@@ -7,6 +7,8 @@
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 
 namespace EffekseerTool
@@ -88,6 +90,8 @@ namespace EffekseerTool
 		, GridColor(255, 255, 255, 255)
 		, IsBackgroundTranslucent(false)
 	{
+		spdlog::trace("Begin new ::EffekseerTool::Renderer");
+
 		if (deviceType == efk::DeviceType::OpenGL)
 		{
 			graphics = new efk::GraphicsGL();
@@ -102,6 +106,8 @@ namespace EffekseerTool
 			assert(0);
 		}
 #endif
+		spdlog::trace("OK new ::efk::Graphics");
+
 		graphics->LostedDevice = [this]() -> void
 		{
 			if (backgroundData != nullptr)
@@ -128,6 +134,8 @@ namespace EffekseerTool
 
 			backgroundData = textureLoader->Load(backgroundPath.c_str(), Effekseer::TextureType::Color);
 		};
+
+		spdlog::trace("End new ::EffekseerTool::Renderer");
 	}
 
 	Renderer::~Renderer()
@@ -153,8 +161,11 @@ namespace EffekseerTool
 
 bool Renderer::Initialize( void* handle, int width, int height )
 {
+	spdlog::trace("Begin Renderer::Initialize");
+
 	if (!graphics->Initialize(handle, width, height, m_isSRGBMode, m_squareMaxCount))
 	{
+		spdlog::trace("End Renderer::Initialize(false)");
 		return false;
 	}
 
@@ -168,20 +179,24 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	m_renderer = graphics->GetRenderer();
 	m_renderer->SetDistortingCallback(m_distortionCallback);
 
-	// グリッド生成
-	m_grid = ::EffekseerRenderer::Grid::Create(graphics);
+	spdlog::trace("OK SetDistortingCallback");
 
-	// ガイド作成
+	m_grid = ::EffekseerRenderer::Grid::Create(graphics);
+	spdlog::trace("OK Grid");
+
 	m_guide = ::EffekseerRenderer::Guide::Create(graphics);
+	spdlog::trace("OK Guide");
 
 	m_culling = ::EffekseerRenderer::Culling::Create(graphics);
+	spdlog::trace("OK Culling");
 
-	// 背景作成
 	m_background = ::EffekseerRenderer::Paste::Create(graphics);
+	spdlog::trace("OK Background");
 
 	// create postprocessings
 	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics));
 	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
+	spdlog::trace("OK PostProcessing");
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
@@ -193,6 +208,8 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	}
 
 	textureLoader = graphics->GetRenderer()->CreateTextureLoader();
+
+	spdlog::trace("End Renderer::Initialize(true)");
 
 	return true;
 }

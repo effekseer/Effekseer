@@ -598,6 +598,7 @@ Native::~Native()
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
 {
+	spdlog::trace("Begin Native::CreateWindow_Effekseer");
 	m_isSRGBMode = isSRGBMode;
 	g_deviceType = deviceType;
 
@@ -605,12 +606,13 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	int32_t spriteCount = 65000 / 4;
 
 	g_renderer = new ::EffekseerTool::Renderer(spriteCount, isSRGBMode, g_deviceType);
+	
 	if (g_renderer->Initialize(pHandle, width, height))
 	{
-		// 関数追加
-		//::Effekseer::ScriptRegister::SetExternalFunction(0, print);
+		spdlog::trace("OK : ::EffekseerTool::Renderer::Initialize");
 
 		g_manager = ::Effekseer::Manager::Create(spriteCount);
+		spdlog::trace("OK : ::Effekseer::Manager::Create");
 
 		{
 			::Effekseer::SpriteRenderer* sprite_renderer = g_renderer->GetRenderer()->CreateSpriteRenderer();
@@ -621,22 +623,29 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 
 			if (sprite_renderer == NULL)
 			{
-				printf("Failed create Renderer\n");
+				spdlog::trace("FAIL : CreateSpriteRenderer");
 				g_manager->Destroy();
 				g_manager = NULL;
 				ES_SAFE_DELETE(g_renderer);
 				return false;
 			}
+
+			spdlog::trace("OK : CreateRenderers");
+
 			g_manager->SetSpriteRenderer(sprite_renderer);
 			g_manager->SetRibbonRenderer(ribbon_renderer);
 			g_manager->SetRingRenderer(ring_renderer);
 			g_manager->SetModelRenderer(model_renderer);
 			g_manager->SetTrackRenderer(track_renderer);
 
+			spdlog::trace("OK : SetRenderers");
+
 			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer());
 			g_manager->SetTextureLoader(m_textureLoader);
 			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer()));
 			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer()));
+
+			spdlog::trace("OK : SetLoaders");
 		}
 
 		// Assign device lost events.
@@ -666,10 +675,15 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				resource.second->Validate();
 			}
 		};
+
+		spdlog::trace("OK : AssignFunctions");
 	}
 	else
 	{
 		ES_SAFE_DELETE(g_renderer);
+
+		spdlog::trace("End Native::CreateWindow_Effekseer (false)");
+
 		return false;
 	}
 
@@ -679,6 +693,8 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		g_manager->SetSoundPlayer(g_sound->GetSound()->CreateSoundPlayer());
 		g_manager->SetSoundLoader(new SoundLoader(g_sound->GetSound()->CreateSoundLoader()));
 	}
+
+	spdlog::trace("End Native::CreateWindow_Effekseer (true)");
 
 	return true;
 }
@@ -1955,6 +1971,7 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 
 void Native::SetFileLogger(const char16_t* path)
 {
+	spdlog::flush_on(spdlog::level::trace);
 	spdlog::set_level(spdlog::level::trace);
 	spdlog::trace("Begin Native::SetFileLogger");
 
@@ -1969,11 +1986,11 @@ void Native::SetFileLogger(const char16_t* path)
 
 	spdlog::set_default_logger(fileLogger);
 
-	#if defined(_WIN32)
+#if defined(_WIN32)
 	spdlog::trace("Native::SetFileLogger : {}", wpath.generic_string().c_str());
-	#else
+#else
 	spdlog::trace("Native::SetFileLogger : {}", cpath);
-	#endif
+#endif
 
 	spdlog::trace("End Native::SetFileLogger");
 }
