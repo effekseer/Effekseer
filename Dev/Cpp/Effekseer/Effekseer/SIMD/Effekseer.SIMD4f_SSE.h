@@ -47,7 +47,7 @@ struct alignas(16) SIMD4f
 	void SetW(float i) { s = Swizzle<3,1,2,0>(_mm_move_ss(Swizzle<3,1,2,0>(s).s, _mm_set_ss(i))).s; }
 
 	template <size_t LANE>
-	SIMD4f Dup() { return _mm_shuffle_ps(s, s, _MM_SHUFFLE(LANE, LANE, LANE, LANE)); }
+	SIMD4f Dup() { return Swizzle<LANE,LANE,LANE,LANE>(s); }
 
 	SIMD4i Convert4i() const;
 	SIMD4i Cast4i() const;
@@ -315,7 +315,7 @@ template<size_t LANE>
 SIMD4f SIMD4f::MulLane(const SIMD4f& lhs, const SIMD4f& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return SIMD4f{_mm_mul_ps(lhs.s, _mm_shuffle_ps(rhs.s, rhs.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE)))};
+	return _mm_mul_ps(lhs.s, Swizzle<LANE,LANE,LANE,LANE>(rhs).s);
 }
 
 template<size_t LANE>
@@ -323,9 +323,9 @@ SIMD4f SIMD4f::MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 #if defined(EFK_SIMD_AVX2)
-	return SIMD4f{_mm_fmadd_ps(b.s, _mm_shuffle_ps(c.s, c.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE)), a.s)};
+	return _mm_fmadd_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s, a.s);
 #else
-	return SIMD4f{_mm_add_ps(a.s, _mm_mul_ps(b.s, _mm_shuffle_ps(c.s, c.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE))))};
+	return _mm_add_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s));
 #endif
 }
 
@@ -334,9 +334,9 @@ SIMD4f SIMD4f::MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 #if defined(EFK_SIMD_AVX2)
-	return SIMD4f{_mm_fnmadd_ps(b.s, _mm_shuffle_ps(c.s, c.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE)), a.s)};
+	return _mm_fnmadd_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s, a.s);
 #else
-	return SIMD4f{_mm_sub_ps(a.s, _mm_mul_ps(b.s, _mm_shuffle_ps(c.s, c.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE))))};
+	return _mm_sub_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s));
 #endif
 }
 
@@ -347,7 +347,12 @@ SIMD4f SIMD4f::Swizzle(const SIMD4f& v)
 	static_assert(indexY < 4, "indexY is must be less than 4.");
 	static_assert(indexZ < 4, "indexZ is must be less than 4.");
 	static_assert(indexW < 4, "indexW is must be less than 4.");
-	return SIMD4f{_mm_shuffle_ps(v.s, v.s, _MM_SHUFFLE(indexW, indexZ, indexY, indexX))};
+
+#if defined(EFK_SIMD_AVX)
+	return _mm_permute_ps(v.s, _MM_SHUFFLE(indexW, indexZ, indexY, indexX));
+#else
+	return _mm_shuffle_ps(v.s, v.s, _MM_SHUFFLE(indexW, indexZ, indexY, indexX));
+#endif
 }
 
 inline SIMD4f SIMD4f::Dot3(const SIMD4f& lhs, const SIMD4f& rhs)
