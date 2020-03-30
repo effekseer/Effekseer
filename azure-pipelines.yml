@@ -41,8 +41,6 @@ jobs:
           ArtifactName: 'Effekseer150Win'
           publishLocation: 'Container'
 
-
-jobs:
   - job: Windows_x86
     pool:
       vmImage: 'vs2017-win2016'
