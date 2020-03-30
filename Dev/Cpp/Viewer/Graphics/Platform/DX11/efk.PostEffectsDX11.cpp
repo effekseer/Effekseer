@@ -4,6 +4,8 @@
 
 #include <algorithm>
 #include "efk.PostEffectsDX11.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 namespace efk
 {
@@ -169,8 +171,16 @@ namespace efk
 			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
 			PostFX_Extract_PS::g_PS, sizeof(PostFX_Extract_PS::g_PS),
 			"Bloom extract", PostFx_ShaderDecl, 2));
-		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
-		shaderExtract->SetPixelRegisterCount(2);
+
+		if (shaderExtract != nullptr)
+		{
+			shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
+			shaderExtract->SetPixelRegisterCount(2);		
+		}
+		else
+		{
+			spdlog::trace("FAIL Create shaderExtract");
+		}
 
 		// Downsample shader
 		shaderDownsample.reset(Shader::Create(renderer,
@@ -292,7 +302,15 @@ namespace efk
 			int32_t bufferWidth  = width;
 			int32_t bufferHeight = height;
 			extractBuffer.reset(RenderTexture::Create(graphics));
-			extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
+
+			if (extractBuffer != nullptr)
+			{
+				extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);			
+			}
+			else
+			{
+				spdlog::trace("FAIL Create extractBuffer");
+			}
 		}
 
 		// Create low-resolution buffers
@@ -303,7 +321,15 @@ namespace efk
 				bufferWidth  = std::max(1, (bufferWidth  + 1) / 2);
 				bufferHeight = std::max(1, (bufferHeight + 1) / 2);
 				lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
-				lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
+
+				if (lowresBuffers[i][j] != nullptr)
+				{
+					lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);				
+				}
+				else
+				{
+					spdlog::trace("FAIL Create lowresBuffers[i][j]");
+				}
 			}
 		}
 	}
@@ -340,9 +366,16 @@ namespace efk
 			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
 			PostFX_Tonemap_PS::g_PS, sizeof(PostFX_Tonemap_PS::g_PS),
 			"Tonemap Reinhard", PostFx_ShaderDecl, 2));
-		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
-		shaderReinhard->SetPixelRegisterCount(1);
 
+		if (shaderReinhard != nullptr)
+		{
+			shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
+			shaderReinhard->SetPixelRegisterCount(1);
+		}
+		else
+		{
+			spdlog::trace("FAIL Create shaderReinhard");
+		}
 	}
 
 	TonemapEffectDX11::~TonemapEffectDX11()
