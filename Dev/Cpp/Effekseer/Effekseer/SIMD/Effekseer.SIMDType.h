@@ -41,10 +41,18 @@
 #define EFK_SIMD_SSE3
 #endif
 
-#if defined(_MSC_VER)
-#include <intrin.h>
-#else
-#include <x86intrin.h>
+#if defined(EFK_SIMD_AVX) || defined(EFK_SIMD_AVX2)
+#include <immintrin.h>
+#elif defined(EFK_SIMD_SSE4_2)
+#include <nmmintrin.h>
+#elif defined(EFK_SIMD_SSE4_1)
+#include <smmintrin.h>
+#elif defined(EFK_SIMD_SSSE3)
+#include <tmmintrin.h>
+#elif defined(EFK_SIMD_SSE3)
+#include <pmmintrin.h>
+#elif defined(EFK_SIMD_SSE2)
+#include <emmintrin.h>
 #endif
 
 #else

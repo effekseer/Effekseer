@@ -142,28 +142,20 @@ inline SIMD4i operator*(const SIMD4i& lhs, int32_t rhs)
 
 inline SIMD4i operator/(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-#if defined(_MSC_VER)
-	return _mm_div_epi32(lhs.s, rhs.s);
-#else
 	return SIMD4i(
 		lhs.GetX() * rhs.GetX(),
 		lhs.GetY() * rhs.GetY(),
 		lhs.GetZ() * rhs.GetZ(),
 		lhs.GetW() * rhs.GetW());
-#endif
 }
 
 inline SIMD4i operator/(const SIMD4i& lhs, int32_t rhs)
 {
-#if defined(_MSC_VER)
-	return _mm_div_epi32(lhs.s, _mm_set1_epi32(rhs));
-#else
 	return SIMD4i(
 		lhs.GetX() * rhs,
 		lhs.GetY() * rhs,
 		lhs.GetZ() * rhs,
 		lhs.GetW() * rhs);
-#endif
 }
 
 inline SIMD4i operator&(const SIMD4i& lhs, const SIMD4i& rhs)
