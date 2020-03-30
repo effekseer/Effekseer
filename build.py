@@ -1,6 +1,6 @@
 import subprocess
 import Script.aceutils as aceutils
-
+import sys
 import os
 
 def call( cmd , env=None):
@@ -26,7 +26,7 @@ env["PACKAGEING_FOR_MAC"] = os.getenv('PACKAGEING_FOR_MAC', '0')
 env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 
 
-
+is_x86 = 'x86' in sys.argv
 
 if env['IGNORE_BUILD'] == '0':
     aceutils.mkdir('build')
@@ -59,7 +59,11 @@ if env['IGNORE_BUILD'] == '0':
         aceutils.wget(r'https://dist.nuget.org/win-x86-commandline/v5.1.0/nuget.exe')
 
         if aceutils.isWin():
-            aceutils.call('cmake .. -A x64 -DBUILD_VIEWER=ON')
+            if is_x86:
+                aceutils.call('cmake .. -A Win32 -DBUILD_VIEWER=ON')
+            else:
+                aceutils.call('cmake .. -A x64 -DBUILD_VIEWER=ON')
+
         elif aceutils.isMac():
             aceutils.call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')
         else:
@@ -71,8 +75,12 @@ if env['IGNORE_BUILD'] == '0':
     else:
         aceutils.call('mono ./build/nuget.exe restore Dev/Editor/Effekseer.sln')
 
-    call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
-    call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+    if is_x86:
+        call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
+        call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
+    else:
+        call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+        call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
 
 if env['PACKAGEING_FOR_MAC'] == '1':
 
