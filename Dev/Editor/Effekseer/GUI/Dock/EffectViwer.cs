@@ -66,25 +66,29 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.PushItemWidth(50 * dpiScale);
 
 			// DrawCall
-			Manager.NativeManager.InputText("##DrawCalls", "D:" + Manager.Native.GetAndResetDrawCall().ToString(), swig.InputTextFlags.ReadOnly);
+			Manager.NativeManager.Text("D:" + Manager.Native.GetAndResetDrawCall().ToString("D5"));
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.SetTooltip("Draw calls of current rendering.");
 			}
 
 			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Spacing();
+			Manager.NativeManager.SameLine();
 
 			// DrawCall
-			Manager.NativeManager.InputText("##VertexCount", "V:" + Manager.Native.GetAndResetVertexCount().ToString(), swig.InputTextFlags.ReadOnly);
+			Manager.NativeManager.Text("V:" + Manager.Native.GetAndResetVertexCount().ToString("D5"));
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.SetTooltip("Vertex count of current rendering.");
 			}
-   
+
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Spacing();
 			Manager.NativeManager.SameLine();
 
 			// DrawCall
-			Manager.NativeManager.InputText("##ParticleCount", "P:" + Manager.Native.GetInstanceCount().ToString());
+			Manager.NativeManager.Text("P:" + Manager.Native.GetInstanceCount().ToString("D2"));
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.SetTooltip("Particle count of current rendering.");
