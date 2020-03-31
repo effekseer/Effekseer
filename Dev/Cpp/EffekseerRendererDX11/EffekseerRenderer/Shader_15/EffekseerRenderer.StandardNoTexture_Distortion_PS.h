@@ -4,8 +4,8 @@
 //
 //
 //   fxc /Zpc /Tps_4_0_level_9_3 /EPS /Fh
-//    Shader/EffekseerRenderer.StandardNoTexture_Distortion_PS.h
-//    Shader/standard_renderer_no_texture_distortion_PS.fx
+//    Shader_15/EffekseerRenderer.StandardNoTexture_Distortion_PS.h
+//    Shader_15/standard_renderer_no_texture_distortion_PS.fx
 //
 //
 // Buffer Definitions: 

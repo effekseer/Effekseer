@@ -1,29 +1,33 @@
 
 #include "efk.LineRendererDX11.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 namespace efk
 {
 	namespace Standard_VS
 	{
 		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.Tool_VS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.Tool_VS.h>
 	}
 
 	namespace Standard_PS
 	{
 		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.Tool_PS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.Tool_PS.h>
 	}
 
 	namespace StandardNoTexture_PS
 	{
 		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.ToolNoTexture_PS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.ToolNoTexture_PS.h>
 	}
 
 	LineRendererDX11::LineRendererDX11(EffekseerRenderer::Renderer* renderer)
 		: LineRenderer(renderer)
 	{
+		spdlog::trace("Begin new LineRendererDX11");
+
 		this->renderer = (EffekseerRendererDX11::RendererImplemented*)renderer;
 
 
@@ -42,8 +46,18 @@ namespace efk
 			sizeof(StandardNoTexture_PS::g_PS),
 			"StandardRenderer No Texture", decl, 3);
 
-		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		((EffekseerRendererDX11::Shader*)shader)->SetVertexRegisterCount(8);
+
+		if (shader != nullptr)
+		{
+			shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+			((EffekseerRendererDX11::Shader*)shader)->SetVertexRegisterCount(8);		
+		}
+		else
+		{
+			spdlog::trace("FAIL Create shader");
+		}
+
+		spdlog::trace("End new LineRendererDX11");
 	}
 
 	LineRendererDX11::~LineRendererDX11()

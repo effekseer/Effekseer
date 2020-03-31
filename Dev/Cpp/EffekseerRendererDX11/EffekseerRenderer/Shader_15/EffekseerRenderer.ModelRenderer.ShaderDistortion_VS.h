@@ -4,8 +4,8 @@
 //
 //
 //   fxc /Zpc /Tvs_4_0_level_9_3 /EVS /Fh
-//    Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h
-//    Shader/model_renderer_distortion_VS.fx
+//    Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h
+//    Shader_15/model_renderer_distortion_VS.fx
 //
 //
 // Buffer Definitions: 

@@ -4,8 +4,8 @@
 //
 //
 //   fxc /Zpc /Tps_4_0_level_9_3 /EPS /Fh
-//    Shader/EffekseerRenderer.ToolNoTexture_PS.h
-//    Shader/tool_renderer_no_texture_PS.fx
+//    Shader_15/EffekseerRenderer.ToolNoTexture_PS.h
+//    Shader_15/tool_renderer_no_texture_PS.fx
 //
 //
 //

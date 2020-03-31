@@ -1,29 +1,33 @@
 
 #include "efk.ImageRendererDX11.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 namespace efk
 {
 	namespace Standard_VS
 	{
 		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.Tool_VS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.Tool_VS.h>
 	}
 
 	namespace Standard_PS
 	{
 		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.Tool_PS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.Tool_PS.h>
 	}
 
 	namespace StandardNoTexture_PS
 	{
 		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.ToolNoTexture_PS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.ToolNoTexture_PS.h>
 	}
 
 	ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 		: ImageRenderer(renderer)
 	{
+		spdlog::trace("Begin new ImageRendererDX11");
+
 		this->renderer = (EffekseerRendererDX11::RendererImplemented*)renderer;
 
 		// Position(3) Color(1) UV(2)
@@ -50,11 +54,27 @@ namespace efk
 			sizeof(StandardNoTexture_PS::g_PS),
 			"StandardRenderer No Texture", decl, 3);
 
-		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		((EffekseerRendererDX11::Shader*)shader)->SetVertexRegisterCount(8);
-		shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		((EffekseerRendererDX11::Shader*)shader_no_texture)->SetVertexRegisterCount(8);
+		if (shader != nullptr)
+		{
+			shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+			((EffekseerRendererDX11::Shader*)shader)->SetVertexRegisterCount(8);		
+		}
+		else
+		{
+			spdlog::trace("FAIL Create shader");
+		}
 
+		if (shader_no_texture != nullptr)
+		{
+			shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+			((EffekseerRendererDX11::Shader*)shader_no_texture)->SetVertexRegisterCount(8);		
+		}
+		else
+		{
+			spdlog::trace("FAIL Create shader_no_texture");
+		}
+
+		spdlog::trace("End new ImageRendererDX11");
 	}
 
 	ImageRendererDX11::~ImageRendererDX11()

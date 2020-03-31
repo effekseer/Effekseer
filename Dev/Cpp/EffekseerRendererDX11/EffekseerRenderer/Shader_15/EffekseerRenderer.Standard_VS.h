@@ -4,7 +4,8 @@
 //
 //
 //   fxc /Zpc /Tvs_4_0_level_9_3 /EVS /Fh
-//    Shader/EffekseerRenderer.Standard_VS.h Shader/standard_renderer_VS.fx
+//    Shader_15/EffekseerRenderer.Standard_VS.h
+//    Shader_15/standard_renderer_VS.fx
 //
 //
 // Buffer Definitions: 
