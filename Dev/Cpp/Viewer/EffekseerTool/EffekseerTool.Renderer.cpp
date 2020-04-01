@@ -196,6 +196,7 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	// create postprocessings
 	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics));
 	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
+	m_linearToSRGBEffect.reset(efk::PostEffect::CreateLinearToSRGB(graphics));
 	spdlog::trace("OK PostProcessing");
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
@@ -349,35 +350,43 @@ void Renderer::RecalcProjection()
 
 bool Renderer::BeginRendering()
 {
-	if (m_bloomEffect == nullptr &&  m_tonemapEffect == nullptr)
+	lastDstRenderTexture = graphics->GetRenderTexture();
+	lastDstDepthTexture = graphics->GetDepthTexture();
+
+	if (m_bloomEffect == nullptr &&  m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
 	{
-		targetRenderTexture = graphics->GetRenderTexture();
-		targetDepthTexture = graphics->GetDepthTexture();
-		graphics->SetRenderTarget(targetRenderTexture, targetDepthTexture);
+		graphics->SetRenderTarget(lastDstRenderTexture, lastDstDepthTexture);
 	}
 	else
 	{
-	
 		if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
 		{
 			hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-			hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
+			hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
 			depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
 			depthTexture->Initialize(screenWidth, screenHeight, msaaSamples);
 	
 			if (msaaSamples > 1)
 			{
-				postfxRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-				postfxRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
+				hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+				hdrRenderTextureMSAA->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
 			}
-			else
+
+			if (m_isSRGBMode)
 			{
-				postfxRenderTexture = hdrRenderTexture;
+				linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+				linearRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);			
 			}
 		}
-		targetRenderTexture = graphics->GetRenderTexture();
-		targetDepthTexture = graphics->GetDepthTexture();
-		graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());	
+
+		if (msaaSamples > 1)
+		{
+			graphics->SetRenderTarget(hdrRenderTextureMSAA.get(), depthTexture.get());
+		}
+		else
+		{
+			graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
+		}
 	}
 	
 	graphics->BeginScene();
@@ -593,29 +602,31 @@ bool Renderer::EndRenderToView()
 
 void Renderer::RenderPostEffect()
 {
-	auto src = hdrRenderTexture.get();
-	auto dest = postfxRenderTexture.get();
-	
 	// all post effects are disabled
-	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr)
+	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
 	{
 		return;
 	}
 
-	if (src != dest)
+	if (msaaSamples > 1)
 	{
-		graphics->ResolveRenderTarget(src, dest);
-		src = dest;
+		graphics->ResolveRenderTarget(hdrRenderTextureMSAA.get(), hdrRenderTexture.get());
 	}
 
-	if (m_bloomEffect) {
-		// Bloom processing (specifying the same target for src and dest is faster)
-		m_bloomEffect->Render(src, src);
+	// Bloom processing (specifying the same target for src and dest is faster)
+	m_bloomEffect->Render(hdrRenderTexture.get(), hdrRenderTexture.get());
+
+	// Tone map processing
+	auto tonemapTerget = lastDstRenderTexture;
+	if (m_isSRGBMode)
+	{
+		tonemapTerget = linearRenderTexture.get();
 	}
-	if (m_tonemapEffect) {
-		// Tone map processing(final target is specified as dest)
-		dest = targetRenderTexture;
-		m_tonemapEffect->Render(src, dest);
+	m_tonemapEffect->Render(hdrRenderTexture.get(), tonemapTerget);
+
+	if (m_isSRGBMode)
+	{
+		m_linearToSRGBEffect->Render(tonemapTerget, lastDstRenderTexture);
 	}
 }
 

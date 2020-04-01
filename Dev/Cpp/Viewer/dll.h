@@ -168,7 +168,7 @@ private:
 		Effekseer::TextureLoader* m_originalTextureLoader;
 
 	public:
-		TextureLoader(EffekseerRenderer::Renderer* renderer);
+		TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType);
 		virtual ~TextureLoader();
 
 	public:

@@ -45,6 +45,7 @@ namespace Effekseer.GUI.Dock
 				paramerterList.SetValue(Core.Option);
 				isFiestUpdate = false;
 
+				Core.Option.ColorSpace.OnChanged += GuiLanguage_OnChanged;
 				Core.Option.GuiLanguage.OnChanged += GuiLanguage_OnChanged;
 				Core.Option.FontSize.OnChanged += FontSize_OnChanged;
 				Core.Option.Font.OnChanged += FontSize_OnChanged;

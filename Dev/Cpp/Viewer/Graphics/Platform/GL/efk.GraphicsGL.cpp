@@ -192,10 +192,7 @@ namespace efk
 
 		renderer = ::EffekseerRendererGL::Renderer::Create(spriteCount, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 
-		if (this->isSRGBMode)
-		{
-			glEnable(GL_FRAMEBUFFER_SRGB);
-		}
+		glDisable(GL_FRAMEBUFFER_SRGB);
 
 		glGenFramebuffers(1, &frameBuffer);
 		

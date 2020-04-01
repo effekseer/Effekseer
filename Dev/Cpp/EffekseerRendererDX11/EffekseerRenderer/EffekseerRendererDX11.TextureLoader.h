@@ -30,6 +30,7 @@ private:
 	ID3D11DeviceContext*				context = nullptr;
 	::Effekseer::FileInterface*			m_fileInterface;
 	::Effekseer::DefaultFileInterface	m_defaultFileInterface;
+	::Effekseer::ColorSpaceType colorSpaceType_;
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	::EffekseerRenderer::PngTextureLoader pngTextureLoader;
@@ -37,7 +38,10 @@ private:
 #endif
 
 public:
-	TextureLoader(ID3D11Device* device, ID3D11DeviceContext* context, ::Effekseer::FileInterface* fileInterface = NULL );
+	TextureLoader(ID3D11Device* device,
+				  ID3D11DeviceContext* context,
+				  ::Effekseer::FileInterface* fileInterface = nullptr,
+				  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 	virtual ~TextureLoader();
 
 public:

@@ -84,4 +84,20 @@ namespace efk
 
 		void OnResetDevice() override {}
 	};
-}
+
+	class LinearToSRGBEffectDX11 : public LinearToSRGBEffect
+	{
+		std::unique_ptr<EffekseerRendererDX11::Shader> shader_;
+		BlitterDX11 blitter_;
+
+	public:
+		LinearToSRGBEffectDX11(Graphics* graphics);
+		virtual ~LinearToSRGBEffectDX11();
+
+		void Render(RenderTexture* src, RenderTexture* dest) override;
+
+		void OnLostDevice() override {}
+
+		void OnResetDevice() override {}
+	};
+	}

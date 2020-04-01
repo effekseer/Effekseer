@@ -367,18 +367,19 @@ static ::Effekseer::Client* g_client = NULL;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
-Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer) : m_renderer(renderer)
+Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType)
+	: m_renderer(renderer)
 {
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
 		auto r = (EffekseerRendererGL::Renderer*)m_renderer;
-		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader();
+		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader(nullptr, colorSpaceType);
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto r = (EffekseerRendererDX11::Renderer*)m_renderer;
-		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
+		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext(), nullptr, colorSpaceType);
 	}
 	else
 	{
@@ -640,7 +641,8 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 
 			spdlog::trace("OK : SetRenderers");
 
-			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer());
+			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer(),
+												isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma);
 			g_manager->SetTextureLoader(m_textureLoader);
 			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer()));
 			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer()));

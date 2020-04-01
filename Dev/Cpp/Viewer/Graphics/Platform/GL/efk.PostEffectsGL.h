@@ -96,4 +96,22 @@ namespace efk
 
 		void OnResetDevice() override {}
 	};
-}
+
+	class LinearToSRGBEffectGL : public LinearToSRGBEffect
+	{
+		BlitterGL blitter;
+
+		std::unique_ptr<EffekseerRendererGL::Shader> shader_;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vao_;
+
+	public:
+		LinearToSRGBEffectGL(Graphics* graphics);
+		virtual ~LinearToSRGBEffectGL();
+
+		void Render(RenderTexture* src, RenderTexture* dest) override;
+
+		void OnLostDevice() override {}
+
+		void OnResetDevice() override {}
+	};
+	}

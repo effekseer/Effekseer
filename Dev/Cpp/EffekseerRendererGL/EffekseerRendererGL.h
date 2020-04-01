@@ -550,7 +550,7 @@ class DeviceObjectCollection;
 /**
 @brief	テクスチャ読込クラスを生成する。
 */
-::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr, ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
 /**
 @brief	モデル読込クラスを生成する。

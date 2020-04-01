@@ -20,8 +20,8 @@ namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoader::TextureLoader( ::Effekseer::FileInterface* fileInterface )
-	: m_fileInterface	( fileInterface )
+TextureLoader::TextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
+	: m_fileInterface	( fileInterface ), colorSpaceType_(colorSpaceType)
 {
 	if( m_fileInterface == NULL )
 	{
@@ -79,12 +79,16 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 	{
 		pngTextureLoader.Load(data_texture, size_texture, false);
 
+		GLuint colorFormat = GL_RGBA;
+		if (colorSpaceType_ == ::Effekseer::ColorSpaceType::Linear && textureType == Effekseer::TextureType::Color)
+			colorFormat = GL_SRGB8_ALPHA8;
+
 		GLuint texture = 0;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(GL_TEXTURE_2D,
 					 0,
-					 GL_RGBA,
+					 colorFormat,
 					 pngTextureLoader.GetWidth(),
 					 pngTextureLoader.GetHeight(),
 					 0,

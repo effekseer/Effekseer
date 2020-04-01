@@ -29,6 +29,7 @@ class TextureLoader
 private:
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+	::Effekseer::ColorSpaceType colorSpaceType_;
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	::EffekseerRenderer::PngTextureLoader pngTextureLoader;
@@ -36,7 +37,8 @@ private:
 #endif
 
 public:
-	TextureLoader(::Effekseer::FileInterface* fileInterface = NULL);
+	TextureLoader(::Effekseer::FileInterface* fileInterface = nullptr,
+				  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 	virtual ~TextureLoader();
 
 public:

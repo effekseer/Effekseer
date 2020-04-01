@@ -8,6 +8,7 @@ namespace efk
 {
 	class BloomEffect;
 	class TonemapEffect;
+	class LinearToSRGBEffect;
 
 	class PostEffect
 	{
@@ -30,6 +31,8 @@ namespace efk
 		static BloomEffect* CreateBloom(Graphics* graphics);
 
 		static TonemapEffect* CreateTonemap(Graphics* graphics);
+
+		static LinearToSRGBEffect* CreateLinearToSRGB(Graphics* graphics);
 	};
 
 	class BloomEffect : public PostEffect
@@ -71,5 +74,12 @@ namespace efk
 	protected:
 		Algorithm algorithm = Algorithm::Reinhard;
 		float exposure = 1.0f;
+	};
+
+	class LinearToSRGBEffect : public PostEffect
+	{
+	public:
+		LinearToSRGBEffect(Graphics* graphics) : PostEffect(graphics) {}
+		virtual ~LinearToSRGBEffect() = default;
 	};
 }

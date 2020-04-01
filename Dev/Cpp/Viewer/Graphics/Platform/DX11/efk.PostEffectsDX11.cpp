@@ -57,6 +57,12 @@ namespace efk
 #include "Shader/efk.GraphicsDX11.PostFX_Tonemap_PS.h"
 	}
 
+	namespace PostFX_LinearToSRGB_PS
+	{
+	static
+#include "Shader/efk.GraphicsDX11.PostFX_LinearToSRGB_PS.h"
+	} // namespace PostFX_Tonemap_PS
+
 	// Position(2) UV(2)
 	static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -399,5 +405,47 @@ namespace efk
 			const float constantData[4] = {exposure, 16.0f * 16.0f};
 			blitter.Blit(shaderReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
 		}
+	}
+
+	LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter_(graphics)
+	{
+		using namespace Effekseer;
+		using namespace EffekseerRendererDX11;
+
+		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+		// Copy shader
+		shader_.reset(Shader::Create(renderer,
+										PostFX_Basic_VS::g_VS,
+										sizeof(PostFX_Basic_VS::g_VS),
+									 PostFX_LinearToSRGB_PS::g_PS,
+									 sizeof(PostFX_LinearToSRGB_PS::g_PS),
+										"LinearToSRGB",
+										PostFx_ShaderDecl,
+										2));
+
+		if (shader_ != nullptr)
+		{
+		}
+		else
+		{
+			spdlog::trace("FAIL Create shaderLinearToSRGB");
+		}
+	}
+
+	LinearToSRGBEffectDX11::~LinearToSRGBEffectDX11() {}
+
+	void LinearToSRGBEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
+	{
+		using namespace Effekseer;
+		using namespace EffekseerRendererDX11;
+
+		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+		// LinearToSRGB pass
+		ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};
+
+		blitter_.Blit(shader_.get(), 1, textures, nullptr, 0, dest);
+
 	}
 }

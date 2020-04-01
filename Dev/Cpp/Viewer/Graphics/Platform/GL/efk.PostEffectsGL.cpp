@@ -140,6 +140,16 @@ void main() {
 }
 )";
 
+static const char g_linear_to_srgb_fs_src[] =
+	R"(
+IN vec2 v_TexCoord;
+uniform sampler2D u_Texture0;
+void main() {
+	vec4 color = TEX2D(u_Texture0, v_TexCoord);
+	FRAGCOLOR = vec4(pow(color.xyz, 1.0 / 2.2), 1.0);
+}
+)";
+
 	const EffekseerRendererGL::ShaderAttribInfo BlitterGL::shaderAttributes[2] = {
 		{ "a_Position", GL_FLOAT, 2,  0, false },
 		{ "a_TexCoord", GL_FLOAT, 2,  8, false }
@@ -502,4 +512,48 @@ void main() {
 		renderer->GetRenderState()->Pop();
 		GLCheckError();
 	}
+
+	LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter(graphics)
+	{
+		using namespace EffekseerRendererGL;
+		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+		// Copy shader
+		shader_.reset(Shader::Create(
+			renderer, g_basic_vs_src, sizeof(g_basic_vs_src), g_linear_to_srgb_fs_src, sizeof(g_linear_to_srgb_fs_src), "LinearToSRGB"));
+		shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
+		shader_->SetVertexSize(sizeof(BlitterGL::Vertex));
+		shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
+
+
+		// Setup VAOs
+		vao_ = blitter.CreateVAO(shader_.get());
+	}
+
+	LinearToSRGBEffectGL::~LinearToSRGBEffectGL() {}
+
+	void LinearToSRGBEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+	{
+		using namespace Effekseer;
+		using namespace EffekseerRendererGL;
+		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+		auto& state = renderer->GetRenderState()->Push();
+		state.AlphaBlend = AlphaBlendType::Opacity;
+		state.DepthWrite = false;
+		state.DepthTest = false;
+		state.CullingType = CullingType::Double;
+		renderer->GetRenderState()->Update(false);
+		renderer->SetRenderMode(RenderMode::Normal);
+
+		const GLuint textures[] = {(GLuint)src->GetViewID()};
+
+		blitter.Blit(shader_.get(), vao_.get(), 1, textures, nullptr, 0, dest);
+
+		GLExt::glActiveTexture(GL_TEXTURE0);
+		renderer->GetRenderState()->Update(true);
+		renderer->GetRenderState()->Pop();
+		GLCheckError();
+	}
 }
+

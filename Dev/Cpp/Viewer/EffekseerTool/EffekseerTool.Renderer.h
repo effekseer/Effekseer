@@ -58,6 +58,7 @@ private:
 	::EffekseerRenderer::Paste*	m_background;
 	std::unique_ptr<efk::BloomEffect> m_bloomEffect;
 	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
+	std::unique_ptr<efk::LinearToSRGBEffect> m_linearToSRGBEffect;
 
 	bool		m_recording = false;
 	int32_t		m_recordingWidth = 0;
@@ -76,12 +77,16 @@ private:
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
 	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
 
-	efk::RenderTexture* targetRenderTexture = nullptr;
-	efk::DepthTexture* targetDepthTexture = nullptr;
+	//! a render texture which is drawn at last
+	efk::RenderTexture* lastDstRenderTexture = nullptr;
 
-	std::shared_ptr<efk::RenderTexture>	hdrRenderTexture;
-	std::shared_ptr<efk::RenderTexture>	postfxRenderTexture;
-	std::shared_ptr<efk::DepthTexture>	depthTexture;
+	//! a depth texture which is drawn at last
+	efk::DepthTexture* lastDstDepthTexture = nullptr;
+
+	std::shared_ptr<efk::RenderTexture> linearRenderTexture;
+	std::shared_ptr<efk::RenderTexture> hdrRenderTexture;
+	std::shared_ptr<efk::RenderTexture> hdrRenderTextureMSAA;
+	std::shared_ptr<efk::DepthTexture> depthTexture;
 	
 	int32_t		screenWidth = 0;
 	int32_t		screenHeight = 0;

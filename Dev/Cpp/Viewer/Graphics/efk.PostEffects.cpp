@@ -39,4 +39,20 @@ namespace efk
 
 		return nullptr;
 	}
+
+	LinearToSRGBEffect* PostEffect::CreateLinearToSRGB(Graphics* graphics)
+	{
+#ifdef _WIN32
+		if (graphics->GetDeviceType() == DeviceType::DirectX11)
+		{
+			return new LinearToSRGBEffectDX11(graphics);
+		}
+#endif
+		if (graphics->GetDeviceType() == DeviceType::OpenGL)
+		{
+			return new LinearToSRGBEffectGL(graphics);
+		}
+
+		return nullptr;
+	}
 }

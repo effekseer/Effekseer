@@ -114,10 +114,13 @@ static
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device, ID3D11DeviceContext* context, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device,
+												ID3D11DeviceContext* context,
+												::Effekseer::FileInterface* fileInterface,
+												::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(device, context, fileInterface);
+	return new TextureLoader(device, context, fileInterface, colorSpaceType);
 #else
 	return NULL;
 #endif
