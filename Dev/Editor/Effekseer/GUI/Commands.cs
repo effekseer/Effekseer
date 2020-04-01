@@ -409,11 +409,11 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
-			string helpPath = @"https://effekseer.github.io/Help_Tool_15x/index_en.html";
+			string helpPath = @"https://effekseer.github.io/Helps/15x/Tool/en/index.html";
 
 			if (Core.Language == Language.Japanese)
 			{
-				helpPath = @"https://effekseer.github.io/Help_Tool_15x/index_ja.html";
+				helpPath = @"https://effekseer.github.io/Helps/15x/Tool/ja/index.html";
 			}
 
 			try
@@ -435,6 +435,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
+		/*
 		/// <summary>
 		/// Open sample
 		/// </summary>
@@ -456,6 +457,7 @@ namespace Effekseer.GUI
 
 			return true;
 		}
+		*/
 
 		/// <summary>
 		/// About effekseer

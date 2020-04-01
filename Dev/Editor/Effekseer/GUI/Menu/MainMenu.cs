@@ -348,7 +348,7 @@ namespace Effekseer.GUI.Menu
 				var menu = new Menu(Resources.GetString("Help"));
 
 				menu.Controls.Add(create_menu_item_from_commands(Commands.ViewHelp));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.OpenSample));
+				//menu.Controls.Add(create_menu_item_from_commands(Commands.OpenSample));
 
 				menu.Controls.Add(new MenuSeparator());
 
