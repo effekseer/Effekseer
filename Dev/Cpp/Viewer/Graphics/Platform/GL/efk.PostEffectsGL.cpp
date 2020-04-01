@@ -146,7 +146,7 @@ IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 void main() {
 	vec4 color = TEX2D(u_Texture0, v_TexCoord);
-	FRAGCOLOR = vec4(pow(color.xyz, 1.0 / 2.2), 1.0);
+	FRAGCOLOR = vec4(pow(color.xyz, vec3(1.0 / 2.2, 1.0 / 2.2, 1.0 / 2.2)), 1.0);
 }
 )";
 
