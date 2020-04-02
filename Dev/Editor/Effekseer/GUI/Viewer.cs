@@ -426,6 +426,7 @@ namespace Effekseer.GUI
 				return false;
 			}
 
+			ViewMode_OnChanged(null, null);
 			Core.Option.ViewerMode.OnChanged += ViewMode_OnChanged;
 
 			Bloom_OnChanged(null, null);
@@ -814,7 +815,8 @@ namespace Effekseer.GUI
 
 		private void ViewMode_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			var viewerMode = (Data.OptionValues.ViewMode)e.Value;
+			var viewerMode = Core.Option.ViewerMode.Value;
+
 			if (viewerMode == Data.OptionValues.ViewMode._3D)
 			{
 				var param = Manager.Viewer.GetViewerParamater();
