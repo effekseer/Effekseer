@@ -12,6 +12,16 @@ namespace Effekseer.Data
 {
 	public class IO
 	{
+		static Dictionary<Type, Func<XmlDocument, string, object, bool, XmlElement>> saveEvents = new Dictionary<Type, Func<XmlDocument, string, object, bool, XmlElement>>();
+
+		static Dictionary<Type, Action<XmlElement, object, bool>> loadEvents = new Dictionary<Type, Action<XmlElement, object, bool>>();
+
+		public static void ExtendSupportedType(Type type, Func<XmlDocument, string, object, bool, XmlElement>  save, Action<XmlElement, object, bool> load)
+		{
+			saveEvents.Add(type, save);
+			loadEvents.Add(type, load);
+		}
+
 		public static XmlElement SaveObjectToElement(XmlDocument doc, string element_name, object o, bool isClip)
 		{
 			XmlElement e_o = doc.CreateElement(element_name);
@@ -28,6 +38,16 @@ namespace Effekseer.Data
 				{
 					var property_value = property.GetValue(o, null);
 					var element = method.Invoke(null, new object[] { doc, property.Name, property_value, isClip });
+
+					if (element != null)
+					{
+						e_o.AppendChild(element as XmlNode);
+					}
+				}
+				else if(saveEvents.ContainsKey(property.PropertyType))
+				{
+					var property_value = property.GetValue(o, null);
+					var element = saveEvents[property.PropertyType](doc, property.Name, property_value, isClip);
 
 					if (element != null)
 					{
@@ -813,6 +833,11 @@ namespace Effekseer.Data
 				{
 					var property_value = property.GetValue(o, null);
 					method.Invoke(null, new object[] { ch_node, property_value, isClip });
+				}
+				else if(loadEvents.ContainsKey(property.PropertyType))
+				{
+					var property_value = property.GetValue(o, null);
+					loadEvents[property.PropertyType](ch_node, property_value, isClip);
 				}
 				else
 				{

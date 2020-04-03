@@ -2,9 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using Effekseer.Utl;
 
 namespace Effekseer.Data
 {
+	public class LanguageSelector
+	{
+		static LanguageSelector()
+		{
+			IO.ExtendSupportedType(typeof(LanguageSelector), SaveToElement, LoadFromElement);
+		}
+
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, object o, bool isClip)
+		{
+			var text = LanguageTable.Languages[LanguageTable.SelectedIndex];
+			return doc.CreateTextElement(element_name, text);
+		}
+
+		public static void LoadFromElement(XmlElement e, object o, bool isClip)
+		{
+			var text = e.GetText();
+			LanguageTable.SelectLanguage(text);
+		}
+	}
+
 	public enum FontType
 	{
 		[Name(value = "普通", language = Language.Japanese)]
@@ -230,16 +252,16 @@ namespace Effekseer.Data
 			private set;
 		}
 
-        [Name(language = Language.Japanese, value = "言語設定")]
-        [Description(language = Language.Japanese, value = "言語設定")]
-        [Name(language = Language.English, value = "Language")]
-        [Description(language = Language.English, value = "Langueage")]
-        [Undo(Undo = false)]
-        public Value.Enum<Language> GuiLanguage
-        {
-            get;
-            private set;
-        }
+		[Name(language = Language.Japanese, value = "言語設定")]
+		[Description(language = Language.Japanese, value = "言語設定")]
+		[Name(language = Language.English, value = "Language")]
+		[Description(language = Language.English, value = "Langueage")]
+		[Undo(Undo = false)]
+		public LanguageSelector LanguageSelector
+		{
+			get;
+			private set;
+		}
 
 		[Name(language = Language.Japanese, value = "歪み方法")]
 		[Description(language = Language.Japanese, value = "歪み方法")]
@@ -282,8 +304,7 @@ namespace Effekseer.Data
 			Font = new Value.Enum<FontType>(FontType.Normal);
 			FontSize = new Value.Int(16, 32, 8);
 
-			// Switch the language according to the OS settings
-			GuiLanguage = new Value.Enum<Language>(LanguageGetter.GetLanguage());
+			LanguageSelector = new LanguageSelector();
 		}
 		
 		public enum RenderMode : int

@@ -111,6 +111,10 @@ namespace Effekseer
 
 		static void Exec(bool gui, string input, string output, string export, string format, float magnification)
 		{
+			// Register UI
+			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });
+
+
 			// Debug
 			bool isDebugMode = false;
 #if DEBUG
@@ -121,16 +125,21 @@ namespace Effekseer
 				swig.Native.SetFileLogger(Path.Combine(GUI.Manager.GetEntryDirectory(),"Effekseer.log.txt"));	
 			}
 
+			LanguageTable.LoadTable("resources/languages/languages.txt");
+
 			var systemLanguage = EfkN.GetSystemLanguage();
-			Language? language = null;
+			string language = null;
 
 			if(systemLanguage != swig.SystemLanguage.Unknown)
 			{
-				language = (Language)systemLanguage;
-			}
-			else
-			{
-				language = Language.English;
+				if(systemLanguage == swig.SystemLanguage.Japanese)
+				{
+					language = "ja";
+				}
+				else if (systemLanguage == swig.SystemLanguage.English)
+				{
+					language = "en";
+				}
 			}
 
 			Core.OnOutputMessage += new Action<string>(Core_OnOutputMessage);
@@ -139,9 +148,8 @@ namespace Effekseer
 			if (gui)
 			{
 				ChangeLanguage();
-
 #if DEBUG
-				Core.OnLanguageChanged += (lang) => { ChangeLanguage(); };
+				LanguageTable.OnLanguageChanged += (o,e) => { ChangeLanguage(); };
 #endif
 
 				// Failed to compile script
@@ -261,17 +269,10 @@ namespace Effekseer
 
 		private static void ChangeLanguage()
 		{
-			var appDirectory = GUI.Manager.GetEntryDirectory();
-			if (Core.Language == Language.Japanese)
-			{
-				var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
-				Resources.LoadLanguageFile(fullPath);
-			}
-			if (Core.Language == Language.English)
-			{
-				var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
-				Resources.LoadLanguageFile(fullPath);
-			}
+			MultiLanguageTextProvider.RootDirectory = GUI.Manager.GetEntryDirectory() + "/";
+			MultiLanguageTextProvider.Reset();
+			MultiLanguageTextProvider.LoadCSV("Base.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer.csv");
 		}
 
 		static void Core_OnOutputMessage(string obj)

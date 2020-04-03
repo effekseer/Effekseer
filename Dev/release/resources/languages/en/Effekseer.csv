@@ -1,4 +1,4 @@
-AboutEffekseer,About Effekseer
+﻿AboutEffekseer,About Effekseer
 AlphaCrunch,Alpha Crunch
 AttractionForces,Force field (Local)
 AutoConnect,Auto-connect
@@ -119,38 +119,59 @@ Zoom,Zoom
 Depth,Depth
 Global,Global Settings
 ,
+,
 ResetParam_Name,Reset
 ResetParam_Desc,Reset parameter into a default
+,
 EnlargeAnchor,Enlarge anchor
-EnlargeAnchor_Desc,To make the value change smoothly,\nextend the anchor
+EnlargeAnchor_Desc,"To make the value change smoothly,
+extend the anchor"
 ShrinkAnchor,Shrink anchor
-ShrinkAnchor_Desc,To make the value change suddenly\nmove the anchor to the position of the key
+ShrinkAnchor_Desc,"To make the value change suddenly
+move the anchor to the position of the key"
+,
 FCurve_TimelineMode_Name,Timeline Mode
 FCurve_TimelineMode_Desc,It specifies whether the timeline is set for real time or as a percentage of particle lifetime.
 FCurve_Copy_Desc,It copies key points.
 FCurve_Paste_Desc,It pastes key points.
+,
 AutoZoom,AutoZoom
 AutoZoom_Desc,Adjust graph's height automatically
 FCurve_Operation_Instruction_Desc,Operating Instructions(Mouse Over)
-FCurveCtrl_Desc,- Double click - Add, Remove points\nAlt+Wheel - Zoom horizontal\nCtrl+Wheel - Zoom vertical\nAlt+LeftClick - Select multiple points and edit\nShift+LeftClick - Switch selecting points\nDouble click with labels - Change viewing area automatically
+FCurveCtrl_Desc,"- Double click - Add, Remove points
+Alt+Wheel - Zoom horizontal
+Ctrl+Wheel - Zoom vertical
+Alt+LeftClick - Select multiple points and edit
+Shift+LeftClick - Switch selecting points
+Double click with labels - Change viewing area automatically"
+,
 ImageFilter_,Image File (*.png)|*.png
-ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
+ModelFilter_,"Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"
 SoundFilter_,Sound File (*.wav)|*.wav
 ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
+,
 Error_NotFound,{0} is not found.
+,
 EffekseerParticleFilter,efkefc
 MaterialFilter,efkmat
-ImageFilter,png,dds
-ModelFilter,efkmodel,fbx,mqo
+ImageFilter,"png,dds"
+ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
-ProjectFilterNew,efkproj,efkefc
+ProjectFilterNew,"efkproj,efkefc"
+,
+,
 Clipping,Clipping
+,
 Save,Save
+Load,Load
+,
 StorageTarget,Setting save destination
 StorageGlobal,Effekseer Application
 StorageLocal,Effekseer Project
+,
 Panel_Copy_Desc,It copies parameters by panels.
 Panel_Paste_Desc,It pastes parameters by panels.
+,
 DynamicParameter_Name,Dynamic parameter
 DynamicParameter_Desc,
 DynamicInput,Input
@@ -162,7 +183,8 @@ DynamicDynamic,Dynamic
 DynamicAdd,Add
 DynamicDelete,Del
 Compile,Compile
-CompilePosition, : Line {0} Col {1}
+,
+CompilePosition," : Line {0} Col {1}"
 CompileErrror_InvalidToken,Invalid token {0} is found
 CompileErrror_InvalidEoF,Unexpected end is found
 CompileError_InvalidOperation,Invalid operation is found
@@ -171,20 +193,29 @@ CompileError_InvalidSubstitution,Invalid substitution is found
 CompileError_UnknownFunction,Unkwon function {0} is found
 CompileError_UnknownValue,Unkwon value {0} is found
 Cancel,Cancel
+,
+,
 Environment_Name,Environment
 Environment_Desc,
 Environment_Background,Background
 Environment_Lighting,Lighting
 Environment_PostEffect,PostEffect
+,
+,
 Material_Create_Name,Create
 Material_Create_Desc,Create new material file and open it with the material editor
 Material_Edit_Name,Edit
 Material_Edit_Desc,Edit spceified material file with the material editor
 Material_GenCache_Name,Gen. Cache
-Material_GenCache_Desc,It generates caches.\nIf the generated cache is placed in the same directory as the material file, loading will be faster.\nOn some platforms, effects cannot be played without using cache.\nA cache that can be used on both Windows and Mac is generated \nby generating the cache on Mac after generating the cache on Windows.
+Material_GenCache_Desc,"It generates caches.
+If the generated cache is placed in the same directory as the material file, loading will be faster.
+On some platforms, effects cannot be played without using cache.
+A cache that can be used on both Windows and Mac is generated 
+by generating the cache on Mac after generating the cache on Windows."
 Material_NoneCache,Cache - None
 Material_OldCache,Cache - Old
-Material_OldFomatCache,Cache - OldFormat\nPlease regenerate.
+Material_OldFomatCache,"Cache - OldFormat
+Please regenerate."
 DefaultFormat,Default format
 ExportDefaultFormat,Export as default format
 DefaultFormatExample,Default format (*.efk)|*.efk
@@ -196,4 +227,4 @@ GlTFFormat,glTF format
 ExportAsGlTFFormat,Export as glTF format
 GlTFFormatExample,glTF format (*.glTF)|*.glTF
 MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.
-LayerLimitError,The node tree is limited to {0} layers, including the root.
+LayerLimitError,"The node tree is limited to {0} layers, including the root."

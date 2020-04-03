@@ -139,4 +139,101 @@ namespace Effekseer.GUI.Component
 			}
 		}
  	}
+
+	class LanguageSelector : Control, IParameterControl
+	{
+		string id = "";
+
+		public string Label { get; set; } = string.Empty;
+
+		public string Description { get; set; } = string.Empty;
+
+		Data.LanguageSelector binding = null;
+
+		bool isActive = false;
+
+		public List<string> FieldNames = new List<string>();
+
+		public bool EnableUndo { get; set; } = true;
+
+		public Data.LanguageSelector Binding
+		{
+			get
+			{
+				return binding;
+			}
+			set
+			{
+				if (binding == value) return;
+
+				binding = value;
+			}
+		}
+
+		public LanguageSelector()
+		{
+			id = "###" + Manager.GetUniqueID().ToString();
+
+			FieldNames.AddRange(LanguageTable.Languages.Select(_=> MultiLanguageTextProvider.GetText("Language_" + _)));
+		}
+
+		public void SetBinding(object o)
+		{
+			var o_ = o as Data.LanguageSelector;
+			Binding = o_;
+
+			if(Binding != null)
+			{
+				
+			}
+		}
+
+		public void FixValue()
+		{
+			if (binding == null) return;
+		}
+
+		public override void OnDisposed()
+		{
+			FixValue();
+		}
+
+		public override void Update()
+		{
+			if (binding != null)
+			{
+			}
+
+			if (Manager.NativeManager.BeginCombo(id, FieldNames[LanguageTable.SelectedIndex], swig.ComboFlags.None, null))
+			{
+				for (int i = 0; i < FieldNames.Count; i++)
+				{
+					bool is_selected = (FieldNames[LanguageTable.SelectedIndex] == FieldNames[i]);
+
+					if (Manager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None, null))
+					{
+						LanguageTable.SelectLanguage(i);
+					}
+
+					if (is_selected)
+					{
+						Manager.NativeManager.SetItemDefaultFocus();
+					}
+
+				}
+
+				Manager.NativeManager.EndCombo();
+			}
+
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
+		}
+	}
 }

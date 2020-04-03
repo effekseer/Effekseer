@@ -10,13 +10,13 @@ namespace Effekseer.GUI.Menu
 	{
 		string id = "";
 
-		public string Label { get; set; } = string.Empty;
+		public object Label { get; set; } = null;
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
 
-		public Menu(string label = null)
+		public Menu(MultiLanguageString label = null)
 		{
 			if (label != null)
 			{
