@@ -23,7 +23,9 @@ EffectPlatformLLGI::EffectPlatformLLGI()
 
 	llgiWindow_ = new LLGIWindow(glfwWindow_);
 
-	platform_ = LLGI::CreatePlatform(LLGI::DeviceType::Default, llgiWindow_);
+	LLGI::PlatformParameter platformParam;
+	platformParam.Device = LLGI::DeviceType::Default;
+	platform_ = LLGI::CreatePlatform(platformParam, llgiWindow_);
 	graphics_ = platform_->CreateGraphics();
 	sfMemoryPool_ = graphics_->CreateSingleFrameMemoryPool(1024 * 1024, 128);
 	commandListPool_ = std::make_shared<LLGI::CommandListPool>(graphics_, sfMemoryPool_, 3);

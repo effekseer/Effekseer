@@ -28,18 +28,10 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
     };
     shader->StandardTexture_PS = { { standard_frag.data(), (int32_t)standard_frag.size() } };
 
-    static const std::vector<uint8_t> standard_no_texture_frag = {
-#include "Shader/Vulkan/standard_no_texture.frag.spv.inl"
-    };
-
     static const std::vector<uint8_t> standard_distortion_frag = {
 #include "Shader/Vulkan/standard_distortion.frag.spv.inl"
     };
     shader->StandardDistortedTexture_PS = { { standard_distortion_frag.data(), (int32_t)standard_distortion_frag.size() } };
-
-    static const std::vector<uint8_t> standard_distortion_no_texture_frag = {
-#include "Shader/Vulkan/standard_distortion_no_texture.frag.spv.inl"
-    };
 
     static const std::vector<uint8_t> model_ltn_vert = {
 #include "Shader/Vulkan/model_ltn.vert.spv.inl"

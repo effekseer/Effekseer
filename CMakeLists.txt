@@ -40,6 +40,10 @@ endif()
 #     set(BUILD_VULKAN OFF)
 # endif()
 
+if(BUILD_VULKAN)
+    set(BUILD_VULKAN_COMPILER ON)
+endif()
+
 if (WIN32 AND NOT FROM_CI)
     set(BUILD_DX12 ON)
 else()
