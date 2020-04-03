@@ -575,7 +575,7 @@ class ShaderGenerator
 		{
 			if (useSet_)
 			{
-				maincode << "layout(set = " << stage << " binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name
+				maincode << "layout(set = " << stage << ", binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name
 						 << ";" << std::endl;
 			}
 			else
