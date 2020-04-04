@@ -1,14 +1,14 @@
 ﻿Effekseer
 =========
-This software is a tool editing particle effects.
-By incorporating a runtime and plug-ins, you will be able to show the effects that was created with Effekseer.
-Effekseer is useful in developing game software especially. Not only programmers but also designers take charge of particle effects.
+This software is a particle effect editing tool. 
+By incorporating runtimes and plug-ins, effects created in Effekseer can be played back in your application. 
+Effekseer is intended to be used primarily for games, allowing the designer, not the programmer, to be in charge of editing particle effects.
 
 * [Official website](http://effekseer.github.io/en/)
 
-本ソフトウェアはパーティクルエフェクト編集ツールです。
+本ソフトウェアはパーティクルエフェクト編集ツールです。 
 ランタイムやプラグインを組み込むことで、Effekseerで作成されたエフェクトをアプリケーション中で再生できるようになります。
-主にゲームで使用することを想定しており、パーティクルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
+ Effekseerは主にゲーム向けに使用することを想定しており、パーティクルエフェクトの編集をプログラマではなくデザイナーが担当できるようにします。
 
 * [公式ウェブサイト](http://effekseer.github.io/jp/)
 
@@ -66,9 +66,11 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 [Trello](https://trello.com/b/APLk8e6V/effekseer-wishlist)
 
-# RoadMap
+# RoadMap(1.6)
 
-- I'm planning.
+- Optimize runtime
+- Add more force fields.
+- Start to support Godot
 
 ## OnGoing
 
@@ -98,23 +100,17 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 # For contributor
 
-## How to release (under constructing)
+## How to release
 
 * Windows
 
 Visual Studio 2017 are required.
 
-Open ```release.bat```
+Please read ``` azure-pipelines.yml ```
 
 * Mac
 
-Execute ```Dev/build.Mac.sh``` to compile and generate binary into Dev/release/
-
-Execute ```Dev/package.Mac.sh``` to generate app into Dev/Mac/
-
-or
-
-Use cmake to ```Dev/Cpp/CMakeLists.txt```
+Please read ``` azure-pipelines.yml ```
 
 * Linux (not work now)
 
