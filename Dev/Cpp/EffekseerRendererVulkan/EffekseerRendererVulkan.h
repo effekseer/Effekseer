@@ -1,14 +1,13 @@
 ﻿
-#ifndef __EFFEKSEERRENDERER_DX12_BASE_PRE_H__
-#define __EFFEKSEERRENDERER_DX12_BASE_PRE_H__
+#ifndef __EFFEKSEERRENDERER_VULKAN_BASE_PRE_H__
+#define __EFFEKSEERRENDERER_VULKAN_BASE_PRE_H__
 
 #include <Effekseer.h>
-#include <d3d12.h>
 
-namespace EffekseerRendererDX12
-{
-
-}
+#ifdef _WIN32
+#define VK_USE_PLATFORM_WIN32_KHR
+#endif
+#include <vulkan/vulkan.h>
 
 #endif
 #ifndef	__EFFEKSEERRENDERER_RENDERER_H__
@@ -62,6 +61,18 @@ enum class ProxyTextureType
 	Normal,
 };
 
+/**
+	@brief
+	\~english A class which contains a graphics device
+	\~japanese グラフィックデバイスを格納しているクラス
+*/
+class GraphicsDevice : public ::Effekseer::IReference
+{
+public:
+	GraphicsDevice() = default;
+	virtual ~GraphicsDevice() = default;
+};	
+	
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -131,82 +142,87 @@ public:
 	virtual bool EndRendering() = 0;
 
 	/**
-		@brief	ライトの方向を取得する。
+		@brief	Get the direction of light
 	*/
-	virtual const ::Effekseer::Vector3D& GetLightDirection() const = 0;
+	virtual ::Effekseer::Vector3D GetLightDirection() const;
 
 	/**
-		@brief	ライトの方向を設定する。
+		@brief	Specifiy the direction of light
 	*/
-	virtual void SetLightDirection( const ::Effekseer::Vector3D& direction ) = 0;
+	virtual void SetLightDirection(const ::Effekseer::Vector3D& direction);
 
 	/**
-		@brief	ライトの色を取得する。
+		@brief	Get the color of light
 	*/
-	virtual const ::Effekseer::Color& GetLightColor() const = 0;
+	virtual const ::Effekseer::Color& GetLightColor() const;
 
 	/**
-		@brief	ライトの色を設定する。
+		@brief	Specify the color of light
 	*/
-	virtual void SetLightColor( const ::Effekseer::Color& color ) = 0;
+	virtual void SetLightColor(const ::Effekseer::Color& color);
 
 	/**
-		@brief	ライトの環境光の色を取得する。
+		@brief	Get the color of ambient
 	*/
-	virtual const ::Effekseer::Color& GetLightAmbientColor() const = 0;
+	virtual const ::Effekseer::Color& GetLightAmbientColor() const;
 
 	/**
-		@brief	ライトの環境光の色を設定する。
+		@brief	Specify the color of ambient
 	*/
-	virtual void SetLightAmbientColor( const ::Effekseer::Color& color ) = 0;
+	virtual void SetLightAmbientColor(const ::Effekseer::Color& color);
 
-		/**
+	/**
 		@brief	最大描画スプライト数を取得する。
 	*/
 	virtual int32_t GetSquareMaxCount() const = 0;
 
 	/**
-		@brief	投影行列を取得する。
+		@brief	Get a projection matrix
 	*/
-	virtual const ::Effekseer::Matrix44& GetProjectionMatrix() const = 0;
+	virtual ::Effekseer::Matrix44 GetProjectionMatrix() const;
 
 	/**
-		@brief	投影行列を設定する。
+		@brief	Set a projection matrix
 	*/
-	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat ) = 0;
+	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
 
 	/**
-		@brief	カメラ行列を取得する。
+		@brief	Get a camera matrix
 	*/
-	virtual const ::Effekseer::Matrix44& GetCameraMatrix() const = 0;
+	virtual ::Effekseer::Matrix44 GetCameraMatrix() const;
 
 	/**
-		@brief	カメラ行列を設定する。
+		@brief	Set a camera matrix
 	*/
-	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat ) = 0;
+	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
 
 	/**
-		@brief	カメラプロジェクション行列を取得する。
+		@brief	Get a camera projection matrix
 	*/
-	virtual ::Effekseer::Matrix44& GetCameraProjectionMatrix() = 0;
+	virtual ::Effekseer::Matrix44 GetCameraProjectionMatrix() const;
 
 	/**
 		@brief	Get a front direction of camera
+		@note
+		We don't recommend to use it without understanding of internal code.
 	*/
-	virtual ::Effekseer::Vector3D GetCameraFrontDirection() const = 0;
+	virtual ::Effekseer::Vector3D GetCameraFrontDirection() const;
 
 	/**
 		@brief	Get a position of camera
+		@note
+		We don't recommend to use it without understanding of internal code.
 	*/
-	virtual ::Effekseer::Vector3D GetCameraPosition() const = 0;
+	virtual ::Effekseer::Vector3D GetCameraPosition() const;
 
 	/**
 		@brief	Set a front direction and position of camera manually
+		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus, 
 		@note
 		These are set based on camera matrix automatically.
 		It is failed on some platform.
 	*/
-	virtual void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position) = 0;
+	virtual void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position);
 
 	/**
 		@brief	スプライトレンダラーを生成する。
@@ -362,8 +378,8 @@ public:
 	\~English	Specify a background texture.
 	\~Japanese	背景のテクスチャを設定する。
 	@note
-	\~English	Specified texture is not deleted by the renderer. This function is available except DirectX9, DirectX11 and OpenGL.
-	\~Japanese	設定されたテクスチャはレンダラーによって削除されない。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
+	\~English	Specified texture is not deleted by the renderer. This function is available except DirectX9, DirectX11.
+	\~Japanese	設定されたテクスチャはレンダラーによって削除されない。この関数はDirectX9、DirectX11以外で使用できる。
 	*/
 	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
 
@@ -391,43 +407,70 @@ public:
 //----------------------------------------------------------------------------------
 #endif	// __EFFEKSEERRENDERER_RENDERER_H__
 
-#ifndef __EFFEKSEERRENDERER_DX12_RENDERER_H__
-#define __EFFEKSEERRENDERER_DX12_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
+#define __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
 
 #include <functional>
 
-namespace EffekseerRendererDX12
+namespace EffekseerRendererVulkan
 {
+
+
+struct RenderPassInformation
+{
+	bool DoesPresentToScreen = false;
+	std::array<VkFormat, 8> RenderTextureFormats;
+	int32_t RenderTextureCount = 1;
+	bool HasDepth = false;
+};
+
+::EffekseerRenderer::GraphicsDevice* CreateDevice(
+	VkPhysicalDevice physicalDevice, VkDevice device, VkQueue transfarQueue, VkCommandPool transfarCommandPool, int32_t swapBufferCount);
+
+::EffekseerRenderer::Renderer*
+Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
+
 /**
 @brief	Create an instance
-@param	device			directX12 device
-@param int32_t	the number of maximum sprites
+@param transfarQueue   Used in short-time command buffer for immediate data transfer.
+@param transfarCommandPool   Used in short-time command buffer for immediate data transfer.
+@param squareMaxCount	the number of maximum sprites
 @return	instance
 */
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
-									  ID3D12CommandQueue* commandQueue,
+::EffekseerRenderer::Renderer* Create(VkPhysicalDevice physicalDevice,
+									  VkDevice device,
+									  VkQueue transfarQueue,
+									  VkCommandPool transfarCommandPool,
 									  int32_t swapBufferCount,
-									  DXGI_FORMAT* renderTargetFormats,
-									  int32_t renderTargetCount,
-									  bool hasDepth,
-									  bool isReversedDepth,
+									  RenderPassInformation renderPassInformation,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, VkImage texture);
+
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, VkImage texture);
 
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
+void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData);
+
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+
+void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
 
 EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
+
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
 
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
+
+void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuffer nativeCommandList);
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList);
 
-} // namespace EffekseerRendererDX12
+} // namespace EffekseerRendererVulkan
 
 #endif

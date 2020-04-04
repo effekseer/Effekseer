@@ -101,6 +101,12 @@ effekseerRendererDX12Header.readLines('EffekseerRendererCommon/EffekseerRenderer
 effekseerRendererDX12Header.readLines('EffekseerRendererDX12/EffekseerRenderer/EffekseerRendererDX12.Renderer.h')
 effekseerRendererDX12Header.output('EffekseerRendererDX12/EffekseerRendererDX12.h')
 
+effekseerRendererVulkanHeader = CreateHeader()
+effekseerRendererVulkanHeader.readLines('EffekseerRendererVulkan/EffekseerRenderer/EffekseerRendererVulkan.Base.Pre.h')
+effekseerRendererVulkanHeader.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
+effekseerRendererVulkanHeader.readLines('EffekseerRendererVulkan/EffekseerRenderer/EffekseerRendererVulkan.Renderer.h')
+effekseerRendererVulkanHeader.output('EffekseerRendererVulkan/EffekseerRendererVulkan.h')
+
 effekseerRendererGLHeader = CreateHeader()
 effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Base.Pre.h')
 effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObjectCollection.h')
