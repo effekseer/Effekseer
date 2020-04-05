@@ -1,6 +1,7 @@
 #include "../PlatformMisc.h"
 
 #include <locale.h>
+#include <string>
 
 namespace Effekseer
 {

@@ -400,7 +400,7 @@ namespace efk
 		Vec2 GetWindowSize();
 		Vec2 GetContentRegionAvail();
 
-		void SetNextWindowPos(const Vec2& pos, Cond cond, const const Vec2& pivot);
+		void SetNextWindowPos(const Vec2& pos, Cond cond, const Vec2& pivot);
 
 		void SetNextWindowSize(float size_x, float size_y, Cond cond);
 

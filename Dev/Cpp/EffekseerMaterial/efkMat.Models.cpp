@@ -5,6 +5,7 @@
 #include "efkMat.Parameters.h"
 #include "efkMat.TextExporter.h"
 #include <float.h>
+#include <cstring>
 
 std::vector<std::string> Split(const std::string& s, char delim)
 {
@@ -46,13 +47,7 @@ public:
 	{
 		auto offset = buffer_.size();
 		buffer_.resize(offset + sizeof(T));
-		memcpy(buffer_.data() + offset, &value, sizeof(T));
-	}
-
-	template <> void Push<bool>(bool value)
-	{
-		int32_t temp = value ? 1 : 0;
-		Push(temp);
+		std::memcpy(buffer_.data() + offset, &value, sizeof(T));
 	}
 
 	template <typename U> void Push(const std::vector<U>& value)
@@ -60,11 +55,17 @@ public:
 		Push(static_cast<int32_t>(value.size()));
 		auto offset = buffer_.size();
 		buffer_.resize(offset + sizeof(U) * value.size());
-		memcpy(buffer_.data() + offset, value.data(), sizeof(U) * value.size());
+		std::memcpy(buffer_.data() + offset, value.data(), sizeof(U) * value.size());
 	}
 
 	const std::vector<uint8_t>& GetBuffer() const { return buffer_; }
 };
+
+template <> void BinaryWriter::Push<bool>(bool value)
+{
+	int32_t temp = value ? 1 : 0;
+	Push(temp);
+}
 
 static const char* tag_changeNumberCommand = "ChangeNumberCommand";
 

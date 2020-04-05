@@ -3,6 +3,8 @@
 
 #include <AltseedRHI.h>
 #include <efkMat.TextExporter.h>
+#include <cmath>
+#include <cstring>
 
 namespace EffekseerMaterial
 {
@@ -168,7 +170,7 @@ public:
 
 	Matrix44& SetLookAtRH(const Vector3& eye, const Vector3& at, const Vector3& up)
 	{
-		memset(Values, 0, sizeof(float) * 16);
+		std::memset(Values, 0, sizeof(float) * 16);
 
 		Vector3 F = Vector3::Subtract(eye, at).GetNormal();
 		Vector3 R = Vector3::Cross(up, F).GetNormal();
