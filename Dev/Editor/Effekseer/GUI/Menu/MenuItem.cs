@@ -19,7 +19,7 @@ namespace Effekseer.GUI.Menu
     {
         string id = "";
 
-        public string Label { get; set; } = string.Empty;
+        public object Label { get; set; }
 
 		public string Shortcut { get; set; } = null;
 

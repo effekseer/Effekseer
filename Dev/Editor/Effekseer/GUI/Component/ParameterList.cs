@@ -7,6 +7,25 @@ using System.Reflection;
 
 namespace Effekseer.GUI.Component
 {
+	class ParameterListComponentFactory
+	{
+		static Dictionary<Type, Func<IParameterControl>> generators = new Dictionary<Type, Func<IParameterControl>>();
+
+		public static void Register(Type type, Func<IParameterControl> generator)
+		{
+			generators.Add(type, generator);
+		}
+
+		public static IParameterControl Generate(Type type)
+		{
+			if(generators.ContainsKey(type))
+			{
+				return generators[type]();
+			}
+			return null;
+		}
+	}
+
 	class ParameterList : GroupControl, IControl, IDroppableControl
 	{
 		object bindingObject = null;
@@ -501,6 +520,13 @@ namespace Effekseer.GUI.Component
 				{
 					gui = null;
 					return;
+				}
+
+				gui = ParameterListComponentFactory.Generate(type);
+
+				if(gui != null)
+				{
+					// already generated
 				}
 				else if (type == typeof(Data.Value.String))
 				{

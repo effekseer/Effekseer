@@ -158,6 +158,9 @@ namespace Effekseer
 
 		public static string GetString(string name)
         {
+			var text = MultiLanguageTextProvider.GetText(name);
+			if (text != null) return text;
+
 			if(keyToStrings.ContainsKey(name))
 			{
 				return keyToStrings[name];

@@ -40,9 +40,9 @@ namespace Effekseer.Binary
 			{
 				Language language = Language.English;
 
-				if(Core.Option != null && Core.Option.GuiLanguage != null)
+				if(Core.Option != null && Core.Option.LanguageSelector != null)
 				{
-					language = Core.Option.GuiLanguage.Value;
+					language = Core.Language;
 				}
 				else
 				{

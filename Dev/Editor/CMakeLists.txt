@@ -45,7 +45,7 @@ set_target_properties(EffekseerCore PROPERTIES
 #    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
 #	)
 
-set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
+set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9;TinyCsvParser_2.5.2") 
 
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
 target_compile_options(EffekseerCore PRIVATE "/langversion:6")
@@ -63,8 +63,8 @@ file(GLOB files
     Effekseer/Properties/*.cs
     Effekseer/swig/*.cs
     Effekseer/Utils/*.cs
-	Effekseer/Process/*.cs
-	)
+    Effekseer/Process/*.cs
+    )
 
 list(APPEND files
     Effekseer/swig/IO.cs
