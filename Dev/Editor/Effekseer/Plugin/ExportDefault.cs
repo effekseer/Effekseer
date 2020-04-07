@@ -98,8 +98,8 @@ namespace Effekseer.Plugin
 
 					}
 
-					var save_text = "Save";
-					if (Effekseer.Core.Language == Effekseer.Language.Japanese) save_text = "保存";
+					var save_text = MultiLanguageTextProvider.GetText("Save");
+					var cancel_text = MultiLanguageTextProvider.GetText("Cancel");
 
 					if (Effekseer.GUI.Manager.NativeManager.Button(save_text))
 					{
@@ -109,9 +109,6 @@ namespace Effekseer.Plugin
 						Effekseer.Core.Option.ExternalMagnification.SetValue(mag[0]);
 						ShouldBeRemoved = true;
 					}
-
-					var cancel_text = "Cancel";
-					if (Effekseer.Core.Language == Effekseer.Language.Japanese) cancel_text = "キャンセル";
 
 					if (Effekseer.GUI.Manager.NativeManager.Button(cancel_text))
 					{

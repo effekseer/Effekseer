@@ -9,11 +9,7 @@ namespace Effekseer.GUI.Component
 	class ColorCtrl : Control, IParameterControl
 	{
 		string id = "";
-
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
+		
 		Data.Value.Color binding = null;
 
 		/// <summary>
@@ -52,13 +48,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public ColorCtrl(string label = null)
+		public ColorCtrl()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 

@@ -8,10 +8,6 @@ namespace Effekseer.GUI.Component
 {
 	class Dummy : Control, IParameterControl
 	{
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Object binding = null;
 
 		bool[] internalValue = new bool[] { false };
@@ -32,12 +28,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Dummy(string label = null)
+		public Dummy()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
 		}
 
 		public void SetBinding(object o)

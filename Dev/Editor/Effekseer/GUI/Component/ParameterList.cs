@@ -77,7 +77,7 @@ namespace Effekseer.GUI.Component
 				//Manager.NativeManager.PushItemWidth(100);
 
 				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
-				Manager.NativeManager.Text(controlRows.Internal[i].Label);
+				Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
@@ -85,9 +85,9 @@ namespace Effekseer.GUI.Component
 
 					Manager.NativeManager.BeginTooltip();
 
-					Manager.NativeManager.Text(controlRows.Internal[i].Label);
+					Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
 					Manager.NativeManager.Separator();
-					Manager.NativeManager.Text(controlRows.Internal[i].Description);
+					Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
 
 					Manager.NativeManager.EndTooltip();
 				}
@@ -424,13 +424,13 @@ namespace Effekseer.GUI.Component
 		{
 			Data.EditableValue editableValue;
 
-			public string Title
+			public object Title
 			{
 				get;
 				private set;
 			}
 
-			public string Description
+			public object Description
 			{
 				get;
 				private set;
@@ -454,7 +454,7 @@ namespace Effekseer.GUI.Component
 				private set;
 			}
 
-			public string Label
+			public object Label
 			{
 				get;
 				private set;
@@ -530,59 +530,59 @@ namespace Effekseer.GUI.Component
 				}
 				else if (type == typeof(Data.Value.String))
 				{
-					gui = new String(Title);
+					gui = new String();
 				}
 				else if (type == typeof(Data.Value.Boolean))
 				{
-					gui = new Boolean(Title);
+					gui = new Boolean();
 				}
 				else if (type == typeof(Data.Value.Int))
 				{
-					gui = new Int(Title);
+					gui = new Int();
 				}
 				else if (type == typeof(Data.Value.IntWithInifinite))
 				{
-					gui = new IntWithInifinite(Title);
+					gui = new IntWithInifinite();
 				}
 				else if (type == typeof(Data.Value.IntWithRandom))
 				{
-					gui = new IntWithRandom(Title);
+					gui = new IntWithRandom();
 				}
 				else if (type == typeof(Data.Value.Float))
 				{
-					gui = new Float(Title);
+					gui = new Float();
 				}
 				else if (type == typeof(Data.Value.FloatWithRandom))
 				{
-					gui = new FloatWithRandom(Title);
+					gui = new FloatWithRandom();
 				}
 				else if (type == typeof(Data.Value.Vector2D))
 				{
-					gui = new Vector2D(Title);
+					gui = new Vector2D();
 				}
 				else if (type == typeof(Data.Value.Vector2DWithRandom))
 				{
-					gui = new Vector2DWithRandom(Title);
+					gui = new Vector2DWithRandom();
 				}
 				else if (type == typeof(Data.Value.Vector3D))
 				{
-					gui = new Vector3D(Title);
+					gui = new Vector3D();
 				}
 				else if (type == typeof(Data.Value.Vector3DWithRandom))
 				{
-					gui = new Vector3DWithRandom(Title);
+					gui = new Vector3DWithRandom();
 				}
 				else if (type == typeof(Data.Value.Vector4D))
 				{
-					gui = new Vector4D(Title);
+					gui = new Vector4D();
 				}
 				else if (type == typeof(Data.Value.Color))
 				{
-					gui = new ColorCtrl(Title);
+					gui = new ColorCtrl();
 				}
 				else if (type == typeof(Data.Value.ColorWithRandom))
 				{
-					gui = new ColorWithRandom(Title);
+					gui = new ColorWithRandom();
 				}
 				else if (type == typeof(Data.Value.Path))
 				{
@@ -591,41 +591,41 @@ namespace Effekseer.GUI.Component
 				}
 				else if (type == typeof(Data.Value.PathForModel))
 				{
-					gui = new PathForModel(Title);
+					gui = new PathForModel();
 				}
 				else if (type == typeof(Data.Value.PathForImage))
 				{
-					gui = new PathForImage(Title);
+					gui = new PathForImage();
 				}
 				else if (type == typeof(Data.Value.PathForSound))
 				{
-					gui = new PathForSound(Title);
+					gui = new PathForSound();
 				}
 				else if (type == typeof(Data.Value.PathForMaterial))
 				{
-					gui = new PathForMaterial(Title);
+					gui = new PathForMaterial();
 				}
 #if __EFFEKSEER_BUILD_VERSION16__
 				else if (type == typeof(Data.Value.FCurveScalar))
 				{
-					gui = new FCurveButton(Title);
+					gui = new FCurveButton();
 				}
 #endif
 				else if (type == typeof(Data.Value.FCurveVector2D))
 				{
-					gui = new FCurveButton(Title);
+					gui = new FCurveButton();
 				}
 				else if (type == typeof(Data.Value.FCurveVector3D))
 				{
-					gui = new FCurveButton(Title);
+					gui = new FCurveButton();
 				}
 				else if (type == typeof(Data.Value.FCurveColorRGBA))
 				{
-					gui = new FCurveButton(Title);
+					gui = new FCurveButton();
 				}
 				else if (editableValue.Value is Data.IEditableValueCollection)
 				{
-					gui = new Dummy(Title);
+					gui = new Dummy();
 				}
 				else if (type == typeof(Data.Value.FCurve<float>))
 				{
@@ -645,7 +645,7 @@ namespace Effekseer.GUI.Component
 				else if (type.IsGenericType)
 				{
 					var types = type.GetGenericArguments();
-					gui = new Enum(Title);
+					gui = new Enum();
 
 					var dgui = (dynamic)gui;
 					dgui.Initialize(types[0]);
@@ -663,11 +663,6 @@ namespace Effekseer.GUI.Component
 				}
 
 				Control = gui;
-
-				if (gui != null)
-				{
-					gui.Description = this.Description;
-				}
 
 				Label = Title;
 

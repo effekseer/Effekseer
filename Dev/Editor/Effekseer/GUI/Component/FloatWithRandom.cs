@@ -15,10 +15,6 @@ namespace Effekseer.GUI.Component
 		string id_d1 = "";
 		string id_d2 = "";
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Data.Value.FloatWithRandom binding = null;
 
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
@@ -51,13 +47,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public FloatWithRandom(string label = null)
+		public FloatWithRandom()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
 			id_r2 = "###" + Manager.GetUniqueID().ToString();

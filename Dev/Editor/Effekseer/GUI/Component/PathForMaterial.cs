@@ -13,10 +13,6 @@ namespace Effekseer.GUI.Component
 		string id3 = "";
 		string id4 = "";
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Data.Value.PathForMaterial binding = null;
 
 		string relativeFilePath = string.Empty;
@@ -47,13 +43,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public PathForMaterial(string label = null)
+		public PathForMaterial()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id3 = "###" + Manager.GetUniqueID().ToString();

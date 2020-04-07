@@ -18,10 +18,6 @@ namespace Effekseer.GUI.Component
 
 		bool isActive = false;
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Data.Value.Vector2DWithRandom binding = null;
 
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
@@ -63,13 +59,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Vector2DWithRandom(string label = null)
+		public Vector2DWithRandom()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_r1 = "###" + Manager.GetUniqueID().ToString();

@@ -553,8 +553,8 @@ namespace Effekseer.Data
 	public class EditableValue
 	{
 		public object Value;
-		public string Title = string.Empty;
-		public string Description = string.Empty;
+		public object Title = new MultiLanguageString(string.Empty);
+		public object Description = new MultiLanguageString(string.Empty);
 		public bool IsUndoEnabled;
 		public bool IsShown = true;
 		public int SelfSelectorID = -1;
@@ -613,8 +613,35 @@ namespace Effekseer.Data
 				ret.RequiredSelectorValues = selectedAttributes.Select(_ => _.Value).ToArray();
 			}
 
-			ret.Title = NameAttribute.GetName(attributes);
-			ret.Description = DescriptionAttribute.GetDescription(attributes);
+			var nameKey = NameAttribute.GetKey(attributes);
+			if(string.IsNullOrEmpty(nameKey))
+			{
+				nameKey = info.ReflectedType.Name + "_" + info.Name + "_Name";
+			}
+
+			if(MultiLanguageTextProvider.HasKey(nameKey))
+			{
+				ret.Title = new MultiLanguageString(nameKey);
+			}
+			else
+			{
+				ret.Title = NameAttribute.GetName(attributes);
+			}
+
+			var descKey = DescriptionAttribute.GetKey(attributes);
+			if (string.IsNullOrEmpty(descKey))
+			{
+				descKey = info.ReflectedType.Name + "_" + info.Name + "_Desc";
+			}
+
+			if (MultiLanguageTextProvider.HasKey(descKey))
+			{
+				ret.Description = new MultiLanguageString(descKey);
+			}
+			else
+			{
+				ret.Description = DescriptionAttribute.GetDescription(attributes);
+			}
 
 			return ret;
 		}

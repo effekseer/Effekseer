@@ -63,26 +63,8 @@ namespace Effekseer.GUI.Dialog
 					Magnification = fs[0];
 				}
 
-				var okText = string.Empty;
-				var cancelText = string.Empty;
-
-				if (Core.Language == Language.Japanese)
-				{
-					okText = "保存";
-				}
-				else
-				{
-					okText = "Save";
-				}
-
-				if (Core.Language == Language.Japanese)
-				{
-					cancelText = "キャンセル";
-				}
-				else
-				{
-					cancelText = "Cancel";
-				}
+				var okText = MultiLanguageTextProvider.GetText("Save");
+				var cancelText = MultiLanguageTextProvider.GetText("Cancel");
 
 				if (Manager.NativeManager.Button(okText))
 				{

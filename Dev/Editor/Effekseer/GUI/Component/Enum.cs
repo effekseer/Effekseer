@@ -10,14 +10,10 @@ namespace Effekseer.GUI.Component
 	{
 		string id = "";
 
-		public string Label { get; set; } = string.Empty;
-
 		/// <summary>
 		/// A label without parameter list
 		/// </summary>
 		internal string InternalLabel = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
 
 		Data.Value.EnumBase binding = null;
 
@@ -90,13 +86,8 @@ namespace Effekseer.GUI.Component
 			enums = list.ToArray();
 		}
 
-		public Enum(string label = null)
+		public Enum()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 

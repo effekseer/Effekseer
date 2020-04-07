@@ -24,16 +24,6 @@ namespace Effekseer.GUI
 	interface IParameterControl : IControl
 	{
 		/// <summary>
-		/// a label which is shown in contents
-		/// </summary>
-		string Label { get; }
-
-		/// <summary>
-		/// a description which is shown when a mouse is over
-		/// </summary>
-		string Description { get; set; }
-
-		/// <summary>
 		/// whether this parameter can be undo
 		/// </summary>
 		bool EnableUndo { get; set; }

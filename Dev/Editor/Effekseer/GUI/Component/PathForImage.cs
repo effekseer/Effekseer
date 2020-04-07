@@ -14,9 +14,6 @@ namespace Effekseer.GUI.Component
 		string id2 = "";
 		string id_c = "";
 		string id_reset = "";
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
 
 		Data.Value.PathForImage binding = null;
 
@@ -60,13 +57,8 @@ namespace Effekseer.GUI.Component
 			Read();
 		}
 
-		public PathForImage(string label = null)
+		public PathForImage()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();

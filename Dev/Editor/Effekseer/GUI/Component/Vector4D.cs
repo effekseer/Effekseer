@@ -13,10 +13,6 @@ namespace Effekseer.GUI.Component
 		string id_c = "";
 		string id_reset = "";
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		bool isActive = false;
 
 		bool isPopupShown = false;
@@ -50,13 +46,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Vector4D(string label = null)
+		public Vector4D()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_d = "###" + Manager.GetUniqueID().ToString();

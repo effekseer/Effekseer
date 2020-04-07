@@ -12,9 +12,6 @@ namespace Effekseer.GUI.Component
 		string id_c = "";
 		string id_d = "";
 		string id_reset = "";
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
 
 		Data.Value.Float binding = null;
 
@@ -47,13 +44,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Float(string label = null)
+		public Float()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_d = "###" + Manager.GetUniqueID().ToString();

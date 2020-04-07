@@ -86,19 +86,8 @@ namespace Effekseer.GUI.Dock
 
 					if (!Manager.Network.IsConnected())
 					{
-						string errorMessage = "";
-
-						if (Effekseer.Core.Language == Language.Japanese)
-						{
-							errorMessage = "接続に失敗しました。";
-						}
-						else
-						{
-							errorMessage = "It failed to connect.";
-						}
-
+						var errorMessage = MultiLanguageTextProvider.GetText("Network_FailedToConnect");
 						swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-
 					}
 				}
 			}

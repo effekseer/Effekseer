@@ -415,14 +415,8 @@ namespace Effekseer.GUI
 			}
 			else
 			{
-				if(Core.Language == Language.Japanese)
-				{
-					Core.OnOutputMessage("描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。");
-				}
-				else
-				{
-					Core.OnOutputMessage("Failed to generate drawing screen. DirectX version problems, memory shortage, and so on.");
-				}
+				var message = MultiLanguageTextProvider.GetText("System_FailedToInitialize");
+				Core.OnOutputMessage(message);
 				return false;
 			}
 

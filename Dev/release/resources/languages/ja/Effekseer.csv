@@ -1,4 +1,5 @@
 ﻿AboutEffekseer,Effekseerについて
+System_FailedToInitialize,描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。
 AlphaCrunch,アルファクランチ
 AttractionForces,力場(ローカル)
 AutoConnect,切断時、自動接続を一定時間ごとに行う
@@ -70,6 +71,7 @@ NetworkAddress,接続先
 NetworkConnected,状態：接続済
 NetworkDisconnected,状態：未接続
 NetworkState,状態：
+Network_FailedToConnect,接続に失敗しました。
 NodeTree,ノードツリー
 None,なし
 NotAbsolutePathError,絶対パスでありません。

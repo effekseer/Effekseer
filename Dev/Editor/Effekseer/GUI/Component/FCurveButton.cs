@@ -11,20 +11,11 @@ namespace Effekseer.GUI.Component
 		string id = "";
 
 		object boundObject = null;
-
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
 		
 		public bool EnableUndo { get; set; } = true;
 
-		public FCurveButton(string label = null)
+		public FCurveButton()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 

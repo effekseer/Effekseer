@@ -13,10 +13,6 @@ namespace Effekseer.GUI.Component
 		string id_c = "";
 		string id_d = "";
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Data.Value.IntWithInifinite binding = null;
 
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
@@ -50,13 +46,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public IntWithInifinite(string label = null)
+		public IntWithInifinite()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();

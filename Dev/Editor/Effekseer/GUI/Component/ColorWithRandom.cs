@@ -21,10 +21,6 @@ namespace Effekseer.GUI.Component
 		/// </summary>
 		bool isPopupShown = false;
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Data.Value.ColorWithRandom binding = null;
 
 		/// <summary>
@@ -97,13 +93,8 @@ namespace Effekseer.GUI.Component
 		}
 
 
-		public ColorWithRandom(string label = null)
+		public ColorWithRandom()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();

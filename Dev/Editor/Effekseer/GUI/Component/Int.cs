@@ -10,10 +10,6 @@ namespace Effekseer.GUI.Component
 	{
 		string id = "";
 
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
-
 		Data.Value.Int binding = null;
 
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
@@ -43,13 +39,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Int(string label = null)
+		public Int()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 

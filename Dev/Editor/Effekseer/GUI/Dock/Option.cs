@@ -66,15 +66,10 @@ namespace Effekseer.GUI.Dock
 			if (e == Language.Japanese)
 			{
                 swig.GUIManager.show("次回のEffekseer起動時に適応します。", "Info", swig.DialogStyle.Info, swig.DialogButtons.OK);
-				//var mb = new Dialog.MessageBox();
-				//mb.Show("Info", "次回のEffekseer起動時に適応します。");
 			}
 			else if (e == Language.English)
 			{
                 swig.GUIManager.show("It adapts to the next startup", "Info", swig.DialogStyle.Info, swig.DialogButtons.OK);
-
-				//var mb = new Dialog.MessageBox();
-				//mb.Show("Info", "It adapts to the next startup");
 			}
 		}
 

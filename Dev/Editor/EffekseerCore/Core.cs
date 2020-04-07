@@ -94,6 +94,11 @@ namespace Effekseer
 			}
 		}
 
+		public static bool HasKey(string key)
+		{
+			return texts.ContainsKey(key);
+		}
+
 		public static string GetText(string key)
 		{
 			string ret = string.Empty;
@@ -101,7 +106,7 @@ namespace Effekseer
 			{
 				return ret;
 			}
-			return null;
+			return key;
 		}
 
 		public class KeyValue

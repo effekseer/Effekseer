@@ -11,9 +11,6 @@ namespace Effekseer.GUI.Component
 		string id = "";
 		string id_c = "";
 		string id_reset = "";
-		public string Label { get; set; } = string.Empty;
-
-		public string Description { get; set; } = string.Empty;
 
 		Data.Value.Vector2D binding = null;
 
@@ -47,13 +44,8 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Vector2D(string label = null)
+		public Vector2D()
 		{
-			if (label != null)
-			{
-				Label = label;
-			}
-
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_reset = "###" + Manager.GetUniqueID().ToString();
