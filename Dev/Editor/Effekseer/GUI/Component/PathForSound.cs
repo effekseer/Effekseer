@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Media;
 using System.IO;
 using System.Text.RegularExpressions;
+
+#if !DOTNET_STARNDARD
+using System.Media;
+#endif
 
 namespace Effekseer.GUI.Component
 {
@@ -59,12 +62,14 @@ namespace Effekseer.GUI.Component
 
 		public override void OnDisposed()
 		{
+#if !DOTNET_STARNDARD
 			if (player != null)
 			{
 				player.Stop();
 				player.Dispose();
 				player = null;
 			}
+#endif
 		}
 
 		public override void OnDropped(string path, ref bool handle)
@@ -174,20 +179,24 @@ namespace Effekseer.GUI.Component
 
 		private void btn_delete_Click()
 		{
+#if !DOTNET_STARNDARD
 			if (player != null)
 			{
 				player.Stop();
 				player.Dispose();
 				player = null;
 			}
+#endif
 			binding.SetAbsolutePath("");
 			Read();
 		}
 
+#if !DOTNET_STARNDARD
 		SoundPlayer player = null;
-
+#endif
 		private void btn_play_Click()
 		{
+#if !DOTNET_STARNDARD
 			if (player != null)
 			{
 				player.Stop();
@@ -199,6 +208,7 @@ namespace Effekseer.GUI.Component
 				player = new SoundPlayer(path);
 				player.Play();
 			}
+#endif
 		}
 
 		void Read()

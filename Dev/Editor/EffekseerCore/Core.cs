@@ -318,7 +318,7 @@ namespace Effekseer
 				}
 			}
 		}
-#if SCRIPT_ENABLED
+
         public static Script.ScriptCollection<Script.CommandScript> CommandScripts
 		{
 			get;
@@ -342,7 +342,7 @@ namespace Effekseer
 			get;
 			private set;
 		}
-#endif
+
 		public static Data.OptionValues Option
 		{
 			get { return option; }
@@ -469,12 +469,11 @@ namespace Effekseer
 		{
 			ResourceCache = new Utils.ResourceCache();
 
-#if SCRIPT_ENABLED
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();
 			SelectedScripts = new Script.ScriptCollection<Script.SelectedScript>();
 			ExportScripts = new Script.ScriptCollection<Script.ExportScript>();
 			ImportScripts = new Script.ScriptCollection<Script.ImportScript>();
-#endif
+
             // change a separator
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
@@ -500,13 +499,13 @@ namespace Effekseer
 
 		static void InitializeScripts(string entryDirectory)
 		{
-#if SCRIPT_ENABLED
 			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/export");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/command");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/selected");
+#if SCRIPT_ENABLED
 
 			Script.Compiler.Initialize();
 
