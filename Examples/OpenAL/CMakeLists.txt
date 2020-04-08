@@ -65,7 +65,7 @@ if(OpenAL_FOUND)
         )
     endif()
 
-    if(UNIX)
+    if(UNIX AND NOT APPLE)
         find_package(X11 REQUIRED)
 
         include_directories(${X11_INCLUDE_DIR})
