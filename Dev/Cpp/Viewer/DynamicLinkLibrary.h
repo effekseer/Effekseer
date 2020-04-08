@@ -7,6 +7,7 @@
 #include <Windows.h>
 #else
 #include <dlfcn.h>
+#include <cstddef>
 #endif
 
 /**

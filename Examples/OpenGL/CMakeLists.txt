@@ -55,6 +55,21 @@ if(APPLE)
     )
 endif()
 
+if(UNIX)
+    find_package(X11 REQUIRED)
+
+    include_directories(${X11_INCLUDE_DIR})
+
+    target_link_libraries(
+        Example_OpenGL
+        PRIVATE
+        Effekseer
+        EffekseerRendererGL
+        dl
+        ${X11_LIBRARIES}
+    )
+endif()
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 
 
 if(USE_LIBPNG_LOADER)

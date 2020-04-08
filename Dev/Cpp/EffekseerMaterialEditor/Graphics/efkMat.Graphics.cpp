@@ -59,7 +59,7 @@ bool Texture::Validate()
 	auto file = Effekseer::IO::GetInstance()->LoadFile(path16.c_str());
 	if (file == nullptr)
 	{
-		return nullptr;
+		return false;
 	}
 
 	texture_ = ar::Texture2D::Create(graphics_->GetManager());

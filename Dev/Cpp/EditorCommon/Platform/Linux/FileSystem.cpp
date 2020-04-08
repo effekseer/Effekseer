@@ -1,6 +1,6 @@
 #pragma once
 
-#if __GNUC__ >= 8
+#if __GNUC__ >= 9
 #include <filesystem>
 namespace fs = std::filesystem;
 #else
@@ -19,13 +19,6 @@ bool FileSystem::GetIsDirectory(const std::u16string& path) { return fs::is_dire
 uint64_t FileSystem::GetLastWriteTime(const std::u16string& path) {
     std::error_code ec;
     return fs::last_write_time(path, ec).time_since_epoch().count();
-
-    if (ec)
-    {
-        return 0;
-    }
-
-    return ret;
 }
 
 int32_t FileSystem::GetFileSize(const std::u16string& path) { return fs::file_size(path); }

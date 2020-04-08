@@ -64,6 +64,22 @@ if(OpenAL_FOUND)
             ${CORE_VIDEO_FRAMEWORK}
         )
     endif()
+
+    if(UNIX)
+        find_package(X11 REQUIRED)
+
+        include_directories(${X11_INCLUDE_DIR})
+
+        target_link_libraries(
+            Example_OpenAL
+            PRIVATE
+            Effekseer
+            EffekseerRendererGL
+            dl
+            ${X11_LIBRARIES}
+        )
+    endif()
+
 else()
     message("Example_OpenAL : OpenAL is not found.")
 endif()

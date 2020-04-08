@@ -1109,7 +1109,7 @@ namespace efk
 		return Vec2(v.x, v.y);
 	}
 
-	void GUIManager::SetNextWindowPos(const Vec2& pos, Cond cond, const const Vec2& pivot)
+	void GUIManager::SetNextWindowPos(const Vec2& pos, Cond cond, const Vec2& pivot)
 	{
 		ImGui::SetNextWindowPos(ImVec2(pos.X, pos.Y), (ImGuiCond)cond, ImVec2(pivot.X, pivot.Y));
 	}
