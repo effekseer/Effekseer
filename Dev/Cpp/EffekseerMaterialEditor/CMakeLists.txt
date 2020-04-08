@@ -113,8 +113,6 @@ target_link_libraries(
     EditorCommon
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
-	debug "${LIBPNG_LIB_DEBUG}"
-    optimized "${LIBPNG_LIB_RELEASE}"
 )
 
 if(USE_LIBPNG_LOADER)
@@ -130,8 +128,9 @@ if(USE_LIBPNG_LOADER)
         debug "${ZLIB_LIB_DEBUG}"
         optimized "${ZLIB_LIB_RELEASE}"
         debug "${LIBPNG_LIB_DEBUG}"
-	    optimized "${LIBPNG_LIB_RELEASE}"
-	)
+        optimized "${LIBPNG_LIB_RELEASE}"
+    )
+
 endif()
 
 if (WIN32)
@@ -209,7 +208,6 @@ target_link_libraries(
     GLEW
     dl
     AltseedRHI
-	z
     stdc++fs
     EffekseerMaterial
 	${CMAKE_THREAD_LIBS_INIT}
