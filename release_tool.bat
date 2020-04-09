@@ -19,6 +19,7 @@ copy Dev\release\Microsoft.Dynamic.dll %RDIR%\Tool\.
 copy Dev\release\Microsoft.Scripting.dll %RDIR%\Tool\.
 copy Dev\release\EffekseerMaterialEditor.exe %RDIR%\Tool\.
 copy Dev\release\Viewer.dll %RDIR%\Tool\.
+copy Dev\release\TinyCsvParser.dll %RDIR%\Tool\.
 
 mkdir %RDIR%\Tool\scripts
 mkdir %RDIR%\Tool\scripts\export
