@@ -93,7 +93,7 @@ if env['PACKAGEING_FOR_MAC'] == '1':
         aceutils.copy('release/libViewer.dylib', 'Mac/Effekseer.app/Contents/Resources/')
         aceutils.copy('release/EffekseerCore.dll', 'Mac/Effekseer.app/Contents/Resources/')
         aceutils.copy('release/EffekseerMaterialEditor', 'Mac/Effekseer.app/Contents/Resources/')
-        
+        aceutils.copy('/Library/Frameworks/Mono.framework/Libraries/libMonoPosixHelper.dylib', 'Mac/Effekseer.app/Contents/Resources/')        
         aceutils.copytree('release/resources', 'Mac/Effekseer.app/Contents/Resources/resources')
         aceutils.copytree('release/scripts', 'Mac/Effekseer.app/Contents/Resources/scripts')
         aceutils.copytree('release/tools', 'Mac/Effekseer.app/Contents/Resources/tools')
