@@ -83,6 +83,6 @@ jobs:
           publishLocation: 'Container'
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: 'dev/Mac'
-          ArtifactName: 'MacOS'
+          PathtoPublish: 'Dev/Effekseer.dmg'
+          ArtifactName: 'EffekseerMac'
           publishLocation: 'Container'

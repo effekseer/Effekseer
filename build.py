@@ -2,6 +2,7 @@ import subprocess
 import Script.aceutils as aceutils
 import sys
 import os
+import shutil
 
 def call( cmd , env=None):
     """ call command line.
@@ -99,3 +100,9 @@ if env['PACKAGEING_FOR_MAC'] == '1':
         aceutils.copytree('release/tools', 'Mac/Effekseer.app/Contents/Resources/tools')
         
         aceutils.call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
+
+        os.makedirs('Mac/Package', exist_ok=True)
+        shutil.copytree('Mac/Effekseer.app', 'Mac/Package/Effekseer.app')
+        aceutils.call('ln -s /Applications Applications > /dev/null 2>&1')        
+        aceutils.call('mv Applications Mac/Package/')
+        aceutils.call('hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Mac/Package"')
