@@ -27,7 +27,7 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: 'EffekseerRuntime151b'
+          PathtoPublish: 'EffekseerRuntime150'
           ArtifactName: 'EffekseerRuntime151b'
           publishLocation: 'Container'
 
