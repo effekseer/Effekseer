@@ -45,8 +45,9 @@ if(OpenAL_FOUND)
             ${OPENGL_gl_LIBRARY}
             debug "${LIBPNG_LIB_DEBUG}"
             optimized "${LIBPNG_LIB_RELEASE}"
-            z
-        )
+            debug "${ZLIB_LIB_DEBUG}"
+            optimized "${ZLIB_LIB_RELEASE}"
+	)
     endif()
    
     if(APPLE)

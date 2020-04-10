@@ -90,8 +90,8 @@ endif()
 
 target_include_directories(
     EffekseerMaterialEditor
-	PRIVATE
-	${EFK_THIRDPARTY_INCLUDES}
+    PRIVATE
+    ${EFK_THIRDPARTY_INCLUDES}
     ../include/
     ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
     ../EffekseerMaterial/
@@ -125,10 +125,10 @@ if(USE_LIBPNG_LOADER)
     target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE
-        debug "${ZLIB_LIB_DEBUG}"
-        optimized "${ZLIB_LIB_RELEASE}"
         debug "${LIBPNG_LIB_DEBUG}"
         optimized "${LIBPNG_LIB_RELEASE}"
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
     )
 
 endif()
@@ -165,8 +165,6 @@ target_link_libraries(
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
-    AltseedRHI
-    z
     EffekseerMaterial
     ${CMAKE_THREAD_LIBS_INIT}
     ${COCOA_FRAMEWORK}
@@ -190,30 +188,29 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
 include_directories(
-	${OPENGL_INCLUDE_DIR}
-	${GTK3_INCLUDE_DIRS}
-	${X11_INCLUDE_DIR})
+    ${OPENGL_INCLUDE_DIR}
+    ${GTK3_INCLUDE_DIRS}
+    ${X11_INCLUDE_DIR})
 
 link_directories(${GTK3_LIBRARY_DIRS})
 
 add_definitions(${GTK3_CFLAGS_OTHER})
 
 target_link_libraries(
-	EffekseerMaterialEditor
-	PRIVATE
+    EffekseerMaterialEditor
+    PRIVATE
     EffekseerMaterial
-	Effekseer # to use shader loader
-	EffekseerRendererGL # to use shader loader
-	IPC
+    Effekseer # to use shader loader
+    EffekseerRendererGL # to use shader loader
+    IPC
     GLEW
     dl
-    AltseedRHI
     stdc++fs
     EffekseerMaterial
-	${CMAKE_THREAD_LIBS_INIT}
-	${OPENGL_LIBRARY}
-	${GTK3_LIBRARIES}
-	${X11_LIBRARIES})
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${OPENGL_LIBRARY}
+    ${GTK3_LIBRARIES}
+    ${X11_LIBRARIES})
 
 endif()
 
