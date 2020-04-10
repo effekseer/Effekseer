@@ -52,12 +52,14 @@ if env['IGNORE_BUILD'] == '0':
         if candidate is None:
             raise Exception("MSBuild is not found")
 
-    else:
+    elif aceutils.isMac():
         msbuild_path = 'msbuild'
 
     with aceutils.CurrentDir('build'):
-        # for auto restore of .csproj 
-        aceutils.wget(r'https://dist.nuget.org/win-x86-commandline/v5.1.0/nuget.exe')
+
+        if aceutils.isWin() or aceutils.isMac():
+            # for auto restore of .csproj 
+            aceutils.wget(r'https://dist.nuget.org/win-x86-commandline/v5.1.0/nuget.exe')
 
         if aceutils.isWin():
             if is_x86:
@@ -73,15 +75,19 @@ if env['IGNORE_BUILD'] == '0':
 
     if aceutils.isWin():
         aceutils.call('build\\nuget.exe restore Dev/Editor/Effekseer.sln')
-    else:
+    elif aceutils.isMac():
         aceutils.call('mono ./build/nuget.exe restore Dev/Editor/Effekseer.sln')
 
-    if is_x86:
-        call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-        call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
+    if aceutils.isWin() or aceutils.isMac():
+        if is_x86:
+            call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
+            call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
+        else:
+            call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+            call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
     else:
-        call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
-        call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj')
 
 if env['PACKAGEING_FOR_MAC'] == '1':
 
