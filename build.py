@@ -100,6 +100,8 @@ if env['PACKAGEING_FOR_MAC'] == '1':
         aceutils.copytree('release/tools', 'Mac/Effekseer.app/Contents/Resources/tools')
         
         aceutils.call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
+        aceutils.call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/mqoToEffekseerModelConverter')
+        aceutils.call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
 
         os.makedirs('Mac/Package', exist_ok=True)
         shutil.copytree('Mac/Effekseer.app', 'Mac/Package/Effekseer.app')
