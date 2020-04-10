@@ -110,7 +110,9 @@ target_link_directories(
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
+    EffekseerMaterial
     EditorCommon
+    AltseedRHI
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
 )
@@ -138,13 +140,11 @@ if (WIN32)
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    EffekseerMaterial
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
     debug libglew32d
-    optimized libglew32
-    AltseedRHI)
+    optimized libglew32)
 
 elseif(APPLE)
 
@@ -161,11 +161,9 @@ find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    EffekseerMaterial
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
-    EffekseerMaterial
     ${CMAKE_THREAD_LIBS_INIT}
     ${COCOA_FRAMEWORK}
     ${OPENGL_gl_LIBRARY}
@@ -199,14 +197,12 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    EffekseerMaterial
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
     GLEW
     dl
     stdc++fs
-    EffekseerMaterial
     ${CMAKE_THREAD_LIBS_INIT}
     ${OPENGL_LIBRARY}
     ${GTK3_LIBRARIES}
