@@ -27,8 +27,8 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: 'EffekseerRuntime150'
-          ArtifactName: 'EffekseerRuntime150'
+          PathtoPublish: 'EffekseerRuntime151b'
+          ArtifactName: 'EffekseerRuntime151b'
           publishLocation: 'Container'
 
       - task: BatchScript@1
@@ -38,7 +38,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'Effekseer150Win'
-          ArtifactName: 'Effekseer150Win'
+          ArtifactName: 'Effekseer151bWin'
           publishLocation: 'Container'
 
   - job: Windows_x86
@@ -61,7 +61,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'Effekseer150Win'
-          ArtifactName: 'Effekseer150Win_x86'
+          ArtifactName: 'Effekseer151bWin_x86'
           publishLocation: 'Container'
 
   - job: MacOS

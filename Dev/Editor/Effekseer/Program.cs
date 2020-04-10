@@ -148,9 +148,7 @@ namespace Effekseer
 			if (gui)
 			{
 				ChangeLanguage();
-#if DEBUG
 				LanguageTable.OnLanguageChanged += (o,e) => { ChangeLanguage(); };
-#endif
 
 				// Failed to compile script
 				if (Core.ExportScripts.Count == 0)
