@@ -9,7 +9,7 @@
     <OutputPath>../../release/</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <StartupObject>Effekseer.Program</StartupObject>
-    <AssemblyName>netcoreapp</AssemblyName>
+    <AssemblyName>Effekseer</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

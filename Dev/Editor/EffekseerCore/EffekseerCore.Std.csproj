@@ -6,6 +6,7 @@
     <Platforms>x64</Platforms>
     <OutputPath>../../release</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AssemblyName>EffekseerCore</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
