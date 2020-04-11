@@ -36,9 +36,6 @@ if(USE_LIBPNG_LOADER)
     target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE
-    target_link_libraries(
-        ${PROJECT_NAME}
-        PRIVATE
         debug "${LIBPNG_LIB_DEBUG}"
         optimized "${LIBPNG_LIB_RELEASE}"
         debug "${ZLIB_LIB_DEBUG}"
