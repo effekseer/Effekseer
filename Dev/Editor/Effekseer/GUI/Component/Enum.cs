@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Component
 
 		int[] enums = null;
 
-		public List<string> FieldNames = new List<string>();
+		public List<object> FieldNames = new List<object>();
 		
 		List<swig.ImageResource> icons = new List<swig.ImageResource>();
 
@@ -66,12 +66,31 @@ namespace Effekseer.GUI.Component
 				if (f.FieldType != enumType) continue;
 
 				var attributes = f.GetCustomAttributes(false);
-				var name = NameAttribute.GetName(attributes);
-				if (name == string.Empty)
-				{
-					name = f.ToString();
-				}
+
+				object name = f.ToString();
+
 				
+				 var key = KeyAttribute.GetKey(attributes);
+				var nameKey = key + "_Name";
+				if(string.IsNullOrEmpty(key))
+				{
+					nameKey = f.FieldType.ToString() + "_" + f.ToString() + "_Name";
+				}
+
+				if(MultiLanguageTextProvider.HasKey(nameKey))
+				{
+					name = new MultiLanguageString(nameKey);
+				}
+				else
+				{
+					name = NameAttribute.GetName(attributes);
+					if (name.ToString() == string.Empty)
+					{
+						name = f.ToString();
+					}
+					//System.IO.File.AppendAllText("kv.csv", nameKey + "," + name.ToString() + "\r\n");
+				}
+
 				var iconAttribute = IconAttribute.GetIcon(attributes);
 				swig.ImageResource icon = null;
 				if (iconAttribute != null)
@@ -119,13 +138,13 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2], swig.ComboFlags.None, icons[v.Item2]))
+			if(Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None, icons[v.Item2]))
 			{
 				for(int i = 0; i < FieldNames.Count; i++)
 				{
 					bool is_selected = (FieldNames[v.Item2] == FieldNames[i]);
 
-					if (Manager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None, icons[i]))
+					if (Manager.NativeManager.Selectable(FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None, icons[i]))
 					{
 						selectedValues = enums[i];
 						binding.SetValue(selectedValues);

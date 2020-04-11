@@ -613,8 +613,9 @@ namespace Effekseer.Data
 				ret.RequiredSelectorValues = selectedAttributes.Select(_ => _.Value).ToArray();
 			}
 
-			var nameKey = NameAttribute.GetKey(attributes);
-			if(string.IsNullOrEmpty(nameKey))
+			var key = KeyAttribute.GetKey(attributes);
+			var nameKey = key + "_Name";
+			if(string.IsNullOrEmpty(key))
 			{
 				nameKey = info.ReflectedType.Name + "_" + info.Name + "_Name";
 			}
@@ -626,10 +627,11 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Title = NameAttribute.GetName(attributes);
+				//System.IO.File.AppendAllText("kv.csv", nameKey + "," + ret.Title.ToString() + "\r\n");
 			}
 
-			var descKey = DescriptionAttribute.GetKey(attributes);
-			if (string.IsNullOrEmpty(descKey))
+			var descKey = key + "_Desc";
+			if (string.IsNullOrEmpty(key))
 			{
 				descKey = info.ReflectedType.Name + "_" + info.Name + "_Desc";
 			}
@@ -641,6 +643,7 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Description = DescriptionAttribute.GetDescription(attributes);
+				//System.IO.File.AppendAllText("kv.csv", descKey + "," + ret.Description.ToString() + "\r\n");
 			}
 
 			return ret;

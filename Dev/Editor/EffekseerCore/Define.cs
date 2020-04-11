@@ -118,6 +118,40 @@ namespace Effekseer
     }
 
 	/// <summary>
+	/// attribute for parameter's key
+	/// </summary>
+	[AttributeUsage(
+	AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method,
+	AllowMultiple = true,
+	Inherited = false)]
+	public class KeyAttribute : Attribute
+	{
+		static KeyAttribute()
+		{
+		}
+
+		public string key
+		{
+			get;
+			set;
+		}
+
+
+		public static string GetKey(object[] attributes)
+		{
+			if (attributes != null && attributes.Length > 0)
+			{
+				foreach (var attribute in attributes.OfType<KeyAttribute>())
+				{
+					if (!String.IsNullOrEmpty(attribute.key)) return attribute.key;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	/// <summary>
 	/// attribute for parameter's name
 	/// </summary>
 	[AttributeUsage(

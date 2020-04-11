@@ -463,13 +463,13 @@ namespace Effekseer.GUI.Dock
 
 			if (selectedInd >= 0)
 			{
-				if (Manager.NativeManager.BeginCombo(type_text, type.FieldNames[selected.Item2.Interpolations[selectedInd]], swig.ComboFlags.None))
+				if (Manager.NativeManager.BeginCombo(type_text, type.FieldNames[selected.Item2.Interpolations[selectedInd]].ToString(), swig.ComboFlags.None))
 				{
 					for (int i = 0; i < type.FieldNames.Count; i++)
 					{
 						bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[selectedInd]] == type.FieldNames[i]);
 
-						if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
+						if (Manager.NativeManager.Selectable(type.FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
 						{
 							selected.Item2.Interpolations[selectedInd] = i;
 							selected.Item2.IsDirtied = true;
