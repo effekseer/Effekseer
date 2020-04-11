@@ -76,7 +76,7 @@ namespace Effekseer.GUI
 
 		public override void DpiChanged(float f)
 		{
-			Manager.UpdateFontSize();
+			Manager.UpdateFont();
 		}
 
 		public override bool ClickLink(string path)
@@ -284,7 +284,7 @@ namespace Effekseer.GUI
 			panels = new Dock.DockPanel[dockTypes.Length];
 
 			// Load font
-			UpdateFontSize();
+			UpdateFont();
 
 			// Load window icon
 			NativeManager.SetWindowIcon(System.IO.Path.Combine(appDirectory, "resources/icon.png"));
@@ -454,7 +454,7 @@ namespace Effekseer.GUI
 			IO = null;
 		}
 
-		public static void UpdateFontSize()
+		public static void UpdateFont()
 		{
 			isFontSizeDirtied = true;
 		}
@@ -483,11 +483,11 @@ namespace Effekseer.GUI
 
 				if(type == Data.FontType.Normal)
 				{
-					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/GenShinGothic-Monospace-Normal.ttf"), Core.Option.FontSize.Value);
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Normal")), Core.Option.FontSize.Value);
 				}
 				else if (type == Data.FontType.Bold)
 				{
-					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf"), Core.Option.FontSize.Value);
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Bold")), Core.Option.FontSize.Value);
 				}
 				isFontSizeDirtied = false;
 			}
