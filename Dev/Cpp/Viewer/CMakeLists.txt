@@ -207,7 +207,6 @@ elseif(APPLE)
         Effekseer
         IPC
         OpenSoundMixer
-		stdc++fs
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}
@@ -242,12 +241,13 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 target_link_libraries(
 	Viewer
 	PRIVATE
-	Effekseer
 	EffekseerRendererGL
 	EffekseerSoundOSMixer
+	Effekseer
 	IPC
 	dl
 	OpenSoundMixer
+	stdc++fs
 	${OPENGL_LIBRARY}
 	${CMAKE_THREAD_LIBS_INIT}
 	${PulseAudio_LIBRARY}
