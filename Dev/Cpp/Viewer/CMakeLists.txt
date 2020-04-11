@@ -202,11 +202,12 @@ elseif(APPLE)
     target_link_libraries(
         Viewer
         PRIVATE
-        Effekseer
         EffekseerRendererGL
         EffekseerSoundOSMixer
+        Effekseer
         IPC
         OpenSoundMixer
+		stdc++fs
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}

@@ -88,6 +88,7 @@ if env['IGNORE_BUILD'] == '0':
     else:
         call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r linux-x64')
+        call('cp -r Dev/release/release/linux-x64/publish/* Dev/release/release/')
 
 if env['PACKAGEING_FOR_MAC'] == '1':
 
