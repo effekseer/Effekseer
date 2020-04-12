@@ -69,6 +69,9 @@ private:
 
 		int32_t Layer = 0;
 
+		//! HACK for GC (Instances must be updated after removing) If you use UpdateHandle, updating instance which is contained removing effects is not called. It makes update called forcibly.
+		int32_t UpdateCountAfterRemoving = 0;
+
 		DrawSet( Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
 			: ParameterPointer			( effect )
 			, InstanceContainerPointer	( pContainer )
@@ -129,11 +132,11 @@ private:
 	} cullingCurrent, cullingNext;
 
 private:
-	/* 自動データ入れ替えフラグ */
-	bool m_autoFlip;
+	//! whether does rendering and update handle flipped automatically
+	bool m_autoFlip = true;
 
-	// 次のHandle
-	Handle		m_NextHandle;
+	//! next handle
+	Handle m_NextHandle = 0;
 
 	// 確保済みインスタンス数
 	int m_instance_max;
@@ -160,7 +163,7 @@ private:
 	std::map<Handle,DrawSet>	m_DrawSets;
 
 	// 破棄待ちオブジェクト
-	std::map<Handle,DrawSet>	m_RemovingDrawSets[2];
+	std::array<std::map<Handle,DrawSet>, 2> m_RemovingDrawSets;
 
 	//! objects on rendering
 	CustomVector<DrawSet> m_renderingDrawSets;
@@ -222,8 +225,8 @@ private:
 	// 描画オブジェクト追加
 	Handle AddDrawSet( Effect* effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer );
 
-	// 描画オブジェクト破棄処理
-	void GCDrawSet( bool isRemovingManager );
+	//! GC Draw sets
+	void GCDrawSet(bool isRemovingManager);
 
 	// メモリ確保関数
 	static void* EFK_STDCALL Malloc( unsigned int size );

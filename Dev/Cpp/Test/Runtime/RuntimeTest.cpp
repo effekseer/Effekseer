@@ -180,6 +180,35 @@ void UpdateHandleTest()
 
 		platform->Terminate();
 	}
+
+	// Check memory leak
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+		param.IsUpdatedByHandle = true;
+
+		platform->Initialize(param);
+
+		auto handle = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		for (size_t i = 0; i < 10; i++)
+		{
+			platform->Update();
+		}
+
+		platform->GetManager()->StopEffect(handle);
+
+		for (size_t i = 0; i < 10; i++)
+		{
+			platform->Update();
+		}
+		
+		assert(platform->GetManager()->GetRestInstancesCount() == 8000);
+
+		platform->Terminate();
+	}
 }
 
 void PlaybackSpeedTest()

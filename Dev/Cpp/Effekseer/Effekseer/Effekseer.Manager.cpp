@@ -124,13 +124,21 @@ Handle ManagerImplemented::AddDrawSet( Effect* effect, InstanceContainer* pInsta
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::GCDrawSet( bool isRemovingManager )
+void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 {
-	// インスタンスグループ自体の削除処理
+	// dispose instance groups
 	{
 		std::map<Handle,DrawSet>::iterator it = m_RemovingDrawSets[1].begin();
 		while( it != m_RemovingDrawSets[1].end() )
 		{
+			// HACK
+			if (it->second.UpdateCountAfterRemoving < 2)
+			{
+				UpdateInstancesByInstanceGlobal(it->second);
+				UpdateHandleInternal(it->second);
+				it->second.UpdateCountAfterRemoving++;
+			}
+
 			DrawSet& drawset = (*it).second;
 
 			// dispose all instances
@@ -154,10 +162,19 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 		m_RemovingDrawSets[1].clear();
 	}
 
+	// wait next frame to be removed
 	{
 		std::map<Handle,DrawSet>::iterator it = m_RemovingDrawSets[0].begin();
 		while( it != m_RemovingDrawSets[0].end() )
 		{
+			// HACK
+			if (it->second.UpdateCountAfterRemoving < 1)
+			{
+				UpdateInstancesByInstanceGlobal(it->second);
+				UpdateHandleInternal(it->second);
+				it->second.UpdateCountAfterRemoving++;
+			}
+
 			m_RemovingDrawSets[1][ (*it).first ] = (*it).second;
 			m_RemovingDrawSets[0].erase( it++ );
 		}
@@ -223,7 +240,7 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 
 				if( (*it).second.RemovingCallback != NULL )
 				{
-					(*it).second.RemovingCallback( this, (*it).first, isRemovingManager );
+					(*it).second.RemovingCallback(this, (*it).first, isRemovingManager);
 				}
 
 				m_RemovingDrawSets[0][ (*it).first ] = (*it).second;
@@ -426,7 +443,7 @@ ManagerImplemented::~ManagerImplemented()
 
 	for( int i = 0; i < 5; i++ )
 	{
-		GCDrawSet( true );
+		GCDrawSet(true);
 	}
 
 	//assert( m_reserved_instances.size() == m_instance_max ); 
@@ -509,7 +526,7 @@ void ManagerImplemented::Destroy()
 
 	for( int i = 0; i < 5; i++ )
 	{
-		GCDrawSet( true );
+		GCDrawSet(true);
 	}
 
 	Release();
@@ -1432,6 +1449,15 @@ void ManagerImplemented::Update( float deltaFrame )
 	// start to measure time
 	int64_t beginTime = ::Effekseer::GetTime();
 
+	// Hack for GC
+	for (size_t i = 0; i < m_RemovingDrawSets.size(); i++)
+	{
+		for (auto& ds : m_RemovingDrawSets[i])
+		{
+			ds.second.UpdateCountAfterRemoving++;
+		}
+	}
+
 	BeginUpdate();
 
 	for (auto& drawSet : m_DrawSets)
@@ -1510,19 +1536,21 @@ void ManagerImplemented::EndUpdate()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::UpdateHandle( Handle handle, float deltaFrame )
 {
-	auto it = m_DrawSets.find( handle );
-	if( it != m_DrawSets.end() )
 	{
-		DrawSet& drawSet = it->second;
-
+		auto it = m_DrawSets.find(handle);
+		if (it != m_DrawSets.end())
 		{
-			float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed;
-			drawSet.GlobalPointer->BeginDeltaFrame(df);
+			DrawSet& drawSet = it->second;
+
+			{
+				float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed;
+				drawSet.GlobalPointer->BeginDeltaFrame(df);
+			}
+
+			UpdateInstancesByInstanceGlobal(drawSet);
+
+			UpdateHandleInternal(drawSet);
 		}
-
-		UpdateInstancesByInstanceGlobal(drawSet);
-
-		UpdateHandleInternal(drawSet);
 	}
 }
 
