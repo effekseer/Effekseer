@@ -12,6 +12,9 @@ then
     exit -1
 fi
 
+nuget install ./Editor/Effekseer/packages.config -o ./Editor/packages/
+nuget install ./Editor/EffekseerCore/packages.config -o ./Editor/packages/
+
 msbuild Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86
 msbuild Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86
 
