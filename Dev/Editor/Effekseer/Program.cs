@@ -21,6 +21,12 @@ namespace Effekseer
 			private set;
 		}
 
+		public static string EntryDirectory
+		{
+			get;
+			private set;
+		}
+
 		[STAThread]
 		[HandleProcessCorruptedStateExceptions]
 		static void Main(string[] args)
@@ -29,7 +35,19 @@ namespace Effekseer
 			var test = new Effekseer.InternalScript.Tests();
 			Effekseer.IO.ChunkTest.Test();
 #endif
-			StartDirectory = System.IO.Directory.GetCurrentDirectory();
+
+			try
+			{
+				StartDirectory = System.IO.Directory.GetCurrentDirectory();
+				EntryDirectory = GUI.Manager.GetEntryDirectory();
+			}
+			catch(Exception e)
+			{
+				DateTime dt = DateTime.Now;
+				var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+				System.IO.File.WriteAllText(filename, e.ToString());
+				return;
+			}
 
 			bool gui = true;
 			string input = string.Empty;
@@ -104,7 +122,8 @@ namespace Effekseer
 				{
 					DateTime dt = DateTime.Now;
 					var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
-					System.IO.File.WriteAllText(filename, e.ToString());
+					var filepath = Path.Combine(EntryDirectory, filename);
+					System.IO.File.WriteAllText(filepath, e.ToString());
 				}
 			}
 		}
@@ -120,12 +139,12 @@ namespace Effekseer
 #if DEBUG
 			isDebugMode = true;
 #endif
-			if(System.IO.File.Exists("debug.txt") || isDebugMode)
+			if(System.IO.File.Exists(Path.Combine(EntryDirectory, "debug.txt")) || isDebugMode)
 			{
 				swig.Native.SetFileLogger(Path.Combine(GUI.Manager.GetEntryDirectory(),"Effekseer.log.txt"));	
 			}
 
-			LanguageTable.LoadTable("resources/languages/languages.txt");
+			LanguageTable.LoadTable(Path.Combine(EntryDirectory, "resources/languages/languages.txt"));
 
 			var systemLanguage = EfkN.GetSystemLanguage();
 			string language = null;
