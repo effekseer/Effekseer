@@ -124,6 +124,70 @@ Handle ManagerImplemented::AddDrawSet( Effect* effect, InstanceContainer* pInsta
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+void ManagerImplemented::StopStoppingEffects() {
+	{
+		for (auto& draw_set_it : m_DrawSets)
+		{
+			DrawSet& draw_set = draw_set_it.second;
+			if (draw_set.IsRemoving)
+				continue;
+			if (draw_set.GoingToStop)
+				continue;
+
+			bool isRemoving = false;
+
+			// Empty
+			if (!isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 0)
+			{
+				isRemoving = true;
+			}
+
+			// Root only exists and none plan to create new instances
+			if (!isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 1)
+			{
+				InstanceContainer* pRootContainer = draw_set.InstanceContainerPointer;
+				InstanceGroup* group = pRootContainer->GetFirstGroup();
+
+				if (group)
+				{
+					Instance* pRootInstance = group->GetFirst();
+
+					if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE)
+					{
+						int maxcreate_count = 0;
+						bool canRemoved = true;
+						for (int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++)
+						{
+							auto child = (EffectNodeImplemented*)pRootInstance->m_pEffectNode->GetChild(i);
+
+							if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
+							{
+								canRemoved = false;
+								break;
+							}
+						}
+
+						if (canRemoved)
+						{
+							// when a sound is not playing.
+							if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
+							{
+								isRemoving = true;
+							}
+						}
+					}
+				}
+			}
+
+			if (isRemoving)
+			{
+				StopEffect(draw_set_it.first);
+			}
+		}
+	}
+}
+
 void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 {
 	// dispose instance groups
@@ -190,6 +254,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 			// 削除フラグが立っている時
 			bool isRemoving = draw_set.IsRemoving;
 
+			/*
 			// 何も存在しない時
 			if( !isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 0 )
 			{
@@ -232,11 +297,12 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 					}
 				}
 			}
+			*/
 
 			if( isRemoving )
 			{
 				// 消去処理
-				StopEffect( (*it).first );
+				//StopEffect( (*it).first );
 
 				if( (*it).second.RemovingCallback != NULL )
 				{
@@ -1314,10 +1380,11 @@ void ManagerImplemented::Flip()
 		Preupdate(drawSet.second);
 	}
 
+	StopStoppingEffects();
+
 	ExecuteEvents();
 
-	// DrawSet削除処理
-	GCDrawSet( false );
+	GCDrawSet(false);
 
 	m_renderingDrawSets.clear();
 	m_renderingDrawSetMaps.clear();

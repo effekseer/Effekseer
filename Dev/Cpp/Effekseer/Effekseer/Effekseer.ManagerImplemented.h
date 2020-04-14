@@ -225,6 +225,8 @@ private:
 	// 描画オブジェクト追加
 	Handle AddDrawSet( Effect* effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer );
 
+	void StopStoppingEffects();
+
 	//! GC Draw sets
 	void GCDrawSet(bool isRemovingManager);
 
