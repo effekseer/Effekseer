@@ -19,6 +19,8 @@
 
 #include "../../3rdParty/imgui_markdown/imgui_markdown.h"
 #include <EditorCommon/GUI/MainWindow.h>
+#include <EditorCommon/GUI/FramerateController.h>
+
 class Native;
 
 namespace efk
@@ -340,6 +342,8 @@ namespace efk
 		std::u16string	clipboard;
 
 		ImGui::MarkdownConfig markdownConfig_;
+
+		Effekseer::FramerateController framerateController_;
 
 		static void MarkdownLinkCallback(ImGui::MarkdownLinkCallbackData data);
 

@@ -267,20 +267,11 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 	}
 }
 
-void SetZoom(float zoom)
-{
-	g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
-}
+void SetZoom(float zoom) { g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom)); }
 
-float GetDistance()
-{
-	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
-}
+float GetDistance() { return DistanceBase * powf(ZoomDistanceFactor, g_Zoom); }
 
-float GetOrthoScale()
-{
-	return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom);
-}
+float GetOrthoScale() { return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom); }
 
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
@@ -367,8 +358,7 @@ static ::Effekseer::Client* g_client = NULL;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
-Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType)
-	: m_renderer(renderer)
+Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType) : m_renderer(renderer)
 {
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
@@ -607,7 +597,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	int32_t spriteCount = 65000 / 4;
 
 	g_renderer = new ::EffekseerTool::Renderer(spriteCount, isSRGBMode, g_deviceType);
-	
+
 	if (g_renderer->Initialize(pHandle, width, height))
 	{
 		spdlog::trace("OK : ::EffekseerTool::Renderer::Initialize");

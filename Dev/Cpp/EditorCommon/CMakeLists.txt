@@ -10,6 +10,8 @@ set(srcs
     GUI/JapaneseFont.h
     GUI/MainWindow.h
     GUI/MainWindow.cpp
+    GUI/FramerateController.h
+    GUI/FramerateController.cpp
     IO/IO.h
     IO/IO.cpp
     IO/StaticFile.h

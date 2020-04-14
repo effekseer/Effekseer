@@ -932,7 +932,13 @@ namespace efk
 
 	bool GUIManager::DoEvents()
 	{
-		return window->DoEvents();
+		if(window->DoEvents())
+		{
+			framerateController_.Update();
+			return true;
+		}
+
+		return false;
 	}
 
 	void GUIManager::Present()
