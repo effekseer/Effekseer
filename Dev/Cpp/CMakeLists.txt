@@ -5,7 +5,11 @@ project(Effekseer)
 cmake_minimum_required(VERSION 3.1)
 
 # C++ version
-set(CMAKE_CXX_STANDARD 17)
+if(APPLE)
+    set(CMAKE_CXX_STANDARD 14)
+else()	
+    set(CMAKE_CXX_STANDARD 17)
+endif()
 
 # For Mac
 if(APPLE)
