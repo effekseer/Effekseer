@@ -230,3 +230,8 @@ ExportAsGlTFFormat,Export as glTF format
 GlTFFormatExample,glTF format (*.glTF)|*.glTF
 MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.
 LayerLimitError,"The node tree is limited to {0} layers, including the root."
+FileViewer_OpenFile,Open
+FileViewer_DeleteFile,Delete
+FileViewer_RenameFile,Rename
+FileViewer_ShowInExplorer,Show in Explorer
+FileViewer_ShowInFinder,Show in Finder

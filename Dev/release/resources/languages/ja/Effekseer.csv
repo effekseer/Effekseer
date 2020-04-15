@@ -232,3 +232,8 @@ ExportAsGlTFFormat,glTF形式で出力する。
 GlTFFormatExample,glTF形式 (*.glTF)|*.glTF
 MismatchResourceError,リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。
 LayerLimitError,ノードツリーはルートを含めて {0} レイヤーまでに制限されています。
+FileViewer_OpenFile,開く
+FileViewer_DeleteFile,削除
+FileViewer_RenameFile,名前の変更
+FileViewer_ShowInExplorer,エクスプローラで表示
+FileViewer_ShowInFinder,Finderで表示

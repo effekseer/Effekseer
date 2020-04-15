@@ -13,16 +13,31 @@ namespace Effekseer.GUI.Dock
 		List<FileItem> items = new List<FileItem>();
 		int selectedIndex = -1;
 
+		string menuOpenFile;
+		string menuShowInFileManager;
+
 		public FileViewer()
 		{
 			Label = Resources.GetString("FileViewer") + "###FileVeiwer";
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
+			Core.OnAfterSave += OnAfterSave;
 
 			UpdateFileListWithProjectPath(Core.FullPath);
 
 			Icon = Images.GetIcon("PanelFileViewer");
 			TabToolTip = Resources.GetString("FileViewer");
+
+			menuOpenFile = Resources.GetString("FileViewer_OpenFile");
+
+			if (swig.GUIManager.IsMacOSX())
+			{
+				menuShowInFileManager = Resources.GetString("FileViewer_ShowInFinder");
+			}
+			else
+			{
+				menuShowInFileManager = Resources.GetString("FileViewer_ShowInExplorer");
+			}
 		}
 
 		public override void OnDisposed()
@@ -105,15 +120,38 @@ namespace Effekseer.GUI.Dock
 						OnFilePicked();
 					}
 				}
-				
+
+				// File Context Menu
+				string menuId = "###FileViewerFilePopupMenu" + i;
+				if (Manager.NativeManager.BeginPopupContextItem(menuId))
+				{
+					selectedIndex = i;
+					if (Manager.NativeManager.MenuItem(menuOpenFile))
+					{
+						OnFilePicked();
+					}
+					Manager.NativeManager.Separator();
+					
+					if (Manager.NativeManager.MenuItem(menuShowInFileManager))
+					{
+						ShowInFileManager();
+					}
+					Manager.NativeManager.EndPopup();
+				}
+
 				// D&D
 				DragAndDrops.UpdateImageSrc(item.FilePath);
 			}
-			
+
 			Manager.NativeManager.PopItemWidth();
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)
+		{
+			UpdateFileListWithProjectPath(Core.FullPath);
+		}
+
+		void OnAfterSave(object sender, EventArgs e)
 		{
 			UpdateFileListWithProjectPath(Core.FullPath);
 		}
@@ -259,6 +297,33 @@ namespace Effekseer.GUI.Dock
 				catch (Exception e)
 				{
 				}
+			}
+		}
+
+		private void ShowInFileManager()
+		{
+			if (items.Count == 0)
+			{
+				return;
+			}
+
+			if (selectedIndex == -1) return;
+
+			var fileItem = items[selectedIndex];
+
+			try
+			{
+				if (swig.GUIManager.IsMacOSX())
+				{
+					System.Diagnostics.Process.Start("open", Path.GetDirectoryName(fileItem.FilePath));
+				}
+				else
+				{
+					System.Diagnostics.Process.Start("explorer", "/select," + fileItem.FilePath);
+				}
+			}
+			catch (Exception e)
+			{
 			}
 		}
 	}
