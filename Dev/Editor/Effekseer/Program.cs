@@ -291,6 +291,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Base.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Options.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicSettings.csv");
 			GUI.Manager.UpdateFont();
 		}
 

@@ -69,27 +69,23 @@ namespace Effekseer
 
 		internal static void LoadCSV(string path, string language)
 		{
-			TinyCsvParser.CsvParserOptions csvParserOptions = new TinyCsvParser.CsvParserOptions(false, ',');
-			CsvKeyValueMapping csvMapper = new CsvKeyValueMapping();
-			TinyCsvParser.CsvParser<KeyValue> csvParser = new TinyCsvParser.CsvParser<KeyValue>(csvParserOptions, csvMapper);
-
-			var lines = System.IO.File.ReadAllLines(RootDirectory + "resources/languages/" + language + "/" + path, Encoding.UTF8).Select((line, index) => new TinyCsvParser.Model.Row(index, line));
-			var result = csvParser.Parse(lines).ToList();
-
-			foreach(var r in result)
+			using (var streamReader = new System.IO.StreamReader(RootDirectory + "resources/languages/" + language + "/" + path, Encoding.UTF8))
+			using (var csv = new CsvHelper.CsvReader(streamReader, new CultureInfo("ja-JP")))
 			{
-				if(r.Result == null)
-				{
-					continue;
-				}
+				csv.Configuration.HasHeaderRecord = false;
+				csv.Configuration.RegisterClassMap<CsvKeyValueMapping>();
+				var records = csv.GetRecords<KeyValue>();
 
-				if(texts.ContainsKey(r.Result.Key))
+				foreach(var record in records)
 				{
-					texts[r.Result.Key] = r.Result.Value;
-				}
-				else
-				{
-					texts.Add(r.Result.Key, r.Result.Value);
+					if (texts.ContainsKey(record.Key))
+					{
+						texts[record.Key] = record.Value;
+					}
+					else
+					{
+						texts.Add(record.Key, record.Value);
+					}
 				}
 			}
 		}
@@ -115,13 +111,13 @@ namespace Effekseer
 			public string Value { get; set; }
 		}
 
-		class CsvKeyValueMapping : TinyCsvParser.Mapping.CsvMapping<KeyValue>
+		class CsvKeyValueMapping : CsvHelper.Configuration.ClassMap<KeyValue>
 		{
 			public CsvKeyValueMapping()
 				: base()
 			{
-				MapProperty(0, x => x.Key);
-				MapProperty(1, x => x.Value);
+				Map(x => x.Key).Index(0);
+				Map(x => x.Value).Index(1);
 			}
 		}
 	}

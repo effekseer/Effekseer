@@ -7,94 +7,71 @@ namespace Effekseer.Data
 {
 	public class CommonValues
 	{
-		[Name(language = Language.Japanese, value = "生成数")]
-		[Description(language = Language.Japanese, value = "インスタンスの生成数")]
-		[Name(language = Language.English, value = "Spawn Count")]
-		[Description(language = Language.English, value = "Number of instances to generate")]
+		[Key(key = "BasicSettings_MaxGeneration")]
+
 		public Value.IntWithInifinite MaxGeneration
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "位置への影響")]
-		[Description(language = Language.Japanese, value = "親ノードからの位置への影響")]
-		[Name(language = Language.English, value = "Inherit Position")]
-		[Description(language = Language.English, value = "When this instance should copy its parent node's position")]
+		[Key(key = "BasicSettings_LocationEffectType")]
 		public Value.Enum<ParentEffectType> LocationEffectType
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "回転への影響")]
-		[Description(language = Language.Japanese, value = "親ノードからの回転への影響")]
-		[Name(language = Language.English, value = "Inherit Rotation")]
-		[Description(language = Language.English, value = "When this instance should copy its parent node's rotation")]
+		[Key(key = "BasicSettings_RotationEffectType")]
 		public Value.Enum<ParentEffectType> RotationEffectType
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "拡大への影響")]
-		[Description(language = Language.Japanese, value = "親ノードからの拡大への影響")]
-		[Name(language = Language.English, value = "Inherit Scale")]
-		[Description(language = Language.English, value = "When this instance should copy its parent node's scale")]
+		[Key(key = "BasicSettings_ScaleEffectType")]
 		public Value.Enum<ParentEffectType> ScaleEffectType
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "寿命により削除")]
-		[Name(language = Language.English, value = "Destroy after time")]
+		[Key(key = "BasicSettings_RemoveWhenLifeIsExtinct")]
 		public Value.Boolean RemoveWhenLifeIsExtinct
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "親削除時削除")]
-		[Name(language = Language.English, value = "Destroy with parent")]
+		[Key(key = "BasicSettings_RemoveWhenParentIsRemoved")]
 		public Value.Boolean RemoveWhenParentIsRemoved
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "子が全て消滅時削除")]
-		[Name(language = Language.English, value = "Destroy when no\nmore children")]
+		[Key(key = "BasicSettings_RemoveWhenAllChildrenAreRemoved")]
 		public Value.Boolean RemoveWhenAllChildrenAreRemoved
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "生存時間")]
-		[Description(language = Language.Japanese, value = "1インスタンスが生存する時間")]
-		[Name(language = Language.English, value = "Time to live")]
-		[Description(language = Language.English, value = "Length of time each instance survives")]
+		[Key(key = "BasicSettings_Life")]
 		public Value.IntWithRandom Life
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "生成時間")]
-		[Description(language = Language.Japanese, value = "1インスタンスを生成するのに必要とする時間")]
-		[Name(language = Language.English, value = "Spawn Rate")]
-		[Description(language = Language.English, value = "Time between each instance generation")]
+		[Key(key = "BasicSettings_GenerationTime")]
 		public Value.FloatWithRandom GenerationTime
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "生成開始時間")]
-		[Description(language = Language.Japanese, value = "このノードのインスタンスが生成されてから生成を開始するまでの時間")]
-		[Name(language = Language.English, value = "Initial Delay")]
-		[Description(language = Language.English, value = "Amount of time that must elapse after instance spawns before it starts generating.")]
+		[Key(key = "BasicSettings_GenerationTimeOffset")]
 		public Value.FloatWithRandom GenerationTimeOffset
 		{
 			get;
