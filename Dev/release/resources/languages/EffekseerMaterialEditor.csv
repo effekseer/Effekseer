@@ -156,7 +156,9 @@ the normal has been changed for each pixel by a normal input in OutputNode.",出
 VertexTangentWS_Node_Name,VertexTangent,頂点接線
 VertexTangentWS_Node_Desc,,
 VertexColor_Node_Name,VertexColor,頂点色
-VertexColor_Node_Desc,Outputs the vertex color of the particles.,パーティクルの頂点カラーを出力します。
+VertexColor_Node_Desc,"Outputs the vertex color of the particles.
+This includes all colors of sprite, ring, and so on.","パーティクルの頂点カラーを出力します。
+スプライト等の全体色もこれに含まれます。"
 ObjectScale_Node_Name,ObjectScale,オブジェクト拡大率
 ObjectScale_Node_Desc,"Outputs the enlargement ratio of particles in Effekseer.
 

@@ -102,7 +102,7 @@
   "VertexTangentWS_Node_Name": "頂点接線",
   "VertexTangentWS_Node_Desc": "",
   "VertexColor_Node_Name": "頂点色",
-  "VertexColor_Node_Desc": "パーティクルの頂点カラーを出力します。",
+  "VertexColor_Node_Desc": "パーティクルの頂点カラーを出力します。\nスプライト等の全体色もこれに含まれます。",
   "ObjectScale_Node_Name": "オブジェクト拡大率",
   "ObjectScale_Node_Desc": "Effekseerでのパーティクルの拡大率を出力します。\n\nただし、出力ノードのWorldPositionOffsetに使用する場合かつモデルのみ有効です。",
   "Texture_Name": "画像",

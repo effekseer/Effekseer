@@ -102,7 +102,7 @@
   "VertexTangentWS_Node_Name": "VertexTangent",
   "VertexTangentWS_Node_Desc": "",
   "VertexColor_Node_Name": "VertexColor",
-  "VertexColor_Node_Desc": "Outputs the vertex color of the particles.",
+  "VertexColor_Node_Desc": "Outputs the vertex color of the particles.\nThis includes all colors of sprite, ring, and so on.",
   "ObjectScale_Node_Name": "ObjectScale",
   "ObjectScale_Node_Desc": "Outputs the enlargement ratio of particles in Effekseer.\n\nHowever, only it is valid when used for the OutputNode WorldPositionOffset with the model.",
   "Texture_Name": "Image",
