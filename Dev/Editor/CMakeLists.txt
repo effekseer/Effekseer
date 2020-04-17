@@ -27,6 +27,7 @@ file(GLOB files_core
 list(APPEND files_core
     EffekseerCore/IO/EfkEfc.cs
     EffekseerCore/Utils/ResourceCache.cs
+    EffekseerCore/Utils/CsvReader.cs
 )
 
 add_library(EffekseerCore
@@ -45,7 +46,7 @@ set_target_properties(EffekseerCore PROPERTIES
 #    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
 #	)
 
-set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9;CsvHelper_15.0.4") 
+set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
 target_compile_options(EffekseerCore PRIVATE "/langversion:6")

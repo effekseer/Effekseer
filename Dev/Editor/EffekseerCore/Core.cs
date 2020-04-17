@@ -70,21 +70,21 @@ namespace Effekseer
 		internal static void LoadCSV(string path, string language)
 		{
 			using (var streamReader = new System.IO.StreamReader(RootDirectory + "resources/languages/" + language + "/" + path, Encoding.UTF8))
-			using (var csv = new CsvHelper.CsvReader(streamReader, new CultureInfo("ja-JP")))
 			{
-				csv.Configuration.HasHeaderRecord = false;
-				csv.Configuration.RegisterClassMap<CsvKeyValueMapping>();
-				var records = csv.GetRecords<KeyValue>();
+				var records = Utils.CsvReaader.Read(streamReader.ReadToEnd());
 
 				foreach(var record in records)
 				{
-					if (texts.ContainsKey(record.Key))
+					if (record.Count < 2) continue;
+					if (record[0] == string.Empty) continue;
+
+					if (texts.ContainsKey(record[0]))
 					{
-						texts[record.Key] = record.Value;
+						texts[record[0]] = record[1];
 					}
 					else
 					{
-						texts.Add(record.Key, record.Value);
+						texts.Add(record[0], record[1]);
 					}
 				}
 			}
@@ -103,22 +103,6 @@ namespace Effekseer
 				return ret;
 			}
 			return key;
-		}
-
-		public class KeyValue
-		{
-			public string Key { get; set; }
-			public string Value { get; set; }
-		}
-
-		class CsvKeyValueMapping : CsvHelper.Configuration.ClassMap<KeyValue>
-		{
-			public CsvKeyValueMapping()
-				: base()
-			{
-				Map(x => x.Key).Index(0);
-				Map(x => x.Value).Index(1);
-			}
 		}
 	}
 
