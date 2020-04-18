@@ -121,69 +121,64 @@ Handle ManagerImplemented::AddDrawSet( Effect* effect, InstanceContainer* pInsta
 	return Temp;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-void ManagerImplemented::StopStoppingEffects() {
+void ManagerImplemented::StopStoppingEffects()
+{
+	for (auto& draw_set_it : m_DrawSets)
 	{
-		for (auto& draw_set_it : m_DrawSets)
+		DrawSet& draw_set = draw_set_it.second;
+		if (draw_set.IsRemoving)
+			continue;
+		if (draw_set.GoingToStop)
+			continue;
+
+		bool isRemoving = false;
+
+		// Empty
+		if (!isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 0)
 		{
-			DrawSet& draw_set = draw_set_it.second;
-			if (draw_set.IsRemoving)
-				continue;
-			if (draw_set.GoingToStop)
-				continue;
+			isRemoving = true;
+		}
 
-			bool isRemoving = false;
+		// Root only exists and none plan to create new instances
+		if (!isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 1)
+		{
+			InstanceContainer* pRootContainer = draw_set.InstanceContainerPointer;
+			InstanceGroup* group = pRootContainer->GetFirstGroup();
 
-			// Empty
-			if (!isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 0)
+			if (group)
 			{
-				isRemoving = true;
-			}
+				Instance* pRootInstance = group->GetFirst();
 
-			// Root only exists and none plan to create new instances
-			if (!isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 1)
-			{
-				InstanceContainer* pRootContainer = draw_set.InstanceContainerPointer;
-				InstanceGroup* group = pRootContainer->GetFirstGroup();
-
-				if (group)
+				if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE)
 				{
-					Instance* pRootInstance = group->GetFirst();
-
-					if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE)
+					int maxcreate_count = 0;
+					bool canRemoved = true;
+					for (int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++)
 					{
-						int maxcreate_count = 0;
-						bool canRemoved = true;
-						for (int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++)
-						{
-							auto child = (EffectNodeImplemented*)pRootInstance->m_pEffectNode->GetChild(i);
+						auto child = (EffectNodeImplemented*)pRootInstance->m_pEffectNode->GetChild(i);
 
-							if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
-							{
-								canRemoved = false;
-								break;
-							}
+						if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
+						{
+							canRemoved = false;
+							break;
 						}
+					}
 
-						if (canRemoved)
+					if (canRemoved)
+					{
+						// when a sound is not playing.
+						if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
 						{
-							// when a sound is not playing.
-							if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
-							{
-								isRemoving = true;
-							}
+							isRemoving = true;
 						}
 					}
 				}
 			}
+		}
 
-			if (isRemoving)
-			{
-				StopEffect(draw_set_it.first);
-			}
+		if (isRemoving)
+		{
+			StopEffect(draw_set_it.first);
 		}
 	}
 }
@@ -251,59 +246,8 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 		{
 			DrawSet& draw_set = (*it).second;
 
-			// 削除フラグが立っている時
-			bool isRemoving = draw_set.IsRemoving;
-
-			/*
-			// 何も存在しない時
-			if( !isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 0 )
+			if (draw_set.IsRemoving)
 			{
-				isRemoving = true;
-			}
-
-			// ルートのみ存在し、既に新しく生成する見込みがないとき
-			if( !isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 1 )
-			{
-				InstanceContainer* pRootContainer = draw_set.InstanceContainerPointer;
-				InstanceGroup* group = pRootContainer->GetFirstGroup();
-
-				if( group )
-				{
-					Instance* pRootInstance = group->GetFirst();
-
-					if( pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE )
-					{
-						int maxcreate_count = 0;
-						bool canRemoved = true;
-						for( int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++ )
-						{
-							auto child = (EffectNodeImplemented*) pRootInstance->m_pEffectNode->GetChild(i);
-
-							if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
-							{
-								canRemoved = false;
-								break;
-							}
-						}
-					
-						if (canRemoved)
-						{
-							// when a sound is not playing.
-							if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
-							{
-								isRemoving = true;
-							}
-						}
-					}
-				}
-			}
-			*/
-
-			if( isRemoving )
-			{
-				// 消去処理
-				//StopEffect( (*it).first );
-
 				if( (*it).second.RemovingCallback != NULL )
 				{
 					(*it).second.RemovingCallback(this, (*it).first, isRemovingManager);
