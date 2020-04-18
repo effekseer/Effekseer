@@ -428,7 +428,7 @@ namespace Effekseer.GUI.Dock
 
 					if (recordResult)
 					{
-						Manager.NativeManager.OpenPopup("Recording Progress");
+						Manager.NativeManager.OpenPopup("Progress in Recording");
 					}
 					else
 					{
@@ -442,7 +442,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.SetNextWindowSize(320, 0, swig.Cond.Always);
 
-			if (Manager.NativeManager.BeginPopupModal("Recording Progress"))
+			if (Manager.NativeManager.BeginPopupModal("Progress in Recording"))
 			{
 				var viewer = Manager.Viewer;
 				float progress;
