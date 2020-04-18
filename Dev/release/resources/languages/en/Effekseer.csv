@@ -235,3 +235,27 @@ FileViewer_DeleteFile,Delete
 FileViewer_RenameFile,Rename
 FileViewer_ShowInExplorer,Show in Explorer
 FileViewer_ShowInFinder,Show in Finder
+,
+Easing_Start_Name,Start
+Easing_Start_Desc,Starting point of easing
+Easing_End_Name,End
+Easing_End_Desc,Value of easing at end
+Easing_StartSpeed_Name,Ease In
+Easing_StartSpeed_Desc,Initial rate of easing
+Easing_EndSpeed_Name,Ease Out
+Easing_EndSpeed_Desc,Rate of easing at end
+,
+Easing_StartSlowly3_Name,Slowest
+Easing_StartSlowly2_Name,Slower
+Easing_StartSlowly1_Name,Slow
+Easing_StartNormal_Name,Normal
+Easing_StartRapidly1_Name,Fast
+Easing_StartRapidly2_Name,Faster
+Easing_StartRapidly3_Name,Fastest
+Easing_EndSlowly3_Name,Slowest
+Easing_EndSlowly2_Name,Slower
+Easing_EndSlowly1_Name,Slow
+Easing_EndNormal_Name,Normal
+Easing_EndRapidly1_Name,Fast
+Easing_EndRapidly2_Name,Faster
+Easing_EndRapidly3_Name,Fastest

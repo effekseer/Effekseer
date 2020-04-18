@@ -25,4 +25,8 @@ BasicSettings_GenerationTime_Name,Spawn Rate
 BasicSettings_GenerationTime_Desc,Time between each instance generation
 BasicSettings_GenerationTimeOffset_Name,Initial Delay
 BasicSettings_GenerationTimeOffset_Desc,Amount of time that must elapse after instance spawns before it starts generating.
-
+,
+BasicSettings_ParentEffectType_NotBind_Name,Never
+BasicSettings_ParentEffectType_NotBind_Root_Name,Root dependent (deprecated)
+BasicSettings_ParentEffectType_WhenCreating_Name,Only on create
+BasicSettings_ParentEffectType_Already_Name,Always

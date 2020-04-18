@@ -1,4 +1,4 @@
-Node_IsRendered_Name,描画
+﻿Node_IsRendered_Name,描画
 Node_IsRendered_Desc,"編集画面にインスタンスを描画するかどうか。
 最終的に出力される結果には関係ない。"
 ,
@@ -27,3 +27,8 @@ BasicSettings_GenerationTime_Name,生成時間
 BasicSettings_GenerationTime_Desc,1インスタンスを生成するのに必要とする時間
 BasicSettings_GenerationTimeOffset_Name,生成開始時間
 BasicSettings_GenerationTimeOffset_Desc,このノードのインスタンスが生成されてから生成を開始するまでの時間
+,
+BasicSettings_ParentEffectType_NotBind_Name,なし
+BasicSettings_ParentEffectType_NotBind_Root_Name,なし(Root依存)-非推奨
+BasicSettings_ParentEffectType_WhenCreating_Name,生成時のみ
+BasicSettings_ParentEffectType_Already_Name,常時
