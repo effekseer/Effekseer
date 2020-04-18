@@ -313,13 +313,16 @@ namespace Effekseer.GUI.Dock
 
 			try
 			{
+				string dirPath = Directory.Exists(fileItem.FilePath) ? 
+					fileItem.FilePath : Path.GetDirectoryName(fileItem.FilePath);
+
 				if (swig.GUIManager.IsMacOSX())
 				{
-					System.Diagnostics.Process.Start("open", Path.GetDirectoryName(fileItem.FilePath));
+					System.Diagnostics.Process.Start("open", dirPath);
 				}
 				else
 				{
-					System.Diagnostics.Process.Start("explorer", "/select," + fileItem.FilePath);
+					System.Diagnostics.Process.Start(dirPath);
 				}
 			}
 			catch (Exception e)
