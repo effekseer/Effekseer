@@ -2486,6 +2486,86 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * 
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_BeginRecord___(void * jarg1, void * jarg2) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  RecordingParameter *arg2 = 0 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (RecordingParameter *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "RecordingParameter const & type is null", 0);
+    return 0;
+  } 
+  result = (bool)(arg1)->BeginRecord((RecordingParameter const &)*arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_StepRecord___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->StepRecord(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_EndRecord___(void * jarg1) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (bool)(arg1)->EndRecord();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsRecording___(void * jarg1) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (bool)((Native const *)arg1)->IsRecording();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Native_GetRecordingProgress___(void * jarg1) {
+  float jresult ;
+  Native *arg1 = (Native *) 0 ;
+  float result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (float)((Native const *)arg1)->GetRecordingProgress();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsRecordCompleted___(void * jarg1) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (bool)((Native const *)arg1)->IsRecordCompleted();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_Record___(void * jarg1, void * jarg2) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
@@ -2495,10 +2575,10 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_Record___(void 
   arg1 = (Native *)jarg1; 
   arg2 = (RecordingParameter *)jarg2;
   if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "RecordingParameter & type is null", 0);
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "RecordingParameter const & type is null", 0);
     return 0;
   } 
-  result = (bool)(arg1)->Record(*arg2);
+  result = (bool)(arg1)->Record((RecordingParameter const &)*arg2);
   jresult = result; 
   return jresult;
 }
@@ -4212,6 +4292,22 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SliderInt__
   
   
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ProgressBar___(void * jarg1, float jarg2, void * jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  efk::Vec2 *arg3 = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return ;
+  } 
+  (arg1)->ProgressBar(arg2,(efk::Vec2 const &)*arg3);
 }
 
 

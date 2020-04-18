@@ -1464,6 +1464,11 @@ namespace efk
 		return ImGui::SliderInt(utf8str<256>(label), v, v_min, v_max);
 	}
 
+	void GUIManager::ProgressBar(float fraction, const Vec2& size)
+	{
+		ImGui::ProgressBar(fraction, ImVec2(size.X, size.Y));
+	}
+
 	bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id)
 	{
 		return ImGui::BeginCombo(
