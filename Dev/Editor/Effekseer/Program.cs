@@ -293,7 +293,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Options.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicSettings.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Position.csv");
-
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Rotation.csv");
 			GUI.Manager.UpdateFont();
 		}
 

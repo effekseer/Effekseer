@@ -259,3 +259,6 @@ Easing_EndNormal_Name,Normal
 Easing_EndRapidly1_Name,Fast
 Easing_EndRapidly2_Name,Faster
 Easing_EndRapidly3_Name,Fastest
+,
+FCurve_Name,F-Curve
+FCurve_Desc,F-Curve

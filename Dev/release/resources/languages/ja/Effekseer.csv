@@ -261,3 +261,6 @@ Easing_EndNormal_Name,等速
 Easing_EndRapidly1_Name,高速1
 Easing_EndRapidly2_Name,高速2
 Easing_EndRapidly3_Name,高速3
+,
+FCurve_Name,Fカーブ
+FCurve_Desc,Fカーブ

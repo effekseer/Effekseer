@@ -193,10 +193,7 @@ namespace Effekseer.Data
 
 	public class ColorFCurveParameter
 	{
-		[Name(language = Language.Japanese, value = "Fカーブ")]
-		[Description(language = Language.Japanese, value = "Fカーブ")]
-		[Name(language = Language.English, value = "F-Curve")]
-		[Description(language = Language.English, value = "F-Curve")]
+		[Key(key = "FCurve")]
 		[Shown(Shown = true)]
 		public Value.FCurveColorRGBA FCurve
 		{
@@ -338,10 +335,7 @@ namespace Effekseer.Data
 
 	public class Vector3DFCurveParameter
 	{
-		[Name(language = Language.Japanese, value = "Fカーブ")]
-		[Description(language = Language.Japanese, value = "Fカーブ")]
-		[Name(language = Language.English, value = "F-Curve")]
-		[Description(language = Language.English, value = "F-Curve")]
+		[Key(key = "FCurve")]
 		[Shown(Shown = true)]
 		public Value.FCurveVector3D FCurve
 		{
