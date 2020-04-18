@@ -1385,163 +1385,133 @@ public:
 	}
 };
 
-bool Native::Record(RecordingParameter& recordingParameter)
+class Native::Recorder
 {
-
-	bool isBehaviorEnabled = true;
-
-	if (g_effect == nullptr)
-		return false;
-
+private:
 	std::shared_ptr<RecorderCallback> recorderCallback;
 	std::shared_ptr<RecorderCallback> recorderCallback2;
 
-	RecordingParameter recordingParameter2;
-	int32_t currentTime = 0;
-
-	if (recordingParameter.Transparence == TransparenceType::Generate2)
-	{
-		recordingParameter2 = recordingParameter;
-		auto path = recordingParameter2.GetPath();
-
-		char pathWOE[256];
-		char ext_[256];
-		char path8_dst[256];
-		char16_t* path_[256];
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)path);
-		sprintf(path8_dst, "%s_add", pathWOE);
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 256, (const int8_t*)path8_dst);
-		recordingParameter2.SetPath((const char16_t*)path_);
-	}
-
-	if (recordingParameter.RecordingMode == RecordingModeType::Sprite)
-	{
-		recorderCallback = std::make_shared<RecorderCallbackSprite>(recordingParameter);
-
-		if (recordingParameter.Transparence == TransparenceType::Generate2)
-		{
-			recorderCallback2 = std::make_shared<RecorderCallbackSprite>(recordingParameter2);
-		}
-	}
-	else if (recordingParameter.RecordingMode == RecordingModeType::SpriteSheet)
-	{
-		recorderCallback = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter);
-
-		if (recordingParameter.Transparence == TransparenceType::Generate2)
-		{
-			recorderCallback2 = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter2);
-		}
-	}
-	else if (recordingParameter.RecordingMode == RecordingModeType::Gif)
-	{
-		recorderCallback = std::make_shared<RecorderCallbackGif>(recordingParameter);
-
-		if (recordingParameter.Transparence == TransparenceType::Generate2)
-		{
-			recorderCallback2 = std::make_shared<RecorderCallbackGif>(recordingParameter2);
-		}
-	}
-	else if (recordingParameter.RecordingMode == RecordingModeType::Avi)
-	{
-		recorderCallback = std::make_shared<RecorderCallbackAvi>(recordingParameter);
-
-		if (recordingParameter.Transparence == TransparenceType::Generate2)
-		{
-			recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2);
-		}
-	}
-
+	static constexpr bool isBehaviorEnabled = true;
+	bool isRecording = false;
+	bool isRecordCompleted = false;
+	RecordingParameter recordingParameter = {};
+	RecordingParameter recordingParameter2 = {};
+	::Effekseer::Handle handle = 0;
 	int iteratorCount = 1;
+	int32_t currentTime = 0;
+	int recordedCount = 0;
+	bool completed = false;
 
-	if (recordingParameter.Transparence == TransparenceType::Generate2)
+public:
+	bool Begin(Native* native, const RecordingParameter& recordingParameter_)
 	{
-		iteratorCount = 9;
-	}
+		recordingParameter = recordingParameter_;
 
-	if (!recorderCallback->OnBeginRecord())
-	{
-		return false;
-	}
-
-	if (recorderCallback2 != nullptr && !recorderCallback2->OnBeginRecord())
-	{
-		return false;
-	}
-
-	g_renderer->IsBackgroundTranslucent = recordingParameter.Transparence == TransparenceType::Original;
-
-	::Effekseer::Vector3D position(0, 0, GetDistance());
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-	::Effekseer::Vector3D::Transform(position, position, mat);
-	position.X += g_focus_position.X;
-	position.Y += g_focus_position.Y;
-	position.Z += g_focus_position.Z;
-
-	g_renderer->GetRenderer()->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-	g_renderer->SetOrthographicScale(GetOrthoScale());
-
-	StopEffect();
-
-	::Effekseer::Handle handle;
-	if (isBehaviorEnabled)
-	{
-		PlayEffect();
-	}
-	else
-	{
-		handle = g_manager->Play(g_effect, 0, 0, 0);
-		g_manager->SetTargetLocation(
-			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
-	}
-
-	if (isBehaviorEnabled)
-	{
-		StepEffect(recordingParameter.OffsetFrame);
-	}
-	else
-	{
-		for (int i = 0; i < recordingParameter.OffsetFrame; i++)
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
 		{
-			g_manager->Update();
-			g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
-			currentTime++;
+			recordingParameter2 = recordingParameter;
+			auto path = recordingParameter.GetPath();
+
+			char pathWOE[256];
+			char ext_[256];
+			char path8_dst[256];
+			char16_t* path_[256];
+			Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)path);
+			sprintf(path8_dst, "%s_add", pathWOE);
+			Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 256, (const int8_t*)path8_dst);
+			recordingParameter2.SetPath((const char16_t*)path_);
 		}
-	}
 
-	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
-
-	for (int32_t i = 0; i < recordingParameter.Count; i++)
-	{
-		std::vector<std::vector<Effekseer::Color>> pixels;
-		pixels.resize(iteratorCount);
-
-		for (int32_t loop = 0; loop < iteratorCount; loop++)
+		if (recordingParameter.RecordingMode == RecordingModeType::Sprite)
 		{
-			auto colorValue = Effekseer::Clamp(32 * loop, 255, 0);
-			g_renderer->BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
+			recorderCallback = std::make_shared<RecorderCallbackSprite>(recordingParameter);
 
-			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-				goto Exit;
+			if (recordingParameter.Transparence == TransparenceType::Generate2)
+			{
+				recorderCallback2 = std::make_shared<RecorderCallbackSprite>(recordingParameter2);
+			}
+		}
+		else if (recordingParameter.RecordingMode == RecordingModeType::SpriteSheet)
+		{
+			recorderCallback = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter);
 
-			RenderWindow();
+			if (recordingParameter.Transparence == TransparenceType::Generate2)
+			{
+				recorderCallback2 = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter2);
+			}
+		}
+		else if (recordingParameter.RecordingMode == RecordingModeType::Gif)
+		{
+			recorderCallback = std::make_shared<RecorderCallbackGif>(recordingParameter);
 
-			g_renderer->EndRecord(pixels[loop],
-								  recordingParameter.Transparence == TransparenceType::Generate,
-								  recordingParameter.Transparence == TransparenceType::None);
+			if (recordingParameter.Transparence == TransparenceType::Generate2)
+			{
+				recorderCallback2 = std::make_shared<RecorderCallbackGif>(recordingParameter2);
+			}
+		}
+		else if (recordingParameter.RecordingMode == RecordingModeType::Avi)
+		{
+			recorderCallback = std::make_shared<RecorderCallbackAvi>(recordingParameter);
+
+			if (recordingParameter.Transparence == TransparenceType::Generate2)
+			{
+				recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2);
+			}
+		}
+
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			iteratorCount = 9;
+		}
+
+		if (!recorderCallback->OnBeginRecord())
+		{
+			return false;
+		}
+
+		if (recorderCallback2 != nullptr && !recorderCallback2->OnBeginRecord())
+		{
+			return false;
+		}
+
+		g_renderer->IsBackgroundTranslucent = recordingParameter.Transparence == TransparenceType::Original;
+
+		::Effekseer::Vector3D position(0, 0, GetDistance());
+		::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
+		mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+		mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
+		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+		::Effekseer::Vector3D::Transform(position, position, mat);
+		position.X += g_focus_position.X;
+		position.Y += g_focus_position.Y;
+		position.Z += g_focus_position.Z;
+
+		g_renderer->GetRenderer()->SetCameraMatrix(
+			::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+		g_renderer->SetOrthographicScale(GetOrthoScale());
+
+		native->StopEffect();
+
+		if (isBehaviorEnabled)
+		{
+			native->PlayEffect();
+		}
+		else
+		{
+			handle = g_manager->Play(g_effect, 0, 0, 0);
+			const ViewerEffectBehavior& behavior = native->m_effectBehavior;
+			g_manager->SetTargetLocation(
+				handle, behavior.TargetPositionX, behavior.TargetPositionY, behavior.TargetPositionZ);
 		}
 
 		if (isBehaviorEnabled)
 		{
-			StepEffect(recordingParameter.Freq);
+			native->StepEffect(recordingParameter.OffsetFrame);
 		}
 		else
 		{
-			for (int j = 0; j < recordingParameter.Freq; j++)
+			for (int i = 0; i < recordingParameter.OffsetFrame; i++)
 			{
 				g_manager->Update();
 				g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
@@ -1549,45 +1519,168 @@ bool Native::Record(RecordingParameter& recordingParameter)
 			}
 		}
 
-		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+	}
+
+	bool Step(Native* native, int frames)
+	{
+		for (int32_t i = 0; i < frames; i++)
 		{
-			std::vector<std::vector<Effekseer::Color>> pixels_out;
-			pixels_out.resize(2);
-			GenerateExportedImageWithBlendAndAdd(pixels_out[0], pixels_out[1], pixels);
-
-			recorderCallback->OnEndFrameRecord(i, pixels_out[0]);
-
-			if (recorderCallback2 != nullptr)
+			if (IsCompleted())
 			{
-				recorderCallback2->OnEndFrameRecord(i, pixels_out[1]);
+				break;
 			}
+
+			std::vector<std::vector<Effekseer::Color>> pixels;
+			pixels.resize(iteratorCount);
+
+			for (int32_t loop = 0; loop < iteratorCount; loop++)
+			{
+				auto colorValue = Effekseer::Clamp(32 * loop, 255, 0);
+				g_renderer->BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
+
+				if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
+					return false;
+
+				native->RenderWindow();
+
+				g_renderer->EndRecord(pixels[loop],
+					recordingParameter.Transparence == TransparenceType::Generate,
+					recordingParameter.Transparence == TransparenceType::None);
+			}
+
+			if (isBehaviorEnabled)
+			{
+				native->StepEffect(recordingParameter.Freq);
+			}
+			else
+			{
+				for (int j = 0; j < recordingParameter.Freq; j++)
+				{
+					g_manager->Update();
+					g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
+					currentTime++;
+				}
+			}
+
+			if (recordingParameter.Transparence == TransparenceType::Generate2)
+			{
+				std::vector<std::vector<Effekseer::Color>> pixels_out;
+				pixels_out.resize(2);
+				GenerateExportedImageWithBlendAndAdd(pixels_out[0], pixels_out[1], pixels);
+
+				recorderCallback->OnEndFrameRecord(recordedCount, pixels_out[0]);
+
+				if (recorderCallback2 != nullptr)
+				{
+					recorderCallback2->OnEndFrameRecord(recordedCount, pixels_out[1]);
+				}
+			}
+			else
+			{
+				recorderCallback->OnEndFrameRecord(recordedCount, pixels[0]);
+			}
+
+			recordedCount++;
+		}
+		return true;
+	}
+
+	bool End(Native* native)
+	{
+		if (isBehaviorEnabled)
+		{
+			native->StopEffect();
 		}
 		else
 		{
-			recorderCallback->OnEndFrameRecord(i, pixels[0]);
+			g_manager->StopEffect(handle);
+		}
+
+		g_manager->Update();
+
+		g_renderer->EndRenderToView();
+
+		recorderCallback->OnEndRecord();
+
+		if (recorderCallback2 != nullptr)
+		{
+			recorderCallback2->OnEndRecord();
+		}
+
+		return true;
+	}
+
+	bool IsCompleted() const
+	{
+		return recordedCount >= recordingParameter.Count;
+	}
+
+	float GetProgress() const
+	{
+		return (float)recordedCount / (float)recordingParameter.Count;
+	}
+};
+
+bool Native::BeginRecord(const RecordingParameter& recordingParameter)
+{
+	if (g_effect == nullptr)
+		return false;
+
+	recorder.reset(new Recorder());
+	return recorder->Begin(this, recordingParameter);
+}
+
+bool Native::StepRecord(int frames)
+{
+	if (recorder == nullptr) {
+		return false;
+	}
+	return recorder->Step(this, frames);
+}
+
+bool Native::EndRecord()
+{
+	if (recorder == nullptr) {
+		return false;
+	}
+	bool result = recorder->End(this);
+	recorder.reset();
+}
+
+bool Native::IsRecording() const
+{
+	return recorder != nullptr;
+}
+
+float Native::GetRecordingProgress() const
+{
+	return (recorder) ? recorder->GetProgress() : 0.0f;
+}
+
+bool Native::IsRecordCompleted() const
+{
+	return (recorder) ? recorder->IsCompleted() : false;
+}
+
+bool Native::Record(const RecordingParameter& recordingParameter)
+{
+	if (BeginRecord(recordingParameter) == false)
+	{
+		return false;
+	}
+
+	while (!IsRecordCompleted())
+	{
+		if (StepRecord(1) == false)
+		{
+			break;
 		}
 	}
 
-Exit:;
-
-	if (isBehaviorEnabled)
+	if (EndRecord() == false)
 	{
-		StopEffect();
-	}
-	else
-	{
-		g_manager->StopEffect(handle);
-	}
-
-	g_manager->Update();
-
-	g_renderer->EndRenderToView();
-
-	recorderCallback->OnEndRecord();
-
-	if (recorderCallback2 != nullptr)
-	{
-		recorderCallback2->OnEndRecord();
+		return false;
 	}
 
 	return true;
