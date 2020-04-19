@@ -294,6 +294,14 @@ public:
 
 	const EFK_CHAR* GetMaterialPath(int n) const override;
 
+	void SetTexture(int32_t index, TextureType type, TextureData* data) override;
+
+	void SetSound(int32_t index, void* data) override;
+
+	void SetModel(int32_t index, void* data) override;
+
+	void SetMaterial(int32_t index, MaterialData* data) override;
+
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/

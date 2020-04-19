@@ -1063,6 +1063,82 @@ int32_t EffectImplemented::GetMaterialCount() const { return materialCount_; }
 
 const EFK_CHAR* EffectImplemented::GetMaterialPath(int n) const { return materialPaths_[n]; }
 
+void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureData* data)
+{
+	auto textureLoader = GetSetting()->GetTextureLoader();
+
+	if (type == TextureType::Color)
+	{
+		assert(0 <= index && index < m_ImageCount);
+		if (textureLoader != nullptr)
+		{
+			textureLoader->Unload(GetColorImage(index));
+		}
+
+		m_pImages[index] = data;
+	}
+
+	if (type == TextureType::Normal)
+	{
+		assert(0 <= index && index < m_normalImageCount);
+		if (textureLoader != nullptr)
+		{
+			textureLoader->Unload(GetNormalImage(index));
+		}
+
+		m_normalImages[index] = data;
+	}
+
+	if (type == TextureType::Distortion)
+	{
+		assert(0 <= index && index < m_distortionImageCount);
+		if (textureLoader != nullptr)
+		{
+			textureLoader->Unload(GetDistortionImage(index));
+		}
+
+		m_distortionImages[index] = data;
+	}
+}
+
+void EffectImplemented::SetSound(int32_t index, void* data)
+{
+	auto soundLoader = GetSetting()->GetSoundLoader();
+	assert(0 <= index && index < m_WaveCount);
+
+	if (soundLoader != nullptr)
+	{
+		soundLoader->Unload(GetWave(index));
+	}
+
+	m_pWaves[index] = data;
+}
+
+void EffectImplemented::SetModel(int32_t index, void* data)
+{
+	auto modelLoader = GetSetting()->GetModelLoader();
+	assert(0 <= index && index < modelCount_);
+
+	if (modelLoader != nullptr)
+	{
+		modelLoader->Unload(GetModel(index));
+	}
+
+	models_[index] = data;
+}
+
+void EffectImplemented::SetMaterial(int32_t index, MaterialData* data)
+{
+	auto materialLoader = GetSetting()->GetMaterialLoader();
+	assert(0 <= index && index < materialCount_);
+
+	if (materialLoader != nullptr)
+	{
+		materialLoader->Unload(GetMaterial(index));
+	}
+
+	materials_[index] = data;
+}
 
 bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {

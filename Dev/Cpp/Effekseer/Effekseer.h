@@ -1994,6 +1994,36 @@ public:
 
 	/**
 		@brief
+		\~English set texture data into specified index
+		\~Japanese	指定されたインデックスにテクスチャを設定する。
+	*/
+	virtual void SetTexture(int32_t index, TextureType type, TextureData* data) = 0;
+
+	/**
+		@brief
+		\~English set sound data into specified index
+		\~Japanese	指定されたインデックスに音を設定する。
+	*/
+
+	virtual void SetSound(int32_t index, void* data) = 0;
+
+	/**
+		@brief
+		\~English set model data into specified index
+		\~Japanese	指定されたインデックスにモデルを設定する。
+	*/
+	virtual void SetModel(int32_t index, void* data) = 0;
+
+	/**
+		@brief
+		\~English set material data into specified index
+		\~Japanese	指定されたインデックスにマテリアルを設定する。
+	*/
+	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
+
+
+	/**
+		@brief
 		\~English	Reload this effect
 		\~Japanese	エフェクトのリロードを行う。
 		@param	data
