@@ -201,8 +201,29 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 void RendererImplemented::GenerateVertexBuffer()
 {
-    // assume max vertex size is smaller than float * 10
-    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, sizeof(float) * 10 * m_squareMaxCount * 4, true, false);
+	m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
+}
+
+void RendererImplemented::GenerateIndexBuffer()
+{
+	m_indexBuffer = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 6, false, false);
+	if (m_indexBuffer == nullptr)
+		return;
+
+	m_indexBuffer->Lock();
+
+	for (int i = 0; i < m_squareMaxCount; i++)
+	{
+		uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
+		buf[0] = 3 + 4 * i;
+		buf[1] = 1 + 4 * i;
+		buf[2] = 0 + 4 * i;
+		buf[3] = 3 + 4 * i;
+		buf[4] = 0 + 4 * i;
+		buf[5] = 2 + 4 * i;
+	}
+
+	m_indexBuffer->Unlock();
 }
 
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
@@ -291,31 +312,17 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 
 	// Generate vertex buffer
 	{
-        GenerateVertexBuffer();
+		GenerateVertexBuffer();
 		if (m_vertexBuffer == NULL)
 			return false;
 	}
 
 	// Generate index buffer
 	{
+		GenerateIndexBuffer();
 		m_indexBuffer = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 6, false, false);
 		if (m_indexBuffer == NULL)
 			return false;
-
-		m_indexBuffer->Lock();
-
-		for (int i = 0; i < m_squareMaxCount; i++)
-		{
-			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
-			buf[0] = 3 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 0 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-		}
-
-		m_indexBuffer->Unlock();
 	}
 
 	// Generate index buffer for rendering wireframes

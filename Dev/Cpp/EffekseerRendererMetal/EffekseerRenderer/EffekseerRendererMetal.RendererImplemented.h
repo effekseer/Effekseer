@@ -10,8 +10,10 @@ namespace EffekseerRendererMetal
 
 class RendererImplemented : public ::EffekseerRendererLLGI::RendererImplemented
 {
-    void GenerateVertexBuffer() override;
-    
+	void GenerateVertexBuffer() override;
+
+	void GenerateIndexBuffer() override;
+
 public:
 
     RendererImplemented(int32_t squareMaxCount): ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount)

@@ -302,7 +302,7 @@ private:
 	StandardRendererState m_state;
 
 	std::vector<uint8_t> vertexCaches;
-	int32_t renderVertexMaxSize;
+	int32_t squareMaxSize_ = 0;
 
 	bool isDistortionMode_;
 	bool isDynamicVertexMode_ = false;
@@ -389,16 +389,13 @@ private:
 public:
 	StandardRenderer(
 		RENDERER* renderer, SHADER* shader, SHADER* shader_distortion)
-		: renderVertexMaxSize(0), isDistortionMode_(false)
+		: squareMaxSize_(renderer->GetSquareMaxCount()), isDistortionMode_(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
-		//m_shader_no_texture = shader_no_texture;
 		m_shader_distortion = shader_distortion;
-		//m_shader_no_texture_distortion = shader_no_texture_distortion;
 
 		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
-		renderVertexMaxSize = m_renderer->GetVertexBuffer()->GetMaxSize();
 	}
 
 	virtual ~StandardRenderer()
@@ -443,6 +440,8 @@ public:
 		stride = CalculateCurrentStride();
 
 		{
+			int32_t renderVertexMaxSize = squareMaxSize_ * stride * 4;
+
 			if (count * stride + (int32_t)vertexCaches.size() > renderVertexMaxSize)
 			{
 				Rendering();
@@ -494,6 +493,8 @@ public:
 			{
 				// only sprite
 				int32_t renderBufferSize = (int32_t)vertexCaches.size() - offset;
+
+				int32_t renderVertexMaxSize = squareMaxSize_ * stride * 4;
 
 				if (renderBufferSize > renderVertexMaxSize)
 				{

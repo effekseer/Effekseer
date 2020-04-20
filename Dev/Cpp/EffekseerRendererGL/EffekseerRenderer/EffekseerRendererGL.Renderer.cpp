@@ -868,8 +868,8 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	// generate a vertex buffer
 	{
-		// assume max vertex size is smaller than float * 10
-		m_vertexBuffer = VertexBuffer::Create(this, sizeof(Vertex) * m_squareMaxCount * 4, true, false);
+		m_vertexBuffer =
+			VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
 		if (m_vertexBuffer == NULL) return;
 	}
 

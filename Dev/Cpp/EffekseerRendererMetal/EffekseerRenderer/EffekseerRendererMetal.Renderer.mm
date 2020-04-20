@@ -2,7 +2,7 @@
 #include "EffekseerRendererMetal.RendererImplemented.h"
 //#include "EffekseerRendererMetal.MaterialLoader.h"
 #include "EffekseerRendererMetal.VertexBuffer.h"
-
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
@@ -202,8 +202,32 @@ void EndCommandList(EffekseerRenderer::CommandList* commandList)
 void RendererImplemented::GenerateVertexBuffer()
 {
     // Metal doesn't need to update buffer to make sure it has the correct size
-    // this will buffer 1.2mb of memory in total for a start
-    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, 400000, true, false);
+    auto sc = std::max(4000, m_squareMaxCount);
+    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * sc * 4, true, false);
+}
+
+void RendererImplemented::GenerateIndexBuffer()
+{
+    auto sc = std::max(4000, m_squareMaxCount);
+
+	m_indexBuffer = IndexBuffer::Create(graphicsDevice_, sc * 6, false, false);
+	if (m_indexBuffer == nullptr)
+		return;
+
+	m_indexBuffer->Lock();
+
+	for (int i = 0; i < sc; i++)
+	{
+		uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
+		buf[0] = 3 + 4 * i;
+		buf[1] = 1 + 4 * i;
+		buf[2] = 0 + 4 * i;
+		buf[3] = 3 + 4 * i;
+		buf[4] = 0 + 4 * i;
+		buf[5] = 2 + 4 * i;
+	}
+
+	m_indexBuffer->Unlock();
 }
 
 void RendererImplemented::SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer)

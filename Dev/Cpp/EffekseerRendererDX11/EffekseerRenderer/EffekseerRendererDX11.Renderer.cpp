@@ -352,8 +352,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 	// generate a vertex buffer
 	{
-		// assume max vertex size is smaller than float * 10
-		m_vertexBuffer = VertexBuffer::Create( this, sizeof(float) * 10 * m_squareMaxCount * 4, true );
+		m_vertexBuffer = VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true);
 		if( m_vertexBuffer == NULL ) return false;
 	}
 

@@ -94,6 +94,8 @@ protected:
 
     virtual void GenerateVertexBuffer();
     
+	virtual void GenerateIndexBuffer();
+
 public:
 	//! shaders (todo implemented)
 	FixedShader fixedShader_;
