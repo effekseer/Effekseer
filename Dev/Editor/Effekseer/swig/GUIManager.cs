@@ -425,6 +425,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void ProgressBar(float fraction, Vec2 size) {
+    EffekseerNativePINVOKE.GUIManager_ProgressBar(swigCPtr, fraction, Vec2.getCPtr(size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public bool BeginCombo(string label, string preview_value, ComboFlags flags, ImageResource user_texture_id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo__SWIG_0(swigCPtr, label, preview_value, (int)flags, ImageResource.getCPtr(user_texture_id));
     return ret;

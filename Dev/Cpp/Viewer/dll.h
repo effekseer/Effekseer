@@ -1,4 +1,4 @@
-﻿
+
 #pragma once
 
 /**
@@ -252,6 +252,9 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
+	struct Recorder;
+	std::unique_ptr<Recorder> recorder;
+
 	::Effekseer::Effect* GetEffect();
 
 public:
@@ -295,7 +298,19 @@ public:
 
 	void* RenderView(int32_t width, int32_t height);
 
-	bool Record(RecordingParameter& recordingParameter);
+	bool BeginRecord(const RecordingParameter& recordingParameter);
+
+	bool StepRecord(int frames);
+
+	bool EndRecord();
+
+	bool IsRecording() const;
+
+	float GetRecordingProgress() const;
+
+	bool IsRecordCompleted() const;
+
+	bool Record(const RecordingParameter& recordingParameter);
 
 	ViewerParamater GetViewerParamater();
 

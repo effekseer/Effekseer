@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -196,8 +196,9 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.EndChild();
 
-			// Recordingwindow
-			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, 100 * dpiScale), true, swig.WindowFlags.MenuBar);
+			// ExportType
+			float exportTypeChildHeight = (selectedTypeIndex == 0 ? 90 : 60) * dpiScale;
+			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, exportTypeChildHeight), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
 			{
 				if (Manager.NativeManager.BeginMenu(typeTitle + "##OutputTypeTitle"))
@@ -211,19 +212,6 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("XCount"));
-
-			Manager.NativeManager.NextColumn();
-
-			Manager.NativeManager.PushItemWidth(-1);
-			if (Manager.NativeManager.DragInt("###tn", theNumberOfImageH_))
-			{
-                Core.Recording.RecordingHorizontalCount.SetValueDirectly(theNumberOfImageH_[0]);
-			}
-			Manager.NativeManager.PopItemWidth();
-
-			Manager.NativeManager.NextColumn();
-
 			Manager.NativeManager.Text(Resources.GetString("ExportedFrame"));
 
 			Manager.NativeManager.NextColumn();
@@ -231,13 +219,13 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.PushItemWidth(-1);
 			if (Manager.NativeManager.BeginCombo("###extype", selectedExportTypes[selectedTypeIndex], swig.ComboFlags.None))
 			{
-				for(int i = 0; i < selectedExportTypes.Length; i++)
+				for (int i = 0; i < selectedExportTypes.Length; i++)
 				{
-					if(Manager.NativeManager.Selectable(selectedExportTypes[i]))
+					if (Manager.NativeManager.Selectable(selectedExportTypes[i]))
 					{
 						selectedTypeIndex = i;
-                        Core.Recording.RecordingExporter.SetValueDirectly((Data.RecordingExporterType)i);
-                        Manager.NativeManager.SetItemDefaultFocus();
+						Core.Recording.RecordingExporter.SetValueDirectly((Data.RecordingExporterType)i);
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
@@ -245,7 +233,21 @@ namespace Effekseer.GUI.Dock
 			}
 			Manager.NativeManager.PopItemWidth();
 
-			Manager.NativeManager.Columns(1);
+			if (selectedTypeIndex == 0)
+			{
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.Text(Resources.GetString("XCount"));
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.PushItemWidth(-1);
+				if (Manager.NativeManager.DragInt("###tn", theNumberOfImageH_))
+				{
+					Core.Recording.RecordingHorizontalCount.SetValueDirectly(theNumberOfImageH_[0]);
+				}
+				Manager.NativeManager.PopItemWidth();
+			}
 
 			Manager.NativeManager.EndChild();
 
@@ -322,7 +324,10 @@ namespace Effekseer.GUI.Dock
 
 			Manager.Viewer.SetViewerParamater(viewerParameter);
 
-			if(Manager.NativeManager.Button(Resources.GetString("Record") + "###btn"))
+			float buttonWidth = 100 * dpiScale;
+			Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2);
+
+			if (Manager.NativeManager.Button(Resources.GetString("Record") + "###btn", buttonWidth))
 			{
 				var during = Core.Recording.RecordingEndingFrame.Value - Core.Recording.RecordingStartingFrame.Value;
 				if (during < 0)
@@ -402,38 +407,66 @@ namespace Effekseer.GUI.Dock
 						errorMessage = "It failed to save. A file is opend by other application or lack of specification.";
 					}
 
+					bool recordResult = false;
+
 					if (selectedTypeIndex == 0)
 					{
-						if (!viewer.RecordSpriteSheet(filename, recordingParameter))
-						{
-                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						}
+						recordResult = viewer.RecordSpriteSheet(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 1)
 					{
-						if (!viewer.RecordSprite(filename, recordingParameter))
-						{
-                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						}
+						recordResult = viewer.RecordSprite(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 2)
 					{
-						if (!viewer.RecordAsGifAnimation(filename, recordingParameter))
-						{
-                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						}
+						recordResult = viewer.RecordAsGifAnimation(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 3)
 					{
-						if (!viewer.RecordAsAVI(filename, recordingParameter))
-						{
-                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						}
+						recordResult = viewer.RecordAsAVI(filename, recordingParameter);
+					}
+
+					if (recordResult)
+					{
+						Manager.NativeManager.OpenPopup("Progress in Recording");
+					}
+					else
+					{
+						swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 					}
 
 					System.IO.Directory.SetCurrentDirectory(tempDirectory);
 
 				}
+			}
+
+			Manager.NativeManager.SetNextWindowSize(320, 0, swig.Cond.Always);
+
+			if (Manager.NativeManager.BeginPopupModal("Progress in Recording"))
+			{
+				var viewer = Manager.Viewer;
+				float progress;
+
+				viewer.StepRecord(4);
+
+				if (viewer.IsRecordCompleted())
+	{
+					viewer.EndRecord();
+					progress = 1.0f;
+					Manager.NativeManager.CloseCurrentPopup();
+				}
+				else
+				{
+					progress = viewer.GetRecordingProgress();
+				}
+
+				Manager.NativeManager.PushItemWidth(-1);
+				
+				Manager.NativeManager.ProgressBar(progress, new swig.Vec2(-1, 0));
+
+				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.EndPopup();
 			}
 		}
 	}

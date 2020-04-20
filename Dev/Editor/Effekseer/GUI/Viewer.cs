@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -127,7 +127,7 @@ namespace Effekseer.GUI
             recordingParameter.SetPath(dir + "/" + fileWExt);
             recordingParameter.SetExt(ext);
             recordingParameter.RecordingMode = swig.RecordingModeType.Sprite;
-            return native.Record(recordingParameter);
+            return native.BeginRecord(recordingParameter);
 		}
 
 		public bool RecordSpriteSheet(string path, swig.RecordingParameter recordingParameter)
@@ -139,7 +139,7 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.SpriteSheet;
-            return native.Record(recordingParameter);
+            return native.BeginRecord(recordingParameter);
 		}
 
 		public bool RecordAsGifAnimation(string path, swig.RecordingParameter recordingParameter)
@@ -151,7 +151,7 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.Gif;
-            return native.Record(recordingParameter);
+            return native.BeginRecord(recordingParameter);
         }
 
 		public bool RecordAsAVI(string path, swig.RecordingParameter recordingParameter)
@@ -163,9 +163,28 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.Avi;
-            return native.Record(recordingParameter);
+            return native.BeginRecord(recordingParameter);
         }
 
+		public bool EndRecord()
+		{
+			return native.EndRecord();
+		}
+
+		public bool StepRecord(int frames = 1)
+		{
+			return native.StepRecord(frames);
+		}
+
+		public bool IsRecordCompleted()
+		{
+			return native.IsRecordCompleted();
+		}
+	
+		public float GetRecordingProgress()
+		{
+			return native.GetRecordingProgress();
+		}
 
 		public swig.ViewerParamater GetViewerParamater()
 		{
