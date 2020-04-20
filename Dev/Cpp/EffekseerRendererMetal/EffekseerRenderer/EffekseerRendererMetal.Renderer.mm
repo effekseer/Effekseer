@@ -2,7 +2,7 @@
 #include "EffekseerRendererMetal.RendererImplemented.h"
 //#include "EffekseerRendererMetal.MaterialLoader.h"
 #include "EffekseerRendererMetal.VertexBuffer.h"
-#include "EffekseerRendererMetal.IndexBuffer.h"
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.IndexBuffer.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h"
