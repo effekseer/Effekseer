@@ -472,6 +472,8 @@ namespace efk
 
 		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
 
+		void ProgressBar(float fraction, const Vec2& size);
+
 		// Widgets: Combo Box
 		bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id = NULL);
 		void EndCombo(); // only call EndCombo() if BeginCombo() returns true!
