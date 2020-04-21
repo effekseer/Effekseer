@@ -1,4 +1,4 @@
-﻿
+
 
 #include "EffekseerRendererLLGI.Renderer.h"
 #include "EffekseerRendererLLGI.RenderState.h"
@@ -320,7 +320,6 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	// Generate index buffer
 	{
 		GenerateIndexBuffer();
-		m_indexBuffer = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 6, false, false);
 		if (m_indexBuffer == NULL)
 			return false;
 	}
