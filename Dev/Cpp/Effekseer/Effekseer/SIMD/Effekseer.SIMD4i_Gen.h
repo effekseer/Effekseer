@@ -143,20 +143,8 @@ struct alignas(16) SIMD4i
 
 } // namespace Effekseer
 
-#include "Effekseer.SIMD4f.h"
-
 namespace Effekseer
 {
-
-inline SIMD4f SIMD4i::Convert4f() const
-{
-	return SIMD4f((float)vi[0], (float)vi[1], (float)vi[2], (float)vi[3]);
-}
-
-inline SIMD4f SIMD4i::Cast4f() const
-{
-	return SIMD4f(vf[0], vf[1], vf[2], vf[3]);
-}
 
 inline SIMD4i operator+(const SIMD4i& lhs, const SIMD4i& rhs)
 {

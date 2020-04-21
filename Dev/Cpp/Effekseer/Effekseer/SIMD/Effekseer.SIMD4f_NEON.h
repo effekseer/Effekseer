@@ -111,8 +111,6 @@ private:
 
 } // namespace Effekseer
 
-#include "Effekseer.SIMD4i.h"
-
 namespace Effekseer
 {
 
@@ -122,16 +120,6 @@ SIMD4f SIMD4f::Dup()
 	return (LANE < 2) ?
 		vdupq_lane_f32(vget_low_f32(s), LANE) :
 		vdupq_lane_f32(vget_high_f32(s), LANE & 1);
-}
-	
-inline SIMD4i SIMD4f::Convert4i() const
-{
-	return vcvtq_s32_f32(s);
-}
-
-inline SIMD4i SIMD4f::Cast4i() const
-{
-	return vreinterpretq_s32_f32(s);
 }
 
 inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)

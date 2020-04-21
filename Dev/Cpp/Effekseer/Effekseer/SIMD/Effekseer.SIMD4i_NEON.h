@@ -95,20 +95,8 @@ private:
 
 } // namespace Effekseer
 
-#include "Effekseer.SIMD4f.h"
-
 namespace Effekseer
 {
-
-inline SIMD4f SIMD4i::Convert4f() const
-{
-	return vcvtq_f32_s32(s);
-}
-
-inline SIMD4f SIMD4i::Cast4f() const
-{
-	return vreinterpretq_f32_s32(s);
-}
 
 inline SIMD4i operator+(const SIMD4i& lhs, const SIMD4i& rhs)
 {
