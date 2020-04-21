@@ -378,6 +378,12 @@ Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, 
 	return NULL;
 }
 
+int32_t RendererImplemented::GetIndexSpriteCount() const
+{
+	int vsSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
+	return (vsSize / sizeof(Vertex) / 4 + 1);
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -474,7 +480,7 @@ void RendererImplemented::GenerateIndexData()
 		m_indexBuffer->Lock();
 
 		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for( int i = 0; i < m_squareMaxCount; i++ )
+		for (int i = 0; i < GetIndexSpriteCount(); i++)
 		{
 			uint16_t* buf = (uint16_t*) m_indexBuffer->GetBufferDirect(6);
 			buf[0] = (uint16_t) (3 + 4 * i);
@@ -494,7 +500,7 @@ void RendererImplemented::GenerateIndexData()
 		m_indexBufferForWireframe->Lock();
 
 		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for( int i = 0; i < m_squareMaxCount; i++ )
+		for (int i = 0; i < GetIndexSpriteCount(); i++)
 		{
 			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect( 8 );
 			buf[0] = (uint16_t)(0 + 4 * i);
@@ -875,13 +881,13 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	// generate an index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
+		m_indexBuffer = IndexBuffer::Create(this, GetIndexSpriteCount() * 6, false, false);
 		if (m_indexBuffer == nullptr) return;
 	}
 
 	// generate an index buffer for a wireframe
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create( this, m_squareMaxCount * 8, false, false);
+		m_indexBufferForWireframe = IndexBuffer::Create(this, GetIndexSpriteCount() * 8, false, false);
 		if( m_indexBufferForWireframe == nullptr) return;
 	}
 
