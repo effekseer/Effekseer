@@ -211,7 +211,7 @@ void RendererImplemented::GenerateIndexBuffer()
 {
     auto sc = std::max(4000, m_squareMaxCount);
 
-	m_indexBuffer = IndexBuffer::Create(graphicsDevice_, sc * 6, false, false);
+	m_indexBuffer = EffekseerRendererLLGI::IndexBuffer::Create(graphicsDevice_, sc * 6, false, false);
 	if (m_indexBuffer == nullptr)
 		return;
 
