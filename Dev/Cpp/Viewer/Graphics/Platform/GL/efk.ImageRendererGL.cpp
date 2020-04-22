@@ -236,7 +236,16 @@ static const char g_sprite_fs_no_texture_src[] =
 
 			//EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
 			//glBindTexture(GL_TEXTURE_2D, (GLuint)(size_t)sprites[i].TexturePtr);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+
+			renderer->SetIndexBuffer(renderer->GetIndexBuffer());
+
+			GLsizei stride = GL_UNSIGNED_SHORT;
+			if (renderer->GetIndexBuffer()->GetStride() == 4)
+			{
+				stride = GL_UNSIGNED_INT;
+			}
+
+			glDrawElements(GL_TRIANGLES, 6, stride, NULL);
 
 			renderer->EndShader(shader_);
 			renderer->SetVertexArray(nullptr);

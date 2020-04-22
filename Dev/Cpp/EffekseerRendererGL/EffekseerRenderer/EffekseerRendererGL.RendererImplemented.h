@@ -87,6 +87,10 @@ private:
 
 	VertexArray*	m_currentVertexArray;
 
+	int32_t indexBufferStride_ = 2;
+	
+	int32_t indexBufferCurrentStride_ = 0;
+
 	//! because gleDrawElements has only index offset
 	int32_t GetIndexSpriteCount() const;
 
@@ -233,6 +237,9 @@ public:
 
 private:
 	void GenerateIndexData();
+
+	template <typename T>
+	void GenerateIndexDataStride();
 };
 
 //----------------------------------------------------------------------------------

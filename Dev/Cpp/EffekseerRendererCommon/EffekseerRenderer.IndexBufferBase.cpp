@@ -33,9 +33,8 @@ IndexBufferBase::~IndexBufferBase()
 //-----------------------------------------------------------------------------------
 void IndexBufferBase::Push( const void* buffer, int count )
 {
-	assert( m_isLock );
-
-	memcpy( GetBufferDirect( count ), buffer, count * sizeof(uint16_t) );
+	assert(m_isLock);
+	memcpy(GetBufferDirect(count), buffer, count * stride_);
 }
 
 //-----------------------------------------------------------------------------------
@@ -64,7 +63,7 @@ void* IndexBufferBase::GetBufferDirect( int count )
 
 	uint8_t* pBuffer = NULL;
 
-	pBuffer = (uint8_t*)m_resource + ( m_indexCount * sizeof(uint16_t) );
+	pBuffer = (uint8_t*)m_resource + (m_indexCount * stride_);
 	m_indexCount += count;
 
 	return pBuffer;

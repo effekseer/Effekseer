@@ -280,8 +280,12 @@ bool Initialize(OpenGLDeviceType deviceType)
 	{
 		g_isSupportedVertexArray = true;
 		g_isSurrpotedBufferRange = true;
+	}
+	if (deviceType == OpenGLDeviceType::OpenGL3)
+	{
 		g_isSurrpotedMapBuffer = true;
 	}
+
 #endif
 
 	g_isInitialized = true;
@@ -663,6 +667,8 @@ void* glMapBuffer(GLenum target, GLenum access)
 	return g_glMapBuffer(target, access);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 	return g_glMapBufferOES(target, access);
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+	return nullptr;
 #else
 	return ::glMapBuffer(target, access);
 #endif

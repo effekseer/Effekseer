@@ -223,7 +223,13 @@ void main() {
 			GLCheckError();
 		}
 		
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+		GLsizei stride = GL_UNSIGNED_SHORT;
+		if (renderer->GetIndexBuffer()->GetStride() == 4)
+		{
+			stride = GL_UNSIGNED_INT;
+		}
+
+		glDrawElements(GL_TRIANGLES, 6, stride, nullptr);
 		GLCheckError();
 
 		renderer->EndShader(shader);

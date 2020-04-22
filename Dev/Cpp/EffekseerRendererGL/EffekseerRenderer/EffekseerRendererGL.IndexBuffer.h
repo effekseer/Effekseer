@@ -22,13 +22,13 @@ class IndexBuffer
 {
 private:
 	GLuint					m_buffer;
-
-	IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, bool hasRefCount);
+	
+	IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount);
+	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount);
 
 	GLuint GetInterface() { return m_buffer; }
 
@@ -41,6 +41,8 @@ public:
 	void Unlock() override;
 
 	bool IsValid();
+
+	int32_t GetStride() const { return stride_; }
 };
 
 //-----------------------------------------------------------------------------------

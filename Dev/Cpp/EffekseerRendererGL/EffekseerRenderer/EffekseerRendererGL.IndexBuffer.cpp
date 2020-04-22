@@ -13,10 +13,13 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, bool hasRefCount)
-	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount), IndexBufferBase(maxCount, isDynamic), m_buffer(buffer)
+IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
+	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount)
+	, IndexBufferBase(maxCount, isDynamic)
+	, m_buffer(buffer)
 {
-	m_resource = new uint8_t[m_indexMaxCount * sizeof(uint16_t)];
+	stride_ = stride;
+	m_resource = new uint8_t[m_indexMaxCount * stride_];
 }
 
 //-----------------------------------------------------------------------------------
@@ -31,11 +34,11 @@ IndexBuffer::~IndexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount)
+IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
 {
 	GLuint ib;
 	GLExt::glGenBuffers(1, &ib);
-	return new IndexBuffer(renderer, ib, maxCount, isDynamic, hasRefCount);
+	return new IndexBuffer(renderer, ib, maxCount, isDynamic, stride, hasRefCount);
 }
 
 //-----------------------------------------------------------------------------------
@@ -77,7 +80,7 @@ void IndexBuffer::Unlock()
 	assert( m_isLock );
 
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
-	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * sizeof(uint16_t), m_resource, GL_DYNAMIC_DRAW);
+	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * stride_, m_resource, GL_DYNAMIC_DRAW);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	m_isLock = false;

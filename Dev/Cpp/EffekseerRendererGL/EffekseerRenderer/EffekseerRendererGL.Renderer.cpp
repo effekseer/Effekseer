@@ -474,43 +474,53 @@ void RendererImplemented::OnResetDevice()
 
 void RendererImplemented::GenerateIndexData()
 {
+	if (indexBufferStride_ == 2)
+	{
+		GenerateIndexDataStride<uint16_t>();
+	}
+	else if (indexBufferStride_ == 4)
+	{
+		GenerateIndexDataStride<uint32_t>();
+	}
+}
+
+template <typename T> void RendererImplemented::GenerateIndexDataStride()
+{
 	// generate an index buffer
-	if( m_indexBuffer != NULL )
+	if (m_indexBuffer != nullptr)
 	{
 		m_indexBuffer->Lock();
 
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
 		for (int i = 0; i < GetIndexSpriteCount(); i++)
 		{
-			uint16_t* buf = (uint16_t*) m_indexBuffer->GetBufferDirect(6);
-			buf[0] = (uint16_t) (3 + 4 * i);
-			buf[1] = (uint16_t) (1 + 4 * i);
-			buf[2] = (uint16_t) (0 + 4 * i);
-			buf[3] = (uint16_t) (3 + 4 * i);
-			buf[4] = (uint16_t) (0 + 4 * i);
-			buf[5] = (uint16_t) (2 + 4 * i);
+			T* buf = (T*)m_indexBuffer->GetBufferDirect(6);
+			buf[0] = (T)(3 + 4 * i);
+			buf[1] = (T)(1 + 4 * i);
+			buf[2] = (T)(0 + 4 * i);
+			buf[3] = (T)(3 + 4 * i);
+			buf[4] = (T)(0 + 4 * i);
+			buf[5] = (T)(2 + 4 * i);
 		}
 
 		m_indexBuffer->Unlock();
 	}
 
 	// generate an index buffer for a wireframe
-	if( m_indexBufferForWireframe != NULL )
+	if (m_indexBufferForWireframe != nullptr)
 	{
 		m_indexBufferForWireframe->Lock();
 
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
 		for (int i = 0; i < GetIndexSpriteCount(); i++)
 		{
-			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect( 8 );
-			buf[0] = (uint16_t)(0 + 4 * i);
-			buf[1] = (uint16_t)(1 + 4 * i);
-			buf[2] = (uint16_t)(2 + 4 * i);
-			buf[3] = (uint16_t)(3 + 4 * i);
-			buf[4] = (uint16_t)(0 + 4 * i);
-			buf[5] = (uint16_t)(2 + 4 * i);
-			buf[6] = (uint16_t)(1 + 4 * i);
-			buf[7] = (uint16_t)(3 + 4 * i);
+			T* buf = (T*)m_indexBufferForWireframe->GetBufferDirect(8);
+			buf[0] = (T)(0 + 4 * i);
+			buf[1] = (T)(1 + 4 * i);
+			buf[2] = (T)(2 + 4 * i);
+			buf[3] = (T)(3 + 4 * i);
+			buf[4] = (T)(0 + 4 * i);
+			buf[5] = (T)(2 + 4 * i);
+			buf[6] = (T)(1 + 4 * i);
+			buf[7] = (T)(3 + 4 * i);
 		}
 
 		m_indexBufferForWireframe->Unlock();
@@ -534,7 +544,12 @@ bool RendererImplemented::Initialize()
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
 
-	SetSquareMaxCount( m_squareMaxCount );
+	if (GetIndexSpriteCount() * 4 > 65536)
+	{
+		indexBufferStride_ = 4;
+	}
+
+	SetSquareMaxCount(m_squareMaxCount);
 
 	m_renderState = new RenderState( this );
 
@@ -881,13 +896,13 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	// generate an index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create(this, GetIndexSpriteCount() * 6, false, false);
+		m_indexBuffer = IndexBuffer::Create(this, GetIndexSpriteCount() * 6, false, indexBufferStride_, false);
 		if (m_indexBuffer == nullptr) return;
 	}
 
 	// generate an index buffer for a wireframe
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create(this, GetIndexSpriteCount() * 8, false, false);
+		m_indexBufferForWireframe = IndexBuffer::Create(this, GetIndexSpriteCount() * 8, false, indexBufferStride_, false);
 		if( m_indexBufferForWireframe == nullptr) return;
 	}
 
@@ -1028,6 +1043,7 @@ void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetIndexBuffer() == nullptr)
 	{
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
+		indexBufferCurrentStride_ = indexBuffer->GetStride();
 	}
 }
 
@@ -1039,6 +1055,7 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetIndexBuffer() == nullptr)
 	{
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		indexBufferCurrentStride_ = 4;
 	}
 }
 
@@ -1076,13 +1093,19 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	impl->drawcallCount++;
 	impl->drawvertexCount += spriteCount * 4;
 
+	GLsizei stride = GL_UNSIGNED_SHORT;
+	if (indexBufferCurrentStride_ == 4)
+	{
+		stride = GL_UNSIGNED_INT;
+	}
+
 	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
-		glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, (void*) (vertexOffset / 4 * 6 * sizeof(GLushort)));
+		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, (void*)(vertexOffset / 4 * 6 * indexBufferCurrentStride_));
 	}
 	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		glDrawElements(GL_LINES, spriteCount * 8, GL_UNSIGNED_SHORT, (void*) (vertexOffset / 4 * 8 * sizeof(GLushort)));
+		glDrawElements(GL_LINES, spriteCount * 8, stride, (void*)(vertexOffset / 4 * 8 * indexBufferCurrentStride_));
 	}
 	
 	GLCheckError();
