@@ -3,44 +3,6 @@ trigger:
 - master
 
 jobs:
-  - job: Windows
-    pool:
-      vmImage: 'vs2017-win2016'
-    steps:
-      - task: Bash@3
-        inputs:
-          targetType: 'inline'
-          script: |
-            git submodule update --init
-            git lfs install
-            git lfs pull
-            python build.py
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: 'dev/release'
-          ArtifactName: 'Windows'
-          publishLocation: 'Container'
-
-      - task: BatchScript@1
-        inputs:
-          filename: 'release_runtime.bat'
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: 'EffekseerRuntime150'
-          ArtifactName: 'EffekseerRuntime151b'
-          publishLocation: 'Container'
-
-      - task: BatchScript@1
-        inputs:
-          filename: 'release_tool.bat'
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: 'Effekseer150Win'
-          ArtifactName: 'Effekseer151bWin'
-          publishLocation: 'Container'
-
   - job: Windows_x86
     pool:
       vmImage: 'vs2017-win2016'

@@ -1,0 +1,42 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+
+  windows:
+    name: windows Build
+    runs-on: vs2017-win2016
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+         git submodule update --init
+         git lfs install
+         git lfs pull
+        
+      - name: Build
+        run: python build.py
+        shell: cmd
+
+      - name: Release Runtime
+        run: release_runtime.bat
+        shell: cmd
+
+      - name: Upload Runtime
+        uses: actions/upload-artifact@v1
+        with:
+          name: EffekseerRuntime151b
+          path: EffekseerRuntime150
+
+      - name: Release Tool
+        run: release_tool.bat
+        shell: cmd
+
+      - name: Upload Tool
+        uses: actions/upload-artifact@v1
+        with:
+          name: Effekseer151bWin
+          path: Effekseer150Win
