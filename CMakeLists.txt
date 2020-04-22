@@ -249,6 +249,9 @@ if (BUILD_VIEWER)
     )
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(FilterFolder)
+
 add_subdirectory(Dev)
 
 if(BUILD_EXAMPLES)

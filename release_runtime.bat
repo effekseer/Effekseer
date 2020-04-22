@@ -3,6 +3,8 @@ SET RDIR_R=EffekseerRuntime150
 rmdir %RDIR_R%
 mkdir %RDIR_R%
 
+mkdir %RDIR_R%\cmake\
+
 echo Copy runtime
 mkdir %RDIR_R%\Examples\
 
@@ -66,6 +68,8 @@ echo Samples for runtimes
 robocopy Examples %RDIR_R%\Examples\ *.h *.cpp *.mm *.txt *.fx *.efk *.wav *.png /S
 
 copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
+
+copy cmake\FilterFolder.cmake %RDIR_R%\cmake\.
 
 echo Sample
 
