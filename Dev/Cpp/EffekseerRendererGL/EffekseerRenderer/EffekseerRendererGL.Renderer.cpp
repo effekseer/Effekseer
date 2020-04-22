@@ -493,13 +493,14 @@ template <typename T> void RendererImplemented::GenerateIndexDataStride()
 
 		for (int i = 0; i < GetIndexSpriteCount(); i++)
 		{
-			T* buf = (T*)m_indexBuffer->GetBufferDirect(6);
+			std::array<T, 6> buf;
 			buf[0] = (T)(3 + 4 * i);
 			buf[1] = (T)(1 + 4 * i);
 			buf[2] = (T)(0 + 4 * i);
 			buf[3] = (T)(3 + 4 * i);
 			buf[4] = (T)(0 + 4 * i);
 			buf[5] = (T)(2 + 4 * i);
+			memcpy(m_indexBuffer->GetBufferDirect(6), buf.data(), sizeof(T) * 6);
 		}
 
 		m_indexBuffer->Unlock();
@@ -512,7 +513,7 @@ template <typename T> void RendererImplemented::GenerateIndexDataStride()
 
 		for (int i = 0; i < GetIndexSpriteCount(); i++)
 		{
-			T* buf = (T*)m_indexBufferForWireframe->GetBufferDirect(8);
+			std::array<T, 8> buf;
 			buf[0] = (T)(0 + 4 * i);
 			buf[1] = (T)(1 + 4 * i);
 			buf[2] = (T)(2 + 4 * i);
@@ -521,6 +522,7 @@ template <typename T> void RendererImplemented::GenerateIndexDataStride()
 			buf[5] = (T)(2 + 4 * i);
 			buf[6] = (T)(1 + 4 * i);
 			buf[7] = (T)(3 + 4 * i);
+			memcpy(m_indexBufferForWireframe->GetBufferDirect(8), buf.data(), sizeof(T) * 8);
 		}
 
 		m_indexBufferForWireframe->Unlock();
@@ -1045,6 +1047,10 @@ void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
 		indexBufferCurrentStride_ = indexBuffer->GetStride();
 	}
+	else
+	{
+		indexBufferCurrentStride_ = m_currentVertexArray->GetIndexBuffer()->GetStride();
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -1056,6 +1062,10 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 	{
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		indexBufferCurrentStride_ = 4;
+	}
+	else
+	{
+		indexBufferCurrentStride_ = m_currentVertexArray->GetIndexBuffer()->GetStride();
 	}
 }
 
