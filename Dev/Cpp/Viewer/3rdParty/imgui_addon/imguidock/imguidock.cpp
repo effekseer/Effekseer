@@ -820,8 +820,9 @@ struct DockContext
     {
         if (!dock.next_tab) return;
 
+        float dpiScale = ImGui::GetWindowDpiScale();
         ImDrawList* draw_list = GetWindowDrawList();
-        if (InvisibleButton("list", ImVec2(16, 16)))
+        if (InvisibleButton("list", ImVec2(16, 16) * dpiScale))
         {
             OpenPopup("tab_list_popup");
         }
@@ -847,12 +848,12 @@ struct DockContext
         ImVec2 center = (min + max) * 0.5f;
         ImU32 text_color = GetColorU32(ImGuiCol_Text);
         ImU32 color_active = GetColorU32(ImGuiCol_FrameBgActive);
-        draw_list->AddRectFilled(ImVec2(center.x - 4, min.y + 3),
-                                 ImVec2(center.x + 4, min.y + 5),
+        draw_list->AddRectFilled(ImVec2(center.x - 4 * dpiScale, min.y + 3 * dpiScale),
+                                 ImVec2(center.x + 4 * dpiScale, min.y + 5 * dpiScale),
                                  hovered ? color_active : text_color);
-        draw_list->AddTriangleFilled(ImVec2(center.x - 4, min.y + 7),
-                                     ImVec2(center.x + 4, min.y + 7),
-                                     ImVec2(center.x, min.y + 12),
+        draw_list->AddTriangleFilled(ImVec2(center.x - 4 * dpiScale, min.y + 7 * dpiScale),
+                                     ImVec2(center.x + 4 * dpiScale, min.y + 7 * dpiScale),
+                                     ImVec2(center.x, min.y + 12 * dpiScale),
                                      hovered ? color_active : text_color);
     }
 
@@ -972,20 +973,22 @@ struct DockContext
 		}
 
 		if (dock_tab->active && close_button)	{
-		    size.x += 16 + GetStyle().ItemSpacing.x;
+            float dpiScale = ImGui::GetWindowDpiScale();
+		    size.x += 8 * dpiScale + GetStyle().ItemSpacing.x;
 		    SameLine();
-		    tab_closed = InvisibleButton("close", ImVec2(16, size.y));
+            SetCursorPosX(GetCursorPosX() - 6 * dpiScale);
+		    tab_closed = InvisibleButton("close", ImVec2(16, 16) * dpiScale);
 		    ImVec2 center = (GetItemRectMin() + GetItemRectMax()) * 0.5f;
 
 			
 			if (IsItemHovered()) {
-				draw_list->AddRectFilled(center + ImVec2(-6.0f, -6.0f), center + ImVec2(7.0f, 7.0f), button_hovered);
+				draw_list->AddRectFilled(center + ImVec2(-6.0f, -6.0f) * dpiScale, center + ImVec2(7.0f, 7.0f) * dpiScale, button_hovered);
 			}
 			
 		    draw_list->AddLine(
-				center + ImVec2(-3.5f, -3.5f), center + ImVec2(3.5f, 3.5f), text_color);
+				center + ImVec2(-3.5f, -3.5f) * dpiScale, center + ImVec2(3.5f, 3.5f) * dpiScale, text_color);
 		    draw_list->AddLine(
-				center + ImVec2(3.5f, -3.5f), center + ImVec2(-3.5f, 3.5f), text_color);
+				center + ImVec2(3.5f, -3.5f) * dpiScale, center + ImVec2(-3.5f, 3.5f) * dpiScale, text_color);
 		}
 
                 dock_tab = dock_tab->next_tab;
