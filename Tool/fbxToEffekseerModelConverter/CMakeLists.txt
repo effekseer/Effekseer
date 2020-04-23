@@ -32,6 +32,9 @@ if (MSVC)
 endif()
 
 
+message(STATUS "FBX_INCLUDE $ENV{FBX_INCLUDE}")
+message(STATUS "FBX_LIB $ENV{FBX_LIB}")
+
 include_directories($ENV{FBX_INCLUDE})
 
 link_directories($ENV{FBX_LIB})
