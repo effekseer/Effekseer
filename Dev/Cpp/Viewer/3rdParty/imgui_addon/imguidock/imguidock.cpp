@@ -327,7 +327,7 @@ struct DockContext
     }
 
 
-    void splits()
+    void splits(float border)
     {
         if (GetFrameCount() == m_last_frame) return;
         m_last_frame = GetFrameCount();
@@ -366,8 +366,8 @@ struct DockContext
             if (dock.isHorizontal())
             {
                 cursor = ImGuiMouseCursor_ResizeEW;
-                SetCursorScreenPos(ImVec2(dock.pos.x + size0.x, dock.pos.y));
-                InvisibleButton("split", ImVec2(3, dock.size.y));
+                SetCursorScreenPos(ImVec2(dock.pos.x + size0.x - border * 0.5f, dock.pos.y + border * 0.5f));
+                InvisibleButton("split", ImVec2(border, dock.size.y - border));
                 if (dock.status == Status_Dragged) dsize.x = io.MouseDelta.x;
                 dsize.x = -ImMin(-dsize.x, dock.children[0]->size.x - min_size0.x);
                 dsize.x = ImMin(dsize.x, dock.children[1]->size.x - min_size1.x);
@@ -383,8 +383,8 @@ struct DockContext
             else
             {
                 cursor = ImGuiMouseCursor_ResizeNS;
-                SetCursorScreenPos(ImVec2(dock.pos.x, dock.pos.y + size0.y));
-                InvisibleButton("split", ImVec2(dock.size.x, 3));
+                SetCursorScreenPos(ImVec2(dock.pos.x + border * 0.5f, dock.pos.y + size0.y - border * 0.5f));
+                InvisibleButton("split", ImVec2(dock.size.x - border, border));
                 if (dock.status == Status_Dragged) dsize.y = io.MouseDelta.y;
                 dsize.y = -ImMin(-dsize.y, dock.children[0]->size.y - min_size0.y);
                 dsize.y = ImMin(dsize.y, dock.children[1]->size.y - min_size1.y);
@@ -400,7 +400,7 @@ struct DockContext
             dock.children[0]->setPosSize(pos0, size0);
             dock.children[1]->setPosSize(pos1, size1);
 
-            if (IsItemHovered()) {
+            if (IsItemHovered() || dock.status == Status_Dragged) {
                 SetMouseCursor(cursor);
                 SetHoveredID(GImGui->CurrentWindow->DC.LastItemId);
             }
@@ -410,8 +410,8 @@ struct DockContext
                 dock.status = Status_Dragged;
             }
 
-            draw_list->AddRectFilled(
-                        GetItemRectMin(), GetItemRectMax(), IsItemHovered() ? color_hovered : color);
+            draw_list->AddRectFilled(GetItemRectMin(), GetItemRectMax(), 
+                (IsItemHovered() || dock.status == Status_Dragged) ? color_hovered : color);
             PopID();
         }
     }
@@ -1260,6 +1260,8 @@ struct DockContext
     {
 		ImGuiIO& io = ImGui::GetIO();
 
+        float border = ceil(2 * GetWindowDpiScale());
+
 	IM_ASSERT(!m_is_begin_open);
 	m_is_begin_open = true;
 	Dock& dock = getDock(label, !opened || *opened, default_size);
@@ -1400,7 +1402,7 @@ struct DockContext
 
         m_end_action = EndAction_EndChild;
         
-        splits();
+        splits(border);
 
 	PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
 	PushStyleColor(ImGuiCol_BorderShadow, ImVec4(0, 0, 0, 0));
@@ -1418,8 +1420,8 @@ struct DockContext
         }
     }
 
-    ImVec2 pos = dock.pos;
-    ImVec2 size = dock.size;
+    ImVec2 pos = dock.pos + ImVec2(border * 0.5f, border * 0.5f);
+    ImVec2 size = dock.size - ImVec2(border, border);
 
 	// IconTab
 	{
