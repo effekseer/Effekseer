@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,11 +23,9 @@ namespace Effekseer.GUI.Dock
 		{
 			if (opened)
 			{
-				Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(0, 0));
 				//if (Manager.NativeManager.Begin(Label + id, ref opened))
-				if (Manager.NativeManager.BeginFullscreen(Label + id))
+				if(Manager.NativeManager.BeginFullscreen(Label + id))
 				{
-					Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(5 * Manager.DpiScale, 5 * Manager.DpiScale));
 					Manager.NativeManager.BeginDockspace();
 
 					Controls.Lock();
@@ -50,11 +48,9 @@ namespace Effekseer.GUI.Dock
 					
 
 					Manager.NativeManager.EndDockspace();
-					Manager.NativeManager.PopStyleVar();
 				}
 
 				Manager.NativeManager.End();
-				Manager.NativeManager.PopStyleVar();
 			}
 			else
 			{

@@ -1893,11 +1893,9 @@ namespace efk
 
 	bool GUIManager::BeginFullscreen(const char16_t* label)
 	{
-		float offset = 21 * ImGui::GetWindowDpiScale();
-
 		ImVec2 windowSize;
 		windowSize.x = ImGui::GetIO().DisplaySize.x;
-		windowSize.y = ImGui::GetIO().DisplaySize.y - offset;
+		windowSize.y = ImGui::GetIO().DisplaySize.y - 25;
 
 		ImGui::SetNextWindowSize(windowSize);
 		
@@ -1905,12 +1903,12 @@ namespace efk
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			auto pos = ImGui::GetMainViewport()->Pos;
-			pos.y += offset;
+			pos.y += 25;
 			ImGui::SetNextWindowPos(pos);
 		}
 		else
 		{
-			ImGui::SetNextWindowPos(ImVec2(0, offset));
+			ImGui::SetNextWindowPos(ImVec2(0, 25));
 		}
 		
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
