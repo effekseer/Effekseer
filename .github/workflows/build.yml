@@ -28,7 +28,7 @@ jobs:
       - name: Upload Runtime
         uses: actions/upload-artifact@v1
         with:
-          name: EffekseerRuntime151b
+          name: EffekseerRuntime151c
           path: EffekseerRuntime150
 
       - name: Release Tool
@@ -38,5 +38,5 @@ jobs:
       - name: Upload Tool
         uses: actions/upload-artifact@v1
         with:
-          name: Effekseer151bWin
+          name: Effekseer151cSWin
           path: Effekseer150Win
