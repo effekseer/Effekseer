@@ -7741,31 +7741,11 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ResetNextParentDock
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SaveDock___(void * jarg1, void * jarg2) {
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  (arg1)->SaveDock((char16_t const *)arg2);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_LoadDock___(void * jarg1, void * jarg2) {
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  (arg1)->LoadDock((char16_t const *)arg2);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ShutdownDock___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetDefaultDockLayout___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  (arg1)->ShutdownDock();
+  (arg1)->SetDefaultDockLayout();
 }
 
 

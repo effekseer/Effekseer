@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -316,7 +316,7 @@ namespace Effekseer.GUI
 			// TODO : refactor
 			if (LoadWindowConfig(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
 			{
-				Manager.NativeManager.LoadDock(System.IO.Path.Combine(appDirectory, "config.Dock.config"));
+				//Manager.NativeManager.LoadDock(System.IO.Path.Combine(appDirectory, "config.Dock.config"));
 			}
 			else
 			{
@@ -417,7 +417,6 @@ namespace Effekseer.GUI
 			var entryDirectory = GetEntryDirectory();
 			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
-			Manager.NativeManager.SaveDock(entryDirectory + "/config.Dock.config");
 			SaveWindowConfig(entryDirectory + "/config.Dock.xml");
 
 			foreach (var p in panels)
@@ -647,8 +646,6 @@ namespace Effekseer.GUI
 				panels[i]?.Close();
 			}
 			resetCount = -5;
-
-			NativeManager.ShutdownDock();
 		}
 
 		static void ResetWindowActually()
@@ -672,6 +669,7 @@ namespace Effekseer.GUI
 			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Tab, 1.0f, false);
 			SelectOrShowWindow(typeof(Dock.RendererValues), null, swig.DockSlot.Tab, 1.0f, false);
 
+			NativeManager.SetDefaultDockLayout();
 			basicPanel.InitialDockActive = 2;
 		}
 
