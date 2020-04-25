@@ -1187,8 +1187,6 @@ void ManagerImplemented::BeginUpdate()
 	}
 
 	m_sequenceNumber++;
-
-	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 }
 
 void ManagerImplemented::EndUpdate()
@@ -1211,6 +1209,7 @@ void ManagerImplemented::EndUpdate()
 		}
 		chunks.erase(last, chunks.end());
 	}
+	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
 	m_renderingMutex.unlock();
 	m_isLockedWithRenderingMutex = false;
