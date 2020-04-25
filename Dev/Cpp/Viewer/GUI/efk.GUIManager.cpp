@@ -29,7 +29,7 @@ namespace ImGui
 		return ImVec2(lhs.x * rhs, lhs.y * rhs);
 	}
 
-	bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture, const char* label, const char* label_end)
+/*	bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture, const char* label, const char* label_end)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 		if (window->SkipItems)
@@ -238,7 +238,7 @@ namespace ImGui
 			return false;
 
 		return TreeNodeBehavior(window->GetID(label), flags, v, user_texture, label, NULL);
-	}
+	}*/
 
 	bool ImageButton_(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col)
 	{
@@ -850,6 +850,7 @@ namespace efk
 #endif
 		// Enable keyboard navication
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		ImGui::StyleColorsDark();
 		ResetGUIStyle();
@@ -1474,7 +1475,7 @@ namespace efk
 		return ImGui::BeginCombo(
 			utf8str<256>(label),
 			utf8str<256>(preview_value),
-			(int)flags, ToImTextureID(user_texture_id));
+			(int)flags/*, ToImTextureID(user_texture_id)*/);
 	}
 
 	void GUIManager::EndCombo()
@@ -1663,12 +1664,12 @@ namespace efk
 
 	bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id, TreeNodeFlags flags)
 	{
-		return ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags, v, ToImTextureID(user_texture_id));
+		return *v = ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags/*, v, ToImTextureID(user_texture_id)*/);
 	}
 
 	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)
 	{
-		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0), ToImTextureID(user_texture_id));
+		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0)/*, ToImTextureID(user_texture_id)*/);
 	}
 
 	void GUIManager::SetTooltip(const char16_t* text)
@@ -1719,12 +1720,12 @@ namespace efk
 
 	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled, ImageResource* icon)
 	{
-		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled, ToImTextureID(icon));
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled/*, ToImTextureID(icon)*/);
 	}
 
 	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled, ImageResource* icon)
 	{
-		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled, ToImTextureID(icon));
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled/*, ToImTextureID(icon)*/);
 	}
 
 	void GUIManager::OpenPopup(const char* str_id)
@@ -1912,80 +1913,120 @@ namespace efk
 		}
 		
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-		const float oldWindowRounding = ImGui::GetStyle().WindowRounding; ImGui::GetStyle().WindowRounding = 0;
-		const bool visible = ImGui::Begin(utf8str<256>(label), NULL, ImVec2(0, 0), 1.0f, flags);
-		ImGui::GetStyle().WindowRounding = oldWindowRounding;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
+		const bool visible = ImGui::Begin(utf8str<256>(label), NULL, flags);
+		ImGui::PopStyleVar(2);
+
+		imguiWindowID = ImGui::GetID(utf8str<256>(label));
+		ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags_NoCloseButton;
+		ImGui::DockSpace(imguiWindowID, ImVec2(0.0f, 0.0f), dockFlags);
+
+		if (!ImGui::DockBuilderGetNode(imguiWindowID))
+		{
+			SetDefaultDockLayout();
+		}
+
 		return visible;
 	}
 
 	void GUIManager::SetNextDock(DockSlot slot)
 	{
-		ImGui::SetNextDock((ImGuiDockSlot)slot);
+		//ImGui::SetNextDock((ImGuiDockSlot)slot);
 	}
 
 	void GUIManager::BeginDockspace()
 	{
-		ImGui::BeginDockspace();
+		//ImGui::BeginDockspace();
 	}
 
 	void GUIManager::EndDockspace()
 	{
-		ImGui::EndDockspace();
+		//ImGui::EndDockspace();
 	}
 
 	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size)
 	{
-		return ImGui::BeginDock(utf8str<256>(label), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
+		//return ImGui::BeginDock(utf8str<256>(label), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
+		ImGui::SetNextWindowSize(ImVec2(default_size.X, default_size.Y), ImGuiCond_Once);
+		
+		utf8str<256> utf8label(label);
+		ImGuiWindow* window = ImGui::FindWindowByName(utf8label);
+		if (!window || window->DockIsActive || window->DockTabIsVisible)
+		{
+			p_open = nullptr;
+		}
+
+		return ImGui::Begin(utf8label, p_open, (ImGuiWindowFlags)extra_flags);
 	}
 
 	void GUIManager::EndDock()
 	{
-		ImGui::EndDock();
+		//ImGui::EndDock();
+		ImGui::End();
 	}
 
 	void GUIManager::SetNextDockRate(float rate)
 	{
-		ImGui::SetNextDockRate(rate);
+		//ImGui::SetNextDockRate(rate);
 	}
 
 	void GUIManager::ResetNextParentDock()
 	{
-		ImGui::ResetNextParentDock();
+		//ImGui::ResetNextParentDock();
 	}
 
-	void GUIManager::SaveDock(const char16_t* path)
+	void GUIManager::SetDefaultDockLayout()
 	{
-		ImGui::SaveDock(utf8str<280>(path));
+		ImGui::DockBuilderRemoveNode(imguiWindowID);
+		ImGui::DockBuilderAddNode(imguiWindowID, ImGuiDockNodeFlags_None);
+		ImGui::DockBuilderSetNodeSize(imguiWindowID, ImGui::GetMainViewport()->Size);
+
+		ImGuiID dockLeftID = 0, dockRightID = 0;
+		ImGui::DockBuilderSplitNode(imguiWindowID, ImGuiDir_Left, 0.65f, &dockLeftID, &dockRightID);
+
+		ImGuiID dockLeftTop = 0, dockLeftBottom = 0;
+		ImGui::DockBuilderSplitNode(dockLeftID, ImGuiDir_Up, 0.85f, &dockLeftTop, &dockLeftBottom);
+
+		ImGuiID dockRightTop = 0, dockRightBottom = 0;
+		ImGui::DockBuilderSplitNode(dockRightID, ImGuiDir_Up, 0.6f, &dockRightTop, &dockRightBottom);
+
+		ImGui::DockBuilderGetNode(dockLeftTop)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar;
+		ImGui::DockBuilderGetNode(dockLeftTop)->LocalFlags |= ImGuiDockNodeFlags_HiddenTabBar;
+		ImGui::DockBuilderGetNode(dockLeftBottom)->LocalFlags |= ImGuiDockNodeFlags_HiddenTabBar;
+
+		ImGui::DockBuilderDockWindow("###Viewer", dockLeftTop);
+		ImGui::DockBuilderDockWindow("###ViewerControls", dockLeftBottom);
+		ImGui::DockBuilderDockWindow("###BasicSettings", dockRightTop);
+		ImGui::DockBuilderDockWindow("###Position", dockRightTop);
+		ImGui::DockBuilderDockWindow("###Rotation", dockRightTop);
+		ImGui::DockBuilderDockWindow("###Scale", dockRightTop);
+		ImGui::DockBuilderDockWindow("###RenderSettings", dockRightTop);
+		ImGui::DockBuilderDockWindow("###BasicRenderSettings", dockRightTop);
+		ImGui::DockBuilderDockWindow("###AttractionForces", dockRightTop);
+		ImGui::DockBuilderDockWindow("###NodeTree", dockRightBottom);
+
+		ImGui::DockBuilderFinish(imguiWindowID);
 	}
 	
-	void GUIManager::LoadDock(const char16_t* path)
-	{
-		ImGui::LoadDock(utf8str<280>(path));
-	}
-
-	void GUIManager::ShutdownDock()
-	{
-		ImGui::ShutdownDock();
-	}
-
 	void GUIManager::SetNextDockIcon(ImageResource* icon, Vec2 iconSize)
 	{
-		ImGui::SetNextDockIcon(ToImTextureID(icon), ImVec2(iconSize.X, iconSize.Y));
+		//ImGui::SetNextDockIcon(ToImTextureID(icon), ImVec2(iconSize.X, iconSize.Y));
 	}
 
 	void GUIManager::SetNextDockTabToolTip(const char16_t* popup)
 	{
-		ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
+		//ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
 	}
 
 	bool GUIManager::GetDockActive()
 	{
-		return ImGui::GetDockActive();
+		return true;//ImGui::GetDockActive();
 	}
 
 	void GUIManager::SetDockActive()
 	{
-		ImGui::SetDockActive();
+		//ImGui::SetDockActive();
 	}
 
 	bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value, float max_value)

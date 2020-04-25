@@ -1285,16 +1285,8 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_ResetNextParentDock(swigCPtr);
   }
 
-  public void SaveDock(string path) {
-    EffekseerNativePINVOKE.GUIManager_SaveDock(swigCPtr, path);
-  }
-
-  public void LoadDock(string path) {
-    EffekseerNativePINVOKE.GUIManager_LoadDock(swigCPtr, path);
-  }
-
-  public void ShutdownDock() {
-    EffekseerNativePINVOKE.GUIManager_ShutdownDock(swigCPtr);
+  public void SetDefaultDockLayout() {
+    EffekseerNativePINVOKE.GUIManager_SetDefaultDockLayout(swigCPtr);
   }
 
   public void SetNextDockIcon(ImageResource icon, Vec2 iconSize) {
