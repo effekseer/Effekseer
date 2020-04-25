@@ -15,6 +15,7 @@
 #endif
 
 //#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
+#include "../3rdParty/imgui_addon/imguidock/imguidock.h"
 
 #include "../../3rdParty/imgui_markdown/imgui_markdown.h"
 #include <EditorCommon/GUI/MainWindow.h>
@@ -339,7 +340,6 @@ namespace efk
 		std::shared_ptr<Effekseer::MainWindow> mainWindow_;
 		efk::DeviceType deviceType;
 		std::u16string	clipboard;
-		ImGuiID	imguiWindowID;
 
 		ImGui::MarkdownConfig markdownConfig_;
 
@@ -587,7 +587,9 @@ namespace efk
 		void EndDock();
 		void SetNextDockRate(float rate);
 		void ResetNextParentDock();
-		void SetDefaultDockLayout();
+		void SaveDock(const char16_t* path);
+		void LoadDock(const char16_t* path);
+		void ShutdownDock();
 		void SetNextDockIcon(ImageResource* icon, Vec2 iconSize);
 		void SetNextDockTabToolTip(const char16_t* popup);
 		bool GetDockActive();
