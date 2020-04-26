@@ -961,38 +961,28 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_1(swigCPtr, is_open);
   }
 
-  public bool TreeNodeEx(string label, bool[] v, ImageResource user_texture_id, TreeNodeFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_2(swigCPtr, label, v, ImageResource.getCPtr(user_texture_id), (int)flags);
-    return ret;
-  }
-
-  public bool TreeNodeEx(string label, bool[] v, ImageResource user_texture_id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_3(swigCPtr, label, v, ImageResource.getCPtr(user_texture_id));
+  public bool TreeNodeEx(string label, bool[] v, TreeNodeFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_2(swigCPtr, label, v, (int)flags);
     return ret;
   }
 
   public bool TreeNodeEx(string label, bool[] v) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_4(swigCPtr, label, v);
-    return ret;
-  }
-
-  public bool Selectable(string label, bool selected, SelectableFlags flags, ImageResource user_texture_id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags, ImageResource.getCPtr(user_texture_id));
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_3(swigCPtr, label, v);
     return ret;
   }
 
   public bool Selectable(string label, bool selected, SelectableFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected, (int)flags);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags);
     return ret;
   }
 
   public bool Selectable(string label, bool selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label, selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected);
     return ret;
   }
 
   public bool Selectable(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_3(swigCPtr, label);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label);
     return ret;
   }
 
@@ -1040,43 +1030,33 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndMenu(swigCPtr);
   }
 
-  public bool MenuItem(string label, string shortcut, bool selected, bool enabled, ImageResource icon) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_0(swigCPtr, label, shortcut, selected, enabled, ImageResource.getCPtr(icon));
-    return ret;
-  }
-
   public bool MenuItem(string label, string shortcut, bool selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_1(swigCPtr, label, shortcut, selected, enabled);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_0(swigCPtr, label, shortcut, selected, enabled);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, bool selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_2(swigCPtr, label, shortcut, selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_1(swigCPtr, label, shortcut, selected);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_3(swigCPtr, label, shortcut);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_2(swigCPtr, label, shortcut);
     return ret;
   }
 
   public bool MenuItem(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label);
-    return ret;
-  }
-
-  public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled, ImageResource icon) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected, enabled, ImageResource.getCPtr(icon));
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_3(swigCPtr, label);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_6(swigCPtr, label, shortcut, ref p_selected, enabled);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label, shortcut, ref p_selected, enabled);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, ref bool p_selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_7(swigCPtr, label, shortcut, ref p_selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected);
     return ret;
   }
 
