@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -293,7 +293,7 @@ namespace Effekseer.GUI.Menu
 					menu.Controls.Add(item);
 				}
 
-				Action<MultiLanguageString, Type, swig.ImageResource> setDockWindow = (s, t, icon) =>
+				Action<MultiLanguageString, Type, string> setDockWindow = (s, t, icon) =>
 				{
 					var item = new MenuItem();
 					item.Label = s;
@@ -309,31 +309,31 @@ namespace Effekseer.GUI.Menu
 					menu.Controls.Add(item);
 				};
 				
-				setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Images.GetIcon("PanelNodeTree"));
-				setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Images.GetIcon("PanelCommon"));
-				setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Images.GetIcon("PanelLocation"));
-				setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Images.GetIcon("PanelLocationAbs"));
-				setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Images.GetIcon("PanelGenerationLocation"));
-				setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Images.GetIcon("PanelRotation"));
-				setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Images.GetIcon("PanelScale"));
-				setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Images.GetIcon("PanelDepth"));
-				setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Images.GetIcon("PanelRendererCommon"));
-				setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Images.GetIcon("PanelRenderer"));
-				setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Images.GetIcon("PanelSound"));
-				setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Images.GetIcon("PanelFCurve"));
-				setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Images.GetIcon("PanelViewer"));
-				setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Images.GetIcon("PanelViewPoint"));
-				setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Images.GetIcon("PanelRecorder"));
-				setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Images.GetIcon("PanelOption"));
-				setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Images.GetIcon("PanelEnvironment"));
-				setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Images.GetIcon("PanelGlobal"));
-				setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Images.GetIcon("PanelBehavior"));
-				setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Images.GetIcon("PanelCulling"));
-                setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
-				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
-				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Images.GetIcon("PanelDynamicParameter"));
+				setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Icons.PanelNodeTree);
+				setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Icons.PanelCommon);
+				setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Icons.PanelLocation);
+				setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Icons.PanelForceField);
+				setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Icons.PanelGeneration);
+				setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Icons.PanelRotation);
+				setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Icons.PanelScale);
+				setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Icons.PanelDepth);
+				setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon);
+				setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Icons.PanelRender);
+				setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Icons.PanelSound);
+				setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Icons.PanelFCurve);
+				setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Icons.PanelViewerCtrl);
+				setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Icons.PanelViewPoint);
+				setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Icons.PanelRecorder);
+				setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Icons.PanelOptions);
+				setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Icons.PanelEnvironment);
+				setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Icons.PanelGlobal);
+				setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Icons.PanelBehavior);
+				setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Icons.PanelCulling);
+                setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Icons.PanelNetwork);
+				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
+				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
 #if __EFFEKSEER_BUILD_VERSION16__
-				setDockWindow(new MultiLanguageString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Images.GetIcon("PanelAlphaCrunch"));
+				setDockWindow(new MultiLanguageString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Icons.PanelAlphaCrunch);
 #endif
 
 				this.Controls.Add(menu);

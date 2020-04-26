@@ -50,9 +50,8 @@ namespace Effekseer.GUI.Dock
 			selectedStorageTargets[0] = Resources.GetString("StorageGlobal");
 			selectedStorageTargets[1] = Resources.GetString("StorageLocal");
 
-			Label = Resources.GetString("Recorder") + "###Recorder";
+			Label = Icons.PanelRecorder + Resources.GetString("Recorder") + "###Recorder";
 
-			Icon = Images.GetIcon("PanelRecorder");
 			TabToolTip = Resources.GetString("Recorder");
 		}
 

@@ -547,7 +547,9 @@ namespace efk
 
 		void SetItemDefaultFocus();
 
+		void ClearAllFonts();
 		void AddFontFromFileTTF(const char16_t* filename, float size_pixels);
+		void AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY);
 
 		// Utils
 		bool BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags = WindowFlags::None);

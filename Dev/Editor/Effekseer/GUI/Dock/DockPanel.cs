@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,8 +21,6 @@ namespace Effekseer.GUI.Dock
 		internal bool InitialDockReset = false;
 
 		internal int InitialDockActive = 0;
-
-		internal swig.ImageResource Icon;
 
 		internal swig.Vec2 IconSize { get
 			{
@@ -58,11 +56,6 @@ namespace Effekseer.GUI.Dock
 						}
 
 						IsInitialized++;
-					}
-
-					if(Icon != null)
-					{
-						Manager.NativeManager.SetNextDockIcon(Icon, IconSize);
 					}
 
 					if(!String.IsNullOrEmpty(TabToolTip))

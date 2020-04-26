@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public LocationAbsValues()
 		{
-			Label = Resources.GetString("AttractionForces") + "###AttractionForces";
+			Label = Icons.PanelForceField + Resources.GetString("AttractionForces") + "###AttractionForces";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationAbsValues));
@@ -27,7 +27,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelLocationAbs");
 			TabToolTip = Resources.GetString("AttractionForces");
 		}
 
