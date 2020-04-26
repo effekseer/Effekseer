@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Dock
 
 		public Dynamic()
 		{
-			Label = Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
+			Label = Icons.PanelDynamicParams + Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
 
 			paramerterListInput = new Component.ParameterList();
 			paramerterList = new Component.ParameterList();
@@ -35,7 +35,6 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			Icon = Images.GetIcon("PanelDynamicParameter");
 			TabToolTip = Resources.GetString("DynamicParameter_Name");
 		}
 

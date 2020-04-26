@@ -409,6 +409,11 @@ namespace Effekseer.GUI
 				ErrorUtils.ThrowFileNotfound();
 			}
 
+			if (!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png")))
+			{
+				ErrorUtils.ThrowFileNotfound();
+			}
+
 			return true;
 		}
 
@@ -480,7 +485,9 @@ namespace Effekseer.GUI
 				var appDirectory = Manager.GetEntryDirectory();
 				var type = Core.Option.Font.Value;
 
-				if(type == Data.FontType.Normal)
+				NativeManager.ClearAllFonts();
+
+				if (type == Data.FontType.Normal)
 				{
 					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Normal")), Core.Option.FontSize.Value);
 				}
@@ -488,6 +495,9 @@ namespace Effekseer.GUI
 				{
 					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Bold")), Core.Option.FontSize.Value);
 				}
+
+				NativeManager.AddFontFromAtlasImage(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png"), 0xec00, 24, 24, 16, 16);
+
 				isFontSizeDirtied = false;
 			}
 

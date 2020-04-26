@@ -6,6 +6,7 @@
 #endif
 
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
+#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 
 #include "efk.GUIManager.h"
 
@@ -583,12 +584,101 @@ namespace ImGui
 
 namespace efk
 {
-	template <size_t size_>
+	void ResizeBicubic(uint32_t* dst, int32_t dstWidth, int32_t dstHeight, int32_t dstStride,
+		const uint32_t* src, int32_t srcWidth, int32_t srcHeight, int32_t srcStride)
+	{
+		float wf = (float)srcWidth / dstWidth;
+		float hf = (float)srcHeight / dstHeight;
+		
+		// bicubic weight function
+		auto weight = [](float d) -> float {
+			const float a = -1.0f;
+			return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1:
+			       d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a) : 0.0f;
+		};
+
+		for (int32_t iy = 0; iy < dstHeight; iy++)
+		{
+			for (int32_t ix = 0; ix < dstWidth; ix++)
+			{
+				float wfx = wf * ix, wfy = hf * iy;
+				int32_t x = (int32_t)wfx;
+				int32_t y = (int32_t)wfy;
+				float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
+
+				for (int32_t jy = y - 1; jy <= y + 2; jy++)
+				{
+					for (int32_t jx = x - 1; jx <= x + 2; jx++)
+					{
+						float w = weight(std::abs(wfx - jx)) * weight(std::abs(wfy - jy));
+						if (w == 0.0f) continue;
+						int32_t sx = (jx >= 0 && jx < srcWidth ) ? jx : x;
+						int32_t sy = (jy >= 0 && jy < srcHeight) ? jy : y;
+						uint32_t sc = src[sx + sy * srcStride];
+						uint32_t alpha = ((sc >> 24) & 0xff);
+						r += ((sc >>  0) & 0xff) * w;
+						g += ((sc >>  8) & 0xff) * w;
+						b += ((sc >> 16) & 0xff) * w;
+						a += alpha * w;
+					}
+				}
+
+				dst[ix + iy * dstStride] = 
+					(std::max(0, std::min(255, (int32_t)r)) <<  0) |
+					(std::max(0, std::min(255, (int32_t)g)) <<  8) |
+					(std::max(0, std::min(255, (int32_t)b)) << 16) |
+					(std::max(0, std::min(255, (int32_t)a)) << 24);
+			}
+		}
+	}
+
+	size_t ConvertUTF16ToUTF8(char* dst, size_t dstSize, const char16_t* src)
+	{
+		const uint16_t* wp = (const uint16_t*)src;
+		uint8_t* cp = (uint8_t*)dst;
+
+		if (dstSize == 0) return 0;
+
+		dstSize -= 3;
+
+		size_t count = 0;
+		for (count = 0; count < dstSize; )
+		{
+			uint16_t wc = *wp++;
+			if (wc == 0)
+			{
+				break;
+			}
+			
+			if ((wc & ~0x7f) == 0)
+			{
+				*cp++ = wc & 0x7f;
+				count += 1;
+			}
+			else if ((wc & ~0x7ff) == 0)
+			{
+				*cp++ = ((wc >>  6) & 0x1f) | 0xc0;
+				*cp++ = ((wc)       & 0x3f) | 0x80;
+				count += 2;
+			}
+			else
+			{
+				*cp++ = ((wc >> 12) &  0xf) | 0xe0;
+				*cp++ = ((wc >>  6) & 0x3f) | 0x80;
+				*cp++ = ((wc)       & 0x3f) | 0x80;
+				count += 3;
+			}
+		}
+		*cp = '\0';
+		return count;
+	}
+
+	template <size_t SIZE>
 	struct utf8str {
-		enum {size = size_};
-		char data[size];
+		enum {size = SIZE};
+		char data[SIZE];
 		utf8str(const char16_t* u16str) {
-			Effekseer::ConvertUtf16ToUtf8((int8_t*)data, size, (const int16_t*)u16str);
+			ConvertUTF16ToUTF8(data, SIZE, u16str);
 		}
 		operator const char*() const {
 			return data;
@@ -1768,19 +1858,87 @@ namespace efk
 		ImGui::SetItemDefaultFocus();
 	}
 
+	void GUIManager::ClearAllFonts()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.Fonts->Clear();
+	}
+
 	void GUIManager::AddFontFromFileTTF(const char16_t* filename, float size_pixels)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		
 		size_pixels = roundf(size_pixels * mainWindow_->GetDPIScale());
-
-		io.Fonts->Clear();
+		
 		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
 
-		markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1);
-		markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
-		markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2);
+		//markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1, nullptr, glyphRangesJapanese);
+		//markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
+		//markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2, nullptr, glyphRangesJapanese);
 
+		io.Fonts->Build();
+	}
+
+	void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		Effekseer::DefaultFileInterface fi;
+		std::unique_ptr<Effekseer::FileReader> reader(fi.OpenRead(filename));
+		if (!reader)
+		{
+			return;
+		}
+
+		std::vector<uint8_t> buffer(reader->GetLength());
+		reader->Read(&buffer[0], buffer.size());
+		reader.reset();
+
+		EffekseerRenderer::PngTextureLoader pngloader;
+		if (!pngloader.Load(&buffer[0], (int32_t)buffer.size(), false)) {
+			return;
+		}
+
+		auto imagePixels = pngloader.GetData();
+		int32_t imageWidth = pngloader.GetWidth();
+		int32_t imageHeight = pngloader.GetHeight();
+
+		ImFontConfig config;
+		config.MergeMode = true;
+		ImFont* font = io.Fonts->AddFontDefault(&config);
+
+		int glyphSizeX = font->FontSize;
+		int glyphSizeY = font->FontSize;
+		float offsetX = 2 * GetDpiScale();
+
+		std::vector<int> rectIDs;
+		for (int32_t i = 0; i < countX * countY; i++)
+		{
+			rectIDs.push_back(io.Fonts->AddCustomRectFontGlyph(font, (ImWchar)baseCode + i, glyphSizeX, glyphSizeY, glyphSizeX + offsetX));
+		}
+
+		io.Fonts->Build();
+
+		uint8_t* texturePixels = nullptr;
+		int textureWidth = 0, textureHeight = 0;
+		io.Fonts->GetTexDataAsRGBA32(&texturePixels, &textureWidth, &textureHeight);
+
+		for (size_t i = 0; i < rectIDs.size(); i++)
+		{
+			if (auto* rect = io.Fonts->GetCustomRectByIndex(rectIDs[i]))
+			{
+				ImU32* rectPixels = (ImU32*)texturePixels + rect->Y * textureWidth + rect->X;
+				const ImU32* atlasPixels = (const ImU32*)&imagePixels[0] + (sizeY * (i / countX) * imageWidth) + (sizeX * (i % countX));
+
+				//for (int posY = 0; posY < sizeY; posY++)
+				//{
+				//	// copy a line
+				//	memcpy(rectPixels + posY * textureWidth, atlasPixels + posY * imageWidth, sizeX * sizeof(ImU32));
+				//}
+				ResizeBicubic(rectPixels, glyphSizeX, glyphSizeY, textureWidth, atlasPixels, sizeX, sizeY, imageWidth);
+			}
+		}
 	}
 
 	bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
@@ -1894,9 +2052,11 @@ namespace efk
 
 	bool GUIManager::BeginFullscreen(const char16_t* label)
 	{
+		float offsetY = ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale();
+		
 		ImVec2 windowSize;
 		windowSize.x = ImGui::GetIO().DisplaySize.x;
-		windowSize.y = ImGui::GetIO().DisplaySize.y - 25;
+		windowSize.y = ImGui::GetIO().DisplaySize.y - offsetY;
 
 		ImGui::SetNextWindowSize(windowSize);
 		
@@ -1904,12 +2064,12 @@ namespace efk
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			auto pos = ImGui::GetMainViewport()->Pos;
-			pos.y += 25;
+			pos.y += offsetY;
 			ImGui::SetNextWindowPos(pos);
 		}
 		else
 		{
-			ImGui::SetNextWindowPos(ImVec2(0, 25));
+			ImGui::SetNextWindowPos(ImVec2(0, offsetY));
 		}
 		
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);

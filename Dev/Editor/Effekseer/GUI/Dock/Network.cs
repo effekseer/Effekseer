@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +10,8 @@ namespace Effekseer.GUI.Dock
 	{
 		public Network()
 		{
-			Label = Resources.GetString("Network") + "###Network";
+			Label = Icons.PanelNetwork + Resources.GetString("Network") + "###Network";
 
-			Icon = Images.GetIcon("PanelNetwork");
 			TabToolTip = Resources.GetString("Network");
 		}
 

@@ -1141,8 +1141,16 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetItemDefaultFocus(swigCPtr);
   }
 
+  public void ClearAllFonts() {
+    EffekseerNativePINVOKE.GUIManager_ClearAllFonts(swigCPtr);
+  }
+
   public void AddFontFromFileTTF(string filename, float size_pixels) {
     EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, filename, size_pixels);
+  }
+
+  public void AddFontFromAtlasImage(string filename, ushort baseCode, int sizeX, int sizeY, int countX, int countY) {
+    EffekseerNativePINVOKE.GUIManager_AddFontFromAtlasImage(swigCPtr, filename, baseCode, sizeX, sizeY, countX, countY);
   }
 
   public bool BeginChildFrame(uint id, Vec2 size, WindowFlags flags) {
