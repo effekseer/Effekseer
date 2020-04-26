@@ -21,6 +21,19 @@ option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer 
 
 option(BUILD_VULKAN "Build vulkan modules" OFF)
 
+if (WIN32 AND NOT FROM_CI)
+    option(BUILD_DX12 "Build DirectX12 modules" ON)
+else()
+    option(BUILD_DX12 "Build DirectX12 modules" OFF)
+endif()
+
+
+if (APPLE)
+    option(BUILD_METAL "Build metal modules" ON)
+else()
+    option(BUILD_METAL "Build metal modules" OFF)
+endif()
+
 if (BUILD_VIEWER)
     set(USE_LIBPNG_LOADER ON)
 endif()
@@ -42,18 +55,6 @@ endif()
 
 if(BUILD_VULKAN)
     set(BUILD_VULKAN_COMPILER ON)
-endif()
-
-if (WIN32 AND NOT FROM_CI)
-    set(BUILD_DX12 ON)
-else()
-    set(BUILD_DX12 OFF)
-endif()
-
-if (APPLE)
-    set(BUILD_METAL ON)
-else()
-    set(BUILD_METAL OFF)
 endif()
 
 if (BUILD_DX12)
@@ -189,6 +190,20 @@ if(BUILD_VIEWER)
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
     endif()
+
+    # OpenSoundMixer
+    ExternalProject_Add(
+        ExternalProject_OpenSoundMixer
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer
+        PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/OpenSoundMixer
+        INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
+        CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
+                        -DCMAKE_DEBUG_POSTFIX=d
+                        -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+    )
+    list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
+    list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
 endif()
     
 if(BUILD_VIEWER OR BUILD_EXAMPLES)
@@ -219,20 +234,6 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES)
 
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
-    
-    # OpenSoundMixer
-    ExternalProject_Add(
-        ExternalProject_OpenSoundMixer
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer
-        PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/OpenSoundMixer
-        INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
-        CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
-                        -DCMAKE_DEBUG_POSTFIX=d
-                        -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
-                        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-    )
-    list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
-    list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
 endif()
 
 # resource
