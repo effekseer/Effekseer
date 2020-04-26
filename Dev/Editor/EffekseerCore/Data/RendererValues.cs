@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -1108,28 +1108,28 @@ namespace Effekseer.Data
 		{
 			[Name(value = "無し", language = Language.Japanese)]
 			[Name(value = "None", language = Language.English)]
-			[Icon(resourceName = "NodeEmpty")]
+			[Icon(code = "\xec20")]
 			None = 0,
 			//Particle = 1,
 			[Name(value = "スプライト", language = Language.Japanese)]
 			[Name(value = "Sprite", language = Language.English)]
-			[Icon(resourceName = "NodeSprite")]
+			[Icon(code = "\xec21")]
 			Sprite = 2,
 			[Name(value = "リボン", language = Language.Japanese)]
 			[Name(value = "Ribbon", language = Language.English)]
-			[Icon(resourceName = "NodeRibbon")]
-            Ribbon = 3,
+			[Icon(code = "\xec22")]
+			Ribbon = 3,
 			[Name(value = "軌跡", language = Language.Japanese)]
 			[Name(value = "Track", language = Language.English)]
-			[Icon(resourceName = "NodeTrack")]
+			[Icon(code = "\xec23")]
 			Track = 6,
             [Name(value = "リング", language = Language.Japanese)]
 			[Name(value = "Ring", language = Language.English)]
-			[Icon(resourceName = "NodeRing")]
-            Ring = 4,
+			[Icon(code = "\xec24")]
+			Ring = 4,
 			[Name(value = "モデル", language = Language.Japanese)]
 			[Name(value = "Model", language = Language.English)]
-			[Icon(resourceName = "NodeModel")]
+			[Icon(code = "\xec25")]
 			Model = 5,
 		}
 

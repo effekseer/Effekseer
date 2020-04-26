@@ -1543,14 +1543,14 @@ namespace efk
 		ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond);
 	}
 
-	bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id, TreeNodeFlags flags)
+	bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags)
 	{
-		return *v = ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags/*, v, ToImTextureID(user_texture_id)*/);
+		return *v = ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags);
 	}
 
-	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)
+	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags)
 	{
-		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0)/*, ToImTextureID(user_texture_id)*/);
+		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0));
 	}
 
 	void GUIManager::SetTooltip(const char16_t* text)
@@ -1599,14 +1599,14 @@ namespace efk
 		ImGui::EndMenu();
 	}
 
-	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled, ImageResource* icon)
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled)
 	{
-		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled/*, ToImTextureID(icon)*/);
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled);
 	}
 
-	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled, ImageResource* icon)
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled)
 	{
-		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled/*, ToImTextureID(icon)*/);
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled);
 	}
 
 	void GUIManager::OpenPopup(const char* str_id)

@@ -516,10 +516,10 @@ namespace efk
 
 		void SetNextTreeNodeOpen(bool is_open, Cond cond = Cond::None);
 
-		bool TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id = NULL, TreeNodeFlags flags = TreeNodeFlags::None);
+		bool TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags = TreeNodeFlags::None);
 
 		// Widgets: Selectable / Lists
-		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None, ImageResource* user_texture_id = NULL);
+		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
 
 		// Tooltips
 		void SetTooltip(const char16_t* text);
@@ -533,8 +533,8 @@ namespace efk
 		void EndMenuBar();
 		bool BeginMenu(const char16_t* label, bool enabled = true);
 		void EndMenu();
-		bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true, ImageResource* icon = NULL);
-		bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true, ImageResource* icon = NULL);
+		bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true);
+		bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true);
 
 		// Popups
 		void OpenPopup(const char* str_id);
