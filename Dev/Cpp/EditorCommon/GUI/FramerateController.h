@@ -9,7 +9,7 @@ namespace Effekseer
 class FramerateController
 {
 	float currentFPS_ = 0.0f;
-	int32_t targetFPS_ = 60.0f;
+	int32_t targetFPS_ = 60;
 	float deltaSecond_ = 0.0f;
 
 	std::chrono::system_clock::time_point previousTime_;

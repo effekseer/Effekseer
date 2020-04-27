@@ -252,7 +252,7 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
-	struct Recorder;
+	class Recorder;
 	std::unique_ptr<Recorder> recorder;
 
 	::Effekseer::Effect* GetEffect();
