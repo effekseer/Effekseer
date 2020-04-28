@@ -1,4 +1,4 @@
-#ifndef __EFFEKSEER_SIMD4F_SSE_H__
+﻿#ifndef __EFFEKSEER_SIMD4F_SSE_H__
 #define __EFFEKSEER_SIMD4F_SSE_H__
 
 #include "Effekseer.SIMDType.h"
@@ -10,13 +10,13 @@ namespace Effekseer
 
 inline float Sqrt(float x)
 {
-	return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
+	_mm_store_ss(&x, _mm_sqrt_ss(_mm_load_ss(&x)));
+	return x;
 }
 inline float Rsqrt(float x)
 {
-	float res = _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
-	res = res * (1.5f - (2.0f * 0.5f * res * res));
-	return res;
+	_mm_store_ss(&x, _mm_rsqrt_ss(_mm_load_ss(&x)));
+	return x;
 }
 
 struct SIMD4i;
