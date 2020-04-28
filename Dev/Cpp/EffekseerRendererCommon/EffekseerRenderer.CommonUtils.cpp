@@ -15,6 +15,8 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 {
 	auto frontDir = frontDirection;
 
+	assert(abs(frontDir.GetLength() - 1.0f) < 0.0001f);
+
 	if (billboardType == ::Effekseer::BillboardType::Billboard || billboardType == ::Effekseer::BillboardType::RotatedBillboard ||
 		billboardType == ::Effekseer::BillboardType::YAxisFixed)
 	{
@@ -28,7 +30,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		{
 			::Effekseer::Vec3f Up(0.0f, 1.0f, 0.0f);
 
-			F = frontDir.Normalize();
+			F = frontDir;
 			R = ::Effekseer::Vec3f::Cross(Up, F).Normalize();
 			U = ::Effekseer::Vec3f::Cross(F, R).Normalize();
 		}
@@ -36,20 +38,20 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		{
 			::Effekseer::Vec3f Up(0.0f, 1.0f, 0.0f);
 
-			F = frontDir.Normalize();
+			F = frontDir;
 			R = ::Effekseer::Vec3f::Cross(Up, F).Normalize();
 			U = ::Effekseer::Vec3f::Cross(F, R).Normalize();
 
-			float c_zx = sqrt(1.0f - r.Y.GetZ() * r.Y.GetZ());
+			
+			float c_zx2 = Effekseer::Vec3f::Dot(r.Y, r.Y) - r.Y.GetZ() * r.Y.GetZ();
+			float c_zx = sqrt(std::max(0.0f, c_zx2));
 			float s_z = 0.0f;
 			float c_z = 0.0f;
 
-			if (fabsf(c_zx) > 0.05f)
+			if (fabsf(c_zx) > 0.001f)
 			{
 				s_z = r.Y.GetX() / c_zx;
-				c_z = sqrt(1.0f - s_z * s_z);
-				if (r.Y.GetY() < 0.0f)
-					c_z = -c_z;
+				c_z = r.Y.GetY() / c_zx;
 			}
 			else
 			{
@@ -66,7 +68,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		else if (billboardType == ::Effekseer::BillboardType::YAxisFixed)
 		{
 			U = ::Effekseer::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
-			F = frontDir.Normalize();
+			F = frontDir;
 			R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
 			F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
 		}
@@ -150,10 +152,10 @@ Effekseer::Vec3f SplineGenerator::GetValue(float t) const
 }
 
 void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-	const ::Effekseer::Vec3f& cameraFront,
-	const ::Effekseer::Vec3f& cameraPos,
-	::Effekseer::NodeRendererDepthParameter* depthParameter,
-	bool isRightHand)
+						  const ::Effekseer::Vec3f& cameraFront,
+						  const ::Effekseer::Vec3f& cameraPos,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+						  bool isRightHand)
 {
 	auto depthOffset = depthParameter->DepthOffset;
 	auto isDepthOffsetScaledWithCamera = depthParameter->IsDepthOffsetScaledWithCamera;
@@ -204,7 +206,7 @@ void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 		auto t = mat.GetTranslation();
 		auto c = t - cameraPos;
 		auto cl = c.GetLength();
-		//auto cl = cameraFront.X * cx + cameraFront.Y * cy * cameraFront.Z * cz;
+		// auto cl = cameraFront.X * cx + cameraFront.Y * cy * cameraFront.Z * cz;
 
 		if (cl != 0.0)
 		{
@@ -284,9 +286,9 @@ void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 }
 
 void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-					  const ::Effekseer::Vec3f& cameraFront,
-					  const ::Effekseer::Vec3f& cameraPos,
-					  ::Effekseer::Vec3f& scaleValues,
+						  const ::Effekseer::Vec3f& cameraFront,
+						  const ::Effekseer::Vec3f& cameraPos,
+						  ::Effekseer::Vec3f& scaleValues,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {

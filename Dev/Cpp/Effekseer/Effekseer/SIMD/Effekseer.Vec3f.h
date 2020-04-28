@@ -43,6 +43,8 @@ struct Vec3f
 	float GetLength() const;
 	bool IsZero(float epsiron = DefaultEpsilon) const;
 	Vec3f Normalize() const;
+	Vec3f NormalizePrecisely() const;
+	Vec3f NormalizeFast() const;
 
 	static Vec3f Load(const void* mem);
 	static void Store(void* mem, const Vec3f& i);
@@ -171,6 +173,10 @@ inline Vec3f Vec3f::Normalize() const
 {
 	return *this * Effekseer::Rsqrt(GetSquaredLength());
 }
+
+inline Vec3f Vec3f::NormalizePrecisely() const { return *this / Effekseer::Sqrt(GetSquaredLength()); }
+
+inline Vec3f Vec3f::NormalizeFast() const { return *this * Effekseer::Rsqrt(GetSquaredLength()); }
 
 } // namespace Effekseer
 
