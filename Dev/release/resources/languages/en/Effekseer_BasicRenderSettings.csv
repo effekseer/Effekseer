@@ -1,0 +1,53 @@
+BRS_Material_Name,"Material"
+BRS_ColorTexture_Name,"Texture"
+BRS_ColorTexture_Desc,"Image that represents color/distortion"
+BRS_Filter_Name,"Filter"
+BRS_Wrap_Name,"Wrap"
+BRS_NormalTexture_Name,"Normal Map"
+BRS_NormalTexture_Desc,"Image representing normal vectors"
+BRS_Filter2_Name,"Filter"
+BRS_Wrap2_Name,"Wrap"
+BRS_DistortionIntensity_Name,"Distortion
+Intensity"
+BRS_AlphaBlend_Name,"Blend"
+BRS_ZWrite_Name,"Depth Set"
+BRS_ZTest_Name,"Depth Test"
+BRS_FadeInType_Name,"Fade-In"
+BRS_FadeOutType_Name,"Fade-Out"
+BRS_UV_Name,"UV"
+BRS_UVTextureReferenceTarget_Name,"Referenced"
+BRS_ColorInheritType_Name,"Inherit Color"
+BRS_ColorInheritType_Desc,"When this instance should copy its parent node's color"
+BRS_CustomData1_Name,"Custom data"
+BRS_CustomData2_Name,"Custom data"
+MaterialType_Default_Name,Default
+MaterialType_BackDistortion_Name,Distortion(Back)
+MaterialType_Lighting_Name,Lighting
+MaterialType_File_Name,File
+FilterType_Nearest_Name,Nearest-Neighbor
+FilterType_Linear_Name,Linear Interpolation
+WrapType_Repeat_Name,Repeat
+WrapType_Clamp_Name,Clamp
+AlphaBlendType_Opacity_Name,Opacity
+AlphaBlendType_Blend_Name,Blend
+AlphaBlendType_Add_Name,Additive
+AlphaBlendType_Sub_Name,Subtract
+AlphaBlendType_Mul_Name,Multiply
+UVTextureReferenceTargetType_None_Name,None(128x128)
+UVTextureReferenceTargetType_Texture1_Name,Image1
+UVTextureReferenceTargetType_Texture2_Name,Image2
+UVTextureReferenceTargetType_Texture3_Name,Image3
+UVTextureReferenceTargetType_Texture4_Name,Image4
+MaterialFileParameter_Path_Name,"Path"
+BRS_FadeIn_Frame_Name,"Frame Count"
+BRS_FadeIn_Frame_Desc,"Duration in frames of the fade-in transition"
+BRS_FadeIn_StartSpeed_Name,"Ease In"
+BRS_FadeIn_StartSpeed_Desc,"Initial speed (of the tween)"
+BRS_FadeIn_EndSpeed_Name,"Ease Out"
+BRS_FadeIn_EndSpeed_Desc,"Final speed (of the tween)"
+BRS_FadeOut_Frame_Name,"Frame Count"
+BRS_FadeOut_Frame_Desc,"Duration in frames of the fade-out transition"
+BRS_FadeOut_StartSpeed_Name,"Ease In"
+BRS_FadeOut_StartSpeed_Desc,"Initial speed (of the tween)"
+BRS_FadeOut_EndSpeed_Name,"Ease Out"
+BRS_FadeOut_EndSpeed_Desc,"Final speed (of the tween)"

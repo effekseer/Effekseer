@@ -7,20 +7,15 @@ namespace Effekseer.Data
 {
 	public enum UVTextureReferenceTargetType
 	{
-		[Name(language = Language.Japanese, value = "なし(128x128)")]
-		[Name(language = Language.English, value = "None(128x128)")]
+		[Key(key= "UVTextureReferenceTargetType_None")]
 		None = 0,
-		[Name(language = Language.Japanese, value = "画像1")]
-		[Name(language = Language.English, value = "Image1")]
+		[Key(key = "UVTextureReferenceTargetType_Texture1")]
 		Texture1 = 1,
-		[Name(language = Language.Japanese, value = "画像2")]
-		[Name(language = Language.English, value = "Image2")]
+		[Key(key = "UVTextureReferenceTargetType_Texture2")]
 		Texture2 = 2,
-		[Name(language = Language.Japanese, value = "画像3")]
-		[Name(language = Language.English, value = "Image3")]
+		[Key(key = "UVTextureReferenceTargetType_Texture3")]
 		Texture3 = 3,
-		[Name(language = Language.Japanese, value = "画像4")]
-		[Name(language = Language.English, value = "Image4")]
+		[Key(key = "UVTextureReferenceTargetType_Texture4")]
 		Texture4 = 4,
 	}
 
@@ -160,8 +155,7 @@ namespace Effekseer.Data
 		string selfDetail = string.Empty;
 
 		[Shown(Shown = true)]
-		[Name(language = Language.Japanese, value = "パス")]
-		[Name(language = Language.English, value = "Path")]
+		[Key(key = "MaterialFileParameter_Path")]
 		public Value.PathForMaterial Path
 		{
 			get;
@@ -734,8 +728,7 @@ namespace Effekseer.Data
 	public class RendererCommonValues
 	{
 		[Selector(ID = 3)]
-		[Name(language = Language.Japanese, value = "マテリアル")]
-		[Name(language = Language.English, value = "Material")]
+		[Key(key = "BRS_Material")]
 		public Value.Enum<MaterialType> Material
 		{
 			get;
@@ -745,11 +738,7 @@ namespace Effekseer.Data
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "色/歪み画像")]
-		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
-		[Name(language = Language.English, value = "Texture")]
-		[Description(language = Language.English, value = "Image that represents color/distortion")]
-
+		[Key(key = "BRS_ColorTexture")]
 		public Value.PathForImage ColorTexture
 		{
 			get;
@@ -759,22 +748,17 @@ namespace Effekseer.Data
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "フィルタ")]
-		[Name(language = Language.English, value = "Filter")]
+		[Key(key = "BRS_Filter")]
 		public Value.Enum<FilterType> Filter { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "外側")]
-		[Name(language = Language.English, value = "Wrap")]
+		[Key(key = "BRS_Wrap")]
 		public Value.Enum<WrapType> Wrap { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "法線画像")]
-		[Description(language = Language.Japanese, value = "法線を表す画像")]
-		[Name(language = Language.English, value = "Normal Map")]
-		[Description(language = Language.English, value = "Image representing normal vectors")]
+		[Key(key = "BRS_NormalTexture")]
 		public Value.PathForImage NormalTexture
 		{
 			get;
@@ -782,18 +766,15 @@ namespace Effekseer.Data
 		}
 
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "フィルタ")]
-		[Name(language = Language.English, value = "Filter")]
+		[Key(key = "BRS_Filter2")]
 		public Value.Enum<FilterType> Filter2 { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "外側")]
-		[Name(language = Language.English, value = "Wrap")]
+		[Key(key = "BRS_Wrap2")]
 		public Value.Enum<WrapType> Wrap2 { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
-		[Name(language = Language.Japanese, value = "歪み強度")]
-		[Name(language = Language.English, value = "Distortion\nIntensity")]
+		[Key(key = "BRS_DistortionIntensity")]
 		public Value.Float DistortionIntensity { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.File)]
@@ -804,21 +785,17 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "ブレンド")]
-		[Name(language = Language.English, value = "Blend")]
+		[Key(key = "BRS_AlphaBlend")]
 		public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
-		[Name(language = Language.Japanese, value = "深度書き込み")]
-		[Name(language = Language.English, value = "Depth Set")]
+		[Key(key = "BRS_ZWrite")]
 		public Value.Boolean ZWrite { get; private set; }
 
-		[Name(language = Language.Japanese, value = "深度テスト")]
-		[Name(language = Language.English, value = "Depth Test")]
+		[Key(key = "BRS_ZTest")]
 		public Value.Boolean ZTest { get; private set; }
 
 		[Selector(ID = 0)]
-		[Name(language = Language.Japanese, value = "フェードイン")]
-		[Name(language = Language.English, value = "Fade-In")]
+		[Key(key = "BRS_FadeInType")]
 		public Value.Enum<FadeType> FadeInType
 		{
 			get;
@@ -842,8 +819,7 @@ namespace Effekseer.Data
 		}
 
 		[Selector(ID = 1)]
-		[Name(language = Language.Japanese, value = "フェードアウト")]
-		[Name(language = Language.English, value = "Fade-Out")]
+		[Key(key = "BRS_FadeOutType")]
 		public Value.Enum<FadeType> FadeOutType
 		{
 			get;
@@ -867,20 +843,18 @@ namespace Effekseer.Data
 		}
 
 		[Selector(ID = 2)]
-		[Name(language = Language.Japanese, value = "UV")]
-		[Name(language = Language.English, value = "UV")]
+		[Key(key = "BRS_UV")]
 		public Value.Enum<UVType> UV
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "参照画像")]
-		[Name(language = Language.English, value = "Referenced")]
 		[Selected(ID = 2, Value = 1)]
 		[Selected(ID = 2, Value = 2)]
 		[Selected(ID = 2, Value = 3)]
 		[IO(Export = true)]
+		[Key(key = "BRS_UVTextureReferenceTarget")]
 		public Value.Enum<UVTextureReferenceTargetType> UVTextureReferenceTarget
 		{
 			get;
@@ -907,10 +881,7 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVFCurveParamater UVFCurve { get; private set; }
 
-		[Name(language = Language.Japanese, value = "色への影響")]
-		[Description(language = Language.Japanese, value = "親ノードからの色への影響")]
-		[Name(language = Language.English, value = "Inherit Color")]
-		[Description(language = Language.English, value = "When this instance should copy its parent node's color")]
+		[Key(key = "BRS_ColorInheritType")]
 		public Value.Enum<ParentEffectType> ColorInheritType
 		{
 			get;
@@ -993,14 +964,12 @@ namespace Effekseer.Data
 		public Value.Enum<AlphaCrunchType> AlphaCrunchTypeValue { get; private set; }
 #endif
 
-		[Name(language = Language.Japanese, value = "カスタムデータ")]
-		[Name(language = Language.English, value = "Custom data")]
 		[IO(Export = true)]
+		[Key(key = "BRS_CustomData1")]
 		public CustomDataParameter CustomData1 { get; private set; }
 
-		[Name(language = Language.Japanese, value = "カスタムデータ")]
-		[Name(language = Language.English, value = "Custom data")]
 		[IO(Export = true)]
+		[Key(key = "BRS_CustomData2")]
 		public CustomDataParameter CustomData2 { get; private set; }
 		internal RendererCommonValues()
 		{
@@ -1062,26 +1031,17 @@ namespace Effekseer.Data
 
 		public class FadeInParamater
 		{
-			[Name(value = "フレーム数", language = Language.Japanese)]
-			[Description(language = Language.Japanese, value = "生成からフェードインが終了するまでのフレーム数")]
-			[Name(value = "Frame Count", language = Language.English)]
-			[Description(language = Language.English, value = "Duration in frames of the fade-in transition")]
+			[Key(key = "BRS_FadeIn_Frame")]
 			public Value.Float Frame { get; private set; }
 
-			[Name(language = Language.Japanese, value = "始点速度")]
-			[Description(language = Language.Japanese, value = "始点速度")]
-			[Name(language = Language.English, value = "Ease In")]
-			[Description(language = Language.English, value = "Initial speed (of the tween)")]
+			[Key(key = "BRS_FadeIn_StartSpeed")]
 			public Value.Enum<EasingStart> StartSpeed
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "終点速度")]
-			[Description(language = Language.Japanese, value = "終点速度")]
-			[Name(language = Language.English, value = "Ease Out")]
-			[Description(language = Language.English, value = "Final speed (of the tween)")]
+			[Key(key = "BRS_FadeIn_EndSpeed")]
 			public Value.Enum<EasingEnd> EndSpeed
 			{
 				get;
@@ -1098,26 +1058,17 @@ namespace Effekseer.Data
 
 		public class FadeOutParamater
 		{
-			[Name(value = "フレーム数", language = Language.Japanese)]
-			[Description(language = Language.Japanese, value = "フェードアウトが開始してから終了するまでのフレーム数")]
-			[Name(value = "Frame Count", language = Language.English)]
-			[Description(language = Language.English, value = "Duration in frames of the fade-out transition")]
+			[Key(key = "BRS_FadeOut_Frame")]
 			public Value.Float Frame { get; private set; }
 
-			[Name(language = Language.Japanese, value = "始点速度")]
-			[Description(language = Language.Japanese, value = "始点速度")]
-			[Name(language = Language.English, value = "Ease In")]
-			[Description(language = Language.English, value = "Initial speed (of the tween)")]
+			[Key(key = "BRS_FadeOut_StartSpeed")]
 			public Value.Enum<EasingStart> StartSpeed
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "終点速度")]
-			[Description(language = Language.Japanese, value = "終点速度")]
-			[Name(language = Language.English, value = "Ease Out")]
-			[Description(language = Language.English, value = "Final speed (of the tween)")]
+			[Key(key = "BRS_FadeOut_EndSpeed")]
 			public Value.Enum<EasingEnd> EndSpeed
 			{
 				get;
@@ -1245,20 +1196,16 @@ namespace Effekseer.Data
 
 		public enum MaterialType : int
 		{
-			[Name(value = "標準", language = Language.Japanese)]
-			[Name(value = "Default", language = Language.English)]
+			[Key(key = "MaterialType_Default")]
 			Default = 0,
 
-			[Name(value = "歪み(背景)", language = Language.Japanese)]
-			[Name(value = "Distortion(Back)", language = Language.English)]
+			[Key(key = "MaterialType_BackDistortion")]
 			BackDistortion = 6,
 
-			[Name(value = "ライティング", language = Language.Japanese)]
-			[Name(value = "Lighting", language = Language.English)]
+			[Key(key = "MaterialType_Lighting")]
 			Lighting = 7,
 
-			[Name(value = "ファイル", language = Language.Japanese)]
-			[Name(value = "File", language = Language.English)]
+			[Key(key = "MaterialType_File")]
 			File = 128,
 		}
 		public enum FadeType : int
@@ -1273,21 +1220,17 @@ namespace Effekseer.Data
 
 		public enum FilterType : int
 		{
-			[Name(value = "最近傍", language = Language.Japanese)]
-			[Name(value = "Nearest-Neighbor", language = Language.English)]
+			[Key(key = "FilterType_Nearest")]
 			Nearest = 0,
-			[Name(value = "線形", language = Language.Japanese)]
-			[Name(value = "Linear Interpolation", language = Language.English)]
+			[Key(key = "FilterType_Linear")]
 			Linear = 1,
 		}
 
 		public enum WrapType : int
 		{
-			[Name(value = "繰り返し", language = Language.Japanese)]
-			[Name(value = "Repeat", language = Language.English)]
+			[Key(key = "WrapType_Repeat")]
 			Repeat = 0,
-			[Name(value = "クランプ", language = Language.Japanese)]
-			[Name(value = "Clamp", language = Language.English)]
+			[Key(key = "WrapType_Clamp")]
 			Clamp = 1,
 		}
 
