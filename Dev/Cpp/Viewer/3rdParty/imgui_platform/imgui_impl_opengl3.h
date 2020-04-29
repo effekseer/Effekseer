@@ -62,6 +62,7 @@ IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyDeviceObjects();
             #define IMGUI_IMPL_OPENGL_LOADER_GLBINDING3
         #elif __has_include(<glbinding/Binding.h>)
             #define IMGUI_IMPL_OPENGL_LOADER_GLBINDING2
+		#elif defined(__APPLE__)
         #else
             #error "Cannot detect OpenGL loader!"
         #endif

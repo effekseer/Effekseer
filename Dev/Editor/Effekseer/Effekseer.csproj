@@ -200,6 +200,7 @@
     <Compile Include="GUI\Dock\Culling.cs" />
     <Compile Include="GUI\Dock\GlobalValues.cs" />
     <Compile Include="GUI\Dialog\RenameNode.cs" />
+    <Compile Include="GUI\Icons.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
