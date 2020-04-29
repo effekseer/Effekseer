@@ -24,28 +24,29 @@ https://support.microsoft.com/en-us/help/4020302/the-net-framework-4-7-installat
 
 * Directory structure
 -Tool
-Tools for creating effects are saved.
+Tools for creating effects are stored.
 
 -Sample
-Sample effects provided by various users are saved.
+Sample effects provided by various users are stored.
 
 -Help
-Help that describes how to use the tool is saved.
+Help that describes how to use the tool. (Online)
 
 
 * For those using Effekseer for the first time
 
-Let's first download the .NET Framework and the DirectX end user runtime to satisfy the operating environment.
-
 Let's start Effekseer.exe in the Tool directory.
+
+If it not run, please download dll to satisfy the operating environment.
+
 I think that you do not know the meaning at first when a lot of parameters exist, but let's push the playback button (triangle mark) at the bottom left for the time being.
 Then a square was displayed on the screen. This is the simplest effect.
 
 Let's open the effect file in the Sample directory with Effekseer as it is boring as it is.
-The effect of Effekseer has an extension of .efkproj. I will open this with Effekseer.
+The effect of Effekseer has an extension of .efkproj or .efkefc. I will open this with Effekseer.
 Then you can see various effects.
 
-Click on the node tree node in the upper right corner to see the parameters of the node.
+Click on the node tree node in the lower right corner to see the parameters of the node.
 Let's change the numerical value of sample effect variously. Even just that, you can make effects that are used for many games.
 
 Let's create an effect by yourself as soon as you get used to fingering samples.
@@ -83,22 +84,23 @@ https://support.microsoft.com/ja-jp/help/4020302/the-net-framework-4-7-installat
 様々なユーザーから提供されたサンプルエフェクトが保存されています。
 
 -Help
-ツールの使い方が記述されているヘルプが保存されています。
+ツールの使い方が記述されているヘルプです。(オンライン)
 
 
 ■　初めてEffekseerを使用する方へ
 
-まずは動作環境を満たすように.NET FrameworkやDirectX エンド ユーザー ランタイムをダウンロードしましょう。
+Toolディレクトリ内のEffekseer.exeを起動してみましょう。
 
-そして、Toolディレクトリ内のEffekseer.exeを起動してみましょう。
+もし起動しないならdllをダウンロードしましょう。
+
 沢山パラメーターが存在して最初は意味がわからないと思いますが、とりあえず左下の再生ボタン(三角のマーク)を押してみましょう。
 そうすると、画面に四角が表示されました。これは一番シンプルなエフェクトになります。
 
 このままではつまらないので、Sampleディレクトリ内のエフェクトファイルをEffekseerで開いてみましょう。
-Effekseerのエフェクトは、.efkprojという拡張子がついています。これをEffekseerで開いてみます。
+Effekseerのエフェクトは、.efkprojもしくは.efkefcという拡張子がついています。これをEffekseerで開いてみます。
 そうすると様々なエフェクトを見ることができます。
 
-右上のノードツリーのノードをクリックすると、ノードのパラメーターを見ることができます。
+右下のノードツリーのノードをクリックすると、ノードのパラメーターを見ることができます。
 サンプルエフェクトの数値を色々変えてみましょう。それだけでも多くのゲームに使用されるようなエフェクトは作れます。
 
 サンプルを弄るのに慣れたら、いよいよ自分でエフェクトを作成してみましょう。

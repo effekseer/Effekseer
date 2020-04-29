@@ -35,6 +35,8 @@ void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
 
 	cameraPosition_ = r * localPos.GetX() + u * localPos.GetY() + f * localPos.GetZ();
 
+	// To optimize particle, cameraFontDirection_ is normalized
+	cameraFrontDirection_ = cameraFrontDirection_.NormalizePrecisely();
 	cameraMat_ = mat;
 }
 
@@ -48,6 +50,9 @@ void Renderer::Impl::SetCameraParameter(const ::Effekseer::Vector3D& front, cons
 {
 	cameraFrontDirection_ = front;
 	cameraPosition_ = position;
+
+	// To optimize particle, cameraFontDirection_ is normalized
+	cameraFrontDirection_ = cameraFrontDirection_.NormalizePrecisely();
 }
 
 void Renderer::Impl::CreateProxyTextures(Renderer* renderer)
