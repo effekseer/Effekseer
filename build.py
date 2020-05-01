@@ -3,6 +3,7 @@ import Script.aceutils as aceutils
 import sys
 import os
 import shutil
+from distutils.spawn import find_executable
 
 def call( cmd , env=None):
     """ call command line.
@@ -70,6 +71,8 @@ if env['IGNORE_BUILD'] == '0':
 
         elif aceutils.isMac():
             aceutils.call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')
+        elif find_executable('ninja'):
+            aceutils.call('cmake .. -G Ninja -DBUILD_VIEWER=ON')
         else:
             aceutils.call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
         aceutils.call('cmake --build . --config Release')
