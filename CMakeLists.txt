@@ -67,6 +67,7 @@ endif()
 
 # for linux
 if(UNIX AND NOT APPLE)
+    set(OpenGL_GL_PREFERENCE GLVND)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
