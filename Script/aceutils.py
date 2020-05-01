@@ -58,6 +58,8 @@ def call( cmd , env=None):
 	print( cmd )
 	p = subprocess.Popen(cmd, shell=True, env=env)
 	ret = p.wait()
+	if ret != 0:
+		raise RuntimeError('failed command: "{}" with {}'.format(cmd, ret))
 	print('')
 
 
