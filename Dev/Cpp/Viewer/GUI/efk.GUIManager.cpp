@@ -1899,7 +1899,7 @@ namespace efk
 	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size)
 	{
 		//return ImGui::BeginDock(utf8str<256>(label), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
-		ImGui::SetNextWindowSize(ImVec2(default_size.X, default_size.Y), ImGuiCond_Once);
+		//ImGui::SetNextWindowSize(ImVec2(default_size.X, default_size.Y), ImGuiCond_Once);
 		
 		utf8str<256> utf8label(label);
 		ImGuiWindow* window = ImGui::FindWindowByName(utf8label);
