@@ -5,10 +5,11 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - name: Initialize repository
+        run: |
          git submodule update --init
          git lfs install
          git lfs pull
-        
+      - run: pwd
       - name: Build
         run: python build.py
