@@ -11,6 +11,6 @@ jobs:
          git lfs install
          git lfs pull
       - name: Install packages
-        run: sudo apt install libpulse-dev libglvnd-dev libx11-dev libopenal-dev libvulkan-dev
+        run: sudo apt update && sudo apt install libpulse-dev libglvnd-dev libx11-dev libopenal-dev libvulkan-dev
       - name: Build
         run: python3 build.py
