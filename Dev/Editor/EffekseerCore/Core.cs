@@ -141,7 +141,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.52a";
+		public const string Version = "1.52b";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -173,7 +173,7 @@ namespace Effekseer
 
 		static bool is_loop = false;
 
-		static Language language;
+		//static Language language;
 		/*
 		public static IViewer Viewer
 		{
