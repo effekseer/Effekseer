@@ -35,7 +35,7 @@ if(NOT WIN32)
         Example_CustomLoader
         PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
-        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_LIBRARIES}
     )
 endif()
 
