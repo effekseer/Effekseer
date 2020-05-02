@@ -1,0 +1,14 @@
+on: [push, pull_request]
+jobs:
+  linux:
+    name: Linux Build
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+         git submodule update --init
+         git lfs install
+         git lfs pull
+        
+      - name: Build
+        run: python build.py
