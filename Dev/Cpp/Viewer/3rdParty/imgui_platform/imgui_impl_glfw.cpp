@@ -39,6 +39,7 @@
 //  2017-08-25: Inputs: MousePos set to -FLT_MAX,-FLT_MAX when mouse is unavailable/missing (instead of -1,-1).
 //  2016-10-15: Misc: Added a void* user_data parameter to Clipboard function handlers.
 
+#include <vector>
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 
@@ -700,6 +701,44 @@ static void ImGui_ImplGlfw_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
 static void ImGui_ImplGlfw_SetWindowTitle(ImGuiViewport* viewport, const char* title)
 {
     ImGuiViewportDataGlfw* data = (ImGuiViewportDataGlfw*)viewport->PlatformUserData;
+
+    // Set window icon when first character is icon
+    if ((uint8_t)title[0] >= 0xE0 && (uint8_t)title[0] < 0xF0)
+    {
+        uint16_t code = (((uint8_t)title[0] & 0x0F) << 12)
+                      | (((uint8_t)title[1] & 0x3F) << 6)
+                      | (((uint8_t)title[2] & 0x3F));
+        if (code >= 0xEC00 && code < 0xED00) {
+            // Remove icon character
+            title = title + 3;
+
+            auto& io = ImGui::GetIO();
+            if (auto rect = io.Fonts->GetCustomRectByIndex(code - 0xEC00 + 1))
+            {
+                uint8_t* texturePixels = nullptr;
+                int textureWidth = 0, textureHeight = 0;
+                io.Fonts->GetTexDataAsRGBA32(&texturePixels, &textureWidth, &textureHeight);
+
+                std::vector<uint32_t> pixels(rect->Width * rect->Height);
+
+                uint32_t* rectPixels = (uint32_t*)texturePixels + rect->Y * textureWidth + rect->X;
+                for (uint32_t y = 0; y < rect->Height; y++)
+                {
+                    for (uint32_t x = 0; x < rect->Height; x++)
+                    {
+                        pixels[x + y * rect->Width] = rectPixels[x + y * textureWidth];
+                    }
+                }
+
+                GLFWimage image;
+                image.width = rect->Width;
+                image.height = rect->Height;
+                image.pixels = (uint8_t*)pixels.data();
+                glfwSetWindowIcon(data->Window, 1, &image);
+            }
+        }
+    }
+
     glfwSetWindowTitle(data->Window, title);
 }
 
