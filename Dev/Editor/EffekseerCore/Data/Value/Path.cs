@@ -71,6 +71,9 @@ namespace Effekseer.Data.Value
 		{
 			if (abspath == _abspath) return;
 
+			// Replace separators
+			abspath = abspath.Replace('\\', '/');
+
 			var old_value = _abspath;
 			var new_value = abspath;
 
@@ -106,6 +109,9 @@ namespace Effekseer.Data.Value
 
 		public void SetRelativePath(string relative_path)
 		{
+			// Replace separators
+			relative_path = relative_path.Replace('\\', '/');
+
 			try
 			{
 				if (Core.FullPath == string.Empty)
