@@ -118,3 +118,15 @@ if env['PACKAGEING_FOR_MAC'] == '1' and aceutils.isMac():
     aceutils.call('ln -s /Applications Applications > /dev/null 2>&1')        
     aceutils.call('mv Applications Mac/Package/')
     aceutils.call('hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Mac/Package"')
+
+    aceutils.cd('../')
+    os.makedirs('EffekseerMac', exist_ok=True)
+    shutil.copy('Dev/Effekseer.dmg', 'EffekseerMac/')
+    shutil.copy('docs/Help_Ja.html', 'EffekseerMac/')
+    shutil.copy('docs/Help_En.html', 'EffekseerMac/')
+    shutil.copy('LICENSE_TOOL', 'EffekseerMac/LICENSE_TOOL')
+    
+    os.makedirs('EffekseerMac/Sample/', exist_ok=True)
+    shutil.copytree('Release/Sample', 'EffekseerMac/Sample')
+    shutil.copytree('ResourceData/samples', 'EffekseerMac/Sample')
+    shutil.copy('docs/readme_sample.txt', 'EffekseerMac/Sample/readme.txt')
