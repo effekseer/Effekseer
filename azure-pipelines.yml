@@ -23,7 +23,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'Effekseer150Win'
-          ArtifactName: 'Effekseer152aWin_x86'
+          ArtifactName: 'Effekseer152bWin_x86'
           publishLocation: 'Container'
 
   - job: MacOS
