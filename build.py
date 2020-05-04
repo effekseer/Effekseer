@@ -3,6 +3,9 @@ import Script.aceutils as aceutils
 import sys
 import os
 import shutil
+from distutils.spawn import find_executable
+import distutils
+from distutils import dir_util
 
 def call( cmd , env=None):
     """ call command line.
@@ -70,6 +73,8 @@ if env['IGNORE_BUILD'] == '0':
 
         elif aceutils.isMac():
             aceutils.call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')
+        elif find_executable('ninja'):
+            aceutils.call('cmake .. -G Ninja -DBUILD_VIEWER=ON')
         else:
             aceutils.call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
         aceutils.call('cmake --build . --config Release')
@@ -115,3 +120,16 @@ if env['PACKAGEING_FOR_MAC'] == '1' and aceutils.isMac():
     aceutils.call('ln -s /Applications Applications > /dev/null 2>&1')        
     aceutils.call('mv Applications Mac/Package/')
     aceutils.call('hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Mac/Package"')
+
+    aceutils.cd('../')
+    os.makedirs('EffekseerMac', exist_ok=True)
+    shutil.copy('Dev/Effekseer.dmg', 'EffekseerMac/')
+    shutil.copy('docs/Help_Ja.html', 'EffekseerMac/')
+    shutil.copy('docs/Help_En.html', 'EffekseerMac/')
+    shutil.copy('LICENSE_TOOL', 'EffekseerMac/LICENSE_TOOL')
+    shutil.copy('readme_tool_mac.txt', 'EffekseerMac/readme.txt')
+    
+    os.makedirs('EffekseerMac/Sample/', exist_ok=True)
+    distutils.dir_util.copy_tree('Release/Sample', 'EffekseerMac/Sample')
+    distutils.dir_util.copy_tree('ResourceData/samples', 'EffekseerMac/Sample')
+    shutil.copy('docs/readme_sample.txt', 'EffekseerMac/Sample/readme.txt')

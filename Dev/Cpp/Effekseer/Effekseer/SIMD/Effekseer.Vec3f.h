@@ -166,7 +166,7 @@ inline float Vec3f::GetLength() const
 
 inline bool Vec3f::IsZero(float epsiron) const
 {
-	return (SIMD4f::MoveMask(SIMD4f::IsZero(epsiron)) & 0x7) != 0;
+	return (SIMD4f::MoveMask(SIMD4f::IsZero(s, epsiron)) & 0x7) == 0x7;
 }
 
 inline Vec3f Vec3f::Normalize() const

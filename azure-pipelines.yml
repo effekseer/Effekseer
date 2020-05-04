@@ -23,7 +23,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'Effekseer150Win'
-          ArtifactName: 'Effekseer152aWin_x86'
+          ArtifactName: 'Effekseer152bWin_x86'
           publishLocation: 'Container'
 
   - job: MacOS
@@ -38,13 +38,15 @@ jobs:
             git lfs install
             git lfs pull
             PACKAGEING_FOR_MAC=1 MONO_SDK_PATH=/Library/Frameworks/Mono.framework/Versions/5_18_1 python3 build.py
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: 'dev/release'
-          ArtifactName: 'MacOS'
-          publishLocation: 'Container'
+
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'Dev/Effekseer.dmg'
-          ArtifactName: 'EffekseerMac'
+          ArtifactName: 'EffekseerMacDmg'
+          publishLocation: 'Container'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'EffekseerMac'
+          ArtifactName: 'Effekseer152bMac'
           publishLocation: 'Container'

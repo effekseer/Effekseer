@@ -105,8 +105,7 @@ else()
             ${METAL_LIBRARY} 
             ${METALKIT_LIBRARY} 
             ${QUARTZ_CORE_LIBRARY}
-            ${OPENGL_gl_LIBRARY}
-            ${OPENGL_glu_LIBRARY}
+            ${OPENGL_LIBRARIES}
             ${IOKIT_FRAMEWORK}
             ${CORE_FOUNDATION_FRAMEWORK}
             ${CORE_VIDEO_FRAMEWORK})

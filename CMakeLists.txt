@@ -67,6 +67,7 @@ endif()
 
 # for linux
 if(UNIX AND NOT APPLE)
+    set(OpenGL_GL_PREFERENCE GLVND)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
@@ -86,6 +87,7 @@ if(BUILD_VIEWER)
         SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/zlib
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/zlib
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
+        INSTALL_COMMAND ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
@@ -104,8 +106,8 @@ if(BUILD_VIEWER)
         set(ZLIB_LIB_DEBUG "z")
         set(ZLIB_LIB_RELEASE "z")
     else()
-        set(ZLIB_LIB_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib/libz.a")
-        set(ZLIB_LIB_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib/libz.a")
+        set(ZLIB_LIB_DEBUG "z")
+        set(ZLIB_LIB_RELEASE "z")
     endif()
 
     # libpng
@@ -115,6 +117,7 @@ if(BUILD_VIEWER)
         SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/libpng
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+        INSTALL_COMMAND ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
@@ -134,8 +137,8 @@ if(BUILD_VIEWER)
         set(LIBPNG_LIB_DEBUG "png16")
         set(LIBPNG_LIB_RELEASE "png16")
     else()
-        set(LIBPNG_LIB_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib/libpng16.a")
-        set(LIBPNG_LIB_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib/libpng16.a")
+        set(LIBPNG_LIB_DEBUG "png16")
+        set(LIBPNG_LIB_RELEASE "png16")
     endif()
 
     # libgd

@@ -112,10 +112,7 @@ namespace Effekseer.Data
 
 		public class FixedParamater
 		{
-			[Name(language = Language.Japanese, value = "拡大率")]
-			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
-			[Name(language = Language.English, value = "Scaling Factor")]
-			[Description(language = Language.English, value = "Magnification of the instance")]
+			[Key(key = "Scale_FixedParamater_Scale")]
 			public Value.Vector3D Scale
 			{
 				get;
@@ -130,30 +127,22 @@ namespace Effekseer.Data
 
 		public class PVAParamater
 		{
-			[Name(language = Language.Japanese, value = "拡大率")]
-			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
-			[Name(language = Language.English, value = "Scaling Factor")]
-			[Description(language = Language.English, value = "Magnification of the instance")]
+			[Key(key = "Scale_PVAParamater_Scale")]
 			public Value.Vector3DWithRandom Scale
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "拡大速度")]
-			[Description(language = Language.Japanese, value = "インスタンスの拡大速度")]
-			[Name(language = Language.English, value = "Expansion\nSpeed")]
-			[Description(language = Language.English, value = "The instance's initial rate of expansion")]
+			[Key(key = "Scale_PVAParamater_Velocity")]
 			public Value.Vector3DWithRandom Velocity
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "拡大加速度")]
-			[Description(language = Language.Japanese, value = "インスタンスの初期拡大加速度")]
-			[Name(language = Language.English, value = "Expansion\nAccel")]
-			[Description(language = Language.English, value = "Acceleration of the instance's expansion rate")]
+			[Key(key = "Scale_PVAParamater_Acceleration")]
+
 			public Value.Vector3DWithRandom Acceleration
 			{
 				get;
@@ -170,30 +159,21 @@ namespace Effekseer.Data
 
 		public class SinglePVAParamater
 		{
-			[Name(language = Language.Japanese, value = "拡大率")]
-			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
-			[Name(language = Language.English, value = "Scaling Factor")]
-			[Description(language = Language.English, value = "Magnification of the instance")]
+			[Key(key = "Scale_SinglePVAParamater_Scale")]
 			public Value.FloatWithRandom Scale
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "拡大速度")]
-			[Description(language = Language.Japanese, value = "インスタンスの拡大速度")]
-			[Name(language = Language.English, value = "Expansion\nSpeed")]
-			[Description(language = Language.English, value = "The instance's initial rate of expansion")]
+			[Key(key = "Scale_SinglePVAParamater_Velocity")]
 			public Value.FloatWithRandom Velocity
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "拡大加速度")]
-			[Description(language = Language.Japanese, value = "インスタンスの初期拡大加速度")]
-			[Name(language = Language.English, value = "Expansion\nAccel")]
-			[Description(language = Language.English, value = "Acceleration of the instance's expansion rat")]
+			[Key(key = "Scale_SinglePVAParamater_Acceleration")]
 			public Value.FloatWithRandom Acceleration
 			{
 				get;
@@ -210,23 +190,17 @@ namespace Effekseer.Data
 
 		public enum ParamaterType : int
 		{
-			[Name(value = "拡大率", language = Language.Japanese)]
-			[Name(value = "Fixed Scale", language = Language.English)]
+			[Key(key = "Scale_ParamaterType_Fixed")]
 			Fixed = 0,
-			[Name(value = "拡大率・速度・加速度", language = Language.Japanese)]
-			[Name(value = "PVA", language = Language.English)]
+			[Key(key = "Scale_ParamaterType_PVA")]
 			PVA = 1,
-			[Name(value = "イージング", language = Language.Japanese)]
-			[Name(value = "Easing", language = Language.English)]
+			[Key(key = "Scale_ParamaterType_Easing")]
 			Easing = 2,
-			[Name(value = "単一 拡大率・速度・加速度", language = Language.Japanese)]
-			[Name(value = "PVA (Single)", language = Language.English)]
+			[Key(key = "Scale_ParamaterType_SinglePVA")]
 			SinglePVA = 3,
-			[Name(value = "単一 イージング", language = Language.Japanese)]
-			[Name(value = "Easing (Single)", language = Language.English)]
+			[Key(key = "Scale_ParamaterType_SingleEasing")]
 			SingleEasing = 4,
-			[Name(value = "拡大率(Fカーブ)", language = Language.Japanese)]
-			[Name(value = "F-Curve", language = Language.English)]
+			[Key(key = "Scale_ParamaterType_FCurve")]
 			FCurve = 5,
 		}
 	}

@@ -211,8 +211,7 @@ elseif(APPLE)
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}
         ${COCOA_FRAMEWORK}
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
+        ${OPENGL_LIBRARIES}
         ${IOKIT_FRAMEWORK}
         ${CORE_FOUNDATION_FRAMEWORK}
         ${CORE_VIDEO_FRAMEWORK})

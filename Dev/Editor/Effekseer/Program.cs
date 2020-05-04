@@ -160,6 +160,10 @@ namespace Effekseer
 					language = "en";
 				}
 			}
+			else
+			{
+				language = "en";
+			}
 
 			Core.OnOutputMessage += new Action<string>(Core_OnOutputMessage);
 			Core.Initialize(language);
@@ -294,6 +298,8 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicSettings.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Position.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Rotation.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Scale.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicRenderSettings.csv");
 			GUI.Manager.UpdateFont();
 		}
 

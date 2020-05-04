@@ -39,20 +39,15 @@ namespace Effekseer.Data
 
 	public enum AlphaBlendType : int
 	{
-		[Name(value = "不透明", language = Language.Japanese)]
-		[Name(value = "Opacity", language = Language.English)]
+		[Key(key = "AlphaBlendType_Opacity")]
 		Opacity = 0,
-		[Name(value = "通常", language = Language.Japanese)]
-		[Name(value = "Blend", language = Language.English)]
+		[Key(key = "AlphaBlendType_Blend")]
 		Blend = 1,
-		[Name(value = "加算", language = Language.Japanese)]
-		[Name(value = "Additive", language = Language.English)]
+		[Key(key = "AlphaBlendType_Add")]
 		Add = 2,
-		[Name(value = "減算", language = Language.Japanese)]
-		[Name(value = "Subtract", language = Language.English)]
+		[Key(key = "AlphaBlendType_Sub")]
 		Sub = 3,
-		[Name(value = "乗算", language = Language.Japanese)]
-		[Name(value = "Multiply", language = Language.English)]
+		[Key(key = "AlphaBlendType_Mul")]
 		Mul = 4,
 	}
 
@@ -555,7 +550,10 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Title = NameAttribute.GetName(attributes);
-				//System.IO.File.AppendAllText("kv.csv", nameKey + "," + ret.Title.ToString() + "\r\n");
+				//if (!string.IsNullOrEmpty(ret.Title.ToString()))
+				//{
+				//	System.IO.File.AppendAllText("kv.csv", nameKey + ","  + "\"" + ret.Title.ToString() + "\"" + "\r\n");
+				//}
 			}
 
 			var descKey = key + "_Desc";
@@ -571,7 +569,11 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Description = DescriptionAttribute.GetDescription(attributes);
-				//System.IO.File.AppendAllText("kv.csv", descKey + "," + ret.Description.ToString() + "\r\n");
+
+				//if(!string.IsNullOrEmpty(ret.Description.ToString()))
+				//{
+				//	System.IO.File.AppendAllText("kv.csv", descKey + "," + "\"" + ret.Description.ToString() + "\"" + "\r\n");
+				//}
 			}
 
 			return ret;
