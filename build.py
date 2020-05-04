@@ -127,6 +127,7 @@ if env['PACKAGEING_FOR_MAC'] == '1' and aceutils.isMac():
     shutil.copy('docs/Help_Ja.html', 'EffekseerMac/')
     shutil.copy('docs/Help_En.html', 'EffekseerMac/')
     shutil.copy('LICENSE_TOOL', 'EffekseerMac/LICENSE_TOOL')
+    shutil.copy('readme_tool_mac.txt', 'EffekseerMac/readme.txt')
     
     os.makedirs('EffekseerMac/Sample/', exist_ok=True)
     distutils.dir_util.copy_tree('Release/Sample', 'EffekseerMac/Sample')
