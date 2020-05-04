@@ -4,6 +4,8 @@ import sys
 import os
 import shutil
 from distutils.spawn import find_executable
+import distutils
+from distutils import dir_util
 
 def call( cmd , env=None):
     """ call command line.
@@ -127,6 +129,6 @@ if env['PACKAGEING_FOR_MAC'] == '1' and aceutils.isMac():
     shutil.copy('LICENSE_TOOL', 'EffekseerMac/LICENSE_TOOL')
     
     os.makedirs('EffekseerMac/Sample/', exist_ok=True)
-    shutil.copytree('Release/Sample', 'EffekseerMac/Sample')
-    shutil.copytree('ResourceData/samples', 'EffekseerMac/Sample')
+    distutils.dir_util.copy_tree('Release/Sample', 'EffekseerMac/Sample')
+    distutils.dir_util.copy_tree('ResourceData/samples', 'EffekseerMac/Sample')
     shutil.copy('docs/readme_sample.txt', 'EffekseerMac/Sample/readme.txt')
