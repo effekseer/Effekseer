@@ -300,6 +300,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Rotation.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Scale.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicRenderSettings.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_RenderSettings.csv");
 			GUI.Manager.UpdateFont();
 		}
 
