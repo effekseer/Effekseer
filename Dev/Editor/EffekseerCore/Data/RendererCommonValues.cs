@@ -21,32 +21,25 @@ namespace Effekseer.Data
 
 	public enum CustomDataType
 	{
-		[Name(language = Language.Japanese, value = "なし")]
-		[Name(language = Language.English, value = "None")]
+		[Key(key = "CustomDataType_None")]
 		None = 0,
 
-		[Name(language = Language.Japanese, value = "固定2")]
-		[Name(language = Language.English, value = "Fixed2")]
+		[Key(key = "CustomDataType_Fixed2D")]
 		Fixed2D = 20,
 
-		[Name(language = Language.Japanese, value = "ランダム2")]
-		[Name(language = Language.English, value = "Random2")]
+		[Key(key = "CustomDataType_Random2D")]
 		Random2D = 21,
 
-		[Name(language = Language.Japanese, value = "イージング2")]
-		[Name(language = Language.English, value = "Easing2")]
+		[Key(key = "CustomDataType_Easing2D")]
 		Easing2D = 22,
 
-		[Name(language = Language.Japanese, value = "Fカーブ2")]
-		[Name(language = Language.English, value = "FCurve2")]
+		[Key(key = "CustomDataType_FCurve2D")]
 		FCurve2D = 23,
 
-		[Name(language = Language.Japanese, value = "固定4")]
-		[Name(language = Language.English, value = "Fixed4")]
+		[Key(key = "CustomDataType_Fixed4D")]
 		Fixed4D = 40,
 
-		[Name(language = Language.Japanese, value = "Fカーブ色")]
-		[Name(language = Language.English, value = "FCurve-Color")]
+		[Key(key = "CustomDataType_FCurveColor")]
 		FCurveColor = 53,
 	}
 
@@ -1089,11 +1082,10 @@ namespace Effekseer.Data
 
 		public class UVFixedParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVFixedParamater_Start")]
 			public Value.Vector2D Start { get; private set; }
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+
+			[Key(key = "UVFixedParamater_Size")]
 			public Value.Vector2D Size { get; private set; }
 
 			public UVFixedParamater()
@@ -1105,31 +1097,25 @@ namespace Effekseer.Data
 
 		public class UVAnimationParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVAnimationParamater_Start")]
 			public Value.Vector2D Start { get; private set; }
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+
+			[Key(key = "UVAnimationParamater_Size")] 
 			public Value.Vector2D Size { get; private set; }
 
-			[Name(value = "1枚あたりの時間", language = Language.Japanese)]
-			[Name(value = "Frame Length", language = Language.English)]
+			[Key(key = "UVAnimationParamater_FrameLength")]
 			public Value.IntWithInifinite FrameLength { get; private set; }
 
-			[Name(value = "横方向枚数", language = Language.Japanese)]
-			[Name(value = "X-Count", language = Language.English)]
+			[Key(key = "UVAnimationParamater_FrameCountX")]
 			public Value.Int FrameCountX { get; private set; }
 
-			[Name(value = "縦方向枚数", language = Language.Japanese)]
-			[Name(value = "Y-Count", language = Language.English)]
+			[Key(key = "UVAnimationParamater_FrameCountY")]
 			public Value.Int FrameCountY { get; private set; }
 
-			[Name(value = "ループ", language = Language.Japanese)]
-			[Name(value = "Loop", language = Language.English)]
+			[Key(key = "UVAnimationParamater_LoopType")]
 			public Value.Enum<LoopType> LoopType { get; private set; }
 
-			[Name(value = "開始枚数", language = Language.Japanese)]
-			[Name(value = "Start Sheet", language = Language.English)]
+			[Key(key = "UVAnimationParamater_StartSheet")]
 			public Value.IntWithRandom StartSheet { get; private set; }
 
 #if __EFFEKSEER_BUILD_VERSION16__
@@ -1155,16 +1141,13 @@ namespace Effekseer.Data
 
 		public class UVScrollParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVScrollParamater_Start")]
 			public Value.Vector2DWithRandom Start { get; private set; }
 
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+			[Key(key = "UVScrollParamater_Size")]
 			public Value.Vector2DWithRandom Size { get; private set; }
 
-			[Name(value = "移動速度", language = Language.Japanese)]
-			[Name(value = "Scroll Speed", language = Language.English)]
+			[Key(key = "UVScrollParamater_Speed")]
 			public Value.Vector2DWithRandom Speed { get; private set; }
 
 			public UVScrollParamater()
@@ -1177,13 +1160,11 @@ namespace Effekseer.Data
 
 		public class UVFCurveParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVFCurveParamater_Start")]
 			[IO(Export = true)]
 			public Value.FCurveVector2D Start { get; private set; }
 
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+			[Key(key = "UVFCurveParamater_Size")]
 			[IO(Export = true)]
 			public Value.FCurveVector2D Size { get; private set; }
 
@@ -1210,11 +1191,9 @@ namespace Effekseer.Data
 		}
 		public enum FadeType : int
 		{
-			[Name(value = "有り", language = Language.Japanese)]
-			[Name(value = "Enabled", language = Language.English)]
+			[Key(key = "FadeType_Use")]
 			Use = 1,
-			[Name(value = "無し", language = Language.Japanese)]
-			[Name(value = "Disabled", language = Language.English)]
+			[Key(key = "FadeType_None")]
 			None = 0,
 		}
 
@@ -1236,33 +1215,25 @@ namespace Effekseer.Data
 
 		public enum UVType : int
 		{
-			[Name(value = "標準", language = Language.Japanese)]
-			[Name(value = "Standard", language = Language.English)]
+			[Key(key = "UVType_Default")]
 			Default = 0,
-			[Name(value = "固定", language = Language.Japanese)]
-			[Name(value = "Fixed", language = Language.English)]
+			[Key(key = "UVType_Fixed")]
 			Fixed = 1,
-			[Name(value = "アニメーション", language = Language.Japanese)]
-			[Name(value = "Animation", language = Language.English)]
+			[Key(key = "UVType_Animation")]
 			Animation = 2,
-			[Name(value = "スクロール", language = Language.Japanese)]
-			[Name(value = "Scroll", language = Language.English)]
+			[Key(key = "UVType_Scroll")]
 			Scroll = 3,
-			[Name(value = "Fカーブ", language = Language.Japanese)]
-			[Name(value = "F-Curve", language = Language.English)]
+			[Key(key = "UVType_FCurve")]
 			FCurve = 4,
 		}
 
 		public enum LoopType : int
 		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
+			[Key(key = "UVLoopType_Once")]
 			Once = 0,
-			[Name(value = "ループ", language = Language.Japanese)]
-			[Name(value = "Loop", language = Language.English)]
+			[Key(key = "UVLoopType_Loop")]
 			Loop = 1,
-			[Name(value = "逆ループ", language = Language.Japanese)]
-			[Name(value = "Reverse Loop", language = Language.English)]
+			[Key(key = "UVLoopType_ReverceLoop")]
 			ReverceLoop = 2,
 		}
 

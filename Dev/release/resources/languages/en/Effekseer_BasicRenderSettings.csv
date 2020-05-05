@@ -51,3 +51,43 @@ BRS_FadeOut_StartSpeed_Name,"Ease In"
 BRS_FadeOut_StartSpeed_Desc,"Initial speed (of the tween)"
 BRS_FadeOut_EndSpeed_Name,"Ease Out"
 BRS_FadeOut_EndSpeed_Desc,"Final speed (of the tween)"
+FadeType_Use_Name,Enabled
+FadeType_None_Name,Disabled
+FadeType_Use_Name,Enabled
+FadeType_None_Name,Disabled
+UVType_Default_Name,Standard
+UVType_Fixed_Name,Fixed
+UVType_Animation_Name,Animation
+UVType_Scroll_Name,Scroll
+UVType_FCurve_Name,F-Curve
+CustomDataType_None_Name,None
+CustomDataType_Fixed2D_Name,Fixed2
+CustomDataType_Random2D_Name,Random2
+CustomDataType_Easing2D_Name,Easing2
+CustomDataType_FCurve2D_Name,FCurve2
+CustomDataType_Fixed4D_Name,Fixed4
+CustomDataType_FCurveColor_Name,FCurve-Color
+CustomDataType_None_Name,None
+CustomDataType_Fixed2D_Name,Fixed2
+CustomDataType_Random2D_Name,Random2
+CustomDataType_Easing2D_Name,Easing2
+CustomDataType_FCurve2D_Name,FCurve2
+CustomDataType_Fixed4D_Name,Fixed4
+CustomDataType_FCurveColor_Name,FCurve-Color
+UVFixedParamater_Start_Name,"Start"
+UVFixedParamater_Size_Name,"Size"
+UVAnimationParamater_Start_Name,"Start"
+UVAnimationParamater_Size_Name,"Size"
+UVAnimationParamater_FrameLength_Name,"Frame Length"
+UVAnimationParamater_FrameCountX_Name,"X-Count"
+UVAnimationParamater_FrameCountY_Name,"Y-Count"
+UVAnimationParamater_LoopType_Name,"Loop"
+UVAnimationParamater_StartSheet_Name,"Start Sheet"
+UVScrollParamater_Start_Name,"Start"
+UVScrollParamater_Size_Name,"Size"
+UVScrollParamater_Speed_Name,"Scroll Speed"
+UVFCurveParamater_Start_Name,"Start"
+UVFCurveParamater_Size_Name,"Size"
+UVLoopType_Once_Name,None
+UVLoopType_Loop_Name,Loop
+UVLoopType_ReverceLoop_Name,Reverse Loop
