@@ -38,7 +38,7 @@ namespace EffekseerRendererGL
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 1);
 
 		auto shader = Shader::Create(deviceType_,
-									 deviceObjectCollection_,
+									 graphicsDevice_,
 									 (const char*)binary->GetVertexShaderData(shaderTypes[st]),
 									 binary->GetVertexShaderSize(shaderTypes[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypes[st]),
@@ -195,7 +195,7 @@ namespace EffekseerRendererGL
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);
 
 		auto shader = Shader::Create(deviceType_,
-									 deviceObjectCollection_,
+									 graphicsDevice_,
 									 (const char*)binary->GetVertexShaderData(shaderTypesModel[st]),
 									 binary->GetVertexShaderSize(shaderTypesModel[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypesModel[st]),
@@ -346,7 +346,7 @@ namespace EffekseerRendererGL
 
 MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
 							   Renderer* renderer,
-							   DeviceObjectCollection* deviceObjectCollection,
+							   GraphicsDevice* graphicsDevice,
 							   ::Effekseer::FileInterface* fileInterface,
 							   bool canLoadFromCache)
 	: fileInterface_(fileInterface), canLoadFromCache_(canLoadFromCache)
@@ -361,14 +361,14 @@ MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
 	renderer_ = renderer;
 	ES_SAFE_ADDREF(renderer_);
 
-	deviceObjectCollection_ = deviceObjectCollection;
-	ES_SAFE_ADDREF(deviceObjectCollection_);
+	graphicsDevice_ = graphicsDevice;
+	ES_SAFE_ADDREF(graphicsDevice_);
 }
 
 MaterialLoader ::~MaterialLoader()
 {
 	ES_SAFE_RELEASE(renderer_);
-	ES_SAFE_RELEASE(deviceObjectCollection_);
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)

@@ -5,6 +5,7 @@
 #include "EffekseerRendererGL.Renderer.h"
 #include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.RenderState.h"
+#include "EffekseerRendererGL.DeviceObjectCollection.h"
 
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexBuffer.h"
@@ -348,6 +349,12 @@ void main()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType) 
+{ 
+	return new GraphicsDevice(deviceType);
+}
+
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
@@ -366,11 +373,25 @@ void main()
 #endif
 }
 
-Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, DeviceObjectCollection* deviceObjectCollection)
+Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 {
 	GLExt::Initialize(deviceType);
 
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount, deviceType, deviceObjectCollection);
+	RendererImplemented* renderer = new RendererImplemented(squareMaxCount, deviceType, nullptr);
+	if (renderer->Initialize())
+	{
+		return renderer;
+	}
+	return NULL;
+}
+
+Renderer* Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
+{
+	auto g = static_cast<GraphicsDevice*>(graphicDevice);
+
+	GLExt::Initialize(g->GetDeviceType());
+
+	RendererImplemented* renderer = new RendererImplemented(squareMaxCount, g->GetDeviceType(), g);
 	if (renderer->Initialize())
 	{
 		return renderer;
@@ -388,8 +409,7 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount,
-										 OpenGLDeviceType deviceType,
-										 DeviceObjectCollection* deviceObjectCollection)
+										 OpenGLDeviceType deviceType, GraphicsDevice* graphicsDevice)
 	: m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
 	, m_indexBufferForWireframe	( NULL )
@@ -408,18 +428,18 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount,
 	, m_distortingCallback(nullptr)
 
 	, m_deviceType(deviceType)
-	, deviceObjectCollection_(deviceObjectCollection)
+	, graphicsDevice_(graphicsDevice)
 {
 	m_background.UserID = 0;
 	m_background.HasMipmap = false;
 
-	if (deviceObjectCollection == nullptr)
+	if (graphicsDevice == nullptr)
 	{
-		deviceObjectCollection_ = new DeviceObjectCollection();
+		graphicsDevice_ = new GraphicsDevice(deviceType);
 	}
 	else
 	{
-		ES_SAFE_ADDREF(deviceObjectCollection_);
+		ES_SAFE_ADDREF(graphicsDevice_);
 	}
 }
 
@@ -449,7 +469,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
-	ES_SAFE_RELEASE(deviceObjectCollection_);
+	ES_SAFE_RELEASE(graphicsDevice_);
 
 	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
 	{
@@ -460,14 +480,14 @@ RendererImplemented::~RendererImplemented()
 
 void RendererImplemented::OnLostDevice()
 {
-	if (deviceObjectCollection_ != nullptr)
-		deviceObjectCollection_->OnLostDevice();
+	if (graphicsDevice_ != nullptr)
+		graphicsDevice_->OnLostDevice();
 }
 
 void RendererImplemented::OnResetDevice()
 {
-	if (deviceObjectCollection_ != nullptr)
-		deviceObjectCollection_->OnResetDevice();
+	if (graphicsDevice_ != nullptr)
+		graphicsDevice_->OnResetDevice();
 
 	GenerateIndexData();
 }
@@ -556,14 +576,14 @@ bool RendererImplemented::Initialize()
 	m_renderState = new RenderState( this );
 
 	m_shader = Shader::Create(this->GetDeviceType(),
-							  this->GetDeviceObjectCollection(),
+							  this->GetGraphicsDevice(),
 		g_sprite_vs_src, sizeof(g_sprite_vs_src), 
 		g_sprite_fs_texture_src, sizeof(g_sprite_fs_texture_src), 
 		"Standard Tex", false);
 	if (m_shader == nullptr) return false;
 
 	m_shader_distortion = Shader::Create(this->GetDeviceType(),
-										 this->GetDeviceObjectCollection(),
+										 this->GetGraphicsDevice(),
 		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
 		g_sprite_fs_texture_distortion_src, sizeof(g_sprite_fs_texture_distortion_src), 
 		"Standard Distortion Tex", false);
@@ -663,7 +683,7 @@ bool RendererImplemented::Initialize()
 	};
 
 	m_shader_lighting = Shader::Create(this->GetDeviceType(),
-									   this->GetDeviceObjectCollection(),
+									   this->GetGraphicsDevice(),
 									   g_sprite_vs_lighting_src,
 									   sizeof(g_sprite_vs_lighting_src),
 									   g_sprite_fs_lighting_src,
@@ -989,7 +1009,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(this->GetDeviceType(), this, this->GetDeviceObjectCollection(), fileInterface);
+	return new MaterialLoader(this->GetDeviceType(), this, this->GetGraphicsDevice(), fileInterface);
 #else
 	return nullptr;
 #endif

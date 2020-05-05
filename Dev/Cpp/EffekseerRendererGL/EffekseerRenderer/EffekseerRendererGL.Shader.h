@@ -123,7 +123,7 @@ private:
 
 	Shader(OpenGLDeviceType deviceType, 
 		Renderer* renderer,
-		DeviceObjectCollection* deviceObjectCollection,
+		GraphicsDevice* graphicsDevice,
 		GLuint program,
 		const char* vs_src,
 		size_t vertexShaderSize,
@@ -142,7 +142,7 @@ public:
 
 	static Shader* Create(
 		OpenGLDeviceType deviceType,
-		DeviceObjectCollection* deviceObjectCollection,
+		GraphicsDevice* graphicsDevice,
 						  const char* vs_src,
 						  size_t vertexShaderSize,
 						  const char* fs_src,

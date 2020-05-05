@@ -194,7 +194,7 @@ bool Shader::CompileShader(
 Shader::Shader( 
 	OpenGLDeviceType deviceType,
 	Renderer* renderer,
-	DeviceObjectCollection* deviceObjectCollection,
+	GraphicsDevice* graphicsDevice,
 	GLuint program,
 	const char* vs_src,
 	size_t vertexShaderSize,
@@ -202,7 +202,7 @@ Shader::Shader(
 	size_t pixelShaderSize,
 	const char* name,
 	bool hasRefCount)
-	: DeviceObject(static_cast<RendererImplemented*>(renderer), deviceObjectCollection, hasRefCount)
+	: DeviceObject(static_cast<RendererImplemented*>(renderer), graphicsDevice, hasRefCount)
 	, deviceType_(deviceType)
 	, m_program			( program )
 	, m_vertexSize		( 0 )
@@ -251,7 +251,7 @@ Shader::~Shader()
 
 Shader* Shader::Create(OpenGLDeviceType deviceType,
 
-	DeviceObjectCollection* deviceObjectCollection,
+	GraphicsDevice* graphicsDevice,
 					  const char* vs_src,
 					  size_t vertexShaderSize,
 					  const char* fs_src,
@@ -263,7 +263,7 @@ Shader* Shader::Create(OpenGLDeviceType deviceType,
 
 	if (CompileShader(deviceType, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
 	{
-		return new Shader(deviceType, nullptr, deviceObjectCollection, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name, hasRefCount);
+		return new Shader(deviceType, nullptr, graphicsDevice, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name, hasRefCount);
 	}
 	else
 	{
@@ -282,7 +282,7 @@ Shader* Shader::Create(
 	{
 		return new Shader(r->GetDeviceType(),
 						  renderer,
-						  r->GetDeviceObjectCollection(),
+						  r->GetGraphicsDevice(),
 						  program,
 						  vs_src,
 						  vertexShaderSize,

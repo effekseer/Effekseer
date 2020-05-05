@@ -76,57 +76,6 @@ enum class OpenGLDeviceType
 
 #endif // __EFFEKSEERRENDERER_GL_BASE_PRE_H__
 
-#ifndef __EFFEKSEERRENDERER_GL_DEVICEOBJECT_COLLECTION_H__
-#define __EFFEKSEERRENDERER_GL_DEVICEOBJECT_COLLECTION_H__
-
-#include <set>
-#include <Effekseer.h>
-
-namespace EffekseerRendererGL
-{
-
-class DeviceObject;
-
-class DeviceObjectCollection : public ::Effekseer::ReferenceObject
-{
-	friend class DeviceObject;
-
-private:
-	std::set<DeviceObject*> deviceObjects_;
-
-	/**
-		@brief	register an object
-	*/
-	void Register(DeviceObject* device);
-
-	/**
-		@brief	unregister an object
-	*/
-	void Unregister(DeviceObject* device);
-
-public:
-	DeviceObjectCollection() = default;
-
-	~DeviceObjectCollection() = default;
-
-	/**
-		@brief
-		\~english Call when device lost causes
-		\~japanese デバイスロストが発生した時に実行する。
-	*/
-	void OnLostDevice();
-
-	/**
-		@brief
-		\~english Call when device reset causes
-		\~japanese デバイスがリセットされた時に実行する。
-	*/
-	void OnResetDevice();
-};
-
-} // namespace EffekseerRendererGL
-
-#endif // __EFFEKSEERRENDERER_GL_DEVICEOBJECT_H__
 #ifndef	__EFFEKSEERRENDERER_RENDERER_H__
 #define	__EFFEKSEERRENDERER_RENDERER_H__
 
@@ -541,25 +490,14 @@ public:
 namespace EffekseerRendererGL
 {
 
-class DeviceObjectCollection;
+class GraphicsDevice;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr, ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
 ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
-/**
-	@brief	描画クラス
-*/
 class Renderer
 	: public ::EffekseerRenderer::Renderer
 {
@@ -578,7 +516,7 @@ public:
 	@param	deviceType
 	\~english	device type of opengl
 	\~japanese	デバイスの種類
-	@param	deviceObjectCollection
+	@param	graphicDevice
 	\~english	for a middleware. it should be nullptr.
 	\~japanese	ミドルウェア向け。 nullptrにすべきである。
 	@return
@@ -586,8 +524,9 @@ public:
 	\~japanese	インスタンス
 	*/
 	static Renderer* Create(int32_t squareMaxCount,
-							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2,
-							DeviceObjectCollection* deviceObjectCollection = nullptr);
+							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+
+	static Renderer* Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

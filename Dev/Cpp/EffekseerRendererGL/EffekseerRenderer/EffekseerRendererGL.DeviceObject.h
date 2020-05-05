@@ -8,20 +8,20 @@
 namespace EffekseerRendererGL
 {
 
-class DeviceObjectCollection;
+class GraphicsDevice;
 class RendererImplemented;
 
 class DeviceObject
 {
 private:
 	RendererImplemented* renderer_;
-	DeviceObjectCollection* deviceObjectCollection_ = nullptr;
+	GraphicsDevice* graphicsDevice_ = nullptr;
 
 	//! whether does this instance inc and dec the reference count of renderer
 	bool hasRefCount_ = false;
 
 public:
-	DeviceObject(RendererImplemented* renderer, DeviceObjectCollection* deviceObjectCollection, bool hasRefCount);
+	DeviceObject(RendererImplemented* renderer, GraphicsDevice* graphicsDevice, bool hasRefCount);
 	virtual ~DeviceObject();
 
 public:
