@@ -27,6 +27,18 @@ namespace Effekseer.Data
 		}
 	}
 
+	public enum MouseMappingType
+	{
+		[Key(key = "MouseMappingType_Effekseer")]
+		Effekseer = 0,
+		[Key(key = "MouseMappingType_Unity")]
+		Unity = 1,
+		[Key(key = "MouseMappingType_Blender")]
+		Blender = 2,
+		[Key(key = "MouseMappingType_Maya")]
+		Maya = 3,
+	}
+
 	public enum FontType
 	{
 		[Key(key ="FontType_Normal")]
@@ -159,6 +171,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "Options_MouseMappingType")]
+		[Undo(Undo = false)]
+		public Value.Enum<MouseMappingType> MouseMappingType
+		{
+			get;
+			private set;
+		}
+
 		[Key(key = "Options_MouseRotInvX")]
 		[Undo(Undo = false)]
 		public Value.Boolean MouseRotInvX
@@ -236,6 +256,8 @@ namespace Effekseer.Data
 
 			Font = new Value.Enum<FontType>(FontType.Normal);
 			FontSize = new Value.Int(16, 32, 8);
+
+			MouseMappingType = new Value.Enum<MouseMappingType>(Data.MouseMappingType.Effekseer);
 
 			LanguageSelector = new LanguageSelector();
 		}
