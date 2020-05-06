@@ -1,6 +1,8 @@
 trigger:
-
-- master
+  branches:
+    include:
+    - master
+    - 15x
 
 jobs:
   - job: Windows_x86
