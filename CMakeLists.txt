@@ -82,12 +82,18 @@ endif()
 if(BUILD_VIEWER)
 
     # zlib
+    if(BUILD_WITH_POSTFIX)
+        set(ZLIB_INSTALL "")
+    else()
+        set(ZLIB_INSTALL ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>)
+    endif()
+
     ExternalProject_Add(
         ExternalProject_zlib
         SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/zlib
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/zlib
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
-        INSTALL_COMMAND ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>
+        INSTALL_COMMAND ${ZLIB_INSTALL}
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
@@ -111,13 +117,19 @@ if(BUILD_VIEWER)
     endif()
 
     # libpng
+    if(BUILD_WITH_POSTFIX)
+        set(LIBPNG_INSTALL "")
+    else()
+        set(LIBPNG_INSTALL ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>)
+    endif()
+
     ExternalProject_Add(
         ExternalProject_libpng
         DEPENDS         ExternalProject_zlib
         SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/libpng
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
-        INSTALL_COMMAND ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>
+        INSTALL_COMMAND ${LIBPNG_INSTALL}
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
