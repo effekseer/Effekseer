@@ -2,11 +2,11 @@ on:
   push:
     branches:
       - master
-	  - 15x
+      - 15x
   pull_request:
     branches:
       - master
-	  - 15x
+      - 15x
 jobs:
 
   windows:
