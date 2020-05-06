@@ -192,8 +192,6 @@ bool Shader::CompileShader(
 //
 //-----------------------------------------------------------------------------------
 Shader::Shader( 
-	OpenGLDeviceType deviceType,
-	Renderer* renderer,
 	GraphicsDevice* graphicsDevice,
 	GLuint program,
 	const char* vs_src,
@@ -202,8 +200,7 @@ Shader::Shader(
 	size_t pixelShaderSize,
 	const char* name,
 	bool hasRefCount)
-	: DeviceObject(static_cast<RendererImplemented*>(renderer), graphicsDevice, hasRefCount)
-	, deviceType_(deviceType)
+	: DeviceObject(nullptr, graphicsDevice, hasRefCount)
 	, m_program			( program )
 	, m_vertexSize		( 0 )
 	, m_vertexConstantBuffer	( NULL )
@@ -249,8 +246,7 @@ Shader::~Shader()
 	ES_SAFE_DELETE_ARRAY( m_pixelConstantBuffer );
 }
 
-Shader* Shader::Create(OpenGLDeviceType deviceType,
-
+Shader* Shader::Create(
 	GraphicsDevice* graphicsDevice,
 					  const char* vs_src,
 					  size_t vertexShaderSize,
@@ -261,35 +257,9 @@ Shader* Shader::Create(OpenGLDeviceType deviceType,
 {
 	GLuint program;
 
-	if (CompileShader(deviceType, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
+	if (CompileShader(graphicsDevice->GetDeviceType(), program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
 	{
-		return new Shader(deviceType, nullptr, graphicsDevice, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name, hasRefCount);
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
-Shader* Shader::Create(
-	Renderer* renderer, const char* vs_src, size_t vertexShaderSize, const char* fs_src, size_t pixelShaderSize, const char* name)
-{
-	GLuint program;
-
-	auto r = static_cast<RendererImplemented*>(renderer);
-
-	if (CompileShader(r->GetDeviceType(), program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
-	{
-		return new Shader(r->GetDeviceType(),
-						  renderer,
-						  r->GetGraphicsDevice(),
-						  program,
-						  vs_src,
-						  vertexShaderSize,
-						  fs_src,
-						  pixelShaderSize,
-						  name,
-						  true);
+		return new Shader(graphicsDevice, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name, hasRefCount);
 	}
 	else
 	{

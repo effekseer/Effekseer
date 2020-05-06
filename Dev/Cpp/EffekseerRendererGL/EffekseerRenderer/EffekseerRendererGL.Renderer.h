@@ -26,6 +26,9 @@ class GraphicsDevice;
 
 ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
+::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+												  ::Effekseer::FileInterface* fileInterface = nullptr);
+
 class Renderer
 	: public ::EffekseerRenderer::Renderer
 {

@@ -373,6 +373,16 @@ void main()
 #endif
 }
 
+::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+												  ::Effekseer::FileInterface* fileInterface)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new MaterialLoader(static_cast<GraphicsDevice*>(graphicsDevice), fileInterface);
+#else
+	return NULL;
+#endif
+}
+
 Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 {
 	GLExt::Initialize(deviceType);
@@ -575,15 +585,13 @@ bool RendererImplemented::Initialize()
 
 	m_renderState = new RenderState( this );
 
-	m_shader = Shader::Create(this->GetDeviceType(),
-							  this->GetGraphicsDevice(),
+	m_shader = Shader::Create(GetGraphicsDevice(),
 		g_sprite_vs_src, sizeof(g_sprite_vs_src), 
 		g_sprite_fs_texture_src, sizeof(g_sprite_fs_texture_src), 
 		"Standard Tex", false);
 	if (m_shader == nullptr) return false;
 
-	m_shader_distortion = Shader::Create(this->GetDeviceType(),
-										 this->GetGraphicsDevice(),
+	m_shader_distortion = Shader::Create(GetGraphicsDevice(),
 		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
 		g_sprite_fs_texture_distortion_src, sizeof(g_sprite_fs_texture_distortion_src), 
 		"Standard Distortion Tex", false);
@@ -682,8 +690,7 @@ bool RendererImplemented::Initialize()
 		{"atTexCoord2", GL_FLOAT, 2, 32, false},
 	};
 
-	m_shader_lighting = Shader::Create(this->GetDeviceType(),
-									   this->GetGraphicsDevice(),
+	m_shader_lighting = Shader::Create(GetGraphicsDevice(),
 									   g_sprite_vs_lighting_src,
 									   sizeof(g_sprite_vs_lighting_src),
 									   g_sprite_fs_lighting_src,
@@ -1009,7 +1016,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(this->GetDeviceType(), this, this->GetGraphicsDevice(), fileInterface);
+	return new MaterialLoader(GetGraphicsDevice(), fileInterface);
 #else
 	return nullptr;
 #endif

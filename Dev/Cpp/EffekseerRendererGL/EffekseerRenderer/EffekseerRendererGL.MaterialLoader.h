@@ -18,8 +18,6 @@ class GraphicsDevice;
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
-	OpenGLDeviceType deviceType_;
-	Renderer* renderer_ = nullptr;
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	bool canLoadFromCache_ = false;
 
@@ -29,9 +27,7 @@ private:
 	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(OpenGLDeviceType deviceType,
-				   Renderer* renderer,
-				   GraphicsDevice* graphicsDevice,
+	MaterialLoader(GraphicsDevice* graphicsDevice,
 				   ::Effekseer::FileInterface* fileInterface,
 				   bool canLoadFromCache = true);
 	virtual ~MaterialLoader();

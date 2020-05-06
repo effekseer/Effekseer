@@ -12,8 +12,8 @@ DeviceObject::DeviceObject(RendererImplemented* renderer, GraphicsDevice* graphi
 	if (hasRefCount_)
 	{
 		ES_SAFE_ADDREF(renderer_);
-		ES_SAFE_ADDREF(graphicsDevice_);	
 	}
+	ES_SAFE_ADDREF(graphicsDevice_);	
 
 	graphicsDevice_->Register(this);
 }
@@ -25,8 +25,8 @@ DeviceObject::~DeviceObject()
 	if (hasRefCount_)
 	{
 		ES_SAFE_RELEASE(renderer_);
-		ES_SAFE_RELEASE(graphicsDevice_);
 	}
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 RendererImplemented* DeviceObject::GetRenderer() const { return renderer_; }

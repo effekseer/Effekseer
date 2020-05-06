@@ -1,6 +1,7 @@
 
 #include "efk.ImageRendererGL.h"
 
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
 
 namespace efk
@@ -75,14 +76,14 @@ static const char g_sprite_fs_no_texture_src[] =
 		this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
 
 		auto shader_ = EffekseerRendererGL::Shader::Create(
-			this->renderer,
+			this->renderer->GetGraphicsDevice(),
 			g_sprite_vs_src, sizeof(g_sprite_vs_src),
 			g_sprite_fs_texture_src, sizeof(g_sprite_fs_texture_src),
 			"Standard Tex");
 
-		auto shader_no_texture_ = EffekseerRendererGL::Shader::Create(
-			this->renderer,
-			g_sprite_vs_src, sizeof(g_sprite_vs_src),
+		auto shader_no_texture_ = EffekseerRendererGL::Shader::Create(this->renderer->GetGraphicsDevice(),
+																	  g_sprite_vs_src,
+																	  sizeof(g_sprite_vs_src),
 			g_sprite_fs_no_texture_src, sizeof(g_sprite_fs_no_texture_src),
 			"Standard NoTex");
 
