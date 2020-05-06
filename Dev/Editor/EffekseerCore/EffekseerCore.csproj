@@ -142,6 +142,7 @@
     <Compile Include="Data\Value\EnumBase.cs" />
     <Compile Include="Data\Value\FCurve.cs" />
     <Compile Include="Data\Value\FCurveColor.cs" />
+    <Compile Include="Data\Value\FCurveScalar.cs" />
     <Compile Include="Data\Value\FCurveVector2D.cs" />
     <Compile Include="Data\Value\FCurveVector3D.cs" />
     <Compile Include="Data\Value\Float.cs" />
