@@ -1873,34 +1873,16 @@ namespace efk
 		ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags_NoCloseButton;
 		ImGui::DockSpace(imguiWindowID, ImVec2(0.0f, 0.0f), dockFlags);
 
-		if (!ImGui::DockBuilderGetNode(imguiWindowID))
-		{
-			SetDefaultDockLayout();
-		}
+		//if (!ImGui::DockBuilderGetNode(imguiWindowID))
+		//{
+		//	SetDefaultDockLayout();
+		//}
 
 		return visible;
 	}
 
-	void GUIManager::SetNextDock(DockSlot slot)
+	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags)
 	{
-		//ImGui::SetNextDock((ImGuiDockSlot)slot);
-	}
-
-	void GUIManager::BeginDockspace()
-	{
-		//ImGui::BeginDockspace();
-	}
-
-	void GUIManager::EndDockspace()
-	{
-		//ImGui::EndDockspace();
-	}
-
-	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size)
-	{
-		//return ImGui::BeginDock(utf8str<256>(label), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
-		//ImGui::SetNextWindowSize(ImVec2(default_size.X, default_size.Y), ImGuiCond_Once);
-		
 		utf8str<256> utf8label(label);
 		ImGuiWindow* window = ImGui::FindWindowByName(utf8label);
 		if (!window || window->DockIsActive || window->DockTabIsVisible)
@@ -1913,72 +1895,47 @@ namespace efk
 
 	void GUIManager::EndDock()
 	{
-		//ImGui::EndDock();
 		ImGui::End();
 	}
 
-	void GUIManager::SetNextDockRate(float rate)
-	{
-		//ImGui::SetNextDockRate(rate);
-	}
-
-	void GUIManager::ResetNextParentDock()
-	{
-		//ImGui::ResetNextParentDock();
-	}
-
-	void GUIManager::SetDefaultDockLayout()
+	uint32_t GUIManager::BeginDockLayout()
 	{
 		ImGui::DockBuilderRemoveNode(imguiWindowID);
 		ImGui::DockBuilderAddNode(imguiWindowID, ImGuiDockNodeFlags_None);
 		ImGui::DockBuilderSetNodeSize(imguiWindowID, ImGui::GetMainViewport()->Size);
+		return imguiWindowID;
+	}
 
-		ImGuiID dockLeftID = 0, dockRightID = 0;
-		ImGui::DockBuilderSplitNode(imguiWindowID, ImGuiDir_Left, 0.65f, &dockLeftID, &dockRightID);
-
-		ImGuiID dockLeftTop = 0, dockLeftBottom = 0;
-		ImGui::DockBuilderSplitNode(dockLeftID, ImGuiDir_Up, 0.85f, &dockLeftTop, &dockLeftBottom);
-
-		ImGuiID dockRightTop = 0, dockRightBottom = 0;
-		ImGui::DockBuilderSplitNode(dockRightID, ImGuiDir_Up, 0.6f, &dockRightTop, &dockRightBottom);
-
-		ImGui::DockBuilderGetNode(dockLeftTop)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar;
-		ImGui::DockBuilderGetNode(dockLeftTop)->LocalFlags |= ImGuiDockNodeFlags_HiddenTabBar;
-		ImGui::DockBuilderGetNode(dockLeftBottom)->LocalFlags |= ImGuiDockNodeFlags_HiddenTabBar;
-
-		ImGui::DockBuilderDockWindow("###Viewer", dockLeftTop);
-		ImGui::DockBuilderDockWindow("###ViewerControls", dockLeftBottom);
-		ImGui::DockBuilderDockWindow("###BasicSettings", dockRightTop);
-		ImGui::DockBuilderDockWindow("###Position", dockRightTop);
-		ImGui::DockBuilderDockWindow("###Rotation", dockRightTop);
-		ImGui::DockBuilderDockWindow("###Scale", dockRightTop);
-		ImGui::DockBuilderDockWindow("###RenderSettings", dockRightTop);
-		ImGui::DockBuilderDockWindow("###BasicRenderSettings", dockRightTop);
-		ImGui::DockBuilderDockWindow("###NodeTree", dockRightBottom);
-
+	void GUIManager::EndDockLayout()
+	{
 		ImGui::DockBuilderFinish(imguiWindowID);
 	}
+
+	void GUIManager::DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2)
+	{
+		ImGui::DockBuilderSplitNode(nodeId, (ImGuiDir)dir, sizeRatio, outId1, outId2);
+	}
+
+	void GUIManager::DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags)
+	{
+		auto node = ImGui::DockBuilderGetNode(nodeId);
+		if (node == nullptr)
+		{
+			return;
+		}
+
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoTabBar) ? ImGuiDockNodeFlags_NoTabBar : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::HiddenTabBar) ? ImGuiDockNodeFlags_HiddenTabBar : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoWindowMenuButton) ? ImGuiDockNodeFlags_NoWindowMenuButton : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoCloseButton) ? ImGuiDockNodeFlags_NoCloseButton : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoDocking) ? ImGuiDockNodeFlags_NoDocking : 0;
+	}
+
+	void GUIManager::DockSetWindow(uint32_t nodeId, const char* windowName)
+	{
+		ImGui::DockBuilderDockWindow(windowName, nodeId);
+	}
 	
-	void GUIManager::SetNextDockIcon(ImageResource* icon, Vec2 iconSize)
-	{
-		//ImGui::SetNextDockIcon(ToImTextureID(icon), ImVec2(iconSize.X, iconSize.Y));
-	}
-
-	void GUIManager::SetNextDockTabToolTip(const char16_t* popup)
-	{
-		//ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
-	}
-
-	bool GUIManager::GetDockActive()
-	{
-		return true;//ImGui::GetDockActive();
-	}
-
-	void GUIManager::SetDockActive()
-	{
-		//ImGui::SetDockActive();
-	}
-
 	bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value, float max_value)
 	{
 		return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), current, ImVec2(scale.X, scale.Y), min_value, max_value);

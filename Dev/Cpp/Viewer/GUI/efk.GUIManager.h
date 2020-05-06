@@ -244,16 +244,22 @@ namespace efk
 		LoopInversely = 2,
 	};
 
-	enum class DockSlot : int32_t
+	enum class DockSplitDir : int32_t
 	{
 		Left = 0,
 		Right,
 		Top,
 		Bottom,
-		Tab,
+	};
 
-		Float,
-		None
+	enum class DockNodeFlags : int32_t
+	{
+		None = 0,
+		NoTabBar = (1 << 0),
+		HiddenTabBar = (1 << 1),
+		NoWindowMenuButton = (1 << 2),
+		NoCloseButton = (1 << 3),
+		NoDocking = (1 << 4),
 	};
     
     enum class DialogStyle {
@@ -582,18 +588,13 @@ namespace efk
 
 		// Dock
 		bool BeginFullscreen(const char16_t* label);
-		void SetNextDock(DockSlot slot);
-		void BeginDockspace();
-		void EndDockspace();
-		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size);
+		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags);
 		void EndDock();
-		void SetNextDockRate(float rate);
-		void ResetNextParentDock();
-		void SetDefaultDockLayout();
-		void SetNextDockIcon(ImageResource* icon, Vec2 iconSize);
-		void SetNextDockTabToolTip(const char16_t* popup);
-		bool GetDockActive();
-		void SetDockActive();
+		uint32_t GUIManager::BeginDockLayout();
+		void GUIManager::EndDockLayout();
+		void GUIManager::DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2);
+		void GUIManager::DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags);
+		void GUIManager::DockSetWindow(uint32_t nodeId, const char* windowName);
 
 		// Fcurve
 		bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);

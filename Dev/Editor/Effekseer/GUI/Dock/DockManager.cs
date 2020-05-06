@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,8 +26,6 @@ namespace Effekseer.GUI.Dock
 				//if (Manager.NativeManager.Begin(Label + id, ref opened))
 				if(Manager.NativeManager.BeginFullscreen(Label + id))
 				{
-					Manager.NativeManager.BeginDockspace();
-
 					Controls.Lock();
 
 					foreach (var c in Controls.Internal.OfType<DockPanel>())
@@ -44,10 +42,6 @@ namespace Effekseer.GUI.Dock
 					}
 
 					Controls.Unlock();
-
-					
-
-					Manager.NativeManager.EndDockspace();
 				}
 
 				Manager.NativeManager.End();

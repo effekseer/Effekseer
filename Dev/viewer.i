@@ -79,6 +79,8 @@ class"
 
 %apply uint8_t INOUT[] { uint8_t* kv_selected }
 
+%apply uint32_t *INOUT { uint32_t* outId1 }
+%apply uint32_t *INOUT { uint32_t* outId2 }
 %apply int *INOUT { int* size }
 %apply uint8_t INOUT[] { uint8_t* data }
 %apply uint8_t INOUT[] { uint8_t* data_output }

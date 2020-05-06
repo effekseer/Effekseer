@@ -1243,21 +1243,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public void SetNextDock(DockSlot slot) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDock(swigCPtr, (int)slot);
-  }
-
-  public void BeginDockspace() {
-    EffekseerNativePINVOKE.GUIManager_BeginDockspace(swigCPtr);
-  }
-
-  public void EndDockspace() {
-    EffekseerNativePINVOKE.GUIManager_EndDockspace(swigCPtr);
-  }
-
-  public bool BeginDock(string label, ref bool p_open, WindowFlags extra_flags, Vec2 default_size) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, ref p_open, (int)extra_flags, Vec2.getCPtr(default_size));
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  public bool BeginDock(string label, ref bool p_open, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, ref p_open, (int)extra_flags);
     return ret;
   }
 
@@ -1265,34 +1252,25 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndDock(swigCPtr);
   }
 
-  public void SetNextDockRate(float rate) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDockRate(swigCPtr, rate);
-  }
-
-  public void ResetNextParentDock() {
-    EffekseerNativePINVOKE.GUIManager_ResetNextParentDock(swigCPtr);
-  }
-
-  public void SetDefaultDockLayout() {
-    EffekseerNativePINVOKE.GUIManager_SetDefaultDockLayout(swigCPtr);
-  }
-
-  public void SetNextDockIcon(ImageResource icon, Vec2 iconSize) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDockIcon(swigCPtr, ImageResource.getCPtr(icon), Vec2.getCPtr(iconSize));
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-  }
-
-  public void SetNextDockTabToolTip(string popup) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDockTabToolTip(swigCPtr, popup);
-  }
-
-  public bool GetDockActive() {
-    bool ret = EffekseerNativePINVOKE.GUIManager_GetDockActive(swigCPtr);
+  public uint BeginDockLayout() {
+    uint ret = EffekseerNativePINVOKE.GUIManager_BeginDockLayout(swigCPtr);
     return ret;
   }
 
-  public void SetDockActive() {
-    EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
+  public void EndDockLayout() {
+    EffekseerNativePINVOKE.GUIManager_EndDockLayout(swigCPtr);
+  }
+
+  public void DockSplitNode(uint nodeId, DockSplitDir dir, float sizeRatio, ref uint outId1, ref uint outId2) {
+    EffekseerNativePINVOKE.GUIManager_DockSplitNode(swigCPtr, nodeId, (int)dir, sizeRatio, ref outId1, ref outId2);
+  }
+
+  public void DockSetNodeFlags(uint nodeId, DockNodeFlags flags) {
+    EffekseerNativePINVOKE.GUIManager_DockSetNodeFlags(swigCPtr, nodeId, (int)flags);
+  }
+
+  public void DockSetWindow(uint nodeId, string windowName) {
+    EffekseerNativePINVOKE.GUIManager_DockSetWindow(swigCPtr, nodeId, windowName);
   }
 
   public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value, float max_value) {
