@@ -156,7 +156,6 @@ void FCurve::Maginify(float value)
 	}
 }
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 int32_t FCurveScalar::Load(void* data, int32_t version)
 {
 	int32_t size = 0;
@@ -176,16 +175,9 @@ int32_t FCurveScalar::Load(void* data, int32_t version)
 	return size;
 }
 
-float FCurveScalar::GetValues(float living, float life) const
-{
-	return S.GetValue(living, life, Timeline);
-}
+float FCurveScalar::GetValues(float living, float life) const { return S.GetValue(living, life, Timeline); }
 
-float FCurveScalar::GetOffsets(InstanceGlobal& g) const
-{
-	return S.GetOffset(g);
-}
-#endif
+float FCurveScalar::GetOffsets(InstanceGlobal& g) const { return S.GetOffset(g); }
 
 int32_t FCurveVector2D::Load(void* data, int32_t version)
 {
