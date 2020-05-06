@@ -31,6 +31,12 @@ namespace Effekseer
 		[HandleProcessCorruptedStateExceptions]
 		static void Main(string[] args)
 		{
+			// HACK code for mac
+			// To load libMonoPosix at first
+			{
+				var dummy = Effekseer.Utils.Zlib.Decompress(new byte[] { 1, 2, 3, 4 });
+			}
+
 #if DEBUG
 			var test = new Effekseer.InternalScript.Tests();
 			Effekseer.IO.ChunkTest.Test();
