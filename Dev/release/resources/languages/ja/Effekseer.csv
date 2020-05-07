@@ -146,7 +146,8 @@ Alt+ホイール - 横方向拡大
 Ctrl+ホイール - 縦方向拡大
 Alt+左クリック - 複数選択と編集
 Shift+左クリック - 選択切り替え
-ラベルのダブルクリック - 表示範囲自動変更"
+ラベルのダブルクリック - 表示範囲自動変更
+Delete - 点の削除"
 ,
 ImageFilter_,画像ファイル (*.png)|*.png
 ModelFilter_,"モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"

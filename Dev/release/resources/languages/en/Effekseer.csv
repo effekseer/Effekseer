@@ -140,12 +140,13 @@ FCurve_Paste_Desc,It pastes key points.
 AutoZoom,AutoZoom
 AutoZoom_Desc,Adjust graph's height automatically
 FCurve_Operation_Instruction_Desc,Operating Instructions(Mouse Over)
-FCurveCtrl_Desc,"- Double click - Add, Remove points
+FCurveCtrl_Desc,"Double click - Add, Remove points
 Alt+Wheel - Zoom horizontal
 Ctrl+Wheel - Zoom vertical
 Alt+LeftClick - Select multiple points and edit
 Shift+LeftClick - Switch selecting points
-Double click with labels - Change viewing area automatically"
+Double click with labels - Change viewing area automatically
+Delete - Remove a point"
 ,
 ImageFilter_,Image File (*.png)|*.png
 ModelFilter_,"Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"
