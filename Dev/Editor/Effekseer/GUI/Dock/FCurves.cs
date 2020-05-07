@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// hot key
-			if (IsDockActive() && canControl)
+			if (IsDockActive() && !Manager.NativeManager.IsAnyItemActive() && canControl)
 			{
 				int delete_num = 261;
 
