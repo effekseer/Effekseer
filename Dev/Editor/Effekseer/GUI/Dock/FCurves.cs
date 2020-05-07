@@ -207,6 +207,11 @@ namespace Effekseer.GUI.Dock
 			{
 				int delete_num = 261;
 
+				if (swig.GUIManager.IsMacOSX())
+				{
+					delete_num = 259;
+				}
+
 				// Delete points
 				if(Manager.NativeManager.IsKeyDown(delete_num))
 				{
