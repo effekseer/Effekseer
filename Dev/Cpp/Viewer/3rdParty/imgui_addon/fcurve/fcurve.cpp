@@ -1318,11 +1318,11 @@ namespace ImGui
 				auto f_mousePos = transform_s2f(mousePos);
 				if (keys[movedIndex] + 0.5f <= f_mousePos.x && 0 < fd.x)
 				{
-					fd.x = (f_mousePos.x - keys[movedIndex]) + 1;
+					fd.x = (int)(f_mousePos.x - keys[movedIndex]) + 1;
 				}
 				else if (keys[movedIndex] - 0.5f >= f_mousePos.x && 0 > fd.x)
 				{
-					fd.x = (f_mousePos.x - keys[movedIndex]) - 1;
+					fd.x = (int)(f_mousePos.x - keys[movedIndex]) - 1;
 				}
 				else
 				{
