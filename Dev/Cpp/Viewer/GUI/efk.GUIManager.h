@@ -590,11 +590,11 @@ namespace efk
 		bool BeginFullscreen(const char16_t* label);
 		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags);
 		void EndDock();
-		uint32_t GUIManager::BeginDockLayout();
-		void GUIManager::EndDockLayout();
-		void GUIManager::DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2);
-		void GUIManager::DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags);
-		void GUIManager::DockSetWindow(uint32_t nodeId, const char* windowName);
+		uint32_t BeginDockLayout();
+		void EndDockLayout();
+		void DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2);
+		void DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags);
+		void DockSetWindow(uint32_t nodeId, const char* windowName);
 
 		// Fcurve
 		bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);
