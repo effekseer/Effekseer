@@ -1273,6 +1273,15 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_DockSetWindow(swigCPtr, nodeId, windowName);
   }
 
+  public bool IsDockFocused() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsDockFocused(swigCPtr);
+    return ret;
+  }
+
+  public void SetDockFocus(string label) {
+    EffekseerNativePINVOKE.GUIManager_SetDockFocus(swigCPtr, label);
+  }
+
   public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value, float max_value) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_0(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value, max_value);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

@@ -781,8 +781,9 @@ namespace Effekseer.GUI
 			{
 				if (dockTypes[i] != t) continue;
 
-				if(panels[i] != null)
+				if (panels[i] != null)
 				{
+					panels[i].SetFocus();
 					return panels[i];
 				}
 				else

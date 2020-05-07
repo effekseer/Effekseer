@@ -595,6 +595,8 @@ namespace efk
 		void DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2);
 		void DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags);
 		void DockSetWindow(uint32_t nodeId, const char* windowName);
+		bool IsDockFocused();
+		void SetDockFocus(const char16_t* label);
 
 		// Fcurve
 		bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);

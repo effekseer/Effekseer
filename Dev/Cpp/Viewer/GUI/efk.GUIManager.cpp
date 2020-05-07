@@ -1935,7 +1935,18 @@ namespace efk
 	{
 		ImGui::DockBuilderDockWindow(windowName, nodeId);
 	}
-	
+
+	bool GUIManager::IsDockFocused()
+	{
+		return ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+	}
+
+	void GUIManager::SetDockFocus(const char16_t* label)
+	{
+		utf8str<256> utf8label(label);
+		ImGui::SetWindowFocus(utf8label);
+	}
+
 	bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value, float max_value)
 	{
 		return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), current, ImVec2(scale.X, scale.Y), min_value, max_value);

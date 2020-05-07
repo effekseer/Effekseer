@@ -115,14 +115,22 @@ namespace Effekseer.GUI.Dock
 
 		public bool IsDockActive()
 		{
-			//if (Manager.IsDockMode())
-			//{
-			//	return Manager.NativeManager.GetDockActive();
-			//}
+			if (Manager.IsDockMode())
+			{
+				return Manager.NativeManager.IsDockFocused();
+			}
 			return false;
 		}
 
-        protected virtual void UpdateInternal()
+		public void SetFocus()
+		{
+			if (Manager.IsDockMode())
+			{
+				Manager.NativeManager.SetDockFocus(WindowID);
+			}
+		}
+
+		protected virtual void UpdateInternal()
         {
         }
     }
