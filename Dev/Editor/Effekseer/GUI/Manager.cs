@@ -474,6 +474,70 @@ namespace Effekseer.GUI
 		protected static int LEFT_CONTROL = 341;
 		protected static int RIGHT_CONTROL = 345;
 
+		protected static int LEFT_ALT = 342;
+		protected static int RIGHT_ALT = 346;
+
+		protected static int LEFT_SUPER = 343;
+		protected static int RIGHT_SUPER = 347;
+
+		struct ViewportControllerResult
+		{
+			public bool Rotate;
+			public bool Slide;
+			public bool Zoom;
+		}
+
+		static ViewportControllerResult ControllViewport()
+		{
+			bool isLeftPressed = NativeManager.GetMouseButton(0) > 0;
+			bool isRightPressed = NativeManager.GetMouseButton(1) > 0;
+			bool isWheelPressed = NativeManager.GetMouseButton(2) > 0;
+
+			bool isShiftPressed = Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT);
+			bool isCtrlPressed = Manager.NativeManager.IsKeyDown(LEFT_CONTROL) || Manager.NativeManager.IsKeyDown(RIGHT_CONTROL);
+			bool isAltPressed = Manager.NativeManager.IsKeyDown(LEFT_ALT) || Manager.NativeManager.IsKeyDown(RIGHT_ALT);
+			bool isSuperPressed = Manager.NativeManager.IsKeyDown(LEFT_SUPER) || Manager.NativeManager.IsKeyDown(RIGHT_SUPER);
+
+			bool isSlidePressed = false;
+			bool isZoomPressed = false;
+			bool isRotatePressed = false;
+
+			switch (Core.Option.MouseMappingType.Value)
+			{
+				case Data.MouseMappingType.Effekseer:
+					isSlidePressed = isWheelPressed || (isRightPressed && isShiftPressed);
+					isZoomPressed = isRightPressed && isCtrlPressed;
+					isRotatePressed = isRightPressed;
+					break;
+
+				case Data.MouseMappingType.Blender:
+					isSlidePressed = isWheelPressed && isShiftPressed;
+					isZoomPressed = isWheelPressed && isCtrlPressed;
+					isRotatePressed = isWheelPressed;
+					break;
+
+				case Data.MouseMappingType.Maya:
+					isSlidePressed = isWheelPressed && isAltPressed;
+					isZoomPressed = isRightPressed && isAltPressed;
+					isRotatePressed = isLeftPressed && isAltPressed;
+					break;
+
+				case Data.MouseMappingType.Unity:
+					isSlidePressed = isRightPressed;
+					isZoomPressed = false;
+					isRotatePressed = isWheelPressed;
+					break;
+			}
+
+			ViewportControllerResult result;
+
+			result.Rotate = isRotatePressed;
+			result.Zoom = isZoomPressed;
+			result.Slide = isSlidePressed;
+
+			return result;
+		}
+
 		public static void Update()
 		{
 			if (isFontSizeDirtied)
@@ -522,7 +586,9 @@ namespace Effekseer.GUI
 
 			if((effectViewer == null && !NativeManager.IsAnyWindowHovered()) || (effectViewer != null && effectViewer.IsHovered))
 			{
-				if (NativeManager.GetMouseButton(2) > 0 || (NativeManager.GetMouseButton(1) > 0 && (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))))
+				var result = ControllViewport();
+
+				if (result.Slide)
 				{
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;
@@ -540,13 +606,13 @@ namespace Effekseer.GUI
 				{
 					Viewer.Zoom(NativeManager.GetMouseWheel());
 				}
-				else if (NativeManager.GetMouseButton(1) > 0 && (NativeManager.GetMouseButton(1) > 0 && (Manager.NativeManager.IsKeyDown(LEFT_CONTROL) || Manager.NativeManager.IsKeyDown(RIGHT_CONTROL))))
+				else if (result.Zoom)
 				{
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;
-					Viewer.Zoom(dy * 0.25f);
+					Viewer.Zoom(-dy * 0.25f);
 				}
-				else if (NativeManager.GetMouseButton(1) > 0)
+				else if (result.Rotate)
 				{
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;

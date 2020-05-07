@@ -242,7 +242,7 @@ void main() {
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 		
 		// Extract shader
-		shaderExtract.reset(Shader::Create(renderer,
+		shaderExtract.reset(Shader::Create(renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src),
 			g_extract_fs_src, sizeof(g_extract_fs_src),
 			"Bloom extract"));
@@ -256,7 +256,7 @@ void main() {
 			shaderExtract->GetUniformId("u_Intensity"), 16);
 
 		// Downsample shader
-		shaderDownsample.reset(Shader::Create(renderer,
+		shaderDownsample.reset(Shader::Create(renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src),
 			g_downsample_fs_src, sizeof(g_downsample_fs_src),
 			"Bloom downsample"));
@@ -265,7 +265,8 @@ void main() {
 		shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 		// Blend shader
-		shaderBlend.reset(Shader::Create(renderer,
+		shaderBlend.reset(Shader::Create(
+			renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src),
 			g_blend_fs_src, sizeof(g_blend_fs_src),
 			"Bloom blend"));
@@ -277,7 +278,8 @@ void main() {
 		shaderBlend->SetTextureSlot(3, shaderBlend->GetUniformId("u_Texture3"));
 
 		// Blur(horizontal) shader
-		shaderBlurH.reset(Shader::Create(renderer,
+		shaderBlurH.reset(Shader::Create(
+			renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src),
 			g_blur_h_fs_src, sizeof(g_blur_h_fs_src),
 			"Bloom blurH"));
@@ -286,7 +288,8 @@ void main() {
 		shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
 
 		// Blur(vertical) shader
-		shaderBlurV.reset(Shader::Create(renderer,
+		shaderBlurV.reset(Shader::Create(
+			renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src),
 			g_blur_v_fs_src, sizeof(g_blur_v_fs_src),
 			"Bloom blurV"));
@@ -459,7 +462,8 @@ void main() {
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 		// Copy shader
-		shaderCopy.reset(Shader::Create(renderer, 
+		shaderCopy.reset(Shader::Create(
+			renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src), 
 			g_copy_fs_src, sizeof(g_copy_fs_src), 
 			"Tonemap copy"));
@@ -468,7 +472,7 @@ void main() {
 		shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
 		// Reinhard shader
-		shaderReinhard.reset(Shader::Create(renderer,
+		shaderReinhard.reset(Shader::Create(renderer->GetGraphicsDevice(),
 			g_basic_vs_src, sizeof(g_basic_vs_src), 
 			g_tonemap_reinhard_fs_src, sizeof(g_tonemap_reinhard_fs_src), 
 			"Tonemap Reinhard"));
@@ -525,8 +529,12 @@ void main() {
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 		// Copy shader
-		shader_.reset(Shader::Create(
-			renderer, g_basic_vs_src, sizeof(g_basic_vs_src), g_linear_to_srgb_fs_src, sizeof(g_linear_to_srgb_fs_src), "LinearToSRGB"));
+		shader_.reset(Shader::Create(renderer->GetGraphicsDevice(),
+									 g_basic_vs_src,
+									 sizeof(g_basic_vs_src),
+									 g_linear_to_srgb_fs_src,
+									 sizeof(g_linear_to_srgb_fs_src),
+									 "LinearToSRGB"));
 		shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
 		shader_->SetVertexSize(sizeof(BlitterGL::Vertex));
 		shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));

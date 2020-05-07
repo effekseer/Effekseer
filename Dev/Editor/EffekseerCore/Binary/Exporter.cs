@@ -643,7 +643,7 @@ namespace Effekseer.Binary
 				}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-				if (Version >= 1600)
+				if (exporterVersion >= ExporterVersion.Ver1600)
 				{
 					node_data.Add(AlphaCrunchValues.GetBytes(n.AlphaCrunchValues));
 				}

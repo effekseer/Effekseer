@@ -4,11 +4,11 @@
 namespace EffekseerRendererGL
 {
 
-void DeviceObjectCollection::Register(DeviceObject* device) { deviceObjects_.insert(device); }
+void GraphicsDevice::Register(DeviceObject* device) { deviceObjects_.insert(device); }
 
-void DeviceObjectCollection::Unregister(DeviceObject* device) { deviceObjects_.erase(device); }
+void GraphicsDevice::Unregister(DeviceObject* device) { deviceObjects_.erase(device); }
 
-void DeviceObjectCollection::OnLostDevice()
+void GraphicsDevice::OnLostDevice()
 {
 	for (auto& device : deviceObjects_)
 	{
@@ -16,7 +16,7 @@ void DeviceObjectCollection::OnLostDevice()
 	}
 }
 
-void DeviceObjectCollection::OnResetDevice()
+void GraphicsDevice::OnResetDevice()
 {
 	for (auto& device : deviceObjects_)
 	{

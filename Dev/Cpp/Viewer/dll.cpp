@@ -1525,6 +1525,9 @@ public:
 
 	bool Step(Native* native, int frames)
 	{
+		// HACK
+		g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+
 		for (int32_t i = 0; i < frames; i++)
 		{
 			if (IsCompleted())
@@ -1584,6 +1587,10 @@ public:
 
 			recordedCount++;
 		}
+
+		// HACK
+		g_renderer->EndRenderToView();
+
 		return true;
 	}
 

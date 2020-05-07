@@ -16,6 +16,7 @@ namespace EffekseerRendererGL
 
 using Vertex = EffekseerRenderer::SimpleVertex;
 using VertexDistortion = EffekseerRenderer::VertexDistortion;
+class GraphicsDevice;
 
 struct RenderStateSet
 {
@@ -47,7 +48,7 @@ class RendererImplemented
 friend class DeviceObject;
 
 private:
-	DeviceObjectCollection* deviceObjectCollection_ = nullptr;
+	GraphicsDevice* graphicsDevice_ = nullptr;
 
 	VertexBuffer*		m_vertexBuffer;
 	IndexBuffer*		m_indexBuffer = nullptr;
@@ -95,7 +96,7 @@ private:
 	int32_t GetIndexSpriteCount() const;
 
 public:
-	RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType, DeviceObjectCollection* deviceObjectCollection);
+	RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType, GraphicsDevice* graphicsDevice);
 
 	~RendererImplemented();
 
@@ -229,7 +230,7 @@ public:
 
 	bool IsVertexArrayObjectSupported() const override;
 
-	DeviceObjectCollection* GetDeviceObjectCollection() const { return deviceObjectCollection_; }
+	GraphicsDevice* GetGraphicsDevice() const { return graphicsDevice_; }
 
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }

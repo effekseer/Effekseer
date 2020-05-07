@@ -53,7 +53,6 @@ public:
 	void Maginify(float value);
 };
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 class FCurveScalar
 {
 public:
@@ -65,7 +64,6 @@ public:
 	float GetValues(float living, float life) const;
 	float GetOffsets(InstanceGlobal& g) const;
 };
-#endif
 
 class FCurveVector2D
 {

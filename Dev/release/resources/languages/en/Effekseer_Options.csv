@@ -40,6 +40,7 @@ Options_LanguageSelector_Name,Language
 Options_LanguageSelector_Desc,Langueage
 Options_DistortionType_Name,Distortion method
 Options_DistortionType_Desc,Distortion method
+Options_MouseMappingType_Name,Mouse mapping
 RenderMode_Normal_Name,Normal
 RenderMode_Wireframe_Name,Wireframe
 ViewMode_3D_Name,3D
@@ -57,3 +58,7 @@ FontType_Bold_Name,Bold
 DistortionMethodType_Current_Name,Current
 DistortionMethodType_Effekseer120_Name,1.20 Compatible
 DistortionMethodType_Disabled_Name,Disabled
+MouseMappingType_Effekseer_Name,Effekseer
+MouseMappingType_Unity_Name,Unity
+MouseMappingType_Blender_Name,Blender
+MouseMappingType_Maya_Name,Maya

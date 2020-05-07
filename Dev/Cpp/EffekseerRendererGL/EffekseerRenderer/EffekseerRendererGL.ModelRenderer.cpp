@@ -548,16 +548,22 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	fs_d_t_src = Replace(fs_d_t_src, "TextureEnable", "true");
 
 	shader_lighting_texture_normal =
-		Shader::Create(renderer, vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1");
+		Shader::Create(renderer->GetGraphicsDevice(), vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1", true);
 	if (shader_lighting_texture_normal == NULL)
 		goto End;
 
-	shader_texture = Shader::Create(renderer, vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5");
+	shader_texture = Shader::Create(
+		renderer->GetGraphicsDevice(), vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5", true);
 	if (shader_texture == NULL)
 		goto End;
 
-	shader_distortion_texture =
-		Shader::Create(renderer, vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer7");
+	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(),
+											   vs_d_t_src.c_str(),
+											   vs_d_t_src.length(),
+											   fs_d_t_src.c_str(),
+											   fs_d_t_src.length(),
+											   "ModelRenderer7",
+											   true);
 	if (shader_distortion_texture == NULL)
 		goto End;
 

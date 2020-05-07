@@ -18,25 +18,17 @@
 namespace EffekseerRendererGL
 {
 
-class DeviceObjectCollection;
+class GraphicsDevice;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr, ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
 ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
-/**
-	@brief	描画クラス
-*/
+::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+												  ::Effekseer::FileInterface* fileInterface = nullptr);
+
 class Renderer
 	: public ::EffekseerRenderer::Renderer
 {
@@ -55,7 +47,7 @@ public:
 	@param	deviceType
 	\~english	device type of opengl
 	\~japanese	デバイスの種類
-	@param	deviceObjectCollection
+	@param	graphicDevice
 	\~english	for a middleware. it should be nullptr.
 	\~japanese	ミドルウェア向け。 nullptrにすべきである。
 	@return
@@ -63,8 +55,9 @@ public:
 	\~japanese	インスタンス
 	*/
 	static Renderer* Create(int32_t squareMaxCount,
-							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2,
-							DeviceObjectCollection* deviceObjectCollection = nullptr);
+							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+
+	static Renderer* Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

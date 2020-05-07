@@ -121,9 +121,7 @@ private:
 		size_t pixelShaderSize,
 		const char* name);
 
-	Shader(OpenGLDeviceType deviceType, 
-		Renderer* renderer,
-		DeviceObjectCollection* deviceObjectCollection,
+	Shader(GraphicsDevice* graphicsDevice,
 		GLuint program,
 		const char* vs_src,
 		size_t vertexShaderSize,
@@ -141,22 +139,13 @@ public:
 	virtual ~Shader();
 
 	static Shader* Create(
-		OpenGLDeviceType deviceType,
-		DeviceObjectCollection* deviceObjectCollection,
+		GraphicsDevice* graphicsDevice,
 						  const char* vs_src,
 						  size_t vertexShaderSize,
 						  const char* fs_src,
 						  size_t pixelShaderSize,
 						  const char* name,
-						  bool hasRefCount);
-
-	static Shader* Create(
-					  Renderer* renderer,
-					  const char* vs_src,
-					  size_t vertexShaderSize,
-					  const char* fs_src,
-					  size_t pixelShaderSize,
-					  const char* name);
+						  bool hasRefCount = true);
 
 public:
 	virtual void OnLostDevice() override;

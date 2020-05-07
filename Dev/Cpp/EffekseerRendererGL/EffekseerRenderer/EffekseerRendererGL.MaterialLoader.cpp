@@ -37,8 +37,7 @@ namespace EffekseerRendererGL
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 1);
 
-		auto shader = Shader::Create(deviceType_,
-									 deviceObjectCollection_,
+		auto shader = Shader::Create(graphicsDevice_,
 									 (const char*)binary->GetVertexShaderData(shaderTypes[st]),
 									 binary->GetVertexShaderSize(shaderTypes[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypes[st]),
@@ -194,8 +193,7 @@ namespace EffekseerRendererGL
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);
 
-		auto shader = Shader::Create(deviceType_,
-									 deviceObjectCollection_,
+		auto shader = Shader::Create(graphicsDevice_,
 									 (const char*)binary->GetVertexShaderData(shaderTypesModel[st]),
 									 binary->GetVertexShaderSize(shaderTypesModel[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypesModel[st]),
@@ -344,11 +342,7 @@ namespace EffekseerRendererGL
 	return materialData;
 }
 
-MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
-							   Renderer* renderer,
-							   DeviceObjectCollection* deviceObjectCollection,
-							   ::Effekseer::FileInterface* fileInterface,
-							   bool canLoadFromCache)
+MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache)
 	: fileInterface_(fileInterface), canLoadFromCache_(canLoadFromCache)
 {
 	if (fileInterface == nullptr)
@@ -356,20 +350,11 @@ MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
 		fileInterface_ = &defaultFileInterface_;
 	}
 
-	deviceType_ = deviceType;
-
-	renderer_ = renderer;
-	ES_SAFE_ADDREF(renderer_);
-
-	deviceObjectCollection_ = deviceObjectCollection;
-	ES_SAFE_ADDREF(deviceObjectCollection_);
+	graphicsDevice_ = graphicsDevice;
+	ES_SAFE_ADDREF(graphicsDevice_);
 }
 
-MaterialLoader ::~MaterialLoader()
-{
-	ES_SAFE_RELEASE(renderer_);
-	ES_SAFE_RELEASE(deviceObjectCollection_);
-}
+MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(graphicsDevice_); }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {
@@ -442,7 +427,7 @@ MaterialLoader ::~MaterialLoader()
 		Effekseer::Material material;
 		if (!material.Load((const uint8_t*)data, size))
 		{
-			std::cout << "Error : Invalid material is loaded." << std::endl; 
+			std::cout << "Error : Invalid material is loaded." << std::endl;
 		}
 		auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
 		auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&material));

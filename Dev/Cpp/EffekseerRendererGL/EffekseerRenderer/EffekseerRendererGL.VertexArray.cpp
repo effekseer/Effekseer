@@ -18,7 +18,7 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 VertexArray::VertexArray( RendererImplemented* renderer, Shader* shader, 
 	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
-	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount)
+	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount)
 	, m_shader(shader)
 	, m_vertexBuffer(vertexBuffer)
 	, m_indexBuffer(indexBuffer)
