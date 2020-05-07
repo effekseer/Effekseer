@@ -1097,6 +1097,130 @@ namespace ImGui
 			}
 		}
 
+		// remove point
+		if (!hasControlled && selected && IsMouseDoubleClicked(0))
+		{
+			auto mousePos = GetMousePos();
+			auto v = transform_s2f(mousePos);
+
+			for (int i = 0; i < count; i++)
+			{
+				auto p = transform_f2s(ImVec2(keys[i], values[i]));
+
+				if (!IsHovered(mousePos, p, 3))
+					continue;
+
+				for (int j = i; j < count; j++)
+				{
+					keys[j] = keys[j + 1];
+					values[j] = values[j + 1];
+					leftHandleKeys[j] = leftHandleKeys[j + 1];
+					leftHandleValues[j] = leftHandleValues[j + 1];
+					rightHandleKeys[j] = rightHandleKeys[j + 1];
+					rightHandleValues[j] = rightHandleValues[j + 1];
+					kv_selected[j] = kv_selected[j + 1];
+					interporations[j] = interporations[j + 1];
+				}
+
+				(*newCount) = count - 1;
+				count = count - 1;
+				hasControlled = true;
+				break;
+			}
+		}
+
+		// Add point
+		if (!hasControlled && selected)
+		{
+			if (isLineHovered && IsMouseDoubleClicked(0))
+			{
+				auto mousePos = GetMousePos();
+				auto v = transform_s2f(mousePos);
+
+				// make int
+				v.x = (int32_t)(v.x + 0.5);
+
+				if (v.x < keys[0])
+				{
+					for (int j = count; j > 0; j--)
+					{
+						keys[j] = keys[j - 1];
+						values[j] = values[j - 1];
+						leftHandleKeys[j] = leftHandleKeys[j - 1];
+						leftHandleValues[j] = leftHandleValues[j - 1];
+						rightHandleKeys[j] = rightHandleKeys[j - 1];
+						rightHandleValues[j] = rightHandleValues[j - 1];
+						kv_selected[j] = kv_selected[j - 1];
+						interporations[j] = interporations[j - 1];
+					}
+
+					keys[0] = v.x;
+					values[0] = v.y;
+					leftHandleKeys[0] = v.x;
+					leftHandleValues[0] = v.y;
+					rightHandleKeys[0] = v.x;
+					rightHandleValues[0] = v.y;
+					kv_selected[0] = false;
+					interporations[0] = ImFCurveInterporationType::Linear;
+
+					(*newCount) = count + 1;
+					count = count + 1;
+					hasControlled = true;
+				}
+				else if (v.x >= keys[count - 1])
+				{
+					keys[count] = v.x;
+					values[count] = v.y;
+					leftHandleKeys[count] = v.x;
+					leftHandleValues[count] = v.y;
+					rightHandleKeys[count] = v.x;
+					rightHandleValues[count] = v.y;
+					kv_selected[count] = false;
+					interporations[count] = ImFCurveInterporationType::Linear;
+
+					(*newCount) = count + 1;
+					count = count + 1;
+					hasControlled = true;
+				}
+				else
+				{
+					for (int i = 0; i < count - 1; i++)
+					{
+						if (keys[i] <= v.x && v.x < keys[i + 1])
+						{
+							for (int j = count; j > i; j--)
+							{
+								keys[j] = keys[j - 1];
+								values[j] = values[j - 1];
+								leftHandleKeys[j] = leftHandleKeys[j - 1];
+								leftHandleValues[j] = leftHandleValues[j - 1];
+								rightHandleKeys[j] = rightHandleKeys[j - 1];
+								rightHandleValues[j] = rightHandleValues[j - 1];
+								kv_selected[j] = kv_selected[j - 1];
+								interporations[j] = interporations[j - 1];
+							}
+
+							keys[i + 1] = v.x;
+							values[i + 1] = v.y;
+							leftHandleKeys[i + 1] = v.x;
+							leftHandleValues[i + 1] = v.y;
+							rightHandleKeys[i + 1] = v.x;
+							rightHandleValues[i + 1] = v.y;
+							kv_selected[i + 1] = false;
+							interporations[i + 1] = ImFCurveInterporationType::Linear;
+
+							(*newCount) = count + 1;
+							count = count + 1;
+							hasControlled = true;
+							break;
+						}
+					}
+				}
+
+				ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
+			}
+		}
+
 		// move points
 		if (!hasControlled && selected)
 		{
@@ -1192,13 +1316,13 @@ namespace ImGui
 				// make int
 				auto mousePos = GetMousePos();
 				auto f_mousePos = transform_s2f(mousePos);
-				if (keys[movedIndex] <= f_mousePos.x && 0 < fd.x)
+				if (keys[movedIndex] + 0.5f <= f_mousePos.x && 0 < fd.x)
 				{
-					fd.x = 1;
+					fd.x = (f_mousePos.x - keys[movedIndex]) + 1;
 				}
-				else if (keys[movedIndex] >= f_mousePos.x && 0 > fd.x)
+				else if (keys[movedIndex] - 0.5f >= f_mousePos.x && 0 > fd.x)
 				{
-					fd.x = -1;
+					fd.x = (f_mousePos.x - keys[movedIndex]) - 1;
 				}
 				else
 				{
@@ -1470,131 +1594,6 @@ namespace ImGui
 
 					rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
 				}
-			}
-		}
-
-		// remove point
-		if (!hasControlled && selected && IsMouseDoubleClicked(0))
-		{
-			auto mousePos = GetMousePos();
-			auto v = transform_s2f(mousePos);
-
-			for (int i = 0; i < count; i++)
-			{
-				auto p = transform_f2s(ImVec2(keys[i], values[i]));
-
-				if (!IsHovered(mousePos, p, 3)) continue;
-
-
-				for (int j = i; j < count; j++)
-				{
-					keys[j] = keys[j + 1];
-					values[j] = values[j + 1];
-					leftHandleKeys[j] = leftHandleKeys[j + 1];
-					leftHandleValues[j] = leftHandleValues[j + 1];
-					rightHandleKeys[j] = rightHandleKeys[j + 1];
-					rightHandleValues[j] = rightHandleValues[j + 1];
-					kv_selected[j] = kv_selected[j + 1];
-					interporations[j] = interporations[j + 1];
-				}
-
-				(*newCount) = count - 1;
-				count = count - 1;
-				hasControlled = true;
-				break;
-
-			}
-		}
-
-		// Add point
-		if(!hasControlled && selected)
-		{
-			if (isLineHovered && IsMouseDoubleClicked(0))
-			{
-				auto mousePos = GetMousePos();
-				auto v = transform_s2f(mousePos);
-
-				// make int
-				v.x = (int32_t)(v.x + 0.5);
-
-				if (v.x < keys[0])
-				{
-					for (int j = count; j > 0; j--)
-					{
-						keys[j] = keys[j - 1];
-						values[j] = values[j - 1];
-						leftHandleKeys[j] = leftHandleKeys[j - 1];
-						leftHandleValues[j] = leftHandleValues[j - 1];
-						rightHandleKeys[j] = rightHandleKeys[j - 1];
-						rightHandleValues[j] = rightHandleValues[j - 1];
-						kv_selected[j] = kv_selected[j - 1];
-						interporations[j] = interporations[j - 1];
-					}
-
-					keys[0] = v.x;
-					values[0] = v.y;
-					leftHandleKeys[0] = v.x;
-					leftHandleValues[0] = v.y;
-					rightHandleKeys[0] = v.x;
-					rightHandleValues[0] = v.y;
-					kv_selected[0] = false;
-					interporations[0] = ImFCurveInterporationType::Linear;
-
-					(*newCount) = count + 1;
-					count = count + 1;
-					hasControlled = true;
-				}
-				else if (v.x >= keys[count - 1])
-				{
-					keys[count] = v.x;
-					values[count] = v.y;
-					leftHandleKeys[count] = v.x;
-					leftHandleValues[count] = v.y;
-					rightHandleKeys[count] = v.x;
-					rightHandleValues[count] = v.y;
-					kv_selected[count] = false;
-					interporations[count] = ImFCurveInterporationType::Linear;
-
-					(*newCount) = count + 1;
-					count = count + 1;
-					hasControlled = true;
-				}
-				else
-				{
-					for (int i = 0; i < count - 1; i++)
-					{
-						if (keys[i] <= v.x && v.x < keys[i + 1])
-						{
-							for (int j = count; j > i; j--)
-							{
-								keys[j] = keys[j - 1];
-								values[j] = values[j - 1];
-								leftHandleKeys[j] = leftHandleKeys[j - 1];
-								leftHandleValues[j] = leftHandleValues[j - 1];
-								rightHandleKeys[j] = rightHandleKeys[j - 1];
-								rightHandleValues[j] = rightHandleValues[j - 1];
-								kv_selected[j] = kv_selected[j - 1];
-								interporations[j] = interporations[j - 1];
-							}
-
-							keys[i + 1] = v.x;
-							values[i + 1] = v.y;
-							leftHandleKeys[i + 1] = v.x;
-							leftHandleValues[i + 1] = v.y;
-							rightHandleKeys[i + 1] = v.x;
-							rightHandleValues[i + 1] = v.y;
-							kv_selected[i + 1] = false;
-							interporations[i + 1] = ImFCurveInterporationType::Linear;
-
-							(*newCount) = count + 1;
-							count = count + 1;
-							hasControlled = true;
-							break;
-						}
-					}
-				}
-
-				ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
 			}
 		}
 
