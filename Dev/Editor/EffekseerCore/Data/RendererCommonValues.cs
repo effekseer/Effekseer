@@ -874,88 +874,43 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVFCurveParamater UVFCurve { get; private set; }
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		[Selector(ID = 101)]
+		[Name(language = Language.Japanese, value = "UV(アルファ画像)")]
+		[Name(language = Language.English, value = "UV(α Texture)")]
+		public Value.Enum<UVType> UV2
+		{
+			get;
+			private set;
+		}
+
+		[Selected(ID = 101, Value = 0)]
+		[IO(Export = true)]
+		public UVDefaultParamater UV2Default { get; private set; }
+
+		[Selected(ID = 101, Value = 1)]
+		[IO(Export = true)]
+		public UVFixedParamater UV2Fixed { get; private set; }
+
+		[Selected(ID = 101, Value = 2)]
+		[IO(Export = true)]
+		public UVAnimationParamater UV2Animation { get; private set; }
+
+		[Selected(ID = 101, Value = 3)]
+		[IO(Export = true)]
+		public UVScrollParamater UV2Scroll { get; private set; }
+
+		[Selected(ID = 101, Value = 4)]
+		[IO(Export = true)]
+		public UVFCurveParamater UV2FCurve { get; private set; }
+#endif
+
 		[Key(key = "BRS_ColorInheritType")]
 		public Value.Enum<ParentEffectType> ColorInheritType
 		{
 			get;
 			private set;
 		}
-
-#if __EFFEKSEER_BUILD_VERSION16__
-		[Selector(ID = 100)]
-		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "アルファ画像を有効")]
-		public Value.Boolean EnableAlphaTexture { get; private set; }
-
-		[IO(Export = true)]
-		[Selected(ID = 100, Value = 0)]
-		public AlphaTextureParameter AlphaTextureParam { get; private set; }
-
-		public class AlphaTextureParameter
-		{
-			[Name(language = Language.Japanese, value = "アルファ画像")]
-			[Name(language = Language.English, value = "α Texture")]
-			public Value.PathForImage Texture
-			{
-				get; private set;
-			}
-
-			[Name(language = Language.Japanese, value = "フィルタ(アルファ画像)")]
-			[Name(language = Language.English, value = "Filter(α Texture)")]
-			public Value.Enum<FilterType> Filter { get; private set; }
-
-			[Name(language = Language.Japanese, value = "外側(アルファ画像)")]
-			[Name(language = Language.English, value = "Wrap(α Texture)")]
-			public Value.Enum<WrapType> Wrap { get; private set; }
-
-			[Selector(ID = 101)]
-			[Name(language = Language.Japanese, value = "UV(アルファ画像)")]
-			[Name(language = Language.English, value = "UV(α Texture)")]
-			public Value.Enum<UVType> UV
-			{
-				get;
-				private set;
-			}
-
-			[Selected(ID = 101, Value = 0)]
-			[IO(Export = true)]
-			public UVDefaultParamater UVDefault { get; private set; }
-
-			[Selected(ID = 101, Value = 1)]
-			[IO(Export = true)]
-			public UVFixedParamater UVFixed { get; private set; }
-
-			[Selected(ID = 101, Value = 2)]
-			[IO(Export = true)]
-			public UVAnimationParamater UVAnimation { get; private set; }
-
-			[Selected(ID = 101, Value = 3)]
-			[IO(Export = true)]
-			public UVScrollParamater UVScroll { get; private set; }
-
-			[Selected(ID = 101, Value = 4)]
-			[IO(Export = true)]
-			public UVFCurveParamater UVFCurve { get; private set; }
-
-			public AlphaTextureParameter()
-			{
-				Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-				Filter = new Value.Enum<FilterType>(FilterType.Linear);
-				Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
-				UV = new Value.Enum<UVType>();
-				UVDefault = new UVDefaultParamater();
-				UVFixed = new UVFixedParamater();
-				UVAnimation = new UVAnimationParamater();
-				UVScroll = new UVScrollParamater();
-				UVFCurve = new UVFCurveParamater();
-			}
-		}
-
-		[Name(language = Language.Japanese, value = "アルファクランチ")]
-		[Name(language = Language.English, value = "Alpha Crunch")]
-		[IO(Export = true)]
-		public Value.Enum<AlphaCrunchType> AlphaCrunchTypeValue { get; private set; }
-#endif
 
 		[IO(Export = true)]
 		[Key(key = "BRS_CustomData1")]
@@ -997,19 +952,21 @@ namespace Effekseer.Data
 			UVScroll = new UVScrollParamater();
 			UVFCurve = new UVFCurveParamater();
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			UV2 = new Value.Enum<UVType>();
+			UV2Default = new UVDefaultParamater();
+			UV2Fixed = new UVFixedParamater();
+			UV2Animation = new UVAnimationParamater();
+			UV2Scroll = new UVScrollParamater();
+			UV2FCurve = new UVFCurveParamater();
+#endif
+
 			ZWrite = new Value.Boolean(false);
 			ZTest = new Value.Boolean(true);
 
 			ColorInheritType = new Value.Enum<ParentEffectType>(ParentEffectType.NotBind);
 
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
-
-#if __EFFEKSEER_BUILD_VERSION16__
-			EnableAlphaTexture = new Value.Boolean(false);
-			AlphaTextureParam = new AlphaTextureParameter();
-
-			AlphaCrunchTypeValue = new Value.Enum<AlphaCrunchType>(RendererCommonValues.AlphaCrunchType.None);
-#endif
 
 			CustomData1 = new CustomDataParameter(1);
 			CustomData2 = new CustomDataParameter(2);
@@ -1247,29 +1204,6 @@ namespace Effekseer.Data
 			[Name(value = "線形補間", language = Language.Japanese)]
 			[Name(value = "Lerp", language = Language.English)]
 			Lerp = 1,
-		}
-
-		public enum AlphaCrunchType : int
-		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
-			None = 0,
-
-			[Name(value = "アルファ閾値", language = Language.Japanese)]
-			[Name(value = "Alpha Threshold", language = Language.English)]
-			AlphaThreashold = 1,
-
-			[Name(value = "4点補間", language = Language.Japanese)]
-			[Name(value = "Four Point Interpolation", language = Language.English)]
-			FourPointInterpolation = 2,
-
-			[Name(value = "イージング", language = Language.Japanese)]
-			[Name(value = "Easing", language = Language.English)]
-			Easing = 3,
-
-			[Name(value = "Fカーブ", language = Language.Japanese)]
-			[Name(value = "F Curve", language = Language.English)]
-			FCurve = 4,
 		}
 #endif
 

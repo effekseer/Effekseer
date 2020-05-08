@@ -5,9 +5,46 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-    public class AlphaCrunchValues
+	public class AlphaCrunchValues
     {
-        [Selector(ID = 0)]
+#if __EFFEKSEER_BUILD_VERSION16__
+		[Selector(ID = 100)]
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "アルファ画像を有効")]
+		[Name(language = Language.English, value = "Enable AlphaTexture")]
+		public Value.Boolean EnableAlphaTexture { get; private set; }
+
+		[IO(Export = true)]
+		[Selected(ID = 100, Value = 0)]
+		public AlphaTextureParameter AlphaTextureParam { get; private set; }
+
+		public class AlphaTextureParameter
+		{
+			[Name(language = Language.Japanese, value = "アルファ画像")]
+			[Name(language = Language.English, value = "α Texture")]
+			public Value.PathForImage Texture
+			{
+				get; private set;
+			}
+
+			[Name(language = Language.Japanese, value = "フィルタ(アルファ画像)")]
+			[Name(language = Language.English, value = "Filter(α Texture)")]
+			public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+			[Name(language = Language.Japanese, value = "外側(アルファ画像)")]
+			[Name(language = Language.English, value = "Wrap(α Texture)")]
+			public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+			public AlphaTextureParameter()
+			{
+				Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+				Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+				Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			}
+		}
+#endif
+
+		[Selector(ID = 0)]
         [IO(Export = true)]
         public Value.Enum<ParameterType> Type { get; private set; }
 
@@ -30,7 +67,12 @@ namespace Effekseer.Data
 
         public AlphaCrunchValues()
         {
-            Type = new Value.Enum<ParameterType>(ParameterType.Fixed);
+#if __EFFEKSEER_BUILD_VERSION16__
+			EnableAlphaTexture = new Value.Boolean(false);
+			AlphaTextureParam = new AlphaTextureParameter();
+#endif
+
+			Type = new Value.Enum<ParameterType>(ParameterType.Fixed);
             Fixed = new FixedParameter();
             FourPointInterpolation = new FourPointInterpolationParameter();
             Easing = new FloatEasingParamater(0.0f, 1.0f, 0.0f);
