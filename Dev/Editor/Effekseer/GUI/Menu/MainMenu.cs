@@ -329,7 +329,7 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
 				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
 #if __EFFEKSEER_BUILD_VERSION16__
-				setDockWindow(new MultiLanguageString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Icons.PanelAlphaCrunch);
+				setDockWindow(new MultiLanguageString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Icons.PanelDynamicParams);
 #endif
 
 				this.Controls.Add(menu);
