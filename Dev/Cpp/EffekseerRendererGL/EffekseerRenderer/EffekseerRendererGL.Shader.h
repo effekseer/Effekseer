@@ -88,7 +88,7 @@ private:
 		int32_t			Offset;
 	};
 
-	OpenGLDeviceType deviceType_;
+	OpenGLDeviceType m_deviceType;
 	GLuint m_program;
 
 	std::vector<GLint>		m_aid;
