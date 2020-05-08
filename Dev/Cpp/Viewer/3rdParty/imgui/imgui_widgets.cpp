@@ -2155,6 +2155,26 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
             }
         }
     }
+
+    // ======== Add by Effekseer ========
+    if (!temp_input_is_active && hovered && g.IO.MouseReleased[0] && g.IO.MouseClickedPos[0].x == g.IO.MousePos.x &&
+        g.IO.MouseClickedPos[0].y == g.IO.MousePos.y)
+    {
+        SetActiveID(id, window);
+        SetFocusID(id, window);
+        FocusWindow(window);
+
+        // HACK
+        g.IO.MouseClicked[0] = 1;
+
+        g.ActiveIdUsingNavDirMask = (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
+        {
+            temp_input_start = true;
+            FocusableItemUnregister(window);
+        }
+    }
+    // ==================================
+   
     if (temp_input_is_active || temp_input_start)
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format);
 
