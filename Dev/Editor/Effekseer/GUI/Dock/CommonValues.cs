@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +42,7 @@ namespace Effekseer.GUI.Dock
 
 		public CommonValues()
 		{
-			Label = Resources.GetString("BasicSettings") + "###BasicSettings";
+			Label = Icons.PanelCommon + Resources.GetString("BasicSettings") + "###BasicSettings";
 
 			paramerterList_Node = new Component.ParameterList();
 			paramerterList_Node.SetType(typeof(Data.NodeBase));
@@ -57,7 +57,6 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			Icon = Images.GetIcon("PanelCommon");
 			TabToolTip = Resources.GetString("BasicSettings");
 		}
 

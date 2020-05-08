@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -371,39 +371,9 @@ namespace Effekseer
 			Icons["Paste"] = LoadAppResource(native, "resources/icons/Paste.png");
 
 			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
-			Icons["NodeEmpty"] = LoadAppResource(native, "resources/icons/NodeType_Empty.png");
-			Icons["NodeModel"] = LoadAppResource(native, "resources/icons/NodeType_Model.png");
-			Icons["NodeRibbon"] = LoadAppResource(native, "resources/icons/NodeType_Ribbon.png");
-			Icons["NodeRing"] = LoadAppResource(native, "resources/icons/NodeType_Ring.png");
-			Icons["NodeSprite"] = LoadAppResource(native, "resources/icons/NodeType_Sprite.png");
-			Icons["NodeTrack"] = LoadAppResource(native, "resources/icons/NodeType_Track.png");
 
 			Icons["VisibleShow"] = LoadAppResource(native, "resources/icons/Visible_Show.png");
 			Icons["VisibleHide"] = LoadAppResource(native, "resources/icons/Visible_Hide.png");
-
-			Icons["PanelBehavior"] = LoadAppResource(native, "resources/icons/Panel_Behavior.png");
-			Icons["PanelCommon"] = LoadAppResource(native, "resources/icons/Panel_Common.png");
-			Icons["PanelCulling"] = LoadAppResource(native, "resources/icons/Panel_Culling.png");
-			Icons["PanelFCurve"] = LoadAppResource(native, "resources/icons/Panel_FCurve.png");
-			Icons["PanelFileViewer"] = LoadAppResource(native, "resources/icons/Panel_FileViewer.png");
-			Icons["PanelGenerationLocation"] = LoadAppResource(native, "resources/icons/Panel_GenerationLocation.png");
-			Icons["PanelLocation"] = LoadAppResource(native, "resources/icons/Panel_Location.png");
-			Icons["PanelLocationAbs"] = LoadAppResource(native, "resources/icons/Panel_LocationAbs.png");
-			Icons["PanelNetwork"] = LoadAppResource(native, "resources/icons/Panel_Network.png");
-			Icons["PanelNodeTree"] = LoadAppResource(native, "resources/icons/Panel_NodeTree.png");
-			Icons["PanelOption"] = LoadAppResource(native, "resources/icons/Panel_Option.png");
-			Icons["PanelEnvironment"] = LoadAppResource(native, "resources/icons/Panel_Environment.png");
-			Icons["PanelRecorder"] = LoadAppResource(native, "resources/icons/Panel_Recorder.png");
-			Icons["PanelRenderer"] = LoadAppResource(native, "resources/icons/Panel_Renderer.png");
-			Icons["PanelRendererCommon"] = LoadAppResource(native, "resources/icons/Panel_RendererCommon.png");
-			Icons["PanelRotation"] = LoadAppResource(native, "resources/icons/Panel_Rotation.png");
-			Icons["PanelScale"] = LoadAppResource(native, "resources/icons/Panel_Scale.png");
-			Icons["PanelSound"] = LoadAppResource(native, "resources/icons/Panel_Sound.png");
-			Icons["PanelViewer"] = LoadAppResource(native, "resources/icons/Panel_Viewer.png");
-			Icons["PanelViewPoint"] = LoadAppResource(native, "resources/icons/Panel_ViewPoint.png");
-			Icons["PanelDepth"] = LoadAppResource(native, "resources/icons/Panel_Depth.png");
-			Icons["PanelGlobal"] = LoadAppResource(native, "resources/icons/Panel_Global.png");
-			Icons["PanelDynamicParameter"] = LoadAppResource(native, "resources/icons/Panel_DynamicParameter.png");
 
 			Icons["EnlargeAnchor"] = LoadAppResource(native, "resources/icons/EnlargeAnchor.png");
 			Icons["ShrinkAnchor"] = LoadAppResource(native, "resources/icons/ShrinkAnchor.png");

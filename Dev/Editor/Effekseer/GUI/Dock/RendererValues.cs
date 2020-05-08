@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererValues()
 		{
-			Label = Resources.GetString("RenderSettings") + "###RenderSettings";
+			Label = Icons.PanelRender + Resources.GetString("RenderSettings") + "###RenderSettings";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererValues));
@@ -28,7 +28,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelRenderer");
 			TabToolTip = Resources.GetString("RenderSettings");
 		}
 

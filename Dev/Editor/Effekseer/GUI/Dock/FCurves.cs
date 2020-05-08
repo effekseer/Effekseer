@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,7 +73,7 @@ namespace Effekseer.GUI.Dock
 
 		public FCurves()
 		{
-			Label = Resources.GetString("FCurves") + "###FCurves";
+			Label = Icons.PanelFCurve + Resources.GetString("FCurves") + "###FCurves";
 
 			Command.CommandManager.Changed += OnChanged;
 			Core.OnAfterNew += OnChanged;
@@ -94,7 +94,6 @@ namespace Effekseer.GUI.Dock
 
 			OnChanged();
 
-			Icon = Images.GetIcon("PanelFCurve");
 			TabToolTip = Resources.GetString("FCurves");
 
 			//NoPadding = true;

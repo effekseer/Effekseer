@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public RotationValues()
 		{
-			Label = Resources.GetString("Rotation") + "###Rotation";
+			Label = Icons.PanelRotation + Resources.GetString("Rotation") + "###Rotation";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RotationValues));
@@ -28,7 +28,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelRotation");
 			TabToolTip = Resources.GetString("Rotation");
 		}
 

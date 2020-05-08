@@ -201,6 +201,7 @@ Shader::Shader(
 	const char* name,
 	bool hasRefCount)
 	: DeviceObject(nullptr, graphicsDevice, hasRefCount)
+	, m_deviceType      ( graphicsDevice->GetDeviceType() )
 	, m_program			( program )
 	, m_vertexSize		( 0 )
 	, m_vertexConstantBuffer	( NULL )
@@ -283,7 +284,7 @@ void Shader::OnResetDevice()
 	GLuint program;
 	
 	if(CompileShader(
-		deviceType_,
+		m_deviceType,
 		program,
 		(const char*)(m_vsSrc.data()),
 		m_vsSrc.size(),
@@ -310,7 +311,7 @@ void Shader::OnChangeDevice()
 	GLuint program;
 	
 	if(CompileShader(
-		deviceType_,
+		m_deviceType,
 		program,
 		(const char*)&(m_vsSrc[0]),
 		m_vsSrc.size(),

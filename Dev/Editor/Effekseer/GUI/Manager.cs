@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -303,9 +303,8 @@ namespace Effekseer.GUI
 
 			// Default 
 			effectViewer = new Dock.EffectViwer();
-			if(dockManager != null)
+			if (dockManager != null)
 			{
-				effectViewer.InitialDockSlot = swig.DockSlot.None;
 				dockManager.Controls.Add(effectViewer);
 			}
 			else
@@ -313,14 +312,12 @@ namespace Effekseer.GUI
 				AddControl(effectViewer);
 			}
 
-			// TODO : refactor
 			if (LoadWindowConfig(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
 			{
-				Manager.NativeManager.LoadDock(System.IO.Path.Combine(appDirectory, "config.Dock.config"));
 			}
 			else
 			{
-				ResetWindowActually();
+				ResetWindow();
 			}
 
 			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
@@ -409,6 +406,11 @@ namespace Effekseer.GUI
 				ErrorUtils.ThrowFileNotfound();
 			}
 
+			if (!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png")))
+			{
+				ErrorUtils.ThrowFileNotfound();
+			}
+
 			return true;
 		}
 
@@ -417,7 +419,6 @@ namespace Effekseer.GUI
 			var entryDirectory = GetEntryDirectory();
 			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
-			Manager.NativeManager.SaveDock(entryDirectory + "/config.Dock.config");
 			SaveWindowConfig(entryDirectory + "/config.Dock.xml");
 
 			foreach (var p in panels)
@@ -545,7 +546,9 @@ namespace Effekseer.GUI
 				var appDirectory = Manager.GetEntryDirectory();
 				var type = Core.Option.Font.Value;
 
-				if(type == Data.FontType.Normal)
+				NativeManager.ClearAllFonts();
+
+				if (type == Data.FontType.Normal)
 				{
 					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Normal")), Core.Option.FontSize.Value);
 				}
@@ -553,13 +556,13 @@ namespace Effekseer.GUI
 				{
 					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Bold")), Core.Option.FontSize.Value);
 				}
+
+				NativeManager.AddFontFromAtlasImage(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png"), 0xec00, 24, 24, 16, 16);
+
 				isFontSizeDirtied = false;
 			}
 
 			// Reset
-			NativeManager.SetNextDockRate(0.5f);
-			NativeManager.SetNextDock(swig.DockSlot.Tab);
-			NativeManager.ResetNextParentDock();
 
 			IO.Update();
 			Shortcuts.Update();
@@ -633,10 +636,10 @@ namespace Effekseer.GUI
 
 			Native.ClearWindow(50, 50, 50, 0);
 
-			if(effectViewer == null)
-			{
-				Native.RenderWindow();
-			}
+			//if(effectViewer == null)
+			//{
+			//	Native.RenderWindow();
+			//}
 
 			NativeManager.ResetGUI();
 
@@ -713,32 +716,53 @@ namespace Effekseer.GUI
 				panels[i]?.Close();
 			}
 			resetCount = -5;
-
-			NativeManager.ShutdownDock();
 		}
 
 		static void ResetWindowActually()
 		{
-			if(effectViewer == null)
+			if (effectViewer == null)
 			{
 				effectViewer = new Dock.EffectViwer();
 				if (dockManager != null)
 				{
-					effectViewer.InitialDockSlot = swig.DockSlot.None;
 					dockManager.Controls.Add(effectViewer);
 				}
 			}
 			
-			SelectOrShowWindow(typeof(Dock.ViewerController), null, swig.DockSlot.Bottom, 0.15f, true);
-			SelectOrShowWindow(typeof(Dock.NodeTreeView), null, swig.DockSlot.Right, 0.3f, true);
-			var basicPanel = SelectOrShowWindow(typeof(Dock.CommonValues), null, swig.DockSlot.Top, 0.7f, false);
-			SelectOrShowWindow(typeof(Dock.LocationValues), null, swig.DockSlot.Tab, 1.0f, false);
-			SelectOrShowWindow(typeof(Dock.RotationValues), null, swig.DockSlot.Tab, 1.0f, false);
-			SelectOrShowWindow(typeof(Dock.ScaleValues), null, swig.DockSlot.Tab, 1.0f, false);
-			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Tab, 1.0f, false);
-			SelectOrShowWindow(typeof(Dock.RendererValues), null, swig.DockSlot.Tab, 1.0f, false);
+			var viewerController = SelectOrShowWindow(typeof(Dock.ViewerController), null);
+			var nodeTreeView = SelectOrShowWindow(typeof(Dock.NodeTreeView), null);
+			var commonValues = SelectOrShowWindow(typeof(Dock.CommonValues), null);
+			var locationValues = SelectOrShowWindow(typeof(Dock.LocationValues), null);
+			var rotationValues = SelectOrShowWindow(typeof(Dock.RotationValues), null);
+			var scaleValues = SelectOrShowWindow(typeof(Dock.ScaleValues), null);
+			var rendererCommonValues = SelectOrShowWindow(typeof(Dock.RendererCommonValues), null);
+			var rendererValues = SelectOrShowWindow(typeof(Dock.RendererValues), null);
 
-			basicPanel.InitialDockActive = 2;
+			uint windowId = NativeManager.BeginDockLayout();
+
+			uint dockLeftID = 0, dockRightID = 0;
+			NativeManager.DockSplitNode(windowId, DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
+
+			uint dockLeftTop = 0, dockLeftBottom = 0;
+			NativeManager.DockSplitNode(dockLeftID, DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
+
+			uint dockRightTop = 0, dockRightBottom = 0;
+			NativeManager.DockSplitNode(dockRightID, DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
+
+			NativeManager.DockSetNodeFlags(dockLeftTop, DockNodeFlags.HiddenTabBar);
+			NativeManager.DockSetNodeFlags(dockLeftBottom, DockNodeFlags.HiddenTabBar);
+
+			NativeManager.DockSetWindow(dockLeftTop, effectViewer.WindowID);
+			NativeManager.DockSetWindow(dockLeftBottom, viewerController.WindowID);
+			NativeManager.DockSetWindow(dockRightTop, commonValues.WindowID);
+			NativeManager.DockSetWindow(dockRightTop, locationValues.WindowID);
+			NativeManager.DockSetWindow(dockRightTop, rotationValues.WindowID);
+			NativeManager.DockSetWindow(dockRightTop, scaleValues.WindowID);
+			NativeManager.DockSetWindow(dockRightTop, rendererValues.WindowID);
+			NativeManager.DockSetWindow(dockRightTop, rendererCommonValues.WindowID);
+			NativeManager.DockSetWindow(dockRightBottom, nodeTreeView.WindowID);
+
+			NativeManager.EndDockLayout();
 		}
 
 		internal static Dock.DockPanel GetWindow(Type t)
@@ -751,14 +775,15 @@ namespace Effekseer.GUI
 			return null;
 		}
 
-		internal static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, swig.DockSlot slot = swig.DockSlot.None, float dockRate = 0.5f, bool isResetParent = false)
+		internal static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
 		{
 			for(int i = 0; i < dockTypes.Length; i++)
 			{
 				if (dockTypes[i] != t) continue;
 
-				if(panels[i] != null)
+				if (panels[i] != null)
 				{
+					panels[i].SetFocus();
 					return panels[i];
 				}
 				else
@@ -769,11 +794,9 @@ namespace Effekseer.GUI
 					}
 
 					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
-					panels[i].InitialDockSlot = slot;
 					panels[i].InitialDockSize = defaultSize;
-					panels[i].InitialDockReset = isResetParent;
-					panels[i].InitialDockRate = dockRate;
 					panels[i].IsInitialized = -1;
+					panels[i].ResetSize = resetRect;
 
 					if (dockManager != null)
 					{

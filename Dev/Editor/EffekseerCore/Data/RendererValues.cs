@@ -1097,27 +1097,27 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Key(key = "RS_ParameterType_None")]
-			[Icon(resourceName = "NodeEmpty")]
+			[Icon(code = "\xec20")]
 			None = 0,
 
 			[Key(key = "RS_ParameterType_Sprite")]
-			[Icon(resourceName = "NodeSprite")]
+			[Icon(code = "\xec21")]
 			Sprite = 2,
 
 			[Key(key = "RS_ParameterType_Ribbon")]
-			[Icon(resourceName = "NodeRibbon")]
-            Ribbon = 3,
+			[Icon(code = "\xec22")]
+			Ribbon = 3,
 
 			[Key(key = "RS_ParameterType_Track")]
-			[Icon(resourceName = "NodeTrack")]
+			[Icon(code = "\xec23")]
 			Track = 6,
 
 			[Key(key = "RS_ParameterType_Ring")]
-			[Icon(resourceName = "NodeRing")]
-            Ring = 4,
+			[Icon(code = "\xec24")]
+			Ring = 4,
 
 			[Key(key = "RS_ParameterType_Model")]
-			[Icon(resourceName = "NodeModel")]
+			[Icon(code = "\xec25")]
 			Model = 5,
 		}
 

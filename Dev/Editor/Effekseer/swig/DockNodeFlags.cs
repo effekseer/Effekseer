@@ -10,14 +10,13 @@
 
 namespace Effekseer.swig {
 
-public enum DockSlot {
-  Left = 0,
-  Right,
-  Top,
-  Bottom,
-  Tab,
-  Float,
-  None
+public enum DockNodeFlags {
+  None = 0,
+  NoTabBar = (1 << 0),
+  HiddenTabBar = (1 << 1),
+  NoWindowMenuButton = (1 << 2),
+  NoCloseButton = (1 << 3),
+  NoDocking = (1 << 4)
 }
 
 }
