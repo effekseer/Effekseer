@@ -80,7 +80,7 @@ namespace Effekseer.Data
 
 #if __EFFEKSEER_BUILD_VERSION16__
 		[IO(Export = true)]
-		public AlphaCrunchValues AlphaCrunchValues
+		public AdvancedRenderCommonValues AdvancedRendererCommonValuesValues
 		{
 			get;
 			private set;
@@ -105,7 +105,7 @@ namespace Effekseer.Data
             DrawingValues = new RendererValues();
             SoundValues = new SoundValues();
 #if __EFFEKSEER_BUILD_VERSION16__
-			AlphaCrunchValues = new Data.AlphaCrunchValues();
+			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues();
 #endif
 		}
 	}

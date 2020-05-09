@@ -9,12 +9,12 @@ namespace Effekseer.Binary
 {
     class AlphaCrunchValues
     {
-        public static byte[] GetBytes(Data.AlphaCrunchValues value)
+        public static byte[] GetBytes(Data.AlphaCrunchParameter value)
         {
             List<byte[]> data = new List<byte[]>();
             data.Add(value.Type.GetValueAsInt().GetBytes());
 
-            if (value.Type == Data.AlphaCrunchValues.ParameterType.Fixed)
+            if (value.Type == Data.AlphaCrunchParameter.ParameterType.Fixed)
             {
                 var refBuf = value.Fixed.Threshold.DynamicEquation.Index.GetBytes();
                 var mainBuf = value.Fixed.Threshold.GetBytes();
@@ -22,7 +22,7 @@ namespace Effekseer.Binary
                 data.Add(refBuf);
                 data.Add(mainBuf);
             }
-            else if (value.Type == Data.AlphaCrunchValues.ParameterType.FourPointInterpolation)
+            else if (value.Type == Data.AlphaCrunchParameter.ParameterType.FourPointInterpolation)
             {
                 List<byte[]> _data = new List<byte[]>();
                 _data.Add(value.FourPointInterpolation.BeginThreshold.Max.GetBytes());
@@ -43,7 +43,7 @@ namespace Effekseer.Binary
                 data.Add(__data.Count().GetBytes());
                 data.Add(__data);
             }
-            else if (value.Type == Data.AlphaCrunchValues.ParameterType.Easing)
+            else if (value.Type == Data.AlphaCrunchParameter.ParameterType.Easing)
             {
                 var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
 
@@ -69,7 +69,7 @@ namespace Effekseer.Binary
                 data.Add(__data.Count().GetBytes());
                 data.Add(__data);
             }
-            else if (value.Type == Data.AlphaCrunchValues.ParameterType.FCurve)
+            else if (value.Type == Data.AlphaCrunchParameter.ParameterType.FCurve)
             {
                 var _data = value.FCurve.GetBytes();
                 data.Add(_data.Count().GetBytes());

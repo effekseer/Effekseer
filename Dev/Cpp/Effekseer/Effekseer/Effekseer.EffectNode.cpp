@@ -714,6 +714,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.reset();
 		}
 
+		#ifdef __EFFEKSEER_BUILD_VERSION16__
+		AlphaCrunch.load(pos, m_effect->GetVersion());
+		#endif
+
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
 		// rescale intensity after 1.5
@@ -721,10 +725,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
 		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
 #endif // !__EFFEKSEER_FOR_UE4__
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-		AlphaCrunch.load(pos, m_effect->GetVersion());
-#endif
 
 		if (m_effect->GetVersion() >= 1)
 		{

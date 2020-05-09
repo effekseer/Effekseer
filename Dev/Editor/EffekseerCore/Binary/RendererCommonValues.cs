@@ -14,7 +14,7 @@ namespace Effekseer.Binary
 #endif
 
 #if __EFFEKSEER_BUILD_VERSION16__
-		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AlphaCrunchValues advanceValue, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
+		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
 #else
 		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
 #endif
@@ -436,6 +436,13 @@ namespace Effekseer.Binary
 				data.Add(bytes);
 			}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			if (version >= ExporterVersion.Ver1600)
+			{
+				data.Add(AlphaCrunchValues.GetBytes(advanceValue.AlphaCrunchParam));
+			}
+#endif
+
 			return data.ToArray().ToArray();
 		}
 
@@ -496,7 +503,7 @@ namespace Effekseer.Binary
 				data.Add(value_.StartSheet.Max.GetBytes());
 				data.Add(value_.StartSheet.Min.GetBytes());
 
-				// TOTO should add dummy flipsheet data? -> OK
+				data.Add(value_.FlipbookInterpolationType);
 
 			}
 			else if (_UVType == Data.RendererCommonValues.UVType.Scroll)
