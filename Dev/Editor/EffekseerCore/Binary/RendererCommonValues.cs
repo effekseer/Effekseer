@@ -439,7 +439,7 @@ namespace Effekseer.Binary
 #if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
-				data.Add(AlphaCrunchValues.GetBytes(advanceValue.AlphaCrunchParam));
+				data.Add(AlphaCrunchValues.GetBytes(advanceValue.AlphaCutoffParam));
 			}
 #endif
 

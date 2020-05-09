@@ -30,7 +30,7 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class AlphaCrunchParameter
+	public class AlphaCutoffParameter
 	{
 		[Selector(ID = 0)]
 		[IO(Export = true)]
@@ -122,7 +122,7 @@ namespace Effekseer.Data
 			FCurve = 3,
 		}
 
-		public AlphaCrunchParameter()
+		public AlphaCutoffParameter()
 		{
 			Type = new Value.Enum<ParameterType>(ParameterType.Fixed);
 			Fixed = new FixedParameter();
@@ -150,7 +150,7 @@ namespace Effekseer.Data
 		public AlphaTextureParameter AlphaTextureParam { get; private set; }
 #endif
 
-		public AlphaCrunchParameter AlphaCrunchParam { get; private set; }
+		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
         public AdvancedRenderCommonValues()
         {
@@ -159,7 +159,7 @@ namespace Effekseer.Data
 			AlphaTextureParam = new AlphaTextureParameter();
 #endif
 
-			AlphaCrunchParam = new AlphaCrunchParameter();
+			AlphaCutoffParam = new AlphaCutoffParameter();
         }
     }
 }
