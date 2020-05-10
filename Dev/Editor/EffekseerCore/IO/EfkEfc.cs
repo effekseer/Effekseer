@@ -376,8 +376,21 @@ namespace Effekseer.IO
 			{
 				System.IO.File.WriteAllBytes(path, allData);
 			}
-			catch
+			catch(Exception e)
 			{
+				string messeage = "";
+				if (Core.Language == Language.English)
+				{
+					messeage = "ï€ë∂Ç…é∏îsÇµÇ‹ÇµÇΩÅB " + path + "\nÉGÉâÅ[ÇÕ \n";
+				}
+				else	
+				{
+					messeage =  "Failed to save a file " + path + "\nThis error is \n"; 
+				}
+
+				messeage += e.ToString();
+
+				Core.OnOutputMessage(messeage);
 				return false;
 			}
 
