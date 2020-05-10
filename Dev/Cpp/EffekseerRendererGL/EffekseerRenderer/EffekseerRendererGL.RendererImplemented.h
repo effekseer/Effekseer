@@ -33,7 +33,7 @@ struct RenderStateSet
 	GLint		vao;
 	GLint arrayBufferBinding;
 	GLint elementArrayBufferBinding;
-	std::array<GLuint, ::Effekseer::TextureSlotMax> boundTextures;
+	std::array<GLint, ::Effekseer::TextureSlotMax> boundTextures;
 };
 
 /**
