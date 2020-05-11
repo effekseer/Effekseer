@@ -14,6 +14,11 @@ file(GLOB effekseer_h
     Effekseer/Noise/*.h
     Effekseer/ForceField/*.h
     Effekseer/Backend/*.h
+    Effekseer/Model/ProcedualModelGenerator.h
+    Effekseer/Model/ProcedualModelParameter.h
+    Effekseer/Model/Model.h
+    Effekseer/Model/ModelLoader.h
+
 )
 
 set(effekseer_src
@@ -67,6 +72,9 @@ set(effekseer_src
     Effekseer/Noise/CurlNoise.cpp
     Effekseer/Noise/PerlinNoise.cpp
     Effekseer/ForceField/ForceFields.cpp
+    Effekseer/Model/ProcedualModelGenerator.cpp
+    Effekseer/Model/Model.cpp
+    Effekseer/Model/ModelLoader.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

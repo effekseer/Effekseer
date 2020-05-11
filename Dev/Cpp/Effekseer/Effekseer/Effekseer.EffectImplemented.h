@@ -9,6 +9,8 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.InternalScript.h"
 #include "Effekseer.Vector3D.h"
+#include "Model/ProcedualModelParameter.h"
+#include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 #include <memory>
 
@@ -86,7 +88,7 @@ public:
 	HolderCollection<TextureData*> normalImages;
 	HolderCollection<TextureData*> distortionImages;
 	HolderCollection<void*> sounds;
-	HolderCollection<void*> models;
+	HolderCollection<Model*> models;
 	HolderCollection<MaterialData*> materials;
 	HolderCollection<void*> curves;
 };
@@ -130,9 +132,11 @@ protected:
 	EFK_CHAR** m_WavePaths = nullptr;
 	void** m_pWaves = nullptr;
 
-	int32_t modelCount_ = 0;
-	EFK_CHAR** modelPaths_ = nullptr;
-	void** models_ = nullptr;
+	CustomVector<Model*> models_;
+	CustomVector<EFK_CHAR*> modelPaths_;
+
+	CustomVector<Model*> procedualModels_;
+	CustomVector<ProcedualModelParameter> procedualModelParameters_;
 
 	int32_t materialCount_ = 0;
 	EFK_CHAR** materialPaths_ = nullptr;
@@ -171,7 +175,8 @@ protected:
 		CullingShape Shape;
 		Vector3D Location;
 
-		union {
+		union
+		{
 			struct
 			{
 			} None;
@@ -293,7 +298,7 @@ public:
 
 	const EFK_CHAR* GetWavePath(int n) const override;
 
-	void* GetModel(int n) const override;
+	Model* GetModel(int n) const override;
 
 	int32_t GetModelCount() const override;
 
@@ -306,16 +311,22 @@ public:
 	const EFK_CHAR* GetMaterialPath(int n) const override;
 
 	void* GetCurve(int n) const override;
-	
+
 	int32_t GetCurveCount() const override;
 
 	const EFK_CHAR* GetCurvePath(int n) const override;
+
+	Model* GetProcedualModel(int n) const override;
+
+	int32_t GetProcedualModelCount() const override;
+
+	const ProcedualModelParameter* GetProcedualModelParameter(int n) const override;
 
 	void SetTexture(int32_t index, TextureType type, TextureData* data) override;
 
 	void SetSound(int32_t index, void* data) override;
 
-	void SetModel(int32_t index, void* data) override;
+	void SetModel(int32_t index, Model* data) override;
 
 	void SetMaterial(int32_t index, MaterialData* data) override;
 

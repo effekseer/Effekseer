@@ -250,63 +250,6 @@ public:
 	}
 };
 
-/**
-@brief	\~English	Model
-		\~Japanese	モデル
-*/
-class Model : public Effekseer::Model
-{
-private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
-
-public:
-	struct InternalModel
-	{
-		LLGI::VertexBuffer* VertexBuffer;
-		LLGI::IndexBuffer* IndexBuffer;
-		int32_t VertexCount;
-		int32_t IndexCount;
-		int32_t FaceCount;
-
-		InternalModel()
-		{
-			VertexBuffer = nullptr;
-			IndexBuffer = nullptr;
-			VertexCount = 0;
-			IndexCount = 0;
-			FaceCount = 0;
-		}
-
-		virtual ~InternalModel()
-		{
-			ES_SAFE_RELEASE(VertexBuffer);
-			ES_SAFE_RELEASE(IndexBuffer);
-		}
-	};
-
-	InternalModel* InternalModels = nullptr;
-	int32_t ModelCount;
-	bool IsLoadedOnGPU = false;
-
-	Model(uint8_t* data, int32_t size, GraphicsDevice* graphicsDevice)
-		: Effekseer::Model(data, size)
-		, InternalModels(nullptr)
-		, graphicsDevice_(graphicsDevice)
-		, ModelCount(0)
-	{
-		this->m_vertexSize = sizeof(VertexWithIndex);
-		ES_SAFE_ADDREF(graphicsDevice_);
-	}
-
-	virtual ~Model()
-	{
-		ES_SAFE_DELETE_ARRAY(InternalModels);
-		ES_SAFE_RELEASE(graphicsDevice_);
-	}
-
-	bool LoadToGPU();
-};
-
 } // namespace EffekseerRendererLLGI
 
 #endif // __EFFEKSEERRENDERER_LLGI_RENDERER_H__

@@ -12,7 +12,7 @@
 #include "Effekseer.InstanceGroup.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
-#include "Effekseer.Model.h"
+#include "Model/Model.h"
 
 //----------------------------------------------------------------------------------
 //

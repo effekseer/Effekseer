@@ -83,11 +83,14 @@ class SoundPlayer;
 class SoundLoader;
 
 class ModelLoader;
+class ProcedualModelGenerator;
 
 class Model;
 
 class CurveLoader;
 class Curve;
+
+struct ProcedualModelParameter;
 
 typedef int Handle;
 

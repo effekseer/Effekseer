@@ -369,7 +369,6 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	, shader_distortion_(shader_distortion)
 {
 
-
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
 		InitRenderer<InstanceCount>();
@@ -398,6 +397,8 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	{
 		GLExt::glBindVertexArray(currentVAO);
 	}
+
+	graphicsDevice_ = new Backend::GraphicsDevice(renderer->GetDeviceType());
 }
 
 //----------------------------------------------------------------------------------
@@ -417,6 +418,8 @@ ModelRenderer::~ModelRenderer()
 	ES_SAFE_DELETE(shader_ad_unlit_);
 	ES_SAFE_DELETE(shader_ad_lit_);
 	ES_SAFE_DELETE(shader_ad_distortion_);
+
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -541,26 +544,36 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	auto model = (EffekseerRenderer::Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	Effekseer::Model* model = nullptr;
+
+	if (parameter.IsProcedualMode)
+	{
+		model = parameter.EffectPointer->GetProcedualModel(parameter.ModelIndex);
+	}
+	else
+	{
+		model = parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	}
+
 	if (model == nullptr)
 	{
 		return;
 	}
 
-	model->LoadToGPU();
-	if (!model->IsLoadedOnGPU)
+	model->StoreBufferToGPU(graphicsDevice_);
+	if (!model->GetIsBufferStoredOnGPU())
 	{
 		return;
 	}
 
 	if (VertexType == EffekseerRenderer::ModelRendererVertexType::Instancing)
 	{
-		EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, true, InstanceCount>(
+		EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, InstanceCount>(
 			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
 	}
 	else
 	{
-		EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, false, 1>(
+		EndRendering_<RendererImplemented, Shader, Effekseer::Model, false, 1>(
 			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
 	}
 }

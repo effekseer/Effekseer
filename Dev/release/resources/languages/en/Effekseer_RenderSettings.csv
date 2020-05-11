@@ -4,6 +4,7 @@ RS_ParameterType_Ribbon_Name,Ribbon
 RS_ParameterType_Track_Name,Track
 RS_ParameterType_Ring_Name,Ring
 RS_ParameterType_Model_Name,Model
+RS_ParameterType_ProcedualModel_Name,ProcedualModel(Don't use it)
 RS_RenderingOrder_FirstCreatedInstanceIsFirst_Name,Order of spawn
 RS_RenderingOrder_FirstCreatedInstanceIsLast_Name,Reversed
 BillboardType_Billboard_Name,Billboard

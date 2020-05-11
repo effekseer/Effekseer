@@ -157,7 +157,7 @@ void Renderer::SetBackgroundTexture(::Effekseer::TextureData* textureData)
 	// not implemented
 	assert(0);
 }
-
+/*
 Model::InternalModel::InternalModel()
 {
 	VertexBuffer = nullptr;
@@ -181,7 +181,7 @@ Model::Model(uint8_t* data, int32_t size, int maximumModelCount, Effekseer::Back
 {
 	ES_SAFE_ADDREF(graphicsDevice_);
 
-	ModelCount = Effekseer::Min(Effekseer::Max(GetModelCount(), 1), maximumModelCount);
+	ModelCount = maximumModelCount;
 }
 
 Model::~Model()
@@ -261,5 +261,6 @@ bool Model::LoadToGPU()
 
 	return true;
 }
+*/
 
 } // namespace EffekseerRenderer

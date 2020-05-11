@@ -45,10 +45,10 @@ effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Manager.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.EffectLoader.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.TextureLoader.h')
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.ModelLoader.h')
+effekseerHeader.readLines('Effekseer/Effekseer/Model/ModelLoader.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.MaterialLoader.h')
 
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Model.h')
+effekseerHeader.readLines('Effekseer/Effekseer/Model/Model.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Curve.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.CurveLoader.h')

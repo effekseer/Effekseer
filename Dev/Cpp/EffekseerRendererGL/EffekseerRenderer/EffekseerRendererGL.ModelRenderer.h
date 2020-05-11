@@ -43,7 +43,9 @@ private:
 	Shader* shader_unlit_ = nullptr;
 	Shader* shader_distortion_ = nullptr;
 
-	template<int N>
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+
+	template <int N>
 	void InitRenderer();
 
 	ModelRenderer(RendererImplemented* renderer,

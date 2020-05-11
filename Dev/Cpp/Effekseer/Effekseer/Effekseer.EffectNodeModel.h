@@ -20,6 +20,13 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+enum class EffectNodeModelMode
+{
+	File,
+	Procedual,
+};
+
 class EffectNodeModel : public EffectNodeImplemented
 {
 	friend class Manager;
@@ -77,8 +84,11 @@ public:
 	bool EnableFalloff;
 	ModelRenderer::FalloffParameter FalloffParam;
 
-	EffectNodeModel(Effect* effect, unsigned char*& pos)
+	const EffectNodeModelMode Mode;
+
+	EffectNodeModel(Effect* effect, unsigned char*& pos, EffectNodeModelMode mode)
 		: EffectNodeImplemented(effect, pos)
+		, Mode(mode)
 	{
 	}
 

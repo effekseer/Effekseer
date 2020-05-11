@@ -29,11 +29,11 @@ public:
 	virtual ~ModelLoader();
 
 public:
-	void* Load(const EFK_CHAR* path) override;
+	Effekseer::Model* Load(const EFK_CHAR* path) override;
 
-	void* Load(const void* data, int32_t size) override;
+	Effekseer::Model* Load(const void* data, int32_t size) override;
 
-	void Unload(void* data) override;
+	void Unload(Effekseer::Model* data) override;
 };
 //----------------------------------------------------------------------------------
 //

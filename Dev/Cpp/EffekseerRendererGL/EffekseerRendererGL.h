@@ -492,6 +492,7 @@ public:
 @brief	\~English	Model
 		\~Japanese	モデル
 */
+/*
 class Model : public Effekseer::Model
 {
 private:
@@ -520,6 +521,7 @@ public:
 
 	bool IsLoadedOnGPU = false;
 };
+*/
 
 //----------------------------------------------------------------------------------
 //

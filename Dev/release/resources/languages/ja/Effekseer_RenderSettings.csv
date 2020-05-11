@@ -4,6 +4,7 @@ RS_ParameterType_Ribbon_Name,リボン
 RS_ParameterType_Track_Name,軌跡
 RS_ParameterType_Ring_Name,リング
 RS_ParameterType_Model_Name,モデル
+RS_ParameterType_ProcedualModel_Name,プロシージャルモデル(使用禁止)
 RS_RenderingOrder_FirstCreatedInstanceIsFirst_Name,生成順
 RS_RenderingOrder_FirstCreatedInstanceIsLast_Name,生成順の逆
 BillboardType_Billboard_Name,ビルボード

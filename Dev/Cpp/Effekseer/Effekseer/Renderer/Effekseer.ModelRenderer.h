@@ -76,6 +76,8 @@ public:
 
 		bool EnableViewOffset = false;
 
+		bool IsProcedualMode = false;
+
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
 

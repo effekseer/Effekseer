@@ -306,7 +306,7 @@ Native::ModelLoader::~ModelLoader()
 {
 }
 
-void* Native::ModelLoader::Load(const EFK_CHAR* path)
+Effekseer::Model* Native::ModelLoader::Load(const EFK_CHAR* path)
 {
 	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
@@ -359,7 +359,7 @@ void* Native::ModelLoader::Load(const EFK_CHAR* path)
 	}
 }
 
-void Native::ModelLoader::Unload(void* data)
+void Native::ModelLoader::Unload(Effekseer::Model* data)
 {
 	/*
 	if( data != NULL )

@@ -26,7 +26,7 @@
 #include "Effekseer.SoundLoader.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 
-#include "Effekseer.ModelLoader.h"
+#include "Model/ModelLoader.h"
 
 #include <algorithm>
 #include <iostream>

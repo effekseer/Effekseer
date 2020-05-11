@@ -4,6 +4,7 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
+#include "Effekseer.CurveLoader.h"
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.EffectImplemented.h"
 #include "Effekseer.EffectLoader.h"
@@ -11,12 +12,13 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.MaterialLoader.h"
-#include "Effekseer.ModelLoader.h"
 #include "Effekseer.Setting.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
+#include "Model/ModelLoader.h"
+#include "Model/ProcedualModelGenerator.h"
+#include "Model/ProcedualModelParameter.h"
 #include "Utils/Effekseer.BinaryReader.h"
-#include "Effekseer.CurveLoader.h"
 
 #include <array>
 #include <functional>
@@ -48,15 +50,15 @@ static void PathCombine(EFK_CHAR* dst, const EFK_CHAR* src1, const EFK_CHAR* src
 		}
 		memcpy(&dst[len1], src2, len2 * sizeof(EFK_CHAR));
 	}
-    
-    for(int i = 0; i < len1 + len2; i++)
-    {
-        if(dst[i] == u'\\')
-        {
-            dst[i] = u'/';
-        }
-    }
-    
+
+	for (int i = 0; i < len1 + len2; i++)
+	{
+		if (dst[i] == u'\\')
+		{
+			dst[i] = u'/';
+		}
+	}
+
 	dst[len1 + len2] = L'\0';
 }
 
@@ -149,10 +151,10 @@ void EffectFactory::SetSound(Effect* effect, int32_t index, void* data)
 	effect_->m_pWaves[index] = data;
 }
 
-void EffectFactory::SetModel(Effect* effect, int32_t index, void* data)
+void EffectFactory::SetModel(Effect* effect, int32_t index, Model* data)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
-	assert(0 <= index && index < effect_->modelCount_);
+	assert(0 <= index && index < effect_->models_.size());
 	effect_->models_[index] = data;
 }
 
@@ -168,6 +170,13 @@ void EffectFactory::SetCurve(Effect* effect, int32_t index, void* data)
 	auto effect_ = static_cast<EffectImplemented*>(effect);
 	assert(0 <= index && index < effect_->curveCount_);
 	effect_->curves_[index] = data;
+}
+
+void EffectFactory::SetProcedualModel(Effect* effect, int32_t index, Model* data)
+{
+	auto effect_ = static_cast<EffectImplemented*>(effect);
+	assert(0 <= index && index < effect_->procedualModels_.size());
+	effect_->procedualModels_[index] = data;
 }
 
 void EffectFactory::SetLoadingParameter(Effect* effect, ReferenceObject* parameter)
@@ -203,6 +212,7 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 	auto modelLoader = effect->GetSetting()->GetModelLoader();
 	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
 	auto curveLoader = effect->GetSetting()->GetCurveLoader();
+	auto pmGenerator = effect->GetSetting()->GetProcedualMeshGenerator();
 
 	if (textureLoader != nullptr)
 	{
@@ -276,9 +286,18 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 		{
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, materialPath, effect->GetCurvePath(i));
-			
+
 			auto resource = curveLoader->Load(fullPath);
 			SetCurve(effect, i, resource);
+		}
+	}
+
+	if (pmGenerator != nullptr)
+	{
+		for (int32_t ind = 0; ind < effect->GetProcedualModelCount(); ind++)
+		{
+			auto model = pmGenerator->Generate(effect->GetProcedualModelParameter(ind));
+			SetProcedualModel(effect, ind, model);
 		}
 	}
 }
@@ -290,6 +309,7 @@ void EffectFactory::OnUnloadingResource(Effect* effect)
 	auto modelLoader = effect->GetSetting()->GetModelLoader();
 	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
 	auto curveLoader = effect->GetSetting()->GetCurveLoader();
+	auto pmGenerator = effect->GetSetting()->GetProcedualMeshGenerator();
 
 	if (textureLoader != nullptr)
 	{
@@ -345,6 +365,15 @@ void EffectFactory::OnUnloadingResource(Effect* effect)
 		{
 			curveLoader->Unload(effect->GetCurve(i));
 			SetCurve(effect, i, nullptr);
+		}
+	}
+
+	if (pmGenerator != nullptr)
+	{
+		for (int32_t ind = 0; ind < effect->GetProcedualModelCount(); ind++)
+		{
+			pmGenerator->Ungenerate(effect->GetProcedualModel(ind));
+			SetProcedualModel(effect, ind, nullptr);
 		}
 	}
 }
@@ -517,14 +546,15 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 	if (m_version >= 6)
 	{
 		// Model
-		binaryReader.Read(modelCount_, 0, elementCountMax);
+		int32_t modelCount = 0;
+		binaryReader.Read(modelCount, 0, elementCountMax);
 
-		if (modelCount_ > 0)
+		if (modelCount > 0)
 		{
-			modelPaths_ = new EFK_CHAR*[modelCount_];
-			models_ = new void*[modelCount_];
+			modelPaths_.resize(modelCount);
+			models_.resize(modelCount);
 
-			for (int i = 0; i < modelCount_; i++)
+			for (size_t i = 0; i < models_.size(); i++)
 			{
 				int length = 0;
 				binaryReader.Read(length, 0, elementCountMax);
@@ -623,6 +653,20 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 				curves_[i] = nullptr;
 			}
+		}
+
+		// procedual material
+		int32_t pmCount = 0;
+
+		binaryReader.Read(pmCount, 0, elementCountMax);
+
+		procedualModelParameters_.resize(pmCount);
+		procedualModels_.resize(pmCount);
+
+		for (int32_t i = 0; i < pmCount; i++)
+		{
+			procedualModelParameters_[i].Load(binaryReader);
+			procedualModels_[i] = nullptr;
 		}
 	}
 
@@ -1003,15 +1047,14 @@ void EffectImplemented::Reset()
 	ES_SAFE_DELETE_ARRAY(m_WavePaths);
 	ES_SAFE_DELETE_ARRAY(m_pWaves);
 
-	for (int i = 0; i < modelCount_; i++)
+	for (size_t i = 0; i < models_.size(); i++)
 	{
 		if (modelPaths_[i] != NULL)
 			delete[] modelPaths_[i];
 	}
-	modelCount_ = 0;
 
-	ES_SAFE_DELETE_ARRAY(modelPaths_);
-	ES_SAFE_DELETE_ARRAY(models_);
+	models_.clear();
+	modelPaths_.clear();
 
 	for (int i = 0; i < materialCount_; i++)
 	{
@@ -1148,14 +1191,14 @@ const EFK_CHAR* EffectImplemented::GetWavePath(int n) const
 	return m_WavePaths[n];
 }
 
-void* EffectImplemented::GetModel(int n) const
+Model* EffectImplemented::GetModel(int n) const
 {
 	return models_[n];
 }
 
 int32_t EffectImplemented::GetModelCount() const
 {
-	return modelCount_;
+	return static_cast<int32_t>(models_.size());
 }
 
 const EFK_CHAR* EffectImplemented::GetModelPath(int n) const
@@ -1191,6 +1234,31 @@ int32_t EffectImplemented::GetCurveCount() const
 const EFK_CHAR* EffectImplemented::GetCurvePath(int n) const
 {
 	return curvePaths_[n];
+}
+
+Model* EffectImplemented::GetProcedualModel(int n) const
+{
+	if (n < 0 || n >= GetProcedualModelCount())
+	{
+		return nullptr;
+	}
+
+	return procedualModels_[n];
+}
+
+int32_t EffectImplemented::GetProcedualModelCount() const
+{
+	return static_cast<int32_t>(procedualModelParameters_.size());
+}
+
+const ProcedualModelParameter* EffectImplemented::GetProcedualModelParameter(int n) const
+{
+	if (n < 0 || n >= GetProcedualModelCount())
+	{
+		return nullptr;
+	}
+
+	return &procedualModelParameters_[n];
 }
 
 void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureData* data)
@@ -1244,10 +1312,10 @@ void EffectImplemented::SetSound(int32_t index, void* data)
 	m_pWaves[index] = data;
 }
 
-void EffectImplemented::SetModel(int32_t index, void* data)
+void EffectImplemented::SetModel(int32_t index, Model* data)
 {
 	auto modelLoader = GetSetting()->GetModelLoader();
-	assert(0 <= index && index < modelCount_);
+	assert(0 <= index && index < models_.size());
 
 	if (modelLoader != nullptr)
 	{
@@ -1333,7 +1401,7 @@ bool EffectImplemented::Reload(Manager** managers,
 		}
 
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->BeginReloadEffect( this, true);
+		manager->BeginReloadEffect(this, true);
 	}
 
 	// HACK for scale
@@ -1360,7 +1428,7 @@ bool EffectImplemented::Reload(Manager** managers,
 		}
 
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->EndReloadEffect( this, true);
+		manager->EndReloadEffect(this, true);
 	}
 
 	return false;
@@ -1484,12 +1552,12 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const EF
 			}
 		}
 
-		for (int32_t ind = 0; ind < modelCount_; ind++)
+		for (size_t ind = 0; ind < models_.size(); ind++)
 		{
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, matPath, modelPaths_[ind]);
 
-			void* value = nullptr;
+			Model* value = nullptr;
 			if (reloadingBackup->models.Pop(fullPath, value))
 			{
 				models_[ind] = value;
@@ -1580,7 +1648,7 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 			reloadingBackup->sounds.Push(fullPath, m_pWaves[ind]);
 		}
 
-		for (int32_t ind = 0; ind < modelCount_; ind++)
+		for (size_t ind = 0; ind < models_.size(); ind++)
 		{
 			if (models_[ind] == nullptr)
 				continue;
