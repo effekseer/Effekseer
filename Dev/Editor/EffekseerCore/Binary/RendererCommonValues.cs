@@ -13,8 +13,11 @@ namespace Effekseer.Binary
 		delegate int GetTexIDAndInfo(Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef);
 #endif
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
+#else
 		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
-
+#endif
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -70,7 +73,7 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 				// alpha texture
-				data.Add(getTexIDAndInfo(value.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+				data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
 #endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
@@ -83,7 +86,7 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 				// alpha texture
-				data.Add(getTexIDAndInfo(value.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+				data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
 #endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
@@ -96,7 +99,7 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 				// alpha texture
-				data.Add(getTexIDAndInfo(value.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+				data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
 #endif
 			}
 			else
@@ -192,8 +195,8 @@ namespace Effekseer.Binary
 			data.Add(value.Wrap2);
 
 #if __EFFEKSEER_BUILD_VERSION16__
-			data.Add(value.AlphaTextureParam.Filter);
-			data.Add(value.AlphaTextureParam.Wrap);
+			data.Add(advanceValue.AlphaTextureParam.Filter);
+			data.Add(advanceValue.AlphaTextureParam.Wrap);
 #endif
 
 			if (value.ZTest.GetValue())
@@ -328,11 +331,11 @@ namespace Effekseer.Binary
 			data.Add(GetUVBytes
 				(
 				alphaTexInfo, 
-				value.AlphaTextureParam.UV,
-				value.AlphaTextureParam.UVFixed, 
-				value.AlphaTextureParam.UVAnimation,
-				value.AlphaTextureParam.UVScroll,
-				value.AlphaTextureParam.UVFCurve
+				value.UV2,
+				value.UV2Fixed, 
+				value.UV2Animation,
+				value.UV2Scroll,
+				value.UV2FCurve
 				));
 #endif
 
@@ -433,6 +436,13 @@ namespace Effekseer.Binary
 				data.Add(bytes);
 			}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			if (version >= ExporterVersion.Ver1600)
+			{
+				data.Add(AlphaCrunchValues.GetBytes(advanceValue.AlphaCutoffParam));
+			}
+#endif
+
 			return data.ToArray().ToArray();
 		}
 
@@ -492,6 +502,8 @@ namespace Effekseer.Binary
 
 				data.Add(value_.StartSheet.Max.GetBytes());
 				data.Add(value_.StartSheet.Min.GetBytes());
+
+				data.Add(value_.FlipbookInterpolationType);
 
 			}
 			else if (_UVType == Data.RendererCommonValues.UVType.Scroll)

@@ -1702,14 +1702,14 @@ namespace Effekseer
 					}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-					if (node.AlphaCrunchValues.Type == Data.AlphaCrunchValues.ParameterType.FCurve)
+					if (node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 					{
 						var name = "AlphaThreshold";
 						if (Language == Language.Japanese)
 						{
 							name = "アルファ閾値";
 						}
-						list.Add(Tuple35.Create(name, (object)node.AlphaCrunchValues.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.FCurve));
 					}
 #endif
 

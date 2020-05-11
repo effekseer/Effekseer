@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Dock
             Label = Resources.GetString("AlphaCrunch") + "###AlphaCrunch";
 
             parameterList = new Component.ParameterList();
-            parameterList.SetType(typeof(Data.AlphaCrunchValues));
+            parameterList.SetType(typeof(Data.AdvancedRenderCommonValues));
 
             candp = new Component.CopyAndPaste("AlphaCrunch", GetTargetObject, Read);
 
@@ -63,7 +63,7 @@ namespace Effekseer.GUI.Dock
             {
                 if (Core.SelectedNode is Data.Node)
                 {
-                    return ((Data.Node)Core.SelectedNode).AlphaCrunchValues;
+                    return ((Data.Node)Core.SelectedNode).AdvancedRendererCommonValuesValues;
                 }
             }
             return null;

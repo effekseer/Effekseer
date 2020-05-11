@@ -949,7 +949,7 @@ struct ParameterRendererCommon
 		}
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		if (version >= 16)
+		if (version >= 1600)
 		{
 			memcpy(&Filter3Type, pos, sizeof(int));
 			pos += sizeof(int);
@@ -1009,7 +1009,7 @@ struct ParameterRendererCommon
 		pos += sizeof(int);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		if (version >= 16)
+		if (version >= 1600)
 		{
 			auto LoadUVParameter = [&](const int UVIndex)
 			{

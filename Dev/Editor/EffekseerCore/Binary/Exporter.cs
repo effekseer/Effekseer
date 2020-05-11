@@ -84,8 +84,8 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								var alpha_relative_path = _node.RendererCommonValues.AlphaTextureParam.Texture.RelativePath;
-								if (_node.RendererCommonValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+								var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
 								{
 									if (!UsedTextures.Contains(alpha_relative_path))
 									{
@@ -106,8 +106,8 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								var alpha_relative_path = _node.RendererCommonValues.AlphaTextureParam.Texture.RelativePath;
-								if (_node.RendererCommonValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+								var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
 								{
 									if (!UsedDistortionTextures.Contains(alpha_relative_path))
 									{
@@ -137,8 +137,8 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								var path3 = _node.RendererCommonValues.AlphaTextureParam.Texture.RelativePath;
-								if (_node.RendererCommonValues.EnableAlphaTexture && path3 != string.Empty)
+								var path3 = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && path3 != string.Empty)
 								{
 									if (!UsedTextures.Contains(path3))
 									{
@@ -630,9 +630,11 @@ namespace Effekseer.Binary
 				node_data.Add(((int)n.DepthValues.ZSort.Value).GetBytes());
 				node_data.Add(n.DepthValues.DrawingPriority.Value.GetBytes());
 				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());
+#if __EFFEKSEER_BUILD_VERSION16__
+				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion));
+#else
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index));
-
-
+#endif
 				if (isRenderParamExported)
 				{
 					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index));
@@ -641,13 +643,6 @@ namespace Effekseer.Binary
 				{
 					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index));
 				}
-
-#if __EFFEKSEER_BUILD_VERSION16__
-				if (exporterVersion >= ExporterVersion.Ver1600)
-				{
-					node_data.Add(AlphaCrunchValues.GetBytes(n.AlphaCrunchValues));
-				}
-#endif
 
 				data.Add(node_data.ToArray().ToArray());
 
