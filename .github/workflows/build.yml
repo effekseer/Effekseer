@@ -41,5 +41,5 @@ jobs:
       - name: Upload Tool
         uses: actions/upload-artifact@v1
         with:
-          name: Effekseer152eWin
+          name: Effekseer152fWin
           path: Effekseer150Win
