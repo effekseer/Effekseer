@@ -381,11 +381,11 @@ namespace Effekseer.IO
 				string messeage = "";
 				if (Core.Language == Language.English)
 				{
-					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
+					messeage = "Failed to save a file " + path + "\nThis error is \n";
 				}
 				else	
 				{
-					messeage =  "Failed to save a file " + path + "\nThis error is \n"; 
+					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
 				}
 
 				messeage += e.ToString();
