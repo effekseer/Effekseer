@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -385,7 +385,7 @@ namespace Effekseer.IO
 				}
 				else	
 				{
-					messeage = "•Û‘¶‚É¸”s‚µ‚Ü‚µ‚½B " + path + "\nƒGƒ‰[‚Í \n";
+					messeage = "ä¿å­˜ã«å¤±æ•—ã—ã¾ã—ãŸã€‚ " + path + "\nã‚¨ãƒ©ãƒ¼ã¯ \n";
 				}
 
 				messeage += e.ToString();
