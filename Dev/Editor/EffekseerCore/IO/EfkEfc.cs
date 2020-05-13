@@ -390,7 +390,11 @@ namespace Effekseer.IO
 
 				messeage += e.ToString();
 
-				Core.OnOutputMessage(messeage);
+				if(Core.OnOutputMessage != null)
+				{
+					Core.OnOutputMessage(messeage);
+				}
+
 				return false;
 			}
 
