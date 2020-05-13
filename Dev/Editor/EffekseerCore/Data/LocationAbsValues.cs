@@ -59,6 +59,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[IO(Export = true)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		public LocalForceFieldTurbulence Turbulence
 		{
