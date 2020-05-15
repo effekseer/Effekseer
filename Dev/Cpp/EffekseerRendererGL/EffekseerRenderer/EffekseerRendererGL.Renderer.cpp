@@ -395,7 +395,7 @@ Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 	return NULL;
 }
 
-Renderer* Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
+Renderer* Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
 {
 	auto g = static_cast<GraphicsDevice*>(graphicDevice);
 
