@@ -1,3 +1,8 @@
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils_PS.fx"
+#endif
+
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 
 cbuffer PS_ConstanBuffer : register(b0)
@@ -87,6 +92,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV, Input.FlipbookRate);
+	/*
     if(fFlipbookParameter.x > 0)
     {
         float4 NextPixelColor = g_colorTexture.Sample(g_colorSampler, Input.FlipbookNextIndexUV) * Input.Color;
@@ -96,6 +103,7 @@ float4 PS( const PS_Input Input ) : SV_Target
             Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
         }
     }
+    */
     
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
     
