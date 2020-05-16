@@ -1,3 +1,8 @@
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils_PS.fx"
+#endif
+
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 
 cbuffer PS_ConstanBuffer : register(b0)
@@ -72,7 +77,7 @@ float4 PS( const PS_Input Input ) : SV_Target
 {
 	float diffuse = 1.0;
 
-#if ENABLE_LIGHTING && ENABLE_NORMAL_TEXTURE
+#if ENABLE_LIGHTING
 	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV).xyz  - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(
 		mul(
@@ -84,10 +89,11 @@ float4 PS( const PS_Input Input ) : SV_Target
 	diffuse = max( dot( fLightDirection.xyz, localNormal.xyz ), 0.0 );
 #endif
 
-#ifdef ENABLE_COLOR_TEXTURE
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV, Input.FlipbookRate);
+	/*
     if(fFlipbookParameter.x > 0)
     {
         float4 NextPixelColor = g_colorTexture.Sample(g_colorSampler, Input.FlipbookNextIndexUV) * Input.Color;
@@ -97,6 +103,7 @@ float4 PS( const PS_Input Input ) : SV_Target
             Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
         }
     }
+    */
     
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
     
@@ -108,10 +115,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 #endif
     
 	Output.xyz = Output.xyz * diffuse;
-#else
-	float4 Output = Input.Color;
-	Output.xyz = Output.xyz * diffuse;
-#endif
 
 #if ENABLE_LIGHTING
 	Output.xyz = Output.xyz + fLightAmbient.xyz;

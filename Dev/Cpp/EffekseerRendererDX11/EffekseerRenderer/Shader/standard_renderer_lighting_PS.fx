@@ -1,3 +1,8 @@
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils_PS.fx"
+#endif
+
 struct PS_Input
 {
 	float4 Position : SV_POSITION;
@@ -55,7 +60,8 @@ float4 PS(const PS_Input Input) : SV_Target
 
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1) * Input.VColor;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    
+	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.VColor, Input.FlipbookNextIndexUV, Input.FlipbookRate);
+    /*
     // flipbook interpolation
     if(fFlipbookParameter.x > 0)
     {
@@ -67,6 +73,7 @@ float4 PS(const PS_Input Input) : SV_Target
             Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
         }
     }
+    */
     
     // alpha texture
 	Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;

@@ -54,8 +54,8 @@ VS_Output VS( const VS_Input Input )
 {
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
-	float3 worldNormal = (Input.Normal - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldTangent = (Input.Tangent - float3(0.5, 0.5, 0.5)) * 2.0;
+	float3 worldNormal = (Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
+	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldBinormal = cross(worldNormal, worldTangent);
 
 	// UV
@@ -68,7 +68,9 @@ VS_Output VS( const VS_Input Input )
     float2 alphaUV = Input.AlphaUV;
     alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
     
+    ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
     // flipbook interpolation
+	/*
     if(mflipbookParameter.x > 0)
     {
         Output.FlipbookRate = frac(Input.FlipbookIndex);
@@ -106,7 +108,8 @@ VS_Output VS( const VS_Input Input )
         float2 OriginUV = GetFlipbookOriginUV(Input.UV1, Index, mflipbookParameter.z, mflipbookParameter.w);
         Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(OriginUV, NextIndex, mflipbookParameter.z, mflipbookParameter.w);
     }
-    
+    */
+
     // alpha threshold
     Output.AlphaThreshold = Input.AlphaThreshold;
 #endif

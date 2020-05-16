@@ -1,3 +1,8 @@
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils_PS.fx"
+#endif
+
 Texture2D	g_texture		: register(t0);
 SamplerState	g_sampler		: register(s0);
 
@@ -41,14 +46,13 @@ struct PS_Input
 
 float4 PS( const PS_Input Input ) : SV_Target
 {
-#ifdef ENABLE_COLOR_TEXTURE
 	float4 Output = g_texture.Sample(g_sampler, Input.UV);
-#else
-	float4 Output = float4(1.0, 1.0, 1.0, 1.0);
-#endif
+
 	Output.a = Output.a * Input.Color.a;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+	ApplyFlipbook(Output, g_texture, g_sampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV, Input.FlipbookRate);
+	/*
     if(fFlipbookParameter.x > 0)
     {
         float4 NextPixelColor = g_backTexture.Sample(g_backSampler, Input.FlipbookNextIndexUV) * Input.Color;
@@ -58,7 +62,8 @@ float4 PS( const PS_Input Input ) : SV_Target
             Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
         }
     }
-    
+    */
+
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
     
     // alpha threshold
