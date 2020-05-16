@@ -41,11 +41,8 @@ struct PS_Input
 
 float4 PS( const PS_Input Input ) : SV_Target
 {
-#ifdef ENABLE_COLOR_TEXTURE
 	float4 Output = g_texture.Sample(g_sampler, Input.UV);
-#else
-	float4 Output = float4(1.0, 1.0, 1.0, 1.0);
-#endif
+
 	Output.a = Output.a * Input.Color.a;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__

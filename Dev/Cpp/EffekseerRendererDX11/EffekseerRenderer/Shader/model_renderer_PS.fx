@@ -72,7 +72,7 @@ float4 PS( const PS_Input Input ) : SV_Target
 {
 	float diffuse = 1.0;
 
-#if ENABLE_LIGHTING && ENABLE_NORMAL_TEXTURE
+#if ENABLE_LIGHTING
 	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV).xyz  - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(
 		mul(
@@ -84,7 +84,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 	diffuse = max( dot( fLightDirection.xyz, localNormal.xyz ), 0.0 );
 #endif
 
-#ifdef ENABLE_COLOR_TEXTURE
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -108,10 +107,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 #endif
     
 	Output.xyz = Output.xyz * diffuse;
-#else
-	float4 Output = Input.Color;
-	Output.xyz = Output.xyz * diffuse;
-#endif
 
 #if ENABLE_LIGHTING
 	Output.xyz = Output.xyz + fLightAmbient.xyz;

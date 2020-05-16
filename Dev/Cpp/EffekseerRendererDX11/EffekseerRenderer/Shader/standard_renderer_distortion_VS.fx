@@ -93,6 +93,8 @@ VS_Output VS( const VS_Input Input )
     Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
     
     // flipbook interpolation
+	ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV);
+	/*
     if(mflipbookParameter.x > 0)
     {
         Output.FlipbookRate = frac(Input.FlipbookIndex);
@@ -130,6 +132,7 @@ VS_Output VS( const VS_Input Input )
         float2 OriginUV = GetFlipbookOriginUV(Input.UV, Index, mflipbookParameter.z, mflipbookParameter.w);
         Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(OriginUV, NextIndex, mflipbookParameter.z, mflipbookParameter.w);
     }
+    */
     
     // alpha threshold
     Output.AlphaThreshold = Input.AlphaThreshold;
