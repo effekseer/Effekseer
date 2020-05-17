@@ -827,6 +827,26 @@ void GUIManager::Close()
 	window->Close();
 }
 
+bool GUIManager::IsWindowMaximized()
+{
+	return window->IsWindowMaximized();
+}
+
+void GUIManager::SetWindowMaximized(bool maximized)
+{
+	window->SetWindowMaximized(maximized);
+}
+
+bool GUIManager::IsWindowMinimized()
+{
+	return window->IsWindowMinimized();
+}
+
+void GUIManager::SetWindowMinimized(bool minimized)
+{
+	window->SetWindowMinimized(minimized);
+}
+
 Vec2 GUIManager::GetMousePosition()
 {
 	return window->GetMousePosition();
@@ -1317,6 +1337,11 @@ void GUIManager::Image(void* user_texture_id, float x, float y)
 bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 {
 	return ImGui::ImageButton_(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+}
+
+bool GUIManager::ImageButtonOriginal(ImageResource* user_texture_id, float x, float y)
+{
+	return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 }
 
 bool GUIManager::Checkbox(const char16_t* label, bool* v)
@@ -1822,7 +1847,9 @@ void GUIManager::DrawLineBackground(float height, uint32_t col)
 
 bool GUIManager::BeginFullscreen(const char16_t* label)
 {
-	float offsetY = ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale();
+	float offsetY = (mainWindow_->IsFrameless()) ?
+		(32.0f * GetDpiScale()) :
+		(ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale());
 
 	ImVec2 windowSize;
 	windowSize.x = ImGui::GetIO().DisplaySize.x;

@@ -39,16 +39,78 @@ namespace Effekseer.GUI.Menu
 				isFirstUpdate = false;
 			}
 
-            Manager.NativeManager.BeginMainMenuBar();
+			if (Manager.IsWindowFrameless)
+			{
+				UpdateSystemBar();
+			}
+			else
+			{
+				Manager.NativeManager.BeginMainMenuBar();
 
-            foreach (var ctrl in Controls)
-            {
-                ctrl.Update();
-            }
+				foreach (var ctrl in Controls)
+				{
+					ctrl.Update();
+				}
 
-            Manager.NativeManager.EndMainMenuBar();
+				Manager.NativeManager.EndMainMenuBar();
+			}
 
 			ReloadTitle();
+		}
+
+		public void UpdateSystemBar()
+		{
+			Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, 8.0f * Manager.DpiScale));
+
+			Manager.NativeManager.BeginMainMenuBar();
+
+			var windowSize = Manager.NativeManager.GetWindowSize();
+
+			float iconSize = 28.0f * Manager.DpiScale;
+			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
+			Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+			Manager.NativeManager.SetCursorPosY(0);
+
+			foreach (var ctrl in Controls)
+			{
+				ctrl.Update();
+			}
+
+			float pos = Manager.NativeManager.GetCursorPosX();
+			Manager.NativeManager.SetCursorPosX(pos + (windowSize.X - pos - 56 * 3 - 140) / 2);
+			Manager.NativeManager.Text("Effekseer Version 1.51");
+
+			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
+			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
+
+			float buttonX = 44 * Manager.DpiScale;
+			float buttonY = 32 * Manager.DpiScale;
+
+			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 3);
+			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon("ButtonMin"), buttonX, buttonY))
+			{
+				Manager.NativeManager.SetWindowMinimized(true);
+			}
+
+			bool maximized = Manager.NativeManager.IsWindowMaximized();
+			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 2);
+			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon(maximized ? "ButtonMaxCancel" : "ButtonMax"), buttonX, buttonY))
+			{
+				Manager.NativeManager.SetWindowMaximized(!maximized);
+			}
+
+			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 1);
+			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon("ButtonClose"), buttonX, buttonY))
+			{
+				Manager.NativeManager.Close();
+			}
+
+			Manager.NativeManager.PopStyleColor(2);
+
+			Manager.NativeManager.EndMainMenuBar();
+
+			Manager.NativeManager.PopStyleVar(1);
+
 		}
 
 		void ReloadRecentFiles()

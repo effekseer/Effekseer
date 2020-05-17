@@ -139,6 +139,8 @@ namespace Effekseer.GUI
 			}
 		}
 
+		public static bool IsWindowFrameless { get; private set; }
+
 		static int resetCount = 0;
 		internal static int resizedCount = 0;
 		internal static int actualWidth = 1;
@@ -200,6 +202,11 @@ namespace Effekseer.GUI
 
 			swig.MainWindowState state = new swig.MainWindowState();
 
+			if (System.Environment.OSVersion.Platform == PlatformID.Win32NT)
+			{
+				IsWindowFrameless = true;
+			}
+
 			// TODO : refactor
 			var windowConfig = new Configs.WindowConfig();
 			if(windowConfig.Load(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
@@ -217,8 +224,10 @@ namespace Effekseer.GUI
 				state.Height = 720;
 				windowConfig = null;
 			}
-			
-			if(!swig.MainWindow.Initialize("Effekseer", state, false, deviceType == swig.DeviceType.OpenGL))
+
+			state.IsFrameless = IsWindowFrameless;
+
+			if (!swig.MainWindow.Initialize("Effekseer", state, false, deviceType == swig.DeviceType.OpenGL))
 			{
 				return false;
 			}

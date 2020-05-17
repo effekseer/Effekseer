@@ -2,6 +2,8 @@
 #include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include <memory>
+#include <imgui.h>
+#include <imgui_internal.h>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -25,7 +27,7 @@ static std::string utf16_to_utf8(const std::u16string& s)
 #endif
 }
 
-void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y)
+void GLFW_ResizeCallback(GLFWwindow* w, int x, int y)
 {
 	auto w_ = (Window*)glfwGetWindowUserPointer(w);
 
@@ -41,7 +43,7 @@ void GLFW_DropCallback(GLFWwindow* w, int count, const char** paths)
 	w_->Droped(paths[0]);
 }
 
-void GLFLW_CloseCallback(GLFWwindow* w)
+void GLFW_CloseCallback(GLFWwindow* w)
 {
 	auto w_ = (Window*)glfwGetWindowUserPointer(w);
 
@@ -67,7 +69,7 @@ void GLFW_WindowFocusCallback(GLFWwindow* w, int f)
 	}
 }
 
-void GLFW_IconifyCallback(GLFWwindow* w, int f)
+void Window::GLFW_IconifyCallback(GLFWwindow* w, int f)
 {
 	auto w_ = (Window*)glfwGetWindowUserPointer(w);
 
@@ -75,6 +77,15 @@ void GLFW_IconifyCallback(GLFWwindow* w, int f)
 	{
 		w_->Iconify(f);
 	}
+
+	w_->minimized = f != 0;
+}
+
+void Window::GLFW_MaximizeCallback(GLFWwindow* w, int f)
+{
+	auto w_ = (Window*)glfwGetWindowUserPointer(w);
+
+	w_->maximized = f != 0;
 }
 
 void GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale)
@@ -102,24 +113,53 @@ bool Window::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Devic
 	mainWindow_ = mainWindow;
 
 	glfwSetWindowUserPointer(window, this);
-	glfwSetFramebufferSizeCallback(window, GLFLW_ResizeCallback);
+	glfwSetFramebufferSizeCallback(window, GLFW_ResizeCallback);
 	glfwSetDropCallback(window, GLFW_DropCallback);
 	glfwSetWindowFocusCallback(window, GLFW_WindowFocusCallback);
-	glfwSetWindowCloseCallback(window, GLFLW_CloseCallback);
+	glfwSetWindowCloseCallback(window, GLFW_CloseCallback);
 	glfwSetWindowIconifyCallback(window, GLFW_IconifyCallback);
-	//glfwSetWindowContentScaleCallback(window, GLFW_ContentScaleCallback);
+	glfwSetWindowMaximizeCallback(window, GLFW_MaximizeCallback);
+	// glfwSetWindowContentScaleCallback(window, GLFW_ContentScaleCallback);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
-	mainWindow_->DpiChanged = [this](float scale) -> void {
-		GLFW_ContentScaleCallback(window, scale, 1.0f);
-	};
+	maximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED) > 0;
+
+	mainWindow_->DpiChanged = [this](float scale) -> void { GLFW_ContentScaleCallback(window, scale, 1.0f); };
+
+#ifdef _WIN32
+	if (mainWindow->IsFrameless())
+	{
+		HWND hwnd = glfwGetWin32Window(window);
+		vertResize = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+
+		glfwWndProc = (WNDPROC)::GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+		::SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)this);
+		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
+
+		DWORD wndStyle = ::GetWindowLong(hwnd, GWL_STYLE);
+		wndStyle |= WS_SIZEBOX | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+		::SetWindowLong(hwnd, GWL_STYLE, wndStyle);
+	}
+#endif
 
 	return true;
 }
 
 void Window::Terminate()
 {
+#ifdef _WIN32
+	if (glfwWndProc)
+	{
+		HWND hwnd = glfwGetWin32Window(window);
+		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)glfwWndProc);
+	}
+	if (vertResize)
+	{
+		glfwDestroyCursor(vertResize);
+		vertResize = nullptr;
+	}
+#endif
 	window = nullptr;
 	mainWindow_ = nullptr;
 }
@@ -146,8 +186,7 @@ void Window::SetTitle(const char16_t* title)
 void Window::SetWindowIcon(const char16_t* iconPath)
 {
 	Effekseer::DefaultFileInterface file;
-	std::unique_ptr<Effekseer::FileReader>
-		reader(file.OpenRead(iconPath));
+	std::unique_ptr<Effekseer::FileReader> reader(file.OpenRead(iconPath));
 	if (reader.get() != NULL)
 	{
 		size_t size = reader->GetLength();
@@ -189,7 +228,42 @@ void Window::Present()
 
 void Window::Close()
 {
-	glfwSetWindowShouldClose(window, 1);
+	//lfwSetWindowShouldClose(window, 1);
+	GLFW_CloseCallback(window);
+}
+
+bool Window::IsWindowMaximized() const
+{
+	return maximized;
+}
+
+void Window::SetWindowMaximized(bool maximized)
+{
+	if (maximized)
+	{
+		glfwMaximizeWindow(window);
+	}
+	else
+	{
+		glfwRestoreWindow(window);
+	}
+}
+
+bool Window::IsWindowMinimized() const
+{
+	return minimized;
+}
+
+void Window::SetWindowMinimized(bool minimized)
+{
+	if (minimized)
+	{
+		glfwIconifyWindow(window);
+	}
+	else
+	{
+		glfwRestoreWindow(window);
+	}
 }
 
 Vec2 Window::GetMousePosition()
@@ -243,4 +317,65 @@ void* Window::GetNativeHandle() const
 	return nullptr;
 #endif
 }
+
+#ifdef _WIN32
+LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	Window* window = (Window*)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+	switch (msg)
+	{
+	case WM_NCCALCSIZE:
+	{
+		WINDOWPLACEMENT placement;
+		GetWindowPlacement(hwnd, &placement);
+		if (placement.showCmd == SW_NORMAL) {
+			NCCALCSIZE_PARAMS* pncsp = (NCCALCSIZE_PARAMS*)lparam;
+			pncsp->rgrc[0].top    += 0;
+			pncsp->rgrc[0].bottom -= 8;
+			pncsp->rgrc[0].left   += 8;
+			pncsp->rgrc[0].right  -= 8;
+		}
+	}
+	return 0;
+	case WM_NCHITTEST:
+	{
+		long x = LOWORD(lparam);
+		long y = HIWORD(lparam);
+
+		POINT point = {x, y};
+		ScreenToClient(hwnd, &point);
+
+		RECT rect;
+		GetClientRect(hwnd, &rect);
+		if (point.x >= rect.left && point.x < rect.right) {
+
+			if (point.y >= rect.top  && point.y < rect.top + 6
+				&& !window->maximized)
+			{
+				glfwSetCursor(window->window, window->vertResize);
+				return HTTOP;
+			}
+			else if (point.y >= rect.top
+				&& point.y < rect.top + 32 * window->mainWindow_->GetDPIScale()
+				&& ImGui::GetHoveredID() == 0)
+			{
+				return HTCAPTION;
+			}
+		}
+	}
+	break;
+	case WM_NCRBUTTONDOWN:
+		if (wparam == HTCAPTION)
+		{
+			WPARAM cmd = TrackPopupMenu(GetSystemMenu(hwnd, 0), TPM_RETURNCMD, LOWORD(lparam), HIWORD(lparam), 0, hwnd, nullptr);
+			if (cmd) PostMessage(hwnd, WM_SYSCOMMAND, cmd, 0);
+			return 0;
+		}
+		break;
+	}
+
+	return ::CallWindowProc(window->glfwWndProc, hwnd, msg, wparam, lparam);
+}
+#endif
 } // namespace efk
