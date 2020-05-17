@@ -58,6 +58,7 @@ namespace EffekseerRenderer
 			Normal,
 			Distortion,
 			Dynamic,
+			Lighting,
 		};
 
 		VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
@@ -65,6 +66,8 @@ namespace EffekseerRenderer
 		VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
 
 		VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+		VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lighting; }
 
 		template <typename VERTEX, int TARGET> void AssignUV(StrideView<VERTEX> v, float uvX1, float uvX2, float uvY1, float uvY2)
 		{
@@ -99,17 +102,17 @@ namespace EffekseerRenderer
 			}
 			else if (TARGET == 2)
 			{
-				v[0].AlphaUV[0] = uvX1;
-				v[0].AlphaUV[1] = uvY1;
-
-				v[1].AlphaUV[0] = uvX2;
-				v[1].AlphaUV[1] = uvY1;
-
-				v[2].AlphaUV[0] = uvX1;
-				v[2].AlphaUV[1] = uvY2;
-
-				v[3].AlphaUV[0] = uvX2;
-				v[3].AlphaUV[1] = uvY2;
+				v[0].SetAlphaUV(uvX1, 0);
+				v[0].SetAlphaUV(uvY1, 1);
+							   
+				v[1].SetAlphaUV(uvX2, 0);
+				v[1].SetAlphaUV(uvY1, 1);
+							   
+				v[2].SetAlphaUV(uvX1, 0);
+				v[2].SetAlphaUV(uvY2, 1);
+							   
+				v[3].SetAlphaUV(uvX2, 0);
+				v[3].SetAlphaUV(uvY2, 1);
 			}
 #else
 			else
@@ -404,8 +407,8 @@ namespace EffekseerRenderer
 							verteies[i].SetColor(param.Colors[i]);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-							verteies[i].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
-							verteies[i].AlphaThreshold = param.AlphaThreshold;
+							verteies[i].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
+							verteies[i].SetAlphaThreshold(param.AlphaThreshold);
 #endif
 						}
 					}
@@ -722,6 +725,10 @@ namespace EffekseerRenderer
 				parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 			{
 				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			}
+			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+			{
+				Rendering_Internal<LightingVertex>(parameter, instanceParameter, userData, camera);
 			}
 			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 			{

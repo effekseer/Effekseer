@@ -1,24 +1,53 @@
+// 1.6
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
 
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCamera;
+    float4x4 mProj;
+    float4 mUVInversed;
+
+    float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+};
+#else
 float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
+#endif
+
 
 struct VS_Input
 {
 	float3 Pos		: POSITION0;
 	float4 Color		: NORMAL0;
 	float2 UV		: TEXCOORD0;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float2 AlphaUV : TEXCOORD1;
+	float FlipbookIndex : TEXCOORD2;
+	float AlphaThreshold : TEXCOORD3;
+#endif
 };
 
 struct VS_Output
 {
 	float4 Position		: POSITION0;
-	float4 Color		: TEXCOORD0;
-	float2 UV		: TEXCOORD1;
+	float4 Color		: COLOR;
+	float2 UV		: TEXCOORD0;
 
-	float4 Pos		: TEXCOORD2;
-	float4 PosU		: TEXCOORD3;
-	float4 PosR		: TEXCOORD4;
+	float4 Pos		: TEXCOORD1;
+	float4 PosU		: TEXCOORD2;
+	float4 PosR		: TEXCOORD3;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float2 AlphaUV : TEXCOORD4;
+	float FlipbookRate : TEXCOORD5;
+	float2 FlipbookNextIndexUV : TEXCOORD6;
+	float AlphaThreshold : TEXCOORD7;
+#endif
 };
 
 VS_Output VS( const VS_Input Input )
@@ -45,6 +74,16 @@ VS_Output VS( const VS_Input Input )
 	Output.UV = Input.UV;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    // alpha texture
+	Output.AlphaUV = Input.AlphaUV;
+	Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
+    
+	ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV);
+
+    Output.AlphaThreshold = Input.AlphaThreshold;
+#endif
 
 	return Output;
 }

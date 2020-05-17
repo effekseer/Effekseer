@@ -305,6 +305,7 @@ private:
 	int32_t squareMaxSize_ = 0;
 
 	bool isDistortionMode_;
+	bool isLightningMode_ = false;
 	bool isDynamicVertexMode_ = false;
 
 	struct VertexConstantBuffer
@@ -410,6 +411,10 @@ public:
 			stride = (int32_t)sizeof(DynamicVertex);
 			stride += (m_state.CustomData1Count + m_state.CustomData2Count) * sizeof(float);
 		}
+		else if (isLightningMode_)
+		{
+			stride = (int32_t)sizeof(LightingVertex);
+		}
 		else if (isDistortionMode_)
 		{
 			stride = (int32_t)sizeof(VERTEX_DISTORTION);
@@ -430,8 +435,8 @@ public:
 
 		m_state = state;
 
-		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) || 
-			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
+		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex);
+		isLightningMode_ = m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
 		isDistortionMode_ = m_state.Distortion;
 	}
 

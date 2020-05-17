@@ -144,6 +144,8 @@ void Shader::SetVertexConstantBufferSize(int32_t size)
 		hBufferDesc.StructureByteStride = sizeof(float);
 
 	GetRenderer()->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &m_constantBufferToVS);
+
+	vertexConstantBufferSize_ = size;
 }
 
 //-----------------------------------------------------------------------------------
@@ -163,6 +165,8 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 	hBufferDesc.StructureByteStride = sizeof(float);
 
 	GetRenderer()->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &m_constantBufferToPS);
+
+	pixelConstantBufferSize_ = size;
 }
 
 //-----------------------------------------------------------------------------------

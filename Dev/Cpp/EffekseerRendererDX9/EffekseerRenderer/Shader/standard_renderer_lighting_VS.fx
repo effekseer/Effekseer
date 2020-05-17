@@ -1,3 +1,8 @@
+// 1.6
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
+
 
 struct VS_Input
 {
@@ -7,6 +12,11 @@ struct VS_Input
 	float4 Tangent : NORMAL2;
 	float2 UV1 : TEXCOORD0;
 	float2 UV2 : TEXCOORD1;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV : TEXCOORD2;
+    float FlipbookIndex : TEXCOORD3;
+    float AlphaThreshold : TEXCOORD4;
+#endif
 };
 
 struct VS_Output
@@ -14,17 +24,35 @@ struct VS_Output
 	float4 Position : POSITION0;
 	float4 VColor : COLOR;
 	float2 UV1 : TEXCOORD0;
-	float2 UV2 : TEXCOORD1;
-	float3 WorldP : TEXCOORD2;
-	float3 WorldN : TEXCOORD3;
-	float3 WorldT : TEXCOORD4;
-	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
+	float3 WorldP : TEXCOORD1;
+	float3 WorldN : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
+	float3 WorldB : TEXCOORD4;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV : TEXCOORD5;
+    float FlipbookRate : TEXCOORD6;
+    float2 FlipbookNextIndexUV : TEXCOORD7;
+    float AlphaThreshold : TEXCOORD8;
+#endif
 };
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCamera;
+    float4x4 mProj;
+    float4 mUVInversed;
+
+    float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+};
+
+#else
 
 float4x4 mCamera : register(c0);
 float4x4 mProj : register(c4);
 float4 mUVInversed : register(c8);
+
+#endif
 
 VS_Output VS( const VS_Input Input )
 {
@@ -40,6 +68,17 @@ VS_Output VS( const VS_Input Input )
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    // alpha texture
+    float2 alphaUV = Input.AlphaUV;
+    alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
+    
+    ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
+
+    // alpha threshold
+    Output.AlphaThreshold = Input.AlphaThreshold;
+#endif
+
 	// NBT
 	Output.WorldN = worldNormal;
 	Output.WorldB = worldBinormal;
@@ -54,9 +93,10 @@ VS_Output VS( const VS_Input Input )
 	Output.WorldP = worldPos;
 	Output.VColor = Input.Color;
 	Output.UV1 = uv1;
-	Output.UV2 = uv2;
-	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV = alphaUV;
+#endif
 
 	return Output;
 }

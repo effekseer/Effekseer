@@ -55,6 +55,7 @@ namespace EffekseerRenderer
 			Normal,
 			Distortion,
 			Dynamic,
+			Lighting,
 		};
 
 		VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
@@ -62,6 +63,8 @@ namespace EffekseerRenderer
 		VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
 
 		VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+		VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lighting; }
 
 		template <typename VERTEX, int TARGET>
 		void AssignUV(StrideView<VERTEX>& v, float uvX1, float uvX2, float uvX3, float uvY1, float uvY2)
@@ -121,29 +124,29 @@ namespace EffekseerRenderer
 			}
 			else if (TARGET == 2)
 			{
-				v[0].AlphaUV[0] = uvX1;
-				v[0].AlphaUV[1] = uvY1;
-
-				v[1].AlphaUV[0] = uvX2;
-				v[1].AlphaUV[1] = uvY1;
-
-				v[4].AlphaUV[0] = uvX2;
-				v[4].AlphaUV[1] = uvY1;
-
-				v[5].AlphaUV[0] = uvX3;
-				v[5].AlphaUV[1] = uvY1;
-
-				v[2].AlphaUV[0] = uvX1;
-				v[2].AlphaUV[1] = uvY2;
-
-				v[3].AlphaUV[0] = uvX2;
-				v[3].AlphaUV[1] = uvY2;
-
-				v[6].AlphaUV[0] = uvX2;
-				v[6].AlphaUV[1] = uvY2;
-
-				v[7].AlphaUV[0] = uvX3;
-				v[7].AlphaUV[1] = uvY2;
+				v[0].SetAlphaUV(uvX1, 0);
+				v[0].SetAlphaUV(uvY1, 1);
+					 			
+				v[1].SetAlphaUV(uvX2, 0);
+				v[1].SetAlphaUV(uvY1, 1);
+					 			
+				v[4].SetAlphaUV(uvX2, 0);
+				v[4].SetAlphaUV(uvY1, 1);
+					 			
+				v[5].SetAlphaUV(uvX3, 0);
+				v[5].SetAlphaUV(uvY1, 1);
+					 			
+				v[2].SetAlphaUV(uvX1, 0);
+				v[2].SetAlphaUV(uvY2, 1);
+					 			
+				v[3].SetAlphaUV(uvX2, 0);
+				v[3].SetAlphaUV(uvY2, 1);
+					 			
+				v[6].SetAlphaUV(uvX2, 0);
+				v[6].SetAlphaUV(uvY2, 1);
+					 			
+				v[7].SetAlphaUV(uvX3, 0);
+				v[7].SetAlphaUV(uvY2, 1);
 			}
 #else
 			else
@@ -463,13 +466,13 @@ namespace EffekseerRenderer
 					v[2].SetColor(rightColor);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-					v[0].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
-					v[1].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
-					v[2].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
+					v[0].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
+					v[1].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
+					v[2].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
 
-					v[0].AlphaThreshold = param.AlphaThreshold;
-					v[1].AlphaThreshold = param.AlphaThreshold;
-					v[2].AlphaThreshold = param.AlphaThreshold;
+					v[0].SetAlphaThreshold(param.AlphaThreshold);
+					v[1].SetAlphaThreshold(param.AlphaThreshold);
+					v[2].SetAlphaThreshold(param.AlphaThreshold);
 #endif
 
 					if (parameter.SplineDivision > 1)
@@ -751,10 +754,13 @@ namespace EffekseerRenderer
 		{
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
-			if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||	
-				parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+			if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
 			{
 				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			}
+			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+			{
+				Rendering_Internal<LightingVertex>(parameter, instanceParameter, userData, camera);
 			}
 			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 			{
