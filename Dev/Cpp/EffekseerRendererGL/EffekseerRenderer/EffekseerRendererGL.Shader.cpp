@@ -30,6 +30,11 @@ namespace EffekseerRendererGL
 
 static const char g_header_vs_gl3_src [] =
 "#version 330\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "#define lowp\n" \
 "#define mediump\n" \
 "#define highp\n" \
@@ -39,6 +44,11 @@ static const char g_header_vs_gl3_src [] =
 
 static const char g_header_fs_gl3_src [] =
 "#version 330\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "#define lowp\n" \
 "#define mediump\n" \
 "#define highp\n" \
@@ -48,6 +58,11 @@ static const char g_header_fs_gl3_src [] =
 
 static const char g_header_vs_gles3_src [] =
 "#version 300 es\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "precision mediump float;\n" \
 "#define IN in\n" \
 "#define TEX2D textureLod\n" \
@@ -55,6 +70,11 @@ static const char g_header_vs_gles3_src [] =
 
 static const char g_header_fs_gles3_src [] =
 "#version 300 es\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "precision mediump float;\n" \
 "#define IN in\n" \
 "#define TEX2D texture\n" \
@@ -62,18 +82,33 @@ static const char g_header_fs_gles3_src [] =
 
 static const char g_header_vs_gles2_src [] =
 "precision mediump float;\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "#define IN attribute\n" \
 "#define TEX2D texture2DLod\n" \
 "#define OUT varying\n";
 
 static const char g_header_fs_gles2_src [] =
 "precision mediump float;\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "#define IN varying\n" \
 "#define TEX2D texture2D\n" \
 "#define FRAGCOLOR gl_FragColor\n";
 
 static const char g_header_vs_gl2_src [] =
 "#version 120\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "#define lowp\n" \
 "#define mediump\n" \
 "#define highp\n" \
@@ -83,6 +118,11 @@ static const char g_header_vs_gl2_src [] =
 
 static const char g_header_fs_gl2_src [] =
 "#version 120\n" \
+R"(
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+)"
 "#define lowp\n" \
 "#define mediump\n" \
 "#define highp\n" \
@@ -96,14 +136,20 @@ static const char g_header_fs_gl2_src [] =
 bool Shader::CompileShader(
 	OpenGLDeviceType deviceType,
 	GLuint& program,
-	const char* vs_src,
-	size_t vertexShaderSize,
-	const char* fs_src,
-	size_t pixelShaderSize,
+	const ShaderCodeView* vsData,
+	size_t vsDataCount,
+	const ShaderCodeView* psData,
+	size_t psDataCount,
 	const char* name)
 {
-	const char* src_data[2];
-	GLint src_size[2];
+	std::array<const char*, 16> src_data;
+	std::array<GLint, 16> src_size;
+
+	if (vsDataCount + 1 > src_data.size() || psDataCount + 1 > src_data.size())
+	{
+		assert(0);
+		return false;
+	}
 
 	GLuint vert_shader, frag_shader;
 	GLint res_vs, res_fs, res_link;
@@ -117,11 +163,15 @@ bool Shader::CompileShader(
 		src_data[0] = g_header_vs_gles2_src;
 
 	src_size[0] = (GLint) strlen(src_data[0]);
-	src_data[1] = vs_src;
-	src_size[1] = (GLint)strlen(vs_src);
+
+	for (int i = 0; i < vsDataCount; i++)
+	{
+		src_data[i + 1] = vsData[i].Data;
+		src_size[i + 1] = (GLint)strlen(src_data[i + 1]);	
+	}
 	
 	vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
-	GLExt::glShaderSource(vert_shader, 2, src_data, src_size);
+	GLExt::glShaderSource(vert_shader, vsDataCount + 1, src_data.data(), src_size.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
@@ -133,11 +183,15 @@ bool Shader::CompileShader(
 		src_data[0] = g_header_fs_gles2_src;
 
 	src_size[0] = (GLint) strlen(src_data[0]);
-	src_data[1] = fs_src;
-	src_size[1] = (GLint)strlen(fs_src);
+
+	for (int i = 0; i < psDataCount; i++)
+	{
+		src_data[i + 1] = psData[i].Data;
+		src_size[i + 1] = (GLint)strlen(src_data[i + 1]);
+	}
 
 	frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, 2, src_data, src_size);
+	GLExt::glShaderSource(frag_shader, psDataCount + 1, src_data.data(), src_size.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 	
@@ -188,16 +242,50 @@ bool Shader::CompileShader(
 	return true;
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+bool Shader::ReloadShader() 
+{
+	assert(m_program == 0);
+
+	GLuint program;
+
+	std::vector<ShaderCodeView> vsData;
+	std::vector<ShaderCodeView> psData;
+
+	vsData.resize(vsCodes_.size());
+	psData.resize(psCodes_.size());
+
+	for (size_t i = 0; i < vsData.size(); i++)
+	{
+		vsData[i].Data = vsCodes_[i].Code.data();
+		vsData[i].Length = vsCodes_[i].Code.size();
+	}
+
+	for (size_t i = 0; i < psData.size(); i++)
+	{
+		psData[i].Data = psCodes_[i].Code.data();
+		psData[i].Length = psCodes_[i].Code.size();
+	}
+
+	if (CompileShader(m_deviceType, program, vsData.data(), vsData.size(), psData.data(), psData.size(), name_.c_str()))
+	{
+		m_program = program;
+		GetAttribIdList(0, nullptr);
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
 Shader::Shader( 
 	GraphicsDevice* graphicsDevice,
 	GLuint program,
-	const char* vs_src,
-	size_t vertexShaderSize,
-	const char* fs_src,
-	size_t pixelShaderSize,
+	const ShaderCodeView* vsData,
+	size_t vsDataCount,
+	const ShaderCodeView* psData,
+	size_t psDataCount,
 	const char* name,
 	bool hasRefCount)
 	: DeviceObject(nullptr, graphicsDevice, hasRefCount)
@@ -210,15 +298,24 @@ Shader::Shader(
 	m_textureSlots.fill(0);
 	m_textureSlotEnables.fill(false);
 
-	m_vsSrc.resize(vertexShaderSize);
-	memcpy(m_vsSrc.data(), vs_src, vertexShaderSize );
-	m_vsSrc.push_back(0);
+	vsCodes_.resize(vsDataCount);
+	psCodes_.resize(psDataCount);
 
-	m_psSrc.resize(pixelShaderSize);
-	memcpy(m_psSrc.data(), fs_src, pixelShaderSize );
-	m_psSrc.push_back(0);
+	for (size_t i = 0; i < vsDataCount; i++)
+	{
+		vsCodes_[i].Code.resize(vsData[i].Length);
+		memcpy(vsCodes_[i].Code.data(), vsData[i].Data, vsData[i].Length);
+		vsCodes_[i].Code.push_back(0);
+	}
 
-	m_name = name;
+	for (size_t i = 0; i < psDataCount; i++)
+	{
+		psCodes_[i].Code.resize(psData[i].Length);
+		memcpy(psCodes_[i].Code.data(), psData[i].Data, psData[i].Length);
+		psCodes_[i].Code.push_back(0);
+	}
+
+	name_ = name;
 }
 
 //-----------------------------------------------------------------------------------
@@ -249,18 +346,18 @@ Shader::~Shader()
 
 Shader* Shader::Create(
 	GraphicsDevice* graphicsDevice,
-					  const char* vs_src,
-					  size_t vertexShaderSize,
-					  const char* fs_src,
-					  size_t pixelShaderSize,
+					  const ShaderCodeView* vsData,
+					  size_t vsDataCount,
+					  const ShaderCodeView* psData,
+					  size_t psDataCount,
 					  const char* name,
 					  bool hasRefCount)
 {
 	GLuint program;
 
-	if (CompileShader(graphicsDevice->GetDeviceType(), program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
+	if (CompileShader(graphicsDevice->GetDeviceType(), program, vsData, vsDataCount, psData, psDataCount, name))
 	{
-		return new Shader(graphicsDevice, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name, hasRefCount);
+		return new Shader(graphicsDevice, program, vsData, vsDataCount, psData, psDataCount, name, hasRefCount);
 	}
 	else
 	{
@@ -274,63 +371,27 @@ void Shader::OnLostDevice()
 	m_program = 0;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Shader::OnResetDevice()
 {
 	if (IsValid()) return;
 
-	GLuint program;
-	
-	if(CompileShader(
-		m_deviceType,
-		program,
-		(const char*)(m_vsSrc.data()),
-		m_vsSrc.size(),
-		(const char*)(m_psSrc.data()),
-		m_psSrc.size(),
-		m_name.c_str()))
-	{
-		m_program = program;
-		GetAttribIdList(0, nullptr);
-	}
-	else
+	if (!ReloadShader())
 	{
 		printf("Failed to reset device.\n");
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Shader::OnChangeDevice()
 {
 	GLExt::glDeleteProgram(m_program);
+	m_program = 0;
 
-	GLuint program;
-	
-	if(CompileShader(
-		m_deviceType,
-		program,
-		(const char*)&(m_vsSrc[0]),
-		m_vsSrc.size(),
-		(const char*)&(m_psSrc[0]),
-		m_psSrc.size(),
-		m_name.c_str()))
-	{
-		m_program = program;
-		GetAttribIdList(0, nullptr);
-	}
-	else
+	if (!ReloadShader())
 	{
 		printf("Failed to change device.\n");
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 GLuint Shader::GetInterface() const
 {
 	return m_program;

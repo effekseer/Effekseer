@@ -29,41 +29,6 @@ class ModelRenderer
 	: public ::EffekseerRenderer::ModelRendererBase
 {
 public:
-	enum eShaderAttrib
-	{
-		AttribPosition,
-		AttribNormal,
-		AttribBinormal,
-		AttribTangent,
-		AttribTexCoord,
-		AttribColor,
-#if defined(MODEL_SOFTWARE_INSTANCING)
-		AttribInstanceID,
-		AttribUVOffset,
-		AttribModelColor,
-#endif
-		NumAttribs,
-		NumVertexAttribs = AttribTexCoord + 1,
-	};
-	enum eShaderUniform
-	{
-		UniformProjectionMatrix,
-		UniformModelMatrix,
-#if !defined(MODEL_SOFTWARE_INSTANCING)
-		UniformUVOffset,
-		UniformModelColor,
-#endif
-		UniformColorTexture,
-		UniformNormalTexture,
-		UniformLightDirection,
-		UniformLightColor,
-		UniformLightAmbient,
-		Scale,
-		UVInversed,
-		UVInversedBack,
-		NumUniforms,
-	};
-
 	static const int32_t MaxInstanced = 20;
 
 private:
@@ -72,9 +37,6 @@ private:
 	Shader*								m_shader_lighting_texture_normal;
 	Shader*								m_shader_texture;
 	Shader*								m_shader_distortion_texture;
-
-	GLint								m_uniformLoc[8][NumUniforms];
-
 	VertexArray*						m_va[8];
 
 	ModelRenderer(

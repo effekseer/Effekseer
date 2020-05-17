@@ -13,6 +13,9 @@
 #include "EffekseerRendererGL.GLExtension.h"
 #include <string>
 
+#include "Shader/FlipbookInterpolationUtils_VS.h"
+#include "Shader/FlipbookInterpolationUtils_PS.h"
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -50,6 +53,7 @@ IN vec4 a_UVOffset;
 IN vec4 a_ModelColor;
 )"
 #endif
+
 R"(
 OUT mediump vec4 v_Normal;
 OUT mediump vec4 v_Binormal;
@@ -57,6 +61,16 @@ OUT mediump vec4 v_Tangent;
 OUT mediump vec4 v_TexCoord;
 OUT lowp vec4 v_Color;
 )"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+OUT vec2 vaAlphaUV;
+OUT float vaFlipbookRate;
+OUT vec2 vaFlipbookNextIndexUV;
+OUT float vaAlphaThreshold;
+)"
+#endif
+
 #if defined(MODEL_SOFTWARE_INSTANCING)
 R"(
 uniform mat4 ModelMatrix[20];
@@ -70,13 +84,30 @@ uniform vec4 UVOffset;
 uniform vec4 ModelColor;
 )"
 #endif
+
 R"(
 uniform mat4 ProjectionMatrix;
 uniform vec4 LightDirection;
 uniform vec4 LightColor;
 uniform vec4 LightAmbient;
 uniform vec4 mUVInversed;
+)"
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	R"(
+uniform vec4 atAlphaUV;
+uniform vec4 atFlipbookIndexAndNextRate;
+uniform vec4 atAlphaThreshold;
+)"
+#endif
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+)"
+#endif
+
+R"(
 void main()
 {
 )"
@@ -110,6 +141,24 @@ R"(
 	}
 
 	v_Color = modelColor;
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	R"(
+    // alpha texture
+    vaAlphaUV.x = v_TexCoord.x * atAlphaUV.z + atAlphaUV.x;
+	vaAlphaUV.y = v_TexCoord.y * atAlphaUV.w + atAlphaUV.y;
+	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
+
+	vaFlipbookRate = 0.0;
+	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
+
+	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndexAndNextRate.x, v_TexCoord.xy);
+	vaAlphaThreshold = atAlphaThreshold.x;
+)"
+#endif
+
+R"(
 	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
 }
 )";
@@ -123,11 +172,35 @@ IN mediump vec4 v_Tangent;
 IN mediump vec4 v_TexCoord;
 IN lowp vec4 v_Color;
 
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+IN mediump vec2 vaAlphaUV;
+IN mediump float vaFlipbookRate;
+IN mediump vec2 vaFlipbookNextIndexUV;
+IN mediump float vaAlphaThreshold;
+)"
+#endif
+
+R"(
+
 uniform sampler2D ColorTexture;
 uniform sampler2D NormalTexture;
 uniform vec4 LightDirection;
 uniform vec4 LightColor;
 uniform vec4 LightAmbient;
+
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+uniform sampler2D uAlphaTexture;
+uniform float4 flipbookParameter; // x:enable, y:interpolationType
+)"
+#endif
+
+R"(
 
 void main()
 {
@@ -141,6 +214,22 @@ void main()
 		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 		FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 	}
+
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	R"(
+	ApplyFlipbook(FRAGCOLOR, ColorTexture, flipbookParameter, v_Color, vaFlipbookNextIndexUV, vaFlipbookRate);
+    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
+    if (FRAGCOLOR.a <= vaAlphaThreshold)
+    {
+        discard;
+    }
+)"
+#endif
+
+R"(
+
 }
 
 )";
@@ -168,6 +257,15 @@ OUT mediump vec4 v_Pos;
 OUT lowp vec4 v_Color;
 )"
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+OUT vec2 vaAlphaUV;
+OUT float vaFlipbookRate;
+OUT vec2 vaFlipbookNextIndexUV;
+OUT float vaAlphaThreshold;
+)"
+#endif
+
 #if defined(MODEL_SOFTWARE_INSTANCING)
 "uniform mat4 ModelMatrix[20];\n"
 "uniform vec4 UVOffset[20];\n"
@@ -179,6 +277,20 @@ OUT lowp vec4 v_Color;
 #endif
 "uniform mat4 ProjectionMatrix;\n"
 "uniform vec4 mUVInversed;\n"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+												R"(
+uniform vec4 atAlphaUV;
+uniform vec4 atFlipbookIndexAndNextRate;
+uniform vec4 atAlphaThreshold;
+)"
+#endif
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+)"
+#endif
 
 "void main() {\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
@@ -217,7 +329,23 @@ R"(
 	v_Pos = gl_Position;
 
 	v_Color = modelColor * a_Color;
+)"
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+    vaAlphaUV.x = v_TexCoord.x * atAlphaUV.z + atAlphaUV.x;
+	vaAlphaUV.y = v_TexCoord.y * atAlphaUV.w + atAlphaUV.y;
+	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
+
+	vaFlipbookRate = 0.0;
+	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
+
+	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndexAndNextRate.x, v_TexCoord.xy);
+	vaAlphaThreshold = atAlphaThreshold.x;
+)"
+#endif
+
+R"(
 	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
 }
 )";
@@ -230,12 +358,32 @@ static const char g_model_distortion_fs_src [] =
 "IN mediump vec4 v_Pos;\n"
 "IN lowp vec4 v_Color;\n"
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+IN mediump vec2 vaAlphaUV;
+IN mediump float vaFlipbookRate;
+IN mediump vec2 vaFlipbookNextIndexUV;
+IN mediump float vaAlphaThreshold;
+)"
+#endif
+
 R"(
 uniform sampler2D uTexture0;
 uniform sampler2D uBackTexture0;
 
 uniform	vec4	g_scale;
 uniform	vec4	mUVInversedBack;
+
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+R"(
+uniform sampler2D uAlphaTexture;
+uniform float4 flipbookParameter; // x:enable, y:interpolationType
+)"
+#endif
+
+R"(
 
 void main() {
 	if (TextureEnable)
@@ -248,6 +396,21 @@ void main() {
 	}
 
 	FRAGCOLOR.a = FRAGCOLOR.a * v_Color.a;
+
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+												R"(
+	ApplyFlipbook(FRAGCOLOR, uTexture0, flipbookParameter, v_Color, vaFlipbookNextIndexUV, vaFlipbookRate);
+    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
+    if (FRAGCOLOR.a <= vaAlphaThreshold)
+    {
+        discard;
+    }
+)"
+#endif
+
+												R"(
 
 	vec2 pos = v_Pos.xy / v_Pos.w;
 	vec2 posU = v_Tangent.xy / v_Tangent.w;
@@ -269,36 +432,36 @@ void main() {
 }
 )";
 
-static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
-	{"a_Position",		GL_FLOAT,			3,  0,	false},
-	{"a_Normal",		GL_FLOAT,			3, 12,	false},
-	{"a_Binormal",		GL_FLOAT,			3, 24,	false},
-	{"a_Tangent",		GL_FLOAT,			3, 36,	false},
-	{"a_TexCoord",		GL_FLOAT,			2, 48,	false},
-	{"a_Color", GL_UNSIGNED_BYTE,			4, 56,	true },
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+static const int NumAttribs_Model = 6;
+
+static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
+	{"a_Position", GL_FLOAT, 3, 0, false},
+	{"a_Normal", GL_FLOAT, 3, 12, false},
+	{"a_Binormal", GL_FLOAT, 3, 24, false},
+	{"a_Tangent", GL_FLOAT, 3, 36, false},
+	{"a_TexCoord", GL_FLOAT, 2, 48, false},
+	{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
+};
+
+#else
+static const int NumAttribs_Model = 6;
+
+static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
+	{"a_Position", GL_FLOAT, 3, 0, false},
+	{"a_Normal", GL_FLOAT, 3, 12, false},
+	{"a_Binormal", GL_FLOAT, 3, 24, false},
+	{"a_Tangent", GL_FLOAT, 3, 36, false},
+	{"a_TexCoord", GL_FLOAT, 2, 48, false},
+	{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	{"a_InstanceID",	GL_FLOAT,			1,  0,	false},
-	{"a_UVOffset",		GL_FLOAT,			4,	0,	false},
-	{"a_ModelColor",	GL_FLOAT,			4,  0,	false},
+	{"a_InstanceID", GL_FLOAT, 1, 0, false},
+	{"a_UVOffset", GL_FLOAT, 4, 0, false},
+	{"a_ModelColor", GL_FLOAT, 4, 0, false},
 #endif
 };
 
-static ShaderUniformInfo g_model_uniforms[ModelRenderer::NumUniforms] = {
-	{"ProjectionMatrix"	},
-	{"ModelMatrix"		},
-#if !defined(MODEL_SOFTWARE_INSTANCING)
-	{"UVOffset"			},
-	{"ModelColor"		},
 #endif
-	{"ColorTexture"		},
-	{"NormalTexture"	},
-	{"LightDirection"	},
-	{"LightColor"		},
-	{"LightAmbient"		},
-	{ "g_scale" },
-	{ "mUVInversed" },
-	{ "mUVInversedBack" },
-};
 
 //----------------------------------------------------------------------------------
 //
@@ -318,17 +481,14 @@ ModelRenderer::ModelRenderer(
 		m_va[i] = nullptr;
 	}
 
-	shader_lighting_texture_normal->GetAttribIdList(NumAttribs, g_model_attribs);
-	shader_lighting_texture_normal->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[0]);
+	shader_lighting_texture_normal->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_lighting_texture_normal->SetTextureSlot(0, shader_lighting_texture_normal->GetUniformId("ColorTexture"));
 	shader_lighting_texture_normal->SetTextureSlot(1, shader_lighting_texture_normal->GetUniformId("NormalTexture"));
 
-	shader_texture->GetAttribIdList(NumAttribs, g_model_attribs);
-	shader_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[4]);
+	shader_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("ColorTexture"));
 	
-	shader_distortion_texture->GetAttribIdList(NumAttribs, g_model_attribs);
-	shader_distortion_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[6]);
+	shader_distortion_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("uTexture0"));
 	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("uBackTexture0"));
 
@@ -341,50 +501,56 @@ ModelRenderer::ModelRenderer(
 		shaders[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
 		shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44,
-			shaders[i]->GetUniformId("ProjectionMatrix"),
-			0
-			);
 
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44,
-			shaders[i]->GetUniformId("ModelMatrix"),
-			sizeof(Effekseer::Matrix44)
-			);
+		int vsOffset = 0;
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("ProjectionMatrix"), vsOffset);
 
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("UVOffset"),
-			sizeof(Effekseer::Matrix44) * 2
-			);
+		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("ModelColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1
-			);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("ModelMatrix"), vsOffset);
 
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("LightDirection"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0
-			);
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("LightColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1
-			);
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("LightAmbient"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
-			);
-		shaders[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("mUVInversed"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3
-		);
+		vsOffset += sizeof(Effekseer::Matrix44);
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("UVOffset"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atAlphaUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("mflipbookParameter"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atFlipbookIndexAndNextRate"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atAlphaThreshold"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+#endif
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("ModelColor"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightDirection"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightColor"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightAmbient"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("mUVInversed"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
 
 		shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 		shaders[i]->AddPixelConstantLayout(
@@ -402,6 +568,11 @@ ModelRenderer::ModelRenderer(
 			shaders[i]->GetUniformId("LightAmbient"),
 			sizeof(float[4]) * 2
 			);
+
+	#ifdef __EFFEKSEER_BUILD_VERSION16__
+		shaders[i]->SetTextureSlot(2, shaders[i]->GetUniformId("uAlphaTexture"));
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
+	#endif
 	}
 
 	Shader* shaders_d[1];
@@ -412,56 +583,62 @@ ModelRenderer::ModelRenderer(
 		shaders_d[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
 		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44,
-			shaders_d[i]->GetUniformId("ProjectionMatrix"),
-			0
-			);
+		
+		int vsOffset = 0;
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("ProjectionMatrix"), vsOffset);
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44,
-			shaders_d[i]->GetUniformId("ModelMatrix"),
-			sizeof(Effekseer::Matrix44)
-			);
+		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("UVOffset"),
-			sizeof(Effekseer::Matrix44) * 2
-			);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("ModelMatrix"), vsOffset);
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("ModelColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1
-			);
+		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("LightDirection"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0
-			);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("UVOffset"), vsOffset);
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("LightColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1
-			);
+		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("LightAmbient"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
-			);
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atAlphaUV"), vsOffset);
 
-		shaders_d[i]->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("mUVInversed"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3
-		);
+		vsOffset += sizeof(float[4]) * 1;
 
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("mflipbookParameter"), vsOffset);
 
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atFlipbookIndexAndNextRate"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atAlphaThreshold"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+#endif
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("ModelColor"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("LightDirection"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("LightColor"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("LightAmbient"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("mUVInversed"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
+#else
 		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
+#endif
 		shaders_d[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("g_scale"),
@@ -474,6 +651,11 @@ ModelRenderer::ModelRenderer(
 			shaders_d[i]->GetUniformId("mUVInversedBack"),
 			sizeof(float[4]) * 1
 			);
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		shaders_d[i]->SetTextureSlot(2, shaders_d[i]->GetUniformId("uAlphaTexture"));
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("flipbookParameter"), sizeof(float[4]) * 2);
+#endif
 	}
 
 	GLint currentVAO = 0;
@@ -547,26 +729,53 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	vs_d_t_src = Replace(vs_d_t_src, "TextureEnable", "true");
 	fs_d_t_src = Replace(fs_d_t_src, "TextureEnable", "true");
 
-	shader_lighting_texture_normal =
-		Shader::Create(renderer->GetGraphicsDevice(), vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1", true);
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	ShaderCodeView ltnVS[2]{
+		ShaderCodeView(g_flipbook_interpolation_vs_src),
+		ShaderCodeView(vs_ltn_src.c_str()),
+	};
+
+	ShaderCodeView ltnPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_ltn_src.c_str())};
+
+	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), ltnVS, 2, ltnPS, 2, "ModelRenderer1", true);
 	if (shader_lighting_texture_normal == NULL)
 		goto End;
 
-	shader_texture = Shader::Create(
-		renderer->GetGraphicsDevice(), vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5", true);
+	ShaderCodeView tVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_t_src.c_str())};
+	ShaderCodeView tPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_t_src.c_str())};
+
+	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), tVS, 2, tPS, 2, "ModelRenderer5", true);
 	if (shader_texture == NULL)
 		goto End;
 
-	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(),
-											   vs_d_t_src.c_str(),
-											   vs_d_t_src.length(),
-											   fs_d_t_src.c_str(),
-											   fs_d_t_src.length(),
-											   "ModelRenderer7",
-											   true);
+	ShaderCodeView dVS[]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_d_t_src.c_str())};
+	ShaderCodeView dPS[]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_d_t_src.c_str())};
+
+	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), dVS, 2, dPS, 2, "ModelRenderer7", true);
 	if (shader_distortion_texture == NULL)
 		goto End;
+#else
+	ShaderCodeView ltnVS(vs_ltn_src.c_str());
+	ShaderCodeView ltnPS(fs_ltn_src.c_str());
 
+	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true);
+	if (shader_lighting_texture_normal == NULL)
+		goto End;
+
+	ShaderCodeView tVS(vs_t_src.c_str());
+	ShaderCodeView tPS(fs_t_src.c_str());
+
+	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true);
+	if (shader_texture == NULL)
+		goto End;
+
+	ShaderCodeView dVS(vs_d_t_src.c_str());
+	ShaderCodeView dPS(fs_d_t_src.c_str());
+
+	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true);
+	if (shader_distortion_texture == NULL)
+		goto End;
+#endif
 	return new ModelRenderer( 
 		renderer, 
 		shader_lighting_texture_normal,
