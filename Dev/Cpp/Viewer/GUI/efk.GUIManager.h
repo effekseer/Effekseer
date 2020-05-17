@@ -430,6 +430,14 @@ public:
 
 	void Close();
 
+	bool IsWindowMaximized();
+
+	void SetWindowMaximized(bool maximized);
+
+	bool IsWindowMinimized();
+
+	void SetWindowMinimized(bool minimized);
+
 	Vec2 GetMousePosition();
 
 	int GetMouseButton(int32_t mouseButton);
@@ -519,6 +527,8 @@ public:
 	void Image(void* user_texture_id, float x, float y);
 
 	bool ImageButton(ImageResource* user_texture_id, float x, float y);
+
+	bool ImageButtonOriginal(ImageResource* user_texture_id, float x, float y);
 
 	bool Checkbox(const char16_t* label, bool* v);
 

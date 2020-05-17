@@ -94,6 +94,24 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Close(swigCPtr);
   }
 
+  public bool IsWindowMaximized() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowMaximized(swigCPtr);
+    return ret;
+  }
+
+  public void SetWindowMaximized(bool maximized) {
+    EffekseerNativePINVOKE.GUIManager_SetWindowMaximized(swigCPtr, maximized);
+  }
+
+  public bool IsWindowMinimized() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowMinimized(swigCPtr);
+    return ret;
+  }
+
+  public void SetWindowMinimized(bool minimized) {
+    EffekseerNativePINVOKE.GUIManager_SetWindowMinimized(swigCPtr, minimized);
+  }
+
   public Vec2 GetMousePosition() {
     Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetMousePosition(swigCPtr), true);
     return ret;
@@ -392,6 +410,11 @@ public class GUIManager : global::System.IDisposable {
 
   public bool ImageButton(ImageResource user_texture_id, float x, float y) {
     bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    return ret;
+  }
+
+  public bool ImageButtonOriginal(ImageResource user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
     return ret;
   }
 

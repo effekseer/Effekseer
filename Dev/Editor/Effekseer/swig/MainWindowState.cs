@@ -94,6 +94,16 @@ public class MainWindowState : global::System.IDisposable {
     } 
   }
 
+  public bool IsFrameless {
+    set {
+      EffekseerNativePINVOKE.MainWindowState_IsFrameless_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.MainWindowState_IsFrameless_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public MainWindowState() : this(EffekseerNativePINVOKE.new_MainWindowState(), true) {
   }
 
