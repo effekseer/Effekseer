@@ -42,6 +42,16 @@ struct DynamicVertex
 	void SetAlphaThreshold(float value) {}
 
 	void SetColor(const VertexColor& color) { Col = color; }
+
+	void SetPackedNormal(const VertexColor& normal) { Normal = normal; }
+
+	void SetPackedTangent(const VertexColor& tangent) { Tangent = tangent; }
+
+	void SetUV2(float u, float v)
+	{
+		UV2[0] = u;
+		UV2[1] = v;
+	}
 };
 
 struct DynamicVertexWithCustomData
@@ -83,6 +93,16 @@ struct LightingVertex
 #endif
 
 	void SetColor(const VertexColor& color) { Col = color; }
+
+	void SetPackedNormal(const VertexColor& normal) { Normal = normal; }
+
+	void SetPackedTangent(const VertexColor& tangent) { Tangent = tangent; }
+
+	void SetUV2(float u, float v)
+	{
+		UV2[0] = u;
+		UV2[1] = v;
+	}
 };
 
 struct SimpleVertex
@@ -117,6 +137,12 @@ struct SimpleVertex
 		Col[2] = color.B;
 		Col[3] = color.A;
 	}
+
+	void SetPackedNormal(const VertexColor& normal) {}
+
+	void SetPackedTangent(const VertexColor& tangent) {}
+
+	void SetUV2(float u, float v) {}
 };
 
 struct SimpleVertexDX9
@@ -151,6 +177,12 @@ struct SimpleVertexDX9
 		Col[2] = color.R;
 		Col[3] = color.A;
 	}
+
+	void SetPackedNormal(const VertexColor& normal) {}
+
+	void SetPackedTangent(const VertexColor& tangent) {}
+
+	void SetUV2(float u, float v) {}
 };
 
 struct VertexDistortion
@@ -188,6 +220,12 @@ struct VertexDistortion
 		Col[2] = color.B;
 		Col[3] = color.A;
 	}
+
+	void SetPackedNormal(const VertexColor& normal) {}
+
+	void SetPackedTangent(const VertexColor& tangent) {}
+
+	void SetUV2(float u, float v) {}
 };
 
 struct VertexDistortionDX9
@@ -225,6 +263,12 @@ struct VertexDistortionDX9
 		Col[2] = color.R;
 		Col[3] = color.A;
 	}
+
+	void SetPackedNormal(const VertexColor& normal) {}
+
+	void SetPackedTangent(const VertexColor& tangent) {}
+
+	void SetUV2(float u, float v) {}
 };
 
 static int32_t GetMaximumVertexSizeInAllTypes()

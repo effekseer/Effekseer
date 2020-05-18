@@ -233,17 +233,13 @@ protected:
 				vs[i].Binormal.Z = 0.0f;
 			}
 		}
-		else if (vertexType == VertexType::Dynamic)
+		else if (vertexType == VertexType::Lightning || vertexType == VertexType::Dynamic)
 		{
-			StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
-			vs[0].UV2[0] = 0.0f;
-			vs[0].UV2[1] = 1.0f;
-			vs[1].UV2[0] = 1.0f;
-			vs[1].UV2[1] = 1.0f;
-			vs[2].UV2[0] = 0.0f;
-			vs[2].UV2[1] = 0.0f;
-			vs[3].UV2[0] = 1.0f;
-			vs[3].UV2[1] = 0.0f;
+			StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
+			vs[0].SetUV2(0.0f, 1.0f);
+			vs[1].SetUV2(1.0f, 1.0f);
+			vs[2].SetUV2(0.0f, 0.0f);
+			vs[3].SetUV2(1.0f, 1.0f);
 		}
 		
 		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
@@ -272,18 +268,18 @@ protected:
 
 			TransformVertexes( verteies, 4, mat_rot );
 
-			if (vertexType == VertexType::Dynamic)
+			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lightning)
 			{
 				if (!parameter.IsRightHand)
 				{
 					F = -F;
 				}
 
-				StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
+				StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
-					vs[i].Normal = PackVector3DF(F);
-					vs[i].Tangent = PackVector3DF(R);
+					vs[i].SetPackedNormal(PackVector3DF(F));
+					vs[i].SetPackedTangent(PackVector3DF(R));
 				}
 			}
 		}
@@ -318,9 +314,9 @@ protected:
 					Binormal = ::Effekseer::Vec3f::Transform(Binormal, mat) - t;
 					::Effekseer::Vec3f::Store(&vs->Binormal, Binormal);
 				}
-				else if (vertexType == VertexType::Dynamic)
+				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lightning)
 				{
-					StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
+					StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
 					auto tangentZ = efkVector3D(mat.X.GetZ(), mat.Y.GetZ(), mat.Z.GetZ());
 					tangentX = tangentX.Normalize();
@@ -331,8 +327,8 @@ protected:
 						tangentZ = -tangentZ;
 					}
 
-					vs[i].Normal = PackVector3DF(tangentZ);
-					vs[i].Tangent = PackVector3DF(tangentX);
+					vs[i].SetPackedNormal(PackVector3DF(tangentZ));
+					vs[i].SetPackedTangent(PackVector3DF(tangentX));
 				}
 			}
 		}

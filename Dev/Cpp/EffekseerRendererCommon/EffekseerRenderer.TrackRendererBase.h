@@ -620,11 +620,11 @@ namespace EffekseerRenderer
 
 						vl_->Tangent = vm_->Tangent = vr_->Tangent = ToStruct(tangent);
 					}
-					else if (vertexType == VertexType::Dynamic)
+					else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 					{
-						auto vl_ = (DynamicVertex*)(&vl);
-						auto vm_ = (DynamicVertex*)(&vm);
-						auto vr_ = (DynamicVertex*)(&vr);
+						auto vl_ = (&vl);
+						auto vm_ = (&vm);
+						auto vr_ = (&vr);
 
 						::Effekseer::Vec3f tangent = Effekseer::Vec3f(vl_->Pos - vr_->Pos).Normalize();
 						Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(tangent, axis).Normalize();
@@ -637,13 +637,13 @@ namespace EffekseerRenderer
 						Effekseer::Color normal_ = PackVector3DF(normal);
 						Effekseer::Color tangent_ = PackVector3DF(tangent);
 
-						vl_->Normal = normal_;
-						vm_->Normal = normal_;
-						vr_->Normal = normal_;
+						vl_->SetPackedNormal(normal_);
+						vm_->SetPackedNormal(normal_);
+						vr_->SetPackedNormal(normal_);
 
-						vl_->Tangent = tangent_;
-						vm_->Tangent = tangent_;
-						vr_->Tangent = tangent_;
+						vl_->SetPackedTangent(tangent_);
+						vm_->SetPackedTangent(tangent_);
+						vr_->SetPackedTangent(tangent_);
 					}
 
 					if (isFirst_)
@@ -683,7 +683,7 @@ namespace EffekseerRenderer
 			// calculate UV
 			AssignUVs<VERTEX, 0>(parameter, verteies);
 
-			if (vertexType == VertexType::Dynamic) 
+			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting) 
 			{
 				AssignUVs<VERTEX, 1>(parameter, verteies);
 			}

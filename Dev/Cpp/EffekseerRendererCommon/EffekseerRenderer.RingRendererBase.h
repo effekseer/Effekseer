@@ -478,9 +478,9 @@ protected:
 				vs[7].Tangent = ToStruct(tangentNext);
 				vs[7].Binormal = ToStruct(binormalNext);
 			}
-			else if (vertexType == VertexType::Dynamic)
+			else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 			{
-				StrideView<DynamicVertex> vs(&verteies[i], stride_, 8);
+				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
 
 				// return back
 				float t_b;
@@ -539,52 +539,46 @@ protected:
 				tangentCurrent = tangentCurrent.Normalize();
 				tangentNext = tangentNext.Normalize();
 
-				vs[0].Normal = PackVector3DF(normalCurrent);
-				vs[1].Normal = vs[0].Normal;
-				vs[2].Normal = PackVector3DF(normalNext);
-				vs[3].Normal = vs[2].Normal;
+				const auto packedNormalCurrent = PackVector3DF(normalCurrent);
+				const auto packedNormalNext = PackVector3DF(normalNext);
+				const auto packedTangentCurrent = PackVector3DF(tangentCurrent);
+				const auto packedTangentNext = PackVector3DF(tangentNext);
 
-				vs[4].Normal = vs[0].Normal;
-				vs[5].Normal = vs[0].Normal;
-				vs[6].Normal = vs[2].Normal;
-				vs[7].Normal = vs[2].Normal;
+				vs[0].SetPackedNormal(packedNormalCurrent);
+				vs[1].SetPackedNormal(packedNormalCurrent);
+				vs[2].SetPackedNormal(packedNormalNext);
+				vs[3].SetPackedNormal(packedNormalNext);
 
-				vs[0].Tangent = PackVector3DF(tangentCurrent);
-				vs[1].Tangent = vs[0].Tangent;
-				vs[2].Tangent = PackVector3DF(tangentNext);
-				vs[3].Tangent = vs[2].Tangent;
+				vs[4].SetPackedNormal(packedNormalCurrent);
+				vs[5].SetPackedNormal(packedNormalCurrent);
+				vs[6].SetPackedNormal(packedNormalNext);
+				vs[7].SetPackedNormal(packedNormalNext);
 
-				vs[4].Tangent = vs[0].Tangent;
-				vs[5].Tangent = vs[0].Tangent;
-				vs[6].Tangent = vs[2].Tangent;
-				vs[7].Tangent = vs[2].Tangent;
+				vs[0].SetPackedTangent(packedTangentCurrent);
+				vs[1].SetPackedTangent(packedTangentCurrent);
+				vs[2].SetPackedTangent(packedTangentNext);
+				vs[3].SetPackedTangent(packedTangentNext);
+
+				vs[4].SetPackedTangent(packedTangentCurrent);
+				vs[5].SetPackedTangent(packedTangentCurrent);
+				vs[6].SetPackedTangent(packedTangentNext);
+				vs[7].SetPackedTangent(packedTangentNext);
 
 				// uv1
 				uv1texNext = uv1Current + uv1Step;
 
-				vs[0].UV2[0] = uv1Current;
-				vs[0].UV2[1] = uv1v1;
+				vs[0].SetUV2(uv1Current, uv1v1);
+				vs[1].SetUV2(uv1Current, uv1v2);
+				vs[2].SetUV2(uv1texNext, uv1v1);
+				vs[3].SetUV2(uv1texNext, uv1v2);
 				 
-				vs[1].UV2[0] = uv1Current;
-				vs[1].UV2[1] = uv1v2;
+				vs[4].SetUV2(uv1Current, uv1v2);
 				 
-				vs[2].UV2[0] = uv1texNext;
-				vs[2].UV2[1] = uv1v1;
+				vs[5].SetUV2(uv1Current, uv1v3);
 				 
-				vs[3].UV2[0] = uv1texNext;
-				vs[3].UV2[1] = uv1v2;
-				 
-				vs[4].UV2[0] = vs[1].UV2[0];
-				vs[4].UV2[1] = vs[1].UV2[1];
-				 
-				vs[5].UV2[0] = uv1Current;
-				vs[5].UV2[1] = uv1v3;
-				 
-				vs[6].UV2[0] = vs[3].UV2[0];
-				vs[6].UV2[1] = vs[3].UV2[1];
-				 
-				vs[7].UV2[0] = uv1texNext;
-				vs[7].UV2[1] = uv1v3;
+				vs[6].SetUV2(uv1texNext, uv1v2);
+				
+				vs[7].SetUV2(uv1texNext, uv1v3);
 			}
 
 			outerCurrent = outerNext;

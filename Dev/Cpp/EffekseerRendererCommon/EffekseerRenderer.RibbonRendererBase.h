@@ -514,7 +514,7 @@ namespace EffekseerRenderer
 			// calculate UV
 			AssignUVs<VERTEX, 0>(parameter, verteies);
 
-			if (vertexType == VertexType::Dynamic)
+			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 			{
 				AssignUVs<VERTEX, 1>(parameter, verteies);
 			}
@@ -581,9 +581,9 @@ namespace EffekseerRenderer
 					}
 				}
 			}
-			else if (vertexType == VertexType::Dynamic)
+			else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 			{
-				StrideView<DynamicVertex> vs_(m_ringBufferData, stride_, vertexCount_);
+				StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
 				Effekseer::Vec3f axisBefore;
 
 				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
@@ -627,32 +627,38 @@ namespace EffekseerRenderer
 
 					if (isFirst_)
 					{
-						vs_[0].Normal = PackVector3DF(normal);					
-						vs_[0].Tangent = PackVector3DF(tangent);
-						vs_[1].Tangent = vs_[0].Tangent;
-						vs_[1].Normal = vs_[0].Normal;
+						const auto packedNormal = PackVector3DF(normal);
+						const auto packedTangent = PackVector3DF(tangent);
+						vs_[0].SetPackedNormal(packedNormal);
+						vs_[0].SetPackedTangent(packedTangent);
+						vs_[1].SetPackedNormal(packedNormal);
+						vs_[1].SetPackedTangent(packedTangent);
 
 						vs_ += 2;
 					}
 					else if (isLast_)
 					{
-						vs_[0].Normal = PackVector3DF(normal);
-						vs_[0].Tangent = PackVector3DF(tangent);
-						vs_[1].Tangent = vs_[0].Tangent;
-						vs_[1].Normal = vs_[0].Normal;
+						const auto packedNormal = PackVector3DF(normal);
+						const auto packedTangent = PackVector3DF(tangent);
+						vs_[0].SetPackedNormal(packedNormal);
+						vs_[0].SetPackedTangent(packedTangent);
+						vs_[1].SetPackedNormal(packedNormal);
+						vs_[1].SetPackedTangent(packedTangent);
 
 						vs_ += 2;
 					}
 					else
 					{
-						vs_[0].Normal = PackVector3DF(normal);
-						vs_[0].Tangent = PackVector3DF(tangent);
-						vs_[1].Tangent = vs_[0].Tangent;
-						vs_[1].Normal = vs_[0].Normal;
-						vs_[2].Tangent = vs_[0].Tangent;
-						vs_[2].Normal = vs_[0].Normal;
-						vs_[3].Tangent = vs_[0].Tangent;
-						vs_[3].Normal = vs_[0].Normal;
+						const auto packedNormal = PackVector3DF(normal);
+						const auto packedTangent = PackVector3DF(tangent);
+						vs_[0].SetPackedNormal(packedNormal);
+						vs_[0].SetPackedTangent(packedTangent);
+						vs_[1].SetPackedNormal(packedNormal);
+						vs_[1].SetPackedTangent(packedTangent);
+						vs_[2].SetPackedNormal(packedNormal);
+						vs_[2].SetPackedTangent(packedTangent);
+						vs_[3].SetPackedNormal(packedNormal);
+						vs_[3].SetPackedTangent(packedTangent);
 
 						vs_ += 4;
 					}
