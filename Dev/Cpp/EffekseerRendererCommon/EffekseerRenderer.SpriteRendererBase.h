@@ -239,7 +239,7 @@ protected:
 			vs[0].SetUV2(0.0f, 1.0f);
 			vs[1].SetUV2(1.0f, 1.0f);
 			vs[2].SetUV2(0.0f, 0.0f);
-			vs[3].SetUV2(1.0f, 1.0f);
+			vs[3].SetUV2(1.0f, 0.0f);
 		}
 		
 		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
