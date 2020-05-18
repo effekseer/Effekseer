@@ -1,9 +1,55 @@
+// 1.6
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+/* hlsl3.0 must specify register(sort automatically)
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCameraProj;
+    float4x4 mModel[20];
+    float4 fUV[20];
+    float4 fAlphaUV[20];
+
+    float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+    float4 fFlipbookIndexAndNextRate[20];
+
+    float4 fModelAlphaThreshold[20];
+
+    float4 fModelColor[20];
+
+    float4 fLightDirection;
+    float4 fLightColor;
+    float4 fLightAmbient;
+    
+    float4 mUVInversed;
+};
+*/
+
+float4x4 mCameraProj : register(c0);
+float4x4 mModel[20] : register(c4);
+float4 fUV[20] : register(c84);
+
+float4 fAlphaUV[20] : register(c104);
+float4 fFlipbookParameter : register(c124);
+float4 fFlipbookIndexAndNextRate[20] : register(c125);
+float4 fModelAlphaThreshold[20] : register(c145);
+float4 fModelColor[20] : register(c165);
+
+float4 fLightDirection : register(c185);
+float4 fLightColor : register(c186);
+float4 fLightAmbient : register(c187);
+
+float4 mUVInversed : register(c188);
+
+#else
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[20]		: register( c4 );
 float4	fUV[20]			: register( c84 );
 float4	fModelColor[20]		: register( c104 );
 float4 mUVInversed		: register(c127);
+#endif
 
 struct VS_Input
 {
@@ -25,6 +71,12 @@ struct VS_Output
 	float4 Tangent		: TEXCOORD3;
 	float4 Pos			: TEXCOORD4;
 	float4 Color		: COLOR;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV : TEXCOORD5;
+    float FlipbookRate  : TEXCOORD6;
+    float2 FlipbookNextIndexUV : TEXCOORD7;
+    float AlphaThreshold : TEXCOORD8;
+#endif
 };
 
 VS_Output VS( const VS_Input Input )
@@ -32,6 +84,9 @@ VS_Output VS( const VS_Input Input )
 	float4x4 matModel = mModel[Input.Index.x];
 	float4 uv = fUV[Input.Index.x];
 	float4 modelColor = fModelColor[Input.Index.x];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float4 alphaUV = fAlphaUV[Input.Index.x];
+#endif
 
 	VS_Output Output = (VS_Output)0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 }; 
@@ -53,6 +108,10 @@ VS_Output VS( const VS_Input Input )
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
+    Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
+#endif
 
 	Output.Normal = mul(mCameraProj, localNormal);
 	Output.Binormal = mul(mCameraProj, localBinormal);
@@ -62,6 +121,17 @@ VS_Output VS( const VS_Input Input )
 	Output.Color = modelColor;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV.y =  mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
+    
+    // flipbook interpolation
+	ApplyFlipbookVS(
+		Output.FlipbookRate, Output.FlipbookNextIndexUV, fFlipbookParameter, fFlipbookIndexAndNextRate[Input.Index.x].x, Output.UV);
+
+    // alpha threshold
+    Output.AlphaThreshold = fModelAlphaThreshold[Input.Index.x].x;
+#endif
 
 	return Output;
 }

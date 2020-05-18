@@ -891,8 +891,11 @@ struct ParameterRendererCommon
 				pos += sizeof(int);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-				memcpy(&AlphaTextureIndex, pos, sizeof(int));
-				pos += sizeof(int);
+				if (version >= 1600)
+				{
+					memcpy(&AlphaTextureIndex, pos, sizeof(int));
+					pos += sizeof(int);
+				}
 #endif
 			}
 			else
@@ -1009,42 +1012,64 @@ struct ParameterRendererCommon
 		pos += sizeof(int);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+		auto LoadUVParameter = [&](const int UVIndex) {
+			const auto& UVType = UVTypes[UVIndex];
+			auto& UV = UVs[UVIndex];
+
+			if (UVType == UV_DEFAULT)
+			{
+			}
+			else if (UVType == UV_FIXED)
+			{
+				memcpy(&UV.Fixed, pos, sizeof(UV.Fixed));
+				pos += sizeof(UV.Fixed);
+			}
+			else if (UVType == UV_ANIMATION)
+			{
+				memcpy(&UV.Animation.Position, pos, sizeof(UV.Animation.Position));
+				pos += sizeof(UV.Animation.Position);
+
+				memcpy(&UV.Animation.FrameLength, pos, sizeof(UV.Animation.FrameLength));
+				pos += sizeof(UV.Animation.FrameLength);
+
+				memcpy(&UV.Animation.FrameCountX, pos, sizeof(UV.Animation.FrameCountX));
+				pos += sizeof(UV.Animation.FrameCountX);
+
+				memcpy(&UV.Animation.FrameCountY, pos, sizeof(UV.Animation.FrameCountY));
+				pos += sizeof(UV.Animation.FrameCountY);
+
+				memcpy(&UV.Animation.LoopType, pos, sizeof(UV.Animation.LoopType));
+				pos += sizeof(UV.Animation.LoopType);
+
+				memcpy(&UV.Animation.StartFrame, pos, sizeof(UV.Animation.StartFrame));
+				pos += sizeof(UV.Animation.StartFrame);
+
+				if (version >= 1600)
+				{
+					memcpy(&UV.Animation.InterpolationType, pos, sizeof(UV.Animation.InterpolationType));
+					pos += sizeof(UV.Animation.InterpolationType);
+				}
+			}
+			else if (UVType == UV_SCROLL)
+			{
+				memcpy(&UV.Scroll, pos, sizeof(UV.Scroll));
+				pos += sizeof(UV.Scroll);
+			}
+			else if (UVType == UV_FCURVE)
+			{
+				UV.FCurve.Position = new FCurveVector2D();
+				UV.FCurve.Size = new FCurveVector2D();
+				pos += UV.FCurve.Position->Load(pos, version);
+				pos += UV.FCurve.Size->Load(pos, version);
+			}
+		};
+
+
+		
+		LoadUVParameter(0);
+
 		if (version >= 1600)
 		{
-			auto LoadUVParameter = [&](const int UVIndex)
-			{
-				const auto& UVType = UVTypes[UVIndex];
-				auto& UV = UVs[UVIndex];
-
-				if (UVType == UV_DEFAULT)
-				{
-				}
-				else if (UVType == UV_FIXED)
-				{
-					memcpy(&UV.Fixed, pos, sizeof(UV.Fixed));
-					pos += sizeof(UV.Fixed);
-				}
-				else if (UVType == UV_ANIMATION)
-				{
-					memcpy(&UV.Animation, pos, sizeof(UV.Animation));
-					pos += sizeof(UV.Animation);
-				}
-				else if (UVType == UV_SCROLL)
-				{
-					memcpy(&UV.Scroll, pos, sizeof(UV.Scroll));
-					pos += sizeof(UV.Scroll);
-				}
-				else if (UVType == UV_FCURVE)
-				{
-					UV.FCurve.Position = new FCurveVector2D();
-					UV.FCurve.Size = new FCurveVector2D();
-					pos += UV.FCurve.Position->Load(pos, version);
-					pos += UV.FCurve.Size->Load(pos, version);
-				}
-			};
-
-			LoadUVParameter(0);
-
 			memcpy(&UVTypes[1], pos, sizeof(int));
 			pos += sizeof(int);
 

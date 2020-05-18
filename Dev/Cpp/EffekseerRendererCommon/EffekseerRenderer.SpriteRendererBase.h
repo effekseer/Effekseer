@@ -74,10 +74,13 @@ protected:
 						   const StandardRendererState& state,
 						   const ::Effekseer::Mat44f& camera)
 	{
-		if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
-			param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
 		{
 			Rendering_Internal<DynamicVertex>(param, inst, nullptr, camera);
+		}
+		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		{
+			Rendering_Internal<LightingVertex>(param, inst, nullptr, camera);
 		}
 		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{
@@ -156,6 +159,7 @@ protected:
 		Normal,
 		Distortion,
 		Dynamic,
+		Lightning,
 	};
 
 	VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
@@ -163,6 +167,8 @@ protected:
 	VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
 
 	VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lightning; }
 
 	template<typename VERTEX>
 	void Rendering_Internal( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera )
@@ -182,8 +188,8 @@ protected:
 			verteies[i].SetColor( instanceParameter.Colors[i] );
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			verteies[i].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			verteies[i].AlphaThreshold = instanceParameter.AlphaThreshold;
+			verteies[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
+			verteies[i].SetAlphaThreshold(instanceParameter.AlphaThreshold);
 #endif
 		}
 		
@@ -200,17 +206,17 @@ protected:
 		verteies[3].UV[1] = instanceParameter.UV.Y;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		verteies[0].AlphaUV[0] = instanceParameter.AlphaUV.X;
-		verteies[0].AlphaUV[1] = instanceParameter.AlphaUV.Y +  instanceParameter.AlphaUV.Height;
+		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
+		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.Y +  instanceParameter.AlphaUV.Height, 1);
 		
-		verteies[1].AlphaUV[0] = instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width;
-		verteies[1].AlphaUV[1] = instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height;
+		verteies[1].SetAlphaUV(instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
+		verteies[1].SetAlphaUV(instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
 		
-		verteies[2].AlphaUV[0] = instanceParameter.AlphaUV.X;
-		verteies[2].AlphaUV[1] = instanceParameter.AlphaUV.Y;
+		verteies[2].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
+		verteies[2].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
 
-		verteies[3].AlphaUV[0] = instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width;
-		verteies[3].AlphaUV[1] = instanceParameter.AlphaUV.Y;
+		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
+		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
 #endif
 
 		// distortion

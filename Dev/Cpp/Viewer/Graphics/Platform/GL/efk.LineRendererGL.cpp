@@ -73,18 +73,16 @@ static const char g_sprite_fs_no_texture_src[] =
 	{
 		this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
 
-		auto shader_ = EffekseerRendererGL::Shader::Create(
-			this->renderer->GetGraphicsDevice(),
-			g_sprite_vs_src, sizeof(g_sprite_vs_src),
-			g_sprite_fs_texture_src, sizeof(g_sprite_fs_texture_src),
-			"Standard Tex");
-		
-		auto shader_no_texture_ = EffekseerRendererGL::Shader::Create(this->renderer->GetGraphicsDevice(),
-			g_sprite_vs_src, sizeof(g_sprite_vs_src),
-			g_sprite_fs_no_texture_src, sizeof(g_sprite_fs_no_texture_src),
-			"Standard NoTex");
-		
+		EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
+		EffekseerRendererGL::ShaderCodeView lineCodeDataPS(g_sprite_fs_texture_src);
+		EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
 
+		auto shader_ = EffekseerRendererGL::Shader::Create(
+			this->renderer->GetGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataPS, 1, "Standard Tex");
+
+		auto shader_no_texture_ = EffekseerRendererGL::Shader::Create(
+			this->renderer->GetGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex");
+		
 		EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
 			{ "atPosition", GL_FLOAT, 3, 0, false },
 			{ "atColor", GL_UNSIGNED_BYTE, 4, 12, true },

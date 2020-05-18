@@ -18,33 +18,69 @@ namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 namespace ShaderLightingTextureNormal_
 {
 static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
 
-static
+	static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
 
-}
+} // namespace ShaderLightingTextureNormal_
 
 namespace ShaderTexture_
 {
 static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
 
-static
+	static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+} // namespace ShaderTexture_
+
+namespace ShaderDistortionTexture_
+{
+static
+#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+
+	static
+#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
+} // namespace ShaderDistortionTexture_
+
+
+#else
+
+namespace ShaderLightingTextureNormal_
+{
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
+
+}
+
+namespace ShaderTexture_
+{
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
 }
 
 namespace ShaderDistortionTexture_
 {
 	static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
 
 	static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
 }
+
+#endif
 
 ModelRenderer::ModelRenderer( 
 	RendererImplemented* renderer,
@@ -70,8 +106,13 @@ ModelRenderer::ModelRenderer(
 
 	m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<20>));
 	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<20>) / (sizeof(float) * 4));
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1 + 1);
+#else
 	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1);
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -106,6 +147,31 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 		D3DDECL_END()
 	};
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	Shader* shader_lighting_texture_normal = Shader::Create(renderer,
+															ShaderLightingTextureNormal_::g_vs30_VS,
+															sizeof(ShaderLightingTextureNormal_::g_vs30_VS),
+															ShaderLightingTextureNormal_::g_ps30_PS,
+															sizeof(ShaderLightingTextureNormal_::g_ps30_PS),
+															"ModelRendererLightingTextureNormal",
+															decl);
+
+	Shader* shader_texture = Shader::Create(renderer,
+											ShaderTexture_::g_vs30_VS,
+											sizeof(ShaderTexture_::g_vs30_VS),
+											ShaderTexture_::g_ps30_PS,
+											sizeof(ShaderTexture_::g_ps30_PS),
+											"ModelRendererTexture",
+											decl);
+
+	auto shader_distortion_texture = Shader::Create(renderer,
+													ShaderDistortionTexture_::g_vs30_VS,
+													sizeof(ShaderDistortionTexture_::g_vs30_VS),
+													ShaderDistortionTexture_::g_ps30_PS,
+													sizeof(ShaderDistortionTexture_::g_ps30_PS),
+													"ModelRendererDistortionTexture",
+													decl);
+#else
 	Shader* shader_lighting_texture_normal = Shader::Create( 
 		renderer, 
 		ShaderLightingTextureNormal_::g_vs20_VS,
@@ -132,6 +198,7 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 		sizeof(ShaderDistortionTexture_::g_ps20_PS),
 		"ModelRendererDistortionTexture",
 		decl);
+#endif
 
 	if( shader_lighting_texture_normal == NULL ||
 		shader_texture == NULL ||

@@ -714,9 +714,12 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.reset();
 		}
 
-		#ifdef __EFFEKSEER_BUILD_VERSION16__
-		AlphaCrunch.load(pos, m_effect->GetVersion());
-		#endif
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (m_effect->GetVersion() >= 1600)
+		{
+			AlphaCrunch.load(pos, m_effect->GetVersion());
+		}
+#endif
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
 

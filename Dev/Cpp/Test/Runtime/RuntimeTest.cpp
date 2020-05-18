@@ -278,12 +278,14 @@ void PlaybackSpeedTest()
 void BasicRuntimeTest()
 {
 #ifdef _WIN32
+#ifndef __EFFEKSEER_BUILD_VERSION16__
 #ifdef __EFFEKSEER_BUILD_DX12__
 	{
 		auto platform = std::make_shared<EffectPlatformDX12>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
 		platform->Terminate();
 	}
+#endif
 #endif
 
 	{

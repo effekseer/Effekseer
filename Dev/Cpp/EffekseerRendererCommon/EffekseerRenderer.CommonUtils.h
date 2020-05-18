@@ -35,13 +35,11 @@ struct DynamicVertex
 
 	float UV2[2];
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	float AlphaUV[2];
+	void SetAlphaUV(float value, int index) {}
 
-	float FlipbookIndexAndNextRate;
+	void SetFlipbookIndexAndNextRate(float value) {}
 
-	float AlphaThreshold;
-#endif
+	void SetAlphaThreshold(float value) {}
 
 	void SetColor(const VertexColor& color) { Col = color; }
 };
@@ -51,6 +49,40 @@ struct DynamicVertexWithCustomData
 	DynamicVertex V;
 	std::array<float, 4> CustomData1;
 	std::array<float, 4> CustomData2;
+};
+
+struct LightingVertex
+{
+	VertexFloat3 Pos;
+	VertexColor Col;
+	//! packed vector
+	VertexColor Normal;
+	//! packed vector
+	VertexColor Tangent;
+
+	union {
+		//! UV1 (for template)
+		float UV[2];
+		float UV1[2];
+	};
+
+	float UV2[2];
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float AlphaUV[2];
+
+	float FlipbookIndexAndNextRate;
+
+	float AlphaThreshold;
+
+	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
+
+	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
+
+	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
+#endif
+
+	void SetColor(const VertexColor& color) { Col = color; }
 };
 
 struct SimpleVertex
@@ -70,6 +102,12 @@ struct SimpleVertex
 	float FlipbookIndexAndNextRate;
 
 	float AlphaThreshold;
+
+	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
+
+	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
+
+	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)
@@ -98,6 +136,12 @@ struct SimpleVertexDX9
 	float FlipbookIndexAndNextRate;
 
 	float AlphaThreshold;
+
+	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
+
+	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
+
+	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)
@@ -129,6 +173,12 @@ struct VertexDistortion
 	float FlipbookIndexAndNextRate;
 
 	float AlphaThreshold;
+
+	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
+
+	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
+
+	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)
@@ -160,6 +210,12 @@ struct VertexDistortionDX9
 	float FlipbookIndexAndNextRate;
 
 	float AlphaThreshold;
+
+	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
+
+	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
+
+	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)
@@ -472,6 +528,11 @@ inline void TransformVertexes(StrideView<SimpleVertexDX9>& v, int32_t count, con
 }
 
 inline void TransformVertexes(StrideView<DynamicVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+{
+	TransformStandardVertexes(v, count, mat);
+}
+
+inline void TransformVertexes(StrideView<LightingVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }

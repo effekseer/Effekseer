@@ -79,10 +79,13 @@ protected:
 						   const StandardRendererState& state,
 						   const ::Effekseer::Mat44f& camera)
 	{
-		if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
-			param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
 		{
 			Rendering_Internal<DynamicVertex>(param, inst, nullptr, camera);
+		}
+		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		{
+			Rendering_Internal<LightingVertex>(param, inst, nullptr, camera);
 		}
 		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{
@@ -177,6 +180,7 @@ protected:
 		Normal,
 		Distortion,
 		Dynamic,
+		Lighting,
 	};
 
 	VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
@@ -184,6 +188,8 @@ protected:
 	VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
 
 	VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lighting; }
 
 	bool CanSingleRendering()
 	{ 
@@ -390,32 +396,32 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			alphaUVtexNext = alphaUVCurrent + alphaUVStep;
 
-			v[0].AlphaUV[0] = alphaUVCurrent;
-			v[0].AlphaUV[1] = alphaUVv1;
+			v[0].SetAlphaUV(alphaUVCurrent, 0);
+			v[0].SetAlphaUV(alphaUVv1, 1);
 
-			v[1].AlphaUV[0] = alphaUVCurrent;
-			v[1].AlphaUV[1] = alphaUVv2;
+			v[1].SetAlphaUV(alphaUVCurrent, 0);
+			v[1].SetAlphaUV(alphaUVv2, 1);
 
-			v[2].AlphaUV[0] = alphaUVtexNext;
-			v[2].AlphaUV[1] = alphaUVv1;
+			v[2].SetAlphaUV(alphaUVtexNext, 0);
+			v[2].SetAlphaUV(alphaUVv1, 1);
 
-			v[3].AlphaUV[0] = alphaUVtexNext;
-			v[3].AlphaUV[1] = alphaUVv2;
+			v[3].SetAlphaUV(alphaUVtexNext, 0);
+			v[3].SetAlphaUV(alphaUVv2, 1);
 
 			v[4] = v[1];
 
-			v[5].AlphaUV[0] = alphaUVCurrent;
-			v[5].AlphaUV[1] = alphaUVv3;
+			v[5].SetAlphaUV(alphaUVCurrent, 0);
+			v[5].SetAlphaUV(alphaUVv3, 1);
 
 			v[6] = v[3];
 
-			v[7].AlphaUV[0] = alphaUVtexNext;
-			v[7].AlphaUV[1] = alphaUVv3;
+			v[7].SetAlphaUV(alphaUVtexNext, 0);
+			v[7].SetAlphaUV(alphaUVv3, 1);
 
 			for (int32_t i = 0; i < 8; i++)
 			{
-				v[i].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-				v[i].AlphaThreshold = instanceParameter.AlphaThreshold;
+				v[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
+				v[i].SetAlphaThreshold(instanceParameter.AlphaThreshold);
 			}
 #endif
 

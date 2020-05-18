@@ -54,11 +54,29 @@ enum eConstantType
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+struct ShaderCodeView
+{
+	const char* Data;
+	int32_t Length;
+
+	ShaderCodeView() : Data(nullptr), Length(0) {}
+
+	ShaderCodeView(const char* data) : Data(data), Length(static_cast<int32_t>(strlen(data)))
+	{
+	}
+};
+
 class Shader
 	: public DeviceObject
 	, public ::EffekseerRenderer::ShaderBase
 {
 private:
+	struct ShaderCode
+	{
+		std::vector<char> Code;
+	};
+
 	struct Layout
 	{
 		GLenum		type;
@@ -105,9 +123,9 @@ private:
 	std::array<GLuint, Effekseer::TextureSlotMax> m_textureSlots;
 	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
 
-	std::vector<char>	m_vsSrc;
-	std::vector<char>	m_psSrc;
-	std::string				m_name;
+	std::string name_;
+	std::vector<ShaderCode> vsCodes_;
+	std::vector<ShaderCode> psCodes_;
 
 	std::vector<ShaderAttribInfoInternal>	attribs;
 	std::vector<ShaderUniformInfoInternal>	uniforms;
@@ -115,18 +133,20 @@ private:
 	static bool CompileShader(
 		OpenGLDeviceType deviceType,
 		GLuint& program,
-		const char* vs_src,
-		size_t vertexShaderSize,
-		const char* fs_src,
-		size_t pixelShaderSize,
+		const ShaderCodeView* vsData,
+		size_t vsDataCount,
+		const ShaderCodeView* psData,
+		size_t psDataCount,
 		const char* name);
+
+	bool ReloadShader();
 
 	Shader(GraphicsDevice* graphicsDevice,
 		GLuint program,
-		const char* vs_src,
-		size_t vertexShaderSize,
-		const char* fs_src,
-		size_t pixelShaderSize,
+		const ShaderCodeView* vsData,
+		size_t vsDataCount,
+		const ShaderCodeView* psData,
+		size_t psDataCount,
 		const char* name,
 		bool hasRefCount);
 
@@ -140,10 +160,10 @@ public:
 
 	static Shader* Create(
 		GraphicsDevice* graphicsDevice,
-						  const char* vs_src,
-						  size_t vertexShaderSize,
-						  const char* fs_src,
-						  size_t pixelShaderSize,
+						  const ShaderCodeView* vsData,
+						  size_t vsDataCount,
+						  const ShaderCodeView* psData,
+						  size_t psDataCount,
 						  const char* name,
 						  bool hasRefCount = true);
 

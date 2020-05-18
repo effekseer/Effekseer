@@ -37,13 +37,10 @@ namespace EffekseerRendererGL
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 1);
 
-		auto shader = Shader::Create(graphicsDevice_,
-									 (const char*)binary->GetVertexShaderData(shaderTypes[st]),
-									 binary->GetVertexShaderSize(shaderTypes[st]),
-									 (const char*)binary->GetPixelShaderData(shaderTypes[st]),
-									 binary->GetPixelShaderSize(shaderTypes[st]),
-									 "CustomMaterial",
-									 true);
+		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypes[st]));
+		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypes[st]));
+
+		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true);
 
 		if (shader == nullptr)
 		{
@@ -193,13 +190,10 @@ namespace EffekseerRendererGL
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);
 
-		auto shader = Shader::Create(graphicsDevice_,
-									 (const char*)binary->GetVertexShaderData(shaderTypesModel[st]),
-									 binary->GetVertexShaderSize(shaderTypesModel[st]),
-									 (const char*)binary->GetPixelShaderData(shaderTypesModel[st]),
-									 binary->GetPixelShaderSize(shaderTypesModel[st]),
-									 "CustomMaterial",
-									 true);
+		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypesModel[st]));
+		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypesModel[st]));
+
+		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true);
 
 		if (shader == nullptr)
 		{
@@ -212,7 +206,8 @@ namespace EffekseerRendererGL
 			return nullptr;
 		}
 
-		static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
+		const int32_t NumAttribs = 6;
+		static ShaderAttribInfo g_model_attribs[NumAttribs] = {
 			{"a_Position", GL_FLOAT, 3, 0, false},
 			{"a_Normal", GL_FLOAT, 3, 12, false},
 			{"a_Binormal", GL_FLOAT, 3, 24, false},
@@ -226,7 +221,7 @@ namespace EffekseerRendererGL
 #endif
 		};
 
-		shader->GetAttribIdList(ModelRenderer::NumAttribs, g_model_attribs);
+		shader->GetAttribIdList(NumAttribs, g_model_attribs);
 		shader->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
 		shader->AddVertexConstantLayout(
