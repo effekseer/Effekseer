@@ -736,20 +736,19 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	};
 
 	ShaderCodeView ltnPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_ltn_src.c_str())};
+	ShaderCodeView tVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_t_src.c_str())};
+	ShaderCodeView tPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_t_src.c_str())};
+	ShaderCodeView dVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_d_t_src.c_str())};
+	ShaderCodeView dPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_d_t_src.c_str())};
 
 	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), ltnVS, 2, ltnPS, 2, "ModelRenderer1", true);
 	if (shader_lighting_texture_normal == NULL)
 		goto End;
 
-	ShaderCodeView tVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_t_src.c_str())};
-	ShaderCodeView tPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_t_src.c_str())};
 
 	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), tVS, 2, tPS, 2, "ModelRenderer5", true);
 	if (shader_texture == NULL)
 		goto End;
-
-	ShaderCodeView dVS[]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_d_t_src.c_str())};
-	ShaderCodeView dPS[]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_d_t_src.c_str())};
 
 	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), dVS, 2, dPS, 2, "ModelRenderer7", true);
 	if (shader_distortion_texture == NULL)
@@ -757,21 +756,19 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 #else
 	ShaderCodeView ltnVS(vs_ltn_src.c_str());
 	ShaderCodeView ltnPS(fs_ltn_src.c_str());
+	ShaderCodeView tVS(vs_t_src.c_str());
+	ShaderCodeView tPS(fs_t_src.c_str());
+	ShaderCodeView dVS(vs_d_t_src.c_str());
+	ShaderCodeView dPS(fs_d_t_src.c_str());
 
 	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true);
 	if (shader_lighting_texture_normal == NULL)
 		goto End;
 
-	ShaderCodeView tVS(vs_t_src.c_str());
-	ShaderCodeView tPS(fs_t_src.c_str());
-
 	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true);
 	if (shader_texture == NULL)
 		goto End;
-
-	ShaderCodeView dVS(vs_d_t_src.c_str());
-	ShaderCodeView dPS(fs_d_t_src.c_str());
-
+	
 	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true);
 	if (shader_distortion_texture == NULL)
 		goto End;
