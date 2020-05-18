@@ -73,7 +73,10 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 				// alpha texture
-				data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+				if (version >= ExporterVersion.Ver1600)
+				{
+					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+				}
 #endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
@@ -86,7 +89,10 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 				// alpha texture
-				data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+				if (version >= ExporterVersion.Ver1600)
+				{
+					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+				}
 #endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
@@ -99,7 +105,10 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 				// alpha texture
-				data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+				if (version >= ExporterVersion.Ver1600)
+				{
+					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+				}
 #endif
 			}
 			else
@@ -195,8 +204,11 @@ namespace Effekseer.Binary
 			data.Add(value.Wrap2);
 
 #if __EFFEKSEER_BUILD_VERSION16__
-			data.Add(advanceValue.AlphaTextureParam.Filter);
-			data.Add(advanceValue.AlphaTextureParam.Wrap);
+			if (version >= ExporterVersion.Ver1600)
+			{
+				data.Add(advanceValue.AlphaTextureParam.Filter);
+				data.Add(advanceValue.AlphaTextureParam.Wrap);
+			}
 #endif
 
 			if (value.ZTest.GetValue())
@@ -287,7 +299,10 @@ namespace Effekseer.Binary
 				data.Add(value_.StartSheet.Min.GetBytes());
 
 #if __EFFEKSEER_BUILD_VERSION16__
-				data.Add(value_.FlipbookInterpolationType);
+				if (version >= ExporterVersion.Ver1600)
+				{
+					data.Add(value_.FlipbookInterpolationType);
+				}
 #endif
 
 			}
@@ -328,15 +343,18 @@ namespace Effekseer.Binary
 
 
 #if __EFFEKSEER_BUILD_VERSION16__
-			data.Add(GetUVBytes
+			if (version >= ExporterVersion.Ver1600)
+			{
+				data.Add(GetUVBytes
 				(
-				alphaTexInfo, 
+				alphaTexInfo,
 				value.UV2,
-				value.UV2Fixed, 
+				value.UV2Fixed,
 				value.UV2Animation,
 				value.UV2Scroll,
 				value.UV2FCurve
 				));
+			}
 #endif
 
 
@@ -439,7 +457,7 @@ namespace Effekseer.Binary
 #if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
-				data.Add(AlphaCrunchValues.GetBytes(advanceValue.AlphaCutoffParam));
+				data.Add(AlphaCutoffValues.GetBytes(advanceValue.AlphaCutoffParam));
 			}
 #endif
 

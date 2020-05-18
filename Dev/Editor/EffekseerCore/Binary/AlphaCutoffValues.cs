@@ -7,7 +7,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Binary
 {
-    class AlphaCrunchValues
+    class AlphaCutoffValues
     {
         public static byte[] GetBytes(Data.AlphaCutoffParameter value)
         {

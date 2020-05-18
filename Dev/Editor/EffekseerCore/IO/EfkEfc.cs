@@ -332,7 +332,7 @@ namespace Effekseer.IO
 					}
 				};
 
-				int infoVersion = 1500;
+				int infoVersion = (int)Binary.ExporterVersion.Latest;
 				data.Add(BitConverter.GetBytes(infoVersion));
 
 				exportStrs(binaryExporter.UsedTextures);

@@ -84,12 +84,15 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+								if(exporterVersion >= ExporterVersion.Ver1600)
 								{
-									if (!UsedTextures.Contains(alpha_relative_path))
+									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
+									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
 									{
-										UsedTextures.Add(alpha_relative_path);
+										if (!UsedTextures.Contains(alpha_relative_path))
+										{
+											UsedTextures.Add(alpha_relative_path);
+										}
 									}
 								}
 #endif
@@ -106,12 +109,15 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
-									if (!UsedDistortionTextures.Contains(alpha_relative_path))
+									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
+									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
 									{
-										UsedDistortionTextures.Add(alpha_relative_path);
+										if (!UsedDistortionTextures.Contains(alpha_relative_path))
+										{
+											UsedDistortionTextures.Add(alpha_relative_path);
+										}
 									}
 								}
 #endif
@@ -137,12 +143,15 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								var path3 = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && path3 != string.Empty)
+								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
-									if (!UsedTextures.Contains(path3))
+									var path3 = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
+									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && path3 != string.Empty)
 									{
-										UsedTextures.Add(path3);
+										if (!UsedTextures.Contains(path3))
+										{
+											UsedTextures.Add(path3);
+										}
 									}
 								}
 #endif
