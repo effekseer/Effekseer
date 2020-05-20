@@ -72,6 +72,11 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 	manager_->SetModelLoader(renderer_->CreateModelLoader());
 	manager_->SetMaterialLoader(renderer_->CreateMaterialLoader());
 
+	if (param.IsCullingCreated)
+	{
+		manager_->CreateCullingWorld(100.0f, 100.0f, 100.0f, 6);
+	}
+
 	isInitialized_ = true;
 }
 
