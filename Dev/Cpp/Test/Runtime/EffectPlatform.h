@@ -11,6 +11,7 @@ struct EffectPlatformInitializingParameter
 {
 	bool VSync = true;
 	bool IsUpdatedByHandle = false;
+	bool IsCullingCreated = true;
 };
 
 class EffectPlatform
