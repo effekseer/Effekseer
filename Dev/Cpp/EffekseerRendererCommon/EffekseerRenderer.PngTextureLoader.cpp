@@ -44,6 +44,12 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 
 	png_read_info(png, png_info);
 
+	const auto interlaceType = png_get_interlace_type(png, png_info);
+
+	int passes = 1;
+	if (interlaceType != PNG_INTERLACE_NONE)
+		passes = png_set_interlace_handling(png);
+
 	const png_byte bit_depth = png_get_bit_depth(png, png_info);
 	if (bit_depth < 8)
 	{
@@ -97,18 +103,21 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	uint8_t* image = new uint8_t[textureWidth * textureHeight * pixelBytes];
 	uint32_t pitch = textureWidth * pixelBytes;
 
-	if (rev)
+	for (int pass = 0; pass < passes; pass++)
 	{
-		for (uint32_t i = 0; i < textureHeight; i++)
+		if (rev)
 		{
-			png_read_row(png, &image[(textureHeight - 1 - i) * pitch], NULL);
+			for (uint32_t i = 0; i < textureHeight; i++)
+			{
+				png_read_row(png, &image[(textureHeight - 1 - i) * pitch], NULL);
+			}
 		}
-	}
-	else
-	{
-		for (uint32_t i = 0; i < textureHeight; i++)
+		else
 		{
-			png_read_row(png, &image[i * pitch], NULL);
+			for (uint32_t i = 0; i < textureHeight; i++)
+			{
+				png_read_row(png, &image[i * pitch], NULL);
+			}
 		}
 	}
 
