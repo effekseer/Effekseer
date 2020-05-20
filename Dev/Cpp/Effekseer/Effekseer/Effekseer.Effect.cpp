@@ -1423,7 +1423,10 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 		ResetReloadingBackup();
 	}
 
-	factory->OnUnloadingResource(this);
+	if (factory != nullptr)
+	{
+		factory->OnUnloadingResource(this);	
+	}
 }
 
 void EffectImplemented::UnloadResources()
