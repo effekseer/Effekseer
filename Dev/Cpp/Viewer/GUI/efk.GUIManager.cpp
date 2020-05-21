@@ -1881,15 +1881,14 @@ namespace efk
 		return visible;
 	}
 
-	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags)
+	bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabHint, bool* p_open, bool allowClose, WindowFlags extra_flags)
 	{
-		utf8str<256> utf8label(label);
-		ImGuiWindow* window = ImGui::FindWindowByName(utf8label);
-		if (!window || window->DockIsActive || window->DockTabIsVisible)
+		if (!allowClose)
 		{
 			p_open = nullptr;
 		}
 
+		utf8str<256> utf8label(label);
 		return ImGui::Begin(utf8label, p_open, (ImGuiWindowFlags)extra_flags);
 	}
 
@@ -1939,6 +1938,18 @@ namespace efk
 	bool GUIManager::IsDockFocused()
 	{
 		return ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+	}
+
+	bool GUIManager::IsDockVisibled()
+	{
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		return (window && window->DockTabIsVisible);
+	}
+
+	bool GUIManager::IsDockWindowed()
+	{
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		return (window && !window->DockIsActive);
 	}
 
 	void GUIManager::SetDockFocus(const char16_t* label)

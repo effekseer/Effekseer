@@ -7603,19 +7603,23 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFullsc
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock___(void * jarg1, void * jarg2, unsigned int * jarg3, int jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock___(void * jarg1, void * jarg2, void * jarg3, unsigned int * jarg4, unsigned int jarg5, int jarg6) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
-  bool *arg3 = (bool *) 0 ;
-  efk::WindowFlags arg4 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  bool *arg4 = (bool *) 0 ;
+  bool arg5 ;
+  efk::WindowFlags arg6 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  arg3 = (bool *)jarg3; 
-  arg4 = (efk::WindowFlags)jarg4; 
-  result = (bool)(arg1)->BeginDock((char16_t const *)arg2,arg3,arg4);
+  arg3 = (char16_t *)jarg3; 
+  arg4 = (bool *)jarg4; 
+  arg5 = jarg5 ? true : false; 
+  arg6 = (efk::WindowFlags)jarg6; 
+  result = (bool)(arg1)->BeginDock((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5,arg6);
   jresult = result; 
   return jresult;
 }
@@ -7698,6 +7702,30 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsDockFocus
   
   arg1 = (efk::GUIManager *)jarg1; 
   result = (bool)(arg1)->IsDockFocused();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsDockVisibled___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsDockVisibled();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsDockWindowed___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsDockWindowed();
   jresult = result; 
   return jresult;
 }

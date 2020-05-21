@@ -1243,8 +1243,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool BeginDock(string label, ref bool p_open, WindowFlags extra_flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, ref p_open, (int)extra_flags);
+  public bool BeginDock(string label, string tabHint, ref bool p_open, bool allowClose, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, tabHint, ref p_open, allowClose, (int)extra_flags);
     return ret;
   }
 
@@ -1275,6 +1275,16 @@ public class GUIManager : global::System.IDisposable {
 
   public bool IsDockFocused() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsDockFocused(swigCPtr);
+    return ret;
+  }
+
+  public bool IsDockVisibled() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsDockVisibled(swigCPtr);
+    return ret;
+  }
+
+  public bool IsDockWindowed() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsDockWindowed(swigCPtr);
     return ret;
   }
 
