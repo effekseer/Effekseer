@@ -588,7 +588,7 @@ namespace efk
 
 		// Dock
 		bool BeginFullscreen(const char16_t* label);
-		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags);
+		bool BeginDock(const char16_t* label, const char16_t* tabHint, bool* p_open, bool allowClose, WindowFlags extra_flags);
 		void EndDock();
 		uint32_t BeginDockLayout();
 		void EndDockLayout();
@@ -596,6 +596,8 @@ namespace efk
 		void DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags);
 		void DockSetWindow(uint32_t nodeId, const char* windowName);
 		bool IsDockFocused();
+		bool IsDockVisibled();
+		bool IsDockWindowed();
 		void SetDockFocus(const char16_t* label);
 
 		// Fcurve
