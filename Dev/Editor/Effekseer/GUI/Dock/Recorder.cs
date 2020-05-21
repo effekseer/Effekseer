@@ -385,6 +385,8 @@ namespace Effekseer.GUI.Dock
 					var tempDirectory = System.IO.Directory.GetCurrentDirectory();
 					System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
 
+					Utils.Logger.Write(string.Format("SetCurrentDirectory : {0}", Program.StartDirectory));
+
 					string errorMessage = string.Empty;
 
                     var startingFrame = Core.Recording.RecordingStartingFrame.Value;
@@ -411,18 +413,26 @@ namespace Effekseer.GUI.Dock
 
 					if (selectedTypeIndex == 0)
 					{
+						Utils.Logger.Write(string.Format("RecordSpriteSheet : {0}", filename));
+
 						recordResult = viewer.RecordSpriteSheet(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 1)
 					{
+						Utils.Logger.Write(string.Format("RecordSprite : {0}", filename));
+
 						recordResult = viewer.RecordSprite(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 2)
 					{
+						Utils.Logger.Write(string.Format("RecordAsGifAnimation : {0}", filename));
+
 						recordResult = viewer.RecordAsGifAnimation(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 3)
 					{
+						Utils.Logger.Write(string.Format("RecordAsAVI : {0}", filename));
+
 						recordResult = viewer.RecordAsAVI(filename, recordingParameter);
 					}
 
@@ -433,6 +443,8 @@ namespace Effekseer.GUI.Dock
 					else
 					{
 						swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+
+						Utils.Logger.Write(string.Format("Record : Failed : {0}", errorMessage));
 					}
 
 					System.IO.Directory.SetCurrentDirectory(tempDirectory);

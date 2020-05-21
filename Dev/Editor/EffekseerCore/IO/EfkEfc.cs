@@ -312,6 +312,8 @@ namespace Effekseer.IO
 
 		public bool Save(string path)
 		{
+			Utils.Logger.Write(string.Format("Save : Start : {0}", path));
+
 			// editor data
 			var editorData = Core.SaveAsXmlDocument(path);
 
@@ -395,8 +397,12 @@ namespace Effekseer.IO
 					Core.OnOutputMessage(messeage);
 				}
 
+				Utils.Logger.Write(string.Format("Save : Failed : {0}", e.ToString()));
+
 				return false;
 			}
+
+			Utils.Logger.Write(string.Format("Save : End"));
 
 			return true;
 		}

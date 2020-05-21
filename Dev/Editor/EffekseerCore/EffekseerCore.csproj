@@ -173,6 +173,7 @@
     <Compile Include="IO\EfkEfc.cs" />
     <Compile Include="Utils\BinaryWriter.cs" />
     <Compile Include="Utils\CsvReader.cs" />
+    <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\Misc.cs" />
     <Compile Include="Utils\ResourceCache.cs" />
     <Compile Include="Utils\Zlib.cs" />
