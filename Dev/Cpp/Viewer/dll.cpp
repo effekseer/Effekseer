@@ -1212,6 +1212,8 @@ public:
 		sprintf(path8_dst, "%s.%d%s", pathWOE, index, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
+		spdlog::trace("RecorderCallbackSprite : {}", path8_dst);
+
 		efk::PNGHelper pngHelper;
 		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
 	}
@@ -1270,6 +1272,8 @@ public:
 		sprintf(path8_dst, "%s%s", pathWOE, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
+		spdlog::trace("RecorderCallbackSpriteSheet : {}", path8_dst);
+
 		efk::PNGHelper pngHelper;
 		pngHelper.Save(
 			path_, g_renderer->GuideWidth * recordingParameter_.HorizontalCount, g_renderer->GuideHeight * yCount, pixels_out.data());
@@ -1317,6 +1321,8 @@ public:
 		sprintf(path8_dst, "%s%s", pathWOE, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
+		spdlog::trace("RecorderCallbackGif : {}", path8_dst);
+
 		helper.Initialize(path_, g_renderer->GuideWidth, g_renderer->GuideHeight, recordingParameter_.Freq);
 		return true;
 	}
@@ -1351,6 +1357,9 @@ public:
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
 		sprintf(path8_dst, "%s%s", pathWOE, ext_);
+
+		spdlog::trace("RecorderCallbackAvi : {}", path8_dst);
+
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
 #ifdef _WIN32
