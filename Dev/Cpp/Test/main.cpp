@@ -124,22 +124,26 @@ void TestShowEfcAssets()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int main()
+int main(int argc, char* argv[])
 {
+	bool onCI = argc >= 2;
+
 #if _WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 	StringAndPathHelperTest();
+	PlaybackSpeedTest();
 	StartingFrameTest();
 	UpdateHandleTest();
-	PlaybackSpeedTest();
 	CustomAllocatorTest();
-	//SIMDTest();
-	BasicRuntimeTest();
-	UpdateHandleTest();
-	//BasicRuntimeDeviceLostTest();
+	BasicRuntimeTest(onCI);
+	
+	if (!onCI)
+	{
+		//BasicRuntimeDeviceLostTest();
+	}
 #else
 
 	//TestShowEfcAssets();
