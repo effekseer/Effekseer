@@ -23,6 +23,18 @@ jobs:
         run: python build.py
         shell: cmd
 
+      - name: Test
+        run: |
+         cd build/Dev/Cpp/Test/Release/
+         Test.exe ci
+        shell: cmd
+
+      - name: Upload Test
+        uses: actions/upload-artifact@v1
+        with:
+          name: Test
+          path: build/Dev/Cpp/Test/Release/
+
       - name: Release Runtime
         run: release_runtime.bat
         shell: cmd
