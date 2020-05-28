@@ -19,8 +19,8 @@ EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const { return render
 
 EffectPlatform::EffectPlatform()
 {
-	checkeredPattern_.resize(1280 * 720);
-	CreateCheckeredPattern(1280, 720, checkeredPattern_.data());
+	checkeredPattern_.resize(WindowWidth * WindowHeight);
+	CreateCheckeredPattern(WindowWidth, WindowHeight, checkeredPattern_.data());
 }
 
 EffectPlatform::~EffectPlatform()
@@ -53,11 +53,12 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 	if (isOpenGLMode_)
 	{
 		renderer_->SetProjectionMatrix(
-			::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, 1280.0f / 720.0f, 1.0f, 50.0f));
+			::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)WindowWidth / (float)WindowHeight, 1.0f, 50.0f));
 	}
 	else
 	{
-		renderer_->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, 1280.0f / 720.0f, 1.0f, 50.0f));
+		renderer_->SetProjectionMatrix(
+			::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)WindowWidth / (float)WindowHeight, 1.0f, 50.0f));
 	}
 
 	manager_->SetSpriteRenderer(renderer_->CreateSpriteRenderer());

@@ -96,8 +96,8 @@ void EffectPlatformDX12::CreateCheckedTexture()
 	auto g = static_cast<LLGI::GraphicsDX12*>(graphics_);
 
 	LLGI::TextureInitializationParameter param;
-	param.Size.X = 1280;
-	param.Size.Y = 720;
+	param.Size.X = WindowWidth;
+	param.Size.Y = WindowHeight;
 	checkTexture_ = g->CreateTexture(param);
 
 	auto b = (uint8_t*)checkTexture_->Lock();
@@ -123,9 +123,9 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 	commandListEfk_ = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk_);
 
 	LLGI::RenderTextureInitializationParameter renderParam;
-	renderParam.Size = LLGI::Vec2I(1280, 720);
+	renderParam.Size = LLGI::Vec2I(WindowWidth, WindowHeight);
 	LLGI::DepthTextureInitializationParameter depthParam;
-	depthParam.Size = LLGI::Vec2I(1280, 720);
+	depthParam.Size = LLGI::Vec2I(WindowWidth, WindowHeight);
 	colorBuffer_ = g->CreateRenderTexture(renderParam);
 	depthBuffer_ = g->CreateDepthTexture(depthParam);
 	renderPass_ = g->CreateRenderPass((const LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);

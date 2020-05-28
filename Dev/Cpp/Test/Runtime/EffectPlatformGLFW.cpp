@@ -51,7 +51,7 @@ EffectPlatformGLFW::EffectPlatformGLFW(bool isOpenGLMode)
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	}
 
-	glfwWindow_ = glfwCreateWindow(1280, 720, "Example glfw", nullptr, nullptr);
+	glfwWindow_ = glfwCreateWindow(WindowWidth, WindowHeight, "Example glfw", nullptr, nullptr);
 
 	if (glfwWindow_ == nullptr)
 	{

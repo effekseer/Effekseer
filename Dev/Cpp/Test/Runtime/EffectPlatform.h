@@ -7,6 +7,9 @@
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 
+static const int WindowWidth = 320;
+static const int WindowHeight = 240;
+
 struct EffectPlatformInitializingParameter
 {
 	bool VSync = true;

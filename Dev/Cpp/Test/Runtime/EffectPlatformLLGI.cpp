@@ -13,7 +13,7 @@ EffectPlatformLLGI::EffectPlatformLLGI()
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-	glfwWindow_ = glfwCreateWindow(1280, 720, "Example glfw", nullptr, nullptr);
+	glfwWindow_ = glfwCreateWindow(WindowWidth, WindowHeight, "Example glfw", nullptr, nullptr);
 
 	if (glfwWindow_ == nullptr)
 	{
@@ -84,7 +84,7 @@ bool EffectPlatformLLGI::TakeScreenshot(const char* path)
 	auto texture = platform_->GetCurrentScreen(color, true)->GetRenderTexture(0);
 	auto data = graphics_->CaptureRenderTarget(texture);
 
-	stbi_write_png(path, 1280, 720, 4, data.data(), 1280 * 4);
+	stbi_write_png(path, WindowWidth, WindowHeight, 4, data.data(), WindowWidth * 4);
 
 	return true;
 }
