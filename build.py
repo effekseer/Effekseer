@@ -69,7 +69,8 @@ if env['IGNORE_BUILD'] == '0':
             if is_x86:
                 aceutils.call('cmake .. -A Win32 -DBUILD_VIEWER=ON')
             else:
-                aceutils.call('cmake .. -A x64 -DBUILD_VIEWER=ON')
+                # run tests on x64
+                aceutils.call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON')
 
         elif aceutils.isMac():
             aceutils.call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')

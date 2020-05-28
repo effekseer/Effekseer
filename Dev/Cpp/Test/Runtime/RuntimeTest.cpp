@@ -117,7 +117,11 @@ void BasicRuntimeDeviceLostTest()
 void StartingFrameTest()
 {
 	srand(0);
-	auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+	auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+	auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 	EffectPlatformInitializingParameter param;
 
@@ -138,7 +142,11 @@ void UpdateHandleTest()
 {
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 
@@ -170,7 +178,11 @@ void UpdateHandleTest()
 
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.IsUpdatedByHandle = true;
@@ -204,7 +216,11 @@ void UpdateHandleTest()
 	// Check memory leak
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.IsUpdatedByHandle = true;
@@ -235,8 +251,11 @@ void PlaybackSpeedTest()
 {
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
-
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 		EffectPlatformInitializingParameter param;
 
 		platform->Initialize(param);
@@ -255,7 +274,11 @@ void PlaybackSpeedTest()
 
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.IsUpdatedByHandle = true;
@@ -275,24 +298,9 @@ void PlaybackSpeedTest()
 	}
 }
 
-void BasicRuntimeTest()
+void BasicRuntimeTest(bool onCI)
 {
 #ifdef _WIN32
-#ifndef __EFFEKSEER_BUILD_VERSION16__
-#ifdef __EFFEKSEER_BUILD_DX12__
-	{
-		auto platform = std::make_shared<EffectPlatformDX12>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
-		platform->Terminate();
-	}
-#endif
-#endif
-
-	{
-		auto platform = std::make_shared<EffectPlatformDX9>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_DX9");
-		platform->Terminate();
-	}
 
 	{
 		auto platform = std::make_shared<EffectPlatformDX11>();
@@ -300,10 +308,30 @@ void BasicRuntimeTest()
 		platform->Terminate();
 	}
 
+	if (!onCI)
 	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
-		platform->Terminate();
+
+#ifndef __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_DX12__
+		{
+			auto platform = std::make_shared<EffectPlatformDX12>();
+			BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
+			platform->Terminate();
+		}
+#endif
+#endif
+
+		{
+			auto platform = std::make_shared<EffectPlatformDX9>();
+			BasicRuntimeTestPlatform(platform.get(), "", "_DX9");
+			platform->Terminate();
+		}
+
+		{
+			auto platform = std::make_shared<EffectPlatformGL>();
+			BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+			platform->Terminate();
+		}
 	}
 
 #elif defined(__APPLE__)
