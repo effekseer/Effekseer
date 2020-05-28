@@ -35,6 +35,10 @@ jobs:
           name: Test
           path: build/Dev/Cpp/Test/Release/
 
+      - name: Test
+        run: python Script/test_screenshot.py
+        shell: cmd
+
       - name: Release Runtime
         run: release_runtime.bat
         shell: cmd
