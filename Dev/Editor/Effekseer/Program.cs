@@ -33,8 +33,14 @@ namespace Effekseer
 		{
 			// HACK code for mac
 			// To load libMonoPosix at first
+			try
 			{
 				var dummy = Effekseer.Utils.Zlib.Decompress(new byte[] { 1, 2, 3, 4 });
+			}
+			catch(Exception e)
+			{
+				ExportError(e);
+				return;
 			}
 
 #if DEBUG
@@ -49,9 +55,7 @@ namespace Effekseer
 			}
 			catch(Exception e)
 			{
-				DateTime dt = DateTime.Now;
-				var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
-				System.IO.File.WriteAllText(filename, e.ToString());
+				ExportError(e);
 				return;
 			}
 
@@ -126,10 +130,7 @@ namespace Effekseer
 				}
 				catch (Exception e)
 				{
-					DateTime dt = DateTime.Now;
-					var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
-					var filepath = Path.Combine(EntryDirectory, filename);
-					System.IO.File.WriteAllText(filepath, e.ToString());
+					ExportError(e);
 				}
 			}
 		}
@@ -313,6 +314,40 @@ namespace Effekseer
 		static void Core_OnOutputMessage(string obj)
 		{
 			swig.GUIManager.show(obj, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+		}
+
+		static void ExportError(Exception e)
+		{
+			DateTime dt = DateTime.Now;
+			var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+			var filepath = Path.Combine(EntryDirectory, filename);
+
+			try
+			{
+				System.IO.File.WriteAllText(filepath, e.ToString());
+
+				string message = "Error has been caused. Error log is written in " + filepath + "\nWe are glad if you send this error to Effekseer with a mail or twitter.\n";
+
+				if (Core.Language == Language.Japanese)
+				{
+					message = "エラーが発生しました。エラーログが" + filepath + "に出力されました。\nもしエラーをメールやTwitterでEffekseerに送っていただけると助かります。\n";
+				}
+				swig.GUIManager.show(message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+			}
+			catch (Exception e2)
+			{
+				string message = "Error has been caused\n";
+
+				if (Core.Language == Language.Japanese)
+				{
+					message = "エラーが発生しました。";
+				}
+
+				message += e.ToString();
+				message += "\n";
+				message += e2.ToString();
+				swig.GUIManager.show(message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+			}
 		}
 	}
 
