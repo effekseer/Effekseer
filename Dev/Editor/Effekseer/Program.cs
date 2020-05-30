@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -331,7 +331,7 @@ namespace Effekseer
 
 				if (Core.Language == Language.Japanese)
 				{
-					message = "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½BƒGƒ‰[ƒƒO‚ª" + filepath + "‚Éo—Í‚³‚ê‚Ü‚µ‚½B\n‚à‚µƒGƒ‰[‚ğƒ[ƒ‹‚âTwitter‚ÅEffekseer‚É‘—‚Á‚Ä‚¢‚½‚¾‚¯‚é‚Æ•‚©‚è‚Ü‚·B\n";
+					message = "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ãŒ" + filepath + "ã«å‡ºåŠ›ã•ã‚Œã¾ã—ãŸã€‚\nã‚‚ã—ã‚¨ãƒ©ãƒ¼ã‚’ãƒ¡ãƒ¼ãƒ«ã‚„Twitterã§Effekseerã«é€ã£ã¦ã„ãŸã ã‘ã‚‹ã¨åŠ©ã‹ã‚Šã¾ã™ã€‚\n";
 				}
 				swig.GUIManager.show(message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 			}
@@ -341,7 +341,7 @@ namespace Effekseer
 
 				if (Core.Language == Language.Japanese)
 				{
-					message = "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B";
+					message = "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚";
 				}
 
 				message += e.ToString();
