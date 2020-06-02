@@ -830,6 +830,11 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 {
 	EffectBasicRenderParameter param;
 	param.ColorTextureIndex = RendererCommon.ColorTextureIndex;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
+
+	param.AlphaTexWrapType = RendererCommon.Wrap3Type;
+#endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;
 	param.DistortionIntensity = RendererCommon.DistortionIntensity;
@@ -843,6 +848,11 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter param)
 {
 	RendererCommon.ColorTextureIndex = param.ColorTextureIndex;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	RendererCommon.AlphaTextureIndex = param.AlphaTextureIndex;
+
+	RendererCommon.Wrap3Type = param.AlphaTexWrapType;
+#endif
 	RendererCommon.AlphaBlend = param.AlphaBlend;
 	RendererCommon.Distortion = param.Distortion;
 	RendererCommon.DistortionIntensity = param.DistortionIntensity;

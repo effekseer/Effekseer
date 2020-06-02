@@ -1271,8 +1271,11 @@ struct ParameterAlphaCrunch
 		} FCurve;
 	};
 
+#pragma warning(push)
+#pragma warning(disable:4582)
 	ParameterAlphaCrunch()
 	{}
+#pragma warning(pop)
 
 	~ParameterAlphaCrunch()
 	{

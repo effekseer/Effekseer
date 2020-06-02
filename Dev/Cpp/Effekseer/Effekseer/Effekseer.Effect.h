@@ -586,6 +586,11 @@ public:
 struct EffectBasicRenderParameter
 {
 	int32_t				ColorTextureIndex;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	int32_t				AlphaTextureIndex;
+
+	TextureWrapType		AlphaTexWrapType;
+#endif
 	AlphaBlendType		AlphaBlend;
 	TextureFilterType	FilterType;
 	TextureWrapType		WrapType;
