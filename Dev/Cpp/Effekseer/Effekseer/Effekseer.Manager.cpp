@@ -983,6 +983,26 @@ void ManagerImplemented::SetLayer(Handle handle, int32_t layer)
 	}
 }
 
+int64_t ManagerImplemented::GetGroupMask(Handle handle) const
+{
+	auto it = m_DrawSets.find(handle);
+
+	if (it != m_DrawSets.end())
+	{
+		return it->second.GroupMask;
+	}
+}
+
+void ManagerImplemented::SetGroupMask(Handle handle, int64_t groupmask)
+{
+	auto it = m_DrawSets.find(handle);
+
+	if (it != m_DrawSets.end())
+	{
+		it->second.GroupMask = groupmask;
+	}
+}
+
 float ManagerImplemented::GetSpeed(Handle handle) const
 {
 	auto it = m_DrawSets.find(handle);
@@ -997,6 +1017,27 @@ void ManagerImplemented::SetSpeed(Handle handle, float speed)
 	{
 		m_DrawSets[handle].Speed = speed;
 		m_DrawSets[handle].IsParameterChanged = true;
+	}
+}
+
+void ManagerImplemented::SetTimeScaleByGroup(int64_t groupmask, float timeScale)
+{
+	for (auto& it : m_DrawSets)
+	{
+		if ((it.second.GroupMask & groupmask) != 0)
+		{
+			it.second.TimeScale = timeScale;
+		}
+	}
+}
+
+void ManagerImplemented::SetTimeScaleByHandle(Handle handle, float timeScale)
+{
+	auto it = m_DrawSets.find(handle);
+
+	if (it != m_DrawSets.end())
+	{
+		it->second.TimeScale = timeScale;
 	}
 }
 
@@ -1151,10 +1192,18 @@ void ManagerImplemented::Update(float deltaFrame)
 
 	BeginUpdate();
 
+	// add frames
 	for (auto& drawSet : m_DrawSets)
 	{
-		float df = drawSet.second.IsPaused ? 0 : deltaFrame * drawSet.second.Speed;
-		drawSet.second.GlobalPointer->BeginDeltaFrame(df);
+		float df = drawSet.second.IsPaused ? 0 : deltaFrame * drawSet.second.Speed * drawSet.second.TimeScale;
+		drawSet.second.NextUpdateFrame += df;
+	}
+
+	// specify delta frames
+	for (auto& drawSet : m_DrawSets)
+	{
+		drawSet.second.GlobalPointer->BeginDeltaFrame(drawSet.second.NextUpdateFrame);
+		drawSet.second.NextUpdateFrame = 0.0f;
 	}
 
 	for (auto& chunks : instanceChunks_)
@@ -1168,6 +1217,93 @@ void ManagerImplemented::Update(float deltaFrame)
 	for (auto& drawSet : m_DrawSets)
 	{
 		UpdateHandleInternal(drawSet.second);
+	}
+
+	EndUpdate();
+
+	// end to measure time
+	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
+}
+
+void ManagerImplemented::Update(const UpdateParameter& parameter)
+{
+	// start to measure time
+	int64_t beginTime = ::Effekseer::GetTime();
+
+	// Hack for GC
+	for (size_t i = 0; i < m_RemovingDrawSets.size(); i++)
+	{
+		for (auto& ds : m_RemovingDrawSets[i])
+		{
+			ds.second.UpdateCountAfterRemoving++;
+		}
+	}
+
+	// add frames
+	float maximumDeltaFrame = 0;
+
+	for (auto& drawSet : m_DrawSets)
+	{
+		float df = drawSet.second.IsPaused ? 0 : parameter.DeltaFrame * drawSet.second.Speed * drawSet.second.TimeScale;
+		drawSet.second.NextUpdateFrame += df;
+
+		maximumDeltaFrame = std::max(maximumDeltaFrame, drawSet.second.NextUpdateFrame);
+	}
+
+	int times = 0;
+
+	if (parameter.UpdateInterval == 0)
+	{
+		times = static_cast<int>(maximumDeltaFrame / parameter.UpdateInterval);
+	}
+
+	// Update once at least
+	if (times == 0)
+	{
+		times = 1;
+	}
+
+	BeginUpdate();
+
+	for (int32_t t = 0; t < times; t++)
+	{
+		// specify delta frames
+		for (auto& drawSet : m_DrawSets)
+		{
+			if (drawSet.second.NextUpdateFrame >= parameter.UpdateInterval)
+			{
+				float idf = 0;
+
+				if (parameter.UpdateInterval > 0)
+				{
+					idf = parameter.UpdateInterval;
+				}
+				else
+				{
+					idf = drawSet.second.NextUpdateFrame;
+				}
+
+				drawSet.second.NextUpdateFrame -= idf;
+				drawSet.second.GlobalPointer->BeginDeltaFrame(idf);
+			}
+			else
+			{
+				drawSet.second.GlobalPointer->BeginDeltaFrame(0);
+			}
+		}
+
+		for (auto& chunks : instanceChunks_)
+		{
+			for (auto chunk : chunks)
+			{
+				chunk->UpdateInstances();
+			}
+		}
+
+		for (auto& drawSet : m_DrawSets)
+		{
+			UpdateHandleInternal(drawSet.second);
+		}
 	}
 
 	EndUpdate();
@@ -1224,8 +1360,11 @@ void ManagerImplemented::UpdateHandle(Handle handle, float deltaFrame)
 			DrawSet& drawSet = it->second;
 
 			{
-				float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed;
-				drawSet.GlobalPointer->BeginDeltaFrame(df);
+				float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed * drawSet.TimeScale;
+				drawSet.NextUpdateFrame += df;
+
+				drawSet.GlobalPointer->BeginDeltaFrame(drawSet.NextUpdateFrame);
+				drawSet.NextUpdateFrame = 0.0f;
 			}
 
 			UpdateInstancesByInstanceGlobal(drawSet);
@@ -1766,8 +1905,7 @@ void ManagerImplemented::EndReloadEffect(Effect* effect, bool doLockThread)
 		}
 
 		// Create an instance through a container
-		ds.InstanceContainerPointer =
-			CreateInstanceContainer(e->GetRoot(), ds.GlobalPointer, true, ds.GlobalMatrix, NULL);
+		ds.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), ds.GlobalPointer, true, ds.GlobalMatrix, NULL);
 
 		// skip
 		for (float f = 0; f < ds.GlobalPointer->GetUpdatedFrame() - 1; f += 1.0f)

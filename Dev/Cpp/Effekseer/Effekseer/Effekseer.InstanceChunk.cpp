@@ -21,7 +21,7 @@ void InstanceChunk::UpdateInstances()
 
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				auto deltaTime = instance->GetInstanceGlobal()->NextDeltaFrame;
+				auto deltaTime = instance->GetInstanceGlobal()->GetNextDeltaFrame();
 				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
@@ -52,7 +52,7 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				auto deltaTime = global->NextDeltaFrame;
+				auto deltaTime = global->GetNextDeltaFrame();
 				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
