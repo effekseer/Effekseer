@@ -1274,7 +1274,11 @@ struct ParameterAlphaCrunch
 #pragma warning(push)
 #pragma warning(disable:4582)
 	ParameterAlphaCrunch()
-	{}
+	{
+		Type = ParameterAlphaCrunch::EType::FIXED;
+		Fixed.RefEq = -1;
+		Fixed.Threshold = 0;
+	}
 #pragma warning(pop)
 
 	~ParameterAlphaCrunch()
