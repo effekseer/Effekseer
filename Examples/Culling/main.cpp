@@ -3,16 +3,17 @@
 //
 //----------------------------------------------------------------------------------
 #include <stdio.h>
-#include <windows.h>
+#include <string>
 #include <vector>
+#include <windows.h>
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <d3d9.h>
 #include <XAudio2.h>
-#pragma comment(lib, "d3d9.lib" )
-#pragma comment(lib, "xaudio2.lib" )
+#include <d3d9.h>
+#pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "xaudio2.lib")
 
 //----------------------------------------------------------------------------------
 //
@@ -27,31 +28,31 @@
 static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
-static ::Effekseer::Manager*			g_manager = NULL;
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
-static ::EffekseerSound::Sound*			g_sound = NULL;
-static ::Effekseer::Effect*				g_effects[3];
-static ::Effekseer::Vector3D			g_position;
+static ::Effekseer::Manager* g_manager = NULL;
+static ::EffekseerRenderer::Renderer* g_renderer = NULL;
+static ::EffekseerSound::Sound* g_sound = NULL;
+static ::Effekseer::Effect* g_effects[3];
+static ::Effekseer::Vector3D g_position;
 
-static LPDIRECT3D9						g_d3d = NULL;
-static LPDIRECT3DDEVICE9				g_d3d_device = NULL;
-static IXAudio2*						g_xa2 = NULL;
-static IXAudio2MasteringVoice*			g_xa2_master = NULL;
+static LPDIRECT3D9 g_d3d = NULL;
+static LPDIRECT3DDEVICE9 g_d3d_device = NULL;
+static IXAudio2* g_xa2 = NULL;
+static IXAudio2MasteringVoice* g_xa2_master = NULL;
 
-static std::vector<::Effekseer::Handle>		g_handles;
+static std::vector<::Effekseer::Handle> g_handles;
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch( msg ) 
+	switch (msg)
 	{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		default:
-			return DefWindowProc(hWnd, msg, wParam, lParam);
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 	return 0;
 }
@@ -62,35 +63,34 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 void InitWindow()
 {
 	WNDCLASS wndClass;
-	wchar_t szClassNme[]      =  L"Culling";
-	wndClass.style         = CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc   = WndProc;
-	wndClass.cbClsExtra    = 0;
-	wndClass.cbWndExtra    = 0;
-	wndClass.hInstance     = GetModuleHandle(0);
-	wndClass.hIcon         = NULL;
-	wndClass.hCursor       = LoadCursor(NULL, IDC_ARROW);
+	wchar_t szClassNme[] = L"Culling";
+	wndClass.style = CS_HREDRAW | CS_VREDRAW;
+	wndClass.lpfnWndProc = WndProc;
+	wndClass.cbClsExtra = 0;
+	wndClass.cbWndExtra = 0;
+	wndClass.hInstance = GetModuleHandle(0);
+	wndClass.hIcon = NULL;
+	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	wndClass.lpszMenuName  = NULL;
+	wndClass.lpszMenuName = NULL;
 	wndClass.lpszClassName = szClassNme;
 	RegisterClass(&wndClass);
-	g_window_handle = CreateWindow(
-		szClassNme,
-		L"Culling",
-		WS_SYSMENU,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		g_window_width,
-		g_window_height,
-		NULL,
-		NULL,
-		GetModuleHandle(0),
-		NULL);
-	ShowWindow( g_window_handle, true );
-	UpdateWindow( g_window_handle );
-	
+	g_window_handle = CreateWindow(szClassNme,
+								   L"Culling",
+								   WS_SYSMENU,
+								   CW_USEDEFAULT,
+								   CW_USEDEFAULT,
+								   g_window_width,
+								   g_window_height,
+								   NULL,
+								   NULL,
+								   GetModuleHandle(0),
+								   NULL);
+	ShowWindow(g_window_handle, true);
+	UpdateWindow(g_window_handle);
+
 	// COMの初期化
-	CoInitializeEx( NULL, NULL );
+	CoInitializeEx(NULL, NULL);
 
 	// DirectX9の初期化を行う
 	D3DPRESENT_PARAMETERS d3dp;
@@ -98,27 +98,21 @@ void InitWindow()
 	d3dp.BackBufferWidth = g_window_width;
 	d3dp.BackBufferHeight = g_window_height;
 	d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
-    d3dp.BackBufferCount = 1;      
+	d3dp.BackBufferCount = 1;
 	d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dp.Windowed = TRUE;
 	d3dp.hDeviceWindow = g_window_handle;
 	d3dp.EnableAutoDepthStencil = TRUE;
-    d3dp.AutoDepthStencilFormat = D3DFMT_D16;
+	d3dp.AutoDepthStencilFormat = D3DFMT_D16;
 
 	g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
-	
-	g_d3d->CreateDevice( 
-		D3DADAPTER_DEFAULT,
-		D3DDEVTYPE_HAL,
-		g_window_handle,
-		D3DCREATE_HARDWARE_VERTEXPROCESSING,
-		&d3dp,
-		&g_d3d_device );
-	
-	// XAudio2の初期化を行う
-	XAudio2Create( &g_xa2 );
 
-	g_xa2->CreateMasteringVoice( &g_xa2_master );
+	g_d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, g_window_handle, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dp, &g_d3d_device);
+
+	// XAudio2の初期化を行う
+	XAudio2Create(&g_xa2);
+
+	g_xa2->CreateMasteringVoice(&g_xa2_master);
 }
 
 //----------------------------------------------------------------------------------
@@ -128,34 +122,34 @@ void MainLoop()
 {
 	int time = 0;
 	bool reverse = false;
-	for(;;)
-	{ 
+	for (;;)
+	{
 		MSG msg;
-		if (PeekMessage (&msg,NULL,0,0,PM_NOREMOVE)) 
+		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
 		{
-			if( msg.message == WM_QUIT )
+			if (msg.message == WM_QUIT)
 			{
-				return ;
+				return;
 			}
-			GetMessage (&msg,NULL,0,0);
+			GetMessage(&msg, NULL, 0, 0);
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 		else
 		{
-			if( time % 120 == 0 )
+			if (time % 120 == 0)
 			{
 				// エフェクトの停止
-				for( size_t i = 0; i < g_handles.size(); i++ )
+				for (size_t i = 0; i < g_handles.size(); i++)
 				{
 					g_manager->StopEffect(g_handles[i]);
 				}
 				g_handles.clear();
 
 				// エフェクトの再生
-				for( int i = 0; i < 3; i++ )
+				for (int i = 0; i < 3; i++)
 				{
-					Effekseer::Handle handle = g_manager->Play( g_effects[i], (i - 1) * 10.0f, 0, 0 );
+					Effekseer::Handle handle = g_manager->Play(g_effects[i], (i - 1) * 10.0f, 0, 0);
 					g_handles.push_back(handle);
 				}
 
@@ -163,9 +157,9 @@ void MainLoop()
 			}
 
 			// エフェクトの更新処理を行う
-			g_manager->Update();	
-			
-			g_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
+			g_manager->Update();
+
+			g_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 			g_d3d_device->BeginScene();
 
 			// エフェクトの描画開始処理を行う。
@@ -173,7 +167,7 @@ void MainLoop()
 
 			// 視錐体内に存在するエフェクトを計算する。
 			// カリングの設定がないエフェクトは常に描画される。
-			g_manager->CalcCulling( g_renderer->GetCameraProjectionMatrix(), false );
+			g_manager->CalcCulling(g_renderer->GetCameraProjectionMatrix(), false);
 
 			// エフェクトを描画する。
 			g_manager->Draw();
@@ -187,46 +181,46 @@ void MainLoop()
 
 			{
 				HRESULT hr;
-				hr = g_d3d_device->Present( NULL, NULL, NULL, NULL );
+				hr = g_d3d_device->Present(NULL, NULL, NULL, NULL);
 
 				// デバイスロスト処理
-				switch ( hr )
+				switch (hr)
 				{
-					// デバイスロスト
-					case D3DERR_DEVICELOST:
-					while ( FAILED( hr = g_d3d_device->TestCooperativeLevel() ) )
+				// デバイスロスト
+				case D3DERR_DEVICELOST:
+					while (FAILED(hr = g_d3d_device->TestCooperativeLevel()))
 					{
-						switch ( hr )
+						switch (hr)
 						{
-							// デバイスロスト
-							case D3DERR_DEVICELOST:
-								::SleepEx( 1000, true );
-								break;
+						// デバイスロスト
+						case D3DERR_DEVICELOST:
+							::SleepEx(1000, true);
+							break;
 
-							// デバイスロスト：リセット可
-							case D3DERR_DEVICENOTRESET:
-								
-								// デバイスロストの処理を行う前に実行する
-								g_renderer->OnLostDevice();
+						// デバイスロスト：リセット可
+						case D3DERR_DEVICENOTRESET:
 
-								D3DPRESENT_PARAMETERS d3dp;
-								ZeroMemory(&d3dp, sizeof(d3dp));
-								d3dp.BackBufferWidth = g_window_width;
-								d3dp.BackBufferHeight = g_window_height;
-								d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
-								d3dp.BackBufferCount = 1;      
-								d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-								d3dp.Windowed = TRUE;
-								d3dp.hDeviceWindow = g_window_handle;
-								d3dp.EnableAutoDepthStencil = TRUE;
-								d3dp.AutoDepthStencilFormat = D3DFMT_D16;
+							// デバイスロストの処理を行う前に実行する
+							g_renderer->OnLostDevice();
 
-								g_d3d_device->Reset( &d3dp );
+							D3DPRESENT_PARAMETERS d3dp;
+							ZeroMemory(&d3dp, sizeof(d3dp));
+							d3dp.BackBufferWidth = g_window_width;
+							d3dp.BackBufferHeight = g_window_height;
+							d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
+							d3dp.BackBufferCount = 1;
+							d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+							d3dp.Windowed = TRUE;
+							d3dp.hDeviceWindow = g_window_handle;
+							d3dp.EnableAutoDepthStencil = TRUE;
+							d3dp.AutoDepthStencilFormat = D3DFMT_D16;
 
-								// デバイスロストの処理の後に実行する
-								g_renderer->OnResetDevice();
+							g_d3d_device->Reset(&d3dp);
 
-								break;
+							// デバイスロストの処理の後に実行する
+							g_renderer->OnResetDevice();
+
+							break;
 						}
 					}
 					break;
@@ -245,7 +239,7 @@ void GetDirectoryName(char* dst, char* src);
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 #if _WIN32
 	char current_path[MAX_PATH + 1];
@@ -253,68 +247,68 @@ int main(int argc, char **argv)
 	SetCurrentDirectoryA(current_path);
 #endif
 
-	for( int i = 0; i < 3; i++ )
+	for (int i = 0; i < 3; i++)
 	{
 		g_effects[i] = NULL;
 	}
 
 	InitWindow();
-	
+
 	// 描画用インスタンスの生成
-	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 4000 );
-	
+	g_renderer = ::EffekseerRendererDX9::Renderer::Create(g_d3d_device, 4000);
+
 	// エフェクト管理用インスタンスの生成
-	g_manager = ::Effekseer::Manager::Create( 4000 );
+	g_manager = ::Effekseer::Manager::Create(4000);
 
 	// 描画用インスタンスから描画機能を設定
-	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
-	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
-	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
-	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
+	g_manager->SetSpriteRenderer(g_renderer->CreateSpriteRenderer());
+	g_manager->SetRibbonRenderer(g_renderer->CreateRibbonRenderer());
+	g_manager->SetRingRenderer(g_renderer->CreateRingRenderer());
+	g_manager->SetModelRenderer(g_renderer->CreateModelRenderer());
 	g_manager->SetTrackRenderer(g_renderer->CreateTrackRenderer());
 
 	// 描画用インスタンスからテクスチャの読込機能を設定
 	// 独自拡張可能、現在はファイルから読み込んでいる。
-	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
-	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
+	g_manager->SetTextureLoader(g_renderer->CreateTextureLoader());
+	g_manager->SetModelLoader(g_renderer->CreateModelLoader());
 
 	// 音再生用インスタンスの生成
-	g_sound = ::EffekseerSound::Sound::Create( g_xa2, 16, 16 );
+	g_sound = ::EffekseerSound::Sound::Create(g_xa2, 16, 16);
 
 	// 音再生用インスタンスから再生機能を指定
-	g_manager->SetSoundPlayer( g_sound->CreateSoundPlayer() );
-	
+	g_manager->SetSoundPlayer(g_sound->CreateSoundPlayer());
+
 	// 音再生用インスタンスからサウンドデータの読込機能を設定
 	// 独自拡張可能、現在はファイルから読み込んでいる。
-	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
+	g_manager->SetSoundLoader(g_sound->CreateSoundLoader());
 
 	// 視点位置を確定
-	g_position = ::Effekseer::Vector3D( 10.0f, 5.0f, 20.0f );
+	g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 	// 投影行列を設定
 	g_renderer->SetProjectionMatrix(
-		::Effekseer::Matrix44().PerspectiveFovRH( 90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f ) );
+		::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f));
 
 	// カメラ行列を設定
 	g_renderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH( g_position, ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f ), ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
-	
+		::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
 	// カリングを行う範囲を設定
 	// 範囲内にエフェクトが存在するとカリングが高速に実行される
 	// layerCountが大きいほうが高速にカリングを行うがメモリも消費する。最大6程度。
-	g_manager->CreateCullingWorld( 1000.0f, 1000.0f, 1000.0f, 5);
+	g_manager->CreateCullingWorld(1000.0f, 1000.0f, 1000.0f, 5);
 
 	// エフェクトの読込
-	g_effects[0] = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"r_square.efk" );
-	g_effects[1] = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"g_square.efk" );
-	g_effects[2] = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"b_square.efk" );
+	g_effects[0] = Effekseer::Effect::Create(g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"r_square.efk");
+	g_effects[1] = Effekseer::Effect::Create(g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"g_square.efk");
+	g_effects[2] = Effekseer::Effect::Create(g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"b_square.efk");
 
 	MainLoop();
 
 	// エフェクトの破棄
-	for( int i = 0; i < 3; i++ )
+	for (int i = 0; i < 3; i++)
 	{
-		ES_SAFE_RELEASE( g_effects[i] );
+		ES_SAFE_RELEASE(g_effects[i]);
 	}
 
 	// 先にエフェクト管理用インスタンスを破棄
@@ -327,16 +321,16 @@ int main(int argc, char **argv)
 	g_renderer->Destroy();
 
 	// XAudio2の解放
-	if( g_xa2_master != NULL )
+	if (g_xa2_master != NULL)
 	{
 		g_xa2_master->DestroyVoice();
 		g_xa2_master = NULL;
 	}
-	ES_SAFE_RELEASE( g_xa2 );
+	ES_SAFE_RELEASE(g_xa2);
 
 	// DirectXの解放
-	ES_SAFE_RELEASE( g_d3d_device );
-	ES_SAFE_RELEASE( g_d3d );
+	ES_SAFE_RELEASE(g_d3d_device);
+	ES_SAFE_RELEASE(g_d3d);
 
 	// COMの終了処理
 	CoUninitialize();
