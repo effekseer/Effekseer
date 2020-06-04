@@ -51,9 +51,18 @@ private:
 
 		int32_t Layer = 0;
 
+		//! a time (by 1/60) to progress an effect when Update is called 
+		float NextUpdateFrame = 0;
+
+		//! Rate of scale in relation to manager's time
+		float TimeScale = 1.0f;
+
 		//! HACK for GC (Instances must be updated after removing) If you use UpdateHandle, updating instance which is contained removing
 		//! effects is not called. It makes update called forcibly.
 		int32_t UpdateCountAfterRemoving = 0;
+
+		//! a bit mask for group
+		int64_t GroupMask = 0;
 
 		DrawSet(Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 			: ParameterPointer(effect)
@@ -348,15 +357,25 @@ public:
 
 	void SetLayer(Handle handle, int32_t layer) override;
 
+	int64_t GetGroupMask(Handle handle) const override;
+
+	void SetGroupMask(Handle handle, int64_t groupmask) override;
+
 	float GetSpeed(Handle handle) const override;
 
 	void SetSpeed(Handle handle, float speed) override;
+
+	void SetTimeScaleByGroup(int64_t groupmask, float timeScale) override;
+
+	void SetTimeScaleByHandle(Handle handle, float timeScale) override;
 
 	void SetAutoDrawing(Handle handle, bool autoDraw) override;
 
 	void Flip() override;
 
 	void Update(float deltaFrame) override;
+
+	void Update(const UpdateParameter& parameter) override;
 
 	void BeginUpdate() override;
 
