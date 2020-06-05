@@ -834,6 +834,23 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
 
 	param.AlphaTexWrapType = RendererCommon.Wrap3Type;
+
+	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
+	{
+		if (RendererCommon.UVs[0].Animation.InterpolationType != 0)
+		{
+			param.FlipbookParams.Enable = true;
+		}
+		else
+		{
+			param.FlipbookParams.Enable = false;
+		}
+	}
+	
+	param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
+	param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
+	param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
+
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;
@@ -852,6 +869,14 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	RendererCommon.AlphaTextureIndex = param.AlphaTextureIndex;
 
 	RendererCommon.Wrap3Type = param.AlphaTexWrapType;
+
+	if (param.FlipbookParams.Enable)
+	{
+		RendererCommon.UVTypes[0] = ParameterRendererCommon::UV_ANIMATION;
+		RendererCommon.UVs[0].Animation.InterpolationType = static_cast<decltype(RendererCommon.UVs[0].Animation.InterpolationType)>(param.FlipbookParams.LoopType);
+		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;
+		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.DivideY;
+	}
 #endif
 	RendererCommon.AlphaBlend = param.AlphaBlend;
 	RendererCommon.Distortion = param.Distortion;
