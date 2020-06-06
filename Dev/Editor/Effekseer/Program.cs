@@ -318,6 +318,27 @@ namespace Effekseer
 
 		static void ExportError(Exception e)
 		{
+			string messageBase = "Error has been caused.";
+
+			if (e is UnauthorizedAccessException)
+			{
+				if (Core.Language == Language.Japanese)
+				{
+					messageBase = "アクセスが拒否されエラーが発生しました。\n他のディレクトリにインストールしてください。\nもしくはアクセスできないファイルを選択しています。\n";
+				}
+				else
+				{
+					messageBase = "Access is denied and an error occurred. \nPlease install it in another directory. \nOr you have selected a file that you cannot access.\n";
+				}
+			}
+			else
+			{
+				if (Core.Language == Language.Japanese)
+				{
+					messageBase = "エラーが発生しました。";
+				}
+			}
+
 			DateTime dt = DateTime.Now;
 			var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
 			var filepath = Path.Combine(EntryDirectory, filename);
@@ -326,22 +347,17 @@ namespace Effekseer
 			{
 				System.IO.File.WriteAllText(filepath, e.ToString());
 
-				string message = "Error has been caused. Error log is written in " + filepath + "\nWe are glad if you send this error to Effekseer with a mail or twitter.\n";
+				string message = messageBase + "Error log is written in " + filepath + "\nWe are glad if you send this error to Effekseer with a mail or twitter.\n";
 
 				if (Core.Language == Language.Japanese)
 				{
-					message = "エラーが発生しました。エラーログが" + filepath + "に出力されました。\nもしエラーをメールやTwitterでEffekseerに送っていただけると助かります。\n";
+					message = messageBase + "エラーログが" + filepath + "に出力されました。\nもしエラーをメールやTwitterでEffekseerに送っていただけると助かります。\n";
 				}
 				swig.GUIManager.show(message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 			}
 			catch (Exception e2)
 			{
-				string message = "Error has been caused\n";
-
-				if (Core.Language == Language.Japanese)
-				{
-					message = "エラーが発生しました。";
-				}
+				string message = messageBase;
 
 				message += e.ToString();
 				message += "\n";
