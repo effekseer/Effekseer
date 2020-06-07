@@ -991,6 +991,8 @@ int64_t ManagerImplemented::GetGroupMask(Handle handle) const
 	{
 		return it->second.GroupMask;
 	}
+
+	return 0;
 }
 
 void ManagerImplemented::SetGroupMask(Handle handle, int64_t groupmask)
