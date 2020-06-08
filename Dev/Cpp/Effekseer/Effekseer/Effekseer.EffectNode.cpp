@@ -873,7 +873,7 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	if (param.FlipbookParams.Enable)
 	{
 		RendererCommon.UVTypes[0] = ParameterRendererCommon::UV_ANIMATION;
-		RendererCommon.UVs[0].Animation.InterpolationType = static_cast<decltype(RendererCommon.UVs[0].Animation.InterpolationType)>(param.FlipbookParams.LoopType);
+		RendererCommon.UVs[0].Animation.LoopType = static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.LoopType);
 		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;
 		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.DivideY;
 	}
