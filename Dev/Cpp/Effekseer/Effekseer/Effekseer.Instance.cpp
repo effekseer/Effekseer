@@ -1179,6 +1179,7 @@ void Instance::Update( float deltaFrame, bool shown )
 		}
 	}
 
+	if(m_pEffectNode->m_effect->GetVersion() >= 1600)
 	{
 		if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FIXED)
 		{

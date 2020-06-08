@@ -830,6 +830,28 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 {
 	EffectBasicRenderParameter param;
 	param.ColorTextureIndex = RendererCommon.ColorTextureIndex;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
+
+	param.AlphaTexWrapType = RendererCommon.Wrap3Type;
+
+	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
+	{
+		if (RendererCommon.UVs[0].Animation.InterpolationType != 0)
+		{
+			param.FlipbookParams.Enable = true;
+		}
+		else
+		{
+			param.FlipbookParams.Enable = false;
+		}
+	}
+	
+	param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
+	param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
+	param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
+
+#endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;
 	param.DistortionIntensity = RendererCommon.DistortionIntensity;
@@ -843,6 +865,19 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter param)
 {
 	RendererCommon.ColorTextureIndex = param.ColorTextureIndex;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	RendererCommon.AlphaTextureIndex = param.AlphaTextureIndex;
+
+	RendererCommon.Wrap3Type = param.AlphaTexWrapType;
+
+	if (param.FlipbookParams.Enable)
+	{
+		RendererCommon.UVTypes[0] = ParameterRendererCommon::UV_ANIMATION;
+		RendererCommon.UVs[0].Animation.LoopType = static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.LoopType);
+		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;
+		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.DivideY;
+	}
+#endif
 	RendererCommon.AlphaBlend = param.AlphaBlend;
 	RendererCommon.Distortion = param.Distortion;
 	RendererCommon.DistortionIntensity = param.DistortionIntensity;
@@ -860,7 +895,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 	if (GetType() == EFFECT_NODE_TYPE_MODEL)
 	{
 		auto t = (EffectNodeModel*)this;
-		param.Lighting = t->Lighting;
+		param.Lighting = RendererCommon.MaterialType == RendererMaterialType::Lighting;
 	}
 
 	return param;

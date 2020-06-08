@@ -7,6 +7,7 @@ namespace Effekseer.Data
 {
 	public class AlphaTextureParameter
 	{
+		[IO(Export = true)]
 		[Name(language = Language.Japanese, value = "アルファ画像")]
 		[Name(language = Language.English, value = "α Texture")]
 		public Value.PathForImage Texture
@@ -14,10 +15,12 @@ namespace Effekseer.Data
 			get; private set;
 		}
 
+		[IO(Export = true)]
 		[Name(language = Language.Japanese, value = "フィルタ(アルファ画像)")]
 		[Name(language = Language.English, value = "Filter(α Texture)")]
 		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
 
+		[IO(Export = true)]
 		[Name(language = Language.Japanese, value = "外側(アルファ画像)")]
 		[Name(language = Language.English, value = "Wrap(α Texture)")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
@@ -150,6 +153,7 @@ namespace Effekseer.Data
 		public AlphaTextureParameter AlphaTextureParam { get; private set; }
 #endif
 
+		[IO(Export = true)]
 		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
         public AdvancedRenderCommonValues()
