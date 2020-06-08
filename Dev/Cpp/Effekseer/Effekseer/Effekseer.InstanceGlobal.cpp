@@ -40,12 +40,14 @@ InstanceGlobal::~InstanceGlobal()
 	
 }
 
-void InstanceGlobal::BeginDeltaFrame(float frame) { NextDeltaFrame = frame; }
+float InstanceGlobal::GetNextDeltaFrame() const { return nextDeltaFrame_; }
+
+void InstanceGlobal::BeginDeltaFrame(float frame) { nextDeltaFrame_ = frame; }
 
 void InstanceGlobal::EndDeltaFrame()
 {
-	m_updatedFrame += NextDeltaFrame;
-	NextDeltaFrame = 0.0f;
+	m_updatedFrame += nextDeltaFrame_;
+	nextDeltaFrame_ = 0.0f;
 }
 
 std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index) {

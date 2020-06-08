@@ -45,6 +45,8 @@ private:
 
 	std::array<float, 4> dynamicInputParameters;
 
+	float nextDeltaFrame_ = 0.0f;
+
 	//! placement new
 	static void* operator new(size_t size);
 
@@ -57,7 +59,7 @@ private:
 
 public:
 	//! A delta time for next update
-	float NextDeltaFrame = 0.0f;
+	float GetNextDeltaFrame() const;
 
 	void BeginDeltaFrame(float frame);
 

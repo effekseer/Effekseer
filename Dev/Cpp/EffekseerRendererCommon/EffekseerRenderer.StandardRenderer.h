@@ -136,7 +136,7 @@ struct StandardRendererState
 #endif
 		if (TexturePtr != state.TexturePtr)
 			return true;
-		if (NormalTexturePtr != state.TexturePtr)
+		if (NormalTexturePtr != state.NormalTexturePtr)
 			return true;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		if (AlphaTexturePtr != state.AlphaTexturePtr)

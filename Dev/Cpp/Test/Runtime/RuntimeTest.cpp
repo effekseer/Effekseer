@@ -59,6 +59,18 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
+	auto single16Test = [&](const char16_t* name, const char* savename) -> void {
+		srand(0);
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
+
+		for (size_t i = 0; i < 30; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		platform->StopAllEffects();
+	};
+
 	single10Test(u"SimpleLaser", "SimpleLaser");
 	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
@@ -73,6 +85,10 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_Sampler1", "Material_Sampler1");
 	single15Test(u"Material_Refraction", "Material_Refraction");
 	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	single16Test(u"Flip01", "Flip01");
+#endif
 }
 
 void BasicRuntimeDeviceLostTest()
