@@ -84,7 +84,7 @@ namespace Effekseer.Binary
 								}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-								if(exporterVersion >= ExporterVersion.Ver1600)
+								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
 									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -92,6 +92,15 @@ namespace Effekseer.Binary
 										if (!UsedTextures.Contains(alpha_relative_path))
 										{
 											UsedTextures.Add(alpha_relative_path);
+										}
+									}
+
+									var uvDistortion_relative_path = _node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture.RelativePath;
+									if (_node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture && uvDistortion_relative_path != string.Empty)
+									{
+										if (!UsedTextures.Contains(uvDistortion_relative_path))
+										{
+											UsedTextures.Add(uvDistortion_relative_path);
 										}
 									}
 								}
@@ -117,6 +126,15 @@ namespace Effekseer.Binary
 										if (!UsedDistortionTextures.Contains(alpha_relative_path))
 										{
 											UsedDistortionTextures.Add(alpha_relative_path);
+										}
+									}
+
+									var uvDistortion_relative_path = _node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture.RelativePath;
+									if (_node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture && uvDistortion_relative_path != string.Empty)
+									{
+										if (!UsedDistortionTextures.Contains(uvDistortion_relative_path))
+										{
+											UsedDistortionTextures.Add(uvDistortion_relative_path);
 										}
 									}
 								}
@@ -145,12 +163,23 @@ namespace Effekseer.Binary
 #if __EFFEKSEER_BUILD_VERSION16__
 								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
+									// alpha texture
 									var path3 = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && path3 != string.Empty)
 									{
 										if (!UsedTextures.Contains(path3))
 										{
 											UsedTextures.Add(path3);
+										}
+									}
+
+									// uv distortion texture
+									var path4 = _node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture.RelativePath;
+									if (_node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture && path4 != string.Empty)
+									{
+										if (!UsedTextures.Contains(path4))
+										{
+											UsedTextures.Add(path4);
 										}
 									}
 								}

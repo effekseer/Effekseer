@@ -875,6 +875,7 @@ namespace Effekseer.Data
 		public UVFCurveParamater UVFCurve { get; private set; }
 
 #if __EFFEKSEER_BUILD_VERSION16__
+		// alpha texture uv
 		[Selector(ID = 101)]
 		[Name(language = Language.Japanese, value = "UV(アルファ画像)")]
 		[Name(language = Language.English, value = "UV(α Texture)")]
@@ -903,6 +904,32 @@ namespace Effekseer.Data
 		[Selected(ID = 101, Value = 4)]
 		[IO(Export = true)]
 		public UVFCurveParamater UV2FCurve { get; private set; }
+
+		// uv distortion texture uv
+		[Selector(ID = 102)]
+		[Name(language = Language.Japanese, value = "UV(UV歪み画像)")]
+		[Name(language = Language.English, value = "UV(UV Distortion Texture)")]
+		public Value.Enum<UVType> UV3 { get; private set; }
+
+		[Selected(ID = 102, Value = 0)]
+		[IO(Export = true)]
+		public UVDefaultParamater UV3Default { get; private set; }
+
+		[Selected(ID = 102, Value = 1)]
+		[IO(Export = true)]
+		public UVFixedParamater UV3Fixed { get; private set; }
+
+		[Selected(ID = 102, Value = 2)]
+		[IO(Export = true)]
+		public UVAnimationParamater UV3Animation { get; private set; }
+
+		[Selected(ID = 102, Value = 3)]
+		[IO(Export = true)]
+		public UVScrollParamater UV3Scroll { get; private set; }
+
+		[Selected(ID = 102, Value = 4)]
+		[IO(Export = true)]
+		public UVFCurveParamater UV3FCurve { get; private set; }
 #endif
 
 		[Key(key = "BRS_ColorInheritType")]
@@ -959,6 +986,13 @@ namespace Effekseer.Data
 			UV2Animation = new UVAnimationParamater();
 			UV2Scroll = new UVScrollParamater();
 			UV2FCurve = new UVFCurveParamater();
+
+			UV3 = new Value.Enum<UVType>();
+			UV3Default = new UVDefaultParamater();
+			UV3Fixed = new UVFixedParamater();
+			UV3Animation = new UVAnimationParamater();
+			UV3Scroll = new UVScrollParamater();
+			UV3FCurve = new UVFCurveParamater();
 #endif
 
 			ZWrite = new Value.Boolean(false);

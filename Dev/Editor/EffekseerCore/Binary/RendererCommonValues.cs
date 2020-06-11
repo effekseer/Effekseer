@@ -25,6 +25,8 @@ namespace Effekseer.Binary
 
 #if __EFFEKSEER_BUILD_VERSION16__
 			var alphaTexInfo = new TextureInformation();
+
+			var uvDistortionTexInfo = new TextureInformation();
 #endif
 
 			data.Add(((int)value.Material.Value).GetBytes());
@@ -72,10 +74,13 @@ namespace Effekseer.Binary
 				data.Add((-1).GetBytes());
 
 #if __EFFEKSEER_BUILD_VERSION16__
-				// alpha texture
 				if (version >= ExporterVersion.Ver1600)
 				{
+					// alpha texture
 					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+
+					// uv distortion texture
+					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -88,10 +93,13 @@ namespace Effekseer.Binary
 				data.Add((-1).GetBytes());
 
 #if __EFFEKSEER_BUILD_VERSION16__
-				// alpha texture
 				if (version >= ExporterVersion.Ver1600)
 				{
+					// alpha texture
 					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+
+					// uv distortion texture
+					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, distortionTexture_and_index, ref uvDistortionTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -104,10 +112,13 @@ namespace Effekseer.Binary
 				data.Add(getTexIDAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
 
 #if __EFFEKSEER_BUILD_VERSION16__
-				// alpha texture
 				if (version >= ExporterVersion.Ver1600)
 				{
+					// alpha texture
 					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+					
+					// uv distortion texture
+					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -208,6 +219,9 @@ namespace Effekseer.Binary
 			{
 				data.Add(advanceValue.AlphaTextureParam.Filter);
 				data.Add(advanceValue.AlphaTextureParam.Wrap);
+
+				data.Add(advanceValue.UVDistortionTextureParam.Filter);
+				data.Add(advanceValue.UVDistortionTextureParam.Wrap);
 			}
 #endif
 
@@ -345,6 +359,7 @@ namespace Effekseer.Binary
 #if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
+				// alpha texture
 				data.Add(GetUVBytes
 				(
 				alphaTexInfo,
@@ -354,6 +369,20 @@ namespace Effekseer.Binary
 				value.UV2Scroll,
 				value.UV2FCurve
 				));
+
+				// uv distortion texture
+				data.Add(GetUVBytes
+				(
+				uvDistortionTexInfo,
+				value.UV3,
+				value.UV3Fixed,
+				value.UV3Animation,
+				value.UV3Scroll,
+				value.UV3FCurve
+				));
+
+				// uv distortion intensity
+				data.Add(advanceValue.UVDistortionTextureParam.UVDistortionIntensity.GetBytes());
 			}
 #endif
 

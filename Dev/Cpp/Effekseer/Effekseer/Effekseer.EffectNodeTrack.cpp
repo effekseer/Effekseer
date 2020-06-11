@@ -122,12 +122,14 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		if (group->GetFirst() != nullptr)
 		{
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			m_instanceParameter.UV = group->GetFirst()->GetUV(0);
-			m_instanceParameter.AlphaUV = group->GetFirst()->GetUV(1);
+			Instance* groupFirst = group->GetFirst();
+			m_instanceParameter.UV = groupFirst->GetUV(0);
+			m_instanceParameter.AlphaUV = groupFirst->GetUV(1);
+			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2);
 
-			m_instanceParameter.FlipbookIndexAndNextRate = group->GetFirst()->m_flipbookIndexAndNextRate;
+			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->m_flipbookIndexAndNextRate;
 
-			m_instanceParameter.AlphaThreshold = group->GetFirst()->m_AlphaThreshold;
+			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
 #else
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
 #endif

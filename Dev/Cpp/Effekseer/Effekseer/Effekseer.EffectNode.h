@@ -665,7 +665,7 @@ struct ParameterCustomData
 struct ParameterRendererCommon
 {
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	static const int32_t UVParameterNum = 2;
+	static const int32_t UVParameterNum = 3;
 #endif
 
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
@@ -679,6 +679,9 @@ struct ParameterRendererCommon
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	//! texture index except a file
 	int32_t AlphaTextureIndex = -1;
+
+	//! texture index except a file
+	int32_t UVDistortionTextureIndex = -1;
 #endif
 
 	//! material index in MaterialType::File
@@ -698,6 +701,12 @@ struct ParameterRendererCommon
 	TextureFilterType Filter3Type = TextureFilterType::Nearest;
 
 	TextureWrapType Wrap3Type = TextureWrapType::Repeat;
+
+	TextureFilterType Filter4Type = TextureFilterType::Nearest;
+
+	TextureWrapType Wrap4Type = TextureWrapType::Repeat;
+
+	float UVDistortionIntensity = 1.0f;
 #endif
 
 	bool				ZWrite = false;
@@ -895,6 +904,9 @@ struct ParameterRendererCommon
 				{
 					memcpy(&AlphaTextureIndex, pos, sizeof(int));
 					pos += sizeof(int);
+
+					memcpy(&UVDistortionTextureIndex, pos, sizeof(int));
+					pos += sizeof(int);
 				}
 #endif
 			}
@@ -959,11 +971,21 @@ struct ParameterRendererCommon
 
 			memcpy(&Wrap3Type, pos, sizeof(int));
 			pos += sizeof(int);
+
+
+			memcpy(&Filter4Type, pos, sizeof(int));
+			pos += sizeof(int);
+
+			memcpy(&Wrap4Type, pos, sizeof(int));
+			pos += sizeof(int);
 		}
 		else
 		{
 			Filter3Type = FilterType;
 			Wrap3Type = WrapType;
+
+			Filter4Type = FilterType;
+			Wrap4Type = WrapType;
 		}
 #endif
 
@@ -1070,10 +1092,21 @@ struct ParameterRendererCommon
 
 		if (version >= 1600)
 		{
+			// alpha texture
 			memcpy(&UVTypes[1], pos, sizeof(int));
 			pos += sizeof(int);
 
 			LoadUVParameter(1);
+
+			// uv distortion texture
+			memcpy(&UVTypes[2], pos, sizeof(int));
+			pos += sizeof(int);
+
+			LoadUVParameter(2);
+
+			// uv distortion intensity
+			memcpy(&UVDistortionIntensity, pos, sizeof(int));
+			pos += sizeof(int);
 		}
 
 #else
@@ -1180,11 +1213,13 @@ struct ParameterRendererCommon
 		BasicParameter.TextureFilter2 = Filter2Type;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		BasicParameter.TextureFilter3 = Filter3Type;
+		BasicParameter.TextureFilter4 = Filter4Type;
 #endif
 		BasicParameter.TextureWrap1 = WrapType;
 		BasicParameter.TextureWrap2 = Wrap2Type;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		BasicParameter.TextureWrap3 = Wrap3Type;
+		BasicParameter.TextureWrap4 = Wrap4Type;
 #endif
 
 		BasicParameter.DistortionIntensity = DistortionIntensity;
@@ -1193,9 +1228,10 @@ struct ParameterRendererCommon
 		BasicParameter.Texture2Index = Texture2Index;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		BasicParameter.Texture3Index = AlphaTextureIndex;
-#endif
+		BasicParameter.Texture4Index = UVDistortionTextureIndex;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+		BasicParameter.UVDistortionIntensity = UVDistortionIntensity;
+
 		if (UVTypes[0] == UV_ANIMATION)
 		{
 			BasicParameter.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);

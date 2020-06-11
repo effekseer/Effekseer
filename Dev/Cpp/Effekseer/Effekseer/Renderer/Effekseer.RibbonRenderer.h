@@ -69,6 +69,8 @@ struct NodeRendererTextureUVTypeParameter;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			RectF	AlphaUV;
 
+			RectF	UVDistortionUV;
+
 			float	FlipbookIndexAndNextRate;
 
 			float	AlphaThreshold;
