@@ -1259,7 +1259,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 
 	int times = 0;
 
-	if (parameter.UpdateInterval == 0)
+	if (parameter.UpdateInterval != 0)
 	{
 		times = static_cast<int>(maximumDeltaFrame / parameter.UpdateInterval);
 	}
