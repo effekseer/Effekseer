@@ -588,8 +588,10 @@ struct EffectBasicRenderParameter
 	int32_t				ColorTextureIndex;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	int32_t				AlphaTextureIndex;
-
 	TextureWrapType		AlphaTexWrapType;
+
+	int32_t				UVDistortionIndex;
+	TextureWrapType		UVDistortionTexWrapType;
 
 	struct FlipbookParameters
 	{
@@ -598,6 +600,10 @@ struct EffectBasicRenderParameter
 		int32_t DivideX;
 		int32_t DivideY;
 	} FlipbookParams;
+
+	RendererMaterialType MaterialType;
+
+	float UVDistortionIntensity;
 #endif
 	AlphaBlendType		AlphaBlend;
 	TextureFilterType	FilterType;

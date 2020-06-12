@@ -832,8 +832,10 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
-
 	param.AlphaTexWrapType = RendererCommon.Wrap3Type;
+
+	param.UVDistortionIndex = RendererCommon.UVDistortionTextureIndex;
+	param.UVDistortionTexWrapType = RendererCommon.Wrap4Type;
 
 	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
 	{
@@ -851,6 +853,9 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
 	param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
 
+	param.MaterialType = RendererCommon.MaterialType;
+
+	param.UVDistortionIntensity = RendererCommon.UVDistortionIntensity;
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;
@@ -877,7 +882,10 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;
 		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.DivideY;
 	}
+
+	RendererCommon.UVDistortionIntensity = param.UVDistortionIntensity;
 #endif
+
 	RendererCommon.AlphaBlend = param.AlphaBlend;
 	RendererCommon.Distortion = param.Distortion;
 	RendererCommon.DistortionIntensity = param.DistortionIntensity;
