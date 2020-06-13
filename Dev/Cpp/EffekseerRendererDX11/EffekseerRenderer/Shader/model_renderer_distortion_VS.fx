@@ -5,6 +5,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4x4 mModel[40];
     float4 fUV[40];
     float4 fAlphaUV[40];
+    float4 fUVDistortionUV[40];
 
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     float4 fFlipbookIndexAndNextRate[40];
@@ -48,10 +49,11 @@ struct VS_Output
 	float4 Pos		: TEXCOORD4;
 	float4 Color		: COLOR0;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV : TEXCOORD5;
-    float FlipbookRate  : TEXCOORD6;
-    float2 FlipbookNextIndexUV : TEXCOORD7;
-    float AlphaThreshold : TEXCOORD8;
+    float2 AlphaUV              : TEXCOORD5;
+    float2 UVDistortionUV       : TEXCOORD6;
+    float FlipbookRate          : TEXCOORD7;
+    float2 FlipbookNextIndexUV  : TEXCOORD8;
+    float AlphaThreshold        : TEXCOORD9;
 #endif
 };
 
@@ -66,6 +68,7 @@ VS_Output VS( const VS_Input Input )
 		float4 modelColor = fModelColor[Input.Index.x];
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float4 alphaUV = fAlphaUV[Input.Index.x];
+    float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
 #endif
 
 		VS_Output Output = (VS_Output) 0;
@@ -91,6 +94,8 @@ VS_Output VS( const VS_Input Input )
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
     Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
+    Output.UVDistortionUV.x = Input.UV.x * uvDistortionUV.z + uvDistortionUV.x;
+    Output.UVDistortionUV.y = Input.UV.y * uvDistortionUV.w + uvDistortionUV.y;
 #endif
 
 	Output.Normal = mul(mCameraProj, localNormal);
@@ -103,6 +108,7 @@ VS_Output VS( const VS_Input Input )
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV.y =  mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
+    Output.UVDistortionUV.y =  mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
     
     // flipbook interpolation
 	ApplyFlipbookVS(

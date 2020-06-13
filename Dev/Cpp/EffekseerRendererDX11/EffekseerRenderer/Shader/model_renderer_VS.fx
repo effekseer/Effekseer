@@ -5,6 +5,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4x4 mModel[40];
     float4 fUV[40];
     float4 fAlphaUV[40];
+    float4 fUVDistortionUV[40];
 
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     float4 fFlipbookIndexAndNextRate[40];
@@ -56,23 +57,25 @@ struct VS_Output
 	half3 Tangent		: TEXCOORD3;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV      : TEXCOORD4;
+    float2 AlphaUV              : TEXCOORD4;
+    float2 UVDistortionUV       : TEXCOORD5;
     
-    float FlipbookRate  : TEXCOORD5;
-    float2 FlipbookNextIndexUV : TEXCOORD6;
+    float FlipbookRate          : TEXCOORD6;
+    float2 FlipbookNextIndexUV  : TEXCOORD7;
     
-    float AlphaThreshold : TEXCOORD7;
+    float AlphaThreshold        : TEXCOORD8;
 #endif
     
 #else // else ENABLE_NORMAL_TEXTURE
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV      : TEXCOORD1;
+    float2 AlphaUV              : TEXCOORD1;
+    float2 UVDistortionUV       : TEXCOORD2;
     
-    float FlipbookRate  : TEXCOORD2;
-    float2 FlipbookNextIndexUV : TEXCOORD3;
+    float FlipbookRate          : TEXCOORD3;
+    float2 FlipbookNextIndexUV  : TEXCOORD4;
     
-    float AlphaThreshold : TEXCOORD4;
+    float AlphaThreshold        : TEXCOORD5;
 #endif
     
 #endif // end ENABLE_NORMAL_TEXTURE
@@ -89,6 +92,7 @@ VS_Output VS( const VS_Input Input )
 	float4 uv = fUV[Input.Index.x];
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float4 alphaUV = fAlphaUV[Input.Index.x];
+    float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
 #endif
 	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
 
@@ -104,6 +108,10 @@ VS_Output VS( const VS_Input Input )
     // alpha texture
     Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
 	Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
+    
+    // uv distortion texture
+    Output.UVDistortionUV.x = Input.UV.x * uvDistortionUV.z + uvDistortionUV.x;
+	Output.UVDistortionUV.y = Input.UV.y * uvDistortionUV.w + uvDistortionUV.y;
     
     // flipbook interpolation
 	ApplyFlipbookVS(
@@ -170,6 +178,7 @@ VS_Output VS( const VS_Input Input )
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
+    Output.UVDistortionUV.y = mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
 #endif
 
 	return Output;

@@ -3,6 +3,8 @@
 #include "FlipbookInterpolationUtils_PS.fx"
 #endif
 
+#include "UVDistortionUtils.fx"
+
 Texture2D	g_texture		: register(t0);
 SamplerState	g_sampler		: register(s0);
 
@@ -10,8 +12,11 @@ Texture2D		g_backTexture		: register(t1);
 SamplerState	g_backSampler		: register(s1);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-Texture2D g_alphaTexture : register(t2);
+Texture2D g_alphaTexture    : register(t2);
 SamplerState g_alphaSampler : register(s2);
+
+Texture2D g_uvDistortionTexture     : register(t3);
+SamplerState g_uvDistortionSampler  : register(s3);
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -21,6 +26,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4	mUVInversedBack;
 
     float4  fFlipbookParameter; // x:enable, y:interpolationType
+
+    float4  fUVDistortionParameter; // x:intensity
 };
 #else
 float4		g_scale			: register(c0);
@@ -37,21 +44,29 @@ struct PS_Input
 	float4 Pos		: TEXCOORD4;
 	float4 Color		: COLOR0;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV : TEXCOORD5;
-    float FlipbookRate  : TEXCOORD6;
-    float2 FlipbookNextIndexUV : TEXCOORD7;
-    float AlphaThreshold : TEXCOORD8;
+    float2 AlphaUV              : TEXCOORD5;
+    float2 UVDistortionUV       : TEXCOORD6;
+    float FlipbookRate          : TEXCOORD7;
+    float2 FlipbookNextIndexUV  : TEXCOORD8;
+    float AlphaThreshold        : TEXCOORD9;
 #endif
 };
 
 float4 PS( const PS_Input Input ) : SV_Target
 {
-	float4 Output = g_texture.Sample(g_sampler, Input.UV);
+    float2 UVOffset = float2(0.0, 0.0);
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
+    UVOffset *= fUVDistortionParameter.x;
+#endif
+    
+	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset * GetPixelSize(g_texture));
 
 	Output.a = Output.a * Input.Color.a;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	ApplyFlipbook(Output, g_texture, g_sampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV, Input.FlipbookRate);
+	ApplyFlipbook(Output, g_texture, g_sampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset * GetPixelSize(g_texture), Input.FlipbookRate);
 	/*
     if(fFlipbookParameter.x > 0)
     {
@@ -64,7 +79,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     }
     */
 
-    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
+    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset * GetPixelSize(g_alphaTexture)).a;
     
     // alpha threshold
     if(Output.a <= Input.AlphaThreshold)

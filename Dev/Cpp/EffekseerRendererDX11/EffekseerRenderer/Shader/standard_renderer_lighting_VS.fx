@@ -8,9 +8,10 @@ struct VS_Input
 	float2 UV1 : TEXCOORD0;
 	float2 UV2 : TEXCOORD1;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV : TEXCOORD2;
-    float FlipbookIndex : TEXCOORD3;
-    float AlphaThreshold : TEXCOORD4;
+    float2 AlphaUV          : TEXCOORD2;
+    float2 UVDistortionUV   : TEXCOORD3;
+    float FlipbookIndex     : TEXCOORD4;
+    float AlphaThreshold    : TEXCOORD5;
 #endif
 };
 
@@ -26,10 +27,11 @@ struct VS_Output
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV : TEXCOORD7;
-    float FlipbookRate : TEXCOORD8;
-    float2 FlipbookNextIndexUV : TEXCOORD9;
-    float AlphaThreshold : TEXCOORD10;
+    float2 AlphaUV              : TEXCOORD7;
+    float2 UVDistortionUV       : TEXCOORD8;
+    float FlipbookRate          : TEXCOORD9;
+    float2 FlipbookNextIndexUV  : TEXCOORD10;
+    float AlphaThreshold        : TEXCOORD11;
 #endif
 };
 
@@ -67,6 +69,10 @@ VS_Output VS( const VS_Input Input )
     // alpha texture
     float2 alphaUV = Input.AlphaUV;
     alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
+    
+    // uv distortion texture
+    float2 uvDistorionUV = Input.UVDistortionUV;
+    uvDistorionUV.y = mUVInversed.x + mUVInversed.y * uvDistorionUV.y;
     
     ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
     // flipbook interpolation
@@ -131,6 +137,7 @@ VS_Output VS( const VS_Input Input )
 	Output.UV2 = uv2;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV = alphaUV;
+    Output.UVDistortionUV = uvDistorionUV;
 #endif
 	Output.ScreenUV = Output.Position.xy / Output.Position.w;
 	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;

@@ -37,6 +37,8 @@ struct DynamicVertex
 
 	void SetAlphaUV(float value, int index) {}
 
+	void SetUVDistortionUV(float value, int index) {}
+
 	void SetFlipbookIndexAndNextRate(float value) {}
 
 	void SetAlphaThreshold(float value) {}
@@ -80,15 +82,13 @@ struct LightingVertex
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float AlphaUV[2];
-
+	float UVDistortionUV[2];
 	float FlipbookIndexAndNextRate;
-
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
-
+	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
-
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
@@ -118,15 +118,13 @@ struct SimpleVertex
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float AlphaUV[2];
-
+	float UVDistortionUV[2];
 	float FlipbookIndexAndNextRate;
-
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
-
+	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
-
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
@@ -158,15 +156,13 @@ struct SimpleVertexDX9
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float AlphaUV[2];
-
+	float UVDistortionUV[2];
 	float FlipbookIndexAndNextRate;
-
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
-
+	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
-
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
@@ -201,15 +197,13 @@ struct VertexDistortion
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float AlphaUV[2];
-
+	float UVDistortionUV[2];
 	float FlipbookIndexAndNextRate;
-
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
-
+	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
-
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 
@@ -244,15 +238,13 @@ struct VertexDistortionDX9
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float AlphaUV[2];
-
+	float UVDistortionUV[2];
 	float FlipbookIndexAndNextRate;
-
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
-
+	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
-
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
 

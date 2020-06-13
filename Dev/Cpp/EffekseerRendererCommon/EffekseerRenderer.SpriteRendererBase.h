@@ -106,12 +106,16 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
+		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
 		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
 		state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
 		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
+
+		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 #endif
 
 
@@ -122,6 +126,7 @@ protected:
 		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 											   , param.BasicParameterPtr->Texture3Index
+											   , param.BasicParameterPtr->Texture4Index
 #endif
 		);
 		customData1Count_ = state.CustomData1Count;
@@ -217,6 +222,18 @@ protected:
 
 		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
 		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
+
+		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.X, 0);
+		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y +  instanceParameter.UVDistortionUV.Height, 1);
+
+		verteies[1].SetUVDistortionUV(instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
+		verteies[1].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
+
+		verteies[2].SetUVDistortionUV(instanceParameter.UVDistortionUV.X, 0);
+		verteies[2].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y, 1);
+
+		verteies[3].SetUVDistortionUV(instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
+		verteies[3].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y, 1);
 #endif
 
 		// distortion

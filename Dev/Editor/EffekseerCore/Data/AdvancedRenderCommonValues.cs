@@ -33,6 +33,37 @@ namespace Effekseer.Data
 		}
 	}
 
+	public class UVDistortionTextureParameter
+	{
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "UV歪み画像")]
+		[Name(language = Language.English, value = "UV Distortion Texture")]
+		public Value.PathForImage Texture { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "UV歪み強度")]
+		[Name(language = Language.English, value = "UV Distortion Intensity")]
+		public Value.Float UVDistortionIntensity { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "フィルタ(UV歪み画像)")]
+		[Name(language = Language.English, value = "Filter(UV Distortion Texture)")]
+		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "外側(UV歪み画像)")]
+		[Name(language = Language.English, value = "Wrap(UV DIstortion Texture)")]
+		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+		public UVDistortionTextureParameter()
+		{
+			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			UVDistortionIntensity = new Value.Float(1.0f, 2048.0f, -2048.0f);
+			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+		}
+	}
+
 	public class AlphaCutoffParameter
 	{
 		[Selector(ID = 0)]
@@ -140,7 +171,7 @@ namespace Effekseer.Data
 	}
 
 	public class AdvancedRenderCommonValues
-    {
+	{
 #if __EFFEKSEER_BUILD_VERSION16__
 		[Selector(ID = 100)]
 		[IO(Export = true)]
@@ -151,6 +182,17 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		[Selected(ID = 100, Value = 0)]
 		public AlphaTextureParameter AlphaTextureParam { get; private set; }
+
+
+		[Selector(ID = 200)]
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "UV歪み画像を有効")]
+		[Name(language = Language.English, value = "Enable UV Distortion Texture")]
+		public Value.Boolean EnableUVDistortionTexture { get; private set; }
+
+		[IO(Export = true)]
+		[Selected(ID = 200, Value = 0)]
+		public UVDistortionTextureParameter UVDistortionTextureParam { get; private set; }
 #endif
 
 		[IO(Export = true)]
@@ -161,6 +203,9 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 			EnableAlphaTexture = new Value.Boolean(false);
 			AlphaTextureParam = new AlphaTextureParameter();
+
+			EnableUVDistortionTexture = new Value.Boolean(false);
+			UVDistortionTextureParam = new UVDistortionTextureParameter();
 #endif
 
 			AlphaCutoffParam = new AlphaCutoffParameter();

@@ -110,6 +110,8 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		RectF		AlphaUV;
 
+		RectF		UVDistortionUV;
+
 		float		FlipbookIndexAndNextRate;
 
 		float		AlphaThreshold;
@@ -201,6 +203,8 @@ struct NodeRendererTextureUVTypeParameter;
 			RectF	UV;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			RectF	AlphaUV;
+
+			RectF	UVDistortionUV;
 
 			float	FlipbookIndexAndNextRate;
 
@@ -299,6 +303,8 @@ public:
 		RectF	UV;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		RectF		AlphaUV;
+
+		RectF		UVDistortionUV;
 		
 		float		FlipbookIndexAndNextRate;
 
@@ -387,6 +393,8 @@ public:
 		RectF			UV;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		RectF			AlphaUV;
+
+		RectF			UVDistortionUV;
 
 		float			FlipbookIndexAndNextRate;
 
@@ -492,6 +500,8 @@ struct NodeRendererTextureUVTypeParameter;
 			RectF	UV;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			RectF	AlphaUV;
+
+			RectF	UVDistortionUV;
 
 			float	FlipbookIndexAndNextRate;
 

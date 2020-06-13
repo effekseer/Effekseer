@@ -154,6 +154,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
+		instanceParameter.UVDistortionUV = instance.GetUV(2);
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.m_flipbookIndexAndNextRate;
 

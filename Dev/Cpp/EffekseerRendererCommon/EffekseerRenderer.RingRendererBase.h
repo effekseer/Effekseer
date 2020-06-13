@@ -127,12 +127,16 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
+		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
 		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
 		state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
 		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
+
+		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
@@ -145,6 +149,7 @@ protected:
 											   param.BasicParameterPtr->Texture2Index
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 											   , param.BasicParameterPtr->Texture3Index
+											   , param.BasicParameterPtr->Texture4Index
 #endif
 		);
 
@@ -294,12 +299,37 @@ protected:
 		float uv1texNext = 0.0f;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		float alphaUVCurrent = instanceParameter.AlphaUV.X;
-		const float alphaUVStep = instanceParameter.AlphaUV.Width / parameter.VertexCount;
-		const float alphaUVv1 = instanceParameter.AlphaUV.Y;
-		const float alphaUVv2 = alphaUVv1 + instanceParameter.AlphaUV.Height * 0.5f;
-		const float alphaUVv3 = alphaUVv1 + instanceParameter.AlphaUV.Height;
-		float alphaUVtexNext = 0.0f;
+		const int32_t advancedUVNum = 2;
+
+		float advancedUVCurrent[advancedUVNum] = 
+		{ 
+			instanceParameter.AlphaUV.X, 
+			instanceParameter.UVDistortionUV.X 
+		};
+		const float advancedUVStep[advancedUVNum] = 
+		{ 
+			instanceParameter.AlphaUV.Width / parameter.VertexCount, 
+			instanceParameter.UVDistortionUV.Width / parameter.VertexCount 
+		};
+		const float advancedUVv1[advancedUVNum] = 
+		{ 
+			instanceParameter.AlphaUV.Y, 
+			instanceParameter.UVDistortionUV.Y 
+		};
+		const float advancedUVv2[advancedUVNum] =
+		{
+			advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
+			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f
+		};
+		const float advancedUVv3[advancedUVNum] =
+		{
+			advancedUVv1[0] + instanceParameter.AlphaUV.Height,
+			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
+		};
+		float advancedUVtexNext[advancedUVNum] =
+		{
+			0.0f
+		};
 #endif
 
 		::Effekseer::Vec3f outerNext, innerNext, centerNext;
@@ -394,34 +424,49 @@ protected:
 			v[7].UV[1] = uv0v3;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			alphaUVtexNext = alphaUVCurrent + alphaUVStep;
+			for (int32_t uvi = 0; uvi < advancedUVNum; uvi++)
+			{
+				advancedUVtexNext[uvi] = advancedUVCurrent[uvi] + advancedUVStep[uvi];
+			}
 
-			v[0].SetAlphaUV(alphaUVCurrent, 0);
-			v[0].SetAlphaUV(alphaUVv1, 1);
+			v[0].SetAlphaUV(advancedUVCurrent[0], 0);
+			v[0].SetAlphaUV(advancedUVv1[0], 1);			
+			v[0].SetUVDistortionUV(advancedUVCurrent[1], 0);
+			v[0].SetUVDistortionUV(advancedUVv1[1], 1);
 
-			v[1].SetAlphaUV(alphaUVCurrent, 0);
-			v[1].SetAlphaUV(alphaUVv2, 1);
+			v[1].SetAlphaUV(advancedUVCurrent[0], 0);
+			v[1].SetAlphaUV(advancedUVv2[0], 1);
+			v[1].SetUVDistortionUV(advancedUVCurrent[1], 0);
+			v[1].SetUVDistortionUV(advancedUVv2[1], 1);
 
-			v[2].SetAlphaUV(alphaUVtexNext, 0);
-			v[2].SetAlphaUV(alphaUVv1, 1);
+			v[2].SetAlphaUV(advancedUVtexNext[0], 0);
+			v[2].SetAlphaUV(advancedUVv1[0], 1);
+			v[2].SetUVDistortionUV(advancedUVtexNext[1], 0);
+			v[2].SetUVDistortionUV(advancedUVv1[1], 1);
 
-			v[3].SetAlphaUV(alphaUVtexNext, 0);
-			v[3].SetAlphaUV(alphaUVv2, 1);
+			v[3].SetAlphaUV(advancedUVtexNext[0], 0);
+			v[3].SetAlphaUV(advancedUVv2[0], 1);
+			v[3].SetUVDistortionUV(advancedUVtexNext[1], 0);
+			v[3].SetUVDistortionUV(advancedUVv2[1], 1);
 
 			v[4] = v[1];
 
-			v[5].SetAlphaUV(alphaUVCurrent, 0);
-			v[5].SetAlphaUV(alphaUVv3, 1);
+			v[5].SetAlphaUV(advancedUVCurrent[0], 0);
+			v[5].SetAlphaUV(advancedUVv3[0], 1);
+			v[5].SetUVDistortionUV(advancedUVCurrent[1], 0);
+			v[5].SetUVDistortionUV(advancedUVv3[1], 1);
 
 			v[6] = v[3];
 
-			v[7].SetAlphaUV(alphaUVtexNext, 0);
-			v[7].SetAlphaUV(alphaUVv3, 1);
+			v[7].SetAlphaUV(advancedUVtexNext[0], 0);
+			v[7].SetAlphaUV(advancedUVv3[0], 1);
+			v[7].SetUVDistortionUV(advancedUVtexNext[1], 0);
+			v[7].SetUVDistortionUV(advancedUVv3[1], 1);
 
-			for (int32_t i = 0; i < 8; i++)
+			for (int32_t vi = 0; vi < 8; vi++)
 			{
-				v[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
-				v[i].SetAlphaThreshold(instanceParameter.AlphaThreshold);
+				v[vi].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
+				v[vi].SetAlphaThreshold(instanceParameter.AlphaThreshold);
 			}
 #endif
 
@@ -587,7 +632,10 @@ protected:
 			uv0Current = uv0texNext;
 			uv1Current = uv1texNext;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			alphaUVCurrent = alphaUVtexNext;
+			for (int32_t uvi = 0; uvi < advancedUVNum; uvi++)
+			{
+				advancedUVCurrent[uvi] = advancedUVtexNext[uvi];
+			}
 #endif
 			outerColor = outerColorNext;
 			innerColor = innerColorNext;

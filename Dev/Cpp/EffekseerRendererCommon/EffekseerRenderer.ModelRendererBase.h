@@ -30,6 +30,8 @@ template <int MODEL_COUNT> struct ModelRendererVertexConstantBuffer
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float ModelAlphaUV[MODEL_COUNT][4];
 
+	float ModelUVDistortionUV[MODEL_COUNT][4];
+
 	struct
 	{
 		union {
@@ -65,6 +67,14 @@ template <int MODEL_COUNT> struct ModelRendererVertexConstantBuffer
 		ModelAlphaUV[index][3] = h;
 	}
 
+	void SetModelUVDistortionUV(int32_t index, float x, float y, float w, float h)
+	{
+		ModelUVDistortionUV[index][0] = x;
+		ModelUVDistortionUV[index][1] = y;
+		ModelUVDistortionUV[index][2] = w;
+		ModelUVDistortionUV[index][3] = h;
+	}
+
 	void SetModelFlipbookIndexAndNextRate(int32_t index, float value) { ModelFlipbookIndexAndNextRate[index][0] = value; }
 
 	void SetModelAlphaThreshold(int32_t index, float value) { ModelAlphaThreshold[index][0] = value; }
@@ -94,6 +104,8 @@ template <int MODEL_COUNT> struct ModelRendererMaterialVertexConstantBuffer
 
 	void SetModelAlphaUV(int32_t index, float x, float y, float w, float h) {}
 
+	void SetModelUVDistortionUV(int32_t index, float x, float y, float w, float h) {}
+
 	void SetModelFlipbookIndexAndNextRate(int32_t index, float value) {}
 
 	void SetModelAlphaThreshold(int32_t index, float value) {}
@@ -118,6 +130,19 @@ struct ModelRendererPixelConstantBuffer
 			};
 		};
 	} ModelFlipbookParameter;
+
+	struct
+	{
+		union 
+		{
+			float Buffer[4];
+
+			struct
+			{
+				float Intensity;
+			};
+		};
+	} ModelUVDistortionParameter;
 #endif
 };
 
@@ -136,6 +161,7 @@ protected:
 	std::vector<Effekseer::RectF> uvSorted_;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> alphaUVSorted_;
+	std::vector<Effekseer::RectF> uvDistortionUVSorted_;
 	std::vector<float> flipbookIndexAndNextRateSorted_;
 	std::vector<float> alphaThresholdSorted_;
 #endif
@@ -148,6 +174,7 @@ protected:
 	std::vector<Effekseer::RectF> m_uv;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> m_alphaUV;
+	std::vector<Effekseer::RectF> m_uvDistortionUV;
 	std::vector<float> m_flipbookIndexAndNextRate;
 	std::vector<float> m_alphaThreshold;
 #endif
@@ -233,6 +260,7 @@ protected:
 			uvSorted_.resize(m_matrixes.size());
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			alphaUVSorted_.resize(m_matrixes.size());
+			uvDistortionUVSorted_.resize(m_matrixes.size());
 			flipbookIndexAndNextRateSorted_.resize(m_matrixes.size());
 #endif
 			colorsSorted_.resize(m_matrixes.size());
@@ -254,6 +282,7 @@ protected:
 				uvSorted_[keyValues_[i].Value] = m_uv[i];
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				alphaUVSorted_[keyValues_[i].Value] = m_alphaUV[i];
+				uvDistortionUVSorted_[keyValues_[i].Value] = m_uvDistortionUV[i];
 				flipbookIndexAndNextRateSorted_[keyValues_[i].Value] = m_flipbookIndexAndNextRate[i];
 				alphaThresholdSorted_[keyValues_[i].Value] = m_alphaThreshold[i];
 #endif
@@ -281,6 +310,7 @@ protected:
 			m_uv = uvSorted_;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			m_alphaUV = alphaUVSorted_;
+			m_uvDistortionUV = uvDistortionUVSorted_;
 			m_flipbookIndexAndNextRate = flipbookIndexAndNextRateSorted_;
 			m_alphaThreshold = alphaThresholdSorted_;
 #endif
@@ -418,6 +448,7 @@ public:
 		m_uv.clear();
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.clear();
+		m_uvDistortionUV.clear();
 		m_flipbookIndexAndNextRate.clear();
 		m_alphaThreshold.clear();
 #endif
@@ -430,6 +461,7 @@ public:
 		uvSorted_.clear();
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		alphaUVSorted_.clear();
+		uvDistortionUVSorted_.clear();
 		flipbookIndexAndNextRateSorted_.clear();
 		alphaThresholdSorted_.clear();
 #endif
@@ -492,6 +524,7 @@ public:
 		m_uv.push_back(instanceParameter.UV);
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.push_back(instanceParameter.AlphaUV);
+		m_uvDistortionUV.push_back(instanceParameter.UVDistortionUV);
 		m_flipbookIndexAndNextRate.push_back(instanceParameter.FlipbookIndexAndNextRate);
 		m_alphaThreshold.push_back(instanceParameter.AlphaThreshold);
 #endif
@@ -729,10 +762,7 @@ public:
 		else
 		{
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			Effekseer::TextureData* textures[3];
-			textures[0] = nullptr;
-			textures[1] = nullptr;
-			textures[2] = nullptr;
+			Effekseer::TextureData* textures[4] = { nullptr };
 #else
 			Effekseer::TextureData* textures[2];
 			textures[0] = nullptr;
@@ -760,6 +790,15 @@ public:
 				else
 				{
 					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				}
+
+				if (param.BasicParameterPtr->Texture4Index >= 0)
+				{
+					textures[3] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture4Index);
+				}
+				if (textures[3] == nullptr)
+				{
+					textures[3] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
 #endif
 			}
@@ -790,10 +829,18 @@ public:
 				{
 					textures[2] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture3Index);
 				}
-
 				if (textures[2] == nullptr)
 				{
 					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				}
+
+				if (param.BasicParameterPtr->Texture4Index >= 0)
+				{
+					textures[3] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture4Index);
+				}
+				if (textures[3] == nullptr)
+				{
+					textures[3] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
 #endif
 			}
@@ -815,10 +862,12 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			state.TextureFilterTypes[2] = param.BasicParameterPtr->TextureFilter3;
 			state.TextureWrapTypes[2] = param.BasicParameterPtr->TextureWrap3;
+			state.TextureFilterTypes[3] = param.BasicParameterPtr->TextureFilter4;
+			state.TextureWrapTypes[3] = param.BasicParameterPtr->TextureWrap4;
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			renderer->SetTextures(shader_, textures, 3);
+			renderer->SetTextures(shader_, textures, 4);
 #else
 			renderer->SetTextures(shader_, textures, 2);
 #endif
@@ -857,6 +906,8 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				pcb[4 * 2 + 0] = param.BasicParameterPtr->EnableInterpolation;
 				pcb[4 * 2 + 1] = param.BasicParameterPtr->InterpolationType;
+
+				pcb[4 * 3 + 0] = param.BasicParameterPtr->UVDistortionIntensity;
 #endif
 			}
 			else
@@ -885,6 +936,8 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				pcb->ModelFlipbookParameter.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 				pcb->ModelFlipbookParameter.InterpolationType = param.BasicParameterPtr->InterpolationType;
+
+				pcb->ModelUVDistortionParameter.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
 #endif
 			}
 		}
@@ -945,6 +998,7 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 					vcb->SetModelAlphaUV(num, m_alphaUV[loop + num].X, m_alphaUV[loop + num].Y, m_alphaUV[loop + num].Width, m_alphaUV[loop + num].Height);
+					vcb->SetModelUVDistortionUV(num, m_uvDistortionUV[loop + num].X, m_uvDistortionUV[loop + num].Y, m_uvDistortionUV[loop + num].Width, m_uvDistortionUV[loop + num].Height);
 					vcb->SetModelFlipbookIndexAndNextRate(num, m_flipbookIndexAndNextRate[loop + num]);
 					vcb->SetModelAlphaThreshold(num, m_alphaThreshold[loop + num]);
 #endif
@@ -995,6 +1049,7 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				vcb->SetModelAlphaUV(0, m_alphaUV[loop].X, m_alphaUV[loop].Y, m_alphaUV[loop].Width, m_alphaUV[loop].Height);
+				vcb->SetModelUVDistortionUV(0, m_uvDistortionUV[loop].X, m_uvDistortionUV[loop].Y, m_uvDistortionUV[loop].Width, m_uvDistortionUV[loop].Height);
 				vcb->SetModelFlipbookIndexAndNextRate(0, m_flipbookIndexAndNextRate[loop]);
 				vcb->SetModelAlphaThreshold(0, m_alphaThreshold[loop]);
 #endif
