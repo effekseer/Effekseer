@@ -34,8 +34,15 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) /
 														(sizeof(float) * 4));
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	auto sizeVec4 = sizeof(float) * 4;
+	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeVec4 * 4);
+	m_shader_distortion_texture->SetPixelRegisterCount(4);
+#else
 	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1);
+#endif
 }
 
 ModelRenderer::~ModelRenderer()

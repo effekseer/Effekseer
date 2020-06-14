@@ -1,9 +1,9 @@
 ﻿AboutEffekseer,About Effekseer
 System_FailedToInitialize,"Failed to generate drawing screen. DirectX version problems, memory shortage, and so on."
-AlphaCrunch,Alpha Crunch
 AttractionForces,Force field (Local)
 AutoConnect,Auto-connect
 BasicRenderSettings,Basic Render Settings
+AdvancedRenderSettings,Advanced Render Settings
 BasicSettings,Basic Settings
 Behavior,Behavior
 CameraMode,Camera Mode

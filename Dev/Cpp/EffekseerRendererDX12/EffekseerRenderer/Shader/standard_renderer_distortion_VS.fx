@@ -1,7 +1,18 @@
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCamera;
+    float4x4 mProj;
+    float4 mUVInversed;
+
+    float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+};
+#else
 float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
+#endif
 
 struct VS_Input
 {
@@ -11,6 +22,13 @@ struct VS_Input
 
 	float3 Binormal		: NORMAL1;
 	float3 Tangent		: NORMAL2;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV          : TEXCOORD1;
+    float2 UVDistortionUV   : TEXCOORD2;
+    float FlipbookIndex     : TEXCOORD3;
+    float AlphaThreshold    : TEXCOORD4;
+#endif
 };
 
 struct VS_Output
@@ -22,7 +40,19 @@ struct VS_Output
 	float4 Pos		: TEXCOORD1;
 	float4 PosU		: TEXCOORD2;
 	float4 PosR		: TEXCOORD3;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV              : TEXCOORD4;
+    float2 UVDistortionUV       : TEXCOORD5;
+    float FlipbookRate          : TEXCOORD6;
+    float2 FlipbookNextIndexUV  : TEXCOORD7;
+    float AlphaThreshold        : TEXCOORD8;
+#endif
 };
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
 
 VS_Output VS( const VS_Input Input )
 {
@@ -59,6 +89,61 @@ VS_Output VS( const VS_Input Input )
 	Output.UV = Input.UV;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    // alpha uv
+    Output.AlphaUV = Input.AlphaUV;
+    Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
+    
+    // uv distortion uv
+    Output.UVDistortionUV = Input.UVDistortionUV;
+    Output.UVDistortionUV.y = mUVInversed.x + mUVInversed.y * Input.UVDistortionUV.y;
+    
+    // flipbook interpolation
+	ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV);
+	/*
+    if(mflipbookParameter.x > 0)
+    {
+        Output.FlipbookRate = frac(Input.FlipbookIndex);
+        
+        float Index = floor(Input.FlipbookIndex);
+        float IndexOffset = 1.0;
+    
+        float NextIndex = Input.FlipbookIndex + IndexOffset;
+        
+        // loop none 
+        if(mflipbookParameter.y == 0)
+        {
+            if (NextIndex >= mflipbookParameter.z * mflipbookParameter.w)
+			{
+				NextIndex = (mflipbookParameter.z * mflipbookParameter.w) - 1;
+                Index = (mflipbookParameter.z * mflipbookParameter.w) - 1;
+			}
+        }
+        // loop
+        else if(mflipbookParameter.y == 1)
+        {
+            NextIndex %= (mflipbookParameter.z * mflipbookParameter.w);
+        }
+        // loop reverse
+        else if(mflipbookParameter.y == 2)
+        {
+            bool Reverse = (floor(NextIndex) / (mflipbookParameter.z * mflipbookParameter.w)) % 2 == 1;
+            NextIndex = int(NextIndex) % (mflipbookParameter.z * mflipbookParameter.w);
+            if(Reverse)
+            {
+                NextIndex = mflipbookParameter.z * mflipbookParameter.w - 1 - NextIndex;
+            }
+        }
+        
+        float2 OriginUV = GetFlipbookOriginUV(Input.UV, Index, mflipbookParameter.z, mflipbookParameter.w);
+        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(OriginUV, NextIndex, mflipbookParameter.z, mflipbookParameter.w);
+    }
+    */
+    
+    // alpha threshold
+    Output.AlphaThreshold = Input.AlphaThreshold;
+#endif
 
 	return Output;
 }

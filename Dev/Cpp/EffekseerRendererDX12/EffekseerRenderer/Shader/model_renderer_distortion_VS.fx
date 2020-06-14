@@ -1,9 +1,32 @@
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCameraProj;
+    float4x4 mModel[1];
+    float4 fUV[1];
+    float4 fAlphaUV[1];
+    float4 fUVDistortionUV[1];
 
+    float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+    float4 fFlipbookIndexAndNextRate[1];
+
+    float4 fModelAlphaThreshold[1];
+
+    float4 fModelColor[1];
+
+    float4 fLightDirection;
+    float4 fLightColor;
+    float4 fLightAmbient;
+    
+    float4 mUVInversed;
+};
+#else
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel		: register( c4 );
-float4	fUV		: register( c8 );
-float4	fModelColor		: register( c9 );
+float4x4 mModel[1]		: register( c4 );
+float4	fUV[1]			: register( c8 );
+float4	fModelColor[1]		: register( c9 );
 float4 mUVInversed		: register(c10);
+#endif
 
 struct VS_Input
 {
@@ -25,13 +48,28 @@ struct VS_Output
 	float4 Tangent		: TEXCOORD3;
 	float4 Pos		: TEXCOORD4;
 	float4 Color		: COLOR0;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV              : TEXCOORD5;
+    float2 UVDistortionUV       : TEXCOORD6;
+    float FlipbookRate          : TEXCOORD7;
+    float2 FlipbookNextIndexUV  : TEXCOORD8;
+    float AlphaThreshold        : TEXCOORD9;
+#endif
 };
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
 
 VS_Output VS( const VS_Input Input )
 {
-	float4x4 matModel = mModel;
-	float4 uv = fUV;
-	float4 modelColor = fModelColor;
+	float4x4 matModel = mModel[Input.Index.x];
+		float4 uv = fUV[Input.Index.x];
+		float4 modelColor = fModelColor[Input.Index.x];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float4 alphaUV = fAlphaUV[Input.Index.x];
+    float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
+#endif
 
 		VS_Output Output = (VS_Output) 0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
@@ -53,6 +91,12 @@ VS_Output VS( const VS_Input Input )
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
+    Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
+    Output.UVDistortionUV.x = Input.UV.x * uvDistortionUV.z + uvDistortionUV.x;
+    Output.UVDistortionUV.y = Input.UV.y * uvDistortionUV.w + uvDistortionUV.y;
+#endif
 
 	Output.Normal = mul(mCameraProj, localNormal);
 	Output.Binormal = mul(mCameraProj, localBinormal);
@@ -62,6 +106,53 @@ VS_Output VS( const VS_Input Input )
 	Output.Color = modelColor;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV.y =  mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
+    Output.UVDistortionUV.y =  mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
+    
+    // flipbook interpolation
+	ApplyFlipbookVS(
+		Output.FlipbookRate, Output.FlipbookNextIndexUV, fFlipbookParameter, fFlipbookIndexAndNextRate[Input.Index.x].x, Output.UV);
+	/*
+    if(fFlipbookParameter.x > 0)
+    {
+        float FlipbookIndexAndNextRate = fFlipbookIndexAndNextRate[Input.Index.x].x;
+    
+        Output.FlipbookRate = frac(FlipbookIndexAndNextRate);
+    
+        float NextIndex = floor(FlipbookIndexAndNextRate) + 1;
+        
+        // loop none 
+        if(fFlipbookParameter.y == 0)
+        {
+            if (NextIndex >= fFlipbookParameter.z * fFlipbookParameter.w)
+			{
+				NextIndex = (fFlipbookParameter.z * fFlipbookParameter.w) - 1;
+			}
+        }
+        // loop
+        else if(fFlipbookParameter.y == 1)
+        {
+            NextIndex %= (fFlipbookParameter.z * fFlipbookParameter.w);
+        }
+        // loop reverse
+        else if(fFlipbookParameter.y == 2)
+        {
+            bool Reverse = (floor(NextIndex) / (fFlipbookParameter.z * fFlipbookParameter.w)) % 2 == 1;
+            NextIndex = int(NextIndex) % (fFlipbookParameter.z * fFlipbookParameter.w);
+            if(Reverse)
+            {
+                NextIndex = fFlipbookParameter.z * fFlipbookParameter.w - 1 - NextIndex;
+            }
+        }
+    
+        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(Input.UV, NextIndex, fFlipbookParameter.z, fFlipbookParameter.w);
+    }
+    */
+    
+    // alpha threshold
+    Output.AlphaThreshold = fModelAlphaThreshold[Input.Index.x].x;
+#endif
 
 	return Output;
 }

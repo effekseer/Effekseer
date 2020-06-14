@@ -180,7 +180,7 @@ namespace Effekseer.GUI
 			typeof(Dock.FileViewer),
 			typeof(Dock.Dynamic),
 #if __EFFEKSEER_BUILD_VERSION16__
-			typeof(Dock.AlphaCrunchValues),
+			typeof(Dock.AdvancedRenderCommonValues),
 #endif
 		};
 

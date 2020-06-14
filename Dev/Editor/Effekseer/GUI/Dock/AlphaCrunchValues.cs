@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    class AlphaCrunchValues : DockPanel
+    class AdvancedRenderCommonValues : DockPanel
     {
         Component.CopyAndPaste candp = null;
         Component.ParameterList parameterList = null;
 
         bool isFirstUpdate = true;
 
-        public AlphaCrunchValues()
+        public AdvancedRenderCommonValues()
         {
-            Label = Resources.GetString("AlphaCrunch") + "###AlphaCrunch";
+            Label = Resources.GetString("AdvancedRenderSettings") + "###AdvancedRenderSettings";
 
             parameterList = new Component.ParameterList();
             parameterList.SetType(typeof(Data.AdvancedRenderCommonValues));
 
-            candp = new Component.CopyAndPaste("AlphaCrunch", GetTargetObject, Read);
+            candp = new Component.CopyAndPaste("AdvancedRenderSettings", GetTargetObject, Read);
 
             Core.OnAfterLoad += OnAfterLoad;
             Core.OnAfterNew += OnAfterLoad;
@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Dock
 
             Read();
 
-            TabToolTip = Resources.GetString("AlphaCrunch");
+            TabToolTip = Resources.GetString("AdvancedRenderSettings");
         }
 
         public void FixValues()
