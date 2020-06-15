@@ -3,8 +3,6 @@
 #include "FlipbookInterpolationUtils_PS.fx"
 #endif
 
-#include "UVDistortionUtils.fx"
-
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 
 cbuffer PS_ConstanBuffer : register(b0)
@@ -93,10 +91,10 @@ float4 PS( const PS_Input Input ) : SV_Target
     UVOffset *= fUVDistortionParameter.x;
 #endif
     
-	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV + UVOffset * GetPixelSize(g_colorTexture)) * Input.Color;
+	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV + UVOffset) * Input.Color;
 
 #if ENABLE_LIGHTING
-	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV + UVOffset * GetPixelSize(g_normalTexture)).xyz  - 0.5) * 2.0;
+	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV + UVOffset).xyz  - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(
 		mul(
 		texNormal ,
@@ -104,7 +102,7 @@ float4 PS( const PS_Input Input ) : SV_Target
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset * GetPixelSize(g_colorTexture), Input.FlipbookRate);
+	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
 	/*
     if(fFlipbookParameter.x > 0)
     {
@@ -117,7 +115,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     }
     */
     
-    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset * GetPixelSize(g_alphaTexture)).a;
+    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
     
     // alpha threshold
     if (Output.a <= Input.AlphaThreshold)

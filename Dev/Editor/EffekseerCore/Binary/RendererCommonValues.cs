@@ -382,7 +382,7 @@ namespace Effekseer.Binary
 				));
 
 				// uv distortion intensity
-				data.Add(advanceValue.UVDistortionTextureParam.UVDistortionIntensity.GetBytes());
+				data.Add((advanceValue.UVDistortionTextureParam.UVDistortionIntensity / 100.0f).GetBytes());
 			}
 #endif
 
