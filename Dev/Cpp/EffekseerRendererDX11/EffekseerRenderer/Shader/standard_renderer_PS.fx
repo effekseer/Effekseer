@@ -3,8 +3,6 @@
 #include "FlipbookInterpolationUtils_PS.fx"
 #endif
 
-#include "UVDistortionUtils.fx"
-
 Texture2D	g_texture		: register( t0 );
 SamplerState	g_sampler		: register( s0 );
 
@@ -49,10 +47,10 @@ float4 PS( const PS_Input Input ) : SV_Target
     UVOffset *= uvDistortionParameter.x;
 #endif
     
-	float4 Output = Input.Color * g_texture.Sample(g_sampler, Input.UV + UVOffset * GetPixelSize(g_texture));
+	float4 Output = Input.Color * g_texture.Sample(g_sampler, Input.UV + UVOffset);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__    
-	ApplyFlipbook(Output, g_texture, g_sampler, flipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset * GetPixelSize(g_texture), Input.FlipbookRate);
+	ApplyFlipbook(Output, g_texture, g_sampler, flipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
     /*
     // flipbook interpolation
     if(g_flipbookParameter.x > 0)
@@ -68,7 +66,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     */
     
     // alpha texture
-    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset * GetPixelSize(g_alphaTexture)).a;
+    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
     
     // alpha threshold
     if (Output.a <= Input.AlphaThreshold)
