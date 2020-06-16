@@ -23,6 +23,7 @@ OUT lowp vec4 v_Color;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 												R"(
 OUT vec2 vaAlphaUV;
+OUT vec2 vaUVDistortionUV;
 OUT float vaFlipbookRate;
 OUT vec2 vaFlipbookNextIndexUV;
 OUT float vaAlphaThreshold;
@@ -44,6 +45,7 @@ OUT float vaAlphaThreshold;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 												R"(
 uniform vec4 atAlphaUV;
+uniform vec4 atUVDistortionUV;
 uniform vec4 atFlipbookIndexAndNextRate;
 uniform vec4 atAlphaThreshold;
 )"
@@ -99,6 +101,10 @@ uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     vaAlphaUV.x = v_TexCoord.x * atAlphaUV.z + atAlphaUV.x;
 	vaAlphaUV.y = v_TexCoord.y * atAlphaUV.w + atAlphaUV.y;
 	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
+
+    vaUVDistortionUV.x = v_TexCoord.x * atUVDistortionUV.z + atUVDistortionUV.x;
+	vaUVDistortionUV.y = v_TexCoord.y * atUVDistortionUV.w + atUVDistortionUV.y;
+	vaUVDistortionUV.y = mUVInversed.x + mUVInversed.y * vaUVDistortionUV.y;
 
 	vaFlipbookRate = 0.0;
 	vaFlipbookNextIndexUV = vec2(0.0, 0.0);

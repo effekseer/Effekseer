@@ -11,6 +11,7 @@ IN mediump vec4 vaPosU;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 IN mediump vec2 vaAlphaUV;
+IN mediump vec2 vaUVDistortionUV;
 IN mediump float vaFlipbookRate;
 IN mediump vec2 vaFlipbookNextIndexUV;
 IN mediump float vaAlphaThreshold;
@@ -29,13 +30,30 @@ uniform	vec4	mUVInversedBack;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 uniform sampler2D uAlphaTexture;
+uniform sampler2D uuvDistortionTexture;
 uniform float4 flipbookParameter; // x:enable, y:interpolationType
+uniform float4 uvDistortionParameter; // x:intensity
 )"
 #endif
 
 	R"(
-void main() {
-	vec4 color = TEX2D(uTexture0, vaTexCoord.xy);
+
+void main()
+{
+    vec2 UVOffset = vec2(0.0, 0.0);
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
+	R"(
+    UVOffset = TEX2D(uuvDistortionTexture, vaUVDistortionUV).xy * 2.0 - 1.0;
+    UVOffset *= uvDistortionParameter.x;
+)"
+#endif
+
+	R"(
+
+	vec4 color = TEX2D(uTexture0, vaTexCoord.xy + UVOffset);
 	color.w = color.w * vaColor.w;
 
 )"
@@ -43,7 +61,7 @@ void main() {
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 	ApplyFlipbook(color, uTexture0, flipbookParameter, vaColor, vaFlipbookNextIndexUV, vaFlipbookRate);
-    color.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
+    color.a *= TEX2D(uAlphaTexture, vaAlphaUV + UVOffset).a;
     if (color.a <= vaAlphaThreshold)
     {
         discard;

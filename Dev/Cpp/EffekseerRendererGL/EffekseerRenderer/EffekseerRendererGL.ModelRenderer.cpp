@@ -125,6 +125,10 @@ ModelRenderer::ModelRenderer(
 
 		vsOffset += sizeof(float[4]) * 1;
 
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atUVDistortionUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
 		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("mflipbookParameter"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
@@ -176,7 +180,10 @@ ModelRenderer::ModelRenderer(
 
 	#ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders[i]->SetTextureSlot(2, shaders[i]->GetUniformId("uAlphaTexture"));
+		shaders[i]->SetTextureSlot(3, shaders[i]->GetUniformId("uuvDistortionTexture"));
 		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
+		shaders[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 4);
 	#endif
 	}
 
@@ -204,6 +211,10 @@ ModelRenderer::ModelRenderer(
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atAlphaUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atUVDistortionUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
@@ -259,7 +270,10 @@ ModelRenderer::ModelRenderer(
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders_d[i]->SetTextureSlot(2, shaders_d[i]->GetUniformId("uAlphaTexture"));
+		shaders_d[i]->SetTextureSlot(3, shaders_d[i]->GetUniformId("uuvDistortionTexture"));
 		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("flipbookParameter"), sizeof(float[4]) * 2);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 3);
+
 #endif
 	}
 

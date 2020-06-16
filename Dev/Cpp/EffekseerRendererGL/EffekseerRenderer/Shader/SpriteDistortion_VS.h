@@ -12,6 +12,7 @@ IN vec4 atTangent;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 IN vec2 atAlphaUV;
+IN vec2 atUVDistortionUV;
 IN float atFlipbookIndex;
 IN float atAlphaThreshold;
 )"
@@ -28,6 +29,7 @@ OUT vec4 vaPosU;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 OUT vec2 vaAlphaUV;
+OUT vec2 vaUVDistortionUV;
 OUT float vaFlipbookRate;
 OUT vec2 vaFlipbookNextIndexUV;
 OUT float vaAlphaThreshold;
@@ -86,6 +88,10 @@ void main() {
 	R"(
 	vaAlphaUV = atAlphaUV;
 	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
+
+    // uv distortion texture
+    vaUVDistortionUV = atUVDistortionUV;
+    vaUVDistortionUV.y = mUVInversed.x + mUVInversed.y * vaUVDistortionUV.y;
 
 	vaFlipbookRate = 0.0;
 	vaFlipbookNextIndexUV = vec2(0.0, 0.0);

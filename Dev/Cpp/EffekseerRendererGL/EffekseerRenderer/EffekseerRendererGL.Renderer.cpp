@@ -322,7 +322,7 @@ bool RendererImplemented::Initialize()
 		{"atFlipbookIndex", GL_FLOAT, 1, 40, false},
 		{"atAlphaThreshold", GL_FLOAT, 1, 44, false},
 	};
-	m_shader->GetAttribIdList(6, sprite_attribs);
+	m_shader->GetAttribIdList(7, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
 #else
 	static ShaderAttribInfo sprite_attribs[3] = {
@@ -338,9 +338,12 @@ bool RendererImplemented::Initialize()
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 * 2);
 	m_shader->AddVertexConstantLayout(
 		CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 	m_shader->SetTextureSlot(1, m_shader->GetUniformId("uAlphaTexture"));
+	m_shader->SetTextureSlot(2, m_shader->GetUniformId("uuvDistortionTexture"));
 	m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("flipbookParameter"), 0);
+	m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 1);
+
 #else
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 #endif
@@ -381,7 +384,7 @@ bool RendererImplemented::Initialize()
 		{"atAlphaThreshold", GL_FLOAT, 1, 68, false},
 	};
 
-	m_shader_distortion->GetAttribIdList(8, sprite_attribs_distortion);
+	m_shader_distortion->GetAttribIdList(9, sprite_attribs_distortion);
 
 #else
 	static ShaderAttribInfo sprite_attribs_distortion[5] = {
@@ -400,7 +403,7 @@ bool RendererImplemented::Initialize()
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
 #else
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
@@ -445,8 +448,12 @@ bool RendererImplemented::Initialize()
 												 m_shader_distortion->GetUniformId("mflipbookParameter"),
 												 sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetTextureSlot(2, m_shader_distortion->GetUniformId("uAlphaTexture"));
+	m_shader_distortion->SetTextureSlot(3, m_shader_distortion->GetUniformId("uuvDistortionTexture"));
 	m_shader_distortion->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 2);
+
+	m_shader_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 3);
 #endif
 
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer(), false);
@@ -479,7 +486,7 @@ bool RendererImplemented::Initialize()
 		{"atAlphaThreshold", GL_FLOAT, 1, 60, false},
 	};
 
-	m_shader_lighting->GetAttribIdList(9, sprite_attribs_lighting);
+	m_shader_lighting->GetAttribIdList(10, sprite_attribs_lighting);
 	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::LightingVertex));
 #else
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
@@ -497,7 +504,7 @@ bool RendererImplemented::Initialize()
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3 + sizeof(float) * 4);
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 #else
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
@@ -523,8 +530,13 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("mflipbookParameter"),
 												 sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_lighting->SetTextureSlot(2, m_shader_lighting->GetUniformId("uAlphaTexture"));
+	m_shader_lighting->SetTextureSlot(3, m_shader_lighting->GetUniformId("uuvDistortionTexture"));
+
 	m_shader_lighting->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
+
+	m_shader_lighting->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 4);
 #endif
 
 	m_vao_lighting = VertexArray::Create(this, m_shader_lighting, GetVertexBuffer(), GetIndexBuffer(), false);

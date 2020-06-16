@@ -13,6 +13,7 @@ IN lowp vec4 v_Color;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 IN mediump vec2 vaAlphaUV;
+IN mediump vec2 vaUVDistortionUV;
 IN mediump float vaFlipbookRate;
 IN mediump vec2 vaFlipbookNextIndexUV;
 IN mediump float vaAlphaThreshold;
@@ -32,7 +33,9 @@ uniform vec4 LightAmbient;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 uniform sampler2D uAlphaTexture;
+uniform sampler2D uuvDistortionTexture;
 uniform float4 flipbookParameter; // x:enable, y:interpolationType
+uniform float4 uvDistortionParameter; // x:intensity
 )"
 #endif
 
@@ -40,7 +43,19 @@ uniform float4 flipbookParameter; // x:enable, y:interpolationType
 
 void main()
 {
-	FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);
+    vec2 UVOffset = vec2(0.0, 0.0);
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
+	R"(
+    UVOffset = TEX2D(uuvDistortionTexture, vaUVDistortionUV).xy * 2.0 - 1.0;
+    UVOffset *= uvDistortionParameter.x;
+)"
+#endif
+
+	R"(
+	FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy + UVOffset);
 
 	if (LightingEnable)
 	{
@@ -56,7 +71,7 @@ void main()
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 	ApplyFlipbook(FRAGCOLOR, ColorTexture, flipbookParameter, v_Color, vaFlipbookNextIndexUV, vaFlipbookRate);
-    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
+    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV + UVOffset).a;
     if (FRAGCOLOR.a <= vaAlphaThreshold)
     {
         discard;

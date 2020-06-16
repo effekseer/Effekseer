@@ -14,6 +14,7 @@ IN lowp vec4 v_Color;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 IN mediump vec2 vaAlphaUV;
+IN mediump vec2 vaUVDistortionUV;
 IN mediump float vaFlipbookRate;
 IN mediump vec2 vaFlipbookNextIndexUV;
 IN mediump float vaAlphaThreshold;
@@ -32,21 +33,30 @@ uniform	vec4	mUVInversedBack;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 uniform sampler2D uAlphaTexture;
+uniform sampler2D uuvDistortionTexture;
 uniform float4 flipbookParameter; // x:enable, y:interpolationType
+uniform float4 uvDistortionParameter; // x:intensity
 )"
 #endif
 
 	R"(
 
-void main() {
-	if (TextureEnable)
-	{
-		FRAGCOLOR = TEX2D(uTexture0, v_TexCoord.xy);
-	}
-	else
-	{
-		FRAGCOLOR = vec4(1.0, 1.0, 1.0, 1.0);
-	}
+void main()
+{
+    vec2 UVOffset = vec2(0.0, 0.0);
+)"
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
+	R"(
+    UVOffset = TEX2D(uuvDistortionTexture, vaUVDistortionUV).xy * 2.0 - 1.0;
+    UVOffset *= uvDistortionParameter.x;
+)"
+#endif
+
+	R"(
+
+	FRAGCOLOR = TEX2D(uTexture0, v_TexCoord.xy + UVOffset);
 
 	FRAGCOLOR.a = FRAGCOLOR.a * v_Color.a;
 
@@ -55,7 +65,7 @@ void main() {
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	R"(
 	ApplyFlipbook(FRAGCOLOR, uTexture0, flipbookParameter, v_Color, vaFlipbookNextIndexUV, vaFlipbookRate);
-    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
+    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV + UVOffset).a;
     if (FRAGCOLOR.a <= vaAlphaThreshold)
     {
         discard;
