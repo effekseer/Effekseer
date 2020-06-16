@@ -5,23 +5,23 @@
 
 namespace efk
 {
-	namespace Standard_VS
-	{
-		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.Tool_VS.h>
-	}
+namespace Standard_VS
+{
+static
+#include "Shader/EffekseerRenderer.Tool_VS.h"
+} // namespace Standard_VS
 
-	namespace Standard_PS
-	{
-		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.Tool_PS.h>
-	}
+namespace Standard_PS
+{
+static
+#include "Shader/EffekseerRenderer.Tool_PS.h"
+} // namespace Standard_PS
 
-	namespace StandardNoTexture_PS
-	{
-		static
-#include <EffekseerRendererDX11/EffekseerRenderer/Shader_15/EffekseerRenderer.ToolNoTexture_PS.h>
-	}
+namespace StandardNoTexture_PS
+{
+static
+#include "Shader/EffekseerRenderer.ToolNoTexture_PS.h"
+} // namespace StandardNoTexture_PS
 
 	ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 		: ImageRenderer(renderer)
