@@ -29,8 +29,9 @@ struct VS_Input
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD1;
-    float FlipbookIndex : TEXCOORD2;
-    float AlphaThreshold : TEXCOORD3;
+	float2 UVDistortionUV : TEXCOORD2;
+    float FlipbookIndex : TEXCOORD3;
+    float AlphaThreshold : TEXCOORD4;
 #endif
 };
 
@@ -46,9 +47,10 @@ struct VS_Output
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD4;
-    float FlipbookRate : TEXCOORD5;
-    float2 FlipbookNextIndexUV : TEXCOORD6;
-    float AlphaThreshold : TEXCOORD7;
+	float2 UVDistortionUV : TEXCOORD5;
+    float FlipbookRate : TEXCOORD6;
+    float2 FlipbookNextIndexUV : TEXCOORD7;
+    float AlphaThreshold : TEXCOORD8;
 #endif
 };
 
@@ -92,6 +94,10 @@ VS_Output VS( const VS_Input Input )
     Output.AlphaUV = Input.AlphaUV;
     Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
     
+    // uv distortion texture
+	Output.UVDistortionUV = Input.UVDistortionUV;
+	Output.UVDistortionUV.y = mUVInversed.x + mUVInversed.y * Input.UVDistortionUV.y;
+
     // flipbook interpolation
 	ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV);
 

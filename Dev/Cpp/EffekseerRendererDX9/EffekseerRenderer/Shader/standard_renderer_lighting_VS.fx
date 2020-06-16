@@ -14,8 +14,9 @@ struct VS_Input
 	float2 UV2 : TEXCOORD1;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV : TEXCOORD2;
-    float FlipbookIndex : TEXCOORD3;
-    float AlphaThreshold : TEXCOORD4;
+	float2 UVDistortionUV : TEXCOORD3;
+    float FlipbookIndex : TEXCOORD4;
+    float AlphaThreshold : TEXCOORD5;
 #endif
 };
 
@@ -24,15 +25,16 @@ struct VS_Output
 	float4 Position : POSITION0;
 	float4 VColor : COLOR;
 	float2 UV1 : TEXCOORD0;
-	float3 WorldP : TEXCOORD1;
+//	float3 WorldP : TEXCOORD1;
 	float3 WorldN : TEXCOORD2;
 	float3 WorldT : TEXCOORD3;
 	float3 WorldB : TEXCOORD4;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV : TEXCOORD5;
-    float FlipbookRate : TEXCOORD6;
-    float2 FlipbookNextIndexUV : TEXCOORD7;
-    float AlphaThreshold : TEXCOORD8;
+	float2 UVDistortionUV : TEXCOORD6;
+    float FlipbookRate : TEXCOORD7;
+    float2 FlipbookNextIndexUV : TEXCOORD8;
+    float AlphaThreshold : TEXCOORD9;
 #endif
 };
 
@@ -73,6 +75,10 @@ VS_Output VS( const VS_Input Input )
     float2 alphaUV = Input.AlphaUV;
     alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
     
+    // uv distortion texture
+	Output.UVDistortionUV = Input.UVDistortionUV;
+	Output.UVDistortionUV.y = mUVInversed.x + mUVInversed.y * Input.UVDistortionUV.y;
+
     ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
 
     // alpha threshold
@@ -90,7 +96,7 @@ VS_Output VS( const VS_Input Input )
 	cameraPos = cameraPos / cameraPos.w;
 	Output.Position = mul(mProj, cameraPos);
 
-	Output.WorldP = worldPos;
+//	Output.WorldP = worldPos;
 	Output.VColor = Input.Color;
 	Output.UV1 = uv1;
 
