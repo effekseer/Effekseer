@@ -176,6 +176,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 			m_instanceParameter.UV = groupFirst->GetUV(0);
 			m_instanceParameter.AlphaUV = groupFirst->GetUV(1);
 			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2);
+			m_instanceParameter.BlendUV = groupFirst->GetUV(3);
 
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->m_flipbookIndexAndNextRate;
 

@@ -930,6 +930,32 @@ namespace Effekseer.Data
 		[Selected(ID = 102, Value = 4)]
 		[IO(Export = true)]
 		public UVFCurveParamater UV3FCurve { get; private set; }
+
+		// blend texture uv
+		[Selector(ID = 103)]
+		[Name(language = Language.Japanese, value = "UV(ブレンド画像)")]
+		[Name(language = Language.English, value = "UV(Blend Texture)")]
+		public Value.Enum<UVType> UV4 { get; private set; }
+
+		[Selected(ID = 103, Value = 0)]
+		[IO(Export = true)]
+		public UVDefaultParamater UV4Default { get; private set; }
+
+		[Selected(ID = 103, Value = 1)]
+		[IO(Export = true)]
+		public UVFixedParamater UV4Fixed { get; private set; }
+
+		[Selected(ID = 103, Value = 2)]
+		[IO(Export = true)]
+		public UVAnimationParamater UV4Animation { get; private set; }
+
+		[Selected(ID = 103, Value = 3)]
+		[IO(Export = true)]
+		public UVScrollParamater UV4Scroll { get; private set; }
+
+		[Selected(ID = 103, Value = 4)]
+		[IO(Export = true)]
+		public UVFCurveParamater UV4FCurve { get; private set; }
 #endif
 
 		[Key(key = "BRS_ColorInheritType")]
@@ -993,6 +1019,13 @@ namespace Effekseer.Data
 			UV3Animation = new UVAnimationParamater();
 			UV3Scroll = new UVScrollParamater();
 			UV3FCurve = new UVFCurveParamater();
+
+			UV4 = new Value.Enum<UVType>();
+			UV4Default = new UVDefaultParamater();
+			UV4Fixed = new UVFixedParamater();
+			UV4Animation = new UVAnimationParamater();
+			UV4Scroll = new UVScrollParamater();
+			UV4FCurve = new UVFCurveParamater();
 #endif
 
 			ZWrite = new Value.Boolean(false);

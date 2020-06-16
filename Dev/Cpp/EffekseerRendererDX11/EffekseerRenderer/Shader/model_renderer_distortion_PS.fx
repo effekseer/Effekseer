@@ -1,6 +1,7 @@
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "FlipbookInterpolationUtils_PS.fx"
+#include "TextureBlendingUtils_PS.fx"
 #endif
 
 Texture2D	g_texture		: register(t0);
@@ -15,6 +16,9 @@ SamplerState g_alphaSampler : register(s2);
 
 Texture2D g_uvDistortionTexture     : register(t3);
 SamplerState g_uvDistortionSampler  : register(s3);
+
+Texture2D g_blendTexture    : register(t4);
+SamplerState g_blendSampler : register(s4);
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -26,6 +30,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4  fFlipbookParameter; // x:enable, y:interpolationType
 
     float4  fUVDistortionParameter; // x:intensity
+
+    float4  fBlendTextureParameter; // x:blendType
 };
 #else
 float4		g_scale			: register(c0);
@@ -44,9 +50,10 @@ struct PS_Input
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD5;
     float2 UVDistortionUV       : TEXCOORD6;
-    float FlipbookRate          : TEXCOORD7;
-    float2 FlipbookNextIndexUV  : TEXCOORD8;
-    float AlphaThreshold        : TEXCOORD9;
+    float2 BlendUV              : TEXCOORD7;
+    float FlipbookRate          : TEXCOORD8;
+    float2 FlipbookNextIndexUV  : TEXCOORD9;
+    float AlphaThreshold        : TEXCOORD10;
 #endif
 };
 
@@ -56,7 +63,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
-    UVOffset *= fUVDistortionParameter.x;
+    UVOffset *= fUVDistortionParameter.x;    
 #endif
     
 	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset);
@@ -78,6 +85,9 @@ float4 PS( const PS_Input Input ) : SV_Target
     */
 
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
+    
+    float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV);
+    ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     // alpha threshold
     if(Output.a <= Input.AlphaThreshold)

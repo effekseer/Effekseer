@@ -266,6 +266,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
 		instanceParameter.UVDistortionUV = instance.GetUV(2);
+		instanceParameter.BlendUV = instance.GetUV(3);
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.m_flipbookIndexAndNextRate;
 

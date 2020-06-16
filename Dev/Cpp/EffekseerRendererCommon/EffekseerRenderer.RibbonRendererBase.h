@@ -128,6 +128,20 @@ namespace EffekseerRenderer
 				v[3].SetUVDistortionUV(uvX2, 0);
 				v[3].SetUVDistortionUV(uvY2, 1);
 			}
+			else if (TARGET == 4)
+			{
+				v[0].SetBlendUV(uvX1, 0);
+				v[0].SetBlendUV(uvY1, 1);
+
+				v[1].SetBlendUV(uvX2, 0);
+				v[1].SetBlendUV(uvY1, 1);
+
+				v[2].SetBlendUV(uvX1, 0);
+				v[2].SetBlendUV(uvY2, 1);
+
+				v[3].SetBlendUV(uvX2, 0);
+				v[3].SetBlendUV(uvY2, 1);
+			}
 #else
 			else
 			{
@@ -183,6 +197,13 @@ namespace EffekseerRenderer
 						uvy = param.UVDistortionUV.Y;
 						uvh = param.UVDistortionUV.Height;
 					}
+					else if (TARGET == 4)
+					{
+						uvx = param.BlendUV.X;
+						uvw = param.BlendUV.Width;
+						uvy = param.BlendUV.Y;
+						uvh = param.BlendUV.Height;
+					}
 #endif
 
 					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
@@ -234,6 +255,13 @@ namespace EffekseerRenderer
 						uvw = param.UVDistortionUV.Width;
 						uvy = param.UVDistortionUV.Y;
 						uvh = param.UVDistortionUV.Height;
+					}
+					else if (TARGET == 4)
+					{
+						uvx = param.BlendUV.X;
+						uvw = param.BlendUV.Width;
+						uvy = param.BlendUV.Y;
+						uvh = param.BlendUV.Height;
 					}
 #endif
 
@@ -550,6 +578,7 @@ namespace EffekseerRenderer
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			AssignUVs<VERTEX, 2>(parameter, verteies);
 			AssignUVs<VERTEX, 3>(parameter, verteies);
+			AssignUVs<VERTEX, 4>(parameter, verteies);
 #endif
 
 			// Apply distortion
@@ -823,6 +852,8 @@ namespace EffekseerRenderer
 			state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 			state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
 			state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
+			state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
+			state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
 
 			state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 			state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -831,6 +862,8 @@ namespace EffekseerRenderer
 			state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
 
 			state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
+
+			state.BlendTextureBlendType = param.BasicParameterPtr->BlendTextureBlendType;
 #endif
 
 
@@ -845,6 +878,7 @@ namespace EffekseerRenderer
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 												   , param.BasicParameterPtr->Texture3Index
 												   , param.BasicParameterPtr->Texture4Index
+												   , param.BasicParameterPtr->Texture5Index
 #endif
 			);
 			customData1Count_ = state.CustomData1Count;

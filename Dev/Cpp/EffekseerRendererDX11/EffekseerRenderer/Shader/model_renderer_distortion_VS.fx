@@ -6,6 +6,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 fUV[40];
     float4 fAlphaUV[40];
     float4 fUVDistortionUV[40];
+    float4 fBlendUV[40];
 
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     float4 fFlipbookIndexAndNextRate[40];
@@ -51,9 +52,10 @@ struct VS_Output
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD5;
     float2 UVDistortionUV       : TEXCOORD6;
-    float FlipbookRate          : TEXCOORD7;
-    float2 FlipbookNextIndexUV  : TEXCOORD8;
-    float AlphaThreshold        : TEXCOORD9;
+    float2 BlendUV              : TEXCOORD7; 
+    float FlipbookRate          : TEXCOORD8;
+    float2 FlipbookNextIndexUV  : TEXCOORD9;
+    float AlphaThreshold        : TEXCOORD10;
 #endif
 };
 
@@ -69,6 +71,7 @@ VS_Output VS( const VS_Input Input )
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float4 alphaUV = fAlphaUV[Input.Index.x];
     float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
+    float4 blendUV = fBlendUV[Input.Index.x];
 #endif
 
 		VS_Output Output = (VS_Output) 0;
@@ -96,6 +99,8 @@ VS_Output VS( const VS_Input Input )
     Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
     Output.UVDistortionUV.x = Input.UV.x * uvDistortionUV.z + uvDistortionUV.x;
     Output.UVDistortionUV.y = Input.UV.y * uvDistortionUV.w + uvDistortionUV.y;
+    Output.BlendUV.x = Input.UV.x * blendUV.z + blendUV.x;
+    Output.BlendUV.y = Input.UV.y * blendUV.w + blendUV.y;
 #endif
 
 	Output.Normal = mul(mCameraProj, localNormal);
@@ -109,6 +114,7 @@ VS_Output VS( const VS_Input Input )
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV.y =  mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
     Output.UVDistortionUV.y =  mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
+    Output.BlendUV.y = mUVInversed.x + mUVInversed.y * Output.BlendUV.y;
     
     // flipbook interpolation
 	ApplyFlipbookVS(

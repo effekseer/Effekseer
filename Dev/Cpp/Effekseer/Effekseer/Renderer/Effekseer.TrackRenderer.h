@@ -83,6 +83,8 @@ struct NodeRendererTextureUVTypeParameter;
 
 			RectF	UVDistortionUV;
 
+			RectF	BlendUV;
+
 			float	FlipbookIndexAndNextRate;
 
 			float	AlphaThreshold;

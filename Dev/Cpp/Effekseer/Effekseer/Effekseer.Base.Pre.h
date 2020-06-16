@@ -644,6 +644,7 @@ struct NodeRendererBasicParameter
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	int32_t Texture3Index = -1;
 	int32_t Texture4Index = -1;
+	int32_t Texture5Index = -1;
 #endif
 	float DistortionIntensity = 0.0f;
 	MaterialParameter* MaterialParameterPtr = nullptr;
@@ -660,7 +661,12 @@ struct NodeRendererBasicParameter
 	TextureFilterType TextureFilter4 = TextureFilterType::Nearest;
 	TextureWrapType TextureWrap4 = TextureWrapType::Repeat;
 
+	TextureFilterType TextureFilter5 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap5 = TextureWrapType::Repeat;
+
 	float UVDistortionIntensity = 1.0f;
+
+	int32_t BlendTextureBlendType = 0;
 
 	bool EnableInterpolation = false;
 	int32_t UVLoopType = 0;

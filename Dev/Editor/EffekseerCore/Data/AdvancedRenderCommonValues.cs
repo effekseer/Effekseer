@@ -64,6 +64,76 @@ namespace Effekseer.Data
 		}
 	}
 
+	public enum AdvancedAlphaBlendType : int
+	{
+		[Name(language = Language.Japanese, value = "アルファブレンド")]
+		[Name(language = Language.English, value = "Alpha Blend")]
+		Blend = 0,
+		[Key(key = "AlphaBlendType_Add")]
+		Add = 1,
+		[Key(key = "AlphaBlendType_Sub")]
+		Sub = 2,
+		[Key(key = "AlphaBlendType_Mul")]
+		Mul = 3,
+	}
+
+	public class BlendTextureParameter
+	{
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "ブレンド画像")]
+		[Name(language = Language.English, value = "Blend Texture")]
+		public Value.PathForImage Texture { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "ブレンドタイプ")]
+		[Name(language = Language.English, value = "Blend Type")]
+		public Value.Enum<AdvancedAlphaBlendType> BlendType { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "フィルター(ブレンド画像)")]
+		[Name(language = Language.English, value = "Filter(Blend Texture)")]
+		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "外側(ブレンド画像)")]
+		[Name(language = Language.English, value = "Wrap(Blend Texture)")]
+		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+		public BlendTextureParameter()
+		{
+			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			BlendType = new Value.Enum<AdvancedAlphaBlendType>(AdvancedAlphaBlendType.Blend);
+			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+		}
+	}
+
+	public class BlendTextureParameters
+	{
+		[IO(Export = true)]
+		public BlendTextureParameter BlendTextureParam { get; private set; }
+
+		//[Selector(ID = 400)]
+		//[IO(Export = true)]
+		//[Name(language = Language.Japanese, value = "アルファ画像を有効(ブレンド用)")]
+		//[Name(language = Language.English, value = "Enable Blend Alpha Texture")]
+		//public Value.Boolean EnableBlendAlphaTexture { get; private set; }
+
+		//[Selector(ID = 500)]
+		//[IO(Export = true)]
+		//[Name(language = Language.Japanese, value = "UV歪み画像を有効(ブレンド用)")]
+		//[Name(language = Language.English, value = "Enable Blend UV Distortion Texture")]
+		//public Value.Boolean EnableBlendUVDistortionTexture { get; private set; }
+
+		public BlendTextureParameters()
+		{
+			BlendTextureParam = new BlendTextureParameter();
+
+			//EnableBlendAlphaTexture = new Value.Boolean(false);
+			//EnableBlendUVDistortionTexture = new Value.Boolean(false);
+		}
+	}
+
 	public class AlphaCutoffParameter
 	{
 		[Selector(ID = 0)]
@@ -193,6 +263,16 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		[Selected(ID = 200, Value = 0)]
 		public UVDistortionTextureParameter UVDistortionTextureParam { get; private set; }
+
+		[Selector(ID = 300)]
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "ブレンドテクスチャを有効")]
+		[Name(language = Language.English, value = "Enable Blend Texture")]
+		public Value.Boolean EnableBlendTexture { get; private set; }
+
+		[Selected(ID = 300, Value = 0)]
+		[IO(Export = true)]
+		public BlendTextureParameters BlendTextureParams { get; private set; }
 #endif
 
 		[IO(Export = true)]
@@ -206,6 +286,9 @@ namespace Effekseer.Data
 
 			EnableUVDistortionTexture = new Value.Boolean(false);
 			UVDistortionTextureParam = new UVDistortionTextureParameter();
+
+			EnableBlendTexture = new Value.Boolean(false);
+			BlendTextureParams = new BlendTextureParameters();
 #endif
 
 			AlphaCutoffParam = new AlphaCutoffParameter();

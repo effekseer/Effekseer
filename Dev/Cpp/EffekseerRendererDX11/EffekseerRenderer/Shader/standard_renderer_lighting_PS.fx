@@ -1,6 +1,7 @@
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "FlipbookInterpolationUtils_PS.fx"
+#include "TextureBlendingUtils_PS.fx"
 #endif
 
 struct PS_Input
@@ -17,9 +18,10 @@ struct PS_Input
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD7;
     float2 UVDistortionUV       : TEXCOORD8;
-    float FlipbookRate          : TEXCOORD9;
-    float2 FlipbookNextIndexUV  : TEXCOORD10;
-    float AlphaThreshold        : TEXCOORD11;
+    float2 BlendUV              : TEXCOORD9;
+    float FlipbookRate          : TEXCOORD10;
+    float2 FlipbookNextIndexUV  : TEXCOORD11;
+    float AlphaThreshold        : TEXCOORD12;
 #endif
 };
 
@@ -33,6 +35,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 fFlipbookParameter; // x:enable, y:interpolationType
 
     float4 fUVDistortionParameter; // x:intensity
+    float4 fBlendTextureParameter; // x:blendType
 };
 #else
 float4	fLightDirection		: register( c0 );
@@ -52,6 +55,9 @@ SamplerState g_alphaSampler : register( s2 );
 
 Texture2D g_uvDistortionTexture     : register( t3 );
 SamplerState g_uvDistortionSampler  : register( s3 );
+
+Texture2D g_blendTexture    : register( t4 );
+SamplerState g_blendSampler  : register( s4 );
 #endif
 
 float4 PS(const PS_Input Input) : SV_Target
@@ -91,6 +97,9 @@ float4 PS(const PS_Input Input) : SV_Target
     
     // alpha texture
 	Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
+    
+    float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV);
+    ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     // alpha threshold
     if(Output.a <= Input.AlphaThreshold)
