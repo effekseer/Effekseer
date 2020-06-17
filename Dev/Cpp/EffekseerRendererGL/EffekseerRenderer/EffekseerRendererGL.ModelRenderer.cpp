@@ -16,14 +16,14 @@
 #include "Shader/FlipbookInterpolationUtils_VS.h"
 #include "Shader/FlipbookInterpolationUtils_PS.h"
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+#include "Shader/Model_VS.h"
+#include "Shader/Model_PS.h"
+#include "Shader/ModelDistortion_VS.h"
+#include "Shader/ModelDistortion_PS.h"
+
 namespace EffekseerRendererGL
 {
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+
 static std::string Replace( std::string target, std::string from_, std::string to_ )
 {
 	std::string::size_type Pos(target.find(from_));
@@ -36,401 +36,6 @@ static std::string Replace( std::string target, std::string from_, std::string t
 
 	return target;
 }
-
-static const char g_model_vs_src[] =
-R"(
-IN vec4 a_Position;
-IN vec4 a_Normal;
-IN vec4 a_Binormal;
-IN vec4 a_Tangent;
-IN vec4 a_TexCoord;
-IN vec4 a_Color;
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-R"(
-IN float a_InstanceID;
-IN vec4 a_UVOffset;
-IN vec4 a_ModelColor;
-)"
-#endif
-
-R"(
-OUT mediump vec4 v_Normal;
-OUT mediump vec4 v_Binormal;
-OUT mediump vec4 v_Tangent;
-OUT mediump vec4 v_TexCoord;
-OUT lowp vec4 v_Color;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-OUT vec2 vaAlphaUV;
-OUT float vaFlipbookRate;
-OUT vec2 vaFlipbookNextIndexUV;
-OUT float vaAlphaThreshold;
-)"
-#endif
-
-#if defined(MODEL_SOFTWARE_INSTANCING)
-R"(
-uniform mat4 ModelMatrix[20];
-uniform vec4 UVOffset[20];
-uniform vec4 ModelColor[20];
-)"
-#else
-R"(
-uniform mat4 ModelMatrix;
-uniform vec4 UVOffset;
-uniform vec4 ModelColor;
-)"
-#endif
-
-R"(
-uniform mat4 ProjectionMatrix;
-uniform vec4 LightDirection;
-uniform vec4 LightColor;
-uniform vec4 LightAmbient;
-uniform vec4 mUVInversed;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-uniform vec4 atAlphaUV;
-uniform vec4 atFlipbookIndexAndNextRate;
-uniform vec4 atAlphaThreshold;
-)"
-#endif
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
-)"
-#endif
-
-R"(
-void main()
-{
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-R"(
-	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];
-	vec4 uvOffset = a_UVOffset;
-	vec4 modelColor = a_ModelColor;
-)"
-#else
-R"(
-	mat4 modelMatrix = ModelMatrix;
-	vec4 uvOffset = UVOffset;
-	vec4 modelColor = ModelColor * a_Color;
-)"
-#endif
-R"(
-	vec4 localPosition = modelMatrix * a_Position;
-	gl_Position = ProjectionMatrix * localPosition;
-
-	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
-
-	if (LightingEnable)
-	{
-		mat3 lightMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
-		vec3 localNormal = normalize( lightMatrix * a_Normal.xyz );
-
-		v_Normal = vec4(localNormal, 1.0);
-		v_Binormal = vec4(normalize( lightMatrix * a_Binormal.xyz ), 1.0);
-		v_Tangent = vec4(normalize( lightMatrix * a_Tangent.xyz ), 1.0);
-	}
-
-	v_Color = modelColor;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-    // alpha texture
-    vaAlphaUV.x = v_TexCoord.x * atAlphaUV.z + atAlphaUV.x;
-	vaAlphaUV.y = v_TexCoord.y * atAlphaUV.w + atAlphaUV.y;
-	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
-
-	vaFlipbookRate = 0.0;
-	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
-
-	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndexAndNextRate.x, v_TexCoord.xy);
-	vaAlphaThreshold = atAlphaThreshold.x;
-)"
-#endif
-
-R"(
-	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
-}
-)";
-
-static const char g_model_fs_src[] = 
-R"(
-
-IN mediump vec4 v_Normal;
-IN mediump vec4 v_Binormal;
-IN mediump vec4 v_Tangent;
-IN mediump vec4 v_TexCoord;
-IN lowp vec4 v_Color;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-IN mediump vec2 vaAlphaUV;
-IN mediump float vaFlipbookRate;
-IN mediump vec2 vaFlipbookNextIndexUV;
-IN mediump float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-
-uniform sampler2D ColorTexture;
-uniform sampler2D NormalTexture;
-uniform vec4 LightDirection;
-uniform vec4 LightColor;
-uniform vec4 LightAmbient;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform sampler2D uAlphaTexture;
-uniform float4 flipbookParameter; // x:enable, y:interpolationType
-)"
-#endif
-
-R"(
-
-void main()
-{
-	FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);
-
-	if (LightingEnable)
-	{
-		vec3 texNormal = (TEX2D(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;
-		mat3 normalMatrix = mat3(v_Tangent.xyz, v_Binormal.xyz, v_Normal.xyz );
-		vec3 localNormal = normalize( normalMatrix * texNormal );
-		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
-		FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
-	}
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-	ApplyFlipbook(FRAGCOLOR, ColorTexture, flipbookParameter, v_Color, vaFlipbookNextIndexUV, vaFlipbookRate);
-    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
-    if (FRAGCOLOR.a <= vaAlphaThreshold)
-    {
-        discard;
-    }
-)"
-#endif
-
-R"(
-
-}
-
-)";
-
-
-static const char g_model_distortion_vs_src [] =
-"IN vec4 a_Position;\n"
-"IN vec4 a_Normal;\n"
-"IN vec4 a_Binormal;\n"
-"IN vec4 a_Tangent;\n"
-"IN vec4 a_TexCoord;\n"
-"IN vec4 a_Color;\n"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-"IN float a_InstanceID;\n"
-"IN vec4 a_UVOffset;\n"
-"IN vec4 a_ModelColor;\n"
-#endif
-
-R"(
-OUT mediump vec4 v_Normal;
-OUT mediump vec4 v_Binormal;
-OUT mediump vec4 v_Tangent;
-OUT mediump vec4 v_TexCoord;
-OUT mediump vec4 v_Pos;
-OUT lowp vec4 v_Color;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-OUT vec2 vaAlphaUV;
-OUT float vaFlipbookRate;
-OUT vec2 vaFlipbookNextIndexUV;
-OUT float vaAlphaThreshold;
-)"
-#endif
-
-#if defined(MODEL_SOFTWARE_INSTANCING)
-"uniform mat4 ModelMatrix[20];\n"
-"uniform vec4 UVOffset[20];\n"
-"uniform vec4 ModelColor[20];\n"
-#else
-"uniform mat4 ModelMatrix;\n"
-"uniform vec4 UVOffset;\n"
-"uniform vec4 ModelColor;\n"
-#endif
-"uniform mat4 ProjectionMatrix;\n"
-"uniform vec4 mUVInversed;\n"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-												R"(
-uniform vec4 atAlphaUV;
-uniform vec4 atFlipbookIndexAndNextRate;
-uniform vec4 atAlphaThreshold;
-)"
-#endif
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
-)"
-#endif
-
-"void main() {\n"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-"	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];\n"
-"	vec4 uvOffset = a_UVOffset;\n"
-"	vec4 modelColor = a_ModelColor;\n"
-#else
-"	mat4 modelMatrix = ModelMatrix;\n"
-"	vec4 uvOffset = UVOffset;\n"
-"	vec4 modelColor = ModelColor;\n"
-#endif
-
-R"(
-	vec4 localPosition = vec4( a_Position.x, a_Position.y, a_Position.z, 1.0 );
-	vec4 localNormal = vec4( a_Position.x + a_Normal.x, a_Position.y + a_Normal.y, a_Position.z + a_Normal.z, 1.0 );
-	vec4 localBinormal = vec4( a_Position.x + a_Binormal.x, a_Position.y + a_Binormal.y, a_Position.z + a_Binormal.z, 1.0 );
-	vec4 localTangent = vec4( a_Position.x + a_Tangent.x, a_Position.y + a_Tangent.y, a_Position.z + a_Tangent.z, 1.0 );
-
-
-	localPosition = modelMatrix * localPosition;
-	localNormal = modelMatrix * localNormal;
-	localBinormal = modelMatrix * localBinormal;
-	localTangent = modelMatrix * localTangent;
-
-	localNormal = localPosition + normalize(localNormal - localPosition);
-	localBinormal = localPosition + normalize(localBinormal - localPosition);
-	localTangent = localPosition + normalize(localTangent - localPosition);
-
-	gl_Position = ProjectionMatrix * localPosition;
-
-	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
-
-	v_Normal = ProjectionMatrix * localNormal;
-	v_Binormal = ProjectionMatrix * localBinormal;
-	v_Tangent = ProjectionMatrix * localTangent;
-	v_Pos = gl_Position;
-
-	v_Color = modelColor * a_Color;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-    vaAlphaUV.x = v_TexCoord.x * atAlphaUV.z + atAlphaUV.x;
-	vaAlphaUV.y = v_TexCoord.y * atAlphaUV.w + atAlphaUV.y;
-	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
-
-	vaFlipbookRate = 0.0;
-	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
-
-	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndexAndNextRate.x, v_TexCoord.xy);
-	vaAlphaThreshold = atAlphaThreshold.x;
-)"
-#endif
-
-R"(
-	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
-}
-)";
-
-static const char g_model_distortion_fs_src [] =
-"IN mediump vec4 v_Normal;\n"
-"IN mediump vec4 v_Binormal;\n"
-"IN mediump vec4 v_Tangent;\n"
-"IN mediump vec4 v_TexCoord;\n"
-"IN mediump vec4 v_Pos;\n"
-"IN lowp vec4 v_Color;\n"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-IN mediump vec2 vaAlphaUV;
-IN mediump float vaFlipbookRate;
-IN mediump vec2 vaFlipbookNextIndexUV;
-IN mediump float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-uniform sampler2D uTexture0;
-uniform sampler2D uBackTexture0;
-
-uniform	vec4	g_scale;
-uniform	vec4	mUVInversedBack;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform sampler2D uAlphaTexture;
-uniform float4 flipbookParameter; // x:enable, y:interpolationType
-)"
-#endif
-
-R"(
-
-void main() {
-	if (TextureEnable)
-	{
-		FRAGCOLOR = TEX2D(uTexture0, v_TexCoord.xy);
-	}
-	else
-	{
-		FRAGCOLOR = vec4(1.0, 1.0, 1.0, 1.0);
-	}
-
-	FRAGCOLOR.a = FRAGCOLOR.a * v_Color.a;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-												R"(
-	ApplyFlipbook(FRAGCOLOR, uTexture0, flipbookParameter, v_Color, vaFlipbookNextIndexUV, vaFlipbookRate);
-    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
-    if (FRAGCOLOR.a <= vaAlphaThreshold)
-    {
-        discard;
-    }
-)"
-#endif
-
-												R"(
-
-	vec2 pos = v_Pos.xy / v_Pos.w;
-	vec2 posU = v_Tangent.xy / v_Tangent.w;
-	vec2 posR = v_Binormal.xy / v_Binormal.w;
-
-	float xscale = (FRAGCOLOR.x * 2.0 - 1.0) * v_Color.x * g_scale.x;
-	float yscale = (FRAGCOLOR.y * 2.0 - 1.0) * v_Color.y * g_scale.x;
-
-	vec2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
-
-	uv.x = (uv.x + 1.0) * 0.5;
-	uv.y = (uv.y + 1.0) * 0.5;
-//	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
-
-	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
-
-	vec3 color = TEX2D(uBackTexture0, uv).xyz;
-	FRAGCOLOR.xyz = color;
-}
-)";
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 static const int NumAttribs_Model = 6;
@@ -520,6 +125,10 @@ ModelRenderer::ModelRenderer(
 
 		vsOffset += sizeof(float[4]) * 1;
 
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atUVDistortionUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
 		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("mflipbookParameter"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
@@ -571,7 +180,10 @@ ModelRenderer::ModelRenderer(
 
 	#ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders[i]->SetTextureSlot(2, shaders[i]->GetUniformId("uAlphaTexture"));
+		shaders[i]->SetTextureSlot(3, shaders[i]->GetUniformId("uuvDistortionTexture"));
 		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
+		shaders[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 4);
 	#endif
 	}
 
@@ -599,6 +211,10 @@ ModelRenderer::ModelRenderer(
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atAlphaUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atUVDistortionUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
@@ -635,7 +251,7 @@ ModelRenderer::ModelRenderer(
 		vsOffset += sizeof(float[4]) * 1;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
+		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
 #else
 		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 #endif
@@ -654,7 +270,10 @@ ModelRenderer::ModelRenderer(
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders_d[i]->SetTextureSlot(2, shaders_d[i]->GetUniformId("uAlphaTexture"));
+		shaders_d[i]->SetTextureSlot(3, shaders_d[i]->GetUniformId("uuvDistortionTexture"));
 		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("flipbookParameter"), sizeof(float[4]) * 2);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 3);
+
 #endif
 	}
 

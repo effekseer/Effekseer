@@ -13,6 +13,8 @@ SamplerState	g_backSampler		: register(s1);
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 Texture2D g_alphaTexture : register(t2);
 SamplerState g_alphaSampler : register(s2);
+Texture2D g_uvDistortionTexture : register(t3);
+SamplerState g_uvDistortionSampler : register(s3);
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -22,6 +24,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4	mUVInversedBack;
 
     float4  fFlipbookParameter; // x:enable, y:interpolationType
+	float4 fUVDistortionParameter; // x:intensity
 };
 #else
 float4		g_scale			: register(c0);
@@ -31,29 +34,37 @@ float4 mUVInversedBack		: register(c1);
 struct PS_Input
 {
 	float2 UV		: TEXCOORD0;
-	float4 Normal		: TEXCOORD1;
+//	float4 Normal		: TEXCOORD1;
 	float4 Binormal		: TEXCOORD2;
 	float4 Tangent		: TEXCOORD3;
 	float4 Pos			: TEXCOORD4;
 	float4 Color		: COLOR;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV : TEXCOORD5;
-    float FlipbookRate  : TEXCOORD6;
-    float2 FlipbookNextIndexUV : TEXCOORD7;
-    float AlphaThreshold : TEXCOORD8;
+	float2 UVDistortionUV : TEXCOORD6;
+    float FlipbookRate  : TEXCOORD7;
+    float2 FlipbookNextIndexUV : TEXCOORD8;
+    float AlphaThreshold : TEXCOORD9;
 #endif
 };
 
 float4 PS( const PS_Input Input ) : COLOR
 {
-	float4 Output = tex2D(g_sampler, Input.UV);
+	float2 UVOffset = float2(0.0, 0.0);
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	UVOffset = tex2D(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
+	UVOffset *= fUVDistortionParameter.x;
+#endif
+
+	float4 Output = tex2D(g_sampler, Input.UV + +UVOffset);
 
 	Output.a = Output.a * Input.Color.a;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	ApplyFlipbook(Output, g_texture, g_sampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV, Input.FlipbookRate);
 
-    Output.a *= tex2D(g_alphaSampler, Input.AlphaUV).a;
+    Output.a *= tex2D(g_alphaSampler, Input.AlphaUV + +UVOffset).a;
     
     // alpha threshold
     if(Output.a <= Input.AlphaThreshold)

@@ -32,508 +32,17 @@
 #include "Shader/FlipbookInterpolationUtils_VS.h"
 #include "Shader/FlipbookInterpolationUtils_PS.h"
 
+#include "Shader/SpriteLighting_VS.h"
+#include "Shader/SpriteLighting_PS.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+#include "Shader/Sprite_VS.h"
+#include "Shader/Sprite_PS.h"
+
+#include "Shader/SpriteDistortion_PS.h"
+#include "Shader/SpriteDistortion_VS.h"
+
 namespace EffekseerRendererGL
 {
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-static const char g_sprite_vs_src[] =
-	R"(
-IN vec4 atPosition;
-IN vec4 atColor;
-IN vec4 atTexCoord;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-IN vec2 atAlphaUV;
-IN float atFlipbookIndex;
-IN float atAlphaThreshold;
-)"
-#endif
-
-	R"(
-OUT vec4 vaColor;
-OUT vec4 vaTexCoord;
-OUT vec4 vaPos;
-OUT vec4 vaPosR;
-OUT vec4 vaPosU;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-OUT vec2 vaAlphaUV;
-OUT float vaFlipbookRate;
-OUT vec2 vaFlipbookNextIndexUV;
-OUT float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-uniform mat4 uMatCamera;
-uniform mat4 uMatProjection;
-uniform vec4 mUVInversed;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
-)"
-#endif
-
-R"(
-void main()
-{
-	vec4 cameraPos = uMatCamera * atPosition;
-	cameraPos = cameraPos / cameraPos.w;
-
-	gl_Position = uMatProjection * cameraPos;
-
-	vaPos = gl_Position;
-
-	vec4 cameraPosU = cameraPos + vec4(0.0, 1.0, 0.0, 0.0);
-	vec4 cameraPosR = cameraPos + vec4(1.0, 0.0, 0.0, 0.0);
-
-	vaPosR = uMatProjection * cameraPosR;
-	vaPosU = uMatProjection * cameraPosU;
-	
-	vaPos = vaPos / vaPos.w;
-	vaPosR = vaPosR / vaPosR.w;
-	vaPosU = vaPosU / vaPosU.w;
-
-	vaColor = atColor;
-	vaTexCoord = atTexCoord;
-
-	vaTexCoord.y = mUVInversed.x + mUVInversed.y * vaTexCoord.y;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-	vaAlphaUV = atAlphaUV;
-	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
-
-	vaFlipbookRate = 0.0;
-	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
-
-	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndex, vaTexCoord.xy);
-	vaAlphaThreshold = atAlphaThreshold;
-)"
-#endif
-
-R"(
-	
-}
-
-)";
-
-static const char g_sprite_fs_texture_src[] =
-R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-IN mediump vec2 vaAlphaUV;
-IN mediump float vaFlipbookRate;
-IN mediump vec2 vaFlipbookNextIndexUV;
-IN mediump float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-uniform sampler2D uTexture0;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform sampler2D uAlphaTexture;
-uniform float4 flipbookParameter; // x:enable, y:interpolationType
-)"
-#endif
-
-R"(
-
-void main()
-{
-	FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-	ApplyFlipbook(FRAGCOLOR, uTexture0, flipbookParameter, vaColor, vaFlipbookNextIndexUV, vaFlipbookRate);
-    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
-    if (FRAGCOLOR.a <= vaAlphaThreshold)
-    {
-        discard;
-    }
-)"
-#endif
-
-R"(
-}
-)";
-
-static const char g_sprite_distortion_vs_src [] =
-R"(
-IN vec4 atPosition;
-IN vec4 atColor;
-IN vec4 atTexCoord;
-IN vec4 atBinormal;
-IN vec4 atTangent;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-IN vec2 atAlphaUV;
-IN float atFlipbookIndex;
-IN float atAlphaThreshold;
-)"
-#endif
-
-R"(
-OUT vec4 vaColor;
-OUT vec4 vaTexCoord;
-OUT vec4 vaPos;
-OUT vec4 vaPosR;
-OUT vec4 vaPosU;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-OUT vec2 vaAlphaUV;
-OUT float vaFlipbookRate;
-OUT vec2 vaFlipbookNextIndexUV;
-OUT float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-uniform mat4 uMatCamera;
-uniform mat4 uMatProjection;
-uniform vec4 mUVInversed;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
-)"
-#endif
-
-	R"(
-void main() {
-
-	vec4 localBinormal = vec4( atPosition.x + atBinormal.x, atPosition.y + atBinormal.y, atPosition.z + atBinormal.z, 1.0 );
-	vec4 localTangent = vec4( atPosition.x + atTangent.x, atPosition.y + atTangent.y, atPosition.z + atTangent.z, 1.0 );
-	localBinormal = uMatCamera * localBinormal;
-	localTangent = uMatCamera * localTangent;
-
-	vec4 cameraPos = uMatCamera * atPosition;
-	cameraPos = cameraPos / cameraPos.w;
-
-	localBinormal = localBinormal / localBinormal.w;
-	localTangent = localTangent / localTangent.w;
-
-	localBinormal = cameraPos + normalize(localBinormal - cameraPos);
-	localTangent = cameraPos + normalize(localTangent - cameraPos);
-
-	gl_Position = uMatProjection * cameraPos;
-
-	vaPos = gl_Position;
-
-
-	vaPosR = uMatProjection * localTangent;
-	vaPosU = uMatProjection * localBinormal;
-	
-	vaPos = vaPos / vaPos.w;
-	vaPosR = vaPosR / vaPosR.w;
-	vaPosU = vaPosU / vaPosU.w;
-
-	vaColor = atColor;
-	vaTexCoord = atTexCoord;
-
-	vaTexCoord.y = mUVInversed.x + mUVInversed.y * vaTexCoord.y;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-	vaAlphaUV = atAlphaUV;
-	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
-
-	vaFlipbookRate = 0.0;
-	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
-
-	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndex, vaTexCoord.xy);
-	vaAlphaThreshold = atAlphaThreshold;
-)"
-#endif
-
-R"(
-
-}
-
-)";
-
-static const char g_sprite_fs_texture_distortion_src [] =
-R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
-IN mediump vec4 vaPos;
-IN mediump vec4 vaPosR;
-IN mediump vec4 vaPosU;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-IN mediump vec2 vaAlphaUV;
-IN mediump float vaFlipbookRate;
-IN mediump vec2 vaFlipbookNextIndexUV;
-IN mediump float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-uniform sampler2D uTexture0;
-uniform sampler2D uBackTexture0;
-
-uniform	vec4	g_scale;
-uniform	vec4	mUVInversedBack;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform sampler2D uAlphaTexture;
-uniform float4 flipbookParameter; // x:enable, y:interpolationType
-)"
-#endif
-
-R"(
-void main() {
-	vec4 color = TEX2D(uTexture0, vaTexCoord.xy);
-	color.w = color.w * vaColor.w;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-	ApplyFlipbook(color, uTexture0, flipbookParameter, vaColor, vaFlipbookNextIndexUV, vaFlipbookRate);
-    color.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
-    if (color.a <= vaAlphaThreshold)
-    {
-        discard;
-    }
-)"
-#endif
-
-	R"(
-
-	vec2 pos = vaPos.xy / vaPos.w;
-	vec2 posU = vaPosU.xy / vaPosU.w;
-	vec2 posR = vaPosR.xy / vaPosR.w;
-
-	vec2 uv = pos + (posR - pos) * (color.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (color.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
-	uv.x = (uv.x + 1.0) * 0.5;
-	uv.y = (uv.y + 1.0) * 0.5;
-	//uv.y = 1.0 - (uv.y + 1.0) * 0.5;
-
-	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
-
-	color.xyz = TEX2D(uBackTexture0, uv).xyz;
-	
-	FRAGCOLOR = color;
-}
-)";
-
-static const char g_sprite_vs_lighting_src[] =
-	R"(
-IN vec4 atPosition;
-IN vec4 atColor;
-IN vec3 atNormal;
-IN vec3 atTangent;
-IN vec2 atTexCoord;
-IN vec2 atTexCoord2;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-IN vec2 atAlphaUV;
-IN float atFlipbookIndex;
-IN float atAlphaThreshold;
-)"
-#endif
-
-	R"(
-OUT lowp vec4 v_VColor;
-OUT mediump vec2 v_UV1;
-OUT mediump vec2 v_UV2;
-OUT mediump vec3 v_WorldP;
-OUT mediump vec3 v_WorldN;
-OUT mediump vec3 v_WorldT;
-OUT mediump vec3 v_WorldB;
-OUT mediump vec2 v_ScreenUV;
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-OUT vec2 vaAlphaUV;
-OUT float vaFlipbookRate;
-OUT vec2 vaFlipbookNextIndexUV;
-OUT float vaAlphaThreshold;
-)"
-#endif
-
-	R"(
-uniform mat4 uMatCamera;
-uniform mat4 uMatProjection;
-uniform vec4 mUVInversed;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-uniform vec4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
-)"
-#endif
-
-	R"(
-void main() {
-	vec3 worldPos = atPosition.xyz;
-
-	// UV
-	vec2 uv1 = atTexCoord.xy;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	vec2 uv2 = atTexCoord2.xy;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
-
-	// NBT
-	vec3 worldNormal = (atNormal - vec3(0.5, 0.5, 0.5)) * 2.0;
-	vec3 worldTangent = (atTangent - vec3(0.5, 0.5, 0.5)) * 2.0;
-	vec3 worldBinormal = cross(worldNormal, worldTangent);
-
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
-	vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
-
-	vec4 cameraPos = uMatCamera * vec4(worldPos, 1.0);
-	cameraPos = cameraPos / cameraPos.w;
-
-	gl_Position = uMatProjection * cameraPos;
-
-	v_WorldP = worldPos;
-	v_VColor = atColor;
-
-	v_UV1 = uv1;
-	v_UV2 = uv2;
-	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
-	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-	vaAlphaUV = atAlphaUV;
-	vaAlphaUV.y = mUVInversed.x + mUVInversed.y * vaAlphaUV.y;
-
-	vaFlipbookRate = 0.0;
-	vaFlipbookNextIndexUV = vec2(0.0, 0.0);
-
-	ApplyFlipbookVS(vaFlipbookRate, vaFlipbookNextIndexUV, mflipbookParameter, atFlipbookIndex, v_UV1);
-	vaAlphaThreshold = atAlphaThreshold;
-)"
-#endif
-
-R"(
-
-}
-
-)";
-
-static const char g_sprite_fs_lighting_src[] =
-	R"(
-
-IN lowp vec4 v_VColor;
-IN mediump vec2 v_UV1;
-IN mediump vec2 v_UV2;
-IN mediump vec3 v_WorldP;
-IN mediump vec3 v_WorldN;
-IN mediump vec3 v_WorldT;
-IN mediump vec3 v_WorldB;
-IN mediump vec2 v_ScreenUV;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-IN mediump vec2 vaAlphaUV;
-IN mediump float vaFlipbookRate;
-IN mediump vec2 vaFlipbookNextIndexUV;
-IN mediump float vaAlphaThreshold;
-)"
-#endif
-
-R"(
-
-uniform sampler2D ColorTexture;
-uniform sampler2D NormalTexture;
-uniform vec4 LightDirection;
-uniform vec4 LightColor;
-uniform vec4 LightAmbient;
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	R"(
-uniform sampler2D uAlphaTexture;
-uniform float4 flipbookParameter; // x:enable, y:interpolationType
-)"
-#endif
-
-R"(
-
-void main()
-{
-	vec3 texNormal = (TEX2D(NormalTexture, v_UV1.xy).xyz - 0.5) * 2.0;
-	mat3 normalMatrix = mat3(v_WorldT.xyz, v_WorldB.xyz, v_WorldN.xyz );
-	vec3 localNormal = normalize( normalMatrix * texNormal );
-	float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
-	
-	FRAGCOLOR = v_VColor * TEX2D(ColorTexture, v_UV1.xy);
-
-)"
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-R"(
-	ApplyFlipbook(FRAGCOLOR, ColorTexture, flipbookParameter, v_VColor, vaFlipbookNextIndexUV, vaFlipbookRate);
-    FRAGCOLOR.a *= TEX2D(uAlphaTexture, vaAlphaUV).a;
-    if (FRAGCOLOR.a <= vaAlphaThreshold)
-    {
-        discard;
-    }
-)"
-#endif
-
-R"(
-	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
-}
-
-
-)";
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType) 
 { 
@@ -804,15 +313,16 @@ bool RendererImplemented::Initialize()
 	#endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	static ShaderAttribInfo sprite_attribs[6] = {
+	static ShaderAttribInfo sprite_attribs[7] = {
 		{"atPosition", GL_FLOAT, 3, 0, false},
 		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
 		{"atTexCoord", GL_FLOAT, 2, 16, false},
 		{"atAlphaUV", GL_FLOAT, 2, 24, false},
-		{"atFlipbookIndex", GL_FLOAT, 1, 32, false},
-		{"atAlphaThreshold", GL_FLOAT, 1, 36, false},
+		{"atUVDistortionUV", GL_FLOAT, 2, 32, false},
+		{"atFlipbookIndex", GL_FLOAT, 1, 40, false},
+		{"atAlphaThreshold", GL_FLOAT, 1, 44, false},
 	};
-	m_shader->GetAttribIdList(6, sprite_attribs);
+	m_shader->GetAttribIdList(7, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
 #else
 	static ShaderAttribInfo sprite_attribs[3] = {
@@ -828,9 +338,12 @@ bool RendererImplemented::Initialize()
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 * 2);
 	m_shader->AddVertexConstantLayout(
 		CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 	m_shader->SetTextureSlot(1, m_shader->GetUniformId("uAlphaTexture"));
+	m_shader->SetTextureSlot(2, m_shader->GetUniformId("uuvDistortionTexture"));
 	m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("flipbookParameter"), 0);
+	m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 1);
+
 #else
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 #endif
@@ -859,18 +372,19 @@ bool RendererImplemented::Initialize()
 
 	// Distortion
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	static ShaderAttribInfo sprite_attribs_distortion[8] = {
+	static ShaderAttribInfo sprite_attribs_distortion[9] = {
 		{"atPosition", GL_FLOAT, 3, 0, false},
 		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
 		{"atTexCoord", GL_FLOAT, 2, 16, false},
 		{"atBinormal", GL_FLOAT, 3, 24, false},
 		{"atTangent", GL_FLOAT, 3, 36, false},
 		{"atAlphaUV", GL_FLOAT, 2, 48, false},
-		{"atFlipbookIndex", GL_FLOAT, 1, 56, false},
-		{"atAlphaThreshold", GL_FLOAT, 1, 60, false},
+		{"atUVDistortionUV", GL_FLOAT, 2, 56, false},
+		{"atFlipbookIndex", GL_FLOAT, 1, 64, false},
+		{"atAlphaThreshold", GL_FLOAT, 1, 68, false},
 	};
 
-	m_shader_distortion->GetAttribIdList(8, sprite_attribs_distortion);
+	m_shader_distortion->GetAttribIdList(9, sprite_attribs_distortion);
 
 #else
 	static ShaderAttribInfo sprite_attribs_distortion[5] = {
@@ -889,7 +403,7 @@ bool RendererImplemented::Initialize()
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
 #else
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
@@ -934,8 +448,12 @@ bool RendererImplemented::Initialize()
 												 m_shader_distortion->GetUniformId("mflipbookParameter"),
 												 sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetTextureSlot(2, m_shader_distortion->GetUniformId("uAlphaTexture"));
+	m_shader_distortion->SetTextureSlot(3, m_shader_distortion->GetUniformId("uuvDistortionTexture"));
 	m_shader_distortion->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 2);
+
+	m_shader_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 3);
 #endif
 
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer(), false);
@@ -955,7 +473,7 @@ bool RendererImplemented::Initialize()
 	#endif
 	
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[9] = {
+	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[10] = {
 		{"atPosition", GL_FLOAT, 3, 0, false},
 		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
 		{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
@@ -963,11 +481,12 @@ bool RendererImplemented::Initialize()
 		{"atTexCoord", GL_FLOAT, 2, 24, false},
 		{"atTexCoord2", GL_FLOAT, 2, 32, false},
 		{"atAlphaUV", GL_FLOAT, 2, 40, false},
-		{"atFlipbookIndex", GL_FLOAT, 1, 48, false},
-		{"atAlphaThreshold", GL_FLOAT, 1, 52, false},
+		{"atUVDistortionUV", GL_FLOAT, 2, 48, false},
+		{"atFlipbookIndex", GL_FLOAT, 1, 56, false},
+		{"atAlphaThreshold", GL_FLOAT, 1, 60, false},
 	};
 
-	m_shader_lighting->GetAttribIdList(9, sprite_attribs_lighting);
+	m_shader_lighting->GetAttribIdList(10, sprite_attribs_lighting);
 	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::LightingVertex));
 #else
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
@@ -985,7 +504,7 @@ bool RendererImplemented::Initialize()
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3 + sizeof(float) * 4);
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 #else
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
@@ -1011,8 +530,13 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("mflipbookParameter"),
 												 sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_lighting->SetTextureSlot(2, m_shader_lighting->GetUniformId("uAlphaTexture"));
+	m_shader_lighting->SetTextureSlot(3, m_shader_lighting->GetUniformId("uuvDistortionTexture"));
+
 	m_shader_lighting->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
+
+	m_shader_lighting->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 4);
 #endif
 
 	m_vao_lighting = VertexArray::Create(this, m_shader_lighting, GetVertexBuffer(), GetIndexBuffer(), false);

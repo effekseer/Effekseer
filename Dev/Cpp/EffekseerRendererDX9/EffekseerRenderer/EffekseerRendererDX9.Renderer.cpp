@@ -335,8 +335,9 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		{ 0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 6, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1}, // AlphaTextureUV
-		{0, sizeof(float) * 8, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},	  // FlipbookIndexAndNextRate
-		{0, sizeof(float) * 9, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3}, // AlphaThreshold
+		{0, sizeof(float) * 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2}, // UVDistortionTextureUV
+		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},	  // FlipbookIndexAndNextRate
+		{0, sizeof(float) * 11, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4}, // AlphaThreshold
 #endif
 		D3DDECL_END()
 	};
@@ -350,8 +351,9 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		{ 0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2 },
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1}, // AlphaTextureUV
-		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2}, // FlipbookIndexAndNextRate
-		{0, sizeof(float) * 15, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3}, // AlphaThreshold
+		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2}, // UVDistortionTextureUV
+		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3}, // FlipbookIndexAndNextRate
+		{0, sizeof(float) * 17, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4}, // AlphaThreshold
 #endif
 		D3DDECL_END()
 	};
@@ -410,14 +412,14 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 1);
-	m_shader->SetPixelRegisterCount(1);
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
+	m_shader->SetPixelRegisterCount(2);
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1 + 1 + 1);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
+	m_shader_distortion->SetPixelRegisterCount(4);
 #else
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1);
@@ -437,8 +439,9 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 										 {0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2}, // AlphaTextureUVs
-		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},	   // FlipbookIndexAndNextRate
-		{0, sizeof(float) * 13, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4}, // AlphaThreshold
+		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3}, // UVDistortionTextureUV
+		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},	 // FlipbookIndexAndNextRate
+		{0, sizeof(float) * 15, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5}, // AlphaThreshold
 #endif
 										 D3DDECL_END()};
 
@@ -467,8 +470,8 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
-	m_shader_lighting->SetPixelRegisterCount(4);
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
+	m_shader_lighting->SetPixelRegisterCount(5);
 #else
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
