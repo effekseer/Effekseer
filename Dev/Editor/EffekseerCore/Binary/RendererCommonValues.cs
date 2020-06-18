@@ -27,6 +27,8 @@ namespace Effekseer.Binary
 			var alphaTexInfo = new TextureInformation();
 
 			var uvDistortionTexInfo = new TextureInformation();
+
+			var blendTexInfo = new TextureInformation();
 #endif
 
 			data.Add(((int)value.Material.Value).GetBytes());
@@ -81,6 +83,9 @@ namespace Effekseer.Binary
 
 					// uv distortion texture
 					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+
+					// blend texture
+					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -100,6 +105,9 @@ namespace Effekseer.Binary
 
 					// uv distortion texture
 					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, distortionTexture_and_index, ref uvDistortionTexInfo).GetBytes());
+
+					// blend texture
+					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -119,6 +127,9 @@ namespace Effekseer.Binary
 					
 					// uv distortion texture
 					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+
+					// blend texture
+					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -222,6 +233,9 @@ namespace Effekseer.Binary
 
 				data.Add(advanceValue.UVDistortionTextureParam.Filter);
 				data.Add(advanceValue.UVDistortionTextureParam.Wrap);
+
+				data.Add(advanceValue.BlendTextureParams.BlendTextureParam.Filter);
+				data.Add(advanceValue.BlendTextureParams.BlendTextureParam.Wrap);
 			}
 #endif
 
@@ -383,6 +397,27 @@ namespace Effekseer.Binary
 
 				// uv distortion intensity
 				data.Add((advanceValue.UVDistortionTextureParam.UVDistortionIntensity / 100.0f).GetBytes());
+
+				// blend texture
+				data.Add(GetUVBytes
+				(
+				blendTexInfo,
+				value.UV4,
+				value.UV4Fixed,
+				value.UV4Animation,
+				value.UV4Scroll,
+				value.UV4FCurve
+				));
+
+				// blend texture blend type
+				if (advanceValue.EnableBlendTexture && advanceValue.BlendTextureParams.BlendTextureParam.Texture.RelativePath != string.Empty)
+				{
+					data.Add(advanceValue.BlendTextureParams.BlendTextureParam.BlendType);
+				}
+				else
+				{
+					data.Add((-1).GetBytes());
+				}
 			}
 #endif
 

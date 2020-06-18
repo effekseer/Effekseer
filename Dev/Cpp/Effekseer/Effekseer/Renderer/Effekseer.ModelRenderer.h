@@ -68,6 +68,8 @@ public:
 
 		RectF			UVDistortionUV;
 
+		RectF			BlendUV;
+
 		float			FlipbookIndexAndNextRate;
 
 		float			AlphaThreshold;

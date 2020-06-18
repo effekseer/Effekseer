@@ -593,6 +593,9 @@ struct EffectBasicRenderParameter
 	int32_t				UVDistortionIndex;
 	TextureWrapType		UVDistortionTexWrapType;
 
+	int32_t				BlendTextureIndex;
+	TextureWrapType		BlendTexWrapType;
+
 	struct FlipbookParameters
 	{
 		bool Enable;
@@ -604,6 +607,8 @@ struct EffectBasicRenderParameter
 	RendererMaterialType MaterialType;
 
 	float UVDistortionIntensity;
+
+	int32_t				TextureBlendType;
 #endif
 	AlphaBlendType		AlphaBlend;
 	TextureFilterType	FilterType;

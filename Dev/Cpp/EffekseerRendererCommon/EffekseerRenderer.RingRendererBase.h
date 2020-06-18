@@ -129,6 +129,8 @@ protected:
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
 		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
+		state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
+		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -137,6 +139,8 @@ protected:
 		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
 
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
+
+		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
@@ -150,6 +154,7 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 											   , param.BasicParameterPtr->Texture3Index
 											   , param.BasicParameterPtr->Texture4Index
+											   , param.BasicParameterPtr->Texture5Index
 #endif
 		);
 
@@ -299,7 +304,7 @@ protected:
 		float uv1texNext = 0.0f;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		const int32_t advancedUVNum = 2;
+		const int32_t advancedUVNum = 3;
 
 		float advancedUVCurrent[advancedUVNum] = 
 		{ 
@@ -433,21 +438,29 @@ protected:
 			v[0].SetAlphaUV(advancedUVv1[0], 1);			
 			v[0].SetUVDistortionUV(advancedUVCurrent[1], 0);
 			v[0].SetUVDistortionUV(advancedUVv1[1], 1);
+			v[0].SetBlendUV(advancedUVCurrent[2], 0);
+			v[0].SetBlendUV(advancedUVv1[2], 1);
 
 			v[1].SetAlphaUV(advancedUVCurrent[0], 0);
 			v[1].SetAlphaUV(advancedUVv2[0], 1);
 			v[1].SetUVDistortionUV(advancedUVCurrent[1], 0);
 			v[1].SetUVDistortionUV(advancedUVv2[1], 1);
+			v[1].SetBlendUV(advancedUVCurrent[2], 0);
+			v[1].SetBlendUV(advancedUVv2[2], 1);
 
 			v[2].SetAlphaUV(advancedUVtexNext[0], 0);
 			v[2].SetAlphaUV(advancedUVv1[0], 1);
 			v[2].SetUVDistortionUV(advancedUVtexNext[1], 0);
 			v[2].SetUVDistortionUV(advancedUVv1[1], 1);
+			v[2].SetBlendUV(advancedUVtexNext[2], 0);
+			v[2].SetBlendUV(advancedUVv1[2], 1);
 
 			v[3].SetAlphaUV(advancedUVtexNext[0], 0);
 			v[3].SetAlphaUV(advancedUVv2[0], 1);
 			v[3].SetUVDistortionUV(advancedUVtexNext[1], 0);
 			v[3].SetUVDistortionUV(advancedUVv2[1], 1);
+			v[3].SetBlendUV(advancedUVtexNext[2], 0);
+			v[3].SetBlendUV(advancedUVv2[2], 1);
 
 			v[4] = v[1];
 
@@ -455,6 +468,8 @@ protected:
 			v[5].SetAlphaUV(advancedUVv3[0], 1);
 			v[5].SetUVDistortionUV(advancedUVCurrent[1], 0);
 			v[5].SetUVDistortionUV(advancedUVv3[1], 1);
+			v[5].SetBlendUV(advancedUVCurrent[2], 0);
+			v[5].SetBlendUV(advancedUVv3[2], 1);
 
 			v[6] = v[3];
 
@@ -462,6 +477,8 @@ protected:
 			v[7].SetAlphaUV(advancedUVv3[0], 1);
 			v[7].SetUVDistortionUV(advancedUVtexNext[1], 0);
 			v[7].SetUVDistortionUV(advancedUVv3[1], 1);
+			v[7].SetBlendUV(advancedUVtexNext[2], 0);
+			v[7].SetBlendUV(advancedUVv3[2], 1);
 
 			for (int32_t vi = 0; vi < 8; vi++)
 			{

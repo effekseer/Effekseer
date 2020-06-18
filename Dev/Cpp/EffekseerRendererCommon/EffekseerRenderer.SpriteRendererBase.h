@@ -108,6 +108,8 @@ protected:
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
 		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
+		state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
+		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -116,6 +118,8 @@ protected:
 		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
 
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
+
+		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
 #endif
 
 
@@ -127,6 +131,7 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 											   , param.BasicParameterPtr->Texture3Index
 											   , param.BasicParameterPtr->Texture4Index
+											   , param.BasicParameterPtr->Texture5Index
 #endif
 		);
 		customData1Count_ = state.CustomData1Count;
@@ -234,6 +239,18 @@ protected:
 
 		verteies[3].SetUVDistortionUV(instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
 		verteies[3].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y, 1);
+
+		verteies[0].SetBlendUV(instanceParameter.BlendUV.X, 0);
+		verteies[0].SetBlendUV(instanceParameter.BlendUV.Y + instanceParameter.BlendUV.Height, 1);
+
+		verteies[1].SetBlendUV(instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
+		verteies[1].SetBlendUV(instanceParameter.BlendUV.Y + instanceParameter.BlendUV.Height, 1);
+
+		verteies[2].SetBlendUV(instanceParameter.BlendUV.X, 0);
+		verteies[2].SetBlendUV(instanceParameter.BlendUV.Y, 1);
+
+		verteies[3].SetBlendUV(instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
+		verteies[3].SetBlendUV(instanceParameter.BlendUV.Y, 1);
 #endif
 
 		// distortion
