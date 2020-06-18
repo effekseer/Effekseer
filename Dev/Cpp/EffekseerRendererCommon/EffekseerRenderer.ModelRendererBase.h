@@ -962,7 +962,7 @@ public:
 
 				pcb[4 * 3 + 0] = param.BasicParameterPtr->UVDistortionIntensity;
 
-				pcb[4 * 4 + 0] = param.BasicParameterPtr->BlendTextureBlendType;
+				pcb[4 * 4 + 0] = param.BasicParameterPtr->TextureBlendType;
 #endif
 			}
 			else
@@ -994,7 +994,7 @@ public:
 
 				pcb->ModelUVDistortionParameter.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
 
-				pcb->ModelBlendTextureParameter.BlendType = param.BasicParameterPtr->BlendTextureBlendType;
+				pcb->ModelBlendTextureParameter.BlendType = param.BasicParameterPtr->TextureBlendType;
 #endif
 			}
 		}

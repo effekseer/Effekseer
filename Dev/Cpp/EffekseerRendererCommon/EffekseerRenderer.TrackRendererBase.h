@@ -917,7 +917,7 @@ namespace EffekseerRenderer
 
 			state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 
-			state.BlendTextureBlendType = param.BasicParameterPtr->BlendTextureBlendType;
+			state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
 #endif
 
 			state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;

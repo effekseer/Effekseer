@@ -119,7 +119,7 @@ protected:
 
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 
-		state.BlendTextureBlendType = param.BasicParameterPtr->BlendTextureBlendType;
+		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
 #endif
 
 

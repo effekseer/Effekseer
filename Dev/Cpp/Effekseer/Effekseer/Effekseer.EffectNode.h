@@ -715,7 +715,7 @@ struct ParameterRendererCommon
 
 	float UVDistortionIntensity = 1.0f;
 
-	int32_t BlendTextureBlendType = 0;
+	int32_t TextureBlendType = -1;
 #endif
 
 	bool				ZWrite = false;
@@ -1136,7 +1136,7 @@ struct ParameterRendererCommon
 			LoadUVParameter(3);
 
 			// blend type
-			memcpy(&BlendTextureBlendType, pos, sizeof(int));
+			memcpy(&TextureBlendType, pos, sizeof(int));
 			pos += sizeof(int);
 		}
 
@@ -1266,7 +1266,7 @@ struct ParameterRendererCommon
 
 		BasicParameter.UVDistortionIntensity = UVDistortionIntensity;
 
-		BasicParameter.BlendTextureBlendType = BlendTextureBlendType;
+		BasicParameter.TextureBlendType = TextureBlendType;
 
 		if (UVTypes[0] == UV_ANIMATION)
 		{

@@ -61,7 +61,7 @@ struct StandardRendererState
 
 	float UVDistortionIntensity;
 
-	int32_t BlendTextureBlendType;
+	int32_t TextureBlendType;
 #endif
 
 	::Effekseer::RendererMaterialType MaterialType;
@@ -113,7 +113,7 @@ struct StandardRendererState
 
 		UVDistortionIntensity = 1.0f;
 
-		BlendTextureBlendType = 0;
+		TextureBlendType = 0;
 #endif
 
 		MaterialPtr = nullptr;
@@ -187,7 +187,7 @@ struct StandardRendererState
 			return true;
 		if (UVDistortionIntensity != state.UVDistortionIntensity)
 			return true;
-		if (BlendTextureBlendType != state.BlendTextureBlendType)
+		if (TextureBlendType != state.TextureBlendType)
 			return true;
 #endif
 		if (MaterialType != state.MaterialType)
@@ -1123,7 +1123,7 @@ public:
 
 			pcb.uvDistortionParameter.intensity = m_state.UVDistortionIntensity;
 
-			pcb.blendTextureParameter.blendType = m_state.BlendTextureBlendType;
+			pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 
 			m_renderer->SetPixelBufferToShader(&pcb.flipbookParameter, sizeof(PixelConstantBuffer), psOffset);
 #endif
@@ -1160,7 +1160,7 @@ public:
 
 				pcb.uvDistortionParameter.intensity = m_state.UVDistortionIntensity;
 
-				pcb.blendTextureParameter.blendType = m_state.BlendTextureBlendType;
+				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 #endif
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
@@ -1174,7 +1174,7 @@ public:
 
 				pcb.uvDistortionParameter.intensity = m_state.UVDistortionIntensity;
 
-				pcb.blendTextureParameter.blendType = m_state.BlendTextureBlendType;
+				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}

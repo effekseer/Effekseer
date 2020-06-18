@@ -666,7 +666,7 @@ struct NodeRendererBasicParameter
 
 	float UVDistortionIntensity = 1.0f;
 
-	int32_t BlendTextureBlendType = 0;
+	int32_t TextureBlendType = 0;
 
 	bool EnableInterpolation = false;
 	int32_t UVLoopType = 0;
