@@ -13,6 +13,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4	fLightAmbient;
 
     float4  fFlipbookParameter; // x:enable, y:interpolationType
+	float4 fUVDistortionParameter; // x:intensity
 };
 
 #else // else __EFFEKSEER_BUILD_VERSION16__
@@ -38,6 +39,8 @@ sampler2D	g_normalSampler		: register( s1 );
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 Texture2D	    g_alphaTexture		: register( t2 );
 SamplerState	g_alphaSampler		: register( s2 );
+Texture2D g_uvDistortionTexture : register(t3);
+SamplerState g_uvDistortionSampler : register(s3);
 #endif
 
 struct PS_Input
@@ -50,22 +53,22 @@ struct PS_Input
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD4;
+	float2 UVDistortionUV : TEXCOORD5;
+    float FlipbookRate  : TEXCOORD6;
+    float2 FlipbookNextIndexUV : TEXCOORD7;
     
-    float FlipbookRate  : TEXCOORD5;
-    float2 FlipbookNextIndexUV : TEXCOORD6;
-    
-    float AlphaThreshold : TEXCOORD7;
+    float AlphaThreshold : TEXCOORD8;
 #endif
 
 #else
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD1;
+	float2 UVDistortionUV : TEXCOORD2;
+    float FlipbookRate  : TEXCOORD3;
+    float2 FlipbookNextIndexUV : TEXCOORD4;
     
-    float FlipbookRate  : TEXCOORD2;
-    float2 FlipbookNextIndexUV : TEXCOORD3;
-    
-    float AlphaThreshold : TEXCOORD4;
+    float AlphaThreshold : TEXCOORD5;
 #endif
 
 #endif
@@ -74,12 +77,19 @@ struct PS_Input
 
 float4 PS(const PS_Input Input) : COLOR
 {
-	float4 Output = tex2D(g_colorSampler, Input.UV) * Input.Color;
+	float2 UVOffset = float2(0.0, 0.0);
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	UVOffset = tex2D(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
+	UVOffset *= fUVDistortionParameter.x;
+#endif
+
+	float4 Output = tex2D(g_colorSampler, Input.UV + +UVOffset) * Input.Color;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV, Input.FlipbookRate);
 
-    Output.a *= tex2D(g_alphaSampler, Input.AlphaUV).a;
+    Output.a *= tex2D(g_alphaSampler, Input.AlphaUV + +UVOffset).a;
     
     // alpha threshold
     if (Output.a <= Input.AlphaThreshold)
