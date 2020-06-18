@@ -38,6 +38,20 @@ void InstanceChunk::UpdateInstances()
 		}
 	}
 }
+
+void InstanceChunk::GenerateChildrenInRequired()
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+
+			instance->GenerateChildrenInRequired();
+		}
+	}
+}
+
 void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global)
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)

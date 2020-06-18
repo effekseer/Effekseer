@@ -2387,6 +2387,20 @@ public:
 
 	/**
 		@brief
+		\~English Starts a specified number of worker threads
+		\~Japanese 指定した数のワーカースレッドを起動する
+	*/
+	virtual void LaunchWorkerThreads(uint32_t threadCount) = 0;
+
+	/**
+		@brief
+		\~English Get a thread handle (HANDLE(win32), pthread_t(posix) or etc.)
+		\~Japanese スレッドハンドルを取得する。(HANDLE(win32) や pthread_t(posix) など)
+	*/
+	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadIndex) = 0;
+
+	/**
+		@brief
 		\~English get an allocator
 		\~Japanese メモリ確保関数を取得する。
 	*/

@@ -307,6 +307,9 @@ public:
 	// 親の変換用行列
 	Mat43f			m_ParentMatrix;
 
+	// FirstUpdate実行前
+	bool			m_IsFirstTime;
+
 	// 変換用行列が計算済かどうか
 	bool			m_GlobalMatrix43Calculated;
 
@@ -315,6 +318,8 @@ public:
 
 	//! whether a time is allowed to pass
 	bool			is_time_step_allowed;
+
+	int32_t			m_InstanceNumber;
 
 	/* 更新番号 */
 	uint32_t		m_sequenceNumber;
@@ -378,15 +383,15 @@ public:
 	// デストラクタ
 	virtual ~Instance();
 
-	bool IsRequiredToCreateChildren(float currentTime);
-
-	void GenerateChildrenInRequired(float currentTime);
+	void GenerateChildrenInRequired();
 
 	void UpdateChildrenGroupMatrix();
 
 	InstanceGlobal* GetInstanceGlobal();
 
 public:
+	bool IsFirstTime() const { return m_IsFirstTime; }
+
 	/**
 		@brief	状態の取得
 	*/
@@ -400,7 +405,12 @@ public:
 	/**
 		@brief	初期化
 	*/
-	void Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime, const Mat43f& globalMatrix);
+	void Initialize( Instance* parent, int32_t instanceNumber, const Mat43f& globalMatrix);
+
+	/**
+		@brief	初回の更新
+	*/
+	void FirstUpdate();
 
 	/**
 		@brief	更新

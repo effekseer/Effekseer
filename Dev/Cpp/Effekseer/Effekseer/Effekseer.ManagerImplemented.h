@@ -9,6 +9,7 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
+#include "Effekseer.WorkerThread.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 
 namespace Effekseer
@@ -122,6 +123,8 @@ private:
 	} cullingCurrent, cullingNext;
 
 private:
+	CustomVector<WorkerThread> m_WorkerThreads;
+
 	//! whether does rendering and update handle flipped automatically
 	bool m_autoFlip = true;
 
@@ -228,6 +231,10 @@ public:
 	void ReleaseInstanceContainer(InstanceContainer* container);
 
 	void Destroy() override;
+
+	void LaunchWorkerThreads(uint32_t threadCount) override;
+
+	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadIndex);
 
 	uint32_t GetSequenceNumber() const;
 
@@ -376,6 +383,8 @@ public:
 	void Update(float deltaFrame) override;
 
 	void Update(const UpdateParameter& parameter) override;
+
+	void DoUpdate(const UpdateParameter& parameter);
 
 	void BeginUpdate() override;
 

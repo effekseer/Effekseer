@@ -42,6 +42,7 @@ set(effekseer_src
     Effekseer/Effekseer.Socket.cpp
     Effekseer/Effekseer.Vector2D.cpp
     Effekseer/Effekseer.Vector3D.cpp
+    Effekseer/Effekseer.WorkerThread.cpp
     Effekseer/Culling/Culling3D.Grid.cpp
     Effekseer/Culling/Culling3D.Layer.cpp
     Effekseer/Culling/Culling3D.Matrix44.cpp

@@ -25,6 +25,8 @@ public:
 
 	void UpdateInstances();
 
+	void GenerateChildrenInRequired();
+
 	void UpdateInstancesByInstanceGlobal(const InstanceGlobal* global);
 
 	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
