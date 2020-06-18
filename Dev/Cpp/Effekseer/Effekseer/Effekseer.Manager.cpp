@@ -1297,6 +1297,11 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 
 		for (auto& chunks : instanceChunks_)
 		{
+			for (auto chunk : chunks)
+			{
+				chunk->Preupdate();
+			}
+
 			if (m_WorkerThreads.size() >= 2)
 			{
 				const uint32_t chunkStep = (uint32_t)m_WorkerThreads.size();

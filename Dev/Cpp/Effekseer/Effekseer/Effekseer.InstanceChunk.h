@@ -23,6 +23,8 @@ public:
 
 	~InstanceChunk();
 
+	void Preupdate();
+
 	void UpdateInstances();
 
 	void GenerateChildrenInRequired();

@@ -266,6 +266,10 @@ void Instance::GenerateChildrenInRequired()
 					Mat43f rootMatrix = Mat43f::Identity;
 
 					newInstance->Initialize(this, m_generatedChildrenCount[i], rootMatrix);
+					
+					// TODO : Improve it
+					newInstance->FirstUpdate();
+					m_IsFirstTime = false;
 				}
 
 				m_generatedChildrenCount[i]++;
@@ -1000,7 +1004,8 @@ void Instance::Update( float deltaFrame, bool shown )
 
 	if( m_IsFirstTime )
 	{
-		FirstUpdate();
+		// TODO : Improve it
+		// FirstUpdate();
 		m_IsFirstTime = false;
 	}
 
