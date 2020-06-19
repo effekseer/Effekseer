@@ -1299,7 +1299,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 		{
 			for (auto chunk : chunks)
 			{
-				chunk->Preupdate();
+				//chunk->Preupdate();
 			}
 
 			if (m_WorkerThreads.size() >= 2)
@@ -1484,6 +1484,8 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 		drawSet.IsRemoving = true;
 		return;
 	}
+
+	drawSet.InstanceContainerPointer->GetFirstGroup()->GetFirst()->FirstUpdate();
 
 	for (int32_t frame = 0; frame < drawSet.StartFrame; frame++)
 	{

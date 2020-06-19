@@ -269,7 +269,7 @@ void Instance::GenerateChildrenInRequired()
 					
 					// TODO : Improve it
 					newInstance->FirstUpdate();
-					m_IsFirstTime = false;
+					//m_IsFirstTime = false;
 				}
 
 				m_generatedChildrenCount[i]++;
@@ -359,18 +359,10 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, const Mat43
 	m_InstanceNumber = instanceNumber;
 
 	m_IsFirstTime = true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Instance::FirstUpdate()
-{
-	assert(this->m_pContainer != nullptr);
 
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
-	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
+	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
 
 	// Extend array
 	if (parameter->GetChildrenCount() >= ChildrenMax)
@@ -385,6 +377,61 @@ void Instance::FirstUpdate()
 	}
 
 	// initialize children
+	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++)
+	{
+		auto pNode = (EffectNodeImplemented*)parameter->GetChild(i);
+
+		m_generatedChildrenCount[i] = 0;
+
+		auto gt = ApplyEq(pNode->CommonValues.RefEqGenerationTimeOffset, pNode->CommonValues.GenerationTimeOffset);
+
+		m_nextGenerationTime[i] = gt.getValue(*instanceGlobal);
+
+		if (pNode->CommonValues.RefEqMaxGeneration >= 0)
+		{
+			auto maxGene = static_cast<float>(pNode->CommonValues.MaxGeneration);
+			ApplyEq(maxGene,
+					this->m_pEffectNode->m_effect,
+					this->m_pContainer->GetRootInstance(),
+					pNode->CommonValues.RefEqMaxGeneration,
+					maxGene);
+			maxGenerationChildrenCount[i] = maxGene;
+		}
+		else
+		{
+			maxGenerationChildrenCount[i] = pNode->CommonValues.MaxGeneration;
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Instance::FirstUpdate()
+{
+	m_IsFirstTime = false;
+	assert(this->m_pContainer != nullptr);
+
+	auto instanceGlobal = this->m_pContainer->GetRootInstance();
+
+	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
+
+	/*
+	// Extend array
+	if (parameter->GetChildrenCount() >= ChildrenMax)
+	{
+		m_flexibleGeneratedChildrenCount = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
+		flexibleMaxGenerationChildrenCount_ = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
+		m_flexibleNextGenerationTime = (float*)(m_pManager->GetMallocFunc()(sizeof(float) * parameter->GetChildrenCount()));
+
+		m_generatedChildrenCount = m_flexibleGeneratedChildrenCount;
+		maxGenerationChildrenCount = flexibleMaxGenerationChildrenCount_;
+		m_nextGenerationTime = m_flexibleNextGenerationTime;
+	}
+	*/
+
+	// initialize children
+	/*
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++)
 	{
 		auto pNode = (EffectNodeImplemented*) parameter->GetChild(i);
@@ -410,6 +457,7 @@ void Instance::FirstUpdate()
 			maxGenerationChildrenCount[i] = pNode->CommonValues.MaxGeneration;
 		}
 	}
+	*/
 
 	if( m_pParent == nullptr )
 	{
@@ -1005,8 +1053,8 @@ void Instance::Update( float deltaFrame, bool shown )
 	if( m_IsFirstTime )
 	{
 		// TODO : Improve it
-		// FirstUpdate();
-		m_IsFirstTime = false;
+		FirstUpdate();
+		//m_IsFirstTime = false;
 	}
 
 	if (is_time_step_allowed && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
