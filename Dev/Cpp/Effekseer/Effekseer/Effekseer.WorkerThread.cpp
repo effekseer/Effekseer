@@ -14,6 +14,10 @@ namespace Effekseer {
 WorkerThread::WorkerThread()
 {
 	m_TaskCompleted.store(true);
+
+	m_TaskRequested.store(false);
+	m_TaskCompleted.store(false);
+	m_QuitRequested.store(false);
 }
 
 //----------------------------------------------------------------------------------

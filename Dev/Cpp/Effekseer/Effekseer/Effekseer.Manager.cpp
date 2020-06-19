@@ -1211,6 +1211,7 @@ void ManagerImplemented::Update(float deltaFrame)
 {
 	UpdateParameter parameter;
 	parameter.DeltaFrame = deltaFrame;
+	parameter.UpdateInterval = 0.0f;
 	Update(parameter);
 }
 
@@ -1224,7 +1225,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	{
 		m_WorkerThreads[0].WaitForComplete();
 		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter](){ DoUpdate(parameter); });
+		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
 	}
 }
 
@@ -1299,7 +1300,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 		{
 			for (auto chunk : chunks)
 			{
-				//chunk->Preupdate();
+				// chunk->Preupdate();
 			}
 
 			if (m_WorkerThreads.size() >= 2)
@@ -1311,7 +1312,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 					const uint32_t chunkOffset = workerID;
 
 					// Process on worker thread
-					m_WorkerThreads[workerID].RunAsync([this, &chunks, chunkOffset, chunkStep](){
+					m_WorkerThreads[workerID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
 							chunks[i]->UpdateInstances();
@@ -1320,7 +1321,8 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				}
 
 				// Process on this thread
-				for (size_t i = 0; i < chunks.size(); i += chunkStep) {
+				for (size_t i = 0; i < chunks.size(); i += chunkStep)
+				{
 					chunks[i]->UpdateInstances();
 				}
 
@@ -1425,6 +1427,11 @@ void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet)
 		for (auto chunk : chunks)
 		{
 			chunk->UpdateInstancesByInstanceGlobal(drawSet.GlobalPointer);
+		}
+
+		for (auto chunk : chunks)
+		{
+			chunk->GenerateChildrenInRequiredByInstanceGlobal(drawSet.GlobalPointer);
 		}
 	}
 }

@@ -28,9 +28,9 @@ private:
 	std::mutex m_Mutex;
 	std::condition_variable m_TaskRequestCV;
 	std::condition_variable m_TaskWaitCV;
-	std::atomic<bool> m_TaskRequested = false;
-	std::atomic<bool> m_TaskCompleted = false;
-	std::atomic<bool> m_QuitRequested = false;
+	std::atomic<bool> m_TaskRequested;
+	std::atomic<bool> m_TaskCompleted;
+	std::atomic<bool> m_QuitRequested;
 
 public:
 	WorkerThread();

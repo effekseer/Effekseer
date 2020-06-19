@@ -234,7 +234,7 @@ public:
 
 	void LaunchWorkerThreads(uint32_t threadCount) override;
 
-	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadIndex);
+	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadIndex) override;
 
 	uint32_t GetSequenceNumber() const;
 

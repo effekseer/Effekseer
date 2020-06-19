@@ -101,6 +101,24 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 	}
 }
 
+void InstanceChunk::GenerateChildrenInRequiredByInstanceGlobal(const InstanceGlobal* global)
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+
+			if (global != instance->GetInstanceGlobal())
+			{
+				continue;
+			}
+
+			instance->GenerateChildrenInRequired();
+		}
+	}
+}
+
 Instance* InstanceChunk::CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
