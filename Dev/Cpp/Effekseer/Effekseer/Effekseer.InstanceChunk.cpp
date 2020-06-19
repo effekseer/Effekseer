@@ -11,22 +11,6 @@ InstanceChunk::InstanceChunk() { std::fill(instancesAlive_.begin(), instancesAli
 
 InstanceChunk::~InstanceChunk() {}
 
-void InstanceChunk::Preupdate()
-{
-	for (int32_t i = 0; i < InstancesOfChunk; i++)
-	{
-		if (instancesAlive_[i])
-		{
-			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
-
-			if (instance->IsFirstTime())
-			{
-				instance->FirstUpdate();
-			}
-		}
-	}
-}
-
 void InstanceChunk::UpdateInstances()
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
