@@ -536,7 +536,7 @@ namespace EffekseerRenderer
 					if (isFirst_)
 					{
 						axis = (vs_[3].Pos - vs_[1].Pos);
-						axis = axis.Normalize();
+						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
 						axisBefore = axis;
 					}
 					else if (isLast_)
@@ -551,7 +551,7 @@ namespace EffekseerRenderer
 						axisBefore = axis;
 
 						axis = (axisBefore + axisOld) / 2.0f;
-						axis = axis.Normalize();
+						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
 					}
 
 					Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
@@ -593,7 +593,7 @@ namespace EffekseerRenderer
 					if (isFirst_)
 					{
 						axis = (vs_[3].Pos - vs_[1].Pos);
-						axis = axis.Normalize();
+						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
 						axisBefore = axis;
 					}
 					else if (isLast_)
@@ -604,11 +604,11 @@ namespace EffekseerRenderer
 					{
 						Effekseer::Vec3f axisOld = axisBefore;
 						axis = (vs_[5].Pos - vs_[3].Pos);
-						axis = axis.Normalize();
+						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
 						axisBefore = axis;
 
 						axis = (axisBefore + axisOld) / 2.0f;
-						axis = axis.Normalize();
+						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
 					}
 
 					Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;

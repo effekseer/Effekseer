@@ -493,6 +493,18 @@ inline Effekseer::Color PackVector3DF(const Effekseer::Vec3f& v)
 	return ret;
 }
 
+inline Effekseer::Vec3f SafeNormalize(const Effekseer::Vec3f& v, const Effekseer::Vec3f& ifzero)
+{
+	auto lengthSq = v.GetSquaredLength();
+	auto e = 0.0001f;
+	if (lengthSq < e * e)
+	{
+		return ifzero;
+	}
+
+	return v / sqrtf(lengthSq);
+}
+
 struct MaterialShaderParameterGenerator
 {
 	int32_t VertexSize = 0;
