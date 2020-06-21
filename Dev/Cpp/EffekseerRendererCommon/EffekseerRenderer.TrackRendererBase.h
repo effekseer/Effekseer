@@ -621,7 +621,7 @@ namespace EffekseerRenderer
 					if (isFirst_)
 					{
 						axis = (vs_[3].Pos - vs_[1].Pos);
-						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
+						axis = SafeNormalize(axis);
 						axisBefore = axis;
 					}
 					else if (isLast_)
@@ -632,7 +632,7 @@ namespace EffekseerRenderer
 					{
 						Effekseer::Vec3f axisOld = axisBefore;
 						axis = vs_[9].Pos - vs_[7].Pos;
-						axis = SafeNormalize(axis, Effekseer::Vec3f(1.0f, 0.0f, 0.0f));
+						axis = SafeNormalize(axis);
 						axisBefore = axis;
 
 						axis = (axisBefore + axisOld) / 2.0f;
@@ -673,7 +673,7 @@ namespace EffekseerRenderer
 
 					U = axis;
 					F = m_renderer->GetCameraFrontDirection();
-					R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
+					R = SafeNormalize(::Effekseer::Vec3f::Cross(U, F));
 
 					assert(vl.Pos.Y == 0.0f);
 					assert(vr.Pos.Y == 0.0f);
@@ -706,8 +706,8 @@ namespace EffekseerRenderer
 						auto vm_ = (&vm);
 						auto vr_ = (&vr);
 
-						::Effekseer::Vec3f tangent = Effekseer::Vec3f(vl_->Pos - vr_->Pos).Normalize();
-						Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(tangent, axis).Normalize();
+						::Effekseer::Vec3f tangent = SafeNormalize(Effekseer::Vec3f(vl_->Pos - vr_->Pos));
+						Effekseer::Vec3f normal = SafeNormalize(Effekseer::Vec3f::Cross(tangent, axis));
 
 						if (!parameter.IsRightHand)
 						{
