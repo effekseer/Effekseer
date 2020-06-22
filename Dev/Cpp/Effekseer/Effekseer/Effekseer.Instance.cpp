@@ -1038,6 +1038,11 @@ void Instance::Update( float deltaFrame, bool shown )
 {
 	assert(this->m_pContainer != nullptr);
 
+	if (IsFirstTime())
+	{
+		FirstUpdate();
+	}
+
 	// Invalidate matrix
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
