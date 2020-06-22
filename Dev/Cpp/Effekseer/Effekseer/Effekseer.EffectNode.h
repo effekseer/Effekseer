@@ -904,6 +904,10 @@ struct ParameterRendererCommon
 		{
 			memcpy(&MaterialType, pos, sizeof(int));
 			pos += sizeof(int);
+			
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			Distortion = MaterialType == RendererMaterialType::BackDistortion;
+#endif
 
 			if (MaterialType == RendererMaterialType::Default ||
 				MaterialType == RendererMaterialType::BackDistortion ||

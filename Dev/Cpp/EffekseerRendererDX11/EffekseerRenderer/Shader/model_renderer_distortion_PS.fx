@@ -68,8 +68,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
     UVOffset *= fUVDistortionParameter.x;
-    
-    return g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV);
 #endif
     
 	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset);
@@ -93,6 +91,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
     
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV);
+    BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV).a;
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     // alpha threshold

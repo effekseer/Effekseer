@@ -840,6 +840,9 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.BlendTextureIndex = RendererCommon.BlendTextureIndex;
 	param.BlendTexWrapType = RendererCommon.Wrap5Type;
 
+	param.BlendAlphaTextureIndex = RendererCommon.BlendAlphaTextureIndex;
+	param.BlendAlphaTexWrapType = RendererCommon.Wrap6Type;
+
 	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
 	{
 		if (RendererCommon.UVs[0].Animation.InterpolationType != 0)

@@ -596,6 +596,9 @@ struct EffectBasicRenderParameter
 	int32_t				BlendTextureIndex;
 	TextureWrapType		BlendTexWrapType;
 
+	int32_t				BlendAlphaTextureIndex;
+	TextureWrapType		BlendAlphaTexWrapType;
+
 	struct FlipbookParameters
 	{
 		bool Enable;
