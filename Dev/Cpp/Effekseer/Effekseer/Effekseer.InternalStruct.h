@@ -18,6 +18,7 @@
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Color.h"
+#include "Effekseer.Random.h"
 #include "SIMD/Effekseer.Vec2f.h"
 #include "SIMD/Effekseer.Vec3f.h"
 

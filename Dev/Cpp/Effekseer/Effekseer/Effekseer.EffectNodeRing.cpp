@@ -358,21 +358,21 @@ void EffectNodeRing::EndRendering(Manager* manager)
 //----------------------------------------------------------------------------------
 void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
-	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
+	IRandObject* rand = &instance.GetRandObject();
 
 	InstanceValues& instValues = instance.rendererValues.ring;
 
-	InitializeSingleValues(Shape.StartingAngle, instValues.startingAngle, manager, instanceGlobal);
-	InitializeSingleValues(Shape.EndingAngle, instValues.endingAngle, manager, instanceGlobal);
+	InitializeSingleValues(Shape.StartingAngle, instValues.startingAngle, manager, rand);
+	InitializeSingleValues(Shape.EndingAngle, instValues.endingAngle, manager, rand);
 
-	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager, instanceGlobal);
-	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager, instanceGlobal);
+	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager, rand);
+	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager, rand);
 	
-	InitializeSingleValues(CenterRatio, instValues.centerRatio, manager, instanceGlobal);
+	InitializeSingleValues(CenterRatio, instValues.centerRatio, manager, rand);
 
-	InitializeColorValues(OuterColor, instValues.outerColor, manager, instanceGlobal);
-	InitializeColorValues(CenterColor, instValues.centerColor, manager, instanceGlobal);
-	InitializeColorValues(InnerColor, instValues.innerColor, manager, instanceGlobal);
+	InitializeColorValues(OuterColor, instValues.outerColor, manager, rand);
+	InitializeColorValues(CenterColor, instValues.centerColor, manager, rand);
+	InitializeColorValues(InnerColor, instValues.innerColor, manager, rand);
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
@@ -501,7 +501,7 @@ void EffectNodeRing::LoadColorParameter( unsigned char*& pos, RingColorParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, InstanceGlobal* instanceGlobal)
+void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, IRandObject* rand)
 {
 	switch( param.type )
 	{
@@ -509,11 +509,11 @@ void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, Ri
 			values.current = param.fixed;
 			break;
 		case RingSingleParameter::Random:
-			values.current = param.random.getValue(*instanceGlobal);
+			values.current = param.random.getValue(*rand);
 			break;
 		case RingSingleParameter::Easing:
-			values.easing.start = param.easing.start.getValue(*instanceGlobal);
-			values.easing.end = param.easing.end.getValue(*instanceGlobal);
+			values.easing.start = param.easing.start.getValue(*rand);
+			values.easing.end = param.easing.end.getValue(*rand);
 			values.current = values.easing.start;
 			break;
 		default:
@@ -524,7 +524,7 @@ void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, Ri
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, InstanceGlobal* instanceGlobal)
+void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, IRandObject* rand)
 {
 	switch( param.type )
 	{
@@ -532,14 +532,14 @@ void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param
 			values.current = param.fixed.location;
 			break;
 		case RingLocationParameter::PVA:
-			values.pva.start = param.pva.location.getValue(*instanceGlobal);
-			values.pva.velocity = param.pva.velocity.getValue(*instanceGlobal);
-			values.pva.acceleration = param.pva.acceleration.getValue(*instanceGlobal);
+			values.pva.start = param.pva.location.getValue(*rand);
+			values.pva.velocity = param.pva.velocity.getValue(*rand);
+			values.pva.acceleration = param.pva.acceleration.getValue(*rand);
 			values.current = values.pva.start;
 			break;
 		case RingLocationParameter::Easing:
-			values.easing.start = param.easing.start.getValue(*instanceGlobal);
-			values.easing.end = param.easing.end.getValue(*instanceGlobal);
+			values.easing.start = param.easing.start.getValue(*rand);
+			values.easing.end = param.easing.end.getValue(*rand);
 			values.current = values.easing.start;
 			break;
 		default:
@@ -550,7 +550,7 @@ void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, InstanceGlobal* instanceGlobal)
+void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, IRandObject* rand)
 {
 	switch( param.type )
 	{
@@ -559,12 +559,12 @@ void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, Ring
 			values.fixed._color = values.original;
 			break;
 		case RingColorParameter::Random:
-			values.original = param.random.getValue(*instanceGlobal);
+			values.original = param.random.getValue(*rand);
 			values.random._color = values.original;
 			break;
 		case RingColorParameter::Easing:
-			values.easing.start = param.easing.getStartValue(*instanceGlobal);
-			values.easing.end = param.easing.getEndValue(*instanceGlobal);
+			values.easing.start = param.easing.getStartValue(*rand);
+			values.easing.end = param.easing.getEndValue(*rand);
 			values.original = values.easing.start;
 			break;
 		default:

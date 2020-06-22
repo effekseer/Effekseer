@@ -519,6 +519,8 @@ public:
 	IRandObject() = default;
 	virtual ~IRandObject() = default;
 
+	virtual int32_t GetRandInt() = 0;
+
 	virtual float GetRand() = 0;
 
 	virtual float GetRand(float min_, float max_) = 0;

@@ -17,6 +17,7 @@
 #include "Effekseer.RectF.h"
 #include "Effekseer.Color.h"
 #include "Effekseer.IntrusiveList.h"
+#include "Effekseer.Random.h"
 
 #include "Effekseer.EffectNodeSprite.h"
 #include "Effekseer.EffectNodeRibbon.h"
@@ -92,6 +93,9 @@ public:
 
 	// 親
 	Instance*	m_pParent;
+
+	// Random generator
+	RandObject	m_randObject;
 	
 	// グローバル位置
 	Vec3f	m_GlobalPosition;
@@ -114,7 +118,7 @@ public:
 	{
 		struct
 		{
-		
+			Vec3f location;
 		} fixed;
 
 		struct
@@ -141,7 +145,7 @@ public:
 	{
 		struct
 		{
-		
+			Vec3f rotation;
 		} fixed;
 
 		struct
@@ -190,7 +194,7 @@ public:
 	{
 		struct
 		{
-		
+			Vec3f  scale;
 		} fixed;
 
 		struct
@@ -307,6 +311,9 @@ public:
 	// 親の変換用行列
 	Mat43f			m_ParentMatrix;
 
+	// FirstUpdate実行前
+	bool			m_IsFirstTime;
+
 	// 変換用行列が計算済かどうか
 	bool			m_GlobalMatrix43Calculated;
 
@@ -315,6 +322,8 @@ public:
 
 	//! whether a time is allowed to pass
 	bool			is_time_step_allowed;
+
+	int32_t			m_InstanceNumber;
 
 	/* 更新番号 */
 	uint32_t		m_sequenceNumber;
@@ -356,21 +365,21 @@ public:
 
 	//! calculate dynamic equation and assign a result
 	template <typename T, typename U>
-	void ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam);
+	void ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, IRandObject* rand, int dpInd, const U& originalParam);
 
 	//! calculate dynamic equation and return a result
 	template <typename S> 
-	Vec3f ApplyEq(const int& dpInd, const Vec3f& originalParam, const S& scale, const S& scaleInv);
+	Vec3f ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, const int& dpInd, const Vec3f& originalParam, const S& scale, const S& scaleInv);
 
 	//! calculate dynamic equation and return a result
-	random_float ApplyEq(const RefMinMax& dpInd, random_float originalParam);
+	random_float ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, const RefMinMax& dpInd, random_float originalParam);
 
 	//! calculate dynamic equation and return a result
 	template <typename S> 
-	random_vector3d ApplyEq(const RefMinMax& dpInd, random_vector3d originalParam, const S& scale, const S& scaleInv);
+	random_vector3d ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, const RefMinMax& dpInd, random_vector3d originalParam, const S& scale, const S& scaleInv);
 
 	//! calculate dynamic equation and return a result
-	random_int ApplyEq(const RefMinMax& dpInd, random_int originalParam);
+	random_int ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, const RefMinMax& dpInd, random_int originalParam);
 
 	// コンストラクタ
 	Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup );
@@ -378,15 +387,15 @@ public:
 	// デストラクタ
 	virtual ~Instance();
 
-	bool IsRequiredToCreateChildren(float currentTime);
-
-	void GenerateChildrenInRequired(float currentTime);
+	void GenerateChildrenInRequired();
 
 	void UpdateChildrenGroupMatrix();
 
 	InstanceGlobal* GetInstanceGlobal();
 
 public:
+	bool IsFirstTime() const { return m_IsFirstTime; }
+
 	/**
 		@brief	状態の取得
 	*/
@@ -400,7 +409,12 @@ public:
 	/**
 		@brief	初期化
 	*/
-	void Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime, const Mat43f& globalMatrix);
+	void Initialize( Instance* parent, int32_t instanceNumber, const Mat43f& globalMatrix);
+
+	/**
+		@brief	初回の更新
+	*/
+	void FirstUpdate();
 
 	/**
 		@brief	更新
@@ -428,6 +442,9 @@ public:
 
 	//! get custom data
 	std::array<float,4> GetCustomData(int32_t index) const;
+
+	//! get random object
+	RandObject& GetRandObject() { return m_randObject; }
 
 private:
 	/**

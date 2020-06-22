@@ -198,14 +198,15 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 {
 	InstanceGroupValues& instValues = instanceGroup.rendererValues.track;
 	auto instanceGlobal = instanceGroup.GetRootInstance();
+	IRandObject* rand = &instanceGlobal->GetRandObject();
 
-	InitializeValues(instValues.ColorLeft, TrackColorLeft, instanceGlobal);
-	InitializeValues(instValues.ColorCenter, TrackColorCenter, instanceGlobal);
-	InitializeValues(instValues.ColorRight, TrackColorRight, instanceGlobal);
+	InitializeValues(instValues.ColorLeft, TrackColorLeft, rand);
+	InitializeValues(instValues.ColorCenter, TrackColorCenter, rand);
+	InitializeValues(instValues.ColorRight, TrackColorRight, rand);
 
-	InitializeValues(instValues.ColorLeftMiddle, TrackColorLeftMiddle, instanceGlobal);
-	InitializeValues(instValues.ColorCenterMiddle, TrackColorCenterMiddle, instanceGlobal);
-	InitializeValues(instValues.ColorRightMiddle, TrackColorRightMiddle, instanceGlobal);
+	InitializeValues(instValues.ColorLeftMiddle, TrackColorLeftMiddle, rand);
+	InitializeValues(instValues.ColorCenterMiddle, TrackColorCenterMiddle, rand);
+	InitializeValues(instValues.ColorRightMiddle, TrackColorRightMiddle, rand);
 
 	InitializeValues(instValues.SizeFor, TrackSizeFor, manager);
 	InitializeValues(instValues.SizeBack, TrackSizeBack, manager);
@@ -217,6 +218,7 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
+	IRandObject* rand = &instance.GetRandObject();
 	// Calculate only center
 	int32_t time = (int32_t)instance.m_LivingTime;
 	int32_t livedTime = (int32_t)instance.m_LivedTime;
@@ -250,7 +252,7 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manage
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, InstanceGlobal* instanceGlobal)
+void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, IRandObject* rand)
 {
 	if (param.type == StandardColorParameter::Fixed)
 	{
@@ -258,16 +260,16 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, Standa
 	}
 	else if (param.type == StandardColorParameter::Random)
 	{
-		value.color.random.color_ = param.random.all.getValue(*(instanceGlobal));
+		value.color.random.color_ = param.random.all.getValue(*rand);
 	}
 	else if (param.type == StandardColorParameter::Easing)
 	{
-		value.color.easing.start = param.easing.all.getStartValue(*(instanceGlobal));
-		value.color.easing.end = param.easing.all.getEndValue(*(instanceGlobal));
+		value.color.easing.start = param.easing.all.getStartValue(*rand);
+		value.color.easing.end = param.easing.all.getEndValue(*rand);
 	}
 	else if (param.type == StandardColorParameter::FCurve_RGBA)
 	{
-		value.color.fcurve_rgba.offset = param.fcurve_rgba.FCurve->GetOffsets(*instanceGlobal);
+		value.color.fcurve_rgba.offset = param.fcurve_rgba.FCurve->GetOffsets(*rand);
 	}
 }
 

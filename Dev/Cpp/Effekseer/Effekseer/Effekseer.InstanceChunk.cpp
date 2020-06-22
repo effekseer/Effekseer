@@ -22,6 +22,7 @@ void InstanceChunk::UpdateInstances()
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
 				auto deltaTime = instance->GetInstanceGlobal()->GetNextDeltaFrame();
+
 				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
@@ -38,6 +39,20 @@ void InstanceChunk::UpdateInstances()
 		}
 	}
 }
+
+void InstanceChunk::GenerateChildrenInRequired()
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+
+			instance->GenerateChildrenInRequired();
+		}
+	}
+}
+
 void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global)
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
@@ -45,8 +60,9 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 		if (instancesAlive_[i])
 		{
 			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
-			
-			if (global != instance->GetInstanceGlobal()) {
+
+			if (global != instance->GetInstanceGlobal())
+			{
 				continue;
 			}
 
@@ -66,6 +82,24 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 				instancesAlive_[i] = false;
 				aliveCount_--;
 			}
+		}
+	}
+}
+
+void InstanceChunk::GenerateChildrenInRequiredByInstanceGlobal(const InstanceGlobal* global)
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+
+			if (global != instance->GetInstanceGlobal())
+			{
+				continue;
+			}
+
+			instance->GenerateChildrenInRequired();
 		}
 	}
 }

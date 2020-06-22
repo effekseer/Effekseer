@@ -519,6 +519,8 @@ public:
 	IRandObject() = default;
 	virtual ~IRandObject() = default;
 
+	virtual int32_t GetRandInt() = 0;
+
 	virtual float GetRand() = 0;
 
 	virtual float GetRand(float min_, float max_) = 0;
@@ -2393,6 +2395,20 @@ public:
 		このマネージャーから生成されたエフェクトは全て強制的に破棄される。
 	*/
 	virtual void Destroy() = 0;
+
+	/**
+		@brief
+		\~English Starts a specified number of worker threads
+		\~Japanese 指定した数のワーカースレッドを起動する
+	*/
+	virtual void LaunchWorkerThreads(uint32_t threadCount) = 0;
+
+	/**
+		@brief
+		\~English Get a thread handle (HANDLE(win32), pthread_t(posix) or etc.)
+		\~Japanese スレッドハンドルを取得する。(HANDLE(win32) や pthread_t(posix) など)
+	*/
+	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
 		@brief

@@ -20,7 +20,8 @@ namespace Effekseer
 {
 
 template<typename T, typename U>
-void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam)
+void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, IRandObject* rand, 
+	int dpInd, const U& originalParam)
 {
 	static_assert(sizeof(T) == sizeof(U), "size is not mismatched");
 	const int count = sizeof(T) / 4;
@@ -54,7 +55,7 @@ void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd,
 
 	if (dp.GetRunningPhase() == InternalScript::RunningPhaseType::Local)
 	{
-		eqresult = dp.Execute(instg->dynamicInputParameters, globals, locals, InstanceGlobal::Rand, InstanceGlobal::RandSeed, instg);
+		eqresult = dp.Execute(instg->dynamicInputParameters, globals, locals, RandCallback::Rand, RandCallback::RandSeed, rand);
 	}
 
 	for (int i = 0; i < count; i++)
@@ -63,54 +64,48 @@ void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd,
 	}
 }
 
-template <typename S> Vec3f Instance::ApplyEq(const int& dpInd, const Vec3f& originalParam, const S& scale, const S& scaleInv)
+template <typename S> Vec3f Instance::ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, 
+	const int& dpInd, const Vec3f& originalParam, const S& scale, const S& scaleInv)
 {
-	const auto& e = this->m_pEffectNode->m_effect;
-	const auto& instg = this->m_pContainer->GetRootInstance();
-
 	Vec3f param = originalParam;
 	if (dpInd >= 0)
 	{
 		param *= Vec3f(scaleInv[0], scaleInv[1], scaleInv[2]);
 
-		ApplyEq(param, e, instg, dpInd, param);
+		ApplyEq(param, e, instg, rand, dpInd, param);
 
 		param *= Vec3f(scale[0], scale[1], scale[2]);
 	}
 	return param;
 }
 
-random_float Instance::ApplyEq(const RefMinMax& dpInd, random_float originalParam)
+random_float Instance::ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, 
+	const RefMinMax& dpInd, random_float originalParam)
 {
-	const auto& e = this->m_pEffectNode->m_effect;
-	const auto& instg = this->m_pContainer->GetRootInstance();
-
 	if (dpInd.Max >= 0)
 	{
-		ApplyEq(originalParam.max, e, instg, dpInd.Max, originalParam.max);
+		ApplyEq(originalParam.max, e, instg, rand, dpInd.Max, originalParam.max);
 	}
 
 	if (dpInd.Min >= 0)
 	{
-		ApplyEq(originalParam.min, e, instg, dpInd.Min, originalParam.min);
+		ApplyEq(originalParam.min, e, instg, rand, dpInd.Min, originalParam.min);
 	}
 
 	return originalParam;
 }
 
 template <typename S>
-random_vector3d Instance::ApplyEq(const RefMinMax& dpInd, random_vector3d originalParam, const S& scale, const S& scaleInv)
+random_vector3d Instance::ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, 
+	const RefMinMax& dpInd, random_vector3d originalParam, const S& scale, const S& scaleInv)
 {
-	const auto& e = this->m_pEffectNode->m_effect;
-	const auto& instg = this->m_pContainer->GetRootInstance();
-
 	if (dpInd.Max >= 0)
 	{
 		originalParam.max.x *= scaleInv[0];
 		originalParam.max.y *= scaleInv[1];
 		originalParam.max.z *= scaleInv[2];
 
-		ApplyEq(originalParam.max, e, instg, dpInd.Max, originalParam.max);
+		ApplyEq(originalParam.max, e, instg, rand, dpInd.Max, originalParam.max);
 
 		originalParam.max.x *= scale[0];
 		originalParam.max.y *= scale[1];
@@ -123,7 +118,7 @@ random_vector3d Instance::ApplyEq(const RefMinMax& dpInd, random_vector3d origin
 		originalParam.min.y *= scaleInv[1];
 		originalParam.min.z *= scaleInv[2];
 
-		ApplyEq(originalParam.min, e, instg, dpInd.Min, originalParam.min);
+		ApplyEq(originalParam.min, e, instg, rand, dpInd.Min, originalParam.min);
 
 		originalParam.min.x *= scale[0];
 		originalParam.min.y *= scale[1];
@@ -133,22 +128,20 @@ random_vector3d Instance::ApplyEq(const RefMinMax& dpInd, random_vector3d origin
 	return originalParam;
 }
 
-random_int Instance::ApplyEq(const RefMinMax& dpInd, random_int originalParam)
+random_int Instance::ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, 
+	const RefMinMax& dpInd, random_int originalParam)
 {
-	const auto& e = this->m_pEffectNode->m_effect;
-	const auto& instg = this->m_pContainer->GetRootInstance();
-
 	if (dpInd.Max >= 0)
 	{
 		float value = static_cast<float>(originalParam.max);
-		ApplyEq(value, e, instg, dpInd.Max, value);
+		ApplyEq(value, e, instg, rand, dpInd.Max, value);
 		originalParam.max = static_cast<int32_t>(value);
 	}
 
 	if (dpInd.Min >= 0)
 	{
 		float value = static_cast<float>(originalParam.min);
-		ApplyEq(value, e, instg, dpInd.Min, value);
+		ApplyEq(value, e, instg, rand, dpInd.Min, value);
 		originalParam.min = static_cast<int32_t>(value);
 	}
 
@@ -237,33 +230,18 @@ Instance::~Instance()
 	}
 }
 
-bool Instance::IsRequiredToCreateChildren(float currentTime)
+void Instance::GenerateChildrenInRequired()
 {
-	auto instanceGlobal = this->m_pContainer->GetRootInstance();
-
-	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
-
-	InstanceGroup* group = childrenGroups_;
-
-	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
+	if (m_State == INSTANCE_STATE_REMOVED)
 	{
-		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
-		assert(group != NULL);
-
-		// GenerationTimeOffset can be minus value.
-		// Minus frame particles is generated simultaniously at frame 0.
-		if (maxGenerationChildrenCount[i] > m_generatedChildrenCount[i] && m_nextGenerationTime[i] <= currentTime)
-		{
-			return true;
-		}
+		return;
 	}
 
-	return false;
-}
+	const float currentTime = m_LivingTime;
 
-void Instance::GenerateChildrenInRequired(float currentTime)
-{
+	auto effect = this->m_pEffectNode->m_effect;
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
+	auto& rand = m_randObject;
 
 	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
 
@@ -287,19 +265,38 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 				{
 					Mat43f rootMatrix = Mat43f::Identity;
 
-					newInstance->Initialize(this, m_generatedChildrenCount[i], (int32_t)std::max(0.0f, this->m_LivingTime), rootMatrix);
+					newInstance->Initialize(this, m_generatedChildrenCount[i], rootMatrix);
 				}
 
 				m_generatedChildrenCount[i]++;
 
-				auto gt = ApplyEq(node->CommonValues.RefEqGenerationTime, node->CommonValues.GenerationTime);
-				m_nextGenerationTime[i] += Max(0.0f, gt.getValue(*instanceGlobal));
+				auto gt = ApplyEq(effect, instanceGlobal, &rand, node->CommonValues.RefEqGenerationTime, node->CommonValues.GenerationTime);
+				m_nextGenerationTime[i] += Max(0.0f, gt.getValue(rand));
 			}
 			else
 			{
 				break;
 			}
 		}
+
+
+		/*int32_t instanceNumberOffset = m_generatedChildrenCount[i];
+
+		// GenerationTimeOffset can be minus value.
+		// Minus frame particles is generated simultaniously at frame 0.
+		while (maxGenerationChildrenCount[i] > m_generatedChildrenCount[i] &&
+			m_nextGenerationTime[i] <= currentTime)
+		{
+			m_generatedChildrenCount[i]++;
+
+			auto gt = ApplyEq(node->CommonValues.RefEqGenerationTime, node->CommonValues.GenerationTime);
+			m_nextGenerationTime[i] += Max(0.0f, gt.getValue(rand));
+		}
+
+		int32_t generatingCount = m_generatedChildrenCount[i] - instanceNumberOffset;
+
+		// Create instances
+		group->CreateInstances(instanceNumberOffset, generatingCount, m_LivingTime, m_GlobalMatrix43);*/
 	}
 }
 
@@ -338,17 +335,33 @@ const Mat43f& Instance::GetGlobalMatrix43() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime, const Mat43f& globalMatrix)
+void Instance::Initialize( Instance* parent, int32_t instanceNumber, const Mat43f& globalMatrix)
 {
 	assert(this->m_pContainer != nullptr);
 	
-	// Invalidate matrix
-	m_GlobalMatrix43Calculated = false;
-	m_ParentMatrix43Calculated = false;
+	// 状態の初期化
+	m_State = INSTANCE_STATE_ACTIVE;
+
+	// 親の設定
+	m_pParent = parent;
+
+	m_GlobalMatrix43 = globalMatrix;
+	assert(m_GlobalMatrix43.IsValid());
+
+	// 時間周りの初期化
+	m_LivingTime = 0.0f;
+	m_LivedTime = FLT_MAX;
+
+	m_InstanceNumber = instanceNumber;
+
+	m_IsFirstTime = true;
 
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
-	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
+	// Set random seed from InstanceGlobal's randomizer
+	m_randObject.SetSeed(instanceGlobal->GetRandObject().GetRandInt());
+
+	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
 
 	// Extend array
 	if (parameter->GetChildrenCount() >= ChildrenMax)
@@ -361,29 +374,41 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		maxGenerationChildrenCount = flexibleMaxGenerationChildrenCount_;
 		m_nextGenerationTime = m_flexibleNextGenerationTime;
 	}
+}
 
-	// 親の設定
-	m_pParent = parent;
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Instance::FirstUpdate()
+{
+	m_IsFirstTime = false;
+	assert(this->m_pContainer != nullptr);
+
+	auto effect = this->m_pEffectNode->m_effect;
+	auto instanceGlobal = this->m_pContainer->GetRootInstance();
+	auto& rand = m_randObject;
+
+	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
 
 	// initialize children
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++)
 	{
-		auto pNode = (EffectNodeImplemented*) parameter->GetChild(i);
+		auto pNode = (EffectNodeImplemented*)parameter->GetChild(i);
 
 		m_generatedChildrenCount[i] = 0;
 
-		auto gt = ApplyEq(pNode->CommonValues.RefEqGenerationTimeOffset, pNode->CommonValues.GenerationTimeOffset);
+		auto gt = ApplyEq(effect, instanceGlobal, &rand, 
+			pNode->CommonValues.RefEqGenerationTimeOffset, pNode->CommonValues.GenerationTimeOffset);
 
-		m_nextGenerationTime[i] = gt.getValue(*instanceGlobal);
+		m_nextGenerationTime[i] = gt.getValue(rand);
 
 		if (pNode->CommonValues.RefEqMaxGeneration >= 0)
 		{
 			auto maxGene = static_cast<float>(pNode->CommonValues.MaxGeneration);
 			ApplyEq(maxGene,
-					this->m_pEffectNode->m_effect,
-					this->m_pContainer->GetRootInstance(),
-					pNode->CommonValues.RefEqMaxGeneration,
-					maxGene);
+				effect, instanceGlobal, &rand,
+				pNode->CommonValues.RefEqMaxGeneration,
+				maxGene);
 			maxGenerationChildrenCount[i] = maxGene;
 		}
 		else
@@ -392,58 +417,44 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		}
 	}
 
-	if( m_pParent == NULL )
+	if( m_pParent == nullptr )
 	{
-		// ROOTの場合
-
-		// 状態の初期化
-		m_State = INSTANCE_STATE_ACTIVE;
-
-		// 時間周りの初期化
-		m_LivingTime = 0.0f;
-		m_LivedTime = FLT_MAX;
-
-		// SRTの初期化
+		// initialize SRT
 		m_GenerationLocation = Mat43f::Identity;
-		m_GlobalMatrix43 = globalMatrix;
-		assert(m_GlobalMatrix43.IsValid());
 
-		// 親の初期化
+		// initialize Parent
 		m_ParentMatrix = Mat43f::Identity;
 
 		// Generate zero frame effect
 
 		// for new children
-		UpdateChildrenGroupMatrix();
+		//UpdateChildrenGroupMatrix();
+		//
+		//GenerateChildrenInRequired(0.0f);
 
-		GenerateChildrenInRequired(0.0f);
 		return;
 	}
-	
-	// 状態の初期化
-	m_State = INSTANCE_STATE_ACTIVE;
 
-	// initialize about a lifetime
-	m_LivingTime = 0.0f;
+	const int32_t parentTime = (int32_t)std::max(0.0f, this->m_pParent->m_LivingTime);
+
 	{
-		auto ri = ApplyEq(parameter->CommonValues.RefEqLife, parameter->CommonValues.life);
-		m_LivedTime = (float)ri.getValue(*instanceGlobal);
+		auto ri = ApplyEq(effect, instanceGlobal, &rand, 
+			parameter->CommonValues.RefEqLife, parameter->CommonValues.life);
+		m_LivedTime = (float)ri.getValue(rand);
 	}
 
 	// initialize SRT
 
 	// calculate parent matrixt to get matrix
 	m_pParent->CalculateMatrix(0);
-	
+
 	const Mat43f& parentMatrix = m_pParent->GetGlobalMatrix43();
 	m_GlobalPosition = parentMatrix.GetTranslation();
 	m_GlobalRevisionLocation = Vec3f(0.0f, 0.0f, 0.0f);
 	m_GlobalRevisionVelocity = Vec3f(0.0f, 0.0f, 0.0f);
 	modifyWithNoise_ = Vec3f(0.0f, 0.0f, 0.0f);
 	m_GenerationLocation = Mat43f::Identity;
-	m_GlobalMatrix43 = globalMatrix;
-	assert(m_GlobalMatrix43.IsValid());
-
+	
 	// 親の初期化
 	if( parameter->CommonValues.TranslationBindType == BindType::WhenCreating ||
 		parameter->CommonValues.RotationBindType == BindType::WhenCreating ||
@@ -466,93 +477,113 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	// Translation
 	if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 	{
+		translation_values.fixed.location = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->TranslationFixed.RefEq,
+			m_pEffectNode->TranslationFixed.Position,
+			m_pEffectNode->DynamicFactor.Tra,
+			m_pEffectNode->DynamicFactor.TraInv);
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 	{
-		auto rvl = ApplyEq(m_pEffectNode->TranslationPVA.RefEqP,
-						   m_pEffectNode->TranslationPVA.location,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		translation_values.random.location = rvl.getValue(*this->m_pContainer->GetRootInstance());
+		auto rvl = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->TranslationPVA.RefEqP,
+			m_pEffectNode->TranslationPVA.location,
+			m_pEffectNode->DynamicFactor.Tra,
+			m_pEffectNode->DynamicFactor.TraInv);
+		translation_values.random.location = rvl.getValue(rand);
 
-		auto rvv = ApplyEq(m_pEffectNode->TranslationPVA.RefEqV,
-						   m_pEffectNode->TranslationPVA.velocity,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		translation_values.random.velocity = rvv.getValue(*this->m_pContainer->GetRootInstance());
+		auto rvv = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->TranslationPVA.RefEqV,
+			m_pEffectNode->TranslationPVA.velocity,
+			m_pEffectNode->DynamicFactor.Tra,
+			m_pEffectNode->DynamicFactor.TraInv);
+		translation_values.random.velocity = rvv.getValue(rand);
 
-		auto rva = ApplyEq(m_pEffectNode->TranslationPVA.RefEqA,
-						   m_pEffectNode->TranslationPVA.acceleration,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		translation_values.random.acceleration = rva.getValue(*this->m_pContainer->GetRootInstance());
+		auto rva = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->TranslationPVA.RefEqA,
+			m_pEffectNode->TranslationPVA.acceleration,
+			m_pEffectNode->DynamicFactor.Tra,
+			m_pEffectNode->DynamicFactor.TraInv);
+		translation_values.random.acceleration = rva.getValue(rand);
 
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_Easing )
 	{
-		auto rvs = ApplyEq(m_pEffectNode->TranslationEasing.RefEqS,
-						   m_pEffectNode->TranslationEasing.location.start,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		auto rve = ApplyEq(m_pEffectNode->TranslationEasing.RefEqE,
-						   m_pEffectNode->TranslationEasing.location.end,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
+		auto rvs = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->TranslationEasing.RefEqS,
+			m_pEffectNode->TranslationEasing.location.start,
+			m_pEffectNode->DynamicFactor.Tra,
+			m_pEffectNode->DynamicFactor.TraInv);
+		auto rve = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->TranslationEasing.RefEqE,
+			m_pEffectNode->TranslationEasing.location.end,
+			m_pEffectNode->DynamicFactor.Tra,
+			m_pEffectNode->DynamicFactor.TraInv);
 
-		translation_values.easing.start = rvs.getValue(*this->m_pContainer->GetRootInstance());
-		translation_values.easing.end = rve.getValue(*this->m_pContainer->GetRootInstance());
+		translation_values.easing.start = rvs.getValue(rand);
+		translation_values.easing.end = rve.getValue(rand);
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_FCurve )
 	{
 		assert( m_pEffectNode->TranslationFCurve != NULL );
 
-		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets( *instanceGlobal );
+		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets(rand);
 	}
-	
+
 	// Rotation
 	if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 	{
+		rotation_values.fixed.rotation = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->RotationFixed.RefEq,
+			m_pEffectNode->RotationFixed.Position,
+			m_pEffectNode->DynamicFactor.Rot,
+			m_pEffectNode->DynamicFactor.RotInv);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 	{
-		auto rvl = ApplyEq(m_pEffectNode->RotationPVA.RefEqP,
+		auto rvl = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->RotationPVA.RefEqP,
 						   m_pEffectNode->RotationPVA.rotation,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
-		auto rvv = ApplyEq(m_pEffectNode->RotationPVA.RefEqV,
+		auto rvv = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->RotationPVA.RefEqV,
 						   m_pEffectNode->RotationPVA.velocity,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
-		auto rva = ApplyEq(m_pEffectNode->RotationPVA.RefEqA,
+		auto rva = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->RotationPVA.RefEqA,
 						   m_pEffectNode->RotationPVA.acceleration,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
 
-		rotation_values.random.rotation = rvl.getValue(*instanceGlobal);
-		rotation_values.random.velocity = rvv.getValue(*instanceGlobal);
-		rotation_values.random.acceleration = rva.getValue(*instanceGlobal);
+		rotation_values.random.rotation = rvl.getValue(rand);
+		rotation_values.random.velocity = rvv.getValue(rand);
+		rotation_values.random.acceleration = rva.getValue(rand);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_Easing )
 	{
-		auto rvs = ApplyEq(m_pEffectNode->RotationEasing.RefEqS,
+		auto rvs = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->RotationEasing.RefEqS,
 						   m_pEffectNode->RotationEasing.rotation.start,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
-		auto rve = ApplyEq(m_pEffectNode->RotationEasing.RefEqE,
+		auto rve = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->RotationEasing.RefEqE,
 						   m_pEffectNode->RotationEasing.rotation.end,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
 
-		rotation_values.easing.start = rvs.getValue(*instanceGlobal);
-		rotation_values.easing.end = rve.getValue(*instanceGlobal);
+		rotation_values.easing.start = rvs.getValue(rand);
+		rotation_values.easing.end = rve.getValue(rand);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_AxisPVA )
 	{
-		rotation_values.axis.random.rotation = m_pEffectNode->RotationAxisPVA.rotation.getValue(*instanceGlobal);
-		rotation_values.axis.random.velocity = m_pEffectNode->RotationAxisPVA.velocity.getValue(*instanceGlobal);
-		rotation_values.axis.random.acceleration = m_pEffectNode->RotationAxisPVA.acceleration.getValue(*instanceGlobal);
+		rotation_values.axis.random.rotation = m_pEffectNode->RotationAxisPVA.rotation.getValue(rand);
+		rotation_values.axis.random.velocity = m_pEffectNode->RotationAxisPVA.velocity.getValue(rand);
+		rotation_values.axis.random.acceleration = m_pEffectNode->RotationAxisPVA.acceleration.getValue(rand);
 		rotation_values.axis.rotation = rotation_values.axis.random.rotation;
-		rotation_values.axis.axis = m_pEffectNode->RotationAxisPVA.axis.getValue(*instanceGlobal);
+		rotation_values.axis.axis = m_pEffectNode->RotationAxisPVA.axis.getValue(rand);
 		if (rotation_values.axis.axis.GetLength() < 0.001f)
 		{
 			rotation_values.axis.axis = Vec3f(0, 1, 0);
@@ -561,10 +592,10 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_AxisEasing )
 	{
-		rotation_values.axis.easing.start = m_pEffectNode->RotationAxisEasing.easing.start.getValue(*instanceGlobal);
-		rotation_values.axis.easing.end = m_pEffectNode->RotationAxisEasing.easing.end.getValue(*instanceGlobal);
+		rotation_values.axis.easing.start = m_pEffectNode->RotationAxisEasing.easing.start.getValue(rand);
+		rotation_values.axis.easing.end = m_pEffectNode->RotationAxisEasing.easing.end.getValue(rand);
 		rotation_values.axis.rotation = rotation_values.axis.easing.start;
-		rotation_values.axis.axis = m_pEffectNode->RotationAxisEasing.axis.getValue(*instanceGlobal);
+		rotation_values.axis.axis = m_pEffectNode->RotationAxisEasing.axis.getValue(rand);
 		if (rotation_values.axis.axis.GetLength() < 0.001f)
 		{
 			rotation_values.axis.axis = Vec3f(0, 1, 0);
@@ -575,72 +606,85 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		assert( m_pEffectNode->RotationFCurve != NULL );
 
-		rotation_values.fcruve.offset = m_pEffectNode->RotationFCurve->GetOffsets( *instanceGlobal );
+		rotation_values.fcruve.offset = m_pEffectNode->RotationFCurve->GetOffsets(rand);
 	}
 
 	// Scaling
 	if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 	{
+		scaling_values.fixed.scale = ApplyEq(effect, instanceGlobal, &rand,
+			m_pEffectNode->ScalingFixed.RefEq,
+			m_pEffectNode->ScalingFixed.Position,
+			m_pEffectNode->DynamicFactor.Scale,
+			m_pEffectNode->DynamicFactor.ScaleInv);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 	{
-		auto rvl = ApplyEq(m_pEffectNode->ScalingPVA.RefEqP, m_pEffectNode->ScalingPVA.Position, m_pEffectNode->DynamicFactor.Scale, m_pEffectNode->DynamicFactor.ScaleInv);
-		auto rvv = ApplyEq(m_pEffectNode->ScalingPVA.RefEqV,
+		auto rvl = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->ScalingPVA.RefEqP, 
+						   m_pEffectNode->ScalingPVA.Position,
+						   m_pEffectNode->DynamicFactor.Scale,
+						   m_pEffectNode->DynamicFactor.ScaleInv);
+		auto rvv = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->ScalingPVA.RefEqV,
 						   m_pEffectNode->ScalingPVA.Velocity,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
-		auto rva = ApplyEq(m_pEffectNode->ScalingPVA.RefEqA,
+		auto rva = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->ScalingPVA.RefEqA,
 						   m_pEffectNode->ScalingPVA.Acceleration,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
 
-		scaling_values.random.scale = rvl.getValue(*instanceGlobal);
-		scaling_values.random.velocity = rvv.getValue(*instanceGlobal);
-		scaling_values.random.acceleration = rva.getValue(*instanceGlobal);
+		scaling_values.random.scale = rvl.getValue(rand);
+		scaling_values.random.velocity = rvv.getValue(rand);
+		scaling_values.random.acceleration = rva.getValue(rand);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_Easing )
 	{
-		auto rvs = ApplyEq(m_pEffectNode->ScalingEasing.RefEqS,
+		auto rvs = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->ScalingEasing.RefEqS,
 						   m_pEffectNode->ScalingEasing.Position.start,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
-		auto rve = ApplyEq(m_pEffectNode->ScalingEasing.RefEqE,
+		auto rve = ApplyEq(effect, instanceGlobal, &rand,
+						   m_pEffectNode->ScalingEasing.RefEqE,
 						   m_pEffectNode->ScalingEasing.Position.end,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
 
-		scaling_values.easing.start = rvs.getValue(*instanceGlobal);
-		scaling_values.easing.end = rve.getValue(*instanceGlobal);
+		scaling_values.easing.start = rvs.getValue(rand);
+		scaling_values.easing.end = rve.getValue(rand);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_SinglePVA )
 	{
-		scaling_values.single_random.scale = m_pEffectNode->ScalingSinglePVA.Position.getValue(*instanceGlobal);
-		scaling_values.single_random.velocity = m_pEffectNode->ScalingSinglePVA.Velocity.getValue(*instanceGlobal);
-		scaling_values.single_random.acceleration = m_pEffectNode->ScalingSinglePVA.Acceleration.getValue(*instanceGlobal);
+		scaling_values.single_random.scale = m_pEffectNode->ScalingSinglePVA.Position.getValue(rand);
+		scaling_values.single_random.velocity = m_pEffectNode->ScalingSinglePVA.Velocity.getValue(rand);
+		scaling_values.single_random.acceleration = m_pEffectNode->ScalingSinglePVA.Acceleration.getValue(rand);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_SingleEasing )
 	{
-		scaling_values.single_easing.start = m_pEffectNode->ScalingSingleEasing.start.getValue(*instanceGlobal);
-		scaling_values.single_easing.end = m_pEffectNode->ScalingSingleEasing.end.getValue(*instanceGlobal);
+		scaling_values.single_easing.start = m_pEffectNode->ScalingSingleEasing.start.getValue(rand);
+		scaling_values.single_easing.end = m_pEffectNode->ScalingSingleEasing.end.getValue(rand);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_FCurve )
 	{
 		assert( m_pEffectNode->ScalingFCurve != NULL );
 
-		scaling_values.fcruve.offset = m_pEffectNode->ScalingFCurve->GetOffsets( *instanceGlobal );
+		scaling_values.fcruve.offset = m_pEffectNode->ScalingFCurve->GetOffsets(rand);
 	}
 
 	// Spawning Method
 	if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
 	{
-		Vec3f p = m_pEffectNode->GenerationLocation.point.location.getValue(*instanceGlobal);
+		Vec3f p = m_pEffectNode->GenerationLocation.point.location.getValue(rand);
 		m_GenerationLocation = Mat43f::Translation( p.GetX(), p.GetY(), p.GetZ() );
 	}
 	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
 	{
-		Vec3f s = m_pEffectNode->GenerationLocation.line.position_start.getValue(*instanceGlobal);
-		Vec3f e = m_pEffectNode->GenerationLocation.line.position_end.getValue(*instanceGlobal);
-		auto noize = m_pEffectNode->GenerationLocation.line.position_noize.getValue(*instanceGlobal);
+		Vec3f s = m_pEffectNode->GenerationLocation.line.position_start.getValue(rand);
+		Vec3f e = m_pEffectNode->GenerationLocation.line.position_end.getValue(rand);
+		auto noize = m_pEffectNode->GenerationLocation.line.position_noize.getValue(rand);
 		auto division = Max(1, m_pEffectNode->GenerationLocation.line.division);
 
 		Vec3f dir = e - s;
@@ -653,15 +697,15 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		{
 			auto len = dir.GetLength();
 			dir /= len;
-		
+
 			int32_t target = 0;
 			if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Order)
 			{
-				target = instanceNumber % division;
+				target = m_InstanceNumber % division;
 			}
 			else if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Random)
 			{
-				target = (int32_t)((division) * instanceGlobal->GetRand());
+				target = (int32_t)((division) * rand.GetRand());
 				if (target == division) target -= 1;
 			}
 
@@ -672,7 +716,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 			}
 
 			d += noize;
-		
+
 			s += dir * d;
 
 			Vec3f xdir;
@@ -718,9 +762,9 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE )
 	{
-		Mat43f mat_x = Mat43f::RotationX( m_pEffectNode->GenerationLocation.sphere.rotation_x.getValue( *instanceGlobal ) );
-		Mat43f mat_y = Mat43f::RotationY( m_pEffectNode->GenerationLocation.sphere.rotation_y.getValue( *instanceGlobal ) );
-		float r = m_pEffectNode->GenerationLocation.sphere.radius.getValue(*instanceGlobal);
+		Mat43f mat_x = Mat43f::RotationX( m_pEffectNode->GenerationLocation.sphere.rotation_x.getValue(rand) );
+		Mat43f mat_y = Mat43f::RotationY( m_pEffectNode->GenerationLocation.sphere.rotation_y.getValue(rand) );
+		float r = m_pEffectNode->GenerationLocation.sphere.radius.getValue(rand);
 		m_GenerationLocation = Mat43f::Translation( 0, r, 0 ) * mat_x * mat_y;
 	}
 	else if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL )
@@ -734,11 +778,11 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 			if( model != NULL )
 			{
 				Model::Emitter emitter;
-				
+
 				if( m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_RANDOM )
 				{
 					emitter = model->GetEmitter( 
-						instanceGlobal, 
+						&rand, 
 						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
@@ -746,7 +790,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 				else if( m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_VERTEX )
 				{
 					emitter = model->GetEmitterFromVertex( 
-						instanceNumber,
+						m_InstanceNumber,
 						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
@@ -754,7 +798,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 				else if( m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM )
 				{
 					emitter = model->GetEmitterFromVertex( 
-						instanceGlobal,
+						&rand,
 						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
@@ -762,7 +806,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 				else if( m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_FACE )
 				{
 					emitter = model->GetEmitterFromFace( 
-						instanceNumber,
+						m_InstanceNumber,
 						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
@@ -770,7 +814,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 				else if( m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM )
 				{
 					emitter = model->GetEmitterFromFace( 
-						instanceGlobal,
+						&rand,
 						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
@@ -798,29 +842,29 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	else if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE )
 	{
 		m_GenerationLocation = Mat43f::Identity;
-		float radius = m_pEffectNode->GenerationLocation.circle.radius.getValue(*instanceGlobal);
-		float start = m_pEffectNode->GenerationLocation.circle.angle_start.getValue(*instanceGlobal);
-		float end = m_pEffectNode->GenerationLocation.circle.angle_end.getValue(*instanceGlobal);
+		float radius = m_pEffectNode->GenerationLocation.circle.radius.getValue(rand);
+		float start = m_pEffectNode->GenerationLocation.circle.angle_start.getValue(rand);
+		float end = m_pEffectNode->GenerationLocation.circle.angle_end.getValue(rand);
 		int32_t div = Max(m_pEffectNode->GenerationLocation.circle.division, 1);
 
 		int32_t target = 0;
 		if(m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_ORDER)
 		{
-			target = instanceNumber % div;
+			target = m_InstanceNumber % div;
 		}
 		else if(m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_REVERSE_ORDER)
 		{
-			target = div - 1 - (instanceNumber % div);
+			target = div - 1 - (m_InstanceNumber % div);
 		}
 		else if(m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_RANDOM)
 		{
-			target = (int32_t)( (div) * instanceGlobal->GetRand() );
+			target = (int32_t)( (div) * rand.GetRand() );
 			if (target == div) target -= 1;
 		}
 
 		float angle = (end - start) * ((float)target / (float)div) + start;
 
-		angle += m_pEffectNode->GenerationLocation.circle.angle_noize.getValue(*instanceGlobal);
+		angle += m_pEffectNode->GenerationLocation.circle.angle_noize.getValue(rand);
 
 		switch (m_pEffectNode->GenerationLocation.circle.axisDirection)
 		{
@@ -838,7 +882,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 	if( m_pEffectNode->SoundType == ParameterSoundType_Use )
 	{
-		soundValues.delay = (int32_t)m_pEffectNode->Sound.Delay.getValue( *instanceGlobal );
+		soundValues.delay = (int32_t)m_pEffectNode->Sound.Delay.getValue(rand);
 	}
 
 	// UV
@@ -851,7 +895,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		if (UVType == ParameterRendererCommon::UV_ANIMATION)
 		{
 			auto& uvTimeOffset = uvTimeOffsets[i];
-			uvTimeOffset = (int32_t)UV.Animation.StartFrame.getValue(*instanceGlobal);
+			uvTimeOffset = (int32_t)UV.Animation.StartFrame.getValue(rand);
 			uvTimeOffset *= UV.Animation.FrameLength;
 		}
 		else if (UVType == ParameterRendererCommon::UV_SCROLL)
@@ -859,24 +903,24 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 			auto& uvAreaOffset = uvAreaOffsets[i];
 			auto& uvScrollSpeed = uvScrollSpeeds[i];
 
-			auto xy = UV.Scroll.Position.getValue(*instanceGlobal);
-			auto zw = UV.Scroll.Size.getValue(*instanceGlobal);
+			auto xy = UV.Scroll.Position.getValue(rand);
+			auto zw = UV.Scroll.Size.getValue(rand);
 
 			uvAreaOffset.X = xy.GetX();
 			uvAreaOffset.Y = xy.GetY();
 			uvAreaOffset.Width = zw.GetX();
 			uvAreaOffset.Height = zw.GetY();
 
-			uvScrollSpeed = UV.Scroll.Speed.getValue(*instanceGlobal);
+			uvScrollSpeed = UV.Scroll.Speed.getValue(rand);
 		}
 		else if (UVType == ParameterRendererCommon::UV_FCURVE)
 		{
 			auto& uvAreaOffset = uvAreaOffsets[i];
 
-			uvAreaOffset.X = UV.FCurve.Position->X.GetOffset(*instanceGlobal);
-			uvAreaOffset.Y = UV.FCurve.Position->Y.GetOffset(*instanceGlobal);
-			uvAreaOffset.Width = UV.FCurve.Size->X.GetOffset(*instanceGlobal);
-			uvAreaOffset.Height = UV.FCurve.Size->Y.GetOffset(*instanceGlobal);
+			uvAreaOffset.X = UV.FCurve.Position->X.GetOffset(rand);
+			uvAreaOffset.Y = UV.FCurve.Position->Y.GetOffset(rand);
+			uvAreaOffset.Width = UV.FCurve.Size->X.GetOffset(rand);
+			uvAreaOffset.Height = UV.FCurve.Size->Y.GetOffset(rand);
 		}
 	}
 
@@ -893,54 +937,54 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		auto& fpiValue = alpha_crunch_values.four_point_interpolation;
 		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.FourPointInterpolation;
 
-		fpiValue.begin_threshold	= nodeAlphaCrunchValue.BeginThreshold.getValue(*instanceGlobal);
-		fpiValue.transition_frame	= nodeAlphaCrunchValue.TransitionFrameNum.getValue(*instanceGlobal);
-		fpiValue.no2_threshold		= nodeAlphaCrunchValue.No2Threshold.getValue(*instanceGlobal);
-		fpiValue.no3_threshold		= nodeAlphaCrunchValue.No3Threshold.getValue(*instanceGlobal);
-		fpiValue.transition_frame2	= nodeAlphaCrunchValue.TransitionFrameNum2.getValue(*instanceGlobal);
-		fpiValue.end_threshold		= nodeAlphaCrunchValue.EndThreshold.getValue(*instanceGlobal);
+		fpiValue.begin_threshold	= nodeAlphaCrunchValue.BeginThreshold.getValue(rand);
+		fpiValue.transition_frame	= nodeAlphaCrunchValue.TransitionFrameNum.getValue(rand);
+		fpiValue.no2_threshold		= nodeAlphaCrunchValue.No2Threshold.getValue(rand);
+		fpiValue.no3_threshold		= nodeAlphaCrunchValue.No3Threshold.getValue(rand);
+		fpiValue.transition_frame2	= nodeAlphaCrunchValue.TransitionFrameNum2.getValue(rand);
+		fpiValue.end_threshold		= nodeAlphaCrunchValue.EndThreshold.getValue(rand);
 	}
 	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::EASING)
 	{
 		auto& easingValue = alpha_crunch_values.easing;
 		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.Easing;
 
-		easingValue.start = nodeAlphaCrunchValue.Threshold.start.getValue(*instanceGlobal);
-		easingValue.end = nodeAlphaCrunchValue.Threshold.end.getValue(*instanceGlobal);
-	}
+		easingValue.start = nodeAlphaCrunchValue.Threshold.start.getValue(rand);
+		easingValue.end = nodeAlphaCrunchValue.Threshold.end.getValue(rand);
+		}
 	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::F_CURVE)
 	{
 		auto& fcurveValue = alpha_crunch_values.fcurve;
 		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.FCurve;
 
-		fcurveValue.offset = nodeAlphaCrunchValue.Threshold->GetOffsets(*instanceGlobal);
+		fcurveValue.offset = nodeAlphaCrunchValue.Threshold->GetOffsets(rand);
 	}
 #else
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
-		uvTimeOffset = (int32_t)m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(*instanceGlobal);
+		uvTimeOffset = (int32_t)m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(rand);
 		uvTimeOffset *= m_pEffectNode->RendererCommon.UV.Animation.FrameLength;
 	}
-	
+
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL)
 	{
-		auto xy = m_pEffectNode->RendererCommon.UV.Scroll.Position.getValue(*instanceGlobal);
-		auto zw = m_pEffectNode->RendererCommon.UV.Scroll.Size.getValue(*instanceGlobal);
+		auto xy = m_pEffectNode->RendererCommon.UV.Scroll.Position.getValue(rand);
+		auto zw = m_pEffectNode->RendererCommon.UV.Scroll.Size.getValue(rand);
 
 		uvAreaOffset.X = xy.GetX();
 		uvAreaOffset.Y = xy.GetY();
 		uvAreaOffset.Width = zw.GetX();
 		uvAreaOffset.Height = zw.GetY();
 
-		uvScrollSpeed = m_pEffectNode->RendererCommon.UV.Scroll.Speed.getValue(*instanceGlobal);
+		uvScrollSpeed = m_pEffectNode->RendererCommon.UV.Scroll.Speed.getValue(rand);
 	}
 
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FCURVE)
 	{
-		uvAreaOffset.X = m_pEffectNode->RendererCommon.UV.FCurve.Position->X.GetOffset(*instanceGlobal);
-		uvAreaOffset.Y = m_pEffectNode->RendererCommon.UV.FCurve.Position->Y.GetOffset(*instanceGlobal);
-		uvAreaOffset.Width = m_pEffectNode->RendererCommon.UV.FCurve.Size->X.GetOffset(*instanceGlobal);
-		uvAreaOffset.Height = m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetOffset(*instanceGlobal);
+		uvAreaOffset.X = m_pEffectNode->RendererCommon.UV.FCurve.Position->X.GetOffset(rand);
+		uvAreaOffset.Y = m_pEffectNode->RendererCommon.UV.FCurve.Position->Y.GetOffset(rand);
+		uvAreaOffset.Width = m_pEffectNode->RendererCommon.UV.FCurve.Size->X.GetOffset(rand);
+		uvAreaOffset.Height = m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetOffset(rand);
 	}
 #endif
 
@@ -967,36 +1011,24 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		}
 		else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
 		{
-			instanceCustomData->easing.start = parameterCustomData->Easing.Values.start.getValue(*instanceGlobal);
-			instanceCustomData->easing.end = parameterCustomData->Easing.Values.end.getValue(*instanceGlobal);
+			instanceCustomData->easing.start = parameterCustomData->Easing.Values.start.getValue(rand);
+			instanceCustomData->easing.end = parameterCustomData->Easing.Values.end.getValue(rand);
 		}
 		else if (parameterCustomData->Type == ParameterCustomDataType::Random2D)
 		{
-			instanceCustomData->random.value = parameterCustomData->Random.Values.getValue(*instanceGlobal);
+			instanceCustomData->random.value = parameterCustomData->Random.Values.getValue(rand);
 		}
 		else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
 		{
-			instanceCustomData->fcruve.offset = parameterCustomData->FCurve.Values->GetOffsets(*instanceGlobal);
+			instanceCustomData->fcruve.offset = parameterCustomData->FCurve.Values->GetOffsets(rand);
 		}
 		else if (parameterCustomData->Type == ParameterCustomDataType::FCurveColor)
 		{
-			instanceCustomData->fcurveColor.offset = parameterCustomData->FCurveColor.Values->GetOffsets(*instanceGlobal);
+			instanceCustomData->fcurveColor.offset = parameterCustomData->FCurveColor.Values->GetOffsets(rand);
 		}
 	}
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
-
-	if (IsRequiredToCreateChildren(0.0f))
-	{
-		// calculate myself to update children group matrix
-		CalculateMatrix(0);
-
-		// for new children
-		UpdateChildrenGroupMatrix();
-
-		// Generate zero frame effect
-		GenerateChildrenInRequired(0.0f);
-	}
 }
 
 //----------------------------------------------------------------------------------
@@ -1005,7 +1037,12 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 void Instance::Update( float deltaFrame, bool shown )
 {
 	assert(this->m_pContainer != nullptr);
-	
+
+	if (IsFirstTime())
+	{
+		FirstUpdate();
+	}
+
 	// Invalidate matrix
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
@@ -1017,15 +1054,13 @@ void Instance::Update( float deltaFrame, bool shown )
 		{
 			float living_time = m_LivingTime;
 			float living_time_p = living_time + deltaFrame;
-
+	
 			if (living_time <= (float) soundValues.delay && (float) soundValues.delay < living_time_p)
 			{
 				m_pEffectNode->PlaySound_(*this, m_pContainer->GetRootInstance(), m_pManager);
 			}
 		}
 	}
-
-	float originalTime = m_LivingTime;
 
 	// step time
 	// frame 0 - generated time
@@ -1035,7 +1070,7 @@ void Instance::Update( float deltaFrame, bool shown )
 		m_LivingTime += deltaFrame;
 	}
 
-	if(shown)
+	if (shown)
 	{
 		CalculateMatrix( deltaFrame );
 	}
@@ -1065,18 +1100,12 @@ void Instance::Update( float deltaFrame, bool shown )
 	}
 
 	// Create child particles
-	if( is_time_step_allowed && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
-	{
-		GenerateChildrenInRequired(originalTime + deltaFrame);
-	}
+	//if( !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct )
+	//{
+	//	GenerateChildrenInRequired(m_LivingTime);
+	//}
 
 	UpdateChildrenGroupMatrix();
-	/*
-	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
-	{
-		group->SetParentMatrix(m_GlobalMatrix43);
-	}
-	*/
 
 	// check whether killed?
 	bool killed = false;
@@ -1294,10 +1323,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 		{
-			localPosition = ApplyEq(m_pEffectNode->TranslationFixed.RefEq,
-									m_pEffectNode->TranslationFixed.Position,
-									m_pEffectNode->DynamicFactor.Tra,
-									m_pEffectNode->DynamicFactor.TraInv);
+			localPosition = translation_values.fixed.location;
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 		{
@@ -1331,10 +1357,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 		{
-			localAngle = ApplyEq(m_pEffectNode->RotationFixed.RefEq,
-								 m_pEffectNode->RotationFixed.Position,
-								 m_pEffectNode->DynamicFactor.Rot,
-								 m_pEffectNode->DynamicFactor.RotInv);
+			localAngle = rotation_values.fixed.rotation;
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 		{
@@ -1376,10 +1399,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 		{
-			localScaling = ApplyEq(m_pEffectNode->ScalingFixed.RefEq,
-								   m_pEffectNode->ScalingFixed.Position,
-								   m_pEffectNode->DynamicFactor.Scale,
-								   m_pEffectNode->DynamicFactor.ScaleInv);
+			localScaling = scaling_values.fixed.scale;
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 		{

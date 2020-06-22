@@ -264,11 +264,11 @@ private:
 	
 	void LoadColorParameter( unsigned char*& pos, RingColorParameter& param );
 	
-	void InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, InstanceGlobal* instanceGlobal);
+	void InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, IRandObject* rand);
 
-	void InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, InstanceGlobal* instanceGlobal);
+	void InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, IRandObject* rand);
 	
-	void InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, InstanceGlobal* instanceGlobal);
+	void InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, IRandObject* rand);
 	
 	void UpdateSingleValues( Instance& instance, const RingSingleParameter& param, RingSingleValues& values );
 	

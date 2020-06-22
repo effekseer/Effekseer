@@ -1009,7 +1009,7 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 //----------------------------------------------------------------------------------
 void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
 {
-	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
+	IRandObject& rand = instance.GetRandObject();
 
 	SoundPlayer* player = manager->GetSoundPlayer();
 	if (player == NULL)
@@ -1021,9 +1021,9 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 	{
 		SoundPlayer::InstanceParameter parameter;
 		parameter.Data = m_effect->GetWave(Sound.WaveId);
-		parameter.Volume = Sound.Volume.getValue(*instanceGlobal);
-		parameter.Pitch = Sound.Pitch.getValue(*instanceGlobal);
-		parameter.Pan = Sound.Pan.getValue(*instanceGlobal);
+		parameter.Volume = Sound.Volume.getValue(rand);
+		parameter.Pitch = Sound.Pitch.getValue(rand);
+		parameter.Pan = Sound.Pan.getValue(rand);
 
 		parameter.Mode3D = (Sound.PanType == ParameterSoundPanType_3D);
 		parameter.Position = ToStruct(instance.GetGlobalMatrix43().GetTranslation());
