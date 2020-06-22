@@ -342,27 +342,27 @@ void InitGraphics(int width, int height)
 
 	g_width = width;
 	g_height = height;
-
+	
 	g_clearing_image = new uint32_t[width * height];
 	CreateCheckeredPattern(width, height, g_clearing_image);
-
+	
 	glViewport(0, 0, width, height);
 
-	g_renderer = ::EffekseerRendererGL::Renderer::Create(2000);
-	g_renderer->SetProjectionMatrix(
-		::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f));
-	g_renderer->SetDistortingCallback(new DistortingCallback((EffekseerRendererGL::Renderer*)g_renderer, width, height));
-
-	g_manager->SetSpriteRenderer(g_renderer->CreateSpriteRenderer());
-	g_manager->SetRibbonRenderer(g_renderer->CreateRibbonRenderer());
-	g_manager->SetRingRenderer(g_renderer->CreateRingRenderer());
-	g_manager->SetModelRenderer(g_renderer->CreateModelRenderer());
-	g_manager->SetTrackRenderer(g_renderer->CreateTrackRenderer());
-
-	g_manager->SetCoordinateSystem(::Effekseer::CoordinateSystem::RH);
-
-	g_manager->SetTextureLoader(g_renderer->CreateTextureLoader());
-	g_manager->SetModelLoader(g_renderer->CreateModelLoader());
+	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
+	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH_OpenGL( 90.0f / 180.0f * 3.14f, (float)width /
+	 (float)height, 1.0f, 50.0f ) ); g_renderer->SetDistortingCallback( new DistortingCallback( 	(EffekseerRendererGL::Renderer*)g_renderer,
+	width, height ) );
+	
+	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
+	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
+	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
+	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
+	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
+	
+	g_manager->SetCoordinateSystem( ::Effekseer::CoordinateSystem::RH );
+	
+	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
+	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
 }
 
 //----------------------------------------------------------------------------------

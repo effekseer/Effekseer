@@ -36,10 +36,6 @@ target_link_libraries(${PROJECT_NAME} LLGI)
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_DX12}")
 add_dependencies(${PROJECT_NAME} Effekseer)
 
-if(CLANG_FORMAT_ENABLED)
-    clang_format(${PROJECT_NAME})
-endif()
-
 if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()

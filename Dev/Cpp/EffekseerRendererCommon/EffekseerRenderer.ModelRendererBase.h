@@ -157,7 +157,8 @@ struct ModelRendererPixelConstantBuffer
 
 	struct
 	{
-		union {
+		union 
+		{
 			float Buffer[4];
 
 			struct
@@ -169,7 +170,8 @@ struct ModelRendererPixelConstantBuffer
 
 	struct
 	{
-		union {
+		union
+		{
 			float Buffer[4];
 
 			struct
@@ -812,7 +814,7 @@ public:
 		else
 		{
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			Effekseer::TextureData* textures[6] = {nullptr};
+			Effekseer::TextureData* textures[6] = { nullptr };
 #else
 			Effekseer::TextureData* textures[2];
 			textures[0] = nullptr;
@@ -1091,20 +1093,10 @@ public:
 					vcb->ModelUV[num][3] = m_uv[loop + num].Height;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-					vcb->SetModelAlphaUV(
-						num, m_alphaUV[loop + num].X, m_alphaUV[loop + num].Y, m_alphaUV[loop + num].Width, m_alphaUV[loop + num].Height);
-					vcb->SetModelUVDistortionUV(num,
-												m_uvDistortionUV[loop + num].X,
-												m_uvDistortionUV[loop + num].Y,
-												m_uvDistortionUV[loop + num].Width,
-												m_uvDistortionUV[loop + num].Height);
-					vcb->SetModelBlendUV(
-						num, m_blendUV[loop + num].X, m_blendUV[loop + num].Y, m_blendUV[loop + num].Width, m_blendUV[loop + num].Height);
-					vcb->SetModelBlendAlphaUV(num,
-											  m_blendAlphaUV[loop + num].X,
-											  m_blendAlphaUV[loop + num].Y,
-											  m_blendAlphaUV[loop + num].Width,
-											  m_blendAlphaUV[loop + num].Height);
+					vcb->SetModelAlphaUV(num, m_alphaUV[loop + num].X, m_alphaUV[loop + num].Y, m_alphaUV[loop + num].Width, m_alphaUV[loop + num].Height);
+					vcb->SetModelUVDistortionUV(num, m_uvDistortionUV[loop + num].X, m_uvDistortionUV[loop + num].Y, m_uvDistortionUV[loop + num].Width, m_uvDistortionUV[loop + num].Height);
+					vcb->SetModelBlendUV(num, m_blendUV[loop + num].X, m_blendUV[loop + num].Y, m_blendUV[loop + num].Width, m_blendUV[loop + num].Height);
+					vcb->SetModelBlendAlphaUV(num, m_blendAlphaUV[loop + num].X, m_blendAlphaUV[loop + num].Y, m_blendAlphaUV[loop + num].Width, m_blendAlphaUV[loop + num].Height);
 					vcb->SetModelFlipbookIndexAndNextRate(num, m_flipbookIndexAndNextRate[loop + num]);
 					vcb->SetModelAlphaThreshold(num, m_alphaThreshold[loop + num]);
 #endif
@@ -1155,11 +1147,9 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				vcb->SetModelAlphaUV(0, m_alphaUV[loop].X, m_alphaUV[loop].Y, m_alphaUV[loop].Width, m_alphaUV[loop].Height);
-				vcb->SetModelUVDistortionUV(
-					0, m_uvDistortionUV[loop].X, m_uvDistortionUV[loop].Y, m_uvDistortionUV[loop].Width, m_uvDistortionUV[loop].Height);
+				vcb->SetModelUVDistortionUV(0, m_uvDistortionUV[loop].X, m_uvDistortionUV[loop].Y, m_uvDistortionUV[loop].Width, m_uvDistortionUV[loop].Height);
 				vcb->SetModelBlendUV(0, m_blendUV[loop].X, m_blendUV[loop].Y, m_blendUV[loop].Width, m_blendUV[loop].Height);
-				vcb->SetModelBlendAlphaUV(
-					0, m_blendAlphaUV[loop].X, m_blendAlphaUV[loop].Y, m_blendAlphaUV[loop].Width, m_blendAlphaUV[loop].Height);
+				vcb->SetModelBlendAlphaUV(0, m_blendAlphaUV[loop].X, m_blendAlphaUV[loop].Y, m_blendAlphaUV[loop].Width, m_blendAlphaUV[loop].Height);
 				vcb->SetModelFlipbookIndexAndNextRate(0, m_flipbookIndexAndNextRate[loop]);
 				vcb->SetModelAlphaThreshold(0, m_alphaThreshold[loop]);
 #endif

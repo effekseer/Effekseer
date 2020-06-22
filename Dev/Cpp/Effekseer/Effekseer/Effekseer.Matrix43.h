@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_MATRIX43_H__
-#define __EFFEKSEER_MATRIX43_H__
+#ifndef	__EFFEKSEER_MATRIX43_H__
+#define	__EFFEKSEER_MATRIX43_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -10,8 +10,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer
-{
+namespace Effekseer { 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -31,12 +30,13 @@ struct Matrix44;
 struct Matrix43
 {
 private:
+
 public:
 	/**
 		@brief	行列の値
 	*/
-	float Value[4][3];
-
+	float	Value[4][3];
+	
 	/**
 		@brief	単位行列化を行う。
 	*/
@@ -48,48 +48,48 @@ public:
 		@param	y	[in]	Y方向拡大率
 		@param	z	[in]	Z方向拡大率
 	*/
-	void Scaling(float x, float y, float z);
+	void Scaling( float x, float y, float z );
 
 	/**
 		@brief	反時計周り方向のX軸回転行列化を行う。
 		@param	angle	[in]	角度(ラジアン)
 	*/
-	void RotationX(float angle);
+	void RotationX( float angle );
 
 	/**
 		@brief	反時計周り方向のY軸回転行列化を行う。
 		@param	angle	[in]	角度(ラジアン)
 	*/
-	void RotationY(float angle);
+	void RotationY( float angle );
 
 	/**
 		@brief	反時計周り方向のZ軸回転行列化を行う。
 		@param	angle	[in]	角度(ラジアン)
 	*/
-	void RotationZ(float angle);
-
+	void RotationZ( float angle );
+	
 	/**
 		@brief	反時計周り方向のXYZ軸回転行列化を行う。
 		@param	rx	[in]	角度(ラジアン)
 		@param	ry	[in]	角度(ラジアン)
 		@param	rz	[in]	角度(ラジアン)
 	*/
-	void RotationXYZ(float rx, float ry, float rz);
-
+	void RotationXYZ( float rx, float ry, float rz );
+	
 	/**
 		@brief	反時計周り方向のZXY軸回転行列化を行う。
 		@param	rz	[in]	角度(ラジアン)
 		@param	rx	[in]	角度(ラジアン)
 		@param	ry	[in]	角度(ラジアン)
 	*/
-	void RotationZXY(float rz, float rx, float ry);
+	void RotationZXY( float rz, float rx, float ry );
 
 	/**
 		@brief	任意軸に対する反時計周り方向回転行列化を行う。
 		@param	axis	[in]	回転軸
 		@param	angle	[in]	角度(ラジアン)
 	*/
-	void RotationAxis(const Vector3D& axis, float angle);
+	void RotationAxis( const Vector3D& axis, float angle );
 
 	/**
 		@brief	任意軸に対する反時計周り方向回転行列化を行う。
@@ -97,7 +97,7 @@ public:
 		@param	s	[in]	サイン
 		@param	c	[in]	コサイン
 	*/
-	void RotationAxis(const Vector3D& axis, float s, float c);
+	void RotationAxis( const Vector3D& axis, float s, float c );
 
 	/**
 		@brief	移動行列化を行う。
@@ -105,7 +105,7 @@ public:
 		@param	y	[in]	Y方向移動
 		@param	z	[in]	Z方向移動
 	*/
-	void Translation(float x, float y, float z);
+	void Translation( float x, float y, float z );
 
 	/**
 		@brief	行列を、拡大、回転、移動の行列とベクトルに分解する。
@@ -113,33 +113,33 @@ public:
 		@param	r	[out]	回転行列
 		@param	t	[out]	位置
 	*/
-	void GetSRT(Vector3D& s, Matrix43& r, Vector3D& t) const;
-
+	void GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const; 
+	
 	/**
 		@brief	行列から拡大ベクトルを取得する。
 		@param	s	[out]	拡大ベクトル
 	*/
-	void GetScale(Vector3D& s) const;
-
+	void GetScale( Vector3D& s ) const;
+	
 	/**
 		@brief	行列から回転行列を取得する。
 		@param	s	[out]	回転行列
 	*/
-	void GetRotation(Matrix43& r) const;
+	void GetRotation( Matrix43& r ) const;
 
 	/**
 		@brief	行列から移動ベクトルを取得する。
 		@param	t	[out]	移動ベクトル
 	*/
-	void GetTranslation(Vector3D& t) const;
-
+	void GetTranslation( Vector3D& t ) const;
+	
 	/**
 		@brief	行列の拡大、回転、移動を設定する。
 		@param	s	[in]	拡大行列
 		@param	r	[in]	回転行列
 		@param	t	[in]	位置
 	*/
-	void SetSRT(const Vector3D& s, const Matrix43& r, const Vector3D& t);
+	void SetSRT( const Vector3D& s, const Matrix43& r, const Vector3D& t );
 
 	/**
 		@brief	convert into matrix44
@@ -157,14 +157,14 @@ public:
 		@param	in1	[in]	乗算の左側
 		@param	in2	[in]	乗算の右側
 	*/
-	static void Multiple(Matrix43& out, const Matrix43& in1, const Matrix43& in2);
+	static void Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2 );
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+ } 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_MATRIX43_H__
+#endif	// __EFFEKSEER_MATRIX43_H__

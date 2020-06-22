@@ -15,19 +15,25 @@ namespace EffekseerTool
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Sound::Sound() : m_sound(nullptr), m_manager(nullptr), m_mute(false), m_volume(1.0f) {}
+Sound::Sound()
+	: m_sound( nullptr )
+	, m_manager( nullptr )
+	, m_mute( false )
+	, m_volume( 1.0f )
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 Sound::~Sound()
 {
-	if (m_sound)
+	if( m_sound )
 	{
 		m_sound->Destroy();
 	}
 
-	if (m_manager)
+	if( m_manager )
 	{
 		m_manager->Release();
 	}
@@ -39,18 +45,18 @@ Sound::~Sound()
 bool Sound::Initialize()
 {
 	m_manager = osm::Manager::Create();
-	if (m_manager == nullptr)
+	if( m_manager == nullptr )
 	{
 		return false;
 	}
 
-	if (!m_manager->Initialize())
+	if( !m_manager->Initialize() )
 	{
 		return false;
 	}
 
-	m_sound = EffekseerSound::Sound::Create(m_manager);
-	if (m_sound == nullptr)
+	m_sound = EffekseerSound::Sound::Create( m_manager );
+	if( m_sound == nullptr )
 	{
 		return false;
 	}
@@ -60,30 +66,30 @@ bool Sound::Initialize()
 
 void Sound::Update()
 {
-	// m_sound->Update();
+	//m_sound->Update();
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Sound::SetVolume(float volume)
+void Sound::SetVolume( float volume )
 {
 	m_volume = volume;
 
-	if (m_sound)
+	if( m_sound )
 	{
-		// m_sound->SetMasterVolume(volume);
+		//m_sound->SetMasterVolume(volume);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Sound::SetMute(bool mute)
+void Sound::SetMute( bool mute )
 {
 	m_mute = mute;
 
-	if (m_sound)
+	if( m_sound )
 	{
 		m_sound->SetMute(mute);
 	}
@@ -92,18 +98,18 @@ void Sound::SetMute(bool mute)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Sound::SetListener(const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up)
+void Sound::SetListener( const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up )
 {
-	if (m_sound)
+	if( m_sound )
 	{
-		m_sound->SetListener(pos, at, up);
+		m_sound->SetListener( pos, at, up );
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace EffekseerTool
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_FILE_H__
-#define __EFFEKSEER_FILE_H__
+#ifndef	__EFFEKSEER_FILE_H__
+#define	__EFFEKSEER_FILE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -10,8 +10,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer
-{
+namespace Effekseer { 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -21,12 +20,13 @@ namespace Effekseer
 class FileReader
 {
 private:
+
 public:
 	FileReader() {}
 
 	virtual ~FileReader() {}
 
-	virtual size_t Read(void* buffer, size_t size) = 0;
+	virtual size_t Read( void* buffer, size_t size ) = 0;
 
 	virtual void Seek(int position) = 0;
 
@@ -41,12 +41,13 @@ public:
 class FileWriter
 {
 private:
+
 public:
 	FileWriter() {}
 
 	virtual ~FileWriter() {}
 
-	virtual size_t Write(const void* buffer, size_t size) = 0;
+	virtual size_t Write( const void* buffer, size_t size ) = 0;
 
 	virtual void Flush() = 0;
 
@@ -81,8 +82,9 @@ public:
 	virtual FileWriter* OpenWrite(const EFK_CHAR* path) = 0;
 };
 
-} // namespace Effekseer
+
+ } 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_FILE_H__
+#endif	// __EFFEKSEER_FILE_H__

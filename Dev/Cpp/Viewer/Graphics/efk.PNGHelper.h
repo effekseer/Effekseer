@@ -1,16 +1,17 @@
 
 #pragma once
 
-#include <Effekseer.h>
+#include <stdint.h>
 #include <stdint.h>
 #include <vector>
+#include <Effekseer.h>
 
 #ifdef _WIN32
 
-#define WINVER 0x0501
-#define _WIN32_WINNT 0x0501
-#include <gdiplus.h>
+#define WINVER          0x0501
+#define _WIN32_WINNT    0x0501
 #include <windows.h>
+#include <gdiplus.h>
 
 #else
 
@@ -21,22 +22,24 @@
 
 #endif
 
+
 namespace efk
 {
-class PNGHelper
-{
-private:
+	class PNGHelper
+	{
+	private:
+
 #ifdef _WIN32
-	std::vector<uint8_t> tempBuffer1;
-	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-	ULONG_PTR gdiplusToken;
+		std::vector<uint8_t>	tempBuffer1;
+		Gdiplus::GdiplusStartupInput	gdiplusStartupInput;
+		ULONG_PTR						gdiplusToken;
 #endif
 
-public:
-	PNGHelper();
+	public:
+		PNGHelper();
+		
+		~PNGHelper();
 
-	~PNGHelper();
-
-	bool Save(const char16_t* path, int32_t width, int32_t height, const void* data);
-};
-} // namespace efk
+		bool Save(const char16_t* path, int32_t width, int32_t height, const void* data);
+	};
+}

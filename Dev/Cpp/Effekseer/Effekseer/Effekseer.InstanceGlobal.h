@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_INSTANCEGLOBAL_H__
-#define __EFFEKSEER_INSTANCEGLOBAL_H__
+#ifndef	__EFFEKSEER_INSTANCEGLOBAL_H__
+#define	__EFFEKSEER_INSTANCEGLOBAL_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -8,8 +8,8 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
 #include "Effekseer.Random.h"
-#include "SIMD/Effekseer.Mat43f.h"
 #include "SIMD/Effekseer.Vec3f.h"
+#include "SIMD/Effekseer.Mat43f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -32,15 +32,15 @@ class InstanceGlobal
 
 private:
 	/* このエフェクトで使用しているインスタンス数 */
-	int m_instanceCount;
-
+	int			m_instanceCount;
+	
 	/* 更新されたフレーム数 */
-	float m_updatedFrame;
+	float		m_updatedFrame;
 
-	InstanceContainer* m_rootContainer;
-	Vec3f m_targetLocation;
+	InstanceContainer*	m_rootContainer;
+	Vec3f				m_targetLocation;
 
-	RandObject m_randObjects;
+	RandObject			m_randObjects;
 	std::array<float, 4> dynamicInputParameters;
 
 	float nextDeltaFrame_ = 0.0f;
@@ -63,15 +63,15 @@ public:
 
 	void EndDeltaFrame();
 
-	bool IsGlobalColorSet = false;
-	Color GlobalColor = Color(255, 255, 255, 255);
+	bool		IsGlobalColorSet = false;
+	Color		GlobalColor = Color(255, 255, 255, 255);
 
 	std::array<std::array<float, 4>, 16> dynamicEqResults;
 
-	std::vector<InstanceContainer*> RenderedInstanceContainers;
+	std::vector<InstanceContainer*>	RenderedInstanceContainers;
 
 	std::array<float, 4> GetDynamicEquationResult(int32_t index);
-
+	
 	RandObject& GetRandObject() { return m_randObjects; }
 
 	void IncInstanceCount();
@@ -89,16 +89,16 @@ public:
 	float GetUpdatedFrame();
 
 	InstanceContainer* GetRootContainer() const;
-	void SetRootContainer(InstanceContainer* container);
+	void SetRootContainer( InstanceContainer* container );
 
 	const Vec3f& GetTargetLocation() const;
-	void SetTargetLocation(const Vector3D& location);
+	void SetTargetLocation( const Vector3D& location );
 };
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_INSTANCEGLOBAL_H__
+#endif	// __EFFEKSEER_INSTANCEGLOBAL_H__

@@ -8,7 +8,7 @@ namespace Effekseer
 {
 
 /**
-	@brief
+	@brief	
 	\~English	Material loader
 	\~Japanese	マテリアル読み込み破棄関数指定クラス
 */
@@ -16,7 +16,7 @@ class MaterialLoader
 {
 public:
 	/**
-	@brief
+	@brief	
 	\~English	Constructor
 	\~Japanese	コンストラクタ
 	*/
@@ -33,7 +33,7 @@ public:
 		@brief
 		\~English	load a material
 		\~Japanese	マテリアルを読み込む。
-		@param	path
+		@param	path	
 		\~English	a file path
 		\~Japanese	読み込み元パス
 		@return

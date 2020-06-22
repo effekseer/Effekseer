@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
-#include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -31,27 +31,27 @@ namespace Effekseer
 void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
-	memcpy(&type, pos, sizeof(int));
+	memcpy( &type, pos, sizeof(int) );
 	pos += sizeof(int);
-	assert(type == GetType());
+	assert( type == GetType() );
 	EffekseerPrintDebug("Renderer : Ring\n");
 
-	memcpy(&RenderingOrder, pos, sizeof(int));
+	memcpy( &RenderingOrder, pos, sizeof(int) );
 	pos += sizeof(int);
 
-	if (m_effect->GetVersion() >= 3)
+	if( m_effect->GetVersion() >= 3)
 	{
 		AlphaBlend = RendererCommon.AlphaBlend;
 	}
 	else
 	{
-		memcpy(&AlphaBlend, pos, sizeof(int));
+		memcpy( &AlphaBlend, pos, sizeof(int) );
 		pos += sizeof(int);
 	}
 
-	memcpy(&Billboard, pos, sizeof(int));
+	memcpy( &Billboard, pos, sizeof(int) );
 	pos += sizeof(int);
-
+	
 	if (m_effect->GetVersion() >= 15)
 	{
 		int32_t ringShape = 0;
@@ -79,9 +79,9 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 		}
 	}
 
-	memcpy(&VertexCount, pos, sizeof(int));
+	memcpy( &VertexCount, pos, sizeof(int) );
 	pos += sizeof(int);
-
+	
 	// compatiblity
 	{
 		RingSingleParameter viewingAngle;
@@ -120,36 +120,36 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 		}
 	}
 
-	LoadLocationParameter(pos, OuterLocation);
+	LoadLocationParameter( pos, OuterLocation );
+	
+	LoadLocationParameter( pos, InnerLocation );
+	
+	LoadSingleParameter( pos, CenterRatio );
 
-	LoadLocationParameter(pos, InnerLocation);
+	LoadColorParameter( pos, OuterColor);
 
-	LoadSingleParameter(pos, CenterRatio);
+	LoadColorParameter( pos, CenterColor);
 
-	LoadColorParameter(pos, OuterColor);
+	LoadColorParameter( pos, InnerColor);
 
-	LoadColorParameter(pos, CenterColor);
-
-	LoadColorParameter(pos, InnerColor);
-
-	if (m_effect->GetVersion() >= 3)
+	if( m_effect->GetVersion() >= 3)
 	{
 		RingTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{
-		memcpy(&RingTexture, pos, sizeof(int));
+		memcpy( &RingTexture, pos, sizeof(int) );
 		pos += sizeof(int);
 	}
-
+	
 	// 右手系左手系変換
 	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
-		if (OuterLocation.type == RingLocationParameter::Fixed)
+		if( OuterLocation.type == RingLocationParameter::Fixed )
 		{
 			OuterLocation.fixed.location.y *= -1;
 		}
-		else if (OuterLocation.type == RingLocationParameter::PVA)
+		else if( OuterLocation.type == RingLocationParameter::PVA )
 		{
 			OuterLocation.pva.location.min.y *= -1;
 			OuterLocation.pva.location.max.y *= -1;
@@ -158,7 +158,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 			OuterLocation.pva.acceleration.min.y *= -1;
 			OuterLocation.pva.acceleration.max.y *= -1;
 		}
-		else if (OuterLocation.type == RingLocationParameter::Easing)
+		else if( OuterLocation.type == RingLocationParameter::Easing )
 		{
 			OuterLocation.easing.start.min.y *= -1;
 			OuterLocation.easing.start.max.y *= -1;
@@ -166,11 +166,11 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 			OuterLocation.easing.end.max.y *= -1;
 		}
 
-		if (InnerLocation.type == RingLocationParameter::Fixed)
+		if( InnerLocation.type == RingLocationParameter::Fixed )
 		{
 			InnerLocation.fixed.location.y *= -1;
 		}
-		else if (InnerLocation.type == RingLocationParameter::PVA)
+		else if( InnerLocation.type == RingLocationParameter::PVA )
 		{
 			InnerLocation.pva.location.min.y *= -1;
 			InnerLocation.pva.location.max.y *= -1;
@@ -179,7 +179,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 			InnerLocation.pva.acceleration.min.y *= -1;
 			InnerLocation.pva.acceleration.max.y *= -1;
 		}
-		else if (InnerLocation.type == RingLocationParameter::Easing)
+		else if( InnerLocation.type == RingLocationParameter::Easing )
 		{
 			InnerLocation.easing.start.min.y *= -1;
 			InnerLocation.easing.start.max.y *= -1;
@@ -189,13 +189,13 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 	}
 
 	/* 位置拡大処理 */
-	if (m_effect->GetVersion() >= 8)
+	if( m_effect->GetVersion() >= 8 )
 	{
-		if (OuterLocation.type == RingLocationParameter::Fixed)
+		if( OuterLocation.type == RingLocationParameter::Fixed )
 		{
 			OuterLocation.fixed.location *= m_effect->GetMaginification();
 		}
-		else if (OuterLocation.type == RingLocationParameter::PVA)
+		else if( OuterLocation.type == RingLocationParameter::PVA )
 		{
 			OuterLocation.pva.location.min *= m_effect->GetMaginification();
 			OuterLocation.pva.location.max *= m_effect->GetMaginification();
@@ -204,7 +204,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 			OuterLocation.pva.acceleration.min *= m_effect->GetMaginification();
 			OuterLocation.pva.acceleration.max *= m_effect->GetMaginification();
 		}
-		else if (OuterLocation.type == RingLocationParameter::Easing)
+		else if( OuterLocation.type == RingLocationParameter::Easing )
 		{
 			OuterLocation.easing.start.min *= m_effect->GetMaginification();
 			OuterLocation.easing.start.max *= m_effect->GetMaginification();
@@ -212,11 +212,11 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 			OuterLocation.easing.end.max *= m_effect->GetMaginification();
 		}
 
-		if (InnerLocation.type == RingLocationParameter::Fixed)
+		if( InnerLocation.type == RingLocationParameter::Fixed )
 		{
 			InnerLocation.fixed.location *= m_effect->GetMaginification();
 		}
-		else if (InnerLocation.type == RingLocationParameter::PVA)
+		else if( InnerLocation.type == RingLocationParameter::PVA )
 		{
 			InnerLocation.pva.location.min *= m_effect->GetMaginification();
 			InnerLocation.pva.location.max *= m_effect->GetMaginification();
@@ -225,7 +225,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 			InnerLocation.pva.acceleration.min *= m_effect->GetMaginification();
 			InnerLocation.pva.acceleration.max *= m_effect->GetMaginification();
 		}
-		else if (InnerLocation.type == RingLocationParameter::Easing)
+		else if( InnerLocation.type == RingLocationParameter::Easing )
 		{
 			InnerLocation.easing.start.min *= m_effect->GetMaginification();
 			InnerLocation.easing.start.max *= m_effect->GetMaginification();
@@ -241,7 +241,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 {
 	RingRenderer* renderer = manager->GetRingRenderer();
-	if (renderer != NULL)
+	if( renderer != NULL )
 	{
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ZTest = RendererCommon.ZTest;
@@ -255,7 +255,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.StartingFade = Shape.StartingFade;
 		nodeParameter.EndingFade = Shape.EndingFade;
 
-		renderer->BeginRendering(nodeParameter, count, m_userData);
+		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
 }
 
@@ -266,14 +266,15 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
 	RingRenderer* renderer = manager->GetRingRenderer();
-	if (renderer != NULL)
+	if( renderer != NULL )
 	{
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.VertexCount = VertexCount;
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
@@ -302,7 +303,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 
 		instanceParameter.ViewingAngleStart = instValues.startingAngle.current;
 		instanceParameter.ViewingAngleEnd = instValues.endingAngle.current;
-
+		
 		instanceParameter.OuterLocation = instValues.outerLocation.current;
 		instanceParameter.InnerLocation = instValues.innerLocation.current;
 
@@ -316,10 +317,10 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 			_innerColor = Color::Mul(_innerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
-		instanceParameter.OuterColor = _outerColor;
+		instanceParameter.OuterColor  = _outerColor;
 		instanceParameter.CenterColor = _centerColor;
-		instanceParameter.InnerColor = _innerColor;
-
+		instanceParameter.InnerColor  = _innerColor;
+		
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
@@ -333,10 +334,10 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 #else
 		instanceParameter.UV = instance.GetUV();
 #endif
-
+		
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
-		renderer->Rendering(nodeParameter, instanceParameter, m_userData);
+		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
 }
 
@@ -346,9 +347,9 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 void EffectNodeRing::EndRendering(Manager* manager)
 {
 	RingRenderer* renderer = manager->GetRingRenderer();
-	if (renderer != NULL)
+	if( renderer != NULL )
 	{
-		renderer->EndRendering(nodeParameter, m_userData);
+		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }
 
@@ -366,7 +367,7 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 
 	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager, rand);
 	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager, rand);
-
+	
 	InitializeSingleValues(CenterRatio, instValues.centerRatio, manager, rand);
 
 	InitializeColorValues(OuterColor, instValues.outerColor, manager, rand);
@@ -395,18 +396,18 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ring;
-
+	
 	UpdateSingleValues(instance, Shape.StartingAngle, instValues.startingAngle);
 	UpdateSingleValues(instance, Shape.EndingAngle, instValues.endingAngle);
 
-	UpdateLocationValues(instance, OuterLocation, instValues.outerLocation);
-	UpdateLocationValues(instance, InnerLocation, instValues.innerLocation);
+	UpdateLocationValues( instance, OuterLocation, instValues.outerLocation );
+	UpdateLocationValues( instance, InnerLocation, instValues.innerLocation );
+	
+	UpdateSingleValues( instance, CenterRatio, instValues.centerRatio );
 
-	UpdateSingleValues(instance, CenterRatio, instValues.centerRatio);
-
-	UpdateColorValues(instance, OuterColor, instValues.outerColor);
-	UpdateColorValues(instance, CenterColor, instValues.centerColor);
-	UpdateColorValues(instance, InnerColor, instValues.innerColor);
+	UpdateColorValues( instance, OuterColor, instValues.outerColor );
+	UpdateColorValues( instance, CenterColor, instValues.centerColor );
+	UpdateColorValues( instance, InnerColor, instValues.innerColor );
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
@@ -427,24 +428,24 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param)
+void EffectNodeRing::LoadSingleParameter( unsigned char*& pos, RingSingleParameter& param )
 {
-	memcpy(&param.type, pos, sizeof(int));
+	memcpy( &param.type, pos, sizeof(int) );
 	pos += sizeof(int);
 
-	if (param.type == RingSingleParameter::Fixed)
+	if( param.type == RingSingleParameter::Fixed )
 	{
-		memcpy(&param.fixed, pos, sizeof(float));
+		memcpy( &param.fixed, pos, sizeof(float) );
 		pos += sizeof(float);
 	}
-	else if (param.type == RingSingleParameter::Random)
+	else if( param.type == RingSingleParameter::Random )
 	{
-		memcpy(&param.random, pos, sizeof(param.random));
+		memcpy( &param.random, pos, sizeof(param.random) );
 		pos += sizeof(param.random);
 	}
-	else if (param.type == RingSingleParameter::Easing)
+	else if( param.type == RingSingleParameter::Easing )
 	{
-		memcpy(&param.easing, pos, sizeof(param.easing));
+		memcpy( &param.easing, pos, sizeof(param.easing) );
 		pos += sizeof(param.easing);
 	}
 }
@@ -452,24 +453,24 @@ void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParamete
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param)
+void EffectNodeRing::LoadLocationParameter( unsigned char*& pos, RingLocationParameter& param )
 {
-	memcpy(&param.type, pos, sizeof(int));
+	memcpy( &param.type, pos, sizeof(int) );
 	pos += sizeof(int);
-
-	if (param.type == RingLocationParameter::Fixed)
+	
+	if( param.type == RingLocationParameter::Fixed )
 	{
-		memcpy(&param.fixed, pos, sizeof(param.fixed));
+		memcpy( &param.fixed, pos, sizeof(param.fixed) );
 		pos += sizeof(param.fixed);
 	}
-	else if (param.type == RingLocationParameter::PVA)
+	else if( param.type == RingLocationParameter::PVA )
 	{
-		memcpy(&param.pva, pos, sizeof(param.pva));
+		memcpy( &param.pva, pos, sizeof(param.pva) );
 		pos += sizeof(param.pva);
 	}
-	else if (param.type == RingLocationParameter::Easing)
+	else if( param.type == RingLocationParameter::Easing )
 	{
-		memcpy(&param.easing, pos, sizeof(param.easing));
+		memcpy( &param.easing, pos, sizeof(param.easing) );
 		pos += sizeof(param.easing);
 	}
 }
@@ -477,23 +478,23 @@ void EffectNodeRing::LoadLocationParameter(unsigned char*& pos, RingLocationPara
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::LoadColorParameter(unsigned char*& pos, RingColorParameter& param)
+void EffectNodeRing::LoadColorParameter( unsigned char*& pos, RingColorParameter& param )
 {
-	memcpy(&param.type, pos, sizeof(int));
+	memcpy( &param.type, pos, sizeof(int) );
 	pos += sizeof(int);
-
-	if (param.type == RingColorParameter::Fixed)
+	
+	if( param.type == RingColorParameter::Fixed )
 	{
-		memcpy(&param.fixed, pos, sizeof(param.fixed));
+		memcpy( &param.fixed, pos, sizeof(param.fixed) );
 		pos += sizeof(param.fixed);
 	}
-	else if (param.type == RingColorParameter::Random)
+	else if( param.type == RingColorParameter::Random )
 	{
-		param.random.load(m_effect->GetVersion(), pos);
+		param.random.load( m_effect->GetVersion(), pos );
 	}
-	else if (param.type == RingColorParameter::Easing)
+	else if( param.type == RingColorParameter::Easing )
 	{
-		param.easing.load(m_effect->GetVersion(), pos);
+		param.easing.load( m_effect->GetVersion(), pos );
 	}
 }
 
@@ -502,50 +503,47 @@ void EffectNodeRing::LoadColorParameter(unsigned char*& pos, RingColorParameter&
 //----------------------------------------------------------------------------------
 void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, IRandObject* rand)
 {
-	switch (param.type)
+	switch( param.type )
 	{
-	case RingSingleParameter::Fixed:
-		values.current = param.fixed;
-		break;
-	case RingSingleParameter::Random:
-		values.current = param.random.getValue(*rand);
-		break;
-	case RingSingleParameter::Easing:
-		values.easing.start = param.easing.start.getValue(*rand);
-		values.easing.end = param.easing.end.getValue(*rand);
-		values.current = values.easing.start;
-		break;
-	default:
-		break;
+		case RingSingleParameter::Fixed:
+			values.current = param.fixed;
+			break;
+		case RingSingleParameter::Random:
+			values.current = param.random.getValue(*rand);
+			break;
+		case RingSingleParameter::Easing:
+			values.easing.start = param.easing.start.getValue(*rand);
+			values.easing.end = param.easing.end.getValue(*rand);
+			values.current = values.easing.start;
+			break;
+		default:
+			break;
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param,
-											  RingLocationValues& values,
-											  Manager* manager,
-											  IRandObject* rand)
+void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, IRandObject* rand)
 {
-	switch (param.type)
+	switch( param.type )
 	{
-	case RingLocationParameter::Fixed:
-		values.current = param.fixed.location;
-		break;
-	case RingLocationParameter::PVA:
-		values.pva.start = param.pva.location.getValue(*rand);
-		values.pva.velocity = param.pva.velocity.getValue(*rand);
-		values.pva.acceleration = param.pva.acceleration.getValue(*rand);
-		values.current = values.pva.start;
-		break;
-	case RingLocationParameter::Easing:
-		values.easing.start = param.easing.start.getValue(*rand);
-		values.easing.end = param.easing.end.getValue(*rand);
-		values.current = values.easing.start;
-		break;
-	default:
-		break;
+		case RingLocationParameter::Fixed:
+			values.current = param.fixed.location;
+			break;
+		case RingLocationParameter::PVA:
+			values.pva.start = param.pva.location.getValue(*rand);
+			values.pva.velocity = param.pva.velocity.getValue(*rand);
+			values.pva.acceleration = param.pva.acceleration.getValue(*rand);
+			values.current = values.pva.start;
+			break;
+		case RingLocationParameter::Easing:
+			values.easing.start = param.easing.start.getValue(*rand);
+			values.easing.end = param.easing.end.getValue(*rand);
+			values.current = values.easing.start;
+			break;
+		default:
+			break;
 	}
 }
 
@@ -554,57 +552,62 @@ void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param
 //----------------------------------------------------------------------------------
 void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, IRandObject* rand)
 {
-	switch (param.type)
+	switch( param.type )
 	{
-	case RingColorParameter::Fixed:
-		values.original = param.fixed;
-		values.fixed._color = values.original;
-		break;
-	case RingColorParameter::Random:
-		values.original = param.random.getValue(*rand);
-		values.random._color = values.original;
-		break;
-	case RingColorParameter::Easing:
-		values.easing.start = param.easing.getStartValue(*rand);
-		values.easing.end = param.easing.getEndValue(*rand);
-		values.original = values.easing.start;
-		break;
-	default:
-		break;
+		case RingColorParameter::Fixed:
+			values.original = param.fixed;
+			values.fixed._color = values.original;
+			break;
+		case RingColorParameter::Random:
+			values.original = param.random.getValue(*rand);
+			values.random._color = values.original;
+			break;
+		case RingColorParameter::Easing:
+			values.easing.start = param.easing.getStartValue(*rand);
+			values.easing.end = param.easing.getEndValue(*rand);
+			values.original = values.easing.start;
+			break;
+		default:
+			break;
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::UpdateSingleValues(Instance& instance, const RingSingleParameter& param, RingSingleValues& values)
+void EffectNodeRing::UpdateSingleValues( Instance& instance, const RingSingleParameter& param, RingSingleValues& values )
 {
-	if (param.type == RingSingleParameter::Easing)
+	if( param.type == RingSingleParameter::Easing )
 	{
-		values.current = param.easing.getValue(values.easing.start, values.easing.end, instance.m_LivingTime / instance.m_LivedTime);
+		values.current = param.easing.getValue(
+			values.easing.start, values.easing.end,
+			instance.m_LivingTime / instance.m_LivedTime );
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::UpdateLocationValues(Instance& instance, const RingLocationParameter& param, RingLocationValues& values)
+void EffectNodeRing::UpdateLocationValues( Instance& instance, const RingLocationParameter& param, RingLocationValues& values )
 {
-	if (param.type == RingLocationParameter::PVA)
+	if( param.type == RingLocationParameter::PVA )
 	{
-		values.current = values.pva.start + values.pva.velocity * instance.m_LivingTime +
-						 values.pva.acceleration * instance.m_LivingTime * instance.m_LivingTime * 0.5f;
+		values.current = values.pva.start +
+			values.pva.velocity * instance.m_LivingTime +
+			values.pva.acceleration * instance.m_LivingTime * instance.m_LivingTime * 0.5f;
 	}
-	else if (param.type == RingLocationParameter::Easing)
+	else if( param.type == RingLocationParameter::Easing )
 	{
-		values.current = param.easing.getValue(values.easing.start, values.easing.end, instance.m_LivingTime / instance.m_LivedTime);
+		values.current = param.easing.getValue(
+			values.easing.start, values.easing.end,
+			instance.m_LivingTime / instance.m_LivedTime );
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::UpdateColorValues(Instance& instance, const RingColorParameter& param, RingColorValues& values)
+void EffectNodeRing::UpdateColorValues( Instance& instance, const RingColorParameter& param, RingColorValues& values )
 {
 	if (param.type == RingColorParameter::Fixed)
 	{
@@ -614,9 +617,13 @@ void EffectNodeRing::UpdateColorValues(Instance& instance, const RingColorParame
 	{
 		values.original = values.random._color;
 	}
-	else if (param.type == RingColorParameter::Easing)
+	else if( param.type == RingColorParameter::Easing )
 	{
-		param.easing.setValueToArg(values.original, values.easing.start, values.easing.end, instance.m_LivingTime / instance.m_LivedTime);
+		param.easing.setValueToArg(
+			values.original, 
+			values.easing.start,
+			values.easing.end,
+			instance.m_LivingTime / instance.m_LivedTime );
 	}
 
 	float fadeAlpha = GetFadeAlpha(instance);
@@ -629,7 +636,7 @@ void EffectNodeRing::UpdateColorValues(Instance& instance, const RingColorParame
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 
 //----------------------------------------------------------------------------------
 //

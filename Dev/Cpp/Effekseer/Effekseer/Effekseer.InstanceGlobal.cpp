@@ -22,14 +22,23 @@ void* InstanceGlobal::operator new(size_t size)
 	return GetMallocFunc()(size);
 }
 
-void InstanceGlobal::operator delete(void* p) { GetFreeFunc()(p, sizeof(InstanceGlobal)); }
+void InstanceGlobal::operator delete(void* p) {GetFreeFunc()(p, sizeof(InstanceGlobal)); }
 
-InstanceGlobal::InstanceGlobal() : m_instanceCount(0), m_updatedFrame(0), m_rootContainer(NULL) { dynamicInputParameters.fill(0); }
+InstanceGlobal::InstanceGlobal()
+	: m_instanceCount	( 0 )
+	, m_updatedFrame	( 0 )
+	, m_rootContainer	( NULL )
+{ 
+	dynamicInputParameters.fill(0);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGlobal::~InstanceGlobal() {}
+InstanceGlobal::~InstanceGlobal()
+{
+	
+}
 
 float InstanceGlobal::GetNextDeltaFrame() const { return nextDeltaFrame_; }
 
@@ -41,8 +50,7 @@ void InstanceGlobal::EndDeltaFrame()
 	nextDeltaFrame_ = 0.0f;
 }
 
-std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index)
-{
+std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index) {
 	assert(0 <= index && index < dynamicEqResults.size());
 	return dynamicEqResults[index];
 }
@@ -50,44 +58,68 @@ std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGlobal::IncInstanceCount() { m_instanceCount++; }
+void InstanceGlobal::IncInstanceCount()
+{
+	m_instanceCount++;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGlobal::DecInstanceCount() { m_instanceCount--; }
+void InstanceGlobal::DecInstanceCount()
+{
+	m_instanceCount--;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int InstanceGlobal::GetInstanceCount() { return m_instanceCount; }
+int InstanceGlobal::GetInstanceCount()
+{
+	return m_instanceCount;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float InstanceGlobal::GetUpdatedFrame() { return m_updatedFrame; }
+float InstanceGlobal::GetUpdatedFrame()
+{
+	return m_updatedFrame;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceContainer* InstanceGlobal::GetRootContainer() const { return m_rootContainer; }
+InstanceContainer* InstanceGlobal::GetRootContainer() const
+{
+	return m_rootContainer;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGlobal::SetRootContainer(InstanceContainer* container) { m_rootContainer = container; }
+void InstanceGlobal::SetRootContainer( InstanceContainer* container )
+{
+	m_rootContainer = container;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const Vec3f& InstanceGlobal::GetTargetLocation() const { return m_targetLocation; }
+const Vec3f& InstanceGlobal::GetTargetLocation() const
+{
+	return m_targetLocation;
+}
 
-void InstanceGlobal::SetTargetLocation(const Vector3D& location) { m_targetLocation = location; }
+void InstanceGlobal::SetTargetLocation( const Vector3D& location )
+{
+	m_targetLocation = location;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 
 //----------------------------------------------------------------------------------
 //

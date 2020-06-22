@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_ParameterNODE_TRACK_H__
-#define __EFFEKSEER_ParameterNODE_TRACK_H__
+#ifndef	__EFFEKSEER_ParameterNODE_TRACK_H__
+#define	__EFFEKSEER_ParameterNODE_TRACK_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -25,7 +25,8 @@ struct TrackSizeParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 			float size;
@@ -36,14 +37,17 @@ struct TrackSizeParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class EffectNodeTrack : public EffectNodeImplemented
+class EffectNodeTrack
+	: public EffectNodeImplemented
 {
 public:
+
 	struct InstanceGroupValues
 	{
 		struct Color
 		{
-			union {
+			union
+			{
 				struct
 				{
 					Effekseer::Color color_;
@@ -57,7 +61,7 @@ public:
 				struct
 				{
 					Effekseer::Color start;
-					Effekseer::Color end;
+					Effekseer::Color  end;
 				} easing;
 
 				struct
@@ -70,79 +74,88 @@ public:
 
 		struct Size
 		{
-			union {
+			union
+			{
 				struct
 				{
-					float size_;
+					float	size_;
 				} fixed;
 			} size;
 		};
 
-		Color ColorLeft;
-		Color ColorCenter;
-		Color ColorRight;
+		Color	ColorLeft;
+		Color	ColorCenter;
+		Color	ColorRight;
 
-		Color ColorLeftMiddle;
-		Color ColorCenterMiddle;
-		Color ColorRightMiddle;
+		Color	ColorLeftMiddle;
+		Color	ColorCenterMiddle;
+		Color	ColorRightMiddle;
 
-		Size SizeFor;
-		Size SizeMiddle;
-		Size SizeBack;
+		Size	SizeFor;
+		Size	SizeMiddle;
+		Size	SizeBack;
+
 	};
 
 	struct InstanceValues
 	{
-		Color colorLeft;
-		Color colorCenter;
-		Color colorRight;
+		Color	colorLeft;
+		Color	colorCenter;
+		Color	colorRight;
 
-		Color colorLeftMiddle;
-		Color colorCenterMiddle;
-		Color colorRightMiddle;
+		Color	colorLeftMiddle;
+		Color	colorCenterMiddle;
+		Color	colorRightMiddle;
 
-		Color _colorLeft;
-		Color _colorCenter;
-		Color _colorRight;
+		Color	_colorLeft;
+		Color	_colorCenter;
+		Color	_colorRight;
 
-		Color _colorLeftMiddle;
-		Color _colorCenterMiddle;
-		Color _colorRightMiddle;
+		Color	_colorLeftMiddle;
+		Color	_colorCenterMiddle;
+		Color	_colorRightMiddle;
 
-		float SizeFor;
-		float SizeMiddle;
-		float SizeBack;
+		float	SizeFor;
+		float	SizeMiddle;
+		float	SizeBack;
 	};
 
-	TrackRenderer::NodeParameter m_nodeParameter;
+	TrackRenderer::NodeParameter	m_nodeParameter;
 	TrackRenderer::InstanceParameter m_instanceParameter;
 
-	InstanceGroupValues m_currentGroupValues;
+	InstanceGroupValues		m_currentGroupValues;
 
 public:
-	AlphaBlendType AlphaBlend;
 
-	StandardColorParameter TrackColorLeft;
-	StandardColorParameter TrackColorCenter;
-	StandardColorParameter TrackColorRight;
+	AlphaBlendType		AlphaBlend;
 
-	StandardColorParameter TrackColorLeftMiddle;
-	StandardColorParameter TrackColorCenterMiddle;
-	StandardColorParameter TrackColorRightMiddle;
+	StandardColorParameter	TrackColorLeft;
+	StandardColorParameter	TrackColorCenter;
+	StandardColorParameter	TrackColorRight;
 
-	TrackSizeParameter TrackSizeFor;
-	TrackSizeParameter TrackSizeMiddle;
-	TrackSizeParameter TrackSizeBack;
+	StandardColorParameter	TrackColorLeftMiddle;
+	StandardColorParameter	TrackColorCenterMiddle;
+	StandardColorParameter	TrackColorRightMiddle;
+
+	TrackSizeParameter	TrackSizeFor;
+	TrackSizeParameter	TrackSizeMiddle;
+	TrackSizeParameter	TrackSizeBack;
 
 	int TrackTexture;
 
-	int32_t SplineDivision = 1;
+	int32_t	SplineDivision = 1;
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
-	EffectNodeTrack(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos), TrackTexture(-1) {}
+	EffectNodeTrack(Effect* effect, unsigned char*& pos)
+		: EffectNodeImplemented(effect, pos)
+		, TrackTexture(-1)
+	{
+	}
 
-	~EffectNodeTrack() {}
+	~EffectNodeTrack()
+	{
+	}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -166,12 +179,7 @@ public:
 
 	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, IRandObject* rand);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
-	void SetValues(Color& c,
-				   const Instance& instance,
-				   InstanceGroupValues::Color& value,
-				   StandardColorParameter& param,
-				   int32_t time,
-				   int32_t livedTime);
+	void SetValues(Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime);
 	void SetValues(float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time);
 	void LoadValues(TrackSizeParameter& param, unsigned char*& pos);
 };
@@ -179,8 +187,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_ParameterNODE_TRACK_H__
+#endif	// __EFFEKSEER_ParameterNODE_TRACK_H__

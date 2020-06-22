@@ -6,9 +6,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer
-{
-
+namespace Effekseer {
+	
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -22,18 +21,21 @@ WorkerThread::WorkerThread()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-WorkerThread::~WorkerThread() { Shutdown(); }
+WorkerThread::~WorkerThread()
+{
+	Shutdown();
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 void WorkerThread::Launch()
 {
-	m_Thread = std::thread([this]() {
+	m_Thread = std::thread([this](){
 		while (1)
 		{
 			std::unique_lock<std::mutex> lock(m_Mutex);
-			m_TaskRequestCV.wait(lock, [this]() { return m_TaskRequested.load() || m_QuitRequested.load(); });
+			m_TaskRequestCV.wait(lock, [this](){ return m_TaskRequested.load() || m_QuitRequested.load(); });
 			if (m_QuitRequested)
 			{
 				break;
@@ -46,7 +48,7 @@ void WorkerThread::Launch()
 			m_TaskCompleted.store(true);
 			m_TaskWaitCV.notify_all();
 		}
-	});
+		});
 }
 
 //----------------------------------------------------------------------------------
@@ -77,14 +79,15 @@ void WorkerThread::RunAsync(std::function<void()> task)
 void WorkerThread::WaitForComplete()
 {
 	std::unique_lock<std::mutex> lock(m_Mutex);
-	m_TaskWaitCV.wait(lock, [this]() { return m_TaskCompleted.load(); });
+	m_TaskWaitCV.wait(lock, [this](){ return m_TaskCompleted.load(); });
 	m_Task = nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+ } 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+

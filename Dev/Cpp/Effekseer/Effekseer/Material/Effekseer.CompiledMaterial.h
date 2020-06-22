@@ -2,13 +2,13 @@
 #ifndef __EFFEKSEER_COMPILED_MATERIAL_H__
 #define __EFFEKSEER_COMPILED_MATERIAL_H__
 
-#include "Effekseer.MaterialCompiler.h"
 #include <array>
 #include <assert.h>
 #include <map>
 #include <sstream>
 #include <string.h>
 #include <vector>
+#include "Effekseer.MaterialCompiler.h"
 
 namespace Effekseer
 {
@@ -36,7 +36,7 @@ class CompiledMaterial
 
 public:
 	uint64_t GUID = 0;
-
+	
 	const std::vector<uint8_t>& GetOriginalData() const;
 
 	bool Load(const uint8_t* data, int32_t size);

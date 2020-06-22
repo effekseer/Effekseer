@@ -3,11 +3,11 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.InstanceContainer.h"
+#include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.Instance.h"
+#include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 #include "Effekseer.InstanceGroup.h"
-#include "Effekseer.ManagerImplemented.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
@@ -24,7 +24,11 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 InstanceContainer::InstanceContainer(ManagerImplemented* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal)
-	: m_pManager(pManager), m_pEffectNode((EffectNodeImplemented*)pEffectNode), m_pGlobal(pGlobal), m_headGroups(NULL), m_tailGroups(NULL)
+	: m_pManager(pManager)
+	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
+	, m_pGlobal(pGlobal)
+	, m_headGroups(NULL)
+	, m_tailGroups(NULL)
 
 {
 	auto en = (EffectNodeImplemented*)pEffectNode;
@@ -44,22 +48,24 @@ InstanceContainer::~InstanceContainer()
 	assert(m_headGroups == NULL);
 	assert(m_tailGroups == NULL);
 
-	for (auto child : m_Children)
+	for( auto child : m_Children )
 	{
-		m_pManager->ReleaseInstanceContainer(child);
+		m_pManager->ReleaseInstanceContainer( child );
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceContainer::AddChild(InstanceContainer* pContainter) { m_Children.push_back(pContainter); }
+void InstanceContainer::AddChild(InstanceContainer* pContainter)
+{
+	m_Children.push_back( pContainter );
+}
 
 InstanceContainer* InstanceContainer::GetChild(int index)
 {
 	auto it = m_Children.begin();
-	for (int i = 0; i < index; i++)
-	{
+	for( int i = 0; i < index; i++) {
 		it++;
 	}
 	return *it;
@@ -73,12 +79,12 @@ void InstanceContainer::RemoveInvalidGroups()
 	/* 最後に存在する有効なグループ */
 	InstanceGroup* tailGroup = NULL;
 
-	for (InstanceGroup* group = m_headGroups; group != NULL;)
+	for (InstanceGroup* group = m_headGroups; group != NULL; )
 	{
 		if (!group->IsReferencedFromInstance && group->GetInstanceCount() == 0)
 		{
 			InstanceGroup* next = group->NextUsedByContainer;
-			m_pManager->ReleaseGroup(group);
+			m_pManager->ReleaseGroup( group );
 
 			if (m_headGroups == group)
 			{
@@ -98,6 +104,7 @@ void InstanceContainer::RemoveInvalidGroups()
 		}
 	}
 
+
 	m_tailGroups = tailGroup;
 
 	assert(m_tailGroups == NULL || m_tailGroups->NextUsedByContainer == NULL);
@@ -108,7 +115,7 @@ void InstanceContainer::RemoveInvalidGroups()
 //----------------------------------------------------------------------------------
 InstanceGroup* InstanceContainer::CreateInstanceGroup()
 {
-	InstanceGroup* group = m_pManager->CreateInstanceGroup(m_pEffectNode, this, m_pGlobal);
+	InstanceGroup* group = m_pManager->CreateInstanceGroup( m_pEffectNode, this, m_pGlobal );
 	if (group == nullptr)
 	{
 		return nullptr;
@@ -134,7 +141,10 @@ InstanceGroup* InstanceContainer::CreateInstanceGroup()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGroup* InstanceContainer::GetFirstGroup() const { return m_headGroups; }
+InstanceGroup* InstanceContainer::GetFirstGroup() const
+{
+	return m_headGroups;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -187,6 +197,7 @@ void InstanceContainer::SetBaseMatrix(bool recursive, const Mat43f& mat)
 void InstanceContainer::RemoveForcibly(bool recursive)
 {
 	KillAllInstances(false);
+
 
 	for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
 	{
@@ -320,13 +331,16 @@ void InstanceContainer::KillAllInstances(bool recursive)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGlobal* InstanceContainer::GetRootInstance() { return m_pGlobal; }
+InstanceGlobal* InstanceContainer::GetRootInstance()
+{
+	return m_pGlobal;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-} // namespace Effekseer
+}
 
 //----------------------------------------------------------------------------------
 //

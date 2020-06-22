@@ -1,14 +1,19 @@
+#include <cmath>
 #include "Effekseer.Mat44f.h"
 #include "../Effekseer.Matrix44.h"
-#include <cmath>
 
 namespace Effekseer
 {
-
+	
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const Mat44f Mat44f::Identity = Mat44f(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+const Mat44f Mat44f::Identity = Mat44f(
+	1, 0, 0, 0, 
+	0, 1, 0, 0, 
+	0, 0, 1, 0, 
+	0, 0, 0, 1
+);
 
 //----------------------------------------------------------------------------------
 //
@@ -29,8 +34,15 @@ bool Mat44f::IsValid() const
 {
 	const SIMD4f nan{NAN};
 	const SIMD4f inf{INFINITY};
-	SIMD4f res = SIMD4f::Equal(X, nan) | SIMD4f::Equal(Y, nan) | SIMD4f::Equal(Z, nan) | SIMD4f::Equal(W, nan) | SIMD4f::Equal(X, inf) |
-				 SIMD4f::Equal(Y, inf) | SIMD4f::Equal(Z, inf) | SIMD4f::Equal(W, inf);
+	SIMD4f res = 
+		SIMD4f::Equal(X, nan) | 
+		SIMD4f::Equal(Y, nan) | 
+		SIMD4f::Equal(Z, nan) |
+		SIMD4f::Equal(W, nan) |
+		SIMD4f::Equal(X, inf) | 
+		SIMD4f::Equal(Y, inf) | 
+		SIMD4f::Equal(Z, inf) | 
+		SIMD4f::Equal(W, inf);
 	return SIMD4f::MoveMask(res) == 0;
 }
 
@@ -69,7 +81,10 @@ Mat44f Mat44f::GetRotation() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Vec3f Mat44f::GetTranslation() const { return Vec3f(X.GetW(), Y.GetW(), Z.GetW()); }
+Vec3f Mat44f::GetTranslation() const
+{
+	return Vec3f(X.GetW(), Y.GetW(), Z.GetW());
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -115,9 +130,13 @@ Mat44f Mat44f::Transpose() const
 //----------------------------------------------------------------------------------
 bool Mat44f::Equal(const Mat44f& lhs, const Mat44f& rhs, float epsilon)
 {
-	SIMD4f ret = SIMD4f::NearEqual(lhs.X, rhs.X, epsilon) & SIMD4f::NearEqual(lhs.Y, rhs.Y, epsilon) &
-				 SIMD4f::NearEqual(lhs.Z, rhs.Z, epsilon) & SIMD4f::NearEqual(lhs.W, rhs.W, epsilon);
+	SIMD4f ret =
+		SIMD4f::NearEqual(lhs.X, rhs.X, epsilon) &
+		SIMD4f::NearEqual(lhs.Y, rhs.Y, epsilon) &
+		SIMD4f::NearEqual(lhs.Z, rhs.Z, epsilon) &
+		SIMD4f::NearEqual(lhs.W, rhs.W, epsilon);
 	return (SIMD4f::MoveMask(ret) & 0xf) == 0xf;
+
 }
 
 //----------------------------------------------------------------------------------
@@ -173,7 +192,7 @@ Mat44f Mat44f::RotationX(float angle)
 	Mat44f ret;
 	ret.X = {1.0f, 0.0f, 0.0f, 0.0f};
 	ret.Y = {0.0f, c, -s, 0.0f};
-	ret.Z = {0.0f, s, c, 0.0f};
+	ret.Z = {0.0f, s,  c, 0.0f};
 	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
@@ -187,7 +206,7 @@ Mat44f Mat44f::RotationY(float angle)
 	::Effekseer::SinCos(angle, s, c);
 
 	Mat44f ret;
-	ret.X = {c, 0.0f, s, 0.0f};
+	ret.X = { c, 0.0f, s, 0.0f};
 	ret.Y = {0.0f, 1.0f, 0.0f, 0.0f};
 	ret.Z = {-s, 0.0f, c, 0.0f};
 	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -204,7 +223,7 @@ Mat44f Mat44f::RotationZ(float angle)
 
 	Mat44f ret;
 	ret.X = {c, -s, 0.0f, 0.0f};
-	ret.Y = {s, c, 0.0f, 0.0f};
+	ret.Y = {s,  c, 0.0f, 0.0f};
 	ret.Z = {0.0f, 0.0f, 1.0f, 0.0f};
 	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
@@ -250,7 +269,7 @@ Mat44f Mat44f::RotationXYZ(float rx, float ry, float rz)
 	float m02 = -sy;
 
 	float m10 = sx * sy * -sz + cx * -sz;
-	float m11 = sx * sy * sz + cx * cz;
+	float m11 = sx * sy *  sz + cx *  cz;
 	float m12 = sx * cy;
 
 	float m20 = cx * sy * cz + sx * sz;
@@ -325,8 +344,8 @@ Mat44f Mat44f::RotationZXY(float rz, float rx, float ry)
 //----------------------------------------------------------------------------------
 Mat44f Mat44f::RotationAxis(const Vec3f& axis, float angle)
 {
-	const float c = cosf(angle);
-	const float s = sinf(angle);
+	const float c = cosf( angle );
+	const float s = sinf( angle );
 	return RotationAxis(axis, s, c);
 }
 
@@ -383,4 +402,4 @@ Mat44f Mat44f::Translation(const Vec3f& pos)
 	return ret;
 }
 
-} // namespace Effekseer
+}

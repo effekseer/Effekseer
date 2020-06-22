@@ -5,9 +5,9 @@
 
 namespace efk
 {
-enum class DeviceType
-{
-	DirectX11,
-	OpenGL,
-};
+	enum class DeviceType
+	{
+		DirectX11,
+		OpenGL,
+	};
 }

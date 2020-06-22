@@ -170,11 +170,6 @@ link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
 )
 
-
-if(CLANG_FORMAT_ENABLED)
-    clang_format(Viewer)
-endif()
-
 if (WIN32)
 
     target_link_libraries(

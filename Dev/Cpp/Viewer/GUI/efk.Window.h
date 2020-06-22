@@ -13,77 +13,77 @@
 #include <EditorCommon/GUI/MainWindow.h>
 
 #include <codecvt>
-#include <functional>
 #include <locale>
+#include <functional>
 
-#include "../efk.Base.h"
 #include "efk.Vec2.h"
+#include "../efk.Base.h"
 
 namespace efk
 {
-void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y);
+	void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y);
+	
+	/**
+		@note !!Important!! it is migrating into EditorCommon/GUI/MainWindow
+	*/
+	class Window
+	{
+	private:
+		std::shared_ptr<Effekseer::MainWindow> mainWindow_;
 
-/**
-	@note !!Important!! it is migrating into EditorCommon/GUI/MainWindow
-*/
-class Window
-{
-private:
-	std::shared_ptr<Effekseer::MainWindow> mainWindow_;
-
-	GLFWwindow* window = nullptr;
-	bool isOpenGLMode = false;
-	DeviceType deviceType = DeviceType::OpenGL;
+		GLFWwindow*	window = nullptr;
+		bool		isOpenGLMode = false;
+		DeviceType	deviceType = DeviceType::OpenGL;
 
 #ifndef _WIN32
-	GLuint vao;
+        GLuint      vao;
 #endif
+        
+	public:
+		Window();
+		virtual ~Window();
 
-public:
-	Window();
-	virtual ~Window();
+		bool Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, DeviceType deviceType);
 
-	bool Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, DeviceType deviceType);
+		void Terminate();
 
-	void Terminate();
+		bool DoEvents();
 
-	bool DoEvents();
+		void SetTitle(const char16_t* title);
 
-	void SetTitle(const char16_t* title);
+		void SetWindowIcon(const char16_t* iconPath);
 
-	void SetWindowIcon(const char16_t* iconPath);
+		Vec2 GetSize() const;
 
-	Vec2 GetSize() const;
+		void SetSize(int32_t width, int32_t height);
 
-	void SetSize(int32_t width, int32_t height);
+		void Present();
 
-	void Present();
+		void Close();
 
-	void Close();
+		Vec2 GetMousePosition();
 
-	Vec2 GetMousePosition();
+		int GetMouseButton(int32_t mouseButton);
 
-	int GetMouseButton(int32_t mouseButton);
+		void MakeCurrent();
 
-	void MakeCurrent();
+		void MakeNone();
 
-	void MakeNone();
+		GLFWwindow*	GetGLFWWindows() const { return window; }
 
-	GLFWwindow* GetGLFWWindows() const { return window; }
+		void* GetNativeHandle() const;
 
-	void* GetNativeHandle() const;
+		std::function<void(int, int)> Resized;
 
-	std::function<void(int, int)> Resized;
+		std::function<void()> Focused;
 
-	std::function<void()> Focused;
+		std::function<void(const char* path)> Droped;
 
-	std::function<void(const char* path)> Droped;
+		std::function<bool()> Closing;
 
-	std::function<bool()> Closing;
+		std::function<void(int)> Iconify;
 
-	std::function<void(int)> Iconify;
+		std::function<void(float)> DpiChanged;
+	};
 
-	std::function<void(float)> DpiChanged;
-};
-
-} // namespace efk
+}

@@ -1,8 +1,8 @@
 ﻿
-#ifndef __EFFEKSEER_SERVER_H__
-#define __EFFEKSEER_SERVER_H__
+#ifndef	__EFFEKSEER_SERVER_H__
+#define	__EFFEKSEER_SERVER_H__
 
-#if !(defined(_PSVITA) || defined(_XBOXONE))
+#if !( defined(_PSVITA) || defined(_XBOXONE) )
 
 //----------------------------------------------------------------------------------
 // Include
@@ -12,8 +12,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer
-{
+namespace Effekseer {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -25,6 +24,7 @@ namespace Effekseer
 class Server
 {
 public:
+
 	Server() {}
 	virtual ~Server() {}
 
@@ -40,7 +40,7 @@ public:
 		\~English	start a server
 		\~Japanese	サーバーを開始する。
 	*/
-	virtual bool Start(uint16_t port) = 0;
+	virtual bool Start( uint16_t port ) = 0;
 
 	/**
 		@brief
@@ -53,7 +53,7 @@ public:
 		@brief
 		\~English	register an effect as a target to edit.
 		\~Japanese	エフェクトを編集の対象として登録する。
-		@param	key
+		@param	key	
 		\~English	a key to search an effect
 		\~Japanese	検索用キー
 		@param	effect
@@ -73,7 +73,7 @@ public:
 	virtual void Unregister(Effect* effect) = 0;
 
 	/**
-		@brief
+		@brief	
 		\~English	update a server and reload effects
 		\~Japanese	サーバーを更新し、エフェクトのリロードを行う。
 		@brief	managers
@@ -84,15 +84,14 @@ public:
 		\~Japanese	マネージャーの個数
 
 	*/
-	virtual void
-	Update(Manager** managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
 		\~English	Specify root path to load materials
 		\~Japanese	素材のルートパスを設定する。
 	*/
-	virtual void SetMaterialPath(const EFK_CHAR* materialPath) = 0;
+	virtual void SetMaterialPath( const EFK_CHAR* materialPath ) = 0;
 
 	/**
 		@brief
@@ -112,11 +111,11 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+ } 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
+#endif	// #if !( defined(_PSVITA) || defined(_XBOXONE) )
 
-#endif // __EFFEKSEER_SERVER_H__
+#endif	// __EFFEKSEER_SERVER_H__

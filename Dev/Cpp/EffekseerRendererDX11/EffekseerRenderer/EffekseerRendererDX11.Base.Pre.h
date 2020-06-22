@@ -1,18 +1,18 @@
 ﻿
-#ifndef __EFFEKSEERRENDERER_DX11_BASE_PRE_H__
-#define __EFFEKSEERRENDERER_DX11_BASE_PRE_H__
+#ifndef	__EFFEKSEERRENDERER_DX11_BASE_PRE_H__
+#define	__EFFEKSEERRENDERER_DX11_BASE_PRE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
 
-#include <d3d11.h>
 #include <windows.h>
+#include <d3d11.h>
 
 #if _WIN32
 #pragma comment(lib, "gdiplus.lib")
-#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3d11.lib" )
 #endif
 
 //----------------------------------------------------------------------------------
@@ -28,8 +28,8 @@ class Renderer;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace EffekseerRendererDX11
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEERRENDERER_DX11_PRE_BASE_H__
+#endif	// __EFFEKSEERRENDERER_DX11_PRE_BASE_H__

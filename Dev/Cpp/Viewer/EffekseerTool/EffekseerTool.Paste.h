@@ -1,12 +1,12 @@
 ﻿
-#ifndef __EFFEKSEERRENDERER_PASTE_H__
-#define __EFFEKSEERRENDERER_PASTE_H__
+#ifndef	__EFFEKSEERRENDERER_PASTE_H__
+#define	__EFFEKSEERRENDERER_PASTE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "../Graphics/efk.ImageRenderer.h"
 #include "EffekseerTool.Renderer.h"
+#include "../Graphics/efk.ImageRenderer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -19,11 +19,12 @@ namespace EffekseerRenderer
 class Paste
 {
 private:
-	efk::ImageRenderer* imageRenderer = nullptr;
+	
+	efk::ImageRenderer*								imageRenderer = nullptr;
 
 	Paste(efk::Graphics* graphics);
-
 public:
+
 	virtual ~Paste();
 
 	static Paste* Create(efk::Graphics* graphics);
@@ -34,8 +35,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace EffekseerRenderer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEERRENDERER_PASTE_H__
+#endif	// __EFFEKSEERRENDERER_PASTE_H__

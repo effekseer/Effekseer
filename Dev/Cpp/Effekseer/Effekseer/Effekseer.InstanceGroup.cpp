@@ -5,10 +5,10 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.ManagerImplemented.h"
 
+#include "Effekseer.InstanceGroup.h"
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
-#include "Effekseer.InstanceGroup.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 
@@ -18,18 +18,19 @@
 namespace Effekseer
 {
 
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGroup::InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global)
-	: m_manager((ManagerImplemented*)manager)
-	, m_effectNode((EffectNodeImplemented*)effectNode)
-	, m_container(container)
-	, m_global(global)
-	, m_time(0)
-	, IsReferencedFromInstance(true)
-	, NextUsedByInstance(NULL)
-	, NextUsedByContainer(NULL)
+InstanceGroup::InstanceGroup( Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global )
+	: m_manager		( (ManagerImplemented*)manager )
+	, m_effectNode((EffectNodeImplemented*) effectNode)
+	, m_container	( container )
+	, m_global		( global )
+	, m_time		( 0 )
+	, IsReferencedFromInstance	( true )
+	, NextUsedByInstance	( NULL )
+	, NextUsedByContainer	( NULL )
 {
 	parentMatrix_ = Mat43f::Identity;
 }
@@ -37,7 +38,10 @@ InstanceGroup::InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceC
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGroup::~InstanceGroup() { RemoveForcibly(); }
+InstanceGroup::~InstanceGroup()
+{
+	RemoveForcibly();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -46,11 +50,11 @@ Instance* InstanceGroup::CreateInstance()
 {
 	Instance* instance = NULL;
 
-	instance = m_manager->CreateInstance(m_effectNode, m_container, this);
-
-	if (instance)
+	instance = m_manager->CreateInstance( m_effectNode, m_container, this );
+	
+	if( instance )
 	{
-		m_instances.push_back(instance);
+		m_instances.push_back( instance );
 		m_global->IncInstanceCount();
 	}
 	return instance;
@@ -61,7 +65,7 @@ Instance* InstanceGroup::CreateInstance()
 //----------------------------------------------------------------------------------
 Instance* InstanceGroup::GetFirst()
 {
-	if (m_instances.size() > 0)
+	if( m_instances.size() > 0 )
 	{
 		return m_instances.front();
 	}
@@ -71,7 +75,10 @@ Instance* InstanceGroup::GetFirst()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int InstanceGroup::GetInstanceCount() const { return (int32_t)m_instances.size(); }
+int InstanceGroup::GetInstanceCount() const
+{
+	return (int32_t)m_instances.size();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -99,7 +106,7 @@ void InstanceGroup::Update(bool shown)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::SetBaseMatrix(const Mat43f& mat)
+void InstanceGroup::SetBaseMatrix( const Mat43f& mat )
 {
 	for (auto instance : m_instances)
 	{
@@ -181,7 +188,10 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::RemoveForcibly() { KillAllInstances(); }
+void InstanceGroup::RemoveForcibly()
+{
+	KillAllInstances();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -203,7 +213,7 @@ void InstanceGroup::KillAllInstances()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 
 //----------------------------------------------------------------------------------
 //

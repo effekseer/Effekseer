@@ -2,12 +2,12 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerSoundDSound.SoundLoader.h"
-#include "EffekseerSoundDSound.SoundImplemented.h"
-#include <algorithm>
-#include <assert.h>
-#include <memory>
 #include <string.h>
+#include "EffekseerSoundDSound.SoundImplemented.h"
+#include "EffekseerSoundDSound.SoundLoader.h"
+#include <algorithm>
+#include <memory>
+#include <assert.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -51,12 +51,12 @@ public:
 
 	size_t GetLength() override { return size_; }
 };
-} // namespace SupportDSound
+} // namespace SupporDSound
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface)
+SoundLoader::SoundLoader( SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface )
 	: m_sound(sound), m_fileInterface(fileInterface)
 {
 }
@@ -64,7 +64,9 @@ SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fi
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader::~SoundLoader() {}
+SoundLoader::~SoundLoader()
+{
+}
 
 void* SoundLoader::Load(::Effekseer::FileReader* reader)
 {
@@ -223,11 +225,10 @@ void* SoundLoader::Load(const void* data, int32_t size)
 	return Load(&reader);
 }
 
-void SoundLoader::Unload(void* data)
+void SoundLoader::Unload( void* data )
 {
 	SoundData* soundData = (SoundData*)data;
-	if (soundData == NULL)
-	{
+	if (soundData == NULL) {
 		return;
 	}
 
@@ -236,4 +237,5 @@ void SoundLoader::Unload(void* data)
 	delete soundData;
 }
 
-} // namespace EffekseerSound
+}
+

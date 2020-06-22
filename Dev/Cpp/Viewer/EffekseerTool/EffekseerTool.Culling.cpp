@@ -1,23 +1,34 @@
 ﻿
-#include "EffekseerTool.Culling.h"
 #include <math.h>
+#include "EffekseerTool.Culling.h"
+
 
 namespace EffekseerRenderer
 {
 
-Culling::Culling(efk::Graphics* graphics) : IsShown(false), Radius(0.0f), X(0.0f), Y(0.0f), Z(0.0f)
+Culling::Culling(efk::Graphics* graphics)
+	: IsShown		(false)
+	, Radius		(0.0f)
+	, X				(0.0f)
+	, Y				(0.0f)
+	, Z				(0.0f)
 {
 	lineRenderer = efk::LineRenderer::Create(graphics);
 }
 
-Culling::~Culling() { ES_SAFE_DELETE(lineRenderer); }
-
-Culling* Culling::Create(efk::Graphics* graphics) { return new Culling(graphics); }
-
-void Culling::Rendering(bool isRightHand)
+Culling::~Culling()
 {
-	if (!IsShown)
-		return;
+	ES_SAFE_DELETE(lineRenderer);
+}
+
+Culling* Culling::Create(efk::Graphics* graphics)
+{
+	return new Culling( graphics );
+}
+
+void Culling::Rendering(bool isRightHand )
+{
+	if(!IsShown) return;
 
 	lineRenderer->ClearCache();
 
@@ -31,13 +42,14 @@ void Culling::Rendering(bool isRightHand)
 			float a0 = 3.1415f * 2.0f / 9.0f * r;
 			float a1 = 3.1415f * 2.0f / 9.0f * (r + 1.0f);
 
-			lineRenderer->DrawLine(::Effekseer::Vector3D(X + sin(a0) * radius, Y + ylen, Z + cos(a0) * radius),
-								   ::Effekseer::Vector3D(X + sin(a1) * radius, Y + ylen, Z + cos(a1) * radius),
-								   ::Effekseer::Color(255, 255, 255, 255));
+			lineRenderer->DrawLine(
+				::Effekseer::Vector3D(X + sin(a0) * radius, Y + ylen, Z + cos(a0) * radius),
+				::Effekseer::Vector3D(X + sin(a1) * radius, Y + ylen, Z + cos(a1) * radius),
+				::Effekseer::Color(255, 255, 255, 255));
 		}
 	}
 
 	lineRenderer->Render();
 }
 
-} // namespace EffekseerRenderer
+}

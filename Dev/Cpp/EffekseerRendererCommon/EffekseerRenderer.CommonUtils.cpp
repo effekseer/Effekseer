@@ -42,6 +42,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			R = ::Effekseer::Vec3f::Cross(Up, F).Normalize();
 			U = ::Effekseer::Vec3f::Cross(F, R).Normalize();
 
+			
 			float c_zx2 = Effekseer::Vec3f::Dot(r.Y, r.Y) - r.Y.GetZ() * r.Y.GetZ();
 			float c_zx = sqrt(std::max(0.0f, c_zx2));
 			float s_z = 0.0f;

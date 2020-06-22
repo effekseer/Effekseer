@@ -150,6 +150,7 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 						  vsRefractionModelBinary,
 						  psRefractionModelBinary,
 						  dll.first);
+		
 		}
 
 		compiler->Release();

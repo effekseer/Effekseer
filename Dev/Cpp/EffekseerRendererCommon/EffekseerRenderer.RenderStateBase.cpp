@@ -12,7 +12,10 @@ namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderStateBase::State::State() { Reset(); }
+RenderStateBase::State::State()
+{
+	Reset();
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -31,7 +34,7 @@ void RenderStateBase::State::Reset()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void RenderStateBase::State::CopyTo(State& state)
+void RenderStateBase::State::CopyTo( State& state )
 {
 	state.DepthTest = DepthTest;
 	state.DepthWrite = DepthWrite;
@@ -45,12 +48,16 @@ void RenderStateBase::State::CopyTo(State& state)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderStateBase::RenderStateBase() {}
+RenderStateBase::RenderStateBase()
+{
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderStateBase::~RenderStateBase() {}
+RenderStateBase::~RenderStateBase()
+{
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -58,8 +65,8 @@ RenderStateBase::~RenderStateBase() {}
 RenderStateBase::State& RenderStateBase::Push()
 {
 	State newState;
-	m_next.CopyTo(newState);
-	m_stateStack.push(m_next);
+	m_next.CopyTo( newState );
+	m_stateStack.push( m_next );
 	m_next = newState;
 	return m_next;
 }
@@ -69,7 +76,7 @@ RenderStateBase::State& RenderStateBase::Push()
 //-----------------------------------------------------------------------------------
 void RenderStateBase::Pop()
 {
-	assert(!m_stateStack.empty());
+	assert( !m_stateStack.empty() );
 
 	State top = m_stateStack.top();
 	m_stateStack.pop();
@@ -80,12 +87,15 @@ void RenderStateBase::Pop()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderStateBase::State& RenderStateBase::GetActiveState() { return m_next; }
+RenderStateBase::State& RenderStateBase::GetActiveState()
+{
+	return m_next;
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-} // namespace EffekseerRenderer
+}
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

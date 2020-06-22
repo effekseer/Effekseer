@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_COLOR_H__
-#define __EFFEKSEER_COLOR_H__
+#ifndef	__EFFEKSEER_COLOR_H__
+#define	__EFFEKSEER_COLOR_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -25,28 +25,28 @@ enum ColorMode
 /**
 	@brief	色
 */
-#pragma pack(push, 1)
+#pragma pack(push,1)
 struct Color
 {
 	/**
 		@brief	赤
 	*/
-	uint8_t R;
+	uint8_t		R;
 
 	/**
 		@brief	緑
 	*/
-	uint8_t G;
+	uint8_t		G;
 
 	/**
 		@brief	青
 	*/
-	uint8_t B;
-
+	uint8_t		B;
+	
 	/**
 		@brief	透明度
 	*/
-	uint8_t A;
+	uint8_t		A;
 
 	/**
 		@brief	コンストラクタ
@@ -56,25 +56,25 @@ struct Color
 	/**
 		@brief	コンストラクタ
 	*/
-	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+	Color( uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255 );
 
 	/**
 		@brief	乗算
 	*/
-	static Color Mul(Color in1, Color in2);
-	static Color Mul(Color in1, float in2);
-
+	static Color Mul( Color in1, Color in2 );
+	static Color Mul( Color in1, float in2 );
+	
 	/**
 		@brief	線形補間
 	*/
-	static Color Lerp(const Color in1, const Color in2, float t);
+	static Color Lerp( const Color in1, const Color in2, float t );
 };
 #pragma pack(pop)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_COLOR_H__
+#endif	// __EFFEKSEER_COLOR_H__

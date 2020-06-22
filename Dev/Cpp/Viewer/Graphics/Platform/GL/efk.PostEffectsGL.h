@@ -1,119 +1,117 @@
 #pragma once
 
-#include "../../efk.PostEffects.h"
 #include <Effekseer.h>
-#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.IndexBuffer.h>
-#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RenderState.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
-#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.h>
-#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.IndexBuffer.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RenderState.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.h>
+#include "../../efk.PostEffects.h"
 
 namespace efk
 {
-class BlitterGL
-{
-	Graphics* graphics = nullptr;
-	std::unique_ptr<EffekseerRendererGL::VertexBuffer> vertexBuffer;
-
-public:
-	struct Vertex
+	class BlitterGL
 	{
-		float x, y;
-		float u, v;
+		Graphics* graphics = nullptr;
+		std::unique_ptr<EffekseerRendererGL::VertexBuffer> vertexBuffer;
+
+	public:
+		struct Vertex
+		{
+			float x, y;
+			float u, v;
+		};
+		static const EffekseerRendererGL::ShaderAttribInfo shaderAttributes[2];
+
+		BlitterGL(Graphics* graphics);
+		virtual ~BlitterGL();
+
+		std::unique_ptr<EffekseerRendererGL::VertexArray>
+			CreateVAO(EffekseerRendererGL::Shader* shader);
+
+		void Blit(EffekseerRendererGL::Shader* shader, EffekseerRendererGL::VertexArray* vao,
+			int32_t numTextures, const GLuint* textures, 
+			const void* constantData, size_t constantDataSize, RenderTexture* dest);
 	};
-	static const EffekseerRendererGL::ShaderAttribInfo shaderAttributes[2];
 
-	BlitterGL(Graphics* graphics);
-	virtual ~BlitterGL();
+	class BloomEffectGL : public BloomEffect
+	{
+		static const int BlurBuffers = 2;
+		static const int BlurIterations = 4;
 
-	std::unique_ptr<EffekseerRendererGL::VertexArray> CreateVAO(EffekseerRendererGL::Shader* shader);
+		BlitterGL blitter;
 
-	void Blit(EffekseerRendererGL::Shader* shader,
-			  EffekseerRendererGL::VertexArray* vao,
-			  int32_t numTextures,
-			  const GLuint* textures,
-			  const void* constantData,
-			  size_t constantDataSize,
-			  RenderTexture* dest);
-};
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderExtract;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderDownsample;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderBlend;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderBlurH;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderBlurV;
 
-class BloomEffectGL : public BloomEffect
-{
-	static const int BlurBuffers = 2;
-	static const int BlurIterations = 4;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoExtract;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoDownsample;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlend;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlurH;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlurV;
 
-	BlitterGL blitter;
+		int32_t renderTextureWidth = 0;
+		int32_t renderTextureHeight = 0;
+		std::unique_ptr<RenderTexture> extractBuffer;
+		std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
 
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderExtract;
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderDownsample;
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderBlend;
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderBlurH;
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderBlurV;
+	public:
+		BloomEffectGL(Graphics* graphics);
+		virtual ~BloomEffectGL();
 
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoExtract;
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoDownsample;
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlend;
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlurH;
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlurV;
+		void Render(RenderTexture* src, RenderTexture* dest) override;
 
-	int32_t renderTextureWidth = 0;
-	int32_t renderTextureHeight = 0;
-	std::unique_ptr<RenderTexture> extractBuffer;
-	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
+		void OnLostDevice() override;
 
-public:
-	BloomEffectGL(Graphics* graphics);
-	virtual ~BloomEffectGL();
+		void OnResetDevice() override;
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	private:
+		void SetupBuffers(int32_t width, int32_t height);
+		void ReleaseBuffers();
+	};
 
-	void OnLostDevice() override;
+	
+	class TonemapEffectGL : public TonemapEffect
+	{
+		BlitterGL blitter;
 
-	void OnResetDevice() override;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderCopy;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderReinhard;
 
-private:
-	void SetupBuffers(int32_t width, int32_t height);
-	void ReleaseBuffers();
-};
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoCopy;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoReinhard;
 
-class TonemapEffectGL : public TonemapEffect
-{
-	BlitterGL blitter;
+	public:
+		TonemapEffectGL(Graphics* graphics);
+		virtual ~TonemapEffectGL();
 
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderCopy;
-	std::unique_ptr<EffekseerRendererGL::Shader> shaderReinhard;
+		void Render(RenderTexture* src, RenderTexture* dest) override;
 
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoCopy;
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoReinhard;
+		void OnLostDevice() override {}
 
-public:
-	TonemapEffectGL(Graphics* graphics);
-	virtual ~TonemapEffectGL();
+		void OnResetDevice() override {}
+	};
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	class LinearToSRGBEffectGL : public LinearToSRGBEffect
+	{
+		BlitterGL blitter;
 
-	void OnLostDevice() override {}
+		std::unique_ptr<EffekseerRendererGL::Shader> shader_;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vao_;
 
-	void OnResetDevice() override {}
-};
+	public:
+		LinearToSRGBEffectGL(Graphics* graphics);
+		virtual ~LinearToSRGBEffectGL();
 
-class LinearToSRGBEffectGL : public LinearToSRGBEffect
-{
-	BlitterGL blitter;
+		void Render(RenderTexture* src, RenderTexture* dest) override;
 
-	std::unique_ptr<EffekseerRendererGL::Shader> shader_;
-	std::unique_ptr<EffekseerRendererGL::VertexArray> vao_;
+		void OnLostDevice() override {}
 
-public:
-	LinearToSRGBEffectGL(Graphics* graphics);
-	virtual ~LinearToSRGBEffectGL();
-
-	void Render(RenderTexture* src, RenderTexture* dest) override;
-
-	void OnLostDevice() override {}
-
-	void OnResetDevice() override {}
-};
-} // namespace efk
+		void OnResetDevice() override {}
+	};
+	}

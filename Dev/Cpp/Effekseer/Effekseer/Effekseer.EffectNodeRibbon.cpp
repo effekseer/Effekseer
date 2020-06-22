@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
-#include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -13,8 +13,8 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 
-#include "Effekseer.EffectNodeRibbon.h"
 #include "Effekseer.InstanceGroup.h"
+#include "Effekseer.EffectNodeRibbon.h"
 
 #include "Effekseer.Setting.h"
 
@@ -145,8 +145,8 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if (renderer != NULL)
 	{
-		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//m_nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;
@@ -247,6 +247,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 
 		if (RibbonColor.type == RibbonColorParameter::Default)
 		{
+
 		}
 		else if (RibbonColor.type == RibbonColorParameter::Fixed)
 		{
@@ -264,10 +265,8 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 		// Apply global Color
 		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
 		{
-			m_instanceParameter.Colors[0] =
-				Color::Mul(m_instanceParameter.Colors[0], instance.m_pContainer->GetRootInstance()->GlobalColor);
-			m_instanceParameter.Colors[1] =
-				Color::Mul(m_instanceParameter.Colors[1], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			m_instanceParameter.Colors[0] = Color::Mul(m_instanceParameter.Colors[0], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			m_instanceParameter.Colors[1] = Color::Mul(m_instanceParameter.Colors[1], instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
 		if (RibbonPosition.type == RibbonPositionParameter::Default)
@@ -355,7 +354,10 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
 		RibbonAllColor.easing.all.setValueToArg(
-			instValues._original, instValues.allColorValues.easing.start, instValues.allColorValues.easing.end, t);
+			instValues._original,
+			instValues.allColorValues.easing.start,
+			instValues.allColorValues.easing.end,
+			t);
 	}
 
 	float fadeAlpha = GetFadeAlpha(instance);
@@ -379,7 +381,7 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 
 //----------------------------------------------------------------------------------
 //

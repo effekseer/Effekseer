@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_RECTF_H__
-#define __EFFEKSEER_RECTF_H__
+#ifndef	__EFFEKSEER_RECTF_H__
+#define	__EFFEKSEER_RECTF_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -10,8 +10,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer
-{
+namespace Effekseer { 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -21,18 +20,19 @@ namespace Effekseer
 struct RectF
 {
 private:
+
 public:
-	float X;
+	float	X;
 
-	float Y;
+	float	Y;
 
-	float Width;
+	float	Width;
 
-	float Height;
+	float	Height;
 
 	RectF();
 
-	RectF(float x, float y, float width, float height);
+	RectF( float x, float y, float width, float height );
 
 	Vector2D Position() const;
 
@@ -42,8 +42,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+ } 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_RECTF_H__
+#endif	// __EFFEKSEER_RECTF_H__

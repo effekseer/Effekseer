@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_DEFAULT_FILE_H__
-#define __EFFEKSEER_DEFAULT_FILE_H__
+#ifndef	__EFFEKSEER_DEFAULT_FILE_H__
+#define	__EFFEKSEER_DEFAULT_FILE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -11,8 +11,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer
-{
+namespace Effekseer { 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -26,13 +25,13 @@ private:
 	FILE* m_filePtr;
 
 public:
-	DefaultFileReader(FILE* filePtr);
+	DefaultFileReader( FILE* filePtr );
 
 	~DefaultFileReader();
 
-	size_t Read(void* buffer, size_t size);
+	size_t Read( void* buffer, size_t size );
 
-	void Seek(int position);
+	void Seek( int position );
 
 	int GetPosition();
 
@@ -45,15 +44,15 @@ private:
 	FILE* m_filePtr;
 
 public:
-	DefaultFileWriter(FILE* filePtr);
+	DefaultFileWriter( FILE* filePtr );
 
 	~DefaultFileWriter();
 
-	size_t Write(const void* buffer, size_t size);
+	size_t Write( const void* buffer, size_t size );
 
 	void Flush();
 
-	void Seek(int position);
+	void Seek( int position );
 
 	int GetPosition();
 
@@ -63,17 +62,19 @@ public:
 class DefaultFileInterface : public FileInterface
 {
 private:
-public:
-	FileReader* OpenRead(const EFK_CHAR* path);
 
-	FileWriter* OpenWrite(const EFK_CHAR* path);
+public:
+	FileReader* OpenRead( const EFK_CHAR* path );
+
+	FileWriter* OpenWrite( const EFK_CHAR* path );
 };
 
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+ } 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_DEFAULT_FILE_H__
+#endif	// __EFFEKSEER_DEFAULT_FILE_H__
