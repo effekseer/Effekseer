@@ -55,6 +55,10 @@ target_link_libraries(
     PRIVATE
     IPC)
 
+if(CLANG_FORMAT_ENABLED)
+    clang_format(${PROJECT_NAME})
+endif()
+
 
 if (WIN32)
     target_link_libraries(

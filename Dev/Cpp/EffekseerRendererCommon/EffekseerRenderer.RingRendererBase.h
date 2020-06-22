@@ -1,21 +1,21 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_RING_RENDERER_BASE_H__
-#define	__EFFEKSEERRENDERER_RING_RENDERER_BASE_H__
+#ifndef __EFFEKSEERRENDERER_RING_RENDERER_BASE_H__
+#define __EFFEKSEERRENDERER_RING_RENDERER_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.h>
 #include <Effekseer.Internal.h>
+#include <Effekseer.h>
 #include <assert.h>
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.RenderStateBase.h"
-#include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -29,13 +29,10 @@ typedef ::Effekseer::RingRenderer::NodeParameter efkRingNodeParam;
 typedef ::Effekseer::RingRenderer::InstanceParameter efkRingInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template<typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
-class RingRendererBase
-	: public ::Effekseer::RingRenderer
-	, public ::Effekseer::AlignedAllocationPolicy<16>
+template <typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
+class RingRendererBase : public ::Effekseer::RingRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
-
 	struct KeyValue
 	{
 		float Key;
@@ -43,13 +40,13 @@ protected:
 	};
 	std::vector<KeyValue> instances_;
 
-	RENDERER*						m_renderer;
-	int32_t							m_ringBufferOffset;
-	uint8_t*						m_ringBufferData;
+	RENDERER* m_renderer;
+	int32_t m_ringBufferOffset;
+	uint8_t* m_ringBufferData;
 
-	int32_t							m_spriteCount;
-	int32_t							m_instanceCount;
-	::Effekseer::Mat44f			m_singleRenderingMatrix;
+	int32_t m_spriteCount;
+	int32_t m_instanceCount;
+	::Effekseer::Mat44f m_singleRenderingMatrix;
 	::Effekseer::RendererMaterialType materialType_ = ::Effekseer::RendererMaterialType::Default;
 
 	int32_t vertexCount_ = 0;
@@ -58,22 +55,14 @@ protected:
 	int32_t customData2Count_ = 0;
 
 public:
-
 	RingRendererBase(RENDERER* renderer)
-		: m_renderer(renderer)
-		, m_ringBufferOffset(0)
-		, m_ringBufferData(NULL)
-		, m_spriteCount(0)
-		, m_instanceCount(0)
+		: m_renderer(renderer), m_ringBufferOffset(0), m_ringBufferData(NULL), m_spriteCount(0), m_instanceCount(0)
 	{
 	}
 
-	virtual ~RingRendererBase()
-	{
-	}
+	virtual ~RingRendererBase() {}
 
 protected:
-
 	void RenderingInstance(const efkRingInstanceParam& inst,
 						   const efkRingNodeParam& param,
 						   const StandardRendererState& state,
@@ -114,7 +103,7 @@ protected:
 		{
 			renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 		}
-		
+
 		EffekseerRenderer::StandardRendererState state;
 		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = ::Effekseer::CullingType::Double;
@@ -154,10 +143,11 @@ protected:
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-											   , param.BasicParameterPtr->Texture3Index
-											   , param.BasicParameterPtr->Texture4Index
-											   , param.BasicParameterPtr->Texture5Index
-											   , param.BasicParameterPtr->Texture6Index
+											   ,
+											   param.BasicParameterPtr->Texture3Index,
+											   param.BasicParameterPtr->Texture4Index,
+											   param.BasicParameterPtr->Texture5Index,
+											   param.BasicParameterPtr->Texture6Index
 #endif
 		);
 
@@ -172,7 +162,10 @@ protected:
 		vertexCount_ = count * singleVertexCount;
 	}
 
-	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera)
+	void Rendering_(const efkRingNodeParam& parameter,
+					const efkRingInstanceParam& instanceParameter,
+					void* userData,
+					const ::Effekseer::Mat44f& camera)
 	{
 		if (parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None || CanSingleRendering())
 		{
@@ -204,13 +197,13 @@ protected:
 
 	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lighting; }
 
-	bool CanSingleRendering()
-	{ 
-		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default;
-	}
+	bool CanSingleRendering() { return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default; }
 
-	template<typename VERTEX>
-	void Rendering_Internal( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera )
+	template <typename VERTEX>
+	void Rendering_Internal(const efkRingNodeParam& parameter,
+							const efkRingInstanceParam& instanceParameter,
+							void* userData,
+							const ::Effekseer::Mat44f& camera)
 	{
 		::Effekseer::Mat43f mat43;
 
@@ -252,8 +245,8 @@ protected:
 		}
 
 		int32_t singleVertexCount = parameter.VertexCount * 8;
-		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
-		
+		// Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
+
 		StrideView<VERTEX> verteies(m_ringBufferData, stride_, singleVertexCount);
 		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
@@ -261,7 +254,7 @@ protected:
 		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
 		const float stepAngle = (stepAngleDegree) / 180.0f * 3.141592f;
 		const float beginAngle = (instanceParameter.ViewingAngleStart + 90) / 180.0f * 3.141592f;
-		
+
 		const float outerRadius = instanceParameter.OuterLocation.GetX();
 		const float innerRadius = instanceParameter.InnerLocation.GetX();
 		const float centerRadius = innerRadius + (outerRadius - innerRadius) * instanceParameter.CenterRatio;
@@ -269,7 +262,7 @@ protected:
 		const float outerHeight = instanceParameter.OuterLocation.GetY();
 		const float innerHeight = instanceParameter.InnerLocation.GetY();
 		const float centerHeight = innerHeight + (outerHeight - innerHeight) * instanceParameter.CenterRatio;
-		
+
 		::Effekseer::Color outerColor = instanceParameter.OuterColor;
 		::Effekseer::Color innerColor = instanceParameter.InnerColor;
 		::Effekseer::Color centerColor = instanceParameter.CenterColor;
@@ -288,9 +281,9 @@ protected:
 		const float stepS = sinf(stepAngle);
 		float cos_ = cosf(beginAngle);
 		float sin_ = sinf(beginAngle);
-		::Effekseer::Vec3f outerCurrent( cos_ * outerRadius, sin_ * outerRadius, outerHeight );
-		::Effekseer::Vec3f innerCurrent( cos_ * innerRadius, sin_ * innerRadius, innerHeight );
-		::Effekseer::Vec3f centerCurrent( cos_ * centerRadius, sin_ * centerRadius, centerHeight );
+		::Effekseer::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, outerHeight);
+		::Effekseer::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, innerHeight);
+		::Effekseer::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, centerHeight);
 
 		float uv0Current = instanceParameter.UV.X;
 		const float uv0Step = instanceParameter.UV.Width / parameter.VertexCount;
@@ -298,7 +291,7 @@ protected:
 		const float uv0v2 = uv0v1 + instanceParameter.UV.Height * 0.5f;
 		const float uv0v3 = uv0v1 + instanceParameter.UV.Height;
 		float uv0texNext = 0.0f;
-		
+
 		float uv1Current = 0.0f;
 		const float uv1Step = 1.0f / parameter.VertexCount;
 		const float uv1v1 = 0.0f;
@@ -309,45 +302,23 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		const int32_t advancedUVNum = 4;
 
-		float advancedUVCurrent[advancedUVNum] = 
-		{ 
-			instanceParameter.AlphaUV.X, 
-			instanceParameter.UVDistortionUV.X,
-			instanceParameter.BlendUV.X,
-			instanceParameter.BlendAlphaUV.X
-		};
-		const float advancedUVStep[advancedUVNum] = 
-		{ 
-			instanceParameter.AlphaUV.Width / parameter.VertexCount, 
-			instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
-			instanceParameter.BlendUV.Width / parameter.VertexCount,
-			instanceParameter.BlendAlphaUV.Width / parameter.VertexCount 
-		};
-		const float advancedUVv1[advancedUVNum] = 
-		{ 
-			instanceParameter.AlphaUV.Y, 
-			instanceParameter.UVDistortionUV.Y,
-			instanceParameter.BlendUV.Y,
-			instanceParameter.BlendAlphaUV.Y
-		};
-		const float advancedUVv2[advancedUVNum] =
-		{
-			advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
-			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
-			advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
-			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f
-		};
-		const float advancedUVv3[advancedUVNum] =
-		{
-			advancedUVv1[0] + instanceParameter.AlphaUV.Height,
-			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
-			advancedUVv1[2] + instanceParameter.BlendUV.Height,
-			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height
-		};
-		float advancedUVtexNext[advancedUVNum] =
-		{
-			0.0f
-		};
+		float advancedUVCurrent[advancedUVNum] = {
+			instanceParameter.AlphaUV.X, instanceParameter.UVDistortionUV.X, instanceParameter.BlendUV.X, instanceParameter.BlendAlphaUV.X};
+		const float advancedUVStep[advancedUVNum] = {instanceParameter.AlphaUV.Width / parameter.VertexCount,
+													 instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
+													 instanceParameter.BlendUV.Width / parameter.VertexCount,
+													 instanceParameter.BlendAlphaUV.Width / parameter.VertexCount};
+		const float advancedUVv1[advancedUVNum] = {
+			instanceParameter.AlphaUV.Y, instanceParameter.UVDistortionUV.Y, instanceParameter.BlendUV.Y, instanceParameter.BlendAlphaUV.Y};
+		const float advancedUVv2[advancedUVNum] = {advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
+												   advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
+												   advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
+												   advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f};
+		const float advancedUVv3[advancedUVNum] = {advancedUVv1[0] + instanceParameter.AlphaUV.Height,
+												   advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
+												   advancedUVv1[2] + instanceParameter.BlendUV.Height,
+												   advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height};
+		float advancedUVtexNext[advancedUVNum] = {0.0f};
 #endif
 
 		::Effekseer::Vec3f outerNext, innerNext, centerNext;
@@ -356,7 +327,7 @@ protected:
 		float fadeStartAngle = parameter.StartingFade;
 		float fadeEndingAngle = parameter.EndingFade;
 
-		for( int i = 0; i < singleVertexCount; i += 8 )
+		for (int i = 0; i < singleVertexCount; i += 8)
 		{
 			float old_c = cos_;
 			float old_s = sin_;
@@ -366,18 +337,9 @@ protected:
 			sin_ = sin_ * stepC + cos_ * stepS;
 			cos_ = t;
 
-			outerNext = ::Effekseer::Vec3f{
-				cos_ * outerRadius,
-				sin_ * outerRadius,
-				outerHeight};
-			innerNext = ::Effekseer::Vec3f{
-				cos_ * innerRadius,
-				sin_ * innerRadius,
-				innerHeight};
-			centerNext = ::Effekseer::Vec3f{
-				cos_ * centerRadius,
-				sin_ * centerRadius,
-				centerHeight};
+			outerNext = ::Effekseer::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
+			innerNext = ::Effekseer::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
+			centerNext = ::Effekseer::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
 
 			currentAngleDegree += stepAngleDegree;
 
@@ -408,36 +370,36 @@ protected:
 
 			StrideView<VERTEX> v(&verteies[i], stride_, 8);
 			v[0].Pos = ToStruct(outerCurrent);
-			v[0].SetColor( outerColor );
+			v[0].SetColor(outerColor);
 			v[0].UV[0] = uv0Current;
 			v[0].UV[1] = uv0v1;
 
 			v[1].Pos = ToStruct(centerCurrent);
-			v[1].SetColor( centerColor );
+			v[1].SetColor(centerColor);
 			v[1].UV[0] = uv0Current;
 			v[1].UV[1] = uv0v2;
 
 			v[2].Pos = ToStruct(outerNext);
-			v[2].SetColor( outerColorNext );
+			v[2].SetColor(outerColorNext);
 			v[2].UV[0] = uv0texNext;
 			v[2].UV[1] = uv0v1;
-			
+
 			v[3].Pos = ToStruct(centerNext);
-			v[3].SetColor( centerColorNext );
+			v[3].SetColor(centerColorNext);
 			v[3].UV[0] = uv0texNext;
 			v[3].UV[1] = uv0v2;
 
 			v[4] = v[1];
 
 			v[5].Pos = ToStruct(innerCurrent);
-			v[5].SetColor( innerColor );
+			v[5].SetColor(innerColor);
 			v[5].UV[0] = uv0Current;
 			v[5].UV[1] = uv0v3;
 
 			v[6] = v[3];
 
 			v[7].Pos = ToStruct(innerNext);
-			v[7].SetColor( innerColorNext );
+			v[7].SetColor(innerColorNext);
 			v[7].UV[0] = uv0texNext;
 			v[7].UV[1] = uv0v3;
 
@@ -448,7 +410,7 @@ protected:
 			}
 
 			v[0].SetAlphaUV(advancedUVCurrent[0], 0);
-			v[0].SetAlphaUV(advancedUVv1[0], 1);			
+			v[0].SetAlphaUV(advancedUVv1[0], 1);
 			v[0].SetUVDistortionUV(advancedUVCurrent[1], 0);
 			v[0].SetUVDistortionUV(advancedUVv1[1], 1);
 			v[0].SetBlendUV(advancedUVCurrent[2], 0);
@@ -521,24 +483,18 @@ protected:
 
 				// return back
 				float t_b;
-				t_b = old_c * (stepC) - old_s * (-stepS);
+				t_b = old_c * (stepC)-old_s * (-stepS);
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::Vec3f outerBefore(
-					c_b * outerRadius,
-					s_b * outerRadius,
-					outerHeight);
+				::Effekseer::Vec3f outerBefore(c_b * outerRadius, s_b * outerRadius, outerHeight);
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
 				auto s_n = sin_ * stepC + cos_ * stepS;
 				auto c_n = t_n;
 
-				::Effekseer::Vec3f outerNN(
-					c_n * outerRadius,
-					s_n * outerRadius,
-					outerHeight);
+				::Effekseer::Vec3f outerNN(c_n * outerRadius, s_n * outerRadius, outerHeight);
 
 				::Effekseer::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
 				::Effekseer::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
@@ -575,10 +531,7 @@ protected:
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::Vec3f outerBefore{
-					c_b * outerRadius,
-					s_b * outerRadius,
-					outerHeight};
+				::Effekseer::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
@@ -658,13 +611,13 @@ protected:
 				vs[1].SetUV2(uv1Current, uv1v2);
 				vs[2].SetUV2(uv1texNext, uv1v1);
 				vs[3].SetUV2(uv1texNext, uv1v2);
-				 
+
 				vs[4].SetUV2(uv1Current, uv1v2);
-				 
+
 				vs[5].SetUV2(uv1Current, uv1v3);
-				 
+
 				vs[6].SetUV2(uv1texNext, uv1v2);
-				
+
 				vs[7].SetUV2(uv1texNext, uv1v3);
 			}
 
@@ -717,7 +670,6 @@ protected:
 
 		m_spriteCount += 2 * parameter.VertexCount;
 		m_ringBufferData += stride_ * singleVertexCount;
-
 	}
 
 	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, void* userData, const ::Effekseer::Mat44f& camera)
@@ -753,32 +705,29 @@ protected:
 				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
 			}
 
-
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
 			for (auto& kv : instances_)
 			{
 				RenderingInstance(kv.Value, param, state, camera);
 			}
-			
 		}
 	}
 
 public:
-	void BeginRendering(const efkRingNodeParam& parameter, int32_t count, void* userData)
-	{
-		BeginRendering_(m_renderer, count, parameter);
-	}
+	void BeginRendering(const efkRingNodeParam& parameter, int32_t count, void* userData) { BeginRendering_(m_renderer, count, parameter); }
 
 	void Rendering(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData)
 	{
-		if (m_spriteCount == m_renderer->GetSquareMaxCount()) return;
+		if (m_spriteCount == m_renderer->GetSquareMaxCount())
+			return;
 		Rendering_(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 	}
 
 	void EndRendering(const efkRingNodeParam& parameter, void* userData)
 	{
-		if (m_ringBufferData == NULL) return;
+		if (m_ringBufferData == NULL)
+			return;
 
 		if (m_spriteCount == 0 && parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None)
 			return;
@@ -789,8 +738,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_RING_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_RING_RENDERER_H__

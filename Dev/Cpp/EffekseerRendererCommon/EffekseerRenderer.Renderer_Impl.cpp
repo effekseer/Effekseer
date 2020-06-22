@@ -4,7 +4,7 @@
 namespace EffekseerRenderer
 {
 
-::Effekseer::Vector3D Renderer::Impl::GetLightDirection() const {return ToStruct(lightDirection_); }
+::Effekseer::Vector3D Renderer::Impl::GetLightDirection() const { return ToStruct(lightDirection_); }
 
 void Renderer::Impl::SetLightDirection(const ::Effekseer::Vector3D& direction) { lightDirection_ = direction; }
 

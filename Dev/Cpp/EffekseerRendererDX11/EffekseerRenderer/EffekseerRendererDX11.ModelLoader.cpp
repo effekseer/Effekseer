@@ -4,8 +4,8 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX11.Renderer.h"
 #include "EffekseerRendererDX11.ModelLoader.h"
+#include "EffekseerRendererDX11.Renderer.h"
 #include <memory>
 
 //-----------------------------------------------------------------------------------
@@ -16,13 +16,11 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface )
-	: device			( device )
-	, m_fileInterface	( fileInterface )
+ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface) : device(device), m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(device);
 
-	if( m_fileInterface == NULL )
+	if (m_fileInterface == NULL)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -31,10 +29,7 @@ ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileI
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::~ModelLoader()
-{
-	ES_SAFE_RELEASE(device);
-}
+ModelLoader::~ModelLoader() { ES_SAFE_RELEASE(device); }
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {
@@ -159,9 +154,9 @@ void* ModelLoader::Load(const void* data, int32_t size)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ModelLoader::Unload( void* data )
+void ModelLoader::Unload(void* data)
 {
-	if( data != NULL )
+	if (data != NULL)
 	{
 		Model* model = (Model*)data;
 		delete model;
@@ -171,7 +166,7 @@ void ModelLoader::Unload( void* data )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

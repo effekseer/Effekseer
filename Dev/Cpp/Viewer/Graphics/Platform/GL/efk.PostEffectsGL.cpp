@@ -11,8 +11,8 @@
 
 namespace efk
 {
-	static const char g_basic_vs_src[] =
-R"(
+static const char g_basic_vs_src[] =
+	R"(
 IN vec4 a_Position;
 IN vec2 a_TexCoord;
 OUT vec2 v_TexCoord;
@@ -23,7 +23,7 @@ void main() {
 )";
 
 static const char g_copy_fs_src[] =
-R"(
+	R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 void main() {
@@ -33,7 +33,7 @@ void main() {
 )";
 
 static const char g_extract_fs_src[] =
-R"(
+	R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 uniform vec4 u_FilterParams;
@@ -51,7 +51,7 @@ void main() {
 )";
 
 static const char g_downsample_fs_src[] =
-R"(
+	R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 const vec4 gain = vec4(0.25, 0.5, 1.0, 2.0);
@@ -66,9 +66,8 @@ void main() {
 }
 )";
 
-
 static const char g_blend_fs_src[] =
-R"(
+	R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 uniform sampler2D u_Texture1;
@@ -83,10 +82,8 @@ void main() {
 }
 )";
 
-
-
 static const char g_blur_h_fs_src[] =
-R"(
+	R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 void main() {
@@ -107,7 +104,7 @@ void main() {
 )";
 
 static const char g_blur_v_fs_src[] =
-R"(
+	R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 void main() {
@@ -128,7 +125,7 @@ void main() {
 )";
 
 static const char g_tonemap_reinhard_fs_src[] =
-R"(
+	R"(
 IN mediump vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 uniform vec4 u_Exposure;
@@ -150,427 +147,390 @@ void main() {
 }
 )";
 
-	const EffekseerRendererGL::ShaderAttribInfo BlitterGL::shaderAttributes[2] = {
-		{ "a_Position", GL_FLOAT, 2,  0, false },
-		{ "a_TexCoord", GL_FLOAT, 2,  8, false }
-	};
+const EffekseerRendererGL::ShaderAttribInfo BlitterGL::shaderAttributes[2] = {{"a_Position", GL_FLOAT, 2, 0, false},
+																			  {"a_TexCoord", GL_FLOAT, 2, 8, false}};
 
-	BlitterGL::BlitterGL(Graphics* graphics)
-		: graphics(graphics)
+BlitterGL::BlitterGL(Graphics* graphics) : graphics(graphics)
+{
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	// Generate vertex data
+	vertexBuffer.reset(VertexBuffer::Create(renderer, sizeof(Vertex) * 4, true, true));
+
+	vertexBuffer->Lock();
 	{
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+		Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
+		verteces[0] = Vertex{-1.0f, 1.0f, 0.0f, 1.0f};
+		verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 0.0f};
+		verteces[2] = Vertex{1.0f, 1.0f, 1.0f, 1.0f};
+		verteces[3] = Vertex{1.0f, -1.0f, 1.0f, 0.0f};
+	}
+	vertexBuffer->Unlock();
+}
 
-		// Generate vertex data
-		vertexBuffer.reset(VertexBuffer::Create(renderer, sizeof(Vertex) * 4, true, true));
+BlitterGL::~BlitterGL() {}
 
-		vertexBuffer->Lock();
-		{
-			Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
-			verteces[0] = Vertex{-1.0f,  1.0f, 0.0f, 1.0f};
-			verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 0.0f};
-			verteces[2] = Vertex{ 1.0f,  1.0f, 1.0f, 1.0f};
-			verteces[3] = Vertex{ 1.0f, -1.0f, 1.0f, 0.0f};
-		}
-		vertexBuffer->Unlock();
+std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(EffekseerRendererGL::Shader* shader)
+{
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	return std::unique_ptr<VertexArray>(VertexArray::Create(renderer, shader, vertexBuffer.get(), renderer->GetIndexBuffer(), true));
+}
+
+void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
+					 EffekseerRendererGL::VertexArray* vao,
+					 int32_t numTextures,
+					 const GLuint* textures,
+					 const void* constantData,
+					 size_t constantDataSize,
+					 RenderTexture* dest)
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	// Set GLStates
+	renderer->SetVertexArray(vao);
+	renderer->BeginShader(shader);
+
+	// Set shader parameters
+	if (constantData != nullptr)
+	{
+		memcpy(shader->GetPixelConstantBuffer(), constantData, constantDataSize);
+		shader->SetConstantBuffer();
 	}
 
-	BlitterGL::~BlitterGL()
+	// Set destination texture
+	graphics->SetRenderTarget(dest, nullptr);
+
+	// Set source textures
+	for (int32_t slot = 0; slot < numTextures; slot++)
 	{
-	}
+		GLExt::glBindSampler(slot, 0);
+		GLExt::glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, textures[slot]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		GLExt::glUniform1i(shader->GetTextureSlot(slot), slot);
 
-	std::unique_ptr<EffekseerRendererGL::VertexArray>
-		BlitterGL::CreateVAO(EffekseerRendererGL::Shader* shader)
-	{
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		return std::unique_ptr<VertexArray>(VertexArray::Create(renderer, shader, vertexBuffer.get(), renderer->GetIndexBuffer(), true));
-	}
-
-	void BlitterGL::Blit(EffekseerRendererGL::Shader* shader, EffekseerRendererGL::VertexArray* vao,
-		int32_t numTextures, const GLuint* textures, 
-		const void* constantData, size_t constantDataSize, RenderTexture* dest)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		// Set GLStates
-		renderer->SetVertexArray(vao);
-		renderer->BeginShader(shader);
-		
-		// Set shader parameters
-		if (constantData != nullptr) {
-			memcpy(shader->GetPixelConstantBuffer(), constantData, constantDataSize);
-			shader->SetConstantBuffer();
-		}
-		
-		// Set destination texture
-		graphics->SetRenderTarget(dest, nullptr);
-
-		// Set source textures
-		for (int32_t slot = 0; slot < numTextures; slot++) {
-			GLExt::glBindSampler(slot, 0);
-			GLExt::glActiveTexture(GL_TEXTURE0 + slot);
-			glBindTexture(GL_TEXTURE_2D, textures[slot]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			GLExt::glUniform1i(shader->GetTextureSlot(slot), slot);
-
-			GLCheckError();
-		}
-		
-		GLsizei stride = GL_UNSIGNED_SHORT;
-		if (renderer->GetIndexBuffer()->GetStride() == 4)
-		{
-			stride = GL_UNSIGNED_INT;
-		}
-
-		glDrawElements(GL_TRIANGLES, 6, stride, nullptr);
-		GLCheckError();
-
-		renderer->EndShader(shader);
-	}
-
-	BloomEffectGL::BloomEffectGL(Graphics* graphics)
-		: BloomEffect(graphics), blitter(graphics)
-	{
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-		
-		EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
-		
-		// Extract shader
-		EffekseerRendererGL::ShaderCodeView extractPS(g_extract_fs_src);
-
-		shaderExtract.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &extractPS, 1, "Bloom extract"));
-
-		shaderExtract->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderExtract->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
-		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
-		shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
-			shaderExtract->GetUniformId("u_FilterParams"), 0);
-		shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
-			shaderExtract->GetUniformId("u_Intensity"), 16);
-
-		// Downsample shader
-
-		EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
-
-		shaderDownsample.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &downSamplePS, 1, "Bloom downsample"));
-		shaderDownsample->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderDownsample->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
-
-		// Blend shader
-		EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
-
-		shaderBlend.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &blendPS, 1, "Bloom blend"));
-		shaderBlend->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderBlend->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
-		shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
-		shaderBlend->SetTextureSlot(2, shaderBlend->GetUniformId("u_Texture2"));
-		shaderBlend->SetTextureSlot(3, shaderBlend->GetUniformId("u_Texture3"));
-
-		// Blur(horizontal) shader
-		EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
-
-		shaderBlurH.reset(Shader::Create(
-			renderer->GetGraphicsDevice(), &basicVS, 1, &blend_h_PS, 1,
-			"Bloom blurH"));
-		shaderBlurH->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderBlurH->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
-
-		// Blur(vertical) shader
-		EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
-
-		shaderBlurV.reset(Shader::Create(
-			renderer->GetGraphicsDevice(), &basicVS, 1, &blend_v_PS, 1,
-			"Bloom blurV"));
-		shaderBlurV->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderBlurV->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
-
-		// Setup VAOs
-		vaoExtract = blitter.CreateVAO(shaderExtract.get());
-		vaoDownsample = blitter.CreateVAO(shaderDownsample.get());
-		vaoBlend = blitter.CreateVAO(shaderBlend.get());
-		vaoBlurH = blitter.CreateVAO(shaderBlurH.get());
-		vaoBlurV = blitter.CreateVAO(shaderBlurV.get());
-	}
-
-	BloomEffectGL::~BloomEffectGL()
-	{
-	}
-
-	void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
-	{
-		if( !enabled )
-		{
-			return;
-		}
-
-		using namespace Effekseer;
-		using namespace EffekseerRendererGL;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-        
-		if (renderTextureWidth  != src->GetWidth() ||
-			renderTextureHeight != src->GetHeight())
-		{
-			SetupBuffers(src->GetWidth(), src->GetHeight());
-		}
-
-		auto& state = renderer->GetRenderState()->Push();
-		state.AlphaBlend = AlphaBlendType::Opacity;
-		state.DepthWrite = false;
-		state.DepthTest = false;
-		state.CullingType = CullingType::Double;
-		state.TextureFilterTypes[0] = TextureFilterType::Linear;
-		state.TextureWrapTypes[0] = TextureWrapType::Clamp;
-		renderer->GetRenderState()->Update(false);
-		renderer->SetRenderMode(RenderMode::Normal);
-
-		// Extract pass
-		{
-			const float knee = threshold * softKnee;
-			const float constantData[8] = {
-				threshold, 
-				threshold - knee, 
-				knee * 2.0f, 
-				0.25f / (knee + 0.00001f),
-				intensity,
-			};
-			const GLuint textures[] = {
-				(GLuint)src->GetViewID()
-			};
-			blitter.Blit(shaderExtract.get(), vaoExtract.get(), 1, textures, 
-				constantData, sizeof(constantData), extractBuffer.get());
-		}
-
-		// Shrink pass
-		for (int i = 0; i < BlurIterations; i++)
-		{
-			GLuint textures[1];
-			textures[0] = (i == 0) ?
-				(GLuint)extractBuffer->GetViewID() : 
-				(GLuint)lowresBuffers[0][i - 1]->GetViewID();
-			blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), 1, textures, 
-				nullptr, 0, lowresBuffers[0][i].get());
-		}
-
-		// Horizontal gaussian blur pass
-		for (int i = 0; i < BlurIterations; i++)
-		{
-			const GLuint textures[] = {
-				(GLuint)lowresBuffers[0][i]->GetViewID()
-			};
-			blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), 1, textures, 
-				nullptr, 0, lowresBuffers[1][i].get());
-		}
-
-		// Vertical gaussian blur pass
-		for (int i = 0; i < BlurIterations; i++)
-		{
-			const GLuint textures[] = {
-				(GLuint)lowresBuffers[1][i]->GetViewID()
-			};
-			blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), 1, textures, 
-				nullptr, 0, lowresBuffers[0][i].get());
-		}
-
-		// Blending pass
-		state.AlphaBlend = AlphaBlendType::Add;
-		renderer->GetRenderState()->Update(false);
-		{
-			const GLuint textures[] = {
-				(GLuint)lowresBuffers[0][0]->GetViewID(),
-				(GLuint)lowresBuffers[0][1]->GetViewID(),
-				(GLuint)lowresBuffers[0][2]->GetViewID(),
-				(GLuint)lowresBuffers[0][3]->GetViewID()
-			};
-			blitter.Blit(shaderBlend.get(), vaoBlend.get(), 4, textures, 
-				nullptr, 0, dest);
-		}
-
-		GLExt::glActiveTexture(GL_TEXTURE0);
-		renderer->GetRenderState()->Update(true);
-		renderer->GetRenderState()->Pop();
 		GLCheckError();
 	}
 
-	void BloomEffectGL::OnLostDevice()
+	GLsizei stride = GL_UNSIGNED_SHORT;
+	if (renderer->GetIndexBuffer()->GetStride() == 4)
 	{
-		ReleaseBuffers();
+		stride = GL_UNSIGNED_INT;
 	}
 
-	void BloomEffectGL::OnResetDevice()
+	glDrawElements(GL_TRIANGLES, 6, stride, nullptr);
+	GLCheckError();
+
+	renderer->EndShader(shader);
+}
+
+BloomEffectGL::BloomEffectGL(Graphics* graphics) : BloomEffect(graphics), blitter(graphics)
+{
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
+
+	// Extract shader
+	EffekseerRendererGL::ShaderCodeView extractPS(g_extract_fs_src);
+
+	shaderExtract.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &extractPS, 1, "Bloom extract"));
+
+	shaderExtract->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderExtract->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
+	shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
+	shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderExtract->GetUniformId("u_FilterParams"), 0);
+	shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderExtract->GetUniformId("u_Intensity"), 16);
+
+	// Downsample shader
+
+	EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
+
+	shaderDownsample.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &downSamplePS, 1, "Bloom downsample"));
+	shaderDownsample->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderDownsample->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
+
+	// Blend shader
+	EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
+
+	shaderBlend.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &blendPS, 1, "Bloom blend"));
+	shaderBlend->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderBlend->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
+	shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
+	shaderBlend->SetTextureSlot(2, shaderBlend->GetUniformId("u_Texture2"));
+	shaderBlend->SetTextureSlot(3, shaderBlend->GetUniformId("u_Texture3"));
+
+	// Blur(horizontal) shader
+	EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
+
+	shaderBlurH.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &blend_h_PS, 1, "Bloom blurH"));
+	shaderBlurH->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderBlurH->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
+
+	// Blur(vertical) shader
+	EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
+
+	shaderBlurV.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &blend_v_PS, 1, "Bloom blurV"));
+	shaderBlurV->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderBlurV->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
+
+	// Setup VAOs
+	vaoExtract = blitter.CreateVAO(shaderExtract.get());
+	vaoDownsample = blitter.CreateVAO(shaderDownsample.get());
+	vaoBlend = blitter.CreateVAO(shaderBlend.get());
+	vaoBlurH = blitter.CreateVAO(shaderBlurH.get());
+	vaoBlurV = blitter.CreateVAO(shaderBlurV.get());
+}
+
+BloomEffectGL::~BloomEffectGL() {}
+
+void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+{
+	if (!enabled)
 	{
+		return;
 	}
 
-	void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
+	using namespace Effekseer;
+	using namespace EffekseerRendererGL;
+
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	if (renderTextureWidth != src->GetWidth() || renderTextureHeight != src->GetHeight())
 	{
-		ReleaseBuffers();
-
-		renderTextureWidth = width;
-		renderTextureHeight = height;
-
-		// Create high brightness extraction buffer
-		{
-			int32_t bufferWidth  = width;
-			int32_t bufferHeight = height;
-			extractBuffer.reset(RenderTexture::Create(graphics));
-			extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
-		}
-
-		// Create low-resolution buffers
-		for (int i = 0; i < BlurBuffers; i++) {
-			int32_t bufferWidth  = width;
-			int32_t bufferHeight = height;
-			for (int j = 0; j < BlurIterations; j++) {
-				bufferWidth  = std::max(1, (bufferWidth  + 1) / 2);
-				bufferHeight = std::max(1, (bufferHeight + 1) / 2);
-				lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
-				lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
-			}
-		}
+		SetupBuffers(src->GetWidth(), src->GetHeight());
 	}
 
-	void BloomEffectGL::ReleaseBuffers()
+	auto& state = renderer->GetRenderState()->Push();
+	state.AlphaBlend = AlphaBlendType::Opacity;
+	state.DepthWrite = false;
+	state.DepthTest = false;
+	state.CullingType = CullingType::Double;
+	state.TextureFilterTypes[0] = TextureFilterType::Linear;
+	state.TextureWrapTypes[0] = TextureWrapType::Clamp;
+	renderer->GetRenderState()->Update(false);
+	renderer->SetRenderMode(RenderMode::Normal);
+
+	// Extract pass
 	{
-		renderTextureWidth = 0;
-		renderTextureHeight = 0;
-
-		extractBuffer.reset();
-		for (int i = 0; i < BlurBuffers; i++) {
-			for (int j = 0; j < BlurIterations; j++) {
-				lowresBuffers[i][j].reset();
-			}
-		}
-	}
-
-	TonemapEffectGL::TonemapEffectGL(Graphics* graphics) 
-		: TonemapEffect(graphics), blitter(graphics)
-	{
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
-
-		// Copy shader
-		EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
-
-		shaderCopy.reset(Shader::Create(
-			renderer->GetGraphicsDevice(), &basicVS, 1, 
-			&copyPS, 1, 
-			"Tonemap copy"));
-		shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderCopy->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
-
-		// Reinhard shader
-		EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
-
-		shaderReinhard.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, 
-			&tonemapPS, 1, 
-			"Tonemap Reinhard"));
-		shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderReinhard->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
-		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
-		shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
-			shaderReinhard->GetUniformId("u_Exposure"), 0);
-
-		// Setup VAOs
-		vaoCopy = blitter.CreateVAO(shaderCopy.get());
-		vaoReinhard = blitter.CreateVAO(shaderReinhard.get());
-	}
-
-	TonemapEffectGL::~TonemapEffectGL()
-	{
-	}
-
-	void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		auto& state = renderer->GetRenderState()->Push();
-		state.AlphaBlend = AlphaBlendType::Opacity;
-		state.DepthWrite = false;
-		state.DepthTest = false;
-		state.CullingType = CullingType::Double;
-		renderer->GetRenderState()->Update(false);
-		renderer->SetRenderMode(RenderMode::Normal);
-
-		const GLuint textures[] = {
-			(GLuint)src->GetViewID()
+		const float knee = threshold * softKnee;
+		const float constantData[8] = {
+			threshold,
+			threshold - knee,
+			knee * 2.0f,
+			0.25f / (knee + 0.00001f),
+			intensity,
 		};
-
-		if (algorithm == Algorithm::Off) {
-			blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, nullptr, 0, dest);
-		} else if (algorithm == Algorithm::Reinhard) {
-			const float constantData[4] = {exposure, 16.0f * 16.0f};
-			blitter.Blit(shaderReinhard.get(), vaoReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
-		}
-
-		GLExt::glActiveTexture(GL_TEXTURE0);
-		renderer->GetRenderState()->Update(true);
-		renderer->GetRenderState()->Pop();
-		GLCheckError();
-	}
-
-	LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter(graphics)
-	{
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
-		EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
-
-		// Copy shader
-		shader_.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS,1, &linierToSrgbPS, 1,
-									 "LinearToSRGB"));
-		shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shader_->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
-
-
-		// Setup VAOs
-		vao_ = blitter.CreateVAO(shader_.get());
-	}
-
-	LinearToSRGBEffectGL::~LinearToSRGBEffectGL() {}
-
-	void LinearToSRGBEffectGL::Render(RenderTexture* src, RenderTexture* dest)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererGL;
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		auto& state = renderer->GetRenderState()->Push();
-		state.AlphaBlend = AlphaBlendType::Opacity;
-		state.DepthWrite = false;
-		state.DepthTest = false;
-		state.CullingType = CullingType::Double;
-		renderer->GetRenderState()->Update(false);
-		renderer->SetRenderMode(RenderMode::Normal);
-
 		const GLuint textures[] = {(GLuint)src->GetViewID()};
+		blitter.Blit(shaderExtract.get(), vaoExtract.get(), 1, textures, constantData, sizeof(constantData), extractBuffer.get());
+	}
 
-		blitter.Blit(shader_.get(), vao_.get(), 1, textures, nullptr, 0, dest);
+	// Shrink pass
+	for (int i = 0; i < BlurIterations; i++)
+	{
+		GLuint textures[1];
+		textures[0] = (i == 0) ? (GLuint)extractBuffer->GetViewID() : (GLuint)lowresBuffers[0][i - 1]->GetViewID();
+		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+	}
 
-		GLExt::glActiveTexture(GL_TEXTURE0);
-		renderer->GetRenderState()->Update(true);
-		renderer->GetRenderState()->Pop();
-		GLCheckError();
+	// Horizontal gaussian blur pass
+	for (int i = 0; i < BlurIterations; i++)
+	{
+		const GLuint textures[] = {(GLuint)lowresBuffers[0][i]->GetViewID()};
+		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), 1, textures, nullptr, 0, lowresBuffers[1][i].get());
+	}
+
+	// Vertical gaussian blur pass
+	for (int i = 0; i < BlurIterations; i++)
+	{
+		const GLuint textures[] = {(GLuint)lowresBuffers[1][i]->GetViewID()};
+		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+	}
+
+	// Blending pass
+	state.AlphaBlend = AlphaBlendType::Add;
+	renderer->GetRenderState()->Update(false);
+	{
+		const GLuint textures[] = {(GLuint)lowresBuffers[0][0]->GetViewID(),
+								   (GLuint)lowresBuffers[0][1]->GetViewID(),
+								   (GLuint)lowresBuffers[0][2]->GetViewID(),
+								   (GLuint)lowresBuffers[0][3]->GetViewID()};
+		blitter.Blit(shaderBlend.get(), vaoBlend.get(), 4, textures, nullptr, 0, dest);
+	}
+
+	GLExt::glActiveTexture(GL_TEXTURE0);
+	renderer->GetRenderState()->Update(true);
+	renderer->GetRenderState()->Pop();
+	GLCheckError();
+}
+
+void BloomEffectGL::OnLostDevice() { ReleaseBuffers(); }
+
+void BloomEffectGL::OnResetDevice() {}
+
+void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
+{
+	ReleaseBuffers();
+
+	renderTextureWidth = width;
+	renderTextureHeight = height;
+
+	// Create high brightness extraction buffer
+	{
+		int32_t bufferWidth = width;
+		int32_t bufferHeight = height;
+		extractBuffer.reset(RenderTexture::Create(graphics));
+		extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
+	}
+
+	// Create low-resolution buffers
+	for (int i = 0; i < BlurBuffers; i++)
+	{
+		int32_t bufferWidth = width;
+		int32_t bufferHeight = height;
+		for (int j = 0; j < BlurIterations; j++)
+		{
+			bufferWidth = std::max(1, (bufferWidth + 1) / 2);
+			bufferHeight = std::max(1, (bufferHeight + 1) / 2);
+			lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
+			lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
+		}
 	}
 }
 
+void BloomEffectGL::ReleaseBuffers()
+{
+	renderTextureWidth = 0;
+	renderTextureHeight = 0;
+
+	extractBuffer.reset();
+	for (int i = 0; i < BlurBuffers; i++)
+	{
+		for (int j = 0; j < BlurIterations; j++)
+		{
+			lowresBuffers[i][j].reset();
+		}
+	}
+}
+
+TonemapEffectGL::TonemapEffectGL(Graphics* graphics) : TonemapEffect(graphics), blitter(graphics)
+{
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
+
+	// Copy shader
+	EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
+
+	shaderCopy.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &copyPS, 1, "Tonemap copy"));
+	shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderCopy->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
+
+	// Reinhard shader
+	EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
+
+	shaderReinhard.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &tonemapPS, 1, "Tonemap Reinhard"));
+	shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderReinhard->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
+	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
+	shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderReinhard->GetUniformId("u_Exposure"), 0);
+
+	// Setup VAOs
+	vaoCopy = blitter.CreateVAO(shaderCopy.get());
+	vaoReinhard = blitter.CreateVAO(shaderReinhard.get());
+}
+
+TonemapEffectGL::~TonemapEffectGL() {}
+
+void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	auto& state = renderer->GetRenderState()->Push();
+	state.AlphaBlend = AlphaBlendType::Opacity;
+	state.DepthWrite = false;
+	state.DepthTest = false;
+	state.CullingType = CullingType::Double;
+	renderer->GetRenderState()->Update(false);
+	renderer->SetRenderMode(RenderMode::Normal);
+
+	const GLuint textures[] = {(GLuint)src->GetViewID()};
+
+	if (algorithm == Algorithm::Off)
+	{
+		blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, nullptr, 0, dest);
+	}
+	else if (algorithm == Algorithm::Reinhard)
+	{
+		const float constantData[4] = {exposure, 16.0f * 16.0f};
+		blitter.Blit(shaderReinhard.get(), vaoReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
+	}
+
+	GLExt::glActiveTexture(GL_TEXTURE0);
+	renderer->GetRenderState()->Update(true);
+	renderer->GetRenderState()->Pop();
+	GLCheckError();
+}
+
+LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter(graphics)
+{
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
+	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
+
+	// Copy shader
+	shader_.reset(Shader::Create(renderer->GetGraphicsDevice(), &basicVS, 1, &linierToSrgbPS, 1, "LinearToSRGB"));
+	shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shader_->SetVertexSize(sizeof(BlitterGL::Vertex));
+	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
+
+	// Setup VAOs
+	vao_ = blitter.CreateVAO(shader_.get());
+}
+
+LinearToSRGBEffectGL::~LinearToSRGBEffectGL() {}
+
+void LinearToSRGBEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererGL;
+	auto renderer = (RendererImplemented*)graphics->GetRenderer();
+
+	auto& state = renderer->GetRenderState()->Push();
+	state.AlphaBlend = AlphaBlendType::Opacity;
+	state.DepthWrite = false;
+	state.DepthTest = false;
+	state.CullingType = CullingType::Double;
+	renderer->GetRenderState()->Update(false);
+	renderer->SetRenderMode(RenderMode::Normal);
+
+	const GLuint textures[] = {(GLuint)src->GetViewID()};
+
+	blitter.Blit(shader_.get(), vao_.get(), 1, textures, nullptr, 0, dest);
+
+	GLExt::glActiveTexture(GL_TEXTURE0);
+	renderer->GetRenderState()->Update(true);
+	renderer->GetRenderState()->Pop();
+	GLCheckError();
+}
+} // namespace efk

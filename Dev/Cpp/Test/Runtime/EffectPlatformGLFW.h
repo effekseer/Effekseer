@@ -32,7 +32,6 @@ private:
 	GLFWwindow* glfwWindow_ = nullptr;
 
 protected:
-
 	void* GetNativePtr(int32_t index) override;
 	void Present() override;
 	bool DoEvent() override;

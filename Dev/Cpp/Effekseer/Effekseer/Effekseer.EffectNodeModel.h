@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_ParameterNODE_MODEL_H__
-#define	__EFFEKSEER_ParameterNODE_MODEL_H__
+#ifndef __EFFEKSEER_ParameterNODE_MODEL_H__
+#define __EFFEKSEER_ParameterNODE_MODEL_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -19,23 +19,20 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class EffectNodeModel
-	: public EffectNodeImplemented
+class EffectNodeModel : public EffectNodeImplemented
 {
 	friend class Manager;
 	friend class Effect;
 	friend class Instance;
 
 public:
-
 	struct InstanceValues
 	{
 		// 色
 		Color _color;
 		Color _original;
 
-		union 
-		{
+		union {
 			struct
 			{
 				Color _color;
@@ -49,7 +46,7 @@ public:
 			struct
 			{
 				Color start;
-				Color  end;
+				Color end;
 
 			} easing;
 
@@ -62,28 +59,23 @@ public:
 	};
 
 public:
-	AlphaBlendType		AlphaBlend;
-	int32_t			ModelIndex;
+	AlphaBlendType AlphaBlend;
+	int32_t ModelIndex;
 
 	//! this value is not used
-	int32_t			NormalTextureIndex;
+	int32_t NormalTextureIndex;
 
-	BillboardType	Billboard;
+	BillboardType Billboard;
 
 	//! this value is not used
-	bool			Lighting;
-	CullingType	Culling;
+	bool Lighting;
+	CullingType Culling;
 
-	StandardColorParameter	AllColor;
+	StandardColorParameter AllColor;
 
-	EffectNodeModel( Effect* effect, unsigned char*& pos )
-		: EffectNodeImplemented(effect, pos)
-	{
-	}
+	EffectNodeModel(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos) {}
 
-	~EffectNodeModel()
-	{
-	}
+	~EffectNodeModel() {}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -103,8 +95,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_ParameterNODE_MODEL_H__
+#endif // __EFFEKSEER_ParameterNODE_MODEL_H__

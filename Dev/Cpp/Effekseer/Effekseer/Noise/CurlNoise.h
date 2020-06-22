@@ -32,23 +32,11 @@ public:
 		const Vec3f dy = Vec3f(0.0, e, 0.0);
 		const Vec3f dz = Vec3f(0.0, 0.0, e);
 
-		auto noise_x = [this](Vec3f v) -> Vec3f {
-			return Vec3f(0.0f,
-						 ynoise_.OctaveNoise(Octave, v),
-						 znoise_.OctaveNoise(Octave, v));
-		};
+		auto noise_x = [this](Vec3f v) -> Vec3f { return Vec3f(0.0f, ynoise_.OctaveNoise(Octave, v), znoise_.OctaveNoise(Octave, v)); };
 
-		auto noise_y = [this](Vec3f v) -> Vec3f {
-			return Vec3f(xnoise_.OctaveNoise(Octave, v),
-						 0.0f,
-						 znoise_.OctaveNoise(Octave, v));
-		};
+		auto noise_y = [this](Vec3f v) -> Vec3f { return Vec3f(xnoise_.OctaveNoise(Octave, v), 0.0f, znoise_.OctaveNoise(Octave, v)); };
 
-		auto noise_z = [this](Vec3f v) -> Vec3f {
-			return Vec3f(xnoise_.OctaveNoise(Octave, v),
-						 ynoise_.OctaveNoise(Octave, v),
-						 0.0f);
-		};
+		auto noise_z = [this](Vec3f v) -> Vec3f { return Vec3f(xnoise_.OctaveNoise(Octave, v), ynoise_.OctaveNoise(Octave, v), 0.0f); };
 
 		Vec3f p_x = noise_x(pos + dx) - noise_x(pos - dx);
 		Vec3f p_y = noise_y(pos + dy) - noise_y(pos - dy);

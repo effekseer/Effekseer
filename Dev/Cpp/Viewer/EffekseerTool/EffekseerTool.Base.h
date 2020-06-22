@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERTOOL_BASE_H__
-#define	__EFFEKSEERTOOL_BASE_H__
+#ifndef __EFFEKSEERTOOL_BASE_H__
+#define __EFFEKSEERTOOL_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -16,7 +16,7 @@ class Grid;
 class Guide;
 class Culling;
 class Paste;
-}
+} // namespace EffekseerRenderer
 
 namespace EffekseerTool
 {
@@ -41,13 +41,11 @@ enum class DistortionType : int32_t
 	Disabled,
 };
 
-
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerTool
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERTOOL_BASE_H__
+#endif // __EFFEKSEERTOOL_BASE_H__

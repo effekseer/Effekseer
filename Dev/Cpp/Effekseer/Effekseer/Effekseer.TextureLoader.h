@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_TEXTURELOADER_H__
-#define	__EFFEKSEER_TEXTURELOADER_H__
+#ifndef __EFFEKSEER_TEXTURELOADER_H__
+#define __EFFEKSEER_TEXTURELOADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -10,7 +10,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer { 
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -39,7 +40,7 @@ public:
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual TextureData* Load( const EFK_CHAR* path, TextureType textureType ) { return nullptr; }
+	virtual TextureData* Load(const EFK_CHAR* path, TextureType textureType) { return nullptr; }
 
 	/**
 		@brief
@@ -67,14 +68,14 @@ public:
 		テクスチャを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(TextureData* data ) {}
+	virtual void Unload(TextureData* data) {}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_TEXTURELOADER_H__
+#endif // __EFFEKSEER_TEXTURELOADER_H__

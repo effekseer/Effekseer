@@ -52,7 +52,7 @@ private:
 
 		int32_t Layer = 0;
 
-		//! a time (by 1/60) to progress an effect when Update is called 
+		//! a time (by 1/60) to progress an effect when Update is called
 		float NextUpdateFrame = 0.0f;
 
 		//! Rate of scale in relation to manager's time

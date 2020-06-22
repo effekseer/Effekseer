@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_RENDERER_H__
-#define	__EFFEKSEERRENDERER_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_RENDERER_H__
+#define __EFFEKSEERRENDERER_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -29,7 +29,7 @@ public:
 };
 
 /**
-	@brief	
+	@brief
 	\~english A status of UV when particles are rendered.
 	\~japanese パーティクルを描画する時のUVの状態
 */
@@ -60,8 +60,8 @@ class GraphicsDevice : public ::Effekseer::IReference
 public:
 	GraphicsDevice() = default;
 	virtual ~GraphicsDevice() = default;
-};	
-	
+};
+
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -83,8 +83,7 @@ public:
 	virtual void NewFrame() {}
 };
 
-class Renderer
-	: public ::Effekseer::IReference
+class Renderer : public ::Effekseer::IReference
 {
 protected:
 	Renderer();
@@ -94,7 +93,6 @@ protected:
 	Impl* impl = nullptr;
 
 public:
-
 	/**
 		@brief	only for Effekseer backend developer. Effekseer User doesn't need it.
 	*/
@@ -173,7 +171,7 @@ public:
 	/**
 		@brief	Set a projection matrix
 	*/
-	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera matrix
@@ -183,7 +181,7 @@ public:
 	/**
 		@brief	Set a camera matrix
 	*/
-	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera projection matrix
@@ -206,7 +204,7 @@ public:
 
 	/**
 		@brief	Set a front direction and position of camera manually
-		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus, 
+		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus,
 		@note
 		These are set based on camera matrix automatically.
 		It is failed on some platform.
@@ -241,15 +239,15 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english Create default material loader
 	\~japanese 標準のマテリアル読込クラスを生成する。
 
@@ -272,7 +270,7 @@ public:
 	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english Get draw call count
 	\~japanese ドローコールの回数を取得する
 	*/
@@ -307,7 +305,7 @@ public:
 	virtual Effekseer::RenderMode GetRenderMode() const;
 
 	/**
-	@brief	
+	@brief
 	\~english Specify a render mode.
 	\~japanese 描画モードを設定する。
 	*/
@@ -384,14 +382,14 @@ public:
 	\~English	Delete a proxy texture
 	\~Japanese	代替のテクスチャを削除する
 	*/
-	virtual void DeleteProxyTexture(Effekseer::TextureData* data) { }
+	virtual void DeleteProxyTexture(Effekseer::TextureData* data) {}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_RENDERER_H__

@@ -1,22 +1,22 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
-#define	__EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
+#ifndef __EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
+#define __EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.h>
 #include <Effekseer.Internal.h>
-#include <assert.h>
-#include <string.h>
-#include <math.h>
+#include <Effekseer.h>
 #include <algorithm>
+#include <assert.h>
+#include <math.h>
+#include <string.h>
 
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.RenderStateBase.h"
-#include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -30,20 +30,18 @@ typedef ::Effekseer::SpriteRenderer::NodeParameter efkSpriteNodeParam;
 typedef ::Effekseer::SpriteRenderer::InstanceParameter efkSpriteInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template<typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
-class SpriteRendererBase
-	: public ::Effekseer::SpriteRenderer
-	, public ::Effekseer::AlignedAllocationPolicy<16>
+template <typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
+class SpriteRendererBase : public ::Effekseer::SpriteRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
-	RENDERER*						m_renderer;
-	int32_t							m_spriteCount;
-	uint8_t*						m_ringBufferData;
+	RENDERER* m_renderer;
+	int32_t m_spriteCount;
+	uint8_t* m_ringBufferData;
 
 	struct KeyValue
 	{
 		float Key;
-		efkSpriteInstanceParam	Value;
+		efkSpriteInstanceParam Value;
 	};
 
 	Effekseer::CustomAlignedVector<KeyValue> instances;
@@ -53,22 +51,15 @@ protected:
 	int32_t customData2Count_ = 0;
 
 public:
-
-	SpriteRendererBase(RENDERER* renderer)
-		: m_renderer(renderer)
-		, m_spriteCount(0)
-		, m_ringBufferData(nullptr)
+	SpriteRendererBase(RENDERER* renderer) : m_renderer(renderer), m_spriteCount(0), m_ringBufferData(nullptr)
 	{
 		// reserve buffers
 		instances.reserve(m_renderer->GetSquareMaxCount());
 	}
 
-	virtual ~SpriteRendererBase()
-	{
-	}
+	virtual ~SpriteRendererBase() {}
 
 protected:
-
 	void RenderingInstance(const efkSpriteInstanceParam& inst,
 						   const efkSpriteNodeParam& param,
 						   const StandardRendererState& state,
@@ -124,17 +115,20 @@ protected:
 		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
 #endif
 
-
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index
+		state.CopyMaterialFromParameterToState(param.EffectPointer,
+											   param.BasicParameterPtr->MaterialParameterPtr,
+											   param.BasicParameterPtr->Texture1Index,
+											   param.BasicParameterPtr->Texture2Index
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-											   , param.BasicParameterPtr->Texture3Index
-											   , param.BasicParameterPtr->Texture4Index
-											   , param.BasicParameterPtr->Texture5Index
-											   , param.BasicParameterPtr->Texture6Index
+											   ,
+											   param.BasicParameterPtr->Texture3Index,
+											   param.BasicParameterPtr->Texture4Index,
+											   param.BasicParameterPtr->Texture5Index,
+											   param.BasicParameterPtr->Texture6Index
 #endif
 		);
 		customData1Count_ = state.CustomData1Count;
@@ -150,7 +144,10 @@ protected:
 		instances.clear();
 	}
 
-	void Rendering_(const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera)
+	void Rendering_(const efkSpriteNodeParam& parameter,
+					const efkSpriteInstanceParam& instanceParameter,
+					void* userData,
+					const ::Effekseer::Mat44f& camera)
 	{
 		if (parameter.ZSort == Effekseer::ZSortType::None)
 		{
@@ -183,48 +180,52 @@ protected:
 
 	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lightning; }
 
-	template<typename VERTEX>
-	void Rendering_Internal( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera )
+	template <typename VERTEX>
+	void Rendering_Internal(const efkSpriteNodeParam& parameter,
+							const efkSpriteInstanceParam& instanceParameter,
+							void* userData,
+							const ::Effekseer::Mat44f& camera)
 	{
-		if( m_ringBufferData == nullptr ) return;
+		if (m_ringBufferData == nullptr)
+			return;
 
 		StrideView<VERTEX> verteies(m_ringBufferData, stride_, 4);
-		
+
 		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
-		for( int i = 0; i < 4; i++ )
+		for (int i = 0; i < 4; i++)
 		{
 			verteies[i].Pos.X = instanceParameter.Positions[i].GetX();
 			verteies[i].Pos.Y = instanceParameter.Positions[i].GetY();
 			verteies[i].Pos.Z = 0.0f;
-	
-			verteies[i].SetColor( instanceParameter.Colors[i] );
+
+			verteies[i].SetColor(instanceParameter.Colors[i]);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			verteies[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
 			verteies[i].SetAlphaThreshold(instanceParameter.AlphaThreshold);
 #endif
 		}
-		
+
 		verteies[0].UV[0] = instanceParameter.UV.X;
 		verteies[0].UV[1] = instanceParameter.UV.Y + instanceParameter.UV.Height;
-	
+
 		verteies[1].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[1].UV[1] = instanceParameter.UV.Y + instanceParameter.UV.Height;
-		
+
 		verteies[2].UV[0] = instanceParameter.UV.X;
 		verteies[2].UV[1] = instanceParameter.UV.Y;
-	
+
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
-		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.Y +  instanceParameter.AlphaUV.Height, 1);
-		
+		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
+
 		verteies[1].SetAlphaUV(instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
 		verteies[1].SetAlphaUV(instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
-		
+
 		verteies[2].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
 		verteies[2].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
 
@@ -232,7 +233,7 @@ protected:
 		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
 
 		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.X, 0);
-		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y +  instanceParameter.UVDistortionUV.Height, 1);
+		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
 
 		verteies[1].SetUVDistortionUV(instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
 		verteies[1].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
@@ -290,8 +291,8 @@ protected:
 			vs[2].SetUV2(0.0f, 0.0f);
 			vs[3].SetUV2(1.0f, 0.0f);
 		}
-		
-		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
+
+		if (parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
 		{
@@ -307,7 +308,7 @@ protected:
 				verteies[i].Pos.X = verteies[i].Pos.X * s.GetX();
 				verteies[i].Pos.Y = verteies[i].Pos.Y * s.GetY();
 			}
-	
+
 			ApplyDepthParameters(mat_rot,
 								 m_renderer->GetCameraFrontDirection(),
 								 m_renderer->GetCameraPosition(),
@@ -315,7 +316,7 @@ protected:
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
 
-			TransformVertexes( verteies, 4, mat_rot );
+			TransformVertexes(verteies, 4, mat_rot);
 
 			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lightning)
 			{
@@ -332,17 +333,17 @@ protected:
 				}
 			}
 		}
-		else if( parameter.Billboard == ::Effekseer::BillboardType::Fixed )
+		else if (parameter.Billboard == ::Effekseer::BillboardType::Fixed)
 		{
 			auto mat = instanceParameter.SRTMatrix43;
 
 			ApplyDepthParameters(mat,
-							 m_renderer->GetCameraFrontDirection(),
-							 m_renderer->GetCameraPosition(),
-							 parameter.DepthParameterPtr,
-							 parameter.IsRightHand);
+								 m_renderer->GetCameraFrontDirection(),
+								 m_renderer->GetCameraPosition(),
+								 parameter.DepthParameterPtr,
+								 parameter.IsRightHand);
 
-			for( int i = 0; i < 4; i++ )
+			for (int i = 0; i < 4; i++)
 			{
 				auto Pos = ::Effekseer::Vec3f::Load(&verteies[i].Pos);
 				Pos = ::Effekseer::Vec3f::Transform(Pos, mat);
@@ -351,7 +352,7 @@ protected:
 				// distortion
 				if (vertexType == VertexType::Distortion)
 				{
-					auto vs = (VERTEX_DISTORTION*) & verteies[i];
+					auto vs = (VERTEX_DISTORTION*)&verteies[i];
 
 					::Effekseer::Vec3f t = mat.GetTranslation();
 
@@ -381,7 +382,7 @@ protected:
 				}
 			}
 		}
-		
+
 		// custom parameter
 		if (customData1Count_ > 0)
 		{
@@ -432,7 +433,6 @@ protected:
 			{
 				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
 			}
-			
 
 			for (auto& kv : instances)
 			{
@@ -452,20 +452,18 @@ public:
 
 	void Rendering(const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData) override
 	{
-		if (m_spriteCount == m_renderer->GetSquareMaxCount()) return;
+		if (m_spriteCount == m_renderer->GetSquareMaxCount())
+			return;
 		Rendering_(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 	}
 
-	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override
-	{
-		EndRendering_(m_renderer, parameter);
-	}
+	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override { EndRendering_(m_renderer, parameter); }
 };
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_SPRITE_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_SPRITE_RENDERER_H__

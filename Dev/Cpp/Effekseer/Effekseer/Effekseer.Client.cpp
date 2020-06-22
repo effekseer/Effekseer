@@ -1,29 +1,30 @@
 ﻿
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
 #include "Effekseer.ClientImplemented.h"
 
-#include "Effekseer.Manager.h"
 #include "Effekseer.EffectLoader.h"
+#include "Effekseer.Manager.h"
 
-namespace Effekseer {
+namespace Effekseer
+{
 
-void ClientImplemented::RecvAsync( void* data )
+void ClientImplemented::RecvAsync(void* data)
 {
 	auto client = (ClientImplemented*)data;
 
-	while(true)
+	while (true)
 	{
 		int32_t size = 0;
 		int32_t restSize = 0;
 
 		restSize = 4;
-		while(restSize > 0)
+		while (restSize > 0)
 		{
-			auto recvSize = ::recv( client->m_socket, (char*)(&size), restSize, 0 );
+			auto recvSize = ::recv(client->m_socket, (char*)(&size), restSize, 0);
 			restSize -= recvSize;
 
-			if( recvSize == 0 || recvSize == -1 )
+			if (recvSize == 0 || recvSize == -1)
 			{
 				client->StopInternal();
 				return;
@@ -36,7 +37,8 @@ void ClientImplemented::StopInternal()
 {
 	std::lock_guard<std::mutex> lock(mutexStop);
 
-	if (!m_running) return;
+	if (!m_running)
+		return;
 	m_running = false;
 
 	Socket::Shutsown(m_socket);
@@ -45,11 +47,7 @@ void ClientImplemented::StopInternal()
 	EffekseerPrintDebug("Client : Stop(Internal)\n");
 }
 
-ClientImplemented::ClientImplemented()
-	: m_running		( false )
-{
-	Socket::Initialize();
-}
+ClientImplemented::ClientImplemented() : m_running(false) { Socket::Initialize(); }
 
 ClientImplemented::~ClientImplemented()
 {
@@ -58,10 +56,7 @@ ClientImplemented::~ClientImplemented()
 	Socket::Finalize();
 }
 
-Client* Client::Create()
-{
-	return new ClientImplemented();
-}
+Client* Client::Create() { return new ClientImplemented(); }
 
 /*
 HOSTENT* ClientImplemented::GetHostEntry( const char* host )
@@ -109,15 +104,16 @@ bool ClientImplemented::GetAddr(const char* host, IN_ADDR* addr)
 			return false;
 		}
 
-		addr->s_addr = *(unsigned int *)hostEntry->h_addr_list[0];
+		addr->s_addr = *(unsigned int*)hostEntry->h_addr_list[0];
 	}
 
 	return true;
 }
 
-bool ClientImplemented::Start( char* host, uint16_t port )
+bool ClientImplemented::Start(char* host, uint16_t port)
 {
-	if( m_running ) return false;
+	if (m_running)
+		return false;
 
 	// to stop thread
 	Stop();
@@ -126,7 +122,7 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 
 	// create a socket
 	EfkSocket socket_ = Socket::GenSocket();
-	if ( socket_ == InvalidSocket )
+	if (socket_ == InvalidSocket)
 	{
 		return false;
 	}
@@ -135,21 +131,23 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 	IN_ADDR addr;
 	if (!GetAddr(host, &addr))
 	{
-		if (socket_ != InvalidSocket) Socket::Close(socket_);
+		if (socket_ != InvalidSocket)
+			Socket::Close(socket_);
 		return false;
 	}
 
 	// generate data to connect
-	memset( &sockAddr, 0, sizeof(SOCKADDR_IN) );
-	sockAddr.sin_family	= AF_INET;
-	sockAddr.sin_port	= htons( port );
-	sockAddr.sin_addr	= addr;
+	memset(&sockAddr, 0, sizeof(SOCKADDR_IN));
+	sockAddr.sin_family = AF_INET;
+	sockAddr.sin_port = htons(port);
+	sockAddr.sin_addr = addr;
 
 	// connect
-	int32_t ret = ::connect( socket_, (SOCKADDR*)(&sockAddr), sizeof(SOCKADDR_IN) );
-	if ( ret == SocketError )
+	int32_t ret = ::connect(socket_, (SOCKADDR*)(&sockAddr), sizeof(SOCKADDR_IN));
+	if (ret == SocketError)
 	{
-		if ( socket_ != InvalidSocket ) Socket::Close( socket_ );
+		if (socket_ != InvalidSocket)
+			Socket::Close(socket_);
 		return false;
 	}
 
@@ -159,10 +157,7 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 	m_running = true;
 
 	isThreadRunning = true;
-	m_threadRecv = std::thread(
-		[this](){
-		RecvAsync(this);
-	});
+	m_threadRecv = std::thread([this]() { RecvAsync(this); });
 
 	EffekseerPrintDebug("Client : Start\n");
 
@@ -182,26 +177,27 @@ void ClientImplemented::Stop()
 	EffekseerPrintDebug("Client : Stop\n");
 }
 
-bool ClientImplemented::Send( void* data, int32_t datasize )
+bool ClientImplemented::Send(void* data, int32_t datasize)
 {
-	if( !m_running ) return false;
+	if (!m_running)
+		return false;
 
 	m_sendBuffer.clear();
-	for( int32_t i = 0; i < sizeof(int32_t); i++ )
+	for (int32_t i = 0; i < sizeof(int32_t); i++)
 	{
-		m_sendBuffer.push_back( ((uint8_t*)(&datasize))[i] );
+		m_sendBuffer.push_back(((uint8_t*)(&datasize))[i]);
 	}
 
-	for( int32_t i = 0; i < datasize; i++ )
+	for (int32_t i = 0; i < datasize; i++)
 	{
-		m_sendBuffer.push_back( ((uint8_t*)(data))[i] );
+		m_sendBuffer.push_back(((uint8_t*)(data))[i]);
 	}
 
 	int32_t size = (int32_t)m_sendBuffer.size();
-	while( size > 0 )
+	while (size > 0)
 	{
-		auto ret = ::send( m_socket, (const char*)(&(m_sendBuffer[m_sendBuffer.size()-size])), size, 0 );
-		if( ret == 0 || ret < 0 )
+		auto ret = ::send(m_socket, (const char*)(&(m_sendBuffer[m_sendBuffer.size() - size])), size, 0);
+		if (ret == 0 || ret < 0)
 		{
 			Stop();
 			return false;
@@ -212,65 +208,64 @@ bool ClientImplemented::Send( void* data, int32_t datasize )
 	return true;
 }
 
-void ClientImplemented::Reload( const EFK_CHAR* key, void* data, int32_t size )
+void ClientImplemented::Reload(const EFK_CHAR* key, void* data, int32_t size)
 {
 	int32_t keylen = 0;
-	for( ; ; keylen++ )
+	for (;; keylen++)
 	{
-		if(key[keylen] == 0 ) break;
+		if (key[keylen] == 0)
+			break;
 	}
 
 	std::vector<uint8_t> buf;
 
-	for( int32_t i = 0; i < sizeof(int32_t); i++ )
+	for (int32_t i = 0; i < sizeof(int32_t); i++)
 	{
-		buf.push_back( ((uint8_t*)(&keylen))[i] );
+		buf.push_back(((uint8_t*)(&keylen))[i]);
 	}
 
-	for( int32_t i = 0; i < keylen * 2; i++ )
+	for (int32_t i = 0; i < keylen * 2; i++)
 	{
-		buf.push_back( ((uint8_t*)(key))[i] );
+		buf.push_back(((uint8_t*)(key))[i]);
 	}
 
-	for( int32_t i = 0; i < size; i++ )
+	for (int32_t i = 0; i < size; i++)
 	{
-		buf.push_back( ((uint8_t*)(data))[i] );
+		buf.push_back(((uint8_t*)(data))[i]);
 	}
 
-	Send( &(buf[0]), (int32_t)buf.size() );
+	Send(&(buf[0]), (int32_t)buf.size());
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ClientImplemented::Reload( Manager* manager, const EFK_CHAR* path, const EFK_CHAR* key )
+void ClientImplemented::Reload(Manager* manager, const EFK_CHAR* path, const EFK_CHAR* key)
 {
 	EffectLoader* loader = manager->GetEffectLoader();
-	
+
 	void* data = NULL;
 	int32_t size = 0;
 
-	if( !loader->Load( path, data, size ) ) return;
+	if (!loader->Load(path, data, size))
+		return;
 
-	Reload( key, data, size );
+	Reload(key, data, size);
 
-	loader->Unload( data, size );
+	loader->Unload(data, size);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool ClientImplemented::IsConnected()
-{
-	return m_running;
-}
+bool ClientImplemented::IsConnected() { return m_running; }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )

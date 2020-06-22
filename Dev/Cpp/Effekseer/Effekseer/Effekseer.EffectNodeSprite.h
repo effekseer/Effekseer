@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_ParameterNODE_SPRITE_H__
-#define	__EFFEKSEER_ParameterNODE_SPRITE_H__
+#ifndef __EFFEKSEER_ParameterNODE_SPRITE_H__
+#define __EFFEKSEER_ParameterNODE_SPRITE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -22,11 +22,10 @@ struct SpriteColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
-		
+
 		} def;
 
 		struct
@@ -49,11 +48,10 @@ struct SpritePositionParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
-		
+
 		} def;
 
 		struct
@@ -69,24 +67,21 @@ struct SpritePositionParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class EffectNodeSprite
-	: public EffectNodeImplemented
+class EffectNodeSprite : public EffectNodeImplemented
 {
 	friend class Manager;
 	friend class Effect;
 	friend class Instance;
 
 public:
-
 	struct InstanceValues
 	{
 		// 色
 		Color _color;
 
 		Color _originalColor;
-		
-		union 
-		{
+
+		union {
 			struct
 			{
 				Color _color;
@@ -100,7 +95,7 @@ public:
 			struct
 			{
 				Color start;
-				Color  end;
+				Color end;
 
 			} easing;
 
@@ -111,33 +106,27 @@ public:
 
 		} allColorValues;
 
-		union
-		{
-	
+		union {
+
 		} colorValues;
 
-		union
-		{
-	
+		union {
+
 		} positionValues;
 	};
 
 public:
+	AlphaBlendType AlphaBlend;
+	BillboardType Billboard;
 
-	AlphaBlendType		AlphaBlend;
-	BillboardType	Billboard;
-
-	StandardColorParameter	SpriteAllColor;
+	StandardColorParameter SpriteAllColor;
 
 	SpriteColorParameter SpriteColor;
 	SpritePositionParameter SpritePosition;
 
 	int SpriteTexture;
 
-	EffectNodeSprite( Effect* effect, unsigned char*& pos )
-		: EffectNodeImplemented(effect, pos)
-	{
-	}
+	EffectNodeSprite(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos) {}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -157,8 +146,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_ParameterNODE_SPRITE_H__
+#endif // __EFFEKSEER_ParameterNODE_SPRITE_H__

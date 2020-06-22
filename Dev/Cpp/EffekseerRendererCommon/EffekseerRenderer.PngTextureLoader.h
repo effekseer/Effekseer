@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_PNG_TEXTURE_LOADER_H__
-#define	__EFFEKSEERRENDERER_PNG_TEXTURE_LOADER_H__
+#ifndef __EFFEKSEERRENDERER_PNG_TEXTURE_LOADER_H__
+#define __EFFEKSEERRENDERER_PNG_TEXTURE_LOADER_H__
 
 #include <Effekseer.h>
 #include <assert.h>
@@ -18,7 +18,6 @@ private:
 	int32_t textureHeight;
 
 public:
-
 	bool Load(void* data, int32_t size, bool rev);
 	void Unload();
 
@@ -30,6 +29,6 @@ public:
 	int32_t GetHeight() { return textureHeight; }
 };
 
-}
+} // namespace EffekseerRenderer
 
 #endif

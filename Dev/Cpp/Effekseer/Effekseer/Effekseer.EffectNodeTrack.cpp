@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
+#include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -13,8 +13,8 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 
-#include "Effekseer.InstanceGroup.h"
 #include "Effekseer.EffectNodeTrack.h"
+#include "Effekseer.InstanceGroup.h"
 
 #include "Effekseer.Setting.h"
 
@@ -90,8 +90,8 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 	TrackRenderer* renderer = manager->GetTrackRenderer();
 	if (renderer != NULL)
 	{
-		//m_nodeParameter.TextureFilter = RendererCommon.FilterType;
-		//m_nodeParameter.TextureWrap = RendererCommon.WrapType;
+		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
+		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.EffectPointer = GetEffect();
@@ -118,7 +118,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
-		
+
 		if (group->GetFirst() != nullptr)
 		{
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -164,9 +164,16 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 		SetValues(m_instanceParameter.ColorCenter, instance, m_currentGroupValues.ColorCenter, TrackColorCenter, time, livedTime);
 		SetValues(m_instanceParameter.ColorRight, instance, m_currentGroupValues.ColorRight, TrackColorRight, time, livedTime);
 
-		SetValues(m_instanceParameter.ColorLeftMiddle, instance, m_currentGroupValues.ColorLeftMiddle, TrackColorLeftMiddle, time, livedTime);
-		SetValues(m_instanceParameter.ColorCenterMiddle, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
-		SetValues(m_instanceParameter.ColorRightMiddle, instance, m_currentGroupValues.ColorRightMiddle, TrackColorRightMiddle, time, livedTime);
+		SetValues(
+			m_instanceParameter.ColorLeftMiddle, instance, m_currentGroupValues.ColorLeftMiddle, TrackColorLeftMiddle, time, livedTime);
+		SetValues(m_instanceParameter.ColorCenterMiddle,
+				  instance,
+				  m_currentGroupValues.ColorCenterMiddle,
+				  TrackColorCenterMiddle,
+				  time,
+				  livedTime);
+		SetValues(
+			m_instanceParameter.ColorRightMiddle, instance, m_currentGroupValues.ColorRightMiddle, TrackColorRightMiddle, time, livedTime);
 
 		SetValues(m_instanceParameter.SizeFor, m_currentGroupValues.SizeFor, TrackSizeFor, t);
 		SetValues(m_instanceParameter.SizeMiddle, m_currentGroupValues.SizeMiddle, TrackSizeMiddle, t);
@@ -287,7 +294,8 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSi
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::SetValues(Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime)
+void EffectNodeTrack::SetValues(
+	Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime)
 {
 	if (param.type == StandardColorParameter::Fixed)
 	{
@@ -300,11 +308,7 @@ void EffectNodeTrack::SetValues(Color& c, const Instance& instance, InstanceGrou
 	else if (param.type == StandardColorParameter::Easing)
 	{
 		float t = (float)time / (float)livedTime;
-		param.easing.all.setValueToArg(
-			c,
-			value.color.easing.start,
-			value.color.easing.end,
-			t);
+		param.easing.all.setValueToArg(c, value.color.easing.start, value.color.easing.end, t);
 	}
 	else if (param.type == StandardColorParameter::FCurve_RGBA)
 	{
@@ -362,7 +366,7 @@ void EffectNodeTrack::LoadValues(TrackSizeParameter& param, unsigned char*& pos)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

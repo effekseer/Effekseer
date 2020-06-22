@@ -2,21 +2,21 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <memory>
-#include "../Effekseer.h"
 #include "Effekseer.DefaultEffectLoader.h"
+#include "../Effekseer.h"
+#include <memory>
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer { 
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultEffectLoader::DefaultEffectLoader( FileInterface* fileInterface )
-	: m_fileInterface( fileInterface )
+DefaultEffectLoader::DefaultEffectLoader(FileInterface* fileInterface) : m_fileInterface(fileInterface)
 {
-	if( m_fileInterface == NULL )
+	if (m_fileInterface == NULL)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -25,28 +25,25 @@ DefaultEffectLoader::DefaultEffectLoader( FileInterface* fileInterface )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultEffectLoader::~DefaultEffectLoader()
-{
-
-}
+DefaultEffectLoader::~DefaultEffectLoader() {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool DefaultEffectLoader::Load( const EFK_CHAR* path, void*& data, int32_t& size )
+bool DefaultEffectLoader::Load(const EFK_CHAR* path, void*& data, int32_t& size)
 {
-	assert( path != NULL );
+	assert(path != NULL);
 
 	data = NULL;
 	size = 0;
 
-	std::unique_ptr<FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return false;
+	std::unique_ptr<FileReader> reader(m_fileInterface->OpenRead(path));
+	if (reader.get() == NULL)
+		return false;
 
 	size = (int32_t)reader->GetLength();
 	data = new uint8_t[size];
-	reader->Read( data, size );
+	reader->Read(data, size);
 
 	return true;
 }
@@ -54,16 +51,16 @@ bool DefaultEffectLoader::Load( const EFK_CHAR* path, void*& data, int32_t& size
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void DefaultEffectLoader::Unload( void* data, int32_t size )
+void DefaultEffectLoader::Unload(void* data, int32_t size)
 {
 	uint8_t* data8 = (uint8_t*)data;
-	ES_SAFE_DELETE_ARRAY( data8 );
+	ES_SAFE_DELETE_ARRAY(data8);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

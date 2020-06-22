@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_ParameterNODE_RIBBON_H__
-#define	__EFFEKSEER_ParameterNODE_RIBBON_H__
+#ifndef __EFFEKSEER_ParameterNODE_RIBBON_H__
+#define __EFFEKSEER_ParameterNODE_RIBBON_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -27,8 +27,7 @@ struct RibbonAllColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 			Color all;
@@ -56,8 +55,7 @@ struct RibbonColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -81,8 +79,7 @@ struct RibbonPositionParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -99,19 +96,16 @@ struct RibbonPositionParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class EffectNodeRibbon
-	: public EffectNodeImplemented
+class EffectNodeRibbon : public EffectNodeImplemented
 {
 public:
-
 	struct InstanceValues
 	{
 		// 色
 		Color _color;
 		Color _original;
 
-		union
-		{
+		union {
 			struct
 			{
 				Color _color;
@@ -125,50 +119,43 @@ public:
 			struct
 			{
 				Color start;
-				Color  end;
+				Color end;
 
 			} easing;
 
 		} allColorValues;
 
-		union
-		{
+		union {
 
 		} colorValues;
 
-		union
-		{
+		union {
 
 		} positionValues;
 	};
 
-	RibbonRenderer::NodeParameter	m_nodeParameter;
+	RibbonRenderer::NodeParameter m_nodeParameter;
 	RibbonRenderer::InstanceParameter m_instanceParameter;
+
 public:
+	AlphaBlendType AlphaBlend;
 
-	AlphaBlendType		AlphaBlend;
+	int ViewpointDependent;
 
-	int				ViewpointDependent;
-
-	RibbonAllColorParameter	RibbonAllColor;
+	RibbonAllColorParameter RibbonAllColor;
 
 	RibbonColorParameter RibbonColor;
 	RibbonPositionParameter RibbonPosition;
 
 	int RibbonTexture;
 
-	int32_t	SplineDivision = 1;
+	int32_t SplineDivision = 1;
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
-	EffectNodeRibbon(Effect* effect, unsigned char*& pos)
-		: EffectNodeImplemented(effect, pos)
-	{
-	}
+	EffectNodeRibbon(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos) {}
 
-	~EffectNodeRibbon()
-	{
-	}
+	~EffectNodeRibbon() {}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -192,8 +179,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_ParameterNODE_RIBBON_H__
+#endif // __EFFEKSEER_ParameterNODE_RIBBON_H__

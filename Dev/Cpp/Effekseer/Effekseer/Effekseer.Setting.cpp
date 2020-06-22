@@ -7,15 +7,15 @@
 #include "Effekseer.RectF.h"
 
 #include "Effekseer.EffectLoader.h"
-#include "Effekseer.TextureLoader.h"
+#include "Effekseer.MaterialLoader.h"
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.SoundLoader.h"
-#include "Effekseer.MaterialLoader.h"
+#include "Effekseer.TextureLoader.h"
 
-#include "Renderer/Effekseer.SpriteRenderer.h"
+#include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 #include "Renderer/Effekseer.RingRenderer.h"
-#include "Renderer/Effekseer.ModelRenderer.h"
+#include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
 
 #include "Effekseer.Effect.h"
@@ -24,17 +24,14 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer {
+namespace Effekseer
+{
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 Setting::Setting()
-	: m_coordinateSystem(CoordinateSystem::RH)
-	, m_effectLoader(NULL)
-	, m_textureLoader(NULL)
-	, m_soundLoader(NULL)
-	, m_modelLoader(NULL)
+	: m_coordinateSystem(CoordinateSystem::RH), m_effectLoader(NULL), m_textureLoader(NULL), m_soundLoader(NULL), m_modelLoader(NULL)
 {
 	auto effectFactory = new EffectFactory();
 	effectFactories.push_back(effectFactory);
@@ -61,34 +58,22 @@ Setting::~Setting()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Setting* Setting::Create()
-{
-	return new Setting();
-}
+Setting* Setting::Create() { return new Setting(); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-CoordinateSystem Setting::GetCoordinateSystem() const
-{
-	return m_coordinateSystem;
-}
+CoordinateSystem Setting::GetCoordinateSystem() const { return m_coordinateSystem; }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Setting::SetCoordinateSystem(CoordinateSystem coordinateSystem)
-{
-	m_coordinateSystem = coordinateSystem;
-}
+void Setting::SetCoordinateSystem(CoordinateSystem coordinateSystem) { m_coordinateSystem = coordinateSystem; }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectLoader* Setting::GetEffectLoader()
-{
-	return m_effectLoader;
-}
+EffectLoader* Setting::GetEffectLoader() { return m_effectLoader; }
 
 //----------------------------------------------------------------------------------
 //
@@ -102,10 +87,7 @@ void Setting::SetEffectLoader(EffectLoader* loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoader* Setting::GetTextureLoader()
-{
-	return m_textureLoader;
-}
+TextureLoader* Setting::GetTextureLoader() { return m_textureLoader; }
 
 //----------------------------------------------------------------------------------
 //
@@ -119,10 +101,7 @@ void Setting::SetTextureLoader(TextureLoader* loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader* Setting::GetModelLoader()
-{
-	return m_modelLoader;
-}
+ModelLoader* Setting::GetModelLoader() { return m_modelLoader; }
 
 //----------------------------------------------------------------------------------
 //
@@ -136,10 +115,7 @@ void Setting::SetModelLoader(ModelLoader* loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader* Setting::GetSoundLoader()
-{
-	return m_soundLoader;
-}
+SoundLoader* Setting::GetSoundLoader() { return m_soundLoader; }
 
 //----------------------------------------------------------------------------------
 //
@@ -150,9 +126,7 @@ void Setting::SetSoundLoader(SoundLoader* loader)
 	m_soundLoader = loader;
 }
 
-MaterialLoader* Setting::GetMaterialLoader()
-{ return m_materialLoader;
-}
+MaterialLoader* Setting::GetMaterialLoader() { return m_materialLoader; }
 
 void Setting::SetMaterialLoader(MaterialLoader* loader)
 {
@@ -160,11 +134,12 @@ void Setting::SetMaterialLoader(MaterialLoader* loader)
 	m_materialLoader = loader;
 }
 
-void Setting::AddEffectFactory(EffectFactory* effectFactory) { 
-	
+void Setting::AddEffectFactory(EffectFactory* effectFactory)
+{
+
 	if (effectFactory == nullptr)
 		return;
-	ES_SAFE_ADDREF(effectFactory); 
+	ES_SAFE_ADDREF(effectFactory);
 	effectFactories.push_back(effectFactory);
 }
 
@@ -177,16 +152,11 @@ void Setting::ClearEffectFactory()
 	effectFactories.clear();
 }
 
-EffectFactory* Setting::GetEffectFactory(int32_t ind) const
-{
-	return effectFactories[ind]; 
-}
+EffectFactory* Setting::GetEffectFactory(int32_t ind) const { return effectFactories[ind]; }
 
-int32_t Setting::GetEffectFactoryCount() const { 
-	return effectFactories.size();
-}
+int32_t Setting::GetEffectFactoryCount() const { return effectFactories.size(); }
 
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+} // namespace Effekseer
+  //----------------------------------------------------------------------------------
+  //
+  //----------------------------------------------------------------------------------
