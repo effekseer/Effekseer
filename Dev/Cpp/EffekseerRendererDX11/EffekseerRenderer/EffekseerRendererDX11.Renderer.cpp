@@ -423,8 +423,9 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },	// AlphaTextureUV
 			{ "TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0 },	// UVDistortionTextureUV
 			{ "TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0 },// BlendUV
-			{ "TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },// FlipbookIndexAndNextRate
-			{ "TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 13, D3D11_INPUT_PER_VERTEX_DATA, 0 },// AlphaThreshold	
+			{ "TEXCOORD", 4, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },// BlendAlphaUV
+			{ "TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },// FlipbookIndexAndNextRate
+			{ "TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 15, D3D11_INPUT_PER_VERTEX_DATA, 0 },// AlphaThreshold	
 #endif
 	};
 
@@ -438,8 +439,9 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // AlphaTextureUV
 		{ "TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // UVDistortionTextureUV
 		{ "TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // BlendUV
-		{ "TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 18, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // FlipbookIndexAndNextRate
-		{ "TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 19, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // AlphaThreshold
+		{ "TEXCOORD", 4, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 18, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // BlendAlphaUV
+		{ "TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // FlipbookIndexAndNextRate
+		{ "TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT,		0, sizeof(float) * 21, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // AlphaThreshold
 #endif
 	};
 
@@ -454,8 +456,9 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUV
 		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // UVDistortionTextureUV
 		{"TEXCOORD", 4, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendUV
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,	  0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0}, // FlipbookIndexAndNextRate
-		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT,	  0, sizeof(float) * 17, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaThreshold	
+		{"TEXCOORD", 5, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendUV
+		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT,	  0, sizeof(float) * 18, D3D11_INPUT_PER_VERTEX_DATA, 0}, // FlipbookIndexAndNextRate
+		{"TEXCOORD", 7, DXGI_FORMAT_R32_FLOAT,	  0, sizeof(float) * 19, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaThreshold	
 #endif
 
 	};

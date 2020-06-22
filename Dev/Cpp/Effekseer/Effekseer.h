@@ -645,6 +645,7 @@ struct NodeRendererBasicParameter
 	int32_t Texture3Index = -1;
 	int32_t Texture4Index = -1;
 	int32_t Texture5Index = -1;
+	int32_t Texture6Index = -1;
 #endif
 	float DistortionIntensity = 0.0f;
 	MaterialParameter* MaterialParameterPtr = nullptr;
@@ -663,6 +664,9 @@ struct NodeRendererBasicParameter
 
 	TextureFilterType TextureFilter5 = TextureFilterType::Nearest;
 	TextureWrapType TextureWrap5 = TextureWrapType::Repeat;
+
+	TextureFilterType TextureFilter6 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap6 = TextureWrapType::Repeat;
 
 	float UVDistortionIntensity = 1.0f;
 
@@ -2190,6 +2194,9 @@ struct EffectBasicRenderParameter
 	int32_t				UVDistortionIndex;
 	TextureWrapType		UVDistortionTexWrapType;
 
+	int32_t				BlendTextureIndex;
+	TextureWrapType		BlendTexWrapType;
+
 	struct FlipbookParameters
 	{
 		bool Enable;
@@ -2201,6 +2208,8 @@ struct EffectBasicRenderParameter
 	RendererMaterialType MaterialType;
 
 	float UVDistortionIntensity;
+
+	int32_t				TextureBlendType;
 #endif
 	AlphaBlendType		AlphaBlend;
 	TextureFilterType	FilterType;

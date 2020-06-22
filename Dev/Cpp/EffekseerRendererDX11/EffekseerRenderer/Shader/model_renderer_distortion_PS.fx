@@ -19,6 +19,9 @@ SamplerState g_uvDistortionSampler  : register(s3);
 
 Texture2D g_blendTexture    : register(t4);
 SamplerState g_blendSampler : register(s4);
+
+Texture2D g_blendAlphaTexture : register(t5);
+SamplerState g_blendAlphaSampler : register(s5);
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -51,9 +54,10 @@ struct PS_Input
     float2 AlphaUV              : TEXCOORD5;
     float2 UVDistortionUV       : TEXCOORD6;
     float2 BlendUV              : TEXCOORD7;
-    float FlipbookRate          : TEXCOORD8;
-    float2 FlipbookNextIndexUV  : TEXCOORD9;
-    float AlphaThreshold        : TEXCOORD10;
+    float2 BlendAlphaUV         : TEXCOORD8;
+    float FlipbookRate          : TEXCOORD9;
+    float2 FlipbookNextIndexUV  : TEXCOORD10;
+    float AlphaThreshold        : TEXCOORD11;
 #endif
 };
 
@@ -63,7 +67,9 @@ float4 PS( const PS_Input Input ) : SV_Target
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
-    UVOffset *= fUVDistortionParameter.x;    
+    UVOffset *= fUVDistortionParameter.x;
+    
+    return g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV);
 #endif
     
 	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset);

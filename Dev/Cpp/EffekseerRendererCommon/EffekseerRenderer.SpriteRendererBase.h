@@ -110,6 +110,8 @@ protected:
 		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
 		state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
 		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
+		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
+		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -132,6 +134,7 @@ protected:
 											   , param.BasicParameterPtr->Texture3Index
 											   , param.BasicParameterPtr->Texture4Index
 											   , param.BasicParameterPtr->Texture5Index
+											   , param.BasicParameterPtr->Texture6Index
 #endif
 		);
 		customData1Count_ = state.CustomData1Count;
@@ -251,6 +254,18 @@ protected:
 
 		verteies[3].SetBlendUV(instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
 		verteies[3].SetBlendUV(instanceParameter.BlendUV.Y, 1);
+
+		verteies[0].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X, 0);
+		verteies[0].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y + instanceParameter.BlendAlphaUV.Height, 1);
+
+		verteies[1].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
+		verteies[1].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y + instanceParameter.BlendAlphaUV.Height, 1);
+
+		verteies[2].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X, 0);
+		verteies[2].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y, 1);
+
+		verteies[3].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
+		verteies[3].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y, 1);
 #endif
 
 		// distortion

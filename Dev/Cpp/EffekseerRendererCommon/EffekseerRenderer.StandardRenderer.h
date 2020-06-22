@@ -42,7 +42,9 @@ struct StandardRendererState
 	::Effekseer::TextureFilterType TextureFilter4;
 	::Effekseer::TextureWrapType TextureWrap4;
 	::Effekseer::TextureFilterType TextureFilter5;
-	::Effekseer::TextureWrapType TextureWrap5;
+	::Effekseer::TextureWrapType TextureWrap5;	
+	::Effekseer::TextureFilterType TextureFilter6;
+	::Effekseer::TextureWrapType TextureWrap6;
 #endif
 	::Effekseer::TextureData* TexturePtr;
 	::Effekseer::TextureData* NormalTexturePtr;
@@ -50,6 +52,7 @@ struct StandardRendererState
 	::Effekseer::TextureData* AlphaTexturePtr;
 	::Effekseer::TextureData* UVDistortionTexturePtr;
 	::Effekseer::TextureData* BlendTexturePtr;
+	::Effekseer::TextureData* BlendAlphaTexturePtr;
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -94,7 +97,9 @@ struct StandardRendererState
 		TextureFilter4 = ::Effekseer::TextureFilterType::Nearest;
 		TextureWrap4 = ::Effekseer::TextureWrapType::Repeat;
 		TextureFilter5 = ::Effekseer::TextureFilterType::Nearest;
-		TextureWrap5 = ::Effekseer::TextureWrapType::Repeat;
+		TextureWrap5 = ::Effekseer::TextureWrapType::Repeat;		
+		TextureFilter6 = ::Effekseer::TextureFilterType::Nearest;
+		TextureWrap6 = ::Effekseer::TextureWrapType::Repeat;
 #endif
 		TexturePtr = nullptr;
 		NormalTexturePtr = nullptr;
@@ -102,6 +107,7 @@ struct StandardRendererState
 		AlphaTexturePtr = nullptr;
 		UVDistortionTexturePtr = nullptr;
 		BlendTexturePtr = nullptr;
+		BlendAlphaTexturePtr = nullptr;
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -161,6 +167,10 @@ struct StandardRendererState
 			return true;
 		if (TextureWrap5 != state.TextureWrap5)
 			return true;
+		if (TextureFilter6 != state.TextureFilter6)
+			return true;
+		if (TextureWrap6 != state.TextureWrap6)
+			return true;
 #endif
 		if (TexturePtr != state.TexturePtr)
 			return true;
@@ -172,6 +182,8 @@ struct StandardRendererState
 		if (UVDistortionTexturePtr != state.UVDistortionTexturePtr)
 			return true;
 		if (BlendTexturePtr != state.BlendTexturePtr)
+			return true;
+		if (BlendAlphaTexturePtr != state.BlendAlphaTexturePtr)
 			return true;
 #endif
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -227,6 +239,7 @@ struct StandardRendererState
 										  , int32_t texture3Index
 										  , int32_t texture4Index
 										  , int32_t texture5Index
+										  , int32_t texture6Index
 #endif
 	)
 	{
@@ -347,6 +360,18 @@ struct StandardRendererState
 			else
 			{
 				BlendTexturePtr = nullptr;
+			}
+
+			if (texture6Index >= 0)
+			{
+				if (Distortion)
+				{
+					BlendAlphaTexturePtr = effect->GetDistortionImage(texture6Index);
+				}
+				else
+				{
+					BlendAlphaTexturePtr = effect->GetColorImage(texture6Index);
+				}
 			}
 #endif
 
@@ -591,6 +616,7 @@ public:
 		m_state.AlphaTexturePtr = (Effekseer::TextureData*)0x1;
 		m_state.UVDistortionTexturePtr = (Effekseer::TextureData*)0x1;
 		m_state.BlendTexturePtr = (Effekseer::TextureData*)0x1;
+		m_state.BlendAlphaTexturePtr = (Effekseer::TextureData*)0x1;
 #endif
 	}
 
@@ -791,6 +817,9 @@ public:
 
 				state.TextureFilterTypes[4] = m_state.TextureFilter5;
 				state.TextureWrapTypes[4] = m_state.TextureWrap5;
+
+				state.TextureFilterTypes[5] = m_state.TextureFilter6;
+				state.TextureWrapTypes[5] = m_state.TextureWrap6;
 #endif
             }
             else
@@ -809,6 +838,9 @@ public:
 
 					state.TextureFilterTypes[4] = m_state.TextureFilter5;
 					state.TextureWrapTypes[4] = m_state.TextureWrap5;
+
+					state.TextureFilterTypes[5] = m_state.TextureFilter6;
+					state.TextureWrapTypes[5] = m_state.TextureWrap6;
                 }
                 else
                 {
@@ -820,6 +852,9 @@ public:
 
 					state.TextureFilterTypes[3] = m_state.TextureFilter5;
 					state.TextureWrapTypes[3] = m_state.TextureWrap5;
+
+					state.TextureFilterTypes[4] = m_state.TextureFilter6;
+					state.TextureWrapTypes[4] = m_state.TextureWrap6;
                 }
 #else
                 state.TextureFilterTypes[1] = m_state.TextureFilter2;
@@ -828,7 +863,7 @@ public:
             }
             
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			std::array<Effekseer::TextureData*, 5> textures;
+			std::array<Effekseer::TextureData*, 6> textures;
 #else
 			std::array<Effekseer::TextureData*, 2> textures;
 #endif
@@ -880,7 +915,16 @@ public:
 					textures[4] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 				}
 
-				m_renderer->SetTextures(shader_, textures.data(), 5);
+				if (m_state.BlendAlphaTexturePtr != nullptr && m_state.BlendAlphaTexturePtr != (Effekseer::TextureData*)0x01)
+				{
+					textures[5] = m_state.BlendAlphaTexturePtr;
+				}
+				else
+				{
+					textures[5] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				}
+
+				m_renderer->SetTextures(shader_, textures.data(), 6);
 #else
 				m_renderer->SetTextures(shader_, textures.data(), 2);
 #endif
@@ -917,7 +961,16 @@ public:
 					textures[4] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 				}
 
-				m_renderer->SetTextures(shader_, textures.data(), 5);
+				if (m_state.BlendAlphaTexturePtr != nullptr && m_state.BlendAlphaTexturePtr != (Effekseer::TextureData*)0x01)
+				{
+					textures[5] = m_state.BlendAlphaTexturePtr;
+				}
+				else
+				{
+					textures[5] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				}
+
+				m_renderer->SetTextures(shader_, textures.data(), 6);
 #else
 				m_renderer->SetTextures(shader_, textures.data(), 2);
 #endif
@@ -952,7 +1005,16 @@ public:
 					textures[3] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 				}
 
-				m_renderer->SetTextures(shader_, textures.data(), 4);
+				if (m_state.BlendAlphaTexturePtr != nullptr && m_state.BlendAlphaTexturePtr != (Effekseer::TextureData*)0x01)
+				{
+					textures[4] = m_state.BlendAlphaTexturePtr;
+				}
+				else
+				{
+					textures[4] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				}
+
+				m_renderer->SetTextures(shader_, textures.data(), 5);
 #else
 				m_renderer->SetTextures(shader_, textures.data(), 1);
 #endif

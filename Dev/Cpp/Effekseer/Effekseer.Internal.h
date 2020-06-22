@@ -114,6 +114,8 @@ public:
 
 		RectF		BlendUV;
 
+		RectF		BlendAlphaUV;
+
 		float		FlipbookIndexAndNextRate;
 
 		float		AlphaThreshold;
@@ -209,6 +211,8 @@ struct NodeRendererTextureUVTypeParameter;
 			RectF	UVDistortionUV;
 
 			RectF	BlendUV;
+
+			RectF	BlendAlphaUV;
 
 			float	FlipbookIndexAndNextRate;
 
@@ -311,6 +315,8 @@ public:
 		RectF		UVDistortionUV;
 
 		RectF		BlendUV;
+
+		RectF		BlendAlphaUV;
 		
 		float		FlipbookIndexAndNextRate;
 
@@ -403,6 +409,8 @@ public:
 		RectF			UVDistortionUV;
 
 		RectF			BlendUV;
+
+		RectF			BlendAlphaUV;
 
 		float			FlipbookIndexAndNextRate;
 
@@ -512,6 +520,8 @@ struct NodeRendererTextureUVTypeParameter;
 			RectF	UVDistortionUV;
 
 			RectF	BlendUV;
+
+			RectF	BlendAlphaUV;
 
 			float	FlipbookIndexAndNextRate;
 

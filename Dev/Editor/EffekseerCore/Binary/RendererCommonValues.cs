@@ -29,6 +29,8 @@ namespace Effekseer.Binary
 			var uvDistortionTexInfo = new TextureInformation();
 
 			var blendTexInfo = new TextureInformation();
+
+			var blendAlphaTexInfo = new TextureInformation();
 #endif
 
 			data.Add(((int)value.Material.Value).GetBytes());
@@ -86,6 +88,9 @@ namespace Effekseer.Binary
 
 					// blend texture
 					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+
+					// blend alpha texture
+					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -108,6 +113,9 @@ namespace Effekseer.Binary
 
 					// blend texture
 					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
+
+					// blend alpha texture
+					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -130,6 +138,9 @@ namespace Effekseer.Binary
 
 					// blend texture
 					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+
+					// blend alpha texture
+					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
 				}
 #endif
 			}
@@ -236,6 +247,9 @@ namespace Effekseer.Binary
 
 				data.Add(advanceValue.BlendTextureParams.BlendTextureParam.Filter);
 				data.Add(advanceValue.BlendTextureParams.BlendTextureParam.Wrap);
+
+				data.Add(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Filter);
+				data.Add(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Wrap);
 			}
 #endif
 
@@ -418,6 +432,17 @@ namespace Effekseer.Binary
 				{
 					data.Add((-1).GetBytes());
 				}
+
+				// blend alpha texture
+				data.Add(GetUVBytes
+				(
+					blendAlphaTexInfo,
+					value.UV5,
+					value.UV5Fixed,
+					value.UV5Animation,
+					value.UV5Scroll,
+					value.UV5FCurve
+				));
 			}
 #endif
 

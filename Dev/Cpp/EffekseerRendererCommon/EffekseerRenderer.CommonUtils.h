@@ -41,6 +41,8 @@ struct DynamicVertex
 
 	void SetBlendUV(float value, int index) {}
 
+	void SetBlendAlphaUV(float value, int index) {}
+
 	void SetFlipbookIndexAndNextRate(float value) {}
 
 	void SetAlphaThreshold(float value) {}
@@ -86,12 +88,14 @@ struct LightingVertex
 	float AlphaUV[2];
 	float UVDistortionUV[2];
 	float BlendUV[2];
+	float BlendAlphaUV[2];
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
 	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetBlendUV(float value, int index) { BlendUV[index] = value; }
+	void SetBlendAlphaUV(float value, int index) { BlendAlphaUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
@@ -124,12 +128,14 @@ struct SimpleVertex
 	float AlphaUV[2];
 	float UVDistortionUV[2];
 	float BlendUV[2];
+	float BlendAlphaUV[2];
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
 	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetBlendUV(float value, int index) { BlendUV[index] = value; }
+	void SetBlendAlphaUV(float value, int index) { BlendAlphaUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
@@ -164,12 +170,14 @@ struct SimpleVertexDX9
 	float AlphaUV[2];
 	float UVDistortionUV[2];
 	float BlendUV[2];
+	float BlendAlphaUV[2];
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
 	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetBlendUV(float value, int index) { BlendUV[index] = value; }
+	void SetBlendAlphaUV(float value, int index) { BlendAlphaUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
@@ -207,12 +215,14 @@ struct VertexDistortion
 	float AlphaUV[2];
 	float UVDistortionUV[2];
 	float BlendUV[2];
+	float BlendAlphaUV[2];
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
 	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetBlendUV(float value, int index) { BlendUV[index] = value; }
+	void SetBlendAlphaUV(float value, int index) { BlendAlphaUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif
@@ -250,12 +260,14 @@ struct VertexDistortionDX9
 	float AlphaUV[2];
 	float UVDistortionUV[2];
 	float BlendUV[2];
+	float BlendAlphaUV[2];
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
 	void SetAlphaUV(float value, int index) { AlphaUV[index] = value; }
 	void SetUVDistortionUV(float value, int index) { UVDistortionUV[index] = value; }
 	void SetBlendUV(float value, int index) { BlendUV[index] = value; }
+	void SetBlendAlphaUV(float value, int index) { BlendAlphaUV[index] = value; }
 	void SetFlipbookIndexAndNextRate(float value) { FlipbookIndexAndNextRate = value; }
 	void SetAlphaThreshold(float value) { AlphaThreshold = value; }
 #endif

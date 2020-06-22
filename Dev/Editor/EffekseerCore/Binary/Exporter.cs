@@ -111,6 +111,16 @@ namespace Effekseer.Binary
 										{
 											UsedTextures.Add(blend_relative_path);
 										}
+
+										var blend_alpha_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
+										if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture &&
+											blend_alpha_relative_path != string.Empty)
+										{
+											if (!UsedTextures.Contains(blend_alpha_relative_path))
+											{
+												UsedTextures.Add(blend_alpha_relative_path);
+											}
+										}
 									}
 								}
 #endif
@@ -153,6 +163,16 @@ namespace Effekseer.Binary
 										if (!UsedDistortionTextures.Contains(blend_relative_path))
 										{
 											UsedDistortionTextures.Add(blend_relative_path);
+										}
+
+										var blend_alpha_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
+										if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture &&
+										   blend_alpha_relative_path != string.Empty)
+										{
+											if (!UsedDistortionTextures.Contains(blend_alpha_relative_path))
+											{
+												UsedDistortionTextures.Add(blend_alpha_relative_path);
+											}
 										}
 									}
 								}
@@ -208,6 +228,16 @@ namespace Effekseer.Binary
 										if (!UsedTextures.Contains(path5))
 										{
 											UsedTextures.Add(path5);
+										}
+
+										var path6 = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
+										if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture &&
+										   path6 != string.Empty)
+										{
+											if (!UsedTextures.Contains(path6))
+											{
+												UsedTextures.Add(path6);
+											}
 										}
 									}
 								}
