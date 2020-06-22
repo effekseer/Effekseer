@@ -142,6 +142,20 @@ namespace EffekseerRenderer
 				v[3].SetBlendUV(uvX2, 0);
 				v[3].SetBlendUV(uvY2, 1);
 			}
+			else if (TARGET == 5)
+			{
+				v[0].SetBlendAlphaUV(uvX1, 0);
+				v[0].SetBlendAlphaUV(uvY1, 1);
+
+				v[1].SetBlendAlphaUV(uvX2, 0);
+				v[1].SetBlendAlphaUV(uvY1, 1);
+
+				v[2].SetBlendAlphaUV(uvX1, 0);
+				v[2].SetBlendAlphaUV(uvY2, 1);
+
+				v[3].SetBlendAlphaUV(uvX2, 0);
+				v[3].SetBlendAlphaUV(uvY2, 1);
+			}
 #else
 			else
 			{
@@ -204,6 +218,13 @@ namespace EffekseerRenderer
 						uvy = param.BlendUV.Y;
 						uvh = param.BlendUV.Height;
 					}
+					else if (TARGET == 5)
+					{
+						uvx = param.BlendAlphaUV.X;
+						uvw = param.BlendAlphaUV.Width;
+						uvy = param.BlendAlphaUV.Y;
+						uvh = param.BlendAlphaUV.Height;
+					}
 #endif
 
 					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
@@ -262,6 +283,13 @@ namespace EffekseerRenderer
 						uvw = param.BlendUV.Width;
 						uvy = param.BlendUV.Y;
 						uvh = param.BlendUV.Height;
+					}
+					else if (TARGET == 5)
+					{
+						uvx = param.BlendAlphaUV.X;
+						uvw = param.BlendAlphaUV.Width;
+						uvy = param.BlendAlphaUV.Y;
+						uvh = param.BlendAlphaUV.Height;
 					}
 #endif
 
@@ -579,6 +607,7 @@ namespace EffekseerRenderer
 			AssignUVs<VERTEX, 2>(parameter, verteies);
 			AssignUVs<VERTEX, 3>(parameter, verteies);
 			AssignUVs<VERTEX, 4>(parameter, verteies);
+			AssignUVs<VERTEX, 5>(parameter, verteies);
 #endif
 
 			// Apply distortion
@@ -854,6 +883,8 @@ namespace EffekseerRenderer
 			state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
 			state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
 			state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
+			state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
+			state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
 
 			state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 			state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -879,6 +910,7 @@ namespace EffekseerRenderer
 												   , param.BasicParameterPtr->Texture3Index
 												   , param.BasicParameterPtr->Texture4Index
 												   , param.BasicParameterPtr->Texture5Index
+												   , param.BasicParameterPtr->Texture6Index
 #endif
 			);
 			customData1Count_ = state.CustomData1Count;

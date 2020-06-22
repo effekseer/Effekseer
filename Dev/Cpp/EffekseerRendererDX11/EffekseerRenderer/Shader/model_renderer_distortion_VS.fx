@@ -7,6 +7,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 fAlphaUV[40];
     float4 fUVDistortionUV[40];
     float4 fBlendUV[40];
+    float4 fBlendAlphaUV[40];
 
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     float4 fFlipbookIndexAndNextRate[40];
@@ -52,10 +53,11 @@ struct VS_Output
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD5;
     float2 UVDistortionUV       : TEXCOORD6;
-    float2 BlendUV              : TEXCOORD7; 
-    float FlipbookRate          : TEXCOORD8;
-    float2 FlipbookNextIndexUV  : TEXCOORD9;
-    float AlphaThreshold        : TEXCOORD10;
+    float2 BlendUV              : TEXCOORD7;
+    float2 BlendAlphaUV         : TEXCOORD8;
+    float FlipbookRate          : TEXCOORD9;
+    float2 FlipbookNextIndexUV  : TEXCOORD10;
+    float AlphaThreshold        : TEXCOORD11;
 #endif
 };
 
@@ -72,6 +74,7 @@ VS_Output VS( const VS_Input Input )
     float4 alphaUV = fAlphaUV[Input.Index.x];
     float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
     float4 blendUV = fBlendUV[Input.Index.x];
+    float4 blendAlphaUV = fBlendAlphaUV[Input.Index.x];
 #endif
 
 		VS_Output Output = (VS_Output) 0;
@@ -101,6 +104,8 @@ VS_Output VS( const VS_Input Input )
     Output.UVDistortionUV.y = Input.UV.y * uvDistortionUV.w + uvDistortionUV.y;
     Output.BlendUV.x = Input.UV.x * blendUV.z + blendUV.x;
     Output.BlendUV.y = Input.UV.y * blendUV.w + blendUV.y;
+    Output.BlendAlphaUV.x = Input.UV.x * blendAlphaUV.z + blendAlphaUV.x;
+    Output.BlendAlphaUV.y = Input.UV.y * blendAlphaUV.w + blendAlphaUV.y;
 #endif
 
 	Output.Normal = mul(mCameraProj, localNormal);
@@ -115,6 +120,7 @@ VS_Output VS( const VS_Input Input )
     Output.AlphaUV.y =  mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
     Output.UVDistortionUV.y =  mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
     Output.BlendUV.y = mUVInversed.x + mUVInversed.y * Output.BlendUV.y;
+    Output.BlendAlphaUV.y = mUVInversed.x + mUVInversed.y * Output.BlendAlphaUV.y;
     
     // flipbook interpolation
 	ApplyFlipbookVS(

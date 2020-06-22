@@ -108,16 +108,45 @@ namespace Effekseer.Data
 		}
 	}
 
+	public class BlendAlphaTextureParameter
+	{
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "ブレンドアルファ画像")]
+		[Name(language = Language.English, value = "Blend Alpha Texture")]
+		public Value.PathForImage Texture { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "フィルター(ブレンドアルファ画像)")]
+		[Name(language = Language.English, value = "Filter(Blend Alpha Texture)")]
+		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "外側(ブレンドアルファ画像)")]
+		[Name(language = Language.English, value = "Weap(Blend Alpha Texture)")]
+		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+		public BlendAlphaTextureParameter()
+		{
+			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+		}
+	}
+
 	public class BlendTextureParameters
 	{
 		[IO(Export = true)]
 		public BlendTextureParameter BlendTextureParam { get; private set; }
 
-		//[Selector(ID = 400)]
-		//[IO(Export = true)]
-		//[Name(language = Language.Japanese, value = "アルファ画像を有効(ブレンド用)")]
-		//[Name(language = Language.English, value = "Enable Blend Alpha Texture")]
-		//public Value.Boolean EnableBlendAlphaTexture { get; private set; }
+		[Selector(ID = 400)]
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "ブレンドアルファ画像を有効")]
+		[Name(language = Language.English, value = "Enable Blend Alpha Texture")]
+		public Value.Boolean EnableBlendAlphaTexture { get; private set; }
+
+		[Selected(ID = 400, Value = 0)]
+		[IO(Export = true)]
+		public BlendAlphaTextureParameter BlendAlphaTextureParam { get; private set; }
 
 		//[Selector(ID = 500)]
 		//[IO(Export = true)]
@@ -129,7 +158,9 @@ namespace Effekseer.Data
 		{
 			BlendTextureParam = new BlendTextureParameter();
 
-			//EnableBlendAlphaTexture = new Value.Boolean(false);
+			EnableBlendAlphaTexture = new Value.Boolean(false);
+			BlendAlphaTextureParam = new BlendAlphaTextureParameter();
+
 			//EnableBlendUVDistortionTexture = new Value.Boolean(false);
 		}
 	}

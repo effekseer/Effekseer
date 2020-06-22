@@ -131,6 +131,8 @@ protected:
 		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
 		state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
 		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
+		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
+		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -155,6 +157,7 @@ protected:
 											   , param.BasicParameterPtr->Texture3Index
 											   , param.BasicParameterPtr->Texture4Index
 											   , param.BasicParameterPtr->Texture5Index
+											   , param.BasicParameterPtr->Texture6Index
 #endif
 		);
 
@@ -304,32 +307,42 @@ protected:
 		float uv1texNext = 0.0f;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		const int32_t advancedUVNum = 3;
+		const int32_t advancedUVNum = 4;
 
 		float advancedUVCurrent[advancedUVNum] = 
 		{ 
 			instanceParameter.AlphaUV.X, 
-			instanceParameter.UVDistortionUV.X 
+			instanceParameter.UVDistortionUV.X,
+			instanceParameter.BlendUV.X,
+			instanceParameter.BlendAlphaUV.X
 		};
 		const float advancedUVStep[advancedUVNum] = 
 		{ 
 			instanceParameter.AlphaUV.Width / parameter.VertexCount, 
-			instanceParameter.UVDistortionUV.Width / parameter.VertexCount 
+			instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
+			instanceParameter.BlendUV.Width / parameter.VertexCount,
+			instanceParameter.BlendAlphaUV.Width / parameter.VertexCount 
 		};
 		const float advancedUVv1[advancedUVNum] = 
 		{ 
 			instanceParameter.AlphaUV.Y, 
-			instanceParameter.UVDistortionUV.Y 
+			instanceParameter.UVDistortionUV.Y,
+			instanceParameter.BlendUV.Y,
+			instanceParameter.BlendAlphaUV.Y
 		};
 		const float advancedUVv2[advancedUVNum] =
 		{
 			advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
-			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f
+			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
+			advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
+			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f
 		};
 		const float advancedUVv3[advancedUVNum] =
 		{
 			advancedUVv1[0] + instanceParameter.AlphaUV.Height,
 			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
+			advancedUVv1[2] + instanceParameter.BlendUV.Height,
+			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height
 		};
 		float advancedUVtexNext[advancedUVNum] =
 		{
@@ -440,6 +453,8 @@ protected:
 			v[0].SetUVDistortionUV(advancedUVv1[1], 1);
 			v[0].SetBlendUV(advancedUVCurrent[2], 0);
 			v[0].SetBlendUV(advancedUVv1[2], 1);
+			v[0].SetBlendAlphaUV(advancedUVCurrent[3], 0);
+			v[0].SetBlendAlphaUV(advancedUVv1[3], 1);
 
 			v[1].SetAlphaUV(advancedUVCurrent[0], 0);
 			v[1].SetAlphaUV(advancedUVv2[0], 1);
@@ -447,6 +462,8 @@ protected:
 			v[1].SetUVDistortionUV(advancedUVv2[1], 1);
 			v[1].SetBlendUV(advancedUVCurrent[2], 0);
 			v[1].SetBlendUV(advancedUVv2[2], 1);
+			v[1].SetBlendAlphaUV(advancedUVCurrent[3], 0);
+			v[1].SetBlendAlphaUV(advancedUVv2[3], 1);
 
 			v[2].SetAlphaUV(advancedUVtexNext[0], 0);
 			v[2].SetAlphaUV(advancedUVv1[0], 1);
@@ -454,6 +471,8 @@ protected:
 			v[2].SetUVDistortionUV(advancedUVv1[1], 1);
 			v[2].SetBlendUV(advancedUVtexNext[2], 0);
 			v[2].SetBlendUV(advancedUVv1[2], 1);
+			v[2].SetBlendAlphaUV(advancedUVtexNext[3], 0);
+			v[2].SetBlendAlphaUV(advancedUVv1[3], 1);
 
 			v[3].SetAlphaUV(advancedUVtexNext[0], 0);
 			v[3].SetAlphaUV(advancedUVv2[0], 1);
@@ -461,6 +480,8 @@ protected:
 			v[3].SetUVDistortionUV(advancedUVv2[1], 1);
 			v[3].SetBlendUV(advancedUVtexNext[2], 0);
 			v[3].SetBlendUV(advancedUVv2[2], 1);
+			v[3].SetBlendAlphaUV(advancedUVtexNext[3], 0);
+			v[3].SetBlendAlphaUV(advancedUVv2[3], 1);
 
 			v[4] = v[1];
 
@@ -470,6 +491,8 @@ protected:
 			v[5].SetUVDistortionUV(advancedUVv3[1], 1);
 			v[5].SetBlendUV(advancedUVCurrent[2], 0);
 			v[5].SetBlendUV(advancedUVv3[2], 1);
+			v[5].SetBlendAlphaUV(advancedUVCurrent[3], 0);
+			v[5].SetBlendAlphaUV(advancedUVv3[3], 1);
 
 			v[6] = v[3];
 
@@ -479,6 +502,8 @@ protected:
 			v[7].SetUVDistortionUV(advancedUVv3[1], 1);
 			v[7].SetBlendUV(advancedUVtexNext[2], 0);
 			v[7].SetBlendUV(advancedUVv3[2], 1);
+			v[7].SetBlendAlphaUV(advancedUVtexNext[3], 0);
+			v[7].SetBlendAlphaUV(advancedUVv3[3], 1);
 
 			for (int32_t vi = 0; vi < 8; vi++)
 			{

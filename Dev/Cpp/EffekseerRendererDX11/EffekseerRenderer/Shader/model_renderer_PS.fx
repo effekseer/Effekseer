@@ -48,6 +48,9 @@ SamplerState    g_uvDistortionSampler : register( s3 );
 
 Texture2D       g_blendTexture : register( t4 );
 SamplerState    g_blendSampler : register( s4 );
+
+Texture2D       g_blendAlphaTexture : register( t5 );
+SamplerState    g_blendAlphaSampler : register( s5 );
 #endif
 
 
@@ -64,11 +67,12 @@ struct PS_Input
     float2 AlphaUV              : TEXCOORD4;
     float2 UVDistortionUV       : TEXCOORD5;
     float2 BlendUV              : TEXCOORD6;
+    float2 BlendAlphaUV         : TEXCOORD7;
     
-    float FlipbookRate          : TEXCOORD7;
-    float2 FlipbookNextIndexUV  : TEXCOORD8;
+    float FlipbookRate          : TEXCOORD8;
+    float2 FlipbookNextIndexUV  : TEXCOORD9;
     
-    float AlphaThreshold        : TEXCOORD9;
+    float AlphaThreshold        : TEXCOORD10;
 #endif
     
 #else // else ENABLE_NORMAL_TEXTURE
@@ -77,11 +81,12 @@ struct PS_Input
     float2 AlphaUV              : TEXCOORD1;
     float2 UVDistortionUV       : TEXCOORD2;
     float2 BlendUV              : TEXCOORD3;
+    float2 BlendAlphaUV         : TEXCOORD4;
     
-    float FlipbookRate          : TEXCOORD4;
-    float2 FlipbookNextIndexUV  : TEXCOORD5;
+    float FlipbookRate          : TEXCOORD5;
+    float2 FlipbookNextIndexUV  : TEXCOORD6;
     
-    float AlphaThreshold        : TEXCOORD6;
+    float AlphaThreshold        : TEXCOORD7;
 #endif
     
 #endif // end ENABLE_NORMAL_TEXTURE
@@ -94,7 +99,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
-    UVOffset *= fUVDistortionParameter.x;    
+    UVOffset *= fUVDistortionParameter.x;
 #endif
     
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV + UVOffset) * Input.Color;
@@ -124,6 +129,7 @@ float4 PS( const PS_Input Input ) : SV_Target
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
     
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV);
+    BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV).a;
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     // alpha threshold

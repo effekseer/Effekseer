@@ -19,9 +19,10 @@ struct PS_Input
     float2 AlphaUV              : TEXCOORD7;
     float2 UVDistortionUV       : TEXCOORD8;
     float2 BlendUV              : TEXCOORD9;
-    float FlipbookRate          : TEXCOORD10;
-    float2 FlipbookNextIndexUV  : TEXCOORD11;
-    float AlphaThreshold        : TEXCOORD12;
+    float2 BlendAlphaUV         : TEXCOORD10;
+    float FlipbookRate          : TEXCOORD11;
+    float2 FlipbookNextIndexUV  : TEXCOORD12;
+    float AlphaThreshold        : TEXCOORD13;
 #endif
 };
 
@@ -58,6 +59,9 @@ SamplerState g_uvDistortionSampler  : register( s3 );
 
 Texture2D g_blendTexture    : register( t4 );
 SamplerState g_blendSampler  : register( s4 );
+
+Texture2D g_blendAlphaTexture : register( t5 );
+SamplerState g_blendAlphaSampler : register( s5 );
 #endif
 
 float4 PS(const PS_Input Input) : SV_Target
@@ -99,6 +103,7 @@ float4 PS(const PS_Input Input) : SV_Target
 	Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
     
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV);
+    BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV).a;
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     // alpha threshold
