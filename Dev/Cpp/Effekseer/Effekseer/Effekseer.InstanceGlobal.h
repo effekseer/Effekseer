@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
+#include "Effekseer.Random.h"
 #include "SIMD/Effekseer.Vec3f.h"
 #include "SIMD/Effekseer.Mat43f.h"
 
@@ -25,11 +26,9 @@ namespace Effekseer
 	生成されたインスタンスの全てから参照できる部分
 */
 class InstanceGlobal
-	: public IRandObject
 {
 	friend class ManagerImplemented;
 	friend class Instance;
-
 
 private:
 	/* このエフェクトで使用しているインスタンス数 */
@@ -41,8 +40,7 @@ private:
 	InstanceContainer*	m_rootContainer;
 	Vec3f				m_targetLocation;
 
-	int64_t				m_seed = 0;
-
+	RandObject			m_randObjects;
 	std::array<float, 4> dynamicInputParameters;
 
 	float nextDeltaFrame_ = 0.0f;
@@ -73,11 +71,8 @@ public:
 	std::vector<InstanceContainer*>	RenderedInstanceContainers;
 
 	std::array<float, 4> GetDynamicEquationResult(int32_t index);
-	void SetSeed(int64_t seed);
-
-	virtual float GetRand() override;
-
-	virtual float GetRand(float min_, float max_) override;
+	
+	RandObject& GetRandObject() { return m_randObjects; }
 
 	void IncInstanceCount();
 
@@ -98,10 +93,6 @@ public:
 
 	const Vec3f& GetTargetLocation() const;
 	void SetTargetLocation( const Vector3D& location );
-
-	static float Rand(void* userData);
-
-	static float RandSeed(void* userData, float randSeed);
 };
 //----------------------------------------------------------------------------------
 //

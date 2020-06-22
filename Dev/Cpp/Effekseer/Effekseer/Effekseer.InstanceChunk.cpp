@@ -22,6 +22,12 @@ void InstanceChunk::UpdateInstances()
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
 				auto deltaTime = instance->GetInstanceGlobal()->GetNextDeltaFrame();
+
+				if (instance->IsFirstTime())
+				{
+					instance->FirstUpdate();
+				}
+
 				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)

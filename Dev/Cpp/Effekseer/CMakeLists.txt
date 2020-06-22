@@ -36,6 +36,7 @@ set(effekseer_src
     Effekseer/Effekseer.Manager.cpp
     Effekseer/Effekseer.Matrix43.cpp
     Effekseer/Effekseer.Matrix44.cpp
+    Effekseer/Effekseer.Random.cpp
     Effekseer/Effekseer.RectF.cpp
     Effekseer/Effekseer.Setting.cpp
     Effekseer/Effekseer.Server.cpp

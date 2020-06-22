@@ -313,7 +313,7 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.sprite;
-	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
+	IRandObject& rand = instance.GetRandObject();
 
 	if( SpriteAllColor.type == StandardColorParameter::Fixed )
 	{
@@ -322,13 +322,13 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* m
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Random )
 	{
-		instValues.allColorValues.random._color = SpriteAllColor.random.all.getValue(*instanceGlobal);
+		instValues.allColorValues.random._color = SpriteAllColor.random.all.getValue(rand);
 		instValues._originalColor = instValues.allColorValues.random._color;
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = SpriteAllColor.easing.all.getStartValue(*instanceGlobal);
-		instValues.allColorValues.easing.end = SpriteAllColor.easing.all.getEndValue(*instanceGlobal);
+		instValues.allColorValues.easing.start = SpriteAllColor.easing.all.getStartValue(rand);
+		instValues.allColorValues.easing.end = SpriteAllColor.easing.all.getEndValue(rand);
 
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -340,7 +340,7 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* m
 	}
 	else if (SpriteAllColor.type == StandardColorParameter::FCurve_RGBA)
 	{
-		instValues.allColorValues.fcurve_rgba.offset = SpriteAllColor.fcurve_rgba.FCurve->GetOffsets(*instanceGlobal);
+		instValues.allColorValues.fcurve_rgba.offset = SpriteAllColor.fcurve_rgba.FCurve->GetOffsets(rand);
 		auto fcurveColor = SpriteAllColor.fcurve_rgba.FCurve->GetValues(instance.m_LivingTime, instance.m_LivedTime);
 		instValues._originalColor.R = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[0] + fcurveColor[0]), 255, 0);
 		instValues._originalColor.G = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[1] + fcurveColor[1]), 255, 0);

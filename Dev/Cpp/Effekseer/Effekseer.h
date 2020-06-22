@@ -519,6 +519,8 @@ public:
 	IRandObject() = default;
 	virtual ~IRandObject() = default;
 
+	virtual int32_t GetRandInt() = 0;
+
 	virtual float GetRand() = 0;
 
 	virtual float GetRand(float min_, float max_) = 0;
@@ -2190,6 +2192,9 @@ struct EffectBasicRenderParameter
 	int32_t				UVDistortionIndex;
 	TextureWrapType		UVDistortionTexWrapType;
 
+	int32_t				BlendTextureIndex;
+	TextureWrapType		BlendTexWrapType;
+
 	struct FlipbookParameters
 	{
 		bool Enable;
@@ -2201,6 +2206,8 @@ struct EffectBasicRenderParameter
 	RendererMaterialType MaterialType;
 
 	float UVDistortionIntensity;
+
+	int32_t				TextureBlendType;
 #endif
 	AlphaBlendType		AlphaBlend;
 	TextureFilterType	FilterType;
@@ -2397,7 +2404,7 @@ public:
 		\~English Get a thread handle (HANDLE(win32), pthread_t(posix) or etc.)
 		\~Japanese スレッドハンドルを取得する。(HANDLE(win32) や pthread_t(posix) など)
 	*/
-	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadIndex) = 0;
+	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
 		@brief

@@ -1,86 +1,73 @@
 ﻿//----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.WorkerThread.h"
+#include "Effekseer.Random.h"
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 namespace Effekseer {
-	
+
+int32_t RandLCG(int32_t& seed)
+{
+	const int a = 1103515245;
+	const int c = 12345;
+	const int m = 2147483647;
+
+	seed = (seed * a + c) & m;
+	return seed % 0x7fff;
+}
+const int32_t RandLCGMax = 0x7fff;
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-WorkerThread::WorkerThread()
+void RandObject::SetSeed(int32_t seed)
 {
-	m_TaskCompleted.store(true);
-	m_TaskRequested.store(false);
-	m_QuitRequested.store(false);
+	m_seed = seed;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-WorkerThread::~WorkerThread()
+int32_t RandObject::GetRandInt()
 {
-	Shutdown();
+	return RandLCG(m_seed);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void WorkerThread::Launch()
+float RandObject::GetRand()
 {
-	m_Thread = std::thread([this](){
-		while (1)
-		{
-			std::unique_lock<std::mutex> lock(m_Mutex);
-			m_TaskRequestCV.wait(lock, [this](){ return m_TaskRequested.load() || m_QuitRequested.load(); });
-			if (m_QuitRequested)
-			{
-				break;
-			}
-			if (m_Task)
-			{
-				m_Task();
-			}
-			m_TaskRequested.store(false);
-			m_TaskCompleted.store(true);
-			m_TaskWaitCV.notify_all();
-		}
-		});
+	auto ret = RandLCG(m_seed);
+	return (float)ret / (float) (RandLCGMax - 1);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void WorkerThread::Shutdown()
+float RandObject::GetRand(float min_, float max_)
 {
-	m_QuitRequested.store(true);
-	m_TaskRequestCV.notify_one();
-	m_Thread.join();
+	return GetRand() * (max_ - min_) + min_;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void WorkerThread::RunAsync(std::function<void()> task)
+float RandCallback::Rand(void* userData)
 {
-	std::unique_lock<std::mutex> lock(m_Mutex);
-	m_Task = task;
-	m_TaskCompleted.store(false);
-	m_TaskRequested.store(true);
-	m_TaskRequestCV.notify_all();
+	IRandObject* rand = (IRandObject*)userData;
+	return rand->GetRand();
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void WorkerThread::WaitForComplete()
+float RandCallback::RandSeed(void* userData, float randSeed)
 {
-	std::unique_lock<std::mutex> lock(m_Mutex);
-	m_TaskWaitCV.wait(lock, [this](){ return m_TaskCompleted.load(); });
-	m_Task = nullptr;
+	auto seed = static_cast<int32_t>(randSeed * 1024 * 8);
+	return RandLCG(seed);
 }
 
 //----------------------------------------------------------------------------------
@@ -90,4 +77,3 @@ void WorkerThread::WaitForComplete()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-

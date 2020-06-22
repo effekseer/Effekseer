@@ -510,11 +510,11 @@ void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)
 	}
 }
 
-uintptr_t ManagerImplemented::GetWorkerThreadHandle(uint32_t threadIndex)
+uintptr_t ManagerImplemented::GetWorkerThreadHandle(uint32_t threadID)
 {
-	if (threadIndex < m_WorkerThreads.size())
+	if (threadID < m_WorkerThreads.size())
 	{
-		return m_WorkerThreads[threadIndex].GetThreadHandle();
+		return m_WorkerThreads[threadID].GetThreadHandle();
 	}
 	return 0;
 }
@@ -1307,12 +1307,11 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			{
 				const uint32_t chunkStep = (uint32_t)m_WorkerThreads.size();
 
-				for (uint32_t workerID = 1; workerID < (uint32_t)m_WorkerThreads.size(); workerID++)
+				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
 				{
-					const uint32_t chunkOffset = workerID;
-
+					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
-					m_WorkerThreads[workerID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
+					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
 							chunks[i]->UpdateInstances();
@@ -1327,9 +1326,9 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				}
 
 				// Wait for all worker threads completion
-				for (uint32_t workerID = 1; workerID < (uint32_t)m_WorkerThreads.size(); workerID++)
+				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
 				{
-					m_WorkerThreads[workerID].WaitForComplete();
+					m_WorkerThreads[threadID].WaitForComplete();
 				}
 			}
 			else
@@ -1454,8 +1453,8 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 		drawSet.GlobalPointer->dynamicEqResults[i] = e->dynamicEquation[i].Execute(drawSet.GlobalPointer->dynamicInputParameters,
 																				   globals,
 																				   std::array<float, 5>(),
-																				   InstanceGlobal::Rand,
-																				   InstanceGlobal::RandSeed,
+																				   RandCallback::Rand,
+																				   RandCallback::RandSeed,
 																				   drawSet.GlobalPointer);
 	}
 
@@ -1747,11 +1746,11 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 
 	if (e->m_defaultRandomSeed >= 0)
 	{
-		pGlobal->SetSeed(e->m_defaultRandomSeed);
+		pGlobal->GetRandObject().SetSeed(e->m_defaultRandomSeed);
 	}
 	else
 	{
-		pGlobal->SetSeed(GetRandFunc()());
+		pGlobal->GetRandObject().SetSeed(GetRandFunc()());
 	}
 
 	pGlobal->dynamicInputParameters = e->defaultDynamicInputs;
@@ -2006,11 +2005,11 @@ void ManagerImplemented::EndReloadEffect(Effect* effect, bool doLockThread)
 		// reallocate
 		if (e->m_defaultRandomSeed >= 0)
 		{
-			pGlobal->SetSeed(e->m_defaultRandomSeed);
+			pGlobal->GetRandObject().SetSeed(e->m_defaultRandomSeed);
 		}
 		else
 		{
-			pGlobal->SetSeed(GetRandFunc()());
+			pGlobal->GetRandObject().SetSeed(GetRandFunc()());
 		}
 
 		pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);

@@ -222,8 +222,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 //----------------------------------------------------------------------------------
 void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
+	IRandObject& rand = instance.GetRandObject();
 	InstanceValues& instValues = instance.rendererValues.model;
-	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
 
 	if( AllColor.type == StandardColorParameter::Fixed )
 	{
@@ -232,13 +232,13 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	}
 	else if( AllColor.type == StandardColorParameter::Random )
 	{
-		instValues._original = AllColor.random.all.getValue(*instanceGlobal);
+		instValues._original = AllColor.random.all.getValue(rand);
 		instValues.allColorValues.random._color = instValues._original;
 	}
 	else if( AllColor.type == StandardColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue(*instanceGlobal);
-		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue(*instanceGlobal);
+		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue(rand);
+		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue(rand);
 
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -250,7 +250,7 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	}
 	else if( AllColor.type == StandardColorParameter::FCurve_RGBA )
 	{
-		instValues.allColorValues.fcurve_rgba.offset = AllColor.fcurve_rgba.FCurve->GetOffsets(*instanceGlobal);
+		instValues.allColorValues.fcurve_rgba.offset = AllColor.fcurve_rgba.FCurve->GetOffsets(rand);
 		auto fcurveColors = AllColor.fcurve_rgba.FCurve->GetValues(instance.m_LivingTime, instance.m_LivedTime);
 		instValues._original.R = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
 		instValues._original.G = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);

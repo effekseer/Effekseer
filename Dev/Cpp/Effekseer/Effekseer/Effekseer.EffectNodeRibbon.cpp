@@ -303,7 +303,7 @@ void EffectNodeRibbon::EndRendering(Manager* manager)
 void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ribbon;
-	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
+	IRandObject& rand = instance.GetRandObject();
 
 	if (RibbonAllColor.type == RibbonAllColorParameter::Fixed)
 	{
@@ -312,13 +312,13 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 	}
 	else if (RibbonAllColor.type == RibbonAllColorParameter::Random)
 	{
-		instValues._original = RibbonAllColor.random.all.getValue(*instanceGlobal);
+		instValues._original = RibbonAllColor.random.all.getValue(rand);
 		instValues.allColorValues.random._color = instValues._original;
 	}
 	else if (RibbonAllColor.type == RibbonAllColorParameter::Easing)
 	{
-		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue(*instanceGlobal);
-		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue(*instanceGlobal);
+		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue(rand);
+		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue(rand);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)

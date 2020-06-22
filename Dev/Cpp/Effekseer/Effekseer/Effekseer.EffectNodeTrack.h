@@ -177,7 +177,7 @@ public:
 
 	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_TRACK; }
 
-	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, InstanceGlobal* instanceGlobal);
+	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, IRandObject* rand);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
 	void SetValues(Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime);
 	void SetValues(float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time);

@@ -106,7 +106,7 @@ public:
 		\~English Get a thread handle (HANDLE(win32), pthread_t(posix) or etc.)
 		\~Japanese スレッドハンドルを取得する。(HANDLE(win32) や pthread_t(posix) など)
 	*/
-	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadIndex) = 0;
+	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
 		@brief
