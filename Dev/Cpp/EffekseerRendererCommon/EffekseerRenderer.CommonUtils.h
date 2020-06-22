@@ -502,7 +502,7 @@ inline Effekseer::Vec3f SafeNormalize(const Effekseer::Vec3f& v)
 		return v;
 	}
 
-	return v / sqrtf(lengthSq);
+	return v * Effekseer::Rsqrt(lengthSq);
 }
 
 struct MaterialShaderParameterGenerator
