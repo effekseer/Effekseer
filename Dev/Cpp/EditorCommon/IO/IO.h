@@ -20,7 +20,6 @@ public:
 class IO
 {
 private:
-
 	std::u16string ReplaceSeparator(const char16_t* path);
 
 	static std::shared_ptr<IO> instance_;

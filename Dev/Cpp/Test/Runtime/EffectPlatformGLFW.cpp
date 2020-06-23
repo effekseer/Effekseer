@@ -75,7 +75,7 @@ EffectPlatformGLFW ::~EffectPlatformGLFW()
 	}
 }
 
-void EffectPlatformGLFW::Present() 
+void EffectPlatformGLFW::Present()
 {
 	if (isOpenGLMode_)
 	{
@@ -83,7 +83,7 @@ void EffectPlatformGLFW::Present()
 	}
 }
 
-bool EffectPlatformGLFW::DoEvent() 
+bool EffectPlatformGLFW::DoEvent()
 {
 	if (glfwWindowShouldClose(glfwWindow_) == GL_TRUE)
 	{

@@ -3,10 +3,10 @@
 //
 //-----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.VertexArray.h"
+#include "EffekseerRendererGL.GLExtension.h"
+#include "EffekseerRendererGL.IndexBuffer.h"
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexBuffer.h"
-#include "EffekseerRendererGL.IndexBuffer.h"
-#include "EffekseerRendererGL.GLExtension.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -16,8 +16,8 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexArray::VertexArray( RendererImplemented* renderer, Shader* shader, 
-	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
+VertexArray::VertexArray(
+	RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
 	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount)
 	, m_shader(shader)
 	, m_vertexBuffer(vertexBuffer)
@@ -29,20 +29,17 @@ VertexArray::VertexArray( RendererImplemented* renderer, Shader* shader,
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexArray::~VertexArray()
-{
-	Release();
-}
+VertexArray::~VertexArray() { Release(); }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexArray* VertexArray::Create( RendererImplemented* renderer, Shader* shader, 
-	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
+VertexArray*
+VertexArray::Create(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
 {
 	if (GLExt::IsSupportedVertexArray())
 	{
-		return new VertexArray( renderer, shader, vertexBuffer, indexBuffer, hasRefCount);
+		return new VertexArray(renderer, shader, vertexBuffer, indexBuffer, hasRefCount);
 	}
 	return nullptr;
 }
@@ -50,18 +47,12 @@ VertexArray* VertexArray::Create( RendererImplemented* renderer, Shader* shader,
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void VertexArray::OnLostDevice()
-{
-	Release();
-}
+void VertexArray::OnLostDevice() { Release(); }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void VertexArray::OnResetDevice()
-{
-	Init();
-}
+void VertexArray::OnResetDevice() { Init(); }
 
 //-----------------------------------------------------------------------------------
 //
@@ -78,7 +69,7 @@ void VertexArray::Init()
 	GLExt::glGenVertexArrays(1, &m_vertexArray);
 
 	GLExt::glBindVertexArray(m_vertexArray);
-	
+
 	if (m_vertexBuffer != nullptr)
 	{
 		if (!m_vertexBuffer->IsValid())
@@ -88,7 +79,7 @@ void VertexArray::Init()
 
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer->GetInterface());
 	}
-	
+
 	if (m_indexBuffer != nullptr)
 	{
 		if (!m_indexBuffer->IsValid())
@@ -129,7 +120,7 @@ void VertexArray::Release()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+} // namespace EffekseerRendererGL
+  //-----------------------------------------------------------------------------------
+  //
+  //-----------------------------------------------------------------------------------

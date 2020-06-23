@@ -2,29 +2,29 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.RenderState.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
-#include "EffekseerRendererGL.VertexBuffer.h"
+#include "EffekseerRendererGL.GLExtension.h"
 #include "EffekseerRendererGL.IndexBuffer.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexArray.h"
-#include "EffekseerRendererGL.GLExtension.h"
+#include "EffekseerRendererGL.VertexBuffer.h"
 #include <string>
 
-#include "Shader/FlipbookInterpolationUtils_VS.h"
 #include "Shader/FlipbookInterpolationUtils_PS.h"
+#include "Shader/FlipbookInterpolationUtils_VS.h"
 
-#include "Shader/Model_VS.h"
-#include "Shader/Model_PS.h"
-#include "Shader/ModelDistortion_VS.h"
 #include "Shader/ModelDistortion_PS.h"
+#include "Shader/ModelDistortion_VS.h"
+#include "Shader/Model_PS.h"
+#include "Shader/Model_VS.h"
 
 namespace EffekseerRendererGL
 {
 
-static std::string Replace( std::string target, std::string from_, std::string to_ )
+static std::string Replace(std::string target, std::string from_, std::string to_)
 {
 	std::string::size_type Pos(target.find(from_));
 
@@ -71,11 +71,10 @@ static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelRenderer::ModelRenderer(
-	RendererImplemented* renderer,
-	Shader* shader_lighting_texture_normal,
-	Shader* shader_texture,
-	Shader* shader_distortion_texture)
+ModelRenderer::ModelRenderer(RendererImplemented* renderer,
+							 Shader* shader_lighting_texture_normal,
+							 Shader* shader_texture,
+							 Shader* shader_distortion_texture)
 	: m_renderer(renderer)
 	, m_shader_lighting_texture_normal(shader_lighting_texture_normal)
 	, m_shader_texture(shader_texture)
@@ -92,7 +91,7 @@ ModelRenderer::ModelRenderer(
 
 	shader_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("ColorTexture"));
-	
+
 	shader_distortion_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("uTexture0"));
 	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("uBackTexture0"));
@@ -100,8 +99,8 @@ ModelRenderer::ModelRenderer(
 	Shader* shaders[2];
 	shaders[0] = m_shader_lighting_texture_normal;
 	shaders[1] = m_shader_texture;
-	
-	for( int32_t i = 0; i < 2; i++ )
+
+	for (int32_t i = 0; i < 2; i++)
 	{
 		shaders[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
@@ -162,29 +161,16 @@ ModelRenderer::ModelRenderer(
 		vsOffset += sizeof(float[4]) * 1;
 
 		shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
-		shaders[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("LightDirection"),
-			sizeof(float[4]) * 0
-			);
-		shaders[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("LightColor"),
-			sizeof(float[4]) * 1
-			);
-		shaders[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders[i]->GetUniformId("LightAmbient"),
-			sizeof(float[4]) * 2
-			);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightDirection"), sizeof(float[4]) * 0);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightColor"), sizeof(float[4]) * 1);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightAmbient"), sizeof(float[4]) * 2);
 
-	#ifdef __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders[i]->SetTextureSlot(2, shaders[i]->GetUniformId("uAlphaTexture"));
 		shaders[i]->SetTextureSlot(3, shaders[i]->GetUniformId("uuvDistortionTexture"));
 		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
-		shaders[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 4);
-	#endif
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 4);
+#endif
 	}
 
 	Shader* shaders_d[1];
@@ -195,7 +181,7 @@ ModelRenderer::ModelRenderer(
 		shaders_d[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
 		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-		
+
 		int vsOffset = 0;
 		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("ProjectionMatrix"), vsOffset);
 
@@ -255,24 +241,16 @@ ModelRenderer::ModelRenderer(
 #else
 		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 #endif
-		shaders_d[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("g_scale"),
-			sizeof(float[4]) * 0
-			);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("g_scale"), sizeof(float[4]) * 0);
 
-
-		shaders_d[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4,
-			shaders_d[i]->GetUniformId("mUVInversedBack"),
-			sizeof(float[4]) * 1
-			);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("mUVInversedBack"), sizeof(float[4]) * 1);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders_d[i]->SetTextureSlot(2, shaders_d[i]->GetUniformId("uAlphaTexture"));
 		shaders_d[i]->SetTextureSlot(3, shaders_d[i]->GetUniformId("uuvDistortionTexture"));
 		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("flipbookParameter"), sizeof(float[4]) * 2);
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 3);
+		shaders_d[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 3);
 
 #endif
 	}
@@ -314,11 +292,11 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
+ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 {
-	assert( renderer != NULL );
+	assert(renderer != NULL);
 
-	Shader* shader_lighting_texture_normal = NULL;		    
+	Shader* shader_lighting_texture_normal = NULL;
 	Shader* shader_texture = NULL;
 	Shader* shader_distortion_texture = NULL;
 
@@ -364,7 +342,6 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	if (shader_lighting_texture_normal == NULL)
 		goto End;
 
-
 	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), tVS, 2, tPS, 2, "ModelRenderer5", true);
 	if (shader_texture == NULL)
 		goto End;
@@ -387,16 +364,12 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true);
 	if (shader_texture == NULL)
 		goto End;
-	
+
 	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true);
 	if (shader_distortion_texture == NULL)
 		goto End;
 #endif
-	return new ModelRenderer( 
-		renderer, 
-		shader_lighting_texture_normal,
-		shader_texture,
-		shader_distortion_texture);
+	return new ModelRenderer(renderer, shader_lighting_texture_normal, shader_texture, shader_distortion_texture);
 End:;
 
 	ES_SAFE_DELETE(shader_lighting_texture_normal);
@@ -412,15 +385,10 @@ void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t c
 
 void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData)
 {
-	Rendering_<
-		RendererImplemented>(
-		m_renderer,
-		parameter,
-		instanceParameter,
-		userData);
+	Rendering_<RendererImplemented>(m_renderer, parameter, instanceParameter, userData);
 }
 
-void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* userData )
+void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
 	if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 	{
@@ -435,59 +403,39 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_renderer->SetVertexArray(m_va[4]);
 	}
 
-    if(parameter.ModelIndex < 0)
-    {
-        return;
-    }
-    
-	auto model = (Model*) parameter.EffectPointer->GetModel(parameter.ModelIndex);
-	if(model == nullptr)
+	if (parameter.ModelIndex < 0)
 	{
-        return;
-    }
-    
-    for(auto i = 0; i < model->GetFrameCount(); i++)
-    {
-        model->InternalModels[i].TryDelayLoad();
-    }
-	
-    m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
-    m_shader_texture->SetVertexSize(model->GetVertexSize());
-    m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
-	
-#if defined(MODEL_SOFTWARE_INSTANCING)
-	EndRendering_<
-		RendererImplemented,
-		Shader,
-		GLuint,
-		Model,
-		true,
-		20>(
-		m_renderer,
-		m_shader_lighting_texture_normal,
-		m_shader_texture,
-		m_shader_distortion_texture,
-		parameter );
-#else
-	EndRendering_<
-		RendererImplemented,
-		Shader,
-		Model,
-		false,
-		1>(
-		m_renderer,
-		m_shader_lighting_texture_normal,
-		m_shader_texture,
-		m_shader_distortion_texture,
-		parameter );
-#endif
+		return;
+	}
 
+	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	for (auto i = 0; i < model->GetFrameCount(); i++)
+	{
+		model->InternalModels[i].TryDelayLoad();
+	}
+
+	m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
+	m_shader_texture->SetVertexSize(model->GetVertexSize());
+	m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
+
+#if defined(MODEL_SOFTWARE_INSTANCING)
+	EndRendering_<RendererImplemented, Shader, GLuint, Model, true, 20>(
+		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
+#else
+	EndRendering_<RendererImplemented, Shader, Model, false, 1>(
+		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
+#endif
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

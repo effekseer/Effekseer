@@ -17,4 +17,4 @@ enum class SystemLanguage : int32_t
 */
 SystemLanguage GetSystemLanguage();
 
-}
+} // namespace Effekseer

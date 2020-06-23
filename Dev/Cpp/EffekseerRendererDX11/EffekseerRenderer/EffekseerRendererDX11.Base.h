@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX11_BASE_H__
-#define	__EFFEKSEERRENDERER_DX11_BASE_H__
+#ifndef __EFFEKSEERRENDERER_DX11_BASE_H__
+#define __EFFEKSEERRENDERER_DX11_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -9,18 +9,18 @@
 
 #include <Effekseer.h>
 
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
 #include <assert.h>
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
 #include <string.h>
 
-#include <map>
-#include <vector>
-#include <set>
 #include <list>
-#include <string>
+#include <map>
 #include <queue>
+#include <set>
+#include <string>
+#include <vector>
 
 //----------------------------------------------------------------------------------
 //
@@ -53,8 +53,8 @@ class TextureLoader;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX11_BASE_H__
+#endif // __EFFEKSEERRENDERER_DX11_BASE_H__

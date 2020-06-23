@@ -3,9 +3,9 @@
 #ifndef __EFFEKSEERRENDERER_LLGI_TEXTURELOADER_H__
 #define __EFFEKSEERRENDERER_LLGI_TEXTURELOADER_H__
 
+#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 
 #include <LLGI.Graphics.h>
 #include <LLGI.Texture.h>

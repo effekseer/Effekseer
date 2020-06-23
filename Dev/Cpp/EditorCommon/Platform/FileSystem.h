@@ -14,4 +14,4 @@ public:
 	static uint64_t GetLastWriteTime(const std::u16string& path);
 	static int32_t GetFileSize(const std::u16string& path);
 };
-} // namespace altseed
+} // namespace Effekseer

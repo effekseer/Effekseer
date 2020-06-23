@@ -2,12 +2,12 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
+#include "EffekseerSoundXAudio2.SoundLoader.h"
+#include "EffekseerSoundXAudio2.SoundImplemented.h"
 #include <assert.h>
-#include <string.h>
 #include <memory>
 #include <stdint.h>
-#include "EffekseerSoundXAudio2.SoundImplemented.h"
-#include "EffekseerSoundXAudio2.SoundLoader.h"
+#include <string.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -17,55 +17,47 @@ namespace EffekseerSound
 
 namespace SupportXAudio2
 {
-	class BinaryFileReader : public Effekseer::FileReader
-	{
-	private:
-		uint8_t* origin = nullptr;
-		int32_t pos = 0;
-		int32_t size_ = 0;
-	public:
-		BinaryFileReader(const void* data, int32_t size) {
-			origin = (uint8_t*)data;
-			size_ = size;
-		}
-
-		virtual ~BinaryFileReader() {}
-
-		size_t Read(void* buffer, size_t size) override
-		{
-			if (pos + size > size_)
-			{
-				size = size_ - pos;
-			}
-
-			memcpy(buffer, (origin + pos), size);
-			pos += size;
-			return size;
-		}
-
-		void Seek(int position) override
-		{
-			pos = position;
-		}
-
-		int GetPosition() override
-		{
-			return pos;
-		}
-
-		size_t GetLength() override
-		{
-			return size_;
-		}
-	};
-}
-
-SoundLoader::SoundLoader( SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface )
-	: m_sound	( sound )
-	, m_fileInterface( fileInterface )
+class BinaryFileReader : public Effekseer::FileReader
 {
-	if( m_fileInterface == NULL )
-	{ 
+private:
+	uint8_t* origin = nullptr;
+	int32_t pos = 0;
+	int32_t size_ = 0;
+
+public:
+	BinaryFileReader(const void* data, int32_t size)
+	{
+		origin = (uint8_t*)data;
+		size_ = size;
+	}
+
+	virtual ~BinaryFileReader() {}
+
+	size_t Read(void* buffer, size_t size) override
+	{
+		if (pos + size > size_)
+		{
+			size = size_ - pos;
+		}
+
+		memcpy(buffer, (origin + pos), size);
+		pos += size;
+		return size;
+	}
+
+	void Seek(int position) override { pos = position; }
+
+	int GetPosition() override { return pos; }
+
+	size_t GetLength() override { return size_; }
+};
+} // namespace SupportXAudio2
+
+SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface)
+	: m_sound(sound), m_fileInterface(fileInterface)
+{
+	if (m_fileInterface == NULL)
+	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
 }
@@ -73,9 +65,7 @@ SoundLoader::SoundLoader( SoundImplemented* sound, ::Effekseer::FileInterface* f
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader::~SoundLoader()
-{
-}
+SoundLoader::~SoundLoader() {}
 
 void* SoundLoader::Load(::Effekseer::FileReader* reader)
 {
@@ -83,47 +73,56 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	// check RIFF chunk
 	reader->Read(&chunkIdent, 4);
 	reader->Read(&chunkSize, 4);
-	if (memcmp(&chunkIdent, "RIFF", 4) != 0) {
+	if (memcmp(&chunkIdent, "RIFF", 4) != 0)
+	{
 		return NULL;
 	}
 
 	// check WAVE symbol
 	reader->Read(&chunkIdent, 4);
-	if (memcmp(&chunkIdent, "WAVE", 4) != 0) {
+	if (memcmp(&chunkIdent, "WAVE", 4) != 0)
+	{
 		return NULL;
 	}
 
-	WAVEFORMATEX wavefmt = { 0 };
-	for (;;) {
+	WAVEFORMATEX wavefmt = {0};
+	for (;;)
+	{
 		reader->Read(&chunkIdent, 4);
 		reader->Read(&chunkSize, 4);
 
-		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
+		if (memcmp(&chunkIdent, "fmt ", 4) == 0)
+		{
 			// format chunk
 			uint32_t size = (chunkSize < (uint32_t)sizeof(wavefmt)) ? chunkSize : (uint32_t)sizeof(wavefmt);
 			reader->Read(&wavefmt, size);
-			if (size < chunkSize) {
+			if (size < chunkSize)
+			{
 				reader->Seek(reader->GetPosition() + chunkSize - size);
 			}
 		}
-		else if (memcmp(&chunkIdent, "data", 4) == 0) {
+		else if (memcmp(&chunkIdent, "data", 4) == 0)
+		{
 			// data chunk
 			break;
 		}
-		else {
+		else
+		{
 			// unknown chunk
 			reader->Seek(reader->GetPosition() + chunkSize);
 		}
 	}
 
 	// check a format
-	if (wavefmt.wFormatTag != WAVE_FORMAT_PCM || wavefmt.nChannels > 2) {
+	if (wavefmt.wFormatTag != WAVE_FORMAT_PCM || wavefmt.nChannels > 2)
+	{
 		return NULL;
 	}
 
 	uint8_t* buffer;
 	uint32_t size;
-	switch (wavefmt.wBitsPerSample) {
+	switch (wavefmt.wBitsPerSample)
+	{
 	case 8:
 		// convert 8bit -> 16bit PCM
 		size = chunkSize * 2;
@@ -132,7 +131,8 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 		{
 			int16_t* dst = (int16_t*)&buffer[0];
 			uint8_t* src = (uint8_t*)&buffer[size / 2];
-			for (uint32_t i = 0; i < size; i += 2) {
+			for (uint32_t i = 0; i < size; i += 2)
+			{
 				*dst++ = (int16_t)(((int32_t)*src++ - 128) << 8);
 			}
 		}
@@ -152,7 +152,8 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 
 			int16_t* dst = (int16_t*)&buffer[0];
 			uint8_t* src = (uint8_t*)&chunkData[0];
-			for (uint32_t i = 0; i < size; i += 2) {
+			for (uint32_t i = 0; i < size; i += 2)
+			{
 				*dst++ = (int16_t)(src[1] | (src[2] << 8));
 				src += 3;
 			}
@@ -174,31 +175,32 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	return soundData;
 }
 
-void* SoundLoader::Load( const EFK_CHAR* path )
+void* SoundLoader::Load(const EFK_CHAR* path)
 {
-	assert( path != NULL );
-	
-	std::unique_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return false;
-		
+	assert(path != NULL);
+
+	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+	if (reader.get() == NULL)
+		return false;
+
 	return Load(reader.get());
 }
-	
+
 void* SoundLoader::Load(const void* data, int32_t size)
 {
 	auto reader = SupportXAudio2::BinaryFileReader(data, size);
 	return Load(&reader);
 }
 
-void SoundLoader::Unload( void* data )
+void SoundLoader::Unload(void* data)
 {
 	SoundData* soundData = (SoundData*)data;
-	if (soundData == NULL) {
+	if (soundData == NULL)
+	{
 		return;
 	}
 	// stop a voice which plays this data
-	m_sound->StopData( soundData );
+	m_sound->StopData(soundData);
 
 	delete[] soundData->buffer.pAudioData;
 	delete soundData;
@@ -207,7 +209,7 @@ void SoundLoader::Unload( void* data )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

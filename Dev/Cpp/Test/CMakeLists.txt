@@ -157,6 +157,10 @@ endif()
 
 FilterFolder("${effekseer_test_src}")
 
+if(CLANG_FORMAT_ENABLED)
+    clang_format(Test)
+endif()
+
 if(USE_LIBPNG_LOADER)
     target_link_directories(
         ${PROJECT_NAME}

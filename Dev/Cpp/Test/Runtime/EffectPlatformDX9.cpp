@@ -38,7 +38,8 @@ bool DistortingCallbackDX9::OnDistorting()
 
 void DistortingCallbackDX9::Lost() { ES_SAFE_RELEASE(texture); }
 
-void DistortingCallbackDX9::Reset() {
+void DistortingCallbackDX9::Reset()
+{
 	device->CreateTexture(texWidth_, texHeight_, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
 }
 

@@ -5,13 +5,13 @@
 
 namespace efk
 {
-	class FileDialog
-	{
-		static std::u16string	temp;
-	public:
+class FileDialog
+{
+	static std::u16string temp;
 
-		static const char16_t* OpenDialog(const char16_t* filterList, const char16_t* defaultPath);
+public:
+	static const char16_t* OpenDialog(const char16_t* filterList, const char16_t* defaultPath);
 
-		static const char16_t* SaveDialog(const char16_t* filterList, const char16_t* defaultPath);
-	};
-}
+	static const char16_t* SaveDialog(const char16_t* filterList, const char16_t* defaultPath);
+};
+} // namespace efk

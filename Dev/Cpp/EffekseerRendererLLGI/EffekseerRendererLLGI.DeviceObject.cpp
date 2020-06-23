@@ -12,7 +12,7 @@ DeviceObject::DeviceObject(GraphicsDevice* graphicsDevice, bool hasRefCount) : g
 	{
 		ES_SAFE_ADDREF(graphicsDevice_);
 	}
-	
+
 	graphicsDevice_->Register(this);
 }
 

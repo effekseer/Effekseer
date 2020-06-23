@@ -1,20 +1,20 @@
 
 #include "efk.ImageRendererGL.h"
 
-#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
 
 namespace efk
 {
 
-	static const char g_sprite_vs_src[] =
-		R"(
+static const char g_sprite_vs_src[] =
+	R"(
 IN vec4 atPosition;
 IN vec4 atColor;
 IN vec4 atTexCoord;
 )"
 
-R"(
+	R"(
 OUT vec4 vaColor;
 OUT vec4 vaTexCoord;
 OUT vec4 vaPos;
@@ -22,7 +22,7 @@ OUT vec4 vaPosR;
 OUT vec4 vaPosU;
 )"
 
-R"(
+	R"(
 uniform mat4 uMatCamera;
 uniform mat4 uMatProjection;
 
@@ -50,130 +50,106 @@ void main() {
 
 )";
 
-static const char g_sprite_fs_texture_src[] =
-	"IN lowp vec4 vaColor;\n"
-	"IN mediump vec4 vaTexCoord;\n"
+static const char g_sprite_fs_texture_src[] = "IN lowp vec4 vaColor;\n"
+											  "IN mediump vec4 vaTexCoord;\n"
 
-	"uniform sampler2D uTexture0;\n"
+											  "uniform sampler2D uTexture0;\n"
 
-	"void main() {\n"
-	"FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);\n"
-	"}\n";
+											  "void main() {\n"
+											  "FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);\n"
+											  "}\n";
 
-static const char g_sprite_fs_no_texture_src[] =
-	"IN lowp vec4 vaColor;\n"
-	"IN mediump vec4 vaTexCoord;\n"
+static const char g_sprite_fs_no_texture_src[] = "IN lowp vec4 vaColor;\n"
+												 "IN mediump vec4 vaTexCoord;\n"
 
-	"void main() {\n"
-	"FRAGCOLOR = vaColor;\n"
-	"}\n";
+												 "void main() {\n"
+												 "FRAGCOLOR = vaColor;\n"
+												 "}\n";
 
+ImageRendererGL::ImageRendererGL(EffekseerRenderer::Renderer* renderer) : ImageRenderer(renderer)
+{
+	this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
 
+	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
+	EffekseerRendererGL::ShaderCodeView lineCodeDataPS(g_sprite_fs_texture_src);
+	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
 
-	ImageRendererGL::ImageRendererGL(EffekseerRenderer::Renderer* renderer)
-		: ImageRenderer(renderer)
+	auto shader_ =
+		EffekseerRendererGL::Shader::Create(this->renderer->GetGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataPS, 1, "Standard Tex");
+
+	auto shader_no_texture_ =
+		EffekseerRendererGL::Shader::Create(this->renderer->GetGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex");
+
+	EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
+		{"atPosition", GL_FLOAT, 3, 0, false}, {"atColor", GL_UNSIGNED_BYTE, 4, 12, true}, {"atTexCoord", GL_FLOAT, 2, 16, false}};
+
+	shader_->GetAttribIdList(3, sprite_attribs);
+	shader_->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
+	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+
+	shader_->AddVertexConstantLayout(EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatCamera"), 0);
+
+	shader_->AddVertexConstantLayout(
+		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+
+	shader_->SetTextureSlot(0, shader_->GetUniformId("uTexture0"));
+
+	shader_no_texture_->GetAttribIdList(3, sprite_attribs);
+	shader_no_texture_->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
+	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+
+	shader_no_texture_->AddVertexConstantLayout(
+		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatCamera"), 0);
+
+	shader_no_texture_->AddVertexConstantLayout(
+		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+
+	this->shader = shader_;
+	this->shader_no_texture = shader_no_texture_;
+
+	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true, true);
+
+	vao = EffekseerRendererGL::VertexArray::Create(
+		this->renderer, shader_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, this->renderer->GetIndexBuffer(), true);
+	vao_nt = EffekseerRendererGL::VertexArray::Create(
+		this->renderer, shader_no_texture_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, this->renderer->GetIndexBuffer(), true);
+}
+
+ImageRendererGL::~ImageRendererGL()
+{
+	ES_SAFE_DELETE(shader);
+	ES_SAFE_DELETE(shader_no_texture);
+	ES_SAFE_DELETE(vao);
+	ES_SAFE_DELETE(vao_nt);
+	ES_SAFE_DELETE(vertexBuffer);
+}
+
+void ImageRendererGL::Draw(const Effekseer::Vector3D positions[],
+						   const Effekseer::Vector2D uvs[],
+						   const Effekseer::Color colors[],
+						   ::Effekseer::TextureData* texturePtr)
+{
+	Sprite s;
+
+	for (int32_t i = 0; i < 4; i++)
 	{
-		this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
-
-		EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
-		EffekseerRendererGL::ShaderCodeView lineCodeDataPS(g_sprite_fs_texture_src);
-		EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
-
-		auto shader_ = EffekseerRendererGL::Shader::Create(
-			this->renderer->GetGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataPS, 1, "Standard Tex");
-
-		auto shader_no_texture_ = EffekseerRendererGL::Shader::Create(
-			this->renderer->GetGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex");
-
-
-		EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
-			{ "atPosition", GL_FLOAT, 3, 0, false },
-			{ "atColor", GL_UNSIGNED_BYTE, 4, 12, true },
-			{ "atTexCoord", GL_FLOAT, 2, 16, false }
-		};
-
-
-		shader_->GetAttribIdList(3, sprite_attribs);
-		shader_->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
-		shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-
-		shader_->AddVertexConstantLayout(
-			EffekseerRendererGL::CONSTANT_TYPE_MATRIX44,
-			shader_->GetUniformId("uMatCamera"),
-			0
-		);
-
-		shader_->AddVertexConstantLayout(
-			EffekseerRendererGL::CONSTANT_TYPE_MATRIX44,
-			shader_->GetUniformId("uMatProjection"),
-			sizeof(Effekseer::Matrix44)
-		);
-
-		shader_->SetTextureSlot(0, shader_->GetUniformId("uTexture0"));
-
-		shader_no_texture_->GetAttribIdList(3, sprite_attribs);
-		shader_no_texture_->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
-		shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-
-		shader_no_texture_->AddVertexConstantLayout(
-			EffekseerRendererGL::CONSTANT_TYPE_MATRIX44,
-			shader_no_texture_->GetUniformId("uMatCamera"),
-			0
-		);
-
-		shader_no_texture_->AddVertexConstantLayout(
-			EffekseerRendererGL::CONSTANT_TYPE_MATRIX44,
-			shader_no_texture_->GetUniformId("uMatProjection"),
-			sizeof(Effekseer::Matrix44)
-		);
-
-		this->shader = shader_;
-		this->shader_no_texture = shader_no_texture_;
-        
-		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true, true);
-
-        vao = EffekseerRendererGL::VertexArray::Create(
-                                                       this->renderer,shader_,
-														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-                                                       this->renderer->GetIndexBuffer(), true);
-        vao_nt = EffekseerRendererGL::VertexArray::Create(
-                                                       this->renderer,shader_no_texture_,
-														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-                                                       this->renderer->GetIndexBuffer(), true);
-
+		s.Verteies[i].Pos = positions[i];
+		s.Verteies[i].UV[0] = uvs[i].X;
+		s.Verteies[i].UV[1] = uvs[i].Y;
+		s.Verteies[i].SetColor(colors[i]);
 	}
 
-	ImageRendererGL::~ImageRendererGL()
-	{
-		ES_SAFE_DELETE(shader);
-		ES_SAFE_DELETE(shader_no_texture);
-        ES_SAFE_DELETE(vao);
-        ES_SAFE_DELETE(vao_nt);
-		ES_SAFE_DELETE(vertexBuffer);
-	}
+	s.TexturePtr = texturePtr;
 
-	void ImageRendererGL::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], ::Effekseer::TextureData* texturePtr)
-	{
-		Sprite s;
+	sprites.push_back(s);
+}
 
-		for (int32_t i = 0; i < 4; i++)
-		{
-			s.Verteies[i].Pos = positions[i];
-			s.Verteies[i].UV[0] = uvs[i].X;
-			s.Verteies[i].UV[1] = uvs[i].Y;
-			s.Verteies[i].SetColor(colors[i]);
-		}
+void ImageRendererGL::Render()
+{
+	if (sprites.size() == 0)
+		return;
 
-		s.TexturePtr = texturePtr;
-
-		sprites.push_back(s);
-	}
-
-	void ImageRendererGL::Render()
-	{
-		if (sprites.size() == 0) return;
-
-		for(int32_t i = 0; i < sprites.size(); i++)
+	for (int32_t i = 0; i < sprites.size(); i++)
 
 		for (auto i = 0; i < sprites.size(); i++)
 		{
@@ -197,21 +173,21 @@ static const char g_sprite_fs_no_texture_src[] =
 			state.TextureWrapTypes[0] = Effekseer::TextureWrapType::Clamp;
 
 			EffekseerRendererGL::Shader* shader_ = nullptr;
-            EffekseerRendererGL::VertexArray* vao_ = nullptr;
-            
+			EffekseerRendererGL::VertexArray* vao_ = nullptr;
+
 			if (sprites[i].TexturePtr != nullptr)
 			{
 				shader_ = (EffekseerRendererGL::Shader*)shader;
-                vao_ = vao;
+				vao_ = vao;
 			}
 			else
 			{
 				shader_ = (EffekseerRendererGL::Shader*)shader_no_texture;
-                vao_ = vao_nt;
+				vao_ = vao_nt;
 			}
 
 			renderer->SetRenderMode(Effekseer::RenderMode::Normal);
-            renderer->SetVertexArray(vao_);
+			renderer->SetVertexArray(vao_);
 			renderer->BeginShader(shader_);
 
 			Effekseer::Matrix44 mats[2];
@@ -233,8 +209,8 @@ static const char g_sprite_fs_no_texture_src[] =
 
 			renderer->SetLayout(shader_);
 
-			//EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
-			//glBindTexture(GL_TEXTURE_2D, (GLuint)(size_t)sprites[i].TexturePtr);
+			// EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
+			// glBindTexture(GL_TEXTURE_2D, (GLuint)(size_t)sprites[i].TexturePtr);
 
 			renderer->SetIndexBuffer(renderer->GetIndexBuffer());
 
@@ -253,18 +229,11 @@ static const char g_sprite_fs_no_texture_src[] =
 
 			GLCheckError();
 		}
-	}
-
-	void ImageRendererGL::ClearCache()
-	{
-		sprites.clear();
-	}
-
-	void ImageRendererGL::OnLostDevice()
-	{
-	}
-
-	void ImageRendererGL::OnResetDevice()
-	{
-	}
 }
+
+void ImageRendererGL::ClearCache() { sprites.clear(); }
+
+void ImageRendererGL::OnLostDevice() {}
+
+void ImageRendererGL::OnResetDevice() {}
+} // namespace efk

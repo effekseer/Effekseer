@@ -10,7 +10,7 @@ namespace Effekseer
 {
 class Material;
 class CompiledMaterialBinary;
-}
+} // namespace Effekseer
 
 namespace EffekseerRendererDX11
 {

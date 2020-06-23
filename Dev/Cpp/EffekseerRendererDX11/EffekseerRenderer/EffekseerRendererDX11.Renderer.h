@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX11_RENDERER_H__
-#define	__EFFEKSEERRENDERER_DX11_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_DX11_RENDERER_H__
+#define __EFFEKSEERRENDERER_DX11_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX11.Base.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
+#include "EffekseerRendererDX11.Base.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -30,12 +30,10 @@ namespace EffekseerRendererDX11
 */
 ::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = NULL);
 
-
 /**
 	@brief	描画クラス
 */
-class Renderer
-	: public ::EffekseerRenderer::Renderer
+class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
 	Renderer() {}
@@ -48,15 +46,14 @@ public:
 		@param	context		DirectXのコンテキスト
 		@param	squareMaxCount	最大描画スプライト数
 		@param	depthFunc	奥行きの計算方法
-		@param	isMSAAEnabled whether is MSAA enabled 
+		@param	isMSAAEnabled whether is MSAA enabled
 		@return	インスタンス
 	*/
-	static Renderer* Create(
-		ID3D11Device* device, 
-		ID3D11DeviceContext* context, 
-		int32_t squareMaxCount, 
-		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,
-		bool isMSAAEnabled = false);
+	static Renderer* Create(ID3D11Device* device,
+							ID3D11DeviceContext* context,
+							int32_t squareMaxCount,
+							D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,
+							bool isMSAAEnabled = false);
 
 	virtual ID3D11Device* GetDevice() = 0;
 
@@ -82,20 +79,17 @@ public:
 @brief	\~English	Model
 		\~Japanese	モデル
 */
-class Model 
-	: public Effekseer::Model
+class Model : public Effekseer::Model
 {
 private:
-
 public:
-
 	struct InternalModel
 	{
-		ID3D11Buffer*		VertexBuffer;
-		ID3D11Buffer*		IndexBuffer;
-		int32_t				VertexCount;
-		int32_t				IndexCount;
-		int32_t				FaceCount;
+		ID3D11Buffer* VertexBuffer;
+		ID3D11Buffer* IndexBuffer;
+		int32_t VertexCount;
+		int32_t IndexCount;
+		int32_t FaceCount;
 
 		InternalModel()
 		{
@@ -113,29 +107,22 @@ public:
 		}
 	};
 
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
+	InternalModel* InternalModels = nullptr;
+	int32_t ModelCount;
 
-	Model( uint8_t* data, int32_t size )
-		: Effekseer::Model	( data, size )
-		, InternalModels(nullptr)
-		, ModelCount(0)
+	Model(uint8_t* data, int32_t size) : Effekseer::Model(data, size), InternalModels(nullptr), ModelCount(0)
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
 	}
 
-	virtual ~Model()
-	{
-		ES_SAFE_DELETE_ARRAY(InternalModels);
-	}
+	virtual ~Model() { ES_SAFE_DELETE_ARRAY(InternalModels); }
 };
 
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX11_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_DX11_RENDERER_H__

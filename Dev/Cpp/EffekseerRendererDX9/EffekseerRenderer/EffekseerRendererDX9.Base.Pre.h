@@ -1,18 +1,18 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX9_BASE_PRE_H__
-#define	__EFFEKSEERRENDERER_DX9_BASE_PRE_H__
+#ifndef __EFFEKSEERRENDERER_DX9_BASE_PRE_H__
+#define __EFFEKSEERRENDERER_DX9_BASE_PRE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
 
-#include <windows.h>
 #include <d3d9.h>
+#include <windows.h>
 
 #if _WIN32
 #pragma comment(lib, "gdiplus.lib")
-#pragma comment(lib, "d3d9.lib" )
+#pragma comment(lib, "d3d9.lib")
 #endif
 
 //----------------------------------------------------------------------------------
@@ -28,8 +28,8 @@ class Renderer;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_PRE_BASE_H__
+#endif // __EFFEKSEERRENDERER_DX9_PRE_BASE_H__

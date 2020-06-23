@@ -4,13 +4,13 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <memory>
-#include "EffekseerRendererDX9.RendererImplemented.h"
 #include "EffekseerRendererDX9.TextureLoader.h"
+#include "EffekseerRendererDX9.RendererImplemented.h"
+#include <memory>
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
-#include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -21,8 +21,7 @@ namespace EffekseerRendererDX9
 //
 //----------------------------------------------------------------------------------
 TextureLoader::TextureLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface)
-	: renderer_(renderer)
-	, m_fileInterface(fileInterface)
+	: renderer_(renderer), m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(renderer_);
 
@@ -36,13 +35,12 @@ TextureLoader::TextureLoader(RendererImplemented* renderer, ::Effekseer::FileInt
 #endif
 }
 
-TextureLoader::TextureLoader( LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
-	: device_			( device )
-	, m_fileInterface	( fileInterface )
+TextureLoader::TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
+	: device_(device), m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(device);
 
-	if( m_fileInterface == NULL )
+	if (m_fileInterface == NULL)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -83,7 +81,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 	return nullptr;
 }
 
-Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType) 
+Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType)
 {
 	// get device
 	LPDIRECT3DDEVICE9 device = nullptr;
@@ -186,7 +184,7 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 		textureData->Height = ddsTextureLoader.GetHeight();
 	}
 
-	Exit:;
+Exit:;
 	return textureData;
 }
 
@@ -195,7 +193,7 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 //----------------------------------------------------------------------------------
 void TextureLoader::Unload(Effekseer::TextureData* data)
 {
-	if( data != nullptr && data->UserPtr != nullptr)
+	if (data != nullptr && data->UserPtr != nullptr)
 	{
 		IDirect3DTexture9* texture = (IDirect3DTexture9*)data->UserPtr;
 		texture->Release();
@@ -210,7 +208,7 @@ void TextureLoader::Unload(Effekseer::TextureData* data)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

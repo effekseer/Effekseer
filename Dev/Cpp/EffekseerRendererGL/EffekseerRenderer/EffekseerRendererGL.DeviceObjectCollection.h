@@ -31,10 +31,7 @@ private:
 	void Unregister(DeviceObject* device);
 
 public:
-	GraphicsDevice(OpenGLDeviceType deviceType) :
-		deviceType_(deviceType) {
-
-	}
+	GraphicsDevice(OpenGLDeviceType deviceType) : deviceType_(deviceType) {}
 
 	~GraphicsDevice() = default;
 

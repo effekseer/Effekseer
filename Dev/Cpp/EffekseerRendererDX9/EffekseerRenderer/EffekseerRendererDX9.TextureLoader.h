@@ -1,18 +1,18 @@
 ﻿
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 
-#ifndef	__EFFEKSEERRENDERER_DX9_TEXTURELOADER_H__
-#define	__EFFEKSEERRENDERER_DX9_TEXTURELOADER_H__
+#ifndef __EFFEKSEERRENDERER_DX9_TEXTURELOADER_H__
+#define __EFFEKSEERRENDERER_DX9_TEXTURELOADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX9.RendererImplemented.h"
 #include "EffekseerRendererDX9.DeviceObject.h"
+#include "EffekseerRendererDX9.RendererImplemented.h"
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #endif
 
 //-----------------------------------------------------------------------------------
@@ -23,12 +23,11 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class TextureLoader
-	: public ::Effekseer::TextureLoader
+class TextureLoader : public ::Effekseer::TextureLoader
 {
 private:
 	RendererImplemented* renderer_ = nullptr;
-	LPDIRECT3DDEVICE9		device_ = nullptr;
+	LPDIRECT3DDEVICE9 device_ = nullptr;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
@@ -53,10 +52,10 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_TEXTURELOADER_H__
+#endif // __EFFEKSEERRENDERER_DX9_TEXTURELOADER_H__
 
 #endif // __EFFEKSEER_RENDERER_INTERNAL_LOADER__

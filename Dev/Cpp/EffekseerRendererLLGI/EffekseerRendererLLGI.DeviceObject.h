@@ -7,7 +7,6 @@
 namespace EffekseerRendererLLGI
 {
 
-
 class DeviceObject
 {
 private:

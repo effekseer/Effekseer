@@ -42,4 +42,4 @@ DepthTexture* DepthTexture::Create(Graphics* graphics)
 	return nullptr;
 }
 
-}
+} // namespace efk

@@ -66,19 +66,22 @@ class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer) {}
+	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer)
+	{
+	}
 
-	virtual ~DistortingCallbackDX12() { 
-	
+	virtual ~DistortingCallbackDX12()
+	{
+
 		if (textureData_ != nullptr)
 		{
 			EffekseerRendererDX12::DeleteTextureData(renderer_, textureData_);
 		}
 	}
 
-	
-	virtual bool OnDistorting() override { 
-	
+	virtual bool OnDistorting() override
+	{
+
 		if (textureData_ == nullptr)
 		{
 			auto tex = (LLGI::TextureDX12*)(platform_->GetCheckedTexture());

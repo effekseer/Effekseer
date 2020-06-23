@@ -1,27 +1,27 @@
 ﻿
-#ifndef	__EFFEKSEER_BASE_PRE_H__
-#define	__EFFEKSEER_BASE_PRE_H__
+#ifndef __EFFEKSEER_BASE_PRE_H__
+#define __EFFEKSEER_BASE_PRE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
+#include <array>
+#include <atomic>
+#include <cfloat>
+#include <climits>
+#include <memory>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <atomic>
-#include <stdint.h>
-#include <climits>
 #include <vector>
-#include <cfloat>
-#include <array>
-#include <memory>
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 #ifdef _WIN32
-#define	EFK_STDCALL	__stdcall
+#define EFK_STDCALL __stdcall
 #else
-#define	EFK_STDCALL
+#define EFK_STDCALL
 #endif
 
 //----------------------------------------------------------------------------------
@@ -39,15 +39,15 @@
 #elif defined(_XBOXONE)
 #include "Effekseer.XBoxOne.h"
 #else
-#include <unistd.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <unistd.h>
 #endif
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-typedef char16_t			EFK_CHAR;
+typedef char16_t EFK_CHAR;
 
 //----------------------------------------------------------------------------------
 //
@@ -86,7 +86,7 @@ class ModelLoader;
 
 class Model;
 
-typedef	int	Handle;
+typedef int Handle;
 
 /**
 	@brief	Memory Allocation function
@@ -119,12 +119,31 @@ typedef int(EFK_STDCALL* RandFunc)(void);
 	@param	handle	[in]	エフェクトのインスタンスのハンドル
 	@param	isRemovingManager	[in]	マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
 */
-typedef	void ( EFK_STDCALL *EffectInstanceRemovingCallback ) ( Manager* manager, Handle handle, bool isRemovingManager );
+typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
 
-#define ES_SAFE_ADDREF(val)						if ( (val) != NULL ) { (val)->AddRef(); }
-#define ES_SAFE_RELEASE(val)					if ( (val) != NULL ) { (val)->Release(); (val) = NULL; }
-#define ES_SAFE_DELETE(val)						if ( (val) != NULL ) { delete (val); (val) = NULL; }
-#define ES_SAFE_DELETE_ARRAY(val)				if ( (val) != NULL ) { delete [] (val); (val) = NULL; }
+#define ES_SAFE_ADDREF(val)                                                                                                                \
+	if ((val) != NULL)                                                                                                                     \
+	{                                                                                                                                      \
+		(val)->AddRef();                                                                                                                   \
+	}
+#define ES_SAFE_RELEASE(val)                                                                                                               \
+	if ((val) != NULL)                                                                                                                     \
+	{                                                                                                                                      \
+		(val)->Release();                                                                                                                  \
+		(val) = NULL;                                                                                                                      \
+	}
+#define ES_SAFE_DELETE(val)                                                                                                                \
+	if ((val) != NULL)                                                                                                                     \
+	{                                                                                                                                      \
+		delete (val);                                                                                                                      \
+		(val) = NULL;                                                                                                                      \
+	}
+#define ES_SAFE_DELETE_ARRAY(val)                                                                                                          \
+	if ((val) != NULL)                                                                                                                     \
+	{                                                                                                                                      \
+		delete[](val);                                                                                                                     \
+		(val) = NULL;                                                                                                                      \
+	}
 
 #define EFK_ASSERT(x) assert(x)
 
@@ -237,12 +256,12 @@ enum class ZSortType : int32_t
 };
 
 //-----------------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------------
 enum class RenderMode : int32_t
 {
-	Normal,				// 通常描画
-	Wireframe,			// ワイヤーフレーム描画
+	Normal,	   // 通常描画
+	Wireframe, // ワイヤーフレーム描画
 };
 
 /**
@@ -262,10 +281,9 @@ enum class ReloadingThreadType
 /**
 	@brief	最大値取得
 */
-template <typename T,typename U>
-T Max( T t, U u )
+template <typename T, typename U> T Max(T t, U u)
 {
-	if( t > (T)u )
+	if (t > (T)u)
 	{
 		return t;
 	}
@@ -275,10 +293,9 @@ T Max( T t, U u )
 /**
 	@brief	最小値取得
 */
-template <typename T,typename U>
-T Min( T t, U u )
+template <typename T, typename U> T Min(T t, U u)
 {
-	if( t < (T)u )
+	if (t < (T)u)
 	{
 		return t;
 	}
@@ -288,15 +305,14 @@ T Min( T t, U u )
 /**
 	@brief	範囲内値取得
 */
-template <typename T,typename U,typename V>
-T Clamp( T t, U max_, V min_ )
+template <typename T, typename U, typename V> T Clamp(T t, U max_, V min_)
 {
-	if( t > (T)max_ )
+	if (t > (T)max_)
 	{
 		t = (T)max_;
 	}
 
-	if( t < (T)min_ )
+	if (t < (T)min_)
 	{
 		t = (T)min_;
 	}
@@ -314,17 +330,18 @@ T Clamp( T t, U max_, V min_ )
 	@param	src			[in]	入力配列の先頭ポインタ
 	@return	文字数
 */
-inline int32_t ConvertUtf16ToUtf8( int8_t* dst, int32_t dst_size, const int16_t* src )
+inline int32_t ConvertUtf16ToUtf8(int8_t* dst, int32_t dst_size, const int16_t* src)
 {
 	int32_t cnt = 0;
 	const int16_t* wp = src;
 	int8_t* cp = dst;
 
-	if (dst_size == 0) return 0;
-	
+	if (dst_size == 0)
+		return 0;
+
 	dst_size -= 3;
 
-	for (cnt = 0; cnt < dst_size; )
+	for (cnt = 0; cnt < dst_size;)
 	{
 		int16_t wc = *wp++;
 		if (wc == 0)
@@ -335,15 +352,18 @@ inline int32_t ConvertUtf16ToUtf8( int8_t* dst, int32_t dst_size, const int16_t*
 		{
 			*cp++ = wc & 0x7f;
 			cnt += 1;
-		} else if ((wc & ~0x7ff) == 0)
+		}
+		else if ((wc & ~0x7ff) == 0)
 		{
-			*cp++ = ((wc >>  6) & 0x1f) | 0xc0;
-			*cp++ = ((wc)       & 0x3f) | 0x80;
+			*cp++ = ((wc >> 6) & 0x1f) | 0xc0;
+			*cp++ = ((wc)&0x3f) | 0x80;
 			cnt += 2;
-		} else {
-			*cp++ = ((wc >> 12) &  0xf) | 0xe0;
-			*cp++ = ((wc >>  6) & 0x3f) | 0x80;
-			*cp++ = ((wc)       & 0x3f) | 0x80;
+		}
+		else
+		{
+			*cp++ = ((wc >> 12) & 0xf) | 0xe0;
+			*cp++ = ((wc >> 6) & 0x3f) | 0x80;
+			*cp++ = ((wc)&0x3f) | 0x80;
 			cnt += 3;
 		}
 	}
@@ -358,19 +378,20 @@ inline int32_t ConvertUtf16ToUtf8( int8_t* dst, int32_t dst_size, const int16_t*
 	@param	src			[in]	入力配列の先頭ポインタ
 	@return	文字数
 */
-inline int32_t ConvertUtf8ToUtf16( int16_t* dst, int32_t dst_size, const int8_t* src )
+inline int32_t ConvertUtf8ToUtf16(int16_t* dst, int32_t dst_size, const int8_t* src)
 {
 	int32_t i, code;
 	int8_t c0, c1, c2;
 
-	if (dst_size == 0) return 0;
-	
+	if (dst_size == 0)
+		return 0;
+
 	dst_size -= 1;
 
 	for (i = 0; i < dst_size; i++)
 	{
 		int16_t wc;
-		
+
 		c0 = *src++;
 		if (c0 == '\0')
 		{
@@ -382,20 +403,20 @@ inline int32_t ConvertUtf8ToUtf16( int16_t* dst, int32_t dst_size, const int8_t*
 		{
 			// 8bit文字
 			wc = c0;
-		} 
+		}
 		else if (code >= 12 && code <= 13)
 		{
 			// 16bit文字
 			c1 = *src++;
 			wc = ((c0 & 0x1F) << 6) | (c1 & 0x3F);
-		} 
+		}
 		else if (code == 14)
 		{
 			// 24bit文字
 			c1 = *src++;
 			c2 = *src++;
 			wc = ((c0 & 0x0F) << 12) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
-		} 
+		}
 		else
 		{
 			continue;
@@ -405,7 +426,6 @@ inline int32_t ConvertUtf8ToUtf16( int16_t* dst, int32_t dst_size, const int8_t*
 	dst[i] = 0;
 	return i;
 }
-
 
 //----------------------------------------------------------------------------------
 //
@@ -438,11 +458,10 @@ public:
 /**
 	@brief	a deleter for IReference
 */
-template <typename T>
-struct ReferenceDeleter
+template <typename T> struct ReferenceDeleter
 {
 	void operator()(T* ptr) const
-	{ 
+	{
 		if (ptr != nullptr)
 		{
 			ptr->Release();
@@ -450,18 +469,17 @@ struct ReferenceDeleter
 	}
 };
 
-template<typename T> 
-inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
-{ 
+template <typename T> inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
+{
 	if (ptr == nullptr)
-		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr); 
+		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr);
 
 	if (addRef)
 	{
 		ptr->AddRef();
 	}
 
-	return std::unique_ptr<T, ReferenceDeleter<T>>(ptr); 
+	return std::unique_ptr<T, ReferenceDeleter<T>>(ptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -470,20 +488,15 @@ inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, boo
 /**
 @brief	参照カウンタオブジェクト
 */
-class ReferenceObject
-	: public IReference
+class ReferenceObject : public IReference
 {
 private:
 	mutable std::atomic<int32_t> m_reference;
 
 public:
-	ReferenceObject()
-		: m_reference(1)
-	{
-	}
+	ReferenceObject() : m_reference(1) {}
 
-	virtual ~ReferenceObject()
-	{}
+	virtual ~ReferenceObject() {}
 
 	virtual int AddRef()
 	{
@@ -492,10 +505,7 @@ public:
 		return m_reference;
 	}
 
-	virtual int GetRef()
-	{
-		return m_reference;
-	}
+	virtual int GetRef() { return m_reference; }
 
 	virtual int Release()
 	{
@@ -544,9 +554,9 @@ struct TextureData
 {
 	int32_t Width;
 	int32_t Height;
-	TextureFormatType	TextureFormat;
-	void*	UserPtr;
-	int64_t	UserID;
+	TextureFormatType TextureFormat;
+	void* UserPtr;
+	int64_t UserID;
 
 	//! for OpenGL, it is ignored in other apis
 	bool HasMipmap = true;
@@ -685,8 +695,8 @@ struct NodeRendererBasicParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_BASE_PRE_H__
+#endif // __EFFEKSEER_BASE_PRE_H__
