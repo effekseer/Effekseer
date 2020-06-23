@@ -9,12 +9,20 @@
 #include <windows.h>
 #endif
 
-#include <GL/gl.h>
-
 #ifdef EMSCRIPTEN
 #define GL_GLEXT_PROTOTYPES
 #define EGL_EGLEXT_PROTOTYPES
 #endif // EMSCRIPTEN
+
+#if _WIN32
+#include <GL/gl.h>
+#elif defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#endif
 
 #include "EffekseerRendererGL.Base.Pre.h"
 #include <stddef.h>
