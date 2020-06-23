@@ -3,8 +3,11 @@
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
-#else
+#elif defined(_WIN32)
 #include <GL/glew.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
 #endif
 
 #include <Common/StringHelper.h>

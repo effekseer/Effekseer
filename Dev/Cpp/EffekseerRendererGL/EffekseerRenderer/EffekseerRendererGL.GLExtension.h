@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#if _WIN32
+#if defined(_WIN32)
 #include <windows.h>
 #endif
 
@@ -14,7 +14,7 @@
 #define EGL_EGLEXT_PROTOTYPES
 #endif // EMSCRIPTEN
 
-#if _WIN32
+#if defined(_WIN32)
 #include <GL/gl.h>
 #elif defined(__APPLE__)
 #define GL_SILENCE_DEPRECATION

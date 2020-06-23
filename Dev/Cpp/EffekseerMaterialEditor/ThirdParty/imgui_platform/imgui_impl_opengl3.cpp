@@ -72,7 +72,9 @@
 #if defined(__APPLE__)
 #include <OpenGL/gl3.h>
 #else
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
 #endif
 
 // OpenGL Data

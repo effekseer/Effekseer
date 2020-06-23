@@ -188,7 +188,7 @@ if(BUILD_VIEWER)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib)
     
     # glew
-    if(NOT APPLE)
+    if(WIN32)
     ExternalProject_Add(
         ExternalProject_glew
         URL https://sourceforge.net/projects/glew/files/glew/1.13.0/glew-1.13.0.zip

@@ -134,7 +134,10 @@ using namespace gl;
 #include <glbinding/gl/gl.h>
 using namespace gl;
 #else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+// Effekseer
+// #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
 #endif
 #endif
 

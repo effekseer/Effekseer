@@ -162,7 +162,7 @@ add_dependencies(Viewer
 	ExternalProject_glfw 
 	ExternalProject_OpenSoundMixer)
 
-if(NOT APPLE)
+if(WIN32)
     add_dependencies(Viewer ExternalProject_glew)
 endif()
 

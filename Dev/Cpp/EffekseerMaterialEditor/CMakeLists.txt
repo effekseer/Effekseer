@@ -84,7 +84,7 @@ if (MSVC)
     endif()
 endif()
 
-if(NOT APPLE)
+if(WIN32)
     add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
 endif()
 
@@ -199,7 +199,6 @@ target_link_libraries(
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
-    GLEW
     dl
     stdc++fs
     ${CMAKE_THREAD_LIBS_INIT}
