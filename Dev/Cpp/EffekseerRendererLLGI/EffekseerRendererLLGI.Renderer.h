@@ -142,16 +142,9 @@ private:
 	void Unregister(DeviceObject* device);
 
 public:
-	GraphicsDevice(LLGI::Graphics* graphics)
-		: graphics_(graphics)
-	{
-		ES_SAFE_ADDREF(graphics_);
-	}
+	GraphicsDevice(LLGI::Graphics* graphics) : graphics_(graphics) { ES_SAFE_ADDREF(graphics_); }
 
-	virtual ~GraphicsDevice()
-	{
-		ES_SAFE_RELEASE(graphics_);
-	}
+	virtual ~GraphicsDevice() { ES_SAFE_RELEASE(graphics_); }
 
 	/**
 		@brief

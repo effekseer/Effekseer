@@ -27,9 +27,7 @@ private:
 	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(GraphicsDevice* graphicsDevice,
-				   ::Effekseer::FileInterface* fileInterface,
-				   bool canLoadFromCache = true);
+	MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache = true);
 	virtual ~MaterialLoader();
 
 	::Effekseer::MaterialData* Load(const EFK_CHAR* path) override;

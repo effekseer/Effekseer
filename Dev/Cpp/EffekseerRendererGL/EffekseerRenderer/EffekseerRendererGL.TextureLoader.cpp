@@ -4,13 +4,13 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <memory>
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.TextureLoader.h"
-#include "EffekseerRendererGL.GLExtension.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "EffekseerRendererGL.GLExtension.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
+#include <memory>
 
 //-----------------------------------------------------------------------------------
 //
@@ -21,9 +21,9 @@ namespace EffekseerRendererGL
 //
 //----------------------------------------------------------------------------------
 TextureLoader::TextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
-	: m_fileInterface	( fileInterface ), colorSpaceType_(colorSpaceType)
+	: m_fileInterface(fileInterface), colorSpaceType_(colorSpaceType)
 {
-	if( m_fileInterface == NULL )
+	if (m_fileInterface == NULL)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -48,10 +48,9 @@ TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
-	std::unique_ptr<Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	
-	if( reader.get() != NULL )
+	std::unique_ptr<Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+
+	if (reader.get() != NULL)
 	{
 		size_t size_texture = reader->GetLength();
 		char* data_texture = new char[size_texture];
@@ -193,9 +192,9 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 	return nullptr;
 }
 
-void TextureLoader::Unload(Effekseer::TextureData* data )
+void TextureLoader::Unload(Effekseer::TextureData* data)
 {
-	if( data != NULL )
+	if (data != NULL)
 	{
 		GLuint texture = (GLuint)data->UserID;
 		glDeleteTextures(1, &texture);
@@ -210,7 +209,7 @@ void TextureLoader::Unload(Effekseer::TextureData* data )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

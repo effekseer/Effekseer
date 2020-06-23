@@ -76,8 +76,8 @@ enum class OpenGLDeviceType
 
 #endif // __EFFEKSEERRENDERER_GL_BASE_PRE_H__
 
-#ifndef	__EFFEKSEERRENDERER_RENDERER_H__
-#define	__EFFEKSEERRENDERER_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_RENDERER_H__
+#define __EFFEKSEERRENDERER_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -106,7 +106,7 @@ public:
 };
 
 /**
-	@brief	
+	@brief
 	\~english A status of UV when particles are rendered.
 	\~japanese パーティクルを描画する時のUVの状態
 */
@@ -137,8 +137,8 @@ class GraphicsDevice : public ::Effekseer::IReference
 public:
 	GraphicsDevice() = default;
 	virtual ~GraphicsDevice() = default;
-};	
-	
+};
+
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -160,8 +160,7 @@ public:
 	virtual void NewFrame() {}
 };
 
-class Renderer
-	: public ::Effekseer::IReference
+class Renderer : public ::Effekseer::IReference
 {
 protected:
 	Renderer();
@@ -171,7 +170,6 @@ protected:
 	Impl* impl = nullptr;
 
 public:
-
 	/**
 		@brief	only for Effekseer backend developer. Effekseer User doesn't need it.
 	*/
@@ -250,7 +248,7 @@ public:
 	/**
 		@brief	Set a projection matrix
 	*/
-	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera matrix
@@ -260,7 +258,7 @@ public:
 	/**
 		@brief	Set a camera matrix
 	*/
-	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera projection matrix
@@ -283,7 +281,7 @@ public:
 
 	/**
 		@brief	Set a front direction and position of camera manually
-		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus, 
+		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus,
 		@note
 		These are set based on camera matrix automatically.
 		It is failed on some platform.
@@ -318,15 +316,15 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english Create default material loader
 	\~japanese 標準のマテリアル読込クラスを生成する。
 
@@ -349,7 +347,7 @@ public:
 	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english Get draw call count
 	\~japanese ドローコールの回数を取得する
 	*/
@@ -384,7 +382,7 @@ public:
 	virtual Effekseer::RenderMode GetRenderMode() const;
 
 	/**
-	@brief	
+	@brief
 	\~english Specify a render mode.
 	\~japanese 描画モードを設定する。
 	*/
@@ -461,20 +459,20 @@ public:
 	\~English	Delete a proxy texture
 	\~Japanese	代替のテクスチャを削除する
 	*/
-	virtual void DeleteProxyTexture(Effekseer::TextureData* data) { }
+	virtual void DeleteProxyTexture(Effekseer::TextureData* data) {}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_RENDERER_H__
 
-#ifndef	__EFFEKSEERRENDERER_GL_RENDERER_H__
-#define	__EFFEKSEERRENDERER_GL_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_GL_RENDERER_H__
+#define __EFFEKSEERRENDERER_GL_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -494,15 +492,15 @@ class GraphicsDevice;
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr, ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr,
+												::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
 ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
 ::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);
 
-class Renderer
-	: public ::EffekseerRenderer::Renderer
+class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
 	Renderer() {}
@@ -526,8 +524,7 @@ public:
 	\~english	instance
 	\~japanese	インスタンス
 	*/
-	static Renderer* Create(int32_t squareMaxCount,
-							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+	static Renderer* Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
 	static Renderer* Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice);
 
@@ -551,14 +548,14 @@ public:
 	virtual Effekseer::TextureData* GetBackground() = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english	Specify a background.
 	\~japanese	背景を設定する。
 	*/
 	virtual void SetBackground(GLuint background, bool hasMipmap = false) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english get a device type
 	\~japanese デバイスの種類を取得する。
 	*/
@@ -578,18 +575,16 @@ public:
 /**
 	@brief	モデル
 */
-class Model
-	: public Effekseer::Model
+class Model : public Effekseer::Model
 {
 private:
-
 public:
 	struct InternalModel
 	{
-		GLuint		VertexBuffer;
-		GLuint		IndexBuffer;
-		int32_t		VertexCount;
-		int32_t		IndexCount;
+		GLuint VertexBuffer;
+		GLuint IndexBuffer;
+		int32_t VertexCount;
+		int32_t IndexCount;
 
 		std::vector<uint8_t> delayVertexBuffer;
 		std::vector<uint8_t> delayIndexBuffer;
@@ -601,10 +596,8 @@ public:
 		bool TryDelayLoad();
 	};
 
-
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
-
+	InternalModel* InternalModels = nullptr;
+	int32_t ModelCount;
 
 	Model(void* data, int32_t size);
 	~Model();
@@ -613,8 +606,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_GL_RENDERER_H__

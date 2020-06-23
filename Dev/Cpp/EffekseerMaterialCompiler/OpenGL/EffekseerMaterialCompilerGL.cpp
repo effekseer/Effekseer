@@ -15,7 +15,7 @@ static char* material_common_define = R"(
 #define LERP mix
 
 float atan2(in float y, in float x) {
-    return x == 0.0 ? sign(y)* 3.141592 / 2.0 : atan(y, x);
+	return x == 0.0 ? sign(y)* 3.141592 / 2.0 : atan(y, x);
 }
 
 )";
@@ -123,7 +123,7 @@ void main()
 	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 
 	vec3 pixelNormalDir = worldNormal;
-	
+
 	vec4 vcolor = modelColor;
 )";
 
@@ -451,7 +451,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 	vec2 distortUV = dir.xy * (refraction - airRefraction);
 
 	distortUV += v_ScreenUV;
-	distortUV = GetUVBack(distortUV);	
+	distortUV = GetUVBack(distortUV);
 
 	vec4 bg = TEX2D(background, distortUV);
 	FRAGCOLOR = bg;
@@ -835,7 +835,6 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t 
 	};
 
 	auto saveBinary = [&material, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
-
 		GLSL::ShaderGenerator generator;
 		auto shader = generator.GenerateShader(material, type, maximumTextureCount, false, false, false, false, 0);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));

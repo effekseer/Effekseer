@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_GL_BASE_H__
-#define	__EFFEKSEERRENDERER_GL_BASE_H__
+#ifndef __EFFEKSEERRENDERER_GL_BASE_H__
+#define __EFFEKSEERRENDERER_GL_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -9,18 +9,18 @@
 
 #include <Effekseer.h>
 
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
 #include <assert.h>
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
 #include <string.h>
 
-#include <map>
-#include <vector>
-#include <set>
 #include <list>
-#include <string>
+#include <map>
 #include <queue>
+#include <set>
+#include <string>
+#include <vector>
 
 #include <memory>
 
@@ -59,13 +59,27 @@ class TextureLoader;
 #if _WIN32
 #pragma comment(lib, "glu32.lib")
 #ifndef NDEBUG
-#define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { printf("GLError filename = %s , line = %d, error = %s\n", __FILE__, __LINE__, (const char*)gluErrorString(__code) ); }  }
+#define GLCheckError()                                                                                                                     \
+	{                                                                                                                                      \
+		int __code = glGetError();                                                                                                         \
+		if (__code != GL_NO_ERROR)                                                                                                         \
+		{                                                                                                                                  \
+			printf("GLError filename = %s , line = %d, error = %s\n", __FILE__, __LINE__, (const char*)gluErrorString(__code));            \
+		}                                                                                                                                  \
+	}
 #else
 #define GLCheckError()
 #endif
 #elif EMSCRIPTEN
 #ifndef NDEBUG
-#define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { EM_ASM_ARGS({console.log("GLError filename = " + Pointer_stringify($0) + " , line = " + $1);}, __FILE__, __LINE__); } }
+#define GLCheckError()                                                                                                                     \
+	{                                                                                                                                      \
+		int __code = glGetError();                                                                                                         \
+		if (__code != GL_NO_ERROR)                                                                                                         \
+		{                                                                                                                                  \
+			EM_ASM_ARGS({ console.log("GLError filename = " + Pointer_stringify($0) + " , line = " + $1); }, __FILE__, __LINE__);          \
+		}                                                                                                                                  \
+	}
 #else
 #define GLCheckError()
 #endif
@@ -76,8 +90,8 @@ class TextureLoader;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_BASE_H__
+#endif // __EFFEKSEERRENDERER_GL_BASE_H__

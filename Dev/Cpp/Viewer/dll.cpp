@@ -1509,8 +1509,7 @@ public:
 		{
 			handle = g_manager->Play(g_effect, 0, 0, 0);
 			const ViewerEffectBehavior& behavior = native->m_effectBehavior;
-			g_manager->SetTargetLocation(
-				handle, behavior.TargetPositionX, behavior.TargetPositionY, behavior.TargetPositionZ);
+			g_manager->SetTargetLocation(handle, behavior.TargetPositionX, behavior.TargetPositionY, behavior.TargetPositionZ);
 		}
 
 		if (isBehaviorEnabled)
@@ -1558,8 +1557,8 @@ public:
 				native->RenderWindow();
 
 				g_renderer->EndRecord(pixels[loop],
-					recordingParameter_.Transparence == TransparenceType::Generate,
-					recordingParameter_.Transparence == TransparenceType::None);
+									  recordingParameter_.Transparence == TransparenceType::Generate,
+									  recordingParameter_.Transparence == TransparenceType::None);
 			}
 
 			if (isBehaviorEnabled)
@@ -1628,15 +1627,9 @@ public:
 		return true;
 	}
 
-	bool IsCompleted() const
-	{
-		return recordedCount >= recordingParameter_.Count;
-	}
+	bool IsCompleted() const { return recordedCount >= recordingParameter_.Count; }
 
-	float GetProgress() const
-	{
-		return static_cast<float>(recordedCount) / static_cast<float>(recordingParameter_.Count);
-	}
+	float GetProgress() const { return static_cast<float>(recordedCount) / static_cast<float>(recordingParameter_.Count); }
 };
 
 bool Native::BeginRecord(const RecordingParameter& recordingParameter)
@@ -1650,7 +1643,8 @@ bool Native::BeginRecord(const RecordingParameter& recordingParameter)
 
 bool Native::StepRecord(int frames)
 {
-	if (recorder == nullptr) {
+	if (recorder == nullptr)
+	{
 		return false;
 	}
 	return recorder->Step(this, frames);
@@ -1658,7 +1652,8 @@ bool Native::StepRecord(int frames)
 
 bool Native::EndRecord()
 {
-	if (recorder == nullptr) {
+	if (recorder == nullptr)
+	{
 		return false;
 	}
 	bool result = recorder->End(this);
@@ -1666,20 +1661,11 @@ bool Native::EndRecord()
 	return true;
 }
 
-bool Native::IsRecording() const
-{
-	return recorder != nullptr;
-}
+bool Native::IsRecording() const { return recorder != nullptr; }
 
-float Native::GetRecordingProgress() const
-{
-	return (recorder) ? recorder->GetProgress() : 0.0f;
-}
+float Native::GetRecordingProgress() const { return (recorder) ? recorder->GetProgress() : 0.0f; }
 
-bool Native::IsRecordCompleted() const
-{
-	return (recorder) ? recorder->IsCompleted() : false;
-}
+bool Native::IsRecordCompleted() const { return (recorder) ? recorder->IsCompleted() : false; }
 
 bool Native::Record(const RecordingParameter& recordingParameter)
 {

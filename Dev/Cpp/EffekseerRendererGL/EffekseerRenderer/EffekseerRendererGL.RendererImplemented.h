@@ -1,15 +1,15 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_GL_RENDERER_IMPLEMENTED_H__
-#define	__EFFEKSEERRENDERER_GL_RENDERER_IMPLEMENTED_H__
+#ifndef __EFFEKSEERRENDERER_GL_RENDERER_IMPLEMENTED_H__
+#define __EFFEKSEERRENDERER_GL_RENDERER_IMPLEMENTED_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.Base.h"
-#include "EffekseerRendererGL.Renderer.h"
-#include "EffekseerRendererGL.DeviceObjectCollection.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRendererGL.Base.h"
+#include "EffekseerRendererGL.DeviceObjectCollection.h"
+#include "EffekseerRendererGL.Renderer.h"
 
 namespace EffekseerRendererGL
 {
@@ -20,17 +20,17 @@ class GraphicsDevice;
 
 struct RenderStateSet
 {
-	GLboolean	blend;
-	GLboolean	cullFace;
-	GLboolean	depthTest;
-	GLboolean	depthWrite;
-	GLboolean	texture;
-	GLint		depthFunc;
-	GLint		cullFaceMode;
-	GLint		blendSrc;
-	GLint		blendDst;
-	GLint		blendEquation;
-	GLint		vao;
+	GLboolean blend;
+	GLboolean cullFace;
+	GLboolean depthTest;
+	GLboolean depthWrite;
+	GLboolean texture;
+	GLint depthFunc;
+	GLint cullFaceMode;
+	GLint blendSrc;
+	GLint blendDst;
+	GLint blendEquation;
+	GLint vao;
 	GLint arrayBufferBinding;
 	GLint elementArrayBufferBinding;
 	std::array<GLint, ::Effekseer::TextureSlotMax> boundTextures;
@@ -41,19 +41,17 @@ struct RenderStateSet
 	@note
 	ツール向けの描画機能。
 */
-class RendererImplemented
-	: public Renderer
-	, public ::Effekseer::ReferenceObject
+class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 {
-friend class DeviceObject;
+	friend class DeviceObject;
 
 private:
 	GraphicsDevice* graphicsDevice_ = nullptr;
 
-	VertexBuffer*		m_vertexBuffer;
-	IndexBuffer*		m_indexBuffer = nullptr;
-	IndexBuffer*		m_indexBufferForWireframe = nullptr;
-	int32_t				m_squareMaxCount;
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer = nullptr;
+	IndexBuffer* m_indexBufferForWireframe = nullptr;
+	int32_t m_squareMaxCount;
 
 	Shader* m_shader = nullptr;
 	Shader* m_shader_distortion = nullptr;
@@ -70,26 +68,26 @@ private:
 	//! default vao (alsmot for material)
 	GLuint defaultVertexArray_ = 0;
 
-	::EffekseerRenderer::RenderStateBase*		m_renderState;
+	::EffekseerRenderer::RenderStateBase* m_renderState;
 
-	Effekseer::TextureData	m_background;
+	Effekseer::TextureData m_background;
 
-	OpenGLDeviceType		m_deviceType;
+	OpenGLDeviceType m_deviceType;
 
 	// for restoring states
 	RenderStateSet m_originalState;
 
-	bool	m_restorationOfStates;
+	bool m_restorationOfStates;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 	// textures which are specified currently
 	std::vector<::Effekseer::TextureData> currentTextures_;
 
-	VertexArray*	m_currentVertexArray;
+	VertexArray* m_currentVertexArray;
 
 	int32_t indexBufferStride_ = 2;
-	
+
 	int32_t indexBufferCurrentStride_ = 0;
 
 	//! because gleDrawElements has only index offset
@@ -137,7 +135,7 @@ public:
 	void SetSquareMaxCount(int32_t count) override;
 
 	::EffekseerRenderer::RenderStateBase* GetRenderState();
-	
+
 	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
@@ -147,12 +145,12 @@ public:
 		@brief	リボンレンダラーを生成する。
 	*/
 	::Effekseer::RibbonRenderer* CreateRibbonRenderer() override;
-	
+
 	/**
 		@brief	リングレンダラーを生成する。
 	*/
 	::Effekseer::RingRenderer* CreateRingRenderer() override;
-	
+
 	/**
 		@brief	モデルレンダラーを生成する。
 	*/
@@ -166,21 +164,22 @@ public:
 	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
-	::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL )override;
-	
+	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+
 	/**
 		@brief	モデル読込クラスを生成する。
 	*/
-	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL )override;
+	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
 
 	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	/**
 	@brief	背景を取得する。
 	*/
-	Effekseer::TextureData* GetBackground() override 
+	Effekseer::TextureData* GetBackground() override
 	{
-		if (m_background.UserID == 0) return nullptr;
+		if (m_background.UserID == 0)
+			return nullptr;
 		return &m_background;
 	}
 
@@ -192,21 +191,20 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*
-	GetStandardRenderer()
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer()
 	{
 		return m_standardRenderer;
 	}
 
-	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
+	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
-	void SetIndexBuffer( IndexBuffer* indexBuffer );
+	void SetIndexBuffer(IndexBuffer* indexBuffer);
 	void SetIndexBuffer(GLuint indexBuffer);
-	void SetVertexArray( VertexArray* vertexArray );
+	void SetVertexArray(VertexArray* vertexArray);
 
 	void SetLayout(Shader* shader);
-	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );
-	void DrawPolygon( int32_t vertexCount, int32_t indexCount);
+	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);
+	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
 
 	Shader* GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const;
 	void BeginShader(Shader* shader);
@@ -239,15 +237,14 @@ public:
 private:
 	void GenerateIndexData();
 
-	template <typename T>
-	void GenerateIndexDataStride();
+	template <typename T> void GenerateIndexDataStride();
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_RENDERER_IMPLEMENTED_H__
+#endif // __EFFEKSEERRENDERER_GL_RENDERER_IMPLEMENTED_H__

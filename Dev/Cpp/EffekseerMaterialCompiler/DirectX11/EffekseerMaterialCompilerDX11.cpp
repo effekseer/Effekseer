@@ -193,7 +193,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 
 		std::string log;
 		std::vector<D3D_SHADER_MACRO> macros;
-		
+
 		auto blob = DX11::CompilePixelShader(str.c_str(), "PS", macros, log);
 
 		if (blob != nullptr)

@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERTOOL_SOUND_H__
-#define	__EFFEKSEERTOOL_SOUND_H__
+#ifndef __EFFEKSEERTOOL_SOUND_H__
+#define __EFFEKSEERTOOL_SOUND_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <OpenSoundMixer.h>
 #include <EffekseerSoundOSMixer.h>
+#include <OpenSoundMixer.h>
 
 //----------------------------------------------------------------------------------
 //
@@ -19,10 +19,10 @@ namespace EffekseerTool
 class Sound
 {
 private:
-	::EffekseerSound::Sound*	m_sound;
-	osm::Manager*				m_manager;
-	float	m_volume;
-	bool	m_mute;
+	::EffekseerSound::Sound* m_sound;
+	osm::Manager* m_manager;
+	float m_volume;
+	bool m_mute;
 
 public:
 	/**
@@ -48,29 +48,29 @@ public:
 	/**
 		@brief	ボリューム設定。
 	*/
-	void SetVolume( float volume );
+	void SetVolume(float volume);
 
 	/**
 		@brief	無音設定。
 	*/
-	void SetMute( bool mute );
-	
-	float GetVolume()	{return m_volume;}
-	bool GetMute()		{return m_mute;}
-	
+	void SetMute(bool mute);
+
+	float GetVolume() { return m_volume; }
+	bool GetMute() { return m_mute; }
+
 	/**
 		@brief	リスナー位置設定。
 	*/
-	void SetListener( const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up );
+	void SetListener(const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up);
 
-	::EffekseerSound::Sound*	GetSound() { return m_sound; };
+	::EffekseerSound::Sound* GetSound() { return m_sound; };
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerTool
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERTOOL_SOUND_H__
+#endif // __EFFEKSEERTOOL_SOUND_H__

@@ -13,7 +13,7 @@ DeviceObject::DeviceObject(RendererImplemented* renderer, GraphicsDevice* graphi
 	{
 		ES_SAFE_ADDREF(renderer_);
 	}
-	ES_SAFE_ADDREF(graphicsDevice_);	
+	ES_SAFE_ADDREF(graphicsDevice_);
 
 	graphicsDevice_->Register(this);
 }

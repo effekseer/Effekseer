@@ -3,10 +3,10 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "../EffekseerSoundDSound.h"
+#include "EffekseerSoundDSound.SoundImplemented.h"
+#include "EffekseerSoundDSound.SoundLoader.h"
 #include "EffekseerSoundDSound.SoundPlayer.h"
 #include "EffekseerSoundDSound.SoundVoice.h"
-#include "EffekseerSoundDSound.SoundLoader.h"
-#include "EffekseerSoundDSound.SoundImplemented.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -16,10 +16,10 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Sound* Sound::Create( IDirectSound8* dsound )
+Sound* Sound::Create(IDirectSound8* dsound)
 {
 	SoundImplemented* sound = new SoundImplemented();
-	if( sound->Initialize( dsound ) )
+	if (sound->Initialize(dsound))
 	{
 		return sound;
 	}
@@ -29,13 +29,7 @@ Sound* Sound::Create( IDirectSound8* dsound )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented()
-	: m_dsound	( NULL )
-	, m_mute	( false )
-	, m_voiceContainer(NULL)
-	, m_leftPos(0), m_rightPos(0)
-{
-}
+SoundImplemented::SoundImplemented() : m_dsound(NULL), m_mute(false), m_voiceContainer(NULL), m_leftPos(0), m_rightPos(0) {}
 
 //----------------------------------------------------------------------------------
 //
@@ -43,7 +37,8 @@ SoundImplemented::SoundImplemented()
 SoundImplemented::~SoundImplemented()
 {
 	StopAllVoices();
-	if (m_voiceContainer) {
+	if (m_voiceContainer)
+	{
 		delete m_voiceContainer;
 	}
 }
@@ -51,21 +46,20 @@ SoundImplemented::~SoundImplemented()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool SoundImplemented::Initialize( IDirectSound8* dsound )
+bool SoundImplemented::Initialize(IDirectSound8* dsound)
 {
 	m_dsound = dsound;
-	
+
 	// ボイスを作成
 	m_voiceContainer = new SoundVoiceContainer(this, 32);
-	
+
 	return true;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up )
+void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up)
 {
 	/*::Effekseer::Vector3D front;
 	::Effekseer::Vector3D::Sub(front, at, pos);
@@ -84,87 +78,57 @@ void SoundImplemented::SetListener( const ::Effekseer::Vector3D& pos,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::Destroy()
-{
-	delete this;
-}
+void SoundImplemented::Destroy() { delete this; }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer()
-{
-	return new SoundPlayer(this);
-}
-	
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-::Effekseer::SoundLoader* SoundImplemented::CreateSoundLoader()
-{
-	return new SoundLoader(this);
-}
+::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer() { return new SoundPlayer(this); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopAllVoices()
-{
-	m_voiceContainer->StopAll();
-}
+::Effekseer::SoundLoader* SoundImplemented::CreateSoundLoader() { return new SoundLoader(this); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetMute( bool mute )
-{
-	m_mute = mute;
-}
+void SoundImplemented::StopAllVoices() { m_voiceContainer->StopAll(); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoice* SoundImplemented::GetVoice()
-{
-	return m_voiceContainer->GetVoice();
-}
+void SoundImplemented::SetMute(bool mute) { m_mute = mute; }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopTag( ::Effekseer::SoundTag tag )
-{
-	m_voiceContainer->StopTag(tag);
-}
+SoundVoice* SoundImplemented::GetVoice() { return m_voiceContainer->GetVoice(); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::PauseTag( ::Effekseer::SoundTag tag, bool pause )
-{
-	m_voiceContainer->PauseTag(tag, pause);
-}
+void SoundImplemented::StopTag(::Effekseer::SoundTag tag) { m_voiceContainer->StopTag(tag); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool SoundImplemented::CheckPlayingTag( ::Effekseer::SoundTag tag )
-{
-	return m_voiceContainer->CheckPlayingTag(tag);
-}
-	
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void SoundImplemented::StopData( SoundData* soundData )
-{
-	m_voiceContainer->StopData(soundData);
-}
+void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause) { m_voiceContainer->PauseTag(tag, pause); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetPanRange( int32_t leftPos, int32_t rightPos )
+bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag) { return m_voiceContainer->CheckPlayingTag(tag); }
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void SoundImplemented::StopData(SoundData* soundData) { m_voiceContainer->StopData(soundData); }
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void SoundImplemented::SetPanRange(int32_t leftPos, int32_t rightPos)
 {
 	m_leftPos = leftPos;
 	m_rightPos = rightPos;
@@ -173,18 +137,24 @@ void SoundImplemented::SetPanRange( int32_t leftPos, int32_t rightPos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float SoundImplemented::CalculatePan( const Effekseer::Vector3D& position )
+float SoundImplemented::CalculatePan(const Effekseer::Vector3D& position)
 {
-	if (m_leftPos == m_rightPos) {
+	if (m_leftPos == m_rightPos)
+	{
 		return 0;
 	}
-	
+
 	int32_t pos = (int32_t)position.X;
-	if (pos <= m_leftPos) {
+	if (pos <= m_leftPos)
+	{
 		return -1.0f;
-	} else if (pos >= m_rightPos) {
+	}
+	else if (pos >= m_rightPos)
+	{
 		return 1.0f;
-	} else {
+	}
+	else
+	{
 		return (float)(pos - m_leftPos) / (m_rightPos - m_leftPos);
 	}
 }
@@ -192,7 +162,7 @@ float SoundImplemented::CalculatePan( const Effekseer::Vector3D& position )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

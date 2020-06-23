@@ -4,9 +4,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.IndexBufferBase.h"
 #include "EffekseerRendererGL.DeviceObject.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -16,13 +16,11 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-class IndexBuffer
-	: public DeviceObject
-	, public ::EffekseerRenderer::IndexBufferBase
+class IndexBuffer : public DeviceObject, public ::EffekseerRenderer::IndexBufferBase
 {
 private:
-	GLuint					m_buffer;
-	
+	GLuint m_buffer;
+
 	IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount);
 
 public:
@@ -32,7 +30,7 @@ public:
 
 	GLuint GetInterface() { return m_buffer; }
 
-public:	// デバイス復旧用
+public: // デバイス復旧用
 	virtual void OnLostDevice() override;
 	virtual void OnResetDevice() override;
 
@@ -48,7 +46,7 @@ public:
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

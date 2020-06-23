@@ -14,9 +14,7 @@ namespace EffekseerRendererGL
 //
 //-----------------------------------------------------------------------------------
 IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
-	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount)
-	, IndexBufferBase(maxCount, isDynamic)
-	, m_buffer(buffer)
+	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount), IndexBufferBase(maxCount, isDynamic), m_buffer(buffer)
 {
 	stride_ = stride;
 	m_resource = new uint8_t[m_indexMaxCount * stride_];
@@ -27,7 +25,7 @@ IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCo
 //-----------------------------------------------------------------------------------
 IndexBuffer::~IndexBuffer()
 {
-	delete [] m_resource;
+	delete[] m_resource;
 	GLExt::glDeleteBuffers(1, &m_buffer);
 }
 
@@ -55,7 +53,8 @@ void IndexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::OnResetDevice()
 {
-	if (IsValid()) return;
+	if (IsValid())
+		return;
 	GLuint ib;
 	GLExt::glGenBuffers(1, &ib);
 	m_buffer = ib;
@@ -66,7 +65,7 @@ void IndexBuffer::OnResetDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::Lock()
 {
-	assert( !m_isLock );
+	assert(!m_isLock);
 
 	m_isLock = true;
 	m_indexCount = 0;
@@ -77,7 +76,7 @@ void IndexBuffer::Lock()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::Unlock()
 {
-	assert( m_isLock );
+	assert(m_isLock);
 
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
 	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * stride_, m_resource, GL_DYNAMIC_DRAW);
@@ -86,16 +85,12 @@ void IndexBuffer::Unlock()
 	m_isLock = false;
 }
 
-
-bool IndexBuffer::IsValid()
-{
-	return m_buffer != 0;
-}
+bool IndexBuffer::IsValid() { return m_buffer != 0; }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

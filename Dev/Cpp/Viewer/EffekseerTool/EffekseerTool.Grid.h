@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_GRID_H__
-#define	__EFFEKSEERRENDERER_GRID_H__
+#ifndef __EFFEKSEERRENDERER_GRID_H__
+#define __EFFEKSEERRENDERER_GRID_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -18,21 +18,21 @@ namespace EffekseerRenderer
 class Grid
 {
 
-	efk::LineRenderer*	lineRenderer = nullptr;
+	efk::LineRenderer* lineRenderer = nullptr;
 
-	int32_t							m_lineCount;
-	float							m_gridLength;
+	int32_t m_lineCount;
+	float m_gridLength;
 
 	Grid(efk::Graphics* graphics);
-public:
 
+public:
 	virtual ~Grid();
 
 	static Grid* Create(efk::Graphics* graphics);
 
 public:
-	void Rendering( ::Effekseer::Color& gridColor, bool isRightHand );
-	void SetLength( float gridLength ) { m_gridLength = gridLength; }
+	void Rendering(::Effekseer::Color& gridColor, bool isRightHand);
+	void SetLength(float gridLength) { m_gridLength = gridLength; }
 
 	bool IsShownXY;
 	bool IsShownXZ;
@@ -41,8 +41,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GRID_H__
+#endif // __EFFEKSEERRENDERER_GRID_H__
