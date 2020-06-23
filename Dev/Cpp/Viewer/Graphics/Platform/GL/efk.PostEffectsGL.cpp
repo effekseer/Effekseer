@@ -150,7 +150,8 @@ void main() {
 const EffekseerRendererGL::ShaderAttribInfo BlitterGL::shaderAttributes[2] = {{"a_Position", GL_FLOAT, 2, 0, false},
 																			  {"a_TexCoord", GL_FLOAT, 2, 8, false}};
 
-BlitterGL::BlitterGL(Graphics* graphics) : graphics(graphics)
+BlitterGL::BlitterGL(Graphics* graphics)
+	: graphics(graphics)
 {
 	using namespace EffekseerRendererGL;
 	auto renderer = (RendererImplemented*)graphics->GetRenderer();
@@ -169,7 +170,9 @@ BlitterGL::BlitterGL(Graphics* graphics) : graphics(graphics)
 	vertexBuffer->Unlock();
 }
 
-BlitterGL::~BlitterGL() {}
+BlitterGL::~BlitterGL()
+{
+}
 
 std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(EffekseerRendererGL::Shader* shader)
 {
@@ -232,7 +235,9 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 	renderer->EndShader(shader);
 }
 
-BloomEffectGL::BloomEffectGL(Graphics* graphics) : BloomEffect(graphics), blitter(graphics)
+BloomEffectGL::BloomEffectGL(Graphics* graphics)
+	: BloomEffect(graphics)
+	, blitter(graphics)
 {
 	using namespace EffekseerRendererGL;
 	auto renderer = (RendererImplemented*)graphics->GetRenderer();
@@ -295,7 +300,9 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics) : BloomEffect(graphics), blitte
 	vaoBlurV = blitter.CreateVAO(shaderBlurV.get());
 }
 
-BloomEffectGL::~BloomEffectGL() {}
+BloomEffectGL::~BloomEffectGL()
+{
+}
 
 void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 {
@@ -377,9 +384,14 @@ void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	GLCheckError();
 }
 
-void BloomEffectGL::OnLostDevice() { ReleaseBuffers(); }
+void BloomEffectGL::OnLostDevice()
+{
+	ReleaseBuffers();
+}
 
-void BloomEffectGL::OnResetDevice() {}
+void BloomEffectGL::OnResetDevice()
+{
+}
 
 void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 {
@@ -426,7 +438,9 @@ void BloomEffectGL::ReleaseBuffers()
 	}
 }
 
-TonemapEffectGL::TonemapEffectGL(Graphics* graphics) : TonemapEffect(graphics), blitter(graphics)
+TonemapEffectGL::TonemapEffectGL(Graphics* graphics)
+	: TonemapEffect(graphics)
+	, blitter(graphics)
 {
 	using namespace EffekseerRendererGL;
 	auto renderer = (RendererImplemented*)graphics->GetRenderer();
@@ -456,7 +470,9 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics) : TonemapEffect(graphics), 
 	vaoReinhard = blitter.CreateVAO(shaderReinhard.get());
 }
 
-TonemapEffectGL::~TonemapEffectGL() {}
+TonemapEffectGL::~TonemapEffectGL()
+{
+}
 
 void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 {
@@ -490,7 +506,9 @@ void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	GLCheckError();
 }
 
-LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter(graphics)
+LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics)
+	: LinearToSRGBEffect(graphics)
+	, blitter(graphics)
 {
 	using namespace EffekseerRendererGL;
 	auto renderer = (RendererImplemented*)graphics->GetRenderer();
@@ -508,7 +526,9 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics) : LinearToSRGBEff
 	vao_ = blitter.CreateVAO(shader_.get());
 }
 
-LinearToSRGBEffectGL::~LinearToSRGBEffectGL() {}
+LinearToSRGBEffectGL::~LinearToSRGBEffectGL()
+{
+}
 
 void LinearToSRGBEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 {

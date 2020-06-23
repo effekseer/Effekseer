@@ -4,11 +4,20 @@
 namespace EffekseerRenderer
 {
 
-Guide::Guide(efk::Graphics* graphics) { imageRenderer = efk::ImageRenderer::Create(graphics); }
+Guide::Guide(efk::Graphics* graphics)
+{
+	imageRenderer = efk::ImageRenderer::Create(graphics);
+}
 
-Guide::~Guide() { ES_SAFE_DELETE(imageRenderer); }
+Guide::~Guide()
+{
+	ES_SAFE_DELETE(imageRenderer);
+}
 
-Guide* Guide::Create(efk::Graphics* graphics) { return new Guide(graphics); }
+Guide* Guide::Create(efk::Graphics* graphics)
+{
+	return new Guide(graphics);
+}
 
 void Guide::Rendering(int32_t width, int32_t height, int32_t guide_width, int32_t guide_height)
 {

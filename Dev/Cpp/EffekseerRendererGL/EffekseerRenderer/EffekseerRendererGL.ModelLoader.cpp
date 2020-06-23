@@ -14,7 +14,8 @@ namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface) : m_fileInterface(fileInterface)
+ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface)
+	: m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == NULL)
 	{
@@ -25,7 +26,9 @@ ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface) : m_fileInte
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::~ModelLoader() {}
+ModelLoader::~ModelLoader()
+{
+}
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {

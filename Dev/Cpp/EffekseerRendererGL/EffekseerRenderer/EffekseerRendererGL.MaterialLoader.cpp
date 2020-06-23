@@ -338,7 +338,8 @@ namespace EffekseerRendererGL
 }
 
 MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache)
-	: fileInterface_(fileInterface), canLoadFromCache_(canLoadFromCache)
+	: fileInterface_(fileInterface)
+	, canLoadFromCache_(canLoadFromCache)
 {
 	if (fileInterface == nullptr)
 	{
@@ -349,7 +350,10 @@ MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::File
 	ES_SAFE_ADDREF(graphicsDevice_);
 }
 
-MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(graphicsDevice_); }
+MaterialLoader ::~MaterialLoader()
+{
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {

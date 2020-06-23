@@ -9,7 +9,10 @@ namespace Effekseer
 
 std::shared_ptr<IO> IO::instance_;
 
-std::shared_ptr<IO> IO::GetInstance() { return instance_; }
+std::shared_ptr<IO> IO::GetInstance()
+{
+	return instance_;
+}
 
 std::u16string IO::ReplaceSeparator(const char16_t* path)
 {
@@ -29,9 +32,15 @@ std::u16string IO::ReplaceSeparator(const char16_t* path)
 	return path;
 }
 
-void IO::Initialize(int checkFileInterval) { instance_ = std::make_shared<IO>(checkFileInterval); }
+void IO::Initialize(int checkFileInterval)
+{
+	instance_ = std::make_shared<IO>(checkFileInterval);
+}
 
-void IO::Terminate() { instance_ = nullptr; }
+void IO::Terminate()
+{
+	instance_ = nullptr;
+}
 
 IO::IO(int checkFileInterval)
 {
@@ -213,6 +222,9 @@ void IO::CheckFile(int interval)
 	}
 }
 
-void IO::AddCallback(std::shared_ptr<IOCallback> callback) { callbacks_.push_back(callback); }
+void IO::AddCallback(std::shared_ptr<IOCallback> callback)
+{
+	callbacks_.push_back(callback);
+}
 
 } // namespace Effekseer

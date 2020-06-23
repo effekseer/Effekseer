@@ -44,7 +44,10 @@
 namespace EffekseerRendererGL
 {
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType) { return new GraphicsDevice(deviceType); }
+::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType)
+{
+	return new GraphicsDevice(deviceType);
+}
 
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
 {
@@ -204,7 +207,8 @@ void RendererImplemented::GenerateIndexData()
 	}
 }
 
-template <typename T> void RendererImplemented::GenerateIndexDataStride()
+template <typename T>
+void RendererImplemented::GenerateIndexDataStride()
 {
 	// generate an index buffer
 	if (m_indexBuffer != nullptr)
@@ -532,9 +536,15 @@ bool RendererImplemented::Initialize()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::Destroy() { Release(); }
+void RendererImplemented::Destroy()
+{
+	Release();
+}
 
-void RendererImplemented::SetRestorationOfStatesFlag(bool flag) { m_restorationOfStates = flag; }
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+	m_restorationOfStates = flag;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -670,17 +680,26 @@ bool RendererImplemented::EndRendering()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-VertexBuffer* RendererImplemented::GetVertexBuffer() { return m_vertexBuffer; }
+VertexBuffer* RendererImplemented::GetVertexBuffer()
+{
+	return m_vertexBuffer;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-IndexBuffer* RendererImplemented::GetIndexBuffer() { return m_indexBuffer; }
+IndexBuffer* RendererImplemented::GetIndexBuffer()
+{
+	return m_indexBuffer;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount; }
+int32_t RendererImplemented::GetSquareMaxCount() const
+{
+	return m_squareMaxCount;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -733,7 +752,10 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState() { return m_renderState; }
+::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
+{
+	return m_renderState;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -762,7 +784,10 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this); }
+::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer()
+{
+	return ModelRenderer::Create(this);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -811,9 +836,15 @@ void RendererImplemented::SetBackground(GLuint background, bool hasMipmap)
 	m_background.HasMipmap = hasMipmap;
 }
 
-void RendererImplemented::SetBackgroundTexture(::Effekseer::TextureData* textureData) { m_background = *textureData; }
+void RendererImplemented::SetBackgroundTexture(::Effekseer::TextureData* textureData)
+{
+	m_background = *textureData;
+}
 
-EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback() { return m_distortingCallback; }
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
@@ -878,7 +909,10 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexArray(VertexArray* vertexArray) { m_currentVertexArray = vertexArray; }
+void RendererImplemented::SetVertexArray(VertexArray* vertexArray)
+{
+	m_currentVertexArray = vertexArray;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -1197,7 +1231,10 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	}
 }
 
-bool RendererImplemented::IsVertexArrayObjectSupported() const { return GLExt::IsSupportedVertexArray(); }
+bool RendererImplemented::IsVertexArrayObjectSupported() const
+{
+	return GLExt::IsSupportedVertexArray();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -1245,7 +1282,10 @@ bool Model::InternalModel::TryDelayLoad()
 	return true;
 }
 
-Model::Model(void* data, int32_t size) : ::Effekseer::Model(data, size), InternalModels(nullptr), ModelCount(1)
+Model::Model(void* data, int32_t size)
+	: ::Effekseer::Model(data, size)
+	, InternalModels(nullptr)
+	, ModelCount(1)
 {
 	InternalModels = new Model::InternalModel[GetFrameCount()];
 
@@ -1292,7 +1332,10 @@ Model::Model(void* data, int32_t size) : ::Effekseer::Model(data, size), Interna
 	}
 }
 
-Model::~Model() { ES_SAFE_DELETE_ARRAY(InternalModels); }
+Model::~Model()
+{
+	ES_SAFE_DELETE_ARRAY(InternalModels);
+}
 
 //----------------------------------------------------------------------------------
 //

@@ -31,7 +31,10 @@ public:
 
 	static VertexBuffer* Create(GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
 
-	LLGI::VertexBuffer* GetVertexBuffer() { return vertexBuffers[currentIndex]; }
+	LLGI::VertexBuffer* GetVertexBuffer()
+	{
+		return vertexBuffers[currentIndex];
+	}
 
 public:
 	void Lock() override;

@@ -56,11 +56,17 @@ protected:
 
 public:
 	RingRendererBase(RENDERER* renderer)
-		: m_renderer(renderer), m_ringBufferOffset(0), m_ringBufferData(NULL), m_spriteCount(0), m_instanceCount(0)
+		: m_renderer(renderer)
+		, m_ringBufferOffset(0)
+		, m_ringBufferData(NULL)
+		, m_spriteCount(0)
+		, m_instanceCount(0)
 	{
 	}
 
-	virtual ~RingRendererBase() {}
+	virtual ~RingRendererBase()
+	{
+	}
 
 protected:
 	void RenderingInstance(const efkRingInstanceParam& inst,
@@ -189,15 +195,30 @@ protected:
 		Lighting,
 	};
 
-	VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+	VertexType GetVertexType(const VERTEX_NORMAL* v)
+	{
+		return VertexType::Normal;
+	}
 
-	VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+	VertexType GetVertexType(const VERTEX_DISTORTION* v)
+	{
+		return VertexType::Distortion;
+	}
 
-	VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+	VertexType GetVertexType(const DynamicVertex* v)
+	{
+		return VertexType::Dynamic;
+	}
 
-	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lighting; }
+	VertexType GetVertexType(const LightingVertex* v)
+	{
+		return VertexType::Lighting;
+	}
 
-	bool CanSingleRendering() { return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default; }
+	bool CanSingleRendering()
+	{
+		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default;
+	}
 
 	template <typename VERTEX>
 	void Rendering_Internal(const efkRingNodeParam& parameter,
@@ -715,7 +736,10 @@ protected:
 	}
 
 public:
-	void BeginRendering(const efkRingNodeParam& parameter, int32_t count, void* userData) { BeginRendering_(m_renderer, count, parameter); }
+	void BeginRendering(const efkRingNodeParam& parameter, int32_t count, void* userData)
+	{
+		BeginRendering_(m_renderer, count, parameter);
+	}
 
 	void Rendering(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData)
 	{

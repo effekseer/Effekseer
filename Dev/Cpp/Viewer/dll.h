@@ -145,10 +145,22 @@ class RecordingParameter
 	std::u16string ext;
 
 public:
-	const char16_t* GetPath() const { return path.c_str(); }
-	const char16_t* GetExt() const { return ext.c_str(); }
-	void SetPath(const char16_t* value) { path = value; }
-	void SetExt(const char16_t* value) { ext = value; }
+	const char16_t* GetPath() const
+	{
+		return path.c_str();
+	}
+	const char16_t* GetExt() const
+	{
+		return ext.c_str();
+	}
+	void SetPath(const char16_t* value)
+	{
+		path = value;
+	}
+	void SetExt(const char16_t* value)
+	{
+		ext = value;
+	}
 
 	RecordingModeType RecordingMode;
 	int32_t Count = 0;
@@ -176,7 +188,10 @@ private:
 
 		void Unload(Effekseer::TextureData* data) override;
 
-		Effekseer::TextureLoader* GetOriginalTextureLoader() const { return m_originalTextureLoader; }
+		Effekseer::TextureLoader* GetOriginalTextureLoader() const
+		{
+			return m_originalTextureLoader;
+		}
 		std::u16string RootPath;
 	};
 
@@ -229,7 +244,10 @@ private:
 		Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
 		std::u16string RootPath;
 
-		::Effekseer::MaterialLoader* GetOriginalLoader() { return loader_; }
+		::Effekseer::MaterialLoader* GetOriginalLoader()
+		{
+			return loader_;
+		}
 
 		void ReleaseAll();
 	};

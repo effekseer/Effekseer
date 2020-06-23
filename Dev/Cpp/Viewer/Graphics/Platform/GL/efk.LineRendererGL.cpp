@@ -65,7 +65,8 @@ static const char g_sprite_fs_no_texture_src[] = "IN lowp vec4 vaColor;\n"
 												 "FRAGCOLOR = vaColor;\n"
 												 "}\n";
 
-LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer) : LineRenderer(renderer)
+LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer)
+	: LineRenderer(renderer)
 {
 	this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
 
@@ -193,9 +194,16 @@ void LineRendererGL::Render()
 	GLCheckError();
 }
 
-void LineRendererGL::ClearCache() { vertexies.clear(); }
+void LineRendererGL::ClearCache()
+{
+	vertexies.clear();
+}
 
-void LineRendererGL::OnLostDevice() {}
+void LineRendererGL::OnLostDevice()
+{
+}
 
-void LineRendererGL::OnResetDevice() {}
+void LineRendererGL::OnResetDevice()
+{
+}
 } // namespace efk

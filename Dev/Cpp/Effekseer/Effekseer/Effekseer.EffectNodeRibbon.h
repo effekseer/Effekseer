@@ -153,9 +153,14 @@ public:
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
-	EffectNodeRibbon(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos) {}
+	EffectNodeRibbon(Effect* effect, unsigned char*& pos)
+		: EffectNodeImplemented(effect, pos)
+	{
+	}
 
-	~EffectNodeRibbon() {}
+	~EffectNodeRibbon()
+	{
+	}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -173,7 +178,10 @@ public:
 
 	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
 
-	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_RIBBON; }
+	eEffectNodeType GetType() const override
+	{
+		return EFFECT_NODE_TYPE_RIBBON;
+	}
 };
 
 //----------------------------------------------------------------------------------

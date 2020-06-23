@@ -123,15 +123,25 @@ public:
 	};
 
 public:
-	SpriteRenderer() {}
+	SpriteRenderer()
+	{
+	}
 
-	virtual ~SpriteRenderer() {}
+	virtual ~SpriteRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -219,19 +229,33 @@ public:
 	};
 
 public:
-	RibbonRenderer() {}
+	RibbonRenderer()
+	{
+	}
 
-	virtual ~RibbonRenderer() {}
+	virtual ~RibbonRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 
-	virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -322,15 +346,25 @@ public:
 	};
 
 public:
-	RingRenderer() {}
+	RingRenderer()
+	{
+	}
 
-	virtual ~RingRenderer() {}
+	virtual ~RingRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -417,15 +451,25 @@ public:
 	};
 
 public:
-	ModelRenderer() {}
+	ModelRenderer()
+	{
+	}
 
-	virtual ~ModelRenderer() {}
+	virtual ~ModelRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -524,19 +568,33 @@ public:
 	};
 
 public:
-	TrackRenderer() {}
+	TrackRenderer()
+	{
+	}
 
-	virtual ~TrackRenderer() {}
+	virtual ~TrackRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 
-	virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------

@@ -37,11 +37,11 @@ inline void SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_z_ const ch
 }
 */
 
-#define SAFE_RELEASE(val)                                                                                                                  \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		(val)->Release();                                                                                                                  \
-		(val) = NULL;                                                                                                                      \
+#define SAFE_RELEASE(val) \
+	if ((val) != NULL)    \
+	{                     \
+		(val)->Release(); \
+		(val) = NULL;     \
 	}
 
 //--------------------------------------------------------------------------------------

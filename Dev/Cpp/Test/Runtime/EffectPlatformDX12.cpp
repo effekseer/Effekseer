@@ -66,7 +66,9 @@ class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer)
+	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer)
+		: platform_(platform)
+		, renderer_(renderer)
 	{
 	}
 
@@ -219,9 +221,14 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformDX12::~EffectPlatformDX12() {}
+EffectPlatformDX12::~EffectPlatformDX12()
+{
+}
 
-void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
+void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParameter& param)
+{
+	CreateCheckedTexture();
+}
 
 void EffectPlatformDX12::DestroyDevice()
 {
@@ -290,4 +297,7 @@ void EffectPlatformDX12::EndRendering()
 	commandList_->End();
 }
 
-LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const { return checkTexture_; }
+LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const
+{
+	return checkTexture_;
+}

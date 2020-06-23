@@ -45,8 +45,12 @@ struct FixedShader
 class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	virtual LLGI::Graphics* GetGraphics() const = 0;
@@ -75,15 +79,33 @@ public:
 		ES_SAFE_ADDREF(memoryPool_);
 	}
 
-	virtual ~SingleFrameMemoryPool() { ES_SAFE_RELEASE(memoryPool_); }
+	virtual ~SingleFrameMemoryPool()
+	{
+		ES_SAFE_RELEASE(memoryPool_);
+	}
 
-	void NewFrame() override { memoryPool_->NewFrame(); }
+	void NewFrame() override
+	{
+		memoryPool_->NewFrame();
+	}
 
-	LLGI::SingleFrameMemoryPool* GetInternal() { return memoryPool_; }
+	LLGI::SingleFrameMemoryPool* GetInternal()
+	{
+		return memoryPool_;
+	}
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 class CommandList : public ::EffekseerRenderer::CommandList, public ::Effekseer::ReferenceObject
@@ -95,7 +117,9 @@ private:
 
 public:
 	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
-		: graphics_(graphics), commandList_(commandList), memoryPool_(memoryPool)
+		: graphics_(graphics)
+		, commandList_(commandList)
+		, memoryPool_(memoryPool)
 	{
 		ES_SAFE_ADDREF(graphics_);
 		ES_SAFE_ADDREF(commandList_);
@@ -109,15 +133,33 @@ public:
 		ES_SAFE_RELEASE(memoryPool_);
 	}
 
-	LLGI::Graphics* GetGraphics() { return graphics_; }
+	LLGI::Graphics* GetGraphics()
+	{
+		return graphics_;
+	}
 
-	LLGI::CommandList* GetInternal() { return commandList_; }
+	LLGI::CommandList* GetInternal()
+	{
+		return commandList_;
+	}
 
-	LLGI::SingleFrameMemoryPool* GetMemoryPooll() { return memoryPool_; }
+	LLGI::SingleFrameMemoryPool* GetMemoryPooll()
+	{
+		return memoryPool_;
+	}
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 class DeviceObject;
@@ -142,9 +184,16 @@ private:
 	void Unregister(DeviceObject* device);
 
 public:
-	GraphicsDevice(LLGI::Graphics* graphics) : graphics_(graphics) { ES_SAFE_ADDREF(graphics_); }
+	GraphicsDevice(LLGI::Graphics* graphics)
+		: graphics_(graphics)
+	{
+		ES_SAFE_ADDREF(graphics_);
+	}
 
-	virtual ~GraphicsDevice() { ES_SAFE_RELEASE(graphics_); }
+	virtual ~GraphicsDevice()
+	{
+		ES_SAFE_RELEASE(graphics_);
+	}
 
 	/**
 		@brief
@@ -160,11 +209,23 @@ public:
 	*/
 	void OnResetDevice();
 
-	LLGI::Graphics* GetGraphics() const { return graphics_; }
+	LLGI::Graphics* GetGraphics() const
+	{
+		return graphics_;
+	}
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 /**
@@ -202,12 +263,18 @@ public:
 	InternalModel* InternalModels = nullptr;
 	int32_t ModelCount;
 
-	Model(uint8_t* data, int32_t size) : Effekseer::Model(data, size), InternalModels(nullptr), ModelCount(0)
+	Model(uint8_t* data, int32_t size)
+		: Effekseer::Model(data, size)
+		, InternalModels(nullptr)
+		, ModelCount(0)
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
 	}
 
-	virtual ~Model() { ES_SAFE_DELETE_ARRAY(InternalModels); }
+	virtual ~Model()
+	{
+		ES_SAFE_DELETE_ARRAY(InternalModels);
+	}
 };
 
 } // namespace EffekseerRendererLLGI

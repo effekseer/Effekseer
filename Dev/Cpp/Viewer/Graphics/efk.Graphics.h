@@ -54,8 +54,12 @@ protected:
 	DepthTexture* currentDepthTexture = nullptr;
 
 public:
-	Graphics() {}
-	virtual ~Graphics() {}
+	Graphics()
+	{
+	}
+	virtual ~Graphics()
+	{
+	}
 
 	virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount) = 0;
 
@@ -85,10 +89,18 @@ public:
 
 	virtual DeviceType GetDeviceType() const = 0;
 
-	virtual RenderTexture* GetRenderTexture() const { return currentRenderTexture; }
-	virtual DepthTexture* GetDepthTexture() const { return currentDepthTexture; }
+	virtual RenderTexture* GetRenderTexture() const
+	{
+		return currentRenderTexture;
+	}
+	virtual DepthTexture* GetDepthTexture() const
+	{
+		return currentDepthTexture;
+	}
 
-	virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) {}
+	virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
+	{
+	}
 
 	/**
 	Called when device is losted.

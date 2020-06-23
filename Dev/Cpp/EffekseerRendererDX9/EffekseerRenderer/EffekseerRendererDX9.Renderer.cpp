@@ -493,7 +493,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::Destroy() { Release(); }
+void RendererImplemented::Destroy()
+{
+	Release();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -669,12 +672,18 @@ bool RendererImplemented::EndRendering()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-LPDIRECT3DDEVICE9 RendererImplemented::GetDevice() { return m_d3d_device; }
+LPDIRECT3DDEVICE9 RendererImplemented::GetDevice()
+{
+	return m_d3d_device;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-VertexBuffer* RendererImplemented::GetVertexBuffer() { return m_vertexBuffer; }
+VertexBuffer* RendererImplemented::GetVertexBuffer()
+{
+	return m_vertexBuffer;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -694,17 +703,26 @@ IndexBuffer* RendererImplemented::GetIndexBuffer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-IndexBuffer* RendererImplemented::GetIndexBufferForWireframe() { return m_indexBufferForWireframe; }
+IndexBuffer* RendererImplemented::GetIndexBufferForWireframe()
+{
+	return m_indexBufferForWireframe;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount; }
+int32_t RendererImplemented::GetSquareMaxCount() const
+{
+	return m_squareMaxCount;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState() { return m_renderState; }
+::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
+{
+	return m_renderState;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -733,7 +751,10 @@ int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this); }
+::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer()
+{
+	return ModelRenderer::Create(this);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -782,7 +803,10 @@ void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 	m_background.UserPtr = background;
 }
 
-EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback() { return m_distortingCallback; }
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
@@ -809,17 +833,26 @@ void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t si
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer) { GetDevice()->SetIndices(indexBuffer->GetInterface()); }
+void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
+{
+	GetDevice()->SetIndices(indexBuffer->GetInterface());
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer) { GetDevice()->SetIndices(indexBuffer); }
+void RendererImplemented::SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer)
+{
+	GetDevice()->SetIndices(indexBuffer);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetLayout(Shader* shader) { GetDevice()->SetVertexDeclaration(shader->GetLayoutInterface()); }
+void RendererImplemented::SetLayout(Shader* shader)
+{
+	GetDevice()->SetVertexDeclaration(shader->GetLayoutInterface());
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -903,7 +936,10 @@ void RendererImplemented::BeginShader(Shader* shader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
+void RendererImplemented::EndShader(Shader* shader)
+{
+	currentShader = nullptr;
+}
 
 void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {

@@ -31,7 +31,10 @@ private:
 	void Unregister(DeviceObject* device);
 
 public:
-	GraphicsDevice(OpenGLDeviceType deviceType) : deviceType_(deviceType) {}
+	GraphicsDevice(OpenGLDeviceType deviceType)
+		: deviceType_(deviceType)
+	{
+	}
 
 	~GraphicsDevice() = default;
 
@@ -49,11 +52,23 @@ public:
 	*/
 	void OnResetDevice();
 
-	OpenGLDeviceType GetDeviceType() const { return deviceType_; }
+	OpenGLDeviceType GetDeviceType() const
+	{
+		return deviceType_;
+	}
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 } // namespace EffekseerRendererGL

@@ -21,7 +21,10 @@ TextureLoader::TextureLoader(ID3D11Device* device,
 							 ID3D11DeviceContext* context,
 							 ::Effekseer::FileInterface* fileInterface,
 							 ::Effekseer::ColorSpaceType colorSpaceType)
-	: device(device), context(context), m_fileInterface(fileInterface), colorSpaceType_(colorSpaceType)
+	: device(device)
+	, context(context)
+	, m_fileInterface(fileInterface)
+	, colorSpaceType_(colorSpaceType)
 {
 	ES_SAFE_ADDREF(device);
 	ES_SAFE_ADDREF(context);

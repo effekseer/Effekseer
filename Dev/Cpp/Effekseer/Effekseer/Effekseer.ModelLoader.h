@@ -24,12 +24,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	ModelLoader() {}
+	ModelLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~ModelLoader() {}
+	virtual ~ModelLoader()
+	{
+	}
 
 	/**
 		@brief	モデルを読み込む。
@@ -39,7 +43,10 @@ public:
 		モデルを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const EFK_CHAR* path) { return NULL; }
+	virtual void* Load(const EFK_CHAR* path)
+	{
+		return NULL;
+	}
 
 	/**
 		@brief
@@ -55,7 +62,10 @@ public:
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたモデルのポインタ
 	*/
-	virtual void* Load(const void* data, int32_t size) { return nullptr; }
+	virtual void* Load(const void* data, int32_t size)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief	モデルを破棄する。
@@ -64,7 +74,9 @@ public:
 		モデルを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(void* data) {}
+	virtual void Unload(void* data)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------

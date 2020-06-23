@@ -7,9 +7,14 @@
 namespace Effekseer
 {
 
-InstanceChunk::InstanceChunk() { std::fill(instancesAlive_.begin(), instancesAlive_.end(), false); }
+InstanceChunk::InstanceChunk()
+{
+	std::fill(instancesAlive_.begin(), instancesAlive_.end(), false);
+}
 
-InstanceChunk::~InstanceChunk() {}
+InstanceChunk::~InstanceChunk()
+{
+}
 
 void InstanceChunk::UpdateInstances()
 {

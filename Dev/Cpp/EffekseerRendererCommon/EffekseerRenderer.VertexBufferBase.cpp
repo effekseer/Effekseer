@@ -13,14 +13,20 @@ namespace EffekseerRenderer
 //
 //-----------------------------------------------------------------------------------
 VertexBufferBase::VertexBufferBase(int size, bool isDynamic)
-	: m_isDynamic(isDynamic), m_size(size), m_offset(0), m_resource(NULL), m_isLock(false)
+	: m_isDynamic(isDynamic)
+	, m_size(size)
+	, m_offset(0)
+	, m_resource(NULL)
+	, m_isLock(false)
 {
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBufferBase::~VertexBufferBase() {}
+VertexBufferBase::~VertexBufferBase()
+{
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -34,12 +40,18 @@ void VertexBufferBase::Push(const void* buffer, int size)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-int VertexBufferBase::GetMaxSize() const { return m_size; }
+int VertexBufferBase::GetMaxSize() const
+{
+	return m_size;
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-int VertexBufferBase::GetSize() const { return m_offset; }
+int VertexBufferBase::GetSize() const
+{
+	return m_offset;
+}
 
 //-----------------------------------------------------------------------------------
 //

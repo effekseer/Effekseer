@@ -4,9 +4,13 @@
 
 typedef Effekseer::MaterialCompiler*(EFK_STDCALL* CreateCompilerFunc)();
 
-CompiledMaterialGenerator::CompiledMaterialGenerator() {}
+CompiledMaterialGenerator::CompiledMaterialGenerator()
+{
+}
 
-CompiledMaterialGenerator::~CompiledMaterialGenerator() {}
+CompiledMaterialGenerator::~CompiledMaterialGenerator()
+{
+}
 
 bool CompiledMaterialGenerator::Initialize(const char* directory)
 {

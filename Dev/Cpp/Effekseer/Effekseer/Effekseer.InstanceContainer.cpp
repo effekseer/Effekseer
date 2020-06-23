@@ -24,7 +24,11 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 InstanceContainer::InstanceContainer(ManagerImplemented* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal)
-	: m_pManager(pManager), m_pEffectNode((EffectNodeImplemented*)pEffectNode), m_pGlobal(pGlobal), m_headGroups(NULL), m_tailGroups(NULL)
+	: m_pManager(pManager)
+	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
+	, m_pGlobal(pGlobal)
+	, m_headGroups(NULL)
+	, m_tailGroups(NULL)
 
 {
 	auto en = (EffectNodeImplemented*)pEffectNode;
@@ -53,7 +57,10 @@ InstanceContainer::~InstanceContainer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceContainer::AddChild(InstanceContainer* pContainter) { m_Children.push_back(pContainter); }
+void InstanceContainer::AddChild(InstanceContainer* pContainter)
+{
+	m_Children.push_back(pContainter);
+}
 
 InstanceContainer* InstanceContainer::GetChild(int index)
 {
@@ -134,7 +141,10 @@ InstanceGroup* InstanceContainer::CreateInstanceGroup()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGroup* InstanceContainer::GetFirstGroup() const { return m_headGroups; }
+InstanceGroup* InstanceContainer::GetFirstGroup() const
+{
+	return m_headGroups;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -320,7 +330,10 @@ void InstanceContainer::KillAllInstances(bool recursive)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGlobal* InstanceContainer::GetRootInstance() { return m_pGlobal; }
+InstanceGlobal* InstanceContainer::GetRootInstance()
+{
+	return m_pGlobal;
+}
 
 //----------------------------------------------------------------------------------
 //

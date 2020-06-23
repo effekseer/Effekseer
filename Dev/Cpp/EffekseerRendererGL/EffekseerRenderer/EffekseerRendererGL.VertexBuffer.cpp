@@ -50,7 +50,10 @@ VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool
 	return new VertexBuffer(renderer, size, isDynamic, hasRefCount);
 }
 
-GLuint VertexBuffer::GetInterface() { return m_buffer; }
+GLuint VertexBuffer::GetInterface()
+{
+	return m_buffer;
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -227,7 +230,10 @@ void VertexBuffer::Unlock()
 	m_ringBufferLock = false;
 }
 
-bool VertexBuffer::IsValid() { return m_buffer != 0; }
+bool VertexBuffer::IsValid()
+{
+	return m_buffer != 0;
+}
 
 //-----------------------------------------------------------------------------------
 //

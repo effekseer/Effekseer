@@ -10,7 +10,9 @@
 
 namespace efk
 {
-RenderTextureGL::RenderTextureGL(Graphics* graphics) {}
+RenderTextureGL::RenderTextureGL(Graphics* graphics)
+{
+}
 
 RenderTextureGL::~RenderTextureGL()
 {
@@ -81,7 +83,9 @@ bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat fo
 	return true;
 }
 
-DepthTextureGL::DepthTextureGL(Graphics* graphics) {}
+DepthTextureGL::DepthTextureGL(Graphics* graphics)
+{
+}
 
 DepthTextureGL::~DepthTextureGL()
 {
@@ -155,7 +159,9 @@ bool SaveTextureGL(std::vector<Effekseer::Color>& dst, GLuint texture, int32_t w
 	return true;
 }
 
-GraphicsGL::GraphicsGL() {}
+GraphicsGL::GraphicsGL()
+{
+}
 
 GraphicsGL::~GraphicsGL()
 {
@@ -280,9 +286,13 @@ bool GraphicsGL::Present()
 	return true;
 }
 
-void GraphicsGL::BeginScene() {}
+void GraphicsGL::BeginScene()
+{
+}
 
-void GraphicsGL::EndScene() {}
+void GraphicsGL::EndScene()
+{
+}
 
 void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
 {
@@ -461,7 +471,13 @@ void GraphicsGL::ResetDevice()
 	renderer->OnResetDevice();
 }
 
-void* GraphicsGL::GetBack() { return (void*)(uintptr_t)backTarget->GetViewID(); }
+void* GraphicsGL::GetBack()
+{
+	return (void*)(uintptr_t)backTarget->GetViewID();
+}
 
-EffekseerRenderer::Renderer* GraphicsGL::GetRenderer() { return renderer; }
+EffekseerRenderer::Renderer* GraphicsGL::GetRenderer()
+{
+	return renderer;
+}
 } // namespace efk

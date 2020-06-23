@@ -17,7 +17,8 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderState::RenderState(RendererImplemented* renderer) : m_renderer(renderer)
+RenderState::RenderState(RendererImplemented* renderer)
+	: m_renderer(renderer)
 {
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{

@@ -60,9 +60,17 @@ struct ShaderCodeView
 	const char* Data;
 	int32_t Length;
 
-	ShaderCodeView() : Data(nullptr), Length(0) {}
+	ShaderCodeView()
+		: Data(nullptr)
+		, Length(0)
+	{
+	}
 
-	ShaderCodeView(const char* data) : Data(data), Length(static_cast<int32_t>(strlen(data))) {}
+	ShaderCodeView(const char* data)
+		: Data(data)
+		, Length(static_cast<int32_t>(strlen(data)))
+	{
+	}
 };
 
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
@@ -183,8 +191,14 @@ public:
 	void SetVertexConstantBufferSize(int32_t size) override;
 	void SetPixelConstantBufferSize(int32_t size) override;
 
-	void* GetVertexConstantBuffer() override { return m_vertexConstantBuffer; }
-	void* GetPixelConstantBuffer() override { return m_pixelConstantBuffer; }
+	void* GetVertexConstantBuffer() override
+	{
+		return m_vertexConstantBuffer;
+	}
+	void* GetPixelConstantBuffer() override
+	{
+		return m_pixelConstantBuffer;
+	}
 
 	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset);
 	void AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset);

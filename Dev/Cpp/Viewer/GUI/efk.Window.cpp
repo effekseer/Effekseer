@@ -86,9 +86,13 @@ void GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale)
 	}
 }
 
-Window::Window() {}
+Window::Window()
+{
+}
 
-Window::~Window() {}
+Window::~Window()
+{
+}
 
 bool Window::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, DeviceType deviceType)
 {
@@ -132,7 +136,10 @@ bool Window::DoEvents()
 	return true;
 }
 
-void Window::SetTitle(const char16_t* title) { glfwSetWindowTitle(window, utf16_to_utf8(title).c_str()); }
+void Window::SetTitle(const char16_t* title)
+{
+	glfwSetWindowTitle(window, utf16_to_utf8(title).c_str());
+}
 
 void Window::SetWindowIcon(const char16_t* iconPath)
 {
@@ -167,11 +174,20 @@ Vec2 Window::GetSize() const
 	return s;
 }
 
-void Window::SetSize(int32_t width, int32_t height) { glfwSetWindowSize(window, width, height); }
+void Window::SetSize(int32_t width, int32_t height)
+{
+	glfwSetWindowSize(window, width, height);
+}
 
-void Window::Present() { glfwSwapBuffers(window); }
+void Window::Present()
+{
+	glfwSwapBuffers(window);
+}
 
-void Window::Close() { glfwSetWindowShouldClose(window, 1); }
+void Window::Close()
+{
+	glfwSetWindowShouldClose(window, 1);
+}
 
 Vec2 Window::GetMousePosition()
 {
@@ -185,7 +201,10 @@ Vec2 Window::GetMousePosition()
 	return ret;
 }
 
-int Window::GetMouseButton(int32_t mouseButton) { return glfwGetMouseButton(window, mouseButton); }
+int Window::GetMouseButton(int32_t mouseButton)
+{
+	return glfwGetMouseButton(window, mouseButton);
+}
 
 void Window::MakeCurrent()
 {

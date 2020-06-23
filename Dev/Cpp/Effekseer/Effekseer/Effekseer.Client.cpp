@@ -47,7 +47,11 @@ void ClientImplemented::StopInternal()
 	EffekseerPrintDebug("Client : Stop(Internal)\n");
 }
 
-ClientImplemented::ClientImplemented() : m_running(false) { Socket::Initialize(); }
+ClientImplemented::ClientImplemented()
+	: m_running(false)
+{
+	Socket::Initialize();
+}
 
 ClientImplemented::~ClientImplemented()
 {
@@ -56,7 +60,10 @@ ClientImplemented::~ClientImplemented()
 	Socket::Finalize();
 }
 
-Client* Client::Create() { return new ClientImplemented(); }
+Client* Client::Create()
+{
+	return new ClientImplemented();
+}
 
 /*
 HOSTENT* ClientImplemented::GetHostEntry( const char* host )
@@ -258,7 +265,10 @@ void ClientImplemented::Reload(Manager* manager, const EFK_CHAR* path, const EFK
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool ClientImplemented::IsConnected() { return m_running; }
+bool ClientImplemented::IsConnected()
+{
+	return m_running;
+}
 
 //----------------------------------------------------------------------------------
 //

@@ -40,7 +40,10 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const EFK_CHAR* path) { return nullptr; }
+	virtual MaterialData* Load(const EFK_CHAR* path)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief
@@ -59,7 +62,10 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType) { return nullptr; }
+	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief
@@ -69,7 +75,9 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual void Unload(MaterialData* data) {}
+	virtual void Unload(MaterialData* data)
+	{
+	}
 };
 
 } // namespace Effekseer

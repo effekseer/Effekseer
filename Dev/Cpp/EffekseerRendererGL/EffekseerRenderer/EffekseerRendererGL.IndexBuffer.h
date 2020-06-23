@@ -28,7 +28,10 @@ public:
 
 	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount);
 
-	GLuint GetInterface() { return m_buffer; }
+	GLuint GetInterface()
+	{
+		return m_buffer;
+	}
 
 public: // デバイス復旧用
 	virtual void OnLostDevice() override;
@@ -40,7 +43,10 @@ public:
 
 	bool IsValid();
 
-	int32_t GetStride() const { return stride_; }
+	int32_t GetStride() const
+	{
+		return stride_;
+	}
 };
 
 //-----------------------------------------------------------------------------------

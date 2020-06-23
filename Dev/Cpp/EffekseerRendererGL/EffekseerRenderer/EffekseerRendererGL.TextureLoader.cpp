@@ -21,7 +21,8 @@ namespace EffekseerRendererGL
 //
 //----------------------------------------------------------------------------------
 TextureLoader::TextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
-	: m_fileInterface(fileInterface), colorSpaceType_(colorSpaceType)
+	: m_fileInterface(fileInterface)
+	, colorSpaceType_(colorSpaceType)
 {
 	if (m_fileInterface == NULL)
 	{

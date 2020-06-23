@@ -20,9 +20,15 @@
 
 namespace ImGui
 {
-static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
+static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
+{
+	return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
+}
 
-static ImVec2 operator*(const ImVec2& lhs, const float& rhs) { return ImVec2(lhs.x * rhs, lhs.y * rhs); }
+static ImVec2 operator*(const ImVec2& lhs, const float& rhs)
+{
+	return ImVec2(lhs.x * rhs, lhs.y * rhs);
+}
 
 bool ImageButton_(ImTextureID user_texture_id,
 				  const ImVec2& size,
@@ -483,15 +489,22 @@ size_t ConvertUTF16ToUTF8(char* dst, size_t dstSize, const char16_t* src)
 	return count;
 }
 
-template <size_t SIZE> struct utf8str
+template <size_t SIZE>
+struct utf8str
 {
 	enum
 	{
 		size = SIZE
 	};
 	char data[SIZE];
-	utf8str(const char16_t* u16str) { ConvertUTF16ToUTF8(data, SIZE, u16str); }
-	operator const char*() const { return data; }
+	utf8str(const char16_t* u16str)
+	{
+		ConvertUTF16ToUTF8(data, SIZE, u16str);
+	}
+	operator const char*() const
+	{
+		return data;
+	}
 };
 
 // http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
@@ -630,9 +643,13 @@ void GUIManager::MarkdownLinkCallback(ImGui::MarkdownLinkCallbackData data)
 	self->callback->ClickLink(url16.c_str());
 }
 
-GUIManager::GUIManager() {}
+GUIManager::GUIManager()
+{
+}
 
-GUIManager::~GUIManager() {}
+GUIManager::~GUIManager()
+{
+}
 
 bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType)
 {
@@ -782,13 +799,25 @@ void GUIManager::ResetGUIStyle()
 	style.Colors[ImGuiCol_Tab] = style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 }
 
-void GUIManager::SetTitle(const char16_t* title) { window->SetTitle(title); }
+void GUIManager::SetTitle(const char16_t* title)
+{
+	window->SetTitle(title);
+}
 
-void GUIManager::SetWindowIcon(const char16_t* iconPath) { window->SetWindowIcon(iconPath); }
+void GUIManager::SetWindowIcon(const char16_t* iconPath)
+{
+	window->SetWindowIcon(iconPath);
+}
 
-Vec2 GUIManager::GetSize() const { return window->GetSize(); }
+Vec2 GUIManager::GetSize() const
+{
+	return window->GetSize();
+}
 
-void GUIManager::SetSize(int32_t width, int32_t height) { window->SetSize(width, height); }
+void GUIManager::SetSize(int32_t width, int32_t height)
+{
+	window->SetSize(width, height);
+}
 
 void GUIManager::Terminate()
 {
@@ -826,17 +855,35 @@ bool GUIManager::DoEvents()
 	return false;
 }
 
-void GUIManager::Present() { window->Present(); }
+void GUIManager::Present()
+{
+	window->Present();
+}
 
-void GUIManager::Close() { window->Close(); }
+void GUIManager::Close()
+{
+	window->Close();
+}
 
-Vec2 GUIManager::GetMousePosition() { return window->GetMousePosition(); }
+Vec2 GUIManager::GetMousePosition()
+{
+	return window->GetMousePosition();
+}
 
-int GUIManager::GetMouseButton(int32_t mouseButton) { return window->GetMouseButton(mouseButton); }
+int GUIManager::GetMouseButton(int32_t mouseButton)
+{
+	return window->GetMouseButton(mouseButton);
+}
 
-int GUIManager::GetMouseWheel() { return ImGui::GetIO().MouseWheel; }
+int GUIManager::GetMouseWheel()
+{
+	return ImGui::GetIO().MouseWheel;
+}
 
-void GUIManager::SetCallback(GUIManagerCallback* callback) { this->callback = callback; }
+void GUIManager::SetCallback(GUIManagerCallback* callback)
+{
+	this->callback = callback;
+}
 
 void GUIManager::InvalidateFont()
 {
@@ -927,7 +974,10 @@ void GUIManager::RenderGUI(bool isValid)
 	}
 }
 
-void* GUIManager::GetNativeHandle() { return window->GetNativeHandle(); }
+void* GUIManager::GetNativeHandle()
+{
+	return window->GetNativeHandle();
+}
 
 const char16_t* GUIManager::GetClipboardText()
 {
@@ -941,18 +991,30 @@ const char16_t* GUIManager::GetClipboardText()
 	return clipboard.c_str();
 }
 
-void GUIManager::SetClipboardText(const char16_t* text) { glfwSetClipboardString(window->GetGLFWWindows(), utf16_to_utf8(text).c_str()); }
+void GUIManager::SetClipboardText(const char16_t* text)
+{
+	glfwSetClipboardString(window->GetGLFWWindows(), utf16_to_utf8(text).c_str());
+}
 
-bool GUIManager::Begin(const char16_t* name, bool* p_open) { return ImGui::Begin(utf8str<256>(name), p_open); }
+bool GUIManager::Begin(const char16_t* name, bool* p_open)
+{
+	return ImGui::Begin(utf8str<256>(name), p_open);
+}
 
-void GUIManager::End() { ImGui::End(); }
+void GUIManager::End()
+{
+	ImGui::End();
+}
 
 bool GUIManager::BeginChild(const char* str_id, const Vec2& size_arg, bool border, WindowFlags extra_flags)
 {
 	return ImGui::BeginChild(str_id, ImVec2(size_arg.X, size_arg.Y), border, (ImGuiWindowFlags)extra_flags);
 }
 
-void GUIManager::EndChild() { ImGui::EndChild(); }
+void GUIManager::EndChild()
+{
+	ImGui::EndChild();
+}
 
 Vec2 GUIManager::GetWindowSize()
 {
@@ -980,11 +1042,20 @@ void GUIManager::SetNextWindowSize(float size_x, float size_y, Cond cond)
 	ImGui::SetNextWindowSize(size, (int)cond);
 }
 
-void GUIManager::PushStyleColor(ImGuiColFlags idx, uint32_t col) { ImGui::PushStyleColor((int32_t)idx, col); }
+void GUIManager::PushStyleColor(ImGuiColFlags idx, uint32_t col)
+{
+	ImGui::PushStyleColor((int32_t)idx, col);
+}
 
-void GUIManager::PopStyleColor(int count) { ImGui::PopStyleColor(count); }
+void GUIManager::PopStyleColor(int count)
+{
+	ImGui::PopStyleColor(count);
+}
 
-void GUIManager::PushStyleVar(ImGuiStyleVarFlags idx, float val) { ImGui::PushStyleVar(idx, val); }
+void GUIManager::PushStyleVar(ImGuiStyleVarFlags idx, float val)
+{
+	ImGui::PushStyleVar(idx, val);
+}
 
 void GUIManager::PushStyleVar(ImGuiStyleVarFlags idx, const Vec2& val)
 {
@@ -994,13 +1065,25 @@ void GUIManager::PushStyleVar(ImGuiStyleVarFlags idx, const Vec2& val)
 	ImGui::PushStyleVar(idx, val_);
 }
 
-void GUIManager::PopStyleVar(int count) { ImGui::PopStyleVar(count); }
+void GUIManager::PopStyleVar(int count)
+{
+	ImGui::PopStyleVar(count);
+}
 
-void GUIManager::PushItemWidth(float item_width) { ImGui::PushItemWidth(item_width); }
+void GUIManager::PushItemWidth(float item_width)
+{
+	ImGui::PushItemWidth(item_width);
+}
 
-void GUIManager::PopItemWidth() { ImGui::PopItemWidth(); }
+void GUIManager::PopItemWidth()
+{
+	ImGui::PopItemWidth();
+}
 
-void GUIManager::Separator() { ImGui::Separator(); }
+void GUIManager::Separator()
+{
+	ImGui::Separator();
+}
 
 void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
 {
@@ -1069,45 +1152,105 @@ void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
 	}
 }
 
-void GUIManager::Indent(float indent_w) { ImGui::Indent(indent_w); }
+void GUIManager::Indent(float indent_w)
+{
+	ImGui::Indent(indent_w);
+}
 
-void GUIManager::Spacing() { ImGui::Spacing(); }
+void GUIManager::Spacing()
+{
+	ImGui::Spacing();
+}
 
-void GUIManager::SameLine(float offset_from_start_x, float spacing) { ImGui::SameLine(offset_from_start_x, spacing); }
+void GUIManager::SameLine(float offset_from_start_x, float spacing)
+{
+	ImGui::SameLine(offset_from_start_x, spacing);
+}
 
-void GUIManager::BeginGroup() { ImGui::BeginGroup(); }
+void GUIManager::BeginGroup()
+{
+	ImGui::BeginGroup();
+}
 
-void GUIManager::EndGroup() { ImGui::EndGroup(); }
+void GUIManager::EndGroup()
+{
+	ImGui::EndGroup();
+}
 
-void GUIManager::SetCursorPosX(float x) { ImGui::SetCursorPosX(x); }
+void GUIManager::SetCursorPosX(float x)
+{
+	ImGui::SetCursorPosX(x);
+}
 
-void GUIManager::SetCursorPosY(float y) { ImGui::SetCursorPosY(y); }
+void GUIManager::SetCursorPosY(float y)
+{
+	ImGui::SetCursorPosY(y);
+}
 
-float GUIManager::GetCursorPosX() { return ImGui::GetCursorPosX(); }
+float GUIManager::GetCursorPosX()
+{
+	return ImGui::GetCursorPosX();
+}
 
-float GUIManager::GetCursorPosY() { return ImGui::GetCursorPosY(); }
+float GUIManager::GetCursorPosY()
+{
+	return ImGui::GetCursorPosY();
+}
 
-float GUIManager::GetTextLineHeight() { return ImGui::GetTextLineHeight(); }
+float GUIManager::GetTextLineHeight()
+{
+	return ImGui::GetTextLineHeight();
+}
 
-float GUIManager::GetTextLineHeightWithSpacing() { return ImGui::GetTextLineHeightWithSpacing(); }
+float GUIManager::GetTextLineHeightWithSpacing()
+{
+	return ImGui::GetTextLineHeightWithSpacing();
+}
 
-float GUIManager::GetFrameHeight() { return ImGui::GetFrameHeight(); }
+float GUIManager::GetFrameHeight()
+{
+	return ImGui::GetFrameHeight();
+}
 
-float GUIManager::GetFrameHeightWithSpacing() { return ImGui::GetFrameHeightWithSpacing(); }
+float GUIManager::GetFrameHeightWithSpacing()
+{
+	return ImGui::GetFrameHeightWithSpacing();
+}
 
-float GUIManager::GetDpiScale() const { return mainWindow_->GetDPIScale(); }
+float GUIManager::GetDpiScale() const
+{
+	return mainWindow_->GetDPIScale();
+}
 
-void GUIManager::Columns(int count, const char* id, bool border) { ImGui::Columns(count, id, border); }
+void GUIManager::Columns(int count, const char* id, bool border)
+{
+	ImGui::Columns(count, id, border);
+}
 
-void GUIManager::NextColumn() { ImGui::NextColumn(); }
+void GUIManager::NextColumn()
+{
+	ImGui::NextColumn();
+}
 
-float GUIManager::GetColumnWidth(int column_index) { return ImGui::GetColumnWidth(column_index); }
+float GUIManager::GetColumnWidth(int column_index)
+{
+	return ImGui::GetColumnWidth(column_index);
+}
 
-void GUIManager::SetColumnWidth(int column_index, float width) { ImGui::SetColumnWidth(column_index, width); }
+void GUIManager::SetColumnWidth(int column_index, float width)
+{
+	ImGui::SetColumnWidth(column_index, width);
+}
 
-float GUIManager::GetColumnOffset(int column_index) { return ImGui::GetColumnOffset(column_index); }
+float GUIManager::GetColumnOffset(int column_index)
+{
+	return ImGui::GetColumnOffset(column_index);
+}
 
-void GUIManager::SetColumnOffset(int column_index, float offset_x) { ImGui::SetColumnOffset(column_index, offset_x); }
+void GUIManager::SetColumnOffset(int column_index, float offset_x)
+{
+	ImGui::SetColumnOffset(column_index, offset_x);
+}
 
 void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* text)
 {
@@ -1192,7 +1335,10 @@ bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 	return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
 }
 
-void GUIManager::Image(ImageResource* user_texture_id, float x, float y) { ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y)); }
+void GUIManager::Image(ImageResource* user_texture_id, float x, float y)
+{
+	ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y));
+}
 
 void GUIManager::Image(void* user_texture_id, float x, float y)
 {
@@ -1212,9 +1358,15 @@ bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 		ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 }
 
-bool GUIManager::Checkbox(const char16_t* label, bool* v) { return ImGui::Checkbox(utf8str<256>(label), v); }
+bool GUIManager::Checkbox(const char16_t* label, bool* v)
+{
+	return ImGui::Checkbox(utf8str<256>(label), v);
+}
 
-bool GUIManager::RadioButton(const char16_t* label, bool active) { return ImGui::RadioButton(utf8str<256>(label), active); }
+bool GUIManager::RadioButton(const char16_t* label, bool active)
+{
+	return ImGui::RadioButton(utf8str<256>(label), active);
+}
 
 bool GUIManager::InputInt(const char16_t* label, int* v, int step, int step_fast)
 {
@@ -1226,14 +1378,20 @@ bool GUIManager::SliderInt(const char16_t* label, int* v, int v_min, int v_max)
 	return ImGui::SliderInt(utf8str<256>(label), v, v_min, v_max);
 }
 
-void GUIManager::ProgressBar(float fraction, const Vec2& size) { ImGui::ProgressBar(fraction, ImVec2(size.X, size.Y)); }
+void GUIManager::ProgressBar(float fraction, const Vec2& size)
+{
+	ImGui::ProgressBar(fraction, ImVec2(size.X, size.Y));
+}
 
 bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id)
 {
 	return ImGui::BeginCombo(utf8str<256>(label), utf8str<256>(preview_value), (int)flags /*, ToImTextureID(user_texture_id)*/);
 }
 
-void GUIManager::EndCombo() { ImGui::EndCombo(); }
+void GUIManager::EndCombo()
+{
+	ImGui::EndCombo();
+}
 
 bool GUIManager::DragFloat(
 	const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
@@ -1427,20 +1585,35 @@ bool GUIManager::InputTextMultiline(const char16_t* label, const char16_t* text)
 	return ret;
 }
 
-const char16_t* GUIManager::GetInputTextResult() { return inputTextResult.c_str(); }
+const char16_t* GUIManager::GetInputTextResult()
+{
+	return inputTextResult.c_str();
+}
 
 bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)
 {
 	return ImGui::ColorEdit4_(utf8str<256>(label), col, (int)flags);
 }
 
-bool GUIManager::TreeNode(const char16_t* label) { return ImGui::TreeNode(utf8str<256>(label)); }
+bool GUIManager::TreeNode(const char16_t* label)
+{
+	return ImGui::TreeNode(utf8str<256>(label));
+}
 
-bool GUIManager::TreeNodeEx(const char16_t* label, TreeNodeFlags flags) { return ImGui::TreeNodeEx(utf8str<256>(label), (int)flags); }
+bool GUIManager::TreeNodeEx(const char16_t* label, TreeNodeFlags flags)
+{
+	return ImGui::TreeNodeEx(utf8str<256>(label), (int)flags);
+}
 
-void GUIManager::TreePop() { ImGui::TreePop(); }
+void GUIManager::TreePop()
+{
+	ImGui::TreePop();
+}
 
-void GUIManager::SetNextTreeNodeOpen(bool is_open, Cond cond) { ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond); }
+void GUIManager::SetNextTreeNodeOpen(bool is_open, Cond cond)
+{
+	ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond);
+}
 
 bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags)
 {
@@ -1458,21 +1631,45 @@ void GUIManager::SetTooltip(const char16_t* text)
 	CallWithEscaped(func, text);
 }
 
-void GUIManager::BeginTooltip() { ImGui::BeginTooltip(); }
+void GUIManager::BeginTooltip()
+{
+	ImGui::BeginTooltip();
+}
 
-void GUIManager::EndTooltip() { ImGui::EndTooltip(); }
+void GUIManager::EndTooltip()
+{
+	ImGui::EndTooltip();
+}
 
-bool GUIManager::BeginMainMenuBar() { return ImGui::BeginMainMenuBar(); }
+bool GUIManager::BeginMainMenuBar()
+{
+	return ImGui::BeginMainMenuBar();
+}
 
-void GUIManager::EndMainMenuBar() { ImGui::EndMainMenuBar(); }
+void GUIManager::EndMainMenuBar()
+{
+	ImGui::EndMainMenuBar();
+}
 
-bool GUIManager::BeginMenuBar() { return ImGui::BeginMenuBar(); }
+bool GUIManager::BeginMenuBar()
+{
+	return ImGui::BeginMenuBar();
+}
 
-void GUIManager::EndMenuBar() { return ImGui::EndMenuBar(); }
+void GUIManager::EndMenuBar()
+{
+	return ImGui::EndMenuBar();
+}
 
-bool GUIManager::BeginMenu(const char16_t* label, bool enabled) { return ImGui::BeginMenu(utf8str<256>(label), enabled); }
+bool GUIManager::BeginMenu(const char16_t* label, bool enabled)
+{
+	return ImGui::BeginMenu(utf8str<256>(label), enabled);
+}
 
-void GUIManager::EndMenu() { ImGui::EndMenu(); }
+void GUIManager::EndMenu()
+{
+	ImGui::EndMenu();
+}
 
 bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled)
 {
@@ -1484,24 +1681,45 @@ bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_s
 	return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled);
 }
 
-void GUIManager::OpenPopup(const char* str_id) { ImGui::OpenPopup(str_id); }
+void GUIManager::OpenPopup(const char* str_id)
+{
+	ImGui::OpenPopup(str_id);
+}
 
-bool GUIManager::BeginPopup(const char* str_id, WindowFlags extra_flags) { return ImGui::BeginPopup(str_id, (int)extra_flags); }
+bool GUIManager::BeginPopup(const char* str_id, WindowFlags extra_flags)
+{
+	return ImGui::BeginPopup(str_id, (int)extra_flags);
+}
 
 bool GUIManager::BeginPopupModal(const char16_t* name, bool* p_open, WindowFlags extra_flags)
 {
 	return ImGui::BeginPopupModal(utf8str<256>(name), p_open, (int)extra_flags);
 }
 
-bool GUIManager::BeginPopupContextItem(const char* str_id, int mouse_button) { return ImGui::BeginPopupContextItem(str_id, mouse_button); }
+bool GUIManager::BeginPopupContextItem(const char* str_id, int mouse_button)
+{
+	return ImGui::BeginPopupContextItem(str_id, mouse_button);
+}
 
-void GUIManager::EndPopup() { ImGui::EndPopup(); }
+void GUIManager::EndPopup()
+{
+	ImGui::EndPopup();
+}
 
-bool GUIManager::IsPopupOpen(const char* str_id) { return ImGui::IsPopupOpen(str_id); }
+bool GUIManager::IsPopupOpen(const char* str_id)
+{
+	return ImGui::IsPopupOpen(str_id);
+}
 
-void GUIManager::CloseCurrentPopup() { ImGui::CloseCurrentPopup(); }
+void GUIManager::CloseCurrentPopup()
+{
+	ImGui::CloseCurrentPopup();
+}
 
-void GUIManager::SetItemDefaultFocus() { ImGui::SetItemDefaultFocus(); }
+void GUIManager::SetItemDefaultFocus()
+{
+	ImGui::SetItemDefaultFocus();
+}
 
 void GUIManager::ClearAllFonts()
 {
@@ -1593,41 +1811,95 @@ bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flag
 	return ImGui::BeginChildFrame(id, ImVec2(size.X, size.Y), (int32_t)flags);
 }
 
-void GUIManager::EndChildFrame() { ImGui::EndChildFrame(); }
+void GUIManager::EndChildFrame()
+{
+	ImGui::EndChildFrame();
+}
 
-int GUIManager::GetKeyIndex(Key key) { return ImGui::GetKeyIndex((ImGuiKey)key); }
+int GUIManager::GetKeyIndex(Key key)
+{
+	return ImGui::GetKeyIndex((ImGuiKey)key);
+}
 
-bool GUIManager::IsKeyDown(int user_key_index) { return ImGui::IsKeyDown(user_key_index); }
+bool GUIManager::IsKeyDown(int user_key_index)
+{
+	return ImGui::IsKeyDown(user_key_index);
+}
 
-bool GUIManager::IsKeyPressed(int user_key_index) { return ImGui::IsKeyPressed(user_key_index); }
+bool GUIManager::IsKeyPressed(int user_key_index)
+{
+	return ImGui::IsKeyPressed(user_key_index);
+}
 
-bool GUIManager::IsKeyReleased(int user_key_index) { return ImGui::IsKeyReleased(user_key_index); }
+bool GUIManager::IsKeyReleased(int user_key_index)
+{
+	return ImGui::IsKeyReleased(user_key_index);
+}
 
-bool GUIManager::IsMouseDown(int button) { return ImGui::IsMouseDown(button); }
+bool GUIManager::IsMouseDown(int button)
+{
+	return ImGui::IsMouseDown(button);
+}
 
-bool GUIManager::IsMouseDoubleClicked(int button) { return ImGui::IsMouseDoubleClicked(button); }
+bool GUIManager::IsMouseDoubleClicked(int button)
+{
+	return ImGui::IsMouseDoubleClicked(button);
+}
 
-bool GUIManager::IsItemHovered() { return ImGui::IsItemHovered(); }
+bool GUIManager::IsItemHovered()
+{
+	return ImGui::IsItemHovered();
+}
 
-bool GUIManager::IsItemActive() { return ImGui::IsItemActive(); }
+bool GUIManager::IsItemActive()
+{
+	return ImGui::IsItemActive();
+}
 
-bool GUIManager::IsItemFocused() { return ImGui::IsItemFocused(); }
+bool GUIManager::IsItemFocused()
+{
+	return ImGui::IsItemFocused();
+}
 
-bool GUIManager::IsItemClicked(int mouse_button) { return ImGui::IsItemClicked(mouse_button); }
+bool GUIManager::IsItemClicked(int mouse_button)
+{
+	return ImGui::IsItemClicked(mouse_button);
+}
 
-bool GUIManager::IsAnyItemActive() { return ImGui::IsAnyItemActive(); }
+bool GUIManager::IsAnyItemActive()
+{
+	return ImGui::IsAnyItemActive();
+}
 
-bool GUIManager::IsWindowHovered() { return ImGui::IsWindowHovered(); }
+bool GUIManager::IsWindowHovered()
+{
+	return ImGui::IsWindowHovered();
+}
 
-bool GUIManager::IsWindowFocused() { return ImGui::IsWindowFocused(); }
+bool GUIManager::IsWindowFocused()
+{
+	return ImGui::IsWindowFocused();
+}
 
-bool GUIManager::IsAnyWindowHovered() { return ImGui::IsAnyWindowHovered(); }
+bool GUIManager::IsAnyWindowHovered()
+{
+	return ImGui::IsAnyWindowHovered();
+}
 
-bool GUIManager::IsAnyWindowFocused() { return ImGui::IsAnyWindowFocused(); }
+bool GUIManager::IsAnyWindowFocused()
+{
+	return ImGui::IsAnyWindowFocused();
+}
 
-MouseCursor GUIManager::GetMouseCursor() { return (MouseCursor)ImGui::GetMouseCursor(); }
+MouseCursor GUIManager::GetMouseCursor()
+{
+	return (MouseCursor)ImGui::GetMouseCursor();
+}
 
-float GUIManager::GetHoveredIDTimer() { return ImGui::GetCurrentContext()->HoveredIdTimer; }
+float GUIManager::GetHoveredIDTimer()
+{
+	return ImGui::GetCurrentContext()->HoveredIdTimer;
+}
 
 void GUIManager::DrawLineBackground(float height, uint32_t col)
 {
@@ -1695,7 +1967,10 @@ bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabHint, bool*
 	return ImGui::Begin(utf8label, p_open, (ImGuiWindowFlags)extra_flags);
 }
 
-void GUIManager::EndDock() { ImGui::End(); }
+void GUIManager::EndDock()
+{
+	ImGui::End();
+}
 
 uint32_t GUIManager::BeginDockLayout()
 {
@@ -1705,7 +1980,10 @@ uint32_t GUIManager::BeginDockLayout()
 	return imguiWindowID;
 }
 
-void GUIManager::EndDockLayout() { ImGui::DockBuilderFinish(imguiWindowID); }
+void GUIManager::EndDockLayout()
+{
+	ImGui::DockBuilderFinish(imguiWindowID);
+}
 
 void GUIManager::DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2)
 {
@@ -1727,9 +2005,15 @@ void GUIManager::DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags)
 	node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoDocking) ? ImGuiDockNodeFlags_NoDocking : 0;
 }
 
-void GUIManager::DockSetWindow(uint32_t nodeId, const char* windowName) { ImGui::DockBuilderDockWindow(windowName, nodeId); }
+void GUIManager::DockSetWindow(uint32_t nodeId, const char* windowName)
+{
+	ImGui::DockBuilderDockWindow(windowName, nodeId);
+}
 
-bool GUIManager::IsDockFocused() { return ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows); }
+bool GUIManager::IsDockFocused()
+{
+	return ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+}
 
 bool GUIManager::IsDockVisibled()
 {
@@ -1754,7 +2038,10 @@ bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2
 	return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), current, ImVec2(scale.X, scale.Y), min_value, max_value);
 }
 
-void GUIManager::EndFCurve() { ImGui::EndFCurve(); }
+void GUIManager::EndFCurve()
+{
+	ImGui::EndFCurve();
+}
 
 bool GUIManager::FCurve(int fcurve_id,
 						float* keys,
@@ -1807,15 +2094,30 @@ bool GUIManager::FCurve(int fcurve_id,
 						 changedType);
 }
 
-bool GUIManager::StartSelectingAreaFCurve() { return ImGui::StartSelectingAreaFCurve(); }
+bool GUIManager::StartSelectingAreaFCurve()
+{
+	return ImGui::StartSelectingAreaFCurve();
+}
 
-bool GUIManager::BeginDragDropSource() { return ImGui::BeginDragDropSource(); }
+bool GUIManager::BeginDragDropSource()
+{
+	return ImGui::BeginDragDropSource();
+}
 
-bool GUIManager::SetDragDropPayload(const char* type, uint8_t* data, int size) { return ImGui::SetDragDropPayload(type, data, size); }
+bool GUIManager::SetDragDropPayload(const char* type, uint8_t* data, int size)
+{
+	return ImGui::SetDragDropPayload(type, data, size);
+}
 
-void GUIManager::EndDragDropSource() { ImGui::EndDragDropSource(); }
+void GUIManager::EndDragDropSource()
+{
+	ImGui::EndDragDropSource();
+}
 
-bool GUIManager::BeginDragDropTarget() { return ImGui::BeginDragDropTarget(); }
+bool GUIManager::BeginDragDropTarget()
+{
+	return ImGui::BeginDragDropTarget();
+}
 
 bool GUIManager::AcceptDragDropPayload(const char* type, uint8_t* data_output, int data_output_size, int* size)
 {
@@ -1833,7 +2135,10 @@ bool GUIManager::AcceptDragDropPayload(const char* type, uint8_t* data_output, i
 	return true;
 }
 
-void GUIManager::EndDragDropTarget() { ImGui::EndDragDropTarget(); }
+void GUIManager::EndDragDropTarget()
+{
+	ImGui::EndDragDropTarget();
+}
 
 DialogSelection GUIManager::show(const char16_t* message, const char16_t* title, DialogStyle style, DialogButtons buttons)
 {

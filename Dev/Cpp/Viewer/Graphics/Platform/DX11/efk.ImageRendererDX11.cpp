@@ -23,7 +23,8 @@ static
 #include "Shader/EffekseerRenderer.ToolNoTexture_PS.h"
 } // namespace StandardNoTexture_PS
 
-ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer) : ImageRenderer(renderer)
+ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
+	: ImageRenderer(renderer)
 {
 	spdlog::trace("Begin new ImageRendererDX11");
 
@@ -185,7 +186,10 @@ void ImageRendererDX11::Render()
 		}
 }
 
-void ImageRendererDX11::ClearCache() { sprites.clear(); }
+void ImageRendererDX11::ClearCache()
+{
+	sprites.clear();
+}
 
 void ImageRendererDX11::OnLostDevice()
 {

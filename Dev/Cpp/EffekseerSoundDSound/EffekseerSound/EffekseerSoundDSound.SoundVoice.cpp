@@ -14,7 +14,12 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoice::SoundVoice(SoundImplemented* sound) : m_sound(sound), m_dsbuf(NULL), m_tag(NULL) {}
+SoundVoice::SoundVoice(SoundImplemented* sound)
+	: m_sound(sound)
+	, m_dsbuf(NULL)
+	, m_tag(NULL)
+{
+}
 
 //----------------------------------------------------------------------------------
 //

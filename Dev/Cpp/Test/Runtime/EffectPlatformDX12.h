@@ -26,7 +26,10 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX12() : EffectPlatformLLGI() {}
+	EffectPlatformDX12()
+		: EffectPlatformLLGI()
+	{
+	}
 
 	virtual ~EffectPlatformDX12();
 

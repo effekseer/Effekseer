@@ -121,28 +121,28 @@ typedef int(EFK_STDCALL* RandFunc)(void);
 */
 typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
 
-#define ES_SAFE_ADDREF(val)                                                                                                                \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		(val)->AddRef();                                                                                                                   \
+#define ES_SAFE_ADDREF(val) \
+	if ((val) != NULL)      \
+	{                       \
+		(val)->AddRef();    \
 	}
-#define ES_SAFE_RELEASE(val)                                                                                                               \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		(val)->Release();                                                                                                                  \
-		(val) = NULL;                                                                                                                      \
+#define ES_SAFE_RELEASE(val) \
+	if ((val) != NULL)       \
+	{                        \
+		(val)->Release();    \
+		(val) = NULL;        \
 	}
-#define ES_SAFE_DELETE(val)                                                                                                                \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		delete (val);                                                                                                                      \
-		(val) = NULL;                                                                                                                      \
+#define ES_SAFE_DELETE(val) \
+	if ((val) != NULL)      \
+	{                       \
+		delete (val);       \
+		(val) = NULL;       \
 	}
-#define ES_SAFE_DELETE_ARRAY(val)                                                                                                          \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		delete[](val);                                                                                                                     \
-		(val) = NULL;                                                                                                                      \
+#define ES_SAFE_DELETE_ARRAY(val) \
+	if ((val) != NULL)            \
+	{                             \
+		delete[](val);            \
+		(val) = NULL;             \
 	}
 
 #define EFK_ASSERT(x) assert(x)
@@ -281,7 +281,8 @@ enum class ReloadingThreadType
 /**
 	@brief	最大値取得
 */
-template <typename T, typename U> T Max(T t, U u)
+template <typename T, typename U>
+T Max(T t, U u)
 {
 	if (t > (T)u)
 	{
@@ -293,7 +294,8 @@ template <typename T, typename U> T Max(T t, U u)
 /**
 	@brief	最小値取得
 */
-template <typename T, typename U> T Min(T t, U u)
+template <typename T, typename U>
+T Min(T t, U u)
 {
 	if (t < (T)u)
 	{
@@ -305,7 +307,8 @@ template <typename T, typename U> T Min(T t, U u)
 /**
 	@brief	範囲内値取得
 */
-template <typename T, typename U, typename V> T Clamp(T t, U max_, V min_)
+template <typename T, typename U, typename V>
+T Clamp(T t, U max_, V min_)
 {
 	if (t > (T)max_)
 	{
@@ -458,7 +461,8 @@ public:
 /**
 	@brief	a deleter for IReference
 */
-template <typename T> struct ReferenceDeleter
+template <typename T>
+struct ReferenceDeleter
 {
 	void operator()(T* ptr) const
 	{
@@ -469,7 +473,8 @@ template <typename T> struct ReferenceDeleter
 	}
 };
 
-template <typename T> inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
+template <typename T>
+inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
 {
 	if (ptr == nullptr)
 		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr);
@@ -494,9 +499,14 @@ private:
 	mutable std::atomic<int32_t> m_reference;
 
 public:
-	ReferenceObject() : m_reference(1) {}
+	ReferenceObject()
+		: m_reference(1)
+	{
+	}
 
-	virtual ~ReferenceObject() {}
+	virtual ~ReferenceObject()
+	{
+	}
 
 	virtual int AddRef()
 	{
@@ -505,7 +515,10 @@ public:
 		return m_reference;
 	}
 
-	virtual int GetRef() { return m_reference; }
+	virtual int GetRef()
+	{
+		return m_reference;
+	}
 
 	virtual int Release()
 	{
@@ -789,39 +802,76 @@ FreeFunc GetFreeFunc();
 */
 void SetFreeFunc(FreeFunc func);
 
-template <class T> struct CustomAllocator
+template <class T>
+struct CustomAllocator
 {
 	using value_type = T;
 
-	CustomAllocator() {}
+	CustomAllocator()
+	{
+	}
 
-	template <class U> CustomAllocator(const CustomAllocator<U>&) {}
+	template <class U>
+	CustomAllocator(const CustomAllocator<U>&)
+	{
+	}
 
-	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * n)); }
-	void deallocate(T* p, std::size_t n) { GetFreeFunc()(p, sizeof(T) * n); }
+	T* allocate(std::size_t n)
+	{
+		return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * n));
+	}
+	void deallocate(T* p, std::size_t n)
+	{
+		GetFreeFunc()(p, sizeof(T) * n);
+	}
 };
 
-template <class T> struct CustomAlignedAllocator
+template <class T>
+struct CustomAlignedAllocator
 {
 	using value_type = T;
 
-	CustomAlignedAllocator() {}
+	CustomAlignedAllocator()
+	{
+	}
 
-	template <class U> CustomAlignedAllocator(const CustomAlignedAllocator<U>&) {}
+	template <class U>
+	CustomAlignedAllocator(const CustomAlignedAllocator<U>&)
+	{
+	}
 
-	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * n, 16)); }
-	void deallocate(T* p, std::size_t n) { GetAlignedFreeFunc()(p, sizeof(T) * n); }
+	T* allocate(std::size_t n)
+	{
+		return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * n, 16));
+	}
+	void deallocate(T* p, std::size_t n)
+	{
+		GetAlignedFreeFunc()(p, sizeof(T) * n);
+	}
 };
 
-template <class T, class U> bool operator==(const CustomAllocator<T>&, const CustomAllocator<U>&) { return true; }
+template <class T, class U>
+bool operator==(const CustomAllocator<T>&, const CustomAllocator<U>&)
+{
+	return true;
+}
 
-template <class T, class U> bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&) { return false; }
+template <class T, class U>
+bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&)
+{
+	return false;
+}
 
-template <class T> using CustomVector = std::vector<T, CustomAllocator<T>>;
-template <class T> using CustomAlignedVector = std::vector<T, CustomAlignedAllocator<T>>;
-template <class T> using CustomList = std::list<T, CustomAllocator<T>>;
-template <class T> using CustomSet = std::set<T, std::less<T>, CustomAllocator<T>>;
-template <class T, class U> using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
+template <class T>
+using CustomVector = std::vector<T, CustomAllocator<T>>;
+template <class T>
+using CustomAlignedVector = std::vector<T, CustomAlignedAllocator<T>>;
+template <class T>
+using CustomList = std::list<T, CustomAllocator<T>>;
+template <class T>
+using CustomSet = std::set<T, std::less<T>, CustomAllocator<T>>;
+template <class T, class U>
+using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
 
 } // namespace Effekseer
 
@@ -1469,9 +1519,13 @@ class FileReader
 {
 private:
 public:
-	FileReader() {}
+	FileReader()
+	{
+	}
 
-	virtual ~FileReader() {}
+	virtual ~FileReader()
+	{
+	}
 
 	virtual size_t Read(void* buffer, size_t size) = 0;
 
@@ -1489,9 +1543,13 @@ class FileWriter
 {
 private:
 public:
-	FileWriter() {}
+	FileWriter()
+	{
+	}
 
-	virtual ~FileWriter() {}
+	virtual ~FileWriter()
+	{
+	}
 
 	virtual size_t Write(const void* buffer, size_t size) = 0;
 
@@ -1523,7 +1581,10 @@ public:
 		\~English	try to open a reader. It need not to succeeds in opening it.
 		\~Japanese	リーダーを開くことを試します。成功する必要はありません。
 	*/
-	virtual FileReader* TryOpenRead(const EFK_CHAR* path) { return OpenRead(path); }
+	virtual FileReader* TryOpenRead(const EFK_CHAR* path)
+	{
+		return OpenRead(path);
+	}
 
 	virtual FileWriter* OpenWrite(const EFK_CHAR* path) = 0;
 };
@@ -1824,8 +1885,12 @@ public:
 class Effect : public IReference
 {
 protected:
-	Effect() {}
-	virtual ~Effect() {}
+	Effect()
+	{
+	}
+	virtual ~Effect()
+	{
+	}
 
 public:
 	/**
@@ -2264,8 +2329,12 @@ struct EffectModelParameter
 class EffectNode
 {
 public:
-	EffectNode() {}
-	virtual ~EffectNode() {}
+	EffectNode()
+	{
+	}
+	virtual ~EffectNode()
+	{
+	}
 
 	/**
 	@brief	ノードが所属しているエフェクトを取得する。
@@ -2395,8 +2464,12 @@ public:
 	};
 
 protected:
-	Manager() {}
-	virtual ~Manager() {}
+	Manager()
+	{
+	}
+	virtual ~Manager()
+	{
+	}
 
 public:
 	/**
@@ -3123,12 +3196,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	EffectLoader() {}
+	EffectLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~EffectLoader() {}
+	virtual ~EffectLoader()
+	{
+	}
 
 	/**
 		@brief	エフェクトファイルを読み込む。
@@ -3186,12 +3263,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	TextureLoader() {}
+	TextureLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~TextureLoader() {}
+	virtual ~TextureLoader()
+	{
+	}
 
 	/**
 		@brief	テクスチャを読み込む。
@@ -3202,7 +3283,10 @@ public:
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual TextureData* Load(const EFK_CHAR* path, TextureType textureType) { return nullptr; }
+	virtual TextureData* Load(const EFK_CHAR* path, TextureType textureType)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief
@@ -3221,7 +3305,10 @@ public:
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたテクスチャのポインタ
 	*/
-	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType) { return nullptr; }
+	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief	テクスチャを破棄する。
@@ -3230,7 +3317,9 @@ public:
 		テクスチャを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(TextureData* data) {}
+	virtual void Unload(TextureData* data)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -3266,12 +3355,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	ModelLoader() {}
+	ModelLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~ModelLoader() {}
+	virtual ~ModelLoader()
+	{
+	}
 
 	/**
 		@brief	モデルを読み込む。
@@ -3281,7 +3374,10 @@ public:
 		モデルを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const EFK_CHAR* path) { return NULL; }
+	virtual void* Load(const EFK_CHAR* path)
+	{
+		return NULL;
+	}
 
 	/**
 		@brief
@@ -3297,7 +3393,10 @@ public:
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたモデルのポインタ
 	*/
-	virtual void* Load(const void* data, int32_t size) { return nullptr; }
+	virtual void* Load(const void* data, int32_t size)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief	モデルを破棄する。
@@ -3306,7 +3405,9 @@ public:
 		モデルを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(void* data) {}
+	virtual void Unload(void* data)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -3357,7 +3458,10 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const EFK_CHAR* path) { return nullptr; }
+	virtual MaterialData* Load(const EFK_CHAR* path)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief
@@ -3376,7 +3480,10 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType) { return nullptr; }
+	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief
@@ -3386,7 +3493,9 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual void Unload(MaterialData* data) {}
+	virtual void Unload(MaterialData* data)
+	{
+	}
 };
 
 } // namespace Effekseer
@@ -3481,7 +3590,11 @@ public:
 	\~English	Constructor
 	\~Japanese	コンストラクタ
 	*/
-	Model(void* data, int32_t size) : m_data(NULL), m_size(size), m_version(0), models(nullptr)
+	Model(void* data, int32_t size)
+		: m_data(NULL)
+		, m_size(size)
+		, m_version(0)
+		, models(nullptr)
 	{
 		m_data = new uint8_t[m_size];
 		memcpy(m_data, data, m_size);
@@ -3545,17 +3658,38 @@ public:
 		}
 	}
 
-	Vertex* GetVertexes(int32_t index = 0) const { return models[index].m_vertexes; }
-	int32_t GetVertexCount(int32_t index = 0) { return models[index].m_vertexCount; }
+	Vertex* GetVertexes(int32_t index = 0) const
+	{
+		return models[index].m_vertexes;
+	}
+	int32_t GetVertexCount(int32_t index = 0)
+	{
+		return models[index].m_vertexCount;
+	}
 
-	Face* GetFaces(int32_t index = 0) const { return models[index].m_faces; }
-	int32_t GetFaceCount(int32_t index = 0) { return models[index].m_faceCount; }
+	Face* GetFaces(int32_t index = 0) const
+	{
+		return models[index].m_faces;
+	}
+	int32_t GetFaceCount(int32_t index = 0)
+	{
+		return models[index].m_faceCount;
+	}
 
-	int32_t GetFrameCount() const { return m_frameCount; }
+	int32_t GetFrameCount() const
+	{
+		return m_frameCount;
+	}
 
-	int32_t GetModelCount() { return m_modelCount; }
+	int32_t GetModelCount()
+	{
+		return m_modelCount;
+	}
 
-	int32_t GetVertexSize() const { return m_vertexSize; }
+	int32_t GetVertexSize() const
+	{
+		return m_vertexSize;
+	}
 
 	/**
 		@brief
@@ -3769,9 +3903,13 @@ public:
 	};
 
 public:
-	SoundPlayer() {}
+	SoundPlayer()
+	{
+	}
 
-	virtual ~SoundPlayer() {}
+	virtual ~SoundPlayer()
+	{
+	}
 
 	virtual SoundHandle Play(SoundTag tag, const InstanceParameter& parameter) = 0;
 
@@ -3823,12 +3961,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	SoundLoader() {}
+	SoundLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~SoundLoader() {}
+	virtual ~SoundLoader()
+	{
+	}
 
 	/**
 		@brief	サウンドを読み込む。
@@ -3838,7 +3980,10 @@ public:
 		サウンドを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const EFK_CHAR* path) { return NULL; }
+	virtual void* Load(const EFK_CHAR* path)
+	{
+		return NULL;
+	}
 
 	/**
 		@brief
@@ -3854,7 +3999,10 @@ public:
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたサウンドのポインタ
 	*/
-	virtual void* Load(const void* data, int32_t size) { return nullptr; }
+	virtual void* Load(const void* data, int32_t size)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief	サウンドを破棄する。
@@ -3863,7 +4011,9 @@ public:
 		サウンドを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(void* source) {}
+	virtual void Unload(void* source)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -4076,8 +4226,12 @@ namespace Effekseer
 class Server
 {
 public:
-	Server() {}
-	virtual ~Server() {}
+	Server()
+	{
+	}
+	virtual ~Server()
+	{
+	}
 
 	/**
 		@brief
@@ -4192,8 +4346,12 @@ namespace Effekseer
 class Client
 {
 public:
-	Client() {}
-	virtual ~Client() {}
+	Client()
+	{
+	}
+	virtual ~Client()
+	{
+	}
 
 	static Client* Create();
 

@@ -25,16 +25,34 @@ public:
 	virtual ~RenderTextureDX11();
 	bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
-	int32_t GetWidth() override { return width; }
-	int32_t GetHeight() override { return height; }
+	int32_t GetWidth() override
+	{
+		return width;
+	}
+	int32_t GetHeight() override
+	{
+		return height;
+	}
 
-	ID3D11Texture2D* GetTexture() const { return texture; }
+	ID3D11Texture2D* GetTexture() const
+	{
+		return texture;
+	}
 
-	ID3D11RenderTargetView* GetRenderTargetView() const { return textureRTV; }
+	ID3D11RenderTargetView* GetRenderTargetView() const
+	{
+		return textureRTV;
+	}
 
-	ID3D11ShaderResourceView* GetShaderResourceView() const { return textureSRV; }
+	ID3D11ShaderResourceView* GetShaderResourceView() const
+	{
+		return textureSRV;
+	}
 
-	uint64_t GetViewID() override { return (uint64_t)textureSRV; }
+	uint64_t GetViewID() override
+	{
+		return (uint64_t)textureSRV;
+	}
 };
 
 class DepthTextureDX11 : public DepthTexture
@@ -53,9 +71,15 @@ public:
 	virtual ~DepthTextureDX11();
 	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
-	ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView; }
+	ID3D11DepthStencilView* GetDepthStencilView() const
+	{
+		return depthStencilView;
+	}
 
-	ID3D11ShaderResourceView* GetShaderResourceView() const { return depthSRV; }
+	ID3D11ShaderResourceView* GetShaderResourceView() const
+	{
+		return depthSRV;
+	}
 };
 
 class GraphicsDX11 : public Graphics
@@ -141,6 +165,9 @@ public:
 
 	EffekseerRenderer::Renderer* GetRenderer() override;
 
-	DeviceType GetDeviceType() const override { return DeviceType::DirectX11; }
+	DeviceType GetDeviceType() const override
+	{
+		return DeviceType::DirectX11;
+	}
 };
 } // namespace efk

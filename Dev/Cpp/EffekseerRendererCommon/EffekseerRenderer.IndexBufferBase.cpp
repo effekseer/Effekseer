@@ -13,14 +13,20 @@ namespace EffekseerRenderer
 //
 //-----------------------------------------------------------------------------------
 IndexBufferBase::IndexBufferBase(int maxCount, bool isDynamic)
-	: m_indexMaxCount(maxCount), m_indexCount(0), m_isDynamic(false), m_isLock(false), m_resource(NULL)
+	: m_indexMaxCount(maxCount)
+	, m_indexCount(0)
+	, m_isDynamic(false)
+	, m_isLock(false)
+	, m_resource(NULL)
 {
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBufferBase::~IndexBufferBase() {}
+IndexBufferBase::~IndexBufferBase()
+{
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -34,12 +40,18 @@ void IndexBufferBase::Push(const void* buffer, int count)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-int IndexBufferBase::GetCount() const { return m_indexCount; }
+int IndexBufferBase::GetCount() const
+{
+	return m_indexCount;
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-int IndexBufferBase::GetMaxCount() const { return m_indexMaxCount; }
+int IndexBufferBase::GetMaxCount() const
+{
+	return m_indexMaxCount;
+}
 
 //-----------------------------------------------------------------------------------
 //

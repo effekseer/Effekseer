@@ -24,11 +24,19 @@ class EffectNodeRoot : public EffectNodeImplemented
 
 protected:
 public:
-	EffectNodeRoot(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos) {}
+	EffectNodeRoot(Effect* effect, unsigned char*& pos)
+		: EffectNodeImplemented(effect, pos)
+	{
+	}
 
-	~EffectNodeRoot() {}
+	~EffectNodeRoot()
+	{
+	}
 
-	eEffectNodeType GetType() const { return EFFECT_NODE_TYPE_ROOT; }
+	eEffectNodeType GetType() const
+	{
+		return EFFECT_NODE_TYPE_ROOT;
+	}
 };
 
 //----------------------------------------------------------------------------------

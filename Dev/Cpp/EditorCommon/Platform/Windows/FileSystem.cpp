@@ -7,9 +7,15 @@ namespace fs = std::filesystem;
 
 namespace Effekseer
 {
-bool FileSystem::GetIsFile(const std::u16string& path) { return fs::is_regular_file(path); }
+bool FileSystem::GetIsFile(const std::u16string& path)
+{
+	return fs::is_regular_file(path);
+}
 
-bool FileSystem::GetIsDirectory(const std::u16string& path) { return fs::is_directory(path); }
+bool FileSystem::GetIsDirectory(const std::u16string& path)
+{
+	return fs::is_directory(path);
+}
 
 uint64_t FileSystem::GetLastWriteTime(const std::u16string& path)
 {
@@ -24,5 +30,8 @@ uint64_t FileSystem::GetLastWriteTime(const std::u16string& path)
 	return ret;
 }
 
-int32_t FileSystem::GetFileSize(const std::u16string& path) { return fs::file_size(path); }
+int32_t FileSystem::GetFileSize(const std::u16string& path)
+{
+	return fs::file_size(path);
+}
 } // namespace Effekseer

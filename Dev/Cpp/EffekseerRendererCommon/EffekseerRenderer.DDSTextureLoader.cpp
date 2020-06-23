@@ -90,6 +90,9 @@ bool DDSTextureLoader::Load(void* data, int32_t size)
 	return true;
 }
 
-void DDSTextureLoader::Unload() { textureData.clear(); }
+void DDSTextureLoader::Unload()
+{
+	textureData.clear();
+}
 
 } // namespace EffekseerRenderer

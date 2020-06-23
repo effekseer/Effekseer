@@ -13,7 +13,8 @@ namespace Culling3D
 /**
 @brief	最大値取得
 */
-template <typename T, typename U> T Max(T t, U u)
+template <typename T, typename U>
+T Max(T t, U u)
 {
 	if (t > (T)u)
 	{
@@ -25,7 +26,8 @@ template <typename T, typename U> T Max(T t, U u)
 /**
 @brief	最小値取得
 */
-template <typename T, typename U> T Min(T t, U u)
+template <typename T, typename U>
+T Min(T t, U u)
 {
 	if (t < (T)u)
 	{
@@ -37,7 +39,8 @@ template <typename T, typename U> T Min(T t, U u)
 /**
 @brief	範囲内値取得
 */
-template <typename T, typename U, typename V> T Clamp(T t, U max_, V min_)
+template <typename T, typename U, typename V>
+T Clamp(T t, U max_, V min_)
 {
 	if (t > (T)max_)
 	{
@@ -52,7 +55,8 @@ template <typename T, typename U, typename V> T Clamp(T t, U max_, V min_)
 	return t;
 }
 
-template <class T> void SafeAddRef(T& t)
+template <class T>
+void SafeAddRef(T& t)
 {
 	if (t != NULL)
 	{
@@ -60,7 +64,8 @@ template <class T> void SafeAddRef(T& t)
 	}
 }
 
-template <class T> void SafeRelease(T& t)
+template <class T>
+void SafeRelease(T& t)
 {
 	if (t != NULL)
 	{
@@ -69,14 +74,16 @@ template <class T> void SafeRelease(T& t)
 	}
 }
 
-template <class T> void SafeSubstitute(T& target, T& value)
+template <class T>
+void SafeSubstitute(T& target, T& value)
 {
 	SafeAddRef(value);
 	SafeRelease(target);
 	target = value;
 }
 
-template <typename T> inline void SafeDelete(T*& p)
+template <typename T>
+inline void SafeDelete(T*& p)
 {
 	if (p != NULL)
 	{
@@ -85,7 +92,8 @@ template <typename T> inline void SafeDelete(T*& p)
 	}
 }
 
-template <typename T> inline void SafeDeleteArray(T*& p)
+template <typename T>
+inline void SafeDeleteArray(T*& p)
 {
 	if (p != NULL)
 	{
@@ -138,12 +146,18 @@ struct Vector3DF
 	/**
 	@brief	このベクトルの長さを取得する。
 	*/
-	float GetLength() const { return sqrtf(GetSquaredLength()); }
+	float GetLength() const
+	{
+		return sqrtf(GetSquaredLength());
+	}
 
 	/**
 	@brief	このベクトルの長さの二乗を取得する。
 	*/
-	float GetSquaredLength() const { return X * X + Y * Y + Z * Z; }
+	float GetSquaredLength() const
+	{
+		return X * X + Y * Y + Z * Z;
+	}
 
 	/**
 	@brief	このベクトルの長さを設定する。

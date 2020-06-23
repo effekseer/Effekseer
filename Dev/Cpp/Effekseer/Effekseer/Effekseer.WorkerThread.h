@@ -36,7 +36,9 @@ private:
 public:
 	WorkerThread();
 
-	WorkerThread(const WorkerThread&) {}
+	WorkerThread(const WorkerThread&)
+	{
+	}
 
 	~WorkerThread();
 
@@ -44,9 +46,15 @@ public:
 
 	void Shutdown();
 
-	uintptr_t GetThreadHandle() { return (uintptr_t)m_Thread.native_handle(); }
+	uintptr_t GetThreadHandle()
+	{
+		return (uintptr_t)m_Thread.native_handle();
+	}
 
-	std::thread::id GetThreadId() { return m_Thread.get_id(); }
+	std::thread::id GetThreadId()
+	{
+		return m_Thread.get_id();
+	}
 
 	void RunAsync(std::function<void()> task);
 

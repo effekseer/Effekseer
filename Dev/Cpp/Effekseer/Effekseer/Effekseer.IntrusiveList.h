@@ -22,7 +22,8 @@ namespace Effekseer
 	class Instance : public IntrusiveList<Instance> {...};
 	@endcode
 */
-template <typename T> class IntrusiveList final
+template <typename T>
+class IntrusiveList final
 {
 public:
 	typedef T Type;
@@ -34,7 +35,10 @@ public:
 	public:
 		Iterator() = default;
 		Iterator(const Iterator& it) = default;
-		Iterator(Type* node) : m_Node(node) {}
+		Iterator(Type* node)
+			: m_Node(node)
+		{
+		}
 		Type* operator*() const
 		{
 			assert(m_Node != nullptr);
@@ -58,8 +62,14 @@ public:
 			m_Node = m_Node->m_NextNode;
 			return it;
 		}
-		bool operator==(const Iterator& rhs) const { return m_Node == rhs.m_Node; }
-		bool operator!=(const Iterator& rhs) const { return m_Node != rhs.m_Node; }
+		bool operator==(const Iterator& rhs) const
+		{
+			return m_Node == rhs.m_Node;
+		}
+		bool operator!=(const Iterator& rhs) const
+		{
+			return m_Node != rhs.m_Node;
+		}
 	};
 
 	class ReverseIterator
@@ -69,7 +79,10 @@ public:
 	public:
 		ReverseIterator() = default;
 		ReverseIterator(const ReverseIterator& it) = default;
-		ReverseIterator(Type* node) : m_Node(node) {}
+		ReverseIterator(Type* node)
+			: m_Node(node)
+		{
+		}
 		Type* operator*() const
 		{
 			assert(m_Node != nullptr);
@@ -93,8 +106,14 @@ public:
 			m_Node = m_Node->m_PrevNode;
 			return it;
 		}
-		bool operator==(const ReverseIterator& rhs) const { return m_Node == rhs.m_Node; }
-		bool operator!=(const ReverseIterator& rhs) const { return m_Node != rhs.m_Node; }
+		bool operator==(const ReverseIterator& rhs) const
+		{
+			return m_Node == rhs.m_Node;
+		}
+		bool operator!=(const ReverseIterator& rhs) const
+		{
+			return m_Node != rhs.m_Node;
+		}
 	};
 
 	class Node
@@ -132,16 +151,35 @@ public:
 	Type* front() const;
 	Type* back() const;
 
-	bool empty() const { return m_Count == 0; }
-	size_t size() const { return m_Count; }
+	bool empty() const
+	{
+		return m_Count == 0;
+	}
+	size_t size() const
+	{
+		return m_Count;
+	}
 
-	Iterator begin() const { return Iterator(m_HeadNode); }
-	Iterator end() const { return Iterator(nullptr); }
-	ReverseIterator rbegin() const { return ReverseIterator(m_TailNode); }
-	ReverseIterator rend() const { return ReverseIterator(nullptr); }
+	Iterator begin() const
+	{
+		return Iterator(m_HeadNode);
+	}
+	Iterator end() const
+	{
+		return Iterator(nullptr);
+	}
+	ReverseIterator rbegin() const
+	{
+		return ReverseIterator(m_TailNode);
+	}
+	ReverseIterator rend() const
+	{
+		return ReverseIterator(nullptr);
+	}
 };
 
-template <typename T> IntrusiveList<T>::IntrusiveList(IntrusiveList<T>&& rhs)
+template <typename T>
+IntrusiveList<T>::IntrusiveList(IntrusiveList<T>&& rhs)
 {
 	m_HeadNode = rhs.m_HeadNode;
 	m_TailNode = rhs.m_TailNode;
@@ -151,7 +189,8 @@ template <typename T> IntrusiveList<T>::IntrusiveList(IntrusiveList<T>&& rhs)
 	rhs.m_Count = 0;
 }
 
-template <typename T> IntrusiveList<T>& IntrusiveList<T>::operator=(IntrusiveList<T>&& rhs)
+template <typename T>
+IntrusiveList<T>& IntrusiveList<T>::operator=(IntrusiveList<T>&& rhs)
 {
 	m_HeadNode = rhs.m_HeadNode;
 	m_TailNode = rhs.m_TailNode;
@@ -161,9 +200,14 @@ template <typename T> IntrusiveList<T>& IntrusiveList<T>::operator=(IntrusiveLis
 	rhs.m_Count = 0;
 }
 
-template <typename T> IntrusiveList<T>::~IntrusiveList() { clear(); }
+template <typename T>
+IntrusiveList<T>::~IntrusiveList()
+{
+	clear();
+}
 
-template <typename T> inline void IntrusiveList<T>::push_back(typename IntrusiveList<T>::Type* newObject)
+template <typename T>
+inline void IntrusiveList<T>::push_back(typename IntrusiveList<T>::Type* newObject)
 {
 	assert(newObject != nullptr);
 	assert(newObject->m_PrevNode == nullptr);
@@ -183,7 +227,8 @@ template <typename T> inline void IntrusiveList<T>::push_back(typename Intrusive
 	m_Count++;
 }
 
-template <typename T> inline void IntrusiveList<T>::pop_back()
+template <typename T>
+inline void IntrusiveList<T>::pop_back()
 {
 	assert(m_TailNode != nullptr);
 	if (m_TailNode)
@@ -200,7 +245,8 @@ template <typename T> inline void IntrusiveList<T>::pop_back()
 	}
 }
 
-template <typename T> inline void IntrusiveList<T>::push_front(typename IntrusiveList<T>::Type* newObject)
+template <typename T>
+inline void IntrusiveList<T>::push_front(typename IntrusiveList<T>::Type* newObject)
 {
 	assert(newObject != nullptr);
 	assert(newObject->m_PrevNode == nullptr);
@@ -220,7 +266,8 @@ template <typename T> inline void IntrusiveList<T>::push_front(typename Intrusiv
 	m_Count++;
 }
 
-template <typename T> inline void IntrusiveList<T>::pop_front()
+template <typename T>
+inline void IntrusiveList<T>::pop_front()
 {
 	assert(m_HeadNode != nullptr);
 	if (m_HeadNode)
@@ -258,7 +305,8 @@ inline typename IntrusiveList<T>::Iterator IntrusiveList<T>::insert(typename Int
 	return IntrusiveList<T>::Iterator(newObject);
 }
 
-template <typename T> inline typename IntrusiveList<T>::Iterator IntrusiveList<T>::erase(typename IntrusiveList<T>::Iterator it)
+template <typename T>
+inline typename IntrusiveList<T>::Iterator IntrusiveList<T>::erase(typename IntrusiveList<T>::Iterator it)
 {
 	auto prev = it->m_PrevNode;
 	auto next = it->m_NextNode;
@@ -280,7 +328,8 @@ template <typename T> inline typename IntrusiveList<T>::Iterator IntrusiveList<T
 	return IntrusiveList<T>::Iterator(next);
 }
 
-template <typename T> inline void IntrusiveList<T>::clear()
+template <typename T>
+inline void IntrusiveList<T>::clear()
 {
 	for (Type* it = m_HeadNode; it != nullptr;)
 	{
@@ -294,13 +343,15 @@ template <typename T> inline void IntrusiveList<T>::clear()
 	m_Count = 0;
 }
 
-template <typename T> T* IntrusiveList<T>::front() const
+template <typename T>
+T* IntrusiveList<T>::front() const
 {
 	assert(m_HeadNode != nullptr);
 	return m_HeadNode;
 }
 
-template <typename T> T* IntrusiveList<T>::back() const
+template <typename T>
+T* IntrusiveList<T>::back() const
 {
 	assert(m_TailNode != nullptr);
 	return m_TailNode;

@@ -40,9 +40,15 @@ static int64_t GetTime(void)
 	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-Manager::DrawParameter::DrawParameter() { CameraCullingMask = 1; }
+Manager::DrawParameter::DrawParameter()
+{
+	CameraCullingMask = 1;
+}
 
-Manager* Manager::Create(int instance_max, bool autoFlip) { return new ManagerImplemented(instance_max, autoFlip); }
+Manager* Manager::Create(int instance_max, bool autoFlip)
+{
+	return new ManagerImplemented(instance_max, autoFlip);
+}
 
 Mat43f* ManagerImplemented::DrawSet::GetEnabledGlobalMatrix()
 {
@@ -303,7 +309,10 @@ void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 	pooledContainers_.push(container);
 }
 
-void* EFK_STDCALL ManagerImplemented::Malloc(unsigned int size) { return (void*)new char*[size]; }
+void* EFK_STDCALL ManagerImplemented::Malloc(unsigned int size)
+{
+	return (void*)new char*[size];
+}
 
 void EFK_STDCALL ManagerImplemented::Free(void* p, unsigned int size)
 {
@@ -311,7 +320,10 @@ void EFK_STDCALL ManagerImplemented::Free(void* p, unsigned int size)
 	delete[] pData;
 }
 
-int EFK_STDCALL ManagerImplemented::Rand() { return rand(); }
+int EFK_STDCALL ManagerImplemented::Rand()
+{
+	return rand();
+}
 
 void ManagerImplemented::ExecuteEvents()
 {
@@ -519,29 +531,65 @@ uintptr_t ManagerImplemented::GetWorkerThreadHandle(uint32_t threadID)
 	return 0;
 }
 
-uint32_t ManagerImplemented::GetSequenceNumber() const { return m_sequenceNumber; }
+uint32_t ManagerImplemented::GetSequenceNumber() const
+{
+	return m_sequenceNumber;
+}
 
-MallocFunc ManagerImplemented::GetMallocFunc() const { return m_MallocFunc; }
+MallocFunc ManagerImplemented::GetMallocFunc() const
+{
+	return m_MallocFunc;
+}
 
-void ManagerImplemented::SetMallocFunc(MallocFunc func) { m_MallocFunc = func; }
+void ManagerImplemented::SetMallocFunc(MallocFunc func)
+{
+	m_MallocFunc = func;
+}
 
-FreeFunc ManagerImplemented::GetFreeFunc() const { return m_FreeFunc; }
+FreeFunc ManagerImplemented::GetFreeFunc() const
+{
+	return m_FreeFunc;
+}
 
-void ManagerImplemented::SetFreeFunc(FreeFunc func) { m_FreeFunc = func; }
+void ManagerImplemented::SetFreeFunc(FreeFunc func)
+{
+	m_FreeFunc = func;
+}
 
-RandFunc ManagerImplemented::GetRandFunc() const { return m_randFunc; }
+RandFunc ManagerImplemented::GetRandFunc() const
+{
+	return m_randFunc;
+}
 
-void ManagerImplemented::SetRandFunc(RandFunc func) { m_randFunc = func; }
+void ManagerImplemented::SetRandFunc(RandFunc func)
+{
+	m_randFunc = func;
+}
 
-int ManagerImplemented::GetRandMax() const { return m_randMax; }
+int ManagerImplemented::GetRandMax() const
+{
+	return m_randMax;
+}
 
-void ManagerImplemented::SetRandMax(int max_) { m_randMax = max_; }
+void ManagerImplemented::SetRandMax(int max_)
+{
+	m_randMax = max_;
+}
 
-CoordinateSystem ManagerImplemented::GetCoordinateSystem() const { return m_setting->GetCoordinateSystem(); }
+CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
+{
+	return m_setting->GetCoordinateSystem();
+}
 
-void ManagerImplemented::SetCoordinateSystem(CoordinateSystem coordinateSystem) { m_setting->SetCoordinateSystem(coordinateSystem); }
+void ManagerImplemented::SetCoordinateSystem(CoordinateSystem coordinateSystem)
+{
+	m_setting->SetCoordinateSystem(coordinateSystem);
+}
 
-SpriteRenderer* ManagerImplemented::GetSpriteRenderer() { return m_spriteRenderer; }
+SpriteRenderer* ManagerImplemented::GetSpriteRenderer()
+{
+	return m_spriteRenderer;
+}
 
 void ManagerImplemented::SetSpriteRenderer(SpriteRenderer* renderer)
 {
@@ -549,7 +597,10 @@ void ManagerImplemented::SetSpriteRenderer(SpriteRenderer* renderer)
 	m_spriteRenderer = renderer;
 }
 
-RibbonRenderer* ManagerImplemented::GetRibbonRenderer() { return m_ribbonRenderer; }
+RibbonRenderer* ManagerImplemented::GetRibbonRenderer()
+{
+	return m_ribbonRenderer;
+}
 
 void ManagerImplemented::SetRibbonRenderer(RibbonRenderer* renderer)
 {
@@ -557,7 +608,10 @@ void ManagerImplemented::SetRibbonRenderer(RibbonRenderer* renderer)
 	m_ribbonRenderer = renderer;
 }
 
-RingRenderer* ManagerImplemented::GetRingRenderer() { return m_ringRenderer; }
+RingRenderer* ManagerImplemented::GetRingRenderer()
+{
+	return m_ringRenderer;
+}
 
 void ManagerImplemented::SetRingRenderer(RingRenderer* renderer)
 {
@@ -565,7 +619,10 @@ void ManagerImplemented::SetRingRenderer(RingRenderer* renderer)
 	m_ringRenderer = renderer;
 }
 
-ModelRenderer* ManagerImplemented::GetModelRenderer() { return m_modelRenderer; }
+ModelRenderer* ManagerImplemented::GetModelRenderer()
+{
+	return m_modelRenderer;
+}
 
 void ManagerImplemented::SetModelRenderer(ModelRenderer* renderer)
 {
@@ -573,7 +630,10 @@ void ManagerImplemented::SetModelRenderer(ModelRenderer* renderer)
 	m_modelRenderer = renderer;
 }
 
-TrackRenderer* ManagerImplemented::GetTrackRenderer() { return m_trackRenderer; }
+TrackRenderer* ManagerImplemented::GetTrackRenderer()
+{
+	return m_trackRenderer;
+}
 
 void ManagerImplemented::SetTrackRenderer(TrackRenderer* renderer)
 {
@@ -581,7 +641,10 @@ void ManagerImplemented::SetTrackRenderer(TrackRenderer* renderer)
 	m_trackRenderer = renderer;
 }
 
-SoundPlayer* ManagerImplemented::GetSoundPlayer() { return m_soundPlayer; }
+SoundPlayer* ManagerImplemented::GetSoundPlayer()
+{
+	return m_soundPlayer;
+}
 
 void ManagerImplemented::SetSoundPlayer(SoundPlayer* soundPlayer)
 {
@@ -589,7 +652,10 @@ void ManagerImplemented::SetSoundPlayer(SoundPlayer* soundPlayer)
 	m_soundPlayer = soundPlayer;
 }
 
-Setting* ManagerImplemented::GetSetting() { return m_setting; }
+Setting* ManagerImplemented::GetSetting()
+{
+	return m_setting;
+}
 
 void ManagerImplemented::SetSetting(Setting* setting)
 {
@@ -598,25 +664,55 @@ void ManagerImplemented::SetSetting(Setting* setting)
 	ES_SAFE_ADDREF(m_setting);
 }
 
-EffectLoader* ManagerImplemented::GetEffectLoader() { return m_setting->GetEffectLoader(); }
+EffectLoader* ManagerImplemented::GetEffectLoader()
+{
+	return m_setting->GetEffectLoader();
+}
 
-void ManagerImplemented::SetEffectLoader(EffectLoader* effectLoader) { m_setting->SetEffectLoader(effectLoader); }
+void ManagerImplemented::SetEffectLoader(EffectLoader* effectLoader)
+{
+	m_setting->SetEffectLoader(effectLoader);
+}
 
-TextureLoader* ManagerImplemented::GetTextureLoader() { return m_setting->GetTextureLoader(); }
+TextureLoader* ManagerImplemented::GetTextureLoader()
+{
+	return m_setting->GetTextureLoader();
+}
 
-void ManagerImplemented::SetTextureLoader(TextureLoader* textureLoader) { m_setting->SetTextureLoader(textureLoader); }
+void ManagerImplemented::SetTextureLoader(TextureLoader* textureLoader)
+{
+	m_setting->SetTextureLoader(textureLoader);
+}
 
-SoundLoader* ManagerImplemented::GetSoundLoader() { return m_setting->GetSoundLoader(); }
+SoundLoader* ManagerImplemented::GetSoundLoader()
+{
+	return m_setting->GetSoundLoader();
+}
 
-void ManagerImplemented::SetSoundLoader(SoundLoader* soundLoader) { m_setting->SetSoundLoader(soundLoader); }
+void ManagerImplemented::SetSoundLoader(SoundLoader* soundLoader)
+{
+	m_setting->SetSoundLoader(soundLoader);
+}
 
-ModelLoader* ManagerImplemented::GetModelLoader() { return m_setting->GetModelLoader(); }
+ModelLoader* ManagerImplemented::GetModelLoader()
+{
+	return m_setting->GetModelLoader();
+}
 
-void ManagerImplemented::SetModelLoader(ModelLoader* modelLoader) { m_setting->SetModelLoader(modelLoader); }
+void ManagerImplemented::SetModelLoader(ModelLoader* modelLoader)
+{
+	m_setting->SetModelLoader(modelLoader);
+}
 
-MaterialLoader* ManagerImplemented::GetMaterialLoader() { return m_setting->GetMaterialLoader(); }
+MaterialLoader* ManagerImplemented::GetMaterialLoader()
+{
+	return m_setting->GetMaterialLoader();
+}
 
-void ManagerImplemented::SetMaterialLoader(MaterialLoader* loader) { m_setting->SetMaterialLoader(loader); }
+void ManagerImplemented::SetMaterialLoader(MaterialLoader* loader)
+{
+	m_setting->SetMaterialLoader(loader);
+}
 
 void ManagerImplemented::StopEffect(Handle handle)
 {
@@ -763,7 +859,10 @@ void ManagerImplemented::SetLocation(Handle handle, float x, float y, float z)
 	}
 }
 
-void ManagerImplemented::SetLocation(Handle handle, const Vector3D& location) { SetLocation(handle, location.X, location.Y, location.Z); }
+void ManagerImplemented::SetLocation(Handle handle, const Vector3D& location)
+{
+	SetLocation(handle, location.X, location.Y, location.Z);
+}
 
 void ManagerImplemented::AddLocation(Handle handle, const Vector3D& location)
 {
@@ -869,7 +968,10 @@ void ManagerImplemented::SetAllColor(Handle handle, Color color)
 	}
 }
 
-void ManagerImplemented::SetTargetLocation(Handle handle, float x, float y, float z) { SetTargetLocation(handle, Vector3D(x, y, z)); }
+void ManagerImplemented::SetTargetLocation(Handle handle, float x, float y, float z)
+{
+	SetTargetLocation(handle, Vector3D(x, y, z));
+}
 
 void ManagerImplemented::SetTargetLocation(Handle handle, const Vector3D& location)
 {
@@ -1727,7 +1829,10 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-Handle ManagerImplemented::Play(Effect* effect, float x, float y, float z) { return Play(effect, Vector3D(x, y, z), 0); }
+Handle ManagerImplemented::Play(Effect* effect, float x, float y, float z)
+{
+	return Play(effect, Vector3D(x, y, z), 0);
+}
 
 Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_t startFrame)
 {
@@ -1946,9 +2051,15 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 	}
 }
 
-int ManagerImplemented::GetUpdateTime() const { return m_updateTime; };
+int ManagerImplemented::GetUpdateTime() const
+{
+	return m_updateTime;
+};
 
-int ManagerImplemented::GetDrawTime() const { return m_drawTime; };
+int ManagerImplemented::GetDrawTime() const
+{
+	return m_drawTime;
+};
 
 int32_t ManagerImplemented::GetRestInstancesCount() const
 {

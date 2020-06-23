@@ -10,8 +10,12 @@ namespace efk
 class LineRenderer
 {
 public:
-	LineRenderer(EffekseerRenderer::Renderer* renderer) {}
-	virtual ~LineRenderer() {}
+	LineRenderer(EffekseerRenderer::Renderer* renderer)
+	{
+	}
+	virtual ~LineRenderer()
+	{
+	}
 
 	virtual void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c) = 0;
 

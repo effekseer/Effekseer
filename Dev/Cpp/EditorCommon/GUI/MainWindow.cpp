@@ -78,7 +78,9 @@ bool MainWindow::InitializeInternal(const char16_t* title, MainWindowState state
 	return true;
 }
 
-MainWindow::MainWindow() {}
+MainWindow::MainWindow()
+{
+}
 
 MainWindow::~MainWindow()
 {
@@ -90,7 +92,10 @@ MainWindow::~MainWindow()
 	}
 }
 
-std::shared_ptr<MainWindow> MainWindow::GetInstance() { return instance_; }
+std::shared_ptr<MainWindow> MainWindow::GetInstance()
+{
+	return instance_;
+}
 
 bool MainWindow::Initialize(const char16_t* title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode)
 {
@@ -125,8 +130,14 @@ void MainWindow::SetState(const MainWindowState& state)
 	glfwSetWindowAttrib(window_, GLFW_MAXIMIZED, state.IsMaximumMode ? 1 : 0);
 }
 
-float MainWindow::GetDPIScale() const { return dpiScale_; }
+float MainWindow::GetDPIScale() const
+{
+	return dpiScale_;
+}
 
-void MainWindow::Terminate() { instance_ = nullptr; }
+void MainWindow::Terminate()
+{
+	instance_ = nullptr;
+}
 
 } // namespace Effekseer

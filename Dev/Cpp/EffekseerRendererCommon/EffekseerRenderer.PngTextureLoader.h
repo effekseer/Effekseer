@@ -24,9 +24,18 @@ public:
 	void Initialize();
 	void Finalize();
 
-	std::vector<uint8_t>& GetData() { return textureData; }
-	int32_t GetWidth() { return textureWidth; }
-	int32_t GetHeight() { return textureHeight; }
+	std::vector<uint8_t>& GetData()
+	{
+		return textureData;
+	}
+	int32_t GetWidth()
+	{
+		return textureWidth;
+	}
+	int32_t GetHeight()
+	{
+		return textureHeight;
+	}
 };
 
 } // namespace EffekseerRenderer

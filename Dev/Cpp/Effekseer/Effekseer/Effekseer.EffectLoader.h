@@ -24,12 +24,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	EffectLoader() {}
+	EffectLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~EffectLoader() {}
+	virtual ~EffectLoader()
+	{
+	}
 
 	/**
 		@brief	エフェクトファイルを読み込む。

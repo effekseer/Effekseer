@@ -398,7 +398,10 @@ public:
 	InstanceGlobal* GetInstanceGlobal();
 
 public:
-	bool IsFirstTime() const { return m_IsFirstTime; }
+	bool IsFirstTime() const
+	{
+		return m_IsFirstTime;
+	}
 
 	/**
 		@brief	状態の取得
@@ -448,7 +451,10 @@ public:
 	std::array<float, 4> GetCustomData(int32_t index) const;
 
 	//! get random object
-	RandObject& GetRandObject() { return m_randObject; }
+	RandObject& GetRandObject()
+	{
+		return m_randObject;
+	}
 
 private:
 	/**

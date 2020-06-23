@@ -222,22 +222,41 @@ public:
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
-	const std::vector<::Effekseer::TextureData>& GetCurrentTextures() const { return currentTextures_; }
+	const std::vector<::Effekseer::TextureData>& GetCurrentTextures() const
+	{
+		return currentTextures_;
+	}
 
-	OpenGLDeviceType GetDeviceType() const override { return m_deviceType; }
+	OpenGLDeviceType GetDeviceType() const override
+	{
+		return m_deviceType;
+	}
 
 	bool IsVertexArrayObjectSupported() const override;
 
-	GraphicsDevice* GetGraphicsDevice() const { return graphicsDevice_; }
+	GraphicsDevice* GetGraphicsDevice() const
+	{
+		return graphicsDevice_;
+	}
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 
 private:
 	void GenerateIndexData();
 
-	template <typename T> void GenerateIndexDataStride();
+	template <typename T>
+	void GenerateIndexDataStride();
 };
 
 //----------------------------------------------------------------------------------

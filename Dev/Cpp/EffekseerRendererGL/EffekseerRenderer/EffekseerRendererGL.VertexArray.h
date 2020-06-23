@@ -32,10 +32,19 @@ public:
 	static VertexArray*
 	Create(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
 
-	GLuint GetInterface() const { return m_vertexArray; }
+	GLuint GetInterface() const
+	{
+		return m_vertexArray;
+	}
 
-	VertexBuffer* GetVertexBuffer() { return m_vertexBuffer; }
-	IndexBuffer* GetIndexBuffer() { return m_indexBuffer; }
+	VertexBuffer* GetVertexBuffer()
+	{
+		return m_vertexBuffer;
+	}
+	IndexBuffer* GetIndexBuffer()
+	{
+		return m_indexBuffer;
+	}
 
 public: // デバイス復旧用
 	virtual void OnLostDevice();

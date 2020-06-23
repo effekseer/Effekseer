@@ -25,8 +25,12 @@ namespace Effekseer
 class Server
 {
 public:
-	Server() {}
-	virtual ~Server() {}
+	Server()
+	{
+	}
+	virtual ~Server()
+	{
+	}
 
 	/**
 		@brief

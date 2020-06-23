@@ -7,7 +7,10 @@
 namespace Effekseer
 {
 
-FCurve::FCurve(float defaultValue) : defaultValue_(defaultValue) {}
+FCurve::FCurve(float defaultValue)
+	: defaultValue_(defaultValue)
+{
+}
 
 int32_t FCurve::Load(void* data, int32_t version)
 {
@@ -132,7 +135,10 @@ float FCurve::GetValue(float living, float life, FCurveTimelineType type) const
 	}
 }
 
-float FCurve::GetOffset(IRandObject& g) const { return g.GetRand(offsetMin_, offsetMax_); }
+float FCurve::GetOffset(IRandObject& g) const
+{
+	return g.GetRand(offsetMin_, offsetMax_);
+}
 
 void FCurve::ChangeCoordinate()
 {
@@ -175,9 +181,15 @@ int32_t FCurveScalar::Load(void* data, int32_t version)
 	return size;
 }
 
-float FCurveScalar::GetValues(float living, float life) const { return S.GetValue(living, life, Timeline); }
+float FCurveScalar::GetValues(float living, float life) const
+{
+	return S.GetValue(living, life, Timeline);
+}
 
-float FCurveScalar::GetOffsets(IRandObject& g) const { return S.GetOffset(g); }
+float FCurveScalar::GetOffsets(IRandObject& g) const
+{
+	return S.GetOffset(g);
+}
 
 int32_t FCurveVector2D::Load(void* data, int32_t version)
 {

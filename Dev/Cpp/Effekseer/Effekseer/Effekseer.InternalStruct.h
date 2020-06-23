@@ -28,7 +28,8 @@
 namespace Effekseer
 {
 
-template <typename T> void ReadData(T& dst, unsigned char*& pos)
+template <typename T>
+void ReadData(T& dst, unsigned char*& pos)
 {
 	memcpy(&dst, pos, sizeof(T));
 	pos += sizeof(T);
@@ -42,9 +43,15 @@ struct random_float
 	float max;
 	float min;
 
-	void reset() { memset(this, 0, sizeof(random_float)); };
+	void reset()
+	{
+		memset(this, 0, sizeof(random_float));
+	};
 
-	float getValue(IRandObject& g) const { return g.GetRand(min, max); }
+	float getValue(IRandObject& g) const
+	{
+		return g.GetRand(min, max);
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -55,7 +62,10 @@ struct random_int
 	int max;
 	int min;
 
-	void reset() { memset(this, 0, sizeof(random_int)); };
+	void reset()
+	{
+		memset(this, 0, sizeof(random_int));
+	};
 
 	float getValue(IRandObject& g) const
 	{
@@ -103,9 +113,15 @@ struct random_vector2d
 	vector2d max;
 	vector2d min;
 
-	void reset() { memset(this, 0, sizeof(random_vector2d)); };
+	void reset()
+	{
+		memset(this, 0, sizeof(random_vector2d));
+	};
 
-	Vec2f getValue(IRandObject& g) const { return {g.GetRand(min.x, max.x), g.GetRand(min.y, max.y)}; }
+	Vec2f getValue(IRandObject& g) const
+	{
+		return {g.GetRand(min.x, max.x), g.GetRand(min.y, max.y)};
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -189,9 +205,15 @@ struct random_vector3d
 	vector3d max;
 	vector3d min;
 
-	void reset() { memset(this, 0, sizeof(random_vector3d)); };
+	void reset()
+	{
+		memset(this, 0, sizeof(random_vector3d));
+	};
 
-	Vec3f getValue(IRandObject& g) const { return {g.GetRand(min.x, max.x), g.GetRand(min.y, max.y), g.GetRand(min.z, max.z)}; }
+	Vec3f getValue(IRandObject& g) const
+	{
+		return {g.GetRand(min.x, max.x), g.GetRand(min.y, max.y), g.GetRand(min.z, max.z)};
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -347,9 +369,15 @@ struct easing_color
 		}
 	}
 
-	Color getStartValue(IRandObject& g) const { return start.getDirectValue(g); }
+	Color getStartValue(IRandObject& g) const
+	{
+		return start.getDirectValue(g);
+	}
 
-	Color getEndValue(IRandObject& g) const { return end.getDirectValue(g); }
+	Color getEndValue(IRandObject& g) const
+	{
+		return end.getDirectValue(g);
+	}
 
 	void load(int version, unsigned char*& pos)
 	{

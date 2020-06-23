@@ -31,7 +31,10 @@ public:
 
 	static VertexBuffer* Create(RendererImplemented* renderer, int size, bool isDynamic);
 
-	IDirect3DVertexBuffer9* GetInterface() { return m_buffer; }
+	IDirect3DVertexBuffer9* GetInterface()
+	{
+		return m_buffer;
+	}
 
 public: // デバイス復旧用
 	virtual void OnLostDevice();

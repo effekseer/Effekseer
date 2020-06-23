@@ -84,15 +84,25 @@ public:
 	};
 
 public:
-	SpriteRenderer() {}
+	SpriteRenderer()
+	{
+	}
 
-	virtual ~SpriteRenderer() {}
+	virtual ~SpriteRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------

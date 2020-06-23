@@ -7,7 +7,9 @@ namespace EffekseerRendererGL
 {
 
 DeviceObject::DeviceObject(RendererImplemented* renderer, GraphicsDevice* graphicsDevice, bool hasRefCount)
-	: renderer_(renderer), graphicsDevice_(graphicsDevice), hasRefCount_(hasRefCount)
+	: renderer_(renderer)
+	, graphicsDevice_(graphicsDevice)
+	, hasRefCount_(hasRefCount)
 {
 	if (hasRefCount_)
 	{
@@ -29,6 +31,9 @@ DeviceObject::~DeviceObject()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-RendererImplemented* DeviceObject::GetRenderer() const { return renderer_; }
+RendererImplemented* DeviceObject::GetRenderer() const
+{
+	return renderer_;
+}
 
 } // namespace EffekseerRendererGL

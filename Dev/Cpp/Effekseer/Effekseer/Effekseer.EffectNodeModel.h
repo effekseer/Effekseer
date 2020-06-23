@@ -73,9 +73,14 @@ public:
 
 	StandardColorParameter AllColor;
 
-	EffectNodeModel(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos) {}
+	EffectNodeModel(Effect* effect, unsigned char*& pos)
+		: EffectNodeImplemented(effect, pos)
+	{
+	}
 
-	~EffectNodeModel() {}
+	~EffectNodeModel()
+	{
+	}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -89,7 +94,10 @@ public:
 
 	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
 
-	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_MODEL; }
+	eEffectNodeType GetType() const override
+	{
+		return EFFECT_NODE_TYPE_MODEL;
+	}
 };
 
 //----------------------------------------------------------------------------------

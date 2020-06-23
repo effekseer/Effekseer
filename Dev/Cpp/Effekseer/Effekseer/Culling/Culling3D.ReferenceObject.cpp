@@ -3,9 +3,14 @@
 
 namespace Culling3D
 {
-ReferenceObject::ReferenceObject() : m_reference(1) {}
+ReferenceObject::ReferenceObject()
+	: m_reference(1)
+{
+}
 
-ReferenceObject::~ReferenceObject() {}
+ReferenceObject::~ReferenceObject()
+{
+}
 
 int32_t ReferenceObject::AddRef()
 {
@@ -13,7 +18,10 @@ int32_t ReferenceObject::AddRef()
 	return m_reference;
 }
 
-int32_t ReferenceObject::GetRef() { return m_reference; }
+int32_t ReferenceObject::GetRef()
+{
+	return m_reference;
+}
 
 int32_t ReferenceObject::Release()
 {
