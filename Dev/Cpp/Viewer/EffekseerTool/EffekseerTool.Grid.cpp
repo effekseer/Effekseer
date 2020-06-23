@@ -13,7 +13,12 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::Grid(efk::Graphics* graphics) : m_lineCount(0), m_gridLength(2.0f), IsShownXY(false), IsShownXZ(true), IsShownYZ(false)
+Grid::Grid(efk::Graphics* graphics)
+	: m_lineCount(0)
+	, m_gridLength(2.0f)
+	, IsShownXY(false)
+	, IsShownXZ(true)
+	, IsShownYZ(false)
 {
 	lineRenderer = efk::LineRenderer::Create(graphics);
 }
@@ -21,12 +26,18 @@ Grid::Grid(efk::Graphics* graphics) : m_lineCount(0), m_gridLength(2.0f), IsShow
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::~Grid() { ES_SAFE_DELETE(lineRenderer); }
+Grid::~Grid()
+{
+	ES_SAFE_DELETE(lineRenderer);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid* Grid::Create(efk::Graphics* graphics) { return new Grid(graphics); }
+Grid* Grid::Create(efk::Graphics* graphics)
+{
+	return new Grid(graphics);
+}
 
 //----------------------------------------------------------------------------------
 //

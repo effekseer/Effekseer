@@ -13,14 +13,21 @@ namespace EffekseerRendererDX9
 //
 //-----------------------------------------------------------------------------------
 VertexBuffer::VertexBuffer(RendererImplemented* renderer, IDirect3DVertexBuffer9* buffer, int size, bool isDynamic)
-	: DeviceObject(renderer), VertexBufferBase(size, isDynamic), m_buffer(buffer), m_vertexRingOffset(0), m_ringBufferLock(false)
+	: DeviceObject(renderer)
+	, VertexBufferBase(size, isDynamic)
+	, m_buffer(buffer)
+	, m_vertexRingOffset(0)
+	, m_ringBufferLock(false)
 {
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer::~VertexBuffer() { ES_SAFE_RELEASE(m_buffer); }
+VertexBuffer::~VertexBuffer()
+{
+	ES_SAFE_RELEASE(m_buffer);
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -67,7 +74,10 @@ void VertexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void VertexBuffer::OnChangeDevice() { ES_SAFE_RELEASE(m_buffer); }
+void VertexBuffer::OnChangeDevice()
+{
+	ES_SAFE_RELEASE(m_buffer);
+}
 
 //-----------------------------------------------------------------------------------
 //

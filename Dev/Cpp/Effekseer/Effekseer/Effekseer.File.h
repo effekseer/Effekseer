@@ -22,9 +22,13 @@ class FileReader
 {
 private:
 public:
-	FileReader() {}
+	FileReader()
+	{
+	}
 
-	virtual ~FileReader() {}
+	virtual ~FileReader()
+	{
+	}
 
 	virtual size_t Read(void* buffer, size_t size) = 0;
 
@@ -42,9 +46,13 @@ class FileWriter
 {
 private:
 public:
-	FileWriter() {}
+	FileWriter()
+	{
+	}
 
-	virtual ~FileWriter() {}
+	virtual ~FileWriter()
+	{
+	}
 
 	virtual size_t Write(const void* buffer, size_t size) = 0;
 
@@ -76,7 +84,10 @@ public:
 		\~English	try to open a reader. It need not to succeeds in opening it.
 		\~Japanese	リーダーを開くことを試します。成功する必要はありません。
 	*/
-	virtual FileReader* TryOpenRead(const EFK_CHAR* path) { return OpenRead(path); }
+	virtual FileReader* TryOpenRead(const EFK_CHAR* path)
+	{
+		return OpenRead(path);
+	}
 
 	virtual FileWriter* OpenWrite(const EFK_CHAR* path) = 0;
 };

@@ -17,7 +17,10 @@ protected:
 	Graphics* graphics;
 
 public:
-	PostEffect(Graphics* graphics) : graphics(graphics) {}
+	PostEffect(Graphics* graphics)
+		: graphics(graphics)
+	{
+	}
 	virtual ~PostEffect() = default;
 
 	virtual void Render(RenderTexture* src, RenderTexture* dest) = 0;
@@ -26,7 +29,10 @@ public:
 
 	virtual void OnResetDevice() = 0;
 
-	virtual void SetEnabled(bool enabled) { this->enabled = enabled; }
+	virtual void SetEnabled(bool enabled)
+	{
+		this->enabled = enabled;
+	}
 
 	static BloomEffect* CreateBloom(Graphics* graphics);
 
@@ -43,7 +49,10 @@ protected:
 	float softKnee = 0.5f;
 
 public:
-	BloomEffect(Graphics* graphics) : PostEffect(graphics) {}
+	BloomEffect(Graphics* graphics)
+		: PostEffect(graphics)
+	{
+	}
 	virtual ~BloomEffect() = default;
 
 	virtual void SetParameters(float intensity, float threshold, float softKnee)
@@ -63,7 +72,10 @@ public:
 		Reinhard,
 	};
 
-	TonemapEffect(Graphics* graphics) : PostEffect(graphics) {}
+	TonemapEffect(Graphics* graphics)
+		: PostEffect(graphics)
+	{
+	}
 	virtual ~TonemapEffect() = default;
 
 	virtual void SetParameters(Algorithm algorithm, float exposure)
@@ -80,7 +92,10 @@ protected:
 class LinearToSRGBEffect : public PostEffect
 {
 public:
-	LinearToSRGBEffect(Graphics* graphics) : PostEffect(graphics) {}
+	LinearToSRGBEffect(Graphics* graphics)
+		: PostEffect(graphics)
+	{
+	}
 	virtual ~LinearToSRGBEffect() = default;
 };
 } // namespace efk

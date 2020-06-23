@@ -22,10 +22,17 @@ namespace EffekseerRenderer
 class DistortingCallback
 {
 public:
-	DistortingCallback() {}
-	virtual ~DistortingCallback() {}
+	DistortingCallback()
+	{
+	}
+	virtual ~DistortingCallback()
+	{
+	}
 
-	virtual bool OnDistorting() { return false; }
+	virtual bool OnDistorting()
+	{
+		return false;
+	}
 };
 
 /**
@@ -80,7 +87,9 @@ public:
 		\~English	notify that new frame is started.
 		\~Japanese	新規フレームが始ったことを通知する。
 	*/
-	virtual void NewFrame() {}
+	virtual void NewFrame()
+	{
+	}
 };
 
 class Renderer : public ::Effekseer::IReference
@@ -358,7 +367,9 @@ public:
 	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
 	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
-	virtual void SetCommandList(CommandList* commandList) {}
+	virtual void SetCommandList(CommandList* commandList)
+	{
+	}
 
 	/**
 	@brief
@@ -375,14 +386,19 @@ public:
 	\~English	Create a proxy texture
 	\~Japanese	代替のテクスチャを生成する
 	*/
-	virtual Effekseer::TextureData* CreateProxyTexture(ProxyTextureType type) { return nullptr; }
+	virtual Effekseer::TextureData* CreateProxyTexture(ProxyTextureType type)
+	{
+		return nullptr;
+	}
 
 	/**
 	@brief
 	\~English	Delete a proxy texture
 	\~Japanese	代替のテクスチャを削除する
 	*/
-	virtual void DeleteProxyTexture(Effekseer::TextureData* data) {}
+	virtual void DeleteProxyTexture(Effekseer::TextureData* data)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------

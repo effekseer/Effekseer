@@ -28,7 +28,10 @@ public:
 
 	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic);
 
-	IDirect3DIndexBuffer9* GetInterface() { return m_buffer; }
+	IDirect3DIndexBuffer9* GetInterface()
+	{
+		return m_buffer;
+	}
 
 public: // デバイス復旧用
 	virtual void OnLostDevice();

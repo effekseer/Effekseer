@@ -58,15 +58,28 @@ protected:
 		Lighting,
 	};
 
-	VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+	VertexType GetVertexType(const VERTEX_NORMAL* v)
+	{
+		return VertexType::Normal;
+	}
 
-	VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+	VertexType GetVertexType(const VERTEX_DISTORTION* v)
+	{
+		return VertexType::Distortion;
+	}
 
-	VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+	VertexType GetVertexType(const DynamicVertex* v)
+	{
+		return VertexType::Dynamic;
+	}
 
-	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lighting; }
+	VertexType GetVertexType(const LightingVertex* v)
+	{
+		return VertexType::Lighting;
+	}
 
-	template <typename VERTEX, int TARGET> void AssignUV(StrideView<VERTEX> v, float uvX1, float uvX2, float uvY1, float uvY2)
+	template <typename VERTEX, int TARGET>
+	void AssignUV(StrideView<VERTEX> v, float uvX1, float uvX2, float uvY1, float uvY2)
 	{
 		if (TARGET == 0)
 		{
@@ -171,7 +184,8 @@ protected:
 #endif
 	}
 
-	template <typename VERTEX, int TARGET> void AssignUVs(efkRibbonNodeParam& parameter, StrideView<VERTEX> verteies)
+	template <typename VERTEX, int TARGET>
+	void AssignUVs(efkRibbonNodeParam& parameter, StrideView<VERTEX> verteies)
 	{
 		float uvx = 0.0f;
 		float uvw = 1.0f;
@@ -367,7 +381,8 @@ protected:
 		}
 	}
 
-	template <typename VERTEX> void RenderSplines(const ::Effekseer::Mat44f& camera)
+	template <typename VERTEX>
+	void RenderSplines(const ::Effekseer::Mat44f& camera)
 	{
 		if (instances.size() == 0)
 		{
@@ -799,9 +814,17 @@ protected:
 	}
 
 public:
-	RibbonRendererBase(RENDERER* renderer) : m_renderer(renderer), m_ribbonCount(0), m_ringBufferOffset(0), m_ringBufferData(NULL) {}
+	RibbonRendererBase(RENDERER* renderer)
+		: m_renderer(renderer)
+		, m_ribbonCount(0)
+		, m_ringBufferOffset(0)
+		, m_ringBufferData(NULL)
+	{
+	}
 
-	virtual ~RibbonRendererBase() {}
+	virtual ~RibbonRendererBase()
+	{
+	}
 
 protected:
 	void Rendering_(const efkRibbonNodeParam& parameter,

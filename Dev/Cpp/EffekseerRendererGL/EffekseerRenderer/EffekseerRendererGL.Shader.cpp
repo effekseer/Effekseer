@@ -319,12 +319,18 @@ Shader::Shader(GraphicsDevice* graphicsDevice,
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-GLint Shader::GetAttribId(const char* name) const { return GLExt::glGetAttribLocation(m_program, name); }
+GLint Shader::GetAttribId(const char* name) const
+{
+	return GLExt::glGetAttribLocation(m_program, name);
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-GLint Shader::GetUniformId(const char* name) const { return GLExt::glGetUniformLocation(m_program, name); }
+GLint Shader::GetUniformId(const char* name) const
+{
+	return GLExt::glGetUniformLocation(m_program, name);
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -384,7 +390,10 @@ void Shader::OnChangeDevice()
 	}
 }
 
-GLuint Shader::GetInterface() const { return m_program; }
+GLuint Shader::GetInterface() const
+{
+	return m_program;
+}
 
 void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
 {
@@ -443,9 +452,15 @@ void Shader::GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* u
 	}
 }
 
-void Shader::BeginScene() { GLExt::glUseProgram(m_program); }
+void Shader::BeginScene()
+{
+	GLExt::glUseProgram(m_program);
+}
 
-void Shader::EndScene() { GLExt::glUseProgram(0); }
+void Shader::EndScene()
+{
+	GLExt::glUseProgram(0);
+}
 
 void Shader::EnableAttribs()
 {
@@ -492,7 +507,10 @@ void Shader::SetVertex()
 	}
 }
 
-void Shader::SetVertexSize(int32_t vertexSize) { m_vertexSize = vertexSize; }
+void Shader::SetVertexSize(int32_t vertexSize)
+{
+	m_vertexSize = vertexSize;
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -624,14 +642,23 @@ void Shader::SetTextureSlot(int32_t index, GLuint value)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-GLuint Shader::GetTextureSlot(int32_t index) { return m_textureSlots[index]; }
+GLuint Shader::GetTextureSlot(int32_t index)
+{
+	return m_textureSlots[index];
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-bool Shader::GetTextureSlotEnable(int32_t index) { return m_textureSlotEnables[index]; }
+bool Shader::GetTextureSlotEnable(int32_t index)
+{
+	return m_textureSlotEnables[index];
+}
 
-bool Shader::IsValid() const { return m_program != 0; }
+bool Shader::IsValid() const
+{
+	return m_program != 0;
+}
 
 //-----------------------------------------------------------------------------------
 //

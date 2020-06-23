@@ -54,19 +54,46 @@ public:
 						  bool hasRefCount);
 
 public:
-	LLGI::Shader* GetVertexShader() const { return vertexShader_; }
-	LLGI::Shader* GetPixelShader() const { return pixelShader_; }
-	std::vector<VertexLayout>& GetVertexLayouts() { return layouts_; }
+	LLGI::Shader* GetVertexShader() const
+	{
+		return vertexShader_;
+	}
+	LLGI::Shader* GetPixelShader() const
+	{
+		return pixelShader_;
+	}
+	std::vector<VertexLayout>& GetVertexLayouts()
+	{
+		return layouts_;
+	}
 	void SetVertexConstantBufferSize(int32_t size);
 	void SetPixelConstantBufferSize(int32_t size);
-	int32_t GetVertexConstantBufferSize() { return vertexConstantBufferSize; }
-	int32_t GetPixelConstantBufferSize() { return pixelConstantBufferSize; }
+	int32_t GetVertexConstantBufferSize()
+	{
+		return vertexConstantBufferSize;
+	}
+	int32_t GetPixelConstantBufferSize()
+	{
+		return pixelConstantBufferSize;
+	}
 
-	void* GetVertexConstantBuffer() { return m_vertexConstantBuffer; }
-	void* GetPixelConstantBuffer() { return m_pixelConstantBuffer; }
+	void* GetVertexConstantBuffer()
+	{
+		return m_vertexConstantBuffer;
+	}
+	void* GetPixelConstantBuffer()
+	{
+		return m_pixelConstantBuffer;
+	}
 
-	void SetVertexRegisterCount(int32_t count) { m_vertexRegisterCount = count; }
-	void SetPixelRegisterCount(int32_t count) { m_pixelRegisterCount = count; }
+	void SetVertexRegisterCount(int32_t count)
+	{
+		m_vertexRegisterCount = count;
+	}
+	void SetPixelRegisterCount(int32_t count)
+	{
+		m_pixelRegisterCount = count;
+	}
 
 	void SetConstantBuffer();
 };

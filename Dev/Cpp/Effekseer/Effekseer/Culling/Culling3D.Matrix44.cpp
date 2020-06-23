@@ -304,7 +304,10 @@ Matrix44 Matrix44::operator*(const Matrix44& right) const
 	return o_;
 }
 
-Vector3DF Matrix44::operator*(const Vector3DF& right) const { return Transform3D(right); }
+Vector3DF Matrix44::operator*(const Vector3DF& right) const
+{
+	return Transform3D(right);
+}
 
 Matrix44& Matrix44::Mul(Matrix44& o, const Matrix44& in1, const Matrix44& in2)
 {

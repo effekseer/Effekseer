@@ -20,8 +20,12 @@ namespace Effekseer
 class Client
 {
 public:
-	Client() {}
-	virtual ~Client() {}
+	Client()
+	{
+	}
+	virtual ~Client()
+	{
+	}
 
 	static Client* Create();
 

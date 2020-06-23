@@ -23,13 +23,28 @@ public:
 	virtual ~ImageResource();
 	bool Validate();
 	void Invalidate();
-	const char16_t* GetPath() const { return path.c_str(); }
-	int32_t GetWidth() const { return textureData->Width; }
-	int32_t GetHeight() const { return textureData->Height; }
+	const char16_t* GetPath() const
+	{
+		return path.c_str();
+	}
+	int32_t GetWidth() const
+	{
+		return textureData->Width;
+	}
+	int32_t GetHeight() const
+	{
+		return textureData->Height;
+	}
 
 #if !defined(SWIG)
-	void SetPath(const char16_t* path) { this->path = path; }
-	Effekseer::TextureData*& GetTextureData() { return textureData; }
+	void SetPath(const char16_t* path)
+	{
+		this->path = path;
+	}
+	Effekseer::TextureData*& GetTextureData()
+	{
+		return textureData;
+	}
 #endif
 };
 

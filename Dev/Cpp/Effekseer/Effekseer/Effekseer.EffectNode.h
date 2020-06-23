@@ -81,7 +81,10 @@ public:
 		} fcurve_rgba;
 	};
 
-	StandardColorParameter() { type = Fixed; }
+	StandardColorParameter()
+	{
+		type = Fixed;
+	}
 
 	~StandardColorParameter()
 	{
@@ -1654,7 +1657,10 @@ public:
 	/**
 	@brief	ノードの種類取得
 	*/
-	virtual eEffectNodeType GetType() const { return EFFECT_NODE_TYPE_NONE; }
+	virtual eEffectNodeType GetType() const
+	{
+		return EFFECT_NODE_TYPE_NONE;
+	}
 };
 //----------------------------------------------------------------------------------
 //

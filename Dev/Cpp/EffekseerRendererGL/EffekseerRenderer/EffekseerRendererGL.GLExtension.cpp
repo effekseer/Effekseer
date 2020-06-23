@@ -157,18 +157,21 @@ static bool g_isSurrpotedMapBuffer = false;
 static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 
 #if _WIN32
-#define GET_PROC(name)                                                                                                                     \
-	g_##name = (FP_##name)wglGetProcAddress(#name);                                                                                        \
-	if (g_##name == NULL)                                                                                                                  \
+#define GET_PROC(name)                              \
+	g_##name = (FP_##name)wglGetProcAddress(#name); \
+	if (g_##name == NULL)                           \
 		return false;
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-#define GET_PROC(name)                                                                                                                     \
-	g_##name = (FP_##name)eglGetProcAddress(#name);                                                                                        \
-	if (g_##name == NULL)                                                                                                                  \
+#define GET_PROC(name)                              \
+	g_##name = (FP_##name)eglGetProcAddress(#name); \
+	if (g_##name == NULL)                           \
 		return false;
 #endif
 
-OpenGLDeviceType GetDeviceType() { return g_deviceType; }
+OpenGLDeviceType GetDeviceType()
+{
+	return g_deviceType;
+}
 
 bool Initialize(OpenGLDeviceType deviceType)
 {
@@ -297,13 +300,25 @@ bool Initialize(OpenGLDeviceType deviceType)
 	return true;
 }
 
-bool IsSupportedVertexArray() { return g_isSupportedVertexArray; }
+bool IsSupportedVertexArray()
+{
+	return g_isSupportedVertexArray;
+}
 
-bool IsSupportedBufferRange() { return g_isSurrpotedBufferRange; }
+bool IsSupportedBufferRange()
+{
+	return g_isSurrpotedBufferRange;
+}
 
-bool IsSupportedMapBuffer() { return g_isSurrpotedMapBuffer; }
+bool IsSupportedMapBuffer()
+{
+	return g_isSurrpotedMapBuffer;
+}
 
-void MakeMapBufferInvalid() { g_isSurrpotedMapBuffer = false; }
+void MakeMapBufferInvalid()
+{
+	g_isSurrpotedMapBuffer = false;
+}
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers)
 {

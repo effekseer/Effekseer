@@ -45,7 +45,10 @@ void Socket::Finalize()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EfkSocket Socket::GenSocket() { return ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); }
+EfkSocket Socket::GenSocket()
+{
+	return ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+}
 
 //----------------------------------------------------------------------------------
 //

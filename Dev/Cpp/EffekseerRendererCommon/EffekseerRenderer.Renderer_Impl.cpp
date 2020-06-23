@@ -4,25 +4,55 @@
 namespace EffekseerRenderer
 {
 
-::Effekseer::Vector3D Renderer::Impl::GetLightDirection() const { return ToStruct(lightDirection_); }
+::Effekseer::Vector3D Renderer::Impl::GetLightDirection() const
+{
+	return ToStruct(lightDirection_);
+}
 
-void Renderer::Impl::SetLightDirection(const ::Effekseer::Vector3D& direction) { lightDirection_ = direction; }
+void Renderer::Impl::SetLightDirection(const ::Effekseer::Vector3D& direction)
+{
+	lightDirection_ = direction;
+}
 
-const ::Effekseer::Color& Renderer::Impl::GetLightColor() const { return lightColor_; }
+const ::Effekseer::Color& Renderer::Impl::GetLightColor() const
+{
+	return lightColor_;
+}
 
-void Renderer::Impl::SetLightColor(const ::Effekseer::Color& color) { lightColor_ = color; }
+void Renderer::Impl::SetLightColor(const ::Effekseer::Color& color)
+{
+	lightColor_ = color;
+}
 
-const ::Effekseer::Color& Renderer::Impl::GetLightAmbientColor() const { return lightAmbient_; }
+const ::Effekseer::Color& Renderer::Impl::GetLightAmbientColor() const
+{
+	return lightAmbient_;
+}
 
-void Renderer::Impl::SetLightAmbientColor(const ::Effekseer::Color& color) { lightAmbient_ = color; }
+void Renderer::Impl::SetLightAmbientColor(const ::Effekseer::Color& color)
+{
+	lightAmbient_ = color;
+}
 
-void Renderer::Impl::CalculateCameraProjectionMatrix() { cameraProjMat_ = cameraMat_ * projectionMat_; }
+void Renderer::Impl::CalculateCameraProjectionMatrix()
+{
+	cameraProjMat_ = cameraMat_ * projectionMat_;
+}
 
-::Effekseer::Matrix44 Renderer::Impl::GetProjectionMatrix() const { return ToStruct(projectionMat_); }
+::Effekseer::Matrix44 Renderer::Impl::GetProjectionMatrix() const
+{
+	return ToStruct(projectionMat_);
+}
 
-void Renderer::Impl::SetProjectionMatrix(const ::Effekseer::Matrix44& mat) { projectionMat_ = mat; }
+void Renderer::Impl::SetProjectionMatrix(const ::Effekseer::Matrix44& mat)
+{
+	projectionMat_ = mat;
+}
 
-::Effekseer::Matrix44 Renderer::Impl::GetCameraMatrix() const { return ToStruct(cameraMat_); }
+::Effekseer::Matrix44 Renderer::Impl::GetCameraMatrix() const
+{
+	return ToStruct(cameraMat_);
+}
 
 void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
 {
@@ -40,11 +70,20 @@ void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
 	cameraMat_ = mat;
 }
 
-::Effekseer::Matrix44 Renderer::Impl::GetCameraProjectionMatrix() const { return ToStruct(cameraProjMat_); }
+::Effekseer::Matrix44 Renderer::Impl::GetCameraProjectionMatrix() const
+{
+	return ToStruct(cameraProjMat_);
+}
 
-::Effekseer::Vector3D Renderer::Impl::GetCameraFrontDirection() const { return ToStruct(cameraFrontDirection_); }
+::Effekseer::Vector3D Renderer::Impl::GetCameraFrontDirection() const
+{
+	return ToStruct(cameraFrontDirection_);
+}
 
-::Effekseer::Vector3D Renderer::Impl::GetCameraPosition() const { return ToStruct(cameraPosition_); }
+::Effekseer::Vector3D Renderer::Impl::GetCameraPosition() const
+{
+	return ToStruct(cameraPosition_);
+}
 
 void Renderer::Impl::SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)
 {
@@ -78,25 +117,55 @@ void Renderer::Impl::DeleteProxyTextures(Renderer* renderer)
 	return nullptr;
 }
 
-UVStyle Renderer::Impl::GetTextureUVStyle() const { return textureUVStyle; }
+UVStyle Renderer::Impl::GetTextureUVStyle() const
+{
+	return textureUVStyle;
+}
 
-void Renderer::Impl::SetTextureUVStyle(UVStyle style) { textureUVStyle = style; }
+void Renderer::Impl::SetTextureUVStyle(UVStyle style)
+{
+	textureUVStyle = style;
+}
 
-UVStyle Renderer::Impl::GetBackgroundTextureUVStyle() const { return backgroundTextureUVStyle; }
+UVStyle Renderer::Impl::GetBackgroundTextureUVStyle() const
+{
+	return backgroundTextureUVStyle;
+}
 
-void Renderer::Impl::SetBackgroundTextureUVStyle(UVStyle style) { backgroundTextureUVStyle = style; }
+void Renderer::Impl::SetBackgroundTextureUVStyle(UVStyle style)
+{
+	backgroundTextureUVStyle = style;
+}
 
-int32_t Renderer::Impl::GetDrawCallCount() const { return drawcallCount; }
+int32_t Renderer::Impl::GetDrawCallCount() const
+{
+	return drawcallCount;
+}
 
-int32_t Renderer::Impl::GetDrawVertexCount() const { return drawvertexCount; }
+int32_t Renderer::Impl::GetDrawVertexCount() const
+{
+	return drawvertexCount;
+}
 
-void Renderer::Impl::ResetDrawCallCount() { drawcallCount = 0; }
+void Renderer::Impl::ResetDrawCallCount()
+{
+	drawcallCount = 0;
+}
 
-void Renderer::Impl::ResetDrawVertexCount() { drawvertexCount = 0; }
+void Renderer::Impl::ResetDrawVertexCount()
+{
+	drawvertexCount = 0;
+}
 
-float Renderer::Impl::GetTime() const { return time_; }
+float Renderer::Impl::GetTime() const
+{
+	return time_;
+}
 
-void Renderer::Impl::SetTime(float time) { time_ = time; }
+void Renderer::Impl::SetTime(float time)
+{
+	time_ = time;
+}
 
 Effekseer::RenderMode Renderer::Impl::GetRenderMode() const
 {
@@ -109,6 +178,9 @@ Effekseer::RenderMode Renderer::Impl::GetRenderMode() const
 	return renderMode_;
 }
 
-void Renderer::Impl::SetRenderMode(Effekseer::RenderMode renderMode) { renderMode_ = renderMode; }
+void Renderer::Impl::SetRenderMode(Effekseer::RenderMode renderMode)
+{
+	renderMode_ = renderMode;
+}
 
 } // namespace EffekseerRenderer

@@ -31,7 +31,9 @@ EffectPlatformLLGI::EffectPlatformLLGI()
 	commandListPool_ = std::make_shared<LLGI::CommandListPool>(graphics_, sfMemoryPool_, 3);
 }
 
-EffectPlatformLLGI ::~EffectPlatformLLGI() {}
+EffectPlatformLLGI ::~EffectPlatformLLGI()
+{
+}
 
 void EffectPlatformLLGI::Present()
 {
@@ -52,7 +54,10 @@ bool EffectPlatformLLGI::DoEvent()
 	return true;
 }
 
-void EffectPlatformLLGI::PreDestroyDevice() { graphics_->WaitFinish(); }
+void EffectPlatformLLGI::PreDestroyDevice()
+{
+	graphics_->WaitFinish();
+}
 
 void EffectPlatformLLGI::DestroyDevice()
 {

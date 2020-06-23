@@ -72,7 +72,10 @@ public:
 
 	std::array<float, 4> GetDynamicEquationResult(int32_t index);
 
-	RandObject& GetRandObject() { return m_randObjects; }
+	RandObject& GetRandObject()
+	{
+		return m_randObjects;
+	}
 
 	void IncInstanceCount();
 

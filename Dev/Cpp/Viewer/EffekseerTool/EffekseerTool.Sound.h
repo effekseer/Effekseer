@@ -55,15 +55,24 @@ public:
 	*/
 	void SetMute(bool mute);
 
-	float GetVolume() { return m_volume; }
-	bool GetMute() { return m_mute; }
+	float GetVolume()
+	{
+		return m_volume;
+	}
+	bool GetMute()
+	{
+		return m_mute;
+	}
 
 	/**
 		@brief	リスナー位置設定。
 	*/
 	void SetListener(const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up);
 
-	::EffekseerSound::Sound* GetSound() { return m_sound; };
+	::EffekseerSound::Sound* GetSound()
+	{
+		return m_sound;
+	};
 };
 
 //----------------------------------------------------------------------------------

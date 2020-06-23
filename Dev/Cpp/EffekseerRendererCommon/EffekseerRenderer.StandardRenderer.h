@@ -388,7 +388,8 @@ struct StandardRendererState
 	}
 };
 
-template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION> class StandardRenderer
+template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION>
+class StandardRenderer
 {
 private:
 	RENDERER* m_renderer;
@@ -535,7 +536,8 @@ private:
 
 public:
 	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_distortion)
-		: squareMaxSize_(renderer->GetSquareMaxCount()), isDistortionMode_(false)
+		: squareMaxSize_(renderer->GetSquareMaxCount())
+		, isDistortionMode_(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
@@ -544,7 +546,9 @@ public:
 		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
 	}
 
-	virtual ~StandardRenderer() {}
+	virtual ~StandardRenderer()
+	{
+	}
 
 	int32_t CalculateCurrentStride() const
 	{
@@ -616,7 +620,10 @@ public:
 #endif
 	}
 
-	const StandardRendererState& GetState() { return m_state; }
+	const StandardRendererState& GetState()
+	{
+		return m_state;
+	}
 
 	void Rendering(const Effekseer::Mat44f& mCamera, const Effekseer::Mat44f& mProj)
 	{
@@ -1258,7 +1265,10 @@ public:
 		m_renderer->GetRenderState()->Pop();
 	}
 
-	void Rendering() { Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix()); }
+	void Rendering()
+	{
+		Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix());
+	}
 };
 
 //----------------------------------------------------------------------------------

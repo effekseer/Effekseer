@@ -41,7 +41,10 @@ public:
 				radius = sqrtf(Data.Cuboid.X * Data.Cuboid.X + Data.Cuboid.Y * Data.Cuboid.Y + Data.Cuboid.Z * Data.Cuboid.Z) / 2.0f;
 		}
 
-		float GetRadius() { return radius; }
+		float GetRadius()
+		{
+			return radius;
+		}
 	};
 
 private:
@@ -69,13 +72,28 @@ public:
 
 	void SetWorld(World* world_);
 
-	Status GetCurrentStatus() { return currentStatus; }
-	Status GetNextStatus() { return nextStatus; }
+	Status GetCurrentStatus()
+	{
+		return currentStatus;
+	}
+	Status GetNextStatus()
+	{
+		return nextStatus;
+	}
 
 	int32_t ObjectIndex;
 
-	virtual int32_t GetRef() override { return ReferenceObject::GetRef(); }
-	virtual int32_t AddRef() override { return ReferenceObject::AddRef(); }
-	virtual int32_t Release() override { return ReferenceObject::Release(); }
+	virtual int32_t GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
+	virtual int32_t AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
+	virtual int32_t Release() override
+	{
+		return ReferenceObject::Release();
+	}
 };
 } // namespace Culling3D

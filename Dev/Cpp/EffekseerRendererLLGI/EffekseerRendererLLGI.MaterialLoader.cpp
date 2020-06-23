@@ -41,7 +41,9 @@ MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice,
 							   ::Effekseer::FileInterface* fileInterface,
 							   ::Effekseer::CompiledMaterialPlatformType platformType,
 							   ::Effekseer::MaterialCompiler* materialCompiler)
-	: fileInterface_(fileInterface), platformType_(platformType), materialCompiler_(materialCompiler)
+	: fileInterface_(fileInterface)
+	, platformType_(platformType)
+	, materialCompiler_(materialCompiler)
 {
 	if (fileInterface == nullptr)
 	{

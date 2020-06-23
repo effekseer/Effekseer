@@ -17,7 +17,8 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface)
-	: m_sound(sound), m_fileInterface(fileInterface)
+	: m_sound(sound)
+	, m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == NULL)
 	{
@@ -28,7 +29,9 @@ SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fi
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader::~SoundLoader() {}
+SoundLoader::~SoundLoader()
+{
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -48,7 +51,10 @@ void* SoundLoader::Load(const EFK_CHAR* path)
 	return Load(data.get(), (int32_t)size);
 }
 
-void* SoundLoader::Load(const void* data, int32_t size) { return m_sound->GetDevice()->CreateSound(data, (int32_t)size, false); }
+void* SoundLoader::Load(const void* data, int32_t size)
+{
+	return m_sound->GetDevice()->CreateSound(data, (int32_t)size, false);
+}
 
 void SoundLoader::Unload(void* data)
 {

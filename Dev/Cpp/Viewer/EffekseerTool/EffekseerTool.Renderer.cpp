@@ -12,13 +12,16 @@
 
 namespace EffekseerTool
 {
-Renderer::DistortingCallback::DistortingCallback(efk::Graphics* renderer) : renderer(renderer)
+Renderer::DistortingCallback::DistortingCallback(efk::Graphics* renderer)
+	: renderer(renderer)
 {
 	IsEnabled = true;
 	Blit = true;
 }
 
-Renderer::DistortingCallback::~DistortingCallback() {}
+Renderer::DistortingCallback::~DistortingCallback()
+{
+}
 
 bool Renderer::DistortingCallback::OnDistorting()
 {
@@ -208,11 +211,20 @@ bool Renderer::Initialize(void* handle, int width, int height)
 	return true;
 }
 
-bool Renderer::Present() { return graphics->Present(); }
+bool Renderer::Present()
+{
+	return graphics->Present();
+}
 
-void Renderer::ResetDevice() { graphics->ResetDevice(); }
+void Renderer::ResetDevice()
+{
+	graphics->ResetDevice();
+}
 
-eProjectionType Renderer::GetProjectionType() { return m_projection; }
+eProjectionType Renderer::GetProjectionType()
+{
+	return m_projection;
+}
 
 void Renderer::SetProjectionType(eProjectionType type)
 {
@@ -289,7 +301,10 @@ void Renderer::SetOrthographic(int width, int height)
 	m_renderer->SetProjectionMatrix(proj);
 }
 
-void Renderer::SetOrthographicScale(float scale) { m_orthoScale = scale; }
+void Renderer::SetOrthographicScale(float scale)
+{
+	m_orthoScale = scale;
+}
 
 bool Renderer::Resize(int width, int height)
 {
@@ -726,6 +741,9 @@ void Renderer::CopyToBackground()
 #endif
 }
 
-uint64_t Renderer::GetViewID() { return viewRenderTexture->GetViewID(); }
+uint64_t Renderer::GetViewID()
+{
+	return viewRenderTexture->GetViewID();
+}
 
 } // namespace EffekseerTool

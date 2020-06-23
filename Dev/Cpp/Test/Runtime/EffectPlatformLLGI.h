@@ -33,9 +33,15 @@ class LLGIWindow : public LLGI::Window
 	GLFWwindow* window_ = nullptr;
 
 public:
-	LLGIWindow(GLFWwindow* window) : window_(window) {}
+	LLGIWindow(GLFWwindow* window)
+		: window_(window)
+	{
+	}
 
-	bool OnNewFrame() override { return glfwWindowShouldClose(window_) == GL_FALSE; }
+	bool OnNewFrame() override
+	{
+		return glfwWindowShouldClose(window_) == GL_FALSE;
+	}
 
 	void* GetNativePtr(int32_t index) override
 	{
@@ -97,5 +103,8 @@ public:
 	virtual ~EffectPlatformLLGI();
 	bool TakeScreenshot(const char* path);
 
-	LLGI::Graphics* GetGraphics() const { return graphics_; }
+	LLGI::Graphics* GetGraphics() const
+	{
+		return graphics_;
+	}
 };

@@ -13,7 +13,11 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoice::SoundVoice(SoundImplemented* sound, const WAVEFORMATEX* format) : m_sound(sound), m_xavoice(NULL), m_tag(NULL), m_data(NULL)
+SoundVoice::SoundVoice(SoundImplemented* sound, const WAVEFORMATEX* format)
+	: m_sound(sound)
+	, m_xavoice(NULL)
+	, m_tag(NULL)
+	, m_data(NULL)
 {
 	sound->GetDevice()->CreateSourceVoice(&m_xavoice, format);
 }

@@ -33,7 +33,12 @@ Sound* Sound::Create(IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoic
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented() : m_xaudio2(NULL), m_mute(false) { memset(m_voiceContainer, 0, sizeof(m_voiceContainer)); }
+SoundImplemented::SoundImplemented()
+	: m_xaudio2(NULL)
+	, m_mute(false)
+{
+	memset(m_voiceContainer, 0, sizeof(m_voiceContainer));
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -100,12 +105,18 @@ void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Eff
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::Destroy() { delete this; }
+void SoundImplemented::Destroy()
+{
+	delete this;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer() { return new SoundPlayer(this); }
+::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer()
+{
+	return new SoundPlayer(this);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -129,7 +140,10 @@ void SoundImplemented::StopAllVoices()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetMute(bool mute) { m_mute = mute; }
+void SoundImplemented::SetMute(bool mute)
+{
+	m_mute = mute;
+}
 
 //----------------------------------------------------------------------------------
 //

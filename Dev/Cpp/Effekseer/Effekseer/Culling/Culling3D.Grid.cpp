@@ -4,7 +4,10 @@
 
 namespace Culling3D
 {
-Grid::Grid() { IsScanned = false; }
+Grid::Grid()
+{
+	IsScanned = false;
+}
 
 void Grid::AddObject(Object* o)
 {

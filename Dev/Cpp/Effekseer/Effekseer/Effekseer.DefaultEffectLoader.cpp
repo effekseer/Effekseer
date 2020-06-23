@@ -14,7 +14,8 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultEffectLoader::DefaultEffectLoader(FileInterface* fileInterface) : m_fileInterface(fileInterface)
+DefaultEffectLoader::DefaultEffectLoader(FileInterface* fileInterface)
+	: m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == NULL)
 	{
@@ -25,7 +26,9 @@ DefaultEffectLoader::DefaultEffectLoader(FileInterface* fileInterface) : m_fileI
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultEffectLoader::~DefaultEffectLoader() {}
+DefaultEffectLoader::~DefaultEffectLoader()
+{
+}
 
 //----------------------------------------------------------------------------------
 //

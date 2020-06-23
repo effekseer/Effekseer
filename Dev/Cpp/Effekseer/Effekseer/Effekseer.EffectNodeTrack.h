@@ -140,9 +140,15 @@ public:
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
-	EffectNodeTrack(Effect* effect, unsigned char*& pos) : EffectNodeImplemented(effect, pos), TrackTexture(-1) {}
+	EffectNodeTrack(Effect* effect, unsigned char*& pos)
+		: EffectNodeImplemented(effect, pos)
+		, TrackTexture(-1)
+	{
+	}
 
-	~EffectNodeTrack() {}
+	~EffectNodeTrack()
+	{
+	}
 
 	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
@@ -162,7 +168,10 @@ public:
 
 	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
 
-	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_TRACK; }
+	eEffectNodeType GetType() const override
+	{
+		return EFFECT_NODE_TYPE_TRACK;
+	}
 
 	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, IRandObject* rand);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);

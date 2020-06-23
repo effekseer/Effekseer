@@ -312,17 +312,26 @@ void Instance::UpdateChildrenGroupMatrix()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGlobal* Instance::GetInstanceGlobal() { return m_pContainer->GetRootInstance(); }
+InstanceGlobal* Instance::GetInstanceGlobal()
+{
+	return m_pContainer->GetRootInstance();
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-eInstanceState Instance::GetState() const { return m_State; }
+eInstanceState Instance::GetState() const
+{
+	return m_State;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const Mat43f& Instance::GetGlobalMatrix43() const { return m_GlobalMatrix43; }
+const Mat43f& Instance::GetGlobalMatrix43() const
+{
+	return m_GlobalMatrix43;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -1228,14 +1237,19 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	if (m_pEffectNode->m_effect->GetVersion() >= 1600)
 	{
+		auto effect = this->m_pEffectNode->m_effect;
+		auto instanceGlobal = this->m_pContainer->GetRootInstance();
+		auto& rand = m_randObject;
+
 		if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FIXED)
 		{
 			if (m_pEffectNode->AlphaCrunch.Fixed.RefEq >= 0)
 			{
 				auto alphaThreshold = static_cast<float>(m_pEffectNode->AlphaCrunch.Fixed.Threshold);
 				ApplyEq(alphaThreshold,
-						this->m_pEffectNode->m_effect,
-						this->m_pContainer->GetRootInstance(),
+						effect,
+						instanceGlobal,
+						&rand,
 						m_pEffectNode->AlphaCrunch.Fixed.RefEq,
 						alphaThreshold);
 

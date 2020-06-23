@@ -33,9 +33,15 @@ public:
 
 	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
-	int32_t GetAliveCount() const { return aliveCount_; }
+	int32_t GetAliveCount() const
+	{
+		return aliveCount_;
+	}
 
-	bool IsInstanceCreatable() const { return aliveCount_ < InstancesOfChunk; }
+	bool IsInstanceCreatable() const
+	{
+		return aliveCount_ < InstancesOfChunk;
+	}
 
 private:
 	std::array<uint8_t[sizeof(Instance)], InstancesOfChunk> instances_;

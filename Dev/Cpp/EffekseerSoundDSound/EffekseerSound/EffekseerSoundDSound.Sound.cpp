@@ -29,7 +29,14 @@ Sound* Sound::Create(IDirectSound8* dsound)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented() : m_dsound(NULL), m_mute(false), m_voiceContainer(NULL), m_leftPos(0), m_rightPos(0) {}
+SoundImplemented::SoundImplemented()
+	: m_dsound(NULL)
+	, m_mute(false)
+	, m_voiceContainer(NULL)
+	, m_leftPos(0)
+	, m_rightPos(0)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -78,52 +85,82 @@ void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Eff
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::Destroy() { delete this; }
+void SoundImplemented::Destroy()
+{
+	delete this;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer() { return new SoundPlayer(this); }
+::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer()
+{
+	return new SoundPlayer(this);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundLoader* SoundImplemented::CreateSoundLoader() { return new SoundLoader(this); }
+::Effekseer::SoundLoader* SoundImplemented::CreateSoundLoader()
+{
+	return new SoundLoader(this);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopAllVoices() { m_voiceContainer->StopAll(); }
+void SoundImplemented::StopAllVoices()
+{
+	m_voiceContainer->StopAll();
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetMute(bool mute) { m_mute = mute; }
+void SoundImplemented::SetMute(bool mute)
+{
+	m_mute = mute;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoice* SoundImplemented::GetVoice() { return m_voiceContainer->GetVoice(); }
+SoundVoice* SoundImplemented::GetVoice()
+{
+	return m_voiceContainer->GetVoice();
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopTag(::Effekseer::SoundTag tag) { m_voiceContainer->StopTag(tag); }
+void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
+{
+	m_voiceContainer->StopTag(tag);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause) { m_voiceContainer->PauseTag(tag, pause); }
+void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
+{
+	m_voiceContainer->PauseTag(tag, pause);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag) { return m_voiceContainer->CheckPlayingTag(tag); }
+bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
+{
+	return m_voiceContainer->CheckPlayingTag(tag);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopData(SoundData* soundData) { m_voiceContainer->StopData(soundData); }
+void SoundImplemented::StopData(SoundData* soundData)
+{
+	m_voiceContainer->StopData(soundData);
+}
 
 //----------------------------------------------------------------------------------
 //

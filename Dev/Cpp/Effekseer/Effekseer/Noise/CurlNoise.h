@@ -20,7 +20,12 @@ public:
 	float Scale = 1.0f;
 	int32_t Octave = 2;
 
-	CurlNoise(int32_t seed) : xnoise_(seed), ynoise_(seed * (seed % 1949 + 5)), znoise_(seed * (seed % 3541 + 10)) {}
+	CurlNoise(int32_t seed)
+		: xnoise_(seed)
+		, ynoise_(seed * (seed % 1949 + 5))
+		, znoise_(seed * (seed % 3541 + 10))
+	{
+	}
 
 	Vec3f Get(Vec3f pos) const
 	{

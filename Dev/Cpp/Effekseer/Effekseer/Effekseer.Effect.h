@@ -213,8 +213,12 @@ public:
 class Effect : public IReference
 {
 protected:
-	Effect() {}
-	virtual ~Effect() {}
+	Effect()
+	{
+	}
+	virtual ~Effect()
+	{
+	}
 
 public:
 	/**
@@ -656,8 +660,12 @@ struct EffectModelParameter
 class EffectNode
 {
 public:
-	EffectNode() {}
-	virtual ~EffectNode() {}
+	EffectNode()
+	{
+	}
+	virtual ~EffectNode()
+	{
+	}
 
 	/**
 	@brief	ノードが所属しているエフェクトを取得する。

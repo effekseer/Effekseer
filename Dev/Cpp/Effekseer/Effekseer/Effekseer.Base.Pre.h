@@ -121,28 +121,28 @@ typedef int(EFK_STDCALL* RandFunc)(void);
 */
 typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
 
-#define ES_SAFE_ADDREF(val)                                                                                                                \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		(val)->AddRef();                                                                                                                   \
+#define ES_SAFE_ADDREF(val) \
+	if ((val) != NULL)      \
+	{                       \
+		(val)->AddRef();    \
 	}
-#define ES_SAFE_RELEASE(val)                                                                                                               \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		(val)->Release();                                                                                                                  \
-		(val) = NULL;                                                                                                                      \
+#define ES_SAFE_RELEASE(val) \
+	if ((val) != NULL)       \
+	{                        \
+		(val)->Release();    \
+		(val) = NULL;        \
 	}
-#define ES_SAFE_DELETE(val)                                                                                                                \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		delete (val);                                                                                                                      \
-		(val) = NULL;                                                                                                                      \
+#define ES_SAFE_DELETE(val) \
+	if ((val) != NULL)      \
+	{                       \
+		delete (val);       \
+		(val) = NULL;       \
 	}
-#define ES_SAFE_DELETE_ARRAY(val)                                                                                                          \
-	if ((val) != NULL)                                                                                                                     \
-	{                                                                                                                                      \
-		delete[](val);                                                                                                                     \
-		(val) = NULL;                                                                                                                      \
+#define ES_SAFE_DELETE_ARRAY(val) \
+	if ((val) != NULL)            \
+	{                             \
+		delete[](val);            \
+		(val) = NULL;             \
 	}
 
 #define EFK_ASSERT(x) assert(x)
@@ -281,7 +281,8 @@ enum class ReloadingThreadType
 /**
 	@brief	最大値取得
 */
-template <typename T, typename U> T Max(T t, U u)
+template <typename T, typename U>
+T Max(T t, U u)
 {
 	if (t > (T)u)
 	{
@@ -293,7 +294,8 @@ template <typename T, typename U> T Max(T t, U u)
 /**
 	@brief	最小値取得
 */
-template <typename T, typename U> T Min(T t, U u)
+template <typename T, typename U>
+T Min(T t, U u)
 {
 	if (t < (T)u)
 	{
@@ -305,7 +307,8 @@ template <typename T, typename U> T Min(T t, U u)
 /**
 	@brief	範囲内値取得
 */
-template <typename T, typename U, typename V> T Clamp(T t, U max_, V min_)
+template <typename T, typename U, typename V>
+T Clamp(T t, U max_, V min_)
 {
 	if (t > (T)max_)
 	{
@@ -458,7 +461,8 @@ public:
 /**
 	@brief	a deleter for IReference
 */
-template <typename T> struct ReferenceDeleter
+template <typename T>
+struct ReferenceDeleter
 {
 	void operator()(T* ptr) const
 	{
@@ -469,7 +473,8 @@ template <typename T> struct ReferenceDeleter
 	}
 };
 
-template <typename T> inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
+template <typename T>
+inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
 {
 	if (ptr == nullptr)
 		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr);
@@ -494,9 +499,14 @@ private:
 	mutable std::atomic<int32_t> m_reference;
 
 public:
-	ReferenceObject() : m_reference(1) {}
+	ReferenceObject()
+		: m_reference(1)
+	{
+	}
 
-	virtual ~ReferenceObject() {}
+	virtual ~ReferenceObject()
+	{
+	}
 
 	virtual int AddRef()
 	{
@@ -505,7 +515,10 @@ public:
 		return m_reference;
 	}
 
-	virtual int GetRef() { return m_reference; }
+	virtual int GetRef()
+	{
+		return m_reference;
+	}
 
 	virtual int Release()
 	{

@@ -66,7 +66,8 @@ static const char g_sprite_fs_no_texture_src[] = "IN lowp vec4 vaColor;\n"
 												 "FRAGCOLOR = vaColor;\n"
 												 "}\n";
 
-ImageRendererGL::ImageRendererGL(EffekseerRenderer::Renderer* renderer) : ImageRenderer(renderer)
+ImageRendererGL::ImageRendererGL(EffekseerRenderer::Renderer* renderer)
+	: ImageRenderer(renderer)
 {
 	this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
 
@@ -231,9 +232,16 @@ void ImageRendererGL::Render()
 		}
 }
 
-void ImageRendererGL::ClearCache() { sprites.clear(); }
+void ImageRendererGL::ClearCache()
+{
+	sprites.clear();
+}
 
-void ImageRendererGL::OnLostDevice() {}
+void ImageRendererGL::OnLostDevice()
+{
+}
 
-void ImageRendererGL::OnResetDevice() {}
+void ImageRendererGL::OnResetDevice()
+{
+}
 } // namespace efk

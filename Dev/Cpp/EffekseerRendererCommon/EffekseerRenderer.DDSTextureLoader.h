@@ -20,10 +20,22 @@ public:
 	bool Load(void* data, int32_t size);
 	void Unload();
 
-	std::vector<uint8_t>& GetData() { return textureData; }
-	int32_t GetWidth() { return textureWidth; }
-	int32_t GetHeight() { return textureHeight; }
-	Effekseer::TextureFormatType GetTextureFormat() { return textureFormatType; }
+	std::vector<uint8_t>& GetData()
+	{
+		return textureData;
+	}
+	int32_t GetWidth()
+	{
+		return textureWidth;
+	}
+	int32_t GetHeight()
+	{
+		return textureHeight;
+	}
+	Effekseer::TextureFormatType GetTextureFormat()
+	{
+		return textureFormatType;
+	}
 };
 } // namespace EffekseerRenderer
 

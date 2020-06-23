@@ -130,11 +130,29 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 	return false;
 }
 
-const std::vector<std::u16string>& EfkEfcProperty::GetColorImages() const { return colorImages_; }
-const std::vector<std::u16string>& EfkEfcProperty::GetNormalImages() const { return normalImages_; }
-const std::vector<std::u16string>& EfkEfcProperty::GetDistortionImages() const { return distortionImages_; }
-const std::vector<std::u16string>& EfkEfcProperty::GetSounds() const { return sounds_; }
-const std::vector<std::u16string>& EfkEfcProperty::GetModels() const { return models_; }
-const std::vector<std::u16string>& EfkEfcProperty::GetMaterials() const { return materials_; }
+const std::vector<std::u16string>& EfkEfcProperty::GetColorImages() const
+{
+	return colorImages_;
+}
+const std::vector<std::u16string>& EfkEfcProperty::GetNormalImages() const
+{
+	return normalImages_;
+}
+const std::vector<std::u16string>& EfkEfcProperty::GetDistortionImages() const
+{
+	return distortionImages_;
+}
+const std::vector<std::u16string>& EfkEfcProperty::GetSounds() const
+{
+	return sounds_;
+}
+const std::vector<std::u16string>& EfkEfcProperty::GetModels() const
+{
+	return models_;
+}
+const std::vector<std::u16string>& EfkEfcProperty::GetMaterials() const
+{
+	return materials_;
+}
 
 } // namespace Effekseer

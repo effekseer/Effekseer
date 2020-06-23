@@ -12,7 +12,8 @@ namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled) : m_renderer(renderer)
+RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
+	: m_renderer(renderer)
 {
 	D3D11_CULL_MODE cullTbl[] = {
 		D3D11_CULL_BACK,

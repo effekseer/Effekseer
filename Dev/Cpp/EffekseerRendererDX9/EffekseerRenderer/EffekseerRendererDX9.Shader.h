@@ -63,15 +63,30 @@ public: // デバイス復旧用
 	virtual void OnChangeDevice();
 
 public:
-	IDirect3DVertexShader9* GetVertexShader() const { return m_vertexShader; }
-	IDirect3DPixelShader9* GetPixelShader() const { return m_pixelShader; }
-	IDirect3DVertexDeclaration9* GetLayoutInterface() const { return m_vertexDeclaration; }
+	IDirect3DVertexShader9* GetVertexShader() const
+	{
+		return m_vertexShader;
+	}
+	IDirect3DPixelShader9* GetPixelShader() const
+	{
+		return m_pixelShader;
+	}
+	IDirect3DVertexDeclaration9* GetLayoutInterface() const
+	{
+		return m_vertexDeclaration;
+	}
 
 	void SetVertexConstantBufferSize(int32_t size);
 	void SetPixelConstantBufferSize(int32_t size);
 
-	void* GetVertexConstantBuffer() { return m_vertexConstantBuffer; }
-	void* GetPixelConstantBuffer() { return m_pixelConstantBuffer; }
+	void* GetVertexConstantBuffer()
+	{
+		return m_vertexConstantBuffer;
+	}
+	void* GetPixelConstantBuffer()
+	{
+		return m_pixelConstantBuffer;
+	}
 
 	void SetVertexRegisterCount(int32_t count)
 	{

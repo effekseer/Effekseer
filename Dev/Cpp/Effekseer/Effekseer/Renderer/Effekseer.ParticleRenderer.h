@@ -43,15 +43,25 @@ public:
 	};
 
 public:
-	ParticleRenderer() {}
+	ParticleRenderer()
+	{
+	}
 
-	virtual ~ParticleRenderer() {}
+	virtual ~ParticleRenderer()
+	{
+	}
 
-	virtual void BeginRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void BeginRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 
-	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+	virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData)
+	{
+	}
 
-	virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+	virtual void EndRendering(const NodeParameter& parameter, void* userData)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------

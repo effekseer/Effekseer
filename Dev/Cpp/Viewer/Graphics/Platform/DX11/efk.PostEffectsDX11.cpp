@@ -69,7 +69,8 @@ static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
 	{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
-BlitterDX11::BlitterDX11(Graphics* graphics) : graphics(graphics)
+BlitterDX11::BlitterDX11(Graphics* graphics)
+	: graphics(graphics)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
@@ -107,7 +108,10 @@ BlitterDX11::BlitterDX11(Graphics* graphics) : graphics(graphics)
 	}
 }
 
-BlitterDX11::~BlitterDX11() { ES_SAFE_RELEASE(sampler); }
+BlitterDX11::~BlitterDX11()
+{
+	ES_SAFE_RELEASE(sampler);
+}
 
 void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
 					   int32_t numTextures,
@@ -164,7 +168,9 @@ void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
 	renderer->GetRenderState()->Pop();
 }
 
-BloomEffectDX11::BloomEffectDX11(Graphics* graphics) : BloomEffect(graphics), blitter(graphics)
+BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
+	: BloomEffect(graphics)
+	, blitter(graphics)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
@@ -232,7 +238,9 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics) : BloomEffect(graphics), bl
 									 2));
 }
 
-BloomEffectDX11::~BloomEffectDX11() {}
+BloomEffectDX11::~BloomEffectDX11()
+{
+}
 
 void BloomEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 {
@@ -298,9 +306,14 @@ void BloomEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 	}
 }
 
-void BloomEffectDX11::OnLostDevice() { ReleaseBuffers(); }
+void BloomEffectDX11::OnLostDevice()
+{
+	ReleaseBuffers();
+}
 
-void BloomEffectDX11::OnResetDevice() {}
+void BloomEffectDX11::OnResetDevice()
+{
+}
 
 void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
 {
@@ -363,7 +376,9 @@ void BloomEffectDX11::ReleaseBuffers()
 	}
 }
 
-TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics) : TonemapEffect(graphics), blitter(graphics)
+TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics)
+	: TonemapEffect(graphics)
+	, blitter(graphics)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
@@ -401,7 +416,9 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics) : TonemapEffect(graphic
 	}
 }
 
-TonemapEffectDX11::~TonemapEffectDX11() {}
+TonemapEffectDX11::~TonemapEffectDX11()
+{
+}
 
 void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 {
@@ -424,7 +441,9 @@ void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 	}
 }
 
-LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter_(graphics)
+LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics)
+	: LinearToSRGBEffect(graphics)
+	, blitter_(graphics)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
@@ -450,7 +469,9 @@ LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics) : LinearToSRG
 	}
 }
 
-LinearToSRGBEffectDX11::~LinearToSRGBEffectDX11() {}
+LinearToSRGBEffectDX11::~LinearToSRGBEffectDX11()
+{
+}
 
 void LinearToSRGBEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 {

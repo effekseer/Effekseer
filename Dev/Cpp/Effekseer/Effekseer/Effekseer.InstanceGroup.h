@@ -77,7 +77,10 @@ public:
 
 	void KillAllInstances();
 
-	int32_t GetTime() const { return m_time; }
+	int32_t GetTime() const
+	{
+		return m_time;
+	}
 
 	/**
 		@brief	グループを生成したインスタンスからの参照が残っているか?
@@ -94,12 +97,27 @@ public:
 	*/
 	InstanceGroup* NextUsedByContainer;
 
-	InstanceGlobal* GetRootInstance() const { return m_global; }
+	InstanceGlobal* GetRootInstance() const
+	{
+		return m_global;
+	}
 
-	const Mat43f& GetParentMatrix() const { return parentMatrix_; }
-	const Vec3f& GetParentTranslation() const { return parentTranslation_; }
-	const Mat43f& GetParentRotation() const { return parentRotation_; }
-	const Vec3f& GetParentScale() const { return parentScale_; }
+	const Mat43f& GetParentMatrix() const
+	{
+		return parentMatrix_;
+	}
+	const Vec3f& GetParentTranslation() const
+	{
+		return parentTranslation_;
+	}
+	const Mat43f& GetParentRotation() const
+	{
+		return parentRotation_;
+	}
+	const Vec3f& GetParentScale() const
+	{
+		return parentScale_;
+	}
 };
 //----------------------------------------------------------------------------------
 //

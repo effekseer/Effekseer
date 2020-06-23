@@ -31,7 +31,9 @@ public:
 		size_ = size;
 	}
 
-	virtual ~BinaryFileReader() {}
+	virtual ~BinaryFileReader()
+	{
+	}
 
 	size_t Read(void* buffer, size_t size) override
 	{
@@ -45,16 +47,26 @@ public:
 		return size;
 	}
 
-	void Seek(int position) override { pos = position; }
+	void Seek(int position) override
+	{
+		pos = position;
+	}
 
-	int GetPosition() override { return pos; }
+	int GetPosition() override
+	{
+		return pos;
+	}
 
-	size_t GetLength() override { return size_; }
+	size_t GetLength() override
+	{
+		return size_;
+	}
 };
 } // namespace SupportXAudio2
 
 SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface)
-	: m_sound(sound), m_fileInterface(fileInterface)
+	: m_sound(sound)
+	, m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == NULL)
 	{
@@ -65,7 +77,9 @@ SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fi
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader::~SoundLoader() {}
+SoundLoader::~SoundLoader()
+{
+}
 
 void* SoundLoader::Load(::Effekseer::FileReader* reader)
 {

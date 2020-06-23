@@ -23,13 +23,31 @@ public:
 	virtual ~RenderTextureGL();
 	bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
-	int32_t GetWidth() override { return width; }
-	int32_t GetHeight() override { return height; }
-	bool IsMultisample() { return multisample > 1; }
-	GLuint GetTexture() { return texture; }
-	GLuint GetBuffer() { return renderbuffer; }
+	int32_t GetWidth() override
+	{
+		return width;
+	}
+	int32_t GetHeight() override
+	{
+		return height;
+	}
+	bool IsMultisample()
+	{
+		return multisample > 1;
+	}
+	GLuint GetTexture()
+	{
+		return texture;
+	}
+	GLuint GetBuffer()
+	{
+		return renderbuffer;
+	}
 
-	uint64_t GetViewID() override { return texture; }
+	uint64_t GetViewID() override
+	{
+		return texture;
+	}
 };
 
 class DepthTextureGL : public DepthTexture
@@ -43,8 +61,14 @@ public:
 	virtual ~DepthTextureGL();
 	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
-	GLuint GetTexture() { return texture; }
-	GLuint GetBuffer() { return renderbuffer; }
+	GLuint GetTexture()
+	{
+		return texture;
+	}
+	GLuint GetBuffer()
+	{
+		return renderbuffer;
+	}
 };
 
 class GraphicsGL : public Graphics
@@ -117,6 +141,9 @@ public:
 
 	EffekseerRenderer::Renderer* GetRenderer() override;
 
-	DeviceType GetDeviceType() const override { return DeviceType::OpenGL; }
+	DeviceType GetDeviceType() const override
+	{
+		return DeviceType::OpenGL;
+	}
 };
 } // namespace efk

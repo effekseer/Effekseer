@@ -82,9 +82,13 @@ public:
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
 
-	void OnLostDevice() override {}
+	void OnLostDevice() override
+	{
+	}
 
-	void OnResetDevice() override {}
+	void OnResetDevice() override
+	{
+	}
 };
 
 class LinearToSRGBEffectDX11 : public LinearToSRGBEffect
@@ -98,8 +102,12 @@ public:
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
 
-	void OnLostDevice() override {}
+	void OnLostDevice() override
+	{
+	}
 
-	void OnResetDevice() override {}
+	void OnResetDevice() override
+	{
+	}
 };
 } // namespace efk

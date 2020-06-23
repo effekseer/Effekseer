@@ -129,9 +129,15 @@ public:
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
-	GraphicsDevice* GetGraphicsDevice() const { return graphicsDevice_; }
+	GraphicsDevice* GetGraphicsDevice() const
+	{
+		return graphicsDevice_;
+	}
 
-	LLGI::Graphics* GetGraphics() const override { return graphicsDevice_->GetGraphics(); }
+	LLGI::Graphics* GetGraphics() const override
+	{
+		return graphicsDevice_->GetGraphics();
+	}
 
 	/**
 		@brief	頂点バッファ取得
@@ -230,9 +236,18 @@ public:
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 } // namespace EffekseerRendererLLGI

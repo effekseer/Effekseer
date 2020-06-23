@@ -51,13 +51,18 @@ protected:
 	int32_t customData2Count_ = 0;
 
 public:
-	SpriteRendererBase(RENDERER* renderer) : m_renderer(renderer), m_spriteCount(0), m_ringBufferData(nullptr)
+	SpriteRendererBase(RENDERER* renderer)
+		: m_renderer(renderer)
+		, m_spriteCount(0)
+		, m_ringBufferData(nullptr)
 	{
 		// reserve buffers
 		instances.reserve(m_renderer->GetSquareMaxCount());
 	}
 
-	virtual ~SpriteRendererBase() {}
+	virtual ~SpriteRendererBase()
+	{
+	}
 
 protected:
 	void RenderingInstance(const efkSpriteInstanceParam& inst,
@@ -172,13 +177,25 @@ protected:
 		Lightning,
 	};
 
-	VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+	VertexType GetVertexType(const VERTEX_NORMAL* v)
+	{
+		return VertexType::Normal;
+	}
 
-	VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+	VertexType GetVertexType(const VERTEX_DISTORTION* v)
+	{
+		return VertexType::Distortion;
+	}
 
-	VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+	VertexType GetVertexType(const DynamicVertex* v)
+	{
+		return VertexType::Dynamic;
+	}
 
-	VertexType GetVertexType(const LightingVertex* v) { return VertexType::Lightning; }
+	VertexType GetVertexType(const LightingVertex* v)
+	{
+		return VertexType::Lightning;
+	}
 
 	template <typename VERTEX>
 	void Rendering_Internal(const efkSpriteNodeParam& parameter,
@@ -457,7 +474,10 @@ public:
 		Rendering_(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 	}
 
-	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override { EndRendering_(m_renderer, parameter); }
+	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override
+	{
+		EndRendering_(m_renderer, parameter);
+	}
 };
 //----------------------------------------------------------------------------------
 //

@@ -6,7 +6,8 @@
 namespace EffekseerRendererLLGI
 {
 
-DeviceObject::DeviceObject(GraphicsDevice* graphicsDevice, bool hasRefCount) : graphicsDevice_(graphicsDevice)
+DeviceObject::DeviceObject(GraphicsDevice* graphicsDevice, bool hasRefCount)
+	: graphicsDevice_(graphicsDevice)
 {
 	if (hasRefCount_)
 	{
@@ -26,6 +27,9 @@ DeviceObject::~DeviceObject()
 	}
 }
 
-GraphicsDevice* DeviceObject::GetGraphicsDevice() const { return graphicsDevice_; }
+GraphicsDevice* DeviceObject::GetGraphicsDevice() const
+{
+	return graphicsDevice_;
+}
 
 } // namespace EffekseerRendererLLGI

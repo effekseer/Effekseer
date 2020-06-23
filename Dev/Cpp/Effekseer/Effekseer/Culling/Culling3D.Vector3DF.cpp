@@ -3,27 +3,64 @@
 
 namespace Culling3D
 {
-Vector3DF::Vector3DF() : X(0), Y(0), Z(0) {}
+Vector3DF::Vector3DF()
+	: X(0)
+	, Y(0)
+	, Z(0)
+{
+}
 
-Vector3DF::Vector3DF(float x, float y, float z) : X(x), Y(y), Z(z) {}
+Vector3DF::Vector3DF(float x, float y, float z)
+	: X(x)
+	, Y(y)
+	, Z(z)
+{
+}
 
-bool Vector3DF::operator==(const Vector3DF& o) { return X == o.X && Y == o.Y && Z == o.Z; }
+bool Vector3DF::operator==(const Vector3DF& o)
+{
+	return X == o.X && Y == o.Y && Z == o.Z;
+}
 
-bool Vector3DF::operator!=(const Vector3DF& o) { return !(X == o.X && Y == o.Y && Z == o.Z); }
+bool Vector3DF::operator!=(const Vector3DF& o)
+{
+	return !(X == o.X && Y == o.Y && Z == o.Z);
+}
 
-Vector3DF Vector3DF::operator-() { return Vector3DF(-X, -Y, -Z); }
+Vector3DF Vector3DF::operator-()
+{
+	return Vector3DF(-X, -Y, -Z);
+}
 
-Vector3DF Vector3DF::operator+(const Vector3DF& o) const { return Vector3DF(X + o.X, Y + o.Y, Z + o.Z); }
+Vector3DF Vector3DF::operator+(const Vector3DF& o) const
+{
+	return Vector3DF(X + o.X, Y + o.Y, Z + o.Z);
+}
 
-Vector3DF Vector3DF::operator-(const Vector3DF& o) const { return Vector3DF(X - o.X, Y - o.Y, Z - o.Z); }
+Vector3DF Vector3DF::operator-(const Vector3DF& o) const
+{
+	return Vector3DF(X - o.X, Y - o.Y, Z - o.Z);
+}
 
-Vector3DF Vector3DF::operator*(const Vector3DF& o) const { return Vector3DF(X * o.X, Y * o.Y, Z * o.Z); }
+Vector3DF Vector3DF::operator*(const Vector3DF& o) const
+{
+	return Vector3DF(X * o.X, Y * o.Y, Z * o.Z);
+}
 
-Vector3DF Vector3DF::operator/(const Vector3DF& o) const { return Vector3DF(X / o.X, Y / o.Y, Z / o.Z); }
+Vector3DF Vector3DF::operator/(const Vector3DF& o) const
+{
+	return Vector3DF(X / o.X, Y / o.Y, Z / o.Z);
+}
 
-Vector3DF Vector3DF::operator*(const float& o) const { return Vector3DF(X * o, Y * o, Z * o); }
+Vector3DF Vector3DF::operator*(const float& o) const
+{
+	return Vector3DF(X * o, Y * o, Z * o);
+}
 
-Vector3DF Vector3DF::operator/(const float& o) const { return Vector3DF(X / o, Y / o, Z / o); }
+Vector3DF Vector3DF::operator/(const float& o) const
+{
+	return Vector3DF(X / o, Y / o, Z / o);
+}
 
 Vector3DF& Vector3DF::operator+=(const Vector3DF& o)
 {
@@ -57,7 +94,10 @@ Vector3DF& Vector3DF::operator/=(const float& o)
 	return *this;
 }
 
-float Vector3DF::Dot(const Vector3DF& v1, const Vector3DF& v2) { return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z; }
+float Vector3DF::Dot(const Vector3DF& v1, const Vector3DF& v2)
+{
+	return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+}
 
 Vector3DF Vector3DF::Cross(const Vector3DF& v1, const Vector3DF& v2)
 {

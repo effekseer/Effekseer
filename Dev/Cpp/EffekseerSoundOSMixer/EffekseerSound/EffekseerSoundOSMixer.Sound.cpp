@@ -29,12 +29,19 @@ Sound* Sound::Create(osm::Manager* soundManager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented() : m_manager(NULL), m_mute(false) {}
+SoundImplemented::SoundImplemented()
+	: m_manager(NULL)
+	, m_mute(false)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::~SoundImplemented() { StopAll(); }
+SoundImplemented::~SoundImplemented()
+{
+	StopAll();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -63,7 +70,10 @@ void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Eff
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::Destroy() { delete this; }
+void SoundImplemented::Destroy()
+{
+	delete this;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -86,7 +96,10 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer() { return new SoundPlayer(this); }
+::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer()
+{
+	return new SoundPlayer(this);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -99,17 +112,26 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopAll() { m_manager->StopAll(); }
+void SoundImplemented::StopAll()
+{
+	m_manager->StopAll();
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetMute(bool mute) { m_mute = mute; }
+void SoundImplemented::SetMute(bool mute)
+{
+	m_mute = mute;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::AddInstance(const Instance& instance) { m_instances.push_back(instance); }
+void SoundImplemented::AddInstance(const Instance& instance)
+{
+	m_instances.push_back(instance);
+}
 
 //----------------------------------------------------------------------------------
 //

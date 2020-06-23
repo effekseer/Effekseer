@@ -26,7 +26,9 @@ private:
 		uint32_t ID;
 		uint32_t Size;
 
-		Chunk() {}
+		Chunk()
+		{
+		}
 		Chunk(uint32_t id, uint32_t size)
 		{
 			ID = id;
@@ -34,7 +36,8 @@ private:
 		}
 	};
 
-	template <typename T> void ExportData(std::vector<uint8_t>& dst, T* data)
+	template <typename T>
+	void ExportData(std::vector<uint8_t>& dst, T* data)
 	{
 		auto u = (uint8_t*)data;
 		for (size_t i = 0; i < sizeof(T); i++)

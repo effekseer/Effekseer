@@ -91,7 +91,11 @@ public:
 	\~English	Constructor
 	\~Japanese	コンストラクタ
 	*/
-	Model(void* data, int32_t size) : m_data(NULL), m_size(size), m_version(0), models(nullptr)
+	Model(void* data, int32_t size)
+		: m_data(NULL)
+		, m_size(size)
+		, m_version(0)
+		, models(nullptr)
 	{
 		m_data = new uint8_t[m_size];
 		memcpy(m_data, data, m_size);
@@ -155,17 +159,38 @@ public:
 		}
 	}
 
-	Vertex* GetVertexes(int32_t index = 0) const { return models[index].m_vertexes; }
-	int32_t GetVertexCount(int32_t index = 0) { return models[index].m_vertexCount; }
+	Vertex* GetVertexes(int32_t index = 0) const
+	{
+		return models[index].m_vertexes;
+	}
+	int32_t GetVertexCount(int32_t index = 0)
+	{
+		return models[index].m_vertexCount;
+	}
 
-	Face* GetFaces(int32_t index = 0) const { return models[index].m_faces; }
-	int32_t GetFaceCount(int32_t index = 0) { return models[index].m_faceCount; }
+	Face* GetFaces(int32_t index = 0) const
+	{
+		return models[index].m_faces;
+	}
+	int32_t GetFaceCount(int32_t index = 0)
+	{
+		return models[index].m_faceCount;
+	}
 
-	int32_t GetFrameCount() const { return m_frameCount; }
+	int32_t GetFrameCount() const
+	{
+		return m_frameCount;
+	}
 
-	int32_t GetModelCount() { return m_modelCount; }
+	int32_t GetModelCount()
+	{
+		return m_modelCount;
+	}
 
-	int32_t GetVertexSize() const { return m_vertexSize; }
+	int32_t GetVertexSize() const
+	{
+		return m_vertexSize;
+	}
 
 	/**
 		@brief

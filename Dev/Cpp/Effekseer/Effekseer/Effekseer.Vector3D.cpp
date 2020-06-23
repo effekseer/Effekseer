@@ -20,37 +20,71 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Vector3D::Vector3D() : X(0.0f), Y(0.0f), Z(0.0f) {}
+Vector3D::Vector3D()
+	: X(0.0f)
+	, Y(0.0f)
+	, Z(0.0f)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Vector3D::Vector3D(float x, float y, float z) : X(x), Y(y), Z(z) {}
+Vector3D::Vector3D(float x, float y, float z)
+	: X(x)
+	, Y(y)
+	, Z(z)
+{
+}
 
-Vector3D Vector3D::operator-() { return Vector3D(-X, -Y, -Z); }
+Vector3D Vector3D::operator-()
+{
+	return Vector3D(-X, -Y, -Z);
+}
 
-Vector3D Vector3D::operator+(const Vector3D& o) const { return Vector3D(X + o.X, Y + o.Y, Z + o.Z); }
+Vector3D Vector3D::operator+(const Vector3D& o) const
+{
+	return Vector3D(X + o.X, Y + o.Y, Z + o.Z);
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-Vector3D Vector3D::operator-(const Vector3D& o) const { return Vector3D(X - o.X, Y - o.Y, Z - o.Z); }
+Vector3D Vector3D::operator-(const Vector3D& o) const
+{
+	return Vector3D(X - o.X, Y - o.Y, Z - o.Z);
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-Vector3D Vector3D::operator*(const float& o) const { return Vector3D(X * o, Y * o, Z * o); }
+Vector3D Vector3D::operator*(const float& o) const
+{
+	return Vector3D(X * o, Y * o, Z * o);
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-Vector3D Vector3D::operator/(const float& o) const { return Vector3D(X / o, Y / o, Z / o); }
+Vector3D Vector3D::operator/(const float& o) const
+{
+	return Vector3D(X / o, Y / o, Z / o);
+}
 
-Vector3D Vector3D::operator*(const Vector3D& o) const { return Vector3D(X * o.X, Y * o.Y, Z * o.Z); }
+Vector3D Vector3D::operator*(const Vector3D& o) const
+{
+	return Vector3D(X * o.X, Y * o.Y, Z * o.Z);
+}
 
-Vector3D Vector3D::operator/(const Vector3D& o) const { return Vector3D(X / o.X, Y / o.Y, Z / o.Z); }
+Vector3D Vector3D::operator/(const Vector3D& o) const
+{
+	return Vector3D(X / o.X, Y / o.Y, Z / o.Z);
+}
 
-bool Vector3D::operator==(const Vector3D& o) { return this->X == o.X && this->Y == o.Y && this->Z == o.Z; }
+bool Vector3D::operator==(const Vector3D& o)
+{
+	return this->X == o.X && this->Y == o.Y && this->Z == o.Z;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -123,17 +157,26 @@ Vector3D& Vector3D::operator/=(const float& o)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float Vector3D::Length(const Vector3D& in) { return sqrt(in.X * in.X + in.Y * in.Y + in.Z * in.Z); }
+float Vector3D::Length(const Vector3D& in)
+{
+	return sqrt(in.X * in.X + in.Y * in.Y + in.Z * in.Z);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float Vector3D::LengthSq(const Vector3D& in) { return in.X * in.X + in.Y * in.Y + in.Z * in.Z; }
+float Vector3D::LengthSq(const Vector3D& in)
+{
+	return in.X * in.X + in.Y * in.Y + in.Z * in.Z;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float Vector3D::Dot(const Vector3D& in1, const Vector3D& in2) { return in1.X * in2.X + in1.Y * in2.Y + in1.Z * in2.Z; }
+float Vector3D::Dot(const Vector3D& in1, const Vector3D& in2)
+{
+	return in1.X * in2.X + in1.Y * in2.Y + in1.Z * in2.Z;
+}
 
 //----------------------------------------------------------------------------------
 //

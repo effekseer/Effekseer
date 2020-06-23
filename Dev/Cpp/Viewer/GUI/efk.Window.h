@@ -69,7 +69,10 @@ public:
 
 	void MakeNone();
 
-	GLFWwindow* GetGLFWWindows() const { return window; }
+	GLFWwindow* GetGLFWWindows() const
+	{
+		return window;
+	}
 
 	void* GetNativeHandle() const;
 

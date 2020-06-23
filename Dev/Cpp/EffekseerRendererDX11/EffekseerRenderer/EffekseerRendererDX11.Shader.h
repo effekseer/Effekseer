@@ -56,21 +56,48 @@ public: // デバイス復旧用
 	virtual void OnResetDevice();
 
 public:
-	ID3D11VertexShader* GetVertexShader() const { return m_vertexShader; }
-	ID3D11PixelShader* GetPixelShader() const { return m_pixelShader; }
-	ID3D11InputLayout* GetLayoutInterface() const { return m_vertexDeclaration; }
+	ID3D11VertexShader* GetVertexShader() const
+	{
+		return m_vertexShader;
+	}
+	ID3D11PixelShader* GetPixelShader() const
+	{
+		return m_pixelShader;
+	}
+	ID3D11InputLayout* GetLayoutInterface() const
+	{
+		return m_vertexDeclaration;
+	}
 
 	void SetVertexConstantBufferSize(int32_t size);
 	void SetPixelConstantBufferSize(int32_t size);
 
-	int32_t GetVertexConstantBufferSize() const { return vertexConstantBufferSize_; }
-	int32_t GetPixelConstantBufferSize() const { return pixelConstantBufferSize_; }
+	int32_t GetVertexConstantBufferSize() const
+	{
+		return vertexConstantBufferSize_;
+	}
+	int32_t GetPixelConstantBufferSize() const
+	{
+		return pixelConstantBufferSize_;
+	}
 
-	void* GetVertexConstantBuffer() { return m_vertexConstantBuffer; }
-	void* GetPixelConstantBuffer() { return m_pixelConstantBuffer; }
+	void* GetVertexConstantBuffer()
+	{
+		return m_vertexConstantBuffer;
+	}
+	void* GetPixelConstantBuffer()
+	{
+		return m_pixelConstantBuffer;
+	}
 
-	void SetVertexRegisterCount(int32_t count) { m_vertexRegisterCount = count; }
-	void SetPixelRegisterCount(int32_t count) { m_pixelRegisterCount = count; }
+	void SetVertexRegisterCount(int32_t count)
+	{
+		m_vertexRegisterCount = count;
+	}
+	void SetPixelRegisterCount(int32_t count)
+	{
+		m_pixelRegisterCount = count;
+	}
 
 	void SetConstantBuffer();
 };

@@ -32,7 +32,10 @@ public:
 
 public:
 	void Rendering(::Effekseer::Color& gridColor, bool isRightHand);
-	void SetLength(float gridLength) { m_gridLength = gridLength; }
+	void SetLength(float gridLength)
+	{
+		m_gridLength = gridLength;
+	}
 
 	bool IsShownXY;
 	bool IsShownXZ;

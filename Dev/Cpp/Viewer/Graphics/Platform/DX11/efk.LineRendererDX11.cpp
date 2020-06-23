@@ -23,7 +23,8 @@ static
 #include "Shader/EffekseerRenderer.ToolNoTexture_PS.h"
 } // namespace StandardNoTexture_PS
 
-LineRendererDX11::LineRendererDX11(EffekseerRenderer::Renderer* renderer) : LineRenderer(renderer)
+LineRendererDX11::LineRendererDX11(EffekseerRenderer::Renderer* renderer)
+	: LineRenderer(renderer)
 {
 	spdlog::trace("Begin new LineRendererDX11");
 
@@ -129,7 +130,10 @@ void LineRendererDX11::Render()
 	renderer->GetRenderState()->Pop();
 }
 
-void LineRendererDX11::ClearCache() { vertexies.clear(); }
+void LineRendererDX11::ClearCache()
+{
+	vertexies.clear();
+}
 
 void LineRendererDX11::OnLostDevice()
 {

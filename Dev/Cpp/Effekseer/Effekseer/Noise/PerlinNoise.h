@@ -35,11 +35,17 @@ class PerlinNoise
 		return (float)ret / (float)(0x7fff - 1);
 	}
 
-	float GetRand(int32_t min_, int32_t max_) { return GetRand() * (max_ - min_) + min_; }
+	float GetRand(int32_t min_, int32_t max_)
+	{
+		return GetRand() * (max_ - min_) + min_;
+	}
 
 public:
 	constexpr PerlinNoise() = default;
-	explicit PerlinNoise(const std::uint_fast32_t seed) { this->setSeed(seed); }
+	explicit PerlinNoise(const std::uint_fast32_t seed)
+	{
+		this->setSeed(seed);
+	}
 
 	void setSeed(const std::uint_fast32_t seed)
 	{
@@ -59,7 +65,10 @@ public:
 	}
 
 private:
-	constexpr float GetFade(const float t) const noexcept { return t * t * t * (t * (t * 6 - 15) + 10); }
+	constexpr float GetFade(const float t) const noexcept
+	{
+		return t * t * t * (t * (t * 6 - 15) + 10);
+	}
 
 	SIMD4f GetFadeFast(const SIMD4f in) const noexcept
 	{
@@ -73,9 +82,15 @@ private:
 		return t3 * t6_15_10;
 	}
 
-	constexpr float GetLerp(const float t, const float a, const float b) const noexcept { return a + t * (b - a); }
+	constexpr float GetLerp(const float t, const float a, const float b) const noexcept
+	{
+		return a + t * (b - a);
+	}
 
-	SIMD4f GetLerpFast(const SIMD4f t, const SIMD4f a, const SIMD4f b) const noexcept { return a + t * (b - a); }
+	SIMD4f GetLerpFast(const SIMD4f t, const SIMD4f a, const SIMD4f b) const noexcept
+	{
+		return a + t * (b - a);
+	}
 
 	constexpr float MakeGrad(const Pint hashnum, const float u, const float v) const noexcept
 	{
@@ -183,7 +198,10 @@ public:
 		return this->GetLerp(w, this->GetLerp(v, vv.GetX(), vv.GetY()), this->GetLerp(v, vv.GetZ(), vv.GetW()));
 	}
 
-	float Noise(Vec3f position) const noexcept { return this->SetNoise(position) * 0.5f + 0.5f; }
+	float Noise(Vec3f position) const noexcept
+	{
+		return this->SetNoise(position) * 0.5f + 0.5f;
+	}
 
 public:
 	float OctaveNoise(const std::size_t octaves_, Vec3f position) const noexcept

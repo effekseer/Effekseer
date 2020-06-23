@@ -24,7 +24,10 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX11() : EffectPlatformGLFW(false) {}
+	EffectPlatformDX11()
+		: EffectPlatformGLFW(false)
+	{
+	}
 
 	~EffectPlatformDX11();
 

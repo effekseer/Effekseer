@@ -37,7 +37,10 @@ InstanceGroup::InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceC
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGroup::~InstanceGroup() { RemoveForcibly(); }
+InstanceGroup::~InstanceGroup()
+{
+	RemoveForcibly();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -71,7 +74,10 @@ Instance* InstanceGroup::GetFirst()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int InstanceGroup::GetInstanceCount() const { return (int32_t)m_instances.size(); }
+int InstanceGroup::GetInstanceCount() const
+{
+	return (int32_t)m_instances.size();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -181,7 +187,10 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::RemoveForcibly() { KillAllInstances(); }
+void InstanceGroup::RemoveForcibly()
+{
+	KillAllInstances();
+}
 
 //----------------------------------------------------------------------------------
 //

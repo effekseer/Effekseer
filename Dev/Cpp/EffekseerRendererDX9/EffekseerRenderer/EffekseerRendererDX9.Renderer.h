@@ -33,8 +33,12 @@ namespace EffekseerRendererDX9
 class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	/**
@@ -103,12 +107,18 @@ public:
 	InternalModel* InternalModels = nullptr;
 	int32_t ModelCount;
 
-	Model(uint8_t* data, int32_t size) : Effekseer::Model(data, size), InternalModels(nullptr), ModelCount(0)
+	Model(uint8_t* data, int32_t size)
+		: Effekseer::Model(data, size)
+		, InternalModels(nullptr)
+		, ModelCount(0)
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
 	}
 
-	virtual ~Model() { ES_SAFE_DELETE_ARRAY(InternalModels); }
+	virtual ~Model()
+	{
+		ES_SAFE_DELETE_ARRAY(InternalModels);
+	}
 };
 
 //----------------------------------------------------------------------------------

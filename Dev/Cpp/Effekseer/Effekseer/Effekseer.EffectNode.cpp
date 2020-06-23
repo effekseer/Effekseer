@@ -29,7 +29,8 @@
 namespace Effekseer
 {
 
-LocalForceFieldTurbulenceParameter::LocalForceFieldTurbulenceParameter(int32_t seed, float scale, float strength, int octave) : Noise(seed)
+LocalForceFieldTurbulenceParameter::LocalForceFieldTurbulenceParameter(int32_t seed, float scale, float strength, int octave)
+	: Noise(seed)
 {
 	Noise.Octave = octave;
 	Noise.Scale = scale;
@@ -807,14 +808,23 @@ void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* EffectNodeImplemented::GetEffect() const { return m_effect; }
+Effect* EffectNodeImplemented::GetEffect() const
+{
+	return m_effect;
+}
 
-int EffectNodeImplemented::GetGeneration() const { return generation_; }
+int EffectNodeImplemented::GetGeneration() const
+{
+	return generation_;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int EffectNodeImplemented::GetChildrenCount() const { return (int)m_Nodes.size(); }
+int EffectNodeImplemented::GetChildrenCount() const
+{
+	return (int)m_Nodes.size();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -940,39 +950,55 @@ void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, Setting* 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager) {}
+void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager) {}
+void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+{
+}
 
-void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* manager) {}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) {}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeImplemented::EndRendering(Manager* manager) {}
+void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* manager)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager) {}
+void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, Manager* manager) {}
+void EffectNodeImplemented::EndRendering(Manager* manager)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, Manager* manager) {}
+void EffectNodeImplemented::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
+{
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, Manager* manager)
+{
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, Manager* manager)
+{
+}
 
 //----------------------------------------------------------------------------------
 //

@@ -135,7 +135,10 @@ public:
 
 	void RecalcProjection();
 
-	::EffekseerRenderer::Renderer* GetRenderer() { return m_renderer; };
+	::EffekseerRenderer::Renderer* GetRenderer()
+	{
+		return m_renderer;
+	};
 
 	/**
 		@brief	射影行列設定
@@ -284,10 +287,19 @@ public:
 	*/
 	uint64_t GetViewID();
 
-	efk::Graphics* GetGraphics() const { return graphics; }
+	efk::Graphics* GetGraphics() const
+	{
+		return graphics;
+	}
 
-	efk::BloomEffect* GetBloomEffect() const { return m_bloomEffect.get(); }
-	efk::TonemapEffect* GetTonemapEffect() const { return m_tonemapEffect.get(); }
+	efk::BloomEffect* GetBloomEffect() const
+	{
+		return m_bloomEffect.get();
+	}
+	efk::TonemapEffect* GetTonemapEffect() const
+	{
+		return m_tonemapEffect.get();
+	}
 
 	/**
 		Called when device is losted.

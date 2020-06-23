@@ -82,7 +82,9 @@ void ServerImplemented::InternalClient::RecvAsync(void* data)
 //
 //----------------------------------------------------------------------------------
 ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImplemented* server)
-	: m_socket(socket_), m_server(server), m_active(true)
+	: m_socket(socket_)
+	, m_server(server)
+	, m_active(true)
 {
 	m_threadRecv = std::thread([this]() { RecvAsync(this); });
 }
@@ -90,7 +92,10 @@ ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImple
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ServerImplemented::InternalClient::~InternalClient() { m_threadRecv.join(); }
+ServerImplemented::InternalClient::~InternalClient()
+{
+	m_threadRecv.join();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -109,7 +114,11 @@ void ServerImplemented::InternalClient::ShutDown()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ServerImplemented::ServerImplemented() : m_running(false) { Socket::Initialize(); }
+ServerImplemented::ServerImplemented()
+	: m_running(false)
+{
+	Socket::Initialize();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -124,7 +133,10 @@ ServerImplemented::~ServerImplemented()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Server* Server::Create() { return new ServerImplemented(); }
+Server* Server::Create()
+{
+	return new ServerImplemented();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -437,9 +449,15 @@ void ServerImplemented::SetMaterialPath(const EFK_CHAR* materialPath)
 	m_materialPath.push_back(0);
 }
 
-void ServerImplemented::Regist(const EFK_CHAR* key, Effect* effect) { Register(key, effect); }
+void ServerImplemented::Regist(const EFK_CHAR* key, Effect* effect)
+{
+	Register(key, effect);
+}
 
-void ServerImplemented::Unregist(Effect* effect) { Unregister(effect); }
+void ServerImplemented::Unregist(Effect* effect)
+{
+	Unregister(effect);
+}
 
 //----------------------------------------------------------------------------------
 //

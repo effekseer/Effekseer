@@ -32,15 +32,39 @@ public:
 
 	void AddGrids(Vector3DF max_, Vector3DF min_, std::vector<Grid*>& grids_);
 
-	int32_t GetGridXCount() { return gridXCount; }
-	int32_t GetGridYCount() { return gridYCount; }
-	int32_t GetGridZCount() { return gridZCount; }
+	int32_t GetGridXCount()
+	{
+		return gridXCount;
+	}
+	int32_t GetGridYCount()
+	{
+		return gridYCount;
+	}
+	int32_t GetGridZCount()
+	{
+		return gridZCount;
+	}
 
-	float GetOffsetX() { return offsetX; }
-	float GetOffsetY() { return offsetY; }
-	float GetOffsetZ() { return offsetZ; }
+	float GetOffsetX()
+	{
+		return offsetX;
+	}
+	float GetOffsetY()
+	{
+		return offsetY;
+	}
+	float GetOffsetZ()
+	{
+		return offsetZ;
+	}
 
-	float GetGridSize() { return gridSize; }
-	std::vector<Grid>& GetGrids() { return grids; }
+	float GetGridSize()
+	{
+		return gridSize;
+	}
+	std::vector<Grid>& GetGrids()
+	{
+		return grids;
+	}
 };
 } // namespace Culling3D

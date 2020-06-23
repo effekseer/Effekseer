@@ -19,7 +19,10 @@ public:
 
 	void RemoveObject(Object* o);
 
-	std::vector<Object*>& GetObjects() { return objects; }
+	std::vector<Object*>& GetObjects()
+	{
+		return objects;
+	}
 
 	bool IsScanned;
 };

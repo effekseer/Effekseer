@@ -14,7 +14,9 @@ namespace EffekseerRendererGL
 //
 //-----------------------------------------------------------------------------------
 IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
-	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount), IndexBufferBase(maxCount, isDynamic), m_buffer(buffer)
+	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount)
+	, IndexBufferBase(maxCount, isDynamic)
+	, m_buffer(buffer)
 {
 	stride_ = stride;
 	m_resource = new uint8_t[m_indexMaxCount * stride_];
@@ -85,7 +87,10 @@ void IndexBuffer::Unlock()
 	m_isLock = false;
 }
 
-bool IndexBuffer::IsValid() { return m_buffer != 0; }
+bool IndexBuffer::IsValid()
+{
+	return m_buffer != 0;
+}
 
 //-----------------------------------------------------------------------------------
 //

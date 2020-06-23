@@ -73,8 +73,12 @@ public:
 	};
 
 protected:
-	Manager() {}
-	virtual ~Manager() {}
+	Manager()
+	{
+	}
+	virtual ~Manager()
+	{
+	}
 
 public:
 	/**

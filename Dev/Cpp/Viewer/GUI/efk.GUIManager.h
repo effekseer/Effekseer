@@ -43,14 +43,14 @@ enum class WindowFlags : int32_t
 	MenuBar = 1 << 10,		  // Has a menu-bar
 	HorizontalScrollbar =
 		1 << 11, // Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0f)); prior
-				 // to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
+	// to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
 	NoFocusOnAppearing = 1 << 12, // Disable taking focus when transitioning from hidden to visible state
 	NoBringToFrontOnFocus =
-		1 << 13, // Disable bringing window to front when taking focus (e.g. clicking on it or programatically giving it focus)
+		1 << 13,						 // Disable bringing window to front when taking focus (e.g. clicking on it or programatically giving it focus)
 	AlwaysVerticalScrollbar = 1 << 14,	 // Always show vertical scrollbar (even if ContentSize.y < Size.y)
 	AlwaysHorizontalScrollbar = 1 << 15, // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
-	AlwaysUseWindowPadding = 1 << 16, // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered
-									  // child windows, because more convenient)
+	AlwaysUseWindowPadding = 1 << 16,	 // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered
+										 // child windows, because more convenient)
 	// ResizeFromAnySide = 1 << 17,  // (WIP) Enable resize from any corners and borders. Your back-end needs to honor the different values
 	// of io.MouseCursor set by imgui.
 	NoNavInputs = 1 << 18, // No gamepad/keyboard navigation within the window
@@ -62,16 +62,16 @@ enum class ColorEditFlags : int32_t
 {
 	None = 0,
 	NoAlpha =
-		1 << 1, //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (read 3 components from the input pointer).
+		1 << 1,			//              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (read 3 components from the input pointer).
 	NoPicker = 1 << 2,	//              // ColorEdit: disable picker when clicking on colored square.
 	NoOptions = 1 << 3, //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
 	NoSmallPreview =
-		1 << 4, //              // ColorEdit, ColorPicker: disable colored square preview next to the inputs. (e.g. to show only the inputs)
-	NoInputs = 1 << 5,	//              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview
-						//              colored square).
-	NoTooltip = 1 << 6, //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
-	NoLabel = 1 << 7,	//              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the
-						//              tooltip and picker).
+		1 << 4,				//              // ColorEdit, ColorPicker: disable colored square preview next to the inputs. (e.g. to show only the inputs)
+	NoInputs = 1 << 5,		//              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview
+							//              colored square).
+	NoTooltip = 1 << 6,		//              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+	NoLabel = 1 << 7,		//              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the
+							//              tooltip and picker).
 	NoSidePreview = 1 << 8, //              // ColorPicker: disable bigger color preview on right side of the picker, use small colored
 							//              square preview instead.
 	NoDragDrop = 1 << 9,	//              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
@@ -83,15 +83,15 @@ enum class ColorEditFlags : int32_t
 	AlphaPreview = 1 << 17, //              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a
 							//              checkerboard, instead of opaque.
 	AlphaPreviewHalf =
-		1 << 18,   //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
-	HDR = 1 << 19, //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to
-				   //              use ImGuiColorEditFlags_Float flag as well).
-	RGB = 1 << 20, // [Inputs]     // ColorEdit: choose one among RGB/HSV/HEX. ColorPicker: choose any combination using RGB/HSV/HEX.
-	HSV = 1 << 21, // [Inputs]     // "
-	HEX = 1 << 22, // [Inputs]     // "
-	Uint8 = 1 << 23, // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
-	Float = 1 << 24, // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of
-					 // 0..255 integers. No round-trip of value via integers.
+		1 << 18,			  //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+	HDR = 1 << 19,			  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to
+							  //              use ImGuiColorEditFlags_Float flag as well).
+	RGB = 1 << 20,			  // [Inputs]     // ColorEdit: choose one among RGB/HSV/HEX. ColorPicker: choose any combination using RGB/HSV/HEX.
+	HSV = 1 << 21,			  // [Inputs]     // "
+	HEX = 1 << 22,			  // [Inputs]     // "
+	Uint8 = 1 << 23,		  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+	Float = 1 << 24,		  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of
+							  // 0..255 integers. No round-trip of value via integers.
 	PickerHueBar = 1 << 25,	  // [PickerMode] // ColorPicker: bar for Hue, rectangle for Sat/Value.
 	PickerHueWheel = 1 << 26, // [PickerMode] // ColorPicker: wheel for Hue, triangle for Sat/Value.
 
@@ -130,20 +130,20 @@ enum class SelectableFlags : int32_t
 enum class TreeNodeFlags : int32_t
 {
 	None = 0,
-	Selected = 1 << 0,		   // Draw as selected
-	Framed = 1 << 1,		   // Full colored frame (e.g. for CollapsingHeader)
-	AllowItemOverlap = 1 << 2, // Hit testing to allow subsequent widgets to overlap this one
-	NoTreePushOnOpen = 1 << 3, // Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
-	NoAutoOpenOnLog = 1 << 4, // Don't automatically and temporarily open node when Logging is active (by default logging will automatically
-							  // open tree nodes)
-	DefaultOpen = 1 << 5,	  // Default node to be open
+	Selected = 1 << 0,			// Draw as selected
+	Framed = 1 << 1,			// Full colored frame (e.g. for CollapsingHeader)
+	AllowItemOverlap = 1 << 2,	// Hit testing to allow subsequent widgets to overlap this one
+	NoTreePushOnOpen = 1 << 3,	// Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
+	NoAutoOpenOnLog = 1 << 4,	// Don't automatically and temporarily open node when Logging is active (by default logging will automatically
+								// open tree nodes)
+	DefaultOpen = 1 << 5,		// Default node to be open
 	OpenOnDoubleClick = 1 << 6, // Need double-click to open node
-	OpenOnArrow = 1 << 7,	// Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click
-							// arrow or double-click all box to open.
-	Leaf = 1 << 8,			// No collapsing, no arrow (use as a convenience for leaf nodes).
-	Bullet = 1 << 9,		// Display a bullet instead of arrow
-	FramePadding = 1 << 10, // Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height.
-							// Equivalent to calling AlignTextToFramePadding().
+	OpenOnArrow = 1 << 7,		// Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click
+								// arrow or double-click all box to open.
+	Leaf = 1 << 8,				// No collapsing, no arrow (use as a convenience for leaf nodes).
+	Bullet = 1 << 9,			// Display a bullet instead of arrow
+	FramePadding = 1 << 10,		// Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height.
+								// Equivalent to calling AlignTextToFramePadding().
 };
 
 enum class MouseCursor : int32_t
@@ -171,7 +171,7 @@ enum InputTextFlags
 	CallbackHistory = 1 << 7,	 // Call user function on pressing Up/Down arrows (for history handling)
 	CallbackAlways = 1 << 8,	 // Call user function every time. User code may query cursor position, modify text buffer.
 	CallbackCharFilter =
-		1 << 9, // Call user function to filter character. Modify data->EventChar to replace/filter input, or return 1 to discard character.
+		1 << 9,					   // Call user function to filter character. Modify data->EventChar to replace/filter input, or return 1 to discard character.
 	AllowTabInput = 1 << 10,	   // Pressing TAB input a '\t' character into the text field
 	CtrlEnterForNewLine = 1 << 11, // In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus
 								   // with Ctrl+Enter, add line with Enter).
@@ -179,9 +179,9 @@ enum InputTextFlags
 	AlwaysInsertMode = 1 << 13,	   // Insert mode
 	ReadOnly = 1 << 14,			   // Read-only mode
 	Password = 1 << 15,			   // Password mode, display all characters as '*'
-	NoUndoRedo = 1 << 16,	   // Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own
-							   // undo/redo stack you need e.g. to call ClearActiveID().
-	CharsScientific = 1 << 17, // Allow 0123456789.+-*/eE (Scientific notation input)
+	NoUndoRedo = 1 << 16,		   // Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own
+								   // undo/redo stack you need e.g. to call ClearActiveID().
+	CharsScientific = 1 << 17,	   // Allow 0123456789.+-*/eE (Scientific notation input)
 };
 
 enum class ImGuiColFlags : int32_t
@@ -345,20 +345,46 @@ class GUIManagerCallback
 	std::u16string path;
 
 public:
-	GUIManagerCallback() {}
-	virtual ~GUIManagerCallback() {}
-	virtual void Resized(int x, int y) {}
-	virtual void Droped() {}
-	virtual void Focused() {}
-	virtual bool Closing() { return true; }
-	virtual void Iconify(int f) {}
-	virtual void DpiChanged(float scale) {}
+	GUIManagerCallback()
+	{
+	}
+	virtual ~GUIManagerCallback()
+	{
+	}
+	virtual void Resized(int x, int y)
+	{
+	}
+	virtual void Droped()
+	{
+	}
+	virtual void Focused()
+	{
+	}
+	virtual bool Closing()
+	{
+		return true;
+	}
+	virtual void Iconify(int f)
+	{
+	}
+	virtual void DpiChanged(float scale)
+	{
+	}
 
-	virtual bool ClickLink(const char16_t* path) { return false; }
+	virtual bool ClickLink(const char16_t* path)
+	{
+		return false;
+	}
 
-	const char16_t* GetPath() { return path.c_str(); }
+	const char16_t* GetPath()
+	{
+		return path.c_str();
+	}
 
-	void SetPath(const char16_t* path) { this->path = path; }
+	void SetPath(const char16_t* path)
+	{
+		this->path = path;
+	}
 };
 
 class GUIManager

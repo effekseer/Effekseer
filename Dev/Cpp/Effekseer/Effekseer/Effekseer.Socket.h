@@ -58,9 +58,15 @@ typedef struct sockaddr SOCKADDR;
 #endif
 
 #if defined(_WIN32) && !defined(_PS4)
-static void Sleep_(int32_t ms) { Sleep(ms); }
+static void Sleep_(int32_t ms)
+{
+	Sleep(ms);
+}
 #else
-static void Sleep_(int32_t ms) { usleep(1000 * ms); }
+static void Sleep_(int32_t ms)
+{
+	usleep(1000 * ms);
+}
 #endif
 
 class Socket

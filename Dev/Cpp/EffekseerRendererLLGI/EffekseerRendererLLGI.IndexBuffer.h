@@ -21,7 +21,10 @@ public:
 
 	static IndexBuffer* Create(GraphicsDevice* graphicsDevice, int maxCount, bool isDynamic, bool hasRefCount);
 
-	LLGI::IndexBuffer* GetIndexBuffer() { return indexBuffer; }
+	LLGI::IndexBuffer* GetIndexBuffer()
+	{
+		return indexBuffer;
+	}
 
 public:
 	void Lock();

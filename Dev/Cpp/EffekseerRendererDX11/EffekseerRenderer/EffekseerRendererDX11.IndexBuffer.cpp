@@ -13,7 +13,10 @@ namespace EffekseerRendererDX11
 //
 //-----------------------------------------------------------------------------------
 IndexBuffer::IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic)
-	: DeviceObject(renderer), IndexBufferBase(maxCount, isDynamic), m_buffer(buffer), m_lockedResource(NULL)
+	: DeviceObject(renderer)
+	, IndexBufferBase(maxCount, isDynamic)
+	, m_buffer(buffer)
+	, m_lockedResource(NULL)
 {
 	m_lockedResource = new uint8_t[sizeof(uint16_t) * maxCount];
 }
@@ -58,12 +61,16 @@ IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bo
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void IndexBuffer::OnLostDevice() {}
+void IndexBuffer::OnLostDevice()
+{
+}
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void IndexBuffer::OnResetDevice() {}
+void IndexBuffer::OnResetDevice()
+{
+}
 
 //-----------------------------------------------------------------------------------
 //

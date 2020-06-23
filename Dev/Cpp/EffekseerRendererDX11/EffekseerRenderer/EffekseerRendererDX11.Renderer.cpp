@@ -159,7 +159,10 @@ OriginalState::OriginalState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-OriginalState::~OriginalState() { ReleaseState(); }
+OriginalState::~OriginalState()
+{
+	ReleaseState();
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -550,12 +553,18 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::Destroy() { Release(); }
+void RendererImplemented::Destroy()
+{
+	Release();
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetRestorationOfStatesFlag(bool flag) { m_restorationOfStates = flag; }
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+	m_restorationOfStates = flag;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -605,17 +614,26 @@ bool RendererImplemented::EndRendering()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ID3D11Device* RendererImplemented::GetDevice() { return m_device; }
+ID3D11Device* RendererImplemented::GetDevice()
+{
+	return m_device;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ID3D11DeviceContext* RendererImplemented::GetContext() { return m_context; }
+ID3D11DeviceContext* RendererImplemented::GetContext()
+{
+	return m_context;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-VertexBuffer* RendererImplemented::GetVertexBuffer() { return m_vertexBuffer; }
+VertexBuffer* RendererImplemented::GetVertexBuffer()
+{
+	return m_vertexBuffer;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -635,12 +653,18 @@ IndexBuffer* RendererImplemented::GetIndexBuffer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount; }
+int32_t RendererImplemented::GetSquareMaxCount() const
+{
+	return m_squareMaxCount;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState() { return m_renderState; }
+::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
+{
+	return m_renderState;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -669,7 +693,10 @@ int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this); }
+::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer()
+{
+	return ModelRenderer::Create(this);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -728,7 +755,10 @@ void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 	m_background.UserPtr = background;
 }
 
-EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback() { return m_distortingCallback; }
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
@@ -867,7 +897,10 @@ void RendererImplemented::BeginShader(Shader* shader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
+void RendererImplemented::EndShader(Shader* shader)
+{
+	currentShader = nullptr;
+}
 
 void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {

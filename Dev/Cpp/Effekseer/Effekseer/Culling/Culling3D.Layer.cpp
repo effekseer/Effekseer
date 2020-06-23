@@ -17,7 +17,9 @@ Layer::Layer(int32_t gridXCount, int32_t gridYCount, int32_t gridZCount, float o
 	grids.resize(this->gridXCount * this->gridYCount * this->gridZCount);
 }
 
-Layer::~Layer() {}
+Layer::~Layer()
+{
+}
 
 bool Layer::AddObject(Object* o)
 {

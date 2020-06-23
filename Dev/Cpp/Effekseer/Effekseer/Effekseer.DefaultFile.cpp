@@ -14,27 +14,43 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultFileReader::DefaultFileReader(FILE* filePtr) : m_filePtr(filePtr) { assert(filePtr != NULL); }
+DefaultFileReader::DefaultFileReader(FILE* filePtr)
+	: m_filePtr(filePtr)
+{
+	assert(filePtr != NULL);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultFileReader::~DefaultFileReader() { fclose(m_filePtr); }
+DefaultFileReader::~DefaultFileReader()
+{
+	fclose(m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-size_t DefaultFileReader::Read(void* buffer, size_t size) { return fread(buffer, 1, size, m_filePtr); }
+size_t DefaultFileReader::Read(void* buffer, size_t size)
+{
+	return fread(buffer, 1, size, m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void DefaultFileReader::Seek(int position) { fseek(m_filePtr, (size_t)position, SEEK_SET); }
+void DefaultFileReader::Seek(int position)
+{
+	fseek(m_filePtr, (size_t)position, SEEK_SET);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int DefaultFileReader::GetPosition() { return (int)ftell(m_filePtr); }
+int DefaultFileReader::GetPosition()
+{
+	return (int)ftell(m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -51,32 +67,51 @@ size_t DefaultFileReader::GetLength()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultFileWriter::DefaultFileWriter(FILE* filePtr) : m_filePtr(filePtr) { assert(filePtr != NULL); }
+DefaultFileWriter::DefaultFileWriter(FILE* filePtr)
+	: m_filePtr(filePtr)
+{
+	assert(filePtr != NULL);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultFileWriter::~DefaultFileWriter() { fclose(m_filePtr); }
+DefaultFileWriter::~DefaultFileWriter()
+{
+	fclose(m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-size_t DefaultFileWriter::Write(const void* buffer, size_t size) { return fwrite(buffer, 1, size, m_filePtr); }
+size_t DefaultFileWriter::Write(const void* buffer, size_t size)
+{
+	return fwrite(buffer, 1, size, m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void DefaultFileWriter::Flush() { fflush(m_filePtr); }
+void DefaultFileWriter::Flush()
+{
+	fflush(m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void DefaultFileWriter::Seek(int position) { fseek(m_filePtr, (size_t)position, SEEK_SET); }
+void DefaultFileWriter::Seek(int position)
+{
+	fseek(m_filePtr, (size_t)position, SEEK_SET);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int DefaultFileWriter::GetPosition() { return (int)ftell(m_filePtr); }
+int DefaultFileWriter::GetPosition()
+{
+	return (int)ftell(m_filePtr);
+}
 
 //----------------------------------------------------------------------------------
 //

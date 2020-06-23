@@ -14,12 +14,17 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundPlayer::SoundPlayer(SoundImplemented* sound) : m_sound(sound) {}
+SoundPlayer::SoundPlayer(SoundImplemented* sound)
+	: m_sound(sound)
+{
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundPlayer::~SoundPlayer() {}
+SoundPlayer::~SoundPlayer()
+{
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -83,22 +88,34 @@ bool SoundPlayer::CheckPlaying(::Effekseer::SoundHandle handle, ::Effekseer::Sou
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundPlayer::StopTag(::Effekseer::SoundTag tag) { m_sound->StopTag(tag); }
+void SoundPlayer::StopTag(::Effekseer::SoundTag tag)
+{
+	m_sound->StopTag(tag);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundPlayer::PauseTag(::Effekseer::SoundTag tag, bool pause) { m_sound->PauseTag(tag, pause); }
+void SoundPlayer::PauseTag(::Effekseer::SoundTag tag, bool pause)
+{
+	m_sound->PauseTag(tag, pause);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool SoundPlayer::CheckPlayingTag(::Effekseer::SoundTag tag) { return m_sound->CheckPlayingTag(tag); }
+bool SoundPlayer::CheckPlayingTag(::Effekseer::SoundTag tag)
+{
+	return m_sound->CheckPlayingTag(tag);
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundPlayer::StopAll() { m_sound->StopAllVoices(); }
+void SoundPlayer::StopAll()
+{
+	m_sound->StopAllVoices();
+}
 
 //----------------------------------------------------------------------------------
 //

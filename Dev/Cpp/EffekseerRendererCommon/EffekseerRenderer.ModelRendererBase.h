@@ -22,7 +22,8 @@ typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
 typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template <int MODEL_COUNT> struct ModelRendererVertexConstantBuffer
+template <int MODEL_COUNT>
+struct ModelRendererVertexConstantBuffer
 {
 	Effekseer::Matrix44 CameraMatrix;
 	Effekseer::Matrix44 ModelMatrix[MODEL_COUNT];
@@ -95,9 +96,15 @@ template <int MODEL_COUNT> struct ModelRendererVertexConstantBuffer
 		ModelBlendAlphaUV[index][3] = h;
 	}
 
-	void SetModelFlipbookIndexAndNextRate(int32_t index, float value) { ModelFlipbookIndexAndNextRate[index][0] = value; }
+	void SetModelFlipbookIndexAndNextRate(int32_t index, float value)
+	{
+		ModelFlipbookIndexAndNextRate[index][0] = value;
+	}
 
-	void SetModelAlphaThreshold(int32_t index, float value) { ModelAlphaThreshold[index][0] = value; }
+	void SetModelAlphaThreshold(int32_t index, float value)
+	{
+		ModelAlphaThreshold[index][0] = value;
+	}
 
 #endif
 	float ModelColor[MODEL_COUNT][4];
@@ -108,7 +115,8 @@ template <int MODEL_COUNT> struct ModelRendererVertexConstantBuffer
 	float UVInversed[4];
 };
 
-template <int MODEL_COUNT> struct ModelRendererMaterialVertexConstantBuffer
+template <int MODEL_COUNT>
+struct ModelRendererMaterialVertexConstantBuffer
 {
 	Effekseer::Matrix44 CameraMatrix;
 	Effekseer::Matrix44 ModelMatrix[MODEL_COUNT];
@@ -120,19 +128,33 @@ template <int MODEL_COUNT> struct ModelRendererMaterialVertexConstantBuffer
 	float LightAmbientColor[4];
 	float UVInversed[4];
 
-	void SetModelFlipbookParameter(float enableInterpolation, float loopType, float divideX, float divideY) {}
+	void SetModelFlipbookParameter(float enableInterpolation, float loopType, float divideX, float divideY)
+	{
+	}
 
-	void SetModelAlphaUV(int32_t index, float x, float y, float w, float h) {}
+	void SetModelAlphaUV(int32_t index, float x, float y, float w, float h)
+	{
+	}
 
-	void SetModelUVDistortionUV(int32_t index, float x, float y, float w, float h) {}
+	void SetModelUVDistortionUV(int32_t index, float x, float y, float w, float h)
+	{
+	}
 
-	void SetModelBlendUV(int32_t iondex, float x, float y, float w, float h) {}
+	void SetModelBlendUV(int32_t iondex, float x, float y, float w, float h)
+	{
+	}
 
-	void SetModelBlendAlphaUV(int32_t iondex, float x, float y, float w, float h) {}
+	void SetModelBlendAlphaUV(int32_t iondex, float x, float y, float w, float h)
+	{
+	}
 
-	void SetModelFlipbookIndexAndNextRate(int32_t index, float value) {}
+	void SetModelFlipbookIndexAndNextRate(int32_t index, float value)
+	{
+	}
 
-	void SetModelAlphaThreshold(int32_t index, float value) {}
+	void SetModelAlphaThreshold(int32_t index, float value)
+	{
+	}
 };
 
 struct ModelRendererPixelConstantBuffer
@@ -239,7 +261,9 @@ protected:
 		fc[3] = 1.0f;
 	}
 
-	ModelRendererBase() {}
+	ModelRendererBase()
+	{
+	}
 
 	template <typename RENDERER>
 	void GetInversedFlags(RENDERER* renderer, std::array<float, 4>& uvInversed, std::array<float, 4>& uvInversedBack)
@@ -267,7 +291,8 @@ protected:
 		}
 	}
 
-	template <typename RENDERER> void SortTemporaryValues(RENDERER* renderer, const efkModelNodeParam& param)
+	template <typename RENDERER>
+	void SortTemporaryValues(RENDERER* renderer, const efkModelNodeParam& param)
 	{
 		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None)
 		{
@@ -483,9 +508,12 @@ protected:
 	}
 
 public:
-	virtual ~ModelRendererBase() {}
+	virtual ~ModelRendererBase()
+	{
+	}
 
-	template <typename RENDERER> void BeginRendering_(RENDERER* renderer, const efkModelNodeParam& parameter, int32_t count, void* userData)
+	template <typename RENDERER>
+	void BeginRendering_(RENDERER* renderer, const efkModelNodeParam& parameter, int32_t count, void* userData)
 	{
 		keyValues_.clear();
 

@@ -4,9 +4,15 @@
 
 namespace Culling3D
 {
-Object* Object::Create() { return new ObjectInternal(); }
+Object* Object::Create()
+{
+	return new ObjectInternal();
+}
 
-ObjectInternal::ObjectInternal() : userData(NULL), world(NULL), ObjectIndex(-1)
+ObjectInternal::ObjectInternal()
+	: userData(NULL)
+	, world(NULL)
+	, ObjectIndex(-1)
 {
 	currentStatus.Position = Vector3DF();
 	currentStatus.radius = 0.0f;
@@ -17,9 +23,14 @@ ObjectInternal::ObjectInternal() : userData(NULL), world(NULL), ObjectIndex(-1)
 	nextStatus.Type = OBJECT_SHAPE_TYPE_NONE;
 }
 
-ObjectInternal::~ObjectInternal() {}
+ObjectInternal::~ObjectInternal()
+{
+}
 
-Vector3DF ObjectInternal::GetPosition() { return nextStatus.Position; }
+Vector3DF ObjectInternal::GetPosition()
+{
+	return nextStatus.Position;
+}
 
 void ObjectInternal::SetPosition(Vector3DF pos)
 {
@@ -84,9 +95,18 @@ void ObjectInternal::ChangeIntoCuboid(Vector3DF size)
 	currentStatus = nextStatus;
 }
 
-void* ObjectInternal::GetUserData() { return userData; }
+void* ObjectInternal::GetUserData()
+{
+	return userData;
+}
 
-void ObjectInternal::SetUserData(void* userData_) { this->userData = userData_; }
+void ObjectInternal::SetUserData(void* userData_)
+{
+	this->userData = userData_;
+}
 
-void ObjectInternal::SetWorld(World* world_) { this->world = world_; }
+void ObjectInternal::SetWorld(World* world_)
+{
+	this->world = world_;
+}
 } // namespace Culling3D

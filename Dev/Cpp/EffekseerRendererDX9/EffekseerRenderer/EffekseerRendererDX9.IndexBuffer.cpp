@@ -13,14 +13,19 @@ namespace EffekseerRendererDX9
 //
 //-----------------------------------------------------------------------------------
 IndexBuffer::IndexBuffer(RendererImplemented* renderer, IDirect3DIndexBuffer9* buffer, int maxCount, bool isDynamic)
-	: DeviceObject(renderer), IndexBufferBase(maxCount, isDynamic), m_buffer(buffer)
+	: DeviceObject(renderer)
+	, IndexBufferBase(maxCount, isDynamic)
+	, m_buffer(buffer)
 {
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::~IndexBuffer() { ES_SAFE_RELEASE(m_buffer); }
+IndexBuffer::~IndexBuffer()
+{
+	ES_SAFE_RELEASE(m_buffer);
+}
 
 //-----------------------------------------------------------------------------------
 //
@@ -72,7 +77,10 @@ void IndexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void IndexBuffer::OnChangeDevice() { ES_SAFE_RELEASE(m_buffer); }
+void IndexBuffer::OnChangeDevice()
+{
+	ES_SAFE_RELEASE(m_buffer);
+}
 
 //-----------------------------------------------------------------------------------
 //

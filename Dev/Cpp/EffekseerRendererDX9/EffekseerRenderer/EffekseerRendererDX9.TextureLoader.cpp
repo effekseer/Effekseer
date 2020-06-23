@@ -21,7 +21,8 @@ namespace EffekseerRendererDX9
 //
 //----------------------------------------------------------------------------------
 TextureLoader::TextureLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface)
-	: renderer_(renderer), m_fileInterface(fileInterface)
+	: renderer_(renderer)
+	, m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(renderer_);
 
@@ -36,7 +37,8 @@ TextureLoader::TextureLoader(RendererImplemented* renderer, ::Effekseer::FileInt
 }
 
 TextureLoader::TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
-	: device_(device), m_fileInterface(fileInterface)
+	: device_(device)
+	, m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(device);
 

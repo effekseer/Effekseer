@@ -16,7 +16,9 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface) : device(device), m_fileInterface(fileInterface)
+ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+	: device(device)
+	, m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(device);
 
@@ -29,7 +31,10 @@ ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileI
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::~ModelLoader() { ES_SAFE_RELEASE(device); }
+ModelLoader::~ModelLoader()
+{
+	ES_SAFE_RELEASE(device);
+}
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {

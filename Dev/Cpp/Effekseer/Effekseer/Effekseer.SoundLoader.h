@@ -24,12 +24,16 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	SoundLoader() {}
+	SoundLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~SoundLoader() {}
+	virtual ~SoundLoader()
+	{
+	}
 
 	/**
 		@brief	サウンドを読み込む。
@@ -39,7 +43,10 @@ public:
 		サウンドを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const EFK_CHAR* path) { return NULL; }
+	virtual void* Load(const EFK_CHAR* path)
+	{
+		return NULL;
+	}
 
 	/**
 		@brief
@@ -55,7 +62,10 @@ public:
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたサウンドのポインタ
 	*/
-	virtual void* Load(const void* data, int32_t size) { return nullptr; }
+	virtual void* Load(const void* data, int32_t size)
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief	サウンドを破棄する。
@@ -64,7 +74,9 @@ public:
 		サウンドを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(void* source) {}
+	virtual void Unload(void* source)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------

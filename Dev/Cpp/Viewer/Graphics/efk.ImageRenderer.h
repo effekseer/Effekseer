@@ -9,9 +9,13 @@ namespace efk
 class ImageRenderer
 {
 public:
-	ImageRenderer(EffekseerRenderer::Renderer* renderer) {}
+	ImageRenderer(EffekseerRenderer::Renderer* renderer)
+	{
+	}
 
-	virtual ~ImageRenderer() {}
+	virtual ~ImageRenderer()
+	{
+	}
 
 	virtual void Draw(const Effekseer::Vector3D positions[],
 					  const Effekseer::Vector2D uvs[],

@@ -6,7 +6,10 @@
 
 namespace efk
 {
-RenderTextureDX11::RenderTextureDX11(Graphics* graphics) : graphics(graphics) {}
+RenderTextureDX11::RenderTextureDX11(Graphics* graphics)
+	: graphics(graphics)
+{
+}
 
 RenderTextureDX11::~RenderTextureDX11()
 {
@@ -91,7 +94,10 @@ End:;
 	return false;
 }
 
-DepthTextureDX11::DepthTextureDX11(Graphics* graphics) : graphics(graphics) {}
+DepthTextureDX11::DepthTextureDX11(Graphics* graphics)
+	: graphics(graphics)
+{
+}
 
 DepthTextureDX11::~DepthTextureDX11()
 {
@@ -161,7 +167,9 @@ End:;
 	return false;
 }
 
-GraphicsDX11::GraphicsDX11() {}
+GraphicsDX11::GraphicsDX11()
+{
+}
 
 GraphicsDX11::~GraphicsDX11()
 {
@@ -696,7 +704,13 @@ void GraphicsDX11::ResetDevice()
 	renderer->OnResetDevice();
 }
 
-void* GraphicsDX11::GetBack() { return backTextureSRV; }
+void* GraphicsDX11::GetBack()
+{
+	return backTextureSRV;
+}
 
-EffekseerRenderer::Renderer* GraphicsDX11::GetRenderer() { return renderer; }
+EffekseerRenderer::Renderer* GraphicsDX11::GetRenderer()
+{
+	return renderer;
+}
 } // namespace efk

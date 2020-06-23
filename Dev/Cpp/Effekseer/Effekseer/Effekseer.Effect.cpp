@@ -169,7 +169,10 @@ bool EffectFactory::OnCheckIsBinarySupported(const void* data, int32_t size)
 	return true;
 }
 
-bool EffectFactory::OnCheckIsReloadSupported() { return true; }
+bool EffectFactory::OnCheckIsReloadSupported()
+{
+	return true;
+}
 
 bool EffectFactory::OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath)
 {
@@ -312,11 +315,18 @@ const char* EffectFactory::GetName() const
 	return name;
 }
 
-bool EffectFactory::GetIsResourcesLoadedAutomatically() const { return true; }
+bool EffectFactory::GetIsResourcesLoadedAutomatically() const
+{
+	return true;
+}
 
-EffectFactory::EffectFactory() {}
+EffectFactory::EffectFactory()
+{
+}
 
-EffectFactory::~EffectFactory() {}
+EffectFactory::~EffectFactory()
+{
+}
 
 Effect* Effect::Create(Manager* manager, void* data, int32_t size, float magnification, const EFK_CHAR* materialPath)
 {
@@ -797,12 +807,18 @@ EffectImplemented::~EffectImplemented()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNode* EffectImplemented::GetRoot() const { return m_pRoot; }
+EffectNode* EffectImplemented::GetRoot() const
+{
+	return m_pRoot;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float EffectImplemented::GetMaginification() const { return m_maginification; }
+float EffectImplemented::GetMaginification() const
+{
+	return m_maginification;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -945,9 +961,15 @@ void EffectImplemented::Reset()
 	ES_SAFE_DELETE(m_pRoot);
 }
 
-bool EffectImplemented::IsDyanamicMagnificationValid() const { return GetVersion() >= 8 || GetVersion() < 2; }
+bool EffectImplemented::IsDyanamicMagnificationValid() const
+{
+	return GetVersion() >= 8 || GetVersion() < 2;
+}
 
-ReferenceObject* EffectImplemented::GetLoadingParameter() const { return loadingObject; }
+ReferenceObject* EffectImplemented::GetLoadingParameter() const
+{
+	return loadingObject;
+}
 
 void EffectImplemented::SetLoadingParameter(ReferenceObject* obj)
 {
@@ -956,11 +978,20 @@ void EffectImplemented::SetLoadingParameter(ReferenceObject* obj)
 	loadingObject = obj;
 }
 
-Manager* EffectImplemented::GetManager() const { return m_pManager; }
+Manager* EffectImplemented::GetManager() const
+{
+	return m_pManager;
+}
 
-const char16_t* EffectImplemented::GetName() const { return name_.c_str(); }
+const char16_t* EffectImplemented::GetName() const
+{
+	return name_.c_str();
+}
 
-void EffectImplemented::SetName(const char16_t* name) { name_ = name; }
+void EffectImplemented::SetName(const char16_t* name)
+{
+	name_ = name;
+}
 
 Setting* EffectImplemented::GetSetting() const
 {
@@ -972,16 +1003,28 @@ Setting* EffectImplemented::GetSetting() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int EffectImplemented::GetVersion() const { return m_version; }
+int EffectImplemented::GetVersion() const
+{
+	return m_version;
+}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureData* EffectImplemented::GetColorImage(int n) const { return m_pImages[n]; }
+TextureData* EffectImplemented::GetColorImage(int n) const
+{
+	return m_pImages[n];
+}
 
-int32_t EffectImplemented::GetColorImageCount() const { return m_ImageCount; }
+int32_t EffectImplemented::GetColorImageCount() const
+{
+	return m_ImageCount;
+}
 
-const EFK_CHAR* EffectImplemented::GetColorImagePath(int n) const { return m_ImagePaths[n]; }
+const EFK_CHAR* EffectImplemented::GetColorImagePath(int n) const
+{
+	return m_ImagePaths[n];
+}
 
 TextureData* EffectImplemented::GetNormalImage(int n) const
 {
@@ -994,9 +1037,15 @@ TextureData* EffectImplemented::GetNormalImage(int n) const
 	return m_normalImages[n];
 }
 
-int32_t EffectImplemented::GetNormalImageCount() const { return m_normalImageCount; }
+int32_t EffectImplemented::GetNormalImageCount() const
+{
+	return m_normalImageCount;
+}
 
-const EFK_CHAR* EffectImplemented::GetNormalImagePath(int n) const { return m_normalImagePaths[n]; }
+const EFK_CHAR* EffectImplemented::GetNormalImagePath(int n) const
+{
+	return m_normalImagePaths[n];
+}
 
 TextureData* EffectImplemented::GetDistortionImage(int n) const
 {
@@ -1009,27 +1058,60 @@ TextureData* EffectImplemented::GetDistortionImage(int n) const
 	return m_distortionImages[n];
 }
 
-int32_t EffectImplemented::GetDistortionImageCount() const { return m_distortionImageCount; }
+int32_t EffectImplemented::GetDistortionImageCount() const
+{
+	return m_distortionImageCount;
+}
 
-const EFK_CHAR* EffectImplemented::GetDistortionImagePath(int n) const { return m_distortionImagePaths[n]; }
+const EFK_CHAR* EffectImplemented::GetDistortionImagePath(int n) const
+{
+	return m_distortionImagePaths[n];
+}
 
-void* EffectImplemented::GetWave(int n) const { return m_pWaves[n]; }
+void* EffectImplemented::GetWave(int n) const
+{
+	return m_pWaves[n];
+}
 
-int32_t EffectImplemented::GetWaveCount() const { return m_WaveCount; }
+int32_t EffectImplemented::GetWaveCount() const
+{
+	return m_WaveCount;
+}
 
-const EFK_CHAR* EffectImplemented::GetWavePath(int n) const { return m_WavePaths[n]; }
+const EFK_CHAR* EffectImplemented::GetWavePath(int n) const
+{
+	return m_WavePaths[n];
+}
 
-void* EffectImplemented::GetModel(int n) const { return models_[n]; }
+void* EffectImplemented::GetModel(int n) const
+{
+	return models_[n];
+}
 
-int32_t EffectImplemented::GetModelCount() const { return modelCount_; }
+int32_t EffectImplemented::GetModelCount() const
+{
+	return modelCount_;
+}
 
-const EFK_CHAR* EffectImplemented::GetModelPath(int n) const { return modelPaths_[n]; }
+const EFK_CHAR* EffectImplemented::GetModelPath(int n) const
+{
+	return modelPaths_[n];
+}
 
-MaterialData* EffectImplemented::GetMaterial(int n) const { return materials_[n]; }
+MaterialData* EffectImplemented::GetMaterial(int n) const
+{
+	return materials_[n];
+}
 
-int32_t EffectImplemented::GetMaterialCount() const { return materialCount_; }
+int32_t EffectImplemented::GetMaterialCount() const
+{
+	return materialCount_;
+}
 
-const EFK_CHAR* EffectImplemented::GetMaterialPath(int n) const { return materialPaths_[n]; }
+const EFK_CHAR* EffectImplemented::GetMaterialPath(int n) const
+{
+	return materialPaths_[n];
+}
 
 void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureData* data)
 {
@@ -1410,7 +1492,10 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 	}
 }
 
-void EffectImplemented::UnloadResources() { UnloadResources(nullptr); }
+void EffectImplemented::UnloadResources()
+{
+	UnloadResources(nullptr);
+}
 
 EffectTerm EffectImplemented::CalculateTerm() const
 {

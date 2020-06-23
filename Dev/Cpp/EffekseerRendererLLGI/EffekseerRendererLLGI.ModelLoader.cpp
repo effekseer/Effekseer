@@ -7,7 +7,8 @@ namespace EffekseerRendererLLGI
 {
 
 ModelLoader::ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-	: graphicsDevice_(graphicsDevice), m_fileInterface(fileInterface)
+	: graphicsDevice_(graphicsDevice)
+	, m_fileInterface(fileInterface)
 {
 	LLGI::SafeAddRef(graphicsDevice_);
 
@@ -17,7 +18,10 @@ ModelLoader::ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterf
 	}
 }
 
-ModelLoader::~ModelLoader() { LLGI::SafeRelease(graphicsDevice_); }
+ModelLoader::~ModelLoader()
+{
+	LLGI::SafeRelease(graphicsDevice_);
+}
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {
