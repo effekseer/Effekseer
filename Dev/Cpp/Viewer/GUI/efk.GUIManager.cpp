@@ -1949,7 +1949,7 @@ bool GUIManager::IsDockFocused()
 bool GUIManager::IsDockVisibled()
 {
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
-	return (window && window->DockTabIsVisible);
+	return (window && (window->DockTabIsVisible || !window->DockIsActive));
 }
 
 bool GUIManager::IsDockWindowed()
