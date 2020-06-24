@@ -438,6 +438,11 @@ namespace Effekseer
 
 			Icons["FileViewer_Directory"] = LoadAppResource(native, "resources/icons/FileViewer_Directory.png");
 			Icons["FileViewer_EffekseerProj"] = LoadAppResource(native, "resources/icons/FileViewer_EffekseerProj.png");
+
+			Icons["ButtonMin"] = LoadAppResource(native, "resources/icons/Button_Min.png");
+			Icons["ButtonMax"] = LoadAppResource(native, "resources/icons/Button_Max.png");
+			Icons["ButtonMaxCancel"] = LoadAppResource(native, "resources/icons/Button_MaxCancel.png");
+			Icons["ButtonClose"] = LoadAppResource(native, "resources/icons/Button_Close.png");
 		}
 
 		public static void Unload()
