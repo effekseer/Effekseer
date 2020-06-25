@@ -661,7 +661,7 @@ struct ParameterCustomData
 struct ParameterRendererCommon
 {
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	static const int32_t UVParameterNum = 5;
+	static const int32_t UVParameterNum = 6;
 #endif
 
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
@@ -684,6 +684,9 @@ struct ParameterRendererCommon
 
 	//! texture index except a file
 	int32_t BlendAlphaTextureIndex = -1;
+
+	//! texture index except a file
+	int32_t BlendUVDistortionTextureIndex = -1;
 #endif
 
 	//! material index in MaterialType::File
@@ -719,6 +722,12 @@ struct ParameterRendererCommon
 	float UVDistortionIntensity = 1.0f;
 
 	int32_t TextureBlendType = -1;
+
+	TextureFilterType Filter7Type = TextureFilterType::Nearest;
+
+	TextureWrapType Wrap7Type = TextureWrapType::Repeat;
+
+	float BlendUVDistortionIntensity = 1.0f;
 #endif
 
 	bool ZWrite = false;
@@ -927,6 +936,9 @@ struct ParameterRendererCommon
 
 					memcpy(&BlendAlphaTextureIndex, pos, sizeof(int));
 					pos += sizeof(int);
+
+					memcpy(&BlendUVDistortionTextureIndex, pos, sizeof(int));
+					pos += sizeof(int);
 				}
 #endif
 			}
@@ -1008,6 +1020,12 @@ struct ParameterRendererCommon
 
 			memcpy(&Wrap6Type, pos, sizeof(int));
 			pos += sizeof(int);
+
+			memcpy(&Filter7Type, pos, sizeof(int));
+			pos += sizeof(int);
+
+			memcpy(&Wrap7Type, pos, sizeof(int));
+			pos += sizeof(int);
 		}
 		else
 		{
@@ -1022,6 +1040,9 @@ struct ParameterRendererCommon
 
 			Filter6Type = FilterType;
 			Wrap6Type = WrapType;
+
+			Filter7Type = FilterType;
+			Wrap7Type = WrapType;
 		}
 #endif
 
@@ -1102,7 +1123,7 @@ struct ParameterRendererCommon
 				memcpy(&UV.Animation.StartFrame, pos, sizeof(UV.Animation.StartFrame));
 				pos += sizeof(UV.Animation.StartFrame);
 
-				if (version >= 1600)
+				if (version >= 1600 && UVIndex == 0)
 				{
 					memcpy(&UV.Animation.InterpolationType, pos, sizeof(UV.Animation.InterpolationType));
 					pos += sizeof(UV.Animation.InterpolationType);
@@ -1157,6 +1178,16 @@ struct ParameterRendererCommon
 			pos += sizeof(int);
 
 			LoadUVParameter(4);
+
+			// blend alpha texture
+			memcpy(&UVTypes[5], pos, sizeof(int));
+			pos += sizeof(int);
+
+			LoadUVParameter(5);
+
+			// blend uv distortion intensity
+			memcpy(&BlendUVDistortionIntensity, pos, sizeof(int));
+			pos += sizeof(int);
 		}
 
 #else
@@ -1265,6 +1296,7 @@ struct ParameterRendererCommon
 		BasicParameter.TextureFilter4 = Filter4Type;
 		BasicParameter.TextureFilter5 = Filter5Type;
 		BasicParameter.TextureFilter6 = Filter6Type;
+		BasicParameter.TextureFilter7 = Filter7Type;
 #endif
 		BasicParameter.TextureWrap1 = WrapType;
 		BasicParameter.TextureWrap2 = Wrap2Type;
@@ -1273,6 +1305,7 @@ struct ParameterRendererCommon
 		BasicParameter.TextureWrap4 = Wrap4Type;
 		BasicParameter.TextureWrap5 = Wrap5Type;
 		BasicParameter.TextureWrap6 = Wrap6Type;
+		BasicParameter.TextureWrap7 = Wrap7Type;
 #endif
 
 		BasicParameter.DistortionIntensity = DistortionIntensity;
@@ -1284,10 +1317,13 @@ struct ParameterRendererCommon
 		BasicParameter.Texture4Index = UVDistortionTextureIndex;
 		BasicParameter.Texture5Index = BlendTextureIndex;
 		BasicParameter.Texture6Index = BlendAlphaTextureIndex;
+		BasicParameter.Texture7Index = BlendUVDistortionTextureIndex;
 
 		BasicParameter.UVDistortionIntensity = UVDistortionIntensity;
 
 		BasicParameter.TextureBlendType = TextureBlendType;
+
+		BasicParameter.BlendUVDistortionIntensity = BlendUVDistortionIntensity;
 
 		if (UVTypes[0] == UV_ANIMATION)
 		{

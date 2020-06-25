@@ -236,6 +236,32 @@ protected:
 			v[7].SetBlendAlphaUV(uvX3, 0);
 			v[7].SetBlendAlphaUV(uvY2, 1);
 		}
+		else if (TARGET == 6)
+		{
+			v[0].SetBlendUVDistortionUV(uvX1, 0);
+			v[0].SetBlendUVDistortionUV(uvY1, 1);
+
+			v[1].SetBlendUVDistortionUV(uvX2, 0);
+			v[1].SetBlendUVDistortionUV(uvY1, 1);
+
+			v[4].SetBlendUVDistortionUV(uvX2, 0);
+			v[4].SetBlendUVDistortionUV(uvY1, 1);
+
+			v[5].SetBlendUVDistortionUV(uvX3, 0);
+			v[5].SetBlendUVDistortionUV(uvY1, 1);
+
+			v[2].SetBlendUVDistortionUV(uvX1, 0);
+			v[2].SetBlendUVDistortionUV(uvY2, 1);
+
+			v[3].SetBlendUVDistortionUV(uvX2, 0);
+			v[3].SetBlendUVDistortionUV(uvY2, 1);
+
+			v[6].SetBlendUVDistortionUV(uvX2, 0);
+			v[6].SetBlendUVDistortionUV(uvY2, 1);
+
+			v[7].SetBlendUVDistortionUV(uvX3, 0);
+			v[7].SetBlendUVDistortionUV(uvY2, 1);
+		}
 #else
 		else
 		{
@@ -316,6 +342,13 @@ protected:
 					uvy = param.BlendAlphaUV.Y;
 					uvh = param.BlendAlphaUV.Height;
 				}
+				else if (TARGET == 6)
+				{
+					uvx = param.BlendUVDistortionUV.X;
+					uvw = param.BlendUVDistortionUV.Width;
+					uvy = param.BlendUVDistortionUV.Y;
+					uvh = param.BlendUVDistortionUV.Height;
+				}
 #endif
 
 				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
@@ -381,6 +414,13 @@ protected:
 					uvw = param.BlendAlphaUV.Width;
 					uvy = param.BlendAlphaUV.Y;
 					uvh = param.BlendAlphaUV.Height;
+				}
+				else if (TARGET == 6)
+				{
+					uvx = param.BlendUVDistortionUV.X;
+					uvw = param.BlendUVDistortionUV.Width;
+					uvy = param.BlendUVDistortionUV.Y;
+					uvh = param.BlendUVDistortionUV.Height;
 				}
 #endif
 
@@ -838,6 +878,7 @@ protected:
 		AssignUVs<VERTEX, 3>(parameter, verteies);
 		AssignUVs<VERTEX, 4>(parameter, verteies);
 		AssignUVs<VERTEX, 5>(parameter, verteies);
+		AssignUVs<VERTEX, 6>(parameter, verteies);
 #endif
 
 		// custom parameter
@@ -981,6 +1022,8 @@ public:
 		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
 		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
 		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
+		state.TextureFilter7 = param.BasicParameterPtr->TextureFilter7;
+		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -991,6 +1034,8 @@ public:
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 
 		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
+
+		state.BlendUVDistortionIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
@@ -1006,7 +1051,8 @@ public:
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
-											   param.BasicParameterPtr->Texture6Index
+											   param.BasicParameterPtr->Texture6Index,
+											   param.BasicParameterPtr->Texture7Index
 #endif
 		);
 		customData1Count_ = state.CustomData1Count;

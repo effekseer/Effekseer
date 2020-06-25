@@ -864,7 +864,11 @@ namespace Effekseer.Data
 
 		[Selected(ID = 2, Value = 2)]
 		[IO(Export = true)]
-		public UVAnimationParamater UVAnimation { get; private set; }
+#if __EFFEKSEER_BUILD_VERSION16__
+		public UVAnimationSupportedFrameBlendParameter UVAnimation { get; private set; }
+#else
+		public UVAnimationParameter UVAnimation { get; private set; }
+#endif
 
 		[Selected(ID = 2, Value = 3)]
 		[IO(Export = true)]
@@ -982,6 +986,32 @@ namespace Effekseer.Data
 		[Selected(ID = 104, Value = 4)]
 		[IO(Export = true)]
 		public UVFCurveParamater UV5FCurve { get; private set; }
+
+		// blend uv distortion textute
+		[Selector(ID = 105)]
+		[Name(language = Language.Japanese, value = "UV(ブレンドUV歪み画像)")]
+		[Name(language = Language.English, value = "UV(Blend UV Distortion Texture)")]
+		public Value.Enum<UVType> UV6 { get; private set; }
+
+		[Selected(ID = 105, Value = 0)]
+		[IO(Export = true)]
+		public UVDefaultParamater UV6Default { get; private set; }
+
+		[Selected(ID = 105, Value = 1)]
+		[IO(Export = true)]
+		public UVFixedParamater UV6Fixed { get; private set; }
+
+		[Selected(ID = 105, Value = 2)]
+		[IO(Export = true)]
+		public UVAnimationParamater UV6Animation { get; private set; }
+
+		[Selected(ID = 105, Value = 3)]
+		[IO(Export = true)]
+		public UVScrollParamater UV6Scroll { get; private set; }
+
+		[Selected(ID = 105, Value = 4)]
+		[IO(Export = true)]
+		public UVFCurveParamater UV6FCurve { get; private set; }
 #endif
 
 		[Key(key = "BRS_ColorInheritType")]
@@ -1027,7 +1057,9 @@ namespace Effekseer.Data
 
 			UVDefault = new UVDefaultParamater();
 			UVFixed = new UVFixedParamater();
-			UVAnimation = new UVAnimationParamater();
+#if __EFFEKSEER_BUILD_VERSION16__
+			UVAnimation = new UVAnimationSupportedFrameBlendParameter();
+#endif
 			UVScroll = new UVScrollParamater();
 			UVFCurve = new UVFCurveParamater();
 
@@ -1059,6 +1091,13 @@ namespace Effekseer.Data
 			UV5Animation = new UVAnimationParamater();
 			UV5Scroll = new UVScrollParamater();
 			UV5FCurve = new UVFCurveParamater();
+
+			UV6 = new Value.Enum<UVType>();
+			UV6Default = new UVDefaultParamater();
+			UV6Fixed = new UVFixedParamater();
+			UV6Animation = new UVAnimationParamater();
+			UV6Scroll = new UVScrollParamater();
+			UV6FCurve = new UVFCurveParamater();
 #endif
 
 			ZWrite = new Value.Boolean(false);
@@ -1157,7 +1196,7 @@ namespace Effekseer.Data
 			[Key(key = "UVAnimationParamater_Start")]
 			public Value.Vector2D Start { get; private set; }
 
-			[Key(key = "UVAnimationParamater_Size")] 
+			[Key(key = "UVAnimationParamater_Size")]
 			public Value.Vector2D Size { get; private set; }
 
 			[Key(key = "UVAnimationParamater_FrameLength")]
@@ -1175,11 +1214,6 @@ namespace Effekseer.Data
 			[Key(key = "UVAnimationParamater_StartSheet")]
 			public Value.IntWithRandom StartSheet { get; private set; }
 
-#if __EFFEKSEER_BUILD_VERSION16__
-			[Name(value = "アニメーション補間", language = Language.Japanese)]
-			public Value.Enum<FlipbookInterpolationType> FlipbookInterpolationType { get; private set; }
-#endif
-
 			public UVAnimationParamater()
 			{
 				Start = new Value.Vector2D();
@@ -1189,12 +1223,27 @@ namespace Effekseer.Data
 				FrameCountY = new Value.Int(1, int.MaxValue, 1);
 				LoopType = new Value.Enum<LoopType>(RendererCommonValues.LoopType.Once);
 				StartSheet = new Value.IntWithRandom(0, int.MaxValue, 0);
-
-#if __EFFEKSEER_BUILD_VERSION16__
-				FlipbookInterpolationType = new Value.Enum<FlipbookInterpolationType>(RendererCommonValues.FlipbookInterpolationType.None);
-#endif
 			}
 		}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+		public class UVAnimationSupportedFrameBlendParameter
+		{
+			[IO(Export = true)]
+			public UVAnimationParamater AnimationParams { get; private set; }
+
+			[IO(Export = true)]
+			[Name(language = Language.Japanese, value = "アニメーション補間")]
+			[Name(language = Language.English, value = "Flipbook Frame Blend Type")]
+			public Value.Enum<FlipbookInterpolationType> FlipbookInterpolationType { get; private set; }
+
+			public UVAnimationSupportedFrameBlendParameter() : base()
+			{
+				AnimationParams = new UVAnimationParamater();
+				FlipbookInterpolationType = new Value.Enum<FlipbookInterpolationType>(RendererCommonValues.FlipbookInterpolationType.None);
+			}
+		}
+#endif
 
 		public class UVScrollParamater
 		{

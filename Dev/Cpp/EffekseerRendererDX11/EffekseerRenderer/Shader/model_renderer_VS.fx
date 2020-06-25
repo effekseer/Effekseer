@@ -8,6 +8,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 fUVDistortionUV[40];
     float4 fBlendUV[40];
     float4 fBlendAlphaUV[40];
+    float4 fBlendUVDistortionUV[40];
 
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     float4 fFlipbookIndexAndNextRate[40];
@@ -63,11 +64,12 @@ struct VS_Output
     float2 UVDistortionUV       : TEXCOORD5;
     float2 BlendUV              : TEXCOORD6;
     float2 BlendAlphaUV         : TEXCOORD7;
+    float2 BlendUVDistortionUV  : TEXCOORD8;
     
-    float FlipbookRate          : TEXCOORD8;
-    float2 FlipbookNextIndexUV  : TEXCOORD9;
+    float FlipbookRate          : TEXCOORD9;
+    float2 FlipbookNextIndexUV  : TEXCOORD10;
     
-    float AlphaThreshold        : TEXCOORD10;
+    float AlphaThreshold        : TEXCOORD11;
 #endif
     
 #else // else ENABLE_NORMAL_TEXTURE
@@ -77,11 +79,12 @@ struct VS_Output
     float2 UVDistortionUV       : TEXCOORD2;
     float2 BlendUV              : TEXCOORD3;
     float2 BlendAlphaUV         : TEXCOORD4;
+    float2 BlendUVDistortionUV  : TEXCOORD5;
     
-    float FlipbookRate          : TEXCOORD5;
-    float2 FlipbookNextIndexUV  : TEXCOORD6;
+    float FlipbookRate          : TEXCOORD6;
+    float2 FlipbookNextIndexUV  : TEXCOORD7;
     
-    float AlphaThreshold        : TEXCOORD7;
+    float AlphaThreshold        : TEXCOORD8;
 #endif
     
 #endif // end ENABLE_NORMAL_TEXTURE
@@ -101,6 +104,7 @@ VS_Output VS( const VS_Input Input )
     float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
     float4 blendUV = fBlendUV[Input.Index.x];
     float4 blendAlphaUV = fBlendAlphaUV[Input.Index.x];
+    float4 blendUVDistortionUV = fBlendUVDistortionUV[Input.Index.x];
 #endif
 	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
 
@@ -129,45 +133,13 @@ VS_Output VS( const VS_Input Input )
     Output.BlendAlphaUV.x = Input.UV.x * blendAlphaUV.z + blendAlphaUV.x;
     Output.BlendAlphaUV.y = Input.UV.y * blendAlphaUV.w + blendAlphaUV.y;
     
+    // blend uv distortion texture
+    Output.BlendUVDistortionUV.x = Input.UV.x * blendUVDistortionUV.z + blendUVDistortionUV.x;
+    Output.BlendUVDistortionUV.y = Input.UV.y * blendUVDistortionUV.w + blendUVDistortionUV.y;
+    
     // flipbook interpolation
 	ApplyFlipbookVS(
 		Output.FlipbookRate, Output.FlipbookNextIndexUV, fFlipbookParameter, fFlipbookIndexAndNextRate[Input.Index.x].x, Output.UV);
-	/*
-    if(fFlipbookParameter.x > 0)
-    {
-        float FlipbookIndexAndNextRate = fFlipbookIndexAndNextRate[Input.Index.x].x;
-    
-        Output.FlipbookRate = frac(FlipbookIndexAndNextRate);
-    
-        float NextIndex = floor(FlipbookIndexAndNextRate) + 1;
-        
-        // loop none 
-        if(fFlipbookParameter.y == 0)
-        {
-            if (NextIndex >= fFlipbookParameter.z * fFlipbookParameter.w)
-			{
-				NextIndex = (fFlipbookParameter.z * fFlipbookParameter.w) - 1;
-			}
-        }
-        // loop
-        else if(fFlipbookParameter.y == 1)
-        {
-            NextIndex %= (fFlipbookParameter.z * fFlipbookParameter.w);
-        }
-        // loop reverse
-        else if(fFlipbookParameter.y == 2)
-        {
-            bool Reverse = (floor(NextIndex) / (fFlipbookParameter.z * fFlipbookParameter.w)) % 2 == 1;
-            NextIndex = int(NextIndex) % (fFlipbookParameter.z * fFlipbookParameter.w);
-            if(Reverse)
-            {
-                NextIndex = fFlipbookParameter.z * fFlipbookParameter.w - 1 - NextIndex;
-            }
-        }
-    
-        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(Input.UV, NextIndex, fFlipbookParameter.z, fFlipbookParameter.w);
-    }
-    */
     
     // alpha threshold
     Output.AlphaThreshold = fModelAlphaThreshold[Input.Index.x].x;
@@ -197,6 +169,7 @@ VS_Output VS( const VS_Input Input )
     Output.UVDistortionUV.y = mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
     Output.BlendUV.y = mUVInversed.x + mUVInversed.y * Output.BlendUV.y;
     Output.BlendAlphaUV.y = mUVInversed.x + mUVInversed.y * Output.BlendAlphaUV.y;
+    Output.BlendUVDistortionUV.y = mUVInversed.x + mUVInversed.y * Output.BlendUVDistortionUV.y;
 #endif
 
 	return Output;

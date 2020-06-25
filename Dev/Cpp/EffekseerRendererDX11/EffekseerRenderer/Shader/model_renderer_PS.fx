@@ -14,7 +14,7 @@ cbuffer PS_ConstanBuffer : register(b0)
 
     float4  fFlipbookParameter; // x:enable, y:interpolationType
 
-    float4  fUVDistortionParameter; // x:intensity
+    float4  fUVDistortionParameter; // x:intensity, y:blendIntensity
 
     float4  fBlendTextureParameter; // x:blendType
 };
@@ -51,6 +51,9 @@ SamplerState    g_blendSampler : register( s4 );
 
 Texture2D       g_blendAlphaTexture : register( t5 );
 SamplerState    g_blendAlphaSampler : register( s5 );
+
+Texture2D       g_blendUVDistortionTexture : register( t6 );
+SamplerState    g_blendUVDistortionSampler : register( s6 );
 #endif
 
 
@@ -68,11 +71,12 @@ struct PS_Input
     float2 UVDistortionUV       : TEXCOORD5;
     float2 BlendUV              : TEXCOORD6;
     float2 BlendAlphaUV         : TEXCOORD7;
+    float2 BlendUVDistortionUV  : TEXCOORD8;
     
-    float FlipbookRate          : TEXCOORD8;
-    float2 FlipbookNextIndexUV  : TEXCOORD9;
+    float FlipbookRate          : TEXCOORD9;
+    float2 FlipbookNextIndexUV  : TEXCOORD10;
     
-    float AlphaThreshold        : TEXCOORD10;
+    float AlphaThreshold        : TEXCOORD11;
 #endif
     
 #else // else ENABLE_NORMAL_TEXTURE
@@ -82,11 +86,12 @@ struct PS_Input
     float2 UVDistortionUV       : TEXCOORD2;
     float2 BlendUV              : TEXCOORD3;
     float2 BlendAlphaUV         : TEXCOORD4;
+    float2 BlendUVDistortionUV  : TEXCOORD5;
     
-    float FlipbookRate          : TEXCOORD5;
-    float2 FlipbookNextIndexUV  : TEXCOORD6;
+    float FlipbookRate          : TEXCOORD6;
+    float2 FlipbookNextIndexUV  : TEXCOORD7;
     
-    float AlphaThreshold        : TEXCOORD7;
+    float AlphaThreshold        : TEXCOORD8;
 #endif
     
 #endif // end ENABLE_NORMAL_TEXTURE
@@ -114,22 +119,17 @@ float4 PS( const PS_Input Input ) : SV_Target
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
-	/*
-    if(fFlipbookParameter.x > 0)
-    {
-        float4 NextPixelColor = g_colorTexture.Sample(g_colorSampler, Input.FlipbookNextIndexUV) * Input.Color;
-        
-        if(fFlipbookParameter.y == 1)
-        {
-            Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
-        }
-    }
-    */
     
+    // apply alpha texture
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
     
-    float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV);
-    BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV).a;
+    // blend texture uv offset
+    float2 BlendUVOffset = g_blendUVDistortionTexture.Sample(g_blendUVDistortionSampler, Input.BlendUVDistortionUV).rg * 2.0 - 1.0;
+    BlendUVOffset *= fUVDistortionParameter.y;
+    
+    float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV + BlendUVOffset);
+    BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset).a;
+    
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     // alpha threshold

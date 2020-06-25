@@ -1,16 +1,18 @@
 ﻿#pragma once
 #include "Effekseer.h"
-#include "Effekseer/SIMD/Effekseer.Mat43f.h"
-#include "Effekseer/SIMD/Effekseer.Mat44f.h"
-#include "Effekseer/SIMD/Effekseer.SIMDUtils.h"
 #include "Effekseer/SIMD/Effekseer.Vec2f.h"
 #include "Effekseer/SIMD/Effekseer.Vec3f.h"
 #include "Effekseer/SIMD/Effekseer.Vec4f.h"
+#include "Effekseer/SIMD/Effekseer.Mat43f.h"
+#include "Effekseer/SIMD/Effekseer.Mat44f.h"
+#include "Effekseer/SIMD/Effekseer.SIMDUtils.h"
 
 // A header to access internal data of effekseer
 
+
 #ifndef __EFFEKSEER_PARAMETERS_H__
 #define __EFFEKSEER_PARAMETERS_H__
+
 
 namespace Effekseer
 {
@@ -112,6 +114,8 @@ public:
 		RectF BlendUV;
 
 		RectF BlendAlphaUV;
+
+		RectF BlendUVDistortionUV;
 
 		float FlipbookIndexAndNextRate;
 
@@ -219,6 +223,8 @@ public:
 		RectF BlendUV;
 
 		RectF BlendAlphaUV;
+
+		RectF BlendUVDistortionUV;
 
 		float FlipbookIndexAndNextRate;
 
@@ -337,6 +343,8 @@ public:
 
 		RectF BlendAlphaUV;
 
+		RectF BlendUVDistortionUV;
+
 		float FlipbookIndexAndNextRate;
 
 		float AlphaThreshold;
@@ -439,6 +447,8 @@ public:
 		RectF BlendUV;
 
 		RectF BlendAlphaUV;
+
+		RectF BlendUVDistortionUV;
 
 		float FlipbookIndexAndNextRate;
 
@@ -558,6 +568,8 @@ public:
 		RectF BlendUV;
 
 		RectF BlendAlphaUV;
+
+		RectF BlendUVDistortionUV;
 
 		float FlipbookIndexAndNextRate;
 
