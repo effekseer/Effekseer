@@ -3361,6 +3361,50 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Close___(void * jar
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsWindowMaximized___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsWindowMaximized();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetWindowMaximized___(void * jarg1, unsigned int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->SetWindowMaximized(arg2);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsWindowMinimized___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsWindowMinimized();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetWindowMinimized___(void * jarg1, unsigned int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->SetWindowMinimized(arg2);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetMousePosition___(void * jarg1) {
   void * jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -4172,6 +4216,24 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageButton
   arg3 = (float)jarg3; 
   arg4 = (float)jarg4; 
   result = (bool)(arg1)->ImageButton(arg2,arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageButtonOriginal___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImageResource *arg2 = (efk::ImageResource *) 0 ;
+  float arg3 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImageResource *)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->ImageButtonOriginal(arg2,arg3,arg4);
   jresult = result; 
   return jresult;
 }
@@ -8264,6 +8326,28 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_IsMaxi
   
   arg1 = (Effekseer::MainWindowState *)jarg1; 
   result = (bool) ((arg1)->IsMaximumMode);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_IsFrameless_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsFrameless = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_IsFrameless_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  result = (bool) ((arg1)->IsFrameless);
   jresult = result; 
   return jresult;
 }
