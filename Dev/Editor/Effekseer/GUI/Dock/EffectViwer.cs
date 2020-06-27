@@ -62,42 +62,22 @@ namespace Effekseer.GUI.Dock
 			viewMode.Update();
 			Manager.NativeManager.PopItemWidth();
 
-			Manager.NativeManager.SameLine(contentSize.X - 170 * dpiScale);
+			string perfText = 
+				"D:" + Manager.Native.GetAndResetDrawCall().ToString("D3") + "  " + 
+				"V:" + Manager.Native.GetAndResetVertexCount().ToString("D5") + "  " +
+				"P:" + Manager.Native.GetInstanceCount().ToString("D5") + " ";
 
-			Manager.NativeManager.PushItemWidth(50 * dpiScale);
+			Manager.NativeManager.SameLine(contentSize.X - Manager.NativeManager.CalcTextSize(perfText).X);
 
-			// DrawCall
-			Manager.NativeManager.Text("D:" + Manager.Native.GetAndResetDrawCall().ToString("D5"));
+			// Display performance information
+			Manager.NativeManager.Text(perfText);
 			if (Manager.NativeManager.IsItemHovered())
 			{
-				Manager.NativeManager.SetTooltip("Draw calls of current rendering.");
+				Manager.NativeManager.SetTooltip(
+					"D: Draw calls of current rendering.\n" +
+					"V: Vertex count of current rendering.\n" +
+					"P: Particle count of current rendering.");
 			}
-
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Spacing();
-			Manager.NativeManager.SameLine();
-
-			// DrawCall
-			Manager.NativeManager.Text("V:" + Manager.Native.GetAndResetVertexCount().ToString("D5"));
-			if (Manager.NativeManager.IsItemHovered())
-			{
-				Manager.NativeManager.SetTooltip("Vertex count of current rendering.");
-			}
-
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Spacing();
-			Manager.NativeManager.SameLine();
-
-			// DrawCall
-			Manager.NativeManager.Text("P:" + Manager.Native.GetInstanceCount().ToString("D2"));
-			if (Manager.NativeManager.IsItemHovered())
-			{
-				Manager.NativeManager.SetTooltip("Particle count of current rendering.");
-			}
-
-			Manager.NativeManager.PopItemWidth();
-
-			Manager.NativeManager.Spacing();
 		}
 	}
 }

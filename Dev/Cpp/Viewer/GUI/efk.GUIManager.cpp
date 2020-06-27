@@ -1312,6 +1312,22 @@ void GUIManager::TextWrapped(const char16_t* text)
 	}
 }
 
+Vec2 GUIManager::CalcTextSize(const char16_t* text)
+{
+	ImVec2 result;
+	
+	if (std::char_traits<char16_t>::length(text) < 1024)
+	{
+		result = ImGui::CalcTextSize(utf8str<1024>(text));
+	}
+	else
+	{
+		result = ImGui::CalcTextSize(utf16_to_utf8(text).c_str());
+	}
+
+	return {result.x, result.y};
+}
+
 bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 {
 	return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
