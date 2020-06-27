@@ -623,7 +623,7 @@ public:
 
 	// Dock
 	bool BeginFullscreen(const char16_t* label);
-	bool BeginDock(const char16_t* label, const char16_t* tabHint, bool* p_open, bool allowClose, WindowFlags extra_flags);
+	bool BeginDock(const char16_t* label, const char16_t* tabLabel, bool* p_open, bool allowClose, WindowFlags extra_flags);
 	void EndDock();
 	uint32_t BeginDockLayout();
 	void EndDockLayout();
