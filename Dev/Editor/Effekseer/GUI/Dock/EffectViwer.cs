@@ -29,6 +29,8 @@ namespace Effekseer.GUI.Dock
 
 			NoPadding = true;
 			NoScrollBar = true;
+			NoCloseButton = true;
+			AllowsShortTab = false;
 		}
 
 		protected override void UpdateInternal()
