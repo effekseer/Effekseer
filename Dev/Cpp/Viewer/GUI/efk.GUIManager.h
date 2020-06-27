@@ -518,6 +518,7 @@ public:
 
 	void Text(const char16_t* text);
 	void TextWrapped(const char16_t* text);
+	Vec2 CalcTextSize(const char16_t* text);
 
 	// Main
 	bool Button(const char16_t* label, float size_x = 0.0f, float size_y = 0.0f);

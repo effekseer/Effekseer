@@ -70,6 +70,12 @@ public class MainWindow : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsFrameless() {
+    bool ret = EffekseerNativePINVOKE.MainWindow_IsFrameless(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public static bool Initialize(string title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode) {
     bool ret = EffekseerNativePINVOKE.MainWindow_Initialize(title, MainWindowState.getCPtr(state), isSRGBMode, isOpenGLMode);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

@@ -4125,6 +4125,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TextWrapped___(void
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CalcTextSize___(void * jarg1, void * jarg2) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (arg1)->CalcTextSize((char16_t const *)arg2);
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Button__SWIG_0___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -8446,6 +8460,21 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_GetDPIScale___(voi
   smartarg1 = (std::shared_ptr< const Effekseer::MainWindow > *)jarg1;
   arg1 = (Effekseer::MainWindow *)(smartarg1 ? smartarg1->get() : 0); 
   result = (float)((Effekseer::MainWindow const *)arg1)->GetDPIScale();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_IsFrameless___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::MainWindow *arg1 = (Effekseer::MainWindow *) 0 ;
+  std::shared_ptr< Effekseer::MainWindow const > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::MainWindow > *)jarg1;
+  arg1 = (Effekseer::MainWindow *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (bool)((Effekseer::MainWindow const *)arg1)->IsFrameless();
   jresult = result; 
   return jresult;
 }
