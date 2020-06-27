@@ -1757,6 +1757,7 @@ struct IMGUI_API ImGuiWindow
     bool                    DockIsActive        :1;             // When docking artifacts are actually visible. When this is set, DockNode is guaranteed to be != NULL. ~~ (DockNode != NULL) && (DockNode->Windows.Size > 1).
     bool                    DockTabIsVisible    :1;             // Is our window visible this frame? ~~ is the corresponding tab selected?
     bool                    DockTabWantClose    :1;
+    char                    DockTabLabel[32];
 
 public:
     ImGuiWindow(ImGuiContext* context, const char* name);
@@ -1861,7 +1862,7 @@ struct ImGuiTabBar
     const char*         GetTabName(const ImGuiTabItem* tab) const
     {
         if (tab->Window)
-            return tab->Window->Name;
+            return tab->Window->DockTabLabel;
         IM_ASSERT(tab->NameOffset != -1 && tab->NameOffset < TabsNames.Buf.Size);
         return TabsNames.Buf.Data + tab->NameOffset;
     }

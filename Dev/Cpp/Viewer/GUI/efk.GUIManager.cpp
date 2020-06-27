@@ -1983,15 +1983,25 @@ bool GUIManager::BeginFullscreen(const char16_t* label)
 	return visible;
 }
 
-bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabHint, bool* p_open, bool allowClose, WindowFlags extra_flags)
+bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabLabel, bool* p_open, bool allowClose, WindowFlags extra_flags)
 {
 	if (!allowClose)
 	{
 		p_open = nullptr;
 	}
 
-	utf8str<256> utf8label(label);
-	return ImGui::Begin(utf8label, p_open, (ImGuiWindowFlags)extra_flags);
+	utf8str<256> utf8Label(label);
+	utf8str<256> utf8TabLabel(tabLabel);
+
+	bool result = ImGui::Begin(utf8Label, p_open, (ImGuiWindowFlags)extra_flags);
+
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	if (window && !window->DockTabLabel[0])
+	{
+		strcpy(window->DockTabLabel, utf8TabLabel);
+	}
+
+	return result;
 }
 
 void GUIManager::EndDock()
