@@ -193,6 +193,15 @@ bool Renderer::Initialize(void* handle, int width, int height)
 	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics));
 	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
 	m_linearToSRGBEffect.reset(efk::PostEffect::CreateLinearToSRGB(graphics));
+
+	if (!(m_bloomEffect != nullptr && m_bloomEffect->GetIsValid() &&
+		  m_tonemapEffect != nullptr && m_tonemapEffect->GetIsValid() &&
+		  m_linearToSRGBEffect != nullptr && m_linearToSRGBEffect->GetIsValid()))
+	{
+		spdlog::trace("Failed PostProcessing");
+		return false;
+	}
+
 	spdlog::trace("OK PostProcessing");
 
 	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)

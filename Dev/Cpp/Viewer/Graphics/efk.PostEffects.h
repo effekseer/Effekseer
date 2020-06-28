@@ -15,6 +15,7 @@ class PostEffect
 protected:
 	bool enabled = true;
 	Graphics* graphics;
+	bool isValid_ = true;
 
 public:
 	PostEffect(Graphics* graphics)
@@ -32,6 +33,11 @@ public:
 	virtual void SetEnabled(bool enabled)
 	{
 		this->enabled = enabled;
+	}
+
+	bool GetIsValid() const
+	{
+		return isValid_;
 	}
 
 	static BloomEffect* CreateBloom(Graphics* graphics);
