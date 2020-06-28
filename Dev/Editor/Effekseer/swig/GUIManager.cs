@@ -1268,7 +1268,13 @@ public class GUIManager : global::System.IDisposable {
   }
 
   public bool BeginDock(string label, ref bool p_open, WindowFlags extra_flags, Vec2 default_size) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, ref p_open, (int)extra_flags, Vec2.getCPtr(default_size));
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock__SWIG_0(swigCPtr, label, ref p_open, (int)extra_flags, Vec2.getCPtr(default_size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool BeginDock(string label, WindowFlags extra_flags, Vec2 default_size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock__SWIG_1(swigCPtr, label, (int)extra_flags, Vec2.getCPtr(default_size));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

@@ -584,6 +584,7 @@ namespace efk
 		void BeginDockspace();
 		void EndDockspace();
 		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size);
+		bool BeginDock(const char16_t* label, WindowFlags extra_flags, Vec2 default_size);
 		void EndDock();
 		void SetNextDockRate(float rate);
 		void ResetNextParentDock();

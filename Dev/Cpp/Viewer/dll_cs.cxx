@@ -7689,7 +7689,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDockspace___(voi
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock___(void * jarg1, void * jarg2, unsigned int * jarg3, int jarg4, void * jarg5) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock__SWIG_0___(void * jarg1, void * jarg2, unsigned int * jarg3, int jarg4, void * jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -7710,6 +7710,30 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock__
   }
   arg5 = *argp5; 
   result = (bool)(arg1)->BeginDock((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock__SWIG_1___(void * jarg1, void * jarg2, int jarg3, void * jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::WindowFlags arg3 ;
+  efk::Vec2 arg4 ;
+  efk::Vec2 *argp4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (efk::WindowFlags)jarg3; 
+  argp4 = (efk::Vec2 *)jarg4; 
+  if (!argp4) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
+    return 0;
+  }
+  arg4 = *argp4; 
+  result = (bool)(arg1)->BeginDock((char16_t const *)arg2,arg3,arg4);
   jresult = result; 
   return jresult;
 }

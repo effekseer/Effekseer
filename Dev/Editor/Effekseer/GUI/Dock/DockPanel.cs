@@ -24,6 +24,8 @@ namespace Effekseer.GUI.Dock
 
 		internal swig.ImageResource Icon;
 
+		protected bool CanClose = true;
+
 		internal swig.Vec2 IconSize { get
 			{
 				float scale = Manager.DpiScale;
@@ -80,7 +82,16 @@ namespace Effekseer.GUI.Dock
 
 					if (NoPadding) Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(0.0f, 0.0f));
 
-					bool dockEnabled = Manager.NativeManager.BeginDock(Label, ref opened, flags, InitialDockSize);
+					bool dockEnabled = false;
+					
+					if(CanClose)
+					{
+						dockEnabled = Manager.NativeManager.BeginDock(Label, ref opened, flags, InitialDockSize);
+					}
+					else
+					{
+						dockEnabled = Manager.NativeManager.BeginDock(Label, flags, InitialDockSize);
+					}
 
 					if (NoPadding) Manager.NativeManager.PopStyleVar();
 
