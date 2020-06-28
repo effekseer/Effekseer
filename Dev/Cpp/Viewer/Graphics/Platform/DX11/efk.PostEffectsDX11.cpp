@@ -186,6 +186,8 @@ namespace efk
 		else
 		{
 			spdlog::trace("FAIL Create shaderExtract");
+			isValid_ = false;
+			return;
 		}
 
 		// Downsample shader
@@ -316,6 +318,8 @@ namespace efk
 			else
 			{
 				spdlog::trace("FAIL Create extractBuffer");
+				isValid_ = false;
+				return;
 			}
 		}
 
@@ -335,6 +339,8 @@ namespace efk
 				else
 				{
 					spdlog::trace("FAIL Create lowresBuffers[i][j]");
+					isValid_ = false;
+					return;
 				}
 			}
 		}
@@ -381,6 +387,8 @@ namespace efk
 		else
 		{
 			spdlog::trace("FAIL Create shaderReinhard");
+			isValid_ = false;
+			return;
 		}
 	}
 
@@ -430,6 +438,8 @@ namespace efk
 		else
 		{
 			spdlog::trace("FAIL Create shaderLinearToSRGB");
+			isValid_ = false;
+			return;
 		}
 	}
 
