@@ -518,6 +518,7 @@ public:
 
 	void Text(const char16_t* text);
 	void TextWrapped(const char16_t* text);
+	Vec2 CalcTextSize(const char16_t* text);
 
 	// Main
 	bool Button(const char16_t* label, float size_x = 0.0f, float size_y = 0.0f);
@@ -727,7 +728,7 @@ public:
 
 	// Dock
 	bool BeginFullscreen(const char16_t* label);
-	bool BeginDock(const char16_t* label, const char16_t* tabHint, bool* p_open, bool allowClose, WindowFlags extra_flags);
+	bool BeginDock(const char16_t* label, const char16_t* tabLabel, bool* p_open, bool allowClose, WindowFlags extra_flags);
 	void EndDock();
 	uint32_t BeginDockLayout();
 	void EndDockLayout();

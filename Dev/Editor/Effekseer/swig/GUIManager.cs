@@ -385,6 +385,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TextWrapped(swigCPtr, text);
   }
 
+  public Vec2 CalcTextSize(string text) {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_CalcTextSize(swigCPtr, text), true);
+    return ret;
+  }
+
   public bool Button(string label, float size_x, float size_y) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_0(swigCPtr, label, size_x, size_y);
     return ret;
@@ -1266,8 +1271,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool BeginDock(string label, string tabHint, ref bool p_open, bool allowClose, WindowFlags extra_flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, tabHint, ref p_open, allowClose, (int)extra_flags);
+  public bool BeginDock(string label, string tabLabel, ref bool p_open, bool allowClose, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, tabLabel, ref p_open, allowClose, (int)extra_flags);
     return ret;
   }
 

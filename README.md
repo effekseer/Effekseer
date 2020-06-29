@@ -112,8 +112,6 @@ Please read ``` azure-pipelines.yml ```
 
 Please read ``` azure-pipelines.yml ```
 
-* Linux (not work now)
+* Linux
 
-Execute ```Dev/build.Linux.sh``` to compile and generate binary into Dev/release/
-
-I have not debuged Effekseer on Linux yet.
+Please compile by yourself.

@@ -1350,6 +1350,22 @@ void GUIManager::TextWrapped(const char16_t* text)
 	}
 }
 
+Vec2 GUIManager::CalcTextSize(const char16_t* text)
+{
+	ImVec2 result;
+	
+	if (std::char_traits<char16_t>::length(text) < 1024)
+	{
+		result = ImGui::CalcTextSize(utf8str<1024>(text));
+	}
+	else
+	{
+		result = ImGui::CalcTextSize(utf16_to_utf8(text).c_str());
+	}
+
+	return {result.x, result.y};
+}
+
 bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 {
 	return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
@@ -1983,15 +1999,25 @@ bool GUIManager::BeginFullscreen(const char16_t* label)
 	return visible;
 }
 
-bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabHint, bool* p_open, bool allowClose, WindowFlags extra_flags)
+bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabLabel, bool* p_open, bool allowClose, WindowFlags extra_flags)
 {
 	if (!allowClose)
 	{
 		p_open = nullptr;
 	}
 
-	utf8str<256> utf8label(label);
-	return ImGui::Begin(utf8label, p_open, (ImGuiWindowFlags)extra_flags);
+	utf8str<256> utf8Label(label);
+	utf8str<256> utf8TabLabel(tabLabel);
+
+	bool result = ImGui::Begin(utf8Label, p_open, (ImGuiWindowFlags)extra_flags);
+
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	if (window && !window->DockTabLabel[0])
+	{
+		strcpy(window->DockTabLabel, utf8TabLabel);
+	}
+
+	return result;
 }
 
 void GUIManager::EndDock()

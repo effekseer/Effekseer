@@ -195,6 +195,8 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
 	else
 	{
 		spdlog::trace("FAIL Create shaderExtract");
+		isValid_ = false;
+		return;
 	}
 
 	// Downsample shader
@@ -335,6 +337,8 @@ void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
 		else
 		{
 			spdlog::trace("FAIL Create extractBuffer");
+			isValid_ = false;
+			return;
 		}
 	}
 
@@ -356,6 +360,8 @@ void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
 			else
 			{
 				spdlog::trace("FAIL Create lowresBuffers[i][j]");
+				isValid_ = false;
+				return;
 			}
 		}
 	}
@@ -413,6 +419,8 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics)
 	else
 	{
 		spdlog::trace("FAIL Create shaderReinhard");
+		isValid_ = false;
+		return;
 	}
 }
 
@@ -466,6 +474,8 @@ LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics)
 	else
 	{
 		spdlog::trace("FAIL Create shaderLinearToSRGB");
+		isValid_ = false;
+		return;
 	}
 }
 

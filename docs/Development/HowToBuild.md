@@ -22,7 +22,7 @@ Requirements
 
 [How to install git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)
 
-### Linux (not work, please help us)
+### Linux
 
 - git
 - git-lfs
@@ -96,13 +96,17 @@ Effekseer.exe
 ```
 
 ### macOS
+
 ```
 python3 build.py
 cd Dev/release
 mono Effekseer.exe
 ```
 
-Attention
-----------
+###Linux
 
-- fbxToEffekseerModelConverter is downloaded from https://github.com/effekseer/Effekseer/releases/tag/Prebuild
+```
+python3 build.py
+cd Dev/release
+./Effekseer
+```

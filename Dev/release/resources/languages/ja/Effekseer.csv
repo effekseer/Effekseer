@@ -1,5 +1,5 @@
 ﻿AboutEffekseer,Effekseerについて
-System_FailedToInitialize,描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。
+System_FailedToInitialize,描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足、ビデオカードの仕様等が考えられます。
 AttractionForces,力場(ローカル)
 AutoConnect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,描画共通

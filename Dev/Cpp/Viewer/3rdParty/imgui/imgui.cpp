@@ -2927,6 +2927,7 @@ ImGuiWindow::ImGuiWindow(ImGuiContext* context, const char* name)
     DockTabItemStatusFlags = ImGuiItemStatusFlags_None;
     DockOrder = -1;
     DockIsActive = DockTabIsVisible = DockTabWantClose = false;
+    memset(DockTabLabel, 0, sizeof(DockTabLabel));
 }
 
 ImGuiWindow::~ImGuiWindow()
