@@ -867,7 +867,7 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 		public UVAnimationSupportedFrameBlendParameter UVAnimation { get; private set; }
 #else
-		public UVAnimationParameter UVAnimation { get; private set; }
+		public UVAnimationParamater UVAnimation { get; private set; }
 #endif
 
 		[Selected(ID = 2, Value = 3)]
@@ -1059,6 +1059,8 @@ namespace Effekseer.Data
 			UVFixed = new UVFixedParamater();
 #if __EFFEKSEER_BUILD_VERSION16__
 			UVAnimation = new UVAnimationSupportedFrameBlendParameter();
+#else
+			UVAnimation = new UVAnimationParamater();
 #endif
 			UVScroll = new UVScrollParamater();
 			UVFCurve = new UVFCurveParamater();
