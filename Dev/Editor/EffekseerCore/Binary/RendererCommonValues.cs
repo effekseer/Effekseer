@@ -83,19 +83,56 @@ namespace Effekseer.Binary
 				if (version >= ExporterVersion.Ver1600)
 				{
 					// alpha texture
-					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+					if (advanceValue.EnableAlphaTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
 
 					// uv distortion texture
-					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+					if (advanceValue.EnableUVDistortionTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
 
 					// blend texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+					if (advanceValue.EnableBlendTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 
-					// blend alpha texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+						// blend alpha texture
+						if (advanceValue.BlendTextureParams.EnableBlendAlphaTexture)
+						{
+							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+						}
+						else
+						{
+							data.Add((-1).GetBytes());
+						}
 
-					// blend uv distortion texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+						// blend uv distortion texture
+						if (advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture)
+						{
+							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+						}
+						else
+						{
+							data.Add((-1).GetBytes());
+						}
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+						data.Add((-1).GetBytes());
+						data.Add((-1).GetBytes());
+					}
 				}
 #endif
 			}
@@ -111,19 +148,56 @@ namespace Effekseer.Binary
 				if (version >= ExporterVersion.Ver1600)
 				{
 					// alpha texture
-					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+					if (advanceValue.EnableAlphaTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
 
 					// uv distortion texture
-					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, distortionTexture_and_index, ref uvDistortionTexInfo).GetBytes());
+					if (advanceValue.EnableUVDistortionTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, distortionTexture_and_index, ref uvDistortionTexInfo).GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
 
 					// blend texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
+					if (advanceValue.EnableBlendTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
 
-					// blend alpha texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
+						// blend alpha texture
+						if (advanceValue.BlendTextureParams.EnableBlendAlphaTexture)
+						{
+							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
+						}
+						else
+						{
+							data.Add((-1).GetBytes());
+						}
 
-					// blend uv distortion texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, distortionTexture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+						// blend uv distortion texture
+						if (advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture)
+						{
+							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, distortionTexture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+						}
+						else
+						{
+							data.Add((-1).GetBytes());
+						}
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+						data.Add((-1).GetBytes());
+						data.Add((-1).GetBytes());
+					}
 				}
 #endif
 			}
@@ -139,19 +213,56 @@ namespace Effekseer.Binary
 				if (version >= ExporterVersion.Ver1600)
 				{
 					// alpha texture
-					data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
-					
+					if (advanceValue.EnableAlphaTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
+
 					// uv distortion texture
-					data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+					if (advanceValue.EnableUVDistortionTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
 
 					// blend texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+					if (advanceValue.EnableBlendTexture)
+					{
+						data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 
-					// blend alpha texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+						// blend alpha texture
+						if (advanceValue.BlendTextureParams.EnableBlendAlphaTexture)
+						{
+							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+						}
+						else
+						{
+							data.Add((-1).GetBytes());
+						}
 
-					// blend uv distortion texture
-					data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+						// blend uv distortion texture
+						if (advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture)
+						{
+							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+						}
+						else
+						{
+							data.Add((-1).GetBytes());
+						}
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+						data.Add((-1).GetBytes());
+						data.Add((-1).GetBytes());
+					}
 				}
 #endif
 			}
