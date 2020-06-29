@@ -108,6 +108,8 @@ protected:
 		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
 		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
 		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
+		state.TextureFilter7 = param.BasicParameterPtr->TextureFilter7;
+		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -118,6 +120,8 @@ protected:
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 
 		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
+
+		state.BlendUVDistortionIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
@@ -133,7 +137,8 @@ protected:
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
-											   param.BasicParameterPtr->Texture6Index
+											   param.BasicParameterPtr->Texture6Index,
+											   param.BasicParameterPtr->Texture7Index
 #endif
 		);
 		customData1Count_ = state.CustomData1Count;
@@ -284,6 +289,18 @@ protected:
 
 		verteies[3].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
 		verteies[3].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y, 1);
+
+		verteies[0].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X, 0);
+		verteies[0].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y + instanceParameter.BlendUVDistortionUV.Height, 1);
+
+		verteies[1].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
+		verteies[1].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y + instanceParameter.BlendUVDistortionUV.Height, 1);
+
+		verteies[2].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X, 0);
+		verteies[2].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y, 1);
+
+		verteies[3].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
+		verteies[3].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y, 1);
 #endif
 
 		// distortion

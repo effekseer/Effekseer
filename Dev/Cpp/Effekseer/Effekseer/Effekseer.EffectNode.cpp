@@ -853,6 +853,9 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.BlendAlphaTextureIndex = RendererCommon.BlendAlphaTextureIndex;
 	param.BlendAlphaTexWrapType = RendererCommon.Wrap6Type;
 
+	param.BlendUVDistortionTextureIndex = RendererCommon.BlendUVDistortionTextureIndex;
+	param.BlendUVDistortionTexWrapType = RendererCommon.Wrap7Type;
+
 	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
 	{
 		if (RendererCommon.UVs[0].Animation.InterpolationType != 0)
@@ -874,6 +877,8 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.UVDistortionIntensity = RendererCommon.UVDistortionIntensity;
 
 	param.TextureBlendType = RendererCommon.TextureBlendType;
+
+	param.BlendUVDistortionIntensity = RendererCommon.BlendUVDistortionIntensity;
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;

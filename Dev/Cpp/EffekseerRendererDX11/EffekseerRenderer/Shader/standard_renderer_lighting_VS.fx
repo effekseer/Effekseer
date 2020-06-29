@@ -12,8 +12,9 @@ struct VS_Input
     float2 UVDistortionUV   : TEXCOORD3;
     float2 BlendUV          : TEXCOORD4;
     float2 BlendAlphaUV     : TEXCOORD5;
-    float FlipbookIndex     : TEXCOORD6;
-    float AlphaThreshold    : TEXCOORD7;
+    float2 BlendUVDistortionUV : TEXCOORD6;
+    float FlipbookIndex     : TEXCOORD7;
+    float AlphaThreshold    : TEXCOORD8;
 #endif
 };
 
@@ -33,9 +34,10 @@ struct VS_Output
     float2 UVDistortionUV       : TEXCOORD8;
     float2 BlendUV              : TEXCOORD9;
     float2 BlendAlphaUV         : TEXCOORD10;
-    float FlipbookRate          : TEXCOORD11;
-    float2 FlipbookNextIndexUV  : TEXCOORD12;
-    float AlphaThreshold        : TEXCOORD13;
+    float2 BlendUVDistortionUV  : TEXCOORD11;
+    float FlipbookRate          : TEXCOORD12;
+    float2 FlipbookNextIndexUV  : TEXCOORD13;
+    float AlphaThreshold        : TEXCOORD14;
 #endif
 };
 
@@ -86,47 +88,12 @@ VS_Output VS( const VS_Input Input )
     float2 blendAlphaUV = Input.BlendAlphaUV;
     blendAlphaUV.y = mUVInversed.x + mUVInversed.y * blendAlphaUV.y;
     
-    ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
-    // flipbook interpolation
-	/*
-    if(mflipbookParameter.x > 0)
-    {
-        Output.FlipbookRate = frac(Input.FlipbookIndex);
-        
-        float Index = floor(Input.FlipbookIndex);
-        float IndexOffset = 1.0;
+    // blend uv distortion texture
+    float2 blendUVDistortionUV = Input.BlendUVDistortionUV;
+    blendUVDistortionUV.y = mUVInversed.x + mUVInversed.y * blendUVDistortionUV.y;
     
-        float NextIndex = Input.FlipbookIndex + IndexOffset;
-        
-        // loop none 
-        if(mflipbookParameter.y == 0)
-        {
-            if (NextIndex >= mflipbookParameter.z * mflipbookParameter.w)
-			{
-				NextIndex = (mflipbookParameter.z * mflipbookParameter.w) - 1;
-                Index = (mflipbookParameter.z * mflipbookParameter.w) - 1;
-			}
-        }
-        // loop
-        else if(mflipbookParameter.y == 1)
-        {
-            NextIndex %= (mflipbookParameter.z * mflipbookParameter.w);
-        }
-        // loop reverse
-        else if(mflipbookParameter.y == 2)
-        {
-            bool Reverse = (floor(NextIndex) / (mflipbookParameter.z * mflipbookParameter.w)) % 2 == 1;
-            NextIndex = int(NextIndex) % (mflipbookParameter.z * mflipbookParameter.w);
-            if(Reverse)
-            {
-                NextIndex = mflipbookParameter.z * mflipbookParameter.w - 1 - NextIndex;
-            }
-        }
-        
-        float2 OriginUV = GetFlipbookOriginUV(Input.UV1, Index, mflipbookParameter.z, mflipbookParameter.w);
-        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(OriginUV, NextIndex, mflipbookParameter.z, mflipbookParameter.w);
-    }
-    */
+    // flipbook interpolation
+    ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
 
     // alpha threshold
     Output.AlphaThreshold = Input.AlphaThreshold;
@@ -152,6 +119,7 @@ VS_Output VS( const VS_Input Input )
     Output.UVDistortionUV = uvDistorionUV;
     Output.BlendUV = blendUV;
     Output.BlendAlphaUV = blendAlphaUV;
+    Output.BlendUVDistortionUV = blendUVDistortionUV;
 #endif
 	Output.ScreenUV = Output.Position.xy / Output.Position.w;
 	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;

@@ -128,6 +128,8 @@ protected:
 		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
 		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
 		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
+		state.TextureFilter7 = param.BasicParameterPtr->TextureFilter7;
+		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -138,6 +140,8 @@ protected:
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 
 		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
+
+		state.BlendUVDistortionIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
@@ -153,7 +157,8 @@ protected:
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
-											   param.BasicParameterPtr->Texture6Index
+											   param.BasicParameterPtr->Texture6Index,
+											   param.BasicParameterPtr->Texture7Index
 #endif
 		);
 
@@ -321,25 +326,49 @@ protected:
 		float uv1texNext = 0.0f;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		const int32_t advancedUVNum = 4;
+		const int32_t advancedUVNum = 5;
 
-		float advancedUVCurrent[advancedUVNum] = {
-			instanceParameter.AlphaUV.X, instanceParameter.UVDistortionUV.X, instanceParameter.BlendUV.X, instanceParameter.BlendAlphaUV.X};
-		const float advancedUVStep[advancedUVNum] = {instanceParameter.AlphaUV.Width / parameter.VertexCount,
-													 instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
-													 instanceParameter.BlendUV.Width / parameter.VertexCount,
-													 instanceParameter.BlendAlphaUV.Width / parameter.VertexCount};
-		const float advancedUVv1[advancedUVNum] = {
-			instanceParameter.AlphaUV.Y, instanceParameter.UVDistortionUV.Y, instanceParameter.BlendUV.Y, instanceParameter.BlendAlphaUV.Y};
-		const float advancedUVv2[advancedUVNum] = {advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
-												   advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
-												   advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
-												   advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f};
-		const float advancedUVv3[advancedUVNum] = {advancedUVv1[0] + instanceParameter.AlphaUV.Height,
-												   advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
-												   advancedUVv1[2] + instanceParameter.BlendUV.Height,
-												   advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height};
-		float advancedUVtexNext[advancedUVNum] = {0.0f};
+		float advancedUVCurrent[advancedUVNum] =
+		{
+			instanceParameter.AlphaUV.X,
+			instanceParameter.UVDistortionUV.X,
+			instanceParameter.BlendUV.X,
+			instanceParameter.BlendAlphaUV.X,
+			instanceParameter.BlendUVDistortionUV.X
+		};
+		const float advancedUVStep[advancedUVNum] =
+		{
+			instanceParameter.AlphaUV.Width / parameter.VertexCount,
+			instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
+			instanceParameter.BlendUV.Width / parameter.VertexCount,
+			instanceParameter.BlendAlphaUV.Width / parameter.VertexCount,
+			instanceParameter.BlendUVDistortionUV.Width / parameter.VertexCount
+		};
+		const float advancedUVv1[advancedUVNum] =
+		{
+			instanceParameter.AlphaUV.Y,
+			instanceParameter.UVDistortionUV.Y,
+			instanceParameter.BlendUV.Y,
+			instanceParameter.BlendAlphaUV.Y,
+			instanceParameter.BlendUVDistortionUV.Y
+		};
+		const float advancedUVv2[advancedUVNum] =
+		{
+			advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
+			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
+			advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
+			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f,
+			advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height * 0.5f
+		};
+		const float advancedUVv3[advancedUVNum] =
+		{
+			advancedUVv1[0] + instanceParameter.AlphaUV.Height,
+			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
+			advancedUVv1[2] + instanceParameter.BlendUV.Height,
+			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height,
+			advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height
+		};
+		float advancedUVtexNext[advancedUVNum] = { 0.0f };
 #endif
 
 		::Effekseer::Vec3f outerNext, innerNext, centerNext;
@@ -358,9 +387,9 @@ protected:
 			sin_ = sin_ * stepC + cos_ * stepS;
 			cos_ = t;
 
-			outerNext = ::Effekseer::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
-			innerNext = ::Effekseer::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
-			centerNext = ::Effekseer::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
+			outerNext = ::Effekseer::Vec3f{ cos_ * outerRadius, sin_ * outerRadius, outerHeight };
+			innerNext = ::Effekseer::Vec3f{ cos_ * innerRadius, sin_ * innerRadius, innerHeight };
+			centerNext = ::Effekseer::Vec3f{ cos_ * centerRadius, sin_ * centerRadius, centerHeight };
 
 			currentAngleDegree += stepAngleDegree;
 
@@ -438,6 +467,8 @@ protected:
 			v[0].SetBlendUV(advancedUVv1[2], 1);
 			v[0].SetBlendAlphaUV(advancedUVCurrent[3], 0);
 			v[0].SetBlendAlphaUV(advancedUVv1[3], 1);
+			v[0].SetBlendUVDistortionUV(advancedUVCurrent[4], 0);
+			v[0].SetBlendUVDistortionUV(advancedUVv1[4], 1);
 
 			v[1].SetAlphaUV(advancedUVCurrent[0], 0);
 			v[1].SetAlphaUV(advancedUVv2[0], 1);
@@ -447,6 +478,8 @@ protected:
 			v[1].SetBlendUV(advancedUVv2[2], 1);
 			v[1].SetBlendAlphaUV(advancedUVCurrent[3], 0);
 			v[1].SetBlendAlphaUV(advancedUVv2[3], 1);
+			v[1].SetBlendUVDistortionUV(advancedUVCurrent[4], 0);
+			v[1].SetBlendUVDistortionUV(advancedUVv2[4], 1);
 
 			v[2].SetAlphaUV(advancedUVtexNext[0], 0);
 			v[2].SetAlphaUV(advancedUVv1[0], 1);
@@ -456,6 +489,8 @@ protected:
 			v[2].SetBlendUV(advancedUVv1[2], 1);
 			v[2].SetBlendAlphaUV(advancedUVtexNext[3], 0);
 			v[2].SetBlendAlphaUV(advancedUVv1[3], 1);
+			v[2].SetBlendUVDistortionUV(advancedUVtexNext[4], 0);
+			v[2].SetBlendUVDistortionUV(advancedUVv1[4], 1);
 
 			v[3].SetAlphaUV(advancedUVtexNext[0], 0);
 			v[3].SetAlphaUV(advancedUVv2[0], 1);
@@ -465,6 +500,8 @@ protected:
 			v[3].SetBlendUV(advancedUVv2[2], 1);
 			v[3].SetBlendAlphaUV(advancedUVtexNext[3], 0);
 			v[3].SetBlendAlphaUV(advancedUVv2[3], 1);
+			v[3].SetBlendUVDistortionUV(advancedUVtexNext[4], 0);
+			v[3].SetBlendUVDistortionUV(advancedUVv2[4], 1);
 
 			v[4] = v[1];
 
@@ -476,6 +513,8 @@ protected:
 			v[5].SetBlendUV(advancedUVv3[2], 1);
 			v[5].SetBlendAlphaUV(advancedUVCurrent[3], 0);
 			v[5].SetBlendAlphaUV(advancedUVv3[3], 1);
+			v[5].SetBlendUVDistortionUV(advancedUVCurrent[4], 0);
+			v[5].SetBlendUVDistortionUV(advancedUVv3[4], 1);
 
 			v[6] = v[3];
 
@@ -487,6 +526,8 @@ protected:
 			v[7].SetBlendUV(advancedUVv3[2], 1);
 			v[7].SetBlendAlphaUV(advancedUVtexNext[3], 0);
 			v[7].SetBlendAlphaUV(advancedUVv3[3], 1);
+			v[7].SetBlendUVDistortionUV(advancedUVtexNext[4], 0);
+			v[7].SetBlendUVDistortionUV(advancedUVv3[4], 1);
 
 			for (int32_t vi = 0; vi < 8; vi++)
 			{
@@ -505,7 +546,7 @@ protected:
 				// return back
 				float t_b;
 				t_b = old_c * (stepC)-old_s * (-stepS);
-				auto s_b = old_s * (stepC) + old_c * (-stepS);
+				auto s_b = old_s * (stepC)+old_c * (-stepS);
 				auto c_b = t_b;
 
 				::Effekseer::Vec3f outerBefore(c_b * outerRadius, s_b * outerRadius, outerHeight);
@@ -549,10 +590,10 @@ protected:
 				// return back
 				float t_b;
 				t_b = old_c * (stepC)-old_s * (-stepS);
-				auto s_b = old_s * (stepC) + old_c * (-stepS);
+				auto s_b = old_s * (stepC)+old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
+				::Effekseer::Vec3f outerBefore{ c_b * outerRadius, s_b * outerRadius, outerHeight };
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
@@ -588,7 +629,7 @@ protected:
 
 				// rotate directions
 				::Effekseer::Mat43f matRot = mat43;
-				matRot.SetTranslation({0.0f, 0.0f, 0.0f});
+				matRot.SetTranslation({ 0.0f, 0.0f, 0.0f });
 
 				normalCurrent = ::Effekseer::Vec3f::Transform(normalCurrent, matRot);
 				normalNext = ::Effekseer::Vec3f::Transform(normalNext, matRot);

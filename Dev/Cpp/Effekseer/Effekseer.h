@@ -671,6 +671,7 @@ struct NodeRendererBasicParameter
 	int32_t Texture4Index = -1;
 	int32_t Texture5Index = -1;
 	int32_t Texture6Index = -1;
+	int32_t Texture7Index = -1;
 #endif
 	float DistortionIntensity = 0.0f;
 	MaterialParameter* MaterialParameterPtr = nullptr;
@@ -693,9 +694,14 @@ struct NodeRendererBasicParameter
 	TextureFilterType TextureFilter6 = TextureFilterType::Nearest;
 	TextureWrapType TextureWrap6 = TextureWrapType::Repeat;
 
+	TextureFilterType TextureFilter7 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap7 = TextureWrapType::Repeat;
+
 	float UVDistortionIntensity = 1.0f;
 
 	int32_t TextureBlendType = 0;
+
+	float BlendUVDistortionIntensity = 1.0f;
 
 	bool EnableInterpolation = false;
 	int32_t UVLoopType = 0;
@@ -2284,6 +2290,9 @@ struct EffectBasicRenderParameter
 	int32_t BlendTextureIndex;
 	TextureWrapType BlendTexWrapType;
 
+	int32_t BlendAlphaTextureIndex;
+	TextureWrapType BlendAlphaTexWrapType;
+
 	struct FlipbookParameters
 	{
 		bool Enable;
@@ -3422,6 +3431,7 @@ public:
 #ifndef __EFFEKSEER_MATERIALLOADER_H__
 #define __EFFEKSEER_MATERIALLOADER_H__
 
+
 namespace Effekseer
 {
 
@@ -3869,8 +3879,8 @@ public:
 //----------------------------------------------------------------------------------
 #endif // __EFFEKSEER_MODEL_H__
 
-#ifndef __EFFEKSEER_SOUND_PLAYER_H__
-#define __EFFEKSEER_SOUND_PLAYER_H__
+#ifndef	__EFFEKSEER_SOUND_PLAYER_H__
+#define	__EFFEKSEER_SOUND_PLAYER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -3893,37 +3903,33 @@ class SoundPlayer
 public:
 	struct InstanceParameter
 	{
-		void* Data;
-		float Volume;
-		float Pan;
-		float Pitch;
-		bool Mode3D;
-		Vector3D Position;
-		float Distance;
+		void*		Data;
+		float		Volume;
+		float		Pan;
+		float		Pitch;
+		bool		Mode3D;
+		Vector3D	Position;
+		float		Distance;
 	};
 
 public:
-	SoundPlayer()
-	{
-	}
+	SoundPlayer() {}
 
-	virtual ~SoundPlayer()
-	{
-	}
+	virtual ~SoundPlayer() {}
 
-	virtual SoundHandle Play(SoundTag tag, const InstanceParameter& parameter) = 0;
+	virtual SoundHandle Play( SoundTag tag, const InstanceParameter& parameter ) = 0;
+	
+	virtual void Stop( SoundHandle handle, SoundTag tag ) = 0;
 
-	virtual void Stop(SoundHandle handle, SoundTag tag) = 0;
+	virtual void Pause( SoundHandle handle, SoundTag tag, bool pause ) = 0;
 
-	virtual void Pause(SoundHandle handle, SoundTag tag, bool pause) = 0;
+	virtual bool CheckPlaying( SoundHandle handle, SoundTag tag ) = 0;
 
-	virtual bool CheckPlaying(SoundHandle handle, SoundTag tag) = 0;
+	virtual void StopTag( SoundTag tag ) = 0;
 
-	virtual void StopTag(SoundTag tag) = 0;
+	virtual void PauseTag( SoundTag tag, bool pause ) = 0;
 
-	virtual void PauseTag(SoundTag tag, bool pause) = 0;
-
-	virtual bool CheckPlayingTag(SoundTag tag) = 0;
+	virtual bool CheckPlayingTag( SoundTag tag ) = 0;
 
 	virtual void StopAll() = 0;
 };
@@ -3931,11 +3937,11 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_SOUND_PLAYER_H__
+#endif	// __EFFEKSEER_SOUND_PLAYER_H__
 
 #ifndef __EFFEKSEER_SOUNDLOADER_H__
 #define __EFFEKSEER_SOUNDLOADER_H__

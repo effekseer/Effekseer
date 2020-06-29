@@ -121,6 +121,16 @@ namespace Effekseer.Binary
 												UsedTextures.Add(blend_alpha_relative_path);
 											}
 										}
+
+										var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
+										if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture && 
+											blend_uv_distortion_relative_path != string.Empty)
+										{
+											if (!UsedTextures.Contains(blend_uv_distortion_relative_path))
+											{
+												UsedTextures.Add(blend_uv_distortion_relative_path);
+											}
+										}
 									}
 								}
 #endif
@@ -172,6 +182,16 @@ namespace Effekseer.Binary
 											if (!UsedDistortionTextures.Contains(blend_alpha_relative_path))
 											{
 												UsedDistortionTextures.Add(blend_alpha_relative_path);
+											}
+										}
+
+										var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
+										if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture &&
+											blend_uv_distortion_relative_path != string.Empty)
+										{
+											if (!UsedDistortionTextures.Contains(blend_uv_distortion_relative_path))
+											{
+												UsedDistortionTextures.Add(blend_uv_distortion_relative_path);
 											}
 										}
 									}
@@ -237,6 +257,16 @@ namespace Effekseer.Binary
 											if (!UsedTextures.Contains(path6))
 											{
 												UsedTextures.Add(path6);
+											}
+										}
+
+										var path7 = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
+										if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture &&
+											path7 != string.Empty)
+										{
+											if (!UsedTextures.Contains(path7))
+											{
+												UsedTextures.Add(path7);
 											}
 										}
 									}
