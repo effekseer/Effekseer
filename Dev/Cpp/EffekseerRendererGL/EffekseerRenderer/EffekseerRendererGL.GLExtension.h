@@ -9,6 +9,38 @@
 #include <windows.h>
 #endif
 
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+
+#if defined(__APPLE__)
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+
+#if defined(__APPLE__)
+#include <OpenGLES/ES3/gl.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GLES3/gl3.h>
+#endif
+
+#elif defined(__EFFEKSEER_RENDERER_GL2__)
+
+#if _WIN32
+#include <GL/gl.h>
+#elif defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
+#else
+
 #ifdef EMSCRIPTEN
 #define GL_GLEXT_PROTOTYPES
 #define EGL_EGLEXT_PROTOTYPES
@@ -22,6 +54,8 @@
 #else
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
+#endif
+
 #endif
 
 #include "EffekseerRendererGL.Base.Pre.h"
