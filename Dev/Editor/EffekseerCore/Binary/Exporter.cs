@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using Effekseer.Utl;
+using Effekseer.Data;
 
 namespace Effekseer.Binary
 {
@@ -67,10 +68,7 @@ namespace Effekseer.Binary
 					{
 						var _node = node as Data.Node;
 
-						if (!_node.IsRendered)
-						{
-						}
-						else
+						if(IsRenderedNode(_node))
 						{
 							if(_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 							{
@@ -268,7 +266,7 @@ namespace Effekseer.Binary
 				{
 					var _node = node as Data.Node;
 
-					if (_node.IsRendered && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model)
+					if (IsRenderedNode(_node) && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model)
 					{
 						var relative_path = _node.DrawingValues.Model.Model.RelativePath;
 
@@ -522,10 +520,13 @@ namespace Effekseer.Binary
 			outout_rootnode = (n) =>
 				{
 					data.Add(((int)NodeType.Root).GetBytes());
-					data.Add(n.Children.Count.GetBytes());
-					for (int i = 0; i < n.Children.Count; i++)
+
+					var children = n.Children.Internal.Where(_ => IsRenderedNodeGroup(_)).ToList();
+
+					data.Add(children.Count.GetBytes());
+					for (int i = 0; i < children.Count; i++)
 					{
-						outout_node(n.Children[i]);
+						outout_node(children[i]);
 					}
 				};
 
@@ -653,16 +654,37 @@ namespace Effekseer.Binary
 
 				data.Add(SoundValues.GetBytes(n.SoundValues, wave_and_index));
 
-				data.Add(n.Children.Count.GetBytes());
-				for (int i = 0; i < n.Children.Count; i++)
+				var children = n.Children.Internal.Where(_ => IsRenderedNodeGroup(_)).ToList();
+
+				data.Add(children.Count.GetBytes());
+				for (int i = 0; i < children.Count; i++)
 				{
-					outout_node(n.Children[i]);
+					outout_node(children[i]);
 				}
 			};
 
 			outout_rootnode(Core.Root);
 
 			return data.ToArray().ToArray();
+		}
+
+		bool IsRenderedNode(Data.Node node)
+		{
+			return node.IsRendered.Value && node.DrawingValues.Type.Value != Data.RendererValues.ParamaterType.None;
+		}
+
+		bool IsRenderedNodeGroup(Data.Node node)
+		{
+			if (IsRenderedNode(node))
+				return true;
+
+			foreach(var n in node.Children.Internal)
+			{
+				if (IsRenderedNodeGroup(n))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }
