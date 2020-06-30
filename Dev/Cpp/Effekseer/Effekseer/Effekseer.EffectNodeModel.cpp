@@ -86,6 +86,19 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	pos += sizeof(int);
 
 	AllColor.load(pos, m_effect->GetVersion());
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	int FalloffFlag = 0;
+	memcpy(&FalloffFlag, pos, sizeof(int));
+	pos += sizeof(int);
+	EnableFalloff = (FalloffFlag == 1);
+
+	if (EnableFalloff)
+	{
+		memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
+		pos += sizeof(FalloffParameter);
+	}
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -114,6 +127,12 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		nodeParameter.EnableFalloff = EnableFalloff;
+		nodeParameter.FalloffParam = FalloffParam;
+#endif
+
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
 }
@@ -144,6 +163,11 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		// nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		nodeParameter.EnableFalloff = EnableFalloff;
+		nodeParameter.FalloffParam = FalloffParam;
+#endif
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -212,6 +236,12 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		nodeParameter.EnableFalloff = EnableFalloff;
+		nodeParameter.FalloffParam = FalloffParam;
+#endif
+
 		renderer->EndRendering(nodeParameter, m_userData);
 	}
 }

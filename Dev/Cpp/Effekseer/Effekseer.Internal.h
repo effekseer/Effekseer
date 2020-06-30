@@ -7,6 +7,9 @@
 #include "Effekseer/SIMD/Effekseer.Mat44f.h"
 #include "Effekseer/SIMD/Effekseer.SIMDUtils.h"
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "../Effekseer/Effekseer/Effekseer.EffectNodeModel.h"
+#endif
 // A header to access internal data of effekseer
 
 
@@ -391,6 +394,7 @@ public:
 // Include
 //----------------------------------------------------------------------------------
 
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -426,6 +430,11 @@ public:
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		bool EnableFalloff;
+		EffectNodeModel::FalloffParameter FalloffParam;
+#endif
 
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;

@@ -54,12 +54,12 @@ struct VS_Output
 {
 	float4 Pos		: SV_POSITION;
 	float2 UV		: TEXCOORD0;
-#if ENABLE_NORMAL_TEXTURE
-	 half3 Normal		: TEXCOORD1;
-	half3 Binormal		: TEXCOORD2;
-	half3 Tangent		: TEXCOORD3;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+    float3 Normal		: TEXCOORD1;
+	float3 Binormal		: TEXCOORD2;
+	float3 Tangent		: TEXCOORD3;  
+    
     float2 AlphaUV              : TEXCOORD4;
     float2 UVDistortionUV       : TEXCOORD5;
     float2 BlendUV              : TEXCOORD6;
@@ -70,24 +70,16 @@ struct VS_Output
     float2 FlipbookNextIndexUV  : TEXCOORD10;
     
     float AlphaThreshold        : TEXCOORD11;
+#else
+
+#if ENABLE_NORMAL_TEXTURE
+	half3 Normal		: TEXCOORD1;
+	half3 Binormal		: TEXCOORD2;
+	half3 Tangent		: TEXCOORD3;   
 #endif
     
-#else // else ENABLE_NORMAL_TEXTURE
-    
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV              : TEXCOORD1;
-    float2 UVDistortionUV       : TEXCOORD2;
-    float2 BlendUV              : TEXCOORD3;
-    float2 BlendAlphaUV         : TEXCOORD4;
-    float2 BlendUVDistortionUV  : TEXCOORD5;
-    
-    float FlipbookRate          : TEXCOORD6;
-    float2 FlipbookNextIndexUV  : TEXCOORD7;
-    
-    float AlphaThreshold        : TEXCOORD8;
 #endif
-    
-#endif // end ENABLE_NORMAL_TEXTURE
+
 	float4 Color		: COLOR;
 };
 
@@ -160,6 +152,14 @@ VS_Output VS( const VS_Input Input )
 	Output.Normal = localNormal.xyz;
 	Output.Binormal = localBinormal.xyz;
 	Output.Tangent = localTangent.xyz;
+#else
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.Normal   = normalize( mul((float3x3)matModel, Input.Normal) );
+	Output.Binormal = normalize( mul((float3x3)matModel, Input.Binormal) );
+	Output.Tangent  = normalize( mul((float3x3)matModel, Input.Tangent) );
+#endif
+    
 #endif
 	Output.Color = modelColor;
 

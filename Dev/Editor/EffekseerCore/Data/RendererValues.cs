@@ -859,6 +859,11 @@ namespace Effekseer.Data
 				Color_Random = new Value.ColorWithRandom(255, 255, 255, 255);
 				Color_Easing = new ColorEasingParamater();
 				Color_FCurve = new ColorFCurveParameter();
+
+#if __EFFEKSEER_BUILD_VERSION16__
+				EnableFalloff = new Value.Boolean(false);
+				FalloffParam = new FalloffParameter();
+#endif
 			}
 
 			[Selector(ID = 0)]
@@ -878,6 +883,65 @@ namespace Effekseer.Data
 			[Selected(ID = 0, Value = 3)]
 			[IO(Export = true)]
 			public ColorFCurveParameter Color_FCurve { get; private set; }
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			[Selector(ID = 100)]
+			[Name(language = Language.Japanese, value = "フォールオフを有効")]
+			[Name(language = Language.English, value = "Enable Falloff")]
+			[IO(Export = true)]
+			public Value.Boolean EnableFalloff { get; private set; }
+
+			[Selected(ID = 100, Value = 0)]
+			[IO(Export = true)]
+			public FalloffParameter FalloffParam { get; private set; }
+
+			public class FalloffParameter
+			{
+				[Name(language = Language.Japanese, value = "カラーブレンドタイプ")]
+				[Name(language = Language.English, value = "Color Blend Type")]
+				[IO(Export = true)]
+				public Value.Enum<BlendType> ColorBlendType { get; private set; }
+
+				[Name(language = Language.Japanese, value = "開始色")]
+				[Name(language = Language.English, value = "Begin Color")]
+				[IO(Export = true)]
+				public Value.Color BeginColor { get; private set; }
+
+				[Name(language = Language.Japanese, value = "終了色")]
+				[Name(language = Language.English, value = "End Color")]
+				[IO(Export = true)]
+				public Value.Color EndColor { get; private set; }
+
+				[Name(language = Language.Japanese, value = "指数")]
+				[Name(language = Language.English, value = "Pow")]
+				[IO(Export = true)]
+				public Value.Int Pow { get; private set; }
+
+				public FalloffParameter()
+				{
+					ColorBlendType = new Value.Enum<BlendType>(BlendType.Add);
+					BeginColor = new Value.Color(0, 0, 0, 255);
+					EndColor = new Value.Color(255, 255, 255, 255);
+					Pow = new Value.Int(1, 100, 1);
+				}
+
+				public enum BlendType : int
+				{
+					[Name(language = Language.Japanese, value = "加算")]
+					[Name(language = Language.English, value = "Add")]
+					Add = 0,
+
+					[Name(language = Language.Japanese, value = "減算")]
+					[Name(language = Language.English, value = "Sub")]
+					Sub = 1,
+
+					[Name(language = Language.Japanese, value = "乗算")]
+					[Name(language = Language.English, value = "Mul")]
+					Mul = 2,
+				}
+
+			}
+#endif
 		}
 
 		public class TrackParameter

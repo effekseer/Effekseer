@@ -14,6 +14,8 @@
 #include "../SIMD/Effekseer.Vec2f.h"
 #include "../SIMD/Effekseer.Vec3f.h"
 
+#include "../Effekseer.EffectNodeModel.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -49,6 +51,11 @@ public:
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		bool EnableFalloff;
+		EffectNodeModel::FalloffParameter FalloffParam;
+#endif
 
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
