@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
+#include "Renderer/Effekseer.ModelRenderer.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -58,29 +59,6 @@ public:
 		} allColorValues;
 	};
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	struct FalloffParameter
-	{
-		enum BlendType
-		{
-			Add = 0,
-			Sub = 1,
-			Mul = 2,
-		} ColorBlendType;
-		Color BeginColor;
-		Color EndColor;
-		int32_t Pow;
-		
-		FalloffParameter()
-		{
-			ColorBlendType = BlendType::Add;
-			BeginColor = Color(255, 255, 255, 255);
-			EndColor = Color(255, 255, 255, 255);
-			Pow = 1;
-		}
-	};
-#endif
-
 public:
 	AlphaBlendType AlphaBlend;
 	int32_t ModelIndex;
@@ -98,7 +76,7 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	bool EnableFalloff;
-	FalloffParameter FalloffParam;
+	ModelRenderer::FalloffParameter FalloffParam;
 #endif
 
 	EffectNodeModel(Effect* effect, unsigned char*& pos)

@@ -879,6 +879,27 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.TextureBlendType = RendererCommon.TextureBlendType;
 
 	param.BlendUVDistortionIntensity = RendererCommon.BlendUVDistortionIntensity;
+
+	if (GetType() == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
+	{
+		EffectNodeModel* pNodeModel = reinterpret_cast<EffectNodeModel*>(this);
+		param.EnableFalloff = pNodeModel->EnableFalloff;
+		param.FalloffParam.ColorBlendType = static_cast<int32_t>(pNodeModel->FalloffParam.ColorBlendType);
+		param.FalloffParam.BeginColor[0] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.R) / 255.0f;
+		param.FalloffParam.BeginColor[1] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.G) / 255.0f;
+		param.FalloffParam.BeginColor[2] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.B) / 255.0f;
+		param.FalloffParam.BeginColor[3] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.A) / 255.0f;
+		param.FalloffParam.EndColor[0] = static_cast<float>(pNodeModel->FalloffParam.EndColor.R / 255.0f);
+		param.FalloffParam.EndColor[1] = static_cast<float>(pNodeModel->FalloffParam.EndColor.G / 255.0f);
+		param.FalloffParam.EndColor[2] = static_cast<float>(pNodeModel->FalloffParam.EndColor.B / 255.0f);
+		param.FalloffParam.EndColor[3] = static_cast<float>(pNodeModel->FalloffParam.EndColor.A / 255.0f);
+		param.FalloffParam.Pow = pNodeModel->FalloffParam.Pow;
+	}
+	else
+	{
+		param.EnableFalloff = false;
+	}
+
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;

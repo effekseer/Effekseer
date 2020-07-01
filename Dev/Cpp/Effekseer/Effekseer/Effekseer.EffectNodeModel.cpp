@@ -95,8 +95,8 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* settin
 
 	if (EnableFalloff)
 	{
-		memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
-		pos += sizeof(FalloffParameter);
+		memcpy(&FalloffParam, pos, sizeof(ModelRenderer::FalloffParameter));
+		pos += sizeof(ModelRenderer::FalloffParameter);
 	}
 #endif
 }

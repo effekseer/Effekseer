@@ -633,6 +633,15 @@ struct EffectBasicRenderParameter
 	int32_t TextureBlendType;
 
 	float BlendUVDistortionIntensity;
+
+	bool EnableFalloff;
+	struct
+	{
+		int32_t ColorBlendType;
+		float BeginColor[4];
+		float EndColor[4];
+		int32_t Pow = 1;
+	} FalloffParam;
 #endif
 	AlphaBlendType AlphaBlend;
 	TextureFilterType FilterType;
