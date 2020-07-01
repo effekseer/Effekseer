@@ -271,6 +271,13 @@ public:
 		return selfID;
 	}
 
+	int32_t Step(int32_t edge, int32_t value, const std::string& name = "")
+	{
+		auto selfID = AddVariable(ValueType::Float1, name);
+		ExportVariable(selfID, "step(" + GetNameWithCast(edge, ValueType::Float1) + "," + GetNameWithCast(value, ValueType::Float1) + ")");
+		return selfID;
+	}
+
 	int32_t AppendVector(int32_t id1, int32_t id2, const std::string& name = "")
 	{
 		auto allCount = GetElementCount(GetType(id1)) + GetElementCount(GetType(id2));
@@ -1090,9 +1097,31 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Step)
 	{
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= min(1.0,ceil("
-			<< GetInputArg(ValueType::Float1, node->Inputs[1]) << "-" << GetInputArg(ValueType::Float1, node->Inputs[0]) << "));"
-			<< std::endl;
+		int edgeArg = 0;
+		int valueArg = 0;
+
+		if (node->Inputs[0].IsConnected)
+		{
+			edgeArg = compiler->AddVariable(node->Inputs[0].Type, node->Inputs[0].Name);
+		}
+		else
+		{
+			edgeArg = compiler->AddConstant(ValueType::Float1, node->Inputs[0].NumberValue);
+		}
+
+		if (node->Inputs[1].IsConnected)
+		{
+			valueArg = compiler->AddVariable(node->Inputs[1].Type, node->Inputs[1].Name);
+		}
+		else
+		{
+			valueArg = compiler->AddConstant(ValueType::Float1, node->Inputs[1].NumberValue);
+		}
+
+		compiler->Step(edgeArg, valueArg, node->Outputs[0].Name);
+
+		ret << compiler->Str();
+		compiler->Clear();
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Ceil)
