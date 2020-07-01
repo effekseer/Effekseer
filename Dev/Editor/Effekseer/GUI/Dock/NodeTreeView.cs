@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 		/// <summary>
 		/// For maintain parameters when removing and adding immediately
 		/// </summary>
-		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeViewNode> temporalRemovingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeViewNode>();
+		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeViewNode> temporalChangingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeViewNode>();
 
 		public NodeTreeView()
         {
@@ -135,25 +135,32 @@ namespace Effekseer.GUI.Dock
 				var n1 = findNode(pair.Item1, Children.Internal);
 				var n2 = findNode(pair.Item2, Children.Internal);
 
-				if (pair.Item3 == MovingNodeEventType.AddLast)
+				var isNode = n1.Node is Data.Node;
+
+				if(isNode)
 				{
-					Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, int.MaxValue);
-				}
-				else if (pair.Item3 == MovingNodeEventType.Insert)
-				{
-					// to avoid root node
-					if(n2.Node is Data.Node)
+					var movedNode = n1.Node as Data.Node;
+
+					if (pair.Item3 == MovingNodeEventType.AddLast)
 					{
-						Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+						Core.MoveNode(movedNode, n2.Node.Parent, int.MaxValue);
 					}
-				}
-				else if (pair.Item3 == MovingNodeEventType.AddAsChild)
-				{
-					Core.MoveNode(n1.Node as Data.Node, n2.Node, int.MaxValue);
-				}
-				else
-				{
-					throw new Exception();
+					else if (pair.Item3 == MovingNodeEventType.Insert)
+					{
+						// to avoid root node
+						if (n2.Node is Data.Node)
+						{
+							Core.MoveNode(movedNode, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+						}
+					}
+					else if (pair.Item3 == MovingNodeEventType.AddAsChild)
+					{
+						Core.MoveNode(movedNode, n2.Node, int.MaxValue);
+					}
+					else
+					{
+						throw new Exception();
+					}
 				}
 			}
 			exchangeEvents.Clear();
@@ -164,7 +171,7 @@ namespace Effekseer.GUI.Dock
 				isVisibleChanging = false;
 			}
 
-			temporalRemovingNodeTreeViews.Clear();
+			temporalChangingNodeTreeViews.Clear();
 		}
 
         /// <summary>
@@ -585,9 +592,9 @@ namespace Effekseer.GUI.Dock
             }
 
 			NodeTreeViewNode treeViewNode = null;
-			if(treeView.temporalRemovingNodeTreeViews.ContainsKey(node))
+			if(treeView.temporalChangingNodeTreeViews.ContainsKey(node))
 			{
-				treeViewNode = treeView.temporalRemovingNodeTreeViews[node];
+				treeViewNode = treeView.temporalChangingNodeTreeViews[node];
 				treeViewNode.AddEvent(true);
 			}
 			else
@@ -618,7 +625,11 @@ namespace Effekseer.GUI.Dock
                 {
                     treenode.RemoveEvent(true);
                     Children.Remove(treenode);
-					treeView.temporalRemovingNodeTreeViews.Add(treenode.Node, treenode);
+
+					if (!treeView.temporalChangingNodeTreeViews.ContainsKey(node))
+					{
+						treeView.temporalChangingNodeTreeViews.Add(treenode.Node, treenode);
+					}
                     return;
                 }
             }
