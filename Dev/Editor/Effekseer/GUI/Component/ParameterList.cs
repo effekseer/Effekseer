@@ -32,8 +32,6 @@ namespace Effekseer.GUI.Component
 
 		Utils.DelayedList<TypeRow> controlRows = new Utils.DelayedList<TypeRow>();
 
-		Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
-
 		bool isControlsChanged = false;
 
 		bool isFirstUpdate = true;
@@ -139,67 +137,6 @@ namespace Effekseer.GUI.Component
 			controlRows.Unlock();
 		}
 
-		/*
-		void AppendType(Type type, int selectorIndent, PropertyInfo[] props = null, TypeRow parentRow = null)
-		{
-			if (props == null)
-			{
-				props = new PropertyInfo[0];
-			}
-
-			var ps = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-
-			List<TypeRow> sameLayer = new List<TypeRow>();
-
-			for (int i = 0; i < ps.Length; i++)
-			{
-				var attributes = ps[i].GetCustomAttributes(false);
-
-				var list_props = new List<PropertyInfo>(props);
-				list_props.Add(ps[i]);
-
-				var row = new TypeRow(list_props.ToArray(), sameLayer, parentRow);
-
-				if (row.Control != null)
-				{
-					// visible values
-					typeRows.Add(row);
-					sameLayer.Add(row);
-
-					if (row.Selector != null)
-					{
-						row.SelectorIndent = selectorIndent + 1;
-					}
-					else
-					{
-						row.SelectorIndent = selectorIndent;
-					}
-				}
-				else
-				{
-					// value container
-
-					// protect looping
-					if (ps[i].PropertyType == typeof(Data.NodeBase)) continue;
-					if (ps[i].PropertyType == typeof(Data.NodeBase.ChildrenCollection)) continue;
-					if (ps[i].PropertyType == typeof(Data.Value.FCurve<float>)) continue;
-					if (ps[i].PropertyType == typeof(Data.Value.FCurve<byte>)) continue;
-
-					typeRows.Add(row);
-					sameLayer.Add(row);
-
-					var selectorIndentLocal = selectorIndent;
-					if (row.Selector != null)
-					{
-						selectorIndentLocal = selectorIndentLocal + 1;
-					}
-
-					AppendType(ps[i].PropertyType, selectorIndentLocal, list_props.ToArray(), row);
-				}
-			}
-		}
-		*/
-
 		public void SetValue(object value)
 		{
 			if (value != null)
@@ -223,6 +160,13 @@ namespace Effekseer.GUI.Component
 		void RegisterValue(object value)
 		{
 			List<TypeRow> newRows = new List<TypeRow>();
+
+			Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
+
+			foreach (var row in controlRows.Internal)
+			{
+				objToTypeRow.Add(row.BindingValue, row);
+			}
 
 			Action<object,int> parseObject = null;
 
@@ -355,8 +299,6 @@ namespace Effekseer.GUI.Component
 
 		void ResetValue()
 		{
-			objToTypeRow.Clear();
-
 			controlRows.Lock();
 			foreach (var row in controlRows.Internal)
 			{
