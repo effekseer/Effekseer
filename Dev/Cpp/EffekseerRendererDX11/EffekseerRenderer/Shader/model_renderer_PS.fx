@@ -5,6 +5,12 @@
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+struct FalloffParameter
+{
+    float4 Param; // x:enable, y:colorblendtype, z:pow
+    float4 BeginColor;
+    float4 EndColor;
+};
 
 cbuffer PS_ConstanBuffer : register(b0)
 {
@@ -17,6 +23,10 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4  fUVDistortionParameter; // x:intensity, y:blendIntensity
 
     float4  fBlendTextureParameter; // x:blendType
+    
+    float4  fCameraFrontDirection;
+
+    FalloffParameter fFalloffParam;
 };
 
 #else // else __EFFEKSEER_BUILD_VERSION16__
@@ -61,12 +71,12 @@ struct PS_Input
 {
 	float4 Pos		: SV_POSITION;
 	float2 UV		: TEXCOORD0;
-#if ENABLE_NORMAL_TEXTURE
-	half3 Normal	: TEXCOORD1;
-	half3 Binormal	: TEXCOORD2;
-	half3 Tangent	: TEXCOORD3;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+    float3 Normal		: TEXCOORD1;
+	float3 Binormal		: TEXCOORD2;
+	float3 Tangent		: TEXCOORD3;  
+    
     float2 AlphaUV              : TEXCOORD4;
     float2 UVDistortionUV       : TEXCOORD5;
     float2 BlendUV              : TEXCOORD6;
@@ -77,24 +87,15 @@ struct PS_Input
     float2 FlipbookNextIndexUV  : TEXCOORD10;
     
     float AlphaThreshold        : TEXCOORD11;
+#else
+
+#if ENABLE_NORMAL_TEXTURE
+	half3 Normal		: TEXCOORD1;
+	half3 Binormal		: TEXCOORD2;
+	half3 Tangent		: TEXCOORD3;   
 #endif
     
-#else // else ENABLE_NORMAL_TEXTURE
-    
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV              : TEXCOORD1;
-    float2 UVDistortionUV       : TEXCOORD2;
-    float2 BlendUV              : TEXCOORD3;
-    float2 BlendAlphaUV         : TEXCOORD4;
-    float2 BlendUVDistortionUV  : TEXCOORD5;
-    
-    float FlipbookRate          : TEXCOORD6;
-    float2 FlipbookNextIndexUV  : TEXCOORD7;
-    
-    float AlphaThreshold        : TEXCOORD8;
 #endif
-    
-#endif // end ENABLE_NORMAL_TEXTURE
 	float4 Color	: COLOR;
 };
 
@@ -131,17 +132,46 @@ float4 PS( const PS_Input Input ) : SV_Target
     BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset).a;
     
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
+#endif
+    
+#if ENABLE_LIGHTING
+	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
+	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
+#endif
+    
+#if __EFFEKSEER_BUILD_VERSION16__
+    // apply falloff
+    if(fFalloffParam.Param.x == 1)
+    {
+        float3 cameraVec = normalize(-fCameraFrontDirection.xyz);
+#if ENABLE_LIGHTING
+        float CdotN = saturate(dot(cameraVec, float3(localNormal.x, localNormal.y, localNormal.z)));
+#else
+        float CdotN = saturate(dot(cameraVec, normalize(Input.Normal)));
+#endif
+        float4 FalloffBlendColor = lerp(fFalloffParam.EndColor, fFalloffParam.BeginColor, pow(CdotN, fFalloffParam.Param.z));
+
+        if(fFalloffParam.Param.y == 0) // add
+        {
+            Output.rgb += FalloffBlendColor.rgb;
+        }
+        else if(fFalloffParam.Param.y == 1) // sub
+        {
+            Output.rgb -= FalloffBlendColor.rgb;
+        }
+        else if(fFalloffParam.Param.y == 2) // mul
+        {
+            Output.rgb *= FalloffBlendColor.rgb;
+        }
+    
+        Output.a *= FalloffBlendColor.a;
+    }
     
     // alpha threshold
     if (Output.a <= Input.AlphaThreshold)
     {
         discard;
     }
-#endif
-    
-#if ENABLE_LIGHTING
-	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
-	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
 #endif
 
 	if( Output.a == 0.0 ) discard;

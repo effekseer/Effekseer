@@ -58,7 +58,7 @@ namespace Effekseer.Data
 		public UVDistortionTextureParameter()
 		{
 			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-			UVDistortionIntensity = new Value.Float(100.0f, 100.0f, -100.0f);
+			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
 		}
@@ -158,7 +158,7 @@ namespace Effekseer.Data
 		public BlendUVDistortionTextureParameter()
 		{
 			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-			UVDistortionIntensity = new Value.Float(100.0f, 100.0f, -100.0f);
+			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
 		}

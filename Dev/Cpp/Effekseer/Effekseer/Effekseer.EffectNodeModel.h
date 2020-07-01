@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
+#include "Renderer/Effekseer.ModelRenderer.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -72,6 +73,11 @@ public:
 	CullingType Culling;
 
 	StandardColorParameter AllColor;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	bool EnableFalloff;
+	ModelRenderer::FalloffParameter FalloffParam;
+#endif
 
 	EffectNodeModel(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
