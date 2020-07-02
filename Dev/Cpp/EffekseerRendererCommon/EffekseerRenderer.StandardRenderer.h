@@ -68,6 +68,8 @@ struct StandardRendererState
 	int32_t TextureBlendType;
 
 	float BlendUVDistortionIntensity;
+
+	int32_t EmissiveScaling;
 #endif
 
 	::Effekseer::RendererMaterialType MaterialType;
@@ -128,6 +130,8 @@ struct StandardRendererState
 		TextureBlendType = 0;
 
 		BlendUVDistortionIntensity = 1.0f;
+
+		EmissiveScaling = 1;
 #endif
 
 		MaterialPtr = nullptr;
@@ -216,6 +220,8 @@ struct StandardRendererState
 		if (TextureBlendType != state.TextureBlendType)
 			return true;
 		if (BlendUVDistortionIntensity != state.BlendUVDistortionIntensity)
+			return true;
+		if (EmissiveScaling != state.EmissiveScaling)
 			return true;
 #endif
 		if (MaterialType != state.MaterialType)
@@ -510,6 +516,18 @@ private:
 				};
 			};
 		} blendTextureParameter;
+
+		struct
+		{
+			union {
+				float Buffer[4];
+
+				struct
+				{
+					float emissiveScaling;
+				};
+			};
+		};
 	};
 #endif
 
@@ -1270,6 +1288,8 @@ public:
 
 			pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 
+			pcb.emissiveScaling = m_state.EmissiveScaling;
+
 			m_renderer->SetPixelBufferToShader(&pcb.flipbookParameter, sizeof(PixelConstantBuffer), psOffset);
 #endif
 		}
@@ -1322,6 +1342,8 @@ public:
 				pcb.uvDistortionParameter.blendIntensity = m_state.BlendUVDistortionIntensity;
 
 				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
+
+				pcb.emissiveScaling = m_state.EmissiveScaling;
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}

@@ -900,6 +900,8 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 		param.EnableFalloff = false;
 	}
 
+	param.EmissiveScaling = RendererCommon.EmissiveScaling;
+
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;

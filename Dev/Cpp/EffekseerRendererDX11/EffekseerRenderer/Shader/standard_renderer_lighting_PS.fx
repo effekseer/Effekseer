@@ -38,6 +38,8 @@ cbuffer PS_ConstanBuffer : register(b0)
 
     float4 fUVDistortionParameter; // x:intensity, y: blendIntensity
     float4 fBlendTextureParameter; // x:blendType
+    
+    float4 fEmissiveScaling; // x:emissiveScaling
 };
 #else
 float4	fLightDirection		: register( c0 );
@@ -101,6 +103,8 @@ float4 PS(const PS_Input Input) : SV_Target
     BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset).a;
     
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
+    
+    Output.rgb *= fEmissiveScaling.x;
     
     // alpha threshold
     if(Output.a <= Input.AlphaThreshold)

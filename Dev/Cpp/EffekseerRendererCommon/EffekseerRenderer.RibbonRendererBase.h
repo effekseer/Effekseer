@@ -953,6 +953,8 @@ public:
 		state.TextureBlendType = param.BasicParameterPtr->TextureBlendType;
 
 		state.BlendUVDistortionIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
+
+		state.EmissiveScaling = param.BasicParameterPtr->EmissiveScaling;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;

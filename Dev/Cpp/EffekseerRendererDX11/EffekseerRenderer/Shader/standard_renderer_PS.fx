@@ -28,6 +28,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 flipbookParameter; // x:enable, y:interpolationType
     float4 uvDistortionParameter; // x:intensity, y:blendIntensity
     float4 blendTextureParameter; // x:blendType
+    float4 emissiveScaling; // x:emissiveScaling
 };
 #endif
 
@@ -77,6 +78,8 @@ float4 PS( const PS_Input Input ) : SV_Target
     BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset).a;
     
     ApplyTextureBlending(Output, BlendTextureColor, blendTextureParameter.x);
+    
+    Output.rgb *= emissiveScaling.x;
     
     // alpha threshold
     if (Output.a <= Input.AlphaThreshold)
