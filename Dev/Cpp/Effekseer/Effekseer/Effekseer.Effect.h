@@ -642,6 +642,9 @@ struct EffectBasicRenderParameter
 		float EndColor[4];
 		int32_t Pow = 1;
 	} FalloffParam;
+
+	int32_t EmissiveScaling;
+
 #endif
 	AlphaBlendType AlphaBlend;
 	TextureFilterType FilterType;
