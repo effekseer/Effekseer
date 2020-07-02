@@ -27,6 +27,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4  fCameraFrontDirection;
 
     FalloffParameter fFalloffParam;
+
+    float4 fEmissiveScaling; // x:emissiveScaling
 };
 
 #else // else __EFFEKSEER_BUILD_VERSION16__
@@ -166,6 +168,8 @@ float4 PS( const PS_Input Input ) : SV_Target
     
         Output.a *= FalloffBlendColor.a;
     }
+    
+    Output.rgb *= fEmissiveScaling.x;
     
     // alpha threshold
     if (Output.a <= Input.AlphaThreshold)

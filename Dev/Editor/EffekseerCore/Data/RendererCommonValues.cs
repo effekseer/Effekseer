@@ -728,6 +728,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		[Selected(ID = 3, Value = (int)MaterialType.Default)]
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
+		[Name(language = Language.Japanese, value = "エミッシブ倍率")]
+		[Name(language = Language.English, value = "Emissive Scaling")]
+		public Value.Int EmissiveScaling { get; private set; }
+#endif
+
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
@@ -1032,6 +1040,10 @@ namespace Effekseer.Data
 		{
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter(this);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			EmissiveScaling = new Value.Int(1, int.MaxValue, 1);
+#endif
 
 			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);

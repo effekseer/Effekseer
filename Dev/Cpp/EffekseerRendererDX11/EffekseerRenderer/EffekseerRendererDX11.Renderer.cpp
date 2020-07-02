@@ -499,8 +499,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
-	m_shader->SetPixelRegisterCount(3);
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
+	m_shader->SetPixelRegisterCount(4);
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetVertexRegisterCount(8 + 1 + 1);
@@ -533,8 +533,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
-	m_shader_lighting->SetPixelRegisterCount(6);
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 7);
+	m_shader_lighting->SetPixelRegisterCount(7);
 #else
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);

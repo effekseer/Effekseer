@@ -708,6 +708,8 @@ struct NodeRendererBasicParameter
 	int32_t InterpolationType = 0;
 	int32_t FlipbookDivideX = 1;
 	int32_t FlipbookDivideY = 1;
+
+	int32_t EmissiveScaling = 1;
 #endif
 };
 

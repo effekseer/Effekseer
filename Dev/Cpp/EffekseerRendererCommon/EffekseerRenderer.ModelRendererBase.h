@@ -235,6 +235,18 @@ struct ModelRendererPixelConstantBuffer
 		float EndColor[4];
 
 	} FalloffParameter;
+
+	struct
+	{
+		union {
+			float Buffer[4];
+			
+			struct
+			{
+				float EmissiveScaling;
+			};
+		};
+	};
 #endif
 };
 
@@ -1137,6 +1149,7 @@ public:
 				pcb->FalloffParameter.Pow = static_cast<float>(param.FalloffParam.Pow);
 				ColorToFloat4(param.FalloffParam.BeginColor, pcb->FalloffParameter.BeginColor);
 				ColorToFloat4(param.FalloffParam.EndColor, pcb->FalloffParameter.EndColor);
+				pcb->EmissiveScaling = param.BasicParameterPtr->EmissiveScaling;
 #endif
 			}
 		}

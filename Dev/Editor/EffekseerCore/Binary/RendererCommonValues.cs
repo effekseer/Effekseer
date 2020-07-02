@@ -37,6 +37,14 @@ namespace Effekseer.Binary
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default ||
+				value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
+			{
+				data.Add(BitConverter.GetBytes(value.EmissiveScaling));
+			}
+#endif
+
 			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
 			{
 				var tempTexInfo = new TextureInformation();
