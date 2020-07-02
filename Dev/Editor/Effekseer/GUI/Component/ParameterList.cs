@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Component
 
 		public static IParameterControl Generate(Type type)
 		{
-			if(generators.ContainsKey(type))
+			if (generators.ContainsKey(type))
 			{
 				return generators[type]();
 			}
@@ -47,8 +47,11 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
 			}
 
-			collection.Update();
-			
+			var indent = new IndentInformation();
+			indent.Indent = 0;
+			indent.IsSelecter = false;
+			collection.Update(indent);
+
 			Manager.NativeManager.Columns(1);
 
 			isFirstUpdate = false;
@@ -68,7 +71,13 @@ namespace Effekseer.GUI.Component
 		{
 			collection.SetValue(value, 0);
 		}
-		
+
+		struct IndentInformation
+		{
+			public int Indent;
+			public bool IsSelecter;
+		}
+
 		class TypeRowCollection
 		{
 			object bindingObject = null;
@@ -81,8 +90,14 @@ namespace Effekseer.GUI.Component
 			{
 			}
 
-			public void Update()
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="firstIndent"></param>
+			/// <returns>last indent</returns>
+			public IndentInformation Update(IndentInformation firstIndent)
 			{
+				var indent = firstIndent;
 				if (isControlsChanged)
 				{
 					SetValue(bindingObject, 0);
@@ -97,11 +112,14 @@ namespace Effekseer.GUI.Component
 
 
 
-					if(controlRows.Internal[i].Children != null)
+					if (controlRows.Internal[i].Children != null)
 					{
-						if(string.IsNullOrEmpty(controlRows.Internal[i].TreeNodeID))
+						if (string.IsNullOrEmpty(controlRows.Internal[i].TreeNodeID))
 						{
-							controlRows.Internal[i].Children.Update();
+							indent.Indent = controlRows[i].SelectorIndent;
+							indent.IsSelecter = controlRows[i].IsSelector;
+
+							indent = controlRows.Internal[i].Children.Update(indent);
 						}
 						else
 						{
@@ -115,7 +133,7 @@ namespace Effekseer.GUI.Component
 
 							if (opened)
 							{
-								controlRows.Internal[i].Children.Update();
+								indent = controlRows.Internal[i].Children.Update(indent);
 							}
 
 							if (opened)
@@ -129,10 +147,10 @@ namespace Effekseer.GUI.Component
 					if (c is Dummy) continue;
 					if (c == null) continue;
 
-					if (i > 0 &&
-						(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
+					if (
+						(indent.Indent > controlRows[i].SelectorIndent ||
 						controlRows[i].IsSelector ||
-						(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
+						(indent.Indent == controlRows[i].SelectorIndent && indent.IsSelecter)))
 					{
 						Manager.NativeManager.Separator();
 					}
@@ -158,6 +176,9 @@ namespace Effekseer.GUI.Component
 					Manager.NativeManager.PopItemWidth();
 
 					Manager.NativeManager.NextColumn();
+
+					indent.Indent = controlRows[i].SelectorIndent;
+					indent.IsSelecter = controlRows[i].IsSelector;
 				}
 
 				controlRows.Unlock();
@@ -167,6 +188,8 @@ namespace Effekseer.GUI.Component
 					SetValue(bindingObject, 0);
 					isControlsChanged = false;
 				}
+
+				return indent;
 			}
 
 			public void FixValues()
@@ -349,7 +372,7 @@ namespace Effekseer.GUI.Component
 
 			void RemoveRow(TypeRow row, bool removeControls)
 			{
-				if(row.Children != null)
+				if (row.Children != null)
 				{
 					row.Children.SetValue(null, 0);
 				}
@@ -408,7 +431,7 @@ namespace Effekseer.GUI.Component
 			}
 
 		}
-		
+
 		class TypeRow
 		{
 			public string TreeNodeID = null;
@@ -517,7 +540,7 @@ namespace Effekseer.GUI.Component
 
 				gui = ParameterListComponentFactory.Generate(type);
 
-				if(gui != null)
+				if (gui != null)
 				{
 					// already generated
 				}
@@ -676,7 +699,7 @@ namespace Effekseer.GUI.Component
 			public void SetSelector(List<TypeRow> sameLayerRows)
 			{
 				// Selector
-				if(editableValue.TargetSelectorID >= 0)
+				if (editableValue.TargetSelectorID >= 0)
 				{
 					var selector = sameLayerRows.Where(_ => _.IsSelector && _.SelfSelectorID == editableValue.TargetSelectorID).LastOrDefault();
 
