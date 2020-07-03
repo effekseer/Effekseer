@@ -28,11 +28,7 @@ namespace Effekseer.GUI.Component
 
 	class ParameterList : GroupControl, IControl, IDroppableControl
 	{
-		object bindingObject = null;
-
-		Utils.DelayedList<TypeRow> controlRows = new Utils.DelayedList<TypeRow>();
-
-		bool isControlsChanged = false;
+		TypeRowCollection collection = new TypeRowCollection();
 
 		bool isFirstUpdate = true;
 
@@ -42,146 +38,201 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			if (isControlsChanged)
-			{
-				SetValue(bindingObject);
-				isControlsChanged = false;
-			}
-
-			controlRows.Lock();
-
 			Manager.NativeManager.Columns(2);
 
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
 
-			if(isFirstUpdate)
+			if (isFirstUpdate)
 			{
 				Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
 			}
 
-			for (int i = 0; i < controlRows.Internal.Count; i++)
-			{
-				var c = controlRows.Internal[i].Control as IParameterControl;
-
-				if (c is Dummy) continue;
-
-				if (i > 0 &&
-					(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
-					controlRows[i].IsSelector ||
-					(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
-				{
-					Manager.NativeManager.Separator();
-				}
-				//Manager.NativeManager.PushItemWidth(100);
-
-				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
-				Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
-
-				if (Manager.NativeManager.IsItemHovered())
-				{
-					//Manager.NativeManager.SetTooltip(c.Description);
-
-					Manager.NativeManager.BeginTooltip();
-
-					Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
-					Manager.NativeManager.Separator();
-					Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
-
-					Manager.NativeManager.EndTooltip();
-				}
-
-				//Manager.NativeManager.PopItemWidth();
-
-				Manager.NativeManager.NextColumn();
-
-				Manager.NativeManager.PushItemWidth(-1);
-				c.Update();
-				Manager.NativeManager.PopItemWidth();
-
-				Manager.NativeManager.NextColumn();
-			}
-
+			collection.Update();
+			
 			Manager.NativeManager.Columns(1);
-
-			controlRows.Unlock();
-
-			if (isControlsChanged)
-			{
-				SetValue(bindingObject);
-				isControlsChanged = false;
-			}
 
 			isFirstUpdate = false;
 		}
 
 		public void SetType(Type type)
 		{
-			// Ignore
-			/*
-			typeRows.Clear();
-
-			bindingType = type;
-			AppendType(type, 0);
-			*/
+			// ignore
 		}
 
 		public void FixValues()
 		{
-			controlRows.Lock();
-
-			foreach (var c in controlRows.Internal.Select(_ => _.Control).OfType<IParameterControl>())
-			{
-				c.FixValue();
-			}
-
-			controlRows.Unlock();
+			collection.FixValues();
 		}
 
 		public void SetValue(object value)
 		{
-			if (value != null)
-			{
-				RegisterValue(value);
-			}
-			else
-			{
-				ResetValue();
+			collection.SetValue(value, 0);
+		}
+		
+		class TypeRowCollection
+		{
+			object bindingObject = null;
 
-				if (bindingObject is Data.IEditableValueCollection)
+			Utils.DelayedList<TypeRow> controlRows = new Utils.DelayedList<TypeRow>();
+
+			bool isControlsChanged = false;
+
+			public TypeRowCollection()
+			{
+			}
+
+			public void Update()
+			{
+				if (isControlsChanged)
 				{
-					var o2 = bindingObject as Data.IEditableValueCollection;
-					o2.OnChanged -= ChangeSelector;
+					SetValue(bindingObject, 0);
+					isControlsChanged = false;
 				}
 
-				bindingObject = null;
+				controlRows.Lock();
+
+				for (int i = 0; i < controlRows.Internal.Count; i++)
+				{
+					var c = controlRows.Internal[i].Control as IParameterControl;
+
+
+
+					if(controlRows.Internal[i].Children != null)
+					{
+						if(string.IsNullOrEmpty(controlRows.Internal[i].TreeNodeID))
+						{
+							controlRows.Internal[i].Children.Update();
+						}
+						else
+						{
+							var label = controlRows.Internal[i].Label.ToString() + "###" + controlRows.Internal[i].TreeNodeID;
+
+							var opened = Manager.NativeManager.TreeNode(label);
+
+							Manager.NativeManager.NextColumn();
+
+							Manager.NativeManager.NextColumn();
+
+							if (opened)
+							{
+								controlRows.Internal[i].Children.Update();
+							}
+
+							if (opened)
+							{
+								Manager.NativeManager.TreePop();
+							}
+						}
+						continue;
+					}
+
+					if (c is Dummy) continue;
+					if (c == null) continue;
+
+					if (i > 0 &&
+						(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
+						controlRows[i].IsSelector ||
+						(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
+					{
+						Manager.NativeManager.Separator();
+					}
+
+					Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
+					Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+
+					if (Manager.NativeManager.IsItemHovered())
+					{
+						Manager.NativeManager.BeginTooltip();
+
+						Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+						Manager.NativeManager.Separator();
+						Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
+
+						Manager.NativeManager.EndTooltip();
+					}
+
+					Manager.NativeManager.NextColumn();
+
+					Manager.NativeManager.PushItemWidth(-1);
+					c.Update();
+					Manager.NativeManager.PopItemWidth();
+
+					Manager.NativeManager.NextColumn();
+				}
+
+				controlRows.Unlock();
+
+				if (isControlsChanged)
+				{
+					SetValue(bindingObject, 0);
+					isControlsChanged = false;
+				}
 			}
-		}
 
-		void RegisterValue(object value)
-		{
-			List<TypeRow> newRows = new List<TypeRow>();
-
-			Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
-
-			foreach (var row in controlRows.Internal)
+			public void FixValues()
 			{
-				objToTypeRow.Add(row.BindingValue, row);
+				controlRows.Lock();
+
+				foreach (var c in controlRows.Internal.Select(_ => _.Control).OfType<IParameterControl>())
+				{
+					c.FixValue();
+				}
+
+				foreach (var c in controlRows.Internal)
+				{
+					c.Children?.FixValues();
+				}
+
+				controlRows.Unlock();
 			}
 
-			Action<object,int> parseObject = null;
+			public void SetValue(object value, int indent)
+			{
+				if (value != null)
+				{
+					RegisterValue(value, indent);
+				}
+				else
+				{
+					controlRows.Lock();
+					foreach (var row in controlRows.Internal)
+					{
+						RemoveRow(row, true);
+					}
+					controlRows.Unlock();
 
-			parseObject = (objValue, indent) =>
+					if (bindingObject is Data.IEditableValueCollection)
+					{
+						var o2 = bindingObject as Data.IEditableValueCollection;
+						o2.OnChanged -= ChangeSelector;
+					}
+
+					bindingObject = null;
+				}
+			}
+
+			void RegisterValue(object value, int indent)
+			{
+				List<TypeRow> newRows = new List<TypeRow>();
+
+				Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
+
+				foreach (var row in controlRows.Internal)
+				{
+					objToTypeRow.Add(row.BindingValue, row);
+				}
+
 				{
 					Data.EditableValue[] editableValues = null;
 
-					if(objValue is Data.IEditableValueCollection)
+					if (value is Data.IEditableValueCollection)
 					{
-						editableValues = (objValue as Data.IEditableValueCollection).GetValues();
+						editableValues = (value as Data.IEditableValueCollection).GetValues();
 					}
 					else
 					{
-						var props = objValue.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-						editableValues = props.Select(_ => Data.EditableValue.Create(_.GetValue(objValue), _)).ToArray();
+						var props = value.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+						editableValues = props.Select(_ => Data.EditableValue.Create(_.GetValue(value), _)).ToArray();
 					}
 
 					List<TypeRow> localRows = new List<TypeRow>();
@@ -203,7 +254,7 @@ namespace Effekseer.GUI.Component
 							row.SelectorIndent = indent;
 							if (row.Selector != null) row.SelectorIndent++;
 #if DEBUG
-							if(row.BindingValue != propValue) throw new Exception();
+							if (row.BindingValue != propValue) throw new Exception();
 #endif
 
 							if (!row.IsShown()) continue;
@@ -225,14 +276,14 @@ namespace Effekseer.GUI.Component
 								if (prop.Value.GetType() == typeof(Data.Value.FCurve<float>)) continue;
 								if (prop.Value.GetType() == typeof(Data.Value.FCurve<byte>)) continue;
 
-								parseObject(propValue, row.SelectorIndent);
-								continue;
+								row.Children = new TypeRowCollection();
+								row.Children.RegisterValue(propValue, row.SelectorIndent);
 							}
 							else
 							{
 								row.ControlDynamic.SetBinding(propValue);
-								objToTypeRow.Add(propValue, row);
 							}
+							objToTypeRow.Add(propValue, row);
 						}
 
 						newRows.Add(row);
@@ -240,7 +291,8 @@ namespace Effekseer.GUI.Component
 
 						if (propValue is Data.IEditableValueCollection)
 						{
-							parseObject(propValue, row.SelectorIndent);
+							row.Children = new TypeRowCollection();
+							row.Children.RegisterValue(propValue, row.SelectorIndent);
 						}
 
 						{
@@ -270,100 +322,99 @@ namespace Effekseer.GUI.Component
 #endif
 						}
 					}
-				};
+				}
 
-			parseObject(value, 0);
+				foreach (var row in controlRows.Internal.ToArray())
+				{
+					if (newRows.Contains(row)) continue;
+					RemoveRow(row, true);
+					objToTypeRow.Remove(row.BindingValue);
+				}
 
-			foreach(var row in controlRows.Internal.ToArray())
-			{
-				if (newRows.Contains(row)) continue;
-				RemoveRow(row, true);
-				objToTypeRow.Remove(row.BindingValue);
+				controlRows.Clear();
+
+				foreach (var n in newRows)
+				{
+					controlRows.Add(n);
+				}
+
+				bindingObject = value;
+
+				if (bindingObject is Data.IEditableValueCollection)
+				{
+					var o2 = bindingObject as Data.IEditableValueCollection;
+					o2.OnChanged += ChangeSelector;
+				}
 			}
 
-			controlRows.Clear();
-
-			foreach(var n in newRows)
+			void RemoveRow(TypeRow row, bool removeControls)
 			{
-				controlRows.Add(n);
-			}
+				if(row.Children != null)
+				{
+					row.Children.SetValue(null, 0);
+				}
 
-			bindingObject = value;
+				if (row.Control == null) return;
 
-			if(bindingObject is Data.IEditableValueCollection)
-			{
-				var o2 = bindingObject as Data.IEditableValueCollection;
-				o2.OnChanged += ChangeSelector;
-			}
-		}
+				row.ControlDynamic.SetBinding(null);
 
-		void ResetValue()
-		{
-			controlRows.Lock();
-			foreach (var row in controlRows.Internal)
-			{
-				RemoveRow(row, true);
-			}
-			controlRows.Unlock();
-		}
-
-		void RemoveRow(TypeRow row, bool removeControls)
-		{
-			if (row.Control == null) return;
-
-			row.ControlDynamic.SetBinding(null);
-
-			if (bindingObject != null)
-			{
-				var o0 = row.BindingValue as Data.Value.EnumBase;
-				var o1 = row.BindingValue as Data.Value.PathForImage;
-				var o2 = row.BindingValue as Data.IEditableValueCollection;
+				if (bindingObject != null)
+				{
+					var o0 = row.BindingValue as Data.Value.EnumBase;
+					var o1 = row.BindingValue as Data.Value.PathForImage;
+					var o2 = row.BindingValue as Data.IEditableValueCollection;
 #if __EFFEKSEER_BUILD_VERSION16__
 				var o3 = row.BindingValue as Data.Value.Boolean;
 #endif
-				if (o0 != null && row.IsSelector)
-				{
-					o0.OnChanged -= ChangeSelector;
-				}
-				else if (o1 != null)
-				{
-					o1.OnChanged -= ChangeSelector;
-				}
-				else if (o2 != null)
-				{
-					o2.OnChanged -= ChangeSelector;
-				}
+					if (o0 != null && row.IsSelector)
+					{
+						o0.OnChanged -= ChangeSelector;
+					}
+					else if (o1 != null)
+					{
+						o1.OnChanged -= ChangeSelector;
+					}
+					else if (o2 != null)
+					{
+						o2.OnChanged -= ChangeSelector;
+					}
 #if __EFFEKSEER_BUILD_VERSION16__
 				else if (o3 != null)
 				{
 					o3.OnChanged += ChangeSelector;
 				}
 #endif
+				}
+
+				if (removeControls)
+				{
+					if (row.Control is Control)
+					{
+						var c = row.Control as Control;
+						c.DispatchDisposed();
+					}
+					else
+					{
+						row.Control.OnDisposed();
+					}
+				}
+
+				this.controlRows.Remove(row);
 			}
 
-			if (removeControls)
+			void ChangeSelector(object sender, ChangedValueEventArgs e)
 			{
-				if (row.Control is Control)
-				{
-					var c = row.Control as Control;
-					c.DispatchDisposed();
-				}
-				else
-				{
-					row.Control.OnDisposed();
-				}
+				isControlsChanged = true;
 			}
 
-			this.controlRows.Remove(row);
 		}
-
-		void ChangeSelector(object sender, ChangedValueEventArgs e)
-		{
-			isControlsChanged = true;
-		}
-
+		
 		class TypeRow
 		{
+			public string TreeNodeID = null;
+
+			public TypeRowCollection Children;
+
 			Data.EditableValue editableValue;
 
 			public object Title
@@ -605,6 +656,8 @@ namespace Effekseer.GUI.Component
 				Control = gui;
 
 				Label = Title;
+
+				TreeNodeID = propInfo.TreeNodeID;
 
 				ControlDynamic = Control;
 
