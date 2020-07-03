@@ -13,5 +13,9 @@ struct PS_Input
 float4 PS( const PS_Input Input ) : COLOR
 {
 	float4 Output = Input.Color * tex2D(g_sampler, Input.UV);
+
+	if (Output.a == 0.0)
+		discard;
+
 	return Output;
 }
