@@ -65,7 +65,7 @@ void main()
 		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 		FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 	}
-
+	if(FRAGCOLOR.w <= 0.0) discard;
 )"
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__

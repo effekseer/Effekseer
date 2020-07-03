@@ -59,7 +59,7 @@ void main()
 	FRAGCOLOR = TEX2D(uTexture0, v_TexCoord.xy + UVOffset);
 
 	FRAGCOLOR.a = FRAGCOLOR.a * v_Color.a;
-
+	if(FRAGCOLOR.w <= 0.0) discard;
 )"
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
