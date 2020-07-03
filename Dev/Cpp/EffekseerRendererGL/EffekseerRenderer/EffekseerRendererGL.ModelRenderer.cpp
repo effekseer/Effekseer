@@ -141,6 +141,8 @@ void main()
 		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 		FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 	}
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 
 )";
@@ -266,6 +268,8 @@ void main() {
 
 	vec3 color = TEX2D(uBackTexture0, uv).xyz;
 	FRAGCOLOR.xyz = color;
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 )";
 

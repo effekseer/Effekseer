@@ -149,8 +149,6 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	if (key.state.AlphaBlend == Effekseer::AlphaBlendType::Opacity)
 	{
-		piplineState->IsBlendEnabled = false;
-		piplineState->IsBlendEnabled = true;
 		piplineState->BlendDstFunc = LLGI::BlendFuncType::Zero;
 		piplineState->BlendSrcFunc = LLGI::BlendFuncType::One;
 		piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;

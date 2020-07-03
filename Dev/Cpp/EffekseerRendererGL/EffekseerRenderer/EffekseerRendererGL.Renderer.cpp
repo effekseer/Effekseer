@@ -97,6 +97,8 @@ uniform sampler2D uTexture0;
 void main()
 {
 	FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 )";
 
@@ -108,6 +110,8 @@ IN mediump vec4 vaTexCoord;
 void main()
 {
 	FRAGCOLOR = vaColor;
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 )";
 
@@ -207,6 +211,8 @@ void main() {
 	color.xyz = TEX2D(uBackTexture0, uv).xyz;
 	
 	FRAGCOLOR = color;
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 )";
 
@@ -246,6 +252,8 @@ void main() {
 	color.xyz = TEX2D(uBackTexture0, uv).xyz;
 	
 	FRAGCOLOR = color;
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 )";
 
@@ -340,6 +348,8 @@ void main()
 	
 	FRAGCOLOR = v_VColor * TEX2D(ColorTexture, v_UV1.xy);
 	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
+
+	if(FRAGCOLOR.w <= 0.0) discard;
 }
 
 
