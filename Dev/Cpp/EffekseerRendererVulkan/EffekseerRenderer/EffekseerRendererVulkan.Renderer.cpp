@@ -82,7 +82,7 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 		key.RenderTargetFormats.at(i) = LLGI::VulkanHelper::VkFormatToTextureFormat(renderPassInformation.RenderTextureFormats.at(i));
 	}
 
-	key.HasDepth = renderPassInformation.HasDepth;
+	key.DepthFormat = LLGI::VulkanHelper::VkFormatToTextureFormat(renderPassInformation.DepthFormat);
 
 	auto pipelineState = gd->GetGraphics()->CreateRenderPassPipelineState(key);
 

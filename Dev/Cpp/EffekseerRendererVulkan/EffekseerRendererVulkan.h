@@ -435,7 +435,7 @@ struct RenderPassInformation
 	bool DoesPresentToScreen = false;
 	std::array<VkFormat, 8> RenderTextureFormats;
 	int32_t RenderTextureCount = 1;
-	bool HasDepth = false;
+	VkFormat DepthFormat = VK_FORMAT_UNDEFINED;
 };
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(

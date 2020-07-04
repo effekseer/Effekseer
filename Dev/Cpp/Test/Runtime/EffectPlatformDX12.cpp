@@ -119,8 +119,8 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 
 	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-	auto renderer =
-		EffekseerRendererDX12::Create(g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, true, false, 10000);
+	auto renderer = EffekseerRendererDX12::Create(
+		g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, DXGI_FORMAT_D32_FLOAT, false, 10000);
 
 	renderer->SetDistortingCallback(new DistortingCallbackDX12(this, renderer));
 
@@ -133,7 +133,7 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 	depthParam.Size = LLGI::Vec2I(WindowWidth, WindowHeight);
 	colorBuffer_ = g->CreateRenderTexture(renderParam);
 	depthBuffer_ = g->CreateDepthTexture(depthParam);
-	renderPass_ = g->CreateRenderPass((const LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);
+	renderPass_ = g->CreateRenderPass((LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);
 
 	auto compiler = LLGI::CreateCompiler(LLGI::DeviceType::DirectX12);
 

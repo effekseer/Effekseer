@@ -153,7 +153,7 @@ namespace EffekseerRendererDX12
 ::EffekseerRenderer::Renderer* Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
-									  bool hasDepth,
+									  DXGI_FORMAT depthFormat,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount)
 {
@@ -201,7 +201,7 @@ namespace EffekseerRendererDX12
 		key.RenderTargetFormats.at(i) = LLGI::ConvertFormat(renderTargetFormats[i]);
 	}
 
-	key.HasDepth = hasDepth;
+	key.DepthFormat = LLGI::ConvertFormat(depthFormat);
 
 	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
 
@@ -225,13 +225,13 @@ namespace EffekseerRendererDX12
 									  int32_t swapBufferCount,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
-									  bool hasDepth,
+									  DXGI_FORMAT depthFormat,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount)
 {
 	auto graphicDevice = CreateDevice(device, commandQueue, swapBufferCount);
 
-	auto ret = Create(graphicDevice, renderTargetFormats, renderTargetCount, hasDepth, isReversedDepth, squareMaxCount);
+	auto ret = Create(graphicDevice, renderTargetFormats, renderTargetCount, depthFormat, isReversedDepth, squareMaxCount);
 
 	if (ret != nullptr)
 	{
