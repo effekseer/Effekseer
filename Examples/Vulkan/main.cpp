@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 	renderPassInfo.DoesPresentToScreen = true;
 	renderPassInfo.RenderTextureCount = 1;
 	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_B8G8R8A8_UNORM;
-	renderPassInfo.HasDepth = true;
+	renderPassInfo.DepthFormat = VK_FORMAT_D24_UNORM_S8_UINT; 
 	auto renderer = ::EffekseerRendererVulkan::Create(
 		GetVkPhysicalDevice(), GetVkDevice(), GetVkQueue(), GetVkCommandPool(), GetSwapBufferCount(), renderPassInfo, 8000);
 
