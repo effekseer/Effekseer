@@ -80,7 +80,14 @@ namespace EffekseerRendererMetal
 
 	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
     auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
-    auto pipelineState = g->CreateRenderPassPipelineState(renderTargetFormat, depthStencilFormat).get();
+    LLGI::RenderPassPipelineStateKey key;
+    key.RenderTargetFormats.resize(1);
+    key.RenderTargetFormats.at(0) = LLGI::ConvertFormat(renderTargetFormat);
+    key.DepthFormat = LLGI::ConvertFormat(depthStencilFormat);
+    key.IsColorCleared = false;
+    key.IsDepthCleared = false;
+    
+    auto pipelineState = g->CreateRenderPassPipelineState(key);
 
     if (renderer->Initialize(gd, pipelineState, isReversedDepth))
     {
