@@ -28,6 +28,7 @@ namespace Effekseer.GUI.Menu
 
 			recentFiles = new Menu();
 			recentFiles.Label = new MultiLanguageString("RecentFiles");
+			recentFiles.Icon = Icons.Empty;
 		}
 
         public void Update()
@@ -185,7 +186,7 @@ namespace Effekseer.GUI.Menu
 				menu.Controls.Add(new MenuSeparator());
 
 				{
-					var import_menu = new Menu(input);
+					var import_menu = new Menu(input, Icons.Empty);
 
 					for (int c = 0; c < Core.ImportScripts.Count; c++)
 					{
@@ -237,7 +238,7 @@ namespace Effekseer.GUI.Menu
 				}
 
 				{
-					var export_menu = new Menu(output);
+					var export_menu = new Menu(output, Icons.Empty);
 
 					for (int c = 0; c < Core.ExportScripts.Count; c++)
 					{
