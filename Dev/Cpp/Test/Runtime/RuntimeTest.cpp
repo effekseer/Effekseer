@@ -316,6 +316,64 @@ void PlaybackSpeedTest()
 	}
 }
 
+void MassPlayTest()
+{
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+		param.InstanceCount = 1;
+
+		platform->Initialize(param);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+			platform->Update();
+		}
+
+		platform->Terminate();
+	}
+
+		{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+		param.InstanceCount = 10;
+
+		platform->Initialize(param);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+			platform->Update();
+		}
+
+		platform->Terminate();
+	}
+
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+		param.InstanceCount = 100;
+		param.IsUpdatedByHandle = true;
+		platform->Initialize(param);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Play(
+				(GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/Memory/DestroyWhenNoMoreChildren.efkefc").c_str());
+			platform->Update();
+		}
+
+		platform->Terminate();
+	}
+}
+
 void BasicRuntimeTest(bool onCI)
 {
 #ifdef _WIN32

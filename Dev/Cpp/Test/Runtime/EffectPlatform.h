@@ -15,6 +15,7 @@ struct EffectPlatformInitializingParameter
 	bool VSync = true;
 	bool IsUpdatedByHandle = false;
 	bool IsCullingCreated = true;
+	int InstanceCount = 8000;
 };
 
 class EffectPlatform
