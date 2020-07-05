@@ -64,6 +64,8 @@ void InstanceContainer::AddChild(InstanceContainer* pContainter)
 
 InstanceContainer* InstanceContainer::GetChild(int index)
 {
+	assert(index < static_cast<int32_t>(m_Children.size()));
+
 	auto it = m_Children.begin();
 	for( int i = 0; i < index; i++) {
 		it++;

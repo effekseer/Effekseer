@@ -198,7 +198,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 			ES_SAFE_RELEASE(drawset.ParameterPointer);
 			ES_SAFE_DELETE(drawset.GlobalPointer);
 
-			if (m_cullingWorld != NULL)
+			if (m_cullingWorld != NULL && drawset.CullingObjectPointer != nullptr)
 			{
 				m_cullingWorld->RemoveObject(drawset.CullingObjectPointer);
 				Culling3D::SafeRelease(drawset.CullingObjectPointer);
@@ -265,7 +265,14 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer(
 
 	for (int i = 0; i < pEffectNode->GetChildrenCount(); i++)
 	{
-		pContainer->AddChild(CreateInstanceContainer(pEffectNode->GetChild(i), pGlobal, false, Matrix43(), nullptr));
+		auto child = CreateInstanceContainer(pEffectNode->GetChild(i), pGlobal, false, Matrix43(), nullptr);
+		if (child == nullptr)
+		{
+			ReleaseInstanceContainer(pContainer);
+			return nullptr;
+		}
+
+		pContainer->AddChild(child);
 	}
 
 	if (isRoot)
