@@ -7,29 +7,36 @@ namespace Effekseer.Data
 {
 	public enum ForceFieldFalloffType
 	{
+		[Key(key = "LFF_FalloffType_None")]
 		None,
+		[Key(key = "LFF_FalloffType_Sphere")]
 		Sphere,
+		[Key(key = "LFF_FalloffType_Tube")]
 		Tube,
+		[Key(key = "LFF_FalloffType_Cone")]
 		Cone,
 	}
 
 	public class ForceFieldFalloff
 	{
+		[Key(key = "LFF_Falloff_Type")]
 		[Selector(ID = 11)]
 		public Value.Enum<ForceFieldFalloffType> Type { get; set; }
 
+		[Key(key = "LFF_Falloff_Power")]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Sphere)]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
 		public Value.Float Power { get; private set; }
 
+		[Key(key = "LFF_Falloff_MaxDistance")]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Sphere)]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
 
 		public Value.Float MaxDistance { get; private set; }
 
-
+		[Key(key = "LFF_Falloff_MinDistance")]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Sphere)]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
 		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
@@ -62,10 +69,13 @@ namespace Effekseer.Data
 
 	public class ForceFieldFalloffTube
 	{
+		[Key(key = "LFF_Falloff_Tube_RadiusPower")]
 		public Value.Float RadiusPower { get; private set; }
 
+		[Key(key = "LFF_Falloff_Tube_MaxRadius")]
 		public Value.Float MaxRadius { get; private set; }
 
+		[Key(key = "LFF_Falloff_Tube_MinRadius")]
 		public Value.Float MinRadius { get; private set; }
 
 		public ForceFieldFalloffTube()
@@ -80,10 +90,13 @@ namespace Effekseer.Data
 
 	public class ForceFieldFalloffCone
 	{
+		[Key(key = "LFF_Falloff_Cone_AnglePower")]
 		public Value.Float AnglePower { get; private set; }
 
+		[Key(key = "LFF_Falloff_Cone_MaxAngle")]
 		public Value.Float MaxAngle { get; private set; }
 
+		[Key(key = "LFF_Falloff_Cone_MinAngle")]
 		public Value.Float MinAngle { get; private set; }
 
 		public ForceFieldFalloffCone()
@@ -98,19 +111,25 @@ namespace Effekseer.Data
 
 	public enum LocalForceFieldType
 	{
-		[Name(value = "無し", language = Language.Japanese)]
-		[Name(value = "None", language = Language.English)]
+		[Key(key = "LFF_Type_None")]
 		None = 0,
 
+		[Key(key = "LFF_Type_Force")]
 		Force = 2,
+
+		[Key(key = "LFF_Type_Wind")]
 		Wind = 3,
+
+		[Key(key = "LFF_Type_Vortex")]
 		Vortex = 4,
+
+		[Key(key = "LFF_Type_Maginetic")]
 		Maginetic = 5,
 
-		[Name(value = "乱流", language = Language.Japanese)]
-		[Name(value = "Turbulence", language = Language.English)]
+		[Key(key = "LFF_Type_Turbulence")]
 		Turbulence = 1,
 
+		[Key(key = "LFF_Type_Drag")]
 		Drag = 7,
 	}
 
@@ -151,6 +170,7 @@ namespace Effekseer.Data
 
 	public class ForceFieldForce
 	{
+		[Key(key = "LFF_Force_Gravitation")]
 		public Value.Boolean Gravitation { get; private set; }
 
 		public ForceFieldForce()
@@ -195,6 +215,7 @@ namespace Effekseer.Data
 	}
 	public class LocalForceField : IEditableValueCollection
 	{
+		[Key(key = "LFF_Type")]
 		[Selector(ID = 10)]
 		public Value.Enum<LocalForceFieldType> Type
 		{
@@ -202,6 +223,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "LFF_Power")]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
@@ -216,6 +238,7 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
 
+		[Key(key = "LFF_Position")]
 		public Value.Vector3D Position { get; private set; }
 
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
@@ -225,6 +248,7 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
 
+		[Key(key = "LFF_Rotation")]
 		public Value.Vector3D Rotation { get; private set; }
 
 		[IO(Export = true)]
