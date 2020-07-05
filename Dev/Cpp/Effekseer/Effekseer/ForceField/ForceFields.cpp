@@ -194,6 +194,10 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 			assert(0);
 		}
 	}
+	else
+	{
+		IsRotated = false;
+	}
 
 	pos += br.GetOffset();
 
