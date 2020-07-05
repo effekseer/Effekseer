@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <random>
 
 #include "../Effekseer.Vector3D.h"
