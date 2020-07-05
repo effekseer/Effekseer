@@ -251,12 +251,15 @@ namespace Effekseer.Data
 	public class EnvironmentValues
 	{
 		[IO(Export = true, Import = true)]
+		[TreeNode(key ="Environment_Background", id = "Environment_Background")]
 		public EnvironmentBackgroundValues Background { get; private set; }
 
 		[IO(Export = true, Import = true)]
+		[TreeNode(key= "Environment_Lighting", id = "Environment_Lighting")]
 		public EnvironmentLightingValues Lighting { get; private set; }
 
 		[IO(Export = true, Import = true)]
+		[TreeNode(key = "Environment_PostEffect", id = "Environment_PostEffect")]
 		public EnvironmentPostEffectValues PostEffect { get; private set; }
 
 		public EnvironmentValues()

@@ -465,6 +465,28 @@ namespace Effekseer.Data
 	}
 
 	/// <summary>
+	/// For collection to create a treenode in GUI
+	/// </summary>
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+	AllowMultiple = true,
+	Inherited = false)]
+	public class TreeNodeAttribute : Attribute
+	{
+		public string key
+		{
+			get;
+			set;
+		}
+
+		public string id
+		{
+			get;
+			set;
+		}
+	}
+
+	/// <summary>
 	/// A class to show editable value in parameter list
 	/// </summary>
 	public class EditableValue
@@ -475,6 +497,7 @@ namespace Effekseer.Data
 		public bool IsUndoEnabled;
 		public bool IsShown = true;
 		public int SelfSelectorID = -1;
+		public string TreeNodeID = null;
 
 		/// <summary>
 		/// If this value is larger than 0, target selector id is used to show it.
@@ -568,6 +591,19 @@ namespace Effekseer.Data
 				//{
 				//	System.IO.File.AppendAllText("kv.csv", descKey + "," + "\"" + ret.Description.ToString() + "\"" + "\r\n");
 				//}
+			}
+
+			var treeNode = attributes.OfType<TreeNodeAttribute>().FirstOrDefault();
+
+			if (treeNode != null)
+			{
+				ret.TreeNodeID = treeNode.id;
+
+				if (MultiLanguageTextProvider.HasKey(treeNode.key))
+				{
+					ret.Title = new MultiLanguageString(treeNode.key);
+				}
+
 			}
 
 			return ret;
