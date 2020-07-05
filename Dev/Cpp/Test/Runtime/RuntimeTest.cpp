@@ -320,7 +320,11 @@ void MassPlayTest()
 {
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.InstanceCount = 1;
@@ -338,7 +342,11 @@ void MassPlayTest()
 
 		{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+			auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+			auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.InstanceCount = 10;
@@ -356,7 +364,11 @@ void MassPlayTest()
 
 	{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.InstanceCount = 100;
