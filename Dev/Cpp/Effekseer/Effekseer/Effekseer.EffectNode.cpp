@@ -874,6 +874,13 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	param.EmissiveScaling = RendererCommon.EmissiveScaling;
 
+	param.EdgeParam.Color[0] = static_cast<float>(AlphaCutoff.EdgeColor.R) / 255.0f;
+	param.EdgeParam.Color[1] = static_cast<float>(AlphaCutoff.EdgeColor.G) / 255.0f;
+	param.EdgeParam.Color[2] = static_cast<float>(AlphaCutoff.EdgeColor.B) / 255.0f;
+	param.EdgeParam.Color[3] = static_cast<float>(AlphaCutoff.EdgeColor.A) / 255.0f;
+	param.EdgeParam.Threshold = AlphaCutoff.EdgeThreshold;
+	param.EdgeParam.ColorScaling = AlphaCutoff.EdgeColorScaling;
+
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;

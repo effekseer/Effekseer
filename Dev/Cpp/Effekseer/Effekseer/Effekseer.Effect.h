@@ -645,6 +645,13 @@ struct EffectBasicRenderParameter
 
 	int32_t EmissiveScaling;
 
+	struct
+	{
+		float Color[4];
+		float Threshold;
+		int32_t ColorScaling;
+	} EdgeParam;
+
 #endif
 	AlphaBlendType AlphaBlend;
 	TextureFilterType FilterType;
