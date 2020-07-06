@@ -1367,7 +1367,7 @@ struct ParameterRendererCommon
 };
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-struct ParameterAlphaCrunch
+struct ParameterAlphaCutoff
 {
 	enum EType : int32_t
 	{
@@ -1409,17 +1409,21 @@ struct ParameterAlphaCrunch
 		} FCurve;
 	};
 
+	float EdgeThreshold;
+	Color EdgeColor;
+	int32_t EdgeColorScaling;
+
 #pragma warning(push)
 #pragma warning(disable : 4582)
-	ParameterAlphaCrunch()
+	ParameterAlphaCutoff()
 	{
-		Type = ParameterAlphaCrunch::EType::FIXED;
+		Type = ParameterAlphaCutoff::EType::FIXED;
 		Fixed.RefEq = -1;
 		Fixed.Threshold = 0;
 	}
 #pragma warning(pop)
 
-	~ParameterAlphaCrunch()
+	~ParameterAlphaCutoff()
 	{
 		if (Type == EType::F_CURVE)
 		{
@@ -1438,22 +1442,31 @@ struct ParameterAlphaCrunch
 
 		switch (Type)
 		{
-		case Effekseer::ParameterAlphaCrunch::EType::FIXED:
+		case Effekseer::ParameterAlphaCutoff::EType::FIXED:
 			memcpy(&Fixed, pos, BufferSize);
 			break;
-		case Effekseer::ParameterAlphaCrunch::EType::FPI:
+		case Effekseer::ParameterAlphaCutoff::EType::FPI:
 			memcpy(&FourPointInterpolation, pos, BufferSize);
 			break;
-		case Effekseer::ParameterAlphaCrunch::EType::EASING:
+		case Effekseer::ParameterAlphaCutoff::EType::EASING:
 			memcpy(&Easing, pos, BufferSize);
 			break;
-		case Effekseer::ParameterAlphaCrunch::EType::F_CURVE:
+		case Effekseer::ParameterAlphaCutoff::EType::F_CURVE:
 			FCurve.Threshold = new FCurveScalar();
 			FCurve.Threshold->Load(pos, version);
 			break;
 		}
 
 		pos += BufferSize;
+
+		memcpy(&EdgeThreshold, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+
+		memcpy(&EdgeColor, pos, sizeof(Color));
+		pos += sizeof(int32_t);
+
+		memcpy(&EdgeColorScaling, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
 	}
 };
 #endif
@@ -1615,7 +1628,7 @@ public:
 	ParameterRendererCommon RendererCommon;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	ParameterAlphaCrunch AlphaCrunch;
+	ParameterAlphaCutoff AlphaCutoff;
 #endif
 
 	ParameterSoundType SoundType;

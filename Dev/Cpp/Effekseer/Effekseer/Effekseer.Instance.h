@@ -350,7 +350,7 @@ public:
 			float offset;
 		} fcurve;
 
-	} alpha_crunch_values;
+	} alpha_cutoff_values;
 
 	float m_AlphaThreshold;
 #endif

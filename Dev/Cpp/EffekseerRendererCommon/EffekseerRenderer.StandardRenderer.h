@@ -70,6 +70,10 @@ struct StandardRendererState
 	float BlendUVDistortionIntensity;
 
 	int32_t EmissiveScaling;
+
+	float EdgeThreshold;
+	uint8_t EdgeColor[4];
+	int32_t EdgeColorScaling;
 #endif
 
 	::Effekseer::RendererMaterialType MaterialType;
@@ -132,6 +136,10 @@ struct StandardRendererState
 		BlendUVDistortionIntensity = 1.0f;
 
 		EmissiveScaling = 1;
+
+		EdgeThreshold = 0.0f;
+		EdgeColor[0] = EdgeColor[1] = EdgeColor[2] = EdgeColor[3] = 0;
+		EdgeColorScaling = 1;
 #endif
 
 		MaterialPtr = nullptr;
@@ -222,6 +230,16 @@ struct StandardRendererState
 		if (BlendUVDistortionIntensity != state.BlendUVDistortionIntensity)
 			return true;
 		if (EmissiveScaling != state.EmissiveScaling)
+			return true;
+
+		if (EdgeThreshold != state.EdgeThreshold)
+			return true;
+		if (EdgeColor[0] != state.EdgeColor[0] ||
+			EdgeColor[1] != state.EdgeColor[1] ||
+			EdgeColor[2] != state.EdgeColor[2] ||
+			EdgeColor[3] != state.EdgeColor[3])
+			return true;
+		if (EdgeColorScaling != state.EdgeColorScaling)
 			return true;
 #endif
 		if (MaterialType != state.MaterialType)
@@ -528,6 +546,21 @@ private:
 				};
 			};
 		};
+
+		struct
+		{
+			float Color[4];
+
+			union {
+				float Buffer[4];
+
+				struct
+				{
+					float Threshold;
+					float ColorScaling;
+				};
+			};
+		} edgeParameter;
 	};
 #endif
 
@@ -1290,6 +1323,10 @@ public:
 
 			pcb.emissiveScaling = m_state.EmissiveScaling;
 
+			ColorToFloat4(Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]), pcb.edgeParameter.Color);
+			pcb.edgeParameter.Threshold = m_state.EdgeThreshold;
+			pcb.edgeParameter.ColorScaling = m_state.EdgeColorScaling;
+
 			m_renderer->SetPixelBufferToShader(&pcb.flipbookParameter, sizeof(PixelConstantBuffer), psOffset);
 #endif
 		}
@@ -1344,6 +1381,10 @@ public:
 				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 
 				pcb.emissiveScaling = m_state.EmissiveScaling;
+
+				ColorToFloat4(Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]), pcb.edgeParameter.Color);
+				pcb.edgeParameter.Threshold = m_state.EdgeThreshold;
+				pcb.edgeParameter.ColorScaling = m_state.EdgeColorScaling;
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}

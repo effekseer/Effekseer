@@ -710,6 +710,10 @@ struct NodeRendererBasicParameter
 	int32_t FlipbookDivideY = 1;
 
 	int32_t EmissiveScaling = 1;
+
+	float EdgeThreshold = 0.0f;
+	uint8_t EdgeColor[4] = { 0 };
+	int32_t EdgeColorScaling = 1;
 #endif
 };
 
@@ -2322,6 +2326,9 @@ struct EffectBasicRenderParameter
 		float EndColor[4];
 		int32_t Pow = 1;
 	} FalloffParam;
+
+	int32_t EmissiveScaling;
+
 #endif
 	AlphaBlendType AlphaBlend;
 	TextureFilterType FilterType;
