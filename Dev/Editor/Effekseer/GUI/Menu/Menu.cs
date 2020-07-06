@@ -12,16 +12,19 @@ namespace Effekseer.GUI.Menu
 
 		public object Label { get; set; } = null;
 
+		public string Icon { get; set; } = null;
+
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
-
-		public Menu(MultiLanguageString label = null)
+	
+		public Menu(MultiLanguageString label = null, string icon = null)
 		{
 			if (label != null)
 			{
 				Label = label;
 			}
+			Icon = icon;
 
 			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
@@ -29,7 +32,12 @@ namespace Effekseer.GUI.Menu
 
 		public void Update()
 		{
-			if (Manager.NativeManager.BeginMenu(Label + id))
+			string nativeLabel = "";
+			if (Icon != null) nativeLabel += Icon + " ";
+			if (Label != null) nativeLabel += Label;
+			nativeLabel += id;
+
+			if (Manager.NativeManager.BeginMenu(nativeLabel))
 			{
 				Controls.Lock();
 				foreach (var ctrl in Controls.Internal)

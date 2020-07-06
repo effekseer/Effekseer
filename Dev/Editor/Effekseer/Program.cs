@@ -309,6 +309,8 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Scale.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicRenderSettings.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_RenderSettings.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_LocalForceField.csv");
+			
 			GUI.Manager.UpdateFont();
 		}
 

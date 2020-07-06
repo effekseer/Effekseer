@@ -65,7 +65,7 @@ void main()
 	float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 	
 	FRAGCOLOR = v_VColor * TEX2D(ColorTexture, v_UV1.xy + UVOffset);
-
+	if(FRAGCOLOR.w <= 0.0) discard;
 )"
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__

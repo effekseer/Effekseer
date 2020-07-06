@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
 	auto format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	auto renderer = ::EffekseerRendererDX12::Create(GetDevice(), GetCommandQueue(), 3, &format, 1, false, false, 8000);
+	auto renderer = ::EffekseerRendererDX12::Create(GetDevice(), GetCommandQueue(), 3, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
 
 	// Create a memory pool
 	// メモリプールの作成

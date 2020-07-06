@@ -30,10 +30,16 @@ set(LOCAL_SOURCES
 # Projects
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${Vulkan_INCLUDE_DIRS} ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+
 target_link_libraries(${PROJECT_NAME} LLGI)
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Vulkan}")
 add_dependencies(${PROJECT_NAME} Effekseer)
+
+if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+    add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
+endif()
 
 #--------------------
 # Install

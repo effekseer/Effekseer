@@ -44,7 +44,7 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	InitializeDevice(param);
 
-	manager_ = ::Effekseer::Manager::Create(8000);
+	manager_ = ::Effekseer::Manager::Create(param.InstanceCount);
 
 	renderer_ = CreateRenderer();
 

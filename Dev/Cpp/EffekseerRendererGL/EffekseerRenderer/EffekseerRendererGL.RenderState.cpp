@@ -117,15 +117,16 @@ void RenderState::Update(bool forced)
 
 	if (m_active.AlphaBlend != m_next.AlphaBlend || forced)
 	{
-		if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity || m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			glDisable(GL_BLEND);
-		}
-		else
 		{
 			glEnable(GL_BLEND);
 
-			if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
+			if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity ||
+				m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+			{
+				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+				GLExt::glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE);
+			}
+			else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
 				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);

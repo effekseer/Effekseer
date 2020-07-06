@@ -14,6 +14,7 @@
 #include "Sound/Effekseer.SoundPlayer.h"
 
 #include "Effekseer.Effect.h"
+#include "ForceField/ForceFields.h"
 #include "Noise/CurlNoise.h"
 #include "Parameter/Effekseer.Parameters.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
@@ -59,7 +60,8 @@ public:
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 			Color all;
@@ -237,27 +239,6 @@ struct ParameterTranslationEasing
 //
 //----------------------------------------------------------------------------------
 
-enum class LocalForceFieldType : int32_t
-{
-	None = 0,
-	Turbulence = 1,
-};
-
-struct LocalForceFieldTurbulenceParameter
-{
-	float Strength = 0.1f;
-	CurlNoise Noise;
-
-	LocalForceFieldTurbulenceParameter(int32_t seed, float scale, float strength, int octave);
-};
-
-struct LocalForceFieldParameter
-{
-	std::unique_ptr<LocalForceFieldTurbulenceParameter> Turbulence;
-
-	bool Load(uint8_t*& pos, int32_t version);
-};
-
 enum class LocationAbsType : int32_t
 {
 	None = 0,
@@ -269,7 +250,8 @@ struct LocationAbsParameter
 {
 	LocationAbsType type = LocationAbsType::None;
 
-	union {
+	union
+	{
 		struct
 		{
 
@@ -461,7 +443,8 @@ struct ParameterGenerationLocation
 		Order = 1,
 	};
 
-	union {
+	union
+	{
 		struct
 		{
 			random_vector3d location;
@@ -589,7 +572,8 @@ struct ParameterCustomData
 {
 	ParameterCustomDataType Type = ParameterCustomDataType::None;
 
-	union {
+	union
+	{
 		ParameterCustomDataFixed Fixed;
 		ParameterCustomDataRandom Random;
 		ParameterCustomDataEasing Easing;
@@ -803,7 +787,8 @@ struct ParameterRendererCommon
 		vector2d Speed;
 	};
 
-	union {
+	union
+	{
 		struct
 		{
 		} Default;
@@ -1379,7 +1364,8 @@ struct ParameterAlphaCutoff
 		FPI = FOUR_POINT_INTERPOLATION,
 	} Type;
 
-	union {
+	union
+	{
 		struct
 		{
 			int32_t RefEq;
@@ -1601,7 +1587,11 @@ public:
 	ParameterTranslationEasing TranslationEasing;
 	FCurveVector3D* TranslationFCurve;
 
-	std::array<LocalForceFieldParameter, LocalFieldSlotMax> LocalForceFields;
+#ifdef OLD_LF
+	std::array<LocalForceFieldParameterOld, LocalFieldSlotMax> LocalForceFieldsOld;
+#else
+	LocalForceFieldParameter LocalForceField;
+#endif
 	LocationAbsParameter LocationAbs;
 
 	ParameterRotationType RotationType;

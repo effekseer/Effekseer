@@ -85,6 +85,8 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_Sampler1", "Material_Sampler1");
 	single15Test(u"Material_Refraction", "Material_Refraction");
 	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
+	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
+	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	single16Test(u"Flip01", "Flip01");
@@ -309,6 +311,76 @@ void PlaybackSpeedTest()
 			platform->Update();
 		}
 		platform->TakeScreenshot("PlaybackSpeed_1.png");
+
+		platform->Terminate();
+	}
+}
+
+void MassPlayTest()
+{
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
+
+		EffectPlatformInitializingParameter param;
+		param.InstanceCount = 1;
+
+		platform->Initialize(param);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+			platform->Update();
+		}
+
+		platform->Terminate();
+	}
+
+		{
+		srand(0);
+#ifdef _WIN32
+			auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+			auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
+
+		EffectPlatformInitializingParameter param;
+		param.InstanceCount = 10;
+
+		platform->Initialize(param);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+			platform->Update();
+		}
+
+		platform->Terminate();
+	}
+
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformOpenGL>();
+#endif
+
+		EffectPlatformInitializingParameter param;
+		param.InstanceCount = 100;
+		param.IsUpdatedByHandle = true;
+		platform->Initialize(param);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Play(
+				(GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/Memory/DestroyWhenNoMoreChildren.efkefc").c_str());
+			platform->Update();
+		}
 
 		platform->Terminate();
 	}

@@ -57,13 +57,16 @@ RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC de
 	{
 		auto type = (::Effekseer::AlphaBlendType)i;
 
+		if (m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+			type = ::Effekseer::AlphaBlendType::Opacity;
+
 		D3D11_BLEND_DESC Desc;
 		ZeroMemory(&Desc, sizeof(Desc));
 		Desc.AlphaToCoverageEnable = false;
 
 		for (int32_t k = 0; k < 8; k++)
 		{
-			Desc.RenderTarget[k].BlendEnable = type != ::Effekseer::AlphaBlendType::Opacity;
+			Desc.RenderTarget[k].BlendEnable = true;
 			Desc.RenderTarget[k].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 			Desc.RenderTarget[k].SrcBlendAlpha = D3D11_BLEND_ONE;
 			Desc.RenderTarget[k].DestBlendAlpha = D3D11_BLEND_ONE;

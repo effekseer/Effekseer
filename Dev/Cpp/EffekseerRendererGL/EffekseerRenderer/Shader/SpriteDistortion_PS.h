@@ -55,7 +55,7 @@ void main()
 
 	vec4 color = TEX2D(uTexture0, vaTexCoord.xy + UVOffset);
 	color.w = color.w * vaColor.w;
-
+	if(color.w <= 0.0) discard;
 )"
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__

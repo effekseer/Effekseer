@@ -47,6 +47,7 @@ void main()
 
 	R"(
 	FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy + UVOffset);
+	if(FRAGCOLOR.w <= 0.0) discard;
 )"
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
