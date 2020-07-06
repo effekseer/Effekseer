@@ -27,6 +27,6 @@ public:
 
 	virtual void OnResetDevice() = 0;
 
-	static LineRenderer* Create(Graphics* graphics);
+	static LineRenderer* Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 };
 } // namespace efk

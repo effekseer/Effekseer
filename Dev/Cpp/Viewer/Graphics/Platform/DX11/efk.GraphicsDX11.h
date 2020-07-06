@@ -13,26 +13,16 @@ class RenderTextureDX11 : public RenderTexture
 {
 private:
 	Graphics* graphics = nullptr;
-	int32_t width = 0;
-	int32_t height = 0;
 
 	ID3D11Texture2D* texture = nullptr;
 	ID3D11ShaderResourceView* textureSRV = nullptr;
 	ID3D11RenderTargetView* textureRTV = nullptr;
+	DXGI_FORMAT dxgiFormat_ = DXGI_FORMAT_UNKNOWN;
 
 public:
 	RenderTextureDX11(Graphics* graphics);
 	virtual ~RenderTextureDX11();
-	bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
-
-	int32_t GetWidth() override
-	{
-		return width;
-	}
-	int32_t GetHeight() override
-	{
-		return height;
-	}
+	bool Initialize(Effekseer::Tool::Vector2DI size, TextureFormat format, uint32_t multisample = 1);
 
 	ID3D11Texture2D* GetTexture() const
 	{
@@ -52,6 +42,11 @@ public:
 	uint64_t GetViewID() override
 	{
 		return (uint64_t)textureSRV;
+	}
+
+	DXGI_FORMAT GetDXGIFormat() const
+	{
+		return dxgiFormat_;
 	}
 };
 
@@ -90,7 +85,7 @@ private:
 	int32_t windowHeight = 0;
 	bool isSRGBMode = false;
 
-	ID3D11Device* device = nullptr;
+	ID3D11Device* device_ = nullptr;
 	ID3D11Debug* d3dDebug = nullptr;
 	ID3D11DeviceContext* context = nullptr;
 	IDXGIDevice1* dxgiDevice = nullptr;
@@ -103,13 +98,8 @@ private:
 	ID3D11RenderTargetView* renderTargetView = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 
-	ID3D11Texture2D* backTexture = nullptr;
-	ID3D11ShaderResourceView* backTextureSRV = nullptr;
-
-	RenderTexture* recordingTexture = nullptr;
-	DepthTexture* recordingDepthStencil = nullptr;
-	int32_t recordingWidth = 0;
-	int32_t recordingHeight = 0;
+	//ID3D11Texture2D* backTexture = nullptr;
+	//ID3D11ShaderResourceView* backTextureSRV = nullptr;
 
 	ID3D11RenderTargetView* currentRenderTargetView = nullptr;
 	ID3D11DepthStencilView* currentDepthStencilView = nullptr;
@@ -128,8 +118,6 @@ private:
 	IDirect3DTexture9*	backTargetTexture = nullptr;
 	*/
 
-	EffekseerRendererDX11::Renderer* renderer = nullptr;
-
 	ID3D11RasterizerState* rasterizerState = nullptr;
 	ID3D11RasterizerState* savedRasterizerState = nullptr;
 
@@ -137,9 +125,11 @@ public:
 	GraphicsDX11();
 	virtual ~GraphicsDX11();
 
-	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount) override;
+	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode) override;
+	
+	void CopyTo(RenderTexture* src, RenderTexture* dst) override;
 
-	void CopyToBackground() override;
+	//void CopyToBackground() override;
 
 	void Resize(int32_t width, int32_t height) override;
 
@@ -151,9 +141,11 @@ public:
 
 	void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) override;
 
-	void BeginRecord(int32_t width, int32_t height) override;
+//	void BeginRecord(int32_t width, int32_t height) override;
+//
+//	void EndRecord(std::vector<Effekseer::Color>& pixels) override;
 
-	void EndRecord(std::vector<Effekseer::Color>& pixels) override;
+	void SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels) override;
 
 	void Clear(Effekseer::Color color) override;
 
@@ -161,9 +153,11 @@ public:
 
 	void ResetDevice() override;
 
-	void* GetBack() override;
+	//void* GetBack() override;
 
-	EffekseerRenderer::Renderer* GetRenderer() override;
+	ID3D11Device* GetDevice() const;
+
+	ID3D11DeviceContext* GetContext() const;
 
 	DeviceType GetDeviceType() const override
 	{

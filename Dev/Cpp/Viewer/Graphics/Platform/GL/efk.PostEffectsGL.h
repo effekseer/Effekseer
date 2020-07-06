@@ -15,6 +15,8 @@ namespace efk
 class BlitterGL
 {
 	Graphics* graphics = nullptr;
+	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
+
 	std::unique_ptr<EffekseerRendererGL::VertexBuffer> vertexBuffer;
 
 public:
@@ -25,7 +27,7 @@ public:
 	};
 	static const EffekseerRendererGL::ShaderAttribInfo shaderAttributes[2];
 
-	BlitterGL(Graphics* graphics);
+	BlitterGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~BlitterGL();
 
 	std::unique_ptr<EffekseerRendererGL::VertexArray> CreateVAO(EffekseerRendererGL::Shader* shader);
@@ -62,9 +64,10 @@ class BloomEffectGL : public BloomEffect
 	int32_t renderTextureHeight = 0;
 	std::unique_ptr<RenderTexture> extractBuffer;
 	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
+	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
 
 public:
-	BloomEffectGL(Graphics* graphics);
+	BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~BloomEffectGL();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -87,9 +90,10 @@ class TonemapEffectGL : public TonemapEffect
 
 	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoCopy;
 	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoReinhard;
+	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
 
 public:
-	TonemapEffectGL(Graphics* graphics);
+	TonemapEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~TonemapEffectGL();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -109,9 +113,10 @@ class LinearToSRGBEffectGL : public LinearToSRGBEffect
 
 	std::unique_ptr<EffekseerRendererGL::Shader> shader_;
 	std::unique_ptr<EffekseerRendererGL::VertexArray> vao_;
+	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
 
 public:
-	LinearToSRGBEffectGL(Graphics* graphics);
+	LinearToSRGBEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~LinearToSRGBEffectGL();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;

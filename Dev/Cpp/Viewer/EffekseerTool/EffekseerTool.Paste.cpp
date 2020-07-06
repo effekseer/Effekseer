@@ -4,9 +4,9 @@
 namespace EffekseerRenderer
 {
 
-Paste::Paste(efk::Graphics* graphics)
+Paste::Paste(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
-	imageRenderer = efk::ImageRenderer::Create(graphics);
+	imageRenderer = efk::ImageRenderer::Create(graphics, renderer);
 }
 
 Paste::~Paste()
@@ -14,9 +14,9 @@ Paste::~Paste()
 	ES_SAFE_DELETE(imageRenderer);
 }
 
-Paste* Paste::Create(efk::Graphics* graphics)
+Paste* Paste::Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
-	return new Paste(graphics);
+	return new Paste(graphics, renderer);
 }
 
 void Paste::Rendering(::Effekseer::TextureData* texture, int32_t width, int32_t height)
