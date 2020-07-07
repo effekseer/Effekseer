@@ -960,8 +960,10 @@ bool Native::StepEffect(int frame)
 			g_manager->SetShown(g_handles[i].Handle, true);
 		}
 
+		m_time += m_step;
+
 		g_sound->SetMute(mute);
-		g_manager->Update();
+		g_manager->Update(m_step);
 		g_renderer->GetRenderer()->SetTime(m_time / 60.0f);
 	}
 	return true;
@@ -1057,11 +1059,11 @@ bool Native::StepEffect()
 
 		for (size_t i = 0; i < g_handles.size(); i++)
 		{
-			g_handles[i].Time++;
+			g_handles[i].Time += m_step;
 		}
 	}
 
-	m_time++;
+	m_time += m_step;
 
 	return true;
 }
