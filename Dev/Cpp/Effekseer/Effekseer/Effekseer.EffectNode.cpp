@@ -684,7 +684,13 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		if (m_effect->GetVersion() >= 1600)
 		{
-			AlphaCrunch.load(pos, m_effect->GetVersion());
+			AlphaCutoff.load(pos, m_effect->GetVersion());
+			RendererCommon.BasicParameter.EdgeThreshold = AlphaCutoff.EdgeThreshold;
+			RendererCommon.BasicParameter.EdgeColor[0] = AlphaCutoff.EdgeColor.R;
+			RendererCommon.BasicParameter.EdgeColor[1] = AlphaCutoff.EdgeColor.G;
+			RendererCommon.BasicParameter.EdgeColor[2] = AlphaCutoff.EdgeColor.B;
+			RendererCommon.BasicParameter.EdgeColor[3] = AlphaCutoff.EdgeColor.A;
+			RendererCommon.BasicParameter.EdgeColorScaling = AlphaCutoff.EdgeColorScaling;
 		}
 #endif
 
@@ -867,6 +873,13 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	}
 
 	param.EmissiveScaling = RendererCommon.EmissiveScaling;
+
+	param.EdgeParam.Color[0] = static_cast<float>(AlphaCutoff.EdgeColor.R) / 255.0f;
+	param.EdgeParam.Color[1] = static_cast<float>(AlphaCutoff.EdgeColor.G) / 255.0f;
+	param.EdgeParam.Color[2] = static_cast<float>(AlphaCutoff.EdgeColor.B) / 255.0f;
+	param.EdgeParam.Color[3] = static_cast<float>(AlphaCutoff.EdgeColor.A) / 255.0f;
+	param.EdgeParam.Threshold = AlphaCutoff.EdgeThreshold;
+	param.EdgeParam.ColorScaling = AlphaCutoff.EdgeColorScaling;
 
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;

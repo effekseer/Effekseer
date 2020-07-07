@@ -957,40 +957,40 @@ void Instance::FirstUpdate()
 		}
 	}
 
-	// Alpha Crunch
-	if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FIXED)
+	// Alpha Cutoff
+	if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
 	{
-		if (m_pEffectNode->AlphaCrunch.Fixed.RefEq < 0)
+		if (m_pEffectNode->AlphaCutoff.Fixed.RefEq < 0)
 		{
-			m_AlphaThreshold = m_pEffectNode->AlphaCrunch.Fixed.Threshold;
+			m_AlphaThreshold = m_pEffectNode->AlphaCutoff.Fixed.Threshold;
 		}
 	}
-	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FPI)
+	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FPI)
 	{
-		auto& fpiValue = alpha_crunch_values.four_point_interpolation;
-		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.FourPointInterpolation;
+		auto& fpiValue = alpha_cutoff_values.four_point_interpolation;
+		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.FourPointInterpolation;
 
-		fpiValue.begin_threshold = nodeAlphaCrunchValue.BeginThreshold.getValue(rand);
-		fpiValue.transition_frame = nodeAlphaCrunchValue.TransitionFrameNum.getValue(rand);
-		fpiValue.no2_threshold = nodeAlphaCrunchValue.No2Threshold.getValue(rand);
-		fpiValue.no3_threshold = nodeAlphaCrunchValue.No3Threshold.getValue(rand);
-		fpiValue.transition_frame2 = nodeAlphaCrunchValue.TransitionFrameNum2.getValue(rand);
-		fpiValue.end_threshold = nodeAlphaCrunchValue.EndThreshold.getValue(rand);
+		fpiValue.begin_threshold = nodeAlphaCutoffValue.BeginThreshold.getValue(rand);
+		fpiValue.transition_frame = nodeAlphaCutoffValue.TransitionFrameNum.getValue(rand);
+		fpiValue.no2_threshold = nodeAlphaCutoffValue.No2Threshold.getValue(rand);
+		fpiValue.no3_threshold = nodeAlphaCutoffValue.No3Threshold.getValue(rand);
+		fpiValue.transition_frame2 = nodeAlphaCutoffValue.TransitionFrameNum2.getValue(rand);
+		fpiValue.end_threshold = nodeAlphaCutoffValue.EndThreshold.getValue(rand);
 	}
-	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::EASING)
+	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
 	{
-		auto& easingValue = alpha_crunch_values.easing;
-		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.Easing;
+		auto& easingValue = alpha_cutoff_values.easing;
+		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.Easing;
 
-		easingValue.start = nodeAlphaCrunchValue.Threshold.start.getValue(rand);
-		easingValue.end = nodeAlphaCrunchValue.Threshold.end.getValue(rand);
+		easingValue.start = nodeAlphaCutoffValue.Threshold.start.getValue(rand);
+		easingValue.end = nodeAlphaCutoffValue.Threshold.end.getValue(rand);
 	}
-	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::F_CURVE)
+	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
 	{
-		auto& fcurveValue = alpha_crunch_values.fcurve;
-		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.FCurve;
+		auto& fcurveValue = alpha_cutoff_values.fcurve;
+		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.FCurve;
 
-		fcurveValue.offset = nodeAlphaCrunchValue.Threshold->GetOffsets(rand);
+		fcurveValue.offset = nodeAlphaCutoffValue.Threshold->GetOffsets(rand);
 	}
 #else
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
@@ -1250,25 +1250,25 @@ void Instance::Update(float deltaFrame, bool shown)
 		auto instanceGlobal = this->m_pContainer->GetRootInstance();
 		auto& rand = m_randObject;
 
-		if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FIXED)
+		if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
 		{
-			if (m_pEffectNode->AlphaCrunch.Fixed.RefEq >= 0)
+			if (m_pEffectNode->AlphaCutoff.Fixed.RefEq >= 0)
 			{
-				auto alphaThreshold = static_cast<float>(m_pEffectNode->AlphaCrunch.Fixed.Threshold);
+				auto alphaThreshold = static_cast<float>(m_pEffectNode->AlphaCutoff.Fixed.Threshold);
 				ApplyEq(alphaThreshold,
 						effect,
 						instanceGlobal,
 						&rand,
-						m_pEffectNode->AlphaCrunch.Fixed.RefEq,
+						m_pEffectNode->AlphaCutoff.Fixed.RefEq,
 						alphaThreshold);
 
 				m_AlphaThreshold = alphaThreshold;
 			}
 		}
-		else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FPI)
+		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FPI)
 		{
 			float t = m_LivingTime / m_LivedTime;
-			auto val = alpha_crunch_values.four_point_interpolation;
+			auto val = alpha_cutoff_values.four_point_interpolation;
 
 			float p[4][2] = {0.0f,
 							 val.begin_threshold,
@@ -1289,15 +1289,15 @@ void Instance::Update(float deltaFrame, bool shown)
 				}
 			}
 		}
-		else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::EASING)
+		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
 		{
-			m_AlphaThreshold = m_pEffectNode->AlphaCrunch.Easing.Threshold.getValue(
-				alpha_crunch_values.easing.start, alpha_crunch_values.easing.end, m_LivingTime / m_LivedTime);
+			m_AlphaThreshold = m_pEffectNode->AlphaCutoff.Easing.Threshold.getValue(
+				alpha_cutoff_values.easing.start, alpha_cutoff_values.easing.end, m_LivingTime / m_LivedTime);
 		}
-		else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::F_CURVE)
+		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
 		{
-			auto fcurve = m_pEffectNode->AlphaCrunch.FCurve.Threshold->GetValues(m_LivingTime, m_LivedTime);
-			m_AlphaThreshold = fcurve + alpha_crunch_values.fcurve.offset;
+			auto fcurve = m_pEffectNode->AlphaCutoff.FCurve.Threshold->GetValues(m_LivingTime, m_LivedTime);
+			m_AlphaThreshold = fcurve + alpha_cutoff_values.fcurve.offset;
 			m_AlphaThreshold /= 100.0f;
 		}
 	}

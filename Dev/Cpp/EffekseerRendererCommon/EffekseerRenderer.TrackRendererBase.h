@@ -1038,6 +1038,13 @@ public:
 		state.BlendUVDistortionIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
 
 		state.EmissiveScaling = param.BasicParameterPtr->EmissiveScaling;
+
+		state.EdgeThreshold = param.BasicParameterPtr->EdgeThreshold;
+		state.EdgeColor[0] = param.BasicParameterPtr->EdgeColor[0];
+		state.EdgeColor[1] = param.BasicParameterPtr->EdgeColor[1];
+		state.EdgeColor[2] = param.BasicParameterPtr->EdgeColor[2];
+		state.EdgeColor[3] = param.BasicParameterPtr->EdgeColor[3];
+		state.EdgeColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
