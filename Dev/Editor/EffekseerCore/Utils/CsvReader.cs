@@ -66,7 +66,12 @@ namespace Effekseer.Utils
 					else
 					{
 						rows.Add(sb.ToString());
+						// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 						sb.Clear();
+#else
+						sb = new StringBuilder();
+#endif
 						isStarting = true;
 					}
 				}
@@ -80,7 +85,12 @@ namespace Effekseer.Utils
 					else
 					{
 						rows.Add(sb.ToString());
+						// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 						sb.Clear();
+#else
+						sb = new StringBuilder();
+#endif
 						columns.Add(rows);
 						rows = new List<string>();
 						isStarting = true;
