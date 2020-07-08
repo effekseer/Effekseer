@@ -45,5 +45,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float3 color = g_backTexture.Sample(g_backSampler, uv);
 		Output.xyz = color;
 
+	if (Output.a == 0.0)
+		discard;
+
 	return Output;
 }
