@@ -35,7 +35,7 @@ namespace Effekseer
 			SelectLanguage(ind, callEvent);
 		}
 
-		public static IReadOnlyList<string> Languages { get { return languages; } }
+		public static List<string> Languages { get { return languages; } }
 
 		public static int SelectedIndex { get { return selectedIndex; } }
 
@@ -48,9 +48,14 @@ namespace Effekseer
 
 		static Dictionary<string, string> texts = new Dictionary<string, string>();
 
-		public static string Language { get; set; } = "en";
+		public static string Language { get; set; }
 
 		public static string RootDirectory = string.Empty;
+
+		static MultiLanguageTextProvider()
+		{
+			Language = "en";
+		}
 
 		public static void Reset()
 		{
@@ -298,8 +303,8 @@ namespace Effekseer
 				}
 			}
 		}
-
-        public static Script.ScriptCollection<Script.CommandScript> CommandScripts
+#if SCRIPT_ENABLED
+		public static Script.ScriptCollection<Script.CommandScript> CommandScripts
 		{
 			get;
 			private set;
@@ -322,7 +327,7 @@ namespace Effekseer
 			get;
 			private set;
 		}
-
+#endif
 		public static Data.OptionValues Option
 		{
 			get { return option; }
@@ -448,14 +453,14 @@ namespace Effekseer
 		static Core()
 		{
 			ResourceCache = new Utils.ResourceCache();
-
+#if SCRIPT_ENABLED
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();
 			SelectedScripts = new Script.ScriptCollection<Script.SelectedScript>();
 			ExportScripts = new Script.ScriptCollection<Script.ExportScript>();
 			ImportScripts = new Script.ScriptCollection<Script.ImportScript>();
-
-            // change a separator
-            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+#endif
+			// change a separator
+			System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
         }
@@ -480,12 +485,12 @@ namespace Effekseer
 		static void InitializeScripts(string entryDirectory)
 		{
 			// Load scripts
+#if SCRIPT_ENABLED
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/export");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/command");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/selected");
-#if SCRIPT_ENABLED
 
 			Script.Compiler.Initialize();
 

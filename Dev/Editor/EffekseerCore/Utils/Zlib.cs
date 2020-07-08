@@ -13,6 +13,8 @@ namespace Effekseer.Utils
 	{
 		public static unsafe byte[] Compress(byte[] buffer)
 		{
+			// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 			using (var compressStream = new System.IO.MemoryStream())
 			using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionLevel.Optimal))
 			{
@@ -33,10 +35,15 @@ namespace Effekseer.Utils
 
 				return dst.SelectMany(_ => _).ToArray();
 			}
+#else
+			return null;
+#endif
 		}
 
 		public static byte[] Decompress(byte[] buffer)
 		{
+			// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 			var decompressBuffer = new List<byte>();
 			using (var decompressStream = new System.IO.MemoryStream(buffer.Skip(2).Take(buffer.Length - 4).ToArray()))
 			using (var decompressor = new System.IO.Compression.DeflateStream(decompressStream, System.IO.Compression.CompressionMode.Decompress))
@@ -51,6 +58,9 @@ namespace Effekseer.Utils
 			}
 
 			return decompressBuffer.ToArray();
+#else
+			return null;
+#endif
 		}
 
 		static unsafe UInt32 CalcAdler32(byte* data, UInt32 len)
