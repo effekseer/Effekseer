@@ -35,6 +35,9 @@ void main()
 		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 		o_Color.xyz = o_Color.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 	}
+
+	if(o_Color.w <= 0.0)
+		discard;
 }
 
 
