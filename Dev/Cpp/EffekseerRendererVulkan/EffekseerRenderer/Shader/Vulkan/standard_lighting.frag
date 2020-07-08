@@ -32,4 +32,7 @@ void main()
 	
 	o_Color = v_VColor * texture(ColorTexture, v_UV1.xy);
 	o_Color.xyz = o_Color.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
+
+	if(o_Color.w <= 0.0)
+		discard;
 }
