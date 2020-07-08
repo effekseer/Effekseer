@@ -10,6 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <StartupObject>Effekseer.Program</StartupObject>
     <AssemblyName>Effekseer</AssemblyName>
+    <DefineConstants>SCRIPT_ENABLED;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
