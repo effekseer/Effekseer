@@ -7,7 +7,7 @@
     <OutputPath>../../release</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AssemblyName>EffekseerCore</AssemblyName>
-    <DefineConstants>SCRIPT_ENABLED;</DefineConstants>
+    <DefineConstants>SCRIPT_ENABLED;DOTNET_STARNDARD;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
