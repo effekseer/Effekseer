@@ -55,4 +55,7 @@ void main() {
 	v_UV2 = uv2;
 	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
 	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+
+	gl_Position.y = - gl_Position.y;
+
 }

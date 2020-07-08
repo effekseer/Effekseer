@@ -1,5 +1,12 @@
 # Effekseer Runtime
 
+## Release notes
+
+### 1.52h
+
+- (Broken changes) Depth format now can be specified.
+- Fixed many bugs
+
 ## Overview
 
 Thank you for downloading Effekseer.
