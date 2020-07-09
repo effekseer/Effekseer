@@ -242,6 +242,7 @@ struct ParameterTranslationEasing
 struct ParameterTranslationNurbsCurve
 {
 	int32_t Index;
+	float Scale;
 	float MoveSpeed;
 	int32_t LoopType;
 };

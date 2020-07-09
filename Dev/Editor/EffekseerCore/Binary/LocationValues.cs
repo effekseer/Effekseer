@@ -92,6 +92,8 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 
+				data.Add(BitConverter.GetBytes(value.NurbsCurve.Scale));
+
 				data.Add(BitConverter.GetBytes(value.NurbsCurve.MoveSpeed));
 
 				data.Add(value.NurbsCurve.LoopType.GetValueAsInt().GetBytes());

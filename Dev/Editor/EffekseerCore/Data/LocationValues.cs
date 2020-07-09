@@ -137,6 +137,10 @@ namespace Effekseer.Data
 			[IO(Export = true)]
 			public Value.PathForCurve FilePath { get; private set; }
 
+			[Name(language = Language.Japanese, value = "カーブ拡大率")]
+			[Name(language = Language.English, value = "Curve Scale")]
+			public Value.Float Scale { get; private set; }
+
 			[Name(language = Language.Japanese, value = "移動速度")]
 			[Name(language = Language.English, value = "Move Speed")]
 			public Value.Float MoveSpeed { get; private set; }
@@ -149,6 +153,7 @@ namespace Effekseer.Data
 			public NurbsCurveParameter()
 			{
 				FilePath = new Value.PathForCurve(Resources.GetString("CurveFilter"), true, "");
+				Scale = new Value.Float(1.0f);
 				MoveSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f);
 				LoopType = new Value.Enum<NurbsLoopType>(NurbsLoopType.Repeat);
 			}

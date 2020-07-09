@@ -1395,7 +1395,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 				float moveSpeed = NurbsCurveParam.MoveSpeed;
 				int32_t loopType = NurbsCurveParam.LoopType;
 
-				float speed = 1.0f / curve->GetLength();
+				float speed = 1.0f / (curve->GetLength() * NurbsCurveParam.Scale);
 
 				float t = speed * m_LivingTime * moveSpeed;
 
@@ -1414,7 +1414,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 				break;
 				}
 
-				localPosition = curve->CalcuratePoint(t, 1.0f);
+				localPosition = curve->CalcuratePoint(t, NurbsCurveParam.Scale);
 			}
 			else
 			{
