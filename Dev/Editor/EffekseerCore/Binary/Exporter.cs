@@ -791,7 +791,9 @@ namespace Effekseer.Binary
 
 		bool IsRenderedNode(Data.Node node)
 		{
-			return node.IsRendered.Value && node.DrawingValues.Type.Value != Data.RendererValues.ParamaterType.None;
+			var rendered = node.IsRendered.Value && node.DrawingValues.Type.Value != Data.RendererValues.ParamaterType.None;
+			var hasSound = node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.Use;
+			return rendered || hasSound;
 		}
 
 		bool IsRenderedNodeGroup(Data.Node node)
