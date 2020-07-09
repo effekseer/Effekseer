@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source File">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source File\FbxLoader">
+      <UniqueIdentifier>{3380172f-3267-49a0-a5f4-33ea6255cc32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource File">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source File\FbxCurveConverter">
+      <UniqueIdentifier>{2152af3c-3fca-4caf-85b9-c847d4d655e8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Main.cpp">
+      <Filter>Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FbxLoader.cpp">
+      <Filter>Source File\FbxLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FbxCurveConverter.cpp">
+      <Filter>Source File\FbxCurveConverter</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\FbxLoader.h">
+      <Filter>Source File\FbxLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FbxCurveConverter.h">
+      <Filter>Source File\FbxCurveConverter</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

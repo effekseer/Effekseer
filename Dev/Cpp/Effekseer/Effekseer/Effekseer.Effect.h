@@ -150,6 +150,15 @@ public:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+	@brief
+	\~English set curve data into specified index
+	\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	void SetCurve(Effect* effect, int32_t index, void* data);
+#endif
+
 	/**
 	@brief
 	\~English set loading data
@@ -410,6 +419,26 @@ public:
 	*/
 	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+	@brief	\~English	Get a curve's pointer
+	\~Japanese	格納されているカーブのポインタを取得する。
+	*/
+	virtual void* GetCurve(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored curve pointer
+	\~Japanese	格納されているカーブのポインタの個数を取得する。
+	*/
+	virtual int32_t GetCurveCount() const = 0;
+
+	/**
+	@brief	\~English	Get a curve's path
+	\~Japanese	カーブのパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
+#endif
+
 	/**
 		@brief
 		\~English set texture data into specified index
@@ -438,6 +467,15 @@ public:
 		\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
 	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+		@brief
+		\~English set curve data into specified index
+		\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	virtual void SetCurve(int32_t index, void* data) = 0;
+#endif
 
 	/**
 		@brief

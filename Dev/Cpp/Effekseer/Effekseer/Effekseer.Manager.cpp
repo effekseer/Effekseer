@@ -721,6 +721,18 @@ void ManagerImplemented::SetMaterialLoader(MaterialLoader* loader)
 	m_setting->SetMaterialLoader(loader);
 }
 
+#if __EFFEKSEER_BUILD_VERSION16__
+CurveLoader* ManagerImplemented::GetCurveLoader()
+{
+	return m_setting->GetCurveLoader();
+}
+
+void ManagerImplemented::SetCurveLoader(CurveLoader* loader)
+{
+	m_setting->SetCurveLoader(loader);
+}
+#endif
+
 void ManagerImplemented::StopEffect(Handle handle)
 {
 	if (m_DrawSets.count(handle) > 0)

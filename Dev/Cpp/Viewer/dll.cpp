@@ -679,6 +679,9 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			g_manager->SetTextureLoader(m_textureLoader);
 			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer()));
 			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer()));
+#if __EFFEKSEER_BUILD_VERSION16__
+			g_manager->SetCurveLoader(new ::Effekseer::CurveLoader());
+#endif
 
 			spdlog::trace("OK : SetLoaders");
 		}

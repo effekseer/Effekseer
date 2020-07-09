@@ -35,6 +35,9 @@ private:
 	SoundLoader* m_soundLoader;
 	ModelLoader* m_modelLoader;
 	MaterialLoader* m_materialLoader = nullptr;
+#if __EFFEKSEER_BUILD_VERSION16__
+	CurveLoader* m_curveLoader = nullptr;
+#endif
 
 	std::vector<EffectFactory*> effectFactories;
 
@@ -137,6 +140,28 @@ public:
 		\~Japanese ローダー
 		*/
 	void SetMaterialLoader(MaterialLoader* loader);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+		@brief
+		\~English get a curve loader
+		\~Japanese カーブローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	CurveLoader* GetCurveLoader();
+
+	/**
+		@brief
+		\~English specfiy a curve loader
+		\~Japanese カーブローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	void SetCurveLoader(CurveLoader* loader);
+#endif
 
 	/**
 		@brief

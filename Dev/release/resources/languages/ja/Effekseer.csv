@@ -162,6 +162,7 @@ ImageFilter,"png,dds"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"
+CurveFilter,"efkcurve,fbx"
 ,
 ,
 Clipping,クリッピング

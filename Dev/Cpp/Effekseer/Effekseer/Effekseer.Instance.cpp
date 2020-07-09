@@ -12,6 +12,9 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.Model.h"
+#if __EFFEKSEER_BUILD_VERSION16__
+#include "Effekseer.Curve.h"
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -1381,6 +1384,44 @@ void Instance::CalculateMatrix(float deltaFrame)
 			auto fcurve = m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localPosition = fcurve + translation_values.fcruve.offset;
 		}
+#if __EFFEKSEER_BUILD_VERSION16__
+		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
+		{
+			auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
+			
+			if (NurbsCurveParam.Index != -1)
+			{	
+				Curve* curve = static_cast<Curve*>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
+				float moveSpeed = NurbsCurveParam.MoveSpeed;
+				int32_t loopType = NurbsCurveParam.LoopType;
+
+				float speed = 1.0f / curve->GetLength();
+
+				float t = speed * m_LivingTime * moveSpeed;
+
+				switch (loopType)
+				{
+				default:
+				case 0:
+				t = fmod(t, 1.0f);
+				break;
+
+				case 1:
+				if (t > 1.0f)
+				{
+					t = 1.0f;
+				}
+				break;
+				}
+
+				localPosition = curve->CalcuratePoint(t, 1.0f);
+			}
+			else
+			{
+				localPosition = {0, 0, 0};
+			}
+		}
+#endif
 
 		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
 		{

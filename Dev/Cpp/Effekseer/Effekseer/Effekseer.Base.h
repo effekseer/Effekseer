@@ -69,6 +69,10 @@ class TextureLoader;
 class SoundLoader;
 class ModelLoader;
 class MaterialLoader;
+#if __EFFEKSEER_BUILD_VERSION16__
+class CurveLoader;
+class Curve;
+#endif
 
 class Model;
 class InternalScript;
