@@ -247,6 +247,21 @@ struct ModelRendererPixelConstantBuffer
 			};
 		};
 	};
+
+	float EdgeColor[4];
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float Threshold;
+				float ColorScaling;
+			};
+		};
+	} EdgeParameter;
 #endif
 };
 
@@ -1150,6 +1165,15 @@ public:
 				ColorToFloat4(param.FalloffParam.BeginColor, pcb->FalloffParameter.BeginColor);
 				ColorToFloat4(param.FalloffParam.EndColor, pcb->FalloffParameter.EndColor);
 				pcb->EmissiveScaling = param.BasicParameterPtr->EmissiveScaling;
+
+				ColorToFloat4(Effekseer::Color(
+					param.BasicParameterPtr->EdgeColor[0],
+					param.BasicParameterPtr->EdgeColor[1],
+					param.BasicParameterPtr->EdgeColor[2],
+					param.BasicParameterPtr->EdgeColor[3]), 
+					pcb->EdgeColor);
+				pcb->EdgeParameter.Threshold = param.BasicParameterPtr->EdgeThreshold;
+				pcb->EdgeParameter.ColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 #endif
 			}
 		}

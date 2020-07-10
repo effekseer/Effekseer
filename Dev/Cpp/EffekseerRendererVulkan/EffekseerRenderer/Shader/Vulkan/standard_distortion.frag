@@ -36,4 +36,7 @@ void main() {
 	color.xyz = texture(uBackTexture0, uv).xyz;
 	
 	o_Color = color;
+
+	if(o_Color.w <= 0.0)
+		discard;
 }

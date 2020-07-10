@@ -655,10 +655,13 @@ namespace Effekseer.Data
 
 				if(version > 0)
 				{
+					// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 					var labels = key.Split(' ');
 					status.Name = System.Net.WebUtility.UrlDecode(labels[0]);
 					status.UniformName = System.Net.WebUtility.UrlDecode(labels[1]);
 					status.Footer = labels[2];
+#endif
 					return status;
 				}
 				else
@@ -711,7 +714,12 @@ namespace Effekseer.Data
 
 			public override string ToString()
 			{
+				// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 				return System.Net.WebUtility.UrlEncode(Name) + " " + System.Net.WebUtility.UrlEncode(UniformName) + " " + Footer;
+#else
+				return string.Empty;
+#endif
 			}
 		}
 

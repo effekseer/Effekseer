@@ -221,8 +221,16 @@ namespace Effekseer.Data
 
 		[Selected(ID = 0, Value = 3)]
 		[Name(language = Language.Japanese, value = "Fカーブ")]
+		[Name(language = Language.English, value = "F Curve")]
 		[IO(Export = true)]
 		public Value.FCurveScalar FCurve { get; private set; }
+
+		[Selected(ID = 0, Value = 0)]
+		[Selected(ID = 0, Value = 1)]
+		[Selected(ID = 0, Value = 2)]
+		[Selected(ID = 0, Value = 3)]
+		[IO(Export = true)]
+		public EdgeParameter EdgeParam { get; private set; }
 
 		public class FixedParameter
 		{
@@ -274,6 +282,31 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class EdgeParameter
+		{
+			[Name(language = Language.Japanese, value = "エッジ閾値")]
+			[Name(language = Language.English, value = "Edge Threshold")]
+			[IO(Export = true)]
+			public Value.Float EdgeThreshold { get; private set; }
+
+			[Name(language = Language.Japanese, value = "エッジカラー")]
+			[Name(language = Language.English, value = "Edge Color")]
+			[IO(Export = true)]
+			public Value.Color EdgeColor { get; private set; }
+
+			[Name(language = Language.Japanese, value = "エッジカラー倍率")]
+			[Name(language = Language.English, value = "Edge Color Scaling")]
+			[IO(Export = true)]
+			public Value.Int EdgeColorScaling { get; private set; }
+
+			public EdgeParameter()
+			{
+				EdgeThreshold = new Value.Float(0.0f, 1.0f, 0.0f, 0.01f);
+				EdgeColor = new Value.Color(255, 255, 255, 255);
+				EdgeColorScaling = new Value.Int(1, int.MaxValue, 0);
+			}
+		}
+
 		public enum ParameterType : int
 		{
 			[Name(value = "アルファ閾値", language = Language.Japanese)]
@@ -304,6 +337,8 @@ namespace Effekseer.Data
 			Fixed.Threshold.CanSelectDynamicEquation = true;
 			Easing.Start.CanSelectDynamicEquation = true;
 			Easing.End.CanSelectDynamicEquation = true;
+
+			EdgeParam = new EdgeParameter();
 		}
 	}
 

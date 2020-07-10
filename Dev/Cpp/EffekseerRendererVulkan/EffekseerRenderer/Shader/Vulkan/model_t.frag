@@ -47,6 +47,9 @@ void main()
 	{
 		o_Color.xyz = o_Color.xyz + LightAmbient.xyz;
 	}
+
+	if(o_Color.w <= 0.0)
+		discard;
 }
 
 

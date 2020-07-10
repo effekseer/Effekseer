@@ -76,6 +76,10 @@ namespace Effekseer.Binary
                 data.Add(_data);
             }
 
+			data.Add(value.EdgeParam.EdgeThreshold.GetBytes());
+			data.Add((byte[])value.EdgeParam.EdgeColor);
+			data.Add(BitConverter.GetBytes(value.EdgeParam.EdgeColorScaling));
+
             return data.ToArray().ToArray();
         }
     }

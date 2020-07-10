@@ -80,14 +80,16 @@ float4 PS( const PS_Input Input ) : SV_Target
 	ApplyFlipbook(Output, g_texture, g_sampler, flipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
     
     // apply alpha texture
-    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset).a;
+    float4 AlphaTexColor = g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset);
+    Output.a *= AlphaTexColor.r * AlphaTexColor.a;
     
     // blend texture uv offset
     float2 BlendUVOffset = g_blendUVDistortionTexture.Sample(g_blendUVDistortionSampler, Input.BlendUVDistortionUV).rg * 2.0 - 1.0;
     BlendUVOffset *= uvDistortionParameter.y;
     
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV + BlendUVOffset);
-    BlendTextureColor.a *= g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset).a;
+    float4 BlendAlphaTextureColor = g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset);
+    BlendTextureColor.a *= BlendAlphaTextureColor.r * BlendAlphaTextureColor.a;
     
     ApplyTextureBlending(Output, BlendTextureColor, blendTextureParameter.x);
     

@@ -52,4 +52,6 @@ void main() {
 	vaTexCoord = atTexCoord;
 
 	vaTexCoord.y = mUVInversed.x + mUVInversed.y * vaTexCoord.y;
+
+	gl_Position.y = - gl_Position.y;
 }
