@@ -26,7 +26,7 @@ RenderTextureGL::~RenderTextureGL()
 	}
 }
 
-bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample)
+bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, TextureFormat format, uint32_t multisample)
 {
 	GLCheckError();
 
@@ -58,7 +58,7 @@ bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat fo
 	{
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, width, height, 0, glFormat, glType, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, size.X, size.Y, 0, glFormat, glType, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -71,15 +71,14 @@ bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat fo
 	{
 		glGenRenderbuffers(1, &renderbuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, glInternalFormat, width, height);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, glInternalFormat, size.X, size.Y);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	}
 	GLCheckError();
 
-	this->width = width;
-	this->height = height;
-	this->multisample = multisample;
-
+	this->size_ = size;
+	this->samplingCount_ = multisample;
+	this->format_ = format;
 	return true;
 }
 
@@ -170,25 +169,15 @@ GraphicsGL::~GraphicsGL()
 	glDeleteFramebuffers(1, &frameBufferForCopySrc);
 	glDeleteFramebuffers(1, &frameBufferForCopyDst);
 
-	recordingTarget.reset();
-	recordingDepth.reset();
 	backTarget.reset();
-
-	if (renderer != nullptr)
-	{
-		renderer->Destroy();
-		renderer = nullptr;
-	}
 }
 
-bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount)
+bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode)
 {
 	this->isSRGBMode = isSRGBMode;
 
 	this->windowWidth = windowWidth;
 	this->windowHeight = windowHeight;
-
-	renderer = ::EffekseerRendererGL::Renderer::Create(spriteCount, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 
 	glDisable(GL_FRAMEBUFFER_SRGB);
 
@@ -209,6 +198,46 @@ bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t win
 	return true;
 }
 
+void GraphicsGL::CopyTo(RenderTexture* src, RenderTexture* dst)
+{
+	if (src->GetSize() != dst->GetSize())
+		return;
+
+	if (src->GetFormat() != dst->GetFormat())
+		return;
+
+	if (src->GetSamplingCount() != dst->GetSamplingCount())
+	{
+		ResolveRenderTarget(src, dst);
+	}
+	else
+	{
+		// Copy to background
+		GLint backupFramebuffer;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+
+		auto s = static_cast<RenderTextureGL*>(src);
+		auto d = static_cast<RenderTextureGL*>(dst);
+		
+		if (s->GetSamplingCount() > 1)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, s->GetTexture());
+		}
+		else
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, s->GetTexture(), 0);
+		}
+
+		glBindTexture(GL_TEXTURE_2D, (GLuint)dst->GetViewID());
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, dst->GetSize().X, dst->GetSize().Y);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+	}
+}
+/*
 void GraphicsGL::CopyToBackground()
 {
 #ifndef _WIN32
@@ -222,10 +251,10 @@ void GraphicsGL::CopyToBackground()
 	uint32_t width = viewport[2];
 	uint32_t height = viewport[3];
 
-	if (!backTarget || backTarget->GetWidth() != width || backTarget->GetHeight() != height)
+	if (!backTarget || backTarget->GetSize().X != width || backTarget->GetSize().Y != height)
 	{
 		backTarget = std::make_shared<RenderTextureGL>(this);
-		backTarget->Initialize(width, height, TextureFormat::RGBA8U);
+		backTarget->Initialize(Effekseer::Tool::Vector2DI(width, height), TextureFormat::RGBA8U);
 	}
 
 #ifndef _WIN32
@@ -252,7 +281,7 @@ void GraphicsGL::CopyToBackground()
 #endif
 
 	auto rt = (RenderTextureGL*)currentRenderTexture;
-	if (rt->IsMultisample())
+	if (rt->GetSamplingCount() > 1)
 	{
 		ResolveRenderTarget(currentRenderTexture, backTarget.get());
 	}
@@ -266,6 +295,7 @@ void GraphicsGL::CopyToBackground()
 	glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 #endif
 }
+*/
 
 void GraphicsGL::Resize(int32_t width, int32_t height)
 {
@@ -323,7 +353,7 @@ void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* dep
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-		if (rt->IsMultisample())
+		if (rt->GetSamplingCount() > 1)
 		{
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rt->GetBuffer());
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt ? dt->GetBuffer() : 0);
@@ -341,36 +371,15 @@ void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* dep
 
 		GLCheckError();
 
-		glViewport(0, 0, renderTexture->GetWidth(), renderTexture->GetHeight());
+		glViewport(0, 0, renderTexture->GetSize().X, renderTexture->GetSize().Y);
 	}
 }
 
-void GraphicsGL::BeginRecord(int32_t width, int32_t height)
+void GraphicsGL::SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels)
 {
-	auto rt = std::make_shared<RenderTextureGL>(this);
-	rt->Initialize(width, height, TextureFormat::RGBA8U);
-
-	auto dt = std::make_shared<DepthTextureGL>(this);
-	dt->Initialize(width, height);
-
-	recordingTarget = rt;
-	recordingDepth = dt;
-
-	recordingWidth = width;
-	recordingHeight = height;
-
-	SetRenderTarget(rt.get(), dt.get());
-}
-
-void GraphicsGL::EndRecord(std::vector<Effekseer::Color>& pixels)
-{
-	pixels.resize(recordingWidth * recordingHeight);
-	SetRenderTarget(nullptr, nullptr);
-
-	SaveTextureGL(pixels, recordingTarget->GetTexture(), recordingWidth, recordingHeight);
-
-	recordingTarget = nullptr;
-	recordingDepth = nullptr;
+	auto t = static_cast<RenderTextureGL*>(texture);
+	pixels.resize(t->GetSize().X * t->GetSize().Y);
+	SaveTextureGL(pixels, t->GetTexture(), t->GetSize().X, t->GetSize().Y);
 }
 
 void GraphicsGL::Clear(Effekseer::Color color)
@@ -413,7 +422,7 @@ void GraphicsGL::ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
 	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtDest->GetTexture(), 0);
 	GLCheckError();
 
-	glBlitFramebuffer(0, 0, src->GetWidth(), src->GetHeight(), 0, 0, dest->GetWidth(), dest->GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, src->GetSize().X, src->GetSize().Y, 0, 0, dest->GetSize().X, dest->GetSize().Y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	GLCheckError();
 
 	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
@@ -427,57 +436,11 @@ void GraphicsGL::ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
 
 void GraphicsGL::ResetDevice()
 {
-	renderer->OnLostDevice();
-
-	if (LostedDevice != nullptr)
-	{
-		LostedDevice();
-	}
-
-	/*
-	ES_SAFE_RELEASE(backTarget);
-	ES_SAFE_RELEASE(backTargetTexture);
-
-
-
-	HRESULT hr;
-
-	D3DPRESENT_PARAMETERS d3dp;
-	ZeroMemory(&d3dp, sizeof(d3dp));
-	d3dp.BackBufferWidth = windowWidth;
-	d3dp.BackBufferHeight = windowHeight;
-	d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
-	d3dp.BackBufferCount = 1;
-	d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dp.Windowed = TRUE;
-	d3dp.hDeviceWindow = (HWND)windowHandle;
-	d3dp.EnableAutoDepthStencil = TRUE;
-	d3dp.AutoDepthStencilFormat = D3DFMT_D16;
-
-	hr = d3d_device->Reset(&d3dp);
-
-	if (FAILED(hr))
-	{
-		assert(0);
-		return;
-	}
-	*/
-
-	if (ResettedDevice != nullptr)
-	{
-		ResettedDevice();
-	}
-
-	renderer->OnResetDevice();
 }
 
-void* GraphicsGL::GetBack()
-{
-	return (void*)(uintptr_t)backTarget->GetViewID();
-}
+//void* GraphicsGL::GetBack()
+//{
+//	return (void*)(uintptr_t)backTarget->GetViewID();
+//}
 
-EffekseerRenderer::Renderer* GraphicsGL::GetRenderer()
-{
-	return renderer;
-}
 } // namespace efk

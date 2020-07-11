@@ -30,6 +30,6 @@ public:
 
 	virtual void OnResetDevice() = 0;
 
-	static ImageRenderer* Create(Graphics* graphics);
+	static ImageRenderer* Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 };
 } // namespace efk

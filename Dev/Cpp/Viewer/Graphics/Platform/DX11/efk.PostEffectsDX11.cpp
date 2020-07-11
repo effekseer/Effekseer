@@ -69,16 +69,15 @@ static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
 	{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
-BlitterDX11::BlitterDX11(Graphics* graphics)
+BlitterDX11::BlitterDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 	: graphics(graphics)
+	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
 	// Generate vertex data
-	vertexBuffer.reset(VertexBuffer::Create(renderer, sizeof(Vertex) * 4, true));
+	vertexBuffer.reset(VertexBuffer::Create(renderer_, sizeof(Vertex) * 4, true));
 	vertexBuffer->Lock();
 	{
 		Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
@@ -104,7 +103,7 @@ BlitterDX11::BlitterDX11(Graphics* graphics)
 			D3D11_FLOAT32_MAX,
 		};
 
-		renderer->GetDevice()->CreateSamplerState(&SamlerDesc, &sampler);
+		renderer_->GetDevice()->CreateSamplerState(&SamlerDesc, &sampler);
 	}
 }
 
@@ -124,25 +123,23 @@ void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-	auto& state = renderer->GetRenderState()->Push();
+	auto& state = renderer_->GetRenderState()->Push();
 	state.AlphaBlend = blendType;
 	state.DepthWrite = false;
 	state.DepthTest = false;
 	state.CullingType = CullingType::Double;
 	state.TextureFilterTypes[0] = TextureFilterType::Linear;
 	state.TextureWrapTypes[0] = TextureWrapType::Clamp;
-	renderer->GetRenderState()->Update(false);
-	renderer->SetRenderMode(RenderMode::Normal);
+	renderer_->GetRenderState()->Update(true);
+	renderer_->SetRenderMode(RenderMode::Normal);
 
-	renderer->SetVertexBuffer(vertexBuffer.get(), sizeof(Vertex));
-	renderer->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_R16_UINT, 0);
-	renderer->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	renderer->GetContext()->PSSetSamplers(0, 1, &sampler);
+	renderer_->SetVertexBuffer(vertexBuffer.get(), sizeof(Vertex));
+	renderer_->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_R16_UINT, 0);
+	renderer_->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	renderer_->GetContext()->PSSetSamplers(0, 1, &sampler);
 
-	renderer->BeginShader(shader);
-	renderer->GetContext()->IASetInputLayout(shader->GetLayoutInterface());
+	renderer_->BeginShader(shader);
+	renderer_->GetContext()->IASetInputLayout(shader->GetLayoutInterface());
 
 	if (constantData)
 	{
@@ -151,34 +148,33 @@ void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
 	}
 
 	graphics->SetRenderTarget(dest, nullptr);
-	renderer->GetContext()->PSSetShaderResources(0, numTextures, textures);
+	renderer_->GetContext()->PSSetShaderResources(0, numTextures, textures);
 
-	renderer->GetContext()->Draw(4, 0);
-	renderer->EndShader(shader);
+	renderer_->GetContext()->Draw(4, 0);
+	renderer_->EndShader(shader);
 
 	// Reset texture/sampler state
 	{
 		ID3D11ShaderResourceView* srv[4] = {};
-		renderer->GetContext()->PSSetShaderResources(0, 4, srv);
+		renderer_->GetContext()->PSSetShaderResources(0, 4, srv);
 		ID3D11SamplerState* samplers[1] = {};
-		renderer->GetContext()->PSSetSamplers(0, 1, samplers);
+		renderer_->GetContext()->PSSetSamplers(0, 1, samplers);
 	}
 
-	renderer->GetRenderState()->Update(true);
-	renderer->GetRenderState()->Pop();
+	renderer_->GetRenderState()->Update(true);
+	renderer_->GetRenderState()->Pop();
 }
 
-BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
+BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 	: BloomEffect(graphics)
-	, blitter(graphics)
+	, blitter(graphics, renderer)
+	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
 	// Extract shader
-	shaderExtract.reset(Shader::Create(renderer,
+	shaderExtract.reset(Shader::Create(renderer_,
 									   PostFX_Basic_VS::g_VS,
 									   sizeof(PostFX_Basic_VS::g_VS),
 									   PostFX_Extract_PS::g_PS,
@@ -200,7 +196,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
 	}
 
 	// Downsample shader
-	shaderDownsample.reset(Shader::Create(renderer,
+	shaderDownsample.reset(Shader::Create(renderer_,
 										  PostFX_Basic_VS::g_VS,
 										  sizeof(PostFX_Basic_VS::g_VS),
 										  PostFX_Downsample_PS::g_PS,
@@ -210,7 +206,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
 										  2));
 
 	// Blend shader
-	shaderBlend.reset(Shader::Create(renderer,
+	shaderBlend.reset(Shader::Create(renderer_,
 									 PostFX_Basic_VS::g_VS,
 									 sizeof(PostFX_Basic_VS::g_VS),
 									 PostFX_Blend_PS::g_PS,
@@ -220,7 +216,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
 									 2));
 
 	// Blur(horizontal) shader
-	shaderBlurH.reset(Shader::Create(renderer,
+	shaderBlurH.reset(Shader::Create(renderer_,
 									 PostFX_Basic_VS::g_VS,
 									 sizeof(PostFX_Basic_VS::g_VS),
 									 PostFX_BlurH_PS::g_PS,
@@ -230,7 +226,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
 									 2));
 
 	// Blur(vertical) shader
-	shaderBlurV.reset(Shader::Create(renderer,
+	shaderBlurV.reset(Shader::Create(renderer_,
 									 PostFX_Basic_VS::g_VS,
 									 sizeof(PostFX_Basic_VS::g_VS),
 									 PostFX_BlurV_PS::g_PS,
@@ -254,11 +250,9 @@ void BloomEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-	if (renderTextureWidth != src->GetWidth() || renderTextureHeight != src->GetHeight())
+	if (renderTextureSize_ != src->GetSize())
 	{
-		SetupBuffers(src->GetWidth(), src->GetHeight());
+		SetupBuffers(src->GetSize());
 	}
 
 	// Extract pass
@@ -317,22 +311,19 @@ void BloomEffectDX11::OnResetDevice()
 {
 }
 
-void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
+void BloomEffectDX11::SetupBuffers(Effekseer::Tool::Vector2DI size)
 {
 	ReleaseBuffers();
 
-	renderTextureWidth = width;
-	renderTextureHeight = height;
+	renderTextureSize_ = size;
 
 	// Create high brightness extraction buffer
 	{
-		int32_t bufferWidth = width;
-		int32_t bufferHeight = height;
 		extractBuffer.reset(RenderTexture::Create(graphics));
 
 		if (extractBuffer != nullptr)
 		{
-			extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
+			extractBuffer->Initialize(size, TextureFormat::RGBA16F);
 		}
 		else
 		{
@@ -345,17 +336,16 @@ void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
 	// Create low-resolution buffers
 	for (int i = 0; i < BlurBuffers; i++)
 	{
-		int32_t bufferWidth = width;
-		int32_t bufferHeight = height;
+		auto bufferSize = size;
 		for (int j = 0; j < BlurIterations; j++)
 		{
-			bufferWidth = std::max(1, (bufferWidth + 1) / 2);
-			bufferHeight = std::max(1, (bufferHeight + 1) / 2);
+			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);
+			bufferSize.Y = std::max(1, (bufferSize.Y + 1) / 2);
 			lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
 
 			if (lowresBuffers[i][j] != nullptr)
 			{
-				lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
+				lowresBuffers[i][j]->Initialize(bufferSize, TextureFormat::RGBA16F);
 			}
 			else
 			{
@@ -369,8 +359,7 @@ void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
 
 void BloomEffectDX11::ReleaseBuffers()
 {
-	renderTextureWidth = 0;
-	renderTextureHeight = 0;
+	renderTextureSize_ = Effekseer::Tool::Vector2DI();
 
 	extractBuffer.reset();
 	for (int i = 0; i < BlurBuffers; i++)
@@ -382,17 +371,17 @@ void BloomEffectDX11::ReleaseBuffers()
 	}
 }
 
-TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics)
+TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 	: TonemapEffect(graphics)
-	, blitter(graphics)
+	, blitter(graphics, renderer)
+	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
+
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
 	// Copy shader
-	shaderCopy.reset(Shader::Create(renderer,
+	shaderCopy.reset(Shader::Create(renderer_,
 									PostFX_Basic_VS::g_VS,
 									sizeof(PostFX_Basic_VS::g_VS),
 									PostFX_Copy_PS::g_PS,
@@ -402,7 +391,7 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics)
 									2));
 
 	// Reinhard shader
-	shaderReinhard.reset(Shader::Create(renderer,
+	shaderReinhard.reset(Shader::Create(renderer_,
 										PostFX_Basic_VS::g_VS,
 										sizeof(PostFX_Basic_VS::g_VS),
 										PostFX_Tonemap_PS::g_PS,
@@ -433,8 +422,6 @@ void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
 	// Tonemap pass
 	ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};
 
@@ -449,17 +436,17 @@ void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 	}
 }
 
-LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics)
+LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 	: LinearToSRGBEffect(graphics)
-	, blitter_(graphics)
+	, blitter_(graphics, renderer)
+	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
+
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
 	// Copy shader
-	shader_.reset(Shader::Create(renderer,
+	shader_.reset(Shader::Create(renderer_,
 								 PostFX_Basic_VS::g_VS,
 								 sizeof(PostFX_Basic_VS::g_VS),
 								 PostFX_LinearToSRGB_PS::g_PS,
@@ -487,8 +474,6 @@ void LinearToSRGBEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
-
-	auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 	// LinearToSRGB pass
 	ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};

@@ -22,11 +22,12 @@ class BlitterDX11
 	};
 
 	Graphics* graphics;
+	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
 	std::unique_ptr<EffekseerRendererDX11::VertexBuffer> vertexBuffer;
 	ID3D11SamplerState* sampler = nullptr;
 
 public:
-	BlitterDX11(Graphics* graphics);
+	BlitterDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~BlitterDX11();
 
 	void Blit(EffekseerRendererDX11::Shader* shader,
@@ -50,13 +51,13 @@ class BloomEffectDX11 : public BloomEffect
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurV;
 
 	BlitterDX11 blitter;
-	int32_t renderTextureWidth = 0;
-	int32_t renderTextureHeight = 0;
+	Effekseer::Tool::Vector2DI renderTextureSize_;
 	std::unique_ptr<RenderTexture> extractBuffer;
 	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
+	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
 
 public:
-	BloomEffectDX11(Graphics* graphics);
+	BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~BloomEffectDX11();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -66,7 +67,7 @@ public:
 	void OnResetDevice() override;
 
 private:
-	void SetupBuffers(int32_t width, int32_t height);
+	void SetupBuffers(Effekseer::Tool::Vector2DI size);
 	void ReleaseBuffers();
 };
 
@@ -75,9 +76,10 @@ class TonemapEffectDX11 : public TonemapEffect
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderReinhard;
 	BlitterDX11 blitter;
+	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
 
 public:
-	TonemapEffectDX11(Graphics* graphics);
+	TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~TonemapEffectDX11();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -95,9 +97,10 @@ class LinearToSRGBEffectDX11 : public LinearToSRGBEffect
 {
 	std::unique_ptr<EffekseerRendererDX11::Shader> shader_;
 	BlitterDX11 blitter_;
+	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
 
 public:
-	LinearToSRGBEffectDX11(Graphics* graphics);
+	LinearToSRGBEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 	virtual ~LinearToSRGBEffectDX11();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
