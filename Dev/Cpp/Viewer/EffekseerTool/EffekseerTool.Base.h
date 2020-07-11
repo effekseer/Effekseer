@@ -34,13 +34,6 @@ enum eProjectionType
 	PROJECTION_TYPE_DWORD = 0x7fffffff,
 };
 
-enum class DistortionType : int32_t
-{
-	Current,
-	Effekseer120,
-	Disabled,
-};
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

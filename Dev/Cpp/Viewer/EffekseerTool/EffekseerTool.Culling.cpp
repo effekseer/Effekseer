@@ -5,14 +5,14 @@
 namespace EffekseerRenderer
 {
 
-Culling::Culling(efk::Graphics* graphics)
+Culling::Culling(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 	: IsShown(false)
 	, Radius(0.0f)
 	, X(0.0f)
 	, Y(0.0f)
 	, Z(0.0f)
 {
-	lineRenderer = efk::LineRenderer::Create(graphics);
+	lineRenderer = efk::LineRenderer::Create(graphics, renderer);
 }
 
 Culling::~Culling()
@@ -20,9 +20,9 @@ Culling::~Culling()
 	ES_SAFE_DELETE(lineRenderer);
 }
 
-Culling* Culling::Create(efk::Graphics* graphics)
+Culling* Culling::Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
-	return new Culling(graphics);
+	return new Culling(graphics, renderer);
 }
 
 void Culling::Rendering(bool isRightHand)

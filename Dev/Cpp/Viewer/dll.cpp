@@ -2,6 +2,12 @@
 #include "Graphics/efk.AVIExporter.h"
 #include "Graphics/efk.GifHelper.h"
 #include "Graphics/efk.PNGHelper.h"
+#include "RenderedEffectGenerator.h"
+
+#ifdef _WIN32
+#include "Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#endif
+#include "Graphics/Platform/GL/efk.GraphicsGL.h"
 
 #ifdef _WIN32
 #include "3rdParty/imgui_platform/imgui_impl_dx11.h"
@@ -28,40 +34,6 @@
 #endif
 #include <gd.h>
 #include <gdfontmb.h>
-
-#ifndef __EFFEKSEER_VIEWER_BUILD_AS_CMAKE__
-
-#ifdef _WIN32
-#if _DEBUG
-#pragma comment(lib, "x86/Debug/libgd_static.lib")
-#else
-#pragma comment(lib, "x86/Release/libgd_static.lib")
-#endif
-#endif
-
-#ifdef _WIN32
-
-#ifdef _DEBUG
-#pragma comment(lib, "x86/Debug/libglew32d.lib")
-#else
-#pragma comment(lib, "x86/Release/libglew32.lib")
-#endif
-
-#endif
-
-#if _DEBUG
-#pragma comment(lib, "x86/Debug/glfw3.lib")
-#else
-#pragma comment(lib, "x86/Release/glfw3.lib")
-#endif
-
-#if _DEBUG
-#pragma comment(lib, "x86/Debug/OpenSoundMixer.lib")
-#else
-#pragma comment(lib, "x86/Release/OpenSoundMixer.lib")
-#endif
-
-#endif
 
 const float DistanceBase = 15.0f;
 const float OrthoScaleBase = 16.0f;
@@ -301,73 +273,22 @@ ViewerParamater::ViewerParamater()
 	, CullingY(0)
 	, CullingZ(0)
 
-	, Distortion(DistortionType::Current)
+	, Distortion(Effekseer::Tool::DistortionType::Current)
 	, RenderingMode(RenderMode::Normal)
 	, ViewerMode(ViewMode::_3D)
 
 {
 }
 
-ViewerEffectBehavior::ViewerEffectBehavior()
-	: CountX(1)
-	, CountY(1)
-	, CountZ(1)
-	, Distance(5.0f)
-	, RemovedTime(0xffff)
-	, PositionX(0.0f)
-	, PositionY(0.0f)
-	, PositionZ(0.0f)
-	, RotationX(0.0f)
-	, RotationY(0.0f)
-	, RotationZ(0.0f)
-	, ScaleX(1.0f)
-	, ScaleY(1.0f)
-	, ScaleZ(1.0f)
-
-	, PositionVelocityX(0.0f)
-	, PositionVelocityY(0.0f)
-	, PositionVelocityZ(0.0f)
-	, RotationVelocityX(0.0f)
-	, RotationVelocityY(0.0f)
-	, RotationVelocityZ(0.0f)
-	, ScaleVelocityX(0.0f)
-	, ScaleVelocityY(0.0f)
-	, ScaleVelocityZ(0.0f)
-
-{
-}
-
-struct HandleHolder
-{
-	::Effekseer::Handle Handle = 0;
-	int32_t Time = 0;
-	bool IsRootStopped = false;
-
-	HandleHolder()
-		: Handle(0)
-		, Time(0)
-	{
-	}
-
-	HandleHolder(::Effekseer::Handle handle, int32_t time = 0)
-		: Handle(handle)
-		, Time(time)
-	{
-	}
-};
-
-static ::Effekseer::Manager* g_manager = NULL;
 static Effekseer::Manager::DrawParameter drawParameter;
 
-static ::EffekseerTool::Renderer* g_renderer = NULL;
-static ::Effekseer::Effect* g_effect = NULL;
-static ::EffekseerTool::Sound* g_sound = NULL;
+static ::EffekseerTool::Renderer* renderer_ = NULL;
+static ::Effekseer::Effect* effect_ = NULL;
+static ::EffekseerTool::Sound* sound_ = NULL;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
 static std::map<std::u16string, Effekseer::Model*> m_models;
 static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
 static std::map<std::u16string, Effekseer::MaterialData*> g_materials_;
-
-static std::vector<HandleHolder> g_handles;
 
 static ::Effekseer::Vector3D g_focus_position;
 
@@ -375,19 +296,17 @@ static ::Effekseer::Client* g_client = NULL;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
-Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType)
-	: m_renderer(renderer)
+Native::TextureLoader::TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType)
 {
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
-		auto r = (EffekseerRendererGL::Renderer*)m_renderer;
 		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader(nullptr, colorSpaceType);
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
-		auto r = (EffekseerRendererDX11::Renderer*)m_renderer;
-		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext(), nullptr, colorSpaceType);
+		auto g = static_cast<efk::GraphicsDX11*>(graphics);
+		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(g->GetDevice(), g->GetContext(), nullptr, colorSpaceType);
 	}
 	else
 	{
@@ -454,8 +373,8 @@ void Native::SoundLoader::Unload(void* handle)
 	m_loader->Unload(handle);
 }
 
-Native::ModelLoader::ModelLoader(EffekseerRenderer::Renderer* renderer)
-	: m_renderer(renderer)
+Native::ModelLoader::ModelLoader(efk::Graphics* graphics)
+	: graphics_(graphics)
 {
 }
 
@@ -479,7 +398,6 @@ void* Native::ModelLoader::Load(const EFK_CHAR* path)
 	{
 		if (g_deviceType == efk::DeviceType::OpenGL)
 		{
-			auto r = (EffekseerRendererGL::Renderer*)m_renderer;
 			auto loader = ::EffekseerRendererGL::CreateModelLoader();
 			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
 
@@ -495,8 +413,8 @@ void* Native::ModelLoader::Load(const EFK_CHAR* path)
 #ifdef _WIN32
 		else if (g_deviceType == efk::DeviceType::DirectX11)
 		{
-			auto r = (EffekseerRendererDX11::Renderer*)m_renderer;
-			auto loader = ::EffekseerRendererDX11::CreateModelLoader(r->GetDevice());
+			auto g = static_cast<efk::GraphicsDX11*>(graphics_);
+			auto loader = ::EffekseerRendererDX11::CreateModelLoader(g->GetDevice());
 			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
 
 			if (m != nullptr)
@@ -529,9 +447,8 @@ void Native::ModelLoader::Unload(void* data)
 }
 
 Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer)
-	: renderer_(renderer)
 {
-	loader_ = renderer_->CreateMaterialLoader();
+	loader_ = renderer->CreateMaterialLoader();
 }
 
 Native::MaterialLoader::~MaterialLoader()
@@ -591,7 +508,7 @@ void Native::MaterialLoader::ReleaseAll()
 {
 	for (auto it : g_materials_)
 	{
-		((MaterialLoader*)g_manager->GetMaterialLoader())->GetOriginalLoader()->Unload(it.second);
+		loader_->Unload(it.second);
 	}
 	g_materials_.clear();
 	materialFiles_.clear();
@@ -599,7 +516,7 @@ void Native::MaterialLoader::ReleaseAll()
 
 ::Effekseer::Effect* Native::GetEffect()
 {
-	return g_effect;
+	return effect_;
 }
 
 Native::Native()
@@ -620,6 +537,7 @@ Native::~Native()
 	spdlog::trace("Begin Native::~Native()");
 
 	ES_SAFE_DELETE(g_client);
+	ES_SAFE_RELEASE(setting_);
 
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();
@@ -639,95 +557,88 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	// because internal buffer is 16bit
 	int32_t spriteCount = 65000 / 4;
 
-	g_renderer = new ::EffekseerTool::Renderer(spriteCount, isSRGBMode, g_deviceType);
+	if (deviceType == efk::DeviceType::OpenGL)
+	{
+		graphics_ = new efk::GraphicsGL();
+	}
+#ifdef _WIN32
+	else if (deviceType == efk::DeviceType::DirectX11)
+	{
+		graphics_ = new efk::GraphicsDX11();
+	}
+	else
+	{
+		assert(0);
+	}
+#endif
+	spdlog::trace("OK new ::efk::Graphics");
 
-	if (g_renderer->Initialize(pHandle, width, height))
+	if (!graphics_->Initialize(pHandle, width, height, m_isSRGBMode))
+	{
+		spdlog::trace("Graphics::Initialize(false)");
+		ES_SAFE_DELETE(graphics_);
+		return false;
+	}
+
+	renderer_ = new ::EffekseerTool::Renderer(g_deviceType);
+
+	if (renderer_->Initialize(width, height))
 	{
 		spdlog::trace("OK : ::EffekseerTool::Renderer::Initialize");
 
-		g_manager = ::Effekseer::Manager::Create(spriteCount);
+		//manager_ = ::Effekseer::Manager::Create(spriteCount);
 		spdlog::trace("OK : ::Effekseer::Manager::Create");
 
 		{
-			::Effekseer::SpriteRenderer* sprite_renderer = g_renderer->GetRenderer()->CreateSpriteRenderer();
-			::Effekseer::RibbonRenderer* ribbon_renderer = g_renderer->GetRenderer()->CreateRibbonRenderer();
-			::Effekseer::RingRenderer* ring_renderer = g_renderer->GetRenderer()->CreateRingRenderer();
-			::Effekseer::ModelRenderer* model_renderer = g_renderer->GetRenderer()->CreateModelRenderer();
-			::Effekseer::TrackRenderer* track_renderer = g_renderer->GetRenderer()->CreateTrackRenderer();
-
-			if (sprite_renderer == NULL)
-			{
-				spdlog::trace("FAIL : CreateSpriteRenderer");
-				g_manager->Destroy();
-				g_manager = NULL;
-				ES_SAFE_DELETE(g_renderer);
-				return false;
-			}
-
-			spdlog::trace("OK : CreateRenderers");
-
-			g_manager->SetSpriteRenderer(sprite_renderer);
-			g_manager->SetRibbonRenderer(ribbon_renderer);
-			g_manager->SetRingRenderer(ring_renderer);
-			g_manager->SetModelRenderer(model_renderer);
-			g_manager->SetTrackRenderer(track_renderer);
-
 			spdlog::trace("OK : SetRenderers");
 
-			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer(),
-												isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma);
-			g_manager->SetTextureLoader(m_textureLoader);
-			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer()));
-			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer()));
+			{
+				setting_ = Effekseer::Setting::Create();
+
+				m_textureLoader = new TextureLoader(graphics_,
+													isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma);
+
+				setting_->SetTextureLoader(m_textureLoader);
+
+				// TODO : refactor
+				setting_->SetModelLoader(new ModelLoader(graphics_));
+			}
+
+			//manager_->SetSetting(setting_);
 
 			spdlog::trace("OK : SetLoaders");
 		}
 
-		// Assign device lost events.
-		g_renderer->LostedDevice = [this]() -> void {
-			this->InvalidateTextureCache();
-			auto e = this->GetEffect();
-			if (e != nullptr)
-			{
-				e->UnloadResources();
-			}
-
-			for (auto& resource : g_imageResources)
-			{
-				resource.second->Invalidate();
-			}
-		};
-
-		g_renderer->ResettedDevice = [this]() -> void {
-			auto e = this->GetEffect();
-			if (e != nullptr)
-			{
-				e->ReloadResources();
-			}
-
-			for (auto& resource : g_imageResources)
-			{
-				resource.second->Validate();
-			}
-		};
-
 		spdlog::trace("OK : AssignFunctions");
+
+		mainScreen_ = std::make_shared<EffekseerTool::MainScreenRenderedEffectGenerator>();
+		mainScreen_->Initialize(graphics_, setting_, spriteCount, isSRGBMode);
+		mainScreen_->InitializedPrePost();
 	}
 	else
 	{
-		ES_SAFE_DELETE(g_renderer);
-
+		ES_SAFE_DELETE(renderer_);
+		ES_SAFE_DELETE(graphics_);
 		spdlog::trace("End Native::CreateWindow_Effekseer (false)");
 
 		return false;
 	}
 
-	g_sound = new ::EffekseerTool::Sound();
-	if (g_sound->Initialize())
+	sound_ = new ::EffekseerTool::Sound();
+	if (sound_->Initialize())
 	{
-		g_manager->SetSoundPlayer(g_sound->GetSound()->CreateSoundPlayer());
-		g_manager->SetSoundLoader(new SoundLoader(g_sound->GetSound()->CreateSoundLoader()));
+		mainScreen_->GetMamanager()->SetSoundPlayer(sound_->GetSound()->CreateSoundPlayer());
+
+		setting_->SetSoundLoader(new SoundLoader(sound_->GetSound()->CreateSoundLoader()));
 	}
+
+	if (mainScreen_ != nullptr && sound_ != nullptr)
+	{
+		mainScreen_->SetSound(sound_);
+	}
+
+	// TODO : refactor
+	mainScreen_->GetMamanager()->GetSetting()->SetMaterialLoader(new MaterialLoader(mainScreen_->GetRenderer()));
 
 	spdlog::trace("End Native::CreateWindow_Effekseer (true)");
 
@@ -736,19 +647,19 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 
 void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	g_renderer->GetGraphics()->Clear(Effekseer::Color(r, g, b, a));
+	graphics_->Clear(Effekseer::Color(r, g, b, a));
 }
 
 bool Native::UpdateWindow()
 {
-	assert(g_manager != NULL);
-	assert(g_renderer != NULL);
+	//assert(manager_ != NULL);
+	assert(renderer_ != NULL);
 
 	::Effekseer::Vector3D position(0, 0, GetDistance());
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
 	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
 
-	if (g_renderer->IsRightHand)
+	if (renderer_->IsRightHand)
 	{
 		mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
 		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
@@ -761,7 +672,7 @@ bool Native::UpdateWindow()
 		position.Z += g_focus_position.Z;
 
 		::Effekseer::Matrix44 cameraMat;
-		g_renderer->GetRenderer()->SetCameraMatrix(
+		renderer_->SetCameraMatrix(
 			::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 		drawParameter.CameraPosition = position;
@@ -782,16 +693,16 @@ bool Native::UpdateWindow()
 		position.Z += temp_focus.Z;
 
 		::Effekseer::Matrix44 cameraMat;
-		g_renderer->GetRenderer()->SetCameraMatrix(
+		renderer_->SetCameraMatrix(
 			::Effekseer::Matrix44().LookAtLH(position, temp_focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 		drawParameter.CameraPosition = position;
 	}
 
-	g_renderer->SetOrthographicScale(GetOrthoScale());
+	renderer_->SetOrthographicScale(GetOrthoScale());
 
-	g_sound->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
-	g_sound->Update();
+	sound_->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
+	sound_->Update();
 
 	// command
 	if (commandQueueFromMaterialEditor_ != nullptr)
@@ -811,307 +722,103 @@ bool Native::UpdateWindow()
 
 void Native::RenderWindow()
 {
-	g_renderer->BeginRendering();
+	graphics_->BeginScene();
 
-	if (g_renderer->Distortion == EffekseerTool::DistortionType::Current)
-	{
-		g_manager->DrawBack(drawParameter);
+	mainScreen_->Render();
 
-		// HACK
-		g_renderer->GetRenderer()->EndRendering();
-
-		g_renderer->CopyToBackground();
-
-		// HACK
-		g_renderer->GetRenderer()->BeginRendering();
-		g_manager->DrawFront(drawParameter);
-	}
-	else
-	{
-		g_manager->Draw(drawParameter);
-	}
-
-	g_renderer->EndRendering();
-
-	g_renderer->RenderPostEffect();
+	graphics_->EndScene();
 }
 
 void Native::Present()
 {
-	g_renderer->Present();
+	graphics_->Present();
 }
 
 bool Native::ResizeWindow(int width, int height)
 {
-	g_renderer->Resize(width, height);
+	graphics_->Resize(width, height);
 	return true;
 }
 
 bool Native::DestroyWindow()
 {
-	assert(g_renderer != NULL);
-	assert(g_manager != NULL);
-
-	for (size_t i = 0; i < g_handles.size(); i++)
-	{
-		g_manager->StopEffect(g_handles[i].Handle);
-	}
-	g_handles.clear();
+	assert(renderer_ != NULL);
 
 	InvalidateTextureCache();
 
 	g_imageResources.clear();
 
-	ES_SAFE_RELEASE(g_effect);
+	ES_SAFE_RELEASE(effect_);
 
-	g_manager->Destroy();
-	ES_SAFE_DELETE(g_renderer);
+	//manager_->Destroy();
+	ES_SAFE_DELETE(renderer_);
+
+	mainScreen_.reset();
+
+	ES_SAFE_DELETE(graphics_);
 
 	return true;
 }
 
 bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 {
-	assert(g_effect == NULL);
+	assert(effect_ == NULL);
 
-	g_handles.clear();
+	//handles_.clear();
 
-	((TextureLoader*)g_manager->GetTextureLoader())->RootPath = std::u16string(Path);
-	((ModelLoader*)g_manager->GetModelLoader())->RootPath = std::u16string(Path);
-	((MaterialLoader*)g_manager->GetMaterialLoader())->RootPath = std::u16string(Path);
+	((TextureLoader*)setting_->GetTextureLoader())->RootPath = std::u16string(Path);
+	((ModelLoader*)setting_->GetModelLoader())->RootPath = std::u16string(Path);
+	((MaterialLoader*)setting_->GetMaterialLoader())->RootPath = std::u16string(Path);
 
-	SoundLoader* soundLoader = (SoundLoader*)g_manager->GetSoundLoader();
+	SoundLoader* soundLoader = (SoundLoader*)setting_->GetSoundLoader();
 	if (soundLoader)
 	{
 		soundLoader->RootPath = std::u16string(Path);
 	}
 
-	g_effect = Effekseer::Effect::Create(g_manager, pData, size);
-	assert(g_effect != NULL);
+	effect_ = Effekseer::Effect::Create(setting_, pData, size);
+	assert(effect_ != NULL);
+
+	if (mainScreen_ != nullptr)
+	{
+		mainScreen_->SetEffect(effect_);
+	}
 	return true;
 }
 
 bool Native::RemoveEffect()
 {
-	ES_SAFE_RELEASE(g_effect);
-	g_handles.clear();
+	if (mainScreen_ != nullptr)
+	{
+		mainScreen_->SetEffect(effect_);
+		mainScreen_->Reset();
+	}
+
+	ES_SAFE_RELEASE(effect_);
 	return true;
 }
 
 bool Native::PlayEffect()
 {
-	assert(g_effect != NULL);
-
-	for (int32_t z = 0; z < m_effectBehavior.CountZ; z++)
-	{
-		for (int32_t y = 0; y < m_effectBehavior.CountY; y++)
-		{
-			for (int32_t x = 0; x < m_effectBehavior.CountX; x++)
-			{
-				auto lenX = m_effectBehavior.Distance * (m_effectBehavior.CountX - 1);
-				auto lenY = m_effectBehavior.Distance * (m_effectBehavior.CountY - 1);
-				auto lenZ = m_effectBehavior.Distance * (m_effectBehavior.CountZ - 1);
-
-				auto posX = m_effectBehavior.Distance * x - lenX / 2.0f;
-				auto posY = m_effectBehavior.Distance * y - lenY / 2.0f;
-				auto posZ = m_effectBehavior.Distance * z - lenZ / 2.0f;
-
-				posX += m_effectBehavior.PositionX;
-				posY += m_effectBehavior.PositionY;
-				posZ += m_effectBehavior.PositionZ;
-
-				HandleHolder handleHolder(g_manager->Play(g_effect, posX, posY, posZ));
-
-				Effekseer::Matrix43 mat, matTra, matRot, matScale;
-				matTra.Translation(posX, posY, posZ);
-				matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
-				matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
-
-				mat.Indentity();
-				Effekseer::Matrix43::Multiple(mat, mat, matScale);
-				Effekseer::Matrix43::Multiple(mat, mat, matRot);
-				Effekseer::Matrix43::Multiple(mat, mat, matTra);
-
-				g_manager->SetMatrix(handleHolder.Handle, mat);
-				g_manager->SetSpeed(handleHolder.Handle, m_effectBehavior.PlaybackSpeed);
-
-				g_handles.push_back(handleHolder);
-
-				if (m_effectBehavior.AllColorR != 255 || m_effectBehavior.AllColorG != 255 || m_effectBehavior.AllColorB != 255 ||
-					m_effectBehavior.AllColorA != 255)
-				{
-					g_manager->SetAllColor(handleHolder.Handle,
-										   Effekseer::Color(m_effectBehavior.AllColorR,
-															m_effectBehavior.AllColorG,
-															m_effectBehavior.AllColorB,
-															m_effectBehavior.AllColorA));
-				}
-			}
-		}
-	}
-
-	m_time = 0;
-	m_rootLocation.X = m_effectBehavior.PositionX;
-	m_rootLocation.Y = m_effectBehavior.PositionY;
-	m_rootLocation.Z = m_effectBehavior.PositionZ;
-	m_rootRotation.X = m_effectBehavior.RotationX;
-	m_rootRotation.Y = m_effectBehavior.RotationY;
-	m_rootRotation.Z = m_effectBehavior.RotationZ;
-	m_rootScale.X = m_effectBehavior.ScaleX;
-	m_rootScale.Y = m_effectBehavior.ScaleY;
-	m_rootScale.Z = m_effectBehavior.ScaleZ;
-
+	mainScreen_->PlayEffect();
 	return true;
 }
 
 bool Native::StopEffect()
 {
-	if (g_handles.size() <= 0)
-		return false;
-
-	for (size_t i = 0; i < g_handles.size(); i++)
-	{
-		g_manager->StopEffect(g_handles[i].Handle);
-	}
-	g_handles.clear();
-
-	g_manager->Update();
-
+	mainScreen_->Reset();
 	return true;
 }
 
 bool Native::StepEffect(int frame)
 {
-	if (frame <= 0)
-	{
-	}
-	else if (frame == 1)
-	{
-		StepEffect();
-	}
-	else
-	{
-		bool mute = g_sound->GetMute();
-		g_sound->SetMute(true);
-
-		for (size_t i = 0; i < g_handles.size(); i++)
-		{
-			g_manager->SetShown(g_handles[i].Handle, false);
-		}
-
-		for (int i = 0; i < frame - 1; i++)
-		{
-			StepEffect();
-		}
-
-		for (size_t i = 0; i < g_handles.size(); i++)
-		{
-			g_manager->SetShown(g_handles[i].Handle, true);
-		}
-
-		g_sound->SetMute(mute);
-		g_manager->Update();
-		g_renderer->GetRenderer()->SetTime(m_time / 60.0f);
-	}
+	mainScreen_->Update(frame);
 	return true;
 }
 
 bool Native::StepEffect()
 {
-	if (m_effectBehavior.TimeSpan > 0 && m_time > 0 && m_time % m_effectBehavior.TimeSpan == 0)
-	{
-		PlayEffect();
-	}
-
-	// dynamic parameter
-	for (auto h : g_handles)
-	{
-		g_manager->SetDynamicInput(h.Handle, 0, m_effectBehavior.DynamicInput1);
-		g_manager->SetDynamicInput(h.Handle, 1, m_effectBehavior.DynamicInput2);
-		g_manager->SetDynamicInput(h.Handle, 2, m_effectBehavior.DynamicInput3);
-		g_manager->SetDynamicInput(h.Handle, 3, m_effectBehavior.DynamicInput4);
-	}
-
-	for (auto h : g_handles)
-	{
-		g_manager->SetSpeed(h.Handle, m_effectBehavior.PlaybackSpeed);
-	}
-
-	if (m_time % m_step == 0)
-	{
-		m_rootLocation.X += m_effectBehavior.PositionVelocityX;
-		m_rootLocation.Y += m_effectBehavior.PositionVelocityY;
-		m_rootLocation.Z += m_effectBehavior.PositionVelocityZ;
-
-		m_rootRotation.X += m_effectBehavior.RotationVelocityX;
-		m_rootRotation.Y += m_effectBehavior.RotationVelocityY;
-		m_rootRotation.Z += m_effectBehavior.RotationVelocityZ;
-
-		m_rootScale.X += m_effectBehavior.ScaleVelocityX;
-		m_rootScale.Y += m_effectBehavior.ScaleVelocityY;
-		m_rootScale.Z += m_effectBehavior.ScaleVelocityZ;
-
-		int32_t index = 0;
-
-		for (int32_t z = 0; z < m_effectBehavior.CountZ && index < g_handles.size(); z++)
-		{
-			for (int32_t y = 0; y < m_effectBehavior.CountY && index < g_handles.size(); y++)
-			{
-				for (int32_t x = 0; x < m_effectBehavior.CountX && index < g_handles.size(); x++)
-				{
-					auto lenX = m_effectBehavior.Distance * (m_effectBehavior.CountX - 1);
-					auto lenY = m_effectBehavior.Distance * (m_effectBehavior.CountY - 1);
-					auto lenZ = m_effectBehavior.Distance * (m_effectBehavior.CountZ - 1);
-
-					auto posX = m_effectBehavior.Distance * x - lenX / 2.0f;
-					auto posY = m_effectBehavior.Distance * y - lenY / 2.0f;
-					auto posZ = m_effectBehavior.Distance * z - lenZ / 2.0f;
-
-					posX += m_rootLocation.X;
-					posY += m_rootLocation.Y;
-					posZ += m_rootLocation.Z;
-
-					Effekseer::Matrix43 mat, matTra, matRot, matScale;
-					matTra.Translation(posX, posY, posZ);
-					matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
-					matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
-
-					mat.Indentity();
-					Effekseer::Matrix43::Multiple(mat, mat, matScale);
-					Effekseer::Matrix43::Multiple(mat, mat, matRot);
-					Effekseer::Matrix43::Multiple(mat, mat, matTra);
-
-					g_manager->SetMatrix(g_handles[index].Handle, mat);
-
-					g_manager->SetTargetLocation(g_handles[index].Handle,
-												 m_effectBehavior.TargetPositionX,
-												 m_effectBehavior.TargetPositionY,
-												 m_effectBehavior.TargetPositionZ);
-					index++;
-				}
-			}
-		}
-
-		for (size_t i = 0; i < g_handles.size(); i++)
-		{
-			if (g_handles[i].Time >= m_effectBehavior.RemovedTime)
-			{
-				g_manager->StopRoot(g_handles[i].Handle);
-				g_handles[i].IsRootStopped = true;
-			}
-		}
-
-		g_manager->Update((float)m_step);
-		g_renderer->GetRenderer()->SetTime(m_time / 60.0f);
-
-		for (size_t i = 0; i < g_handles.size(); i++)
-		{
-			g_handles[i].Time++;
-		}
-	}
-
-	m_time++;
-
+	mainScreen_->Update(1);
 	return true;
 }
 
@@ -1210,13 +917,16 @@ bool Native::SetRandomSeed(int seed)
 
 void* Native::RenderView(int32_t width, int32_t height)
 {
-	g_lastViewWidth = width;
-	g_lastViewHeight = height;
-
-	g_renderer->BeginRenderToView(width, height);
-	RenderWindow();
-	g_renderer->EndRenderToView();
-	return (void*)g_renderer->GetViewID();
+	renderer_->SetScreenSize(width, height);
+	mainScreenConfig_.DrawParameter = drawParameter;
+	mainScreenConfig_.CameraMatrix = renderer_->GetCameraMatrix();
+	mainScreenConfig_.ProjectionMatrix = renderer_->GetProjectionMatrix();
+	mainScreenConfig_.Distortion = (Effekseer::Tool::DistortionType)renderer_->Distortion;
+	mainScreenConfig_.BackgroundColor = renderer_->BackgroundColor;
+	mainScreen_->SetConfig(mainScreenConfig_);
+	mainScreen_->Resize(Effekseer::Tool::Vector2DI(width, height));
+	mainScreen_->Render();
+	return (void*)mainScreen_->GetView()->GetViewID();
 }
 
 class RecorderCallback
@@ -1244,10 +954,12 @@ class RecorderCallbackSprite : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
+	Effekseer::Tool::Vector2DI imageSize_;
 
 public:
-	RecorderCallbackSprite(RecordingParameter& recordingParameter)
+	RecorderCallbackSprite(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
 		: recordingParameter_(recordingParameter)
+		, imageSize_(imageSize)
 	{
 	}
 
@@ -1279,7 +991,7 @@ public:
 		spdlog::trace("RecorderCallbackSprite : {}", path8_dst);
 
 		efk::PNGHelper pngHelper;
-		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
+		pngHelper.Save((char16_t*)path_, imageSize_.X, imageSize_.Y, pixels.data());
 	}
 };
 
@@ -1287,12 +999,14 @@ class RecorderCallbackSpriteSheet : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
+	Effekseer::Tool::Vector2DI imageSize_;
 	int yCount = 0;
 	std::vector<Effekseer::Color> pixels_out;
 
 public:
-	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter)
+	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
 		: recordingParameter_(recordingParameter)
+		, imageSize_(imageSize)
 	{
 	}
 
@@ -1304,7 +1018,7 @@ public:
 		if (recordingParameter_.Count > recordingParameter_.HorizontalCount * yCount)
 			yCount++;
 
-		pixels_out.resize((g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * yCount));
+		pixels_out.resize((imageSize_.X * recordingParameter_.HorizontalCount) * (imageSize_.Y * yCount));
 
 		if (recordingParameter_.Transparence == TransparenceType::None)
 		{
@@ -1343,7 +1057,7 @@ public:
 
 		efk::PNGHelper pngHelper;
 		pngHelper.Save(
-			path_, g_renderer->GuideWidth * recordingParameter_.HorizontalCount, g_renderer->GuideHeight * yCount, pixels_out.data());
+			path_, imageSize_.X * recordingParameter_.HorizontalCount, imageSize_.Y * yCount, pixels_out.data());
 	}
 
 	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
@@ -1351,13 +1065,13 @@ public:
 		auto x = index % recordingParameter_.HorizontalCount;
 		auto y = index / recordingParameter_.HorizontalCount;
 
-		for (int32_t y_ = 0; y_ < g_renderer->GuideHeight; y_++)
+		for (int32_t y_ = 0; y_ < imageSize_.Y; y_++)
 		{
-			for (int32_t x_ = 0; x_ < g_renderer->GuideWidth; x_++)
+			for (int32_t x_ = 0; x_ < imageSize_.X; x_++)
 			{
-				pixels_out[x * g_renderer->GuideWidth + x_ +
-						   (g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * y + y_)] =
-					pixels[x_ + y_ * g_renderer->GuideWidth];
+				pixels_out[x * imageSize_.X + x_ +
+						   (imageSize_.X * recordingParameter_.HorizontalCount) * (imageSize_.Y * y + y_)] =
+					pixels[x_ + y_ * imageSize_.X];
 			}
 		}
 	}
@@ -1367,11 +1081,13 @@ class RecorderCallbackGif : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
+	Effekseer::Tool::Vector2DI imageSize_;
 	efk::GifHelper helper;
 
 public:
-	RecorderCallbackGif(RecordingParameter& recordingParameter)
+	RecorderCallbackGif(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
 		: recordingParameter_(recordingParameter)
+		, imageSize_(imageSize)
 	{
 	}
 
@@ -1393,7 +1109,7 @@ public:
 
 		spdlog::trace("RecorderCallbackGif : {}", path8_dst);
 
-		helper.Initialize(path_, g_renderer->GuideWidth, g_renderer->GuideHeight, recordingParameter_.Freq);
+		helper.Initialize(path_, imageSize_.X, imageSize_.Y, recordingParameter_.Freq);
 		return true;
 	}
 
@@ -1411,13 +1127,15 @@ class RecorderCallbackAvi : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
+	Effekseer::Tool::Vector2DI imageSize_;
 	efk::AVIExporter exporter;
 	std::vector<uint8_t> d;
 	FILE* fp = nullptr;
 
 public:
-	RecorderCallbackAvi(RecordingParameter& recordingParameter)
+	RecorderCallbackAvi(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
 		: recordingParameter_(recordingParameter)
+		, imageSize_(imageSize)
 	{
 	}
 
@@ -1450,7 +1168,7 @@ public:
 			return false;
 
 		exporter.Initialize(
-			g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)recordingParameter_.Freq), recordingParameter_.Count);
+			imageSize_.X, imageSize_.Y, (int32_t)(60.0f / (float)recordingParameter_.Freq), recordingParameter_.Count);
 
 		exporter.BeginToExportAVI(d);
 		fwrite(d.data(), 1, d.size(), fp);
@@ -1477,8 +1195,8 @@ class Native::Recorder
 private:
 	std::shared_ptr<RecorderCallback> recorderCallback;
 	std::shared_ptr<RecorderCallback> recorderCallback2;
+	Effekseer::Tool::Vector2DI imageSize_;
 
-	static constexpr bool isBehaviorEnabled = true;
 	bool isRecording = false;
 	bool isRecordCompleted = false;
 	RecordingParameter recordingParameter_ = {};
@@ -1489,10 +1207,24 @@ private:
 	int recordedCount = 0;
 	bool completed = false;
 
+	std::shared_ptr<Effekseer::Tool::RenderedEffectGenerator> generator_;
+	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
+	efk::Graphics* graphics_ = nullptr;
+
 public:
-	bool Begin(Native* native, const RecordingParameter& recordingParameter)
+	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+			   efk::Graphics* graphics,
+			   Effekseer::Setting* setting,
+			   const RecordingParameter& recordingParameter,
+			   Effekseer::Tool::Vector2DI imageSize,
+			   bool isSRGBMode,
+			   Effekseer::Tool::ViewerEffectBehavior behavior)
 	{
+		mainScreen_ = mainScreen;
+		graphics_ = graphics;
 		recordingParameter_ = recordingParameter;
+		int recScale = 1;
+		imageSize_ = Effekseer::Tool::Vector2DI(imageSize.X * recScale, imageSize.Y * recScale);
 
 		if (recordingParameter_.Transparence == TransparenceType::Generate2)
 		{
@@ -1510,38 +1242,38 @@ public:
 
 		if (recordingParameter_.RecordingMode == RecordingModeType::Sprite)
 		{
-			recorderCallback = std::make_shared<RecorderCallbackSprite>(recordingParameter_);
+			recorderCallback = std::make_shared<RecorderCallbackSprite>(recordingParameter_, imageSize_);
 
 			if (recordingParameter_.Transparence == TransparenceType::Generate2)
 			{
-				recorderCallback2 = std::make_shared<RecorderCallbackSprite>(recordingParameter2_);
+				recorderCallback2 = std::make_shared<RecorderCallbackSprite>(recordingParameter2_, imageSize_);
 			}
 		}
 		else if (recordingParameter_.RecordingMode == RecordingModeType::SpriteSheet)
 		{
-			recorderCallback = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter_);
+			recorderCallback = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter_, imageSize_);
 
 			if (recordingParameter_.Transparence == TransparenceType::Generate2)
 			{
-				recorderCallback2 = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter2_);
+				recorderCallback2 = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter2_, imageSize_);
 			}
 		}
 		else if (recordingParameter_.RecordingMode == RecordingModeType::Gif)
 		{
-			recorderCallback = std::make_shared<RecorderCallbackGif>(recordingParameter_);
+			recorderCallback = std::make_shared<RecorderCallbackGif>(recordingParameter_, imageSize_);
 
 			if (recordingParameter_.Transparence == TransparenceType::Generate2)
 			{
-				recorderCallback2 = std::make_shared<RecorderCallbackGif>(recordingParameter2_);
+				recorderCallback2 = std::make_shared<RecorderCallbackGif>(recordingParameter2_, imageSize_);
 			}
 		}
 		else if (recordingParameter_.RecordingMode == RecordingModeType::Avi)
 		{
-			recorderCallback = std::make_shared<RecorderCallbackAvi>(recordingParameter_);
+			recorderCallback = std::make_shared<RecorderCallbackAvi>(recordingParameter_, imageSize_);
 
 			if (recordingParameter_.Transparence == TransparenceType::Generate2)
 			{
-				recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2_);
+				recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2_, imageSize_);
 			}
 		}
 
@@ -1560,60 +1292,52 @@ public:
 			return false;
 		}
 
-		g_renderer->IsBackgroundTranslucent = recordingParameter_.Transparence == TransparenceType::Original;
+		generator_ = std::make_shared<Effekseer::Tool::RenderedEffectGenerator>();
 
-		::Effekseer::Vector3D position(0, 0, GetDistance());
-		::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-		mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-		mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-		::Effekseer::Vector3D::Transform(position, position, mat);
-		position.X += g_focus_position.X;
-		position.Y += g_focus_position.Y;
-		position.Z += g_focus_position.Z;
-
-		g_renderer->GetRenderer()->SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-		g_renderer->SetOrthographicScale(GetOrthoScale());
-
-		native->StopEffect();
-
-		if (isBehaviorEnabled)
+		if (!generator_->Initialize(graphics_, setting, mainScreen_->GetRenderer()->GetSquareMaxCount(), isSRGBMode))
 		{
-			native->PlayEffect();
-		}
-		else
-		{
-			handle = g_manager->Play(g_effect, 0, 0, 0);
-			const ViewerEffectBehavior& behavior = native->m_effectBehavior;
-			g_manager->SetTargetLocation(handle, behavior.TargetPositionX, behavior.TargetPositionY, behavior.TargetPositionZ);
+			return false;
 		}
 
-		if (isBehaviorEnabled)
-		{
-			native->StepEffect(recordingParameter_.OffsetFrame);
-		}
-		else
-		{
-			for (int i = 0; i < recordingParameter_.OffsetFrame; i++)
-			{
-				g_manager->Update();
-				g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
-				currentTime++;
-			}
-		}
+		generator_->Resize(imageSize_);
 
-		g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+		Effekseer::Tool::RenderedEffectGeneratorConfig config = mainScreen_->GetConfig();
+		config.DrawParameter = drawParameter;
+		config.Distortion = (Effekseer::Tool::DistortionType)renderer_->Distortion;
+		auto screenSize = renderer_->GetScreenSize();
+
+		::Effekseer::Matrix44 mat;
+		mat.Values[0][0] = (float)screenSize.X / (float)imageSize.X;
+		mat.Values[1][1] = (float)screenSize.Y / (float)imageSize.Y;
+		::Effekseer::Matrix44::Mul(config.ProjectionMatrix, config.ProjectionMatrix, mat);
+
+		generator_->SetConfig(config);
+		generator_->SetEffect(effect_);
+
+		generator_->SetBehavior(behavior);
+
+		float bloomIntencity = 0.0f;
+		float bloomTh = 0.0f;
+		float bloomK = 0.0f;
+
+		mainScreen_->GetBloomEffect()->GetParameters(bloomIntencity, bloomTh, bloomK);
+		generator_->GetBloomEffect()->SetParameters(bloomIntencity, bloomTh, bloomK);
+		generator_->GetBloomEffect()->SetEnabled(mainScreen_->GetBloomEffect()->GetEnabled());
+
+		efk::TonemapEffect::Algorithm toneA;
+		float toneE = 0.0f;
+		mainScreen_->GetTonemapEffect()->GetParameters(toneA, toneE);
+		generator_->GetTonemapEffect()->SetParameters(toneA, toneE);
+		generator_->GetTonemapEffect()->SetEnabled(mainScreen_->GetTonemapEffect()->GetEnabled());
+
+		generator_->PlayEffect();
+		generator_->Update(recordingParameter_.OffsetFrame);
 
 		return true;
 	}
 
 	bool Step(Native* native, int frames)
 	{
-		// HACK
-		g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
-
 		for (int32_t i = 0; i < frames; i++)
 		{
 			if (IsCompleted())
@@ -1621,43 +1345,80 @@ public:
 				break;
 			}
 
-			std::vector<std::vector<Effekseer::Color>> pixels;
-			pixels.resize(iteratorCount);
+			std::vector<std::vector<Effekseer::Color>> pixelss;
+			pixelss.resize(iteratorCount);
 
 			for (int32_t loop = 0; loop < iteratorCount; loop++)
 			{
 				auto colorValue = Effekseer::Clamp(32 * loop, 255, 0);
-				g_renderer->BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
 
-				if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-					return false;
+				auto config = generator_->GetConfig();
+				config.BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
+				generator_->SetConfig(config);
 
-				native->RenderWindow();
+				generator_->Render();
+				graphics_->SaveTexture(generator_->GetView().get(), pixelss[loop]);
 
-				g_renderer->EndRecord(pixels[loop],
-									  recordingParameter_.Transparence == TransparenceType::Generate,
-									  recordingParameter_.Transparence == TransparenceType::None);
-			}
+				auto generateAlpha = recordingParameter_.Transparence == TransparenceType::Generate;
+				auto removeAlpha = recordingParameter_.Transparence == TransparenceType::None;
 
-			if (isBehaviorEnabled)
-			{
-				native->StepEffect(recordingParameter_.Freq);
-			}
-			else
-			{
-				for (int j = 0; j < recordingParameter_.Freq; j++)
+				auto& pixels = pixelss[loop];
+
+				auto f2b = [](float v) -> uint8_t {
+					auto v_ = v * 255;
+					if (v_ > 255)
+						v_ = 255;
+					if (v_ < 0)
+						v_ = 0;
+					return v_;
+				};
+
+				auto b2f = [](uint8_t v) -> float {
+					auto v_ = (float)v / 255.0f;
+					return v_;
+				};
+
+				for (int32_t i = 0; i < imageSize_.X * imageSize_.Y; i++)
 				{
-					g_manager->Update();
-					g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
-					currentTime++;
+					if (generateAlpha)
+					{
+						auto rf = b2f(pixels[i].R);
+						auto gf = b2f(pixels[i].G);
+						auto bf = b2f(pixels[i].B);
+						auto oaf = b2f(pixels[i].A);
+
+						rf = rf * oaf;
+						gf = gf * oaf;
+						bf = bf * oaf;
+
+						auto af = rf;
+						af = Effekseer::Max(af, gf);
+						af = Effekseer::Max(af, bf);
+
+						if (af > 0.0f)
+						{
+							pixels[i].R = f2b(rf / af);
+							pixels[i].G = f2b(gf / af);
+							pixels[i].B = f2b(bf / af);
+						}
+
+						pixels[i].A = f2b(af);
+					}
+
+					if (removeAlpha)
+					{
+						pixels[i].A = 255;
+					}
 				}
 			}
+
+			generator_->Update(recordingParameter_.Freq);
 
 			if (recordingParameter_.Transparence == TransparenceType::Generate2)
 			{
 				std::vector<std::vector<Effekseer::Color>> pixels_out;
 				pixels_out.resize(2);
-				GenerateExportedImageWithBlendAndAdd(pixels_out[0], pixels_out[1], pixels);
+				GenerateExportedImageWithBlendAndAdd(pixels_out[0], pixels_out[1], pixelss);
 
 				recorderCallback->OnEndFrameRecord(recordedCount, pixels_out[0]);
 
@@ -1668,32 +1429,18 @@ public:
 			}
 			else
 			{
-				recorderCallback->OnEndFrameRecord(recordedCount, pixels[0]);
+				recorderCallback->OnEndFrameRecord(recordedCount, pixelss[0]);
 			}
 
 			recordedCount++;
 		}
-
-		// HACK
-		g_renderer->EndRenderToView();
 
 		return true;
 	}
 
 	bool End(Native* native)
 	{
-		if (isBehaviorEnabled)
-		{
-			native->StopEffect();
-		}
-		else
-		{
-			g_manager->StopEffect(handle);
-		}
-
-		g_manager->Update();
-
-		g_renderer->EndRenderToView();
+		generator_->Reset();
 
 		recorderCallback->OnEndRecord();
 
@@ -1701,6 +1448,8 @@ public:
 		{
 			recorderCallback2->OnEndRecord();
 		}
+
+		generator_ = nullptr;
 
 		return true;
 	}
@@ -1718,11 +1467,11 @@ public:
 
 bool Native::BeginRecord(const RecordingParameter& recordingParameter)
 {
-	if (g_effect == nullptr)
+	if (effect_ == nullptr)
 		return false;
 
 	recorder.reset(new Recorder());
-	return recorder->Begin(this, recordingParameter);
+	return recorder->Begin(mainScreen_, graphics_, setting_, recordingParameter, Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight), m_isSRGBMode, behavior_);
 }
 
 bool Native::StepRecord(int frames)
@@ -1785,50 +1534,50 @@ bool Native::Record(const RecordingParameter& recordingParameter)
 
 ViewerParamater Native::GetViewerParamater()
 {
-	assert(g_renderer != NULL);
+	assert(renderer_ != NULL);
 
 	ViewerParamater paramater;
 
-	paramater.GuideWidth = g_renderer->GuideWidth;
-	paramater.GuideHeight = g_renderer->GuideHeight;
-	paramater.ClippingStart = g_renderer->ClippingStart;
-	paramater.ClippingEnd = g_renderer->ClippingEnd;
-	paramater.IsPerspective = g_renderer->GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE;
-	paramater.IsOrthographic = g_renderer->GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC;
+	paramater.GuideWidth = mainScreen_->GuideWidth;
+	paramater.GuideHeight = mainScreen_->GuideHeight;
+	paramater.ClippingStart = renderer_->ClippingStart;
+	paramater.ClippingEnd = renderer_->ClippingEnd;
+	paramater.IsPerspective = renderer_->GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE;
+	paramater.IsOrthographic = renderer_->GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC;
 	paramater.FocusX = g_focus_position.X;
 	paramater.FocusY = g_focus_position.Y;
 	paramater.FocusZ = g_focus_position.Z;
 	paramater.AngleX = g_RotX;
 	paramater.AngleY = g_RotY;
 	paramater.Distance = GetDistance();
-	paramater.RendersGuide = g_renderer->RendersGuide;
-	paramater.RateOfMagnification = g_renderer->RateOfMagnification;
+	paramater.RendersGuide = mainScreen_->RendersGuide;
+	paramater.RateOfMagnification = renderer_->RateOfMagnification;
 
-	paramater.Distortion = (DistortionType)g_renderer->Distortion;
-	paramater.RenderingMode = (RenderMode)g_renderer->RenderingMode;
+	paramater.Distortion = (Effekseer::Tool::DistortionType)renderer_->Distortion;
+	paramater.RenderingMode = (RenderMode)renderer_->RenderingMode;
 
 	return paramater;
 }
 
 void Native::SetViewerParamater(ViewerParamater& paramater)
 {
-	assert(g_renderer != NULL);
+	assert(renderer_ != NULL);
 
-	g_renderer->ClippingStart = paramater.ClippingStart;
-	g_renderer->ClippingEnd = paramater.ClippingEnd;
-	g_renderer->GuideWidth = paramater.GuideWidth;
-	g_renderer->GuideHeight = paramater.GuideHeight;
+	renderer_->ClippingStart = paramater.ClippingStart;
+	renderer_->ClippingEnd = paramater.ClippingEnd;
+	mainScreen_->GuideWidth = paramater.GuideWidth;
+	mainScreen_->GuideHeight = paramater.GuideHeight;
 
-	g_renderer->RateOfMagnification = paramater.RateOfMagnification;
+	renderer_->RateOfMagnification = paramater.RateOfMagnification;
 
 	if (paramater.IsPerspective)
 	{
-		g_renderer->SetProjectionType(::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE);
+		renderer_->SetProjectionType(::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE);
 	}
 
 	if (paramater.IsOrthographic)
 	{
-		g_renderer->SetProjectionType(::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC);
+		renderer_->SetProjectionType(::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC);
 	}
 
 	g_focus_position.X = paramater.FocusX;
@@ -1839,36 +1588,41 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 
 	SetZoom(logf(Effekseer::Max(FLT_MIN, paramater.Distance / DistanceBase)) / logf(ZoomDistanceFactor));
 
-	g_renderer->RendersGuide = paramater.RendersGuide;
-	g_renderer->Distortion = (::EffekseerTool::DistortionType)paramater.Distortion;
-	g_renderer->RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
+	mainScreen_->RendersGuide = paramater.RendersGuide;
+	renderer_->Distortion = (Effekseer::Tool::DistortionType)paramater.Distortion;
+	renderer_->RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
 }
 
-ViewerEffectBehavior Native::GetEffectBehavior()
+Effekseer::Tool::ViewerEffectBehavior Native::GetEffectBehavior()
 {
-	return m_effectBehavior;
+	return behavior_;
 }
 
-void Native::SetViewerEffectBehavior(ViewerEffectBehavior& behavior)
+void Native::SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior& behavior)
 {
-	m_effectBehavior = behavior;
-	if (m_effectBehavior.CountX <= 0)
-		m_effectBehavior.CountX = 1;
-	if (m_effectBehavior.CountY <= 0)
-		m_effectBehavior.CountY = 1;
-	if (m_effectBehavior.CountZ <= 0)
-		m_effectBehavior.CountZ = 1;
+	behavior_ = behavior;
+	if (behavior_.CountX <= 0)
+		behavior_.CountX = 1;
+	if (behavior_.CountY <= 0)
+		behavior_.CountY = 1;
+	if (behavior_.CountZ <= 0)
+		behavior_.CountZ = 1;
+
+	if (mainScreen_ != nullptr)
+	{
+		mainScreen_->SetBehavior(behavior_);
+	}
 }
 
 bool Native::SetSoundMute(bool mute)
 {
-	g_sound->SetMute(mute);
+	sound_->SetMute(mute);
 	return true;
 }
 
 bool Native::SetSoundVolume(float volume)
 {
-	g_sound->SetVolume(volume);
+	sound_->SetVolume(volume);
 	return true;
 }
 
@@ -1897,7 +1651,7 @@ bool Native::InvalidateTextureCache()
 	}
 
 	{
-		((MaterialLoader*)g_manager->GetMaterialLoader())->ReleaseAll();
+		((MaterialLoader*)setting_->GetMaterialLoader())->ReleaseAll();
 	}
 
 	return true;
@@ -1905,35 +1659,32 @@ bool Native::InvalidateTextureCache()
 
 void Native::SetIsGridShown(bool value, bool xy, bool xz, bool yz)
 {
-	g_renderer->IsGridShown = value;
-	g_renderer->IsGridXYShown = xy;
-	g_renderer->IsGridXZShown = xz;
-	g_renderer->IsGridYZShown = yz;
+	mainScreen_->IsGridShown = value;
+	mainScreen_->IsGridXYShown = xy;
+	mainScreen_->IsGridXZShown = xz;
+	mainScreen_->IsGridYZShown = yz;
 }
 
 void Native::SetGridLength(float length)
 {
-	g_renderer->GridLength = length;
+	mainScreen_->GridLength = length;
 }
 
 void Native::SetBackgroundColor(uint8_t r, uint8_t g, uint8_t b)
 {
-	g_renderer->BackgroundColor.R = r;
-	g_renderer->BackgroundColor.G = g;
-	g_renderer->BackgroundColor.B = b;
+	renderer_->BackgroundColor.R = r;
+	renderer_->BackgroundColor.G = g;
+	renderer_->BackgroundColor.B = b;
 }
 
 void Native::SetBackgroundImage(const char16_t* path)
 {
-	g_renderer->LoadBackgroundImage(path);
+	mainScreen_->LoadBackgroundImage(path);
 }
 
 void Native::SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	g_renderer->GridColor.R = r;
-	g_renderer->GridColor.G = g;
-	g_renderer->GridColor.B = b;
-	g_renderer->GridColor.A = a;
+	mainScreen_->GridColor = Effekseer::Color(r, g, b, a);
 }
 
 void Native::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
@@ -1976,57 +1727,57 @@ void Native::SetLightDirection(float x, float y, float z)
 
 	Effekseer::Vector3D temp = g_lightDirection;
 
-	if (!g_renderer->IsRightHand)
+	if (!renderer_->IsRightHand)
 	{
 		temp.Z = -temp.Z;
 	}
 
-	g_renderer->GetRenderer()->SetLightDirection(temp);
+	mainScreenConfig_.LightDirection = temp;
 }
 
 void Native::SetLightColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	g_renderer->GetRenderer()->SetLightColor(Effekseer::Color(r, g, b, a));
+	mainScreenConfig_.LightColor = Effekseer::Color(r, g, b, a);
 }
 
 void Native::SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	g_renderer->GetRenderer()->SetLightAmbientColor(Effekseer::Color(r, g, b, a));
+	mainScreenConfig_.LightAmbientColor = Effekseer::Color(r, g, b, a);
 }
 
 void Native::SetIsRightHand(bool value)
 {
-	g_renderer->IsRightHand = value;
-	if (g_renderer->IsRightHand)
+	renderer_->IsRightHand = value;
+	if (renderer_->IsRightHand)
 	{
-		g_manager->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
+		setting_->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
 	}
 	else
 	{
-		g_manager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
+		setting_->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 	}
 
-	g_renderer->RecalcProjection();
+	renderer_->RecalcProjection();
 
 	{
-		Effekseer::Vector3D temp = g_lightDirection;
+		Effekseer::Vector3D temp = mainScreenConfig_.LightDirection;
 
-		if (!g_renderer->IsRightHand)
+		if (!renderer_->IsRightHand)
 		{
 			temp.Z = -temp.Z;
 		}
 
-		g_renderer->GetRenderer()->SetLightDirection(temp);
+		mainScreenConfig_.LightDirection = temp;
 	}
 }
 
 void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ)
 {
-	g_renderer->IsCullingShown = isCullingShown;
-	g_renderer->CullingRadius = cullingRadius;
-	g_renderer->CullingPosition.X = cullingX;
-	g_renderer->CullingPosition.Y = cullingY;
-	g_renderer->CullingPosition.Z = cullingZ;
+	mainScreen_->IsCullingShown = isCullingShown;
+	mainScreen_->CullingRadius = cullingRadius;
+	mainScreen_->CullingPosition.X = cullingX;
+	mainScreen_->CullingPosition.Y = cullingY;
+	mainScreen_->CullingPosition.Z = cullingZ;
 }
 
 efk::ImageResource* Native::LoadImageResource(const char16_t* path)
@@ -2040,13 +1791,13 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	std::shared_ptr<Effekseer::TextureLoader> loader = nullptr;
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
-		auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
+		auto r = (EffekseerRendererGL::Renderer*)mainScreen_->GetRenderer();
 		loader = std::shared_ptr<Effekseer::TextureLoader>(EffekseerRendererGL::CreateTextureLoader());
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
-		auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
+		auto r = (EffekseerRendererDX11::Renderer*)mainScreen_->GetRenderer();
 		loader = std::shared_ptr<Effekseer::TextureLoader>(EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext()));
 	}
 	else
@@ -2069,39 +1820,21 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 
 int32_t Native::GetAndResetDrawCall()
 {
-	auto call = g_renderer->GetRenderer()->GetDrawCallCount();
-	g_renderer->GetRenderer()->ResetDrawCallCount();
+	auto call = mainScreen_->GetRenderer()->GetDrawCallCount();
+	mainScreen_->GetRenderer()->ResetDrawCallCount();
 	return call;
 }
 
 int32_t Native::GetAndResetVertexCount()
 {
-	auto call = g_renderer->GetRenderer()->GetDrawVertexCount();
-	g_renderer->GetRenderer()->ResetDrawVertexCount();
+	auto call = mainScreen_->GetRenderer()->GetDrawVertexCount();
+	mainScreen_->GetRenderer()->ResetDrawVertexCount();
 	return call;
 }
 
 int32_t Native::GetInstanceCount()
 {
-	if (m_time == 0)
-		return 0;
-
-	int32_t sum = 0;
-	for (int i = 0; i < g_handles.size(); i++)
-	{
-		auto count = g_manager->GetInstanceCount(g_handles[i].Handle);
-
-		// Root
-		if (!g_handles[i].IsRootStopped)
-			count--;
-
-		if (!g_manager->Exists(g_handles[i].Handle))
-			count = 0;
-
-		sum += count;
-	}
-
-	return sum;
+	return mainScreen_->GetInstanceCount();
 }
 
 float Native::GetFPS()
@@ -2120,21 +1853,27 @@ bool Native::IsDebugMode()
 
 void Native::SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee)
 {
-	auto bloom = g_renderer->GetBloomEffect();
-	if (bloom)
+	if (mainScreen_ != nullptr)
 	{
-		bloom->SetEnabled(enabled);
-		bloom->SetParameters(intensity, threshold, softKnee);
+		auto bloom = mainScreen_->GetBloomEffect();
+		if (bloom)
+		{
+			bloom->SetEnabled(enabled);
+			bloom->SetParameters(intensity, threshold, softKnee);
+		}
 	}
 }
 
 void Native::SetTonemapParameters(int32_t algorithm, float exposure)
 {
-	auto tonemap = g_renderer->GetTonemapEffect();
-	if (tonemap)
+	if (mainScreen_ != nullptr)
 	{
-		tonemap->SetEnabled(algorithm != 0);
-		tonemap->SetParameters((efk::TonemapEffect::Algorithm)algorithm, exposure);
+		auto tonemap = mainScreen_->GetTonemapEffect();
+		if (tonemap)
+		{
+			tonemap->SetEnabled(algorithm != 0);
+			tonemap->SetParameters((efk::TonemapEffect::Algorithm)algorithm, exposure);
+		}
 	}
 }
 
@@ -2203,5 +1942,5 @@ void Native::SetFileLogger(const char16_t* path)
 
 EffekseerRenderer::Renderer* Native::GetRenderer()
 {
-	return g_renderer->GetRenderer();
+	return mainScreen_->GetRenderer();
 }
