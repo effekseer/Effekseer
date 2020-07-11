@@ -334,7 +334,7 @@ public:
 #ifdef _WIN32
 		_wfopen_s(&fp, (const wchar_t*)path_, L"wb");
 #else
-		fp = fopen(path8_dst, "wb");
+		fp = fopen(ss.str().c_str(), "wb");
 #endif
 
 		if (fp == nullptr)
