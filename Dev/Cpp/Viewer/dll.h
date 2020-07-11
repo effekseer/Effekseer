@@ -18,6 +18,14 @@
 #include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
+namespace Effekseer
+{
+namespace Tool
+{
+class Recorder;
+}
+} // namespace Effekseer
+
 enum class RenderMode
 {
 	Normal,
@@ -206,8 +214,7 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
-	class Recorder;
-	std::unique_ptr<Recorder> recorder;
+	std::unique_ptr<Effekseer::Tool::Recorder> recorder;
 
 	efk::Graphics* graphics_ = nullptr;
 
