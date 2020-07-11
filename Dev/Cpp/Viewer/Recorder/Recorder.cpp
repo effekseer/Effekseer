@@ -379,7 +379,7 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 	mainScreen_ = mainScreen;
 	graphics_ = graphics;
 	recordingParameter_ = recordingParameter;
-	int recScale = 1;
+	int recScale = Effekseer::Max(1, recordingParameter.Scale);
 	imageSize_ = Effekseer::Tool::Vector2DI(imageSize.X * recScale, imageSize.Y * recScale);
 
 	if (recordingParameter_.Transparence == TransparenceType::Generate2)

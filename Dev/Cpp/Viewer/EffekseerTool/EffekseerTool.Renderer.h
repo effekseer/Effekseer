@@ -7,6 +7,7 @@
 #include "../efk.Base.h"
 
 #include <functional>
+#include <string>
 
 namespace EffekseerTool
 {

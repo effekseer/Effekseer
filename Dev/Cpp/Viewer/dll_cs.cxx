@@ -2194,6 +2194,28 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Transparence
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Scale_set___(void * jarg1, int jarg2) {
+  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (RecordingParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->Scale = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Scale_get___(void * jarg1) {
+  int jresult ;
+  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (RecordingParameter *)jarg1; 
+  result = (int32_t) ((arg1)->Scale);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_RecordingParameter___() {
   void * jresult ;
   RecordingParameter *result = 0 ;

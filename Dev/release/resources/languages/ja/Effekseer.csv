@@ -265,3 +265,6 @@ Easing_EndRapidly3_Name,高速3
 ,
 FCurve_Name,Fカーブ
 FCurve_Desc,Fカーブ
+,
+Recording_Scale_Name,Scale
+Recording_Scale_Desc,Enlarge the area to record images.

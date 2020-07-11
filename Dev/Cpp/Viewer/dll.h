@@ -114,6 +114,7 @@ public:
 	int32_t OffsetFrame;
 	int32_t Freq;
 	TransparenceType Transparence;
+	int32_t Scale = 1;
 };
 
 class Native
