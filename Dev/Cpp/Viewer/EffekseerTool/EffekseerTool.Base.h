@@ -24,7 +24,7 @@ namespace EffekseerTool
 //
 //----------------------------------------------------------------------------------
 
-class Renderer;
+class ViewPointController;
 
 enum eProjectionType
 {

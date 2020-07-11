@@ -5,6 +5,10 @@
 #include <GL/glew.h>
 #endif
 
+#ifdef _WIN32
+#include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#endif
+
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
 
@@ -1353,7 +1357,7 @@ void GUIManager::TextWrapped(const char16_t* text)
 Vec2 GUIManager::CalcTextSize(const char16_t* text)
 {
 	ImVec2 result;
-	
+
 	if (std::char_traits<char16_t>::length(text) < 1024)
 	{
 		result = ImGui::CalcTextSize(utf8str<1024>(text));
@@ -1958,9 +1962,7 @@ void GUIManager::DrawLineBackground(float height, uint32_t col)
 
 bool GUIManager::BeginFullscreen(const char16_t* label)
 {
-	float offsetY = (mainWindow_->IsFrameless()) ?
-		(32.0f * GetDpiScale()) :
-		(ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale());
+	float offsetY = (mainWindow_->IsFrameless()) ? (32.0f * GetDpiScale()) : (ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale());
 
 	ImVec2 windowSize;
 	windowSize.x = ImGui::GetIO().DisplaySize.x;

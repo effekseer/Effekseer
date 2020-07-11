@@ -224,6 +224,8 @@ private:
 
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
+	EffekseerTool::ViewPointController viewPointCtrl_;
+
 	::Effekseer::Effect* GetEffect();
 
 public:

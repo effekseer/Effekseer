@@ -3,12 +3,6 @@
 
 #include "EffekseerTool.Base.h"
 
-#ifdef _WIN32
-#include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
-#endif
-
-#include "../Graphics/Platform/GL/efk.GraphicsGL.h"
-#include "../Graphics/efk.PostEffects.h"
 #include "../RenderedEffectGenerator.h"
 #include "../efk.Base.h"
 
@@ -66,7 +60,7 @@ public:
 	void LoadBackgroundImage(const char16_t* path);
 };
 
-class Renderer
+class ViewPointController
 {
 private:
 	float m_orthoScale = 1.0f;
@@ -79,51 +73,24 @@ private:
 	int32_t screenHeight = 0;
 
 public:
-	/**
-		@brief	Constructor
-	*/
-	Renderer(efk::DeviceType deviceType);
+	ViewPointController();
 
-	/**
-		@brief	デストラクタ
-	*/
-	~Renderer();
+	~ViewPointController();
 
-	/**
-		@brief	初期化を行う。
-	*/
-	bool Initialize(int width, int height);
+	void Initialize(efk::DeviceType deviceType, int width, int height);
 
-	/**
-		@brief	射影取得
-	*/
 	eProjectionType GetProjectionType();
 
-	/**
-		@brief	射影設定
-	*/
 	void SetProjectionType(eProjectionType type);
 
 	void RecalcProjection();
 
-	/**
-		@brief	射影行列設定
-	*/
 	void SetPerspectiveFov(int width, int height);
 
-	/**
-		@brief	射影行列設定
-	*/
 	void SetOrthographic(int width, int height);
 
-	/**
-		@brief	射影行列設定
-	*/
 	void SetOrthographicScale(float scale);
 
-	/**
-		@brief	Orthographic表示の拡大率
-	*/
 	float RateOfMagnification;
 
 	/**
@@ -136,30 +103,9 @@ public:
 	*/
 	float ClippingEnd = 300.0f;
 
-	/**
-		@brief	右手系か?
-	*/
 	bool IsRightHand;
 
-	/**
-		@brief	The type of distortion
-	*/
-	Effekseer::Tool::DistortionType Distortion;
-
-	/**
-		@brief	背景色
-	*/
-	Effekseer::Color BackgroundColor;
-
-	/**
-	@brief	背景色
-	*/
 	Effekseer::RenderMode RenderingMode;
-
-	/**
-		@brief	背景が半透明か?
-	*/
-	bool IsBackgroundTranslucent;
 
 	void SetScreenSize(int32_t width, int32_t height);
 

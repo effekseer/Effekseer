@@ -1,4 +1,8 @@
 
+#ifdef _WIN32
+#include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#endif
+
 #include "Recorder.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
@@ -505,7 +509,14 @@ bool Recorder::Step(Native* native, int frames)
 			auto colorValue = Effekseer::Clamp(32 * loop, 255, 0);
 
 			auto config = generator_->GetConfig();
-			config.BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
+			if (recordingParameter_.Transparence == TransparenceType::None)
+			{
+				config.BackgroundColor = Effekseer::Color(0, 0, 0, 0);
+			}
+			else
+			{
+				config.BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
+			}
 			generator_->SetConfig(config);
 
 			generator_->Render();

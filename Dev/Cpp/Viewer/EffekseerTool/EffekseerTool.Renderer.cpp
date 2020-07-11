@@ -114,26 +114,21 @@ void MainScreenRenderedEffectGenerator::LoadBackgroundImage(const char16_t* path
 	backgroundData_ = textureLoader_->Load(path, Effekseer::TextureType::Color);
 }
 
-Renderer::Renderer(efk::DeviceType deviceType)
-	:  m_projection(PROJECTION_TYPE_PERSPECTIVE)
-	, deviceType_(deviceType)
-
+ViewPointController::ViewPointController()
+	: m_projection(PROJECTION_TYPE_PERSPECTIVE)
 	, RateOfMagnification(1.0f)
 	, IsRightHand(true)
-	, Distortion(Effekseer::Tool::DistortionType::Current)
 	, RenderingMode(Effekseer::RenderMode::Normal)
-
-	, BackgroundColor(0, 0, 0, 255)
-	, IsBackgroundTranslucent(false)
 {
 }
 
-Renderer::~Renderer()
+ViewPointController::~ViewPointController()
 {
 }
 
-bool Renderer::Initialize(int width, int height)
+void ViewPointController::Initialize(efk::DeviceType deviceType, int width, int height)
 {
+	deviceType_ = deviceType;
 	screenWidth = width;
 	screenHeight = height;
 
@@ -145,16 +140,14 @@ bool Renderer::Initialize(int width, int height)
 	{
 		SetOrthographic(width, height);
 	}
-
-	return true;
 }
 
-eProjectionType Renderer::GetProjectionType()
+eProjectionType ViewPointController::GetProjectionType()
 {
 	return m_projection;
 }
 
-void Renderer::SetProjectionType(eProjectionType type)
+void ViewPointController::SetProjectionType(eProjectionType type)
 {
 	m_projection = type;
 
@@ -168,7 +161,7 @@ void Renderer::SetProjectionType(eProjectionType type)
 	}
 }
 
-void Renderer::SetPerspectiveFov(int width, int height)
+void ViewPointController::SetPerspectiveFov(int width, int height)
 {
 	::Effekseer::Matrix44 proj;
 
@@ -205,7 +198,7 @@ void Renderer::SetPerspectiveFov(int width, int height)
 	m_projMat = proj;
 }
 
-void Renderer::SetOrthographic(int width, int height)
+void ViewPointController::SetOrthographic(int width, int height)
 {
 	::Effekseer::Matrix44 proj;
 
@@ -229,12 +222,12 @@ void Renderer::SetOrthographic(int width, int height)
 	m_projMat = proj;
 }
 
-void Renderer::SetOrthographicScale(float scale)
+void ViewPointController::SetOrthographicScale(float scale)
 {
 	m_orthoScale = scale;
 }
 
-void Renderer::RecalcProjection()
+void ViewPointController::RecalcProjection()
 {
 	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
 	{
@@ -246,7 +239,7 @@ void Renderer::RecalcProjection()
 	}
 }
 
-void Renderer::SetScreenSize(int32_t width, int32_t height)
+void ViewPointController::SetScreenSize(int32_t width, int32_t height)
 {
 	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
 	{
@@ -260,6 +253,5 @@ void Renderer::SetScreenSize(int32_t width, int32_t height)
 	screenWidth = width;
 	screenHeight = height;
 }
-
 
 } // namespace EffekseerTool

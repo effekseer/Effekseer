@@ -356,7 +356,7 @@ void RenderedEffectGenerator::Update(int32_t frame)
 			sound_->SetMute(mute);
 		}
 
-		manager_->Update(m_step);
+		manager_->Update(static_cast<float>(m_step));
 		m_time += m_step;
 		renderer_->SetTime(m_time / 60.0f);
 	}
@@ -453,7 +453,7 @@ void RenderedEffectGenerator::Render()
 	}
 
 	m_tonemapEffect->Render(hdrRenderTexture.get(), tonemapTerget);
-	
+
 	if (m_isSRGBMode)
 	{
 		m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture.get());
