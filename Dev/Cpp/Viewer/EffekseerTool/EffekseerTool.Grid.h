@@ -23,12 +23,12 @@ class Grid
 	int32_t m_lineCount;
 	float m_gridLength;
 
-	Grid(efk::Graphics* graphics);
+	Grid(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 
 public:
 	virtual ~Grid();
 
-	static Grid* Create(efk::Graphics* graphics);
+	static Grid* Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 
 public:
 	void Rendering(::Effekseer::Color& gridColor, bool isRightHand);

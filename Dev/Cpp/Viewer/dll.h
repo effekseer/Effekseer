@@ -15,14 +15,16 @@
 
 #include "../IPC/IPC.h"
 #include "GUI/efk.ImageResource.h"
+#include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
-enum class DistortionType
+namespace Effekseer
 {
-	Current,
-	Effekseer120,
-	Disabled,
-};
+namespace Tool
+{
+class Recorder;
+}
+} // namespace Effekseer
 
 enum class RenderMode
 {
@@ -60,67 +62,11 @@ public:
 	float CullingY;
 	float CullingZ;
 
-	DistortionType Distortion;
+	Effekseer::Tool::DistortionType Distortion;
 	RenderMode RenderingMode;
 	ViewMode ViewerMode;
 
 	ViewerParamater();
-};
-
-class ViewerEffectBehavior
-{
-public:
-	int32_t CountX;
-	int32_t CountY;
-	int32_t CountZ;
-
-	int32_t TimeSpan = 0;
-
-	uint8_t AllColorR = 255;
-	uint8_t AllColorG = 255;
-	uint8_t AllColorB = 255;
-	uint8_t AllColorA = 255;
-
-	float Distance;
-
-	int32_t RemovedTime;
-
-	float PositionX;
-	float PositionY;
-	float PositionZ;
-
-	float RotationX;
-	float RotationY;
-	float RotationZ;
-
-	float ScaleX;
-	float ScaleY;
-	float ScaleZ;
-
-	float PositionVelocityX;
-	float PositionVelocityY;
-	float PositionVelocityZ;
-
-	float RotationVelocityX;
-	float RotationVelocityY;
-	float RotationVelocityZ;
-
-	float ScaleVelocityX;
-	float ScaleVelocityY;
-	float ScaleVelocityZ;
-
-	float TargetPositionX;
-	float TargetPositionY;
-	float TargetPositionZ;
-
-	float DynamicInput1 = 0.0f;
-	float DynamicInput2 = 0.0f;
-	float DynamicInput3 = 0.0f;
-	float DynamicInput4 = 0.0f;
-
-	float PlaybackSpeed = 1.0f;
-
-	ViewerEffectBehavior();
 };
 
 enum class RecordingModeType
@@ -168,6 +114,7 @@ public:
 	int32_t OffsetFrame;
 	int32_t Freq;
 	TransparenceType Transparence;
+	int32_t Scale = 1;
 };
 
 class Native
@@ -176,11 +123,10 @@ private:
 	class TextureLoader : public ::Effekseer::TextureLoader
 	{
 	private:
-		EffekseerRenderer::Renderer* m_renderer;
 		Effekseer::TextureLoader* m_originalTextureLoader;
 
 	public:
-		TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType);
+		TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType);
 		virtual ~TextureLoader();
 
 	public:
@@ -215,10 +161,10 @@ private:
 	class ModelLoader : public ::Effekseer::ModelLoader
 	{
 	private:
-		EffekseerRenderer::Renderer* m_renderer;
+		efk::Graphics* graphics_ = nullptr;
 
 	public:
-		ModelLoader(EffekseerRenderer::Renderer* renderer);
+		ModelLoader(efk::Graphics* graphics);
 		virtual ~ModelLoader();
 
 	public:
@@ -232,7 +178,6 @@ private:
 	class MaterialLoader : public ::Effekseer::MaterialLoader
 	{
 	private:
-		EffekseerRenderer::Renderer* renderer_ = nullptr;
 		Effekseer::MaterialLoader* loader_ = nullptr;
 		std::unordered_map<std::u16string, std::shared_ptr<Effekseer::StaticFile>> materialFiles_;
 
@@ -252,7 +197,7 @@ private:
 		void ReleaseAll();
 	};
 
-	ViewerEffectBehavior m_effectBehavior;
+	Effekseer::Tool::ViewerEffectBehavior behavior_;
 	TextureLoader* m_textureLoader;
 
 	int32_t m_time;
@@ -270,8 +215,17 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
-	class Recorder;
-	std::unique_ptr<Recorder> recorder;
+	std::unique_ptr<Effekseer::Tool::Recorder> recorder;
+
+	efk::Graphics* graphics_ = nullptr;
+
+	Effekseer::Setting* setting_ = nullptr;
+
+	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
+
+	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
+
+	EffekseerTool::ViewPointController viewPointCtrl_;
 
 	::Effekseer::Effect* GetEffect();
 
@@ -334,9 +288,9 @@ public:
 
 	void SetViewerParamater(ViewerParamater& paramater);
 
-	ViewerEffectBehavior GetEffectBehavior();
+	Effekseer::Tool::ViewerEffectBehavior GetEffectBehavior();
 
-	void SetViewerEffectBehavior(ViewerEffectBehavior& behavior);
+	void SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior& behavior);
 
 	bool SetSoundMute(bool mute);
 

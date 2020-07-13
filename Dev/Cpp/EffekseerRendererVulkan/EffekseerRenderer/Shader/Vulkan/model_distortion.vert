@@ -78,6 +78,7 @@ void main() {
 	localTangent = localPosition + normalize(localTangent - localPosition);
 
 	gl_Position = ProjectionMatrix * localPosition;
+	gl_Position.y = - gl_Position.y;
 
 	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
 

@@ -8,49 +8,49 @@
 
 namespace efk
 {
-BloomEffect* PostEffect::CreateBloom(Graphics* graphics)
+BloomEffect* PostEffect::CreateBloom(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)
 	{
-		return new BloomEffectDX11(graphics);
+		return new BloomEffectDX11(graphics, renderer);
 	}
 #endif
 	if (graphics->GetDeviceType() == DeviceType::OpenGL)
 	{
-		return new BloomEffectGL(graphics);
+		return new BloomEffectGL(graphics, renderer);
 	}
 
 	return nullptr;
 }
 
-TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics)
+TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)
 	{
-		return new TonemapEffectDX11(graphics);
+		return new TonemapEffectDX11(graphics, renderer);
 	}
 #endif
 	if (graphics->GetDeviceType() == DeviceType::OpenGL)
 	{
-		return new TonemapEffectGL(graphics);
+		return new TonemapEffectGL(graphics, renderer);
 	}
 
 	return nullptr;
 }
 
-LinearToSRGBEffect* PostEffect::CreateLinearToSRGB(Graphics* graphics)
+LinearToSRGBEffect* PostEffect::CreateLinearToSRGB(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)
 	{
-		return new LinearToSRGBEffectDX11(graphics);
+		return new LinearToSRGBEffectDX11(graphics, renderer);
 	}
 #endif
 	if (graphics->GetDeviceType() == DeviceType::OpenGL)
 	{
-		return new LinearToSRGBEffectGL(graphics);
+		return new LinearToSRGBEffectGL(graphics, renderer);
 	}
 
 	return nullptr;

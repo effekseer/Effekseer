@@ -264,3 +264,6 @@ Easing_EndRapidly3_Name,Fastest
 ,
 FCurve_Name,F-Curve
 FCurve_Desc,F-Curve
+,
+Recording_Scale_Name,Scale
+Recording_Scale_Desc,Enlarge the area to record images.

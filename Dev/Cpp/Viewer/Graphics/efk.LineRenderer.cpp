@@ -8,17 +8,17 @@
 
 namespace efk
 {
-LineRenderer* LineRenderer::Create(Graphics* graphics)
+LineRenderer* LineRenderer::Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)
 	{
-		return new LineRendererDX11(graphics->GetRenderer());
+		return new LineRendererDX11(renderer);
 	}
 #endif
 	if (graphics->GetDeviceType() == DeviceType::OpenGL)
 	{
-		return new LineRendererGL(graphics->GetRenderer());
+		return new LineRendererGL(renderer);
 	}
 
 	return nullptr;

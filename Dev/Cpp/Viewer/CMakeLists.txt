@@ -26,6 +26,20 @@ FILE(GLOB cpps
 	*.cxx
 )
 
+list(APPEND cpps
+    RenderedEffectGenerator.cpp
+	Graphics/CommandList.cpp
+    Graphics/RenderPass.cpp
+    Recorder/Recorder.cpp
+)
+
+list(APPEND hs
+    RenderedEffectGenerator.h
+	Graphics/CommandList.h
+    Graphics/RenderPass.h
+    Recorder/Recorder.h
+)
+
 # OS Dependency
 if (WIN32)
 list(APPEND hs

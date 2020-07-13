@@ -35,6 +35,9 @@ namespace Effekseer.GUI.Dock
 		};
 
 
+		MultiLanguageString scale_name = new MultiLanguageString("Recording_Scale_Name");
+		MultiLanguageString scale_desc = new MultiLanguageString("Recording_Scale_Desc");
+
 		public Recorder()
 		{
 			selectedExportTypes[0] = Resources.GetString("ExportAsSingleImage");
@@ -82,62 +85,83 @@ namespace Effekseer.GUI.Dock
 			selectedStorageTarget = Core.Recording.RecordingStorageTarget.GetValueAsInt();
 
 			// Recordingwindow
-			Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0, 120 * dpiScale), true, swig.WindowFlags.MenuBar);
-			
-			if (Manager.NativeManager.BeginMenuBar())
 			{
-				if (Manager.NativeManager.BeginMenu(areaTitle + "##RecordResTitle"))
+				Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0, 140 * dpiScale), true, swig.WindowFlags.MenuBar);
+
+				if (Manager.NativeManager.BeginMenuBar())
 				{
-					Manager.NativeManager.EndMenu();
+					if (Manager.NativeManager.BeginMenu(areaTitle + "##RecordResTitle"))
+					{
+						Manager.NativeManager.EndMenu();
+					}
+
+					Manager.NativeManager.EndMenuBar();
 				}
 
-				Manager.NativeManager.EndMenuBar();
+				Manager.NativeManager.Columns(2);
+				Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
+
+				Manager.NativeManager.Text(Resources.GetString("Width"));
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.PushItemWidth(-1);
+				if (Manager.NativeManager.DragInt("###w", w))
+				{
+					viewerParameter.GuideWidth = w[0];
+					Core.Recording.RecordingWidth.SetValueDirectly(w[0]);
+				}
+				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.Text(Resources.GetString("Height"));
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.PushItemWidth(-1);
+				if (Manager.NativeManager.DragInt("###h", h))
+				{
+					viewerParameter.GuideHeight = h[0];
+					Core.Recording.RecordingHeight.SetValueDirectly(h[0]);
+				}
+				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.Text(Resources.GetString("ShowGuide"));
+
+				Manager.NativeManager.NextColumn();
+
+				if (Manager.NativeManager.Checkbox("###sg", showGuide))
+				{
+					viewerParameter.RendersGuide = showGuide[0];
+					Core.Recording.IsRecordingGuideShown.SetValueDirectly(showGuide[0]);
+				}
+
+				// Scale
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.Text(scale_name.ToString());
+
+				if(Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(scale_desc.ToString());
+				}
+
+				Manager.NativeManager.NextColumn();
+
+				var recordingScale = new int[] { Core.Recording.RecordingScale.Value };
+				if (Manager.NativeManager.DragInt("###RecScale", recordingScale))
+				{
+					Core.Recording.RecordingScale.SetValue(recordingScale[0]);
+				}
+
+				Manager.NativeManager.Columns(1);
+
+				Manager.NativeManager.EndChild();
 			}
-
-			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
-
-			Manager.NativeManager.Text(Resources.GetString("Width"));
-
-			Manager.NativeManager.NextColumn();
-
-			Manager.NativeManager.PushItemWidth(-1);
-			if (Manager.NativeManager.DragInt("###w", w))
-			{
-				viewerParameter.GuideWidth = w[0];
-                Core.Recording.RecordingWidth.SetValueDirectly(w[0]);
-			}
-			Manager.NativeManager.PopItemWidth();
-
-			Manager.NativeManager.NextColumn();
-
-			Manager.NativeManager.Text(Resources.GetString("Height"));
-
-			Manager.NativeManager.NextColumn();
-
-			Manager.NativeManager.PushItemWidth(-1);
-			if (Manager.NativeManager.DragInt("###h", h))
-			{
-				viewerParameter.GuideHeight = h[0];
-                Core.Recording.RecordingHeight.SetValueDirectly(h[0]);
-			}
-			Manager.NativeManager.PopItemWidth();
-
-			Manager.NativeManager.NextColumn();
-
-			Manager.NativeManager.Text(Resources.GetString("ShowGuide"));
-
-			Manager.NativeManager.NextColumn();
-
-			if (Manager.NativeManager.Checkbox("###sg", showGuide))
-			{
-				viewerParameter.RendersGuide = showGuide[0];
-                Core.Recording.IsRecordingGuideShown.SetValueDirectly(showGuide[0]);
-			}
-
-			Manager.NativeManager.Columns(1);
-
-			Manager.NativeManager.EndChild();
 
 			// Recordingwindow
 			Manager.NativeManager.BeginChild("##OutputFrame", new swig.Vec2(0, 130 * dpiScale), true, swig.WindowFlags.MenuBar);
@@ -398,6 +422,7 @@ namespace Effekseer.GUI.Dock
                     recordingParameter.Freq = freq;
                     recordingParameter.OffsetFrame = startingFrame;
                     recordingParameter.Transparence = (swig.TransparenceType)selectedAlphaIndex;
+					recordingParameter.Scale = Core.Recording.RecordingScale.Value;
 
 					if (Effekseer.Core.Language == Language.Japanese)
 					{

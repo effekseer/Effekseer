@@ -24,7 +24,7 @@ namespace EffekseerTool
 //
 //----------------------------------------------------------------------------------
 
-class Renderer;
+class ViewPointController;
 
 enum eProjectionType
 {
@@ -32,13 +32,6 @@ enum eProjectionType
 	PROJECTION_TYPE_ORTHOGRAPHIC,
 
 	PROJECTION_TYPE_DWORD = 0x7fffffff,
-};
-
-enum class DistortionType : int32_t
-{
-	Current,
-	Effekseer120,
-	Disabled,
 };
 
 //----------------------------------------------------------------------------------

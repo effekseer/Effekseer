@@ -30,6 +30,11 @@ public:
 
 	virtual void OnResetDevice() = 0;
 
+	bool GetEnabled() const
+	{
+		return enabled;
+	}
+
 	virtual void SetEnabled(bool enabled)
 	{
 		this->enabled = enabled;
@@ -40,11 +45,11 @@ public:
 		return isValid_;
 	}
 
-	static BloomEffect* CreateBloom(Graphics* graphics);
+	static BloomEffect* CreateBloom(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 
-	static TonemapEffect* CreateTonemap(Graphics* graphics);
+	static TonemapEffect* CreateTonemap(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 
-	static LinearToSRGBEffect* CreateLinearToSRGB(Graphics* graphics);
+	static LinearToSRGBEffect* CreateLinearToSRGB(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
 };
 
 class BloomEffect : public PostEffect
@@ -60,6 +65,13 @@ public:
 	{
 	}
 	virtual ~BloomEffect() = default;
+
+	void GetParameters(float& intensity, float& threshold, float& softKnee)
+	{
+		intensity = this->intensity;
+		threshold = this->threshold;
+		softKnee = this->softKnee;
+	}
 
 	virtual void SetParameters(float intensity, float threshold, float softKnee)
 	{
@@ -83,6 +95,12 @@ public:
 	{
 	}
 	virtual ~TonemapEffect() = default;
+
+	void GetParameters(Algorithm& algorithm, float& exposure)
+	{
+		algorithm = this->algorithm;
+		exposure = this->exposure;
+	}
 
 	virtual void SetParameters(Algorithm algorithm, float exposure)
 	{

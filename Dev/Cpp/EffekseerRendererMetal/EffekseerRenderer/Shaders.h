@@ -61,6 +61,10 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   half4 tmpvar_1 = 0;
   tmpvar_1 = half4(uTexture0.sample(_mtlsmp_uTexture0, (float2)(_mtl_i.vaTexCoord.xy)));
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.vaColor * (float4)(tmpvar_1)));
+
+  if(_mtl_o.gl_FragColor.w <= 0.0f)
+    discard_fragment();
+
   return _mtl_o;
 }
 )";
@@ -166,6 +170,10 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
       (tmpvar_1.xyz - (half)(0.5))
      * (half)(2.0)))))), _mtl_u.LightDirection.xyz))
   ))) + _mtl_u.LightAmbient.xyz)));
+
+  if(_mtl_o.gl_FragColor.w <= 0.0f)
+    discard_fragment();
+
   return _mtl_o;
 }
 )";
@@ -280,6 +288,10 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   tmpvar_7 = half4(uBackTexture0.sample(_mtlsmp_uBackTexture0, (float2)(uv_1)));
   color_2.xyz = tmpvar_7.xyz;
   _mtl_o.gl_FragColor = color_2;
+
+  if(_mtl_o.gl_FragColor.w <= 0.0f)
+    discard_fragment();
+
   return _mtl_o;
 }
 )";
@@ -380,6 +392,10 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
     normalize(((half3)(tmpvar_2 * (float3)(((tmpvar_1.xyz - (half)(0.5)) * (half)(2.0))))))
   , _mtl_u.LightDirection.xyz)))));
   _mtl_o.gl_FragColor.xyz = ((half3)((float3)(_mtl_o.gl_FragColor.xyz) + _mtl_u.LightAmbient.xyz));
+
+  if(_mtl_o.gl_FragColor.w <= 0.0f)
+    discard_fragment();
+
   return _mtl_o;
 }
 )";
@@ -453,6 +469,10 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   half4 tmpvar_1 = 0;
   tmpvar_1 = half4(ColorTexture.sample(_mtlsmp_ColorTexture, (float2)(_mtl_i.v_TexCoord.xy)));
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.v_Color * (float4)(tmpvar_1)));
+
+  if(_mtl_o.gl_FragColor.w <= 0.0f)
+    discard_fragment();
+
   return _mtl_o;
 }
 )";
@@ -574,6 +594,10 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   half4 tmpvar_6 = 0;
   tmpvar_6 = half4(uBackTexture0.sample(_mtlsmp_uBackTexture0, (float2)(uv_1)));
   _mtl_o.gl_FragColor.xyz = tmpvar_6.xyz;
+
+  if(_mtl_o.gl_FragColor.w <= 0.0f)
+    discard_fragment();
+
   return _mtl_o;
 }
 )";

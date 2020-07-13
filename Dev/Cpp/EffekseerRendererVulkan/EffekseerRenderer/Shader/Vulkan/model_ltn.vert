@@ -67,6 +67,7 @@ void main()
 
 	vec4 localPosition = modelMatrix * a_Position;
 	gl_Position = ProjectionMatrix * localPosition;
+	gl_Position.y = - gl_Position.y;
 
 	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
 

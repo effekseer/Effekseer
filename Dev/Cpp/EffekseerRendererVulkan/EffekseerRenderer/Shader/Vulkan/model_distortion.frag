@@ -52,4 +52,7 @@ void main() {
 
 	vec3 color = texture(uBackTexture0, uv).xyz;
 	o_Color.xyz = color;
+
+	if(o_Color.w <= 0.0)
+		discard;
 }

@@ -11,4 +11,7 @@ layout(location = 0) out vec4 o_Color;
 void main()
 {
 	o_Color = vaColor * texture(uTexture0, vaTexCoord.xy);
+
+	if(o_Color.w <= 0.0)
+		discard;
 }

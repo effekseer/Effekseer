@@ -359,20 +359,23 @@ namespace Effekseer.Binary
                 {
                     var _node = node as Data.Node;
 
-                    if (_node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.None)
-                    {
-                    }
-                    else if (_node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.Use)
-                    {
-                        var relative_path = _node.SoundValues.Sound.Wave.RelativePath;
-                        if (relative_path != string.Empty)
-                        {
-                            if (!Sounds.Contains(relative_path))
-                            {
-                                Sounds.Add(relative_path);
-                            }
-                        }
-                    }
+					if (IsRenderedNode(_node))
+					{
+						if (_node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.None)
+						{
+						}
+						else if (_node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.Use)
+						{
+							var relative_path = _node.SoundValues.Sound.Wave.RelativePath;
+							if (relative_path != string.Empty)
+							{
+								if (!Sounds.Contains(relative_path))
+								{
+									Sounds.Add(relative_path);
+								}
+							}
+						}
+					}
                 }
 
                 for (int i = 0; i < node.Children.Count; i++)
@@ -477,7 +480,7 @@ namespace Effekseer.Binary
 				{
 					var _node = node as Data.Node;
 
-					if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
+					if (IsRenderedNode(_node) && _node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
 					{
 						var relative_path = _node.RendererCommonValues.MaterialFile.Path.RelativePath;
 						if (relative_path != string.Empty)
@@ -560,9 +563,11 @@ namespace Effekseer.Binary
 					nodes.Add(_node);
 				}
 
-				for (int i = 0; i < node.Children.Count; i++)
+				var children = node.Children.Internal.Where(_ =>IsRenderedNodeGroup(_)).ToList();
+
+				for (int i = 0; i < children.Count; i++)
 				{
-					get_nodes(node.Children[i]);
+					get_nodes(children[i]);
 				}
 			};
 
@@ -855,7 +860,9 @@ namespace Effekseer.Binary
 
 		bool IsRenderedNode(Data.Node node)
 		{
-			return node.IsRendered.Value && node.DrawingValues.Type.Value != Data.RendererValues.ParamaterType.None;
+			var rendered = node.IsRendered.Value && node.DrawingValues.Type.Value != Data.RendererValues.ParamaterType.None;
+			var hasSound = node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.Use;
+			return rendered || hasSound;
 		}
 
 		bool IsRenderedNodeGroup(Data.Node node)
