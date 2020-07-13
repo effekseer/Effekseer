@@ -46,6 +46,12 @@ namespace Effekseer.Data
 			private set;
 		}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		[Selected(ID = 0, Value = 4)]
+		[IO(Export = true)]
+		public NurbsCurveParameter NurbsCurve { get; private set; }
+#endif
+
 		internal LocationValues()
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Fixed);
@@ -53,6 +59,9 @@ namespace Effekseer.Data
 			PVA = new PVAParamater();
 			Easing = new Vector3DEasingParamater();
 			LocationFCurve = new Vector3DFCurveParameter();
+#if __EFFEKSEER_BUILD_VERSION16__
+			NurbsCurve = new NurbsCurveParameter();
+#endif
 
 			// dynamic parameter
 			Fixed.Location.CanSelectDynamicEquation = true;
@@ -109,6 +118,48 @@ namespace Effekseer.Data
 			}
 		}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		public class NurbsCurveParameter
+		{
+			public enum NurbsLoopType : int
+			{
+				[Name(language = Language.Japanese, value = "繰り返す")]
+				[Name(language = Language.English, value = "Repeat")]
+				Repeat = 0,
+
+				[Name(language = Language.Japanese, value = "停止")]
+				[Name(language = Language.English, value = "Stop")]
+				Stop = 1,
+			}
+
+			[Name(language = Language.Japanese, value = "NURBSカーブ")]
+			[Name(language = Language.English, value = "NURBS-Curve")]
+			[IO(Export = true)]
+			public Value.PathForCurve FilePath { get; private set; }
+
+			[Name(language = Language.Japanese, value = "カーブ拡大率")]
+			[Name(language = Language.English, value = "Curve Scale")]
+			public Value.Float Scale { get; private set; }
+
+			[Name(language = Language.Japanese, value = "移動速度")]
+			[Name(language = Language.English, value = "Move Speed")]
+			public Value.Float MoveSpeed { get; private set; }
+
+			[Name(language = Language.Japanese, value = "ループタイプ")]
+			[Name(language = Language.English, value = "LoopType")]
+			[IO(Export = true)]
+			public Value.Enum<NurbsLoopType> LoopType { get; private set; }
+
+			public NurbsCurveParameter()
+			{
+				FilePath = new Value.PathForCurve(Resources.GetString("CurveFilter"), true, "");
+				Scale = new Value.Float(1.0f);
+				MoveSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f);
+				LoopType = new Value.Enum<NurbsLoopType>(NurbsLoopType.Repeat);
+			}
+		}
+#endif
+
 		public enum ParamaterType : int
 		{
 			[Key(key = "Position_ParamaterType_Fixed")]
@@ -119,6 +170,11 @@ namespace Effekseer.Data
 			Easing = 2,
 			[Key(key = "Position_ParamaterType_LocationFCurve")]
 			LocationFCurve = 3,
+#if __EFFEKSEER_BUILD_VERSION16__
+			[Name(language = Language.Japanese, value = "位置(NURBSカーブ)")]
+			[Name(language = Language.English, value = "NURBS-Curve")]
+			NurbsCurve = 4,
+#endif
 		}
 	}
 }

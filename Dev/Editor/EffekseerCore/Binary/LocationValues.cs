@@ -9,7 +9,11 @@ namespace Effekseer.Binary
 {
 	class LocationValues
 	{
-		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType)
+		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType
+#if __EFFEKSEER_BUILD_VERSION16__
+			, Dictionary<string, int> curveAndIndex
+#endif
+			)
 		{
 			//if (parentEffectType != Data.ParentEffectType.NotBind) magnification = 1.0f;
 
@@ -74,6 +78,27 @@ namespace Effekseer.Binary
 				data.Add(bytes1.Count().GetBytes());
 				data.Add(bytes1);
 			}
+#if __EFFEKSEER_BUILD_VERSION16__
+			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.NurbsCurve)
+			{
+				if (value.NurbsCurve.FilePath.RelativePath != string.Empty)
+				{
+					// export index
+					var relative_path = value.NurbsCurve.FilePath.RelativePath;
+					data.Add(curveAndIndex[relative_path].GetBytes());
+				}
+				else
+				{
+					data.Add((-1).GetBytes());
+				}
+
+				data.Add(BitConverter.GetBytes(value.NurbsCurve.Scale));
+
+				data.Add(BitConverter.GetBytes(value.NurbsCurve.MoveSpeed));
+
+				data.Add(value.NurbsCurve.LoopType.GetValueAsInt().GetBytes());
+			}
+#endif
 
 			return data.ToArray().ToArray();
 		}

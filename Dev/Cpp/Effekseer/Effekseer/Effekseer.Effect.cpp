@@ -16,6 +16,9 @@
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
 #include "Utils/Effekseer.BinaryReader.h"
+#if __EFFEKSEER_BUILD_VERSION16__
+#include "Effekseer.CurveLoader.h"
+#endif
 
 #include <array>
 #include <functional>
@@ -153,6 +156,15 @@ void EffectFactory::SetMaterial(Effect* effect, int32_t index, MaterialData* dat
 	effect_->materials_[index] = data;
 }
 
+#if __EFFEKSEER_BUILD_VERSION16__
+void EffectFactory::SetCurve(Effect* effect, int32_t index, void* data)
+{
+	auto effect_ = static_cast<EffectImplemented*>(effect);
+	assert(0 <= index && index < effect_->curveCount_);
+	effect_->curves_[index] = data;
+}
+#endif
+
 void EffectFactory::SetLoadingParameter(Effect* effect, ReferenceObject* parameter)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
@@ -185,6 +197,9 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 	auto soundLoader = effect->GetSetting()->GetSoundLoader();
 	auto modelLoader = effect->GetSetting()->GetModelLoader();
 	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
+#if __EFFEKSEER_BUILD_VERSION16__
+	auto curveLoader = effect->GetSetting()->GetCurveLoader();
+#endif
 
 	if (textureLoader != nullptr)
 	{
@@ -251,6 +266,20 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 			SetMaterial(effect, i, resource);
 		}
 	}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	if (curveLoader != nullptr)
+	{
+		for (auto i = 0; i < effect->GetCurveCount(); i++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, materialPath, effect->GetCurvePath(i));
+			
+			auto resource = curveLoader->Load(fullPath);
+			SetCurve(effect, i, resource);
+		}
+	}
+#endif
 }
 
 void EffectFactory::OnUnloadingResource(Effect* effect)
@@ -259,6 +288,9 @@ void EffectFactory::OnUnloadingResource(Effect* effect)
 	auto soundLoader = effect->GetSetting()->GetSoundLoader();
 	auto modelLoader = effect->GetSetting()->GetModelLoader();
 	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
+#if __EFFEKSEER_BUILD_VERSION16__
+	auto curveLoader = effect->GetSetting()->GetCurveLoader();
+#endif
 
 	if (textureLoader != nullptr)
 	{
@@ -307,6 +339,17 @@ void EffectFactory::OnUnloadingResource(Effect* effect)
 			SetMaterial(effect, i, nullptr);
 		}
 	}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	if (curveLoader != nullptr)
+	{
+		for (auto i = 0; i < effect->GetCurveCount(); i++)
+		{
+			curveLoader->Unload(effect->GetCurve(i));
+			SetCurve(effect, i, nullptr);
+		}
+	}
+#endif
 }
 
 const char* EffectFactory::GetName() const
@@ -562,6 +605,31 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 	{
 		defaultDynamicInputs.fill(0);
 	}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	if (m_version >= 16)
+	{
+		// curve
+		binaryReader.Read(curveCount_, 0, elementCountMax);
+
+		if (curveCount_ > 0)
+		{
+			curvePaths_ = new EFK_CHAR*[curveCount_];
+			curves_ = new void*[curveCount_];
+
+			for (int i = 0; i < curveCount_; i++)
+			{
+				int length = 0;
+				binaryReader.Read(length, 0, elementCountMax);
+
+				curvePaths_[i] = new EFK_CHAR[length];
+				binaryReader.Read(curvePaths_[i], length);
+
+				curves_[i] = nullptr;
+			}
+		}
+	}
+#endif
 
 	if (m_version >= 13)
 	{
@@ -1113,6 +1181,22 @@ const EFK_CHAR* EffectImplemented::GetMaterialPath(int n) const
 	return materialPaths_[n];
 }
 
+#if __EFFEKSEER_BUILD_VERSION16__
+void* EffectImplemented::GetCurve(int n) const
+{
+	return curves_[n];
+}
+
+int32_t EffectImplemented::GetCurveCount() const
+{
+	return curveCount_;
+}
+
+const EFK_CHAR* EffectImplemented::GetCurvePath(int n) const
+{
+	return curvePaths_[n];
+}
+#endif
 void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureData* data)
 {
 	auto textureLoader = GetSetting()->GetTextureLoader();
@@ -1189,6 +1273,21 @@ void EffectImplemented::SetMaterial(int32_t index, MaterialData* data)
 
 	materials_[index] = data;
 }
+
+#if __EFFEKSEER_BUILD_VERSION16__
+void EffectImplemented::SetCurve(int32_t index, void* data)
+{
+	auto curveLoader = GetSetting()->GetCurveLoader();
+	assert(0 <= index && index < curveCount_);
+
+	if (curveLoader != nullptr)
+	{
+		curveLoader->Unload(GetCurve(index));
+	}
+
+	curves_[index] = data;
+}
+#endif
 
 bool EffectImplemented::Reload(void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
@@ -1399,6 +1498,20 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const EF
 			}
 		}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		for (int32_t ind = 0; ind < curveCount_; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, curvePaths_[ind]);
+
+			void* value = nullptr;
+			if (reloadingBackup->curves.Pop(fullPath, value))
+			{
+				curves_[ind] = value;
+			}
+		}
+#endif
+
 		return;
 	}
 
@@ -1478,6 +1591,18 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 			PathCombine(fullPath, matPath, materialPaths_[ind]);
 			reloadingBackup->materials.Push(fullPath, materials_[ind]);
 		}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+		for (int32_t ind = 0; ind < curveCount_; ind++)
+		{
+			if (curves_[ind] == nullptr)
+				continue;
+
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, curvePaths_[ind]);
+			reloadingBackup->curves.Push(fullPath, curves_[ind]);
+		}
+#endif
 
 		return;
 	}

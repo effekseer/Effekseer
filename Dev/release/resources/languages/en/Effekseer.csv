@@ -161,6 +161,7 @@ ImageFilter,"png,dds"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"
+CurveFilter,"efkcurve,fbx"
 ,
 ,
 Clipping,Clipping
@@ -213,7 +214,7 @@ Material_GenCache_Name,Gen. Cache
 Material_GenCache_Desc,"It generates caches.
 If the generated cache is placed in the same directory as the material file, loading will be faster.
 On some platforms, effects cannot be played without using cache.
-A cache that can be used on both Windows and Mac is generated 
+A cache that can be used on both Windows and Mac is generated
 by generating the cache on Mac after generating the cache on Windows."
 Material_NoneCache,Cache - None
 Material_OldCache,Cache - Old

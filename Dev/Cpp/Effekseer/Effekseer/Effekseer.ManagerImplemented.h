@@ -306,6 +306,12 @@ public:
 
 	void SetMaterialLoader(MaterialLoader* loader) override;
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	CurveLoader* GetCurveLoader() override;
+
+	void SetCurveLoader(CurveLoader* loader) override;
+#endif
+
 	void StopEffect(Handle handle) override;
 
 	void StopAllEffects() override;

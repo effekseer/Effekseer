@@ -50,6 +50,9 @@ effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.MaterialLoader.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Model.h')
 
+effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Curve.h')
+effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.CurveLoader.h')
+
 effekseerHeader.readLines('Effekseer/Effekseer/Sound/Effekseer.SoundPlayer.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.SoundLoader.h')

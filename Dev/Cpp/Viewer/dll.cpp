@@ -524,6 +524,10 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 
 				// TODO : refactor
 				setting_->SetModelLoader(new ModelLoader(graphics_));
+
+#if __EFFEKSEER_BUILD_VERSION16__
+				setting_->SetCurveLoader(new ::Effekseer::CurveLoader());
+#endif
 			}
 
 			//manager_->SetSetting(setting_);

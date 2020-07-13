@@ -302,6 +302,28 @@ public:
 	*/
 	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+		@brief
+		\~English get a curve loader
+		\~Japanese カーブローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual CurveLoader* GetCurveLoader() = 0;
+
+	/**
+		@brief
+		\~English specfiy a curve loader
+		\~Japanese カーブローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual void SetCurveLoader(CurveLoader* loader) = 0;
+#endif
+
 	/**
 		@brief	エフェクトを停止する。
 		@param	handle	[in]	インスタンスのハンドル

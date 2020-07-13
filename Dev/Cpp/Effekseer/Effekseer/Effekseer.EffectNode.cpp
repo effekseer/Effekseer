@@ -208,6 +208,13 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			TranslationFCurve = new FCurveVector3D();
 			pos += TranslationFCurve->Load(pos, m_effect->GetVersion());
 		}
+#if __EFFEKSEER_BUILD_VERSION16__
+		else if (TranslationType == ParameterTranslationType_NurbsCurve)
+		{
+			memcpy(&TranslationNurbsCurve, pos, sizeof(ParameterTranslationNurbsCurve));
+			pos += sizeof(ParameterTranslationNurbsCurve);
+		}
+#endif
 
 		/* 位置拡大処理 */
 		if (ef->IsDyanamicMagnificationValid())

@@ -86,6 +86,11 @@ class ModelLoader;
 
 class Model;
 
+#if __EFFEKSEER_BUILD_VERSION16__
+class CurveLoader;
+class Curve;
+#endif
+
 typedef int Handle;
 
 /**
@@ -154,6 +159,10 @@ const int32_t UserTextureSlotMax = 6;
 const int32_t TextureSlotMax = 8;
 
 const int32_t LocalFieldSlotMax = 4;
+
+#ifndef __EFFEKSEER_FOR_UE4__
+const float PI = 3.141592653589;
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -1834,6 +1843,15 @@ public:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+	@brief
+	\~English set curve data into specified index
+	\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	void SetCurve(Effect* effect, int32_t index, void* data);
+#endif
+
 	/**
 	@brief
 	\~English set loading data
@@ -2094,6 +2112,26 @@ public:
 	*/
 	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+	@brief	\~English	Get a curve's pointer
+	\~Japanese	格納されているカーブのポインタを取得する。
+	*/
+	virtual void* GetCurve(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored curve pointer
+	\~Japanese	格納されているカーブのポインタの個数を取得する。
+	*/
+	virtual int32_t GetCurveCount() const = 0;
+
+	/**
+	@brief	\~English	Get a curve's path
+	\~Japanese	カーブのパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
+#endif
+
 	/**
 		@brief
 		\~English set texture data into specified index
@@ -2122,6 +2160,15 @@ public:
 		\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
 	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+		@brief
+		\~English set curve data into specified index
+		\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	virtual void SetCurve(int32_t index, void* data) = 0;
+#endif
 
 	/**
 		@brief
@@ -2328,6 +2375,13 @@ struct EffectBasicRenderParameter
 	} FalloffParam;
 
 	int32_t EmissiveScaling;
+
+	struct
+	{
+		float Color[4];
+		float Threshold;
+		int32_t ColorScaling;
+	} EdgeParam;
 
 #endif
 	AlphaBlendType AlphaBlend;
@@ -2724,6 +2778,28 @@ public:
 		\~Japanese ローダー
 	*/
 	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+		@brief
+		\~English get a curve loader
+		\~Japanese カーブローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual CurveLoader* GetCurveLoader() = 0;
+
+	/**
+		@brief
+		\~English specfiy a curve loader
+		\~Japanese カーブローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual void SetCurveLoader(CurveLoader* loader) = 0;
+#endif
 
 	/**
 		@brief	エフェクトを停止する。
@@ -3902,6 +3978,368 @@ public:
 //----------------------------------------------------------------------------------
 #endif // __EFFEKSEER_MODEL_H__
 
+#ifndef	__EFFEKSEER_CURVE_H__
+#define	__EFFEKSEER_CURVE_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+#include <vector>
+#include <limits>
+#include <cmath>
+
+namespace Effekseer
+{
+
+
+class dVector4
+{
+public:
+	double X, Y, Z, W;
+
+public:
+	dVector4(double x = 0, double y = 0, double z = 0, double w = 0) :
+		X(x), Y(y), Z(z), W(w)
+	{
+	}
+};
+
+/**
+@brief
+\~English	Curve class
+\~Japanese	カーブクラス
+*/
+class Curve
+{
+	friend class CurveLoader;
+public:
+	static const int32_t Version = 1;
+
+private:
+	int mControllPointCount;
+	std::vector<dVector4> mControllPoint;
+
+	int mKnotCount;
+	std::vector<double> mKnotValue;
+
+	int mOrder;
+	int mStep;
+	int mType;
+	int mDimension;
+
+	float mLength;
+
+private:
+	/**
+	 * CalcBSplineBasisFunc : B-スプライン基底関数の計算
+	 * 
+	 * const vector<double>& knot : ノット列
+	 * unsigned int j : ノット列の開始番号
+	 * unsigned int p : 次数
+	 * double t : 計算対象の独立変数
+	 * 
+	 * ノット列は昇順である必要があるが、そのチェックは行わない
+	 * 
+	 * 戻り値 : 計算結果
+	 */
+	double CalcBSplineBasisFunc(const std::vector<double>& knot, unsigned int j, unsigned int p, double t)
+	{
+		if (knot.size() == 0) return std::numeric_limits<double>::quiet_NaN();
+
+		// ノット列のデータ長が充分でない場合は nan を返す
+		unsigned int m = static_cast<unsigned int>(knot.size()) - 1;
+		if (m < j + p + 1) return std::numeric_limits<double>::quiet_NaN();
+
+		// 正値をとる範囲外ならゼロを返す
+		if ((t < knot[j]) || (t > knot[j + p + 1])) return(0);
+		// p = 0 かつ knot[j] <= t <= knot[j + p + 1] なら 1 を返す
+		if (p == 0) return(1);
+		// p = 1 の場合、三角の頂点の値は特別扱い
+		if (p == 1 && t == knot[j + 1]) return(1);
+
+		// 漸化式の計算
+		double d1 = (knot[j + p] == knot[j]) ? 0 :
+			(t - knot[j]) * CalcBSplineBasisFunc(knot, j, p - 1, t) / (knot[j + p] - knot[j]);
+		double d2 = (knot[j + p + 1] == knot[j + 1]) ? 0 :
+			(knot[j + p + 1] - t) * CalcBSplineBasisFunc(knot, j + 1, p - 1, t) / (knot[j + p + 1] - knot[j + 1]);
+
+		return (d1 + d2);
+	}
+
+public:
+	Curve()
+	{
+	}
+
+	Curve(void* data, int32_t size)
+	{
+		uint8_t* pData = new uint8_t[size];
+		memcpy(pData, data, size);
+
+		uint8_t* p = (uint8_t*)pData;
+
+		// load converter version
+		int converter_version = 0;
+		memcpy(&converter_version, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// load controll point count
+		memcpy(&mControllPointCount, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// load controll points
+		for (int i = 0; i < mControllPointCount; i++)
+		{
+			dVector4 value;
+			memcpy(&value, p, sizeof(dVector4));
+			p += sizeof(dVector4);
+			mControllPoint.push_back(value);
+		}
+
+		// load knot count
+		memcpy(&mKnotCount, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// load knot values
+		for (int i = 0; i < mKnotCount; i++)
+		{
+			double value;
+			memcpy(&value, p, sizeof(double));
+			p += sizeof(double);
+			mKnotValue.push_back(value);
+		}
+
+		// load order
+		memcpy(&mOrder, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// load step
+		memcpy(&mStep, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// load type
+		memcpy(&mType, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// load dimension
+		memcpy(&mDimension, p, sizeof(int32_t));
+		p += sizeof(int32_t);
+
+		// calc curve length
+		mLength = 0;
+
+		for (int i = 1; i < mControllPointCount; i++)
+		{
+			dVector4 p0 = mControllPoint[i - 1];
+			dVector4 p1 = mControllPoint[i];
+
+			float len = Vector3D::Length(Vector3D((float)p1.X, (float)p1.Y, (float)p1.Z) - Vector3D((float)p0.X, (float)p0.Y, (float)p0.Z));
+			mLength += len;
+		}
+
+		ES_SAFE_DELETE_ARRAY(pData);
+	}
+
+	~Curve()
+	{
+	}
+
+	Vector3D CalcuratePoint(float t, float magnification) {
+		int p = mOrder; // 次数
+
+		std::vector< double > bs(mControllPointCount); // B-Spline 基底関数の計算結果(重み値を積算)
+
+		// ノット列の要素を +1 する
+		auto knot = mKnotValue;
+		knot.push_back(mKnotValue[mKnotValue.size() - 1] + 1);
+
+		float t_rate = float(knot.back() - 1);
+
+		double wSum = 0; // bs の合計
+		for (int j = 0; j < mControllPointCount; ++j) {
+			bs[j] = mControllPoint[j].W * CalcBSplineBasisFunc(knot, j, p, t * (t_rate));
+
+			if (!std::isnan(bs[j]))
+			{
+				wSum += bs[j];
+			}
+		}
+
+		Vector3D ans(0, 0, 0); // 計算結果
+		for (int j = 0; j < mControllPointCount; ++j)
+		{
+			Vector3D d;
+			d.X = (float)mControllPoint[j].X * magnification * (float)bs[j] / (float)wSum;
+			d.Y = (float)mControllPoint[j].Y * magnification * (float)bs[j] / (float)wSum;
+			d.Z = (float)mControllPoint[j].Z * magnification * (float)bs[j] / (float)wSum;
+			if (!std::isnan(d.X) && !std::isnan(d.Y) && !std::isnan(d.Z))
+			{
+				ans += d;
+			}
+		}
+
+		return ans;
+	}
+
+	//
+	//  Getter
+	//
+	int GetControllPointCount() { return mControllPointCount; }
+	dVector4 GetControllPoint(int index) { return mControllPoint[index]; }
+
+	int GetKnotCount() { return mKnotCount; }
+	double GetKnotValue(int index) { return mKnotValue[index]; }
+
+	int GetOrder() { return mOrder; }
+	int GetStep() { return mStep; }
+	int GetType() { return mType; }
+	int GetDimension() { return mDimension; }
+
+	float GetLength() { return mLength; }
+
+}; // end class
+
+
+} // end namespace Effekseer
+
+#endif  // __EFFEKSEER_CURVE_H__
+
+#ifndef __EFFEKSEER_CURVELOADER_H__
+#define __EFFEKSEER_CURVELOADER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+#include <memory>
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer
+{
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	カーブ読み込み破棄関数指定クラス
+*/
+class CurveLoader
+{
+public:
+	/**
+	@brief	コンストラクタ
+	*/
+	CurveLoader()
+	{
+	}
+
+	/**
+	@brief	デストラクタ
+	*/
+	virtual ~CurveLoader()
+	{
+	}
+
+	/**
+	@brief	Nカーブを読み込む。
+	@param	path	[in]	読み込み元パス
+	@return	カーブのポインタ
+	@note
+	カーブを読み込む。
+	::Effekseer::Effect::Create実行時に使用される。
+	*/
+	virtual void* Load(const EFK_CHAR* path)
+	{
+		::Effekseer::DefaultFileInterface fileInterface;
+		std::unique_ptr<::Effekseer::FileReader>reader(fileInterface.OpenRead(path));
+		if (reader.get() == NULL)
+		{
+			return nullptr;
+		}
+
+		Effekseer::Curve* curve = new Effekseer::Curve();
+
+		// load converter version
+		int converter_version = 0;
+		reader->Read(&converter_version, sizeof(int));
+
+		// load controll point count
+		reader->Read(&curve->mControllPointCount, sizeof(int));
+
+		// load controll points
+		for (int i = 0; i < curve->mControllPointCount; i++)
+		{
+			dVector4 value;
+			reader->Read(&value, sizeof(dVector4));
+			curve->mControllPoint.push_back(value);
+		}
+
+		// load knot count
+		reader->Read(&curve->mKnotCount, sizeof(int));
+
+		// load knot values
+		for (int i = 0; i < curve->mKnotCount; i++)
+		{
+			double value;
+			reader->Read(&value, sizeof(double));
+			curve->mKnotValue.push_back(value);
+		}
+
+		// load order
+		reader->Read(&curve->mOrder, sizeof(int));
+
+		// load step
+		reader->Read(&curve->mStep, sizeof(int));
+
+		// load type
+		reader->Read(&curve->mType, sizeof(int));
+
+		// load dimension
+		reader->Read(&curve->mDimension, sizeof(int));
+
+		// calc curve length
+		curve->mLength = 0;
+
+		for (int i = 1; i < curve->mControllPointCount; i++)
+		{
+			dVector4 p0 = curve->mControllPoint[i - 1];
+			dVector4 p1 = curve->mControllPoint[i];
+
+			float len = Vector3D::Length(Vector3D((float)p1.X, (float)p1.Y, (float)p1.Z) - Vector3D((float)p0.X, (float)p0.Y, (float)p0.Z));
+			curve->mLength += len;
+		}
+
+		return static_cast<void*>(curve);
+	}
+
+	/**
+	@brief	カーブを破棄する。
+	@param	data	[in]	カーブ
+	@note
+	カーブを破棄する。
+	::Effekseer::Effectのインスタンスが破棄された時に使用される。
+	*/
+	virtual void Unload(void* data)
+	{
+		if (data != NULL)
+		{
+			Curve* curve = (Curve*)data;
+			ES_SAFE_DELETE(curve);
+		}
+	}
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+} // namespace Effekseer
+  //----------------------------------------------------------------------------------
+  //
+  //----------------------------------------------------------------------------------
+#endif // __EFFEKSEER_MODELLOADER_H__
+
 #ifndef	__EFFEKSEER_SOUND_PLAYER_H__
 #define	__EFFEKSEER_SOUND_PLAYER_H__
 
@@ -4089,6 +4527,9 @@ private:
 	SoundLoader* m_soundLoader;
 	ModelLoader* m_modelLoader;
 	MaterialLoader* m_materialLoader = nullptr;
+#if __EFFEKSEER_BUILD_VERSION16__
+	CurveLoader* m_curveLoader = nullptr;
+#endif
 
 	std::vector<EffectFactory*> effectFactories;
 
@@ -4191,6 +4632,28 @@ public:
 		\~Japanese ローダー
 		*/
 	void SetMaterialLoader(MaterialLoader* loader);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+	/**
+		@brief
+		\~English get a curve loader
+		\~Japanese カーブローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	CurveLoader* GetCurveLoader();
+
+	/**
+		@brief
+		\~English specfiy a curve loader
+		\~Japanese カーブローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	void SetCurveLoader(CurveLoader* loader);
+#endif
 
 	/**
 		@brief
