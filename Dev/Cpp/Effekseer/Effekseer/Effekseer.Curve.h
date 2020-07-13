@@ -10,6 +10,7 @@
 #include "Effekseer.Vector3D.h"
 
 #include <vector>
+#include <limits>
 #include <cmath>
 
 namespace Effekseer
@@ -68,11 +69,11 @@ private:
 	 */
 	double CalcBSplineBasisFunc(const std::vector<double>& knot, unsigned int j, unsigned int p, double t)
 	{
-		if (knot.size() == 0) return  std::nan("");
+		if (knot.size() == 0) return std::numeric_limits<double>::quiet_NaN();
 
 		// ノット列のデータ長が充分でない場合は nan を返す
 		unsigned int m = static_cast<unsigned int>(knot.size()) - 1;
-		if (m < j + p + 1) return  std::nan("");
+		if (m < j + p + 1) return std::numeric_limits<double>::quiet_NaN();
 
 		// 正値をとる範囲外ならゼロを返す
 		if ((t < knot[j]) || (t > knot[j + p + 1])) return(0);
