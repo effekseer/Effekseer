@@ -1414,7 +1414,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 				break;
 				}
 
-				localPosition = curve->CalcuratePoint(t, NurbsCurveParam.Scale);
+				localPosition = curve->CalcuratePoint(t, NurbsCurveParam.Scale * m_pEffectNode->m_effect->GetMaginification());
 			}
 			else
 			{
