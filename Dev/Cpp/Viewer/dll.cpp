@@ -765,15 +765,19 @@ bool Native::UpdateWindow()
 
 void Native::RenderWindow()
 {
+	spdlog::trace("Native::RenderWindow::BeginRendering");
 	g_renderer->BeginRendering();
 
 	if (g_renderer->Distortion == EffekseerTool::DistortionType::Current)
 	{
+		spdlog::trace("Native::RenderWindow::DrawBack");
 		g_manager->DrawBack(drawParameter);
-
+		
 		// HACK
+		spdlog::trace("Native::RenderWindow::EndRendering");
 		g_renderer->GetRenderer()->EndRendering();
 
+		spdlog::trace("Native::RenderWindow::CopyToBackground");
 		g_renderer->CopyToBackground();
 
 		// HACK

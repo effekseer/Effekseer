@@ -653,10 +653,92 @@ namespace efk
 		auto srcDX11 = (RenderTextureDX11*)src;
 		auto destDX11 = (RenderTextureDX11*)dest;
 
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
+		srcDX11->GetTexture()->GetDesc(&desc);
+		
 		context->ResolveSubresource(
 			destDX11->GetTexture(), 0,
 			srcDX11->GetTexture(), 0,
-			DXGI_FORMAT_R16G16B16A16_FLOAT);
+			desc.Format);
+	}
+
+	bool GraphicsDX11::CheckFormatSupport(TextureFormat format, TextureFeatureType feature)
+	{
+		DXGI_FORMAT dxgiformat;
+
+		switch (format)
+		{
+		case TextureFormat::RGBA8U:
+			dxgiformat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			break;
+		case TextureFormat::RGBA16F:
+			dxgiformat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			break;
+		case TextureFormat::R16F:
+			dxgiformat = DXGI_FORMAT_R16_FLOAT;
+			break;
+		default:
+			assert(0);
+			return false;
+		}
+
+		UINT dxfeature = 0;
+		device->CheckFormatSupport(dxgiformat, &dxfeature);
+
+		if (feature == TextureFeatureType::Texture2D)
+		{
+			return dxfeature & D3D11_FORMAT_SUPPORT_TEXTURE2D;		
+		}
+		else if (feature == TextureFeatureType::MultisampledTexture2DRenderTarget)
+		{
+			return dxfeature & D3D11_FORMAT_SUPPORT_MULTISAMPLE_RENDERTARGET;
+		}
+		else if (feature == TextureFeatureType::MultisampledTexture2DResolve)
+		{
+			return dxfeature & D3D11_FORMAT_SUPPORT_MULTISAMPLE_RESOLVE;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		return false;
+	}
+
+	int GraphicsDX11::GetMultisampleLevel(TextureFormat format)
+	{
+		DXGI_FORMAT dxgiformat;
+
+		switch (format)
+		{
+		case TextureFormat::RGBA8U:
+			dxgiformat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			break;
+		case TextureFormat::RGBA16F:
+			dxgiformat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			break;
+		case TextureFormat::R16F:
+			dxgiformat = DXGI_FORMAT_R16_FLOAT;
+			break;
+		default:
+			assert(0);
+			return false;
+		}
+
+		for (int i = 1; i <= D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT; i <<= 1)
+		{
+			UINT Quality;
+			if (SUCCEEDED(device->CheckMultisampleQualityLevels(dxgiformat, i, &Quality)))
+			{
+				if (0 == Quality)
+				{
+					return i >> 1;
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	void GraphicsDX11::ResetDevice()

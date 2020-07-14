@@ -91,6 +91,8 @@ private:
 	int32_t		screenWidth = 0;
 	int32_t		screenHeight = 0;
 	uint32_t	msaaSamples = 4;
+	efk::TextureFormat textureFormat_ = efk::TextureFormat::RGBA16F;
+
 public:
 	/**
 		@brief	Constructor

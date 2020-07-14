@@ -208,6 +208,50 @@ bool Renderer::Initialize( void* handle, int width, int height )
 
 	spdlog::trace("OK PostProcessing");
 
+	auto msaaSampleHDR = graphics->GetMultisampleLevel(efk::TextureFormat::RGBA16F);
+	auto msaaSample = graphics->GetMultisampleLevel(efk::TextureFormat::RGBA8U);
+
+	auto isHDRSupported = graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::Texture2D);
+	auto isMSAAHDRSupported =
+		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::Texture2D) &&
+		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::MultisampledTexture2DResolve) &&
+		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::MultisampledTexture2DRenderTarget) &&
+		msaaSampleHDR > 1;
+	auto isMSAASupported = msaaSample > 1;
+
+	if (isHDRSupported || isMSAAHDRSupported)
+	{
+		textureFormat_ = efk::TextureFormat::RGBA16F;
+
+		if (isMSAAHDRSupported)
+		{
+			msaaSamples = Effekseer::Min(4, msaaSampleHDR);
+		}
+		else
+		{
+			msaaSamples = 1;
+		}
+	}
+	else
+	{
+		if (isMSAASupported)
+		{
+			msaaSamples = Effekseer::Min(4, msaaSample);
+		}
+		else
+		{
+			msaaSamples = 1;
+		}
+
+		textureFormat_ = efk::TextureFormat::RGBA8U;		
+	}
+
+	spdlog::trace("HDR {} {}", isMSAAHDRSupported, isHDRSupported);
+
+	spdlog::trace("MSAA {} {}", msaaSampleHDR, msaaSample);
+
+	spdlog::trace("OK Check format");
+
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
 		SetPerspectiveFov( width, height );
@@ -371,20 +415,27 @@ bool Renderer::BeginRendering()
 		if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
 		{
 			hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-			hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
+			if(!hdrRenderTexture->Initialize(screenWidth, screenHeight, textureFormat_))
+			{
+				spdlog::trace("Failed to initialize hdrRenderTexture {},{}", screenWidth, screenHeight);
+			}
+
 			depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
-			depthTexture->Initialize(screenWidth, screenHeight, msaaSamples);
+			if(!depthTexture->Initialize(screenWidth, screenHeight, msaaSamples))
+			{
+				spdlog::trace("Failed to initialize depthTexture {},{}", screenWidth, screenHeight);
+			}
 	
 			if (msaaSamples > 1)
 			{
 				hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-				hdrRenderTextureMSAA->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
+				hdrRenderTextureMSAA->Initialize(screenWidth, screenHeight, textureFormat_, msaaSamples);
 			}
 
 			if (m_isSRGBMode)
 			{
 				linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-				linearRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);			
+				linearRenderTexture->Initialize(screenWidth, screenHeight, textureFormat_);			
 			}
 		}
 

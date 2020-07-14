@@ -19,6 +19,13 @@ namespace efk
 		R16F,
 	};
 
+	enum class TextureFeatureType
+	{
+		Texture2D,
+		MultisampledTexture2DRenderTarget,
+		MultisampledTexture2DResolve,
+	};
+
 	class RenderTexture
 	{
 	public:
@@ -88,6 +95,10 @@ namespace efk
 		virtual DepthTexture* GetDepthTexture() const { return currentDepthTexture; }
 
 		virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) {}
+
+		virtual bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature) { return true; }
+
+		virtual int GetMultisampleLevel(TextureFormat format) { return 4; }
 
 		/**
 		Called when device is losted.
