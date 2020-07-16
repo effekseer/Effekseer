@@ -170,6 +170,10 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 
 		nodeParameter.ZSort = DepthValues.ZSort;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+#endif
+
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
 }
@@ -196,6 +200,10 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		nodeParameter.ZSort = DepthValues.ZSort;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+#endif
 
 		SpriteRenderer::InstanceParameter instanceParameter;
 		instanceParameter.AllColor = instValues._color;
@@ -269,6 +277,11 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 		instanceParameter.FlipbookIndexAndNextRate = instance.m_flipbookIndexAndNextRate;
 
 		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
+
+		if (nodeParameter.EnableViewOffset)
+		{
+			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
+		}
 #else
 		instanceParameter.UV = instance.GetUV();
 #endif

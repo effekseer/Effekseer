@@ -286,6 +286,7 @@ protected:
 	std::vector<Effekseer::RectF> blendUVDistortionUVSorted_;
 	std::vector<float> flipbookIndexAndNextRateSorted_;
 	std::vector<float> alphaThresholdSorted_;
+	std::vector<float> viewOffsetDistanceSorted_;
 #endif
 	std::vector<Effekseer::Color> colorsSorted_;
 	std::vector<int32_t> timesSorted_;
@@ -302,6 +303,7 @@ protected:
 	std::vector<Effekseer::RectF> m_blendUVDistortionUV;
 	std::vector<float> m_flipbookIndexAndNextRate;
 	std::vector<float> m_alphaThreshold;
+	std::vector<float> m_viewOffsetDistance;
 #endif
 	std::vector<Effekseer::Color> m_colors;
 	std::vector<int32_t> m_times;
@@ -392,6 +394,8 @@ protected:
 			blendUVSorted_.resize(m_matrixes.size());
 			blendAlphaUVSorted_.resize(m_matrixes.size());
 			flipbookIndexAndNextRateSorted_.resize(m_matrixes.size());
+			alphaThresholdSorted_.resize(m_matrixes.size());
+			viewOffsetDistanceSorted_.resize(m_matrixes.size());
 #endif
 			colorsSorted_.resize(m_matrixes.size());
 			timesSorted_.resize(m_matrixes.size());
@@ -418,6 +422,7 @@ protected:
 				blendUVDistortionUVSorted_[keyValues_[i].Value] = m_blendUVDistortionUV[i];
 				flipbookIndexAndNextRateSorted_[keyValues_[i].Value] = m_flipbookIndexAndNextRate[i];
 				alphaThresholdSorted_[keyValues_[i].Value] = m_alphaThreshold[i];
+				viewOffsetDistanceSorted_[keyValues_[i].Value] = m_viewOffsetDistance[i];
 #endif
 				colorsSorted_[keyValues_[i].Value] = m_colors[i];
 				timesSorted_[keyValues_[i].Value] = m_times[i];
@@ -449,6 +454,7 @@ protected:
 			m_blendUVDistortionUV = blendUVDistortionUVSorted_;
 			m_flipbookIndexAndNextRate = flipbookIndexAndNextRateSorted_;
 			m_alphaThreshold = alphaThresholdSorted_;
+			m_viewOffsetDistance = viewOffsetDistanceSorted_;
 #endif
 			m_colors = colorsSorted_;
 			m_times = timesSorted_;
@@ -593,6 +599,7 @@ public:
 		m_blendUVDistortionUV.clear();
 		m_flipbookIndexAndNextRate.clear();
 		m_alphaThreshold.clear();
+		m_viewOffsetDistance.clear();
 #endif
 		m_colors.clear();
 		m_times.clear();
@@ -609,6 +616,7 @@ public:
 		blendUVDistortionUVSorted_.clear();
 		flipbookIndexAndNextRateSorted_.clear();
 		alphaThresholdSorted_.clear();
+		viewOffsetDistanceSorted_.clear();
 #endif
 		colorsSorted_.clear();
 		timesSorted_.clear();
@@ -675,6 +683,7 @@ public:
 		m_blendUVDistortionUV.push_back(instanceParameter.BlendUVDistortionUV);
 		m_flipbookIndexAndNextRate.push_back(instanceParameter.FlipbookIndexAndNextRate);
 		m_alphaThreshold.push_back(instanceParameter.AlphaThreshold);
+		m_viewOffsetDistance.push_back(instanceParameter.ViewOffsetDistance);
 #endif
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
@@ -1220,6 +1229,12 @@ public:
 
 					// DepthParameter
 					::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[num];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+					if (param.EnableViewOffset)
+					{
+						ApplyViewOffset(modelMatrix, renderer->GetCameraMatrix(), m_viewOffsetDistance[loop + num]);
+					}
+#endif
 					ApplyDepthParameters(modelMatrix,
 										 renderer->GetCameraFrontDirection(),
 										 renderer->GetCameraPosition(),
@@ -1315,6 +1330,12 @@ public:
 
 				// DepthParameters
 				::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[0];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				if (param.EnableViewOffset == true)
+				{
+					ApplyViewOffset(modelMatrix, renderer->GetCameraMatrix(), m_viewOffsetDistance[0]);
+				}
+#endif
 				ApplyDepthParameters(modelMatrix,
 									 renderer->GetCameraFrontDirection(),
 									 renderer->GetCameraPosition(),

@@ -50,6 +50,10 @@ public:
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		bool EnableViewOffset = false;
+#endif
 	};
 
 	struct InstanceParameter
@@ -79,6 +83,8 @@ public:
 		float FlipbookIndexAndNextRate;
 
 		float AlphaThreshold;
+
+		float ViewOffsetDistance;
 #endif
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;

@@ -74,6 +74,8 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableFalloff;
 		FalloffParameter FalloffParam;
+
+		bool EnableViewOffset = false;
 #endif
 
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
@@ -102,6 +104,8 @@ public:
 		float FlipbookIndexAndNextRate;
 
 		float AlphaThreshold;
+
+		float ViewOffsetDistance;
 #endif
 		Color AllColor;
 		int32_t Time;

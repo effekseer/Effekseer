@@ -131,6 +131,8 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
+
+		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 #endif
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
@@ -167,6 +169,8 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
+
+		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 #endif
 
 		ModelRenderer::InstanceParameter instanceParameter;
@@ -184,6 +188,11 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		instanceParameter.FlipbookIndexAndNextRate = instance.m_flipbookIndexAndNextRate;
 
 		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
+
+		if (nodeParameter.EnableViewOffset == true)
+		{
+			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
+		}
 #else
 		instanceParameter.UV = instance.GetUV();
 #endif
@@ -240,6 +249,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
+
+		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 #endif
 
 		renderer->EndRendering(nodeParameter, m_userData);

@@ -529,6 +529,13 @@ protected:
 
 				auto mat = param.SRTMatrix43;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				if (parameter.EnableViewOffset == true)
+				{
+					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+				}
+#endif
+
 				ApplyDepthParameters(mat,
 									 m_renderer->GetCameraFrontDirection(),
 									 m_renderer->GetCameraPosition(),
@@ -552,6 +559,13 @@ protected:
 			for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 			{
 				auto mat = param.SRTMatrix43;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				if (parameter.EnableViewOffset == true)
+				{
+					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+				}
+#endif
 
 				::Effekseer::Vec3f s;
 				::Effekseer::Mat43f r;

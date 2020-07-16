@@ -49,7 +49,19 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 		[Selected(ID = 0, Value = 4)]
 		[IO(Export = true)]
-		public NurbsCurveParameter NurbsCurve { get; private set; }
+		public NurbsCurveParameter NurbsCurve
+		{
+			get;
+			private set;
+		}
+
+		[Selected(ID = 0, Value = 5)]
+		[IO(Export = true)]
+		public ViewOffsetParameter ViewOffset
+		{
+			get;
+			private set;
+		}
 #endif
 
 		internal LocationValues()
@@ -61,6 +73,7 @@ namespace Effekseer.Data
 			LocationFCurve = new Vector3DFCurveParameter();
 #if __EFFEKSEER_BUILD_VERSION16__
 			NurbsCurve = new NurbsCurveParameter();
+			ViewOffset = new ViewOffsetParameter();
 #endif
 
 			// dynamic parameter
@@ -135,20 +148,38 @@ namespace Effekseer.Data
 			[Name(language = Language.Japanese, value = "NURBSカーブ")]
 			[Name(language = Language.English, value = "NURBS-Curve")]
 			[IO(Export = true)]
-			public Value.PathForCurve FilePath { get; private set; }
+			public Value.PathForCurve FilePath
+			{
+				get;
+				private set;
+			}
 
 			[Name(language = Language.Japanese, value = "カーブ拡大率")]
 			[Name(language = Language.English, value = "Curve Scale")]
-			public Value.Float Scale { get; private set; }
+			[IO(Export = true)]
+			public Value.Float Scale
+			{
+				get;
+				private set;
+			}
 
 			[Name(language = Language.Japanese, value = "移動速度")]
 			[Name(language = Language.English, value = "Move Speed")]
-			public Value.Float MoveSpeed { get; private set; }
+			[IO(Export = true)]
+			public Value.Float MoveSpeed
+			{
+				get;
+				private set;
+			}
 
 			[Name(language = Language.Japanese, value = "ループタイプ")]
 			[Name(language = Language.English, value = "LoopType")]
 			[IO(Export = true)]
-			public Value.Enum<NurbsLoopType> LoopType { get; private set; }
+			public Value.Enum<NurbsLoopType> LoopType
+			{
+				get;
+				private set;
+			}
 
 			public NurbsCurveParameter()
 			{
@@ -156,6 +187,23 @@ namespace Effekseer.Data
 				Scale = new Value.Float(1.0f);
 				MoveSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f);
 				LoopType = new Value.Enum<NurbsLoopType>(NurbsLoopType.Repeat);
+			}
+		}
+
+		public class ViewOffsetParameter
+		{
+			[Name(language = Language.Japanese, value = "距離")]
+			[Name(language = Language.English, value = "Distance")]
+			[IO(Export = true)]
+			public Value.FloatWithRandom Distance
+			{
+				get;
+				private set;
+			}
+
+			public ViewOffsetParameter()
+			{
+				Distance = new Value.FloatWithRandom(3.0f, float.MaxValue, 0.0f, DrawnAs.CenterAndAmplitude, 0.5f);
 			}
 		}
 #endif
@@ -174,6 +222,10 @@ namespace Effekseer.Data
 			[Name(language = Language.Japanese, value = "位置(NURBSカーブ)")]
 			[Name(language = Language.English, value = "NURBS-Curve")]
 			NurbsCurve = 4,
+
+			[Name(language = Language.Japanese, value = "カメラオフセット")]
+			[Name(language = Language.English, value = "View Offset")]
+			ViewOffset = 5,
 #endif
 		}
 	}
