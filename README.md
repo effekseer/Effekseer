@@ -28,8 +28,9 @@ Supported platforms
 - DirectX9, DirectX11, DirectX12, Metal, Vulkan, OpenGL
 - WebGL
 - Unity
-- Cocos2d-x
 - UnrealEngine4
+- DX Library
+- Cocos2d-x
 - Console games (Please mail to effekseer(at)gmail.com)
 
 GodotEngine is planned in 1.6.
