@@ -148,7 +148,7 @@ Shift+LeftClick - Switch selecting points
 Double click with labels - Change viewing area automatically
 Delete - Remove a point"
 ,
-ImageFilter_,Image File (*.png)|*.png
+ImageFilter_,Image File (*.png,*.tga)|*.png;*.tga
 ModelFilter_,"Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"
 SoundFilter_,Sound File (*.wav)|*.wav
 ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
@@ -157,7 +157,7 @@ Error_NotFound,{0} is not found.
 ,
 EffekseerParticleFilter,efkefc
 MaterialFilter,efkmat
-ImageFilter,"png,dds"
+ImageFilter,"png,dds,tga"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"

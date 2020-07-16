@@ -158,6 +158,69 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 		textureData->Width = ddsTextureLoader.GetWidth();
 		textureData->Height = ddsTextureLoader.GetHeight();
 	}
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	else
+	{
+		if (tgaTextureLoader.Load(data_texture, size_texture) == true)
+		{
+			DXGI_FORMAT colorFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			if (colorSpaceType_ == ::Effekseer::ColorSpaceType::Linear && textureType == Effekseer::TextureType::Color)
+				colorFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+			ID3D11Texture2D* tex = NULL;
+
+			D3D11_TEXTURE2D_DESC TexDesc{};
+			TexDesc.Width = tgaTextureLoader.GetWidth();
+			TexDesc.Height = tgaTextureLoader.GetHeight();
+			TexDesc.ArraySize = 1;
+			TexDesc.Format = colorFormat;
+			TexDesc.SampleDesc.Count = 1;
+			TexDesc.SampleDesc.Quality = 0;
+			TexDesc.Usage = D3D11_USAGE_DEFAULT;
+			TexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			TexDesc.CPUAccessFlags = 0;
+			TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+			D3D11_SUBRESOURCE_DATA data;
+			data.pSysMem = tgaTextureLoader.GetData().data();
+			data.SysMemPitch = TexDesc.Width * 4;
+			data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
+
+			HRESULT hr = device->CreateTexture2D(&TexDesc, nullptr, &tex);
+
+			if (FAILED(hr))
+			{
+				goto Exit;
+			}
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
+			desc.Format = TexDesc.Format;
+			desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			desc.Texture2D.MipLevels = 1;
+
+			hr = device->CreateShaderResourceView(tex, &desc, &texture);
+			if (FAILED(hr))
+			{
+				ES_SAFE_RELEASE(texture);
+				goto Exit;
+			}
+
+			context->UpdateSubresource(tex, 0, 0, tgaTextureLoader.GetData().data(), data.SysMemPitch, 0);
+
+			ES_SAFE_RELEASE(tex);
+
+			// Generate mipmap
+			context->GenerateMips(texture);
+
+			textureData = new Effekseer::TextureData();
+			textureData->UserPtr = texture;
+			textureData->UserID = 0;
+			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+			textureData->Width = TexDesc.Width;
+			textureData->Height = TexDesc.Height;
+		}
+	}
+#endif
 
 Exit:;
 	return textureData;

@@ -34,7 +34,11 @@ namespace Effekseer.Utl
 
 			var buf = new byte[1024];
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			if (br.Read(buf, 0, 18) != 18)
+#else
 			if (br.Read(buf, 0, 8) != 8)
+#endif
 			{
 				fs.Dispose();
 				br.Close();
@@ -55,8 +59,8 @@ namespace Effekseer.Utl
 				if (br.Read(buf, 0, 25) != 25)
 				{
 					fs.Dispose();
-                    br.Close();
-                    return false;
+					br.Close();
+					return false;
 				}
 
 				var width = new byte[] { buf[11], buf[10], buf[9], buf[8] };
@@ -70,19 +74,48 @@ namespace Effekseer.Utl
 				if (br.Read(buf, 0, 25) != 25)
 				{
 					fs.Dispose();
-                    br.Close();
-                    return false;
+					br.Close();
+					return false;
 				}
 
 				Width = BitConverter.ToInt32(buf, 8);
 				Height = BitConverter.ToInt32(buf, 4);
 			}
+#if __EFFEKSEER_BUILD_VERSION16__
+			else
+			{
+				var footer = new char[18];
+				br.BaseStream.Seek(br.BaseStream.Length - 18, System.IO.SeekOrigin.Begin);
+				if (br.Read(footer, 0, 18) != 18)
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+
+				string str = new string(footer);
+
+				if (str.Equals("TRUEVISION-XFILE.\0") == true)
+				{
+					// TGA
+					Width = buf[12] + buf[13] * 256;
+					Height = buf[14] + buf[15] * 256;
+				}
+				else
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+			}
+#else
 			else
 			{
 				fs.Dispose();
-                br.Close();
-                return false;
+				br.Close();
+				return false;
 			}
+#endif
 
 			fs.Dispose();
             br.Close();
