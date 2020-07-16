@@ -413,4 +413,40 @@ void ApplyDepthParameters(::Effekseer::Mat44f& mat,
 	}
 }
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+void ApplyViewOffset(::Effekseer::Mat43f& mat,
+					 const ::Effekseer::Mat44f& camera,
+					 float distance)
+{
+	::Effekseer::Matrix44 cameraMat;
+	::Effekseer::Matrix44::Inverse(cameraMat, ToStruct(camera));
+
+	::Effekseer::Vec3f ViewOffset = ::Effekseer::Vec3f::Load(cameraMat.Values[3]) + -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * distance;
+
+	::Effekseer::Vec3f localPos = mat.GetTranslation();
+	ViewOffset += (::Effekseer::Vec3f::Load(cameraMat.Values[0]) * localPos.GetX()+ 
+				   ::Effekseer::Vec3f::Load(cameraMat.Values[1]) * localPos.GetY() + 
+				   -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * localPos.GetZ());
+
+	mat.SetTranslation(ViewOffset);
+}
+
+void ApplyViewOffset(::Effekseer::Mat44f& mat,
+					 const ::Effekseer::Mat44f& camera,
+					 float distance)
+{
+	::Effekseer::Matrix44 cameraMat;
+	::Effekseer::Matrix44::Inverse(cameraMat, ToStruct(camera));
+
+	::Effekseer::Vec3f ViewOffset = ::Effekseer::Vec3f::Load(cameraMat.Values[3]) + -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * distance;
+
+	::Effekseer::Vec3f localPos = mat.GetTranslation();
+	ViewOffset += (::Effekseer::Vec3f::Load(cameraMat.Values[0]) * localPos.GetX()+ 
+				   ::Effekseer::Vec3f::Load(cameraMat.Values[1]) * localPos.GetY() + 
+				   -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * localPos.GetZ());
+
+	mat.SetTranslation(ViewOffset);
+}
+#endif
+
 } // namespace EffekseerRenderer

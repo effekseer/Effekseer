@@ -544,6 +544,12 @@ void Instance::FirstUpdate()
 
 		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets(rand);
 	}
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	else if (m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
+	{
+		translation_values.view_offset.distance = m_pEffectNode->TranslationViewOffset.distance.getValue(rand);
+	}
+#endif
 
 	// Rotation
 	if (m_pEffectNode->RotationType == ParameterRotationType_Fixed)
@@ -1421,6 +1427,10 @@ void Instance::CalculateMatrix(float deltaFrame)
 				localPosition = {0, 0, 0};
 			}
 		}
+		else if (m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
+		{
+			localPosition = { 0, 0, 0 };
+		}
 #endif
 
 		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
@@ -1584,8 +1594,16 @@ void Instance::CalculateMatrix(float deltaFrame)
 			assert(m_GlobalMatrix43.IsValid());
 		}
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if(m_pEffectNode->TranslationType != ParameterTranslationType_ViewOffset)
+		{ 
+			m_GlobalMatrix43 *= m_ParentMatrix;
+			assert(m_GlobalMatrix43.IsValid());
+		}
+#else
 		m_GlobalMatrix43 *= m_ParentMatrix;
 		assert(m_GlobalMatrix43.IsValid());
+#endif
 
 		if (m_pEffectNode->LocationAbs.type != LocationAbsType::None)
 		{

@@ -250,7 +250,22 @@ protected:
 			Effekseer::Vec3f R;
 			Effekseer::Vec3f F;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			if (parameter.EnableViewOffset)
+			{
+				Effekseer::Mat43f instMat = instanceParameter.SRTMatrix43;
+
+				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
+
+				CalcBillboard(parameter.Billboard, mat43, s, R, F, instMat, m_renderer->GetCameraFrontDirection());
+			}
+			else
+			{
+				CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
+			}
+#else
 			CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
+#endif
 
 			ApplyDepthParameters(mat43,
 								 m_renderer->GetCameraFrontDirection(),
@@ -271,6 +286,13 @@ protected:
 		else if (parameter.Billboard == ::Effekseer::BillboardType::Fixed)
 		{
 			mat43 = instanceParameter.SRTMatrix43;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			if (parameter.EnableViewOffset)
+			{
+				ApplyViewOffset(mat43, camera, instanceParameter.ViewOffsetDistance);
+			}
+#endif
 
 			ApplyDepthParameters(mat43,
 								 m_renderer->GetCameraFrontDirection(),

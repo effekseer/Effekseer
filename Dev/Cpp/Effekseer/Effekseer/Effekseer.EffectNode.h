@@ -201,6 +201,7 @@ enum ParameterTranslationType
 	ParameterTranslationType_FCurve = 3,
 #if __EFFEKSEER_BUILD_VERSION16__
 	ParameterTranslationType_NurbsCurve = 4,
+	ParameterTranslationType_ViewOffset = 5,
 #endif
 
 	ParameterTranslationType_None = 0x7fffffff - 1,
@@ -245,6 +246,11 @@ struct ParameterTranslationNurbsCurve
 	float Scale;
 	float MoveSpeed;
 	int32_t LoopType;
+};
+
+struct ParameterTranslationViewOffset
+{
+	random_float distance;
 };
 #endif
 
@@ -1601,6 +1607,7 @@ public:
 	FCurveVector3D* TranslationFCurve;
 #if __EFFEKSEER_BUILD_VERSION16__
 	ParameterTranslationNurbsCurve TranslationNurbsCurve;
+	ParameterTranslationViewOffset TranslationViewOffset;
 #endif
 
 #ifdef OLD_LF
