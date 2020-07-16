@@ -120,6 +120,7 @@ private:
 
 	uint8_t* m_vertexConstantBuffer;
 	uint8_t* m_pixelConstantBuffer;
+	bool addHeader_ = true;
 
 	std::vector<ConstantLayout> m_vertexConstantLayout;
 	std::vector<ConstantLayout> m_pixelConstantLayout;
@@ -140,7 +141,8 @@ private:
 							  size_t vsDataCount,
 							  const ShaderCodeView* psData,
 							  size_t psDataCount,
-							  const char* name);
+							  const char* name,
+							  bool addHeader);
 
 	bool ReloadShader();
 
@@ -151,7 +153,8 @@ private:
 		   const ShaderCodeView* psData,
 		   size_t psDataCount,
 		   const char* name,
-		   bool hasRefCount);
+		   bool hasRefCount,
+		   bool addHeader);
 
 	GLint GetAttribId(const char* name) const;
 
@@ -167,7 +170,8 @@ public:
 						  const ShaderCodeView* psData,
 						  size_t psDataCount,
 						  const char* name,
-						  bool hasRefCount = true);
+						  bool hasRefCount = true,
+						  bool addHeader = true);
 
 public:
 	virtual void OnLostDevice() override;

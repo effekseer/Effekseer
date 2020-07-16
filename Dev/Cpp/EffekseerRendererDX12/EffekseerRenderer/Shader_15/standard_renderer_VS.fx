@@ -1,50 +1,84 @@
-
-float4x4 mCamera		: register(c0);
-float4x4 mProj			: register(c4);
-float4 mUVInversed		: register(c8);
-
 struct VS_Input
 {
-	float3 Pos		: POSITION0;
-	float4 Color		: NORMAL0;
-	float2 UV		: TEXCOORD0;
+    float3 Pos;
+    float4 Color;
+    float2 UV;
 };
 
 struct VS_Output
 {
-	float4 Position		: SV_POSITION;
-	float4 Color		: COLOR;
-	float2 UV		: TEXCOORD0;
-
-	float4 Pos		: TEXCOORD1;
-	float4 PosU		: TEXCOORD2;
-	float4 PosR		: TEXCOORD3;
+    float4 Position;
+    float4 Color;
+    float2 UV;
 };
 
-VS_Output VS( const VS_Input Input )
+static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+
+cbuffer VS_ConstantBuffer : register(b0)
 {
-	VS_Output Output = (VS_Output)0;
-	float4 pos4 = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
+    column_major float4x4 _40_mCamera : packoffset(c0);
+    column_major float4x4 _40_mProj : packoffset(c4);
+    float4 _40_mUVInversed : packoffset(c8);
+};
 
-	float4 cameraPos = mul(mCamera, pos4);
-	cameraPos = cameraPos / cameraPos.w;
-	Output.Position = mul(mProj, cameraPos);
 
-	Output.Pos = Output.Position;
+static float4 gl_Position;
+static float3 Input_Pos;
+static float4 Input_Color;
+static float2 Input_UV;
+static float4 _entryPointOutput_Color;
+static float2 _entryPointOutput_UV;
 
-	float4 cameraPosU = cameraPos + float4(0.0, 1.0, 0.0, 0.0);
-	float4 cameraPosR = cameraPos + float4(1.0, 0.0, 0.0, 0.0);
-	Output.PosU = mul(mProj, cameraPosU);
-	Output.PosR = mul(mProj, cameraPosR);
+struct SPIRV_Cross_Input
+{
+    float3 Input_Pos : TEXCOORD0;
+    float4 Input_Color : TEXCOORD1;
+    float2 Input_UV : TEXCOORD2;
+};
 
-	Output.PosU /= Output.PosU.w;
-	Output.PosR /= Output.PosR.w;
-	Output.Pos /= Output.Pos.w;
+struct SPIRV_Cross_Output
+{
+    float4 _entryPointOutput_Color : TEXCOORD0;
+    float2 _entryPointOutput_UV : TEXCOORD1;
+    float4 gl_Position : SV_Position;
+};
 
-	Output.Color = Input.Color;
-	Output.UV = Input.UV;
+VS_Output _main(VS_Input Input)
+{
+    VS_Output Output = _21;
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 cameraPos = mul(_40_mCamera, pos4);
+    cameraPos /= cameraPos.w.xxxx;
+    Output.Position = mul(_40_mProj, cameraPos);
+    float4 cameraPosU = cameraPos + float4(0.0f, 1.0f, 0.0f, 0.0f);
+    float4 cameraPosR = cameraPos + float4(1.0f, 0.0f, 0.0f, 0.0f);
+    Output.Color = Input.Color;
+    Output.UV = Input.UV;
+    Output.UV.y = _40_mUVInversed.x + (_40_mUVInversed.y * Input.UV.y);
+    return Output;
+}
 
-	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+void vert_main()
+{
+    VS_Input Input;
+    Input.Pos = Input_Pos;
+    Input.Color = Input_Color;
+    Input.UV = Input_UV;
+    VS_Output flattenTemp = _main(Input);
+    gl_Position = flattenTemp.Position;
+    _entryPointOutput_Color = flattenTemp.Color;
+    _entryPointOutput_UV = flattenTemp.UV;
+}
 
-	return Output;
+SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
+{
+    Input_Pos = stage_input.Input_Pos;
+    Input_Color = stage_input.Input_Color;
+    Input_UV = stage_input.Input_UV;
+    vert_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.gl_Position = gl_Position;
+    stage_output._entryPointOutput_Color = _entryPointOutput_Color;
+    stage_output._entryPointOutput_UV = _entryPointOutput_UV;
+    return stage_output;
 }

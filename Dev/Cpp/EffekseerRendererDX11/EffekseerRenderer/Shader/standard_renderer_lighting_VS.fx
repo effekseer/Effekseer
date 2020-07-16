@@ -7,7 +7,6 @@ struct VS_Input
 	float4 Tangent : NORMAL2;
 	float2 UV1 : TEXCOORD0;
 	float2 UV2 : TEXCOORD1;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV          : TEXCOORD2;
     float2 UVDistortionUV   : TEXCOORD3;
     float2 BlendUV          : TEXCOORD4;
@@ -15,7 +14,6 @@ struct VS_Input
     float2 BlendUVDistortionUV : TEXCOORD6;
     float FlipbookIndex     : TEXCOORD7;
     float AlphaThreshold    : TEXCOORD8;
-#endif
 };
 
 struct VS_Output
@@ -29,7 +27,6 @@ struct VS_Output
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD7;
     float2 UVDistortionUV       : TEXCOORD8;
     float2 BlendUV              : TEXCOORD9;
@@ -38,10 +35,8 @@ struct VS_Output
     float FlipbookRate          : TEXCOORD12;
     float2 FlipbookNextIndexUV  : TEXCOORD13;
     float AlphaThreshold        : TEXCOORD14;
-#endif
 };
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 cbuffer VS_ConstantBuffer : register(b0)
 {
     float4x4 mCamera;
@@ -52,13 +47,8 @@ cbuffer VS_ConstantBuffer : register(b0)
 };
 
 #include "FlipbookInterpolationUtils.fx"
-#else
-float4x4 mCamera : register(c0);
-float4x4 mProj : register(c4);
-float4 mUVInversed : register(c8);
-#endif
 
-VS_Output VS( const VS_Input Input )
+VS_Output main( const VS_Input Input )
 {
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
@@ -71,7 +61,7 @@ VS_Output VS( const VS_Input Input )
 	float2 uv2 = Input.UV1;
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
     // alpha texture
     float2 alphaUV = Input.AlphaUV;
     alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
@@ -97,7 +87,6 @@ VS_Output VS( const VS_Input Input )
 
     // alpha threshold
     Output.AlphaThreshold = Input.AlphaThreshold;
-#endif
 
 	// NBT
 	Output.WorldN = worldNormal;
@@ -114,13 +103,13 @@ VS_Output VS( const VS_Input Input )
 	Output.VColor = Input.Color;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
     Output.AlphaUV = alphaUV;
     Output.UVDistortionUV = uvDistorionUV;
     Output.BlendUV = blendUV;
     Output.BlendAlphaUV = blendAlphaUV;
     Output.BlendUVDistortionUV = blendUVDistortionUV;
-#endif
+
 	Output.ScreenUV = Output.Position.xy / Output.Position.w;
 	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
 

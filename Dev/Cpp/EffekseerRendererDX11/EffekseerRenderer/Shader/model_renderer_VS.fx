@@ -1,21 +1,21 @@
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 cbuffer VS_ConstantBuffer : register(b0)
 {
     float4x4 mCameraProj;
-    float4x4 mModel[40];
-    float4 fUV[40];
-    float4 fAlphaUV[40];
-    float4 fUVDistortionUV[40];
-    float4 fBlendUV[40];
-    float4 fBlendAlphaUV[40];
-    float4 fBlendUVDistortionUV[40];
+    float4x4 mModel[__INST__];
+    float4 fUV[__INST__];
+    float4 fAlphaUV[__INST__];
+    float4 fUVDistortionUV[__INST__];
+    float4 fBlendUV[__INST__];
+    float4 fBlendAlphaUV[__INST__];
+    float4 fBlendUVDistortionUV[__INST__];
 
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
-    float4 fFlipbookIndexAndNextRate[40];
+    float4 fFlipbookIndexAndNextRate[__INST__];
 
-    float4 fModelAlphaThreshold[40];
+    float4 fModelAlphaThreshold[__INST__];
 
-    float4 fModelColor[40];
+    float4 fModelColor[__INST__];
     
     float4 fLightDirection;
     float4 fLightColor;
@@ -23,20 +23,6 @@ cbuffer VS_ConstantBuffer : register(b0)
     
     float4 mUVInversed;
 };
-#else
-float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
-
-#ifdef ENABLE_LIGHTING
-float4	fLightDirection		: register( c244 );
-float4	fLightColor		: register( c245 );
-float4	fLightAmbient		: register( c246 );
-#endif
-float4 mUVInversed		: register(c247);
-#endif
-
 
 struct VS_Input
 {
@@ -55,7 +41,6 @@ struct VS_Output
 	float4 Pos		: SV_POSITION;
 	float2 UV		: TEXCOORD0;
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float3 Normal		: TEXCOORD1;
 	float3 Binormal		: TEXCOORD2;
 	float3 Tangent		: TEXCOORD3;  
@@ -70,34 +55,21 @@ struct VS_Output
     float2 FlipbookNextIndexUV  : TEXCOORD10;
     
     float AlphaThreshold        : TEXCOORD11;
-#else
-
-#if ENABLE_NORMAL_TEXTURE
-	half3 Normal		: TEXCOORD1;
-	half3 Binormal		: TEXCOORD2;
-	half3 Tangent		: TEXCOORD3;   
-#endif
-    
-#endif
 
 	float4 Color		: COLOR;
 };
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "FlipbookInterpolationUtils.fx"
-#endif
 
-VS_Output VS( const VS_Input Input )
+VS_Output main( const VS_Input Input )
 {
 	float4x4 matModel = mModel[Input.Index.x];
 	float4 uv = fUV[Input.Index.x];
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float4 alphaUV = fAlphaUV[Input.Index.x];
     float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
     float4 blendUV = fBlendUV[Input.Index.x];
     float4 blendAlphaUV = fBlendAlphaUV[Input.Index.x];
     float4 blendUVDistortionUV = fBlendUVDistortionUV[Input.Index.x];
-#endif
 	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
 
 	VS_Output Output = (VS_Output)0;
@@ -108,7 +80,6 @@ VS_Output VS( const VS_Input Input )
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     // alpha texture
     Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
 	Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
@@ -135,7 +106,6 @@ VS_Output VS( const VS_Input Input )
     
     // alpha threshold
     Output.AlphaThreshold = fModelAlphaThreshold[Input.Index.x].x;
-#endif
 
 #if ENABLE_LIGHTING
 	float3x3 lightMat = (float3x3)matModel;
@@ -154,23 +124,19 @@ VS_Output VS( const VS_Input Input )
 	Output.Tangent = localTangent.xyz;
 #else
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.Normal   = normalize( mul((float3x3)matModel, Input.Normal) );
 	Output.Binormal = normalize( mul((float3x3)matModel, Input.Binormal) );
 	Output.Tangent  = normalize( mul((float3x3)matModel, Input.Tangent) );
-#endif
     
 #endif
 	Output.Color = modelColor;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
     Output.UVDistortionUV.y = mUVInversed.x + mUVInversed.y * Output.UVDistortionUV.y;
     Output.BlendUV.y = mUVInversed.x + mUVInversed.y * Output.BlendUV.y;
     Output.BlendAlphaUV.y = mUVInversed.x + mUVInversed.y * Output.BlendAlphaUV.y;
     Output.BlendUVDistortionUV.y = mUVInversed.x + mUVInversed.y * Output.BlendUVDistortionUV.y;
-#endif
 
 	return Output;
 }

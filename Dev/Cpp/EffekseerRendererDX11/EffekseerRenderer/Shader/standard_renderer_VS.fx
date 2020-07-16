@@ -1,4 +1,4 @@
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 cbuffer VS_ConstantBuffer : register(b0)
 {
     float4x4 mCamera;
@@ -7,18 +7,12 @@ cbuffer VS_ConstantBuffer : register(b0)
 
     float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 };
-#else
-float4x4 mCamera		: register(c0);
-float4x4 mProj			: register(c4);
-float4 mUVInversed		: register(c8);
-#endif
 
 struct VS_Input
 {
 	float3 Pos		: POSITION0;
 	float4 Color		: NORMAL0;
 	float2 UV		: TEXCOORD0;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	float2 AlphaUV              : TEXCOORD1;
 	float2 UVDistortionUV       : TEXCOORD2;
 	float2 BlendUV              : TEXCOORD3;
@@ -26,7 +20,6 @@ struct VS_Input
 	float2 BlendUVDistortionUV  : TEXCOORD5;
 	float FlipbookIndex         : TEXCOORD6;
 	float AlphaThreshold        : TEXCOORD7;
-#endif
 };
 
 struct VS_Output
@@ -39,7 +32,6 @@ struct VS_Output
 	float4 PosU		: TEXCOORD2;
 	float4 PosR		: TEXCOORD3;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	float2 AlphaUV              : TEXCOORD4;
 	float2 UVDistortionUV       : TEXCOORD5;
 	float2 BlendUV              : TEXCOORD6;
@@ -48,14 +40,11 @@ struct VS_Output
 	float FlipbookRate          : TEXCOORD9;
 	float2 FlipbookNextIndexUV  : TEXCOORD10;
 	float AlphaThreshold        : TEXCOORD11;
-#endif
 };
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "FlipbookInterpolationUtils.fx"
-#endif
 
-VS_Output VS( const VS_Input Input )
+VS_Output main( const VS_Input Input )
 {
 	VS_Output Output = (VS_Output)0;
 	float4 pos4 = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
@@ -80,7 +69,6 @@ VS_Output VS( const VS_Input Input )
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     // alpha texture
 	Output.AlphaUV = Input.AlphaUV;
 	Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
@@ -105,7 +93,6 @@ VS_Output VS( const VS_Input Input )
 	ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV);
     
     Output.AlphaThreshold = Input.AlphaThreshold;
-#endif
 
 	return Output;
 }

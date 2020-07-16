@@ -22,11 +22,14 @@ struct VS_Output
 	float2 ScreenUV : TEXCOORD6;
 };
 
-float4x4 mCamera : register(c0);
-float4x4 mProj : register(c4);
-float4 mUVInversed : register(c8);
+cbuffer VS_ConstantBuffer : register(b0)
+{
+	float4x4 mCamera;
+	float4x4 mProj;
+	float4 mUVInversed;
+}
 
-VS_Output VS( const VS_Input Input )
+VS_Output main(const VS_Input Input)
 {
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
@@ -60,4 +63,3 @@ VS_Output VS( const VS_Input Input )
 
 	return Output;
 }
-

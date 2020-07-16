@@ -72,62 +72,74 @@ static
 namespace Standard_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_VS.h"
 } // namespace Standard_VS
 
 namespace Standard_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_PS.h"
 } // namespace Standard_PS
 
 namespace Standard_Distortion_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Distortion_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Distortion_VS.h"
 } // namespace Standard_Distortion_VS
 
 namespace Standard_Distortion_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Distortion_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Distortion_PS.h"
 } // namespace Standard_Distortion_PS
 
-namespace ShaderLightingTextureNormal_
+namespace ShaderLightingTextureNormal_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+} // namespace ShaderLightingTextureNormal_
 
+namespace ShaderLightingTextureNormal_PS
+{
 	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
 
 } // namespace ShaderLightingTextureNormal_
 
-namespace ShaderTexture_
+namespace ShaderTexture_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
-
-	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
 } // namespace ShaderTexture_
 
-namespace ShaderDistortionTexture_
+namespace ShaderTexture_PS
+{
+	static
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+} // namespace ShaderTexture_
+
+namespace ShaderDistortionTexture_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
-
-	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
 } // namespace ShaderDistortionTexture_
 
-namespace ShaderStandardLighting_
+namespace ShaderDistortionTexture_PS
+{
+	static
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+} // namespace ShaderDistortionTexture_
+
+namespace ShaderStandardLighting_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Lighting_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Lighting_VS.h"
+}
 
+namespace ShaderStandardLighting_PS
+{
 	static
-#include "Shader_15/EffekseerRenderer.Standard_Lighting_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Lighting_PS.h"
 } // namespace ShaderStandardLighting_
 
 #endif
@@ -166,29 +178,29 @@ namespace EffekseerRendererDX12
 		return;
 	};
 
-	allocate_(renderer->fixedShader_.StandardTexture_VS, Standard_VS::g_VS, sizeof(Standard_VS::g_VS));
-	allocate_(renderer->fixedShader_.StandardTexture_PS, Standard_PS::g_PS, sizeof(Standard_PS::g_PS));
+	allocate_(renderer->fixedShader_.StandardTexture_VS, Standard_VS::g_main, sizeof(Standard_VS::g_main));
+	allocate_(renderer->fixedShader_.StandardTexture_PS, Standard_PS::g_main, sizeof(Standard_PS::g_main));
 
-	allocate_(renderer->fixedShader_.StandardDistortedTexture_VS, Standard_Distortion_VS::g_VS, sizeof(Standard_Distortion_VS::g_VS));
-	allocate_(renderer->fixedShader_.StandardDistortedTexture_PS, Standard_Distortion_PS::g_PS, sizeof(Standard_Distortion_PS::g_PS));
+	allocate_(renderer->fixedShader_.StandardDistortedTexture_VS, Standard_Distortion_VS::g_main, sizeof(Standard_Distortion_VS::g_main));
+	allocate_(renderer->fixedShader_.StandardDistortedTexture_PS, Standard_Distortion_PS::g_main, sizeof(Standard_Distortion_PS::g_main));
 
-	allocate_(renderer->fixedShader_.ModelShaderTexture_VS, ShaderTexture_::g_VS, sizeof(ShaderTexture_::g_VS));
-	allocate_(renderer->fixedShader_.ModelShaderTexture_PS, ShaderTexture_::g_PS, sizeof(ShaderTexture_::g_PS));
+	allocate_(renderer->fixedShader_.ModelShaderTexture_VS, ShaderTexture_VS::g_main, sizeof(ShaderTexture_VS::g_main));
+	allocate_(renderer->fixedShader_.ModelShaderTexture_PS, ShaderTexture_PS::g_main, sizeof(ShaderTexture_PS::g_main));
 
 	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_VS,
-			  ShaderLightingTextureNormal_::g_VS,
-			  sizeof(ShaderLightingTextureNormal_::g_VS));
+			  ShaderLightingTextureNormal_VS::g_main,
+			  sizeof(ShaderLightingTextureNormal_VS::g_main));
 	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_PS,
-			  ShaderLightingTextureNormal_::g_PS,
-			  sizeof(ShaderLightingTextureNormal_::g_PS));
+			  ShaderLightingTextureNormal_PS::g_main,
+			  sizeof(ShaderLightingTextureNormal_PS::g_main));
 
 	allocate_(
-		renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_::g_VS, sizeof(ShaderDistortionTexture_::g_VS));
+		renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_VS::g_main, sizeof(ShaderDistortionTexture_VS::g_main));
 	allocate_(
-		renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_::g_PS, sizeof(ShaderDistortionTexture_::g_PS));
+		renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_PS::g_main, sizeof(ShaderDistortionTexture_PS::g_main));
 
-	allocate_(renderer->fixedShader_.StandardLightingTexture_VS, ShaderStandardLighting_::g_VS, sizeof(ShaderStandardLighting_::g_VS));
-	allocate_(renderer->fixedShader_.StandardLightingTexture_PS, ShaderStandardLighting_::g_PS, sizeof(ShaderStandardLighting_::g_PS));
+	allocate_(renderer->fixedShader_.StandardLightingTexture_VS, ShaderStandardLighting_VS::g_main, sizeof(ShaderStandardLighting_VS::g_main));
+	allocate_(renderer->fixedShader_.StandardLightingTexture_PS, ShaderStandardLighting_PS::g_main, sizeof(ShaderStandardLighting_PS::g_main));
 
 	renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::DirectX12;
 	renderer->materialCompiler_ = new Effekseer::MaterialCompilerDX12();

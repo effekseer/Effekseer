@@ -41,6 +41,15 @@
 #include "Shader/SpriteDistortion_PS.h"
 #include "Shader/SpriteDistortion_VS.h"
 
+#include "ShaderHeader_15/standard_renderer_VS.h"
+#include "ShaderHeader_15/standard_renderer_PS.h"
+
+#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
+#include "ShaderHeader_15/standard_renderer_distortion_PS.h"
+
+#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
+#include "ShaderHeader_15/standard_renderer_lighting_PS.h"
+
 namespace EffekseerRendererGL
 {
 
@@ -295,17 +304,17 @@ bool RendererImplemented::Initialize()
 		return false;
 
 #else
-	ShaderCodeView sVS(g_sprite_vs_src);
-	ShaderCodeView sPS(g_sprite_fs_texture_src);
+	ShaderCodeView sVS(get_standard_renderer_VS(GetDeviceType()));
+	ShaderCodeView sPS(get_standard_renderer_PS(GetDeviceType()));
 
-	m_shader = Shader::Create(GetGraphicsDevice(), &sVS, 1, &sPS, 1, "Standard Tex", false);
+	m_shader = Shader::Create(GetGraphicsDevice(), &sVS, 1, &sPS, 1, "Standard Tex", false, false);
 	if (m_shader == nullptr)
 		return false;
 
-	ShaderCodeView dVS(g_sprite_distortion_vs_src);
-	ShaderCodeView dPS(g_sprite_fs_texture_distortion_src);
+	ShaderCodeView dVS(get_standard_renderer_distortion_VS(GetDeviceType()));
+	ShaderCodeView dPS(get_standard_renderer_distortion_PS(GetDeviceType()));
 
-	m_shader_distortion = Shader::Create(GetGraphicsDevice(), &dVS, 1, &dPS, 1, "Standard Distortion Tex", false);
+	m_shader_distortion = Shader::Create(GetGraphicsDevice(), &dVS, 1, &dPS, 1, "Standard Distortion Tex", false, false);
 	if (m_shader_distortion == nullptr)
 		return false;
 
@@ -325,9 +334,9 @@ bool RendererImplemented::Initialize()
 	m_shader->SetVertexSize(sizeof(Vertex));
 #else
 	static ShaderAttribInfo sprite_attribs[3] = {
-		{"atPosition", GL_FLOAT, 3, 0, false},
-		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"atTexCoord", GL_FLOAT, 2, 16, false},
+		{"Input_Pos", GL_FLOAT, 3, 0, false},
+		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"Input_UV", GL_FLOAT, 2, 16, false},
 	};
 	m_shader->GetAttribIdList(3, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
@@ -347,13 +356,13 @@ bool RendererImplemented::Initialize()
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 #endif
 
-	m_shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader->GetUniformId("uMatCamera"), 0);
+	m_shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader->GetUniformId("CBVS0.mCamera"), 0);
 
-	m_shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+	m_shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
 
-	m_shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
+	m_shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
 
-	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
+	m_shader->SetTextureSlot(0, m_shader->GetUniformId("Sampler_g_sampler"));
 
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer(), false);
 
@@ -375,11 +384,11 @@ bool RendererImplemented::Initialize()
 
 #else
 	static ShaderAttribInfo sprite_attribs_distortion[5] = {
-		{"atPosition", GL_FLOAT, 3, 0, false},
-		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"atTexCoord", GL_FLOAT, 2, 16, false},
-		{"atBinormal", GL_FLOAT, 3, 24, false},
-		{"atTangent", GL_FLOAT, 3, 36, false},
+		{"Input_Pos", GL_FLOAT, 3, 0, false},
+		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"Input_UV", GL_FLOAT, 2, 16, false},
+		{"Input_Binormal", GL_FLOAT, 3, 24, false},
+		{"Input_Tangent", GL_FLOAT, 3, 36, false},
 	};
 
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
@@ -396,21 +405,21 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 #endif
 
-	m_shader_distortion->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader_distortion->GetUniformId("uMatCamera"), 0);
+	m_shader_distortion->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader_distortion->GetUniformId("CBVS0.mCamera"), 0);
 
 	m_shader_distortion->AddVertexConstantLayout(
-		CONSTANT_TYPE_MATRIX44, m_shader_distortion->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+		CONSTANT_TYPE_MATRIX44, m_shader_distortion->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
 
 	m_shader_distortion->AddVertexConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
+		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
 
-	m_shader_distortion->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("g_scale"), 0);
+	m_shader_distortion->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("CBPS0.g_scale"), 0);
 
 	m_shader_distortion->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("mUVInversedBack"), sizeof(float) * 4);
+		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("CBPS0.mUVInversedBack"), sizeof(float) * 4);
 
-	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
-	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
+	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("Sampler_g_sampler"));
+	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("Sampler_g_backSampler"));
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_distortion->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
@@ -435,10 +444,10 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting = Shader::Create(GetGraphicsDevice(), lVS, 2, lPS, 2, "Standard Lighting Tex", false);
 
 #else
-	ShaderCodeView lVS(g_sprite_vs_lighting_src);
-	ShaderCodeView lPS(g_sprite_fs_lighting_src);
+	ShaderCodeView lVS(get_standard_renderer_lighting_VS(GetDeviceType()));
+	ShaderCodeView lPS(get_standard_renderer_lighting_PS(GetDeviceType()));
 
-	m_shader_lighting = Shader::Create(GetGraphicsDevice(), &lVS, 1, &lPS, 1, "Standard Lighting Tex", false);
+	m_shader_lighting = Shader::Create(GetGraphicsDevice(), &lVS, 1, &lPS, 1, "Standard Lighting Tex", false, false);
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -459,12 +468,12 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::LightingVertex));
 #else
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
-		{"atPosition", GL_FLOAT, 3, 0, false},
-		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
-		{"atTangent", GL_UNSIGNED_BYTE, 4, 20, true},
-		{"atTexCoord", GL_FLOAT, 2, 24, false},
-		{"atTexCoord2", GL_FLOAT, 2, 32, false},
+		{"Input_Pos", GL_FLOAT, 3, 0, false},
+		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
+		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
+		{"Input_UV1", GL_FLOAT, 2, 24, false},
+		{"Input_UV2", GL_FLOAT, 2, 32, false},
 	};
 
 	m_shader_lighting->GetAttribIdList(6, sprite_attribs_lighting);
@@ -479,21 +488,21 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
 #endif
 
-	m_shader_lighting->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader_lighting->GetUniformId("uMatCamera"), 0);
+	m_shader_lighting->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader_lighting->GetUniformId("CBVS0.mCamera"), 0);
 
 	m_shader_lighting->AddVertexConstantLayout(
-		CONSTANT_TYPE_MATRIX44, m_shader_lighting->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+		CONSTANT_TYPE_MATRIX44, m_shader_lighting->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
 
 	m_shader_lighting->AddVertexConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
+		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
 
 	m_shader_lighting->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("LightDirection"), sizeof(float[4]) * 0);
-	m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("LightColor"), sizeof(float[4]) * 1);
-	m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("LightAmbient"), sizeof(float[4]) * 2);
+		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fLightDirection"), sizeof(float[4]) * 0);
+	m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fLightColor"), sizeof(float[4]) * 1);
+	m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fLightAmbient"), sizeof(float[4]) * 2);
 
-	m_shader_lighting->SetTextureSlot(0, m_shader_lighting->GetUniformId("ColorTexture"));
-	m_shader_lighting->SetTextureSlot(1, m_shader_lighting->GetUniformId("NormalTexture"));
+	m_shader_lighting->SetTextureSlot(0, m_shader_lighting->GetUniformId("Sampler_g_colorSampler"));
+	m_shader_lighting->SetTextureSlot(1, m_shader_lighting->GetUniformId("Sampler_g_normalSampler"));
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_lighting->AddVertexConstantLayout(
