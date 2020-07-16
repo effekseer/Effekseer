@@ -102,6 +102,9 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
 		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+#endif
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
 }
@@ -133,6 +136,11 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->m_flipbookIndexAndNextRate;
 
 			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
+			
+			if (m_nodeParameter.EnableViewOffset == true)
+			{
+				m_instanceParameter.ViewOffsetDistance = groupFirst->translation_values.view_offset.distance;
+			}
 #else
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
 #endif

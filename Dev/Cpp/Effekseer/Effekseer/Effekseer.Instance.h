@@ -143,6 +143,13 @@ public:
 			Vec3f offset;
 		} fcruve;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		struct
+		{
+			float distance;
+		} view_offset;
+#endif
+
 	} translation_values;
 
 	union

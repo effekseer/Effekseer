@@ -437,6 +437,12 @@ protected:
 				if (parameter.ViewpointDependent)
 				{
 					::Effekseer::Mat43f mat = param.SRTMatrix43;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+					if (parameter.EnableViewOffset == true)
+					{
+						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+					}
+#endif
 					::Effekseer::Vec3f s;
 					::Effekseer::Mat43f r;
 					::Effekseer::Vec3f t;
@@ -485,6 +491,13 @@ protected:
 				else
 				{
 					::Effekseer::Mat43f mat = param.SRTMatrix43;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+					if (parameter.EnableViewOffset == true)
+					{
+						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+					}
+#endif
 
 					ApplyDepthParameters(mat,
 										 m_renderer->GetCameraFrontDirection(),
@@ -547,6 +560,12 @@ protected:
 				if (parameter.ViewpointDependent)
 				{
 					::Effekseer::Mat43f mat = param.SRTMatrix43;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+					if (parameter.EnableViewOffset == true)
+					{
+						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+					}
+#endif
 					::Effekseer::Vec3f s;
 					::Effekseer::Mat43f r;
 					::Effekseer::Vec3f t;
@@ -607,6 +626,13 @@ protected:
 					else
 					{
 						::Effekseer::Mat43f mat = param.SRTMatrix43;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+						if (parameter.EnableViewOffset == true)
+						{
+							ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+						}
+#endif
 
 						ApplyDepthParameters(mat,
 											 m_renderer->GetCameraFrontDirection(),

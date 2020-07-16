@@ -98,6 +98,11 @@ namespace Effekseer.Binary
 
 				data.Add(value.NurbsCurve.LoopType.GetValueAsInt().GetBytes());
 			}
+			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.ViewOffset)
+			{
+				data.Add(value.ViewOffset.Distance.Max.GetBytes());
+				data.Add(value.ViewOffset.Distance.Min.GetBytes());
+			}
 #endif
 
 			return data.ToArray().ToArray();

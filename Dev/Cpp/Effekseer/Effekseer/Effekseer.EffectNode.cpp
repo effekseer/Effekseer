@@ -214,6 +214,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy(&TranslationNurbsCurve, pos, sizeof(ParameterTranslationNurbsCurve));
 			pos += sizeof(ParameterTranslationNurbsCurve);
 		}
+		else if (TranslationType == ParameterTranslationType_ViewOffset)
+		{
+			memcpy(&TranslationViewOffset, pos, sizeof(ParameterTranslationViewOffset));
+			pos += sizeof(ParameterTranslationViewOffset);
+		}
 #endif
 
 		/* 位置拡大処理 */
