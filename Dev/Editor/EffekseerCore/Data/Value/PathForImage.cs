@@ -7,8 +7,8 @@ namespace Effekseer.Data.Value
 {
 	public class PathForImage : Path
 	{
-		internal PathForImage(string filter, bool isRelativeSaved, string abspath = "")
-			: base(filter, isRelativeSaved, abspath)
+		internal PathForImage(Path basepath, string filter, bool isRelativeSaved, string abspath = "")
+			: base(basepath, filter, isRelativeSaved, abspath)
 		{
 		}
 	}

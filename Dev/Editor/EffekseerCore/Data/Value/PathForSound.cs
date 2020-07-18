@@ -7,8 +7,8 @@ namespace Effekseer.Data.Value
 {
 	public class PathForSound : Path
 	{
-		internal PathForSound(string filter, bool isRelativeSaved, string abspath = "")
-			: base(filter, isRelativeSaved, abspath)
+		internal PathForSound(Path basepath, string filter, bool isRelativeSaved, string abspath = "")
+			: base(basepath, filter, isRelativeSaved, abspath)
 		{
 		}
 	}

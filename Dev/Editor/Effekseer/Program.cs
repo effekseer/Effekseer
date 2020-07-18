@@ -183,6 +183,16 @@ namespace Effekseer
 				// Failed to compile script
 				if (Core.ExportScripts.Count == 0)
 				{
+					Script.ExportScript efkpkgExporter = new Script.ExportScript(
+						Script.ScriptPosition.External,
+						Plugin.ExportEfkPkg.UniqueName,
+						Plugin.ExportEfkPkg.Author,
+						Plugin.ExportEfkPkg.Title,
+						Plugin.ExportEfkPkg.Description,
+						Plugin.ExportEfkPkg.Filter,
+						Plugin.ExportEfkPkg.Call);
+					Core.ExportScripts.Add(efkpkgExporter);
+
 					Script.ExportScript defaultExporter = new Script.ExportScript(
 						Script.ScriptPosition.External,
 						Plugin.ExportDefault.UniqueName,
@@ -271,7 +281,7 @@ namespace Effekseer
 					else
 					{
 						var binaryExporter = new Binary.Exporter();
-						var binary = binaryExporter.Export(magnification);
+						var binary = binaryExporter.Export(Core.Root, magnification);
 						System.IO.File.WriteAllBytes(export, binary);
 					}
 				}

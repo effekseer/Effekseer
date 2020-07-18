@@ -135,7 +135,7 @@ namespace Effekseer.GUI.Menu
 
 		void ReloadTitle()
 		{
-			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + Core.FullPath + "] ";
+			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + Core.Root.GetFullPath() + "] ";
 
 			if (Core.IsChanged)
 			{

@@ -126,7 +126,7 @@ namespace Effekseer.Exporter
 		{
 			var effect = new EffekseerEffect();
 
-			var name = System.IO.Path.GetFileNameWithoutExtension(Core.FullPath);
+			var name = System.IO.Path.GetFileNameWithoutExtension(Core.Root.GetFullPath());
 			if (string.IsNullOrEmpty(name))
 			{
 				name = "effect";
@@ -152,7 +152,7 @@ namespace Effekseer.Exporter
             effect.Add("effectName", name);
 
 			var binaryExporter = new Binary.Exporter();
-			var binary = binaryExporter.Export(scale, Binary.ExporterVersion.Latest);
+			var binary = binaryExporter.Export(Core.Root, scale, Binary.ExporterVersion.Latest);
 
 			AddBufferView(bodyName, binary);
 
@@ -187,7 +187,7 @@ namespace Effekseer.Exporter
 			{
 				foreach (var texture in textures.ToList().OrderBy(_=>_))
 				{
-					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, texture);
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
@@ -202,7 +202,7 @@ namespace Effekseer.Exporter
 
 				foreach (var texture in normalTextures.ToList().OrderBy(_ => _))
 				{
-					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, texture);
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
@@ -217,7 +217,7 @@ namespace Effekseer.Exporter
 
 				foreach (var texture in distortionTextures.ToList().OrderBy(_ => _))
 				{
-					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, texture);
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
@@ -258,7 +258,7 @@ namespace Effekseer.Exporter
 			{
 				foreach (var sound in binaryExporter.Sounds.ToList().OrderBy(_ => _))
 				{
-					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, sound);
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
@@ -282,7 +282,7 @@ namespace Effekseer.Exporter
 			{
 				foreach (var model in binaryExporter.Models.ToList().OrderBy(_ => _))
 				{
-					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, model);
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
@@ -306,7 +306,7 @@ namespace Effekseer.Exporter
 			{
 				foreach (var material in binaryExporter.Materials.ToList().OrderBy(_ => _))
 				{
-					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, material);
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);

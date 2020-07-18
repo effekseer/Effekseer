@@ -81,10 +81,10 @@ namespace Effekseer.GUI
 			if (!native.IsConnectingNetwork()) return;
 
 			var binaryExporter = new Binary.Exporter();
-			var data = binaryExporter.Export(1.0f);
+			var data = binaryExporter.Export(Core.Root, 1.0f);
 			fixed (byte* p = &data[0])
 			{
-				native.SendDataByNetwork(System.IO.Path.GetFileNameWithoutExtension(Core.FullPath), new IntPtr(p), data.Length, Core.FullPath);
+				native.SendDataByNetwork(System.IO.Path.GetFileNameWithoutExtension(Core.Root.GetFullPath()), new IntPtr(p), data.Length, Core.Root.GetFullPath());
 			}
 		}
 

@@ -36,6 +36,10 @@ GenerateAlpha2,Generate alpha(Blend+Add)
 Height,Height
 Help,Help
 Import,Import
+ImportSourcePackage,Source package
+ImportDestinationDirectory,Destination directory
+ImportSourceFile,Source files
+ImportDestinationFile,Destination files
 Infinite,Infinite
 InternalAbout,About Effekseer
 InternalAddNode,Add Node
@@ -163,6 +167,7 @@ ImageFilter,"png,dds,tga"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"
+EffekseerPackageFilter,"efkpkg"
 CurveFilter,"efkcurve,fbx"
 ,
 ,
@@ -239,6 +244,8 @@ FileViewer_DeleteFile,Delete
 FileViewer_RenameFile,Rename
 FileViewer_ShowInExplorer,Show in Explorer
 FileViewer_ShowInFinder,Show in Finder
+FileViewer_ImportFromPackage,Import from package
+FileViewer_ExportToPackage,Export to package
 ,
 Easing_Start_Name,Start
 Easing_Start_Desc,Starting point of easing

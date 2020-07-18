@@ -778,7 +778,7 @@ namespace Effekseer.GUI
 		{
 			foreach(var panel in panels)
 			{
-				if (panel.GetType() == t) return panel;
+				if (panel != null && panel.GetType() == t) return panel;
 			}
 
 			return null;
