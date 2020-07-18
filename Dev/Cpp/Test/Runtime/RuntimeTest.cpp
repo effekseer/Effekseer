@@ -9,6 +9,7 @@
 #include "EffectPlatformGL.h"
 #elif defined(__APPLE__)
 #include "EffectPlatformGL.h"
+#include "EffectPlatformMetal.h"
 #else
 #include "EffectPlatformGL.h"
 #endif
@@ -118,7 +119,11 @@ void BasicRuntimeDeviceLostTest()
 void StartingFrameTest()
 {
 	srand(0);
+#ifdef _WIN32
+	auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 	auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 	EffectPlatformInitializingParameter param;
 
@@ -139,7 +144,11 @@ void UpdateHandleTest()
 {
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 
@@ -171,7 +180,11 @@ void UpdateHandleTest()
 
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.IsUpdatedByHandle = true;
@@ -205,7 +218,11 @@ void UpdateHandleTest()
 	// Check memory leak
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.IsUpdatedByHandle = true;
@@ -236,8 +253,11 @@ void PlaybackSpeedTest()
 {
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
-
+#endif
 		EffectPlatformInitializingParameter param;
 
 		platform->Initialize(param);
@@ -256,7 +276,11 @@ void PlaybackSpeedTest()
 
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.IsUpdatedByHandle = true;
@@ -280,7 +304,11 @@ void MassPlayTest()
 {
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.InstanceCount = 1;
@@ -298,7 +326,11 @@ void MassPlayTest()
 
 		{
 		srand(0);
-		auto platform = std::make_shared<EffectPlatformGL>();
+#ifdef _WIN32
+			auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+			auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.InstanceCount = 10;
@@ -316,7 +348,11 @@ void MassPlayTest()
 
 	{
 		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
 		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
 
 		EffectPlatformInitializingParameter param;
 		param.InstanceCount = 100;
@@ -364,6 +400,12 @@ void BasicRuntimeTest()
 	}
 
 #elif defined(__APPLE__)
+	{
+		auto platform = std::make_shared<EffectPlatformMetal>();
+		BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
+		platform->Terminate();
+	}
+
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");

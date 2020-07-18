@@ -187,25 +187,26 @@ EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effeksee
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
     return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
 }
-/*
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLCommandBuffer> commandBuffer)
+
+void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLRenderCommandEncoder> encoder)
 {
 	assert(commandList != nullptr);
 
-	LLGI::PlatformContextDX12 context;
-	context.commandList = dx12CommandList;
+    LLGI::CommandListMetalPlatformRenderPassContext context;
+    context.RenderEncoder = encoder;
 
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
-	c->GetInternal()->BeginWithPlatform(&context);
+	c->GetInternal()->BeginWithPlatform(nullptr);
+	c->GetInternal()->BeginRenderPassWithPlatformPtr(&context);
 }
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList)
 {
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	c->GetInternal()->EndRenderPassWithPlatformPtr();
 	c->GetInternal()->EndWithPlatform();
 }
-*/
 
 void RendererImplemented::GenerateVertexBuffer()
 {
@@ -238,6 +239,7 @@ void RendererImplemented::GenerateIndexBuffer()
 	m_indexBuffer->Unlock();
 }
 
+/*
 void RendererImplemented::SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer)
 {
     if (commandList_ != nullptr)
@@ -310,6 +312,7 @@ bool RendererImplemented::EndRendering()
     }
     return true;
 }
+*/
 
 /*
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {

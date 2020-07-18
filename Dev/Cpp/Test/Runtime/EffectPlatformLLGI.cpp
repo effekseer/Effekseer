@@ -1,10 +1,92 @@
 #include "EffectPlatformLLGI.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
+#include "../3rdParty/LLGI/src/LLGI.Graphics.h"
+#include "../3rdParty/LLGI/src/LLGI.IndexBuffer.h"
+#include "../3rdParty/LLGI/src/LLGI.PipelineState.h"
 #include "../3rdParty/LLGI/src/LLGI.Platform.h"
+#include "../3rdParty/LLGI/src/LLGI.Shader.h"
+#include "../3rdParty/LLGI/src/LLGI.Texture.h"
+#include "../3rdParty/LLGI/src/LLGI.VertexBuffer.h"
 
 #include "../../3rdParty/stb/stb_image_write.h"
 
-EffectPlatformLLGI::EffectPlatformLLGI()
+void EffectPlatformLLGI::CreateCheckedTexture()
+{
+	LLGI::TextureInitializationParameter param;
+	param.Size.X = WindowWidth;
+	param.Size.Y = WindowHeight;
+	checkTexture_ = graphics_->CreateTexture(param);
+
+	auto b = (uint8_t*)checkTexture_->Lock();
+
+	memcpy(b, checkeredPattern_.data(), param.Size.X * param.Size.Y * 4);
+
+	checkTexture_->Unlock();
+}
+
+void EffectPlatformLLGI::CreateResources()
+{
+	CreateShaders();
+
+	LLGI::RenderTextureInitializationParameter renderParam;
+	renderParam.Size = LLGI::Vec2I(WindowWidth, WindowHeight);
+	LLGI::DepthTextureInitializationParameter depthParam;
+	depthParam.Size = LLGI::Vec2I(WindowWidth, WindowHeight);
+	colorBuffer_ = graphics_->CreateRenderTexture(renderParam);
+	depthBuffer_ = graphics_->CreateDepthTexture(depthParam);
+	renderPass_ = graphics_->CreateRenderPass((LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);
+
+	vb_ = graphics_->CreateVertexBuffer(sizeof(SimpleVertex) * 4);
+	ib_ = graphics_->CreateIndexBuffer(2, 6);
+	auto vb_buf = (SimpleVertex*)vb_->Lock();
+	vb_buf[0].Pos = LLGI::Vec3F(-1.0f, 1.0f, 0.5f);
+	vb_buf[1].Pos = LLGI::Vec3F(1.0f, 1.0f, 0.5f);
+	vb_buf[2].Pos = LLGI::Vec3F(1.0f, -1.0f, 0.5f);
+	vb_buf[3].Pos = LLGI::Vec3F(-1.0f, -1.0f, 0.5f);
+
+	vb_buf[0].UV = LLGI::Vec2F(0.0f, 0.0f);
+	vb_buf[1].UV = LLGI::Vec2F(1.0f, 0.0f);
+	vb_buf[2].UV = LLGI::Vec2F(1.0f, 1.0f);
+	vb_buf[3].UV = LLGI::Vec2F(0.0f, 1.0f);
+
+	vb_buf[0].Color = LLGI::Color8();
+	vb_buf[1].Color = LLGI::Color8();
+	vb_buf[2].Color = LLGI::Color8();
+	vb_buf[3].Color = LLGI::Color8();
+
+	vb_->Unlock();
+
+	auto ib_buf = (uint16_t*)ib_->Lock();
+	ib_buf[0] = 0;
+	ib_buf[1] = 1;
+	ib_buf[2] = 2;
+	ib_buf[3] = 0;
+	ib_buf[4] = 2;
+	ib_buf[5] = 3;
+	ib_->Unlock();
+
+	rppip_ = graphics_->CreateRenderPassPipelineState(renderPass_);
+
+	{
+		pip_ = graphics_->CreatePiplineState();
+		pip_->VertexLayouts[0] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
+		pip_->VertexLayouts[1] = LLGI::VertexLayoutFormat::R32G32_FLOAT;
+		pip_->VertexLayouts[2] = LLGI::VertexLayoutFormat::R8G8B8A8_UNORM;
+		pip_->VertexLayoutNames[0] = "POSITION";
+		pip_->VertexLayoutNames[1] = "UV";
+		pip_->VertexLayoutNames[2] = "COLOR";
+		pip_->VertexLayoutCount = 3;
+		pip_->IsDepthTestEnabled = false;
+		pip_->IsDepthWriteEnabled = false;
+		pip_->Culling = LLGI::CullingMode::DoubleSide;
+		pip_->SetShader(LLGI::ShaderStageType::Vertex, shader_vs_);
+		pip_->SetShader(LLGI::ShaderStageType::Pixel, shader_ps_);
+		pip_->SetRenderPassPipelineState(rppip_);
+		pip_->Compile();
+	}
+}
+
+EffectPlatformLLGI::EffectPlatformLLGI(LLGI::DeviceType deviceType)
 {
 	if (!glfwInit())
 	{
@@ -24,7 +106,7 @@ EffectPlatformLLGI::EffectPlatformLLGI()
 	llgiWindow_ = new LLGIWindow(glfwWindow_);
 
 	LLGI::PlatformParameter platformParam;
-	platformParam.Device = LLGI::DeviceType::Default;
+	platformParam.Device = deviceType;
 	platform_ = LLGI::CreatePlatform(platformParam, llgiWindow_);
 	graphics_ = platform_->CreateGraphics();
 	sfMemoryPool_ = graphics_->CreateSingleFrameMemoryPool(1024 * 1024, 128);
@@ -69,6 +151,88 @@ void EffectPlatformLLGI::DestroyDevice()
 		glfwTerminate();
 		glfwWindow_ = nullptr;
 	}
+
+	ES_SAFE_RELEASE(commandListEfk_);
+	ES_SAFE_RELEASE(sfMemoryPoolEfk_);
+	ES_SAFE_RELEASE(renderPass_);
+	ES_SAFE_RELEASE(colorBuffer_);
+	ES_SAFE_RELEASE(depthBuffer_);
+	ES_SAFE_RELEASE(shader_vs_);
+	ES_SAFE_RELEASE(shader_ps_);
+	ES_SAFE_RELEASE(vb_);
+	ES_SAFE_RELEASE(ib_);
+	ES_SAFE_RELEASE(rppip_);
+	ES_SAFE_RELEASE(pip_);
+    ES_SAFE_RELEASE(screenPip_);
+	ES_SAFE_RELEASE(checkTexture_);
+}
+
+void EffectPlatformLLGI::BeginRendering()
+{
+	LLGI::Color8 color;
+	color.R = 64;
+	color.G = 64;
+	color.B = 64;
+	color.A = 255;
+	renderPass_->SetClearColor(color);
+	renderPass_->SetIsColorCleared(true);
+	renderPass_->SetIsDepthCleared(true);
+
+	commandList_->Begin();
+	commandList_->BeginRenderPass(renderPass_);
+
+	// check
+	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
+	commandList_->SetIndexBuffer(ib_);
+	commandList_->SetPipelineState(pip_);
+	commandList_->SetTexture(
+		checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
+	commandList_->Draw(2);
+
+	sfMemoryPoolEfk_->NewFrame();
+}
+
+void EffectPlatformLLGI::EndRendering()
+{
+	commandList_->EndRenderPass();
+
+	auto currentScreen = platform_->GetCurrentScreen(LLGI::Color8(), true);
+    
+    if(screenPip_ == nullptr)
+    {
+        auto rpip = graphics_->CreateRenderPassPipelineState(currentScreen);
+
+        {
+            screenPip_ = graphics_->CreatePiplineState();
+            screenPip_->VertexLayouts[0] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
+            screenPip_->VertexLayouts[1] = LLGI::VertexLayoutFormat::R32G32_FLOAT;
+            screenPip_->VertexLayouts[2] = LLGI::VertexLayoutFormat::R8G8B8A8_UNORM;
+            screenPip_->VertexLayoutNames[0] = "POSITION";
+            screenPip_->VertexLayoutNames[1] = "UV";
+            screenPip_->VertexLayoutNames[2] = "COLOR";
+            screenPip_->VertexLayoutCount = 3;
+            screenPip_->IsDepthTestEnabled = false;
+            screenPip_->IsDepthWriteEnabled = false;
+            screenPip_->Culling = LLGI::CullingMode::DoubleSide;
+            screenPip_->SetShader(LLGI::ShaderStageType::Vertex, shader_vs_);
+            screenPip_->SetShader(LLGI::ShaderStageType::Pixel, shader_ps_);
+            screenPip_->SetRenderPassPipelineState(rpip);
+            screenPip_->Compile();
+        }
+        
+        ES_SAFE_RELEASE(rpip);
+    }
+    
+	commandList_->BeginRenderPass(currentScreen);
+	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
+	commandList_->SetIndexBuffer(ib_);
+	commandList_->SetPipelineState(screenPip_);
+	commandList_->SetTexture(
+		colorBuffer_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
+	commandList_->Draw(2);
+	commandList_->EndRenderPass();
+
+	commandList_->End();
 }
 
 bool EffectPlatformLLGI::TakeScreenshot(const char* path)
