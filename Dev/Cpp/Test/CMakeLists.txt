@@ -39,6 +39,13 @@ if(BUILD_METAL)
     )
 endif()
 
+if(BUILD_VULKAN)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformVulkan.h
+        Runtime/EffectPlatformVulkan.cpp
+    )
+endif()
+
 if(WIN32)
     list(APPEND effekseer_test_src
         Runtime/EffectPlatformDX9.h
@@ -89,6 +96,10 @@ if(BUILD_METAL)
     list(APPEND common_lib EffekseerRendererMetal)
 endif()
 
+if(BUILD_VULKAN)
+    list(APPEND common_lib EffekseerRendererVulkan)
+endif()
+
 if (MSVC)
 else()
     find_package(Threads REQUIRED)
@@ -132,6 +143,42 @@ endif()
 
 add_executable(Test ${effekseer_test_src} )
 target_link_directories(Test PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+
+if(BUILD_VULKAN)
+    find_package(Vulkan REQUIRED)
+
+    target_include_directories(
+        Test
+        PRIVATE
+        ${Vulkan_INCLUDE_DIRS}
+    )
+    
+    target_link_libraries(
+        Test
+        ${Vulkan_LIBRARIES}
+    )
+
+    # TODO Improve it
+    target_link_libraries(
+        Test
+        debug glslangd
+        debug SPIRVd
+        debug OGLCompilerd
+        debug OSDependentd
+        debug HLSLd
+        optimized glslang
+        optimized SPIRV
+        optimized OGLCompiler
+        optimized OSDependent
+        optimized HLSL
+    )
+    
+    target_link_directories(
+        Test
+        PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/../3rdParty/LLGI/EP/Install/glslang/lib
+    )
+endif()
 
 if (MSVC)
 target_link_libraries(
