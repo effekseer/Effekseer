@@ -460,11 +460,16 @@ static const char g_material_fs_src_suf2_refraction[] =
     R"(
     float airRefraction = 1.0;
 
-    float3 dir = float3x3(cameraMat) * pixelNormalDir;
+    float3x3 tmpvar_1;
+    tmpvar_1[0] = u.cameraMat[0].xyz;
+    tmpvar_1[1] = u.cameraMat[1].xyz;
+    tmpvar_1[2] = u.cameraMat[2].xyz;
+
+    float3 dir = float3x3(tmpvar_1) * pixelNormalDir;
     float2 distortUV = dir.xy * (refraction - airRefraction);
 
-    distortUV += in.v_ScreenUV;
-    distortUV = float(distortUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * distortUV.y);
+    distortUV += i.v_ScreenUV;
+    distortUV = float2(distortUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * distortUV.y);
 
     float4 bg = background.sample(s_background, distortUV);
     o.gl_FragColor = bg;
@@ -749,7 +754,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
         if (isRefrection && stage == 1)
         {
-            ExportUniform(maincode, 16, "cameraMat");
+            ExportUniform(userUniforms, 16, "cameraMat");
             ExportTexture(textures, "background", t_index);
         }
         
