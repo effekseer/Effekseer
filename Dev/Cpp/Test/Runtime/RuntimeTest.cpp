@@ -9,6 +9,7 @@
 #include "EffectPlatformGL.h"
 #elif defined(__APPLE__)
 #include "EffectPlatformGL.h"
+#include "EffectPlatformMetal.h"
 #else
 #include "EffectPlatformGL.h"
 #endif
@@ -138,7 +139,7 @@ void StartingFrameTest()
 #ifdef _WIN32
 	auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-	auto platform = std::make_shared<EffectPlatformOpenGL>();
+	auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 	EffectPlatformInitializingParameter param;
@@ -163,7 +164,7 @@ void UpdateHandleTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -199,7 +200,7 @@ void UpdateHandleTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -237,7 +238,7 @@ void UpdateHandleTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -272,7 +273,7 @@ void PlaybackSpeedTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 		EffectPlatformInitializingParameter param;
 
@@ -295,7 +296,7 @@ void PlaybackSpeedTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -323,7 +324,7 @@ void MassPlayTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -345,7 +346,7 @@ void MassPlayTest()
 #ifdef _WIN32
 			auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-			auto platform = std::make_shared<EffectPlatformOpenGL>();
+			auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -367,7 +368,7 @@ void MassPlayTest()
 #ifdef _WIN32
 		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-		auto platform = std::make_shared<EffectPlatformOpenGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -423,6 +424,12 @@ void BasicRuntimeTest(bool onCI)
 	}
 
 #elif defined(__APPLE__)
+	{
+		auto platform = std::make_shared<EffectPlatformMetal>();
+		BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
+		platform->Terminate();
+	}
+
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");

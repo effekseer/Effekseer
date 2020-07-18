@@ -32,6 +32,13 @@ if(BUILD_DX12)
     )
 endif()
 
+if(BUILD_METAL)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformMetal.h
+        Runtime/EffectPlatformMetal.mm
+    )
+endif()
+
 if(WIN32)
     list(APPEND effekseer_test_src
         Runtime/EffectPlatformDX9.h
@@ -75,6 +82,11 @@ endif()
 
 if(BUILD_DX12)
     list(APPEND common_lib EffekseerRendererDX12)
+endif()
+
+
+if(BUILD_METAL)
+    list(APPEND common_lib EffekseerRendererMetal)
 endif()
 
 if (MSVC)

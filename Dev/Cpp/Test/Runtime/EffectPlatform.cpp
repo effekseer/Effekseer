@@ -118,17 +118,19 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path, int32_t startFrame)
 	// reset time
 	time_ = 0;
 
+	int8_t path8[256];
+	Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+
 	FILE* filePtr = NULL;
 #ifdef _WIN32
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
 #else
-	int8_t path8[256];
-	Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
 	filePtr = fopen((const char*)path8, "rb");
 #endif
 
 	if (filePtr == nullptr)
 	{
+		printf("Failed to load %s./n", path8);
 		assert(0);
 	}
 
