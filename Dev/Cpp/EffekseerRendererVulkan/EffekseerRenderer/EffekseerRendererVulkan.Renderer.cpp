@@ -1,10 +1,8 @@
 ﻿#include "EffekseerRendererVulkan.Renderer.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "EffekseerMaterialCompilerVulkan.h"
-
 
 namespace EffekseerRendererVulkan
 {
@@ -35,6 +33,17 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	};
 	shader->StandardDistortedTexture_PS = {{standard_distortion_frag.data(), (int32_t)standard_distortion_frag.size()}};
 
+	static const std::vector<uint8_t> standard_l_vert = {
+#include "Shader/Vulkan/standard_lighting.vert.spv.inl"
+	};
+	shader->StandardLightingTexture_VS = {{standard_l_vert.data(), (int32_t)standard_l_vert.size()}};
+
+	static const std::vector<uint8_t> standard_l_frag = {
+#include "Shader/Vulkan/standard_lighting.frag.spv.inl"
+	};
+	shader->StandardLightingTexture_PS = {{standard_l_frag.data(), (int32_t)standard_l_frag.size()}};
+
+
 	static const std::vector<uint8_t> model_ltn_vert = {
 #include "Shader/Vulkan/model_ltn.vert.spv.inl"
 	};
@@ -44,6 +53,26 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 #include "Shader/Vulkan/model_ltn.frag.spv.inl"
 	};
 	shader->ModelShaderLightingTextureNormal_PS = {{model_ltn_flag.data(), (int32_t)model_ltn_flag.size()}};
+
+	static const std::vector<uint8_t> model_t_vert = {
+#include "Shader/Vulkan/model_t.vert.spv.inl"
+	};
+	shader->ModelShaderTexture_VS = {{model_t_vert.data(), (int32_t)model_t_vert.size()}};
+
+	static const std::vector<uint8_t> model_t_flag = {
+#include "Shader/Vulkan/model_t.frag.spv.inl"
+	};
+	shader->ModelShaderTexture_PS = {{model_t_flag.data(), (int32_t)model_t_flag.size()}};
+
+	static const std::vector<uint8_t> model_d_vert = {
+#include "Shader/Vulkan/model_distortion.vert.spv.inl"
+	};
+	shader->ModelShaderDistortionTexture_VS = {{model_d_vert.data(), (int32_t)model_d_vert.size()}};
+
+	static const std::vector<uint8_t> model_d_flag = {
+#include "Shader/Vulkan/model_distortion.frag.spv.inl"
+	};
+	shader->ModelShaderDistortionTexture_PS = {{model_d_flag.data(), (int32_t)model_d_flag.size()}};
 }
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(
@@ -72,8 +101,6 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
 	CreateFixedShaderForVulkan(&renderer->fixedShader_);
 
-
-	
 	LLGI::RenderPassPipelineStateKey key;
 	key.RenderTargetFormats.resize(renderPassInformation.RenderTextureCount);
 	key.IsPresent = renderPassInformation.DoesPresentToScreen;
@@ -123,16 +150,21 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 	return nullptr;
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, VkImage texture)
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateTextureData(r->GetGraphicsDevice(), texture);
+	return CreateTextureData(r->GetGraphicsDevice(), info);
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, VkImage texture)
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, const VulkanImageInfo& info)
 {
+	LLGI::VulkanImageInfo llgiinfo;
+	llgiinfo.image = info.image;
+	llgiinfo.format = info.format;
+	llgiinfo.aspect = info.aspect;
+
 	auto g = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
-	auto texture_ = g->GetGraphics()->CreateTexture((uint64_t)texture);
+	auto texture_ = g->GetGraphics()->CreateTexture((uint64_t)(&llgiinfo));
 
 	auto textureData = new Effekseer::TextureData();
 	textureData->UserPtr = texture_;

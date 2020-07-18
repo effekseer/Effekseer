@@ -54,7 +54,9 @@ endif()
 # endif()
 
 if(BUILD_VULKAN)
-    set(BUILD_VULKAN_COMPILER ON)
+    set(BUILD_VULKAN ON CACHE BOOL "For LLGI" FORCE)
+    set(BUILD_VULKAN_COMPILER ON CACHE BOOL "For LLGI" FORCE)
+    add_definitions(-D__EFFEKSEER_BUILD_VULKAN__)
 endif()
 
 if (BUILD_DX12)

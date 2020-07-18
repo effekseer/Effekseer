@@ -42,3 +42,27 @@ if(USE_LIBPNG_LOADER)
 	    optimized "${LIBPNG_LIB_RELEASE}"
 	)
 endif()
+
+if(BUILD_VULKAN)
+# TODO Improve it
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+    debug glslangd
+    debug SPIRVd
+    debug OGLCompilerd
+    debug OSDependentd
+    debug HLSLd
+    optimized glslang
+    optimized SPIRV
+    optimized OGLCompiler
+    optimized OSDependent
+    optimized HLSL
+)
+
+target_link_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/../../Dev/Cpp/3rdParty/LLGI/EP/Install/glslang/lib
+)
+endif()

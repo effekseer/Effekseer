@@ -14,6 +14,10 @@
 #include "EffectPlatformGL.h"
 #endif
 
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+#include "EffectPlatformVulkan.h"
+#endif
+
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
 #include "../Effekseer/Effekseer/Noise/CurlNoise.h"
 #include "../TestHelper.h"
@@ -372,6 +376,15 @@ void MassPlayTest()
 
 void BasicRuntimeTest()
 {
+
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+	{
+		auto platform = std::make_shared<EffectPlatformVulkan>();
+		BasicRuntimeTestPlatform(platform.get(), "", "_Vulkan");
+		platform->Terminate();
+	}
+#endif
+
 #ifdef _WIN32
 #ifdef __EFFEKSEER_BUILD_DX12__
 	{
@@ -418,6 +431,7 @@ void BasicRuntimeTest()
 		platform->Terminate();
 	}
 #endif
+
 }
 
 void CustomAllocatorTest()
