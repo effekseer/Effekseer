@@ -7,11 +7,6 @@
 #include <EffekseerRendererVulkan.h>
 #include <Window.h>
 
-// HACK for Windows (LLGI is not separated perfectly)
-#ifdef _WIN32
-#pragma comment(lib, "d3dcompiler.lib")
-#endif
-
 bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight);
 void TerminateWindowAndDevice();
 bool BeginFrame();

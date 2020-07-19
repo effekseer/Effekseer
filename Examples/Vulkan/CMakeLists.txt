@@ -30,16 +30,10 @@ target_link_libraries(
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
-    debug glslangd
-    debug SPIRVd
-    debug OGLCompilerd
-    debug OSDependentd
-    debug HLSLd
-    optimized glslang
-    optimized SPIRV
-    optimized OGLCompiler
-    optimized OSDependent
-    optimized HLSL
+    glslang
+    SPIRV
+    OGLCompiler
+    OSDependent
 )
 
 target_link_directories(

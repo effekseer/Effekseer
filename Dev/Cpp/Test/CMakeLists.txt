@@ -161,16 +161,10 @@ if(BUILD_VULKAN)
     # TODO Improve it
     target_link_libraries(
         Test
-        debug glslangd
-        debug SPIRVd
-        debug OGLCompilerd
-        debug OSDependentd
-        debug HLSLd
-        optimized glslang
-        optimized SPIRV
-        optimized OGLCompiler
-        optimized OSDependent
-        optimized HLSL
+        glslang
+        SPIRV
+        OGLCompiler
+        OSDependent
     )
     
     target_link_directories(
