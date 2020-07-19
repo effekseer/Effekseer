@@ -17,13 +17,35 @@ target_include_directories(
 )
 
 target_link_libraries(
-    Example_Vulkan
+    ${PROJECT_NAME}
     PRIVATE
     Effekseer
     LLGI
     EffekseerRendererVulkan
     Example_Utils
     ${Vulkan_LIBRARIES}
+)
+
+# TODO Improve it
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+    debug glslangd
+    debug SPIRVd
+    debug OGLCompilerd
+    debug OSDependentd
+    debug HLSLd
+    optimized glslang
+    optimized SPIRV
+    optimized OGLCompiler
+    optimized OSDependent
+    optimized HLSL
+)
+
+target_link_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/../../Dev/Cpp/3rdParty/LLGI/EP/Install/glslang/lib
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 

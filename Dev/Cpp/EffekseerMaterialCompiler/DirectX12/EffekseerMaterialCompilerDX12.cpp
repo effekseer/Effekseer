@@ -11,7 +11,7 @@
 namespace Effekseer
 {
 
-void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
+static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
 {
 
 	uint32_t binarySize = 0;
