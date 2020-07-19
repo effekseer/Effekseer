@@ -5,6 +5,7 @@
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.PlatformVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.TextureVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.VertexBufferVulkan.h"
+#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -141,7 +142,8 @@ public:
 
 void EffectPlatformVulkan::CreateShaders()
 {
-	auto compiler = LLGI::CreateCompiler(LLGI::DeviceType::Vulkan);
+	auto compiler = new LLGI::CompilerVulkan();
+	compiler->Initialize();
 
 	LLGI::CompilerResult result_vs;
 	LLGI::CompilerResult result_ps;

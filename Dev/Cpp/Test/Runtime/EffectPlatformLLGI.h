@@ -112,6 +112,7 @@ protected:
     LLGI::PipelineState* screenPip_ = nullptr;
 	LLGI::RenderPassPipelineState* rppip_ = nullptr;
 	LLGI::Texture* checkTexture_ = nullptr;
+	LLGI::TextureFormatType screenFormat_ = LLGI::TextureFormatType::R8G8B8A8_UNORM;
 
 	void Present() override;
 	bool DoEvent() override;

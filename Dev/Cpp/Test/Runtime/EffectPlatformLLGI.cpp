@@ -197,10 +197,11 @@ void EffectPlatformLLGI::EndRendering()
 	commandList_->EndRenderPass();
 
 	auto currentScreen = platform_->GetCurrentScreen(LLGI::Color8(), true);
-    
+	
     if(screenPip_ == nullptr)
     {
         auto rpip = graphics_->CreateRenderPassPipelineState(currentScreen);
+		screenFormat_ = rpip->Key.RenderTargetFormats.at(0);
 
         {
             screenPip_ = graphics_->CreatePiplineState();
@@ -247,6 +248,14 @@ bool EffectPlatformLLGI::TakeScreenshot(const char* path)
 
 	auto texture = platform_->GetCurrentScreen(color, true)->GetRenderTexture(0);
 	auto data = graphics_->CaptureRenderTarget(texture);
+
+	if (screenFormat_ == LLGI::TextureFormatType::B8G8R8A8_UNORM)
+	{
+		for (size_t i = 0; i < data.size(); i += 4)
+		{
+			std::swap(data[i + 0], data[i + 2]);
+		}
+	}
 
 	stbi_write_png(path, WindowWidth, WindowHeight, 4, data.data(), WindowWidth * 4);
 
