@@ -519,7 +519,7 @@ class ShaderGenerator
 {
 	bool useUniformBlock_ = false;
 	bool useSet_ = false;
-	int32_t textuerBindingOffset_ = 0;
+	int32_t textureBindingOffset_ = 0;
 
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
@@ -575,12 +575,12 @@ class ShaderGenerator
 		{
 			if (useSet_)
 			{
-				maincode << "layout(set = " << stage << ", binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name
+				maincode << "layout(set = " << stage << ", binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
 						 << ";" << std::endl;
 			}
 			else
 			{
-				maincode << "layout(binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
+				maincode << "layout(binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
 			}
 		}
 		else
@@ -769,11 +769,11 @@ public:
 							  bool isOutputDefined,
 							  bool is450,
 							  bool useSet,
-							  bool textureBindingOffset)
+							  int textureBindingOffset)
 	{
 		useUniformBlock_ = useUniformBlock;
 		useSet_ = useSet;
-		textuerBindingOffset_ = textuerBindingOffset_;
+		textureBindingOffset_ = textureBindingOffset;
 
 		bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 		bool isRefrection = material->GetHasRefraction() &&
