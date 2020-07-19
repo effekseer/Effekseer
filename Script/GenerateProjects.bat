@@ -5,6 +5,6 @@ mkdir ..\build
 
 cd /d ..\build
 
-cmake -A x64 -D BUILD_VIEWER=ON -D BUILD_EDITOR=ON -D BUILD_TEST=ON ../
+cmake -A x64 -D BUILD_VIEWER=ON -D BUILD_EDITOR=ON -D BUILD_TEST=ON -D BUILD_VULKAN=ON ../
 
 pause

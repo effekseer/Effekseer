@@ -61,6 +61,9 @@ robocopy Dev\Cpp\EffekseerMaterialCompiler %RDIR_R%\src\EffekseerMaterialCompile
 mkdir %RDIR_R%\src\3rdParty\LLGI
 robocopy Dev\Cpp\3rdParty\LLGI %RDIR_R%\src\3rdParty\LLGI /S
 
+mkdir %RDIR_R%\src\3rdParty\glslang
+robocopy Dev\Cpp\3rdParty\glslang %RDIR_R%\src\3rdParty\glslang /S
+
 mkdir %RDIR_R%\src\3rdParty\stb_effekseer
 robocopy Dev\Cpp\3rdParty\stb_effekseer %RDIR_R%\src\3rdParty\stb_effekseer *.h
 
