@@ -4,6 +4,7 @@
 #include "../../3rdParty/LLGI/src/DX12/LLGI.IndexBufferDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.PlatformDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.VertexBufferDX12.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -86,7 +87,8 @@ public:
 
 void EffectPlatformDX12::CreateShaders()
 {
-	auto compiler = LLGI::CreateCompiler(LLGI::DeviceType::DirectX12);
+	auto compiler = new LLGI::CompilerDX12();
+	compiler->Initialize();
 
 	LLGI::CompilerResult result_vs;
 	LLGI::CompilerResult result_ps;

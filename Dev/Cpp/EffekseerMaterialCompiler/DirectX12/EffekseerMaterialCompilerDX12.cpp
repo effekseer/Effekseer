@@ -93,9 +93,7 @@ public:
 
 CompiledMaterialBinary* MaterialCompilerDX12::Compile(Material* material, int32_t maximumTextureCount)
 {
-	// to use options
-	// auto compiler = LLGI::CreateSharedPtr(LLGI::CreateCompiler(LLGI::DeviceType::DirectX12));
-	auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerDX12(LLGI::CompilerDX12Option::ColumnMajor));
+	auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerDX12());
 
 	auto binary = new CompiledMaterialBinaryDX12();
 
