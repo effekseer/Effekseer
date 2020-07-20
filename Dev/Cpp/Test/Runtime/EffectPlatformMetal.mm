@@ -5,6 +5,7 @@
 #include "../../3rdParty/LLGI/src/Metal/LLGI.IndexBufferMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.PlatformMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.TextureMetal.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
@@ -164,8 +165,9 @@ public:
 
 void EffectPlatformMetal::CreateShaders()
 {
-	auto compiler = LLGI::CreateCompiler(LLGI::DeviceType::DirectX12);
-
+    auto compiler =  new LLGI::CompilerMetal();
+    compiler->Initialize();
+    
 	LLGI::CompilerResult result_vs;
 	LLGI::CompilerResult result_ps;
 

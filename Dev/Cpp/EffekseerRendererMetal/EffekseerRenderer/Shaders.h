@@ -285,6 +285,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   ) + (half2)(float2(1.0, 1.0))) * (half2)(float2(0.5, 0.5)));
   uv_1.y = ((half)(_mtl_u.mUVInversedBack.x + (float)(((half)(_mtl_u.mUVInversedBack.y * (float)(uv_1.y))))));
   half4 tmpvar_7 = 0;
+  uv_1.y = 1.0 - uv_1.y;
   tmpvar_7 = half4(uBackTexture0.sample(_mtlsmp_uBackTexture0, (float2)(uv_1)));
   color_2.xyz = tmpvar_7.xyz;
   _mtl_o.gl_FragColor = color_2;
@@ -592,6 +593,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   ) + (half2)(float2(1.0, 1.0))) * (half2)(float2(0.5, 0.5)));
   uv_1.y = ((half)(_mtl_u.mUVInversedBack.x + (float)(((half)(_mtl_u.mUVInversedBack.y * (float)(uv_1.y))))));
   half4 tmpvar_6 = 0;
+  uv_1.y = 1.0 - uv_1.y;
   tmpvar_6 = half4(uBackTexture0.sample(_mtlsmp_uBackTexture0, (float2)(uv_1)));
   _mtl_o.gl_FragColor.xyz = tmpvar_6.xyz;
 
