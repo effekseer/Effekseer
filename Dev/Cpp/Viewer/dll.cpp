@@ -765,19 +765,15 @@ bool Native::UpdateWindow()
 
 void Native::RenderWindow()
 {
-	spdlog::trace("Native::RenderWindow::BeginRendering");
 	g_renderer->BeginRendering();
 
 	if (g_renderer->Distortion == EffekseerTool::DistortionType::Current)
 	{
-		spdlog::trace("Native::RenderWindow::DrawBack");
 		g_manager->DrawBack(drawParameter);
 		
 		// HACK
-		spdlog::trace("Native::RenderWindow::EndRendering");
 		g_renderer->GetRenderer()->EndRendering();
 
-		spdlog::trace("Native::RenderWindow::CopyToBackground");
 		g_renderer->CopyToBackground();
 
 		// HACK
@@ -791,7 +787,6 @@ void Native::RenderWindow()
 
 	g_renderer->EndRendering();
 
-	spdlog::trace("Native::RenderWindow::RenderPostEffect");
 	g_renderer->RenderPostEffect();
 }
 
@@ -1168,19 +1163,15 @@ bool Native::SetRandomSeed(int seed)
 
 void* Native::RenderView(int32_t width, int32_t height)
 {
-	spdlog::trace("Start Native::RenderView");
 	g_lastViewWidth = width;
 	g_lastViewHeight = height;
 
-	spdlog::trace("Native::RenderView::BeginRenderToView");
 	g_renderer->BeginRenderToView(width, height);
 
-	spdlog::trace("Native::RenderView::RenderWindow");
 	RenderWindow();
 
-	spdlog::trace("Native::RenderView::EndRenderToView");
 	g_renderer->EndRenderToView();
-	spdlog::trace("End Native::RenderView");
+
 	return (void*)g_renderer->GetViewID();
 }
 

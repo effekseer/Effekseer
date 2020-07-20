@@ -611,11 +611,8 @@ bool Renderer::EndRendering()
 
 bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 {
-	spdlog::trace("Start Renderer::BeginRenderToView");
-
 	if (viewRenderTexture == nullptr || viewRenderTexture->GetWidth() != width || viewRenderTexture->GetHeight() != height)
 	{
-		spdlog::trace("Renderer::BeginRenderToView::CreateBuffer");
 		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
 		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
 
@@ -623,10 +620,8 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 		viewDepthTexture->Initialize(width, height);
 	}
 
-	spdlog::trace("Renderer::BeginRenderToView::SetRenderTarget");
 	graphics->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
 
-	spdlog::trace("Renderer::BeginRenderToView::SetMatrix");
 	m_cameraMatTemp = m_renderer->GetCameraMatrix();
 	m_projMatTemp = m_renderer->GetProjectionMatrix();
 
@@ -647,8 +642,6 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 
 	isScreenMode = true;
 
-	spdlog::trace("End Renderer::BeginRenderToView");
-
 	return true;
 }
 
@@ -659,7 +652,6 @@ bool Renderer::EndRenderToView()
 	m_renderer->SetCameraMatrix(m_cameraMatTemp);
 	m_renderer->SetProjectionMatrix(m_projMatTemp);
 
-	spdlog::trace("Renderer::EndRenderToView::SetRenderTarget");
 	graphics->SetRenderTarget(nullptr, nullptr);
 
 	currentWidth = m_windowWidth;
@@ -678,12 +670,10 @@ void Renderer::RenderPostEffect()
 
 	if (msaaSamples > 1)
 	{
-		spdlog::trace("Renderer::RenderPostEffect::ResolveRenderTarget");
 		graphics->ResolveRenderTarget(hdrRenderTextureMSAA.get(), hdrRenderTexture.get());
 	}
 
 	// Bloom processing (specifying the same target for src and dest is faster)
-	spdlog::trace("Renderer::RenderPostEffect::Bloom");
 	m_bloomEffect->Render(hdrRenderTexture.get(), hdrRenderTexture.get());
 
 	// Tone map processing
@@ -693,7 +683,6 @@ void Renderer::RenderPostEffect()
 		tonemapTerget = linearRenderTexture.get();
 	}
 
-	spdlog::trace("Renderer::RenderPostEffect::Tone");
 	m_tonemapEffect->Render(hdrRenderTexture.get(), tonemapTerget);
 
 	if (m_isSRGBMode)
