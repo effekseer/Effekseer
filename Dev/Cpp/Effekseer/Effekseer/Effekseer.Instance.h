@@ -118,6 +118,11 @@ public:
 	// Parent color
 	Color ColorParent;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	Vec3f PrevLocalPosition;
+	Vec3f PrevAcceleration;
+#endif
+
 	union
 	{
 		struct

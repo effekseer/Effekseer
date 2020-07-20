@@ -12,7 +12,7 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.Model.h"
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "Effekseer.Curve.h"
 #endif
 
@@ -378,6 +378,11 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const Mat43f
 		maxGenerationChildrenCount = flexibleMaxGenerationChildrenCount_;
 		m_nextGenerationTime = m_flexibleNextGenerationTime;
 	}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	PrevLocalPosition = Vec3f(0, 0, 0);
+	PrevAcceleration = Vec3f(0, 0, 0);
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -1375,9 +1380,26 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_PVA)
 		{
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			localPosition = PrevLocalPosition;
+
+			Vec3f CurrentVelocity = translation_values.random.velocity + (translation_values.random.acceleration * m_LivingTime * m_LivingTime * 0.5f - PrevAcceleration);
+			localPosition += CurrentVelocity * deltaFrame;
+			PrevAcceleration += CurrentVelocity;
+
+			if (m_pEffectNode->TranslationPVA.EnableAffectedDrag == true)
+			{
+				localForceField_.DraggedVelocity(translation_values.random.velocity, m_pEffectNode->LocalForceField);
+				localForceField_.DraggedVelocity(translation_values.random.acceleration, m_pEffectNode->LocalForceField);
+				localForceField_.DraggedVelocity(PrevAcceleration, m_pEffectNode->LocalForceField);
+			}
+
+			PrevLocalPosition = localPosition;
+#else
 			/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
 			localPosition = translation_values.random.location + (translation_values.random.velocity * m_LivingTime) +
 							(translation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
+#endif
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_Easing)
 		{
@@ -1390,7 +1412,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 			auto fcurve = m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localPosition = fcurve + translation_values.fcruve.offset;
 		}
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
 		{
 			auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;

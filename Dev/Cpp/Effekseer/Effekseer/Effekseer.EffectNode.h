@@ -230,6 +230,9 @@ struct ParameterTranslationPVA
 	random_vector3d location;
 	random_vector3d velocity;
 	random_vector3d acceleration;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	bool EnableAffectedDrag;
+#endif
 };
 
 struct ParameterTranslationEasing

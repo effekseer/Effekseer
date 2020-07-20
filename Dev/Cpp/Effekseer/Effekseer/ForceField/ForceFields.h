@@ -288,6 +288,13 @@ public:
 	{
 		return -ffc.PreviousSumVelocity * ffp.Power;
 	}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	Vec3f GetDragedVelocity(const Vec3f& velocity, const ForceFieldDragParameter& ffp)
+	{
+		return -velocity * ffp.Power;
+	}
+#endif
 };
 
 enum class LocalForceFieldFalloffType : int32_t
@@ -366,6 +373,10 @@ struct LocalForceFieldInstance
 	Vec3f ModifyLocation;
 
 	void Update(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification);
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	void DraggedVelocity(Vec3f& outAcceleration, const LocalForceFieldParameter& parameter);
+#endif
 
 	void Reset();
 };

@@ -123,11 +123,25 @@ namespace Effekseer.Data
 				private set;
 			}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			[Name(language = Language.Japanese, value = "力場[抵抗]による影響を受ける")]
+			[Name(language = Language.English, value = "Affected by the force field [Drag]")]
+			[IO(Export = true)]
+			public Value.Boolean EnableAffectedDrag
+			{
+				get;
+				private set;
+			}
+#endif
+
 			internal PVAParamater()
 			{
 				Location = new Value.Vector3DWithRandom(0, 0, 0);
 				Velocity = new Value.Vector3DWithRandom(0, 0, 0);
 				Acceleration = new Value.Vector3DWithRandom(0, 0, 0);
+#if __EFFEKSEER_BUILD_VERSION16__
+				EnableAffectedDrag = new Value.Boolean(false);
+#endif
 			}
 		}
 

@@ -139,6 +139,10 @@ namespace Effekseer.Binary
 		public Vector3D Acceleration_Max;
 		public Vector3D Acceleration_Min;
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		public bool EnableAffectedDrag;
+#endif
+
 		static public Translation_PVA_Values Create(Data.LocationValues.PVAParamater value, float magnification)
 		{
 			var s_value = new Translation_PVA_Values();
@@ -172,6 +176,10 @@ namespace Effekseer.Binary
 				value.Acceleration.X.Max * magnification,
 				value.Acceleration.Y.Max * magnification,
 				value.Acceleration.Z.Max * magnification);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			s_value.EnableAffectedDrag = value.EnableAffectedDrag.Value;
+#endif
 
 			return s_value;
 		}

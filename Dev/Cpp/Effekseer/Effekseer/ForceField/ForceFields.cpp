@@ -325,6 +325,25 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 	ModifyLocation += VelocitySum;
 }
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+void LocalForceFieldInstance::DraggedVelocity(Vec3f& outAcceleration, const LocalForceFieldParameter& parameter)
+{
+	for (auto& field : parameter.LocalForceFields)
+	{
+		if (!field.HasValue)
+		{
+			continue;
+		}
+
+		if (field.Drag != nullptr)
+		{
+			ForceField ff;
+			outAcceleration += ff.GetDragedVelocity(outAcceleration, *field.Drag);
+		}
+	}
+}
+#endif
+
 void LocalForceFieldInstance::Reset()
 {
 	Velocities.fill(Vec3f(0, 0, 0));
