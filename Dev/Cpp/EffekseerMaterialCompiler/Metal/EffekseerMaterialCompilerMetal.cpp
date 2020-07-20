@@ -470,7 +470,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 
     distortUV += i.v_ScreenUV;
     distortUV = float2(distortUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * distortUV.y);
-
+    distortUV.y = 1.0 - distortUV.y;
     float4 bg = background.sample(s_background, distortUV);
     o.gl_FragColor = bg;
 

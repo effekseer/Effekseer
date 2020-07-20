@@ -1,4 +1,4 @@
-﻿
+
 cmake_minimum_required(VERSION 3.10)
 
 project(Test)
@@ -174,21 +174,20 @@ if(BUILD_VULKAN)
     )
 endif()
 
-if (MSVC)
+add_dependencies(Test ExternalProject_glfw)
+
+if (BUILD_WITH_POSTFIX)
 target_link_libraries(
     Test
     ${common_lib}
     debug glfw3d
-    debug OpenSoundMixerd
     optimized glfw3
-    optimized OpenSoundMixer
 )
 else()
 target_link_libraries(
     Test
     ${common_lib}
     glfw3
-    OpenSoundMixer
 )
 endif()
 
@@ -211,6 +210,9 @@ endif()
 FilterFolder("${effekseer_test_src}")
 
 if(USE_LIBPNG_LOADER)
+    add_dependencies(Test ExternalProject_libpng)
+
+
     target_link_directories(
         ${PROJECT_NAME}
         PRIVATE
