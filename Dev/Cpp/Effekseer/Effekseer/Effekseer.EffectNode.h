@@ -199,7 +199,7 @@ enum ParameterTranslationType
 	ParameterTranslationType_PVA = 1,
 	ParameterTranslationType_Easing = 2,
 	ParameterTranslationType_FCurve = 3,
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	ParameterTranslationType_NurbsCurve = 4,
 	ParameterTranslationType_ViewOffset = 5,
 #endif
@@ -242,7 +242,7 @@ struct ParameterTranslationEasing
 	easing_vector3d location;
 };
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 struct ParameterTranslationNurbsCurve
 {
 	int32_t Index;
@@ -1608,7 +1608,7 @@ public:
 	ParameterTranslationPVA TranslationPVA;
 	ParameterTranslationEasing TranslationEasing;
 	FCurveVector3D* TranslationFCurve;
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	ParameterTranslationNurbsCurve TranslationNurbsCurve;
 	ParameterTranslationViewOffset TranslationViewOffset;
 #endif

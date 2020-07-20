@@ -302,7 +302,7 @@ public:
 	*/
 	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English get a curve loader

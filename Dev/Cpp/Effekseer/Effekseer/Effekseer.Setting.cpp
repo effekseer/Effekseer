@@ -11,7 +11,7 @@
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "Effekseer.CurveLoader.h"
 #endif
 
@@ -39,7 +39,7 @@ Setting::Setting()
 	, m_textureLoader(NULL)
 	, m_soundLoader(NULL)
 	, m_modelLoader(NULL)
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	, m_curveLoader(NULL)
 #endif
 {
@@ -63,7 +63,7 @@ Setting::~Setting()
 	ES_SAFE_DELETE(m_soundLoader);
 	ES_SAFE_DELETE(m_modelLoader);
 	ES_SAFE_DELETE(m_materialLoader);
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	ES_SAFE_DELETE(m_curveLoader);
 #endif
 }
@@ -171,7 +171,7 @@ void Setting::SetMaterialLoader(MaterialLoader* loader)
 	m_materialLoader = loader;
 }
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 CurveLoader* Setting::GetCurveLoader()
 {
 	return m_curveLoader;

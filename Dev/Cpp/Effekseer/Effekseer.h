@@ -86,7 +86,7 @@ class ModelLoader;
 
 class Model;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 class CurveLoader;
 class Curve;
 #endif
@@ -1843,7 +1843,7 @@ public:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 	@brief
 	\~English set curve data into specified index
@@ -2112,7 +2112,7 @@ public:
 	*/
 	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 	@brief	\~English	Get a curve's pointer
 	\~Japanese	格納されているカーブのポインタを取得する。
@@ -2161,7 +2161,7 @@ public:
 	*/
 	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English set curve data into specified index
@@ -2779,7 +2779,7 @@ public:
 	*/
 	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English get a curve loader
@@ -4527,7 +4527,7 @@ private:
 	SoundLoader* m_soundLoader;
 	ModelLoader* m_modelLoader;
 	MaterialLoader* m_materialLoader = nullptr;
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	CurveLoader* m_curveLoader = nullptr;
 #endif
 
@@ -4633,7 +4633,7 @@ public:
 		*/
 	void SetMaterialLoader(MaterialLoader* loader);
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English get a curve loader

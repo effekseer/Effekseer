@@ -150,7 +150,7 @@ public:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 	@brief
 	\~English set curve data into specified index
@@ -419,7 +419,7 @@ public:
 	*/
 	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 	@brief	\~English	Get a curve's pointer
 	\~Japanese	格納されているカーブのポインタを取得する。
@@ -468,7 +468,7 @@ public:
 	*/
 	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English set curve data into specified index
