@@ -326,7 +326,7 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 }
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-void LocalForceFieldInstance::DraggedVelocity(Vec3f& outAcceleration, const LocalForceFieldParameter& parameter)
+void LocalForceFieldInstance::DraggedVelocity(Vec3f& outAcceleration, const LocalForceFieldParameter& parameter, float deltaFrame)
 {
 	for (auto& field : parameter.LocalForceFields)
 	{
@@ -338,7 +338,7 @@ void LocalForceFieldInstance::DraggedVelocity(Vec3f& outAcceleration, const Loca
 		if (field.Drag != nullptr)
 		{
 			ForceField ff;
-			outAcceleration += ff.GetDragedVelocity(outAcceleration, *field.Drag);
+			outAcceleration += ff.GetDragedVelocity(outAcceleration, *field.Drag) * deltaFrame;
 		}
 	}
 }

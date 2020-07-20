@@ -375,7 +375,7 @@ struct LocalForceFieldInstance
 	void Update(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	void DraggedVelocity(Vec3f& outAcceleration, const LocalForceFieldParameter& parameter);
+	void DraggedVelocity(Vec3f& outAcceleration, const LocalForceFieldParameter& parameter, float deltaFrame);
 #endif
 
 	void Reset();

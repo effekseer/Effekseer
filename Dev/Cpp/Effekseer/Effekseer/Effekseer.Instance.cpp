@@ -522,6 +522,10 @@ void Instance::FirstUpdate()
 						   m_pEffectNode->DynamicFactor.Tra,
 						   m_pEffectNode->DynamicFactor.TraInv);
 		translation_values.random.acceleration = rva.getValue(rand);
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		PrevLocalPosition = translation_values.random.location;
+#endif
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_Easing)
 	{
@@ -1383,15 +1387,15 @@ void Instance::CalculateMatrix(float deltaFrame)
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			localPosition = PrevLocalPosition;
 
-			Vec3f CurrentVelocity = translation_values.random.velocity + (translation_values.random.acceleration * m_LivingTime * m_LivingTime * 0.5f - PrevAcceleration);
-			localPosition += CurrentVelocity * deltaFrame;
+			Vec3f CurrentVelocity = ((translation_values.random.velocity * m_LivingTime) + (translation_values.random.acceleration * m_LivingTime * m_LivingTime * 0.5f)) - PrevAcceleration;
+			localPosition += CurrentVelocity;
 			PrevAcceleration += CurrentVelocity;
 
 			if (m_pEffectNode->TranslationPVA.EnableAffectedDrag == true)
 			{
-				localForceField_.DraggedVelocity(translation_values.random.velocity, m_pEffectNode->LocalForceField);
-				localForceField_.DraggedVelocity(translation_values.random.acceleration, m_pEffectNode->LocalForceField);
-				localForceField_.DraggedVelocity(PrevAcceleration, m_pEffectNode->LocalForceField);
+				localForceField_.DraggedVelocity(translation_values.random.velocity, m_pEffectNode->LocalForceField, deltaFrame);
+				localForceField_.DraggedVelocity(translation_values.random.acceleration, m_pEffectNode->LocalForceField, deltaFrame);
+				localForceField_.DraggedVelocity(PrevAcceleration, m_pEffectNode->LocalForceField, deltaFrame);
 			}
 
 			PrevLocalPosition = localPosition;

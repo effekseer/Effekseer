@@ -166,7 +166,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 		else if (TranslationType == ParameterTranslationType_PVA)
 		{
-			if (ef->GetVersion() >= 14)
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			if (ef->GetVersion() >= 1600)
 			{
 				memcpy(&size, pos, sizeof(int));
 				pos += sizeof(int);
@@ -175,11 +176,29 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				pos += size;
 			}
 			else
+#endif
+			if (ef->GetVersion() >= 14)
+			{
+				memcpy(&size, pos, sizeof(int));
+				pos += sizeof(int);
+#ifndef __EFFEKSEER_BUILD_VERSION16__
+				assert(size == sizeof(ParameterTranslationPVA));
+#endif
+				memcpy(&TranslationPVA, pos, size);
+				pos += size;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				TranslationPVA.EnableAffectedDrag = false;
+#endif
+			}
+			else
 			{
 				memcpy(&size, pos, sizeof(int));
 				pos += sizeof(int);
 				memcpy(&TranslationPVA.location, pos, size);
 				pos += size;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				TranslationPVA.EnableAffectedDrag = false;
+#endif
 			}
 		}
 		else if (TranslationType == ParameterTranslationType_Easing)
