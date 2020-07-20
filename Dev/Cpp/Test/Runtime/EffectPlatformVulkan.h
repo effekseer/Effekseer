@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../../EffekseerRendererDX12/EffekseerRendererDX12.h"
+#include "../../EffekseerRendererVulkan/EffekseerRendererVulkan.h"
 #include "EffectPlatformLLGI.h"
 
-class EffectPlatformDX12 final : public EffectPlatformLLGI
+class EffectPlatformVulkan final : public EffectPlatformLLGI
 {
 protected:
 	void CreateShaders() override;
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX12() : EffectPlatformLLGI(LLGI::DeviceType::DirectX12) {}
+	EffectPlatformVulkan() : EffectPlatformLLGI(LLGI::DeviceType::Vulkan) {}
 
-	virtual ~EffectPlatformDX12();
+	virtual ~EffectPlatformVulkan();
 
 	void InitializeDevice(const EffectPlatformInitializingParameter& param) override;
 	void DestroyDevice() override;

@@ -22,6 +22,7 @@ public:
 	~RendererImplemented()
     {}
     
+    /*
     void SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer);
     
     void SetExternalRenderEncoder(id<MTLRenderCommandEncoder> extRenderEncoder);
@@ -29,6 +30,7 @@ public:
 	bool BeginRendering() override;
 
 	bool EndRendering() override;
+    */
     
     //::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 };

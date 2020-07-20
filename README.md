@@ -22,6 +22,22 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
+Supported platforms
+=========
+
+- DirectX9, DirectX11, DirectX12, Metal, Vulkan, OpenGL
+- WebGL
+- Unity
+- UnrealEngine4
+- DX Library
+- Cocos2d-x
+- Console games (Please mail to effekseer(at)gmail.com)
+
+GodotEngine is planned in 1.6.
+
+Repositories
+=========
+
 * [ForUnity](https://github.com/effekseer/EffekseerForUnity)
 
 * [ForUE4](https://github.com/effekseer/EffekseerForUE4)

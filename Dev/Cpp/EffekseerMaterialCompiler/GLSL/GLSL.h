@@ -38,7 +38,7 @@ float atan2(in float y, in float x) {
 
 static const char* material_common_vs_define = R"()"
 
-										 R"(
+											   R"(
 
 #define TEX2D textureLod
 
@@ -46,7 +46,7 @@ static const char* material_common_vs_define = R"()"
 
 static const char* material_common_fs_define = R"()"
 
-										 R"(
+											   R"(
 
 #define TEX2D texture
 
@@ -179,6 +179,10 @@ static const char g_material_model_vs_src_suf2[] =
 	gl_Position = ProjectionMatrix * vec4(worldPos, 1.0);
 	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
 	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+
+	#ifdef _Y_INVERTED_
+	gl_Position.y = - gl_Position.y;
+	#endif
 }
 )";
 
@@ -340,6 +344,10 @@ static const char g_material_sprite_vs_src_suf2[] =
 	v_UV2 = uv2;
 	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
 	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+
+	#ifdef _Y_INVERTED_
+	gl_Position.y = - gl_Position.y;
+	#endif
 }
 
 )";
@@ -519,7 +527,7 @@ class ShaderGenerator
 {
 	bool useUniformBlock_ = false;
 	bool useSet_ = false;
-	int32_t textuerBindingOffset_ = 0;
+	int32_t textureBindingOffset_ = 0;
 
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
@@ -575,12 +583,12 @@ class ShaderGenerator
 		{
 			if (useSet_)
 			{
-				maincode << "layout(set = " << stage << ", binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name
+				maincode << "layout(set = " << stage << ", binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
 						 << ";" << std::endl;
 			}
 			else
 			{
-				maincode << "layout(binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
+				maincode << "layout(binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
 			}
 		}
 		else
@@ -769,11 +777,12 @@ public:
 							  bool isOutputDefined,
 							  bool is450,
 							  bool useSet,
-							  bool textureBindingOffset)
+							  int textureBindingOffset,
+							  bool isYInverted = false)
 	{
 		useUniformBlock_ = useUniformBlock;
 		useSet_ = useSet;
-		textuerBindingOffset_ = textuerBindingOffset_;
+		textureBindingOffset_ = textureBindingOffset;
 
 		bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 		bool isRefrection = material->GetHasRefraction() &&
@@ -786,6 +795,11 @@ public:
 			std::ostringstream maincode;
 
 			ExportHeader(maincode, material, stage, isSprite, isOutputDefined, is450);
+
+			if (isYInverted)
+			{
+				maincode << "#define _Y_INVERTED_ 1" << std::endl;
+			}
 
 			int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
 

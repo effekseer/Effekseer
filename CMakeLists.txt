@@ -56,7 +56,9 @@ endif()
 # endif()
 
 if(BUILD_VULKAN)
-    set(BUILD_VULKAN_COMPILER ON)
+    set(BUILD_VULKAN ON CACHE BOOL "For LLGI" FORCE)
+    set(BUILD_VULKAN_COMPILER ON CACHE BOOL "For LLGI" FORCE)
+    add_definitions(-D__EFFEKSEER_BUILD_VULKAN__)
 endif()
 
 if (BUILD_DX12)
@@ -79,6 +81,36 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio|Xcode")
     set(BUILD_WITH_POSTFIX ON)
 else()
     set(BUILD_WITH_POSTFIX OFF)
+endif()
+
+if(BUILD_VULKAN)
+    # TODO : Improve it
+    # Hack for GLSLANG
+    if (MSVC)
+    	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+    		foreach (flag CMAKE_C_FLAGS
+    			CMAKE_C_FLAGS_DEBUG
+    			CMAKE_C_FLAGS_RELEASE
+    			CMAKE_CXX_FLAGS
+    			CMAKE_CXX_FLAGS_DEBUG
+    			CMAKE_CXX_FLAGS_RELEASE)
+    
+    			if (${flag} MATCHES "/MD")
+    				string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+    			endif()
+    			if (${flag} MATCHES "/MDd")
+    				string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+    			endif()
+    		endforeach()
+    	endif()
+    endif()
+
+    set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
+    set(ENABLE_CTEST OFF CACHE BOOL "For glslang" FORCE)
+    set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "For glslang" FORCE)
+
+    set(GLSLANG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/glslang/" "${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/")
+    add_subdirectory(Dev/Cpp/3rdParty/glslang/)
 endif()
 
 if(BUILD_VIEWER)
@@ -224,7 +256,7 @@ if(BUILD_VIEWER)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
 endif()
     
-if(BUILD_VIEWER OR BUILD_EXAMPLES)
+if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
     # glfw
     ExternalProject_Add(
         ExternalProject_glfw

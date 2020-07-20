@@ -800,7 +800,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 
 
-void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
+static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
 {
 
 	uint32_t binarySize = 0;
@@ -923,7 +923,7 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
 		
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1, true);
 
 		//auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));

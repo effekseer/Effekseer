@@ -429,6 +429,12 @@ public:
 namespace EffekseerRendererVulkan
 {
 
+struct VulkanImageInfo
+{
+	VkImage image;
+	VkImageAspectFlags aspect;
+	VkFormat format;
+};
 
 struct RenderPassInformation
 {
@@ -459,9 +465,9 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 									  RenderPassInformation renderPassInformation,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, VkImage texture);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, VkImage texture);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, const VulkanImageInfo& info);
 
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
