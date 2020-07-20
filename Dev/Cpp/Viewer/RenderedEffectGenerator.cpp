@@ -158,6 +158,50 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Set
 
 	spdlog::trace("OK PostProcessing");
 
+	auto msaaSampleHDR = graphics->GetMultisampleLevel(efk::TextureFormat::RGBA16F);
+	auto msaaSample = graphics->GetMultisampleLevel(efk::TextureFormat::RGBA8U);
+
+	auto isHDRSupported = graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::Texture2D);
+	auto isMSAAHDRSupported =
+		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::Texture2D) &&
+		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::MultisampledTexture2DResolve) &&
+		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::MultisampledTexture2DRenderTarget) &&
+		msaaSampleHDR > 1;
+	auto isMSAASupported = msaaSample > 1;
+
+	if (isHDRSupported || isMSAAHDRSupported)
+	{
+		textureFormat_ = efk::TextureFormat::RGBA16F;
+
+		if (isMSAAHDRSupported)
+		{
+			msaaSamples = Effekseer::Min(4, msaaSampleHDR);
+		}
+		else
+		{
+			msaaSamples = 1;
+		}
+	}
+	else
+	{
+		if (isMSAASupported)
+		{
+			msaaSamples = Effekseer::Min(4, msaaSample);
+		}
+		else
+		{
+			msaaSamples = 1;
+		}
+
+		textureFormat_ = efk::TextureFormat::RGBA8U;
+	}
+
+	spdlog::trace("HDR {} {}", isMSAAHDRSupported, isHDRSupported);
+
+	spdlog::trace("MSAA {} {}", msaaSampleHDR, msaaSample);
+
+	spdlog::trace("OK Check format");
+
 	::Effekseer::SpriteRenderer* sprite_renderer = renderer_->CreateSpriteRenderer();
 	::Effekseer::RibbonRenderer* ribbon_renderer = renderer_->CreateRibbonRenderer();
 	::Effekseer::RingRenderer* ring_renderer = renderer_->CreateRingRenderer();
@@ -197,23 +241,23 @@ void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
 	hdrRenderTextureMSAA = nullptr;
 
 	hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-	hdrRenderTexture->Initialize(screenSize, efk::TextureFormat::RGBA16F);
+	hdrRenderTexture->Initialize(screenSize, textureFormat_);
 	depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics_));
 	depthTexture->Initialize(screenSize_.X, screenSize_.Y, msaaSamples);
 
 	if (msaaSamples > 1)
 	{
 		hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-		hdrRenderTextureMSAA->Initialize(screenSize, efk::TextureFormat::RGBA16F, msaaSamples);
+		hdrRenderTextureMSAA->Initialize(screenSize, textureFormat_, msaaSamples);
 	}
 
 	backTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-	backTexture->Initialize(screenSize, efk::TextureFormat::RGBA16F, 1);
+	backTexture->Initialize(screenSize, textureFormat_, 1);
 
 	if (m_isSRGBMode)
 	{
 		linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-		linearRenderTexture->Initialize(screenSize, efk::TextureFormat::RGBA16F);
+		linearRenderTexture->Initialize(screenSize, textureFormat_);
 	}
 
 	viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));

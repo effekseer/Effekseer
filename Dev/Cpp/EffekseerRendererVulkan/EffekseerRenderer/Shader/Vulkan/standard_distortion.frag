@@ -33,6 +33,9 @@ void main() {
 
 	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
 
+	// Vulkan
+	uv.y = 1.0 -uv.y;
+
 	color.xyz = texture(uBackTexture0, uv).xyz;
 	
 	o_Color = color;

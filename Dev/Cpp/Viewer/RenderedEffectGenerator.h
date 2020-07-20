@@ -92,6 +92,7 @@ protected:
 
 	bool m_isSRGBMode = false;
 	uint32_t msaaSamples = 4;
+	efk::TextureFormat textureFormat_ = efk::TextureFormat::RGBA16F;
 
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;

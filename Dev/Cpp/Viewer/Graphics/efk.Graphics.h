@@ -32,6 +32,13 @@ enum class TextureFormat
 	R16F,
 };
 
+enum class TextureFeatureType
+{
+	Texture2D,
+	MultisampledTexture2DRenderTarget,
+	MultisampledTexture2DResolve,
+};
+
 class RenderTexture
 {
 protected:
@@ -106,7 +113,6 @@ public:
 
 	virtual void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) = 0;
 
-
 	virtual void SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels) = 0;
 
 	virtual void Clear(Effekseer::Color color) = 0;
@@ -128,6 +134,16 @@ public:
 
 	virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
 	{
+	}
+
+	virtual bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature)
+	{
+		return true;
+	}
+
+	virtual int GetMultisampleLevel(TextureFormat format)
+	{
+		return 4;
 	}
 
 	virtual std::shared_ptr<Effekseer::Tool::RenderPass> CreateRenderPass(std::shared_ptr<efk::RenderTexture> colorTexture, std::shared_ptr<efk::DepthTexture> depthTexture)

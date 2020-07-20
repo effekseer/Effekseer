@@ -151,6 +151,10 @@ public:
 
 	void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) override;
 
+	bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature) override;
+
+	int GetMultisampleLevel(TextureFormat format) override;
+
 	void ResetDevice() override;
 
 	//void* GetBack() override;
