@@ -242,13 +242,13 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = VelocitySum;
+		ffcp.PreviousSumVelocity = VelocitySum + ExternalVelocity;
 		ffcp.PreviousVelocity = Velocities[i];
 		ffcp.IsFieldRotated = field.IsRotated;
 
 		if (field.IsRotated)
 		{
-			ffcp.PreviousSumVelocity = Vec3f::Transform(VelocitySum, field.InvRotation);
+			ffcp.PreviousSumVelocity = Vec3f::Transform(VelocitySum + ExternalVelocity, field.InvRotation);
 			ffcp.PreviousVelocity = Vec3f::Transform(Velocities[i], field.InvRotation);
 			ffcp.Position = Vec3f::Transform(ffcp.Position, field.InvRotation);
 		}
@@ -330,6 +330,7 @@ void LocalForceFieldInstance::Reset()
 	Velocities.fill(Vec3f(0, 0, 0));
 	VelocitySum = Vec3f(0, 0, 0);
 	ModifyLocation = Vec3f(0, 0, 0);
+	ExternalVelocity = Vec3f(0, 0, 0);
 }
 
 } // namespace Effekseer

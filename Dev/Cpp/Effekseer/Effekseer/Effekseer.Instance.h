@@ -72,6 +72,8 @@ protected:
 	InstanceCustomData customDataValues1;
 	InstanceCustomData customDataValues2;
 
+	Vec3f prevPosition_;
+
 public:
 	static const int32_t ChildrenMax = 16;
 
