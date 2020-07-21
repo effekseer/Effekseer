@@ -358,7 +358,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 			}
 			else if (point.y >= rect.top
 				&& point.y < rect.top + 32 * window->mainWindow_->GetDPIScale()
-				&& ImGui::GetHoveredID() == 0)
+				&& ImGui::GetHoveredID() == 0 && GImGui->HoveredWindow == ImGui::FindWindowByName("##MainMenuBar"))
 			{
 				return HTCAPTION;
 			}
