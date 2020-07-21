@@ -1,4 +1,4 @@
-﻿
+
 #ifndef __EFFEKSEER_BASE_PRE_H__
 #define __EFFEKSEER_BASE_PRE_H__
 
@@ -381,6 +381,66 @@ inline int32_t ConvertUtf16ToUtf8(int8_t* dst, int32_t dst_size, const int16_t* 
 	}
 	*cp = '\0';
 	return cnt;
+}
+
+/**
+    @brief    Convert UTF8 into UTF16
+    @param    dst    a pointer to destination buffer
+    @param    dst_size    a length of destination buffer
+    @param    src            a source buffer
+    @return    length except 0
+*/
+inline int32_t ConvertUtf8ToUtf16(char16_t* dst, int32_t dst_size, const char* src)
+{
+    int32_t i, code = 0;
+    int8_t c0, c1, c2 = 0;
+    int8_t* srci = reinterpret_cast<int8_t*>(const_cast<char*>(src));
+    if (dst_size == 0)
+        return 0;
+
+    dst_size -= 1;
+
+    for (i = 0; i < dst_size; i++)
+    {
+        uint16_t wc;
+
+        c0 = *srci;
+        srci++;
+        if (c0 == '\0')
+        {
+            break;
+        }
+        // convert UTF8 to UTF16
+        code = (uint8_t)c0 >> 4;
+        if (code <= 7)
+        {
+            // 8bit character
+            wc = c0;
+        }
+        else if (code >= 12 && code <= 13)
+        {
+            // 16bit  character
+            c1 = *srci;
+            srci++;
+            wc = ((c0 & 0x1F) << 6) | (c1 & 0x3F);
+        }
+        else if (code == 14)
+        {
+            // 24bit character
+            c1 = *srci;
+            srci++;
+            c2 = *srci;
+            srci++;
+            wc = ((c0 & 0x0F) << 12) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
+        }
+        else
+        {
+            continue;
+        }
+        dst[i] = wc;
+    }
+    dst[i] = 0;
+    return i;
 }
 
 /**

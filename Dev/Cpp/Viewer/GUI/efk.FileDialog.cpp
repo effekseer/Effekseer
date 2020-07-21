@@ -3,6 +3,7 @@
 #include "Effekseer.h"
 
 #include <codecvt>
+#include <iostream>
 
 namespace efk
 {
@@ -36,12 +37,63 @@ namespace efk
 	}
 #endif
 
-std::u16string FileDialog::temp;
+std::u16string FileDialog::temp = u"";
+
+int32_t ConvertUtf8ToUtf16_(char16_t* dst, int32_t dst_size, const char* src)
+{
+    int32_t i, code = 0;
+    int8_t c0, c1, c2 = 0;
+    int8_t* srci = reinterpret_cast<int8_t*>(const_cast<char*>(src));
+    if (dst_size == 0)
+        return 0;
+
+    dst_size -= 1;
+
+    for (i = 0; i < dst_size; i++)
+    {
+        uint16_t wc;
+
+        c0 = *srci;
+        srci++;
+        if (c0 == '\0')
+        {
+            break;
+        }
+        // UTF8からUTF16に変換
+        code = (uint8_t)c0 >> 4;
+        if (code <= 7)
+        {
+            // 8bit文字
+            wc = c0;
+        }
+        else if (code >= 12 && code <= 13)
+        {
+            // 16bit文字
+            c1 = *srci;
+            srci++;
+            wc = ((c0 & 0x1F) << 6) | (c1 & 0x3F);
+        }
+        else if (code == 14)
+        {
+            // 24bit文字
+            c1 = *srci;
+            srci++;
+            c2 = *srci;
+            srci++;
+            wc = ((c0 & 0x0F) << 12) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
+        }
+        else
+        {
+            continue;
+        }
+        dst[i] = wc;
+    }
+    dst[i] = 0;
+    return i;
+}
 
 const char16_t* FileDialog::OpenDialog(const char16_t* filterList, const char16_t* defaultPath)
 {
-	// auto filterList_ = utf16_to_utf8(filterList);
-	// auto defaultPath_ = utf16_to_utf8(defaultPath);
 	char filterList_[256], defaultPath_[1024];
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
@@ -51,10 +103,13 @@ const char16_t* FileDialog::OpenDialog(const char16_t* filterList, const char16_
 
 	if (result == NFD_OKAY)
 	{
-		char16_t outPath_[1024];
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)outPath_, sizeof(outPath_) / sizeof(char16_t), (const int8_t*)outPath);
-		temp = outPath_;
-		// temp = utf8_to_utf16(outPath);
+		std::array<char16_t, 1024> outPath_;
+        outPath_.fill(0);
+
+		Effekseer::ConvertUtf8ToUtf16(outPath_.data(), 1024, outPath);
+
+		temp = std::u16string(outPath_.data());
+        
 		free(outPath);
 		return temp.c_str();
 	}
@@ -82,7 +137,7 @@ const char16_t* FileDialog::SaveDialog(const char16_t* filterList, const char16_
 	if (result == NFD_OKAY)
 	{
 		char16_t outPath_[1024];
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)outPath_, sizeof(outPath_) / sizeof(char16_t), (const int8_t*)outPath);
+		Effekseer::ConvertUtf8ToUtf16(outPath_, 1024, outPath);
 		temp = outPath_;
 		// temp = utf8_to_utf16(outPath);
 		free(outPath);
