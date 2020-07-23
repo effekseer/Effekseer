@@ -237,20 +237,28 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 			else if (type == OperatorType::Div)
 				registers[index] = tempInputs[0] / tempInputs[1];
 			else if (type == OperatorType::Sine)
-				registers[index] = sin(tempInputs[0]);
+			{
+				registers[index] = sin(tempInputs[j]);
+			}
 			else if (type == OperatorType::Cos)
-				registers[index] = cos(tempInputs[0]);
+			{
+				registers[index] = cos(tempInputs[j]);
+			}
 			else if (type == OperatorType::UnaryAdd)
+			{
 				registers[index] = tempInputs[0];
+			}
 			else if (type == OperatorType::UnarySub)
+			{
 				registers[index] = -tempInputs[0];
+			}
 			else if (type == OperatorType::Rand)
 			{
 				registers[index] = randFuncCallback(userData);
 			}
 			else if (type == OperatorType::Rand_WithSeed)
 			{
-				registers[index] = randSeedFuncCallback(userData, tempInputs[0]);
+				registers[index] = randSeedFuncCallback(userData, tempInputs[j]);
 			}
 			else if (type == OperatorType::Constant)
 			{
