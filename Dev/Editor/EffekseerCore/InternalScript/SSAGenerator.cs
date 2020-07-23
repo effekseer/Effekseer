@@ -6,6 +6,145 @@ using System.Threading.Tasks;
 
 namespace Effekseer.InternalScript
 {
+	class FunctionDefinition
+	{
+		public string Name = string.Empty;
+		public OperatorType Type = OperatorType.Unknown;
+		public Type[] Arguments = new Type[0];
+		public Type Return = null;
+
+		public virtual object Generate(FunctionExpression expr, object[] inputs)
+		{
+			return null;
+		}
+	}
+
+	class InputValueNOutputValue1FunctionDefinition : FunctionDefinition
+	{
+		public InputValueNOutputValue1FunctionDefinition(string name, OperatorType type, int valueCount)
+		{
+			Name = name;
+			Type = type;
+
+			List<Type> args = new List<Type>();
+
+			for(int i = 0; i < valueCount; i++)
+			{
+				args.Add(typeof(SSAGenerator.Value));
+			}
+
+			Arguments = args.ToArray();
+
+			Return = typeof(SSAGenerator.Value);
+		}
+
+		public override object Generate(FunctionExpression expr, object[] inputs)
+		{
+			var node = new SSAGenerator.NodeOperator();
+			node.Expression = expr;
+			node.Type = Type;
+
+			var ret = new SSAGenerator.Value();
+			ret.Index = 0;
+			ret.Generator = node;
+
+			for(int i = 0; i < Arguments.Length; i++)
+			{
+				node.Inputs.Add((SSAGenerator.Value)inputs[i]);
+			}
+			node.Outputs.Add(ret);
+			return ret;
+		}
+	}
+
+	class InputTable1OutputTable1FunctionDefinition : FunctionDefinition
+	{
+		public InputTable1OutputTable1FunctionDefinition(string name, OperatorType type)
+		{
+			Name = name;
+			Type = type;
+			Arguments = new[] { typeof(SSAGenerator.SymbolTable) };
+			Return = typeof(SSAGenerator.SymbolTable);
+		}
+
+		public override object Generate(FunctionExpression expr, object[] inputs)
+		{
+			var node = new SSAGenerator.NodeOperator();
+			node.Expression = expr;
+			node.Type = Type;
+
+			var input = (SSAGenerator.SymbolTable)inputs[0];
+			var retTable = new SSAGenerator.SymbolTable();
+
+			foreach (var kv in input.Tables)
+			{
+				if (!(kv.Value.Value is SSAGenerator.Value))
+				{
+					throw new InvalidOperationException(expr.Line);
+				}
+
+				node.Inputs.Add(kv.Value.Value as SSAGenerator.Value);
+			}
+
+			int ind = 0;
+			foreach (var table in input.Tables)
+			{
+				var ret = new SSAGenerator.Value();
+				ret.Index = ind;
+				ret.Generator = node;
+				node.Outputs.Add(ret);
+				retTable.Tables.Add(table.Key, new SSAGenerator.Attribute(ret));
+				ind++;
+			}
+			return retTable;
+		}
+	}
+
+	class FunctionDefinitionCollection
+	{
+		List<FunctionDefinition> functions = new List<FunctionDefinition>();
+
+		public FunctionDefinitionCollection()
+		{
+			functions.Add(new InputValueNOutputValue1FunctionDefinition("sin", OperatorType.Sine, 1));
+			functions.Add(new InputTable1OutputTable1FunctionDefinition("sin", OperatorType.Sine));
+			functions.Add(new InputValueNOutputValue1FunctionDefinition("cos", OperatorType.Cos, 1));
+			functions.Add(new InputTable1OutputTable1FunctionDefinition("cos", OperatorType.Cos));
+			functions.Add(new InputValueNOutputValue1FunctionDefinition("rand", OperatorType.Rand, 0));
+			functions.Add(new InputValueNOutputValue1FunctionDefinition("rand", OperatorType.Rand_WithSeed, 1));
+			functions.Add(new InputTable1OutputTable1FunctionDefinition("rand", OperatorType.Rand_WithSeed));
+		}
+
+		public object Generate(FunctionExpression expr, object[] inputs)
+		{
+			foreach (var func in functions)
+			{
+				if (func.Name != expr.Value)
+					continue;
+
+				if (func.Arguments.Length != expr.Args.Length)
+					continue;
+
+				bool exit = false;
+				for(int i = 0; i < func.Arguments.Length; i++)
+				{	
+					if(inputs[i].GetType() != func.Arguments[i])
+					{
+						exit = true;
+						break;
+					}
+				}
+
+				if (exit)
+					continue;
+
+				return func.Generate(expr, inputs);
+			}
+
+			throw new UnknownFunctionException(expr.Value, expr.Line);
+		}
+	}
+
 	/// <summary>
 	/// generate Static single assignment form
 	/// </summary>
@@ -14,6 +153,8 @@ namespace Effekseer.InternalScript
 	/// </remarks>
 	class SSAGenerator
 	{
+		FunctionDefinitionCollection functionDefinitionCollection = new FunctionDefinitionCollection();
+
 		public class Node
 		{
 			public Expression Expression;
@@ -137,9 +278,24 @@ namespace Effekseer.InternalScript
 				throw new InvalidSubstitution(expr.Line);
 			}
 
-			if (value is Value)
+			if (targetAttribute.Value == null)
 			{
+				// new data
 				targetAttribute.Value = value;
+			}
+			else if (value is Value && targetAttribute.Value is Value)
+			{
+				// value to value
+				targetAttribute.Value = value;
+			}
+			else if (value is SymbolTable && targetAttribute.Value is SymbolTable)
+			{
+				// table to table
+				targetAttribute.Value = value;
+			}
+			else
+			{
+				throw new InvalidSubstitution(expr.Line);
 			}
 		}
 
@@ -163,6 +319,22 @@ namespace Effekseer.InternalScript
 
 		object EvalFunction(FunctionExpression expr, EvalOption option)
 		{
+			var inputs = new List<object>();
+
+			for (int i = 0; i < expr.Args.Length; i++)
+			{
+				var input = Eval(expr.Args[i], null);
+				if (input is Attribute)
+				{
+					input = (input as Attribute).Value;
+				}
+
+				inputs.Add(input);
+			}
+
+			return functionDefinitionCollection.Generate(expr, inputs.ToArray());
+
+			/*
 			var node = new NodeOperator();
 			node.Expression = expr;
 			if (expr.Value == "sin")
@@ -195,8 +367,14 @@ namespace Effekseer.InternalScript
 				}
 			}
 
+			if(expr.Value == "step")
+			{
+				node.Type = OperatorType.Rand;
+				if (expr.Args.Count() != 1) throw new ArgSizeException(expr.Args.Count(), 2, expr.Line);
+			}
+
 			// input
-			for(int i = 0; i < expr.Args.Length; i++)
+			for (int i = 0; i < expr.Args.Length; i++)
 			{
 				var input = Eval(expr.Args[i], null);
 				if (input is Attribute)
@@ -217,7 +395,7 @@ namespace Effekseer.InternalScript
 
 						node.Inputs.Add(table.Value.Value as Value);
 					}
-					return retTable;
+					//return retTable;
 				}
 				else if (input is Value)
 				{
@@ -275,6 +453,7 @@ namespace Effekseer.InternalScript
 				node.Outputs.Add(ret);
 				return ret;
 			}
+			*/
 		}
 
 		object Eval(Expression expression, EvalOption option)

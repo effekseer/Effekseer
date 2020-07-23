@@ -44,7 +44,6 @@ namespace Effekseer
 			}
 
 #if DEBUG
-			var test = new Effekseer.InternalScript.Tests();
 			Effekseer.IO.ChunkTest.Test();
 #endif
 
