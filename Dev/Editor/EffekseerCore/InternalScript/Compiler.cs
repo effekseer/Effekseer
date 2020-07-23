@@ -22,6 +22,8 @@ namespace Effekseer.InternalScript
 
 		Rand = 31,
 		Rand_WithSeed = 32,
+
+		Unknown = 255,
 	}
 
 	public enum RunningPhaseType : int
