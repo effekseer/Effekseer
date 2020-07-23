@@ -101,3 +101,24 @@ if (MSVC)
     set_target_properties(EffekseerEditor PROPERTIES OUTPUT_NAME_DEBUG "Effekseer" )
     set_target_properties(EffekseerEditor PROPERTIES OUTPUT_NAME_RELEASE "Effekseer" )
 endif()
+
+
+file(GLOB files_test
+    TestCSharp/*.cs
+    TestCSharp/Misc/*.cs
+    TestCSharp/Tests/*.cs
+)
+
+add_executable(TestCSharp
+    ${files_test}
+)
+
+set_target_properties(TestCSharp PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
+add_dependencies(TestCSharp EffekseerCore)
+target_link_libraries(TestCSharp EffekseerCore)
+target_compile_options(TestCSharp PRIVATE "/langversion:6")
+
+if (MSVC)
+    set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_DEBUG "Effekseer" )
+    set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_RELEASE "Effekseer" )
+endif()

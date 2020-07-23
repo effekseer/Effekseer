@@ -7,7 +7,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
-
 namespace TestCSharp
 {
 	class Program
@@ -16,7 +15,8 @@ namespace TestCSharp
 		[HandleProcessCorruptedStateExceptions]
 		static void Main(string[] args)
 		{
-			Misc.ZLib.Test();
+			ZLib.Test();
+			MaterialInformation.Test();
 		}
 	}
 }
