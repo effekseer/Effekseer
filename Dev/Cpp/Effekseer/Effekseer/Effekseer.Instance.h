@@ -490,6 +490,12 @@ private:
 		@brief	絶対パラメータの反映
 	*/
 	void ModifyMatrixFromLocationAbs(float deltaFrame);
+
+	void ApplyDynamicParameterToFixedLocation();
+
+	void ApplyDynamicParameterToFixedRotation();
+
+	void ApplyDynamicParameterToFixedScaling();
 };
 
 //----------------------------------------------------------------------------------

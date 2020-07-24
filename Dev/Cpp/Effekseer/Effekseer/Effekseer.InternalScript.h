@@ -30,6 +30,7 @@ private:
 		Sub = 2,
 		Mul = 3,
 		Div = 4,
+		Mod = 5,
 
 		UnaryAdd = 11,
 		UnarySub = 12,
@@ -39,6 +40,8 @@ private:
 
 		Rand = 31,
 		Rand_WithSeed = 32,
+
+		Step = 50,
 	};
 
 private:

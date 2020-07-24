@@ -113,6 +113,7 @@ namespace Effekseer.InternalScript
 			functions.Add(new InputValueNOutputValue1FunctionDefinition("rand", OperatorType.Rand, 0));
 			functions.Add(new InputValueNOutputValue1FunctionDefinition("rand", OperatorType.Rand_WithSeed, 1));
 			functions.Add(new InputTable1OutputTable1FunctionDefinition("rand", OperatorType.Rand_WithSeed));
+			functions.Add(new InputValueNOutputValue1FunctionDefinition("step", OperatorType.Step, 2));
 		}
 
 		public object Generate(FunctionExpression expr, object[] inputs)
@@ -496,7 +497,7 @@ namespace Effekseer.InternalScript
 				if (expr.Operator == "-") node.Type = OperatorType.Sub;
 				if (expr.Operator == "*") node.Type = OperatorType.Mul;
 				if (expr.Operator == "/") node.Type = OperatorType.Div;
-
+				if (expr.Operator == "%") node.Type = OperatorType.Mod;
 
 				var lhs = Eval(expr.Lhs, null);
 				if (lhs is Attribute)

@@ -7,13 +7,15 @@ namespace Effekseer
 
 bool InternalScript::IsValidOperator(int value) const
 {
-	if (0 <= value && value <= 4)
+	if (0 <= value && value <= 5)
 		return true;
 	if (11 <= value && value <= 12)
 		return true;
 	if (21 <= value && value <= 22)
 		return true;
 	if (31 <= value && value <= 32)
+		return true;
+	if (50 == value)
 		return true;
 
 	return false;
@@ -236,6 +238,10 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 				registers[index] = tempInputs[0] * tempInputs[1];
 			else if (type == OperatorType::Div)
 				registers[index] = tempInputs[0] / tempInputs[1];
+			else if (type == OperatorType::Mod)
+			{
+				registers[index] = fmodf(tempInputs[0], tempInputs[1]);
+			}
 			else if (type == OperatorType::Sine)
 			{
 				registers[index] = sin(tempInputs[j]);
@@ -259,6 +265,12 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 			else if (type == OperatorType::Rand_WithSeed)
 			{
 				registers[index] = randSeedFuncCallback(userData, tempInputs[j]);
+			}
+			else if (type == OperatorType::Step)
+			{
+				auto edge = tempInputs[0];
+				auto x = tempInputs[1];
+				registers[index] = x >= edge ? 1.0f : 0.0f;
 			}
 			else if (type == OperatorType::Constant)
 			{
