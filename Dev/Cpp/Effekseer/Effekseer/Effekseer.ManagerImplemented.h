@@ -124,9 +124,9 @@ private:
 
 	// buffers which is allocated while initializing
 	// 初期化中に確保されたバッファ
-	std::unique_ptr<InstanceChunk[]> reservedChunksBuffer_;
-	std::unique_ptr<uint8_t[]> reservedGroupBuffer_;
-	std::unique_ptr<uint8_t[]> reservedContainerBuffer_;
+	CustomAlignedVector<InstanceChunk> reservedChunksBuffer_;
+	CustomAlignedVector<uint8_t> reservedGroupBuffer_;
+	CustomAlignedVector<uint8_t> reservedContainerBuffer_;
 
 	// pooled instances. Thease are not used and waiting to be used.
 	// プールされたインスタンス。使用されておらず、使用されてるのを待っている。
