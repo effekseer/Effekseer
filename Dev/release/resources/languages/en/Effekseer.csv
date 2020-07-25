@@ -84,6 +84,8 @@ Range,Range
 RecentFiles,Recent Files
 Record,Record
 Recorder,Recorder
+RecorderProgress,Progress in Recording...
+RecorderAbort,Abort
 Render,Render
 RenderSettings,Render Settings
 ResetMaginification,Reset maginification
