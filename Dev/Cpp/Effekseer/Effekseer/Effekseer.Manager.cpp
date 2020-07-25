@@ -397,10 +397,10 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	m_renderingDrawSets.reserve(64);
 
 	int chunk_max = (m_instance_max + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
-	reservedChunksBuffer_.reset(new InstanceChunk[chunk_max]);
-	for (int i = 0; i < chunk_max; i++)
+	reservedChunksBuffer_.resize(chunk_max);
+	for (auto& chunk : reservedChunksBuffer_)
 	{
-		pooledChunks_.push(&reservedChunksBuffer_[i]);
+		pooledChunks_.push(&chunk);
 	}
 	for (auto& chunks : instanceChunks_)
 	{
@@ -409,17 +409,17 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
 	// Pooling InstanceGroup
-	reservedGroupBuffer_.reset(new uint8_t[instance_max * sizeof(InstanceGroup)]);
+	reservedGroupBuffer_.resize(instance_max * sizeof(InstanceGroup));
 	for (int i = 0; i < instance_max; i++)
 	{
 		pooledGroups_.push((InstanceGroup*)&reservedGroupBuffer_[i * sizeof(InstanceGroup)]);
 	}
 
 	// Pooling InstanceGroup
-	reservedContainerBuffer_.reset(new uint8_t[instance_max * sizeof(InstanceGroup)]);
+	reservedContainerBuffer_.resize(instance_max * sizeof(InstanceContainer));
 	for (int i = 0; i < instance_max; i++)
 	{
-		pooledContainers_.push((InstanceContainer*)&reservedContainerBuffer_[i * sizeof(InstanceGroup)]);
+		pooledContainers_.push((InstanceContainer*)&reservedContainerBuffer_[i * sizeof(InstanceContainer)]);
 	}
 
 	m_setting->SetEffectLoader(new DefaultEffectLoader());
