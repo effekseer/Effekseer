@@ -481,13 +481,8 @@ void Instance::FirstUpdate()
 	// Translation
 	if (m_pEffectNode->TranslationType == ParameterTranslationType_Fixed)
 	{
-		translation_values.fixed.location = ApplyEq(effect,
-													instanceGlobal,
-													&rand,
-													m_pEffectNode->TranslationFixed.RefEq,
-													m_pEffectNode->TranslationFixed.Position,
-													m_pEffectNode->DynamicFactor.Tra,
-													m_pEffectNode->DynamicFactor.TraInv);
+		translation_values.fixed.location = m_pEffectNode->TranslationFixed.Position;
+		ApplyDynamicParameterToFixedLocation();
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_PVA)
 	{
@@ -554,13 +549,8 @@ void Instance::FirstUpdate()
 	// Rotation
 	if (m_pEffectNode->RotationType == ParameterRotationType_Fixed)
 	{
-		rotation_values.fixed.rotation = ApplyEq(effect,
-												 instanceGlobal,
-												 &rand,
-												 m_pEffectNode->RotationFixed.RefEq,
-												 m_pEffectNode->RotationFixed.Position,
-												 m_pEffectNode->DynamicFactor.Rot,
-												 m_pEffectNode->DynamicFactor.RotInv);
+		rotation_values.fixed.rotation = m_pEffectNode->RotationFixed.Position;
+		ApplyDynamicParameterToFixedRotation();
 	}
 	else if (m_pEffectNode->RotationType == ParameterRotationType_PVA)
 	{
@@ -645,13 +635,8 @@ void Instance::FirstUpdate()
 	// Scaling
 	if (m_pEffectNode->ScalingType == ParameterScalingType_Fixed)
 	{
-		scaling_values.fixed.scale = ApplyEq(effect,
-											 instanceGlobal,
-											 &rand,
-											 m_pEffectNode->ScalingFixed.RefEq,
-											 m_pEffectNode->ScalingFixed.Position,
-											 m_pEffectNode->DynamicFactor.Scale,
-											 m_pEffectNode->DynamicFactor.ScaleInv);
+		scaling_values.fixed.scale = m_pEffectNode->ScalingFixed.Position;
+		ApplyDynamicParameterToFixedScaling();
 	}
 	else if (m_pEffectNode->ScalingType == ParameterScalingType_PVA)
 	{
@@ -1371,6 +1356,8 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_Fixed)
 		{
+			ApplyDynamicParameterToFixedLocation();
+
 			localPosition = translation_values.fixed.location;
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_PVA)
@@ -1394,9 +1381,9 @@ void Instance::CalculateMatrix(float deltaFrame)
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
 		{
 			auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
-			
+
 			if (NurbsCurveParam.Index != -1)
-			{	
+			{
 				Curve* curve = static_cast<Curve*>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
 				float moveSpeed = NurbsCurveParam.MoveSpeed;
 				int32_t loopType = NurbsCurveParam.LoopType;
@@ -1409,15 +1396,15 @@ void Instance::CalculateMatrix(float deltaFrame)
 				{
 				default:
 				case 0:
-				t = fmod(t, 1.0f);
-				break;
+					t = fmod(t, 1.0f);
+					break;
 
 				case 1:
-				if (t > 1.0f)
-				{
-					t = 1.0f;
-				}
-				break;
+					if (t > 1.0f)
+					{
+						t = 1.0f;
+					}
+					break;
 				}
 
 				localPosition = curve->CalcuratePoint(t, NurbsCurveParam.Scale * m_pEffectNode->m_effect->GetMaginification());
@@ -1429,7 +1416,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
 		{
-			localPosition = { 0, 0, 0 };
+			localPosition = {0, 0, 0};
 		}
 #endif
 
@@ -1445,6 +1432,8 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->RotationType == ParameterRotationType_Fixed)
 		{
+			ApplyDynamicParameterToFixedRotation();
+
 			localAngle = rotation_values.fixed.rotation;
 		}
 		else if (m_pEffectNode->RotationType == ParameterRotationType_PVA)
@@ -1482,6 +1471,8 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->ScalingType == ParameterScalingType_Fixed)
 		{
+			ApplyDynamicParameterToFixedScaling();
+
 			localScaling = scaling_values.fixed.scale;
 		}
 		else if (m_pEffectNode->ScalingType == ParameterScalingType_PVA)
@@ -1595,8 +1586,8 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		if(m_pEffectNode->TranslationType != ParameterTranslationType_ViewOffset)
-		{ 
+		if (m_pEffectNode->TranslationType != ParameterTranslationType_ViewOffset)
+		{
 			m_GlobalMatrix43 *= m_ParentMatrix;
 			assert(m_GlobalMatrix43.IsValid());
 		}
@@ -1730,6 +1721,48 @@ void Instance::ModifyMatrixFromLocationAbs(float deltaFrame)
 	Mat43f MatTraGlobal = Mat43f::Translation(m_GlobalRevisionLocation);
 	m_GlobalMatrix43 *= MatTraGlobal;
 	assert(m_GlobalMatrix43.IsValid());
+}
+
+void Instance::ApplyDynamicParameterToFixedLocation()
+{
+	if (m_pEffectNode->TranslationFixed.RefEq >= 0)
+	{
+		translation_values.fixed.location = ApplyEq(m_pEffectNode->GetEffect(),
+													m_pContainer->GetRootInstance(),
+													&m_randObject,
+													m_pEffectNode->TranslationFixed.RefEq,
+													m_pEffectNode->TranslationFixed.Position,
+													m_pEffectNode->DynamicFactor.Tra,
+													m_pEffectNode->DynamicFactor.TraInv);
+	}
+}
+
+void Instance::ApplyDynamicParameterToFixedRotation()
+{
+	if (m_pEffectNode->RotationFixed.RefEq >= 0)
+	{
+		rotation_values.fixed.rotation = ApplyEq(m_pEffectNode->GetEffect(),
+												 m_pContainer->GetRootInstance(),
+												 &m_randObject,
+												 m_pEffectNode->RotationFixed.RefEq,
+												 m_pEffectNode->RotationFixed.Position,
+												 m_pEffectNode->DynamicFactor.Rot,
+												 m_pEffectNode->DynamicFactor.RotInv);
+	}
+}
+
+void Instance::ApplyDynamicParameterToFixedScaling()
+{
+	if (m_pEffectNode->ScalingFixed.RefEq >= 0)
+	{
+		scaling_values.fixed.scale = ApplyEq(m_pEffectNode->GetEffect(),
+											 m_pContainer->GetRootInstance(),
+											 &m_randObject,
+											 m_pEffectNode->ScalingFixed.RefEq,
+											 m_pEffectNode->ScalingFixed.Position,
+											 m_pEffectNode->DynamicFactor.Scale,
+											 m_pEffectNode->DynamicFactor.ScaleInv);
+	}
 }
 
 //----------------------------------------------------------------------------------

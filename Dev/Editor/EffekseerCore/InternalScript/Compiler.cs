@@ -13,6 +13,7 @@ namespace Effekseer.InternalScript
 		Sub = 2,
 		Mul = 3,
 		Div = 4,
+		Mod = 5,
 
 		UnaryAdd = 11,
 		UnarySub = 12,
@@ -22,6 +23,8 @@ namespace Effekseer.InternalScript
 
 		Rand = 31,
 		Rand_WithSeed = 32,
+
+		Step = 50,
 
 		Unknown = 255,
 	}
@@ -38,6 +41,17 @@ namespace Effekseer.InternalScript
 		public List<string> Inputs = new List<string>();
 		public List<string> Outputs = new List<string>();
 		public Dictionary<string, object> Attributes = new Dictionary<string, object>();
+
+		public bool IsSupported(int version)
+		{
+			if (Type == OperatorType.Mod && version < 1600)
+				return false;
+
+			if (Type == OperatorType.Step && version < 1600)
+				return false;
+
+			return true;
+		}
 	}
 
 	public class CompileResult
