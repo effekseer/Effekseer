@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.0.0)
+cmake_minimum_required (VERSION 3.0.0)
 
 # C++ version
 if(WIN32)
@@ -61,6 +61,10 @@ add_subdirectory(OpenAL)
 
 if (BUILD_VULKAN)
     add_subdirectory(Vulkan)
+endif()
+
+if(APPLE)
+    add_subdirectory(Metal)
 endif()
 
 add_subdirectory(CustomLoader)
