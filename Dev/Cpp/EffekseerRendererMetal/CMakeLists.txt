@@ -19,8 +19,14 @@ file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../Effekse
 
 list(REMOVE_ITEM LOCAL_SOURCES_Common
   ${CMAKE_CURRENT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
 )
+
+if(NOT USE_INTERNAL_LOADER)
+    list(REMOVE_ITEM LOCAL_SOURCES_Common
+        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
+        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
+    )
+endif()
 
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
