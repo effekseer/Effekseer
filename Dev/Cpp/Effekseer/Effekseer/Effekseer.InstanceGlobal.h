@@ -91,6 +91,8 @@ public:
 	*/
 	float GetUpdatedFrame();
 
+	void ResetUpdatedFrame();
+
 	InstanceContainer* GetRootContainer() const;
 	void SetRootContainer( InstanceContainer* container );
 

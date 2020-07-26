@@ -37,6 +37,7 @@ private:
 		bool DoUseBaseMatrix;
 		bool GoingToStop;
 		bool GoingToStopRoot;
+		int RandomSeed = 0;
 		EffectInstanceRemovingCallback RemovingCallback;
 
 		Mat43f BaseMatrix;

@@ -807,6 +807,8 @@ float EffectImplemented::GetMaginification() const
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
+	ES_SAFE_RELEASE(factory);
+
 	if(m_setting != nullptr)
 	{
 		for (int i = 0; i < m_setting->GetEffectFactoryCount(); i++)
@@ -1177,7 +1179,8 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)managers[i])->BeginReloadEffect( this, lockCount == 0);
+		auto manager = static_cast<ManagerImplemented*>(managers[i]);
+		manager->BeginReloadEffect( this, lockCount == 0);
 		lockCount++;
 	}
 
@@ -1198,7 +1201,8 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		lockCount--;
-		((ManagerImplemented*)managers[i])->EndReloadEffect( this, lockCount == 0);
+		auto manager = static_cast<ManagerImplemented*>(managers[i]);
+		manager->EndReloadEffect( this, lockCount == 0);
 	}
 
 	return false;
@@ -1233,7 +1237,8 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this, lockCount == 0);
+		auto manager = static_cast<ManagerImplemented*>(managers[i]);
+		manager->BeginReloadEffect(this, lockCount == 0);
 		lockCount++;
 	}
 
@@ -1245,8 +1250,11 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		lockCount--;
-		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this, lockCount == 0);
+		auto manager = static_cast<ManagerImplemented*>(managers[i]);
+		manager->EndReloadEffect(this, lockCount == 0);
 	}
+
+	eLoader->Unload(data, size);
 
 	return false;
 }
