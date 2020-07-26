@@ -523,14 +523,14 @@ namespace Effekseer.Binary
 			{
 				{
 					var value_ = value.UVFCurve.Start;
-					var bytes1 = value_.GetBytes(1.0f / width);
+					var bytes1 = value_.GetBytes(1.0f / width, 1.0f / height);
 					List<byte[]> _data = new List<byte[]>();
 					data.Add(bytes1);
 				}
 
 				{
 					var value_ = value.UVFCurve.Size;
-					var bytes1 = value_.GetBytes(1.0f / height);
+					var bytes1 = value_.GetBytes(1.0f / width, 1.0f / height);
 					List<byte[]> _data = new List<byte[]>();
 					data.Add(bytes1);
 				}
@@ -649,7 +649,7 @@ namespace Effekseer.Binary
 			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData1.FCurve;
-				var bytes1 = value_.GetBytes(1.0f);
+				var bytes1 = value_.GetBytes();
 				data.Add(bytes1);
 			}
 			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed4D)
@@ -694,7 +694,7 @@ namespace Effekseer.Binary
 			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData2.FCurve;
-				var bytes1 = value_.GetBytes(1.0f);
+				var bytes1 = value_.GetBytes();
 				data.Add(bytes1);
 			}
 			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed4D)
