@@ -18,12 +18,12 @@ namespace Effekseer.Data.Value
 			Y = new FCurve<float>(0);
 		}
 
-		public byte[] GetBytes(float mul = 1.0f)
+		public byte[] GetBytes(float mulX = 1.0f, float mulY = 1.0f)
 		{
 			List<byte[]> data = new List<byte[]>();
 			data.Add(BitConverter.GetBytes((int)Timeline.Value));
-			data.Add(X.GetBytes(mul));
-			data.Add(Y.GetBytes(mul));
+			data.Add(X.GetBytes(mulX));
+			data.Add(Y.GetBytes(mulY));
 			return data.SelectMany(_ => _).ToArray();
 		}
 	}

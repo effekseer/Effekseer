@@ -861,6 +861,7 @@ namespace Effekseer.Data
 		[Selected(ID = 2, Value = 1)]
 		[Selected(ID = 2, Value = 2)]
 		[Selected(ID = 2, Value = 3)]
+		[Selected(ID = 2, Value = 4)]
 		[IO(Export = true)]
 		[Key(key = "BRS_UVTextureReferenceTarget")]
 		public Value.Enum<UVTextureReferenceTargetType> UVTextureReferenceTarget
