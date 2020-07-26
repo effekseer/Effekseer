@@ -15,6 +15,8 @@ namespace Effekseer.GUI.Dock
 
 		string menuOpenFile;
 		string menuShowInFileManager;
+		System.IO.FileSystemWatcher directoryWatcher;
+		bool shouldUpdateFileList = true;
 
 		public FileViewer()
 		{
@@ -37,6 +39,13 @@ namespace Effekseer.GUI.Dock
 			{
 				menuShowInFileManager = Resources.GetString("FileViewer_ShowInExplorer");
 			}
+
+			directoryWatcher = new FileSystemWatcher();
+			directoryWatcher.Changed += (o, e) => { shouldUpdateFileList = true; };
+			directoryWatcher.Renamed += (o, e) => { shouldUpdateFileList = true; };
+			directoryWatcher.Deleted += (o, e) => { shouldUpdateFileList = true; };
+			directoryWatcher.Created += (o, e) => { shouldUpdateFileList = true; };
+
 		}
 
 		public override void OnDisposed()
@@ -143,6 +152,12 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.PopItemWidth();
+
+			if (shouldUpdateFileList)
+			{
+				UpdateFileList();
+				shouldUpdateFileList = false;
+			}
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)
@@ -227,8 +242,13 @@ namespace Effekseer.GUI.Dock
 		/// <summary>
 		/// Update list
 		/// </summary>
-		private void UpdateFileList(string path)
+		private void UpdateFileList(string path = null)
 		{
+			if (path == null)
+			{
+				path = currentPath;
+			}
+
 			if (!Directory.Exists(path))
 			{
 				return;
@@ -259,6 +279,9 @@ namespace Effekseer.GUI.Dock
 				var fileNode = new FileItem(Path.GetFileName(filePath), filePath);
 				items.Add(fileNode);
 			}
+
+			directoryWatcher.Path = path;
+			directoryWatcher.EnableRaisingEvents = true;
 		}
 
 		private void OnFilePicked()
