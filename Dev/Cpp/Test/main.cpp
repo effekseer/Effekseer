@@ -131,6 +131,8 @@ int main()
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
+	ReloadTest();
+
 	MassPlayTest();
 	StringAndPathHelperTest();
 	StartingFrameTest();

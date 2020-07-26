@@ -374,6 +374,42 @@ void MassPlayTest()
 	}
 }
 
+void ReloadTest()
+{
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
+
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		auto handle = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+
+		platform->TakeScreenshot("Reload_0.png");
+
+		platform->GetEffects()[0]->Reload((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		//platform->Update();
+
+		platform->Draw();
+
+		platform->TakeScreenshot("Reload_1.png");
+
+		platform->Terminate();
+	}
+}
+
+
 void BasicRuntimeTest()
 {
 
