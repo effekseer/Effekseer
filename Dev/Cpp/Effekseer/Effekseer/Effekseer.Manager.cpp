@@ -1535,6 +1535,31 @@ void ManagerImplemented::UpdateHandle(Handle handle, float deltaFrame)
 	}
 }
 
+void ManagerImplemented::UpdateHandleToMoveToFrame(Handle handle, float frame)
+{
+	auto it = m_DrawSets.find(handle);
+	if (it == m_DrawSets.end())
+	{
+		return;
+	}
+
+	DrawSet& drawSet = it->second;
+
+	if (frame < drawSet.GlobalPointer->GetUpdatedFrame())
+	{
+		StopWithoutRemoveDrawSet(drawSet);
+		ResetAndPlayWithDataSet(drawSet, frame);
+	}
+	else
+	{
+		auto updatedFrame = drawSet.GlobalPointer->GetUpdatedFrame();
+		for (int i = 0; i < frame - updatedFrame; i++)
+		{
+			UpdateHandle(handle, 1);
+		}
+	}
+}
+
 void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet)
 {
 	for (auto& chunks : instanceChunks_)
@@ -1636,6 +1661,66 @@ bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer*
 	{
 		return false;
 	}
+}
+
+void ManagerImplemented::StopWithoutRemoveDrawSet(DrawSet& drawSet)
+{
+	drawSet.InstanceContainerPointer->RemoveForcibly(true);
+	ReleaseInstanceContainer(drawSet.InstanceContainerPointer);
+	drawSet.InstanceContainerPointer = nullptr;
+	ES_SAFE_RELEASE(drawSet.CullingObjectPointer);
+}
+
+void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
+{
+	auto pGlobal = drawSet.GlobalPointer;
+	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer);
+
+	// reallocate
+	pGlobal->GetRandObject().SetSeed(drawSet.RandomSeed);
+
+	pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
+	for (size_t i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
+	{
+		pGlobal->RenderedInstanceContainers[i] = nullptr;
+	}
+
+	drawSet.IsPreupdated = false;
+	drawSet.IsParameterChanged = true;
+	drawSet.StartFrame = 0;
+	drawSet.GoingToStop = false;
+	drawSet.GoingToStopRoot = false;
+	drawSet.IsRemoving = false;
+	pGlobal->ResetUpdatedFrame();
+
+	// Create an instance through a container
+	//drawSet.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, NULL);
+
+	auto isShown = drawSet.IsShown;
+	drawSet.IsShown = false;
+
+	// skip
+	Preupdate(drawSet);
+
+	for (float f = 0; f < frame - 1; f += 1.0f)
+	{
+		drawSet.GlobalPointer->BeginDeltaFrame(1.0f);
+
+		UpdateInstancesByInstanceGlobal(drawSet);
+		UpdateHandleInternal(drawSet);
+		//drawSet.InstanceContainerPointer->Update(true, false);
+		drawSet.GlobalPointer->EndDeltaFrame();
+	}
+
+	drawSet.IsShown = isShown;
+
+	drawSet.GlobalPointer->BeginDeltaFrame(1.0f);
+
+	UpdateInstancesByInstanceGlobal(drawSet);
+	UpdateHandleInternal(drawSet);
+		
+	//drawSet.InstanceContainerPointer->Update(true, drawSet.IsShown);
+	drawSet.GlobalPointer->EndDeltaFrame();
 }
 
 void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
@@ -1863,14 +1948,17 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 	// Create root
 	InstanceGlobal* pGlobal = new InstanceGlobal();
 
+	int32_t randomSeed = 0;
 	if (e->m_defaultRandomSeed >= 0)
 	{
-		pGlobal->GetRandObject().SetSeed(e->m_defaultRandomSeed);
+		randomSeed = e->m_defaultRandomSeed;
 	}
 	else
 	{
-		pGlobal->GetRandObject().SetSeed(GetRandFunc()());
+		randomSeed = GetRandFunc()();
 	}
+
+	pGlobal->GetRandObject().SetSeed(randomSeed);
 
 	pGlobal->dynamicInputParameters = e->defaultDynamicInputs;
 
@@ -1890,6 +1978,7 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 
 	drawSet.IsParameterChanged = true;
 	drawSet.StartFrame = startFrame;
+	drawSet.RandomSeed = randomSeed;
 
 	return handle;
 }
@@ -2104,9 +2193,7 @@ void ManagerImplemented::BeginReloadEffect(Effect* effect, bool doLockThread)
 		}
 
 		// dispose instances
-		it.second.InstanceContainerPointer->RemoveForcibly(true);
-		ReleaseInstanceContainer(it.second.InstanceContainerPointer);
-		it.second.InstanceContainerPointer = NULL;
+		StopWithoutRemoveDrawSet(it.second);
 	}
 }
 
@@ -2127,42 +2214,8 @@ void ManagerImplemented::EndReloadEffect(Effect* effect, bool doLockThread)
 		auto e = static_cast<EffectImplemented*>(effect);
 		auto pGlobal = ds.GlobalPointer;
 
-		// reallocate
-		if (e->m_defaultRandomSeed >= 0)
-		{
-			pGlobal->GetRandObject().SetSeed(e->m_defaultRandomSeed);
-		}
-		else
-		{
-			pGlobal->GetRandObject().SetSeed(GetRandFunc()());
-		}
+		ResetAndPlayWithDataSet(ds, ds.GlobalPointer->GetUpdatedFrame());
 
-		pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
-		for (size_t i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
-		{
-			pGlobal->RenderedInstanceContainers[i] = nullptr;
-		}
-
-		// Create an instance through a container
-		ds.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), ds.GlobalPointer, true, ds.GlobalMatrix, NULL);
-
-		// skip
-		for (float f = 0; f < ds.GlobalPointer->GetUpdatedFrame() - 1; f += 1.0f)
-		{
-			ds.GlobalPointer->BeginDeltaFrame(1.0f);
-
-			UpdateInstancesByInstanceGlobal(ds);
-
-			ds.InstanceContainerPointer->Update(true, false);
-			ds.GlobalPointer->EndDeltaFrame();
-		}
-
-		ds.GlobalPointer->BeginDeltaFrame(1.0f);
-
-		UpdateInstancesByInstanceGlobal(ds);
-
-		ds.InstanceContainerPointer->Update(true, ds.IsShown);
-		ds.GlobalPointer->EndDeltaFrame();
 	}
 
 	if (doLockThread)

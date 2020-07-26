@@ -682,6 +682,21 @@ public:
 	virtual void UpdateHandle(Handle handle, float deltaFrame = 1.0f) = 0;
 
 	/**
+		@brief	
+		\~English	Update an effect to move to the specified frame
+		\~Japanese	指定した時間に移動するために更新する
+		\~English	a handle.
+		\~Japanese	ハンドル
+		@param	frame
+		\~English	frame time (1 is 1/60 seconds)
+		\~Japanese	フレーム時間(60fps基準)
+		@note
+		\~English	This function is slow.
+		\~Japanese	この関数は遅い。
+	*/
+	virtual void UpdateHandleToMoveToFrame(Handle handle, float frame) = 0;
+
+	/**
 	@brief
 	\~English	Draw particles.
 	\~Japanese	描画処理を行う。

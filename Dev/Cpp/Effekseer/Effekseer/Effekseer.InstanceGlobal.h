@@ -81,15 +81,11 @@ public:
 
 	void DecInstanceCount();
 
-	/**
-		@brief	全てのインスタンス数を取得
-	*/
 	int GetInstanceCount();
 
-	/**
-		@brief	更新されたフレーム数を取得する。
-	*/
 	float GetUpdatedFrame();
+
+	void ResetUpdatedFrame();
 
 	InstanceContainer* GetRootContainer() const;
 	void SetRootContainer(InstanceContainer* container);
