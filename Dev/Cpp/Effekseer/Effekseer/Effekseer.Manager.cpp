@@ -2206,7 +2206,7 @@ void ManagerImplemented::EndReloadEffect(Effect* effect, bool doLockThread)
 		if (ds.ParameterPointer != effect)
 			continue;
 
-		if (it.second.InstanceContainerPointer == nullptr)
+		if (it.second.InstanceContainerPointer != nullptr)
 		{
 			continue;
 		}
@@ -2217,6 +2217,8 @@ void ManagerImplemented::EndReloadEffect(Effect* effect, bool doLockThread)
 		ResetAndPlayWithDataSet(ds, ds.GlobalPointer->GetUpdatedFrame());
 
 	}
+
+	Flip();
 
 	if (doLockThread)
 	{
