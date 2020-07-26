@@ -96,6 +96,11 @@ float InstanceGlobal::GetUpdatedFrame()
 	return m_updatedFrame;
 }
 
+void InstanceGlobal::ResetUpdatedFrame()
+{
+	m_updatedFrame = 0.0f;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

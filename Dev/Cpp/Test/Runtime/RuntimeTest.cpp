@@ -345,12 +345,12 @@ void MassPlayTest()
 		platform->Terminate();
 	}
 
-		{
+	{
 		srand(0);
 #ifdef _WIN32
-			auto platform = std::make_shared<EffectPlatformDX11>();
+		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-			auto platform = std::make_shared<EffectPlatformGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -386,6 +386,61 @@ void MassPlayTest()
 				(GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/Memory/DestroyWhenNoMoreChildren.efkefc").c_str());
 			platform->Update();
 		}
+
+		platform->Terminate();
+	}
+}
+
+void UpdateToMoveTest()
+{
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
+
+		EffectPlatformInitializingParameter param;
+		platform->Initialize(param);
+
+		auto handle = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		//
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+
+		platform->TakeScreenshot("UpdateToMove_0.png");
+
+		for (size_t i = 0; i < 10; i++)
+		{
+			platform->Update();
+		}
+
+		//
+		platform->GetManager()->BeginUpdate();
+
+		platform->GetManager()->UpdateHandleToMoveToFrame(handle, 19);
+
+		platform->GetManager()->EndUpdate();
+
+		platform->Update();
+
+		platform->TakeScreenshot("UpdateToMove_1.png");
+
+		//
+		platform->GetManager()->BeginUpdate();
+
+		platform->GetManager()->UpdateHandleToMoveToFrame(handle, 10);
+		platform->GetManager()->UpdateHandleToMoveToFrame(handle, 19);
+
+		platform->GetManager()->EndUpdate();
+
+		platform->Update();
+		
+		platform->TakeScreenshot("UpdateToMove_2.png");
 
 		platform->Terminate();
 	}
@@ -455,7 +510,6 @@ void BasicRuntimeTest(bool onCI)
 		platform->Terminate();
 	}
 #endif
-
 }
 
 void CustomAllocatorTest()

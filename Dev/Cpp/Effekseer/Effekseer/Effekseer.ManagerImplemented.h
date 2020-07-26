@@ -30,6 +30,7 @@ private:
 		InstanceContainer* InstanceContainerPointer;
 		InstanceGlobal* GlobalPointer;
 		Culling3D::Object* CullingObjectPointer;
+		int RandomSeed = 0;
 		bool IsPaused;
 		bool IsShown;
 		bool IsAutoDrawing;
@@ -398,6 +399,8 @@ public:
 
 	void UpdateHandle(Handle handle, float deltaFrame = 1.0f) override;
 
+	void UpdateHandleToMoveToFrame(Handle handle, float frame) override;
+
 private:
 	void UpdateInstancesByInstanceGlobal(const DrawSet& drawSet);
 
@@ -408,6 +411,10 @@ private:
 
 	//! whether container is disabled while rendering because of a distance between the effect and a camera
 	bool IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter);
+
+	void StopWithoutRemoveDrawSet(DrawSet& drawSet);
+
+	void ResetAndPlayWithDataSet(DrawSet& drawSet, float frame);
 
 public:
 	void Draw(const Manager::DrawParameter& drawParameter) override;
