@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using TestCSharp.Misc;
-using Microsoft.Scripting.Utils;
 
 namespace TestCSharp
 {
