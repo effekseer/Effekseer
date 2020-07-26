@@ -80,6 +80,8 @@ public:
 
 	bool Update();
 
+	bool Draw();
+
 	void StopAllEffects();
 
 	virtual bool TakeScreenshot(const char* path)
@@ -96,4 +98,6 @@ public:
 	{
 		return manager_;
 	}
+
+	const std::vector<Effekseer::Effect*>& GetEffects() const { return effects_; }
 };

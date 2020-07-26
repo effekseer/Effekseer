@@ -133,6 +133,8 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
+	ReloadTest();
+
 	MassPlayTest();
 	StringAndPathHelperTest();
 	PlaybackSpeedTest();

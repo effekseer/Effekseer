@@ -193,6 +193,24 @@ bool EffectPlatform::Update()
 	return true;
 }
 
+bool EffectPlatform::Draw() {
+	if (!DoEvent())
+		return false;
+
+	BeginRendering();
+
+	renderer_->SetTime(time_);
+	renderer_->BeginRendering();
+	manager_->Draw();
+	renderer_->EndRendering();
+
+	EndRendering();
+
+	Present();
+
+	return true;
+}
+
 void EffectPlatform::StopAllEffects()
 {
 	if (manager_ != nullptr)

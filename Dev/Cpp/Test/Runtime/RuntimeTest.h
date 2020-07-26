@@ -9,4 +9,5 @@ void PlaybackSpeedTest();
 void MassPlayTest();
 void CustomAllocatorTest();
 void StringAndPathHelperTest();
+void ReloadTest();
 void UpdateToMoveTest();
