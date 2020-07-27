@@ -60,7 +60,7 @@ namespace Effekseer.Utils
 			return true;
 		}
 
-		public static ResourcePaths FindResourcePaths(Data.NodeBase node, ResourcePaths resources = null)
+		public static ResourcePaths FindResourcePaths(Data.NodeBase node, Binary.ExporterVersion exporterVersion, ResourcePaths resources = null)
 		{
 			if (resources == null)
 			{
@@ -83,7 +83,7 @@ namespace Effekseer.Utils
 						}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-						if (exporterVersion >= ExporterVersion.Ver1600)
+						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -128,7 +128,7 @@ namespace Effekseer.Utils
 						}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-						if (exporterVersion >= ExporterVersion.Ver1600)
+						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -179,7 +179,7 @@ namespace Effekseer.Utils
 						}
 
 #if __EFFEKSEER_BUILD_VERSION16__
-						if (exporterVersion >= ExporterVersion.Ver1600)
+						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -291,7 +291,7 @@ namespace Effekseer.Utils
 
 			for (int i = 0; i < node.Children.Count; i++)
 			{
-				FindResourcePaths(node.Children[i], resources);
+				FindResourcePaths(node.Children[i], exporterVersion, resources);
 			}
 
 			return resources;

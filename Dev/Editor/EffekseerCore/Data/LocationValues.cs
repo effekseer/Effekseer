@@ -64,7 +64,7 @@ namespace Effekseer.Data
 		}
 #endif
 
-		internal LocationValues()
+		internal LocationValues(Value.Path basepath)
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Fixed);
 			Fixed = new FixedParamater();
@@ -72,7 +72,7 @@ namespace Effekseer.Data
 			Easing = new Vector3DEasingParamater();
 			LocationFCurve = new Vector3DFCurveParameter();
 #if __EFFEKSEER_BUILD_VERSION16__
-			NurbsCurve = new NurbsCurveParameter();
+			NurbsCurve = new NurbsCurveParameter(basepath);
 			ViewOffset = new ViewOffsetParameter();
 #endif
 
@@ -181,9 +181,9 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public NurbsCurveParameter()
+			public NurbsCurveParameter(Value.Path basepath)
 			{
-				FilePath = new Value.PathForCurve(Resources.GetString("CurveFilter"), true, "");
+				FilePath = new Value.PathForCurve(basepath, Resources.GetString("CurveFilter"), true, "");
 				Scale = new Value.Float(1.0f);
 				MoveSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f);
 				LoopType = new Value.Enum<NurbsLoopType>(NurbsLoopType.Repeat);

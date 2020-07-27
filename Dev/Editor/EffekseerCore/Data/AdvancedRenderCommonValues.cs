@@ -380,17 +380,17 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
-        public AdvancedRenderCommonValues()
+        public AdvancedRenderCommonValues(Value.Path basepath)
         {
 #if __EFFEKSEER_BUILD_VERSION16__
 			EnableAlphaTexture = new Value.Boolean(false);
-			AlphaTextureParam = new AlphaTextureParameter();
+			AlphaTextureParam = new AlphaTextureParameter(basepath);
 
 			EnableUVDistortionTexture = new Value.Boolean(false);
-			UVDistortionTextureParam = new UVDistortionTextureParameter();
+			UVDistortionTextureParam = new UVDistortionTextureParameter(basepath);
 
 			EnableBlendTexture = new Value.Boolean(false);
-			BlendTextureParams = new BlendTextureParameters();
+			BlendTextureParams = new BlendTextureParameters(basepath);
 #endif
 
 			AlphaCutoffParam = new AlphaCutoffParameter();

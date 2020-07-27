@@ -63,7 +63,7 @@ namespace Effekseer.IO
 			Data.NodeRoot rootNode = Core.LoadFromFile(path);
 
 			// Load all dependent resource files
-			var resourcePaths = Utils.Misc.FindResourcePaths(rootNode);
+			var resourcePaths = Utils.Misc.FindResourcePaths(rootNode, Binary.ExporterVersion.Latest);
 			var dependencies = AddEffectDependencies(resourcePaths);
 
 			var efkefc = new EfkEfc();
@@ -370,7 +370,7 @@ namespace Effekseer.IO
 				if (root == null) return false;
 
 				// Resolve the path of dependent resources
-				var resourcePaths = Utils.Misc.FindResourcePaths(root);
+				var resourcePaths = Utils.Misc.FindResourcePaths(root, Binary.ExporterVersion.Latest);
 				foreach (var list in resourcePaths.All)
 				{
 					ApplyEffectDependencies(list);

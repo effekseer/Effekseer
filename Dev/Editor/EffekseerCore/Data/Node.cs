@@ -98,7 +98,7 @@ namespace Effekseer.Data
 
 			Name.SetValueDirectly("Node");
 			CommonValues = new Data.CommonValues();
-			LocationValues = new Data.LocationValues();
+			LocationValues = new Data.LocationValues(basepath);
 			RotationValues = new Data.RotationValues();
 			ScalingValues = new Data.ScaleValues();
 			LocationAbsValues = new Data.LocationAbsValues();
@@ -108,7 +108,7 @@ namespace Effekseer.Data
             DrawingValues = new RendererValues(basepath);
             SoundValues = new SoundValues(basepath);
 #if __EFFEKSEER_BUILD_VERSION16__
-			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues();
+			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
 #endif
 		}
 	}
