@@ -54,6 +54,22 @@ namespace Effekseer.Data
 		}
 
 		/// <summary>
+		/// Get root node
+		/// </summary>
+		/// <returns>Root node</returns>
+		public NodeRoot GetRoot()
+		{
+			var node = Parent;
+			while (node != null)
+			{
+				if (node is NodeRoot)
+					return node as NodeRoot;
+				node = node.Parent;
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Add child
 		/// </summary>
 		/// <param name="node">Added node (if null, generated automatically)</param>

@@ -143,13 +143,13 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Overwrite")]
 		public static bool Overwrite()
 		{
-			if (!System.IO.File.Exists(Core.FullPath))
+			if (!System.IO.File.Exists(Core.Root.GetFullPath()))
 			{
 				return SaveAs();
 			}
 			else
 			{
-				Core.SaveTo(Core.FullPath);
+				Core.SaveTo(Core.Root.GetFullPath());
 
 				if (Manager.Network.SendOnSave)
 				{
@@ -470,6 +470,50 @@ namespace Effekseer.GUI
 			var messageBox = new GUI.Dialog.About();
 			messageBox.Show();
 			return true;
+		}
+
+		[Name(value = "InternalImportPackage")]
+		[UniqueName(value = "Internal.ImportPackage")]
+		static public void ImportPackage(string packagePath, string targetDirPath)
+		{
+			if (string.IsNullOrEmpty(packagePath))
+			{
+				packagePath = swig.FileDialog.OpenDialog("efkpkg", string.Empty);
+			}
+			if (string.IsNullOrEmpty(packagePath))
+			{
+				return;
+			}
+
+			var efkpkg = new IO.EfkPkg();
+			if (!efkpkg.Import(packagePath))
+			{
+				return;
+			}
+
+			var dialog = new GUI.Dialog.ImportEfkPkg();
+			dialog.Show(packagePath, efkpkg);
+		}
+
+		[Name(value = "InternalExportPackage")]
+		[UniqueName(value = "Internal.ExportPackage")]
+		static public void ExportPackage(string packagePath, string[] exportFilePaths)
+		{
+			if (string.IsNullOrEmpty(packagePath))
+			{
+				packagePath = swig.FileDialog.SaveDialog("efkpkg", string.Empty);
+			}
+			if (string.IsNullOrEmpty(packagePath))
+			{
+				return;
+			}
+
+			var efkpkg = new IO.EfkPkg();
+			foreach (string path in exportFilePaths)
+			{
+				efkpkg.AddEffect(path);
+			}
+			efkpkg.Export(packagePath);
 		}
 	}
 }

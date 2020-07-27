@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Effekseer.IO
 {
@@ -310,16 +311,50 @@ namespace Effekseer.IO
 			return data.SelectMany(_ => _).ToArray();
 		}
 
-		public bool Save(string path)
+		public bool Save(string path, Data.NodeRoot rootNode, XmlDocument editorData)
 		{
 			Utils.Logger.Write(string.Format("Save : Start : {0}", path));
 
-			// editor data
-			var editorData = Core.SaveAsXmlDocument(path);
+			var allData = Save(rootNode, editorData);
 
+			try
+			{
+				System.IO.File.WriteAllBytes(path, allData);
+			}
+			catch (Exception e)
+			{
+				string messeage = "";
+				if (Core.Language == Language.English)
+				{
+					messeage = "Failed to save a file " + path + "\nThis error is \n";
+				}
+				else
+				{
+					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
+				}
+
+				messeage += e.ToString();
+
+				if (Core.OnOutputMessage != null)
+				{
+					Core.OnOutputMessage(messeage);
+				}
+
+				Utils.Logger.Write(string.Format("Save : Failed : {0}", e.ToString()));
+
+				return false;
+			}
+
+			Utils.Logger.Write(string.Format("Save : End"));
+
+			return true;
+		}
+
+		public byte[] Save(Data.NodeRoot rootNode, XmlDocument editorData)
+		{
 			// binary data
 			var binaryExporter = new Binary.Exporter();
-			var binaryDataLatest = binaryExporter.Export(1, Binary.ExporterVersion.Latest);  // TODO change magnification
+			var binaryDataLatest = binaryExporter.Export(rootNode, 1, Binary.ExporterVersion.Latest);  // TODO change magnification
 
 			// info data
 			byte[] infoData = null;
@@ -366,48 +401,16 @@ namespace Effekseer.IO
 			if(Binary.ExporterVersion.Latest > Binary.ExporterVersion.Ver1500)
 			{
 				var binaryExporterFallback = new Binary.Exporter();
-				var binaryDataFallback = binaryExporterFallback.Export(1, Binary.ExporterVersion.Ver1500);
+				var binaryDataFallback = binaryExporterFallback.Export(Core.Root, 1, Binary.ExporterVersion.Ver1500);
 				chunk.AddChunk("BIN_", binaryDataFallback);
 			}
 
 			var chunkData = chunk.Save();
 
-			var allData = headerData.Concat(chunkData).ToArray();
-
-			try
-			{
-				System.IO.File.WriteAllBytes(path, allData);
-			}
-			catch(Exception e)
-			{
-				string messeage = "";
-				if (Core.Language == Language.English)
-				{
-					messeage = "Failed to save a file " + path + "\nThis error is \n";
-				}
-				else	
-				{
-					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
-				}
-
-				messeage += e.ToString();
-
-				if(Core.OnOutputMessage != null)
-				{
-					Core.OnOutputMessage(messeage);
-				}
-
-				Utils.Logger.Write(string.Format("Save : Failed : {0}", e.ToString()));
-
-				return false;
-			}
-
-			Utils.Logger.Write(string.Format("Save : End"));
-
-			return true;
+			return headerData.Concat(chunkData).ToArray();
 		}
 
-		public bool Load(string path)
+		public XmlDocument Load(string path)
 		{
 			byte[] allData = null;
 			try
@@ -416,17 +419,22 @@ namespace Effekseer.IO
 			}
 			catch
 			{
-				return false;
+				return null;
 			}
 
-			if (allData.Length < 24) return false;
+			return Load(allData);
+		}
+
+		public XmlDocument Load(byte[] allData)
+		{
+			if (allData.Length < 24) return null;
 
 			if (allData[0] != 'E' ||
 				allData[1] != 'F' ||
 				allData[2] != 'K' ||
 				allData[3] != 'E')
 			{
-				return false;
+				return null;
 			}
 
 			var version = BitConverter.ToInt32(allData, 4);
@@ -439,10 +447,10 @@ namespace Effekseer.IO
 			var editBlock = chunk.Blocks.FirstOrDefault(_ => _.Chunk == "EDIT");
 			if (editBlock == null)
 			{
-				return false;
+				return null;
 			}
 
-			return Core.LoadFromXml(Decompress(editBlock.Buffer), path);
+			return Decompress(editBlock.Buffer);
 		}
 	}
 }

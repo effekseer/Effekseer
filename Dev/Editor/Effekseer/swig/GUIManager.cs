@@ -1197,6 +1197,21 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsShiftKeyDown() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsShiftKeyDown(swigCPtr);
+    return ret;
+  }
+
+  public bool IsCtrlKeyDown() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsCtrlKeyDown(swigCPtr);
+    return ret;
+  }
+
+  public bool IsAltKeyDown() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsAltKeyDown(swigCPtr);
+    return ret;
+  }
+
   public bool IsMouseDown(int button) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseDown(swigCPtr, button);
     return ret;

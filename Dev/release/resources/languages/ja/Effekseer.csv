@@ -18,7 +18,7 @@ Disconnect,切断
 Edit,編集
 End,終了
 EndFrame,終了フレーム
-Export,出力
+Export,エクスポート
 ExportAsAvi,AVIとして出力
 ExportAsGifAnimation,GIFアニメーションとして出力
 ExportAsImages,連番画像として出力
@@ -36,7 +36,11 @@ GenerateAlpha,生成
 GenerateAlpha2,生成(ブレンド+加算)
 Height,縦幅
 Help,ヘルプ
-Import,入力
+Import,インポート
+ImportSourcePackage,インポート元のパッケージ
+ImportDestinationDirectory,インポート先のディレクトリ
+ImportSourceFile,インポート元のファイル
+ImportDestinationFile,インポート先のファイル
 Infinite,無限
 InternalAbout,Effekseerについて
 InternalAddNode,ノードの追加
@@ -164,6 +168,7 @@ ImageFilter,"png,dds,tga"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"
+EffekseerPackageFilter,"efkpkg"
 CurveFilter,"efkcurve,fbx"
 ,
 ,
@@ -241,6 +246,8 @@ FileViewer_DeleteFile,削除
 FileViewer_RenameFile,名前の変更
 FileViewer_ShowInExplorer,エクスプローラで表示
 FileViewer_ShowInFinder,Finderで表示
+FileViewer_ImportFromPackage,パッケージからインポート
+FileViewer_ExportToPackage,パッケージにエクスポート
 ,
 Easing_Start_Name,始点
 Easing_Start_Desc,イージングの始点

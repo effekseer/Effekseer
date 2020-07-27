@@ -38,6 +38,11 @@ namespace Effekseer.Utils
 			buffers.Add(BitConverter.GetBytes(value));
 		}
 
+		public void Push(UInt64 value)
+		{
+			buffers.Add(BitConverter.GetBytes(value));
+		}
+
 		public void Push(bool value)
 		{
 			buffers.Add(BitConverter.GetBytes(value ? 1 : 0));
@@ -47,6 +52,11 @@ namespace Effekseer.Utils
 		{
 			Push(buffer.Count());
 			buffers.Add((byte[])buffer.Clone());
+		}
+
+		public void Push(float value)
+		{
+			buffers.Add(BitConverter.GetBytes(value));
 		}
 
 		public void Push(string value, Encoding encoding, bool zeroEnd = true, int bufLenSize = 4)

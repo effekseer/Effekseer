@@ -42,7 +42,7 @@ namespace Effekseer.Binary
 		/// Export effect data
 		/// </summary>
 		/// <returns></returns>
-		public byte[] Export(float magnification = 1.0f, ExporterVersion exporterVersion = ExporterVersion.Latest)
+		public byte[] Export(Data.NodeRoot rootNode, float magnification = 1.0f, ExporterVersion exporterVersion = ExporterVersion.Latest)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -320,7 +320,7 @@ namespace Effekseer.Binary
 					}
 				};
 
-			get_textures(Core.Root);
+			get_textures(rootNode);
 
             Dictionary<string, int> texture_and_index = new Dictionary<string, int>();
             {
@@ -384,7 +384,7 @@ namespace Effekseer.Binary
                 }
             };
 
-            get_waves(Core.Root);
+            get_waves(rootNode);
 
             Dictionary<string, int> wave_and_index = new Dictionary<string, int>();
             {
@@ -461,7 +461,7 @@ namespace Effekseer.Binary
 				}
 			};
 
-			get_models(Core.Root);
+			get_models(rootNode);
 
 			Dictionary<string, int> model_and_index = new Dictionary<string, int>();
 			{
@@ -499,7 +499,7 @@ namespace Effekseer.Binary
 				}
 			};
 
-			get_materials(Core.Root);
+			get_materials(rootNode);
 
 			Dictionary<string, int> material_and_index = new Dictionary<string, int>();
 			{
@@ -571,7 +571,7 @@ namespace Effekseer.Binary
 				}
 			};
 
-			get_nodes(Core.Root);
+			get_nodes(rootNode);
 
 			var snode2ind = nodes.
 				Select((v, i) => Tuple35.Create(v, i)).
@@ -853,7 +853,7 @@ namespace Effekseer.Binary
 				}
 			};
 
-			outout_rootnode(Core.Root);
+			outout_rootnode(rootNode);
 
 			return data.ToArray().ToArray();
 		}

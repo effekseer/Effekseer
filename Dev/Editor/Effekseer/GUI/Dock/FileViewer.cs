@@ -9,14 +9,19 @@ namespace Effekseer.GUI.Dock
 {
 	class FileViewer : DockPanel
 	{
-		string currentPath = null;
+		public string CurrentPath { get; private set; }
 		List<FileItem> items = new List<FileItem>();
 		int selectedIndex = -1;
 
 		string menuOpenFile;
 		string menuShowInFileManager;
+		string menuImportFromPackage;
+		string menuExportToPackage;
+		
 		System.IO.FileSystemWatcher directoryWatcher;
 		bool shouldUpdateFileList = true;
+
+		const string ContextMenuPopupId = "###FileViewerPopupMenu";
 
 		public FileViewer()
 		{
@@ -25,7 +30,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSave += OnAfterSave;
 
-			UpdateFileListWithProjectPath(Core.FullPath);
+			UpdateFileListWithProjectPath(Core.Root.GetFullPath());
 
 			TabToolTip = Resources.GetString("FileViewer");
 
@@ -39,13 +44,14 @@ namespace Effekseer.GUI.Dock
 			{
 				menuShowInFileManager = Resources.GetString("FileViewer_ShowInExplorer");
 			}
+			menuImportFromPackage = Resources.GetString("FileViewer_ImportFromPackage");
+			menuExportToPackage = Resources.GetString("FileViewer_ExportToPackage");
 
 			directoryWatcher = new FileSystemWatcher();
 			directoryWatcher.Changed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Renamed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Deleted += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Created += (o, e) => { shouldUpdateFileList = true; };
-
 		}
 
 		public override void OnDisposed()
@@ -63,22 +69,22 @@ namespace Effekseer.GUI.Dock
 				// Back directory (BS shortcut key)
 				if (Manager.NativeManager.IsWindowFocused() &&
 					Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
-					!String.IsNullOrEmpty(currentPath))
+					!String.IsNullOrEmpty(CurrentPath))
 				{
-					UpdateFileListWithProjectPath(currentPath);
+					UpdateFileListWithProjectPath(CurrentPath);
 				}
 
 				// Back directory
 				if (Manager.NativeManager.Button("↑") &&
-					!String.IsNullOrEmpty(currentPath))
+					!String.IsNullOrEmpty(CurrentPath))
 				{
-					UpdateFileListWithProjectPath(currentPath);
+					UpdateFileListWithProjectPath(CurrentPath);
 				}
 			
 				Manager.NativeManager.SameLine();
 
 				// Display current directory
-				if (Manager.NativeManager.InputText("", (currentPath != null) ? currentPath : ""))
+				if (Manager.NativeManager.InputText("###AddressBar", (CurrentPath != null) ? CurrentPath : ""))
 				{
 					string path = Manager.NativeManager.GetInputTextResult();
 					UpdateFileList(path);
@@ -88,7 +94,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Separator();
 
 			// Display all files
-			for(int i = 0; i < items.Count; i++)
+			for (int i = 0; i < items.Count; i++)
 			{
 				var item = items[i];
 
@@ -118,8 +124,27 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.SameLine();
 
 				string caption = Path.GetFileName(item.FilePath);
-				if (Manager.NativeManager.Selectable(caption, i == selectedIndex, swig.SelectableFlags.AllowDoubleClick))
+				if (Manager.NativeManager.Selectable(caption, item.Selected, swig.SelectableFlags.AllowDoubleClick))
 				{
+					if (Manager.NativeManager.IsCtrlKeyDown())
+					{
+						item.Selected = !item.Selected;
+					}
+					else if (Manager.NativeManager.IsShiftKeyDown() && selectedIndex >= 0)
+					{
+						int min = Math.Min(selectedIndex, i);
+						int max = Math.Max(selectedIndex, i);
+						for (int j = min; j <= max; j++)
+						{
+							items[j].Selected = true;
+						}
+					}
+					else
+					{
+						ResetSelected();
+						item.Selected = true;
+					}
+					
 					selectedIndex = i;
 
 					if (Manager.NativeManager.IsMouseDoubleClicked(0) ||
@@ -129,27 +154,28 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				// File Context Menu
-				string menuId = "###FileViewerFilePopupMenu" + i;
-				if (Manager.NativeManager.BeginPopupContextItem(menuId))
+				if (Manager.NativeManager.IsItemFocused())
 				{
+					ResetSelected();
+				}
+
+				if (Manager.NativeManager.IsItemClicked(1))
+				{
+					if (!item.Selected)
+					{
+						ResetSelected();
+						item.Selected = true;
+					}
 					selectedIndex = i;
-					if (Manager.NativeManager.MenuItem(menuOpenFile))
-					{
-						OnFilePicked();
-					}
-					Manager.NativeManager.Separator();
-					
-					if (Manager.NativeManager.MenuItem(menuShowInFileManager))
-					{
-						ShowInFileManager();
-					}
-					Manager.NativeManager.EndPopup();
+
+					Manager.NativeManager.OpenPopup(ContextMenuPopupId);
 				}
 
 				// D&D
 				DragAndDrops.UpdateImageSrc(item.FilePath);
 			}
+
+			UpdateContextMenu();
 
 			Manager.NativeManager.PopItemWidth();
 
@@ -160,14 +186,55 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		void UpdateContextMenu()
+		{
+			// File Context Menu
+			if (Manager.NativeManager.BeginPopup(ContextMenuPopupId))
+			{
+				if (Manager.NativeManager.MenuItem(menuOpenFile))
+				{
+					OnFilePicked();
+				}
+
+				if (Manager.NativeManager.MenuItem(menuShowInFileManager))
+				{
+					ShowInFileManager();
+				}
+
+				Manager.NativeManager.Separator();
+
+				if (Manager.NativeManager.MenuItem(menuImportFromPackage))
+				{
+					if (!string.IsNullOrEmpty(CurrentPath))
+					{
+						Commands.ImportPackage(null, CurrentPath);
+					}
+				}
+
+				if (Manager.NativeManager.MenuItem(menuExportToPackage))
+				{
+					var files = items
+						.Where(it => it.Selected && Path.GetExtension(it.FilePath) == ".efkefc")
+						.Select(it => it.FilePath)
+						.ToArray();
+					if (files.Length > 0)
+					{
+						Commands.ExportPackage(null, files);
+					}
+				}
+
+				Manager.NativeManager.EndPopup();
+			}
+		}
+
 		void OnAfterLoad(object sender, EventArgs e)
 		{
-			UpdateFileListWithProjectPath(Core.FullPath);
+			UpdateFileListWithProjectPath(Core.Root.GetFullPath());
 		}
 
 		void OnAfterSave(object sender, EventArgs e)
 		{
-			UpdateFileListWithProjectPath(Core.FullPath);
+			UpdateFileListWithProjectPath(Core.Root.GetFullPath());
 		}
 
 		void UpdateFileListWithProjectPath(string path)
@@ -211,6 +278,8 @@ namespace Effekseer.GUI.Dock
 
 			public swig.ImageResource Image { get; private set; }
 
+			public bool Selected { get; set; }
+
 			public FileItem(string name, string filePath)
 			{
 				FilePath = filePath;
@@ -246,7 +315,7 @@ namespace Effekseer.GUI.Dock
 		{
 			if (path == null)
 			{
-				path = currentPath;
+				path = CurrentPath;
 			}
 
 			if (!Directory.Exists(path))
@@ -254,8 +323,8 @@ namespace Effekseer.GUI.Dock
 				return;
 			}
 
-			selectedIndex = -1;
-			currentPath = path;
+			ResetSelected();
+			CurrentPath = path;
 			items.Clear();
 
 			//string parentDirectory = System.IO.Path.GetDirectoryName(path);
@@ -282,6 +351,15 @@ namespace Effekseer.GUI.Dock
 
 			directoryWatcher.Path = path;
 			directoryWatcher.EnableRaisingEvents = true;
+		}
+
+		private void ResetSelected()
+		{
+			selectedIndex = -1;
+			for (int i = 0; i < items.Count; i++)
+			{
+				items[i].Selected = false;
+			}
 		}
 
 		private void OnFilePicked()

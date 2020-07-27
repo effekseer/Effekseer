@@ -708,11 +708,11 @@ namespace Effekseer.GUI
 			}
 
 			var binaryExporter = new Binary.Exporter();
-			var data = binaryExporter.Export(Core.Option.Magnification);
+			var data = binaryExporter.Export(Core.Root, Core.Option.Magnification);
 			fixed (byte* p = &data[0])
 			{
 				// TODO refactor replace
-				LoadEffect(new IntPtr(p), data.Length, Core.FullPath.Replace('\\', '/'));
+				LoadEffect(new IntPtr(p), data.Length, Core.Root.GetFullPath().Replace('\\', '/'));
 			}
 		}
 

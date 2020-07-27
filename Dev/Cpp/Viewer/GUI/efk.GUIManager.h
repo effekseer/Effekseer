@@ -706,6 +706,9 @@ public:
 	bool IsKeyDown(int user_key_index);
 	bool IsKeyPressed(int user_key_index);
 	bool IsKeyReleased(int user_key_index);
+	bool IsShiftKeyDown();
+	bool IsCtrlKeyDown();
+	bool IsAltKeyDown();
 	bool IsMouseDown(int button);
 	bool IsMouseDoubleClicked(int button);
 

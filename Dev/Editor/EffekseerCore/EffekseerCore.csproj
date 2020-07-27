@@ -82,6 +82,8 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -147,6 +149,7 @@
     <Compile Include="Data\Value\FCurveVector3D.cs" />
     <Compile Include="Data\Value\Float.cs" />
     <Compile Include="Data\Value\FloatWithRandom.cs" />
+    <Compile Include="Data\Value\PathForCurve.cs" />
     <Compile Include="Data\Value\PathForImage.cs" />
     <Compile Include="Data\Value\Int.cs" />
     <Compile Include="Data\Value\IntWithInifinite.cs" />
@@ -171,6 +174,7 @@
     <Compile Include="InternalScript\Parser.cs" />
     <Compile Include="InternalScript\SSAGenerator.cs" />
     <Compile Include="IO\EfkEfc.cs" />
+    <Compile Include="IO\EfkPkg.cs" />
     <Compile Include="Utils\BinaryWriter.cs" />
     <Compile Include="Utils\CsvReader.cs" />
     <Compile Include="Utils\Logger.cs" />

@@ -34,7 +34,7 @@ namespace Effekseer.Data
 			{
 				if (LasyBackgroundImage == null)
 				{
-					LasyBackgroundImage = new Value.PathForImage(Resources.GetString("ImageFilter"), false, "");
+					LasyBackgroundImage = new Value.PathForImage(null, Resources.GetString("ImageFilter"), false, "");
 				}
 				return LasyBackgroundImage;
 			}

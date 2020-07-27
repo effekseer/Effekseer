@@ -38,5 +38,9 @@ namespace Effekseer.GUI
 		public const string NodeTypeTrack      = "\xec23";
 		public const string NodeTypeRing       = "\xec24";
 		public const string NodeTypeModel      = "\xec25";
+
+		public const string CommonCheck        = "\xec30";
+		public const string CommonWarning      = "\xec31";
+		public const string CommonError        = "\xec32";
 	}
 }
