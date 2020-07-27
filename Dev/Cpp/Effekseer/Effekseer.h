@@ -160,9 +160,7 @@ const int32_t TextureSlotMax = 8;
 
 const int32_t LocalFieldSlotMax = 4;
 
-#ifndef __EFFEKSEER_FOR_UE4__
-const float PI = 3.141592653589;
-#endif
+const float EFK_PI = 3.141592653589f;
 
 //----------------------------------------------------------------------------------
 //

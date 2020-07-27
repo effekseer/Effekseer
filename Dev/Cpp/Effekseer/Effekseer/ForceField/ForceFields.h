@@ -176,7 +176,7 @@ public:
 
 		auto tubeRadius = tubePos.GetLength();
 
-		auto angle = fabs(PI / 2.0f - atan2(localPos.GetY(), tubeRadius));
+		auto angle = fabs(EFK_PI / 2.0f - atan2(localPos.GetY(), tubeRadius));
 
 		if (angle > ffft.MaxAngle)
 		{
