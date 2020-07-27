@@ -77,37 +77,37 @@ static
 namespace Standard_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_VS.h"
 } // namespace Standard_VS
 
 namespace Standard_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_PS.h"
 } // namespace Standard_PS
 
 namespace Standard_Distortion_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Distortion_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Distortion_VS.h"
 } // namespace Standard_Distortion_VS
 
 namespace Standard_Distortion_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Distortion_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Distortion_PS.h"
 } // namespace Standard_Distortion_PS
 
 namespace Standard_Lighting_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Lighting_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Lighting_VS.h"
 } // namespace Standard_Lighting_VS
 
 namespace Standard_Lighting_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Lighting_PS.h"
+#include "ShaderHeader_15/EffekseerRenderer.Standard_Lighting_PS.h"
 } // namespace Standard_Lighting_PS
 
 #endif
@@ -330,9 +330,9 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 
 	// 座標(3) 色(1) UV(2)
 	D3DVERTEXELEMENT9 decl[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 6, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},  // AlphaTextureUV
 		{0, sizeof(float) * 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},  // UVDistortionTextureUV
@@ -342,11 +342,11 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		D3DDECL_END()};
 
 	D3DVERTEXELEMENT9 decl_distortion[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1},
-		{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
+		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
+		{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
+		{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1}, // AlphaTextureUV
 		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2}, // UVDistortionTextureUV
@@ -380,10 +380,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		return false;
 #else
 	m_shader = Shader::Create(this,
-							  Standard_VS::g_vs20_VS,
-							  sizeof(Standard_VS::g_vs20_VS),
-							  Standard_PS::g_ps20_PS,
-							  sizeof(Standard_PS::g_ps20_PS),
+							  Standard_VS::g_vs30_main,
+							  sizeof(Standard_VS::g_vs30_main),
+							  Standard_PS::g_ps30_main,
+							  sizeof(Standard_PS::g_ps30_main),
 							  "StandardRenderer",
 							  decl);
 	if (m_shader == NULL)
@@ -393,10 +393,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 	Release();
 
 	m_shader_distortion = Shader::Create(this,
-										 Standard_Distortion_VS::g_vs20_VS,
-										 sizeof(Standard_Distortion_VS::g_vs20_VS),
-										 Standard_Distortion_PS::g_ps20_PS,
-										 sizeof(Standard_Distortion_PS::g_ps20_PS),
+										 Standard_Distortion_VS::g_vs30_main,
+										 sizeof(Standard_Distortion_VS::g_vs30_main),
+										 Standard_Distortion_PS::g_ps30_main,
+										 sizeof(Standard_Distortion_PS::g_ps30_main),
 										 "StandardRenderer Distortion",
 										 decl_distortion);
 	if (m_shader_distortion == NULL)
@@ -430,12 +430,12 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 #endif
 
 	D3DVERTEXELEMENT9 decl_lighting[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-		{0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1},
-		{0, 20, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
-		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+		{0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
+		{0, 20, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
+		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
+		{0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2}, // AlphaTextureUVs
 		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3}, // UVDistortionTextureUV
@@ -455,10 +455,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 
 #else
 	m_shader_lighting = Shader::Create(this,
-									   Standard_Lighting_VS::g_vs20_VS,
-									   sizeof(Standard_Lighting_VS::g_vs20_VS),
-									   Standard_Lighting_PS::g_ps20_PS,
-									   sizeof(Standard_Lighting_PS::g_ps20_PS),
+									   Standard_Lighting_VS::g_vs30_main,
+									   sizeof(Standard_Lighting_VS::g_vs30_main),
+									   Standard_Lighting_PS::g_ps30_main,
+									   sizeof(Standard_Lighting_PS::g_ps30_main),
 									   "StandardRenderer Lighting",
 									   decl_lighting);
 #endif

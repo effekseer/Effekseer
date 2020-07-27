@@ -1,8 +1,6 @@
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "FlipbookInterpolationUtils_PS.fx"
 #include "TextureBlendingUtils_PS.fx"
-#endif
 
 struct PS_Input
 {
@@ -15,7 +13,6 @@ struct PS_Input
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD7;
     float2 UVDistortionUV       : TEXCOORD8;
     float2 BlendUV              : TEXCOORD9;
@@ -24,10 +21,8 @@ struct PS_Input
     float FlipbookRate          : TEXCOORD12;
     float2 FlipbookNextIndexUV  : TEXCOORD13;
     float AlphaThreshold        : TEXCOORD14;
-#endif
 };
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 cbuffer PS_ConstanBuffer : register(b0)
 {
     float4 fLightDirection;
@@ -44,11 +39,6 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 fEdgeColor;
     float4 fEdgeParameter; // x:threshold, y:colorScaling
 };
-#else
-float4	fLightDirection		: register( c0 );
-float4	fLightColor		: register( c1 );
-float4	fLightAmbient		: register( c2 );
-#endif
 
 Texture2D	g_colorTexture		: register( t0 );
 SamplerState g_colorSampler : register(s0);
@@ -73,7 +63,7 @@ Texture2D g_blendUVDistortionTexture    : register( t6 );
 SamplerState g_blendUVDistortionSampler : register( s6 );
 #endif
 
-float4 PS(const PS_Input Input) : SV_Target
+float4 main(const PS_Input Input) : SV_Target
 {
 	float diffuse = 1.0;
 
@@ -85,14 +75,11 @@ float4 PS(const PS_Input Input) : SV_Target
 
     float2 UVOffset = float2(0.0, 0.0);
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
     UVOffset *= fUVDistortionParameter.x;
-#endif  
     
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1 + UVOffset) * Input.VColor;
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.VColor, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
     
     // apply alpha texture
@@ -116,16 +103,13 @@ float4 PS(const PS_Input Input) : SV_Target
     {
         discard;
     }
-#endif
     
 	Output.xyz = Output.xyz * (float3(diffuse, diffuse, diffuse) + fLightAmbient);
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.rgb = lerp(
                 fEdgeColor.rgb * fEdgeParameter.y, 
                 Output.rgb, 
                 ceil((Output.a - Input.AlphaThreshold) - fEdgeParameter.x));
-#endif
     
 	if (Output.a == 0.0)
 		discard;

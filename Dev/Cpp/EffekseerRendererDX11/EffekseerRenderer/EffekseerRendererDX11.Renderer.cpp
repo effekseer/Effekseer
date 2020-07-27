@@ -35,6 +35,7 @@ namespace EffekseerRendererDX11
 {
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+
 namespace Standard_VS
 {
 static
@@ -468,10 +469,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	};
 
 	m_shader = Shader::Create(this,
-							  Standard_VS::g_VS,
-							  sizeof(Standard_VS::g_VS),
-							  Standard_PS::g_PS,
-							  sizeof(Standard_PS::g_PS),
+							  Standard_VS::g_main,
+							  sizeof(Standard_VS::g_main),
+							  Standard_PS::g_main,
+							  sizeof(Standard_PS::g_main),
 							  "StandardRenderer",
 							  decl,
 							  ARRAYSIZE(decl));
@@ -482,10 +483,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	Release();
 
 	m_shader_distortion = Shader::Create(this,
-										 Standard_Distortion_VS::g_VS,
-										 sizeof(Standard_Distortion_VS::g_VS),
-										 Standard_Distortion_PS::g_PS,
-										 sizeof(Standard_Distortion_PS::g_PS),
+										 Standard_Distortion_VS::g_main,
+										 sizeof(Standard_Distortion_VS::g_main),
+										 Standard_Distortion_PS::g_main,
+										 sizeof(Standard_Distortion_PS::g_main),
 										 "StandardRenderer Distortion",
 										 decl_distortion,
 										 ARRAYSIZE(decl_distortion));
@@ -519,10 +520,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 #endif
 
 	m_shader_lighting = Shader::Create(this,
-									   Standard_Lighting_VS::g_VS,
-									   sizeof(Standard_Lighting_VS::g_VS),
-									   Standard_Lighting_PS::g_PS,
-									   sizeof(Standard_Lighting_PS::g_PS),
+									   Standard_Lighting_VS::g_main,
+									   sizeof(Standard_Lighting_VS::g_main),
+									   Standard_Lighting_PS::g_main,
+									   sizeof(Standard_Lighting_PS::g_main),
 									   "StandardRenderer Lighting",
 									   decl_lighting,
 									   ARRAYSIZE(decl_lighting));

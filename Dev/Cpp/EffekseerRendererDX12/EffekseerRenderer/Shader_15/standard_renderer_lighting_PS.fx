@@ -1,42 +1,102 @@
 struct PS_Input
 {
-	float4 Position : SV_POSITION;
-	float4 VColor : COLOR;
-	float2 UV1 : TEXCOORD0;
-	float2 UV2 : TEXCOORD1;
-	float3 WorldP : TEXCOORD2;
-	float3 WorldN : TEXCOORD3;
-	float3 WorldT : TEXCOORD4;
-	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
+    float4 Position;
+    float4 VColor;
+    float2 UV1;
+    float2 UV2;
+    float3 WorldP;
+    float3 WorldN;
+    float3 WorldT;
+    float3 WorldB;
+    float2 ScreenUV;
 };
 
-cbuffer PSConstantBuffer : register(b1)
+cbuffer VS_ConstantBuffer : register(b1)
 {
-float4	fLightDirection		: register( c0 );
-float4	fLightColor		: register( c1 );
-float4	fLightAmbient		: register( c2 );
+    float4 _69_fLightDirection : packoffset(c0);
+    float4 _69_fLightColor : packoffset(c1);
+    float4 _69_fLightAmbient : packoffset(c2);
 };
 
-Texture2D	g_colorTexture		: register( t0 );
+Texture2D<float4> g_normalTexture : register(t1);
+SamplerState g_normalSampler : register(s1);
+Texture2D<float4> g_colorTexture : register(t0);
 SamplerState g_colorSampler : register(s0);
 
-Texture2D	g_normalTexture		: register( t1 );
-SamplerState g_normalSampler : register(s1);
+static float4 gl_FragCoord;
+static float4 Input_VColor;
+static float2 Input_UV1;
+static float2 Input_UV2;
+static float3 Input_WorldP;
+static float3 Input_WorldN;
+static float3 Input_WorldT;
+static float3 Input_WorldB;
+static float2 Input_ScreenUV;
+static float4 _entryPointOutput;
 
-float4 PS(const PS_Input Input) : SV_Target
+struct SPIRV_Cross_Input
 {
-	half3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV1).xyz;
-	half3 texNormal = (loN - 0.5) * 2.0;
-	half3 localNormal = (half3)normalize(mul(texNormal, half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
+    float4 Input_VColor : TEXCOORD0;
+    float2 Input_UV1 : TEXCOORD1;
+    float2 Input_UV2 : TEXCOORD2;
+    float3 Input_WorldP : TEXCOORD3;
+    float3 Input_WorldN : TEXCOORD4;
+    float3 Input_WorldT : TEXCOORD5;
+    float3 Input_WorldB : TEXCOORD6;
+    float2 Input_ScreenUV : TEXCOORD7;
+    float4 gl_FragCoord : SV_Position;
+};
 
-	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
+struct SPIRV_Cross_Output
+{
+    float4 _entryPointOutput : SV_Target0;
+};
 
-	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1) * Input.VColor;
-	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient);
+float4 _main(PS_Input Input)
+{
+    float3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV1).xyz;
+    float3 texNormal = (loN - 0.5f.xxx) * 2.0f;
+    float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
+    float diffuse = max(dot(_69_fLightDirection.xyz, localNormal), 0.0f);
+    float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1) * Input.VColor;
+    float3 _104 = Output.xyz * ((_69_fLightColor.xyz * diffuse) + float3(_69_fLightAmbient.xyz));
+    Output = float4(_104.x, _104.y, _104.z, Output.w);
+    if (Output.w == 0.0f)
+    {
+        discard;
+    }
+    return Output;
+}
 
-	if (Output.a == 0.0)
-		discard;
+void frag_main()
+{
+    PS_Input Input;
+    Input.Position = gl_FragCoord;
+    Input.VColor = Input_VColor;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
+    Input.WorldP = Input_WorldP;
+    Input.WorldN = Input_WorldN;
+    Input.WorldT = Input_WorldT;
+    Input.WorldB = Input_WorldB;
+    Input.ScreenUV = Input_ScreenUV;
+    float4 _158 = _main(Input);
+    _entryPointOutput = _158;
+}
 
-	return Output;
+SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
+{
+    gl_FragCoord = stage_input.gl_FragCoord;
+    Input_VColor = stage_input.Input_VColor;
+    Input_UV1 = stage_input.Input_UV1;
+    Input_UV2 = stage_input.Input_UV2;
+    Input_WorldP = stage_input.Input_WorldP;
+    Input_WorldN = stage_input.Input_WorldN;
+    Input_WorldT = stage_input.Input_WorldT;
+    Input_WorldB = stage_input.Input_WorldB;
+    Input_ScreenUV = stage_input.Input_ScreenUV;
+    frag_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output._entryPointOutput = _entryPointOutput;
+    return stage_output;
 }

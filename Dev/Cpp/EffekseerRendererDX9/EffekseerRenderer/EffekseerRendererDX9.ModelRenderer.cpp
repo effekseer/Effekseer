@@ -51,33 +51,42 @@ static
 
 #else
 
-namespace ShaderLightingTextureNormal_
+namespace ShaderLightingTextureNormal_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+} // namespace ShaderLightingTextureNormal_VS
 
-	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
-
-} // namespace ShaderLightingTextureNormal_
-
-namespace ShaderTexture_
+namespace ShaderLightingTextureNormal_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
 
-	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
-} // namespace ShaderTexture_
+} // namespace ShaderLightingTextureNormal_PS
 
-namespace ShaderDistortionTexture_
+namespace ShaderTexture_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+} // namespace ShaderTexture_VS
 
-	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
-} // namespace ShaderDistortionTexture_
+namespace ShaderTexture_PS
+{
+static
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+} // namespace ShaderTexture_PS
+
+namespace ShaderDistortionTexture_VS
+{
+static
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+} // namespace ShaderDistortionTexture_VS
+
+namespace ShaderDistortionTexture_PS
+{
+static
+#include "ShaderHeader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+} // namespace ShaderDistortionTexture_PS
 
 #endif
 
@@ -134,13 +143,13 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	assert(renderer->GetDevice() != NULL);
 
 	// 座標(3) 法線(3)*3 UV(2)
-	D3DVERTEXELEMENT9 decl[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-								{0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-								{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1},
-								{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
-								{0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-								{0, 56, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 3},
-								{0, 60, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0},
+	D3DVERTEXELEMENT9 decl[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+								{0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+								{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
+								{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
+								{0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
+								{0, 56, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
+								{0, 60, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6},
 								D3DDECL_END()};
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -169,26 +178,26 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 													decl);
 #else
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer,
-															ShaderLightingTextureNormal_::g_vs20_VS,
-															sizeof(ShaderLightingTextureNormal_::g_vs20_VS),
-															ShaderLightingTextureNormal_::g_ps20_PS,
-															sizeof(ShaderLightingTextureNormal_::g_ps20_PS),
+															ShaderLightingTextureNormal_VS::g_vs30_main,
+															sizeof(ShaderLightingTextureNormal_VS::g_vs30_main),
+															ShaderLightingTextureNormal_PS::g_ps30_main,
+															sizeof(ShaderLightingTextureNormal_PS::g_ps30_main),
 															"ModelRendererLightingTextureNormal",
 															decl);
 
 	Shader* shader_texture = Shader::Create(renderer,
-											ShaderTexture_::g_vs20_VS,
-											sizeof(ShaderTexture_::g_vs20_VS),
-											ShaderTexture_::g_ps20_PS,
-											sizeof(ShaderTexture_::g_ps20_PS),
+											ShaderTexture_VS::g_vs30_main,
+											sizeof(ShaderTexture_VS::g_vs30_main),
+											ShaderTexture_PS::g_ps30_main,
+											sizeof(ShaderTexture_PS::g_ps30_main),
 											"ModelRendererTexture",
 											decl);
 
 	auto shader_distortion_texture = Shader::Create(renderer,
-													ShaderDistortionTexture_::g_vs20_VS,
-													sizeof(ShaderDistortionTexture_::g_vs20_VS),
-													ShaderDistortionTexture_::g_ps20_PS,
-													sizeof(ShaderDistortionTexture_::g_ps20_PS),
+													ShaderDistortionTexture_VS::g_vs30_main,
+													sizeof(ShaderDistortionTexture_VS::g_vs30_main),
+													ShaderDistortionTexture_PS::g_ps30_main,
+													sizeof(ShaderDistortionTexture_PS::g_ps30_main),
 													"ModelRendererDistortionTexture",
 													decl);
 #endif

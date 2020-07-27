@@ -59,13 +59,13 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 	assert(renderer->GetGraphics() != NULL);
 
 	std::vector<VertexLayout> layouts;
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 0});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 1});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UINT, "BLENDINDICES", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 1});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 2});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 3});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 5});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UINT, "TEXCOORD", 6});
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(),
 															fixedShader->ModelShaderLightingTextureNormal_VS.data(),

@@ -11,17 +11,21 @@ struct PS_Input
 	float2 ScreenUV : TEXCOORD6;
 };
 
-float4	fLightDirection		: register( c0 );
-float4	fLightColor		: register( c1 );
-float4	fLightAmbient		: register( c2 );
+cbuffer VS_ConstantBuffer : register(b0)
+{
+	float4 fLightDirection;
+	float4 fLightColor;
+	float4 fLightAmbient;
+}
 
-Texture2D	g_colorTexture		: register( t0 );
+Texture2D g_colorTexture : register(t0);
 SamplerState g_colorSampler : register(s0);
 
-Texture2D	g_normalTexture		: register( t1 );
+Texture2D g_normalTexture : register(t1);
 SamplerState g_normalSampler : register(s1);
 
-float4 PS(const PS_Input Input) : SV_Target
+float4 main(const PS_Input Input)
+	: SV_Target
 {
 	half3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV1).xyz;
 	half3 texNormal = (loN - 0.5) * 2.0;
