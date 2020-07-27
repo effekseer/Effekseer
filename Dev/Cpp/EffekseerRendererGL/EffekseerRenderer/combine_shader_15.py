@@ -58,7 +58,7 @@ for fx in verts + frags:
             return {}_{};
         return nullptr;
     }}
-    '''.format(fx, fx, 'gl2', fx, 'gl3', fx, 'gles2', fx, 'gles3')
+    '''.format(fx, fx, 'gl3', fx, 'gl2', fx, 'gles3', fx, 'gles2')
 
     f = open(gl_dst_path + fx + '.h', 'w')
     f.write(code)

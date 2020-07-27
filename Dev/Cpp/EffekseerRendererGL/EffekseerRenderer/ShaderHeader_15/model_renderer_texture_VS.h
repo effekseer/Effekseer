@@ -312,13 +312,13 @@ void main()
     static const char* get_model_renderer_texture_VS (EffekseerRendererGL::OpenGLDeviceType deviceType)
     {
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL3)
-            return model_renderer_texture_VS_gl2;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
             return model_renderer_texture_VS_gl3;
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
+            return model_renderer_texture_VS_gl2;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
-            return model_renderer_texture_VS_gles2;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
             return model_renderer_texture_VS_gles3;
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+            return model_renderer_texture_VS_gles2;
         return nullptr;
     }
     

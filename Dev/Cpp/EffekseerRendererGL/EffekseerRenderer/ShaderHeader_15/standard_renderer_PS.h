@@ -162,13 +162,13 @@ void main()
     static const char* get_standard_renderer_PS (EffekseerRendererGL::OpenGLDeviceType deviceType)
     {
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL3)
-            return standard_renderer_PS_gl2;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
             return standard_renderer_PS_gl3;
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
+            return standard_renderer_PS_gl2;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
-            return standard_renderer_PS_gles2;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
             return standard_renderer_PS_gles3;
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+            return standard_renderer_PS_gles2;
         return nullptr;
     }
     
