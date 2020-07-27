@@ -148,7 +148,7 @@ void main()
 )";
 
 static const char standard_renderer_lighting_PS_gles2[] = R"(
-#version 200 es
+
 precision mediump float;
 precision highp int;
 
@@ -174,17 +174,17 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_normalSampler;
-uniform highp sampler2D Sampler_g_colorSampler;
+uniform  sampler2D Sampler_g_normalSampler;
+uniform  sampler2D Sampler_g_colorSampler;
 
-varying highp vec4 _VSPS_VColor;
-varying highp vec2 _VSPS_UV1;
-varying highp vec2 _VSPS_UV2;
-varying highp vec3 _VSPS_WorldP;
-varying highp vec3 _VSPS_WorldN;
-varying highp vec3 _VSPS_WorldT;
-varying highp vec3 _VSPS_WorldB;
-varying highp vec2 _VSPS_ScreenUV;
+varying  vec4 _VSPS_VColor;
+varying  vec2 _VSPS_UV1;
+varying  vec2 _VSPS_UV2;
+varying  vec3 _VSPS_WorldP;
+varying  vec3 _VSPS_WorldN;
+varying  vec3 _VSPS_WorldT;
+varying  vec3 _VSPS_WorldB;
+varying  vec2 _VSPS_ScreenUV;
 
 highp vec4 _main(PS_Input Input)
 {

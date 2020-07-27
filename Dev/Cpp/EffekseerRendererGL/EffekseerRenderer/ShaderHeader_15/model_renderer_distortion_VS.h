@@ -207,7 +207,7 @@ void main()
 )";
 
 static const char model_renderer_distortion_VS_gles2[] = R"(
-#version 200 es
+
 
 struct VS_Input
 {

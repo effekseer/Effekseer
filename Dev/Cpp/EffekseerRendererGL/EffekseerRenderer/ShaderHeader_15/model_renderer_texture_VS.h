@@ -157,7 +157,7 @@ void main()
 )";
 
 static const char model_renderer_texture_VS_gles2[] = R"(
-#version 200 es
+
 
 struct VS_Input
 {

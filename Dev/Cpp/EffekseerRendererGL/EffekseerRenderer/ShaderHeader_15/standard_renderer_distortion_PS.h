@@ -142,7 +142,7 @@ void main()
 )";
 
 static const char standard_renderer_distortion_PS_gles2[] = R"(
-#version 200 es
+
 precision mediump float;
 precision highp int;
 
@@ -164,14 +164,14 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_sampler;
-uniform highp sampler2D Sampler_g_backSampler;
+uniform  sampler2D Sampler_g_sampler;
+uniform  sampler2D Sampler_g_backSampler;
 
-varying highp vec4 _VSPS_Color;
-varying highp vec2 _VSPS_UV;
-varying highp vec4 _VSPS_Pos;
-varying highp vec4 _VSPS_PosU;
-varying highp vec4 _VSPS_PosR;
+varying  vec4 _VSPS_Color;
+varying  vec2 _VSPS_UV;
+varying  vec4 _VSPS_Pos;
+varying  vec4 _VSPS_PosU;
+varying  vec4 _VSPS_PosR;
 
 highp vec4 _main(PS_Input Input)
 {

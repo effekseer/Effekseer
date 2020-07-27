@@ -205,7 +205,7 @@ void main()
 )";
 
 static const char standard_renderer_lighting_VS_gles2[] = R"(
-#version 200 es
+
 
 struct VS_Input
 {

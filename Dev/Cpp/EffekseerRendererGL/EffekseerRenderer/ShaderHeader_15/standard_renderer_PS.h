@@ -80,7 +80,7 @@ void main()
 )";
 
 static const char standard_renderer_PS_gles2[] = R"(
-#version 200 es
+
 precision mediump float;
 precision highp int;
 
@@ -91,10 +91,10 @@ struct PS_Input
     highp vec2 UV;
 };
 
-uniform highp sampler2D Sampler_g_sampler;
+uniform  sampler2D Sampler_g_sampler;
 
-varying highp vec4 _VSPS_Color;
-varying highp vec2 _VSPS_UV;
+varying  vec4 _VSPS_Color;
+varying  vec2 _VSPS_UV;
 
 highp vec4 _main(PS_Input Input)
 {

@@ -98,7 +98,7 @@ void main()
 )";
 
 static const char model_renderer_texture_PS_gles2[] = R"(
-#version 200 es
+
 precision mediump float;
 precision highp int;
 
@@ -118,10 +118,10 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_colorSampler;
+uniform  sampler2D Sampler_g_colorSampler;
 
-varying highp vec2 _VSPS_UV;
-varying highp vec4 _VSPS_Color;
+varying  vec2 _VSPS_UV;
+varying  vec4 _VSPS_Color;
 
 highp vec4 _main(PS_Input Input)
 {

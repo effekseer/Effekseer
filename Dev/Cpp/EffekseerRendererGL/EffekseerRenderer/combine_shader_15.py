@@ -15,6 +15,12 @@ gl_es3_root_path = 'Shader_15_ES3/'
 
 gl_dst_path = 'ShaderHeader_15/'
 
+def replace_es2(code):
+    code = code.replace('#version 200 es','')
+    code = code.replace('uniform highp', 'uniform ')
+    code = code.replace('varying highp', 'varying ')
+    return code
+
 for fx in verts + frags:
     f_gl_2 = open(gl_2_root_path + fx + '.fx', 'r')
     gl_2 = f_gl_2.read()
@@ -23,7 +29,7 @@ for fx in verts + frags:
     gl_3 = f_gl_3.read()
 
     f_gl_es2 = open(gl_es2_root_path + fx + '.fx', 'r')
-    gl_es2 = f_gl_es2.read()
+    gl_es2 = replace_es2(f_gl_es2.read())
 
     f_gl_es3 = open(gl_es3_root_path + fx + '.fx', 'r')
     gl_es3 = f_gl_es3.read()
