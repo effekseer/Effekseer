@@ -97,8 +97,8 @@ template <class T> struct CustomAllocator
 
 	template <class U> CustomAllocator(const CustomAllocator<U>&) {}
 
-	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * n)); }
-	void deallocate(T* p, std::size_t n) { GetFreeFunc()(p, sizeof(T) * n); }
+	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * static_cast<uint32_t>(n))); }
+	void deallocate(T* p, std::size_t n) { GetFreeFunc()(p, sizeof(T) * static_cast<uint32_t>(n)); }
 };
 
 template <class T> struct CustomAlignedAllocator
@@ -109,8 +109,8 @@ template <class T> struct CustomAlignedAllocator
 
 	template <class U> CustomAlignedAllocator(const CustomAlignedAllocator<U>&) {}
 
-	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * n, 16)); }
-	void deallocate(T* p, std::size_t n) { GetAlignedFreeFunc()(p, sizeof(T) * n); }
+	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * static_cast<uint32_t>(n), 16)); }
+	void deallocate(T* p, std::size_t n) { GetAlignedFreeFunc()(p, sizeof(T) * static_cast<uint32_t>(n)); }
 };
 
 template <class T, class U> bool operator==(const CustomAllocator<T>&, const CustomAllocator<U>&) { return true; }

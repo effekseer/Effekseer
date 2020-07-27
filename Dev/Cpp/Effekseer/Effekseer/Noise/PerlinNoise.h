@@ -50,7 +50,7 @@ public:
 
 		for (std::size_t i{}; i < 256; ++i)
 		{
-			auto target = GetRand(0, 255);
+			auto target = static_cast<std::size_t>(GetRand(0, 255));
 			std::swap(p[i], p[target]);
 		}
 
