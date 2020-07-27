@@ -80,7 +80,9 @@ mkdir %RDIR%\Sample
 robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png *.mqo *.fbx /S
 
 echo License
-cp Release/LICENSE.txt %RDIR_R%/LICENSE.txt
+cp LICENSE %RDIR_R%/LICENSE.txt
+cp LICENSE_RUNTIME_DIRECTX %RDIR_R%/LICENSE_RUNTIME_DIRECTX.txt
+cp LICENSE_RUNTIME_VULKAN %RDIR_R%/LICENSE_RUNTIME_VULKAN.txt
 
 echo Readme
 copy docs\readme_runtime_ja.txt %RDIR_R%\readme_runtime_ja.txt
