@@ -806,7 +806,7 @@ namespace Effekseer
 			Root.SetFullPath(System.IO.Path.GetFullPath(path));
 
 			var loader = new IO.EfkEfc();
-			loader.Save(Core.Root, SaveAsXmlDocument(Core.Root));
+			loader.Save(path, Core.Root, SaveAsXmlDocument(Core.Root));
 			return;
 		}
 
