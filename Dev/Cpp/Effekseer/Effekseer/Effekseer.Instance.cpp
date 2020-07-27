@@ -378,6 +378,8 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const Mat43f
 		maxGenerationChildrenCount = flexibleMaxGenerationChildrenCount_;
 		m_nextGenerationTime = m_flexibleNextGenerationTime;
 	}
+
+	prevPosition_ = Vec3f(0, 0, 0);
 }
 
 //----------------------------------------------------------------------------------
@@ -483,6 +485,8 @@ void Instance::FirstUpdate()
 	{
 		translation_values.fixed.location = m_pEffectNode->TranslationFixed.Position;
 		ApplyDynamicParameterToFixedLocation();
+
+		prevPosition_ = translation_values.fixed.location;
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_PVA)
 	{
@@ -512,6 +516,8 @@ void Instance::FirstUpdate()
 						   m_pEffectNode->DynamicFactor.Tra,
 						   m_pEffectNode->DynamicFactor.TraInv);
 		translation_values.random.acceleration = rva.getValue(rand);
+
+		prevPosition_ = translation_values.random.location;
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_Easing)
 	{
@@ -532,17 +538,59 @@ void Instance::FirstUpdate()
 
 		translation_values.easing.start = rvs.getValue(rand);
 		translation_values.easing.end = rve.getValue(rand);
+
+		prevPosition_ = translation_values.easing.start;
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_FCurve)
 	{
 		assert(m_pEffectNode->TranslationFCurve != NULL);
 
 		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets(rand);
+
+		prevPosition_ = translation_values.fcruve.offset + m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
 	}
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+	else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
+	{
+		// TODO refactoring
+		auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
+
+		if (NurbsCurveParam.Index != -1)
+		{
+			Curve* curve = static_cast<Curve*>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
+			float moveSpeed = NurbsCurveParam.MoveSpeed;
+			int32_t loopType = NurbsCurveParam.LoopType;
+
+			float speed = 1.0f / (curve->GetLength() * NurbsCurveParam.Scale);
+
+			float t = speed * m_LivingTime * moveSpeed;
+
+			switch (loopType)
+			{
+			default:
+			case 0:
+				t = fmod(t, 1.0f);
+				break;
+
+			case 1:
+				if (t > 1.0f)
+				{
+					t = 1.0f;
+				}
+				break;
+			}
+
+			prevPosition_ = curve->CalcuratePoint(t, NurbsCurveParam.Scale * m_pEffectNode->m_effect->GetMaginification());
+		}
+		else
+		{
+			prevPosition_ = {0, 0, 0};
+		}
+	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
 	{
 		translation_values.view_offset.distance = m_pEffectNode->TranslationViewOffset.distance.getValue(rand);
+		prevPosition_ = {0, 0, 0};
 	}
 #endif
 
@@ -1419,6 +1467,14 @@ void Instance::CalculateMatrix(float deltaFrame)
 			localPosition = {0, 0, 0};
 		}
 #endif
+		// Velocitty
+		Vec3f localVelocity = Vec3f(0, 0, 0);
+		if (m_pEffectNode->LocalForceField.HasValue)
+		{
+			localVelocity = localPosition - prevPosition_;
+		}
+
+		prevPosition_ = localPosition;
 
 		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
@@ -1534,6 +1590,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 #else
 		currentLocalPosition += localForceField_.ModifyLocation;
+		localForceField_.ExternalVelocity = localVelocity;
 		localForceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification());
 #endif
 

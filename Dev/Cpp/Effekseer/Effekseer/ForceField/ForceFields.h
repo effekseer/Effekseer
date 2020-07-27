@@ -262,10 +262,17 @@ public:
 		auto distance = localPos.GetLength() + eps;
 		auto dir = localPos / distance;
 
-		auto forceDir = Vec3f::Cross(ffc.PreviousSumVelocity, dir);
-
-		if (forceDir.GetSquaredLength() < 0.01f)
+		auto vecLenSq = ffc.PreviousSumVelocity.GetSquaredLength();
+		if (vecLenSq < eps)
 			return Vec3f(0.0f, 0.0f, 0.0f);
+
+		auto forceDir = Vec3f::Cross(ffc.PreviousSumVelocity / sqrtf(vecLenSq), dir);
+
+		auto forceDirScaleSq = forceDir.GetSquaredLength();
+		if (forceDirScaleSq < 0.01f)
+			return Vec3f(0.0f, 0.0f, 0.0f);
+
+		forceDir /= (sqrtf(forceDirScaleSq));
 
 		return forceDir * ffp.Power;
 	}
@@ -362,6 +369,7 @@ struct LocalForceFieldInstance
 {
 	std::array<Vec3f, LocalFieldSlotMax> Velocities;
 
+	Vec3f ExternalVelocity;
 	Vec3f VelocitySum;
 	Vec3f ModifyLocation;
 
