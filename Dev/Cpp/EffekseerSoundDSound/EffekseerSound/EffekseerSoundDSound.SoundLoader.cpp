@@ -43,7 +43,7 @@ public:
 		}
 
 		memcpy(buffer, (origin + pos), size);
-		pos += size;
+		pos += static_cast<int32_t>(size);
 		return size;
 	}
 
@@ -154,7 +154,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	case 16:
 		// not convert
 		buffer = new uint8_t[chunkSize];
-		size = reader->Read(buffer, chunkSize);
+		size = static_cast<uint32_t>(reader->Read(buffer, chunkSize));
 		break;
 	case 24:
 		// convert 24bit -> 16bit PCM

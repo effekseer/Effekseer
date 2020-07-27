@@ -105,11 +105,11 @@ struct CustomAllocator
 
 	T* allocate(std::size_t n)
 	{
-		return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * n));
+		return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * static_cast<uint32_t>(n)));
 	}
 	void deallocate(T* p, std::size_t n)
 	{
-		GetFreeFunc()(p, sizeof(T) * n);
+		GetFreeFunc()(p, sizeof(T) * static_cast<uint32_t>(n));
 	}
 };
 
@@ -129,11 +129,11 @@ struct CustomAlignedAllocator
 
 	T* allocate(std::size_t n)
 	{
-		return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * n, 16));
+		return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * static_cast<uint32_t>(n), 16));
 	}
 	void deallocate(T* p, std::size_t n)
 	{
-		GetAlignedFreeFunc()(p, sizeof(T) * n);
+		GetAlignedFreeFunc()(p, sizeof(T) * static_cast<uint32_t>(n));
 	}
 };
 
