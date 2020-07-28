@@ -379,6 +379,7 @@ namespace Effekseer.IO
 				// Write effect file
 				byte[] data = efkefc.Save(root, Core.SaveAsXmlDocument(root));
 				File.WriteAllBytes(filePath, data);
+				File.SetLastWriteTime(filePath, file.LastWriteTime);
 			}
 
 			// Extract resource files
@@ -400,6 +401,7 @@ namespace Effekseer.IO
 				if (data != null)
 				{
 					File.WriteAllBytes(filePath, data);
+					File.SetLastWriteTime(filePath, file.LastWriteTime);
 				}
 			}
 
