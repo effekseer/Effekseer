@@ -77,9 +77,16 @@ namespace Effekseer.GUI.Menu
 				ctrl.Update();
 			}
 
-			float pos = Manager.NativeManager.GetCursorPosX();
-			Manager.NativeManager.SetCursorPosX(pos + (windowSize.X - pos - 56 * 3 - 140) / 2);
-			Manager.NativeManager.Text("Effekseer Version 1.51");
+			{
+				float pos = Manager.NativeManager.GetCursorPosX();
+				float textWidth = Manager.NativeManager.CalcTextSize(currentTitle).X;
+				float areaWidth = windowSize.X - pos - 56 * 3;
+				if (textWidth < areaWidth)
+				{
+					Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
+					Manager.NativeManager.Text(currentTitle);
+				}
+			}
 
 			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
 			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
@@ -135,7 +142,9 @@ namespace Effekseer.GUI.Menu
 
 		void ReloadTitle()
 		{
-			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + Core.FullPath + "] ";
+			string filePath = Core.Root.GetFullPath();
+			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
+			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + fileName + "] ";
 
 			if (Core.IsChanged)
 			{
@@ -378,6 +387,9 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Icons.PanelDepth);
 				setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon);
 				setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Icons.PanelRender);
+#if __EFFEKSEER_BUILD_VERSION16__
+				setDockWindow(new MultiLanguageString("AdvancedRenderSettings"), typeof(Dock.AdvancedRenderCommonValues), Icons.PanelDynamicParams);
+#endif
 				setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Icons.PanelSound);
 				setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Icons.PanelFCurve);
 				setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Icons.PanelViewerCtrl);
@@ -391,9 +403,6 @@ namespace Effekseer.GUI.Menu
                 setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Icons.PanelNetwork);
 				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
 				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
-#if __EFFEKSEER_BUILD_VERSION16__
-				setDockWindow(new MultiLanguageString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Icons.PanelAlphaCrunch);
-#endif
 
 				this.Controls.Add(menu);
 			}
