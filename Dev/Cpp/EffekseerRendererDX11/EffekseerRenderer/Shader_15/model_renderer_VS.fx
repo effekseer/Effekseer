@@ -70,19 +70,25 @@ VS_Output main(const VS_Input Input)
 #if ENABLE_LIGHTING
 
 #ifdef DISABLE_INSTANCE
-	float3x3 lightMat = (float3x3)mModel;
+	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
+	localNormal = normalize(mul(mModel, localNormal));
+
+	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
+	localBinormal = normalize(mul(mModel, localBinormal));
+
+	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
+	localTangent = normalize(mul(mModel, localTangent));
 #else
-	float3x3 lightMat = (float3x3)matModel;
+	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
+	localNormal = normalize(mul(matModel, localNormal));
+
+	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
+	localBinormal = normalize(mul(matModel, localBinormal));
+
+	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
+	localTangent = normalize(mul(matModel, localTangent));
 #endif
 
-	float4 localNormal = {0.0, 0.0, 0.0, 1.0};
-	localNormal.xyz = normalize(mul(lightMat, Input.Normal));
-
-	float4 localBinormal = {0.0, 0.0, 0.0, 1.0};
-	localBinormal.xyz = normalize(mul(lightMat, Input.Binormal));
-
-	float4 localTangent = {0.0, 0.0, 0.0, 1.0};
-	localTangent.xyz = normalize(mul(lightMat, Input.Tangent));
 	Output.Normal = localNormal.xyz;
 	Output.Binormal = localBinormal.xyz;
 	Output.Tangent = localTangent.xyz;
