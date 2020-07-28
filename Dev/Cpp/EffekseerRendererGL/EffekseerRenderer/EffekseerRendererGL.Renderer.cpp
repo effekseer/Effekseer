@@ -539,6 +539,14 @@ bool RendererImplemented::Initialize()
 		GLExt::glGenVertexArrays(1, &defaultVertexArray_);
 	}
 
+	// Transpiled shader for OpenGL 3.x is transposed
+	if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		m_shader->SetIsTransposeEnabled(true);
+		m_shader_distortion->SetIsTransposeEnabled(true);
+		m_shader_lighting->SetIsTransposeEnabled(true);
+	}
+
 	return true;
 }
 

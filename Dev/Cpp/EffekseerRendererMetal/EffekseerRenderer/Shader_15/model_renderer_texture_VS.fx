@@ -61,8 +61,8 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_27)
     float4 modelColor = v_27.fModelColor[Input.Index.x] * Input.Color;
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.Pos = v_27.mCameraProj * localPosition;
+    float4 cameraPosition = localPosition * matModel;
+    Output.Pos = v_27.mCameraProj * cameraPosition;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;

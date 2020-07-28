@@ -48,26 +48,25 @@ varying vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = transpose(CBVS0.mModel);
     vec4 uv = CBVS0.fUV;
     vec4 modelColor = CBVS0.fModelColor * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.Pos = CBVS0.mCameraProj * localPosition;
+    vec4 cameraPosition = CBVS0.mModel * localPosition;
+    Output.Pos = CBVS0.mCameraProj * cameraPosition;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    mat3 lightMat = mat3(matModel[0].xyz, matModel[1].xyz, matModel[2].xyz);
+    mat3 lightMat = mat3(CBVS0.mModel[0].xyz, CBVS0.mModel[1].xyz, CBVS0.mModel[2].xyz);
     vec4 localNormal = vec4(0.0, 0.0, 0.0, 1.0);
-    vec3 _103 = normalize(Input.Normal * lightMat);
-    localNormal = vec4(_103.x, _103.y, _103.z, localNormal.w);
+    vec3 _102 = normalize(Input.Normal * lightMat);
+    localNormal = vec4(_102.x, _102.y, _102.z, localNormal.w);
     vec4 localBinormal = vec4(0.0, 0.0, 0.0, 1.0);
-    vec3 _110 = normalize(Input.Binormal * lightMat);
-    localBinormal = vec4(_110.x, _110.y, _110.z, localBinormal.w);
+    vec3 _109 = normalize(Input.Binormal * lightMat);
+    localBinormal = vec4(_109.x, _109.y, _109.z, localBinormal.w);
     vec4 localTangent = vec4(0.0, 0.0, 0.0, 1.0);
-    vec3 _117 = normalize(Input.Tangent * lightMat);
-    localTangent = vec4(_117.x, _117.y, _117.z, localTangent.w);
+    vec3 _116 = normalize(Input.Tangent * lightMat);
+    localTangent = vec4(_116.x, _116.y, _116.z, localTangent.w);
     Output.Normal = localNormal.xyz;
     Output.Binormal = localBinormal.xyz;
     Output.Tangent = localTangent.xyz;

@@ -135,6 +135,8 @@ private:
 	std::vector<ShaderAttribInfoInternal> attribs;
 	std::vector<ShaderUniformInfoInternal> uniforms;
 
+	bool isTransposeEnabled_ = false;
+
 	static bool CompileShader(OpenGLDeviceType deviceType,
 							  GLuint& program,
 							  const ShaderCodeView* vsData,
@@ -212,6 +214,11 @@ public:
 	void SetTextureSlot(int32_t index, GLuint value);
 	GLuint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
+
+	void SetIsTransposeEnabled(bool isTransposeEnabled)
+	{
+		isTransposeEnabled_ = isTransposeEnabled;
+	}
 
 	bool IsValid() const;
 };

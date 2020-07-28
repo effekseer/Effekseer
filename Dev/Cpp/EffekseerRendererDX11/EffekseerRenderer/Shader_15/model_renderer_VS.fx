@@ -45,7 +45,6 @@ struct VS_Output
 VS_Output main(const VS_Input Input)
 {
 #ifdef DISABLE_INSTANCE
-	float4x4 matModel = mModel;
 	float4 uv = fUV;
 	float4 modelColor = fModelColor * Input.Color;
 #else
@@ -56,16 +55,25 @@ VS_Output main(const VS_Input Input)
 
 	VS_Output Output = (VS_Output)0;
 	float4 localPosition = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
-	localPosition = mul(matModel, localPosition);
-	Output.Pos = mul(mCameraProj, localPosition);
+
+#ifdef DISABLE_INSTANCE
+	float4 cameraPosition = mul(mModel, localPosition);
+#else
+	float4 cameraPosition = mul(matModel, localPosition);
+#endif
+	Output.Pos = mul(mCameraProj, cameraPosition);
 	Output.Color = modelColor;
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
 #if ENABLE_LIGHTING
+
+#ifdef DISABLE_INSTANCE
+	float3x3 lightMat = (float3x3)mModel;
+#else
 	float3x3 lightMat = (float3x3)matModel;
-	//lightMat = transpose( lightMat );
+#endif
 
 	float4 localNormal = {0.0, 0.0, 0.0, 1.0};
 	localNormal.xyz = normalize(mul(lightMat, Input.Normal));

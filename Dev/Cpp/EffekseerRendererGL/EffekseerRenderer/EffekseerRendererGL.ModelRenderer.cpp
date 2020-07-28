@@ -21,12 +21,12 @@
 #include "Shader/Model_PS.h"
 #include "Shader/Model_VS.h"
 
-#include "ShaderHeader_15/model_renderer_texture_VS.h"
-#include "ShaderHeader_15/model_renderer_texture_PS.h"
-#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
-#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
-#include "ShaderHeader_15/model_renderer_distortion_VS.h"
 #include "ShaderHeader_15/model_renderer_distortion_PS.h"
+#include "ShaderHeader_15/model_renderer_distortion_VS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader_15/model_renderer_texture_PS.h"
+#include "ShaderHeader_15/model_renderer_texture_VS.h"
 
 namespace EffekseerRendererGL
 {
@@ -375,6 +375,15 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true, false);
 	if (shader_distortion_texture == NULL)
 		goto End;
+
+	// Transpiled shader is transposed
+	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		shader_lighting_texture_normal->SetIsTransposeEnabled(true);
+		shader_texture->SetIsTransposeEnabled(true);
+		shader_distortion_texture->SetIsTransposeEnabled(true);
+	}
+
 #endif
 	return new ModelRenderer(renderer, shader_lighting_texture_normal, shader_texture, shader_distortion_texture);
 End:;

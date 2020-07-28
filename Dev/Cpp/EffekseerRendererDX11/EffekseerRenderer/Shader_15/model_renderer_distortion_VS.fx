@@ -44,7 +44,6 @@ struct VS_Output
 VS_Output main(const VS_Input Input)
 {
 #ifdef DISABLE_INSTANCE
-	float4x4 matModel = mModel;
 	float4 uv = fUV;
 	float4 modelColor = fModelColor * Input.Color;
 #else
@@ -59,10 +58,17 @@ VS_Output main(const VS_Input Input)
 	float4 localBinormal = {Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0};
 	float4 localTangent = {Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0};
 
+#ifdef DISABLE_INSTANCE
+	localPosition = mul(mModel, localPosition);
+	localNormal = mul(mModel, localNormal);
+	localBinormal = mul(mModel, localBinormal);
+	localTangent = mul(mModel, localTangent);
+#else
 	localPosition = mul(matModel, localPosition);
 	localNormal = mul(matModel, localNormal);
 	localBinormal = mul(matModel, localBinormal);
 	localTangent = mul(matModel, localTangent);
+#endif
 
 	localNormal = localPosition + normalize(localNormal - localPosition);
 	localBinormal = localPosition + normalize(localBinormal - localPosition);

@@ -50,7 +50,6 @@ varying vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = transpose(CBVS0.mModel);
     vec4 uv = CBVS0.fUV;
     vec4 modelColor = CBVS0.fModelColor * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
@@ -58,10 +57,10 @@ VS_Output _main(VS_Input Input)
     vec4 localNormal = vec4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
     vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
     vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
-    localPosition *= matModel;
-    localNormal *= matModel;
-    localBinormal *= matModel;
-    localTangent *= matModel;
+    localPosition = CBVS0.mModel * localPosition;
+    localNormal = CBVS0.mModel * localNormal;
+    localBinormal = CBVS0.mModel * localBinormal;
+    localTangent = CBVS0.mModel * localTangent;
     localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
