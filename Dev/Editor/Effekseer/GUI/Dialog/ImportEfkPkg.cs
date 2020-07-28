@@ -189,7 +189,17 @@ namespace Effekseer.GUI.Dialog
 						{
 							file.Name = importFiles[file].DestinationName;
 						}
-						EfkPkg.ExtractFiles(targetDirPath, files);
+
+						try
+						{
+							EfkPkg.ExtractFiles(targetDirPath, files);
+						}
+						catch (Exception e)
+						{
+							var mb = new MessageBox();
+							mb.Show("Error", e.Message);
+						}
+
 						ShouldBeRemoved = true;
 					}
 
