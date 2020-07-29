@@ -463,6 +463,9 @@ void Instance::FirstUpdate()
 
 	// 親の初期化
 	if (parameter->CommonValues.TranslationBindType == BindType::WhenCreating ||
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		parameter->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent ||
+#endif
 		parameter->CommonValues.RotationBindType == BindType::WhenCreating ||
 		parameter->CommonValues.ScalingBindType == BindType::WhenCreating)
 	{
@@ -479,6 +482,17 @@ void Instance::FirstUpdate()
 	{
 		ColorParent = m_pParent->ColorInheritance;
 	}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	steeringVec_ = Vec3f(0, 0, 0);
+
+	if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
+		m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
+	{
+		followParentParam.maxFollowSpeed = m_pEffectNode->SteeringBehaviorParam.MaxFollowSpeed.getValue(rand);
+		followParentParam.steeringSpeed = m_pEffectNode->SteeringBehaviorParam.SteeringSpeed.getValue(rand) / 100.0f;
+	}
+#endif
 
 	// Translation
 	if (m_pEffectNode->TranslationType == ParameterTranslationType_Fixed)
@@ -518,6 +532,10 @@ void Instance::FirstUpdate()
 		translation_values.random.acceleration = rva.getValue(rand);
 
 		prevPosition_ = translation_values.random.location;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		steeringVec_ = translation_values.random.velocity;
+#endif
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_Easing)
 	{
@@ -1474,6 +1492,37 @@ void Instance::CalculateMatrix(float deltaFrame)
 			localVelocity = localPosition - prevPosition_;
 		}
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
+			m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
+		{
+			localPosition = prevPosition_;
+
+			Vec3f worldPos = Vec3f::Transform(localPosition, m_ParentMatrix);
+			Vec3f toTarget = parentPosition_ - worldPos;
+
+			if (toTarget.GetLength() > followParentParam.maxFollowSpeed)
+			{
+				toTarget = toTarget.Normalize();
+				toTarget *= followParentParam.maxFollowSpeed;
+			}
+
+			Vec3f vSteering = toTarget - steeringVec_;
+			vSteering *= followParentParam.steeringSpeed;
+
+			steeringVec_ += vSteering * deltaFrame;
+
+			if (steeringVec_.GetLength() > followParentParam.maxFollowSpeed)
+			{
+				steeringVec_ = steeringVec_.Normalize();
+				steeringVec_ *= followParentParam.maxFollowSpeed;
+			}
+
+			Vec3f followVelocity = steeringVec_ * deltaFrame * m_pEffectNode->m_effect->GetMaginification();
+			localPosition += followVelocity;
+		}
+#endif
+
 		prevPosition_ = localPosition;
 
 		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
@@ -1677,13 +1726,25 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 	// 親の行列を計算
 	m_pParent->CalculateMatrix(deltaFrame);
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	parentPosition_ = m_pParent->GetGlobalMatrix43().GetTranslation();
+#endif
+
 	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		TranslationParentBindType tType = m_pEffectNode->CommonValues.TranslationBindType;
+#else
 		BindType tType = m_pEffectNode->CommonValues.TranslationBindType;
+#endif
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
 		BindType sType = m_pEffectNode->CommonValues.ScalingBindType;
 
-		if (tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
+		if (tType == BindType::WhenCreating 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			|| tType == TranslationParentBindType::WhenCreating_FollowParent
+#endif
+			&& rType == BindType::WhenCreating && sType == BindType::WhenCreating)
 		{
 			// do not do anything
 		}
@@ -1697,7 +1758,11 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 			Vec3f s, t;
 			Mat43f r;
 
-			if (tType == BindType::WhenCreating)
+			if (tType == BindType::WhenCreating
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				|| tType == TranslationParentBindType::WhenCreating_FollowParent
+#endif
+				)
 				t = m_ParentMatrix.GetTranslation();
 			else
 				t = ownGroup_->GetParentTranslation();

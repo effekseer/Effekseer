@@ -37,6 +37,26 @@ namespace Effekseer.Data
 		Already = 2,
 	}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+	public enum TranslationParentEffectType : int
+	{
+		[Key(key = "BasicSettings_ParentEffectType_NotBind")]
+		NotBind = 0,
+		[Key(key = "BasicSettings_ParentEffectType_NotBind_Root")]
+		NotBind_Root = 3,
+		[Key(key = "BasicSettings_ParentEffectType_WhenCreating")]
+		WhenCreating = 1,
+		[Key(key = "BasicSettings_ParentEffectType_Already")]
+		Already = 2,
+		[Name(language = Language.Japanese, value = "なし-親を追従")]
+		[Name(language = Language.English, value = "NotBind-FollowParant")]
+		NotBind_FollowParent = 4,
+		[Name(language = Language.Japanese, value = "生成時のみ-親を追従")]
+		[Name(language = Language.English, value = "WhenCreating-FollowParant")]
+		WhenCreating_FollowParent = 5,
+	}
+#endif
+
 	public enum AlphaBlendType : int
 	{
 		[Key(key = "AlphaBlendType_Opacity")]
