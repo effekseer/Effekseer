@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.Data.Value;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -93,19 +94,21 @@ namespace Effekseer.Data
 		internal Node(NodeBase parent)
 			:base(parent)
 		{
+			Path basepath = GetRoot().GetPath();
+
 			Name.SetValueDirectly("Node");
 			CommonValues = new Data.CommonValues();
-			LocationValues = new Data.LocationValues();
+			LocationValues = new Data.LocationValues(basepath);
 			RotationValues = new Data.RotationValues();
 			ScalingValues = new Data.ScaleValues();
 			LocationAbsValues = new Data.LocationAbsValues();
-			GenerationLocationValues = new Data.GenerationLocationValues();
+			GenerationLocationValues = new Data.GenerationLocationValues(basepath);
             DepthValues = new DepthValues();
-			RendererCommonValues = new Data.RendererCommonValues();
-            DrawingValues = new RendererValues();
-            SoundValues = new SoundValues();
+			RendererCommonValues = new Data.RendererCommonValues(basepath);
+            DrawingValues = new RendererValues(basepath);
+            SoundValues = new SoundValues(basepath);
 #if __EFFEKSEER_BUILD_VERSION16__
-			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues();
+			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
 #endif
 		}
 	}

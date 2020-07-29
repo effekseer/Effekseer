@@ -96,6 +96,7 @@
     <Compile Include="GUI\Component\IntWithInifinite.cs" />
     <Compile Include="GUI\Component\IntWithRandom.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
+    <Compile Include="GUI\Component\PathForCurve.cs" />
     <Compile Include="GUI\Component\PathForImage.cs" />
     <Compile Include="GUI\Component\PathForMaterial.cs" />
     <Compile Include="GUI\Component\PathForModel.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="GUI\Component\Vector3DWithRandom.cs" />
     <Compile Include="GUI\Component\Vector4D.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
+    <Compile Include="GUI\Dialog\ImportEfkPkg.cs" />
     <Compile Include="GUI\Dialog\MessageBox.cs" />
     <Compile Include="GUI\Dialog\OpenModel.cs" />
     <Compile Include="GUI\Dock\CommonValues.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="GUI\ThumbnailManager.cs" />
     <Compile Include="GUI\Viewer.cs" />
     <Compile Include="Plugin\ExportDefault.cs" />
+    <Compile Include="Plugin\ExportEfkPkg.cs" />
     <Compile Include="Plugin\Exportglb.cs" />
     <Compile Include="Plugin\ExportglTF.cs" />
     <Compile Include="Process\MaterialEditor.cs" />

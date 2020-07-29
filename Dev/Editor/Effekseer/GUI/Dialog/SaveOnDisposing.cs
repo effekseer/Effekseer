@@ -24,7 +24,7 @@ namespace Effekseer.GUI.Dialog
 		{
 			title = "Warning";
 			var format = Resources.GetString("ConfirmSaveChanged");
-			message = string.Format(format, System.IO.Path.GetFileName(Core.FullPath));
+			message = string.Format(format, System.IO.Path.GetFileName(Core.Root.GetFullPath()));
 
 			this.disposed = disposed;
 

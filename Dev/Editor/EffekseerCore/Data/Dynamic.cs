@@ -58,18 +58,19 @@ namespace Effekseer.Data
 			}
 		}
 
-		public void Add()
+		public void Add(bool isUndoEnabled = true)
 		{
 			var old_value = values;
 			var new_value = new List<DynamicInput>(values);
 			new_value.Add(new DynamicInput());
 
-
-			var cmd = new Command.DelegateCommand(
+			if (isUndoEnabled)
+			{
+				var cmd = new Command.DelegateCommand(
 				() =>
 				{
 					values = new_value;
-					if(OnChanged != null)
+					if (OnChanged != null)
 					{
 						OnChanged(this, null);
 					}
@@ -82,8 +83,12 @@ namespace Effekseer.Data
 						OnChanged(this, null);
 					}
 				});
-
-			Command.CommandManager.Execute(cmd);
+			
+				Command.CommandManager.Execute(cmd);
+			}
+			else {
+				values = new_value;
+			}
 		}
 
 		public EditableValue[] GetValues()
@@ -254,7 +259,7 @@ namespace Effekseer.Data
 
 			for(int i = 0; i < 4; i++)
 			{
-				Inputs.Add();
+				Inputs.Add(false);
 			}
 
 			Equations = new DynamicEquationCollection();

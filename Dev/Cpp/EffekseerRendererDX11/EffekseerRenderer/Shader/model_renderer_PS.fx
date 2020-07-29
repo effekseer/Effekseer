@@ -1,10 +1,8 @@
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 #include "FlipbookInterpolationUtils_PS.fx"
 #include "TextureBlendingUtils_PS.fx"
-#endif
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 struct FalloffParameter
 {
     float4 Param; // x:enable, y:colorblendtype, z:pow
@@ -34,15 +32,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 fEdgeParameter; // x:threshold, y:colorScaling
 };
 
-#else // else __EFFEKSEER_BUILD_VERSION16__
 
-#ifdef ENABLE_LIGHTING
-float4	fLightDirection		: register( c0 );
-float4	fLightColor		: register( c1 );
-float4	fLightAmbient		: register( c2 );
-#endif
-
-#endif // end __EFFEKSEER_BUILD_VERSION16__
 
 #ifdef ENABLE_COLOR_TEXTURE
 Texture2D	g_colorTexture		: register( t0 );
@@ -54,7 +44,6 @@ Texture2D	g_normalTexture		: register( t1 );
 SamplerState	g_normalSampler		: register( s1 );
 #endif
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 Texture2D	    g_alphaTexture		: register( t2 );
 SamplerState	g_alphaSampler		: register( s2 );
 
@@ -69,7 +58,6 @@ SamplerState    g_blendAlphaSampler : register( s5 );
 
 Texture2D       g_blendUVDistortionTexture : register( t6 );
 SamplerState    g_blendUVDistortionSampler : register( s6 );
-#endif
 
 
 struct PS_Input
@@ -77,7 +65,6 @@ struct PS_Input
 	float4 Pos		: SV_POSITION;
 	float2 UV		: TEXCOORD0;
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float3 Normal		: TEXCOORD1;
 	float3 Binormal		: TEXCOORD2;
 	float3 Tangent		: TEXCOORD3;  
@@ -92,27 +79,16 @@ struct PS_Input
     float2 FlipbookNextIndexUV  : TEXCOORD10;
     
     float AlphaThreshold        : TEXCOORD11;
-#else
-
-#if ENABLE_NORMAL_TEXTURE
-	half3 Normal		: TEXCOORD1;
-	half3 Binormal		: TEXCOORD2;
-	half3 Tangent		: TEXCOORD3;   
-#endif
-    
-#endif
 	float4 Color	: COLOR;
 };
 
-float4 PS( const PS_Input Input ) : SV_Target
+float4 main( const PS_Input Input ) : SV_Target
 {
     float2 UVOffset = float2(0.0, 0.0);
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
     UVOffset *= fUVDistortionParameter.x;
-#endif
-    
+
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV + UVOffset) * Input.Color;
 
 #if ENABLE_LIGHTING
@@ -123,7 +99,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 		half3x3( (half3)Input.Tangent, (half3)Input.Binormal, (half3)Input.Normal ) ) );
 #endif
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
     
     // apply alpha texture
@@ -139,14 +114,12 @@ float4 PS( const PS_Input Input ) : SV_Target
     BlendTextureColor.a *= BlendAlphaTextureColor.r * BlendAlphaTextureColor.a;
     
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
-#endif
     
 #if ENABLE_LIGHTING
 	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
 #endif
     
-#if __EFFEKSEER_BUILD_VERSION16__
     // apply falloff
     if(fFalloffParam.Param.x == 1)
     {
@@ -186,7 +159,6 @@ float4 PS( const PS_Input Input ) : SV_Target
                 fEdgeColor.rgb * fEdgeParameter.y, 
                 Output.rgb, 
                 ceil((Output.a - Input.AlphaThreshold) - fEdgeParameter.x));
-#endif
 
 	if( Output.a == 0.0 ) discard;
 

@@ -1881,6 +1881,21 @@ bool GUIManager::IsKeyReleased(int user_key_index)
 	return ImGui::IsKeyReleased(user_key_index);
 }
 
+bool GUIManager::IsShiftKeyDown()
+{
+	return ImGui::GetIO().KeyShift;
+}
+
+bool GUIManager::IsCtrlKeyDown()
+{
+	return ImGui::GetIO().KeyCtrl;
+}
+
+bool GUIManager::IsAltKeyDown()
+{
+	return ImGui::GetIO().KeyAlt;
+}
+
 bool GUIManager::IsMouseDown(int button)
 {
 	return ImGui::IsMouseDown(button);

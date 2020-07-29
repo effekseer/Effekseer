@@ -5,6 +5,8 @@ using System.Text;
 using Effekseer.Utl;
 using System.Globalization;
 using System.Threading;
+using Effekseer.Data;
+using Effekseer.Data.Value;
 
 namespace Effekseer
 {
@@ -205,12 +207,6 @@ namespace Effekseer
 		}
 
 		public static Data.NodeRoot Root
-		{
-			get;
-			private set;
-		}
-
-		public static string FullPath
 		{
 			get;
 			private set;
@@ -470,8 +466,7 @@ namespace Effekseer
 			var entryDirectory = GetEntryDirectory() + "/";
 
 			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
-			FullPath = string.Empty;
-
+			
 			option = LoadOption(language);
 
 			New();
@@ -747,7 +742,6 @@ namespace Effekseer
 			// Add a root node
 			Root.AddChild();
 			Command.CommandManager.Clear();
-			FullPath = string.Empty;
 			IsChanged = false;
 
 			// Select child
@@ -759,15 +753,11 @@ namespace Effekseer
 			}
 		}
 
-		public static System.Xml.XmlDocument SaveAsXmlDocument(string basePath)
+		public static System.Xml.XmlDocument SaveAsXmlDocument(Data.NodeRoot rootNode)
 		{
-			basePath = System.IO.Path.GetFullPath(basePath);
-
-			FullPath = basePath;
-
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
-			var element = Data.IO.SaveObjectToElement(doc, "Root", Core.Root, false);
+			var element = Data.IO.SaveObjectToElement(doc, "Root", rootNode, false);
 
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
@@ -813,32 +803,24 @@ namespace Effekseer
 
 		public static void SaveTo(string path)
 		{
+			Root.SetFullPath(System.IO.Path.GetFullPath(path));
+
 			var loader = new IO.EfkEfc();
-			loader.Save(path);
+			loader.Save(path, Core.Root, SaveAsXmlDocument(Core.Root));
 			return;
 		}
 
-		public static bool LoadFromXml(string xml, string basePath)
+		public static Data.NodeRoot LoadFromXml(string xml, string path)
 		{
 			var doc = new System.Xml.XmlDocument();
 			doc.LoadXml(xml);
-			return LoadFromXml(doc, basePath);
+			return LoadFromXml(doc, path);
 		}
-		public static bool LoadFromXml(System.Xml.XmlDocument doc, string basePath)
+
+		public static Data.NodeRoot LoadFromXml(System.Xml.XmlDocument doc, string path)
 		{
-			basePath = System.IO.Path.GetFullPath(basePath);
-
-			SelectedNode = null;
-
-			FullPath = basePath;
-
-			if (doc.ChildNodes.Count != 2) return false;
-			if (doc.ChildNodes[1].Name != "EffekseerProject") return false;
-
-			if (OnBeforeLoad != null)
-			{
-				OnBeforeLoad(null, null);
-			}
+			if (doc.ChildNodes.Count != 2) return null;
+			if (doc.ChildNodes[1].Name != "EffekseerProject") return null;
 
 			uint toolVersion = 0;
 			if (doc["EffekseerProject"]["ToolVersion"] != null)
@@ -1025,7 +1007,7 @@ namespace Effekseer
 			}
 
 			var root = doc["EffekseerProject"]["Root"];
-			if (root == null) return false;
+			if (root == null) return null;
 
 			culling = new Data.EffectCullingValues();
 			globalValues = new Data.GlobalValues();
@@ -1080,8 +1062,10 @@ namespace Effekseer
 				version = doc["EffekseerProject"]["Version"].GetTextAsInt();
 			}
 
-			var root_node = new Data.NodeRoot() as object;
-			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node, false);
+			var root_node = new Data.NodeRoot();
+			root_node.SetFullPath(path);
+			var root_node_object = root_node as object;
+			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node_object, false);
 
 			// For compatibility
 			if (version < 3)
@@ -1116,7 +1100,7 @@ namespace Effekseer
 					}
 				};
 
-				convert(root_node as Data.NodeBase);
+				convert(root_node);
 			}
 
 			if (toolVersion < ParseVersion("1.50"))
@@ -1164,10 +1148,8 @@ namespace Effekseer
 					}
 				};
 
-				convert(root_node as Data.NodeBase);
+				convert(root_node);
 			}
-
-			Root = root_node as Data.NodeRoot;
 
 			if (toolVersion < ParseVersion("1.50"))
 			{
@@ -1220,30 +1202,19 @@ namespace Effekseer
 			Command.CommandManager.Clear();
 			IsChanged = false;
 
-			if (OnAfterLoad != null)
-			{
-				OnAfterLoad(null, null);
-			}
-
-			return true;
+			return root_node;
 		}
 
-		public static bool LoadFrom(string path)
+		public static Data.NodeRoot LoadFromFile(string path)
 		{
-			var fullpath = System.IO.Path.GetFullPath(path);
-
-			if (!System.IO.File.Exists(fullpath)) return false;
-
-			ResourceCache.Reset();
-
 			// new format?
 			bool isNewFormat = false;
 			{
 				if (string.IsNullOrEmpty(path))
-					return false;
+					return null;
 
 				System.IO.FileStream fs = null;
-				if (!System.IO.File.Exists(path)) return false;
+				if (!System.IO.File.Exists(path)) return null;
 
 				try
 				{
@@ -1251,7 +1222,7 @@ namespace Effekseer
 				}
 				catch
 				{
-					return false;
+					return null;
 				}
 
 				var br = new System.IO.BinaryReader(fs);
@@ -1263,7 +1234,7 @@ namespace Effekseer
 				{
 					fs.Dispose();
 					br.Close();
-					return false;
+					return null;
 				}
 
 				if (buf[0] != 'E' ||
@@ -1282,16 +1253,44 @@ namespace Effekseer
 				br.Close();
 			}
 
-			if(isNewFormat)
+			NodeRoot nodeRoot;
+			if (isNewFormat)
 			{
 				var loader = new IO.EfkEfc();
-				return loader.Load(path);
+				var doc = loader.Load(path);
+				nodeRoot = LoadFromXml(doc, path);
+			}
+			else
+			{
+				var doc = new System.Xml.XmlDocument();
+				doc.Load(path);
+				nodeRoot = LoadFromXml(doc, path);
+			}
+			nodeRoot.SetFullPath(path);
+			return nodeRoot;
+		}
+
+		public static bool LoadFrom(string path)
+		{
+			var fullpath = System.IO.Path.GetFullPath(path);
+
+			SelectedNode = null;
+
+			ResourceCache.Reset();
+
+			OnBeforeLoad?.Invoke(null, null);
+
+			Data.NodeRoot loadedNode = LoadFromFile(fullpath);
+			if (loadedNode == null)
+			{
+				return false;
 			}
 
-			var doc = new System.Xml.XmlDocument();
-			doc.Load(path);
+			Core.Root = loadedNode;
 
-			return LoadFromXml(doc.InnerXml, path);
+			OnAfterLoad?.Invoke(null, null);
+
+			return true;
 		}
 
 		/// <summary>

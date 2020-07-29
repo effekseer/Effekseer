@@ -77,7 +77,9 @@ namespace Effekseer.GUI.Component
 			isHovered = false;
 
 			if (binding == null) return;
-			
+
+			string dd = null;
+
 			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
 			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
@@ -85,11 +87,15 @@ namespace Effekseer.GUI.Component
 				btn_load_Click();
 			}
 
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Curve);
+
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			Manager.NativeManager.SameLine();
 
 			Manager.NativeManager.Text(filePath);
+
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Curve);
 
 			if (Manager.NativeManager.IsItemHovered())
 			{
@@ -115,6 +121,20 @@ namespace Effekseer.GUI.Component
 				}
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+			}
+
+			if (dd != null)
+			{
+				Dropped(dd);
+			}
+		}
+
+		public void Dropped(string path)
+		{
+			if (CheckExtension(path))
+			{
+				LoadFile(path, false);
+				Read();
 			}
 		}
 

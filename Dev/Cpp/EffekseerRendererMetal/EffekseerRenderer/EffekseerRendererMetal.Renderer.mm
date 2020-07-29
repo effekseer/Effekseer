@@ -13,7 +13,25 @@
 
 #include "../../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.h"
 
-#include "Shaders.h"
+// #include "Shaders.h"
+
+#include "ShaderHeader_15/standard_renderer_VS.h"
+#include "ShaderHeader_15/standard_renderer_PS.h"
+
+#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
+#include "ShaderHeader_15/standard_renderer_lighting_PS.h"
+
+#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
+#include "ShaderHeader_15/standard_renderer_distortion_PS.h"
+
+#include "ShaderHeader_15/model_renderer_texture_VS.h"
+#include "ShaderHeader_15/model_renderer_texture_PS.h"
+
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
+
+#include "ShaderHeader_15/model_renderer_distortion_VS.h"
+#include "ShaderHeader_15/model_renderer_distortion_PS.h"
 
 namespace EffekseerRendererMetal
 {
@@ -66,9 +84,14 @@ namespace EffekseerRendererMetal
         return;
     };
     
+    //const char* sources[] = {
+    //    g_sprite_vs_src, g_sprite_vs_lighting_src, g_sprite_distortion_vs_src, g_model_lighting_vs_src, g_model_texture_vs_src, g_model_distortion_vs_src,
+    //    g_sprite_fs_texture_src, g_sprite_fs_lighting_src, g_sprite_fs_texture_distortion_src, g_model_lighting_fs_src, g_model_texture_fs_src, g_model_distortion_fs_src
+    //};
+    
     const char* sources[] = {
-        g_sprite_vs_src, g_sprite_vs_lighting_src, g_sprite_distortion_vs_src, g_model_lighting_vs_src, g_model_texture_vs_src, g_model_distortion_vs_src,
-        g_sprite_fs_texture_src, g_sprite_fs_lighting_src, g_sprite_fs_texture_distortion_src, g_model_lighting_fs_src, g_model_texture_fs_src, g_model_distortion_fs_src
+        metal_standard_renderer_VS, metal_standard_renderer_lighting_VS, metal_standard_renderer_distortion_VS, metal_model_renderer_lighting_texture_normal_VS, metal_model_renderer_texture_VS, metal_model_renderer_distortion_VS,
+        metal_standard_renderer_PS, metal_standard_renderer_lighting_PS, metal_standard_renderer_distortion_PS, metal_model_renderer_lighting_texture_normal_PS, metal_model_renderer_texture_PS, metal_model_renderer_distortion_PS,
     };
     
     std::vector<LLGI::DataStructure>* dest = &renderer->fixedShader_.StandardTexture_VS;

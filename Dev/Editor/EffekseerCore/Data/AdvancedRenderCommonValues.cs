@@ -25,9 +25,9 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Wrap(α Texture)")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
-		public AlphaTextureParameter()
+		public AlphaTextureParameter(Value.Path basepath)
 		{
-			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
 		}
@@ -55,9 +55,9 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Wrap(UV DIstortion Texture)")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
-		public UVDistortionTextureParameter()
+		public UVDistortionTextureParameter(Value.Path basepath)
 		{
-			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
@@ -99,9 +99,9 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Wrap(Blend Texture)")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
-		public BlendTextureParameter()
+		public BlendTextureParameter(Value.Path basepath)
 		{
-			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			BlendType = new Value.Enum<AdvancedAlphaBlendType>(AdvancedAlphaBlendType.Blend);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
@@ -125,9 +125,9 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Wrap(Blend Alpha Texture)")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
-		public BlendAlphaTextureParameter()
+		public BlendAlphaTextureParameter(Value.Path basepath)
 		{
-			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
 		}
@@ -155,9 +155,9 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Wrap(Blend UV Distortion Texture)")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
-		public BlendUVDistortionTextureParameter()
+		public BlendUVDistortionTextureParameter(Value.Path basepath)
 		{
-			Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
@@ -189,15 +189,15 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public BlendUVDistortionTextureParameter BlendUVDistortionTextureParam { get; private set; }
 
-		public BlendTextureParameters()
+		public BlendTextureParameters(Value.Path basepath)
 		{
-			BlendTextureParam = new BlendTextureParameter();
+			BlendTextureParam = new BlendTextureParameter(basepath);
 
 			EnableBlendAlphaTexture = new Value.Boolean(false);
-			BlendAlphaTextureParam = new BlendAlphaTextureParameter();
+			BlendAlphaTextureParam = new BlendAlphaTextureParameter(basepath);
 
 			EnableBlendUVDistortionTexture = new Value.Boolean(false);
-			BlendUVDistortionTextureParam = new BlendUVDistortionTextureParameter();
+			BlendUVDistortionTextureParam = new BlendUVDistortionTextureParameter(basepath);
 		}
 	}
 
@@ -380,17 +380,17 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
-        public AdvancedRenderCommonValues()
+        public AdvancedRenderCommonValues(Value.Path basepath)
         {
 #if __EFFEKSEER_BUILD_VERSION16__
 			EnableAlphaTexture = new Value.Boolean(false);
-			AlphaTextureParam = new AlphaTextureParameter();
+			AlphaTextureParam = new AlphaTextureParameter(basepath);
 
 			EnableUVDistortionTexture = new Value.Boolean(false);
-			UVDistortionTextureParam = new UVDistortionTextureParameter();
+			UVDistortionTextureParam = new UVDistortionTextureParameter(basepath);
 
 			EnableBlendTexture = new Value.Boolean(false);
-			BlendTextureParams = new BlendTextureParameters();
+			BlendTextureParams = new BlendTextureParameters(basepath);
 #endif
 
 			AlphaCutoffParam = new AlphaCutoffParameter();

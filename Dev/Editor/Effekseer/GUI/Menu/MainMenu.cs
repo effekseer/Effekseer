@@ -77,9 +77,16 @@ namespace Effekseer.GUI.Menu
 				ctrl.Update();
 			}
 
-			float pos = Manager.NativeManager.GetCursorPosX();
-			Manager.NativeManager.SetCursorPosX(pos + (windowSize.X - pos - 56 * 3 - 140) / 2);
-			Manager.NativeManager.Text("Effekseer Version 1.51");
+			{
+				float pos = Manager.NativeManager.GetCursorPosX();
+				float textWidth = Manager.NativeManager.CalcTextSize(currentTitle).X;
+				float areaWidth = windowSize.X - pos - 56 * 3;
+				if (textWidth < areaWidth)
+				{
+					Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
+					Manager.NativeManager.Text(currentTitle);
+				}
+			}
 
 			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
 			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
@@ -135,7 +142,9 @@ namespace Effekseer.GUI.Menu
 
 		void ReloadTitle()
 		{
-			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + Core.FullPath + "] ";
+			string filePath = Core.Root.GetFullPath();
+			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
+			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + fileName + "] ";
 
 			if (Core.IsChanged)
 			{

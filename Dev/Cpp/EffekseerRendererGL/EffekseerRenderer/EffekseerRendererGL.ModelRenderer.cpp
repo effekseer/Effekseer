@@ -21,6 +21,13 @@
 #include "Shader/Model_PS.h"
 #include "Shader/Model_VS.h"
 
+#include "ShaderHeader_15/model_renderer_distortion_PS.h"
+#include "ShaderHeader_15/model_renderer_distortion_VS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader_15/model_renderer_texture_PS.h"
+#include "ShaderHeader_15/model_renderer_texture_VS.h"
+
 namespace EffekseerRendererGL
 {
 
@@ -53,12 +60,12 @@ static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
 static const int NumAttribs_Model = 6;
 
 static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
-	{"a_Position", GL_FLOAT, 3, 0, false},
-	{"a_Normal", GL_FLOAT, 3, 12, false},
-	{"a_Binormal", GL_FLOAT, 3, 24, false},
-	{"a_Tangent", GL_FLOAT, 3, 36, false},
-	{"a_TexCoord", GL_FLOAT, 2, 48, false},
-	{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
+	{"Input_Pos", GL_FLOAT, 3, 0, false},
+	{"Input_Normal", GL_FLOAT, 3, 12, false},
+	{"Input_Binormal", GL_FLOAT, 3, 24, false},
+	{"Input_Tangent", GL_FLOAT, 3, 36, false},
+	{"Input_UV", GL_FLOAT, 2, 48, false},
+	{"Input_Color", GL_UNSIGNED_BYTE, 4, 56, true},
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	{"a_InstanceID", GL_FLOAT, 1, 0, false},
 	{"a_UVOffset", GL_FLOAT, 4, 0, false},
@@ -86,15 +93,15 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	}
 
 	shader_lighting_texture_normal->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-	shader_lighting_texture_normal->SetTextureSlot(0, shader_lighting_texture_normal->GetUniformId("ColorTexture"));
-	shader_lighting_texture_normal->SetTextureSlot(1, shader_lighting_texture_normal->GetUniformId("NormalTexture"));
+	shader_lighting_texture_normal->SetTextureSlot(0, shader_lighting_texture_normal->GetUniformId("Sampler_g_colorSampler"));
+	shader_lighting_texture_normal->SetTextureSlot(1, shader_lighting_texture_normal->GetUniformId("Sampler_g_normalSampler"));
 
 	shader_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("ColorTexture"));
+	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("Sampler_g_colorSampler"));
 
 	shader_distortion_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("uTexture0"));
-	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("uBackTexture0"));
+	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("Sampler_g_sampler"));
+	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("Sampler_g_backSampler"));
 
 	Shader* shaders[2];
 	shaders[0] = m_shader_lighting_texture_normal;
@@ -107,15 +114,15 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 
 		int vsOffset = 0;
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("ProjectionMatrix"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mCameraProj"), vsOffset);
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("ModelMatrix"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mModel"), vsOffset);
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("UVOffset"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
@@ -140,30 +147,30 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		vsOffset += sizeof(float[4]) * 1;
 #endif
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("ModelColor"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fModelColor"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightDirection"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fLightDirection"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightColor"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fLightColor"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightAmbient"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fLightAmbient"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("mUVInversed"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.mUVInversed"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
 		shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightDirection"), sizeof(float[4]) * 0);
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightColor"), sizeof(float[4]) * 1);
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("LightAmbient"), sizeof(float[4]) * 2);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightDirection"), sizeof(float[4]) * 0);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightColor"), sizeof(float[4]) * 1);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightAmbient"), sizeof(float[4]) * 2);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders[i]->SetTextureSlot(2, shaders[i]->GetUniformId("uAlphaTexture"));
@@ -183,15 +190,15 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 
 		int vsOffset = 0;
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("ProjectionMatrix"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mCameraProj"), vsOffset);
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("ModelMatrix"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mModel"), vsOffset);
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("UVOffset"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
@@ -216,23 +223,23 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		vsOffset += sizeof(float[4]) * 1;
 #endif
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("ModelColor"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fModelColor"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("LightDirection"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fLightDirection"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("LightColor"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fLightColor"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("LightAmbient"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fLightAmbient"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("mUVInversed"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.mUVInversed"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
@@ -241,9 +248,9 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 #else
 		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 #endif
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("g_scale"), sizeof(float[4]) * 0);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.g_scale"), sizeof(float[4]) * 0);
 
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("mUVInversedBack"), sizeof(float[4]) * 1);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.mUVInversedBack"), sizeof(float[4]) * 1);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		shaders_d[i]->SetTextureSlot(2, shaders_d[i]->GetUniformId("uAlphaTexture"));
@@ -350,24 +357,33 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	if (shader_distortion_texture == NULL)
 		goto End;
 #else
-	ShaderCodeView ltnVS(vs_ltn_src.c_str());
-	ShaderCodeView ltnPS(fs_ltn_src.c_str());
-	ShaderCodeView tVS(vs_t_src.c_str());
-	ShaderCodeView tPS(fs_t_src.c_str());
-	ShaderCodeView dVS(vs_d_t_src.c_str());
-	ShaderCodeView dPS(fs_d_t_src.c_str());
+	ShaderCodeView ltnVS(get_model_renderer_lighting_texture_normal_VS(renderer->GetDeviceType()));
+	ShaderCodeView ltnPS(get_model_renderer_lighting_texture_normal_PS(renderer->GetDeviceType()));
+	ShaderCodeView tVS(get_model_renderer_texture_VS(renderer->GetDeviceType()));
+	ShaderCodeView tPS(get_model_renderer_texture_PS(renderer->GetDeviceType()));
+	ShaderCodeView dVS(get_model_renderer_distortion_VS(renderer->GetDeviceType()));
+	ShaderCodeView dPS(get_model_renderer_distortion_PS(renderer->GetDeviceType()));
 
-	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true);
+	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true, false);
 	if (shader_lighting_texture_normal == NULL)
 		goto End;
 
-	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true);
+	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true, false);
 	if (shader_texture == NULL)
 		goto End;
 
-	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true);
+	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true, false);
 	if (shader_distortion_texture == NULL)
 		goto End;
+
+	// Transpiled shader is transposed
+	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		shader_lighting_texture_normal->SetIsTransposeEnabled(true);
+		shader_texture->SetIsTransposeEnabled(true);
+		shader_distortion_texture->SetIsTransposeEnabled(true);
+	}
+
 #endif
 	return new ModelRenderer(renderer, shader_lighting_texture_normal, shader_texture, shader_distortion_texture);
 End:;

@@ -7,6 +7,7 @@ namespace Effekseer.Data.Value
 {
 	public class Path : IResettableValue
 	{
+		Path _basepath;
 		string _abspath = string.Empty;
 
 		/// <summary>
@@ -53,10 +54,17 @@ namespace Effekseer.Data.Value
 
 		public string DefaultValue { get; private set; }
 
-		internal Path(string filter, bool isRelativeSaved = true, string abspath = "")
+		internal Path(Path basepath, string filter, bool isRelativeSaved = true, string abspath = "")
 		{
+			//if (basepath == null && isRelativeSaved)
+			//{
+			//	throw new Exception("required basepath");
+			//
+			//}
+
 			Filter = filter;
 			IsRelativeSaved = isRelativeSaved;
+			_basepath = basepath;
 			_abspath = abspath;
 
 			DefaultValue = _abspath;
@@ -103,8 +111,8 @@ namespace Effekseer.Data.Value
 		public string GetRelativePath()
 		{
 			if (_abspath == string.Empty) return _abspath;
-			if (Core.FullPath == string.Empty) return _abspath;
-			return Utils.Misc.GetRelativePath(Core.FullPath, _abspath);
+			if (_basepath == null || _basepath.AbsolutePath == string.Empty) return _abspath;
+			return Utils.Misc.GetRelativePath(_basepath.AbsolutePath, _abspath);
 		}
 
 		public void SetRelativePath(string relative_path)
@@ -114,7 +122,7 @@ namespace Effekseer.Data.Value
 
 			try
 			{
-				if (Core.FullPath == string.Empty)
+				if (_basepath == null || _basepath.AbsolutePath == string.Empty)
 				{
 					SetAbsolutePath(relative_path);
 					return;
@@ -126,12 +134,12 @@ namespace Effekseer.Data.Value
 				}
 				else
 				{
-					SetAbsolutePath(Utils.Misc.GetAbsolutePath(Core.FullPath, relative_path));
+					SetAbsolutePath(Utils.Misc.GetAbsolutePath(_basepath.AbsolutePath, relative_path));
 				}
 			}
 			catch (Exception e)
 			{
-				throw new Exception(e.ToString() + " Core.FullPath = " + Core.FullPath );
+				throw new Exception(e.ToString() + " relative_path = " + relative_path);
 			}
 		}
 
@@ -158,8 +166,8 @@ namespace Effekseer.Data.Value
 
 		internal void SetRelativePathDirectly(string relative_path)
 		{
-			if (Core.FullPath == string.Empty) SetAbsolutePathDirectly(relative_path);
-			Uri basepath = new Uri(Core.FullPath);
+			if (_basepath.AbsolutePath == string.Empty) SetAbsolutePathDirectly(relative_path);
+			Uri basepath = new Uri(_basepath.AbsolutePath);
 			Uri path = new Uri(basepath, relative_path);
 			var absolute_path = path.LocalPath;
 			SetAbsolutePathDirectly(absolute_path);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.Data.Value;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,13 +78,13 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal GenerationLocationValues()
+		internal GenerationLocationValues(Value.Path basepath)
 		{
 			EffectsRotation = new Value.Boolean(false);
 			Type = new Value.Enum<ParameterType>();
 			Point = new PointParameter();
 			Sphere = new SphereParameter();
-			Model = new ModelParameter();
+			Model = new ModelParameter(basepath);
 			Circle = new CircleParameter();
 			Line = new LineParameter();
 		}
@@ -210,9 +211,9 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public ModelParameter()
+			public ModelParameter(Path basepath)
 			{
-                Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");				
+                Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");				
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}

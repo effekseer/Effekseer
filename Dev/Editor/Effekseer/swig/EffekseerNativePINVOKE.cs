@@ -1656,6 +1656,15 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsKeyReleased___")]
   public static extern bool GUIManager_IsKeyReleased(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsShiftKeyDown___")]
+  public static extern bool GUIManager_IsShiftKeyDown(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsCtrlKeyDown___")]
+  public static extern bool GUIManager_IsCtrlKeyDown(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAltKeyDown___")]
+  public static extern bool GUIManager_IsAltKeyDown(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsMouseDown___")]
   public static extern bool GUIManager_IsMouseDown(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 

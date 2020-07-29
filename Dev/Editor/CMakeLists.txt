@@ -36,7 +36,7 @@ add_library(EffekseerCore
 )
 
 set_target_properties(EffekseerCore PROPERTIES
-    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq")
+    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;System.IO.Compression.FileSystem")
 
 #set_target_properties(EffekseerCore PROPERTIES
 #    VS_DOTNET_REFERENCE_IronPython ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.dll
@@ -119,6 +119,6 @@ target_link_libraries(TestCSharp EffekseerCore)
 target_compile_options(TestCSharp PRIVATE "/langversion:6")
 
 if (MSVC)
-    set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_DEBUG "Effekseer" )
-    set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_RELEASE "Effekseer" )
+    set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_DEBUG "Effekseer.TestCSharp" )
+    set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_RELEASE "Effekseer.TestCSharp" )
 endif()

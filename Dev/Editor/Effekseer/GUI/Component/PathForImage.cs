@@ -120,7 +120,7 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			if (dd == null) dd = DragAndDrops.UpdateImageDst();
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
@@ -133,7 +133,7 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.SetTooltip(filePath);
 			}
 
-			if (dd == null) dd = DragAndDrops.UpdateImageDst();
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			
@@ -146,7 +146,7 @@ namespace Effekseer.GUI.Component
 
 				Popup();
 				
-				if (dd == null) dd = DragAndDrops.UpdateImageDst();
+				if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
@@ -156,7 +156,7 @@ namespace Effekseer.GUI.Component
 
 				Popup();
 
-				if (dd == null) dd = DragAndDrops.UpdateImageDst();
+				if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 				
@@ -181,7 +181,7 @@ namespace Effekseer.GUI.Component
 					Popup();
 				}
 
-				if (dd == null) dd = DragAndDrops.UpdateImageDst();
+				if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}

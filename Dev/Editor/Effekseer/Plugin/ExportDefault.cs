@@ -104,7 +104,7 @@ namespace Effekseer.Plugin
 					if (Effekseer.GUI.Manager.NativeManager.Button(save_text))
 					{
 						var binaryExporter = new Binary.Exporter();
-						var binary = binaryExporter.Export(mag[0]);
+						var binary = binaryExporter.Export(Core.Root, mag[0]);
 						System.IO.File.WriteAllBytes(path, binary);
 						Effekseer.Core.Option.ExternalMagnification.SetValue(mag[0]);
 						ShouldBeRemoved = true;

@@ -1,8 +1,6 @@
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 #include "FlipbookInterpolationUtils_PS.fx"
 #include "TextureBlendingUtils_PS.fx"
-#endif
 
 Texture2D	g_texture		: register(t0);
 SamplerState	g_sampler		: register(s0);
@@ -10,7 +8,6 @@ SamplerState	g_sampler		: register(s0);
 Texture2D		g_backTexture		: register(t1);
 SamplerState	g_backSampler		: register(s1);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 Texture2D g_alphaTexture            : register(t2);
 SamplerState g_alphaSampler         : register(s2);
 
@@ -25,9 +22,8 @@ SamplerState g_blendAlphaSampler    : register(s5);
 
 Texture2D g_blendUVDistortionTexture : register(t6);
 SamplerState g_blendUVDistortionSampler : register(s6);
-#endif
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 cbuffer PS_ConstanBuffer : register(b0)
 {
     float4	g_scale;
@@ -39,10 +35,7 @@ cbuffer PS_ConstanBuffer : register(b0)
 
     float4  fBlendTextureParameter; // x:blendType
 };
-#else
-float4		g_scale			: register(c0);
-float4 mUVInversedBack		: register(c1);
-#endif
+
 
 struct PS_Input
 {
@@ -53,7 +46,6 @@ struct PS_Input
 	float4 Tangent		: TEXCOORD3;
 	float4 Pos		: TEXCOORD4;
 	float4 Color		: COLOR0;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV              : TEXCOORD5;
     float2 UVDistortionUV       : TEXCOORD6;
     float2 BlendUV              : TEXCOORD7;
@@ -63,23 +55,19 @@ struct PS_Input
     float FlipbookRate          : TEXCOORD10;
     float2 FlipbookNextIndexUV  : TEXCOORD11;
     float AlphaThreshold        : TEXCOORD12;
-#endif
 };
 
-float4 PS( const PS_Input Input ) : SV_Target
+float4 main( const PS_Input Input ) : SV_Target
 {
     float2 UVOffset = float2(0.0, 0.0);
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
     UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
     UVOffset *= fUVDistortionParameter.x;
-#endif
     
 	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset);
 
 	Output.a = Output.a * Input.Color.a;
     
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	ApplyFlipbook(Output, g_texture, g_sampler, fFlipbookParameter, Input.Color, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
 
     // apply alpha texture
@@ -101,7 +89,6 @@ float4 PS( const PS_Input Input ) : SV_Target
     {
         discard;
     }
-#endif
 
 	if (Output.a == 0.0f) discard;
 

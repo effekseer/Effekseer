@@ -131,7 +131,8 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 						   size_t vsDataCount,
 						   const ShaderCodeView* psData,
 						   size_t psDataCount,
-						   const char* name)
+						   const char* name,
+						   bool addHeader)
 {
 	std::array<const char*, 16> src_data;
 	std::array<GLint, 16> src_size;
@@ -145,49 +146,64 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	GLuint vert_shader, frag_shader;
 	GLint res_vs, res_fs, res_link;
 
-	// compile a vertex shader
-	if (deviceType == OpenGLDeviceType::OpenGL3)
-		src_data[0] = g_header_vs_gl3_src;
-	if (deviceType == OpenGLDeviceType::OpenGL2)
-		src_data[0] = g_header_vs_gl2_src;
-	if (deviceType == OpenGLDeviceType::OpenGLES3)
-		src_data[0] = g_header_vs_gles3_src;
-	if (deviceType == OpenGLDeviceType::OpenGLES2 || deviceType == OpenGLDeviceType::Emscripten)
-		src_data[0] = g_header_vs_gles2_src;
+	int32_t vsOffset = 0;
+	int32_t psOffset = 0;
 
-	src_size[0] = (GLint)strlen(src_data[0]);
+	// compile a vertex shader
+	if (addHeader)
+	{
+		if (deviceType == OpenGLDeviceType::OpenGL3)
+			src_data[0] = g_header_vs_gl3_src;
+		if (deviceType == OpenGLDeviceType::OpenGL2)
+			src_data[0] = g_header_vs_gl2_src;
+		if (deviceType == OpenGLDeviceType::OpenGLES3)
+			src_data[0] = g_header_vs_gles3_src;
+		if (deviceType == OpenGLDeviceType::OpenGLES2 || deviceType == OpenGLDeviceType::Emscripten)
+			src_data[0] = g_header_vs_gles2_src;
+
+		src_size[0] = (GLint)strlen(src_data[0]);
+		vsOffset += 1;
+	}
 
 	for (int i = 0; i < vsDataCount; i++)
 	{
-		src_data[i + 1] = vsData[i].Data;
-		src_size[i + 1] = (GLint)strlen(src_data[i + 1]);
+		src_data[i + vsOffset] = vsData[i].Data;
+		src_size[i + vsOffset] = (GLint)strlen(src_data[i + vsOffset]);
 	}
 
+	vsOffset += vsDataCount;
+
 	vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
-	GLExt::glShaderSource(vert_shader, vsDataCount + 1, src_data.data(), src_size.data());
+	GLExt::glShaderSource(vert_shader, vsOffset, src_data.data(), src_size.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
 	// compile a fragment shader
-	if (deviceType == OpenGLDeviceType::OpenGL3)
-		src_data[0] = g_header_fs_gl3_src;
-	if (deviceType == OpenGLDeviceType::OpenGL2)
-		src_data[0] = g_header_fs_gl2_src;
-	if (deviceType == OpenGLDeviceType::OpenGLES3)
-		src_data[0] = g_header_fs_gles3_src;
-	if (deviceType == OpenGLDeviceType::OpenGLES2 || deviceType == OpenGLDeviceType::Emscripten)
-		src_data[0] = g_header_fs_gles2_src;
+	if (addHeader)
+	{
+		if (deviceType == OpenGLDeviceType::OpenGL3)
+			src_data[0] = g_header_fs_gl3_src;
+		if (deviceType == OpenGLDeviceType::OpenGL2)
+			src_data[0] = g_header_fs_gl2_src;
+		if (deviceType == OpenGLDeviceType::OpenGLES3)
+			src_data[0] = g_header_fs_gles3_src;
+		if (deviceType == OpenGLDeviceType::OpenGLES2 || deviceType == OpenGLDeviceType::Emscripten)
+			src_data[0] = g_header_fs_gles2_src;
 
-	src_size[0] = (GLint)strlen(src_data[0]);
+		src_size[0] = (GLint)strlen(src_data[0]);
+		psOffset += 1;
+	}
 
 	for (int i = 0; i < psDataCount; i++)
 	{
-		src_data[i + 1] = psData[i].Data;
-		src_size[i + 1] = (GLint)strlen(src_data[i + 1]);
+		src_data[i + psOffset] = psData[i].Data;
+		src_size[i + psOffset] = (GLint)strlen(src_data[i + psOffset]);
 	}
 
+	psOffset += psDataCount;
+
 	frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, psDataCount + 1, src_data.data(), src_size.data());
+	GLExt::glShaderSource(frag_shader, psOffset, src_data.data(), src_size.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 
@@ -265,7 +281,7 @@ bool Shader::ReloadShader()
 		psData[i].Length = psCodes_[i].Code.size();
 	}
 
-	if (CompileShader(m_deviceType, program, vsData.data(), vsData.size(), psData.data(), psData.size(), name_.c_str()))
+	if (CompileShader(m_deviceType, program, vsData.data(), vsData.size(), psData.data(), psData.size(), name_.c_str(), addHeader_))
 	{
 		m_program = program;
 		GetAttribIdList(0, nullptr);
@@ -285,13 +301,15 @@ Shader::Shader(GraphicsDevice* graphicsDevice,
 			   const ShaderCodeView* psData,
 			   size_t psDataCount,
 			   const char* name,
-			   bool hasRefCount)
+			   bool hasRefCount,
+			   bool addHeader)
 	: DeviceObject(nullptr, graphicsDevice, hasRefCount)
 	, m_deviceType(graphicsDevice->GetDeviceType())
 	, m_program(program)
 	, m_vertexSize(0)
 	, m_vertexConstantBuffer(NULL)
 	, m_pixelConstantBuffer(NULL)
+	, addHeader_(addHeader)
 {
 	m_textureSlots.fill(0);
 	m_textureSlotEnables.fill(false);
@@ -348,13 +366,14 @@ Shader* Shader::Create(GraphicsDevice* graphicsDevice,
 					   const ShaderCodeView* psData,
 					   size_t psDataCount,
 					   const char* name,
-					   bool hasRefCount)
+					   bool hasRefCount,
+					   bool addHeader)
 {
 	GLuint program;
 
-	if (CompileShader(graphicsDevice->GetDeviceType(), program, vsData, vsDataCount, psData, psDataCount, name))
+	if (CompileShader(graphicsDevice->GetDeviceType(), program, vsData, vsDataCount, psData, psDataCount, name, addHeader))
 	{
-		return new Shader(graphicsDevice, program, vsData, vsDataCount, psData, psDataCount, name, hasRefCount);
+		return new Shader(graphicsDevice, program, vsData, vsDataCount, psData, psDataCount, name, hasRefCount, addHeader);
 	}
 	else
 	{
@@ -565,7 +584,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*)m_vertexConstantBuffer;
 			data += m_vertexConstantLayout[i].Offset;
-			GLExt::glUniformMatrix4fv(m_vertexConstantLayout[i].ID, 1, GL_FALSE, (const GLfloat*)data);
+			GLExt::glUniformMatrix4fv(m_vertexConstantLayout[i].ID, 1, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
 		}
 		else if (CONSTANT_TYPE_MATRIX44_ARRAY_END > m_vertexConstantLayout[i].Type &&
 				 m_vertexConstantLayout[i].Type >= CONSTANT_TYPE_MATRIX44_ARRAY)
@@ -574,7 +593,7 @@ void Shader::SetConstantBuffer()
 			data += m_vertexConstantLayout[i].Offset;
 			GLExt::glUniformMatrix4fv(m_vertexConstantLayout[i].ID,
 									  m_vertexConstantLayout[i].Type - CONSTANT_TYPE_MATRIX44_ARRAY,
-									  GL_FALSE,
+									  isTransposeEnabled_ ? GL_TRUE : GL_FALSE,
 									  (const GLfloat*)data);
 		}
 
@@ -600,7 +619,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*)m_pixelConstantBuffer;
 			data += m_pixelConstantLayout[i].Offset;
-			GLExt::glUniformMatrix4fv(m_pixelConstantLayout[i].ID, 1, GL_FALSE, (const GLfloat*)data);
+			GLExt::glUniformMatrix4fv(m_pixelConstantLayout[i].ID, 1, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
 		}
 		else if (CONSTANT_TYPE_MATRIX44_ARRAY_END > m_pixelConstantLayout[i].Type &&
 				 m_pixelConstantLayout[i].Type >= CONSTANT_TYPE_MATRIX44_ARRAY)
@@ -608,7 +627,7 @@ void Shader::SetConstantBuffer()
 			uint8_t* data = (uint8_t*)m_pixelConstantBuffer;
 			data += m_pixelConstantLayout[i].Offset;
 			GLExt::glUniformMatrix4fv(
-				m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Type - CONSTANT_TYPE_MATRIX44_ARRAY, GL_FALSE, (const GLfloat*)data);
+				m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Type - CONSTANT_TYPE_MATRIX44_ARRAY, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
 		}
 
 		else if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)

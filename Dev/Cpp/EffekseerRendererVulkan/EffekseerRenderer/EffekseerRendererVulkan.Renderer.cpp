@@ -4,6 +4,20 @@
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "EffekseerMaterialCompilerVulkan.h"
 
+#include "ShaderHeader_15/standard_renderer_VS.h"
+#include "ShaderHeader_15/standard_renderer_PS.h"
+#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
+#include "ShaderHeader_15/standard_renderer_lighting_PS.h"
+#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
+#include "ShaderHeader_15/standard_renderer_distortion_PS.h"
+
+#include "ShaderHeader_15/model_renderer_texture_VS.h"
+#include "ShaderHeader_15/model_renderer_texture_PS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader_15/model_renderer_distortion_VS.h"
+#include "ShaderHeader_15/model_renderer_distortion_PS.h"
+
 namespace EffekseerRendererVulkan
 {
 
@@ -13,66 +27,19 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	if (!shader)
 		return;
 
-	static const std::vector<uint8_t> standard_vert = {
-#include "Shader/Vulkan/standard.vert.spv.inl"
-	};
-	shader->StandardTexture_VS = {{standard_vert.data(), (int32_t)standard_vert.size()}};
+	shader->StandardTexture_VS = {{standard_renderer_VS, (int32_t)sizeof(standard_renderer_VS)}};
+	shader->StandardDistortedTexture_VS = {{standard_renderer_distortion_VS, (int32_t)sizeof(standard_renderer_distortion_VS)}};
+	shader->StandardLightingTexture_VS = {{standard_renderer_lighting_VS, (int32_t)sizeof(standard_renderer_lighting_VS)}};
+	shader->ModelShaderTexture_VS = {{model_renderer_texture_VS, (int32_t)sizeof(model_renderer_texture_VS)}};
+	shader->ModelShaderLightingTextureNormal_VS = {{model_renderer_lighting_texture_normal_VS, (int32_t)sizeof(model_renderer_lighting_texture_normal_VS)}};
+	shader->ModelShaderDistortionTexture_VS = {{model_renderer_distortion_VS, (int32_t)sizeof(model_renderer_distortion_VS)}};
 
-	static const std::vector<uint8_t> standard_distorted_vert = {
-#include "Shader/Vulkan/standard_distortion.vert.spv.inl"
-	};
-	shader->StandardDistortedTexture_VS = {{standard_distorted_vert.data(), (int32_t)standard_distorted_vert.size()}};
-
-	static const std::vector<uint8_t> standard_frag = {
-#include "Shader/Vulkan/standard.frag.spv.inl"
-	};
-	shader->StandardTexture_PS = {{standard_frag.data(), (int32_t)standard_frag.size()}};
-
-	static const std::vector<uint8_t> standard_distortion_frag = {
-#include "Shader/Vulkan/standard_distortion.frag.spv.inl"
-	};
-	shader->StandardDistortedTexture_PS = {{standard_distortion_frag.data(), (int32_t)standard_distortion_frag.size()}};
-
-	static const std::vector<uint8_t> standard_l_vert = {
-#include "Shader/Vulkan/standard_lighting.vert.spv.inl"
-	};
-	shader->StandardLightingTexture_VS = {{standard_l_vert.data(), (int32_t)standard_l_vert.size()}};
-
-	static const std::vector<uint8_t> standard_l_frag = {
-#include "Shader/Vulkan/standard_lighting.frag.spv.inl"
-	};
-	shader->StandardLightingTexture_PS = {{standard_l_frag.data(), (int32_t)standard_l_frag.size()}};
-
-
-	static const std::vector<uint8_t> model_ltn_vert = {
-#include "Shader/Vulkan/model_ltn.vert.spv.inl"
-	};
-	shader->ModelShaderLightingTextureNormal_VS = {{model_ltn_vert.data(), (int32_t)model_ltn_vert.size()}};
-
-	static const std::vector<uint8_t> model_ltn_flag = {
-#include "Shader/Vulkan/model_ltn.frag.spv.inl"
-	};
-	shader->ModelShaderLightingTextureNormal_PS = {{model_ltn_flag.data(), (int32_t)model_ltn_flag.size()}};
-
-	static const std::vector<uint8_t> model_t_vert = {
-#include "Shader/Vulkan/model_t.vert.spv.inl"
-	};
-	shader->ModelShaderTexture_VS = {{model_t_vert.data(), (int32_t)model_t_vert.size()}};
-
-	static const std::vector<uint8_t> model_t_flag = {
-#include "Shader/Vulkan/model_t.frag.spv.inl"
-	};
-	shader->ModelShaderTexture_PS = {{model_t_flag.data(), (int32_t)model_t_flag.size()}};
-
-	static const std::vector<uint8_t> model_d_vert = {
-#include "Shader/Vulkan/model_distortion.vert.spv.inl"
-	};
-	shader->ModelShaderDistortionTexture_VS = {{model_d_vert.data(), (int32_t)model_d_vert.size()}};
-
-	static const std::vector<uint8_t> model_d_flag = {
-#include "Shader/Vulkan/model_distortion.frag.spv.inl"
-	};
-	shader->ModelShaderDistortionTexture_PS = {{model_d_flag.data(), (int32_t)model_d_flag.size()}};
+	shader->StandardTexture_PS = {{standard_renderer_PS, (int32_t)sizeof(standard_renderer_PS)}};
+	shader->StandardDistortedTexture_PS = {{standard_renderer_distortion_PS, (int32_t)sizeof(standard_renderer_distortion_PS)}};
+	shader->StandardLightingTexture_PS = {{standard_renderer_lighting_PS, (int32_t)sizeof(standard_renderer_lighting_PS)}};
+	shader->ModelShaderTexture_PS = {{model_renderer_texture_PS, (int32_t)sizeof(model_renderer_texture_PS)}};
+	shader->ModelShaderLightingTextureNormal_PS = {{model_renderer_lighting_texture_normal_PS, (int32_t)sizeof(model_renderer_lighting_texture_normal_PS)}};
+	shader->ModelShaderDistortionTexture_PS = {{model_renderer_distortion_PS, (int32_t)sizeof(model_renderer_distortion_PS)}};
 }
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(

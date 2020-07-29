@@ -15,63 +15,82 @@ namespace EffekseerRendererDX11
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 
-namespace ShaderLightingTextureNormal_
+namespace ShaderLightingVS_
 {
 static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+}; // namespace ShaderLightingVS_
 
-	static
+namespace ShaderLightingPS_
+{
+static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
 
-} // namespace ShaderLightingTextureNormal_
+} // namespace ShaderLightingPS_
 
-namespace ShaderTexture_
+namespace ShaderVS_
 {
 static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+} // namespace ShaderVS_
 
-	static
+namespace ShaderPS_
+{
+static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
-} // namespace ShaderTexture_
+} // namespace ShaderPS_
 
-namespace ShaderDistortionTexture_
+namespace ShaderDistortionVS_
 {
 static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+} // namespace ShaderDistortionVS_
 
-	static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
-} // namespace ShaderDistortionTexture_
+namespace ShaderDistortionPS_
+{
+static
+#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+} // namespace ShaderDistortionPS_
+
 
 #else
 
-namespace ShaderLightingTextureNormal_
+namespace ShaderLightingVS_
 {
 static
 #include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+}; // namespace ShaderLightingVS_
 
-	static
+namespace ShaderLightingPS_
+{
+static
 #include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
 
-} // namespace ShaderLightingTextureNormal_
+} // namespace ShaderLightingPS_
 
-namespace ShaderTexture_
+namespace ShaderVS_
 {
 static
 #include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+} // namespace ShaderVS_
 
-	static
+namespace ShaderPS_
+{
+static
 #include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
-} // namespace ShaderTexture_
+} // namespace ShaderPS_
 
-namespace ShaderDistortionTexture_
+namespace ShaderDistortionVS_
 {
 static
 #include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+} // namespace ShaderDistortionVS_
 
-	static
-#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
-} // namespace ShaderDistortionTexture_
+namespace ShaderDistortionPS_
+{
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+} // namespace ShaderDistortionPS_
 
 #endif
 
@@ -138,28 +157,28 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	};
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer,
-															ShaderLightingTextureNormal_::g_VS,
-															sizeof(ShaderLightingTextureNormal_::g_VS),
-															ShaderLightingTextureNormal_::g_PS,
-															sizeof(ShaderLightingTextureNormal_::g_PS),
+															ShaderLightingVS_::g_main,
+															sizeof(ShaderLightingVS_::g_main),
+															ShaderLightingPS_::g_main,
+															sizeof(ShaderLightingPS_::g_main),
 															"ModelRendererLightingTextureNormal",
 															decl,
 															ARRAYSIZE(decl));
 
 	Shader* shader_texture = Shader::Create(renderer,
-											ShaderTexture_::g_VS,
-											sizeof(ShaderTexture_::g_VS),
-											ShaderTexture_::g_PS,
-											sizeof(ShaderTexture_::g_PS),
+											ShaderVS_::g_main,
+											sizeof(ShaderVS_::g_main),
+											ShaderPS_::g_main,
+											sizeof(ShaderPS_::g_main),
 											"ModelRendererTexture",
 											decl,
 											ARRAYSIZE(decl));
 
 	auto shader_distortion_texture = Shader::Create(renderer,
-													ShaderDistortionTexture_::g_VS,
-													sizeof(ShaderDistortionTexture_::g_VS),
-													ShaderDistortionTexture_::g_PS,
-													sizeof(ShaderDistortionTexture_::g_PS),
+													ShaderDistortionVS_::g_main,
+													sizeof(ShaderDistortionVS_::g_main),
+													ShaderDistortionPS_::g_main,
+													sizeof(ShaderDistortionPS_::g_main),
 													"ModelRendererDistortionTexture",
 													decl,
 													ARRAYSIZE(decl));

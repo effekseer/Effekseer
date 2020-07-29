@@ -120,6 +120,7 @@ private:
 
 	uint8_t* m_vertexConstantBuffer;
 	uint8_t* m_pixelConstantBuffer;
+	bool addHeader_ = true;
 
 	std::vector<ConstantLayout> m_vertexConstantLayout;
 	std::vector<ConstantLayout> m_pixelConstantLayout;
@@ -134,13 +135,16 @@ private:
 	std::vector<ShaderAttribInfoInternal> attribs;
 	std::vector<ShaderUniformInfoInternal> uniforms;
 
+	bool isTransposeEnabled_ = false;
+
 	static bool CompileShader(OpenGLDeviceType deviceType,
 							  GLuint& program,
 							  const ShaderCodeView* vsData,
 							  size_t vsDataCount,
 							  const ShaderCodeView* psData,
 							  size_t psDataCount,
-							  const char* name);
+							  const char* name,
+							  bool addHeader);
 
 	bool ReloadShader();
 
@@ -151,7 +155,8 @@ private:
 		   const ShaderCodeView* psData,
 		   size_t psDataCount,
 		   const char* name,
-		   bool hasRefCount);
+		   bool hasRefCount,
+		   bool addHeader);
 
 	GLint GetAttribId(const char* name) const;
 
@@ -167,7 +172,8 @@ public:
 						  const ShaderCodeView* psData,
 						  size_t psDataCount,
 						  const char* name,
-						  bool hasRefCount = true);
+						  bool hasRefCount = true,
+						  bool addHeader = true);
 
 public:
 	virtual void OnLostDevice() override;
@@ -208,6 +214,11 @@ public:
 	void SetTextureSlot(int32_t index, GLuint value);
 	GLuint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
+
+	void SetIsTransposeEnabled(bool isTransposeEnabled)
+	{
+		isTransposeEnabled_ = isTransposeEnabled;
+	}
 
 	bool IsValid() const;
 };

@@ -179,7 +179,7 @@ namespace Effekseer.Data
 		public MaterialFileParameter(RendererCommonValues rcValues)
 		{
 			this.rcValues = rcValues;
-			Path = new Value.PathForMaterial(Resources.GetString("MaterialFilter"), true);
+			Path = new Value.PathForMaterial(rcValues.BasePath, Resources.GetString("MaterialFilter"), true);
 			Path.OnChanged += Path_OnChanged;
 		}
 
@@ -334,6 +334,7 @@ namespace Effekseer.Data
 					};
 
 					ValueStatus status = null;
+					string defaultPath = Utils.Misc.GetAbsolutePath(Path.AbsolutePath, texture.DefaultPath);
 
 					var foundValue = FindValue(key.ToString(), usedValueStatuses, withNameFlag);
 					if (foundValue != null)
@@ -344,27 +345,27 @@ namespace Effekseer.Data
 							status.IsShown = texture.IsParam;
 							isChanged = true;
 						}
-
+						
 						// update default path
-						if(texture.IsParam)
+						if (texture.IsParam)
 						{
 							if ((foundValue.Value as Value.PathForImage).AbsolutePath == string.Empty)
 							{
-								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
+								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(defaultPath);
 								isChanged = true;
 							}
 
-							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(texture.DefaultPath);
+							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(defaultPath);
 						}
 						else
 						{
-							if((foundValue.Value as Value.PathForImage).AbsolutePath != texture.DefaultPath)
+							if((foundValue.Value as Value.PathForImage).AbsolutePath != defaultPath)
 							{
-								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
+								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(defaultPath);
 								isChanged = true;
 							}
 
-							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(texture.DefaultPath);
+							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(defaultPath);
 						}
 					}
 					else
@@ -373,15 +374,15 @@ namespace Effekseer.Data
 						if (!withNameFlag) continue;
 
 						status = new ValueStatus();
-						var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true, texture.DefaultPath);
+						var value = new Value.PathForImage(rcValues.BasePath, Resources.GetString("ImageFilter"), true, texture.DefaultPath);
 						status.Value = value;
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
 						valueStatuses.Add(status);
 
-						if(!string.IsNullOrEmpty(texture.DefaultPath))
+						if(!string.IsNullOrEmpty(defaultPath))
 						{
-							value.SetAbsolutePathDirectly(texture.DefaultPath);
+							value.SetAbsolutePathDirectly(defaultPath);
 						}
 
 						isChanged = true;
@@ -1045,8 +1046,12 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		[Key(key = "BRS_CustomData2")]
 		public CustomDataParameter CustomData2 { get; private set; }
-		internal RendererCommonValues()
+
+		internal Value.Path BasePath { get; private set; }
+
+		internal RendererCommonValues(Value.Path basepath)
 		{
+			BasePath = basepath;
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter(this);
 
@@ -1054,11 +1059,11 @@ namespace Effekseer.Data
 			EmissiveScaling = new Value.Int(1, int.MaxValue, 1);
 #endif
 
-			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			ColorTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
 
-			NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			NormalTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter2 = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap2 = new Value.Enum<WrapType>(WrapType.Repeat);
 

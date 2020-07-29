@@ -36,8 +36,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Misc\ZLib.cs" />
+    <Compile Include="Misc\Utils.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Tests\MaterialInformation.cs" />
+    <Compile Include="Tests\ZLib.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">

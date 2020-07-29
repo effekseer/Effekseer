@@ -74,7 +74,7 @@ SoundPlayer::~SoundPlayer()
 	instance.data = soundData;
 	m_sound->AddInstance(instance);
 
-	return reinterpret_cast<Effekseer::SoundHandle>(id);
+	return reinterpret_cast<Effekseer::SoundHandle>(static_cast<int64_t>(id));
 }
 
 //----------------------------------------------------------------------------------

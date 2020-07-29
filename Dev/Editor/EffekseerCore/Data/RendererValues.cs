@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.Data.Value;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -198,16 +199,16 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal RendererValues()
+		internal RendererValues(Path basepath)
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Sprite);
 			TextureUVType = new TextureUVTypeParameter();
 
-			Sprite = new SpriteParamater();
-            Ribbon = new RibbonParamater();
-			Track = new TrackParameter();
-            Ring = new RingParamater();
-			Model = new ModelParamater();
+			Sprite = new SpriteParamater(basepath);
+            Ribbon = new RibbonParamater(basepath);
+			Track = new TrackParameter(basepath);
+            Ring = new RingParamater(basepath);
+			Model = new ModelParamater(basepath);
 		}
 
 		public class SpriteParamater
@@ -307,7 +308,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public SpriteParamater()
+			public SpriteParamater(Path basepath)
 			{
 				RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
 
@@ -332,7 +333,7 @@ namespace Effekseer.Data
 				Position_Fixed_LR = new Value.Vector2D(0.5f, -0.5f);
 				Position_Fixed_UL = new Value.Vector2D(-0.5f, 0.5f);
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
-				ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
+				ColorTexture = new Value.Path(basepath, "画像ファイル (*.png)|*.png", true, "");
 			}
 
             public enum ColorType : int
@@ -436,7 +437,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public RibbonParamater()
+			public RibbonParamater(Path basepath)
 			{
 				AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 				ViewpointDependent = new Value.Boolean(false);
@@ -455,7 +456,7 @@ namespace Effekseer.Data
 
 				SplineDivision = new Value.Int(1, int.MaxValue, 1);
 
-				ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
+				ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
 			}
 
             public enum ColorAllType : int
@@ -661,7 +662,7 @@ namespace Effekseer.Data
                 private set;
             }
 
-            public RingParamater()
+            public RingParamater(Path basepath)
             {
 				RingShape = new RingShapeParameter();
                 RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
@@ -708,7 +709,7 @@ namespace Effekseer.Data
                 InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
                 InnerColor_Easing = new ColorEasingParamater();
 
-                ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
+                ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
             }
 
 			/// <summary>
@@ -846,9 +847,9 @@ namespace Effekseer.Data
 			[Name(language = Language.English, value = "Culling")]
 			public Value.Enum<CullingValues> Culling { get; private set; }
 
-			public ModelParamater()
+			public ModelParamater(Value.Path basepath)
 			{
-                Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");
+                Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 
@@ -1095,7 +1096,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorRightMiddle_FCurve { get; private set; }
 
 			
-			public TrackParameter()
+			public TrackParameter(Path basepath)
 			{
 				TrackSizeFor = new Value.Enum<TrackSizeType>(TrackSizeType.Fixed);
 				TrackSizeFor_Fixed = new Value.Float(1, float.MaxValue, 0);
