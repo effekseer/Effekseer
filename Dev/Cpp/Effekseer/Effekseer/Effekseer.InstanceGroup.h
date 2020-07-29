@@ -50,6 +50,7 @@ private:
 
 	~InstanceGroup();
 
+	void NotfyEraseInstance();
 public:
 
 	/** 
