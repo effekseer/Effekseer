@@ -172,7 +172,27 @@ namespace Effekseer.GUI.Dock
 				}
 
 				// D&D
-				DragAndDrops.UpdateImageSrc(item.FilePath);
+				switch (item.Type)
+				{
+					case FileType.Image:
+						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Image);
+						break;
+					case FileType.Sound:
+						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Sound);
+						break;
+					case FileType.Model:
+						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Model);
+						break;
+					case FileType.Material:
+						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Material);
+						break;
+					case FileType.Curve:
+						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Curve);
+						break;
+					default:
+						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Other);
+						break;
+				}
 			}
 
 			UpdateContextMenu();
@@ -261,6 +281,10 @@ namespace Effekseer.GUI.Dock
 			Directory,
 			EffekseerProject,
 			Image,
+			Sound,
+			Model,
+			Material,
+			Curve,
 			Other,
 		}
 
@@ -288,22 +312,36 @@ namespace Effekseer.GUI.Dock
 				{
 					Type = FileType.Directory;
 				}
-				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".efkproj")
-				{
-					Type = FileType.EffekseerProject;
-				}
-				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".efkefc")
-				{
-					Type = FileType.EffekseerProject;
-				}
-				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".png")
-				{
-					Type = FileType.Image;
-					Image = Images.Load(Manager.Native, filePath);
-				}
 				else
 				{
-					Type = FileType.Other;
+					switch (System.IO.Path.GetExtension(filePath).ToLower())
+					{
+						case ".efkproj":
+						case ".efkefc":
+							Type = FileType.EffekseerProject;
+							break;
+						case ".png":
+							Type = FileType.Image;
+							Image = Images.Load(Manager.Native, filePath);
+							break;
+						case ".wav":
+							Type = FileType.Sound;
+							break;
+						case ".efkmodel":
+						case ".fbx":
+						case ".mqo":
+							Type = FileType.Model;
+							break;
+						case ".efkmat":
+							Type = FileType.Material;
+							break;
+						case ".efkcurve":
+							Type = FileType.Curve;
+							break;
+						default:
+							Type = FileType.Other;
+							break;
+					}
 				}
 			}
 		}
@@ -372,17 +410,20 @@ namespace Effekseer.GUI.Dock
 			if (selectedIndex == -1) return;
 
 			var fileItem = items[selectedIndex];
-			if (Path.GetExtension(fileItem.FilePath) == ".efkproj")
+			if (fileItem.Type == FileType.EffekseerProject)
 			{
 				// efkproj is opened internal function
 				Commands.Open(fileItem.FilePath);
 			}
-			else if (Path.GetExtension(fileItem.FilePath) == ".efkefc")
+			else if (fileItem.Type == FileType.Material)
 			{
-				// efkproj is opened internal function
-				Commands.Open(fileItem.FilePath);
+				// execute external material editor
+				if (Process.MaterialEditor.Run())
+				{
+					Process.MaterialEditor.OpenOrCreateMaterial(fileItem.FilePath);
+				}
 			}
-			else if (Directory.Exists(fileItem.FilePath))
+			else if (fileItem.Type == FileType.Directory)
 			{
 				// move directory
 				UpdateFileList(fileItem.FilePath);

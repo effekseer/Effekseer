@@ -8,16 +8,25 @@ namespace Effekseer.GUI
 {
 	class DragAndDrops
 	{
+		public enum FileType
+		{
+			Image,
+			Sound,
+			Model,
+			Material,
+			Curve,
+			Other,
+		}
+
 		static byte[] tempBuffer = new byte[512];
 
-		public static string ImageKey = "__IMAGE__";
-
-		public static void UpdateImageSrc(string path)
+		public static void UpdateFileSrc(string path, FileType type)
 		{
 			if (Manager.NativeManager.BeginDragDropSource())
 			{
+				string key = type.ToString() + "File";
 				byte[] idBuf = Encoding.UTF8.GetBytes(path);
-				if (Manager.NativeManager.SetDragDropPayload(ImageKey, idBuf, idBuf.Length))
+				if (Manager.NativeManager.SetDragDropPayload(key, idBuf, idBuf.Length))
 				{
 				}
 				Manager.NativeManager.Text(path);
@@ -26,13 +35,14 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public static string UpdateImageDst()
+		public static string UpdateFileDst(FileType type)
 		{
 			string str = null;
 			if (Manager.NativeManager.BeginDragDropTarget())
 			{
+				string key = type.ToString() + "File";
 				int size = 0;
-				if (Manager.NativeManager.AcceptDragDropPayload(ImageKey, tempBuffer, tempBuffer.Length, ref size))
+				if (Manager.NativeManager.AcceptDragDropPayload(key, tempBuffer, tempBuffer.Length, ref size))
 				{
 					str = Encoding.UTF8.GetString(tempBuffer.Take(size).ToArray());
 				}
