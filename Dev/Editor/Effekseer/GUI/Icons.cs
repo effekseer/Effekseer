@@ -42,5 +42,12 @@ namespace Effekseer.GUI
 		public const string CommonCheck        = "\xec30";
 		public const string CommonWarning      = "\xec31";
 		public const string CommonError        = "\xec32";
+
+		public const string FileDirectory      = "\xec16";
+		public const string FileEfkefc         = "\xec35";
+		public const string FileEfkmat         = "\xec36";
+		public const string FileModel          = "\xec25";
+		public const string FileSound          = "\xec37";
+		public const string FileOther          = "\xec34";
 	}
 }

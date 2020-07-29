@@ -98,32 +98,37 @@ namespace Effekseer.GUI.Dock
 			{
 				var item = items[i];
 
+				string icon = Icons.Empty;
 				swig.ImageResource image = null;
 
-				if(item.Type == FileType.Directory)
+				switch (item.Type)
 				{
-					image = Images.GetIcon("FileViewer_Directory");
-				}
-				if (item.Type == FileType.EffekseerProject)
-				{
-					image = Images.GetIcon("FileViewer_EffekseerProj");
-				}
-				if (item.Type == FileType.Image)
-				{
-					image = item.Image;
-				}
-				if (item.Type == FileType.Other)
-				{
+					case FileType.Directory:
+						icon = Icons.FileDirectory;
+						break;
+					case FileType.EffekseerProject:
+						icon = Icons.FileEfkefc;
+						break;
+					case FileType.Image:
+						image = item.Image;
+						break;
+					case FileType.Sound:
+						icon = Icons.FileSound;
+						break;
+					case FileType.Model:
+						icon = Icons.FileModel;
+						break;
+					case FileType.Material:
+						icon = Icons.FileEfkmat;
+						break;
+					default:
+						icon = Icons.FileOther;
+						break;
 				}
 
-				{
-					float iconSize = Manager.NativeManager.GetTextLineHeight();
-					Manager.NativeManager.Image(image, iconSize, iconSize);
-				}
+				float iconPosX = Manager.NativeManager.GetCursorPosX();
 
-				Manager.NativeManager.SameLine();
-
-				string caption = Path.GetFileName(item.FilePath);
+				string caption = icon + " " + Path.GetFileName(item.FilePath);
 				if (Manager.NativeManager.Selectable(caption, item.Selected, swig.SelectableFlags.AllowDoubleClick))
 				{
 					if (Manager.NativeManager.IsCtrlKeyDown())
@@ -192,6 +197,14 @@ namespace Effekseer.GUI.Dock
 					default:
 						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Other);
 						break;
+				}
+
+				if (image != null)
+				{
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.SetCursorPosX(iconPosX);
+					float iconSize = Manager.NativeManager.GetTextLineHeight();
+					Manager.NativeManager.Image(image, iconSize, iconSize);
 				}
 			}
 
