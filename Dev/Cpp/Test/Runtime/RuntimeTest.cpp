@@ -412,6 +412,7 @@ void ReloadTest()
 			platform->Update();
 		}
 
+		auto restCount1 = platform->GetManager()->GetInstanceCount(handle);
 		platform->TakeScreenshot("Reload_0.png");
 
 		platform->GetEffects()[0]->Reload((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
@@ -420,7 +421,10 @@ void ReloadTest()
 
 		platform->Draw();
 
+		auto restCount2 = platform->GetManager()->GetInstanceCount(handle);
 		platform->TakeScreenshot("Reload_1.png");
+
+		assert(restCount1 == restCount2);
 
 		platform->Terminate();
 	}

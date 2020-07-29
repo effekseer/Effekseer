@@ -42,6 +42,11 @@ InstanceGroup::~InstanceGroup()
 	RemoveForcibly();
 }
 
+void InstanceGroup::NotfyEraseInstance()
+{
+	m_global->DecInstanceCount();
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -91,7 +96,7 @@ void InstanceGroup::Update(bool shown)
 		if (instance->m_State != INSTANCE_STATE_ACTIVE)
 		{
 			it = m_instances.erase(it);
-			m_global->DecInstanceCount();
+			NotfyEraseInstance();
 		}
 		else
 		{
@@ -201,6 +206,7 @@ void InstanceGroup::KillAllInstances()
 	{
 		auto instance = m_instances.front();
 		m_instances.pop_front();
+		NotfyEraseInstance();
 
 		if (instance->GetState() == INSTANCE_STATE_ACTIVE)
 		{

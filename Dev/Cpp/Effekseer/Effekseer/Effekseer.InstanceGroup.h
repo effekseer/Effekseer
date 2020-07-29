@@ -50,6 +50,8 @@ private:
 
 	~InstanceGroup();
 
+	void NotfyEraseInstance();
+
 public:
 	/**
 		@brief	描画に必要なパラメータ

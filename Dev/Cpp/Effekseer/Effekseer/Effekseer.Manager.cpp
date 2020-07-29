@@ -1665,6 +1665,7 @@ bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer*
 
 void ManagerImplemented::StopWithoutRemoveDrawSet(DrawSet& drawSet)
 {
+	drawSet.InstanceContainerPointer->KillAllInstances(true);
 	drawSet.InstanceContainerPointer->RemoveForcibly(true);
 	ReleaseInstanceContainer(drawSet.InstanceContainerPointer);
 	drawSet.InstanceContainerPointer = nullptr;
