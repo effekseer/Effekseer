@@ -85,32 +85,41 @@ endif()
 
 if(BUILD_VULKAN)
     # TODO : Improve it
-    # Hack for GLSLANG
-    if (MSVC)
-    	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-    		foreach (flag CMAKE_C_FLAGS
-    			CMAKE_C_FLAGS_DEBUG
-    			CMAKE_C_FLAGS_RELEASE
-    			CMAKE_CXX_FLAGS
-    			CMAKE_CXX_FLAGS_DEBUG
-    			CMAKE_CXX_FLAGS_RELEASE)
+
+    option(USE_EXTERNAL_GLSLANG "Whether do it compile with external glslang" OFF)
+
+    if(USE_EXTERNAL_GLSLANG)
+        option(GLSLANG_INCLUDE_DIR "A directory which contains glslang includes" "")
+    else()
+
+        # Hack for GLSLANG
+        if (MSVC)
+    	    if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+    		    foreach (flag CMAKE_C_FLAGS
+    			    CMAKE_C_FLAGS_DEBUG
+    			    CMAKE_C_FLAGS_RELEASE
+    			    CMAKE_CXX_FLAGS
+    			    CMAKE_CXX_FLAGS_DEBUG
+    			    CMAKE_CXX_FLAGS_RELEASE)
     
-    			if (${flag} MATCHES "/MD")
-    				string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-    			endif()
-    			if (${flag} MATCHES "/MDd")
-    				string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-    			endif()
-    		endforeach()
-    	endif()
+    			    if (${flag} MATCHES "/MD")
+    				    string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+    			    endif()
+    			    if (${flag} MATCHES "/MDd")
+    				    string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+        			endif()
+        		endforeach()
+    	    endif()
+        endif()
+
+        set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
+        set(ENABLE_CTEST OFF CACHE BOOL "For glslang" FORCE)
+        set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "For glslang" FORCE)
+
+        set(GLSLANG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/glslang/" "${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/")
+        add_subdirectory(Dev/Cpp/3rdParty/glslang/)
+
     endif()
-
-    set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
-    set(ENABLE_CTEST OFF CACHE BOOL "For glslang" FORCE)
-    set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "For glslang" FORCE)
-
-    set(GLSLANG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/glslang/" "${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/")
-    add_subdirectory(Dev/Cpp/3rdParty/glslang/)
 endif()
 
 if(BUILD_VIEWER)

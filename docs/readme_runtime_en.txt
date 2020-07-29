@@ -2,6 +2,11 @@
 
 ## Release notes
 
+### 1.52i
+
+- Fixed many bugs
+- Added Metal sample
+
 ### 1.52h
 
 - (Broken changes) Depth format now can be specified.
@@ -36,6 +41,13 @@ An install folder is created, and include files and library files are created in
 For example, for Visual Studio 2019, the batch file is build_msvc2019.bat and the install folder is install_msvc2019.
 
 You can use Effekseer by linking them.
+
+## License
+
+Please read license files.
+If you use DirectX, please read LICENSE_DIRECTX.txt
+If you use Vulkan, please read LICENSE_VULKAN.txt
+If you use Others, please read LICENSE.txt
 
 ## Examples
 

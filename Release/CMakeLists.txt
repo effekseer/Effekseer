@@ -31,13 +31,20 @@ if (MSVC)
     endif()
 endif()
 
-if(BUILD_VULKAN)
-    set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
-    set(ENABLE_CTEST OFF CACHE BOOL "For glslang" FORCE)
-    set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "For glslang" FORCE)
 
-    set(GLSLANG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/3rdParty/glslang/" "${CMAKE_CURRENT_SOURCE_DIR}/src/3rdParty/")
-    add_subdirectory(src/3rdParty/glslang/)
+if(BUILD_VULKAN)
+    option(USE_EXTERNAL_GLSLANG "Whether do it compile with external glslang" OFF)
+
+    if(USE_EXTERNAL_GLSLANG)
+        option(GLSLANG_INCLUDE_DIR "A directory which contains glslang includes" "")
+    else()
+        set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
+        set(ENABLE_CTEST OFF CACHE BOOL "For glslang" FORCE)
+        set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "For glslang" FORCE)
+
+        set(GLSLANG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/3rdParty/glslang/" "${CMAKE_CURRENT_SOURCE_DIR}/src/3rdParty/")
+        add_subdirectory(src/3rdParty/glslang/)
+    endif()
 endif()
 
 set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_LIST_DIR}/src)
