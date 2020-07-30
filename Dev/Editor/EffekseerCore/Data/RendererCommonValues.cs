@@ -740,8 +740,7 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "エミッシブ倍率")]
-		[Name(language = Language.English, value = "Emissive Scaling")]
+		[Key(key = "BRS_EmissiveScaling")]
 		public Value.Int EmissiveScaling { get; private set; }
 #endif
 
@@ -899,8 +898,8 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 		// alpha texture uv
 		[Selector(ID = 101)]
-		[Name(language = Language.Japanese, value = "UV(アルファ画像)")]
-		[Name(language = Language.English, value = "UV(α Texture)")]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV2")]
 		public Value.Enum<UVType> UV2
 		{
 			get;
@@ -929,8 +928,8 @@ namespace Effekseer.Data
 
 		// uv distortion texture uv
 		[Selector(ID = 102)]
-		[Name(language = Language.Japanese, value = "UV(UV歪み画像)")]
-		[Name(language = Language.English, value = "UV(UV Distortion Texture)")]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV3")]
 		public Value.Enum<UVType> UV3 { get; private set; }
 
 		[Selected(ID = 102, Value = 0)]
@@ -955,8 +954,8 @@ namespace Effekseer.Data
 
 		// blend texture uv
 		[Selector(ID = 103)]
-		[Name(language = Language.Japanese, value = "UV(ブレンド画像)")]
-		[Name(language = Language.English, value = "UV(Blend Texture)")]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV4")]
 		public Value.Enum<UVType> UV4 { get; private set; }
 
 		[Selected(ID = 103, Value = 0)]
@@ -981,8 +980,8 @@ namespace Effekseer.Data
 
 		// blend alpha Texture
 		[Selector(ID = 104)]
-		[Name(language = Language.Japanese, value = "UV(ブレンドアルファ画像)")]
-		[Name(language = Language.English, value = "UV(Blend Alpha Texture)")]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV5")]
 		public Value.Enum<UVType> UV5 { get; private set; }
 
 		[Selected(ID = 104, Value = 0)]
@@ -1007,8 +1006,8 @@ namespace Effekseer.Data
 
 		// blend uv distortion textute
 		[Selector(ID = 105)]
-		[Name(language = Language.Japanese, value = "UV(ブレンドUV歪み画像)")]
-		[Name(language = Language.English, value = "UV(Blend UV Distortion Texture)")]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV6")]
 		public Value.Enum<UVType> UV6 { get; private set; }
 
 		[Selected(ID = 105, Value = 0)]
@@ -1261,8 +1260,7 @@ namespace Effekseer.Data
 			public UVAnimationParamater AnimationParams { get; private set; }
 
 			[IO(Export = true)]
-			[Name(language = Language.Japanese, value = "アニメーション補間")]
-			[Name(language = Language.English, value = "Flipbook Frame Blend Type")]
+			[Key(key = "UVAnimationSupportedFrameBlendParameter_Type")]
 			public Value.Enum<FlipbookInterpolationType> FlipbookInterpolationType { get; private set; }
 
 			public UVAnimationSupportedFrameBlendParameter() : base()
@@ -1374,12 +1372,10 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 		public enum FlipbookInterpolationType : int
 		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
+			[Key(key = "FlipbookInterpolationType_None")]
 			None = 0,
 
-			[Name(value = "線形補間", language = Language.Japanese)]
-			[Name(value = "Lerp", language = Language.English)]
+			[Key(key = "FlipbookInterpolationType_Lerp")]
 			Lerp = 1,
 		}
 #endif

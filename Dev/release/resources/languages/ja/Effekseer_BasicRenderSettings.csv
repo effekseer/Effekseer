@@ -1,4 +1,5 @@
 BRS_Material_Name,"マテリアル"
+BRS_EmissiveScaling_Name,エミッシブ倍率
 BRS_ColorTexture_Name,"色/歪み画像"
 BRS_ColorTexture_Desc,"色/歪みを表す画像"
 BRS_Filter_Name,"フィルタ"
@@ -14,6 +15,11 @@ BRS_ZTest_Name,"深度テスト"
 BRS_FadeInType_Name,"フェードイン"
 BRS_FadeOutType_Name,"フェードアウト"
 BRS_UV_Name,"UV"
+BRS_UV2_Name,"UV(アルファ画像)"
+BRS_UV3_Name,"UV(UV歪み画像)"
+BRS_UV4_Name,"UV(ブレンド画像)"
+BRS_UV5_Name,"UV(ブレンドアルファ画像)"
+BRS_UV6_Name,"UV(ブレンドUV歪み画像)"
 BRS_UVTextureReferenceTarget_Name,"参照画像"
 BRS_ColorInheritType_Name,"色への影響"
 BRS_ColorInheritType_Desc,"親ノードからの色への影響"
@@ -82,6 +88,7 @@ UVAnimationParamater_FrameCountX_Name,"横方向枚数"
 UVAnimationParamater_FrameCountY_Name,"縦方向枚数"
 UVAnimationParamater_LoopType_Name,"ループ"
 UVAnimationParamater_StartSheet_Name,"開始枚数"
+UVAnimationSupportedFrameBlendParameter_Type_Name,アニメーション補間
 UVScrollParamater_Start_Name,"始点"
 UVScrollParamater_Size_Name,"大きさ"
 UVScrollParamater_Speed_Name,"移動速度"
@@ -90,3 +97,5 @@ UVFCurveParamater_Size_Name,"大きさ"
 UVLoopType_Once_Name,なし
 UVLoopType_Loop_Name,ループ
 UVLoopType_ReverceLoop_Name,逆ループ
+FlipbookInterpolationType_None_Name,なし
+FlipbookInterpolationType_Lerp_Name,線形補間

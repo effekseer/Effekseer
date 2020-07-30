@@ -20,3 +20,14 @@ TextureUVTypeParameter_TileEdgeTail_Name,"The number of tile on Tail"
 TextureUVTypeParameter_TileLoopingArea_Name,"Looping area"
 TextureUVTypeParameter_Type_Strech_Name,Strech
 TextureUVTypeParameter_Type_Tile_Name,Tile
+
+ModelParameter_EnableFalloff_Name,Enable Falloff
+
+FalloffParameter_ColorBlendType_Name,Color Blend Type
+FalloffParameter_BeginColor_Name,Begin Color
+FalloffParameter_EndColor_Name,End Color
+FalloffParameter_Pow_Name,Pow
+
+FalloffParameter_BlendType_Add_Name,Add
+Falloffparameter_BlendType_Sub_Name,Sub
+FalloffParameter_BlendType_Mul_Name,Mul

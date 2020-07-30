@@ -887,9 +887,8 @@ namespace Effekseer.Data
 
 #if __EFFEKSEER_BUILD_VERSION16__
 			[Selector(ID = 100)]
-			[Name(language = Language.Japanese, value = "フォールオフを有効")]
-			[Name(language = Language.English, value = "Enable Falloff")]
 			[IO(Export = true)]
+			[Key(key = "ModelParameter_EnableFalloff")]
 			public Value.Boolean EnableFalloff { get; private set; }
 
 			[Selected(ID = 100, Value = 0)]
@@ -898,24 +897,20 @@ namespace Effekseer.Data
 
 			public class FalloffParameter
 			{
-				[Name(language = Language.Japanese, value = "カラーブレンドタイプ")]
-				[Name(language = Language.English, value = "Color Blend Type")]
 				[IO(Export = true)]
+				[Key(key = "FalloffParameter_ColorBlendType")]
 				public Value.Enum<BlendType> ColorBlendType { get; private set; }
 
-				[Name(language = Language.Japanese, value = "開始色")]
-				[Name(language = Language.English, value = "Begin Color")]
 				[IO(Export = true)]
+				[Key(key = "FalloffParameter_BeginColor")]
 				public Value.Color BeginColor { get; private set; }
 
-				[Name(language = Language.Japanese, value = "終了色")]
-				[Name(language = Language.English, value = "End Color")]
 				[IO(Export = true)]
+				[Key(key = "FalloffParameter_EndColor")]
 				public Value.Color EndColor { get; private set; }
 
-				[Name(language = Language.Japanese, value = "指数")]
-				[Name(language = Language.English, value = "Pow")]
 				[IO(Export = true)]
+				[Key(key = "FalloffParameter_Pow")]
 				public Value.Int Pow { get; private set; }
 
 				public FalloffParameter()
@@ -928,16 +923,13 @@ namespace Effekseer.Data
 
 				public enum BlendType : int
 				{
-					[Name(language = Language.Japanese, value = "加算")]
-					[Name(language = Language.English, value = "Add")]
+					[Key(key = "FalloffParameter_BlendType_Add")]
 					Add = 0,
 
-					[Name(language = Language.Japanese, value = "減算")]
-					[Name(language = Language.English, value = "Sub")]
+					[Key(key = "FalloffParameter_BlendType_Sub")]
 					Sub = 1,
 
-					[Name(language = Language.Japanese, value = "乗算")]
-					[Name(language = Language.English, value = "Mul")]
+					[Key(key = "FalloffParameter_BlendType_Mul")]
 					Mul = 2,
 				}
 
