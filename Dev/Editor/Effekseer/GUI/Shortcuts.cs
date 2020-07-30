@@ -178,6 +178,7 @@ namespace Effekseer.GUI
 				AddShortcut(new Shortcut("Internal.AddNode", true, false, false, (int)ShortcutKeys.A, null));
 				AddShortcut(new Shortcut("Internal.InsertNode", true, false, false, (int)ShortcutKeys.I, null));
 				AddShortcut(new Shortcut("Internal.RemoveNode", true, false, false, (int)ShortcutKeys.R, null));
+				AddShortcut(new Shortcut("Internal.RenameNode", false, false, false, (int)ShortcutKeys.F2, null));
 			}
 		}
 

@@ -1626,6 +1626,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetItemDefaultFocus___")]
   public static extern void GUIManager_SetItemDefaultFocus(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetKeyboardFocusHere__SWIG_0___")]
+  public static extern void GUIManager_SetKeyboardFocusHere__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetKeyboardFocusHere__SWIG_1___")]
+  public static extern void GUIManager_SetKeyboardFocusHere__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ClearAllFonts___")]
   public static extern void GUIManager_ClearAllFonts(global::System.Runtime.InteropServices.HandleRef jarg1);
 
