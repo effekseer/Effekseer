@@ -248,6 +248,7 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 
 	LLGI::PlatformParameter platformParam;
 	platformParam.Device = LLGI::DeviceType::DirectX12;
+	platformParam.WaitVSync = true;
 	context->platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, context->window.get()));
 
 	if (context->platform == nullptr)
