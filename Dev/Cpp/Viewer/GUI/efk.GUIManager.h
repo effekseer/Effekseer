@@ -305,8 +305,8 @@ enum class Key
 	Backspace,
 	Space,
 	Enter,
-	NumEnter,
 	Escape,
+	NumEnter,
 	A, // for text edit CTRL+A: select all
 	C, // for text edit CTRL+C: copy
 	V, // for text edit CTRL+V: paste
@@ -588,6 +588,7 @@ public:
 	void CloseCurrentPopup();
 
 	void SetItemDefaultFocus();
+	void SetKeyboardFocusHere(int offset = 0);
 
 	void ClearAllFonts();
 	void AddFontFromFileTTF(const char16_t* filename, float size_pixels);

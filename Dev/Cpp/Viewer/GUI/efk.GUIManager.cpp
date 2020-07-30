@@ -1668,6 +1668,11 @@ void GUIManager::SetItemDefaultFocus()
 	ImGui::SetItemDefaultFocus();
 }
 
+void GUIManager::SetKeyboardFocusHere(int offset)
+{
+	ImGui::SetKeyboardFocusHere(offset);
+}
+
 void GUIManager::ClearAllFonts()
 {
 	ImGuiIO& io = ImGui::GetIO();

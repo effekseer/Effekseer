@@ -1149,6 +1149,14 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetItemDefaultFocus(swigCPtr);
   }
 
+  public void SetKeyboardFocusHere(int offset) {
+    EffekseerNativePINVOKE.GUIManager_SetKeyboardFocusHere__SWIG_0(swigCPtr, offset);
+  }
+
+  public void SetKeyboardFocusHere() {
+    EffekseerNativePINVOKE.GUIManager_SetKeyboardFocusHere__SWIG_1(swigCPtr);
+  }
+
   public void ClearAllFonts() {
     EffekseerNativePINVOKE.GUIManager_ClearAllFonts(swigCPtr);
   }
