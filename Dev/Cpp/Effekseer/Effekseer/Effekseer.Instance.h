@@ -74,6 +74,11 @@ protected:
 
 	Vec3f prevPosition_;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	Vec3f parentPosition_;
+	Vec3f steeringVec_;
+#endif
+
 public:
 	static const int32_t ChildrenMax = 16;
 
@@ -119,6 +124,14 @@ public:
 
 	// Parent color
 	Color ColorParent;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	struct
+	{
+		float maxFollowSpeed;
+		float steeringSpeed;
+	} followParentParam;
+#endif
 
 	union
 	{

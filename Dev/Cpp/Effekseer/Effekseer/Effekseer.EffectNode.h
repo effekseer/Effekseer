@@ -36,6 +36,20 @@ enum class BindType : int32_t
 	Always = 2,
 };
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+enum class TranslationParentBindType : int32_t
+{
+	NotBind = 0,
+	NotBind_Root = 3,
+	WhenCreating = 1,
+	Always = 2,
+	NotBind_FollowParent = 4,
+	WhenCreating_FollowParent = 5,
+};
+
+bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
+#endif
+
 /**!
 	@brief indexes of dynamic parameter
 */
@@ -147,7 +161,11 @@ struct ParameterCommonValues
 	RefMinMax RefEqGenerationTimeOffset;
 
 	int MaxGeneration = 1;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	TranslationParentBindType TranslationBindType = TranslationParentBindType::Always;
+#else
 	BindType TranslationBindType = BindType::Always;
+#endif
 	BindType RotationBindType = BindType::Always;
 	BindType ScalingBindType = BindType::Always;
 	int RemoveWhenLifeIsExtinct = 1;
@@ -189,6 +207,14 @@ struct ParameterDepthValues
 		SoftParticle = 0.0f;
 	}
 };
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+struct SteeringBehaviorParameter
+{
+	random_float MaxFollowSpeed;
+	random_float SteeringSpeed;
+};
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -1599,6 +1625,10 @@ public:
 	bool IsRendered;
 
 	ParameterCommonValues CommonValues;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	SteeringBehaviorParameter SteeringBehaviorParam;
+#endif
 
 	ParameterTranslationType TranslationType;
 	ParameterTranslationFixed TranslationFixed;

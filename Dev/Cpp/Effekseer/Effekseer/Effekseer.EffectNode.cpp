@@ -29,6 +29,13 @@
 namespace Effekseer
 {
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
+{
+	return (lhs == static_cast<TranslationParentBindType>(rhs));
+}
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -124,7 +131,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			CommonValues.MaxGeneration = param_8.MaxGeneration;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			CommonValues.TranslationBindType = static_cast<TranslationParentBindType>(param_8.TranslationBindType);
+#else
 			CommonValues.TranslationBindType = param_8.TranslationBindType;
+#endif
 			CommonValues.RotationBindType = param_8.RotationBindType;
 			CommonValues.ScalingBindType = param_8.ScalingBindType;
 			CommonValues.RemoveWhenLifeIsExtinct = param_8.RemoveWhenLifeIsExtinct;
@@ -136,6 +147,18 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			CommonValues.GenerationTimeOffset.max = param_8.GenerationTimeOffset;
 			CommonValues.GenerationTimeOffset.min = param_8.GenerationTimeOffset;
 		}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (ef->GetVersion() >= 1600)
+		{
+			if (CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
+				CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
+			{
+				memcpy(&SteeringBehaviorParam, pos, sizeof(SteeringBehaviorParameter));
+				pos += sizeof(SteeringBehaviorParameter);
+			}
+		}
+#endif
 
 		memcpy(&TranslationType, pos, sizeof(int));
 		pos += sizeof(int);
