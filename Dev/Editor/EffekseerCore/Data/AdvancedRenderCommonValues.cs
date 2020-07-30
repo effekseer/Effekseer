@@ -8,21 +8,15 @@ namespace Effekseer.Data
 	public class AlphaTextureParameter
 	{
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "アルファ画像")]
-		[Name(language = Language.English, value = "α Texture")]
-		public Value.PathForImage Texture
-		{
-			get; private set;
-		}
+		[Key(key = "AlphaTextureParameter_Texture")]
+		public Value.PathForImage Texture { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "フィルタ(アルファ画像)")]
-		[Name(language = Language.English, value = "Filter(α Texture)")]
+		[Key(key = "AlphaTextureParameter_Filter")]
 		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "外側(アルファ画像)")]
-		[Name(language = Language.English, value = "Wrap(α Texture)")]
+		[Key(key = "AlphaTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
 		public AlphaTextureParameter(Value.Path basepath)
@@ -36,23 +30,19 @@ namespace Effekseer.Data
 	public class UVDistortionTextureParameter
 	{
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "UV歪み画像")]
-		[Name(language = Language.English, value = "UV Distortion Texture")]
+		[Key(key = "UVDistortionTextureParameter_Texture")]
 		public Value.PathForImage Texture { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "UV歪み強度")]
-		[Name(language = Language.English, value = "UV Distortion Intensity")]
+		[Key(key = "UVDistortionTextureParameter_Intensity")]
 		public Value.Float UVDistortionIntensity { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "フィルタ(UV歪み画像)")]
-		[Name(language = Language.English, value = "Filter(UV Distortion Texture)")]
+		[Key(key = "UVDistortionTextureParameter_Filter")]
 		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "外側(UV歪み画像)")]
-		[Name(language = Language.English, value = "Wrap(UV DIstortion Texture)")]
+		[Key(key = "UVDistortionTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
 		public UVDistortionTextureParameter(Value.Path basepath)
@@ -66,8 +56,7 @@ namespace Effekseer.Data
 
 	public enum AdvancedAlphaBlendType : int
 	{
-		[Name(language = Language.Japanese, value = "アルファブレンド")]
-		[Name(language = Language.English, value = "Alpha Blend")]
+		[Key(key = "AdvancedAlphaBlendType_AlphaBlend")]
 		Blend = 0,
 		[Key(key = "AlphaBlendType_Add")]
 		Add = 1,
@@ -80,23 +69,19 @@ namespace Effekseer.Data
 	public class BlendTextureParameter
 	{
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンド画像")]
-		[Name(language = Language.English, value = "Blend Texture")]
+		[Key(key = "BlendTextureParameter_Texture")]
 		public Value.PathForImage Texture { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドタイプ")]
-		[Name(language = Language.English, value = "Blend Type")]
+		[Key(key = "BlendTextureParameter_BlendType")]
 		public Value.Enum<AdvancedAlphaBlendType> BlendType { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "フィルター(ブレンド画像)")]
-		[Name(language = Language.English, value = "Filter(Blend Texture)")]
+		[Key(key = "BlendTextureParameter_Filter")]
 		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "外側(ブレンド画像)")]
-		[Name(language = Language.English, value = "Wrap(Blend Texture)")]
+		[Key(key = "BlendTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
 		public BlendTextureParameter(Value.Path basepath)
@@ -111,18 +96,15 @@ namespace Effekseer.Data
 	public class BlendAlphaTextureParameter
 	{
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドアルファ画像")]
-		[Name(language = Language.English, value = "Blend Alpha Texture")]
+		[Key(key = "BlendAlphaTextureParameter_Texture")]
 		public Value.PathForImage Texture { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "フィルター(ブレンドアルファ画像)")]
-		[Name(language = Language.English, value = "Filter(Blend Alpha Texture)")]
+		[Key(key = "BlendAlphaTextureParameter_Filter")]
 		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "外側(ブレンドアルファ画像)")]
-		[Name(language = Language.English, value = "Wrap(Blend Alpha Texture)")]
+		[Key(key = "BlendAlphaTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
 		public BlendAlphaTextureParameter(Value.Path basepath)
@@ -136,23 +118,19 @@ namespace Effekseer.Data
 	public class BlendUVDistortionTextureParameter
 	{
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドUV歪み画像")]
-		[Name(language = Language.English, value = "Blend UV Distortion Texture")]
+		[Key(key = "BlendUVDistortionTextureParameter_Texture")]
 		public Value.PathForImage Texture { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドUV歪み強度")]
-		[Name(language = Language.English, value = "Blend UV Distortion Intensity")]
+		[Key(key = "BlendUVDistortionTextureParameter_Intensity")]
 		public Value.Float UVDistortionIntensity { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "フィルター(ブレンドUV歪み画像)")]
-		[Name(language = Language.English, value = "Filter(Blend UV Distortion Texture)")]
+		[Key(key = "BlendUVDistortionTextureParameter_Filter")]
 		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
 
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "外側(ブレンドUV歪み画像)")]
-		[Name(language = Language.English, value = "Wrap(Blend UV Distortion Texture)")]
+		[Key(key = "BlendUVDistortionTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
 		public BlendUVDistortionTextureParameter(Value.Path basepath)
@@ -171,8 +149,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = 400)]
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドアルファ画像を有効")]
-		[Name(language = Language.English, value = "Enable Blend Alpha Texture")]
+		[Key(key = "BlendTextureParameters_EnableBlendAlphaTexture")]
 		public Value.Boolean EnableBlendAlphaTexture { get; private set; }
 
 		[Selected(ID = 400, Value = 0)]
@@ -181,8 +158,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = 500)]
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドUV歪み画像を有効")]
-		[Name(language = Language.English, value = "Enable Blend UV Distortion Texture")]
+		[Key(key = "BlendTextureParameters_EnableBlendUVDistortionTexture")]
 		public Value.Boolean EnableBlendUVDistortionTexture { get; private set; }
 
 		[Selected(ID = 500, Value = 0)]
@@ -220,9 +196,8 @@ namespace Effekseer.Data
 		public FloatEasingParamater Easing { get; private set; }
 
 		[Selected(ID = 0, Value = 3)]
-		[Name(language = Language.Japanese, value = "Fカーブ")]
-		[Name(language = Language.English, value = "F Curve")]
 		[IO(Export = true)]
+		[Key(key = "FCurve")]
 		public Value.FCurveScalar FCurve { get; private set; }
 
 		[Selected(ID = 0, Value = 0)]
@@ -234,8 +209,8 @@ namespace Effekseer.Data
 
 		public class FixedParameter
 		{
-			[Name(language = Language.Japanese, value = "アルファ閾値")]
-			[Name(language = Language.English, value = "Alpha Threshold")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCutoffParameter_FixedParameter_Fixed")]
 			public Value.Float Threshold { get; private set; }
 
 			internal FixedParameter()
@@ -246,28 +221,28 @@ namespace Effekseer.Data
 
 		public class FourPointInterpolationParameter
 		{
-			[Name(language = Language.Japanese, value = "生成時アルファ閾値")]
-			[Name(language = Language.English, value = "Begin Alpha Threshold")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCuroffParameter_FPIParameter_BeginThreshold")]
 			public Value.FloatWithRandom BeginThreshold { get; private set; }
 
-			[Name(language = Language.Japanese, value = "遷移フレーム(生成時 -> 第2)")]
-			[Name(language = Language.English, value = "Sequence Frame Num")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCuroffParameter_FPIParameter_TransitionFrameNum")]
 			public Value.IntWithRandom TransitionFrameNum { get; private set; }
 
-			[Name(language = Language.Japanese, value = "第2アルファ閾値")]
-			[Name(language = Language.English, value = "Second Alpha Threshold")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCuroffParameter_FPIParameter_No2Threshold")]
 			public Value.FloatWithRandom No2Threshold { get; private set; }
 
-			[Name(language = Language.Japanese, value = "第3アルファ閾値")]
-			[Name(language = Language.English, value = "Third Alpha Threshold")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCuroffParameter_FPIParameter_No3Threshold")]
 			public Value.FloatWithRandom No3Threshold { get; private set; }
 
-			[Name(language = Language.Japanese, value = "遷移フレーム(第3 -> 消滅時)")]
-			[Name(language = Language.English, value = "Sequence Frame Num")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCuroffParameter_FPIParameter_TransitionFrameNum2")]
 			public Value.IntWithRandom TransitionFrameNum2 { get; private set; }
 
-			[Name(language = Language.Japanese, value = "消滅時アルファ閾値")]
-			[Name(language = Language.English, value = "End Alpha Threshold")]
+			[IO(Export = true)]
+			[Key(key = "AlphaCuroffParameter_FPIParameter_EndThreshold")]
 			public Value.FloatWithRandom EndThreshold { get; private set; }
 
 
@@ -284,19 +259,16 @@ namespace Effekseer.Data
 
 		public class EdgeParameter
 		{
-			[Name(language = Language.Japanese, value = "エッジ閾値")]
-			[Name(language = Language.English, value = "Edge Threshold")]
 			[IO(Export = true)]
+			[Key(key = "AlphaCutoffParameter_EdgeParameter_Threshold")]
 			public Value.Float EdgeThreshold { get; private set; }
 
-			[Name(language = Language.Japanese, value = "エッジカラー")]
-			[Name(language = Language.English, value = "Edge Color")]
 			[IO(Export = true)]
+			[Key(key = "AlphaCutoffParameter_EdgeParameter_Color")]
 			public Value.Color EdgeColor { get; private set; }
 
-			[Name(language = Language.Japanese, value = "エッジカラー倍率")]
-			[Name(language = Language.English, value = "Edge Color Scaling")]
 			[IO(Export = true)]
+			[Key(key = "AlphaCutoffParameter_EdgeParameter_ColorScaling")]
 			public Value.Int EdgeColorScaling { get; private set; }
 
 			public EdgeParameter()
@@ -309,20 +281,16 @@ namespace Effekseer.Data
 
 		public enum ParameterType : int
 		{
-			[Name(value = "アルファ閾値", language = Language.Japanese)]
-			[Name(value = "Set Alpha Threshold", language = Language.English)]
+			[Key(key = "AlphaCutoffParameter_ParameterType_Fixed")]
 			Fixed = 0,
 
-			[Name(value = "4点補間", language = Language.Japanese)]
-			[Name(value = "Four Point Interpolation", language = Language.English)]
+			[Key(key = "AlphaCutoffParameter_ParameterType_FPI")]
 			FourPointInterpolation = 1,
 
-			[Name(value = "イージング", language = Language.Japanese)]
-			[Name(value = "Easing", language = Language.English)]
+			[Key(key = "AlphaCutoffParameter_ParameterType_Easing")]
 			Easing = 2,
 
-			[Name(value = "アルファ閾値(Fカーブ)", language = Language.Japanese)]
-			[Name(value = "F-Curve", language = Language.English)]
+			[Key(key = "AlphaCutoffParameter_ParameterType_FCurve")]
 			FCurve = 3,
 		}
 
@@ -347,8 +315,7 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 		[Selector(ID = 100)]
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "アルファ画像を有効")]
-		[Name(language = Language.English, value = "Enable AlphaTexture")]
+		[Key(key = "AdvancedRenderCommonValues_EnableAlphaTexture")]
 		public Value.Boolean EnableAlphaTexture { get; private set; }
 
 		[IO(Export = true)]
@@ -358,8 +325,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = 200)]
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "UV歪み画像を有効")]
-		[Name(language = Language.English, value = "Enable UV Distortion Texture")]
+		[Key(key = "AdvancedRenderCommonValues_EnableUVDistortionTexture")]
 		public Value.Boolean EnableUVDistortionTexture { get; private set; }
 
 		[IO(Export = true)]
@@ -368,8 +334,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = 300)]
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "ブレンドテクスチャを有効")]
-		[Name(language = Language.English, value = "Enable Blend Texture")]
+		[Key(key = "AdvancedRenderCommonValues_EnableBlendTexture")]
 		public Value.Boolean EnableBlendTexture { get; private set; }
 
 		[Selected(ID = 300, Value = 0)]

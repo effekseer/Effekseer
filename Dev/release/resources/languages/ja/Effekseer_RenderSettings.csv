@@ -20,3 +20,14 @@ TextureUVTypeParameter_TileEdgeTail_Name,"尻尾のタイル数"
 TextureUVTypeParameter_TileLoopingArea_Name,"ループ領域"
 TextureUVTypeParameter_Type_Strech_Name,ストレッチ
 TextureUVTypeParameter_Type_Tile_Name,タイル
+
+ModelParameter_EnableFalloff_Name,フォールオフを有効
+
+FalloffParameter_ColorBlendType_Name,カラーブレンドタイプ
+FalloffParameter_BeginColor_Name,開始色
+FalloffParameter_EndColor_Name,終了色
+FalloffParameter_Pow_Name,指数
+
+FalloffParameter_BlendType_Add_Name,加算
+Falloffparameter_BlendType_Sub_Name,減算
+FalloffParameter_BlendType_Mul_Name,乗算
