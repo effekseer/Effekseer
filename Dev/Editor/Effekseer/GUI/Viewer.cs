@@ -842,9 +842,9 @@ namespace Effekseer.GUI
 				param.AngleX = 30.0f;
 				param.AngleY = -30.0f;
 				Manager.Viewer.SetViewerParamater(param);
-				Core.Option.IsXYGridShown.Value = false;
-				Core.Option.IsXZGridShown.Value = true;
-				Core.Option.IsYZGridShown.Value = false;
+				Core.Option.IsXYGridShown.SetValueDirectly(false);
+				Core.Option.IsXZGridShown.SetValueDirectly(true);
+				Core.Option.IsYZGridShown.SetValueDirectly(false);
 			}
 			else if (viewerMode == Data.OptionValues.ViewMode._2D)
 			{
@@ -858,9 +858,9 @@ namespace Effekseer.GUI
 				param.AngleX = 0.0f;
 				param.AngleY = 0.0f;
 				Manager.Viewer.SetViewerParamater(param);
-				Core.Option.IsXYGridShown.Value = true;
-				Core.Option.IsXZGridShown.Value = false;
-				Core.Option.IsYZGridShown.Value = false;
+				Core.Option.IsXYGridShown.SetValueDirectly(true);
+				Core.Option.IsXZGridShown.SetValueDirectly(false);
+				Core.Option.IsYZGridShown.SetValueDirectly(false);
 			}
 		}
 
