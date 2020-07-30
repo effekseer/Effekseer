@@ -143,7 +143,15 @@ namespace Effekseer.GUI.Component
 					if (Manager.NativeManager.Selectable(FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
 					{
 						selectedValues = enums[i];
-						binding.SetValue(selectedValues);
+
+						if (EnableUndo)
+						{
+							binding.SetValue(selectedValues);
+						}
+						else
+						{
+							binding.SetValueDirectly(selectedValues);
+						}
 					}
 						
 					if (is_selected)
