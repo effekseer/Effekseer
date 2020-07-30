@@ -48,11 +48,9 @@ namespace Effekseer.Data
 		WhenCreating = 1,
 		[Key(key = "BasicSettings_ParentEffectType_Already")]
 		Already = 2,
-		[Name(language = Language.Japanese, value = "なし-親を追従")]
-		[Name(language = Language.English, value = "NotBind-FollowParant")]
+		[Key(key = "BasicSettings_TranslationParentEffectType_NotBind_FollowParent")]
 		NotBind_FollowParent = 4,
-		[Name(language = Language.Japanese, value = "生成時のみ-親を追従")]
-		[Name(language = Language.English, value = "WhenCreating-FollowParant")]
+		[Key(key = "BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent")]
 		WhenCreating_FollowParent = 5,
 	}
 #endif

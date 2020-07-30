@@ -44,8 +44,7 @@ namespace Effekseer.Data
 
 		public class SteeringBehaviorParameter
 		{
-			[Name(language = Language.Japanese, value = "最大追従速度")]
-			[Name(language = Language.English, value = "Max Follow Speed")]
+			[Key(key = "BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed")]
 			[IO(Export = true)]
 			public Value.FloatWithRandom MaxFollowSpeed
 			{
@@ -53,8 +52,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "操舵速度(%)")]
-			[Name(language = Language.English, value = "Steering Speed(%)")]
+			[Key(key = "BasicSettings_SteeringBehaviorParameter_SteeringSpeed")]
 			[IO(Export = true)]
 			public Value.FloatWithRandom SteeringSpeed
 			{
