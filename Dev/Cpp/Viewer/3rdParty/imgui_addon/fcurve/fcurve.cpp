@@ -543,6 +543,11 @@ namespace ImGui
 		float width = innerRect.Max.x - innerRect.Min.x;
 		float height = innerRect.Max.y - innerRect.Min.y;
 
+		if (!innerRect.Contains(ImGui::GetMousePos()))
+		{
+			return false;
+		}
+
 		auto transform_f2s = [&](const ImVec2& p) -> ImVec2 {
 			return ImVec2((p.x - offset_x) * scale_x + innerRect.Min.x, (-p.y - offset_y) * scale_y + innerRect.Min.y + height / 2);
 		};
