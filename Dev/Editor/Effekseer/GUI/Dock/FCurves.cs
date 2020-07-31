@@ -131,6 +131,8 @@ namespace Effekseer.GUI.Dock
 			float dpiScale = Manager.DpiScale;
 			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
+			Manager.NativeManager.PushItemWidth(-1);
+
 			if (Component.Functions.CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
@@ -276,6 +278,8 @@ namespace Effekseer.GUI.Dock
 			UpdateDetails();
 
 			CheckAndApplyUpdate(treeNodes);
+
+			Manager.NativeManager.PopItemWidth();
 
 			isFirstUpdate = false;
 		}
