@@ -28,7 +28,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float4 Output = g_texture.Sample(g_sampler, Input.UV);
 	Output.a = Output.a * Input.Color.a;
 
-	if(Output.a == 0.0f) discard;
+	if(Output.a <= 0.0f) discard;
+	if(Output.a > 1.01f) discard;
 
 	float2 pos = Input.Pos.xy / Input.Pos.w;
 	float2 posU = Input.PosU.xy / Input.PosU.w;
@@ -47,8 +48,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float3 color = g_backTexture.Sample(g_backSampler, uv);
 	Output.xyz = color;
 
-	if (Output.a == 0.0)
-		discard;
+	if(Output.a <= 0.0f) discard;
+	if(Output.a > 1.01f) discard;
 
 	return Output;
 }

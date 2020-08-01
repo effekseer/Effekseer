@@ -99,6 +99,7 @@ void main()
 	FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);
 
 	if(FRAGCOLOR.w <= 0.0) discard;
+	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 
@@ -213,6 +214,7 @@ void main() {
 	FRAGCOLOR = color;
 
 	if(FRAGCOLOR.w <= 0.0) discard;
+	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 
@@ -254,6 +256,7 @@ void main() {
 	FRAGCOLOR = color;
 
 	if(FRAGCOLOR.w <= 0.0) discard;
+	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 
@@ -350,6 +353,7 @@ void main()
 	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 
 	if(FRAGCOLOR.w <= 0.0) discard;
+	if(FRAGCOLOR.w > 1.01) discard;
 }
 
 

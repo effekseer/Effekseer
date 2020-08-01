@@ -43,7 +43,10 @@ float4 PS( const PS_Input Input ) : SV_Target
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
 #endif
 
-	if( Output.a == 0.0 ) discard;
+	if (Output.a <= 0.0f)
+		discard;
+	if (Output.a > 1.01f)
+		discard;
 
 	return Output;
 }

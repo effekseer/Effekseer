@@ -14,7 +14,9 @@ float4 PS( const PS_Input Input ) : COLOR
 {
 	float4 Output = Input.Color * tex2D(g_sampler, Input.UV);
 
-	if (Output.a == 0.0)
+	if (Output.a <= 0.0f)
+		discard;
+	if (Output.a > 1.01f)
 		discard;
 
 	return Output;

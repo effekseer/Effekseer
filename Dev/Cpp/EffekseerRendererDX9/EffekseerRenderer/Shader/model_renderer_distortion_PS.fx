@@ -26,7 +26,10 @@ float4 PS( const PS_Input Input ) : COLOR
 #endif
 	Output.a = Output.a * Input.Color.a;
 
-	if (Output.a == 0.0f) discard;
+	if (Output.a <= 0.0f)
+		discard;
+	if (Output.a > 1.01f)
+		discard;
 
 	float2 pos = Input.Pos.xy / Input.Pos.w;
 	float2 posU = Input.Tangent.xy / Input.Tangent.w;

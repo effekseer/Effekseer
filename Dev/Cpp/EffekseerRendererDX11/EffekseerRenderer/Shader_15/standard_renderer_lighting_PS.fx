@@ -32,7 +32,9 @@ float4 PS(const PS_Input Input) : SV_Target
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1) * Input.VColor;
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient);
 
-	if (Output.a == 0.0)
+	if (Output.a <= 0.0f)
+		discard;
+	if (Output.a > 1.01f)
 		discard;
 
 	return Output;

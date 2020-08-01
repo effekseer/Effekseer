@@ -15,7 +15,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 {
 	float4 Output = Input.Color * g_texture	.Sample(g_sampler, Input.UV);
 
-	if(Output.a == 0.0f) discard;
+	if(Output.a <= 0.0f) discard;
+	if(Output.a > 1.01f) discard;
 
 	return Output;
 }

@@ -143,6 +143,7 @@ void main()
 	}
 
 	if(FRAGCOLOR.w <= 0.0) discard;
+	if(FRAGCOLOR.w > 1.01) discard;
 }
 
 )";
@@ -270,6 +271,7 @@ void main() {
 	FRAGCOLOR.xyz = color;
 
 	if(FRAGCOLOR.w <= 0.0) discard;
+	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 

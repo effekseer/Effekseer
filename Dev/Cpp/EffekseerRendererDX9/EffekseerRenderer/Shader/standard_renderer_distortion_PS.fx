@@ -24,7 +24,10 @@ float4 PS( const PS_Input Input ) : COLOR
 	float4 Output = tex2D(g_sampler, Input.UV);
 	Output.a = Output.a * Input.Color.a;
 
-	if(Output.a == 0.0f) discard;
+	if (Output.a <= 0.0f)
+		discard;
+	if (Output.a > 1.01f)
+		discard;
 
 	float2 pos = Input.Pos.xy / Input.Pos.w;
 	float2 posU = Input.PosU.xy / Input.PosU.w;

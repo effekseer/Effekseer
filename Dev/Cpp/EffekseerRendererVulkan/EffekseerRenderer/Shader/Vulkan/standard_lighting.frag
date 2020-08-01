@@ -35,4 +35,6 @@ void main()
 
 	if(o_Color.w <= 0.0)
 		discard;
+	if(o_Color.w > 1.01)
+		discard;
 }
