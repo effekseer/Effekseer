@@ -23,7 +23,7 @@ class ManagerImplemented : public Manager, public ReferenceObject
 	friend class InstanceGroup;
 
 private:
-	class DrawSet
+	class alignas(32) DrawSet
 	{
 	public:
 		Effect* ParameterPointer;
@@ -154,16 +154,16 @@ private:
 	std::array<int32_t, GenerationsMax> creatableChunkOffsets_;
 
 	// playing objects
-	CustomMap<Handle, DrawSet> m_DrawSets;
+	CustomAlignedMap<Handle, DrawSet> m_DrawSets;
 
 	//! objects which are waiting to be disposed
-	std::array<CustomMap<Handle, DrawSet>, 2> m_RemovingDrawSets;
+	std::array<CustomAlignedMap<Handle, DrawSet>, 2> m_RemovingDrawSets;
 
 	//! objects on rendering
-	CustomVector<DrawSet> m_renderingDrawSets;
+	CustomAlignedVector<DrawSet> m_renderingDrawSets;
 
 	//! objects on rendering
-	CustomMap<Handle, DrawSet> m_renderingDrawSetMaps;
+	CustomAlignedMap<Handle, DrawSet> m_renderingDrawSetMaps;
 
 	// mutex for rendering
 	std::mutex m_renderingMutex;

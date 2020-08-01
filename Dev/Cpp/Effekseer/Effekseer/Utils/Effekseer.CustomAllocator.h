@@ -159,6 +159,7 @@ template <class T>
 using CustomSet = std::set<T, std::less<T>, CustomAllocator<T>>;
 template <class T, class U>
 using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
+template <class T, class U> using CustomAlignedMap = std::map<T, U, std::less<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
 
 } // namespace Effekseer
 
