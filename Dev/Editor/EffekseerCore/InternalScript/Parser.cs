@@ -112,6 +112,7 @@ namespace Effekseer.InternalScript
 						var substitution = new SubstitutionExpression();
 						substitution.Target = lhs;
 						substitution.Value = rhs;
+						substitution.Line = token.Line;
 						sentences.Add(substitution);
 					}
 					else
