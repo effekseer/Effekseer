@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -43,6 +43,15 @@ static void PathCombine(EFK_CHAR* dst, const EFK_CHAR* src1, const EFK_CHAR* src
 		for( len2 = 0; src2[len2] != L'\0'; len2++ ) {}
 		memcpy( &dst[len1], src2, len2 * sizeof(EFK_CHAR) );
 	}
+    
+    for(int i = 0; i < len1 + len2; i++)
+    {
+        if(dst[i] == u'\\')
+        {
+            dst[i] = u'/';
+        }
+    }
+    
 	dst[len1 + len2] = L'\0';
 }
 
