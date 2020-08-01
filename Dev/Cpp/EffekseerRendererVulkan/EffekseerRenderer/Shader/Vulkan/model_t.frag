@@ -8,8 +8,8 @@
 layout(location = 0) in vec4 v_Normal;
 layout(location = 1) in vec4 v_Binormal;
 layout(location = 2) in vec4 v_Tangent;
-layout(location = 3) in vec4 v_TexCoord;
-layout(location = 4) in vec4 v_Color;
+layout(location = 3) centroid in vec4 v_TexCoord;
+layout(location = 4) centroid in vec4 v_Color;
 
 layout(set = 1, binding = 1) uniform sampler2D ColorTexture;
 layout(set = 1, binding = 2) uniform sampler2D NormalTexture;
@@ -49,8 +49,6 @@ void main()
 	}
 
 	if(o_Color.w <= 0.0)
-		discard;
-	if(o_Color.w > 1.01)
 		discard;
 }
 

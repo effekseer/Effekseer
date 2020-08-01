@@ -17,6 +17,7 @@ static const char* material_common_define_450 = R"(
 #define highp
 #define IN in
 #define OUT out
+#define CENTROID centroid
 
 )";
 
@@ -72,9 +73,9 @@ IN vec4 a_ModelColor;
 
 	R"(
 
-LAYOUT(0) OUT lowp vec4 v_VColor;
-LAYOUT(1) OUT mediump vec2 v_UV1;
-LAYOUT(2) OUT mediump vec2 v_UV2;
+LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
+LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
+LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
 LAYOUT(3) OUT mediump vec3 v_WorldP;
 LAYOUT(4) OUT mediump vec3 v_WorldN;
 LAYOUT(5) OUT mediump vec3 v_WorldT;
@@ -195,9 +196,9 @@ LAYOUT(2) IN vec4 atTexCoord;
 )"
 
 	R"(
-LAYOUT(0) OUT lowp vec4 v_VColor;
-LAYOUT(1) OUT mediump vec2 v_UV1;
-LAYOUT(2) OUT mediump vec2 v_UV2;
+LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
+LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
+LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
 LAYOUT(3) OUT mediump vec3 v_WorldP;
 LAYOUT(4) OUT mediump vec3 v_WorldN;
 LAYOUT(5) OUT mediump vec3 v_WorldT;
@@ -229,9 +230,9 @@ LAYOUT(5) IN vec2 atTexCoord2;
 )"
 
 	R"(
-LAYOUT(0) OUT lowp vec4 v_VColor;
-LAYOUT(1) OUT mediump vec2 v_UV1;
-LAYOUT(2) OUT mediump vec2 v_UV2;
+LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
+LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
+LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
 LAYOUT(3) OUT mediump vec3 v_WorldP;
 LAYOUT(4) OUT mediump vec3 v_WorldN;
 LAYOUT(5) OUT mediump vec3 v_WorldT;
@@ -355,9 +356,9 @@ static const char g_material_sprite_vs_src_suf2[] =
 static const char g_material_fs_src_pre[] =
 	R"(
 
-LAYOUT(0) IN lowp vec4 v_VColor;
-LAYOUT(1) IN mediump vec2 v_UV1;
-LAYOUT(2) IN mediump vec2 v_UV2;
+LAYOUT(0) CENTROID IN lowp vec4 v_VColor;
+LAYOUT(1) CENTROID IN mediump vec2 v_UV1;
+LAYOUT(2) CENTROID IN mediump vec2 v_UV2;
 LAYOUT(3) IN mediump vec3 v_WorldP;
 LAYOUT(4) IN mediump vec3 v_WorldN;
 LAYOUT(5) IN mediump vec3 v_WorldT;

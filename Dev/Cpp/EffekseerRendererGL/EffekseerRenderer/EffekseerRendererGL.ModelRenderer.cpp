@@ -54,8 +54,8 @@ R"(
 OUT mediump vec4 v_Normal;
 OUT mediump vec4 v_Binormal;
 OUT mediump vec4 v_Tangent;
-OUT mediump vec4 v_TexCoord;
-OUT lowp vec4 v_Color;
+CENTROID OUT mediump vec4 v_TexCoord;
+CENTROID OUT lowp vec4 v_Color;
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
 R"(
@@ -120,8 +120,8 @@ R"(
 IN mediump vec4 v_Normal;
 IN mediump vec4 v_Binormal;
 IN mediump vec4 v_Tangent;
-IN mediump vec4 v_TexCoord;
-IN lowp vec4 v_Color;
+CENTROID IN mediump vec4 v_TexCoord;
+CENTROID IN lowp vec4 v_Color;
 
 uniform sampler2D ColorTexture;
 uniform sampler2D NormalTexture;
@@ -143,7 +143,6 @@ void main()
 	}
 
 	if(FRAGCOLOR.w <= 0.0) discard;
-	if(FRAGCOLOR.w > 1.01) discard;
 }
 
 )";
@@ -166,9 +165,9 @@ R"(
 OUT mediump vec4 v_Normal;
 OUT mediump vec4 v_Binormal;
 OUT mediump vec4 v_Tangent;
-OUT mediump vec4 v_TexCoord;
+CENTROID OUT mediump vec4 v_TexCoord;
 OUT mediump vec4 v_Pos;
-OUT lowp vec4 v_Color;
+CENTROID OUT lowp vec4 v_Color;
 )"
 
 #if defined(MODEL_SOFTWARE_INSTANCING)
@@ -229,9 +228,9 @@ static const char g_model_distortion_fs_src [] =
 "IN mediump vec4 v_Normal;\n"
 "IN mediump vec4 v_Binormal;\n"
 "IN mediump vec4 v_Tangent;\n"
-"IN mediump vec4 v_TexCoord;\n"
+"CENTROID IN mediump vec4 v_TexCoord;\n"
 "IN mediump vec4 v_Pos;\n"
-"IN lowp vec4 v_Color;\n"
+"CENTROID IN lowp vec4 v_Color;\n"
 
 R"(
 uniform sampler2D uTexture0;
@@ -271,7 +270,6 @@ void main() {
 	FRAGCOLOR.xyz = color;
 
 	if(FRAGCOLOR.w <= 0.0) discard;
-	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 

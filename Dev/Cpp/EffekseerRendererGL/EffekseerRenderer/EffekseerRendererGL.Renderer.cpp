@@ -49,8 +49,8 @@ IN vec4 atTexCoord;
 )"
 
 R"(
-OUT vec4 vaColor;
-OUT vec4 vaTexCoord;
+CENTROID OUT vec4 vaColor;
+CENTROID OUT vec4 vaTexCoord;
 OUT vec4 vaPos;
 OUT vec4 vaPosR;
 OUT vec4 vaPosU;
@@ -89,8 +89,8 @@ void main() {
 
 static const char g_sprite_fs_texture_src[] =
 R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
+CENTROID IN lowp vec4 vaColor;
+CENTROID IN mediump vec4 vaTexCoord;
 
 uniform sampler2D uTexture0;
 
@@ -99,14 +99,13 @@ void main()
 	FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);
 
 	if(FRAGCOLOR.w <= 0.0) discard;
-	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 
 static const char g_sprite_fs_no_texture_src[] =
 R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
+CENTROID IN lowp vec4 vaColor;
+CENTROID IN mediump vec4 vaTexCoord;
 
 void main()
 {
@@ -128,8 +127,8 @@ IN vec4 atTangent;
 )"
 
 R"(
-OUT vec4 vaColor;
-OUT vec4 vaTexCoord;
+CENTROID OUT vec4 vaColor;
+CENTROID OUT vec4 vaTexCoord;
 OUT vec4 vaPos;
 OUT vec4 vaPosR;
 OUT vec4 vaPosU;
@@ -177,8 +176,8 @@ void main() {
 
 static const char g_sprite_fs_texture_distortion_src [] =
 R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
+CENTROID IN lowp vec4 vaColor;
+CENTROID IN mediump vec4 vaTexCoord;
 IN mediump vec4 vaPos;
 IN mediump vec4 vaPosR;
 IN mediump vec4 vaPosU;
@@ -214,14 +213,13 @@ void main() {
 	FRAGCOLOR = color;
 
 	if(FRAGCOLOR.w <= 0.0) discard;
-	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 
 static const char g_sprite_fs_no_texture_distortion_src [] =
 R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
+CENTROID IN lowp vec4 vaColor;
+CENTROID IN mediump vec4 vaTexCoord;
 IN mediump vec4 vaPos;
 IN mediump vec4 vaPosR;
 IN mediump vec4 vaPosU;
@@ -256,7 +254,6 @@ void main() {
 	FRAGCOLOR = color;
 
 	if(FRAGCOLOR.w <= 0.0) discard;
-	if(FRAGCOLOR.w > 1.01) discard;
 }
 )";
 
@@ -271,8 +268,8 @@ IN vec2 atTexCoord2;
 )"
 
 	R"(
-OUT lowp vec4 v_VColor;
-OUT mediump vec2 v_UV1;
+CENTROID OUT lowp vec4 v_VColor;
+CENTROID OUT mediump vec2 v_UV1;
 OUT mediump vec2 v_UV2;
 OUT mediump vec3 v_WorldP;
 OUT mediump vec3 v_WorldN;
@@ -327,8 +324,8 @@ void main() {
 static const char g_sprite_fs_lighting_src[] =
 	R"(
 
-IN lowp vec4 v_VColor;
-IN mediump vec2 v_UV1;
+CENTROID IN lowp vec4 v_VColor;
+CENTROID IN mediump vec2 v_UV1;
 IN mediump vec2 v_UV2;
 IN mediump vec3 v_WorldP;
 IN mediump vec3 v_WorldN;
@@ -353,7 +350,6 @@ void main()
 	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 
 	if(FRAGCOLOR.w <= 0.0) discard;
-	if(FRAGCOLOR.w > 1.01) discard;
 }
 
 

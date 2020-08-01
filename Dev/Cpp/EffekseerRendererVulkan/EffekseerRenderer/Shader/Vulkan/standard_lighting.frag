@@ -1,8 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(location = 0) in vec4 v_VColor;
-layout(location = 1) in vec2 v_UV1;
+layout(location = 0) centroid in vec4 v_VColor;
+layout(location = 1) centroid in vec2 v_UV1;
 layout(location = 2) in vec2 v_UV2;
 layout(location = 3) in vec3 v_WorldP;
 layout(location = 4) in vec3 v_WorldN;
@@ -34,7 +34,5 @@ void main()
 	o_Color.xyz = o_Color.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 
 	if(o_Color.w <= 0.0)
-		discard;
-	if(o_Color.w > 1.01)
 		discard;
 }

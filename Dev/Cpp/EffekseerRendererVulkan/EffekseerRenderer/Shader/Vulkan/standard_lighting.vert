@@ -8,8 +8,8 @@ layout(location = 3) in vec3 atTangent;
 layout(location = 4) in vec2 atTexCoord;
 layout(location = 5) in vec2 atTexCoord2;
 
-layout(location = 0) out vec4 v_VColor;
-layout(location = 1) out vec2 v_UV1;
+layout(location = 0) centroid out vec4 v_VColor;
+layout(location = 1) centroid out vec2 v_UV1;
 layout(location = 2) out vec2 v_UV2;
 layout(location = 3) out vec3 v_WorldP;
 layout(location = 4) out vec3 v_WorldN;

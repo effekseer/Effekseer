@@ -320,9 +320,9 @@ static const char g_material_sprite_vs_src_suf2[] =
 static const char g_material_fs_src_pre[] =
     R"(
 struct ShaderInput2 {
-  float4 v_VColor;
-  float2 v_UV1;
-  float2 v_UV2;
+  float4 v_VColor [[ centroid_no_perspective ]];
+  float2 v_UV1 [[ centroid_no_perspective ]];
+  float2 v_UV2 [[ centroid_no_perspective ]];
   float3 v_WorldP;
   float3 v_WorldN;
   float3 v_WorldT;

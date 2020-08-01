@@ -6,8 +6,8 @@ SamplerState	g_sampler		: register( s0 );
 struct PS_Input
 {
 	float4 Pos		: SV_POSITION;
-	float4 Color		: COLOR;
-	float2 UV		: TEXCOORD0;
+	linear centroid float4 Color		: COLOR;
+	linear centroid float2 UV		: TEXCOORD0;
 };
 
 
@@ -16,7 +16,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float4 Output = Input.Color * g_texture	.Sample(g_sampler, Input.UV);
 
 	if(Output.a <= 0.0f) discard;
-	if(Output.a > 1.01f) discard;
 
 	return Output;
 }

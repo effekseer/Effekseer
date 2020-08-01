@@ -22,8 +22,8 @@ layout(location = 8) in vec4 a_ModelColor;
 layout(location = 0) out vec4 v_Normal;
 layout(location = 1) out vec4 v_Binormal;
 layout(location = 2) out vec4 v_Tangent;
-layout(location = 3) out vec4 v_TexCoord;
-layout(location = 4) out vec4 v_Color;
+layout(location = 3) centroid out vec4 v_TexCoord;
+layout(location = 4) centroid out vec4 v_Color;
 
 layout(set = 0, binding = 0) uniform Block 
 {

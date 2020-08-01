@@ -7,8 +7,8 @@ layout(location = 2) in vec4 atTexCoord;
 layout(location = 3) in vec4 atBinormal;
 layout(location = 4) in vec4 atTangent;
 
-layout(location = 0) out vec4 vaColor;
-layout(location = 1) out vec4 vaTexCoord;
+layout(location = 0) centroid out vec4 vaColor;
+layout(location = 1) centroid out vec4 vaTexCoord;
 layout(location = 2) out vec4 vaPos;
 layout(location = 3) out vec4 vaPosR;
 layout(location = 4) out vec4 vaPosU;

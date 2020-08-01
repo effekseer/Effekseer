@@ -43,8 +43,6 @@ float4 PS( const PS_Input Input ) : COLOR
 
 	if (Output.a <= 0.0f)
 		discard;
-	if (Output.a > 1.01f)
-		discard;
 
 	return Output;
 }

@@ -46,8 +46,8 @@ const char g_sprite_fs_texture_src[] = R"(mtlcode
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
 struct ShaderInput2 {
-  float4 vaColor;
-  float4 vaTexCoord;
+  float4 vaColor [[ centroid_no_perspective ]];
+  float4 vaTexCoord [[ centroid_no_perspective ]];
 };
 struct ShaderOutput2 {
   half4 gl_FragColor;
@@ -63,9 +63,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.vaColor * (float4)(tmpvar_1)));
 
   if(_mtl_o.gl_FragColor.w <= 0.0f)
-    discard_fragment();
-
-  if(_mtl_o.gl_FragColor.w > 1.01f)
     discard_fragment();
 
   return _mtl_o;
@@ -140,8 +137,8 @@ static const char g_sprite_fs_lighting_src[] = R"(mtlcode
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
 struct ShaderInput2 {
-  float4 v_VColor;
-  float2 v_UV1;
+  float4 v_VColor [[ centroid_no_perspective ]];
+  float2 v_UV1 [[ centroid_no_perspective ]];
   float3 v_WorldN;
   float3 v_WorldT;
   float3 v_WorldB;
@@ -175,9 +172,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   ))) + _mtl_u.LightAmbient.xyz)));
 
   if(_mtl_o.gl_FragColor.w <= 0.0f)
-    discard_fragment();
-
-  if(_mtl_o.gl_FragColor.w > 1.01f)
     discard_fragment();
 
   return _mtl_o;
@@ -249,8 +243,8 @@ const char g_sprite_fs_texture_distortion_src[] = R"(mtlcode
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
 struct ShaderInput2 {
-  float4 vaColor;
-  float4 vaTexCoord;
+  float4 vaColor [[ centroid_no_perspective ]];
+  float4 vaTexCoord [[ centroid_no_perspective ]];
   float4 vaPos;
   float4 vaPosR;
   float4 vaPosU;
@@ -297,9 +291,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   _mtl_o.gl_FragColor = color_2;
 
   if(_mtl_o.gl_FragColor.w <= 0.0f)
-    discard_fragment();
-
-  if(_mtl_o.gl_FragColor.w > 1.01f)
     discard_fragment();
 
   return _mtl_o;
@@ -373,8 +364,8 @@ struct ShaderInput2 {
   float4 v_Normal;
   float4 v_Binormal;
   float4 v_Tangent;
-  float4 v_TexCoord;
-  float4 v_Color;
+  float4 v_TexCoord [[ centroid_no_perspective ]];
+  float4 v_Color [[ centroid_no_perspective ]];
 };
 struct ShaderOutput2 {
   half4 gl_FragColor;
@@ -404,9 +395,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   _mtl_o.gl_FragColor.xyz = ((half3)((float3)(_mtl_o.gl_FragColor.xyz) + _mtl_u.LightAmbient.xyz));
 
   if(_mtl_o.gl_FragColor.w <= 0.0f)
-    discard_fragment();
-
-  if(_mtl_o.gl_FragColor.w > 1.01f)
     discard_fragment();
 
   return _mtl_o;
@@ -464,8 +452,8 @@ struct ShaderInput2 {
   float4 v_Normal;
   float4 v_Binormal;
   float4 v_Tangent;
-  float4 v_TexCoord;
-  float4 v_Color;
+  float4 v_TexCoord [[ centroid_no_perspective ]];
+  float4 v_Color [[ centroid_no_perspective ]];
 };
 struct ShaderOutput2 {
   half4 gl_FragColor;
@@ -484,9 +472,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.v_Color * (float4)(tmpvar_1)));
 
   if(_mtl_o.gl_FragColor.w <= 0.0f)
-    discard_fragment();
-
-  if(_mtl_o.gl_FragColor.w > 1.01f)
     discard_fragment();
 
   return _mtl_o;
@@ -571,9 +556,9 @@ using namespace metal;
 struct ShaderInput2 {
   float4 v_Binormal;
   float4 v_Tangent;
-  float4 v_TexCoord;
+  float4 v_TexCoord [[ centroid_no_perspective ]];
   float4 v_Pos;
-  float4 v_Color;
+  float4 v_Color [[ centroid_no_perspective ]];
 };
 struct ShaderOutput2 {
   half4 gl_FragColor;
@@ -613,9 +598,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   _mtl_o.gl_FragColor.xyz = tmpvar_6.xyz;
 
   if(_mtl_o.gl_FragColor.w <= 0.0f)
-    discard_fragment();
-
-  if(_mtl_o.gl_FragColor.w > 1.01f)
     discard_fragment();
 
   return _mtl_o;

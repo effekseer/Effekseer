@@ -1,8 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(location = 0) in vec4 vaColor;
-layout(location = 1) in vec4 vaTexCoord;
+layout(location = 0) centroid in vec4 vaColor;
+layout(location = 1) centroid in vec4 vaTexCoord;
 layout(location = 2) in vec4 vaPos;
 layout(location = 3) in vec4 vaPosR;
 layout(location = 4) in vec4 vaPosU;
@@ -41,7 +41,5 @@ void main() {
 	o_Color = color;
 
 	if(o_Color.w <= 0.0)
-		discard;
-	if(o_Color.w > 1.01)
 		discard;
 }

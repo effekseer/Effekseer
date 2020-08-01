@@ -1,8 +1,8 @@
 struct PS_Input
 {
 	float4 Position : SV_POSITION;
-	float4 VColor : COLOR;
-	float2 UV1 : TEXCOORD0;
+	linear centroid float4 VColor : COLOR;
+	linear centroid float2 UV1 : TEXCOORD0;
 	float2 UV2 : TEXCOORD1;
 	float3 WorldP : TEXCOORD2;
 	float3 WorldN : TEXCOORD3;
@@ -36,7 +36,6 @@ float4 PS(const PS_Input Input) : SV_Target
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient);
 
 	if(Output.a <= 0.0f) discard;
-	if(Output.a > 1.01f) discard;
 
 	return Output;
 }

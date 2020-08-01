@@ -13,12 +13,12 @@ float4 mUVInversedBack		: register(c1);
 struct PS_Input
 {
 	float4 Position		: SV_POSITION;
-	float2 UV		: TEXCOORD0;
+	linear centroid float2 UV		: TEXCOORD0;
 	float4 Normal		: TEXCOORD1;
 	float4 Binormal		: TEXCOORD2;
 	float4 Tangent		: TEXCOORD3;
 	float4 Pos		: TEXCOORD4;
-	float4 Color		: COLOR0;
+	linear centroid float4 Color : COLOR0;
 };
 
 float4 PS( const PS_Input Input ) : SV_Target
@@ -27,7 +27,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 	Output.a = Output.a * Input.Color.a;
 
 	if(Output.a <= 0.0f) discard;
-	if(Output.a > 1.01f) discard;
 
 	float2 pos = Input.Pos.xy / Input.Pos.w;
 		float2 posU = Input.Tangent.xy / Input.Tangent.w;
@@ -47,7 +46,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 		Output.xyz = color;
 
 	if(Output.a <= 0.0f) discard;
-	if(Output.a > 1.01f) discard;
-
+	
 	return Output;
 }
