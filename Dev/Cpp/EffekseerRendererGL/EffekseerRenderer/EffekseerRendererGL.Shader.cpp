@@ -1,4 +1,4 @@
-﻿
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -217,6 +217,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
 
 #ifndef NDEBUG
+    if (res_link == GL_FALSE)
 	{
 		// output errors
 		char log[512];
