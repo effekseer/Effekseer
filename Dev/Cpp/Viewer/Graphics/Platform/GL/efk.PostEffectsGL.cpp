@@ -190,7 +190,7 @@ void main() {
 
 	void BlitterGL::Blit(EffekseerRendererGL::Shader* shader, EffekseerRendererGL::VertexArray* vao,
 		int32_t numTextures, const GLuint* textures, 
-		const void* constantData, size_t constantDataSize, RenderTexture* dest)
+		const void* constantData, size_t constantDataSize, RenderTexture* dest, bool isCleared)
 	{
 		using namespace Effekseer;
 		using namespace EffekseerRendererGL;
@@ -208,6 +208,11 @@ void main() {
 		
 		// Set destination texture
 		graphics->SetRenderTarget(dest, nullptr);
+
+		if (isCleared)
+		{
+			graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+		}
 
 		// Set source textures
 		for (int32_t slot = 0; slot < numTextures; slot++) {
@@ -393,7 +398,7 @@ void main() {
 				(GLuint)lowresBuffers[0][3]->GetViewID()
 			};
 			blitter.Blit(shaderBlend.get(), vaoBlend.get(), 4, textures, 
-				nullptr, 0, dest);
+				nullptr, 0, dest, false);
 		}
 
 		GLExt::glActiveTexture(GL_TEXTURE0);

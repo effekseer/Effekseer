@@ -33,7 +33,7 @@ namespace efk
 
 		void Blit(EffekseerRendererGL::Shader* shader, EffekseerRendererGL::VertexArray* vao,
 			int32_t numTextures, const GLuint* textures, 
-			const void* constantData, size_t constantDataSize, RenderTexture* dest);
+			const void* constantData, size_t constantDataSize, RenderTexture* dest, bool isCleared = true);
 	};
 
 	class BloomEffectGL : public BloomEffect
