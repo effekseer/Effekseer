@@ -13,20 +13,21 @@
 #include "EffekseerRendererGL.VertexBuffer.h"
 #include <string>
 
-#include "Shader/FlipbookInterpolationUtils_PS.h"
-#include "Shader/FlipbookInterpolationUtils_VS.h"
-
-#include "Shader/ModelDistortion_PS.h"
-#include "Shader/ModelDistortion_VS.h"
-#include "Shader/Model_PS.h"
-#include "Shader/Model_VS.h"
-
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "ShaderHeader/model_renderer_distortion_PS.h"
+#include "ShaderHeader/model_renderer_distortion_VS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader/model_renderer_texture_PS.h"
+#include "ShaderHeader/model_renderer_texture_VS.h"
+#else
 #include "ShaderHeader_15/model_renderer_distortion_PS.h"
 #include "ShaderHeader_15/model_renderer_distortion_VS.h"
 #include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
 #include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
 #include "ShaderHeader_15/model_renderer_texture_PS.h"
 #include "ShaderHeader_15/model_renderer_texture_VS.h"
+#endif
 
 namespace EffekseerRendererGL
 {
@@ -48,12 +49,12 @@ static std::string Replace(std::string target, std::string from_, std::string to
 static const int NumAttribs_Model = 6;
 
 static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
-	{"a_Position", GL_FLOAT, 3, 0, false},
-	{"a_Normal", GL_FLOAT, 3, 12, false},
-	{"a_Binormal", GL_FLOAT, 3, 24, false},
-	{"a_Tangent", GL_FLOAT, 3, 36, false},
-	{"a_TexCoord", GL_FLOAT, 2, 48, false},
-	{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
+	{"Input_Pos", GL_FLOAT, 3, 0, false},
+	{"Input_Normal", GL_FLOAT, 3, 12, false},
+	{"Input_Binormal", GL_FLOAT, 3, 24, false},
+	{"Input_Tangent", GL_FLOAT, 3, 36, false},
+	{"Input_UV", GL_FLOAT, 2, 48, false},
+	{"Input_Color", GL_UNSIGNED_BYTE, 4, 56, true},
 };
 
 #else
@@ -87,6 +88,16 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	, m_shader_texture(shader_texture)
 	, m_shader_distortion_texture(shader_distortion_texture)
 {
+	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
+		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_g_uvDistortionSampler"));
+		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_g_blendSampler"));
+		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_g_blendAlphaSampler"));
+		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_g_blendUVDistortionSampler"));
+#endif
+	};
+
 	for (size_t i = 0; i < 8; i++)
 	{
 		m_va[i] = nullptr;
@@ -95,13 +106,16 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	shader_lighting_texture_normal->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_lighting_texture_normal->SetTextureSlot(0, shader_lighting_texture_normal->GetUniformId("Sampler_g_colorSampler"));
 	shader_lighting_texture_normal->SetTextureSlot(1, shader_lighting_texture_normal->GetUniformId("Sampler_g_normalSampler"));
+	applyPSAdvancedRendererParameterTexture(shader_lighting_texture_normal, 2);
 
 	shader_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("Sampler_g_colorSampler"));
+	applyPSAdvancedRendererParameterTexture(shader_texture, 1);
 
 	shader_distortion_texture->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("Sampler_g_sampler"));
 	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("Sampler_g_backSampler"));
+	applyPSAdvancedRendererParameterTexture(shader_distortion_texture, 2);
 
 	Shader* shaders[2];
 	shaders[0] = m_shader_lighting_texture_normal;
@@ -127,23 +141,35 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		vsOffset += sizeof(float[4]) * 1;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atAlphaUV"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fAlphaUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atUVDistortionUV"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fUVDistortionUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("mflipbookParameter"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atFlipbookIndexAndNextRate"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendAlphaUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("atAlphaThreshold"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendUVDistortionUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fFlipbookParameter"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fFlipbookIndexAndNextRate"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fModelAlphaThreshold"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 #endif
@@ -167,16 +193,60 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		vsOffset += sizeof(float[4]) * 1;
 
+		int psOffset = 0;
 		shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightDirection"), sizeof(float[4]) * 0);
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightColor"), sizeof(float[4]) * 1);
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightAmbient"), sizeof(float[4]) * 2);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightDirection"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightColor"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightAmbient"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		shaders[i]->SetTextureSlot(2, shaders[i]->GetUniformId("uAlphaTexture"));
-		shaders[i]->SetTextureSlot(3, shaders[i]->GetUniformId("uuvDistortionTexture"));
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 4);
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFlipbookParameter"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fUVDistortionParameter"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fBlendTextureParameter"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fCameraFrontDirection"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFalloffParam.Param"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFalloffParam.BeginColor"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFalloffParam.EndColor"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fEmissiveScaling"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fEdgeColor"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fEdgeParameter"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
 #endif
 	}
 
@@ -203,23 +273,35 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		vsOffset += sizeof(float[4]) * 1;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atAlphaUV"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fAlphaUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atUVDistortionUV"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fUVDistortionUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("mflipbookParameter"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atFlipbookIndexAndNextRate"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendAlphaUV"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("atAlphaThreshold"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendUVDistortionUV"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fFlipbookParameter"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fFlipbookIndexAndNextRate"), vsOffset);
+
+		vsOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fModelAlphaThreshold"), vsOffset);
 
 		vsOffset += sizeof(float[4]) * 1;
 #endif
@@ -244,21 +326,34 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		vsOffset += sizeof(float[4]) * 1;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
+		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 #else
 		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 #endif
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.g_scale"), sizeof(float[4]) * 0);
+		int psOffset = 0;
 
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.mUVInversedBack"), sizeof(float[4]) * 1);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.g_scale"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.mUVInversedBack"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		shaders_d[i]->SetTextureSlot(2, shaders_d[i]->GetUniformId("uAlphaTexture"));
-		shaders_d[i]->SetTextureSlot(3, shaders_d[i]->GetUniformId("uuvDistortionTexture"));
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("flipbookParameter"), sizeof(float[4]) * 2);
-		shaders_d[i]->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("uvDistortionParameter"), sizeof(float[4]) * 3);
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.fFlipbookParameter"), psOffset);
 
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.fUVDistortionParameter"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
+
+		shaders_d[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.fBlendTextureParameter"), psOffset);
+
+		psOffset += sizeof(float[4]) * 1;
 #endif
 	}
 
@@ -307,56 +402,6 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	Shader* shader_texture = NULL;
 	Shader* shader_distortion_texture = NULL;
 
-	std::string vs_ltn_src = g_model_vs_src;
-	std::string fs_ltn_src = g_model_fs_src;
-
-	std::string vs_t_src = g_model_vs_src;
-	std::string fs_t_src = g_model_fs_src;
-
-	std::string vs_d_t_src = g_model_distortion_vs_src;
-	std::string fs_d_t_src = g_model_distortion_fs_src;
-
-	vs_ltn_src = Replace(vs_ltn_src, "TextureEnable", "true");
-	fs_ltn_src = Replace(fs_ltn_src, "TextureEnable", "true");
-	vs_ltn_src = Replace(vs_ltn_src, "LightingEnable", "true");
-	fs_ltn_src = Replace(fs_ltn_src, "LightingEnable", "true");
-	vs_ltn_src = Replace(vs_ltn_src, "NormalMapEnable", "true");
-	fs_ltn_src = Replace(fs_ltn_src, "NormalMapEnable", "true");
-
-	vs_t_src = Replace(vs_t_src, "TextureEnable", "true");
-	fs_t_src = Replace(fs_t_src, "TextureEnable", "true");
-	vs_t_src = Replace(vs_t_src, "LightingEnable", "false");
-	fs_t_src = Replace(fs_t_src, "LightingEnable", "false");
-	vs_t_src = Replace(vs_t_src, "NormalMapEnable", "false");
-	fs_t_src = Replace(fs_t_src, "NormalMapEnable", "false");
-
-	vs_d_t_src = Replace(vs_d_t_src, "TextureEnable", "true");
-	fs_d_t_src = Replace(fs_d_t_src, "TextureEnable", "true");
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	ShaderCodeView ltnVS[2]{
-		ShaderCodeView(g_flipbook_interpolation_vs_src),
-		ShaderCodeView(vs_ltn_src.c_str()),
-	};
-
-	ShaderCodeView ltnPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_ltn_src.c_str())};
-	ShaderCodeView tVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_t_src.c_str())};
-	ShaderCodeView tPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_t_src.c_str())};
-	ShaderCodeView dVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(vs_d_t_src.c_str())};
-	ShaderCodeView dPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(fs_d_t_src.c_str())};
-
-	shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(), ltnVS, 2, ltnPS, 2, "ModelRenderer1", true);
-	if (shader_lighting_texture_normal == NULL)
-		goto End;
-
-	shader_texture = Shader::Create(renderer->GetGraphicsDevice(), tVS, 2, tPS, 2, "ModelRenderer5", true);
-	if (shader_texture == NULL)
-		goto End;
-
-	shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(), dVS, 2, dPS, 2, "ModelRenderer7", true);
-	if (shader_distortion_texture == NULL)
-		goto End;
-#else
 	ShaderCodeView ltnVS(get_model_renderer_lighting_texture_normal_VS(renderer->GetDeviceType()));
 	ShaderCodeView ltnPS(get_model_renderer_lighting_texture_normal_PS(renderer->GetDeviceType()));
 	ShaderCodeView tVS(get_model_renderer_texture_VS(renderer->GetDeviceType()));
@@ -384,7 +429,6 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 		shader_distortion_texture->SetIsTransposeEnabled(true);
 	}
 
-#endif
 	return new ModelRenderer(renderer, shader_lighting_texture_normal, shader_texture, shader_distortion_texture);
 End:;
 

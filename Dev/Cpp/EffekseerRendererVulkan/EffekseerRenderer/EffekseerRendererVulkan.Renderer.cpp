@@ -4,6 +4,24 @@
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "EffekseerMaterialCompilerVulkan.h"
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
+#include "ShaderHeader/standard_renderer_VS.h"
+#include "ShaderHeader/standard_renderer_PS.h"
+#include "ShaderHeader/standard_renderer_lighting_VS.h"
+#include "ShaderHeader/standard_renderer_lighting_PS.h"
+#include "ShaderHeader/standard_renderer_distortion_VS.h"
+#include "ShaderHeader/standard_renderer_distortion_PS.h"
+
+#include "ShaderHeader/model_renderer_texture_VS.h"
+#include "ShaderHeader/model_renderer_texture_PS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader/model_renderer_distortion_VS.h"
+#include "ShaderHeader/model_renderer_distortion_PS.h"
+
+#else
+
 #include "ShaderHeader_15/standard_renderer_VS.h"
 #include "ShaderHeader_15/standard_renderer_PS.h"
 #include "ShaderHeader_15/standard_renderer_lighting_VS.h"
@@ -17,6 +35,8 @@
 #include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
 #include "ShaderHeader_15/model_renderer_distortion_VS.h"
 #include "ShaderHeader_15/model_renderer_distortion_PS.h"
+
+#endif
 
 namespace EffekseerRendererVulkan
 {

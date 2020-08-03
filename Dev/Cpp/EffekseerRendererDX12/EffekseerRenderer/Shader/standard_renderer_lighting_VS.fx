@@ -1,147 +1,309 @@
-
 struct VS_Input
 {
-	float3 Pos : POSITION0;
-	float4 Color : NORMAL0;
-	float4 Normal : NORMAL1;
-	float4 Tangent : NORMAL2;
-	float2 UV1 : TEXCOORD0;
-	float2 UV2 : TEXCOORD1;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV          : TEXCOORD2;
-    float2 UVDistortionUV   : TEXCOORD3;
-    float FlipbookIndex     : TEXCOORD4;
-    float AlphaThreshold    : TEXCOORD5;
-#endif
+    float3 Pos;
+    float4 Color;
+    float4 Normal;
+    float4 Tangent;
+    float2 UV1;
+    float2 UV2;
+    float4 Alpha_Dist_UV;
+    float2 BlendUV;
+    float4 Blend_Alpha_Dist_UV;
+    float FlipbookIndex;
+    float AlphaThreshold;
 };
 
 struct VS_Output
 {
-	float4 Position : SV_POSITION;
-	float4 VColor : COLOR;
-	float2 UV1 : TEXCOORD0;
-	float2 UV2 : TEXCOORD1;
-	float3 WorldP : TEXCOORD2;
-	float3 WorldN : TEXCOORD3;
-	float3 WorldT : TEXCOORD4;
-	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV              : TEXCOORD7;
-    float2 UVDistortionUV       : TEXCOORD8;
-    float FlipbookRate          : TEXCOORD9;
-    float2 FlipbookNextIndexUV  : TEXCOORD10;
-    float AlphaThreshold        : TEXCOORD11;
-#endif
+    float4 Position;
+    float4 VColor;
+    float2 UV;
+    float3 WorldP;
+    float3 WorldN;
+    float3 WorldT;
+    float3 WorldB;
+    float4 Alpha_Dist_UV;
+    float4 Blend_Alpha_Dist_UV;
+    float4 Blend_FBNextIndex_UV;
+    float2 Others;
 };
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+static const VS_Output _348 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    float4x4 mCamera;
-    float4x4 mProj;
-    float4 mUVInversed;
-
-    float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+    column_major float4x4 _256_mCamera : packoffset(c0);
+    column_major float4x4 _256_mProj : packoffset(c4);
+    float4 _256_mUVInversed : packoffset(c8);
+    float4 _256_mflipbookParameter : packoffset(c9);
 };
 
-#include "FlipbookInterpolationUtils.fx"
-#else
-float4x4 mCamera : register(c0);
-float4x4 mProj : register(c4);
-float4 mUVInversed : register(c8);
-#endif
 
-VS_Output VS( const VS_Input Input )
+static float4 gl_Position;
+static float3 Input_Pos;
+static float4 Input_Color;
+static float4 Input_Normal;
+static float4 Input_Tangent;
+static float2 Input_UV1;
+static float2 Input_UV2;
+static float4 Input_Alpha_Dist_UV;
+static float2 Input_BlendUV;
+static float4 Input_Blend_Alpha_Dist_UV;
+static float Input_FlipbookIndex;
+static float Input_AlphaThreshold;
+static float4 _entryPointOutput_VColor;
+static float2 _entryPointOutput_UV;
+static float3 _entryPointOutput_WorldP;
+static float3 _entryPointOutput_WorldN;
+static float3 _entryPointOutput_WorldT;
+static float3 _entryPointOutput_WorldB;
+static float4 _entryPointOutput_Alpha_Dist_UV;
+static float4 _entryPointOutput_Blend_Alpha_Dist_UV;
+static float4 _entryPointOutput_Blend_FBNextIndex_UV;
+static float2 _entryPointOutput_Others;
+
+struct SPIRV_Cross_Input
 {
-	VS_Output Output = (VS_Output)0;
-	float3 worldPos = Input.Pos;
-	float3 worldNormal = (Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldBinormal = cross(worldNormal, worldTangent);
+    float3 Input_Pos : TEXCOORD0;
+    float4 Input_Color : TEXCOORD1;
+    float4 Input_Normal : TEXCOORD2;
+    float4 Input_Tangent : TEXCOORD3;
+    float2 Input_UV1 : TEXCOORD4;
+    float2 Input_UV2 : TEXCOORD5;
+    float4 Input_Alpha_Dist_UV : TEXCOORD6;
+    float2 Input_BlendUV : TEXCOORD7;
+    float4 Input_Blend_Alpha_Dist_UV : TEXCOORD8;
+    float Input_FlipbookIndex : TEXCOORD9;
+    float Input_AlphaThreshold : TEXCOORD10;
+};
 
-	// UV
-	float2 uv1 = Input.UV1;
-	float2 uv2 = Input.UV1;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    // alpha texture
-    float2 alphaUV = Input.AlphaUV;
-    alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
-    
-    // uv distortion texture
-    float2 uvDistorionUV = Input.UVDistortionUV;
-    uvDistorionUV.y = mUVInversed.x + mUVInversed.y * uvDistorionUV.y;
-    
-    ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
-    // flipbook interpolation
-	/*
-    if(mflipbookParameter.x > 0)
-    {
-        Output.FlipbookRate = frac(Input.FlipbookIndex);
-        
-        float Index = floor(Input.FlipbookIndex);
-        float IndexOffset = 1.0;
-    
-        float NextIndex = Input.FlipbookIndex + IndexOffset;
-        
-        // loop none 
-        if(mflipbookParameter.y == 0)
-        {
-            if (NextIndex >= mflipbookParameter.z * mflipbookParameter.w)
-			{
-				NextIndex = (mflipbookParameter.z * mflipbookParameter.w) - 1;
-                Index = (mflipbookParameter.z * mflipbookParameter.w) - 1;
-			}
-        }
-        // loop
-        else if(mflipbookParameter.y == 1)
-        {
-            NextIndex %= (mflipbookParameter.z * mflipbookParameter.w);
-        }
-        // loop reverse
-        else if(mflipbookParameter.y == 2)
-        {
-            bool Reverse = (floor(NextIndex) / (mflipbookParameter.z * mflipbookParameter.w)) % 2 == 1;
-            NextIndex = int(NextIndex) % (mflipbookParameter.z * mflipbookParameter.w);
-            if(Reverse)
-            {
-                NextIndex = mflipbookParameter.z * mflipbookParameter.w - 1 - NextIndex;
-            }
-        }
-        
-        float2 OriginUV = GetFlipbookOriginUV(Input.UV1, Index, mflipbookParameter.z, mflipbookParameter.w);
-        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(OriginUV, NextIndex, mflipbookParameter.z, mflipbookParameter.w);
-    }
-    */
+struct SPIRV_Cross_Output
+{
+    float4 _entryPointOutput_VColor : TEXCOORD0;
+    float2 _entryPointOutput_UV : TEXCOORD1;
+    float3 _entryPointOutput_WorldP : TEXCOORD2;
+    float3 _entryPointOutput_WorldN : TEXCOORD3;
+    float3 _entryPointOutput_WorldT : TEXCOORD4;
+    float3 _entryPointOutput_WorldB : TEXCOORD5;
+    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD6;
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD7;
+    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD8;
+    float2 _entryPointOutput_Others : TEXCOORD9;
+    float4 gl_Position : SV_Position;
+};
 
-    // alpha threshold
-    Output.AlphaThreshold = Input.AlphaThreshold;
-#endif
-
-	// NBT
-	Output.WorldN = worldNormal;
-	Output.WorldB = worldBinormal;
-	Output.WorldT = worldTangent;
-
-	float3 pixelNormalDir = float3(0.5, 0.5, 1.0);
-
-	float4 cameraPos = mul(mCamera, float4(worldPos, 1.0));
-	cameraPos = cameraPos / cameraPos.w;
-	Output.Position = mul(mProj, cameraPos);
-
-	Output.WorldP = worldPos;
-	Output.VColor = Input.Color;
-	Output.UV1 = uv1;
-	Output.UV2 = uv2;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    Output.AlphaUV = alphaUV;
-    Output.UVDistortionUV = uvDistorionUV;
-#endif
-	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
-
-	return Output;
+float mod(float x, float y)
+{
+    return x - y * floor(x / y);
 }
 
+float2 mod(float2 x, float2 y)
+{
+    return x - y * floor(x / y);
+}
+
+float3 mod(float3 x, float3 y)
+{
+    return x - y * floor(x / y);
+}
+
+float4 mod(float4 x, float4 y)
+{
+    return x - y * floor(x / y);
+}
+
+float2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
+{
+    return 1.0f.xx / float2(DivideX, DivideY);
+}
+
+float2 GetFlipbookOriginUV(float2 FlipbookUV, float FlipbookIndex, float DivideX, float DivideY)
+{
+    float2 DivideIndex;
+    DivideIndex.x = float(int(FlipbookIndex) % int(DivideX));
+    DivideIndex.y = float(int(FlipbookIndex) / int(DivideX));
+    float param = DivideX;
+    float param_1 = DivideY;
+    float2 FlipbookOneSize = GetFlipbookOneSizeUV(param, param_1);
+    float2 UVOffset = DivideIndex * FlipbookOneSize;
+    float2 OriginUV = FlipbookUV - UVOffset;
+    OriginUV *= float2(DivideX, DivideY);
+    return OriginUV;
+}
+
+float2 GetFlipbookUVForIndex(float2 OriginUV, float Index, float DivideX, float DivideY)
+{
+    float2 DivideIndex;
+    DivideIndex.x = float(int(Index) % int(DivideX));
+    DivideIndex.y = float(int(Index) / int(DivideX));
+    float param = DivideX;
+    float param_1 = DivideY;
+    float2 FlipbookOneSize = GetFlipbookOneSizeUV(param, param_1);
+    return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
+}
+
+void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 flipbookParameter, float flipbookIndex, float2 uv)
+{
+    if (flipbookParameter.x > 0.0f)
+    {
+        flipbookRate = frac(flipbookIndex);
+        float Index = floor(flipbookIndex);
+        float IndexOffset = 1.0f;
+        float NextIndex = Index + IndexOffset;
+        float FlipbookMaxCount = flipbookParameter.z * flipbookParameter.w;
+        if (flipbookParameter.y == 0.0f)
+        {
+            if (NextIndex >= FlipbookMaxCount)
+            {
+                NextIndex = FlipbookMaxCount - 1.0f;
+                Index = FlipbookMaxCount - 1.0f;
+            }
+        }
+        else
+        {
+            if (flipbookParameter.y == 1.0f)
+            {
+                Index = mod(Index, FlipbookMaxCount);
+                NextIndex = mod(NextIndex, FlipbookMaxCount);
+            }
+            else
+            {
+                if (flipbookParameter.y == 2.0f)
+                {
+                    bool Reverse = mod(floor(Index / FlipbookMaxCount), 2.0f) == 1.0f;
+                    Index = mod(Index, FlipbookMaxCount);
+                    if (Reverse)
+                    {
+                        Index = (FlipbookMaxCount - 1.0f) - floor(Index);
+                    }
+                    Reverse = mod(floor(NextIndex / FlipbookMaxCount), 2.0f) == 1.0f;
+                    NextIndex = mod(NextIndex, FlipbookMaxCount);
+                    if (Reverse)
+                    {
+                        NextIndex = (FlipbookMaxCount - 1.0f) - floor(NextIndex);
+                    }
+                }
+            }
+        }
+        float2 param = uv;
+        float param_1 = Index;
+        float param_2 = flipbookParameter.z;
+        float param_3 = flipbookParameter.w;
+        float2 OriginUV = GetFlipbookOriginUV(param, param_1, param_2, param_3);
+        float2 param_4 = OriginUV;
+        float param_5 = NextIndex;
+        float param_6 = flipbookParameter.z;
+        float param_7 = flipbookParameter.w;
+        flipbookUV = GetFlipbookUVForIndex(param_4, param_5, param_6, param_7);
+    }
+}
+
+void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutput)
+{
+    vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
+    vsoutput.Alpha_Dist_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
+    vsoutput.Blend_Alpha_Dist_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    float flipbookRate = 0.0f;
+    float2 flipbookNextIndexUV = 0.0f.xx;
+    float param = flipbookRate;
+    float2 param_1 = flipbookNextIndexUV;
+    float4 param_2 = _256_mflipbookParameter;
+    float param_3 = vsinput.FlipbookIndex;
+    float2 param_4 = vsoutput.UV;
+    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
+    flipbookRate = param;
+    flipbookNextIndexUV = param_1;
+    vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
+    vsoutput.Others.x = flipbookRate;
+    vsoutput.Others.y = vsinput.AlphaThreshold;
+}
+
+VS_Output _main(VS_Input Input)
+{
+    VS_Output Output = _348;
+    float3 worldPos = Input.Pos;
+    float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
+    float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
+    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float2 uv1 = Input.UV1;
+    float2 uv2 = Input.UV1;
+    uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
+    uv2.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv2.y);
+    Output.WorldN = worldNormal;
+    Output.WorldB = worldBinormal;
+    Output.WorldT = worldTangent;
+    float3 pixelNormalDir = float3(0.5f, 0.5f, 1.0f);
+    float4 cameraPos = mul(_256_mCamera, float4(worldPos, 1.0f));
+    cameraPos /= cameraPos.w.xxxx;
+    Output.Position = mul(_256_mProj, cameraPos);
+    Output.WorldP = worldPos;
+    Output.VColor = Input.Color;
+    Output.UV = uv1;
+    VS_Input param = Input;
+    VS_Output param_1 = Output;
+    CalculateAndStoreAdvancedParameter(param, param_1);
+    Output = param_1;
+    return Output;
+}
+
+void vert_main()
+{
+    VS_Input Input;
+    Input.Pos = Input_Pos;
+    Input.Color = Input_Color;
+    Input.Normal = Input_Normal;
+    Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
+    Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
+    Input.BlendUV = Input_BlendUV;
+    Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
+    Input.FlipbookIndex = Input_FlipbookIndex;
+    Input.AlphaThreshold = Input_AlphaThreshold;
+    VS_Output flattenTemp = _main(Input);
+    gl_Position = flattenTemp.Position;
+    _entryPointOutput_VColor = flattenTemp.VColor;
+    _entryPointOutput_UV = flattenTemp.UV;
+    _entryPointOutput_WorldP = flattenTemp.WorldP;
+    _entryPointOutput_WorldN = flattenTemp.WorldN;
+    _entryPointOutput_WorldT = flattenTemp.WorldT;
+    _entryPointOutput_WorldB = flattenTemp.WorldB;
+    _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
+    _entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
+    _entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
+    _entryPointOutput_Others = flattenTemp.Others;
+}
+
+SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
+{
+    Input_Pos = stage_input.Input_Pos;
+    Input_Color = stage_input.Input_Color;
+    Input_Normal = stage_input.Input_Normal;
+    Input_Tangent = stage_input.Input_Tangent;
+    Input_UV1 = stage_input.Input_UV1;
+    Input_UV2 = stage_input.Input_UV2;
+    Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
+    Input_BlendUV = stage_input.Input_BlendUV;
+    Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;
+    Input_FlipbookIndex = stage_input.Input_FlipbookIndex;
+    Input_AlphaThreshold = stage_input.Input_AlphaThreshold;
+    vert_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.gl_Position = gl_Position;
+    stage_output._entryPointOutput_VColor = _entryPointOutput_VColor;
+    stage_output._entryPointOutput_UV = _entryPointOutput_UV;
+    stage_output._entryPointOutput_WorldP = _entryPointOutput_WorldP;
+    stage_output._entryPointOutput_WorldN = _entryPointOutput_WorldN;
+    stage_output._entryPointOutput_WorldT = _entryPointOutput_WorldT;
+    stage_output._entryPointOutput_WorldB = _entryPointOutput_WorldB;
+    stage_output._entryPointOutput_Alpha_Dist_UV = _entryPointOutput_Alpha_Dist_UV;
+    stage_output._entryPointOutput_Blend_Alpha_Dist_UV = _entryPointOutput_Blend_Alpha_Dist_UV;
+    stage_output._entryPointOutput_Blend_FBNextIndex_UV = _entryPointOutput_Blend_FBNextIndex_UV;
+    stage_output._entryPointOutput_Others = _entryPointOutput_Others;
+    return stage_output;
+}

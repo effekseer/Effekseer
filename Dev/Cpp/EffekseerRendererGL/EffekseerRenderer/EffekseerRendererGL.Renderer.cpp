@@ -29,6 +29,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #endif
 
+/*
 #include "Shader/FlipbookInterpolationUtils_PS.h"
 #include "Shader/FlipbookInterpolationUtils_VS.h"
 
@@ -40,15 +41,27 @@
 
 #include "Shader/SpriteDistortion_PS.h"
 #include "Shader/SpriteDistortion_VS.h"
+*/
 
-#include "ShaderHeader_15/standard_renderer_VS.h"
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "ShaderHeader/standard_renderer_PS.h"
+#include "ShaderHeader/standard_renderer_VS.h"
+
+#include "ShaderHeader/standard_renderer_distortion_PS.h"
+#include "ShaderHeader/standard_renderer_distortion_VS.h"
+
+#include "ShaderHeader/standard_renderer_lighting_PS.h"
+#include "ShaderHeader/standard_renderer_lighting_VS.h"
+#else
 #include "ShaderHeader_15/standard_renderer_PS.h"
+#include "ShaderHeader_15/standard_renderer_VS.h"
 
-#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
 #include "ShaderHeader_15/standard_renderer_distortion_PS.h"
+#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
 
-#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
 #include "ShaderHeader_15/standard_renderer_lighting_PS.h"
+#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
+#endif
 
 namespace EffekseerRendererGL
 {
@@ -115,7 +128,13 @@ Renderer* Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::Graphics
 int32_t RendererImplemented::GetIndexSpriteCount() const
 {
 	int vsSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
-	return (vsSize / sizeof(Vertex) / 4 + 1);
+
+	size_t size = sizeof(EffekseerRenderer::SimpleVertex);
+	size = (std::min)(size, sizeof(VertexDistortion));
+	size = (std::min)(size, sizeof(EffekseerRenderer::DynamicVertex));
+	size = (std::min)(size, sizeof(EffekseerRenderer::LightingVertex));
+
+	return (vsSize / size / 4 + 1);
 }
 
 //----------------------------------------------------------------------------------
@@ -288,22 +307,6 @@ bool RendererImplemented::Initialize()
 
 	m_renderState = new RenderState(this);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	ShaderCodeView sVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(g_sprite_vs_src)};
-	ShaderCodeView sPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(g_sprite_fs_texture_src)};
-
-	m_shader = Shader::Create(GetGraphicsDevice(), sVS, 2, sPS, 2, "Standard Tex", false);
-	if (m_shader == nullptr)
-		return false;
-
-	ShaderCodeView dVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(g_sprite_distortion_vs_src)};
-	ShaderCodeView dPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(g_sprite_fs_texture_distortion_src)};
-
-	m_shader_distortion = Shader::Create(GetGraphicsDevice(), dVS, 2, dPS, 2, "Standard Distortion Tex", false);
-	if (m_shader_distortion == nullptr)
-		return false;
-
-#else
 	ShaderCodeView sVS(get_standard_renderer_VS(GetDeviceType()));
 	ShaderCodeView sPS(get_standard_renderer_PS(GetDeviceType()));
 
@@ -318,19 +321,20 @@ bool RendererImplemented::Initialize()
 	if (m_shader_distortion == nullptr)
 		return false;
 
-#endif
-
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	static ShaderAttribInfo sprite_attribs[7] = {
-		{"atPosition", GL_FLOAT, 3, 0, false},
-		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"atTexCoord", GL_FLOAT, 2, 16, false},
-		{"atAlphaUV", GL_FLOAT, 2, 24, false},
-		{"atUVDistortionUV", GL_FLOAT, 2, 32, false},
-		{"atFlipbookIndex", GL_FLOAT, 1, 40, false},
-		{"atAlphaThreshold", GL_FLOAT, 1, 44, false},
+	static ShaderAttribInfo sprite_attribs[8] = {
+		{"Input_Pos", GL_FLOAT, 3, 0, false},
+		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"Input_UV", GL_FLOAT, 2, 16, false},
+
+		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 6, false},
+		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 10, false},
+		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 12, false},
+		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 16, false},
+		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 17, false},
 	};
-	m_shader->GetAttribIdList(7, sprite_attribs);
+
+	m_shader->GetAttribIdList(8, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
 #else
 	static ShaderAttribInfo sprite_attribs[3] = {
@@ -343,14 +347,32 @@ bool RendererImplemented::Initialize()
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 * 2);
+
+	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
+		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
+		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_g_uvDistortionSampler"));
+		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_g_blendSampler"));
+		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_g_blendAlphaSampler"));
+		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_g_blendUVDistortionSampler"));
+	};
+
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
+
 	m_shader->AddVertexConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
-	m_shader->SetTextureSlot(1, m_shader->GetUniformId("uAlphaTexture"));
-	m_shader->SetTextureSlot(2, m_shader->GetUniformId("uuvDistortionTexture"));
-	m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("flipbookParameter"), 0);
-	m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 1);
+		CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBVS0.mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+
+	{
+		int32_t offset = 0;
+		m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBPS0.flipbookParameter"), 0 + offset);
+		m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBPS0.uvDistortionParameter"), sizeof(float) * 4 * 1 + offset);
+		m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBPS0.blendTextureParameter"), sizeof(float) * 4 * 2 + offset);
+		m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBPS0.emissiveScaling"), sizeof(float) * 4 * 3 + offset);
+		m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBPS0.edgeColor"), sizeof(float) * 4 * 4 + offset);
+		m_shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader->GetUniformId("CBPS0.edgeParameter"), sizeof(float) * 4 * 5 + offset);
+	}
+
+	applyPSAdvancedRendererParameterTexture(m_shader, 1);
 
 #else
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
@@ -368,19 +390,21 @@ bool RendererImplemented::Initialize()
 
 	// Distortion
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	static ShaderAttribInfo sprite_attribs_distortion[9] = {
-		{"atPosition", GL_FLOAT, 3, 0, false},
-		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"atTexCoord", GL_FLOAT, 2, 16, false},
-		{"atBinormal", GL_FLOAT, 3, 24, false},
-		{"atTangent", GL_FLOAT, 3, 36, false},
-		{"atAlphaUV", GL_FLOAT, 2, 48, false},
-		{"atUVDistortionUV", GL_FLOAT, 2, 56, false},
-		{"atFlipbookIndex", GL_FLOAT, 1, 64, false},
-		{"atAlphaThreshold", GL_FLOAT, 1, 68, false},
+	static ShaderAttribInfo sprite_attribs_distortion[10] = {
+		{"Input_Pos", GL_FLOAT, 3, 0, false},
+		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"Input_UV", GL_FLOAT, 2, 16, false},
+		{"Input_Binormal", GL_FLOAT, 3, 24, false},
+		{"Input_Tangent", GL_FLOAT, 3, 36, false},
+
+		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 12, false},
+		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 16, false},
+		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 18, false},
+		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 22, false},
+		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 23, false},
 	};
 
-	m_shader_distortion->GetAttribIdList(9, sprite_attribs_distortion);
+	m_shader_distortion->GetAttribIdList(10, sprite_attribs_distortion);
 
 #else
 	static ShaderAttribInfo sprite_attribs_distortion[5] = {
@@ -399,7 +423,7 @@ bool RendererImplemented::Initialize()
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 #else
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
@@ -422,49 +446,47 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("Sampler_g_backSampler"));
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	m_shader_distortion->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
-												 m_shader_distortion->GetUniformId("mflipbookParameter"),
-												 sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_distortion->SetTextureSlot(2, m_shader_distortion->GetUniformId("uAlphaTexture"));
-	m_shader_distortion->SetTextureSlot(3, m_shader_distortion->GetUniformId("uuvDistortionTexture"));
-	m_shader_distortion->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 2);
 
-	m_shader_distortion->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 3);
+	m_shader_distortion->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
+												 m_shader_distortion->GetUniformId("CBVS0.mflipbookParameter"),
+												 sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+
+	{
+		int32_t offset = sizeof(float) * 4 * 2;
+		m_shader_distortion->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("CBPS0.flipbookParameter"), 0 + offset);
+		m_shader_distortion->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("CBPS0.uvDistortionParameter"), sizeof(float) * 4 * 1 + offset);
+		m_shader_distortion->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_distortion->GetUniformId("CBPS0.blendTextureParameter"), sizeof(float) * 4 * 2 + offset);
+	}
+
+	applyPSAdvancedRendererParameterTexture(m_shader_distortion, 2);
+
 #endif
 
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer(), false);
 
-// Lighting
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	ShaderCodeView lVS[2]{ShaderCodeView(g_flipbook_interpolation_vs_src), ShaderCodeView(g_sprite_vs_lighting_src)};
-	ShaderCodeView lPS[2]{ShaderCodeView(g_flipbook_interpolation_ps_src), ShaderCodeView(g_sprite_fs_lighting_src)};
-
-	m_shader_lighting = Shader::Create(GetGraphicsDevice(), lVS, 2, lPS, 2, "Standard Lighting Tex", false);
-
-#else
+	// Lighting
 	ShaderCodeView lVS(get_standard_renderer_lighting_VS(GetDeviceType()));
 	ShaderCodeView lPS(get_standard_renderer_lighting_PS(GetDeviceType()));
 
 	m_shader_lighting = Shader::Create(GetGraphicsDevice(), &lVS, 1, &lPS, 1, "Standard Lighting Tex", false, false);
-#endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[10] = {
-		{"atPosition", GL_FLOAT, 3, 0, false},
-		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
-		{"atTangent", GL_UNSIGNED_BYTE, 4, 20, true},
-		{"atTexCoord", GL_FLOAT, 2, 24, false},
-		{"atTexCoord2", GL_FLOAT, 2, 32, false},
-		{"atAlphaUV", GL_FLOAT, 2, 40, false},
-		{"atUVDistortionUV", GL_FLOAT, 2, 48, false},
-		{"atFlipbookIndex", GL_FLOAT, 1, 56, false},
-		{"atAlphaThreshold", GL_FLOAT, 1, 60, false},
+	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[11] = {
+		{"Input_Pos", GL_FLOAT, 3, 0, false},
+		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
+		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
+		{"Input_UV1", GL_FLOAT, 2, 24, false},
+		{"Input_UV2", GL_FLOAT, 2, 32, false},
+
+		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 10, false},
+		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 14, false},
+		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 16, false},
+		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 20, false},
+		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 21, false},
 	};
 
-	m_shader_lighting->GetAttribIdList(10, sprite_attribs_lighting);
+	m_shader_lighting->GetAttribIdList(11, sprite_attribs_lighting);
 	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::LightingVertex));
 #else
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
@@ -482,7 +504,8 @@ bool RendererImplemented::Initialize()
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+
 #else
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
@@ -505,16 +528,17 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting->SetTextureSlot(1, m_shader_lighting->GetUniformId("Sampler_g_normalSampler"));
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	m_shader_lighting->AddVertexConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_lighting->SetTextureSlot(2, m_shader_lighting->GetUniformId("uAlphaTexture"));
-	m_shader_lighting->SetTextureSlot(3, m_shader_lighting->GetUniformId("uuvDistortionTexture"));
+	{
+		int32_t offset = sizeof(float) * 4 * 3;
+		m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fFlipbookParameter"), 0 + offset);
+		m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fUVDistortionParameter"), sizeof(float) * 4 * 1 + offset);
+		m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fBlendTextureParameter"), sizeof(float) * 4 * 2 + offset);
+		m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fEmissiveScaling"), sizeof(float) * 4 * 3 + offset);
+		m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fEdgeColor"), sizeof(float) * 4 * 4 + offset);
+		m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("CBPS0.fEdgeParameter"), sizeof(float) * 4 * 5 + offset);
+	}
 
-	m_shader_lighting->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("flipbookParameter"), sizeof(float) * 4 * 3);
-
-	m_shader_lighting->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("uvDistortionParameter"), sizeof(float) * 4 * 4);
+	applyPSAdvancedRendererParameterTexture(m_shader_lighting, 2);
 #endif
 
 	m_vao_lighting = VertexArray::Create(this, m_shader_lighting, GetVertexBuffer(), GetIndexBuffer(), false);

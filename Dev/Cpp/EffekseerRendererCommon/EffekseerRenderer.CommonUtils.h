@@ -465,6 +465,7 @@ static int32_t GetMaximumVertexSizeInAllTypes()
 	size_t size = sizeof(SimpleVertex);
 	size = (std::max)(size, sizeof(VertexDistortion));
 	size = (std::max)(size, sizeof(DynamicVertexWithCustomData));
+	size = (std::max)(size, sizeof(LightingVertex));
 	return static_cast<int32_t>(size);
 };
 

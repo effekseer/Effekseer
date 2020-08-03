@@ -1,26 +1,22 @@
 
-#include "FlipbookInterpolationUtils_PS.fx"
-#include "TextureBlendingUtils_PS.fx"
-
 struct PS_Input
 {
 	float4 Position : SV_POSITION;
 	float4 VColor : COLOR;
-	float2 UV1 : TEXCOORD0;
-	float2 UV2 : TEXCOORD1;
-	float3 WorldP : TEXCOORD2;
-	float3 WorldN : TEXCOORD3;
-	float3 WorldT : TEXCOORD4;
-	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
-    float2 AlphaUV              : TEXCOORD7;
-    float2 UVDistortionUV       : TEXCOORD8;
-    float2 BlendUV              : TEXCOORD9;
-    float2 BlendAlphaUV         : TEXCOORD10;
-    float2 BlendUVDistortionUV  : TEXCOORD11;
-    float FlipbookRate          : TEXCOORD12;
-    float2 FlipbookNextIndexUV  : TEXCOORD13;
-    float AlphaThreshold        : TEXCOORD14;
+	float2 UV : TEXCOORD0;
+	float3 WorldP : TEXCOORD1;
+	float3 WorldN : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
+	float3 WorldB : TEXCOORD4;
+
+	float4 Alpha_Dist_UV : TEXCOORD5;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD6;
+
+	// BlendUV, FlipbookNextIndexUV
+	float4 Blend_FBNextIndex_UV : TEXCOORD7;
+
+	// x - FlipbookRate, y - AlphaThreshold
+	float2 Others : TEXCOORD8;
 };
 
 cbuffer PS_ConstanBuffer : register(b0)
@@ -46,7 +42,6 @@ SamplerState g_colorSampler : register(s0);
 Texture2D	g_normalTexture		: register( t1 );
 SamplerState g_normalSampler : register(s1);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 Texture2D g_alphaTexture 	            : register( t2 );
 SamplerState g_alphaSampler             : register( s2 );
 
@@ -61,58 +56,58 @@ SamplerState g_blendAlphaSampler        : register( s5 );
 
 Texture2D g_blendUVDistortionTexture    : register( t6 );
 SamplerState g_blendUVDistortionSampler : register( s6 );
-#endif
+
+#include "renderer_common_PS.fx"
 
 float4 main(const PS_Input Input) : SV_Target
 {
+	AdvancedParameter advancedParam = DisolveAdvancedParameter(Input);
+
+    float2 UVOffset = float2(0.0, 0.0);
+
+	UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, advancedParam.UVDistortionUV).rg * 2.0 - 1.0;
+	UVOffset *= fUVDistortionParameter.x;
+
 	float diffuse = 1.0;
 
-	half3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV1).xyz;
+	half3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV + UVOffset).xyz;
 	half3 texNormal = (loN - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(mul(texNormal, half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
 
 	diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
 
-    float2 UVOffset = float2(0.0, 0.0);
+	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV + UVOffset) * Input.VColor;
     
-    UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, Input.UVDistortionUV).rg * 2.0 - 1.0;
-    UVOffset *= fUVDistortionParameter.x;
-    
-	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1 + UVOffset) * Input.VColor;
-    
-	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.VColor, Input.FlipbookNextIndexUV + UVOffset, Input.FlipbookRate);
+	ApplyFlipbook(Output, g_colorTexture, g_colorSampler, fFlipbookParameter, Input.VColor, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
     
     // apply alpha texture
-    float4 AlphaTexColor = g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV + UVOffset);
+	float4 AlphaTexColor = g_alphaTexture.Sample(g_alphaSampler, advancedParam.AlphaUV + UVOffset);
 	Output.a *= AlphaTexColor.r * AlphaTexColor.a;
     
     // blend texture uv offset
-    float2 BlendUVOffset = g_blendUVDistortionTexture.Sample(g_blendUVDistortionSampler, Input.BlendUVDistortionUV).rg * 2.0 - 1.0;
+	float2 BlendUVOffset = g_blendUVDistortionTexture.Sample(g_blendUVDistortionSampler, advancedParam.BlendUVDistortionUV).rg * 2.0 - 1.0;
     BlendUVOffset *= fUVDistortionParameter.y;
     
-    float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, Input.BlendUV + BlendUVOffset);
-    float4 BlendAlphaTextureColor = g_blendAlphaTexture.Sample(g_blendAlphaSampler, Input.BlendAlphaUV + BlendUVOffset);
+    float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
+	float4 BlendAlphaTextureColor = g_blendAlphaTexture.Sample(g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.a *= BlendAlphaTextureColor.r * BlendAlphaTextureColor.a;
     
     ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
     
     Output.rgb *= fEmissiveScaling.x;
     
-    // alpha threshold
-    if(Output.a <= Input.AlphaThreshold)
-    {
-        discard;
-    }
-    
+    // zero + alpha threshold
+	if (Output.a <= max(0.0, advancedParam.AlphaThreshold))
+	{
+		discard;
+	}
+
 	Output.xyz = Output.xyz * (float3(diffuse, diffuse, diffuse) + fLightAmbient);
     
     Output.rgb = lerp(
                 fEdgeColor.rgb * fEdgeParameter.y, 
                 Output.rgb, 
-                ceil((Output.a - Input.AlphaThreshold) - fEdgeParameter.x));
+                ceil((Output.a - advancedParam.AlphaThreshold) - fEdgeParameter.x));
     
-	if (Output.a == 0.0)
-		discard;
-
 	return Output;
 }

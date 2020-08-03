@@ -37,8 +37,8 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	auto sizeVec4 = sizeof(float) * 4;
-	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeVec4 * 4);
-	m_shader_distortion_texture->SetPixelRegisterCount(4);
+	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeVec4 * 5);
+	m_shader_distortion_texture->SetPixelRegisterCount(5);
 #else
 	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1);

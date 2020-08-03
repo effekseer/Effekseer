@@ -58,7 +58,11 @@ namespace EffekseerRendererGL
 			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
 				{"atPosition", GL_FLOAT, 3, 0, false}, {"atColor", GL_UNSIGNED_BYTE, 4, 12, true}, {"atTexCoord", GL_FLOAT, 2, 16, false}};
 			shader->GetAttribIdList(3, sprite_attribs);
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			shader->SetVertexSize(24);
+#else
 			shader->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
+#endif
 		}
 		else
 		{

@@ -125,7 +125,7 @@ private:
 	std::vector<ConstantLayout> m_vertexConstantLayout;
 	std::vector<ConstantLayout> m_pixelConstantLayout;
 
-	std::array<GLuint, Effekseer::TextureSlotMax> m_textureSlots;
+	std::array<GLint, Effekseer::TextureSlotMax> m_textureSlots;
 	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
 
 	std::string name_;
@@ -211,8 +211,8 @@ public:
 
 	void SetConstantBuffer() override;
 
-	void SetTextureSlot(int32_t index, GLuint value);
-	GLuint GetTextureSlot(int32_t index);
+	void SetTextureSlot(int32_t index, GLint value);
+	GLint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
 
 	void SetIsTransposeEnabled(bool isTransposeEnabled)
