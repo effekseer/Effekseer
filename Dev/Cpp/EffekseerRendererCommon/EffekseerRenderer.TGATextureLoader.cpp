@@ -48,6 +48,11 @@ bool TGATextureLoader::Load(void* data, int32_t size)
 			{
 				textureData[LU_Index + c] = SrcTextureData[LD_Index + c];
 			}
+
+			if (ColorStep == 3)
+			{
+				textureData[LU_Index + 3] = 255;
+			}
 		}
 	}
 
