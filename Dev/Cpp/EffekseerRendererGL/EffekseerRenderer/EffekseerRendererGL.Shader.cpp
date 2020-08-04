@@ -52,7 +52,7 @@ static const char g_header_vs_gles3_src [] =
 "#version 300 es\n" \
 "precision mediump float;\n" \
 "#define IN in\n" \
-"#define CENTROID centroid\n" \
+"#define CENTROID\n" \
 "#define TEX2D textureLod\n" \
 "#define OUT out\n";
 
@@ -60,7 +60,7 @@ static const char g_header_fs_gles3_src [] =
 "#version 300 es\n" \
 "precision mediump float;\n" \
 "#define IN in\n" \
-"#define CENTROID centroid\n" \
+"#define CENTROID\n" \
 "#define TEX2D texture\n" \
 "layout (location = 0) out vec4 FRAGCOLOR;\n";
 
