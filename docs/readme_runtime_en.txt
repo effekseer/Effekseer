@@ -2,6 +2,10 @@
 
 ## Release notes
 
+### 1.52i2
+
+- Fixed a bug that effects are not shown with OpenGL ES3 in some devices.
+
 ### 1.52i
 
 - Fixed many bugs
