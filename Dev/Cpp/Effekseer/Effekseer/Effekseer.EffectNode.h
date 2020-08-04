@@ -946,8 +946,15 @@ struct ParameterRendererCommon
 
 			if (MaterialType == RendererMaterialType::Default || MaterialType == RendererMaterialType::Lighting)
 			{
-				memcpy(&EmissiveScaling, pos, sizeof(int));
-				pos += sizeof(int);
+				if (version >= 1600)
+				{
+					memcpy(&EmissiveScaling, pos, sizeof(int));
+					pos += sizeof(int);
+				}
+				else
+				{
+					EmissiveScaling = 1;
+				}
 			}
 #endif
 

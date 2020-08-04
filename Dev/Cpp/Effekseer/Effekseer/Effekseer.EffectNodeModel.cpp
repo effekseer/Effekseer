@@ -88,15 +88,22 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	AllColor.load(pos, m_effect->GetVersion());
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	int FalloffFlag = 0;
-	memcpy(&FalloffFlag, pos, sizeof(int));
-	pos += sizeof(int);
-	EnableFalloff = (FalloffFlag == 1);
-
-	if (EnableFalloff)
+	if (m_effect->GetVersion() >= 1600)
 	{
-		memcpy(&FalloffParam, pos, sizeof(ModelRenderer::FalloffParameter));
-		pos += sizeof(ModelRenderer::FalloffParameter);
+		int FalloffFlag = 0;
+		memcpy(&FalloffFlag, pos, sizeof(int));
+		pos += sizeof(int);
+		EnableFalloff = (FalloffFlag == 1);
+
+		if (EnableFalloff)
+		{
+			memcpy(&FalloffParam, pos, sizeof(ModelRenderer::FalloffParameter));
+			pos += sizeof(ModelRenderer::FalloffParameter);
+		}
+	}
+	else
+	{
+		EnableFalloff = false;
 	}
 #endif
 }

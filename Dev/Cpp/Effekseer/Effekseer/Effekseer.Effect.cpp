@@ -616,7 +616,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 	}
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	if (m_version >= 16)
+	if (m_version >= 1600)
 	{
 		// curve
 		binaryReader.Read(curveCount_, 0, elementCountMax);
