@@ -34,11 +34,7 @@ namespace Effekseer.Utl
 
 			var buf = new byte[1024];
 
-#if __EFFEKSEER_BUILD_VERSION16__
-			if (br.Read(buf, 0, 18) != 18)
-#else
 			if (br.Read(buf, 0, 8) != 8)
-#endif
 			{
 				fs.Dispose();
 				br.Close();
@@ -84,6 +80,14 @@ namespace Effekseer.Utl
 #if __EFFEKSEER_BUILD_VERSION16__
 			else
 			{
+				br.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+				if (br.Read(buf, 0, 18) != 18)
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+
 				var footer = new char[18];
 				br.BaseStream.Seek(br.BaseStream.Length - 18, System.IO.SeekOrigin.Begin);
 				if (br.Read(footer, 0, 18) != 18)
@@ -95,7 +99,8 @@ namespace Effekseer.Utl
 
 				string str = new string(footer);
 
-				if (str.Equals("TRUEVISION-XFILE.\0") == true)
+				if (str.Equals("TRUEVISION-XFILE.\0") == true ||
+					System.IO.Path.GetExtension(path) == ".tga")
 				{
 					// TGA
 					Width = buf[12] + buf[13] * 256;
