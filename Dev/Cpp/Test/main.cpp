@@ -133,6 +133,8 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
+
+#ifndef __EFFEKSEER_BUILD_VERSION16__
 	ReloadTest();
 	UpdateToMoveTest();
 	MassPlayTest();
@@ -141,6 +143,7 @@ int main(int argc, char* argv[])
 	StartingFrameTest();
 	UpdateHandleTest();
 	CustomAllocatorTest();
+#endif
 	BasicRuntimeTest(onCI);
 
 	if (!onCI)

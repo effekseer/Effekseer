@@ -177,7 +177,7 @@ namespace EffekseerRendererDX12
 		ds[0].Data = data;
 		return;
 	};
-
+	/*
 	allocate_(renderer->fixedShader_.StandardTexture_VS, Standard_VS::g_main, sizeof(Standard_VS::g_main));
 	allocate_(renderer->fixedShader_.StandardTexture_PS, Standard_PS::g_main, sizeof(Standard_PS::g_main));
 
@@ -201,7 +201,7 @@ namespace EffekseerRendererDX12
 
 	allocate_(renderer->fixedShader_.StandardLightingTexture_VS, ShaderStandardLighting_VS::g_main, sizeof(ShaderStandardLighting_VS::g_main));
 	allocate_(renderer->fixedShader_.StandardLightingTexture_PS, ShaderStandardLighting_PS::g_main, sizeof(ShaderStandardLighting_PS::g_main));
-
+	*/
 	renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::DirectX12;
 	renderer->materialCompiler_ = new Effekseer::MaterialCompilerDX12();
 

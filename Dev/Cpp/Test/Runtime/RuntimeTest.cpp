@@ -23,7 +23,7 @@
 #include "../TestHelper.h"
 #include <iostream>
 
-void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
+void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix, bool run16 = false)
 {
 	EffectPlatformInitializingParameter param;
 	platform->Initialize(param);
@@ -93,9 +93,12 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
 	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	single16Test(u"Flip01", "Flip01");
-#endif
+	if (run16)
+	{
+		single16Test(u"Flip01", "Flip01");
+		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
+		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
+	}
 }
 
 void BasicRuntimeDeviceLostTest()
@@ -430,7 +433,6 @@ void ReloadTest()
 	}
 }
 
-
 void UpdateToMoveTest()
 {
 	{
@@ -479,7 +481,7 @@ void UpdateToMoveTest()
 		platform->GetManager()->EndUpdate();
 
 		platform->Update();
-		
+
 		platform->TakeScreenshot("UpdateToMove_2.png");
 
 		platform->Terminate();
@@ -490,26 +492,33 @@ void BasicRuntimeTest(bool onCI)
 {
 
 #ifdef __EFFEKSEER_BUILD_VULKAN__
+#ifndef __EFFEKSEER_BUILD_VERSION16__
 	{
 		auto platform = std::make_shared<EffectPlatformVulkan>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_Vulkan");
 		platform->Terminate();
 	}
 #endif
+#endif
 
 #ifdef _WIN32
 
 	{
 		auto platform = std::make_shared<EffectPlatformDX11>();
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		BasicRuntimeTestPlatform(platform.get(), "", "_DX11", true);
+#else
 		BasicRuntimeTestPlatform(platform.get(), "", "_DX11");
+#endif
 		platform->Terminate();
 	}
 
 	if (!onCI)
 	{
 
-#ifndef __EFFEKSEER_BUILD_VERSION16__
 #ifdef __EFFEKSEER_BUILD_DX12__
+#ifndef __EFFEKSEER_BUILD_VERSION16__
+
 		{
 			auto platform = std::make_shared<EffectPlatformDX12>();
 			BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
@@ -517,6 +526,8 @@ void BasicRuntimeTest(bool onCI)
 		}
 #endif
 #endif
+
+#ifndef __EFFEKSEER_BUILD_VERSION16__
 
 		{
 			auto platform = std::make_shared<EffectPlatformDX9>();
@@ -529,9 +540,13 @@ void BasicRuntimeTest(bool onCI)
 			BasicRuntimeTestPlatform(platform.get(), "", "_GL");
 			platform->Terminate();
 		}
+#endif
 	}
 
 #elif defined(__APPLE__)
+
+#ifndef __EFFEKSEER_BUILD_VERSION16__
+
 	{
 		auto platform = std::make_shared<EffectPlatformMetal>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
@@ -543,12 +558,16 @@ void BasicRuntimeTest(bool onCI)
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
 		platform->Terminate();
 	}
+#endif
 #else
+#ifndef __EFFEKSEER_BUILD_VERSION16__
+
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
 		platform->Terminate();
 	}
+#endif
 #endif
 }
 
