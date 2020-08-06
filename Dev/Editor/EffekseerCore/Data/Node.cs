@@ -86,6 +86,13 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
+
+		[IO(Export = true)]
+		public AdvancedRenderCommonValues2 AdvancedRendererCommonValues2Values
+		{
+			get;
+			private set;
+		}
 #endif
 
 		/// <summary>
@@ -109,6 +116,7 @@ namespace Effekseer.Data
             SoundValues = new SoundValues(basepath);
 #if __EFFEKSEER_BUILD_VERSION16__
 			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
+			AdvancedRendererCommonValues2Values = new Data.AdvancedRenderCommonValues2(basepath);
 #endif
 		}
 	}
