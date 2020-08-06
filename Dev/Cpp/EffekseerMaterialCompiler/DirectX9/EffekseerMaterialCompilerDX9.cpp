@@ -126,6 +126,13 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 namespace Effekseer
 {
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+const int32_t ModelRendererInstanceCount = 10;
+#else
+const int32_t ModelRendererInstanceCount = 20;
+#endif
+
+
 class CompiledMaterialBinaryDX9 : public CompiledMaterialBinary, ReferenceObject
 {
 private:
@@ -258,7 +265,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(Material* material, int32_t
 												  DX9::g_material_ps_suf2_refraction,
 												  DirectX::ShaderGeneratorTarget::DirectX9);
 
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 0, 20);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 0, ModelRendererInstanceCount);
 
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));

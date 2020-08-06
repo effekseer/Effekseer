@@ -3,17 +3,17 @@ import subprocess
 import sys
 
 transpiler_path = 'ShaderTranspiler'
-root_path = 'EffekseerRendererDX11/EffekseerRenderer/Shader_15/'
+root_path = 'EffekseerRendererDX11/EffekseerRenderer/Shader/'
 
-dx9_root_path = 'EffekseerRendererDX9/EffekseerRenderer/Shader_15/'
-dx12_root_path = 'EffekseerRendererDX12/EffekseerRenderer/Shader_15/'
-metal_root_path = 'EffekseerRendererMetal/EffekseerRenderer/Shader_15/'
-vulkan_root_path = 'EffekseerRendererVulkan/EffekseerRenderer/Shader_15/'
+dx9_root_path = 'EffekseerRendererDX9/EffekseerRenderer/Shader/'
+dx12_root_path = 'EffekseerRendererDX12/EffekseerRenderer/Shader/'
+metal_root_path = 'EffekseerRendererMetal/EffekseerRenderer/Shader/'
+vulkan_root_path = 'EffekseerRendererVulkan/EffekseerRenderer/Shader/'
 
-gl_120_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_15_120/'
-gl_330_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_15_330/'
-gl_es2_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_15_ES2/'
-gl_es3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_15_ES3/'
+gl_2_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_2/'
+gl_3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_3/'
+gl_es2_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_ES2/'
+gl_es3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_ES3/'
 
 verts = [root_path + 'standard_renderer_VS.fx', root_path + 'standard_renderer_lighting_VS.fx',
          root_path + 'standard_renderer_distortion_VS.fx', root_path + 'model_renderer_texture_VS.fx', root_path + 'model_renderer_lighting_texture_normal_VS.fx', root_path + 'model_renderer_distortion_VS.fx']
@@ -36,9 +36,9 @@ except:
     print('Please put ShaderTranspiler from https://github.com/altseed/LLGI/tree/master/tools')
     sys.exit(1)    
 
-dx9_common_flags = ['-D', '__EFFEKSEER_BUILD_VERSION16__', '1', '-D', '__INST__', '20']
-llgi_common_flags = ['-D', '__EFFEKSEER_BUILD_VERSION16__', '1', '-D', '__INST__', '1']
-gl_common_flags = ['-D', '__EFFEKSEER_BUILD_VERSION16__', '1', '-D', '__INST__', '1']
+dx9_common_flags = ['-D', '__INST__', '10']
+llgi_common_flags = ['-D', '__INST__', '1']
+gl_common_flags = ['-D', 'DISABLE_INSTANCE', '1', '-D', '__OPENGL__', '1', '--plain']
 
 # DX9
 for f in (verts):
@@ -62,37 +62,37 @@ for f in (frags):
 # Metal
 for f in (verts):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-M' '--input', f, '--output', metal_root_path + os.path.basename(f)] + llgi_common_flags)
+    subprocess.call(['ShaderTranspiler', '--vert', '-M', '--input', f, '--output', metal_root_path + os.path.basename(f)] + llgi_common_flags)
 
 for f in (frags):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-M' '--input', f, '--output', metal_root_path + os.path.basename(f)] + llgi_common_flags)
+    subprocess.call(['ShaderTranspiler', '--frag', '-M', '--input', f, '--output', metal_root_path + os.path.basename(f)] + llgi_common_flags)
 
 # Vulkan
 for f in (verts):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-V' '--input', f, '--output', vulkan_root_path + os.path.basename(f)] + llgi_common_flags)
+    subprocess.call(['ShaderTranspiler', '--vert', '-V', '--input', f, '--output', vulkan_root_path + os.path.basename(f) + '.vert'] + llgi_common_flags)
 
 for f in (frags):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-V' '--input', f, '--output', vulkan_root_path + os.path.basename(f)] + llgi_common_flags)
+    subprocess.call(['ShaderTranspiler', '--frag', '-V', '--input', f, '--output', vulkan_root_path + os.path.basename(f) + '.frag'] + llgi_common_flags)
 
 # OpenGL
 for f in (verts):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '120', '--input', f, '--output', gl_120_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '120', '--input', f, '--output', gl_2_root_path + os.path.basename(f)] + gl_common_flags)
 
 for f in (frags):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '120', '--input', f, '--output', gl_120_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '120', '--input', f, '--output', gl_2_root_path + os.path.basename(f)] + gl_common_flags)
 
 for f in (verts):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '120', '--input', f, '--output', gl_330_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '330', '--input', f, '--output', gl_3_root_path + os.path.basename(f)] + gl_common_flags)
 
 for f in (frags):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '120', '--input', f, '--output', gl_330_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '330', '--input', f, '--output', gl_3_root_path + os.path.basename(f)] + gl_common_flags)
 
 for f in (verts):
     print('Converting {}'.format(f))

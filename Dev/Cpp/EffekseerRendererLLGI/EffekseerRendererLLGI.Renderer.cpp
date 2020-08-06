@@ -372,10 +372,11 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2});
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 1}); // AlphaTextureUV
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2}); // UVDistortionTextureUV
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 3});	// FlipbookIndexAndNextRate
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 4});	// AlphaThreshold
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 3}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});		  // BlendUV
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 6});		  // FlipbookIndexAndNextRate
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 7});		  // AlphaThreshold
 #endif
 
 	std::vector<VertexLayout> layouts_distort;
@@ -386,10 +387,11 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 4});
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 1}); // AlphaTextureUV
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2}); // UVDistortionTextureUV
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 3});	// FlipbookIndexAndNextRate
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 4});	// AlphaThreshold
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 6});		  // BlendUV
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 7}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 8});		  // FlipbookIndexAndNextRate
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // AlphaThreshold
 #endif
 
 	m_shader = Shader::Create(graphicsDevice_,
@@ -425,10 +427,11 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2}); // AlphaTextureUV
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 3}); // UVDistortionTextureUV
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 4});	 // FlipbookIndexAndNextRate
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 5});	 // AlphaThreshold
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 6}); // AlphaTextureUV + UVDistortionTextureUV
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 7});		  // BlendUV
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 8}); // BlendAlphaUV + BlendUVDistortionUV
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // FlipbookIndexAndNextRate
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
 #endif
 
 		m_shader_lighting = Shader::Create(graphicsDevice_,
@@ -444,8 +447,8 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 		m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
 
-		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
-		m_shader_lighting->SetPixelRegisterCount(5);
+		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+		m_shader_lighting->SetPixelRegisterCount(9);
 #else
 		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 		m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
@@ -459,14 +462,14 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
-	m_shader->SetPixelRegisterCount(2);
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
+	m_shader->SetPixelRegisterCount(6);
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetVertexRegisterCount(8 + 1 + 1);
 
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
-	m_shader_distortion->SetPixelRegisterCount(4);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
+	m_shader_distortion->SetPixelRegisterCount(5);
 #else
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1);

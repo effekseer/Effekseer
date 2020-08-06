@@ -99,7 +99,15 @@ Shader* Shader::Create(RendererImplemented* renderer,
 	}
 
 	IDirect3DVertexDeclaration9* vertexDeclaration = NULL;
-	renderer->GetDevice()->CreateVertexDeclaration(decl, &vertexDeclaration);
+	hr = renderer->GetDevice()->CreateVertexDeclaration(decl, &vertexDeclaration);
+
+	if (FAILED(hr))
+	{
+		printf("* %s Error\n", name);
+		printf("Unknown Error\n");
+
+		return NULL;
+	}
 
 	return new Shader(renderer,
 

@@ -17,13 +17,11 @@ struct VS_Input
 	float3 Binormal		: NORMAL1;
 	float3 Tangent		: NORMAL2;
     
-    float2 AlphaUV          : TEXCOORD1;
-    float2 UVDistortionUV   : TEXCOORD2;
-    float2 BlendUV          : TEXCOORD3;
-    float2 BlendAlphaUV     : TEXCOORD4;
-    float2 BlendUVDistortionUV : TEXCOORD5;
-    float FlipbookIndex     : TEXCOORD6;
-    float AlphaThreshold    : TEXCOORD7;
+	float4 Alpha_Dist_UV : TEXCOORD1;
+	float2 BlendUV : TEXCOORD2;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD3;
+	float FlipbookIndex : TEXCOORD4;
+	float AlphaThreshold : TEXCOORD5;
 };
 
 struct VS_Output
@@ -36,17 +34,17 @@ struct VS_Output
 	float4 PosU		: TEXCOORD2;
 	float4 PosR		: TEXCOORD3;
     
-    float2 AlphaUV              : TEXCOORD4;
-    float2 UVDistortionUV       : TEXCOORD5;
-    float2 BlendUV              : TEXCOORD6;
-    float2 BlendAlphaUV         : TEXCOORD7;
-    float2 BlendUVDistortionUV  : TEXCOORD8;
-    float FlipbookRate          : TEXCOORD9;
-    float2 FlipbookNextIndexUV  : TEXCOORD10;
-    float AlphaThreshold        : TEXCOORD11;
+	float4 Alpha_Dist_UV : TEXCOORD4;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
+
+	// BlendUV, FlipbookNextIndexUV
+	float4 Blend_FBNextIndex_UV : TEXCOORD6;
+
+	// x - FlipbookRate, y - AlphaThreshold
+	float2 Others : TEXCOORD7;
 };
 
-#include "FlipbookInterpolationUtils.fx"
+#include "standard_renderer_common_VS.fx"
 
 VS_Output main( const VS_Input Input )
 {
@@ -84,6 +82,7 @@ VS_Output main( const VS_Input Input )
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
     
+    /*
     // alpha uv
     Output.AlphaUV = Input.AlphaUV;
     Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
@@ -109,6 +108,9 @@ VS_Output main( const VS_Input Input )
     
     // alpha threshold
     Output.AlphaThreshold = Input.AlphaThreshold;
+    */
+
+    CalculateAndStoreAdvancedParameter(Input, Output);
 
 	return Output;
 }

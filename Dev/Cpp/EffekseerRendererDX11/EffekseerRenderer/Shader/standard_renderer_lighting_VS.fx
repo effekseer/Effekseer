@@ -7,34 +7,32 @@ struct VS_Input
 	float4 Tangent : NORMAL2;
 	float2 UV1 : TEXCOORD0;
 	float2 UV2 : TEXCOORD1;
-    float2 AlphaUV          : TEXCOORD2;
-    float2 UVDistortionUV   : TEXCOORD3;
-    float2 BlendUV          : TEXCOORD4;
-    float2 BlendAlphaUV     : TEXCOORD5;
-    float2 BlendUVDistortionUV : TEXCOORD6;
-    float FlipbookIndex     : TEXCOORD7;
-    float AlphaThreshold    : TEXCOORD8;
+
+	float4 Alpha_Dist_UV : TEXCOORD2;
+	float2 BlendUV : TEXCOORD3;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD4;
+	float FlipbookIndex : TEXCOORD5;
+	float AlphaThreshold : TEXCOORD6;
 };
 
 struct VS_Output
 {
 	float4 Position : SV_POSITION;
 	float4 VColor : COLOR;
-	float2 UV1 : TEXCOORD0;
-	float2 UV2 : TEXCOORD1;
-	float3 WorldP : TEXCOORD2;
-	float3 WorldN : TEXCOORD3;
-	float3 WorldT : TEXCOORD4;
-	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
-    float2 AlphaUV              : TEXCOORD7;
-    float2 UVDistortionUV       : TEXCOORD8;
-    float2 BlendUV              : TEXCOORD9;
-    float2 BlendAlphaUV         : TEXCOORD10;
-    float2 BlendUVDistortionUV  : TEXCOORD11;
-    float FlipbookRate          : TEXCOORD12;
-    float2 FlipbookNextIndexUV  : TEXCOORD13;
-    float AlphaThreshold        : TEXCOORD14;
+	float2 UV : TEXCOORD0;
+	float3 WorldP : TEXCOORD1;
+	float3 WorldN : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
+	float3 WorldB : TEXCOORD4;
+
+	float4 Alpha_Dist_UV : TEXCOORD5;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD6;
+
+	// BlendUV, FlipbookNextIndexUV
+	float4 Blend_FBNextIndex_UV : TEXCOORD7;
+
+	// x - FlipbookRate, y - AlphaThreshold
+	float2 Others : TEXCOORD8;
 };
 
 cbuffer VS_ConstantBuffer : register(b0)
@@ -46,7 +44,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 };
 
-#include "FlipbookInterpolationUtils.fx"
+#include "standard_renderer_common_VS.fx"
 
 VS_Output main( const VS_Input Input )
 {
@@ -62,6 +60,7 @@ VS_Output main( const VS_Input Input )
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
+    /*
     // alpha texture
     float2 alphaUV = Input.AlphaUV;
     alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
@@ -87,6 +86,7 @@ VS_Output main( const VS_Input Input )
 
     // alpha threshold
     Output.AlphaThreshold = Input.AlphaThreshold;
+    */
 
 	// NBT
 	Output.WorldN = worldNormal;
@@ -101,17 +101,17 @@ VS_Output main( const VS_Input Input )
 
 	Output.WorldP = worldPos;
 	Output.VColor = Input.Color;
-	Output.UV1 = uv1;
-	Output.UV2 = uv2;
+	Output.UV = uv1;
 
+	/*
     Output.AlphaUV = alphaUV;
     Output.UVDistortionUV = uvDistorionUV;
     Output.BlendUV = blendUV;
     Output.BlendAlphaUV = blendAlphaUV;
     Output.BlendUVDistortionUV = blendUVDistortionUV;
+	*/
 
-	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    CalculateAndStoreAdvancedParameter(Input, Output);
 
 	return Output;
 }

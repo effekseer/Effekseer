@@ -12,6 +12,13 @@
 namespace EffekseerRendererDX9
 {
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+const int32_t ModelRendererInstanceCount = 10;
+#else
+const int32_t ModelRendererInstanceCount = 20;
+#endif
+
+
 MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface)
 	: fileInterface_(fileInterface)
 {
@@ -95,7 +102,7 @@ MaterialLoader ::~MaterialLoader()
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
 		Shader* shader = nullptr;
-		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 20);
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, ModelRendererInstanceCount);
 
 		if (materialData->IsSimpleVertex)
 		{
@@ -201,7 +208,7 @@ MaterialLoader ::~MaterialLoader()
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 20);
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, ModelRendererInstanceCount);
 
 		D3DVERTEXELEMENT9 decl[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
 									{0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
