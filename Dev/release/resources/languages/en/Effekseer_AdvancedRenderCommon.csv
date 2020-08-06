@@ -26,6 +26,8 @@ BlendUVDistortionTextureParameter_Wrap_Name,Wrap(Blend UV Distortion Texture)
 BlendTextureParameters_EnableBlendAlphaTexture_Name,Enable Blend Alpha Texture
 BlendTextureParameters_EnableBlendUVDistortionTexture_Name,Enable Blend UV Distortion Texture
 
+AlphaCutoffParameter_ParameterType_Name,Alpha Cutoff
+
 AlphaCutoffParameter_FixedParameter_Fixed_Name,Alpha Threshold
 
 AlphaCuroffParameter_FPIParameter_BeginThreshold_Name,Begin Alpha Threshold

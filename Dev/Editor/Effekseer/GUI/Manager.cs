@@ -183,6 +183,7 @@ namespace Effekseer.GUI
 			typeof(Dock.Dynamic),
 #if __EFFEKSEER_BUILD_VERSION16__
 			typeof(Dock.AdvancedRenderCommonValues),
+			typeof(Dock.AdvancedRenderCommonValues2),
 #endif
 		};
 

@@ -4,6 +4,7 @@ AttractionForces,力場(ローカル)
 AutoConnect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,描画共通
 AdvancedRenderSettings,描画共通(高度)
+AdvancedRenderSettings2,描画共通(高度2)
 BasicSettings,共通
 Behavior,振る舞い
 CameraMode,カメラの種類

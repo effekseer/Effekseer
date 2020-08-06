@@ -14,7 +14,7 @@ namespace Effekseer.Binary
 #endif
 
 #if __EFFEKSEER_BUILD_VERSION16__
-		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Data.AdvancedRenderCommonValues2 advanceValue2, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
 #else
 		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
 #endif
@@ -111,14 +111,14 @@ namespace Effekseer.Binary
 					}
 
 					// blend texture
-					if (advanceValue.EnableBlendTexture)
+					if (advanceValue2.EnableBlendTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+						data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 
 						// blend alpha texture
-						if (advanceValue.BlendTextureParams.EnableBlendAlphaTexture)
+						if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
 						}
 						else
 						{
@@ -126,9 +126,9 @@ namespace Effekseer.Binary
 						}
 
 						// blend uv distortion texture
-						if (advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture)
+						if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
 						}
 						else
 						{
@@ -176,14 +176,14 @@ namespace Effekseer.Binary
 					}
 
 					// blend texture
-					if (advanceValue.EnableBlendTexture)
+					if (advanceValue2.EnableBlendTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
+						data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
 
 						// blend alpha texture
-						if (advanceValue.BlendTextureParams.EnableBlendAlphaTexture)
+						if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
+							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
 						}
 						else
 						{
@@ -191,9 +191,9 @@ namespace Effekseer.Binary
 						}
 
 						// blend uv distortion texture
-						if (advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture)
+						if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, distortionTexture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, distortionTexture_and_index, ref blendUVDistortionTexInfo).GetBytes());
 						}
 						else
 						{
@@ -241,14 +241,14 @@ namespace Effekseer.Binary
 					}
 
 					// blend texture
-					if (advanceValue.EnableBlendTexture)
+					if (advanceValue2.EnableBlendTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+						data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 
 						// blend alpha texture
-						if (advanceValue.BlendTextureParams.EnableBlendAlphaTexture)
+						if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
 						}
 						else
 						{
@@ -256,9 +256,9 @@ namespace Effekseer.Binary
 						}
 
 						// blend uv distortion texture
-						if (advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture)
+						if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
 						}
 						else
 						{
@@ -375,14 +375,14 @@ namespace Effekseer.Binary
 				data.Add(advanceValue.UVDistortionTextureParam.Filter);
 				data.Add(advanceValue.UVDistortionTextureParam.Wrap);
 
-				data.Add(advanceValue.BlendTextureParams.BlendTextureParam.Filter);
-				data.Add(advanceValue.BlendTextureParams.BlendTextureParam.Wrap);
+				data.Add(advanceValue2.BlendTextureParams.BlendTextureParam.Filter);
+				data.Add(advanceValue2.BlendTextureParams.BlendTextureParam.Wrap);
 
-				data.Add(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Filter);
-				data.Add(advanceValue.BlendTextureParams.BlendAlphaTextureParam.Wrap);
+				data.Add(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Filter);
+				data.Add(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Wrap);
 
-				data.Add(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Filter);
-				data.Add(advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Wrap);
+				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Filter);
+				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Wrap);
 			}
 #endif
 
@@ -569,17 +569,17 @@ namespace Effekseer.Binary
 				data.Add(GetUVBytes
 				(
 				blendTexInfo,
-				advanceValue.BlendTextureParams.BlendTextureParam.UV,
-				advanceValue.BlendTextureParams.BlendTextureParam.UVFixed,
-				advanceValue.BlendTextureParams.BlendTextureParam.UVAnimation,
-				advanceValue.BlendTextureParams.BlendTextureParam.UVScroll,
-				advanceValue.BlendTextureParams.BlendTextureParam.UVFCurve
+				advanceValue2.BlendTextureParams.BlendTextureParam.UV,
+				advanceValue2.BlendTextureParams.BlendTextureParam.UVFixed,
+				advanceValue2.BlendTextureParams.BlendTextureParam.UVAnimation,
+				advanceValue2.BlendTextureParams.BlendTextureParam.UVScroll,
+				advanceValue2.BlendTextureParams.BlendTextureParam.UVFCurve
 				));
 
 				// blend texture blend type
-				if (advanceValue.EnableBlendTexture && advanceValue.BlendTextureParams.BlendTextureParam.Texture.RelativePath != string.Empty)
+				if (advanceValue2.EnableBlendTexture && advanceValue2.BlendTextureParams.BlendTextureParam.Texture.RelativePath != string.Empty)
 				{
-					data.Add(advanceValue.BlendTextureParams.BlendTextureParam.BlendType);
+					data.Add(advanceValue2.BlendTextureParams.BlendTextureParam.BlendType);
 				}
 				else
 				{
@@ -590,26 +590,26 @@ namespace Effekseer.Binary
 				data.Add(GetUVBytes
 				(
 					blendAlphaTexInfo,
-					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UV,
-					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVFixed,
-					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVAnimation,
-					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVScroll,
-					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVFCurve
+					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UV,
+					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVFixed,
+					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVAnimation,
+					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVScroll,
+					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVFCurve
 				));
 
 				// blend uv distoriton texture
 				data.Add(GetUVBytes
 				(
 					blendUVDistortionTexInfo,
-					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UV,
-					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVFixed,
-					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVAnimation,
-					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVScroll,
-					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve
+					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UV,
+					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVFixed,
+					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVAnimation,
+					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVScroll,
+					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve
 				));
 
 				// blend uv distoriton intensity
-				data.Add((advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity / 100.0f).GetBytes());
+				data.Add((advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity / 100.0f).GetBytes());
 			}
 #endif
 
