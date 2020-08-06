@@ -19,11 +19,42 @@ namespace Effekseer.Data
 		[Key(key = "AlphaTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
+		[Selector(ID = 101)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV2")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 101, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 101, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 101, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 101, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 101, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
 		public AlphaTextureParameter(Value.Path basepath)
 		{
 			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
 		}
 	}
 
@@ -45,12 +76,43 @@ namespace Effekseer.Data
 		[Key(key = "UVDistortionTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
+		[Selector(ID = 102)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV3")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 102, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 102, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 102, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 102, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 102, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
 		public UVDistortionTextureParameter(Value.Path basepath)
 		{
 			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
 		}
 	}
 
@@ -84,12 +146,43 @@ namespace Effekseer.Data
 		[Key(key = "BlendTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
+		[Selector(ID = 103)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV4")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 103, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 103, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 103, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 103, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 103, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
 		public BlendTextureParameter(Value.Path basepath)
 		{
 			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			BlendType = new Value.Enum<AdvancedAlphaBlendType>(AdvancedAlphaBlendType.Blend);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
 		}
 	}
 
@@ -107,11 +200,42 @@ namespace Effekseer.Data
 		[Key(key = "BlendAlphaTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
+		[Selector(ID = 104)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV5")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 104, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 104, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 104, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 104, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 104, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
 		public BlendAlphaTextureParameter(Value.Path basepath)
 		{
 			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
 		}
 	}
 
@@ -133,12 +257,43 @@ namespace Effekseer.Data
 		[Key(key = "BlendUVDistortionTextureParameter_Wrap")]
 		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
 
+		[Selector(ID = 105)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV6")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 105, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 105, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 105, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 105, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 105, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
 		public BlendUVDistortionTextureParameter(Value.Path basepath)
 		{
 			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
 		}
 	}
 

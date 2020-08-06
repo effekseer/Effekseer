@@ -544,22 +544,22 @@ namespace Effekseer.Binary
 				data.Add(GetUVBytes
 				(
 				alphaTexInfo,
-				value.UV2,
-				value.UV2Fixed,
-				value.UV2Animation,
-				value.UV2Scroll,
-				value.UV2FCurve
+				advanceValue.AlphaTextureParam.UV,
+				advanceValue.AlphaTextureParam.UVFixed,
+				advanceValue.AlphaTextureParam.UVAnimation,
+				advanceValue.AlphaTextureParam.UVScroll,
+				advanceValue.AlphaTextureParam.UVFCurve
 				));
 
 				// uv distortion texture
 				data.Add(GetUVBytes
 				(
 				uvDistortionTexInfo,
-				value.UV3,
-				value.UV3Fixed,
-				value.UV3Animation,
-				value.UV3Scroll,
-				value.UV3FCurve
+				advanceValue.UVDistortionTextureParam.UV,
+				advanceValue.UVDistortionTextureParam.UVFixed,
+				advanceValue.UVDistortionTextureParam.UVAnimation,
+				advanceValue.UVDistortionTextureParam.UVScroll,
+				advanceValue.UVDistortionTextureParam.UVFCurve
 				));
 
 				// uv distortion intensity
@@ -569,11 +569,11 @@ namespace Effekseer.Binary
 				data.Add(GetUVBytes
 				(
 				blendTexInfo,
-				value.UV4,
-				value.UV4Fixed,
-				value.UV4Animation,
-				value.UV4Scroll,
-				value.UV4FCurve
+				advanceValue.BlendTextureParams.BlendTextureParam.UV,
+				advanceValue.BlendTextureParams.BlendTextureParam.UVFixed,
+				advanceValue.BlendTextureParams.BlendTextureParam.UVAnimation,
+				advanceValue.BlendTextureParams.BlendTextureParam.UVScroll,
+				advanceValue.BlendTextureParams.BlendTextureParam.UVFCurve
 				));
 
 				// blend texture blend type
@@ -590,22 +590,22 @@ namespace Effekseer.Binary
 				data.Add(GetUVBytes
 				(
 					blendAlphaTexInfo,
-					value.UV5,
-					value.UV5Fixed,
-					value.UV5Animation,
-					value.UV5Scroll,
-					value.UV5FCurve
+					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UV,
+					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVFixed,
+					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVAnimation,
+					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVScroll,
+					advanceValue.BlendTextureParams.BlendAlphaTextureParam.UVFCurve
 				));
 
 				// blend uv distoriton texture
 				data.Add(GetUVBytes
 				(
 					blendUVDistortionTexInfo,
-					value.UV6,
-					value.UV6Fixed,
-					value.UV6Animation,
-					value.UV6Scroll,
-					value.UV6FCurve
+					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UV,
+					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVFixed,
+					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVAnimation,
+					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVScroll,
+					advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve
 				));
 
 				// blend uv distoriton intensity
