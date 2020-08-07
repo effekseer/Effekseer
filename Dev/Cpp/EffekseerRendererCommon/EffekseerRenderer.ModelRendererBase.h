@@ -200,6 +200,7 @@ struct ModelRendererPixelConstantBuffer
 			{
 				float Intensity;
 				float BlendIntensity;
+				float UVInversed[2];
 			};
 		};
 	} ModelUVDistortionParameter;
@@ -1126,6 +1127,8 @@ public:
 
 				pcb[4 * 3 + 0] = param.BasicParameterPtr->UVDistortionIntensity;
 				pcb[4 * 3 + 1] = param.BasicParameterPtr->BlendUVDistortionIntensity;
+				pcb[4 * 3 + 2] = uvInversed[0];
+				pcb[4 * 3 + 3] = uvInversed[1];
 
 				pcb[4 * 4 + 0] = param.BasicParameterPtr->TextureBlendType;
 #endif
@@ -1159,6 +1162,8 @@ public:
 
 				pcb->ModelUVDistortionParameter.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
 				pcb->ModelUVDistortionParameter.BlendIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
+				pcb->ModelUVDistortionParameter.UVInversed[0] = uvInversed[0];
+				pcb->ModelUVDistortionParameter.UVInversed[1] = uvInversed[1];
 
 				pcb->ModelBlendTextureParameter.BlendType = param.BasicParameterPtr->TextureBlendType;
 

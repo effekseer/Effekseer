@@ -33,7 +33,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 flipbookParameter;
     vec4 uvDistortionParameter;
     vec4 blendTextureParameter;
-} _186;
+} _209;
 
 layout(set = 1, binding = 4) uniform sampler2D Sampler_g_uvDistortionSampler;
 layout(set = 1, binding = 1) uniform sampler2D Sampler_g_sampler;
@@ -68,6 +68,14 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     return ret;
 }
 
+vec2 UVDistortionOffset(vec2 uv, vec2 uvInversed, sampler2D SPIRV_Cross_Combinedts)
+{
+    vec2 UVOffset = (texture(SPIRV_Cross_Combinedts, uv).xy * 2.0) - vec2(1.0);
+    UVOffset.y *= (-1.0);
+    UVOffset.y = uvInversed.x + (uvInversed.y * UVOffset.y);
+    return UVOffset;
+}
+
 void ApplyFlipbook(inout vec4 dst, vec4 flipbookParameter, vec4 vcolor, vec2 nextUV, float flipbookRate, sampler2D SPIRV_Cross_Combinedts)
 {
     if (flipbookParameter.x > 0.0)
@@ -84,29 +92,29 @@ void ApplyTextureBlending(inout vec4 dstColor, vec4 blendColor, float blendType)
 {
     if (blendType == 0.0)
     {
-        vec3 _77 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_77.x, _77.y, _77.z, dstColor.w);
+        vec3 _85 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
+        dstColor = vec4(_85.x, _85.y, _85.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0)
         {
-            vec3 _89 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_89.x, _89.y, _89.z, dstColor.w);
+            vec3 _97 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = vec4(_97.x, _97.y, _97.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0)
             {
-                vec3 _102 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_102.x, _102.y, _102.z, dstColor.w);
+                vec3 _110 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = vec4(_110.x, _110.y, _110.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    vec3 _115 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_115.x, _115.y, _115.z, dstColor.w);
+                    vec3 _123 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = vec4(_123.x, _123.y, _123.z, dstColor.w);
                 }
             }
         }
@@ -117,25 +125,28 @@ vec4 _main(PS_Input Input)
 {
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
-    vec2 UVOffset = vec2(0.0);
-    UVOffset = (texture(Sampler_g_uvDistortionSampler, advancedParam.UVDistortionUV).xy * 2.0) - vec2(1.0);
-    UVOffset *= _186.uvDistortionParameter.x;
+    vec2 param_1 = advancedParam.UVDistortionUV;
+    vec2 param_2 = _209.uvDistortionParameter.zw;
+    vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_g_uvDistortionSampler);
+    UVOffset *= _209.uvDistortionParameter.x;
     vec4 Output = texture(Sampler_g_sampler, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
-    vec4 param_1 = Output;
-    float param_2 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_1, _186.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_2, Sampler_g_sampler);
-    Output = param_1;
+    vec4 param_3 = Output;
+    float param_4 = advancedParam.FlipbookRate;
+    ApplyFlipbook(param_3, _209.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
+    Output = param_3;
     vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    vec2 BlendUVOffset = (texture(Sampler_g_blendUVDistortionSampler, advancedParam.BlendUVDistortionUV).xy * 2.0) - vec2(1.0);
-    BlendUVOffset *= _186.uvDistortionParameter.y;
+    vec2 param_5 = advancedParam.BlendUVDistortionUV;
+    vec2 param_6 = _209.uvDistortionParameter.zw;
+    vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
+    BlendUVOffset *= _209.uvDistortionParameter.y;
     vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    vec4 param_3 = Output;
-    ApplyTextureBlending(param_3, BlendTextureColor, _186.blendTextureParameter.x);
-    Output = param_3;
+    vec4 param_7 = Output;
+    ApplyTextureBlending(param_7, BlendTextureColor, _209.blendTextureParameter.x);
+    Output = param_7;
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
@@ -143,12 +154,12 @@ vec4 _main(PS_Input Input)
     vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
     vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
     vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
-    float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _186.g_scale.x;
-    float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _186.g_scale.x;
+    float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _209.g_scale.x;
+    float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _209.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
-    uv.y = _186.mUVInversedBack.x + (_186.mUVInversedBack.y * uv.y);
+    uv.y = _209.mUVInversedBack.x + (_209.mUVInversedBack.y * uv.y);
     vec3 color = vec3(texture(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -167,7 +178,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.Others = Input_Others;
-    vec4 _436 = _main(Input);
-    _entryPointOutput = _436;
+    vec4 _467 = _main(Input);
+    _entryPointOutput = _467;
 }
 
