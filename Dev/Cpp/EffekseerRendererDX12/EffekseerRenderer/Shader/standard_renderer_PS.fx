@@ -26,12 +26,12 @@ struct AdvancedParameter
 
 cbuffer PS_ConstanBuffer : register(b1)
 {
-    float4 _186_flipbookParameter : packoffset(c0);
-    float4 _186_uvDistortionParameter : packoffset(c1);
-    float4 _186_blendTextureParameter : packoffset(c2);
-    float4 _186_emissiveScaling : packoffset(c3);
-    float4 _186_edgeColor : packoffset(c4);
-    float4 _186_edgeParameter : packoffset(c5);
+    float4 _209_flipbookParameter : packoffset(c0);
+    float4 _209_uvDistortionParameter : packoffset(c1);
+    float4 _209_blendTextureParameter : packoffset(c2);
+    float4 _209_emissiveScaling : packoffset(c3);
+    float4 _209_edgeColor : packoffset(c4);
+    float4 _209_edgeParameter : packoffset(c5);
 };
 
 Texture2D<float4> g_uvDistortionTexture : register(t2);
@@ -92,6 +92,14 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     return ret;
 }
 
+float2 UVDistortionOffset(Texture2D<float4> t, SamplerState s, float2 uv, float2 uvInversed)
+{
+    float2 UVOffset = (t.Sample(s, uv).xy * 2.0f) - 1.0f.xx;
+    UVOffset.y *= (-1.0f);
+    UVOffset.y = uvInversed.x + (uvInversed.y * UVOffset.y);
+    return UVOffset;
+}
+
 void ApplyFlipbook(inout float4 dst, Texture2D<float4> t, SamplerState s, float4 flipbookParameter, float4 vcolor, float2 nextUV, float flipbookRate)
 {
     if (flipbookParameter.x > 0.0f)
@@ -108,29 +116,29 @@ void ApplyTextureBlending(inout float4 dstColor, float4 blendColor, float blendT
 {
     if (blendType == 0.0f)
     {
-        float3 _77 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
-        dstColor = float4(_77.x, _77.y, _77.z, dstColor.w);
+        float3 _85 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
+        dstColor = float4(_85.x, _85.y, _85.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0f)
         {
-            float3 _89 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = float4(_89.x, _89.y, _89.z, dstColor.w);
+            float3 _97 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = float4(_97.x, _97.y, _97.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0f)
             {
-                float3 _102 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = float4(_102.x, _102.y, _102.z, dstColor.w);
+                float3 _110 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = float4(_110.x, _110.y, _110.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0f)
                 {
-                    float3 _115 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = float4(_115.x, _115.y, _115.z, dstColor.w);
+                    float3 _123 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = float4(_123.x, _123.y, _123.z, dstColor.w);
                 }
             }
         }
@@ -141,32 +149,36 @@ float4 _main(PS_Input Input)
 {
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
-    float2 UVOffset = 0.0f.xx;
-    UVOffset = (g_uvDistortionTexture.Sample(g_uvDistortionSampler, advancedParam.UVDistortionUV).xy * 2.0f) - 1.0f.xx;
-    UVOffset *= _186_uvDistortionParameter.x;
+    float2 param_1 = advancedParam.UVDistortionUV;
+    float2 param_2 = _209_uvDistortionParameter.zw;
+    float2 UVOffset = UVDistortionOffset(g_uvDistortionTexture, g_uvDistortionSampler, param_1, param_2);
+    UVOffset *= _209_uvDistortionParameter.x;
     float4 Output = Input.Color * g_texture.Sample(g_sampler, Input.UV + UVOffset);
-    float4 param_1 = Output;
-    float param_2 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_1, g_texture, g_sampler, _186_flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_2);
-    Output = param_1;
+    float4 param_3 = Output;
+    float param_4 = advancedParam.FlipbookRate;
+    ApplyFlipbook(param_3, g_texture, g_sampler, _209_flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
+    Output = param_3;
     float4 AlphaTexColor = g_alphaTexture.Sample(g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    float2 BlendUVOffset = (g_blendUVDistortionTexture.Sample(g_blendUVDistortionSampler, advancedParam.BlendUVDistortionUV).xy * 2.0f) - 1.0f.xx;
-    BlendUVOffset *= _186_uvDistortionParameter.y;
+    float2 param_5 = advancedParam.BlendUVDistortionUV;
+    float2 param_6 = _209_uvDistortionParameter.zw;
+    float2 BlendUVOffset = UVDistortionOffset(g_blendUVDistortionTexture, g_blendUVDistortionSampler, param_5, param_6);
+    BlendUVOffset.y = _209_uvDistortionParameter.z + (_209_uvDistortionParameter.w * BlendUVOffset.y);
+    BlendUVOffset *= _209_uvDistortionParameter.y;
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     float4 BlendAlphaTextureColor = g_blendAlphaTexture.Sample(g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    float4 param_3 = Output;
-    ApplyTextureBlending(param_3, BlendTextureColor, _186_blendTextureParameter.x);
-    Output = param_3;
-    float3 _300 = Output.xyz * _186_emissiveScaling.x;
-    Output = float4(_300.x, _300.y, _300.z, Output.w);
+    float4 param_7 = Output;
+    ApplyTextureBlending(param_7, BlendTextureColor, _209_blendTextureParameter.x);
+    Output = param_7;
+    float3 _341 = Output.xyz * _209_emissiveScaling.x;
+    Output = float4(_341.x, _341.y, _341.z, Output.w);
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    float3 _330 = lerp(_186_edgeColor.xyz * _186_edgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _186_edgeParameter.x).xxx);
-    Output = float4(_330.x, _330.y, _330.z, Output.w);
+    float3 _371 = lerp(_209_edgeColor.xyz * _209_edgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _209_edgeParameter.x).xxx);
+    Output = float4(_371.x, _371.y, _371.z, Output.w);
     return Output;
 }
 
@@ -183,8 +195,8 @@ void frag_main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.Others = Input_Others;
-    float4 _372 = _main(Input);
-    _entryPointOutput = _372;
+    float4 _413 = _main(Input);
+    _entryPointOutput = _413;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

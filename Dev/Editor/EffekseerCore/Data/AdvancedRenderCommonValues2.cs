@@ -174,7 +174,7 @@ namespace Effekseer.Data
 		public BlendUVDistortionTextureParameter(Value.Path basepath)
 		{
 			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
-			UVDistortionIntensity = new Value.Float(1.0f, 100.0f, -100.0f);
+			UVDistortionIntensity = new Value.Float(0.01f, 100.0f, -100.0f, 0.01f);
 			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
 			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
 			UV = new Value.Enum<RendererCommonValues.UVType>();

@@ -519,6 +519,7 @@ private:
 				{
 					float intensity;
 					float blendIntensity;
+					float uvInversed[2];
 				};
 			};
 		} uvDistortionParameter;
@@ -592,6 +593,7 @@ private:
 				{
 					float intensity;
 					float blendIntensity;
+					float uvInversed[2];
 				};
 			};
 		} uvDistortionParameter;
@@ -1318,6 +1320,8 @@ public:
 
 			pcb.uvDistortionParameter.intensity = m_state.UVDistortionIntensity;
 			pcb.uvDistortionParameter.blendIntensity = m_state.BlendUVDistortionIntensity;
+			pcb.uvDistortionParameter.uvInversed[0] = uvInversed[0];
+			pcb.uvDistortionParameter.uvInversed[1] = uvInversed[1];
 
 			pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 
@@ -1362,6 +1366,8 @@ public:
 
 				pcb.uvDistortionParameter.intensity = m_state.UVDistortionIntensity;
 				pcb.uvDistortionParameter.blendIntensity = m_state.BlendUVDistortionIntensity;
+				pcb.uvDistortionParameter.uvInversed[0] = uvInversed[0];
+				pcb.uvDistortionParameter.uvInversed[1] = uvInversed[1];
 
 				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 #endif
@@ -1377,6 +1383,8 @@ public:
 
 				pcb.uvDistortionParameter.intensity = m_state.UVDistortionIntensity;
 				pcb.uvDistortionParameter.blendIntensity = m_state.BlendUVDistortionIntensity;
+				pcb.uvDistortionParameter.uvInversed[0] = uvInversed[0];
+				pcb.uvDistortionParameter.uvInversed[1] = uvInversed[1];
 
 				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
 

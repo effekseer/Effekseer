@@ -1,6 +1,7 @@
 
 #include "FlipbookInterpolationUtils_PS.fx"
 #include "TextureBlendingUtils_PS.fx"
+#include "UVDistortionUtils_PS.fx"
 
 struct AdvancedParameter
 {

@@ -563,7 +563,7 @@ namespace Effekseer.Binary
 				));
 
 				// uv distortion intensity
-				data.Add((advanceValue.UVDistortionTextureParam.UVDistortionIntensity / 100.0f).GetBytes());
+				data.Add((advanceValue.UVDistortionTextureParam.UVDistortionIntensity).GetBytes());
 
 				// blend texture
 				data.Add(GetUVBytes
@@ -609,7 +609,7 @@ namespace Effekseer.Binary
 				));
 
 				// blend uv distoriton intensity
-				data.Add((advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity / 100.0f).GetBytes());
+				data.Add((advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity).GetBytes());
 			}
 #endif
 

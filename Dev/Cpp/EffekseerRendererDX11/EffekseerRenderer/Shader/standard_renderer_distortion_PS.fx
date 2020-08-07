@@ -25,7 +25,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 g_scale;
     float4 mUVInversedBack;
     float4 flipbookParameter;       // x:enable, y:interpolationType
-    float4 uvDistortionParameter;   // x:intensity, y:blendIntensity
+    float4 uvDistortionParameter;   // x:intensity, y:blendIntensity, zw:uvInversed
     float4 blendTextureParameter; // x:blendType
 };
 
@@ -55,9 +55,7 @@ float4 main( const PS_Input Input ) : SV_Target
 {
 	AdvancedParameter advancedParam = DisolveAdvancedParameter(Input);
 
-    float2 UVOffset = float2(0.0, 0.0);
-    
-    UVOffset = g_uvDistortionTexture.Sample(g_uvDistortionSampler, advancedParam.UVDistortionUV).rg * 2.0 - 1.0;
+    float2 UVOffset = UVDistortionOffset(g_uvDistortionTexture, g_uvDistortionSampler, advancedParam.UVDistortionUV, uvDistortionParameter.zw);
     UVOffset *= uvDistortionParameter.x;
 
 	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset);
@@ -70,7 +68,7 @@ float4 main( const PS_Input Input ) : SV_Target
     Output.a *= AlphaTexColor.r * AlphaTexColor.a;
     
     // blend texture uv offset
-	float2 BlendUVOffset = g_blendUVDistortionTexture.Sample(g_blendUVDistortionSampler, advancedParam.BlendUVDistortionUV).rg * 2.0 - 1.0;
+	float2 BlendUVOffset = UVDistortionOffset(g_blendUVDistortionTexture, g_blendUVDistortionSampler, advancedParam.BlendUVDistortionUV, uvDistortionParameter.zw);
     BlendUVOffset *= uvDistortionParameter.y;
     
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
