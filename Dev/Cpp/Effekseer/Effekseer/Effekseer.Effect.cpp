@@ -1340,13 +1340,17 @@ bool EffectImplemented::Reload(Manager** managers,
 
 	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
 
-	int lockCount = 0;
-
 	for (int32_t i = 0; i < managersCount; i++)
 	{
+		// to call only once
+		for (int32_t j = 0; j < i; j++)
+		{
+			if (managers[i] == managers[j])
+				continue;
+		}
+
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->BeginReloadEffect(this, lockCount == 0);
-		lockCount++;
+		manager->BeginReloadEffect( this, true);
 	}
 
 	// HACK for scale
@@ -1365,9 +1369,15 @@ bool EffectImplemented::Reload(Manager** managers,
 
 	for (int32_t i = 0; i < managersCount; i++)
 	{
-		lockCount--;
+		// to call only once
+		for (int32_t j = 0; j < i; j++)
+		{
+			if (managers[i] == managers[j])
+				continue;
+		}
+
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->EndReloadEffect(this, lockCount == 0);
+		manager->EndReloadEffect( this, true);
 	}
 
 	return false;
