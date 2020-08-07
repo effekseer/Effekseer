@@ -315,6 +315,9 @@ include(FilterFolder)
 add_subdirectory(Dev)
 
 if(BUILD_EXAMPLES)
+    # To use glfw in OpenGL projects
+    add_dependencies(EffekseerRendererGL ExternalProject_glfw)
+
     set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_LIST_DIR}/Dev/Cpp)
     add_subdirectory(Examples)
 endif()
