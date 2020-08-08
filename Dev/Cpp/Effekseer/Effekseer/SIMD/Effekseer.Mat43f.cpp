@@ -83,13 +83,23 @@ void Mat43f::GetSRT(Vec3f& s, Mat43f& r, Vec3f& t) const
 	SIMD4f y2 = Y * Y;
 	SIMD4f z2 = Z * Z;
 	SIMD4f s2 = x2 + y2 + z2;
-	SIMD4f rsq = SIMD4f::Rsqrt(s2);
-	rsq.SetW(0.0f);
 
-	s = SIMD4f(1.0f) / rsq;
-	r.X = X * rsq;
-	r.Y = Y * rsq;
-	r.Z = Z * rsq;
+	if (Vec3f(s2).IsZero())
+	{
+		s = Vec3f(0.0f);
+		r = Mat43f::Identity;
+	}
+	else
+	{
+		SIMD4f rsq = SIMD4f::Rsqrt(s2);
+		rsq.SetW(0.0f);
+
+		s = SIMD4f(1.0f) / rsq;
+		r.X = X * rsq;
+		r.Y = Y * rsq;
+		r.Z = Z * rsq;
+	}
+
 	t = Vec3f(X.GetW(), Y.GetW(), Z.GetW());
 }
 
