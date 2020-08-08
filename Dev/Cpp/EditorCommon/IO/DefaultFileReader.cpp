@@ -2,6 +2,9 @@
 #include "../Common/StringHelper.h"
 #include <cassert>
 
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
 namespace Effekseer
 {
 
@@ -12,7 +15,13 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path) : S
 #else
 	stream_.open(utf16_to_utf8(path).c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
 #endif
-	assert(!stream_.fail());
+
+	if (stream_.fail())
+	{
+		spdlog::trace("DefaultStaticFileReader : {} : Failed to load.", utf16_to_utf8(path));
+		length_ = 0;
+		return;	
+	}
 
 	if (length_ < 0)
 	{
@@ -24,8 +33,15 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path) : S
 	}
 
 	buffer_.resize(GetSize());
-	stream_.read(reinterpret_cast<char*>(&buffer_[0]), GetSize());
 
+	if (buffer_.size() > 0)
+	{
+		stream_.read(reinterpret_cast<char*>(buffer_.data()), GetSize());	
+	}
+	else
+	{
+		spdlog::trace("DefaultStaticFileReader : {} : Size is zero.", utf16_to_utf8(path));
+	}
 	stream_.close();
 }
 
