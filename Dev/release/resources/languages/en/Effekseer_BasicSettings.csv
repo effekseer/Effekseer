@@ -4,7 +4,6 @@ Has nothing to do with the final output."
 ,
 Node_Name_Name,Name
 Node_Name_Desc,The name of the node.
-
 BasicSettings_MaxGeneration_Name,Spawn Count
 BasicSettings_MaxGeneration_Desc,Number of instances to generate
 BasicSettings_LocationEffectType_Name,Inherit Position
@@ -17,7 +16,8 @@ BasicSettings_RemoveWhenLifeIsExtinct_Name,Destroy after time
 BasicSettings_RemoveWhenLifeIsExtinct_Desc,
 BasicSettings_RemoveWhenParentIsRemoved_Name,Destroy with parent
 BasicSettings_RemoveWhenParentIsRemoved_Desc,
-BasicSettings_RemoveWhenAllChildrenAreRemoved_Name,Destroy when no
+BasicSettings_RemoveWhenAllChildrenAreRemoved_Name,"Destroy when no 
+more children"
 BasicSettings_RemoveWhenAllChildrenAreRemoved_Desc,
 BasicSettings_Life_Name,Time to live
 BasicSettings_Life_Desc,Length of time each instance survives
