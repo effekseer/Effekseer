@@ -22,6 +22,10 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path) : S
 		length_ = 0;
 		return;	
 	}
+	else
+	{
+		spdlog::trace("DefaultStaticFileReader : {} : Succseeded in loading.", utf16_to_utf8(path));	
+	}
 
 	if (length_ < 0)
 	{
