@@ -3,6 +3,8 @@
 #include "../Platform/FileSystem.h"
 #include "DefaultFileReader.h"
 #include "IPCFileReader.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 namespace Effekseer
 {
@@ -75,14 +77,19 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	std::shared_ptr<StaticFileReader> reader = std::make_shared<DefaultStaticFileReader>(pathSafe);
 	auto file = std::make_shared<StaticFile>(reader);
 
+	spdlog::trace("IO::LoadFile : {} : Create StaticFile.", utf16_to_utf8(path));
+
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
 	{
 		changedFileInfos_.erase(info);
 	}
 
+	spdlog::trace("IO::LoadFile : {} : erase old.", utf16_to_utf8(path));
+
 	auto time = FileSystem::GetLastWriteTime(pathSafe);
 	fileUpdateDates_[info] = time;
 
+	spdlog::trace("IO::LoadFile : {} : add new.", utf16_to_utf8(path));
 	return file;
 }
 
