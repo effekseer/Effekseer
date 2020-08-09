@@ -251,6 +251,21 @@ namespace Effekseer.GUI
 					f = IO.LoadFile(path);
 				}
 
+				// TODO : refactor it
+				// Permission error
+				if(f != null && f.GetSize() == 0)
+				{
+					var message = MultiLanguageTextProvider.GetText("PermissionError_File");
+
+					if (swig.GUIManager.IsMacOSX())
+					{
+						message += "\n";
+						message += MultiLanguageTextProvider.GetText("PermissionError_File_Mac");
+					}
+					swig.GUIManager.show(string.Format(message, path), "Error", DialogStyle.Error, DialogButtons.OK);
+					return null;
+				}
+
 				if (f == null) return null;
 
 				byte[] ret = new byte[f.GetSize()];

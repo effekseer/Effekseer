@@ -277,3 +277,6 @@ FCurve_Desc,F-Curve
 ,
 Recording_Scale_Name,Scale
 Recording_Scale_Desc,Enlarge the area to record images.
+,
+PermissionError_File,Cannot read file {0}. Cannot read file {0}. You may not have permission to read the file.
+PermissionError_File_Mac,Moving the files associated with the effect to your home directory may solve the problem.
