@@ -242,17 +242,26 @@ namespace Effekseer.GUI
 
 					if (System.IO.File.Exists(path))
 					{
+						Utils.Logger.Write(string.Format("Exists {0}", path));
 						if(f != null && f.GetSize() == 0)
 						{
+							Utils.Logger.Write(string.Format("Mac Error {0}", path));
 							throw new Exception("Mac errror?");
 						}
+					}
+					else
+					{
+						Utils.Logger.Write(string.Format("Not Exists {0}", path));
 					}
 				}
 
 				if (f == null) return null;
 
 				byte[] ret = new byte[f.GetSize()];
-				System.Runtime.InteropServices.Marshal.Copy(f.GetData(), ret, 0, ret.Length);
+				if(f.GetSize() > 0)
+				{
+					System.Runtime.InteropServices.Marshal.Copy(f.GetData(), ret, 0, ret.Length);
+				}
 				f.Dispose();
 				return ret;
 			};
