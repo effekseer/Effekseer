@@ -239,6 +239,14 @@ namespace Effekseer.GUI
 				if(f == null)
 				{
 					f = IO.LoadFile(path);
+
+					if (System.IO.File.Exists(path))
+					{
+						if(f != null && f.GetSize() == 0)
+						{
+							throw new Exception("Mac errror?");
+						}
+					}
 				}
 
 				if (f == null) return null;
