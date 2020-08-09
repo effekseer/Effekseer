@@ -5,6 +5,10 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
+#if !defined(_WIN32)
+#include <unistd.h>
+#endif
+
 namespace Effekseer
 {
 
@@ -13,6 +17,15 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path) : S
 #ifdef _WIN32
 	stream_.open((wchar_t*)path.c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
 #else
+	auto path8 = utf16_to_utf8(path);
+	char buf[512];
+	int count = readlink(path8.c_str(), buf, sizeof(buf));
+	if (count > 0)
+	{
+		buf[count] = '\0';
+		spdlog::trace("DefaultStaticFileReader : {} : Find symbolic link", buf);
+	}
+
 	stream_.open(utf16_to_utf8(path).c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
 #endif
 
