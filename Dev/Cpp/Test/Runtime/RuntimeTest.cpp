@@ -557,6 +557,64 @@ void BasicRuntimeTest(bool onCI)
 #endif
 }
 
+void InstanceDisposeTestPlatform(EffectPlatform* platform)
+{
+	EffectPlatformInitializingParameter param;
+	platform->Initialize(param);
+
+	{
+		auto effect = Effekseer::Effect::Create(
+			platform->GetManager(), (GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/Model_Parameters1.efk").c_str());
+
+		ES_SAFE_RELEASE(effect);
+	}
+}
+
+void InstanceDisposeTest()
+{
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+	{
+		auto platform = std::make_shared<EffectPlatformVulkan>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+#endif
+
+#ifdef _WIN32
+#ifdef __EFFEKSEER_BUILD_DX12__
+	{
+		auto platform = std::make_shared<EffectPlatformDX12>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+#endif
+
+	{
+		auto platform = std::make_shared<EffectPlatformDX9>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+
+	{
+		auto platform = std::make_shared<EffectPlatformDX11>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+
+#elif defined(__APPLE__)
+	{
+		auto platform = std::make_shared<EffectPlatformMetal>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+#endif
+	{
+		auto platform = std::make_shared<EffectPlatformGL>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+}
+
 void CustomAllocatorTest()
 {
 	Effekseer::CustomVector<int> v;
