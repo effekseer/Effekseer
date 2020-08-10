@@ -10,3 +10,4 @@ void MassPlayTest();
 void CustomAllocatorTest();
 void StringAndPathHelperTest();
 void ReloadTest();
+void InstanceDisposeTest();
