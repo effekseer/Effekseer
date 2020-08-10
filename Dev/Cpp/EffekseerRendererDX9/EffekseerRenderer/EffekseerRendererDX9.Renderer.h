@@ -79,6 +79,8 @@ public:
 class Model : public Effekseer::Model
 {
 private:
+	LPDIRECT3DDEVICE9 device_ = nullptr;
+
 public:
 	struct InternalModel
 	{
@@ -106,19 +108,25 @@ public:
 
 	InternalModel* InternalModels = nullptr;
 	int32_t ModelCount;
+	bool IsLoadedOnGPU = false;
 
-	Model(uint8_t* data, int32_t size)
-		: Effekseer::Model(data, size)
-		, InternalModels(nullptr)
-		, ModelCount(0)
+	Model(uint8_t* data, int32_t size, LPDIRECT3DDEVICE9 device)
+		: Effekseer::Model	( data, size )
+		, device_(device)
+		, InternalModels	(nullptr)
+		, ModelCount		( 0 )
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
+		ES_SAFE_ADDREF(device_);
 	}
 
 	virtual ~Model()
 	{
 		ES_SAFE_DELETE_ARRAY(InternalModels);
+		ES_SAFE_RELEASE(device_);
 	}
+
+	bool LoadToGPU();
 };
 
 //----------------------------------------------------------------------------------

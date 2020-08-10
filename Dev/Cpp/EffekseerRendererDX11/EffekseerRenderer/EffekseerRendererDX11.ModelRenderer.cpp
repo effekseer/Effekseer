@@ -205,8 +205,29 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
-	EndRendering_<RendererImplemented, Shader, Model, true, 40>(
-		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
+	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	model->LoadToGPU();
+	if (!model->IsLoadedOnGPU)
+	{
+		return;
+	}
+
+	EndRendering_<
+		RendererImplemented,
+		Shader,
+		Model,
+		true,
+		40>(
+		m_renderer,
+		m_shader_lighting_texture_normal,
+		m_shader_texture,
+		m_shader_distortion_texture,
+		parameter );
 }
 
 //----------------------------------------------------------------------------------
