@@ -18,7 +18,6 @@ const int32_t ModelRendererInstanceCount = 10;
 const int32_t ModelRendererInstanceCount = 20;
 #endif
 
-
 MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface)
 	: fileInterface_(fileInterface)
 {

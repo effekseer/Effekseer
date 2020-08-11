@@ -133,8 +133,12 @@ public:
 	InternalModel* InternalModels = nullptr;
 	int32_t ModelCount;
 
+	bool IsLoadedOnGPU = false;
+
 	Model(void* data, int32_t size);
 	~Model();
+
+	bool LoadToGPU();
 };
 
 //----------------------------------------------------------------------------------

@@ -422,11 +422,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},  // AlphaTextureUV + UVDistortionTextureUV
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendUV
+		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},	// AlphaTextureUV + UVDistortionTextureUV
+		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
 		{"TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
-		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},	  // FlipbookIndexAndNextRate
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 17, D3D11_INPUT_PER_VERTEX_DATA, 0},	  // AlphaThreshold
+		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
+		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 17, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 #endif
 	};
 
@@ -438,10 +438,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUV + UVDistortionTextureUV
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendUV
+		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
 		{"TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 18, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
-		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT,    0, sizeof(float) * 22, D3D11_INPUT_PER_VERTEX_DATA, 0}, // FlipbookIndexAndNextRate
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,    0, sizeof(float) * 23, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaThreshold
+		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 22, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
+		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 23, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 #endif
 	};
 
@@ -454,10 +454,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{"TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUV + UVDistortionTextureUV
-		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendUV
+		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
 		{"TEXCOORD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT,    0, sizeof(float) * 20, D3D11_INPUT_PER_VERTEX_DATA, 0}, // FlipbookIndexAndNextRate
-		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT,    0, sizeof(float) * 21, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaThreshold
+		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 20, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
+		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 21, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 #endif
 
 	};
@@ -1033,6 +1033,108 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	{
 		delete data;
 	}
+}
+
+bool Model::LoadToGPU()
+{
+	if (IsLoadedOnGPU)
+	{
+		return false;
+	}
+
+	for (int32_t f = 0; f < GetFrameCount(); f++)
+	{
+		InternalModels[f].VertexCount = GetVertexCount(f);
+
+		{
+			ES_SAFE_RELEASE(InternalModels[f].VertexBuffer);
+
+			std::vector<Effekseer::Model::VertexWithIndex> vs;
+			for (int32_t m = 0; m < ModelCount; m++)
+			{
+				for (int32_t i = 0; i < GetVertexCount(f); i++)
+				{
+					Effekseer::Model::VertexWithIndex v;
+					v.Position = GetVertexes(f)[i].Position;
+					v.Normal = GetVertexes(f)[i].Normal;
+					v.Binormal = GetVertexes(f)[i].Binormal;
+					v.Tangent = GetVertexes(f)[i].Tangent;
+					v.UV = GetVertexes(f)[i].UV;
+					v.VColor = GetVertexes(f)[i].VColor;
+					v.Index[0] = m;
+
+					vs.push_back(v);
+				}
+			}
+
+			ID3D11Buffer* vb = nullptr;
+
+			D3D11_BUFFER_DESC hBufferDesc;
+			hBufferDesc.ByteWidth = sizeof(Effekseer::Model::VertexWithIndex) * GetVertexCount(f) * ModelCount;
+			hBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			hBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			hBufferDesc.CPUAccessFlags = 0;
+			hBufferDesc.MiscFlags = 0;
+			hBufferDesc.StructureByteStride = sizeof(float);
+
+			D3D11_SUBRESOURCE_DATA hSubResourceData;
+			hSubResourceData.pSysMem = &(vs[0]);
+			hSubResourceData.SysMemPitch = 0;
+			hSubResourceData.SysMemSlicePitch = 0;
+
+			if (FAILED(device_->CreateBuffer(&hBufferDesc, &hSubResourceData, &vb)))
+			{
+				return false;
+			}
+
+			InternalModels[f].VertexBuffer = vb;
+		}
+
+		InternalModels[f].FaceCount = GetFaceCount(f);
+		InternalModels[f].IndexCount = InternalModels[f].FaceCount * 3;
+
+		{
+			ES_SAFE_RELEASE(InternalModels[f].IndexBuffer);
+
+			std::vector<Effekseer::Model::Face> fs;
+			for (int32_t m = 0; m < ModelCount; m++)
+			{
+				for (int32_t i = 0; i < InternalModels[f].FaceCount; i++)
+				{
+					Effekseer::Model::Face face;
+					face.Indexes[0] = GetFaces(f)[i].Indexes[0] + GetVertexCount(f) * m;
+					face.Indexes[1] = GetFaces(f)[i].Indexes[1] + GetVertexCount(f) * m;
+					face.Indexes[2] = GetFaces(f)[i].Indexes[2] + GetVertexCount(f) * m;
+					fs.push_back(face);
+				}
+			}
+
+			ID3D11Buffer* ib = NULL;
+			D3D11_BUFFER_DESC hBufferDesc;
+			hBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			hBufferDesc.ByteWidth = sizeof(int32_t) * 3 * InternalModels[f].FaceCount * ModelCount;
+			hBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			hBufferDesc.CPUAccessFlags = 0;
+			hBufferDesc.MiscFlags = 0;
+			hBufferDesc.StructureByteStride = sizeof(int32_t);
+
+			D3D11_SUBRESOURCE_DATA hSubResourceData;
+			hSubResourceData.pSysMem = &(fs[0]);
+			hSubResourceData.SysMemPitch = 0;
+			hSubResourceData.SysMemSlicePitch = 0;
+
+			if (FAILED(device_->CreateBuffer(&hBufferDesc, &hSubResourceData, &ib)))
+			{
+				return nullptr;
+			}
+
+			InternalModels[f].IndexBuffer = ib;
+		}
+	}
+
+	IsLoadedOnGPU = true;
+
+	return true;
 }
 
 //----------------------------------------------------------------------------------

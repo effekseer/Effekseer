@@ -11,3 +11,4 @@ void CustomAllocatorTest();
 void StringAndPathHelperTest();
 void ReloadTest();
 void UpdateToMoveTest();
+void InstanceDisposeTest(bool onCI);

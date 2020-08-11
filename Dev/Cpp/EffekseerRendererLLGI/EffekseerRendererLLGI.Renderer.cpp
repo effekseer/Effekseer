@@ -951,4 +951,73 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	}
 }
 
+bool Model::LoadToGPU()
+{
+	if (IsLoadedOnGPU)
+	{
+		return false;
+	}
+
+	for (int32_t f = 0; f < GetFrameCount(); f++)
+	{
+		InternalModels[f].VertexCount = GetVertexCount(f);
+
+		{
+			std::vector<Effekseer::Model::VertexWithIndex> vs;
+			for (int32_t m = 0; m < ModelCount; m++)
+			{
+				for (int32_t i = 0; i < GetVertexCount(f); i++)
+				{
+					Effekseer::Model::VertexWithIndex v;
+					v.Position = GetVertexes(f)[i].Position;
+					v.Normal = GetVertexes(f)[i].Normal;
+					v.Binormal = GetVertexes(f)[i].Binormal;
+					v.Tangent = GetVertexes(f)[i].Tangent;
+					v.UV = GetVertexes(f)[i].UV;
+					v.VColor = GetVertexes(f)[i].VColor;
+					v.Index[0] = m;
+
+					vs.push_back(v);
+				}
+			}
+
+			auto vb_size = sizeof(Effekseer::Model::VertexWithIndex) * GetVertexCount(f) * ModelCount;
+
+			InternalModels[f].VertexBuffer = graphicsDevice_->GetGraphics()->CreateVertexBuffer(vb_size);
+
+			auto p_ = InternalModels[f].VertexBuffer->Lock();
+			memcpy(p_, vs.data(), sizeof(Effekseer::Model::VertexWithIndex) * vs.size());
+			InternalModels[f].VertexBuffer->Unlock();
+		}
+
+		InternalModels[f].FaceCount = GetFaceCount(f);
+		InternalModels[f].IndexCount = InternalModels[f].FaceCount * 3;
+
+		{
+			std::vector<Effekseer::Model::Face> fs;
+			for (int32_t m = 0; m < ModelCount; m++)
+			{
+				for (int32_t i = 0; i < InternalModels[f].FaceCount; i++)
+				{
+					Effekseer::Model::Face face;
+					face.Indexes[0] = GetFaces(f)[i].Indexes[0] + GetVertexCount(f) * m;
+					face.Indexes[1] = GetFaces(f)[i].Indexes[1] + GetVertexCount(f) * m;
+					face.Indexes[2] = GetFaces(f)[i].Indexes[2] + GetVertexCount(f) * m;
+					fs.push_back(face);
+				}
+			}
+
+			InternalModels[f].IndexBuffer =
+				graphicsDevice_->GetGraphics()->CreateIndexBuffer(4, sizeof(int32_t) * 3 * InternalModels[f].FaceCount * ModelCount);
+
+			auto p_ = InternalModels[f].IndexBuffer->Lock();
+			memcpy(p_, fs.data(), sizeof(Effekseer::Model::Face) * fs.size());
+			InternalModels[f].IndexBuffer->Unlock();
+		}
+	}
+
+	IsLoadedOnGPU = true;
+	return true;
+}
+
 } // namespace EffekseerRendererLLGI

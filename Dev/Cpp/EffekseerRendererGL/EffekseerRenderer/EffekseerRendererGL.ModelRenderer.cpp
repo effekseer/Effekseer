@@ -474,9 +474,10 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	for (auto i = 0; i < model->GetFrameCount(); i++)
+	model->LoadToGPU();
+	if (!model->IsLoadedOnGPU)
 	{
-		model->InternalModels[i].TryDelayLoad();
+		return;
 	}
 
 	m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());

@@ -335,7 +335,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		{0, sizeof(float) * 6, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},  // AlphaTextureUV + UVDistortionTextureUV
-		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},  // BlendUV
+		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4}, // BlendUV
 		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5}, // BlendAlphaUV + BlendUVDistortionUV
 		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6}, // FlipbookIndexAndNextRate
 		{0, sizeof(float) * 17, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7}, // AlphaThreshold
@@ -349,7 +349,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
 		{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},  // AlphaTextureUV + UVDistortionTextureUV
+		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5}, // AlphaTextureUV + UVDistortionTextureUV
 		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6}, // BlendUV
 		{0, sizeof(float) * 18, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7}, // BlendAlphaUV + BlendUVDistortionUV
 		{0, sizeof(float) * 22, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 8}, // FlipbookIndexAndNextRate
@@ -414,10 +414,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
 		{0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6}, // AlphaTextureUV + UVDistortionTextureUV
-		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7}, // BlendUV
-		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 8}, // BlendAlphaUV + BlendUVDistortionUV
-		{0, sizeof(float) * 20, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 9}, // FlipbookIndexAndNextRate
+		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6},  // AlphaTextureUV + UVDistortionTextureUV
+		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7},  // BlendUV
+		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 8},  // BlendAlphaUV + BlendUVDistortionUV
+		{0, sizeof(float) * 20, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 9},  // FlipbookIndexAndNextRate
 		{0, sizeof(float) * 21, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 10}, // AlphaThreshold
 #endif
 		D3DDECL_END()};
@@ -1053,6 +1053,132 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	{
 		delete data;
 	}
+}
+
+bool Model::LoadToGPU()
+{
+	if (IsLoadedOnGPU)
+	{
+		return false;
+	}
+
+	// get device
+	LPDIRECT3DDEVICE9 device = nullptr;
+	if (device_ != nullptr)
+	{
+		device = device_;
+	}
+
+	HRESULT hr;
+
+	for (int32_t f = 0; f < GetFrameCount(); f++)
+	{
+		InternalModels[f].VertexCount = GetVertexCount(f);
+
+		IDirect3DVertexBuffer9* vb = NULL;
+		hr =
+			device->CreateVertexBuffer(sizeof(Effekseer::Model::VertexWithIndex) * InternalModels[f].VertexCount * ModelCount,
+									   D3DUSAGE_WRITEONLY,
+									   0,
+									   D3DPOOL_MANAGED,
+									   &vb,
+									   NULL);
+
+		if (FAILED(hr))
+		{
+			/* DirectX9ExではD3DPOOL_MANAGED使用不可 */
+			hr = device->CreateVertexBuffer(sizeof(Effekseer::Model::VertexWithIndex) * InternalModels[f].VertexCount *
+												ModelCount,
+											D3DUSAGE_WRITEONLY,
+											0,
+											D3DPOOL_DEFAULT,
+											&vb,
+											NULL);
+		}
+
+		ES_SAFE_RELEASE(InternalModels[f].VertexBuffer);
+
+		if (vb != NULL)
+		{
+			uint8_t* resource = NULL;
+			vb->Lock(0, 0, (void**)&resource, 0);
+
+			for (int32_t m = 0; m < ModelCount; m++)
+			{
+				for (int32_t i = 0; i < GetVertexCount(f); i++)
+				{
+					Effekseer::Model::VertexWithIndex v;
+					v.Position = GetVertexes(f)[i].Position;
+					v.Normal = GetVertexes(f)[i].Normal;
+					v.Binormal = GetVertexes(f)[i].Binormal;
+					v.Tangent = GetVertexes(f)[i].Tangent;
+					v.UV = GetVertexes(f)[i].UV;
+					v.VColor = GetVertexes(f)[i].VColor;
+
+					std::swap(v.VColor.R, v.VColor.B);
+
+					v.Index[0] = m;
+
+					memcpy(resource, &v, sizeof(Effekseer::Model::VertexWithIndex));
+					resource += sizeof(Effekseer::Model::VertexWithIndex);
+				}
+			}
+
+			vb->Unlock();
+		}
+
+		InternalModels[f].VertexBuffer = vb;
+
+		InternalModels[f].FaceCount = GetFaceCount(f);
+		InternalModels[f].IndexCount = InternalModels[f].FaceCount * 3;
+
+		IDirect3DIndexBuffer9* ib = NULL;
+		hr = device->CreateIndexBuffer(sizeof(Effekseer::Model::Face) * InternalModels[f].FaceCount * ModelCount,
+									   D3DUSAGE_WRITEONLY,
+									   D3DFMT_INDEX32,
+									   D3DPOOL_MANAGED,
+									   &ib,
+									   NULL);
+
+		if (FAILED(hr))
+		{
+			hr = device->CreateIndexBuffer(sizeof(Effekseer::Model::Face) * InternalModels[f].FaceCount * ModelCount,
+										   D3DUSAGE_WRITEONLY,
+										   D3DFMT_INDEX32,
+										   D3DPOOL_DEFAULT,
+										   &ib,
+										   NULL);
+		}
+
+		ES_SAFE_RELEASE(InternalModels[f].IndexBuffer);
+
+		if (ib != NULL)
+		{
+			uint8_t* resource = NULL;
+			ib->Lock(0, 0, (void**)&resource, 0);
+			for (int32_t m = 0; m < ModelCount; m++)
+			{
+				for (int32_t i = 0; i < InternalModels[f].FaceCount; i++)
+				{
+					Effekseer::Model::Face face;
+					face.Indexes[0] = GetFaces(f)[i].Indexes[0] + GetVertexCount(f) * m;
+					face.Indexes[1] = GetFaces(f)[i].Indexes[1] + GetVertexCount(f) * m;
+					face.Indexes[2] = GetFaces(f)[i].Indexes[2] + GetVertexCount(f) * m;
+
+					memcpy(resource, &face, sizeof(Effekseer::Model::Face));
+					resource += sizeof(Effekseer::Model::Face);
+				}
+			}
+
+			ib->Unlock();
+		}
+
+		InternalModels[f].IndexBuffer = ib;
+	}
+
+	IsLoadedOnGPU = true;
+
+	return true;
 }
 
 //----------------------------------------------------------------------------------
