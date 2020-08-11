@@ -2,9 +2,9 @@
 
 ## Release notes
 
-### 1.52i2
+### 1.52k
 
-- Fixed a bug that effects are not shown with OpenGL ES3 in some devices.
+- Changed the timing of sending the model's buffer to the GPU before rendering, because in some environments the buffer generation process was not thread-safe. 
 
 ### 1.52i
 
