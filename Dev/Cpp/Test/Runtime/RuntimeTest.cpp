@@ -570,7 +570,7 @@ void InstanceDisposeTestPlatform(EffectPlatform* platform)
 	}
 }
 
-void InstanceDisposeTest()
+void InstanceDisposeTest(bool onCI)
 {
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 	{
@@ -582,6 +582,7 @@ void InstanceDisposeTest()
 
 #ifdef _WIN32
 #ifdef __EFFEKSEER_BUILD_DX12__
+	if (!onCI)
 	{
 		auto platform = std::make_shared<EffectPlatformDX12>();
 		InstanceDisposeTestPlatform(platform.get());
@@ -589,6 +590,7 @@ void InstanceDisposeTest()
 	}
 #endif
 
+	if (!onCI)
 	{
 		auto platform = std::make_shared<EffectPlatformDX9>();
 		InstanceDisposeTestPlatform(platform.get());
@@ -608,6 +610,8 @@ void InstanceDisposeTest()
 		platform->Terminate();
 	}
 #endif
+
+	if (!onCI)
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		InstanceDisposeTestPlatform(platform.get());
