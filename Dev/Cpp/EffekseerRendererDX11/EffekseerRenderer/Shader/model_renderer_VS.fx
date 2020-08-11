@@ -143,6 +143,16 @@ VS_Output main( const VS_Input Input )
 	Output.Normal = localNormal.xyz;
 	Output.Binormal = localBinormal.xyz;
 	Output.Tangent = localTangent.xyz;
+#else
+    
+#ifdef DISABLE_INSTANCE
+	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
+	localNormal = normalize(mul(mModel, localNormal));
+#else
+	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
+	localNormal = normalize(mul(matModel, localNormal));
+#endif
+    Output.Normal = localNormal.xyz;
 #endif
 	Output.Color = modelColor;
 

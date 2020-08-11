@@ -431,14 +431,14 @@ public:
 		} ColorBlendType;
 		Color BeginColor;
 		Color EndColor;
-		int32_t Pow;
+		float Pow;
 
 		FalloffParameter()
 		{
 			ColorBlendType = BlendType::Add;
 			BeginColor = Color(255, 255, 255, 255);
 			EndColor = Color(255, 255, 255, 255);
-			Pow = 1;
+			Pow = 1.0f;
 		}
 	};
 

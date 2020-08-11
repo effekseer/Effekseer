@@ -224,6 +224,9 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_364)
     Output.Pos = v_364.mCameraProj * cameraPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    localNormal = normalize(localNormal * matModel);
+    Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = v_364.mUVInversed.x + (v_364.mUVInversed.y * Output.UV.y);
     float2 param = Output.UV;
