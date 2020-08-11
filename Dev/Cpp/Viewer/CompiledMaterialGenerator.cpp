@@ -107,7 +107,11 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 			continue;
 		}
 
+#if defined(_WIN32) && !defined(_WIN64) 
+		auto createCompiler = dll.second->GetProc<CreateCompilerFunc>("_CreateCompiler@0");
+#else
 		auto createCompiler = dll.second->GetProc<CreateCompilerFunc>("CreateCompiler");
+#endif
 		auto compiler = createCompiler();
 
 		std::vector<uint8_t> vsStandardBinary;
