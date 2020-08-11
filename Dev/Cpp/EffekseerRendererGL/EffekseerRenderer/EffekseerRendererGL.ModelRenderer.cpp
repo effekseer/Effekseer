@@ -465,19 +465,25 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 
 	if (parameter.ModelIndex < 0)
 	{
-        return;
-    }
-    
-    model->LoadToGPU();
+		return;
+	}
+
+	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	model->LoadToGPU();
 	if (!model->IsLoadedOnGPU)
 	{
 		return;
 	}
-	
-    m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
-    m_shader_texture->SetVertexSize(model->GetVertexSize());
-    m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
-	
+
+	m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
+	m_shader_texture->SetVertexSize(model->GetVertexSize());
+	m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
+
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	EndRendering_<RendererImplemented, Shader, GLuint, Model, true, 20>(
 		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);

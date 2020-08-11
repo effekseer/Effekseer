@@ -52,7 +52,6 @@ static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
 } // namespace ShaderDistortionPS_
 
-
 #else
 
 namespace ShaderLightingVS_
@@ -227,7 +226,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		m_shader_lighting_texture_normal,
 		m_shader_texture,
 		m_shader_distortion_texture,
-		parameter );
+		parameter);
 }
 
 //----------------------------------------------------------------------------------

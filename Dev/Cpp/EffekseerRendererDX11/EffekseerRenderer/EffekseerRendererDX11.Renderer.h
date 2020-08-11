@@ -87,6 +87,7 @@ class Model : public Effekseer::Model
 {
 private:
 	ID3D11Device* device_ = nullptr;
+
 public:
 	struct InternalModel
 	{
@@ -117,7 +118,7 @@ public:
 	bool IsLoadedOnGPU = false;
 
 	Model(uint8_t* data, int32_t size, ID3D11Device* device)
-		: Effekseer::Model	( data, size )
+		: Effekseer::Model(data, size)
 		, device_(device)
 		, InternalModels(nullptr)
 		, ModelCount(0)

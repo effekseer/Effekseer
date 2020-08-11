@@ -1394,7 +1394,7 @@ bool Model::LoadToGPU()
 
 	for (int32_t f = 0; f < GetFrameCount(); f++)
 	{
-		if(!InternalModels[f].TryDelayLoad())
+		if (!InternalModels[f].TryDelayLoad())
 		{
 			return false;
 		}

@@ -111,10 +111,10 @@ public:
 	bool IsLoadedOnGPU = false;
 
 	Model(uint8_t* data, int32_t size, LPDIRECT3DDEVICE9 device)
-		: Effekseer::Model	( data, size )
+		: Effekseer::Model(data, size)
 		, device_(device)
-		, InternalModels	(nullptr)
-		, ModelCount		( 0 )
+		, InternalModels(nullptr)
+		, ModelCount(0)
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
 		ES_SAFE_ADDREF(device_);
