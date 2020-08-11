@@ -201,6 +201,9 @@ VS_Output _main(VS_Input Input)
     Output.Pos = CBVS0.mCameraProj * cameraPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    localNormal = normalize(CBVS0.mModel * localNormal);
+    Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Output.UV;
@@ -444,6 +447,9 @@ VS_Output _main(VS_Input Input)
     Output.Pos = cameraPosition * CBVS0.mCameraProj;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    localNormal = normalize(localNormal * CBVS0.mModel);
+    Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Output.UV;
@@ -684,6 +690,9 @@ VS_Output _main(VS_Input Input)
     Output.Pos = CBVS0.mCameraProj * cameraPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    localNormal = normalize(CBVS0.mModel * localNormal);
+    Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Output.UV;
@@ -924,6 +933,9 @@ VS_Output _main(VS_Input Input)
     Output.Pos = cameraPosition * CBVS0.mCameraProj;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    localNormal = normalize(localNormal * CBVS0.mModel);
+    Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Output.UV;
