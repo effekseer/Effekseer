@@ -25,7 +25,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'Effekseer150Win'
-          ArtifactName: 'Effekseer152jWin_x86'
+          ArtifactName: 'Effekseer152kWin_x86'
           publishLocation: 'Container'
 
   - job: MacOS
@@ -50,5 +50,5 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'EffekseerMac'
-          ArtifactName: 'Effekseer152jMac'
+          ArtifactName: 'Effekseer152kMac'
           publishLocation: 'Container'
