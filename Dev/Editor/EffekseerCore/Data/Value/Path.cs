@@ -137,6 +137,10 @@ namespace Effekseer.Data.Value
 					SetAbsolutePath(Utils.Misc.GetAbsolutePath(_basepath.AbsolutePath, relative_path));
 				}
 			}
+			catch (FileLoadPermissionException e)
+			{
+				throw e;
+			}
 			catch (Exception e)
 			{
 				throw new Exception(e.ToString() + " relative_path = " + relative_path);
