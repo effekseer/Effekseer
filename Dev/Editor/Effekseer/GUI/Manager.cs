@@ -252,8 +252,10 @@ namespace Effekseer.GUI
 						message += "\n";
 						message += MultiLanguageTextProvider.GetText("PermissionError_File_Mac");
 					}
-					swig.GUIManager.show(string.Format(message, path), "Error", DialogStyle.Error, DialogButtons.OK);
-					return null;
+
+					message = string.Format(message, System.IO.Path.GetFileName(path));
+
+					throw new FileLoadPermissionException(message);
 				}
 
 				if (f == null) return null;

@@ -383,4 +383,12 @@ namespace Effekseer
             return new Tuple35<TV1, TV2>(t1, t2);
         }
     }
+
+	public class FileLoadPermissionException : Exception
+	{
+		public FileLoadPermissionException(string message) : base(message)
+		{
+
+		}
+	}
 }

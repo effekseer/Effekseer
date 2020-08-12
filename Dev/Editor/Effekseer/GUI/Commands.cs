@@ -110,7 +110,7 @@ namespace Effekseer.GUI
 					}
 					catch (Exception e)
 					{
-						swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+						HandleExceptionWhileOpenning(e);
 					}
 				});
 
@@ -132,7 +132,7 @@ namespace Effekseer.GUI
 				}
 				catch (Exception e)
 				{
-					swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+					HandleExceptionWhileOpenning(e);
 				}
 
 				return true;
@@ -470,6 +470,18 @@ namespace Effekseer.GUI
 			var messageBox = new GUI.Dialog.About();
 			messageBox.Show();
 			return true;
+		}
+
+		static public void HandleExceptionWhileOpenning(Exception e)
+		{
+			if (e is TargetInvocationException)
+			{
+				HandleExceptionWhileOpenning(e.InnerException);
+				return;
+			}
+
+			swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+			Core.New();
 		}
 	}
 }
