@@ -24,7 +24,7 @@
 # for the list of possible encodings.
 # The default value is: UTF-8.
 
-DOXYFILE_ENCODING      = CP932
+DOXYFILE_ENCODING      = UTF-8
 
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded by
 # double-quotes, unless you are using Doxywizard) that should identify the
@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       =
+OUTPUT_DIRECTORY       = EffekseerRuntimeDoc/en/
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -81,7 +81,7 @@ CREATE_SUBDIRS         = NO
 # Turkish, Ukrainian and Vietnamese.
 # The default value is: English.
 
-OUTPUT_LANGUAGE        = Japanese
+OUTPUT_LANGUAGE        = English
 
 # If the BRIEF_MEMBER_DESC tag is set to YES doxygen will include brief member
 # descriptions after the members that are listed in the file and class
