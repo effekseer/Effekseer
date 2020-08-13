@@ -186,15 +186,16 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 	// A code to initialize Metal is too long, so I use LLGI
 	// Metal初期化のためのコードは長すぎるのでLLGIを使用する。
 
+	LLGI::PlatformParameter platformParam;
+	platformParam.Device = LLGI::DeviceType::Metal;
+	platformParam.WaitVSync = true;
+    
 	context->window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow("Metal", LLGI::Vec2I(windowWidth, windowHeight)));
 	if (context->window == nullptr)
 	{
 		goto FAILED;
 	}
 
-	LLGI::PlatformParameter platformParam;
-	platformParam.Device = LLGI::DeviceType::Metal;
-    platformParam.WaitVSync = true;
 	context->platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, context->window.get()));
 
 	if (context->platform == nullptr)
