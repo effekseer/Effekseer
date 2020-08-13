@@ -1233,20 +1233,10 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		speed_[0] = node->Target->Properties[0]->Floats[0];
 		speed_[1] = node->Target->Properties[0]->Floats[1];
 
-		// to avoid large uv value (for mobile environment)
-		auto offsetName = node->Outputs[0].Name + "_PannerOffset";
-		auto rangeStr = GetTypeName(ValueType::Float2) + "(32.0, 32.0)";
-		auto rangeOffsetStr = GetTypeName(ValueType::Float2) + "(16.0, 16.0)";
-		auto offsetStr =
-			(node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[2]) : GetInputArg(ValueType::Float2, speed_)) + "*" +
-			GetInputArg(ValueType::Float1, node->Inputs[1]) + "+" + rangeOffsetStr;
-
-		ret << GetTypeName(ValueType::Float2) << " " << offsetName << "=" << offsetStr << ";" << std::endl;
-
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(index->Floats[0])) << "+"
-			<< "(" << offsetName << "-" << rangeStr << "*floor(" << offsetName << "/" << rangeStr << ")-" << rangeOffsetStr << ")"
-			<< ";" << std::endl;
+			<< (node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[2]) : GetInputArg(ValueType::Float2, speed_))
+			<< "*" << GetInputArg(ValueType::Float1, node->Inputs[1]) << ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::ComponentMask)
