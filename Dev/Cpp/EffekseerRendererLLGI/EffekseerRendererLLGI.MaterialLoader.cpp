@@ -144,13 +144,13 @@ MaterialLoader ::~MaterialLoader()
 			for (size_t i = 0; i < resultVS.Binary.size(); i++)
 			{
 				dataVS[i].Data = resultVS.Binary[i].data();
-				dataVS[i].Size = resultVS.Binary[i].size();
+				dataVS[i].Size = static_cast<int32_t>(resultVS.Binary[i].size());
 			}
 
 			for (size_t i = 0; i < resultPS.Binary.size(); i++)
 			{
 				dataPS[i].Data = resultPS.Binary[i].data();
-				dataPS[i].Size = resultPS.Binary[i].size();
+				dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
 			}
 
 			// Pos(3) Color(1) UV(2)
@@ -182,13 +182,13 @@ MaterialLoader ::~MaterialLoader()
 			for (size_t i = 0; i < resultVS.Binary.size(); i++)
 			{
 				dataVS[i].Data = resultVS.Binary[i].data();
-				dataVS[i].Size = resultVS.Binary[i].size();
+				dataVS[i].Size = static_cast<int32_t>(resultVS.Binary[i].size());
 			}
 
 			for (size_t i = 0; i < resultPS.Binary.size(); i++)
 			{
 				dataPS[i].Data = resultPS.Binary[i].data();
-				dataPS[i].Size = resultPS.Binary[i].size();
+				dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
 			}
 
 			// Pos(3) Color(1) Normal(1) Tangent(1) UV(2) UV(2)
@@ -283,13 +283,13 @@ MaterialLoader ::~MaterialLoader()
 		for (size_t i = 0; i < resultVS.Binary.size(); i++)
 		{
 			dataVS[i].Data = resultVS.Binary[i].data();
-			dataVS[i].Size = resultVS.Binary[i].size();
+			dataVS[i].Size = static_cast<int32_t>(resultVS.Binary[i].size());
 		}
 
 		for (size_t i = 0; i < resultPS.Binary.size(); i++)
 		{
 			dataPS[i].Data = resultPS.Binary[i].data();
-			dataPS[i].Size = resultPS.Binary[i].size();
+			dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
 		}
 
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);

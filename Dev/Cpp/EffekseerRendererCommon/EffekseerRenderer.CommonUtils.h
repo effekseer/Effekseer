@@ -74,6 +74,14 @@ struct DynamicVertex
 		}
 	}
 
+	void SetTangent(const VertexFloat3& tangent)
+	{
+	}
+
+	void SetBinormal(const VertexFloat3& binormal)
+	{
+	}
+
 	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
@@ -165,6 +173,14 @@ struct LightingVertex
 		}
 	}
 
+	void SetTangent(const VertexFloat3& tangent)
+	{
+	}
+
+	void SetBinormal(const VertexFloat3& binormal)
+	{
+	}
+
 	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
@@ -243,6 +259,13 @@ struct SimpleVertex
 		}
 	}
 
+	void SetTangent(const VertexFloat3& tangent)
+	{
+	}
+
+	void SetBinormal(const VertexFloat3& binormal)
+	{
+	}
 
 	void SetPackedNormal(const VertexColor& normal)
 	{
@@ -319,6 +342,16 @@ struct VertexDistortion
 		{
 			std::swap(Col.R, Col.B);
 		}
+	}
+
+	void SetTangent(const VertexFloat3& tangent)
+	{
+		Tangent = tangent;
+	}
+
+	void SetBinormal(const VertexFloat3& binormal)
+	{
+		Binormal = binormal;
 	}
 
 	void SetPackedNormal(const VertexColor& normal)

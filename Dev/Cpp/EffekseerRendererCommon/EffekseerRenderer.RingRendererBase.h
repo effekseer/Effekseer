@@ -542,9 +542,9 @@ protected:
 			// distortion
 			if (vertexType == VertexType::Distortion)
 			{
-				StrideView<VertexDistortion> vs(&verteies[i], stride_, 8);
-				auto binormalCurrent = v[5].Pos - v[0].Pos;
-				auto binormalNext = v[7].Pos - v[2].Pos;
+				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
+				const auto binormalCurrent = ToStruct(v[5].Pos - v[0].Pos);
+				const auto binormalNext = ToStruct(v[7].Pos - v[2].Pos);
 
 				// return back
 				float t_b;
@@ -565,26 +565,26 @@ protected:
 				::Effekseer::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
 				::Effekseer::Vec3f tangent2 = (outerNN - outerNext).Normalize();
 
-				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
-				auto tangentNext = (tangent1 + tangent2) / 2.0f;
+				const auto tangentCurrent = ToStruct((tangent0 + tangent1) / 2.0f);
+				const auto tangentNext = ToStruct((tangent1 + tangent2) / 2.0f);
 
-				vs[0].Tangent = ToStruct(tangentCurrent);
-				vs[0].Binormal = ToStruct(binormalCurrent);
-				vs[1].Tangent = ToStruct(tangentCurrent);
-				vs[1].Binormal = ToStruct(binormalCurrent);
-				vs[2].Tangent = ToStruct(tangentNext);
-				vs[2].Binormal = ToStruct(binormalNext);
-				vs[3].Tangent = ToStruct(tangentNext);
-				vs[3].Binormal = ToStruct(binormalNext);
+				vs[0].SetTangent(tangentCurrent);
+				vs[0].SetBinormal(binormalCurrent);
+				vs[1].SetTangent(tangentCurrent);
+				vs[1].SetBinormal(binormalCurrent);
+				vs[2].SetTangent(tangentNext);
+				vs[2].SetBinormal(binormalNext);
+				vs[3].SetTangent(tangentNext);
+				vs[3].SetBinormal(binormalNext);
 
-				vs[4].Tangent = ToStruct(tangentCurrent);
-				vs[4].Binormal = ToStruct(binormalCurrent);
-				vs[5].Tangent = ToStruct(tangentCurrent);
-				vs[5].Binormal = ToStruct(binormalCurrent);
-				vs[6].Tangent = ToStruct(tangentNext);
-				vs[6].Binormal = ToStruct(binormalNext);
-				vs[7].Tangent = ToStruct(tangentNext);
-				vs[7].Binormal = ToStruct(binormalNext);
+				vs[4].SetTangent(tangentCurrent);
+				vs[4].SetBinormal(binormalCurrent);
+				vs[5].SetTangent(tangentCurrent);
+				vs[5].SetBinormal(binormalCurrent);
+				vs[6].SetTangent(tangentNext);
+				vs[6].SetBinormal(binormalNext);
+				vs[7].SetTangent(tangentNext);
+				vs[7].SetBinormal(binormalNext);
 			}
 			else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 			{

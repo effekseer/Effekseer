@@ -781,24 +781,23 @@ protected:
 
 				if (vertexType == VertexType::Distortion)
 				{
-					auto vl_ = (VertexDistortion*)(&vl);
-					auto vm_ = (VertexDistortion*)(&vm);
-					auto vr_ = (VertexDistortion*)(&vr);
+					const auto binormalVector = ToStruct(axis);
+					vl.SetBinormal(binormalVector);
+					vm.SetBinormal(binormalVector);
+					vr.SetBinormal(binormalVector);
 
-					vl_->Binormal = vm_->Binormal = vr_->Binormal = ToStruct(axis);
-
-					::Effekseer::Vec3f tangent = vl_->Pos - vr_->Pos;
+					::Effekseer::Vec3f tangent = vl.Pos - vr.Pos;
 					tangent.Normalize();
 
-					vl_->Tangent = vm_->Tangent = vr_->Tangent = ToStruct(tangent);
+					const auto tangentVector = ToStruct(tangent);
+
+					vl.SetTangent(tangentVector);
+					vm.SetTangent(tangentVector);
+					vr.SetTangent(tangentVector);
 				}
 				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 				{
-					auto vl_ = (&vl);
-					auto vm_ = (&vm);
-					auto vr_ = (&vr);
-
-					::Effekseer::Vec3f tangent = SafeNormalize(Effekseer::Vec3f(vl_->Pos - vr_->Pos));
+					::Effekseer::Vec3f tangent = SafeNormalize(Effekseer::Vec3f(vl.Pos - vr.Pos));
 					Effekseer::Vec3f normal = SafeNormalize(Effekseer::Vec3f::Cross(tangent, axis));
 
 					if (!parameter.IsRightHand)
@@ -809,13 +808,13 @@ protected:
 					Effekseer::Color normal_ = PackVector3DF(normal);
 					Effekseer::Color tangent_ = PackVector3DF(tangent);
 
-					vl_->SetPackedNormal(normal_);
-					vm_->SetPackedNormal(normal_);
-					vr_->SetPackedNormal(normal_);
+					vl.SetPackedNormal(normal_);
+					vm.SetPackedNormal(normal_);
+					vr.SetPackedNormal(normal_);
 
-					vl_->SetPackedTangent(tangent_);
-					vm_->SetPackedTangent(tangent_);
-					vr_->SetPackedTangent(tangent_);
+					vl.SetPackedTangent(tangent_);
+					vm.SetPackedTangent(tangent_);
+					vr.SetPackedTangent(tangent_);
 				}
 
 				if (isFirst_)

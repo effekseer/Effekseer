@@ -870,7 +870,7 @@ public:
 
 			if (materialParam->MaterialTextures.size() > 0)
 			{
-				textureCount = Effekseer::Min(materialParam->MaterialTextures.size(), ::Effekseer::UserTextureSlotMax);
+				textureCount = Effekseer::Min(static_cast<int32_t>(materialParam->MaterialTextures.size()), ::Effekseer::UserTextureSlotMax);
 
 				auto effect = param.EffectPointer;
 
