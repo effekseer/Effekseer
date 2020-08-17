@@ -234,7 +234,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		Shader,
 		Model,
 		true,
-		20>(
+		ModelRendererInstanceCount>(
 		m_renderer,
 		m_shader_lighting_texture_normal,
 		m_shader_texture,
