@@ -29,7 +29,7 @@ typedef ::Effekseer::RingRenderer::NodeParameter efkRingNodeParam;
 typedef ::Effekseer::RingRenderer::InstanceParameter efkRingInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template <typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
+template <typename RENDERER, bool FLIP_RGB_FLAG>
 class RingRendererBase : public ::Effekseer::RingRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
@@ -76,19 +76,19 @@ protected:
 	{
 		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
 		{
-			Rendering_Internal<DynamicVertex>(param, inst, nullptr, camera);
+			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 		{
-			Rendering_Internal<LightingVertex>(param, inst, nullptr, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{
-			Rendering_Internal<VERTEX_DISTORTION>(param, inst, nullptr, camera);
+			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 		else
 		{
-			Rendering_Internal<VERTEX_NORMAL>(param, inst, nullptr, camera);
+			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 	}
 
@@ -201,40 +201,12 @@ protected:
 		}
 	}
 
-	enum class VertexType
-	{
-		Normal,
-		Distortion,
-		Dynamic,
-		Lighting,
-	};
-
-	VertexType GetVertexType(const VERTEX_NORMAL* v)
-	{
-		return VertexType::Normal;
-	}
-
-	VertexType GetVertexType(const VERTEX_DISTORTION* v)
-	{
-		return VertexType::Distortion;
-	}
-
-	VertexType GetVertexType(const DynamicVertex* v)
-	{
-		return VertexType::Dynamic;
-	}
-
-	VertexType GetVertexType(const LightingVertex* v)
-	{
-		return VertexType::Lighting;
-	}
-
 	bool CanSingleRendering()
 	{
 		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default;
 	}
 
-	template <typename VERTEX>
+	template <typename VERTEX, bool FLIP_RGB>
 	void Rendering_Internal(const efkRingNodeParam& parameter,
 							const efkRingInstanceParam& instanceParameter,
 							void* userData,
@@ -451,36 +423,36 @@ protected:
 
 			StrideView<VERTEX> v(&verteies[i], stride_, 8);
 			v[0].Pos = ToStruct(outerCurrent);
-			v[0].SetColor(outerColor);
+			v[0].SetColor(outerColor, FLIP_RGB);
 			v[0].UV[0] = uv0Current;
 			v[0].UV[1] = uv0v1;
 
 			v[1].Pos = ToStruct(centerCurrent);
-			v[1].SetColor(centerColor);
+			v[1].SetColor(centerColor, FLIP_RGB);
 			v[1].UV[0] = uv0Current;
 			v[1].UV[1] = uv0v2;
 
 			v[2].Pos = ToStruct(outerNext);
-			v[2].SetColor(outerColorNext);
+			v[2].SetColor(outerColorNext, FLIP_RGB);
 			v[2].UV[0] = uv0texNext;
 			v[2].UV[1] = uv0v1;
 
 			v[3].Pos = ToStruct(centerNext);
-			v[3].SetColor(centerColorNext);
+			v[3].SetColor(centerColorNext, FLIP_RGB);
 			v[3].UV[0] = uv0texNext;
 			v[3].UV[1] = uv0v2;
 
 			v[4] = v[1];
 
 			v[5].Pos = ToStruct(innerCurrent);
-			v[5].SetColor(innerColor);
+			v[5].SetColor(innerColor, FLIP_RGB);
 			v[5].UV[0] = uv0Current;
 			v[5].UV[1] = uv0v3;
 
 			v[6] = v[3];
 
 			v[7].Pos = ToStruct(innerNext);
-			v[7].SetColor(innerColorNext);
+			v[7].SetColor(innerColorNext, FLIP_RGB);
 			v[7].UV[0] = uv0texNext;
 			v[7].UV[1] = uv0v3;
 
@@ -570,7 +542,7 @@ protected:
 			// distortion
 			if (vertexType == VertexType::Distortion)
 			{
-				StrideView<VERTEX_DISTORTION> vs(&verteies[i], stride_, 8);
+				StrideView<VertexDistortion> vs(&verteies[i], stride_, 8);
 				auto binormalCurrent = v[5].Pos - v[0].Pos;
 				auto binormalNext = v[7].Pos - v[2].Pos;
 

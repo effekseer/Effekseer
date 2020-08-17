@@ -449,7 +449,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 	Release();
 
 	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_distortion);
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this, m_shader, m_shader_distortion);
 
 	GetImpl()->CreateProxyTextures(this);
 
@@ -696,7 +696,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::SpriteRenderer* RendererImplemented::CreateSpriteRenderer()
 {
-	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, true>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -704,7 +704,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::RibbonRenderer* RendererImplemented::CreateRibbonRenderer()
 {
-	return new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, true>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -712,7 +712,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::RingRenderer* RendererImplemented::CreateRingRenderer()
 {
-	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, true>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -728,7 +728,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::TrackRenderer* RendererImplemented::CreateTrackRenderer()
 {
-	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, true>(this);
 }
 
 //----------------------------------------------------------------------------------

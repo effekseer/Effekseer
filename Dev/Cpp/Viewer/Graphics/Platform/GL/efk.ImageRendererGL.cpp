@@ -137,7 +137,7 @@ void ImageRendererGL::Draw(const Effekseer::Vector3D positions[],
 		s.Verteies[i].Pos = positions[i];
 		s.Verteies[i].UV[0] = uvs[i].X;
 		s.Verteies[i].UV[1] = uvs[i].Y;
-		s.Verteies[i].SetColor(colors[i]);
+		s.Verteies[i].SetColor(colors[i], false);
 	}
 
 	s.TexturePtr = texturePtr;

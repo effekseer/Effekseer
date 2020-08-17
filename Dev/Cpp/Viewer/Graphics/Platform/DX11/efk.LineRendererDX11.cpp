@@ -70,11 +70,11 @@ void LineRendererDX11::DrawLine(const Effekseer::Vector3D& p1, const Effekseer::
 {
 	EffekseerRendererDX11::Vertex v0;
 	v0.Pos = p1;
-	v0.SetColor(c);
+	v0.SetColor(c, false);
 
 	EffekseerRendererDX11::Vertex v1;
 	v1.Pos = p2;
-	v1.SetColor(c);
+	v1.SetColor(c, false);
 
 	vertexies.push_back(v0);
 	vertexies.push_back(v1);

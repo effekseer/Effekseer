@@ -126,11 +126,11 @@ void LineRendererGL::DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Ve
 {
 	EffekseerRendererGL::Vertex v0;
 	v0.Pos = p1;
-	v0.SetColor(c);
+	v0.SetColor(c, false);
 
 	EffekseerRendererGL::Vertex v1;
 	v1.Pos = p2;
-	v1.SetColor(c);
+	v1.SetColor(c, false);
 
 	vertexies.push_back(v0);
 	vertexies.push_back(v1);

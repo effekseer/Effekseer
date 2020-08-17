@@ -19,8 +19,8 @@
 namespace EffekseerRendererDX9
 {
 
-using Vertex = EffekseerRenderer::SimpleVertexDX9;
-using VertexDistortion = EffekseerRenderer::VertexDistortionDX9;
+using Vertex = EffekseerRenderer::SimpleVertex;
+using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 /**
 	@brief	描画クラス
@@ -44,7 +44,7 @@ private:
 	Shader* m_shader_lighting = nullptr;
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
 	::Effekseer::Matrix44 m_proj;
 	::Effekseer::Matrix44 m_camera;
@@ -228,7 +228,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer()
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
 		return m_standardRenderer;
 	}

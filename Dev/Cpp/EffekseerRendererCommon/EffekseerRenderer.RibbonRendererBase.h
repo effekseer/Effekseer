@@ -28,7 +28,7 @@ typedef ::Effekseer::RibbonRenderer::NodeParameter efkRibbonNodeParam;
 typedef ::Effekseer::RibbonRenderer::InstanceParameter efkRibbonInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template <typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
+template <typename RENDERER, bool FLIP_RGB_FLAG>
 class RibbonRendererBase : public ::Effekseer::RibbonRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 private:
@@ -49,34 +49,6 @@ protected:
 
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
-
-	enum class VertexType
-	{
-		Normal,
-		Distortion,
-		Dynamic,
-		Lighting,
-	};
-
-	VertexType GetVertexType(const VERTEX_NORMAL* v)
-	{
-		return VertexType::Normal;
-	}
-
-	VertexType GetVertexType(const VERTEX_DISTORTION* v)
-	{
-		return VertexType::Distortion;
-	}
-
-	VertexType GetVertexType(const DynamicVertex* v)
-	{
-		return VertexType::Dynamic;
-	}
-
-	VertexType GetVertexType(const LightingVertex* v)
-	{
-		return VertexType::Lighting;
-	}
 
 	template <typename VERTEX, int TARGET>
 	void AssignUV(StrideView<VERTEX> v, float uvX1, float uvX2, float uvY1, float uvY2)
@@ -409,7 +381,7 @@ protected:
 		}
 	}
 
-	template <typename VERTEX>
+	template <typename VERTEX, bool FLIP_RGB>
 	void RenderSplines(const ::Effekseer::Mat44f& camera)
 	{
 		if (instances.size() == 0)
@@ -535,8 +507,8 @@ protected:
 					verteies[0].Pos = ToStruct(spline_left.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
 					verteies[1].Pos = ToStruct(spline_right.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
 
-					verteies[0].SetColor(Effekseer::Color::Lerp(param.Colors[0], param.Colors[2], percent_instance));
-					verteies[1].SetColor(Effekseer::Color::Lerp(param.Colors[1], param.Colors[3], percent_instance));
+					verteies[0].SetColor(Effekseer::Color::Lerp(param.Colors[0], param.Colors[2], percent_instance), FLIP_RGB);
+					verteies[1].SetColor(Effekseer::Color::Lerp(param.Colors[1], param.Colors[3], percent_instance), FLIP_RGB);
 				}
 				else
 				{
@@ -545,7 +517,7 @@ protected:
 						verteies[i].Pos.X = param.Positions[i];
 						verteies[i].Pos.Y = 0.0f;
 						verteies[i].Pos.Z = 0.0f;
-						verteies[i].SetColor(param.Colors[i]);
+						verteies[i].SetColor(param.Colors[i], FLIP_RGB);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 						verteies[i].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
@@ -690,7 +662,7 @@ protected:
 		// Apply distortion
 		if (vertexType == VertexType::Distortion)
 		{
-			StrideView<VERTEX_DISTORTION> vs_(m_ringBufferData, stride_, vertexCount_);
+			StrideView<VertexDistortion> vs_(m_ringBufferData, stride_, vertexCount_);
 			Effekseer::Vec3f axisBefore;
 
 			for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
@@ -892,23 +864,23 @@ protected:
 		if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
 			parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 		{
-			Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 		{
-			Rendering_Internal<LightingVertex>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{
-			Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{
-			Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 	}
 
-	template <typename VERTEX>
+	template <typename VERTEX, bool FLIP_RGB>
 	void Rendering_Internal(const efkRibbonNodeParam& parameter,
 							const efkRibbonInstanceParam& instanceParameter,
 							void* userData,
@@ -935,7 +907,7 @@ protected:
 
 		if (isLast)
 		{
-			RenderSplines<VERTEX>(camera);
+			RenderSplines<VERTEX, FLIP_RGB>(camera);
 		}
 	}
 

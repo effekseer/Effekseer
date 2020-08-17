@@ -449,7 +449,7 @@ struct StandardRendererState
 	}
 };
 
-template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION>
+template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
 private:
@@ -656,11 +656,11 @@ public:
 		}
 		else if (isDistortionMode_)
 		{
-			stride = (int32_t)sizeof(VERTEX_DISTORTION);
+			stride = (int32_t)sizeof(VertexDistortion);
 		}
 		else
 		{
-			stride = (int32_t)sizeof(VERTEX);
+			stride = (int32_t)sizeof(SimpleVertex);
 		}
 		return stride;
 	}
