@@ -546,7 +546,7 @@ bool RendererImplemented::Initialize()
 	m_vao_wire_frame = VertexArray::Create(this, m_shader, GetVertexBuffer(), m_indexBufferForWireframe, false);
 
 	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_distortion);
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this, m_shader, m_shader_distortion);
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
@@ -803,7 +803,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 ::Effekseer::SpriteRenderer* RendererImplemented::CreateSpriteRenderer()
 {
-	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, false>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -811,7 +811,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 ::Effekseer::RibbonRenderer* RendererImplemented::CreateRibbonRenderer()
 {
-	return new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, false>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -819,7 +819,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 ::Effekseer::RingRenderer* RendererImplemented::CreateRingRenderer()
 {
-	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, false>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -835,7 +835,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 ::Effekseer::TrackRenderer* RendererImplemented::CreateTrackRenderer()
 {
-	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this);
 }
 
 //----------------------------------------------------------------------------------

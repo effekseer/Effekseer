@@ -58,7 +58,7 @@ private:
 	Shader* m_shader_lighting = nullptr;
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
 	VertexArray* m_vao = nullptr;
 	VertexArray* m_vao_distortion = nullptr;
@@ -191,7 +191,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer()
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
 		return m_standardRenderer;
 	}

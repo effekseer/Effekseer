@@ -28,7 +28,7 @@ typedef ::Effekseer::TrackRenderer::NodeParameter efkTrackNodeParam;
 typedef ::Effekseer::TrackRenderer::InstanceParameter efkTrackInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template <typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
+template <typename RENDERER, bool FLIP_RGB_FLAG>
 class TrackRendererBase : public ::Effekseer::TrackRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
@@ -47,34 +47,6 @@ protected:
 
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
-
-	enum class VertexType
-	{
-		Normal,
-		Distortion,
-		Dynamic,
-		Lighting,
-	};
-
-	VertexType GetVertexType(const VERTEX_NORMAL* v)
-	{
-		return VertexType::Normal;
-	}
-
-	VertexType GetVertexType(const VERTEX_DISTORTION* v)
-	{
-		return VertexType::Distortion;
-	}
-
-	VertexType GetVertexType(const DynamicVertex* v)
-	{
-		return VertexType::Dynamic;
-	}
-
-	VertexType GetVertexType(const LightingVertex* v)
-	{
-		return VertexType::Lighting;
-	}
 
 	template <typename VERTEX, int TARGET>
 	void AssignUV(StrideView<VERTEX>& v, float uvX1, float uvX2, float uvX3, float uvY1, float uvY2)
@@ -505,7 +477,7 @@ protected:
 		}
 	}
 
-	template <typename VERTEX>
+	template <typename VERTEX, bool FLIP_RGB>
 	void RenderSplines(const ::Effekseer::Mat44f& camera)
 	{
 		if (instances.size() == 0)
@@ -655,17 +627,17 @@ protected:
 				v[0].Pos.X = (-size / 2.0f) * s.GetX();
 				v[0].Pos.Y = 0.0f;
 				v[0].Pos.Z = 0.0f;
-				v[0].SetColor(leftColor);
+				v[0].SetColor(leftColor, FLIP_RGB);
 
 				v[1].Pos.X = 0.0f;
 				v[1].Pos.Y = 0.0f;
 				v[1].Pos.Z = 0.0f;
-				v[1].SetColor(centerColor);
+				v[1].SetColor(centerColor, FLIP_RGB);
 
 				v[2].Pos.X = (size / 2.0f) * s.GetX();
 				v[2].Pos.Y = 0.0f;
 				v[2].Pos.Z = 0.0f;
-				v[2].SetColor(rightColor);
+				v[2].SetColor(rightColor, FLIP_RGB);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				v[0].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
@@ -809,9 +781,9 @@ protected:
 
 				if (vertexType == VertexType::Distortion)
 				{
-					auto vl_ = (VERTEX_DISTORTION*)(&vl);
-					auto vm_ = (VERTEX_DISTORTION*)(&vm);
-					auto vr_ = (VERTEX_DISTORTION*)(&vr);
+					auto vl_ = (VertexDistortion*)(&vl);
+					auto vm_ = (VertexDistortion*)(&vm);
+					auto vr_ = (VertexDistortion*)(&vr);
 
 					vl_->Binormal = vm_->Binormal = vr_->Binormal = ToStruct(axis);
 
@@ -958,23 +930,23 @@ protected:
 
 		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
 		{
-			Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 		{
-			Rendering_Internal<LightingVertex>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{
-			Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{
-			Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 	}
 
-	template <typename VERTEX>
+	template <typename VERTEX, bool FLIP_RGB>
 	void Rendering_Internal(const efkTrackNodeParam& parameter,
 							const efkTrackInstanceParam& instanceParameter,
 							void* userData,
@@ -1001,7 +973,7 @@ protected:
 
 		if (isLast)
 		{
-			RenderSplines<VERTEX>(camera);
+			RenderSplines<VERTEX, FLIP_RGB>(camera);
 		}
 	}
 

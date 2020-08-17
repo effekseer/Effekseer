@@ -30,7 +30,7 @@ typedef ::Effekseer::SpriteRenderer::NodeParameter efkSpriteNodeParam;
 typedef ::Effekseer::SpriteRenderer::InstanceParameter efkSpriteInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template <typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
+template <typename RENDERER, bool FLIP_RGB_FLAG>
 class SpriteRendererBase : public ::Effekseer::SpriteRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
@@ -72,19 +72,19 @@ protected:
 	{
 		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
 		{
-			Rendering_Internal<DynamicVertex>(param, inst, nullptr, camera);
+			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 		{
-			Rendering_Internal<LightingVertex>(param, inst, nullptr, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{
-			Rendering_Internal<VERTEX_DISTORTION>(param, inst, nullptr, camera);
+			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 		else
 		{
-			Rendering_Internal<VERTEX_NORMAL>(param, inst, nullptr, camera);
+			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
 		}
 	}
 
@@ -183,35 +183,7 @@ protected:
 		}
 	}
 
-	enum class VertexType
-	{
-		Normal,
-		Distortion,
-		Dynamic,
-		Lightning,
-	};
-
-	VertexType GetVertexType(const VERTEX_NORMAL* v)
-	{
-		return VertexType::Normal;
-	}
-
-	VertexType GetVertexType(const VERTEX_DISTORTION* v)
-	{
-		return VertexType::Distortion;
-	}
-
-	VertexType GetVertexType(const DynamicVertex* v)
-	{
-		return VertexType::Dynamic;
-	}
-
-	VertexType GetVertexType(const LightingVertex* v)
-	{
-		return VertexType::Lightning;
-	}
-
-	template <typename VERTEX>
+	template <typename VERTEX, bool FLIP_RGB>
 	void Rendering_Internal(const efkSpriteNodeParam& parameter,
 							const efkSpriteInstanceParam& instanceParameter,
 							void* userData,
@@ -230,7 +202,7 @@ protected:
 			verteies[i].Pos.Y = instanceParameter.Positions[i].GetY();
 			verteies[i].Pos.Z = 0.0f;
 
-			verteies[i].SetColor(instanceParameter.Colors[i]);
+			verteies[i].SetColor(instanceParameter.Colors[i], FLIP_RGB);
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			verteies[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
@@ -315,7 +287,7 @@ protected:
 		// distortion
 		if (vertexType == VertexType::Distortion)
 		{
-			StrideView<VERTEX_DISTORTION> vs(verteies.pointerOrigin_, stride_, 4);
+			StrideView<VertexDistortion> vs(verteies.pointerOrigin_, stride_, 4);
 			for (auto i = 0; i < 4; i++)
 			{
 				vs[i].Tangent.X = 1.0f;
@@ -326,7 +298,7 @@ protected:
 				vs[i].Binormal.Z = 0.0f;
 			}
 		}
-		else if (vertexType == VertexType::Lightning || vertexType == VertexType::Dynamic)
+		else if (vertexType == VertexType::Lighting || vertexType == VertexType::Dynamic)
 		{
 			StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 			vs[0].SetUV2(0.0f, 1.0f);
@@ -376,7 +348,7 @@ protected:
 
 			TransformVertexes(verteies, 4, mat_rot);
 
-			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lightning)
+			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 			{
 				if (!parameter.IsRightHand)
 				{
@@ -417,7 +389,7 @@ protected:
 				// distortion
 				if (vertexType == VertexType::Distortion)
 				{
-					auto vs = (VERTEX_DISTORTION*)&verteies[i];
+					auto vs = (VertexDistortion*)&verteies[i];
 
 					::Effekseer::Vec3f t = mat.GetTranslation();
 
@@ -429,7 +401,7 @@ protected:
 					Binormal = ::Effekseer::Vec3f::Transform(Binormal, mat) - t;
 					::Effekseer::Vec3f::Store(&vs->Binormal, Binormal);
 				}
-				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lightning)
+				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 				{
 					StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());

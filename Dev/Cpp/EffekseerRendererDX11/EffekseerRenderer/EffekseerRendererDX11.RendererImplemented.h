@@ -87,7 +87,7 @@ private:
 	Shader* m_shader_lighting = nullptr;
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
 	// 座標系
 	::Effekseer::CoordinateSystem m_coordinateSystem;
@@ -218,7 +218,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer()
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
 		return m_standardRenderer;
 	}

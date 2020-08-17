@@ -72,7 +72,7 @@ protected:
 
 	bool isReversedDepth_ = false;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
 	::Effekseer::CoordinateSystem m_coordinateSystem;
 
@@ -206,7 +206,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer()
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
 		return m_standardRenderer;
 	}
