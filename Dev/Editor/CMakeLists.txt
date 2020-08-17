@@ -28,6 +28,7 @@ list(APPEND files_core
     EffekseerCore/IO/EfkEfc.cs
     EffekseerCore/Utils/ResourceCache.cs
     EffekseerCore/Utils/CsvReader.cs
+    EffekseerCore/Utils/ProjectVersionUpdater.cs
 )
 
 add_library(EffekseerCore

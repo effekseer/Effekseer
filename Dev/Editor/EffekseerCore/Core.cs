@@ -896,115 +896,19 @@ namespace Effekseer
 				replace(doc);
 			}
 
-			{
-				Action<System.Xml.XmlNode> replace = null;
-				replace = (node) =>
-				{
-					if ((node.Name == "RenderCommon") && node.ChildNodes.Count > 0)
-					{
-						if(node["Distortion"] != null && node["Distortion"].GetText() == "True")
-						{
-							node.RemoveChild(node["Material"]);
-							node.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
-						}
-					}
-					else
-					{
-						for (int i = 0; i < node.ChildNodes.Count; i++)
-						{
-							replace(node.ChildNodes[i]);
-						}
-					}
-				};
-
-				replace(doc);
-			}
-
 			if (toolVersion < ParseVersion("1.50"))
 			{
-				List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
-
-				Action<System.Xml.XmlNode> collectNodes = null;
-				collectNodes = (node) =>
-				{
-					if (node.Name == "Node")
-					{
-						nodes.Add(node);
-					}
-
-					for (int i = 0; i < node.ChildNodes.Count; i++)
-					{
-						collectNodes(node.ChildNodes[i]);
-					}
-				};
-
-				collectNodes(doc);
-
-				foreach(var node in nodes)
-				{
-					var rendererCommon = node["RendererCommonValues"];
-					var renderer = node["DrawingValues"];
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["Lighting"] == null || renderer["Model"]["Lighting"].GetText() == "True")
-							{
-								if (node["Material"] != null)
-								{
-									rendererCommon.RemoveChild(node["Material"]);
-								}
-
-								rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.Lighting));
-							}
-						}
-					}
-
-					if (rendererCommon != null)
-					{
-						if (rendererCommon["Distortion"] != null && rendererCommon["Distortion"].GetText() == "True")
-						{
-							if(node["Material"] != null)
-							{
-								rendererCommon.RemoveChild(node["Material"]);
-							}
-
-							rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
-						}
-					}
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["NormalTexture"] != null)
-							{
-								if(rendererCommon["Filter"] != null)
-								{
-									rendererCommon.AppendChild(doc.CreateTextElement("Filter2", rendererCommon["Filter"].GetText()));
-								}
-
-								if (rendererCommon["Wrap"] != null)
-								{
-									rendererCommon.AppendChild(doc.CreateTextElement("Wrap2", rendererCommon["Wrap"].GetText()));
-								}
-							}
-						}
-					}
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["NormalTexture"] != null)
-							{
-								rendererCommon.AppendChild(doc.CreateTextElement("NormalTexture", renderer["Model"]["NormalTexture"].GetText()));
-							}
-						}
-					}
-				}
+				var updater = new Utils.ProjectVersionUpdator14xTo15x();
+				updater.Update(doc);
 			}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			if (toolVersion < ParseVersion("1.60"))
+			{
+				var updater = new Utils.ProjectVersionUpdator15xTo16x();
+				updater.Update(doc);
+			}
+#endif
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -1105,100 +1009,18 @@ namespace Effekseer
 
 			if (toolVersion < ParseVersion("1.50"))
 			{
-				Action<Data.NodeBase> convert = null;
-				convert = (n) =>
-				{
-					var n_ = n as Data.Node;
-
-					if (n_ != null && n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring)
-					{
-						var rp = n_.DrawingValues.Ring;
-						if (rp.ViewingAngle.Value != Data.RendererValues.RingParamater.ViewingAngleType.Fixed ||
-							rp.ViewingAngle_Fixed.Value != 360)
-						{
-							var rc = rp.RingShape.Crescent;
-							rp.RingShape.Type.SetValue(Data.RingShapeType.Crescent);
-							rc.StartingAngle.SetValue((Data.FixedRandomEasingType)(int)rp.ViewingAngle.Value);
-							rc.EndingAngle.SetValue((Data.FixedRandomEasingType)(int)rp.ViewingAngle.Value);
-
-							rc.StartingAngle_Fixed.SetValue((360 - rp.ViewingAngle_Fixed.Value) / 2 + 90);
-							rc.EndingAngle_Fixed.SetValue(360 - (360 - rp.ViewingAngle_Fixed.Value) / 2 + 90);
-
-							rc.StartingAngle_Random.SetMax((360 - rp.ViewingAngle_Random.Min) / 2 + 90);
-							rc.StartingAngle_Random.SetMin((360 - rp.ViewingAngle_Random.Max) / 2 + 90);
-
-							rc.EndingAngle_Random.SetMax(360 - (360 - rp.ViewingAngle_Random.Max) / 2 + 90);
-							rc.EndingAngle_Random.SetMin(360 - (360 - rp.ViewingAngle_Random.Min) / 2 + 90);
-
-							rc.StartingAngle_Easing.Start.SetMax((360 - rp.ViewingAngle_Easing.Start.Min) / 2 + 90);
-							rc.StartingAngle_Easing.Start.SetMin((360 - rp.ViewingAngle_Easing.Start.Max) / 2 + 90);
-							rc.StartingAngle_Easing.End.SetMax((360 - rp.ViewingAngle_Easing.End.Min) / 2 + 90);
-							rc.StartingAngle_Easing.End.SetMin((360 - rp.ViewingAngle_Easing.End.Max) / 2 + 90);
-
-							rc.EndingAngle_Easing.Start.SetMax(360 - (360 - rp.ViewingAngle_Easing.Start.Max) / 2 + 90);
-							rc.EndingAngle_Easing.Start.SetMin(360 - (360 - rp.ViewingAngle_Easing.Start.Min) / 2 + 90);
-							rc.EndingAngle_Easing.End.SetMax(360 - (360 - rp.ViewingAngle_Easing.End.Max) / 2 + 90);
-							rc.EndingAngle_Easing.End.SetMin(360 - (360 - rp.ViewingAngle_Easing.End.Min) / 2 + 90);
-						}
-					}
-
-					for (int i = 0; i < n.Children.Count; i++)
-					{
-						convert(n.Children[i]);
-					}
-				};
-
-				convert(root_node);
+				var updater = new Utils.ProjectVersionUpdator14xTo15x();
+				updater.Update(root_node);
 			}
 
-			if (toolVersion < ParseVersion("1.50"))
+#if __EFFEKSEER_BUILD_VERSION16__
+			if (toolVersion < ParseVersion("1.60"))
 			{
-				// Fcurve
-				var fcurves = GetFCurveParameterNode();
-
-				Action<ParameterTreeNode> convert = null;
-				convert = (n) =>
-				{
-					foreach (var fcurve in n.Parameters)
-					{
-						var fcurve2 = fcurve.Item2 as Data.Value.FCurveVector2D;
-						var fcurve3 = fcurve.Item2 as Data.Value.FCurveVector3D;
-						var fcurvecolor = fcurve.Item2 as Data.Value.FCurveColorRGBA;
-
-						if (fcurve2 != null)
-						{
-							fcurve2.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
-							if (!fcurve2.X.Sampling.IsValueAssigned) fcurve2.X.Sampling.SetValue(5);
-							if (!fcurve2.Y.Sampling.IsValueAssigned) fcurve2.Y.Sampling.SetValue(5);
-						}
-
-						if (fcurve3 != null)
-						{
-							fcurve3.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
-							if (!fcurve3.X.Sampling.IsValueAssigned) fcurve3.X.Sampling.SetValue(5);
-							if (!fcurve3.Y.Sampling.IsValueAssigned) fcurve3.Y.Sampling.SetValue(5);
-							if (!fcurve3.Z.Sampling.IsValueAssigned) fcurve3.Z.Sampling.SetValue(5);
-						}
-
-						if (fcurvecolor != null)
-						{
-							fcurvecolor.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
-							if (!fcurvecolor.R.Sampling.IsValueAssigned) fcurvecolor.R.Sampling.SetValue(5);
-							if (!fcurvecolor.G.Sampling.IsValueAssigned) fcurvecolor.G.Sampling.SetValue(5);
-							if (!fcurvecolor.B.Sampling.IsValueAssigned) fcurvecolor.B.Sampling.SetValue(5);
-							if (!fcurvecolor.A.Sampling.IsValueAssigned) fcurvecolor.A.Sampling.SetValue(5);
-						}
-					}
-
-					foreach(var c in n.Children)
-					{
-						convert(c);
-					}
-				};
-
-				convert(fcurves);
+				var updater = new Utils.ProjectVersionUpdator15xTo16x();
+				updater.Update(root_node);
 			}
-			
+#endif
+
 			Command.CommandManager.Clear();
 			IsChanged = false;
 
@@ -1511,8 +1333,9 @@ namespace Effekseer
 		/// <summary>
 		/// Collect nodes contains enabled FCurve
 		/// </summary>
+		/// <param name="targetNode"></param>
 		/// <returns></returns>
-		public static Utl.ParameterTreeNode GetFCurveParameterNode()
+		public static Utl.ParameterTreeNode GetFCurveParameterNode(Data.NodeBase targetNode)
 		{
 			// not smart
 
@@ -1752,7 +1575,7 @@ namespace Effekseer
 				};
 
 
-			return getParameterTreeNodes(Root);
+			return getParameterTreeNodes(targetNode);
 		}
 
 		/// <summary>

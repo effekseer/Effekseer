@@ -694,7 +694,7 @@ namespace Effekseer.GUI.Dock
 
 		void OnChanged()
 		{
-			var paramTreeNodes = Core.GetFCurveParameterNode();
+			var paramTreeNodes = Core.GetFCurveParameterNode(Core.Root);
 			SetParameters(paramTreeNodes);
 		}
 
