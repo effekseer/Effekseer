@@ -66,6 +66,11 @@ varying vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_FBNextIndex_UV;
 varying vec2 _VSPS_Others;
 
+float IntMod(float x, float y)
+{
+    return floor(mod(x, y));
+}
+
 vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
     return vec2(1.0) / vec2(DivideX, DivideY);
@@ -73,12 +78,14 @@ vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 
 vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, float DivideY)
 {
+    float param = FlipbookIndex;
+    float param_1 = DivideX;
     vec2 DivideIndex;
-    DivideIndex.x = float(int(FlipbookIndex) % int(DivideX));
+    DivideIndex.x = IntMod(param, param_1);
     DivideIndex.y = float(int(FlipbookIndex) / int(DivideX));
-    float param = DivideX;
-    float param_1 = DivideY;
-    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param, param_1);
+    float param_2 = DivideX;
+    float param_3 = DivideY;
+    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param_2, param_3);
     vec2 UVOffset = DivideIndex * FlipbookOneSize;
     vec2 OriginUV = FlipbookUV - UVOffset;
     OriginUV *= vec2(DivideX, DivideY);
@@ -87,12 +94,14 @@ vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, fl
 
 vec2 GetFlipbookUVForIndex(vec2 OriginUV, float Index, float DivideX, float DivideY)
 {
+    float param = Index;
+    float param_1 = DivideX;
     vec2 DivideIndex;
-    DivideIndex.x = float(int(Index) % int(DivideX));
+    DivideIndex.x = IntMod(param, param_1);
     DivideIndex.y = float(int(Index) / int(DivideX));
-    float param = DivideX;
-    float param_1 = DivideY;
-    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param, param_1);
+    float param_2 = DivideX;
+    float param_3 = DivideY;
+    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param_2, param_3);
     return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
 }
 
@@ -555,6 +564,11 @@ varying vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_FBNextIndex_UV;
 varying vec2 _VSPS_Others;
 
+float IntMod(float x, float y)
+{
+    return floor(mod(x, y));
+}
+
 vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
     return vec2(1.0) / vec2(DivideX, DivideY);
@@ -562,12 +576,14 @@ vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 
 vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, float DivideY)
 {
+    float param = FlipbookIndex;
+    float param_1 = DivideX;
     vec2 DivideIndex;
-    DivideIndex.x = float(int(FlipbookIndex) % int(DivideX));
+    DivideIndex.x = IntMod(param, param_1);
     DivideIndex.y = float(int(FlipbookIndex) / int(DivideX));
-    float param = DivideX;
-    float param_1 = DivideY;
-    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param, param_1);
+    float param_2 = DivideX;
+    float param_3 = DivideY;
+    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param_2, param_3);
     vec2 UVOffset = DivideIndex * FlipbookOneSize;
     vec2 OriginUV = FlipbookUV - UVOffset;
     OriginUV *= vec2(DivideX, DivideY);
@@ -576,12 +592,14 @@ vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, fl
 
 vec2 GetFlipbookUVForIndex(vec2 OriginUV, float Index, float DivideX, float DivideY)
 {
+    float param = Index;
+    float param_1 = DivideX;
     vec2 DivideIndex;
-    DivideIndex.x = float(int(Index) % int(DivideX));
+    DivideIndex.x = IntMod(param, param_1);
     DivideIndex.y = float(int(Index) / int(DivideX));
-    float param = DivideX;
-    float param_1 = DivideY;
-    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param, param_1);
+    float param_2 = DivideX;
+    float param_3 = DivideY;
+    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param_2, param_3);
     return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
 }
 

@@ -1,4 +1,11 @@
 
+#ifdef __OPENGL2__
+float IntMod(float x, float y)
+{
+	return floor(fmod(x, y));
+}
+#endif
+
 float2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
     return (float2(1.0, 1.0) / float2(DivideX, DivideY));
@@ -7,8 +14,13 @@ float2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 float2 GetFlipbookOriginUV(float2 FlipbookUV, float FlipbookIndex, float DivideX, float DivideY)
 {
     float2 DivideIndex;
-    DivideIndex.x = int(FlipbookIndex) % int(DivideX);
-    DivideIndex.y = int(FlipbookIndex) / int(DivideX);
+
+#ifdef __OPENGL2__
+	DivideIndex.x = IntMod(FlipbookIndex, DivideX);
+#else
+	DivideIndex.x = int(FlipbookIndex) % int(DivideX);
+#endif
+	DivideIndex.y = int(FlipbookIndex) / int(DivideX);
 
     float2 FlipbookOneSize = GetFlipbookOneSizeUV(DivideX, DivideY);
     float2 UVOffset = DivideIndex * FlipbookOneSize;
@@ -22,7 +34,11 @@ float2 GetFlipbookOriginUV(float2 FlipbookUV, float FlipbookIndex, float DivideX
 float2 GetFlipbookUVForIndex(float2 OriginUV, float Index, float DivideX, float DivideY)
 {
     float2 DivideIndex;
-    DivideIndex.x = int(Index) % int(DivideX);
+#ifdef __OPENGL2__
+	DivideIndex.x = IntMod(Index, DivideX);
+#else
+	DivideIndex.x = int(Index) % int(DivideX);
+#endif
     DivideIndex.y = int(Index) / int(DivideX);
 
     float2 FlipbookOneSize = GetFlipbookOneSizeUV(DivideX, DivideY);

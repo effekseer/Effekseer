@@ -38,6 +38,7 @@ except:
 
 dx9_common_flags = ['-D', '__INST__', '10']
 llgi_common_flags = ['-D', '__INST__', '1']
+gl2_common_flags = ['-D', 'DISABLE_INSTANCE', '1', '-D', '__OPENGL__', '1', '-D', '__OPENGL2__', '1', '--plain']
 gl_common_flags = ['-D', 'DISABLE_INSTANCE', '1', '-D', '__OPENGL__', '1', '--plain']
 
 # DX9
@@ -80,11 +81,11 @@ for f in (frags):
 # OpenGL
 for f in (verts):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '120', '--input', f, '--output', gl_2_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '120', '--input', f, '--output', gl_2_root_path + os.path.basename(f)] + gl2_common_flags)
 
 for f in (frags):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '120', '--input', f, '--output', gl_2_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '120', '--input', f, '--output', gl_2_root_path + os.path.basename(f)] + gl2_common_flags)
 
 for f in (verts):
     print('Converting {}'.format(f))
@@ -96,11 +97,11 @@ for f in (frags):
 
 for f in (verts):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--es', '--sm', '200', '--input', f, '--output', gl_es2_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--es', '--sm', '200', '--input', f, '--output', gl_es2_root_path + os.path.basename(f)] + gl2_common_flags)
 
 for f in (frags):
     print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--es', '--sm', '200', '--input', f, '--output', gl_es2_root_path + os.path.basename(f)] + gl_common_flags)
+    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--es', '--sm', '200', '--input', f, '--output', gl_es2_root_path + os.path.basename(f)] + gl2_common_flags)
 
 for f in (verts):
     print('Converting {}'.format(f))
