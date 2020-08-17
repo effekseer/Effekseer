@@ -179,6 +179,7 @@
     <Compile Include="Utils\CsvReader.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\Misc.cs" />
+    <Compile Include="Utils\ProjectVersionUpdater.cs" />
     <Compile Include="Utils\ResourceCache.cs" />
     <Compile Include="Utils\Zlib.cs" />
     <Compile Include="Utl\BinaryReader.cs" />
