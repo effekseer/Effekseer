@@ -376,32 +376,40 @@ static int32_t GetMaximumVertexSizeInAllTypes()
 	return static_cast<int32_t>(size);
 };
 
-enum class VertexType
+template <typename T>
+inline bool IsDistortionVertex()
 {
-	Normal,
-	Distortion,
-	Dynamic,
-	Lighting,
-};
-
-inline VertexType GetVertexType(const SimpleVertex* v)
-{
-	return VertexType::Normal;
+	return false;
 }
 
-inline VertexType GetVertexType(const VertexDistortion* v)
+template <>
+inline bool IsDistortionVertex<VertexDistortion>()
 {
-	return VertexType::Distortion;
+	return true;
 }
 
-inline VertexType GetVertexType(const DynamicVertex* v)
+template <typename T>
+inline bool IsDynamicVertex()
 {
-	return VertexType::Dynamic;
+	return false;
 }
 
-inline VertexType GetVertexType(const LightingVertex* v)
+template <>
+inline bool IsDynamicVertex<DynamicVertex>()
 {
-	return VertexType::Lighting;
+	return true;
+}
+
+template <typename T>
+inline bool IsLightingVertex()
+{
+	return false;
+}
+
+template <>
+inline bool IsLightingVertex<LightingVertex>()
+{
+	return true;
 }
 
 /**

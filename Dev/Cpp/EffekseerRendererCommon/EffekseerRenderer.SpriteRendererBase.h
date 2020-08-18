@@ -194,8 +194,6 @@ protected:
 
 		StrideView<VERTEX> verteies(m_ringBufferData, stride_, 4);
 
-		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
-
 		for (int i = 0; i < 4; i++)
 		{
 			verteies[i].Pos.X = instanceParameter.Positions[i].GetX();
@@ -285,7 +283,7 @@ protected:
 #endif
 
 		// distortion
-		if (vertexType == VertexType::Distortion)
+		if (IsDistortionVertex<VERTEX>())
 		{
 			StrideView<VertexDistortion> vs(verteies.pointerOrigin_, stride_, 4);
 			for (auto i = 0; i < 4; i++)
@@ -294,7 +292,7 @@ protected:
 				vs[i].SetBinormal(Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 			}
 		}
-		else if (vertexType == VertexType::Lighting || vertexType == VertexType::Dynamic)
+		else if (IsLightingVertex<VERTEX>() || IsDynamicVertex<VERTEX>())
 		{
 			StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 			vs[0].SetUV2(0.0f, 1.0f);
@@ -344,7 +342,7 @@ protected:
 
 			TransformVertexes(verteies, 4, mat_rot);
 
-			if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+			if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 			{
 				if (!parameter.IsRightHand)
 				{
@@ -383,7 +381,7 @@ protected:
 				::Effekseer::Vec3f::Store(&verteies[i].Pos, Pos);
 
 				// distortion
-				if (vertexType == VertexType::Distortion)
+				if (IsDistortionVertex<VERTEX>())
 				{
 					auto vs = (VertexDistortion*)&verteies[i];
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
@@ -394,7 +392,7 @@ protected:
 					verteies[i].SetTangent(ToStruct(tangentX));
 					verteies[i].SetBinormal(ToStruct(tangentY));
 				}
-				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+				else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 				{
 					StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());

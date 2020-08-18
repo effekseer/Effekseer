@@ -487,8 +487,6 @@ protected:
 
 		auto& parameter = innstancesNodeParam;
 
-		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
-
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
 		{
@@ -779,7 +777,7 @@ protected:
 				vm.Pos = ToStruct(pos);
 				vr.Pos = ToStruct(-R * vr.Pos.X + pos);
 
-				if (vertexType == VertexType::Distortion)
+				if (IsDistortionVertex<VERTEX>())
 				{
 					const auto binormalVector = ToStruct(axis);
 					vl.SetBinormal(binormalVector);
@@ -795,7 +793,7 @@ protected:
 					vm.SetTangent(tangentVector);
 					vr.SetTangent(tangentVector);
 				}
-				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+				else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 				{
 					::Effekseer::Vec3f tangent = SafeNormalize(Effekseer::Vec3f(vl.Pos - vr.Pos));
 					Effekseer::Vec3f normal = SafeNormalize(Effekseer::Vec3f::Cross(tangent, axis));
@@ -853,7 +851,7 @@ protected:
 		// calculate UV
 		AssignUVs<VERTEX, 0>(parameter, verteies);
 
-		if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+		if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 		{
 			AssignUVs<VERTEX, 1>(parameter, verteies);
 		}

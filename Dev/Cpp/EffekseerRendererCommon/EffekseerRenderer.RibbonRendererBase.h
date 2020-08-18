@@ -391,8 +391,6 @@ protected:
 
 		auto& parameter = innstancesNodeParam;
 
-		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
-
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
 		{
@@ -646,7 +644,7 @@ protected:
 		// calculate UV
 		AssignUVs<VERTEX, 0>(parameter, verteies);
 
-		if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+		if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 		{
 			AssignUVs<VERTEX, 1>(parameter, verteies);
 		}
@@ -660,7 +658,7 @@ protected:
 #endif
 
 		// Apply distortion
-		if (vertexType == VertexType::Distortion)
+		if (IsDistortionVertex<VERTEX>())
 		{
 			StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
 			Effekseer::Vec3f axisBefore;
@@ -722,7 +720,7 @@ protected:
 				}
 			}
 		}
-		else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+		else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 		{
 			StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
 			Effekseer::Vec3f axisBefore;
