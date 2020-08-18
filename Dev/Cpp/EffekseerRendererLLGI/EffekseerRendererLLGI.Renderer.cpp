@@ -482,7 +482,7 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 #endif
 
 	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this, m_shader, m_shader_distortion);
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
 

@@ -443,6 +443,8 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
 
 	m_aid.clear();
 
+	m_vertexSize = 0;
+
 	if (info != nullptr)
 	{
 		for (int i = 0; i < count; i++)
@@ -467,6 +469,18 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
 			attribs[i].type = info[i].type;
 			attribs[i].offset = info[i].offset;
 			attribs[i].count = info[i].count;
+
+			int elementSize = 0;
+			if (attribs[i].type == GL_FLOAT)
+			{
+				elementSize = sizeof(float);
+			}
+			if (attribs[i].type == GL_UNSIGNED_BYTE)
+			{
+				elementSize = sizeof(uint8_t);
+			}
+
+			m_vertexSize = Effekseer::Max(m_vertexSize, attribs[i].offset + elementSize * attribs[i].count);
 		}
 	}
 	else
@@ -547,11 +561,6 @@ void Shader::SetVertex()
 										 (uint8_t*)vertices + m_layout[i].offset);
 		}
 	}
-}
-
-void Shader::SetVertexSize(int32_t vertexSize)
-{
-	m_vertexSize = vertexSize;
 }
 
 //-----------------------------------------------------------------------------------

@@ -123,8 +123,6 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 	for (int32_t i = 0; i < 2; i++)
 	{
-		shaders[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
-
 		shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 
 		int vsOffset = 0;
@@ -255,8 +253,6 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 	for (int32_t i = 0; i < 1; i++)
 	{
-		shaders_d[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
-
 		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 
 		int vsOffset = 0;
@@ -479,10 +475,6 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	{
 		return;
 	}
-
-	m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
-	m_shader_texture->SetVertexSize(model->GetVertexSize());
-	m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
 
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	EndRendering_<RendererImplemented, Shader, GLuint, Model, true, 20>(

@@ -463,23 +463,27 @@ template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
 private:
+
+	enum class RenderingMode
+	{
+		Unlit,
+		Lit,
+		BackDistortion,
+		AdvancedUnlit,
+		AdvancedLit,
+		AdvancedBackDistortion,
+		Material,
+	};
+
 	RENDERER* m_renderer;
-	SHADER* m_shader;
-	// SHADER* m_shader_no_texture;
-
-	SHADER* m_shader_distortion;
-	// SHADER* m_shader_no_texture_distortion;
-
+	
 	Effekseer::TextureData* m_texture;
 
 	StandardRendererState m_state;
 
 	std::vector<uint8_t> vertexCaches;
 	int32_t squareMaxSize_ = 0;
-
-	bool isDistortionMode_;
-	bool isLightningMode_ = false;
-	bool isDynamicVertexMode_ = false;
+	RenderingMode renderingMode_ = RenderingMode::Unlit;
 
 	struct VertexConstantBuffer
 	{
@@ -637,14 +641,10 @@ private:
 	}
 
 public:
-	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_distortion)
+	StandardRenderer(RENDERER* renderer)
 		: squareMaxSize_(renderer->GetSquareMaxCount())
-		, isDistortionMode_(false)
 	{
 		m_renderer = renderer;
-		m_shader = shader;
-		m_shader_distortion = shader_distortion;
-
 		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
 	}
 
@@ -654,25 +654,38 @@ public:
 
 	int32_t CalculateCurrentStride() const
 	{
-		int32_t stride = 0;
-		if (isDynamicVertexMode_)
+		size_t stride = 0;
+		if (renderingMode_ == RenderingMode::Material)
 		{
-			stride = (int32_t)sizeof(DynamicVertex);
+			stride = sizeof(DynamicVertex);
 			stride += (m_state.CustomData1Count + m_state.CustomData2Count) * sizeof(float);
 		}
-		else if (isLightningMode_)
+		else if (renderingMode_ == RenderingMode::Lit)
 		{
-			stride = (int32_t)sizeof(LightingVertex);
+			stride = sizeof(LightingVertex);
 		}
-		else if (isDistortionMode_)
+		else if (renderingMode_ == RenderingMode::BackDistortion)
 		{
-			stride = (int32_t)sizeof(VertexDistortion);
+			stride = sizeof(VertexDistortion);
 		}
-		else
+		else if (renderingMode_ == RenderingMode::Unlit)
 		{
-			stride = (int32_t)sizeof(SimpleVertex);
+			stride = sizeof(SimpleVertex);
 		}
-		return stride;
+		else if (renderingMode_ == RenderingMode::AdvancedLit)
+		{
+			stride = sizeof(AdvancedLightingVertex);
+		}
+		else if (renderingMode_ == RenderingMode::AdvancedBackDistortion)
+		{
+			stride = sizeof(AdvancedVertexDistortion);
+		}
+		else if (renderingMode_ == RenderingMode::AdvancedUnlit)
+		{
+			stride = sizeof(AdvancedSimpleVertex);
+		}
+
+		return static_cast<int32_t>(stride);
 	}
 
 	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
@@ -684,9 +697,41 @@ public:
 
 		m_state = state;
 
-		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex);
-		isLightningMode_ = m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
-		isDistortionMode_ = m_state.Distortion;
+		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
+		{
+			renderingMode_ = RenderingMode::Material;
+		}
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+		{
+			renderingMode_ = RenderingMode::AdvancedLit;
+		}
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
+		{
+			renderingMode_ = RenderingMode::AdvancedBackDistortion;
+		}
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Default)
+		{
+			renderingMode_ = RenderingMode::AdvancedUnlit;
+		}
+#else
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+		{
+			renderingMode_ = RenderingMode::Lit;
+		}
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
+		{
+			renderingMode_ = RenderingMode::BackDistortion;
+		}
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Default)
+		{
+			renderingMode_ = RenderingMode::Unlit;
+		}
+#endif
+		else
+		{
+			assert(0);
+		}
 	}
 
 	void BeginRenderingAndRenderingIfRequired(int32_t count, int& stride, void*& data)

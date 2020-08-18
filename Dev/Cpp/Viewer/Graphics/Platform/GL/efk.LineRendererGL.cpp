@@ -84,7 +84,6 @@ LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer)
 		{"atPosition", GL_FLOAT, 3, 0, false}, {"atColor", GL_UNSIGNED_BYTE, 4, 12, true}, {"atTexCoord", GL_FLOAT, 2, 16, false}};
 
 	shader_->GetAttribIdList(3, sprite_attribs);
-	shader_->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
 	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
 	shader_->AddVertexConstantLayout(EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatCamera"), 0);
@@ -95,7 +94,6 @@ LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer)
 	shader_->SetTextureSlot(0, shader_->GetUniformId("uTexture0"));
 
 	shader_no_texture_->GetAttribIdList(3, sprite_attribs);
-	shader_no_texture_->SetVertexSize(sizeof(EffekseerRendererGL::Vertex));
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
 	shader_no_texture_->AddVertexConstantLayout(
