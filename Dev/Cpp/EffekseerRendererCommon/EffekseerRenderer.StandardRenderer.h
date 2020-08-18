@@ -1347,13 +1347,13 @@ public:
 			pcb.uvDistortionParameter.uvInversed[0] = uvInversed[0];
 			pcb.uvDistortionParameter.uvInversed[1] = uvInversed[1];
 
-			pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
+			pcb.blendTextureParameter.blendType = static_cast<float>(m_state.TextureBlendType);
 
-			pcb.emissiveScaling = m_state.EmissiveScaling;
+			pcb.emissiveScaling = static_cast<float>(m_state.EmissiveScaling);
 
 			ColorToFloat4(Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]), pcb.edgeParameter.Color);
 			pcb.edgeParameter.Threshold = m_state.EdgeThreshold;
-			pcb.edgeParameter.ColorScaling = m_state.EdgeColorScaling;
+			pcb.edgeParameter.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
 			m_renderer->SetPixelBufferToShader(&pcb.flipbookParameter, sizeof(PixelConstantBuffer), psOffset);
 #endif
@@ -1393,7 +1393,7 @@ public:
 				pcb.uvDistortionParameter.uvInversed[0] = uvInversed[0];
 				pcb.uvDistortionParameter.uvInversed[1] = uvInversed[1];
 
-				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
+				pcb.blendTextureParameter.blendType = static_cast<float>(m_state.TextureBlendType);
 #endif
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
@@ -1410,13 +1410,13 @@ public:
 				pcb.uvDistortionParameter.uvInversed[0] = uvInversed[0];
 				pcb.uvDistortionParameter.uvInversed[1] = uvInversed[1];
 
-				pcb.blendTextureParameter.blendType = m_state.TextureBlendType;
+				pcb.blendTextureParameter.blendType = static_cast<float>(m_state.TextureBlendType);
 
-				pcb.emissiveScaling = m_state.EmissiveScaling;
+				pcb.emissiveScaling = static_cast<float>(m_state.EmissiveScaling);
 
 				ColorToFloat4(Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]), pcb.edgeParameter.Color);
 				pcb.edgeParameter.Threshold = m_state.EdgeThreshold;
-				pcb.edgeParameter.ColorScaling = m_state.EdgeColorScaling;
+				pcb.edgeParameter.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}

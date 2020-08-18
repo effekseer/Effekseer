@@ -1122,15 +1122,15 @@ public:
 				pcb[4 * 1 + 1] = uvInversedBack[1];
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-				pcb[4 * 2 + 0] = param.BasicParameterPtr->EnableInterpolation;
-				pcb[4 * 2 + 1] = param.BasicParameterPtr->InterpolationType;
+				pcb[4 * 2 + 0] = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
+				pcb[4 * 2 + 1] = static_cast<float>(param.BasicParameterPtr->InterpolationType);
 
 				pcb[4 * 3 + 0] = param.BasicParameterPtr->UVDistortionIntensity;
 				pcb[4 * 3 + 1] = param.BasicParameterPtr->BlendUVDistortionIntensity;
 				pcb[4 * 3 + 2] = uvInversed[0];
 				pcb[4 * 3 + 3] = uvInversed[1];
 
-				pcb[4 * 4 + 0] = param.BasicParameterPtr->TextureBlendType;
+				pcb[4 * 4 + 0] = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
 #endif
 			}
 			else
@@ -1158,14 +1158,14 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				pcb->ModelFlipbookParameter.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
-				pcb->ModelFlipbookParameter.InterpolationType = param.BasicParameterPtr->InterpolationType;
+				pcb->ModelFlipbookParameter.InterpolationType = static_cast<float>(param.BasicParameterPtr->InterpolationType);
 
 				pcb->ModelUVDistortionParameter.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
 				pcb->ModelUVDistortionParameter.BlendIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
 				pcb->ModelUVDistortionParameter.UVInversed[0] = uvInversed[0];
 				pcb->ModelUVDistortionParameter.UVInversed[1] = uvInversed[1];
 
-				pcb->ModelBlendTextureParameter.BlendType = param.BasicParameterPtr->TextureBlendType;
+				pcb->ModelBlendTextureParameter.BlendType = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
 
 				::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
 				pcb->CameraFrontDirection[0] = -CameraFront.X;
@@ -1178,7 +1178,7 @@ public:
 				pcb->FalloffParameter.Pow = static_cast<float>(param.FalloffParam.Pow);
 				ColorToFloat4(param.FalloffParam.BeginColor, pcb->FalloffParameter.BeginColor);
 				ColorToFloat4(param.FalloffParam.EndColor, pcb->FalloffParameter.EndColor);
-				pcb->EmissiveScaling = param.BasicParameterPtr->EmissiveScaling;
+				pcb->EmissiveScaling = static_cast<float>(param.BasicParameterPtr->EmissiveScaling);
 
 				ColorToFloat4(Effekseer::Color(
 					param.BasicParameterPtr->EdgeColor[0],
@@ -1187,7 +1187,7 @@ public:
 					param.BasicParameterPtr->EdgeColor[3]), 
 					pcb->EdgeColor);
 				pcb->EdgeParameter.Threshold = param.BasicParameterPtr->EdgeThreshold;
-				pcb->EdgeParameter.ColorScaling = param.BasicParameterPtr->EdgeColorScaling;
+				pcb->EdgeParameter.ColorScaling = static_cast<float>(param.BasicParameterPtr->EdgeColorScaling);
 #endif
 			}
 		}
@@ -1196,9 +1196,9 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		vcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation,
-									   param.BasicParameterPtr->UVLoopType,
-									   param.BasicParameterPtr->FlipbookDivideX,
-									   param.BasicParameterPtr->FlipbookDivideY);
+									   static_cast<float>(param.BasicParameterPtr->UVLoopType),
+									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
+									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
 #endif
 
 		// Check time
