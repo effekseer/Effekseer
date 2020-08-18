@@ -1195,7 +1195,7 @@ public:
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		vcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation,
+		vcb->SetModelFlipbookParameter(static_cast<float>(param.BasicParameterPtr->EnableInterpolation),
 									   static_cast<float>(param.BasicParameterPtr->UVLoopType),
 									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
 									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
