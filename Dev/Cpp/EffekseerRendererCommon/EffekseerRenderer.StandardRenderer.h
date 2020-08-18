@@ -21,6 +21,16 @@ namespace EffekseerRenderer
 //
 //----------------------------------------------------------------------------------
 
+enum class StandardRendererShaderType
+{
+	Unlit,
+	Lit,
+	BackDistortion,
+	AdvancedUnlit,
+	AdvancedLit,
+	AdvancedBackDistortion,
+};
+
 struct StandardRendererState
 {
 	bool DepthTest;
@@ -854,7 +864,21 @@ public:
 		}
 		else
 		{
-			shader_ = m_renderer->GetShader(true, m_state.MaterialType);
+			StandardRendererShaderType type;
+			if (m_state.MaterialType == Effekseer::RendererMaterialType::Default)
+			{
+				type = StandardRendererShaderType::Unlit;
+			}
+			else if (m_state.MaterialType == Effekseer::RendererMaterialType::Lighting)
+			{
+				type = StandardRendererShaderType::Lit;
+			}
+			else if (m_state.MaterialType == Effekseer::RendererMaterialType::BackDistortion)
+			{
+				type = StandardRendererShaderType::BackDistortion;
+			}
+
+			shader_ = m_renderer->GetShader(type);
 		}
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();

@@ -321,7 +321,7 @@ void EffectNodeTrack::SetValues(
 	}
 	else if (param.type == StandardColorParameter::FCurve_RGBA)
 	{
-		auto fcurveColors = param.fcurve_rgba.FCurve->GetValues(time, livedTime);
+		auto fcurveColors = param.fcurve_rgba.FCurve->GetValues(static_cast<float>(time), static_cast<float>(livedTime));
 		c.R = (uint8_t)Clamp((value.color.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
 		c.G = (uint8_t)Clamp((value.color.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
 		c.B = (uint8_t)Clamp((value.color.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
