@@ -201,6 +201,11 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* userData )
 {
+	if (parameter.ModelIndex < 0)
+	{
+		return;
+	}
+
 	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
 	if (model == nullptr)
 	{
