@@ -16,8 +16,9 @@ namespace EffekseerRendererDX11
 Shader::Shader(RendererImplemented* renderer,
 			   ID3D11VertexShader* vertexShader,
 			   ID3D11PixelShader* pixelShader,
-			   ID3D11InputLayout* vertexDeclaration)
-	: DeviceObject(renderer)
+			   ID3D11InputLayout* vertexDeclaration,
+			   bool hasRefCount)
+	: DeviceObject(renderer, hasRefCount)
 	, m_vertexShader(vertexShader)
 	, m_pixelShader(pixelShader)
 	, m_vertexDeclaration(vertexDeclaration)
@@ -25,8 +26,6 @@ Shader::Shader(RendererImplemented* renderer,
 	, m_constantBufferToPS(NULL)
 	, m_vertexConstantBuffer(NULL)
 	, m_pixelConstantBuffer(NULL)
-	, m_vertexRegisterCount(0)
-	, m_pixelRegisterCount(0)
 {
 }
 
@@ -55,7 +54,8 @@ Shader* Shader::Create(RendererImplemented* renderer,
 					   int32_t pixelShaderSize,
 					   const char* name,
 					   const D3D11_INPUT_ELEMENT_DESC decl[],
-					   int32_t layoutCount)
+					   int32_t layoutCount,
+					   bool hasRefCount)
 {
 	assert(renderer != NULL);
 	assert(renderer->GetDevice() != NULL);
@@ -90,7 +90,7 @@ Shader* Shader::Create(RendererImplemented* renderer,
 		goto EXIT;
 	}
 
-	return new Shader(renderer, vs, ps, vertexDeclaration);
+	return new Shader(renderer, vs, ps, vertexDeclaration, hasRefCount);
 
 EXIT:;
 	ES_SAFE_RELEASE(vs);
@@ -160,13 +160,13 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 //-----------------------------------------------------------------------------------
 void Shader::SetConstantBuffer()
 {
-	if (m_vertexRegisterCount > 0)
+	if (m_vertexConstantBuffer != nullptr)
 	{
 		GetRenderer()->GetContext()->UpdateSubresource(m_constantBufferToVS, 0, NULL, m_vertexConstantBuffer, 0, 0);
 		GetRenderer()->GetContext()->VSSetConstantBuffers(0, 1, &m_constantBufferToVS);
 	}
 
-	if (m_pixelRegisterCount > 0)
+	if (m_pixelConstantBuffer != nullptr)
 	{
 		GetRenderer()->GetContext()->UpdateSubresource(m_constantBufferToPS, 0, NULL, m_pixelConstantBuffer, 0, 0);
 		GetRenderer()->GetContext()->PSSetConstantBuffers(0, 1, &m_constantBufferToPS);

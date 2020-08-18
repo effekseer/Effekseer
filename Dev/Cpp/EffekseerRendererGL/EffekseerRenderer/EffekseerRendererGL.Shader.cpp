@@ -686,8 +686,11 @@ void Shader::SetConstantBuffer()
 //-----------------------------------------------------------------------------------
 void Shader::SetTextureSlot(int32_t index, GLint value)
 {
-	m_textureSlots[index] = value;
-	m_textureSlotEnables[index] = true;
+	if (value >= 0)
+	{
+		m_textureSlots[index] = value;
+		m_textureSlotEnables[index] = true;	
+	}
 }
 
 //-----------------------------------------------------------------------------------

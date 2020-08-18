@@ -21,12 +21,12 @@ class IndexBuffer : public DeviceObject, public ::EffekseerRenderer::IndexBuffer
 private:
 	IDirect3DIndexBuffer9* m_buffer;
 
-	IndexBuffer(RendererImplemented* renderer, IDirect3DIndexBuffer9* buffer, int maxCount, bool isDynamic);
+	IndexBuffer(RendererImplemented* renderer, IDirect3DIndexBuffer9* buffer, int maxCount, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic);
+	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount);
 
 	IDirect3DIndexBuffer9* GetInterface()
 	{

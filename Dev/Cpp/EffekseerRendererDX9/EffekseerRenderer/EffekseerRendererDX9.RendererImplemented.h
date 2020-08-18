@@ -42,6 +42,9 @@ private:
 	Shader* m_shader = nullptr;
 	Shader* m_shader_distortion = nullptr;
 	Shader* m_shader_lighting = nullptr;
+	Shader* m_shader_ad = nullptr;
+	Shader* m_shader_ad_distortion = nullptr;
+	Shader* m_shader_ad_lighting = nullptr;
 	Shader* currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;

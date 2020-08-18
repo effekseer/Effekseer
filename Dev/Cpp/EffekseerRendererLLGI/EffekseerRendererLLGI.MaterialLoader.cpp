@@ -250,10 +250,7 @@ MaterialLoader ::~MaterialLoader()
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
 
 		shader->SetVertexConstantBufferSize(vertexUniformSize);
-		shader->SetVertexRegisterCount(vertexUniformSize / (sizeof(float) * 4));
-
 		shader->SetPixelConstantBufferSize(pixelUniformSize);
-		shader->SetPixelRegisterCount(pixelUniformSize / (sizeof(float) * 4));
 
 		materialData->TextureCount = material.GetTextureCount();
 		materialData->UniformCount = material.GetUniformCount();
@@ -321,10 +318,7 @@ MaterialLoader ::~MaterialLoader()
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
 
 		shader->SetVertexConstantBufferSize(vertexUniformSize);
-		shader->SetVertexRegisterCount(vertexUniformSize / (sizeof(float) * 4));
-
 		shader->SetPixelConstantBufferSize(pixelUniformSize);
-		shader->SetPixelRegisterCount(pixelUniformSize / (sizeof(float) * 4));
 
 		if (st == 0)
 		{

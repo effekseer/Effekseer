@@ -12,8 +12,8 @@ namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::IndexBuffer(RendererImplemented* renderer, IDirect3DIndexBuffer9* buffer, int maxCount, bool isDynamic)
-	: DeviceObject(renderer)
+IndexBuffer::IndexBuffer(RendererImplemented* renderer, IDirect3DIndexBuffer9* buffer, int maxCount, bool isDynamic, bool hasRefCount)
+	: DeviceObject(renderer, hasRefCount)
 	, IndexBufferBase(maxCount, isDynamic)
 	, m_buffer(buffer)
 {
@@ -30,7 +30,7 @@ IndexBuffer::~IndexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic)
+IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount)
 {
 	// フラグ
 	D3DPOOL pool = D3DPOOL_MANAGED;
@@ -60,7 +60,7 @@ IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bo
 	if (FAILED(hr))
 		return NULL;
 
-	return new IndexBuffer(renderer, ib, maxCount, isDynamic);
+	return new IndexBuffer(renderer, ib, maxCount, isDynamic, hasRefCount);
 }
 
 //-----------------------------------------------------------------------------------

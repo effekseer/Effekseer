@@ -21,10 +21,13 @@ namespace EffekseerRendererDX9
 class DeviceObject
 {
 private:
-	RendererImplemented* m_renderer;
+	RendererImplemented* m_renderer = nullptr;
+
+	//! whether does this instance inc and dec the reference count of renderer
+	bool hasRefCount_ = false;
 
 public:
-	DeviceObject(RendererImplemented* renderer);
+	DeviceObject(RendererImplemented* renderer, bool hasRefCount);
 	virtual ~DeviceObject();
 
 public:

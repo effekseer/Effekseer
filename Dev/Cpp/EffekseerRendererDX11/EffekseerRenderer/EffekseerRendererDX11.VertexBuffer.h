@@ -28,12 +28,12 @@ private:
 	int32_t m_ringLockedOffset;
 	int32_t m_ringLockedSize;
 
-	VertexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int size, bool isDynamic);
+	VertexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int size, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~VertexBuffer();
 
-	static VertexBuffer* Create(RendererImplemented* renderer, int size, bool isDynamic);
+	static VertexBuffer* Create(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount);
 
 	ID3D11Buffer* GetInterface()
 	{

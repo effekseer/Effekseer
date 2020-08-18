@@ -22,12 +22,12 @@ private:
 	ID3D11Buffer* m_buffer;
 	void* m_lockedResource;
 
-	IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic);
+	IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic);
+	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount);
 
 	ID3D11Buffer* GetInterface()
 	{

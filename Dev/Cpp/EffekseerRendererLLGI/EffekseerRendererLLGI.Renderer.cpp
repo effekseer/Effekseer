@@ -198,7 +198,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	piplineState->SetRenderPassPipelineState(renderPassPipelineState_);
 
-	if(!piplineState->Compile())
+	if (!piplineState->Compile())
 	{
 		assert(0);
 	}
@@ -244,8 +244,8 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_renderState(NULL)
 
-	, m_shader(nullptr)
-	, m_shader_distortion(nullptr)
+	, shader_(nullptr)
+	, shader_unlit_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -276,9 +276,13 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_standardRenderer);
 
-	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_lighting);
-	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(shader_);
+	ES_SAFE_DELETE(shader_lit_);
+	ES_SAFE_DELETE(shader_unlit_);
+
+	ES_SAFE_DELETE(shader_ad_unlit_);
+	ES_SAFE_DELETE(shader_ad_lit_);
+	ES_SAFE_DELETE(shader_ad_distortion_);
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
@@ -371,14 +375,6 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2});
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 3}); // AlphaTextureUV + UVDistortionTextureUV
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});		  // BlendUV
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // BlendAlphaUV + BlendUVDistortionUV
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 6});		  // FlipbookIndexAndNextRate
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 7});		  // AlphaThreshold
-#endif
-
 	std::vector<VertexLayout> layouts_distort;
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
@@ -386,100 +382,128 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 3});
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 4});
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // AlphaTextureUV + UVDistortionTextureUV
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 6});		  // BlendUV
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 7}); // BlendAlphaUV + BlendUVDistortionUV
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 8});		  // FlipbookIndexAndNextRate
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // AlphaThreshold
-#endif
+	std::vector<VertexLayout> layouts_ad;
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2});
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 3}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});		 // BlendUV
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 6});			 // FlipbookIndexAndNextRate
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 7});			 // AlphaThreshold
 
-	m_shader = Shader::Create(graphicsDevice_,
-							  fixedShader_.StandardTexture_VS.data(),
-							  fixedShader_.StandardTexture_VS.size(),
-							  fixedShader_.StandardTexture_PS.data(),
-							  fixedShader_.StandardTexture_PS.size(),
+	std::vector<VertexLayout> layouts_distort_ad;
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2});
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 3});
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 4});
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 6});		 // BlendUV
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 7}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 8});			 // FlipbookIndexAndNextRate
+	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});			 // AlphaThreshold
+
+	shader_ = Shader::Create(graphicsDevice_,
+							  fixedShader_.SpriteUnlit_VS.data(),
+							  fixedShader_.SpriteUnlit_VS.size(),
+							  fixedShader_.SpriteUnlit_PS.data(),
+							  fixedShader_.SpriteUnlit_PS.size(),
 							  "StandardRenderer",
 							  layouts,
 							  false);
-	if (m_shader == NULL)
+	if (shader_ == NULL)
 		return false;
 
-	m_shader_distortion = Shader::Create(graphicsDevice_,
-										 fixedShader_.StandardDistortedTexture_VS.data(),
-										 fixedShader_.StandardDistortedTexture_VS.size(),
-										 fixedShader_.StandardDistortedTexture_PS.data(),
-										 fixedShader_.StandardDistortedTexture_PS.size(),
+	shader_unlit_ = Shader::Create(graphicsDevice_,
+										 fixedShader_.SpriteDistortion_VS.data(),
+										 fixedShader_.SpriteDistortion_VS.size(),
+										 fixedShader_.SpriteDistortion_PS.data(),
+										 fixedShader_.SpriteDistortion_PS.size(),
 										 "StandardRenderer Distortion",
 										 layouts_distort,
 										 false);
-	if (m_shader_distortion == NULL)
+	if (shader_unlit_ == NULL)
 		return false;
 
-	if (fixedShader_.StandardLightingTexture_VS.size() > 0 && fixedShader_.StandardLightingTexture_PS.size() > 0)
-	{
-		std::vector<VertexLayout> layouts_lighting;
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 2});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 3});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
+	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
+									  fixedShader_.AdvancedSpriteUnlit_VS.data(),
+									  fixedShader_.AdvancedSpriteUnlit_VS.size(),
+									  fixedShader_.AdvancedSpriteUnlit_PS.data(),
+									  fixedShader_.AdvancedSpriteUnlit_PS.size(),
+									  "StandardRenderer",
+									  layouts_ad,
+									  false);
+	if (shader_ad_unlit_ == NULL)
+		return false;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 6}); // AlphaTextureUV + UVDistortionTextureUV
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 7});		  // BlendUV
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 8}); // BlendAlphaUV + BlendUVDistortionUV
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // FlipbookIndexAndNextRate
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
-#endif
-
-		m_shader_lighting = Shader::Create(graphicsDevice_,
-										   fixedShader_.StandardLightingTexture_VS.data(),
-										   fixedShader_.StandardLightingTexture_VS.size(),
-										   fixedShader_.StandardLightingTexture_PS.data(),
-										   fixedShader_.StandardLightingTexture_PS.size(),
-										   "StandardRenderer Lighting",
-										   layouts_lighting,
+	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
+										   fixedShader_.AdvancedSpriteDistortion_VS.data(),
+										   fixedShader_.AdvancedSpriteDistortion_VS.size(),
+										   fixedShader_.AdvancedSpriteDistortion_PS.data(),
+										   fixedShader_.AdvancedSpriteDistortion_PS.size(),
+										   "StandardRenderer Distortion",
+										   layouts_distort_ad,
 										   false);
+	if (shader_ad_distortion_ == NULL)
+		return false;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-		m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
+	std::vector<VertexLayout> layouts_lighting;
+	layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 2});
+	layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 3});
+	layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
+	layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
 
-		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
-		m_shader_lighting->SetPixelRegisterCount(9);
-#else
-		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-		m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
+	std::vector<VertexLayout> layouts_lighting_ad;
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 2});
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 3});
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 6}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 7});		  // BlendUV
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 8}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // FlipbookIndexAndNextRate
+	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
 
-		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
-		m_shader_lighting->SetPixelRegisterCount(12);
-#endif
-	}
+	shader_lit_ = Shader::Create(graphicsDevice_,
+									   fixedShader_.SpriteLit_VS.data(),
+									   fixedShader_.SpriteLit_VS.size(),
+									   fixedShader_.SpriteLit_PS.data(),
+									   fixedShader_.SpriteLit_PS.size(),
+									   "StandardRenderer Lighting",
+									   layouts_lighting,
+									   false);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader->SetVertexRegisterCount(8 + 1 + 1);
+	shader_ad_lit_ = Shader::Create(graphicsDevice_,
+									fixedShader_.AdvancedSpriteLit_VS.data(),
+									fixedShader_.AdvancedSpriteLit_VS.size(),
+									fixedShader_.AdvancedSpriteLit_PS.data(),
+									fixedShader_.AdvancedSpriteLit_PS.size(),
+									"StandardRenderer Lighting",
+									layouts_lighting_ad,
+									false);
 
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
-	m_shader->SetPixelRegisterCount(6);
+	shader_lit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	shader_lit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
 
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetVertexRegisterCount(8 + 1 + 1);
+	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	shader_->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
 
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
-	m_shader_distortion->SetPixelRegisterCount(5);
-#else
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader->SetVertexRegisterCount(8 + 1);
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	shader_unlit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_distortion->SetVertexRegisterCount(8 + 1);
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
 
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1 + 1);
-#endif
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
+
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
@@ -793,17 +817,29 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 
 Shader* RendererImplemented::GetShader(::EffekseerRenderer::StandardRendererShaderType type) const
 {
-	if (type == ::EffekseerRenderer::StandardRendererShaderType::BackDistortion)
+	if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedBackDistortion)
 	{
-		return m_shader_distortion;
+		return shader_ad_distortion_;
+	}
+	else if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedLit)
+	{
+		return shader_ad_lit_;
+	}
+	else if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedUnlit)
+	{
+		return shader_ad_unlit_;
+	}
+	else if (type == ::EffekseerRenderer::StandardRendererShaderType::BackDistortion)
+	{
+		return shader_unlit_;
 	}
 	else if (type == ::EffekseerRenderer::StandardRendererShaderType::Lit)
 	{
-		return m_shader_lighting;
+		return shader_lit_;
 	}
-	else
+	else if (type == ::EffekseerRenderer::StandardRendererShaderType::Unlit)
 	{
-		return m_shader;
+		return shader_;
 	}
 }
 

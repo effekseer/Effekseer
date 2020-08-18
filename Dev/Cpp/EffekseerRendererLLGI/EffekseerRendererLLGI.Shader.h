@@ -32,9 +32,6 @@ private:
 	int32_t vertexConstantBufferSize = 0;
 	int32_t pixelConstantBufferSize = 0;
 
-	int32_t m_vertexRegisterCount;
-	int32_t m_pixelRegisterCount;
-
 	Shader(GraphicsDevice* graphicsDevice,
 		   LLGI::Shader* vertexShader,
 		   LLGI::Shader* pixelShader,
@@ -84,15 +81,6 @@ public:
 	void* GetPixelConstantBuffer()
 	{
 		return m_pixelConstantBuffer;
-	}
-
-	void SetVertexRegisterCount(int32_t count)
-	{
-		m_vertexRegisterCount = count;
-	}
-	void SetPixelRegisterCount(int32_t count)
-	{
-		m_pixelRegisterCount = count;
 	}
 
 	void SetConstantBuffer();

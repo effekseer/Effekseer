@@ -4,39 +4,33 @@
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "EffekseerMaterialCompilerVulkan.h"
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-
-#include "ShaderHeader/standard_renderer_VS.h"
 #include "ShaderHeader/standard_renderer_PS.h"
-#include "ShaderHeader/standard_renderer_lighting_VS.h"
-#include "ShaderHeader/standard_renderer_lighting_PS.h"
-#include "ShaderHeader/standard_renderer_distortion_VS.h"
+#include "ShaderHeader/standard_renderer_VS.h"
 #include "ShaderHeader/standard_renderer_distortion_PS.h"
+#include "ShaderHeader/standard_renderer_distortion_VS.h"
+#include "ShaderHeader/standard_renderer_lighting_PS.h"
+#include "ShaderHeader/standard_renderer_lighting_VS.h"
 
-#include "ShaderHeader/model_renderer_texture_VS.h"
-#include "ShaderHeader/model_renderer_texture_PS.h"
-#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
-#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
-#include "ShaderHeader/model_renderer_distortion_VS.h"
 #include "ShaderHeader/model_renderer_distortion_PS.h"
+#include "ShaderHeader/model_renderer_distortion_VS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader/model_renderer_texture_PS.h"
+#include "ShaderHeader/model_renderer_texture_VS.h"
 
-#else
+#include "ShaderHeader/sprite_distortion_ps.h"
+#include "ShaderHeader/sprite_distortion_vs.h"
+#include "ShaderHeader/sprite_lit_ps.h"
+#include "ShaderHeader/sprite_lit_vs.h"
+#include "ShaderHeader/sprite_unlit_ps.h"
+#include "ShaderHeader/sprite_unlit_vs.h"
 
-#include "ShaderHeader_15/standard_renderer_VS.h"
-#include "ShaderHeader_15/standard_renderer_PS.h"
-#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
-#include "ShaderHeader_15/standard_renderer_lighting_PS.h"
-#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
-#include "ShaderHeader_15/standard_renderer_distortion_PS.h"
-
-#include "ShaderHeader_15/model_renderer_texture_VS.h"
-#include "ShaderHeader_15/model_renderer_texture_PS.h"
-#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
-#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
-#include "ShaderHeader_15/model_renderer_distortion_VS.h"
-#include "ShaderHeader_15/model_renderer_distortion_PS.h"
-
-#endif
+#include "ShaderHeader/model_distortion_ps.h"
+#include "ShaderHeader/model_distortion_vs.h"
+#include "ShaderHeader/model_lit_ps.h"
+#include "ShaderHeader/model_lit_vs.h"
+#include "ShaderHeader/model_unlit_ps.h"
+#include "ShaderHeader/model_unlit_vs.h"
 
 namespace EffekseerRendererVulkan
 {
@@ -47,19 +41,34 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	if (!shader)
 		return;
 
-	shader->StandardTexture_VS = {{standard_renderer_VS, (int32_t)sizeof(standard_renderer_VS)}};
-	shader->StandardDistortedTexture_VS = {{standard_renderer_distortion_VS, (int32_t)sizeof(standard_renderer_distortion_VS)}};
-	shader->StandardLightingTexture_VS = {{standard_renderer_lighting_VS, (int32_t)sizeof(standard_renderer_lighting_VS)}};
-	shader->ModelShaderTexture_VS = {{model_renderer_texture_VS, (int32_t)sizeof(model_renderer_texture_VS)}};
-	shader->ModelShaderLightingTextureNormal_VS = {{model_renderer_lighting_texture_normal_VS, (int32_t)sizeof(model_renderer_lighting_texture_normal_VS)}};
-	shader->ModelShaderDistortionTexture_VS = {{model_renderer_distortion_VS, (int32_t)sizeof(model_renderer_distortion_VS)}};
+	shader->AdvancedSpriteUnlit_VS = {{standard_renderer_VS, (int32_t)sizeof(standard_renderer_VS)}};
+	shader->AdvancedSpriteLit_VS = {{standard_renderer_lighting_VS, (int32_t)sizeof(standard_renderer_lighting_VS)}};
+	shader->AdvancedSpriteDistortion_VS = {{standard_renderer_distortion_VS, (int32_t)sizeof(standard_renderer_distortion_VS)}};
+	shader->AdvancedModelUnlit_VS = {{model_renderer_texture_VS, (int32_t)sizeof(model_renderer_texture_VS)}};
+	shader->AdvancedModelLit_VS = {{model_renderer_lighting_texture_normal_VS, (int32_t)sizeof(model_renderer_lighting_texture_normal_VS)}};
+	shader->AdvancedModelDistortion_VS = {{model_renderer_distortion_VS, (int32_t)sizeof(model_renderer_distortion_VS)}};
 
-	shader->StandardTexture_PS = {{standard_renderer_PS, (int32_t)sizeof(standard_renderer_PS)}};
-	shader->StandardDistortedTexture_PS = {{standard_renderer_distortion_PS, (int32_t)sizeof(standard_renderer_distortion_PS)}};
-	shader->StandardLightingTexture_PS = {{standard_renderer_lighting_PS, (int32_t)sizeof(standard_renderer_lighting_PS)}};
-	shader->ModelShaderTexture_PS = {{model_renderer_texture_PS, (int32_t)sizeof(model_renderer_texture_PS)}};
-	shader->ModelShaderLightingTextureNormal_PS = {{model_renderer_lighting_texture_normal_PS, (int32_t)sizeof(model_renderer_lighting_texture_normal_PS)}};
-	shader->ModelShaderDistortionTexture_PS = {{model_renderer_distortion_PS, (int32_t)sizeof(model_renderer_distortion_PS)}};
+	shader->AdvancedSpriteUnlit_PS = {{standard_renderer_PS, (int32_t)sizeof(standard_renderer_PS)}};
+	shader->AdvancedSpriteLit_PS = {{standard_renderer_lighting_PS, (int32_t)sizeof(standard_renderer_lighting_PS)}};
+	shader->AdvancedSpriteDistortion_PS = {{standard_renderer_distortion_PS, (int32_t)sizeof(standard_renderer_distortion_PS)}};
+	shader->AdvancedModelUnlit_PS = {{model_renderer_texture_PS, (int32_t)sizeof(model_renderer_texture_PS)}};
+	shader->AdvancedModelLit_PS = {{model_renderer_lighting_texture_normal_PS, (int32_t)sizeof(model_renderer_lighting_texture_normal_PS)}};
+	shader->AdvancedModelDistortion_PS = {{model_renderer_distortion_PS, (int32_t)sizeof(model_renderer_distortion_PS)}};
+
+
+	shader->SpriteUnlit_VS = {{sprite_unlit_vs, (int32_t)sizeof(sprite_unlit_vs)}};
+	shader->SpriteDistortion_VS = {{sprite_distortion_vs, (int32_t)sizeof(sprite_distortion_vs)}};
+	shader->SpriteLit_VS = {{sprite_lit_vs, (int32_t)sizeof(sprite_lit_vs)}};
+	shader->ModelUnlit_VS = {{model_unlit_vs, (int32_t)sizeof(model_unlit_vs)}};
+	shader->ModelDistortion_VS = {{model_distortion_vs, (int32_t)sizeof(model_distortion_vs)}};
+	shader->ModelLit_VS = {{model_lit_vs, (int32_t)sizeof(model_lit_vs)}};
+
+	shader->SpriteUnlit_PS = {{sprite_unlit_ps, (int32_t)sizeof(sprite_unlit_ps)}};
+	shader->SpriteDistortion_PS = {{sprite_distortion_ps, (int32_t)sizeof(sprite_distortion_ps)}};
+	shader->SpriteLit_PS = {{sprite_lit_ps, (int32_t)sizeof(sprite_lit_ps)}};
+	shader->ModelUnlit_PS = {{model_unlit_ps, (int32_t)sizeof(model_unlit_ps)}};
+	shader->ModelDistortion_PS = {{model_distortion_ps, (int32_t)sizeof(model_distortion_ps)}};
+	shader->ModelLit_PS = {{model_lit_ps, (int32_t)sizeof(model_lit_ps)}};
 }
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(

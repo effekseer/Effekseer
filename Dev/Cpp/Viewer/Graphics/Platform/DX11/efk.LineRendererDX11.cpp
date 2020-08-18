@@ -44,12 +44,12 @@ LineRendererDX11::LineRendererDX11(EffekseerRenderer::Renderer* renderer)
 												   sizeof(StandardNoTexture_PS::g_PS),
 												   "StandardRenderer No Texture",
 												   decl,
-												   3);
+												   3,
+												   true);
 
 	if (shader != nullptr)
 	{
 		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		((EffekseerRendererDX11::Shader*)shader)->SetVertexRegisterCount(8);
 	}
 	else
 	{

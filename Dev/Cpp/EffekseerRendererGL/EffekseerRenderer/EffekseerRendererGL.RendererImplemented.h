@@ -53,16 +53,24 @@ private:
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
 
-	Shader* m_shader = nullptr;
-	Shader* m_shader_distortion = nullptr;
-	Shader* m_shader_lighting = nullptr;
+	Shader* shader_unlit_ = nullptr;
+	Shader* shader_distortion_ = nullptr;
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_ad_unlit_ = nullptr;
+	Shader* shader_ad_lit_ = nullptr;
+	Shader* shader_ad_distortion_ = nullptr;
+
 	Shader* currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
-	VertexArray* m_vao = nullptr;
-	VertexArray* m_vao_distortion = nullptr;
-	VertexArray* m_vao_lighting = nullptr;
+	VertexArray* vao_unlit_ = nullptr;
+	VertexArray* vao_distortion_ = nullptr;
+	VertexArray* vao_lit_ = nullptr;
+	VertexArray* vao_ad_unlit_ = nullptr;
+	VertexArray* vao_ad_lit_ = nullptr;
+	VertexArray* vao_ad_distortion_ = nullptr;
+
 	VertexArray* m_vao_wire_frame = nullptr;
 
 	//! default vao (alsmot for material)

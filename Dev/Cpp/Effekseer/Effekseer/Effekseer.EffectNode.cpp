@@ -726,6 +726,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.BasicParameter.EdgeColor[2] = AlphaCutoff.EdgeColor.B;
 			RendererCommon.BasicParameter.EdgeColor[3] = AlphaCutoff.EdgeColor.A;
 			RendererCommon.BasicParameter.EdgeColorScaling = AlphaCutoff.EdgeColorScaling;
+
+			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = AlphaCutoff.Type != ParameterAlphaCutoff::EType::FIXED || AlphaCutoff.Fixed.Threshold != 0.0f;
 		}
 #endif
 
@@ -915,7 +917,6 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.EdgeParam.Color[3] = static_cast<float>(AlphaCutoff.EdgeColor.A) / 255.0f;
 	param.EdgeParam.Threshold = AlphaCutoff.EdgeThreshold;
 	param.EdgeParam.ColorScaling = AlphaCutoff.EdgeColorScaling;
-
 #endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;

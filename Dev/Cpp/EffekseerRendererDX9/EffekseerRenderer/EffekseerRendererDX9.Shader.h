@@ -44,7 +44,8 @@ private:
 		   D3DVERTEXELEMENT9 decl[],
 		   IDirect3DVertexShader9* vertexShader,
 		   IDirect3DPixelShader9* pixelShader,
-		   IDirect3DVertexDeclaration9* vertexDeclaration);
+		   IDirect3DVertexDeclaration9* vertexDeclaration,
+		   bool hasRefCount);
 
 public:
 	virtual ~Shader();
@@ -55,7 +56,8 @@ public:
 						  const uint8_t pixelShader[],
 						  int32_t pixelShaderSize,
 						  const char* name,
-						  D3DVERTEXELEMENT9 decl[]);
+						  D3DVERTEXELEMENT9 decl[],
+						  bool hasRefCount);
 
 public: // デバイス復旧用
 	virtual void OnLostDevice();
@@ -86,17 +88,6 @@ public:
 	void* GetPixelConstantBuffer()
 	{
 		return m_pixelConstantBuffer;
-	}
-
-	void SetVertexRegisterCount(int32_t count)
-	{
-		assert(count <= 256);
-		m_vertexRegisterCount = count;
-	}
-	void SetPixelRegisterCount(int32_t count)
-	{
-		assert(count <= 256);
-		m_pixelRegisterCount = count;
 	}
 
 	void SetConstantBuffer();

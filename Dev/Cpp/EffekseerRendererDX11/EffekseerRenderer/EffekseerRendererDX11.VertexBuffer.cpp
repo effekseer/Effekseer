@@ -12,8 +12,8 @@ namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer::VertexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int size, bool isDynamic)
-	: DeviceObject(renderer)
+VertexBuffer::VertexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int size, bool isDynamic, bool hasRefCount)
+	: DeviceObject(renderer, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
 	, m_buffer(buffer)
 	, m_vertexRingOffset(0)
@@ -36,7 +36,7 @@ VertexBuffer::~VertexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool isDynamic)
+VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount)
 {
 	D3D11_BUFFER_DESC hBufferDesc;
 	ZeroMemory(&hBufferDesc, sizeof(hBufferDesc));
@@ -61,7 +61,7 @@ VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool
 		return NULL;
 	}
 
-	return new VertexBuffer(renderer, vb, size, isDynamic);
+	return new VertexBuffer(renderer, vb, size, isDynamic, hasRefCount);
 }
 
 //-----------------------------------------------------------------------------------
