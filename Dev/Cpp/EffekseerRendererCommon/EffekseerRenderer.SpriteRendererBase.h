@@ -290,12 +290,8 @@ protected:
 			StrideView<VertexDistortion> vs(verteies.pointerOrigin_, stride_, 4);
 			for (auto i = 0; i < 4; i++)
 			{
-				vs[i].Tangent.X = 1.0f;
-				vs[i].Tangent.Y = 0.0f;
-				vs[i].Tangent.Z = 0.0f;
-				vs[i].Binormal.X = 0.0f;
-				vs[i].Binormal.Y = 1.0f;
-				vs[i].Binormal.Z = 0.0f;
+				vs[i].SetTangent(Effekseer::Vector3D(1.0f, 0.0f, 0.0f));
+				vs[i].SetBinormal(Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 			}
 		}
 		else if (vertexType == VertexType::Lighting || vertexType == VertexType::Dynamic)
@@ -322,7 +318,7 @@ protected:
 				Effekseer::Mat43f instMat = instanceParameter.SRTMatrix43;
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
-				
+
 				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, m_renderer->GetCameraFrontDirection());
 			}
 			else
@@ -390,16 +386,13 @@ protected:
 				if (vertexType == VertexType::Distortion)
 				{
 					auto vs = (VertexDistortion*)&verteies[i];
+					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
+					auto tangentY = efkVector3D(mat.X.GetY(), mat.Y.GetY(), mat.Z.GetY());
+					tangentX = tangentX.Normalize();
+					tangentY = tangentY.Normalize();
 
-					::Effekseer::Vec3f t = mat.GetTranslation();
-
-					auto Tangent = ::Effekseer::Vec3f::Load(&vs->Tangent);
-					Tangent = ::Effekseer::Vec3f::Transform(Tangent, mat) - t;
-					::Effekseer::Vec3f::Store(&vs->Tangent, Tangent);
-
-					auto Binormal = ::Effekseer::Vec3f::Load(&vs->Binormal);
-					Binormal = ::Effekseer::Vec3f::Transform(Binormal, mat) - t;
-					::Effekseer::Vec3f::Store(&vs->Binormal, Binormal);
+					verteies[i].SetTangent(ToStruct(tangentX));
+					verteies[i].SetBinormal(ToStruct(tangentY));
 				}
 				else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
 				{

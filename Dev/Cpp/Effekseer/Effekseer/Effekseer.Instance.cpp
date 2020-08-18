@@ -412,7 +412,7 @@ void Instance::FirstUpdate()
 		{
 			auto maxGene = static_cast<float>(pNode->CommonValues.MaxGeneration);
 			ApplyEq(maxGene, effect, instanceGlobal, &rand, pNode->CommonValues.RefEqMaxGeneration, maxGene);
-			maxGenerationChildrenCount[i] = maxGene;
+			maxGenerationChildrenCount[i] = static_cast<int32_t>(maxGene);
 		}
 		else
 		{
@@ -1031,10 +1031,10 @@ void Instance::FirstUpdate()
 		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.FourPointInterpolation;
 
 		fpiValue.begin_threshold = nodeAlphaCutoffValue.BeginThreshold.getValue(rand);
-		fpiValue.transition_frame = nodeAlphaCutoffValue.TransitionFrameNum.getValue(rand);
+		fpiValue.transition_frame = static_cast<int32_t>(nodeAlphaCutoffValue.TransitionFrameNum.getValue(rand));
 		fpiValue.no2_threshold = nodeAlphaCutoffValue.No2Threshold.getValue(rand);
 		fpiValue.no3_threshold = nodeAlphaCutoffValue.No3Threshold.getValue(rand);
-		fpiValue.transition_frame2 = nodeAlphaCutoffValue.TransitionFrameNum2.getValue(rand);
+		fpiValue.transition_frame2 = static_cast<int32_t>(nodeAlphaCutoffValue.TransitionFrameNum2.getValue(rand));
 		fpiValue.end_threshold = nodeAlphaCutoffValue.EndThreshold.getValue(rand);
 	}
 	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)

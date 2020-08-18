@@ -662,7 +662,7 @@ protected:
 		// Apply distortion
 		if (vertexType == VertexType::Distortion)
 		{
-			StrideView<VertexDistortion> vs_(m_ringBufferData, stride_, vertexCount_);
+			StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
 			Effekseer::Vec3f axisBefore;
 
 			for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
@@ -696,22 +696,28 @@ protected:
 				Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
 				tangent = tangent.Normalize();
 
-				if (isFirst_)
+				if (isFirst_ || isLast_)
 				{
-					vs_[0].Binormal = vs_[1].Binormal = ToStruct(axis);
-					vs_[0].Tangent = vs_[1].Tangent = ToStruct(tangent);
-					vs_ += 2;
-				}
-				else if (isLast_)
-				{
-					vs_[0].Binormal = vs_[1].Binormal = ToStruct(axis);
-					vs_[0].Tangent = vs_[1].Tangent = ToStruct(tangent);
+					const auto binormalVector = ToStruct(axis);
+					const auto tangentVector = ToStruct(tangent);
+
+					for (int32_t j = 0; j < 2; j++)
+					{
+						vs_[j].SetBinormal(binormalVector);
+						vs_[j].SetTangent(tangentVector);
+					}
 					vs_ += 2;
 				}
 				else
 				{
-					vs_[0].Binormal = vs_[1].Binormal = vs_[2].Binormal = vs_[3].Binormal = ToStruct(axis);
-					vs_[0].Tangent = vs_[1].Tangent = vs_[2].Tangent = vs_[3].Tangent = ToStruct(tangent);
+					const auto binormalVector = ToStruct(axis);
+					const auto tangentVector = ToStruct(tangent);
+
+					for (int32_t j = 0; j < 4; j++)
+					{
+						vs_[j].SetBinormal(binormalVector);
+						vs_[j].SetTangent(tangentVector);
+					}
 					vs_ += 4;
 				}
 			}

@@ -313,7 +313,7 @@ int32_t Node::GetInputPinIndex(const std::string& name)
 	for (size_t i = 0; i < InputPins.size(); i++)
 	{
 		if (Parameter->InputPins[i]->Name == name)
-			return i;
+			return static_cast<int32_t>(i);
 	}
 
 	return -1;
@@ -325,7 +325,7 @@ int32_t Node::GetOutputPinIndex(const std::string& name)
 	for (size_t i = 0; i < OutputPins.size(); i++)
 	{
 		if (Parameter->OutputPins[i]->Name == name)
-			return i;
+			return static_cast<int32_t>(i);
 	}
 
 	return -1;
@@ -1655,7 +1655,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	const char* prefix = "EFKM";
 	int version = 3;
 
-	int offset = 0;
+	size_t offset = 0;
 
 	offset = data.size();
 	data.resize(data.size() + 4);
