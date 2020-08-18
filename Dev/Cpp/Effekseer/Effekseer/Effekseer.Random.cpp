@@ -68,7 +68,7 @@ float RandCallback::Rand(void* userData)
 float RandCallback::RandSeed(void* userData, float randSeed)
 {
 	auto seed = static_cast<int32_t>(randSeed * 1024 * 8);
-	return RandLCG(seed);
+	return static_cast<float>(RandLCG(seed));
 }
 
 //----------------------------------------------------------------------------------

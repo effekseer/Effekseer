@@ -850,43 +850,19 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	GetDevice()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vertexCount, 0, indexCount / 3);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
+Shader* RendererImplemented::GetShader(::EffekseerRenderer::StandardRendererShaderType type) const
 {
-	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
+	if (type == ::EffekseerRenderer::StandardRendererShaderType::BackDistortion)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader_distortion;
-		}
-		else
-		{
-			return m_shader_distortion;
-		}
+		return m_shader_distortion;
 	}
-	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	else if (type == ::EffekseerRenderer::StandardRendererShaderType::Lit)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader_lighting;
-		}
-		else
-		{
-			return m_shader_lighting;
-		}
+		return m_shader_lighting;
 	}
 	else
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader;
-		}
-		else
-		{
-			return m_shader;
-		}
+		return m_shader;
 	}
 }
 
