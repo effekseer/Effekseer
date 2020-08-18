@@ -277,8 +277,6 @@ protected:
 		// Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
 
 		StrideView<VERTEX> verteies(m_ringBufferData, stride_, singleVertexCount);
-		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
-
 		const float circleAngleDegree = (instanceParameter.ViewingAngleEnd - instanceParameter.ViewingAngleStart);
 		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
 		const float stepAngle = (stepAngleDegree) / 180.0f * 3.141592f;
@@ -540,7 +538,7 @@ protected:
 #endif
 
 			// distortion
-			if (vertexType == VertexType::Distortion)
+			if (IsDistortionVertex<VERTEX>())
 			{
 				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
 				const auto binormalCurrent = ToStruct(v[5].Pos - v[0].Pos);
@@ -586,7 +584,7 @@ protected:
 				vs[7].SetTangent(tangentNext);
 				vs[7].SetBinormal(binormalNext);
 			}
-			else if (vertexType == VertexType::Dynamic || vertexType == VertexType::Lighting)
+			else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 			{
 				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
 
