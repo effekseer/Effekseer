@@ -335,7 +335,6 @@ bool RendererImplemented::Initialize()
 	};
 
 	m_shader->GetAttribIdList(8, sprite_attribs);
-	m_shader->SetVertexSize(sizeof(Vertex));
 #else
 	static ShaderAttribInfo sprite_attribs[3] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false},
@@ -343,7 +342,6 @@ bool RendererImplemented::Initialize()
 		{"Input_UV", GL_FLOAT, 2, 16, false},
 	};
 	m_shader->GetAttribIdList(3, sprite_attribs);
-	m_shader->SetVertexSize(sizeof(Vertex));
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -419,8 +417,6 @@ bool RendererImplemented::Initialize()
 
 #endif
 
-	m_shader_distortion->SetVertexSize(sizeof(VertexDistortion));
-
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
@@ -487,7 +483,6 @@ bool RendererImplemented::Initialize()
 	};
 
 	m_shader_lighting->GetAttribIdList(11, sprite_attribs_lighting);
-	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::LightingVertex));
 #else
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false},
@@ -499,7 +494,6 @@ bool RendererImplemented::Initialize()
 	};
 
 	m_shader_lighting->GetAttribIdList(6, sprite_attribs_lighting);
-	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex));
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -546,7 +540,7 @@ bool RendererImplemented::Initialize()
 	m_vao_wire_frame = VertexArray::Create(this, m_shader, GetVertexBuffer(), m_indexBufferForWireframe, false);
 
 	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this, m_shader, m_shader_distortion);
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);

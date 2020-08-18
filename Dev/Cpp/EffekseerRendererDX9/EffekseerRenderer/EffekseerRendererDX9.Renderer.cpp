@@ -449,7 +449,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 	Release();
 
 	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this, m_shader, m_shader_distortion);
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
 

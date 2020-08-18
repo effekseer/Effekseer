@@ -192,8 +192,6 @@ public:
 	void DisableAttribs();
 	void SetVertex();
 
-	void SetVertexSize(int32_t vertexSize);
-
 	void SetVertexConstantBufferSize(int32_t size) override;
 	void SetPixelConstantBufferSize(int32_t size) override;
 

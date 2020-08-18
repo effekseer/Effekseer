@@ -248,7 +248,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* re
 	shaderExtract.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &extractPS, 1, "Bloom extract"));
 
 	shaderExtract->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderExtract->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
 	shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 	shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderExtract->GetUniformId("u_FilterParams"), 0);
@@ -260,7 +259,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* re
 
 	shaderDownsample.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &downSamplePS, 1, "Bloom downsample"));
 	shaderDownsample->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderDownsample->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 	// Blend shader
@@ -268,7 +266,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* re
 
 	shaderBlend.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &blendPS, 1, "Bloom blend"));
 	shaderBlend->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderBlend->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
 	shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
 	shaderBlend->SetTextureSlot(2, shaderBlend->GetUniformId("u_Texture2"));
@@ -279,7 +276,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* re
 
 	shaderBlurH.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &blend_h_PS, 1, "Bloom blurH"));
 	shaderBlurH->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderBlurH->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
 
 	// Blur(vertical) shader
@@ -287,7 +283,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* re
 
 	shaderBlurV.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &blend_v_PS, 1, "Bloom blurV"));
 	shaderBlurV->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderBlurV->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
@@ -446,7 +441,6 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, EffekseerRenderer::Renderer
 
 	shaderCopy.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &copyPS, 1, "Tonemap copy"));
 	shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderCopy->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
 	// Reinhard shader
@@ -454,7 +448,6 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, EffekseerRenderer::Renderer
 
 	shaderReinhard.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &tonemapPS, 1, "Tonemap Reinhard"));
 	shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shaderReinhard->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
 	shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderReinhard->GetUniformId("u_Exposure"), 0);
@@ -512,7 +505,6 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, EffekseerRenderer
 	// Copy shader
 	shader_.reset(Shader::Create(renderer_->GetGraphicsDevice(), &basicVS, 1, &linierToSrgbPS, 1, "LinearToSRGB"));
 	shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
-	shader_->SetVertexSize(sizeof(BlitterGL::Vertex));
 	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
