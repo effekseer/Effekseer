@@ -2,9 +2,11 @@
 
 ## Release notes
 
-### 1.52k
+### After 1.52k
 
-- Changed the timing of sending the model's buffer to the GPU before rendering, because in some environments the buffer generation process was not thread-safe. 
+- Please read online release notes
+
+https://effekseer.github.io/Help_Tool/en/releasenotes.html
 
 ### 1.52i
 
@@ -22,6 +24,10 @@ Thank you for downloading Effekseer.
 This package contains a runtime for showing visual effects on applications using DirectX or OpenGL.
 The package does not contain tools or samples to create visual effects.
 If you want these, please download a package of tools.
+
+## API Reference
+
+https://effekseer.github.io/Help_Runtime/en/index.html
 
 ## How to use
 
