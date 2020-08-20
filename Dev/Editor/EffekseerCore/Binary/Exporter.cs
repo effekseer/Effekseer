@@ -507,6 +507,8 @@ namespace Effekseer.Binary
 				}
 			}
 
+			Dictionary<string, int> curve_and_index = new Dictionary<string, int>();
+
 #if __EFFEKSEER_BUILD_VERSION16__
 			Action<Data.NodeBase> get_curves = null;
 			get_curves = (node) =>
@@ -535,8 +537,6 @@ namespace Effekseer.Binary
 			};
 
 			get_curves(Core.Root);
-
-			Dictionary<string, int> curve_and_index = new Dictionary<string, int>();
 
 			if (exporterVersion >= ExporterVersion.Ver1600)
 			{
