@@ -9,18 +9,28 @@ namespace Effekseer.Binary
 {
 	class LocationValues
 	{
-		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType
-#if __EFFEKSEER_BUILD_VERSION16__
-			, Dictionary<string, int> curveAndIndex
-#endif
-			)
+		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType, Dictionary<string, int> curveAndIndex, ExporterVersion version)
 		{
 			//if (parentEffectType != Data.ParentEffectType.NotBind) magnification = 1.0f;
 
-			List<byte[]> data = new List<byte[]>();
-			data.Add(value.Type.GetValueAsInt().GetBytes());
+			var type = value.Type.Value;
 
-			if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Fixed)
+#if __EFFEKSEER_BUILD_VERSION16__
+			// Fall back
+			if (version < ExporterVersion.Ver1600)
+			{
+				if(type == Data.LocationValues.ParamaterType.NurbsCurve ||
+					type == Data.LocationValues.ParamaterType.ViewOffset)
+				{
+					type = Data.LocationValues.ParamaterType.Fixed;
+				}
+			}
+#endif
+
+			List<byte[]> data = new List<byte[]>();
+			data.Add(((int)type).GetBytes());
+
+			if (type == Data.LocationValues.ParamaterType.Fixed)
 			{
 				var refBuf = value.Fixed.Location.DynamicEquation.Index.GetBytes();
 				var mainBuf = Translation_Fixed_Values.Create(value.Fixed, 1.0f).GetBytes();
@@ -28,7 +38,7 @@ namespace Effekseer.Binary
 				data.Add(refBuf);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.PVA)
+			else if (type == Data.LocationValues.ParamaterType.PVA)
 			{
 				var refBuf1_1 = value.PVA.Location.DynamicEquationMax.Index.GetBytes();
 				var refBuf1_2 = value.PVA.Location.DynamicEquationMin.Index.GetBytes();
@@ -47,7 +57,7 @@ namespace Effekseer.Binary
 				data.Add(refBuf3_2);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Easing)
+			else if (type == Data.LocationValues.ParamaterType.Easing)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
 
@@ -70,7 +80,7 @@ namespace Effekseer.Binary
 				data.Add(__data.Count().GetBytes());
 				data.Add(__data);
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.LocationFCurve)
+			else if (type == Data.LocationValues.ParamaterType.LocationFCurve)
 			{
 				var bytes1 = value.LocationFCurve.FCurve.GetBytes();
 
@@ -79,7 +89,7 @@ namespace Effekseer.Binary
 				data.Add(bytes1);
 			}
 #if __EFFEKSEER_BUILD_VERSION16__
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.NurbsCurve)
+			else if (type == Data.LocationValues.ParamaterType.NurbsCurve)
 			{
 				if (value.NurbsCurve.FilePath.RelativePath != string.Empty)
 				{
@@ -98,7 +108,7 @@ namespace Effekseer.Binary
 
 				data.Add(value.NurbsCurve.LoopType.GetValueAsInt().GetBytes());
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.ViewOffset)
+			else if (type == Data.LocationValues.ParamaterType.ViewOffset)
 			{
 				data.Add(value.ViewOffset.Distance.Max.GetBytes());
 				data.Add(value.ViewOffset.Distance.Min.GetBytes());

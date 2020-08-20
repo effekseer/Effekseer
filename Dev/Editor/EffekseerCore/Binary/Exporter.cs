@@ -34,9 +34,7 @@ namespace Effekseer.Binary
 
 		public HashSet<string> Materials = new HashSet<string>();
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public HashSet<string> Curves = new HashSet<string>();
-#endif
 
 		/// <summary>
 		/// Export effect data
@@ -65,9 +63,7 @@ namespace Effekseer.Binary
 
 			Materials = new HashSet<string>();
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			Curves = new HashSet<string>();
-#endif
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -541,6 +537,8 @@ namespace Effekseer.Binary
 			get_curves(Core.Root);
 
 			Dictionary<string, int> curve_and_index = new Dictionary<string, int>();
+
+			if (exporterVersion >= ExporterVersion.Ver1600)
 			{
 				int index = 0;
 				foreach (var curve in Curves.ToList().OrderBy(_ => _))
@@ -647,15 +645,19 @@ namespace Effekseer.Binary
 			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
 
 #if __EFFEKSEER_BUILD_VERSION16__
-			// export curves to a file
-			data.Add(BitConverter.GetBytes(curve_and_index.Count));
-			foreach (var curve in curve_and_index)
+			if (exporterVersion >= ExporterVersion.Ver1600)
 			{
-				var path = Encoding.Unicode.GetBytes(curve.Key);
-				data.Add(((path.Count() + 2) / 2).GetBytes());
-				data.Add(path);
-				data.Add(new byte[] { 0, 0 });
+				// export curves to a file
+				data.Add(BitConverter.GetBytes(curve_and_index.Count));
+				foreach (var curve in curve_and_index)
+				{
+					var path = Encoding.Unicode.GetBytes(curve.Key);
+					data.Add(((path.Count() + 2) / 2).GetBytes());
+					data.Add(path);
+					data.Add(new byte[] { 0, 0 });
+				}
 			}
+
 #endif
 
 			var compiler = new InternalScript.Compiler();
@@ -797,11 +799,8 @@ namespace Effekseer.Binary
 				}
 
 				node_data.Add(CommonValues.GetBytes(n.CommonValues));
-				node_data.Add(LocationValues.GetBytes(n.LocationValues, n.CommonValues.ScaleEffectType
-#if __EFFEKSEER_BUILD_VERSION16__
-					, curve_and_index
-#endif
-					));
+				node_data.Add(LocationValues.GetBytes(n.LocationValues, n.CommonValues.ScaleEffectType, curve_and_index, exporterVersion));
+
 				node_data.Add(LocationAbsValues.GetBytes(n.LocationAbsValues, n.CommonValues.ScaleEffectType, exporterVersion));
 				node_data.Add(RotationValues.GetBytes(n.RotationValues));
 				node_data.Add(ScaleValues.GetBytes(n.ScalingValues, n.CommonValues.ScaleEffectType));
