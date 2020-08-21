@@ -38,10 +38,13 @@ namespace Effekseer.Binary
 			data.Add(((int)value.Material.Value).GetBytes());
 
 #if __EFFEKSEER_BUILD_VERSION16__
-			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default ||
-				value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
+			if (version >= ExporterVersion.Ver1600)
 			{
-				data.Add(BitConverter.GetBytes(value.EmissiveScaling));
+				if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default ||
+				value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
+				{
+					data.Add(BitConverter.GetBytes(value.EmissiveScaling));
+				}
 			}
 #endif
 
