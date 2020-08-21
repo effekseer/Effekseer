@@ -10,6 +10,8 @@ namespace Effekseer.GUI.Dock
 	class FileViewer : DockPanel
 	{
 		public string CurrentPath { get; private set; }
+		string addressText = string.Empty;
+		bool addressEditing = false;
 		List<FileItem> items = new List<FileItem>();
 		int selectedIndex = -1;
 
@@ -52,6 +54,8 @@ namespace Effekseer.GUI.Dock
 			directoryWatcher.Renamed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Deleted += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Created += (o, e) => { shouldUpdateFileList = true; };
+
+			UpdateFileList(Directory.GetCurrentDirectory());
 		}
 
 		public override void OnDisposed()
@@ -69,7 +73,8 @@ namespace Effekseer.GUI.Dock
 				// Back directory (BS shortcut key)
 				if (Manager.NativeManager.IsWindowFocused() &&
 					Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
-					!String.IsNullOrEmpty(CurrentPath))
+					!Manager.NativeManager.IsAnyItemActive() &&
+					!string.IsNullOrEmpty(CurrentPath))
 				{
 					UpdateFileListWithProjectPath(CurrentPath);
 				}
@@ -84,10 +89,19 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.SameLine();
 
 				// Display current directory
-				if (Manager.NativeManager.InputText("###AddressBar", (CurrentPath != null) ? CurrentPath : ""))
+				if (Manager.NativeManager.InputText("###AddressBar", addressText))
 				{
-					string path = Manager.NativeManager.GetInputTextResult();
-					UpdateFileList(path);
+					addressText = Manager.NativeManager.GetInputTextResult();
+					UpdateFileList(addressText);
+				}
+				if (Manager.NativeManager.IsItemActivated())
+				{
+					addressEditing = true;
+				}
+				if (Manager.NativeManager.IsItemDeactivated())
+				{
+					addressEditing = false;
+					addressText = CurrentPath;
 				}
 			}
 
@@ -374,8 +388,11 @@ namespace Effekseer.GUI.Dock
 				return;
 			}
 
+			path = Path.GetFullPath(path);
+
 			ResetSelected();
 			CurrentPath = path;
+			if (!addressEditing) { addressText = path; }
 			items.Clear();
 
 			//string parentDirectory = System.IO.Path.GetDirectoryName(path);

@@ -1689,6 +1689,18 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemClicked___")]
   public static extern bool GUIManager_IsItemClicked(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemEdited___")]
+  public static extern bool GUIManager_IsItemEdited(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemActivated___")]
+  public static extern bool GUIManager_IsItemActivated(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemDeactivated___")]
+  public static extern bool GUIManager_IsItemDeactivated(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemDeactivatedAfterEdit___")]
+  public static extern bool GUIManager_IsItemDeactivatedAfterEdit(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAnyItemActive___")]
   public static extern bool GUIManager_IsAnyItemActive(global::System.Runtime.InteropServices.HandleRef jarg1);
 

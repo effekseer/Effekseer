@@ -1250,6 +1250,26 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsItemEdited() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemEdited(swigCPtr);
+    return ret;
+  }
+
+  public bool IsItemActivated() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemActivated(swigCPtr);
+    return ret;
+  }
+
+  public bool IsItemDeactivated() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemDeactivated(swigCPtr);
+    return ret;
+  }
+
+  public bool IsItemDeactivatedAfterEdit() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemDeactivatedAfterEdit(swigCPtr);
+    return ret;
+  }
+
   public bool IsAnyItemActive() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyItemActive(swigCPtr);
     return ret;
