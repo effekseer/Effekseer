@@ -21,8 +21,9 @@ Shader::Shader(RendererImplemented* renderer,
 			   D3DVERTEXELEMENT9 decl[],
 			   IDirect3DVertexShader9* vertexShader,
 			   IDirect3DPixelShader9* pixelShader,
-			   IDirect3DVertexDeclaration9* vertexDeclaration)
-	: DeviceObject(renderer)
+			   IDirect3DVertexDeclaration9* vertexDeclaration,
+			   bool hasRefCount)
+	: DeviceObject(renderer, hasRefCount)
 	, m_vertexShader(vertexShader)
 	, m_pixelShader(pixelShader)
 	, m_vertexDeclaration(vertexDeclaration)
@@ -68,7 +69,8 @@ Shader* Shader::Create(RendererImplemented* renderer,
 					   const uint8_t pixelShader[],
 					   int32_t pixelShaderSize,
 					   const char* name,
-					   D3DVERTEXELEMENT9 decl[])
+					   D3DVERTEXELEMENT9 decl[],
+					   bool hasRefCount)
 {
 	assert(renderer != NULL);
 	assert(renderer->GetDevice() != NULL);
@@ -110,16 +112,14 @@ Shader* Shader::Create(RendererImplemented* renderer,
 	}
 
 	return new Shader(renderer,
-
 					  vertexShader,
 					  vertexShaderSize,
 					  pixelShader,
 					  pixelShaderSize,
 					  decl,
-
 					  vs,
 					  ps,
-					  vertexDeclaration);
+					  vertexDeclaration, hasRefCount);
 }
 
 //----------------------------------------------------------------------------------
@@ -160,8 +160,14 @@ void Shader::OnChangeDevice()
 //-----------------------------------------------------------------------------------
 void Shader::SetVertexConstantBufferSize(int32_t size)
 {
+	// TOTO replace align method
+	size = ((size + 15) / 16) * 16;
+
 	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
 	m_vertexConstantBuffer = new uint8_t[size];
+	m_vertexRegisterCount = size / (sizeof(float) * 4);
+
+	assert(m_vertexRegisterCount <= 256);
 }
 
 //-----------------------------------------------------------------------------------
@@ -169,8 +175,13 @@ void Shader::SetVertexConstantBufferSize(int32_t size)
 //-----------------------------------------------------------------------------------
 void Shader::SetPixelConstantBufferSize(int32_t size)
 {
+	size = ((size + 15) / 16) * 16;
+
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 	m_pixelConstantBuffer = new uint8_t[size];
+	m_pixelRegisterCount = size / (sizeof(float) * 4);
+
+	assert(m_pixelRegisterCount <= 256);
 }
 
 //-----------------------------------------------------------------------------------

@@ -12,8 +12,8 @@ namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer::VertexBuffer(RendererImplemented* renderer, IDirect3DVertexBuffer9* buffer, int size, bool isDynamic)
-	: DeviceObject(renderer)
+VertexBuffer::VertexBuffer(RendererImplemented* renderer, IDirect3DVertexBuffer9* buffer, int size, bool isDynamic, bool hasRefCount)
+	: DeviceObject(renderer, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
 	, m_buffer(buffer)
 	, m_vertexRingOffset(0)
@@ -32,7 +32,7 @@ VertexBuffer::~VertexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool isDynamic)
+VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount)
 {
 	// フラグ
 	D3DPOOL pool = D3DPOOL_MANAGED;
@@ -57,7 +57,7 @@ VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool
 	if (FAILED(hr))
 		return NULL;
 
-	return new VertexBuffer(renderer, vb, size, isDynamic);
+	return new VertexBuffer(renderer, vb, size, isDynamic, hasRefCount);
 }
 
 //-----------------------------------------------------------------------------------

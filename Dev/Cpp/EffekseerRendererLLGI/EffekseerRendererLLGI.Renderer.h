@@ -22,21 +22,34 @@ class GraphicsDevice;
 
 struct FixedShader
 {
-	std::vector<LLGI::DataStructure> StandardTexture_VS;
-	std::vector<LLGI::DataStructure> StandardLightingTexture_VS;
-	std::vector<LLGI::DataStructure> StandardDistortedTexture_VS;
+	std::vector<LLGI::DataStructure> SpriteUnlit_VS;
+	std::vector<LLGI::DataStructure> SpriteLit_VS;
+	std::vector<LLGI::DataStructure> SpriteDistortion_VS;
+	std::vector<LLGI::DataStructure> ModelUnlit_VS;
+	std::vector<LLGI::DataStructure> ModelLit_VS;
+	std::vector<LLGI::DataStructure> ModelDistortion_VS;
 
-	std::vector<LLGI::DataStructure> ModelShaderLightingTextureNormal_VS;
-	std::vector<LLGI::DataStructure> ModelShaderTexture_VS;
-	std::vector<LLGI::DataStructure> ModelShaderDistortionTexture_VS;
+	std::vector<LLGI::DataStructure> SpriteUnlit_PS;
+	std::vector<LLGI::DataStructure> SpriteLit_PS;
+	std::vector<LLGI::DataStructure> SpriteDistortion_PS;
+	std::vector<LLGI::DataStructure> ModelUnlit_PS;
+	std::vector<LLGI::DataStructure> ModelLit_PS;
+	std::vector<LLGI::DataStructure> ModelDistortion_PS;
 
-	std::vector<LLGI::DataStructure> StandardTexture_PS;
-	std::vector<LLGI::DataStructure> StandardLightingTexture_PS;
-	std::vector<LLGI::DataStructure> StandardDistortedTexture_PS;
+	std::vector<LLGI::DataStructure> AdvancedSpriteUnlit_VS;
+	std::vector<LLGI::DataStructure> AdvancedSpriteLit_VS;
+	std::vector<LLGI::DataStructure> AdvancedSpriteDistortion_VS;
+	std::vector<LLGI::DataStructure> AdvancedModelUnlit_VS;
+	std::vector<LLGI::DataStructure> AdvancedModelLit_VS;
+	std::vector<LLGI::DataStructure> AdvancedModelDistortion_VS;
 
-	std::vector<LLGI::DataStructure> ModelShaderLightingTextureNormal_PS;
-	std::vector<LLGI::DataStructure> ModelShaderTexture_PS;
-	std::vector<LLGI::DataStructure> ModelShaderDistortionTexture_PS;
+	std::vector<LLGI::DataStructure> AdvancedSpriteUnlit_PS;
+	std::vector<LLGI::DataStructure> AdvancedSpriteLit_PS;
+	std::vector<LLGI::DataStructure> AdvancedSpriteDistortion_PS;
+	std::vector<LLGI::DataStructure> AdvancedModelUnlit_PS;
+	std::vector<LLGI::DataStructure> AdvancedModelLit_PS;
+	std::vector<LLGI::DataStructure> AdvancedModelDistortion_PS;
+
 };
 
 /**

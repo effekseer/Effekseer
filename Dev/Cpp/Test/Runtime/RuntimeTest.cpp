@@ -532,8 +532,8 @@ void BasicRuntimeTest(bool onCI)
 
 #elif defined(__APPLE__)
 
-#ifndef __EFFEKSEER_BUILD_VERSION16__
 
+    
 	{
 		auto platform = std::make_shared<EffectPlatformMetal>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
@@ -545,7 +545,7 @@ void BasicRuntimeTest(bool onCI)
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
 		platform->Terminate();
 	}
-#endif
+
 #else
 #ifndef __EFFEKSEER_BUILD_VERSION16__
 	{

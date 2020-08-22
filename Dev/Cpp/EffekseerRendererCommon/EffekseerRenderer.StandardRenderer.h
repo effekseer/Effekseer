@@ -84,6 +84,7 @@ struct StandardRendererState
 	float EdgeThreshold;
 	uint8_t EdgeColor[4];
 	int32_t EdgeColorScaling;
+	bool IsAlphaCuttoffEnabled = false;
 #endif
 
 	::Effekseer::RendererMaterialType MaterialType;
@@ -160,6 +161,43 @@ struct StandardRendererState
 		MaterialTextureCount = 0;
 		CustomData1Count = 0;
 		CustomData2Count = 0;
+	}
+
+	bool IsAdvanced() const
+	{
+		// TODO : merge with IsAdvanced in ModelRenderer
+		if (MaterialType == ::Effekseer::RendererMaterialType::File)
+		{
+			return false;
+		}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (AlphaTexturePtr != nullptr && AlphaTexturePtr != reinterpret_cast<void*>(0x1))
+			return true;
+
+		if (UVDistortionTexturePtr != nullptr && UVDistortionTexturePtr != reinterpret_cast<void*>(0x1))
+			return true;
+
+		if (BlendTexturePtr != nullptr && BlendTexturePtr != reinterpret_cast<void*>(0x1))
+			return true;
+
+		if (BlendAlphaTexturePtr != nullptr && BlendAlphaTexturePtr != reinterpret_cast<void*>(0x1))
+			return true;
+
+		if (BlendUVDistortionTexturePtr != nullptr && BlendUVDistortionTexturePtr != reinterpret_cast<void*>(0x1))
+			return true;
+
+		if (EnableInterpolation != 0 ||
+			TextureBlendType != -1 ||
+			EdgeThreshold != 0 ||
+			EmissiveScaling != 1.0f ||
+			IsAlphaCuttoffEnabled)
+		{
+			return true;
+		}
+#endif
+
+		return false;
 	}
 
 	bool operator!=(const StandardRendererState state)
@@ -250,6 +288,9 @@ struct StandardRendererState
 			EdgeColor[3] != state.EdgeColor[3])
 			return true;
 		if (EdgeColorScaling != state.EdgeColorScaling)
+			return true;
+
+		if (IsAlphaCuttoffEnabled != state.IsAlphaCuttoffEnabled)
 			return true;
 #endif
 		if (MaterialType != state.MaterialType)
@@ -463,7 +504,6 @@ template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
 private:
-
 	enum class RenderingMode
 	{
 		Unlit,
@@ -476,7 +516,7 @@ private:
 	};
 
 	RENDERER* m_renderer;
-	
+
 	Effekseer::TextureData* m_texture;
 
 	StandardRendererState m_state;
@@ -493,7 +533,8 @@ private:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -513,7 +554,8 @@ private:
 	{
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -526,7 +568,8 @@ private:
 
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -540,7 +583,8 @@ private:
 
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -552,7 +596,8 @@ private:
 
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -566,7 +611,8 @@ private:
 		{
 			float Color[4];
 
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -587,7 +633,8 @@ private:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -600,7 +647,8 @@ private:
 
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -614,7 +662,8 @@ private:
 
 		struct
 		{
-			union {
+			union
+			{
 				float Buffer[4];
 
 				struct
@@ -697,24 +746,24 @@ public:
 
 		m_state = state;
 
+		bool isAdvanced = m_state.IsAdvanced();
+
 		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
 		{
 			renderingMode_ = RenderingMode::Material;
 		}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting && isAdvanced)
 		{
 			renderingMode_ = RenderingMode::AdvancedLit;
 		}
-		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
 		{
 			renderingMode_ = RenderingMode::AdvancedBackDistortion;
 		}
-		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Default)
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Default && isAdvanced)
 		{
 			renderingMode_ = RenderingMode::AdvancedUnlit;
 		}
-#else
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 		{
 			renderingMode_ = RenderingMode::Lit;
@@ -727,7 +776,6 @@ public:
 		{
 			renderingMode_ = RenderingMode::Unlit;
 		}
-#endif
 		else
 		{
 			assert(0);
@@ -909,8 +957,22 @@ public:
 		}
 		else
 		{
+			auto isAdvanced = m_state.IsAdvanced();
+
 			StandardRendererShaderType type;
-			if (m_state.MaterialType == Effekseer::RendererMaterialType::Default)
+			if (m_state.MaterialType == Effekseer::RendererMaterialType::Default && isAdvanced)
+			{
+				type = StandardRendererShaderType::AdvancedUnlit;
+			}
+			else if (m_state.MaterialType == Effekseer::RendererMaterialType::Lighting && isAdvanced)
+			{
+				type = StandardRendererShaderType::AdvancedLit;
+			}
+			else if (m_state.MaterialType == Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
+			{
+				type = StandardRendererShaderType::AdvancedBackDistortion;
+			}
+			else if (m_state.MaterialType == Effekseer::RendererMaterialType::Default)
 			{
 				type = StandardRendererShaderType::Unlit;
 			}

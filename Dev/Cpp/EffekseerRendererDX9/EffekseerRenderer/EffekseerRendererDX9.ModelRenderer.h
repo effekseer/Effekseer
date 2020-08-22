@@ -24,14 +24,20 @@ class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 {
 private:
 	RendererImplemented* m_renderer;
-	Shader* m_shader_lighting_texture_normal;
-	Shader* m_shader_texture;
-	Shader* m_shader_distortion_texture;
+	Shader* shader_advanced_lit_ = nullptr;
+	Shader* shader_advanced_unlit_ = nullptr;
+	Shader* shader_advanced_distortion_ = nullptr;
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_unlit_ = nullptr;
+	Shader* shader_distortion_ = nullptr;
 
 	ModelRenderer(RendererImplemented* renderer,
-				  Shader* shader_lighting_texture_normal,
-				  Shader* shader_texture,
-				  Shader* shader_distortion_texture);
+				  Shader* shader_advanced_lit,
+				  Shader* shader_advanced_unlit,
+				  Shader* shader_advanced_distortion,
+				  Shader* shader_lit,
+				  Shader* shader_unlit,
+				  Shader* shader_distortion);
 
 public:
 	virtual ~ModelRenderer();

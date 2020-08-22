@@ -15,23 +15,37 @@
 
 // #include "Shaders.h"
 
-#include "ShaderHeader_15/standard_renderer_VS.h"
-#include "ShaderHeader_15/standard_renderer_PS.h"
+#include "ShaderHeader/standard_renderer_VS.h"
+#include "ShaderHeader/standard_renderer_PS.h"
 
-#include "ShaderHeader_15/standard_renderer_lighting_VS.h"
-#include "ShaderHeader_15/standard_renderer_lighting_PS.h"
+#include "ShaderHeader/standard_renderer_lighting_VS.h"
+#include "ShaderHeader/standard_renderer_lighting_PS.h"
 
-#include "ShaderHeader_15/standard_renderer_distortion_VS.h"
-#include "ShaderHeader_15/standard_renderer_distortion_PS.h"
+#include "ShaderHeader/standard_renderer_distortion_VS.h"
+#include "ShaderHeader/standard_renderer_distortion_PS.h"
 
-#include "ShaderHeader_15/model_renderer_texture_VS.h"
-#include "ShaderHeader_15/model_renderer_texture_PS.h"
+#include "ShaderHeader/model_renderer_texture_VS.h"
+#include "ShaderHeader/model_renderer_texture_PS.h"
 
-#include "ShaderHeader_15/model_renderer_lighting_texture_normal_VS.h"
-#include "ShaderHeader_15/model_renderer_lighting_texture_normal_PS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
+#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
 
-#include "ShaderHeader_15/model_renderer_distortion_VS.h"
-#include "ShaderHeader_15/model_renderer_distortion_PS.h"
+#include "ShaderHeader/model_renderer_distortion_VS.h"
+#include "ShaderHeader/model_renderer_distortion_PS.h"
+
+#include "ShaderHeader/sprite_unlit_vs.h"
+#include "ShaderHeader/sprite_unlit_ps.h"
+#include "ShaderHeader/sprite_lit_vs.h"
+#include "ShaderHeader/sprite_lit_ps.h"
+#include "ShaderHeader/sprite_distortion_vs.h"
+#include "ShaderHeader/sprite_distortion_ps.h"
+
+#include "ShaderHeader/model_unlit_vs.h"
+#include "ShaderHeader/model_unlit_ps.h"
+#include "ShaderHeader/model_lit_vs.h"
+#include "ShaderHeader/model_lit_ps.h"
+#include "ShaderHeader/model_distortion_vs.h"
+#include "ShaderHeader/model_distortion_ps.h"
 
 namespace EffekseerRendererMetal
 {
@@ -67,6 +81,42 @@ namespace EffekseerRendererMetal
 	return ret;
 }
 
+static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader)
+{
+    assert(shader);
+    if (!shader)
+        return;
+
+    shader->AdvancedSpriteUnlit_VS = {{metal_standard_renderer_VS, (int32_t)sizeof(metal_standard_renderer_VS)}};
+    shader->AdvancedSpriteLit_VS = {{metal_standard_renderer_lighting_VS, (int32_t)sizeof(metal_standard_renderer_lighting_VS)}};
+    shader->AdvancedSpriteDistortion_VS = {{metal_standard_renderer_distortion_VS, (int32_t)sizeof(metal_standard_renderer_distortion_VS)}};
+    shader->AdvancedModelUnlit_VS = {{metal_model_renderer_texture_VS, (int32_t)sizeof(metal_model_renderer_texture_VS)}};
+    shader->AdvancedModelLit_VS = {{metal_model_renderer_lighting_texture_normal_VS, (int32_t)sizeof(metal_model_renderer_lighting_texture_normal_VS)}};
+    shader->AdvancedModelDistortion_VS = {{metal_model_renderer_distortion_VS, (int32_t)sizeof(metal_model_renderer_distortion_VS)}};
+
+    shader->AdvancedSpriteUnlit_PS = {{metal_standard_renderer_PS, (int32_t)sizeof(metal_standard_renderer_PS)}};
+    shader->AdvancedSpriteLit_PS = {{metal_standard_renderer_lighting_PS, (int32_t)sizeof(metal_standard_renderer_lighting_PS)}};
+    shader->AdvancedSpriteDistortion_PS = {{metal_standard_renderer_distortion_PS, (int32_t)sizeof(metal_standard_renderer_distortion_PS)}};
+    shader->AdvancedModelUnlit_PS = {{metal_model_renderer_texture_PS, (int32_t)sizeof(metal_model_renderer_texture_PS)}};
+    shader->AdvancedModelLit_PS = {{metal_model_renderer_lighting_texture_normal_PS, (int32_t)sizeof(metal_model_renderer_lighting_texture_normal_PS)}};
+    shader->AdvancedModelDistortion_PS = {{metal_model_renderer_distortion_PS, (int32_t)sizeof(metal_model_renderer_distortion_PS)}};
+
+
+    shader->SpriteUnlit_VS = {{metal_sprite_unlit_vs, (int32_t)sizeof(metal_sprite_unlit_vs)}};
+    shader->SpriteDistortion_VS = {{metal_sprite_distortion_vs, (int32_t)sizeof(metal_sprite_distortion_vs)}};
+    shader->SpriteLit_VS = {{metal_sprite_lit_vs, (int32_t)sizeof(metal_sprite_lit_vs)}};
+    shader->ModelUnlit_VS = {{metal_model_unlit_vs, (int32_t)sizeof(metal_model_unlit_vs)}};
+    shader->ModelDistortion_VS = {{metal_model_distortion_vs, (int32_t)sizeof(metal_model_distortion_vs)}};
+    shader->ModelLit_VS = {{metal_model_lit_vs, (int32_t)sizeof(metal_model_lit_vs)}};
+
+    shader->SpriteUnlit_PS = {{metal_sprite_unlit_ps, (int32_t)sizeof(metal_sprite_unlit_ps)}};
+    shader->SpriteDistortion_PS = {{metal_sprite_distortion_ps, (int32_t)sizeof(metal_sprite_distortion_ps)}};
+    shader->SpriteLit_PS = {{metal_sprite_lit_ps, (int32_t)sizeof(metal_sprite_lit_ps)}};
+    shader->ModelUnlit_PS = {{metal_model_unlit_ps, (int32_t)sizeof(metal_model_unlit_ps)}};
+    shader->ModelDistortion_PS = {{metal_model_distortion_ps, (int32_t)sizeof(metal_model_distortion_ps)}};
+    shader->ModelLit_PS = {{metal_model_lit_ps, (int32_t)sizeof(metal_model_lit_ps)}};
+}
+
 ::EffekseerRenderer::Renderer* Create(
                                       ::EffekseerRenderer::GraphicsDevice* graphicsDevice,
                                       int32_t squareMaxCount,
@@ -77,29 +127,7 @@ namespace EffekseerRendererMetal
     RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
     renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
 
-    auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const char* data, int32_t size) -> void {
-        ds.resize(1);
-        ds[0].Size = size;
-        ds[0].Data = data;
-        return;
-    };
-    
-    //const char* sources[] = {
-    //    g_sprite_vs_src, g_sprite_vs_lighting_src, g_sprite_distortion_vs_src, g_model_lighting_vs_src, g_model_texture_vs_src, g_model_distortion_vs_src,
-    //    g_sprite_fs_texture_src, g_sprite_fs_lighting_src, g_sprite_fs_texture_distortion_src, g_model_lighting_fs_src, g_model_texture_fs_src, g_model_distortion_fs_src
-    //};
-    
-    const char* sources[] = {
-        metal_standard_renderer_VS, metal_standard_renderer_lighting_VS, metal_standard_renderer_distortion_VS, metal_model_renderer_lighting_texture_normal_VS, metal_model_renderer_texture_VS, metal_model_renderer_distortion_VS,
-        metal_standard_renderer_PS, metal_standard_renderer_lighting_PS, metal_standard_renderer_distortion_PS, metal_model_renderer_lighting_texture_normal_PS, metal_model_renderer_texture_PS, metal_model_renderer_distortion_PS,
-    };
-    
-    std::vector<LLGI::DataStructure>* dest = &renderer->fixedShader_.StandardTexture_VS;
-
-    for (int i = 0; i < 12; ++i)
-    {
-        allocate_(dest[i], sources[i], sizeof(sources[i]));
-    }
+    CreateFixedShaderForMetal(&renderer->fixedShader_);
 
 	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
     auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());

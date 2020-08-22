@@ -16,8 +16,6 @@ Shader::Shader(GraphicsDevice* graphicsDevice,
 	, layouts_(layouts)
 	, m_vertexConstantBuffer(NULL)
 	, m_pixelConstantBuffer(NULL)
-	, m_vertexRegisterCount(0)
-	, m_pixelRegisterCount(0)
 {
 }
 
@@ -63,13 +61,6 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 
 void Shader::SetConstantBuffer()
 {
-	if (m_vertexRegisterCount > 0)
-	{
-	}
-
-	if (m_pixelRegisterCount > 0)
-	{
-	}
 }
 
 } // namespace EffekseerRendererLLGI

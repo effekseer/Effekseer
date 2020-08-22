@@ -26,18 +26,16 @@ private:
 	ID3D11Buffer* m_constantBufferToVS;
 	ID3D11Buffer* m_constantBufferToPS;
 
-	void* m_vertexConstantBuffer;
-	void* m_pixelConstantBuffer;
+	void* m_vertexConstantBuffer = nullptr;
+	void* m_pixelConstantBuffer = nullptr;
 	int32_t vertexConstantBufferSize_ = 0;
 	int32_t pixelConstantBufferSize_ = 0;
-
-	int32_t m_vertexRegisterCount;
-	int32_t m_pixelRegisterCount;
 
 	Shader(RendererImplemented* renderer,
 		   ID3D11VertexShader* vertexShader,
 		   ID3D11PixelShader* pixelShader,
-		   ID3D11InputLayout* vertexDeclaration);
+		   ID3D11InputLayout* vertexDeclaration,
+		   bool hasRefCount);
 
 public:
 	virtual ~Shader();
@@ -49,7 +47,8 @@ public:
 						  int32_t pixelShaderSize,
 						  const char* name,
 						  const D3D11_INPUT_ELEMENT_DESC decl[],
-						  int32_t layoutCount);
+						  int32_t layoutCount,
+						  bool hasRefCount);
 
 public: // デバイス復旧用
 	virtual void OnLostDevice();
@@ -88,15 +87,6 @@ public:
 	void* GetPixelConstantBuffer()
 	{
 		return m_pixelConstantBuffer;
-	}
-
-	void SetVertexRegisterCount(int32_t count)
-	{
-		m_vertexRegisterCount = count;
-	}
-	void SetPixelRegisterCount(int32_t count)
-	{
-		m_pixelRegisterCount = count;
 	}
 
 	void SetConstantBuffer();

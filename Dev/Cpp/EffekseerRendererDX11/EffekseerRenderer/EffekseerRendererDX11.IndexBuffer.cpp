@@ -12,8 +12,8 @@ namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic)
-	: DeviceObject(renderer)
+IndexBuffer::IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic, bool hasRefCount)
+	: DeviceObject(renderer, hasRefCount)
 	, IndexBufferBase(maxCount, isDynamic)
 	, m_buffer(buffer)
 	, m_lockedResource(NULL)
@@ -33,7 +33,7 @@ IndexBuffer::~IndexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic)
+IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount)
 {
 	D3D11_BUFFER_DESC hBufferDesc;
 	hBufferDesc.Usage = isDynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT;
@@ -55,7 +55,7 @@ IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bo
 		return NULL;
 	}
 
-	return new IndexBuffer(renderer, ib, maxCount, isDynamic);
+	return new IndexBuffer(renderer, ib, maxCount, isDynamic, hasRefCount);
 }
 
 //-----------------------------------------------------------------------------------

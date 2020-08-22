@@ -77,7 +77,7 @@ BlitterDX11::BlitterDX11(Graphics* graphics, EffekseerRenderer::Renderer* render
 	using namespace EffekseerRendererDX11;
 
 	// Generate vertex data
-	vertexBuffer.reset(VertexBuffer::Create(renderer_, sizeof(Vertex) * 4, true));
+	vertexBuffer.reset(VertexBuffer::Create(renderer_, sizeof(Vertex) * 4, true, true));
 	vertexBuffer->Lock();
 	{
 		Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
@@ -181,12 +181,12 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									   sizeof(PostFX_Extract_PS::g_PS),
 									   "Bloom extract",
 									   PostFx_ShaderDecl,
-									   2));
+									   2,
+									   true));
 
 	if (shaderExtract != nullptr)
 	{
 		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
-		shaderExtract->SetPixelRegisterCount(2);
 	}
 	else
 	{
@@ -203,7 +203,8 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 										  sizeof(PostFX_Downsample_PS::g_PS),
 										  "Bloom downsample",
 										  PostFx_ShaderDecl,
-										  2));
+										  2,
+										  true));
 
 	// Blend shader
 	shaderBlend.reset(Shader::Create(renderer_,
@@ -213,7 +214,8 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									 sizeof(PostFX_Blend_PS::g_PS),
 									 "Bloom blend",
 									 PostFx_ShaderDecl,
-									 2));
+									 2,
+									 true));
 
 	// Blur(horizontal) shader
 	shaderBlurH.reset(Shader::Create(renderer_,
@@ -223,7 +225,8 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									 sizeof(PostFX_BlurH_PS::g_PS),
 									 "Bloom blurH",
 									 PostFx_ShaderDecl,
-									 2));
+									 2,
+									 true));
 
 	// Blur(vertical) shader
 	shaderBlurV.reset(Shader::Create(renderer_,
@@ -233,7 +236,8 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									 sizeof(PostFX_BlurV_PS::g_PS),
 									 "Bloom blurV",
 									 PostFx_ShaderDecl,
-									 2));
+									 2,
+									 true));
 }
 
 BloomEffectDX11::~BloomEffectDX11()
@@ -388,7 +392,8 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Rend
 									sizeof(PostFX_Copy_PS::g_PS),
 									"Tonemap Copy",
 									PostFx_ShaderDecl,
-									2));
+									2,
+									true));
 
 	// Reinhard shader
 	shaderReinhard.reset(Shader::Create(renderer_,
@@ -398,12 +403,12 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Rend
 										sizeof(PostFX_Tonemap_PS::g_PS),
 										"Tonemap Reinhard",
 										PostFx_ShaderDecl,
-										2));
+										2,
+										true));
 
 	if (shaderReinhard != nullptr)
 	{
 		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
-		shaderReinhard->SetPixelRegisterCount(1);
 	}
 	else
 	{
@@ -453,7 +458,8 @@ LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, EffekseerRend
 								 sizeof(PostFX_LinearToSRGB_PS::g_PS),
 								 "LinearToSRGB",
 								 PostFx_ShaderDecl,
-								 2));
+								 2,
+								 true));
 
 	if (shader_ != nullptr)
 	{

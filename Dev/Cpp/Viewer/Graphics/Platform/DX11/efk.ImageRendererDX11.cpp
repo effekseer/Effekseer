@@ -45,7 +45,8 @@ ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 												   sizeof(Standard_PS::g_PS),
 												   "StandardRenderer",
 												   decl,
-												   3);
+												   3,
+												   true);
 
 	shader_no_texture = EffekseerRendererDX11::Shader::Create(this->renderer,
 															  Standard_VS::g_VS,
@@ -54,12 +55,12 @@ ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 															  sizeof(StandardNoTexture_PS::g_PS),
 															  "StandardRenderer No Texture",
 															  decl,
-															  3);
+															  3,
+															  true);
 
 	if (shader != nullptr)
 	{
 		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		((EffekseerRendererDX11::Shader*)shader)->SetVertexRegisterCount(8);
 	}
 	else
 	{
@@ -69,7 +70,6 @@ ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 	if (shader_no_texture != nullptr)
 	{
 		shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		((EffekseerRendererDX11::Shader*)shader_no_texture)->SetVertexRegisterCount(8);
 	}
 	else
 	{

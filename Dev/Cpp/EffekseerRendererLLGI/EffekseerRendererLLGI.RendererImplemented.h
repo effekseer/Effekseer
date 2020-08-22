@@ -65,9 +65,14 @@ protected:
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
 
-	Shader* m_shader = nullptr;
-	Shader* m_shader_lighting = nullptr;
-	Shader* m_shader_distortion = nullptr;
+	Shader* shader_ = nullptr;
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_unlit_ = nullptr;
+
+	Shader* shader_ad_unlit_ = nullptr;
+	Shader* shader_ad_lit_ = nullptr;
+	Shader* shader_ad_distortion_ = nullptr;
+
 	Shader* currentShader = nullptr;
 
 	bool isReversedDepth_ = false;

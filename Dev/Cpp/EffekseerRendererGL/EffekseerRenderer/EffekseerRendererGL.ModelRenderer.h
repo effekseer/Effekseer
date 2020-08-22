@@ -33,12 +33,21 @@ public:
 private:
 	RendererImplemented* m_renderer;
 
-	Shader* m_shader_lighting_texture_normal;
-	Shader* m_shader_texture;
-	Shader* m_shader_distortion_texture;
-	VertexArray* m_va[8];
+	VertexArray* m_va[6];
+
+	Shader* shader_ad_lit_ = nullptr;
+	Shader* shader_ad_unlit_ = nullptr;
+	Shader* shader_ad_distortion_ = nullptr;
+
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_unlit_ = nullptr;
+	Shader* shader_distortion_ = nullptr;
+
 
 	ModelRenderer(RendererImplemented* renderer,
+				  Shader* shader_ad_lit,
+				  Shader* shader_ad_unlit,
+				  Shader* shader_ad_distortion,
 				  Shader* shader_lighting_texture_normal,
 				  Shader* shader_texture,
 				  Shader* shader_distortion_texture);
