@@ -746,7 +746,6 @@ void ApplyDepthParameters(::Effekseer::Mat44f& mat,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 void ApplyViewOffset(::Effekseer::Mat43f& mat,
 					 const ::Effekseer::Mat44f& camera,
 					 float distance);
@@ -754,7 +753,6 @@ void ApplyViewOffset(::Effekseer::Mat43f& mat,
 void ApplyViewOffset(::Effekseer::Mat44f& mat,
 					 const ::Effekseer::Mat44f& camera,
 					 float distance);
-#endif
 
 template <typename Vertex>
 inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::Mat43f& mat)

@@ -43,7 +43,6 @@ static std::string Replace(std::string target, std::string from_, std::string to
 	return target;
 }
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 static const int NumAttribs_Model = 6;
 
 static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
@@ -54,25 +53,6 @@ static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
 	{"Input_UV", GL_FLOAT, 2, 48, false},
 	{"Input_Color", GL_UNSIGNED_BYTE, 4, 56, true},
 };
-
-#else
-static const int NumAttribs_Model = 6;
-
-static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
-	{"Input_Pos", GL_FLOAT, 3, 0, false},
-	{"Input_Normal", GL_FLOAT, 3, 12, false},
-	{"Input_Binormal", GL_FLOAT, 3, 24, false},
-	{"Input_Tangent", GL_FLOAT, 3, 36, false},
-	{"Input_UV", GL_FLOAT, 2, 48, false},
-	{"Input_Color", GL_UNSIGNED_BYTE, 4, 56, true},
-#if defined(MODEL_SOFTWARE_INSTANCING)
-	{"a_InstanceID", GL_FLOAT, 1, 0, false},
-	{"a_UVOffset", GL_FLOAT, 4, 0, false},
-	{"a_ModelColor", GL_FLOAT, 4, 0, false},
-#endif
-};
-
-#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -93,13 +73,11 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	, shader_distortion_(shader_distortion)
 {
 	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
 		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_g_uvDistortionSampler"));
 		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_g_blendSampler"));
 		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_g_blendAlphaSampler"));
 		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_g_blendUVDistortionSampler"));
-#endif
 	};
 
 	for (size_t i = 0; i < 6; i++)

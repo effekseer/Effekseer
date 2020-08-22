@@ -437,7 +437,6 @@ void ApplyDepthParameters(::Effekseer::Mat44f& mat,
 	}
 }
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 void ApplyViewOffset(::Effekseer::Mat43f& mat,
 					 const ::Effekseer::Mat44f& camera,
 					 float distance)
@@ -471,6 +470,5 @@ void ApplyViewOffset(::Effekseer::Mat44f& mat,
 
 	mat.SetTranslation(ViewOffset);
 }
-#endif
 
 } // namespace EffekseerRenderer
