@@ -1378,10 +1378,10 @@ public:
 				pcb->Interpolation[0] = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
 				pcb->Interpolation[1] = static_cast<float>(param.BasicParameterPtr->InterpolationType);
 
-				pcb->UVInversedBack[0] = param.BasicParameterPtr->UVDistortionIntensity;
-				pcb->UVInversedBack[1] = param.BasicParameterPtr->BlendUVDistortionIntensity;
-				pcb->UVInversedBack[2] = uvInversed[0];
-				pcb->UVInversedBack[3] = uvInversed[1];
+				pcb->UVDistortion[0] = param.BasicParameterPtr->UVDistortionIntensity;
+				pcb->UVDistortion[1] = param.BasicParameterPtr->BlendUVDistortionIntensity;
+				pcb->UVDistortion[2] = uvInversed[0];
+				pcb->UVDistortion[3] = uvInversed[1];
 
 				pcb->TextureBlendType[0] = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
 #endif
