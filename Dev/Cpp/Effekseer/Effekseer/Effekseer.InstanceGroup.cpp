@@ -124,11 +124,7 @@ void InstanceGroup::SetBaseMatrix(const Mat43f& mat)
 
 void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 {
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	TranslationParentBindType tType = m_effectNode->CommonValues.TranslationBindType;
-#else
-	BindType tType = m_effectNode->CommonValues.TranslationBindType;
-#endif
 	BindType rType = m_effectNode->CommonValues.RotationBindType;
 	BindType sType = m_effectNode->CommonValues.ScalingBindType;
 
@@ -143,9 +139,7 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 		parentMatrix_ = rootGroup->GetParentMatrix();
 	}
 	else if (tType == BindType::WhenCreating 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			 || tType == TranslationParentBindType::WhenCreating_FollowParent
-#endif
 			 && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
 	{
 		// don't do anything
@@ -168,12 +162,10 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 		{
 			parentTranslation_ = Vec3f(0.0f, 0.0f, 0.0f);
 		}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		else if (tType == TranslationParentBindType::NotBind_FollowParent)
 		{
 			parentTranslation_ = Vec3f(0.0f, 0.0f, 0.0f);
 		}
-#endif
 
 		if (rType == BindType::Always)
 		{

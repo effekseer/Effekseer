@@ -52,9 +52,7 @@ public:
 		RendererMaterialType MaterialType = RendererMaterialType::Default;
 		MaterialParameter* MaterialParameterPtr = nullptr;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableViewOffset = false;
-#endif
 	};
 
 	struct InstanceGroupParameter
@@ -80,7 +78,7 @@ public:
 		float SizeBack;
 
 		RectF UV;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -96,7 +94,7 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};

@@ -67,7 +67,6 @@ protected:
 			v[3].UV[0] = uvX2;
 			v[3].UV[1] = uvY2;
 		}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		else if (TARGET == 1)
 		{
 			v[0].UV2[0] = uvX1;
@@ -152,22 +151,6 @@ protected:
 			v[3].SetBlendUVDistortionUV(uvX2, 0);
 			v[3].SetBlendUVDistortionUV(uvY2, 1);
 		}
-#else
-		else
-		{
-			v[0].UV2[0] = uvX1;
-			v[0].UV2[1] = uvY1;
-
-			v[1].UV2[0] = uvX2;
-			v[1].UV2[1] = uvY1;
-
-			v[2].UV2[0] = uvX1;
-			v[2].UV2[1] = uvY2;
-
-			v[3].UV2[0] = uvX2;
-			v[3].UV2[1] = uvY2;
-		}
-#endif
 	}
 
 	template <typename VERTEX, int TARGET>
@@ -192,7 +175,6 @@ protected:
 					uvy = param.UV.Y;
 					uvh = param.UV.Height;
 				}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				else if (TARGET == 2)
 				{
 					uvx = param.AlphaUV.X;
@@ -228,7 +210,6 @@ protected:
 					uvy = param.BlendUVDistortionUV.Y;
 					uvh = param.BlendUVDistortionUV.Height;
 				}
-#endif
 
 				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 				{
@@ -265,7 +246,6 @@ protected:
 					uvy = param.UV.Y;
 					uvh = param.UV.Height;
 				}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				else if (TARGET == 2)
 				{
 					uvx = param.AlphaUV.X;
@@ -301,7 +281,6 @@ protected:
 					uvy = param.BlendUVDistortionUV.Y;
 					uvh = param.BlendUVDistortionUV.Height;
 				}
-#endif
 
 				if (loop < uvParam.TileEdgeTail)
 				{
@@ -407,12 +386,12 @@ protected:
 				if (parameter.ViewpointDependent)
 				{
 					::Effekseer::Mat43f mat = param.SRTMatrix43;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 					if (parameter.EnableViewOffset == true)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
-#endif
+
 					::Effekseer::Vec3f s;
 					::Effekseer::Mat43f r;
 					::Effekseer::Vec3f t;
@@ -462,12 +441,10 @@ protected:
 				{
 					::Effekseer::Mat43f mat = param.SRTMatrix43;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 					if (parameter.EnableViewOffset == true)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
-#endif
 
 					ApplyDepthParameters(mat,
 										 m_renderer->GetCameraFrontDirection(),
@@ -516,11 +493,8 @@ protected:
 						verteies[i].Pos.Y = 0.0f;
 						verteies[i].Pos.Z = 0.0f;
 						verteies[i].SetColor(param.Colors[i], FLIP_RGB);
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 						verteies[i].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
 						verteies[i].SetAlphaThreshold(param.AlphaThreshold);
-#endif
 					}
 				}
 
@@ -530,12 +504,12 @@ protected:
 				if (parameter.ViewpointDependent)
 				{
 					::Effekseer::Mat43f mat = param.SRTMatrix43;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 					if (parameter.EnableViewOffset == true)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
-#endif
+
 					::Effekseer::Vec3f s;
 					::Effekseer::Mat43f r;
 					::Effekseer::Vec3f t;
@@ -597,12 +571,10 @@ protected:
 					{
 						::Effekseer::Mat43f mat = param.SRTMatrix43;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 						if (parameter.EnableViewOffset == true)
 						{
 							ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 						}
-#endif
 
 						ApplyDepthParameters(mat,
 											 m_renderer->GetCameraFrontDirection(),
@@ -649,13 +621,11 @@ protected:
 			AssignUVs<VERTEX, 1>(parameter, verteies);
 		}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		AssignUVs<VERTEX, 2>(parameter, verteies);
 		AssignUVs<VERTEX, 3>(parameter, verteies);
 		AssignUVs<VERTEX, 4>(parameter, verteies);
 		AssignUVs<VERTEX, 5>(parameter, verteies);
 		AssignUVs<VERTEX, 6>(parameter, verteies);
-#endif
 
 		// Apply distortion
 		if (IsDistortionVertex<VERTEX>())
@@ -944,7 +914,6 @@ public:
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
 		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
@@ -977,7 +946,6 @@ public:
 		state.EdgeColor[3] = param.BasicParameterPtr->EdgeColor[3];
 		state.EdgeColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 		state.IsAlphaCuttoffEnabled = param.BasicParameterPtr->IsAlphaCutoffEnabled;
-#endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
@@ -987,14 +955,12 @@ public:
 											   param.BasicParameterPtr->MaterialParameterPtr,
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 											   ,
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
 											   param.BasicParameterPtr->Texture6Index,
 											   param.BasicParameterPtr->Texture7Index
-#endif
 		);
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;

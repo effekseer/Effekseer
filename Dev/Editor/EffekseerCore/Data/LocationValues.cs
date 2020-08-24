@@ -46,7 +46,6 @@ namespace Effekseer.Data
 			private set;
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		[Selected(ID = 0, Value = 4)]
 		[IO(Export = true)]
 		public NurbsCurveParameter NurbsCurve
@@ -62,7 +61,6 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-#endif
 
 		internal LocationValues(Value.Path basepath)
 		{
@@ -71,10 +69,8 @@ namespace Effekseer.Data
 			PVA = new PVAParamater();
 			Easing = new Vector3DEasingParamater();
 			LocationFCurve = new Vector3DFCurveParameter();
-#if __EFFEKSEER_BUILD_VERSION16__
 			NurbsCurve = new NurbsCurveParameter(basepath);
 			ViewOffset = new ViewOffsetParameter();
-#endif
 
 			// dynamic parameter
 			Fixed.Location.CanSelectDynamicEquation = true;
@@ -131,7 +127,6 @@ namespace Effekseer.Data
 			}
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public class NurbsCurveParameter
 		{
 			public enum NurbsLoopType : int
@@ -199,7 +194,6 @@ namespace Effekseer.Data
 				Distance = new Value.FloatWithRandom(3.0f, float.MaxValue, 0.0f, DrawnAs.CenterAndAmplitude, 0.5f);
 			}
 		}
-#endif
 
 		public enum ParamaterType : int
 		{
@@ -211,12 +205,10 @@ namespace Effekseer.Data
 			Easing = 2,
 			[Key(key = "Position_ParamaterType_LocationFCurve")]
 			LocationFCurve = 3,
-#if __EFFEKSEER_BUILD_VERSION16__
 			[Key(key = "Position_ParameterType_NurbsCurve")]
 			NurbsCurve = 4,
 			[Key(key = "Position_ParameterType_ViewOffset")]
 			ViewOffset = 5,
-#endif
 		}
 	}
 }

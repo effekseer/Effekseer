@@ -11,9 +11,7 @@
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#if __EFFEKSEER_BUILD_VERSION16__
 #include "Effekseer.CurveLoader.h"
-#endif
 
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
@@ -39,9 +37,7 @@ Setting::Setting()
 	, m_textureLoader(NULL)
 	, m_soundLoader(NULL)
 	, m_modelLoader(NULL)
-#if __EFFEKSEER_BUILD_VERSION16__
 	, m_curveLoader(NULL)
-#endif
 {
 	auto effectFactory = new EffectFactory();
 	effectFactories.push_back(effectFactory);
@@ -63,9 +59,7 @@ Setting::~Setting()
 	ES_SAFE_DELETE(m_soundLoader);
 	ES_SAFE_DELETE(m_modelLoader);
 	ES_SAFE_DELETE(m_materialLoader);
-#if __EFFEKSEER_BUILD_VERSION16__
 	ES_SAFE_DELETE(m_curveLoader);
-#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -171,7 +165,6 @@ void Setting::SetMaterialLoader(MaterialLoader* loader)
 	m_materialLoader = loader;
 }
 
-#if __EFFEKSEER_BUILD_VERSION16__
 CurveLoader* Setting::GetCurveLoader()
 {
 	return m_curveLoader;
@@ -182,7 +175,6 @@ void Setting::SetCurveLoader(CurveLoader* loader)
 	ES_SAFE_DELETE(m_curveLoader);
 	m_curveLoader = loader;
 }
-#endif
 
 void Setting::AddEffectFactory(EffectFactory* effectFactory)
 {

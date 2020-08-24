@@ -79,7 +79,6 @@ namespace Effekseer.Data
             private set;
         }
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		[IO(Export = true)]
 		public AdvancedRenderCommonValues AdvancedRendererCommonValuesValues
 		{
@@ -93,7 +92,6 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-#endif
 
 		/// <summary>
 		/// コンストラクタ
@@ -114,10 +112,8 @@ namespace Effekseer.Data
 			RendererCommonValues = new Data.RendererCommonValues(basepath);
             DrawingValues = new RendererValues(basepath);
             SoundValues = new SoundValues(basepath);
-#if __EFFEKSEER_BUILD_VERSION16__
 			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
 			AdvancedRendererCommonValues2Values = new Data.AdvancedRenderCommonValues2(basepath);
-#endif
 		}
 	}
 }

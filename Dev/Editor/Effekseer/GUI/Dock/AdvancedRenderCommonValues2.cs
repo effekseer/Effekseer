@@ -58,7 +58,6 @@ namespace Effekseer.GUI.Dock
 
         object GetTargetObject()
         {
-#if __EFFEKSEER_BUILD_VERSION16__
 			if(Core.SelectedNode != null)
             {
                 if (Core.SelectedNode is Data.Node)
@@ -67,9 +66,6 @@ namespace Effekseer.GUI.Dock
                 }
             }
             return null;
-#else
-			return null;
-#endif
 		}
 
         void Read()

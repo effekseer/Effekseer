@@ -93,11 +93,7 @@ static
 #include "ShaderHeader/model_distortion_ps.h"
 } // namespace ShaderDistortionTexture_PS
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 const int32_t ModelRendererInstanceCount = 10;
-#else
-const int32_t ModelRendererInstanceCount = 20;
-#endif
 
 ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_advanced_lit,

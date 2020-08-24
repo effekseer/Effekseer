@@ -71,12 +71,10 @@ public:
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableFalloff;
 		FalloffParameter FalloffParam;
 
 		bool EnableViewOffset = false;
-#endif
 
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
@@ -90,7 +88,7 @@ public:
 	{
 		Mat43f SRTMatrix43;
 		RectF UV;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -106,7 +104,7 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
+
 		Color AllColor;
 		int32_t Time;
 		std::array<float, 4> CustomData1;

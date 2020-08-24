@@ -12,12 +12,7 @@ namespace Effekseer.Binary
 	{
 		Ver1500 = 1500,
 		Ver1600 = 1600,
-
-#if __EFFEKSEER_BUILD_VERSION16__
 		Latest = 1600,
-#else
-		Latest = 1500,
-#endif
 	}
 
 	public class Exporter
@@ -84,8 +79,6 @@ namespace Effekseer.Binary
 										UsedTextures.Add(relative_path);
 									}
 								}
-
-#if __EFFEKSEER_BUILD_VERSION16__
 								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
 									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
@@ -135,7 +128,6 @@ namespace Effekseer.Binary
 										}
 									}
 								}
-#endif
 							}
 							if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion )
 							{
@@ -148,7 +140,6 @@ namespace Effekseer.Binary
 									}
 								}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
 									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
@@ -198,7 +189,6 @@ namespace Effekseer.Binary
 										}
 									}
 								}
-#endif
 							}
 							if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 							{
@@ -220,7 +210,6 @@ namespace Effekseer.Binary
 									}
 								}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 								if (exporterVersion >= ExporterVersion.Ver1600)
 								{
 									// alpha texture
@@ -273,7 +262,6 @@ namespace Effekseer.Binary
 										}
 									}
 								}
-#endif
 							}
 							else if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
 							{
@@ -509,7 +497,6 @@ namespace Effekseer.Binary
 
 			Dictionary<string, int> curve_and_index = new Dictionary<string, int>();
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			Action<Data.NodeBase> get_curves = null;
 			get_curves = (node) =>
 			{
@@ -547,7 +534,6 @@ namespace Effekseer.Binary
 					index++;
 				}
 			}
-#endif
 
 			// get all nodes
 			var nodes = new List<Data.Node>();
@@ -644,7 +630,6 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (exporterVersion >= ExporterVersion.Ver1600)
 			{
 				// export curves to a file
@@ -657,8 +642,6 @@ namespace Effekseer.Binary
 					data.Add(new byte[] { 0, 0 });
 				}
 			}
-
-#endif
 
 			var compiler = new InternalScript.Compiler();
 
@@ -825,11 +808,8 @@ namespace Effekseer.Binary
 				node_data.Add(((int)n.DepthValues.ZSort.Value).GetBytes());
 				node_data.Add(n.DepthValues.DrawingPriority.Value.GetBytes());
 				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());
-#if __EFFEKSEER_BUILD_VERSION16__
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, n.AdvancedRendererCommonValues2Values, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion));
-#else
-				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index));
-#endif
+
 				if (isRenderParamExported)
 				{
 					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index, exporterVersion));

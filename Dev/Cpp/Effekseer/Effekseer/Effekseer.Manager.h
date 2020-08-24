@@ -302,7 +302,6 @@ public:
 	*/
 	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English get a curve loader
@@ -322,7 +321,6 @@ public:
 		\~Japanese ローダー
 	*/
 	virtual void SetCurveLoader(CurveLoader* loader) = 0;
-#endif
 
 	/**
 		@brief	エフェクトを停止する。

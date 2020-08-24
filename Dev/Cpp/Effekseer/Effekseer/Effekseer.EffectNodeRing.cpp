@@ -255,9 +255,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.StartingFade = Shape.StartingFade;
 		nodeParameter.EndingFade = Shape.EndingFade;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-#endif
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
@@ -284,9 +282,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		nodeParameter.StartingFade = Shape.StartingFade;
 		nodeParameter.EndingFade = Shape.EndingFade;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-#endif
 
 		Color _outerColor;
 		Color _centerColor;
@@ -328,7 +324,6 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		instanceParameter.CenterColor = _centerColor;
 		instanceParameter.InnerColor = _innerColor;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
 		instanceParameter.UVDistortionUV = instance.GetUV(2);
@@ -344,9 +339,6 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
 		}
-#else
-		instanceParameter.UV = instance.GetUV();
-#endif
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 

@@ -40,7 +40,6 @@ namespace Effekseer.Binary
 			data.Add(bytes.Count().GetBytes());
 			data.Add(bytes);
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (value.LocationEffectType == Data.TranslationParentEffectType.NotBind_FollowParent ||
 				value.LocationEffectType == Data.TranslationParentEffectType.WhenCreating_FollowParent)
 			{
@@ -49,7 +48,6 @@ namespace Effekseer.Binary
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Max.GetBytes());
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Min.GetBytes());
 			}
-#endif
 
 			return data.ToArray().ToArray();
 		}

@@ -77,7 +77,6 @@ namespace Effekseer.Utl
 				Width = BitConverter.ToInt32(buf, 8);
 				Height = BitConverter.ToInt32(buf, 4);
 			}
-#if __EFFEKSEER_BUILD_VERSION16__
 			else
 			{
 				br.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
@@ -113,14 +112,6 @@ namespace Effekseer.Utl
 					return false;
 				}
 			}
-#else
-			else
-			{
-				fs.Dispose();
-				br.Close();
-				return false;
-			}
-#endif
 
 			fs.Dispose();
             br.Close();

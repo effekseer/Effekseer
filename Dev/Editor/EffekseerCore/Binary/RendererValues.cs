@@ -530,7 +530,6 @@ namespace Effekseer.Binary
 				// 全体色
 				OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing, param.Color_FCurve);
 
-#if __EFFEKSEER_BUILD_VERSION16__
 				if(version >= ExporterVersion.Ver1600)
 				{
 					if (param.EnableFalloff)
@@ -547,7 +546,6 @@ namespace Effekseer.Binary
 						data.Add((0).GetBytes());
 					}
 				}
-#endif
 			}
 			else if (value.Type.Value == Data.RendererValues.ParamaterType.Track)
 			{

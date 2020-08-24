@@ -29,12 +29,10 @@
 namespace Effekseer
 {
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
 {
 	return (lhs == static_cast<TranslationParentBindType>(rhs));
 }
-#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -131,11 +129,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			CommonValues.MaxGeneration = param_8.MaxGeneration;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			CommonValues.TranslationBindType = static_cast<TranslationParentBindType>(param_8.TranslationBindType);
-#else
-			CommonValues.TranslationBindType = param_8.TranslationBindType;
-#endif
+
 			CommonValues.RotationBindType = param_8.RotationBindType;
 			CommonValues.ScalingBindType = param_8.ScalingBindType;
 			CommonValues.RemoveWhenLifeIsExtinct = param_8.RemoveWhenLifeIsExtinct;
@@ -148,7 +143,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			CommonValues.GenerationTimeOffset.min = param_8.GenerationTimeOffset;
 		}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		if (ef->GetVersion() >= 1600)
 		{
 			if (CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
@@ -158,7 +152,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				pos += sizeof(SteeringBehaviorParameter);
 			}
 		}
-#endif
 
 		memcpy(&TranslationType, pos, sizeof(int));
 		pos += sizeof(int);
@@ -231,7 +224,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			TranslationFCurve = new FCurveVector3D();
 			pos += TranslationFCurve->Load(pos, m_effect->GetVersion());
 		}
-#if __EFFEKSEER_BUILD_VERSION16__
 		else if (TranslationType == ParameterTranslationType_NurbsCurve)
 		{
 			memcpy(&TranslationNurbsCurve, pos, sizeof(ParameterTranslationNurbsCurve));
@@ -242,7 +234,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy(&TranslationViewOffset, pos, sizeof(ParameterTranslationViewOffset));
 			pos += sizeof(ParameterTranslationViewOffset);
 		}
-#endif
 
 		/* 位置拡大処理 */
 		if (ef->IsDyanamicMagnificationValid())
@@ -716,7 +707,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.reset();
 		}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		if (m_effect->GetVersion() >= 1600)
 		{
 			AlphaCutoff.load(pos, m_effect->GetVersion());
@@ -729,7 +719,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = AlphaCutoff.Type != ParameterAlphaCutoff::EType::FIXED || AlphaCutoff.Fixed.Threshold != 0.0f;
 		}
-#endif
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
@@ -849,7 +838,6 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 {
 	EffectBasicRenderParameter param;
 	param.ColorTextureIndex = RendererCommon.ColorTextureIndex;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
 	param.AlphaTexWrapType = RendererCommon.Wrap3Type;
 
@@ -917,7 +905,6 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.EdgeParam.Color[3] = static_cast<float>(AlphaCutoff.EdgeColor.A) / 255.0f;
 	param.EdgeParam.Threshold = AlphaCutoff.EdgeThreshold;
 	param.EdgeParam.ColorScaling = AlphaCutoff.EdgeColorScaling;
-#endif
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;
 	param.DistortionIntensity = RendererCommon.DistortionIntensity;
@@ -931,7 +918,6 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter param)
 {
 	RendererCommon.ColorTextureIndex = param.ColorTextureIndex;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	RendererCommon.AlphaTextureIndex = param.AlphaTextureIndex;
 	RendererCommon.Wrap3Type = param.AlphaTexWrapType;
 
@@ -953,7 +939,6 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	RendererCommon.UVDistortionIntensity = param.UVDistortionIntensity;
 
 	RendererCommon.TextureBlendType = param.TextureBlendType;
-#endif
 
 	RendererCommon.AlphaBlend = param.AlphaBlend;
 	RendererCommon.Distortion = param.Distortion;

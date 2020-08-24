@@ -737,12 +737,10 @@ namespace Effekseer.Data
 			private set;
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
 		[Key(key = "BRS_EmissiveScaling")]
 		public Value.Int EmissiveScaling { get; private set; }
-#endif
 
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
@@ -881,11 +879,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 2, Value = 2)]
 		[IO(Export = true)]
-#if __EFFEKSEER_BUILD_VERSION16__
 		public UVAnimationSupportedFrameBlendParameter UVAnimation { get; private set; }
-#else
-		public UVAnimationParamater UVAnimation { get; private set; }
-#endif
 
 		[Selected(ID = 2, Value = 3)]
 		[IO(Export = true)]
@@ -918,9 +912,7 @@ namespace Effekseer.Data
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter(this);
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			EmissiveScaling = new Value.Int(1, int.MaxValue, 1);
-#endif
 
 			ColorTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
@@ -946,11 +938,7 @@ namespace Effekseer.Data
 
 			UVDefault = new UVDefaultParamater();
 			UVFixed = new UVFixedParamater();
-#if __EFFEKSEER_BUILD_VERSION16__
 			UVAnimation = new UVAnimationSupportedFrameBlendParameter();
-#else
-			UVAnimation = new UVAnimationParamater();
-#endif
 			UVScroll = new UVScrollParamater();
 			UVFCurve = new UVFCurveParamater();
 
@@ -1080,7 +1068,6 @@ namespace Effekseer.Data
 			}
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public class UVAnimationSupportedFrameBlendParameter
 		{
 			[IO(Export = true)]
@@ -1096,7 +1083,6 @@ namespace Effekseer.Data
 				FlipbookInterpolationType = new Value.Enum<FlipbookInterpolationType>(RendererCommonValues.FlipbookInterpolationType.None);
 			}
 		}
-#endif
 
 		public class UVScrollParamater
 		{
@@ -1196,7 +1182,6 @@ namespace Effekseer.Data
 			ReverceLoop = 2,
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public enum FlipbookInterpolationType : int
 		{
 			[Key(key = "FlipbookInterpolationType_None")]
@@ -1205,7 +1190,5 @@ namespace Effekseer.Data
 			[Key(key = "FlipbookInterpolationType_Lerp")]
 			Lerp = 1,
 		}
-#endif
-
 	}
 }

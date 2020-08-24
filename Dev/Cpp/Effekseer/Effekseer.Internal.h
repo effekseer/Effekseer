@@ -93,9 +93,7 @@ public:
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableViewOffset = false;
-#endif
 	};
 
 	struct InstanceParameter
@@ -110,7 +108,6 @@ public:
 
 		RectF UV;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -126,7 +123,6 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
 
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
@@ -207,9 +203,7 @@ public:
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableViewOffset = false;
-#endif
 	};
 
 	struct InstanceParameter
@@ -225,7 +219,7 @@ public:
 		float Positions[4];
 
 		RectF UV;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -241,7 +235,7 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};
@@ -332,9 +326,7 @@ public:
 
 		NodeRendererBasicParameter BasicParameter;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableViewOffset = false;
-#endif
 	};
 
 	struct InstanceParameter
@@ -350,7 +342,7 @@ public:
 		Color InnerColor;
 
 		RectF UV;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -366,7 +358,7 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};
@@ -466,12 +458,10 @@ public:
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableFalloff;
 		FalloffParameter FalloffParam;
 
 		bool EnableViewOffset = false;
-#endif
 
 		// RendererMaterialType MaterialType = RendererMaterialType::Default;
 		// MaterialParameter* MaterialParameterPtr = nullptr;
@@ -485,7 +475,7 @@ public:
 	{
 		Mat43f SRTMatrix43;
 		RectF UV;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -501,7 +491,7 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
+
 		Color AllColor;
 		int32_t Time;
 		std::array<float, 4> CustomData1;
@@ -584,9 +574,7 @@ public:
 		RendererMaterialType MaterialType = RendererMaterialType::Default;
 		MaterialParameter* MaterialParameterPtr = nullptr;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		bool EnableViewOffset = false;
-#endif
 	};
 
 	struct InstanceGroupParameter
@@ -612,7 +600,7 @@ public:
 		float SizeBack;
 
 		RectF UV;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 		RectF AlphaUV;
 
 		RectF UVDistortionUV;
@@ -628,7 +616,7 @@ public:
 		float AlphaThreshold;
 
 		float ViewOffsetDistance;
-#endif
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};

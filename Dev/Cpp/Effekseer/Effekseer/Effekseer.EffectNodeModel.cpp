@@ -87,7 +87,6 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* settin
 
 	AllColor.load(pos, m_effect->GetVersion());
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	if (m_effect->GetVersion() >= 1600)
 	{
 		int FalloffFlag = 0;
@@ -105,7 +104,6 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	{
 		EnableFalloff = false;
 	}
-#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -135,12 +133,9 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
-
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-#endif
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
@@ -173,18 +168,15 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-#endif
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 		instanceParameter.Time = (int32_t)instance.m_LivingTime;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
 		instanceParameter.UVDistortionUV = instance.GetUV(2);
@@ -200,9 +192,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
 		}
-#else
-		instanceParameter.UV = instance.GetUV();
-#endif
+
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
 		Color _color;
@@ -253,12 +243,10 @@ void EffectNodeModel::EndRendering(Manager* manager)
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-#endif
 
 		renderer->EndRendering(nodeParameter, m_userData);
 	}

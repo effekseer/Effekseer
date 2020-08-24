@@ -74,10 +74,8 @@ protected:
 
 	Vec3f prevPosition_;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	Vec3f parentPosition_;
 	Vec3f steeringVec_;
-#endif
 
 public:
 	static const int32_t ChildrenMax = 16;
@@ -125,13 +123,11 @@ public:
 	// Parent color
 	Color ColorParent;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	struct
 	{
 		float maxFollowSpeed;
 		float steeringSpeed;
 	} followParentParam;
-#endif
 
 	union
 	{
@@ -158,12 +154,10 @@ public:
 			Vec3f offset;
 		} fcruve;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		struct
 		{
 			float distance;
 		} view_offset;
-#endif
 
 	} translation_values;
 
@@ -281,7 +275,6 @@ public:
 	// 生成されてからの時間
 	float m_LivingTime;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	//! The time offset for UV animation
 	int32_t uvTimeOffsets[ParameterRendererCommon::UVParameterNum];
 
@@ -290,16 +283,6 @@ public:
 
 	// Scroll speed for UV
 	Vec2f uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
-#else
-	//! The time offset for UV animation
-	int32_t uvTimeOffset = 0;
-
-	// Scroll, FCurve area for UV
-	RectF uvAreaOffset;
-
-	// Scroll speed for UV
-	Vec2f uvScrollSpeed;
-#endif
 
 	// The number of generated chiledren. (fixed size)
 	int32_t m_fixedGeneratedChildrenCount[ChildrenMax];
@@ -354,7 +337,6 @@ public:
 	/* 更新番号 */
 	uint32_t m_sequenceNumber;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	float m_flipbookIndexAndNextRate;
 
 	union
@@ -387,7 +369,6 @@ public:
 	} alpha_cutoff_values;
 
 	float m_AlphaThreshold;
-#endif
 
 	//! calculate dynamic equation and assign a result
 	template <typename T, typename U>
@@ -475,11 +456,7 @@ public:
 	/**
 		@brief	UVの位置取得
 	*/
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	RectF GetUV(const int32_t index) const;
-#else
-	RectF GetUV() const;
-#endif
 
 	//! get custom data
 	std::array<float, 4> GetCustomData(int32_t index) const;

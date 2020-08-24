@@ -126,12 +126,7 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 namespace Effekseer
 {
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 const int32_t ModelRendererInstanceCount = 10;
-#else
-const int32_t ModelRendererInstanceCount = 20;
-#endif
-
 
 class CompiledMaterialBinaryDX9 : public CompiledMaterialBinary, ReferenceObject
 {

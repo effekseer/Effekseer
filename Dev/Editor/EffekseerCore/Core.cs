@@ -902,13 +902,11 @@ namespace Effekseer
 				updater.Update(doc);
 			}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (toolVersion < ParseVersion("1.60"))
 			{
 				var updater = new Utils.ProjectVersionUpdator15xTo16x();
 				updater.Update(doc);
 			}
-#endif
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -1013,13 +1011,11 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (toolVersion < ParseVersion("1.60"))
 			{
 				var updater = new Utils.ProjectVersionUpdator15xTo16x();
 				updater.Update(root_node);
 			}
-#endif
 
 			Command.CommandManager.Clear();
 			IsChanged = false;
@@ -1531,7 +1527,6 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 					if (node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 					{
 						var name = "AlphaThreshold";
@@ -1541,7 +1536,6 @@ namespace Effekseer
 						}
 						list.Add(Tuple35.Create(name, (object)node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.FCurve));
 					}
-#endif
 
 					return list.ToArray();
 				};

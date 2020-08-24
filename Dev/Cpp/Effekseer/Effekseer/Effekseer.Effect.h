@@ -150,14 +150,12 @@ public:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	/**
 	@brief
 	\~English set curve data into specified index
 	\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
 	void SetCurve(Effect* effect, int32_t index, void* data);
-#endif
 
 	/**
 	@brief
@@ -419,7 +417,6 @@ public:
 	*/
 	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	/**
 	@brief	\~English	Get a curve's pointer
 	\~Japanese	格納されているカーブのポインタを取得する。
@@ -437,7 +434,6 @@ public:
 	\~Japanese	カーブのパスを取得する。
 	*/
 	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
-#endif
 
 	/**
 		@brief
@@ -468,14 +464,12 @@ public:
 	*/
 	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English set curve data into specified index
 		\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
 	virtual void SetCurve(int32_t index, void* data) = 0;
-#endif
 
 	/**
 		@brief
@@ -640,7 +634,7 @@ public:
 struct EffectBasicRenderParameter
 {
 	int32_t ColorTextureIndex;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 	int32_t AlphaTextureIndex;
 	TextureWrapType AlphaTexWrapType;
 
@@ -690,7 +684,6 @@ struct EffectBasicRenderParameter
 		int32_t ColorScaling;
 	} EdgeParam;
 
-#endif
 	AlphaBlendType AlphaBlend;
 	TextureFilterType FilterType;
 	TextureWrapType WrapType;

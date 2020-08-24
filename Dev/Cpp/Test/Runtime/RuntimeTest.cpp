@@ -93,13 +93,11 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
 	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	{
 		single16Test(u"Flip01", "Flip01");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
 		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
 	}
-#endif
 }
 
 void BasicRuntimeDeviceLostTest()
