@@ -77,7 +77,6 @@ protected:
 			v[7].UV[0] = uvX3;
 			v[7].UV[1] = uvY2;
 		}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		else if (TARGET == 1)
 		{
 			v[0].UV2[0] = uvX1;
@@ -234,34 +233,6 @@ protected:
 			v[7].SetBlendUVDistortionUV(uvX3, 0);
 			v[7].SetBlendUVDistortionUV(uvY2, 1);
 		}
-#else
-		else
-		{
-			v[0].UV2[0] = uvX1;
-			v[0].UV2[1] = uvY1;
-
-			v[1].UV2[0] = uvX2;
-			v[1].UV2[1] = uvY1;
-
-			v[4].UV2[0] = uvX2;
-			v[4].UV2[1] = uvY1;
-
-			v[5].UV2[0] = uvX3;
-			v[5].UV2[1] = uvY1;
-
-			v[2].UV2[0] = uvX1;
-			v[2].UV2[1] = uvY2;
-
-			v[3].UV2[0] = uvX2;
-			v[3].UV2[1] = uvY2;
-
-			v[6].UV2[0] = uvX2;
-			v[6].UV2[1] = uvY2;
-
-			v[7].UV2[0] = uvX3;
-			v[7].UV2[1] = uvY2;
-		}
-#endif
 	}
 
 	template <typename VERTEX, int TARGET>
@@ -285,7 +256,6 @@ protected:
 					uvy = param.UV.Y;
 					uvh = param.UV.Height;
 				}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				else if (TARGET == 2)
 				{
 					uvx = param.AlphaUV.X;
@@ -321,7 +291,6 @@ protected:
 					uvy = param.BlendUVDistortionUV.Y;
 					uvh = param.BlendUVDistortionUV.Height;
 				}
-#endif
 
 				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 				{
@@ -358,7 +327,6 @@ protected:
 					uvy = param.UV.Y;
 					uvh = param.UV.Height;
 				}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				else if (TARGET == 2)
 				{
 					uvx = param.AlphaUV.X;
@@ -394,7 +362,6 @@ protected:
 					uvy = param.BlendUVDistortionUV.Y;
 					uvh = param.BlendUVDistortionUV.Height;
 				}
-#endif
 
 				if (loop < uvParam.TileEdgeTail)
 				{
@@ -499,12 +466,10 @@ protected:
 
 				auto mat = param.SRTMatrix43;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				if (parameter.EnableViewOffset == true)
 				{
 					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 				}
-#endif
 
 				ApplyDepthParameters(mat,
 									 m_renderer->GetCameraFrontDirection(),
@@ -530,12 +495,10 @@ protected:
 			{
 				auto mat = param.SRTMatrix43;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				if (parameter.EnableViewOffset == true)
 				{
 					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 				}
-#endif
 
 				::Effekseer::Vec3f s;
 				::Effekseer::Mat43f r;
@@ -637,7 +600,6 @@ protected:
 				v[2].Pos.Z = 0.0f;
 				v[2].SetColor(rightColor, FLIP_RGB);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				v[0].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
 				v[1].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
 				v[2].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
@@ -645,7 +607,6 @@ protected:
 				v[0].SetAlphaThreshold(param.AlphaThreshold);
 				v[1].SetAlphaThreshold(param.AlphaThreshold);
 				v[2].SetAlphaThreshold(param.AlphaThreshold);
-#endif
 
 				if (parameter.SplineDivision > 1)
 				{
@@ -856,13 +817,11 @@ protected:
 			AssignUVs<VERTEX, 1>(parameter, verteies);
 		}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		AssignUVs<VERTEX, 2>(parameter, verteies);
 		AssignUVs<VERTEX, 3>(parameter, verteies);
 		AssignUVs<VERTEX, 4>(parameter, verteies);
 		AssignUVs<VERTEX, 5>(parameter, verteies);
 		AssignUVs<VERTEX, 6>(parameter, verteies);
-#endif
 
 		// custom parameter
 		if (customData1Count_ > 0)
@@ -1010,7 +969,6 @@ public:
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
 		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
@@ -1044,8 +1002,6 @@ public:
 		state.EdgeColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 		state.IsAlphaCuttoffEnabled = param.BasicParameterPtr->IsAlphaCutoffEnabled;
 
-#endif
-
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
@@ -1054,14 +1010,12 @@ public:
 											   param.BasicParameterPtr->MaterialParameterPtr,
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 											   ,
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
 											   param.BasicParameterPtr->Texture6Index,
 											   param.BasicParameterPtr->Texture7Index
-#endif
 		);
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;

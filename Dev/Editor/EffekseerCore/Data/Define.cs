@@ -37,7 +37,6 @@ namespace Effekseer.Data
 		Already = 2,
 	}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	public enum TranslationParentEffectType : int
 	{
 		[Key(key = "BasicSettings_ParentEffectType_NotBind")]
@@ -53,7 +52,6 @@ namespace Effekseer.Data
 		[Key(key = "BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent")]
 		WhenCreating_FollowParent = 5,
 	}
-#endif
 
 	public enum AlphaBlendType : int
 	{

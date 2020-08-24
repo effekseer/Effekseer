@@ -9,21 +9,14 @@ namespace Effekseer.Binary
 {
 	class RendererCommonValues
 	{
-#if __EFFEKSEER_BUILD_VERSION16__
 		delegate int GetTexIDAndInfo(Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef);
-#endif
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Data.AdvancedRenderCommonValues2 advanceValue2, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
-#else
-		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
-#endif
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			var texInfo = new TextureInformation();
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			var alphaTexInfo = new TextureInformation();
 
 			var uvDistortionTexInfo = new TextureInformation();
@@ -33,11 +26,9 @@ namespace Effekseer.Binary
 			var blendAlphaTexInfo = new TextureInformation();
 
 			var blendUVDistortionTexInfo = new TextureInformation();
-#endif
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
 				if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default ||
@@ -46,7 +37,6 @@ namespace Effekseer.Binary
 					data.Add(BitConverter.GetBytes(value.EmissiveScaling));
 				}
 			}
-#endif
 
 			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
 			{
@@ -67,7 +57,6 @@ namespace Effekseer.Binary
 				}
 			};
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			GetTexIDAndInfo getTexIDAndInfo = (Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef) =>
 			{
 				var tempTexInfo = new TextureInformation();
@@ -80,7 +69,6 @@ namespace Effekseer.Binary
 
 				return -1;
 			};
-#endif
 
 			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 			{
@@ -90,7 +78,6 @@ namespace Effekseer.Binary
 				// texture2
 				data.Add((-1).GetBytes());
 
-#if __EFFEKSEER_BUILD_VERSION16__
 				if (version >= ExporterVersion.Ver1600)
 				{
 					// alpha texture
@@ -145,7 +132,6 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
-#endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
 			{
@@ -155,7 +141,6 @@ namespace Effekseer.Binary
 				// texture2
 				data.Add((-1).GetBytes());
 
-#if __EFFEKSEER_BUILD_VERSION16__
 				if (version >= ExporterVersion.Ver1600)
 				{
 					// alpha texture
@@ -210,7 +195,6 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
-#endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 			{
@@ -220,7 +204,6 @@ namespace Effekseer.Binary
 				// texture2
 				data.Add(getTexIDAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
 
-#if __EFFEKSEER_BUILD_VERSION16__
 				if (version >= ExporterVersion.Ver1600)
 				{
 					// alpha texture
@@ -275,7 +258,6 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
-#endif
 			}
 			else
 			{
@@ -369,7 +351,6 @@ namespace Effekseer.Binary
 			data.Add(value.Filter2);
 			data.Add(value.Wrap2);
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
 				data.Add(advanceValue.AlphaTextureParam.Filter);
@@ -387,7 +368,6 @@ namespace Effekseer.Binary
 				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Filter);
 				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Wrap);
 			}
-#endif
 
 			if (value.ZTest.GetValue())
 			{
@@ -455,7 +435,6 @@ namespace Effekseer.Binary
 			{
 				var value_ = value.UVAnimation;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 				data.Add((value_.AnimationParams.Start.X / width).GetBytes());
 				data.Add((value_.AnimationParams.Start.Y / height).GetBytes());
 				data.Add((value_.AnimationParams.Size.X / width).GetBytes());
@@ -479,30 +458,6 @@ namespace Effekseer.Binary
 				data.Add(value_.AnimationParams.StartSheet.Min.GetBytes());
 
 				data.Add(value_.FlipbookInterpolationType);
-#else
-				data.Add((value_.Start.X / width).GetBytes());
-				data.Add((value_.Start.Y / height).GetBytes());
-				data.Add((value_.Size.X / width).GetBytes());
-				data.Add((value_.Size.Y / height).GetBytes());
-
-				if (value_.FrameLength.Infinite)
-				{
-					var inf = int.MaxValue / 100;
-					data.Add(inf.GetBytes());
-				}
-				else
-				{
-					data.Add(value_.FrameLength.Value.Value.GetBytes());
-				}
-			
-				data.Add(value_.FrameCountX.Value.GetBytes());
-				data.Add(value_.FrameCountY.Value.GetBytes());
-				data.Add(value_.LoopType);
-
-				data.Add(value_.StartSheet.Max.GetBytes());
-				data.Add(value_.StartSheet.Min.GetBytes());
-#endif
-
 			}
 			else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
 			{
@@ -540,7 +495,6 @@ namespace Effekseer.Binary
 			}
 
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
 				// alpha texture
@@ -614,7 +568,6 @@ namespace Effekseer.Binary
 				// blend uv distoriton intensity
 				data.Add((advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity).GetBytes());
 			}
-#endif
 
 
 			// Inheritance
@@ -713,17 +666,14 @@ namespace Effekseer.Binary
 				data.Add(bytes);
 			}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			if (version >= ExporterVersion.Ver1600)
 			{
 				data.Add(AlphaCutoffValues.GetBytes(advanceValue.AlphaCutoffParam));
 			}
-#endif
 
 			return data.ToArray().ToArray();
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public static byte[] GetUVBytes(TextureInformation _TexInfo,
 						Data.Value.Enum<Data.RendererCommonValues.UVType> _UVType,
 						Data.RendererCommonValues.UVFixedParamater _Fixed,
@@ -818,7 +768,6 @@ namespace Effekseer.Binary
 
 			return data.ToArray().ToArray();
 		}
-#endif
 	}
 
 }

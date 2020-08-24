@@ -12,11 +12,7 @@
 namespace EffekseerRendererDX9
 {
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 const int32_t ModelRendererInstanceCount = 10;
-#else
-const int32_t ModelRendererInstanceCount = 20;
-#endif
 
 MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface)
 	: fileInterface_(fileInterface)

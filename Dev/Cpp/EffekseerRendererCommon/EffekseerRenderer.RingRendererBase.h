@@ -133,7 +133,6 @@ protected:
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
 		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
@@ -167,8 +166,6 @@ protected:
 		state.EdgeColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 		state.IsAlphaCuttoffEnabled = param.BasicParameterPtr->IsAlphaCutoffEnabled;
 
-#endif
-
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
@@ -177,14 +174,12 @@ protected:
 											   param.BasicParameterPtr->MaterialParameterPtr,
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 											   ,
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
 											   param.BasicParameterPtr->Texture6Index,
 											   param.BasicParameterPtr->Texture7Index
-#endif
 		);
 
 		customData1Count_ = state.CustomData1Count;
@@ -238,7 +233,6 @@ protected:
 			Effekseer::Vec3f R;
 			Effekseer::Vec3f F;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			if (parameter.EnableViewOffset)
 			{
 				Effekseer::Mat43f instMat = instanceParameter.SRTMatrix43;
@@ -251,9 +245,6 @@ protected:
 			{
 				CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
 			}
-#else
-			CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
-#endif
 
 			ApplyDepthParameters(mat43,
 								 m_renderer->GetCameraFrontDirection(),
@@ -275,12 +266,10 @@ protected:
 		{
 			mat43 = instanceParameter.SRTMatrix43;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			if (parameter.EnableViewOffset)
 			{
 				ApplyViewOffset(mat43, camera, instanceParameter.ViewOffsetDistance);
 			}
-#endif
 
 			ApplyDepthParameters(mat43,
 								 m_renderer->GetCameraFrontDirection(),
@@ -342,7 +331,6 @@ protected:
 		const float uv1v3 = uv1v1 + 1.0f;
 		float uv1texNext = 0.0f;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		const int32_t advancedUVNum = 5;
 
 		float advancedUVCurrent[advancedUVNum] =
@@ -386,7 +374,6 @@ protected:
 			advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height
 		};
 		float advancedUVtexNext[advancedUVNum] = { 0.0f };
-#endif
 
 		::Effekseer::Vec3f outerNext, innerNext, centerNext;
 
@@ -470,7 +457,6 @@ protected:
 			v[7].UV[0] = uv0texNext;
 			v[7].UV[1] = uv0v3;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			for (int32_t uvi = 0; uvi < advancedUVNum; uvi++)
 			{
 				advancedUVtexNext[uvi] = advancedUVCurrent[uvi] + advancedUVStep[uvi];
@@ -551,7 +537,6 @@ protected:
 				v[vi].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
 				v[vi].SetAlphaThreshold(instanceParameter.AlphaThreshold);
 			}
-#endif
 
 			// distortion
 			if (IsDistortionVertex<VERTEX>())
@@ -705,12 +690,11 @@ protected:
 			centerCurrent = centerNext;
 			uv0Current = uv0texNext;
 			uv1Current = uv1texNext;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			for (int32_t uvi = 0; uvi < advancedUVNum; uvi++)
 			{
 				advancedUVCurrent[uvi] = advancedUVtexNext[uvi];
 			}
-#endif
+
 			outerColor = outerColorNext;
 			innerColor = innerColorNext;
 			centerColor = centerColorNext;

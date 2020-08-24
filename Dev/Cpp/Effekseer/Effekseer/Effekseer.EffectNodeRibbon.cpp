@@ -157,9 +157,8 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
 		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-#endif
+
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
 }
@@ -174,7 +173,6 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 
 		if (group->GetFirst() != nullptr)
 		{
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			Instance* groupFirst = group->GetFirst();
 			m_instanceParameter.UV = groupFirst->GetUV(0);
 			m_instanceParameter.AlphaUV = groupFirst->GetUV(1);
@@ -191,9 +189,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 			{
 				m_instanceParameter.ViewOffsetDistance = groupFirst->translation_values.view_offset.distance;
 			}
-#else
-			m_instanceParameter.UV = group->GetFirst()->GetUV();
-#endif
+
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 

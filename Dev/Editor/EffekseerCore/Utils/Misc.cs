@@ -82,7 +82,6 @@ namespace Effekseer.Utils
 							resources.ColorTextures.Add(_node.RendererCommonValues.ColorTexture);
 						}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
@@ -117,7 +116,6 @@ namespace Effekseer.Utils
 								}
 							}
 						}
-#endif
 					}
 					if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
 					{
@@ -127,7 +125,6 @@ namespace Effekseer.Utils
 							resources.DistortionTextures.Add(_node.RendererCommonValues.ColorTexture);
 						}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
@@ -162,7 +159,6 @@ namespace Effekseer.Utils
 								}
 							}
 						}
-#endif
 					}
 					if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 					{
@@ -178,7 +174,6 @@ namespace Effekseer.Utils
 							resources.NormalTextures.Add(_node.RendererCommonValues.NormalTexture);
 						}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
@@ -213,7 +208,6 @@ namespace Effekseer.Utils
 								}
 							}
 						}
-#endif
 					}
 					if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
 					{

@@ -322,9 +322,8 @@ namespace Effekseer.GUI.Component
 							var o0 = row.BindingValue as Data.Value.EnumBase;
 							var o1 = row.BindingValue as Data.Value.PathForImage;
 							var o2 = row.BindingValue as Data.IEditableValueCollection;
-#if __EFFEKSEER_BUILD_VERSION16__
 							var o3 = row.BindingValue as Data.Value.Boolean;
-#endif
+
 							if (o0 != null && row.IsSelector)
 							{
 								o0.OnChanged += ChangeSelector;
@@ -337,12 +336,10 @@ namespace Effekseer.GUI.Component
 							{
 								o2.OnChanged += ChangeSelector;
 							}
-#if __EFFEKSEER_BUILD_VERSION16__
 							else if (o3 != null)
 							{
 								o3.OnChanged += ChangeSelector;
 							}
-#endif
 						}
 					}
 				}
@@ -386,9 +383,7 @@ namespace Effekseer.GUI.Component
 					var o0 = row.BindingValue as Data.Value.EnumBase;
 					var o1 = row.BindingValue as Data.Value.PathForImage;
 					var o2 = row.BindingValue as Data.IEditableValueCollection;
-#if __EFFEKSEER_BUILD_VERSION16__
 				var o3 = row.BindingValue as Data.Value.Boolean;
-#endif
 					if (o0 != null && row.IsSelector)
 					{
 						o0.OnChanged -= ChangeSelector;
@@ -401,12 +396,10 @@ namespace Effekseer.GUI.Component
 					{
 						o2.OnChanged -= ChangeSelector;
 					}
-#if __EFFEKSEER_BUILD_VERSION16__
-				else if (o3 != null)
-				{
-					o3.OnChanged += ChangeSelector;
-				}
-#endif
+					else if (o3 != null)
+					{
+						o3.OnChanged += ChangeSelector;
+					}
 				}
 
 				if (removeControls)
@@ -621,12 +614,10 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new PathForMaterial();
 				}
-#if __EFFEKSEER_BUILD_VERSION16__
 				else if (type == typeof(Data.Value.PathForCurve))
 				{
 					gui = new PathForCurve();
 				}
-#endif
 				else if (type == typeof(Data.Value.FCurveScalar))
 				{
 					gui = new FCurveButton();
@@ -729,13 +720,12 @@ namespace Effekseer.GUI.Component
 
 				if (value == null)
 				{
-#if __EFFEKSEER_BUILD_VERSION16__
 					if (Selector.BindingValue.GetType() == typeof(Data.Value.Boolean))
 					{
 						var v = Selector.BindingValue as Data.Value.Boolean;
 						return v.Value;
 					}
-#endif
+
 					return false;
 				}
 

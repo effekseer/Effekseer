@@ -444,7 +444,6 @@ protected:
 
 	std::vector<Effekseer::Matrix44> matrixesSorted_;
 	std::vector<Effekseer::RectF> uvSorted_;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> alphaUVSorted_;
 	std::vector<Effekseer::RectF> uvDistortionUVSorted_;
 	std::vector<Effekseer::RectF> blendUVSorted_;
@@ -453,7 +452,7 @@ protected:
 	std::vector<float> flipbookIndexAndNextRateSorted_;
 	std::vector<float> alphaThresholdSorted_;
 	std::vector<float> viewOffsetDistanceSorted_;
-#endif
+
 	std::vector<Effekseer::Color> colorsSorted_;
 	std::vector<int32_t> timesSorted_;
 	std::vector<std::array<float, 4>> customData1Sorted_;
@@ -461,7 +460,7 @@ protected:
 
 	std::vector<Effekseer::Matrix44> m_matrixes;
 	std::vector<Effekseer::RectF> m_uv;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 	std::vector<Effekseer::RectF> m_alphaUV;
 	std::vector<Effekseer::RectF> m_uvDistortionUV;
 	std::vector<Effekseer::RectF> m_blendUV;
@@ -470,7 +469,7 @@ protected:
 	std::vector<float> m_flipbookIndexAndNextRate;
 	std::vector<float> m_alphaThreshold;
 	std::vector<float> m_viewOffsetDistance;
-#endif
+
 	std::vector<Effekseer::Color> m_colors;
 	std::vector<int32_t> m_times;
 	std::vector<std::array<float, 4>> customData1_;
@@ -567,7 +566,6 @@ protected:
 
 			matrixesSorted_.resize(m_matrixes.size());
 			uvSorted_.resize(m_matrixes.size());
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			alphaUVSorted_.resize(m_matrixes.size());
 			uvDistortionUVSorted_.resize(m_matrixes.size());
 			blendUVSorted_.resize(m_matrixes.size());
@@ -575,7 +573,6 @@ protected:
 			flipbookIndexAndNextRateSorted_.resize(m_matrixes.size());
 			alphaThresholdSorted_.resize(m_matrixes.size());
 			viewOffsetDistanceSorted_.resize(m_matrixes.size());
-#endif
 			colorsSorted_.resize(m_matrixes.size());
 			timesSorted_.resize(m_matrixes.size());
 
@@ -593,7 +590,6 @@ protected:
 			{
 				matrixesSorted_[keyValues_[i].Value] = m_matrixes[i];
 				uvSorted_[keyValues_[i].Value] = m_uv[i];
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				alphaUVSorted_[keyValues_[i].Value] = m_alphaUV[i];
 				uvDistortionUVSorted_[keyValues_[i].Value] = m_uvDistortionUV[i];
 				blendUVSorted_[keyValues_[i].Value] = m_blendUV[i];
@@ -602,7 +598,6 @@ protected:
 				flipbookIndexAndNextRateSorted_[keyValues_[i].Value] = m_flipbookIndexAndNextRate[i];
 				alphaThresholdSorted_[keyValues_[i].Value] = m_alphaThreshold[i];
 				viewOffsetDistanceSorted_[keyValues_[i].Value] = m_viewOffsetDistance[i];
-#endif
 				colorsSorted_[keyValues_[i].Value] = m_colors[i];
 				timesSorted_[keyValues_[i].Value] = m_times[i];
 			}
@@ -625,7 +620,6 @@ protected:
 
 			m_matrixes = matrixesSorted_;
 			m_uv = uvSorted_;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			m_alphaUV = alphaUVSorted_;
 			m_uvDistortionUV = uvDistortionUVSorted_;
 			m_blendUV = blendUVSorted_;
@@ -634,7 +628,6 @@ protected:
 			m_flipbookIndexAndNextRate = flipbookIndexAndNextRateSorted_;
 			m_alphaThreshold = alphaThresholdSorted_;
 			m_viewOffsetDistance = viewOffsetDistanceSorted_;
-#endif
 			m_colors = colorsSorted_;
 			m_times = timesSorted_;
 			customData1_ = customData1Sorted_;
@@ -770,7 +763,6 @@ public:
 
 		m_matrixes.clear();
 		m_uv.clear();
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.clear();
 		m_uvDistortionUV.clear();
 		m_blendUV.clear();
@@ -779,7 +771,6 @@ public:
 		m_flipbookIndexAndNextRate.clear();
 		m_alphaThreshold.clear();
 		m_viewOffsetDistance.clear();
-#endif
 		m_colors.clear();
 		m_times.clear();
 		customData1_.clear();
@@ -787,7 +778,6 @@ public:
 
 		matrixesSorted_.clear();
 		uvSorted_.clear();
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		alphaUVSorted_.clear();
 		uvDistortionUVSorted_.clear();
 		blendUVSorted_.clear();
@@ -796,7 +786,6 @@ public:
 		flipbookIndexAndNextRateSorted_.clear();
 		alphaThresholdSorted_.clear();
 		viewOffsetDistanceSorted_.clear();
-#endif
 		colorsSorted_.clear();
 		timesSorted_.clear();
 		customData1Sorted_.clear();
@@ -830,7 +819,6 @@ public:
 			return false;
 		}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		if (parameter.BasicParameterPtr->Texture3Index >= 0)
 			return true;
 
@@ -855,7 +843,6 @@ public:
 		{
 			return true;
 		}
-#endif
 
 		return false;
 	}
@@ -894,7 +881,6 @@ public:
 
 		m_matrixes.push_back(ToStruct(mat44));
 		m_uv.push_back(instanceParameter.UV);
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.push_back(instanceParameter.AlphaUV);
 		m_uvDistortionUV.push_back(instanceParameter.UVDistortionUV);
 		m_blendUV.push_back(instanceParameter.BlendUV);
@@ -903,7 +889,6 @@ public:
 		m_flipbookIndexAndNextRate.push_back(instanceParameter.FlipbookIndexAndNextRate);
 		m_alphaThreshold.push_back(instanceParameter.AlphaThreshold);
 		m_viewOffsetDistance.push_back(instanceParameter.ViewOffsetDistance);
-#endif
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
 
@@ -1172,13 +1157,7 @@ public:
 		}
 		else
 		{
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			Effekseer::TextureData* textures[7] = {nullptr};
-#else
-			Effekseer::TextureData* textures[2];
-			textures[0] = nullptr;
-			textures[1] = nullptr;
-#endif
 
 			if (distortion)
 			{
@@ -1193,7 +1172,6 @@ public:
 
 				textures[1] = renderer->GetBackground();
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				if (param.BasicParameterPtr->Texture3Index >= 0)
 				{
 					textures[2] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture3Index);
@@ -1238,7 +1216,6 @@ public:
 				{
 					textures[6] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
-#endif
 			}
 			else
 			{
@@ -1262,7 +1239,6 @@ public:
 					textures[1] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				if (param.BasicParameterPtr->Texture3Index >= 0)
 				{
 					textures[2] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture3Index);
@@ -1307,7 +1283,6 @@ public:
 				{
 					textures[6] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
-#endif
 			}
 
 			state.TextureFilterTypes[0] = param.BasicParameterPtr->TextureFilter1;
@@ -1324,7 +1299,6 @@ public:
 				state.TextureWrapTypes[1] = param.BasicParameterPtr->TextureWrap2;
 			}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			state.TextureFilterTypes[2] = param.BasicParameterPtr->TextureFilter3;
 			state.TextureWrapTypes[2] = param.BasicParameterPtr->TextureWrap3;
 			state.TextureFilterTypes[3] = param.BasicParameterPtr->TextureFilter4;
@@ -1335,13 +1309,8 @@ public:
 			state.TextureWrapTypes[5] = param.BasicParameterPtr->TextureWrap6;
 			state.TextureFilterTypes[6] = param.BasicParameterPtr->TextureFilter7;
 			state.TextureWrapTypes[6] = param.BasicParameterPtr->TextureWrap7;
-#endif
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			renderer->SetTextures(shader_, textures, 7);
-#else
-			renderer->SetTextures(shader_, textures, 2);
-#endif
 		}
 
 		renderer->GetRenderState()->Update(distortion);
@@ -1374,7 +1343,6 @@ public:
 				pcb->UVInversedBack[0] = uvInversedBack[0];
 				pcb->UVInversedBack[1] = uvInversedBack[1];
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				pcb->Interpolation[0] = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
 				pcb->Interpolation[1] = static_cast<float>(param.BasicParameterPtr->InterpolationType);
 
@@ -1384,7 +1352,6 @@ public:
 				pcb->UVDistortion[3] = uvInversed[1];
 
 				pcb->TextureBlendType[0] = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
-#endif
 			}
 			else
 			{
@@ -1409,7 +1376,6 @@ public:
 					ColorToFloat4(renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
 				}
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
 				pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
 				pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
@@ -1431,18 +1397,15 @@ public:
 					param.BasicParameterPtr->EdgeColor[3])));
 
 				pcb->SetEdgeParameter(param.BasicParameterPtr->EdgeThreshold, static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
-#endif
 			}
 		}
 
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		vcb->SetModelFlipbookParameter(static_cast<float>(param.BasicParameterPtr->EnableInterpolation),
 									   static_cast<float>(param.BasicParameterPtr->UVLoopType),
 									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
 									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
-#endif
 
 		// Check time
 		auto stTime0 = m_times[0] % model->GetFrameCount();
@@ -1477,12 +1440,12 @@ public:
 
 					// DepthParameter
 					::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[num];
-#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 					if (param.EnableViewOffset)
 					{
 						ApplyViewOffset(modelMatrix, renderer->GetCameraMatrix(), m_viewOffsetDistance[loop + num]);
 					}
-#endif
+
 					ApplyDepthParameters(modelMatrix,
 										 renderer->GetCameraFrontDirection(),
 										 renderer->GetCameraPosition(),
@@ -1495,7 +1458,6 @@ public:
 					vcb->ModelUV[num][2] = m_uv[loop + num].Width;
 					vcb->ModelUV[num][3] = m_uv[loop + num].Height;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 					vcb->SetModelAlphaUV(
 						num, m_alphaUV[loop + num].X, m_alphaUV[loop + num].Y, m_alphaUV[loop + num].Width, m_alphaUV[loop + num].Height);
 					vcb->SetModelUVDistortionUV(num,
@@ -1517,7 +1479,6 @@ public:
 													 m_blendUVDistortionUV[loop + num].Height);
 					vcb->SetModelFlipbookIndexAndNextRate(num, m_flipbookIndexAndNextRate[loop + num]);
 					vcb->SetModelAlphaThreshold(num, m_alphaThreshold[loop + num]);
-#endif
 
 					ColorToFloat4(m_colors[loop + num], vcb->ModelColor[num]);
 
@@ -1563,7 +1524,6 @@ public:
 				vcb->ModelUV[0][2] = m_uv[loop].Width;
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				vcb->SetModelAlphaUV(0, m_alphaUV[loop].X, m_alphaUV[loop].Y, m_alphaUV[loop].Width, m_alphaUV[loop].Height);
 				vcb->SetModelUVDistortionUV(
 					0, m_uvDistortionUV[loop].X, m_uvDistortionUV[loop].Y, m_uvDistortionUV[loop].Width, m_uvDistortionUV[loop].Height);
@@ -1574,16 +1534,14 @@ public:
 					0, m_blendUVDistortionUV[loop].X, m_blendUVDistortionUV[loop].Y, m_blendUVDistortionUV[loop].Width, m_blendUVDistortionUV[loop].Height);
 				vcb->SetModelFlipbookIndexAndNextRate(0, m_flipbookIndexAndNextRate[loop]);
 				vcb->SetModelAlphaThreshold(0, m_alphaThreshold[loop]);
-#endif
 
 				// DepthParameters
 				::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[0];
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 				if (param.EnableViewOffset == true)
 				{
 					ApplyViewOffset(modelMatrix, renderer->GetCameraMatrix(), m_viewOffsetDistance[0]);
 				}
-#endif
+
 				ApplyDepthParameters(modelMatrix,
 									 renderer->GetCameraFrontDirection(),
 									 renderer->GetCameraPosition(),

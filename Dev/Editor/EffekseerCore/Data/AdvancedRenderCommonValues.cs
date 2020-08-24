@@ -252,7 +252,6 @@ namespace Effekseer.Data
 
 	public class AdvancedRenderCommonValues
 	{
-#if __EFFEKSEER_BUILD_VERSION16__
 		[Selector(ID = 100)]
 		[IO(Export = true)]
 		[Key(key = "AdvancedRenderCommonValues_EnableAlphaTexture")]
@@ -271,20 +270,17 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		[Selected(ID = 200, Value = 0)]
 		public UVDistortionTextureParameter UVDistortionTextureParam { get; private set; }
-#endif
 
 		[IO(Export = true)]
 		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
         public AdvancedRenderCommonValues(Value.Path basepath)
         {
-#if __EFFEKSEER_BUILD_VERSION16__
 			EnableAlphaTexture = new Value.Boolean(false);
 			AlphaTextureParam = new AlphaTextureParameter(basepath);
 
 			EnableUVDistortionTexture = new Value.Boolean(false);
 			UVDistortionTextureParam = new UVDistortionTextureParameter(basepath);
-#endif
 
 			AlphaCutoffParam = new AlphaCutoffParameter();
         }

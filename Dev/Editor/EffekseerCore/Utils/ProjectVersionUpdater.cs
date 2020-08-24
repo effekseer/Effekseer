@@ -247,9 +247,7 @@ namespace Effekseer.Utils
 		}
 	}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	class ProjectVersionUpdator15xTo16x : ProjectVersionUpdator
 	{
 	}
-#endif
 }

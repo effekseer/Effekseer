@@ -35,9 +35,7 @@ private:
 	SoundLoader* m_soundLoader;
 	ModelLoader* m_modelLoader;
 	MaterialLoader* m_materialLoader = nullptr;
-#if __EFFEKSEER_BUILD_VERSION16__
 	CurveLoader* m_curveLoader = nullptr;
-#endif
 
 	std::vector<EffectFactory*> effectFactories;
 
@@ -141,7 +139,6 @@ public:
 		*/
 	void SetMaterialLoader(MaterialLoader* loader);
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	/**
 		@brief
 		\~English get a curve loader
@@ -161,7 +158,6 @@ public:
 		\~Japanese ローダー
 	*/
 	void SetCurveLoader(CurveLoader* loader);
-#endif
 
 	/**
 		@brief

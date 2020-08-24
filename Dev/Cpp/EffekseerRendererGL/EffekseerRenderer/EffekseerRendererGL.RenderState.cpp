@@ -213,7 +213,8 @@ void RenderState::Update(bool forced)
 		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			if (m_renderer->GetCurrentTextures()[i].UserID == 0)
+			const auto& texture = m_renderer->GetCurrentTextures()[i];
+			if (texture.UserID == 0)
 				continue;
 
 			// always changes because a flag is assigned into a texture

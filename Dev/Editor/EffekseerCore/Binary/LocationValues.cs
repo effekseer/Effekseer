@@ -15,7 +15,6 @@ namespace Effekseer.Binary
 
 			var type = value.Type.Value;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			// Fall back
 			if (version < ExporterVersion.Ver1600)
 			{
@@ -25,7 +24,6 @@ namespace Effekseer.Binary
 					type = Data.LocationValues.ParamaterType.Fixed;
 				}
 			}
-#endif
 
 			List<byte[]> data = new List<byte[]>();
 			data.Add(((int)type).GetBytes());
@@ -88,7 +86,6 @@ namespace Effekseer.Binary
 				data.Add(bytes1.Count().GetBytes());
 				data.Add(bytes1);
 			}
-#if __EFFEKSEER_BUILD_VERSION16__
 			else if (type == Data.LocationValues.ParamaterType.NurbsCurve)
 			{
 				if (value.NurbsCurve.FilePath.RelativePath != string.Empty)
@@ -113,7 +110,6 @@ namespace Effekseer.Binary
 				data.Add(value.ViewOffset.Distance.Max.GetBytes());
 				data.Add(value.ViewOffset.Distance.Min.GetBytes());
 			}
-#endif
 
 			return data.ToArray().ToArray();
 		}

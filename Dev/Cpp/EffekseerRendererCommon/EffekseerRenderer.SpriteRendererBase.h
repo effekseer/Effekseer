@@ -114,7 +114,6 @@ protected:
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
 		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
 		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
@@ -147,7 +146,6 @@ protected:
 		state.EdgeColor[3] = param.BasicParameterPtr->EdgeColor[3];
 		state.EdgeColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 		state.IsAlphaCuttoffEnabled = param.BasicParameterPtr->IsAlphaCutoffEnabled;
-#endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
@@ -157,14 +155,12 @@ protected:
 											   param.BasicParameterPtr->MaterialParameterPtr,
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 											   ,
 											   param.BasicParameterPtr->Texture3Index,
 											   param.BasicParameterPtr->Texture4Index,
 											   param.BasicParameterPtr->Texture5Index,
 											   param.BasicParameterPtr->Texture6Index,
 											   param.BasicParameterPtr->Texture7Index
-#endif
 		);
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
@@ -218,10 +214,8 @@ protected:
 
 			verteies[i].SetColor(instanceParameter.Colors[i], FLIP_RGB);
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			verteies[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
 			verteies[i].SetAlphaThreshold(instanceParameter.AlphaThreshold);
-#endif
 		}
 
 		verteies[0].UV[0] = instanceParameter.UV.X;
@@ -236,7 +230,6 @@ protected:
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
 		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
 
@@ -296,7 +289,6 @@ protected:
 
 		verteies[3].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
 		verteies[3].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y, 1);
-#endif
 
 		// distortion
 		if (IsDistortionVertex<VERTEX>())
@@ -326,7 +318,6 @@ protected:
 			Effekseer::Vec3f R;
 			Effekseer::Vec3f F;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			if (parameter.EnableViewOffset == true)
 			{
 				Effekseer::Mat43f instMat = instanceParameter.SRTMatrix43;
@@ -339,9 +330,6 @@ protected:
 			{
 				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
 			}
-#else
-			CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
-#endif
 
 			for (int i = 0; i < 4; i++)
 			{
@@ -377,12 +365,10 @@ protected:
 		{
 			auto mat = instanceParameter.SRTMatrix43;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 			if (parameter.EnableViewOffset == true)
 			{
 				ApplyViewOffset(mat, camera, instanceParameter.ViewOffsetDistance);
 			}
-#endif
 
 			ApplyDepthParameters(mat,
 								 m_renderer->GetCameraFrontDirection(),

@@ -88,9 +88,7 @@ public:
 	HolderCollection<void*> sounds;
 	HolderCollection<void*> models;
 	HolderCollection<MaterialData*> materials;
-#if __EFFEKSEER_BUILD_VERSION16__
 	HolderCollection<void*> curves;
-#endif
 };
 
 /**
@@ -103,11 +101,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	static const int32_t SupportBinaryVersion = 1600;
-#else
-	static const int32_t SupportBinaryVersion = 1500;
-#endif
 
 protected:
 	ManagerImplemented* m_pManager;
@@ -144,11 +138,9 @@ protected:
 	EFK_CHAR** materialPaths_ = nullptr;
 	MaterialData** materials_ = nullptr;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	int32_t curveCount_ = 0;
 	EFK_CHAR** curvePaths_ = nullptr;
 	void** curves_ = nullptr;
-#endif
 
 	std::u16string name_;
 	std::basic_string<EFK_CHAR> m_materialPath;
@@ -308,13 +300,11 @@ public:
 
 	const EFK_CHAR* GetMaterialPath(int n) const override;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	void* GetCurve(int n) const override;
 	
 	int32_t GetCurveCount() const override;
 
 	const EFK_CHAR* GetCurvePath(int n) const override;
-#endif
 
 	void SetTexture(int32_t index, TextureType type, TextureData* data) override;
 
@@ -324,9 +314,7 @@ public:
 
 	void SetMaterial(int32_t index, MaterialData* data) override;
 
-#if __EFFEKSEER_BUILD_VERSION16__
 	void SetCurve(int32_t index, void* data) override;
-#endif
 
 	/**
 		@brief	エフェクトのリロードを行う。

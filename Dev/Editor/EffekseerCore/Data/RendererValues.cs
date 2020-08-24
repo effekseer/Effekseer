@@ -861,10 +861,8 @@ namespace Effekseer.Data
 				Color_Easing = new ColorEasingParamater();
 				Color_FCurve = new ColorFCurveParameter();
 
-#if __EFFEKSEER_BUILD_VERSION16__
 				EnableFalloff = new Value.Boolean(false);
 				FalloffParam = new FalloffParameter();
-#endif
 			}
 
 			[Selector(ID = 0)]
@@ -885,7 +883,6 @@ namespace Effekseer.Data
 			[IO(Export = true)]
 			public ColorFCurveParameter Color_FCurve { get; private set; }
 
-#if __EFFEKSEER_BUILD_VERSION16__
 			[Selector(ID = 100)]
 			[IO(Export = true)]
 			[Key(key = "ModelParameter_EnableFalloff")]
@@ -934,7 +931,6 @@ namespace Effekseer.Data
 				}
 
 			}
-#endif
 		}
 
 		public class TrackParameter

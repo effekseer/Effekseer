@@ -577,12 +577,10 @@ static int32_t GetMaximumVertexSizeInAllTypes()
 	size = (std::max)(size, sizeof(VertexDistortion));
 	size = (std::max)(size, sizeof(SimpleVertex));
 	size = (std::max)(size, sizeof(LightingVertex));
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	size = (std::max)(size, sizeof(AdvancedVertexDistortion));
 	size = (std::max)(size, sizeof(AdvancedSimpleVertex));
 	size = (std::max)(size, sizeof(AdvancedLightingVertex));
-#endif
+
 	return static_cast<int32_t>(size);
 };
 

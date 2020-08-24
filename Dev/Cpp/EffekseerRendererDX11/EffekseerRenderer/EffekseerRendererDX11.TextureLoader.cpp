@@ -158,7 +158,6 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 		textureData->Width = ddsTextureLoader.GetWidth();
 		textureData->Height = ddsTextureLoader.GetHeight();
 	}
-#ifdef __EFFEKSEER_BUILD_VERSION16__
 	else
 	{
 		if (tgaTextureLoader.Load(data_texture, size_texture) == true)
@@ -220,7 +219,6 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 			textureData->Height = TexDesc.Height;
 		}
 	}
-#endif
 
 Exit:;
 	return textureData;
