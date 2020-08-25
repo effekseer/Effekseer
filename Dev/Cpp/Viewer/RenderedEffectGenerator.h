@@ -24,6 +24,7 @@ struct RenderedEffectGeneratorConfig
 	Effekseer::Vector3D LightDirection;
 	Effekseer::Color LightColor;
 	Effekseer::Color LightAmbientColor;
+	Effekseer::RenderMode RenderMode;
 };
 
 class RenderedEffectGenerator

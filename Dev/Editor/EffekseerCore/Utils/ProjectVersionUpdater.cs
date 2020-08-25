@@ -249,5 +249,48 @@ namespace Effekseer.Utils
 
 	class ProjectVersionUpdator15xTo16x : ProjectVersionUpdator
 	{
+		public override bool Update(System.Xml.XmlDocument document)
+		{
+			List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
+
+			Action<System.Xml.XmlNode> collectNodes = null;
+			collectNodes = (node) =>
+			{
+				if (node.Name == "Node")
+				{
+					nodes.Add(node);
+				}
+
+				for (int i = 0; i < node.ChildNodes.Count; i++)
+				{
+					collectNodes(node.ChildNodes[i]);
+				}
+			};
+
+			collectNodes((XmlNode)document);
+
+			foreach (var node in nodes)
+			{
+				var rendererCommon = node["RendererCommonValues"];
+
+				if (rendererCommon != null)
+				{
+					if (rendererCommon["UVAnimation"] != null)
+					{
+						System.Xml.XmlNode uvAnimationParamNode = document.CreateElement("AnimationParams");
+
+						int count = rendererCommon["UVAnimation"].ChildNodes.Count;
+						for (int i = 0; i < count; i++)
+						{
+							uvAnimationParamNode.AppendChild(rendererCommon["UVAnimation"].ChildNodes[0]);
+						}
+
+						rendererCommon["UVAnimation"].AppendChild(uvAnimationParamNode);
+					}
+				}
+			}
+
+			return true;
+		}
 	}
 }
