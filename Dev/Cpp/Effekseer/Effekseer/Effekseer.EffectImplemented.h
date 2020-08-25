@@ -237,6 +237,11 @@ public:
 
 	void SetLoadingParameter(ReferenceObject* obj);
 
+	std::vector<InternalScript>& GetDynamicEquation()
+	{
+		return dynamicEquation;
+	}
+
 private:
 	/**
 		@brief	マネージャー取得

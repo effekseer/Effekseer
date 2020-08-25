@@ -143,11 +143,14 @@ public:
 			Vec3f acceleration;
 		} random;
 
+		InstanceEasing3 easing;
+		/*
 		struct
 		{
 			Vec3f start;
 			Vec3f end;
 		} easing;
+		*/
 
 		struct
 		{
@@ -175,11 +178,14 @@ public:
 			Vec3f acceleration;
 		} random;
 
+		InstanceEasing3 easing;
+		/*
 		struct
 		{
 			Vec3f start;
 			Vec3f end;
 		} easing;
+		*/
 
 		struct
 		{
@@ -224,11 +230,15 @@ public:
 			Vec3f acceleration;
 		} random;
 
+		InstanceEasing3 easing;
+
+		/*
 		struct
 		{
 			Vec3f start;
 			Vec3f end;
 		} easing;
+		*/
 
 		struct
 		{
@@ -369,36 +379,6 @@ public:
 	} alpha_cutoff_values;
 
 	float m_AlphaThreshold;
-
-	//! calculate dynamic equation and assign a result
-	template <typename T, typename U>
-	void ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, IRandObject* rand, int dpInd, const U& originalParam);
-
-	//! calculate dynamic equation and return a result
-	template <typename S>
-	Vec3f ApplyEq(Effect* e,
-				  InstanceGlobal* instg,
-				  IRandObject* rand,
-				  const int& dpInd,
-				  const Vec3f& originalParam,
-				  const S& scale,
-				  const S& scaleInv);
-
-	//! calculate dynamic equation and return a result
-	random_float ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, const RefMinMax& dpInd, random_float originalParam);
-
-	//! calculate dynamic equation and return a result
-	template <typename S>
-	random_vector3d ApplyEq(Effect* e,
-							InstanceGlobal* instg,
-							IRandObject* rand,
-							const RefMinMax& dpInd,
-							random_vector3d originalParam,
-							const S& scale,
-							const S& scaleInv);
-
-	//! calculate dynamic equation and return a result
-	random_int ApplyEq(Effect* e, InstanceGlobal* instg, IRandObject* rand, const RefMinMax& dpInd, random_int originalParam);
 
 	// コンストラクタ
 	Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);

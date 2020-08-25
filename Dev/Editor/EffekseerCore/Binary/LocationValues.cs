@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using Effekseer.Utl;
+using Effekseer.Data;
 
 namespace Effekseer.Binary
 {
@@ -18,7 +19,7 @@ namespace Effekseer.Binary
 			// Fall back
 			if (version < ExporterVersion.Ver1600)
 			{
-				if(type == Data.LocationValues.ParamaterType.NurbsCurve ||
+				if (type == Data.LocationValues.ParamaterType.NurbsCurve ||
 					type == Data.LocationValues.ParamaterType.ViewOffset)
 				{
 					type = Data.LocationValues.ParamaterType.Fixed;
@@ -57,26 +58,7 @@ namespace Effekseer.Binary
 			}
 			else if (type == Data.LocationValues.ParamaterType.Easing)
 			{
-				var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
-
-				var refBuf1_1 = value.Easing.Start.DynamicEquationMax.Index.GetBytes();
-				var refBuf1_2 = value.Easing.Start.DynamicEquationMin.Index.GetBytes();
-				var refBuf2_1 = value.Easing.End.DynamicEquationMax.Index.GetBytes();
-				var refBuf2_2 = value.Easing.End.DynamicEquationMin.Index.GetBytes();
-
-				List<byte[]> _data = new List<byte[]>();
-				_data.Add(refBuf1_1);
-				_data.Add(refBuf1_2);
-				_data.Add(refBuf2_1);
-				_data.Add(refBuf2_2);
-				_data.Add(value.Easing.Start.GetBytes(1.0f));
-				_data.Add(value.Easing.End.GetBytes(1.0f));
-				_data.Add(BitConverter.GetBytes(easing[0]));
-				_data.Add(BitConverter.GetBytes(easing[1]));
-				_data.Add(BitConverter.GetBytes(easing[2]));
-				var __data = _data.ToArray().ToArray();
-				data.Add(__data.Count().GetBytes());
-				data.Add(__data);
+				Utils.ExportEasing(value.Easing, 1.0f, data, version);
 			}
 			else if (type == Data.LocationValues.ParamaterType.LocationFCurve)
 			{
@@ -113,6 +95,8 @@ namespace Effekseer.Binary
 
 			return data.ToArray().ToArray();
 		}
+
+		
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -148,7 +132,7 @@ namespace Effekseer.Binary
 		static public Translation_PVA_Values Create(Data.LocationValues.PVAParamater value, float magnification)
 		{
 			var s_value = new Translation_PVA_Values();
-	
+
 			s_value.Position_Min = new Vector3D(
 				value.Location.X.Min * magnification,
 				value.Location.Y.Min * magnification,

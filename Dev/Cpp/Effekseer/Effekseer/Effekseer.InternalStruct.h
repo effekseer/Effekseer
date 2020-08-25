@@ -214,6 +214,23 @@ struct random_vector3d
 	{
 		return {g.GetRand(min.x, max.x), g.GetRand(min.y, max.y), g.GetRand(min.z, max.z)};
 	}
+
+	Vec3f getValue(const std::array<int32_t, 3>& channels, int32_t channelCount, IRandObject& g) const
+	{
+		assert(channelCount <= 3);
+		std::array<float, 3> channelValues;
+
+		for (int32_t i = 0; i < channelCount; i++)
+		{
+			channelValues[i] = g.GetRand();
+		}
+
+		auto x = channelValues[channels[0]] * (max.x - min.x) + min.x;
+		auto y = channelValues[channels[1]] * (max.y - min.y) + min.y;
+		auto z = channelValues[channels[2]] * (max.z - min.z) + min.z;
+
+		return {x, y, z};
+	}
 };
 
 //----------------------------------------------------------------------------------
