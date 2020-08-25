@@ -187,14 +187,22 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	{
 		InstanceContainer* childContainer = m_pContainer->GetChild(i);
 
+		auto allocated = childContainer->CreateInstanceGroup();
+
+		// Lack of memory
+		if (allocated == nullptr)
+		{
+			break;
+		}
+	
 		if (group != NULL)
 		{
-			group->NextUsedByInstance = childContainer->CreateInstanceGroup();
-			group = group->NextUsedByInstance;
+			group->NextUsedByInstance = allocated;
+			group = allocated;
 		}
 		else
 		{
-			group = childContainer->CreateInstanceGroup();
+			group = allocated;
 			childrenGroups_ = group;
 		}
 	}
@@ -250,7 +258,12 @@ void Instance::GenerateChildrenInRequired()
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 	{
 		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
-		assert(group != NULL);
+
+		// Lack of memory
+		if (group == nullptr)
+		{
+			return;
+		}
 
 		while (true)
 		{
