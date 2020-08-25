@@ -1,11 +1,11 @@
 #include "EffectPlatformVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
+#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.IndexBufferVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.PlatformVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.TextureVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.VertexBufferVulkan.h"
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -107,8 +107,7 @@ class DistortingCallbackVulkan : public EffekseerRenderer::DistortingCallback
 
 public:
 	DistortingCallbackVulkan(EffectPlatformVulkan* platform, ::EffekseerRenderer::Renderer* renderer)
-		: platform_(platform)
-		, renderer_(renderer)
+		: platform_(platform), renderer_(renderer)
 	{
 	}
 
@@ -128,7 +127,7 @@ public:
 		{
 			auto tex = (LLGI::TextureVulkan*)(platform_->GetCheckedTexture());
 			EffekseerRendererVulkan::VulkanImageInfo info;
-			info.image = tex->GetImage();
+			info.image = static_cast<VkImage>(tex->GetImage());
 			info.format = static_cast<VkFormat>(tex->GetVulkanFormat());
 			info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
 			textureData_ = EffekseerRendererVulkan::CreateTextureData(renderer_, info);
@@ -187,8 +186,13 @@ EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
 	renderPassInfo.RenderTextureCount = 1;
 	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_R8G8B8A8_UNORM;
 	renderPassInfo.DepthFormat = VK_FORMAT_D32_SFLOAT;
-	auto renderer = ::EffekseerRendererVulkan::Create(
-		g->GetPysicalDevice(), g->GetDevice(), g->GetQueue(), g->GetCommandPool(), 3, renderPassInfo, 10000);
+	auto renderer = ::EffekseerRendererVulkan::Create(static_cast<VkPhysicalDevice>(g->GetPysicalDevice()),
+													  static_cast<VkDevice>(g->GetDevice()),
+													  static_cast<VkQueue>(g->GetQueue()),
+													  static_cast<VkCommandPool>(g->GetCommandPool()),
+													  3,
+													  renderPassInfo,
+													  10000);
 
 	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this, renderer));
 
@@ -200,26 +204,18 @@ EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformVulkan::~EffectPlatformVulkan()
-{
-}
+EffectPlatformVulkan::~EffectPlatformVulkan() {}
 
-void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param)
-{
-	CreateCheckedTexture();
-}
+void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
 
-void EffectPlatformVulkan::DestroyDevice()
-{
-	EffectPlatformLLGI::DestroyDevice();
-}
+void EffectPlatformVulkan::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
 
 void EffectPlatformVulkan::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();
 
 	auto cl = static_cast<LLGI::CommandListVulkan*>(commandList_);
-	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, cl->GetCommandBuffer());
+	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, static_cast<VkCommandBuffer>(cl->GetCommandBuffer()));
 	GetRenderer()->SetCommandList(commandListEfk_);
 }
 
@@ -231,7 +227,4 @@ void EffectPlatformVulkan::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const
-{
-	return checkTexture_;
-}
+LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const { return checkTexture_; }
