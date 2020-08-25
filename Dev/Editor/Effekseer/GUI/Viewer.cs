@@ -442,6 +442,8 @@ namespace Effekseer.GUI
 			ViewMode_OnChanged(null, null);
 			Core.Option.ViewerMode.OnChanged += ViewMode_OnChanged;
 
+			Core.Option.RenderingMode.OnChanged += RenderingMode_OnChanged;
+
 			Bloom_OnChanged(null, null);
 			Core.Environment.PostEffect.BloomSwitch.OnChanged += Bloom_OnChanged;
 			Core.Environment.PostEffect.Bloom.Intensity.OnChanged += Bloom_OnChanged;
@@ -453,6 +455,11 @@ namespace Effekseer.GUI
 			Core.Environment.PostEffect.TonemapReinhard.Exposure.OnChanged += Tonemap_OnChanged;
 			
 			return true;
+		}
+
+		private void RenderingMode_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			SetRenderMode((int)Core.Option.RenderingMode.Value);
 		}
 
 		public void HideViewer()

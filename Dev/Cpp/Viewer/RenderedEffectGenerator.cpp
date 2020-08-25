@@ -408,6 +408,7 @@ void RenderedEffectGenerator::Update(int32_t frame)
 
 void RenderedEffectGenerator::Render()
 {
+	renderer_->SetRenderMode(config_.RenderMode);
 	renderer_->SetCameraMatrix(config_.CameraMatrix);
 	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
 	renderer_->SetLightDirection(config_.LightDirection);
@@ -427,6 +428,9 @@ void RenderedEffectGenerator::Render()
 	graphics_->Clear(config_.BackgroundColor);
 
 	OnAfterClear();
+
+	// HACK : grid renderer changes RenderMode
+	renderer_->SetRenderMode(config_.RenderMode);
 
 	// Distoriton
 	if (config_.Distortion == DistortionType::Current)
