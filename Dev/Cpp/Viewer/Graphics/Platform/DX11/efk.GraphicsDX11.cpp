@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
 namespace efk
 {
 	RenderTextureDX11::RenderTextureDX11(Graphics* graphics)
@@ -587,6 +590,8 @@ namespace efk
 
 	void GraphicsDX11::EndRecord(std::vector<Effekseer::Color>& pixels)
 	{
+		spdlog::trace("EndRecord : Begin");
+
 		HRESULT hr;
 
 		SetRenderTarget(backupRenderTarget, backupDepthStencil);
@@ -615,7 +620,9 @@ namespace efk
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_STAGING;
 
-		device->CreateTexture2D(&desc, 0, &texture_);
+		hr = device->CreateTexture2D(&desc, 0, &texture_);
+
+		spdlog::trace("EndRecord : CreateTexture2D : {}", SUCCEEDED(hr));
 
 		context->CopyResource(texture_, ((RenderTextureDX11*)recordingTexture)->GetTexture());
 
@@ -623,7 +630,7 @@ namespace efk
 		UINT sr = D3D11CalcSubresource(0, 0, 0);
 		hr = context->Map(texture_, sr, D3D11_MAP_READ_WRITE, 0, &mr);
 		
-		assert(SUCCEEDED(hr));
+		spdlog::trace("EndRecord : Map : {}", SUCCEEDED(hr));
 
 		pixels.resize(recordingTextureDesc.Width * recordingTextureDesc.Height);
 
@@ -639,6 +646,8 @@ namespace efk
 		ES_SAFE_RELEASE(texture_);
 		ES_SAFE_DELETE(recordingTexture);
 		ES_SAFE_DELETE(recordingDepthStencil);
+
+		spdlog::trace("EndRecord : End");
 	}
 
 	void GraphicsDX11::Clear(Effekseer::Color color)

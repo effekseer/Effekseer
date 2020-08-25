@@ -770,7 +770,7 @@ void Native::RenderWindow()
 	if (g_renderer->Distortion == EffekseerTool::DistortionType::Current)
 	{
 		g_manager->DrawBack(drawParameter);
-		
+
 		// HACK
 		g_renderer->GetRenderer()->EndRendering();
 
@@ -800,8 +800,12 @@ bool Native::ResizeWindow(int width, int height)
 
 bool Native::DestroyWindow()
 {
+	spdlog::trace("Begin Native::DestroyWindow");
+
 	assert(g_renderer != NULL);
 	assert(g_manager != NULL);
+
+	spdlog::trace("Begin Native::DestroyWindow Stop");
 
 	for (size_t i = 0; i < g_handles.size(); i++)
 	{
@@ -809,14 +813,24 @@ bool Native::DestroyWindow()
 	}
 	g_handles.clear();
 
+	spdlog::trace("Begin Native::DestroyWindow InvalidateTextureCache");
+
 	InvalidateTextureCache();
+
+	spdlog::trace("Begin Native::DestroyWindow ClearImageResources");
 
 	g_imageResources.clear();
 
+	spdlog::trace("Begin Native::DestroyWindow ReleaseEffect");
+
 	ES_SAFE_RELEASE(g_effect);
+
+	spdlog::trace("Begin Native::DestroyWindow DestoryManager");
 
 	g_manager->Destroy();
 	ES_SAFE_DELETE(g_renderer);
+
+	spdlog::trace("End Native::DestroyWindow");
 
 	return true;
 }
