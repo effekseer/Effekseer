@@ -189,6 +189,42 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 			}
 		}
 	}
+	else
+	{
+		if (tgaTextureLoader_.Load(data_texture, size_texture))
+		{
+			GLuint colorFormat = GL_RGBA;
+			if (colorSpaceType_ == ::Effekseer::ColorSpaceType::Linear && textureType == Effekseer::TextureType::Color)
+				colorFormat = GL_SRGB8_ALPHA8;
+
+			GLuint texture = 0;
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D,
+						 0,
+						 colorFormat,
+						 tgaTextureLoader_.GetWidth(),
+						 tgaTextureLoader_.GetHeight(),
+						 0,
+						 GL_RGBA,
+						 GL_UNSIGNED_BYTE,
+						 tgaTextureLoader_.GetData().data());
+
+			// Generate mipmap
+			GLExt::glGenerateMipmap(GL_TEXTURE_2D);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+			tgaTextureLoader_.Unload();
+
+			auto textureData = new Effekseer::TextureData();
+			textureData->UserPtr = nullptr;
+			textureData->UserID = texture;
+			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+			textureData->Width = tgaTextureLoader_.GetWidth();
+			textureData->Height = tgaTextureLoader_.GetHeight();
+			return textureData;
+		}
+	}
 
 	return nullptr;
 }

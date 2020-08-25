@@ -185,6 +185,68 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 		textureData->Width = ddsTextureLoader.GetWidth();
 		textureData->Height = ddsTextureLoader.GetHeight();
 	}
+	else
+	{
+		if (tgaTextureLoader_.Load(data_texture, size_texture))
+		{
+			HRESULT hr;
+			int32_t width = tgaTextureLoader_.GetWidth();
+			int32_t height = tgaTextureLoader_.GetHeight();
+			int32_t mipMapCount = 1;
+			hr =
+				device->CreateTexture(width, height, mipMapCount, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
+
+			if (FAILED(hr))
+			{
+				tgaTextureLoader_.Unload();
+				goto Exit;
+			}
+
+			LPDIRECT3DTEXTURE9 tempTexture = NULL;
+			hr = device->CreateTexture(width, height, mipMapCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &tempTexture, NULL);
+
+			if (FAILED(hr))
+			{
+				tgaTextureLoader_.Unload();
+				goto Exit;
+			}
+
+			uint8_t* srcBits = (uint8_t*)tgaTextureLoader_.GetData().data();
+			D3DLOCKED_RECT locked;
+			if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
+			{
+				uint8_t* destBits = (uint8_t*)locked.pBits;
+
+				for (int32_t h = 0; h < height; h++)
+				{
+					memcpy(destBits, srcBits, width * 4);
+
+					// RGB入れ替え
+					for (int32_t w = 0; w < width; w++)
+					{
+						std::swap(destBits[w * 4 + 0], destBits[w * 4 + 2]);
+					}
+
+					destBits += locked.Pitch;
+					srcBits += (width * 4);
+				}
+
+				tempTexture->UnlockRect(0);
+			}
+
+			hr = device->UpdateTexture(tempTexture, texture);
+			ES_SAFE_RELEASE(tempTexture);
+
+			tgaTextureLoader_.Unload();
+
+			textureData = new Effekseer::TextureData();
+			textureData->UserPtr = texture;
+			textureData->UserID = 0;
+			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+			textureData->Width = width;
+			textureData->Height = height;
+		}
+	}
 
 Exit:;
 	return textureData;

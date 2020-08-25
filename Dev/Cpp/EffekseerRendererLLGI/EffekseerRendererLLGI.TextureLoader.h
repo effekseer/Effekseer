@@ -4,6 +4,8 @@
 #define __EFFEKSEERRENDERER_LLGI_TEXTURELOADER_H__
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../EffekseerRendererCommon/EffekseerRenderer.TGATextureLoader.h"
+
 #include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
@@ -21,7 +23,7 @@ private:
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 	::EffekseerRenderer::PngTextureLoader pngTextureLoader_;
-
+	::EffekseerRenderer::TGATextureLoader tgaTextureLoader_;
 public:
 	TextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 	virtual ~TextureLoader();
