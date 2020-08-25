@@ -13,6 +13,7 @@
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.TGATextureLoader.h"
 #endif
 
 //-----------------------------------------------------------------------------------
@@ -34,6 +35,7 @@ private:
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	::EffekseerRenderer::PngTextureLoader pngTextureLoader;
 	::EffekseerRenderer::DDSTextureLoader ddsTextureLoader;
+	::EffekseerRenderer::TGATextureLoader tgaTextureLoader_;
 #endif
 
 public:
