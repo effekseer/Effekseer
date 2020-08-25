@@ -1931,6 +1931,26 @@ bool GUIManager::IsItemClicked(int mouse_button)
 	return ImGui::IsItemClicked(mouse_button);
 }
 
+bool GUIManager::IsItemEdited()
+{
+	return ImGui::IsItemEdited();
+}
+
+bool GUIManager::IsItemActivated()
+{
+	return ImGui::IsItemActivated();
+}
+
+bool GUIManager::IsItemDeactivated()
+{
+	return ImGui::IsItemDeactivated();
+}
+
+bool GUIManager::IsItemDeactivatedAfterEdit()
+{
+	return ImGui::IsItemDeactivatedAfterEdit();
+}
+
 bool GUIManager::IsAnyItemActive()
 {
 	return ImGui::IsAnyItemActive();

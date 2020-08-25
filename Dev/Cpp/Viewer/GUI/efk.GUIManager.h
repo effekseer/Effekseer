@@ -717,6 +717,10 @@ public:
 	bool IsItemActive();
 	bool IsItemFocused();
 	bool IsItemClicked(int mouse_button);
+	bool IsItemEdited();
+	bool IsItemActivated();
+	bool IsItemDeactivated();
+	bool IsItemDeactivatedAfterEdit();
 	bool IsAnyItemActive();
 	bool IsWindowHovered();
 	bool IsWindowFocused();
