@@ -23,7 +23,11 @@ bool TGATextureLoader::Load(void* data, int32_t size)
 
 	int ColorStep = 4;
 
-	if (TgaHeader[16] == 24)
+	if (TgaHeader[16] == 16)
+	{
+		ColorStep = 2;
+	}
+	else if (TgaHeader[16] == 24)
 	{
 		ColorStep = 3;
 	}
@@ -47,6 +51,13 @@ bool TGATextureLoader::Load(void* data, int32_t size)
 			for (int c = 0; c < ColorStep; c++)
 			{
 				textureData[LU_Index + c] = SrcTextureData[LD_Index + c];
+			}
+
+			if (ColorStep == 2)
+			{
+				textureData[LU_Index + 3] = textureData[LU_Index + 1];
+				textureData[LU_Index + 1] = textureData[LU_Index + 0];
+				textureData[LU_Index + 2] = textureData[LU_Index + 0];
 			}
 
 			if (ColorStep == 3)
