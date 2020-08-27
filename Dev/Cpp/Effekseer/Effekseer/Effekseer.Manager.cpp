@@ -1248,6 +1248,8 @@ void ManagerImplemented::Flip()
 			{
 				if (m_cullingWorld != NULL)
 				{
+					auto isCreated = false;
+
 					if (ds.CullingObjectPointer == NULL)
 					{
 						ds.CullingObjectPointer = Culling3D::Object::Create();
@@ -1260,25 +1262,25 @@ void ManagerImplemented::Flip()
 						{
 							ds.CullingObjectPointer->ChangeIntoAll();
 						}
+
+						isCreated = true;
 					}
 
 					InstanceContainer* pContainer = ds.InstanceContainerPointer;
 					Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 
-					Vec3f pos(ds.CullingObjectPointer->GetPosition().X,
-							  ds.CullingObjectPointer->GetPosition().Y,
-							  ds.CullingObjectPointer->GetPosition().Z);
+					Vector3D location;
 
-					Mat43f pos_ = Mat43f::Translation(pos);
-					pos_ *= pInstance->m_GlobalMatrix43;
+					auto mat_ = ds.GetEnabledGlobalMatrix();
 
-					if (ds.DoUseBaseMatrix)
+					if (mat_ != nullptr)
 					{
-						pos_ *= ds.BaseMatrix;
+						location.X = mat_->X.GetW();
+						location.Y = mat_->Y.GetW();
+						location.Z = mat_->Z.GetW();
 					}
-
-					Vec3f position = pos_.GetTranslation();
-					ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(position.GetX(), position.GetY(), position.GetZ()));
+					
+					ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(location.X, location.Y, location.Z));
 
 					if (effect->Culling.Shape == CullingShape::Sphere)
 					{
@@ -1298,7 +1300,10 @@ void ManagerImplemented::Flip()
 						ds.CullingObjectPointer->ChangeIntoSphere(radius);
 					}
 
-					m_cullingWorld->AddObject(ds.CullingObjectPointer);
+					if (isCreated)
+					{
+						m_cullingWorld->AddObject(ds.CullingObjectPointer);					
+					}
 				}
 				ds.IsParameterChanged = false;
 			}
@@ -2265,6 +2270,9 @@ void ManagerImplemented::CalcCulling(const Matrix44& cameraProjMat, bool isOpenG
 		m_culledObjects.push_back(ds);
 		m_culledObjectSets.insert(ds->Self);
 	}
+
+	// sort with handle
+	std::sort(m_culledObjects.begin(), m_culledObjects.end(), [](auto const& lhs, auto const& rhs) { return lhs->Self > rhs->Self; });
 
 	m_culled = true;
 }
