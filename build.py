@@ -29,7 +29,7 @@ env["MONO_SDK_PATH"] = os.getenv('MONO_SDK_PATH', '/Library/Frameworks/Mono.fram
 env["PACKAGEING_FOR_MAC"] = os.getenv('PACKAGEING_FOR_MAC', '0')
 env["PACKAGEING_FOR_LINUX"] = os.getenv('PACKAGEING_FOR_LINUX', '0')
 env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
-
+env["DOTNET_FOR_MAC"] = os.getenv('DOTNET_FOR_MAC', '0')
 
 is_x86 = 'x86' in sys.argv
 
@@ -81,10 +81,14 @@ if env['IGNORE_BUILD'] == '0':
 
     if aceutils.isWin():
         aceutils.call('build\\nuget.exe restore Dev/Editor/Effekseer.sln')
-    elif aceutils.isMac():
+    elif aceutils.isMac() and not (env['DOTNET_FOR_MAC'] == '1'):
         aceutils.call('mono ./build/nuget.exe restore Dev/Editor/Effekseer.sln')
 
-    if aceutils.isWin() or aceutils.isMac():
+    if env['DOTNET_FOR_MAC'] == '1':
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r osx.10.11-x64')
+        call('cp -r Dev/release/osx.10.11-x64/publish/* Dev/release/')
+    elif aceutils.isWin() or aceutils.isMac():
         if is_x86:
             call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
             call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
@@ -95,6 +99,7 @@ if env['IGNORE_BUILD'] == '0':
         call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r linux-x64')
         call('cp -r Dev/release/linux-x64/publish/* Dev/release/')
+
 
 if env['PACKAGEING_FOR_MAC'] == '1' and aceutils.isMac():
 

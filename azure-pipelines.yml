@@ -52,3 +52,22 @@ jobs:
           PathtoPublish: 'EffekseerMac'
           ArtifactName: 'Effekseer152mMac'
           publishLocation: 'Container'
+
+  - job: MacOS_NetCore
+    pool:
+      vmImage: 'macOS-10.15'
+    steps:
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            git submodule update --init
+            git lfs install
+            git lfs pull
+            DOTNET_FOR_MAC=1 python3 build.py
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'Dev/release'
+          ArtifactName: 'NetCoreMac'
+          publishLocation: 'Container'
