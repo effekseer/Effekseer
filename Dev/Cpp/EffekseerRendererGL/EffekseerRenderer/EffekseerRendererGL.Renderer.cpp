@@ -60,10 +60,10 @@ namespace EffekseerRendererGL
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(fileInterface);
+	return new ModelLoader(fileInterface, deviceType);
 #else
 	return NULL;
 #endif
@@ -837,7 +837,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(fileInterface);
+	return new ModelLoader(fileInterface, GetDeviceType());
 #else
 	return NULL;
 #endif
@@ -926,6 +926,18 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 	{
 		indexBufferCurrentStride_ = m_currentVertexArray->GetIndexBuffer()->GetStride();
 	}
+}
+
+void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size)
+{
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	SetVertexBuffer(vb->GetBuffer(), size);
+}
+
+void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+{
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	SetIndexBuffer(ib->GetBuffer());
 }
 
 //----------------------------------------------------------------------------------

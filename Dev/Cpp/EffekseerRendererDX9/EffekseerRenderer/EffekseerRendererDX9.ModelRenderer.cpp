@@ -9,6 +9,7 @@
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
 #include "EffekseerRendererDX9.VertexBuffer.h"
+#include "GraphicsDevice.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -260,7 +261,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	auto model = (EffekseerRenderer::Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
 	if (model == nullptr)
 	{
 		return;
@@ -275,7 +276,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	EndRendering_<
 		RendererImplemented,
 		Shader,
-		Model,
+		EffekseerRenderer::Model,
 		true,
 		ModelRendererInstanceCount>(
 		m_renderer,

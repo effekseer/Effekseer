@@ -26,6 +26,8 @@ ModelLoader::ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterfa
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+	graphicsDevice_ = new Backend::GraphicsDevice(renderer_->GetDevice());
 }
 
 ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
@@ -38,6 +40,8 @@ ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* f
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+	graphicsDevice_ = new Backend::GraphicsDevice(device_);
 }
 
 //----------------------------------------------------------------------------------
@@ -47,6 +51,7 @@ ModelLoader::~ModelLoader()
 {
 	ES_SAFE_RELEASE(device_);
 	ES_SAFE_RELEASE(renderer_);
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -62,7 +67,9 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 		uint8_t* data_model = new uint8_t[size_model];
 		reader->Read(data_model, size_model);
 
-		auto model = (Model*)Load(data_model, static_cast<int32_t>(size_model));
+		auto model = new EffekseerRenderer::Model(data_model, size_model, 10, graphicsDevice_);
+
+		// auto model = (Model*)Load(data_model, static_cast<int32_t>(size_model));
 
 		delete[] data_model;
 
@@ -91,11 +98,16 @@ void* ModelLoader::Load(const void* data, int32_t size)
 
 	HRESULT hr;
 
+	auto model = new EffekseerRenderer::Model((uint8_t*)data, size, 10, graphicsDevice_);
+
+	/*
 	auto model = new Model((uint8_t*)data, size, device);
 
 	model->ModelCount = Effekseer::Min(Effekseer::Max(model->GetModelCount(), 1), 40);
 
 	model->InternalModels = new Model::InternalModel[model->GetFrameCount()];
+
+	*/
 
 	return model;
 }

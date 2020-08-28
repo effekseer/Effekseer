@@ -5,6 +5,7 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 #include "EffekseerRendererLLGI.Base.h"
 
+#include "GraphicsDevice.h"
 #include <LLGI.CommandList.h>
 #include <LLGI.Constantbuffer.h>
 #include <LLGI.Graphics.h>
@@ -49,7 +50,6 @@ struct FixedShader
 	std::vector<LLGI::DataStructure> AdvancedModelUnlit_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelLit_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelDistortion_PS;
-
 };
 
 /**
@@ -186,6 +186,8 @@ private:
 
 	LLGI::Graphics* graphics_ = nullptr;
 
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+
 	/**
 		@brief	register an object
 	*/
@@ -201,11 +203,13 @@ public:
 		: graphics_(graphics)
 	{
 		ES_SAFE_ADDREF(graphics_);
+		graphicsDevice_ = new Backend::GraphicsDevice(graphics_);
 	}
 
 	virtual ~GraphicsDevice()
 	{
 		ES_SAFE_RELEASE(graphics_);
+		ES_SAFE_RELEASE(graphicsDevice_);
 	}
 
 	/**
@@ -238,6 +242,11 @@ public:
 	virtual int Release() override
 	{
 		return ::Effekseer::ReferenceObject::Release();
+	}
+
+	Backend::GraphicsDevice* GetGraphicsDevice() const
+	{
+		return graphicsDevice_;
 	}
 };
 
@@ -280,7 +289,10 @@ public:
 	bool IsLoadedOnGPU = false;
 
 	Model(uint8_t* data, int32_t size, GraphicsDevice* graphicsDevice)
-		: Effekseer::Model(data, size), InternalModels(nullptr), graphicsDevice_(graphicsDevice), ModelCount(0)
+		: Effekseer::Model(data, size)
+		, InternalModels(nullptr)
+		, graphicsDevice_(graphicsDevice)
+		, ModelCount(0)
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
 		ES_SAFE_ADDREF(graphicsDevice_);

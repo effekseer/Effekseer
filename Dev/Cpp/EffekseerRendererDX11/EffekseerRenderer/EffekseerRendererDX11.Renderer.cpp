@@ -310,6 +310,8 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
+
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -317,6 +319,11 @@ RendererImplemented::~RendererImplemented()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnLostDevice()
 {
+	if (graphicsDevice_ != nullptr)
+	{
+		graphicsDevice_->LostDevice();
+	}
+
 	for (auto& device : m_deviceObjects)
 	{
 		device->OnLostDevice();
@@ -331,6 +338,11 @@ void RendererImplemented::OnResetDevice()
 	for (auto& device : m_deviceObjects)
 	{
 		device->OnResetDevice();
+	}
+
+	if (graphicsDevice_ != nullptr)
+	{
+		graphicsDevice_->ResetDevice();
 	}
 }
 
@@ -557,6 +569,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
+
+	graphicsDevice_ = new Backend::GraphicsDevice(device, context);
 
 	return true;
 }
@@ -815,6 +829,18 @@ void RendererImplemented::SetIndexBuffer(ID3D11Buffer* indexBuffer)
 	GetContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
+void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size)
+{
+	auto ptr = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	SetVertexBuffer(ptr->GetBuffer(), size);
+}
+
+void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+{
+	auto ptr = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	SetIndexBuffer(ptr->GetBuffer());
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1040,6 +1066,11 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	{
 		delete data;
 	}
+}
+
+Backend::GraphicsDevice* RendererImplemented::GetGraphicsDevice() const
+{
+	return graphicsDevice_;
 }
 
 bool Model::LoadToGPU()

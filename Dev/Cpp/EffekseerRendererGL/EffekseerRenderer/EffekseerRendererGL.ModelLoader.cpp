@@ -14,13 +14,15 @@ namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface)
+ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType)
 	: m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == NULL)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+	graphicsDevice_ = new Backend::GraphicsDevice(deviceType);
 }
 
 //----------------------------------------------------------------------------------
@@ -28,6 +30,7 @@ ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface)
 //----------------------------------------------------------------------------------
 ModelLoader::~ModelLoader()
 {
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 void* ModelLoader::Load(const EFK_CHAR* path)
@@ -40,7 +43,9 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 		char* data_model = new char[size_model];
 		reader->Read(data_model, size_model);
 
-		Model* model = (Model*)Load(data_model, (int32_t)size_model);
+		// Model* model = (Model*)Load(data_model, (int32_t)size_model);
+
+		auto model = new EffekseerRenderer::Model((uint8_t*)data_model, size_model, 1, graphicsDevice_);
 
 		delete[] data_model;
 
@@ -52,7 +57,8 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 
 void* ModelLoader::Load(const void* data, int32_t size)
 {
-	Model* model = new Model((uint8_t*)data, size);
+	// Model* model = new Model((uint8_t*)data, size);
+	auto model = new EffekseerRenderer::Model((uint8_t*)data, size, 1, graphicsDevice_);
 	return model;
 }
 

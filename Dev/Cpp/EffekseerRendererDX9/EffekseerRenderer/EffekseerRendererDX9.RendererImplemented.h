@@ -241,6 +241,9 @@ public:
 	void SetIndexBuffer(IndexBuffer* indexBuffer);
 	void SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer);
 
+	void SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size);
+	void SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer);	
+
 	void SetLayout(Shader* shader);
 	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);
 	void DrawPolygon(int32_t vertexCount, int32_t indexCount);

@@ -10,6 +10,7 @@
 #include "EffekseerRendererGL.Base.h"
 #include "EffekseerRendererGL.DeviceObjectCollection.h"
 #include "EffekseerRendererGL.Renderer.h"
+#include "GraphicsDevice.h"
 
 namespace EffekseerRendererGL
 {
@@ -208,6 +209,10 @@ public:
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
 	void SetIndexBuffer(IndexBuffer* indexBuffer);
 	void SetIndexBuffer(GLuint indexBuffer);
+
+	void SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size);
+	void SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer);
+	
 	void SetVertexArray(VertexArray* vertexArray);
 
 	void SetLayout(Shader* shader);

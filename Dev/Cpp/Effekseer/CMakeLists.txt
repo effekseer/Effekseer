@@ -13,6 +13,7 @@ file(GLOB effekseer_h
     Effekseer/Utils/*.h
     Effekseer/Noise/*.h
     Effekseer/ForceField/*.h
+    Effekseer/Backend/*.h
 )
 
 set(effekseer_src

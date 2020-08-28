@@ -26,6 +26,8 @@ ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileI
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+	graphicsDevice_ = new Backend::GraphicsDevice(device, nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -34,6 +36,8 @@ ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileI
 ModelLoader::~ModelLoader()
 {
 	ES_SAFE_RELEASE(device);
+
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 void* ModelLoader::Load(const EFK_CHAR* path)
@@ -60,6 +64,8 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 
 void* ModelLoader::Load(const void* data, int32_t size)
 {
+	return new EffekseerRenderer::Model((uint8_t*)data, size, 40, graphicsDevice_);
+	/*
 	Model* model = new Model((uint8_t*)data, size, device);
 
 	model->ModelCount = Effekseer::Min(Effekseer::Max(model->GetModelCount(), 1), 40);
@@ -67,6 +73,7 @@ void* ModelLoader::Load(const void* data, int32_t size)
 	model->InternalModels = new Model::InternalModel[model->GetFrameCount()];
 
 	return model;
+	*/
 }
 
 //----------------------------------------------------------------------------------

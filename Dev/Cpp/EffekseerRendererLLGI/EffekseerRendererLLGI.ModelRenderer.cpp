@@ -7,6 +7,8 @@
 #include "EffekseerRendererLLGI.Shader.h"
 #include "EffekseerRendererLLGI.VertexBuffer.h"
 
+#include "GraphicsDevice.h"
+
 namespace EffekseerRendererLLGI
 {
 
@@ -168,7 +170,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	auto model = (EffekseerRenderer::Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
 	if (model == nullptr)
 	{
 		return;
@@ -180,7 +182,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	EndRendering_<RendererImplemented, Shader, Model, false, 1>(
+	EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, false, 1>(
 		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
 }
 

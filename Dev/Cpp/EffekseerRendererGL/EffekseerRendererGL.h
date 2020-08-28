@@ -87,6 +87,17 @@ enum class OpenGLDeviceType
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+namespace Effekseer
+{
+namespace Backend
+{
+class VertexBuffer;
+class IndexBuffer;
+class GraphicsDevice;
+} // namespace Backend
+} // namespace Effekseer
+
 namespace EffekseerRenderer
 {
 //-----------------------------------------------------------------------------------
@@ -478,6 +489,39 @@ public:
 	}
 };
 
+/**
+@brief	\~English	Model
+		\~Japanese	モデル
+*/
+class Model : public Effekseer::Model
+{
+private:
+public:
+	struct InternalModel
+	{
+		Effekseer::Backend::VertexBuffer* VertexBuffer;
+		Effekseer::Backend::IndexBuffer* IndexBuffer;
+		int32_t VertexCount;
+		int32_t IndexCount;
+		int32_t FaceCount;
+
+		InternalModel();
+		~InternalModel();
+	};
+
+	Effekseer::Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	InternalModel* InternalModels = nullptr;
+	int32_t ModelCount;
+
+	Model(uint8_t* data, int32_t size, int maximumModelCount, Effekseer::Backend::GraphicsDevice* graphicsDevice);
+
+	~Model() override;
+
+	bool LoadToGPU();
+
+	bool IsLoadedOnGPU = false;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -511,7 +555,7 @@ class GraphicsDevice;
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr,
 												::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
 ::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);
