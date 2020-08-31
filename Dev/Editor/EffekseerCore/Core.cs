@@ -1527,6 +1527,103 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
+					if (node.AdvancedRendererCommonValuesValues.EnableAlphaTexture == true &&
+					    node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+					{
+						var enType = "Alpha";
+						var jpType = "アルファ";
+
+						var startName = enType + "UV(Start)";
+						var endName	= enType + "UV(Size)";
+
+						if (Language == Language.Japanese)
+						{
+							startName = jpType + "UV(始点)";
+							endName = jpType + "UV(大きさ)";
+						}
+
+						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Start));
+						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Size));
+					}
+
+					if (node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture == true &&
+						node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+					{
+						var enType = "UVDistortion";
+						var jpType = "UV歪み";
+
+						var startName = enType + "UV(Start)";
+						var endName	= enType + "UV(Size)";
+
+						if (Language == Language.Japanese)
+						{
+							startName = jpType + "UV(始点)";
+							endName	= jpType + "UV(大きさ)";
+						}
+
+						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Start));
+						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Size));
+					}
+
+					if (node.AdvancedRendererCommonValues2Values.EnableBlendTexture == true)
+					{
+						if (node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						{
+							var enType = "Blend";
+							var jpType = "ブレンド";
+
+							var startName = enType + "UV(Start)";
+							var endName = enType + "UV(Size)";
+
+							if (Language == Language.Japanese)
+							{
+								startName = jpType + "UV(始点)";
+								endName = jpType + "UV(大きさ)";
+							}
+
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.UVFCurve.Size));
+						}
+
+						if (node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendAlphaTexture == true &&
+							node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						{
+							var enType = "BlendAlpha";
+							var jpType = "ブレンドアルファ";
+
+							var startName = enType + "UV(Start)";
+							var endName = enType + "UV(Size)";
+
+							if (Language == Language.Japanese)
+							{
+								startName = jpType + "UV(始点)";
+								endName = jpType + "UV(大きさ)";
+							}
+
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Size));
+						}
+
+						if (node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendUVDistortionTexture == true &&
+							node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						{
+							var enType = "BlendUVDistortion";
+							var jpType = "ブレンドUV歪み";
+
+							var startName = enType + "UV(Start)";
+							var endName = enType + "UV(Size)";
+
+							if (Language == Language.Japanese)
+							{
+								startName = jpType + "UV(始点)";
+								endName = jpType + "UV(大きさ)";
+							}
+
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Size));
+						}
+					}
+
 					if (node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 					{
 						var name = "AlphaThreshold";
