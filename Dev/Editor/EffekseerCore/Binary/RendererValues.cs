@@ -532,14 +532,14 @@ namespace Effekseer.Binary
 
 				if(version >= ExporterVersion.Ver1600)
 				{
-					if (param.EnableFalloff)
+					if (value.EnableFalloff)
 					{
 						data.Add((1).GetBytes());
 
-						data.Add(param.FalloffParam.ColorBlendType);
-						data.Add(param.FalloffParam.BeginColor);
-						data.Add(param.FalloffParam.EndColor);
-						data.Add(BitConverter.GetBytes(param.FalloffParam.Pow.Value));
+						data.Add(value.FalloffParam.ColorBlendType);
+						data.Add(value.FalloffParam.BeginColor);
+						data.Add(value.FalloffParam.EndColor);
+						data.Add(BitConverter.GetBytes(value.FalloffParam.Pow.Value));
 					}
 					else
 					{

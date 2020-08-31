@@ -228,7 +228,7 @@ namespace Effekseer
 
 
 				System.OperatingSystem os = System.Environment.OSVersion;
-				swig.DeviceType deviceType = swig.DeviceType.DirectX11;
+				swig.DeviceType deviceType = swig.DeviceType.OpenGL;
 
 				if (!(os.Platform == PlatformID.Win32NT ||
 				os.Platform == PlatformID.Win32S ||
