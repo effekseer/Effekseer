@@ -166,7 +166,7 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 		binary->SetVertexShaderData(MaterialShaderType::RefractionModel, modelRefractionVS);
 		binary->SetPixelShaderData(MaterialShaderType::RefractionModel, modelRefractionPS);
 
-		platforms[static_cast<CompiledMaterialPlatformType>(chunk)] = CreateUniqueReference(static_cast<CompiledMaterialBinary*>(binary));
+		platforms[static_cast<CompiledMaterialPlatformType>(chunk)] = CreateSharedPtr(static_cast<CompiledMaterialBinary*>(binary));
 	}
 
 	return true;
@@ -319,7 +319,7 @@ void CompiledMaterial::UpdateData(const std::vector<uint8_t>& standardVS,
 	binary->SetVertexShaderData(MaterialShaderType::RefractionModel, modelRefractionVS);
 	binary->SetPixelShaderData(MaterialShaderType::RefractionModel, modelRefractionPS);
 
-	platforms[type] = CreateUniqueReference(static_cast<CompiledMaterialBinary*>(binary));
+	platforms[type] = CreateSharedPtr(static_cast<CompiledMaterialBinary*>(binary));
 }
 
 } // namespace Effekseer

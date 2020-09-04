@@ -283,8 +283,8 @@ MaterialLoader ::~MaterialLoader()
 	{
 		Effekseer::Material material;
 		material.Load((const uint8_t*)data, size);
-		auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerDX9());
-		auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&material));
+		auto compiler = ::Effekseer::CreateSharedPtr(new Effekseer::MaterialCompilerDX9());
+		auto binary = ::Effekseer::CreateSharedPtr(compiler->Compile(&material));
 
 		return LoadAcutually(material, binary.get());
 	}
