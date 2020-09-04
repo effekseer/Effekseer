@@ -539,17 +539,17 @@ struct ReferenceDeleter
 };
 
 template <typename T>
-inline std::shared_ptr<T> CreateSharedPtr(T* ptr, bool addRef = false)
+inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
 {
 	if (ptr == nullptr)
-		return std::shared_ptr<T>(nullptr, ReferenceDeleter<T>());
+		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr);
 
 	if (addRef)
 	{
 		ptr->AddRef();
 	}
 
-	return std::shared_ptr<T>(ptr, ReferenceDeleter<T>());
+	return std::unique_ptr<T, ReferenceDeleter<T>>(ptr);
 }
 
 //----------------------------------------------------------------------------------

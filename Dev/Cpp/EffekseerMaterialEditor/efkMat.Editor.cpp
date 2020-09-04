@@ -57,8 +57,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
-	auto compiler = ::Effekseer::CreateSharedPtr(new Effekseer::MaterialCompilerGL());
-	auto binary = ::Effekseer::CreateSharedPtr(compiler->Compile(&efkMaterial, 1024));
+	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
+	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024));
 
 	vs = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Standard));
 	ps = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Standard));

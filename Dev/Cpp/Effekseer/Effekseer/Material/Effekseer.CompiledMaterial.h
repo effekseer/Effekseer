@@ -31,7 +31,7 @@ class CompiledMaterial
 {
 	static const int32_t Version = 1;
 
-	std::map<CompiledMaterialPlatformType, std::shared_ptr<CompiledMaterialBinary>> platforms;
+	std::map<CompiledMaterialPlatformType, std::unique_ptr<CompiledMaterialBinary, ReferenceDeleter<CompiledMaterialBinary>>> platforms;
 	std::vector<uint8_t> originalData_;
 
 public:
