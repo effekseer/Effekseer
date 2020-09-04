@@ -275,7 +275,7 @@ namespace Effekseer.Utils
 
 				if (rendererCommon != null)
 				{
-					if (rendererCommon["UVAnimation"] != null)
+					if (rendererCommon["UVAnimation"] != null && rendererCommon["UVAnimation"]["AnimationParams"] == null)
 					{
 						System.Xml.XmlNode uvAnimationParamNode = document.CreateElement("AnimationParams");
 
