@@ -526,13 +526,13 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	auto model = (EffekseerRenderer::Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
 	if (model == nullptr)
 	{
 		return;
 	}
 
-	model->LoadToGPU();
+	model->LoadToGPUWithoutIndex();
 	if (!model->IsLoadedOnGPU)
 	{
 		return;
@@ -542,7 +542,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	EndRendering_<RendererImplemented, Shader, GLuint, Model, true, 20>(
 		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
 #else
-	EndRendering_<RendererImplemented, Shader, Model, false, 1>(
+	EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, false, 1>(
 		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
 #endif
 }

@@ -719,6 +719,20 @@ void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer)
 	GetCurrentCommandList()->SetIndexBuffer(indexBuffer);
 }
 
+void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t stride)
+{
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+
+	SetVertexBuffer(vb->GetBuffer(), stride);
+}
+
+void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+{
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer);
+
+	SetIndexBuffer(ib->GetBuffer());
+}
+
 void RendererImplemented::SetLayout(Shader* shader)
 {
 	if (m_renderMode == Effekseer::RenderMode::Normal)

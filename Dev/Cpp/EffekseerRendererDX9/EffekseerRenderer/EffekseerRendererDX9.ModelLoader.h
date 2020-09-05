@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererDX9.DeviceObject.h"
 #include "EffekseerRendererDX9.RendererImplemented.h"
+#include "GraphicsDevice.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -25,6 +26,8 @@ private:
 	LPDIRECT3DDEVICE9 device_ = nullptr;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 public:
 	ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface);

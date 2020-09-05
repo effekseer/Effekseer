@@ -823,6 +823,18 @@ void RendererImplemented::SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer)
 	GetDevice()->SetIndices(indexBuffer);
 }
 
+void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size)
+{
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	SetVertexBuffer(vb->GetBuffer(), size);
+}
+
+void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+{
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	SetIndexBuffer(ib->GetBuffer());
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

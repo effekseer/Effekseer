@@ -254,7 +254,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	auto model = (EffekseerRenderer::Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
 	if (model == nullptr)
 	{
 		return;
@@ -269,7 +269,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	EndRendering_<
 		RendererImplemented,
 		Shader,
-		Model,
+		EffekseerRenderer::Model,
 		true,
 		40>(
 		m_renderer,

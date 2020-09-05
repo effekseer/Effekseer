@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererDX11.DeviceObject.h"
 #include "EffekseerRendererDX11.RendererImplemented.h"
+#include "GraphicsDevice.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -22,6 +23,7 @@ class ModelLoader : public ::Effekseer::ModelLoader
 {
 private:
 	ID3D11Device* device;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 

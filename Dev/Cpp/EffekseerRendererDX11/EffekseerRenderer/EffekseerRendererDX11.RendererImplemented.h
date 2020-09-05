@@ -9,6 +9,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 #include "EffekseerRendererDX11.Base.h"
 #include "EffekseerRendererDX11.Renderer.h"
+#include "GraphicsDevice.h"
 
 #ifdef _MSC_VER
 #include <xmmintrin.h>
@@ -110,6 +111,8 @@ private:
 	D3D11_COMPARISON_FUNC m_depthFunc;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 public:
 	/**
@@ -232,6 +235,9 @@ public:
 	void SetIndexBuffer(IndexBuffer* indexBuffer);
 	void SetIndexBuffer(ID3D11Buffer* indexBuffer);
 
+	void SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size);
+	void SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer);
+
 	void SetLayout(Shader* shader);
 	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);
 	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
@@ -251,6 +257,8 @@ public:
 	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
+
+	Backend::GraphicsDevice* GetGraphicsDevice() const;
 
 	virtual int GetRef()
 	{

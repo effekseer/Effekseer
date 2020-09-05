@@ -62,6 +62,8 @@ effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Setting.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Server.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Client.h')
 
+effekseerHeader.readLines('Effekseer/Effekseer/Backend/GraphicsDevice.h')
+
 effekseerHeader.output('Effekseer/Effekseer.h')
 
 effekseerInternalHeader = CreateHeader()
