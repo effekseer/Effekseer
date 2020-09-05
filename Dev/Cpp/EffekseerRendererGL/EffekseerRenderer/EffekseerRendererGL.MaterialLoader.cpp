@@ -13,8 +13,14 @@
 namespace EffekseerRendererGL
 {
 
+static const int InstanceCount = 10;
+
 ::Effekseer::MaterialData* MaterialLoader::LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary)
 {
+	auto deviceType = graphicsDevice_->GetDeviceType();
+
+	auto instancing = deviceType == OpenGLDeviceType::OpenGL3 || deviceType == OpenGLDeviceType::OpenGLES3;
+
 	auto materialData = new ::Effekseer::MaterialData();
 	materialData->IsSimpleVertex = material.GetIsSimpleVertex();
 	materialData->IsRefractionRequired = material.GetHasRefraction();
@@ -185,7 +191,7 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, instancing ? InstanceCount : 1);
 
 		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypesModel[st]));
 		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypesModel[st]));
@@ -211,11 +217,6 @@ namespace EffekseerRendererGL
 			{"a_Tangent", GL_FLOAT, 3, 36, false},
 			{"a_TexCoord", GL_FLOAT, 2, 48, false},
 			{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
-#if defined(MODEL_SOFTWARE_INSTANCING)
-			{"a_InstanceID", GL_FLOAT, 1, 0, false},
-			{"a_UVOffset", GL_FLOAT, 4, 0, false},
-			{"a_ModelColor", GL_FLOAT, 4, 0, false},
-#endif
 		};
 
 		shader->GetAttribIdList(NumAttribs, g_model_attribs);

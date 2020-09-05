@@ -66,7 +66,7 @@ float4 _main(PS_Input Input, thread texture2d<float> g_normalTexture, thread sam
     return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_69 [[buffer(0)]], texture2d<float> g_normalTexture [[texture(0)]], texture2d<float> g_colorTexture [[texture(1)]], sampler g_normalSampler [[sampler(0)]], sampler g_colorSampler [[sampler(1)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_69 [[buffer(0)]], texture2d<float> g_normalTexture [[texture(1)]], texture2d<float> g_colorTexture [[texture(0)]], sampler g_normalSampler [[sampler(1)]], sampler g_colorSampler [[sampler(0)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;

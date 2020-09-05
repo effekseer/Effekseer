@@ -1,4 +1,7 @@
 #version 300 es
+#ifdef GL_ARB_shader_draw_parameters
+#extension GL_ARB_shader_draw_parameters : enable
+#endif
 
 struct VS_Input
 {
@@ -8,6 +11,7 @@ struct VS_Input
     vec3 Tangent;
     vec2 UV;
     vec4 Color;
+    uint Index;
 };
 
 struct VS_Output
@@ -24,9 +28,9 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     mat4 mCameraProj;
-    mat4 mModel;
-    vec4 fUV;
-    vec4 fModelColor;
+    mat4 mModel[10];
+    vec4 fUV[10];
+    vec4 fModelColor[10];
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
@@ -41,6 +45,11 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
+#ifdef GL_ARB_shader_draw_parameters
+#define SPIRV_Cross_BaseInstance gl_BaseInstanceARB
+#else
+uniform int SPIRV_Cross_BaseInstance;
+#endif
 out vec2 _VSPS_UV;
 out vec4 _VSPS_Normal;
 out vec4 _VSPS_Binormal;
@@ -50,17 +59,18 @@ out vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
-    vec4 uv = CBVS0.fUV;
-    vec4 modelColor = CBVS0.fModelColor * Input.Color;
+    mat4 matModel = CBVS0.mModel[Input.Index];
+    vec4 uv = CBVS0.fUV[Input.Index];
+    vec4 modelColor = CBVS0.fModelColor[Input.Index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 localNormal = vec4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
     vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
     vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
-    localPosition *= CBVS0.mModel;
-    localNormal *= CBVS0.mModel;
-    localBinormal *= CBVS0.mModel;
-    localTangent *= CBVS0.mModel;
+    localPosition *= matModel;
+    localNormal *= matModel;
+    localBinormal *= matModel;
+    localTangent *= matModel;
     localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
@@ -85,6 +95,7 @@ void main()
     Input.Tangent = Input_Tangent;
     Input.UV = Input_UV;
     Input.Color = Input_Color;
+    Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.Position;
     _VSPS_UV = flattenTemp.UV;

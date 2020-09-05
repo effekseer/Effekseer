@@ -451,7 +451,7 @@ public:
 
 	~Model() override;
 
-	bool LoadToGPU();
+	bool LoadToGPUWithoutIndex();
 
 	bool IsLoadedOnGPU = false;
 };

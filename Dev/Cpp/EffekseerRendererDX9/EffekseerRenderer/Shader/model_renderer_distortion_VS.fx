@@ -21,29 +21,29 @@ struct VS_Input
     float3 Tangent;
     float2 UV;
     float4 Color;
-    uint4 Index;
+    float Index;
 };
 
-static const VS_Output _488 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+static const VS_Output _497 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _365_mCameraProj : register(c0);
-    column_major float4x4 _365_mModel[10] : register(c4);
-    float4 _365_fUV[10] : register(c44);
-    float4 _365_fAlphaUV[10] : register(c54);
-    float4 _365_fUVDistortionUV[10] : register(c64);
-    float4 _365_fBlendUV[10] : register(c74);
-    float4 _365_fBlendAlphaUV[10] : register(c84);
-    float4 _365_fBlendUVDistortionUV[10] : register(c94);
-    float4 _365_fFlipbookParameter : register(c104);
-    float4 _365_fFlipbookIndexAndNextRate[10] : register(c105);
-    float4 _365_fModelAlphaThreshold[10] : register(c115);
-    float4 _365_fModelColor[10] : register(c125);
-    float4 _365_fLightDirection : register(c135);
-    float4 _365_fLightColor : register(c136);
-    float4 _365_fLightAmbient : register(c137);
-    float4 _365_mUVInversed : register(c138);
+    column_major float4x4 _364_mCameraProj : register(c0);
+    column_major float4x4 _364_mModel[10] : register(c4);
+    float4 _364_fUV[10] : register(c44);
+    float4 _364_fAlphaUV[10] : register(c54);
+    float4 _364_fUVDistortionUV[10] : register(c64);
+    float4 _364_fBlendUV[10] : register(c74);
+    float4 _364_fBlendAlphaUV[10] : register(c84);
+    float4 _364_fBlendUVDistortionUV[10] : register(c94);
+    float4 _364_fFlipbookParameter : register(c104);
+    float4 _364_fFlipbookIndexAndNextRate[10] : register(c105);
+    float4 _364_fModelAlphaThreshold[10] : register(c115);
+    float4 _364_fModelColor[10] : register(c125);
+    float4 _364_fLightDirection : register(c135);
+    float4 _364_fLightColor : register(c136);
+    float4 _364_fLightAmbient : register(c137);
+    float4 _364_mUVInversed : register(c138);
 };
 
 static const float4 gl_HalfPixel = 0.0f.xxxx;
@@ -55,7 +55,7 @@ static float3 Input_Binormal;
 static float3 Input_Tangent;
 static float2 Input_UV;
 static float4 Input_Color;
-static uint4 Input_Index;
+static float Input_Index;
 static float2 _entryPointOutput_UV;
 static float4 _entryPointOutput_Normal;
 static float4 _entryPointOutput_Binormal;
@@ -75,7 +75,7 @@ struct SPIRV_Cross_Input
     float3 Input_Tangent : TEXCOORD3;
     float2 Input_UV : TEXCOORD4;
     float4 Input_Color : TEXCOORD5;
-    uint4 Input_Index : TEXCOORD6;
+    float Input_Index : TEXCOORD6;
 };
 
 struct SPIRV_Cross_Output
@@ -215,7 +215,7 @@ void CalculateAndStoreAdvancedParameter(float2 uv, float4 alphaUV, float4 uvDist
     float2 flipbookNextIndexUV = 0.0f.xx;
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = _365_fFlipbookParameter;
+    float4 param_2 = _364_fFlipbookParameter;
     float param_3 = flipbookIndexAndNextRate;
     float2 param_4 = uv;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -224,26 +224,26 @@ void CalculateAndStoreAdvancedParameter(float2 uv, float4 alphaUV, float4 uvDist
     vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
     vsoutput.Others.x = flipbookRate;
     vsoutput.Others.y = modelAlphaThreshold;
-    vsoutput.Alpha_Dist_UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _365_mUVInversed.x + (_365_mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _365_mUVInversed.x + (_365_mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _364_mUVInversed.x + (_364_mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _364_mUVInversed.x + (_364_mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.y = _364_mUVInversed.x + (_364_mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.y = _364_mUVInversed.x + (_364_mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _364_mUVInversed.x + (_364_mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
 }
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 matModel = _365_mModel[Input.Index.x];
-    float4 uv = _365_fUV[Input.Index.x];
-    float4 modelColor = _365_fModelColor[Input.Index.x];
-    float4 alphaUV = _365_fAlphaUV[Input.Index.x];
-    float4 uvDistortionUV = _365_fUVDistortionUV[Input.Index.x];
-    float4 blendUV = _365_fBlendUV[Input.Index.x];
-    float4 blendAlphaUV = _365_fBlendAlphaUV[Input.Index.x];
-    float4 blendUVDistortionUV = _365_fBlendUVDistortionUV[Input.Index.x];
-    float flipbookIndexAndNextRate = _365_fFlipbookIndexAndNextRate[Input.Index.x].x;
-    float modelAlphaThreshold = _365_fModelAlphaThreshold[Input.Index.x].x;
-    VS_Output Output = _488;
+    float4x4 matModel = _364_mModel[uint(Input.Index)];
+    float4 uv = _364_fUV[uint(Input.Index)];
+    float4 modelColor = _364_fModelColor[uint(Input.Index)];
+    float4 alphaUV = _364_fAlphaUV[uint(Input.Index)];
+    float4 uvDistortionUV = _364_fUVDistortionUV[uint(Input.Index)];
+    float4 blendUV = _364_fBlendUV[uint(Input.Index)];
+    float4 blendAlphaUV = _364_fBlendAlphaUV[uint(Input.Index)];
+    float4 blendUVDistortionUV = _364_fBlendUVDistortionUV[uint(Input.Index)];
+    float flipbookIndexAndNextRate = _364_fFlipbookIndexAndNextRate[uint(Input.Index)].x;
+    float modelAlphaThreshold = _364_fModelAlphaThreshold[uint(Input.Index)].x;
+    VS_Output Output = _497;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0f);
     float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
@@ -255,15 +255,15 @@ VS_Output _main(VS_Input Input)
     localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.Position = mul(_365_mCameraProj, localPosition);
+    Output.Position = mul(_364_mCameraProj, localPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.Normal = mul(_365_mCameraProj, localNormal);
-    Output.Binormal = mul(_365_mCameraProj, localBinormal);
-    Output.Tangent = mul(_365_mCameraProj, localTangent);
+    Output.Normal = mul(_364_mCameraProj, localNormal);
+    Output.Binormal = mul(_364_mCameraProj, localBinormal);
+    Output.Tangent = mul(_364_mCameraProj, localTangent);
     Output.Pos = Output.Position;
     Output.Color = modelColor;
-    Output.UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * Output.UV.y);
+    Output.UV.y = _364_mUVInversed.x + (_364_mUVInversed.y * Output.UV.y);
     float2 param = Input.UV;
     float4 param_1 = alphaUV;
     float4 param_2 = uvDistortionUV;

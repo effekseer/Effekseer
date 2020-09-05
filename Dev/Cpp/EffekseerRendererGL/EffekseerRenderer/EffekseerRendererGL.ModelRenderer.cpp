@@ -30,6 +30,8 @@
 namespace EffekseerRendererGL
 {
 
+static const int InstanceCount = 10;
+
 static std::string Replace(std::string target, std::string from_, std::string to_)
 {
 	std::string::size_type Pos(target.find(from_));
@@ -54,23 +56,8 @@ static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
 	{"Input_Color", GL_UNSIGNED_BYTE, 4, 56, true},
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-ModelRenderer::ModelRenderer(RendererImplemented* renderer,
-							 Shader* shader_ad_lit,
-							 Shader* shader_ad_unlit,
-							 Shader* shader_ad_distortion,
-							 Shader* shader_lit,
-							 Shader* shader_unlit,
-							 Shader* shader_distortion)
-	: m_renderer(renderer)
-	, shader_ad_lit_(shader_ad_lit)
-	, shader_ad_unlit_(shader_ad_unlit)
-	, shader_ad_distortion_(shader_ad_distortion)
-	, shader_lit_(shader_lit)
-	, shader_unlit_(shader_unlit)
-	, shader_distortion_(shader_distortion)
+template <int N>
+void ModelRenderer::InitRenderer()
 {
 	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
 		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
@@ -85,16 +72,16 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		m_va[i] = nullptr;
 	}
 
-	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
 	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
 
-	shader_lit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	shader_unlit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	shader_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+	shader_lit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
+	shader_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
 	shader_lit_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 	shader_unlit_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 	shader_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
@@ -132,59 +119,59 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	{
 		auto isAd = i < 2;
 
-		shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+		shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
 
 		int vsOffset = 0;
 		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mCameraProj"), vsOffset);
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mModel"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mModel"), vsOffset, N);
 
-		vsOffset += sizeof(Effekseer::Matrix44);
+		vsOffset += sizeof(Effekseer::Matrix44) * N;
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fUV"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fUV"), vsOffset, N);
 
-		vsOffset += sizeof(float[4]) * 1;
+		vsOffset += sizeof(float[4]) * N;
 
 		if (isAd)
 		{
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fAlphaUV"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fAlphaUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fUVDistortionUV"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fUVDistortionUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendUV"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendAlphaUV"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendAlphaUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendUVDistortionUV"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fBlendUVDistortionUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
 			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fFlipbookParameter"), vsOffset);
 
 			vsOffset += sizeof(float[4]) * 1;
 
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fFlipbookIndexAndNextRate"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fFlipbookIndexAndNextRate"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fModelAlphaThreshold"), vsOffset);
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fModelAlphaThreshold"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 		}
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fModelColor"), vsOffset);
+		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fModelColor"), vsOffset, N);
 
-		vsOffset += sizeof(float[4]) * 1;
+		vsOffset += sizeof(float[4]) * N;
 
 		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBVS0.fLightDirection"), vsOffset);
 
@@ -267,59 +254,59 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	{
 		auto isAd = i < 1;
 
-		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<N>));
 
 		int vsOffset = 0;
 		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mCameraProj"), vsOffset);
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mModel"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mModel"), vsOffset, N);
 
-		vsOffset += sizeof(Effekseer::Matrix44);
+		vsOffset += sizeof(Effekseer::Matrix44) * N;
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fUV"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fUV"), vsOffset, N);
 
-		vsOffset += sizeof(float[4]) * 1;
+		vsOffset += sizeof(float[4]) * N;
 
 		if (isAd)
 		{
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fAlphaUV"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fAlphaUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fUVDistortionUV"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fUVDistortionUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendUV"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendAlphaUV"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendAlphaUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendUVDistortionUV"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fBlendUVDistortionUV"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
 			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fFlipbookParameter"), vsOffset);
 
 			vsOffset += sizeof(float[4]) * 1;
 
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fFlipbookIndexAndNextRate"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fFlipbookIndexAndNextRate"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 
-			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fModelAlphaThreshold"), vsOffset);
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fModelAlphaThreshold"), vsOffset, N);
 
-			vsOffset += sizeof(float[4]) * 1;
+			vsOffset += sizeof(float[4]) * N;
 		}
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fModelColor"), vsOffset);
+		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fModelColor"), vsOffset, N);
 
-		vsOffset += sizeof(float[4]) * 1;
+		vsOffset += sizeof(float[4]) * N;
 
 		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBVS0.fLightDirection"), vsOffset);
 
@@ -363,6 +350,34 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 			psOffset += sizeof(float[4]) * 1;
 		}
+	}
+}
+
+ModelRenderer::ModelRenderer(RendererImplemented* renderer,
+							 Shader* shader_ad_lit,
+							 Shader* shader_ad_unlit,
+							 Shader* shader_ad_distortion,
+							 Shader* shader_lit,
+							 Shader* shader_unlit,
+							 Shader* shader_distortion)
+	: m_renderer(renderer)
+	, shader_ad_lit_(shader_ad_lit)
+	, shader_ad_unlit_(shader_ad_unlit)
+	, shader_ad_distortion_(shader_ad_distortion)
+	, shader_lit_(shader_lit)
+	, shader_unlit_(shader_unlit)
+	, shader_distortion_(shader_distortion)
+{
+
+
+	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		InitRenderer<InstanceCount>();
+		VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
+	}
+	else
+	{
+		InitRenderer<1>();
 	}
 
 	GLint currentVAO = 0;
@@ -538,13 +553,16 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-#if defined(MODEL_SOFTWARE_INSTANCING)
-	EndRendering_<RendererImplemented, Shader, GLuint, Model, true, 20>(
-		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
-#else
-	EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, false, 1>(
-		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
-#endif
+	if (VertexType == EffekseerRenderer::ModelRendererVertexType::Instancing)
+	{
+		EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, true, InstanceCount>(
+			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
+	}
+	else
+	{
+		EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, false, 1>(
+			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
+	}
 }
 
 //----------------------------------------------------------------------------------

@@ -215,7 +215,7 @@ void main()
             return sprite_unlit_ps_gl2;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return sprite_unlit_ps_gles3;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)
             return sprite_unlit_ps_gles2;
         return nullptr;
     }

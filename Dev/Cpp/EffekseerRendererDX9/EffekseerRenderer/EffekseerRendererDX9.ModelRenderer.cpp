@@ -140,6 +140,8 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		shader_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<ModelRendererInstanceCount>));
 		shader_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
 	}
+
+	VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
 }
 
 //----------------------------------------------------------------------------------
@@ -170,7 +172,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 								{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
 								{0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
 								{0, 56, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
-								{0, 60, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6},
+								{1, 0, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6},
 								D3DDECL_END()};
 
 	Shader* shader_ad_lit = Shader::Create(renderer,
@@ -267,7 +269,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	model->LoadToGPU();
+	model->LoadToGPUWithoutIndex();
 	if (!model->IsLoadedOnGPU)
 	{
 		return;

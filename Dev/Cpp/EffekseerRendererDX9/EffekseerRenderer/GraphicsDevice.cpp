@@ -109,12 +109,18 @@ void VertexBuffer::Deallocate()
 
 void VertexBuffer::OnLostDevice()
 {
-	Deallocate();
+	if (isDynamic_)
+	{
+		Deallocate();
+	}
 }
 
 void VertexBuffer::OnResetDevice()
 {
-	Allocate(size_, isDynamic_);
+	if (isDynamic_)
+	{
+		Allocate(size_, isDynamic_);
+	}
 }
 
 bool VertexBuffer::Init(int32_t size, bool isDynamic)
@@ -195,12 +201,14 @@ void IndexBuffer::Deallocate()
 
 void IndexBuffer::OnLostDevice()
 {
-	Deallocate();
+	// Index buffer is not losted
+	// Deallocate();
 }
 
 void IndexBuffer::OnResetDevice()
 {
-	Allocate(elementCount_, stride_);
+	// Index buffer is not losted
+	// Allocate(elementCount_, stride_);
 }
 
 bool IndexBuffer::Init(int32_t elementCount, int32_t stride)

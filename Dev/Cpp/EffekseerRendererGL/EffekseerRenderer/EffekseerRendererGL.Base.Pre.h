@@ -69,7 +69,6 @@ enum class OpenGLDeviceType
 	OpenGL3,
 	OpenGLES2,
 	OpenGLES3,
-	Emscripten,
 };
 
 } // namespace EffekseerRendererGL

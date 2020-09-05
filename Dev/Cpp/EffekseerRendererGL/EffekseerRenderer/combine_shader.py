@@ -73,7 +73,7 @@ for fx in verts + frags:
             return {}_{};
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return {}_{};
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)
             return {}_{};
         return nullptr;
     }}

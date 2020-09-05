@@ -1006,6 +1006,18 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	GLCheckError();
 }
 
+void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount)
+{
+	GLCheckError();
+
+	impl->drawcallCount++;
+	impl->drawvertexCount += vertexCount * instanceCount;
+
+	GLExt::glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL, instanceCount);
+
+	GLCheckError();
+}
+
 Shader* RendererImplemented::GetShader(::EffekseerRenderer::StandardRendererShaderType type) const
 {
 	if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedBackDistortion)

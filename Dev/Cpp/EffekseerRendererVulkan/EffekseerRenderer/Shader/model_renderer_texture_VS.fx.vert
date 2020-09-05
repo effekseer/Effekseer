@@ -22,23 +22,23 @@ struct VS_Input
     vec3 Tangent;
     vec2 UV;
     vec4 Color;
-    uvec4 Index;
+    uint Index;
 };
 
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCameraProj;
-    layout(row_major) mat4 mModel[1];
-    vec4 fUV[1];
-    vec4 fAlphaUV[1];
-    vec4 fUVDistortionUV[1];
-    vec4 fBlendUV[1];
-    vec4 fBlendAlphaUV[1];
-    vec4 fBlendUVDistortionUV[1];
+    layout(row_major) mat4 mModel[10];
+    vec4 fUV[10];
+    vec4 fAlphaUV[10];
+    vec4 fUVDistortionUV[10];
+    vec4 fBlendUV[10];
+    vec4 fBlendAlphaUV[10];
+    vec4 fBlendUVDistortionUV[10];
     vec4 fFlipbookParameter;
-    vec4 fFlipbookIndexAndNextRate[1];
-    vec4 fModelAlphaThreshold[1];
-    vec4 fModelColor[1];
+    vec4 fFlipbookIndexAndNextRate[10];
+    vec4 fModelAlphaThreshold[10];
+    vec4 fModelColor[10];
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
@@ -51,7 +51,6 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
-layout(location = 6) in uvec4 Input_Index;
 layout(location = 0) out vec2 _entryPointOutput_UV;
 layout(location = 1) out vec3 _entryPointOutput_Normal;
 layout(location = 2) out vec3 _entryPointOutput_Binormal;
@@ -182,16 +181,16 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortion
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = _364.mModel[Input.Index.x];
-    vec4 uv = _364.fUV[Input.Index.x];
-    vec4 alphaUV = _364.fAlphaUV[Input.Index.x];
-    vec4 uvDistortionUV = _364.fUVDistortionUV[Input.Index.x];
-    vec4 blendUV = _364.fBlendUV[Input.Index.x];
-    vec4 blendAlphaUV = _364.fBlendAlphaUV[Input.Index.x];
-    vec4 blendUVDistortionUV = _364.fBlendUVDistortionUV[Input.Index.x];
-    vec4 modelColor = _364.fModelColor[Input.Index.x] * Input.Color;
-    float flipbookIndexAndNextRate = _364.fFlipbookIndexAndNextRate[Input.Index.x].x;
-    float modelAlphaThreshold = _364.fModelAlphaThreshold[Input.Index.x].x;
+    mat4 matModel = _364.mModel[Input.Index];
+    vec4 uv = _364.fUV[Input.Index];
+    vec4 alphaUV = _364.fAlphaUV[Input.Index];
+    vec4 uvDistortionUV = _364.fUVDistortionUV[Input.Index];
+    vec4 blendUV = _364.fBlendUV[Input.Index];
+    vec4 blendAlphaUV = _364.fBlendAlphaUV[Input.Index];
+    vec4 blendUVDistortionUV = _364.fBlendUVDistortionUV[Input.Index];
+    vec4 modelColor = _364.fModelColor[Input.Index] * Input.Color;
+    float flipbookIndexAndNextRate = _364.fFlipbookIndexAndNextRate[Input.Index].x;
+    float modelAlphaThreshold = _364.fModelAlphaThreshold[Input.Index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
@@ -226,7 +225,7 @@ void main()
     Input.Tangent = Input_Tangent;
     Input.UV = Input_UV;
     Input.Color = Input_Color;
-    Input.Index = Input_Index;
+    Input.Index = uint(gl_InstanceIndex);
     VS_Output flattenTemp = _main(Input);
     vec4 _position = flattenTemp.Pos;
     _position.y = -_position.y;

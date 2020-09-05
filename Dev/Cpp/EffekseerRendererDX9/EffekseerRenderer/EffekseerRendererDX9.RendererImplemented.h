@@ -9,12 +9,8 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 #include "EffekseerRendererDX9.Base.h"
 #include "EffekseerRendererDX9.Renderer.h"
-
+#include "GraphicsDevice.h"
 #include <array>
-
-#ifdef _MSC_VER
-#include <xmmintrin.h>
-#endif
 
 namespace EffekseerRendererDX9
 {
@@ -98,9 +94,9 @@ private:
 	IDirect3DPixelShader9* m_state_pixelShader;
 	IDirect3DVertexDeclaration9* m_state_vertexDeclaration;
 
-	IDirect3DVertexBuffer9* m_state_streamData;
-	UINT m_state_OffsetInBytes;
-	UINT m_state_pStride;
+	std::array<IDirect3DVertexBuffer9*, 2> m_state_streamData;
+	std::array<UINT, 2> m_state_OffsetInBytes;
+	std::array<UINT, 2> m_state_pStride;
 
 	IDirect3DIndexBuffer9* m_state_IndexData;
 
@@ -112,6 +108,9 @@ private:
 	bool m_isChangedDevice;
 
 	bool m_restorationOfStates;
+
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::VertexBuffer* instancedVertexBuffer_ = nullptr;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
@@ -242,11 +241,12 @@ public:
 	void SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer);
 
 	void SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size);
-	void SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer);	
+	void SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer);
 
 	void SetLayout(Shader* shader);
 	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);
 	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
+	void DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount);
 
 	Shader* GetShader(::EffekseerRenderer::StandardRendererShaderType type) const;
 	void BeginShader(Shader* shader);

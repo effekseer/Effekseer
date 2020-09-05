@@ -173,6 +173,12 @@ void* glMapBuffer(GLenum target, GLenum access);
 void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 GLboolean glUnmapBuffer(GLenum target);
 
+void glDrawElementsInstanced(GLenum mode,
+							 GLsizei count,
+							 GLenum type,
+							 const void* indices,
+							 GLsizei primcount);
+
 void glCompressedTexImage2D(
 	GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data);
 

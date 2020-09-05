@@ -11,6 +11,8 @@
 namespace EffekseerRendererLLGI
 {
 
+static const int InstanceCount = 10;
+
 void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result)
 {
 	if (datasize < 4)
@@ -128,7 +130,7 @@ MaterialLoader ::~MaterialLoader()
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
 		Shader* shader = nullptr;
-		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 1);
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, InstanceCount);
 
 		if (materialData->IsSimpleVertex)
 		{
@@ -289,7 +291,7 @@ MaterialLoader ::~MaterialLoader()
 			dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
 		}
 
-		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, InstanceCount);
 
 		std::vector<VertexLayout> layouts;
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
@@ -298,8 +300,7 @@ MaterialLoader ::~MaterialLoader()
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UINT, "BLENDINDICES", 0});
-
+		
 		// compile
 		std::string log;
 

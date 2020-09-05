@@ -2,6 +2,9 @@
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require
 #endif
+#ifdef GL_ARB_shader_draw_parameters
+#extension GL_ARB_shader_draw_parameters : enable
+#endif
 
 struct VS_Output
 {
@@ -26,22 +29,23 @@ struct VS_Input
     vec3 Tangent;
     vec2 UV;
     vec4 Color;
+    uint Index;
 };
 
 struct VS_ConstantBuffer
 {
     mat4 mCameraProj;
-    mat4 mModel;
-    vec4 fUV;
-    vec4 fAlphaUV;
-    vec4 fUVDistortionUV;
-    vec4 fBlendUV;
-    vec4 fBlendAlphaUV;
-    vec4 fBlendUVDistortionUV;
+    mat4 mModel[10];
+    vec4 fUV[10];
+    vec4 fAlphaUV[10];
+    vec4 fUVDistortionUV[10];
+    vec4 fBlendUV[10];
+    vec4 fBlendAlphaUV[10];
+    vec4 fBlendUVDistortionUV[10];
     vec4 fFlipbookParameter;
-    vec4 fFlipbookIndexAndNextRate;
-    vec4 fModelAlphaThreshold;
-    vec4 fModelColor;
+    vec4 fFlipbookIndexAndNextRate[10];
+    vec4 fModelAlphaThreshold[10];
+    vec4 fModelColor[10];
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
@@ -56,6 +60,11 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
+#ifdef GL_ARB_shader_draw_parameters
+#define SPIRV_Cross_BaseInstance gl_BaseInstanceARB
+#else
+uniform int SPIRV_Cross_BaseInstance;
+#endif
 out vec2 _VSPS_UV;
 out vec4 _VSPS_Normal;
 out vec4 _VSPS_Binormal;
@@ -187,24 +196,25 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortion
 
 VS_Output _main(VS_Input Input)
 {
-    vec4 uv = CBVS0.fUV;
-    vec4 modelColor = CBVS0.fModelColor;
-    vec4 alphaUV = CBVS0.fAlphaUV;
-    vec4 uvDistortionUV = CBVS0.fUVDistortionUV;
-    vec4 blendUV = CBVS0.fBlendUV;
-    vec4 blendAlphaUV = CBVS0.fBlendAlphaUV;
-    vec4 blendUVDistortionUV = CBVS0.fBlendUVDistortionUV;
-    float flipbookIndexAndNextRate = CBVS0.fFlipbookIndexAndNextRate.x;
-    float modelAlphaThreshold = CBVS0.fModelAlphaThreshold.x;
+    mat4 matModel = CBVS0.mModel[Input.Index];
+    vec4 uv = CBVS0.fUV[Input.Index];
+    vec4 modelColor = CBVS0.fModelColor[Input.Index];
+    vec4 alphaUV = CBVS0.fAlphaUV[Input.Index];
+    vec4 uvDistortionUV = CBVS0.fUVDistortionUV[Input.Index];
+    vec4 blendUV = CBVS0.fBlendUV[Input.Index];
+    vec4 blendAlphaUV = CBVS0.fBlendAlphaUV[Input.Index];
+    vec4 blendUVDistortionUV = CBVS0.fBlendUVDistortionUV[Input.Index];
+    float flipbookIndexAndNextRate = CBVS0.fFlipbookIndexAndNextRate[Input.Index].x;
+    float modelAlphaThreshold = CBVS0.fModelAlphaThreshold[Input.Index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 localNormal = vec4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
     vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
     vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
-    localPosition *= CBVS0.mModel;
-    localNormal *= CBVS0.mModel;
-    localBinormal *= CBVS0.mModel;
-    localTangent *= CBVS0.mModel;
+    localPosition *= matModel;
+    localNormal *= matModel;
+    localBinormal *= matModel;
+    localTangent *= matModel;
     localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
@@ -240,6 +250,7 @@ void main()
     Input.Tangent = Input_Tangent;
     Input.UV = Input_UV;
     Input.Color = Input_Color;
+    Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.Position;
     _VSPS_UV = flattenTemp.UV;

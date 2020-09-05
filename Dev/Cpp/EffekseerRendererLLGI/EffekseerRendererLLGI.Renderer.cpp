@@ -405,24 +405,24 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});			 // AlphaThreshold
 
 	shader_ = Shader::Create(graphicsDevice_,
-							  fixedShader_.SpriteUnlit_VS.data(),
-							  fixedShader_.SpriteUnlit_VS.size(),
-							  fixedShader_.SpriteUnlit_PS.data(),
-							  fixedShader_.SpriteUnlit_PS.size(),
-							  "StandardRenderer",
-							  layouts,
-							  false);
+							 fixedShader_.SpriteUnlit_VS.data(),
+							 fixedShader_.SpriteUnlit_VS.size(),
+							 fixedShader_.SpriteUnlit_PS.data(),
+							 fixedShader_.SpriteUnlit_PS.size(),
+							 "StandardRenderer",
+							 layouts,
+							 false);
 	if (shader_ == NULL)
 		return false;
 
 	shader_unlit_ = Shader::Create(graphicsDevice_,
-										 fixedShader_.SpriteDistortion_VS.data(),
-										 fixedShader_.SpriteDistortion_VS.size(),
-										 fixedShader_.SpriteDistortion_PS.data(),
-										 fixedShader_.SpriteDistortion_PS.size(),
-										 "StandardRenderer Distortion",
-										 layouts_distort,
-										 false);
+								   fixedShader_.SpriteDistortion_VS.data(),
+								   fixedShader_.SpriteDistortion_VS.size(),
+								   fixedShader_.SpriteDistortion_PS.data(),
+								   fixedShader_.SpriteDistortion_PS.size(),
+								   "StandardRenderer Distortion",
+								   layouts_distort,
+								   false);
 	if (shader_unlit_ == NULL)
 		return false;
 
@@ -470,13 +470,13 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
 
 	shader_lit_ = Shader::Create(graphicsDevice_,
-									   fixedShader_.SpriteLit_VS.data(),
-									   fixedShader_.SpriteLit_VS.size(),
-									   fixedShader_.SpriteLit_PS.data(),
-									   fixedShader_.SpriteLit_PS.size(),
-									   "StandardRenderer Lighting",
-									   layouts_lighting,
-									   false);
+								 fixedShader_.SpriteLit_VS.data(),
+								 fixedShader_.SpriteLit_VS.size(),
+								 fixedShader_.SpriteLit_PS.data(),
+								 fixedShader_.SpriteLit_PS.size(),
+								 "StandardRenderer Lighting",
+								 layouts_lighting,
+								 false);
 
 	shader_ad_lit_ = Shader::Create(graphicsDevice_,
 									fixedShader_.AdvancedSpriteLit_VS.data(),
@@ -794,6 +794,11 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 {
+	DrawPolygonInstanced(vertexCount, indexCount, 1);
+}
+
+void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount)
+{
 	// constant buffer
 	LLGI::ConstantBuffer* constantBufferVS = nullptr;
 	LLGI::ConstantBuffer* constantBufferPS = nullptr;
@@ -820,10 +825,10 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	GetCurrentCommandList()->SetPipelineState(piplineState);
 
 	impl->drawcallCount++;
-	impl->drawvertexCount += vertexCount;
+	impl->drawvertexCount += vertexCount * instanceCount;
 
 	GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, 0);
-	GetCurrentCommandList()->Draw(indexCount / 3);
+	GetCurrentCommandList()->Draw(indexCount / 3, instanceCount);
 
 	LLGI::SafeRelease(constantBufferVS);
 	LLGI::SafeRelease(constantBufferPS);
