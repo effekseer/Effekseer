@@ -762,6 +762,12 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 			}
 
 			ret << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputExportedNode->Inputs[normalIndex]) << ";" << std::endl;
+			ret << GetTypeName(ValueType::Float3) << " tempPixelNormalDir = ((pixelNormalDir -" << GetTypeName(ValueType::Float3)
+				<< " (0.5, 0.5, 0.5)) * 2.0);" << std::endl;
+
+			ret << "pixelNormalDir = tempPixelNormalDir.x * worldTangent + tempPixelNormalDir.y * worldBinormal + tempPixelNormalDir.z * "
+				   "worldNormal;"
+				<< std::endl;
 		}
 	}
 
@@ -894,11 +900,11 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
 			<< std::endl;
 
-		ret << GetTypeName(ValueType::Float3) << " tempNormalDir = ((normalDir -" << GetTypeName(ValueType::Float3)
-			<< " (0.5, 0.5, 0.5)) * 2.0);" << std::endl;
-
-		ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;"
-			<< std::endl;
+		//ret << GetTypeName(ValueType::Float3) << " tempNormalDir = ((normalDir -" << GetTypeName(ValueType::Float3)
+		//	<< " (0.5, 0.5, 0.5)) * 2.0);" << std::endl;
+		//
+		//ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;"
+		//	<< std::endl;
 
 		ret << GetTypeName(ValueType::Float3)
 			<< " worldPositionOffset = " << GetInputArg(ValueType::Float3, outputNode->Inputs[worldPositionOffsetIndex]) << ";"
