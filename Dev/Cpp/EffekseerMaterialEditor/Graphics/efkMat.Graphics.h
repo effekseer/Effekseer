@@ -2,9 +2,9 @@
 #pragma once
 
 #include <AltseedRHI.h>
-#include <efkMat.TextExporter.h>
 #include <cmath>
 #include <cstring>
+#include <efkMat.TextExporter.h>
 
 namespace EffekseerMaterial
 {
@@ -35,7 +35,13 @@ struct Vector3
 
 	Vector3(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
+	bool operator==(const Vector3& o) const { return X == o.X && Y == o.Y && Z == o.Z; }
+
+	Vector3 operator+(const Vector3& o) const { return Vector3(X + o.X, Y + o.Y, Z + o.Z); }
+
 	Vector3 operator-(const Vector3& o) const { return Vector3(X - o.X, Y - o.Y, Z - o.Z); }
+
+	Vector3 operator/(const float& o) const { return Vector3(X / o, Y / o, Z / o); }
 
 	float GetLength() const { return sqrt(GetSquaredLength()); }
 
@@ -389,3 +395,24 @@ public:
 };
 
 } // namespace EffekseerMaterial
+
+namespace std
+{
+template <> struct hash<EffekseerMaterial::Vector3>
+{
+	size_t operator()(const EffekseerMaterial::Vector3& _Keyval) const noexcept
+	{
+		return std::hash<float>()(_Keyval.X) + std::hash<float>()(_Keyval.Y) + std::hash<float>()(_Keyval.Z);
+	}
+};
+
+template <> struct hash < std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>>
+{
+	size_t operator()(const std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>& _Keyval) const noexcept
+	{
+		return std::hash<EffekseerMaterial::Vector3>()(std::get<0>(_Keyval)) +
+			   std::hash<EffekseerMaterial::Vector3>()(std::get<1>(_Keyval));
+	}
+};
+
+} // namespace std
