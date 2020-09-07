@@ -678,8 +678,17 @@ int mainLoop(int argc, char* argv[])
 
 				if (uobj != nullptr)
 				{
-					ImGui::Text(uobj->GetPreview()->VS.c_str());
-					ImGui::Text(uobj->GetPreview()->PS.c_str());
+					if (ImGui::TreeNode("VS"))
+					{
+						ImGui::Text(uobj->GetPreview()->VS.c_str());
+						ImGui::TreePop();
+					}
+					
+					if (ImGui::TreeNode("PS"))
+					{
+						ImGui::Text(uobj->GetPreview()->PS.c_str());
+						ImGui::TreePop();
+					}
 				}
 			}
 

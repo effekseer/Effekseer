@@ -179,6 +179,8 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 	std::vector<Vertex> vertexes;
 	std::vector<uint16_t> indexes;
 
+	std::unordered_map<std::tuple<Vector3, Vector3>, std::vector<int32_t>> pairVertexes;
+
 	// only single object
 	for (size_t s = 0; s < std::min(static_cast<size_t>(1), shapes.size()); s++)
 	{
@@ -213,12 +215,17 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
 				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
 				vertexes[index_offset + v].Color[3] = 255;
+
+				auto key = std::tuple<Vector3, Vector3>(vertexes[index_offset + v].Pos, normal);
+				pairVertexes[key].emplace_back(index_offset + v);
 			}
 			index_offset += shapes[s].mesh.num_face_vertices[f];
 		}
 	}
 
 	// calc tangent
+	std::vector<Vector3> tangents;
+	tangents.resize(vertexes.size());
 	for (size_t i = 0; i < vertexes.size() / 3; i++)
 	{
 		auto& v0 = vertexes[i * 3 + 0];
@@ -230,7 +237,26 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 
 		CalcTangentSpace(v0, v1, v2, binormal, tangent);
 
-		v0.Tangent = Vertex::CreatePacked(tangent);
+		tangents[i * 3 + 0] = tangent;
+		tangents[i * 3 + 1] = tangent;
+		tangents[i * 3 + 2] = tangent;
+	}
+
+	for (auto& kv : pairVertexes)
+	{
+		Vector3 tangentsum = Vector3(0, 0, 0);
+
+		for (auto i : kv.second)
+		{
+			tangentsum = tangentsum + tangents[i];
+		}
+
+		tangentsum = tangentsum / static_cast<float>(kv.second.size());
+
+		for (auto i : kv.second)
+		{
+			vertexes[i].Tangent = Vertex::CreatePacked(tangentsum);
+		}
 	}
 
 	auto vb = ar::VertexBuffer::Create(graphics->GetManager());

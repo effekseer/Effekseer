@@ -430,7 +430,7 @@ static const char g_material_fs_src_suf2_lit[] =
 
     float3 viewDir = normalize(cameraPosition.xyz - worldPos);
     float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
-    float3 specular = lightColor.xyz * lightScale * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
+    float3 specular = lightColor.xyz * lightScale * calcLightingGGX(pixelNormalDir, viewDir, lightDirection.xyz, roughness, 0.9);
 
     float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse + baseColor * lightAmbientColor.xyz * ambientOcclusion, opacity);
     Output.xyz = Output.xyz + emissive.xyz;
