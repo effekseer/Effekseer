@@ -92,6 +92,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
 	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
 	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
+	single15Test(u"Material_FresnelRotatorPolarCoords", "Material_FresnelRotatorPolarCoords");
 
 	{
 		single16Test(u"Flip01", "Flip01");
