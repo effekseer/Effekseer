@@ -25,7 +25,10 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
-			
+
+			Controls.Add(candp);
+			Controls.Add(paramerterList);
+
 			Read();
 
 			TabToolTip = Resources.GetString("Position");
@@ -50,10 +53,6 @@ namespace Effekseer.GUI.Dock
 			if (isFiestUpdate)
 			{
 			}
-
-			candp.Update();
-
-			paramerterList.Update();
 		}
 
 		object GetTargetObject()

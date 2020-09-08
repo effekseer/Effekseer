@@ -72,6 +72,18 @@ namespace Effekseer.GUI.Component
 			collection.SetValue(value, 0);
 		}
 
+		public override void DispatchDisposed()
+		{
+			collection.DispatchDisposed();
+			OnDisposed();
+		}
+
+		public override void DispatchDropped(string path, ref bool handle)
+		{
+			collection.DispatchDropped(path, ref handle);
+			base.DispatchDropped(path, ref handle);
+		}
+
 		struct IndentInformation
 		{
 			public int Indent;
@@ -423,6 +435,52 @@ namespace Effekseer.GUI.Component
 				isControlsChanged = true;
 			}
 
+
+			private void InternalDispatchDisposed(Utils.DelayedList<TypeRow> rows)
+			{
+				foreach (var row in rows.Internal)
+				{
+					if (row.Control != null)
+					{
+						var c = row.Control as Control;
+						c.DispatchDisposed();
+					}
+					else
+					{
+						if (row.Children == null) continue;
+						InternalDispatchDisposed(row.Children.controlRows);
+					}
+				}
+			}
+
+			public void DispatchDisposed()
+			{
+				InternalDispatchDisposed(controlRows);
+			}
+
+			private void InternalDispatchDropped(Utils.DelayedList<TypeRow> rows, string path, ref bool handle)
+			{
+				if (handle) return;
+
+				foreach (var row in rows.Internal)
+				{
+					if (row.Control != null)
+					{
+						var c = row.Control as Control;
+						c.DispatchDropped(path, ref handle);
+						if (handle) break;
+					}
+					if (row.Children != null)
+					{
+						InternalDispatchDropped(row.Children.controlRows, path, ref handle);
+					}
+				}
+			}
+
+			public void DispatchDropped(string path, ref bool handle)
+			{
+				InternalDispatchDropped(controlRows, path, ref handle);
+			}
 		}
 
 		class TypeRow

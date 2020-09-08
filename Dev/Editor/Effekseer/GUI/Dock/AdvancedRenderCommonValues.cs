@@ -26,7 +26,10 @@ namespace Effekseer.GUI.Dock
             Core.OnAfterNew += OnAfterLoad;
             Core.OnAfterSelectNode += OnAfterSelectNode;
 
-            Read();
+			Controls.Add(candp);
+			Controls.Add(parameterList);
+
+			Read();
 
             TabToolTip = Resources.GetString("AdvancedRenderSettings");
         }
@@ -50,10 +53,6 @@ namespace Effekseer.GUI.Dock
             if (isFirstUpdate)
             {
             }
-
-            candp.Update();
-
-            parameterList.Update();
         }
 
         object GetTargetObject()
