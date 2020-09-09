@@ -202,19 +202,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-
-			if (ef->GetVersion() >= 14)
-			{
-				assert(size == sizeof(ParameterTranslationEasing));
-				memcpy(&TranslationEasing, pos, size);
-				pos += size;
-			}
-			else
-			{
-				assert(size == sizeof(easing_vector3d));
-				memcpy(&TranslationEasing.location, pos, size);
-				pos += size;
-			}
+			TranslationEasing.Load(pos, size, ef->GetVersion());
+			pos += size;
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
 		{
@@ -257,10 +246,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 			else if (TranslationType == ParameterTranslationType_Easing)
 			{
-				TranslationEasing.location.start.min *= m_effect->GetMaginification();
-				TranslationEasing.location.start.max *= m_effect->GetMaginification();
-				TranslationEasing.location.end.min *= m_effect->GetMaginification();
-				TranslationEasing.location.end.max *= m_effect->GetMaginification();
+				TranslationEasing.start.min *= m_effect->GetMaginification();
+				TranslationEasing.start.max *= m_effect->GetMaginification();
+				TranslationEasing.end.min *= m_effect->GetMaginification();
+				TranslationEasing.end.max *= m_effect->GetMaginification();
 			}
 			else if (TranslationType == ParameterTranslationType_FCurve)
 			{
@@ -381,17 +370,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			if (ef->GetVersion() >= 14)
-			{
-				assert(size == sizeof(RotationEasing));
-				memcpy(&RotationEasing, pos, size);
-			}
-			else
-			{
-				assert(size == sizeof(easing_vector3d));
-				memcpy(&RotationEasing.rotation, pos, size);
-			}
-
+			RotationEasing.Load(pos, size, ef->GetVersion());
 			pos += size;
 		}
 		else if (RotationType == ParameterRotationType_AxisPVA)
@@ -466,15 +445,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			if (ef->GetVersion() >= 14)
-			{
-				assert(size == sizeof(ParameterScalingEasing));
-				memcpy(&ScalingEasing, pos, size);
-			}
-			else
-			{
-				memcpy(&ScalingEasing.Position, pos, size);
-			}
+			ScalingEasing.Load(pos, size, ef->GetVersion());
 			pos += size;
 		}
 		else if (ScalingType == ParameterScalingType_SinglePVA)
@@ -612,10 +583,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 			else if (TranslationType == ParameterTranslationType_Easing)
 			{
-				TranslationEasing.location.start.max.z *= -1.0f;
-				TranslationEasing.location.start.min.z *= -1.0f;
-				TranslationEasing.location.end.max.z *= -1.0f;
-				TranslationEasing.location.end.min.z *= -1.0f;
+				TranslationEasing.start.max.z *= -1.0f;
+				TranslationEasing.start.min.z *= -1.0f;
+				TranslationEasing.end.max.z *= -1.0f;
+				TranslationEasing.end.min.z *= -1.0f;
 			}
 
 			// Rotation
@@ -644,14 +615,14 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 			else if (RotationType == ParameterRotationType_Easing)
 			{
-				RotationEasing.rotation.start.max.x *= -1.0f;
-				RotationEasing.rotation.start.min.x *= -1.0f;
-				RotationEasing.rotation.start.max.y *= -1.0f;
-				RotationEasing.rotation.start.min.y *= -1.0f;
-				RotationEasing.rotation.end.max.x *= -1.0f;
-				RotationEasing.rotation.end.min.x *= -1.0f;
-				RotationEasing.rotation.end.max.y *= -1.0f;
-				RotationEasing.rotation.end.min.y *= -1.0f;
+				RotationEasing.start.max.x *= -1.0f;
+				RotationEasing.start.min.x *= -1.0f;
+				RotationEasing.start.max.y *= -1.0f;
+				RotationEasing.start.min.y *= -1.0f;
+				RotationEasing.end.max.x *= -1.0f;
+				RotationEasing.end.min.x *= -1.0f;
+				RotationEasing.end.max.y *= -1.0f;
+				RotationEasing.end.min.y *= -1.0f;
 			}
 			else if (RotationType == ParameterRotationType_AxisPVA)
 			{

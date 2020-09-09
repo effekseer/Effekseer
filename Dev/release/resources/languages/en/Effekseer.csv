@@ -252,6 +252,8 @@ Easing_Start_Name,Start
 Easing_Start_Desc,Starting point of easing
 Easing_End_Name,End
 Easing_End_Desc,Value of easing at end
+Easing_End_Name,Middle
+Easing_End_Desc,Value of easing at middle point
 Easing_StartSpeed_Name,Ease In
 Easing_StartSpeed_Desc,Initial rate of easing
 Easing_EndSpeed_Name,Ease Out
@@ -271,6 +273,38 @@ Easing_EndNormal_Name,Normal
 Easing_EndRapidly1_Name,Fast
 Easing_EndRapidly2_Name,Faster
 Easing_EndRapidly3_Name,Fastest
+Easing_IsMiddleEnabled_Name,"Is Middle point 
+enabled"
+Easing_IsRandomGroupEnabled_Name,"Is Random group 
+enabled"
+Easing_RandomGroup_X_Name, X group
+Easing_RandomGroup_Y_Name, Y group
+Easing_RandomGroup_Z_Name, Z group
+Easing_IsIndividualTypeEnabled_Name,Is Type individual
+Easing_IndividualType_X_Name, X Type
+Easing_IndividualType_Y_Name, Y Type
+Easing_IndividualType_Z_Name, Z Type
+Easing_Type_Name,Type
+Easing_LeftRightSpeed_Name,EaseLeftRightSpeed
+Easing_Linear_Name,Linear
+Easing_EaseInQuadratic_Name,EaseInQuadratic
+Easing_EaseOutQuadratic_Name,EaseOutQuadratic
+Easing_EaseInOutQuadratic_Name,EaseInOutQuadratic
+Easing_EaseInCubic_Name,EaseInCubic
+Easing_EaseOutCubic_Name,EaseOutCubic
+Easing_EaseInOutCubic_Name,EaseInOutCubic
+Easing_EaseInQuartic_Name,EaseInQuartic
+Easing_EaseOutQuartic_Name,EaseOutQuartic
+Easing_EaseInOutQuartic_Name,EaseInOutQuartic
+Easing_EaseInQuintic_Name,EaseInQuintic
+Easing_EaseOutQuintic_Name,EaseOutQuintic
+Easing_EaseInOutQuintic_Name,EaseInOutQuintic
+Easing_EaseInBack_Name,EaseInBack
+Easing_EaseOutBack_Name,EaseOutBack
+Easing_EaseInOutBack_Name,EaseInOutBack
+Easing_EaseInBounce_Name,EaseInBounce
+Easing_EaseOutBounce_Name,EaseOutBounce
+Easing_EaseInOutBounce_Name,EaseInOutBounce
 ,
 FCurve_Name,F-Curve
 FCurve_Desc,F-Curve

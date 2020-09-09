@@ -16,6 +16,7 @@
 #include "Effekseer.Effect.h"
 #include "ForceField/ForceFields.h"
 #include "Noise/CurlNoise.h"
+#include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -47,15 +48,6 @@ enum class TranslationParentBindType : int32_t
 };
 
 bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
-
-/**!
-	@brief indexes of dynamic parameter
-*/
-struct RefMinMax
-{
-	int32_t Max = -1;
-	int32_t Min = -1;
-};
 
 //----------------------------------------------------------------------------------
 //
@@ -1520,7 +1512,8 @@ public:
 	ParameterTranslationType TranslationType;
 	ParameterTranslationFixed TranslationFixed;
 	ParameterTranslationPVA TranslationPVA;
-	ParameterTranslationEasing TranslationEasing;
+	ParameterEasing3 TranslationEasing;
+	// ParameterTranslationEasing TranslationEasing;
 	FCurveVector3D* TranslationFCurve;
 	ParameterTranslationNurbsCurve TranslationNurbsCurve;
 	ParameterTranslationViewOffset TranslationViewOffset;
@@ -1535,7 +1528,9 @@ public:
 	ParameterRotationType RotationType;
 	ParameterRotationFixed RotationFixed;
 	ParameterRotationPVA RotationPVA;
-	ParameterRotationEasing RotationEasing;
+
+	ParameterEasing3 RotationEasing;
+	// ParameterRotationEasing RotationEasing;
 	FCurveVector3D* RotationFCurve;
 
 	ParameterRotationAxisPVA RotationAxisPVA;
@@ -1544,7 +1539,8 @@ public:
 	ParameterScalingType ScalingType;
 	ParameterScalingFixed ScalingFixed;
 	ParameterScalingPVA ScalingPVA;
-	ParameterScalingEasing ScalingEasing;
+	ParameterEasing3 ScalingEasing;
+	// ParameterScalingEasing ScalingEasing;
 	ParameterScalingSinglePVA ScalingSinglePVA;
 	easing_float ScalingSingleEasing;
 	FCurveVector3D* ScalingFCurve;

@@ -72,6 +72,11 @@ public:
 
 	std::array<float, 4> GetDynamicEquationResult(int32_t index);
 
+	const std::array<float, 4>& GetDynamicInputParameters() const
+	{
+		return dynamicInputParameters;
+	}
+
 	RandObject& GetRandObject()
 	{
 		return m_randObjects;
