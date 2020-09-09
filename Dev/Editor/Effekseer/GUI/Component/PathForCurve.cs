@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Component
 
 		private bool CheckExtension(string path)
 		{
-			var filters = binding.Filter.Split(',');
+			var filters = Resources.GetString("CurveFilter").Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 
