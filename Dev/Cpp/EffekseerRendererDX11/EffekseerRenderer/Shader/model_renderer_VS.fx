@@ -40,7 +40,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 fLightDirection;
     float4 fLightColor;
     float4 fLightAmbient;
-    
+
     float4 mUVInversed;
 };
 
@@ -105,7 +105,7 @@ VS_Output main( const VS_Input Input )
 #endif
 
 	VS_Output Output = (VS_Output)0;
-	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 }; 
+	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
 
 #ifdef DISABLE_INSTANCE
 	float4 cameraPosition = mul(mModel, localPosition);
@@ -116,7 +116,7 @@ VS_Output main( const VS_Input Input )
 	Output.Pos = mul( mCameraProj, cameraPosition );
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
-	Output.UV.y = Input.UV.y * uv.w + uv.y; 
+	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
 #if ENABLE_LIGHTING
 
@@ -144,7 +144,7 @@ VS_Output main( const VS_Input Input )
 	Output.Binormal = localBinormal.xyz;
 	Output.Tangent = localTangent.xyz;
 #else
-    
+
 #ifdef DISABLE_INSTANCE
 	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
 	localNormal = normalize(mul(mModel, localNormal));
@@ -158,8 +158,7 @@ VS_Output main( const VS_Input Input )
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
-	CalculateAndStoreAdvancedParameter(Output.UV, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
+	CalculateAndStoreAdvancedParameter(Input.UV, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 
 	return Output;
 }
-

@@ -215,7 +215,7 @@ VS_Output _main(VS_Input Input)
     Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
-    vec2 param = Output.UV;
+    vec2 param = Input.UV;
     vec4 param_1 = alphaUV;
     vec4 param_2 = uvDistortionUV;
     vec4 param_3 = blendUV;
@@ -461,7 +461,7 @@ VS_Output _main(VS_Input Input)
     Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
-    vec2 param = Output.UV;
+    vec2 param = Input.UV;
     vec4 param_1 = alphaUV;
     vec4 param_2 = uvDistortionUV;
     vec4 param_3 = blendUV;
@@ -713,7 +713,7 @@ VS_Output _main(VS_Input Input)
     Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
-    vec2 param = Output.UV;
+    vec2 param = Input.UV;
     vec4 param_1 = alphaUV;
     vec4 param_2 = uvDistortionUV;
     vec4 param_3 = blendUV;
@@ -956,7 +956,7 @@ VS_Output _main(VS_Input Input)
     Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
-    vec2 param = Output.UV;
+    vec2 param = Input.UV;
     vec4 param_1 = alphaUV;
     vec4 param_2 = uvDistortionUV;
     vec4 param_3 = blendUV;

@@ -35,7 +35,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 fLightDirection;
     float4 fLightColor;
     float4 fLightAmbient;
-    
+
     float4 mUVInversed;
 };
 
@@ -136,8 +136,7 @@ VS_Output main( const VS_Input Input )
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
-    CalculateAndStoreAdvancedParameter(Output.UV, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
+  CalculateAndStoreAdvancedParameter(Input.UV, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 
 	return Output;
 }
-
