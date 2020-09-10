@@ -475,7 +475,7 @@ public:
 
 	~Model() override;
 
-	bool LoadToGPUWithoutIndex();
+	bool LoadToGPU();
 
 	bool IsLoadedOnGPU = false;
 };
@@ -558,68 +558,6 @@ public:
 	virtual void SetBackground(IDirect3DTexture9* background) = 0;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-	@brief	モデル
-*/
-class Model : public Effekseer::Model
-{
-private:
-	LPDIRECT3DDEVICE9 device_ = nullptr;
-
-public:
-	struct InternalModel
-	{
-		IDirect3DVertexBuffer9* VertexBuffer;
-		IDirect3DIndexBuffer9* IndexBuffer;
-		int32_t VertexCount;
-		int32_t IndexCount;
-		int32_t FaceCount;
-
-		InternalModel()
-		{
-			VertexBuffer = nullptr;
-			IndexBuffer = nullptr;
-			VertexCount = 0;
-			IndexCount = 0;
-			FaceCount = 0;
-		}
-
-		virtual ~InternalModel()
-		{
-			ES_SAFE_RELEASE(VertexBuffer);
-			ES_SAFE_RELEASE(IndexBuffer);
-		}
-	};
-
-	InternalModel* InternalModels = nullptr;
-	int32_t ModelCount;
-	bool IsLoadedOnGPU = false;
-
-	Model(uint8_t* data, int32_t size, LPDIRECT3DDEVICE9 device)
-		: Effekseer::Model(data, size)
-		, device_(device)
-		, InternalModels(nullptr)
-		, ModelCount(0)
-	{
-		this->m_vertexSize = sizeof(VertexWithIndex);
-		ES_SAFE_ADDREF(device_);
-	}
-
-	virtual ~Model()
-	{
-		ES_SAFE_DELETE_ARRAY(InternalModels);
-		ES_SAFE_RELEASE(device_);
-	}
-
-	bool LoadToGPU();
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //

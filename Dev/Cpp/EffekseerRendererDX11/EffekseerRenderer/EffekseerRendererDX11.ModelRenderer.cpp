@@ -261,7 +261,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	model->LoadToGPUWithoutIndex();
+	model->LoadToGPU();
 	if (!model->IsLoadedOnGPU)
 	{
 		return;

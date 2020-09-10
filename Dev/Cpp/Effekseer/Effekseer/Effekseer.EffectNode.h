@@ -16,6 +16,7 @@
 #include "Effekseer.Effect.h"
 #include "ForceField/ForceFields.h"
 #include "Noise/CurlNoise.h"
+#include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
 #include "SIMD/Effekseer.SIMDUtils.h"

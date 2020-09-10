@@ -66,7 +66,7 @@ void ModelLoader::Unload(void* data)
 {
 	if (data != NULL)
 	{
-		Model* model = (Model*)data;
+		auto model = (EffekseerRenderer::Model*)data;
 		delete model;
 	}
 }

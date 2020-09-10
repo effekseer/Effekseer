@@ -516,7 +516,7 @@ public:
 
 	~Model() override;
 
-	bool LoadToGPUWithoutIndex();
+	bool LoadToGPU();
 
 	bool IsLoadedOnGPU = false;
 };
@@ -632,47 +632,6 @@ public:
 	virtual bool IsVertexArrayObjectSupported() const = 0;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-	@brief	モデル
-*/
-class Model : public Effekseer::Model
-{
-private:
-public:
-	struct InternalModel
-	{
-		GLuint VertexBuffer;
-		GLuint IndexBuffer;
-		int32_t VertexCount;
-		int32_t IndexCount;
-
-		std::vector<uint8_t> delayVertexBuffer;
-		std::vector<uint8_t> delayIndexBuffer;
-
-		InternalModel();
-
-		virtual ~InternalModel();
-
-		bool TryDelayLoad();
-	};
-
-	InternalModel* InternalModels = nullptr;
-	int32_t ModelCount;
-
-	bool IsLoadedOnGPU = false;
-
-	Model(void* data, int32_t size);
-	~Model();
-
-	bool LoadToGPU();
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //

@@ -100,15 +100,6 @@ void* ModelLoader::Load(const void* data, int32_t size)
 
 	auto model = new EffekseerRenderer::Model((uint8_t*)data, size, 10, graphicsDevice_);
 
-	/*
-	auto model = new Model((uint8_t*)data, size, device);
-
-	model->ModelCount = Effekseer::Min(Effekseer::Max(model->GetModelCount(), 1), 40);
-
-	model->InternalModels = new Model::InternalModel[model->GetFrameCount()];
-
-	*/
-
 	return model;
 }
 
@@ -119,7 +110,7 @@ void ModelLoader::Unload(void* data)
 {
 	if (data != NULL)
 	{
-		Model* model = (Model*)data;
+		auto model = (EffekseerRenderer::Model*)data;
 		delete model;
 	}
 }

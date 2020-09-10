@@ -3,6 +3,7 @@
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalScript.h"
+#include "DynamicParameter.h"
 
 namespace Effekseer
 {
@@ -118,13 +119,13 @@ random_float ApplyEq(Effect* e, InstanceGlobal* instg, Instance* parrentInstance
 
 template <typename S>
 random_vector3d ApplyEq_(Effect* e,
-						InstanceGlobal* instg,
-						Instance* parrentInstance,
-						IRandObject* rand,
-						const RefMinMax& dpInd,
-						random_vector3d originalParam,
-						const S& scale,
-						const S& scaleInv)
+						 InstanceGlobal* instg,
+						 Instance* parrentInstance,
+						 IRandObject* rand,
+						 const RefMinMax& dpInd,
+						 random_vector3d originalParam,
+						 const S& scale,
+						 const S& scaleInv)
 {
 	if (dpInd.Max >= 0)
 	{
@@ -165,13 +166,13 @@ random_vector3d ApplyEq(Effect* e,
 						const std::array<float, 3>& scaleInv)
 {
 	return ApplyEq_(e,
-				   instg,
-				   parrentInstance,
-				   rand,
-				   dpInd,
-				   originalParam,
-				   scale,
-				   scaleInv);
+					instg,
+					parrentInstance,
+					rand,
+					dpInd,
+					originalParam,
+					scale,
+					scaleInv);
 }
 
 random_int ApplyEq(Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const RefMinMax& dpInd, random_int originalParam)

@@ -190,7 +190,7 @@ Model::~Model()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Model::LoadToGPUWithoutIndex()
+bool Model::LoadToGPU()
 {
 	if (IsLoadedOnGPU)
 	{
