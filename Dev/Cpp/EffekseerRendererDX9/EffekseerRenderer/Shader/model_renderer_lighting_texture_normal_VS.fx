@@ -257,7 +257,7 @@ VS_Output _main(VS_Input Input)
     Output.Tangent = localTangent.xyz;
     Output.Color = modelColor;
     Output.UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * Output.UV.y);
-    float2 param = Output.UV;
+    float2 param = Input.UV;
     float4 param_1 = alphaUV;
     float4 param_2 = uvDistortionUV;
     float4 param_3 = blendUV;

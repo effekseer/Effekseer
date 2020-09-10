@@ -250,7 +250,7 @@ VS_Output _main(VS_Input Input)
     Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = _364_mUVInversed.x + (_364_mUVInversed.y * Output.UV.y);
-    float2 param = Output.UV;
+    float2 param = Input.UV;
     float4 param_1 = alphaUV;
     float4 param_2 = uvDistortionUV;
     float4 param_3 = blendUV;
