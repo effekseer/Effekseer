@@ -10,7 +10,6 @@ struct VS_Output
 {
     vec4 Position;
     vec2 UV;
-    vec4 Normal;
     vec4 Binormal;
     vec4 Tangent;
     vec4 Pos;
@@ -66,7 +65,6 @@ layout(location = 5) in vec4 Input_Color;
 uniform int SPIRV_Cross_BaseInstance;
 #endif
 out vec2 _VSPS_UV;
-out vec4 _VSPS_Normal;
 out vec4 _VSPS_Binormal;
 out vec4 _VSPS_Tangent;
 out vec4 _VSPS_Pos;
@@ -206,22 +204,18 @@ VS_Output _main(VS_Input Input)
     vec4 blendUVDistortionUV = CBVS0.fBlendUVDistortionUV[Input.Index];
     float flipbookIndexAndNextRate = CBVS0.fFlipbookIndexAndNextRate[Input.Index].x;
     float modelAlphaThreshold = CBVS0.fModelAlphaThreshold[Input.Index].x;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localNormal = vec4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
     vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
     vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
     localPosition *= matModel;
-    localNormal *= matModel;
     localBinormal *= matModel;
     localTangent *= matModel;
-    localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
     Output.Position = localPosition * CBVS0.mCameraProj;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.Normal = localNormal * CBVS0.mCameraProj;
     Output.Binormal = localBinormal * CBVS0.mCameraProj;
     Output.Tangent = localTangent * CBVS0.mCameraProj;
     Output.Pos = Output.Position;
@@ -254,7 +248,6 @@ void main()
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.Position;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Normal = flattenTemp.Normal;
     _VSPS_Binormal = flattenTemp.Binormal;
     _VSPS_Tangent = flattenTemp.Tangent;
     _VSPS_Pos = flattenTemp.Pos;

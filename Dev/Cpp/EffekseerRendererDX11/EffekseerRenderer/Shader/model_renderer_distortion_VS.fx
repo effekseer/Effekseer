@@ -58,20 +58,19 @@ struct VS_Output
 {
 	float4 Position : SV_POSITION;
 	float2 UV : TEXCOORD0;
-	float4 Normal : TEXCOORD1;
-	float4 Binormal : TEXCOORD2;
-	float4 Tangent : TEXCOORD3;
-	float4 Pos : TEXCOORD4;
+	float4 Binormal : TEXCOORD1;
+	float4 Tangent : TEXCOORD2;
+	float4 Pos : TEXCOORD3;
 	float4 Color : COLOR0;
 
-	float4 Alpha_Dist_UV : TEXCOORD5;
-	float4 Blend_Alpha_Dist_UV : TEXCOORD6;
+	float4 Alpha_Dist_UV : TEXCOORD4;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
 
 	// BlendUV, FlipbookNextIndexUV
-	float4 Blend_FBNextIndex_UV : TEXCOORD7;
+	float4 Blend_FBNextIndex_UV : TEXCOORD6;
 
 	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD8;
+	float2 Others : TEXCOORD7;
 };
 
 #include "model_renderer_common_VS.fx"
@@ -103,24 +102,20 @@ VS_Output main( const VS_Input Input )
 
 		VS_Output Output = (VS_Output) 0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
-		float4 localNormal = { Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0 };
 		float4 localBinormal = { Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0 };
 		float4 localTangent = { Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0 };
 
 
 #ifdef DISABLE_INSTANCE
 	localPosition = mul(mModel, localPosition);
-	localNormal = mul(mModel, localNormal);
 	localBinormal = mul(mModel, localBinormal);
 	localTangent = mul(mModel, localTangent);
 #else
 	localPosition = mul(matModel, localPosition);
-	localNormal = mul(matModel, localNormal);
 	localBinormal = mul(matModel, localBinormal);
 	localTangent = mul(matModel, localTangent);
 #endif
 
-	localNormal = localPosition + normalize(localNormal - localPosition);
 	localBinormal = localPosition + normalize(localBinormal - localPosition);
 	localTangent = localPosition + normalize(localTangent - localPosition);
 
@@ -129,7 +124,6 @@ VS_Output main( const VS_Input Input )
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
-	Output.Normal = mul(mCameraProj, localNormal);
 	Output.Binormal = mul(mCameraProj, localBinormal);
 	Output.Tangent = mul(mCameraProj, localTangent);
 	Output.Pos = Output.Position;

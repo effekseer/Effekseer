@@ -9,7 +9,6 @@ struct VS_Output
 {
     float4 Position;
     float2 UV;
-    float4 Normal;
     float4 Binormal;
     float4 Tangent;
     float4 Pos;
@@ -54,15 +53,14 @@ struct VS_ConstantBuffer
 struct main0_out
 {
     float2 _entryPointOutput_UV [[user(locn0)]];
-    float4 _entryPointOutput_Normal [[user(locn1)]];
-    float4 _entryPointOutput_Binormal [[user(locn2)]];
-    float4 _entryPointOutput_Tangent [[user(locn3)]];
-    float4 _entryPointOutput_Pos [[user(locn4)]];
-    float4 _entryPointOutput_Color [[user(locn5)]];
-    float4 _entryPointOutput_Alpha_Dist_UV [[user(locn6)]];
-    float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn7)]];
-    float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn8)]];
-    float2 _entryPointOutput_Others [[user(locn9)]];
+    float4 _entryPointOutput_Binormal [[user(locn1)]];
+    float4 _entryPointOutput_Tangent [[user(locn2)]];
+    float4 _entryPointOutput_Pos [[user(locn3)]];
+    float4 _entryPointOutput_Color [[user(locn4)]];
+    float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
+    float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
+    float2 _entryPointOutput_Others [[user(locn8)]];
     float4 gl_Position [[position]];
 };
 
@@ -219,22 +217,18 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_364)
     float4 blendUVDistortionUV = v_364.fBlendUVDistortionUV[Input.Index];
     float flipbookIndexAndNextRate = v_364.fFlipbookIndexAndNextRate[Input.Index].x;
     float modelAlphaThreshold = v_364.fModelAlphaThreshold[Input.Index].x;
-    VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
     float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
     float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
     localPosition *= matModel;
-    localNormal *= matModel;
     localBinormal *= matModel;
     localTangent *= matModel;
-    localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
     Output.Position = v_364.mCameraProj * localPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.Normal = v_364.mCameraProj * localNormal;
     Output.Binormal = v_364.mCameraProj * localBinormal;
     Output.Tangent = v_364.mCameraProj * localTangent;
     Output.Pos = Output.Position;
@@ -268,7 +262,6 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     VS_Output flattenTemp = _main(Input, v_364);
     out.gl_Position = flattenTemp.Position;
     out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_Normal = flattenTemp.Normal;
     out._entryPointOutput_Binormal = flattenTemp.Binormal;
     out._entryPointOutput_Tangent = flattenTemp.Tangent;
     out._entryPointOutput_Pos = flattenTemp.Pos;

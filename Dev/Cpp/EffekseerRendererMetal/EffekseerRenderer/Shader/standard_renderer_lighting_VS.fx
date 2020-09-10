@@ -25,7 +25,6 @@ struct VS_Output
     float4 Position;
     float4 VColor;
     float2 UV;
-    float3 WorldP;
     float3 WorldN;
     float3 WorldT;
     float3 WorldB;
@@ -47,14 +46,13 @@ struct main0_out
 {
     float4 _entryPointOutput_VColor [[user(locn0)]];
     float2 _entryPointOutput_UV [[user(locn1)]];
-    float3 _entryPointOutput_WorldP [[user(locn2)]];
-    float3 _entryPointOutput_WorldN [[user(locn3)]];
-    float3 _entryPointOutput_WorldT [[user(locn4)]];
-    float3 _entryPointOutput_WorldB [[user(locn5)]];
-    float4 _entryPointOutput_Alpha_Dist_UV [[user(locn6)]];
-    float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn7)]];
-    float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn8)]];
-    float2 _entryPointOutput_Others [[user(locn9)]];
+    float3 _entryPointOutput_WorldN [[user(locn2)]];
+    float3 _entryPointOutput_WorldT [[user(locn3)]];
+    float3 _entryPointOutput_WorldB [[user(locn4)]];
+    float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
+    float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
+    float2 _entryPointOutput_Others [[user(locn8)]];
     float4 gl_Position [[position]];
 };
 
@@ -171,21 +169,21 @@ void ApplyFlipbookVS(thread float& flipbookRate, thread float2& flipbookUV, thre
 }
 
 static inline __attribute__((always_inline))
-void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread VS_Output& vsoutput, constant VS_ConstantBuffer& v_256)
+void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread VS_Output& vsoutput, constant VS_ConstantBuffer& v_255)
 {
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
-    vsoutput.Alpha_Dist_UV.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * vsinput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = v_256.mUVInversed.x + (v_256.mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = v_255.mUVInversed.x + (v_255.mUVInversed.y * vsinput.Alpha_Dist_UV.w);
     vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_FBNextIndex_UV.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
-    vsoutput.Blend_Alpha_Dist_UV.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = v_256.mUVInversed.x + (v_256.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Blend_Alpha_Dist_UV.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = v_255.mUVInversed.x + (v_255.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
     float flipbookRate = 0.0;
     float2 flipbookNextIndexUV = float2(0.0);
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = v_256.mflipbookParameter;
+    float4 param_2 = v_255.mflipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     float2 param_4 = vsoutput.UV;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -197,35 +195,34 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 }
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_256)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
-    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
     float3 worldPos = Input.Pos;
     float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
     float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
     float2 uv2 = Input.UV1;
-    uv1.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * uv1.y);
-    uv2.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * uv2.y);
+    uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
+    uv2.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv2.y);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
     float3 pixelNormalDir = float3(0.5, 0.5, 1.0);
-    float4 cameraPos = v_256.mCamera * float4(worldPos, 1.0);
+    float4 cameraPos = v_255.mCamera * float4(worldPos, 1.0);
     cameraPos /= float4(cameraPos.w);
-    Output.Position = v_256.mProj * cameraPos;
-    Output.WorldP = worldPos;
+    Output.Position = v_255.mProj * cameraPos;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
-    CalculateAndStoreAdvancedParameter(param, param_1, v_256);
+    CalculateAndStoreAdvancedParameter(param, param_1, v_255);
     Output = param_1;
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_256 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_255 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -240,11 +237,10 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.FlipbookIndex = in.Input_FlipbookIndex;
     Input.AlphaThreshold = in.Input_AlphaThreshold;
-    VS_Output flattenTemp = _main(Input, v_256);
+    VS_Output flattenTemp = _main(Input, v_255);
     out.gl_Position = flattenTemp.Position;
     out._entryPointOutput_VColor = flattenTemp.VColor;
     out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_WorldP = flattenTemp.WorldP;
     out._entryPointOutput_WorldN = flattenTemp.WorldN;
     out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_WorldB = flattenTemp.WorldB;

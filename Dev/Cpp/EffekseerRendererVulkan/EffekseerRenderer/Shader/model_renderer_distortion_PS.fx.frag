@@ -4,7 +4,6 @@ struct PS_Input
 {
     vec4 Position;
     vec2 UV;
-    vec4 Normal;
     vec4 Binormal;
     vec4 Tangent;
     vec4 Pos;
@@ -34,7 +33,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 fFlipbookParameter;
     vec4 fUVDistortionParameter;
     vec4 fBlendTextureParameter;
-} _210;
+} _209;
 
 layout(set = 1, binding = 4) uniform sampler2D Sampler_g_uvDistortionSampler;
 layout(set = 1, binding = 1) uniform sampler2D Sampler_g_sampler;
@@ -45,15 +44,14 @@ layout(set = 1, binding = 6) uniform sampler2D Sampler_g_blendAlphaSampler;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_g_backSampler;
 
 layout(location = 0) in vec2 Input_UV;
-layout(location = 1) in vec4 Input_Normal;
-layout(location = 2) in vec4 Input_Binormal;
-layout(location = 3) in vec4 Input_Tangent;
-layout(location = 4) in vec4 Input_Pos;
-layout(location = 5) in vec4 Input_Color;
-layout(location = 6) in vec4 Input_Alpha_Dist_UV;
-layout(location = 7) in vec4 Input_Blend_Alpha_Dist_UV;
-layout(location = 8) in vec4 Input_Blend_FBNextIndex_UV;
-layout(location = 9) in vec2 Input_Others;
+layout(location = 1) in vec4 Input_Binormal;
+layout(location = 2) in vec4 Input_Tangent;
+layout(location = 3) in vec4 Input_Pos;
+layout(location = 4) in vec4 Input_Color;
+layout(location = 5) in vec4 Input_Alpha_Dist_UV;
+layout(location = 6) in vec4 Input_Blend_Alpha_Dist_UV;
+layout(location = 7) in vec4 Input_Blend_FBNextIndex_UV;
+layout(location = 8) in vec2 Input_Others;
 layout(location = 0) out vec4 _entryPointOutput;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
@@ -128,26 +126,26 @@ vec4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
-    vec2 param_2 = _210.fUVDistortionParameter.zw;
+    vec2 param_2 = _209.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_g_uvDistortionSampler);
-    UVOffset *= _210.fUVDistortionParameter.x;
+    UVOffset *= _209.fUVDistortionParameter.x;
     vec4 Output = texture(Sampler_g_sampler, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _210.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
+    ApplyFlipbook(param_3, _209.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
     Output = param_3;
     vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_5 = advancedParam.BlendUVDistortionUV;
-    vec2 param_6 = _210.fUVDistortionParameter.zw;
+    vec2 param_6 = _209.fUVDistortionParameter.zw;
     vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
-    BlendUVOffset *= _210.fUVDistortionParameter.y;
+    BlendUVOffset *= _209.fUVDistortionParameter.y;
     vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, _210.fBlendTextureParameter.x);
+    ApplyTextureBlending(param_7, BlendTextureColor, _209.fBlendTextureParameter.x);
     Output = param_7;
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
@@ -156,12 +154,12 @@ vec4 _main(PS_Input Input)
     vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
     vec2 posU = Input.Tangent.xy / vec2(Input.Tangent.w);
     vec2 posR = Input.Binormal.xy / vec2(Input.Binormal.w);
-    float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _210.g_scale.x;
-    float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _210.g_scale.x;
+    float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _209.g_scale.x;
+    float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _209.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
-    uv.y = _210.mUVInversedBack.x + (_210.mUVInversedBack.y * uv.y);
+    uv.y = _209.mUVInversedBack.x + (_209.mUVInversedBack.y * uv.y);
     vec3 color = vec3(texture(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -172,7 +170,6 @@ void main()
     PS_Input Input;
     Input.Position = gl_FragCoord;
     Input.UV = Input_UV;
-    Input.Normal = Input_Normal;
     Input.Binormal = Input_Binormal;
     Input.Tangent = Input_Tangent;
     Input.Pos = Input_Pos;
@@ -181,7 +178,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.Others = Input_Others;
-    vec4 _471 = _main(Input);
-    _entryPointOutput = _471;
+    vec4 _467 = _main(Input);
+    _entryPointOutput = _467;
 }
 

@@ -20,7 +20,6 @@ struct VS_Output
     vec4 Position;
     vec4 VColor;
     vec2 UV;
-    vec3 WorldP;
     vec3 WorldN;
     vec3 WorldT;
     vec3 WorldB;
@@ -36,7 +35,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     layout(row_major) mat4 mProj;
     vec4 mUVInversed;
     vec4 mflipbookParameter;
-} _256;
+} _255;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
@@ -51,14 +50,13 @@ layout(location = 9) in float Input_FlipbookIndex;
 layout(location = 10) in float Input_AlphaThreshold;
 layout(location = 0) out vec4 _entryPointOutput_VColor;
 layout(location = 1) out vec2 _entryPointOutput_UV;
-layout(location = 2) out vec3 _entryPointOutput_WorldP;
-layout(location = 3) out vec3 _entryPointOutput_WorldN;
-layout(location = 4) out vec3 _entryPointOutput_WorldT;
-layout(location = 5) out vec3 _entryPointOutput_WorldB;
-layout(location = 6) out vec4 _entryPointOutput_Alpha_Dist_UV;
-layout(location = 7) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
-layout(location = 8) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
-layout(location = 9) out vec2 _entryPointOutput_Others;
+layout(location = 2) out vec3 _entryPointOutput_WorldN;
+layout(location = 3) out vec3 _entryPointOutput_WorldT;
+layout(location = 4) out vec3 _entryPointOutput_WorldB;
+layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
+layout(location = 6) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
+layout(location = 7) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
+layout(location = 8) out vec2 _entryPointOutput_Others;
 
 vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
@@ -149,18 +147,18 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
 void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutput)
 {
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
-    vsoutput.Alpha_Dist_UV.y = _256.mUVInversed.x + (_256.mUVInversed.y * vsinput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _256.mUVInversed.x + (_256.mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _255.mUVInversed.x + (_255.mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _255.mUVInversed.x + (_255.mUVInversed.y * vsinput.Alpha_Dist_UV.w);
     vsoutput.Blend_FBNextIndex_UV = vec4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _256.mUVInversed.x + (_256.mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_FBNextIndex_UV.y = _255.mUVInversed.x + (_255.mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
-    vsoutput.Blend_Alpha_Dist_UV.y = _256.mUVInversed.x + (_256.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _256.mUVInversed.x + (_256.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Blend_Alpha_Dist_UV.y = _255.mUVInversed.x + (_255.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _255.mUVInversed.x + (_255.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
     float flipbookRate = 0.0;
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = _256.mflipbookParameter;
+    vec4 param_2 = _255.mflipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     vec2 param_4 = vsoutput.UV;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -173,23 +171,22 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
     vec3 worldBinormal = cross(worldNormal, worldTangent);
     vec2 uv1 = Input.UV1;
     vec2 uv2 = Input.UV1;
-    uv1.y = _256.mUVInversed.x + (_256.mUVInversed.y * uv1.y);
-    uv2.y = _256.mUVInversed.x + (_256.mUVInversed.y * uv2.y);
+    uv1.y = _255.mUVInversed.x + (_255.mUVInversed.y * uv1.y);
+    uv2.y = _255.mUVInversed.x + (_255.mUVInversed.y * uv2.y);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
-    vec4 cameraPos = vec4(worldPos, 1.0) * _256.mCamera;
+    vec4 cameraPos = vec4(worldPos, 1.0) * _255.mCamera;
     cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * _256.mProj;
-    Output.WorldP = worldPos;
+    Output.Position = cameraPos * _255.mProj;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -219,7 +216,6 @@ void main()
     gl_Position = _position;
     _entryPointOutput_VColor = flattenTemp.VColor;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_WorldP = flattenTemp.WorldP;
     _entryPointOutput_WorldN = flattenTemp.WorldN;
     _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_WorldB = flattenTemp.WorldB;

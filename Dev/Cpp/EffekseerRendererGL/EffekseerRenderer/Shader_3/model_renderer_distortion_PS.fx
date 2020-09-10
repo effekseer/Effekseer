@@ -7,7 +7,6 @@ struct PS_Input
 {
     vec4 Position;
     vec2 UV;
-    vec4 Normal;
     vec4 Binormal;
     vec4 Tangent;
     vec4 Pos;
@@ -50,7 +49,6 @@ layout(binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
 layout(binding = 1) uniform sampler2D Sampler_g_backSampler;
 
 in vec2 _VSPS_UV;
-in vec4 _VSPS_Normal;
 in vec4 _VSPS_Binormal;
 in vec4 _VSPS_Tangent;
 in vec4 _VSPS_Pos;
@@ -177,7 +175,6 @@ void main()
     PS_Input Input;
     Input.Position = gl_FragCoord;
     Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
     Input.Pos = _VSPS_Pos;
@@ -186,7 +183,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _471 = _main(Input);
-    _entryPointOutput = _471;
+    vec4 _467 = _main(Input);
+    _entryPointOutput = _467;
 }
 

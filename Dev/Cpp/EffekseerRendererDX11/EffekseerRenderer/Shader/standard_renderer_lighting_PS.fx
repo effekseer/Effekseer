@@ -4,19 +4,18 @@ struct PS_Input
 	float4 Position : SV_POSITION;
 	float4 VColor : COLOR;
 	float2 UV : TEXCOORD0;
-	float3 WorldP : TEXCOORD1;
-	float3 WorldN : TEXCOORD2;
-	float3 WorldT : TEXCOORD3;
-	float3 WorldB : TEXCOORD4;
+	float3 WorldN : TEXCOORD1;
+	float3 WorldT : TEXCOORD2;
+	float3 WorldB : TEXCOORD3;
 
-	float4 Alpha_Dist_UV : TEXCOORD5;
-	float4 Blend_Alpha_Dist_UV : TEXCOORD6;
+	float4 Alpha_Dist_UV : TEXCOORD4;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
 
 	// BlendUV, FlipbookNextIndexUV
-	float4 Blend_FBNextIndex_UV : TEXCOORD7;
+	float4 Blend_FBNextIndex_UV : TEXCOORD6;
 
 	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD8;
+	float2 Others : TEXCOORD7;
 };
 
 cbuffer PS_ConstanBuffer : register(b0)

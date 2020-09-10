@@ -2,7 +2,6 @@ struct VS_Output
 {
     float4 Position;
     float2 UV;
-    float4 Normal;
     float4 Binormal;
     float4 Tangent;
     float4 Pos;
@@ -24,7 +23,7 @@ struct VS_Input
     float Index;
 };
 
-static const VS_Output _497 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+static const VS_Output _497 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -57,7 +56,6 @@ static float2 Input_UV;
 static float4 Input_Color;
 static float Input_Index;
 static float2 _entryPointOutput_UV;
-static float4 _entryPointOutput_Normal;
 static float4 _entryPointOutput_Binormal;
 static float4 _entryPointOutput_Tangent;
 static float4 _entryPointOutput_Pos;
@@ -81,15 +79,14 @@ struct SPIRV_Cross_Input
 struct SPIRV_Cross_Output
 {
     float2 _entryPointOutput_UV : TEXCOORD0;
-    float4 _entryPointOutput_Normal : TEXCOORD1;
-    float4 _entryPointOutput_Binormal : TEXCOORD2;
-    float4 _entryPointOutput_Tangent : TEXCOORD3;
-    float4 _entryPointOutput_Pos : TEXCOORD4;
-    float4 _entryPointOutput_Color : TEXCOORD5;
-    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD6;
-    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD7;
-    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD8;
-    float2 _entryPointOutput_Others : TEXCOORD9;
+    float4 _entryPointOutput_Binormal : TEXCOORD1;
+    float4 _entryPointOutput_Tangent : TEXCOORD2;
+    float4 _entryPointOutput_Pos : TEXCOORD3;
+    float4 _entryPointOutput_Color : TEXCOORD4;
+    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD6;
+    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD7;
+    float2 _entryPointOutput_Others : TEXCOORD8;
     float4 gl_Position : POSITION;
 };
 
@@ -245,20 +242,16 @@ VS_Output _main(VS_Input Input)
     float modelAlphaThreshold = _364_fModelAlphaThreshold[uint(Input.Index)].x;
     VS_Output Output = _497;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0f);
     float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
     float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0f);
     localPosition = mul(matModel, localPosition);
-    localNormal = mul(matModel, localNormal);
     localBinormal = mul(matModel, localBinormal);
     localTangent = mul(matModel, localTangent);
-    localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
     Output.Position = mul(_364_mCameraProj, localPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.Normal = mul(_364_mCameraProj, localNormal);
     Output.Binormal = mul(_364_mCameraProj, localBinormal);
     Output.Tangent = mul(_364_mCameraProj, localTangent);
     Output.Pos = Output.Position;
@@ -291,7 +284,6 @@ void vert_main()
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.Position;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_Normal = flattenTemp.Normal;
     _entryPointOutput_Binormal = flattenTemp.Binormal;
     _entryPointOutput_Tangent = flattenTemp.Tangent;
     _entryPointOutput_Pos = flattenTemp.Pos;
@@ -317,7 +309,6 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     SPIRV_Cross_Output stage_output;
     stage_output.gl_Position = gl_Position;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
-    stage_output._entryPointOutput_Normal = _entryPointOutput_Normal;
     stage_output._entryPointOutput_Binormal = _entryPointOutput_Binormal;
     stage_output._entryPointOutput_Tangent = _entryPointOutput_Tangent;
     stage_output._entryPointOutput_Pos = _entryPointOutput_Pos;

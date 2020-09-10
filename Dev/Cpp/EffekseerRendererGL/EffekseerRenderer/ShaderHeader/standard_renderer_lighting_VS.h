@@ -24,7 +24,6 @@ struct VS_Output
     vec4 Position;
     vec4 VColor;
     vec2 UV;
-    vec3 WorldP;
     vec3 WorldN;
     vec3 WorldT;
     vec3 WorldB;
@@ -57,7 +56,6 @@ attribute float Input_FlipbookIndex;
 attribute float Input_AlphaThreshold;
 varying vec4 _VSPS_VColor;
 varying vec2 _VSPS_UV;
-varying vec3 _VSPS_WorldP;
 varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
@@ -188,7 +186,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
@@ -204,7 +202,6 @@ VS_Output _main(VS_Input Input)
     vec4 cameraPos = CBVS0.mCamera * vec4(worldPos, 1.0);
     cameraPos /= vec4(cameraPos.w);
     Output.Position = CBVS0.mProj * cameraPos;
-    Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -232,7 +229,6 @@ void main()
     gl_Position = flattenTemp.Position;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_WorldP = flattenTemp.WorldP;
     _VSPS_WorldN = flattenTemp.WorldN;
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
@@ -270,7 +266,6 @@ struct VS_Output
     vec4 Position;
     vec4 VColor;
     vec2 UV;
-    vec3 WorldP;
     vec3 WorldN;
     vec3 WorldT;
     vec3 WorldB;
@@ -303,7 +298,6 @@ layout(location = 9) in float Input_FlipbookIndex;
 layout(location = 10) in float Input_AlphaThreshold;
 out vec4 _VSPS_VColor;
 out vec2 _VSPS_UV;
-out vec3 _VSPS_WorldP;
 out vec3 _VSPS_WorldN;
 out vec3 _VSPS_WorldT;
 out vec3 _VSPS_WorldB;
@@ -425,7 +419,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
@@ -441,7 +435,6 @@ VS_Output _main(VS_Input Input)
     vec4 cameraPos = vec4(worldPos, 1.0) * CBVS0.mCamera;
     cameraPos /= vec4(cameraPos.w);
     Output.Position = cameraPos * CBVS0.mProj;
-    Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -469,7 +462,6 @@ void main()
     gl_Position = flattenTemp.Position;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_WorldP = flattenTemp.WorldP;
     _VSPS_WorldN = flattenTemp.WorldN;
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
@@ -504,7 +496,6 @@ struct VS_Output
     vec4 Position;
     vec4 VColor;
     vec2 UV;
-    vec3 WorldP;
     vec3 WorldN;
     vec3 WorldT;
     vec3 WorldB;
@@ -537,7 +528,6 @@ attribute float Input_FlipbookIndex;
 attribute float Input_AlphaThreshold;
 varying vec4 _VSPS_VColor;
 varying vec2 _VSPS_UV;
-varying vec3 _VSPS_WorldP;
 varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
@@ -668,7 +658,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
@@ -684,7 +674,6 @@ VS_Output _main(VS_Input Input)
     vec4 cameraPos = CBVS0.mCamera * vec4(worldPos, 1.0);
     cameraPos /= vec4(cameraPos.w);
     Output.Position = CBVS0.mProj * cameraPos;
-    Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -712,7 +701,6 @@ void main()
     gl_Position = flattenTemp.Position;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_WorldP = flattenTemp.WorldP;
     _VSPS_WorldN = flattenTemp.WorldN;
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
@@ -747,7 +735,6 @@ struct VS_Output
     vec4 Position;
     vec4 VColor;
     vec2 UV;
-    vec3 WorldP;
     vec3 WorldN;
     vec3 WorldT;
     vec3 WorldB;
@@ -780,7 +767,6 @@ layout(location = 9) in float Input_FlipbookIndex;
 layout(location = 10) in float Input_AlphaThreshold;
 out vec4 _VSPS_VColor;
 out vec2 _VSPS_UV;
-out vec3 _VSPS_WorldP;
 out vec3 _VSPS_WorldN;
 out vec3 _VSPS_WorldT;
 out vec3 _VSPS_WorldB;
@@ -902,7 +888,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
@@ -918,7 +904,6 @@ VS_Output _main(VS_Input Input)
     vec4 cameraPos = vec4(worldPos, 1.0) * CBVS0.mCamera;
     cameraPos /= vec4(cameraPos.w);
     Output.Position = cameraPos * CBVS0.mProj;
-    Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -946,7 +931,6 @@ void main()
     gl_Position = flattenTemp.Position;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_WorldP = flattenTemp.WorldP;
     _VSPS_WorldN = flattenTemp.WorldN;
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;

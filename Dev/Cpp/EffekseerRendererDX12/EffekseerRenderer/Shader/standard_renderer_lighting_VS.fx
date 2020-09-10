@@ -18,7 +18,6 @@ struct VS_Output
     float4 Position;
     float4 VColor;
     float2 UV;
-    float3 WorldP;
     float3 WorldN;
     float3 WorldT;
     float3 WorldB;
@@ -28,14 +27,14 @@ struct VS_Output
     float2 Others;
 };
 
-static const VS_Output _348 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+static const VS_Output _348 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _256_mCamera : packoffset(c0);
-    column_major float4x4 _256_mProj : packoffset(c4);
-    float4 _256_mUVInversed : packoffset(c8);
-    float4 _256_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _255_mCamera : packoffset(c0);
+    column_major float4x4 _255_mProj : packoffset(c4);
+    float4 _255_mUVInversed : packoffset(c8);
+    float4 _255_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -53,7 +52,6 @@ static float Input_FlipbookIndex;
 static float Input_AlphaThreshold;
 static float4 _entryPointOutput_VColor;
 static float2 _entryPointOutput_UV;
-static float3 _entryPointOutput_WorldP;
 static float3 _entryPointOutput_WorldN;
 static float3 _entryPointOutput_WorldT;
 static float3 _entryPointOutput_WorldB;
@@ -81,14 +79,13 @@ struct SPIRV_Cross_Output
 {
     float4 _entryPointOutput_VColor : TEXCOORD0;
     float2 _entryPointOutput_UV : TEXCOORD1;
-    float3 _entryPointOutput_WorldP : TEXCOORD2;
-    float3 _entryPointOutput_WorldN : TEXCOORD3;
-    float3 _entryPointOutput_WorldT : TEXCOORD4;
-    float3 _entryPointOutput_WorldB : TEXCOORD5;
-    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD6;
-    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD7;
-    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD8;
-    float2 _entryPointOutput_Others : TEXCOORD9;
+    float3 _entryPointOutput_WorldN : TEXCOORD2;
+    float3 _entryPointOutput_WorldT : TEXCOORD3;
+    float3 _entryPointOutput_WorldB : TEXCOORD4;
+    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD6;
+    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD7;
+    float2 _entryPointOutput_Others : TEXCOORD8;
     float4 gl_Position : SV_Position;
 };
 
@@ -201,18 +198,18 @@ void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 f
 void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutput)
 {
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
-    vsoutput.Alpha_Dist_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
     vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_FBNextIndex_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
-    vsoutput.Blend_Alpha_Dist_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Blend_Alpha_Dist_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
     float flipbookRate = 0.0f;
     float2 flipbookNextIndexUV = 0.0f.xx;
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = _256_mflipbookParameter;
+    float4 param_2 = _255_mflipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     float2 param_4 = vsoutput.UV;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -232,16 +229,15 @@ VS_Output _main(VS_Input Input)
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
     float2 uv2 = Input.UV1;
-    uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
-    uv2.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv2.y);
+    uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
+    uv2.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv2.y);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
     float3 pixelNormalDir = float3(0.5f, 0.5f, 1.0f);
-    float4 cameraPos = mul(_256_mCamera, float4(worldPos, 1.0f));
+    float4 cameraPos = mul(_255_mCamera, float4(worldPos, 1.0f));
     cameraPos /= cameraPos.w.xxxx;
-    Output.Position = mul(_256_mProj, cameraPos);
-    Output.WorldP = worldPos;
+    Output.Position = mul(_255_mProj, cameraPos);
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -269,7 +265,6 @@ void vert_main()
     gl_Position = flattenTemp.Position;
     _entryPointOutput_VColor = flattenTemp.VColor;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_WorldP = flattenTemp.WorldP;
     _entryPointOutput_WorldN = flattenTemp.WorldN;
     _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_WorldB = flattenTemp.WorldB;
@@ -297,7 +292,6 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output.gl_Position = gl_Position;
     stage_output._entryPointOutput_VColor = _entryPointOutput_VColor;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
-    stage_output._entryPointOutput_WorldP = _entryPointOutput_WorldP;
     stage_output._entryPointOutput_WorldN = _entryPointOutput_WorldN;
     stage_output._entryPointOutput_WorldT = _entryPointOutput_WorldT;
     stage_output._entryPointOutput_WorldB = _entryPointOutput_WorldB;

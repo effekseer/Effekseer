@@ -8,7 +8,6 @@ struct PS_Input
     vec4 Position;
     vec4 VColor;
     vec2 UV;
-    vec3 WorldP;
     vec3 WorldN;
     vec3 WorldT;
     vec3 WorldB;
@@ -55,7 +54,6 @@ layout(binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
 
 in vec4 _VSPS_VColor;
 in vec2 _VSPS_UV;
-in vec3 _VSPS_WorldP;
 in vec3 _VSPS_WorldN;
 in vec3 _VSPS_WorldT;
 in vec3 _VSPS_WorldB;
@@ -162,16 +160,16 @@ vec4 _main(PS_Input Input)
     vec4 param_7 = Output;
     ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_7;
-    vec3 _378 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_378.x, _378.y, _378.z, Output.w);
+    vec3 _377 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_377.x, _377.y, _377.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _403 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_403.x, _403.y, _403.z, Output.w);
-    vec3 _424 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_424.x, _424.y, _424.z, Output.w);
+    vec3 _402 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
+    Output = vec4(_402.x, _402.y, _402.z, Output.w);
+    vec3 _423 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_423.x, _423.y, _423.z, Output.w);
     return Output;
 }
 
@@ -181,7 +179,6 @@ void main()
     Input.Position = gl_FragCoord;
     Input.VColor = _VSPS_VColor;
     Input.UV = _VSPS_UV;
-    Input.WorldP = _VSPS_WorldP;
     Input.WorldN = _VSPS_WorldN;
     Input.WorldT = _VSPS_WorldT;
     Input.WorldB = _VSPS_WorldB;
@@ -189,7 +186,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _470 = _main(Input);
-    _entryPointOutput = _470;
+    vec4 _466 = _main(Input);
+    _entryPointOutput = _466;
 }
 

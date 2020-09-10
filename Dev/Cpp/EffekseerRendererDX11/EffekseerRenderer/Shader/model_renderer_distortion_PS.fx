@@ -38,21 +38,19 @@ struct PS_Input
 {
 	float4 Position		: SV_POSITION;
 	float2 UV		: TEXCOORD0;
-	float4 Normal		: TEXCOORD1;
-	float4 Binormal		: TEXCOORD2;
-	float4 Tangent		: TEXCOORD3;
-	float4 Pos		: TEXCOORD4;
+	float4 Binormal		: TEXCOORD1;
+	float4 Tangent		: TEXCOORD2;
+	float4 Pos		: TEXCOORD3;
 	float4 Color		: COLOR0;
 
-
-	float4 Alpha_Dist_UV : TEXCOORD5;
-	float4 Blend_Alpha_Dist_UV : TEXCOORD6;
+	float4 Alpha_Dist_UV : TEXCOORD4;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
 
 	// BlendUV, FlipbookNextIndexUV
-	float4 Blend_FBNextIndex_UV : TEXCOORD7;
+	float4 Blend_FBNextIndex_UV : TEXCOORD6;
 
 	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD8;
+	float2 Others : TEXCOORD7;
 };
 
 #include "renderer_common_PS.fx"
