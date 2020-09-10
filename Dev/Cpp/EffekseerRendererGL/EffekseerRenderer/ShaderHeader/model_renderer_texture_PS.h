@@ -899,7 +899,7 @@ void main()
             return model_renderer_texture_PS_gl2;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return model_renderer_texture_PS_gles3;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)
             return model_renderer_texture_PS_gles2;
         return nullptr;
     }

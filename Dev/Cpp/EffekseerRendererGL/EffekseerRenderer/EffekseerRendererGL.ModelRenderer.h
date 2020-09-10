@@ -43,6 +43,8 @@ private:
 	Shader* shader_unlit_ = nullptr;
 	Shader* shader_distortion_ = nullptr;
 
+	template<int N>
+	void InitRenderer();
 
 	ModelRenderer(RendererImplemented* renderer,
 				  Shader* shader_ad_lit,

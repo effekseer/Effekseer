@@ -175,7 +175,7 @@ protected:
 				}
 				else
 				{
-					maincode << GetType(material->GetCustomData1Count()) + " customData1 = customData1_[Input.Index.x];\n";
+					maincode << GetType(material->GetCustomData1Count()) + " customData1 = customData1_[Input.Index];\n";
 				}
 				maincode << "Output.CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
 			}
@@ -188,7 +188,7 @@ protected:
 				}
 				else
 				{
-					maincode << GetType(material->GetCustomData2Count()) + " customData2 = customData2_[Input.Index.x];\n";
+					maincode << GetType(material->GetCustomData2Count()) + " customData2 = customData2_[Input.Index];\n";
 				}
 				maincode << "Output.CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
 			}

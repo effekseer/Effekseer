@@ -25,8 +25,10 @@ struct VS_Input
 	float3 Tangent : NORMAL2;
 	float2 UV : TEXCOORD0;
 	float4 Color : NORMAL3;
-#ifndef DISABLE_INSTANCE
-	uint4 Index : BLENDINDICES0;
+#if defined(ENABLE_DIVISOR)
+	float Index		: BLENDINDICES0;
+#elif !defined(DISABLE_INSTANCE)
+	uint Index	: SV_InstanceID;
 #endif
 };
 
@@ -48,9 +50,9 @@ VS_Output main(const VS_Input Input)
 	float4 uv = fUV;
 	float4 modelColor = fModelColor * Input.Color;
 #else
-	float4x4 matModel = mModel[Input.Index.x];
-	float4 uv = fUV[Input.Index.x];
-	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
+	float4x4 matModel = mModel[Input.Index];
+	float4 uv = fUV[Input.Index];
+	float4 modelColor = fModelColor[Input.Index] * Input.Color;
 #endif
 
 	VS_Output Output = (VS_Output)0;

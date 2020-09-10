@@ -369,7 +369,7 @@ void main()
             return sprite_distortion_vs_gl2;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return sprite_distortion_vs_gles3;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)
             return sprite_distortion_vs_gles2;
         return nullptr;
     }

@@ -47,8 +47,10 @@ struct VS_Input
 	float3 Tangent		: NORMAL2;
 	float2 UV		: TEXCOORD0;
 	float4 Color : NORMAL3;
-#ifndef DISABLE_INSTANCE
-	uint4 Index		: BLENDINDICES0;
+#if defined(ENABLE_DIVISOR)
+	float Index		: BLENDINDICES0;
+#elif !defined(DISABLE_INSTANCE)
+	uint Index	: SV_InstanceID;
 #endif
 };
 
@@ -87,16 +89,16 @@ VS_Output main( const VS_Input Input )
     float flipbookIndexAndNextRate = fFlipbookIndexAndNextRate.x;
     float modelAlphaThreshold = fModelAlphaThreshold.x;
 #else
-	float4x4 matModel = mModel[Input.Index.x];
-		float4 uv = fUV[Input.Index.x];
-		float4 modelColor = fModelColor[Input.Index.x];
-    float4 alphaUV = fAlphaUV[Input.Index.x];
-    float4 uvDistortionUV = fUVDistortionUV[Input.Index.x];
-    float4 blendUV = fBlendUV[Input.Index.x];
-    float4 blendAlphaUV = fBlendAlphaUV[Input.Index.x];
-    float4 blendUVDistortionUV = fBlendUVDistortionUV[Input.Index.x];
-    float flipbookIndexAndNextRate = fFlipbookIndexAndNextRate[Input.Index.x].x;
-    float modelAlphaThreshold = fModelAlphaThreshold[Input.Index.x].x;
+	float4x4 matModel = mModel[Input.Index];
+		float4 uv = fUV[Input.Index];
+		float4 modelColor = fModelColor[Input.Index];
+    float4 alphaUV = fAlphaUV[Input.Index];
+    float4 uvDistortionUV = fUVDistortionUV[Input.Index];
+    float4 blendUV = fBlendUV[Input.Index];
+    float4 blendAlphaUV = fBlendAlphaUV[Input.Index];
+    float4 blendUVDistortionUV = fBlendUVDistortionUV[Input.Index];
+    float flipbookIndexAndNextRate = fFlipbookIndexAndNextRate[Input.Index].x;
+    float modelAlphaThreshold = fModelAlphaThreshold[Input.Index].x;
 #endif
 
 		VS_Output Output = (VS_Output) 0;

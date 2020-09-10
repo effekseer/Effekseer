@@ -28,23 +28,23 @@ struct VS_Input
     float3 Tangent;
     float2 UV;
     float4 Color;
-    uint4 Index;
+    uint Index;
 };
 
 struct VS_ConstantBuffer
 {
     float4x4 mCameraProj;
-    float4x4 mModel[1];
-    float4 fUV[1];
-    float4 fAlphaUV[1];
-    float4 fUVDistortionUV[1];
-    float4 fBlendUV[1];
-    float4 fBlendAlphaUV[1];
-    float4 fBlendUVDistortionUV[1];
+    float4x4 mModel[10];
+    float4 fUV[10];
+    float4 fAlphaUV[10];
+    float4 fUVDistortionUV[10];
+    float4 fBlendUV[10];
+    float4 fBlendAlphaUV[10];
+    float4 fBlendUVDistortionUV[10];
     float4 fFlipbookParameter;
-    float4 fFlipbookIndexAndNextRate[1];
-    float4 fModelAlphaThreshold[1];
-    float4 fModelColor[1];
+    float4 fFlipbookIndexAndNextRate[10];
+    float4 fModelAlphaThreshold[10];
+    float4 fModelColor[10];
     float4 fLightDirection;
     float4 fLightColor;
     float4 fLightAmbient;
@@ -74,7 +74,6 @@ struct main0_in
     float3 Input_Tangent [[attribute(3)]];
     float2 Input_UV [[attribute(4)]];
     float4 Input_Color [[attribute(5)]];
-    uint4 Input_Index [[attribute(6)]];
 };
 
 // Implementation of the GLSL mod() function, which is slightly different than Metal fmod()
@@ -210,16 +209,16 @@ void CalculateAndStoreAdvancedParameter(thread const float2& uv, thread const fl
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_364)
 {
-    float4x4 matModel = transpose(v_364.mModel[Input.Index.x]);
-    float4 uv = v_364.fUV[Input.Index.x];
-    float4 modelColor = v_364.fModelColor[Input.Index.x];
-    float4 alphaUV = v_364.fAlphaUV[Input.Index.x];
-    float4 uvDistortionUV = v_364.fUVDistortionUV[Input.Index.x];
-    float4 blendUV = v_364.fBlendUV[Input.Index.x];
-    float4 blendAlphaUV = v_364.fBlendAlphaUV[Input.Index.x];
-    float4 blendUVDistortionUV = v_364.fBlendUVDistortionUV[Input.Index.x];
-    float flipbookIndexAndNextRate = v_364.fFlipbookIndexAndNextRate[Input.Index.x].x;
-    float modelAlphaThreshold = v_364.fModelAlphaThreshold[Input.Index.x].x;
+    float4x4 matModel = transpose(v_364.mModel[Input.Index]);
+    float4 uv = v_364.fUV[Input.Index];
+    float4 modelColor = v_364.fModelColor[Input.Index];
+    float4 alphaUV = v_364.fAlphaUV[Input.Index];
+    float4 uvDistortionUV = v_364.fUVDistortionUV[Input.Index];
+    float4 blendUV = v_364.fBlendUV[Input.Index];
+    float4 blendAlphaUV = v_364.fBlendAlphaUV[Input.Index];
+    float4 blendUVDistortionUV = v_364.fBlendUVDistortionUV[Input.Index];
+    float flipbookIndexAndNextRate = v_364.fFlipbookIndexAndNextRate[Input.Index].x;
+    float modelAlphaThreshold = v_364.fModelAlphaThreshold[Input.Index].x;
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
@@ -255,7 +254,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_364)
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_364 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_364 [[buffer(0)]], uint gl_InstanceIndex [[instance_id]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -265,7 +264,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     Input.Tangent = in.Input_Tangent;
     Input.UV = in.Input_UV;
     Input.Color = in.Input_Color;
-    Input.Index = in.Input_Index;
+    Input.Index = gl_InstanceIndex;
     VS_Output flattenTemp = _main(Input, v_364);
     out.gl_Position = flattenTemp.Position;
     out._entryPointOutput_UV = flattenTemp.UV;

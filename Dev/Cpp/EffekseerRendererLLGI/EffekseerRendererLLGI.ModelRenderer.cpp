@@ -11,6 +11,7 @@
 
 namespace EffekseerRendererLLGI
 {
+const int InstanceCount = 10;
 
 ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_ad_lit,
@@ -35,11 +36,11 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
-			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<1>));
+			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<InstanceCount>));
 			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedPixelConstantBuffer));
 		}
 
-		shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<1>));
+		shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<InstanceCount>));
 		shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
 	}
 
@@ -50,13 +51,15 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
-			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<InstanceCount>));
 			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 		}
 
-		m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+		m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<InstanceCount>));
 		m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
 	}
+
+	VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
 }
 
 ModelRenderer::~ModelRenderer()
@@ -83,7 +86,6 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 3});
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 5});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UINT, "TEXCOORD", 6});
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(),
 															fixedShader->ModelLit_VS.data(),
@@ -176,13 +178,13 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	model->LoadToGPU();
+	model->LoadToGPUWithoutIndex();
 	if (!model->IsLoadedOnGPU)
 	{
 		return;
 	}
 
-	EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, false, 1>(
+	EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, true, InstanceCount>(
 		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
 }
 

@@ -887,6 +887,13 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	GetContext()->DrawIndexed(indexCount, 0, 0);
 }
 
+void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount)
+{
+	impl->drawcallCount++;
+	impl->drawvertexCount += vertexCount * instanceCount;
+	GetContext()->DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+}
+
 Shader* RendererImplemented::GetShader(::EffekseerRenderer::StandardRendererShaderType type) const
 {
 	if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedBackDistortion)

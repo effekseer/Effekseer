@@ -967,7 +967,7 @@ void main()
             return standard_renderer_lighting_VS_gl2;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return standard_renderer_lighting_VS_gles3;
-        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2 || deviceType == EffekseerRendererGL::OpenGLDeviceType::Emscripten)
+        if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)
             return standard_renderer_lighting_VS_gles2;
         return nullptr;
     }

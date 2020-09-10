@@ -82,6 +82,12 @@ typedef void*(EFK_STDCALL* FP_glMapBuffer)(GLenum target, GLenum access);
 typedef void*(EFK_STDCALL* FP_glMapBufferRange)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 typedef GLboolean(EFK_STDCALL* FP_glUnmapBuffer)(GLenum target);
 
+typedef void(EFK_STDCALL* FP_glDrawElementsInstanced)(GLenum mode,
+													  GLsizei count,
+													  GLenum type,
+													  const void* indices,
+													  GLsizei primcount);
+
 typedef void(EFK_STDCALL* FP_glCompressedTexImage2D)(
 	GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data);
 
@@ -127,6 +133,8 @@ static FP_glBindSampler g_glBindSampler = nullptr;
 static FP_glMapBuffer g_glMapBuffer = NULL;
 static FP_glMapBufferRange g_glMapBufferRange = NULL;
 static FP_glUnmapBuffer g_glUnmapBuffer = NULL;
+
+static FP_glDrawElementsInstanced g_glDrawElementsInstanced = nullptr;
 
 static FP_glCompressedTexImage2D g_glCompressedTexImage2D = nullptr;
 
@@ -231,6 +239,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glMapBuffer);
 	GET_PROC(glMapBufferRange);
 	GET_PROC(glUnmapBuffer);
+
+	GET_PROC(glDrawElementsInstanced);
 
 	GET_PROC(glCompressedTexImage2D);
 
@@ -716,6 +726,19 @@ GLboolean glUnmapBuffer(GLenum target)
 	return g_glUnmapBufferOES(target);
 #else
 	return ::glUnmapBuffer(target);
+#endif
+}
+
+void glDrawElementsInstanced(GLenum mode,
+							 GLsizei count,
+							 GLenum type,
+							 const void* indices,
+							 GLsizei primcount)
+{
+#if _WIN32
+	return g_glDrawElementsInstanced(mode, count, type, indices, primcount);
+#else
+	return ::glDrawElementsInstanced(mode, count, type, indices, primcount);
 #endif
 }
 

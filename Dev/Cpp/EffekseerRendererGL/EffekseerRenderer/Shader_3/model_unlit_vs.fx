@@ -2,6 +2,9 @@
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require
 #endif
+#ifdef GL_ARB_shader_draw_parameters
+#extension GL_ARB_shader_draw_parameters : enable
+#endif
 
 struct VS_Input
 {
@@ -11,6 +14,7 @@ struct VS_Input
     vec3 Tangent;
     vec2 UV;
     vec4 Color;
+    uint Index;
 };
 
 struct VS_Output
@@ -23,9 +27,9 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     mat4 mCameraProj;
-    mat4 mModel;
-    vec4 fUV;
-    vec4 fModelColor;
+    mat4 mModel[10];
+    vec4 fUV[10];
+    vec4 fModelColor[10];
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
@@ -40,16 +44,22 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
+#ifdef GL_ARB_shader_draw_parameters
+#define SPIRV_Cross_BaseInstance gl_BaseInstanceARB
+#else
+uniform int SPIRV_Cross_BaseInstance;
+#endif
 out vec2 _VSPS_UV;
 out vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
-    vec4 uv = CBVS0.fUV;
-    vec4 modelColor = CBVS0.fModelColor * Input.Color;
+    mat4 matModel = CBVS0.mModel[Input.Index];
+    vec4 uv = CBVS0.fUV[Input.Index];
+    vec4 modelColor = CBVS0.fModelColor[Input.Index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPosition = localPosition * CBVS0.mModel;
+    vec4 cameraPosition = localPosition * matModel;
     Output.Pos = cameraPosition * CBVS0.mCameraProj;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
@@ -67,6 +77,7 @@ void main()
     Input.Tangent = Input_Tangent;
     Input.UV = Input_UV;
     Input.Color = Input_Color;
+    Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.Pos;
     _VSPS_UV = flattenTemp.UV;

@@ -113,7 +113,8 @@ MaterialLoader ::~MaterialLoader()
 									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
 									binary->GetPixelShaderSize(shaderTypes[st]),
 									"MaterialStandardRenderer",
-									decl, true);
+									decl,
+									true);
 		}
 		else
 		{
@@ -173,7 +174,8 @@ MaterialLoader ::~MaterialLoader()
 									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
 									binary->GetPixelShaderSize(shaderTypes[st]),
 									"MaterialStandardRenderer",
-									decl, true);
+									decl,
+									true);
 		}
 
 		if (shader == nullptr)
@@ -183,9 +185,9 @@ MaterialLoader ::~MaterialLoader()
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
 
 		shader->SetVertexConstantBufferSize(vertexUniformSize);
-		
+
 		shader->SetPixelConstantBufferSize(pixelUniformSize);
-		
+
 		materialData->TextureCount = material.GetTextureCount();
 		materialData->UniformCount = material.GetUniformCount();
 
@@ -209,7 +211,7 @@ MaterialLoader ::~MaterialLoader()
 									{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
 									{0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 									{0, 56, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 3},
-									{0, 60, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0},
+									{1, 0, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0},
 									D3DDECL_END()};
 
 		// compile

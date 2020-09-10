@@ -179,7 +179,6 @@ Model::Model(uint8_t* data, int32_t size, int maximumModelCount, Effekseer::Back
 	, InternalModels(nullptr)
 	, ModelCount(0)
 {
-	this->m_vertexSize = sizeof(VertexWithIndex);
 	ES_SAFE_ADDREF(graphicsDevice_);
 
 	ModelCount = Effekseer::Min(Effekseer::Max(GetModelCount(), 1), maximumModelCount);
@@ -189,79 +188,6 @@ Model::~Model()
 {
 	ES_SAFE_DELETE_ARRAY(InternalModels);
 	ES_SAFE_RELEASE(graphicsDevice_);
-}
-
-bool Model::LoadToGPU()
-{
-	if (IsLoadedOnGPU)
-	{
-		return false;
-	}
-
-	InternalModels = new Model::InternalModel[GetFrameCount()];
-
-	for (int32_t f = 0; f < GetFrameCount(); f++)
-	{
-		InternalModels[f].VertexCount = GetVertexCount(f);
-
-		{
-			ES_SAFE_RELEASE(InternalModels[f].VertexBuffer);
-
-			std::vector<Effekseer::Model::VertexWithIndex> vs;
-			for (int32_t m = 0; m < ModelCount; m++)
-			{
-				for (int32_t i = 0; i < GetVertexCount(f); i++)
-				{
-					Effekseer::Model::VertexWithIndex v;
-					v.Position = GetVertexes(f)[i].Position;
-					v.Normal = GetVertexes(f)[i].Normal;
-					v.Binormal = GetVertexes(f)[i].Binormal;
-					v.Tangent = GetVertexes(f)[i].Tangent;
-					v.UV = GetVertexes(f)[i].UV;
-					v.VColor = GetVertexes(f)[i].VColor;
-					v.Index[0] = m;
-
-					vs.push_back(v);
-				}
-			}
-
-			InternalModels[f].VertexBuffer = graphicsDevice_->CreateVertexBuffer(sizeof(Effekseer::Model::VertexWithIndex) * GetVertexCount(f) * ModelCount, vs.data(), false);
-			if (InternalModels[f].VertexBuffer == nullptr)
-			{
-				return false;
-			}
-		}
-
-		InternalModels[f].FaceCount = GetFaceCount(f);
-		InternalModels[f].IndexCount = InternalModels[f].FaceCount * 3;
-
-		{
-			ES_SAFE_RELEASE(InternalModels[f].IndexBuffer);
-
-			std::vector<Effekseer::Model::Face> fs;
-			for (int32_t m = 0; m < ModelCount; m++)
-			{
-				for (int32_t i = 0; i < InternalModels[f].FaceCount; i++)
-				{
-					Effekseer::Model::Face face;
-					face.Indexes[0] = GetFaces(f)[i].Indexes[0] + GetVertexCount(f) * m;
-					face.Indexes[1] = GetFaces(f)[i].Indexes[1] + GetVertexCount(f) * m;
-					face.Indexes[2] = GetFaces(f)[i].Indexes[2] + GetVertexCount(f) * m;
-					fs.push_back(face);
-				}
-			}
-
-			InternalModels[f].IndexBuffer = graphicsDevice_->CreateIndexBuffer(3 * InternalModels[f].FaceCount * ModelCount, fs.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
-			if (InternalModels[f].IndexBuffer == nullptr)
-			{
-				return false;
-			}
-		}
-	}
-
-	IsLoadedOnGPU = true;
-
-	return true;
 }
 
 bool Model::LoadToGPUWithoutIndex()

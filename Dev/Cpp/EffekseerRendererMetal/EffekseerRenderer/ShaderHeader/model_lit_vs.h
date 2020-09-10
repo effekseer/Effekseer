@@ -14,7 +14,7 @@ struct VS_Input
     float3 Tangent;
     float2 UV;
     float4 Color;
-    uint4 Index;
+    uint Index;
 };
 
 struct VS_Output
@@ -30,9 +30,9 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     float4x4 mCameraProj;
-    float4x4 mModel[1];
-    float4 fUV[1];
-    float4 fModelColor[1];
+    float4x4 mModel[10];
+    float4 fUV[10];
+    float4 fModelColor[10];
     float4 fLightDirection;
     float4 fLightColor;
     float4 fLightAmbient;
@@ -57,19 +57,18 @@ struct main0_in
     float3 Input_Tangent [[attribute(3)]];
     float2 Input_UV [[attribute(4)]];
     float4 Input_Color [[attribute(5)]];
-    uint4 Input_Index [[attribute(6)]];
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_27)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_26)
 {
-    float4x4 matModel = transpose(v_27.mModel[Input.Index.x]);
-    float4 uv = v_27.fUV[Input.Index.x];
-    float4 modelColor = v_27.fModelColor[Input.Index.x] * Input.Color;
+    float4x4 matModel = transpose(v_26.mModel[Input.Index]);
+    float4 uv = v_26.fUV[Input.Index];
+    float4 modelColor = v_26.fModelColor[Input.Index] * Input.Color;
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 cameraPosition = localPosition * matModel;
-    Output.Pos = v_27.mCameraProj * cameraPosition;
+    Output.Pos = v_26.mCameraProj * cameraPosition;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
@@ -82,11 +81,11 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_27)
     Output.Normal = localNormal.xyz;
     Output.Binormal = localBinormal.xyz;
     Output.Tangent = localTangent.xyz;
-    Output.UV.y = v_27.mUVInversed.x + (v_27.mUVInversed.y * Output.UV.y);
+    Output.UV.y = v_26.mUVInversed.x + (v_26.mUVInversed.y * Output.UV.y);
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_27 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_26 [[buffer(0)]], uint gl_InstanceIndex [[instance_id]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -96,8 +95,8 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.Tangent = in.Input_Tangent;
     Input.UV = in.Input_UV;
     Input.Color = in.Input_Color;
-    Input.Index = in.Input_Index;
-    VS_Output flattenTemp = _main(Input, v_27);
+    Input.Index = gl_InstanceIndex;
+    VS_Output flattenTemp = _main(Input, v_26);
     out.gl_Position = flattenTemp.Pos;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_Normal = flattenTemp.Normal;

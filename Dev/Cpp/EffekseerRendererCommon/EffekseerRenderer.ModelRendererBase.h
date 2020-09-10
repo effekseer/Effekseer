@@ -431,6 +431,12 @@ struct ModelRendererDistortionPixelConstantBuffer
 	float TextureBlendType[4];
 };
 
+enum class ModelRendererVertexType
+{
+	Instancing,
+	Single,
+};
+
 class ModelRendererBase : public ::Effekseer::ModelRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
@@ -752,6 +758,9 @@ protected:
 	}
 
 public:
+
+	ModelRendererVertexType VertexType = ModelRendererVertexType::Single;
+
 	virtual ~ModelRendererBase()
 	{
 	}
@@ -1501,7 +1510,14 @@ public:
 
 				shader_->SetConstantBuffer();
 
-				renderer->DrawPolygon(imodel.VertexCount * modelCount, imodel.IndexCount * modelCount);
+				if (VertexType == ModelRendererVertexType::Instancing)
+				{
+					renderer->DrawPolygonInstanced(imodel.VertexCount, imodel.IndexCount, modelCount);
+				}
+				else
+				{
+					renderer->DrawPolygon(imodel.VertexCount * modelCount, imodel.IndexCount * modelCount);
+				}
 
 				loop += modelCount;
 			}

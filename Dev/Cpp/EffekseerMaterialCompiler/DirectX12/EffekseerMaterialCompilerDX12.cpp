@@ -57,6 +57,8 @@ namespace DX12
 namespace Effekseer
 {
 
+static const int32_t InstanceCount = 10;
+
 class CompiledMaterialBinaryDX12 : public CompiledMaterialBinary, ReferenceObject
 {
 private:
@@ -183,7 +185,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(Material* material, int32_
 												  DX12::g_material_ps_suf2_refraction,
 												  DirectX::ShaderGeneratorTarget::DirectX12);
 
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 0, 1);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 0, InstanceCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
