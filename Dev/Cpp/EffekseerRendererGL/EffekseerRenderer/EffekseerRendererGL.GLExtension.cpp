@@ -757,8 +757,7 @@ void glDrawElementsInstanced(GLenum mode,
 #ifdef EMSCRIPTEN
 	return g_glDrawElementsInstancedANGLE(mode, count, type, indices, primcount);
 #endif
-	return nullptr;
-
+	return;
 #else
 	return ::glDrawElementsInstanced(mode, count, type, indices, primcount);
 #endif
