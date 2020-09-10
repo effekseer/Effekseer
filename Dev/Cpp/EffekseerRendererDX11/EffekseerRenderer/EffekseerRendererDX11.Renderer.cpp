@@ -37,37 +37,37 @@ namespace EffekseerRendererDX11
 namespace Standard_VS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_VS.h"
+#include "ShaderHeader/EffekseerRenderer.Standard_VS.h"
 } // namespace Standard_VS_Ad
 
 namespace Standard_PS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_PS.h"
+#include "ShaderHeader/EffekseerRenderer.Standard_PS.h"
 } // namespace Standard_PS_Ad
 
 namespace Standard_Distortion_VS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_Distortion_VS.h"
+#include "ShaderHeader/EffekseerRenderer.Standard_Distortion_VS.h"
 } // namespace Standard_Distortion_VS_Ad
 
 namespace Standard_Distortion_PS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
+#include "ShaderHeader/EffekseerRenderer.Standard_Distortion_PS.h"
 } // namespace Standard_Distortion_PS_Ad
 
 namespace Standard_Lighting_VS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_Lighting_VS.h"
+#include "ShaderHeader/EffekseerRenderer.Standard_Lighting_VS.h"
 } // namespace Standard_Lighting_VS_Ad
 
 namespace Standard_Lighting_PS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
+#include "ShaderHeader/EffekseerRenderer.Standard_Lighting_PS.h"
 } // namespace Standard_Lighting_PS_Ad
 
 namespace Standard_VS

@@ -16,38 +16,38 @@ namespace EffekseerRendererDX11
 namespace ShaderLightingVS_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
 }; // namespace ShaderLightingVS_
 
 namespace ShaderLightingPS_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
+#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
 
 } // namespace ShaderLightingPS_
 
 namespace ShaderVS_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
 } // namespace ShaderVS_
 
 namespace ShaderPS_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
 } // namespace ShaderPS_
 
 namespace ShaderDistortionVS_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
 } // namespace ShaderDistortionVS_
 
 namespace ShaderDistortionPS_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
 } // namespace ShaderDistortionPS_
 
 namespace ShaderLightingVS_15_
@@ -65,7 +65,7 @@ static
 
 namespace ShaderVS_15_
 {
-static 
+static
 #include "ShaderHeader/model_unlit_vs.h"
 } // namespace ShaderVS_15_
 
@@ -77,13 +77,13 @@ static
 
 namespace ShaderDistortionVS_15_
 {
-static 
+static
 #include "ShaderHeader/model_distortion_vs.h"
 } // namespace ShaderDistortionVS_15_
 
 namespace ShaderDistortionPS_15_
 {
-static 
+static
 #include "ShaderHeader/model_distortion_ps.h"
 } // namespace ShaderDistortionPS_15_
 
