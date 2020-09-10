@@ -148,6 +148,15 @@ typedef void* (*FP_glMapBufferOES)(GLenum target, GLenum access);
 typedef void* (*FP_glMapBufferRangeEXT)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 typedef GLboolean (*FP_glUnmapBufferOES)(GLenum target);
 
+#ifdef EMSCRIPTEN
+typedef void(EFK_STDCALL* FP_glDrawElementsInstancedANGLE)(GLenum mode,
+														   GLsizei count,
+														   GLenum type,
+														   const void* indices,
+														   GLsizei primcount);
+
+#endif
+
 static FP_glGenVertexArraysOES g_glGenVertexArraysOES = NULL;
 static FP_glDeleteVertexArraysOES g_glDeleteVertexArraysOES = NULL;
 static FP_glBindVertexArrayOES g_glBindVertexArrayOES = NULL;
@@ -155,6 +164,10 @@ static FP_glBindVertexArrayOES g_glBindVertexArrayOES = NULL;
 static FP_glMapBufferOES g_glMapBufferOES = NULL;
 static FP_glMapBufferRangeEXT g_glMapBufferRangeEXT = NULL;
 static FP_glUnmapBufferOES g_glUnmapBufferOES = NULL;
+
+#ifdef EMSCRIPTEN
+static FP_glDrawElementsInstancedANGLE g_glDrawElementsInstancedANGLE = NULL;
+#endif
 
 #endif
 
@@ -270,6 +283,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 	char* glExtensions = (char*)glGetString(GL_EXTENSIONS);
 
 #if defined(__EMSCRIPTEN__)
+	GET_PROC(glDrawElementsInstancedANGLE);
+
 	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES &&
 								((glExtensions && strstr(glExtensions, "OES_vertex_array_object")) ? true : false));
 #else
@@ -737,6 +752,13 @@ void glDrawElementsInstanced(GLenum mode,
 {
 #if _WIN32
 	return g_glDrawElementsInstanced(mode, count, type, indices, primcount);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+
+#ifdef EMSCRIPTEN
+	return ::glDrawElementsInstancedANGLE(mode, count, type, indices, primcount);
+#endif
+	return nullptr;
+
 #else
 	return ::glDrawElementsInstanced(mode, count, type, indices, primcount);
 #endif
