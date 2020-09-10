@@ -511,7 +511,22 @@ namespace Effekseer.Binary
 						{
 							if (!Curves.Contains(relative_path))
 							{
-								Curves.Add(relative_path);
+								if (relative_path != System.IO.Path.GetFileName(_node.LocationValues.NurbsCurve.FilePath.RelativePath))
+								{
+									relative_path = System.IO.Path.GetDirectoryName(relative_path) + "/" + System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkcurve";
+								}
+								else
+								{
+									relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkcurve";
+								}
+
+								if (relative_path != string.Empty)
+								{
+									if (!Curves.Contains(relative_path))
+									{
+										Curves.Add(relative_path);
+									}
+								}
 							}
 						}
 					}
