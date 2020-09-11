@@ -593,6 +593,11 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 			binaryReader.Read(Culling.Location.X);
 			binaryReader.Read(Culling.Location.Y);
 			binaryReader.Read(Culling.Location.Z);
+            
+            Culling.Sphere.Radius *= m_maginification;
+            Culling.Location.X *= m_maginification;
+            Culling.Location.Y *= m_maginification;
+            Culling.Location.Z *= m_maginification;
 		}
 	}
 
