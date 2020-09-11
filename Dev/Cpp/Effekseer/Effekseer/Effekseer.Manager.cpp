@@ -1,4 +1,5 @@
-
+#include "Effekseer.Manager.h"
+#include "Effekseer.ManagerImplemented.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
@@ -10,8 +11,6 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 #include "Effekseer.InstanceGroup.h"
-#include "Effekseer.Manager.h"
-#include "Effekseer.ManagerImplemented.h"
 
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.TextureLoader.h"
@@ -1279,7 +1278,7 @@ void ManagerImplemented::Flip()
 						location.Y = mat_->Y.GetW();
 						location.Z = mat_->Z.GetW();
 					}
-					
+
 					ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(location.X, location.Y, location.Z));
 
 					if (effect->Culling.Shape == CullingShape::Sphere)
@@ -1302,7 +1301,7 @@ void ManagerImplemented::Flip()
 
 					if (isCreated)
 					{
-						m_cullingWorld->AddObject(ds.CullingObjectPointer);					
+						m_cullingWorld->AddObject(ds.CullingObjectPointer);
 					}
 				}
 				ds.IsParameterChanged = false;
@@ -1722,7 +1721,7 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 
 	UpdateInstancesByInstanceGlobal(drawSet);
 	UpdateHandleInternal(drawSet);
-		
+
 	//drawSet.InstanceContainerPointer->Update(true, drawSet.IsShown);
 	drawSet.GlobalPointer->EndDeltaFrame();
 }
@@ -2219,7 +2218,6 @@ void ManagerImplemented::EndReloadEffect(Effect* effect, bool doLockThread)
 		auto pGlobal = ds.GlobalPointer;
 
 		ResetAndPlayWithDataSet(ds, ds.GlobalPointer->GetUpdatedFrame());
-
 	}
 
 	Flip();

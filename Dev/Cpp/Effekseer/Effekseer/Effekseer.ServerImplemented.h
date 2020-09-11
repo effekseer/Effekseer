@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_SERVER_IMPLEMENTED_H__
 #define __EFFEKSEER_SERVER_IMPLEMENTED_H__
 
+#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------
@@ -102,5 +103,6 @@ public:
 //----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif
 
 #endif // __EFFEKSEER_SERVER_IMPLEMENTED_H__

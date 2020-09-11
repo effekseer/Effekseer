@@ -1,14 +1,6 @@
-﻿
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#if defined(_M_X86) && defined(__x86__)
-#include <emmintrin.h>
-#endif
+﻿#include "Effekseer.Vector3D.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
-#include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.Vec3f.h"
 
 //----------------------------------------------------------------------------------

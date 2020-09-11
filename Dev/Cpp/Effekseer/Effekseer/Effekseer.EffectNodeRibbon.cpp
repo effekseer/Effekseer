@@ -1,8 +1,5 @@
-﻿
+﻿#include "Effekseer.EffectNodeRibbon.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Manager.h"
@@ -13,7 +10,6 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 
-#include "Effekseer.EffectNodeRibbon.h"
 #include "Effekseer.InstanceGroup.h"
 
 #include "Effekseer.Setting.h"

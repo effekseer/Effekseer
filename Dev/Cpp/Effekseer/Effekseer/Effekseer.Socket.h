@@ -11,7 +11,19 @@
 #include <stdio.h>
 
 #if defined(_WIN32) && !defined(_PS4)
-#include <windows.h>
+
+#ifdef __EFFEKSEER_FOR_UE4__
+#include "Windows/AllowWindowsPlatformTypes.h"
+#endif
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCKAPI_
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
+
+#ifdef __EFFEKSEER_FOR_UE4__
+#include "Windows/HideWindowsPlatformTypes.h"
+#endif
+
 #else
 #include <arpa/inet.h>
 #include <netinet/in.h>

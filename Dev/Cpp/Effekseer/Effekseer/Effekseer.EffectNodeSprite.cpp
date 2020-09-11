@@ -1,8 +1,5 @@
-﻿
+﻿#include "Effekseer.EffectNodeSprite.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
 #include "Effekseer.EffectNode.h"
@@ -13,8 +10,6 @@
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
-
-#include "Effekseer.EffectNodeSprite.h"
 
 #include "Renderer/Effekseer.SpriteRenderer.h"
 

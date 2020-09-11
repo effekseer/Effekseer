@@ -1,14 +1,10 @@
-﻿
+﻿#include "Effekseer.InstanceGroup.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #include "Effekseer.ManagerImplemented.h"
 
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
-#include "Effekseer.InstanceGroup.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 
@@ -138,9 +134,7 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 	{
 		parentMatrix_ = rootGroup->GetParentMatrix();
 	}
-	else if (tType == BindType::WhenCreating 
-			 || tType == TranslationParentBindType::WhenCreating_FollowParent
-			 && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
+	else if (tType == BindType::WhenCreating || tType == TranslationParentBindType::WhenCreating_FollowParent && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
 	{
 		// don't do anything
 	}

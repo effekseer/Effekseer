@@ -1,18 +1,15 @@
 ﻿
+#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
+#include "Effekseer.Socket.h"
+
 #if defined(_WIN32) && !defined(_PS4)
-#include <winsock2.h>
-#pragma comment(lib, "ws2_32.lib")
 #else
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
 
-#include "Effekseer.Socket.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -95,3 +92,4 @@ bool Socket::Listen(EfkSocket s, int32_t backlog)
 //----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
+#endif

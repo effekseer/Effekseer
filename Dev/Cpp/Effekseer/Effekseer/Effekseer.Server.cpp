@@ -1,9 +1,8 @@
 ﻿
+#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
+#include "Effekseer.Server.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.ServerImplemented.h"
 #include <thread>
@@ -468,3 +467,4 @@ void ServerImplemented::Unregist(Effect* effect)
 //----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
+#endif

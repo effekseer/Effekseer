@@ -1,8 +1,5 @@
-﻿
+﻿#include "Effekseer.EffectNodeModel.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Manager.h"
@@ -12,9 +9,6 @@
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
-
-#include "Effekseer.EffectNodeModel.h"
-
 #include "Renderer/Effekseer.ModelRenderer.h"
 
 #include "Effekseer.Setting.h"
