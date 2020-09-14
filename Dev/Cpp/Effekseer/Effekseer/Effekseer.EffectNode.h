@@ -1292,50 +1292,38 @@ struct ParameterAlphaCutoff
 		FPI = FOUR_POINT_INTERPOLATION,
 	} Type;
 
-	union
+
+	struct
 	{
-		struct
-		{
-			int32_t RefEq;
-			float Threshold;
-		} Fixed;
+		int32_t RefEq = -1;
+		float Threshold = 0.0f;
+	} Fixed;
 
-		struct
-		{
-			random_float BeginThreshold;
-			random_int TransitionFrameNum;
-			random_float No2Threshold;
-			random_float No3Threshold;
-			random_int TransitionFrameNum2;
-			random_float EndThreshold;
-		} FourPointInterpolation;
+	struct
+	{
+		random_float BeginThreshold;
+		random_int TransitionFrameNum;
+		random_float No2Threshold;
+		random_float No3Threshold;
+		random_int TransitionFrameNum2;
+		random_float EndThreshold;
+	} FourPointInterpolation;
 
-		struct
-		{
-			RefMinMax RefEqS;
-			RefMinMax RefEqE;
-			easing_float Threshold;
-		} Easing;
+	ParameterEasingFloat Easing;
 
-		struct
-		{
-			FCurveScalar* Threshold;
-		} FCurve;
-	};
+	struct
+	{
+		FCurveScalar* Threshold;
+	} FCurve;
 
 	float EdgeThreshold;
 	Color EdgeColor;
 	int32_t EdgeColorScaling;
 
-#pragma warning(push)
-#pragma warning(disable : 4582)
 	ParameterAlphaCutoff()
+		: Type(ParameterAlphaCutoff::EType::FIXED)
 	{
-		Type = ParameterAlphaCutoff::EType::FIXED;
-		Fixed.RefEq = -1;
-		Fixed.Threshold = 0;
 	}
-#pragma warning(pop)
 
 	~ParameterAlphaCutoff()
 	{
@@ -1363,7 +1351,7 @@ struct ParameterAlphaCutoff
 			memcpy(&FourPointInterpolation, pos, BufferSize);
 			break;
 		case Effekseer::ParameterAlphaCutoff::EType::EASING:
-			memcpy(&Easing, pos, BufferSize);
+			Easing.Load(pos, BufferSize, version);
 			break;
 		case Effekseer::ParameterAlphaCutoff::EType::F_CURVE:
 			FCurve.Threshold = new FCurveScalar();

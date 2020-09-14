@@ -668,7 +668,7 @@ namespace Effekseer.Binary
 
 			if (version >= ExporterVersion.Ver1600)
 			{
-				data.Add(AlphaCutoffValues.GetBytes(advanceValue.AlphaCutoffParam));
+				data.Add(AlphaCutoffValues.GetBytes(advanceValue.AlphaCutoffParam, version));
 			}
 
 			return data.ToArray().ToArray();

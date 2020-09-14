@@ -58,6 +58,7 @@ set(effekseer_src
     Effekseer/Material/Effekseer.CompiledMaterial.cpp
     Effekseer/Material/Effekseer.MaterialCompiler.cpp
     Effekseer/IO/Effekseer.EfkEfcFactory.cpp
+    Effekseer/Parameter/Easing.cpp
     Effekseer/Parameter/Effekseer.Parameters.cpp
     Effekseer/Utils/Effekseer.CustomAllocator.cpp
     Effekseer/SIMD/Effekseer.Mat43f.cpp
@@ -72,8 +73,8 @@ add_library(${PROJECT_NAME} STATIC
     ${effekseer_h}
     ${effekseer_src})
 
-set(files 
-    ${effekseer_h} 
+set(files
+    ${effekseer_h}
     ${effekseer_src})
 
 FilterFolder("${files}")
@@ -94,11 +95,11 @@ if(BUILD_UNITYPLUGIN)
     )
 else()
     set(PublicHeader
-        Effekseer.h 
+        Effekseer.h
         Effekseer.Internal.h)
 
     set_target_properties(
-        ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 
+        ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER
         "${PublicHeader}")
 endif()
 
