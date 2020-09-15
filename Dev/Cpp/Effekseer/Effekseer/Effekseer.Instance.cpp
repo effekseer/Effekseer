@@ -929,11 +929,7 @@ void Instance::FirstUpdate()
 	}
 	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
 	{
-		auto& easingValue = alpha_cutoff_values.easing;
-		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.Easing;
-
-		easingValue.start = nodeAlphaCutoffValue.Threshold.start.getValue(rand);
-		easingValue.end = nodeAlphaCutoffValue.Threshold.end.getValue(rand);
+		m_pEffectNode->AlphaCutoff.Easing.Init(alpha_cutoff_values.easing, effect, instanceGlobal, m_pParent, &rand);
 	}
 	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
 	{
@@ -1213,8 +1209,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		}
 		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
 		{
-			m_AlphaThreshold = m_pEffectNode->AlphaCutoff.Easing.Threshold.getValue(
-				alpha_cutoff_values.easing.start, alpha_cutoff_values.easing.end, m_LivingTime / m_LivedTime);
+			m_AlphaThreshold = m_pEffectNode->AlphaCutoff.Easing.GetValue(alpha_cutoff_values.easing, m_LivingTime / m_LivedTime);
 		}
 		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
 		{

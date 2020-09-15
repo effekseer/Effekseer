@@ -365,11 +365,7 @@ public:
 			float end_threshold;
 		} four_point_interpolation;
 
-		struct
-		{
-			float start;
-			float end;
-		} easing;
+		InstanceEasing<float> easing;
 
 		struct
 		{

@@ -284,43 +284,106 @@ namespace Effekseer.Data
 		}
 	}
 
-    public class FloatEasingParamater
-    {
+	public class FloatEasingParamater
+	{
+		const int EasingTypeGroup = 200;
+		const int MiddlePoint = 300;
+		const int RandomGroup = 400;
+		const int IndividualType = 500;
+
 		[Key(key = "Easing_Start")]
 		public Value.FloatWithRandom Start
-        {
-            get;
-            private set;
-        }
+		{
+			get;
+			private set;
+		}
 
 		[Key(key = "Easing_End")]
 		public Value.FloatWithRandom End
-        {
-            get;
-            private set;
-        }
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_TYpe")]
+		[Selector(ID = EasingTypeGroup)]
+		public Value.Enum<EasingType> Type
+		{
+			get;
+			private set;
+		}
 
 		[Key(key = "Easing_StartSpeed")]
+		[Selected(ID = EasingTypeGroup, Value = (int)EasingType.LeftRightSpeed)]
 		public Value.Enum<EasingStart> StartSpeed
-        {
-            get;
-            private set;
-        }
+		{
+			get;
+			private set;
+		}
 
 		[Key(key = "Easing_EndSpeed")]
+		[Selected(ID = EasingTypeGroup, Value = (int)EasingType.LeftRightSpeed)]
 		public Value.Enum<EasingEnd> EndSpeed
-        {
-            get;
-            private set;
-        }
+		{
+			get;
+			private set;
+		}
 
-        internal FloatEasingParamater(float value = 0.0f, float max = float.MaxValue, float min = float.MinValue)
+		[Selector(ID = MiddlePoint)]
+		[Key(key = "Easing_IsMiddleEnabled")]
+		public Value.Boolean IsMiddleEnabled { get; private set; }
+
+		[Selected(ID = MiddlePoint, Value = 0)]
+		[Key(key = "Easing_Middle")]
+		public Value.FloatWithRandom Middle
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_IsRandomGroupEnabled")]
+		[Selector(ID = RandomGroup)]
+
+		public Value.Boolean IsRandomGroupEnabled { get; private set; }
+
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Key(key = "Easing_RandomGroup_A")]
+		[Selected(ID = RandomGroup, Value = 0)]
+		public Value.Int RandomGroupA { get; private set; }
+
+		[Key(key = "Easing_IsIndividualTypeEnabled")]
+		[Selector(ID = IndividualType)]
+		public Value.Boolean IsIndividualTypeEnabled { get; private set; }
+
+		[Key(key = "Easing_IndividualType_A")]
+		[Selected(ID = IndividualType, Value = 0)]
+		public Value.Enum<EasingType> Type_A
+		{
+			get;
+			private set;
+		}
+
+		internal FloatEasingParamater(float value = 0.0f, float max = float.MaxValue, float min = float.MinValue)
         {
+			Type = new Value.Enum<EasingType>();
+
             Start = new Value.FloatWithRandom(value, max, min);
             End = new Value.FloatWithRandom(value, max, min);
             StartSpeed = new Value.Enum<EasingStart>(EasingStart.Start);
             EndSpeed = new Value.Enum<EasingEnd>(EasingEnd.End);
-        }
+
+			IsMiddleEnabled = new Value.Boolean(false);
+			Middle = new Value.FloatWithRandom(value, max, min);
+
+			IsRandomGroupEnabled = new Value.Boolean(false);
+
+			RandomGroupA = new Value.Int(0);
+
+			IsIndividualTypeEnabled = new Value.Boolean(false);
+			Type_A = new Value.Enum<EasingType>(EasingType.Linear);
+		}
     }
 
     public class Vector2DEasingParamater

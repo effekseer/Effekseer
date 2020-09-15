@@ -9,7 +9,7 @@ namespace Effekseer.Binary
 {
     class AlphaCutoffValues
     {
-        public static byte[] GetBytes(Data.AlphaCutoffParameter value)
+        public static byte[] GetBytes(Data.AlphaCutoffParameter value, ExporterVersion version)
         {
             List<byte[]> data = new List<byte[]>();
             data.Add(value.Type.GetValueAsInt().GetBytes());
@@ -45,30 +45,8 @@ namespace Effekseer.Binary
             }
             else if (value.Type == Data.AlphaCutoffParameter.ParameterType.Easing)
             {
-                var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
-
-                var refBuf1_1 = value.Easing.Start.DynamicEquationMax.Index.GetBytes();
-                var refBuf1_2 = value.Easing.Start.DynamicEquationMin.Index.GetBytes();
-                var refBuf2_1 = value.Easing.End.DynamicEquationMax.Index.GetBytes();
-                var refBuf2_2 = value.Easing.End.DynamicEquationMin.Index.GetBytes();
-
-                List<byte[]> _data = new List<byte[]>();
-                _data.Add(refBuf1_1);
-                _data.Add(refBuf1_2);
-                _data.Add(refBuf2_1);
-                _data.Add(refBuf2_2);
-                _data.Add(value.Easing.Start.Max.GetBytes());
-                _data.Add(value.Easing.Start.Min.GetBytes());
-                _data.Add(value.Easing.End.Max.GetBytes());
-                _data.Add(value.Easing.End.Min.GetBytes());
-                _data.Add(BitConverter.GetBytes(easing[0]));
-                _data.Add(BitConverter.GetBytes(easing[1]));
-                _data.Add(BitConverter.GetBytes(easing[2]));
-                var __data = _data.ToArray().ToArray();
-
-                data.Add(__data.Count().GetBytes());
-                data.Add(__data);
-            }
+				Utils.ExportEasing(value.Easing, 1.0f, data, version);
+			}
             else if (value.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
             {
                 var _data = value.FCurve.GetBytes();

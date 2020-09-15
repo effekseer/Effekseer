@@ -346,5 +346,13 @@ namespace Effekseer.Data.Value
 			_value_max = new_max;
 			_value_min = new_min;
 		}
+
+		public byte[] GetBytes(float mul = 1.0f)
+		{
+			byte[] values = new byte[sizeof(float) * 2];
+			BitConverter.GetBytes(Max * mul).CopyTo(values, sizeof(float) * 0);
+			BitConverter.GetBytes(Min * mul).CopyTo(values, sizeof(float) * 1);
+			return values;
+		}
 	}
 }
