@@ -36,7 +36,7 @@ private:
 	ModelLoader* m_modelLoader;
 	MaterialLoader* m_materialLoader = nullptr;
 	CurveLoader* m_curveLoader = nullptr;
-
+	ProcedualModelGenerator* procedualMeshGenerator_ = nullptr;
 	std::vector<EffectFactory*> effectFactories;
 
 protected:
@@ -158,6 +158,26 @@ public:
 		\~Japanese ローダー
 	*/
 	void SetCurveLoader(CurveLoader* loader);
+
+	/**
+		@brief
+		\~English get a mesh generator
+		\~Japanese メッシュジェネレーターを取得する。
+		@return
+		\~English	generator
+		\~Japanese ローダー
+	*/
+	ProcedualModelGenerator* GetProcedualMeshGenerator() const;
+
+	/**
+		@brief
+		\~English specfiy a mesh generator
+		\~Japanese メッシュジェネレーターを設定する。
+		@param	generator
+		\~English	generator
+		\~Japanese generator
+	*/
+	void SetProcedualMeshGenerator(ProcedualModelGenerator* generator);
 
 	/**
 		@brief

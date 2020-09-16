@@ -24,7 +24,7 @@ ModelLoader::~ModelLoader()
 	LLGI::SafeRelease(graphicsDevice_);
 }
 
-void* ModelLoader::Load(const EFK_CHAR* path)
+Effekseer::Model* ModelLoader::Load(const EFK_CHAR* path)
 {
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 	if (reader.get() == NULL)
@@ -36,21 +36,21 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 		uint8_t* data_model = new uint8_t[size_model];
 		reader->Read(data_model, size_model);
 
-		auto* model = new EffekseerRenderer::Model(data_model, size_model, 1, graphicsDevice_->GetGraphicsDevice());
+		auto* model = new Effekseer::Model(data_model, size_model);
 
 		//Model* model = (Model*)Load(data_model, size_model);
 
 		delete[] data_model;
 
-		return (void*)model;
+		return model;
 	}
 
 	return NULL;
 }
 
-void* ModelLoader::Load(const void* data, int32_t size)
+Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 {
-	auto* model = new EffekseerRenderer::Model((uint8_t*)(data), size, 1, graphicsDevice_->GetGraphicsDevice());
+	auto* model = new Effekseer::Model((uint8_t*)(data), size);
 
 	//model->ModelCount = Effekseer::Min(Effekseer::Max(model->GetModelCount(), 1), 40);
 	//
@@ -59,11 +59,11 @@ void* ModelLoader::Load(const void* data, int32_t size)
 	return model;
 }
 
-void ModelLoader::Unload(void* data)
+void ModelLoader::Unload(Effekseer::Model* data)
 {
 	if (data != NULL)
 	{
-		EffekseerRenderer::Model* model = (EffekseerRenderer::Model*)data;
+		Effekseer::Model* model = (Effekseer::Model*)data;
 		delete model;
 	}
 }

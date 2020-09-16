@@ -31,6 +31,8 @@ namespace Effekseer.Binary
 
 		public HashSet<string> Curves = new HashSet<string>();
 
+		public HashSet<Data.ProcedualModelParameter> ProcedualModels = new HashSet<ProcedualModelParameter>();
+
 		/// <summary>
 		/// Export effect data
 		/// </summary>
@@ -59,6 +61,8 @@ namespace Effekseer.Binary
 			Materials = new HashSet<string>();
 
 			Curves = new HashSet<string>();
+
+			ProcedualModels = new HashSet<ProcedualModelParameter>();
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -550,6 +554,45 @@ namespace Effekseer.Binary
 				}
 			}
 
+			// Procedual meshes
+
+			Action<Data.NodeBase> get_procedual_models = null;
+			get_procedual_models = (node) =>
+			{
+				if (node is Data.Node)
+				{
+					var _node = node as Data.Node;
+
+					if (IsRenderedNode(_node) && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
+					{
+						var param = _node.DrawingValues.ProcedualModel.Parameter;
+
+						if (!ProcedualModels.Contains(param))
+						{
+							ProcedualModels.Add(param);
+						}
+					}
+				}
+
+				for (int i = 0; i < node.Children.Count; i++)
+				{
+					get_procedual_models(node.Children[i]);
+				}
+			};
+
+			get_procedual_models(rootNode);
+
+			Dictionary<ProcedualModelParameter, int> procedual_mesh_and_index = new Dictionary<ProcedualModelParameter, int>();
+			{
+				int index = 0;
+				foreach (var wave in ProcedualModels.ToList().OrderBy(_ => _))
+				{
+					procedual_mesh_and_index.Add(wave, index);
+					index++;
+				}
+			}
+
+
 			// get all nodes
 			var nodes = new List<Data.Node>();
 
@@ -656,6 +699,38 @@ namespace Effekseer.Binary
 					data.Add(path);
 					data.Add(new byte[] { 0, 0 });
 				}
+
+				// export procedual meshes
+				data.Add(BitConverter.GetBytes(procedual_mesh_and_index.Count));
+				foreach (var pm in procedual_mesh_and_index)
+				{
+					var param = pm.Key;
+					var type = (int)param.Type.Value;
+					data.Add(type.GetBytes());
+					data.Add(param.AngleBegin.Value.GetBytes());
+					data.Add(param.AngleEnd.Value.GetBytes());
+					data.Add(param.AxisBegin.Value.GetBytes());
+					data.Add(param.AxisEnd.Value.GetBytes());
+					data.Add(param.AxisDivision.Value.GetBytes());
+					data.Add(param.AngleDivision.Value.GetBytes());
+
+					if(param.Type.Value == ProcedualModelType.Sphere)
+					{
+						data.Add(param.Radius.Value.GetBytes());
+					}
+					else if (param.Type.Value == ProcedualModelType.Cone)
+					{
+						data.Add(param.Radius.Value.GetBytes());
+						data.Add(param.Depth.Value.GetBytes());
+					}
+					else if (param.Type.Value == ProcedualModelType.Cylinder)
+					{
+						data.Add(param.Radius.Value.GetBytes());
+						data.Add(param.Radius2.Value.GetBytes());
+						data.Add(param.Depth.Value.GetBytes());
+					}
+				}
+
 			}
 
 			var compiler = new InternalScript.Compiler();
@@ -766,6 +841,10 @@ namespace Effekseer.Binary
 				{
 					data.Add(((int)NodeType.Track).GetBytes());
 				}
+				else if (n.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
+				{
+					data.Add(((int)NodeType.ProcedualModel).GetBytes());
+				}
 				else
 				{
 					throw new Exception();
@@ -827,11 +906,11 @@ namespace Effekseer.Binary
 
 				if (isRenderParamExported)
 				{
-					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index, exporterVersion));
+					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index, procedual_mesh_and_index, exporterVersion));
 				}
 				else
 				{
-					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index, exporterVersion));
+					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index, procedual_mesh_and_index, exporterVersion));
 				}
 
 				data.Add(node_data.ToArray().ToArray());

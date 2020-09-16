@@ -591,6 +591,124 @@ namespace Effekseer.Data
 		}
 	}
 
+	public enum ProcedualModelType : int
+	{
+		Sphere,
+		Cone,
+		Cylinder,
+	}
+
+	public class ProcedualModelParameter
+	{
+		public Value.Enum<ProcedualModelType> Type { get; private set; } = new Value.Enum<ProcedualModelType>(ProcedualModelType.Sphere);
+
+
+		public Value.Float AngleBegin { get; private set; } = new Value.Float(0.0f);
+		public Value.Float AngleEnd { get; private set; } = new Value.Float(360.0f);
+		public Value.Float AxisBegin { get; private set; } = new Value.Float(0.0f);
+		public Value.Float AxisEnd { get; private set; } = new Value.Float(1.0f);
+		public Value.Int AxisDivision { get; private set; } = new Value.Int(10);
+		public Value.Int AngleDivision { get; private set; } = new Value.Int(10);
+
+		public Value.Float Radius { get; private set; } = new Value.Float(1.0f);
+
+		public Value.Float Depth { get; private set; } = new Value.Float(1.0f);
+		public Value.Float Radius2 { get; private set; } = new Value.Float(1.0f);
+
+		public override bool Equals(object obj)
+		{
+			var param = obj as ProcedualModelParameter;
+			if (param == null)
+				return false;
+
+			if (Type.Value != param.Type.Value)
+				return false;
+
+			if (AngleBegin.Value != param.AngleBegin.Value)
+				return false;
+
+			if (AngleEnd.Value != param.AngleEnd.Value)
+				return false;
+
+			if (AxisBegin.Value != param.AxisBegin.Value)
+				return false;
+
+			if (AxisEnd.Value != param.AxisEnd.Value)
+				return false;
+
+			if (AxisDivision.Value != param.AxisDivision.Value)
+				return false;
+
+			if (AngleDivision.Value != param.AngleDivision.Value)
+				return false;
+
+			if(Type.Value == ProcedualModelType.Sphere)
+			{
+				if (Radius.Value != param.Radius.Value)
+					return false;
+			}
+			else if (Type.Value == ProcedualModelType.Cone)
+			{
+				if (Depth.Value != param.Depth.Value)
+					return false;
+				if (Radius.Value != param.Radius.Value)
+					return false;
+			}
+			else if (Type.Value == ProcedualModelType.Cylinder)
+			{
+				if (Depth.Value != param.Depth.Value)
+					return false;
+				if (Radius.Value != param.Radius.Value)
+					return false;
+				if (Radius2.Value != param.Radius2.Value)
+					return false;
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			var hash = Type.Value.GetHashCode();
+
+			hash = CombineHashCodes(new[] { hash, AngleBegin.Value.GetHashCode(), AngleEnd.Value.GetHashCode(), AxisBegin.Value.GetHashCode(), AxisEnd.Value.GetHashCode(), AxisDivision.Value.GetHashCode(), AxisDivision.Value.GetHashCode() });
+
+			if (Type.Value == ProcedualModelType.Sphere)
+			{
+				hash = CombineHashCodes(new[] { hash, Radius.Value.GetHashCode() });
+			}
+			else if (Type.Value == ProcedualModelType.Cone)
+			{
+				hash = CombineHashCodes(new[] { hash, Depth.Value.GetHashCode(), Radius.Value.GetHashCode() });
+			}
+			else if (Type.Value == ProcedualModelType.Cylinder)
+			{
+				hash = CombineHashCodes(new[] { hash, Depth.Value.GetHashCode(), Radius.Value.GetHashCode(), Radius2.Value.GetHashCode() });
+			}
+
+			return hash;
+		}
+
+		/// <summary>
+		/// https://stackoverflow.com/questions/1646807/quick-and-simple-hash-code-combinations
+		/// </summary>
+		/// <param name="hashCodes"></param>
+		/// <returns></returns>
+		public static int CombineHashCodes(IEnumerable<int> hashCodes)
+		{
+			int hash = 5381;
+
+			foreach (var hashCode in hashCodes)
+				hash = ((hash << 5) + hash) ^ hashCode;
+
+			return hash;
+		}
+	}
+
 	/// <summary>
 	/// 入出力に関する属性
 	/// </summary>

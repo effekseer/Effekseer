@@ -1219,12 +1219,17 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 	else if (node_type == EFFECT_NODE_TYPE_MODEL)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeModel\n");
-		effectnode = new EffectNodeModel(effect, pos);
+		effectnode = new EffectNodeModel(effect, pos, EffectNodeModelMode::File);
 	}
 	else if (node_type == EFFECT_NODE_TYPE_TRACK)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeTrack\n");
 		effectnode = new EffectNodeTrack(effect, pos);
+	}
+	else if (node_type == EFFECT_NODE_TYPE_PROCEDUAL_MODEL)
+	{
+		EffekseerPrintDebug("* Create : EffectNodeProcedualModel\n");
+		effectnode = new EffectNodeModel(effect, pos, EffectNodeModelMode::Procedual);
 	}
 	else
 	{

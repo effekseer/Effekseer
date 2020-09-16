@@ -141,7 +141,7 @@ public:
 	\~English set model data into specified index
 	\~Japanese	指定されたインデックスにモデルを設定する。
 	*/
-	void SetModel(Effect* effect, int32_t index, void* data);
+	void SetModel(Effect* effect, int32_t index, Model* data);
 
 	/**
 	@brief
@@ -156,6 +156,13 @@ public:
 	\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
 	void SetCurve(Effect* effect, int32_t index, void* data);
+
+	/**
+	@brief
+	\~English set model data into specified index
+	\~Japanese	指定されたインデックスにモデルを設定する。
+	*/
+	void SetProcedualModel(Effect* effect, int32_t index, Model* data);
 
 	/**
 	@brief
@@ -386,7 +393,7 @@ public:
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
-	virtual void* GetModel(int n) const = 0;
+	virtual Model* GetModel(int n) const = 0;
 
 	/**
 	@brief	格納されているモデルのポインタの個数を取得する。
@@ -436,6 +443,24 @@ public:
 	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
 
 	/**
+	@brief	\~English	Get a procedual model's pointer
+	\~Japanese	格納されているプロシージャルモデルのポインタを取得する。
+	*/
+	virtual Model* GetProcedualModel(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored procedual model's pointer
+	\~Japanese	格納されているプロシージャルモデルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetProcedualModelCount() const = 0;
+
+	/**
+	@brief	\~English	Get a procedual model's parameter
+	\~Japanese	格納されているプロシージャルモデルのパラメーターを取得する。
+	*/
+	virtual const ProcedualModelParameter* GetProcedualModelParameter(int n) const = 0;
+
+	/**
 		@brief
 		\~English set texture data into specified index
 		\~Japanese	指定されたインデックスにテクスチャを設定する。
@@ -455,7 +480,7 @@ public:
 		\~English set model data into specified index
 		\~Japanese	指定されたインデックスにモデルを設定する。
 	*/
-	virtual void SetModel(int32_t index, void* data) = 0;
+	virtual void SetModel(int32_t index, Model* data) = 0;
 
 	/**
 		@brief

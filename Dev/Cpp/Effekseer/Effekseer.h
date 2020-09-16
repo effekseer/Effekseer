@@ -83,11 +83,14 @@ class SoundPlayer;
 class SoundLoader;
 
 class ModelLoader;
+class ProcedualModelGenerator;
 
 class Model;
 
 class CurveLoader;
 class Curve;
+
+struct ProcedualModelParameter;
 
 typedef int Handle;
 
@@ -1892,7 +1895,7 @@ public:
 	\~English set model data into specified index
 	\~Japanese	指定されたインデックスにモデルを設定する。
 	*/
-	void SetModel(Effect* effect, int32_t index, void* data);
+	void SetModel(Effect* effect, int32_t index, Model* data);
 
 	/**
 	@brief
@@ -1907,6 +1910,13 @@ public:
 	\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
 	void SetCurve(Effect* effect, int32_t index, void* data);
+
+	/**
+	@brief
+	\~English set model data into specified index
+	\~Japanese	指定されたインデックスにモデルを設定する。
+	*/
+	void SetProcedualModel(Effect* effect, int32_t index, Model* data);
 
 	/**
 	@brief
@@ -2137,7 +2147,7 @@ public:
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
-	virtual void* GetModel(int n) const = 0;
+	virtual Model* GetModel(int n) const = 0;
 
 	/**
 	@brief	格納されているモデルのポインタの個数を取得する。
@@ -2187,6 +2197,24 @@ public:
 	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
 
 	/**
+	@brief	\~English	Get a procedual model's pointer
+	\~Japanese	格納されているプロシージャルモデルのポインタを取得する。
+	*/
+	virtual Model* GetProcedualModel(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored procedual model's pointer
+	\~Japanese	格納されているプロシージャルモデルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetProcedualModelCount() const = 0;
+
+	/**
+	@brief	\~English	Get a procedual model's parameter
+	\~Japanese	格納されているプロシージャルモデルのパラメーターを取得する。
+	*/
+	virtual const ProcedualModelParameter* GetProcedualModelParameter(int n) const = 0;
+
+	/**
 		@brief
 		\~English set texture data into specified index
 		\~Japanese	指定されたインデックスにテクスチャを設定する。
@@ -2206,7 +2234,7 @@ public:
 		\~English set model data into specified index
 		\~Japanese	指定されたインデックスにモデルを設定する。
 	*/
-	virtual void SetModel(int32_t index, void* data) = 0;
+	virtual void SetModel(int32_t index, Model* data) = 0;
 
 	/**
 		@brief
@@ -3506,50 +3534,33 @@ public:
 #ifndef __EFFEKSEER_MODELLOADER_H__
 #define __EFFEKSEER_MODELLOADER_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 /**
-	@brief	モデル読み込み破棄関数指定クラス
+	\~English	Model loader
+	\~Japanese	モデル読み込み破棄関数指定クラス
 */
 class ModelLoader
 {
 public:
-	/**
-		@brief	コンストラクタ
-	*/
-	ModelLoader()
-	{
-	}
+	ModelLoader() = default;
 
-	/**
-		@brief	デストラクタ
-	*/
-	virtual ~ModelLoader()
-	{
-	}
+	virtual ~ModelLoader() = default;
 
-	/**
-		@brief	モデルを読み込む。
-		@param	path	[in]	読み込み元パス
-		@return	モデルのポインタ
-		@note
-		モデルを読み込む。
-		::Effekseer::Effect::Create実行時に使用される。
+	/*
+	@brief
+	\~English load a model
+	\~Japanese モデルを読み込む。
+	@param path
+	\~English a file path
+	\~Japanese 読み込み元パス
+	@ return
+	\~English a pointer of loaded a model
+	\~Japanese 読み込まれたモデルのポインタ
 	*/
-	virtual void* Load(const EFK_CHAR* path)
-	{
-		return NULL;
-	}
+	virtual Model* Load(const EFK_CHAR* path);
 
 	/**
 		@brief
@@ -3562,24 +3573,20 @@ public:
 		\~English	the size of data
 		\~Japanese	データの大きさ
 		@return
-		\~English	a pointer of loaded texture
+		\~English	a pointer of loaded model
 		\~Japanese	読み込まれたモデルのポインタ
 	*/
-	virtual void* Load(const void* data, int32_t size)
-	{
-		return nullptr;
-	}
+	virtual Effekseer::Model* Load(const void* data, int32_t size);
 
 	/**
-		@brief	モデルを破棄する。
-		@param	data	[in]	モデル
-		@note
-		モデルを破棄する。
-		::Effekseer::Effectのインスタンスが破棄された時に使用される。
+		@brief
+		\~English	dispose a model
+		\~Japanese	モデルを破棄する。
+		@param	data
+		\~English	a pointer of loaded a model
+		\~Japanese	読み込まれたモデルのポインタ
 	*/
-	virtual void Unload(void* data)
-	{
-	}
+	virtual void Unload(Model* data);
 };
 
 //----------------------------------------------------------------------------------
@@ -3678,18 +3685,17 @@ public:
 #ifndef __EFFEKSEER_MODEL_H__
 #define __EFFEKSEER_MODEL_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
+namespace Backend
+{
+class GraphicsDevice;
+class VertexBuffer;
+class IndexBuffer;
+} // namespace Backend
+
 /**
 	@brief
 	\~English	Model class
@@ -3710,20 +3716,9 @@ public:
 		Color VColor;
 	};
 
-	struct VertexWithIndex
-	{
-		Vector3D Position;
-		Vector3D Normal;
-		Vector3D Binormal;
-		Vector3D Tangent;
-		Vector2D UV;
-		Color VColor;
-		uint8_t Index[4];
-	};
-
 	struct Face
 	{
-		int32_t Indexes[3];
+		std::array<int32_t, 3> Indexes;
 	};
 
 	struct Emitter
@@ -3734,312 +3729,57 @@ public:
 		Vector3D Tangent;
 	};
 
-private:
-	uint8_t* m_data;
-	int32_t m_size;
-
-	int32_t m_version;
-
+protected:
 	struct InternalModel
 	{
-		int32_t m_vertexCount;
-		Vertex* m_vertexes;
-
-		int32_t m_faceCount;
-		Face* m_faces;
+		CustomVector<Vertex> vertexes;
+		CustomVector<Face> faces;
+		Backend::VertexBuffer* vertexBuffer = nullptr;
+		Backend::IndexBuffer* indexBuffer = nullptr;
 	};
 
-	InternalModel* models;
-
-	int32_t m_modelCount;
-	int32_t m_frameCount;
-
-protected:
-	int32_t m_vertexSize = sizeof(Vertex);
+	int32_t version_ = 0;
+	CustomVector<InternalModel> models_;
+	bool isBufferStoredOnGPU_ = false;
 
 public:
-	/**
-	@brief
-	\~English	Constructor
-	\~Japanese	コンストラクタ
-	*/
-	Model(void* data, int32_t size)
-		: m_data(NULL)
-		, m_size(size)
-		, m_version(0)
-		, models(nullptr)
-	{
-		m_data = new uint8_t[m_size];
-		memcpy(m_data, data, m_size);
+	Model(const CustomVector<Vertex>& vertecies, const CustomVector<Face>& faces);
 
-		uint8_t* p = (uint8_t*)m_data;
+	Model(void* data, int32_t size);
 
-		memcpy(&m_version, p, sizeof(int32_t));
-		p += sizeof(int32_t);
+	virtual ~Model();
 
-		// load scale except version 3(for compatibility)
-		if (m_version == 2 || m_version >= 5)
-		{
-			// Scale
-			p += sizeof(int32_t);
-		}
+	Backend::VertexBuffer* GetVertexBuffer(int32_t index) const;
 
-		memcpy(&m_modelCount, p, sizeof(int32_t));
-		p += sizeof(int32_t);
+	Backend::IndexBuffer* GetIndexBuffer(int32_t index) const;
 
-		if (m_version >= 5)
-		{
-			memcpy(&m_frameCount, p, sizeof(int32_t));
-			p += sizeof(int32_t);
-		}
-		else
-		{
-			m_frameCount = 1;
-		}
+	const Vertex* GetVertexes(int32_t index = 0) const;
 
-		models = new InternalModel[m_frameCount];
+	int32_t GetVertexCount(int32_t index = 0) const;
 
-		for (int32_t f = 0; f < m_frameCount; f++)
-		{
-			memcpy(&models[f].m_vertexCount, p, sizeof(int32_t));
-			p += sizeof(int32_t);
+	const Face* GetFaces(int32_t index = 0) const;
 
-			if (m_version >= 1)
-			{
-				models[f].m_vertexes = (Vertex*)p;
-				p += (sizeof(Vertex) * models[f].m_vertexCount);
-			}
-			else
-			{
-				// allocate new buffer
-				models[f].m_vertexes = new Vertex[models[f].m_vertexCount];
+	int32_t GetFaceCount(int32_t index = 0) const;
 
-				for (int32_t i = 0; i < models[f].m_vertexCount; i++)
-				{
-					memcpy((void*)&models[f].m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
-					models[f].m_vertexes[i].VColor = Color(255, 255, 255, 255);
+	int32_t GetFrameCount() const;
 
-					p += sizeof(Vertex) - sizeof(Color);
-				}
-			}
+	Emitter GetEmitter(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification);
 
-			memcpy(&models[f].m_faceCount, p, sizeof(int32_t));
-			p += sizeof(int32_t);
+	Emitter GetEmitterFromVertex(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification);
 
-			models[f].m_faces = (Face*)p;
-			p += (sizeof(Face) * models[f].m_faceCount);
-		}
-	}
+	Emitter GetEmitterFromVertex(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification);
 
-	Vertex* GetVertexes(int32_t index = 0) const
-	{
-		return models[index].m_vertexes;
-	}
-	int32_t GetVertexCount(int32_t index = 0)
-	{
-		return models[index].m_vertexCount;
-	}
+	Emitter GetEmitterFromFace(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification);
 
-	Face* GetFaces(int32_t index = 0) const
-	{
-		return models[index].m_faces;
-	}
-	int32_t GetFaceCount(int32_t index = 0)
-	{
-		return models[index].m_faceCount;
-	}
+	Emitter GetEmitterFromFace(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification);
 
-	int32_t GetFrameCount() const
-	{
-		return m_frameCount;
-	}
+	bool StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice);
 
-	int32_t GetModelCount()
-	{
-		return m_modelCount;
-	}
-
-	int32_t GetVertexSize() const
-	{
-		return m_vertexSize;
-	}
-
-	/**
-		@brief
-		\~English	Destructor
-		\~Japanese	デストラクタ
-	*/
-	virtual ~Model()
-	{
-		if (m_version == 0)
-		{
-			ES_SAFE_DELETE_ARRAY(models[0].m_vertexes);
-		}
-
-		ES_SAFE_DELETE_ARRAY(models);
-		ES_SAFE_DELETE_ARRAY(m_data);
-	}
-
-	Emitter GetEmitter(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
-	{
-		time = time % GetFrameCount();
-
-		int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
-		faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
-		Face& face = GetFaces(time)[faceInd];
-		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
-		Vertex& v1 = GetVertexes(time)[face.Indexes[1]];
-		Vertex& v2 = GetVertexes(time)[face.Indexes[2]];
-
-		float p1 = g->GetRand();
-		float p2 = g->GetRand();
-
-		// Fit within plane
-		if (p1 + p2 > 1.0f)
-		{
-			p1 = 1.0f - p1;
-			p2 = 1.0f - p2;
-		}
-
-		float p0 = 1.0f - p1 - p2;
-
-		Emitter emitter;
-		emitter.Position = (v0.Position * p0 + v1.Position * p1 + v2.Position * p2) * magnification;
-		emitter.Normal = v0.Normal * p0 + v1.Normal * p1 + v2.Normal * p2;
-		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
-		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
-
-		if (coordinate == CoordinateSystem::LH)
-		{
-			emitter.Position.Z = -emitter.Position.Z;
-			emitter.Normal.Z = -emitter.Normal.Z;
-			emitter.Binormal.Z = -emitter.Binormal.Z;
-			emitter.Tangent.Z = -emitter.Tangent.Z;
-		}
-
-		return emitter;
-	}
-
-	Emitter GetEmitterFromVertex(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
-	{
-		time = time % GetFrameCount();
-
-		int32_t vertexInd = (int32_t)((GetVertexCount(time) - 1) * (g->GetRand()));
-		vertexInd = Clamp(vertexInd, GetVertexCount(time) - 1, 0);
-		Vertex& v = GetVertexes(time)[vertexInd];
-
-		Emitter emitter;
-		emitter.Position = v.Position * magnification;
-		emitter.Normal = v.Normal;
-		emitter.Binormal = v.Binormal;
-		emitter.Tangent = v.Tangent;
-
-		if (coordinate == CoordinateSystem::LH)
-		{
-			emitter.Position.Z = -emitter.Position.Z;
-			emitter.Normal.Z = -emitter.Normal.Z;
-			emitter.Binormal.Z = -emitter.Binormal.Z;
-			emitter.Tangent.Z = -emitter.Tangent.Z;
-		}
-
-		return emitter;
-	}
-
-	Emitter GetEmitterFromVertex(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification)
-	{
-		time = time % GetFrameCount();
-
-		int32_t vertexInd = index % GetVertexCount(time);
-		Vertex& v = GetVertexes(time)[vertexInd];
-
-		Emitter emitter;
-		emitter.Position = v.Position * magnification;
-		emitter.Normal = v.Normal;
-		emitter.Binormal = v.Binormal;
-		emitter.Tangent = v.Tangent;
-
-		if (coordinate == CoordinateSystem::LH)
-		{
-			emitter.Position.Z = -emitter.Position.Z;
-			emitter.Normal.Z = -emitter.Normal.Z;
-			emitter.Binormal.Z = -emitter.Binormal.Z;
-			emitter.Tangent.Z = -emitter.Tangent.Z;
-		}
-
-		return emitter;
-	}
-
-	Emitter GetEmitterFromFace(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
-	{
-		time = time % GetFrameCount();
-
-		int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
-		faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
-		Face& face = GetFaces(time)[faceInd];
-		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
-		Vertex& v1 = GetVertexes(time)[face.Indexes[1]];
-		Vertex& v2 = GetVertexes(time)[face.Indexes[2]];
-
-		float p0 = 1.0f / 3.0f;
-		float p1 = 1.0f / 3.0f;
-		float p2 = 1.0f / 3.0f;
-
-		Emitter emitter;
-		emitter.Position = (v0.Position * p0 + v1.Position * p1 + v2.Position * p2) * magnification;
-		emitter.Normal = v0.Normal * p0 + v1.Normal * p1 + v2.Normal * p2;
-		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
-		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
-
-		if (coordinate == CoordinateSystem::LH)
-		{
-			emitter.Position.Z = -emitter.Position.Z;
-			emitter.Normal.Z = -emitter.Normal.Z;
-			emitter.Binormal.Z = -emitter.Binormal.Z;
-			emitter.Tangent.Z = -emitter.Tangent.Z;
-		}
-
-		return emitter;
-	}
-
-	Emitter GetEmitterFromFace(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification)
-	{
-		time = time % GetFrameCount();
-
-		int32_t faceInd = index % (GetFaceCount(time) - 1);
-		Face& face = GetFaces(time)[faceInd];
-		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
-		Vertex& v1 = GetVertexes(time)[face.Indexes[1]];
-		Vertex& v2 = GetVertexes(time)[face.Indexes[2]];
-
-		float p0 = 1.0f / 3.0f;
-		float p1 = 1.0f / 3.0f;
-		float p2 = 1.0f / 3.0f;
-
-		Emitter emitter;
-		emitter.Position = (v0.Position * p0 + v1.Position * p1 + v2.Position * p2) * magnification;
-		emitter.Normal = v0.Normal * p0 + v1.Normal * p1 + v2.Normal * p2;
-		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
-		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
-
-		if (coordinate == CoordinateSystem::LH)
-		{
-			emitter.Position.Z = -emitter.Position.Z;
-			emitter.Normal.Z = -emitter.Normal.Z;
-			emitter.Binormal.Z = -emitter.Binormal.Z;
-			emitter.Tangent.Z = -emitter.Tangent.Z;
-		}
-
-		return emitter;
-	}
+	bool GetIsBufferStoredOnGPU() const;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_MODEL_H__
 
 #ifndef	__EFFEKSEER_CURVE_H__
@@ -4592,7 +4332,7 @@ private:
 	ModelLoader* m_modelLoader;
 	MaterialLoader* m_materialLoader = nullptr;
 	CurveLoader* m_curveLoader = nullptr;
-
+	ProcedualModelGenerator* procedualMeshGenerator_ = nullptr;
 	std::vector<EffectFactory*> effectFactories;
 
 protected:
@@ -4717,6 +4457,26 @@ public:
 
 	/**
 		@brief
+		\~English get a mesh generator
+		\~Japanese メッシュジェネレーターを取得する。
+		@return
+		\~English	generator
+		\~Japanese ローダー
+	*/
+	ProcedualModelGenerator* GetProcedualMeshGenerator() const;
+
+	/**
+		@brief
+		\~English specfiy a mesh generator
+		\~Japanese メッシュジェネレーターを設定する。
+		@param	generator
+		\~English	generator
+		\~Japanese generator
+	*/
+	void SetProcedualMeshGenerator(ProcedualModelGenerator* generator);
+
+	/**
+		@brief
 		\~English	Add effect factory
 		\~Japanese Effect factoryを追加する。
 	*/
@@ -4756,6 +4516,7 @@ public:
 #ifndef __EFFEKSEER_SERVER_H__
 #define __EFFEKSEER_SERVER_H__
 
+#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------
@@ -4875,12 +4636,14 @@ public:
 //----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
+#endif
 
 #endif // __EFFEKSEER_SERVER_H__
 
 #ifndef __EFFEKSEER_CLIENT_H__
 #define __EFFEKSEER_CLIENT_H__
 
+#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------
@@ -4924,7 +4687,7 @@ public:
 //----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-
+#endif
 #endif // __EFFEKSEER_CLIENT_H__
 
 #ifndef __EFFEKSEER_GRAPHICS_DEVICE_H__

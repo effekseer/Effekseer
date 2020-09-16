@@ -191,6 +191,14 @@ namespace Effekseer.Data
             private set;
         }
 
+		[Selected(ID = 0, Value = 7)]
+		[IO(Export = true)]
+		public ProcedualModelParamater ProcedualModel
+		{
+			get;
+			private set;
+		} = new ProcedualModelParamater();
+
 		[Selected(ID = 0, Value = 5)]
 		[IO(Export = true)]
 		public ModelParamater Model
@@ -893,6 +901,50 @@ namespace Effekseer.Data
 			public ColorFCurveParameter Color_FCurve { get; private set; }
 		}
 
+		public class ProcedualModelParamater
+		{
+			public ProcedualModelParameter Parameter { get; private set; } = new ProcedualModelParameter();
+
+			[Name(language = Language.Japanese, value = "配置方法")]
+			[Name(language = Language.English, value = "Configuration")]
+			public Value.Enum<BillboardType> Billboard { get; private set; }
+
+			[Name(language = Language.Japanese, value = "カリング")]
+			[Name(language = Language.English, value = "Culling")]
+			public Value.Enum<CullingValues> Culling { get; private set; }
+
+			public ProcedualModelParamater()
+			{
+				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
+
+				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);
+
+				Color = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
+				Color_Fixed = new Value.Color(255, 255, 255, 255);
+				Color_Random = new Value.ColorWithRandom(255, 255, 255, 255);
+				Color_Easing = new ColorEasingParamater();
+				Color_FCurve = new ColorFCurveParameter();
+			}
+
+			[Selector(ID = 0)]
+			[Name(language = Language.Japanese, value = "全体色")]
+			public Value.Enum<StandardColorType> Color { get; private set; }
+
+			[Selected(ID = 0, Value = 0)]
+			public Value.Color Color_Fixed { get; private set; }
+
+			[Selected(ID = 0, Value = 1)]
+			public Value.ColorWithRandom Color_Random { get; private set; }
+
+			[Selected(ID = 0, Value = 2)]
+			[IO(Export = true)]
+			public ColorEasingParamater Color_Easing { get; private set; }
+
+			[Selected(ID = 0, Value = 3)]
+			[IO(Export = true)]
+			public ColorFCurveParameter Color_FCurve { get; private set; }
+		}
+
 		public class TrackParameter
 		{
 			[Selector(ID = 10)]
@@ -1168,6 +1220,10 @@ namespace Effekseer.Data
 			[Key(key = "RS_ParameterType_Ring")]
 			[Icon(code = "\xec24")]
 			Ring = 4,
+
+			[Key(key = "RS_ParameterType_ProcedualModel")]
+			[Icon(code = "\xec25")]
+			ProcedualModel = 7,
 
 			[Key(key = "RS_ParameterType_Model")]
 			[Icon(code = "\xec25")]

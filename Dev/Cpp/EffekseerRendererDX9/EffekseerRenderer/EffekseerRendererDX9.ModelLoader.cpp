@@ -57,7 +57,7 @@ ModelLoader::~ModelLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* ModelLoader::Load(const EFK_CHAR* path)
+Effekseer::Model* ModelLoader::Load(const EFK_CHAR* path)
 {
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 
@@ -67,19 +67,19 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 		uint8_t* data_model = new uint8_t[size_model];
 		reader->Read(data_model, size_model);
 
-		auto model = new EffekseerRenderer::Model(data_model, size_model, 10, graphicsDevice_);
+		auto model = new Effekseer::Model(data_model, size_model);
 
 		// auto model = (Model*)Load(data_model, static_cast<int32_t>(size_model));
 
 		delete[] data_model;
 
-		return (void*)model;
+		return model;
 	}
 
 	return nullptr;
 }
 
-void* ModelLoader::Load(const void* data, int32_t size)
+Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 {
 	// get device
 	LPDIRECT3DDEVICE9 device = nullptr;
@@ -98,7 +98,7 @@ void* ModelLoader::Load(const void* data, int32_t size)
 
 	HRESULT hr;
 
-	auto model = new EffekseerRenderer::Model((uint8_t*)data, size, 10, graphicsDevice_);
+	auto model = new Effekseer::Model((uint8_t*)data, size);
 
 	return model;
 }
@@ -106,11 +106,11 @@ void* ModelLoader::Load(const void* data, int32_t size)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ModelLoader::Unload(void* data)
+void ModelLoader::Unload(Effekseer::Model* data)
 {
 	if (data != NULL)
 	{
-		auto model = (EffekseerRenderer::Model*)data;
+		auto model = (Effekseer::Model*)data;
 		delete model;
 	}
 }

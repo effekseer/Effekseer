@@ -30,6 +30,7 @@ private:
 	Shader* shader_lit_;
 	Shader* shader_unlit_;
 	Shader* shader_distortion_;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 	ModelRenderer(RendererImplemented* renderer,
 				  Shader* shader_advanced_lit,

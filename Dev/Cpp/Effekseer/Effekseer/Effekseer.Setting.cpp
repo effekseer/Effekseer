@@ -6,12 +6,12 @@
 
 #include "Effekseer.RectF.h"
 
+#include "Effekseer.CurveLoader.h"
 #include "Effekseer.EffectLoader.h"
 #include "Effekseer.MaterialLoader.h"
-#include "Effekseer.ModelLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#include "Effekseer.CurveLoader.h"
+#include "Model/ModelLoader.h"
 
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
@@ -21,6 +21,7 @@
 
 #include "Effekseer.Effect.h"
 #include "IO/Effekseer.EfkEfcFactory.h"
+#include "Model/ProcedualModelGenerator.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -45,6 +46,8 @@ Setting::Setting()
 	// this function is for 1.6
 	auto efkefcFactory = new EfkEfcFactory();
 	effectFactories.push_back(efkefcFactory);
+
+	procedualMeshGenerator_ = new ProcedualModelGenerator();
 }
 
 //----------------------------------------------------------------------------------
@@ -174,6 +177,18 @@ void Setting::SetCurveLoader(CurveLoader* loader)
 {
 	ES_SAFE_DELETE(m_curveLoader);
 	m_curveLoader = loader;
+}
+
+ProcedualModelGenerator* Setting::GetProcedualMeshGenerator() const
+{
+	return procedualMeshGenerator_;
+}
+
+void Setting::SetProcedualMeshGenerator(ProcedualModelGenerator* generator)
+{
+	ES_SAFE_ADDREF(generator);
+	ES_SAFE_RELEASE(procedualMeshGenerator_);
+	procedualMeshGenerator_ = generator;
 }
 
 void Setting::AddEffectFactory(EffectFactory* effectFactory)

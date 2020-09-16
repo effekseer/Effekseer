@@ -99,9 +99,19 @@ namespace Effekseer.Binary
 
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> model_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> model_and_index, Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
+
+
+			// Fallback
+			if (version < ExporterVersion.Ver1600)
+			{
+				if(value != null && value.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
+				{
+					value = null;
+				}
+			}
 
 			if (value == null)
 			{
@@ -111,7 +121,6 @@ namespace Effekseer.Binary
 			{
 				data.Add(value.Type.GetValueAsInt().GetBytes());
 			}
-			
 
 			if (value == null)
 			{ 
@@ -497,6 +506,12 @@ namespace Effekseer.Binary
                 }
 				*/
             }
+			else if (value.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
+			{
+				var param = value.ProcedualModel.Parameter;
+				var index = pmodel_and_index[param];
+				data.Add((index).GetBytes());
+			}
 			else if (value.Type.Value == Data.RendererValues.ParamaterType.Model)
 			{
 				var param = value.Model;
@@ -573,7 +588,7 @@ namespace Effekseer.Binary
 				OutputStandardColor(data, param.ColorRight, param.ColorRight_Fixed, param.ColorRight_Random, param.ColorRight_Easing, param.ColorRight_FCurve);
 				OutputStandardColor(data, param.ColorRightMiddle, param.ColorRightMiddle_Fixed, param.ColorRightMiddle_Random, param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
 			}
-
+			
 			return data.ToArray().ToArray();
 		}
 

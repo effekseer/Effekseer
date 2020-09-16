@@ -60,6 +60,9 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	}
 
 	VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
+
+	graphicsDevice_ = m_renderer->GetGraphicsDevice();
+	LLGI::SafeAddRef(graphicsDevice_);
 }
 
 ModelRenderer::~ModelRenderer()
@@ -71,6 +74,8 @@ ModelRenderer::~ModelRenderer()
 	ES_SAFE_DELETE(shader_ad_unlit_);
 	ES_SAFE_DELETE(shader_ad_lit_);
 	ES_SAFE_DELETE(shader_ad_distortion_);
+
+	LLGI::SafeRelease(graphicsDevice_);
 }
 
 ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader* fixedShader)
@@ -172,19 +177,29 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	auto model = (EffekseerRenderer::Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	Effekseer::Model* model = nullptr;
+
+	if (parameter.IsProcedualMode)
+	{
+		model = parameter.EffectPointer->GetProcedualModel(parameter.ModelIndex);
+	}
+	else
+	{
+		model = parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	}
+
 	if (model == nullptr)
 	{
 		return;
 	}
 
-	model->LoadToGPU();
-	if (!model->IsLoadedOnGPU)
+	model->StoreBufferToGPU(graphicsDevice_->GetGraphicsDevice());
+	if (!model->GetIsBufferStoredOnGPU())
 	{
 		return;
 	}
 
-	EndRendering_<RendererImplemented, Shader, EffekseerRenderer::Model, true, InstanceCount>(
+	EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, InstanceCount>(
 		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
 }
 

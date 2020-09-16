@@ -987,7 +987,18 @@ public:
 		if (param.ModelIndex < 0)
 			return;
 
-		MODEL* model = (MODEL*)param.EffectPointer->GetModel(param.ModelIndex);
+		MODEL* model = nullptr;
+
+		if (param.IsProcedualMode)
+		{
+			model = (MODEL*)param.EffectPointer->GetProcedualModel(param.ModelIndex);
+		}
+		else
+		{
+			model = (MODEL*)param.EffectPointer->GetModel(param.ModelIndex);
+		}
+
+
 		if (model == NULL)
 			return;
 
@@ -1432,16 +1443,16 @@ public:
 
 		if (Instancing && isTimeSame)
 		{
-			auto& imodel = model->InternalModels[stTime0];
+			//auto& imodel = model->InternalModels[stTime0];
 
 			// Invalid unless layout is set after buffer
-			renderer->SetVertexBuffer(imodel.VertexBuffer, model->GetVertexSize());
-			renderer->SetIndexBuffer(imodel.IndexBuffer);
+			renderer->SetVertexBuffer(model->GetVertexBuffer(stTime0), sizeof(Effekseer::Model::Vertex));
+			renderer->SetIndexBuffer(model->GetIndexBuffer(stTime0));
 			renderer->SetLayout(shader_);
 
 			for (size_t loop = 0; loop < m_matrixes.size();)
 			{
-				int32_t modelCount = Effekseer::Min(static_cast<int32_t>(m_matrixes.size()) - loop, model->ModelCount);
+				int32_t modelCount = Effekseer::Min(static_cast<int32_t>(m_matrixes.size()) - loop, InstanceCount);
 
 				for (int32_t num = 0; num < modelCount; num++)
 				{
@@ -1512,11 +1523,11 @@ public:
 
 				if (VertexType == ModelRendererVertexType::Instancing)
 				{
-					renderer->DrawPolygonInstanced(imodel.VertexCount, imodel.IndexCount, modelCount);
+					renderer->DrawPolygonInstanced(model->GetVertexCount(stTime0), model->GetFaceCount(stTime0) * 3, modelCount);
 				}
 				else
 				{
-					renderer->DrawPolygon(imodel.VertexCount * modelCount, imodel.IndexCount * modelCount);
+					assert(0);
 				}
 
 				loop += modelCount;
@@ -1527,11 +1538,11 @@ public:
 			for (size_t loop = 0; loop < m_matrixes.size();)
 			{
 				auto stTime = m_times[loop] % model->GetFrameCount();
-				auto& imodel = model->InternalModels[stTime];
+				// auto& imodel = model->InternalModels[stTime];
 
 				// Invalid unless layout is set after buffer
-				renderer->SetVertexBuffer(imodel.VertexBuffer, model->GetVertexSize());
-				renderer->SetIndexBuffer(imodel.IndexBuffer);
+				renderer->SetVertexBuffer(model->GetVertexBuffer(stTime), sizeof(Effekseer::Model::Vertex));
+				renderer->SetIndexBuffer(model->GetIndexBuffer(stTime));
 				renderer->SetLayout(shader_);
 
 				vcb->ModelMatrix[0] = m_matrixes[loop];
@@ -1583,7 +1594,7 @@ public:
 				}
 
 				shader_->SetConstantBuffer();
-				renderer->DrawPolygon(imodel.VertexCount, imodel.IndexCount);
+				renderer->DrawPolygon(model->GetVertexCount(stTime), model->GetFaceCount(stTime) * 3);
 
 				loop += 1;
 			}
