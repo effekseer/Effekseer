@@ -1465,6 +1465,10 @@ public:
 
 	EffectModelParameter GetEffectModelParameter() override;
 
+	/*
+	*/
+	bool IsLiveForever() const override;
+
 	/**
 	@brief	描画部分の読込
 	*/

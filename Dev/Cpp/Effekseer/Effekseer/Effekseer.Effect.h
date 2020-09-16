@@ -570,6 +570,10 @@ public:
 	*/
 	virtual EffectNode* GetRoot() const = 0;
 
+	/*
+	*/
+	virtual bool IsLiveForever() const = 0;
+
 	/**
 		@brief
 	\~English	Calculate a term of instances where the effect exists
@@ -666,6 +670,10 @@ public:
 	\~Japanese	インスタンスが存在する期間を計算する。
 	*/
 	virtual EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const = 0;
+
+	/*
+	*/
+	virtual bool IsLiveForever() const = 0;
 };
 
 //----------------------------------------------------------------------------------
