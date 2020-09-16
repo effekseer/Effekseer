@@ -1,4 +1,6 @@
 on:
+  release:
+    types: [published]
   push:
     branches:
       - master
@@ -7,54 +9,157 @@ on:
     branches:
       - master
       - 15x
-jobs:
-
-  windows:
-    name: windows Build
-    runs-on: vs2017-win2016
+jobs:     
+  Build:
+    strategy:
+      fail-fast: true
+      matrix:
+        name: [linux,windows,mac]
+        include:
+          - name: linux
+            os: ubuntu-latest
+          - name: windows
+            os: vs2017-win2016
+          - name: mac
+            os: macos-latest 
+    name: Build on ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
     steps:
+
       - uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 1
+
       - run: |
-         git submodule update --init
-         git lfs install
-         git lfs pull
+          git lfs install
+          git lfs pull
+      
+      - name: Install Linux Dependencies
+        if: matrix.name == 'linux'
+        run: |
+          wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+          sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+          wget -q https://packages.microsoft.com/config/ubuntu/18.04/prod.list 
+          sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get update
+          sudo apt-get install -y  libpulse-dev libglvnd-dev libx11-dev libopenal-dev libvulkan-dev \
+               libgl1-mesa-dev libgles2-mesa-dev libglu1-mesa-dev libgtk-3-dev ninja-build dotnet-sdk-3.1 \
+               xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
         
       - name: Build
-        run: python build.py
-        shell: cmd
-
-      - name: Test
+        shell: bash
         run: |
-         cd build/Dev/Cpp/Test/Release/
-         Test.exe ci
+          if [ "${{ matrix.name }}" = "mac" ];
+          then
+              export PACKAGEING_FOR_MAC=1 
+              export MONO_SDK_PATH=/Library/Frameworks/Mono.framework/Versions/6.4.0
+          fi
+          python3 build.py || python build.py
+                
+      - name: Prepare Runtime
+        if: matrix.name == 'windows'
+        run: |
+          release_runtime.bat
+        shell: cmd
+        
+      - name: Prepare Windows Tool
+        run: |
+          release_tool.bat
+        if: matrix.name == 'windows'
         shell: cmd
 
-      - name: Upload Test
-        uses: actions/upload-artifact@v1
-        with:
-          name: Test
-          path: build/Dev/Cpp/Test/Release/
-
-      - name: Test
-        run: python Script/test_screenshot.py
-        shell: cmd
-
-      - name: Release Runtime
-        run: release_runtime.bat
-        shell: cmd
+      - name: Prepare Linux Tool
+        run: |
+          bash ./release_tool.sh
+        if: matrix.name == 'linux'
 
       - name: Upload Runtime
-        uses: actions/upload-artifact@v1
+        if: matrix.name == 'windows'
+        uses: actions/upload-artifact@v2
         with:
-          name: EffekseerRuntime152g
-          path: EffekseerRuntime150
+          name: Effekseer-runtime
+          path: EffekseerRuntime
 
-      - name: Release Tool
-        run: release_tool.bat
-        shell: cmd
-
-      - name: Upload Tool
-        uses: actions/upload-artifact@v1
+      - name: Upload ${{matrix.name}} Tool
+        uses: actions/upload-artifact@v2
         with:
-          name: Effekseer152gWin
-          path: Effekseer150Win
+          name: Effekseer-${{matrix.name}}
+          path: EffekseerTool*
+          
+      - name: Upload mac Tool (dmg)
+        if: matrix.name == 'mac'
+        uses: actions/upload-artifact@v2
+        with:
+          name: Effekseer-${{matrix.name}}.dmg
+          path: Dev/Effekseer.dmg
+  
+  Deploy:
+    needs: [Build]
+    runs-on: ubuntu-latest
+    steps:
+     
+      - uses: actions/download-artifact@v2
+        with:
+          name: Effekseer-windows
+          path: dist/
+                
+      - uses: actions/download-artifact@v2
+        with:
+          name: Effekseer-linux
+          path: dist/
+      
+      - uses: actions/download-artifact@v2
+        with:
+          name: Effekseer-runtime
+          path: dist/EffekseerRuntime
+      
+      - uses: actions/download-artifact@v2
+        with:
+          name: Effekseer-mac
+          path: dist/
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: Effekseer-mac.dmg
+          path: dist/
+                  
+      
+      - name: Prepare Release
+        run: |
+          mkdir -p dist
+          mkdir -p pub
+          cd dist
+          for d in *;
+          do
+            if [ -d $d ];
+            then
+              zip -r ../pub/$d.zip $d/*
+            else
+              cp $d ../pub/
+            fi
+          done
+          
+      - name: Upload Release artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: EffekseerReleaseAll
+          path: pub
+
+      - name: Deploy to Github Releases
+        if: github.event_name == 'release'
+        run: |
+          cd pub
+          releaseId=$(jq --raw-output '.release.id' ${GITHUB_EVENT_PATH})
+          echo "Upload to release $releaseId"
+          for filename in *;
+          do
+            url="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/$releaseId/assets?name=$(basename $filename)"
+            echo "Upload $filename to $url"
+            curl -L \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/binary" \
+            --data-binary @"$filename" \
+            "$url"
+          done
+        
