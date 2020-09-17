@@ -1,4 +1,4 @@
-SET RDIR_R=EffekseerRuntime150
+SET RDIR_R=EffekseerRuntime
 
 rmdir %RDIR_R%
 mkdir %RDIR_R%
