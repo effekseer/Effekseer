@@ -10,6 +10,38 @@ on:
       - master
       - 15x
 jobs:     
+
+
+  tests:
+    name: Run Tests
+    runs-on: vs2017-win2016
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+         git submodule update --init
+         git lfs install
+         git lfs pull
+        
+      - name: Build
+        run: python build.py
+        shell: cmd
+
+      - name: Test
+        run: |
+         cd build/Dev/Cpp/Test/Release/
+         Test.exe ci
+        shell: cmd
+
+      - name: Upload Test
+        uses: actions/upload-artifact@v1
+        with:
+          name: Test
+          path: build/Dev/Cpp/Test/Release/
+
+      - name: Test
+        run: python Script/test_screenshot.py
+        shell: cmd
+
   Build:
     strategy:
       fail-fast: true
@@ -95,7 +127,7 @@ jobs:
           path: Dev/Effekseer.dmg
   
   Deploy:
-    needs: [Build]
+    needs: [tests,Build]
     runs-on: ubuntu-latest
     steps:
      
