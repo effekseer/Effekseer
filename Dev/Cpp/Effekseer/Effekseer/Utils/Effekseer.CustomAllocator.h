@@ -7,6 +7,7 @@
 #include <map>
 #include <new>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 namespace Effekseer
@@ -135,6 +136,16 @@ struct CustomAlignedAllocator
 	{
 		GetAlignedFreeFunc()(p, sizeof(T) * static_cast<uint32_t>(n));
 	}
+
+	bool operator==(const CustomAlignedAllocator<T>&)
+	{
+		return true;
+	}
+
+	bool operator!=(const CustomAlignedAllocator<T>&)
+	{
+		return false;
+	}
 };
 
 template <class T, class U>
@@ -159,7 +170,12 @@ template <class T>
 using CustomSet = std::set<T, std::less<T>, CustomAllocator<T>>;
 template <class T, class U>
 using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
-template <class T, class U> using CustomAlignedMap = std::map<T, U, std::less<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
+template <class T, class U>
+using CustomAlignedMap = std::map<T, U, std::less<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
+template <class T, class U>
+using CustomUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAllocator<std::pair<const T, U>>>;
+template <class T, class U>
+using CustomAlignedUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
 
 } // namespace Effekseer
 

@@ -705,32 +705,46 @@ namespace Effekseer.Binary
 				foreach (var pm in procedual_mesh_and_index)
 				{
 					var param = pm.Key;
+
 					var type = (int)param.Type.Value;
 					data.Add(type.GetBytes());
-					data.Add(param.AngleBegin.Value.GetBytes());
-					data.Add(param.AngleEnd.Value.GetBytes());
-					data.Add(param.AxisBegin.Value.GetBytes());
-					data.Add(param.AxisEnd.Value.GetBytes());
-					data.Add(param.AxisDivision.Value.GetBytes());
-					data.Add(param.AngleDivision.Value.GetBytes());
 
-					if(param.Type.Value == ProcedualModelType.Sphere)
+					if(param.Type.Value == ProcedualModelType.Mesh)
+					{
+						data.Add(param.AngleBeginEnd.X.Value.GetBytes());
+						data.Add(param.AngleBeginEnd.Y.Value.GetBytes());
+						data.Add(param.AngleDivision.Value.GetBytes());
+						data.Add(param.AxisDivision.Value.GetBytes());
+					}
+					else
+					{
+						data.Add(param.Rotate.Value.GetBytes());
+						data.Add(param.Vertices.Value.GetBytes());
+						data.Add(param.Count.Value.GetBytes());
+					}
+
+					var primitiveType = (int)param.PrimitiveType.Value;
+										
+					data.Add(primitiveType.GetBytes());
+
+					if(param.PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
 					{
 						data.Add(param.Radius.Value.GetBytes());
+						data.Add(param.DepthMin.Value.GetBytes());
+						data.Add(param.DepthMax.Value.GetBytes());
 					}
-					else if (param.Type.Value == ProcedualModelType.Cone)
+					else if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Cone)
 					{
 						data.Add(param.Radius.Value.GetBytes());
 						data.Add(param.Depth.Value.GetBytes());
 					}
-					else if (param.Type.Value == ProcedualModelType.Cylinder)
+					else if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Cylinder)
 					{
 						data.Add(param.Radius.Value.GetBytes());
 						data.Add(param.Radius2.Value.GetBytes());
 						data.Add(param.Depth.Value.GetBytes());
 					}
 				}
-
 			}
 
 			var compiler = new InternalScript.Compiler();

@@ -593,6 +593,11 @@ namespace Effekseer.Data
 
 	public enum ProcedualModelType : int
 	{
+		Mesh,
+		Ribbon,
+	}
+	public enum ProcedualModelPrimitiveType : int
+	{
 		Sphere,
 		Cone,
 		Cylinder,
@@ -600,20 +605,45 @@ namespace Effekseer.Data
 
 	public class ProcedualModelParameter
 	{
-		public Value.Enum<ProcedualModelType> Type { get; private set; } = new Value.Enum<ProcedualModelType>(ProcedualModelType.Sphere);
+		[Key(key = "PM_Type")]
+		public Value.Enum<ProcedualModelType> Type { get; private set; } = new Value.Enum<ProcedualModelType>(ProcedualModelType.Mesh);
+
+		[Key(key = "PM_AngleBeginEnd")]
+		public Value.Vector2D AngleBeginEnd { get; private set; } = new Value.Vector2D(0.0f, 360.0f);
 
 
-		public Value.Float AngleBegin { get; private set; } = new Value.Float(0.0f);
-		public Value.Float AngleEnd { get; private set; } = new Value.Float(360.0f);
-		public Value.Float AxisBegin { get; private set; } = new Value.Float(0.0f);
-		public Value.Float AxisEnd { get; private set; } = new Value.Float(1.0f);
-		public Value.Int AxisDivision { get; private set; } = new Value.Int(10);
+		[Key(key = "PM_AngleDivision")]
 		public Value.Int AngleDivision { get; private set; } = new Value.Int(10);
 
+		[Key(key = "PM_AxisDivision")]
+		public Value.Int AxisDivision { get; private set; } = new Value.Int(10);
+
+		[Key(key = "PM_Rotate")]
+		public Value.Float Rotate { get; private set; } = new Value.Float(1.0f);
+
+		[Key(key = "PM_Vertices")]
+		public Value.Int Vertices { get; private set; } = new Value.Int(10);
+
+		[Key(key = "PM_Count")]
+		public Value.Int Count { get; private set; } = new Value.Int(2);
+
+		[Key(key = "PM_PrimitiveType")]
+		public Value.Enum<ProcedualModelPrimitiveType> PrimitiveType { get; private set; } = new Value.Enum<ProcedualModelPrimitiveType>(ProcedualModelPrimitiveType.Sphere);
+
+		[Key(key = "PM_Radius")]
 		public Value.Float Radius { get; private set; } = new Value.Float(1.0f);
 
-		public Value.Float Depth { get; private set; } = new Value.Float(1.0f);
+		[Key(key = "PM_Radius2")]
 		public Value.Float Radius2 { get; private set; } = new Value.Float(1.0f);
+
+		[Key(key = "PM_Depth")]
+		public Value.Float Depth { get; private set; } = new Value.Float(1.0f);
+
+		[Key(key = "PM_DepthMin")]
+		public Value.Float DepthMin { get; private set; } = new Value.Float(-1.0f);
+
+		[Key(key = "PM_DepthMax")]
+		public Value.Float DepthMax { get; private set; } = new Value.Float(1.0f);
 
 		public override bool Equals(object obj)
 		{
@@ -624,43 +654,58 @@ namespace Effekseer.Data
 			if (Type.Value != param.Type.Value)
 				return false;
 
-			if (AngleBegin.Value != param.AngleBegin.Value)
+			if (Type.Value == ProcedualModelType.Mesh)
+			{
+				if (AngleBeginEnd.X != param.AngleBeginEnd.X)
+					return false;
+				if (AngleBeginEnd.Y != param.AngleBeginEnd.Y)
+					return false;
+				if (AngleDivision.Value != param.AngleDivision.Value)
+					return false;
+				if (AxisDivision.Value != param.AxisDivision.Value)
+					return false;
+			}
+			else if (Type.Value == ProcedualModelType.Ribbon)
+			{
+				if (Rotate.Value != param.Rotate.Value)
+					return false;
+				if (Vertices.Value != param.Vertices.Value)
+					return false;
+				if (Count.Value != param.Count.Value)
+					return false;
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+
+			if (PrimitiveType.Value != param.PrimitiveType.Value)
 				return false;
 
-			if (AngleEnd.Value != param.AngleEnd.Value)
-				return false;
-
-			if (AxisBegin.Value != param.AxisBegin.Value)
-				return false;
-
-			if (AxisEnd.Value != param.AxisEnd.Value)
-				return false;
-
-			if (AxisDivision.Value != param.AxisDivision.Value)
-				return false;
-
-			if (AngleDivision.Value != param.AngleDivision.Value)
-				return false;
-
-			if(Type.Value == ProcedualModelType.Sphere)
+			if(PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
 			{
 				if (Radius.Value != param.Radius.Value)
 					return false;
-			}
-			else if (Type.Value == ProcedualModelType.Cone)
-			{
-				if (Depth.Value != param.Depth.Value)
+				if (DepthMin.Value != param.DepthMin.Value)
 					return false;
+				if (DepthMax.Value != param.DepthMax.Value)
+					return false;
+			}
+			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cone)
+			{
 				if (Radius.Value != param.Radius.Value)
 					return false;
-			}
-			else if (Type.Value == ProcedualModelType.Cylinder)
-			{
 				if (Depth.Value != param.Depth.Value)
 					return false;
+			}
+			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cylinder)
+			{
 				if (Radius.Value != param.Radius.Value)
 					return false;
 				if (Radius2.Value != param.Radius2.Value)
+					return false;
+				if (Depth.Value != param.Depth.Value)
 					return false;
 			}
 			else
@@ -673,21 +718,40 @@ namespace Effekseer.Data
 
 		public override int GetHashCode()
 		{
-			var hash = Type.Value.GetHashCode();
+			var hash = 0;
 
-			hash = CombineHashCodes(new[] { hash, AngleBegin.Value.GetHashCode(), AngleEnd.Value.GetHashCode(), AxisBegin.Value.GetHashCode(), AxisEnd.Value.GetHashCode(), AxisDivision.Value.GetHashCode(), AxisDivision.Value.GetHashCode() });
+			hash = CombineHashCodes(new[] { hash, Type.Value.GetHashCode() });
 
-			if (Type.Value == ProcedualModelType.Sphere)
+			if (Type.Value == ProcedualModelType.Mesh)
 			{
-				hash = CombineHashCodes(new[] { hash, Radius.Value.GetHashCode() });
+				hash = CombineHashCodes(new[] { hash, AngleBeginEnd.X.Value.GetHashCode(), AngleBeginEnd.Y.Value.GetHashCode(), AngleDivision.Value.GetHashCode(), AxisDivision.Value.GetHashCode() });
 			}
-			else if (Type.Value == ProcedualModelType.Cone)
+			else if (Type.Value == ProcedualModelType.Ribbon)
+			{
+				hash = CombineHashCodes(new[] { hash, Rotate.Value.GetHashCode(), Vertices.Value.GetHashCode(), Count.Value.GetHashCode() });
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+			hash = CombineHashCodes(new[] { hash, PrimitiveType.Value.GetHashCode() });
+
+			if (PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
+			{
+				hash = CombineHashCodes(new[] { hash, DepthMin.Value.GetHashCode(), DepthMax.Value.GetHashCode(), Radius.Value.GetHashCode() });
+			}
+			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cone)
 			{
 				hash = CombineHashCodes(new[] { hash, Depth.Value.GetHashCode(), Radius.Value.GetHashCode() });
 			}
-			else if (Type.Value == ProcedualModelType.Cylinder)
+			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cylinder)
 			{
 				hash = CombineHashCodes(new[] { hash, Depth.Value.GetHashCode(), Radius.Value.GetHashCode(), Radius2.Value.GetHashCode() });
+			}
+			else
+			{
+				throw new Exception();
 			}
 
 			return hash;

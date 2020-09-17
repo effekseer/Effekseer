@@ -4,7 +4,8 @@
 #include "ProcedualModelParameter.h"
 
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
+#include <iterator>
 
 namespace Effekseer
 {
@@ -29,45 +30,6 @@ namespace Effekseer
 	// Calculate tangent
 */
 
-struct RotatorSphere
-{
-	float Radius;
-
-	Vec2f GetPosition(float value) const
-	{
-		value = Clamp(value, 1.0f, 0.0f);
-		float axisPos = -Radius + Radius * 2.0f * value;
-		return Vec2f(sqrt(Radius * Radius - axisPos * axisPos), axisPos);
-	}
-};
-
-struct RotatorCone
-{
-	float Radius;
-	float Depth;
-
-	Vec2f GetPosition(float value) const
-	{
-		value = Clamp(value, 1.0f, 0.0f);
-		float axisPos = Depth * value;
-		return Vec2f(Radius / Depth * axisPos, axisPos);
-	}
-};
-
-struct RotatorCylinder
-{
-	float Radius1;
-	float Radius2;
-	float Depth;
-
-	Vec2f GetPosition(float value) const
-	{
-		value = Clamp(value, 1.0f, 0.0f);
-		float axisPos = Depth * value;
-		return Vec2f((Radius2 - Radius1) / Depth * axisPos + Radius1, axisPos);
-	}
-};
-
 struct ProcedualMeshVertex
 {
 	Vec3f Position;
@@ -85,89 +47,24 @@ struct ProcedualMesh
 {
 	CustomAlignedVector<ProcedualMeshVertex> Vertexes;
 	CustomVector<ProcedualMeshFace> Faces;
-};
 
-template <typename T>
-struct RotatorMeshGenerator
-{
-	float DepthMin;
-	float DepthMax;
-	float AngleMin;
-	float AngleMax;
-	T Rotator;
-
-	Vec3f GetPosition(float axisValue, float angleValue) const
+	static ProcedualMesh Combine(ProcedualMesh mesh1, ProcedualMesh mesh2)
 	{
-		auto value = (DepthMax - DepthMin) * axisValue + DepthMin;
-		auto angle = (AngleMax - AngleMin) * angleValue + AngleMin;
+		const auto vertexOffset = mesh1.Vertexes.size();
+		const auto faceOffset = mesh1.Faces.size();
 
-		Vec2f pos2d = Rotator.GetPosition(value);
+		std::copy(mesh2.Vertexes.begin(), mesh2.Vertexes.end(), std::back_inserter(mesh1.Vertexes));
+		std::copy(mesh2.Faces.begin(), mesh2.Faces.end(), std::back_inserter(mesh1.Faces));
 
-		float s;
-		float c;
-		SinCos(angle, s, c);
-
-		auto rx = pos2d.GetX() * s;
-		auto rz = pos2d.GetX() * c;
-		auto y = pos2d.GetY();
-
-		return Vec3f(rx, y, rz);
-	}
-
-	ProcedualMesh Generate(int32_t axisDivision, int32_t angleDivision) const
-	{
-		assert(axisDivision > 1);
-		assert(angleDivision > 1);
-
-		ProcedualMesh ret;
-
-		ret.Vertexes.resize(axisDivision * angleDivision);
-		ret.Faces.resize((axisDivision - 1) * (angleDivision - 1) * 2);
-
-		for (int32_t v = 0; v < axisDivision; v++)
+		for (size_t f = faceOffset; f < mesh1.Faces.size(); f++)
 		{
-			for (int32_t u = 0; u < angleDivision; u++)
+			for (auto& ind : mesh1.Faces[f].Indexes)
 			{
-				ret.Vertexes[u + v * angleDivision].Position = GetPosition(u / float(angleDivision - 1), v / float(axisDivision - 1));
-				ret.Vertexes[u + v * angleDivision].UV = Vec2f(u / float(angleDivision - 1), v / float(axisDivision - 1));
+				ind += vertexOffset;
 			}
 		}
 
-		for (int32_t v = 0; v < axisDivision - 1; v++)
-		{
-			for (int32_t u = 0; u < angleDivision - 1; u++)
-			{
-				ProcedualMeshFace face0;
-				ProcedualMeshFace face1;
-
-				int32_t v00 = (u + 0) + (v + 0) * (angleDivision);
-				int32_t v10 = (u + 1) + (v + 0) * (angleDivision);
-				int32_t v01 = (u + 0) + (v + 1) * (angleDivision);
-				int32_t v11 = (u + 1) + (v + 1) * (angleDivision);
-
-				face0.Indexes[0] = v00;
-				face0.Indexes[1] = v10;
-				face0.Indexes[2] = v11;
-
-				face1.Indexes[0] = v00;
-				face1.Indexes[1] = v11;
-				face1.Indexes[2] = v01;
-
-				ret.Faces[(u + v * (angleDivision - 1)) * 2 + 0] = face0;
-				ret.Faces[(u + v * (angleDivision - 1)) * 2 + 1] = face1;
-			}
-		}
-
-		return ret;
-	}
-};
-
-template <typename T>
-struct RotatedWireMeshGenerator
-{
-
-	ProcedualMesh Generate(float angleBegin, float angleEnd, float axisBegin, float axisEnd, int32_t axisDivision, int32_t angleDivision)
-	{
+		return std::move(mesh1);
 	}
 };
 
@@ -248,34 +145,34 @@ static void CalculateNormal(ProcedualMesh& mesh)
 		faceTangents[i] = tangent;
 	}
 
-	CustomAlignedVector<Vec3f> normals;
-	CustomAlignedVector<Vec3f> tangents;
-	CustomVector<int32_t> vertexCounts;
-
-	normals.resize(mesh.Vertexes.size());
-	tangents.resize(mesh.Vertexes.size());
-	vertexCounts.resize(mesh.Vertexes.size());
-
-	for (size_t i = 0; i < normals.size(); i++)
-	{
-		normals[i] = Vec3f(0.0f, 0.0f, 0.0f);
-		tangents[i] = Vec3f(0.0f, 0.0f, 0.0f);
-	}
+	CustomAlignedUnorderedMap<Vec3f, Vec3f> normals;
+	CustomAlignedUnorderedMap<Vec3f, Vec3f> tangents;
+	CustomAlignedUnorderedMap<Vec3f, int32_t> vertexCounts;
 
 	for (size_t i = 0; i < mesh.Faces.size(); i++)
 	{
 		for (size_t j = 0; j < 3; j++)
 		{
-			normals[mesh.Faces[i].Indexes[j]] = faceNormals[i];
-			tangents[mesh.Faces[i].Indexes[j]] = faceTangents[i];
-			vertexCounts[mesh.Faces[i].Indexes[j]]++;
+			const auto& key = mesh.Vertexes[mesh.Faces[i].Indexes[j]].Position;
+
+			if (normals.count(key) == 0)
+			{
+				normals[key] = Vec3f(0.0f, 0.0f, 0.0f);
+				tangents[key] = Vec3f(0.0f, 0.0f, 0.0f);
+				vertexCounts[key] = 0;
+			}
+
+			normals[key] += faceNormals[i];
+			tangents[key] += faceTangents[i];
+			vertexCounts[key]++;
 		}
 	}
 
-	for (size_t i = 0; i < normals.size(); i++)
+	for (size_t i = 0; i < mesh.Vertexes.size(); i++)
 	{
-		mesh.Vertexes[i].Normal = normals[i] / static_cast<float>(vertexCounts[i]);
-		mesh.Vertexes[i].Tangent = tangents[i] / static_cast<float>(vertexCounts[i]);
+		const auto& key = mesh.Vertexes[i].Position;
+		mesh.Vertexes[i].Normal = normals[key] / static_cast<float>(vertexCounts[key]);
+		mesh.Vertexes[i].Tangent = tangents[key] / static_cast<float>(vertexCounts[key]);
 	}
 }
 
@@ -308,6 +205,240 @@ static Model* ConvertMeshToModel(const ProcedualMesh& mesh)
 	return new Model(vs, faces);
 }
 
+struct RotatorSphere
+{
+	float Radius;
+	float DepthMin;
+	float DepthMax;
+
+	Vec2f GetPosition(float value) const
+	{
+		const auto depthMax = Clamp(DepthMax, 1.0f, -1.0f);
+		const auto depthMin = Clamp(DepthMin, 1.0f, -1.0f);
+
+		float valueMin = depthMin * Radius;
+		float valueMax = depthMax * Radius;
+
+		value = Clamp(value, 1.0f, 0.0f);
+		float axisPos = (DepthMax - DepthMin) * value + DepthMin;
+
+		return Vec2f(sqrt(Radius * Radius - axisPos * axisPos), axisPos);
+	}
+};
+
+struct RotatorCone
+{
+	float Radius;
+	float Depth;
+
+	Vec2f GetPosition(float value) const
+	{
+		value = Clamp(value, 1.0f, 0.0f);
+		float axisPos = Depth * value;
+		return Vec2f(Radius / Depth * axisPos, axisPos);
+	}
+};
+
+struct RotatorCylinder
+{
+	float Radius1;
+	float Radius2;
+	float Depth;
+
+	Vec2f GetPosition(float value) const
+	{
+		value = Clamp(value, 1.0f, 0.0f);
+		float axisPos = Depth * value;
+		return Vec2f((Radius2 - Radius1) / Depth * axisPos + Radius1, axisPos);
+	}
+};
+
+struct RotatorMeshGenerator
+{
+	float AngleMin;
+	float AngleMax;
+	bool IsConnected = false;
+
+	std::function<Vec2f(float)> Rotator;
+
+	Vec3f GetPosition(float angleValue, float depthValue) const
+	{
+		depthValue = Clamp(depthValue, 1.0f, 0.0f);
+		auto angle = (AngleMax - AngleMin) * angleValue + AngleMin;
+
+		Vec2f pos2d = Rotator(depthValue);
+
+		float s;
+		float c;
+		SinCos(angle, s, c);
+
+		auto rx = pos2d.GetX() * s;
+		auto rz = pos2d.GetX() * c;
+		auto y = pos2d.GetY();
+
+		return Vec3f(rx, y, rz);
+	}
+
+	ProcedualMesh Generate(int32_t angleDivision, int32_t depthDivision) const
+	{
+		assert(depthDivision > 1);
+		assert(angleDivision > 1);
+
+		ProcedualMesh ret;
+
+		ret.Vertexes.resize(depthDivision * angleDivision);
+		ret.Faces.resize((depthDivision - 1) * (angleDivision - 1) * 2);
+
+		for (int32_t v = 0; v < depthDivision; v++)
+		{
+			for (int32_t u = 0; u < angleDivision; u++)
+			{
+				ret.Vertexes[u + v * angleDivision].Position = GetPosition(u / float(angleDivision - 1), v / float(depthDivision - 1));
+				ret.Vertexes[u + v * angleDivision].UV = Vec2f(u / float(angleDivision - 1), 1.0f - v / float(depthDivision - 1));
+			}
+		}
+
+		if (IsConnected)
+		{
+			for (int32_t v = 0; v < depthDivision; v++)
+			{
+				ret.Vertexes[(angleDivision - 1) + v * angleDivision].Position = ret.Vertexes[0 + v * angleDivision].Position;
+			}
+		}
+
+		for (int32_t v = 0; v < depthDivision - 1; v++)
+		{
+			for (int32_t u = 0; u < angleDivision - 1; u++)
+			{
+				ProcedualMeshFace face0;
+				ProcedualMeshFace face1;
+
+				int32_t v00 = (u + 0) + (v + 0) * (angleDivision);
+				int32_t v10 = (u + 1) + (v + 0) * (angleDivision);
+				int32_t v01 = (u + 0) + (v + 1) * (angleDivision);
+				int32_t v11 = (u + 1) + (v + 1) * (angleDivision);
+
+				face0.Indexes[0] = v00;
+				face0.Indexes[1] = v11;
+				face0.Indexes[2] = v10;
+
+				face1.Indexes[0] = v00;
+				face1.Indexes[1] = v01;
+				face1.Indexes[2] = v11;
+
+				ret.Faces[(u + v * (angleDivision - 1)) * 2 + 0] = face0;
+				ret.Faces[(u + v * (angleDivision - 1)) * 2 + 1] = face1;
+			}
+		}
+
+		return ret;
+	}
+};
+
+struct RotatedWireMeshGenerator
+{
+	float Rotate;
+	int Vertices;
+	int Count;
+
+	std::function<Vec2f(float)> Rotator;
+
+	Vec3f GetPosition(float angleValue, float depthValue) const
+	{
+		auto value = depthValue;
+		auto angle = angleValue;
+
+		Vec2f pos2d = Rotator(value);
+
+		float s;
+		float c;
+		SinCos(angle, s, c);
+
+		auto rx = pos2d.GetX() * s;
+		auto rz = pos2d.GetX() * c;
+		auto y = pos2d.GetY();
+
+		return Vec3f(rx, y, rz);
+	}
+
+	ProcedualMesh Generate() const
+	{
+		float depthSpeed = 1.0f / static_cast<float>(Vertices);
+		float rotateSpeed = Rotate * EFK_PI * 2.0f / static_cast<float>(Vertices);
+
+		ProcedualMesh ret;
+
+		for (int32_t l = 0; l < Count; l++)
+		{
+			float currentAngle = static_cast<float>(l) / static_cast<float>(Count) * EFK_PI * 2.0f;
+			float currentDepth = 0.0f;
+
+			CustomAlignedVector<Vec3f> vs;
+			CustomAlignedVector<Vec3f> binormals;
+			CustomAlignedVector<Vec3f> normals;
+
+			while (currentDepth < 1.0f)
+			{
+				auto pos = GetPosition(currentAngle, currentDepth);
+
+				const auto eps = 0.0001f;
+				auto pos_diff = GetPosition(currentAngle + eps * rotateSpeed, currentDepth + eps * depthSpeed);
+				auto pos_diff_angle = GetPosition(currentAngle + eps, currentDepth);
+				auto pos_diff_axis = GetPosition(currentAngle, currentDepth + eps);
+				auto normal = Vec3f::Cross(pos_diff_angle - pos, pos_diff_axis - pos);
+
+				vs.emplace_back(pos);
+				normals.emplace_back(normal.Normalize());
+				binormals.emplace_back((pos_diff - pos).Normalize());
+				currentDepth += depthSpeed;
+				currentAngle += rotateSpeed;
+			}
+
+			ProcedualMesh ribbon;
+
+			ribbon.Vertexes.resize(vs.size() * 2);
+
+			for (int32_t v = 0; v < vs.size(); v++)
+			{
+				ribbon.Vertexes[v * 2 + 0].Position = vs[v] - Vec3f::Cross(normals[v], binormals[v]).Normalize() * 0.1f;
+				ribbon.Vertexes[v * 2 + 1].Position = vs[v] + Vec3f::Cross(normals[v], binormals[v]).Normalize() * 0.1f;
+				ribbon.Vertexes[v * 2 + 0].UV = Vec2f(0.0f, v / static_cast<float>(vs.size() - 1));
+				ribbon.Vertexes[v * 2 + 1].UV = Vec2f(1.0f, v / static_cast<float>(vs.size() - 1));
+			}
+
+			ribbon.Faces.resize((vs.size() - 1) * 2);
+
+			for (int32_t v = 0; v < vs.size() - 1; v++)
+			{
+				ProcedualMeshFace face0;
+				ProcedualMeshFace face1;
+
+				int32_t v00 = (0) + (v + 0) * (2);
+				int32_t v10 = (1) + (v + 0) * (2);
+				int32_t v01 = (0) + (v + 1) * (2);
+				int32_t v11 = (1) + (v + 1) * (2);
+
+				face0.Indexes[0] = v00;
+				face0.Indexes[1] = v11;
+				face0.Indexes[2] = v10;
+
+				face1.Indexes[0] = v00;
+				face1.Indexes[1] = v01;
+				face1.Indexes[2] = v11;
+
+				ribbon.Faces[v * 2 + 0] = face0;
+				ribbon.Faces[v * 2 + 1] = face1;
+			}
+
+			CalculateNormal(ribbon);
+
+			ret = ProcedualMesh::Combine(std::move(ret), std::move(ribbon));
+		}
+
+		return std::move(ret);
+	}
+};
+
 Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* parameter)
 {
 	if (parameter == nullptr)
@@ -315,49 +446,73 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		return nullptr;
 	}
 
-	if (parameter->Type == ProcedualModelType::Sphere)
+	std::function<Vec2f(float)> primitiveGenerator;
+
+	if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Sphere)
 	{
-		auto generator = RotatorMeshGenerator<RotatorSphere>();
-		generator.AngleMin = parameter->AngleBegin;
-		generator.AngleMax = parameter->AngleEnd;
-		generator.DepthMin = parameter->DepthMin;
-		generator.DepthMax = parameter->DepthMax;
-		generator.Rotator.Radius = parameter->Sphere.Radius;
-		auto generated = generator.Generate(parameter->AxisDivision, parameter->AngleDivision);
+		RotatorSphere rotator;
+		rotator.DepthMin = parameter->Sphere.DepthMin;
+		rotator.DepthMax = parameter->Sphere.DepthMax;
+		rotator.Radius = parameter->Sphere.Radius;
+
+		primitiveGenerator = [rotator](float value) -> Vec2f {
+			return rotator.GetPosition(value);
+		};
+	}
+	else if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Cone)
+	{
+		RotatorCone rotator;
+		rotator.Radius = parameter->Cone.Radius;
+		rotator.Depth = parameter->Cone.Depth;
+
+		primitiveGenerator = [rotator](float value) -> Vec2f {
+			return rotator.GetPosition(value);
+		};
+	}
+	else if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Cylinder)
+	{
+		RotatorCylinder rotator;
+		rotator.Radius1 = parameter->Cylinder.Radius1;
+		rotator.Radius2 = parameter->Cylinder.Radius2;
+		rotator.Depth = parameter->Cone.Depth;
+
+		primitiveGenerator = [rotator](float value) -> Vec2f {
+			return rotator.GetPosition(value);
+		};
+	}
+	else
+	{
+		assert(0);
+	}
+
+	if (parameter->Type == ProcedualModelType::Mesh)
+	{
+		const auto AngleBegin = parameter->Mesh.AngleBegin / 180.0f * EFK_PI;
+		const auto AngleEnd = parameter->Mesh.AngleEnd / 180.0f * EFK_PI;
+		const auto eps = 0.000001f;
+		const auto isConnected = std::fmod(std::abs(parameter->Mesh.AngleBegin - parameter->Mesh.AngleEnd), 360.0f) < eps;
+
+		auto generator = RotatorMeshGenerator();
+		generator.Rotator = primitiveGenerator;
+		generator.AngleMin = AngleBegin;
+		generator.AngleMax = AngleEnd;
+		generator.IsConnected = isConnected;
+		auto generated = generator.Generate(parameter->Mesh.AngleDivision, parameter->Mesh.DepthDivision);
 
 		CalculateNormal(generated);
-
 		return ConvertMeshToModel(generated);
 	}
-	else if (parameter->Type == ProcedualModelType::Cone)
+	else if (parameter->Type == ProcedualModelType::Ribbon)
 	{
-		auto generator = RotatorMeshGenerator<RotatorCone>();
-		generator.AngleMin = parameter->AngleBegin;
-		generator.AngleMax = parameter->AngleEnd;
-		generator.DepthMin = parameter->DepthMin;
-		generator.DepthMax = parameter->DepthMax;
-		generator.Rotator.Radius = parameter->Cone.Radius;
-		generator.Rotator.Depth = parameter->Cone.Depth;
-		auto generated = generator.Generate(parameter->AxisDivision, parameter->AngleDivision);
+		auto generator = RotatedWireMeshGenerator();
+		generator.Rotator = primitiveGenerator;
+		generator.Vertices = parameter->Ribbon.Vertices;
+		generator.Rotate = parameter->Ribbon.Rotate;
+		generator.Count = parameter->Ribbon.Count;
+
+		auto generated = generator.Generate();
 
 		CalculateNormal(generated);
-
-		return ConvertMeshToModel(generated);
-	}
-	else if (parameter->Type == ProcedualModelType::Cylinder)
-	{
-		auto generator = RotatorMeshGenerator<RotatorCylinder>();
-		generator.AngleMin = parameter->AngleBegin;
-		generator.AngleMax = parameter->AngleEnd;
-		generator.DepthMin = parameter->DepthMin;
-		generator.DepthMax = parameter->DepthMax;
-		generator.Rotator.Radius1 = parameter->Cylinder.Radius1;
-		generator.Rotator.Radius2 = parameter->Cylinder.Radius2;
-		generator.Rotator.Depth = parameter->Cylinder.Depth;
-		auto generated = generator.Generate(parameter->AxisDivision, parameter->AngleDivision);
-
-		CalculateNormal(generated);
-
 		return ConvertMeshToModel(generated);
 	}
 
