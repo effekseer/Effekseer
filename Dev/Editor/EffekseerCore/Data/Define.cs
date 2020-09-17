@@ -114,7 +114,7 @@ namespace Effekseer.Data
 		[Key(key = "Easing_EaseInOutCubic")]
 		EaseInOutCubic = 22,
 
-		[Key(key = "Easing_EaseInOutCubic")]
+		[Key(key = "Easing_EaseInQuartic")]
 		EaseInQuartic = 30,
 
 		[Key(key = "Easing_EaseOutQuartic")]
