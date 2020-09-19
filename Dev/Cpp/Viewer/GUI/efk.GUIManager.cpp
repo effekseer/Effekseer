@@ -731,7 +731,8 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 void GUIManager::InitializeGUI(Native* native)
 {
 	ImGui::CreateContext();
-
+	ImGui::GetCurrentContext()->PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
+	
 	ImGuiIO& io = ImGui::GetIO();
 
 	if (deviceType == DeviceType::OpenGL)
