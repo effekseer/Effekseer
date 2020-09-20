@@ -2,8 +2,9 @@
 #ifndef __EFFEKSEER_VEC3F_H__
 #define __EFFEKSEER_VEC3F_H__
 
-#include "Effekseer.SIMD4f.h"
 #include "../Effekseer.Math.h"
+#include "Effekseer.SIMD4f.h"
+#include <functional>
 
 namespace Effekseer
 {
@@ -19,25 +20,73 @@ struct Vec3f
 
 	explicit Vec3f() = default;
 	Vec3f(const Vec3f& vec) = default;
-	Vec3f(float x, float y, float z): s(x, y, z, 1.0f) {}
-	Vec3f(const SIMD4f& vec): s(vec) {}
+	Vec3f(float x, float y, float z)
+		: s(x, y, z, 1.0f)
+	{
+	}
+	Vec3f(const SIMD4f& vec)
+		: s(vec)
+	{
+	}
 	Vec3f(const Vector3D& vec);
 	Vec3f(const vector3d& vec);
 
-	float GetX() const { return s.GetX(); }
-	float GetY() const { return s.GetY(); }
-	float GetZ() const { return s.GetZ(); }
+	float GetX() const
+	{
+		return s.GetX();
+	}
+	float GetY() const
+	{
+		return s.GetY();
+	}
+	float GetZ() const
+	{
+		return s.GetZ();
+	}
 
-	void SetX(float o) { s.SetX(o); }
-	void SetY(float o) { s.SetY(o); }
-	void SetZ(float o) { s.SetZ(o); }
+	void SetX(float o)
+	{
+		s.SetX(o);
+	}
+	void SetY(float o)
+	{
+		s.SetY(o);
+	}
+	void SetZ(float o)
+	{
+		s.SetZ(o);
+	}
 
-	Vec3f& operator+=(const Vec3f& o) { s += o.s; return *this; }
-	Vec3f& operator-=(const Vec3f& o) { s -= o.s; return *this; }
-	Vec3f& operator*=(const Vec3f& o) { s *= o.s; return *this; }
-	Vec3f& operator*=(float o) { s *= o; return *this; }
-	Vec3f& operator/=(const Vec3f& o) { s /= o.s; return *this; }
-	Vec3f& operator/=(float o) { s /= o; return *this; }
+	Vec3f& operator+=(const Vec3f& o)
+	{
+		s += o.s;
+		return *this;
+	}
+	Vec3f& operator-=(const Vec3f& o)
+	{
+		s -= o.s;
+		return *this;
+	}
+	Vec3f& operator*=(const Vec3f& o)
+	{
+		s *= o.s;
+		return *this;
+	}
+	Vec3f& operator*=(float o)
+	{
+		s *= o;
+		return *this;
+	}
+	Vec3f& operator/=(const Vec3f& o)
+	{
+		s /= o.s;
+		return *this;
+	}
+	Vec3f& operator/=(float o)
+	{
+		s /= o;
+		return *this;
+	}
 
 	float GetSquaredLength() const;
 	float GetLength() const;
@@ -61,7 +110,10 @@ struct Vec3f
 	static Vec3f Transform(const Vec3f& lhs, const Mat44f& rhs);
 };
 
-inline Vec3f operator-(const Vec3f& i) { return Vec3f(-i.GetX(), -i.GetY(), -i.GetZ()); }
+inline Vec3f operator-(const Vec3f& i)
+{
+	return Vec3f(-i.GetX(), -i.GetY(), -i.GetZ());
+}
 
 inline Vec3f operator+(const Vec3f& lhs, const Vec3f& rhs)
 {
@@ -174,10 +226,30 @@ inline Vec3f Vec3f::Normalize() const
 	return *this * Effekseer::Rsqrt(GetSquaredLength());
 }
 
-inline Vec3f Vec3f::NormalizePrecisely() const { return *this / Effekseer::Sqrt(GetSquaredLength()); }
+inline Vec3f Vec3f::NormalizePrecisely() const
+{
+	return *this / Effekseer::Sqrt(GetSquaredLength());
+}
 
-inline Vec3f Vec3f::NormalizeFast() const { return *this * Effekseer::Rsqrt(GetSquaredLength()); }
+inline Vec3f Vec3f::NormalizeFast() const
+{
+	return *this * Effekseer::Rsqrt(GetSquaredLength());
+}
 
 } // namespace Effekseer
+
+namespace std
+{
+
+template <>
+struct hash<Effekseer::Vec3f>
+{
+	size_t operator()(const Effekseer::Vec3f& _Keyval) const noexcept
+	{
+		return std::hash<float>()(_Keyval.GetX()) + std::hash<float>()(_Keyval.GetY()) + std::hash<float>()(_Keyval.GetZ());
+	}
+};
+
+} // namespace std
 
 #endif // __EFFEKSEER_VEC3F_H__

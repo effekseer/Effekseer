@@ -10,6 +10,12 @@ namespace Effekseer
 
 enum class ProcedualModelType : int32_t
 {
+	Mesh,
+	Ribbon,
+};
+
+enum class ProcedualModelPrimitiveType : int32_t
+{
 	Sphere,
 	Cone,
 	Cylinder,
@@ -18,16 +24,28 @@ enum class ProcedualModelType : int32_t
 struct ProcedualModelParameter
 {
 	ProcedualModelType Type;
+	ProcedualModelPrimitiveType PrimitiveType;
 
-	float AngleBegin;
-	float AngleEnd;
-	float DepthMin;
-	float DepthMax;
-	int AxisDivision;
-	int AngleDivision;
+	union
+	{
+		struct
+		{
+			float AngleBegin;
+			float AngleEnd;
+			int AngleDivision;
+			int DepthDivision;
+		} Mesh;
 
-	float TwistPower;
-	float TwistUpPower;
+		struct
+		{
+			float Rotate;
+			int Vertices;
+			int Count;
+		} Ribbon;
+	};
+
+	// float TwistPower;
+	// float TwistUpPower;
 	// hoge,,,
 
 	union
@@ -35,6 +53,8 @@ struct ProcedualModelParameter
 		struct
 		{
 			float Radius;
+			float DepthMin;
+			float DepthMax;
 		} Sphere;
 
 		struct
@@ -55,15 +75,53 @@ struct ProcedualModelParameter
 	{
 		if (Type != rhs.Type)
 		{
-			return static_cast<int32_t>(Type) < static_cast<int32_t>(Type);
+			return static_cast<int32_t>(Type) < static_cast<int32_t>(rhs.Type);
 		}
 
-		if (Type == ProcedualModelType::Sphere)
+		if (Type == ProcedualModelType::Mesh)
+		{
+			if (Mesh.AngleBegin != rhs.Mesh.AngleBegin)
+				return Mesh.AngleBegin < rhs.Mesh.AngleBegin;
+
+			if (Mesh.AngleEnd != rhs.Mesh.AngleEnd)
+				return Mesh.AngleEnd < rhs.Mesh.AngleEnd;
+
+			if (Mesh.AngleDivision != rhs.Mesh.AngleDivision)
+				return Mesh.AngleDivision < rhs.Mesh.AngleDivision;
+
+			if (Mesh.DepthDivision != rhs.Mesh.DepthDivision)
+				return Mesh.DepthDivision < rhs.Mesh.DepthDivision;
+		}
+		else if (Type == ProcedualModelType::Mesh)
+		{
+			if (Ribbon.Rotate != rhs.Ribbon.Rotate)
+				return Ribbon.Rotate < rhs.Ribbon.Rotate;
+
+			if (Ribbon.Vertices != rhs.Ribbon.Vertices)
+				return Ribbon.Vertices < rhs.Ribbon.Vertices;
+
+			if (Ribbon.Count != rhs.Ribbon.Count)
+				return Ribbon.Count < rhs.Ribbon.Count;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		if (PrimitiveType != rhs.PrimitiveType)
+		{
+			return static_cast<int32_t>(PrimitiveType) < static_cast<int32_t>(rhs.PrimitiveType);
+		}
+
+		if (PrimitiveType == ProcedualModelPrimitiveType::Sphere)
 		{
 			if (Sphere.Radius != rhs.Sphere.Radius)
 				return Sphere.Radius < rhs.Sphere.Radius;
+
+			if (Sphere.DepthMin != rhs.Sphere.DepthMin)
+				return Sphere.DepthMax < rhs.Sphere.DepthMax;
 		}
-		else if (Type == ProcedualModelType::Cone)
+		else if (PrimitiveType == ProcedualModelPrimitiveType::Cone)
 		{
 			if (Cone.Radius != rhs.Cone.Radius)
 				return Cone.Radius < rhs.Cone.Radius;
@@ -71,7 +129,7 @@ struct ProcedualModelParameter
 			if (Cone.Depth != rhs.Cone.Depth)
 				return Cone.Depth < rhs.Cone.Depth;
 		}
-		else if (Type == ProcedualModelType::Cylinder)
+		else if (PrimitiveType == ProcedualModelPrimitiveType::Cylinder)
 		{
 			if (Cylinder.Radius1 != rhs.Cylinder.Radius1)
 				return Cylinder.Radius1 < rhs.Cylinder.Radius1;
@@ -94,26 +152,39 @@ struct ProcedualModelParameter
 	bool Load(BinaryReader<T>& reader)
 	{
 		reader.Read(Type);
-		reader.Read(AngleBegin);
-		reader.Read(AngleEnd);
-		reader.Read(DepthMin);
-		reader.Read(DepthMax);
-		reader.Read(AxisDivision);
-		reader.Read(AngleDivision);
 
-		AngleBegin = AngleBegin / 180.0f * EFK_PI;
-		AngleEnd = AngleEnd / 180.0f * EFK_PI;
+		if (Type == ProcedualModelType::Mesh)
+		{
+			reader.Read(Mesh.AngleBegin);
+			reader.Read(Mesh.AngleEnd);
+			reader.Read(Mesh.AngleDivision);
+			reader.Read(Mesh.DepthDivision);
+		}
+		else if (Type == ProcedualModelType::Ribbon)
+		{
+			reader.Read(Ribbon.Rotate);
+			reader.Read(Ribbon.Vertices);
+			reader.Read(Ribbon.Count);
+		}
+		else
+		{
+			assert(0);
+		}
 
-		if (Type == ProcedualModelType::Sphere)
+		reader.Read(PrimitiveType);
+
+		if (PrimitiveType == ProcedualModelPrimitiveType::Sphere)
 		{
 			reader.Read(Sphere.Radius);
+			reader.Read(Sphere.DepthMin);
+			reader.Read(Sphere.DepthMax);
 		}
-		else if (Type == ProcedualModelType::Cone)
+		else if (PrimitiveType == ProcedualModelPrimitiveType::Cone)
 		{
 			reader.Read(Cone.Radius);
 			reader.Read(Cone.Depth);
 		}
-		else if (Type == ProcedualModelType::Cylinder)
+		else if (PrimitiveType == ProcedualModelPrimitiveType::Cylinder)
 		{
 			reader.Read(Cylinder.Radius1);
 			reader.Read(Cylinder.Radius2);
