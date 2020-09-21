@@ -406,6 +406,12 @@ bool Renderer::BeginRendering()
 	lastDstRenderTexture = graphics->GetRenderTexture();
 	lastDstDepthTexture = graphics->GetDepthTexture();
 
+	// Clear a destination texture
+	if (m_recording && IsBackgroundTranslucent)
+	{
+		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+	}
+
 	if (m_bloomEffect == nullptr &&  m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
 	{
 		graphics->SetRenderTarget(lastDstRenderTexture, lastDstDepthTexture);
