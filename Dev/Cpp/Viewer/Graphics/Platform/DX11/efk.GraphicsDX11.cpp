@@ -610,7 +610,11 @@ void GraphicsDX11::Clear(Effekseer::Color color)
 {
 	float ClearColor[] = {color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f};
 	context->ClearRenderTargetView(currentRenderTargetView, ClearColor);
-	context->ClearDepthStencilView(currentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	if (currentDepthStencilView != nullptr)
+	{
+		context->ClearDepthStencilView(currentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);	
+	}
 }
 
 void GraphicsDX11::ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)

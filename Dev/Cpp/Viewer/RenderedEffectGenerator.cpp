@@ -408,6 +408,13 @@ void RenderedEffectGenerator::Update(int32_t frame)
 
 void RenderedEffectGenerator::Render()
 {
+	// Clear a destination texture
+	graphics_->SetRenderTarget(viewRenderTexture.get(), nullptr);
+	if (config_.BackgroundColor.A != 255)
+	{
+		graphics_->Clear(config_.BackgroundColor);	
+	}
+
 	renderer_->SetRenderMode(config_.RenderMode);
 	renderer_->SetCameraMatrix(config_.CameraMatrix);
 	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);

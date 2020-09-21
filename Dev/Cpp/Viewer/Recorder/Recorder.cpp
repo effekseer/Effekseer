@@ -467,6 +467,11 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 	mat.Values[1][1] = (float)screenSize.Y / (float)imageSize.Y;
 	::Effekseer::Matrix44::Mul(config.ProjectionMatrix, config.ProjectionMatrix, mat);
 
+	if (recordingParameter_.Transparence == TransparenceType::Original)
+	{
+		config.BackgroundColor = Color(0, 0, 0, 0);
+	}
+
 	generator_->SetConfig(config);
 	generator_->SetEffect(effect);
 
@@ -510,6 +515,10 @@ bool Recorder::Step(Native* native, int frames)
 
 			auto config = generator_->GetConfig();
 			if (recordingParameter_.Transparence == TransparenceType::None)
+			{
+				config.BackgroundColor = Effekseer::Color(0, 0, 0, 255);
+			}
+			else if (recordingParameter_.Transparence == TransparenceType::Original)
 			{
 				config.BackgroundColor = Effekseer::Color(0, 0, 0, 0);
 			}
