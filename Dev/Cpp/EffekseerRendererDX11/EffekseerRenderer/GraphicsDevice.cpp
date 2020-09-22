@@ -235,6 +235,282 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	graphicsDevice_->GetContext()->Unmap(buffer_.get(), 0);
 }
 
+Texture::Texture(GraphicsDevice* graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+	graphicsDevice_->Register(this);
+}
+
+Texture::~Texture()
+{
+	graphicsDevice_->Unregister(this);
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
+{
+	if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM ||
+		param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB)
+	{
+		// not supported
+		return false;
+	}
+
+	auto device = graphicsDevice_->GetDevice();
+	assert(device != nullptr);
+
+	auto context = graphicsDevice_->GetContext();
+	assert(context != nullptr);
+
+	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
+
+	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	int32_t sizePerWidth = 0;
+	int32_t height = 0;
+
+	const int32_t blockSize = 4;
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+		return (size + alignement - 1) / alignement;
+	};
+
+	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
+	{
+		sizePerWidth = 4 * param.Size[0];
+		height = param.Size[1];
+		format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+	{
+		sizePerWidth = 4 * param.Size[0];
+		height = param.Size[1];
+		format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
+	{
+		sizePerWidth = 1 * param.Size[0];
+		height = param.Size[1];
+		format = DXGI_FORMAT_R8_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
+	{
+		sizePerWidth = 8 * param.Size[0];
+		height = param.Size[1];
+		format = DXGI_FORMAT_R16G16_FLOAT;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
+	{
+		sizePerWidth = 16 * param.Size[0];
+		height = param.Size[1];
+		format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
+	{
+		sizePerWidth = 32 * param.Size[0];
+		height = param.Size[1];
+		format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC1)
+	{
+		sizePerWidth = 8 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = DXGI_FORMAT_BC1_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC2)
+	{
+		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = DXGI_FORMAT_BC2_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3)
+	{
+		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = DXGI_FORMAT_BC3_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
+	{
+		sizePerWidth = 8 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = DXGI_FORMAT_BC1_UNORM_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
+	{
+		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = DXGI_FORMAT_BC2_UNORM_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+	{
+		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = DXGI_FORMAT_BC3_UNORM_SRGB;
+	}
+
+	UINT bindFlag = D3D11_BIND_SHADER_RESOURCE;
+
+	if (param.GenerateMipmap)
+	{
+		bindFlag = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	}
+
+	D3D11_TEXTURE2D_DESC TexDesc{};
+	TexDesc.Width = param.Size[0];
+	TexDesc.Height = param.Size[1];
+	TexDesc.ArraySize = 1;
+	TexDesc.Format = format;
+	TexDesc.SampleDesc.Count = 1;
+	TexDesc.SampleDesc.Quality = 0;
+	TexDesc.Usage = D3D11_USAGE_DEFAULT;
+	TexDesc.BindFlags = bindFlag;
+	TexDesc.CPUAccessFlags = 0;
+
+	if (param.GenerateMipmap)
+	{
+		TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	}
+	else
+	{
+		TexDesc.MiscFlags = 0;
+	}
+
+	ID3D11Texture2D* texture = nullptr;
+	D3D11_SUBRESOURCE_DATA data = {};
+
+	bool hasInitiData = param.InitialData.size() > 0;
+
+	if (hasInitiData)
+	{
+		data.pSysMem = param.InitialData.data();
+		data.SysMemPitch = sizePerWidth;
+		data.SysMemSlicePitch = sizePerWidth * height;
+	}
+
+	HRESULT hr = device->CreateTexture2D(&TexDesc, hasInitiData && !param.GenerateMipmap ? &data : nullptr, &texture);
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	ID3D11ShaderResourceView* srv = nullptr;
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
+	desc.Format = TexDesc.Format;
+	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	desc.Texture2D.MostDetailedMip = 0;
+	desc.Texture2D.MipLevels = TexDesc.MipLevels;
+
+	hr = device->CreateShaderResourceView(texture, &desc, &srv);
+	if (FAILED(hr))
+	{
+		ES_SAFE_RELEASE(texture);
+		return false;
+	}
+
+	// Generate mipmap
+	if (param.GenerateMipmap)
+	{
+		if (hasInitiData)
+		{
+			context->UpdateSubresource(texture, 0, 0, data.pSysMem, data.SysMemPitch, data.SysMemSlicePitch);
+		}
+		context->GenerateMips(srv);
+	}
+
+	texture_ = Effekseer::CreateUniqueReference(texture);
+	srv_ = Effekseer::CreateUniqueReference(srv);
+
+	return true;
+}
+
+bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
+{
+	auto device = graphicsDevice_->GetDevice();
+	assert(device != nullptr);
+
+	DXGI_FORMAT format = DXGI_FORMAT_R24G8_TYPELESS;
+	DXGI_FORMAT depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DXGI_FORMAT textureFormat = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+
+	if (param.Format == Effekseer::Backend::TextureFormatType::D24S8)
+	{
+		format = DXGI_FORMAT_R24G8_TYPELESS;
+		depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		textureFormat = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32)
+	{
+		format = DXGI_FORMAT_R32_TYPELESS;
+		depthFormat = DXGI_FORMAT_D32_FLOAT;
+		textureFormat = DXGI_FORMAT_R32_FLOAT;
+	}
+
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
+	{
+		format = DXGI_FORMAT_R32G8X24_TYPELESS;
+		depthFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+		textureFormat = DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
+	}
+	else
+	{
+		return false;
+	}
+
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width = param.Size[0];
+	desc.Height = param.Size[1];
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = format;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	ID3D11Texture2D* texture = nullptr;
+	if (FAILED(device->CreateTexture2D(&desc, NULL, &texture)))
+	{
+		return false;
+	}
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC viewDesc;
+	ID3D11DepthStencilView* depthStencilView = nullptr;
+	viewDesc.Format = depthFormat;
+	viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	viewDesc.Flags = 0;
+
+	if (FAILED(device->CreateDepthStencilView(texture, &viewDesc, &depthStencilView)))
+	{
+		ES_SAFE_RELEASE(texture);
+		return false;
+	}
+
+	ID3D11ShaderResourceView* srv = nullptr;
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = textureFormat;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	if (FAILED(device->CreateShaderResourceView(texture, &srvDesc, &srv)))
+	{
+		ES_SAFE_RELEASE(texture);
+		ES_SAFE_RELEASE(depthStencilView);
+		return false;
+	}
+
+	texture_ = Effekseer::CreateUniqueReference(texture);
+	dsv_ = Effekseer::CreateUniqueReference(depthStencilView);
+	srv_ = Effekseer::CreateUniqueReference(srv);
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(ID3D11Device* device, ID3D11DeviceContext* context)
 {
 	device_ = Effekseer::CreateUniqueReference(device, true);
@@ -299,6 +575,19 @@ IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void*
 	auto ret = new IndexBuffer(this);
 
 	if (!ret->Init(initialData, elementCount, stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(param))
 	{
 		ES_SAFE_RELEASE(ret);
 		return nullptr;

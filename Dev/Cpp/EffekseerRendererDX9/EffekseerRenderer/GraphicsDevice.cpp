@@ -231,6 +231,205 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	buffer_->Unlock();
 }
 
+Texture::Texture(GraphicsDevice* graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+	graphicsDevice_->Register(this);
+}
+
+Texture::~Texture()
+{
+	graphicsDevice_->Unregister(this);
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
+{
+	if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM ||
+		param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB)
+	{
+		// not supported
+		return false;
+	}
+
+	auto device = graphicsDevice_->GetDevice();
+	assert(device != nullptr);
+
+	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
+
+	_D3DFORMAT format;
+	bool isSwapRequired = false;
+	int32_t sizePerWidth = 0;
+	int32_t height = 0;
+
+	const int32_t blockSize = 4;
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+		return (size + alignement - 1) / alignement;
+	};
+
+	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM || param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+	{
+		sizePerWidth = 4 * param.Size[0];
+		height = param.Size[1];
+		format = D3DFMT_A8R8G8B8;
+		isSwapRequired = true;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
+	{
+		sizePerWidth = 1 * param.Size[0];
+		height = param.Size[1];
+		format = D3DFMT_L8;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
+	{
+		sizePerWidth = 8 * param.Size[0];
+		height = param.Size[1];
+		format = D3DFMT_G16R16F;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
+	{
+		sizePerWidth = 16 * param.Size[0];
+		height = param.Size[1];
+		format = D3DFMT_A16B16G16R16F;
+		isSwapRequired = true;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
+	{
+		sizePerWidth = 32 * param.Size[0];
+		height = param.Size[1];
+		format = D3DFMT_A32B32G32R32F;
+		isSwapRequired = true;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
+			 param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
+	{
+		sizePerWidth = 8 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = D3DFMT_DXT1;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
+			 param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
+	{
+		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = D3DFMT_DXT3;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
+			 param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+	{
+		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
+		height = aligned(param.Size[1], blockSize) / blockSize;
+		format = D3DFMT_DXT5;
+	}
+
+	HRESULT hr;
+	LPDIRECT3DTEXTURE9 texture = nullptr;
+	hr =
+		device->CreateTexture(param.Size[0], param.Size[1], 1, param.GenerateMipmap ? D3DUSAGE_AUTOGENMIPMAP : 0, format, D3DPOOL_DEFAULT, &texture, NULL);
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	LPDIRECT3DTEXTURE9 tempTexture = nullptr;
+	hr = device->CreateTexture(param.Size[0], param.Size[1], 1, 0, format, D3DPOOL_SYSTEMMEM, &tempTexture, NULL);
+
+	if (FAILED(hr))
+	{
+		texture->Release();
+		return false;
+	}
+
+	if (param.InitialData.size() > 0)
+	{
+		const uint8_t* srcBits = static_cast<const uint8_t*>(param.InitialData.data());
+		D3DLOCKED_RECT locked;
+		if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
+		{
+			uint8_t* destBits = (uint8_t*)locked.pBits;
+
+			for (int32_t h = 0; h < height; h++)
+			{
+				memcpy(destBits, srcBits, sizePerWidth);
+
+				// SwapRGB
+				if (isSwapRequired)
+				{
+					int32_t sizePerPixel = sizePerWidth / param.Size[0];
+					for (int32_t w = 0; w < param.Size[0]; w++)
+					{
+						for (int32_t p = 0; p < sizePerPixel; p++)
+						{
+							std::swap(destBits[w * sizePerPixel + 0 * sizePerPixel / 4 + p], destBits[w * sizePerPixel + 2 * sizePerPixel / 4 + p]);
+						}
+					}
+				}
+
+				destBits += locked.Pitch;
+				srcBits += sizePerWidth;
+			}
+
+			tempTexture->UnlockRect(0);
+		}
+		hr = device->UpdateTexture(tempTexture, texture);
+	}
+
+	ES_SAFE_RELEASE(tempTexture);
+
+	texture_ = Effekseer::CreateUniqueReference(texture);
+	return true;
+}
+
+bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
+{
+	auto device = graphicsDevice_->GetDevice();
+	assert(device != nullptr);
+
+	_D3DFORMAT format;
+
+	if (param.Format == Effekseer::Backend::TextureFormatType::D24S8)
+	{
+		format = D3DFMT_D24S8;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32)
+	{
+		format = D3DFMT_D32;
+	}
+	else
+	{
+		return false;
+	}
+
+	HRESULT hr;
+	LPDIRECT3DTEXTURE9 texture = nullptr;
+	hr =
+		device->CreateTexture(param.Size[0], param.Size[1], 0, D3DUSAGE_DEPTHSTENCIL, format, D3DPOOL_DEFAULT, &texture, NULL);
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	IDirect3DSurface9* surface = nullptr;
+	hr = texture->GetSurfaceLevel(0, &surface);
+
+	if (FAILED(hr))
+	{
+		ES_SAFE_RELEASE(texture);
+		return false;
+	}
+
+	texture_ = Effekseer::CreateUniqueReference(texture);
+	surface_ = Effekseer::CreateUniqueReference(surface);
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(IDirect3DDevice9* device)
 {
 	device_ = Effekseer::CreateUniqueReference(device, true);
@@ -297,6 +496,19 @@ IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void*
 	}
 
 	ret->UpdateData(initialData, elementCount * (stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2), 0);
+
+	return ret;
+}
+
+Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(param))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
 
 	return ret;
 }

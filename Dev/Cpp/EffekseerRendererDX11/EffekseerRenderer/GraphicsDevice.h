@@ -16,6 +16,9 @@ using D3D11BufferPtr = std::unique_ptr<ID3D11Buffer, Effekseer::ReferenceDeleter
 using D3D11DevicePtr = std::unique_ptr<ID3D11Device, Effekseer::ReferenceDeleter<ID3D11Device>>;
 using D3D11DeviceContextPtr = std::unique_ptr<ID3D11DeviceContext, Effekseer::ReferenceDeleter<ID3D11DeviceContext>>;
 using D3D11ResourcePtr = std::unique_ptr<ID3D11Resource, Effekseer::ReferenceDeleter<ID3D11Resource>>;
+using D3D11Texture2DPtr = std::unique_ptr<ID3D11Texture2D, Effekseer::ReferenceDeleter<ID3D11Texture2D>>;
+using D3D11ShaderResourceViewPtr = std::unique_ptr<ID3D11ShaderResourceView, Effekseer::ReferenceDeleter<ID3D11ShaderResourceView>>;
+using D3D11DepthStencilViewPtr = std::unique_ptr<ID3D11DepthStencilView, Effekseer::ReferenceDeleter<ID3D11DepthStencilView>>;
 
 class GraphicsDevice;
 
@@ -122,6 +125,25 @@ public:
 	}
 };
 
+class Texture
+	: public DeviceObject,
+	  public Effekseer::Backend::Texture
+{
+	D3D11Texture2DPtr texture_;
+	D3D11ShaderResourceViewPtr srv_;
+	D3D11DepthStencilViewPtr dsv_;
+
+	GraphicsDevice* graphicsDevice_ = nullptr;
+
+public:
+	Texture(GraphicsDevice* graphicsDevice);
+	~Texture() override;
+
+	bool Init(const Effekseer::Backend::TextureParameter& param);
+
+	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+};
+
 /**
 	@brief	GraphicsDevice of DirectX11
 */
@@ -154,6 +176,8 @@ public:
 	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
 	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+
+	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 };
 
 } // namespace Backend

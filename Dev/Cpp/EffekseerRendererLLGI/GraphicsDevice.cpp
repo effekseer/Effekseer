@@ -1,4 +1,5 @@
 #include "GraphicsDevice.h"
+#include <LLGI.Texture.h>
 
 namespace EffekseerRendererLLGI
 {
@@ -115,6 +116,106 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	}
 }
 
+Texture::Texture(GraphicsDevice* graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+	graphicsDevice_->Register(this);
+}
+
+Texture::~Texture()
+{
+	graphicsDevice_->Unregister(this);
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
+{
+	int mw = std::max(param.Size[0], param.Size[1]);
+	int count = 1;
+
+	while (mw > 1)
+	{
+		mw = mw << 1;
+		count++;
+	}
+
+	LLGI::TextureInitializationParameter texParam;
+	texParam.Size = LLGI::Vec2I(param.Size[0], param.Size[1]);
+	texParam.MipMapCount = param.GenerateMipmap ? count : 1;
+
+	LLGI::TextureFormatType format = LLGI::TextureFormatType::R8G8B8A8_UNORM;
+
+	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
+	{
+		texParam.Format = LLGI::TextureFormatType::R8G8B8A8_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM)
+	{
+		texParam.Format = LLGI::TextureFormatType::B8G8R8A8_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
+	{
+		texParam.Format = LLGI::TextureFormatType::R8_UNORM;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
+	{
+		texParam.Format = LLGI::TextureFormatType::R16G16_FLOAT;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
+	{
+		texParam.Format = LLGI::TextureFormatType::R16G16B16A16_FLOAT;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
+	{
+		texParam.Format = LLGI::TextureFormatType::R32G32B32A32_FLOAT;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC1)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC1;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC2)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC2;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC3;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+	{
+		texParam.Format = LLGI::TextureFormatType::R8G8B8A8_UNORM_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB)
+	{
+		texParam.Format = LLGI::TextureFormatType::B8G8R8A8_UNORM_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC1_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC2_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC3_SRGB;
+	}
+
+	auto texture = graphicsDevice_->GetGraphics()->CreateTexture(texParam);
+	auto buf = texture->Lock();
+
+	if (param.InitialData.size() > 0)
+	{
+		memcpy(buf, param.InitialData.data(), param.InitialData.size());
+	}
+
+	texture->Unlock();
+
+	texture_ = LLGI::CreateSharedPtr(texture);
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics)
 	: graphics_(graphics)
 {
@@ -186,6 +287,20 @@ IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void*
 
 	return ret;
 }
+
+Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(param))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
 
 } // namespace Backend
 } // namespace EffekseerRendererLLGI
