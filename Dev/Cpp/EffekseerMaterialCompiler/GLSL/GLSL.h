@@ -808,7 +808,7 @@ public:
 
 			int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
 
-			for (size_t i = 0; i < actualTextureCount; i++)
+			for (int32_t i = 0; i < actualTextureCount; i++)
 			{
 				auto textureIndex = material->GetTextureIndex(i);
 				auto textureName = material->GetTextureName(i);
@@ -816,7 +816,7 @@ public:
 				ExportTexture(maincode, textureName, i, stage);
 			}
 
-			for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
+			for (int32_t i = actualTextureCount; i < actualTextureCount + 1; i++)
 			{
 				ExportTexture(maincode, "background", i, stage);
 			}
@@ -903,7 +903,7 @@ public:
 			baseCode = Replace(baseCode, "$MOD", "mod");
 
 			// replace textures
-			for (size_t i = 0; i < actualTextureCount; i++)
+			for (int32_t i = 0; i < actualTextureCount; i++)
 			{
 				auto textureIndex = material->GetTextureIndex(i);
 				auto textureName = std::string(material->GetTextureName(i));

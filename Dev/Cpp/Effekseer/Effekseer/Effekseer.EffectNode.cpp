@@ -1025,8 +1025,8 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 		lifeMax = INT_MAX;
 	}
 
-	auto firstBeginMin = CommonValues.GenerationTimeOffset.min;
-	auto firstBeginMax = CommonValues.GenerationTimeOffset.max;
+	auto firstBeginMin = static_cast<int32_t>(CommonValues.GenerationTimeOffset.min);
+	auto firstBeginMax = static_cast<int32_t>(CommonValues.GenerationTimeOffset.max);
 	auto firstEndMin = addWithClip(firstBeginMin, lifeMin);
 	auto firstEndMax = addWithClip(firstBeginMax, lifeMax);
 
@@ -1038,7 +1038,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	}
 	else
 	{
-		lastBeginMin = CommonValues.GenerationTimeOffset.min + (CommonValues.MaxGeneration - 1) * (CommonValues.GenerationTime.min);
+		lastBeginMin = firstBeginMin + (CommonValues.MaxGeneration - 1) * (CommonValues.GenerationTime.min);
 	}
 
 	if (CommonValues.MaxGeneration > INT_MAX / 2)
@@ -1047,7 +1047,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	}
 	else
 	{
-		lastBeginMax = CommonValues.GenerationTimeOffset.max + (CommonValues.MaxGeneration - 1) * (CommonValues.GenerationTime.max);
+		lastBeginMax = firstBeginMax + (CommonValues.MaxGeneration - 1) * (CommonValues.GenerationTime.max);
 	}
 
 	auto lastEndMin = addWithClip(lastBeginMin, lifeMin);

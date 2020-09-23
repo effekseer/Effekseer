@@ -159,7 +159,7 @@ public:
 
 	int32_t GetVertexShaderSize(MaterialShaderType type) const override
 	{
-		return vertexShaders_.at(static_cast<int>(type)).size();
+		return static_cast<int32_t>(vertexShaders_.at(static_cast<int>(type)).size());
 	}
 
 	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
@@ -169,7 +169,7 @@ public:
 
 	int32_t GetPixelShaderSize(MaterialShaderType type) const override
 	{
-		return pixelShaders_.at(static_cast<int>(type)).size();
+		return static_cast<int32_t>(pixelShaders_.at(static_cast<int>(type)).size());
 	}
 
 	int AddRef() override

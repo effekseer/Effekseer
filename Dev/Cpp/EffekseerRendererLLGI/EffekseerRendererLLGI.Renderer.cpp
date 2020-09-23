@@ -782,6 +782,8 @@ Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMat
 			return m_shader;
 		}
 	}
+
+	return nullptr;
 }
 
 void RendererImplemented::BeginShader(Shader* shader)
