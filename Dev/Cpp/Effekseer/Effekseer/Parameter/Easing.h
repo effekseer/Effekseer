@@ -931,7 +931,7 @@ protected:
 		b[2] = d[2] = T(0.0f);
 		for (size_t i = 0; i < a.size() - 1; i++)
 		{
-			d[i] = (c[i + 1] - c[i]) / 3.0;
+			d[i] = (c[i + 1] - c[i]) / 3.0f;
 			b[i] = a[i + 1] - a[i] - c[i] - d[i];
 		}
 

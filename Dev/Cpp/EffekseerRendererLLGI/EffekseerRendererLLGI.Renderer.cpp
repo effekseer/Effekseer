@@ -860,6 +860,8 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::StandardRendererShad
 	{
 		return shader_;
 	}
+
+	return nullptr;
 }
 
 void RendererImplemented::BeginShader(Shader* shader)

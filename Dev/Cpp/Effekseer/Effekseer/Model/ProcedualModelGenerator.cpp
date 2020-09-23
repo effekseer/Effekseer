@@ -60,7 +60,7 @@ struct ProcedualMesh
 		{
 			for (auto& ind : mesh1.Faces[f].Indexes)
 			{
-				ind += vertexOffset;
+				ind += static_cast<int32_t>(vertexOffset);
 			}
 		}
 
