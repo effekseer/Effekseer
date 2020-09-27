@@ -801,6 +801,7 @@ struct NodeRendererBasicParameter
 #include <map>
 #include <new>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 namespace Effekseer
@@ -929,6 +930,16 @@ struct CustomAlignedAllocator
 	{
 		GetAlignedFreeFunc()(p, sizeof(T) * static_cast<uint32_t>(n));
 	}
+
+	bool operator==(const CustomAlignedAllocator<T>&)
+	{
+		return true;
+	}
+
+	bool operator!=(const CustomAlignedAllocator<T>&)
+	{
+		return false;
+	}
 };
 
 template <class T, class U>
@@ -953,7 +964,12 @@ template <class T>
 using CustomSet = std::set<T, std::less<T>, CustomAllocator<T>>;
 template <class T, class U>
 using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
-template <class T, class U> using CustomAlignedMap = std::map<T, U, std::less<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
+template <class T, class U>
+using CustomAlignedMap = std::map<T, U, std::less<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
+template <class T, class U>
+using CustomUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAllocator<std::pair<const T, U>>>;
+template <class T, class U>
+using CustomAlignedUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
 
 } // namespace Effekseer
 
@@ -4745,13 +4761,29 @@ public:
 class Texture
 	: public ReferenceObject
 {
+protected:
+	TextureFormatType format_;
+	std::array<int32_t, 2> size_;
+	int32_t mipmapCount_;
+
 public:
 	Texture() = default;
 	virtual ~Texture() = default;
 
-	/**
-	 * TODO : Implement GetType, GetFormat, GetSize
-	*/
+	TextureFormatType GetFormat() const
+	{
+		return format_;
+	}
+
+	std::array<int32_t, 2> GetSize() const
+	{
+		return size_;
+	}
+
+	int32_t GetMipmapCount() const
+	{
+		return mipmapCount_;
+	}
 };
 
 class Shader
@@ -4768,6 +4800,22 @@ class ComputeBuffer
 public:
 	ComputeBuffer() = default;
 	virtual ~ComputeBuffer() = default;
+};
+
+class FrameBuffer
+	: public ReferenceObject
+{
+public:
+	FrameBuffer() = default;
+	virtual ~FrameBuffer() = default;
+};
+
+class RenderPass
+	: public ReferenceObject
+{
+public:
+	RenderPass() = default;
+	virtual ~RenderPass() = default;
 };
 
 enum class IndexBufferStrideType
@@ -4791,13 +4839,15 @@ enum class TextureSamplingType
 struct DrawParameter
 {
 public:
+	static const int TextureSlotCount = 8;
+
 	VertexBuffer* VertexBufferPtr = nullptr;
 	IndexBuffer* IndexBufferPtr = nullptr;
 	PipelineState* PipelineStatePtr = nullptr;
 
-	std::array<Texture*, 8> TexturePtrs;
-	std::array<TextureWrapType, 8> TextureWrapTypes;
-	std::array<TextureSamplingType, 8> TextureSamplingTypes;
+	std::array<Texture*, TextureSlotCount> TexturePtrs;
+	std::array<TextureWrapType, TextureSlotCount> TextureWrapTypes;
+	std::array<TextureSamplingType, TextureSlotCount> TextureSamplingTypes;
 
 	int32_t PrimitiveCount = 0;
 	int32_t InstanceCount = 0;
@@ -4816,6 +4866,9 @@ enum class VertexLayoutFormat
 struct VertexLayoutElement
 {
 	VertexLayoutFormat Format;
+
+	//! only for OpenGL
+	std::string Name;
 
 	//! only for DirectX
 	std::string SemanticName;
@@ -4853,7 +4906,7 @@ enum class TextureFormatType
 	Unknown,
 };
 
-enum class CullingMode
+enum class CullingType
 {
 	Clockwise,
 	CounterClockwise,
@@ -4911,21 +4964,43 @@ struct PipelineStateParameter
 {
 	TopologyType Topology = TopologyType::Triangle;
 
+	CullingType Culling = CullingType::DoubleSide;
+
+	bool IsBlendEnabled = true;
+
+	BlendFuncType BlendSrcFunc = BlendFuncType::SrcAlpha;
+	BlendFuncType BlendDstFunc = BlendFuncType::OneMinusSrcAlpha;
+	BlendFuncType BlendSrcFuncAlpha = BlendFuncType::SrcAlpha;
+	BlendFuncType BlendDstFuncAlpha = BlendFuncType::OneMinusSrcAlpha;
+
+	BlendEquationType BlendEquationRGB = BlendEquationType::Add;
+	BlendEquationType BlendEquationAlpha = BlendEquationType::Add;
+
+	bool IsDepthTestEnabled = false;
+	bool IsDepthWriteEnabled = false;
+	DepthFuncType DepthFunc = DepthFuncType::Less;
+
 	VertexLayout* VertexLayoutPtr = nullptr;
+	FrameBuffer* FrameBufferPtr = nullptr;
 };
 
 struct TextureParameter
 {
+	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
+	bool GenerateMipmap = true;
 	std::array<float, 2> Size;
+	CustomVector<uint8_t> InitialData;
 };
 
 struct RenderTextureParameter
 {
+	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	std::array<float, 2> Size;
 };
 
 struct DepthTextureParameter
 {
+	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	std::array<float, 2> Size;
 };
 
@@ -4974,7 +5049,7 @@ public:
 	}
 
 	/**
-		@brief	Update content of a vertex buffer
+		@brief	Update content of a index buffer
 		@param	buffer	buffer
 		@param	size	the size of updated buffer
 		@param	offset	the offset of updated buffer
@@ -4982,6 +5057,19 @@ public:
 		@return	Succeeded in updating?
 	*/
 	virtual bool UpdateIndexBuffer(IndexBuffer* buffer, int32_t size, int32_t offset, const void* data)
+	{
+		return false;
+	}
+
+	/**
+		@brief	Update content of an uniform buffer
+		@param	buffer	buffer
+		@param	size	the size of updated buffer
+		@param	offset	the offset of updated buffer
+		@param	data	updating data
+		@return	Succeeded in updating?
+	*/
+	virtual bool UpdateUniformBuffer(UniformBuffer* buffer, int32_t size, int32_t offset, const void* data)
 	{
 		return false;
 	}
@@ -5007,22 +5095,27 @@ public:
 		return nullptr;
 	}
 
-	virtual PipelineState* CreatePipelineState(PipelineStateParameter& param)
+	virtual PipelineState* CreatePipelineState(const PipelineStateParameter& param)
 	{
 		return nullptr;
 	}
 
-	virtual Texture* CreateTexture()
+	virtual FrameBuffer* CreateFrameBuffer(const TextureFormatType* formats, int32_t formatCount, TextureFormatType* depthFormat)
 	{
 		return nullptr;
 	}
 
-	virtual Texture* CreateRenderTexture()
+	virtual Texture* CreateTexture(const TextureParameter& param)
 	{
 		return nullptr;
 	}
 
-	virtual Texture* CreateDepthTexture()
+	virtual Texture* CreateRenderTexture(const RenderTextureParameter& param)
+	{
+		return nullptr;
+	}
+
+	virtual Texture* CreateDepthTexture(const DepthTextureParameter& param)
 	{
 		return nullptr;
 	}
@@ -5043,12 +5136,12 @@ public:
 		@param	initialData	the initial data of buffer. If it is null, not initialized.
 		@return	ComputeBuffer
 	*/
-	virtual ComputeBuffer* CreateComputeBuffer(int32_t size, const void* initialData)
-	{
-		return nullptr;
-	}
+	// virtual ComputeBuffer* CreateComputeBuffer(int32_t size, const void* initialData)
+	// {
+	// 	return nullptr;
+	// }
 
-	virtual void Draw(DrawParameter& drawParam)
+	virtual void Draw(const DrawParameter& drawParam)
 	{
 	}
 };

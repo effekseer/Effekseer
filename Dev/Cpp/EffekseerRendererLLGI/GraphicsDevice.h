@@ -99,6 +99,20 @@ public:
 	}
 };
 
+class Texture
+	: public DeviceObject,
+	  public Effekseer::Backend::Texture
+{
+	std::shared_ptr<LLGI::Texture> texture_;
+	GraphicsDevice* graphicsDevice_ = nullptr;
+
+public:
+	Texture(GraphicsDevice* graphicsDevice);
+	~Texture() override;
+
+	bool Init(const Effekseer::Backend::TextureParameter& param);
+};
+
 /**
 	@brief	GraphicsDevice of OpenGL
 */
@@ -127,6 +141,8 @@ public:
 	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
 	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+
+	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 };
 
 } // namespace Backend

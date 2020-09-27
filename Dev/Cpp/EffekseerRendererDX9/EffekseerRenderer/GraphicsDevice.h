@@ -19,6 +19,7 @@ using Direct3DVertexShader9Ptr = std::unique_ptr<IDirect3DVertexShader9, Effekse
 using Direct3DPixelShader9Ptr = std::unique_ptr<IDirect3DPixelShader9, Effekseer::ReferenceDeleter<IDirect3DPixelShader9>>;
 using Direct3DVertexDeclaration9Ptr = std::unique_ptr<IDirect3DVertexDeclaration9, Effekseer::ReferenceDeleter<IDirect3DVertexDeclaration9>>;
 using Direct3DTexture9Ptr = std::unique_ptr<IDirect3DTexture9, Effekseer::ReferenceDeleter<IDirect3DTexture9>>;
+using Direct3DSurface9Ptr = std::unique_ptr<IDirect3DSurface9, Effekseer::ReferenceDeleter<IDirect3DSurface9>>;
 
 class GraphicsDevice;
 
@@ -125,6 +126,23 @@ public:
 	};
 };
 
+class Texture
+	: public DeviceObject,
+	  public Effekseer::Backend::Texture
+{
+	Direct3DTexture9Ptr texture_ = nullptr;
+	Direct3DSurface9Ptr surface_ = nullptr;
+	GraphicsDevice* graphicsDevice_ = nullptr;
+
+public:
+	Texture(GraphicsDevice* graphicsDevice);
+	~Texture() override;
+
+	bool Init(const Effekseer::Backend::TextureParameter& param);
+
+	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+};
+
 /**
 	@brief	GraphicsDevice of DirectX9
 */
@@ -153,6 +171,8 @@ public:
 	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
 	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+
+	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 };
 
 } // namespace Backend
