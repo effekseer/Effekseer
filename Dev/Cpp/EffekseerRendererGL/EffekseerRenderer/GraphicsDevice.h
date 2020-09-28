@@ -100,6 +100,75 @@ public:
 	}
 };
 
+class UniformBuffer
+	: public DeviceObject,
+	  public Effekseer::Backend::UniformBuffer
+{
+private:
+	Effekseer::CustomVector<uint8_t> buffer_;
+
+public:
+	UniformBuffer() = default;
+	~UniformBuffer() override = default;
+
+	bool Init(int32_t size, const void* initialData);
+};
+
+class Texture
+	: public DeviceObject,
+	  public Effekseer::Backend ::Texture
+{
+private:
+	GLuint buffer_ = 0;
+	GraphicsDevice* graphicsDevice_ = nullptr;
+
+	bool InitInternal(const Effekseer::Backend::TextureParameter& param);
+
+public:
+	Texture(GraphicsDevice* graphicsDevice);
+	~Texture() override;
+
+	bool Init(const Effekseer::Backend::TextureParameter& param);
+
+	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
+
+	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+};
+
+class VertexLayout
+	: public DeviceObject,
+	  public Effekseer::Backend::VertexLayout
+{
+private:
+	Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement> elements_;
+
+public:
+	VertexLayout() = default;
+	~VertexLayout() = default;
+
+	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
+};
+
+class Shader
+	: public DeviceObject,
+	  public Effekseer::Backend::Shader
+{
+private:
+public:
+	Shader() = default;
+	~Shader() = default;
+};
+
+class PipelineState
+	: public DeviceObject,
+	  public Effekseer::Backend::PipelineState
+{
+private:
+public:
+	PipelineState() = default;
+	~PipelineState() = default;
+};
+
 /**
 	@brief	GraphicsDevice of OpenGL
 */
@@ -128,6 +197,36 @@ public:
 	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
 	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+
+	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+
+	Texture* CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
+
+	Texture* CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
+
+	UniformBuffer* CreateUniformBuffer(int32_t size, const void* initialData) override;
+
+	VertexLayout* CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
+
+	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
+	{
+		// not implemented
+		assert(0);
+		return nullptr;
+	}
+
+	Shader* CreateShaderFromKey(const char* key)
+	{
+		// not implemented
+		assert(0);
+		return nullptr;
+	}
+
+	virtual void Draw(const Effekseer::Backend::DrawParameter& drawParam)
+	{
+		// not implemented
+		assert(0);
+	}
 };
 
 } // namespace Backend

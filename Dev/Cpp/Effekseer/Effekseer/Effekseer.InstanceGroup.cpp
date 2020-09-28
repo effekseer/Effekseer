@@ -134,7 +134,7 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 	{
 		parentMatrix_ = rootGroup->GetParentMatrix();
 	}
-	else if (tType == BindType::WhenCreating || tType == TranslationParentBindType::WhenCreating_FollowParent && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
+	else if ((tType == BindType::WhenCreating || tType == TranslationParentBindType::WhenCreating_FollowParent) && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
 	{
 		// don't do anything
 	}

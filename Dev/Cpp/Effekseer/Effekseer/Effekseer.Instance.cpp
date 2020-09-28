@@ -1589,7 +1589,7 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
 		BindType sType = m_pEffectNode->CommonValues.ScalingBindType;
 
-		if (tType == BindType::WhenCreating || tType == TranslationParentBindType::WhenCreating_FollowParent && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
+		if ((tType == BindType::WhenCreating || tType == TranslationParentBindType::WhenCreating_FollowParent) && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
 		{
 			// do not do anything
 		}

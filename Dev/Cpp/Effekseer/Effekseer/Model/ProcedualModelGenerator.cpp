@@ -1,5 +1,7 @@
 #include "ProcedualModelGenerator.h"
 #include "../Model/Model.h"
+#include "../Noise/CurlNoise.h"
+#include "../Noise/PerlinNoise.h"
 #include "../SIMD/Effekseer.SIMDUtils.h"
 #include "ProcedualModelParameter.h"
 
@@ -13,21 +15,12 @@ namespace Effekseer
 /*
 	memo
 
-	// Sugoi tube
+	// multi noise
+	// kubire
+	// cross section
+	// cross section size
+	// wire random
 
-	// wire
-
-	// Rectangle
-
-	// Box
-
-	// Others
-
-	// Filter
-	// Twist
-	// Jitter
-	// Require normal
-	// Calculate tangent
 */
 
 struct ProcedualMeshVertex
@@ -60,7 +53,7 @@ struct ProcedualMesh
 		{
 			for (auto& ind : mesh1.Faces[f].Indexes)
 			{
-				ind += vertexOffset;
+				ind += static_cast<int32_t>(vertexOffset);
 			}
 		}
 
@@ -253,6 +246,14 @@ struct RotatorCylinder
 	}
 };
 
+static Vec3f WaveNoise(Vec3f v, std::array<float, 3> waveOffsets, std::array<float, 3> waveScales, std::array<float, 3> noiseScales)
+{
+	return v + Vec3f(
+				   sin(v.GetY() * waveScales[0] + waveOffsets[0]) * noiseScales[0],
+				   sin(v.GetY() * waveScales[1] + waveOffsets[1]) * noiseScales[1],
+				   sin(v.GetY() * waveScales[2] + waveOffsets[2]) * noiseScales[2]);
+}
+
 struct RotatorMeshGenerator
 {
 	float AngleMin;
@@ -260,6 +261,7 @@ struct RotatorMeshGenerator
 	bool IsConnected = false;
 
 	std::function<Vec2f(float)> Rotator;
+	std::function<Vec3f(Vec3f)> Noise;
 
 	Vec3f GetPosition(float angleValue, float depthValue) const
 	{
@@ -331,6 +333,11 @@ struct RotatorMeshGenerator
 			}
 		}
 
+		for (size_t i = 0; i < ret.Vertexes.size(); i++)
+		{
+			ret.Vertexes[i].Position = Noise(ret.Vertexes[i].Position);
+		}
+
 		return ret;
 	}
 };
@@ -342,6 +349,7 @@ struct RotatedWireMeshGenerator
 	int Count;
 
 	std::function<Vec2f(float)> Rotator;
+	std::function<Vec3f(Vec3f)> Noise;
 
 	Vec3f GetPosition(float angleValue, float depthValue) const
 	{
@@ -430,6 +438,11 @@ struct RotatedWireMeshGenerator
 				ribbon.Faces[v * 2 + 1] = face1;
 			}
 
+			for (size_t i = 0; i < ribbon.Vertexes.size(); i++)
+			{
+				ribbon.Vertexes[i].Position = Noise(ribbon.Vertexes[i].Position);
+			}
+
 			CalculateNormal(ribbon);
 
 			ret = ProcedualMesh::Combine(std::move(ret), std::move(ribbon));
@@ -474,7 +487,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		RotatorCylinder rotator;
 		rotator.Radius1 = parameter->Cylinder.Radius1;
 		rotator.Radius2 = parameter->Cylinder.Radius2;
-		rotator.Depth = parameter->Cone.Depth;
+		rotator.Depth = parameter->Cylinder.Depth;
 
 		primitiveGenerator = [rotator](float value) -> Vec2f {
 			return rotator.GetPosition(value);
@@ -485,6 +498,29 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		assert(0);
 	}
 
+	CurlNoise noise(0);
+	std::function<Vec3f(Vec3f)> noiseFunc = [noise](Vec3f v) -> Vec3f {
+		return v;
+		return WaveNoise(v,
+						 {
+							 0.5f,
+							 0.0f,
+							 1.0f,
+						 },
+						 {
+							 2.0f,
+							 2.0f,
+							 2.0f,
+						 },
+						 {
+							 0.4f,
+							 0.1f,
+							 0.4f,
+						 });
+
+		return v + noise.Get(v) * 0.1f;
+	};
+
 	if (parameter->Type == ProcedualModelType::Mesh)
 	{
 		const auto AngleBegin = parameter->Mesh.AngleBegin / 180.0f * EFK_PI;
@@ -494,11 +530,11 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 
 		auto generator = RotatorMeshGenerator();
 		generator.Rotator = primitiveGenerator;
+		generator.Noise = noiseFunc;
 		generator.AngleMin = AngleBegin;
 		generator.AngleMax = AngleEnd;
 		generator.IsConnected = isConnected;
 		auto generated = generator.Generate(parameter->Mesh.AngleDivision, parameter->Mesh.DepthDivision);
-
 		CalculateNormal(generated);
 		return ConvertMeshToModel(generated);
 	}
@@ -506,6 +542,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 	{
 		auto generator = RotatedWireMeshGenerator();
 		generator.Rotator = primitiveGenerator;
+		generator.Noise = noiseFunc;
 		generator.Vertices = parameter->Ribbon.Vertices;
 		generator.Rotate = parameter->Ribbon.Rotate;
 		generator.Count = parameter->Ribbon.Count;

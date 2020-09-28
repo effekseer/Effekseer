@@ -164,6 +164,237 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 }
 
+bool UniformBuffer::Init(int32_t size, const void* initialData)
+{
+	buffer_.resize(size);
+
+	if (auto data = static_cast<const uint8_t*>(initialData))
+	{
+		buffer_.assign(data, data + size);
+	}
+
+	return true;
+}
+
+Texture::Texture(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+}
+
+Texture::~Texture()
+{
+	if (buffer_ > 0)
+	{
+		glDeleteTextures(1, &buffer_);
+		buffer_ = 0;
+	}
+
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
+{
+	if (graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGL2 || graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGLES2)
+	{
+		if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM ||
+			param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+		{
+			// not supported
+			return false;
+		}
+	}
+
+	GLint bound = 0;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+
+	glGenTextures(1, &buffer_);
+	glBindTexture(GL_TEXTURE_2D, buffer_);
+
+	// Compressed texture
+	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
+
+	const size_t initialDataSize = param.InitialData.size();
+	const void* initialDataPtr = param.InitialData.size() > 0 ? param.InitialData.data() : nullptr;
+
+	if (isCompressed)
+	{
+		GLenum format = GL_RGBA;
+
+		if (param.Format == Effekseer::Backend::TextureFormatType::BC1)
+		{
+			format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC2)
+		{
+			format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC3)
+		{
+			format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
+		{
+			format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
+		{
+			format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+		{
+			format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+		}
+
+		GLExt::glCompressedTexImage2D(GL_TEXTURE_2D,
+									  0,
+									  format,
+									  param.Size[0],
+									  param.Size[1],
+									  0,
+									  initialDataSize,
+									  initialDataPtr);
+	}
+	else
+	{
+		GLuint internalFormat = GL_RGBA;
+		GLenum format = GL_RGBA;
+		GLenum type = GL_UNSIGNED_BYTE;
+
+		if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
+		{
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM)
+		{
+			internalFormat = GL_RGBA;
+			format = GL_BGRA;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+		{
+			internalFormat = GL_SRGB8_ALPHA8;
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB)
+		{
+			internalFormat = GL_SRGB8_ALPHA8;
+			format = GL_BGRA;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
+		{
+			internalFormat = GL_R8;
+			format = GL_RED;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
+		{
+			internalFormat = GL_RG16F;
+			format = GL_RG;
+			type = GL_HALF_FLOAT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
+		{
+			internalFormat = GL_RGBA16F;
+			format = GL_RGBA;
+			type = GL_HALF_FLOAT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
+		{
+			internalFormat = GL_RGBA32F;
+			format = GL_RGBA;
+			type = GL_FLOAT;
+		}
+
+		glTexImage2D(GL_TEXTURE_2D,
+					 0,
+					 internalFormat,
+					 param.Size[0],
+					 param.Size[1],
+					 0,
+					 format,
+					 type,
+					 initialDataPtr);
+	}
+
+	if (param.GenerateMipmap)
+	{
+		GLExt::glGenerateMipmap(GL_TEXTURE_2D);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, bound);
+
+	return true;
+}
+
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
+{
+	return InitInternal(param);
+}
+
+bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
+{
+	Effekseer::Backend::TextureParameter paramInternal;
+	paramInternal.Size = param.Size;
+	paramInternal.Format = param.Format;
+	paramInternal.GenerateMipmap = false;
+	return Init(paramInternal);
+}
+
+bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
+{
+	GLint bound = 0;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+
+	glGenTextures(1, &buffer_);
+	glBindTexture(GL_TEXTURE_2D, buffer_);
+
+	if (param.Format == Effekseer::Backend::TextureFormatType::D24S8)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, param.Size[0], param.Size[1], 0, GL_DEPTH_STENCIL, GL_FLOAT, nullptr);
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, param.Size[0], param.Size[1], 0, GL_DEPTH_STENCIL, GL_FLOAT, nullptr);
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, param.Size[0], param.Size[1], 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	}
+	else
+	{
+		glDeleteTextures(1, &buffer_);
+		buffer_ = 0;
+		glBindTexture(GL_TEXTURE_2D, bound);
+		return false;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, bound);
+
+	return false;
+}
+
+bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+{
+	elements_.resize(elementCount);
+
+	for (int32_t i = 0; i < elementCount; i++)
+	{
+		elements_[i] = elements[i];
+	}
+
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType)
 	: deviceType_(deviceType)
 {
@@ -231,6 +462,71 @@ IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void*
 	}
 
 	ret->UpdateData(initialData, elementCount * (stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2), 0);
+
+	return ret;
+}
+
+Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(param))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Texture* GraphicsDevice::CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(param))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Texture* GraphicsDevice::CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(param))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+UniformBuffer* GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
+{
+	auto ret = new UniformBuffer();
+
+	if (!ret->Init(size, initialData))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+VertexLayout* GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+{
+	auto ret = new VertexLayout();
+
+	if (!ret->Init(elements, elementCount))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
 
 	return ret;
 }
