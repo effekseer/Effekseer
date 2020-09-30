@@ -163,6 +163,8 @@ const int32_t LocalFieldSlotMax = 4;
 
 const float EFK_PI = 3.141592653589f;
 
+#define EFK_DEGREE_TO_RADIAN(deg) deg * (EFK_PI / 180.0f)
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -4718,6 +4720,41 @@ namespace Effekseer
 namespace Backend
 {
 
+enum class UniformBufferLayoutElementType
+{
+	Vector4,
+};
+
+struct UniformLayoutElement
+{
+	std::string Name;
+	UniformBufferLayoutElementType Type;
+
+	//! Ignored in UniformBuffer
+	int32_t Offset;
+};
+
+/**
+	@brief	Layouts in an uniform buffer
+	@note
+	Only for OpenGL
+*/
+class UniformLayout
+	: public ReferenceObject
+{
+private:
+	CustomVector<UniformLayoutElement> elements_;
+
+public:
+	UniformLayout() = default;
+	virtual ~UniformLayout() = default;
+
+	const CustomVector<UniformLayoutElement>& GetElements() const
+	{
+		return elements_;
+	}
+};
+
 class VertexBuffer
 	: public ReferenceObject
 {
@@ -4745,9 +4782,27 @@ public:
 class UniformBuffer
 	: public ReferenceObject
 {
+private:
+	UniformLayout* layout_ = nullptr;
+
 public:
 	UniformBuffer() = default;
-	virtual ~UniformBuffer() = default;
+	virtual ~UniformBuffer()
+	{
+		ES_SAFE_RELEASE(layout_);
+	}
+
+	UniformLayout* GetLayout() const
+	{
+		return layout_;	
+	}
+
+	void SetLayout(UniformLayout* layout)
+	{
+		ES_SAFE_ADDREF(layout);
+		ES_SAFE_RELEASE(layout_);
+		layout_ = layout;
+	}
 };
 
 class PipelineState
@@ -4789,9 +4844,14 @@ public:
 class Shader
 	: public ReferenceObject
 {
+	UniformLayout* layout_ = nullptr;
+
 public:
 	Shader() = default;
-	virtual ~Shader() = default;
+	virtual ~Shader()
+	{
+		ES_SAFE_RELEASE(layout_);
+	}
 };
 
 class ComputeBuffer
@@ -5101,6 +5161,11 @@ public:
 	}
 
 	virtual FrameBuffer* CreateFrameBuffer(const TextureFormatType* formats, int32_t formatCount, TextureFormatType* depthFormat)
+	{
+		return nullptr;
+	}
+
+	virtual RenderPass* CreateRenderPass(Texture** textures, Texture* depthTexture)
 	{
 		return nullptr;
 	}

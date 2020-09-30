@@ -1404,6 +1404,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		else if (m_pEffectNode->RotationType == ParameterRotationType_Easing)
 		{
 			localAngle = m_pEffectNode->RotationEasing.GetValue(rotation_values.easing, m_LivingTime / m_LivedTime);
+			localAngle = EFK_DEGREE_TO_RADIAN(localAngle);
 			/*
 			localAngle = m_pEffectNode->RotationEasing.rotation.getValue(
 				rotation_values.easing.start, rotation_values.easing.end, m_LivingTime / m_LivedTime);
