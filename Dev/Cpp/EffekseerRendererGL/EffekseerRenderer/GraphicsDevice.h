@@ -181,6 +181,8 @@ class RenderPass
 private:
 	GLuint buffer_ = 0;
 	GraphicsDevice* graphicsDevice_ = nullptr;
+	Effekseer::CustomVector<std::shared_ptr<Texture>> textures_;
+	std::shared_ptr<Texture> depthTexture_;
 
 public:
 	RenderPass(GraphicsDevice* graphicsDevice);

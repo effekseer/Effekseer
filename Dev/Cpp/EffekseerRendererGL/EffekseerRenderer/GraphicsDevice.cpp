@@ -435,6 +435,14 @@ bool RenderPass::Init(Texture** textures, int32_t textureCount, Texture* depthTe
 		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->GetBuffer(), 0);
 	}
 
+	textures_.resize(textureCount);
+	for (int32_t i = 0; i < textureCount; i++)
+	{
+		textures_[i] = Effekseer::CreateReference(textures[i], true);
+	}
+
+	depthTexture_ = Effekseer::CreateReference(depthTexture, true);
+
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 	return true;
 }
