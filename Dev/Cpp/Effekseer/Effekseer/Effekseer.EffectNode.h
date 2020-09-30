@@ -1566,6 +1566,11 @@ public:
 	EffectModelParameter GetEffectModelParameter() override;
 
 	/**
+	@brief \~English	A flag that an effect node doesn't destroy automatically after play
+	*/
+	bool IsLiveForever() const override;
+
+	/**
 	@brief	描画部分の読込
 	*/
 	virtual void LoadRendererParameter(unsigned char*& pos, Setting* setting);

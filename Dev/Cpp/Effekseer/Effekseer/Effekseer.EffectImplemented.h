@@ -165,6 +165,9 @@ protected:
 	//! child root node
 	EffectNode* m_pRoot = nullptr;
 
+	//! a flag that an effect doesn't destroy automatically
+	bool isLiveForever = false;
+
 	// culling
 	struct
 	{
@@ -262,6 +265,11 @@ public:
 		@brief	エフェクトデータのバージョン取得
 	*/
 	int GetVersion() const override;
+
+	/**
+		@brief \~English	A flag that an effect doesn't destroy automatically after play
+	*/
+	bool IsLiveForever() const override { return isLiveForever; }
 
 	/**
 		@brief	格納されている画像のポインタを取得する。

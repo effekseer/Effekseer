@@ -937,6 +937,25 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+bool EffectNodeImplemented::IsLiveForever() const
+{
+	bool liveForever = (CommonValues.RemoveWhenLifeIsExtinct == 0) &&
+		(CommonValues.RemoveWhenParentIsRemoved == 0) &&
+		(CommonValues.RemoveWhenChildrenIsExtinct == 0);
+	for (int i = 0; i < GetChildrenCount(); i++)
+	{
+		auto* child = GetChild(i);
+		if (child)
+		{
+			liveForever = liveForever || child->IsLiveForever();
+		}
+	}
+	return liveForever;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
