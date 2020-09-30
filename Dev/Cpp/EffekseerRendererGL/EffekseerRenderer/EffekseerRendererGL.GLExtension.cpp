@@ -91,6 +91,18 @@ typedef void(EFK_STDCALL* FP_glDrawElementsInstanced)(GLenum mode,
 typedef void(EFK_STDCALL* FP_glCompressedTexImage2D)(
 	GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data);
 
+typedef void(EFK_STDCALL* FP_glGenFramebuffers)(GLsizei n, GLuint* ids);
+
+typedef void(EFK_STDCALL* FP_glBindFramebuffer)(GLenum target, GLuint framebuffer);
+
+typedef void(EFK_STDCALL* FP_glDeleteFramebuffers)(GLsizei n, GLuint* framebuffers);
+
+typedef void(EFK_STDCALL* FP_glFramebufferTexture2D)(GLenum target,
+													 GLenum attachment,
+													 GLenum textarget,
+													 GLuint texture,
+													 GLint level);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = NULL;
 static FP_glCreateShader g_glCreateShader = NULL;
 static FP_glBindBuffer g_glBindBuffer = NULL;
@@ -137,6 +149,14 @@ static FP_glUnmapBuffer g_glUnmapBuffer = NULL;
 static FP_glDrawElementsInstanced g_glDrawElementsInstanced = nullptr;
 
 static FP_glCompressedTexImage2D g_glCompressedTexImage2D = nullptr;
+
+static FP_glGenFramebuffers g_glGenFramebuffers = nullptr;
+
+static FP_glBindFramebuffer g_glBindFramebuffer = nullptr;
+
+static FP_glDeleteFramebuffers g_glDeleteFramebuffers = nullptr;
+
+static FP_glFramebufferTexture2D g_glFramebufferTexture2D = nullptr;
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
@@ -256,6 +276,14 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glDrawElementsInstanced);
 
 	GET_PROC(glCompressedTexImage2D);
+
+	GET_PROC(glGenFramebuffers);
+
+	GET_PROC(glBindFramebuffer);
+
+	GET_PROC(glDeleteFramebuffers);
+
+	GET_PROC(glFramebufferTexture2D);
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 	g_isSurrpotedBufferRange = (g_glMapBufferRange && g_glUnmapBuffer);
@@ -771,6 +799,54 @@ void glCompressedTexImage2D(
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
 #else
 	::glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+#endif
+}
+
+void glGenFramebuffers(GLsizei n, GLuint* ids)
+{
+#if _WIN32
+	g_glGenFramebuffers(n, ids);
+#else
+	glGenFramebuffers(n, ids);
+#endif
+}
+
+void glBindFramebuffer(GLenum target, GLuint framebuffer)
+{
+#if _WIN32
+	g_glBindFramebuffer(target, framebuffer);
+#else
+	glBindFramebuffer(target, framebuffer);
+#endif
+}
+
+void glDeleteFramebuffers(GLsizei n, GLuint* framebuffers)
+{
+#if _WIN32
+	g_glDeleteFramebuffers(n, framebuffers);
+#else
+	glDeleteFramebuffers(n, framebuffers);
+#endif
+}
+
+void glFramebufferTexture2D(GLenum target,
+							GLenum attachment,
+							GLenum textarget,
+							GLuint texture,
+							GLint level)
+{
+#if _WIN32
+	g_glFramebufferTexture2D(target,
+							 attachment,
+							 textarget,
+							 texture,
+							 level);
+#else
+	glFramebufferTexture2D(target,
+						   attachment,
+						   textarget,
+						   texture,
+						   level);
 #endif
 }
 

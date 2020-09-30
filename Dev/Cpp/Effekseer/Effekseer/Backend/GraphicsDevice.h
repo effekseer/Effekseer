@@ -457,7 +457,7 @@ public:
 		return nullptr;
 	}
 
-	virtual RenderPass* CreateRenderPass(Texture** textures, Texture* depthTexture)
+	virtual RenderPass* CreateRenderPass(Texture** textures, int32_t textureCount, Texture* depthTexture)
 	{
 		return nullptr;
 	}

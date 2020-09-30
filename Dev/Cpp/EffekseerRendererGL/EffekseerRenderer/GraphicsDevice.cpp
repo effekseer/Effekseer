@@ -395,6 +395,50 @@ bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements,
 	return true;
 }
 
+RenderPass::RenderPass(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+}
+
+RenderPass::~RenderPass()
+{
+	if (buffer_ > 0)
+	{
+		GLExt::glDeleteFramebuffers(1, &buffer_);
+		buffer_ = 0;
+	}
+
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+bool RenderPass::Init(Texture** textures, int32_t textureCount, Texture* depthTexture)
+{
+	GLExt::glGenFramebuffers(1, &buffer_);
+	if (buffer_ == 0)
+	{
+		return false;
+	}
+
+	GLint backupFramebuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+
+	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
+
+	for (int32_t i = 0; i < textureCount; i++)
+	{
+		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i]->GetBuffer(), 0);
+	}
+
+	if (depthTexture != nullptr)
+	{
+		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->GetBuffer(), 0);
+	}
+
+	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType)
 	: deviceType_(deviceType)
 {
@@ -523,6 +567,19 @@ VertexLayout* GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::Verte
 	auto ret = new VertexLayout();
 
 	if (!ret->Init(elements, elementCount))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+RenderPass* GraphicsDevice::CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture)
+{
+	auto ret = new RenderPass(this);
+
+	if (!ret->Init(reinterpret_cast<Texture**>(textures), textureCount, reinterpret_cast<Texture*>(depthTexture)))
 	{
 		ES_SAFE_RELEASE(ret);
 		return nullptr;

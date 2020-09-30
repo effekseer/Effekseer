@@ -133,6 +133,11 @@ public:
 	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+
+	GLuint GetBuffer() const
+	{
+		return buffer_;
+	}
 };
 
 class VertexLayout
@@ -167,6 +172,26 @@ private:
 public:
 	PipelineState() = default;
 	~PipelineState() = default;
+};
+
+class RenderPass
+	: public DeviceObject,
+	  public Effekseer::Backend::RenderPass
+{
+private:
+	GLuint buffer_ = 0;
+	GraphicsDevice* graphicsDevice_ = nullptr;
+
+public:
+	RenderPass(GraphicsDevice* graphicsDevice);
+	~RenderPass();
+
+	bool Init(Texture** textures, int32_t textureCount, Texture* depthTexture);
+
+	GLuint GetBuffer() const
+	{
+		return buffer_;
+	}
 };
 
 /**
@@ -207,6 +232,8 @@ public:
 	UniformBuffer* CreateUniformBuffer(int32_t size, const void* initialData) override;
 
 	VertexLayout* CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
+
+	RenderPass* CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture) override;
 
 	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
 	{

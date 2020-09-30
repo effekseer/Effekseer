@@ -132,6 +132,28 @@ namespace GLExt
 #define GL_WRITE_ONLY 0x000088b9
 //#endif
 
+#define GL_FRAMEBUFFER 0x8D40
+#define GL_FRAMEBUFFER_BINDING 0x8CA6
+
+#define GL_COLOR_ATTACHMENT0 0x8CE0
+#define GL_COLOR_ATTACHMENT1 0x8CE1
+#define GL_COLOR_ATTACHMENT2 0x8CE2
+#define GL_COLOR_ATTACHMENT3 0x8CE3
+#define GL_COLOR_ATTACHMENT4 0x8CE4
+#define GL_COLOR_ATTACHMENT5 0x8CE5
+#define GL_COLOR_ATTACHMENT6 0x8CE6
+#define GL_COLOR_ATTACHMENT7 0x8CE7
+#define GL_COLOR_ATTACHMENT8 0x8CE8
+#define GL_COLOR_ATTACHMENT9 0x8CE9
+#define GL_COLOR_ATTACHMENT10 0x8CEA
+#define GL_COLOR_ATTACHMENT11 0x8CEB
+#define GL_COLOR_ATTACHMENT12 0x8CEC
+#define GL_COLOR_ATTACHMENT13 0x8CED
+#define GL_COLOR_ATTACHMENT14 0x8CEE
+#define GL_COLOR_ATTACHMENT15 0x8CEF
+#define GL_DEPTH_ATTACHMENT 0x8D00
+#define GL_STENCIL_ATTACHMENT 0x8D20
+
 #if defined(__APPLE__) || defined(__ANDROID__)
 #else
 typedef ptrdiff_t GLsizeiptr;
@@ -202,6 +224,17 @@ void glDrawElementsInstanced(GLenum mode,
 void glCompressedTexImage2D(
 	GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data);
 
+void glGenFramebuffers(GLsizei n, GLuint* ids);
+
+void glBindFramebuffer(GLenum target, GLuint framebuffer);
+
+void glDeleteFramebuffers(GLsizei n, GLuint* framebuffers);
+
+void glFramebufferTexture2D(GLenum target,
+							GLenum attachment,
+							GLenum textarget,
+							GLuint texture,
+							GLint level);
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
