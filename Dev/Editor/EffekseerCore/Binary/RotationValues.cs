@@ -48,7 +48,7 @@ namespace Effekseer.Binary
 			}
 			else if (value.Type.GetValue() == Data.RotationValues.ParamaterType.Easing)
 			{
-				Utils.ExportEasing(value.Easing, 1.0f, data, version);
+				Utils.ExportEasing(value.Easing, (float)Math.PI / 180.0f, data, version);
 			}
 			else if (value.Type.GetValue() == Data.RotationValues.ParamaterType.AxisPVA)
 			{
