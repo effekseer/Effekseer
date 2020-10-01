@@ -40,7 +40,7 @@ protected:
 
 	efkTrackNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkTrackInstanceParam> instances;
-	SplineGenerator spline;
+	Effekseer::SplineGenerator spline;
 
 	int32_t vertexCount_ = 0;
 	int32_t stride_ = 0;

@@ -18,7 +18,7 @@ file(GLOB effekseer_h
     Effekseer/Model/ProcedualModelParameter.h
     Effekseer/Model/Model.h
     Effekseer/Model/ModelLoader.h
-
+    Effekseer/Model/SplineGenerator.h
 )
 
 set(effekseer_src
@@ -75,6 +75,7 @@ set(effekseer_src
     Effekseer/Model/ProcedualModelGenerator.cpp
     Effekseer/Model/Model.cpp
     Effekseer/Model/ModelLoader.cpp
+    Effekseer/Model/SplineGenerator.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

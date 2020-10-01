@@ -78,6 +78,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 0, Value = (int)(ParameterType.ProcedualModel))]
+		[IO(Export = true)]
+		public ProcedualModelParameter ProcedualModel
+		{
+			get;
+			private set;
+		} = new ProcedualModelParameter();
+
 		internal GenerationLocationValues(Value.Path basepath)
 		{
 			EffectsRotation = new Value.Boolean(false);
@@ -218,6 +226,19 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class ProcedualModelParameter
+		{
+			[Name(language = Language.Japanese, value = "生成位置種類")]
+			[Name(language = Language.English, value = "Method of Spawning")]
+			public Value.Enum<ModelType> Type
+			{
+				get;
+				private set;
+			} = new Value.Enum<ModelType>(ModelType.Random);
+
+			public Data.ProcedualModelParameter Model { get; private set; } = new Data.ProcedualModelParameter();
+		}
+
 		public class CircleParameter
 		{
 			[Name(language = Language.Japanese, value = "軸方向")]
@@ -305,7 +326,9 @@ namespace Effekseer.Data
 			[Name(value = "モデル", language = Language.Japanese)]
 			[Name(value = "Model", language = Language.English)]
 			Model = 2,
-			
+			[Name(value = "プロシージャルモデル", language = Language.Japanese)]
+			[Name(value = "ProcedualModel", language = Language.English)]
+			ProcedualModel = 5,
 		}
 
 		public enum ModelType : int

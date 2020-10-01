@@ -5,6 +5,7 @@
 #include <Effekseer.Internal.h>
 #include <Effekseer.h>
 #include <Effekseer/Material/Effekseer.CompiledMaterial.h>
+#include <Effekseer/Model/SplineGenerator.h>
 #include <algorithm>
 #include <array>
 #include <assert.h>
@@ -693,29 +694,6 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 				   const ::Effekseer::Mat43f& src,
 				   const ::Effekseer::Vec3f& frontDirection);
 
-/**
-	@brief Spline generator
-	@note
-	Reference https://qiita.com/edo_m18/items/f2f0c6bf9032b0ec12d4
-*/
-class SplineGenerator
-{
-	std::vector<Effekseer::Vec3f> a;
-	std::vector<Effekseer::Vec3f> b;
-	std::vector<Effekseer::Vec3f> c;
-	std::vector<Effekseer::Vec3f> d;
-	std::vector<Effekseer::Vec3f> w;
-	std::vector<bool> isSame;
-
-public:
-	void AddVertex(const Effekseer::Vec3f& v);
-
-	void Calculate();
-
-	void Reset();
-
-	Effekseer::Vec3f GetValue(float t) const;
-};
 
 void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 						  const ::Effekseer::Vec3f& cameraFront,

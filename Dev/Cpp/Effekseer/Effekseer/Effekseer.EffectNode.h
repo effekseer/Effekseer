@@ -441,6 +441,7 @@ struct ParameterGenerationLocation
 		TYPE_MODEL = 2,
 		TYPE_CIRCLE = 3,
 		TYPE_LINE = 4,
+		TYPE_PROCEDUAL_MODEL = 5,
 
 		TYPE_DWORD = 0x7fffffff,
 	} type;
@@ -508,6 +509,13 @@ struct ParameterGenerationLocation
 			random_float position_noize;
 			LineType type;
 		} line;
+
+		
+		struct
+		{
+			int32_t index;
+			eModelType type;
+		} procedualModel;
 	};
 
 	void load(uint8_t*& pos, int32_t version)
@@ -553,6 +561,11 @@ struct ParameterGenerationLocation
 		{
 			memcpy(&line, pos, sizeof(line));
 			pos += sizeof(line);
+		}
+		else if (type == TYPE_PROCEDUAL_MODEL)
+		{
+			memcpy(&procedualModel, pos, sizeof(procedualModel));
+			pos += sizeof(procedualModel);
 		}
 	}
 };

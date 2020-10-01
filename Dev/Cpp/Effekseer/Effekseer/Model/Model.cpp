@@ -121,6 +121,12 @@ Model::Emitter Model::GetEmitter(IRandObject* g, int32_t time, CoordinateSystem 
 {
 	time = time % GetFrameCount();
 
+	const auto faceCount = GetFaceCount(time);
+	if (faceCount == 0)
+	{
+		return GetEmitterFromVertex(g, time, coordinate, magnification);
+	}
+
 	int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
 	faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
 	const Face& face = GetFaces(time)[faceInd];
@@ -161,6 +167,12 @@ Model::Emitter Model::GetEmitterFromVertex(IRandObject* g, int32_t time, Coordin
 {
 	time = time % GetFrameCount();
 
+	const auto vertexCount = GetVertexCount(time);
+	if (vertexCount == 0)
+	{
+		return Model::Emitter{};
+	}
+
 	int32_t vertexInd = (int32_t)((GetVertexCount(time) - 1) * (g->GetRand()));
 	vertexInd = Clamp(vertexInd, GetVertexCount(time) - 1, 0);
 	const Vertex& v = GetVertexes(time)[vertexInd];
@@ -186,6 +198,12 @@ Model::Emitter Model::GetEmitterFromVertex(int32_t index, int32_t time, Coordina
 {
 	time = time % GetFrameCount();
 
+	const auto vertexCount = GetVertexCount(time);
+	if (vertexCount == 0)
+	{
+		return Model::Emitter{};
+	}
+
 	int32_t vertexInd = index % GetVertexCount(time);
 	const Vertex& v = GetVertexes(time)[vertexInd];
 
@@ -209,6 +227,12 @@ Model::Emitter Model::GetEmitterFromVertex(int32_t index, int32_t time, Coordina
 Model::Emitter Model::GetEmitterFromFace(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
 {
 	time = time % GetFrameCount();
+
+	const auto faceCount = GetFaceCount(time);
+	if (faceCount == 0)
+	{
+		return Model::Emitter{};
+	}
 
 	int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
 	faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
@@ -241,6 +265,12 @@ Model::Emitter Model::GetEmitterFromFace(IRandObject* g, int32_t time, Coordinat
 Model::Emitter Model::GetEmitterFromFace(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification)
 {
 	time = time % GetFrameCount();
+
+	const auto faceCount = GetFaceCount(time);
+	if (faceCount == 0)
+	{
+		return Model::Emitter{};
+	}
 
 	int32_t faceInd = index % (GetFaceCount(time) - 1);
 	const Face& face = GetFaces(time)[faceInd];

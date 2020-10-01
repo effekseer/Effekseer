@@ -572,6 +572,16 @@ namespace Effekseer.Binary
 							ProcedualModels.Add(param);
 						}
 					}
+
+					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.ProcedualModel)
+					{
+						var param = _node.GenerationLocationValues.ProcedualModel.Model;
+
+						if (!ProcedualModels.Contains(param))
+						{
+							ProcedualModels.Add(param);
+						}
+					}
 				}
 
 				for (int i = 0; i < node.Children.Count; i++)
@@ -713,13 +723,16 @@ namespace Effekseer.Binary
 					{
 						data.Add(param.AngleBeginEnd.X.Value.GetBytes());
 						data.Add(param.AngleBeginEnd.Y.Value.GetBytes());
-						data.Add(param.AngleDivision.Value.GetBytes());
-						data.Add(param.AxisDivision.Value.GetBytes());
+						data.Add((byte[])param.Divisions);
 					}
 					else
 					{
+						data.Add(((int)param.CrossSection.Value).GetBytes());
 						data.Add(param.Rotate.Value.GetBytes());
 						data.Add(param.Vertices.Value.GetBytes());
+						data.Add((byte[])param.RibbonScales);
+						data.Add((byte[])param.RibbonAngles);
+						data.Add((byte[])param.RibbonNoises);
 						data.Add(param.Count.Value.GetBytes());
 					}
 
@@ -727,7 +740,7 @@ namespace Effekseer.Binary
 										
 					data.Add(primitiveType.GetBytes());
 
-					if(param.PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
+					if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
 					{
 						data.Add(param.Radius.Value.GetBytes());
 						data.Add(param.DepthMin.Value.GetBytes());
@@ -744,6 +757,30 @@ namespace Effekseer.Binary
 						data.Add(param.Radius2.Value.GetBytes());
 						data.Add(param.Depth.Value.GetBytes());
 					}
+					else if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Spline4)
+					{
+						data.Add((byte[])param.Point1);
+						data.Add((byte[])param.Point2);
+						data.Add((byte[])param.Point3);
+						data.Add((byte[])param.Point4);
+					}
+
+					data.Add((byte[])param.TiltNoiseFrequency);
+					data.Add((byte[])param.TiltNoiseOffset);
+					data.Add((byte[])param.TiltNoisePower);
+					data.Add((byte[])param.WaveNoiseFrequency);
+					data.Add((byte[])param.WaveNoiseOffset);
+					data.Add((byte[])param.WaveNoisePower);
+					data.Add((byte[])param.CurlNoiseFrequency);
+					data.Add((byte[])param.CurlNoiseOffset);
+					data.Add((byte[])param.CurlNoisePower);
+
+					data.Add((byte[])param.ColorLeft);
+					data.Add((byte[])param.ColorCenter);
+					data.Add((byte[])param.ColorRight);
+					data.Add((byte[])param.ColorLeftMiddle);
+					data.Add((byte[])param.ColorCenterMiddle);
+					data.Add((byte[])param.ColorRightMiddle);
 				}
 			}
 
@@ -895,7 +932,7 @@ namespace Effekseer.Binary
 				node_data.Add(LocationAbsValues.GetBytes(n.LocationAbsValues, n.CommonValues.ScaleEffectType, exporterVersion));
 				node_data.Add(RotationValues.GetBytes(n.RotationValues, exporterVersion));
 				node_data.Add(ScaleValues.GetBytes(n.ScalingValues, n.CommonValues.ScaleEffectType, exporterVersion));
-				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index));
+				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index, procedual_mesh_and_index,exporterVersion));
 
 				// Export depth
                 node_data.Add(n.DepthValues.DepthOffset.Value.GetBytes());

@@ -18,6 +18,7 @@ struct Vec2f
 	explicit Vec2f() = default;
 	Vec2f(const Vec2f& vec) = default;
 	Vec2f(float x, float y): s(x, y, 0.0f, 1.0f) {}
+	Vec2f(const std::array<float, 2>& v): s(v[0], v[1], 0.0f, 1.0f) {}
 	Vec2f(const SIMD4f& vec): s(vec) {}
 	Vec2f(const Vector2D& vec);
 	Vec2f(const vector2d& vec);

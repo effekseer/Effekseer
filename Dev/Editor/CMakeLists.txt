@@ -22,7 +22,8 @@ file(GLOB files_core
     EffekseerCore/Utl/*.cs	
     EffekseerCore/IO/*.cs	
     EffekseerCore/Utils/*.cs
-	)
+    EffekseerCore/Data/Value/Int2.cs
+)
 
 list(APPEND files_core
     EffekseerCore/IO/EfkEfc.cs
@@ -66,6 +67,7 @@ file(GLOB files
     Effekseer/swig/*.cs
     Effekseer/Utils/*.cs
     Effekseer/Process/*.cs
+    Effekseer/GUI/Component/Int2.cs
     )
 
 list(APPEND files
