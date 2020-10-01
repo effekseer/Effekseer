@@ -32,6 +32,7 @@ env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 
 
 is_x86 = 'x86' in sys.argv
+is_from_ci = 'from_ci' in sys.argv
 
 if env['IGNORE_BUILD'] == '0':
     aceutils.mkdir('build')
@@ -66,11 +67,14 @@ if env['IGNORE_BUILD'] == '0':
             aceutils.wget(r'https://dist.nuget.org/win-x86-commandline/v5.1.0/nuget.exe')
 
         if aceutils.isWin():
+            suffix = ''
+            if is_from_ci:
+                suffix += ' -D FROM_CI=ON'
             if is_x86:
-                aceutils.call('cmake .. -A Win32 -DBUILD_VIEWER=ON')
+                aceutils.call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
             else:
                 # run tests on x64
-                aceutils.call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON')
+                aceutils.call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON' + suffix)
 
         elif aceutils.isMac():
             aceutils.call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')
