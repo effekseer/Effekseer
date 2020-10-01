@@ -31,38 +31,6 @@ void* EffectPlatformGLFW::GetNativePtr(int32_t index)
 EffectPlatformGLFW::EffectPlatformGLFW(bool isOpenGLMode)
 {
 	isOpenGLMode_ = isOpenGLMode;
-
-	if (!glfwInit())
-	{
-		throw "Failed to initialize glfw";
-	}
-
-	if (isOpenGLMode)
-	{
-#if !_WIN32
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
-	}
-	else
-	{
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	}
-
-	glfwWindow_ = glfwCreateWindow(WindowWidth, WindowHeight, "Example glfw", nullptr, nullptr);
-
-	if (glfwWindow_ == nullptr)
-	{
-		glfwTerminate();
-		throw "Failed to create an window.";
-	}
-
-	if (isOpenGLMode)
-	{
-		glfwMakeContextCurrent(glfwWindow_);
-	}
 }
 
 EffectPlatformGLFW ::~EffectPlatformGLFW()
@@ -93,4 +61,39 @@ bool EffectPlatformGLFW::DoEvent()
 	glfwPollEvents();
 
 	return true;
+}
+
+void EffectPlatformGLFW::InitializeWindow()
+{
+	if (!glfwInit())
+	{
+		throw "Failed to initialize glfw";
+	}
+
+	if (isOpenGLMode_)
+	{
+#if !_WIN32
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
+	}
+	else
+	{
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	}
+
+	glfwWindow_ = glfwCreateWindow(initParam_.WindowSize[0], initParam_.WindowSize[1], "Example glfw", nullptr, nullptr);
+
+	if (glfwWindow_ == nullptr)
+	{
+		glfwTerminate();
+		throw "Failed to create an window.";
+	}
+
+	if (isOpenGLMode_)
+	{
+		glfwMakeContextCurrent(glfwWindow_);
+	}
 }

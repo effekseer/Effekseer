@@ -22,8 +22,6 @@ EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const
 
 EffectPlatform::EffectPlatform()
 {
-	checkeredPattern_.resize(WindowWidth * WindowHeight);
-	CreateCheckeredPattern(WindowWidth, WindowHeight, checkeredPattern_.data());
 }
 
 EffectPlatform::~EffectPlatform()
@@ -42,6 +40,11 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	initParam_ = param;
 
+	checkeredPattern_.resize(initParam_.WindowSize[0] * initParam_.WindowSize[1]);
+	CreateCheckeredPattern(initParam_.WindowSize[0], initParam_.WindowSize[1], checkeredPattern_.data());
+
+	InitializeWindow();
+
 	InitializeDevice(param);
 
 	manager_ = ::Effekseer::Manager::Create(param.InstanceCount);
@@ -56,12 +59,12 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 	if (isOpenGLMode_)
 	{
 		renderer_->SetProjectionMatrix(
-			::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)WindowWidth / (float)WindowHeight, 1.0f, 50.0f));
+			::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
 	}
 	else
 	{
 		renderer_->SetProjectionMatrix(
-			::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)WindowWidth / (float)WindowHeight, 1.0f, 50.0f));
+			::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
 	}
 
 	manager_->SetSpriteRenderer(renderer_->CreateSpriteRenderer());
@@ -113,7 +116,7 @@ void EffectPlatform::Terminate()
 	isTerminated_ = true;
 }
 
-Effekseer::Handle EffectPlatform::Play(const char16_t* path, int32_t startFrame)
+Effekseer::Handle EffectPlatform::Play(const char16_t* path, Effekseer::Vector3D position, int32_t startFrame)
 {
 	// reset time
 	time_ = 0;
@@ -151,7 +154,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path, int32_t startFrame)
 
 	buffers_.push_back(data);
 	effects_.push_back(effect);
-	auto handle = manager_->Play(effect, Effekseer::Vector3D(), startFrame);
+	auto handle = manager_->Play(effect, position, startFrame);
 	effectHandles_.push_back(handle);
 	return handle;
 }
@@ -193,7 +196,8 @@ bool EffectPlatform::Update()
 	return true;
 }
 
-bool EffectPlatform::Draw() {
+bool EffectPlatform::Draw()
+{
 	if (!DoEvent())
 		return false;
 
