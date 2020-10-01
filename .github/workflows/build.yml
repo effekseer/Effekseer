@@ -23,13 +23,13 @@ jobs:
          git lfs pull
         
       - name: Build
-        run: python build.py
+        run: python build.py from_ci
         shell: cmd
 
       - name: Test
         run: |
          cd build/Dev/Cpp/Test/Release/
-         Test.exe ci
+         Test.exe
         shell: cmd
 
       - name: Upload Test

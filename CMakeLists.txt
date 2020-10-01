@@ -21,7 +21,7 @@ option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer 
 
 option(BUILD_VULKAN "Build vulkan modules" OFF)
 
-if (WIN32 AND NOT FROM_CI)
+if (WIN32)
     option(BUILD_DX12 "Build DirectX12 modules" ON)
 else()
     option(BUILD_DX12 "Build DirectX12 modules" OFF)

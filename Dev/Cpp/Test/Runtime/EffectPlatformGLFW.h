@@ -36,6 +36,8 @@ protected:
 	void Present() override;
 	bool DoEvent() override;
 
+	void InitializeWindow() override;
+
 public:
 	EffectPlatformGLFW(bool isOpenGLMode);
 	virtual ~EffectPlatformGLFW();

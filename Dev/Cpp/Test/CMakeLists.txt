@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.10)
 project(Test)
 
 set(effekseer_test_src
-    graphics_gl.cpp
     main.cpp
     TestHelper.h
     TestHelper.cpp
@@ -14,8 +13,8 @@ set(effekseer_test_src
     Runtime/EffectPlatformGLFW.cpp
     Runtime/EffectPlatformGL.h
     Runtime/EffectPlatformGL.cpp
-    Runtime/RuntimeTest.h
     Runtime/RuntimeTest.cpp
+    Runtime/Performance.cpp
 )
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
@@ -71,16 +70,6 @@ list(APPEND common_lib EffekseerRendererGL)
 if(WIN32)
     list(APPEND common_lib EffekseerRendererDX11)
     list(APPEND common_lib EffekseerRendererDX9)
-endif()
-
-if (USE_XAUDIO2)
-    list(APPEND effekseer_test_src sound_xaudio2.cpp)
-    list(APPEND common_lib EffekseerSoundXAudio2)
-endif()
-
-if (USE_OPENAL)
-    list(APPEND effekseer_test_src sound_al.cpp)
-    list(APPEND common_lib EffekseerSoundAL)
 endif()
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
@@ -189,6 +178,10 @@ target_link_libraries(
     ${common_lib}
     glfw3
 )
+endif()
+
+if(FROM_CI)
+    target_compile_definitions(Test PRIVATE __FROM_CI__)
 endif()
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
