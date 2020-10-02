@@ -357,8 +357,8 @@ struct ModelRendererAdvancedPixelConstantBuffer
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{
-		ModelFlipbookParameter.EnableInterpolation;
-		ModelFlipbookParameter.InterpolationType;
+		ModelFlipbookParameter.EnableInterpolation = enableInterpolation;
+		ModelFlipbookParameter.InterpolationType = interpolationType;
 	}
 
 	void SetModelUVDistortionParameter(float intensity, float blendIntensity, const std::array<float, 2>& uvInversed)
@@ -576,6 +576,7 @@ protected:
 			uvDistortionUVSorted_.resize(m_matrixes.size());
 			blendUVSorted_.resize(m_matrixes.size());
 			blendAlphaUVSorted_.resize(m_matrixes.size());
+			blendUVDistortionUVSorted_.resize(m_matrixes.size());
 			flipbookIndexAndNextRateSorted_.resize(m_matrixes.size());
 			alphaThresholdSorted_.resize(m_matrixes.size());
 			viewOffsetDistanceSorted_.resize(m_matrixes.size());
