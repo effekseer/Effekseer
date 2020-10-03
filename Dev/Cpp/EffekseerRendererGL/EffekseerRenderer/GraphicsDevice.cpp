@@ -761,7 +761,7 @@ Shader* GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* ps
 	if (!ret->Init(vsCode, psCode, layout))
 	{
 		ES_SAFE_RELEASE(ret);
-		return false;
+		return nullptr;
 	}
 
 	return ret;
