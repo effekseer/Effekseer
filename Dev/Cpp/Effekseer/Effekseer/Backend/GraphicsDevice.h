@@ -499,13 +499,9 @@ public:
 		return nullptr;
 	}
 
-	virtual bool RegisterShaderWithCodes(const char* key, const char* vsCode, const char* psCode, UniformLayout* layout = nullptr)
+	virtual Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, UniformLayout* layout = nullptr)
 	{
-		return false;
-	}
-
-	virtual void UnregisterShader(const char* key)
-	{
+		return nullptr;
 	}
 
 	/**

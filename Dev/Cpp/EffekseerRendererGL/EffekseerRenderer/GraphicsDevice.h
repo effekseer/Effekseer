@@ -258,7 +258,6 @@ class GraphicsDevice
 private:
 	std::set<DeviceObject*> objects_;
 	OpenGLDeviceType deviceType_;
-	std::unordered_map<std::string, std::shared_ptr<Effekseer::Backend::Shader>> shaders_;
 	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
 
 public:
@@ -296,9 +295,7 @@ public:
 
 	Shader* CreateShaderFromKey(const char* key) override;
 
-	bool RegisterShaderWithCodes(const char* key, const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout) override;
-
-	void UnregisterShader(const char* key) override;
+	Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout) override;
 
 	void Draw(const Effekseer::Backend::DrawParameter& drawParam) override;
 

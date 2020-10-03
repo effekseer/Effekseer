@@ -1,5 +1,5 @@
 #include "GraphicsDevice.h"
-
+#include "EffekseerRendererGL.Base.h"
 #include "EffekseerRendererGL.GLExtension.h"
 
 #ifdef __ANDROID__
@@ -751,17 +751,10 @@ PipelineState* GraphicsDevice::CreatePipelineState(const Effekseer::Backend::Pip
 
 Shader* GraphicsDevice::CreateShaderFromKey(const char* key)
 {
-	auto it = shaders_.find(key);
-	if (it != shaders_.end())
-	{
-		auto shader = it->second.get();
-		ES_SAFE_ADDREF(shader);
-		return static_cast<Shader*>(shader);
-	}
 	return nullptr;
 }
 
-bool GraphicsDevice::RegisterShaderWithCodes(const char* key, const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
+Shader* GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
 {
 	auto ret = new Shader(this);
 
@@ -771,14 +764,7 @@ bool GraphicsDevice::RegisterShaderWithCodes(const char* key, const char* vsCode
 		return false;
 	}
 
-	shaders_[key] = Effekseer::CreateReference(ret);
-
-	return true;
-}
-
-void GraphicsDevice::UnregisterShader(const char* key)
-{
-	shaders_.erase(key);
+	return ret;
 }
 
 void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
@@ -793,9 +779,10 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	auto pip = static_cast<PipelineState*>(drawParam.PipelineStatePtr);
 	auto& shader = pip->GetShader();
 
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr)->GetBuffer());
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(drawParam.IndexBufferPtr)->GetBuffer());
-	GLExt::glUseProgram(pip->GetShader()->GetProgram());
+	if (shader->GetLayout() == nullptr)
+	{
+		return;
+	}
 
 	GLint currentVAO = 0;
 
@@ -805,12 +792,22 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		GLExt::glBindVertexArray(shader->GetVAO());
 	}
 
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr)->GetBuffer());
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(drawParam.IndexBufferPtr)->GetBuffer());
+	GLExt::glUseProgram(pip->GetShader()->GetProgram());
+
 	// textures
 	auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
 
 	for (int32_t i = 0; i < textureCount; i++)
 	{
 		auto textureSlot = GLExt::glGetUniformLocation(shader->GetProgram(), shader->GetLayout()->GetTextures()[i].c_str());
+
+		if (textureSlot < 0)
+		{
+			continue;
+		}
+
 		GLExt::glUniform1i(textureSlot, i);
 
 		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i]);
@@ -886,6 +883,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		const auto& element = shader->GetLayout()->GetElements()[i];
 		auto loc = GLExt::glGetUniformLocation(shader->GetProgram(), element.Name.c_str());
 
+		if (loc < 0)
+		{
+			continue;
+		}
+
 		UniformBuffer* uniformBuffer = nullptr;
 
 		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
@@ -917,6 +919,8 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			assert(0);
 		}
 	}
+
+	GLCheckError();
 
 	// layouts
 	{
@@ -974,16 +978,22 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 				assert(0);
 			}
 
-			GLExt::glVertexAttribPointer(loc,
-										 count,
-										 type,
-										 isNormalized,
-										 vertexSize,
-										 (uint8_t*)vertices + offset);
+			if (loc >= 0)
+			{
+				GLExt::glEnableVertexAttribArray(loc);
+				GLExt::glVertexAttribPointer(loc,
+											 count,
+											 type,
+											 isNormalized,
+											 vertexSize,
+											 (uint8_t*)vertices + offset);
+			}
 
 			offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
 		}
 	}
+
+	GLCheckError();
 
 	// States
 	GLint frontFace = 0;
@@ -1025,6 +1035,8 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			glCullFace(GL_FRONT_AND_BACK);
 		}
 	}
+
+	GLCheckError();
 
 	{
 		if (pip->GetParam().IsDepthTestEnabled || pip->GetParam().IsDepthWriteEnabled)
@@ -1092,20 +1104,26 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		}
 	}
 
+	GLCheckError();
+
 	GLenum primitiveMode = {};
 	GLenum indexStrideType = {};
+	int32_t indexPerPrimitive = {};
 
 	if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Triangle)
 	{
 		primitiveMode = GL_TRIANGLES;
+		indexPerPrimitive = 3;
 	}
 	else if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Line)
 	{
 		primitiveMode = GL_LINES;
+		indexPerPrimitive = 2;
 	}
 	else if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Point)
 	{
 		primitiveMode = GL_POINTS;
+		indexPerPrimitive = 1;
 	}
 
 	if (drawParam.IndexBufferPtr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride4)
@@ -1119,22 +1137,38 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	if (drawParam.InstanceCount > 1)
 	{
-		GLExt::glDrawElementsInstanced(primitiveMode, drawParam.IndexBufferPtr->GetElementCount(), indexStrideType, NULL, drawParam.PrimitiveCount);
+		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, NULL, drawParam.PrimitiveCount);
 	}
 	else
 	{
-		glDrawElements(primitiveMode, drawParam.IndexBufferPtr->GetElementCount(), indexStrideType, NULL);
+		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, NULL);
+	}
+
+	for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+	{
+		const auto& element = pip->GetVertexLayout()->GetElements()[i];
+		auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
+
+		if (loc >= 0)
+		{
+			GLExt::glDisableVertexAttribArray(loc);
+		}
 	}
 
 	if (GLExt::IsSupportedVertexArray())
 	{
 		GLExt::glBindVertexArray(currentVAO);
 	}
+
+	GLCheckError();
 }
 
 void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
 {
-	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass)->GetBuffer());
+	if (renderPass != nullptr)
+	{
+		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass)->GetBuffer());
+	}
 
 	GLbitfield flag = 0;
 
@@ -1153,11 +1187,15 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass,
 	{
 		glClear(flag);
 	}
+
+	GLCheckError();
 }
 
 void GraphicsDevice::EndRenderPass()
 {
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GLCheckError();
 }
 
 } // namespace Backend

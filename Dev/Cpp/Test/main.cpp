@@ -14,6 +14,7 @@ int main(int argc, char* argv[])
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	// You can specify "Test --filter=*.* to run a single test"
 	auto parsed = TestHelper::ParseArg(argc, argv);
 	TestHelper::Run(parsed);
 

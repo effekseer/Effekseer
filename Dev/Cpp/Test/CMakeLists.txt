@@ -7,6 +7,8 @@ set(effekseer_test_src
     main.cpp
     TestHelper.h
     TestHelper.cpp
+    Window/Window.h
+    Window/Window.cpp
     Runtime/EffectPlatform.h
     Runtime/EffectPlatform.cpp
     Runtime/EffectPlatformGLFW.h
@@ -15,6 +17,7 @@ set(effekseer_test_src
     Runtime/EffectPlatformGL.cpp
     Runtime/RuntimeTest.cpp
     Runtime/Performance.cpp
+    Backend/Mesh.cpp
 )
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
