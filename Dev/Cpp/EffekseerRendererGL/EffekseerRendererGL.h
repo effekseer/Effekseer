@@ -551,6 +551,8 @@ namespace EffekseerRendererGL
 
 class GraphicsDevice;
 
+::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(OpenGLDeviceType deviceType);
+
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr,

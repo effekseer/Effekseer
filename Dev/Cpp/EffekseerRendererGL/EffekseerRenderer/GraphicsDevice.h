@@ -112,6 +112,11 @@ public:
 	~UniformBuffer() override = default;
 
 	bool Init(int32_t size, const void* initialData);
+
+	const Effekseer::CustomVector<uint8_t>& GetBuffer() const
+	{
+		return buffer_;
+	}
 };
 
 class Texture
@@ -152,6 +157,11 @@ public:
 	~VertexLayout() = default;
 
 	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
+
+	const Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement>& GetElements() const
+	{
+		return elements_;
+	}
 };
 
 class Shader
@@ -159,9 +169,31 @@ class Shader
 	  public Effekseer::Backend::Shader
 {
 private:
+	GraphicsDevice* graphicsDevice_ = nullptr;
+	GLuint program_ = 0;
+	GLuint vao_ = 0;
+
+	std::shared_ptr<Effekseer::Backend::UniformLayout> layout_ = nullptr;
+
 public:
-	Shader() = default;
-	~Shader() = default;
+	Shader(GraphicsDevice* graphicsDevice);
+	~Shader() override;
+	bool Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout);
+
+	GLuint GetProgram() const
+	{
+		return program_;
+	}
+
+	GLuint GetVAO() const
+	{
+		return vao_;
+	}
+
+	const std::shared_ptr<Effekseer::Backend::UniformLayout>& GetLayout() const
+	{
+		return layout_;
+	}
 };
 
 class PipelineState
@@ -169,9 +201,30 @@ class PipelineState
 	  public Effekseer::Backend::PipelineState
 {
 private:
+	Effekseer::Backend::PipelineStateParameter param_;
+	std::shared_ptr<Shader> shader_;
+	std::shared_ptr<VertexLayout> vertexLayout_;
+
 public:
 	PipelineState() = default;
 	~PipelineState() = default;
+
+	bool Init(const Effekseer::Backend::PipelineStateParameter& param);
+
+	const Effekseer::Backend::PipelineStateParameter& GetParam() const
+	{
+		return param_;
+	}
+
+	const std::shared_ptr<Shader>& GetShader() const
+	{
+		return shader_;
+	}
+
+	const std::shared_ptr<VertexLayout>& GetVertexLayout() const
+	{
+		return vertexLayout_;
+	}
 };
 
 class RenderPass
@@ -205,6 +258,8 @@ class GraphicsDevice
 private:
 	std::set<DeviceObject*> objects_;
 	OpenGLDeviceType deviceType_;
+	std::unordered_map<std::string, std::shared_ptr<Effekseer::Backend::Shader>> shaders_;
+	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType);
@@ -237,25 +292,19 @@ public:
 
 	RenderPass* CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture) override;
 
-	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
-	{
-		// not implemented
-		assert(0);
-		return nullptr;
-	}
+	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
-	Shader* CreateShaderFromKey(const char* key)
-	{
-		// not implemented
-		assert(0);
-		return nullptr;
-	}
+	Shader* CreateShaderFromKey(const char* key) override;
 
-	virtual void Draw(const Effekseer::Backend::DrawParameter& drawParam)
-	{
-		// not implemented
-		assert(0);
-	}
+	bool RegisterShaderWithCodes(const char* key, const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout) override;
+
+	void UnregisterShader(const char* key) override;
+
+	void Draw(const Effekseer::Backend::DrawParameter& drawParam) override;
+
+	void BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;
+
+	void EndRenderPass() override;
 };
 
 } // namespace Backend

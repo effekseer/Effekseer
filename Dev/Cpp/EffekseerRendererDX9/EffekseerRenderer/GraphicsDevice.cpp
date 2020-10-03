@@ -191,6 +191,9 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 
 	buffer_ = Effekseer::CreateUniqueReference(ib);
 
+	elementCount_ = elementCount;
+	strideType_ = stride == 4 ? Effekseer::Backend::IndexBufferStrideType::Stride4 : Effekseer::Backend::IndexBufferStrideType::Stride2;
+
 	return SUCCEEDED(hr);
 }
 

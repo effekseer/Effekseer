@@ -43,8 +43,15 @@
 #include "ShaderHeader/sprite_unlit_ps.h"
 #include "ShaderHeader/sprite_unlit_vs.h"
 
+#include "GraphicsDevice.h"
+
 namespace EffekseerRendererGL
 {
+
+::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(OpenGLDeviceType deviceType)
+{
+	return new Backend::GraphicsDevice(deviceType);
+}
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType)
 {
