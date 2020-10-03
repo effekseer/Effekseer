@@ -81,6 +81,10 @@ IndexBuffer::~IndexBuffer()
 bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 {
 	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateIndexBuffer(stride, elementCount));
+
+	elementCount_ = elementCount;
+	strideType_ = stride == 4 ? Effekseer::Backend::IndexBufferStrideType::Stride4 : Effekseer::Backend::IndexBufferStrideType::Stride2;
+
 	return buffer_ != nullptr;
 }
 
@@ -300,7 +304,6 @@ Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParamete
 
 	return ret;
 }
-
 
 } // namespace Backend
 } // namespace EffekseerRendererLLGI

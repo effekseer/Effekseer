@@ -12,13 +12,48 @@ namespace Effekseer
 namespace Backend
 {
 
+enum class TextureFormatType
+{
+	R8G8B8A8_UNORM,
+	B8G8R8A8_UNORM,
+	R8_UNORM,
+	R16G16_FLOAT,
+	R16G16B16A16_FLOAT,
+	R32G32B32A32_FLOAT,
+	BC1,
+	BC2,
+	BC3,
+	R8G8B8A8_UNORM_SRGB,
+	B8G8R8A8_UNORM_SRGB,
+	BC1_SRGB,
+	BC2_SRGB,
+	BC3_SRGB,
+	D32,
+	D24S8,
+	D32S8,
+	Unknown,
+};
+
+enum class IndexBufferStrideType
+{
+	Stride2,
+	Stride4,
+};
+
 enum class UniformBufferLayoutElementType
 {
 	Vector4,
 };
 
+enum class ShaderStageType
+{
+	Vertex,
+	Pixel,
+};
+
 struct UniformLayoutElement
 {
+	ShaderStageType Stage = ShaderStageType::Vertex;
 	std::string Name;
 	UniformBufferLayoutElementType Type;
 
@@ -35,11 +70,21 @@ class UniformLayout
 	: public ReferenceObject
 {
 private:
+	CustomVector<std::string> textures_;
 	CustomVector<UniformLayoutElement> elements_;
 
 public:
-	UniformLayout() = default;
+	UniformLayout(CustomVector<std::string> textures, CustomVector<UniformLayoutElement> elements)
+		: textures_(std::move(textures))
+		, elements_(std::move(elements))
+	{
+	}
 	virtual ~UniformLayout() = default;
+
+	const CustomVector<std::string>& GetTextures() const
+	{
+		return textures_;
+	}
 
 	const CustomVector<UniformLayoutElement>& GetElements() const
 	{
@@ -58,9 +103,22 @@ public:
 class IndexBuffer
 	: public ReferenceObject
 {
+protected:
+	IndexBufferStrideType strideType_ = {};
+	int32_t elementCount_ = {};
+
 public:
 	IndexBuffer() = default;
 	virtual ~IndexBuffer() = default;
+
+	IndexBufferStrideType GetStrideType() const
+	{
+		return strideType_;
+	}
+	int32_t GetElementCount() const
+	{
+		return elementCount_;
+	}
 };
 
 class VertexLayout
@@ -74,27 +132,9 @@ public:
 class UniformBuffer
 	: public ReferenceObject
 {
-private:
-	UniformLayout* layout_ = nullptr;
-
 public:
 	UniformBuffer() = default;
-	virtual ~UniformBuffer()
-	{
-		ES_SAFE_RELEASE(layout_);
-	}
-
-	UniformLayout* GetLayout() const
-	{
-		return layout_;	
-	}
-
-	void SetLayout(UniformLayout* layout)
-	{
-		ES_SAFE_ADDREF(layout);
-		ES_SAFE_RELEASE(layout_);
-		layout_ = layout;
-	}
+	virtual ~UniformBuffer() = default;
 };
 
 class PipelineState
@@ -111,7 +151,7 @@ class Texture
 protected:
 	TextureFormatType format_;
 	std::array<int32_t, 2> size_;
-	int32_t mipmapCount_;
+	bool hasMipmap_;
 
 public:
 	Texture() = default;
@@ -127,23 +167,18 @@ public:
 		return size_;
 	}
 
-	int32_t GetMipmapCount() const
+	bool GetHasMipmap() const
 	{
-		return mipmapCount_;
+		return hasMipmap_;
 	}
 };
 
 class Shader
 	: public ReferenceObject
 {
-	UniformLayout* layout_ = nullptr;
-
 public:
 	Shader() = default;
-	virtual ~Shader()
-	{
-		ES_SAFE_RELEASE(layout_);
-	}
+	virtual ~Shader() = default;
 };
 
 class ComputeBuffer
@@ -170,12 +205,6 @@ public:
 	virtual ~RenderPass() = default;
 };
 
-enum class IndexBufferStrideType
-{
-	Stride2,
-	Stride4,
-};
-
 enum class TextureWrapType
 {
 	Clamp,
@@ -197,6 +226,10 @@ public:
 	IndexBuffer* IndexBufferPtr = nullptr;
 	PipelineState* PipelineStatePtr = nullptr;
 
+	UniformBuffer* VertexUniformBufferPtr = nullptr;
+	UniformBuffer* PixelUniformBufferPtr = nullptr;
+
+	int32_t TextureCount = 0;
 	std::array<Texture*, TextureSlotCount> TexturePtrs;
 	std::array<TextureWrapType, TextureSlotCount> TextureWrapTypes;
 	std::array<TextureSamplingType, TextureSlotCount> TextureSamplingTypes;
@@ -234,28 +267,6 @@ enum class TopologyType
 	Triangle,
 	Line,
 	Point,
-};
-
-enum class TextureFormatType
-{
-	R8G8B8A8_UNORM,
-	B8G8R8A8_UNORM,
-	R8_UNORM,
-	R16G16_FLOAT,
-	R16G16B16A16_FLOAT,
-	R32G32B32A32_FLOAT,
-	BC1,
-	BC2,
-	BC3,
-	R8G8B8A8_UNORM_SRGB,
-	B8G8R8A8_UNORM_SRGB,
-	BC1_SRGB,
-	BC2_SRGB,
-	BC3_SRGB,
-	D32,
-	D24S8,
-	D32S8,
-	Unknown,
 };
 
 enum class CullingType
@@ -332,6 +343,7 @@ struct PipelineStateParameter
 	bool IsDepthWriteEnabled = false;
 	DepthFuncType DepthFunc = DepthFuncType::Less;
 
+	Shader* ShaderPtr = nullptr;
 	VertexLayout* VertexLayoutPtr = nullptr;
 	FrameBuffer* FrameBufferPtr = nullptr;
 };
@@ -340,20 +352,20 @@ struct TextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	bool GenerateMipmap = true;
-	std::array<float, 2> Size;
+	std::array<int32_t, 2> Size;
 	CustomVector<uint8_t> InitialData;
 };
 
 struct RenderTextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
-	std::array<float, 2> Size;
+	std::array<int32_t, 2> Size;
 };
 
 struct DepthTextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
-	std::array<float, 2> Size;
+	std::array<int32_t, 2> Size;
 };
 
 class GraphicsDevice
@@ -487,6 +499,15 @@ public:
 		return nullptr;
 	}
 
+	virtual bool RegisterShaderWithCodes(const char* key, const char* vsCode, const char* psCode, UniformLayout* layout = nullptr)
+	{
+		return false;
+	}
+
+	virtual void UnregisterShader(const char* key)
+	{
+	}
+
 	/**
 		@brief	Create ComputeBuffer
 		@param	size	the size of buffer
@@ -501,7 +522,46 @@ public:
 	virtual void Draw(const DrawParameter& drawParam)
 	{
 	}
+
+	virtual void BeginRenderPass(RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Color clearColor)
+	{
+	}
+
+	virtual void EndRenderPass()
+	{
+	}
 };
+
+inline int32_t GetVertexLayoutFormatSize(VertexLayoutFormat format)
+{
+	int32_t size = 0;
+	if (format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT || format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)
+	{
+		size = 4;
+	}
+	else if (format == Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)
+	{
+		size = sizeof(float) * 1;
+	}
+	else if (format == Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)
+	{
+		size = sizeof(float) * 2;
+	}
+	else if (format == Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)
+	{
+		size = sizeof(float) * 3;
+	}
+	else if (format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
+	{
+		size = sizeof(float) * 4;
+	}
+	else
+	{
+		assert(0);
+	}
+
+	return size;
+}
 
 } // namespace Backend
 } // namespace Effekseer

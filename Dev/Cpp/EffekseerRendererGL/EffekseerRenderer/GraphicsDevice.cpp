@@ -2,6 +2,24 @@
 
 #include "EffekseerRendererGL.GLExtension.h"
 
+#ifdef __ANDROID__
+
+#ifdef __ANDROID__DEBUG__
+#include "android/log.h"
+#define LOG(s) __android_log_print(ANDROID_LOG_DEBUG, "Tag", "%s", s)
+#else
+#define LOG(s) printf("%s", s)
+#endif
+
+#elif defined(_WIN32)
+#include <windows.h>
+#define LOG(s) OutputDebugStringA(s)
+#else
+#define LOG(s) printf("%s", s)
+#endif
+
+#undef min
+
 namespace EffekseerRendererGL
 {
 namespace Backend
@@ -122,6 +140,8 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), nullptr, GL_STATIC_DRAW);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 
+	elementCount_ = elementCount;
+	strideType_ = stride == 4 ? Effekseer::Backend::IndexBufferStrideType::Stride4 : Effekseer::Backend::IndexBufferStrideType::Stride2;
 	return true;
 }
 
@@ -257,7 +277,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 									  param.Size[0],
 									  param.Size[1],
 									  0,
-									  initialDataSize,
+									  static_cast<GLsizei>(initialDataSize),
 									  initialDataPtr);
 	}
 	else
@@ -333,6 +353,10 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 
 	glBindTexture(GL_TEXTURE_2D, bound);
 
+	size_ = param.Size;
+	format_ = param.Format;
+	hasMipmap_ = param.GenerateMipmap;
+
 	return true;
 }
 
@@ -380,6 +404,10 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 
 	glBindTexture(GL_TEXTURE_2D, bound);
 
+	size_ = param.Size;
+	format_ = param.Format;
+	hasMipmap_ = false;
+
 	return false;
 }
 
@@ -392,6 +420,109 @@ bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements,
 		elements_[i] = elements[i];
 	}
 
+	return true;
+}
+
+Shader::Shader(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+}
+
+Shader::~Shader()
+{
+	if (program_ > 0)
+	{
+		GLExt::glDeleteProgram(program_);
+	}
+
+	if (vao_ > 0)
+	{
+		GLExt::glDeleteVertexArrays(1, &vao_);
+	}
+
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
+{
+	GLint vsCodeLen = static_cast<GLint>(strlen(vsCode));
+	GLint psCodeLen = static_cast<GLint>(strlen(psCode));
+
+	GLint res_vs, res_fs, res_link = 0;
+	auto vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
+
+	GLExt::glShaderSource(vert_shader, 1, &vsCode, &vsCodeLen);
+	GLExt::glCompileShader(vert_shader);
+	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
+
+	auto frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
+	GLExt::glShaderSource(frag_shader, 1, &psCode, &psCodeLen);
+	GLExt::glCompileShader(frag_shader);
+	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
+
+	// create shader program
+	auto program = GLExt::glCreateProgram();
+	GLExt::glAttachShader(program, vert_shader);
+	GLExt::glAttachShader(program, frag_shader);
+
+	// link shaders
+	GLExt::glLinkProgram(program);
+	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
+
+#ifndef NDEBUG
+	if (res_link == GL_FALSE)
+	{
+		// output errors
+		char log[512];
+		int32_t log_size;
+		GLExt::glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
+		if (log_size > 0)
+		{
+			LOG(": Vertex Shader error.\n");
+			LOG(log);
+		}
+		GLExt::glGetShaderInfoLog(frag_shader, sizeof(log), &log_size, log);
+		if (log_size > 0)
+		{
+			LOG(": Fragment Shader error.\n");
+			LOG(log);
+		}
+		GLExt::glGetProgramInfoLog(program, sizeof(log), &log_size, log);
+		if (log_size > 0)
+		{
+			LOG(": Shader Link error.\n");
+			LOG(log);
+		}
+	}
+#endif
+	// dispose shader objects
+	GLExt::glDeleteShader(frag_shader);
+	GLExt::glDeleteShader(vert_shader);
+
+	if (res_link == GL_FALSE)
+	{
+		GLExt::glDeleteProgram(program);
+		return false;
+	}
+
+	program_ = program;
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glGenVertexArrays(1, &vao_);
+	}
+
+	layout_ = Effekseer::CreateReference(layout, true);
+
+	return true;
+}
+
+bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
+{
+	param_ = param;
+	shader_ = Effekseer::CreateReference(static_cast<Shader*>(param.ShaderPtr), true);
+	vertexLayout_ = Effekseer::CreateReference(static_cast<VertexLayout*>(param.VertexLayoutPtr), true);
 	return true;
 }
 
@@ -451,10 +582,19 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType)
 	: deviceType_(deviceType)
 {
 	GLExt::Initialize(deviceType);
+
+	if (deviceType == OpenGLDeviceType::OpenGL3 || deviceType == OpenGLDeviceType::OpenGLES3)
+	{
+		GLExt::glGenSamplers(Effekseer::TextureSlotMax, samplers_.data());
+	}
 }
 
 GraphicsDevice::~GraphicsDevice()
 {
+	if (deviceType_ == OpenGLDeviceType::OpenGL3 || deviceType_ == OpenGLDeviceType::OpenGLES3)
+	{
+		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, samplers_.data());
+	}
 }
 
 void GraphicsDevice::LostDevice()
@@ -594,6 +734,430 @@ RenderPass* GraphicsDevice::CreateRenderPass(Effekseer::Backend::Texture** textu
 	}
 
 	return ret;
+}
+
+PipelineState* GraphicsDevice::CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
+{
+	auto ret = new PipelineState();
+
+	if (!ret->Init(param))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Shader* GraphicsDevice::CreateShaderFromKey(const char* key)
+{
+	auto it = shaders_.find(key);
+	if (it != shaders_.end())
+	{
+		auto shader = it->second.get();
+		ES_SAFE_ADDREF(shader);
+		return static_cast<Shader*>(shader);
+	}
+	return nullptr;
+}
+
+bool GraphicsDevice::RegisterShaderWithCodes(const char* key, const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
+{
+	auto ret = new Shader(this);
+
+	if (!ret->Init(vsCode, psCode, layout))
+	{
+		ES_SAFE_RELEASE(ret);
+		return false;
+	}
+
+	shaders_[key] = Effekseer::CreateReference(ret);
+
+	return true;
+}
+
+void GraphicsDevice::UnregisterShader(const char* key)
+{
+	shaders_.erase(key);
+}
+
+void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
+{
+	if (drawParam.VertexBufferPtr == nullptr ||
+		drawParam.IndexBufferPtr == nullptr ||
+		drawParam.PipelineStatePtr == nullptr)
+	{
+		return;
+	}
+
+	auto pip = static_cast<PipelineState*>(drawParam.PipelineStatePtr);
+	auto& shader = pip->GetShader();
+
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr)->GetBuffer());
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(drawParam.IndexBufferPtr)->GetBuffer());
+	GLExt::glUseProgram(pip->GetShader()->GetProgram());
+
+	GLint currentVAO = 0;
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+		GLExt::glBindVertexArray(shader->GetVAO());
+	}
+
+	// textures
+	auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
+
+	for (int32_t i = 0; i < textureCount; i++)
+	{
+		auto textureSlot = GLExt::glGetUniformLocation(shader->GetProgram(), shader->GetLayout()->GetTextures()[i].c_str());
+		GLExt::glUniform1i(textureSlot, i);
+
+		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i]);
+		if (texture != nullptr)
+		{
+			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, texture->GetBuffer());
+
+			static const GLint glfilterMin[] = {GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
+			static const GLint glfilterMin_NoneMipmap[] = {GL_NEAREST, GL_LINEAR};
+			static const GLint glfilterMag[] = {GL_NEAREST, GL_LINEAR};
+			static const GLint glwrap[] = {GL_REPEAT, GL_CLAMP_TO_EDGE};
+
+			GLint filterMin = 0;
+			GLint filterMag = 0;
+			GLint wrap = 0;
+
+			if (drawParam.TextureSamplingTypes[i] == Effekseer::Backend::TextureSamplingType::Linear)
+			{
+				if (texture->GetHasMipmap())
+				{
+					filterMin = glfilterMin[1];
+				}
+				else
+				{
+					filterMin = glfilterMin_NoneMipmap[1];
+				}
+				filterMag = glfilterMag[1];
+			}
+			else
+			{
+				if (texture->GetHasMipmap())
+				{
+					filterMin = glfilterMin[0];
+				}
+				else
+				{
+					filterMin = glfilterMin_NoneMipmap[0];
+				}
+				filterMag = glfilterMag[0];
+			}
+
+			if (drawParam.TextureWrapTypes[i] == Effekseer::Backend::TextureWrapType::Clamp)
+			{
+				wrap = glwrap[1];
+			}
+			else
+			{
+				wrap = glwrap[0];
+			}
+
+			if (deviceType_ == OpenGLDeviceType::OpenGL3 || deviceType_ == OpenGLDeviceType::OpenGLES3)
+			{
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_MAG_FILTER, filterMag);
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_MIN_FILTER, filterMin);
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_WRAP_S, wrap);
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_WRAP_T, wrap);
+				GLExt::glBindSampler(i, samplers_[i]);
+			}
+			else
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+			}
+		}
+	}
+
+	// uniformss
+	for (size_t i = 0; i < shader->GetLayout()->GetElements().size(); i++)
+	{
+		const auto& element = shader->GetLayout()->GetElements()[i];
+		auto loc = GLExt::glGetUniformLocation(shader->GetProgram(), element.Name.c_str());
+
+		UniformBuffer* uniformBuffer = nullptr;
+
+		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
+		{
+			uniformBuffer = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr);
+		}
+		else if (element.Stage == Effekseer::Backend::ShaderStageType::Pixel)
+		{
+			uniformBuffer = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr);
+		}
+
+		if (uniformBuffer != nullptr)
+		{
+			if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
+			{
+				const auto& buffer = uniformBuffer->GetBuffer();
+				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
+				GLExt::glUniform4fv(loc, 1, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+			}
+			else
+			{
+				// Unimplemented
+				assert(0);
+			}
+		}
+		else
+		{
+			// Invalid
+			assert(0);
+		}
+	}
+
+	// layouts
+	{
+		int32_t vertexSize = 0;
+		for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+		{
+			const auto& element = pip->GetVertexLayout()->GetElements()[i];
+			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
+		}
+
+		int32_t offset = 0;
+		for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+		{
+			const auto& element = pip->GetVertexLayout()->GetElements()[i];
+			auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
+
+			GLenum type = {};
+			int32_t count = {};
+			GLboolean isNormalized = false;
+			const void* vertices = nullptr;
+
+			if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)
+			{
+				count = 4;
+				type = GL_UNSIGNED_BYTE;
+			}
+			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)
+			{
+				count = 4;
+				type = GL_UNSIGNED_BYTE;
+				isNormalized = GL_TRUE;
+			}
+			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)
+			{
+				count = 1;
+				type = GL_FLOAT;
+			}
+			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)
+			{
+				count = 2;
+				type = GL_FLOAT;
+			}
+			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)
+			{
+				count = 3;
+				type = GL_FLOAT;
+			}
+			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
+			{
+				count = 4;
+				type = GL_FLOAT;
+			}
+			else
+			{
+				assert(0);
+			}
+
+			GLExt::glVertexAttribPointer(loc,
+										 count,
+										 type,
+										 isNormalized,
+										 vertexSize,
+										 (uint8_t*)vertices + offset);
+
+			offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
+		}
+	}
+
+	// States
+	GLint frontFace = 0;
+	glGetIntegerv(GL_FRONT_FACE, &frontFace);
+
+	if (GL_CW == frontFace)
+	{
+		if (pip->GetParam().Culling == Effekseer::Backend::CullingType::Clockwise)
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+		}
+		else if (pip->GetParam().Culling == Effekseer::Backend::CullingType::CounterClockwise)
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+		}
+		else if (pip->GetParam().Culling == Effekseer::Backend::CullingType::DoubleSide)
+		{
+			glDisable(GL_CULL_FACE);
+			glCullFace(GL_FRONT_AND_BACK);
+		}
+	}
+	else
+	{
+		if (pip->GetParam().Culling == Effekseer::Backend::CullingType::Clockwise)
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+		}
+		else if (pip->GetParam().Culling == Effekseer::Backend::CullingType::CounterClockwise)
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+		}
+		else if (pip->GetParam().Culling == Effekseer::Backend::CullingType::DoubleSide)
+		{
+			glDisable(GL_CULL_FACE);
+			glCullFace(GL_FRONT_AND_BACK);
+		}
+	}
+
+	{
+		if (pip->GetParam().IsDepthTestEnabled || pip->GetParam().IsDepthWriteEnabled)
+		{
+			glEnable(GL_DEPTH_TEST);
+		}
+		else
+		{
+			glDisable(GL_DEPTH_TEST);
+		}
+
+		if (pip->GetParam().IsDepthTestEnabled)
+		{
+			std::array<GLenum, 8> depthFuncs;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::Less)] = GL_LESS;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::LessEqual)] = GL_LEQUAL;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::NotEqual)] = GL_NOTEQUAL;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::Equal)] = GL_EQUAL;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::Greater)] = GL_GREATER;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::GreaterEqual)] = GL_GEQUAL;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::Never)] = GL_NEVER;
+			depthFuncs[static_cast<int>(::Effekseer::Backend::DepthFuncType::Always)] = GL_ALWAYS;
+
+			glDepthFunc(depthFuncs[static_cast<int>(pip->GetParam().DepthFunc)]);
+		}
+		else
+		{
+			glDepthFunc(GL_ALWAYS);
+		}
+
+		glDepthMask(pip->GetParam().IsDepthWriteEnabled);
+	}
+
+	{
+		if (pip->GetParam().IsBlendEnabled)
+		{
+			glEnable(GL_BLEND);
+
+			std::array<GLenum, 5> blendEq;
+
+			blendEq[static_cast<int>(::Effekseer::Backend::BlendEquationType::Add)] = GL_FUNC_ADD;
+			blendEq[static_cast<int>(::Effekseer::Backend::BlendEquationType::Sub)] = GL_FUNC_SUBTRACT;
+			blendEq[static_cast<int>(::Effekseer::Backend::BlendEquationType::ReverseSub)] = GL_FUNC_REVERSE_SUBTRACT;
+			blendEq[static_cast<int>(::Effekseer::Backend::BlendEquationType::Min)] = GL_MIN;
+			blendEq[static_cast<int>(::Effekseer::Backend::BlendEquationType::Max)] = GL_MAX;
+
+			std::array<GLenum, 10> blendFunc;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::Zero)] = GL_ZERO;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::One)] = GL_ONE;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::SrcColor)] = GL_SRC_COLOR;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::OneMinusSrcColor)] = GL_ONE_MINUS_SRC_COLOR;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::SrcAlpha)] = GL_SRC_ALPHA;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::OneMinusSrcAlpha)] = GL_ONE_MINUS_SRC_ALPHA;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::DstColor)] = GL_DST_COLOR;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::OneMinusDstColor)] = GL_ONE_MINUS_DST_COLOR;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::DstAlpha)] = GL_DST_ALPHA;
+			blendFunc[static_cast<int>(::Effekseer::Backend::BlendFuncType::OneMinusDstAlpha)] = GL_ONE_MINUS_DST_ALPHA;
+
+			GLExt::glBlendEquationSeparate(blendEq[static_cast<int>(pip->GetParam().BlendEquationRGB)], blendEq[static_cast<int>(pip->GetParam().BlendEquationAlpha)]);
+			GLExt::glBlendFuncSeparate(blendFunc[static_cast<int>(pip->GetParam().BlendSrcFunc)], blendFunc[static_cast<int>(pip->GetParam().BlendDstFunc)], blendFunc[static_cast<int>(pip->GetParam().BlendSrcFuncAlpha)], blendFunc[static_cast<int>(pip->GetParam().BlendDstFuncAlpha)]);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
+		}
+	}
+
+	GLenum primitiveMode = {};
+	GLenum indexStrideType = {};
+
+	if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Triangle)
+	{
+		primitiveMode = GL_TRIANGLES;
+	}
+	else if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Line)
+	{
+		primitiveMode = GL_LINES;
+	}
+	else if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Point)
+	{
+		primitiveMode = GL_POINTS;
+	}
+
+	if (drawParam.IndexBufferPtr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride4)
+	{
+		indexStrideType = GL_UNSIGNED_INT;
+	}
+	else if (drawParam.IndexBufferPtr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride2)
+	{
+		indexStrideType = GL_UNSIGNED_SHORT;
+	}
+
+	if (drawParam.InstanceCount > 1)
+	{
+		GLExt::glDrawElementsInstanced(primitiveMode, drawParam.IndexBufferPtr->GetElementCount(), indexStrideType, NULL, drawParam.PrimitiveCount);
+	}
+	else
+	{
+		glDrawElements(primitiveMode, drawParam.IndexBufferPtr->GetElementCount(), indexStrideType, NULL);
+	}
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glBindVertexArray(currentVAO);
+	}
+}
+
+void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
+{
+	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass)->GetBuffer());
+
+	GLbitfield flag = 0;
+
+	if (isColorCleared)
+	{
+		flag |= GL_COLOR_BUFFER_BIT;
+		glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f, clearColor.B / 255.0f, clearColor.A / 255.0f);
+	}
+
+	if (isDepthCleared)
+	{
+		flag |= GL_DEPTH_BUFFER_BIT;
+	}
+
+	if (flag != 0)
+	{
+		glClear(flag);
+	}
+}
+
+void GraphicsDevice::EndRenderPass()
+{
+	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 } // namespace Backend
