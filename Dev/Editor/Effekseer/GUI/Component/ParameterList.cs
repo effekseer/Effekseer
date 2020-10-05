@@ -126,16 +126,20 @@ namespace Effekseer.GUI.Component
 
 					if (controlRows.Internal[i].Children != null)
 					{
-						if (string.IsNullOrEmpty(controlRows.Internal[i].TreeNodeID))
+						var item = controlRows.Internal[i];
+
+						if (string.IsNullOrEmpty(item.TreeNodeID))
 						{
+							// Not tree view
 							indent.Indent = controlRows[i].SelectorIndent;
 							indent.IsSelecter = controlRows[i].IsSelector;
 
-							indent = controlRows.Internal[i].Children.Update(indent);
+							indent = item.Children.Update(indent);
 						}
 						else
 						{
-							var label = controlRows.Internal[i].Label.ToString() + "###" + controlRows.Internal[i].TreeNodeID;
+							// Tree view
+							var label = item.Label.ToString() + "###" + item.TreeNodeID;
 
 							var opened = Manager.NativeManager.TreeNode(label);
 
@@ -145,7 +149,7 @@ namespace Effekseer.GUI.Component
 
 							if (opened)
 							{
-								indent = controlRows.Internal[i].Children.Update(indent);
+								indent = item.Children.Update(indent);
 							}
 
 							if (opened)
@@ -293,6 +297,12 @@ namespace Effekseer.GUI.Component
 #endif
 
 							if (!row.IsShown()) continue;
+
+							if (row.Control == null)
+							{
+								// It is possible that children are changed even if a parent is not changed.
+								row.Children.RegisterValue(propValue, row.SelectorIndent);
+							}
 						}
 						else
 						{
@@ -306,11 +316,6 @@ namespace Effekseer.GUI.Component
 
 							if (row.Control == null)
 							{
-								if (prop.Value.GetType() == typeof(Data.NodeBase)) continue;
-								if (prop.Value.GetType() == typeof(Data.NodeBase.ChildrenCollection)) continue;
-								if (prop.Value.GetType() == typeof(Data.Value.FCurve<float>)) continue;
-								if (prop.Value.GetType() == typeof(Data.Value.FCurve<byte>)) continue;
-
 								row.Children = new TypeRowCollection();
 								row.Children.RegisterValue(propValue, row.SelectorIndent);
 							}
@@ -595,6 +600,12 @@ namespace Effekseer.GUI.Component
 				{
 					// already generated
 				}
+				else if (type == typeof(Data.NodeBase) || type == typeof(Data.NodeBase.ChildrenCollection))
+				{
+					// Ignore
+					gui = new Dummy();
+					return;
+				}
 				else if (type == typeof(Data.Value.String))
 				{
 					gui = new String();
@@ -653,7 +664,8 @@ namespace Effekseer.GUI.Component
 				}
 				else if (type == typeof(Data.Value.Path))
 				{
-					gui = null;
+					// Ignore
+					gui = new Dummy();
 					return;
 				}
 				else if (type == typeof(Data.Value.PathForModel))
@@ -696,19 +708,10 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new Dummy();
 				}
-				else if (type == typeof(Data.Value.FCurve<float>))
+				else if (type == typeof(Data.Value.FCurve<float>) || type == typeof(Data.Value.FCurve<byte>) || type == typeof(Data.Value.IFCurveKey))
 				{
-					gui = null;
-					return;
-				}
-				else if (type == typeof(Data.Value.FCurve<byte>))
-				{
-					gui = null;
-					return;
-				}
-				else if (type == typeof(Data.Value.IFCurveKey))
-				{
-					gui = null;
+					// Ignore
+					gui = new Dummy();
 					return;
 				}
 				else if (type.IsGenericType)
