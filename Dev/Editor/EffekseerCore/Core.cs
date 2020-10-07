@@ -1232,6 +1232,15 @@ namespace Effekseer
 			versionText = versionText.Replace("j", "");
 			versionText = versionText.Replace("k", "");
 			versionText = versionText.Replace("l", "");
+			versionText = versionText.Replace("m", "");
+			versionText = versionText.Replace("n", "");
+			versionText = versionText.Replace("o", "");
+			versionText = versionText.Replace("p", "");
+			versionText = versionText.Replace("q", "");
+			versionText = versionText.Replace("r", "");
+			versionText = versionText.Replace("s", "");
+			versionText = versionText.Replace("t", "");
+			versionText = versionText.Replace("u", "");
 
 			if (versionText.Length == 2) versionText += "000";
 			if (versionText.Length == 3) versionText += "00";
