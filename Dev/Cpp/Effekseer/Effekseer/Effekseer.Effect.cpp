@@ -1198,6 +1198,11 @@ const EFK_CHAR* EffectImplemented::GetWavePath(int n) const
 
 Model* EffectImplemented::GetModel(int n) const
 {
+	if (n < 0 || n >= GetModelCount())
+	{
+		return nullptr;
+	}
+
 	return models_[n];
 }
 

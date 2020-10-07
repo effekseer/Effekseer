@@ -618,6 +618,10 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new Int();
 				}
+				else if (type == typeof(Data.Value.Int2))
+				{
+					gui = new Int2();
+				}
 				else if (type == typeof(Data.Value.IntWithInifinite))
 				{
 					gui = new IntWithInifinite();

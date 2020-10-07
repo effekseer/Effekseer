@@ -1233,6 +1233,40 @@ struct Color
 		@brief	線形補間
 	*/
 	static Color Lerp(const Color in1, const Color in2, float t);
+
+	bool operator!=(const Color& o) const
+	{
+		if (R != o.R)
+			return true;
+
+		if (G != o.G)
+			return true;
+
+		if (B != o.B)
+			return true;
+
+		if (A != o.A)
+			return true;
+
+		return false;
+	}
+
+	bool operator<(const Color& o) const
+	{
+		if (R != o.R)
+			return R < o.R;
+
+		if (G != o.G)
+			return G < o.G;
+
+		if (B != o.B)
+			return B < o.B;
+
+		if (A != o.A)
+			return A < o.A;
+
+		return false;
+	}
 };
 #pragma pack(pop)
 //----------------------------------------------------------------------------------

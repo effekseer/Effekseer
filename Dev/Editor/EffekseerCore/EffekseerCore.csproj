@@ -152,6 +152,7 @@
     <Compile Include="Data\Value\FCurveVector3D.cs" />
     <Compile Include="Data\Value\Float.cs" />
     <Compile Include="Data\Value\FloatWithRandom.cs" />
+    <Compile Include="Data\Value\Int2.cs" />
     <Compile Include="Data\Value\PathForCurve.cs" />
     <Compile Include="Data\Value\PathForImage.cs" />
     <Compile Include="Data\Value\Int.cs" />

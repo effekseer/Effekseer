@@ -41,8 +41,8 @@ protected:
 
 	efkRibbonNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkRibbonInstanceParam> instances;
-	SplineGenerator spline_left;
-	SplineGenerator spline_right;
+	Effekseer::SplineGenerator spline_left;
+	Effekseer::SplineGenerator spline_right;
 
 	int32_t vertexCount_ = 0;
 	int32_t stride_ = 0;

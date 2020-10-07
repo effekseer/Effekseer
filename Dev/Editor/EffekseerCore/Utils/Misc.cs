@@ -10,6 +10,21 @@ namespace Effekseer.Utils
 {
 	public class Misc
 	{
+		/// <summary>
+		/// https://stackoverflow.com/questions/1646807/quick-and-simple-hash-code-combinations
+		/// </summary>
+		/// <param name="hashCodes"></param>
+		/// <returns></returns>
+		public static int CombineHashCodes(IEnumerable<int> hashCodes)
+		{
+			int hash = 5381;
+
+			foreach (var hashCode in hashCodes)
+				hash = ((hash << 5) + hash) ^ hashCode;
+
+			return hash;
+		}
+
 		public static string GetRelativePath(string basePath, string path)
 		{
 			Func<string, string> escape = (string s) =>

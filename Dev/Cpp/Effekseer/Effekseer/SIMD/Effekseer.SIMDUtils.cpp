@@ -32,4 +32,9 @@ Vec3f::Vec3f(const Vector3D& vec)
 {
 }
 
+Vec3f::Vec3f(const std::array<float, 3>& vec)
+	: s(vec[0], vec[1], vec[2], 0.0f)
+{
+}
+
 } // namespace Effekseer

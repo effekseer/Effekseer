@@ -1,9 +1,11 @@
 #include "ProcedualModelGenerator.h"
+#include "../Effekseer.Random.h"
 #include "../Model/Model.h"
 #include "../Noise/CurlNoise.h"
 #include "../Noise/PerlinNoise.h"
 #include "../SIMD/Effekseer.SIMDUtils.h"
 #include "ProcedualModelParameter.h"
+#include "SplineGenerator.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -12,23 +14,13 @@
 namespace Effekseer
 {
 
-/*
-	memo
-
-	// multi noise
-	// kubire
-	// cross section
-	// cross section size
-	// wire random
-
-*/
-
 struct ProcedualMeshVertex
 {
 	Vec3f Position;
 	Vec3f Normal;
 	Vec3f Tangent;
 	Vec2f UV;
+	Color VColor;
 };
 
 struct ProcedualMeshFace
@@ -60,6 +52,11 @@ struct ProcedualMesh
 		return std::move(mesh1);
 	}
 };
+
+static float CalcSineWave(float x, float frequency, float offset, float power)
+{
+	return sinf(x * frequency + offset) * power;
+}
 
 static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshVertex& v2, const ProcedualMeshVertex& v3, Vec3f& binormal, Vec3f& tangent)
 {
@@ -169,6 +166,89 @@ static void CalculateNormal(ProcedualMesh& mesh)
 	}
 }
 
+static void CalculateVertexColor(ProcedualMesh& mesh,
+								 const Color& ColorLeft,
+								 const Color& ColorCenter,
+								 const Color& ColorRight,
+								 const Color& ColorLeftMiddle,
+								 const Color& ColorCenterMiddle,
+								 const Color& ColorRightMiddle)
+{
+	auto calcColor = [&](float u, float v) -> Color {
+		::Effekseer::Color leftColor;
+		::Effekseer::Color centerColor;
+		::Effekseer::Color rightColor;
+
+		if (v < 0.5f)
+		{
+			float l = v;
+			l = l * 2.0f;
+
+			leftColor.R = (uint8_t)Effekseer::Clamp(ColorLeft.R + (ColorLeftMiddle.R - ColorLeft.R) * l, 255, 0);
+			leftColor.G = (uint8_t)Effekseer::Clamp(ColorLeft.G + (ColorLeftMiddle.G - ColorLeft.G) * l, 255, 0);
+			leftColor.B = (uint8_t)Effekseer::Clamp(ColorLeft.B + (ColorLeftMiddle.B - ColorLeft.B) * l, 255, 0);
+			leftColor.A = (uint8_t)Effekseer::Clamp(ColorLeft.A + (ColorLeftMiddle.A - ColorLeft.A) * l, 255, 0);
+
+			centerColor.R =
+				(uint8_t)Effekseer::Clamp(ColorCenter.R + (ColorCenterMiddle.R - ColorCenter.R) * l, 255, 0);
+			centerColor.G =
+				(uint8_t)Effekseer::Clamp(ColorCenter.G + (ColorCenterMiddle.G - ColorCenter.G) * l, 255, 0);
+			centerColor.B =
+				(uint8_t)Effekseer::Clamp(ColorCenter.B + (ColorCenterMiddle.B - ColorCenter.B) * l, 255, 0);
+			centerColor.A =
+				(uint8_t)Effekseer::Clamp(ColorCenter.A + (ColorCenterMiddle.A - ColorCenter.A) * l, 255, 0);
+
+			rightColor.R =
+				(uint8_t)Effekseer::Clamp(ColorRight.R + (ColorRightMiddle.R - ColorRight.R) * l, 255, 0);
+			rightColor.G =
+				(uint8_t)Effekseer::Clamp(ColorRight.G + (ColorRightMiddle.G - ColorRight.G) * l, 255, 0);
+			rightColor.B =
+				(uint8_t)Effekseer::Clamp(ColorRight.B + (ColorRightMiddle.B - ColorRight.B) * l, 255, 0);
+			rightColor.A =
+				(uint8_t)Effekseer::Clamp(ColorRight.A + (ColorRightMiddle.A - ColorRight.A) * l, 255, 0);
+		}
+		else
+		{
+			float l = v;
+			l = 1.0f - (l * 2.0f - 1.0f);
+
+			leftColor.R = (uint8_t)Effekseer::Clamp(ColorLeft.R + (ColorLeftMiddle.R - ColorLeft.R) * l, 255, 0);
+			leftColor.G = (uint8_t)Effekseer::Clamp(ColorLeft.G + (ColorLeftMiddle.G - ColorLeft.G) * l, 255, 0);
+			leftColor.B = (uint8_t)Effekseer::Clamp(ColorLeft.B + (ColorLeftMiddle.B - ColorLeft.B) * l, 255, 0);
+			leftColor.A = (uint8_t)Effekseer::Clamp(ColorLeft.A + (ColorLeftMiddle.A - ColorLeft.A) * l, 255, 0);
+
+			centerColor.R =
+				(uint8_t)Effekseer::Clamp(ColorCenter.R + (ColorCenterMiddle.R - ColorCenter.R) * l, 255, 0);
+			centerColor.G =
+				(uint8_t)Effekseer::Clamp(ColorCenter.G + (ColorCenterMiddle.G - ColorCenter.G) * l, 255, 0);
+			centerColor.B =
+				(uint8_t)Effekseer::Clamp(ColorCenter.B + (ColorCenterMiddle.B - ColorCenter.B) * l, 255, 0);
+			centerColor.A =
+				(uint8_t)Effekseer::Clamp(ColorCenter.A + (ColorCenterMiddle.A - ColorCenter.A) * l, 255, 0);
+
+			rightColor.R =
+				(uint8_t)Effekseer::Clamp(ColorRight.R + (ColorRightMiddle.R - ColorRight.R) * l, 255, 0);
+			rightColor.G =
+				(uint8_t)Effekseer::Clamp(ColorRight.G + (ColorRightMiddle.G - ColorRight.G) * l, 255, 0);
+			rightColor.B =
+				(uint8_t)Effekseer::Clamp(ColorRight.B + (ColorRightMiddle.B - ColorRight.B) * l, 255, 0);
+			rightColor.A =
+				(uint8_t)Effekseer::Clamp(ColorRight.A + (ColorRightMiddle.A - ColorRight.A) * l, 255, 0);
+		}
+
+		if (u < 0.5f)
+		{
+			return Color::Lerp(leftColor, centerColor, u * 2.0f);
+		}
+		return Color::Lerp(centerColor, rightColor, (u - 0.5f) * 2.0f);
+	};
+
+	for (auto& v : mesh.Vertexes)
+	{
+		v.VColor = calcColor(v.UV.GetX(), v.UV.GetY());
+	}
+}
+
 static Model* ConvertMeshToModel(const ProcedualMesh& mesh)
 {
 	CustomVector<Model::Vertex> vs;
@@ -185,7 +265,7 @@ static Model* ConvertMeshToModel(const ProcedualMesh& mesh)
 		vs[i].UV = ToStruct(mesh.Vertexes[i].UV);
 		Vector3D::Cross(vs[i].Binormal, vs[i].Normal, vs[i].Tangent);
 		Vector3D::Normal(vs[i].Binormal, vs[i].Binormal);
-		vs[i].VColor = Color(255, 255, 255, 255);
+		vs[i].VColor = mesh.Vertexes[i].VColor;
 	}
 
 	for (size_t i = 0; i < faces.size(); i++)
@@ -246,12 +326,66 @@ struct RotatorCylinder
 	}
 };
 
-static Vec3f WaveNoise(Vec3f v, std::array<float, 3> waveOffsets, std::array<float, 3> waveScales, std::array<float, 3> noiseScales)
+struct RotatorSpline3
 {
+	std::array<float, 2> Point1;
+	std::array<float, 2> Point2;
+	std::array<float, 2> Point3;
+	std::array<float, 2> Point4;
+
+	SplineGenerator generator;
+	std::vector<float> distances_;
+	float sumDistance_ = 0.0f;
+
+	void Calculate()
+	{
+		generator.AddVertex({Point1[0], Point1[1], 0.0f});
+		generator.AddVertex({Point2[0], Point2[1], 0.0f});
+		generator.AddVertex({Point3[0], Point3[1], 0.0f});
+		generator.AddVertex({Point4[0], Point4[1], 0.0f});
+		generator.Calculate();
+
+		distances_.emplace_back((Vec2f(Point2) - Vec2f(Point1)).Length());
+		distances_.emplace_back((Vec2f(Point3) - Vec2f(Point2)).Length());
+		distances_.emplace_back((Vec2f(Point4) - Vec2f(Point3)).Length());
+
+		sumDistance_ = 0.0f;
+		for (auto d : distances_)
+		{
+			sumDistance_ += d;
+		}
+	}
+
+	Vec2f GetPosition(float value) const
+	{
+		value = Clamp(value, 1.0f, 0.0f);
+
+		auto distance = sumDistance_ * value;
+
+		for (size_t i = 0; i < distances_.size(); i++)
+		{
+			if (distance <= distances_[i])
+			{
+				value = i + distance / distances_[i];
+				return Vec2f(generator.GetValue(value).GetX(), generator.GetValue(value).GetY());
+			}
+
+			distance -= distances_[i];
+		}
+
+		value = static_cast<float>(distances_.size());
+
+		return Vec2f(generator.GetValue(value).GetX(), generator.GetValue(value).GetY());
+	}
+};
+
+static Vec3f WaveNoise(Vec3f v, std::array<float, 3> waveOffsets, std::array<float, 3> waveFrequency, std::array<float, 3> noiseScales)
+{
+
 	return v + Vec3f(
-				   sin(v.GetY() * waveScales[0] + waveOffsets[0]) * noiseScales[0],
-				   sin(v.GetY() * waveScales[1] + waveOffsets[1]) * noiseScales[1],
-				   sin(v.GetY() * waveScales[2] + waveOffsets[2]) * noiseScales[2]);
+				   CalcSineWave(v.GetY(), waveFrequency[0], waveOffsets[0], noiseScales[0]),
+				   CalcSineWave(v.GetY(), waveFrequency[1], waveOffsets[1], noiseScales[1]),
+				   CalcSineWave(v.GetY(), waveFrequency[2], waveOffsets[2], noiseScales[2]));
 }
 
 struct RotatorMeshGenerator
@@ -273,9 +407,10 @@ struct RotatorMeshGenerator
 		float s;
 		float c;
 		SinCos(angle, s, c);
-
-		auto rx = pos2d.GetX() * s;
-		auto rz = pos2d.GetX() * c;
+		auto x = pos2d.GetX();
+		//x += sin(depthValue) * 0.4f;
+		auto rx = x * s;
+		auto rz = x * c;
 		auto y = pos2d.GetY();
 
 		return Vec3f(rx, y, rz);
@@ -348,8 +483,14 @@ struct RotatedWireMeshGenerator
 	int Vertices;
 	int Count;
 
+	std::array<float, 2> RibbonNoises;
+	std::array<float, 2> RibbonAngles;
+	std::array<float, 2> RibbonSizes;
+
 	std::function<Vec2f(float)> Rotator;
 	std::function<Vec3f(Vec3f)> Noise;
+
+	ProcedualModelCrossSectionType CrossSectionType;
 
 	Vec3f GetPosition(float angleValue, float depthValue) const
 	{
@@ -362,15 +503,75 @@ struct RotatedWireMeshGenerator
 		float c;
 		SinCos(angle, s, c);
 
-		auto rx = pos2d.GetX() * s;
-		auto rz = pos2d.GetX() * c;
+		auto x = pos2d.GetX();
+		auto rx = x * s;
+		auto rz = x * c;
 		auto y = pos2d.GetY();
 
 		return Vec3f(rx, y, rz);
 	}
 
-	ProcedualMesh Generate() const
+	ProcedualMesh Generate(RandObject& randObj) const
 	{
+		std::vector<Vec3f> vertexPoses;
+		std::vector<int32_t> edgeIDs;
+		std::vector<float> edgeUVs;
+
+		if (CrossSectionType == ProcedualModelCrossSectionType::Cross)
+		{
+			vertexPoses = {
+				Vec3f(-0.5f, 0.0f, 0.0f),
+				Vec3f(+0.5f, 0.0f, 0.0f),
+				Vec3f(0.0f, 0.0f, -0.5f),
+				Vec3f(0.0f, 0.0f, +0.5f),
+			};
+
+			edgeIDs = {
+				0,
+				1,
+				2,
+				3,
+			};
+
+			edgeUVs = {
+				0.0f,
+				1.0f,
+				0.0f,
+				1.0f,
+			};
+		}
+		else if (CrossSectionType == ProcedualModelCrossSectionType::Plane)
+		{
+			vertexPoses = {
+				Vec3f(-0.5f, 0.0f, 0.0f),
+				Vec3f(+0.5f, 0.0f, 0.0f),
+			};
+
+			edgeIDs = {
+				0,
+				1,
+			};
+
+			edgeUVs = {
+				0.0f,
+				1.0f,
+			};
+		}
+		else if (CrossSectionType == ProcedualModelCrossSectionType::Point)
+		{
+			vertexPoses = {
+				Vec3f(0.0f, 0.0f, 0.0f),
+			};
+
+			edgeIDs = {
+				0,
+			};
+
+			edgeUVs = {
+				0.0f,
+			};
+		}
+
 		float depthSpeed = 1.0f / static_cast<float>(Vertices);
 		float rotateSpeed = Rotate * EFK_PI * 2.0f / static_cast<float>(Vertices);
 
@@ -378,14 +579,14 @@ struct RotatedWireMeshGenerator
 
 		for (int32_t l = 0; l < Count; l++)
 		{
-			float currentAngle = static_cast<float>(l) / static_cast<float>(Count) * EFK_PI * 2.0f;
-			float currentDepth = 0.0f;
+			float currentAngle = (static_cast<float>(l) / static_cast<float>(Count) + RibbonNoises[0] * (randObj.GetRand() - 0.5f)) * EFK_PI * 2.0f;
+			float currentDepth = RibbonNoises[1] * randObj.GetRand();
 
 			CustomAlignedVector<Vec3f> vs;
 			CustomAlignedVector<Vec3f> binormals;
 			CustomAlignedVector<Vec3f> normals;
 
-			while (currentDepth < 1.0f)
+			while (currentDepth < 1.0f - RibbonNoises[1] * randObj.GetRand())
 			{
 				auto pos = GetPosition(currentAngle, currentDepth);
 
@@ -404,38 +605,56 @@ struct RotatedWireMeshGenerator
 
 			ProcedualMesh ribbon;
 
-			ribbon.Vertexes.resize(vs.size() * 2);
+			ribbon.Vertexes.resize(vs.size() * vertexPoses.size());
 
 			for (int32_t v = 0; v < vs.size(); v++)
 			{
-				ribbon.Vertexes[v * 2 + 0].Position = vs[v] - Vec3f::Cross(normals[v], binormals[v]).Normalize() * 0.1f;
-				ribbon.Vertexes[v * 2 + 1].Position = vs[v] + Vec3f::Cross(normals[v], binormals[v]).Normalize() * 0.1f;
-				ribbon.Vertexes[v * 2 + 0].UV = Vec2f(0.0f, v / static_cast<float>(vs.size() - 1));
-				ribbon.Vertexes[v * 2 + 1].UV = Vec2f(1.0f, v / static_cast<float>(vs.size() - 1));
+				const auto tangent = Vec3f::Cross(normals[v], binormals[v]).Normalize();
+				const auto normal = normals[v];
+
+				const auto percent = v / static_cast<float>(vs.size() - 1);
+
+				const auto scale = (RibbonSizes[1] - RibbonSizes[0]) * percent + RibbonSizes[0];
+				const auto angle = ((RibbonAngles[1] - RibbonAngles[0]) * percent + RibbonAngles[0]) / 180.0f * EFK_PI;
+
+				const auto c = cosf(angle);
+				const auto s = sinf(angle);
+
+				const auto rtangent = tangent * c + normal * s;
+				const auto rnormal = -tangent * s + normal * c;
+
+				for (size_t i = 0; i < vertexPoses.size(); i++)
+				{
+					ribbon.Vertexes[v * vertexPoses.size() + i].Position = vs[v] + (rtangent * vertexPoses[i].GetX() + binormals[v] * vertexPoses[i].GetY() + rnormal * vertexPoses[i].GetZ()) * scale;
+					ribbon.Vertexes[v * vertexPoses.size() + i].UV = Vec2f(edgeUVs[i], v / static_cast<float>(vs.size() - 1));
+				}
 			}
 
-			ribbon.Faces.resize((vs.size() - 1) * 2);
+			ribbon.Faces.resize((vs.size() - 1) * edgeIDs.size());
 
 			for (int32_t v = 0; v < vs.size() - 1; v++)
 			{
-				ProcedualMeshFace face0;
-				ProcedualMeshFace face1;
+				for (size_t i = 0; i < edgeIDs.size() / 2; i++)
+				{
+					ProcedualMeshFace face0;
+					ProcedualMeshFace face1;
 
-				int32_t v00 = (0) + (v + 0) * (2);
-				int32_t v10 = (1) + (v + 0) * (2);
-				int32_t v01 = (0) + (v + 1) * (2);
-				int32_t v11 = (1) + (v + 1) * (2);
+					int32_t v00 = (edgeIDs[i * 2 + 0]) + (v + 0) * static_cast<int32_t>(edgeIDs.size());
+					int32_t v10 = (edgeIDs[i * 2 + 1]) + (v + 0) * static_cast<int32_t>(edgeIDs.size());
+					int32_t v01 = (edgeIDs[i * 2 + 0]) + (v + 1) * static_cast<int32_t>(edgeIDs.size());
+					int32_t v11 = (edgeIDs[i * 2 + 1]) + (v + 1) * static_cast<int32_t>(edgeIDs.size());
 
-				face0.Indexes[0] = v00;
-				face0.Indexes[1] = v11;
-				face0.Indexes[2] = v10;
+					face0.Indexes[0] = v00;
+					face0.Indexes[1] = v11;
+					face0.Indexes[2] = v10;
 
-				face1.Indexes[0] = v00;
-				face1.Indexes[1] = v01;
-				face1.Indexes[2] = v11;
+					face1.Indexes[0] = v00;
+					face1.Indexes[1] = v01;
+					face1.Indexes[2] = v11;
 
-				ribbon.Faces[v * 2 + 0] = face0;
-				ribbon.Faces[v * 2 + 1] = face1;
+					ribbon.Faces[v * edgeIDs.size() + i * 2 + 0] = face0;
+					ribbon.Faces[v * edgeIDs.size() + i * 2 + 1] = face1;
+				}
 			}
 
 			for (size_t i = 0; i < ribbon.Vertexes.size(); i++)
@@ -458,6 +677,9 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 	{
 		return nullptr;
 	}
+
+	RandObject randObj;
+	CurlNoise curlNoise(0);
 
 	std::function<Vec2f(float)> primitiveGenerator;
 
@@ -493,32 +715,44 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 			return rotator.GetPosition(value);
 		};
 	}
+	else if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Spline4)
+	{
+		RotatorSpline3 rotator;
+		rotator.Point1 = parameter->Spline4.Point1;
+		rotator.Point2 = parameter->Spline4.Point2;
+		rotator.Point3 = parameter->Spline4.Point3;
+		rotator.Point4 = parameter->Spline4.Point4;
+		rotator.Calculate();
+
+		primitiveGenerator = [rotator](float value) -> Vec2f {
+			return rotator.GetPosition(value);
+		};
+	}
 	else
 	{
 		assert(0);
 	}
 
-	CurlNoise noise(0);
-	std::function<Vec3f(Vec3f)> noiseFunc = [noise](Vec3f v) -> Vec3f {
-		return v;
-		return WaveNoise(v,
-						 {
-							 0.5f,
-							 0.0f,
-							 1.0f,
-						 },
-						 {
-							 2.0f,
-							 2.0f,
-							 2.0f,
-						 },
-						 {
-							 0.4f,
-							 0.1f,
-							 0.4f,
-						 });
+	std::function<Vec3f(Vec3f)> noiseFunc = [parameter, &curlNoise](Vec3f v) -> Vec3f {
+		// tilt noise
+		{
+			float angleX = CalcSineWave(v.GetY(), parameter->TiltNoiseFrequency[0], parameter->TiltNoiseOffset[0], parameter->TiltNoisePower[0]);
+			float angleY = CalcSineWave(v.GetY(), parameter->TiltNoiseFrequency[1], parameter->TiltNoiseOffset[1], parameter->TiltNoisePower[1]);
 
-		return v + noise.Get(v) * 0.1f;
+			Vec3f dirX(cos(angleX), sin(angleX), 0.0f);
+			Vec3f dirZ(0.0f, sin(angleY), cos(angleY));
+			Vec3f dirY = Vec3f::Cross(dirZ, dirX).Normalize();
+			dirZ = Vec3f::Cross(dirX, dirY).Normalize();
+
+			v = Vec3f(0.0f, v.GetY(), 0.0f) + dirX * v.GetX() + dirZ * v.GetZ();
+		}
+
+		v = WaveNoise(v,
+					  parameter->WaveNoiseOffset,
+					  parameter->WaveNoiseFrequency,
+					  parameter->WaveNoisePower);
+
+		return v + curlNoise.Get(v * parameter->CurlNoiseFrequency + parameter->CurlNoiseOffset) * parameter->CurlNoisePower;
 	};
 
 	if (parameter->Type == ProcedualModelType::Mesh)
@@ -534,8 +768,9 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		generator.AngleMin = AngleBegin;
 		generator.AngleMax = AngleEnd;
 		generator.IsConnected = isConnected;
-		auto generated = generator.Generate(parameter->Mesh.AngleDivision, parameter->Mesh.DepthDivision);
+		auto generated = generator.Generate(parameter->Mesh.Divisions[0], parameter->Mesh.Divisions[1]);
 		CalculateNormal(generated);
+		CalculateVertexColor(generated, parameter->ColorLeft, parameter->ColorCenter, parameter->ColorRight, parameter->ColorLeftMiddle, parameter->ColorCenterMiddle, parameter->ColorRightMiddle);
 		return ConvertMeshToModel(generated);
 	}
 	else if (parameter->Type == ProcedualModelType::Ribbon)
@@ -543,13 +778,18 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		auto generator = RotatedWireMeshGenerator();
 		generator.Rotator = primitiveGenerator;
 		generator.Noise = noiseFunc;
+		generator.CrossSectionType = parameter->Ribbon.CrossSection;
 		generator.Vertices = parameter->Ribbon.Vertices;
 		generator.Rotate = parameter->Ribbon.Rotate;
 		generator.Count = parameter->Ribbon.Count;
+		generator.RibbonSizes = parameter->Ribbon.RibbonSizes;
+		generator.RibbonAngles = parameter->Ribbon.RibbonAngles;
+		generator.RibbonNoises = parameter->Ribbon.RibbonNoises;
 
-		auto generated = generator.Generate();
+		auto generated = generator.Generate(randObj);
 
 		CalculateNormal(generated);
+		CalculateVertexColor(generated, parameter->ColorLeft, parameter->ColorCenter, parameter->ColorRight, parameter->ColorLeftMiddle, parameter->ColorCenterMiddle, parameter->ColorRightMiddle);
 		return ConvertMeshToModel(generated);
 	}
 

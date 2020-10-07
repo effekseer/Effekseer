@@ -30,6 +30,7 @@ struct Vec3f
 	}
 	Vec3f(const Vector3D& vec);
 	Vec3f(const vector3d& vec);
+	Vec3f(const std::array<float, 3>& vec);
 
 	float GetX() const
 	{

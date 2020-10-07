@@ -755,47 +755,58 @@ void Instance::FirstUpdate()
 		float r = m_pEffectNode->GenerationLocation.sphere.radius.getValue(rand);
 		m_GenerationLocation = Mat43f::Translation(0, r, 0) * mat_x * mat_y;
 	}
-	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL)
+	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL ||
+			 m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_PROCEDUAL_MODEL)
 	{
 		m_GenerationLocation = Mat43f::Identity;
+		Model* model = nullptr;
+		ParameterGenerationLocation::eModelType type;
 
-		int32_t modelIndex = m_pEffectNode->GenerationLocation.model.index;
-		if (modelIndex >= 0)
+		if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL)
 		{
-			Model* model = (Model*)m_pEffectNode->GetEffect()->GetModel(modelIndex);
+			type = m_pEffectNode->GenerationLocation.model.type;
+			model = m_pEffectNode->GetEffect()->GetModel(m_pEffectNode->GenerationLocation.model.index);
+		}
+		else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_PROCEDUAL_MODEL)
+		{
+			type = m_pEffectNode->GenerationLocation.procedualModel.type;
+			model = m_pEffectNode->GetEffect()->GetProcedualModel(m_pEffectNode->GenerationLocation.procedualModel.index);
+		}
+
+		{
 			if (model != NULL)
 			{
 				Model::Emitter emitter;
 
-				if (m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_RANDOM)
+				if (type == ParameterGenerationLocation::MODELTYPE_RANDOM)
 				{
 					emitter = model->GetEmitter(&rand,
 												parentTime,
 												m_pManager->GetCoordinateSystem(),
 												((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
 				}
-				else if (m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_VERTEX)
+				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX)
 				{
 					emitter = model->GetEmitterFromVertex(m_InstanceNumber,
 														  parentTime,
 														  m_pManager->GetCoordinateSystem(),
 														  ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
 				}
-				else if (m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM)
+				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM)
 				{
 					emitter = model->GetEmitterFromVertex(&rand,
 														  parentTime,
 														  m_pManager->GetCoordinateSystem(),
 														  ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
 				}
-				else if (m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_FACE)
+				else if (type == ParameterGenerationLocation::MODELTYPE_FACE)
 				{
 					emitter = model->GetEmitterFromFace(m_InstanceNumber,
 														parentTime,
 														m_pManager->GetCoordinateSystem(),
 														((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
 				}
-				else if (m_pEffectNode->GenerationLocation.model.type == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM)
+				else if (type == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM)
 				{
 					emitter = model->GetEmitterFromFace(&rand,
 														parentTime,

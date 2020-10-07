@@ -69,5 +69,26 @@ namespace Effekseer.Data.Value
 			BitConverter.GetBytes(Y * mul).CopyTo(values, sizeof(float) * 1);
 			return values;
 		}
+
+
+		public bool ValueEquals(object obj)
+		{
+			var o = obj as Vector2D;
+			if (o == null)
+				return false;
+		
+			if (X.Value != o.X.Value)
+				return false;
+		
+			if (Y.Value != o.Y.Value)
+				return false;
+		
+			return true;
+		}
+
+		public int GetValueHashCode()
+		{
+			return Utils.Misc.CombineHashCodes(new[] { X.Value.GetHashCode(), Y.Value.GetHashCode() });
+		}
 	}
 }
