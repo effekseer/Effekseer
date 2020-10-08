@@ -50,33 +50,33 @@
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-    auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
     return EffekseerRendererLLGI::CreateTextureLoader(gd, fileInterface);
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(::EffekseerRenderer::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-    auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
     return EffekseerRendererLLGI::CreateModelLoader(gd, fileInterface);
 }
 
-::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-    auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
     auto compiler = new ::Effekseer::MaterialCompilerMetal();
     auto ret = new ::EffekseerRendererLLGI::MaterialLoader(gd, fileInterface, ::Effekseer::CompiledMaterialPlatformType::Metal, compiler);
     ES_SAFE_RELEASE(compiler);
     return ret;
 }
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice()
+::Effekseer::Backend::GraphicsDevice* CreateDevice()
 {
     auto graphics = new LLGI::GraphicsMetal();
     graphics->Initialize(nullptr);
 
-	auto ret = new EffekseerRendererLLGI::GraphicsDevice(graphics);
+	auto ret = new EffekseerRendererLLGI::Backend::GraphicsDevice(graphics);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }
@@ -118,7 +118,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 }
 
 ::EffekseerRenderer::Renderer* Create(
-                                      ::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+                                      ::Effekseer::Backend::GraphicsDevice* graphicsDevice,
                                       int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
@@ -129,7 +129,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 
     CreateFixedShaderForMetal(&renderer->fixedShader_);
 
-	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
     auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
     LLGI::RenderPassPipelineStateKey key;
     key.RenderTargetFormats.resize(1);
@@ -204,10 +204,10 @@ void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
 	g->WaitFinish();
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
 	auto commandList = g->CreateCommandList(mp->GetInternal());
@@ -223,9 +223,9 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDevice* graphicsDevice)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
 	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);

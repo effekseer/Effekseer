@@ -449,27 +449,27 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_vs(get_model_distortion_vs(renderer->GetDeviceType()));
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
-	shader_ad_lit = Shader::Create(renderer->GetGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true, false);
+	shader_ad_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true, false);
 	if (shader_ad_lit == NULL)
 		goto End;
 
-	shader_ad_unlit = Shader::Create(renderer->GetGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true, false);
+	shader_ad_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true, false);
 	if (shader_ad_unlit == NULL)
 		goto End;
 
-	shader_ad_distortion = Shader::Create(renderer->GetGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true, false);
+	shader_ad_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true, false);
 	if (shader_ad_distortion == NULL)
 		goto End;
 
-	shader_lit = Shader::Create(renderer->GetGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "ModelRenderer1", true, false);
+	shader_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "ModelRenderer1", true, false);
 	if (shader_lit == NULL)
 		goto End;
 
-	shader_unlit = Shader::Create(renderer->GetGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "ModelRenderer5", true, false);
+	shader_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "ModelRenderer5", true, false);
 	if (shader_unlit == NULL)
 		goto End;
 
-	shader_distortion = Shader::Create(renderer->GetGraphicsDevice(), &dist_vs, 1, &dist_ps, 1, "ModelRenderer7", true, false);
+	shader_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &dist_vs, 1, &dist_ps, 1, "ModelRenderer7", true, false);
 	if (shader_distortion == NULL)
 		goto End;
 

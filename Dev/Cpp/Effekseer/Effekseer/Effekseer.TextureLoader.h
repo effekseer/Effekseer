@@ -62,11 +62,14 @@ public:
 		@param	textureType
 		\~English	a kind of texture
 		\~Japanese	テクスチャの種類
+		@param	isMipMapEnabled
+		\~English	whether is a mipmap enabled
+		\~Japanese	MipMapが有効かどうか
 		@return
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたテクスチャのポインタ
 	*/
-	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType)
+	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType, bool isMipMapEnabled)
 	{
 		return nullptr;
 	}

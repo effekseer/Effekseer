@@ -36,11 +36,6 @@ public:
 	bool operator<(const PiplineStateKey& v) const;
 };
 
-/**
-	@brief	描画クラス
-	@note
-	ツール向けの描画機能。
-*/
 class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 {
 	friend class DeviceObject;
@@ -57,7 +52,7 @@ protected:
 		Shader
 	*/
 
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
@@ -118,7 +113,7 @@ public:
 	void OnResetDevice() override;
 	;
 
-	bool Initialize(GraphicsDevice* graphicsDevice, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
+	bool Initialize(Backend::GraphicsDevice* graphicsDevice, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
 	bool Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
@@ -134,7 +129,7 @@ public:
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
-	GraphicsDevice* GetGraphicsDevice() const
+	Backend::GraphicsDevice* GetGraphicsDevice() const
 	{
 		return graphicsDevice_;
 	}

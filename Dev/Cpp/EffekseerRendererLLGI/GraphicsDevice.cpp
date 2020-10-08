@@ -121,6 +121,7 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 }
 
 Texture::Texture(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
 {
 	ES_SAFE_ADDREF(graphicsDevice_);
 	graphicsDevice_->Register(this);

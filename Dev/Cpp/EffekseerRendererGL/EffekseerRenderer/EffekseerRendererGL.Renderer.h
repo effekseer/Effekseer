@@ -24,8 +24,14 @@ class GraphicsDevice;
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
+[[deprecated("please use CreateTextureLoader with GraphicsDevice")]]
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr,
 												::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+
+::Effekseer::TextureLoader* CreateTextureLoader(
+	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	::Effekseer::FileInterface* fileInterface = nullptr,
+	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
 ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 

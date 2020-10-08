@@ -11,12 +11,12 @@ namespace EffekseerRendererLLGI
 class ModelLoader : public ::Effekseer::ModelLoader
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface);
+	ModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface);
 	virtual ~ModelLoader();
 
 public:

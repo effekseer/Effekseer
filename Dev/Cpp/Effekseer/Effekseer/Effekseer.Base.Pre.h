@@ -94,6 +94,11 @@ struct ProcedualModelParameter;
 
 typedef int Handle;
 
+namespace Backend
+{
+class Texture;
+}
+
 /**
 	@brief	Memory Allocation function
 */
@@ -655,6 +660,9 @@ struct TextureData
 
 	//! for OpenGL, it is ignored in other apis
 	bool HasMipmap = true;
+
+	//! A backend which contains a native data
+	class Backend::Texture* TexturePtr = nullptr;
 };
 
 enum class ShadingModelType : int32_t

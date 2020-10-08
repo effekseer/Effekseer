@@ -22,7 +22,7 @@ namespace EffekseerRendererLLGI
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 	::Effekseer::FileInterface* fileInterface_ = nullptr;
 	::Effekseer::CompiledMaterialPlatformType platformType_;
 	::Effekseer::MaterialCompiler* materialCompiler_ = nullptr;
@@ -34,7 +34,7 @@ protected:
 	virtual void Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result);
 
 public:
-	MaterialLoader(GraphicsDevice* graphicsDevice,
+	MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
 				   ::Effekseer::FileInterface* fileInterface,
 				   ::Effekseer::CompiledMaterialPlatformType platformType,
 				   ::Effekseer::MaterialCompiler* materialCompiler);

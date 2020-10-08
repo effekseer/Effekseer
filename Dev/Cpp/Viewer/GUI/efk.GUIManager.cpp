@@ -7,7 +7,10 @@
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#include <EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h>
 #endif
+
+#include <EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h>
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
@@ -546,9 +549,25 @@ static ImTextureID ToImTextureID(ImageResource* image)
 		Effekseer::TextureData* texture = image->GetTextureData();
 		if (texture != nullptr)
 		{
-			if (texture->UserPtr != nullptr)
+#ifdef _WIN32
+			if (image->GetDeviceType() == DeviceType::DirectX11)
 			{
-				return (ImTextureID)texture->UserPtr;
+				if (texture->TexturePtr != nullptr)
+				{
+					auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture->TexturePtr);
+					return reinterpret_cast<ImTextureID>(t->GetSRV());
+				}
+				else if (texture->UserPtr != nullptr)
+				{
+					return (ImTextureID)texture->UserPtr;
+				}
+			}
+#endif
+
+			if (texture->TexturePtr != nullptr)
+			{
+				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture->TexturePtr);
+				return reinterpret_cast<ImTextureID>(t->GetBuffer());
 			}
 			else
 			{
@@ -732,7 +751,7 @@ void GUIManager::InitializeGUI(Native* native)
 {
 	ImGui::CreateContext();
 	ImGui::GetCurrentContext()->PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
-	
+
 	ImGuiIO& io = ImGui::GetIO();
 
 	if (deviceType == DeviceType::OpenGL)

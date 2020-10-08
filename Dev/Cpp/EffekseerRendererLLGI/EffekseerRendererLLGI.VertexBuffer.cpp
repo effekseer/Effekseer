@@ -4,7 +4,7 @@
 namespace EffekseerRendererLLGI
 {
 
-VertexBuffer::VertexBuffer(GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount)
+VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount)
 	: DeviceObject(graphicsDevice, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
 	, m_vertexRingOffset(0)
@@ -26,7 +26,7 @@ VertexBuffer::~VertexBuffer()
 	ES_SAFE_DELETE(lockedResource_);
 }
 
-VertexBuffer* VertexBuffer::Create(GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
+VertexBuffer* VertexBuffer::Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
 {
 	auto vertexBuffer = graphicsDevice->GetGraphics()->CreateVertexBuffer(size);
 	if (vertexBuffer == nullptr)

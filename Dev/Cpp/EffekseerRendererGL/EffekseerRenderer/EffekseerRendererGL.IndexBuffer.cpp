@@ -14,7 +14,7 @@ namespace EffekseerRendererGL
 //
 //-----------------------------------------------------------------------------------
 IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
-	: DeviceObject(renderer, renderer->GetGraphicsDevice(), hasRefCount)
+	: DeviceObject(renderer, renderer->GetIntetnalGraphicsDevice(), hasRefCount)
 	, IndexBufferBase(maxCount, isDynamic)
 	, m_buffer(buffer)
 {

@@ -22,10 +22,11 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
-#include "EffekseerRendererDX9.TextureLoader.h"
+//#include "EffekseerRendererDX9.TextureLoader.h"
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/TextureLoader.h"
+//#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #endif
 
 //----------------------------------------------------------------------------------
@@ -112,7 +113,20 @@ static
 ::Effekseer::TextureLoader* CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(device, fileInterface);
+	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device));
+	return new EffekseerRenderer::TextureLoader(gd.get(), fileInterface);
+#else
+	return NULL;
+#endif
+}
+
+::Effekseer::TextureLoader* CreateTextureLoader(
+	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	::Effekseer::FileInterface* fileInterface,
+	::Effekseer::ColorSpaceType colorSpaceType)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface);
 #else
 	return NULL;
 #endif
@@ -770,7 +784,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(this, fileInterface);
+	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
 	return NULL;
 #endif
@@ -983,7 +997,15 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			}
 			else
 			{
-				GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, (IDirect3DTexture9*)textures[i]->UserPtr);
+				if (textures[i]->TexturePtr != nullptr)
+				{
+					auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr)->GetTexture();
+					GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, texture);
+				}
+				else
+				{
+					GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, (IDirect3DTexture9*)textures[i]->UserPtr);
+				}
 			}
 		}
 
@@ -993,7 +1015,15 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else
 		{
-			GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);
+			if (textures[i]->TexturePtr != nullptr)
+			{
+				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr)->GetTexture();
+				GetDevice()->SetTexture(i, texture);
+			}
+			else
+			{
+				GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);			
+			}
 		}
 	}
 }

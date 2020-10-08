@@ -21,7 +21,7 @@ static void PngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 }
 #endif
 
-bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
+bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 {
 #ifdef __EFFEKSEER_USE_LIBPNG__
 	textureWidth = 0;
@@ -240,14 +240,6 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 void PngTextureLoader::Unload()
 {
 	textureData.clear();
-}
-
-void PngTextureLoader::Initialize()
-{
-}
-
-void PngTextureLoader::Finalize()
-{
 }
 
 } // namespace EffekseerRenderer

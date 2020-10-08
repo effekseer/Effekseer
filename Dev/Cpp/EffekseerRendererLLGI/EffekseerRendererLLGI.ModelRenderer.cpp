@@ -193,7 +193,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	model->StoreBufferToGPU(graphicsDevice_->GetGraphicsDevice());
+	model->StoreBufferToGPU(graphicsDevice_);
 	if (!model->GetIsBufferStoredOnGPU())
 	{
 		return;

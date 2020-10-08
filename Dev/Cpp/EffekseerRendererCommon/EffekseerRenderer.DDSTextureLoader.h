@@ -10,31 +10,47 @@ namespace EffekseerRenderer
 {
 class DDSTextureLoader
 {
+public:
+	class Texture
+	{
+	public:
+		const int32_t Width;
+		const int32_t Height;
+		const ::Effekseer::CustomVector<uint8_t> Data;
+
+		Texture(int32_t width, int32_t height, ::Effekseer::CustomVector<uint8_t> data)
+			: Width(width)
+			, Height(height)
+			, Data(std::move(data))
+		{
+		}
+	};
+
 private:
-	std::vector<uint8_t> textureData;
+	::Effekseer::CustomVector<Texture> textures_;
+
 	int32_t textureWidth = 0;
 	int32_t textureHeight = 0;
 	Effekseer::TextureFormatType textureFormatType = Effekseer::TextureFormatType::ABGR8;
+	Effekseer::Backend::TextureFormatType backendTextureFormatType = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 
 public:
-	bool Load(void* data, int32_t size);
+	bool Load(const void* data, int32_t size);
 	void Unload();
 
-	std::vector<uint8_t>& GetData()
+	const ::Effekseer::CustomVector<Texture>& GetTextures() const
 	{
-		return textureData;
+		return textures_;
 	}
-	int32_t GetWidth()
-	{
-		return textureWidth;
-	}
-	int32_t GetHeight()
-	{
-		return textureHeight;
-	}
+
 	Effekseer::TextureFormatType GetTextureFormat()
 	{
 		return textureFormatType;
+	}
+
+	Effekseer::Backend::TextureFormatType GetBackendTextureFormat() const
+	{
+		return backendTextureFormatType;
 	}
 };
 } // namespace EffekseerRenderer

@@ -111,6 +111,11 @@ public:
 	~Texture() override;
 
 	bool Init(const Effekseer::Backend::TextureParameter& param);
+
+	std::shared_ptr<LLGI::Texture>& GetTexture()
+	{
+		return texture_;
+	}
 };
 
 /**

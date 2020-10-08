@@ -217,8 +217,8 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 {
 	if (graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGL2 || graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGLES2)
 	{
-		if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM ||
-			param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+		if ((param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM ||
+			 param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB))
 		{
 			// not supported
 			return false;

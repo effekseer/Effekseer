@@ -142,6 +142,11 @@ public:
 	bool Init(const Effekseer::Backend::TextureParameter& param);
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+
+	ID3D11ShaderResourceView* GetSRV() const
+	{
+		return srv_.get();
+	};
 };
 
 /**

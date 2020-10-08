@@ -162,7 +162,8 @@ void RenderState::Update(bool forced)
 		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			if (m_renderer->GetCurrentTextures()[i].UserID == 0)
+			const auto& texture = m_renderer->GetCurrentTextures()[i];
+			if (texture.UserID == 0 && texture.TexturePtr == nullptr)
 				continue;
 
 			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced || m_active.TextureIDs[i] != m_next.TextureIDs[i])
@@ -180,7 +181,7 @@ void RenderState::Update(bool forced)
 
 				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 
-				if (m_renderer->GetCurrentTextures()[i].HasMipmap)
+				if (texture.HasMipmap)
 				{
 					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
 				}
@@ -214,7 +215,7 @@ void RenderState::Update(bool forced)
 		{
 			// If a texture is not assigned, skip it.
 			const auto& texture = m_renderer->GetCurrentTextures()[i];
-			if (texture.UserID == 0)
+			if (texture.UserID == 0 && texture.TexturePtr == nullptr)
 				continue;
 
 			// always changes because a flag is assigned into a texture
@@ -235,7 +236,7 @@ void RenderState::Update(bool forced)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 				GLCheckError();
 
-				if (m_renderer->GetCurrentTextures()[i].HasMipmap)
+				if (texture.HasMipmap)
 				{
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
 				}

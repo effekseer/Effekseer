@@ -1,6 +1,24 @@
 ## 1.6
 
-### OpenGL
+### Broken changes
 
-Replace DeviceObjectCollection into GraphicsDevice
-Add CreateDevice
+#### Effekseer::Backend::GraphicsDevice
+
+EffekseerRenderer::GraphicsDevice and DeviceObjectCollection were abolished and replaced.
+
+We implemented Effekseer::Backend::GraphicsDevice, which contains platform devices.
+Some methods require an instance of GraphicsDevice.
+
+For example,
+
+CreateTextureLoader
+
+The instance are create with follow functions
+
+EffekseerRendererDX11::CreateGraphicsDevice
+EffekseerRendererGL::CreateGraphicsDevice
+etc...
+
+#### Effekseer::TextureLoader
+
+Added an argument about mipmap

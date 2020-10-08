@@ -15,54 +15,32 @@
 //#include "EffekseerRendererLLGI.TrackRenderer.h"
 #include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelLoader.h"
-#include "EffekseerRendererLLGI.TextureLoader.h"
+//#include "EffekseerRendererLLGI.TextureLoader.h"
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+#include "../EffekseerRendererCommon/TextureLoader.h"
+#endif
+
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoader* CreateTextureLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(graphicsDevice, fileInterface);
+	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface);
 #else
 	return NULL;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoader* CreateModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 	return new ModelLoader(graphicsDevice, fileInterface);
-}
-
-void GraphicsDevice::Register(DeviceObject* device)
-{
-	deviceObjects_.insert(device);
-}
-
-void GraphicsDevice::Unregister(DeviceObject* device)
-{
-	deviceObjects_.erase(device);
-}
-
-void GraphicsDevice::OnLostDevice()
-{
-	for (auto& device : deviceObjects_)
-	{
-		device->OnLostDevice();
-	}
-}
-
-void GraphicsDevice::OnResetDevice()
-{
-	for (auto& device : deviceObjects_)
-	{
-		device->OnResetDevice();
-	}
 }
 
 bool PiplineStateKey::operator<(const PiplineStateKey& v) const
@@ -308,7 +286,7 @@ void RendererImplemented::OnResetDevice()
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
 {
 
-	auto gd = new GraphicsDevice(graphics);
+	auto gd = new Backend::GraphicsDevice(graphics);
 
 	auto ret = Initialize(gd, renderPassPipelineState, isReversedDepth);
 
@@ -317,7 +295,7 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 	return ret;
 }
 
-bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
+bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 									 LLGI::RenderPassPipelineState* renderPassPipelineState,
 									 bool isReversedDepth)
 {
@@ -631,7 +609,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(graphicsDevice_, fileInterface);
+	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
 	return NULL;
 #endif
@@ -910,11 +888,23 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else
 		{
-			auto t = (LLGI::Texture*)(textures[i]->UserPtr);
-			GetCurrentCommandList()->SetTexture(
-				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
-			GetCurrentCommandList()->SetTexture(
-				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
+			if (textures[i]->TexturePtr != nullptr)
+			{
+				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr);
+				auto t = texture->GetTexture().get();
+				GetCurrentCommandList()->SetTexture(
+					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
+				GetCurrentCommandList()->SetTexture(
+					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
+			}
+			else
+			{
+				auto t = (LLGI::Texture*)(textures[i]->UserPtr);
+				GetCurrentCommandList()->SetTexture(
+					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
+				GetCurrentCommandList()->SetTexture(
+					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);	
+			}
 		}
 	}
 }

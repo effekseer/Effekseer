@@ -5,7 +5,7 @@
 namespace EffekseerRendererLLGI
 {
 
-Shader::Shader(GraphicsDevice* graphicsDevice,
+Shader::Shader(Backend::GraphicsDevice* graphicsDevice,
 			   LLGI::Shader* vertexShader,
 			   LLGI::Shader* pixelShader,
 			   const std::vector<VertexLayout>& layouts,
@@ -27,7 +27,7 @@ Shader::~Shader()
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
 
-Shader* Shader::Create(GraphicsDevice* graphicsDevice,
+Shader* Shader::Create(Backend::GraphicsDevice* graphicsDevice,
 					   LLGI::DataStructure* vertexData,
 					   int32_t vertexDataCount,
 					   LLGI::DataStructure* pixelData,

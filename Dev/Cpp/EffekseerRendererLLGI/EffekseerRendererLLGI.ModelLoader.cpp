@@ -7,7 +7,7 @@
 namespace EffekseerRendererLLGI
 {
 
-ModelLoader::ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+ModelLoader::ModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 	: graphicsDevice_(graphicsDevice)
 	, m_fileInterface(fileInterface)
 {

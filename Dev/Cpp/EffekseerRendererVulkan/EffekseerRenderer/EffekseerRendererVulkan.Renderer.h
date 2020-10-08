@@ -24,11 +24,11 @@ struct RenderPassInformation
 	VkFormat DepthFormat = VK_FORMAT_UNDEFINED;
 };
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(
+::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(
 	VkPhysicalDevice physicalDevice, VkDevice device, VkQueue transfarQueue, VkCommandPool transfarCommandPool, int32_t swapBufferCount);
 
 ::EffekseerRenderer::Renderer*
-Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
+Create(::Effekseer::Backend::GraphicsDevice* graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
 
 /**
 @brief	Create an instance
@@ -47,25 +47,25 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, const VulkanImageInfo& info);
+Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDevice* graphicsDevice, const VulkanImageInfo& info);
 
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
-void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData);
+void DeleteTextureData(::Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData);
 
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
 
-void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
+void FlushAndWait(::Effekseer::Backend::GraphicsDevice* graphicsDevice);
 
 EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDevice* graphicsDevice);
 
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuffer nativeCommandList);
 

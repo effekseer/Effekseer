@@ -18,7 +18,7 @@ private:
 	int32_t textureHeight;
 
 public:
-	bool Load(void* data, int32_t size);
+	bool Load(const void* data, int32_t size);
 	void Unload();
 
 	void Initialize();

@@ -239,6 +239,7 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 }
 
 Texture::Texture(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
 {
 	ES_SAFE_ADDREF(graphicsDevice_);
 	graphicsDevice_->Register(this);
@@ -278,20 +279,20 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 	const int32_t blockSize = 4;
 	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
-		return (size + alignement - 1) / alignement;
+		return ((size + alignement - 1) / alignement) * alignement;
 	};
 
 	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
 	{
 		sizePerWidth = 4 * param.Size[0];
 		height = param.Size[1];
-		format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
 	{
 		sizePerWidth = 4 * param.Size[0];
 		height = param.Size[1];
-		format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
 	{
@@ -364,6 +365,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	D3D11_TEXTURE2D_DESC TexDesc{};
 	TexDesc.Width = param.Size[0];
 	TexDesc.Height = param.Size[1];
+	TexDesc.MipLevels = param.GenerateMipmap ? 0 : 1;
 	TexDesc.ArraySize = 1;
 	TexDesc.Format = format;
 	TexDesc.SampleDesc.Count = 1;
@@ -405,7 +407,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	desc.Format = TexDesc.Format;
 	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	desc.Texture2D.MostDetailedMip = 0;
-	desc.Texture2D.MipLevels = TexDesc.MipLevels;
+	desc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &desc, &srv);
 	if (FAILED(hr))
