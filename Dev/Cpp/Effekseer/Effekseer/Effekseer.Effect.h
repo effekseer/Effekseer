@@ -700,7 +700,7 @@ struct EffectBasicRenderParameter
 		float Pow = 1.0f;
 	} FalloffParam;
 
-	int32_t EmissiveScaling;
+	float EmissiveScaling;
 
 	struct
 	{

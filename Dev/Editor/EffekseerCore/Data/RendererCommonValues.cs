@@ -740,7 +740,7 @@ namespace Effekseer.Data
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
 		[Key(key = "BRS_EmissiveScaling")]
-		public Value.Int EmissiveScaling { get; private set; }
+		public Value.Float EmissiveScaling { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
@@ -912,7 +912,7 @@ namespace Effekseer.Data
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter(this);
 
-			EmissiveScaling = new Value.Int(1, int.MaxValue, 1);
+			EmissiveScaling = new Value.Float(1.0f, float.MaxValue, 0.0f);
 
 			ColorTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);

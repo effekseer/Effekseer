@@ -789,7 +789,7 @@ struct NodeRendererBasicParameter
 	int32_t FlipbookDivideX = 1;
 	int32_t FlipbookDivideY = 1;
 
-	int32_t EmissiveScaling = 1;
+	float EmissiveScaling = 1.0f;
 
 	float EdgeThreshold = 0.0f;
 	uint8_t EdgeColor[4] = {0};

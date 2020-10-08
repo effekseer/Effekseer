@@ -77,7 +77,7 @@ struct StandardRendererState
 
 	float BlendUVDistortionIntensity;
 
-	int32_t EmissiveScaling;
+	float EmissiveScaling;
 
 	float EdgeThreshold;
 	uint8_t EdgeColor[4];
@@ -139,7 +139,7 @@ struct StandardRendererState
 
 		BlendUVDistortionIntensity = 1.0f;
 
-		EmissiveScaling = 1;
+		EmissiveScaling = 1.0f;
 
 		EdgeThreshold = 0.0f;
 		EdgeColor[0] = EdgeColor[1] = EdgeColor[2] = EdgeColor[3] = 0;

@@ -747,7 +747,7 @@ struct ParameterRendererCommon
 
 	float BlendUVDistortionIntensity = 1.0f;
 
-	int32_t EmissiveScaling = 1;
+	float EmissiveScaling = 1.0f;
 
 	bool ZWrite = false;
 
@@ -912,12 +912,12 @@ struct ParameterRendererCommon
 			{
 				if (version >= 1600)
 				{
-					memcpy(&EmissiveScaling, pos, sizeof(int));
-					pos += sizeof(int);
+					memcpy(&EmissiveScaling, pos, sizeof(float));
+					pos += sizeof(float);
 				}
 				else
 				{
-					EmissiveScaling = 1;
+					EmissiveScaling = 1.0f;
 				}
 			}
 
