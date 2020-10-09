@@ -727,7 +727,7 @@ RenderPass* GraphicsDevice::CreateRenderPass(Effekseer::Backend::Texture** textu
 {
 	auto ret = new RenderPass(this);
 
-	if (!ret->Init(reinterpret_cast<Texture**>(textures), textureCount, reinterpret_cast<Texture*>(depthTexture)))
+	if (!ret->Init(reinterpret_cast<Texture**>(textures), textureCount, static_cast<Texture*>(depthTexture)))
 	{
 		ES_SAFE_RELEASE(ret);
 		return nullptr;
