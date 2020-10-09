@@ -143,7 +143,7 @@ public:
 			Vec3f acceleration;
 		} random;
 
-		InstanceEasing3 easing;
+		InstanceEasing<Vec3f> easing;
 		/*
 		struct
 		{
@@ -178,7 +178,7 @@ public:
 			Vec3f acceleration;
 		} random;
 
-		InstanceEasing3 easing;
+		InstanceEasing<Vec3f> easing;
 		/*
 		struct
 		{
@@ -230,7 +230,7 @@ public:
 			Vec3f acceleration;
 		} random;
 
-		InstanceEasing3 easing;
+		InstanceEasing<Vec3f> easing;
 
 		/*
 		struct

@@ -252,8 +252,8 @@ Easing_Start_Name,Start
 Easing_Start_Desc,Starting point of easing
 Easing_End_Name,End
 Easing_End_Desc,Value of easing at end
-Easing_End_Name,Middle
-Easing_End_Desc,Value of easing at middle point
+Easing_Middle_Name,Middle
+Easing_Middle_Desc,Value of easing at middle point
 Easing_StartSpeed_Name,Ease In
 Easing_StartSpeed_Desc,Initial rate of easing
 Easing_EndSpeed_Name,Ease Out

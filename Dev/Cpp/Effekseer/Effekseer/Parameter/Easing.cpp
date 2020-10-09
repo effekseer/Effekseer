@@ -3,7 +3,6 @@
 namespace Effekseer
 {
 
-
 float ParameterEasingFloat::GetValue(const InstanceEasingType& instance, float time)
 {
 	auto t = getEaseValue(type_, time);
@@ -49,11 +48,20 @@ void ParameterEasingFloat::Init(InstanceEasingType& instance, Effect* e, Instanc
 						   middle);
 
 		instance.middle = rvm.getValue(*rand);
+
+		const auto eps = 0.000001f;
+		const auto dist1 = (instance.middle - instance.start);
+		const auto dist2 = (instance.end - instance.middle);
+		if (dist1 + dist2 > eps)
+		{
+			instance.Rate = dist1 / (dist1 + dist2);
+		}
+		else
+		{
+			instance.Rate = 0.0f;
+		}
 	}
 }
-
-
-
 
 Vec3f ParameterEasingVec3f::GetValue(const InstanceEasingType& instance, float time)
 {
@@ -124,10 +132,19 @@ void ParameterEasingVec3f::Init(InstanceEasingType& instance, Effect* e, Instanc
 						   scaleInv);
 
 		instance.middle = rvm.getValue(channelIDs, channelCount, *rand);
+
+		const auto eps = 0.000001f;
+		const auto dist1 = (instance.middle - instance.start).GetLength();
+		const auto dist2 = (instance.end - instance.middle).GetLength();
+		if (dist1 + dist2 > eps)
+		{
+			instance.Rate = dist1 / (dist1 + dist2);
+		}
+		else
+		{
+			instance.Rate = 0.0f;
+		}
 	}
 }
 
-
-
-
-}
+} // namespace Effekseer

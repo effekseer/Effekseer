@@ -1514,7 +1514,7 @@ public:
 	ParameterTranslationType TranslationType;
 	ParameterTranslationFixed TranslationFixed;
 	ParameterTranslationPVA TranslationPVA;
-	ParameterEasing3 TranslationEasing;
+	ParameterEasingVec3f TranslationEasing;
 	// ParameterTranslationEasing TranslationEasing;
 	FCurveVector3D* TranslationFCurve;
 	ParameterTranslationNurbsCurve TranslationNurbsCurve;
@@ -1531,7 +1531,7 @@ public:
 	ParameterRotationFixed RotationFixed;
 	ParameterRotationPVA RotationPVA;
 
-	ParameterEasing3 RotationEasing;
+	ParameterEasingVec3f RotationEasing;
 	// ParameterRotationEasing RotationEasing;
 	FCurveVector3D* RotationFCurve;
 
@@ -1541,7 +1541,7 @@ public:
 	ParameterScalingType ScalingType;
 	ParameterScalingFixed ScalingFixed;
 	ParameterScalingPVA ScalingPVA;
-	ParameterEasing3 ScalingEasing;
+	ParameterEasingVec3f ScalingEasing;
 	// ParameterScalingEasing ScalingEasing;
 	ParameterScalingSinglePVA ScalingSinglePVA;
 	easing_float ScalingSingleEasing;
