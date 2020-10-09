@@ -373,6 +373,7 @@ enum ParameterScalingType
 	ParameterScalingType_SinglePVA = 3,
 	ParameterScalingType_SingleEasing = 4,
 	ParameterScalingType_FCurve = 5,
+	ParameterScalingType_SingleFCurve = 6,
 
 	ParameterScalingType_None = 0x7fffffff - 1,
 
@@ -1546,6 +1547,7 @@ public:
 	ParameterScalingSinglePVA ScalingSinglePVA;
 	easing_float ScalingSingleEasing;
 	FCurveVector3D* ScalingFCurve;
+	FCurveScalar* ScalingSingleFCurve = nullptr;
 
 	ParameterGenerationLocation GenerationLocation;
 

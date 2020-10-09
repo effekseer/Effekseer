@@ -14,10 +14,20 @@ namespace Effekseer.Binary
 		{
 			float magnification = 1.0f;
 
-			List<byte[]> data = new List<byte[]>();
-			data.Add(value.Type.GetValueAsInt().GetBytes());
+			var type = value.Type.Value;
 
-			if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.Fixed)
+			if(version < ExporterVersion.Ver1600)
+			{
+				if(type == Data.ScaleValues.ParamaterType.SingleFCurve)
+				{
+					type = Data.ScaleValues.ParamaterType.Fixed;
+				}
+			}
+
+			List<byte[]> data = new List<byte[]>();
+			data.Add(((int)type).GetBytes());
+
+			if (type == Data.ScaleValues.ParamaterType.Fixed)
 			{
 				var refBuf = value.Fixed.Scale.DynamicEquation.Index.GetBytes();
 				var mainBuf = Scaling_Fixed_Values.Create(value.Fixed,magnification).GetBytes();
@@ -25,7 +35,7 @@ namespace Effekseer.Binary
 				data.Add(refBuf);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.PVA)
+			else if (type == Data.ScaleValues.ParamaterType.PVA)
 			{
 				var refBuf1_1 = value.PVA.Scale.DynamicEquationMax.Index.GetBytes();
 				var refBuf1_2 = value.PVA.Scale.DynamicEquationMin.Index.GetBytes();
@@ -44,17 +54,17 @@ namespace Effekseer.Binary
 				data.Add(refBuf3_2);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.Easing)
+			else if (type == Data.ScaleValues.ParamaterType.Easing)
 			{
 				Utils.ExportEasing(value.Easing, magnification, data, version);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.SinglePVA)
+			else if (type == Data.ScaleValues.ParamaterType.SinglePVA)
 			{
 				var bytes = Scaling_SinglePVA_Values.Create(value.SinglePVA, magnification).GetBytes();
 				data.Add(bytes.Count().GetBytes());
 				data.Add(bytes);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.SingleEasing)
+			else if (type == Data.ScaleValues.ParamaterType.SingleEasing)
 			{
 				var easing = Utl.MathUtl.Easing(
 					(float)value.SingleEasing.StartSpeed.Value,
@@ -72,9 +82,16 @@ namespace Effekseer.Binary
 				data.Add(__data.Count().GetBytes());
 				data.Add(__data);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.FCurve)
+			else if (type == Data.ScaleValues.ParamaterType.FCurve)
 			{
 				var bytes = value.FCurve.FCurve.GetBytes();
+
+				data.Add(bytes.Count().GetBytes());
+				data.Add(bytes);
+			}
+			else if (type == Data.ScaleValues.ParamaterType.SingleFCurve)
+			{
+				var bytes = value.SingleFCurve.GetBytes();
 
 				data.Add(bytes.Count().GetBytes());
 				data.Add(bytes);

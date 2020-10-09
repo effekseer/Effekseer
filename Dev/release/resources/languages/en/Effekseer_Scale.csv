@@ -19,6 +19,7 @@ Scale_SinglePVAParamater_Acceleration_Desc,"Acceleration of the instance's expan
 Scale_ParamaterType_Fixed_Name,Fixed Scale
 Scale_ParamaterType_PVA_Name,PVA
 Scale_ParamaterType_Easing_Name,Easing
+Scale_ParamaterType_FCurve_Name,F-Curve
 Scale_ParamaterType_SinglePVA_Name,PVA (Single)
 Scale_ParamaterType_SingleEasing_Name,Easing (Single)
-Scale_ParamaterType_FCurve_Name,F-Curve
+Scale_ParamaterType_SingleFCurve_Name,F-Curve (Single)

@@ -258,6 +258,11 @@ public:
 			Vec3f offset;
 		} fcruve;
 
+		struct
+		{
+			float offset;
+		} single_fcruve;
+
 	} scaling_values;
 
 	// 描画
