@@ -63,6 +63,7 @@ Setting::~Setting()
 	ES_SAFE_DELETE(m_modelLoader);
 	ES_SAFE_DELETE(m_materialLoader);
 	ES_SAFE_DELETE(m_curveLoader);
+	ES_SAFE_RELEASE(procedualMeshGenerator_);
 }
 
 //----------------------------------------------------------------------------------
