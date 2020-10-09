@@ -656,6 +656,12 @@ void Instance::FirstUpdate()
 
 		scaling_values.fcruve.offset = m_pEffectNode->ScalingFCurve->GetOffsets(rand);
 	}
+	else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleFCurve)
+	{
+		assert(m_pEffectNode->ScalingSingleFCurve != NULL);
+
+		scaling_values.single_fcruve.offset = m_pEffectNode->ScalingSingleFCurve->S.GetOffset(rand);
+	}
 
 	// Spawning Method
 	if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
@@ -1471,6 +1477,12 @@ void Instance::CalculateMatrix(float deltaFrame)
 			assert(m_pEffectNode->ScalingFCurve != NULL);
 			auto fcurve = m_pEffectNode->ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localScaling = fcurve + scaling_values.fcruve.offset;
+		}
+		else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleFCurve)
+		{
+			assert(m_pEffectNode->ScalingSingleFCurve != NULL);
+			auto s = m_pEffectNode->ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
+			localScaling = {s, s, s};
 		}
 
 		// update local fields

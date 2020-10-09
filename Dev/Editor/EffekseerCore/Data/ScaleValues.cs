@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.Data.Value;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +38,15 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-		
+
+		[Selected(ID = 0, Value = 5)]
+		[IO(Export = true)]
+		public Vector3DFCurveParameter FCurve
+		{
+			get;
+			private set;
+		}
+
 		[Selected(ID = 0, Value = 3)]
 		[IO(Export = true)]
 		public SinglePVAParamater SinglePVA
@@ -54,13 +63,11 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Selected(ID = 0, Value = 5)]
-		[IO(Export = true)]
-		public Vector3DFCurveParameter FCurve
+		public FCurveScalar SingleFCurve
 		{
 			get;
 			private set;
-		}
+		} = new FCurveScalar();
 
 		internal ScaleValues()
 		{
@@ -100,6 +107,8 @@ namespace Effekseer.Data
 			FCurve.FCurve.X.DefaultValue = 1.0f;
 			FCurve.FCurve.Y.DefaultValue = 1.0f;
 			FCurve.FCurve.Z.DefaultValue = 1.0f;
+
+			SingleFCurve.S.DefaultValue = 1.0f;
 
 			// dynamic parameter
 			Fixed.Scale.CanSelectDynamicEquation = true;
@@ -196,12 +205,14 @@ namespace Effekseer.Data
 			PVA = 1,
 			[Key(key = "Scale_ParamaterType_Easing")]
 			Easing = 2,
+			[Key(key = "Scale_ParamaterType_FCurve")]
+			FCurve = 5,
 			[Key(key = "Scale_ParamaterType_SinglePVA")]
 			SinglePVA = 3,
 			[Key(key = "Scale_ParamaterType_SingleEasing")]
 			SingleEasing = 4,
-			[Key(key = "Scale_ParamaterType_FCurve")]
-			FCurve = 5,
+			[Key(key = "Scale_ParamaterType_SingleFCurve")]
+			SingleFCurve = 6,
 		}
 	}
 }

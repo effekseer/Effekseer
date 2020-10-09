@@ -1381,6 +1381,17 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.ScalingValues.FCurve.FCurve));
 					}
 
+					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.SingleFCurve)
+					{
+						var name = "Scaling Factor(Single)";
+						if (Language == Language.Japanese)
+						{
+							name = "拡大率(単一)";
+						}
+
+						list.Add(Tuple35.Create(name, (object)node.ScalingValues.SingleFCurve));
+					}
+
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
 						var name = "UV(Start)";

@@ -475,6 +475,15 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			ScalingFCurve->Y.SetDefaultValue(1.0f);
 			ScalingFCurve->Z.SetDefaultValue(1.0f);
 		}
+		else if (ScalingType == ParameterScalingType_SingleFCurve)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+
+			ScalingSingleFCurve = new FCurveScalar();
+			pos += ScalingSingleFCurve->Load(pos, m_effect->GetVersion());
+			ScalingSingleFCurve->S.SetDefaultValue(1.0f);
+		}
 
 		/* Spawning Method */
 		GenerationLocation.load(pos, m_effect->GetVersion());
@@ -749,6 +758,7 @@ EffectNodeImplemented::~EffectNodeImplemented()
 	ES_SAFE_DELETE(TranslationFCurve);
 	ES_SAFE_DELETE(RotationFCurve);
 	ES_SAFE_DELETE(ScalingFCurve);
+	ES_SAFE_DELETE(ScalingSingleFCurve);
 }
 
 void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2)
