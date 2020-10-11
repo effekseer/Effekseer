@@ -38,7 +38,8 @@ public:
 			  const GLuint* textures,
 			  const void* constantData,
 			  size_t constantDataSize,
-			  RenderTexture* dest);
+			  RenderTexture* dest,
+			  bool isCleared = true);
 };
 
 class BloomEffectGL : public BloomEffect

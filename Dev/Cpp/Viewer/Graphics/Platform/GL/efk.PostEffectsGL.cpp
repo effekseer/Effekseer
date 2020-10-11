@@ -177,7 +177,7 @@ BlitterGL::~BlitterGL()
 std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(EffekseerRendererGL::Shader* shader)
 {
 	using namespace EffekseerRendererGL;
-	
+
 	return std::unique_ptr<VertexArray>(VertexArray::Create(renderer_, shader, vertexBuffer.get(), renderer_->GetIndexBuffer(), true));
 }
 
@@ -187,11 +187,12 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 					 const GLuint* textures,
 					 const void* constantData,
 					 size_t constantDataSize,
-					 RenderTexture* dest)
+					 RenderTexture* dest,
+					 bool isCleared)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererGL;
-	
+
 	// Set GLStates
 	renderer_->SetVertexArray(vao);
 	renderer_->BeginShader(shader);
@@ -205,6 +206,11 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 
 	// Set destination texture
 	graphics->SetRenderTarget(dest, nullptr);
+
+	if (isCleared)
+	{
+		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+	}
 
 	// Set source textures
 	for (int32_t slot = 0; slot < numTextures; slot++)
@@ -239,7 +245,7 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* re
 	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
 {
 	using namespace EffekseerRendererGL;
-	
+
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 
 	// Extract shader
@@ -366,7 +372,7 @@ void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 								   (GLuint)lowresBuffers[0][1]->GetViewID(),
 								   (GLuint)lowresBuffers[0][2]->GetViewID(),
 								   (GLuint)lowresBuffers[0][3]->GetViewID()};
-		blitter.Blit(shaderBlend.get(), vaoBlend.get(), 4, textures, nullptr, 0, dest);
+		blitter.Blit(shaderBlend.get(), vaoBlend.get(), 4, textures, nullptr, 0, dest, false);
 	}
 
 	GLExt::glActiveTexture(GL_TEXTURE0);
@@ -433,7 +439,7 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, EffekseerRenderer::Renderer
 	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
 {
 	using namespace EffekseerRendererGL;
-	
+
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 
 	// Copy shader
@@ -465,7 +471,7 @@ void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererGL;
-	
+
 	auto& state = renderer_->GetRenderState()->Push();
 	state.AlphaBlend = AlphaBlendType::Opacity;
 	state.DepthWrite = false;
@@ -498,7 +504,7 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, EffekseerRenderer
 	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
 {
 	using namespace EffekseerRendererGL;
-	
+
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
 
