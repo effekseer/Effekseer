@@ -32,7 +32,7 @@ private:
 	int32_t vertexConstantBufferSize = 0;
 	int32_t pixelConstantBufferSize = 0;
 
-	Shader(GraphicsDevice* graphicsDevice,
+	Shader(Backend::GraphicsDevice* graphicsDevice,
 		   LLGI::Shader* vertexShader,
 		   LLGI::Shader* pixelShader,
 		   const std::vector<VertexLayout>& layouts,
@@ -41,7 +41,7 @@ private:
 public:
 	virtual ~Shader();
 
-	static Shader* Create(GraphicsDevice* graphicsDevice,
+	static Shader* Create(Backend::GraphicsDevice* graphicsDevice,
 						  LLGI::DataStructure* vertexData,
 						  int32_t vertexDataCount,
 						  LLGI::DataStructure* pixelData,

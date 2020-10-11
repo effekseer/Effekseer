@@ -18,11 +18,8 @@ private:
 	int32_t textureHeight;
 
 public:
-	bool Load(void* data, int32_t size, bool rev);
+	bool Load(const void* data, int32_t size, bool rev);
 	void Unload();
-
-	void Initialize();
-	void Finalize();
 
 	std::vector<uint8_t>& GetData()
 	{

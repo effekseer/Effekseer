@@ -71,7 +71,7 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	shader->ModelLit_PS = {{model_lit_ps, (int32_t)sizeof(model_lit_ps)}};
 }
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(
+::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(
 	VkPhysicalDevice physicalDevice, VkDevice device, VkQueue transfarQueue, VkCommandPool transfarCommandPool, int32_t swapBufferCount)
 {
 	auto graphics = new LLGI::GraphicsVulkan(
@@ -84,15 +84,15 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 		nullptr,
 		nullptr);
 
-	auto ret = new EffekseerRendererLLGI::GraphicsDevice(graphics);
+	auto ret = new EffekseerRendererLLGI::Backend::GraphicsDevice(graphics);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }
 
 ::EffekseerRenderer::Renderer*
-Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
+Create(::Effekseer::Backend::GraphicsDevice* graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
 {
-	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 
 	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
 	CreateFixedShaderForVulkan(&renderer->fixedShader_);
@@ -132,7 +132,7 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 									  RenderPassInformation renderPassInformation,
 									  int32_t squareMaxCount)
 {
-	auto graphicDevice = CreateDevice(physicalDevice, device, transfarQueue, transfarCommandPool, swapBufferCount);
+	auto graphicDevice = CreateGraphicsDevice(physicalDevice, device, transfarQueue, transfarCommandPool, swapBufferCount);
 
 	auto ret = Create(graphicDevice, renderPassInformation, squareMaxCount);
 
@@ -152,14 +152,14 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 	return CreateTextureData(r->GetGraphicsDevice(), info);
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, const VulkanImageInfo& info)
+Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDevice* graphicsDevice, const VulkanImageInfo& info)
 {
 	LLGI::VulkanImageInfo llgiinfo;
 	llgiinfo.image = info.image;
 	llgiinfo.format = info.format;
 	llgiinfo.aspect = info.aspect;
 
-	auto g = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 	auto texture_ = g->GetGraphics()->CreateTexture((uint64_t)(&llgiinfo));
 
 	auto textureData = new Effekseer::TextureData();
@@ -177,7 +177,7 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 	DeleteTextureData(r->GetGraphicsDevice(), textureData);
 }
 
-void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData)
+void DeleteTextureData(::Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData)
 {
 	auto texture = (LLGI::Texture*)textureData->UserPtr;
 	texture->Release();
@@ -190,9 +190,9 @@ void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
 	FlushAndWait(r->GetGraphicsDevice());
 }
 
-void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+void FlushAndWait(::Effekseer::Backend::GraphicsDevice* graphicsDevice)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
 	g->WaitFinish();
 }
@@ -204,10 +204,10 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
 	auto commandList = g->CreateCommandList(mp->GetInternal());
@@ -222,9 +222,9 @@ EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effeksee
 	return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDevice* graphicsDevice)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
 	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
 	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);

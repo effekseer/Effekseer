@@ -94,6 +94,11 @@ struct ProcedualModelParameter;
 
 typedef int Handle;
 
+namespace Backend
+{
+class Texture;
+}
+
 /**
 	@brief	Memory Allocation function
 */
@@ -655,6 +660,9 @@ struct TextureData
 
 	//! for OpenGL, it is ignored in other apis
 	bool HasMipmap = true;
+
+	//! A backend which contains a native data
+	class Backend::Texture* TexturePtr = nullptr;
 };
 
 enum class ShadingModelType : int32_t
@@ -3565,11 +3573,14 @@ public:
 		@param	textureType
 		\~English	a kind of texture
 		\~Japanese	テクスチャの種類
+		@param	isMipMapEnabled
+		\~English	whether is a mipmap enabled
+		\~Japanese	MipMapが有効かどうか
 		@return
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたテクスチャのポインタ
 	*/
-	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType)
+	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType, bool isMipMapEnabled)
 	{
 		return nullptr;
 	}

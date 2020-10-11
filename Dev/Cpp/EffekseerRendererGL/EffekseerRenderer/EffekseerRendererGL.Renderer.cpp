@@ -13,7 +13,7 @@
 #include "EffekseerRendererGL.ModelLoader.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
-#include "EffekseerRendererGL.TextureLoader.h"
+// #include "EffekseerRendererGL.TextureLoader.h"
 #include "EffekseerRendererGL.VertexArray.h"
 #include "EffekseerRendererGL.VertexBuffer.h"
 
@@ -26,7 +26,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
 #include "ShaderHeader/standard_renderer_PS.h"
@@ -61,7 +61,22 @@ namespace EffekseerRendererGL
 ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(fileInterface, colorSpaceType);
+	auto gd = new Backend::GraphicsDevice(OpenGLDeviceType::OpenGL2);
+	auto ret = new EffekseerRenderer::TextureLoader(gd, fileInterface);
+	ES_SAFE_RELEASE(gd);
+	return ret;
+#else
+	return NULL;
+#endif
+}
+
+::Effekseer::TextureLoader* CreateTextureLoader(
+	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	::Effekseer::FileInterface* fileInterface,
+	::Effekseer::ColorSpaceType colorSpaceType)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface, colorSpaceType);
 #else
 	return NULL;
 #endif
@@ -140,19 +155,21 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	, m_distortingCallback(nullptr)
 
 	, m_deviceType(deviceType)
-	, graphicsDevice_(graphicsDevice)
+	, graphicsDevice_intetnal_(graphicsDevice)
 {
 	m_background.UserID = 0;
 	m_background.HasMipmap = false;
 
 	if (graphicsDevice == nullptr)
 	{
-		graphicsDevice_ = new GraphicsDevice(deviceType);
+		graphicsDevice_intetnal_ = new GraphicsDevice(deviceType);
 	}
 	else
 	{
-		ES_SAFE_ADDREF(graphicsDevice_);
+		ES_SAFE_ADDREF(graphicsDevice_intetnal_);
 	}
+
+	graphicsDevice_ = new Backend::GraphicsDevice(deviceType);
 }
 
 //----------------------------------------------------------------------------------
@@ -190,6 +207,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
+	ES_SAFE_RELEASE(graphicsDevice_intetnal_);
 	ES_SAFE_RELEASE(graphicsDevice_);
 
 	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
@@ -201,14 +219,14 @@ RendererImplemented::~RendererImplemented()
 
 void RendererImplemented::OnLostDevice()
 {
-	if (graphicsDevice_ != nullptr)
-		graphicsDevice_->OnLostDevice();
+	if (graphicsDevice_intetnal_ != nullptr)
+		graphicsDevice_intetnal_->OnLostDevice();
 }
 
 void RendererImplemented::OnResetDevice()
 {
-	if (graphicsDevice_ != nullptr)
-		graphicsDevice_->OnResetDevice();
+	if (graphicsDevice_intetnal_ != nullptr)
+		graphicsDevice_intetnal_->OnResetDevice();
 
 	GenerateIndexData();
 }
@@ -311,25 +329,25 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_sprite_lit_ps(GetDeviceType()));
 
-	shader_ad_unlit_ = Shader::Create(GetGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "Standard Tex", false, false);
+	shader_ad_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "Standard Tex", false, false);
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	shader_ad_distortion_ = Shader::Create(GetGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "Standard Distortion Tex", false, false);
+	shader_ad_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "Standard Distortion Tex", false, false);
 	if (shader_ad_distortion_ == nullptr)
 		return false;
 
-	shader_ad_lit_ = Shader::Create(GetGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "Standard Lighting Tex", false, false);
+	shader_ad_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "Standard Lighting Tex", false, false);
 
-	shader_unlit_ = Shader::Create(GetGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Standard Tex", false, false);
+	shader_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Standard Tex", false, false);
 	if (shader_unlit_ == nullptr)
 		return false;
 
-	shader_distortion_ = Shader::Create(GetGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Standard Distortion Tex", false, false);
+	shader_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Standard Distortion Tex", false, false);
 	if (shader_distortion_ == nullptr)
 		return false;
 
-	shader_lit_ = Shader::Create(GetGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Standard Lighting Tex", false, false);
+	shader_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Standard Lighting Tex", false, false);
 
 	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
 		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
@@ -832,7 +850,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(fileInterface);
+	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
 	return NULL;
 #endif
@@ -853,7 +871,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(GetGraphicsDevice(), fileInterface);
+	return new MaterialLoader(GetIntetnalGraphicsDevice(), fileInterface);
 #else
 	return nullptr;
 #endif
@@ -1197,7 +1215,15 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		GLuint id = 0;
 		if (textures[i] != nullptr)
 		{
-			id = (GLuint)textures[i]->UserID;
+			if (textures[i]->TexturePtr != nullptr)
+			{
+				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr);
+				id = texture->GetBuffer();
+			}
+			else
+			{
+				id = (GLuint)textures[i]->UserID;
+			}
 		}
 
 		GLExt::glActiveTexture(GL_TEXTURE0 + i);
@@ -1205,7 +1231,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 
 		if (textures[i] != nullptr)
 		{
-			m_renderState->GetActiveState().TextureIDs[i] = textures[i]->UserID;
+			m_renderState->GetActiveState().TextureIDs[i] = id;
 			currentTextures_[i] = *textures[i];
 		}
 		else

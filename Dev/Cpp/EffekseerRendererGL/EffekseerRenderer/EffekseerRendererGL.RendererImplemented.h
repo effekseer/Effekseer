@@ -47,7 +47,8 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 	friend class DeviceObject;
 
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphicsDevice_intetnal_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer = nullptr;
@@ -248,9 +249,9 @@ public:
 
 	bool IsVertexArrayObjectSupported() const override;
 
-	GraphicsDevice* GetGraphicsDevice() const
+	GraphicsDevice* GetIntetnalGraphicsDevice() const
 	{
-		return graphicsDevice_;
+		return graphicsDevice_intetnal_;
 	}
 
 	virtual int GetRef() override

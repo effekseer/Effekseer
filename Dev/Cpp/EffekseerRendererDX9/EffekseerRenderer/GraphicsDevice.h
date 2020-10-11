@@ -141,6 +141,11 @@ public:
 	bool Init(const Effekseer::Backend::TextureParameter& param);
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+
+	IDirect3DTexture9* GetTexture() const
+	{
+		return texture_.get();
+	}
 };
 
 /**

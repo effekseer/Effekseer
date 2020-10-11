@@ -26,7 +26,7 @@ private:
 	Shader* shader_ad_lit_ = nullptr;
 	Shader* shader_ad_unlit_ = nullptr;
 	Shader* shader_ad_distortion_ = nullptr;
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 	ModelRenderer(RendererImplemented* renderer,
 				  Shader* shader_ad_lit,

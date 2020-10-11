@@ -5,7 +5,7 @@
 namespace EffekseerRenderer
 {
 
-bool TGATextureLoader::Load(void* data, int32_t size)
+bool TGATextureLoader::Load(const void* data, int32_t size)
 {
 	uint8_t* data_texture = (uint8_t*)data;
 

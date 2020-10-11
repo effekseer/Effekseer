@@ -235,6 +235,7 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 }
 
 Texture::Texture(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
 {
 	ES_SAFE_ADDREF(graphicsDevice_);
 	graphicsDevice_->Register(this);
@@ -272,7 +273,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 	const int32_t blockSize = 4;
 	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
-		return (size + alignement - 1) / alignement;
+		return ((size + alignement - 1) / alignement) * alignement;
 	};
 
 	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM || param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
@@ -367,10 +368,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 					int32_t sizePerPixel = sizePerWidth / param.Size[0];
 					for (int32_t w = 0; w < param.Size[0]; w++)
 					{
-						for (int32_t p = 0; p < sizePerPixel; p++)
-						{
-							std::swap(destBits[w * sizePerPixel + 0 * sizePerPixel / 4 + p], destBits[w * sizePerPixel + 2 * sizePerPixel / 4 + p]);
-						}
+						std::swap(destBits[w * sizePerPixel + 0 * sizePerPixel / 4], destBits[w * sizePerPixel + 2 * sizePerPixel / 4]);
 					}
 				}
 

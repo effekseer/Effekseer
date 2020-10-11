@@ -194,10 +194,8 @@ void Window::SetWindowIcon(const char16_t* iconPath)
 		reader->Read(&data[0], size);
 
 		auto pngLoader = EffekseerRenderer::PngTextureLoader();
-		pngLoader.Initialize();
 		pngLoader.Load(&data[0], size, false);
-		pngLoader.Finalize();
-
+		
 		GLFWimage image;
 		image.pixels = pngLoader.GetData().data();
 		image.width = pngLoader.GetWidth();

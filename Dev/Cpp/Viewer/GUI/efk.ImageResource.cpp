@@ -5,8 +5,9 @@
 namespace efk
 {
 
-ImageResource::ImageResource(std::shared_ptr<Effekseer::TextureLoader> loader)
-	: loader_(loader)
+ImageResource::ImageResource(DeviceType deviceType, std::shared_ptr<Effekseer::TextureLoader> loader)
+	: deviceType_(deviceType)
+	, loader_(loader)
 {
 }
 
@@ -24,7 +25,7 @@ bool ImageResource::Validate()
 	if (staticFile == nullptr)
 		return false;
 
-	auto loaded = loader_->Load(staticFile->GetData(), staticFile->GetSize(), Effekseer::TextureType::Color);
+	auto loaded = loader_->Load(staticFile->GetData(), staticFile->GetSize(), Effekseer::TextureType::Color, true);
 
 	if (loaded == nullptr)
 		return false;

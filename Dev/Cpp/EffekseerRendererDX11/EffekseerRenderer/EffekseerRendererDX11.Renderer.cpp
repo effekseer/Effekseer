@@ -17,7 +17,7 @@
 //#include "EffekseerRendererDX11.TrackRenderer.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
 #include "EffekseerRendererDX11.ModelLoader.h"
-#include "EffekseerRendererDX11.TextureLoader.h"
+//#include "EffekseerRendererDX11.TextureLoader.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
@@ -25,7 +25,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
 //----------------------------------------------------------------------------------
@@ -115,7 +115,8 @@ static
 												::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(device, context, fileInterface, colorSpaceType);
+	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device, context));
+	return new EffekseerRenderer::TextureLoader(gd.get(), fileInterface, colorSpaceType);
 #else
 	return NULL;
 #endif
@@ -737,7 +738,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(this->GetDevice(), this->GetContext(), fileInterface);
+	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
 	return NULL;
 #endif
@@ -969,6 +970,11 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		if (textures[i] == nullptr)
 		{
 			srv[i] = nullptr;
+		}
+		else if (textures[i]->TexturePtr != nullptr)
+		{
+			auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr);
+			srv[i] = texture->GetSRV();
 		}
 		else
 		{

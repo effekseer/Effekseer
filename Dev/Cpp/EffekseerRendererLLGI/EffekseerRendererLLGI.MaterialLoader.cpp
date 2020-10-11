@@ -39,7 +39,7 @@ void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::Compile
 	}
 }
 
-MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice,
+MaterialLoader::MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
 							   ::Effekseer::FileInterface* fileInterface,
 							   ::Effekseer::CompiledMaterialPlatformType platformType,
 							   ::Effekseer::MaterialCompiler* materialCompiler)

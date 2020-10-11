@@ -1185,7 +1185,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	}
 #endif
 
-	auto resource = std::make_shared<efk::ImageResource>(loader);
+	auto resource = std::make_shared<efk::ImageResource>(g_deviceType, loader);
 	resource->SetPath(path);
 
 	if (resource->Validate())

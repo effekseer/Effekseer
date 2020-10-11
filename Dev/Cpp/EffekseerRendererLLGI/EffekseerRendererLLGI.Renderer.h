@@ -15,11 +15,9 @@
 namespace EffekseerRendererLLGI
 {
 
-class GraphicsDevice;
+::Effekseer::TextureLoader* CreateTextureLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::TextureLoader* CreateTextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
-
-::Effekseer::ModelLoader* CreateModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoader* CreateModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
 struct FixedShader
 {
@@ -172,81 +170,6 @@ public:
 	virtual int Release() override
 	{
 		return ::Effekseer::ReferenceObject::Release();
-	}
-};
-
-class DeviceObject;
-
-class GraphicsDevice : public ::EffekseerRenderer::GraphicsDevice, public ::Effekseer::ReferenceObject
-{
-	friend class DeviceObject;
-
-private:
-	std::set<DeviceObject*> deviceObjects_;
-
-	LLGI::Graphics* graphics_ = nullptr;
-
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
-
-	/**
-		@brief	register an object
-	*/
-	void Register(DeviceObject* device);
-
-	/**
-		@brief	unregister an object
-	*/
-	void Unregister(DeviceObject* device);
-
-public:
-	GraphicsDevice(LLGI::Graphics* graphics)
-		: graphics_(graphics)
-	{
-		ES_SAFE_ADDREF(graphics_);
-		graphicsDevice_ = new Backend::GraphicsDevice(graphics_);
-	}
-
-	virtual ~GraphicsDevice()
-	{
-		ES_SAFE_RELEASE(graphics_);
-		ES_SAFE_RELEASE(graphicsDevice_);
-	}
-
-	/**
-		@brief
-		\~english Call when device lost causes
-		\~japanese デバイスロストが発生した時に実行する。
-	*/
-	void OnLostDevice();
-
-	/**
-		@brief
-		\~english Call when device reset causes
-		\~japanese デバイスがリセットされた時に実行する。
-	*/
-	void OnResetDevice();
-
-	LLGI::Graphics* GetGraphics() const
-	{
-		return graphics_;
-	}
-
-	virtual int GetRef() override
-	{
-		return ::Effekseer::ReferenceObject::GetRef();
-	}
-	virtual int AddRef() override
-	{
-		return ::Effekseer::ReferenceObject::AddRef();
-	}
-	virtual int Release() override
-	{
-		return ::Effekseer::ReferenceObject::Release();
-	}
-
-	Backend::GraphicsDevice* GetGraphicsDevice() const
-	{
-		return graphicsDevice_;
 	}
 };
 

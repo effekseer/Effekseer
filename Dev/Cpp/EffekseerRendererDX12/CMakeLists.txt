@@ -5,6 +5,11 @@ project(EffekseerRendererDX12)
 # Files
 
 file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../EffekseerRendererCommon/*.cpp)
+
+list(APPEND LOCAL_SOURCES_Common 
+    ../EffekseerRendererCommon/TextureLoader.h
+    ../EffekseerRendererCommon/TextureLoader.cpp)
+
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_DX12 *.h)
