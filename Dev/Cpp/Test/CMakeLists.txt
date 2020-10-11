@@ -17,6 +17,7 @@ set(effekseer_test_src
     Runtime/EffectPlatformGL.cpp
     Runtime/RuntimeTest.cpp
     Runtime/Performance.cpp
+    Runtime/TextureFormats.cpp
     Backend/Mesh.cpp
 )
 
