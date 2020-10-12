@@ -64,8 +64,8 @@ dcl_sampler s0, mode_default
 dcl_sampler s1, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
 dcl_resource_texture2d (float,float,float,float) t1
-dcl_input_ps linear v0.xyzw
-dcl_input_ps linear v1.xy
+dcl_input_ps linear centroid v0.xyzw
+dcl_input_ps linear centroid v1.xy
 dcl_input_ps linear v3.xyz
 dcl_input_ps linear v4.xyz
 dcl_input_ps linear v5.xyz
@@ -95,10 +95,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67,  53,  20, 
-    230, 158, 197, 140, 112,  77, 
-    118,   8,  53,  51, 191,  35, 
-    224,  18,   1,   0,   0,   0, 
+     68,  88,  66,  67,  86, 212, 
+     69, 194, 116, 148, 101,  69, 
+     52,  18, 217, 158,  81, 135, 
+    153, 209,   1,   0,   0,   0, 
     168,   7,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
      52,   3,   0,   0,  52,   4, 
@@ -297,9 +297,9 @@ const BYTE g_main[] =
       0,   0,  85,  85,   0,   0, 
      88,  24,   0,   4,   0, 112, 
      16,   0,   1,   0,   0,   0, 
-     85,  85,   0,   0,  98,  16, 
+     85,  85,   0,   0,  98,  24, 
       0,   3, 242,  16,  16,   0, 
-      0,   0,   0,   0,  98,  16, 
+      0,   0,   0,   0,  98,  24, 
       0,   3,  50,  16,  16,   0, 
       1,   0,   0,   0,  98,  16, 
       0,   3, 114,  16,  16,   0, 

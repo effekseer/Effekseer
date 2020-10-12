@@ -43,7 +43,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     vec4 fLightColor;
     vec4 fLightAmbient;
     vec4 mUVInversed;
-} _364;
+} _365;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec3 Input_Normal;
@@ -51,11 +51,11 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
-layout(location = 0) out vec2 _entryPointOutput_UV;
+layout(location = 0) centroid out vec2 _entryPointOutput_UV;
 layout(location = 1) out vec3 _entryPointOutput_Normal;
 layout(location = 2) out vec3 _entryPointOutput_Binormal;
 layout(location = 3) out vec3 _entryPointOutput_Tangent;
-layout(location = 4) out vec4 _entryPointOutput_Color;
+layout(location = 4) centroid out vec4 _entryPointOutput_Color;
 layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
 layout(location = 6) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
 layout(location = 7) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
@@ -147,7 +147,7 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
     }
 }
 
-void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortionUV, vec4 blendUV, vec4 blendAlphaUV, vec4 blendUVDistortionUV, float flipbookIndexAndNextRate, float modelAlphaThreshold, inout VS_Output vsoutput)
+void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uvDistortionUV, vec4 blendUV, vec4 blendAlphaUV, vec4 blendUVDistortionUV, float flipbookIndexAndNextRate, float modelAlphaThreshold, inout VS_Output vsoutput)
 {
     vsoutput.Alpha_Dist_UV.x = (uv.x * alphaUV.z) + alphaUV.x;
     vsoutput.Alpha_Dist_UV.y = (uv.y * alphaUV.w) + alphaUV.y;
@@ -163,56 +163,58 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortion
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = _364.fFlipbookParameter;
+    vec4 param_2 = _365.fFlipbookParameter;
     float param_3 = flipbookIndexAndNextRate;
-    vec2 param_4 = uv;
+    vec2 param_4 = uv1;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
     vsoutput.Blend_FBNextIndex_UV = vec4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
     vsoutput.Others.x = flipbookRate;
     vsoutput.Others.y = modelAlphaThreshold;
-    vsoutput.Alpha_Dist_UV.y = _364.mUVInversed.x + (_364.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _364.mUVInversed.x + (_364.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _364.mUVInversed.x + (_364.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.y = _364.mUVInversed.x + (_364.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _364.mUVInversed.x + (_364.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
 }
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = _364.mModel[Input.Index];
-    vec4 uv = _364.fUV[Input.Index];
-    vec4 alphaUV = _364.fAlphaUV[Input.Index];
-    vec4 uvDistortionUV = _364.fUVDistortionUV[Input.Index];
-    vec4 blendUV = _364.fBlendUV[Input.Index];
-    vec4 blendAlphaUV = _364.fBlendAlphaUV[Input.Index];
-    vec4 blendUVDistortionUV = _364.fBlendUVDistortionUV[Input.Index];
-    vec4 modelColor = _364.fModelColor[Input.Index] * Input.Color;
-    float flipbookIndexAndNextRate = _364.fFlipbookIndexAndNextRate[Input.Index].x;
-    float modelAlphaThreshold = _364.fModelAlphaThreshold[Input.Index].x;
+    uint index = Input.Index;
+    mat4 matModel = _365.mModel[index];
+    vec4 uv = _365.fUV[index];
+    vec4 alphaUV = _365.fAlphaUV[index];
+    vec4 uvDistortionUV = _365.fUVDistortionUV[index];
+    vec4 blendUV = _365.fBlendUV[index];
+    vec4 blendAlphaUV = _365.fBlendAlphaUV[index];
+    vec4 blendUVDistortionUV = _365.fBlendUVDistortionUV[index];
+    vec4 modelColor = _365.fModelColor[index] * Input.Color;
+    float flipbookIndexAndNextRate = _365.fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = _365.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
-    Output.Pos = cameraPosition * _364.mCameraProj;
+    Output.Pos = cameraPosition * _365.mCameraProj;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     localNormal = normalize(localNormal * matModel);
     Output.Normal = localNormal.xyz;
     Output.Color = modelColor;
-    Output.UV.y = _364.mUVInversed.x + (_364.mUVInversed.y * Output.UV.y);
+    Output.UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * Output.UV.y);
     vec2 param = Input.UV;
-    vec4 param_1 = alphaUV;
-    vec4 param_2 = uvDistortionUV;
-    vec4 param_3 = blendUV;
-    vec4 param_4 = blendAlphaUV;
-    vec4 param_5 = blendUVDistortionUV;
-    float param_6 = flipbookIndexAndNextRate;
-    float param_7 = modelAlphaThreshold;
-    VS_Output param_8 = Output;
-    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8);
-    Output = param_8;
+    vec2 param_1 = Output.UV;
+    vec4 param_2 = alphaUV;
+    vec4 param_3 = uvDistortionUV;
+    vec4 param_4 = blendUV;
+    vec4 param_5 = blendAlphaUV;
+    vec4 param_6 = blendUVDistortionUV;
+    float param_7 = flipbookIndexAndNextRate;
+    float param_8 = modelAlphaThreshold;
+    VS_Output param_9 = Output;
+    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
+    Output = param_9;
     return Output;
 }
 

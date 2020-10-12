@@ -19,13 +19,13 @@ SamplerState g_normalSampler : register(s1);
 struct PS_Input
 {
 	float4 Pos : SV_POSITION;
-	float2 UV : TEXCOORD0;
+	linear centroid float2 UV : TEXCOORD0;
 #if ENABLE_NORMAL_TEXTURE
 	half3 Normal : TEXCOORD1;
 	half3 Binormal : TEXCOORD2;
 	half3 Tangent : TEXCOORD3;
 #endif
-	float4 Color : COLOR;
+	linear centroid float4 Color : COLOR;
 };
 
 float4 main(const PS_Input Input)

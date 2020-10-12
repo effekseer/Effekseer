@@ -23,8 +23,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform highp sampler2D Sampler_g_sampler;
 
-varying highp vec4 _VSPS_Color;
-varying highp vec2 _VSPS_UV;
+centroid varying highp vec4 _VSPS_Color;
+centroid varying highp vec2 _VSPS_UV;
 
 highp vec4 _main(PS_Input Input)
 {

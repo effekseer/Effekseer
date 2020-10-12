@@ -44,11 +44,11 @@ attribute vec3 Input_Binormal;
 attribute vec3 Input_Tangent;
 attribute vec2 Input_UV;
 attribute vec4 Input_Color;
-varying vec2 _VSPS_UV;
+centroid varying vec2 _VSPS_UV;
 varying vec3 _VSPS_Normal;
 varying vec3 _VSPS_Binormal;
 varying vec3 _VSPS_Tangent;
-varying vec4 _VSPS_Color;
+centroid varying vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
@@ -149,17 +149,18 @@ layout(location = 5) in vec4 Input_Color;
 #else
 uniform int SPIRV_Cross_BaseInstance;
 #endif
-out vec2 _VSPS_UV;
+centroid out vec2 _VSPS_UV;
 out vec3 _VSPS_Normal;
 out vec3 _VSPS_Binormal;
 out vec3 _VSPS_Tangent;
-out vec4 _VSPS_Color;
+centroid out vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = CBVS0.mModel[Input.Index];
-    vec4 uv = CBVS0.fUV[Input.Index];
-    vec4 modelColor = CBVS0.fModelColor[Input.Index] * Input.Color;
+    uint index = Input.Index;
+    mat4 matModel = CBVS0.mModel[index];
+    vec4 uv = CBVS0.fUV[index];
+    vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
@@ -244,11 +245,11 @@ attribute vec3 Input_Binormal;
 attribute vec3 Input_Tangent;
 attribute vec2 Input_UV;
 attribute vec4 Input_Color;
-varying vec2 _VSPS_UV;
+centroid varying vec2 _VSPS_UV;
 varying vec3 _VSPS_Normal;
 varying vec3 _VSPS_Binormal;
 varying vec3 _VSPS_Tangent;
-varying vec4 _VSPS_Color;
+centroid varying vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
@@ -346,17 +347,18 @@ layout(location = 5) in vec4 Input_Color;
 #else
 uniform int SPIRV_Cross_BaseInstance;
 #endif
-out vec2 _VSPS_UV;
+centroid out vec2 _VSPS_UV;
 out vec3 _VSPS_Normal;
 out vec3 _VSPS_Binormal;
 out vec3 _VSPS_Tangent;
-out vec4 _VSPS_Color;
+centroid out vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = CBVS0.mModel[Input.Index];
-    vec4 uv = CBVS0.fUV[Input.Index];
-    vec4 modelColor = CBVS0.fModelColor[Input.Index] * Input.Color;
+    uint index = Input.Index;
+    mat4 matModel = CBVS0.mModel[index];
+    vec4 uv = CBVS0.fUV[index];
+    vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;

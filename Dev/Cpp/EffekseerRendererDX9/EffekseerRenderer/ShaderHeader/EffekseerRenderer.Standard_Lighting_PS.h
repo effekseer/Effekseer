@@ -16,28 +16,28 @@
 //   sampler2D Sampler_g_colorSampler;
 //   sampler2D Sampler_g_normalSampler;
 //   sampler2D Sampler_g_uvDistortionSampler;
-//   float4 _210_fBlendTextureParameter;
-//   float4 _210_fEdgeColor;
-//   float4 _210_fEdgeParameter;
-//   float4 _210_fEmissiveScaling;
-//   float4 _210_fFlipbookParameter;
-//   float4 _210_fLightAmbient;
-//   float4 _210_fLightDirection;
-//   float4 _210_fUVDistortionParameter;
+//   float4 _209_fBlendTextureParameter;
+//   float4 _209_fEdgeColor;
+//   float4 _209_fEdgeParameter;
+//   float4 _209_fEmissiveScaling;
+//   float4 _209_fFlipbookParameter;
+//   float4 _209_fLightAmbient;
+//   float4 _209_fLightDirection;
+//   float4 _209_fUVDistortionParameter;
 //
 //
 // Registers:
 //
 //   Name                               Reg   Size
 //   ---------------------------------- ----- ----
-//   _210_fLightDirection               c0       1
-//   _210_fLightAmbient                 c2       1
-//   _210_fFlipbookParameter            c3       1
-//   _210_fUVDistortionParameter        c4       1
-//   _210_fBlendTextureParameter        c5       1
-//   _210_fEmissiveScaling              c6       1
-//   _210_fEdgeColor                    c7       1
-//   _210_fEdgeParameter                c8       1
+//   _209_fLightDirection               c0       1
+//   _209_fLightAmbient                 c2       1
+//   _209_fFlipbookParameter            c3       1
+//   _209_fUVDistortionParameter        c4       1
+//   _209_fBlendTextureParameter        c5       1
+//   _209_fEmissiveScaling              c6       1
+//   _209_fEdgeColor                    c7       1
+//   _209_fEdgeParameter                c8       1
 //   Sampler_g_colorSampler             s0       1
 //   Sampler_g_normalSampler            s1       1
 //   Sampler_g_alphaSampler             s2       1
@@ -50,15 +50,15 @@
     ps_3_0
     def c1, -0.5, -1, -2, -3
     def c9, 2, -1, 0, -0
-    dcl_texcoord v0
-    dcl_texcoord1 v1.xy
-    dcl_texcoord3 v2.xyz
-    dcl_texcoord4 v3.xyz
-    dcl_texcoord5 v4.xyz
-    dcl_texcoord6 v5
-    dcl_texcoord7 v6
-    dcl_texcoord8 v7
-    dcl_texcoord9 v8.xy
+    dcl_texcoord_centroid v0
+    dcl_texcoord1_centroid v1.xy
+    dcl_texcoord2 v2.xyz
+    dcl_texcoord3 v3.xyz
+    dcl_texcoord4 v4.xyz
+    dcl_texcoord5 v5
+    dcl_texcoord6 v6
+    dcl_texcoord7 v7
+    dcl_texcoord8 v8.xy
     dcl_2d s0
     dcl_2d s1
     dcl_2d s2
@@ -242,7 +242,7 @@ const BYTE g_ps30_main[] =
     114,   0, 171, 171,   4,   0, 
      12,   0,   1,   0,   1,   0, 
       1,   0,   0,   0,   0,   0, 
-      0,   0,  95,  50,  49,  48, 
+      0,   0,  95,  50,  48,  57, 
      95, 102,  66, 108, 101, 110, 
     100,  84, 101, 120, 116, 117, 
     114, 101,  80,  97, 114,  97, 
@@ -250,27 +250,27 @@ const BYTE g_ps30_main[] =
       1,   0,   3,   0,   1,   0, 
       4,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  50, 
-     49,  48,  95, 102,  69, 100, 
+     48,  57,  95, 102,  69, 100, 
     103, 101,  67, 111, 108, 111, 
-    114,   0,  95,  50,  49,  48, 
+    114,   0,  95,  50,  48,  57, 
      95, 102,  69, 100, 103, 101, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114,   0,  95,  50, 
-     49,  48,  95, 102,  69, 109, 
+     48,  57,  95, 102,  69, 109, 
     105, 115, 115, 105, 118, 101, 
      83,  99,  97, 108, 105, 110, 
-    103,   0,  95,  50,  49,  48, 
+    103,   0,  95,  50,  48,  57, 
      95, 102,  70, 108, 105, 112, 
      98, 111, 111, 107,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  50,  49,  48, 
+    114,   0,  95,  50,  48,  57, 
      95, 102,  76, 105, 103, 104, 
     116,  65, 109,  98, 105, 101, 
-    110, 116,   0,  95,  50,  49, 
-     48,  95, 102,  76, 105, 103, 
+    110, 116,   0,  95,  50,  48, 
+     57,  95, 102,  76, 105, 103, 
     104, 116,  68, 105, 114, 101, 
      99, 116, 105, 111, 110,   0, 
-     95,  50,  49,  48,  95, 102, 
+     95,  50,  48,  57,  95, 102, 
      85,  86,  68, 105, 115, 116, 
     111, 114, 116, 105, 111, 110, 
      80,  97, 114,  97, 109, 101, 
@@ -294,22 +294,22 @@ const BYTE g_ps30_main[] =
       0,   0,   0,   0,   0,   0, 
       0, 128,  31,   0,   0,   2, 
       5,   0,   0, 128,   0,   0, 
-     15, 144,  31,   0,   0,   2, 
+     79, 144,  31,   0,   0,   2, 
       5,   0,   1, 128,   1,   0, 
-      3, 144,  31,   0,   0,   2, 
-      5,   0,   3, 128,   2,   0, 
+     67, 144,  31,   0,   0,   2, 
+      5,   0,   2, 128,   2,   0, 
       7, 144,  31,   0,   0,   2, 
-      5,   0,   4, 128,   3,   0, 
+      5,   0,   3, 128,   3,   0, 
       7, 144,  31,   0,   0,   2, 
-      5,   0,   5, 128,   4,   0, 
+      5,   0,   4, 128,   4,   0, 
       7, 144,  31,   0,   0,   2, 
-      5,   0,   6, 128,   5,   0, 
+      5,   0,   5, 128,   5,   0, 
      15, 144,  31,   0,   0,   2, 
-      5,   0,   7, 128,   6,   0, 
+      5,   0,   6, 128,   6,   0, 
      15, 144,  31,   0,   0,   2, 
-      5,   0,   8, 128,   7,   0, 
+      5,   0,   7, 128,   7,   0, 
      15, 144,  31,   0,   0,   2, 
-      5,   0,   9, 128,   8,   0, 
+      5,   0,   8, 128,   8,   0, 
       3, 144,  31,   0,   0,   2, 
       0,   0,   0, 144,   0,   8, 
      15, 160,  31,   0,   0,   2, 

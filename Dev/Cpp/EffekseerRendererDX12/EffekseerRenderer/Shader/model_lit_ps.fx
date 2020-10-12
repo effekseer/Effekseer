@@ -30,11 +30,11 @@ static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
 {
-    float2 Input_UV : TEXCOORD0;
+    centroid float2 Input_UV : TEXCOORD0;
     float3 Input_Normal : TEXCOORD1;
     float3 Input_Binormal : TEXCOORD2;
     float3 Input_Tangent : TEXCOORD3;
-    float4 Input_Color : TEXCOORD4;
+    centroid float4 Input_Color : TEXCOORD4;
     float4 gl_FragCoord : SV_Position;
 };
 

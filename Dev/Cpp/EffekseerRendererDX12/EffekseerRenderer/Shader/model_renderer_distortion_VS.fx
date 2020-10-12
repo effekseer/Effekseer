@@ -23,7 +23,7 @@ struct VS_Input
     uint Index;
 };
 
-static const VS_Output _487 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+static const VS_Output _490 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -77,11 +77,11 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    float2 _entryPointOutput_UV : TEXCOORD0;
+    centroid float2 _entryPointOutput_UV : TEXCOORD0;
     float4 _entryPointOutput_Binormal : TEXCOORD1;
     float4 _entryPointOutput_Tangent : TEXCOORD2;
     float4 _entryPointOutput_Pos : TEXCOORD3;
-    float4 _entryPointOutput_Color : TEXCOORD4;
+    centroid float4 _entryPointOutput_Color : TEXCOORD4;
     float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
     float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD6;
     float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD7;
@@ -229,17 +229,18 @@ void CalculateAndStoreAdvancedParameter(float2 uv, float4 alphaUV, float4 uvDist
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 matModel = _364_mModel[Input.Index];
-    float4 uv = _364_fUV[Input.Index];
-    float4 modelColor = _364_fModelColor[Input.Index];
-    float4 alphaUV = _364_fAlphaUV[Input.Index];
-    float4 uvDistortionUV = _364_fUVDistortionUV[Input.Index];
-    float4 blendUV = _364_fBlendUV[Input.Index];
-    float4 blendAlphaUV = _364_fBlendAlphaUV[Input.Index];
-    float4 blendUVDistortionUV = _364_fBlendUVDistortionUV[Input.Index];
-    float flipbookIndexAndNextRate = _364_fFlipbookIndexAndNextRate[Input.Index].x;
-    float modelAlphaThreshold = _364_fModelAlphaThreshold[Input.Index].x;
-    VS_Output Output = _487;
+    uint index = Input.Index;
+    float4x4 matModel = _364_mModel[index];
+    float4 uv = _364_fUV[index];
+    float4 modelColor = _364_fModelColor[index];
+    float4 alphaUV = _364_fAlphaUV[index];
+    float4 uvDistortionUV = _364_fUVDistortionUV[index];
+    float4 blendUV = _364_fBlendUV[index];
+    float4 blendAlphaUV = _364_fBlendAlphaUV[index];
+    float4 blendUVDistortionUV = _364_fBlendUVDistortionUV[index];
+    float flipbookIndexAndNextRate = _364_fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = _364_fModelAlphaThreshold[index].x;
+    VS_Output Output = _490;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
     float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0f);

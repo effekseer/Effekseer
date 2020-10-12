@@ -16,22 +16,22 @@
 //   sampler2D Sampler_g_blendUVDistortionSampler;
 //   sampler2D Sampler_g_sampler;
 //   sampler2D Sampler_g_uvDistortionSampler;
-//   float4 _210_fBlendTextureParameter;
-//   float4 _210_fFlipbookParameter;
-//   float4 _210_fUVDistortionParameter;
-//   float4 _210_g_scale;
-//   float4 _210_mUVInversedBack;
+//   float4 _209_fBlendTextureParameter;
+//   float4 _209_fFlipbookParameter;
+//   float4 _209_fUVDistortionParameter;
+//   float4 _209_g_scale;
+//   float4 _209_mUVInversedBack;
 //
 //
 // Registers:
 //
 //   Name                               Reg   Size
 //   ---------------------------------- ----- ----
-//   _210_g_scale                       c0       1
-//   _210_mUVInversedBack               c1       1
-//   _210_fFlipbookParameter            c2       1
-//   _210_fUVDistortionParameter        c3       1
-//   _210_fBlendTextureParameter        c4       1
+//   _209_g_scale                       c0       1
+//   _209_mUVInversedBack               c1       1
+//   _209_fFlipbookParameter            c2       1
+//   _209_fUVDistortionParameter        c3       1
+//   _209_fBlendTextureParameter        c4       1
 //   Sampler_g_sampler                  s0       1
 //   Sampler_g_backSampler              s1       1
 //   Sampler_g_alphaSampler             s2       1
@@ -44,15 +44,15 @@
     ps_3_0
     def c5, -1, -2, -3, 0.5
     def c6, 2, -1, 0, -0
-    dcl_texcoord v0.xy
-    dcl_texcoord2 v1.xyw
-    dcl_texcoord3 v2.xyw
-    dcl_texcoord4 v3.xyw
-    dcl_texcoord5 v4.xyw
-    dcl_texcoord6 v5
-    dcl_texcoord7 v6
-    dcl_texcoord8 v7
-    dcl_texcoord9 v8.xy
+    dcl_texcoord_centroid v0.xy
+    dcl_texcoord1 v1.xyw
+    dcl_texcoord2 v2.xyw
+    dcl_texcoord3 v3.xyw
+    dcl_texcoord4_centroid v4.xyw
+    dcl_texcoord5 v5
+    dcl_texcoord6 v6
+    dcl_texcoord7 v7
+    dcl_texcoord8 v8.xy
     dcl_2d s0
     dcl_2d s1
     dcl_2d s2
@@ -224,25 +224,25 @@ const BYTE g_ps30_main[] =
       4,   0,  12,   0,   1,   0, 
       1,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  50, 
-     49,  48,  95, 102,  66, 108, 
+     48,  57,  95, 102,  66, 108, 
     101, 110, 100,  84, 101, 120, 
     116, 117, 114, 101,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114,   0,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  50,  49,  48,  95, 102, 
+     95,  50,  48,  57,  95, 102, 
      70, 108, 105, 112,  98, 111, 
     111, 107,  80,  97, 114,  97, 
     109, 101, 116, 101, 114,   0, 
-     95,  50,  49,  48,  95, 102, 
+     95,  50,  48,  57,  95, 102, 
      85,  86,  68, 105, 115, 116, 
     111, 114, 116, 105, 111, 110, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114,   0,  95,  50, 
-     49,  48,  95, 103,  95, 115, 
+     48,  57,  95, 103,  95, 115, 
      99,  97, 108, 101,   0,  95, 
-     50,  49,  48,  95, 109,  85, 
+     50,  48,  57,  95, 109,  85, 
      86,  73, 110, 118, 101, 114, 
     115, 101, 100,  66,  97,  99, 
     107,   0, 112, 115,  95,  51, 
@@ -264,23 +264,23 @@ const BYTE g_ps30_main[] =
       0,   0, 128, 191,   0,   0, 
       0,   0,   0,   0,   0, 128, 
      31,   0,   0,   2,   5,   0, 
-      0, 128,   0,   0,   3, 144, 
+      0, 128,   0,   0,  67, 144, 
      31,   0,   0,   2,   5,   0, 
-      2, 128,   1,   0,  11, 144, 
+      1, 128,   1,   0,  11, 144, 
      31,   0,   0,   2,   5,   0, 
-      3, 128,   2,   0,  11, 144, 
+      2, 128,   2,   0,  11, 144, 
      31,   0,   0,   2,   5,   0, 
-      4, 128,   3,   0,  11, 144, 
+      3, 128,   3,   0,  11, 144, 
      31,   0,   0,   2,   5,   0, 
-      5, 128,   4,   0,  11, 144, 
+      4, 128,   4,   0,  75, 144, 
      31,   0,   0,   2,   5,   0, 
-      6, 128,   5,   0,  15, 144, 
+      5, 128,   5,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
-      7, 128,   6,   0,  15, 144, 
+      6, 128,   6,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
-      8, 128,   7,   0,  15, 144, 
+      7, 128,   7,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
-      9, 128,   8,   0,   3, 144, 
+      8, 128,   8,   0,   3, 144, 
      31,   0,   0,   2,   0,   0, 
       0, 144,   0,   8,  15, 160, 
      31,   0,   0,   2,   0,   0, 

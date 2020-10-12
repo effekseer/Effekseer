@@ -207,16 +207,17 @@ void CalculateAndStoreAdvancedParameter(thread const float2& uv, thread const fl
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_364)
 {
-    float4x4 matModel = transpose(v_364.mModel[Input.Index]);
-    float4 uv = v_364.fUV[Input.Index];
-    float4 modelColor = v_364.fModelColor[Input.Index];
-    float4 alphaUV = v_364.fAlphaUV[Input.Index];
-    float4 uvDistortionUV = v_364.fUVDistortionUV[Input.Index];
-    float4 blendUV = v_364.fBlendUV[Input.Index];
-    float4 blendAlphaUV = v_364.fBlendAlphaUV[Input.Index];
-    float4 blendUVDistortionUV = v_364.fBlendUVDistortionUV[Input.Index];
-    float flipbookIndexAndNextRate = v_364.fFlipbookIndexAndNextRate[Input.Index].x;
-    float modelAlphaThreshold = v_364.fModelAlphaThreshold[Input.Index].x;
+    uint index = Input.Index;
+    float4x4 matModel = transpose(v_364.mModel[index]);
+    float4 uv = v_364.fUV[index];
+    float4 modelColor = v_364.fModelColor[index];
+    float4 alphaUV = v_364.fAlphaUV[index];
+    float4 uvDistortionUV = v_364.fUVDistortionUV[index];
+    float4 blendUV = v_364.fBlendUV[index];
+    float4 blendAlphaUV = v_364.fBlendAlphaUV[index];
+    float4 blendUVDistortionUV = v_364.fBlendUVDistortionUV[index];
+    float flipbookIndexAndNextRate = v_364.fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = v_364.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);

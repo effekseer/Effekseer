@@ -26,8 +26,8 @@ uniform VS_ConstantBuffer CBPS0;
 uniform highp sampler2D Sampler_g_sampler;
 uniform highp sampler2D Sampler_g_backSampler;
 
-in highp vec4 _VSPS_Color;
-in highp vec2 _VSPS_UV;
+centroid in highp vec4 _VSPS_Color;
+centroid in highp vec2 _VSPS_UV;
 in highp vec4 _VSPS_Pos;
 in highp vec4 _VSPS_PosU;
 in highp vec4 _VSPS_PosR;

@@ -24,8 +24,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 layout(binding = 0) uniform sampler2D Sampler_g_sampler;
 
-in vec4 _VSPS_Color;
-in vec2 _VSPS_UV;
+centroid in vec4 _VSPS_Color;
+centroid in vec2 _VSPS_UV;
 layout(location = 0) out vec4 _entryPointOutput;
 
 vec4 _main(PS_Input Input)

@@ -25,8 +25,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_g_sampler;
 
-varying vec4 _VSPS_Color;
-varying vec2 _VSPS_UV;
+centroid varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
 
 vec4 _main(PS_Input Input)
 {
@@ -77,8 +77,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_g_sampler;
 
-in vec4 _VSPS_Color;
-in vec2 _VSPS_UV;
+centroid in vec4 _VSPS_Color;
+centroid in vec2 _VSPS_UV;
 layout(location = 0) out vec4 _entryPointOutput;
 
 vec4 _main(PS_Input Input)
@@ -129,8 +129,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform  sampler2D Sampler_g_sampler;
 
-varying  vec4 _VSPS_Color;
-varying  vec2 _VSPS_UV;
+centroid varying  vec4 _VSPS_Color;
+centroid varying  vec2 _VSPS_UV;
 
 highp vec4 _main(PS_Input Input)
 {
@@ -180,8 +180,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform highp sampler2D Sampler_g_sampler;
 
-in highp vec4 _VSPS_Color;
-in highp vec2 _VSPS_UV;
+centroid in highp vec4 _VSPS_Color;
+centroid in highp vec2 _VSPS_UV;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
 highp vec4 _main(PS_Input Input)

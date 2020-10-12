@@ -2,8 +2,8 @@
 struct PS_Input
 {
 	float4 Position : SV_POSITION;
-	float4 VColor : COLOR;
-	float2 UV : TEXCOORD0;
+	linear centroid float4 VColor : COLOR;
+	linear centroid float2 UV : TEXCOORD0;
 	float3 WorldN : TEXCOORD1;
 	float3 WorldT : TEXCOORD2;
 	float3 WorldB : TEXCOORD3;

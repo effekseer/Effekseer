@@ -16,18 +16,18 @@ struct VS_Output
     float4 Color;
 };
 
-static const VS_Output _57 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
+static const VS_Output _58 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _26_mCameraProj : register(c0);
-    column_major float4x4 _26_mModel[10] : register(c4);
-    float4 _26_fUV[10] : register(c44);
-    float4 _26_fModelColor[10] : register(c54);
-    float4 _26_fLightDirection : register(c64);
-    float4 _26_fLightColor : register(c65);
-    float4 _26_fLightAmbient : register(c66);
-    float4 _26_mUVInversed : register(c67);
+    column_major float4x4 _32_mCameraProj : register(c0);
+    column_major float4x4 _32_mModel[10] : register(c4);
+    float4 _32_fUV[10] : register(c44);
+    float4 _32_fModelColor[10] : register(c54);
+    float4 _32_fLightDirection : register(c64);
+    float4 _32_fLightColor : register(c65);
+    float4 _32_fLightAmbient : register(c66);
+    float4 _32_mUVInversed : register(c67);
 };
 
 static const float4 gl_HalfPixel = 0.0f.xxxx;
@@ -56,24 +56,25 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    float2 _entryPointOutput_UV : TEXCOORD0;
-    float4 _entryPointOutput_Color : TEXCOORD1;
+    centroid float2 _entryPointOutput_UV : TEXCOORD0;
+    centroid float4 _entryPointOutput_Color : TEXCOORD1;
     float4 gl_Position : POSITION;
 };
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 matModel = _26_mModel[uint(Input.Index)];
-    float4 uv = _26_fUV[uint(Input.Index)];
-    float4 modelColor = _26_fModelColor[uint(Input.Index)] * Input.Color;
-    VS_Output Output = _57;
+    int index = int(Input.Index);
+    float4x4 matModel = _32_mModel[index];
+    float4 uv = _32_fUV[index];
+    float4 modelColor = _32_fModelColor[index] * Input.Color;
+    VS_Output Output = _58;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 cameraPosition = mul(matModel, localPosition);
-    Output.Pos = mul(_26_mCameraProj, cameraPosition);
+    Output.Pos = mul(_32_mCameraProj, cameraPosition);
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = _26_mUVInversed.x + (_26_mUVInversed.y * Output.UV.y);
+    Output.UV.y = _32_mUVInversed.x + (_32_mUVInversed.y * Output.UV.y);
     return Output;
 }
 

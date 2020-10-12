@@ -20,18 +20,18 @@ struct VS_Output
     float4 Color;
 };
 
-static const VS_Output _54 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _57 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _26_mCameraProj : packoffset(c0);
-    column_major float4x4 _26_mModel[10] : packoffset(c4);
-    float4 _26_fUV[10] : packoffset(c44);
-    float4 _26_fModelColor[10] : packoffset(c54);
-    float4 _26_fLightDirection : packoffset(c64);
-    float4 _26_fLightColor : packoffset(c65);
-    float4 _26_fLightAmbient : packoffset(c66);
-    float4 _26_mUVInversed : packoffset(c67);
+    column_major float4x4 _31_mCameraProj : packoffset(c0);
+    column_major float4x4 _31_mModel[10] : packoffset(c4);
+    float4 _31_fUV[10] : packoffset(c44);
+    float4 _31_fModelColor[10] : packoffset(c54);
+    float4 _31_fLightDirection : packoffset(c64);
+    float4 _31_fLightColor : packoffset(c65);
+    float4 _31_fLightAmbient : packoffset(c66);
+    float4 _31_mUVInversed : packoffset(c67);
 };
 
 
@@ -63,21 +63,22 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    float2 _entryPointOutput_UV : TEXCOORD0;
+    centroid float2 _entryPointOutput_UV : TEXCOORD0;
     float4 _entryPointOutput_Normal : TEXCOORD1;
     float4 _entryPointOutput_Binormal : TEXCOORD2;
     float4 _entryPointOutput_Tangent : TEXCOORD3;
     float4 _entryPointOutput_Pos : TEXCOORD4;
-    float4 _entryPointOutput_Color : TEXCOORD5;
+    centroid float4 _entryPointOutput_Color : TEXCOORD5;
     float4 gl_Position : SV_Position;
 };
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 matModel = _26_mModel[Input.Index];
-    float4 uv = _26_fUV[Input.Index];
-    float4 modelColor = _26_fModelColor[Input.Index] * Input.Color;
-    VS_Output Output = _54;
+    uint index = Input.Index;
+    float4x4 matModel = _31_mModel[index];
+    float4 uv = _31_fUV[index];
+    float4 modelColor = _31_fModelColor[index] * Input.Color;
+    VS_Output Output = _57;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0f);
     float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
@@ -89,15 +90,15 @@ VS_Output _main(VS_Input Input)
     localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.Position = mul(_26_mCameraProj, localPosition);
+    Output.Position = mul(_31_mCameraProj, localPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.Normal = mul(_26_mCameraProj, localNormal);
-    Output.Binormal = mul(_26_mCameraProj, localBinormal);
-    Output.Tangent = mul(_26_mCameraProj, localTangent);
+    Output.Normal = mul(_31_mCameraProj, localNormal);
+    Output.Binormal = mul(_31_mCameraProj, localBinormal);
+    Output.Tangent = mul(_31_mCameraProj, localTangent);
     Output.Pos = Output.Position;
     Output.Color = modelColor;
-    Output.UV.y = _26_mUVInversed.x + (_26_mUVInversed.y * Output.UV.y);
+    Output.UV.y = _31_mUVInversed.x + (_31_mUVInversed.y * Output.UV.y);
     return Output;
 }
 
