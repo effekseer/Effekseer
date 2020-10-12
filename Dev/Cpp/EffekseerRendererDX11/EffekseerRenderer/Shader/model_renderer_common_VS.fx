@@ -1,7 +1,7 @@
 
 #include "FlipbookInterpolationUtils.fx"
 
-void CalculateAndStoreAdvancedParameter(in float2 uv, in float4 alphaUV, in float4 uvDistortionUV, in float4 blendUV, in float4 blendAlphaUV, in float4 blendUVDistortionUV, in float flipbookIndexAndNextRate, in float modelAlphaThreshold, inout VS_Output vsoutput)
+void CalculateAndStoreAdvancedParameter(in float2 uv, in float2 uv1, in float4 alphaUV, in float4 uvDistortionUV, in float4 blendUV, in float4 blendAlphaUV, in float4 blendUVDistortionUV, in float flipbookIndexAndNextRate, in float modelAlphaThreshold, inout VS_Output vsoutput)
 {
 	// alpha texture
 	vsoutput.Alpha_Dist_UV.x = uv.x * alphaUV.z + alphaUV.x;
@@ -26,7 +26,7 @@ void CalculateAndStoreAdvancedParameter(in float2 uv, in float4 alphaUV, in floa
 	// flipbook interpolation
 	float flipbookRate = 0.0f;
 	float2 flipbookNextIndexUV = 0.0f;
-	ApplyFlipbookVS(flipbookRate, flipbookNextIndexUV, fFlipbookParameter, flipbookIndexAndNextRate, uv);
+	ApplyFlipbookVS(flipbookRate, flipbookNextIndexUV, fFlipbookParameter, flipbookIndexAndNextRate, uv1);
 
 	vsoutput.Blend_FBNextIndex_UV.zw = flipbookNextIndexUV;
 	vsoutput.Others.x = flipbookRate;
