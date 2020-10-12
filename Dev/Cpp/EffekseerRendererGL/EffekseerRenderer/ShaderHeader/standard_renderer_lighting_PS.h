@@ -53,8 +53,8 @@ uniform sampler2D Sampler_g_blendUVDistortionSampler;
 uniform sampler2D Sampler_g_blendSampler;
 uniform sampler2D Sampler_g_blendAlphaSampler;
 
-varying vec4 _VSPS_VColor;
-varying vec2 _VSPS_UV;
+centroid varying vec4 _VSPS_VColor;
+centroid varying vec2 _VSPS_UV;
 varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
@@ -247,8 +247,8 @@ uniform sampler2D Sampler_g_blendUVDistortionSampler;
 uniform sampler2D Sampler_g_blendSampler;
 uniform sampler2D Sampler_g_blendAlphaSampler;
 
-in vec4 _VSPS_VColor;
-in vec2 _VSPS_UV;
+centroid in vec4 _VSPS_VColor;
+centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_WorldN;
 in vec3 _VSPS_WorldT;
 in vec3 _VSPS_WorldB;
@@ -441,8 +441,8 @@ uniform  sampler2D Sampler_g_blendUVDistortionSampler;
 uniform  sampler2D Sampler_g_blendSampler;
 uniform  sampler2D Sampler_g_blendAlphaSampler;
 
-varying  vec4 _VSPS_VColor;
-varying  vec2 _VSPS_UV;
+centroid varying  vec4 _VSPS_VColor;
+centroid varying  vec2 _VSPS_UV;
 varying  vec3 _VSPS_WorldN;
 varying  vec3 _VSPS_WorldT;
 varying  vec3 _VSPS_WorldB;
@@ -634,8 +634,8 @@ uniform highp sampler2D Sampler_g_blendUVDistortionSampler;
 uniform highp sampler2D Sampler_g_blendSampler;
 uniform highp sampler2D Sampler_g_blendAlphaSampler;
 
-in highp vec4 _VSPS_VColor;
-in highp vec2 _VSPS_UV;
+centroid in highp vec4 _VSPS_VColor;
+centroid in highp vec2 _VSPS_UV;
 in highp vec3 _VSPS_WorldN;
 in highp vec3 _VSPS_WorldT;
 in highp vec3 _VSPS_WorldB;

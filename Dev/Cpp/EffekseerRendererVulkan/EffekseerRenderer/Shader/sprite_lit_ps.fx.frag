@@ -29,9 +29,9 @@ layout(set = 1, binding = 0, std140) uniform VS_ConstantBuffer
 layout(set = 1, binding = 2) uniform sampler2D Sampler_g_normalSampler;
 layout(set = 1, binding = 1) uniform sampler2D Sampler_g_colorSampler;
 
-layout(location = 0) in vec4 Input_VColor;
-layout(location = 1) in vec2 Input_UV1;
-layout(location = 2) in vec2 Input_UV2;
+layout(location = 0) centroid in vec4 Input_VColor;
+layout(location = 1) centroid in vec2 Input_UV1;
+layout(location = 2) centroid in vec2 Input_UV2;
 layout(location = 3) in vec3 Input_WorldP;
 layout(location = 4) in vec3 Input_WorldN;
 layout(location = 5) in vec3 Input_WorldT;

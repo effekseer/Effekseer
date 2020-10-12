@@ -52,8 +52,8 @@ layout(binding = 6) uniform sampler2D Sampler_g_blendUVDistortionSampler;
 layout(binding = 4) uniform sampler2D Sampler_g_blendSampler;
 layout(binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
 
-in vec4 _VSPS_VColor;
-in vec2 _VSPS_UV;
+centroid in vec4 _VSPS_VColor;
+centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_WorldN;
 in vec3 _VSPS_WorldT;
 in vec3 _VSPS_WorldB;

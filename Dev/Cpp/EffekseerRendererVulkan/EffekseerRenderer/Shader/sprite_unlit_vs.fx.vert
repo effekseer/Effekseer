@@ -25,8 +25,8 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
 layout(location = 2) in vec2 Input_UV;
-layout(location = 0) out vec4 _entryPointOutput_Color;
-layout(location = 1) out vec2 _entryPointOutput_UV;
+layout(location = 0) centroid out vec4 _entryPointOutput_Color;
+layout(location = 1) centroid out vec2 _entryPointOutput_UV;
 
 VS_Output _main(VS_Input Input)
 {

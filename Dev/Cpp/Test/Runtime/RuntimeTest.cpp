@@ -64,18 +64,6 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
-		auto single15nowebglTest = [&](const char16_t* name, const char* savename) -> void {
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15_NoWebGL/" + name + u".efkefc").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
 	auto single16Test = [&](const char16_t* name, const char* savename) -> void {
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
@@ -108,8 +96,6 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 
 	single15Test(u"Update_Easing", "Update_Easing");
 	single15Test(u"Update_MultiModel", "Update_MultiModel");
-
-	single15nowebglTest(u"dds", "dds");
 
 	{
 		single16Test(u"Flip01", "Flip01");

@@ -64,11 +64,11 @@
     ps_3_0
     def c13, 2, -1, -0.5, -3
     def c14, 0, -1, -0, 0
-    dcl_texcoord v0.xy
+    dcl_texcoord_centroid v0.xy
     dcl_texcoord1 v1.xyz
     dcl_texcoord2 v2.xyz
     dcl_texcoord3 v3.xyz
-    dcl_texcoord4 v4
+    dcl_texcoord4_centroid v4
     dcl_texcoord5 v5
     dcl_texcoord6 v6
     dcl_texcoord7 v7
@@ -358,7 +358,7 @@ const BYTE g_ps30_main[] =
       0,   0, 128, 191,   0,   0, 
       0, 128,   0,   0,   0,   0, 
      31,   0,   0,   2,   5,   0, 
-      0, 128,   0,   0,   3, 144, 
+      0, 128,   0,   0,  67, 144, 
      31,   0,   0,   2,   5,   0, 
       1, 128,   1,   0,   7, 144, 
      31,   0,   0,   2,   5,   0, 
@@ -366,7 +366,7 @@ const BYTE g_ps30_main[] =
      31,   0,   0,   2,   5,   0, 
       3, 128,   3,   0,   7, 144, 
      31,   0,   0,   2,   5,   0, 
-      4, 128,   4,   0,  15, 144, 
+      4, 128,   4,   0,  79, 144, 
      31,   0,   0,   2,   5,   0, 
       5, 128,   5,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 

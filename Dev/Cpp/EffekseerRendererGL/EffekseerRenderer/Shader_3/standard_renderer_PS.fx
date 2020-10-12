@@ -48,8 +48,8 @@ layout(binding = 5) uniform sampler2D Sampler_g_blendUVDistortionSampler;
 layout(binding = 3) uniform sampler2D Sampler_g_blendSampler;
 layout(binding = 4) uniform sampler2D Sampler_g_blendAlphaSampler;
 
-in vec4 _VSPS_Color;
-in vec2 _VSPS_UV;
+centroid in vec4 _VSPS_Color;
+centroid in vec2 _VSPS_UV;
 in vec4 _VSPS_Position;
 in vec4 _VSPS_PosU;
 in vec4 _VSPS_PosR;

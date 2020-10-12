@@ -20,11 +20,11 @@ layout(set = 1, binding = 0, std140) uniform VS_ConstantBuffer
 layout(set = 1, binding = 1) uniform sampler2D Sampler_g_colorSampler;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_g_normalSampler;
 
-layout(location = 0) in vec2 Input_UV;
+layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec3 Input_Normal;
 layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
-layout(location = 4) in vec4 Input_Color;
+layout(location = 4) centroid in vec4 Input_Color;
 layout(location = 0) out vec4 _entryPointOutput;
 
 vec4 _main(PS_Input Input)

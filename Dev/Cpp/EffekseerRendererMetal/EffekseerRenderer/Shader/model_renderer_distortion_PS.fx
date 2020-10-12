@@ -47,11 +47,11 @@ struct main0_out
 
 struct main0_in
 {
-    float2 Input_UV [[user(locn0)]];
+    float2 Input_UV [[user(locn0), centroid_perspective]];
     float4 Input_Binormal [[user(locn1)]];
     float4 Input_Tangent [[user(locn2)]];
     float4 Input_Pos [[user(locn3)]];
-    float4 Input_Color [[user(locn4)]];
+    float4 Input_Color [[user(locn4), centroid_perspective]];
     float4 Input_Alpha_Dist_UV [[user(locn5)]];
     float4 Input_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 Input_Blend_FBNextIndex_UV [[user(locn7)]];

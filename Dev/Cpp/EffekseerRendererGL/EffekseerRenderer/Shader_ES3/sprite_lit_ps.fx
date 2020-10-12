@@ -33,9 +33,9 @@ uniform VS_ConstantBuffer CBPS0;
 uniform highp sampler2D Sampler_g_normalSampler;
 uniform highp sampler2D Sampler_g_colorSampler;
 
-in highp vec4 _VSPS_VColor;
-in highp vec2 _VSPS_UV1;
-in highp vec2 _VSPS_UV2;
+centroid in highp vec4 _VSPS_VColor;
+centroid in highp vec2 _VSPS_UV1;
+centroid in highp vec2 _VSPS_UV2;
 in highp vec3 _VSPS_WorldP;
 in highp vec3 _VSPS_WorldN;
 in highp vec3 _VSPS_WorldT;

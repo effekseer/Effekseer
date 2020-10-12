@@ -61,11 +61,11 @@ layout(binding = 6) uniform sampler2D Sampler_g_blendUVDistortionSampler;
 layout(binding = 4) uniform sampler2D Sampler_g_blendSampler;
 layout(binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
 
-in vec2 _VSPS_UV;
+centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_Normal;
 in vec3 _VSPS_Binormal;
 in vec3 _VSPS_Tangent;
-in vec4 _VSPS_Color;
+centroid in vec4 _VSPS_Color;
 in vec4 _VSPS_Alpha_Dist_UV;
 in vec4 _VSPS_Blend_Alpha_Dist_UV;
 in vec4 _VSPS_Blend_FBNextIndex_UV;

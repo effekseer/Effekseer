@@ -59,11 +59,11 @@ uniform highp sampler2D Sampler_g_blendUVDistortionSampler;
 uniform highp sampler2D Sampler_g_blendSampler;
 uniform highp sampler2D Sampler_g_blendAlphaSampler;
 
-varying highp vec2 _VSPS_UV;
+centroid varying highp vec2 _VSPS_UV;
 varying highp vec3 _VSPS_Normal;
 varying highp vec3 _VSPS_Binormal;
 varying highp vec3 _VSPS_Tangent;
-varying highp vec4 _VSPS_Color;
+centroid varying highp vec4 _VSPS_Color;
 varying highp vec4 _VSPS_Alpha_Dist_UV;
 varying highp vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying highp vec4 _VSPS_Blend_FBNextIndex_UV;

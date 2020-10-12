@@ -10,6 +10,18 @@ static char* material_common_define = R"(
 #define LERP lerp
 )"
 
+#if defined(_DIRECTX11) || defined(_DIRECTX12)
+									  R"(
+#define C_LINEAR linear
+#define C_CENTROID centroid
+)"
+#else
+									  R"(
+#define C_LINEAR
+#define C_CENTROID
+)"
+#endif
+
 #if defined(_PSSL)
 R"(
 #define SV_POSITION S_POSITION
@@ -57,9 +69,9 @@ struct VS_Input
 struct VS_Output
 {
 	float4 Position		: SV_POSITION;
-	float4 VColor		: COLOR;
-	float2 UV1		: TEXCOORD0;
-	float2 UV2		: TEXCOORD1;
+	C_LINEAR C_CENTROID float4 VColor		: COLOR;
+	C_LINEAR C_CENTROID float2 UV1		: TEXCOORD0;
+	C_LINEAR C_CENTROID float2 UV2		: TEXCOORD1;
 	float3 WorldP	: TEXCOORD2;
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
@@ -94,9 +106,9 @@ struct VS_Input
 struct VS_Output
 {
 	float4 Position		: SV_POSITION;
-	float4 VColor		: COLOR;
-	float2 UV1		: TEXCOORD0;
-	float2 UV2		: TEXCOORD1;
+	C_LINEAR C_CENTROID float4 VColor		: COLOR;
+	C_LINEAR C_CENTROID float2 UV1		: TEXCOORD0;
+	C_LINEAR C_CENTROID float2 UV2		: TEXCOORD1;
 	float3 WorldP	: TEXCOORD2;
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
@@ -218,9 +230,9 @@ R"(
 struct VS_Output
 {
 	float4 Position		: SV_POSITION;
-	float4 VColor		: COLOR;
-	float2 UV1		: TEXCOORD0;
-	float2 UV2		: TEXCOORD1;
+	C_LINEAR C_CENTROID float4 VColor		: COLOR;
+	C_LINEAR C_CENTROID float2 UV1		: TEXCOORD0;
+	C_LINEAR C_CENTROID float2 UV2		: TEXCOORD1;
 	float3 WorldP	: TEXCOORD2;
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
@@ -359,9 +371,9 @@ struct PS_Input
 )"
 #endif
 R"(
-	float4 VColor		: COLOR;
-	float2 UV1		: TEXCOORD0;
-	float2 UV2		: TEXCOORD1;
+	C_LINEAR C_CENTROID float4 VColor		: COLOR;
+	C_LINEAR C_CENTROID float2 UV1		: TEXCOORD0;
+	C_LINEAR C_CENTROID float2 UV2		: TEXCOORD1;
 	float3 WorldP	: TEXCOORD2;
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
