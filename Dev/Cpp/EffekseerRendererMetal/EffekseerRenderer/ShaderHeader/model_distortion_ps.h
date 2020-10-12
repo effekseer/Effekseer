@@ -33,12 +33,12 @@ struct main0_out
 
 struct main0_in
 {
-    float2 Input_UV [[user(locn0)]];
+    float2 Input_UV [[user(locn0), centroid_perspective]];
     float4 Input_Normal [[user(locn1)]];
     float4 Input_Binormal [[user(locn2)]];
     float4 Input_Tangent [[user(locn3)]];
     float4 Input_Pos [[user(locn4)]];
-    float4 Input_Color [[user(locn5)]];
+    float4 Input_Color [[user(locn5), centroid_perspective]];
 };
 
 static inline __attribute__((always_inline))

@@ -27,8 +27,8 @@ struct VS_Input
 struct VS_Output
 {
 	float4 Position		: SV_POSITION;
-	float4 Color		: COLOR;
-	float2 UV		: TEXCOORD0;
+	linear centroid float4 Color		: COLOR;
+	linear centroid float2 UV		: TEXCOORD0;
 
 	float4 Pos		: TEXCOORD1;
 	float4 PosU		: TEXCOORD2;

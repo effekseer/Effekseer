@@ -51,8 +51,8 @@ struct main0_out
 
 struct main0_in
 {
-    float4 Input_VColor [[user(locn0)]];
-    float2 Input_UV [[user(locn1)]];
+    float4 Input_VColor [[user(locn0), centroid_perspective]];
+    float2 Input_UV [[user(locn1), centroid_perspective]];
     float3 Input_WorldN [[user(locn2)]];
     float3 Input_WorldT [[user(locn3)]];
     float3 Input_WorldB [[user(locn4)]];

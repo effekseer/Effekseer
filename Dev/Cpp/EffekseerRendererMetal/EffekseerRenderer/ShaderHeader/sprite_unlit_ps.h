@@ -30,8 +30,8 @@ struct main0_out
 
 struct main0_in
 {
-    float4 Input_Color [[user(locn0)]];
-    float2 Input_UV [[user(locn1)]];
+    float4 Input_Color [[user(locn0), centroid_perspective]];
+    float2 Input_UV [[user(locn1), centroid_perspective]];
 };
 
 static inline __attribute__((always_inline))

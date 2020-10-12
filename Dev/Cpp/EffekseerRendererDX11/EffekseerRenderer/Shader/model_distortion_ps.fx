@@ -19,12 +19,12 @@ cbuffer PS_ConstanBuffer : register(b0)
 struct PS_Input
 {
 	float4 Position : SV_POSITION;
-	float2 UV : TEXCOORD0;
+	linear centroid float2 UV : TEXCOORD0;
 	float4 Normal : TEXCOORD1;
 	float4 Binormal : TEXCOORD2;
 	float4 Tangent : TEXCOORD3;
 	float4 Pos : TEXCOORD4;
-	float4 Color : COLOR0;
+	linear centroid float4 Color : COLOR0;
 };
 
 float4 main(const PS_Input Input)

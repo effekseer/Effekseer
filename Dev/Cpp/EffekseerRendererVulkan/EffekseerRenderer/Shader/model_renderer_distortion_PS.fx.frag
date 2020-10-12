@@ -43,11 +43,11 @@ layout(set = 1, binding = 5) uniform sampler2D Sampler_g_blendSampler;
 layout(set = 1, binding = 6) uniform sampler2D Sampler_g_blendAlphaSampler;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_g_backSampler;
 
-layout(location = 0) in vec2 Input_UV;
+layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec4 Input_Binormal;
 layout(location = 2) in vec4 Input_Tangent;
 layout(location = 3) in vec4 Input_Pos;
-layout(location = 4) in vec4 Input_Color;
+layout(location = 4) centroid in vec4 Input_Color;
 layout(location = 5) in vec4 Input_Alpha_Dist_UV;
 layout(location = 6) in vec4 Input_Blend_Alpha_Dist_UV;
 layout(location = 7) in vec4 Input_Blend_FBNextIndex_UV;

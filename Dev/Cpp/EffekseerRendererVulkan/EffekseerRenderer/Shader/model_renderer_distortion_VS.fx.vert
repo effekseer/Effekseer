@@ -51,11 +51,11 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
-layout(location = 0) out vec2 _entryPointOutput_UV;
+layout(location = 0) centroid out vec2 _entryPointOutput_UV;
 layout(location = 1) out vec4 _entryPointOutput_Binormal;
 layout(location = 2) out vec4 _entryPointOutput_Tangent;
 layout(location = 3) out vec4 _entryPointOutput_Pos;
-layout(location = 4) out vec4 _entryPointOutput_Color;
+layout(location = 4) centroid out vec4 _entryPointOutput_Color;
 layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
 layout(location = 6) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
 layout(location = 7) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
@@ -181,16 +181,17 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortion
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 matModel = _364.mModel[Input.Index];
-    vec4 uv = _364.fUV[Input.Index];
-    vec4 modelColor = _364.fModelColor[Input.Index];
-    vec4 alphaUV = _364.fAlphaUV[Input.Index];
-    vec4 uvDistortionUV = _364.fUVDistortionUV[Input.Index];
-    vec4 blendUV = _364.fBlendUV[Input.Index];
-    vec4 blendAlphaUV = _364.fBlendAlphaUV[Input.Index];
-    vec4 blendUVDistortionUV = _364.fBlendUVDistortionUV[Input.Index];
-    float flipbookIndexAndNextRate = _364.fFlipbookIndexAndNextRate[Input.Index].x;
-    float modelAlphaThreshold = _364.fModelAlphaThreshold[Input.Index].x;
+    uint index = Input.Index;
+    mat4 matModel = _364.mModel[index];
+    vec4 uv = _364.fUV[index];
+    vec4 modelColor = _364.fModelColor[index];
+    vec4 alphaUV = _364.fAlphaUV[index];
+    vec4 uvDistortionUV = _364.fUVDistortionUV[index];
+    vec4 blendUV = _364.fBlendUV[index];
+    vec4 blendAlphaUV = _364.fBlendAlphaUV[index];
+    vec4 blendUVDistortionUV = _364.fBlendUVDistortionUV[index];
+    float flipbookIndexAndNextRate = _364.fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = _364.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);

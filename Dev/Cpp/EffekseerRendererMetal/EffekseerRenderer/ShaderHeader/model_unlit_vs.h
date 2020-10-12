@@ -54,23 +54,24 @@ struct main0_in
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_26)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_31)
 {
-    float4x4 matModel = transpose(v_26.mModel[Input.Index]);
-    float4 uv = v_26.fUV[Input.Index];
-    float4 modelColor = v_26.fModelColor[Input.Index] * Input.Color;
+    uint index = Input.Index;
+    float4x4 matModel = transpose(v_31.mModel[index]);
+    float4 uv = v_31.fUV[index];
+    float4 modelColor = v_31.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 cameraPosition = localPosition * matModel;
-    Output.Pos = v_26.mCameraProj * cameraPosition;
+    Output.Pos = v_31.mCameraProj * cameraPosition;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = v_26.mUVInversed.x + (v_26.mUVInversed.y * Output.UV.y);
+    Output.UV.y = v_31.mUVInversed.x + (v_31.mUVInversed.y * Output.UV.y);
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_26 [[buffer(0)]], uint gl_InstanceIndex [[instance_id]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_31 [[buffer(0)]], uint gl_InstanceIndex [[instance_id]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -81,7 +82,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.UV = in.Input_UV;
     Input.Color = in.Input_Color;
     Input.Index = gl_InstanceIndex;
-    VS_Output flattenTemp = _main(Input, v_26);
+    VS_Output flattenTemp = _main(Input, v_31);
     out.gl_Position = flattenTemp.Pos;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_Color = flattenTemp.Color;

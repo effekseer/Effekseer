@@ -59,12 +59,12 @@ SamplerState    g_blendUVDistortionSampler : register( s6 );
 struct PS_Input
 {
 	float4 Pos		: SV_POSITION;
-	float2 UV		: TEXCOORD0;
+	linear centroid float2 UV		: TEXCOORD0;
     
-    float3 Normal		: TEXCOORD1;
+	float3 Normal		: TEXCOORD1;
 	float3 Binormal		: TEXCOORD2;
 	float3 Tangent		: TEXCOORD3;  
-    float4 Color : COLOR;
+	linear centroid float4 Color : COLOR;
 
 	float4 Alpha_Dist_UV : TEXCOORD4;
 	float4 Blend_Alpha_Dist_UV : TEXCOORD5;

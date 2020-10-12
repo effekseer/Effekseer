@@ -35,13 +35,13 @@ struct VS_Input
 struct VS_Output
 {
 	float4 Pos : SV_POSITION;
-	float2 UV : TEXCOORD0;
+	linear centroid float2 UV : TEXCOORD0;
 #if ENABLE_NORMAL_TEXTURE
 	half3 Normal : TEXCOORD1;
 	half3 Binormal : TEXCOORD2;
 	half3 Tangent : TEXCOORD3;
 #endif
-	float4 Color : COLOR;
+	linear centroid float4 Color : COLOR;
 };
 
 VS_Output main(const VS_Input Input)
@@ -50,9 +50,16 @@ VS_Output main(const VS_Input Input)
 	float4 uv = fUV;
 	float4 modelColor = fModelColor * Input.Color;
 #else
-	float4x4 matModel = mModel[Input.Index];
-	float4 uv = fUV[Input.Index];
-	float4 modelColor = fModelColor[Input.Index] * Input.Color;
+
+#if defined(ENABLE_DIVISOR)
+	int index = (int)Input.Index;
+#else
+	uint index = Input.Index;
+#endif
+
+	float4x4 matModel = mModel[index];
+	float4 uv = fUV[index];
+	float4 modelColor = fModelColor[index] * Input.Color;
 #endif
 
 	VS_Output Output = (VS_Output)0;

@@ -40,8 +40,8 @@ attribute vec3 Input_Binormal;
 attribute vec3 Input_Tangent;
 attribute vec2 Input_UV;
 attribute vec4 Input_Color;
-varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
+centroid varying vec4 _VSPS_Color;
 
 VS_Output _main(VS_Input Input)
 {

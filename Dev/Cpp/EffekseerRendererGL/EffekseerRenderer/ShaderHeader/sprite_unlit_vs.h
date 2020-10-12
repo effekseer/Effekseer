@@ -31,8 +31,8 @@ uniform VS_ConstantBuffer CBVS0;
 attribute vec3 Input_Pos;
 attribute vec4 Input_Color;
 attribute vec2 Input_UV;
-varying vec4 _VSPS_Color;
-varying vec2 _VSPS_UV;
+centroid varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
 
 VS_Output _main(VS_Input Input)
 {
@@ -96,8 +96,8 @@ uniform VS_ConstantBuffer CBVS0;
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
 layout(location = 2) in vec2 Input_UV;
-out vec4 _VSPS_Color;
-out vec2 _VSPS_UV;
+centroid out vec4 _VSPS_Color;
+centroid out vec2 _VSPS_UV;
 
 VS_Output _main(VS_Input Input)
 {
@@ -158,8 +158,8 @@ uniform VS_ConstantBuffer CBVS0;
 attribute vec3 Input_Pos;
 attribute vec4 Input_Color;
 attribute vec2 Input_UV;
-varying vec4 _VSPS_Color;
-varying vec2 _VSPS_UV;
+centroid varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
 
 VS_Output _main(VS_Input Input)
 {
@@ -220,8 +220,8 @@ uniform VS_ConstantBuffer CBVS0;
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
 layout(location = 2) in vec2 Input_UV;
-out vec4 _VSPS_Color;
-out vec2 _VSPS_UV;
+centroid out vec4 _VSPS_Color;
+centroid out vec2 _VSPS_UV;
 
 VS_Output _main(VS_Input Input)
 {

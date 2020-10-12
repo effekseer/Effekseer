@@ -77,8 +77,8 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    float4 _entryPointOutput_VColor : TEXCOORD0;
-    float2 _entryPointOutput_UV : TEXCOORD1;
+    centroid float4 _entryPointOutput_VColor : TEXCOORD0;
+    centroid float2 _entryPointOutput_UV : TEXCOORD1;
     float3 _entryPointOutput_WorldN : TEXCOORD2;
     float3 _entryPointOutput_WorldT : TEXCOORD3;
     float3 _entryPointOutput_WorldB : TEXCOORD4;

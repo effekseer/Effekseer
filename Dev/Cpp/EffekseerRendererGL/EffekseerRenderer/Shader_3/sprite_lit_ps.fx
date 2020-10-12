@@ -34,9 +34,9 @@ uniform VS_ConstantBuffer CBPS0;
 layout(binding = 1) uniform sampler2D Sampler_g_normalSampler;
 layout(binding = 0) uniform sampler2D Sampler_g_colorSampler;
 
-in vec4 _VSPS_VColor;
-in vec2 _VSPS_UV1;
-in vec2 _VSPS_UV2;
+centroid in vec4 _VSPS_VColor;
+centroid in vec2 _VSPS_UV1;
+centroid in vec2 _VSPS_UV2;
 in vec3 _VSPS_WorldP;
 in vec3 _VSPS_WorldN;
 in vec3 _VSPS_WorldT;
