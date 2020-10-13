@@ -350,11 +350,11 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 */
 class SplineGenerator
 {
-	std::vector<Effekseer::Vec3f> a;
-	std::vector<Effekseer::Vec3f> b;
-	std::vector<Effekseer::Vec3f> c;
-	std::vector<Effekseer::Vec3f> d;
-	std::vector<Effekseer::Vec3f> w;
+	Effekseer::CustomAlignedVector<Effekseer::Vec3f> a;
+	Effekseer::CustomAlignedVector<Effekseer::Vec3f> b;
+	Effekseer::CustomAlignedVector<Effekseer::Vec3f> c;
+	Effekseer::CustomAlignedVector<Effekseer::Vec3f> d;
+	Effekseer::CustomAlignedVector<Effekseer::Vec3f> w;
 	std::vector<bool> isSame;
 
 public:

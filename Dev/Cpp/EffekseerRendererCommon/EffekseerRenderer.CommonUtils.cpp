@@ -42,7 +42,6 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			R = ::Effekseer::Vec3f::Cross(Up, F).Normalize();
 			U = ::Effekseer::Vec3f::Cross(F, R).Normalize();
 
-			
 			float c_zx2 = Effekseer::Vec3f::Dot(r.Y, r.Y) - r.Y.GetZ() * r.Y.GetZ();
 			float c_zx = sqrt(std::max(0.0f, c_zx2));
 			float s_z = 0.0f;
@@ -94,6 +93,10 @@ void SplineGenerator::Calculate()
 	c.resize(a.size());
 	d.resize(a.size());
 	w.resize(a.size());
+
+	b[0] = b[b.size() - 1] = ::Effekseer::Vec3f(0.0f, 0.0f, 0.0f);
+	c[0] = c[c.size() - 1] = ::Effekseer::Vec3f(0.0f, 0.0f, 0.0f);
+	w[0] = ::Effekseer::Vec3f(0.0f, 0.0f, 0.0f);
 
 	for (size_t i = 1; i < a.size() - 1; i++)
 	{
