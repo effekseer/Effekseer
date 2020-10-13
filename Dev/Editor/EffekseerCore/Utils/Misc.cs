@@ -102,7 +102,7 @@ namespace Effekseer.Utils
 							resources.ColorTextures.Add(_node.RendererCommonValues.ColorTexture);
 						}
 
-						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
+						if (exporterVersion >= Binary.ExporterVersion.Ver16Alpha1)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -145,7 +145,7 @@ namespace Effekseer.Utils
 							resources.DistortionTextures.Add(_node.RendererCommonValues.ColorTexture);
 						}
 
-						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
+						if (exporterVersion >= Binary.ExporterVersion.Ver16Alpha1)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -194,7 +194,7 @@ namespace Effekseer.Utils
 							resources.NormalTextures.Add(_node.RendererCommonValues.NormalTexture);
 						}
 
-						if (exporterVersion >= Binary.ExporterVersion.Ver1600)
+						if (exporterVersion >= Binary.ExporterVersion.Ver16Alpha1)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)

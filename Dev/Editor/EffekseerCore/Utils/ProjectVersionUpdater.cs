@@ -247,7 +247,7 @@ namespace Effekseer.Utils
 		}
 	}
 
-	class ProjectVersionUpdator15xTo16x : ProjectVersionUpdator
+	class ProjectVersionUpdator15xTo16Alpha1 : ProjectVersionUpdator
 	{
 		public override bool Update(System.Xml.XmlDocument document)
 		{
@@ -287,6 +287,145 @@ namespace Effekseer.Utils
 
 						rendererCommon["UVAnimation"].AppendChild(uvAnimationParamNode);
 					}
+				}
+			}
+
+			return true;
+		}
+	}
+
+	class ProjectVersionUpdator16Alpha1To16x : ProjectVersionUpdator
+	{
+		public override bool Update(System.Xml.XmlDocument document)
+		{
+			List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
+
+			Action<System.Xml.XmlNode> collectNodes = null;
+			collectNodes = (node) =>
+			{
+				if (node.Name == "Node")
+				{
+					nodes.Add(node);
+				}
+
+				for (int i = 0; i < node.ChildNodes.Count; i++)
+				{
+					collectNodes(node.ChildNodes[i]);
+				}
+			};
+
+			collectNodes((XmlNode)document);
+
+			foreach (var node in nodes)
+			{
+				var labs = node["LocationAbsValues"];
+
+				if (labs != null)
+				{
+					// old gravity and attractive force to new
+					if (labs["Type"] != null && labs["Type"].GetTextAsInt() != 0)
+					{
+						var lff = document.CreateElement("LocalForceField4");
+
+						var type = labs["Type"].GetTextAsInt();
+						if (type == 1)
+						{
+							lff.AppendChild(document.CreateTextElement("Type", (int)LocalForceFieldType.Gravity));
+						}
+						else if (type == 2)
+						{
+							lff.AppendChild(document.CreateTextElement("Type", (int)LocalForceFieldType.AttractiveForce));
+						}
+						
+						if (labs["Gravity"] != null)
+						{
+							lff.AppendChild(labs["Gravity"]);
+						}
+
+						if (labs["AttractiveForce"] != null)
+						{
+							lff.AppendChild(labs["AttractiveForce"]);
+							
+							if(lff["AttractiveForce"]["Force"] != null)
+							{
+								var force = lff["AttractiveForce"]["Force"].GetTextAsFloat();
+								lff.AppendChild(document.CreateTextElement("Power", force.ToString()));
+							}
+						}
+
+						labs.AppendChild(lff);
+					}
+
+					Action<XmlElement> convert = (elm) =>
+					{
+						if (elm == null)
+							return;
+
+						var typeInt = elm["Type"]?.GetTextAsInt();
+						var type = typeInt.HasValue ? (Data.LocalForceFieldType)(typeInt.Value) : Data.LocalForceFieldType.None;
+
+						if(type == LocalForceFieldType.Turbulence)
+						{
+							if (elm["Turbulence"] != null && elm["Turbulence"]["Strength"] != null)
+							{
+								var strength = elm["Turbulence"]["Strength"].GetTextAsFloat();
+								elm.AppendChild(document.CreateTextElement("Power", strength.ToString()));
+							}
+						}
+
+						float defaultPower = 1.0f;
+
+						if (type == LocalForceFieldType.Turbulence)
+						{
+							defaultPower = 0.1f;
+						}
+						
+						if (elm["Power"] != null)
+						{
+							defaultPower = elm["Power"].GetTextAsFloat();
+						}
+
+						if (type == LocalForceFieldType.Turbulence)
+						{
+							defaultPower *= 10.0f;
+						}
+
+						if (type == LocalForceFieldType.Vortex)
+						{
+							defaultPower /= 5.0f;
+						}
+
+						if (elm["Power"] != null)
+						{
+							elm.RemoveChild(elm["Power"]);
+						}
+
+						elm.AppendChild(document.CreateTextElement("Power", defaultPower.ToString()));
+
+						if (type == LocalForceFieldType.Vortex)
+						{
+							if (elm["Vortex"] == null)
+							{
+								elm.AppendChild(document.CreateElement("Vortex"));
+							}
+
+							elm["Vortex"].AppendChild(document.CreateTextElement("VortexType", ((int)ForceFieldVortexType.ConstantSpeed).ToString()));
+						}
+
+						if (type == LocalForceFieldType.Turbulence)
+						{
+							if (elm["Turbulence"] == null)
+							{
+								elm.AppendChild(document.CreateElement("Turbulence"));
+							}
+
+							elm["Turbulence"].AppendChild(document.CreateTextElement("TurbulenceType", ((int)ForceFieldTurbulenceType.Complicated).ToString()));
+						}
+					};
+
+					convert(labs["LocalForceField1"]);
+					convert(labs["LocalForceField2"]);
+					convert(labs["LocalForceField3"]);
 				}
 			}
 

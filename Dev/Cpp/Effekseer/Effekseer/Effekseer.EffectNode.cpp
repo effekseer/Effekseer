@@ -74,7 +74,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	if (node_type == -1)
 	{
 		TranslationType = ParameterTranslationType_None;
-		LocationAbs.type = LocationAbsType::None;
 		RotationType = ParameterRotationType_None;
 		ScalingType = ParameterScalingType_None;
 		CommonValues.MaxGeneration = 1;
@@ -262,65 +261,54 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		// Local force field
 		if (ef->GetVersion() >= 1500)
 		{
-#ifdef OLD_LF
-			int32_t count = 0;
-			memcpy(&count, pos, sizeof(int));
-			pos += sizeof(int);
-
-			for (int32_t i = 0; i < count; i++)
-			{
-				LocalForceFieldsOld[i].Load(pos, ef->GetVersion());
-			}
-#else
 			LocalForceField.Load(pos, ef->GetVersion());
-#endif
 		}
 
-		memcpy(&LocationAbs.type, pos, sizeof(int));
-		pos += sizeof(int);
+		// for compatiblity of location abs
+		if (ef->GetVersion() <= Version16Alpha1)
+		{
+			LocationAbsParameter LocationAbs;
 
-		// Calc attraction forces
-		if (LocationAbs.type == LocationAbsType::None)
-		{
-			memcpy(&size, pos, sizeof(int));
+			memcpy(&LocationAbs.type, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == 0);
-			memcpy(&LocationAbs.none, pos, size);
-			pos += size;
-		}
-		else if (LocationAbs.type == LocationAbsType::Gravity)
-		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
-			assert(size == sizeof(vector3d));
-			memcpy(&LocationAbs.gravity, pos, size);
-			pos += size;
-		}
-		else if (LocationAbs.type == LocationAbsType::AttractiveForce)
-		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
-			assert(size == sizeof(LocationAbs.attractiveForce));
-			memcpy(&LocationAbs.attractiveForce, pos, size);
-			pos += size;
-		}
 
-		// Magnify attraction forces
-		if (ef->IsDyanamicMagnificationValid())
-		{
+			// Calc attraction forces
 			if (LocationAbs.type == LocationAbsType::None)
 			{
+				memcpy(&size, pos, sizeof(int));
+				pos += sizeof(int);
+				assert(size == 0);
+				memcpy(&LocationAbs.none, pos, size);
+				pos += size;
 			}
 			else if (LocationAbs.type == LocationAbsType::Gravity)
 			{
-				LocationAbs.gravity *= m_effect->GetMaginification();
+				memcpy(&size, pos, sizeof(int));
+				pos += sizeof(int);
+				assert(size == sizeof(vector3d));
+				memcpy(&LocationAbs.gravity, pos, size);
+				pos += size;
 			}
 			else if (LocationAbs.type == LocationAbsType::AttractiveForce)
 			{
-				LocationAbs.attractiveForce.control *= m_effect->GetMaginification();
-				LocationAbs.attractiveForce.force *= m_effect->GetMaginification();
-				LocationAbs.attractiveForce.minRange *= m_effect->GetMaginification();
-				LocationAbs.attractiveForce.maxRange *= m_effect->GetMaginification();
+				memcpy(&size, pos, sizeof(int));
+				pos += sizeof(int);
+				assert(size == sizeof(LocationAbs.attractiveForce));
+				memcpy(&LocationAbs.attractiveForce, pos, size);
+				pos += size;
+			}
+
+			if (LocationAbs.type == LocationAbsType::Gravity)
+			{
+				LocalForceField.MaintainGravityCompatibility(LocationAbs.gravity);
+			}
+			else if (LocationAbs.type == LocationAbsType::AttractiveForce)
+			{
+				LocalForceField.MaintainAttractiveForceCompatibility(
+					LocationAbs.attractiveForce.force,
+					LocationAbs.attractiveForce.control,
+					LocationAbs.attractiveForce.minRange,
+					LocationAbs.attractiveForce.maxRange);
 			}
 		}
 

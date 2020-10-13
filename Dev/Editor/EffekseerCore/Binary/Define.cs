@@ -79,7 +79,7 @@ namespace Effekseer.Binary
 			_data.Add(easingValue.End.GetBytes(magnification));
 
 			// middle
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int isMiddleEnabled = easingValue.IsMiddleEnabled ? 1 : 0;
 				_data.Add(isMiddleEnabled.GetBytes());
@@ -94,7 +94,7 @@ namespace Effekseer.Binary
 
 				var type = easingValue.Type.Value;
 
-				if (version >= ExporterVersion.Ver1600)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					_data.Add(BitConverter.GetBytes((int)type));
 
@@ -115,7 +115,7 @@ namespace Effekseer.Binary
 				}
 
 				// Channel
-				if (version >= ExporterVersion.Ver1600)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					if (easingValue.IsRandomGroupEnabled.Value)
 					{
@@ -144,7 +144,7 @@ namespace Effekseer.Binary
 				}
 
 				// Individual
-				if (version >= ExporterVersion.Ver1600)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					int individualTypeEnabled = easingValue.IsIndividualTypeEnabled.Value ? 1 : 0;
 					_data.Add(BitConverter.GetBytes(individualTypeEnabled));
@@ -179,7 +179,7 @@ namespace Effekseer.Binary
 			_data.Add(easingValue.End.GetBytes(magnification));
 
 			// middle
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int isMiddleEnabled = easingValue.IsMiddleEnabled.Value ? 1 : 0;
 				_data.Add(isMiddleEnabled.GetBytes());
@@ -195,7 +195,7 @@ namespace Effekseer.Binary
 
 			var type = easingValue.Type.Value;
 
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				_data.Add(BitConverter.GetBytes((int)type));
 
@@ -216,7 +216,7 @@ namespace Effekseer.Binary
 			}
 
 			// Channel
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				if (easingValue.IsRandomGroupEnabled.Value)
 				{
@@ -249,7 +249,7 @@ namespace Effekseer.Binary
 			}
 
 			// Individual
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int individualTypeEnabled = easingValue.IsIndividualTypeEnabled.Value ? 1 : 0;
 				_data.Add(BitConverter.GetBytes(individualTypeEnabled));

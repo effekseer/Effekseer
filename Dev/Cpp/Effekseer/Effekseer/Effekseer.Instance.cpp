@@ -62,7 +62,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 		{
 			break;
 		}
-	
+
 		if (group != NULL)
 		{
 			group->NextUsedByInstance = allocated;
@@ -326,10 +326,7 @@ void Instance::FirstUpdate()
 	m_pParent->CalculateMatrix(0);
 
 	const Mat43f& parentMatrix = m_pParent->GetGlobalMatrix43();
-	m_GlobalPosition = parentMatrix.GetTranslation();
-	m_GlobalRevisionLocation = Vec3f(0.0f, 0.0f, 0.0f);
-	m_GlobalRevisionVelocity = Vec3f(0.0f, 0.0f, 0.0f);
-	localForceField_.Reset();
+	forceField_.Reset();
 	m_GenerationLocation = Mat43f::Identity;
 
 	// 親の初期化
@@ -992,6 +989,7 @@ void Instance::FirstUpdate()
 		}
 	}
 
+	prevGlobalPosition_ = Vec3f::Transform(prevPosition_, m_ParentMatrix);
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
 }
 
@@ -1038,9 +1036,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	{
 		CalculateMatrix(deltaFrame);
 	}
-	else if (m_pEffectNode->LocationAbs.type != LocationAbsType::None
-			 || m_pEffectNode->LocalForceField.HasValue
-	)
+	else if (m_pEffectNode->LocalForceField.HasValue)
 	{
 		// If attraction forces are not default, updating is needed in each frame.
 		CalculateMatrix(deltaFrame);
@@ -1501,9 +1497,9 @@ void Instance::CalculateMatrix(float deltaFrame)
 			currentLocalPosition = localPosition;
 		}
 
-		currentLocalPosition += localForceField_.ModifyLocation;
-		localForceField_.ExternalVelocity = localVelocity;
-		localForceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification());
+		currentLocalPosition += forceField_.ModifyLocation;
+		forceField_.ExternalVelocity = localVelocity;
+		forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification());
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance(*this, m_pManager);
@@ -1536,11 +1532,11 @@ void Instance::CalculateMatrix(float deltaFrame)
 			m_GlobalMatrix43 *= m_GenerationLocation;
 			assert(m_GlobalMatrix43.IsValid());
 
-			m_GlobalMatrix43 *= Mat43f::Translation(localForceField_.ModifyLocation);
+			m_GlobalMatrix43 *= Mat43f::Translation(forceField_.ModifyLocation);
 		}
 		else
 		{
-			localPosition += localForceField_.ModifyLocation;
+			localPosition += forceField_.ModifyLocation;
 
 			m_GlobalMatrix43 = Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
@@ -1552,16 +1548,15 @@ void Instance::CalculateMatrix(float deltaFrame)
 			assert(m_GlobalMatrix43.IsValid());
 		}
 
-		if (m_pEffectNode->LocationAbs.type != LocationAbsType::None)
+		if (m_pEffectNode->LocalForceField.IsGlobalEnabled)
 		{
-			Vec3f currentTranslation = m_GlobalMatrix43.GetTranslation();
-			assert(m_GlobalMatrix43.IsValid());
-
-			m_GlobalVelocity = currentTranslation - m_GlobalPosition;
-			m_GlobalPosition = currentTranslation;
-
-			ModifyMatrixFromLocationAbs(deltaFrame);
+			InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
+			forceField_.UpdateGlobal(m_pEffectNode->LocalForceField, prevGlobalPosition_, m_pEffectNode->GetEffect()->GetMaginification(), instanceGlobal->GetTargetLocation(), deltaFrame);
+			Mat43f MatTraGlobal = Mat43f::Translation(forceField_.GlobalModifyLocation);
+			m_GlobalMatrix43 *= MatTraGlobal;
 		}
+
+		prevGlobalPosition_ = m_GlobalMatrix43.GetTranslation();
 	}
 
 	m_GlobalMatrix43Calculated = true;
@@ -1619,66 +1614,6 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 	}
 
 	m_ParentMatrix43Calculated = true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Instance::ModifyMatrixFromLocationAbs(float deltaFrame)
-{
-	InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-
-	// Update attraction forces
-	if (m_pEffectNode->LocationAbs.type == LocationAbsType::None)
-	{
-	}
-	else if (m_pEffectNode->LocationAbs.type == LocationAbsType::Gravity)
-	{
-		m_GlobalRevisionLocation = m_pEffectNode->LocationAbs.gravity * (m_LivingTime * m_LivingTime * 0.5f);
-	}
-	else if (m_pEffectNode->LocationAbs.type == LocationAbsType::AttractiveForce)
-	{
-		float force = m_pEffectNode->LocationAbs.attractiveForce.force;
-		float control = m_pEffectNode->LocationAbs.attractiveForce.control;
-		float minRange = m_pEffectNode->LocationAbs.attractiveForce.minRange;
-		float maxRange = m_pEffectNode->LocationAbs.attractiveForce.maxRange;
-
-		Vec3f position = m_GlobalPosition - m_GlobalVelocity + m_GlobalRevisionLocation;
-
-		Vec3f targetDifference = instanceGlobal->GetTargetLocation() - position;
-		float targetDistance = targetDifference.GetLength();
-		if (targetDistance > 0.0f)
-		{
-			Vec3f targetDirection = targetDifference / targetDistance;
-
-			if (minRange > 0.0f || maxRange > 0.0f)
-			{
-				if (targetDistance >= m_pEffectNode->LocationAbs.attractiveForce.maxRange)
-				{
-					force = 0.0f;
-				}
-				else if (targetDistance > m_pEffectNode->LocationAbs.attractiveForce.minRange)
-				{
-					force *= 1.0f - (targetDistance - minRange) / (maxRange - minRange);
-				}
-			}
-
-			if (deltaFrame > 0)
-			{
-				float eps = 0.0001f;
-				m_GlobalRevisionVelocity += targetDirection * force * deltaFrame;
-				float currentVelocity = m_GlobalRevisionVelocity.GetLength() + eps;
-				Vec3f currentDirection = m_GlobalRevisionVelocity / currentVelocity;
-
-				m_GlobalRevisionVelocity = (targetDirection * control + currentDirection * (1.0f - control)) * currentVelocity;
-				m_GlobalRevisionLocation += m_GlobalRevisionVelocity * deltaFrame;
-			}
-		}
-	}
-
-	Mat43f MatTraGlobal = Mat43f::Translation(m_GlobalRevisionLocation);
-	m_GlobalMatrix43 *= MatTraGlobal;
-	assert(m_GlobalMatrix43.IsValid());
 }
 
 void Instance::ApplyDynamicParameterToFixedLocation()

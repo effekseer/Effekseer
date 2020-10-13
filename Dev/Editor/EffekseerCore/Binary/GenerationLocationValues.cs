@@ -22,7 +22,7 @@ namespace Effekseer.Binary
 
 			var type = value.Type.GetValue();
 
-			if(version < ExporterVersion.Ver1600)
+			if(version < ExporterVersion.Ver16Alpha1)
 			{
 				if(type == Data.GenerationLocationValues.ParameterType.ProcedualModel)
 				{

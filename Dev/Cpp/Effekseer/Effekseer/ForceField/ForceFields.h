@@ -9,15 +9,10 @@
 #include "../Noise/PerlinNoise.h"
 #include "../SIMD/Effekseer.Mat44f.h"
 #include "../SIMD/Effekseer.Vec3f.h"
+#include "../Utils/BinaryVersion.h"
 
 namespace Effekseer
 {
-
-/**
-	TODO
-	Implement rotation
-	Check falloff specification
-*/
 
 struct ForceFieldCommonParameter
 {
@@ -25,8 +20,10 @@ struct ForceFieldCommonParameter
 	Vec3f PreviousVelocity;
 	Vec3f PreviousSumVelocity;
 	Vec3f FieldCenter;
+	Vec3f TargetPosition;
 	Mat44f FieldRotation;
 	bool IsFieldRotated = false;
+	float DeltaFrame;
 };
 
 struct ForceFieldFalloffCommonParameter
@@ -56,40 +53,59 @@ struct ForceFieldFalloffConeParameter
 
 struct ForceFieldForceParameter
 {
-	// Shape
 	float Power;
 	bool Gravitation;
 };
 
 struct ForceFieldWindParameter
 {
-	// Shape
 	float Power;
+};
+
+enum class ForceFieldVortexType : int32_t
+{
+	ConstantAngle = 0,
+	ConstantSpeed = 1,
 };
 
 struct ForceFieldVortexParameter
 {
-	// Shape
+	ForceFieldVortexType Type = ForceFieldVortexType::ConstantAngle;
 	float Power;
 };
 
-struct ForceFieldMagineticParameter
+enum class ForceFieldTurbulenceType : int32_t
 {
-	// Shape
-	float Power;
+	Simple = 0,
+	Complicated = 1,
 };
 
 struct ForceFieldTurbulenceParameter
 {
 	float Power;
-	CurlNoise Noise;
 
-	ForceFieldTurbulenceParameter(int32_t seed, float scale, float strength, int octave);
+	std::unique_ptr<CurlNoise> Noise;
+	std::unique_ptr<LightCurlNoise> LightNoise;
+
+	ForceFieldTurbulenceParameter(ForceFieldTurbulenceType type, int32_t seed, float scale, float strength, int octave);
 };
 
 struct ForceFieldDragParameter
 {
 	float Power;
+};
+
+struct ForceFieldGravityParameter
+{
+	Vec3f Gravity;
+};
+
+struct ForceFieldAttractiveForceParameter
+{
+	float Force;
+	float Control;
+	float MinRange;
+	float MaxRange;
 };
 
 class ForceFieldFalloff
@@ -247,34 +263,16 @@ public:
 		if (ffp.Power < 0)
 			direction = -1.0f;
 
-		auto xlen = ffp.Power / distance * (ffp.Power / 2.0f);
-		auto flen = sqrt(ffp.Power * ffp.Power - xlen * xlen);
+		auto power = ffp.Power;
+
+		if (ffp.Type == ForceFieldVortexType::ConstantAngle)
+		{
+			power *= distance;
+		}
+
+		auto xlen = power / distance * (power / 2.0f);
+		auto flen = sqrt(power * power - xlen * xlen);
 		return (front * flen - localPos * xlen) * direction - ffc.PreviousVelocity;
-	}
-
-	/**
-		@brief	Maginetic
-	*/
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldMagineticParameter& ffp)
-	{
-		float eps = 0.0000001f;
-		auto localPos = ffc.Position - ffc.FieldCenter;
-		auto distance = localPos.GetLength() + eps;
-		auto dir = localPos / distance;
-
-		auto vecLenSq = ffc.PreviousSumVelocity.GetSquaredLength();
-		if (vecLenSq < eps)
-			return Vec3f(0.0f, 0.0f, 0.0f);
-
-		auto forceDir = Vec3f::Cross(ffc.PreviousSumVelocity / sqrtf(vecLenSq), dir);
-
-		auto forceDirScaleSq = forceDir.GetSquaredLength();
-		if (forceDirScaleSq < 0.01f)
-			return Vec3f(0.0f, 0.0f, 0.0f);
-
-		forceDir /= (sqrtf(forceDirScaleSq));
-
-		return forceDir * ffp.Power;
 	}
 
 	/**
@@ -282,8 +280,20 @@ public:
 	*/
 	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldTurbulenceParameter& ffp)
 	{
+		const float LightNoisePowerScale = 4.0f;
+
 		auto localPos = ffc.Position - ffc.FieldCenter;
-		auto vel = ffp.Noise.Get(localPos) * ffp.Power;
+		Vec3f vel;
+
+		if (ffp.Noise != nullptr)
+		{
+			vel = ffp.Noise->Get(localPos) * ffp.Power;
+		}
+		else if (ffp.LightNoise != nullptr)
+		{
+			vel = ffp.LightNoise->Get(localPos) * ffp.Power * LightNoisePowerScale;		
+		}
+
 		auto acc = vel - ffc.PreviousVelocity;
 		return acc;
 	}
@@ -294,6 +304,50 @@ public:
 	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldDragParameter& ffp)
 	{
 		return -ffc.PreviousSumVelocity * ffp.Power;
+	}
+
+	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldGravityParameter& ffp)
+	{
+		return ffp.Gravity;
+	}
+
+	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldAttractiveForceParameter& ffp)
+	{
+		const Vec3f targetDifference = ffc.TargetPosition - ffc.Position;
+		const float targetDistance = targetDifference.GetLength();
+
+		if (targetDistance > 0.0f)
+		{
+			const Vec3f targetDirection = targetDifference / targetDistance;
+			float force = ffp.Force;
+
+			if (ffp.MinRange > 0.0f || ffp.MaxRange > 0.0f)
+			{
+				if (targetDistance >= ffp.MaxRange)
+				{
+					force = 0.0f;
+				}
+				else if (targetDistance > ffp.MinRange)
+				{
+					force *= 1.0f - (targetDistance - ffp.MinRange) / (ffp.MaxRange - ffp.MinRange);
+				}
+			}
+
+			if (ffc.DeltaFrame > 0)
+			{
+				float eps = 0.0001f;
+				auto ret = Vec3f(0.0f, 0.0f, 0.0f);
+				auto vel = ffc.PreviousVelocity;
+				vel += targetDirection * force * ffc.DeltaFrame;
+				float currentVelocity = vel.GetLength() + eps;
+				Vec3f currentDirection = vel / currentVelocity;
+
+				vel = (targetDirection * ffp.Control + currentDirection * (1.0f - ffp.Control)) * currentVelocity;
+				return vel - ffc.PreviousVelocity;
+			}
+		}
+
+		return Vec3f(0.0f, 0.0f, 0.0f);
 	}
 };
 
@@ -311,25 +365,10 @@ enum class LocalForceFieldType : int32_t
 	Force = 2,
 	Wind = 3,
 	Vortex = 4,
-	Maginetic = 5,
 	Turbulence = 1,
 	Drag = 7,
-};
-
-struct LocalForceFieldTurbulenceParameterOld
-{
-	float Strength = 0.1f;
-	CurlNoise Noise;
-
-	LocalForceFieldTurbulenceParameterOld(int32_t seed, float scale, float strength, int octave);
-};
-
-//! TODO Replace
-struct LocalForceFieldParameterOld
-{
-	std::unique_ptr<LocalForceFieldTurbulenceParameterOld> Turbulence;
-
-	bool Load(uint8_t*& pos, int32_t version);
+	Gravity = 8,
+	AttractiveForce = 9,
 };
 
 struct LocalForceFieldElementParameter
@@ -337,14 +376,16 @@ struct LocalForceFieldElementParameter
 	Vector3D Position;
 	Mat44f Rotation;
 	Mat44f InvRotation;
-	bool IsRotated;
+	bool IsRotated = false;
+	bool IsGlobal = false;
 
 	std::unique_ptr<ForceFieldForceParameter> Force;
 	std::unique_ptr<ForceFieldWindParameter> Wind;
 	std::unique_ptr<ForceFieldVortexParameter> Vortex;
-	std::unique_ptr<ForceFieldMagineticParameter> Maginetic;
 	std::unique_ptr<ForceFieldTurbulenceParameter> Turbulence;
 	std::unique_ptr<ForceFieldDragParameter> Drag;
+	std::unique_ptr<ForceFieldGravityParameter> Gravity;
+	std::unique_ptr<ForceFieldAttractiveForceParameter> AttractiveForce;
 
 	std::unique_ptr<ForceFieldFalloffCommonParameter> FalloffCommon;
 	std::unique_ptr<ForceFieldFalloffSphereParameter> FalloffSphere;
@@ -362,7 +403,13 @@ struct LocalForceFieldParameter
 
 	bool HasValue = false;
 
+	bool IsGlobalEnabled = false;
+
 	bool Load(uint8_t*& pos, int32_t version);
+
+	void MaintainGravityCompatibility(const Vec3f& gravity);
+
+	void MaintainAttractiveForceCompatibility(const float force, const float control, const float minRange, const float maxRange);
 };
 
 struct LocalForceFieldInstance
@@ -373,7 +420,12 @@ struct LocalForceFieldInstance
 	Vec3f VelocitySum;
 	Vec3f ModifyLocation;
 
+	Vec3f GlobalVelocitySum;
+	Vec3f GlobalModifyLocation;
+
 	void Update(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification);
+
+	void UpdateGlobal(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification, const Vec3f& targetPosition, float deltaTime);
 
 	void Reset();
 };

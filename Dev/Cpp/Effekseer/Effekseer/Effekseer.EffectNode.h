@@ -1520,13 +1520,7 @@ public:
 	FCurveVector3D* TranslationFCurve;
 	ParameterTranslationNurbsCurve TranslationNurbsCurve;
 	ParameterTranslationViewOffset TranslationViewOffset;
-
-#ifdef OLD_LF
-	std::array<LocalForceFieldParameterOld, LocalFieldSlotMax> LocalForceFieldsOld;
-#else
 	LocalForceFieldParameter LocalForceField;
-#endif
-	LocationAbsParameter LocationAbs;
 
 	ParameterRotationType RotationType;
 	ParameterRotationFixed RotationFixed;

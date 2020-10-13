@@ -6,50 +6,17 @@
 namespace Effekseer
 {
 
-ForceFieldTurbulenceParameter::ForceFieldTurbulenceParameter(int32_t seed, float scale, float strength, int octave)
-	: Noise(seed)
+ForceFieldTurbulenceParameter::ForceFieldTurbulenceParameter(ForceFieldTurbulenceType type, int32_t seed, float scale, float strength, int octave)
 {
-	Noise.Octave = octave;
-	Noise.Scale = scale;
-	Power = strength;
-}
-
-LocalForceFieldTurbulenceParameterOld::LocalForceFieldTurbulenceParameterOld(int32_t seed, float scale, float strength, int octave)
-	: Noise(seed)
-{
-	Noise.Octave = octave;
-	Noise.Scale = scale;
-	Strength = strength;
-}
-
-bool LocalForceFieldParameterOld::Load(uint8_t*& pos, int32_t version)
-{
-	auto br = BinaryReader<false>(pos, std::numeric_limits<int>::max());
-
-	LocalForceFieldType type{};
-	br.Read(type);
-
-	if (type == LocalForceFieldType::Turbulence)
+	if (type == ForceFieldTurbulenceType::Simple)
 	{
-		int32_t seed{};
-		float scale{};
-		float strength{};
-		int octave{};
-
-		br.Read(seed);
-		br.Read(scale);
-		br.Read(strength);
-		br.Read(octave);
-
-		scale = 1.0f / scale;
-
-		Turbulence = std::unique_ptr<LocalForceFieldTurbulenceParameterOld>(
-			new LocalForceFieldTurbulenceParameterOld(seed, scale, strength, octave));
+		LightNoise = std::make_unique<LightCurlNoise>(seed, scale, octave);
 	}
-
-	pos += br.GetOffset();
-
-	return true;
+	else if (type == ForceFieldTurbulenceType::Complicated)
+	{
+		Noise = std::make_unique<CurlNoise>(seed, scale, octave);
+	}
+	Power = strength;
 }
 
 bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
@@ -109,37 +76,67 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 	}
 	else if (type == LocalForceFieldType::Vortex)
 	{
+		if (version < Version16Alpha2)
+		{
+			power /= 5.0f;
+		}
+
 		// convert it by frames
-		power /= 60.0f;
+		power /= 12.0f;
+
+		ForceFieldVortexType ftype{};
+
+		if (version < Version16Alpha2)
+		{
+			ftype = ForceFieldVortexType::ConstantSpeed;
+		}
+		else
+		{
+			br.Read(ftype);
+		}
 
 		auto ff = new ForceFieldVortexParameter();
 		ff->Power = power;
+		ff->Type = ftype;
 		Vortex = std::unique_ptr<ForceFieldVortexParameter>(ff);
-	}
-	else if (type == LocalForceFieldType::Maginetic)
-	{
-		// convert it by frames
-		power /= 60.0f;
-
-		auto ff = new ForceFieldMagineticParameter();
-		ff->Power = power;
-		Maginetic = std::unique_ptr<ForceFieldMagineticParameter>(ff);
 	}
 	else if (type == LocalForceFieldType::Turbulence)
 	{
+		ForceFieldTurbulenceType ftype{};
 		int32_t seed{};
 		float scale{};
 		float strength{};
 		int octave{};
 
+		if (version < Version16Alpha2)
+		{
+			ftype = ForceFieldTurbulenceType::Complicated;
+		}
+		else
+		{
+			br.Read(ftype);
+		}
+
 		br.Read(seed);
 		br.Read(scale);
-		br.Read(strength);
+
+		if (version < Version16Alpha2)
+		{
+			br.Read(strength);
+			strength *= 10.0f;
+		}
+		else
+		{
+			strength = power;
+		}
+
 		br.Read(octave);
 
 		scale = 1.0f / scale;
 
-		Turbulence = std::unique_ptr<ForceFieldTurbulenceParameter>(new ForceFieldTurbulenceParameter(seed, scale, strength, octave));
+		strength /= 10.0f;
+
+		Turbulence = std::unique_ptr<ForceFieldTurbulenceParameter>(new ForceFieldTurbulenceParameter(ftype, seed, scale, strength, octave));
 	}
 	else if (type == LocalForceFieldType::Drag)
 	{
@@ -149,6 +146,24 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 		auto ff = new ForceFieldDragParameter();
 		ff->Power = power;
 		Drag = std::unique_ptr<ForceFieldDragParameter>(ff);
+	}
+	else if (type == LocalForceFieldType::Gravity)
+	{
+		std::array<float, 3> values;
+		br.Read(values);
+		Vec3f gravity{values};
+		Gravity = std::make_unique<ForceFieldGravityParameter>();
+		Gravity->Gravity = gravity;
+		IsGlobal = true;
+	}
+	else if (type == LocalForceFieldType::AttractiveForce)
+	{
+		AttractiveForce = std::make_unique<ForceFieldAttractiveForceParameter>();
+		AttractiveForce->Force = power;
+		br.Read(AttractiveForce->Control);
+		br.Read(AttractiveForce->MinRange);
+		br.Read(AttractiveForce->MaxRange);
+		IsGlobal = true;
 	}
 	else
 	{
@@ -223,10 +238,38 @@ bool LocalForceFieldParameter::Load(uint8_t*& pos, int32_t version)
 		if (ff.HasValue)
 		{
 			HasValue = true;
+
+			if (ff.Gravity != nullptr || ff.AttractiveForce != nullptr)
+			{
+				IsGlobalEnabled = true;
+			}
 		}
 	}
 
 	return true;
+}
+
+void LocalForceFieldParameter::MaintainGravityCompatibility(const Vec3f& gravity)
+{
+	HasValue = true;
+	IsGlobalEnabled = true;
+	LocalForceFields[3].Gravity = std::make_unique<ForceFieldGravityParameter>();
+	LocalForceFields[3].HasValue = true;
+	LocalForceFields[3].Gravity->Gravity = gravity;
+	LocalForceFields[3].IsGlobal = true;
+}
+
+void LocalForceFieldParameter::MaintainAttractiveForceCompatibility(const float force, const float control, const float minRange, const float maxRange)
+{
+	HasValue = true;
+	IsGlobalEnabled = true;
+	LocalForceFields[3].AttractiveForce = std::make_unique<ForceFieldAttractiveForceParameter>();
+	LocalForceFields[3].HasValue = true;
+	LocalForceFields[3].AttractiveForce->Force = force;
+	LocalForceFields[3].AttractiveForce->Control = control;
+	LocalForceFields[3].AttractiveForce->MinRange = minRange;
+	LocalForceFields[3].AttractiveForce->MaxRange = maxRange;
+	LocalForceFields[3].IsGlobal = true;
 }
 
 void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification)
@@ -238,6 +281,9 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		{
 			continue;
 		}
+
+		if (parameter.LocalForceFields[i].IsGlobal)
+			continue;
 
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
@@ -269,11 +315,6 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		if (field.Vortex != nullptr)
 		{
 			acc = ff.GetAcceleration(ffcp, *field.Vortex) * magnification;
-		}
-
-		if (field.Maginetic != nullptr)
-		{
-			acc = ff.GetAcceleration(ffcp, *field.Maginetic) * magnification;
 		}
 
 		if (field.Turbulence != nullptr)
@@ -319,10 +360,97 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
+		if (parameter.LocalForceFields[i].IsGlobal)
+			continue;
+
 		VelocitySum += Velocities[i];
 	}
 
 	ModifyLocation += VelocitySum;
+}
+
+void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification, const Vec3f& targetPosition, float deltaFrame)
+{
+	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
+	{
+		auto& field = parameter.LocalForceFields[i];
+		if (!field.HasValue)
+		{
+			continue;
+		}
+
+		if (!parameter.LocalForceFields[i].IsGlobal)
+			continue;
+
+		ForceFieldCommonParameter ffcp;
+		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
+		ffcp.Position = location / magnification;
+		ffcp.PreviousSumVelocity = VelocitySum;
+		ffcp.PreviousVelocity = Velocities[i];
+		ffcp.TargetPosition = targetPosition / magnification;
+		ffcp.DeltaFrame = deltaFrame;
+		ffcp.IsFieldRotated = field.IsRotated;
+
+		if (field.IsRotated)
+		{
+			ffcp.PreviousSumVelocity = Vec3f::Transform(VelocitySum, field.InvRotation);
+			ffcp.PreviousVelocity = Vec3f::Transform(Velocities[i], field.InvRotation);
+			ffcp.Position = Vec3f::Transform(ffcp.Position, field.InvRotation);
+		}
+
+		ForceField ff;
+
+		Vec3f acc = Vec3f(0, 0, 0);
+		if (field.Gravity != nullptr)
+		{
+			acc = ff.GetAcceleration(ffcp, *field.Gravity) * magnification;
+		}
+
+		if (field.AttractiveForce != nullptr)
+		{
+			acc = ff.GetAcceleration(ffcp, *field.AttractiveForce) * magnification;
+		}
+
+		float power = 1.0f;
+		if (field.FalloffCommon != nullptr && field.FalloffCone != nullptr)
+		{
+			ForceFieldFalloff fff;
+			power = fff.GetPower(power, ffcp, *field.FalloffCommon, *field.FalloffCone);
+		}
+
+		if (field.FalloffCommon != nullptr && field.FalloffSphere != nullptr)
+		{
+			ForceFieldFalloff fff;
+			power = fff.GetPower(power, ffcp, *field.FalloffCommon, *field.FalloffSphere);
+		}
+
+		if (field.FalloffCommon != nullptr && field.FalloffTube != nullptr)
+		{
+			ForceFieldFalloff fff;
+			power = fff.GetPower(power, ffcp, *field.FalloffCommon, *field.FalloffTube);
+		}
+
+		acc *= power;
+
+		if (field.IsRotated)
+		{
+			acc = Vec3f::Transform(acc, field.Rotation);
+		}
+
+		Velocities[i] += acc;
+	}
+
+	VelocitySum = Vec3f(0, 0, 0);
+
+	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
+	{
+		if (!parameter.LocalForceFields[i].IsGlobal)
+			continue;
+
+		VelocitySum += Velocities[i];
+	}
+
+	GlobalModifyLocation += VelocitySum;
 }
 
 void LocalForceFieldInstance::Reset()
@@ -330,6 +458,7 @@ void LocalForceFieldInstance::Reset()
 	Velocities.fill(Vec3f(0, 0, 0));
 	VelocitySum = Vec3f(0, 0, 0);
 	ModifyLocation = Vec3f(0, 0, 0);
+	GlobalModifyLocation = Vec3f(0, 0, 0);
 	ExternalVelocity = Vec3f(0, 0, 0);
 }
 

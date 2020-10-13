@@ -29,7 +29,7 @@ namespace Effekseer.Binary
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default ||
 				value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
@@ -78,7 +78,7 @@ namespace Effekseer.Binary
 				// texture2
 				data.Add((-1).GetBytes());
 
-				if (version >= ExporterVersion.Ver1600)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					// alpha texture
 					if (advanceValue.EnableAlphaTexture)
@@ -141,7 +141,7 @@ namespace Effekseer.Binary
 				// texture2
 				data.Add((-1).GetBytes());
 
-				if (version >= ExporterVersion.Ver1600)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					// alpha texture
 					if (advanceValue.EnableAlphaTexture)
@@ -204,7 +204,7 @@ namespace Effekseer.Binary
 				// texture2
 				data.Add(getTexIDAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
 
-				if (version >= ExporterVersion.Ver1600)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					// alpha texture
 					if (advanceValue.EnableAlphaTexture)
@@ -351,7 +351,7 @@ namespace Effekseer.Binary
 			data.Add(value.Filter2);
 			data.Add(value.Wrap2);
 
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				data.Add(advanceValue.AlphaTextureParam.Filter);
 				data.Add(advanceValue.AlphaTextureParam.Wrap);
@@ -495,7 +495,7 @@ namespace Effekseer.Binary
 			}
 
 
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				// alpha texture
 				data.Add(GetUVBytes
@@ -666,7 +666,7 @@ namespace Effekseer.Binary
 				data.Add(bytes);
 			}
 
-			if (version >= ExporterVersion.Ver1600)
+			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				data.Add(AlphaCutoffValues.GetBytes(advanceValue.AlphaCutoffParam, version));
 			}

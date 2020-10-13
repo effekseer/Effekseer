@@ -148,7 +148,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.6α1";
+		public const string Version = "1.6α2";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -902,9 +902,15 @@ namespace Effekseer
 				updater.Update(doc);
 			}
 
-			if (toolVersion < ParseVersion("1.60"))
+			if (toolVersion < ParseVersion("1.60α1"))
 			{
-				var updater = new Utils.ProjectVersionUpdator15xTo16x();
+				var updater = new Utils.ProjectVersionUpdator15xTo16Alpha1();
+				updater.Update(doc);
+			}
+
+			if (toolVersion <= ParseVersion("1.60α2"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16x();
 				updater.Update(doc);
 			}
 
@@ -1011,9 +1017,15 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
-			if (toolVersion < ParseVersion("1.60"))
+			if (toolVersion < ParseVersion("1.60α1"))
 			{
-				var updater = new Utils.ProjectVersionUpdator15xTo16x();
+				var updater = new Utils.ProjectVersionUpdator15xTo16Alpha1();
+				updater.Update(root_node);
+			}
+
+			if (toolVersion < ParseVersion("1.60α2"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16x();
 				updater.Update(root_node);
 			}
 
@@ -1195,11 +1207,45 @@ namespace Effekseer
 
 		static uint ParseVersion(string versionText)
 		{
-			versionText = versionText.Replace("CTP1", "");
-			versionText = versionText.Replace("CTP2", "");
-			versionText = versionText.Replace("CTP3", "");
-			versionText = versionText.Replace("CTP4", "");
-			versionText = versionText.Replace("CTP5", "");
+			uint minorVersion = 0;
+
+			Func<string, uint, uint?> calcMinorVersion = (string key, uint baseId) =>
+			{
+				if (versionText.Contains(key))
+				{
+					var strs = versionText.Split(new[] { key }, StringSplitOptions.None);
+
+					if (strs.Length < 2)
+						return baseId;
+
+					uint id = 0;
+					uint.TryParse(strs[1], out id);
+					return id + baseId;
+				}
+
+				return null;
+			};
+
+			var alphaId = calcMinorVersion("α", 0);
+			var betaId = calcMinorVersion("β", 10);
+			var rcId = calcMinorVersion("RC", 20);
+
+			if(alphaId.HasValue)
+			{
+				minorVersion = alphaId.Value;
+			}
+			else if (betaId.HasValue)
+			{
+				minorVersion = betaId.Value;
+			}
+			else if (rcId.HasValue)
+			{
+				minorVersion = rcId.Value;
+			}
+			else
+			{
+				minorVersion = 30;
+			}
 
 			versionText = versionText.Replace("α1", "");
 			versionText = versionText.Replace("α2", "");
@@ -1250,6 +1296,8 @@ namespace Effekseer
 			uint version = 0;
 
 			uint.TryParse(versionText, out version);
+
+			version = (version * 100) + minorVersion;
 
 			return version;
 		}
