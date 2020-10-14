@@ -1789,6 +1789,10 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		{
 			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_InvalidName").c_str());
 		}
+		else if (node->CurrentWarning == WarningType::PixelNodeAndNormal)
+		{
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_PixelNodeAndNormal").c_str());
+		}
 		else
 		{
 			assert(0);

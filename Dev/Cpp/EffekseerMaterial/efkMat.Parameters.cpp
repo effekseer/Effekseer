@@ -546,6 +546,22 @@ WarningType NodeAppendVector::GetWarning(std::shared_ptr<Material> material, std
 	return WarningType::None;
 }
 
+WarningType NodePixelNormalWS::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const {
+
+	auto pins = material->GetRelatedPins(node->OutputPins[0]);
+	
+	for (auto& pin : pins)
+	{
+		auto node = pin->Parent.lock();
+		if (node != nullptr && node->Parameter->Type == NodeType::Output && pin->Parameter->Name == "Normal")
+		{
+			return WarningType::PixelNodeAndNormal;		
+		}
+	}
+
+	return WarningType::None;
+}
+
 ValueType NodeCustomData1::GetOutputType(std::shared_ptr<Material> material,
 										 std::shared_ptr<Node> node,
 										 const std::vector<ValueType>& inputTypes) const

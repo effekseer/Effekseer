@@ -1394,6 +1394,8 @@ public:
 		output->Type = ValueType::Float3;
 		OutputPins.push_back(output);
 	}
+
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const;
 };
 
 class NodeWorldPosition : public NodeParameter

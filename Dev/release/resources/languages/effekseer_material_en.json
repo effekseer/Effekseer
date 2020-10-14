@@ -162,5 +162,6 @@
   "Warning_WrongProperty": "A propery is invalid",
   "Warning_DifferentSampler": "Different samplers are \nassigned in a same image.",
   "Warning_SameName": "A node with the same name exists.",
-  "Warning_InvalidName": "The name is invalid. \n(Please read the help.)"
+  "Warning_InvalidName": "The name is invalid. \n(Please read the help.)",
+  "Warning_PixelNodeAndNormal": "PixelNormal cannot be connected to Normal"
 }

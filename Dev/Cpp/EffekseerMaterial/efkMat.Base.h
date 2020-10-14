@@ -54,6 +54,7 @@ enum class WarningType
 	DifferentSampler,
 	InvalidName,
 	SameName,
+	PixelNodeAndNormal,
 };
 
 enum class ValueType
