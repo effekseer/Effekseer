@@ -3,6 +3,7 @@
 
 #include "efkMat.Base.h"
 #include "efkMat.Utils.h"
+#include <set>
 
 namespace EffekseerMaterial
 {
@@ -201,6 +202,8 @@ public:
 	void Initialize();
 
 	std::vector<std::shared_ptr<Pin>> GetConnectedPins(std::shared_ptr<Pin> pin);
+
+	std::unordered_set<std::shared_ptr<Pin>> GetRelatedPins(std::shared_ptr<Pin> pin);
 
 	ValueType GetPinType(DefaultType type);
 

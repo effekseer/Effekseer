@@ -280,3 +280,4 @@ Warning_SameName,A node with the same name exists.,同じ名前のノードが�
 Warning_InvalidName,"The name is invalid. 
 (Please read the help.)","無効な名前です。
 (ヘルプを読んでください。)"
+Warning_PixelNodeAndNormal,PixelNormal cannot be connected to Normal,画素法線はNormalと接続できません。

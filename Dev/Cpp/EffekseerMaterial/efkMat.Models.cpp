@@ -988,6 +988,47 @@ std::vector<std::shared_ptr<Pin>> Material::GetConnectedPins(std::shared_ptr<Pin
 	return ret;
 }
 
+std::unordered_set<std::shared_ptr<Pin>> Material::GetRelatedPins(std::shared_ptr<Pin> pin)
+{
+	std::unordered_set<std::shared_ptr<Pin>> ret;
+
+	auto pins = GetConnectedPins(pin);
+
+	ret.insert(pins.begin(), pins.end());
+
+	for (auto p : pins)
+	{
+		auto n = p->Parent.lock();
+		if (n != nullptr)
+		{
+			if (p->PinDirection == PinDirectionType::Input)
+			{
+				for (auto pp : n->OutputPins)
+				{
+					if (ret.find(pp) != ret.end())
+					{
+						auto ppins = GetRelatedPins(pp);					
+						ret.insert(ppins.begin(), ppins.end());
+					}
+				}
+			}
+			else if (p->PinDirection == PinDirectionType::Output)
+			{
+				for (auto pp : n->InputPins)
+				{
+					if (ret.find(pp) != ret.end())
+					{
+						auto ppins = GetRelatedPins(pp);
+						ret.insert(ppins.begin(), ppins.end());
+					}
+				}
+			}
+		}
+	}
+
+	return ret;
+}
+
 ValueType Material::GetPinType(DefaultType type)
 {
 	if (type == DefaultType::UV)

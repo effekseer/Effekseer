@@ -162,5 +162,6 @@
   "Warning_WrongProperty": "プロパティが無効です。",
   "Warning_DifferentSampler": "同じ画像に異なるサンプラが\n設定されています。",
   "Warning_SameName": "同じ名前のノードが存在します。",
-  "Warning_InvalidName": "無効な名前です。\n(ヘルプを読んでください。)"
+  "Warning_InvalidName": "無効な名前です。\n(ヘルプを読んでください。)",
+  "Warning_PixelNodeAndNormal": "画素法線はNormalと接続できません。"
 }
