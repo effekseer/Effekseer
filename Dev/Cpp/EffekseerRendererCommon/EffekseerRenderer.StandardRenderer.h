@@ -724,9 +724,16 @@ public:
 
 		bool isAdvanced = m_state.IsAdvanced();
 
-		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
+		if (m_state.MaterialType == ::Effekseer::RendererMaterialType::File)
 		{
-			renderingMode_ = RenderingMode::Material;
+			if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
+			{
+				renderingMode_ = RenderingMode::Material;			
+			}
+			else
+			{
+				renderingMode_ = RenderingMode::Unlit;
+			}
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting && isAdvanced)
 		{
@@ -957,6 +964,15 @@ public:
 			else if (m_state.MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 			{
 				type = StandardRendererShaderType::BackDistortion;
+			}
+			else if (m_state.MaterialType == Effekseer::RendererMaterialType::File)
+			{
+				// fallback
+				type = StandardRendererShaderType::Unlit;
+			}
+			else
+			{
+				assert(0);
 			}
 
 			shader_ = m_renderer->GetShader(type);
