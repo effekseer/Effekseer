@@ -887,33 +887,38 @@ namespace Effekseer.GUI
 		{
 			if (!System.IO.File.Exists(path)) return false;
 
-			var doc = new System.Xml.XmlDocument();
-
-			doc.Load(path);
-
-			if (doc.ChildNodes.Count != 2) return false;
-			if (doc.ChildNodes[1].Name != "Root") return false;
-
-			
-			var windowWidth = doc["Root"]["WindowWidth"]?.GetTextAsInt() ?? 1280;
-			var windowHeight = doc["Root"]["WindowHeight"]?.GetTextAsInt() ?? 720;
-
-			//Manager.NativeManager.SetSize(windowWidth, windowHeight);
-
-			var docks = doc["Root"]["Docks"];
-
-			if(docks != null)
+			try
 			{
-				for (int i = 0; i < docks.ChildNodes.Count; i++)
-				{
-					var panel = docks.ChildNodes[i];
-					var type = dockTypes.FirstOrDefault(_ => _.ToString() == panel.Name);
+				var doc = new System.Xml.XmlDocument();
 
-					if(type != null)
+				doc.Load(path);
+
+				if (doc.ChildNodes.Count != 2) return false;
+				if (doc.ChildNodes[1].Name != "Root") return false;
+
+
+				var windowWidth = doc["Root"]["WindowWidth"]?.GetTextAsInt() ?? 1280;
+				var windowHeight = doc["Root"]["WindowHeight"]?.GetTextAsInt() ?? 720;
+
+				var docks = doc["Root"]["Docks"];
+
+				if (docks != null)
+				{
+					for (int i = 0; i < docks.ChildNodes.Count; i++)
 					{
-						SelectOrShowWindow(type);
+						var panel = docks.ChildNodes[i];
+						var type = dockTypes.FirstOrDefault(_ => _.ToString() == panel.Name);
+
+						if (type != null)
+						{
+							SelectOrShowWindow(type);
+						}
 					}
 				}
+			}
+			catch
+			{
+				return false;
 			}
 
 			return true;
