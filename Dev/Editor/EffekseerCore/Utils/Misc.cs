@@ -26,6 +26,11 @@ namespace Effekseer.Utils
 		}
 		public static string GetAbsolutePath(string basePath, string path)
 		{
+			if (string.IsNullOrEmpty(path))
+			{
+				return string.Empty;
+			}
+
 			Func<string, string> doubleBackslashToSlash = (string s) =>
 			{
 				string input = s;
