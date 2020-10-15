@@ -21,7 +21,7 @@ bool TGATextureLoader::Load(const void* data, int32_t size)
 	textureWidth = TgaHeader[12] + TgaHeader[13] * 256;
 	textureHeight = TgaHeader[14] + TgaHeader[15] * 256;
 
-	int ColorStep = 4;
+	int ColorStep{};
 
 	if (TgaHeader[16] == 16)
 	{
@@ -30,6 +30,14 @@ bool TGATextureLoader::Load(const void* data, int32_t size)
 	else if (TgaHeader[16] == 24)
 	{
 		ColorStep = 3;
+	}
+	else if (TgaHeader[16] == 32)
+	{
+		ColorStep = 4;
+	}
+	else
+	{
+		return false;
 	}
 
 	// カラーマップ取得
