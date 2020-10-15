@@ -43,6 +43,11 @@ namespace Effekseer.Utils
 		}
 		public static string GetAbsolutePath(string basePath, string path)
 		{
+			if(string.IsNullOrEmpty(path))
+			{
+				return string.Empty;
+			}
+
 			var basePath_ecs = new Uri(basePath, UriKind.Relative);
 			var path_ecs = new Uri(path, UriKind.Relative);
 			var basePath_slash = BackSlashToSlash(basePath_ecs.ToString());
