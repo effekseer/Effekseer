@@ -91,23 +91,29 @@ void ModelRenderer::InitRenderer()
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorSampler"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_g_normalSampler"));
-		applyPSAdvancedRendererParameterTexture(shader, 2);
 	}
+	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
+	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_g_depthSampler"));
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorSampler"));
-		applyPSAdvancedRendererParameterTexture(shader, 1);
 	}
+	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
+	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_g_depthSampler"));
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_sampler"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_g_backSampler"));
-		applyPSAdvancedRendererParameterTexture(shader, 2);
 	}
+	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
+	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_g_depthSampler"));
+	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_g_depthSampler"));
 
 	Shader* shaders[4];
 	shaders[0] = shader_ad_lit_;
@@ -118,7 +124,7 @@ void ModelRenderer::InitRenderer()
 	for (int32_t i = 0; i < 4; i++)
 	{
 		auto isAd = i < 2;
-		
+
 		int vsOffset = 0;
 		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mCameraProj"), vsOffset);
 
@@ -242,6 +248,11 @@ void ModelRenderer::InitRenderer()
 
 			psOffset += sizeof(float[4]) * 1;
 		}
+
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), psOffset);
+		psOffset += sizeof(float[4]) * 1;
+		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
+		psOffset += sizeof(float[4]) * 1;
 	}
 
 	Shader* shaders_d[2];
@@ -346,6 +357,11 @@ void ModelRenderer::InitRenderer()
 
 			psOffset += sizeof(float[4]) * 1;
 		}
+
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), psOffset);
+		psOffset += sizeof(float[4]) * 1;
+		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
+		psOffset += sizeof(float[4]) * 1;
 	}
 }
 

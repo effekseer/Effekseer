@@ -60,9 +60,9 @@ protected:
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
 
-	Shader* shader_ = nullptr;
-	Shader* shader_lit_ = nullptr;
 	Shader* shader_unlit_ = nullptr;
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_distortion_ = nullptr;
 
 	Shader* shader_ad_unlit_ = nullptr;
 	Shader* shader_ad_lit_ = nullptr;

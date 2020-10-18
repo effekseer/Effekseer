@@ -5,7 +5,7 @@
 
 struct PS_Input
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV;
     vec3 WorldN;
@@ -40,6 +40,8 @@ struct PS_ConstanBuffer
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -175,7 +177,7 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.VColor = _VSPS_VColor;
     Input.UV = _VSPS_UV;
     Input.WorldN = _VSPS_WorldN;

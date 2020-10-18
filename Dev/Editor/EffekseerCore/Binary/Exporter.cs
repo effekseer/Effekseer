@@ -14,7 +14,8 @@ namespace Effekseer.Binary
 		Ver16Alpha1 = 1600,
 		Ver16Alpha2 = 1601,
 		Ver16Alpha3 = 1602,
-		Latest = Ver16Alpha3,
+		Ver16Alpha4 = 1603,
+		Latest = Ver16Alpha4,
 	}
 
 	public class Exporter
@@ -951,7 +952,9 @@ namespace Effekseer.Binary
 				
 				node_data.Add(((int)n.DepthValues.ZSort.Value).GetBytes());
 				node_data.Add(n.DepthValues.DrawingPriority.Value.GetBytes());
-				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());
+
+				float compatibility = 1.0f;
+				node_data.Add(compatibility.GetBytes());
 
 #if DEBUG
 				{

@@ -21,11 +21,11 @@ struct VS_Input
 
 struct VS_Output
 {
-	float4 Position : SV_POSITION;
+	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
 
-	float4 Pos : TEXCOORD1;
+	float4 PosP : TEXCOORD1;
 	float4 PosU : TEXCOORD2;
 	float4 PosR : TEXCOORD3;
 };
@@ -49,16 +49,16 @@ VS_Output main(const VS_Input Input)
 	localBinormal = cameraPos + normalize(localBinormal - cameraPos);
 	localTangent = cameraPos + normalize(localTangent - cameraPos);
 
-	Output.Position = mul(mProj, cameraPos);
+	Output.PosVS = mul(mProj, cameraPos);
 
-	Output.Pos = Output.Position;
+	Output.PosP = Output.PosVS;
 
 	Output.PosU = mul(mProj, localBinormal);
 	Output.PosR = mul(mProj, localTangent);
 
 	Output.PosU /= Output.PosU.w;
 	Output.PosR /= Output.PosR.w;
-	Output.Pos /= Output.Pos.w;
+	Output.PosP /= Output.PosP.w;
 
 	Output.Color = Input.Color;
 	Output.UV = Input.UV;

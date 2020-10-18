@@ -16,9 +16,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec4 Color;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -43,19 +44,21 @@ attribute vec2 Input_UV;
 attribute vec4 Input_Color;
 centroid varying vec2 _VSPS_UV;
 centroid varying vec4 _VSPS_Color;
+varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
     vec4 uv = CBVS0.fUV;
     vec4 modelColor = CBVS0.fModelColor * Input.Color;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = CBVS0.mModel * localPosition;
-    Output.Pos = CBVS0.mCameraProj * cameraPosition;
+    Output.PosVS = CBVS0.mCameraProj * cameraPosition;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -69,9 +72,10 @@ void main()
     Input.UV = Input_UV;
     Input.Color = Input_Color;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Color = flattenTemp.Color;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";
@@ -98,9 +102,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec4 Color;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -130,6 +135,7 @@ uniform int SPIRV_Cross_BaseInstance;
 #endif
 centroid out vec2 _VSPS_UV;
 centroid out vec4 _VSPS_Color;
+out vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
@@ -137,14 +143,15 @@ VS_Output _main(VS_Input Input)
     mat4 matModel = CBVS0.mModel[index];
     vec4 uv = CBVS0.fUV[index];
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
-    Output.Pos = cameraPosition * CBVS0.mCameraProj;
+    Output.PosVS = cameraPosition * CBVS0.mCameraProj;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -159,9 +166,10 @@ void main()
     Input.Color = Input_Color;
     Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Color = flattenTemp.Color;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";
@@ -181,9 +189,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec4 Color;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -208,19 +217,21 @@ attribute vec2 Input_UV;
 attribute vec4 Input_Color;
 varying vec2 _VSPS_UV;
 varying vec4 _VSPS_Color;
+varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
     vec4 uv = CBVS0.fUV;
     vec4 modelColor = CBVS0.fModelColor * Input.Color;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = CBVS0.mModel * localPosition;
-    Output.Pos = CBVS0.mCameraProj * cameraPosition;
+    Output.PosVS = CBVS0.mCameraProj * cameraPosition;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -234,9 +245,10 @@ void main()
     Input.UV = Input_UV;
     Input.Color = Input_Color;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Color = flattenTemp.Color;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";
@@ -260,9 +272,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec4 Color;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -292,6 +305,7 @@ uniform int SPIRV_Cross_BaseInstance;
 #endif
 centroid out vec2 _VSPS_UV;
 centroid out vec4 _VSPS_Color;
+out vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
@@ -299,14 +313,15 @@ VS_Output _main(VS_Input Input)
     mat4 matModel = CBVS0.mModel[index];
     vec4 uv = CBVS0.fUV[index];
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
-    Output.Pos = cameraPosition * CBVS0.mCameraProj;
+    Output.PosVS = cameraPosition * CBVS0.mCameraProj;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -321,9 +336,10 @@ void main()
     Input.Color = Input_Color;
     Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Color = flattenTemp.Color;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";

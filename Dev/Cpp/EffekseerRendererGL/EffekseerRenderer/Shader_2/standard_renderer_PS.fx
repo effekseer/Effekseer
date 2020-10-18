@@ -5,10 +5,10 @@
 
 struct PS_Input
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Position;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -37,6 +37,8 @@ struct PS_ConstanBuffer
     vec4 emissiveScaling;
     vec4 edgeColor;
     vec4 edgeParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -50,7 +52,7 @@ uniform sampler2D Sampler_g_blendAlphaSampler;
 
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Position;
+varying vec4 _VSPS_PosP;
 varying vec4 _VSPS_PosU;
 varying vec4 _VSPS_PosR;
 varying vec4 _VSPS_Alpha_Dist_UV;
@@ -165,10 +167,10 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Pos = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Position = _VSPS_Position;
+    Input.PosP = _VSPS_PosP;
     Input.PosU = _VSPS_PosU;
     Input.PosR = _VSPS_PosR;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;

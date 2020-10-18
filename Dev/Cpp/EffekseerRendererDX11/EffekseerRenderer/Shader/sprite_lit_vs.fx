@@ -11,7 +11,7 @@ struct VS_Input
 
 struct VS_Output
 {
-	float4 Position : SV_POSITION;
+	float4 PosVS : SV_POSITION;
 	linear centroid float4 VColor : COLOR;
 	linear centroid float2 UV1 : TEXCOORD0;
 	linear centroid float2 UV2 : TEXCOORD1;
@@ -20,6 +20,7 @@ struct VS_Output
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
+	float4 PosP : TEXCOORD7;
 };
 
 cbuffer VS_ConstantBuffer : register(b0)
@@ -54,15 +55,16 @@ VS_Output main(const VS_Input Input)
 	float3 pixelNormalDir = float3(0.5, 0.5, 1.0);
 
 	float4 cameraPos = mul(mCamera, float4(worldPos, 1.0));
-	cameraPos = cameraPos / cameraPos.w;
-	Output.Position = mul(mProj, cameraPos);
+	Output.PosVS = mul(mProj, cameraPos);
 
 	Output.WorldP = worldPos;
 	Output.VColor = Input.Color;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
-	Output.ScreenUV = Output.Position.xy / Output.Position.w;
+	Output.ScreenUV = Output.PosVS.xy / Output.PosVS.w;
 	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+
+	Output.PosP = Output.PosVS;
 
 	return Output;
 }

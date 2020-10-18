@@ -33,6 +33,44 @@ bool RenderedEffectGenerator::DistortingCallback::OnDistorting()
 	return IsEnabled;
 }
 
+void RenderedEffectGenerator::UpdateBackgroundMesh(const Color& backgroundColor)
+{
+	if (backgroundMesh_ != nullptr && !(backgroundColor != backgroundMeshColor_))
+		return;
+	backgroundMeshColor_ = backgroundColor;
+
+	const float eps = 0.00001f;
+
+	Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData;
+	vbData.resize(4);
+	vbData[0].Pos = {-1.0f, 1.0f, 1.0f - eps};
+	vbData[1].Pos = {1.0f, 1.0f, 1.0f - eps};
+	vbData[2].Pos = {1.0f, -1.0f, 1.0f - eps};
+	vbData[3].Pos = {-1.0f, -1.0f, 1.0f - eps};
+
+	for (auto& vb : vbData)
+	{
+		vb.UV[0] = (vb.Pos[0] + 1.0f) / 2.0f;
+		vb.UV[1] = 1.0f - (vb.Pos[1] + 1.0f) / 2.0f;
+
+		vb.Normal = {0.0f, 1.0f, 0.0f};
+		vb.VColor = backgroundMeshColor_;
+	}
+	Effekseer::CustomVector<int32_t> ibData;
+	ibData.resize(6);
+	ibData[0] = 0;
+	ibData[1] = 1;
+	ibData[2] = 2;
+	ibData[3] = 0;
+	ibData[4] = 2;
+	ibData[5] = 3;
+
+	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+	backgroundMesh_->IsLit = false;
+
+	backgroundRenderer_->SetStaticMesh(backgroundMesh_);
+}
+
 void RenderedEffectGenerator::PlayEffect()
 {
 	assert(effect_ != nullptr);
@@ -224,6 +262,17 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 	manager_->SetRingRenderer(ring_renderer);
 	manager_->SetModelRenderer(model_renderer);
 	manager_->SetTrackRenderer(track_renderer);
+
+	if (graphics_->GetGraphicsDevice() != nullptr)
+	{
+
+		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
+
+		if (backgroundRenderer_ == nullptr)
+		{
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -417,6 +466,8 @@ void RenderedEffectGenerator::Update(int32_t frame)
 void RenderedEffectGenerator::Render()
 {
 	// Clear a destination texture
+	UpdateBackgroundMesh(config_.BackgroundColor);
+
 	graphics_->SetRenderTarget(viewRenderTexture.get(), nullptr);
 	if (config_.BackgroundColor.A != 255)
 	{
@@ -433,32 +484,6 @@ void RenderedEffectGenerator::Render()
 	// clear
 	if (msaaSamples > 1)
 	{
-		auto rs = std::array<efk::RenderTexture*, 1>{depthRenderTextureMSAA.get()};
-		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
-	}
-	else
-	{
-		auto rs = std::array<efk::RenderTexture*, 1>{depthRenderTexture.get()};
-		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
-	}
-
-	graphics_->Clear({255, 255, 255, 255});
-
-	if (msaaSamples > 1)
-	{
-		auto rs = std::array<efk::RenderTexture*, 1>{hdrRenderTextureMSAA.get()};
-		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
-	}
-	else
-	{
-		auto rs = std::array<efk::RenderTexture*, 1>{hdrRenderTexture.get()};
-		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
-	}
-
-	graphics_->Clear(config_.BackgroundColor);
-
-	if (msaaSamples > 1)
-	{
 		auto rs = std::array<efk::RenderTexture*, 2>{hdrRenderTextureMSAA.get(), depthRenderTextureMSAA.get()};
 		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
 	}
@@ -466,6 +491,15 @@ void RenderedEffectGenerator::Render()
 	{
 		auto rs = std::array<efk::RenderTexture*, 2>{hdrRenderTexture.get(), depthRenderTexture.get()};
 		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
+	}
+
+	graphics_->Clear(config_.BackgroundColor);
+
+	{
+		Effekseer::Tool::RendererParameter param{};
+		param.CameraMatrix.Indentity();
+		param.ProjectionMatrix.Indentity();
+		backgroundRenderer_->Render(param);
 	}
 
 	OnAfterClear();
@@ -483,6 +517,16 @@ void RenderedEffectGenerator::Render()
 	{
 		graphics_->ResolveRenderTarget(depthRenderTextureMSAA.get(), depthRenderTexture.get());
 	}
+
+	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
+	reconstructionParam.DepthBufferScale = 1.0f;
+	reconstructionParam.DepthBufferOffset = 0.0f;
+	reconstructionParam.ProjectionMatrix33 = config_.ProjectionMatrix.Values[2][2];
+	reconstructionParam.ProjectionMatrix43 = config_.ProjectionMatrix.Values[3][2];
+	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[2][3];
+	reconstructionParam.ProjectionMatrix44 = config_.ProjectionMatrix.Values[3][3];
+
+	renderer_->SetDepth(depthRenderTexture->GetAsEffekseerBackend(), reconstructionParam);
 
 	// HACK : grid renderer changes RenderMode
 	renderer_->SetRenderMode(config_.RenderMode);

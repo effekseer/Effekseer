@@ -35,12 +35,12 @@ private:
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
 
-	Shader* m_shader = nullptr;
-	Shader* m_shader_distortion = nullptr;
-	Shader* m_shader_lighting = nullptr;
-	Shader* m_shader_ad = nullptr;
-	Shader* m_shader_ad_distortion = nullptr;
-	Shader* m_shader_ad_lighting = nullptr;
+	Shader* shader_unlit_ = nullptr;
+	Shader* shader_distortion_ = nullptr;
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_ad_unlit_ = nullptr;
+	Shader* shader_ad_distortion_ = nullptr;
+	Shader* shader_ad_lit_ = nullptr;
 	Shader* currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;

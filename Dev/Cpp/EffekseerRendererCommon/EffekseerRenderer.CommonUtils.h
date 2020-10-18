@@ -30,8 +30,7 @@ struct DynamicVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union
-	{
+	union {
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -118,8 +117,7 @@ struct LightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union
-	{
+	union {
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -189,8 +187,7 @@ struct SimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union
-	{
+	union {
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -254,8 +251,7 @@ struct VertexDistortion
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union
-	{
+	union {
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -328,8 +324,7 @@ struct AdvancedLightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union
-	{
+	union {
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -414,8 +409,7 @@ struct AdvancedSimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union
-	{
+	union {
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -494,8 +488,7 @@ struct AdvancedVertexDistortion
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union
-	{
+	union {
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -1022,9 +1015,11 @@ struct ShaderParameterCollector
 	std::array<::Effekseer::TextureFilterType, Effekseer::TextureSlotMax> TextureFilterTypes;
 	std::array<::Effekseer::TextureWrapType, Effekseer::TextureSlotMax> TextureWrapTypes;
 
+	bool IsDepthRequired = false;
 	bool IsBackgroundRequiredOnFirstPass = false;
 	bool HasMultiPass = false;
 	int32_t BackgroundIndex = -1;
+	int32_t DepthIndex = -1;
 
 	bool DoRequireAdvancedRenderer() const
 	{
@@ -1071,8 +1066,7 @@ struct ShaderParameterCollector
 		return false;
 	}
 
-	//! TODO remove isModel
-	void Collect(Renderer* renderer, Effekseer::Effect* effect, Effekseer::NodeRendererBasicParameter* param, bool edgeFalloff)
+	void Collect(Renderer* renderer, Effekseer::Effect* effect, Effekseer::NodeRendererBasicParameter* param, bool edgeFalloff, bool isSoftParticleEnabled)
 	{
 		::Effekseer::TextureData* TexturePtr = nullptr;
 		::Effekseer::TextureData* NormalTexturePtr = nullptr;
@@ -1088,6 +1082,9 @@ struct ShaderParameterCollector
 
 		BackgroundIndex = -1;
 		IsBackgroundRequiredOnFirstPass = false;
+
+		DepthIndex = -1;
+		IsDepthRequired = isSoftParticleEnabled;
 
 		auto isAdvanced = param->GetIsRenderedWithAdvancedRenderer() || edgeFalloff;
 
@@ -1120,6 +1117,8 @@ struct ShaderParameterCollector
 					MaterialDataPtr = nullptr;
 				}
 			}
+
+			IsDepthRequired = false;
 		}
 		else if (param->MaterialType == ::Effekseer::RendererMaterialType::Lighting && isAdvanced)
 		{
@@ -1205,6 +1204,12 @@ struct ShaderParameterCollector
 				{
 					TextureCount = 7;
 				}
+
+				if (IsDepthRequired)
+				{
+					DepthIndex = TextureCount;
+					TextureCount += 1;
+				}
 			}
 			else
 			{
@@ -1215,6 +1220,12 @@ struct ShaderParameterCollector
 				else
 				{
 					TextureCount = 2;
+				}
+
+				if (IsDepthRequired)
+				{
+					DepthIndex = TextureCount;
+					TextureCount += 1;
 				}
 			}
 
@@ -1370,6 +1381,24 @@ struct ShaderParameterCollector
 				TextureWrapTypes[offset + 4] = param->TextureWrap7;
 			}
 		}
+	}
+};
+
+struct SoftParticleParameter
+{
+	std::array<float, 4> softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
+	std::array<float, 4> reconstructionParam2;
+
+	void SetParam(float softParticle, float rescale1, float rescale2, float v33, float v34, float v43, float v44)
+	{
+		softParticleAndReconstructionParam1[0] = softParticle;
+		softParticleAndReconstructionParam1[1] = rescale1;
+		softParticleAndReconstructionParam1[2] = rescale2;
+	
+		reconstructionParam2[0] = v33;
+		reconstructionParam2[1] = v34;
+		reconstructionParam2[2] = v43;
+		reconstructionParam2[3] = v44;
 	}
 };
 

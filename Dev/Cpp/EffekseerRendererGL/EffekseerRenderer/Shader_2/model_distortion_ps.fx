@@ -5,12 +5,12 @@
 
 struct PS_Input
 {
-    vec4 Position;
+    vec4 PosVS;
     vec2 UV;
     vec4 Normal;
     vec4 Binormal;
     vec4 Tangent;
-    vec4 Pos;
+    vec4 PosP;
     vec4 Color;
 };
 
@@ -21,6 +21,8 @@ struct PS_ConstanBuffer
     vec4 fFlipbookParameter;
     vec4 fUVDistortionParameter;
     vec4 fBlendTextureParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -32,14 +34,14 @@ centroid varying vec2 _VSPS_UV;
 varying vec4 _VSPS_Normal;
 varying vec4 _VSPS_Binormal;
 varying vec4 _VSPS_Tangent;
-varying vec4 _VSPS_Pos;
+varying vec4 _VSPS_PosP;
 centroid varying vec4 _VSPS_Color;
 
 vec4 _main(PS_Input Input)
 {
     vec4 Output = texture2D(Sampler_g_sampler, Input.UV);
     Output.w *= Input.Color.w;
-    vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     vec2 posU = Input.Tangent.xy / vec2(Input.Tangent.w);
     vec2 posR = Input.Binormal.xy / vec2(Input.Binormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -61,12 +63,12 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
     vec4 _186 = _main(Input);
     gl_FragData[0] = _186;

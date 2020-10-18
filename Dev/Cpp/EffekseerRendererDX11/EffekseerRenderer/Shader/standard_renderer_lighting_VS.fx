@@ -17,7 +17,7 @@ struct VS_Input
 
 struct VS_Output
 {
-	float4 Position : SV_POSITION;
+	float4 PosVS : SV_POSITION;
 	linear centroid float4 VColor : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
 	float3 WorldN : TEXCOORD1;
@@ -32,20 +32,24 @@ struct VS_Output
 
 	// x - FlipbookRate, y - AlphaThreshold
 	float2 Others : TEXCOORD7;
+
+#ifndef DISABLED_SOFT_PARTICLE
+	float4 PosP : TEXCOORD8;
+#endif
 };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    float4x4 mCamera;
-    float4x4 mProj;
-    float4 mUVInversed;
+	float4x4 mCamera;
+	float4x4 mProj;
+	float4 mUVInversed;
 
-    float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+	float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 };
 
 #include "standard_renderer_common_VS.fx"
 
-VS_Output main( const VS_Input Input )
+VS_Output main(const VS_Input Input)
 {
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
@@ -59,34 +63,6 @@ VS_Output main( const VS_Input Input )
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
-    /*
-    // alpha texture
-    float2 alphaUV = Input.AlphaUV;
-    alphaUV.y = mUVInversed.x + mUVInversed.y * alphaUV.y;
-    
-    // uv distortion texture
-    float2 uvDistorionUV = Input.UVDistortionUV;
-    uvDistorionUV.y = mUVInversed.x + mUVInversed.y * uvDistorionUV.y;
-    
-    // blend texture
-    float2 blendUV = Input.BlendUV;
-    blendUV.y = mUVInversed.x + mUVInversed.y * blendUV.y;
-    
-    // blend alpha texture
-    float2 blendAlphaUV = Input.BlendAlphaUV;
-    blendAlphaUV.y = mUVInversed.x + mUVInversed.y * blendAlphaUV.y;
-    
-    // blend uv distortion texture
-    float2 blendUVDistortionUV = Input.BlendUVDistortionUV;
-    blendUVDistortionUV.y = mUVInversed.x + mUVInversed.y * blendUVDistortionUV.y;
-    
-    // flipbook interpolation
-    ApplyFlipbookVS(Output.FlipbookRate, Output.FlipbookNextIndexUV, mflipbookParameter, Input.FlipbookIndex, Output.UV1);
-
-    // alpha threshold
-    Output.AlphaThreshold = Input.AlphaThreshold;
-    */
-
 	// NBT
 	Output.WorldN = worldNormal;
 	Output.WorldB = worldBinormal;
@@ -96,21 +72,17 @@ VS_Output main( const VS_Input Input )
 
 	float4 cameraPos = mul(mCamera, float4(worldPos, 1.0));
 	cameraPos = cameraPos / cameraPos.w;
-	Output.Position = mul(mProj, cameraPos);
+	Output.PosVS = mul(mProj, cameraPos);
 
 	Output.VColor = Input.Color;
 	Output.UV = uv1;
 
-	/*
-    Output.AlphaUV = alphaUV;
-    Output.UVDistortionUV = uvDistorionUV;
-    Output.BlendUV = blendUV;
-    Output.BlendAlphaUV = blendAlphaUV;
-    Output.BlendUVDistortionUV = blendUVDistortionUV;
-	*/
+	CalculateAndStoreAdvancedParameter(Input, Output);
 
-    CalculateAndStoreAdvancedParameter(Input, Output);
+#ifndef DISABLED_SOFT_PARTICLE
+	Output.PosP = Output.PosVS;
+
+#endif
 
 	return Output;
 }
-

@@ -2,7 +2,7 @@
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
@@ -203,7 +203,7 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = CBVS0.mModel * localPosition;
-    Output.Pos = CBVS0.mCameraProj * cameraPosition;
+    Output.PosVS = CBVS0.mCameraProj * cameraPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
@@ -236,7 +236,7 @@ void main()
     Input.UV = Input_UV;
     Input.Color = Input_Color;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Normal = flattenTemp.Normal;
     _VSPS_Binormal = flattenTemp.Binormal;

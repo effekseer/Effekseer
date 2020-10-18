@@ -1,10 +1,10 @@
 struct PS_Input
 {
-    float4 Position;
+    float4 PosVS;
     float2 UV;
     float4 Binormal;
     float4 Tangent;
-    float4 Pos;
+    float4 PosP;
     float4 Color;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
@@ -31,6 +31,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _209_fFlipbookParameter : register(c2);
     float4 _209_fUVDistortionParameter : register(c3);
     float4 _209_fBlendTextureParameter : register(c4);
+    float4 _209_softParticleAndReconstructionParam1 : register(c5);
+    float4 _209_reconstructionParam2 : register(c6);
 };
 
 uniform sampler2D Sampler_g_uvDistortionSampler : register(s3);
@@ -45,7 +47,7 @@ static float4 gl_FragCoord;
 static float2 Input_UV;
 static float4 Input_Binormal;
 static float4 Input_Tangent;
-static float4 Input_Pos;
+static float4 Input_PosP;
 static float4 Input_Color;
 static float4 Input_Alpha_Dist_UV;
 static float4 Input_Blend_Alpha_Dist_UV;
@@ -58,7 +60,7 @@ struct SPIRV_Cross_Input
     centroid float2 Input_UV : TEXCOORD0;
     float4 Input_Binormal : TEXCOORD1;
     float4 Input_Tangent : TEXCOORD2;
-    float4 Input_Pos : TEXCOORD3;
+    float4 Input_PosP : TEXCOORD3;
     centroid float4 Input_Color : TEXCOORD4;
     float4 Input_Alpha_Dist_UV : TEXCOORD5;
     float4 Input_Blend_Alpha_Dist_UV : TEXCOORD6;
@@ -169,7 +171,7 @@ float4 _main(PS_Input Input)
     {
         discard;
     }
-    float2 pos = Input.Pos.xy / Input.Pos.w.xx;
+    float2 pos = Input.PosP.xy / Input.PosP.w.xx;
     float2 posU = Input.Tangent.xy / Input.Tangent.w.xx;
     float2 posR = Input.Binormal.xy / Input.Binormal.w.xx;
     float xscale = (((Output.x * 2.0f) - 1.0f) * Input.Color.x) * _209_g_scale.x;
@@ -186,11 +188,11 @@ float4 _main(PS_Input Input)
 void frag_main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = Input_UV;
     Input.Binormal = Input_Binormal;
     Input.Tangent = Input_Tangent;
-    Input.Pos = Input_Pos;
+    Input.PosP = Input_PosP;
     Input.Color = Input_Color;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
@@ -206,7 +208,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_UV = stage_input.Input_UV;
     Input_Binormal = stage_input.Input_Binormal;
     Input_Tangent = stage_input.Input_Tangent;
-    Input_Pos = stage_input.Input_Pos;
+    Input_PosP = stage_input.Input_PosP;
     Input_Color = stage_input.Input_Color;
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;

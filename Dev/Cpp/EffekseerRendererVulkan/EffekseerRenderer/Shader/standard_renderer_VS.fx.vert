@@ -14,10 +14,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Position;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -44,7 +44,7 @@ layout(location = 6) in float Input_FlipbookIndex;
 layout(location = 7) in float Input_AlphaThreshold;
 layout(location = 0) centroid out vec4 _entryPointOutput_Color;
 layout(location = 1) centroid out vec2 _entryPointOutput_UV;
-layout(location = 2) out vec4 _entryPointOutput_Position;
+layout(location = 2) out vec4 _entryPointOutput_PosP;
 layout(location = 3) out vec4 _entryPointOutput_PosU;
 layout(location = 4) out vec4 _entryPointOutput_PosR;
 layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
@@ -169,8 +169,8 @@ VS_Output _main(VS_Input Input)
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPos = pos4 * _256.mCamera;
     cameraPos /= vec4(cameraPos.w);
-    Output.Pos = cameraPos * _256.mProj;
-    Output.Position = Output.Pos;
+    Output.PosP = cameraPos * _256.mProj;
+    Output.PosVS = Output.PosP;
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = _256.mUVInversed.x + (_256.mUVInversed.y * Input.UV.y);
@@ -193,12 +193,12 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    vec4 _position = flattenTemp.Pos;
+    vec4 _position = flattenTemp.PosVS;
     _position.y = -_position.y;
     gl_Position = _position;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_Position = flattenTemp.Position;
+    _entryPointOutput_PosP = flattenTemp.PosP;
     _entryPointOutput_PosU = flattenTemp.PosU;
     _entryPointOutput_PosR = flattenTemp.PosR;
     _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;

@@ -2,11 +2,11 @@
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec2 UV;
     vec4 Binormal;
     vec4 Tangent;
-    vec4 Pos;
+    vec4 PosP;
     vec4 Color;
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
@@ -55,7 +55,7 @@ attribute vec4 Input_Color;
 centroid varying vec2 _VSPS_UV;
 varying vec4 _VSPS_Binormal;
 varying vec4 _VSPS_Tangent;
-varying vec4 _VSPS_Pos;
+varying vec4 _VSPS_PosP;
 centroid varying vec4 _VSPS_Color;
 varying vec4 _VSPS_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_Alpha_Dist_UV;
@@ -209,12 +209,12 @@ VS_Output _main(VS_Input Input)
     localTangent = CBVS0.mModel * localTangent;
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.Position = CBVS0.mCameraProj * localPosition;
+    Output.PosVS = CBVS0.mCameraProj * localPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.Binormal = CBVS0.mCameraProj * localBinormal;
     Output.Tangent = CBVS0.mCameraProj * localTangent;
-    Output.Pos = Output.Position;
+    Output.PosP = Output.PosVS;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Input.UV;
@@ -242,11 +242,11 @@ void main()
     Input.UV = Input_UV;
     Input.Color = Input_Color;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Binormal = flattenTemp.Binormal;
     _VSPS_Tangent = flattenTemp.Tangent;
-    _VSPS_Pos = flattenTemp.Pos;
+    _VSPS_PosP = flattenTemp.PosP;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     _VSPS_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;

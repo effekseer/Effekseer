@@ -1,11 +1,11 @@
 struct PS_Input
 {
-    float4 Position;
+    float4 PosVS;
     float2 UV;
     float4 Normal;
     float4 Binormal;
     float4 Tangent;
-    float4 Pos;
+    float4 PosP;
     float4 Color;
 };
 
@@ -16,6 +16,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _73_fFlipbookParameter : register(c2);
     float4 _73_fUVDistortionParameter : register(c3);
     float4 _73_fBlendTextureParameter : register(c4);
+    float4 _73_softParticleAndReconstructionParam1 : register(c5);
+    float4 _73_reconstructionParam2 : register(c6);
 };
 
 uniform sampler2D Sampler_g_sampler : register(s0);
@@ -26,7 +28,7 @@ static float2 Input_UV;
 static float4 Input_Normal;
 static float4 Input_Binormal;
 static float4 Input_Tangent;
-static float4 Input_Pos;
+static float4 Input_PosP;
 static float4 Input_Color;
 static float4 _entryPointOutput;
 
@@ -36,7 +38,7 @@ struct SPIRV_Cross_Input
     float4 Input_Normal : TEXCOORD1;
     float4 Input_Binormal : TEXCOORD2;
     float4 Input_Tangent : TEXCOORD3;
-    float4 Input_Pos : TEXCOORD4;
+    float4 Input_PosP : TEXCOORD4;
     centroid float4 Input_Color : TEXCOORD5;
     float4 gl_FragCoord : VPOS;
 };
@@ -50,7 +52,7 @@ float4 _main(PS_Input Input)
 {
     float4 Output = tex2D(Sampler_g_sampler, Input.UV);
     Output.w *= Input.Color.w;
-    float2 pos = Input.Pos.xy / Input.Pos.w.xx;
+    float2 pos = Input.PosP.xy / Input.PosP.w.xx;
     float2 posU = Input.Tangent.xy / Input.Tangent.w.xx;
     float2 posR = Input.Binormal.xy / Input.Binormal.w.xx;
     float xscale = (((Output.x * 2.0f) - 1.0f) * Input.Color.x) * _73_g_scale.x;
@@ -71,12 +73,12 @@ float4 _main(PS_Input Input)
 void frag_main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = Input_UV;
     Input.Normal = Input_Normal;
     Input.Binormal = Input_Binormal;
     Input.Tangent = Input_Tangent;
-    Input.Pos = Input_Pos;
+    Input.PosP = Input_PosP;
     Input.Color = Input_Color;
     float4 _182 = _main(Input);
     _entryPointOutput = _182;
@@ -89,7 +91,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_Normal = stage_input.Input_Normal;
     Input_Binormal = stage_input.Input_Binormal;
     Input_Tangent = stage_input.Input_Tangent;
-    Input_Pos = stage_input.Input_Pos;
+    Input_PosP = stage_input.Input_PosP;
     Input_Color = stage_input.Input_Color;
     frag_main();
     SPIRV_Cross_Output stage_output;

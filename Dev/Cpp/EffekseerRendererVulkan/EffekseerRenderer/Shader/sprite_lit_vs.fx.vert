@@ -12,7 +12,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV1;
     vec2 UV2;
@@ -21,6 +21,7 @@ struct VS_Output
     vec3 WorldT;
     vec3 WorldB;
     vec2 ScreenUV;
+    vec4 PosP;
 };
 
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
@@ -45,10 +46,11 @@ layout(location = 4) out vec3 _entryPointOutput_WorldN;
 layout(location = 5) out vec3 _entryPointOutput_WorldT;
 layout(location = 6) out vec3 _entryPointOutput_WorldB;
 layout(location = 7) out vec2 _entryPointOutput_ScreenUV;
+layout(location = 8) out vec4 _entryPointOutput_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
@@ -62,14 +64,14 @@ VS_Output _main(VS_Input Input)
     Output.WorldT = worldTangent;
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = vec4(worldPos, 1.0) * _62.mCamera;
-    cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * _62.mProj;
+    Output.PosVS = cameraPos * _62.mProj;
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / vec2(Output.Position.w);
+    Output.ScreenUV = Output.PosVS.xy / vec2(Output.PosVS.w);
     Output.ScreenUV = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -83,7 +85,7 @@ void main()
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
-    vec4 _position = flattenTemp.Position;
+    vec4 _position = flattenTemp.PosVS;
     _position.y = -_position.y;
     gl_Position = _position;
     _entryPointOutput_VColor = flattenTemp.VColor;
@@ -94,5 +96,6 @@ void main()
     _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_WorldB = flattenTemp.WorldB;
     _entryPointOutput_ScreenUV = flattenTemp.ScreenUV;
+    _entryPointOutput_PosP = flattenTemp.PosP;
 }
 

@@ -1,6 +1,6 @@
 struct VS_Output
 {
-    float4 Pos;
+    float4 PosVS;
     float2 UV;
     float3 Normal;
     float3 Binormal;
@@ -244,7 +244,7 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = _495;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 cameraPosition = mul(matModel, localPosition);
-    Output.Pos = mul(_365_mCameraProj, cameraPosition);
+    Output.PosVS = mul(_365_mCameraProj, cameraPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
@@ -278,7 +278,7 @@ void vert_main()
     Input.Color = Input_Color;
     Input.Index = Input_Index;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _entryPointOutput_UV = flattenTemp.UV;
     _entryPointOutput_Normal = flattenTemp.Normal;
     _entryPointOutput_Binormal = flattenTemp.Binormal;

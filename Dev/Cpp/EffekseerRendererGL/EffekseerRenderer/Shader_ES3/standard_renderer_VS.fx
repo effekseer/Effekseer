@@ -14,10 +14,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Position;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -46,7 +46,7 @@ layout(location = 6) in float Input_FlipbookIndex;
 layout(location = 7) in float Input_AlphaThreshold;
 centroid out vec4 _VSPS_Color;
 centroid out vec2 _VSPS_UV;
-out vec4 _VSPS_Position;
+out vec4 _VSPS_PosP;
 out vec4 _VSPS_PosU;
 out vec4 _VSPS_PosR;
 out vec4 _VSPS_Alpha_Dist_UV;
@@ -171,8 +171,8 @@ VS_Output _main(VS_Input Input)
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPos = pos4 * CBVS0.mCamera;
     cameraPos /= vec4(cameraPos.w);
-    Output.Pos = cameraPos * CBVS0.mProj;
-    Output.Position = Output.Pos;
+    Output.PosP = cameraPos * CBVS0.mProj;
+    Output.PosVS = Output.PosP;
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
@@ -195,10 +195,10 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Position = flattenTemp.Position;
+    _VSPS_PosP = flattenTemp.PosP;
     _VSPS_PosU = flattenTemp.PosU;
     _VSPS_PosR = flattenTemp.PosR;
     _VSPS_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;

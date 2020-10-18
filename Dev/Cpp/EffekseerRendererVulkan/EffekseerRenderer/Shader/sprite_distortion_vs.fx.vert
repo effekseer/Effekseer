@@ -11,10 +11,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
 };
@@ -34,7 +34,7 @@ layout(location = 3) in vec3 Input_Binormal;
 layout(location = 4) in vec3 Input_Tangent;
 layout(location = 0) centroid out vec4 _entryPointOutput_Color;
 layout(location = 1) centroid out vec2 _entryPointOutput_UV;
-layout(location = 2) out vec4 _entryPointOutput_Pos;
+layout(location = 2) out vec4 _entryPointOutput_PosP;
 layout(location = 3) out vec4 _entryPointOutput_PosU;
 layout(location = 4) out vec4 _entryPointOutput_PosR;
 
@@ -52,13 +52,13 @@ VS_Output _main(VS_Input Input)
     localTangent /= vec4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = cameraPos * _63.mProj;
-    Output.Pos = Output.Position;
+    Output.PosVS = cameraPos * _63.mProj;
+    Output.PosP = Output.PosVS;
     Output.PosU = localBinormal * _63.mProj;
     Output.PosR = localTangent * _63.mProj;
     Output.PosU /= vec4(Output.PosU.w);
     Output.PosR /= vec4(Output.PosR.w);
-    Output.Pos /= vec4(Output.Pos.w);
+    Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = _63.mUVInversed.x + (_63.mUVInversed.y * Input.UV.y);
@@ -74,12 +74,12 @@ void main()
     Input.Binormal = Input_Binormal;
     Input.Tangent = Input_Tangent;
     VS_Output flattenTemp = _main(Input);
-    vec4 _position = flattenTemp.Position;
+    vec4 _position = flattenTemp.PosVS;
     _position.y = -_position.y;
     gl_Position = _position;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_Pos = flattenTemp.Pos;
+    _entryPointOutput_PosP = flattenTemp.PosP;
     _entryPointOutput_PosU = flattenTemp.PosU;
     _entryPointOutput_PosR = flattenTemp.PosR;
 }

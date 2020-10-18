@@ -695,6 +695,11 @@ namespace Effekseer.Binary
 				}
 			}
 
+			if (version >= ExporterVersion.Ver16Alpha4)
+			{
+				data.Add(advanceValue.SoftParticleDistance.GetBytes());
+			}
+
 			return data.ToArray().ToArray();
 		}
 

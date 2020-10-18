@@ -5,9 +5,10 @@
 
 struct PS_Input
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec4 Color;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -15,6 +16,8 @@ struct VS_ConstantBuffer
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform VS_ConstantBuffer CBPS0;
@@ -23,6 +26,7 @@ uniform sampler2D Sampler_g_colorSampler;
 
 centroid varying vec2 _VSPS_UV;
 centroid varying vec4 _VSPS_Color;
+varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
@@ -37,10 +41,11 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Pos = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
-    vec4 _65 = _main(Input);
-    gl_FragData[0] = _65;
+    Input.PosP = _VSPS_PosP;
+    vec4 _69 = _main(Input);
+    gl_FragData[0] = _69;
 }
 

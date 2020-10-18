@@ -49,3 +49,6 @@ AlphaCutoffParameter_ParameterType_FCurve_Name,F-Curve
 AdvancedRenderCommonValues_EnableAlphaTexture_Name,Enable Alpha Texture
 AdvancedRenderCommonValues_EnableUVDistortionTexture_Name,Enable UVDistortion Texture
 AdvancedRenderCommonValues_EnableBlendTexture_Name,Enable Blend Texture
+
+AdvancedRenderCommonValues_SoftParticleDistance_Name,SoftParticle(Distance)
+AdvancedRenderCommonValues_SoftParticleDistance_Desc,If the distance between the background object and the particle is shorter than the specified distance, particles become translucent.

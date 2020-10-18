@@ -111,7 +111,7 @@ static
 //-----------------------------------------------------------------------------------
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(ID3D11Device* device,
-														   ID3D11DeviceContext* context)
+															 ID3D11DeviceContext* context)
 {
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 }
@@ -278,8 +278,8 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_renderState(nullptr)
 	, m_restorationOfStates(true)
 
-	, m_shader(nullptr)
-	, m_shader_distortion(nullptr)
+	, shader_unlit_(nullptr)
+	, shader_distortion_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -304,13 +304,13 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_standardRenderer);
 
-	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_distortion);
-	ES_SAFE_DELETE(m_shader_lighting);
+	ES_SAFE_DELETE(shader_unlit_);
+	ES_SAFE_DELETE(shader_distortion_);
+	ES_SAFE_DELETE(shader_lit_);
 
-	ES_SAFE_DELETE(m_shader_advanced);
-	ES_SAFE_DELETE(m_shader_advanced_distortion);
-	ES_SAFE_DELETE(m_shader_advanced_lighting);
+	ES_SAFE_DELETE(shader_ad_unlit_);
+	ES_SAFE_DELETE(shader_ad_distortion_);
+	ES_SAFE_DELETE(shader_ad_lit_);
 
 	ES_SAFE_DELETE(m_state);
 
@@ -432,7 +432,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},  // AlphaTextureUV + UVDistortionTextureUV
+		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},	// AlphaTextureUV + UVDistortionTextureUV
 		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
 		{"TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
 		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
@@ -483,7 +483,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	m_shader = Shader::Create(this,
+	shader_unlit_ = Shader::Create(this,
 							  Standard_VS::g_main,
 							  sizeof(Standard_VS::g_main),
 							  Standard_PS::g_main,
@@ -492,10 +492,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 							  decl,
 							  ARRAYSIZE(decl),
 							  false);
-	if (m_shader == nullptr)
+	if (shader_unlit_ == nullptr)
 		return false;
 
-	m_shader_advanced = Shader::Create(this,
+	shader_ad_unlit_ = Shader::Create(this,
 									   Standard_VS_Ad::g_main,
 									   sizeof(Standard_VS_Ad::g_main),
 									   Standard_PS_Ad::g_main,
@@ -504,10 +504,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 									   decl_advanced,
 									   ARRAYSIZE(decl_advanced),
 									   false);
-	if (m_shader_advanced == nullptr)
+	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	m_shader_distortion = Shader::Create(this,
+	shader_distortion_ = Shader::Create(this,
 										 Standard_Distortion_VS::g_main,
 										 sizeof(Standard_Distortion_VS::g_main),
 										 Standard_Distortion_PS::g_main,
@@ -516,10 +516,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 										 decl_distortion,
 										 ARRAYSIZE(decl_distortion),
 										 false);
-	if (m_shader_distortion == nullptr)
+	if (shader_distortion_ == nullptr)
 		return false;
 
-	m_shader_advanced_distortion = Shader::Create(this,
+	shader_ad_distortion_ = Shader::Create(this,
 												  Standard_Distortion_VS_Ad::g_main,
 												  sizeof(Standard_Distortion_VS_Ad::g_main),
 												  Standard_Distortion_PS_Ad::g_main,
@@ -528,22 +528,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 												  decl_distortion_advanced,
 												  ARRAYSIZE(decl_distortion_advanced),
 												  false);
-	if (m_shader_advanced_distortion == nullptr)
+	if (shader_ad_distortion_ == nullptr)
 		return false;
 
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
-
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
-
-	m_shader_advanced->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_advanced->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
-
-	m_shader_advanced_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_advanced_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
-
-	m_shader_lighting = Shader::Create(this,
+	shader_lit_ = Shader::Create(this,
 									   Standard_Lighting_VS::g_main,
 									   sizeof(Standard_Lighting_VS::g_main),
 									   Standard_Lighting_PS::g_main,
@@ -552,10 +540,10 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 									   decl_lighting,
 									   ARRAYSIZE(decl_lighting),
 									   false);
-	if (m_shader_lighting == nullptr)
+	if (shader_lit_ == nullptr)
 		return false;
 
-	m_shader_advanced_lighting = Shader::Create(this,
+	shader_ad_lit_ = Shader::Create(this,
 												Standard_Lighting_VS_Ad::g_main,
 												sizeof(Standard_Lighting_VS_Ad::g_main),
 												Standard_Lighting_PS_Ad::g_main,
@@ -564,19 +552,32 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 												decl_lighting_advanced,
 												ARRAYSIZE(decl_lighting_advanced),
 												false);
-	if (m_shader_advanced_lighting == nullptr)
+	if (shader_ad_lit_ == nullptr)
 		return false;
 
-	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
 
-	m_shader_advanced_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_advanced_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+	shader_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
+
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
+
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
+
+	shader_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
+
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
 
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
+	GetImpl()->isSoftParticleEnabled = true;
 
 	graphicsDevice_ = new Backend::GraphicsDevice(device, context);
 
@@ -906,27 +907,27 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 {
 	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
 	{
-		return m_shader_advanced_distortion;
+		return shader_ad_distortion_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
 	{
-		return m_shader_advanced_lighting;
+		return shader_ad_lit_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
 	{
-		return m_shader_advanced;
+		return shader_ad_unlit_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
 	{
-		return m_shader_distortion;
+		return shader_distortion_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
 	{
-		return m_shader_lighting;
+		return shader_lit_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
 	{
-		return m_shader;
+		return shader_unlit_;
 	}
 
 	assert(0);

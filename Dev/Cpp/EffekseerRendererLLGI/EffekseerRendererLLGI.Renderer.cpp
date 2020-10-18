@@ -222,8 +222,8 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_renderState(nullptr)
 
-	, shader_(nullptr)
 	, shader_unlit_(nullptr)
+	, shader_distortion_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -254,9 +254,9 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_standardRenderer);
 
-	ES_SAFE_DELETE(shader_);
-	ES_SAFE_DELETE(shader_lit_);
 	ES_SAFE_DELETE(shader_unlit_);
+	ES_SAFE_DELETE(shader_lit_);
+	ES_SAFE_DELETE(shader_distortion_);
 
 	ES_SAFE_DELETE(shader_ad_unlit_);
 	ES_SAFE_DELETE(shader_ad_lit_);
@@ -382,26 +382,26 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 8});			 // FlipbookIndexAndNextRate
 	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});			 // AlphaThreshold
 
-	shader_ = Shader::Create(graphicsDevice_,
-							 fixedShader_.SpriteUnlit_VS.data(),
-							 (int32_t)fixedShader_.SpriteUnlit_VS.size(),
-							 fixedShader_.SpriteUnlit_PS.data(),
-							 (int32_t)fixedShader_.SpriteUnlit_PS.size(),
-							 "StandardRenderer",
-							 layouts,
-							 false);
-	if (shader_ == nullptr)
-		return false;
-
 	shader_unlit_ = Shader::Create(graphicsDevice_,
-								   fixedShader_.SpriteDistortion_VS.data(),
-								   (int32_t)fixedShader_.SpriteDistortion_VS.size(),
-								   fixedShader_.SpriteDistortion_PS.data(),
-								   (int32_t)fixedShader_.SpriteDistortion_PS.size(),
-								   "StandardRenderer Distortion",
-								   layouts_distort,
+								   fixedShader_.SpriteUnlit_VS.data(),
+								   (int32_t)fixedShader_.SpriteUnlit_VS.size(),
+								   fixedShader_.SpriteUnlit_PS.data(),
+								   (int32_t)fixedShader_.SpriteUnlit_PS.size(),
+								   "StandardRenderer",
+								   layouts,
 								   false);
 	if (shader_unlit_ == nullptr)
+		return false;
+
+	shader_distortion_ = Shader::Create(graphicsDevice_,
+										fixedShader_.SpriteDistortion_VS.data(),
+										(int32_t)fixedShader_.SpriteDistortion_VS.size(),
+										fixedShader_.SpriteDistortion_PS.data(),
+										(int32_t)fixedShader_.SpriteDistortion_PS.size(),
+										"StandardRenderer Distortion",
+										layouts_distort,
+										false);
+	if (shader_distortion_ == nullptr)
 		return false;
 
 	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
@@ -465,28 +465,28 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 									layouts_lighting_ad,
 									false);
 
-	shader_lit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	shader_lit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
 
-	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	shader_->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
+	shader_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
 
-	shader_unlit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	shader_unlit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
 
-	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
 
-	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
+	shader_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
 
-	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
 
-	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
+	GetImpl()->isSoftParticleEnabled = true;
 
 	return true;
 }
@@ -828,7 +828,7 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
 	{
-		return shader_unlit_;
+		return shader_distortion_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
 	{
@@ -836,7 +836,7 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
 	{
-		return shader_;
+		return shader_unlit_;
 	}
 
 	return nullptr;
@@ -903,7 +903,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 				GetCurrentCommandList()->SetTexture(
 					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
 				GetCurrentCommandList()->SetTexture(
-					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);	
+					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
 			}
 		}
 	}

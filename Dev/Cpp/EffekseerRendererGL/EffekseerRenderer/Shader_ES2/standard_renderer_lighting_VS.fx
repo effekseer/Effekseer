@@ -17,7 +17,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV;
     vec3 WorldN;
@@ -197,7 +197,7 @@ VS_Output _main(VS_Input Input)
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = CBVS0.mCamera * vec4(worldPos, 1.0);
     cameraPos /= vec4(cameraPos.w);
-    Output.Position = CBVS0.mProj * cameraPos;
+    Output.PosVS = CBVS0.mProj * cameraPos;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -222,7 +222,7 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_WorldN = flattenTemp.WorldN;

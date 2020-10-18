@@ -5,12 +5,13 @@
 #endif
 
 #include "efk.GraphicsGL.h"
-
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
+#include <EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h>
 
 namespace efk
 {
 RenderTextureGL::RenderTextureGL(Graphics* graphics)
+	: graphics(graphics)
 {
 }
 
@@ -28,6 +29,8 @@ RenderTextureGL::~RenderTextureGL()
 
 bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, TextureFormat format, uint32_t multisample)
 {
+	auto g = (GraphicsGL*)graphics;
+
 	GLCheckError();
 
 	GLint glInternalFormat;
@@ -84,6 +87,7 @@ bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, TextureFormat 
 	this->size_ = size;
 	this->samplingCount_ = multisample;
 	this->format_ = format;
+	this->texture_ = static_cast<EffekseerRendererGL::Backend::GraphicsDevice*>(g->GetGraphicsDevice().Get())->CreateTexture(texture, [] {});
 	return true;
 }
 
@@ -311,22 +315,26 @@ void GraphicsGL::SetRenderTarget(RenderTexture** renderTextures, int32_t renderT
 			}
 			else if (rti->GetSamplingCount() > 1)
 			{
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rti->GetBuffer());
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, rti->GetBuffer());
 			}
 			else
 			{
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rti->GetTexture(), 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, rti->GetTexture(), 0);
 			}
+		}
+
+		for (size_t i = renderTextureCount; i < 4; i++)
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
 		}
 
 		if (rt->GetSamplingCount() > 1)
 		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rt->GetBuffer());
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt ? dt->GetBuffer() : 0);
 		}
 		else
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rt->GetTexture(), 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt ? dt->GetBuffer() : 0, 0);
 		}
 
@@ -342,6 +350,9 @@ void GraphicsGL::SetRenderTarget(RenderTexture** renderTextures, int32_t renderT
 
 		glViewport(0, 0, renderTextures[0]->GetSize().X, renderTextures[0]->GetSize().Y);
 	}
+
+	currentRenderTargetCount_ = renderTextureCount;
+	hasDepthBuffer_ = depthTexture != nullptr;
 }
 
 void GraphicsGL::SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels)
@@ -353,24 +364,46 @@ void GraphicsGL::SaveTexture(RenderTexture* texture, std::vector<Effekseer::Colo
 
 void GraphicsGL::Clear(Effekseer::Color color)
 {
-	GLbitfield bit = 0;
+	GLCheckError();
+
+	if (currentRenderTargetCount_ == 0)
 	{
-		bit = bit | GL_COLOR_BUFFER_BIT;
-		glClearColor(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+		GLbitfield bit = 0;
+		{
+			bit = bit | GL_COLOR_BUFFER_BIT;
+			glClearColor(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+		}
+
+		{
+			// Need that GL_DEPTH_TEST & WRITE are enabled
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+
+			bit = bit | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+			glClearDepth(1.0f);
+		}
+
+		if (bit != 0)
+		{
+			glClear(bit);
+		}
 	}
-
+	else
 	{
-		// Need that GL_DEPTH_TEST & WRITE are enabled
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
+		std::array<float, 4> colorf = {color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f};
 
-		bit = bit | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-		glClearDepth(1.0f);
-	}
+		for (int32_t i = 0; i < currentRenderTargetCount_; i++)
+		{
+			glClearBufferfv(GL_COLOR, i, colorf.data());
+			GLCheckError();
+		}
 
-	if (bit != 0)
-	{
-		glClear(bit);
+		if (hasDepthBuffer_)
+		{
+			float clearDepth[] = {1.0f};
+			glClearBufferfv(GL_DEPTH, 0, clearDepth);
+			GLCheckError();
+		}
 	}
 
 	GLCheckError();

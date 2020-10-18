@@ -37,7 +37,6 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
-
 class DeviceObject
 {
 private:
@@ -326,7 +325,7 @@ public:
 		return "OpenGL";
 	}
 
-	Texture* CreateTexture(GLuint buffer, const std::function<void()>& onDisposed);
+	Effekseer::Backend::TextureRef CreateTexture(GLuint buffer, const std::function<void()>& onDisposed);
 };
 
 } // namespace Backend

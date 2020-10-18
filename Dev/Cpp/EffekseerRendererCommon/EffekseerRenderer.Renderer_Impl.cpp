@@ -4,6 +4,11 @@
 namespace EffekseerRenderer
 {
 
+Renderer::Impl::~Impl()
+{
+	ES_SAFE_DELETE(depthTexture_);
+}
+
 ::Effekseer::Vector3D Renderer::Impl::GetLightDirection() const
 {
 	return ToStruct(lightDirection_);
@@ -181,6 +186,38 @@ Effekseer::RenderMode Renderer::Impl::GetRenderMode() const
 void Renderer::Impl::SetRenderMode(Effekseer::RenderMode renderMode)
 {
 	renderMode_ = renderMode;
+}
+
+void Renderer::Impl::GetDepth(::Effekseer::TextureData*& texture, DepthReconstructionParameter& reconstructionParam)
+{
+	texture = depthTexture_;
+	reconstructionParam = reconstructionParam_;
+}
+
+void Renderer::Impl::GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam)
+{
+	texture = depthBackendTexture_;
+	reconstructionParam = reconstructionParam_;
+}
+
+void Renderer::Impl::SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam)
+{
+	depthBackendTexture_ = texture;
+	reconstructionParam_ = reconstructionParam;
+
+	if (texture != nullptr)
+	{
+		if (depthTexture_ == nullptr)
+		{
+			depthTexture_ = new Effekseer::TextureData();		
+		}
+		depthTexture_->HasMipmap = depthBackendTexture_->GetHasMipmap();
+		depthTexture_->TexturePtr = depthBackendTexture_;
+	}
+	else if (texture == nullptr && depthTexture_ != nullptr)
+	{
+		ES_SAFE_DELETE(depthTexture_);
+	}
 }
 
 } // namespace EffekseerRenderer

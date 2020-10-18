@@ -4,11 +4,11 @@ precision highp int;
 
 struct PS_Input
 {
-    highp vec4 Position;
+    highp vec4 PosVS;
     highp vec2 UV;
     highp vec4 Binormal;
     highp vec4 Tangent;
-    highp vec4 Pos;
+    highp vec4 PosP;
     highp vec4 Color;
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
@@ -35,6 +35,8 @@ struct PS_ConstanBuffer
     highp vec4 fFlipbookParameter;
     highp vec4 fUVDistortionParameter;
     highp vec4 fBlendTextureParameter;
+    highp vec4 softParticleAndReconstructionParam1;
+    highp vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -50,7 +52,7 @@ uniform highp sampler2D Sampler_g_backSampler;
 centroid varying highp vec2 _VSPS_UV;
 varying highp vec4 _VSPS_Binormal;
 varying highp vec4 _VSPS_Tangent;
-varying highp vec4 _VSPS_Pos;
+varying highp vec4 _VSPS_PosP;
 centroid varying highp vec4 _VSPS_Color;
 varying highp vec4 _VSPS_Alpha_Dist_UV;
 varying highp vec4 _VSPS_Blend_Alpha_Dist_UV;
@@ -154,7 +156,7 @@ highp vec4 _main(PS_Input Input)
     {
         discard;
     }
-    highp vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    highp vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     highp vec2 posU = Input.Tangent.xy / vec2(Input.Tangent.w);
     highp vec2 posR = Input.Binormal.xy / vec2(Input.Binormal.w);
     highp float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -163,6 +165,7 @@ highp vec4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
+    uv.y = 1.0 - uv.y;
     highp vec3 color = vec3(texture2D(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -171,17 +174,17 @@ highp vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = _VSPS_UV;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    highp vec4 _467 = _main(Input);
-    gl_FragData[0] = _467;
+    highp vec4 _471 = _main(Input);
+    gl_FragData[0] = _471;
 }
 

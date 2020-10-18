@@ -702,9 +702,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
+		if (m_effect->GetVersion() >= Version16Alpha4)
+		{
+			memcpy(&RendererCommon.BasicParameter.SoftParticleDistance, pos, sizeof(float));
+			pos += sizeof(float);
+		}
+		else
+		{
+			RendererCommon.BasicParameter.SoftParticleDistance = 0.0f;
+		}
+
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
-		// rescale intensity after 1.5
+			// rescale intensity after 1.5
 #ifndef __EFFEKSEER_FOR_UE4__ // Hack for EffekseerForUE4
 		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
 		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
@@ -949,7 +959,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>&  setting)
+void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting)
 {
 	int32_t type = 0;
 	memcpy(&type, pos, sizeof(int));

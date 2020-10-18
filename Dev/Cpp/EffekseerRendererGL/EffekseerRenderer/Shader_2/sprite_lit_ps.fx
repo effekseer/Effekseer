@@ -5,7 +5,7 @@
 
 struct PS_Input
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV1;
     vec2 UV2;
@@ -14,6 +14,7 @@ struct PS_Input
     vec3 WorldT;
     vec3 WorldB;
     vec2 ScreenUV;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -27,6 +28,8 @@ struct VS_ConstantBuffer
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform VS_ConstantBuffer CBPS0;
@@ -42,6 +45,7 @@ varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
 varying vec2 _VSPS_ScreenUV;
+varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
@@ -62,7 +66,7 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.VColor = _VSPS_VColor;
     Input.UV1 = _VSPS_UV1;
     Input.UV2 = _VSPS_UV2;
@@ -71,7 +75,8 @@ void main()
     Input.WorldT = _VSPS_WorldT;
     Input.WorldB = _VSPS_WorldB;
     Input.ScreenUV = _VSPS_ScreenUV;
-    vec4 _158 = _main(Input);
-    gl_FragData[0] = _158;
+    Input.PosP = _VSPS_PosP;
+    vec4 _162 = _main(Input);
+    gl_FragData[0] = _162;
 }
 
