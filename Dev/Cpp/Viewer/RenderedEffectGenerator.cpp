@@ -123,6 +123,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Set
 	graphics_ = graphics;
 
 	manager_ = ::Effekseer::Manager::Create(spriteCount);
+	manager_->LaunchWorkerThreads(4);
 	manager_->SetSetting(setting);
 	m_isSRGBMode = isSRGBMode;
 
