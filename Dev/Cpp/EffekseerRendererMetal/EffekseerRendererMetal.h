@@ -270,12 +270,12 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
+	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
+	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 	@brief
@@ -431,41 +431,6 @@ public:
 	{
 	}
 };
-
-/**
-@brief	\~English	Model
-		\~Japanese	モデル
-*/
-/*
-class Model : public Effekseer::Model
-{
-private:
-public:
-	struct InternalModel
-	{
-		Effekseer::Backend::VertexBuffer* VertexBuffer;
-		Effekseer::Backend::IndexBuffer* IndexBuffer;
-		int32_t VertexCount;
-		int32_t IndexCount;
-		int32_t FaceCount;
-
-		InternalModel();
-		~InternalModel();
-	};
-
-	Effekseer::Backend::GraphicsDevice* graphicsDevice_ = nullptr;
-	InternalModel* InternalModels = nullptr;
-	int32_t ModelCount;
-
-	Model(uint8_t* data, int32_t size, int maximumModelCount, Effekseer::Backend::GraphicsDevice* graphicsDevice);
-
-	~Model() override;
-
-	bool LoadToGPU();
-
-	bool IsLoadedOnGPU = false;
-};
-*/
 
 //----------------------------------------------------------------------------------
 //

@@ -456,41 +456,6 @@ public:
 	}
 };
 
-/**
-@brief	\~English	Model
-		\~Japanese	モデル
-*/
-/*
-class Model : public Effekseer::Model
-{
-private:
-public:
-	struct InternalModel
-	{
-		Effekseer::Backend::VertexBuffer* VertexBuffer;
-		Effekseer::Backend::IndexBuffer* IndexBuffer;
-		int32_t VertexCount;
-		int32_t IndexCount;
-		int32_t FaceCount;
-
-		InternalModel();
-		~InternalModel();
-	};
-
-	Effekseer::Backend::GraphicsDevice* graphicsDevice_ = nullptr;
-	InternalModel* InternalModels = nullptr;
-	int32_t ModelCount;
-
-	Model(uint8_t* data, int32_t size, int maximumModelCount, Effekseer::Backend::GraphicsDevice* graphicsDevice);
-
-	~Model() override;
-
-	bool LoadToGPU();
-
-	bool IsLoadedOnGPU = false;
-};
-*/
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -515,6 +480,9 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(ID3D11Device* device,
+														   ID3D11DeviceContext* context);
 
 /**
 @brief	テクスチャ読込クラスを生成する。

@@ -2713,6 +2713,16 @@ public:
 			\~Japanese 例えば、DeltaTimeが2でUpdateIntervalが1の場合、エフェクトは2回更新される。
 		*/
 		float UpdateInterval = 1.0f;
+
+		/**
+			@brief
+			\~English Perform synchronous update
+			\~Japanese 同期更新を行う
+			@note
+			\~English If true, update processing is performed synchronously. If false, update processing is performed asynchronously (after this, do not call anything other than Draw)
+			\~Japanese trueなら同期的に更新処理を行う。falseなら非同期的に更新処理を行う（次はDraw以外呼び出してはいけない）
+		*/
+		bool SyncUpdate = true;
 	};
 
 	/**
@@ -4847,6 +4857,7 @@ enum class IndexBufferStrideType
 enum class UniformBufferLayoutElementType
 {
 	Vector4,
+	Matrix44,
 };
 
 enum class ShaderStageType
@@ -5304,6 +5315,11 @@ public:
 	}
 
 	virtual Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, UniformLayout* layout = nullptr)
+	{
+		return nullptr;
+	}
+
+	virtual Shader* CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
 	{
 		return nullptr;
 	}
