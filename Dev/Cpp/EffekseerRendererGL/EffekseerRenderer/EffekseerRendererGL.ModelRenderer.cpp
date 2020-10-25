@@ -508,7 +508,7 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
-	if (isAdvanced_)
+	if (collector_.DoRequireAdvancedRenderer())
 	{
 		if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 		{

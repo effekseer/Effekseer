@@ -883,30 +883,30 @@ protected:
 					const ::Effekseer::Mat44f& camera)
 	{
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
+		const ShaderParameterCollector& collector = state.Collector;
+		// bool isAdvanced = state.IsAdvanced();
 
-		bool isAdvanced = state.IsAdvanced();
-
-		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+		if (collector.ShaderType == RendererShaderType::Material)
 		{
 			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting && isAdvanced)
+		else if (collector.ShaderType == RendererShaderType::AdvancedLit)
 		{
 			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
+		else if (collector.ShaderType == RendererShaderType::AdvancedBackDistortion)
 		{
 			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-		else if (isAdvanced)
+		else if (collector.ShaderType == RendererShaderType::AdvancedUnlit)
 		{
 			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		else if (collector.ShaderType == RendererShaderType::Lit)
 		{
 			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
+		else if (collector.ShaderType == RendererShaderType::BackDistortion)
 		{
 			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
@@ -965,6 +965,8 @@ public:
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
+		
+		/*
 		state.TextureFilter1 = param.BasicParameterPtr->TextureFilter1;
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
@@ -979,6 +981,7 @@ public:
 		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
 		state.TextureFilter7 = param.BasicParameterPtr->TextureFilter7;
 		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
+		*/
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
@@ -1006,17 +1009,11 @@ public:
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-		state.CopyMaterialFromParameterToState(param.EffectPointer,
-											   param.BasicParameterPtr->MaterialParameterPtr,
-											   param.BasicParameterPtr->Texture1Index,
-											   param.BasicParameterPtr->Texture2Index
-											   ,
-											   param.BasicParameterPtr->Texture3Index,
-											   param.BasicParameterPtr->Texture4Index,
-											   param.BasicParameterPtr->Texture5Index,
-											   param.BasicParameterPtr->Texture6Index,
-											   param.BasicParameterPtr->Texture7Index
-		);
+		state.CopyMaterialFromParameterToState(
+			m_renderer,
+			param.EffectPointer,
+			param.BasicParameterPtr);
+
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
 

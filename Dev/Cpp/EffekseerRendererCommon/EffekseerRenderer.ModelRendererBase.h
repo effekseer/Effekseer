@@ -484,8 +484,7 @@ protected:
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
 
-	//! TODO : refactor
-	bool isAdvanced_ = false;
+	ShaderParameterCollector collector_;
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
@@ -818,43 +817,9 @@ public:
 
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 
-		isAdvanced_ = IsAdvanced(parameter);
-	}
+		collector_ = ShaderParameterCollector();
+		collector_.Collect(renderer, parameter.EffectPointer, parameter.BasicParameterPtr, parameter.EnableFalloff != 0, true);
 
-	bool IsAdvanced(const efkModelNodeParam& parameter) const
-	{
-		// TODO : merge with IsAdvanced in StandererdRenderer
-		if (parameter.BasicParameterPtr->MaterialType == ::Effekseer::RendererMaterialType::File)
-		{
-			return false;
-		}
-
-		if (parameter.BasicParameterPtr->Texture3Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture4Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture5Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture6Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture7Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->EnableInterpolation ||
-			parameter.BasicParameterPtr->TextureBlendType != -1 ||
-			parameter.BasicParameterPtr->EdgeThreshold != 0 ||
-			parameter.BasicParameterPtr->EmissiveScaling != 1.0f ||
-			parameter.BasicParameterPtr->IsAlphaCutoffEnabled ||
-			parameter.EnableFalloff != 0)
-		{
-			return true;
-		}
-
-		return false;
 	}
 
 	template <typename RENDERER>
@@ -957,7 +922,7 @@ public:
 			}
 			else
 			{
-				if (isAdvanced_)
+				if (collector_.DoRequireAdvancedRenderer())
 				{
 					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererAdvancedVertexConstantBuffer<InstanceCount>, ModelRendererAdvancedPixelConstantBuffer>(
 						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
@@ -1003,18 +968,20 @@ public:
 		if (model == NULL)
 			return;
 
-		bool isBackgroundRequired = false;
+		// bool isBackgroundRequired = false;
+		// 
+		// isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
+		// 
+		// if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
+		// {
+		// 	auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
+		// 	if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
+		// 	{
+		// 		isBackgroundRequired = true;
+		// 	}
+		// }
 
-		isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
-
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
-		{
-			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
-			if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
-			{
-				isBackgroundRequired = true;
-			}
-		}
+		auto isBackgroundRequired = collector_.IsBackgroundRequiredOnFirstPass && renderPassInd == 0;
 
 		if (isBackgroundRequired)
 		{
@@ -1032,6 +999,11 @@ public:
 
 		if (isBackgroundRequired && renderer->GetBackground() == 0)
 			return;
+
+		if (isBackgroundRequired)
+		{
+			collector_.Textures[collector_.BackgroundIndex] = renderer->GetBackground();		
+		}
 
 		// select shader
 		Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
@@ -1068,15 +1040,15 @@ public:
 				return;
 			}
 
-			if (material != nullptr && (material->TextureCount != materialParam->MaterialTextures.size() ||
-										material->UniformCount != materialParam->MaterialUniforms.size()))
-			{
-				return;
-			}
+			//if (material != nullptr && (material->TextureCount != materialParam->MaterialTextures.size() ||
+			//							material->UniformCount != materialParam->MaterialUniforms.size()))
+			//{
+			//	return;
+			//}
 		}
 		else
 		{
-			if (isAdvanced_)
+			if (collector_.DoRequireAdvancedRenderer())
 			{
 				if (distortion)
 				{
@@ -1121,6 +1093,15 @@ public:
 
 		renderer->BeginShader(shader_);
 
+		for (int32_t i = 0; i < collector_.TextureCount; i++)
+		{
+			state.TextureFilterTypes[i] = collector_.TextureFilterTypes[i];
+			state.TextureWrapTypes[i] = collector_.TextureWrapTypes[i];
+		}
+
+		renderer->SetTextures(shader_, reinterpret_cast<Effekseer::TextureData**>(collector_.Textures.data()), collector_.TextureCount);
+
+		/*
 		// Select texture
 		if (materialParam != nullptr && material != nullptr)
 		{
@@ -1333,6 +1314,7 @@ public:
 
 			renderer->SetTextures(shader_, textures, 7);
 		}
+		*/
 
 		renderer->GetRenderState()->Update(distortion);
 

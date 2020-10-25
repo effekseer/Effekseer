@@ -67,12 +67,6 @@ public:
 	virtual LLGI::Graphics* GetGraphics() const = 0;
 
 	/**
-		@brief	\~English	Get background
-				\~Japanese	背景を取得する
-	*/
-	virtual Effekseer::TextureData* GetBackground() = 0;
-
-	/**
 		@brief	\~English	Set background
 				\~Japanese	背景を設定する
 	*/

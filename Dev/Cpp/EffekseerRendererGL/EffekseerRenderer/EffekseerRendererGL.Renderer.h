@@ -84,13 +84,6 @@ public:
 
 	/**
 	@brief
-	\~english	Get a background.
-	\~japanese	背景を取得する。
-	*/
-	virtual Effekseer::TextureData* GetBackground() = 0;
-
-	/**
-	@brief
 	\~english	Specify a background.
 	\~japanese	背景を設定する。
 	*/

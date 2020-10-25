@@ -21,16 +21,6 @@ namespace EffekseerRenderer
 //
 //----------------------------------------------------------------------------------
 
-enum class StandardRendererShaderType
-{
-	Unlit,
-	Lit,
-	BackDistortion,
-	AdvancedUnlit,
-	AdvancedLit,
-	AdvancedBackDistortion,
-};
-
 struct StandardRendererState
 {
 	bool DepthTest;
@@ -42,6 +32,8 @@ struct StandardRendererState
 
 	::Effekseer::AlphaBlendType AlphaBlend;
 	::Effekseer::CullingType CullingType;
+
+	/*
 	::Effekseer::TextureFilterType TextureFilter1;
 	::Effekseer::TextureWrapType TextureWrap1;
 	::Effekseer::TextureFilterType TextureFilter2;
@@ -64,6 +56,7 @@ struct StandardRendererState
 	::Effekseer::TextureData* BlendTexturePtr;
 	::Effekseer::TextureData* BlendAlphaTexturePtr;
 	::Effekseer::TextureData* BlendUVDistortionTexturePtr;
+	*/
 
 	int32_t EnableInterpolation;
 	int32_t UVLoopType;
@@ -85,13 +78,15 @@ struct StandardRendererState
 	bool IsAlphaCuttoffEnabled = false;
 
 	::Effekseer::RendererMaterialType MaterialType;
-	::Effekseer::MaterialData* MaterialPtr;
+	//::Effekseer::MaterialData* MaterialPtr;
 	int32_t MaterialUniformCount = 0;
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
-	int32_t MaterialTextureCount = 0;
-	std::array<::Effekseer::TextureData*, 16> MaterialTextures;
+	//int32_t MaterialTextureCount = 0;
+	//std::array<::Effekseer::TextureData*, 16> MaterialTextures;
 	int32_t CustomData1Count = 0;
 	int32_t CustomData2Count = 0;
+
+	ShaderParameterCollector Collector{};
 
 	StandardRendererState()
 	{
@@ -104,6 +99,7 @@ struct StandardRendererState
 
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		CullingType = ::Effekseer::CullingType::Front;
+		/*
 		TextureFilter1 = ::Effekseer::TextureFilterType::Nearest;
 		TextureWrap1 = ::Effekseer::TextureWrapType::Repeat;
 		TextureFilter2 = ::Effekseer::TextureFilterType::Nearest;
@@ -126,7 +122,7 @@ struct StandardRendererState
 		BlendTexturePtr = nullptr;
 		BlendAlphaTexturePtr = nullptr;
 		BlendUVDistortionTexturePtr = nullptr;
-
+		*/
 		EnableInterpolation = 0;
 		UVLoopType = 0;
 		InterpolationType = 0;
@@ -145,16 +141,17 @@ struct StandardRendererState
 		EdgeColor[0] = EdgeColor[1] = EdgeColor[2] = EdgeColor[3] = 0;
 		EdgeColorScaling = 1;
 
-		MaterialPtr = nullptr;
+		//	MaterialPtr = nullptr;
 
 		MaterialType = ::Effekseer::RendererMaterialType::Default;
-		MaterialPtr = nullptr;
+		//MaterialPtr = nullptr;
 		MaterialUniformCount = 0;
-		MaterialTextureCount = 0;
+		//MaterialTextureCount = 0;
 		CustomData1Count = 0;
 		CustomData2Count = 0;
 	}
 
+	/*
 	bool IsAdvanced() const
 	{
 		// TODO : merge with IsAdvanced in ModelRenderer
@@ -189,9 +186,13 @@ struct StandardRendererState
 
 		return false;
 	}
+	*/
 
 	bool operator!=(const StandardRendererState state)
 	{
+		if (Collector != state.Collector)
+			return true;
+
 		if (DepthTest != state.DepthTest)
 			return true;
 		if (DepthWrite != state.DepthWrite)
@@ -204,6 +205,8 @@ struct StandardRendererState
 			return true;
 		if (CullingType != state.CullingType)
 			return true;
+
+		/*
 		if (TextureFilter1 != state.TextureFilter1)
 			return true;
 		if (TextureWrap1 != state.TextureWrap1)
@@ -246,6 +249,7 @@ struct StandardRendererState
 			return true;
 		if (BlendUVDistortionTexturePtr != state.BlendUVDistortionTexturePtr)
 			return true;
+		*/
 
 		if (EnableInterpolation != state.EnableInterpolation)
 			return true;
@@ -281,12 +285,12 @@ struct StandardRendererState
 			return true;
 		if (MaterialType != state.MaterialType)
 			return true;
-		if (MaterialPtr != state.MaterialPtr)
-			return true;
+		//if (MaterialPtr != state.MaterialPtr)
+		//	return true;
 		if (MaterialUniformCount != state.MaterialUniformCount)
 			return true;
-		if (MaterialTextureCount != state.MaterialTextureCount)
-			return true;
+		//if (MaterialTextureCount != state.MaterialTextureCount)
+		//	return true;
 		if (Refraction != state.Refraction)
 			return true;
 
@@ -296,11 +300,11 @@ struct StandardRendererState
 				return true;
 		}
 
-		for (int32_t i = 0; i < state.MaterialTextureCount; i++)
-		{
-			if (MaterialTextures[i] != state.MaterialTextures[i])
-				return true;
-		}
+		//for (int32_t i = 0; i < state.MaterialTextureCount; i++)
+		//{
+		//	if (MaterialTextures[i] != state.MaterialTextures[i])
+		//		return true;
+		//}
 
 		if (CustomData1Count != state.CustomData1Count)
 			return true;
@@ -311,34 +315,40 @@ struct StandardRendererState
 		return false;
 	}
 
-	void CopyMaterialFromParameterToState(Effekseer::Effect* effect,
-										  Effekseer::MaterialParameter* materialParam,
-										  int32_t colorTextureIndex,
-										  int32_t texture2Index
-										  ,
-										  int32_t texture3Index,
-										  int32_t texture4Index,
-										  int32_t texture5Index,
-										  int32_t texture6Index,
-										  int32_t texture7Index
+	void CopyMaterialFromParameterToState(
+		EffekseerRenderer::Renderer* renderer,
+		Effekseer::Effect* effect,
+		Effekseer::NodeRendererBasicParameter* basicParam /*,
+		Effekseer::MaterialParameter* materialParam,
+		int32_t colorTextureIndex,
+		int32_t texture2Index,
+		int32_t texture3Index,
+		int32_t texture4Index,
+		int32_t texture5Index,
+		int32_t texture6Index,
+		int32_t texture7Index */
 	)
 	{
-		if (materialParam != nullptr)
+		Collector = ShaderParameterCollector();
+		Collector.Collect(renderer, effect, basicParam, false, false);
+
+		if (Collector.MaterialParam != nullptr && Collector.MaterialDataPtr != nullptr)
 		{
-			if (materialParam->MaterialIndex >= 0 && effect->GetMaterial(materialParam->MaterialIndex) != nullptr)
+			//if (materialParam->MaterialIndex >= 0 && effect->GetMaterial(materialParam->MaterialIndex) != nullptr)
+			//{
+			//MaterialPtr = effect->GetMaterial(materialParam->MaterialIndex);
+
+			CustomData1Count = Collector.MaterialDataPtr->CustomData1;
+			CustomData2Count = Collector.MaterialDataPtr->CustomData2;
+
+			MaterialUniformCount =
+				static_cast<int32_t>(Effekseer::Min(Collector.MaterialParam->MaterialUniforms.size(), MaterialUniforms.size()));
+			for (size_t i = 0; i < MaterialUniformCount; i++)
 			{
-				MaterialPtr = effect->GetMaterial(materialParam->MaterialIndex);
+				MaterialUniforms[i] = Collector.MaterialParam->MaterialUniforms[i];
+			}
 
-				CustomData1Count = MaterialPtr->CustomData1;
-				CustomData2Count = MaterialPtr->CustomData2;
-
-				MaterialUniformCount =
-					static_cast<int32_t>(Effekseer::Min(materialParam->MaterialUniforms.size(), MaterialUniforms.size()));
-				for (size_t i = 0; i < MaterialUniformCount; i++)
-				{
-					MaterialUniforms[i] = materialParam->MaterialUniforms[i];
-				}
-
+			/*
 				MaterialTextureCount =
 					static_cast<int32_t>(Effekseer::Min(materialParam->MaterialTextures.size(), MaterialTextures.size()));
 				for (size_t i = 0; i < MaterialTextureCount; i++)
@@ -366,10 +376,12 @@ struct StandardRendererState
 						}
 					}
 				}
-			}
+				*/
+			//}
 		}
 		else
 		{
+			/*
 			if (colorTextureIndex >= 0)
 			{
 				if (Distortion)
@@ -474,6 +486,7 @@ struct StandardRendererState
 			{
 				BlendUVDistortionTexturePtr = nullptr;
 			}
+			*/
 
 			Refraction = false;
 			CustomData1Count = 0;
@@ -486,17 +499,6 @@ template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
 private:
-	enum class RenderingMode
-	{
-		Unlit,
-		Lit,
-		BackDistortion,
-		AdvancedUnlit,
-		AdvancedLit,
-		AdvancedBackDistortion,
-		Material,
-	};
-
 	RENDERER* m_renderer;
 
 	Effekseer::TextureData* m_texture;
@@ -505,7 +507,7 @@ private:
 
 	std::vector<uint8_t> vertexCaches;
 	int32_t squareMaxSize_ = 0;
-	RenderingMode renderingMode_ = RenderingMode::Unlit;
+	RendererShaderType renderingMode_ = RendererShaderType::Unlit;
 
 	struct VertexConstantBuffer
 	{
@@ -680,32 +682,32 @@ public:
 	int32_t CalculateCurrentStride() const
 	{
 		size_t stride = 0;
-		if (renderingMode_ == RenderingMode::Material)
+		if (renderingMode_ == RendererShaderType::Material)
 		{
 			stride = sizeof(DynamicVertex);
 			stride += (m_state.CustomData1Count + m_state.CustomData2Count) * sizeof(float);
 		}
-		else if (renderingMode_ == RenderingMode::Lit)
+		else if (renderingMode_ == RendererShaderType::Lit)
 		{
 			stride = sizeof(LightingVertex);
 		}
-		else if (renderingMode_ == RenderingMode::BackDistortion)
+		else if (renderingMode_ == RendererShaderType::BackDistortion)
 		{
 			stride = sizeof(VertexDistortion);
 		}
-		else if (renderingMode_ == RenderingMode::Unlit)
+		else if (renderingMode_ == RendererShaderType::Unlit)
 		{
 			stride = sizeof(SimpleVertex);
 		}
-		else if (renderingMode_ == RenderingMode::AdvancedLit)
+		else if (renderingMode_ == RendererShaderType::AdvancedLit)
 		{
 			stride = sizeof(AdvancedLightingVertex);
 		}
-		else if (renderingMode_ == RenderingMode::AdvancedBackDistortion)
+		else if (renderingMode_ == RendererShaderType::AdvancedBackDistortion)
 		{
 			stride = sizeof(AdvancedVertexDistortion);
 		}
-		else if (renderingMode_ == RenderingMode::AdvancedUnlit)
+		else if (renderingMode_ == RendererShaderType::AdvancedUnlit)
 		{
 			stride = sizeof(AdvancedSimpleVertex);
 		}
@@ -722,47 +724,50 @@ public:
 
 		m_state = state;
 
-		bool isAdvanced = m_state.IsAdvanced();
+		//bool isAdvanced = m_state.IsAdvanced();
+		renderingMode_ = m_state.Collector.ShaderType;
 
+		/*
 		if (m_state.MaterialType == ::Effekseer::RendererMaterialType::File)
 		{
 			if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
 			{
-				renderingMode_ = RenderingMode::Material;			
+				renderingMode_ = FixedShaderType::Material;
 			}
 			else
 			{
-				renderingMode_ = RenderingMode::Unlit;
+				renderingMode_ = FixedShaderType::Unlit;
 			}
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting && isAdvanced)
 		{
-			renderingMode_ = RenderingMode::AdvancedLit;
+			renderingMode_ = FixedShaderType::AdvancedLit;
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
 		{
-			renderingMode_ = RenderingMode::AdvancedBackDistortion;
+			renderingMode_ = FixedShaderType::AdvancedBackDistortion;
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Default && isAdvanced)
 		{
-			renderingMode_ = RenderingMode::AdvancedUnlit;
+			renderingMode_ = FixedShaderType::AdvancedUnlit;
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 		{
-			renderingMode_ = RenderingMode::Lit;
+			renderingMode_ = FixedShaderType::Lit;
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 		{
-			renderingMode_ = RenderingMode::BackDistortion;
+			renderingMode_ = FixedShaderType::BackDistortion;
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Default)
 		{
-			renderingMode_ = RenderingMode::Unlit;
+			renderingMode_ = FixedShaderType::Unlit;
 		}
 		else
 		{
 			assert(0);
 		}
+		*/
 	}
 
 	void BeginRenderingAndRenderingIfRequired(int32_t count, int& stride, void*& data)
@@ -788,6 +793,9 @@ public:
 		Rendering();
 
 		// It is always initialized with the next drawing.
+		m_state.Collector = ShaderParameterCollector();
+
+		/*
 		m_state.TexturePtr = (Effekseer::TextureData*)0x1;
 		m_state.NormalTexturePtr = (Effekseer::TextureData*)0x1;
 		m_state.AlphaTexturePtr = (Effekseer::TextureData*)0x1;
@@ -795,6 +803,7 @@ public:
 		m_state.BlendTexturePtr = (Effekseer::TextureData*)0x1;
 		m_state.BlendAlphaTexturePtr = (Effekseer::TextureData*)0x1;
 		m_state.BlendUVDistortionTexturePtr = (Effekseer::TextureData*)0x1;
+		*/
 	}
 
 	const StandardRendererState& GetState()
@@ -811,9 +820,9 @@ public:
 
 		int32_t passNum = 1;
 
-		if (m_state.MaterialPtr != nullptr)
+		if (m_state.Collector.ShaderType == RendererShaderType::Material)
 		{
-			if (m_state.MaterialPtr->RefractionUserPtr != nullptr)
+			if (m_state.Collector.MaterialDataPtr->RefractionUserPtr != nullptr)
 			{
 				// refraction and standard
 				passNum = 2;
@@ -856,10 +865,10 @@ public:
 					int32_t stride,
 					int32_t renderPass)
 	{
-		bool isBackgroundRequired = false;
+		bool isBackgroundRequired = m_state.Collector.IsBackgroundRequiredOnFirstPass && renderPass == 0;
 
-		isBackgroundRequired |= m_state.Distortion;
-		isBackgroundRequired |= (m_state.MaterialPtr != nullptr && m_state.MaterialPtr->IsRefractionRequired && renderPass == 0);
+		//		isBackgroundRequired |= m_state.Distortion;
+		//		isBackgroundRequired |= (m_state.MaterialPtr != nullptr && m_state.MaterialPtr->IsRefractionRequired && renderPass == 0);
 
 		if (isBackgroundRequired)
 		{
@@ -876,6 +885,12 @@ public:
 		if (isBackgroundRequired && m_renderer->GetBackground() == 0)
 		{
 			return;
+		}
+
+		auto textures = m_state.Collector.Textures;
+		if (isBackgroundRequired)
+		{
+			textures[m_state.Collector.BackgroundIndex] = m_renderer->GetBackground();
 		}
 
 		int32_t vertexSize = bufferSize;
@@ -902,9 +917,9 @@ public:
 		bool distortion = m_state.Distortion;
 		bool renderDistortedBackground = false;
 
-		if (m_state.MaterialPtr != nullptr)
+		if (m_state.Collector.ShaderType == RendererShaderType::Material)
 		{
-			if (m_state.MaterialPtr->IsRefractionRequired)
+			if (m_state.Collector.MaterialDataPtr->IsRefractionRequired)
 			{
 				if (renderPass == 0)
 				{
@@ -913,69 +928,32 @@ public:
 						return;
 					}
 
-					shader_ = (SHADER*)m_state.MaterialPtr->RefractionUserPtr;
+					shader_ = (SHADER*)m_state.Collector.MaterialDataPtr->RefractionUserPtr;
 					renderDistortedBackground = true;
 				}
 				else
 				{
-					shader_ = (SHADER*)m_state.MaterialPtr->UserPtr;
+					shader_ = (SHADER*)m_state.Collector.MaterialDataPtr->UserPtr;
 				}
 			}
 			else
 			{
-				shader_ = (SHADER*)m_state.MaterialPtr->UserPtr;
+				shader_ = (SHADER*)m_state.Collector.MaterialDataPtr->UserPtr;
 			}
 
 			// validate
 			if (shader_ == nullptr)
 				return;
 
-			if (m_state.MaterialPtr->UniformCount != m_state.MaterialUniformCount)
-				return;
+			//if (m_state.Collector.MaterialDataPtr->UniformCount != m_state.MaterialUniformCount)
+			//	return;
 
-			if (m_state.MaterialPtr->TextureCount != m_state.MaterialTextureCount)
-				return;
+			//if (m_state.MaterialPtr->TextureCount != m_state.MaterialTextureCount)
+			//	return;
 		}
 		else
 		{
-			auto isAdvanced = m_state.IsAdvanced();
-
-			StandardRendererShaderType type;
-			if (m_state.MaterialType == Effekseer::RendererMaterialType::Default && isAdvanced)
-			{
-				type = StandardRendererShaderType::AdvancedUnlit;
-			}
-			else if (m_state.MaterialType == Effekseer::RendererMaterialType::Lighting && isAdvanced)
-			{
-				type = StandardRendererShaderType::AdvancedLit;
-			}
-			else if (m_state.MaterialType == Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
-			{
-				type = StandardRendererShaderType::AdvancedBackDistortion;
-			}
-			else if (m_state.MaterialType == Effekseer::RendererMaterialType::Default)
-			{
-				type = StandardRendererShaderType::Unlit;
-			}
-			else if (m_state.MaterialType == Effekseer::RendererMaterialType::Lighting)
-			{
-				type = StandardRendererShaderType::Lit;
-			}
-			else if (m_state.MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-			{
-				type = StandardRendererShaderType::BackDistortion;
-			}
-			else if (m_state.MaterialType == Effekseer::RendererMaterialType::File)
-			{
-				// fallback
-				type = StandardRendererShaderType::Unlit;
-			}
-			else
-			{
-				assert(0);
-			}
-
-			shader_ = m_renderer->GetShader(type);
+			shader_ = m_renderer->GetShader(m_state.Collector.ShaderType);
 		}
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
@@ -991,6 +969,15 @@ public:
 
 		m_renderer->BeginShader(shader_);
 
+		for (int32_t i = 0; i < m_state.Collector.TextureCount; i++)
+		{
+			state.TextureFilterTypes[i] = m_state.Collector.TextureFilterTypes[i];
+			state.TextureWrapTypes[i] = m_state.Collector.TextureWrapTypes[i];
+		}
+
+		m_renderer->SetTextures(shader_, reinterpret_cast<Effekseer::TextureData**>(textures.data()), m_state.Collector.TextureCount);
+
+		/*
 		if (m_state.MaterialPtr != nullptr)
 		{
 			std::array<Effekseer::TextureData*, 16> textures;
@@ -1254,6 +1241,7 @@ public:
 				m_renderer->SetTextures(shader_, textures.data(), 6);
 			}
 		}
+		*/
 
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;
@@ -1286,7 +1274,7 @@ public:
 		uvInversedMaterial[2] = uvInversedBack[0];
 		uvInversedMaterial[3] = uvInversedBack[1];
 
-		if (m_state.MaterialPtr != nullptr)
+		if (m_state.Collector.ShaderType == RendererShaderType::Material)
 		{
 			Effekseer::Matrix44 mstCamera = ToStruct(mCamera);
 			Effekseer::Matrix44 mstProj = ToStruct(mProj);
@@ -1335,7 +1323,7 @@ public:
 			psOffset += (sizeof(float) * 4);
 
 			// shader model
-			if (m_state.MaterialPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
+			if (m_state.Collector.MaterialDataPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
 
 				float lightDirection[4];
@@ -1359,7 +1347,7 @@ public:
 			}
 
 			// refraction
-			if (m_state.MaterialPtr->RefractionUserPtr != nullptr && renderPass == 0)
+			if (m_state.Collector.MaterialDataPtr->RefractionUserPtr != nullptr && renderPass == 0)
 			{
 				auto mat = m_renderer->GetCameraMatrix();
 				m_renderer->SetPixelBufferToShader(&mat, sizeof(float) * 16, psOffset);
