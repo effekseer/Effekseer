@@ -417,8 +417,8 @@ uniform  sampler2D Sampler_g_blendUVDistortionSampler;
 uniform  sampler2D Sampler_g_blendSampler;
 uniform  sampler2D Sampler_g_blendAlphaSampler;
 
-centroid varying  vec4 _VSPS_Color;
-centroid varying  vec2 _VSPS_UV;
+varying  vec4 _VSPS_Color;
+varying  vec2 _VSPS_UV;
 varying  vec4 _VSPS_Position;
 varying  vec4 _VSPS_PosU;
 varying  vec4 _VSPS_PosR;

@@ -431,11 +431,11 @@ uniform  sampler2D Sampler_g_blendSampler;
 uniform  sampler2D Sampler_g_blendAlphaSampler;
 uniform  sampler2D Sampler_g_backSampler;
 
-centroid varying  vec2 _VSPS_UV;
+varying  vec2 _VSPS_UV;
 varying  vec4 _VSPS_Binormal;
 varying  vec4 _VSPS_Tangent;
 varying  vec4 _VSPS_Pos;
-centroid varying  vec4 _VSPS_Color;
+varying  vec4 _VSPS_Color;
 varying  vec4 _VSPS_Alpha_Dist_UV;
 varying  vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying  vec4 _VSPS_Blend_FBNextIndex_UV;

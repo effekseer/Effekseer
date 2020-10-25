@@ -20,6 +20,7 @@ gl_dst_path = 'ShaderHeader/'
 
 def replace_es2(code):
     code = code.replace('#version 200 es', '')
+    code = code.replace('centroid ', '')
     code = code.replace('uniform highp', 'uniform ')
     code = code.replace('varying highp', 'varying ')
     return code

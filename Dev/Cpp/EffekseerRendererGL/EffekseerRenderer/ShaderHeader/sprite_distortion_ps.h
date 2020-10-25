@@ -176,8 +176,8 @@ uniform VS_ConstantBuffer CBPS0;
 uniform  sampler2D Sampler_g_sampler;
 uniform  sampler2D Sampler_g_backSampler;
 
-centroid varying  vec4 _VSPS_Color;
-centroid varying  vec2 _VSPS_UV;
+varying  vec4 _VSPS_Color;
+varying  vec2 _VSPS_UV;
 varying  vec4 _VSPS_Pos;
 varying  vec4 _VSPS_PosU;
 varying  vec4 _VSPS_PosR;

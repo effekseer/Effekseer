@@ -158,8 +158,8 @@ uniform VS_ConstantBuffer CBVS0;
 attribute vec3 Input_Pos;
 attribute vec4 Input_Color;
 attribute vec2 Input_UV;
-centroid varying vec4 _VSPS_Color;
-centroid varying vec2 _VSPS_UV;
+varying vec4 _VSPS_Color;
+varying vec2 _VSPS_UV;
 
 VS_Output _main(VS_Input Input)
 {
