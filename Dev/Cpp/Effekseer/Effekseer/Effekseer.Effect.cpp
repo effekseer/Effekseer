@@ -633,7 +633,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		defaultDynamicInputs.fill(0);
 	}
 
-	if (m_version >= 1600)
+	if (m_version >= Version16Alpha1)
 	{
 		// curve
 		binaryReader.Read(curveCount_, 0, elementCountMax);

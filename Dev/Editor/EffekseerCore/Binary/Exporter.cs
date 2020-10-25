@@ -11,8 +11,9 @@ namespace Effekseer.Binary
 	public enum ExporterVersion
 	{
 		Ver1500 = 1500,
-		Ver1600 = 1600,
-		Latest = 1600,
+		Ver16Alpha1 = 1600,
+		Ver16Alpha2 = 1601,
+		Latest = Ver16Alpha2,
 	}
 
 	public class Exporter
@@ -83,7 +84,7 @@ namespace Effekseer.Binary
 										UsedTextures.Add(relative_path);
 									}
 								}
-								if (exporterVersion >= ExporterVersion.Ver1600)
+								if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 								{
 									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -144,7 +145,7 @@ namespace Effekseer.Binary
 									}
 								}
 
-								if (exporterVersion >= ExporterVersion.Ver1600)
+								if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 								{
 									var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
 									if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
@@ -214,7 +215,7 @@ namespace Effekseer.Binary
 									}
 								}
 
-								if (exporterVersion >= ExporterVersion.Ver1600)
+								if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 								{
 									// alpha texture
 									var path3 = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
@@ -544,7 +545,7 @@ namespace Effekseer.Binary
 
 			get_curves(Core.Root);
 
-			if (exporterVersion >= ExporterVersion.Ver1600)
+			if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 			{
 				int index = 0;
 				foreach (var curve in Curves.ToList().OrderBy(_ => _))
@@ -698,7 +699,7 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
 
-			if (exporterVersion >= ExporterVersion.Ver1600)
+			if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 			{
 				// export curves to a file
 				data.Add(BitConverter.GetBytes(curve_and_index.Count));

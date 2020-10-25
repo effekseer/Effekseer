@@ -105,7 +105,7 @@ namespace Effekseer.Binary
 
 
 			// Fallback
-			if (version < ExporterVersion.Ver1600)
+			if (version < ExporterVersion.Ver16Alpha1)
 			{
 				if(value != null && value.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
 				{
@@ -545,7 +545,7 @@ namespace Effekseer.Binary
 				// 全体色
 				OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing, param.Color_FCurve);
 
-				if(version >= ExporterVersion.Ver1600)
+				if(version >= ExporterVersion.Ver16Alpha1)
 				{
 					if (value.EnableFalloff)
 					{

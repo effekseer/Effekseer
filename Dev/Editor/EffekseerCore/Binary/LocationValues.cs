@@ -17,7 +17,7 @@ namespace Effekseer.Binary
 			var type = value.Type.Value;
 
 			// Fall back
-			if (version < ExporterVersion.Ver1600)
+			if (version < ExporterVersion.Ver16Alpha1)
 			{
 				if (type == Data.LocationValues.ParamaterType.NurbsCurve ||
 					type == Data.LocationValues.ParamaterType.ViewOffset)

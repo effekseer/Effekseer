@@ -17,42 +17,57 @@ private:
 	PerlinNoise znoise_;
 
 public:
-	float Scale = 1.0f;
-	int32_t Octave = 2;
+	const float Scale = 1.0f;
+	const int32_t Octave = 2;
 
-	CurlNoise(int32_t seed)
+	CurlNoise(int32_t seed, float scale, int32_t octave)
 		: xnoise_(seed)
 		, ynoise_(seed * (seed % 1949 + 5))
 		, znoise_(seed * (seed % 3541 + 10))
+		, Scale(scale)
+		, Octave(octave)
 	{
 	}
 
-	Vec3f Get(Vec3f pos) const
+	Vec3f Get(Vec3f pos) const;
+};
+
+class LightCurlNoise
+{
+private:
+	static const int32_t GridSize = 8;
+	uint32_t seed_ = 0;
+	std::array<uint8_t, GridSize * GridSize * GridSize> vectorField_x_;
+	std::array<uint8_t, GridSize * GridSize * GridSize> vectorField_y_;
+	std::array<uint8_t, GridSize * GridSize * GridSize> vectorField_z_;
+
+	float GetRand()
 	{
-		pos *= Scale;
+		const int a = 1103515245;
+		const int c = 12345;
+		const int m = 2147483647;
 
-		const float e = 1.0f / 1024.0f;
+		seed_ = (seed_ * a + c) & m;
+		auto ret = seed_ % 0x7fff;
 
-		const Vec3f dx = Vec3f(e, 0.0, 0.0);
-		const Vec3f dy = Vec3f(0.0, e, 0.0);
-		const Vec3f dz = Vec3f(0.0, 0.0, e);
-
-		auto noise_x = [this](Vec3f v) -> Vec3f { return Vec3f(0.0f, ynoise_.OctaveNoise(Octave, v), znoise_.OctaveNoise(Octave, v)); };
-
-		auto noise_y = [this](Vec3f v) -> Vec3f { return Vec3f(xnoise_.OctaveNoise(Octave, v), 0.0f, znoise_.OctaveNoise(Octave, v)); };
-
-		auto noise_z = [this](Vec3f v) -> Vec3f { return Vec3f(xnoise_.OctaveNoise(Octave, v), ynoise_.OctaveNoise(Octave, v), 0.0f); };
-
-		Vec3f p_x = noise_x(pos + dx) - noise_x(pos - dx);
-		Vec3f p_y = noise_y(pos + dy) - noise_y(pos - dy);
-		Vec3f p_z = noise_z(pos + dz) - noise_z(pos - dz);
-
-		float x = p_y.GetZ() - p_z.GetY();
-		float y = p_z.GetX() - p_x.GetZ();
-		float z = p_x.GetY() - p_y.GetX();
-
-		return Vec3f(x, y, z) * (1.0f / (e * 2.0f));
+		return (float)ret / (float)(0x7fff - 1);
 	}
+
+	float GetRand(float min_, float max_)
+	{
+		return GetRand() * (max_ - min_) + min_;
+	}
+
+	uint8_t Pack(const float v) const;
+
+	float Unpack(const uint8_t v) const;
+
+public:
+	const float Scale{};
+
+	LightCurlNoise(int32_t seed, float scale, int32_t octave);
+
+	Vec3f Get(Vec3f pos) const;
 };
 
 } // namespace Effekseer

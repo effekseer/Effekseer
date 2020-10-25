@@ -679,7 +679,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 	}
 
 	RandObject randObj;
-	CurlNoise curlNoise(0);
+	CurlNoise curlNoise(0, 1.0f, 2);
 
 	std::function<Vec2f(float)> primitiveGenerator;
 

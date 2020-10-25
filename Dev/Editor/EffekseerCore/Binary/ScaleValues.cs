@@ -16,7 +16,7 @@ namespace Effekseer.Binary
 
 			var type = value.Type.Value;
 
-			if(version < ExporterVersion.Ver1600)
+			if(version < ExporterVersion.Ver16Alpha1)
 			{
 				if(type == Data.ScaleValues.ParamaterType.SingleFCurve)
 				{

@@ -123,14 +123,17 @@ namespace Effekseer.Data
 		[Key(key = "LFF_Type_Vortex")]
 		Vortex = 4,
 
-		[Key(key = "LFF_Type_Maginetic")]
-		Maginetic = 5,
-
 		[Key(key = "LFF_Type_Turbulence")]
 		Turbulence = 1,
 
 		[Key(key = "LFF_Type_Drag")]
 		Drag = 7,
+
+		[Key(key = "LFF_Type_Gravity")]
+		Gravity = 8,
+
+		[Key(key = "LFF_Type_AttractiveForce")]
+		AttractiveForce = 9,
 	}
 
 	public class ForceFieldWind
@@ -140,18 +143,22 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class ForceFieldVortex
+	public enum ForceFieldVortexType
 	{
-		public ForceFieldVortex()
-		{
-		}
+		[Key(key = "LFF_VortexType_ConstantAngle")]
+		ConstantAngle = 0,
+		[Key(key = "LFF_VortexType_ConstantSpeed")]
+		ConstantSpeed = 1,
 	}
 
-	public class ForceFieldMaginetic
+	public class ForceFieldVortex
 	{
-		public ForceFieldMaginetic()
+		[Key(key = "LFF_VortexType")]
+		public Value.Enum<ForceFieldVortexType> VortexType
 		{
-		}
+			get;
+			private set;
+		} = new Value.Enum<ForceFieldVortexType>(ForceFieldVortexType.ConstantAngle);
 	}
 
 	public class ForceFieldCharge
@@ -179,8 +186,24 @@ namespace Effekseer.Data
 		}
 	}
 
+	public enum ForceFieldTurbulenceType : int
+	{
+		[Key(key = "LFF_TurbulenceType_Simple")]
+		Simple = 0,
+		[Key(key = "LFF_TurbulenceType_Complicated")]
+		Complicated = 1,
+	}
+
 	public class LocalForceFieldTurbulence
 	{
+		[Key(key = "LFF_TurbulenceType")]
+		public Value.Enum<ForceFieldTurbulenceType> TurbulenceType
+		{
+			get;
+			private set;
+		} = new Value.Enum<ForceFieldTurbulenceType>(ForceFieldTurbulenceType.Simple);
+
+		
 		[Name(value = "ランダムシード", language = Language.Japanese)]
 		[Name(value = "Random Seed", language = Language.English)]
 		[Description(language = Language.Japanese, value = "数値に応じて乱流の流れ方が変わります。")]
@@ -193,12 +216,6 @@ namespace Effekseer.Data
 		[Description(language = Language.English, value = "Larger value ​​increases the turbulence width.")]
 		public Value.Float FieldScale { get; private set; }
 
-		[Name(value = "強さ", language = Language.Japanese)]
-		[Name(value = "Strength", language = Language.English)]
-		[Description(language = Language.Japanese, value = "乱流がパーティクルに与える力の強さです。")]
-		[Description(language = Language.English, value = "The strength of turbulence on particles.")]
-		public Value.Float Strength { get; private set; }
-
 		[Name(value = "複雑さ", language = Language.Japanese)]
 		[Name(value = "Complexity", language = Language.English)]
 		[Description(language = Language.Japanese, value = "値を大きくすると乱流が複雑になります。ただし、処理が重くなります。")]
@@ -209,10 +226,69 @@ namespace Effekseer.Data
 		{
 			Seed = new Value.Int(1, int.MaxValue, 0, 1);
 			FieldScale = new Value.Float(4.0f, float.MaxValue, 0, 0.1f);
-			Strength = new Value.Float(0.1f, float.MaxValue, 0, 0.1f);
 			Octave = new Value.Int(1, 10, 1, 1);
 		}
 	}
+
+	public class ForceFieldGravity
+	{
+		[Name(language = Language.Japanese, value = "重力")]
+		[Description(language = Language.Japanese, value = "インスタンスにかかる重力")]
+		[Name(language = Language.English, value = "Gravity")]
+		[Description(language = Language.English, value = "Gravity's effect on the instance")]
+		public Value.Vector3D Gravity
+		{
+			get;
+			private set;
+		}
+
+		internal ForceFieldGravity()
+		{
+			Gravity = new Value.Vector3D(0, 0, 0);
+		}
+	}
+
+
+	public class ForceFieldAttractiveForce
+	{
+		[Name(language = Language.Japanese, value = "制御")]
+		[Description(language = Language.Japanese, value = "移動方向をターゲット方向へ補正量")]
+		[Name(language = Language.English, value = "Resistance")]
+		[Description(language = Language.English, value = "Resistance to the directional pull of the attractor")]
+		public Value.Float Control
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "最小範囲")]
+		[Description(language = Language.Japanese, value = "この範囲以内では引力がフルに掛かります")]
+		[Name(language = Language.English, value = "Minimum Range")]
+		[Description(language = Language.English, value = "Within this range, it will be affected by the attractor")]
+		public Value.Float MinRange
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "最大範囲")]
+		[Description(language = Language.Japanese, value = "この範囲以外では引力が掛かりません")]
+		[Name(language = Language.English, value = "Maximum Range")]
+		[Description(language = Language.English, value = "Outside this range, the attractor will have no effect on the instance")]
+		public Value.Float MaxRange
+		{
+			get;
+			private set;
+		}
+
+		internal ForceFieldAttractiveForce()
+		{
+			Control = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
+			MinRange = new Value.Float(0.0f, 1000.0f, 0.0f, 1.0f);
+			MaxRange = new Value.Float(0.0f, 1000.0f, 0.0f, 1.0f);
+		}
+	}
+
 	public class LocalForceField : IEditableValueCollection
 	{
 		[Key(key = "LFF_Type")]
@@ -227,15 +303,16 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
-		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
-		// [Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Gravity)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.AttractiveForce)]
 		public Value.Float Power { get; private set; }
 
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
-		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
 
 		[Key(key = "LFF_Position")]
@@ -244,7 +321,6 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
-		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
 
@@ -269,15 +345,7 @@ namespace Effekseer.Data
 
 		[IO(Export = true)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
-		public ForceFieldWind Vortex
-		{
-			get;
-			private set;
-		}
-
-		[IO(Export = true)]
-		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
-		public ForceFieldMaginetic Maginetic
+		public ForceFieldVortex Vortex
 		{
 			get;
 			private set;
@@ -300,12 +368,30 @@ namespace Effekseer.Data
 		}
 
 		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Gravity)]
+		public ForceFieldGravity Gravity
+		{
+			get;
+			private set;
+		} = new ForceFieldGravity();
+
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.AttractiveForce)]
+		public ForceFieldAttractiveForce AttractiveForce
+		{
+			get;
+			private set;
+		} = new ForceFieldAttractiveForce();
+
+		[IO(Export = true)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
-		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Gravity)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.AttractiveForce)]
+
 		public ForceFieldFalloff Falloff { get; private set; }
 
 		int number = 1;
@@ -313,14 +399,13 @@ namespace Effekseer.Data
 		{
 			this.number = number;
 			Type = new Value.Enum<LocalForceFieldType>();
-			Power = new Value.Float(1.0f);
+			Power = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
 			Position = new Value.Vector3D();
 			Rotation = new Value.Vector3D();
 
 			Force = new ForceFieldForce();
 			Wind = new ForceFieldWind();
-			Vortex = new ForceFieldWind();
-			Maginetic = new ForceFieldMaginetic();
+			Vortex = new ForceFieldVortex();
 			Turbulence = new LocalForceFieldTurbulence();
 			Drag = new ForceFieldDrag();
 
@@ -360,9 +445,10 @@ namespace Effekseer.Data
 			ret.Add(EditableValue.Create(Force, this.GetType().GetProperty("Force")));
 			ret.Add(EditableValue.Create(Wind, this.GetType().GetProperty("Wind")));
 			ret.Add(EditableValue.Create(Vortex, this.GetType().GetProperty("Vortex")));
-			ret.Add(EditableValue.Create(Maginetic, this.GetType().GetProperty("Maginetic")));
 			ret.Add(EditableValue.Create(Turbulence, this.GetType().GetProperty("Turbulence")));
 			ret.Add(EditableValue.Create(Drag, this.GetType().GetProperty("Drag")));
+			ret.Add(EditableValue.Create(Gravity, this.GetType().GetProperty("Gravity")));
+			ret.Add(EditableValue.Create(AttractiveForce, this.GetType().GetProperty("AttractiveForce")));
 
 			ret.Add(EditableValue.Create(Falloff, this.GetType().GetProperty("Falloff")));
 
@@ -391,141 +477,15 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public LocalForceField LocalForceField3 { get; private set; }
 
-
-		[Name(value = "力場(1.4)", language = Language.Japanese)]
-		[Name(value = "ForceField(1.4)", language = Language.English)]
-		[Description(language = Language.Japanese, value = "バージョン1.4以前の力場の機能です。")]
-		[Description(language = Language.English, value = "ForceField before 1.4")]
-		[Selector(ID = 0)]
-		public Value.Enum<ParamaterType> Type
-		{
-			get;
-			private set;
-		}
-
-		[Selected(ID = 0, Value = 0)]
 		[IO(Export = true)]
-		public NoneParamater None
-		{
-			get;
-			private set;
-		}
-
-		[Selected(ID = 0, Value = 1)]
-		[IO(Export = true)]
-		public GravityParamater Gravity
-		{
-			get;
-			private set;
-		}
-
-		[Selected(ID = 0, Value = 2)]
-		[IO(Export = true)]
-		public AttractiveForceParamater AttractiveForce
-		{
-			get;
-			private set;
-		}
+		public LocalForceField LocalForceField4 { get; private set; }
 
 		internal LocationAbsValues()
 		{
 			LocalForceField1 = new LocalForceField(1);
 			LocalForceField2 = new LocalForceField(2);
 			LocalForceField3 = new LocalForceField(3);
-
-			Type = new Value.Enum<ParamaterType>(ParamaterType.None);
-			None = new NoneParamater();
-			Gravity = new GravityParamater();
-			AttractiveForce = new AttractiveForceParamater();
-		}
-
-		public class NoneParamater
-		{
-			internal NoneParamater()
-			{
-			}
-		}
-
-		public class GravityParamater
-		{
-			[Name(language = Language.Japanese, value = "重力")]
-			[Description(language = Language.Japanese, value = "インスタンスにかかる重力")]
-			[Name(language = Language.English, value = "Gravity")]
-			[Description(language = Language.English, value = "Gravity's effect on the instance")]
-			public Value.Vector3D Gravity
-			{
-				get;
-				private set;
-			}
-
-			internal GravityParamater()
-			{
-				Gravity = new Value.Vector3D(0, 0, 0);
-			}
-		}
-
-		public class AttractiveForceParamater
-		{
-			[Name(language = Language.Japanese, value = "引力")]
-			[Description(language = Language.Japanese, value = "ターゲットの引力")]
-			[Name(language = Language.English, value = "Attraction")]
-			[Description(language = Language.English, value = "Strength of the point of attraction")]
-			public Value.Float Force
-			{
-				get;
-				private set;
-			}
-
-			[Name(language = Language.Japanese, value = "制御")]
-			[Description(language = Language.Japanese, value = "移動方向をターゲット方向へ補正量")]
-			[Name(language = Language.English, value = "Resistance")]
-			[Description(language = Language.English, value = "Resistance to the directional pull of the attractor")]
-			public Value.Float Control
-			{
-				get;
-				private set;
-			}
-
-			[Name(language = Language.Japanese, value = "最小範囲")]
-			[Description(language = Language.Japanese, value = "この範囲以内では引力がフルに掛かります")]
-			[Name(language = Language.English, value = "Minimum Range")]
-			[Description(language = Language.English, value = "Within this range, it will be affected by the attractor")]
-			public Value.Float MinRange
-			{
-				get;
-				private set;
-			}
-
-			[Name(language = Language.Japanese, value = "最大範囲")]
-			[Description(language = Language.Japanese, value = "この範囲以外では引力が掛かりません")]
-			[Name(language = Language.English, value = "Maximum Range")]
-			[Description(language = Language.English, value = "Outside this range, the attractor will have no effect on the instance")]
-			public Value.Float MaxRange
-			{
-				get;
-				private set;
-			}
-
-			internal AttractiveForceParamater()
-			{
-				Force = new Value.Float(0.0f, float.MaxValue, float.MinValue, 0.01f);
-				Control = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
-				MinRange = new Value.Float(0.0f, 1000.0f, 0.0f, 1.0f);
-				MaxRange = new Value.Float(0.0f, 1000.0f, 0.0f, 1.0f);
-			}
-		}
-
-		public enum ParamaterType : int
-		{
-			[Name(value = "無し", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
-			None = 0,
-			[Name(value = "重力", language = Language.Japanese)]
-			[Name(value = "Gravity", language = Language.English)]
-			Gravity = 1,
-			[Name(value = "引力(ターゲット有り)", language = Language.Japanese)]
-			[Name(value = "Attraction (if point is set)", language = Language.English)]
-			AttractiveForce = 2,
+			LocalForceField4 = new LocalForceField(4);
 		}
 	}
 }

@@ -10,6 +10,7 @@
 #include "Effekseer.InternalScript.h"
 #include "Effekseer.Vector3D.h"
 #include "Model/ProcedualModelParameter.h"
+#include "Utils/BinaryVersion.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 #include <memory>
@@ -103,7 +104,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-	static const int32_t SupportBinaryVersion = 1600;
+	static const int32_t SupportBinaryVersion = Version16Alpha2;
 
 protected:
 	ManagerImplemented* m_pManager;
