@@ -5,6 +5,7 @@
 #include "EffekseerRendererGL.GLExtension.h"
 #include <Effekseer.h>
 #include <assert.h>
+#include <functional>
 #include <set>
 
 namespace EffekseerRendererGL
@@ -117,6 +118,8 @@ public:
 	{
 		return buffer_;
 	}
+
+	void UpdateData(const void* src, int32_t size, int32_t offset);
 };
 
 class Texture
@@ -126,6 +129,7 @@ class Texture
 private:
 	GLuint buffer_ = 0;
 	GraphicsDevice* graphicsDevice_ = nullptr;
+	std::function<void()> onDisposed_;
 
 	bool InitInternal(const Effekseer::Backend::TextureParameter& param);
 
@@ -138,6 +142,8 @@ public:
 	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
+
+	bool Init(GLuint buffer, const std::function<void()>& onDisposed);
 
 	GLuint GetBuffer() const
 	{
@@ -239,7 +245,7 @@ private:
 
 public:
 	RenderPass(GraphicsDevice* graphicsDevice);
-	~RenderPass();
+	~RenderPass() override;
 
 	bool Init(Texture** textures, int32_t textureCount, Texture* depthTexture);
 
@@ -291,17 +297,21 @@ public:
 
 	RenderPass* CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture) override;
 
-	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
-
 	Shader* CreateShaderFromKey(const char* key) override;
 
 	Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout) override;
+
+	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
 	void Draw(const Effekseer::Backend::DrawParameter& drawParam) override;
 
 	void BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;
 
 	void EndRenderPass() override;
+
+	bool UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data) override;
+
+	Texture* CreateTexture(GLuint buffer, const std::function<void()>& onDisposed);
 };
 
 } // namespace Backend

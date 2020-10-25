@@ -43,6 +43,7 @@ enum class IndexBufferStrideType
 enum class UniformBufferLayoutElementType
 {
 	Vector4,
+	Matrix44,
 };
 
 enum class ShaderStageType
@@ -500,6 +501,11 @@ public:
 	}
 
 	virtual Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, UniformLayout* layout = nullptr)
+	{
+		return nullptr;
+	}
+
+	virtual Shader* CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
 	{
 		return nullptr;
 	}

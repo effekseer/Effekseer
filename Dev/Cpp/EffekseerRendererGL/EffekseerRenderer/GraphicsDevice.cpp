@@ -196,6 +196,18 @@ bool UniformBuffer::Init(int32_t size, const void* initialData)
 	return true;
 }
 
+void UniformBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
+{
+	assert(buffer_.size() >= size + offset && offset >= 0);
+
+	buffer_.resize(size);
+
+	if (auto data = static_cast<const uint8_t*>(src))
+	{
+		memcpy(buffer_.data() + offset, src, size);
+	}
+}
+
 Texture::Texture(GraphicsDevice* graphicsDevice)
 	: graphicsDevice_(graphicsDevice)
 {
@@ -211,6 +223,11 @@ Texture::~Texture()
 	}
 
 	ES_SAFE_RELEASE(graphicsDevice_);
+
+	if (onDisposed_)
+	{
+		onDisposed_();
+	}
 }
 
 bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
@@ -409,6 +426,16 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	hasMipmap_ = false;
 
 	return false;
+}
+
+bool Texture::Init(GLuint buffer, const std::function<void()>& onDisposed)
+{
+	if (buffer == 0)
+		return false;
+
+	buffer_ = buffer;
+	onDisposed_ = onDisposed;
+	return true;
 }
 
 bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
@@ -907,6 +934,12 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
 				GLExt::glUniform4fv(loc, 1, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
 			}
+			else if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
+			{
+				const auto& buffer = uniformBuffer->GetBuffer();
+				assert(buffer.size() >= element.Offset + sizeof(float) * 4 * 4);
+				GLExt::glUniformMatrix4fv(loc, 1, GL_FALSE, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+			}
 			else
 			{
 				// Unimplemented
@@ -1196,6 +1229,33 @@ void GraphicsDevice::EndRenderPass()
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	GLCheckError();
+}
+
+bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data)
+{
+	if (buffer == nullptr)
+	{
+		return false;
+	}
+
+	auto b = static_cast<UniformBuffer*>(buffer);
+
+	b->UpdateData(data, size, offset);
+
+	return true;
+}
+
+Texture* GraphicsDevice::CreateTexture(GLuint buffer, const std::function<void()>& onDisposed)
+{
+	auto ret = new Texture(this);
+
+	if (!ret->Init(buffer, onDisposed))
+	{
+		ES_SAFE_RELEASE(ret);
+		return nullptr;
+	}
+
+	return ret;
 }
 
 } // namespace Backend
