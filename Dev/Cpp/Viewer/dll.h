@@ -298,6 +298,8 @@ public:
 
 	bool InvalidateTextureCache();
 
+	void SetIsGroundShown(bool value);
+
 	void SetIsGridShown(bool value, bool xy, bool xz, bool yz);
 
 	void SetGridLength(float length);

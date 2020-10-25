@@ -706,6 +706,18 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetHeight___(void
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetDeviceType___(void * jarg1) {
+  int jresult ;
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  efk::DeviceType result;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  result = (efk::DeviceType)((efk::ImageResource const *)arg1)->GetDeviceType();
+  jresult = (int)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_CountX_set___(void * jarg1, int jarg2) {
   Effekseer::Tool::ViewerEffectBehavior *arg1 = (Effekseer::Tool::ViewerEffectBehavior *) 0 ;
   int32_t arg2 ;
@@ -2695,6 +2707,16 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_InvalidateTextu
   result = (bool)(arg1)->InvalidateTextureCache();
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetIsGroundShown___(void * jarg1, unsigned int jarg2) {
+  Native *arg1 = (Native *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->SetIsGroundShown(arg2);
 }
 
 

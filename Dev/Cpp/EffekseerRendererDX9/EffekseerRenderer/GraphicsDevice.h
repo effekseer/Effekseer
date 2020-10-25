@@ -100,7 +100,6 @@ private:
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	Direct3DIndexBuffer9Ptr buffer_;
-	int32_t elementCount_ = 0;
 	int32_t stride_ = 0;
 
 public:

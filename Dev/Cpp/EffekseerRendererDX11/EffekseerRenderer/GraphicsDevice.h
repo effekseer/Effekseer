@@ -107,7 +107,6 @@ private:
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	D3D11BufferPtr buffer_ = nullptr;
-	int32_t elementCount_ = 0;
 	int32_t stride_ = 0;
 
 public:

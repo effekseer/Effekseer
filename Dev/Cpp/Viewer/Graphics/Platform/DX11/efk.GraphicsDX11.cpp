@@ -334,6 +334,8 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 	rasterizerDesc.MultisampleEnable = true;
 	device_->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
 
+	graphicsDevice_ = std::make_shared<EffekseerRendererDX11::Backend::GraphicsDevice>(device_, context);
+
 	return true;
 End:
 	ES_SAFE_RELEASE(rasterizerState);

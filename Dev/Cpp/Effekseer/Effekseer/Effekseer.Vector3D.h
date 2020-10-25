@@ -113,6 +113,17 @@ public:
 	static Vector3D& Transform(Vector3D& o, const Vector3D& in, const Matrix44& mat);
 
 	static Vector3D& TransformWithW(Vector3D& o, const Vector3D& in, const Matrix44& mat);
+
+	/**
+		@brief 
+		\~English	Convert Vector3D into std::array<float,4>
+		\~Japanese	Vector3D から std::array<float,4> に変換する。
+	*/
+	std::array<float, 4> ToFloat4() const
+	{
+		std::array<float, 4> fc{X, Y, Z, 1.0f};
+		return fc;
+	}
 };
 
 //----------------------------------------------------------------------------------

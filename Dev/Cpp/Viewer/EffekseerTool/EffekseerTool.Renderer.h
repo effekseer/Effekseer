@@ -3,9 +3,9 @@
 
 #include "EffekseerTool.Base.h"
 
+#include "../Graphics/StaticMeshRenderer.h"
 #include "../RenderedEffectGenerator.h"
 #include "../efk.Base.h"
-
 #include <functional>
 #include <string>
 
@@ -19,6 +19,8 @@ private:
 	std::shared_ptr<::EffekseerRenderer::Guide> guide_;
 	std::shared_ptr<::EffekseerRenderer::Culling> culling_;
 	std::shared_ptr<::EffekseerRenderer::Paste> background_;
+	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> staticMeshRenderer_;
+
 	Effekseer::TextureLoader* textureLoader_ = nullptr;
 	Effekseer::TextureData* backgroundData_ = nullptr;
 	std::u16string backgroundPath;
@@ -55,6 +57,8 @@ public:
 	float CullingRadius = 0.0f;
 
 	bool IsRightHand = true;
+
+	bool IsGroundShown = false;
 
 	Effekseer::Vector3D CullingPosition;
 
