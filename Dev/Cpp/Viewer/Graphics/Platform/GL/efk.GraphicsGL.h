@@ -4,6 +4,7 @@
 #include <Effekseer.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.h>
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
+#include <EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h>
 
 #include "../../efk.Graphics.h"
 
@@ -69,6 +70,7 @@ private:
 	std::shared_ptr<RenderTextureGL> backTarget;
 	GLuint frameBufferForCopySrc = 0;
 	GLuint frameBufferForCopyDst = 0;
+	std::shared_ptr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
 
 public:
 	GraphicsGL();
@@ -107,6 +109,11 @@ public:
 	DeviceType GetDeviceType() const override
 	{
 		return DeviceType::OpenGL;
+	}
+
+	std::shared_ptr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override
+	{
+		return graphicsDevice_;
 	}
 };
 } // namespace efk

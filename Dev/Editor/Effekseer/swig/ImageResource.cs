@@ -71,6 +71,11 @@ public class ImageResource : global::System.IDisposable {
     return ret;
   }
 
+  public DeviceType GetDeviceType() {
+    DeviceType ret = (DeviceType)EffekseerNativePINVOKE.ImageResource_GetDeviceType(swigCPtr);
+    return ret;
+  }
+
 }
 
 }

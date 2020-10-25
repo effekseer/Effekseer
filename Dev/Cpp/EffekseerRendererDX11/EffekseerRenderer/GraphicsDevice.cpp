@@ -855,6 +855,11 @@ PipelineState ::~PipelineState()
 
 bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
 {
+	if (param.ShaderPtr == nullptr)
+	{
+		return false;
+	}
+
 	shader_ = Effekseer::CreateReference(static_cast<Shader*>(param.ShaderPtr), true);
 	vertexLayout_ = Effekseer::CreateReference(static_cast<VertexLayout*>(param.VertexLayoutPtr), true);
 
@@ -893,7 +898,7 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
 	ZeroMemory(&dsDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 	dsDesc.DepthEnable = param.IsDepthTestEnabled ? TRUE : FALSE;
-	dsDesc.DepthWriteMask = param.IsDepthTestEnabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+	dsDesc.DepthWriteMask = param.IsDepthWriteEnabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 	dsDesc.DepthFunc = compares[static_cast<int32_t>(param.DepthFunc)];
 	dsDesc.StencilEnable = FALSE;
 	graphicsDevice_->GetDevice()->CreateDepthStencilState(&dsDesc, &depthStencilState);

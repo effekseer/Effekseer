@@ -75,7 +75,6 @@ private:
 	GLuint buffer_ = 0;
 	std::vector<uint8_t> resources_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
-	int32_t elementCount_ = 0;
 	int32_t stride_ = 0;
 
 public:
