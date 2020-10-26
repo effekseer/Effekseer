@@ -1353,6 +1353,11 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 		m_WorkerThreads[0].WaitForComplete();
 		// Process on worker thread
 		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
+
+		if (parameter.SyncUpdate)
+		{
+			m_WorkerThreads[0].WaitForComplete();
+		}
 	}
 }
 
