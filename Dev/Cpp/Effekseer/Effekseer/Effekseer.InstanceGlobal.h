@@ -39,7 +39,7 @@ private:
 	float		m_updatedFrame;
 
 	InstanceContainer*	m_rootContainer;
-	Vec3f				m_targetLocation;
+	Vec3f				m_targetLocation = Vec3f(0.0f, 0.0f, 0.0f);
 
 	int64_t				m_seed = 0;
 
