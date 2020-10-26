@@ -458,6 +458,7 @@ void LocalForceFieldInstance::Reset()
 	Velocities.fill(Vec3f(0, 0, 0));
 	VelocitySum = Vec3f(0, 0, 0);
 	ModifyLocation = Vec3f(0, 0, 0);
+	GlobalVelocitySum = Vec3f(0, 0, 0);
 	GlobalModifyLocation = Vec3f(0, 0, 0);
 	ExternalVelocity = Vec3f(0, 0, 0);
 }
