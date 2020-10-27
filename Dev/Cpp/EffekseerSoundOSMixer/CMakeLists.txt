@@ -27,6 +27,9 @@ if (MSVC)
 endif()
 
 add_library(EffekseerSoundOSMixer STATIC ${effekseer_sound_src})
+if(CLANG_FORMAT_ENABLED)
+    clang_format(${PROJECT_NAME})
+endif()
 
 include_directories(
 	../include/

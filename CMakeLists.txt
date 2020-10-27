@@ -34,6 +34,8 @@ else()
     option(BUILD_METAL "Build metal modules" OFF)
 endif()
 
+include(cmake/ClangFormat.cmake)
+
 if (BUILD_VIEWER)
     set(USE_LIBPNG_LOADER ON)
 endif()

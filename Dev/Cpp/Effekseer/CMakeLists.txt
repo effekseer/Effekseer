@@ -71,6 +71,9 @@ set(files
     ${effekseer_src})
 
 FilterFolder("${files}")
+if(CLANG_FORMAT_ENABLED)
+    clang_format(Effekseer)
+endif()
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /we4456 /we4458)
