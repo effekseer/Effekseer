@@ -85,6 +85,8 @@ Range,"最大,最小"
 RecentFiles,最近使用したファイル
 Record,録画
 Recorder,録画
+RecorderProgress,録画中...
+RecorderAbort,中断
 Render,描画
 RenderSettings,描画
 ResetMaginification,倍率再設定

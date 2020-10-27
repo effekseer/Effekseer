@@ -2,10 +2,10 @@
 #ifndef __EFFEKSEERRENDERER_LLGI_MATERIALLOADER_H__
 #define __EFFEKSEERRENDERER_LLGI_MATERIALLOADER_H__
 
+#include "../3rdParty/LLGI/src/LLGI.Compiler.h"
+#include "../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
 #include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
-#include "../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
-#include "../3rdParty/LLGI/src/LLGI.Compiler.h"
 
 #include <Effekseer.h>
 #include <memory>
@@ -29,9 +29,9 @@ private:
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
 
 	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
-    
+
 protected:
-    virtual void Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result);
+	virtual void Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result);
 
 public:
 	MaterialLoader(GraphicsDevice* graphicsDevice,
@@ -47,6 +47,6 @@ public:
 	void Unload(::Effekseer::MaterialData* data) override;
 };
 
-}
+} // namespace EffekseerRendererLLGI
 
 #endif // __EFFEKSEERRENDERER_LLGI_MATERIALLOADER_H__

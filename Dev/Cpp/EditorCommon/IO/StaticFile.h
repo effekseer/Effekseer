@@ -14,7 +14,6 @@ private:
 	std::vector<uint8_t> buffer_;
 
 public:
-	
 	// Dummy
 	StaticFile() = default;
 

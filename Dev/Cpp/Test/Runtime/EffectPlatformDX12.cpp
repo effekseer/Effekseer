@@ -1,10 +1,10 @@
 #include "EffectPlatformDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.IndexBufferDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.PlatformDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.VertexBufferDX12.h"
-#include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -60,19 +60,24 @@ class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer) {}
+	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer)
+		: platform_(platform)
+		, renderer_(renderer)
+	{
+	}
 
-	virtual ~DistortingCallbackDX12() { 
-	
+	virtual ~DistortingCallbackDX12()
+	{
+
 		if (textureData_ != nullptr)
 		{
 			EffekseerRendererDX12::DeleteTextureData(renderer_, textureData_);
 		}
 	}
 
-	
-	virtual bool OnDistorting() override { 
-	
+	virtual bool OnDistorting() override
+	{
+
 		if (textureData_ == nullptr)
 		{
 			auto tex = (LLGI::TextureDX12*)(platform_->GetCheckedTexture());
@@ -142,11 +147,19 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformDX12::~EffectPlatformDX12() {}
+EffectPlatformDX12::~EffectPlatformDX12()
+{
+}
 
-void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
+void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParameter& param)
+{
+	CreateCheckedTexture();
+}
 
-void EffectPlatformDX12::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
+void EffectPlatformDX12::DestroyDevice()
+{
+	EffectPlatformLLGI::DestroyDevice();
+}
 
 void EffectPlatformDX12::BeginRendering()
 {
@@ -165,4 +178,7 @@ void EffectPlatformDX12::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const { return checkTexture_; }
+LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const
+{
+	return checkTexture_;
+}

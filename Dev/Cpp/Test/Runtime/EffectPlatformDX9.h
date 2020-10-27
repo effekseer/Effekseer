@@ -39,7 +39,10 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX9() : EffectPlatformGLFW(false) {}
+	EffectPlatformDX9()
+		: EffectPlatformGLFW(false)
+	{
+	}
 
 	~EffectPlatformDX9();
 

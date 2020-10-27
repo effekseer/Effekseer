@@ -21,7 +21,8 @@ Paste* Paste::Create(efk::Graphics* graphics)
 
 void Paste::Rendering(::Effekseer::TextureData* texture, int32_t width, int32_t height)
 {
-	if (texture == nullptr) return;
+	if (texture == nullptr)
+		return;
 
 	Effekseer::Vector3D pos[4];
 	Effekseer::Vector2D uv[4];
@@ -64,4 +65,4 @@ void Paste::Rendering(::Effekseer::TextureData* texture, int32_t width, int32_t 
 	imageRenderer->Render();
 }
 
-}
+} // namespace EffekseerRenderer

@@ -30,19 +30,37 @@ namespace Effekseer.GUI.Dialog
 			if (isFirstUpdate)
 			{
 				Manager.NativeManager.OpenPopup(Resources.GetString("RenameNode") + "###RenameNodeDialog");
-				isFirstUpdate = false;
 			}
 
 			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
-
-				if (Manager.NativeManager.InputText("", this.name))
+				if (isFirstUpdate)
 				{
-					this.name = Manager.NativeManager.GetInputTextResult();
+					Manager.NativeManager.SetKeyboardFocusHere();
 				}
+
+				if (Manager.NativeManager.InputText("###RenameNodeInput", this.name, 
+					swig.InputTextFlags.AutoSelectAll | swig.InputTextFlags.EnterReturnsTrue))
+				{
+					this.selectedNode.Name.Value = this.name;
+					ShouldBeRemoved = true;
+				}
+				this.name = Manager.NativeManager.GetInputTextResult();
+				
+				if (Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Escape)))
+				{
+					ShouldBeRemoved = true;
+				}
+
 				Manager.NativeManager.Separator();
 
-				if (Manager.NativeManager.Button("OK", 100))
+				float dpiScale = Manager.DpiScale;
+				float buttonWidth = 80 * dpiScale;
+				float areaWidth = Manager.NativeManager.GetContentRegionAvail().X;
+
+				Manager.NativeManager.SetCursorPosX((areaWidth - buttonWidth * 2 + 8 * dpiScale) / 2);
+
+				if (Manager.NativeManager.Button("OK", buttonWidth))
 				{
 					this.selectedNode.Name.Value = this.name;
 					ShouldBeRemoved = true;
@@ -50,7 +68,7 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button(Resources.GetString("Cancel"), 100))
+				if (Manager.NativeManager.Button(Resources.GetString("Cancel"), buttonWidth))
 				{
 					ShouldBeRemoved = true;
 				}
@@ -61,6 +79,8 @@ namespace Effekseer.GUI.Dialog
 			{
 				ShouldBeRemoved = true;
 			}
+
+			isFirstUpdate = false;
 		}
 	}
 }

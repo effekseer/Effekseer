@@ -17,6 +17,7 @@ public:
 	int32_t Width = 0;
 	int32_t Height = 0;
 	bool IsMaximumMode = false;
+	bool IsFrameless = false;
 };
 
 class MainWindow
@@ -26,6 +27,7 @@ private:
 	GLFWwindow* window_ = nullptr;
 	bool isOpenGLMode_ = false;
 	float dpiScale_ = 1.0f;
+	bool isFrameless = false;
 
 	static void GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale);
 
@@ -40,7 +42,9 @@ public:
 
 	void SetState(const MainWindowState& state);
 
-	float GetDPIScale() const;
+	float GetDPIScale() const { return dpiScale_; }
+
+	bool IsFrameless() const { return isFrameless; }
 
 	static bool Initialize(const char16_t* title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode);
 
@@ -49,7 +53,10 @@ public:
 #ifndef SWIG
 	std::function<void(float)> DpiChanged;
 
-	GLFWwindow* GetGLFWWindows() const { return window_; }
+	GLFWwindow* GetGLFWWindows() const
+	{
+		return window_;
+	}
 #endif // !SWIG
 };
 

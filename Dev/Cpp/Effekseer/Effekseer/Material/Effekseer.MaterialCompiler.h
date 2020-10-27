@@ -3,10 +3,10 @@
 
 #include "../Effekseer.Base.h"
 #include "Effekseer.Material.h"
+#include <map>
 #include <stdint.h>
 #include <stdio.h>
 #include <vector>
-#include <map>
 
 namespace Effekseer
 {
@@ -23,7 +23,6 @@ enum class MaterialShaderType : int32_t
 class CompiledMaterialBinary : public IReference
 {
 private:
-	
 public:
 	CompiledMaterialBinary() = default;
 	virtual ~CompiledMaterialBinary() = default;

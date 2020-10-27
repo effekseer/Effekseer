@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -210,7 +210,7 @@ namespace Effekseer.GUI.Component
 				{
 					bool is_selected = (FieldNames[LanguageTable.SelectedIndex] == FieldNames[i]);
 
-					if (Manager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None, null))
+					if (Manager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None))
 					{
 						LanguageTable.SelectLanguage(i);
 					}

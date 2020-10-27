@@ -36,10 +36,19 @@ void FramerateController::Update()
 	previousTime_ = currentTime;
 }
 
-float FramerateController::GetDeltaSecond() const { return deltaSecond_; }
-float FramerateController::GetCurrentFramerate() const { return currentFPS_; }
+float FramerateController::GetDeltaSecond() const
+{
+	return deltaSecond_;
+}
+float FramerateController::GetCurrentFramerate() const
+{
+	return currentFPS_;
+}
 
-int32_t FramerateController::GetTargetFramerate() const { return targetFPS_; }
+int32_t FramerateController::GetTargetFramerate() const
+{
+	return targetFPS_;
+}
 void FramerateController::SetTargetFramerate(int32_t fps)
 {
 	targetFPS_ = fps;

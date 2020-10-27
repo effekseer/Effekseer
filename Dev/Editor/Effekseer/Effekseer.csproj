@@ -160,7 +160,8 @@
     <Compile Include="swig\DialogSelection.cs" />
     <Compile Include="swig\DialogStyle.cs" />
     <Compile Include="swig\DistortionType.cs" />
-    <Compile Include="swig\DockSlot.cs" />
+    <Compile Include="swig\DockNodeFlags.cs" />
+    <Compile Include="swig\DockSplitDir.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />
     <Compile Include="swig\FCurveEdgeType.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="GUI\Dock\Culling.cs" />
     <Compile Include="GUI\Dock\GlobalValues.cs" />
     <Compile Include="GUI\Dialog\RenameNode.cs" />
+    <Compile Include="GUI\Icons.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

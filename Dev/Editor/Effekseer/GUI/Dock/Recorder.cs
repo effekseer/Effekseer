@@ -50,9 +50,8 @@ namespace Effekseer.GUI.Dock
 			selectedStorageTargets[0] = Resources.GetString("StorageGlobal");
 			selectedStorageTargets[1] = Resources.GetString("StorageLocal");
 
-			Label = Resources.GetString("Recorder") + "###Recorder";
+			Label = Icons.PanelRecorder + Resources.GetString("Recorder") + "###Recorder";
 
-			Icon = Images.GetIcon("PanelRecorder");
 			TabToolTip = Resources.GetString("Recorder");
 		}
 
@@ -438,7 +437,7 @@ namespace Effekseer.GUI.Dock
 
 					if (recordResult)
 					{
-						Manager.NativeManager.OpenPopup("Progress in Recording");
+						Manager.NativeManager.OpenPopup("###RecorderProgress");
 					}
 					else
 					{
@@ -454,15 +453,22 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.SetNextWindowSize(320, 0, swig.Cond.Always);
 
-			if (Manager.NativeManager.BeginPopupModal("Progress in Recording"))
+			UpdateProgressDialog();
+		}
+
+		private void UpdateProgressDialog()
+		{
+			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RecorderProgress") + "###RecorderProgress"))
 			{
+				float dpiScale = Manager.DpiScale;
+
 				var viewer = Manager.Viewer;
 				float progress;
 
 				viewer.StepRecord(4);
 
 				if (viewer.IsRecordCompleted())
-	{
+				{
 					viewer.EndRecord();
 					progress = 1.0f;
 					Manager.NativeManager.CloseCurrentPopup();
@@ -477,6 +483,16 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.ProgressBar(progress, new swig.Vec2(-1, 0));
 
 				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.Spacing();
+
+				float buttonWidth = 100 * dpiScale;
+				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2 + 8 * dpiScale);
+				if (Manager.NativeManager.Button(Resources.GetString("RecorderAbort"), buttonWidth))
+				{
+					viewer.EndRecord();
+					Manager.NativeManager.CloseCurrentPopup();
+				}
 
 				Manager.NativeManager.EndPopup();
 			}

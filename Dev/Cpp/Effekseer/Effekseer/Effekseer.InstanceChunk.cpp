@@ -7,9 +7,14 @@
 namespace Effekseer
 {
 
-InstanceChunk::InstanceChunk() { std::fill(instancesAlive_.begin(), instancesAlive_.end(), false); }
+InstanceChunk::InstanceChunk()
+{
+	std::fill(instancesAlive_.begin(), instancesAlive_.end(), false);
+}
 
-InstanceChunk::~InstanceChunk() {}
+InstanceChunk::~InstanceChunk()
+{
+}
 
 void InstanceChunk::UpdateInstances()
 {
@@ -45,8 +50,9 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 		if (instancesAlive_[i])
 		{
 			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
-			
-			if (global != instance->GetInstanceGlobal()) {
+
+			if (global != instance->GetInstanceGlobal())
+			{
 				continue;
 			}
 

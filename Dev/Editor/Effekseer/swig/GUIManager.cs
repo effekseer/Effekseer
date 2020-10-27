@@ -94,6 +94,24 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Close(swigCPtr);
   }
 
+  public bool IsWindowMaximized() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowMaximized(swigCPtr);
+    return ret;
+  }
+
+  public void SetWindowMaximized(bool maximized) {
+    EffekseerNativePINVOKE.GUIManager_SetWindowMaximized(swigCPtr, maximized);
+  }
+
+  public bool IsWindowMinimized() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowMinimized(swigCPtr);
+    return ret;
+  }
+
+  public void SetWindowMinimized(bool minimized) {
+    EffekseerNativePINVOKE.GUIManager_SetWindowMinimized(swigCPtr, minimized);
+  }
+
   public Vec2 GetMousePosition() {
     Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetMousePosition(swigCPtr), true);
     return ret;
@@ -367,6 +385,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TextWrapped(swigCPtr, text);
   }
 
+  public Vec2 CalcTextSize(string text) {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_CalcTextSize(swigCPtr, text), true);
+    return ret;
+  }
+
   public bool Button(string label, float size_x, float size_y) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_0(swigCPtr, label, size_x, size_y);
     return ret;
@@ -392,6 +415,11 @@ public class GUIManager : global::System.IDisposable {
 
   public bool ImageButton(ImageResource user_texture_id, float x, float y) {
     bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    return ret;
+  }
+
+  public bool ImageButtonOriginal(ImageResource user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
     return ret;
   }
 
@@ -961,38 +989,28 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_1(swigCPtr, is_open);
   }
 
-  public bool TreeNodeEx(string label, bool[] v, ImageResource user_texture_id, TreeNodeFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_2(swigCPtr, label, v, ImageResource.getCPtr(user_texture_id), (int)flags);
-    return ret;
-  }
-
-  public bool TreeNodeEx(string label, bool[] v, ImageResource user_texture_id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_3(swigCPtr, label, v, ImageResource.getCPtr(user_texture_id));
+  public bool TreeNodeEx(string label, bool[] v, TreeNodeFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_2(swigCPtr, label, v, (int)flags);
     return ret;
   }
 
   public bool TreeNodeEx(string label, bool[] v) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_4(swigCPtr, label, v);
-    return ret;
-  }
-
-  public bool Selectable(string label, bool selected, SelectableFlags flags, ImageResource user_texture_id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags, ImageResource.getCPtr(user_texture_id));
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_3(swigCPtr, label, v);
     return ret;
   }
 
   public bool Selectable(string label, bool selected, SelectableFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected, (int)flags);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags);
     return ret;
   }
 
   public bool Selectable(string label, bool selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label, selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected);
     return ret;
   }
 
   public bool Selectable(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_3(swigCPtr, label);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label);
     return ret;
   }
 
@@ -1040,43 +1058,33 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndMenu(swigCPtr);
   }
 
-  public bool MenuItem(string label, string shortcut, bool selected, bool enabled, ImageResource icon) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_0(swigCPtr, label, shortcut, selected, enabled, ImageResource.getCPtr(icon));
-    return ret;
-  }
-
   public bool MenuItem(string label, string shortcut, bool selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_1(swigCPtr, label, shortcut, selected, enabled);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_0(swigCPtr, label, shortcut, selected, enabled);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, bool selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_2(swigCPtr, label, shortcut, selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_1(swigCPtr, label, shortcut, selected);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_3(swigCPtr, label, shortcut);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_2(swigCPtr, label, shortcut);
     return ret;
   }
 
   public bool MenuItem(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label);
-    return ret;
-  }
-
-  public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled, ImageResource icon) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected, enabled, ImageResource.getCPtr(icon));
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_3(swigCPtr, label);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_6(swigCPtr, label, shortcut, ref p_selected, enabled);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label, shortcut, ref p_selected, enabled);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, ref bool p_selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_7(swigCPtr, label, shortcut, ref p_selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected);
     return ret;
   }
 
@@ -1141,8 +1149,24 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetItemDefaultFocus(swigCPtr);
   }
 
+  public void SetKeyboardFocusHere(int offset) {
+    EffekseerNativePINVOKE.GUIManager_SetKeyboardFocusHere__SWIG_0(swigCPtr, offset);
+  }
+
+  public void SetKeyboardFocusHere() {
+    EffekseerNativePINVOKE.GUIManager_SetKeyboardFocusHere__SWIG_1(swigCPtr);
+  }
+
+  public void ClearAllFonts() {
+    EffekseerNativePINVOKE.GUIManager_ClearAllFonts(swigCPtr);
+  }
+
   public void AddFontFromFileTTF(string filename, float size_pixels) {
     EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, filename, size_pixels);
+  }
+
+  public void AddFontFromAtlasImage(string filename, ushort baseCode, int sizeX, int sizeY, int countX, int countY) {
+    EffekseerNativePINVOKE.GUIManager_AddFontFromAtlasImage(swigCPtr, filename, baseCode, sizeX, sizeY, countX, countY);
   }
 
   public bool BeginChildFrame(uint id, Vec2 size, WindowFlags flags) {
@@ -1255,27 +1279,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public void SetNextDock(DockSlot slot) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDock(swigCPtr, (int)slot);
-  }
-
-  public void BeginDockspace() {
-    EffekseerNativePINVOKE.GUIManager_BeginDockspace(swigCPtr);
-  }
-
-  public void EndDockspace() {
-    EffekseerNativePINVOKE.GUIManager_EndDockspace(swigCPtr);
-  }
-
-  public bool BeginDock(string label, ref bool p_open, WindowFlags extra_flags, Vec2 default_size) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock__SWIG_0(swigCPtr, label, ref p_open, (int)extra_flags, Vec2.getCPtr(default_size));
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-    return ret;
-  }
-
-  public bool BeginDock(string label, WindowFlags extra_flags, Vec2 default_size) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock__SWIG_1(swigCPtr, label, (int)extra_flags, Vec2.getCPtr(default_size));
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  public bool BeginDock(string label, string tabLabel, ref bool p_open, bool allowClose, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, tabLabel, ref p_open, allowClose, (int)extra_flags);
     return ret;
   }
 
@@ -1283,42 +1288,44 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndDock(swigCPtr);
   }
 
-  public void SetNextDockRate(float rate) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDockRate(swigCPtr, rate);
-  }
-
-  public void ResetNextParentDock() {
-    EffekseerNativePINVOKE.GUIManager_ResetNextParentDock(swigCPtr);
-  }
-
-  public void SaveDock(string path) {
-    EffekseerNativePINVOKE.GUIManager_SaveDock(swigCPtr, path);
-  }
-
-  public void LoadDock(string path) {
-    EffekseerNativePINVOKE.GUIManager_LoadDock(swigCPtr, path);
-  }
-
-  public void ShutdownDock() {
-    EffekseerNativePINVOKE.GUIManager_ShutdownDock(swigCPtr);
-  }
-
-  public void SetNextDockIcon(ImageResource icon, Vec2 iconSize) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDockIcon(swigCPtr, ImageResource.getCPtr(icon), Vec2.getCPtr(iconSize));
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-  }
-
-  public void SetNextDockTabToolTip(string popup) {
-    EffekseerNativePINVOKE.GUIManager_SetNextDockTabToolTip(swigCPtr, popup);
-  }
-
-  public bool GetDockActive() {
-    bool ret = EffekseerNativePINVOKE.GUIManager_GetDockActive(swigCPtr);
+  public uint BeginDockLayout() {
+    uint ret = EffekseerNativePINVOKE.GUIManager_BeginDockLayout(swigCPtr);
     return ret;
   }
 
-  public void SetDockActive() {
-    EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
+  public void EndDockLayout() {
+    EffekseerNativePINVOKE.GUIManager_EndDockLayout(swigCPtr);
+  }
+
+  public void DockSplitNode(uint nodeId, DockSplitDir dir, float sizeRatio, ref uint outId1, ref uint outId2) {
+    EffekseerNativePINVOKE.GUIManager_DockSplitNode(swigCPtr, nodeId, (int)dir, sizeRatio, ref outId1, ref outId2);
+  }
+
+  public void DockSetNodeFlags(uint nodeId, DockNodeFlags flags) {
+    EffekseerNativePINVOKE.GUIManager_DockSetNodeFlags(swigCPtr, nodeId, (int)flags);
+  }
+
+  public void DockSetWindow(uint nodeId, string windowName) {
+    EffekseerNativePINVOKE.GUIManager_DockSetWindow(swigCPtr, nodeId, windowName);
+  }
+
+  public bool IsDockFocused() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsDockFocused(swigCPtr);
+    return ret;
+  }
+
+  public bool IsDockVisibled() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsDockVisibled(swigCPtr);
+    return ret;
+  }
+
+  public bool IsDockWindowed() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsDockWindowed(swigCPtr);
+    return ret;
+  }
+
+  public void SetDockFocus(string label) {
+    EffekseerNativePINVOKE.GUIManager_SetDockFocus(swigCPtr, label);
   }
 
   public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value, float max_value) {

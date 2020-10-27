@@ -4,9 +4,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <memory>
-#include "EffekseerRendererDX9.Renderer.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
+#include "EffekseerRendererDX9.Renderer.h"
+#include <memory>
 
 //-----------------------------------------------------------------------------------
 //
@@ -28,13 +28,13 @@ ModelLoader::ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterfa
 	}
 }
 
-ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
-	: device_			(device)
-	, m_fileInterface	( fileInterface )
+ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
+	: device_(device)
+	, m_fileInterface(fileInterface)
 {
 	ES_SAFE_ADDREF(device);
-	
-	if( m_fileInterface == NULL )
+
+	if (m_fileInterface == NULL)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -52,20 +52,20 @@ ModelLoader::~ModelLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* ModelLoader::Load( const EFK_CHAR* path )
+void* ModelLoader::Load(const EFK_CHAR* path)
 {
-	std::unique_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	
+	std::unique_ptr<::Effekseer::FileReader>
+		reader(m_fileInterface->OpenRead(path));
+
 	if (reader.get() != nullptr)
 	{
 		size_t size_model = reader->GetLength();
 		uint8_t* data_model = new uint8_t[size_model];
-		reader->Read( data_model, size_model );
+		reader->Read(data_model, size_model);
 
 		auto model = (Model*)Load(data_model, static_cast<int32_t>(size_model));
 
-		delete [] data_model;
+		delete[] data_model;
 
 		return (void*)model;
 	}
@@ -104,9 +104,9 @@ void* ModelLoader::Load(const void* data, int32_t size)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ModelLoader::Unload( void* data )
+void ModelLoader::Unload(void* data)
 {
-	if( data != NULL )
+	if (data != NULL)
 	{
 		Model* model = (Model*)data;
 		delete model;
@@ -116,7 +116,7 @@ void ModelLoader::Unload( void* data )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

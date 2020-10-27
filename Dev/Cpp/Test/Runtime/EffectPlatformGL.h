@@ -10,7 +10,10 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformGL() : EffectPlatformGLFW(true) {}
+	EffectPlatformGL()
+		: EffectPlatformGLFW(true)
+	{
+	}
 
 	~EffectPlatformGL();
 

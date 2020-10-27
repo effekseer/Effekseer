@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,7 +74,7 @@ namespace Effekseer.GUI.Dock
 
 		public FCurves()
 		{
-			Label = Resources.GetString("FCurves") + "###FCurves";
+			Label = Icons.PanelFCurve + Resources.GetString("FCurves") + "###FCurves";
 
 			Command.CommandManager.Changed += OnChanged;
 			Core.OnAfterNew += OnChanged;
@@ -95,7 +95,6 @@ namespace Effekseer.GUI.Dock
 
 			OnChanged();
 
-			Icon = Images.GetIcon("PanelFCurve");
 			TabToolTip = Resources.GetString("FCurves");
 
 			//NoPadding = true;
@@ -1327,7 +1326,6 @@ namespace Effekseer.GUI.Dock
 
 			static public FCurve Create(Tuple35<string, object> v, FCurves window)
 			{
-#if __EFFEKSEER_BUILD_VERSION16__
 				if (v.Item2 is Data.Value.FCurveScalar)
 				{
 					var v_ = (Data.Value.FCurveScalar)v.Item2;
@@ -1345,9 +1343,7 @@ namespace Effekseer.GUI.Dock
 						v_.S.DefaultValueRangeMax,
 						v_.Timeline);
 				}
-				else
-#endif
-				if (v.Item2 is Data.Value.FCurveVector2D)
+				else if (v.Item2 is Data.Value.FCurveVector2D)
 				{
 					var v_ = (Data.Value.FCurveVector2D)v.Item2;
 					return new FCurve(

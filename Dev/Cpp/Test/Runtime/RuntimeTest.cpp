@@ -329,12 +329,12 @@ void MassPlayTest()
 		platform->Terminate();
 	}
 
-		{
+	{
 		srand(0);
 #ifdef _WIN32
-			auto platform = std::make_shared<EffectPlatformDX11>();
+		auto platform = std::make_shared<EffectPlatformDX11>();
 #else
-			auto platform = std::make_shared<EffectPlatformGL>();
+		auto platform = std::make_shared<EffectPlatformGL>();
 #endif
 
 		EffectPlatformInitializingParameter param;
@@ -413,7 +413,6 @@ void ReloadTest()
 		platform->Terminate();
 	}
 }
-
 
 void BasicRuntimeTest()
 {

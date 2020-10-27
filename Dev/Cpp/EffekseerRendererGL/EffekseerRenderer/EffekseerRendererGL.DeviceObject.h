@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEERRENDERER_GL_DEVICEOBJECT_H__
 #define __EFFEKSEERRENDERER_GL_DEVICEOBJECT_H__
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 namespace EffekseerRendererGL
 {

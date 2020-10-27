@@ -15,7 +15,10 @@ void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pix
 	}
 }
 
-EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const { return renderer_; }
+EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const
+{
+	return renderer_;
+}
 
 EffectPlatform::EffectPlatform()
 {
@@ -189,7 +192,8 @@ bool EffectPlatform::Update()
 	return true;
 }
 
-bool EffectPlatform::Draw() {
+bool EffectPlatform::Draw()
+{
 	if (!DoEvent())
 		return false;
 

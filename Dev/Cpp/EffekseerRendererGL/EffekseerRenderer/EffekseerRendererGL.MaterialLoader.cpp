@@ -349,7 +349,8 @@ MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
 							   DeviceObjectCollection* deviceObjectCollection,
 							   ::Effekseer::FileInterface* fileInterface,
 							   bool canLoadFromCache)
-	: fileInterface_(fileInterface), canLoadFromCache_(canLoadFromCache)
+	: fileInterface_(fileInterface)
+	, canLoadFromCache_(canLoadFromCache)
 {
 	if (fileInterface == nullptr)
 	{
@@ -442,7 +443,7 @@ MaterialLoader ::~MaterialLoader()
 		Effekseer::Material material;
 		if (!material.Load((const uint8_t*)data, size))
 		{
-			std::cout << "Error : Invalid material is loaded." << std::endl; 
+			std::cout << "Error : Invalid material is loaded." << std::endl;
 		}
 		auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
 		auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&material));

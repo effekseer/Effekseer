@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 
 		public ViewPoint()
 		{
-			Label = Resources.GetString("CameraSettings") + "###CameraSettings";
+			Label = Icons.PanelViewPoint + Resources.GetString("CameraSettings") + "###CameraSettings";
 
 			id_f = "###" + Manager.GetUniqueID().ToString();
 			id_rx = "###" + Manager.GetUniqueID().ToString();
@@ -38,7 +38,6 @@ namespace Effekseer.GUI.Dock
             id_cs = "###" + Manager.GetUniqueID().ToString();
             id_ce = "###" + Manager.GetUniqueID().ToString();
 
-            Icon = Images.GetIcon("PanelViewPoint");
 			TabToolTip = Resources.GetString("CameraSettings");
 		}
 

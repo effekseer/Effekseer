@@ -1,8 +1,8 @@
 ﻿
-#ifndef	__EFFEKSEER_SERVER_H__
-#define	__EFFEKSEER_SERVER_H__
+#ifndef __EFFEKSEER_SERVER_H__
+#define __EFFEKSEER_SERVER_H__
 
-#if !( defined(_PSVITA) || defined(_XBOXONE) )
+#if !(defined(_PSVITA) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------
 // Include
@@ -12,7 +12,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer {
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -24,9 +25,12 @@ namespace Effekseer {
 class Server
 {
 public:
-
-	Server() {}
-	virtual ~Server() {}
+	Server()
+	{
+	}
+	virtual ~Server()
+	{
+	}
 
 	/**
 		@brief
@@ -40,7 +44,7 @@ public:
 		\~English	start a server
 		\~Japanese	サーバーを開始する。
 	*/
-	virtual bool Start( uint16_t port ) = 0;
+	virtual bool Start(uint16_t port) = 0;
 
 	/**
 		@brief
@@ -91,7 +95,7 @@ public:
 		\~English	Specify root path to load materials
 		\~Japanese	素材のルートパスを設定する。
 	*/
-	virtual void SetMaterialPath( const EFK_CHAR* materialPath ) = 0;
+	virtual void SetMaterialPath(const EFK_CHAR* materialPath) = 0;
 
 	/**
 		@brief
@@ -111,11 +115,11 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_XBOXONE) )
+#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
 
-#endif	// __EFFEKSEER_SERVER_H__
+#endif // __EFFEKSEER_SERVER_H__

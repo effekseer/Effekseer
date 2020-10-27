@@ -12,12 +12,12 @@ namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBufferBase::IndexBufferBase( int maxCount, bool isDynamic )
-	: m_indexMaxCount	( maxCount )
-	, m_indexCount		( 0 )
-	, m_isDynamic		( false )
-	, m_isLock			( false )
-	, m_resource		( NULL )
+IndexBufferBase::IndexBufferBase(int maxCount, bool isDynamic)
+	: m_indexMaxCount(maxCount)
+	, m_indexCount(0)
+	, m_isDynamic(false)
+	, m_isLock(false)
+	, m_resource(NULL)
 {
 }
 
@@ -31,7 +31,7 @@ IndexBufferBase::~IndexBufferBase()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void IndexBufferBase::Push( const void* buffer, int count )
+void IndexBufferBase::Push(const void* buffer, int count)
 {
 	assert(m_isLock);
 	memcpy(GetBufferDirect(count), buffer, count * stride_);
@@ -56,10 +56,10 @@ int IndexBufferBase::GetMaxCount() const
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void* IndexBufferBase::GetBufferDirect( int count )
+void* IndexBufferBase::GetBufferDirect(int count)
 {
-	assert( m_isLock );
-	assert( m_indexMaxCount >= m_indexCount + count );
+	assert(m_isLock);
+	assert(m_indexMaxCount >= m_indexCount + count);
 
 	uint8_t* pBuffer = NULL;
 
@@ -72,7 +72,7 @@ void* IndexBufferBase::GetBufferDirect( int count )
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

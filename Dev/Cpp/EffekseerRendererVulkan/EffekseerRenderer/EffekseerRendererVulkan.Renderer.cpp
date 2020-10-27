@@ -43,7 +43,6 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	};
 	shader->StandardLightingTexture_PS = {{standard_l_frag.data(), (int32_t)standard_l_frag.size()}};
 
-
 	static const std::vector<uint8_t> model_ltn_vert = {
 #include "Shader/Vulkan/model_ltn.vert.spv.inl"
 	};

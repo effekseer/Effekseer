@@ -1,19 +1,20 @@
 ﻿
-#ifndef	__EFFEKSEER_MODEL_H__
-#define	__EFFEKSEER_MODEL_H__
+#ifndef __EFFEKSEER_MODEL_H__
+#define __EFFEKSEER_MODEL_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.Manager.h"
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
-#include "Effekseer.Manager.h"
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer { 
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ namespace Effekseer {
 class Model
 {
 public:
-	static const int32_t	Version = 1;
+	static const int32_t Version = 1;
 
 	struct Vertex
 	{
@@ -50,41 +51,41 @@ public:
 
 	struct Face
 	{
-		int32_t	Indexes[3];
+		int32_t Indexes[3];
 	};
 
 	struct Emitter
 	{
-		Vector3D	Position;
-		Vector3D	Normal;
-		Vector3D	Binormal;
-		Vector3D	Tangent;
+		Vector3D Position;
+		Vector3D Normal;
+		Vector3D Binormal;
+		Vector3D Tangent;
 	};
 
 private:
-	uint8_t*	m_data;
-	int32_t		m_size;
+	uint8_t* m_data;
+	int32_t m_size;
 
-	int32_t		m_version;
+	int32_t m_version;
 
 	struct InternalModel
 	{
-		int32_t		m_vertexCount;
-		Vertex*		m_vertexes;
+		int32_t m_vertexCount;
+		Vertex* m_vertexes;
 
-		int32_t		m_faceCount;
-		Face*		m_faces;
+		int32_t m_faceCount;
+		Face* m_faces;
 	};
 
-	InternalModel*	models;
+	InternalModel* models;
 
-	int32_t		m_modelCount;
-	int32_t		m_frameCount;
+	int32_t m_modelCount;
+	int32_t m_frameCount;
 
 protected:
-	int32_t		m_vertexSize = sizeof(Vertex);
-public:
+	int32_t m_vertexSize = sizeof(Vertex);
 
+public:
 	/**
 	@brief
 	\~English	Constructor
@@ -99,7 +100,7 @@ public:
 		m_data = new uint8_t[m_size];
 		memcpy(m_data, data, m_size);
 
-		uint8_t* p = (uint8_t*) m_data;
+		uint8_t* p = (uint8_t*)m_data;
 
 		memcpy(&m_version, p, sizeof(int32_t));
 		p += sizeof(int32_t);
@@ -133,7 +134,7 @@ public:
 
 			if (m_version >= 1)
 			{
-				models[f].m_vertexes = (Vertex*) p;
+				models[f].m_vertexes = (Vertex*)p;
 				p += (sizeof(Vertex) * models[f].m_vertexCount);
 			}
 			else
@@ -153,22 +154,43 @@ public:
 			memcpy(&models[f].m_faceCount, p, sizeof(int32_t));
 			p += sizeof(int32_t);
 
-			models[f].m_faces = (Face*) p;
+			models[f].m_faces = (Face*)p;
 			p += (sizeof(Face) * models[f].m_faceCount);
 		}
 	}
 
-	Vertex* GetVertexes(int32_t index = 0) const { return models[index].m_vertexes; }
-	int32_t GetVertexCount(int32_t index = 0) { return models[index].m_vertexCount; }
+	Vertex* GetVertexes(int32_t index = 0) const
+	{
+		return models[index].m_vertexes;
+	}
+	int32_t GetVertexCount(int32_t index = 0)
+	{
+		return models[index].m_vertexCount;
+	}
 
-	Face* GetFaces(int32_t index = 0) const { return models[index].m_faces; }
-	int32_t GetFaceCount(int32_t index = 0) { return models[index].m_faceCount; }
+	Face* GetFaces(int32_t index = 0) const
+	{
+		return models[index].m_faces;
+	}
+	int32_t GetFaceCount(int32_t index = 0)
+	{
+		return models[index].m_faceCount;
+	}
 
-	int32_t GetFrameCount() const { return m_frameCount; }
+	int32_t GetFrameCount() const
+	{
+		return m_frameCount;
+	}
 
-	int32_t GetModelCount() { return m_modelCount; }
+	int32_t GetModelCount()
+	{
+		return m_modelCount;
+	}
 
-	int32_t GetVertexSize() const { return m_vertexSize; }
+	int32_t GetVertexSize() const
+	{
+		return m_vertexSize;
+	}
 
 	/**
 		@brief
@@ -186,11 +208,11 @@ public:
 		ES_SAFE_DELETE_ARRAY(m_data);
 	}
 
-	Emitter GetEmitter(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitter(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
 	{
 		time = time % GetFrameCount();
 
-		int32_t faceInd = (int32_t) ((GetFaceCount(time) - 1) * (g->GetRand()));
+		int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
 		faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
 		Face& face = GetFaces(time)[faceInd];
 		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
@@ -201,26 +223,26 @@ public:
 		float p2 = g->GetRand();
 
 		// Fit within plane
-		if( p1 + p2 > 1.0f )
+		if (p1 + p2 > 1.0f)
 		{
 			p1 = 1.0f - p1;
-			p2 = 1.0f - p2;			
+			p2 = 1.0f - p2;
 		}
 
 		float p0 = 1.0f - p1 - p2;
-		
+
 		Emitter emitter;
 		emitter.Position = (v0.Position * p0 + v1.Position * p1 + v2.Position * p2) * magnification;
 		emitter.Normal = v0.Normal * p0 + v1.Normal * p1 + v2.Normal * p2;
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == CoordinateSystem::LH )
+		if (coordinate == CoordinateSystem::LH)
 		{
-			emitter.Position.Z = - emitter.Position.Z;
-			emitter.Normal.Z = - emitter.Normal.Z;
-			emitter.Binormal.Z = - emitter.Binormal.Z;
-			emitter.Tangent.Z = - emitter.Tangent.Z;
+			emitter.Position.Z = -emitter.Position.Z;
+			emitter.Normal.Z = -emitter.Normal.Z;
+			emitter.Binormal.Z = -emitter.Binormal.Z;
+			emitter.Tangent.Z = -emitter.Tangent.Z;
 		}
 
 		return emitter;
@@ -230,22 +252,22 @@ public:
 	{
 		time = time % GetFrameCount();
 
-		int32_t vertexInd = (int32_t) ((GetVertexCount(time) - 1) * (g->GetRand()));
+		int32_t vertexInd = (int32_t)((GetVertexCount(time) - 1) * (g->GetRand()));
 		vertexInd = Clamp(vertexInd, GetVertexCount(time) - 1, 0);
 		Vertex& v = GetVertexes(time)[vertexInd];
-		
+
 		Emitter emitter;
 		emitter.Position = v.Position * magnification;
 		emitter.Normal = v.Normal;
 		emitter.Binormal = v.Binormal;
 		emitter.Tangent = v.Tangent;
 
-		if( coordinate == CoordinateSystem::LH )
+		if (coordinate == CoordinateSystem::LH)
 		{
-			emitter.Position.Z = - emitter.Position.Z;
-			emitter.Normal.Z = - emitter.Normal.Z;
-			emitter.Binormal.Z = - emitter.Binormal.Z;
-			emitter.Tangent.Z = - emitter.Tangent.Z;
+			emitter.Position.Z = -emitter.Position.Z;
+			emitter.Normal.Z = -emitter.Normal.Z;
+			emitter.Binormal.Z = -emitter.Binormal.Z;
+			emitter.Tangent.Z = -emitter.Tangent.Z;
 		}
 
 		return emitter;
@@ -257,19 +279,19 @@ public:
 
 		int32_t vertexInd = index % GetVertexCount(time);
 		Vertex& v = GetVertexes(time)[vertexInd];
-		
+
 		Emitter emitter;
 		emitter.Position = v.Position * magnification;
 		emitter.Normal = v.Normal;
 		emitter.Binormal = v.Binormal;
 		emitter.Tangent = v.Tangent;
 
-		if( coordinate == CoordinateSystem::LH )
+		if (coordinate == CoordinateSystem::LH)
 		{
-			emitter.Position.Z = - emitter.Position.Z;
-			emitter.Normal.Z = - emitter.Normal.Z;
-			emitter.Binormal.Z = - emitter.Binormal.Z;
-			emitter.Tangent.Z = - emitter.Tangent.Z;
+			emitter.Position.Z = -emitter.Position.Z;
+			emitter.Normal.Z = -emitter.Normal.Z;
+			emitter.Binormal.Z = -emitter.Binormal.Z;
+			emitter.Tangent.Z = -emitter.Tangent.Z;
 		}
 
 		return emitter;
@@ -279,7 +301,7 @@ public:
 	{
 		time = time % GetFrameCount();
 
-		int32_t faceInd = (int32_t) ((GetFaceCount(time) - 1) * (g->GetRand()));
+		int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
 		faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
 		Face& face = GetFaces(time)[faceInd];
 		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
@@ -296,12 +318,12 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == CoordinateSystem::LH )
+		if (coordinate == CoordinateSystem::LH)
 		{
-			emitter.Position.Z = - emitter.Position.Z;
-			emitter.Normal.Z = - emitter.Normal.Z;
-			emitter.Binormal.Z = - emitter.Binormal.Z;
-			emitter.Tangent.Z = - emitter.Tangent.Z;
+			emitter.Position.Z = -emitter.Position.Z;
+			emitter.Normal.Z = -emitter.Normal.Z;
+			emitter.Binormal.Z = -emitter.Binormal.Z;
+			emitter.Tangent.Z = -emitter.Tangent.Z;
 		}
 
 		return emitter;
@@ -327,12 +349,12 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == CoordinateSystem::LH )
+		if (coordinate == CoordinateSystem::LH)
 		{
-			emitter.Position.Z = - emitter.Position.Z;
-			emitter.Normal.Z = - emitter.Normal.Z;
-			emitter.Binormal.Z = - emitter.Binormal.Z;
-			emitter.Tangent.Z = - emitter.Tangent.Z;
+			emitter.Position.Z = -emitter.Position.Z;
+			emitter.Normal.Z = -emitter.Normal.Z;
+			emitter.Binormal.Z = -emitter.Binormal.Z;
+			emitter.Tangent.Z = -emitter.Tangent.Z;
 		}
 
 		return emitter;
@@ -342,8 +364,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_MODEL_H__
+#endif // __EFFEKSEER_MODEL_H__

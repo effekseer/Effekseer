@@ -237,10 +237,17 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 #endif
 }
 
-void PngTextureLoader::Unload() { textureData.clear(); }
+void PngTextureLoader::Unload()
+{
+	textureData.clear();
+}
 
-void PngTextureLoader::Initialize() {}
+void PngTextureLoader::Initialize()
+{
+}
 
-void PngTextureLoader::Finalize() {}
+void PngTextureLoader::Finalize()
+{
+}
 
 } // namespace EffekseerRenderer

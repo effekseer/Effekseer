@@ -1,22 +1,25 @@
 
-#ifndef	__EFFEKSEERRENDERER_GL_GLEXTENSION_H__
-#define	__EFFEKSEERRENDERER_GL_GLEXTENSION_H__
+#ifndef __EFFEKSEERRENDERER_GL_GLEXTENSION_H__
+#define __EFFEKSEERRENDERER_GL_GLEXTENSION_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #if _WIN32
 #include <windows.h>
+#endif
+
+#if _WIN32
 #include <GL/gl.h>
 #endif
 
 #ifdef EMSCRIPTEN
-#define		GL_GLEXT_PROTOTYPES
-#define		EGL_EGLEXT_PROTOTYPES
-#endif	// EMSCRIPTEN
+#define GL_GLEXT_PROTOTYPES
+#define EGL_EGLEXT_PROTOTYPES
+#endif // EMSCRIPTEN
 
-#include <stddef.h>
 #include "EffekseerRendererGL.Base.Pre.h"
+#include <stddef.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -91,21 +94,21 @@ void glBindBuffer(GLenum target, GLuint buffer);
 void glGenBuffers(GLsizei n, GLuint* buffers);
 void glBufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage);
 void glBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
-void glBlendFuncSeparate (GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha);
-void glBlendEquation (GLenum mode);
-void glActiveTexture (GLenum texture);
+void glBlendFuncSeparate(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha);
+void glBlendEquation(GLenum mode);
+void glActiveTexture(GLenum texture);
 void glUniform1i(GLint location, GLint v0);
-void glShaderSource (GLuint shader, GLsizei count, const GLchar** strings, const GLint* lengths);
+void glShaderSource(GLuint shader, GLsizei count, const GLchar** strings, const GLint* lengths);
 void glCompileShader(GLuint shader);
-void glGetShaderiv (GLuint shader, GLenum pname, GLint* param);
-GLuint glCreateProgram (void);
+void glGetShaderiv(GLuint shader, GLenum pname, GLint* param);
+GLuint glCreateProgram(void);
 void glAttachShader(GLuint program, GLuint shader);
 void glDeleteProgram(GLuint program);
 void glDeleteShader(GLuint shader);
-void glLinkProgram (GLuint program);
+void glLinkProgram(GLuint program);
 void glGetProgramiv(GLuint program, GLenum pname, GLint* param);
-void glGetShaderInfoLog (GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog);
-void glGetProgramInfoLog (GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog);
+void glGetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog);
+void glGetProgramInfoLog(GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog);
 GLint glGetAttribLocation(GLuint program, const GLchar* name);
 GLint glGetUniformLocation(GLuint program, const GLchar* name);
 void glUseProgram(GLuint program);
@@ -117,12 +120,12 @@ void glUniform4fv(GLint location, GLsizei count, const GLfloat* value);
 void glGenerateMipmap(GLenum target);
 void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid* data);
 
-void glGenVertexArrays(GLsizei n, GLuint *arrays);
-void glDeleteVertexArrays(GLsizei n, const GLuint *arrays);
+void glGenVertexArrays(GLsizei n, GLuint* arrays);
+void glDeleteVertexArrays(GLsizei n, const GLuint* arrays);
 void glBindVertexArray(GLuint array);
 
-void glGenSamplers(GLsizei n, GLuint *samplers);
-void glDeleteSamplers(GLsizei n, const GLuint * samplers);
+void glGenSamplers(GLsizei n, GLuint* samplers);
+void glDeleteSamplers(GLsizei n, const GLuint* samplers);
 void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param);
 void glBindSampler(GLuint unit, GLuint sampler);
 
@@ -130,14 +133,14 @@ void* glMapBuffer(GLenum target, GLenum access);
 void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 GLboolean glUnmapBuffer(GLenum target);
 
-void glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *data);
+void glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data);
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
-}
+} // namespace GLExt
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_GLEXTENSION_H__
+#endif // __EFFEKSEERRENDERER_GL_GLEXTENSION_H__

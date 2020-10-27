@@ -23,9 +23,15 @@ public:
 	int64_t GetSize() override;
 	void GetData(std::vector<uint8_t>& buffer) override;
 
-	StaticFileType GetFileType() override { return StaticFileType::IPC; }
+	StaticFileType GetFileType() override
+	{
+		return StaticFileType::IPC;
+	}
 
-	uint64_t GetUpdateTime() { return time_; }
+	uint64_t GetUpdateTime()
+	{
+		return time_;
+	}
 };
 
 } // namespace Effekseer

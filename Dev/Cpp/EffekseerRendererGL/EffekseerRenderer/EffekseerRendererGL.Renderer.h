@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_GL_RENDERER_H__
-#define	__EFFEKSEERRENDERER_GL_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_GL_RENDERER_H__
+#define __EFFEKSEERRENDERER_GL_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.Base.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
+#include "EffekseerRendererGL.Base.h"
 
 //----------------------------------------------------------------------------------
 // Lib
@@ -41,8 +41,12 @@ class Renderer
 	: public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	/**
@@ -117,14 +121,13 @@ class Model
 	: public Effekseer::Model
 {
 private:
-
 public:
 	struct InternalModel
 	{
-		GLuint		VertexBuffer;
-		GLuint		IndexBuffer;
-		int32_t		VertexCount;
-		int32_t		IndexCount;
+		GLuint VertexBuffer;
+		GLuint IndexBuffer;
+		int32_t VertexCount;
+		int32_t IndexCount;
 
 		std::vector<uint8_t> delayVertexBuffer;
 		std::vector<uint8_t> delayIndexBuffer;
@@ -136,9 +139,8 @@ public:
 		bool TryDelayLoad();
 	};
 
-
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
+	InternalModel* InternalModels = nullptr;
+	int32_t ModelCount;
 	bool IsLoadedOnGPU = false;
 
 	Model(void* data, int32_t size);
@@ -150,8 +152,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_GL_RENDERER_H__

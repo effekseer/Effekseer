@@ -7,7 +7,8 @@ namespace EffekseerRendererLLGI
 {
 
 TextureLoader::TextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-	: m_fileInterface(fileInterface), graphicsDevice_(graphicsDevice)
+	: m_fileInterface(fileInterface)
+	, graphicsDevice_(graphicsDevice)
 {
 	ES_SAFE_ADDREF(graphicsDevice);
 

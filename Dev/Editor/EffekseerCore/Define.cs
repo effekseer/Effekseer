@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -313,10 +313,10 @@ namespace Effekseer
 	{
 		public IconAttribute()
 		{
-			resourceName = string.Empty;
+			code = String.Empty;
 		}
 
-		public string resourceName
+		public string code
 		{
 			get;
 			set;

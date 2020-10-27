@@ -53,11 +53,9 @@ namespace Effekseer.Data
 
 	public enum RenderingOrder : int
 	{
-		[Name(value = "生成順", language = Language.Japanese)]
-		[Name(value = "Order of spawn", language = Language.English)]
+		[Key(key = "RS_RenderingOrder_FirstCreatedInstanceIsFirst")]
 		FirstCreatedInstanceIsFirst = 0,
-		[Name(value = "生成順の逆", language = Language.Japanese)]
-		[Name(value = "Reversed", language = Language.English)]
+		[Key(key = "RS_RenderingOrder_FirstCreatedInstanceIsLast")]
 		FirstCreatedInstanceIsLast = 1,
 	}
 
@@ -124,17 +122,13 @@ namespace Effekseer.Data
 
 	public enum StandardColorType : int
 	{
-		[Name(value = "固定", language = Language.Japanese)]
-		[Name(value = "Fixed", language = Language.English)]
+		[Key(key = "StandardColorType_Fixed")]
 		Fixed = 0,
-		[Name(value = "ランダム", language = Language.Japanese)]
-		[Name(value = "Random", language = Language.English)]
+		[Key(key = "StandardColorType_Random")]
 		Random = 1,
-		[Name(value = "イージング", language = Language.Japanese)]
-		[Name(value = "Easing", language = Language.English)]
+		[Key(key = "StandardColorType_Easing")]
 		Easing = 2,
-		[Name(value = "Fカーブ(RGBA)", language = Language.Japanese)]
-		[Name(value = "F-Curve (RGBA)", language = Language.English)]
+		[Key(key = "StandardColorType_FCurve")]
 		FCurve = 3,
 	}
 

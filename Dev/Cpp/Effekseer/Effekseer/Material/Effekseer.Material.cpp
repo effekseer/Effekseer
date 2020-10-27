@@ -175,53 +175,125 @@ bool Material::Load(const uint8_t* data, int32_t size)
 	return true;
 }
 
-ShadingModelType Material::GetShadingModel() const { return shadingModel_; }
+ShadingModelType Material::GetShadingModel() const
+{
+	return shadingModel_;
+}
 
-void Material::SetShadingModel(ShadingModelType shadingModel) { shadingModel_ = shadingModel; }
+void Material::SetShadingModel(ShadingModelType shadingModel)
+{
+	shadingModel_ = shadingModel;
+}
 
-bool Material::GetIsSimpleVertex() const { return isSimpleVertex_; }
+bool Material::GetIsSimpleVertex() const
+{
+	return isSimpleVertex_;
+}
 
-void Material::SetIsSimpleVertex(bool isSimpleVertex) { isSimpleVertex_ = isSimpleVertex; }
+void Material::SetIsSimpleVertex(bool isSimpleVertex)
+{
+	isSimpleVertex_ = isSimpleVertex;
+}
 
-bool Material::GetHasRefraction() const { return hasRefraction_; }
+bool Material::GetHasRefraction() const
+{
+	return hasRefraction_;
+}
 
-void Material::SetHasRefraction(bool hasRefraction) { hasRefraction_ = hasRefraction; }
+void Material::SetHasRefraction(bool hasRefraction)
+{
+	hasRefraction_ = hasRefraction;
+}
 
-const char* Material::GetGenericCode() const { return genericCode_.c_str(); }
+const char* Material::GetGenericCode() const
+{
+	return genericCode_.c_str();
+}
 
-void Material::SetGenericCode(const char* code) { genericCode_ = code; }
+void Material::SetGenericCode(const char* code)
+{
+	genericCode_ = code;
+}
 
-uint64_t Material::GetGUID() const { return guid_; }
+uint64_t Material::GetGUID() const
+{
+	return guid_;
+}
 
-void Material::SetGUID(uint64_t guid) { guid_ = guid; }
+void Material::SetGUID(uint64_t guid)
+{
+	guid_ = guid;
+}
 
-TextureWrapType Material::GetTextureWrap(int32_t index) const { return textures_.at(index).Wrap; }
+TextureWrapType Material::GetTextureWrap(int32_t index) const
+{
+	return textures_.at(index).Wrap;
+}
 
-void Material::SetTextureWrap(int32_t index, TextureWrapType value) { textures_.at(index).Wrap = value; }
+void Material::SetTextureWrap(int32_t index, TextureWrapType value)
+{
+	textures_.at(index).Wrap = value;
+}
 
-int32_t Material::GetTextureIndex(int32_t index) const { return textures_.at(index).Index; }
+int32_t Material::GetTextureIndex(int32_t index) const
+{
+	return textures_.at(index).Index;
+}
 
-void Material::SetTextureIndex(int32_t index, int32_t value) { textures_.at(index).Index = value; }
+void Material::SetTextureIndex(int32_t index, int32_t value)
+{
+	textures_.at(index).Index = value;
+}
 
-const char* Material::GetTextureName(int32_t index) const { return textures_.at(index).Name.c_str(); }
+const char* Material::GetTextureName(int32_t index) const
+{
+	return textures_.at(index).Name.c_str();
+}
 
-void Material::SetTextureName(int32_t index, const char* name) { textures_.at(index).Name = name; }
+void Material::SetTextureName(int32_t index, const char* name)
+{
+	textures_.at(index).Name = name;
+}
 
-int32_t Material::GetTextureCount() const { return static_cast<int32_t>(textures_.size()); }
+int32_t Material::GetTextureCount() const
+{
+	return static_cast<int32_t>(textures_.size());
+}
 
-void Material::SetTextureCount(int32_t count) { textures_.resize(count); }
+void Material::SetTextureCount(int32_t count)
+{
+	textures_.resize(count);
+}
 
-int32_t Material::GetUniformIndex(int32_t index) const { return uniforms_.at(index).Index; }
+int32_t Material::GetUniformIndex(int32_t index) const
+{
+	return uniforms_.at(index).Index;
+}
 
-void Material::SetUniformIndex(int32_t index, int32_t value) { uniforms_.at(index).Index = value; }
+void Material::SetUniformIndex(int32_t index, int32_t value)
+{
+	uniforms_.at(index).Index = value;
+}
 
-const char* Material::GetUniformName(int32_t index) const { return uniforms_.at(index).Name.c_str(); }
+const char* Material::GetUniformName(int32_t index) const
+{
+	return uniforms_.at(index).Name.c_str();
+}
 
-void Material::SetUniformName(int32_t index, const char* name) { uniforms_.at(index).Name = name; }
+void Material::SetUniformName(int32_t index, const char* name)
+{
+	uniforms_.at(index).Name = name;
+}
 
-int32_t Material::GetUniformCount() const { return static_cast<int32_t>(uniforms_.size()); }
+int32_t Material::GetUniformCount() const
+{
+	return static_cast<int32_t>(uniforms_.size());
+}
 
-void Material::SetUniformCount(int32_t count) { uniforms_.resize(count); }
+void Material::SetUniformCount(int32_t count)
+{
+	uniforms_.resize(count);
+}
 
 int32_t Material::GetCustomData1Count() const
 {
@@ -232,7 +304,10 @@ int32_t Material::GetCustomData1Count() const
 	return std::max(customDataMinCount_, customData1Count_);
 }
 
-void Material::SetCustomData1Count(int32_t count) { customData1Count_ = count; }
+void Material::SetCustomData1Count(int32_t count)
+{
+	customData1Count_ = count;
+}
 
 int32_t Material::GetCustomData2Count() const
 {
@@ -243,6 +318,9 @@ int32_t Material::GetCustomData2Count() const
 	return std::max(customDataMinCount_, customData2Count_);
 }
 
-void Material::SetCustomData2Count(int32_t count) { customData2Count_ = count; }
+void Material::SetCustomData2Count(int32_t count)
+{
+	customData2Count_ = count;
+}
 
 } // namespace Effekseer

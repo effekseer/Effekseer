@@ -11,108 +11,127 @@
 
 namespace efk
 {
-	class Graphics;
+class Graphics;
 
-	enum class TextureFormat {
-		RGBA8U,
-		RGBA16F,
-		R16F,
-	};
+enum class TextureFormat
+{
+	RGBA8U,
+	RGBA16F,
+	R16F,
+};
 
-	enum class TextureFeatureType
+enum class TextureFeatureType
+{
+	Texture2D,
+	MultisampledTexture2DRenderTarget,
+	MultisampledTexture2DResolve,
+};
+
+class RenderTexture
+{
+public:
+	RenderTexture() = default;
+	virtual ~RenderTexture() = default;
+
+	virtual bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1) = 0;
+
+	virtual int32_t GetWidth() = 0;
+	virtual int32_t GetHeight() = 0;
+
+	virtual uint64_t GetViewID() = 0;
+
+	static RenderTexture* Create(Graphics* graphics);
+};
+
+class DepthTexture
+{
+public:
+	DepthTexture() = default;
+	virtual ~DepthTexture() = default;
+
+	virtual bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1) = 0;
+
+	static DepthTexture* Create(Graphics* graphics);
+};
+
+class Graphics
+{
+protected:
+	RenderTexture* currentRenderTexture = nullptr;
+	DepthTexture* currentDepthTexture = nullptr;
+
+public:
+	Graphics()
 	{
-		Texture2D,
-		MultisampledTexture2DRenderTarget,
-		MultisampledTexture2DResolve,
-	};
-
-	class RenderTexture
+	}
+	virtual ~Graphics()
 	{
-	public:
-		RenderTexture() = default;
-		virtual ~RenderTexture() = default;
+	}
 
-		virtual bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1) = 0;
+	virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount) = 0;
 
-		virtual int32_t GetWidth() = 0;
-		virtual int32_t GetHeight() = 0;
+	virtual void CopyToBackground() = 0;
 
-		virtual uint64_t GetViewID() = 0;
+	virtual void Resize(int32_t width, int32_t height) = 0;
 
-		static RenderTexture* Create(Graphics* graphics);
-	};
+	virtual bool Present() = 0;
 
-	class DepthTexture
+	virtual void BeginScene() = 0;
+
+	virtual void EndScene() = 0;
+
+	virtual void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) = 0;
+
+	virtual void BeginRecord(int32_t width, int32_t height) = 0;
+
+	virtual void EndRecord(std::vector<Effekseer::Color>& pixels) = 0;
+
+	virtual void Clear(Effekseer::Color color) = 0;
+
+	virtual void ResetDevice() = 0;
+
+	virtual void* GetBack() = 0;
+
+	virtual EffekseerRenderer::Renderer* GetRenderer() = 0;
+
+	virtual DeviceType GetDeviceType() const = 0;
+
+	virtual RenderTexture* GetRenderTexture() const
 	{
-	public:
-		DepthTexture() = default;
-		virtual ~DepthTexture() = default;
-
-		virtual bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1) = 0;
-
-		static DepthTexture* Create(Graphics* graphics);
-	};
-
-	class Graphics
+		return currentRenderTexture;
+	}
+	virtual DepthTexture* GetDepthTexture() const
 	{
-	protected:
-		RenderTexture* currentRenderTexture = nullptr;
-		DepthTexture* currentDepthTexture = nullptr;
+		return currentDepthTexture;
+	}
 
-	public:
-		Graphics() {}
-		virtual ~Graphics() {}
+	virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
+	{
+	}
 
-		virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount) = 0;
+	virtual bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature)
+	{
+		return true;
+	}
 
-		virtual void CopyToBackground() = 0;
+	virtual int GetMultisampleLevel(TextureFormat format)
+	{
+		return 4;
+	}
 
-		virtual void Resize(int32_t width, int32_t height) = 0;
-
-		virtual bool Present() = 0;
-
-		virtual void BeginScene() = 0;
-
-		virtual void EndScene() = 0;
-
-		virtual void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) = 0;
-
-		virtual void BeginRecord(int32_t width, int32_t height) = 0;
-
-		virtual void EndRecord(std::vector<Effekseer::Color>& pixels) = 0;
-
-		virtual void Clear(Effekseer::Color color) = 0;
-
-		virtual void ResetDevice() = 0;
-
-		virtual void* GetBack() = 0;
-
-		virtual EffekseerRenderer::Renderer* GetRenderer() = 0;
-
-		virtual DeviceType GetDeviceType() const = 0;
-
-		virtual RenderTexture* GetRenderTexture() const { return currentRenderTexture; }
-		virtual DepthTexture* GetDepthTexture() const { return currentDepthTexture; }
-
-		virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) {}
-
-		virtual bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature) { return true; }
-
-		virtual int GetMultisampleLevel(TextureFormat format) { return 4; }
-
-		/**
+	/**
 		Called when device is losted.
 		*/
-		std::function<void()>	LostedDevice;
+	std::function<void()> LostedDevice;
 
-		/**
+	/**
 		Called when device is resetted.
 		*/
-		std::function<void()>	ResettedDevice;
+	std::function<void()> ResettedDevice;
 
-		/**
+	/**
 		Called when device is presented.
 		*/
-		std::function<void()>	Presented;
-	};
-}
+	std::function<void()> Presented;
+};
+} // namespace efk

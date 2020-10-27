@@ -2,15 +2,15 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.RenderState.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
-#include "EffekseerRendererGL.VertexBuffer.h"
+#include "EffekseerRendererGL.GLExtension.h"
 #include "EffekseerRendererGL.IndexBuffer.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexArray.h"
-#include "EffekseerRendererGL.GLExtension.h"
+#include "EffekseerRendererGL.VertexBuffer.h"
 #include <string>
 
 //-----------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-static std::string Replace( std::string target, std::string from_, std::string to_ )
+static std::string Replace(std::string target, std::string from_, std::string to_)
 {
 	std::string::size_type Pos(target.find(from_));
 
@@ -35,7 +35,7 @@ static std::string Replace( std::string target, std::string from_, std::string t
 }
 
 static const char g_model_vs_src[] =
-R"(
+	R"(
 IN vec4 a_Position;
 IN vec4 a_Normal;
 IN vec4 a_Binormal;
@@ -44,13 +44,13 @@ IN vec4 a_TexCoord;
 IN vec4 a_Color;
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-R"(
+	R"(
 IN float a_InstanceID;
 IN vec4 a_UVOffset;
 IN vec4 a_ModelColor;
 )"
 #endif
-R"(
+	R"(
 OUT mediump vec4 v_Normal;
 OUT mediump vec4 v_Binormal;
 OUT mediump vec4 v_Tangent;
@@ -58,19 +58,19 @@ CENTROID OUT mediump vec4 v_TexCoord;
 CENTROID OUT lowp vec4 v_Color;
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-R"(
+	R"(
 uniform mat4 ModelMatrix[20];
 uniform vec4 UVOffset[20];
 uniform vec4 ModelColor[20];
 )"
 #else
-R"(
+	R"(
 uniform mat4 ModelMatrix;
 uniform vec4 UVOffset;
 uniform vec4 ModelColor;
 )"
 #endif
-R"(
+	R"(
 uniform mat4 ProjectionMatrix;
 uniform vec4 LightDirection;
 uniform vec4 LightColor;
@@ -81,19 +81,19 @@ void main()
 {
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-R"(
+	R"(
 	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];
 	vec4 uvOffset = a_UVOffset;
 	vec4 modelColor = a_ModelColor;
 )"
 #else
-R"(
+	R"(
 	mat4 modelMatrix = ModelMatrix;
 	vec4 uvOffset = UVOffset;
 	vec4 modelColor = ModelColor * a_Color;
 )"
 #endif
-R"(
+	R"(
 	vec4 localPosition = modelMatrix * a_Position;
 	gl_Position = ProjectionMatrix * localPosition;
 
@@ -114,8 +114,8 @@ R"(
 }
 )";
 
-static const char g_model_fs_src[] = 
-R"(
+static const char g_model_fs_src[] =
+	R"(
 
 IN mediump vec4 v_Normal;
 IN mediump vec4 v_Binormal;
@@ -147,21 +147,20 @@ void main()
 
 )";
 
-
-static const char g_model_distortion_vs_src [] =
-"IN vec4 a_Position;\n"
-"IN vec4 a_Normal;\n"
-"IN vec4 a_Binormal;\n"
-"IN vec4 a_Tangent;\n"
-"IN vec4 a_TexCoord;\n"
-"IN vec4 a_Color;\n"
+static const char g_model_distortion_vs_src[] =
+	"IN vec4 a_Position;\n"
+	"IN vec4 a_Normal;\n"
+	"IN vec4 a_Binormal;\n"
+	"IN vec4 a_Tangent;\n"
+	"IN vec4 a_TexCoord;\n"
+	"IN vec4 a_Color;\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-"IN float a_InstanceID;\n"
-"IN vec4 a_UVOffset;\n"
-"IN vec4 a_ModelColor;\n"
+	"IN float a_InstanceID;\n"
+	"IN vec4 a_UVOffset;\n"
+	"IN vec4 a_ModelColor;\n"
 #endif
 
-R"(
+	R"(
 OUT mediump vec4 v_Normal;
 OUT mediump vec4 v_Binormal;
 OUT mediump vec4 v_Tangent;
@@ -171,29 +170,29 @@ CENTROID OUT lowp vec4 v_Color;
 )"
 
 #if defined(MODEL_SOFTWARE_INSTANCING)
-"uniform mat4 ModelMatrix[20];\n"
-"uniform vec4 UVOffset[20];\n"
-"uniform vec4 ModelColor[20];\n"
+	"uniform mat4 ModelMatrix[20];\n"
+	"uniform vec4 UVOffset[20];\n"
+	"uniform vec4 ModelColor[20];\n"
 #else
-"uniform mat4 ModelMatrix;\n"
-"uniform vec4 UVOffset;\n"
-"uniform vec4 ModelColor;\n"
+	"uniform mat4 ModelMatrix;\n"
+	"uniform vec4 UVOffset;\n"
+	"uniform vec4 ModelColor;\n"
 #endif
-"uniform mat4 ProjectionMatrix;\n"
-"uniform vec4 mUVInversed;\n"
+	"uniform mat4 ProjectionMatrix;\n"
+	"uniform vec4 mUVInversed;\n"
 
-"void main() {\n"
+	"void main() {\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-"	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];\n"
-"	vec4 uvOffset = a_UVOffset;\n"
-"	vec4 modelColor = a_ModelColor;\n"
+	"	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];\n"
+	"	vec4 uvOffset = a_UVOffset;\n"
+	"	vec4 modelColor = a_ModelColor;\n"
 #else
-"	mat4 modelMatrix = ModelMatrix;\n"
-"	vec4 uvOffset = UVOffset;\n"
-"	vec4 modelColor = ModelColor;\n"
+	"	mat4 modelMatrix = ModelMatrix;\n"
+	"	vec4 uvOffset = UVOffset;\n"
+	"	vec4 modelColor = ModelColor;\n"
 #endif
 
-R"(
+	R"(
 	vec4 localPosition = vec4( a_Position.x, a_Position.y, a_Position.z, 1.0 );
 	vec4 localNormal = vec4( a_Position.x + a_Normal.x, a_Position.y + a_Normal.y, a_Position.z + a_Normal.z, 1.0 );
 	vec4 localBinormal = vec4( a_Position.x + a_Binormal.x, a_Position.y + a_Binormal.y, a_Position.z + a_Binormal.z, 1.0 );
@@ -224,15 +223,15 @@ R"(
 }
 )";
 
-static const char g_model_distortion_fs_src [] =
-"IN mediump vec4 v_Normal;\n"
-"IN mediump vec4 v_Binormal;\n"
-"IN mediump vec4 v_Tangent;\n"
-"CENTROID IN mediump vec4 v_TexCoord;\n"
-"IN mediump vec4 v_Pos;\n"
-"CENTROID IN lowp vec4 v_Color;\n"
+static const char g_model_distortion_fs_src[] =
+	"IN mediump vec4 v_Normal;\n"
+	"IN mediump vec4 v_Binormal;\n"
+	"IN mediump vec4 v_Tangent;\n"
+	"CENTROID IN mediump vec4 v_TexCoord;\n"
+	"IN mediump vec4 v_Pos;\n"
+	"CENTROID IN lowp vec4 v_Color;\n"
 
-R"(
+	R"(
 uniform sampler2D uTexture0;
 uniform sampler2D uBackTexture0;
 
@@ -274,34 +273,34 @@ void main() {
 )";
 
 static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
-	{"a_Position",		GL_FLOAT,			3,  0,	false},
-	{"a_Normal",		GL_FLOAT,			3, 12,	false},
-	{"a_Binormal",		GL_FLOAT,			3, 24,	false},
-	{"a_Tangent",		GL_FLOAT,			3, 36,	false},
-	{"a_TexCoord",		GL_FLOAT,			2, 48,	false},
-	{"a_Color", GL_UNSIGNED_BYTE,			4, 56,	true },
+	{"a_Position", GL_FLOAT, 3, 0, false},
+	{"a_Normal", GL_FLOAT, 3, 12, false},
+	{"a_Binormal", GL_FLOAT, 3, 24, false},
+	{"a_Tangent", GL_FLOAT, 3, 36, false},
+	{"a_TexCoord", GL_FLOAT, 2, 48, false},
+	{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	{"a_InstanceID",	GL_FLOAT,			1,  0,	false},
-	{"a_UVOffset",		GL_FLOAT,			4,	0,	false},
-	{"a_ModelColor",	GL_FLOAT,			4,  0,	false},
+	{"a_InstanceID", GL_FLOAT, 1, 0, false},
+	{"a_UVOffset", GL_FLOAT, 4, 0, false},
+	{"a_ModelColor", GL_FLOAT, 4, 0, false},
 #endif
 };
 
 static ShaderUniformInfo g_model_uniforms[ModelRenderer::NumUniforms] = {
-	{"ProjectionMatrix"	},
-	{"ModelMatrix"		},
+	{"ProjectionMatrix"},
+	{"ModelMatrix"},
 #if !defined(MODEL_SOFTWARE_INSTANCING)
-	{"UVOffset"			},
-	{"ModelColor"		},
+	{"UVOffset"},
+	{"ModelColor"},
 #endif
-	{"ColorTexture"		},
-	{"NormalTexture"	},
-	{"LightDirection"	},
-	{"LightColor"		},
-	{"LightAmbient"		},
-	{ "g_scale" },
-	{ "mUVInversed" },
-	{ "mUVInversedBack" },
+	{"ColorTexture"},
+	{"NormalTexture"},
+	{"LightDirection"},
+	{"LightColor"},
+	{"LightAmbient"},
+	{"g_scale"},
+	{"mUVInversed"},
+	{"mUVInversedBack"},
 };
 
 //----------------------------------------------------------------------------------
@@ -330,7 +329,7 @@ ModelRenderer::ModelRenderer(
 	shader_texture->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[4]);
 	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("ColorTexture"));
-	
+
 	shader_distortion_texture->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader_distortion_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[6]);
 	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("uTexture0"));
@@ -339,8 +338,8 @@ ModelRenderer::ModelRenderer(
 	Shader* shaders[2];
 	shaders[0] = m_shader_lighting_texture_normal;
 	shaders[1] = m_shader_texture;
-	
-	for( int32_t i = 0; i < 2; i++ )
+
+	for (int32_t i = 0; i < 2; i++)
 	{
 		shaders[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
@@ -348,64 +347,53 @@ ModelRenderer::ModelRenderer(
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44,
 			shaders[i]->GetUniformId("ProjectionMatrix"),
-			0
-			);
+			0);
 
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44,
 			shaders[i]->GetUniformId("ModelMatrix"),
-			sizeof(Effekseer::Matrix44)
-			);
+			sizeof(Effekseer::Matrix44));
 
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("UVOffset"),
-			sizeof(Effekseer::Matrix44) * 2
-			);
+			sizeof(Effekseer::Matrix44) * 2);
 
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("ModelColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1);
 
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("LightDirection"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0);
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("LightColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1);
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("LightAmbient"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2);
 		shaders[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("mUVInversed"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3
-		);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3);
 
 		shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 		shaders[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("LightDirection"),
-			sizeof(float[4]) * 0
-			);
+			sizeof(float[4]) * 0);
 		shaders[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("LightColor"),
-			sizeof(float[4]) * 1
-			);
+			sizeof(float[4]) * 1);
 		shaders[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders[i]->GetUniformId("LightAmbient"),
-			sizeof(float[4]) * 2
-			);
+			sizeof(float[4]) * 2);
 	}
 
 	Shader* shaders_d[1];
@@ -419,65 +407,53 @@ ModelRenderer::ModelRenderer(
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44,
 			shaders_d[i]->GetUniformId("ProjectionMatrix"),
-			0
-			);
+			0);
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44,
 			shaders_d[i]->GetUniformId("ModelMatrix"),
-			sizeof(Effekseer::Matrix44)
-			);
+			sizeof(Effekseer::Matrix44));
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("UVOffset"),
-			sizeof(Effekseer::Matrix44) * 2
-			);
+			sizeof(Effekseer::Matrix44) * 2);
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("ModelColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1);
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("LightDirection"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0);
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("LightColor"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1);
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("LightAmbient"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
-			);
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2);
 
 		shaders_d[i]->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("mUVInversed"),
-			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3
-		);
-
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3);
 
 		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 		shaders_d[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("g_scale"),
-			sizeof(float[4]) * 0
-			);
-
+			sizeof(float[4]) * 0);
 
 		shaders_d[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("mUVInversedBack"),
-			sizeof(float[4]) * 1
-			);
+			sizeof(float[4]) * 1);
 	}
 
 	GLint currentVAO = 0;
@@ -517,11 +493,11 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
+ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 {
-	assert( renderer != NULL );
+	assert(renderer != NULL);
 
-	Shader* shader_lighting_texture_normal = NULL;		    
+	Shader* shader_lighting_texture_normal = NULL;
 	Shader* shader_texture = NULL;
 	Shader* shader_distortion_texture = NULL;
 
@@ -565,8 +541,8 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	if (shader_distortion_texture == NULL)
 		goto End;
 
-	return new ModelRenderer( 
-		renderer, 
+	return new ModelRenderer(
+		renderer,
 		shader_lighting_texture_normal,
 		shader_texture,
 		shader_distortion_texture);
@@ -593,7 +569,7 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 		userData);
 }
 
-void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* userData )
+void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
 	if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 	{
@@ -608,27 +584,27 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_renderer->SetVertexArray(m_va[4]);
 	}
 
-    if(parameter.ModelIndex < 0)
-    {
-        return;
-    }
-    
-	auto model = (Model*) parameter.EffectPointer->GetModel(parameter.ModelIndex);
-	if(model == nullptr)
+	if (parameter.ModelIndex < 0)
 	{
-        return;
-    }
-    
-    model->LoadToGPU();
+		return;
+	}
+
+	auto model = (Model*)parameter.EffectPointer->GetModel(parameter.ModelIndex);
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	model->LoadToGPU();
 	if (!model->IsLoadedOnGPU)
 	{
 		return;
 	}
-	
-    m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
-    m_shader_texture->SetVertexSize(model->GetVertexSize());
-    m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
-	
+
+	m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
+	m_shader_texture->SetVertexSize(model->GetVertexSize());
+	m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
+
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	EndRendering_<
 		RendererImplemented,
@@ -641,7 +617,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_shader_lighting_texture_normal,
 		m_shader_texture,
 		m_shader_distortion_texture,
-		parameter );
+		parameter);
 #else
 	EndRendering_<
 		RendererImplemented,
@@ -653,15 +629,14 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_shader_lighting_texture_normal,
 		m_shader_texture,
 		m_shader_distortion_texture,
-		parameter );
+		parameter);
 #endif
-
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

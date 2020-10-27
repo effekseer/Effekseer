@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_EFFECT_H__
-#define	__EFFEKSEER_EFFECT_H__
+#ifndef __EFFEKSEER_EFFECT_H__
+#define __EFFEKSEER_EFFECT_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -38,7 +38,7 @@ struct EffectTerm
 	int32_t TermMax;
 };
 
-	/**
+/**
 @brief
 \~English	Terms where instances exists
 \~Japanese	インスタンスが存在する期間
@@ -214,11 +214,14 @@ class Effect
 	: public IReference
 {
 protected:
-	Effect() {}
-    virtual ~Effect() {}
+	Effect()
+	{
+	}
+	virtual ~Effect()
+	{
+	}
 
 public:
-
 	/**
 		@brief	エフェクトを生成する。
 		@param	manager			[in]	管理クラス
@@ -228,7 +231,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create( Manager* manager, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -238,9 +241,9 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create( Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static Effect* Create(Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
 
-		/**
+	/**
 		@brief	エフェクトを生成する。
 		@param	setting			[in]	設定クラス
 		@param	data			[in]	データ配列の先頭のポインタ
@@ -249,7 +252,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create( Setting*	setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -259,7 +262,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static Effect* Create(Setting* setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
@@ -290,7 +293,7 @@ public:
 			\~Japanese	読み込み時と出力時の拡大率をかけた拡大率を取得する。
 	*/
 	virtual float GetMaginification() const = 0;
-	
+
 	/**
 		@brief	エフェクトデータのバージョン取得
 	*/
@@ -308,7 +311,7 @@ public:
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual TextureData* GetColorImage( int n ) const = 0;
+	virtual TextureData* GetColorImage(int n) const = 0;
 
 	/**
 	@brief	格納されている画像のポインタの個数を取得する。
@@ -338,7 +341,7 @@ public:
 	\~Japanese	法線画像のパスを取得する。
 	*/
 	virtual const EFK_CHAR* GetNormalImagePath(int n) const = 0;
-	
+
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
@@ -356,11 +359,11 @@ public:
 	\~Japanese	歪み画像のパスを取得する。
 	*/
 	virtual const EFK_CHAR* GetDistortionImagePath(int n) const = 0;
-	
+
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
-	virtual void* GetWave( int n ) const = 0;
+	virtual void* GetWave(int n) const = 0;
 
 	/**
 	@brief	格納されている音波形のポインタの個数を取得する。
@@ -372,11 +375,11 @@ public:
 	\~Japanese	音波形のパスを取得する。
 	*/
 	virtual const EFK_CHAR* GetWavePath(int n) const = 0;
-	
+
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
-	virtual void* GetModel( int n ) const = 0;
+	virtual void* GetModel(int n) const = 0;
 
 	/**
 	@brief	格納されているモデルのポインタの個数を取得する。
@@ -388,7 +391,7 @@ public:
 	\~Japanese	モデルのパスを取得する。
 	*/
 	virtual const EFK_CHAR* GetModelPath(int n) const = 0;
-	
+
 	/**
 	@brief	\~English	Get a material's pointer
 	\~Japanese	格納されているマテリアルのポインタを取得する。
@@ -436,7 +439,6 @@ public:
 	*/
 	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
 
-
 	/**
 		@brief
 		\~English	Reload this effect
@@ -462,7 +464,7 @@ public:
 		\~Japanese
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual bool Reload(void* data, int32_t size, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -486,7 +488,7 @@ public:
 		\~Japanese
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual bool Reload(const EFK_CHAR* path, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -521,7 +523,7 @@ public:
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual bool Reload(Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -553,12 +555,12 @@ public:
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload( Manager** managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual bool Reload(Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	virtual void ReloadResources( const void* data = nullptr, int32_t size = 0, const EFK_CHAR* materialPath = nullptr ) = 0;
+	virtual void ReloadResources(const void* data = nullptr, int32_t size = 0, const EFK_CHAR* materialPath = nullptr) = 0;
 
 	/**
 		@brief	画像等リソースの破棄を行う。
@@ -586,14 +588,14 @@ public:
 struct EffectBasicRenderParameter
 {
 	RendererMaterialType MaterialType;
-	int32_t				ColorTextureIndex;
-	AlphaBlendType		AlphaBlend;
-	TextureFilterType	FilterType;
-	TextureWrapType		WrapType;
-	bool				ZWrite;
-	bool				ZTest;
-	bool				Distortion;
-	float				DistortionIntensity;
+	int32_t ColorTextureIndex;
+	AlphaBlendType AlphaBlend;
+	TextureFilterType FilterType;
+	TextureWrapType WrapType;
+	bool ZWrite;
+	bool ZTest;
+	bool Distortion;
+	float DistortionIntensity;
 };
 
 /**
@@ -607,7 +609,7 @@ struct EffectBasicRenderParameter
 */
 struct EffectModelParameter
 {
-	bool				Lighting;
+	bool Lighting;
 };
 
 /**
@@ -618,8 +620,12 @@ struct EffectModelParameter
 class EffectNode
 {
 public:
-	EffectNode() {}
-	virtual ~EffectNode(){}
+	EffectNode()
+	{
+	}
+	virtual ~EffectNode()
+	{
+	}
 
 	/**
 	@brief	ノードが所属しているエフェクトを取得する。
@@ -671,8 +677,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_EFFECT_H__
+#endif // __EFFEKSEER_EFFECT_H__

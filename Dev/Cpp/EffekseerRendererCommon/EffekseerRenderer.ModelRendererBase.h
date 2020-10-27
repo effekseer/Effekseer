@@ -1,19 +1,19 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
-#define	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
+#ifndef __EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
+#define __EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 
-#include <Effekseer.h>
 #include <Effekseer.Internal.h>
+#include <Effekseer.h>
+#include <algorithm>
 #include <assert.h>
 #include <string.h>
-#include <algorithm>
 #include <vector>
 
-#include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.RenderStateBase.h"
-#include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
+#include "EffekseerRenderer.RenderStateBase.h"
+#include "EffekseerRenderer.Renderer.h"
+#include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -27,19 +27,18 @@ typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
 typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
-template<int MODEL_COUNT>
- struct ModelRendererVertexConstantBuffer
+template <int MODEL_COUNT>
+struct ModelRendererVertexConstantBuffer
 {
-	Effekseer::Matrix44		CameraMatrix;
-	Effekseer::Matrix44		ModelMatrix[MODEL_COUNT];
-	float	ModelUV[MODEL_COUNT][4];
+	Effekseer::Matrix44 CameraMatrix;
+	Effekseer::Matrix44 ModelMatrix[MODEL_COUNT];
+	float ModelUV[MODEL_COUNT][4];
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	float	ModelAlphaUV[MODEL_COUNT][4];
+	float ModelAlphaUV[MODEL_COUNT][4];
 
 	struct
 	{
-		union
-		{
+		union {
 			float Buffer[4];
 
 			struct
@@ -51,31 +50,30 @@ template<int MODEL_COUNT>
 			};
 		};
 	} ModelFlipbookParameter;
-	
-	float	ModelFlipbookIndexAndNextRate[MODEL_COUNT][4];
 
-	float	ModelAlphaThreshold[MODEL_COUNT][4];
+	float ModelFlipbookIndexAndNextRate[MODEL_COUNT][4];
+
+	float ModelAlphaThreshold[MODEL_COUNT][4];
 
 #endif
-	float	ModelColor[MODEL_COUNT][4];
+	float ModelColor[MODEL_COUNT][4];
 
-	float	LightDirection[4];
-	float	LightColor[4];
-	float	LightAmbientColor[4];
-	float	UVInversed[4];
+	float LightDirection[4];
+	float LightColor[4];
+	float LightAmbientColor[4];
+	float UVInversed[4];
 };
 
 struct ModelRendererPixelConstantBuffer
 {
-	float	LightDirection[4];
-	float	LightColor[4];
-	float	LightAmbientColor[4];
+	float LightDirection[4];
+	float LightColor[4];
+	float LightAmbientColor[4];
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	struct
 	{
-		union
-		{
+		union {
 			float Buffer[4];
 
 			struct
@@ -89,8 +87,8 @@ struct ModelRendererPixelConstantBuffer
 };
 
 class ModelRendererBase
-	: public ::Effekseer::ModelRenderer
-	, public ::Effekseer::AlignedAllocationPolicy<16>
+	: public ::Effekseer::ModelRenderer,
+	  public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
 	struct KeyValue
@@ -100,7 +98,7 @@ protected:
 	};
 
 	std::vector<KeyValue> keyValues_;
-	
+
 	std::vector<Effekseer::Matrix44> matrixesSorted_;
 	std::vector<Effekseer::RectF> uvSorted_;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -135,7 +133,7 @@ protected:
 		fc[2] = color.B / 255.0f;
 		fc[3] = color.A / 255.0f;
 	}
-	
+
 	void VectorToFloat4(const ::Effekseer::Vec3f& v, float fc[4])
 	{
 		::Effekseer::SIMD4f::Store3(fc, v.s);
@@ -382,11 +380,12 @@ protected:
 		}
 	}
 
- public:
+public:
+	virtual ~ModelRendererBase()
+	{
+	}
 
-	virtual ~ModelRendererBase() {}
-
-	template<typename RENDERER>
+	template <typename RENDERER>
 	void BeginRendering_(RENDERER* renderer, const efkModelNodeParam& parameter, int32_t count, void* userData)
 	{
 		keyValues_.clear();
@@ -433,7 +432,7 @@ protected:
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 	}
 
-	template<typename RENDERER>
+	template <typename RENDERER>
 	void Rendering_(RENDERER* renderer, const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData)
 	{
 		::Effekseer::BillboardType btype = parameter.Billboard;
@@ -450,11 +449,11 @@ protected:
 			Effekseer::Vec3f R;
 			Effekseer::Vec3f F;
 
-			CalcBillboard(btype, mat43, s ,R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection());
+			CalcBillboard(btype, mat43, s, R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection());
 
 			mat44 = ::Effekseer::Mat43f::Scaling(s) * mat43;
 		}
-		
+
 		if (parameter.Magnification != 1.0f)
 		{
 			mat44 = Effekseer::Mat44f::Scaling(::Effekseer::Vec3f(parameter.Magnification)) * mat44;
@@ -474,7 +473,7 @@ protected:
 #endif
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
-		
+
 		if (customData1Count_ > 0)
 		{
 			customData1_.push_back(instanceParameter.CustomData1);
@@ -497,7 +496,7 @@ protected:
 			return;
 		if (param.ModelIndex < 0)
 			return;
-		
+
 		int32_t renderPassCount = 1;
 
 		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
@@ -525,13 +524,13 @@ protected:
 																		   shader_distortion_texture,
 																		   //shader_distortion,
 																		   param,
-																		   renderPassInd);		
+																		   renderPassInd);
 		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
+	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
 	void RenderPass(
-		RENDERER* renderer, 
+		RENDERER* renderer,
 		SHADER* shader_lighting_texture_normal,
 		//SHADER* shader_lighting_normal,
 		//SHADER* shader_lighting_texture,
@@ -543,12 +542,15 @@ protected:
 		const efkModelNodeParam& param,
 		int32_t renderPassInd)
 	{
-		if (m_matrixes.size() == 0) return;
-		if (param.ModelIndex < 0) return;
+		if (m_matrixes.size() == 0)
+			return;
+		if (param.ModelIndex < 0)
+			return;
 
-		MODEL* model = (MODEL*) param.EffectPointer->GetModel(param.ModelIndex);
-		if (model == NULL) return;
-		
+		MODEL* model = (MODEL*)param.EffectPointer->GetModel(param.ModelIndex);
+		if (model == NULL)
+			return;
+
 		bool isBackgroundRequired = false;
 
 		isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
@@ -615,9 +617,9 @@ protected:
 			}
 
 			if (material != nullptr && (material->TextureCount != materialParam->MaterialTextures.size() ||
-				material->UniformCount != materialParam->MaterialUniforms.size()))
+										material->UniformCount != materialParam->MaterialUniforms.size()))
 			{
-				return;			
+				return;
 			}
 		}
 		else
@@ -626,7 +628,7 @@ protected:
 			{
 				//if (param.BasicParameterPtr->Texture1Index >= 0)
 				//{
-					shader_ = shader_distortion_texture;
+				shader_ = shader_distortion_texture;
 				//}
 				//else
 				//{
@@ -639,7 +641,7 @@ protected:
 				//{
 				//	if (param.BasicParameterPtr->Texture1Index >= 0)
 				//	{
-						shader_ = shader_lighting_texture_normal;
+				shader_ = shader_lighting_texture_normal;
 				//	}
 				//	else
 				//	{
@@ -662,7 +664,7 @@ protected:
 			{
 				//if (param.BasicParameterPtr->Texture1Index >= 0)
 				//{
-					shader_ = shader_texture;
+				shader_ = shader_texture;
 				//}
 				//else
 				//{
@@ -736,7 +738,7 @@ protected:
 
 			if (textureCount > 0)
 			{
-				renderer->SetTextures(shader_, textures.data(), textureCount);			
+				renderer->SetTextures(shader_, textures.data(), textureCount);
 			}
 		}
 		else
@@ -782,18 +784,17 @@ protected:
 				{
 					textures[0] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture1Index);
 				}
-				
+
 				if (textures[0] == nullptr)
 				{
-					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);	
+					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 				}
-				
 
 				if (param.BasicParameterPtr->Texture2Index >= 0)
 				{
 					textures[1] = param.EffectPointer->GetNormalImage(param.BasicParameterPtr->Texture2Index);
 				}
-				
+
 				if (textures[1] == nullptr)
 				{
 					textures[1] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
@@ -807,7 +808,7 @@ protected:
 
 				if (textures[2] == nullptr)
 				{
-					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);	
+					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 				}
 #endif
 			}
@@ -837,7 +838,7 @@ protected:
 			renderer->SetTextures(shader_, textures, 2);
 #endif
 		}
-		
+
 		renderer->GetRenderState()->Update(distortion);
 
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb =
@@ -862,7 +863,7 @@ protected:
 
 			if (distortion)
 			{
-				float* pcb = (float*) shader_->GetPixelConstantBuffer();
+				float* pcb = (float*)shader_->GetPixelConstantBuffer();
 				pcb[4 * 0 + 0] = param.BasicParameterPtr->DistortionIntensity;
 
 				pcb[4 * 1 + 0] = uvInversedBack[0];
@@ -875,7 +876,7 @@ protected:
 			}
 			else
 			{
-				ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
+				ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
 
 				// specify predefined parameters
 				if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
@@ -908,8 +909,8 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		vcb->ModelFlipbookParameter.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		vcb->ModelFlipbookParameter.LoopType = param.BasicParameterPtr->UVLoopType;
-		vcb->ModelFlipbookParameter.DivideX =  param.BasicParameterPtr->FlipbookDivideX;
-		vcb->ModelFlipbookParameter.DivideY =  param.BasicParameterPtr->FlipbookDivideY;
+		vcb->ModelFlipbookParameter.DivideX = param.BasicParameterPtr->FlipbookDivideX;
+		vcb->ModelFlipbookParameter.DivideY = param.BasicParameterPtr->FlipbookDivideY;
 #endif
 
 		// Check time
@@ -919,14 +920,14 @@ protected:
 		for (auto t : m_times)
 		{
 			t = t % model->GetFrameCount();
-			if(t != stTime0)
+			if (t != stTime0)
 			{
 				isTimeSame = false;
 				break;
 			}
 		}
 
-		if(Instancing && isTimeSame)
+		if (Instancing && isTimeSame)
 		{
 			auto& imodel = model->InternalModels[stTime0];
 
@@ -935,27 +936,27 @@ protected:
 			renderer->SetIndexBuffer(imodel.IndexBuffer);
 			renderer->SetLayout(shader_);
 
-			for( size_t loop = 0; loop < m_matrixes.size(); )
+			for (size_t loop = 0; loop < m_matrixes.size();)
 			{
 				int32_t modelCount = Effekseer::Min(static_cast<int32_t>(m_matrixes.size()) - loop, model->ModelCount);
-				
-				for( int32_t num = 0; num < modelCount; num++ )
+
+				for (int32_t num = 0; num < modelCount; num++)
 				{
-					vcb->ModelMatrix[num] = m_matrixes[loop+num];
+					vcb->ModelMatrix[num] = m_matrixes[loop + num];
 
 					// DepthParameter
 					::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[num];
 					ApplyDepthParameters(modelMatrix,
-										renderer->GetCameraFrontDirection(),
-										renderer->GetCameraPosition(),
-										param.DepthParameterPtr,
-										param.IsRightHand);
+										 renderer->GetCameraFrontDirection(),
+										 renderer->GetCameraPosition(),
+										 param.DepthParameterPtr,
+										 param.IsRightHand);
 					vcb->ModelMatrix[num] = ToStruct(modelMatrix);
 
-					vcb->ModelUV[num][0] = m_uv[loop+num].X;
-					vcb->ModelUV[num][1] = m_uv[loop+num].Y;
-					vcb->ModelUV[num][2] = m_uv[loop+num].Width;
-					vcb->ModelUV[num][3] = m_uv[loop+num].Height;
+					vcb->ModelUV[num][0] = m_uv[loop + num].X;
+					vcb->ModelUV[num][1] = m_uv[loop + num].Y;
+					vcb->ModelUV[num][2] = m_uv[loop + num].Width;
+					vcb->ModelUV[num][3] = m_uv[loop + num].Height;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 					vcb->ModelAlphaUV[num][0] = m_alphaUV[loop + num].X;
@@ -968,7 +969,7 @@ protected:
 					vcb->ModelAlphaThreshold[num][0] = m_alphaThreshold[loop + num];
 #endif
 
-					ColorToFloat4(m_colors[loop+num],vcb->ModelColor[num]);
+					ColorToFloat4(m_colors[loop + num], vcb->ModelColor[num]);
 
 					if (cutomData1Ptr != nullptr)
 					{
@@ -996,7 +997,7 @@ protected:
 		}
 		else
 		{
-			for( size_t loop = 0; loop < m_matrixes.size(); )
+			for (size_t loop = 0; loop < m_matrixes.size();)
 			{
 				auto stTime = m_times[loop] % model->GetFrameCount();
 				auto& imodel = model->InternalModels[stTime];
@@ -1025,11 +1026,9 @@ protected:
 
 				// DepthParameters
 				::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[0];
-				ApplyDepthParameters(modelMatrix, renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(),
-									 param.DepthParameterPtr,
-									 param.IsRightHand);
+				ApplyDepthParameters(modelMatrix, renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(), param.DepthParameterPtr, param.IsRightHand);
 				vcb->ModelMatrix[0] = ToStruct(modelMatrix);
-				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
+				ColorToFloat4(m_colors[loop], vcb->ModelColor[0]);
 
 				if (cutomData1Ptr != nullptr)
 				{
@@ -1062,8 +1061,8 @@ protected:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_MODEL_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_MODEL_RENDERER_H__

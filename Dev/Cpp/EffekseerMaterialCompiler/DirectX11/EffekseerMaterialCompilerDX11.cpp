@@ -134,30 +134,58 @@ private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-	CompiledMaterialBinaryDX11() {}
+	CompiledMaterialBinaryDX11()
+	{
+	}
 
-	virtual ~CompiledMaterialBinaryDX11() {}
+	virtual ~CompiledMaterialBinaryDX11()
+	{
+	}
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
 		vertexShaders_.at(static_cast<int>(type)) = data;
 	}
 
-	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data) { pixelShaders_.at(static_cast<int>(type)) = data; }
+	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+	{
+		pixelShaders_.at(static_cast<int>(type)) = data;
+	}
 
-	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).data();
+	}
 
-	int32_t GetVertexShaderSize(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetVertexShaderSize(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).size();
+	}
 
-	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).data();
+	}
 
-	int32_t GetPixelShaderSize(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetPixelShaderSize(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).size();
+	}
 
-	int AddRef() override { return ReferenceObject::AddRef(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-	int Release() override { return ReferenceObject::Release(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 
-	int GetRef() override { return ReferenceObject::GetRef(); }
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
 CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_t maximumTextureCount)
@@ -193,7 +221,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 
 		std::string log;
 		std::vector<D3D_SHADER_MACRO> macros;
-		
+
 		auto blob = DX11::CompilePixelShader(str.c_str(), "PS", macros, log);
 
 		if (blob != nullptr)
@@ -248,7 +276,10 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
+{
+	return Compile(material, Effekseer::UserTextureSlotMax);
+}
 
 } // namespace Effekseer
 
@@ -263,6 +294,9 @@ extern "C"
 #define EFK_EXPORT
 #endif
 
-	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerDX11(); }
+	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler()
+	{
+		return new Effekseer::MaterialCompilerDX11();
+	}
 }
 #endif

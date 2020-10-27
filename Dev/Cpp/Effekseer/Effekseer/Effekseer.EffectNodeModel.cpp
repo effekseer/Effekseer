@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
+#include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -27,24 +27,24 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-	void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* setting)
+void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
-	memcpy( &type, pos, sizeof(int) );
+	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
-	assert( type == GetType() );
+	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Model\n");
 
 	AlphaBlend = RendererCommon.AlphaBlend;
 
-	if( m_effect->GetVersion() >= 7 )
+	if (m_effect->GetVersion() >= 7)
 	{
 		float Magnification;
-		memcpy( &Magnification, pos, sizeof(float) );
+		memcpy(&Magnification, pos, sizeof(float));
 		pos += sizeof(float);
 	}
 
-	memcpy( &ModelIndex, pos, sizeof(int) );
+	memcpy(&ModelIndex, pos, sizeof(int));
 	pos += sizeof(int);
 
 	if (m_effect->GetVersion() < 15)
@@ -82,10 +82,10 @@ namespace Effekseer
 		}
 	}
 
-	memcpy( &Culling, pos, sizeof(int) );
+	memcpy(&Culling, pos, sizeof(int));
 	pos += sizeof(int);
 
-	AllColor.load( pos, m_effect->GetVersion() );
+	AllColor.load(pos, m_effect->GetVersion());
 }
 
 //----------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
-			CoordinateSystem::RH;
+									CoordinateSystem::RH;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -126,7 +126,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
 	ModelRenderer* renderer = manager->GetModelRenderer();
-	if( renderer != NULL )
+	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		//nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -139,7 +139,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
-			CoordinateSystem::RH;
+									CoordinateSystem::RH;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -173,14 +173,14 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 			_color = instValues._original;
 		}
 		instanceParameter.AllColor = _color;
-		
+
 		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
 		{
 			instanceParameter.AllColor = Color::Mul(instanceParameter.AllColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
+		renderer->Rendering(nodeParameter, instanceParameter, m_userData);
 	}
 }
 
@@ -190,7 +190,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 void EffectNodeModel::EndRendering(Manager* manager)
 {
 	ModelRenderer* renderer = manager->GetModelRenderer();
-	if( renderer != NULL )
+	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		//nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -203,7 +203,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() ==
-			CoordinateSystem::RH;
+									CoordinateSystem::RH;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -211,7 +211,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-		renderer->EndRendering( nodeParameter, m_userData );
+		renderer->EndRendering(nodeParameter, m_userData);
 	}
 }
 
@@ -223,17 +223,17 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	InstanceValues& instValues = instance.rendererValues.model;
 	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
 
-	if( AllColor.type == StandardColorParameter::Fixed )
+	if (AllColor.type == StandardColorParameter::Fixed)
 	{
 		instValues._original = AllColor.fixed.all;
 		instValues.allColorValues.fixed._color = instValues._original;
 	}
-	else if( AllColor.type == StandardColorParameter::Random )
+	else if (AllColor.type == StandardColorParameter::Random)
 	{
 		instValues._original = AllColor.random.all.getValue(*instanceGlobal);
 		instValues.allColorValues.random._color = instValues._original;
 	}
-	else if( AllColor.type == StandardColorParameter::Easing )
+	else if (AllColor.type == StandardColorParameter::Easing)
 	{
 		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue(*instanceGlobal);
 		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue(*instanceGlobal);
@@ -244,16 +244,16 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 			instValues._original,
 			instValues.allColorValues.easing.start,
 			instValues.allColorValues.easing.end,
-			t );
+			t);
 	}
-	else if( AllColor.type == StandardColorParameter::FCurve_RGBA )
+	else if (AllColor.type == StandardColorParameter::FCurve_RGBA)
 	{
 		instValues.allColorValues.fcurve_rgba.offset = AllColor.fcurve_rgba.FCurve->GetOffsets(*instanceGlobal);
 		auto fcurveColors = AllColor.fcurve_rgba.FCurve->GetValues(instance.m_LivingTime, instance.m_LivedTime);
-		instValues._original.R = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
-		instValues._original.G = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
-		instValues._original.B = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
-		instValues._original.A = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
+		instValues._original.R = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
+		instValues._original.G = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
+		instValues._original.B = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
+		instValues._original.A = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
@@ -283,7 +283,7 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manage
 	{
 		instValues._original = instValues.allColorValues.random._color;
 	}
-	else if( AllColor.type == StandardColorParameter::Easing )
+	else if (AllColor.type == StandardColorParameter::Easing)
 	{
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -291,15 +291,15 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manage
 			instValues._original,
 			instValues.allColorValues.easing.start,
 			instValues.allColorValues.easing.end,
-			t );
+			t);
 	}
-	else if( AllColor.type == StandardColorParameter::FCurve_RGBA )
+	else if (AllColor.type == StandardColorParameter::FCurve_RGBA)
 	{
 		auto fcurveColors = AllColor.fcurve_rgba.FCurve->GetValues(instance.m_LivingTime, instance.m_LivedTime);
-		instValues._original.R = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
-		instValues._original.G = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
-		instValues._original.B = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
-		instValues._original.A = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
+		instValues._original.R = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
+		instValues._original.G = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
+		instValues._original.B = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
+		instValues._original.A = (uint8_t)Clamp((instValues.allColorValues.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
 	}
 
 	float fadeAlpha = GetFadeAlpha(instance);
@@ -323,7 +323,7 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manage
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

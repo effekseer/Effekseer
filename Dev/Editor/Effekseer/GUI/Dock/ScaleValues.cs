@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public ScaleValues()
 		{
-			Label = Resources.GetString("Scale") + "###Scale";
+			Label = Icons.PanelScale + Resources.GetString("Scale") + "###Scale";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.ScaleValues));
@@ -28,7 +28,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelScale");
 			TabToolTip = Resources.GetString("Scale");
 		}
 

@@ -1,17 +1,16 @@
 ﻿
-#include <math.h>
 #include "EffekseerTool.Culling.h"
-
+#include <math.h>
 
 namespace EffekseerRenderer
 {
 
 Culling::Culling(efk::Graphics* graphics)
-	: IsShown		(false)
-	, Radius		(0.0f)
-	, X				(0.0f)
-	, Y				(0.0f)
-	, Z				(0.0f)
+	: IsShown(false)
+	, Radius(0.0f)
+	, X(0.0f)
+	, Y(0.0f)
+	, Z(0.0f)
 {
 	lineRenderer = efk::LineRenderer::Create(graphics);
 }
@@ -23,12 +22,13 @@ Culling::~Culling()
 
 Culling* Culling::Create(efk::Graphics* graphics)
 {
-	return new Culling( graphics );
+	return new Culling(graphics);
 }
 
-void Culling::Rendering(bool isRightHand )
+void Culling::Rendering(bool isRightHand)
 {
-	if(!IsShown) return;
+	if (!IsShown)
+		return;
 
 	lineRenderer->ClearCache();
 
@@ -52,4 +52,4 @@ void Culling::Rendering(bool isRightHand )
 	lineRenderer->Render();
 }
 
-}
+} // namespace EffekseerRenderer

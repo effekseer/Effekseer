@@ -46,7 +46,10 @@ public:
 
 	float GetOffset(InstanceGlobal& g) const;
 
-	void SetDefaultValue(float value) { defaultValue_ = value; }
+	void SetDefaultValue(float value)
+	{
+		defaultValue_ = value;
+	}
 
 	void ChangeCoordinate();
 

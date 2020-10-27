@@ -40,6 +40,7 @@ Options_LanguageSelector_Name,言語設定
 Options_LanguageSelector_Desc,言語設定
 Options_DistortionType_Name,歪み方法
 Options_DistortionType_Desc,歪み方法
+Options_MouseMappingType_Name,マウスマッピング
 RenderMode_Normal_Name,通常モード
 RenderMode_Wireframe_Name,ワイヤーフレーム
 ViewMode_3D_Name,3D
@@ -57,3 +58,7 @@ FontType_Bold_Name,太い
 DistortionMethodType_Current_Name,現行
 DistortionMethodType_Effekseer120_Name,1.20互換
 DistortionMethodType_Disabled_Name,無効
+MouseMappingType_Effekseer_Name,Effekseer
+MouseMappingType_Unity_Name,Unity
+MouseMappingType_Blender_Name,Blender
+MouseMappingType_Maya_Name,Maya

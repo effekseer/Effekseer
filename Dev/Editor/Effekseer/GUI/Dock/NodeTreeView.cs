@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +31,7 @@ namespace Effekseer.GUI.Dock
 
 		public NodeTreeView()
         {
-			Label = Resources.GetString("NodeTree") + "###NodeTree";
+			Label = Icons.PanelNodeTree + Resources.GetString("NodeTree") + "###NodeTree";
 
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;
@@ -69,7 +69,6 @@ namespace Effekseer.GUI.Dock
 
 			Renew();
 
-			Icon = Images.GetIcon("PanelNodeTree");
 			TabToolTip = Resources.GetString("NodeTree");
 		}
 
@@ -456,18 +455,15 @@ namespace Effekseer.GUI.Dock
 				requiredToExpand = false;
 			}
 
-			// Tree
-			var temp = new[] { false };
-
-			var iconString = "NodeEmpty";
+			var icon = Icons.NodeTypeEmpty;
 			var node = Node as Data.Node;
 			if(node != null)
 			{
-				if(node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) iconString = "NodeSprite";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) iconString = "NodeRing";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) iconString = "NodeRibbon";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) iconString = "NodeModel";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) iconString = "NodeTrack";
+				if(node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) icon = Icons.NodeTypeRing;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) icon = Icons.NodeTypeRibbon;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) icon = Icons.NodeTypeModel;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) icon = Icons.NodeTypeTrack;
 			}
 
 			// Change background color
@@ -477,8 +473,8 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Extend clickable space
-			var name = Node.Name + "                                                                " + id;
-			IsExpanding = Manager.NativeManager.TreeNodeEx(name, temp, Images.GetIcon(iconString), flag);
+			var label = icon + " " + Node.Name + "                                                                " + id;
+			IsExpanding = Manager.NativeManager.TreeNodeEx(label, flag);
 
 			SelectNodeIfClicked();
 

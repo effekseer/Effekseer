@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +28,7 @@ namespace Effekseer.GUI.Menu
 
 			recentFiles = new Menu();
 			recentFiles.Label = new MultiLanguageString("RecentFiles");
+			recentFiles.Icon = Icons.Empty;
 		}
 
         public void Update()
@@ -39,16 +40,85 @@ namespace Effekseer.GUI.Menu
 				isFirstUpdate = false;
 			}
 
-            Manager.NativeManager.BeginMainMenuBar();
+			if (Manager.IsWindowFrameless)
+			{
+				UpdateSystemBar();
+			}
+			else
+			{
+				Manager.NativeManager.BeginMainMenuBar();
 
-            foreach (var ctrl in Controls)
-            {
-                ctrl.Update();
-            }
+				foreach (var ctrl in Controls)
+				{
+					ctrl.Update();
+				}
 
-            Manager.NativeManager.EndMainMenuBar();
+				Manager.NativeManager.EndMainMenuBar();
+			}
 
 			ReloadTitle();
+		}
+
+		public void UpdateSystemBar()
+		{
+			Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, 8.0f * Manager.DpiScale));
+
+			Manager.NativeManager.BeginMainMenuBar();
+
+			var windowSize = Manager.NativeManager.GetWindowSize();
+
+			float iconSize = 28.0f * Manager.DpiScale;
+			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
+			Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+			Manager.NativeManager.SetCursorPosY(0);
+
+			foreach (var ctrl in Controls)
+			{
+				ctrl.Update();
+			}
+
+			{
+				float pos = Manager.NativeManager.GetCursorPosX();
+				float textWidth = Manager.NativeManager.CalcTextSize(currentTitle).X;
+				float areaWidth = windowSize.X - pos - 56 * 3;
+				if (textWidth < areaWidth)
+				{
+					Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
+					Manager.NativeManager.Text(currentTitle);
+				}
+			}
+
+			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
+			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
+
+			float buttonX = 44 * Manager.DpiScale;
+			float buttonY = 32 * Manager.DpiScale;
+
+			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 3);
+			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon("ButtonMin"), buttonX, buttonY))
+			{
+				Manager.NativeManager.SetWindowMinimized(true);
+			}
+
+			bool maximized = Manager.NativeManager.IsWindowMaximized();
+			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 2);
+			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon(maximized ? "ButtonMaxCancel" : "ButtonMax"), buttonX, buttonY))
+			{
+				Manager.NativeManager.SetWindowMaximized(!maximized);
+			}
+
+			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 1);
+			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon("ButtonClose"), buttonX, buttonY))
+			{
+				Manager.NativeManager.Close();
+			}
+
+			Manager.NativeManager.PopStyleColor(2);
+
+			Manager.NativeManager.EndMainMenuBar();
+
+			Manager.NativeManager.PopStyleVar(1);
+
 		}
 
 		void ReloadRecentFiles()
@@ -72,7 +142,9 @@ namespace Effekseer.GUI.Menu
 
 		void ReloadTitle()
 		{
-			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + Core.FullPath + "] ";
+			string filePath = Core.FullPath;
+			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
+			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + fileName + "] ";
 
 			if (Core.IsChanged)
 			{
@@ -123,7 +195,7 @@ namespace Effekseer.GUI.Menu
 				menu.Controls.Add(new MenuSeparator());
 
 				{
-					var import_menu = new Menu(input);
+					var import_menu = new Menu(input, Icons.Empty);
 
 					for (int c = 0; c < Core.ImportScripts.Count; c++)
 					{
@@ -175,7 +247,7 @@ namespace Effekseer.GUI.Menu
 				}
 
 				{
-					var export_menu = new Menu(output);
+					var export_menu = new Menu(output, Icons.Empty);
 
 					for (int c = 0; c < Core.ExportScripts.Count; c++)
 					{
@@ -293,48 +365,44 @@ namespace Effekseer.GUI.Menu
 					menu.Controls.Add(item);
 				}
 
-				Action<MultiLanguageString, Type, swig.ImageResource> setDockWindow = (s, t, icon) =>
+				Action<MultiLanguageString, Type, string> setDockWindow = (s, t, icon) =>
 				{
 					var item = new MenuItem();
 					item.Label = s;
 					item.Clicked += () =>
 					{
-						var panel = Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300));
-						if(panel != null)
-						{
-							panel.InitialDockActive = 1;
-						}
+						Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300), true);
 					};
 					item.Icon = icon;
 					menu.Controls.Add(item);
 				};
 				
-				setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Images.GetIcon("PanelNodeTree"));
-				setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Images.GetIcon("PanelCommon"));
-				setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Images.GetIcon("PanelLocation"));
-				setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Images.GetIcon("PanelLocationAbs"));
-				setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Images.GetIcon("PanelGenerationLocation"));
-				setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Images.GetIcon("PanelRotation"));
-				setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Images.GetIcon("PanelScale"));
-				setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Images.GetIcon("PanelDepth"));
-				setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Images.GetIcon("PanelRendererCommon"));
-				setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Images.GetIcon("PanelRenderer"));
-				setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Images.GetIcon("PanelSound"));
-				setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Images.GetIcon("PanelFCurve"));
-				setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Images.GetIcon("PanelViewer"));
-				setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Images.GetIcon("PanelViewPoint"));
-				setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Images.GetIcon("PanelRecorder"));
-				setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Images.GetIcon("PanelOption"));
-				setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Images.GetIcon("PanelEnvironment"));
-				setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Images.GetIcon("PanelGlobal"));
-				setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Images.GetIcon("PanelBehavior"));
-				setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Images.GetIcon("PanelCulling"));
-                setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
-				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
-				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Images.GetIcon("PanelDynamicParameter"));
+				setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Icons.PanelNodeTree);
+				setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Icons.PanelCommon);
+				setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Icons.PanelLocation);
+				setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Icons.PanelForceField);
+				setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Icons.PanelGeneration);
+				setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Icons.PanelRotation);
+				setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Icons.PanelScale);
+				setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Icons.PanelDepth);
+				setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon);
+				setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Icons.PanelRender);
 #if __EFFEKSEER_BUILD_VERSION16__
-				setDockWindow(new MultiLanguageString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Images.GetIcon("PanelAlphaCrunch"));
+				setDockWindow(new MultiLanguageString("AdvancedRenderSettings"), typeof(Dock.AdvancedRenderCommonValues), Icons.PanelDynamicParams);
 #endif
+				setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Icons.PanelSound);
+				setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Icons.PanelFCurve);
+				setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Icons.PanelViewerCtrl);
+				setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Icons.PanelViewPoint);
+				setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Icons.PanelRecorder);
+				setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Icons.PanelOptions);
+				setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Icons.PanelEnvironment);
+				setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Icons.PanelGlobal);
+				setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Icons.PanelBehavior);
+				setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Icons.PanelCulling);
+                setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Icons.PanelNetwork);
+				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
+				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
 
 				this.Controls.Add(menu);
 			}

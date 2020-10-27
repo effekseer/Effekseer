@@ -3,11 +3,11 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.ManagerImplemented.h"
-#include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
+#include "Effekseer.Instance.h"
 #include "Effekseer.InstanceGlobal.h"
 #include "Effekseer.InstanceGroup.h"
+#include "Effekseer.ManagerImplemented.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
@@ -48,9 +48,9 @@ InstanceContainer::~InstanceContainer()
 	assert(m_headGroups == NULL);
 	assert(m_tailGroups == NULL);
 
-	for( auto child : m_Children )
+	for (auto child : m_Children)
 	{
-		m_pManager->ReleaseInstanceContainer( child );
+		m_pManager->ReleaseInstanceContainer(child);
 	}
 }
 
@@ -59,7 +59,7 @@ InstanceContainer::~InstanceContainer()
 //----------------------------------------------------------------------------------
 void InstanceContainer::AddChild(InstanceContainer* pContainter)
 {
-	m_Children.push_back( pContainter );
+	m_Children.push_back(pContainter);
 }
 
 InstanceContainer* InstanceContainer::GetChild(int index)
@@ -67,7 +67,8 @@ InstanceContainer* InstanceContainer::GetChild(int index)
 	assert(index < static_cast<int32_t>(m_Children.size()));
 
 	auto it = m_Children.begin();
-	for( int i = 0; i < index; i++) {
+	for (int i = 0; i < index; i++)
+	{
 		it++;
 	}
 	return *it;
@@ -81,12 +82,12 @@ void InstanceContainer::RemoveInvalidGroups()
 	/* 最後に存在する有効なグループ */
 	InstanceGroup* tailGroup = NULL;
 
-	for (InstanceGroup* group = m_headGroups; group != NULL; )
+	for (InstanceGroup* group = m_headGroups; group != NULL;)
 	{
 		if (!group->IsReferencedFromInstance && group->GetInstanceCount() == 0)
 		{
 			InstanceGroup* next = group->NextUsedByContainer;
-			m_pManager->ReleaseGroup( group );
+			m_pManager->ReleaseGroup(group);
 
 			if (m_headGroups == group)
 			{
@@ -106,7 +107,6 @@ void InstanceContainer::RemoveInvalidGroups()
 		}
 	}
 
-
 	m_tailGroups = tailGroup;
 
 	assert(m_tailGroups == NULL || m_tailGroups->NextUsedByContainer == NULL);
@@ -117,7 +117,7 @@ void InstanceContainer::RemoveInvalidGroups()
 //----------------------------------------------------------------------------------
 InstanceGroup* InstanceContainer::CreateInstanceGroup()
 {
-	InstanceGroup* group = m_pManager->CreateInstanceGroup( m_pEffectNode, this, m_pGlobal );
+	InstanceGroup* group = m_pManager->CreateInstanceGroup(m_pEffectNode, this, m_pGlobal);
 	if (group == nullptr)
 	{
 		return nullptr;
@@ -199,7 +199,6 @@ void InstanceContainer::SetBaseMatrix(bool recursive, const Mat43f& mat)
 void InstanceContainer::RemoveForcibly(bool recursive)
 {
 	KillAllInstances(false);
-
 
 	for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
 	{
@@ -342,7 +341,7 @@ InstanceGlobal* InstanceContainer::GetRootInstance()
 //
 //----------------------------------------------------------------------------------
 
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

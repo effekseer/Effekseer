@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_GUIDE_H__
-#define	__EFFEKSEERRENDERER_GUIDE_H__
+#ifndef __EFFEKSEERRENDERER_GUIDE_H__
+#define __EFFEKSEERRENDERER_GUIDE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerTool.Renderer.h"
 #include "../Graphics/efk.ImageRenderer.h"
+#include "EffekseerTool.Renderer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -19,24 +19,23 @@ namespace EffekseerRenderer
 class Guide
 {
 private:
-	
-	efk::ImageRenderer*								imageRenderer = nullptr;
+	efk::ImageRenderer* imageRenderer = nullptr;
 
 	Guide(efk::Graphics* graphics);
-public:
 
+public:
 	virtual ~Guide();
 
 	static Guide* Create(efk::Graphics* graphics);
 
 public:
-	void Rendering( int32_t width, int32_t height, int32_t guide_width, int32_t guide_height );
+	void Rendering(int32_t width, int32_t height, int32_t guide_width, int32_t guide_height);
 };
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GUIDE_H__
+#endif // __EFFEKSEERRENDERER_GUIDE_H__

@@ -12,8 +12,12 @@ namespace EffekseerRenderer
 class ShaderBase
 {
 public:
-	ShaderBase() {}
-	virtual ~ShaderBase() {}
+	ShaderBase()
+	{
+	}
+	virtual ~ShaderBase()
+	{
+	}
 
 	virtual void SetVertexConstantBufferSize(int32_t size) = 0;
 	virtual void SetPixelConstantBufferSize(int32_t size) = 0;

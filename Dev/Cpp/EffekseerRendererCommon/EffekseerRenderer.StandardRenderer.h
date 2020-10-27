@@ -3,14 +3,14 @@
 #define __EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 
 #include <Effekseer.h>
-#include <vector>
 #include <algorithm>
 #include <functional>
+#include <vector>
 
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer.h"
-#include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
+#include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -188,7 +188,8 @@ struct StandardRendererState
 
 	void CopyMaterialFromParameterToState(Effekseer::Effect* effect, Effekseer::MaterialParameter* materialParam, int32_t colorTextureIndex, int32_t texture2Index
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-										  , int32_t texture3Index
+										  ,
+										  int32_t texture3Index
 #endif
 	)
 	{
@@ -287,7 +288,8 @@ struct StandardRendererState
 	}
 };
 
-template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION> class StandardRenderer
+template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION>
+class StandardRenderer
 {
 private:
 	RENDERER* m_renderer;
@@ -315,8 +317,7 @@ private:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		struct
 		{
-			union
-			{
+			union {
 				float Buffer[4];
 
 				struct
@@ -336,8 +337,7 @@ private:
 	{
 		struct
 		{
-			union
-			{
+			union {
 				float Buffer[4];
 
 				struct
@@ -358,8 +358,7 @@ private:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		struct
 		{
-			union
-			{
+			union {
 				float Buffer[4];
 
 				struct
@@ -389,7 +388,8 @@ private:
 public:
 	StandardRenderer(
 		RENDERER* renderer, SHADER* shader, SHADER* shader_distortion)
-		: squareMaxSize_(renderer->GetSquareMaxCount()), isDistortionMode_(false)
+		: squareMaxSize_(renderer->GetSquareMaxCount())
+		, isDistortionMode_(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
@@ -430,8 +430,8 @@ public:
 
 		m_state = state;
 
-		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) || 
-			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
+		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) ||
+							   m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
 		isDistortionMode_ = m_state.Distortion;
 	}
 
@@ -465,7 +465,10 @@ public:
 #endif
 	}
 
-	const StandardRendererState& GetState() { return m_state; }
+	const StandardRendererState& GetState()
+	{
+		return m_state;
+	}
 
 	void Rendering(const Effekseer::Mat44f& mCamera, const Effekseer::Mat44f& mProj)
 	{
@@ -478,7 +481,7 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
-			if(m_state.MaterialPtr->RefractionUserPtr != nullptr)
+			if (m_state.MaterialPtr->RefractionUserPtr != nullptr)
 			{
 				// refraction and standard
 				passNum = 2;
@@ -517,7 +520,7 @@ public:
 	void Rendering_(const Effekseer::Mat44f& mCamera, const Effekseer::Mat44f& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t stride, int32_t renderPass)
 	{
 		bool isBackgroundRequired = false;
-		
+
 		isBackgroundRequired |= m_state.Distortion;
 		isBackgroundRequired |=
 			(m_state.MaterialPtr != nullptr && m_state.MaterialPtr->IsRefractionRequired && renderPass == 0);
@@ -586,11 +589,11 @@ public:
 			{
 				shader_ = (SHADER*)m_state.MaterialPtr->UserPtr;
 			}
-			
+
 			// validate
 			if (shader_ == nullptr)
 				return;
-			
+
 			if (m_state.MaterialPtr->UniformCount != m_state.MaterialUniformCount)
 				return;
 
@@ -645,41 +648,41 @@ public:
 		}
 		else
 		{
-            state.TextureFilterTypes[0] = m_state.TextureFilter1;
-            state.TextureWrapTypes[0] = m_state.TextureWrap1;
+			state.TextureFilterTypes[0] = m_state.TextureFilter1;
+			state.TextureWrapTypes[0] = m_state.TextureWrap1;
 
-            if (distortion)
-            {
-                state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
-                state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+			if (distortion)
+			{
+				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
+				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-                state.TextureFilterTypes[2] = m_state.TextureFilter3;
-                state.TextureWrapTypes[2] = m_state.TextureWrap3;
+				state.TextureFilterTypes[2] = m_state.TextureFilter3;
+				state.TextureWrapTypes[2] = m_state.TextureWrap3;
 #endif
-            }
-            else
-            {
+			}
+			else
+			{
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-                if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
-                {
-                    state.TextureFilterTypes[1] = m_state.TextureFilter2;
-                    state.TextureWrapTypes[1] = m_state.TextureWrap2;
+				if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+				{
+					state.TextureFilterTypes[1] = m_state.TextureFilter2;
+					state.TextureWrapTypes[1] = m_state.TextureWrap2;
 
-                    state.TextureFilterTypes[2] = m_state.TextureFilter3;
-                    state.TextureWrapTypes[2] = m_state.TextureWrap3;
-                }
-                else
-                {
-                    state.TextureFilterTypes[1] = m_state.TextureFilter3;
-                    state.TextureWrapTypes[1] = m_state.TextureWrap3;
-                }
+					state.TextureFilterTypes[2] = m_state.TextureFilter3;
+					state.TextureWrapTypes[2] = m_state.TextureWrap3;
+				}
+				else
+				{
+					state.TextureFilterTypes[1] = m_state.TextureFilter3;
+					state.TextureWrapTypes[1] = m_state.TextureWrap3;
+				}
 #else
-                state.TextureFilterTypes[1] = m_state.TextureFilter2;
-                state.TextureWrapTypes[1] = m_state.TextureWrap2;
+				state.TextureFilterTypes[1] = m_state.TextureFilter2;
+				state.TextureWrapTypes[1] = m_state.TextureWrap2;
 #endif
-            }
-            
+			}
+
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			std::array<Effekseer::TextureData*, 3> textures;
 #else
@@ -761,7 +764,7 @@ public:
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;
 		std::array<float, 4> uvInversedMaterial;
-		
+
 		if (m_renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
 			uvInversed[0] = 1.0f;
@@ -816,16 +819,16 @@ public:
 
 			m_renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
-			
+
 			m_renderer->SetVertexBufferToShader(cameraPosition, sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
-			
+
 			for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 			{
 				m_renderer->SetVertexBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
 				vsOffset += (sizeof(float) * 4);
 			}
-			
+
 			// ps
 			int32_t psOffset = 0;
 			m_renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
@@ -840,7 +843,7 @@ public:
 			// shader model
 			if (m_state.MaterialPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
-				
+
 				float lightDirection[4];
 				float lightColor[4];
 				float lightAmbientColor[4];
@@ -859,7 +862,6 @@ public:
 
 				m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
-
 			}
 
 			// refraction
@@ -869,7 +871,6 @@ public:
 				m_renderer->SetPixelBufferToShader(&mat, sizeof(float) * 16, psOffset);
 				psOffset += (sizeof(float) * 16);
 			}
-
 
 			for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 			{
@@ -914,7 +915,7 @@ public:
 
 			m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
-			
+
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			PixelConstantBuffer pcb;
 			pcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
@@ -984,7 +985,10 @@ public:
 		m_renderer->GetRenderState()->Pop();
 	}
 
-	void Rendering() { Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix()); }
+	void Rendering()
+	{
+		Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix());
+	}
 };
 
 //----------------------------------------------------------------------------------

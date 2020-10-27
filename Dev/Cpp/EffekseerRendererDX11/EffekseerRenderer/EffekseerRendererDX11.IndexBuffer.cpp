@@ -12,11 +12,11 @@ namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::IndexBuffer( RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic )
-	: DeviceObject		( renderer )
-	, IndexBufferBase	( maxCount, isDynamic )
-	, m_buffer			( buffer )
-	, m_lockedResource	( NULL )
+IndexBuffer::IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, int maxCount, bool isDynamic)
+	: DeviceObject(renderer)
+	, IndexBufferBase(maxCount, isDynamic)
+	, m_buffer(buffer)
+	, m_lockedResource(NULL)
 {
 	m_lockedResource = new uint8_t[sizeof(uint16_t) * maxCount];
 }
@@ -26,14 +26,14 @@ IndexBuffer::IndexBuffer( RendererImplemented* renderer, ID3D11Buffer* buffer, i
 //-----------------------------------------------------------------------------------
 IndexBuffer::~IndexBuffer()
 {
-	ES_SAFE_RELEASE( m_buffer );
-	ES_SAFE_DELETE_ARRAY( m_lockedResource );
+	ES_SAFE_RELEASE(m_buffer);
+	ES_SAFE_DELETE_ARRAY(m_lockedResource);
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, bool isDynamic )
+IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic)
 {
 	D3D11_BUFFER_DESC hBufferDesc;
 	hBufferDesc.Usage = isDynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT;
@@ -47,15 +47,15 @@ IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, b
 	hSubResourceData.pSysMem = NULL;
 	hSubResourceData.SysMemPitch = 0;
 	hSubResourceData.SysMemSlicePitch = 0;
-	
+
 	// 生成
 	ID3D11Buffer* ib = NULL;
-	if( FAILED( renderer->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &ib) ) )
+	if (FAILED(renderer->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &ib)))
 	{
 		return NULL;
 	}
 
-	return new IndexBuffer( renderer, ib, maxCount, isDynamic );
+	return new IndexBuffer(renderer, ib, maxCount, isDynamic);
 }
 
 //-----------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void IndexBuffer::OnResetDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::Lock()
 {
-	assert( !m_isLock );
+	assert(!m_isLock);
 
 	m_isLock = true;
 	m_resource = (uint8_t*)m_lockedResource;
@@ -89,9 +89,9 @@ void IndexBuffer::Lock()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::Unlock()
 {
-	assert( m_isLock );
+	assert(m_isLock);
 
-	if( m_isDynamic )
+	if (m_isDynamic)
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		GetRenderer()->GetContext()->Map(
@@ -99,11 +99,11 @@ void IndexBuffer::Unlock()
 			0,
 			D3D11_MAP_WRITE_DISCARD,
 			0,
-			&mappedResource );
+			&mappedResource);
 
-		memcpy( mappedResource.pData, m_resource, sizeof(uint16_t) * GetMaxCount() );
+		memcpy(mappedResource.pData, m_resource, sizeof(uint16_t) * GetMaxCount());
 
-		GetRenderer()->GetContext()->Unmap( m_buffer, 0 );
+		GetRenderer()->GetContext()->Unmap(m_buffer, 0);
 	}
 	else
 	{
@@ -113,7 +113,7 @@ void IndexBuffer::Unlock()
 			NULL,
 			m_resource,
 			0,
-			0 );
+			0);
 	}
 
 	m_resource = NULL;
@@ -123,7 +123,7 @@ void IndexBuffer::Unlock()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

@@ -1,14 +1,14 @@
 #include "Effekseer.SIMDUtils.h"
+#include "../Effekseer.InternalStruct.h"
+#include "../Effekseer.Vector2D.h"
+#include "../Effekseer.Vector3D.h"
 #include "Effekseer.Vec2f.h"
 #include "Effekseer.Vec3f.h"
 #include "Effekseer.Vec4f.h"
-#include "../Effekseer.Vector2D.h"
-#include "../Effekseer.Vector3D.h"
-#include "../Effekseer.InternalStruct.h"
 
 namespace Effekseer
 {
-	
+
 //----------------------------------------------------------------------------------
 // Temporary implementation
 //----------------------------------------------------------------------------------
@@ -31,6 +31,5 @@ Vec3f::Vec3f(const Vector3D& vec)
 	: s(vec.X, vec.Y, vec.Z, 0.0f)
 {
 }
-
 
 } // namespace Effekseer

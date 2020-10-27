@@ -87,6 +87,7 @@ cp LICENSE_RUNTIME_VULKAN %RDIR_R%/LICENSE_RUNTIME_VULKAN.txt
 echo Readme
 copy docs\readme_runtime_ja.txt %RDIR_R%\readme_runtime_ja.txt
 copy docs\readme_runtime_en.txt %RDIR_R%\readme_runtime_en.txt
+copy docs\releasenotes_runtime.txt %RDIR_R%\releasenotes.txt
 
 copy Release\CMakeLists.txt %RDIR_R%\.
 robocopy Downloads\glfw %RDIR_R%\Examples\Utils\glfw\. /S

@@ -20,7 +20,10 @@ public:
 	int64_t GetSize() override;
 	void GetData(std::vector<uint8_t>& buffer) override;
 
-	StaticFileType GetFileType() override { return StaticFileType::Default; }
+	StaticFileType GetFileType() override
+	{
+		return StaticFileType::Default;
+	}
 };
 
 } // namespace Effekseer

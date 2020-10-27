@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
+#include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -13,8 +13,8 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 
-#include "Effekseer.InstanceGroup.h"
 #include "Effekseer.EffectNodeRibbon.h"
+#include "Effekseer.InstanceGroup.h"
 
 #include "Effekseer.Setting.h"
 
@@ -243,7 +243,6 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 
 		if (RibbonColor.type == RibbonColorParameter::Default)
 		{
-
 		}
 		else if (RibbonColor.type == RibbonColorParameter::Fixed)
 		{
@@ -377,7 +376,7 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

@@ -2,12 +2,12 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <string.h>
-#include "EffekseerSoundDSound.SoundImplemented.h"
 #include "EffekseerSoundDSound.SoundLoader.h"
+#include "EffekseerSoundDSound.SoundImplemented.h"
 #include <algorithm>
-#include <memory>
 #include <assert.h>
+#include <memory>
+#include <string.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -31,7 +31,9 @@ public:
 		size_ = size;
 	}
 
-	virtual ~BinaryFileReader() {}
+	virtual ~BinaryFileReader()
+	{
+	}
 
 	size_t Read(void* buffer, size_t size) override
 	{
@@ -45,19 +47,29 @@ public:
 		return size;
 	}
 
-	void Seek(int position) override { pos = position; }
+	void Seek(int position) override
+	{
+		pos = position;
+	}
 
-	int GetPosition() override { return pos; }
+	int GetPosition() override
+	{
+		return pos;
+	}
 
-	size_t GetLength() override { return size_; }
+	size_t GetLength() override
+	{
+		return size_;
+	}
 };
-} // namespace SupporDSound
+} // namespace SupportDSound
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader::SoundLoader( SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface )
-	: m_sound(sound), m_fileInterface(fileInterface)
+SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface)
+	: m_sound(sound)
+	, m_fileInterface(fileInterface)
 {
 }
 
@@ -225,10 +237,11 @@ void* SoundLoader::Load(const void* data, int32_t size)
 	return Load(&reader);
 }
 
-void SoundLoader::Unload( void* data )
+void SoundLoader::Unload(void* data)
 {
 	SoundData* soundData = (SoundData*)data;
-	if (soundData == NULL) {
+	if (soundData == NULL)
+	{
 		return;
 	}
 
@@ -237,5 +250,4 @@ void SoundLoader::Unload( void* data )
 	delete soundData;
 }
 
-}
-
+} // namespace EffekseerSound

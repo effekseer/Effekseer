@@ -7,7 +7,6 @@
 namespace EffekseerRendererLLGI
 {
 
-
 class DeviceObject
 {
 private:
@@ -23,8 +22,12 @@ public:
 public:
 	GraphicsDevice* GetGraphicsDevice() const;
 
-	virtual void OnLostDevice() {}
-	virtual void OnResetDevice() {}
+	virtual void OnLostDevice()
+	{
+	}
+	virtual void OnResetDevice()
+	{
+	}
 };
 
 } // namespace EffekseerRendererLLGI

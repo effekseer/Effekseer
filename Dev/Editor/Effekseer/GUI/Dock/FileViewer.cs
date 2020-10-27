@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,14 +18,13 @@ namespace Effekseer.GUI.Dock
 
 		public FileViewer()
 		{
-			Label = Resources.GetString("FileViewer") + "###FileVeiwer";
+			Label = Icons.PanelFileViewer + Resources.GetString("FileViewer") + "###FileVeiwer";
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSave += OnAfterSave;
 
 			UpdateFileListWithProjectPath(Core.FullPath);
 
-			Icon = Images.GetIcon("PanelFileViewer");
 			TabToolTip = Resources.GetString("FileViewer");
 
 			menuOpenFile = Resources.GetString("FileViewer_OpenFile");

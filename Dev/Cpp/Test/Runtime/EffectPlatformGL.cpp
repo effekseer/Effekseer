@@ -10,7 +10,9 @@ class DistortingCallbackGL : public EffekseerRenderer::DistortingCallback
 
 public:
 	DistortingCallbackGL(::EffekseerRendererGL::Renderer* renderer, int width, int height)
-		: renderer(renderer), width_(width), height_(height)
+		: renderer(renderer)
+		, width_(width)
+		, height_(height)
 	{
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -18,7 +20,10 @@ public:
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	virtual ~DistortingCallbackGL() { glDeleteTextures(1, &texture); }
+	virtual ~DistortingCallbackGL()
+	{
+		glDeleteTextures(1, &texture);
+	}
 
 	virtual bool OnDistorting() override
 	{
@@ -41,7 +46,9 @@ EffekseerRenderer::Renderer* EffectPlatformGL::CreateRenderer()
 	return ret;
 }
 
-EffectPlatformGL::~EffectPlatformGL() {}
+EffectPlatformGL::~EffectPlatformGL()
+{
+}
 
 void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParameter& param)
 {
@@ -64,7 +71,9 @@ void EffectPlatformGL::BeginRendering()
 	glFinish();
 }
 
-void EffectPlatformGL::EndRendering() {}
+void EffectPlatformGL::EndRendering()
+{
+}
 
 bool EffectPlatformGL::TakeScreenshot(const char* path)
 {

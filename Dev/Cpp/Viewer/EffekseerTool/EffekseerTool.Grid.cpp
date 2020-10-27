@@ -14,11 +14,11 @@ namespace EffekseerRenderer
 //
 //----------------------------------------------------------------------------------
 Grid::Grid(efk::Graphics* graphics)
-	: m_lineCount		( 0 )
-	, m_gridLength		( 2.0f )
-	, IsShownXY	( false )
-	, IsShownXZ	( true )
-	, IsShownYZ	( false )
+	: m_lineCount(0)
+	, m_gridLength(2.0f)
+	, IsShownXY(false)
+	, IsShownXZ(true)
+	, IsShownYZ(false)
 {
 	lineRenderer = efk::LineRenderer::Create(graphics);
 }
@@ -42,7 +42,7 @@ Grid* Grid::Create(efk::Graphics* graphics)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Grid::Rendering( ::Effekseer::Color& gridColor, bool isRightHand )
+void Grid::Rendering(::Effekseer::Color& gridColor, bool isRightHand)
 {
 	lineRenderer->ClearCache();
 
@@ -109,7 +109,6 @@ void Grid::Rendering( ::Effekseer::Color& gridColor, bool isRightHand )
 		}
 	}
 
-
 	lineRenderer->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f),
 		::Effekseer::Vector3D(m_gridLength, 0.0f, 0.0f),
@@ -131,7 +130,7 @@ void Grid::Rendering( ::Effekseer::Color& gridColor, bool isRightHand )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

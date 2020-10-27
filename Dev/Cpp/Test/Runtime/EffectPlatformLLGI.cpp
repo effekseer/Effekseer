@@ -113,7 +113,9 @@ EffectPlatformLLGI::EffectPlatformLLGI(LLGI::DeviceType deviceType)
 	commandListPool_ = std::make_shared<LLGI::CommandListPool>(graphics_, sfMemoryPool_, 3);
 }
 
-EffectPlatformLLGI ::~EffectPlatformLLGI() {}
+EffectPlatformLLGI ::~EffectPlatformLLGI()
+{
+}
 
 void EffectPlatformLLGI::Present()
 {
@@ -134,7 +136,10 @@ bool EffectPlatformLLGI::DoEvent()
 	return true;
 }
 
-void EffectPlatformLLGI::PreDestroyDevice() { graphics_->WaitFinish(); }
+void EffectPlatformLLGI::PreDestroyDevice()
+{
+	graphics_->WaitFinish();
+}
 
 void EffectPlatformLLGI::DestroyDevice()
 {
@@ -163,7 +168,7 @@ void EffectPlatformLLGI::DestroyDevice()
 	ES_SAFE_RELEASE(ib_);
 	ES_SAFE_RELEASE(rppip_);
 	ES_SAFE_RELEASE(pip_);
-    ES_SAFE_RELEASE(screenPip_);
+	ES_SAFE_RELEASE(screenPip_);
 	ES_SAFE_RELEASE(checkTexture_);
 }
 
@@ -197,33 +202,33 @@ void EffectPlatformLLGI::EndRendering()
 	commandList_->EndRenderPass();
 
 	auto currentScreen = platform_->GetCurrentScreen(LLGI::Color8(), true);
-	
-    if(screenPip_ == nullptr)
-    {
-        auto rpip = graphics_->CreateRenderPassPipelineState(currentScreen);
+
+	if (screenPip_ == nullptr)
+	{
+		auto rpip = graphics_->CreateRenderPassPipelineState(currentScreen);
 		screenFormat_ = rpip->Key.RenderTargetFormats.at(0);
 
-        {
-            screenPip_ = graphics_->CreatePiplineState();
-            screenPip_->VertexLayouts[0] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
-            screenPip_->VertexLayouts[1] = LLGI::VertexLayoutFormat::R32G32_FLOAT;
-            screenPip_->VertexLayouts[2] = LLGI::VertexLayoutFormat::R8G8B8A8_UNORM;
-            screenPip_->VertexLayoutNames[0] = "POSITION";
-            screenPip_->VertexLayoutNames[1] = "UV";
-            screenPip_->VertexLayoutNames[2] = "COLOR";
-            screenPip_->VertexLayoutCount = 3;
-            screenPip_->IsDepthTestEnabled = false;
-            screenPip_->IsDepthWriteEnabled = false;
-            screenPip_->Culling = LLGI::CullingMode::DoubleSide;
-            screenPip_->SetShader(LLGI::ShaderStageType::Vertex, shader_vs_);
-            screenPip_->SetShader(LLGI::ShaderStageType::Pixel, shader_ps_);
-            screenPip_->SetRenderPassPipelineState(rpip);
-            screenPip_->Compile();
-        }
-        
-        ES_SAFE_RELEASE(rpip);
-    }
-    
+		{
+			screenPip_ = graphics_->CreatePiplineState();
+			screenPip_->VertexLayouts[0] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
+			screenPip_->VertexLayouts[1] = LLGI::VertexLayoutFormat::R32G32_FLOAT;
+			screenPip_->VertexLayouts[2] = LLGI::VertexLayoutFormat::R8G8B8A8_UNORM;
+			screenPip_->VertexLayoutNames[0] = "POSITION";
+			screenPip_->VertexLayoutNames[1] = "UV";
+			screenPip_->VertexLayoutNames[2] = "COLOR";
+			screenPip_->VertexLayoutCount = 3;
+			screenPip_->IsDepthTestEnabled = false;
+			screenPip_->IsDepthWriteEnabled = false;
+			screenPip_->Culling = LLGI::CullingMode::DoubleSide;
+			screenPip_->SetShader(LLGI::ShaderStageType::Vertex, shader_vs_);
+			screenPip_->SetShader(LLGI::ShaderStageType::Pixel, shader_ps_);
+			screenPip_->SetRenderPassPipelineState(rpip);
+			screenPip_->Compile();
+		}
+
+		ES_SAFE_RELEASE(rpip);
+	}
+
 	commandList_->BeginRenderPass(currentScreen);
 	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
 	commandList_->SetIndexBuffer(ib_);

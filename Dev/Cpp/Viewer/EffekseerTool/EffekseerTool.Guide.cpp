@@ -19,7 +19,7 @@ Guide* Guide::Create(efk::Graphics* graphics)
 	return new Guide(graphics);
 }
 
-void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32_t guide_height )
+void Guide::Rendering(int32_t width, int32_t height, int32_t guide_width, int32_t guide_height)
 {
 	imageRenderer->ClearCache();
 
@@ -58,7 +58,7 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 
 	{
 		Effekseer::Vector3D pos[4];
-		
+
 		pos[0].X = ul_gx;
 		pos[0].Y = ul_gy;
 		pos[1].X = ul_x;
@@ -159,5 +159,4 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 	imageRenderer->Render();
 }
 
-}
-
+} // namespace EffekseerRenderer

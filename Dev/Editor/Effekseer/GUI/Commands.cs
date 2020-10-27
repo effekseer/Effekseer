@@ -45,6 +45,7 @@ namespace Effekseer.GUI
 			register(AddNode);
 			register(InsertNode);
 			register(RemoveNode);
+			register(RenameNode);
 		}
 
 		[Name(value = "InternalNew")]

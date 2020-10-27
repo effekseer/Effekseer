@@ -7,15 +7,15 @@
 #include "Effekseer.RectF.h"
 
 #include "Effekseer.EffectLoader.h"
-#include "Effekseer.TextureLoader.h"
+#include "Effekseer.MaterialLoader.h"
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.SoundLoader.h"
-#include "Effekseer.MaterialLoader.h"
+#include "Effekseer.TextureLoader.h"
 
-#include "Renderer/Effekseer.SpriteRenderer.h"
+#include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 #include "Renderer/Effekseer.RingRenderer.h"
-#include "Renderer/Effekseer.ModelRenderer.h"
+#include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
 
 #include "Effekseer.Effect.h"
@@ -24,7 +24,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer {
+namespace Effekseer
+{
 
 //----------------------------------------------------------------------------------
 //
@@ -151,7 +152,8 @@ void Setting::SetSoundLoader(SoundLoader* loader)
 }
 
 MaterialLoader* Setting::GetMaterialLoader()
-{ return m_materialLoader;
+{
+	return m_materialLoader;
 }
 
 void Setting::SetMaterialLoader(MaterialLoader* loader)
@@ -160,11 +162,12 @@ void Setting::SetMaterialLoader(MaterialLoader* loader)
 	m_materialLoader = loader;
 }
 
-void Setting::AddEffectFactory(EffectFactory* effectFactory) { 
-	
+void Setting::AddEffectFactory(EffectFactory* effectFactory)
+{
+
 	if (effectFactory == nullptr)
 		return;
-	ES_SAFE_ADDREF(effectFactory); 
+	ES_SAFE_ADDREF(effectFactory);
 	effectFactories.push_back(effectFactory);
 }
 
@@ -179,14 +182,15 @@ void Setting::ClearEffectFactory()
 
 EffectFactory* Setting::GetEffectFactory(int32_t ind) const
 {
-	return effectFactories[ind]; 
+	return effectFactories[ind];
 }
 
-int32_t Setting::GetEffectFactoryCount() const { 
+int32_t Setting::GetEffectFactoryCount() const
+{
 	return effectFactories.size();
 }
 
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+} // namespace Effekseer
+  //----------------------------------------------------------------------------------
+  //
+  //----------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -307,6 +307,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Rotation.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Scale.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicRenderSettings.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_RenderSettings.csv");
 			GUI.Manager.UpdateFont();
 		}
 
@@ -323,7 +324,7 @@ namespace Effekseer
 			{
 				if (Core.Language == Language.Japanese)
 				{
-					messageBase = "ã‚¢ã‚¯ã‚»ã‚¹ãŒæ‹’å¦ã•ã‚Œã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚\nä»–ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¦ãã ã•ã„ã€‚\nã‚‚ã—ãã¯ã‚¢ã‚¯ã‚»ã‚¹ã§ããªã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã—ã¦ã„ã¾ã™ã€‚\n";
+					messageBase = "ƒAƒNƒZƒX‚ª‹‘”Û‚³‚êƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B\n‘¼‚ÌƒfƒBƒŒƒNƒgƒŠ‚ÉƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚­‚¾‚³‚¢B\n‚à‚µ‚­‚ÍƒAƒNƒZƒX‚Å‚«‚È‚¢ƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚µ‚Ä‚¢‚Ü‚·B\n";
 				}
 				else
 				{
@@ -334,7 +335,7 @@ namespace Effekseer
 			{
 				if (Core.Language == Language.Japanese)
 				{
-					messageBase = "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚";
+					messageBase = "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B";
 				}
 			}
 
@@ -350,7 +351,7 @@ namespace Effekseer
 
 				if (Core.Language == Language.Japanese)
 				{
-					message = messageBase + "ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ãŒ" + filepath + "ã«å‡ºåŠ›ã•ã‚Œã¾ã—ãŸã€‚\nã‚‚ã—ã‚¨ãƒ©ãƒ¼ã‚’ãƒ¡ãƒ¼ãƒ«ã‚„Twitterã§Effekseerã«é€ã£ã¦ã„ãŸã ã‘ã‚‹ã¨åŠ©ã‹ã‚Šã¾ã™ã€‚\n";
+					message = messageBase + "ƒGƒ‰[ƒƒO‚ª" + filepath + "‚Éo—Í‚³‚ê‚Ü‚µ‚½B\n‚à‚µƒGƒ‰[‚ğƒ[ƒ‹‚âTwitter‚ÅEffekseer‚É‘—‚Á‚Ä‚¢‚½‚¾‚¯‚é‚Æ•‚©‚è‚Ü‚·B\n";
 				}
 				swig.GUIManager.show(message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 			}
@@ -421,39 +422,9 @@ namespace Effekseer
 			Icons["Paste"] = LoadAppResource(native, "resources/icons/Paste.png");
 
 			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
-			Icons["NodeEmpty"] = LoadAppResource(native, "resources/icons/NodeType_Empty.png");
-			Icons["NodeModel"] = LoadAppResource(native, "resources/icons/NodeType_Model.png");
-			Icons["NodeRibbon"] = LoadAppResource(native, "resources/icons/NodeType_Ribbon.png");
-			Icons["NodeRing"] = LoadAppResource(native, "resources/icons/NodeType_Ring.png");
-			Icons["NodeSprite"] = LoadAppResource(native, "resources/icons/NodeType_Sprite.png");
-			Icons["NodeTrack"] = LoadAppResource(native, "resources/icons/NodeType_Track.png");
 
 			Icons["VisibleShow"] = LoadAppResource(native, "resources/icons/Visible_Show.png");
 			Icons["VisibleHide"] = LoadAppResource(native, "resources/icons/Visible_Hide.png");
-
-			Icons["PanelBehavior"] = LoadAppResource(native, "resources/icons/Panel_Behavior.png");
-			Icons["PanelCommon"] = LoadAppResource(native, "resources/icons/Panel_Common.png");
-			Icons["PanelCulling"] = LoadAppResource(native, "resources/icons/Panel_Culling.png");
-			Icons["PanelFCurve"] = LoadAppResource(native, "resources/icons/Panel_FCurve.png");
-			Icons["PanelFileViewer"] = LoadAppResource(native, "resources/icons/Panel_FileViewer.png");
-			Icons["PanelGenerationLocation"] = LoadAppResource(native, "resources/icons/Panel_GenerationLocation.png");
-			Icons["PanelLocation"] = LoadAppResource(native, "resources/icons/Panel_Location.png");
-			Icons["PanelLocationAbs"] = LoadAppResource(native, "resources/icons/Panel_LocationAbs.png");
-			Icons["PanelNetwork"] = LoadAppResource(native, "resources/icons/Panel_Network.png");
-			Icons["PanelNodeTree"] = LoadAppResource(native, "resources/icons/Panel_NodeTree.png");
-			Icons["PanelOption"] = LoadAppResource(native, "resources/icons/Panel_Option.png");
-			Icons["PanelEnvironment"] = LoadAppResource(native, "resources/icons/Panel_Environment.png");
-			Icons["PanelRecorder"] = LoadAppResource(native, "resources/icons/Panel_Recorder.png");
-			Icons["PanelRenderer"] = LoadAppResource(native, "resources/icons/Panel_Renderer.png");
-			Icons["PanelRendererCommon"] = LoadAppResource(native, "resources/icons/Panel_RendererCommon.png");
-			Icons["PanelRotation"] = LoadAppResource(native, "resources/icons/Panel_Rotation.png");
-			Icons["PanelScale"] = LoadAppResource(native, "resources/icons/Panel_Scale.png");
-			Icons["PanelSound"] = LoadAppResource(native, "resources/icons/Panel_Sound.png");
-			Icons["PanelViewer"] = LoadAppResource(native, "resources/icons/Panel_Viewer.png");
-			Icons["PanelViewPoint"] = LoadAppResource(native, "resources/icons/Panel_ViewPoint.png");
-			Icons["PanelDepth"] = LoadAppResource(native, "resources/icons/Panel_Depth.png");
-			Icons["PanelGlobal"] = LoadAppResource(native, "resources/icons/Panel_Global.png");
-			Icons["PanelDynamicParameter"] = LoadAppResource(native, "resources/icons/Panel_DynamicParameter.png");
 
 			Icons["EnlargeAnchor"] = LoadAppResource(native, "resources/icons/EnlargeAnchor.png");
 			Icons["ShrinkAnchor"] = LoadAppResource(native, "resources/icons/ShrinkAnchor.png");
@@ -466,6 +437,11 @@ namespace Effekseer
 
 			Icons["FileViewer_Directory"] = LoadAppResource(native, "resources/icons/FileViewer_Directory.png");
 			Icons["FileViewer_EffekseerProj"] = LoadAppResource(native, "resources/icons/FileViewer_EffekseerProj.png");
+
+			Icons["ButtonMin"] = LoadAppResource(native, "resources/icons/Button_Min.png");
+			Icons["ButtonMax"] = LoadAppResource(native, "resources/icons/Button_Max.png");
+			Icons["ButtonMaxCancel"] = LoadAppResource(native, "resources/icons/Button_MaxCancel.png");
+			Icons["ButtonClose"] = LoadAppResource(native, "resources/icons/Button_Close.png");
 		}
 
 		public static void Unload()

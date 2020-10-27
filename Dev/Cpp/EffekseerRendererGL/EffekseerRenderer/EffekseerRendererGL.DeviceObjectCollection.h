@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEERRENDERER_GL_DEVICEOBJECT_COLLECTION_H__
 #define __EFFEKSEERRENDERER_GL_DEVICEOBJECT_COLLECTION_H__
 
-#include <set>
 #include <Effekseer.h>
+#include <set>
 
 namespace EffekseerRendererGL
 {

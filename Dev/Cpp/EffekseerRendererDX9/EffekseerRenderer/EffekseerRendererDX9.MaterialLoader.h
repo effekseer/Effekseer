@@ -10,7 +10,7 @@ namespace Effekseer
 {
 class Material;
 class CompiledMaterialBinary;
-}
+} // namespace Effekseer
 
 namespace EffekseerRendererDX9
 {
@@ -35,6 +35,6 @@ public:
 	void Unload(::Effekseer::MaterialData* data) override;
 };
 
-} // namespace EffekseerRendererDX11
+} // namespace EffekseerRendererDX9
 
 #endif // __EFFEKSEERRENDERER_GL_MODELLOADER_H__

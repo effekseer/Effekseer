@@ -77,9 +77,15 @@ static int64_t GetTime()
 //
 //----------------------------------------------------------------------------------
 #ifdef _WIN32
-static void Sleep_(int32_t ms) { ::Sleep(ms); }
+static void Sleep_(int32_t ms)
+{
+	::Sleep(ms);
+}
 #else
-static void Sleep_(int32_t ms) { usleep(1000 * ms); }
+static void Sleep_(int32_t ms)
+{
+	usleep(1000 * ms);
+}
 #endif
 
 #if _GLFW
@@ -112,7 +118,8 @@ class DistortingCallback : public EffekseerRenderer::DistortingCallback
 	GLuint texture = 0;
 
 public:
-	DistortingCallback(::EffekseerRendererGL::Renderer* renderer, int texWidth, int texHeight) : renderer(renderer)
+	DistortingCallback(::EffekseerRendererGL::Renderer* renderer, int texWidth, int texHeight)
+		: renderer(renderer)
 	{
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -120,7 +127,10 @@ public:
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	virtual ~DistortingCallback() { glDeleteTextures(1, &texture); }
+	virtual ~DistortingCallback()
+	{
+		glDeleteTextures(1, &texture);
+	}
 
 	virtual bool OnDistorting() override
 	{
@@ -215,15 +225,24 @@ bool InitGLWindow(void* handle1, void* handle2)
 //----------------------------------------------------------------------------------
 #if _GLFW
 
-void MakeContextCurrent() { glfwMakeContextCurrent(window); }
+void MakeContextCurrent()
+{
+	glfwMakeContextCurrent(window);
+}
 
 #else
 
 #if _WIN32
-void MakeContextCurrent() { wglMakeCurrent(g_hDC, g_hGLRC); }
+void MakeContextCurrent()
+{
+	wglMakeCurrent(g_hDC, g_hGLRC);
+}
 
 #else
-void MakeContextCurrent() { glXMakeCurrent(g_display, g_window, g_glx); }
+void MakeContextCurrent()
+{
+	glXMakeCurrent(g_display, g_window, g_glx);
+}
 
 #endif
 
@@ -234,15 +253,24 @@ void MakeContextCurrent() { glXMakeCurrent(g_display, g_window, g_glx); }
 //----------------------------------------------------------------------------------
 #if _GLFW
 
-void MakeContextNone() { glfwMakeContextCurrent(nullptr); }
+void MakeContextNone()
+{
+	glfwMakeContextCurrent(nullptr);
+}
 
 #else
 
 #if _WIN32
-void MakeContextNone() { wglMakeCurrent(0, 0); }
+void MakeContextNone()
+{
+	wglMakeCurrent(0, 0);
+}
 
 #else
-void MakeContextNone() { glXMakeCurrent(g_display, 0, NULL); }
+void MakeContextNone()
+{
+	glXMakeCurrent(g_display, 0, NULL);
+}
 
 #endif
 
@@ -263,7 +291,10 @@ void DestroyContext()
 }
 
 #else
-void DestroyContext() { glXDestroyContext(g_display, g_glx); }
+void DestroyContext()
+{
+	glXDestroyContext(g_display, g_glx);
+}
 
 #endif
 
@@ -283,9 +314,15 @@ void SwapBuffers()
 #else
 
 #if _WIN32
-void SwapBuffers() { SwapBuffers(g_hDC); }
+void SwapBuffers()
+{
+	SwapBuffers(g_hDC);
+}
 #else
-void SwapBuffers() { glXSwapBuffers(g_display, g_window); }
+void SwapBuffers()
+{
+	glXSwapBuffers(g_display, g_window);
+}
 #endif
 
 #endif
@@ -342,27 +379,28 @@ void InitGraphics(int width, int height)
 
 	g_width = width;
 	g_height = height;
-	
+
 	g_clearing_image = new uint32_t[width * height];
 	CreateCheckeredPattern(width, height, g_clearing_image);
-	
+
 	glViewport(0, 0, width, height);
 
-	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
-	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH_OpenGL( 90.0f / 180.0f * 3.14f, (float)width /
-	 (float)height, 1.0f, 50.0f ) ); g_renderer->SetDistortingCallback( new DistortingCallback( 	(EffekseerRendererGL::Renderer*)g_renderer,
-	width, height ) );
-	
-	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
-	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
-	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
-	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
-	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
-	
-	g_manager->SetCoordinateSystem( ::Effekseer::CoordinateSystem::RH );
-	
-	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
-	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
+	g_renderer = ::EffekseerRendererGL::Renderer::Create(2000);
+	g_renderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f));
+	g_renderer->SetDistortingCallback(new DistortingCallback((EffekseerRendererGL::Renderer*)g_renderer,
+															 width,
+															 height));
+
+	g_manager->SetSpriteRenderer(g_renderer->CreateSpriteRenderer());
+	g_manager->SetRibbonRenderer(g_renderer->CreateRibbonRenderer());
+	g_manager->SetRingRenderer(g_renderer->CreateRingRenderer());
+	g_manager->SetModelRenderer(g_renderer->CreateModelRenderer());
+	g_manager->SetTrackRenderer(g_renderer->CreateTrackRenderer());
+
+	g_manager->SetCoordinateSystem(::Effekseer::CoordinateSystem::RH);
+
+	g_manager->SetTextureLoader(g_renderer->CreateTextureLoader());
+	g_manager->SetModelLoader(g_renderer->CreateModelLoader());
 }
 
 //----------------------------------------------------------------------------------
@@ -440,14 +478,20 @@ bool DoEvent()
 
 #else
 
-bool DoEvent() { return DoWindowEvent(); }
+bool DoEvent()
+{
+	return DoWindowEvent();
+}
 
 #endif
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SetCameraMatrix(const ::Effekseer::Matrix44& matrix) { g_renderer->SetCameraMatrix(matrix); }
+void SetCameraMatrix(const ::Effekseer::Matrix44& matrix)
+{
+	g_renderer->SetCameraMatrix(matrix);
+}
 
 //----------------------------------------------------------------------------------
 //

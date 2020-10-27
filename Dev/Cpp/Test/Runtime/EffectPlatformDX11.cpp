@@ -13,13 +13,17 @@ class DistortingCallbackDX11 : public EffekseerRenderer::DistortingCallback
 	D3D11_TEXTURE2D_DESC backGroundTextureDesc;
 
 public:
-	DistortingCallbackDX11(::EffekseerRendererDX11::Renderer* renderer) : renderer(renderer)
+	DistortingCallbackDX11(::EffekseerRendererDX11::Renderer* renderer)
+		: renderer(renderer)
 	{
 		g_D3d11Device = renderer->GetDevice();
 		g_D3d11Context = renderer->GetContext();
 	}
 
-	virtual ~DistortingCallbackDX11() { ReleaseTexture(); }
+	virtual ~DistortingCallbackDX11()
+	{
+		ReleaseTexture();
+	}
 
 	void ReleaseTexture()
 	{
@@ -275,9 +279,14 @@ void EffectPlatformDX11::BeginRendering()
 	context_->CopyResource(backBuffer_, checkedTexture_);
 }
 
-void EffectPlatformDX11::EndRendering() {}
+void EffectPlatformDX11::EndRendering()
+{
+}
 
-void EffectPlatformDX11::Present() { swapChain_->Present(1, 0); }
+void EffectPlatformDX11::Present()
+{
+	swapChain_->Present(1, 0);
+}
 
 bool EffectPlatformDX11::TakeScreenshot(const char* path)
 {

@@ -17,8 +17,8 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderState::RenderState( RendererImplemented* renderer )
-	: m_renderer	( renderer )
+RenderState::RenderState(RendererImplemented* renderer)
+	: m_renderer(renderer)
 {
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
@@ -48,32 +48,32 @@ RenderState::~RenderState()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void RenderState::Update( bool forced )
+void RenderState::Update(bool forced)
 {
 	GLCheckError();
 
-	if( m_active.DepthTest != m_next.DepthTest || forced )
+	if (m_active.DepthTest != m_next.DepthTest || forced)
 	{
-		if( m_next.DepthTest )
+		if (m_next.DepthTest)
 		{
-			glEnable( GL_DEPTH_TEST );
+			glEnable(GL_DEPTH_TEST);
 		}
 		else
 		{
-			glDisable( GL_DEPTH_TEST );
+			glDisable(GL_DEPTH_TEST);
 		}
 	}
 
 	GLCheckError();
 
-	if( m_active.DepthWrite != m_next.DepthWrite || forced )
+	if (m_active.DepthWrite != m_next.DepthWrite || forced)
 	{
-		glDepthMask( m_next.DepthWrite );
+		glDepthMask(m_next.DepthWrite);
 	}
 
 	GLCheckError();
 
-	if( m_active.CullingType != m_next.CullingType || forced )
+	if (m_active.CullingType != m_next.CullingType || forced)
 	{
 		if (m_isCCW)
 		{
@@ -115,10 +115,10 @@ void RenderState::Update( bool forced )
 
 	GLCheckError();
 
-	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
+	if (m_active.AlphaBlend != m_next.AlphaBlend || forced)
 	{
 		{
-			glEnable( GL_BLEND );
+			glEnable(GL_BLEND);
 
 			if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity ||
 				m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
@@ -126,7 +126,7 @@ void RenderState::Update( bool forced )
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 				GLExt::glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE);
 			}
-			else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub )
+			else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
 				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
@@ -134,15 +134,15 @@ void RenderState::Update( bool forced )
 			else
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-				if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend )
+				if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 				{
 					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 				}
-				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add )
+				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 				{
 					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 				}
-				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul )
+				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
 				{
 					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ZERO, GL_ONE);
 				}
@@ -151,11 +151,11 @@ void RenderState::Update( bool forced )
 	}
 
 	GLCheckError();
-	
-	static const GLint glfilterMin[] = { GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR };
+
+	static const GLint glfilterMin[] = {GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
 	static const GLint glfilterMin_NoneMipmap[] = {GL_NEAREST, GL_LINEAR};
-	static const GLint glfilterMag[] = { GL_NEAREST, GL_LINEAR };
-	static const GLint glwrap[] = { GL_REPEAT, GL_CLAMP_TO_EDGE };
+	static const GLint glfilterMag[] = {GL_NEAREST, GL_LINEAR};
+	static const GLint glwrap[] = {GL_REPEAT, GL_CLAMP_TO_EDGE};
 
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
@@ -176,7 +176,7 @@ void RenderState::Update( bool forced )
 				//assert(bound > 0);
 #endif
 
-				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
+				int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
 
 				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 
@@ -188,7 +188,7 @@ void RenderState::Update( bool forced )
 				{
 					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin_NoneMipmap[filter_]);
 				}
-				
+
 				//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
@@ -199,7 +199,7 @@ void RenderState::Update( bool forced )
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
-				int32_t wrap_ = (int32_t) m_next.TextureWrapTypes[i];
+				int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
 				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap_]);
 				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap_]);
 
@@ -213,7 +213,8 @@ void RenderState::Update( bool forced )
 		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			if (m_renderer->GetCurrentTextures()[i].UserID == 0) continue;
+			if (m_renderer->GetCurrentTextures()[i].UserID == 0)
+				continue;
 
 			// always changes because a flag is assigned into a texture
 			// if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
@@ -228,7 +229,7 @@ void RenderState::Update( bool forced )
 				assert(bound > 0);
 #endif
 
-				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
+				int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 				GLCheckError();
@@ -249,7 +250,7 @@ void RenderState::Update( bool forced )
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 				GLCheckError();
 
-				int32_t wrap_ = (int32_t) m_next.TextureWrapTypes[i];
+				int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrap[wrap_]);
 				GLCheckError();
@@ -261,8 +262,8 @@ void RenderState::Update( bool forced )
 		GLCheckError();
 	}
 
-	GLExt::glActiveTexture( GL_TEXTURE0 );
-	
+	GLExt::glActiveTexture(GL_TEXTURE0);
+
 	m_active = m_next;
 
 	GLCheckError();
@@ -271,7 +272,7 @@ void RenderState::Update( bool forced )
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
