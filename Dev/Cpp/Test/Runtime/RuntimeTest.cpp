@@ -102,6 +102,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		single16Test(u"Flip01", "Flip01");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
 		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
+		single16Test(u"EdgeFallOff01", "EdgeFallOff01");
 		single16Test(u"TGA01", "TGA01");
 	}
 }
