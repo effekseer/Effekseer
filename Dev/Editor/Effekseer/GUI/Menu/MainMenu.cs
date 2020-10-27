@@ -142,7 +142,7 @@ namespace Effekseer.GUI.Menu
 
 		void ReloadTitle()
 		{
-			string filePath = Core.Root.GetFullPath();
+			string filePath = Core.FullPath;
 			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
 			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + fileName + "] ";
 
