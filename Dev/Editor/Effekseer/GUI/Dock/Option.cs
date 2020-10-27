@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +14,13 @@ namespace Effekseer.GUI.Dock
 
 		public Option()
 		{
-			Label = Resources.GetString("Options") + "###Options";
+			Label = Icons.PanelOptions + Resources.GetString("Options") + "###Options";
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.OptionValues));
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			Icon = Images.GetIcon("PanelOption");
 			TabToolTip = Resources.GetString("Options");
 		}
 

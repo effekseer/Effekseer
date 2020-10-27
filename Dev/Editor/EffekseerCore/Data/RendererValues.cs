@@ -7,18 +7,15 @@ namespace Effekseer.Data
 {
 	public enum TextureUVType
 	{
-		[Name(value = "Strech", language = Language.English)]
-		[Name(value = "ストレッチ", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_Type_Strech")]
 		Strech = 0,
-		[Name(value = "Tile", language = Language.English)]
-		[Name(value = "タイル", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_Type_Tile")]
 		Tile = 1,
 	}
 
 	public class TextureUVTypeParameter
 	{
-		[Name(value = "UV Type", language = Language.English)]
-		[Name(value = "UV タイプ", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_Type")]
 		[Selector(ID = 0)]
 		public Value.Enum<TextureUVType> Type
 		{
@@ -26,18 +23,15 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(value = "The number of tile on Head", language = Language.English)]
-		[Name(value = "頭のタイル数", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_TileEdgeHead")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
 		public Value.Int TileEdgeHead { get; private set; }
 
-		[Name(value = "The number of tile on Tail", language = Language.English)]
-		[Name(value = "尻尾のタイル数", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_TileEdgeTail")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
 		public Value.Int TileEdgeTail { get; private set; }
 
-		[Name(value = "Looping area", language = Language.English)]
-		[Name(value = "ループ領域", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_TileLoopingArea")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
 		public Value.Vector2D TileLoopingArea { get; private set; }
 		public TextureUVTypeParameter()
@@ -1090,46 +1084,40 @@ namespace Effekseer.Data
 
 		public enum BillboardType : int
 		{
-			[Name(value = "ビルボード", language = Language.Japanese)]
-			[Name(value = "Billboard", language = Language.English)]
+			[Key(key = "BillboardType_Billboard")]
 			Billboard = 0,
-			[Name(value = "Z軸回転ビルボード", language = Language.Japanese)]
-			[Name(value = "Rotated Billboard", language = Language.English)]
+			[Key(key = "BillboardType_RotatedBillboard")]
 			RotatedBillboard = 3,
-			[Name(value = "Y軸固定", language = Language.Japanese)]
-			[Name(value = "Fixed Y-Axis", language = Language.English)]
+			[Key(key = "BillboardType_YAxisFixed")]
 			YAxisFixed = 1,
-			[Name(value = "固定", language = Language.Japanese)]
-			[Name(value = "Fixed", language = Language.English)]
+			[Key(key = "BillboardType_Fixed")]
 			Fixed = 2,
 		}
 
 		public enum ParamaterType : int
 		{
-			[Name(value = "無し", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
-			[Icon(resourceName = "NodeEmpty")]
+			[Key(key = "RS_ParameterType_None")]
+			[Icon(code = "\xec20")]
 			None = 0,
-			//Particle = 1,
-			[Name(value = "スプライト", language = Language.Japanese)]
-			[Name(value = "Sprite", language = Language.English)]
-			[Icon(resourceName = "NodeSprite")]
+
+			[Key(key = "RS_ParameterType_Sprite")]
+			[Icon(code = "\xec21")]
 			Sprite = 2,
-			[Name(value = "リボン", language = Language.Japanese)]
-			[Name(value = "Ribbon", language = Language.English)]
-			[Icon(resourceName = "NodeRibbon")]
-            Ribbon = 3,
-			[Name(value = "軌跡", language = Language.Japanese)]
-			[Name(value = "Track", language = Language.English)]
-			[Icon(resourceName = "NodeTrack")]
+
+			[Key(key = "RS_ParameterType_Ribbon")]
+			[Icon(code = "\xec22")]
+			Ribbon = 3,
+
+			[Key(key = "RS_ParameterType_Track")]
+			[Icon(code = "\xec23")]
 			Track = 6,
-            [Name(value = "リング", language = Language.Japanese)]
-			[Name(value = "Ring", language = Language.English)]
-			[Icon(resourceName = "NodeRing")]
-            Ring = 4,
-			[Name(value = "モデル", language = Language.Japanese)]
-			[Name(value = "Model", language = Language.English)]
-			[Icon(resourceName = "NodeModel")]
+
+			[Key(key = "RS_ParameterType_Ring")]
+			[Icon(code = "\xec24")]
+			Ring = 4,
+
+			[Key(key = "RS_ParameterType_Model")]
+			[Icon(code = "\xec25")]
 			Model = 5,
 		}
 

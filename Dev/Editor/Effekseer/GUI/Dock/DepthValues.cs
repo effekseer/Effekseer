@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public DepthValues()
 		{
-			Label = Resources.GetString("Depth") + "###Depth";
+			Label = Icons.PanelDepth + Resources.GetString("Depth") + "###Depth";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.DepthValues));
@@ -27,7 +27,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelDepth");
 			TabToolTip = Resources.GetString("Depth");
 		}
 

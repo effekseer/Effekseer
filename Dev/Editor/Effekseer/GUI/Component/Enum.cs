@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,8 +23,6 @@ namespace Effekseer.GUI.Component
 
 		public List<object> FieldNames = new List<object>();
 		
-		List<swig.ImageResource> icons = new List<swig.ImageResource>();
-
 		public bool EnableUndo { get; set; } = true;
 
 		int selectedValues = -1;
@@ -92,15 +90,13 @@ namespace Effekseer.GUI.Component
 				}
 
 				var iconAttribute = IconAttribute.GetIcon(attributes);
-				swig.ImageResource icon = null;
 				if (iconAttribute != null)
 				{
-					icon = Images.GetIcon(iconAttribute.resourceName);
+					name = iconAttribute.code + name;
 				}
 
 				list.Add((int)f.GetValue(null));
 				FieldNames.Add(name);
-				icons.Add(icon);
 			}
 			enums = list.ToArray();
 		}
@@ -138,13 +134,13 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None, icons[v.Item2]))
+			if(Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None))
 			{
 				for(int i = 0; i < FieldNames.Count; i++)
 				{
 					bool is_selected = (FieldNames[v.Item2] == FieldNames[i]);
 
-					if (Manager.NativeManager.Selectable(FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None, icons[i]))
+					if (Manager.NativeManager.Selectable(FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
 					{
 						selectedValues = enums[i];
 						binding.SetValue(selectedValues);

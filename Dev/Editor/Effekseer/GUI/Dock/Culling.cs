@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace Effekseer.GUI.Dock
 {
 	class Culling : DockPanel
@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public Culling()
         {
-			Label = Resources.GetString("Culling") + "###Culling";
+			Label = Icons.PanelCulling + Resources.GetString("Culling") + "###Culling";
 
             paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectCullingValues));
@@ -20,7 +20,6 @@ namespace Effekseer.GUI.Dock
 
             Read();
 
-			Icon = Images.GetIcon("PanelCulling");
 			TabToolTip = Resources.GetString("Culling");
 		}
 

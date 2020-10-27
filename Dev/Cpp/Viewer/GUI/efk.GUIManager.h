@@ -15,7 +15,6 @@
 #endif
 
 //#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
-#include "../3rdParty/imgui_addon/imguidock/imguidock.h"
 
 #include "../../3rdParty/imgui_markdown/imgui_markdown.h"
 #include <EditorCommon/GUI/MainWindow.h>
@@ -245,16 +244,22 @@ namespace efk
 		LoopInversely = 2,
 	};
 
-	enum class DockSlot : int32_t
+	enum class DockSplitDir : int32_t
 	{
 		Left = 0,
 		Right,
 		Top,
 		Bottom,
-		Tab,
+	};
 
-		Float,
-		None
+	enum class DockNodeFlags : int32_t
+	{
+		None = 0,
+		NoTabBar = (1 << 0),
+		HiddenTabBar = (1 << 1),
+		NoWindowMenuButton = (1 << 2),
+		NoCloseButton = (1 << 3),
+		NoDocking = (1 << 4),
 	};
     
     enum class DialogStyle {
@@ -340,6 +345,7 @@ namespace efk
 		std::shared_ptr<Effekseer::MainWindow> mainWindow_;
 		efk::DeviceType deviceType;
 		std::u16string	clipboard;
+		ImGuiID	imguiWindowID;
 
 		ImGui::MarkdownConfig markdownConfig_;
 
@@ -516,10 +522,10 @@ namespace efk
 
 		void SetNextTreeNodeOpen(bool is_open, Cond cond = Cond::None);
 
-		bool TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id = NULL, TreeNodeFlags flags = TreeNodeFlags::None);
+		bool TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags = TreeNodeFlags::None);
 
 		// Widgets: Selectable / Lists
-		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None, ImageResource* user_texture_id = NULL);
+		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
 
 		// Tooltips
 		void SetTooltip(const char16_t* text);
@@ -533,8 +539,8 @@ namespace efk
 		void EndMenuBar();
 		bool BeginMenu(const char16_t* label, bool enabled = true);
 		void EndMenu();
-		bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true, ImageResource* icon = NULL);
-		bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true, ImageResource* icon = NULL);
+		bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true);
+		bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true);
 
 		// Popups
 		void OpenPopup(const char* str_id);
@@ -547,7 +553,9 @@ namespace efk
 
 		void SetItemDefaultFocus();
 
+		void ClearAllFonts();
 		void AddFontFromFileTTF(const char16_t* filename, float size_pixels);
+		void AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY);
 
 		// Utils
 		bool BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags = WindowFlags::None);
@@ -580,21 +588,15 @@ namespace efk
 
 		// Dock
 		bool BeginFullscreen(const char16_t* label);
-		void SetNextDock(DockSlot slot);
-		void BeginDockspace();
-		void EndDockspace();
-		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size);
-		bool BeginDock(const char16_t* label, WindowFlags extra_flags, Vec2 default_size);
+		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags);
 		void EndDock();
-		void SetNextDockRate(float rate);
-		void ResetNextParentDock();
-		void SaveDock(const char16_t* path);
-		void LoadDock(const char16_t* path);
-		void ShutdownDock();
-		void SetNextDockIcon(ImageResource* icon, Vec2 iconSize);
-		void SetNextDockTabToolTip(const char16_t* popup);
-		bool GetDockActive();
-		void SetDockActive();
+		uint32_t BeginDockLayout();
+		void EndDockLayout();
+		void DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2);
+		void DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags);
+		void DockSetWindow(uint32_t nodeId, const char* windowName);
+		bool IsDockFocused();
+		void SetDockFocus(const char16_t* label);
 
 		// Fcurve
 		bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);

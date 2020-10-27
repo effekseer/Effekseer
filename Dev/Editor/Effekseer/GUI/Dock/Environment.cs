@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Dock
 
 		public Environement()
 		{
-			Label = Resources.GetString("Environment_Name") + "###Environment";
+			Label = Icons.PanelEnvironment + Resources.GetString("Environment_Name") + "###Environment";
 			
 			paramerterListBackground = new Component.ParameterList();
 			paramerterListBackground.SetType(typeof(Data.EnvironmentBackgroundValues));
@@ -33,7 +33,6 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			Icon = Images.GetIcon("PanelEnvironment");
 			TabToolTip = Resources.GetString("Environment_Name");
 		}
 

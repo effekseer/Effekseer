@@ -6,6 +6,7 @@
 #endif
 
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
+#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 
 #include "efk.GUIManager.h"
 
@@ -27,217 +28,6 @@ namespace ImGui
 	static ImVec2 operator * (const ImVec2& lhs, const float& rhs)
 	{
 		return ImVec2(lhs.x * rhs, lhs.y * rhs);
-	}
-
-	bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture, const char* label, const char* label_end)
-	{
-		ImGuiWindow* window = GetCurrentWindow();
-		if (window->SkipItems)
-			return false;
-
-		ImGuiContext& g = *GImGui;
-		const ImGuiStyle& style = g.Style;
-		const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
-		const ImVec2 padding =
-			(display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, 0.0f);
-
-		if (!label_end)
-			label_end = FindRenderedTextEnd(label);
-		const ImVec2 label_size = CalcTextSize(label, label_end, false);
-
-		// We vertically grow up to current line height up the typical widget height.
-		const float text_base_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset); // Latch before ItemSize changes it
-		const float frame_height =
-			ImMax(ImMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
-		const float icon_size = frame_height;
-
-		ImRect frame_bb = ImRect(window->DC.CursorPos, ImVec2(window->WorkRect.Max.x, window->DC.CursorPos.y + frame_height));
-		if (display_frame)
-		{
-			// Framed header expand a little outside the default padding
-			frame_bb.Min.x -= (float)(int)(window->WindowPadding.x * 0.5f - 1.0f);
-			frame_bb.Max.x += (float)(int)(window->WindowPadding.x * 0.5f);
-		}
-
-		const float text_offset_x =
-			(g.FontSize + icon_size + (display_frame ? padding.x * 3 : padding.x * 2)); // Collapser arrow width + Spacing
-		const float text_width = g.FontSize + icon_size + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f); // Include collapser
-		ItemSize(ImVec2(text_width, frame_height), text_base_offset_y);
-
-		// For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
-		// (Ideally we'd want to add a flag for the user to specify if we want the hit test to be done up to the right side of the content
-		// or not)
-		const ImRect interact_bb =
-			display_frame ? frame_bb
-						  : ImRect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + text_width + style.ItemSpacing.x * 2, frame_bb.Max.y);
-		bool is_open = TreeNodeBehaviorIsOpen(id, flags);
-		bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
-
-		// Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child.
-		// For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
-		// This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
-		if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) &&
-			!(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
-			window->DC.TreeStoreMayJumpToParentOnPop |= (1 << window->DC.TreeDepth);
-
-		bool item_add = ItemAdd(interact_bb, id);
-		window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
-		window->DC.LastItemDisplayRect = frame_bb;
-
-		if (!item_add)
-		{
-			if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
-				TreePushOverrideID(id);
-			IMGUI_TEST_ENGINE_ITEM_INFO(window->DC.LastItemId,
-										label,
-										window->DC.ItemFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) |
-											(is_open ? ImGuiItemStatusFlags_Opened : 0));
-			return is_open;
-		}
-
-		// Flags that affects opening behavior:
-		// - 0 (default) .................... single-click anywhere to open
-		// - OpenOnDoubleClick .............. double-click anywhere to open
-		// - OpenOnArrow .................... single-click on arrow to open
-		// - OpenOnDoubleClick|OpenOnArrow .. single-click on arrow or double-click anywhere to open
-		ImGuiButtonFlags button_flags = ImGuiButtonFlags_NoKeyModifiers;
-		if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
-			button_flags |= ImGuiButtonFlags_AllowItemOverlap;
-		if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
-			button_flags |= ImGuiButtonFlags_PressedOnDoubleClick |
-							((flags & ImGuiTreeNodeFlags_OpenOnArrow) ? ImGuiButtonFlags_PressedOnClickRelease : 0);
-		if (!is_leaf)
-			button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
-
-		bool selected = (flags & ImGuiTreeNodeFlags_Selected) != 0;
-		const bool was_selected = selected;
-
-		bool hovered, held;
-		bool pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
-		bool toggled = false;
-		if (!is_leaf)
-		{
-			if (pressed)
-			{
-				toggled = !(flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) || (g.NavActivateId == id);
-				if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
-					toggled |= IsMouseHoveringRect(interact_bb.Min, ImVec2(interact_bb.Min.x + text_offset_x, interact_bb.Max.y)) &&
-							   (!g.NavDisableMouseHover);
-				if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
-					toggled |= g.IO.MouseDoubleClicked[0];
-				if (g.DragDropActive && is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but
-												 // never close it again.
-					toggled = false;
-			}
-
-			if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Left && is_open)
-			{
-				toggled = true;
-				NavMoveRequestCancel();
-			}
-			if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right &&
-				!is_open) // If there's something upcoming on the line we may want to give it the priority?
-			{
-				toggled = true;
-				NavMoveRequestCancel();
-			}
-
-			if (toggled)
-			{
-				is_open = !is_open;
-				window->DC.StateStorage->SetInt(id, is_open);
-			}
-		}
-		if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
-			SetItemAllowOverlap();
-
-		// In this branch, TreeNodeBehavior() cannot toggle the selection so this will never trigger.
-		if (selected != was_selected) //-V547
-			window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
-
-		// Render
-		const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
-		const ImU32 text_col = GetColorU32(ImGuiCol_Text);
-		const ImVec2 text_pos = frame_bb.Min + ImVec2(text_offset_x, text_base_offset_y);
-		ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
-		if (display_frame)
-		{
-			// Framed type
-			RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, true, style.FrameRounding);
-			RenderNavHighlight(frame_bb, id, nav_highlight_flags);
-			RenderArrow(window->DrawList,
-						frame_bb.Min + ImVec2(padding.x, text_base_offset_y),
-						text_col,
-						is_open ? ImGuiDir_Down : ImGuiDir_Right,
-						1.0f);
-			if (flags & ImGuiTreeNodeFlags_ClipLabelForTrailingButton)
-				frame_bb.Max.x -= g.FontSize + style.FramePadding.x;
-
-			window->DrawList->AddImage(user_texture,
-									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y),
-									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size, icon_size),
-									   ImVec2(0, 0),
-									   ImVec2(1, 1));
-
-			if (g.LogEnabled)
-			{
-				// NB: '##' is normally used to hide text (as a library-wide feature), so we need to specify the text range to make sure the
-				// ## aren't stripped out here.
-				const char log_prefix[] = "\n##";
-				const char log_suffix[] = "##";
-				LogRenderedText(&text_pos, log_prefix, log_prefix + 3);
-				RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
-				LogRenderedText(&text_pos, log_suffix, log_suffix + 2);
-			}
-			else
-			{
-				RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
-			}
-		}
-		else
-		{
-			// Unframed typed for tree nodes
-			if (hovered || selected)
-			{
-				RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
-				RenderNavHighlight(frame_bb, id, nav_highlight_flags);
-			}
-
-			if (flags & ImGuiTreeNodeFlags_Bullet)
-				RenderBullet(
-					window->DrawList, frame_bb.Min + ImVec2(text_offset_x * 0.5f, g.FontSize * 0.50f + text_base_offset_y), text_col);
-			else if (!is_leaf)
-				RenderArrow(window->DrawList,
-							frame_bb.Min + ImVec2(padding.x, g.FontSize * 0.15f + text_base_offset_y),
-							text_col,
-							is_open ? ImGuiDir_Down : ImGuiDir_Right,
-							0.70f);
-
-			window->DrawList->AddImage(user_texture,
-									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y),
-									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size, icon_size),
-									   ImVec2(0, 0),
-									   ImVec2(1, 1));
-
-			if (g.LogEnabled)
-				LogRenderedText(&text_pos, ">");
-			RenderText(text_pos, label, label_end, false);
-		}
-
-		if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
-			TreePushOverrideID(id);
-		IMGUI_TEST_ENGINE_ITEM_INFO(
-			id, label, window->DC.ItemFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
-		return is_open;
-	}
-
-	bool TreeNodeEx(const char* label, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture)
-	{
-		ImGuiWindow* window = GetCurrentWindow();
-		if (window->SkipItems)
-			return false;
-
-		return TreeNodeBehavior(window->GetID(label), flags, v, user_texture, label, NULL);
 	}
 
 	bool ImageButton_(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col)
@@ -583,12 +373,101 @@ namespace ImGui
 
 namespace efk
 {
-	template <size_t size_>
+	void ResizeBicubic(uint32_t* dst, int32_t dstWidth, int32_t dstHeight, int32_t dstStride,
+		const uint32_t* src, int32_t srcWidth, int32_t srcHeight, int32_t srcStride)
+	{
+		float wf = (float)srcWidth / dstWidth;
+		float hf = (float)srcHeight / dstHeight;
+		
+		// bicubic weight function
+		auto weight = [](float d) -> float {
+			const float a = -1.0f;
+			return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1:
+			       d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a) : 0.0f;
+		};
+
+		for (int32_t iy = 0; iy < dstHeight; iy++)
+		{
+			for (int32_t ix = 0; ix < dstWidth; ix++)
+			{
+				float wfx = wf * ix, wfy = hf * iy;
+				int32_t x = (int32_t)wfx;
+				int32_t y = (int32_t)wfy;
+				float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
+
+				for (int32_t jy = y - 1; jy <= y + 2; jy++)
+				{
+					for (int32_t jx = x - 1; jx <= x + 2; jx++)
+					{
+						float w = weight(std::abs(wfx - jx)) * weight(std::abs(wfy - jy));
+						if (w == 0.0f) continue;
+						int32_t sx = (jx >= 0 && jx < srcWidth ) ? jx : x;
+						int32_t sy = (jy >= 0 && jy < srcHeight) ? jy : y;
+						uint32_t sc = src[sx + sy * srcStride];
+						uint32_t alpha = ((sc >> 24) & 0xff);
+						r += ((sc >>  0) & 0xff) * w;
+						g += ((sc >>  8) & 0xff) * w;
+						b += ((sc >> 16) & 0xff) * w;
+						a += alpha * w;
+					}
+				}
+
+				dst[ix + iy * dstStride] = 
+					(std::max(0, std::min(255, (int32_t)r)) <<  0) |
+					(std::max(0, std::min(255, (int32_t)g)) <<  8) |
+					(std::max(0, std::min(255, (int32_t)b)) << 16) |
+					(std::max(0, std::min(255, (int32_t)a)) << 24);
+			}
+		}
+	}
+
+	size_t ConvertUTF16ToUTF8(char* dst, size_t dstSize, const char16_t* src)
+	{
+		const uint16_t* wp = (const uint16_t*)src;
+		uint8_t* cp = (uint8_t*)dst;
+
+		if (dstSize == 0) return 0;
+
+		dstSize -= 3;
+
+		size_t count = 0;
+		for (count = 0; count < dstSize; )
+		{
+			uint16_t wc = *wp++;
+			if (wc == 0)
+			{
+				break;
+			}
+			
+			if ((wc & ~0x7f) == 0)
+			{
+				*cp++ = wc & 0x7f;
+				count += 1;
+			}
+			else if ((wc & ~0x7ff) == 0)
+			{
+				*cp++ = ((wc >>  6) & 0x1f) | 0xc0;
+				*cp++ = ((wc)       & 0x3f) | 0x80;
+				count += 2;
+			}
+			else
+			{
+				*cp++ = ((wc >> 12) &  0xf) | 0xe0;
+				*cp++ = ((wc >>  6) & 0x3f) | 0x80;
+				*cp++ = ((wc)       & 0x3f) | 0x80;
+				count += 3;
+			}
+		}
+		*cp = '\0';
+		return count;
+	}
+
+	template <size_t SIZE>
 	struct utf8str {
-		enum {size = size_};
-		char data[size];
+		enum {size = SIZE};
+		char data[SIZE];
 		utf8str(const char16_t* u16str) {
-			Effekseer::ConvertUtf16ToUtf8((int8_t*)data, size, (const int16_t*)u16str);
+			ConvertUTF16ToUTF8(data, SIZE, u16str);
 		}
 		operator const char*() const {
 			return data;
@@ -850,6 +729,7 @@ namespace efk
 #endif
 		// Enable keyboard navication
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		ImGui::StyleColorsDark();
 		ResetGUIStyle();
@@ -883,6 +763,8 @@ namespace efk
 		style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
 		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
+		style.Colors[ImGuiCol_TitleBgActive] = style.Colors[ImGuiCol_TitleBg];
+		style.Colors[ImGuiCol_Tab] = style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	}
 
 	void GUIManager::SetTitle(const char16_t* title)
@@ -1474,7 +1356,7 @@ namespace efk
 		return ImGui::BeginCombo(
 			utf8str<256>(label),
 			utf8str<256>(preview_value),
-			(int)flags, ToImTextureID(user_texture_id));
+			(int)flags/*, ToImTextureID(user_texture_id)*/);
 	}
 
 	void GUIManager::EndCombo()
@@ -1661,14 +1543,14 @@ namespace efk
 		ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond);
 	}
 
-	bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id, TreeNodeFlags flags)
+	bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags)
 	{
-		return ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags, v, ToImTextureID(user_texture_id));
+		return *v = ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags);
 	}
 
-	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)
+	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags)
 	{
-		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0), ToImTextureID(user_texture_id));
+		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0));
 	}
 
 	void GUIManager::SetTooltip(const char16_t* text)
@@ -1717,14 +1599,14 @@ namespace efk
 		ImGui::EndMenu();
 	}
 
-	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled, ImageResource* icon)
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled)
 	{
-		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled, ToImTextureID(icon));
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled);
 	}
 
-	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled, ImageResource* icon)
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled)
 	{
-		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled, ToImTextureID(icon));
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled);
 	}
 
 	void GUIManager::OpenPopup(const char* str_id)
@@ -1767,19 +1649,87 @@ namespace efk
 		ImGui::SetItemDefaultFocus();
 	}
 
+	void GUIManager::ClearAllFonts()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.Fonts->Clear();
+	}
+
 	void GUIManager::AddFontFromFileTTF(const char16_t* filename, float size_pixels)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		
 		size_pixels = roundf(size_pixels * mainWindow_->GetDPIScale());
-
-		io.Fonts->Clear();
+		
 		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
 
-		markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1);
-		markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
-		markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2);
+		//markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1, nullptr, glyphRangesJapanese);
+		//markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
+		//markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2, nullptr, glyphRangesJapanese);
 
+		io.Fonts->Build();
+	}
+
+	void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		Effekseer::DefaultFileInterface fi;
+		std::unique_ptr<Effekseer::FileReader> reader(fi.OpenRead(filename));
+		if (!reader)
+		{
+			return;
+		}
+
+		std::vector<uint8_t> buffer(reader->GetLength());
+		reader->Read(&buffer[0], buffer.size());
+		reader.reset();
+
+		EffekseerRenderer::PngTextureLoader pngloader;
+		if (!pngloader.Load(&buffer[0], (int32_t)buffer.size(), false)) {
+			return;
+		}
+
+		auto imagePixels = pngloader.GetData();
+		int32_t imageWidth = pngloader.GetWidth();
+		int32_t imageHeight = pngloader.GetHeight();
+
+		ImFontConfig config;
+		config.MergeMode = true;
+		ImFont* font = io.Fonts->AddFontDefault(&config);
+
+		int glyphSizeX = font->FontSize;
+		int glyphSizeY = font->FontSize;
+		float offsetX = 2 * GetDpiScale();
+
+		std::vector<int> rectIDs;
+		for (int32_t i = 0; i < countX * countY; i++)
+		{
+			rectIDs.push_back(io.Fonts->AddCustomRectFontGlyph(font, (ImWchar)baseCode + i, glyphSizeX, glyphSizeY, glyphSizeX + offsetX));
+		}
+
+		io.Fonts->Build();
+
+		uint8_t* texturePixels = nullptr;
+		int textureWidth = 0, textureHeight = 0;
+		io.Fonts->GetTexDataAsRGBA32(&texturePixels, &textureWidth, &textureHeight);
+
+		for (size_t i = 0; i < rectIDs.size(); i++)
+		{
+			if (auto* rect = io.Fonts->GetCustomRectByIndex(rectIDs[i]))
+			{
+				ImU32* rectPixels = (ImU32*)texturePixels + rect->Y * textureWidth + rect->X;
+				const ImU32* atlasPixels = (const ImU32*)&imagePixels[0] + (sizeY * (i / countX) * imageWidth) + (sizeX * (i % countX));
+
+				//for (int posY = 0; posY < sizeY; posY++)
+				//{
+				//	// copy a line
+				//	memcpy(rectPixels + posY * textureWidth, atlasPixels + posY * imageWidth, sizeX * sizeof(ImU32));
+				//}
+				ResizeBicubic(rectPixels, glyphSizeX, glyphSizeY, textureWidth, atlasPixels, sizeX, sizeY, imageWidth);
+			}
+		}
 	}
 
 	bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
@@ -1893,9 +1843,11 @@ namespace efk
 
 	bool GUIManager::BeginFullscreen(const char16_t* label)
 	{
+		float offsetY = ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale();
+		
 		ImVec2 windowSize;
 		windowSize.x = ImGui::GetIO().DisplaySize.x;
-		windowSize.y = ImGui::GetIO().DisplaySize.y - 25;
+		windowSize.y = ImGui::GetIO().DisplaySize.y - offsetY;
 
 		ImGui::SetNextWindowSize(windowSize);
 		
@@ -1903,94 +1855,96 @@ namespace efk
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			auto pos = ImGui::GetMainViewport()->Pos;
-			pos.y += 25;
+			pos.y += offsetY;
 			ImGui::SetNextWindowPos(pos);
 		}
 		else
 		{
-			ImGui::SetNextWindowPos(ImVec2(0, 25));
+			ImGui::SetNextWindowPos(ImVec2(0, offsetY));
 		}
 		
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-		const float oldWindowRounding = ImGui::GetStyle().WindowRounding; ImGui::GetStyle().WindowRounding = 0;
-		const bool visible = ImGui::Begin(utf8str<256>(label), NULL, ImVec2(0, 0), 1.0f, flags);
-		ImGui::GetStyle().WindowRounding = oldWindowRounding;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
+		const bool visible = ImGui::Begin(utf8str<256>(label), NULL, flags);
+		ImGui::PopStyleVar(2);
+
+		imguiWindowID = ImGui::GetID(utf8str<256>(label));
+		ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags_NoCloseButton;
+		ImGui::DockSpace(imguiWindowID, ImVec2(0.0f, 0.0f), dockFlags);
+
+		//if (!ImGui::DockBuilderGetNode(imguiWindowID))
+		//{
+		//	SetDefaultDockLayout();
+		//}
+
 		return visible;
 	}
 
-	void GUIManager::SetNextDock(DockSlot slot)
+	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags)
 	{
-		ImGui::SetNextDock((ImGuiDockSlot)slot);
-	}
+		utf8str<256> utf8label(label);
+		ImGuiWindow* window = ImGui::FindWindowByName(utf8label);
+		if (!window || window->DockIsActive || window->DockTabIsVisible)
+		{
+			p_open = nullptr;
+		}
 
-	void GUIManager::BeginDockspace()
-	{
-		ImGui::BeginDockspace();
-	}
-
-	void GUIManager::EndDockspace()
-	{
-		ImGui::EndDockspace();
-	}
-
-	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size)
-	{
-		return ImGui::BeginDock(utf8str<256>(label), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
-	}
-
-	bool GUIManager::BeginDock(const char16_t* label, WindowFlags extra_flags, Vec2 default_size)
-	{
-		return ImGui::BeginDock(utf8str<256>(label), nullptr, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
+		return ImGui::Begin(utf8label, p_open, (ImGuiWindowFlags)extra_flags);
 	}
 
 	void GUIManager::EndDock()
 	{
-		ImGui::EndDock();
+		ImGui::End();
 	}
 
-	void GUIManager::SetNextDockRate(float rate)
+	uint32_t GUIManager::BeginDockLayout()
 	{
-		ImGui::SetNextDockRate(rate);
+		ImGui::DockBuilderRemoveNode(imguiWindowID);
+		ImGui::DockBuilderAddNode(imguiWindowID, ImGuiDockNodeFlags_None);
+		ImGui::DockBuilderSetNodeSize(imguiWindowID, ImGui::GetMainViewport()->Size);
+		return imguiWindowID;
 	}
 
-	void GUIManager::ResetNextParentDock()
+	void GUIManager::EndDockLayout()
 	{
-		ImGui::ResetNextParentDock();
+		ImGui::DockBuilderFinish(imguiWindowID);
 	}
 
-	void GUIManager::SaveDock(const char16_t* path)
+	void GUIManager::DockSplitNode(uint32_t nodeId, DockSplitDir dir, float sizeRatio, uint32_t* outId1, uint32_t* outId2)
 	{
-		ImGui::SaveDock(utf8str<280>(path));
-	}
-	
-	void GUIManager::LoadDock(const char16_t* path)
-	{
-		ImGui::LoadDock(utf8str<280>(path));
+		ImGui::DockBuilderSplitNode(nodeId, (ImGuiDir)dir, sizeRatio, outId1, outId2);
 	}
 
-	void GUIManager::ShutdownDock()
+	void GUIManager::DockSetNodeFlags(uint32_t nodeId, DockNodeFlags flags)
 	{
-		ImGui::ShutdownDock();
+		auto node = ImGui::DockBuilderGetNode(nodeId);
+		if (node == nullptr)
+		{
+			return;
+		}
+
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoTabBar) ? ImGuiDockNodeFlags_NoTabBar : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::HiddenTabBar) ? ImGuiDockNodeFlags_HiddenTabBar : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoWindowMenuButton) ? ImGuiDockNodeFlags_NoWindowMenuButton : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoCloseButton) ? ImGuiDockNodeFlags_NoCloseButton : 0;
+		node->LocalFlags |= ((uint32_t)flags & (uint32_t)DockNodeFlags::NoDocking) ? ImGuiDockNodeFlags_NoDocking : 0;
 	}
 
-	void GUIManager::SetNextDockIcon(ImageResource* icon, Vec2 iconSize)
+	void GUIManager::DockSetWindow(uint32_t nodeId, const char* windowName)
 	{
-		ImGui::SetNextDockIcon(ToImTextureID(icon), ImVec2(iconSize.X, iconSize.Y));
+		ImGui::DockBuilderDockWindow(windowName, nodeId);
 	}
 
-	void GUIManager::SetNextDockTabToolTip(const char16_t* popup)
+	bool GUIManager::IsDockFocused()
 	{
-		ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
+		return ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
 	}
 
-	bool GUIManager::GetDockActive()
+	void GUIManager::SetDockFocus(const char16_t* label)
 	{
-		return ImGui::GetDockActive();
-	}
-
-	void GUIManager::SetDockActive()
-	{
-		ImGui::SetDockActive();
+		utf8str<256> utf8label(label);
+		ImGui::SetWindowFocus(utf8label);
 	}
 
 	bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value, float max_value)

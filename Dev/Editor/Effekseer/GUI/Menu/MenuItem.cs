@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Menu
 
         public Action Clicked;
 
-		public ImageResource Icon;
+		public string Icon = Icons.Empty;
 
         public MenuItem()
         {
@@ -37,7 +37,7 @@ namespace Effekseer.GUI.Menu
 
         public void Update()
         {
-			if (Manager.NativeManager.MenuItem(Label + id, Shortcut, false, true, Icon))
+			if (Manager.NativeManager.MenuItem(Icon + " " +  Label + id, Shortcut, false, true))
             {
                 if(Clicked != null)
                 {
