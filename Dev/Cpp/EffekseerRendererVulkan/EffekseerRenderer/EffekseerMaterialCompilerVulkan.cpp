@@ -10,8 +10,8 @@ namespace Effekseer
 {
 
 namespace Vulkan
-{	
-	/*
+{
+/*
 
 	static char* material_common_define = R"(
 #version 450
@@ -789,17 +789,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 */
 } // namespace Vulkan
 
-
-
-
-
-
-
-
-
-
-
-
 static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
 {
 
@@ -833,7 +822,6 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 	}
 }
 
-
 } // namespace Effekseer
 
 namespace Effekseer
@@ -847,30 +835,58 @@ private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-	CompiledMaterialBinaryVulkan() {}
+	CompiledMaterialBinaryVulkan()
+	{
+	}
 
-	virtual ~CompiledMaterialBinaryVulkan() {}
+	virtual ~CompiledMaterialBinaryVulkan()
+	{
+	}
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
 		vertexShaders_.at(static_cast<int>(type)) = data;
 	}
 
-	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data) { pixelShaders_.at(static_cast<int>(type)) = data; }
+	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+	{
+		pixelShaders_.at(static_cast<int>(type)) = data;
+	}
 
-	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).data();
+	}
 
-	int32_t GetVertexShaderSize(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetVertexShaderSize(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).size();
+	}
 
-	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).data();
+	}
 
-	int32_t GetPixelShaderSize(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetPixelShaderSize(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).size();
+	}
 
-	int AddRef() override { return ReferenceObject::AddRef(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-	int Release() override { return ReferenceObject::Release(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 
-	int GetRef() override { return ReferenceObject::GetRef(); }
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
 CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int32_t maximumTextureCount)
@@ -921,7 +937,6 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	};
 
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
-		
 		GLSL::ShaderGenerator generator;
 		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1, true);
 
@@ -942,6 +957,9 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material)
+{
+	return Compile(material, Effekseer::UserTextureSlotMax);
+}
 
 } // namespace Effekseer

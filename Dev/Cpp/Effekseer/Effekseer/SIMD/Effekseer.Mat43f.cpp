@@ -1,19 +1,15 @@
-#include <cmath>
 #include "Effekseer.Mat43f.h"
 #include "../Effekseer.Matrix43.h"
+#include <cmath>
 
 namespace Effekseer
 {
-	
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 const Mat43f Mat43f::Identity = Mat43f(
-	1, 0, 0, 
-	0, 1, 0, 
-	0, 0, 1, 
-	0, 0, 0
-);
+	1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0);
 
 //----------------------------------------------------------------------------------
 //
@@ -34,12 +30,12 @@ bool Mat43f::IsValid() const
 {
 	const SIMD4f nan{NAN};
 	const SIMD4f inf{INFINITY};
-	SIMD4f res = 
-		SIMD4f::Equal(X, nan) | 
-		SIMD4f::Equal(Y, nan) | 
+	SIMD4f res =
+		SIMD4f::Equal(X, nan) |
+		SIMD4f::Equal(Y, nan) |
 		SIMD4f::Equal(Z, nan) |
-		SIMD4f::Equal(X, inf) | 
-		SIMD4f::Equal(Y, inf) | 
+		SIMD4f::Equal(X, inf) |
+		SIMD4f::Equal(Y, inf) |
 		SIMD4f::Equal(Z, inf);
 	return SIMD4f::MoveMask(res) == 0;
 }
@@ -133,7 +129,6 @@ bool Mat43f::Equal(const Mat43f& lhs, const Mat43f& rhs, float epsilon)
 		SIMD4f::NearEqual(lhs.Y, rhs.Y, epsilon) &
 		SIMD4f::NearEqual(lhs.Z, rhs.Z, epsilon);
 	return (SIMD4f::MoveMask(ret) & 0xf) == 0xf;
-
 }
 
 //----------------------------------------------------------------------------------
@@ -186,7 +181,7 @@ Mat43f Mat43f::RotationX(float angle)
 	Mat43f ret;
 	ret.X = {1.0f, 0.0f, 0.0f, 0.0f};
 	ret.Y = {0.0f, c, -s, 0.0f};
-	ret.Z = {0.0f, s,  c, 0.0f};
+	ret.Z = {0.0f, s, c, 0.0f};
 	return ret;
 }
 
@@ -199,7 +194,7 @@ Mat43f Mat43f::RotationY(float angle)
 	::Effekseer::SinCos(angle, s, c);
 
 	Mat43f ret;
-	ret.X = { c, 0.0f, s, 0.0f};
+	ret.X = {c, 0.0f, s, 0.0f};
 	ret.Y = {0.0f, 1.0f, 0.0f, 0.0f};
 	ret.Z = {-s, 0.0f, c, 0.0f};
 	return ret;
@@ -215,7 +210,7 @@ Mat43f Mat43f::RotationZ(float angle)
 
 	Mat43f ret;
 	ret.X = {c, -s, 0.0f, 0.0f};
-	ret.Y = {s,  c, 0.0f, 0.0f};
+	ret.Y = {s, c, 0.0f, 0.0f};
 	ret.Z = {0.0f, 0.0f, 1.0f, 0.0f};
 	return ret;
 }
@@ -260,7 +255,7 @@ Mat43f Mat43f::RotationXYZ(float rx, float ry, float rz)
 	float m02 = -sy;
 
 	float m10 = sx * sy * -sz + cx * -sz;
-	float m11 = sx * sy *  sz + cx *  cz;
+	float m11 = sx * sy * sz + cx * cz;
 	float m12 = sx * cy;
 
 	float m20 = cx * sy * cz + sx * sz;
@@ -333,8 +328,8 @@ Mat43f Mat43f::RotationZXY(float rz, float rx, float ry)
 //----------------------------------------------------------------------------------
 Mat43f Mat43f::RotationAxis(const Vec3f& axis, float angle)
 {
-	const float c = cosf( angle );
-	const float s = sinf( angle );
+	const float c = cosf(angle);
+	const float s = sinf(angle);
 	return RotationAxis(axis, s, c);
 }
 
@@ -388,4 +383,4 @@ Mat43f Mat43f::Translation(const Vec3f& pos)
 	return ret;
 }
 
-}
+} // namespace Effekseer

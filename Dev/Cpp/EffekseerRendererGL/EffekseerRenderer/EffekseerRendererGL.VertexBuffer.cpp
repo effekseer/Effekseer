@@ -15,10 +15,10 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 VertexBuffer::VertexBuffer(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount)
 	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount)
-	, VertexBufferBase	( size, isDynamic )
-	, m_vertexRingStart		( 0 )
-	, m_vertexRingOffset	( 0 )
-	, m_ringBufferLock		( false )
+	, VertexBufferBase(size, isDynamic)
+	, m_vertexRingStart(0)
+	, m_vertexRingOffset(0)
+	, m_ringBufferLock(false)
 {
 	m_resource = new uint8_t[m_size];
 	memset(m_resource, 0, (size_t)m_size);
@@ -39,7 +39,7 @@ VertexBuffer::VertexBuffer(RendererImplemented* renderer, int size, bool isDynam
 VertexBuffer::~VertexBuffer()
 {
 	GLExt::glDeleteBuffers(1, &m_buffer);
-	delete [] m_resource;
+	delete[] m_resource;
 }
 
 //-----------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ VertexBuffer::~VertexBuffer()
 //-----------------------------------------------------------------------------------
 VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount)
 {
-	return new VertexBuffer( renderer, size, isDynamic, hasRefCount);
+	return new VertexBuffer(renderer, size, isDynamic, hasRefCount);
 }
 
 GLuint VertexBuffer::GetInterface()
@@ -69,7 +69,8 @@ void VertexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 void VertexBuffer::OnResetDevice()
 {
-	if (IsValid()) return;
+	if (IsValid())
+		return;
 
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
@@ -86,7 +87,7 @@ void VertexBuffer::OnResetDevice()
 //-----------------------------------------------------------------------------------
 void VertexBuffer::Lock()
 {
-	assert( !m_isLock );
+	assert(!m_isLock);
 
 	m_isLock = true;
 	m_offset = 0;
@@ -98,13 +99,14 @@ void VertexBuffer::Lock()
 //-----------------------------------------------------------------------------------
 bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment)
 {
-	assert( !m_isLock );
-	assert( !m_ringBufferLock );
-	assert( this->m_isDynamic );
+	assert(!m_isLock);
+	assert(!m_ringBufferLock);
+	assert(this->m_isDynamic);
 
-	if( size > m_size ) return false;
+	if (size > m_size)
+		return false;
 
-	m_vertexRingOffset =(m_vertexRingOffset + alignment - 1) / alignment* alignment;
+	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
 
 #ifdef __ANDROID__
 	if (true)
@@ -115,7 +117,7 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 		offset = 0;
 		data = m_resource;
 		m_vertexRingOffset = size;
-		
+
 		m_vertexRingStart = offset;
 		m_offset = size;
 	}
@@ -136,7 +138,8 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 
 bool VertexBuffer::TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment)
 {
-	if ((int32_t) m_vertexRingOffset + size > m_size) return false;
+	if ((int32_t)m_vertexRingOffset + size > m_size)
+		return false;
 
 	return RingBufferLock(size, offset, data, alignment);
 }
@@ -146,7 +149,7 @@ bool VertexBuffer::TryRingBufferLock(int32_t size, int32_t& offset, void*& data,
 //-----------------------------------------------------------------------------------
 void VertexBuffer::Unlock()
 {
-	assert( m_isLock || m_ringBufferLock );
+	assert(m_isLock || m_ringBufferLock);
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
@@ -162,13 +165,13 @@ void VertexBuffer::Unlock()
 	}
 	else
 	{
-        // giMapBuffer is invalid with OpenGLES3 after iOS12.2?
-        bool avoidIOS122 = false;
+		// giMapBuffer is invalid with OpenGLES3 after iOS12.2?
+		bool avoidIOS122 = false;
 #if defined(__APPLE__)
-        if(GLExt::GetDeviceType() == OpenGLDeviceType::OpenGLES3)
-        {
-            avoidIOS122 = true;
-        }
+		if (GLExt::GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+		{
+			avoidIOS122 = true;
+		}
 #endif
 
 		if (GLExt::IsSupportedMapBuffer() && !avoidIOS122)
@@ -217,7 +220,7 @@ void VertexBuffer::Unlock()
 	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
+
 	if (m_isLock)
 	{
 		m_vertexRingOffset += m_offset;
@@ -235,7 +238,7 @@ bool VertexBuffer::IsValid()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 ﻿
 #include "EffekseerTool.Renderer.h"
+#include "EffekseerTool.Culling.h"
 #include "EffekseerTool.Grid.h"
 #include "EffekseerTool.Guide.h"
-#include "EffekseerTool.Culling.h"
 #include "EffekseerTool.Paste.h"
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
@@ -10,156 +10,152 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
-
 namespace EffekseerTool
 {
-	Renderer::DistortingCallback::DistortingCallback(efk::Graphics* renderer)
-		: renderer(renderer)
-	{
-		IsEnabled = true;
-		Blit = true;
-	}
+Renderer::DistortingCallback::DistortingCallback(efk::Graphics* renderer)
+	: renderer(renderer)
+{
+	IsEnabled = true;
+	Blit = true;
+}
 
-	Renderer::DistortingCallback::~DistortingCallback()
-	{
-	
-	}
+Renderer::DistortingCallback::~DistortingCallback()
+{
+}
 
-	bool Renderer::DistortingCallback::OnDistorting()
+bool Renderer::DistortingCallback::OnDistorting()
+{
+	if (Blit)
 	{
-		if (Blit)
+		renderer->CopyToBackground();
+
+		if (renderer->GetDeviceType() == efk::DeviceType::OpenGL)
 		{
-			renderer->CopyToBackground();
-
-			if (renderer->GetDeviceType() == efk::DeviceType::OpenGL)
-			{
-				auto r = (::EffekseerRendererGL::Renderer*)renderer->GetRenderer();
-				r->SetBackground((GLuint)(size_t)renderer->GetBack());
-			}
-#ifdef _WIN32
-			else if (renderer->GetDeviceType() == efk::DeviceType::DirectX11)
-			{
-				auto r = (::EffekseerRendererDX11::Renderer*)renderer->GetRenderer();
-				r->SetBackground((ID3D11ShaderResourceView*)renderer->GetBack());
-			}
-			else
-			{
-				assert(0);
-			}
-#endif
-		}
-
-		return IsEnabled;
-	}
-
-	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType)
-		: m_squareMaxCount(squareMaxCount)
-		, m_projection(PROJECTION_TYPE_PERSPECTIVE)
-		, m_renderer(NULL)
-
-		, RateOfMagnification(1.0f)
-
-		, m_grid(NULL)
-		, m_guide(NULL)
-		, m_culling(NULL)
-		, m_background(NULL)
-
-		, GuideWidth(100)
-		, GuideHeight(100)
-		, RendersGuide(false)
-
-		, IsGridShown(true)
-
-		, IsGridXYShown(false)
-		, IsGridXZShown(true)
-		, IsGridYZShown(false)
-
-		, IsRightHand(true)
-		, GridLength(2.0f)
-
-		, IsCullingShown(false)
-		, CullingRadius(0.0f)
-		, CullingPosition()
-
-		, Distortion(DistortionType::Current)
-		, RenderingMode(Effekseer::RenderMode::Normal)
-
-		, m_isSRGBMode(isSRGBMode)
-
-		, BackgroundColor(0, 0, 0, 255)
-		, GridColor(255, 255, 255, 255)
-		, IsBackgroundTranslucent(false)
-	{
-		spdlog::trace("Begin new ::EffekseerTool::Renderer");
-
-		if (deviceType == efk::DeviceType::OpenGL)
-		{
-			graphics = new efk::GraphicsGL();
+			auto r = (::EffekseerRendererGL::Renderer*)renderer->GetRenderer();
+			r->SetBackground((GLuint)(size_t)renderer->GetBack());
 		}
 #ifdef _WIN32
-		else if (deviceType == efk::DeviceType::DirectX11)
+		else if (renderer->GetDeviceType() == efk::DeviceType::DirectX11)
 		{
-			graphics = new efk::GraphicsDX11();
+			auto r = (::EffekseerRendererDX11::Renderer*)renderer->GetRenderer();
+			r->SetBackground((ID3D11ShaderResourceView*)renderer->GetBack());
 		}
 		else
 		{
 			assert(0);
 		}
 #endif
-		spdlog::trace("OK new ::efk::Graphics");
-
-		graphics->LostedDevice = [this]() -> void
-		{
-			if (backgroundData != nullptr)
-			{
-				textureLoader->Unload(backgroundData);
-				backgroundData = nullptr;
-			}
-
-			viewRenderTexture.reset();
-			viewDepthTexture.reset();
-
-			if (LostedDevice != nullptr)
-			{
-				LostedDevice();
-			}
-		};
-
-		graphics->ResettedDevice = [this]() -> void
-		{
-			if (ResettedDevice != nullptr)
-			{
-				ResettedDevice();
-			}
-
-			backgroundData = textureLoader->Load(backgroundPath.c_str(), Effekseer::TextureType::Color);
-		};
-
-		spdlog::trace("End new ::EffekseerTool::Renderer");
 	}
 
-	Renderer::~Renderer()
-	{
-		assert(!m_recording);
+	return IsEnabled;
+}
 
+Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType)
+	: m_squareMaxCount(squareMaxCount)
+	, m_projection(PROJECTION_TYPE_PERSPECTIVE)
+	, m_renderer(NULL)
+
+	, RateOfMagnification(1.0f)
+
+	, m_grid(NULL)
+	, m_guide(NULL)
+	, m_culling(NULL)
+	, m_background(NULL)
+
+	, GuideWidth(100)
+	, GuideHeight(100)
+	, RendersGuide(false)
+
+	, IsGridShown(true)
+
+	, IsGridXYShown(false)
+	, IsGridXZShown(true)
+	, IsGridYZShown(false)
+
+	, IsRightHand(true)
+	, GridLength(2.0f)
+
+	, IsCullingShown(false)
+	, CullingRadius(0.0f)
+	, CullingPosition()
+
+	, Distortion(DistortionType::Current)
+	, RenderingMode(Effekseer::RenderMode::Normal)
+
+	, m_isSRGBMode(isSRGBMode)
+
+	, BackgroundColor(0, 0, 0, 255)
+	, GridColor(255, 255, 255, 255)
+	, IsBackgroundTranslucent(false)
+{
+	spdlog::trace("Begin new ::EffekseerTool::Renderer");
+
+	if (deviceType == efk::DeviceType::OpenGL)
+	{
+		graphics = new efk::GraphicsGL();
+	}
+#ifdef _WIN32
+	else if (deviceType == efk::DeviceType::DirectX11)
+	{
+		graphics = new efk::GraphicsDX11();
+	}
+	else
+	{
+		assert(0);
+	}
+#endif
+	spdlog::trace("OK new ::efk::Graphics");
+
+	graphics->LostedDevice = [this]() -> void {
 		if (backgroundData != nullptr)
 		{
 			textureLoader->Unload(backgroundData);
 			backgroundData = nullptr;
 		}
 
-		ES_SAFE_DELETE(textureLoader);
+		viewRenderTexture.reset();
+		viewDepthTexture.reset();
 
-		ES_SAFE_DELETE(m_guide);
-		ES_SAFE_DELETE(m_grid);
-		ES_SAFE_DELETE(m_culling);
+		if (LostedDevice != nullptr)
+		{
+			LostedDevice();
+		}
+	};
 
-		ES_SAFE_DELETE(m_background);
+	graphics->ResettedDevice = [this]() -> void {
+		if (ResettedDevice != nullptr)
+		{
+			ResettedDevice();
+		}
 
-		ES_SAFE_DELETE(graphics);
+		backgroundData = textureLoader->Load(backgroundPath.c_str(), Effekseer::TextureType::Color);
+	};
+
+	spdlog::trace("End new ::EffekseerTool::Renderer");
+}
+
+Renderer::~Renderer()
+{
+	assert(!m_recording);
+
+	if (backgroundData != nullptr)
+	{
+		textureLoader->Unload(backgroundData);
+		backgroundData = nullptr;
 	}
 
-bool Renderer::Initialize( void* handle, int width, int height )
+	ES_SAFE_DELETE(textureLoader);
+
+	ES_SAFE_DELETE(m_guide);
+	ES_SAFE_DELETE(m_grid);
+	ES_SAFE_DELETE(m_culling);
+
+	ES_SAFE_DELETE(m_background);
+
+	ES_SAFE_DELETE(graphics);
+}
+
+bool Renderer::Initialize(void* handle, int width, int height)
 {
 	spdlog::trace("Begin Renderer::Initialize");
 
@@ -198,8 +194,8 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
 	m_linearToSRGBEffect.reset(efk::PostEffect::CreateLinearToSRGB(graphics));
 
-	if (!(m_bloomEffect != nullptr && m_bloomEffect->GetIsValid() && 
-		m_tonemapEffect != nullptr && m_tonemapEffect->GetIsValid() &&
+	if (!(m_bloomEffect != nullptr && m_bloomEffect->GetIsValid() &&
+		  m_tonemapEffect != nullptr && m_tonemapEffect->GetIsValid() &&
 		  m_linearToSRGBEffect != nullptr && m_linearToSRGBEffect->GetIsValid()))
 	{
 		spdlog::trace("Failed PostProcessing");
@@ -243,7 +239,7 @@ bool Renderer::Initialize( void* handle, int width, int height )
 			msaaSamples = 1;
 		}
 
-		textureFormat_ = efk::TextureFormat::RGBA8U;		
+		textureFormat_ = efk::TextureFormat::RGBA8U;
 	}
 
 	spdlog::trace("HDR {} {}", isMSAAHDRSupported, isHDRSupported);
@@ -252,13 +248,13 @@ bool Renderer::Initialize( void* handle, int width, int height )
 
 	spdlog::trace("OK Check format");
 
-	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
+	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
 	{
-		SetPerspectiveFov( width, height );
+		SetPerspectiveFov(width, height);
 	}
-	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
+	else if (m_projection == PROJECTION_TYPE_ORTHOGRAPHIC)
 	{
-		SetOrthographic( width, height );
+		SetOrthographic(width, height);
 	}
 
 	textureLoader = graphics->GetRenderer()->CreateTextureLoader();
@@ -283,21 +279,21 @@ eProjectionType Renderer::GetProjectionType()
 	return m_projection;
 }
 
-void Renderer::SetProjectionType( eProjectionType type )
+void Renderer::SetProjectionType(eProjectionType type)
 {
 	m_projection = type;
 
-	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
+	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
 	{
-		SetPerspectiveFov( currentWidth, currentHeight );
+		SetPerspectiveFov(currentWidth, currentHeight);
 	}
-	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
+	else if (m_projection == PROJECTION_TYPE_ORTHOGRAPHIC)
 	{
-		SetOrthographic( currentWidth, currentHeight );
+		SetOrthographic(currentWidth, currentHeight);
 	}
 }
 
-void Renderer::SetPerspectiveFov( int width, int height )
+void Renderer::SetPerspectiveFov(int width, int height)
 {
 	::Effekseer::Matrix44 proj;
 
@@ -327,12 +323,11 @@ void Renderer::SetPerspectiveFov( int width, int height )
 			proj.PerspectiveFovLH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, ClippingStart, ClippingEnd);
 		}
 	}
-	
 
 	proj.Values[0][0] *= RateOfMagnification;
 	proj.Values[1][1] *= RateOfMagnification;
 
-	m_renderer->SetProjectionMatrix( proj );
+	m_renderer->SetProjectionMatrix(proj);
 }
 
 void Renderer::SetOrthographic(int width, int height)
@@ -343,28 +338,30 @@ void Renderer::SetOrthographic(int width, int height)
 	{
 		// Right hand coordinate
 		proj.OrthographicRH(
-			(float)width / m_orthoScale / RateOfMagnification, 
-			(float)height / m_orthoScale / RateOfMagnification, 
-			ClippingStart, ClippingEnd);
+			(float)width / m_orthoScale / RateOfMagnification,
+			(float)height / m_orthoScale / RateOfMagnification,
+			ClippingStart,
+			ClippingEnd);
 	}
 	else
 	{
 		// Left hand coordinate
 		proj.OrthographicLH(
-			(float)width / m_orthoScale / RateOfMagnification, 
-			(float)height / m_orthoScale / RateOfMagnification, 
-			ClippingStart, ClippingEnd);
+			(float)width / m_orthoScale / RateOfMagnification,
+			(float)height / m_orthoScale / RateOfMagnification,
+			ClippingStart,
+			ClippingEnd);
 	}
 
 	m_renderer->SetProjectionMatrix(proj);
 }
 
-void Renderer::SetOrthographicScale( float scale )
+void Renderer::SetOrthographicScale(float scale)
 {
 	m_orthoScale = scale;
 }
 
-bool Renderer::Resize( int width, int height )
+bool Renderer::Resize(int width, int height)
 {
 	m_windowWidth = width;
 	m_windowHeight = height;
@@ -374,14 +371,14 @@ bool Renderer::Resize( int width, int height )
 		currentWidth = width;
 		currentHeight = height;
 	}
-	
-	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
+
+	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
 	{
-		SetPerspectiveFov( width, height );
+		SetPerspectiveFov(width, height);
 	}
-	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
+	else if (m_projection == PROJECTION_TYPE_ORTHOGRAPHIC)
 	{
-		SetOrthographic( width, height );
+		SetOrthographic(width, height);
 	}
 
 	graphics->Resize(width, height);
@@ -391,13 +388,13 @@ bool Renderer::Resize( int width, int height )
 
 void Renderer::RecalcProjection()
 {
-	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
+	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
 	{
-		SetPerspectiveFov( currentWidth, currentHeight );
+		SetPerspectiveFov(currentWidth, currentHeight);
 	}
-	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
+	else if (m_projection == PROJECTION_TYPE_ORTHOGRAPHIC)
 	{
-		SetOrthographic( currentWidth, currentHeight );
+		SetOrthographic(currentWidth, currentHeight);
 	}
 }
 
@@ -412,7 +409,7 @@ bool Renderer::BeginRendering()
 		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 
-	if (m_bloomEffect == nullptr &&  m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
+	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
 	{
 		graphics->SetRenderTarget(lastDstRenderTexture, lastDstDepthTexture);
 	}
@@ -421,17 +418,17 @@ bool Renderer::BeginRendering()
 		if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
 		{
 			hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-			if(!hdrRenderTexture->Initialize(screenWidth, screenHeight, textureFormat_))
+			if (!hdrRenderTexture->Initialize(screenWidth, screenHeight, textureFormat_))
 			{
 				spdlog::trace("Failed to initialize hdrRenderTexture {},{}", screenWidth, screenHeight);
 			}
 
 			depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
-			if(!depthTexture->Initialize(screenWidth, screenHeight, msaaSamples))
+			if (!depthTexture->Initialize(screenWidth, screenHeight, msaaSamples))
 			{
 				spdlog::trace("Failed to initialize depthTexture {},{}", screenWidth, screenHeight);
 			}
-	
+
 			if (msaaSamples > 1)
 			{
 				hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
@@ -441,7 +438,7 @@ bool Renderer::BeginRendering()
 			if (m_isSRGBMode)
 			{
 				linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-				linearRenderTexture->Initialize(screenWidth, screenHeight, textureFormat_);			
+				linearRenderTexture->Initialize(screenWidth, screenHeight, textureFormat_);
 			}
 		}
 
@@ -454,7 +451,7 @@ bool Renderer::BeginRendering()
 			graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
 		}
 	}
-	
+
 	graphics->BeginScene();
 
 	if (!m_recording)
@@ -462,7 +459,7 @@ bool Renderer::BeginRendering()
 		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 
-	if( m_recording && IsBackgroundTranslucent )
+	if (m_recording && IsBackgroundTranslucent)
 	{
 		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
@@ -472,32 +469,32 @@ bool Renderer::BeginRendering()
 	}
 
 	// Render background (the size of texture is ignored)
-	if( !m_recording && backgroundData != nullptr)
+	if (!m_recording && backgroundData != nullptr)
 	{
 		m_background->Rendering(backgroundData, 1024, 1024);
 	}
-	else if(!m_recording)
+	else if (!m_recording)
 	{
 		m_background->Rendering(nullptr, 1024, 1024);
 	}
 
-	if( !m_recording && IsGridShown )
+	if (!m_recording && IsGridShown)
 	{
-		m_grid->SetLength( GridLength );
+		m_grid->SetLength(GridLength);
 		m_grid->IsShownXY = IsGridXYShown;
 		m_grid->IsShownXZ = IsGridXZShown;
 		m_grid->IsShownYZ = IsGridYZShown;
 		m_grid->Rendering(GridColor, IsRightHand);
 	}
 
-	if( !m_recording )
+	if (!m_recording)
 	{
 		m_culling->IsShown = IsCullingShown;
 		m_culling->Radius = CullingRadius;
 		m_culling->X = CullingPosition.X;
 		m_culling->Y = CullingPosition.Y;
 		m_culling->Z = CullingPosition.Z;
-		m_culling->Rendering( IsRightHand );
+		m_culling->Rendering(IsRightHand);
 	}
 
 	// ガイド部分が描画されるように拡大
@@ -508,18 +505,18 @@ bool Renderer::BeginRendering()
 		auto proj = m_projMatTemp;
 
 		::Effekseer::Matrix44 mat;
-		mat.Values[0][0] = (float) currentWidth / (float) GuideWidth;
-		mat.Values[1][1] = (float) currentHeight / (float) GuideHeight;
+		mat.Values[0][0] = (float)currentWidth / (float)GuideWidth;
+		mat.Values[1][1] = (float)currentHeight / (float)GuideHeight;
 		::Effekseer::Matrix44::Mul(proj, proj, mat);
 
 		m_renderer->SetProjectionMatrix(proj);
 	}
-	
+
 	// Distoriton
 	if (Distortion == DistortionType::Current)
 	{
 		CopyToBackground();
-		
+
 		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 		{
 			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
@@ -571,7 +568,7 @@ bool Renderer::BeginRendering()
 	m_renderer->SetRenderMode(RenderingMode);
 
 	m_renderer->BeginRendering();
-	
+
 	return true;
 }
 
@@ -579,9 +576,9 @@ bool Renderer::EndRendering()
 {
 	m_renderer->EndRendering();
 
-	if( RendersGuide && !m_recording )
+	if (RendersGuide && !m_recording)
 	{
-		m_guide->Rendering( currentWidth, currentHeight, GuideWidth, GuideHeight );
+		m_guide->Rendering(currentWidth, currentHeight, GuideWidth, GuideHeight);
 	}
 
 	if (!m_recording)
@@ -609,7 +606,7 @@ bool Renderer::EndRendering()
 		m_renderer->SetCameraMatrix(m_cameraMatTemp);
 		m_renderer->SetProjectionMatrix(m_projMatTemp);
 	}
-	
+
 	graphics->EndScene();
 
 	return true;
@@ -697,10 +694,10 @@ void Renderer::RenderPostEffect()
 	}
 }
 
-bool Renderer::BeginRecord( int32_t width, int32_t height )
+bool Renderer::BeginRecord(int32_t width, int32_t height)
 {
-	assert( !m_recording );
-	
+	assert(!m_recording);
+
 	m_recordingWidth = width;
 	m_recordingHeight = height;
 
@@ -717,16 +714,16 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlp
 
 	graphics->EndRecord(pixels);
 
-	auto f2b = [](float v) -> uint8_t
-	{
+	auto f2b = [](float v) -> uint8_t {
 		auto v_ = v * 255;
-		if (v_ > 255) v_ = 255;
-		if (v_ < 0) v_ = 0;
+		if (v_ > 255)
+			v_ = 255;
+		if (v_ < 0)
+			v_ = 0;
 		return v_;
 	};
 
-	auto b2f = [](uint8_t v) -> float
-	{
+	auto b2f = [](uint8_t v) -> float {
 		auto v_ = (float)v / 255.0f;
 		return v_;
 	};
@@ -770,10 +767,11 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlp
 
 void Renderer::LoadBackgroundImage(const char16_t* path)
 {
-	if (backgroundPath == path) return;
+	if (backgroundPath == path)
+		return;
 
 	backgroundPath = path;
-	
+
 	if (backgroundData != nullptr)
 	{
 		textureLoader->Unload(backgroundData);
@@ -791,7 +789,7 @@ void Renderer::CopyToBackground()
 	{
 		::Effekseer::TextureData textureData;
 		textureData.HasMipmap = false;
-		textureData.Width = 1024; // dummy
+		textureData.Width = 1024;  // dummy
 		textureData.Height = 1024; // dummy
 		textureData.TextureFormat = Effekseer::TextureFormatType::ABGR8;
 		textureData.UserPtr = nullptr;
@@ -817,4 +815,4 @@ uint64_t Renderer::GetViewID()
 	return viewRenderTexture->GetViewID();
 }
 
-}
+} // namespace EffekseerTool

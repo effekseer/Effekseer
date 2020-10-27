@@ -1,22 +1,22 @@
 ﻿
-#ifndef	__EFFEKSEER_EFFECTNODE_H__
-#define	__EFFEKSEER_EFFECTNODE_H__
+#ifndef __EFFEKSEER_EFFECTNODE_H__
+#define __EFFEKSEER_EFFECTNODE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
-#include "Effekseer.Vector3D.h"
-#include "Effekseer.RectF.h"
-#include "Effekseer.InternalStruct.h"
 #include "Effekseer.FCurves.h"
+#include "Effekseer.InternalStruct.h"
+#include "Effekseer.RectF.h"
+#include "Effekseer.Vector3D.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 
 #include "Effekseer.Effect.h"
+#include "Noise/CurlNoise.h"
 #include "Parameter/Effekseer.Parameters.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
-#include "Noise/CurlNoise.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -59,8 +59,7 @@ public:
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 			Color all;
@@ -130,10 +129,10 @@ struct ParameterCommonValues_8
 	BindType TranslationBindType;
 	BindType RotationBindType;
 	BindType ScalingBindType;
-	int		RemoveWhenLifeIsExtinct;
-	int		RemoveWhenParentIsRemoved;
-	int		RemoveWhenChildrenIsExtinct;
-	random_int	life;
+	int RemoveWhenLifeIsExtinct;
+	int RemoveWhenParentIsRemoved;
+	int RemoveWhenChildrenIsExtinct;
+	random_int life;
 	float GenerationTime;
 	float GenerationTimeOffset;
 };
@@ -152,7 +151,7 @@ struct ParameterCommonValues
 	int RemoveWhenLifeIsExtinct = 1;
 	int RemoveWhenParentIsRemoved = 0;
 	int RemoveWhenChildrenIsExtinct = 0;
-	random_int	life;
+	random_int life;
 	random_float GenerationTime;
 	random_float GenerationTimeOffset;
 
@@ -169,12 +168,12 @@ struct ParameterCommonValues
 
 struct ParameterDepthValues
 {
-	float	DepthOffset;
-	bool	IsDepthOffsetScaledWithCamera;
-	bool	IsDepthOffsetScaledWithParticleScale;
-	ZSortType	ZSort;
-	int32_t	DrawingPriority;
-	float	SoftParticle;
+	float DepthOffset;
+	bool IsDepthOffsetScaledWithCamera;
+	bool IsDepthOffsetScaledWithParticleScale;
+	ZSortType ZSort;
+	int32_t DrawingPriority;
+	float SoftParticle;
 
 	NodeRendererDepthParameter DepthParameter;
 
@@ -222,9 +221,9 @@ struct ParameterTranslationPVA
 	RefMinMax RefEqP;
 	RefMinMax RefEqV;
 	RefMinMax RefEqA;
-	random_vector3d	location;
-	random_vector3d	velocity;
-	random_vector3d	acceleration;
+	random_vector3d location;
+	random_vector3d velocity;
+	random_vector3d acceleration;
 };
 
 struct ParameterTranslationEasing
@@ -254,11 +253,10 @@ struct LocalForceFieldTurbulenceParameter
 
 struct LocalForceFieldParameter
 {
-	std::unique_ptr <LocalForceFieldTurbulenceParameter> Turbulence;
+	std::unique_ptr<LocalForceFieldTurbulenceParameter> Turbulence;
 
 	bool Load(uint8_t*& pos, int32_t version);
 };
-
 
 enum class LocationAbsType : int32_t
 {
@@ -271,20 +269,20 @@ struct LocationAbsParameter
 {
 	LocationAbsType type = LocationAbsType::None;
 
-	union
-	{
+	union {
 		struct
 		{
 
 		} none;
 
-		Vec3f	gravity;
+		Vec3f gravity;
 
-		struct {
-			float	force;
-			float	control;
-			float	minRange;
-			float	maxRange;
+		struct
+		{
+			float force;
+			float control;
+			float minRange;
+			float maxRange;
 		} attractiveForce;
 	};
 };
@@ -324,9 +322,9 @@ struct ParameterRotationPVA
 	RefMinMax RefEqP;
 	RefMinMax RefEqV;
 	RefMinMax RefEqA;
-	random_vector3d	rotation;
-	random_vector3d	velocity;
-	random_vector3d	acceleration;
+	random_vector3d rotation;
+	random_vector3d velocity;
+	random_vector3d acceleration;
 };
 
 struct ParameterRotationEasing
@@ -341,10 +339,10 @@ struct ParameterRotationEasing
 //----------------------------------------------------------------------------------
 struct ParameterRotationAxisPVA
 {
-	random_vector3d	axis;
-	random_float	rotation;
-	random_float	velocity;
-	random_float	acceleration;
+	random_vector3d axis;
+	random_float rotation;
+	random_float velocity;
+	random_float acceleration;
 };
 
 //----------------------------------------------------------------------------------
@@ -352,8 +350,8 @@ struct ParameterRotationAxisPVA
 //----------------------------------------------------------------------------------
 struct ParameterRotationAxisEasing
 {
-	random_vector3d	axis;
-	easing_float	easing;
+	random_vector3d axis;
+	easing_float easing;
 };
 
 //----------------------------------------------------------------------------------
@@ -419,7 +417,7 @@ struct ParameterScalingSinglePVA
 //----------------------------------------------------------------------------------
 struct ParameterGenerationLocation
 {
-	int	EffectsRotation;
+	int EffectsRotation;
 
 	enum class AxisType : int32_t
 	{
@@ -463,8 +461,7 @@ struct ParameterGenerationLocation
 		Order = 1,
 	};
 
-	union
-	{
+	union {
 		struct
 		{
 			random_vector3d location;
@@ -479,28 +476,28 @@ struct ParameterGenerationLocation
 
 		struct
 		{
-			int32_t		index;
-			eModelType	type;
+			int32_t index;
+			eModelType type;
 		} model;
 
 		struct
 		{
-			int32_t			division;
-			random_float	radius;
-			random_float	angle_start;
-			random_float	angle_end;
-			eCircleType		type;
-			AxisType		axisDirection;
-			random_float	angle_noize;
+			int32_t division;
+			random_float radius;
+			random_float angle_start;
+			random_float angle_end;
+			eCircleType type;
+			AxisType axisDirection;
+			random_float angle_noize;
 		} circle;
 
 		struct
 		{
-			int32_t			division;
-			random_vector3d	position_start;
-			random_vector3d	position_end;
-			random_float	position_noize;
-			LineType		type;
+			int32_t division;
+			random_vector3d position_start;
+			random_vector3d position_end;
+			random_float position_noize;
+			LineType type;
 		} line;
 	};
 
@@ -661,7 +658,6 @@ struct ParameterCustomData
 	}
 };
 
-
 struct ParameterRendererCommon
 {
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -671,7 +667,7 @@ struct ParameterRendererCommon
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
 
 	//! texture index except a file
-	int32_t				ColorTextureIndex = -1;
+	int32_t ColorTextureIndex = -1;
 
 	//! texture index except a file
 	int32_t Texture2Index = -1;
@@ -700,14 +696,14 @@ struct ParameterRendererCommon
 	TextureWrapType Wrap3Type = TextureWrapType::Repeat;
 #endif
 
-	bool				ZWrite = false;
+	bool ZWrite = false;
 
-	bool				ZTest = false;
+	bool ZTest = false;
 
 	//! this value is not unused
-	bool				Distortion = false;
+	bool Distortion = false;
 
-	float				DistortionIntensity = 0;
+	float DistortionIntensity = 0;
 
 	BindType ColorBindType = BindType::NotBind;
 
@@ -727,8 +723,8 @@ struct ParameterRendererCommon
 
 	struct
 	{
-		float	Frame;
-		easing_float_without_random	Value;
+		float Frame;
+		easing_float_without_random Value;
 	} FadeIn;
 
 	enum
@@ -741,8 +737,8 @@ struct ParameterRendererCommon
 
 	struct
 	{
-		float	Frame;
-		easing_float_without_random	Value;
+		float Frame;
+		easing_float_without_random Value;
 	} FadeOut;
 
 	enum
@@ -767,27 +763,26 @@ struct ParameterRendererCommon
 	*/
 	struct UVScroll_09
 	{
-		rectf		Position;
-		vector2d	Speed;
+		rectf Position;
+		vector2d Speed;
 	};
 
-	union
-	{
+	union {
 		struct
 		{
 		} Default;
 
 		struct
 		{
-			rectf	Position;
+			rectf Position;
 		} Fixed;
 
 		struct
 		{
-			rectf	Position;
-			int32_t	FrameLength;
-			int32_t	FrameCountX;
-			int32_t	FrameCountY;
+			rectf Position;
+			int32_t FrameLength;
+			int32_t FrameCountX;
+			int32_t FrameCountY;
 
 			enum
 			{
@@ -798,7 +793,7 @@ struct ParameterRendererCommon
 				LOOPTYPE_DWORD = 0x7fffffff,
 			} LoopType;
 
-			random_int	StartFrame;
+			random_int StartFrame;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			enum
@@ -812,9 +807,9 @@ struct ParameterRendererCommon
 
 		struct
 		{
-			random_vector2d	Position;
-			random_vector2d	Size;
-			random_vector2d	Speed;
+			random_vector2d Position;
+			random_vector2d Size;
+			random_vector2d Speed;
 		} Scroll;
 
 		struct
@@ -905,7 +900,6 @@ struct ParameterRendererCommon
 
 				memcpy(&textures, pos, sizeof(int));
 				pos += sizeof(int);
-
 
 				Material.MaterialTextures.resize(textures);
 				memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
@@ -1011,8 +1005,7 @@ struct ParameterRendererCommon
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		if (version >= 16)
 		{
-			auto LoadUVParameter = [&](const int UVIndex)
-			{
+			auto LoadUVParameter = [&](const int UVIndex) {
 				const auto& UVType = UVTypes[UVIndex];
 				auto& UV = UVs[UVIndex];
 
@@ -1095,7 +1088,6 @@ struct ParameterRendererCommon
 				UV.Scroll.Speed.max.x = values.Speed.x;
 				UV.Scroll.Speed.max.y = values.Speed.y;
 				UV.Scroll.Speed.min = UV.Scroll.Speed.max;
-
 			}
 			else
 			{
@@ -1215,8 +1207,7 @@ struct ParameterAlphaCrunch
 		FPI = FOUR_POINT_INTERPOLATION,
 	} Type;
 
-	union
-	{
+	union {
 		struct
 		{
 			int32_t RefEq;
@@ -1247,7 +1238,8 @@ struct ParameterAlphaCrunch
 	};
 
 	ParameterAlphaCrunch()
-	{}
+	{
+	}
 
 	~ParameterAlphaCrunch()
 	{
@@ -1268,10 +1260,19 @@ struct ParameterAlphaCrunch
 
 		switch (Type)
 		{
-		case Effekseer::ParameterAlphaCrunch::EType::FIXED: memcpy(&Fixed, pos, BufferSize); break;
-		case Effekseer::ParameterAlphaCrunch::EType::FPI: memcpy(&FourPointInterpolation, pos, BufferSize); break;
-		case Effekseer::ParameterAlphaCrunch::EType::EASING: memcpy(&Easing, pos, BufferSize); break;
-		case Effekseer::ParameterAlphaCrunch::EType::F_CURVE: FCurve.Threshold = new FCurveScalar();  FCurve.Threshold->Load(pos, version); break;
+		case Effekseer::ParameterAlphaCrunch::EType::FIXED:
+			memcpy(&Fixed, pos, BufferSize);
+			break;
+		case Effekseer::ParameterAlphaCrunch::EType::FPI:
+			memcpy(&FourPointInterpolation, pos, BufferSize);
+			break;
+		case Effekseer::ParameterAlphaCrunch::EType::EASING:
+			memcpy(&Easing, pos, BufferSize);
+			break;
+		case Effekseer::ParameterAlphaCrunch::EType::F_CURVE:
+			FCurve.Threshold = new FCurveScalar();
+			FCurve.Threshold->Load(pos, version);
+			break;
 		}
 
 		pos += BufferSize;
@@ -1306,13 +1307,13 @@ enum ParameterSoundPanType
 //----------------------------------------------------------------------------------
 struct ParameterSound
 {
-	int32_t			WaveId;
-	random_float	Volume;
-	random_float	Pitch;
+	int32_t WaveId;
+	random_float Volume;
+	random_float Pitch;
 	ParameterSoundPanType PanType;
-	random_float	Pan;
-	float			Distance;
-	random_int		Delay;
+	random_float Pan;
+	float Distance;
+	random_int Delay;
 };
 
 /**
@@ -1328,7 +1329,7 @@ struct DynamicFactorParameter
 	std::array<float, 3> ScaleInv;
 
 	DynamicFactorParameter()
-	{ 
+	{
 		Tra.fill(1.0f);
 		TraInv.fill(1.0f);
 		Rot.fill(1.0f);
@@ -1337,7 +1338,6 @@ struct DynamicFactorParameter
 		ScaleInv.fill(1.0f);
 	}
 };
-
 
 //----------------------------------------------------------------------------------
 //
@@ -1350,15 +1350,14 @@ enum eRenderingOrder
 	RenderingOrder_DWORD = 0x7fffffff,
 };
 
-
 /**
 @brief	ノードインスタンス生成クラス
 @note
 エフェクトのノードの実体を生成する。
 */
 class EffectNodeImplemented
-	: public EffectNode
-	, public AlignedAllocationPolicy<16>
+	: public EffectNode,
+	  public AlignedAllocationPolicy<16>
 {
 	friend class Manager;
 	friend class EffectImplemented;
@@ -1366,13 +1365,13 @@ class EffectNodeImplemented
 
 protected:
 	// 所属しているパラメーター
-	Effect*	m_effect;
-	
+	Effect* m_effect;
+
 	//! a generation in the node tree
 	int generation_;
 
 	// 子ノード
-	std::vector<EffectNodeImplemented*>	m_Nodes;
+	std::vector<EffectNodeImplemented*> m_Nodes;
 
 	// ユーザーデータ
 	void* m_userData;
@@ -1393,7 +1392,6 @@ protected:
 	void CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2);
 
 public:
-
 	/**
 	@brief	\~english Whether to draw the node.
 	\~japanese このノードを描画するか?
@@ -1404,50 +1402,50 @@ public:
 	*/
 	bool IsRendered;
 
-	ParameterCommonValues		CommonValues;
+	ParameterCommonValues CommonValues;
 
-	ParameterTranslationType	TranslationType;
-	ParameterTranslationFixed	TranslationFixed;
-	ParameterTranslationPVA		TranslationPVA;
+	ParameterTranslationType TranslationType;
+	ParameterTranslationFixed TranslationFixed;
+	ParameterTranslationPVA TranslationPVA;
 	ParameterTranslationEasing TranslationEasing;
-	FCurveVector3D*				TranslationFCurve;
+	FCurveVector3D* TranslationFCurve;
 
 	std::array<LocalForceFieldParameter, LocalFieldSlotMax> LocalForceFields;
-	LocationAbsParameter		LocationAbs;
+	LocationAbsParameter LocationAbs;
 
-	ParameterRotationType		RotationType;
-	ParameterRotationFixed		RotationFixed;
-	ParameterRotationPVA		RotationPVA;
+	ParameterRotationType RotationType;
+	ParameterRotationFixed RotationFixed;
+	ParameterRotationPVA RotationPVA;
 	ParameterRotationEasing RotationEasing;
-	FCurveVector3D*				RotationFCurve;
+	FCurveVector3D* RotationFCurve;
 
-	ParameterRotationAxisPVA	RotationAxisPVA;
-	ParameterRotationAxisEasing	RotationAxisEasing;
+	ParameterRotationAxisPVA RotationAxisPVA;
+	ParameterRotationAxisEasing RotationAxisEasing;
 
-	ParameterScalingType		ScalingType;
-	ParameterScalingFixed		ScalingFixed;
-	ParameterScalingPVA			ScalingPVA;
+	ParameterScalingType ScalingType;
+	ParameterScalingFixed ScalingFixed;
+	ParameterScalingPVA ScalingPVA;
 	ParameterScalingEasing ScalingEasing;
-	ParameterScalingSinglePVA	ScalingSinglePVA;
-	easing_float				ScalingSingleEasing;
-	FCurveVector3D*				ScalingFCurve;
+	ParameterScalingSinglePVA ScalingSinglePVA;
+	easing_float ScalingSingleEasing;
+	FCurveVector3D* ScalingFCurve;
 
-	ParameterGenerationLocation	GenerationLocation;
+	ParameterGenerationLocation GenerationLocation;
 
-	ParameterDepthValues		DepthValues;
+	ParameterDepthValues DepthValues;
 
-	ParameterRendererCommon		RendererCommon;
+	ParameterRendererCommon RendererCommon;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	ParameterAlphaCrunch		AlphaCrunch;
+	ParameterAlphaCrunch AlphaCrunch;
 #endif
 
-	ParameterSoundType			SoundType;
-	ParameterSound				Sound;
+	ParameterSoundType SoundType;
+	ParameterSound Sound;
 
-	eRenderingOrder				RenderingOrder;
+	eRenderingOrder RenderingOrder;
 
-	int32_t						RenderingPriority = -1;
+	int32_t RenderingPriority = -1;
 
 	DynamicFactorParameter DynamicFactor;
 
@@ -1527,14 +1525,17 @@ public:
 	/**
 	@brief	ノードの種類取得
 	*/
-	virtual eEffectNodeType GetType() const { return EFFECT_NODE_TYPE_NONE; }
+	virtual eEffectNodeType GetType() const
+	{
+		return EFFECT_NODE_TYPE_NONE;
+	}
 };
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_EFFECTNODE_H__
+#endif // __EFFEKSEER_EFFECTNODE_H__

@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX9_DEVICEOBJECT_H__
-#define	__EFFEKSEERRENDERER_DX9_DEVICEOBJECT_H__
+#ifndef __EFFEKSEERRENDERER_DX9_DEVICEOBJECT_H__
+#define __EFFEKSEERRENDERER_DX9_DEVICEOBJECT_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -21,24 +21,26 @@ namespace EffekseerRendererDX9
 class DeviceObject
 {
 private:
-	RendererImplemented*	m_renderer;
+	RendererImplemented* m_renderer;
 
 public:
-		DeviceObject( RendererImplemented* renderer );
-		virtual ~DeviceObject();
+	DeviceObject(RendererImplemented* renderer);
+	virtual ~DeviceObject();
 
-	public:
-		virtual void OnLostDevice() = 0;
-		virtual void OnResetDevice() = 0;
-		virtual	void OnChangeDevice() {}
-		RendererImplemented* GetRenderer() const;
+public:
+	virtual void OnLostDevice() = 0;
+	virtual void OnResetDevice() = 0;
+	virtual void OnChangeDevice()
+	{
+	}
+	RendererImplemented* GetRenderer() const;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_DEVICEOBJECT_H__
+#endif // __EFFEKSEERRENDERER_DX9_DEVICEOBJECT_H__

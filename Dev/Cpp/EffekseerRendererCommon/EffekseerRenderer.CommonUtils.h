@@ -43,7 +43,10 @@ struct DynamicVertex
 	float AlphaThreshold;
 #endif
 
-	void SetColor(const VertexColor& color) { Col = color; }
+	void SetColor(const VertexColor& color)
+	{
+		Col = color;
+	}
 };
 
 struct DynamicVertexWithCustomData
@@ -182,7 +185,8 @@ static int32_t GetMaximumVertexSizeInAllTypes()
 /**
 	@brief	a view class to access an array with a stride
 */
-template <typename T> struct StrideView
+template <typename T>
+struct StrideView
 {
 	int32_t stride_;
 	uint8_t* pointer_;
@@ -234,7 +238,8 @@ template <typename T> struct StrideView
 /**
 	@brief	a view class to access an array with a stride
 */
-template <> struct StrideView<SimpleVertex>
+template <>
+struct StrideView<SimpleVertex>
 {
 	static const int32_t stride_ = sizeof(SimpleVertex);
 	uint8_t* pointer_;
@@ -286,7 +291,8 @@ template <> struct StrideView<SimpleVertex>
 /**
 	@brief	a view class to access an array with a stride
 */
-template <> struct StrideView<SimpleVertexDX9>
+template <>
+struct StrideView<SimpleVertexDX9>
 {
 	static const int32_t stride_ = sizeof(SimpleVertexDX9);
 	uint8_t* pointer_;
@@ -394,7 +400,8 @@ void ApplyDepthParameters(::Effekseer::Mat44f& mat,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 
-template <typename Vertex> inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::Mat43f& mat)
+template <typename Vertex>
+inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::Mat43f& mat)
 {
 	using namespace Effekseer;
 

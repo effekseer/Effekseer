@@ -107,7 +107,8 @@ class DistortingCallbackVulkan : public EffekseerRenderer::DistortingCallback
 
 public:
 	DistortingCallbackVulkan(EffectPlatformVulkan* platform, ::EffekseerRenderer::Renderer* renderer)
-		: platform_(platform), renderer_(renderer)
+		: platform_(platform)
+		, renderer_(renderer)
 	{
 	}
 
@@ -204,11 +205,19 @@ EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformVulkan::~EffectPlatformVulkan() {}
+EffectPlatformVulkan::~EffectPlatformVulkan()
+{
+}
 
-void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
+void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param)
+{
+	CreateCheckedTexture();
+}
 
-void EffectPlatformVulkan::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
+void EffectPlatformVulkan::DestroyDevice()
+{
+	EffectPlatformLLGI::DestroyDevice();
+}
 
 void EffectPlatformVulkan::BeginRendering()
 {
@@ -227,4 +236,7 @@ void EffectPlatformVulkan::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const { return checkTexture_; }
+LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const
+{
+	return checkTexture_;
+}

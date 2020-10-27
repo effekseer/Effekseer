@@ -7,7 +7,8 @@ namespace EffekseerRendererLLGI
 {
 
 ModelLoader::ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-	: graphicsDevice_(graphicsDevice), m_fileInterface(fileInterface)
+	: graphicsDevice_(graphicsDevice)
+	, m_fileInterface(fileInterface)
 {
 	LLGI::SafeAddRef(graphicsDevice_);
 
@@ -17,7 +18,10 @@ ModelLoader::ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterf
 	}
 }
 
-ModelLoader::~ModelLoader() { LLGI::SafeRelease(graphicsDevice_); }
+ModelLoader::~ModelLoader()
+{
+	LLGI::SafeRelease(graphicsDevice_);
+}
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {
@@ -41,13 +45,14 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 	return NULL;
 }
 
-void* ModelLoader::Load(const void* data, int32_t size) {
+void* ModelLoader::Load(const void* data, int32_t size)
+{
 	Model* model = new Model(static_cast<uint8_t*>(const_cast<void*>(data)), size, graphicsDevice_);
 
 	model->ModelCount = Effekseer::Min(Effekseer::Max(model->GetModelCount(), 1), 40);
 
 	model->InternalModels = new Model::InternalModel[model->GetFrameCount()];
-	
+
 	return model;
 }
 
@@ -61,4 +66,3 @@ void ModelLoader::Unload(void* data)
 }
 
 } // namespace EffekseerRendererLLGI
-

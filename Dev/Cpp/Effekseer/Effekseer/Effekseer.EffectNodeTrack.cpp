@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
+#include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
 #include "SIMD/Effekseer.SIMDUtils.h"
 
@@ -13,8 +13,8 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 
-#include "Effekseer.InstanceGroup.h"
 #include "Effekseer.EffectNodeTrack.h"
+#include "Effekseer.InstanceGroup.h"
 
 #include "Effekseer.Setting.h"
 
@@ -118,7 +118,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
-		
+
 		if (group->GetFirst() != nullptr)
 		{
 #ifdef __EFFEKSEER_BUILD_VERSION16__
@@ -356,7 +356,7 @@ void EffectNodeTrack::LoadValues(TrackSizeParameter& param, unsigned char*& pos)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

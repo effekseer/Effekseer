@@ -39,9 +39,15 @@ namespace EffekseerRendererLLGI
 	return new ModelLoader(graphicsDevice, fileInterface);
 }
 
-void GraphicsDevice::Register(DeviceObject* device) { deviceObjects_.insert(device); }
+void GraphicsDevice::Register(DeviceObject* device)
+{
+	deviceObjects_.insert(device);
+}
 
-void GraphicsDevice::Unregister(DeviceObject* device) { deviceObjects_.erase(device); }
+void GraphicsDevice::Unregister(DeviceObject* device)
+{
+	deviceObjects_.erase(device);
+}
 
 void GraphicsDevice::OnLostDevice()
 {
@@ -281,9 +287,13 @@ RendererImplemented::~RendererImplemented()
 	LLGI::SafeRelease(graphicsDevice_);
 }
 
-void RendererImplemented::OnLostDevice() {}
+void RendererImplemented::OnLostDevice()
+{
+}
 
-void RendererImplemented::OnResetDevice() {}
+void RendererImplemented::OnResetDevice()
+{
+}
 
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
 {
@@ -427,9 +437,14 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	return true;
 }
 
-void RendererImplemented::Destroy() { Release(); }
+void RendererImplemented::Destroy()
+{
+	Release();
+}
 
-void RendererImplemented::SetRestorationOfStatesFlag(bool flag) {}
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+}
 
 void RendererImplemented::SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState)
 {
@@ -485,7 +500,10 @@ void RendererImplemented::SetCommandList(EffekseerRenderer::CommandList* command
 	commandList_ = static_cast<CommandList*>(commandList);
 }
 
-VertexBuffer* RendererImplemented::GetVertexBuffer() { return m_vertexBuffer; }
+VertexBuffer* RendererImplemented::GetVertexBuffer()
+{
+	return m_vertexBuffer;
+}
 
 IndexBuffer* RendererImplemented::GetIndexBuffer()
 {
@@ -499,9 +517,15 @@ IndexBuffer* RendererImplemented::GetIndexBuffer()
 	}
 }
 
-int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount; }
+int32_t RendererImplemented::GetSquareMaxCount() const
+{
+	return m_squareMaxCount;
+}
 
-::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState() { return m_renderState; }
+::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
+{
+	return m_renderState;
+}
 
 ::Effekseer::SpriteRenderer* RendererImplemented::CreateSpriteRenderer()
 {
@@ -518,7 +542,10 @@ int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount
 	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
 }
 
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this, &fixedShader_); }
+::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer()
+{
+	return ModelRenderer::Create(this, &fixedShader_);
+}
 
 ::Effekseer::TrackRenderer* RendererImplemented::CreateTrackRenderer()
 {
@@ -583,7 +610,10 @@ void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerDa
 	m_background.UserPtr = texture;
 }
 
-EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback() { return m_distortingCallback; }
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
@@ -608,7 +638,10 @@ void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
 	GetCurrentCommandList()->SetIndexBuffer(indexBuffer->GetIndexBuffer());
 }
 
-void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer) { GetCurrentCommandList()->SetIndexBuffer(indexBuffer); }
+void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer)
+{
+	GetCurrentCommandList()->SetIndexBuffer(indexBuffer);
+}
 
 void RendererImplemented::SetLayout(Shader* shader)
 {
@@ -751,9 +784,15 @@ Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMat
 	}
 }
 
-void RendererImplemented::BeginShader(Shader* shader) { currentShader = shader; }
+void RendererImplemented::BeginShader(Shader* shader)
+{
+	currentShader = shader;
+}
 
-void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
+void RendererImplemented::EndShader(Shader* shader)
+{
+	currentShader = nullptr;
+}
 
 void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {

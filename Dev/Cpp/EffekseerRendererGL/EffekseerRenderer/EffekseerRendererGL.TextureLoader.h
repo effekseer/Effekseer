@@ -1,18 +1,18 @@
 ﻿
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 
-#ifndef	__EFFEKSEERRENDERER_GL_TEXTURELOADER_H__
-#define	__EFFEKSEERRENDERER_GL_TEXTURELOADER_H__
+#ifndef __EFFEKSEERRENDERER_GL_TEXTURELOADER_H__
+#define __EFFEKSEERRENDERER_GL_TEXTURELOADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.DeviceObject.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #endif
 
 //-----------------------------------------------------------------------------------
@@ -52,10 +52,10 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_TEXTURELOADER_H__
+#endif // __EFFEKSEERRENDERER_GL_TEXTURELOADER_H__
 
 #endif

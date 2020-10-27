@@ -24,14 +24,16 @@ namespace Effekseer
 class EffectReloadingBackup
 {
 public:
-	template <class T> class Holder
+	template <class T>
+	class Holder
 	{
 	public:
 		T value;
 		int counter = 0;
 	};
 
-	template <class T> class HolderCollection
+	template <class T>
+	class HolderCollection
 	{
 		std::map<std::u16string, Holder<T>> collection;
 
@@ -74,7 +76,10 @@ public:
 			}
 		}
 
-		std::map<std::u16string, Holder<T>>& GetCollection() { return collection; }
+		std::map<std::u16string, Holder<T>>& GetCollection()
+		{
+			return collection;
+		}
 	};
 
 	HolderCollection<TextureData*> images;
@@ -95,11 +100,11 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-	#ifdef __EFFEKSEER_BUILD_VERSION16__
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	static const int32_t SupportBinaryVersion = 1600;
 #else
 	static const int32_t SupportBinaryVersion = 1500;
-	#endif
+#endif
 
 protected:
 	ManagerImplemented* m_pManager;
@@ -342,9 +347,18 @@ public:
 
 	EffectTerm CalculateTerm() const override;
 
-	virtual int GetRef() override { return ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ReferenceObject::AddRef(); }
-	virtual int Release() override { return ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 };
 //----------------------------------------------------------------------------------
 //

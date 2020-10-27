@@ -3,7 +3,10 @@
 namespace Effekseer
 {
 
-void* EFK_STDCALL InternalMalloc(unsigned int size) { return (void*)new char*[size]; }
+void* EFK_STDCALL InternalMalloc(unsigned int size)
+{
+	return (void*)new char*[size];
+}
 
 void EFK_STDCALL InternalFree(void* p, unsigned int size)
 {
@@ -43,20 +46,44 @@ AlignedMallocFunc alignedMallocFunc_ = InternalAlignedMalloc;
 
 AlignedFreeFunc alignedFreeFunc_ = InternalAlignedFree;
 
-MallocFunc GetMallocFunc() { return mallocFunc_; }
+MallocFunc GetMallocFunc()
+{
+	return mallocFunc_;
+}
 
-void SetMallocFunc(MallocFunc func) { mallocFunc_ = func; }
+void SetMallocFunc(MallocFunc func)
+{
+	mallocFunc_ = func;
+}
 
-FreeFunc GetFreeFunc() { return freeFunc_; }
+FreeFunc GetFreeFunc()
+{
+	return freeFunc_;
+}
 
-void SetFreeFunc(FreeFunc func) { freeFunc_ = func; }
+void SetFreeFunc(FreeFunc func)
+{
+	freeFunc_ = func;
+}
 
-AlignedMallocFunc GetAlignedMallocFunc() { return alignedMallocFunc_; }
+AlignedMallocFunc GetAlignedMallocFunc()
+{
+	return alignedMallocFunc_;
+}
 
-void SetAlignedMallocFunc(AlignedMallocFunc func) { alignedMallocFunc_ = func; }
+void SetAlignedMallocFunc(AlignedMallocFunc func)
+{
+	alignedMallocFunc_ = func;
+}
 
-AlignedFreeFunc GetAlignedFreeFunc() { return alignedFreeFunc_; }
+AlignedFreeFunc GetAlignedFreeFunc()
+{
+	return alignedFreeFunc_;
+}
 
-void SetAlignedFreeFunc(AlignedFreeFunc func) { alignedFreeFunc_ = func; }
+void SetAlignedFreeFunc(AlignedFreeFunc func)
+{
+	alignedFreeFunc_ = func;
+}
 
 } // namespace Effekseer

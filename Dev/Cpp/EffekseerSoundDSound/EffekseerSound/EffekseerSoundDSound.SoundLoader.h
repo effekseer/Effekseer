@@ -16,6 +16,7 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+class SoundImplemented;
 
 class SoundLoader
 	: public ::Effekseer::SoundLoader

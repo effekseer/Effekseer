@@ -1,18 +1,18 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX9_BASE_PRE_H__
-#define	__EFFEKSEERRENDERER_DX9_BASE_PRE_H__
+#ifndef __EFFEKSEERRENDERER_DX9_BASE_PRE_H__
+#define __EFFEKSEERRENDERER_DX9_BASE_PRE_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
 
-#include <windows.h>
 #include <d3d9.h>
+#include <windows.h>
 
 #if _WIN32
 #pragma comment(lib, "gdiplus.lib")
-#pragma comment(lib, "d3d9.lib" )
+#pragma comment(lib, "d3d9.lib")
 #endif
 
 //----------------------------------------------------------------------------------
@@ -28,14 +28,14 @@ class Renderer;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_PRE_BASE_H__
+#endif // __EFFEKSEERRENDERER_DX9_PRE_BASE_H__
 
-#ifndef	__EFFEKSEERRENDERER_RENDERER_H__
-#define	__EFFEKSEERRENDERER_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_RENDERER_H__
+#define __EFFEKSEERRENDERER_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -57,10 +57,17 @@ namespace EffekseerRenderer
 class DistortingCallback
 {
 public:
-	DistortingCallback() {}
-	virtual ~DistortingCallback() {}
+	DistortingCallback()
+	{
+	}
+	virtual ~DistortingCallback()
+	{
+	}
 
-	virtual bool OnDistorting() { return false; }
+	virtual bool OnDistorting()
+	{
+		return false;
+	}
 };
 
 /**
@@ -95,8 +102,8 @@ class GraphicsDevice : public ::Effekseer::IReference
 public:
 	GraphicsDevice() = default;
 	virtual ~GraphicsDevice() = default;
-};	
-	
+};
+
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -115,7 +122,9 @@ public:
 		\~English	notify that new frame is started.
 		\~Japanese	新規フレームが始ったことを通知する。
 	*/
-	virtual void NewFrame() {}
+	virtual void NewFrame()
+	{
+	}
 };
 
 class Renderer
@@ -129,7 +138,6 @@ protected:
 	Impl* impl = nullptr;
 
 public:
-
 	/**
 		@brief	only for Effekseer backend developer. Effekseer User doesn't need it.
 	*/
@@ -208,7 +216,7 @@ public:
 	/**
 		@brief	Set a projection matrix
 	*/
-	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera matrix
@@ -218,7 +226,7 @@ public:
 	/**
 		@brief	Set a camera matrix
 	*/
-	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera projection matrix
@@ -276,12 +284,12 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
 
 	/**
 	@brief	
@@ -395,7 +403,9 @@ public:
 	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
 	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
-	virtual void SetCommandList(CommandList* commandList) {}
+	virtual void SetCommandList(CommandList* commandList)
+	{
+	}
 
 	/**
 	@brief
@@ -412,27 +422,32 @@ public:
 	\~English	Create a proxy texture
 	\~Japanese	代替のテクスチャを生成する
 	*/
-	virtual Effekseer::TextureData* CreateProxyTexture(ProxyTextureType type) { return nullptr; }
+	virtual Effekseer::TextureData* CreateProxyTexture(ProxyTextureType type)
+	{
+		return nullptr;
+	}
 
 	/**
 	@brief
 	\~English	Delete a proxy texture
 	\~Japanese	代替のテクスチャを削除する
 	*/
-	virtual void DeleteProxyTexture(Effekseer::TextureData* data) { }
+	virtual void DeleteProxyTexture(Effekseer::TextureData* data)
+	{
+	}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_RENDERER_H__
 
-#ifndef	__EFFEKSEERRENDERER_DX9_RENDERER_H__
-#define	__EFFEKSEERRENDERER_DX9_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_DX9_RENDERER_H__
+#define __EFFEKSEERRENDERER_DX9_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -464,8 +479,12 @@ class Renderer
 	: public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	/**
@@ -474,7 +493,7 @@ public:
 		@param	squareMaxCount	[in]	最大描画スプライト数
 		@return	インスタンス
 	*/
-	static Renderer* Create( LPDIRECT3DDEVICE9 device, int32_t squareMaxCount );
+	static Renderer* Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount);
 
 	/**
 		@brief	デバイスを取得する。
@@ -484,7 +503,7 @@ public:
 	/**
 		@brief	デバイスロストリセット間でデバイス自体を再構築する際に外部からデバイスを設定する。
 	*/
-	virtual void ChangeDevice( LPDIRECT3DDEVICE9 device ) = 0;
+	virtual void ChangeDevice(LPDIRECT3DDEVICE9 device) = 0;
 
 	/**
 	@brief	背景を取得する。
@@ -509,14 +528,13 @@ private:
 	LPDIRECT3DDEVICE9 device_ = nullptr;
 
 public:
-
 	struct InternalModel
 	{
-		IDirect3DVertexBuffer9*		VertexBuffer;
-		IDirect3DIndexBuffer9*		IndexBuffer;
-		int32_t						VertexCount;
-		int32_t						IndexCount;
-		int32_t						FaceCount;
+		IDirect3DVertexBuffer9* VertexBuffer;
+		IDirect3DIndexBuffer9* IndexBuffer;
+		int32_t VertexCount;
+		int32_t IndexCount;
+		int32_t FaceCount;
 
 		InternalModel()
 		{
@@ -534,15 +552,15 @@ public:
 		}
 	};
 
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
+	InternalModel* InternalModels = nullptr;
+	int32_t ModelCount;
 	bool IsLoadedOnGPU = false;
 
 	Model(uint8_t* data, int32_t size, LPDIRECT3DDEVICE9 device)
-		: Effekseer::Model	( data, size )
+		: Effekseer::Model(data, size)
 		, device_(device)
-		, InternalModels	(nullptr)
-		, ModelCount		( 0 )
+		, InternalModels(nullptr)
+		, ModelCount(0)
 	{
 		this->m_vertexSize = sizeof(VertexWithIndex);
 		ES_SAFE_ADDREF(device_);
@@ -557,12 +575,11 @@ public:
 	bool LoadToGPU();
 };
 
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_DX9_RENDERER_H__

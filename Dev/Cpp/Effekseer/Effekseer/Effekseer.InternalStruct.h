@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_INTERNAL_STRUCT_H__
-#define	__EFFEKSEER_INTERNAL_STRUCT_H__
+#ifndef __EFFEKSEER_INTERNAL_STRUCT_H__
+#define __EFFEKSEER_INTERNAL_STRUCT_H__
 
 /**
 	@file
@@ -14,10 +14,10 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.Color.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
-#include "Effekseer.Color.h"
 #include "SIMD/Effekseer.Vec2f.h"
 #include "SIMD/Effekseer.Vec3f.h"
 
@@ -28,7 +28,7 @@ namespace Effekseer
 {
 
 template <typename T>
-void ReadData( T& dst, unsigned char*& pos )
+void ReadData(T& dst, unsigned char*& pos)
 {
 	memcpy(&dst, pos, sizeof(T));
 	pos += sizeof(T);
@@ -39,12 +39,12 @@ void ReadData( T& dst, unsigned char*& pos )
 //----------------------------------------------------------------------------------
 struct random_float
 {
-	float	max;
-	float	min;
+	float max;
+	float min;
 
 	void reset()
 	{
-		memset( this, 0 , sizeof(random_float) );
+		memset(this, 0, sizeof(random_float));
 	};
 
 	float getValue(IRandObject& g) const
@@ -58,12 +58,12 @@ struct random_float
 //----------------------------------------------------------------------------------
 struct random_int
 {
-	int	max;
-	int	min;
+	int max;
+	int min;
 
 	void reset()
 	{
-		memset( this, 0 , sizeof(random_int) );
+		memset(this, 0, sizeof(random_int));
 	};
 
 	float getValue(IRandObject& g) const
@@ -79,8 +79,8 @@ struct random_int
 //----------------------------------------------------------------------------------
 struct vector2d
 {
-	float	x;
-	float	y;
+	float x;
+	float y;
 
 	vector2d& operator*=(float rhs)
 	{
@@ -92,15 +92,15 @@ struct vector2d
 
 struct rectf
 {
-	float	x;
-	float	y;
-	float	w;
-	float	h;
+	float x;
+	float y;
+	float w;
+	float h;
 
 	void reset()
 	{
-		assert( sizeof(rectf) == sizeof(float) * 4 );
-		memset( this, 0, sizeof(rectf) );
+		assert(sizeof(rectf) == sizeof(float) * 4);
+		memset(this, 0, sizeof(rectf));
 	}
 };
 
@@ -109,20 +109,19 @@ struct rectf
 //----------------------------------------------------------------------------------
 struct random_vector2d
 {
-	vector2d	max;
-	vector2d	min;
+	vector2d max;
+	vector2d min;
 
 	void reset()
 	{
-		memset( this, 0 , sizeof(random_vector2d) );
+		memset(this, 0, sizeof(random_vector2d));
 	};
 
 	Vec2f getValue(IRandObject& g) const
 	{
 		return {
 			g.GetRand(min.x, max.x),
-			g.GetRand(min.y, max.y)
-		};
+			g.GetRand(min.y, max.y)};
 	}
 };
 
@@ -135,7 +134,7 @@ struct easing_float_without_random
 	float easingB;
 	float easingC;
 
-	void setValueToArg( float& o, const float start_, const float end_, float t ) const
+	void setValueToArg(float& o, const float start_, const float end_, float t) const
 	{
 		float df = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
@@ -148,13 +147,13 @@ struct easing_float_without_random
 //----------------------------------------------------------------------------------
 struct easing_float
 {
-	random_float	start;
-	random_float	end;
+	random_float start;
+	random_float end;
 	float easingA;
 	float easingB;
 	float easingC;
 
-	float getValue( const float start_, const float end_, float t ) const
+	float getValue(const float start_, const float end_, float t) const
 	{
 		float df = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
@@ -167,13 +166,13 @@ struct easing_float
 //----------------------------------------------------------------------------------
 struct easing_vector2d
 {
-	random_vector2d	start;
-	random_vector2d	end;
+	random_vector2d start;
+	random_vector2d end;
 	float easingA;
 	float easingB;
 	float easingC;
 
-	Vec2f getValue( const Vec2f& start_, const Vec2f& end_, float t ) const
+	Vec2f getValue(const Vec2f& start_, const Vec2f& end_, float t) const
 	{
 		Vec2f size = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
@@ -186,9 +185,9 @@ struct easing_vector2d
 //----------------------------------------------------------------------------------
 struct vector3d
 {
-	float	x;
-	float	y;
-	float	z;
+	float x;
+	float y;
+	float z;
 
 	vector3d& operator*=(float rhs)
 	{
@@ -204,12 +203,12 @@ struct vector3d
 //----------------------------------------------------------------------------------
 struct random_vector3d
 {
-	vector3d	max;
-	vector3d	min;
+	vector3d max;
+	vector3d min;
 
 	void reset()
 	{
-		memset( this, 0 , sizeof(random_vector3d) );
+		memset(this, 0, sizeof(random_vector3d));
 	};
 
 	Vec3f getValue(IRandObject& g) const
@@ -217,8 +216,7 @@ struct random_vector3d
 		return {
 			g.GetRand(min.x, max.x),
 			g.GetRand(min.y, max.y),
-			g.GetRand(min.z, max.z)
-		};
+			g.GetRand(min.z, max.z)};
 	}
 };
 
@@ -227,13 +225,13 @@ struct random_vector3d
 //----------------------------------------------------------------------------------
 struct easing_vector3d
 {
-	random_vector3d	start;
-	random_vector3d	end;
+	random_vector3d start;
+	random_vector3d end;
 	float easingA;
 	float easingB;
 	float easingC;
 
-	Vec3f getValue( const Vec3f& start_, const Vec3f& end_, float t ) const
+	Vec3f getValue(const Vec3f& start_, const Vec3f& end_, float t) const
 	{
 		Vec3f size = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
@@ -241,12 +239,14 @@ struct easing_vector3d
 	}
 };
 
-inline Color HSVToRGB(Color hsv) {
+inline Color HSVToRGB(Color hsv)
+{
 	int H = hsv.R, S = hsv.G, V = hsv.B;
-	int Hi, R=0, G=0, B=0, p, q, t;
+	int Hi, R = 0, G = 0, B = 0, p, q, t;
 	float f, s;
 
-	if (H >= 252) H = 252;
+	if (H >= 252)
+		H = 252;
 	Hi = (H / 42);
 	f = H / 42.0f - Hi;
 	Hi = Hi % 6;
@@ -255,13 +255,38 @@ inline Color HSVToRGB(Color hsv) {
 	q = (int)((V * (1 - f * s)));
 	t = (int)((V * (1 - (1 - f) * s)));
 
-	switch (Hi) {
-	case 0: R = V; G = t; B = p; break;
-	case 1: R = q; G = V; B = p; break;
-	case 2: R = p; G = V; B = t; break;
-	case 3: R = p; G = q; B = V; break;
-	case 4: R = t; G = p; B = V; break;
-	case 5: R = V; G = p; B = q; break;
+	switch (Hi)
+	{
+	case 0:
+		R = V;
+		G = t;
+		B = p;
+		break;
+	case 1:
+		R = q;
+		G = V;
+		B = p;
+		break;
+	case 2:
+		R = p;
+		G = V;
+		B = t;
+		break;
+	case 3:
+		R = p;
+		G = q;
+		B = V;
+		break;
+	case 4:
+		R = t;
+		G = p;
+		B = V;
+		break;
+	case 5:
+		R = V;
+		G = p;
+		B = q;
+		break;
 	}
 	Color result;
 	result.R = R;
@@ -277,12 +302,12 @@ inline Color HSVToRGB(Color hsv) {
 struct random_color
 {
 	ColorMode mode;
-	Color	max;
-	Color	min;
+	Color max;
+	Color min;
 
 	void reset()
 	{
-		assert( sizeof(random_color) == 12 );
+		assert(sizeof(random_color) == 12);
 		mode = COLOR_MODE_RGBA;
 		max = {255, 255, 255, 255};
 		min = {255, 255, 255, 255};
@@ -290,39 +315,39 @@ struct random_color
 
 	Color getValue(IRandObject& g) const
 	{
-		Color r = getDirectValue( g );
-		if( mode == COLOR_MODE_HSVA )
+		Color r = getDirectValue(g);
+		if (mode == COLOR_MODE_HSVA)
 		{
-			r = HSVToRGB( r );
+			r = HSVToRGB(r);
 		}
 		return r;
 	}
-	
+
 	Color getDirectValue(IRandObject& g) const
 	{
 		Color r;
-		r.R = (uint8_t) (g.GetRand(min.R, max.R));
-		r.G = (uint8_t) (g.GetRand(min.G, max.G));
-		r.B = (uint8_t) (g.GetRand(min.B, max.B));
-		r.A = (uint8_t) (g.GetRand(min.A, max.A));
+		r.R = (uint8_t)(g.GetRand(min.R, max.R));
+		r.G = (uint8_t)(g.GetRand(min.G, max.G));
+		r.B = (uint8_t)(g.GetRand(min.B, max.B));
+		r.A = (uint8_t)(g.GetRand(min.A, max.A));
 		return r;
 	}
 
-	void load( int version, unsigned char*& pos )
+	void load(int version, unsigned char*& pos)
 	{
-		if( version >= 4 )
+		if (version >= 4)
 		{
 			uint8_t mode_ = 0;
 			ReadData<uint8_t>(mode_, pos);
 			mode = static_cast<ColorMode>(mode_);
-			pos++;	// reserved
+			pos++; // reserved
 		}
 		else
 		{
 			mode = COLOR_MODE_RGBA;
 		}
-		ReadData<Color>(max, pos );
-		ReadData<Color>(min, pos );
+		ReadData<Color>(max, pos);
+		ReadData<Color>(min, pos);
 	}
 };
 
@@ -331,48 +356,48 @@ struct random_color
 //----------------------------------------------------------------------------------
 struct easing_color
 {
-	random_color	start;
-	random_color	end;
+	random_color start;
+	random_color end;
 	float easingA;
 	float easingB;
 	float easingC;
 
-	void setValueToArg( Color& o, const Color& start_, const Color& end_, float t ) const
+	void setValueToArg(Color& o, const Color& start_, const Color& end_, float t) const
 	{
-		assert( start.mode == end.mode );
+		assert(start.mode == end.mode);
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
 		o = Color::Lerp(start_, end_, d);
-		if( start.mode == COLOR_MODE_HSVA )
+		if (start.mode == COLOR_MODE_HSVA)
 		{
-			o = HSVToRGB( o );
+			o = HSVToRGB(o);
 		}
 	}
 
 	Color getStartValue(IRandObject& g) const
 	{
-		return start.getDirectValue( g );
-	}
-	
-	Color getEndValue(IRandObject& g) const
-	{
-		return end.getDirectValue( g);
+		return start.getDirectValue(g);
 	}
 
-	void load( int version, unsigned char*& pos )
+	Color getEndValue(IRandObject& g) const
 	{
-		start.load( version, pos );
-		end.load( version, pos );
-		ReadData<float>(easingA, pos );
-		ReadData<float>(easingB, pos );
-		ReadData<float>(easingC, pos );
+		return end.getDirectValue(g);
+	}
+
+	void load(int version, unsigned char*& pos)
+	{
+		start.load(version, pos);
+		end.load(version, pos);
+		ReadData<float>(easingA, pos);
+		ReadData<float>(easingB, pos);
+		ReadData<float>(easingC, pos);
 	}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_INTERNAL_STRUCT_H__
+#endif // __EFFEKSEER_INTERNAL_STRUCT_H__

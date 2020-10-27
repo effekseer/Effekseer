@@ -66,9 +66,13 @@ float InternalScript::GetRegisterValue(int index,
 	return 0.0f;
 }
 
-InternalScript::InternalScript() {}
+InternalScript::InternalScript()
+{
+}
 
-InternalScript ::~InternalScript() {}
+InternalScript ::~InternalScript()
+{
+}
 bool InternalScript::Load(uint8_t* data, int size)
 {
 	if (data == nullptr || size <= 0)

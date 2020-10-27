@@ -5,7 +5,10 @@
 namespace efk
 {
 
-ImageResource::ImageResource(std::shared_ptr<Effekseer::TextureLoader> loader) : loader_(loader) {}
+ImageResource::ImageResource(std::shared_ptr<Effekseer::TextureLoader> loader)
+	: loader_(loader)
+{
+}
 
 ImageResource::~ImageResource()
 {

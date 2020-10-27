@@ -6,12 +6,18 @@ DistortingCallbackDX9::DistortingCallbackDX9(::EffekseerRendererDX9::Renderer* r
 											 LPDIRECT3DDEVICE9 device,
 											 int texWidth,
 											 int texHeight)
-	: renderer(renderer), device(device), texWidth_(texWidth), texHeight_(texHeight)
+	: renderer(renderer)
+	, device(device)
+	, texWidth_(texWidth)
+	, texHeight_(texHeight)
 {
 	device->CreateTexture(texWidth, texHeight, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
 }
 
-DistortingCallbackDX9::~DistortingCallbackDX9() { ES_SAFE_RELEASE(texture); }
+DistortingCallbackDX9::~DistortingCallbackDX9()
+{
+	ES_SAFE_RELEASE(texture);
+}
 
 bool DistortingCallbackDX9::OnDistorting()
 {
@@ -36,9 +42,13 @@ bool DistortingCallbackDX9::OnDistorting()
 	return true;
 }
 
-void DistortingCallbackDX9::Lost() { ES_SAFE_RELEASE(texture); }
+void DistortingCallbackDX9::Lost()
+{
+	ES_SAFE_RELEASE(texture);
+}
 
-void DistortingCallbackDX9::Reset() {
+void DistortingCallbackDX9::Reset()
+{
 	device->CreateTexture(texWidth_, texHeight_, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
 }
 
@@ -118,7 +128,10 @@ void EffectPlatformDX9::BeginRendering()
 	device_->BeginScene();
 }
 
-void EffectPlatformDX9::EndRendering() { device_->EndScene(); }
+void EffectPlatformDX9::EndRendering()
+{
+	device_->EndScene();
+}
 
 void EffectPlatformDX9::Present()
 {

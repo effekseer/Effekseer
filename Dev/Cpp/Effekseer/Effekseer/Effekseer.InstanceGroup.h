@@ -1,15 +1,15 @@
 ﻿
-#ifndef	__EFFEKSEER_INSTANCEGROUP_H__
-#define	__EFFEKSEER_INSTANCEGROUP_H__
+#ifndef __EFFEKSEER_INSTANCEGROUP_H__
+#define __EFFEKSEER_INSTANCEGROUP_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
-#include "Effekseer.IntrusiveList.h"
 #include "Effekseer.EffectNodeTrack.h"
-#include "SIMD/Effekseer.Vec3f.h"
+#include "Effekseer.IntrusiveList.h"
 #include "SIMD/Effekseer.Mat43f.h"
+#include "SIMD/Effekseer.Vec3f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -27,15 +27,15 @@ namespace Effekseer
 */
 class alignas(32) InstanceGroup
 {
-friend class InstanceContainer;
-friend class ManagerImplemented;
+	friend class InstanceContainer;
+	friend class ManagerImplemented;
 
 private:
-	ManagerImplemented*		m_manager;
-	EffectNodeImplemented*	m_effectNode;
-	InstanceContainer*	m_container;
-	InstanceGlobal*		m_global;
-	int32_t				m_time;
+	ManagerImplemented* m_manager;
+	EffectNodeImplemented* m_effectNode;
+	InstanceContainer* m_container;
+	InstanceGlobal* m_global;
+	int32_t m_time;
 
 	Mat43f parentMatrix_;
 	Mat43f parentRotation_;
@@ -46,19 +46,18 @@ private:
 	IntrusiveList<Instance> m_instances;
 	IntrusiveList<Instance> m_removingInstances;
 
-	InstanceGroup( Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global );
+	InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global);
 
 	~InstanceGroup();
 
 	void NotfyEraseInstance();
-public:
 
+public:
 	/** 
 		@brief	描画に必要なパラメータ
 	*/
-	union
-	{
-		EffectNodeTrack::InstanceGroupValues		track;
+	union {
+		EffectNodeTrack::InstanceGroupValues track;
 	} rendererValues;
 
 	/**
@@ -72,15 +71,18 @@ public:
 
 	void Update(bool shown);
 
-	void SetBaseMatrix( const Mat43f& mat );
+	void SetBaseMatrix(const Mat43f& mat);
 
-	void SetParentMatrix( const Mat43f& mat );
+	void SetParentMatrix(const Mat43f& mat);
 
 	void RemoveForcibly();
 
 	void KillAllInstances();
 
-	int32_t GetTime() const { return m_time; }
+	int32_t GetTime() const
+	{
+		return m_time;
+	}
 
 	/**
 		@brief	グループを生成したインスタンスからの参照が残っているか?
@@ -90,25 +92,40 @@ public:
 	/**
 		@brief	インスタンスから利用する連結リストの次のオブジェクトへのポインタ
 	*/
-	InstanceGroup*	NextUsedByInstance;
+	InstanceGroup* NextUsedByInstance;
 
 	/**
 		@brief	コンテナから利用する連結リストの次のオブジェクトへのポインタ
 	*/
-	InstanceGroup*	NextUsedByContainer;
+	InstanceGroup* NextUsedByContainer;
 
-	InstanceGlobal* GetRootInstance() const { return m_global; }
+	InstanceGlobal* GetRootInstance() const
+	{
+		return m_global;
+	}
 
-	const Mat43f& GetParentMatrix() const { return parentMatrix_; }
-	const Vec3f& GetParentTranslation() const { return parentTranslation_; }
-	const Mat43f& GetParentRotation() const { return parentRotation_; }
-	const Vec3f& GetParentScale() const { return parentScale_; }
+	const Mat43f& GetParentMatrix() const
+	{
+		return parentMatrix_;
+	}
+	const Vec3f& GetParentTranslation() const
+	{
+		return parentTranslation_;
+	}
+	const Mat43f& GetParentRotation() const
+	{
+		return parentRotation_;
+	}
+	const Vec3f& GetParentScale() const
+	{
+		return parentScale_;
+	}
 };
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_INSTANCEGROUP_H__
+#endif // __EFFEKSEER_INSTANCEGROUP_H__

@@ -5,9 +5,14 @@
 namespace EffekseerRendererLLGI
 {
 
-RenderState::RenderState(RendererImplemented* renderer) : m_renderer(renderer) {}
+RenderState::RenderState(RendererImplemented* renderer)
+	: m_renderer(renderer)
+{
+}
 
-RenderState::~RenderState() {}
+RenderState::~RenderState()
+{
+}
 
 void RenderState::Update(bool forced)
 {

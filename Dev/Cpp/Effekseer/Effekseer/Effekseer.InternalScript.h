@@ -67,7 +67,10 @@ public:
 								 RandFuncCallback* randFuncCallback,
 								 RandWithSeedFuncCallback* randSeedFuncCallback,
 								 void* userData);
-	RunningPhaseType GetRunningPhase() const { return runningPhase; }
+	RunningPhaseType GetRunningPhase() const
+	{
+		return runningPhase;
+	}
 };
 
 } // namespace Effekseer

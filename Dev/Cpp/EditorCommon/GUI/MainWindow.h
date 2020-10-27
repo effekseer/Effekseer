@@ -49,7 +49,10 @@ public:
 #ifndef SWIG
 	std::function<void(float)> DpiChanged;
 
-	GLFWwindow* GetGLFWWindows() const { return window_; }
+	GLFWwindow* GetGLFWWindows() const
+	{
+		return window_;
+	}
 #endif // !SWIG
 };
 

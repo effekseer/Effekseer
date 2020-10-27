@@ -14,8 +14,8 @@ namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderState::RenderState( RendererImplemented* renderer )
-	: m_renderer	( renderer )
+RenderState::RenderState(RendererImplemented* renderer)
+	: m_renderer(renderer)
 {
 }
 
@@ -29,45 +29,45 @@ RenderState::~RenderState()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void RenderState::Update( bool forced )
+void RenderState::Update(bool forced)
 {
-	if( m_active.DepthTest != m_next.DepthTest || forced )
+	if (m_active.DepthTest != m_next.DepthTest || forced)
 	{
-		if( m_next.DepthTest )
+		if (m_next.DepthTest)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ZENABLE, TRUE );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ZENABLE, TRUE);
 		}
 		else
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ZENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ZENABLE, FALSE);
 		}
 	}
 
-	if( m_active.DepthWrite != m_next.DepthWrite || forced )
+	if (m_active.DepthWrite != m_next.DepthWrite || forced)
 	{
-		if( m_next.DepthWrite )
+		if (m_next.DepthWrite)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 		}
 		else
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 		}
 	}
 
-	if( m_active.CullingType != m_next.CullingType || forced )
+	if (m_active.CullingType != m_next.CullingType || forced)
 	{
-		if( m_next.CullingType == ::Effekseer::CullingType::Front )
+		if (m_next.CullingType == ::Effekseer::CullingType::Front)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_CULLMODE, D3DCULL_CCW );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		}
-		else if(m_next.CullingType == ::Effekseer::CullingType::Back )
+		else if (m_next.CullingType == ::Effekseer::CullingType::Back)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_CULLMODE, D3DCULL_CW );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 		}
-		else if(m_next.CullingType == ::Effekseer::CullingType::Double )
+		else if (m_next.CullingType == ::Effekseer::CullingType::Double)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 		}
 	}
 
@@ -129,10 +129,10 @@ void RenderState::Update( bool forced )
 			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
 	}
-	
-	for( int32_t i = 0; i < Effekseer::TextureSlotMax; i++ )
+
+	for (int32_t i = 0; i < Effekseer::TextureSlotMax; i++)
 	{
-		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
+		if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
 		{
 			const uint32_t MinFilterTable[] = {
 				D3DTEXF_POINT,
@@ -153,15 +153,15 @@ void RenderState::Update( bool forced )
 
 			// VTF is not supported
 
-			m_renderer->GetDevice()->SetSamplerState( i, D3DSAMP_MINFILTER, MinFilterTable[filter_] );
-			m_renderer->GetDevice()->SetSamplerState( i, D3DSAMP_MAGFILTER, MagFilterTable[filter_] );
-			m_renderer->GetDevice()->SetSamplerState( i, D3DSAMP_MIPFILTER, MipFilterTable[filter_] );
+			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_MINFILTER, MinFilterTable[filter_]);
+			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_MAGFILTER, MagFilterTable[filter_]);
+			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_MIPFILTER, MipFilterTable[filter_]);
 		}
 
-		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
+		if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
 		{
 			// for VTF
-			if(i < 4)
+			if (i < 4)
 			{
 				m_renderer->GetDevice()->SetSamplerState(
 					i + D3DVERTEXTEXTURESAMPLER0,
@@ -174,25 +174,25 @@ void RenderState::Update( bool forced )
 					m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
 			}
 
-			m_renderer->GetDevice()->SetSamplerState( 
-				i, 
-				D3DSAMP_ADDRESSU, 
-				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP );
+			m_renderer->GetDevice()->SetSamplerState(
+				i,
+				D3DSAMP_ADDRESSU,
+				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
 
-			m_renderer->GetDevice()->SetSamplerState( 
-				i, 
-				D3DSAMP_ADDRESSV, 
+			m_renderer->GetDevice()->SetSamplerState(
+				i,
+				D3DSAMP_ADDRESSV,
 				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
 		}
 	}
-	
+
 	m_active = m_next;
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

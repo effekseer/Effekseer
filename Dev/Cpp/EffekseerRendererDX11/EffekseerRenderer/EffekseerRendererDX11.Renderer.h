@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX11_RENDERER_H__
-#define	__EFFEKSEERRENDERER_DX11_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_DX11_RENDERER_H__
+#define __EFFEKSEERRENDERER_DX11_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX11.Base.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
+#include "EffekseerRendererDX11.Base.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -30,7 +30,6 @@ namespace EffekseerRendererDX11
 */
 ::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = NULL);
 
-
 /**
 	@brief	描画クラス
 */
@@ -38,8 +37,12 @@ class Renderer
 	: public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	/**
@@ -52,9 +55,9 @@ public:
 		@return	インスタンス
 	*/
 	static Renderer* Create(
-		ID3D11Device* device, 
-		ID3D11DeviceContext* context, 
-		int32_t squareMaxCount, 
+		ID3D11Device* device,
+		ID3D11DeviceContext* context,
+		int32_t squareMaxCount,
 		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,
 		bool isMSAAEnabled = false);
 
@@ -82,20 +85,20 @@ public:
 @brief	\~English	Model
 		\~Japanese	モデル
 */
-class Model 
+class Model
 	: public Effekseer::Model
 {
 private:
 	ID3D11Device* device_ = nullptr;
-public:
 
+public:
 	struct InternalModel
 	{
-		ID3D11Buffer*		VertexBuffer;
-		ID3D11Buffer*		IndexBuffer;
-		int32_t				VertexCount;
-		int32_t				IndexCount;
-		int32_t				FaceCount;
+		ID3D11Buffer* VertexBuffer;
+		ID3D11Buffer* IndexBuffer;
+		int32_t VertexCount;
+		int32_t IndexCount;
+		int32_t FaceCount;
 
 		InternalModel()
 		{
@@ -113,12 +116,12 @@ public:
 		}
 	};
 
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
+	InternalModel* InternalModels = nullptr;
+	int32_t ModelCount;
 	bool IsLoadedOnGPU = false;
 
 	Model(uint8_t* data, int32_t size, ID3D11Device* device)
-		: Effekseer::Model	( data, size )
+		: Effekseer::Model(data, size)
 		, device_(device)
 		, InternalModels(nullptr)
 		, ModelCount(0)
@@ -136,12 +139,11 @@ public:
 	bool LoadToGPU();
 };
 
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX11_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_DX11_RENDERER_H__

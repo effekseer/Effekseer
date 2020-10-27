@@ -17,7 +17,8 @@ enum class BinaryReaderStatus
 /**
 	@brief	utility for reading binary data
 */
-template <bool IsValidationEnabled> class BinaryReader
+template <bool IsValidationEnabled>
+class BinaryReader
 {
 private:
 	uint8_t* data_ = nullptr;
@@ -32,7 +33,8 @@ public:
 		size_ = size;
 	}
 
-	template <typename T> bool Read(T& value)
+	template <typename T>
+	bool Read(T& value)
 	{
 		if (IsValidationEnabled)
 		{
@@ -52,7 +54,8 @@ public:
 	/**
 @brief	read with validation
 */
-	template <typename T> bool Read(T& value, const T& min_, const T& max_)
+	template <typename T>
+	bool Read(T& value, const T& min_, const T& max_)
 	{
 		if (IsValidationEnabled)
 		{
@@ -81,7 +84,8 @@ public:
 	/**
 		@brief	read with validation
 	*/
-	template <typename T, typename U> bool Read(T& value, const U& min_, const U& max_)
+	template <typename T, typename U>
+	bool Read(T& value, const U& min_, const U& max_)
 	{
 		if (IsValidationEnabled)
 		{
@@ -107,7 +111,8 @@ public:
 		return true;
 	}
 
-	template <typename T> bool Read(T* value, int32_t count)
+	template <typename T>
+	bool Read(T* value, int32_t count)
 	{
 		if (IsValidationEnabled)
 		{
@@ -123,7 +128,8 @@ public:
 		return true;
 	}
 
-	template <typename T, typename _Alloc> bool Read(std::vector<T, _Alloc>& value, int32_t count)
+	template <typename T, typename _Alloc>
+	bool Read(std::vector<T, _Alloc>& value, int32_t count)
 	{
 		if (IsValidationEnabled)
 		{
@@ -149,9 +155,15 @@ public:
 		return offset == size_ ? BinaryReaderStatus::Complete : BinaryReaderStatus::Reading;
 	}
 
-	void AddOffset(size_t length) { offset += length; }
+	void AddOffset(size_t length)
+	{
+		offset += length;
+	}
 
-	size_t GetOffset() const { return offset; }
+	size_t GetOffset() const
+	{
+		return offset;
+	}
 };
 
 } // namespace Effekseer

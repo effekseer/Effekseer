@@ -2,9 +2,9 @@
 #ifndef __EFFEKSEERRENDERER_LLGI_RENDERER_IMPLEMENTED_H__
 #define __EFFEKSEERRENDERER_LLGI_RENDERER_IMPLEMENTED_H__
 
+#include "../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRendererLLGI.Base.h"
 #include "EffekseerRendererLLGI.Renderer.h"
 #include <LLGI.CommandList.h>
@@ -32,7 +32,7 @@ public:
 	Shader* shader = nullptr;
 	EffekseerRenderer::RenderStateBase::State state;
 	LLGI::TopologyType topologyType;
-    LLGI::RenderPassPipelineState* renderPassPipelineState = nullptr;
+	LLGI::RenderPassPipelineState* renderPassPipelineState = nullptr;
 	bool operator<(const PiplineStateKey& v) const;
 };
 
@@ -92,8 +92,8 @@ protected:
 
 	LLGI::PipelineState* GetOrCreatePiplineState();
 
-    virtual void GenerateVertexBuffer();
-    
+	virtual void GenerateVertexBuffer();
+
 	virtual void GenerateIndexBuffer();
 
 public:
@@ -108,8 +108,10 @@ public:
 
 	~RendererImplemented();
 
-	void OnLostDevice() override;;
-	void OnResetDevice() override;;
+	void OnLostDevice() override;
+	;
+	void OnResetDevice() override;
+	;
 
 	bool Initialize(GraphicsDevice* graphicsDevice, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
@@ -119,7 +121,7 @@ public:
 
 	void SetRestorationOfStatesFlag(bool flag) override;
 
-    void SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState);
+	void SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState);
 
 	bool BeginRendering() override;
 
@@ -127,9 +129,15 @@ public:
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
-	GraphicsDevice* GetGraphicsDevice() const { return graphicsDevice_; }
+	GraphicsDevice* GetGraphicsDevice() const
+	{
+		return graphicsDevice_;
+	}
 
-	LLGI::Graphics* GetGraphics() const override { return graphicsDevice_->GetGraphics(); }
+	LLGI::Graphics* GetGraphics() const override
+	{
+		return graphicsDevice_->GetGraphics();
+	}
 
 	/**
 		@brief	頂点バッファ取得
@@ -228,9 +236,18 @@ public:
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
-	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 } // namespace EffekseerRendererLLGI

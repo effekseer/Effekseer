@@ -1,15 +1,15 @@
 ﻿
-#if !( defined(_PSVITA) || defined(_XBOXONE) )
+#if !(defined(_PSVITA) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#if defined(_WIN32) && !defined(_PS4) 
+#if defined(_WIN32) && !defined(_PS4)
 #include <winsock2.h>
-#pragma comment( lib, "ws2_32.lib" )
+#pragma comment(lib, "ws2_32.lib")
 #else
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #endif
 
 #include "Effekseer.Socket.h"
@@ -17,16 +17,17 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer {
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 void Socket::Initialize()
 {
-#if defined(_WIN32) && !defined(_PS4) 
+#if defined(_WIN32) && !defined(_PS4)
 	// Initialize  Winsock
 	WSADATA m_WsaData;
-	::WSAStartup( MAKEWORD(2,0), &m_WsaData );
+	::WSAStartup(MAKEWORD(2, 0), &m_WsaData);
 #endif
 }
 
@@ -35,7 +36,7 @@ void Socket::Initialize()
 //----------------------------------------------------------------------------------
 void Socket::Finalize()
 {
-#if defined(_WIN32) && !defined(_PS4) 
+#if defined(_WIN32) && !defined(_PS4)
 	// Dispose winsock or decrease a counter
 	WSACleanup();
 #endif
@@ -46,52 +47,51 @@ void Socket::Finalize()
 //----------------------------------------------------------------------------------
 EfkSocket Socket::GenSocket()
 {
-	return ::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+	return ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Socket::Close( EfkSocket s )
+void Socket::Close(EfkSocket s)
 {
-#if defined(_WIN32) && !defined(_PS4) 
-	::closesocket( s );
+#if defined(_WIN32) && !defined(_PS4)
+	::closesocket(s);
 #else
-	::close( s );
+	::close(s);
 #endif
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Socket::Shutsown( EfkSocket s )
+void Socket::Shutsown(EfkSocket s)
 {
-#if defined(_WIN32) && !defined(_PS4) 
-	::shutdown( s, SD_BOTH );
+#if defined(_WIN32) && !defined(_PS4)
+	::shutdown(s, SD_BOTH);
 #else
-	::shutdown( s, SHUT_RDWR );
+	::shutdown(s, SHUT_RDWR);
 #endif
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Socket::Listen( EfkSocket s, int32_t backlog )
+bool Socket::Listen(EfkSocket s, int32_t backlog)
 {
-#if defined(_WIN32) && !defined(_PS4) 
-	return ::listen( s, backlog ) != SocketError;
+#if defined(_WIN32) && !defined(_PS4)
+	return ::listen(s, backlog) != SocketError;
 #else
-	return listen( s, backlog ) >= 0;
+	return listen(s, backlog) >= 0;
 #endif
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_XBOXONE) )
-
+#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )

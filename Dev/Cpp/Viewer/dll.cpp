@@ -267,11 +267,20 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 	}
 }
 
-void SetZoom(float zoom) { g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom)); }
+void SetZoom(float zoom)
+{
+	g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
+}
 
-float GetDistance() { return DistanceBase * powf(ZoomDistanceFactor, g_Zoom); }
+float GetDistance()
+{
+	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
+}
 
-float GetOrthoScale() { return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom); }
+float GetOrthoScale()
+{
+	return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom);
+}
 
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
@@ -334,9 +343,17 @@ struct HandleHolder
 	int32_t Time = 0;
 	bool IsRootStopped = false;
 
-	HandleHolder() : Handle(0), Time(0) {}
+	HandleHolder()
+		: Handle(0)
+		, Time(0)
+	{
+	}
 
-	HandleHolder(::Effekseer::Handle handle, int32_t time = 0) : Handle(handle), Time(time) {}
+	HandleHolder(::Effekseer::Handle handle, int32_t time = 0)
+		: Handle(handle)
+		, Time(time)
+	{
+	}
 };
 
 static ::Effekseer::Manager* g_manager = NULL;
@@ -358,7 +375,8 @@ static ::Effekseer::Client* g_client = NULL;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
-Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType) : m_renderer(renderer)
+Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType)
+	: m_renderer(renderer)
 {
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
@@ -378,7 +396,10 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, Effe
 #endif
 }
 
-Native::TextureLoader::~TextureLoader() { ES_SAFE_DELETE(m_originalTextureLoader); }
+Native::TextureLoader::~TextureLoader()
+{
+	ES_SAFE_DELETE(m_originalTextureLoader);
+}
 
 Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
@@ -411,9 +432,14 @@ void Native::TextureLoader::Unload(Effekseer::TextureData* data)
 	// m_originalTextureLoader->Unload(data);
 }
 
-Native::SoundLoader::SoundLoader(Effekseer::SoundLoader* loader) : m_loader(loader) {}
+Native::SoundLoader::SoundLoader(Effekseer::SoundLoader* loader)
+	: m_loader(loader)
+{
+}
 
-Native::SoundLoader::~SoundLoader() {}
+Native::SoundLoader::~SoundLoader()
+{
+}
 
 void* Native::SoundLoader::Load(const EFK_CHAR* path)
 {
@@ -423,11 +449,19 @@ void* Native::SoundLoader::Load(const EFK_CHAR* path)
 	return m_loader->Load(dst);
 }
 
-void Native::SoundLoader::Unload(void* handle) { m_loader->Unload(handle); }
+void Native::SoundLoader::Unload(void* handle)
+{
+	m_loader->Unload(handle);
+}
 
-Native::ModelLoader::ModelLoader(EffekseerRenderer::Renderer* renderer) : m_renderer(renderer) {}
+Native::ModelLoader::ModelLoader(EffekseerRenderer::Renderer* renderer)
+	: m_renderer(renderer)
+{
+}
 
-Native::ModelLoader::~ModelLoader() {}
+Native::ModelLoader::~ModelLoader()
+{
+}
 
 void* Native::ModelLoader::Load(const EFK_CHAR* path)
 {
@@ -494,12 +528,16 @@ void Native::ModelLoader::Unload(void* data)
 	*/
 }
 
-Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer) : renderer_(renderer)
+Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer)
+	: renderer_(renderer)
 {
 	loader_ = renderer_->CreateMaterialLoader();
 }
 
-Native::MaterialLoader::~MaterialLoader() { ES_SAFE_DELETE(loader_); }
+Native::MaterialLoader::~MaterialLoader()
+{
+	ES_SAFE_DELETE(loader_);
+}
 
 Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
 {
@@ -559,9 +597,14 @@ void Native::MaterialLoader::ReleaseAll()
 	materialFiles_.clear();
 }
 
-::Effekseer::Effect* Native::GetEffect() { return g_effect; }
+::Effekseer::Effect* Native::GetEffect()
+{
+	return g_effect;
+}
 
-Native::Native() : m_time(0), m_step(1)
+Native::Native()
+	: m_time(0)
+	, m_step(1)
 {
 	g_client = Effekseer::Client::Create();
 
@@ -691,7 +734,10 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	return true;
 }
 
-void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a) { g_renderer->GetGraphics()->Clear(Effekseer::Color(r, g, b, a)); }
+void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	g_renderer->GetGraphics()->Clear(Effekseer::Color(r, g, b, a));
+}
 
 bool Native::UpdateWindow()
 {
@@ -790,7 +836,10 @@ void Native::RenderWindow()
 	g_renderer->RenderPostEffect();
 }
 
-void Native::Present() { g_renderer->Present(); }
+void Native::Present()
+{
+	g_renderer->Present();
+}
 
 bool Native::ResizeWindow(int width, int height)
 {
@@ -1196,11 +1245,18 @@ public:
 	RecorderCallback() = default;
 	virtual ~RecorderCallback() = default;
 
-	virtual bool OnBeginRecord() { return false; }
+	virtual bool OnBeginRecord()
+	{
+		return false;
+	}
 
-	virtual void OnEndRecord() {}
+	virtual void OnEndRecord()
+	{
+	}
 
-	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) {}
+	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels)
+	{
+	}
 };
 
 class RecorderCallbackSprite : public RecorderCallback
@@ -1209,13 +1265,21 @@ private:
 	RecordingParameter& recordingParameter_;
 
 public:
-	RecorderCallbackSprite(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
+	RecorderCallbackSprite(RecordingParameter& recordingParameter)
+		: recordingParameter_(recordingParameter)
+	{
+	}
 
 	virtual ~RecorderCallbackSprite() = default;
 
-	bool OnBeginRecord() override { return true; }
+	bool OnBeginRecord() override
+	{
+		return true;
+	}
 
-	void OnEndRecord() override {}
+	void OnEndRecord() override
+	{
+	}
 
 	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
 	{
@@ -1246,7 +1310,10 @@ private:
 	std::vector<Effekseer::Color> pixels_out;
 
 public:
-	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
+	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter)
+		: recordingParameter_(recordingParameter)
+	{
+	}
 
 	virtual ~RecorderCallbackSpriteSheet() = default;
 
@@ -1322,7 +1389,10 @@ private:
 	efk::GifHelper helper;
 
 public:
-	RecorderCallbackGif(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
+	RecorderCallbackGif(RecordingParameter& recordingParameter)
+		: recordingParameter_(recordingParameter)
+	{
+	}
 
 	virtual ~RecorderCallbackGif() = default;
 
@@ -1346,9 +1416,14 @@ public:
 		return true;
 	}
 
-	void OnEndRecord() override {}
+	void OnEndRecord() override
+	{
+	}
 
-	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override { helper.AddImage(pixels); }
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
+	{
+		helper.AddImage(pixels);
+	}
 };
 
 class RecorderCallbackAvi : public RecorderCallback
@@ -1360,7 +1435,10 @@ private:
 	FILE* fp = nullptr;
 
 public:
-	RecorderCallbackAvi(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
+	RecorderCallbackAvi(RecordingParameter& recordingParameter)
+		: recordingParameter_(recordingParameter)
+	{
+	}
 
 	virtual ~RecorderCallbackAvi() = default;
 
@@ -1646,9 +1724,15 @@ public:
 		return true;
 	}
 
-	bool IsCompleted() const { return recordedCount >= recordingParameter_.Count; }
+	bool IsCompleted() const
+	{
+		return recordedCount >= recordingParameter_.Count;
+	}
 
-	float GetProgress() const { return static_cast<float>(recordedCount) / static_cast<float>(recordingParameter_.Count); }
+	float GetProgress() const
+	{
+		return static_cast<float>(recordedCount) / static_cast<float>(recordingParameter_.Count);
+	}
 };
 
 bool Native::BeginRecord(const RecordingParameter& recordingParameter)
@@ -1680,11 +1764,20 @@ bool Native::EndRecord()
 	return true;
 }
 
-bool Native::IsRecording() const { return recorder != nullptr; }
+bool Native::IsRecording() const
+{
+	return recorder != nullptr;
+}
 
-float Native::GetRecordingProgress() const { return (recorder) ? recorder->GetProgress() : 0.0f; }
+float Native::GetRecordingProgress() const
+{
+	return (recorder) ? recorder->GetProgress() : 0.0f;
+}
 
-bool Native::IsRecordCompleted() const { return (recorder) ? recorder->IsCompleted() : false; }
+bool Native::IsRecordCompleted() const
+{
+	return (recorder) ? recorder->IsCompleted() : false;
+}
 
 bool Native::Record(const RecordingParameter& recordingParameter)
 {
@@ -1770,7 +1863,10 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 	g_renderer->RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
 }
 
-ViewerEffectBehavior Native::GetEffectBehavior() { return m_effectBehavior; }
+ViewerEffectBehavior Native::GetEffectBehavior()
+{
+	return m_effectBehavior;
+}
 
 void Native::SetViewerEffectBehavior(ViewerEffectBehavior& behavior)
 {
@@ -1834,7 +1930,10 @@ void Native::SetIsGridShown(bool value, bool xy, bool xz, bool yz)
 	g_renderer->IsGridYZShown = yz;
 }
 
-void Native::SetGridLength(float length) { g_renderer->GridLength = length; }
+void Native::SetGridLength(float length)
+{
+	g_renderer->GridLength = length;
+}
 
 void Native::SetBackgroundColor(uint8_t r, uint8_t g, uint8_t b)
 {
@@ -1843,7 +1942,10 @@ void Native::SetBackgroundColor(uint8_t r, uint8_t g, uint8_t b)
 	g_renderer->BackgroundColor.B = b;
 }
 
-void Native::SetBackgroundImage(const char16_t* path) { g_renderer->LoadBackgroundImage(path); }
+void Native::SetBackgroundImage(const char16_t* path)
+{
+	g_renderer->LoadBackgroundImage(path);
+}
 
 void Native::SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
@@ -1862,13 +1964,25 @@ void Native::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
 	g_mouseSlideDirectionInvY = slideY;
 }
 
-void Native::SetStep(int32_t step) { m_step = step; }
+void Native::SetStep(int32_t step)
+{
+	m_step = step;
+}
 
-bool Native::StartNetwork(const char* host, uint16_t port) { return g_client->Start((char*)host, port); }
+bool Native::StartNetwork(const char* host, uint16_t port)
+{
+	return g_client->Start((char*)host, port);
+}
 
-void Native::StopNetwork() { g_client->Stop(); }
+void Native::StopNetwork()
+{
+	g_client->Stop();
+}
 
-bool Native::IsConnectingNetwork() { return g_client->IsConnected(); }
+bool Native::IsConnectingNetwork()
+{
+	return g_client->IsConnected();
+}
 
 void Native::SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path)
 {
@@ -2009,7 +2123,10 @@ int32_t Native::GetInstanceCount()
 	return sum;
 }
 
-float Native::GetFPS() { return 60.0; }
+float Native::GetFPS()
+{
+	return 60.0;
+}
 
 bool Native::IsDebugMode()
 {
@@ -2103,4 +2220,7 @@ void Native::SetFileLogger(const char16_t* path)
 	spdlog::trace("End Native::SetFileLogger");
 }
 
-EffekseerRenderer::Renderer* Native::GetRenderer() { return g_renderer->GetRenderer(); }
+EffekseerRenderer::Renderer* Native::GetRenderer()
+{
+	return g_renderer->GetRenderer();
+}

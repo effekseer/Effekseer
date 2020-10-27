@@ -4,7 +4,7 @@
 #include <Effekseer.h>
 #include <vector>
 
-#define NONDLL	1
+#define NONDLL 1
 
 #ifdef _WIN32
 #define MSWIN32 1
@@ -15,24 +15,23 @@
 
 namespace efk
 {
-	class GifHelper
-	{
-	private:
-		FILE*		fp = nullptr;
-		gdImagePtr	img = nullptr;
-		int32_t		width = 0;
-		int32_t		height = 0;
-		int32_t		freq = 0;
+class GifHelper
+{
+private:
+	FILE* fp = nullptr;
+	gdImagePtr img = nullptr;
+	int32_t width = 0;
+	int32_t height = 0;
+	int32_t freq = 0;
 
-	public:
+public:
+	GifHelper() = default;
 
-		GifHelper() = default;
+	virtual ~GifHelper();
 
-		virtual ~GifHelper();
+	bool Initialize(const char16_t* path, int32_t width, int32_t height, int32_t freq);
 
-		bool Initialize(const char16_t* path, int32_t width, int32_t height, int32_t freq);
+	void AddImage(const std::vector<Effekseer::Color>& pixels);
+};
 
-		void AddImage(const std::vector<Effekseer::Color>& pixels);
-	};
-
-}
+} // namespace efk

@@ -27,7 +27,7 @@ IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCo
 //-----------------------------------------------------------------------------------
 IndexBuffer::~IndexBuffer()
 {
-	delete [] m_resource;
+	delete[] m_resource;
 	GLExt::glDeleteBuffers(1, &m_buffer);
 }
 
@@ -55,7 +55,8 @@ void IndexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::OnResetDevice()
 {
-	if (IsValid()) return;
+	if (IsValid())
+		return;
 	GLuint ib;
 	GLExt::glGenBuffers(1, &ib);
 	m_buffer = ib;
@@ -66,7 +67,7 @@ void IndexBuffer::OnResetDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::Lock()
 {
-	assert( !m_isLock );
+	assert(!m_isLock);
 
 	m_isLock = true;
 	m_indexCount = 0;
@@ -77,7 +78,7 @@ void IndexBuffer::Lock()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::Unlock()
 {
-	assert( m_isLock );
+	assert(m_isLock);
 
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
 	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * stride_, m_resource, GL_DYNAMIC_DRAW);
@@ -85,7 +86,6 @@ void IndexBuffer::Unlock()
 
 	m_isLock = false;
 }
-
 
 bool IndexBuffer::IsValid()
 {
@@ -95,7 +95,7 @@ bool IndexBuffer::IsValid()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX9_RENDERSTATE_H__
-#define	__EFFEKSEERRENDERER_DX9_RENDERSTATE_H__
+#ifndef __EFFEKSEERRENDERER_DX9_RENDERSTATE_H__
+#define __EFFEKSEERRENDERER_DX9_RENDERSTATE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -20,19 +20,20 @@ class RenderState
 	: public ::EffekseerRenderer::RenderStateBase
 {
 private:
-	 RendererImplemented*	m_renderer;
+	RendererImplemented* m_renderer;
+
 public:
-	RenderState( RendererImplemented* renderer );
+	RenderState(RendererImplemented* renderer);
 	virtual ~RenderState();
 
-	void Update( bool forced );
+	void Update(bool forced);
 };
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_RENDERSTATE_H__
+#endif // __EFFEKSEERRENDERER_DX9_RENDERSTATE_H__
