@@ -816,7 +816,7 @@ public:
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 
 		collector_ = ShaderParameterCollector();
-		collector_.Collect(renderer, parameter.EffectPointer, parameter.BasicParameterPtr, parameter.EnableFalloff != 0, true);
+		collector_.Collect(renderer, parameter.EffectPointer, parameter.BasicParameterPtr, parameter.EnableFalloff, true);
 	}
 
 	template <typename RENDERER>
