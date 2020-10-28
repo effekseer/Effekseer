@@ -100,39 +100,6 @@ protected:
 		{
 			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-
-		/*
-		bool isAdvanced = state.IsAdvanced();
-
-		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
-		{
-			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting && isAdvanced)
-		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
-		{
-			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (isAdvanced)
-		{
-			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-		{
-			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else
-		{
-			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		*/
 	}
 
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param)
@@ -142,22 +109,6 @@ protected:
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		/*
-		state.TextureFilter1 = param.BasicParameterPtr->TextureFilter1;
-		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
-		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
-		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
-		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
-		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
-		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
-		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
-		state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
-		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
-		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
-		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
-		state.TextureFilter7 = param.BasicParameterPtr->TextureFilter7;
-		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
-		*/
 
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;

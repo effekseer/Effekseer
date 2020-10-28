@@ -863,40 +863,6 @@ protected:
 		{
 			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-
-		/*
-		const auto& state = m_renderer->GetStandardRenderer()->GetState();
-		bool isAdvanced = state.IsAdvanced();
-
-		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
-		{
-			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting && isAdvanced)
-		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
-		{
-			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		else if (isAdvanced)
-		{
-			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-		{
-			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		else
-		{
-			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
-		}
-		*/
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>

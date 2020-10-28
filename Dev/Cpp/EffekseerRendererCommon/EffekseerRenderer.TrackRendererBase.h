@@ -884,7 +884,6 @@ protected:
 	{
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
 		const ShaderParameterCollector& collector = state.Collector;
-		// bool isAdvanced = state.IsAdvanced();
 
 		if (collector.ShaderType == RendererShaderType::Material)
 		{
@@ -966,23 +965,6 @@ public:
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
 		
-		/*
-		state.TextureFilter1 = param.BasicParameterPtr->TextureFilter1;
-		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
-		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
-		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
-		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
-		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
-		state.TextureFilter4 = param.BasicParameterPtr->TextureFilter4;
-		state.TextureWrap4 = param.BasicParameterPtr->TextureWrap4;
-		state.TextureFilter5 = param.BasicParameterPtr->TextureFilter5;
-		state.TextureWrap5 = param.BasicParameterPtr->TextureWrap5;
-		state.TextureFilter6 = param.BasicParameterPtr->TextureFilter6;
-		state.TextureWrap6 = param.BasicParameterPtr->TextureWrap6;
-		state.TextureFilter7 = param.BasicParameterPtr->TextureFilter7;
-		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
-		*/
-
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
 		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
