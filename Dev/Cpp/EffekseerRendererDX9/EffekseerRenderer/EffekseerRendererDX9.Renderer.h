@@ -66,11 +66,6 @@ public:
 	virtual void ChangeDevice(LPDIRECT3DDEVICE9 device) = 0;
 
 	/**
-	@brief	背景を取得する。
-	*/
-	virtual Effekseer::TextureData* GetBackground() = 0;
-
-	/**
 	@brief	背景を設定する。
 	*/
 	virtual void SetBackground(IDirect3DTexture9* background) = 0;

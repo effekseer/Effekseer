@@ -1043,29 +1043,29 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	GLCheckError();
 }
 
-Shader* RendererImplemented::GetShader(::EffekseerRenderer::StandardRendererShaderType type) const
+Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType type) const
 {
-	if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedBackDistortion)
+	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
 	{
 		return shader_ad_distortion_;
 	}
-	else if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedLit)
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
 	{
 		return shader_ad_lit_;
 	}
-	else if (type == ::EffekseerRenderer::StandardRendererShaderType::AdvancedUnlit)
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
 	{
 		return shader_ad_unlit_;
 	}
-	else if (type == ::EffekseerRenderer::StandardRendererShaderType::BackDistortion)
+	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
 	{
 		return shader_distortion_;
 	}
-	else if (type == ::EffekseerRenderer::StandardRendererShaderType::Lit)
+	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
 	{
 		return shader_lit_;
 	}
-	else if (type == ::EffekseerRenderer::StandardRendererShaderType::Unlit)
+	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
 	{
 		return shader_unlit_;
 	}

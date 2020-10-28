@@ -805,6 +805,45 @@ struct NodeRendererBasicParameter
 
 	//! copy from alphacutoff
 	bool IsAlphaCutoffEnabled = false;
+
+	//! Whether are particles rendered with AdvancedRenderer
+	bool GetIsRenderedWithAdvancedRenderer() const
+	{
+		if (MaterialType == RendererMaterialType::File)
+			return false;
+
+		if (Texture3Index >= 0)
+			return true;
+
+		if (Texture4Index >= 0)
+			return true;
+
+		if (Texture5Index >= 0)
+			return true;
+
+		if (Texture6Index >= 0)
+			return true;
+
+		if (Texture7Index >= 0)
+			return true;
+
+		if (EnableInterpolation)
+			return true;
+
+		if (TextureBlendType != -1)
+			return true;
+
+		if (EdgeThreshold != 0)
+			return true;
+
+		if (IsAlphaCutoffEnabled)
+			return true;
+
+		if (EmissiveScaling != 1.0f)
+			return true;
+
+		return false;
+	}
 };
 
 //----------------------------------------------------------------------------------

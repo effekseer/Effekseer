@@ -224,7 +224,7 @@ public:
 	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
 	void DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount);
 
-	Shader* GetShader(::EffekseerRenderer::StandardRendererShaderType type) const;
+	Shader* GetShader(::EffekseerRenderer::RendererShaderType type) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 

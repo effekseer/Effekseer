@@ -419,7 +419,6 @@ struct ModelRendererAdvancedPixelConstantBuffer
 	}
 };
 
-
 struct ModelRendererDistortionPixelConstantBuffer
 {
 	float DistortionIntencity[4];
@@ -484,8 +483,7 @@ protected:
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
 
-	//! TODO : refactor
-	bool isAdvanced_ = false;
+	ShaderParameterCollector collector_;
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
@@ -759,7 +757,6 @@ protected:
 	}
 
 public:
-
 	ModelRendererVertexType VertexType = ModelRendererVertexType::Single;
 
 	virtual ~ModelRendererBase()
@@ -818,43 +815,8 @@ public:
 
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 
-		isAdvanced_ = IsAdvanced(parameter);
-	}
-
-	bool IsAdvanced(const efkModelNodeParam& parameter) const
-	{
-		// TODO : merge with IsAdvanced in StandererdRenderer
-		if (parameter.BasicParameterPtr->MaterialType == ::Effekseer::RendererMaterialType::File)
-		{
-			return false;
-		}
-
-		if (parameter.BasicParameterPtr->Texture3Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture4Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture5Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture6Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->Texture7Index >= 0)
-			return true;
-
-		if (parameter.BasicParameterPtr->EnableInterpolation ||
-			parameter.BasicParameterPtr->TextureBlendType != -1 ||
-			parameter.BasicParameterPtr->EdgeThreshold != 0 ||
-			parameter.BasicParameterPtr->EmissiveScaling != 1.0f ||
-			parameter.BasicParameterPtr->IsAlphaCutoffEnabled ||
-			parameter.EnableFalloff != 0)
-		{
-			return true;
-		}
-
-		return false;
+		collector_ = ShaderParameterCollector();
+		collector_.Collect(renderer, parameter.EffectPointer, parameter.BasicParameterPtr, parameter.EnableFalloff, true);
 	}
 
 	template <typename RENDERER>
@@ -957,7 +919,7 @@ public:
 			}
 			else
 			{
-				if (isAdvanced_)
+				if (collector_.DoRequireAdvancedRenderer())
 				{
 					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererAdvancedVertexConstantBuffer<InstanceCount>, ModelRendererAdvancedPixelConstantBuffer>(
 						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
@@ -966,7 +928,6 @@ public:
 				{
 					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererVertexConstantBuffer<InstanceCount>, ModelRendererPixelConstantBuffer>(
 						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
-
 				}
 			}
 		}
@@ -999,22 +960,10 @@ public:
 			model = (MODEL*)param.EffectPointer->GetModel(param.ModelIndex);
 		}
 
-
 		if (model == NULL)
 			return;
 
-		bool isBackgroundRequired = false;
-
-		isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
-
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
-		{
-			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
-			if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
-			{
-				isBackgroundRequired = true;
-			}
-		}
+		auto isBackgroundRequired = collector_.IsBackgroundRequiredOnFirstPass && renderPassInd == 0;
 
 		if (isBackgroundRequired)
 		{
@@ -1032,6 +981,11 @@ public:
 
 		if (isBackgroundRequired && renderer->GetBackground() == 0)
 			return;
+
+		if (isBackgroundRequired)
+		{
+			collector_.Textures[collector_.BackgroundIndex] = renderer->GetBackground();
+		}
 
 		// select shader
 		Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
@@ -1067,16 +1021,10 @@ public:
 			{
 				return;
 			}
-
-			if (material != nullptr && (material->TextureCount != materialParam->MaterialTextures.size() ||
-										material->UniformCount != materialParam->MaterialUniforms.size()))
-			{
-				return;
-			}
 		}
 		else
 		{
-			if (isAdvanced_)
+			if (collector_.DoRequireAdvancedRenderer())
 			{
 				if (distortion)
 				{
@@ -1121,218 +1069,13 @@ public:
 
 		renderer->BeginShader(shader_);
 
-		// Select texture
-		if (materialParam != nullptr && material != nullptr)
+		for (int32_t i = 0; i < collector_.TextureCount; i++)
 		{
-			int32_t textureCount = 0;
-			std::array<Effekseer::TextureData*, ::Effekseer::TextureSlotMax> textures;
-
-			if (materialParam->MaterialTextures.size() > 0)
-			{
-				textureCount = Effekseer::Min(static_cast<int32_t>(materialParam->MaterialTextures.size()), ::Effekseer::UserTextureSlotMax);
-
-				auto effect = param.EffectPointer;
-
-				for (size_t i = 0; i < textureCount; i++)
-				{
-					if (materialParam->MaterialTextures[i].Type == 1)
-					{
-						if (materialParam->MaterialTextures[i].Index >= 0)
-						{
-							textures[i] = effect->GetNormalImage(materialParam->MaterialTextures[i].Index);
-						}
-						else
-						{
-							textures[i] = nullptr;
-						}
-					}
-					else
-					{
-						if (materialParam->MaterialTextures[i].Index >= 0)
-						{
-							textures[i] = effect->GetColorImage(materialParam->MaterialTextures[i].Index);
-						}
-						else
-						{
-							textures[i] = nullptr;
-						}
-					}
-
-					state.TextureFilterTypes[i] = Effekseer::TextureFilterType::Linear;
-					state.TextureWrapTypes[i] = material->TextureWrapTypes[i];
-				}
-			}
-
-			if (renderer->GetBackground() != 0)
-			{
-				textures[textureCount] = renderer->GetBackground();
-				state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
-				state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
-				textureCount += 1;
-			}
-
-			if (textureCount > 0)
-			{
-				renderer->SetTextures(shader_, textures.data(), textureCount);
-			}
+			state.TextureFilterTypes[i] = collector_.TextureFilterTypes[i];
+			state.TextureWrapTypes[i] = collector_.TextureWrapTypes[i];
 		}
-		else
-		{
-			Effekseer::TextureData* textures[7] = {nullptr};
 
-			if (distortion)
-			{
-				if (param.BasicParameterPtr->Texture1Index >= 0)
-				{
-					textures[0] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture1Index);
-				}
-				else
-				{
-					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				textures[1] = renderer->GetBackground();
-
-				if (param.BasicParameterPtr->Texture3Index >= 0)
-				{
-					textures[2] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture3Index);
-				}
-				else
-				{
-					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture4Index >= 0)
-				{
-					textures[3] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture4Index);
-				}
-				if (textures[3] == nullptr)
-				{
-					textures[3] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
-				}
-
-				if (param.BasicParameterPtr->Texture5Index >= 0)
-				{
-					textures[4] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture5Index);
-				}
-				if (textures[4] == nullptr)
-				{
-					textures[4] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture6Index >= 0)
-				{
-					textures[5] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture6Index);
-				}
-				if (textures[5] == nullptr)
-				{
-					textures[5] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture7Index >= 0)
-				{
-					textures[6] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture7Index);
-				}
-				if (textures[6] == nullptr)
-				{
-					textures[6] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
-				}
-			}
-			else
-			{
-				if (param.BasicParameterPtr->Texture1Index >= 0)
-				{
-					textures[0] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture1Index);
-				}
-
-				if (textures[0] == nullptr)
-				{
-					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture2Index >= 0)
-				{
-					textures[1] = param.EffectPointer->GetNormalImage(param.BasicParameterPtr->Texture2Index);
-				}
-
-				if (textures[1] == nullptr)
-				{
-					textures[1] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
-				}
-
-				if (param.BasicParameterPtr->Texture3Index >= 0)
-				{
-					textures[2] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture3Index);
-				}
-				if (textures[2] == nullptr)
-				{
-					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture4Index >= 0)
-				{
-					textures[3] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture4Index);
-				}
-				if (textures[3] == nullptr)
-				{
-					textures[3] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
-				}
-
-				if (param.BasicParameterPtr->Texture5Index >= 0)
-				{
-					textures[4] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture5Index);
-				}
-				if (textures[4] == nullptr)
-				{
-					textures[4] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture6Index >= 0)
-				{
-					textures[5] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture6Index);
-				}
-				if (textures[5] == nullptr)
-				{
-					textures[5] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
-
-				if (param.BasicParameterPtr->Texture7Index >= 0)
-				{
-					textures[6] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture7Index);
-				}
-				if (textures[6] == nullptr)
-				{
-					textures[6] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
-				}
-			}
-
-			state.TextureFilterTypes[0] = param.BasicParameterPtr->TextureFilter1;
-			state.TextureWrapTypes[0] = param.BasicParameterPtr->TextureWrap1;
-
-			if (distortion)
-			{
-				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
-				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
-			}
-			else
-			{
-				state.TextureFilterTypes[1] = param.BasicParameterPtr->TextureFilter2;
-				state.TextureWrapTypes[1] = param.BasicParameterPtr->TextureWrap2;
-			}
-
-			state.TextureFilterTypes[2] = param.BasicParameterPtr->TextureFilter3;
-			state.TextureWrapTypes[2] = param.BasicParameterPtr->TextureWrap3;
-			state.TextureFilterTypes[3] = param.BasicParameterPtr->TextureFilter4;
-			state.TextureWrapTypes[3] = param.BasicParameterPtr->TextureWrap4;
-			state.TextureFilterTypes[4] = param.BasicParameterPtr->TextureFilter5;
-			state.TextureWrapTypes[4] = param.BasicParameterPtr->TextureWrap5;
-			state.TextureFilterTypes[5] = param.BasicParameterPtr->TextureFilter6;
-			state.TextureWrapTypes[5] = param.BasicParameterPtr->TextureWrap6;
-			state.TextureFilterTypes[6] = param.BasicParameterPtr->TextureFilter7;
-			state.TextureWrapTypes[6] = param.BasicParameterPtr->TextureWrap7;
-
-			renderer->SetTextures(shader_, textures, 7);
-		}
+		renderer->SetTextures(shader_, reinterpret_cast<Effekseer::TextureData**>(collector_.Textures.data()), collector_.TextureCount);
 
 		renderer->GetRenderState()->Update(distortion);
 
