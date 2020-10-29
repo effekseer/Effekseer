@@ -121,7 +121,9 @@ protected:
 	LLGI::RenderPassPipelineState* rppip_ = nullptr;
 	LLGI::Texture* checkTexture_ = nullptr;
 	LLGI::TextureFormatType screenFormat_ = LLGI::TextureFormatType::R8G8B8A8_UNORM;
+	LLGI::DeviceType deviceType_;
 
+	void InitializeWindow() override;
 	void Present() override;
 	bool DoEvent() override;
 	void PreDestroyDevice() override;

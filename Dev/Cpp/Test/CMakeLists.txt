@@ -4,18 +4,20 @@ cmake_minimum_required(VERSION 3.10)
 project(Test)
 
 set(effekseer_test_src
-    graphics_gl.cpp
     main.cpp
     TestHelper.h
     TestHelper.cpp
+    Window/Window.h
+    Window/Window.cpp
     Runtime/EffectPlatform.h
     Runtime/EffectPlatform.cpp
     Runtime/EffectPlatformGLFW.h
     Runtime/EffectPlatformGLFW.cpp
     Runtime/EffectPlatformGL.h
     Runtime/EffectPlatformGL.cpp
-    Runtime/RuntimeTest.h
     Runtime/RuntimeTest.cpp
+    Runtime/Performance.cpp
+    Runtime/TextureFormats.cpp
 )
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
@@ -65,22 +67,11 @@ include_directories(
 set(common_lib)
 set(common_inc)
 
-list(APPEND common_lib Effekseer)
 list(APPEND common_lib EffekseerRendererGL)
 
 if(WIN32)
     list(APPEND common_lib EffekseerRendererDX11)
     list(APPEND common_lib EffekseerRendererDX9)
-endif()
-
-if (USE_XAUDIO2)
-    list(APPEND effekseer_test_src sound_xaudio2.cpp)
-    list(APPEND common_lib EffekseerSoundXAudio2)
-endif()
-
-if (USE_OPENAL)
-    list(APPEND effekseer_test_src sound_al.cpp)
-    list(APPEND common_lib EffekseerSoundAL)
 endif()
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
@@ -99,6 +90,8 @@ endif()
 if(BUILD_VULKAN)
     list(APPEND common_lib EffekseerRendererVulkan)
 endif()
+
+list(APPEND common_lib Effekseer)
 
 if (MSVC)
 else()
@@ -132,11 +125,6 @@ else()
             ${IOKIT_FRAMEWORK}
             ${CORE_FOUNDATION_FRAMEWORK}
             ${CORE_VIDEO_FRAMEWORK})
-    else()
-        list(APPEND common_lib GLEW )
-        find_package(X11 REQUIRED)
-        list(APPEND common_inc ${X11_INCLUDE_DIR})
-        list(APPEND common_lib ${X11_LIBRARIES})
     endif()
 
 endif()
@@ -188,7 +176,19 @@ target_link_libraries(
     Test
     ${common_lib}
     glfw3
+    dl
 )
+endif()
+
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+    target_link_libraries(Test ${X11_LIBRARIES})
+    find_package(Threads REQUIRED)
+    target_link_libraries(Test ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
+if(FROM_CI)
+    target_compile_definitions(Test PRIVATE __FROM_CI__)
 endif()
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
@@ -208,6 +208,7 @@ else()
 endif()
 
 FilterFolder("${effekseer_test_src}")
+
 if(CLANG_FORMAT_ENABLED)
     clang_format(Test)
 endif()

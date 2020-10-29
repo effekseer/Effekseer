@@ -64,6 +64,18 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
+	auto single16Test = [&](const char16_t* name, const char* savename) -> void {
+		srand(0);
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
+
+		for (size_t i = 0; i < 30; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		platform->StopAllEffects();
+	};
+
 	single10Test(u"SimpleLaser", "SimpleLaser");
 	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
@@ -79,7 +91,12 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_Refraction", "Material_Refraction");
 	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
 	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
+	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
+	single15Test(u"ForceFieldLocal_Old", "ForceFieldLocal_Old");
 	single15Test(u"Material_FresnelRotatorPolarCoords", "Material_FresnelRotatorPolarCoords");
+
+	single15Test(u"Update_Easing", "Update_Easing");
+	single15Test(u"Update_MultiModel", "Update_MultiModel");
 }
 
 void BasicRuntimeDeviceLostTest()
@@ -134,7 +151,7 @@ void StartingFrameTest()
 
 	platform->Initialize(param);
 
-	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str(), 30);
+	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str(), Effekseer::Vector3D(), 30);
 
 	for (size_t i = 0; i < 20; i++)
 	{
@@ -401,7 +418,7 @@ void ReloadTest()
 
 		platform->GetEffects()[0]->Reload((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
 
-		// platform->Update();
+		//platform->Update();
 
 		platform->Draw();
 
@@ -417,6 +434,15 @@ void ReloadTest()
 void BasicRuntimeTest()
 {
 
+#ifdef _WIN32
+	{
+		auto platform = std::make_shared<EffectPlatformDX11>();
+		BasicRuntimeTestPlatform(platform.get(), "", "_DX11");
+		platform->Terminate();
+	}
+#endif
+
+#if !defined(__FROM_CI__)
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 	{
 		auto platform = std::make_shared<EffectPlatformVulkan>();
@@ -426,33 +452,31 @@ void BasicRuntimeTest()
 #endif
 
 #ifdef _WIN32
-#ifdef __EFFEKSEER_BUILD_DX12__
 	{
-		auto platform = std::make_shared<EffectPlatformDX12>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
-		platform->Terminate();
-	}
+
+#ifdef __EFFEKSEER_BUILD_DX12__
+		{
+			auto platform = std::make_shared<EffectPlatformDX12>();
+			BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
+			platform->Terminate();
+		}
 #endif
 
-	{
-		auto platform = std::make_shared<EffectPlatformDX9>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_DX9");
-		platform->Terminate();
-	}
+		{
+			auto platform = std::make_shared<EffectPlatformDX9>();
+			BasicRuntimeTestPlatform(platform.get(), "", "_DX9");
+			platform->Terminate();
+		}
 
-	{
-		auto platform = std::make_shared<EffectPlatformDX11>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_DX11");
-		platform->Terminate();
-	}
-
-	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
-		platform->Terminate();
+		{
+			auto platform = std::make_shared<EffectPlatformGL>();
+			BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+			platform->Terminate();
+		}
 	}
 
 #elif defined(__APPLE__)
+
 	{
 		auto platform = std::make_shared<EffectPlatformMetal>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
@@ -464,12 +488,16 @@ void BasicRuntimeTest()
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
 		platform->Terminate();
 	}
+
 #else
+#ifndef __EFFEKSEER_BUILD_VERSION16__
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
 		platform->Terminate();
 	}
+#endif
+#endif
 #endif
 }
 
@@ -488,6 +516,17 @@ void InstanceDisposeTestPlatform(EffectPlatform* platform)
 
 void InstanceDisposeTest()
 {
+
+#ifdef _WIN32
+	{
+		auto platform = std::make_shared<EffectPlatformDX11>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+#endif
+
+#if !defined(__FROM_CI__)
+
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 	{
 		auto platform = std::make_shared<EffectPlatformVulkan>();
@@ -511,12 +550,6 @@ void InstanceDisposeTest()
 		platform->Terminate();
 	}
 
-	{
-		auto platform = std::make_shared<EffectPlatformDX11>();
-		InstanceDisposeTestPlatform(platform.get());
-		platform->Terminate();
-	}
-
 #elif defined(__APPLE__)
 	{
 		auto platform = std::make_shared<EffectPlatformMetal>();
@@ -524,11 +557,11 @@ void InstanceDisposeTest()
 		platform->Terminate();
 	}
 #endif
-	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		InstanceDisposeTestPlatform(platform.get());
-		platform->Terminate();
-	}
+
+	auto platform = std::make_shared<EffectPlatformGL>();
+	InstanceDisposeTestPlatform(platform.get());
+	platform->Terminate();
+#endif
 }
 
 void CustomAllocatorTest()
@@ -573,3 +606,27 @@ void StringAndPathHelperTest()
 	if (Effekseer::PathHelper::Relative(std::u16string(u"/a/b/e"), std::u16string(u"/a/b/c")) != std::u16string(u"e"))
 		throw "";
 }
+
+#if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
+
+TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
+
+TestRegister Runtime_CustomAllocatorTest("Runtime.CustomAllocatorTest", []() -> void { CustomAllocatorTest(); });
+
+TestRegister Runtime_InstanceDisposeTest("Runtime.InstanceDisposeTest", []() -> void { InstanceDisposeTest(); });
+
+TestRegister Runtime_ReloadTest("Runtime.ReloadTest", []() -> void { ReloadTest(); });
+
+TestRegister Runtime_MassPlayTest("Runtime.MassPlayTest", []() -> void { MassPlayTest(); });
+
+TestRegister Runtime_PlaybackSpeedTest("Runtime.PlaybackSpeedTest", []() -> void { PlaybackSpeedTest(); });
+
+TestRegister Runtime_StartingFrameTest("Runtime.StartingFrameTest", []() -> void { StartingFrameTest(); });
+
+TestRegister Runtime_UpdateHandleTest("Runtime.UpdateHandleTest", []() -> void { UpdateHandleTest(); });
+
+TestRegister Runtime_BasicRuntimeTest("Runtime.BasicRuntimeTest", []() -> void { BasicRuntimeTest(); });
+
+// TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void { BasicRuntimeDeviceLostTest(); });
+
+#endif

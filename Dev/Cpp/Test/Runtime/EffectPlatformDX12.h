@@ -10,10 +10,7 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX12()
-		: EffectPlatformLLGI(LLGI::DeviceType::DirectX12)
-	{
-	}
+	EffectPlatformDX12() : EffectPlatformLLGI(LLGI::DeviceType::DirectX12) {}
 
 	virtual ~EffectPlatformDX12();
 

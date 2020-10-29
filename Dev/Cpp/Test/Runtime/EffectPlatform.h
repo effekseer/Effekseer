@@ -7,15 +7,13 @@
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 
-static const int WindowWidth = 1280;
-static const int WindowHeight = 720;
-
 struct EffectPlatformInitializingParameter
 {
 	bool VSync = true;
 	bool IsUpdatedByHandle = false;
 	bool IsCullingCreated = true;
 	int InstanceCount = 8000;
+	std::array<int32_t, 2> WindowSize = {320, 240};
 };
 
 class EffectPlatform
@@ -24,7 +22,6 @@ private:
 	bool isInitialized_ = false;
 	bool isTerminated_ = false;
 	float time_ = 0;
-	EffectPlatformInitializingParameter initParam_;
 
 	Effekseer::Manager* manager_ = nullptr;
 	EffekseerRenderer::Renderer* renderer_ = nullptr;
@@ -34,6 +31,7 @@ private:
 
 protected:
 	bool isOpenGLMode_ = false;
+	EffectPlatformInitializingParameter initParam_;
 
 protected:
 	std::vector<Effekseer::Effect*> effects_;
@@ -46,6 +44,11 @@ protected:
 		return nullptr;
 	}
 	virtual EffekseerRenderer::Renderer* CreateRenderer() = 0;
+
+	virtual void InitializeWindow()
+	{
+	}
+
 	virtual void InitializeDevice(const EffectPlatformInitializingParameter& param)
 	{
 	}
@@ -76,7 +79,7 @@ public:
 	void Initialize(const EffectPlatformInitializingParameter& param);
 	void Terminate();
 
-	Effekseer::Handle Play(const char16_t* path, int32_t startFrame = 0);
+	Effekseer::Handle Play(const char16_t* path, Effekseer::Vector3D position = Effekseer::Vector3D(), int32_t startFrame = 0);
 
 	bool Update();
 

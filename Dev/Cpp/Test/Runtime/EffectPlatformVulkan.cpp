@@ -107,8 +107,7 @@ class DistortingCallbackVulkan : public EffekseerRenderer::DistortingCallback
 
 public:
 	DistortingCallbackVulkan(EffectPlatformVulkan* platform, ::EffekseerRenderer::Renderer* renderer)
-		: platform_(platform)
-		, renderer_(renderer)
+		: platform_(platform), renderer_(renderer)
 	{
 	}
 
@@ -161,7 +160,7 @@ void EffectPlatformVulkan::CreateShaders()
 	{
 		LLGI::DataStructure d;
 		d.Data = b.data();
-		d.Size = b.size();
+		d.Size = static_cast<int32_t>(b.size());
 		data_vs.push_back(d);
 	}
 
@@ -169,12 +168,12 @@ void EffectPlatformVulkan::CreateShaders()
 	{
 		LLGI::DataStructure d;
 		d.Data = b.data();
-		d.Size = b.size();
+		d.Size = static_cast<int32_t>(b.size());
 		data_ps.push_back(d);
 	}
 
-	shader_vs_ = graphics_->CreateShader(data_vs.data(), data_vs.size());
-	shader_ps_ = graphics_->CreateShader(data_ps.data(), data_ps.size());
+	shader_vs_ = graphics_->CreateShader(data_vs.data(), static_cast<int32_t>(data_vs.size()));
+	shader_ps_ = graphics_->CreateShader(data_ps.data(), static_cast<int32_t>(data_ps.size()));
 }
 
 EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
@@ -205,19 +204,11 @@ EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformVulkan::~EffectPlatformVulkan()
-{
-}
+EffectPlatformVulkan::~EffectPlatformVulkan() {}
 
-void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param)
-{
-	CreateCheckedTexture();
-}
+void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
 
-void EffectPlatformVulkan::DestroyDevice()
-{
-	EffectPlatformLLGI::DestroyDevice();
-}
+void EffectPlatformVulkan::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
 
 void EffectPlatformVulkan::BeginRendering()
 {
@@ -236,7 +227,4 @@ void EffectPlatformVulkan::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const
-{
-	return checkTexture_;
-}
+LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const { return checkTexture_; }

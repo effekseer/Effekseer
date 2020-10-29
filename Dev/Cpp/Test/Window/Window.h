@@ -1,6 +1,7 @@
 #pragma once
 
-#include "EffectPlatform.h"
+#include <array>
+#include <stdint.h>
 
 #if defined(WIN32) || defined(__APPLE__) || defined(__linux__)
 
@@ -26,19 +27,16 @@
 
 #endif
 
-class EffectPlatformGLFW : public EffectPlatform
+class RenderingWindow
 {
 private:
 	GLFWwindow* glfwWindow_ = nullptr;
-
-protected:
-	void* GetNativePtr(int32_t index) override;
-	void Present() override;
-	bool DoEvent() override;
-
-	void InitializeWindow() override;
+	bool isOpenGLMode_ = false;
 
 public:
-	EffectPlatformGLFW(bool isOpenGLMode);
-	virtual ~EffectPlatformGLFW();
+	RenderingWindow(bool isOpenGLMode, std::array<int32_t,2> windowSize, const char* title);
+	virtual ~RenderingWindow();
+	void Present();
+	bool DoEvent();
+	void* GetNativePtr(int32_t index);
 };

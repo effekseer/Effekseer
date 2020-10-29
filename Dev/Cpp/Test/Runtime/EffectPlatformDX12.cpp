@@ -1,10 +1,10 @@
 #include "EffectPlatformDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
-#include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.IndexBufferDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.PlatformDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.VertexBufferDX12.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -60,9 +60,7 @@ class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer)
-		: platform_(platform)
-		, renderer_(renderer)
+	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer)
 	{
 	}
 
@@ -111,7 +109,7 @@ void EffectPlatformDX12::CreateShaders()
 	{
 		LLGI::DataStructure d;
 		d.Data = b.data();
-		d.Size = b.size();
+		d.Size = static_cast<int32_t>(b.size());
 		data_vs.push_back(d);
 	}
 
@@ -119,12 +117,12 @@ void EffectPlatformDX12::CreateShaders()
 	{
 		LLGI::DataStructure d;
 		d.Data = b.data();
-		d.Size = b.size();
+		d.Size = static_cast<int32_t>(b.size());
 		data_ps.push_back(d);
 	}
 
-	shader_vs_ = graphics_->CreateShader(data_vs.data(), data_vs.size());
-	shader_ps_ = graphics_->CreateShader(data_ps.data(), data_ps.size());
+	shader_vs_ = graphics_->CreateShader(data_vs.data(), static_cast<int32_t>(data_vs.size()));
+	shader_ps_ = graphics_->CreateShader(data_ps.data(), static_cast<int32_t>(data_ps.size()));
 }
 
 EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
@@ -147,19 +145,11 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformDX12::~EffectPlatformDX12()
-{
-}
+EffectPlatformDX12::~EffectPlatformDX12() {}
 
-void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParameter& param)
-{
-	CreateCheckedTexture();
-}
+void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
 
-void EffectPlatformDX12::DestroyDevice()
-{
-	EffectPlatformLLGI::DestroyDevice();
-}
+void EffectPlatformDX12::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
 
 void EffectPlatformDX12::BeginRendering()
 {
@@ -178,7 +168,4 @@ void EffectPlatformDX12::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const
-{
-	return checkTexture_;
-}
+LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const { return checkTexture_; }

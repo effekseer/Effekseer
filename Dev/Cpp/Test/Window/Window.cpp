@@ -1,7 +1,7 @@
 
-#include "EffectPlatformGLFW.h"
+#include "Window.h"
 
-void* EffectPlatformGLFW::GetNativePtr(int32_t index)
+void* RenderingWindow::GetNativePtr(int32_t index)
 {
 #ifdef _WIN32
 	if (index == 0)
@@ -28,43 +28,10 @@ void* EffectPlatformGLFW::GetNativePtr(int32_t index)
 	return nullptr;
 }
 
-EffectPlatformGLFW::EffectPlatformGLFW(bool isOpenGLMode)
+RenderingWindow::RenderingWindow(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title)
 {
 	isOpenGLMode_ = isOpenGLMode;
-}
 
-EffectPlatformGLFW ::~EffectPlatformGLFW()
-{
-	if (glfwWindow_ != nullptr)
-	{
-		glfwDestroyWindow(glfwWindow_);
-		glfwTerminate();
-		glfwWindow_ = nullptr;
-	}
-}
-
-void EffectPlatformGLFW::Present()
-{
-	if (isOpenGLMode_)
-	{
-		glfwSwapBuffers(glfwWindow_);
-	}
-}
-
-bool EffectPlatformGLFW::DoEvent()
-{
-	if (glfwWindowShouldClose(glfwWindow_) == GL_TRUE)
-	{
-		return false;
-	}
-
-	glfwPollEvents();
-
-	return true;
-}
-
-void EffectPlatformGLFW::InitializeWindow()
-{
 	if (!glfwInit())
 	{
 		throw "Failed to initialize glfw";
@@ -84,7 +51,7 @@ void EffectPlatformGLFW::InitializeWindow()
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	}
 
-	glfwWindow_ = glfwCreateWindow(initParam_.WindowSize[0], initParam_.WindowSize[1], "Example glfw", nullptr, nullptr);
+	glfwWindow_ = glfwCreateWindow(windowSize[0], windowSize[1], title, nullptr, nullptr);
 
 	if (glfwWindow_ == nullptr)
 	{
@@ -96,4 +63,34 @@ void EffectPlatformGLFW::InitializeWindow()
 	{
 		glfwMakeContextCurrent(glfwWindow_);
 	}
+}
+
+RenderingWindow::~RenderingWindow()
+{
+	if (glfwWindow_ != nullptr)
+	{
+		glfwDestroyWindow(glfwWindow_);
+		glfwTerminate();
+		glfwWindow_ = nullptr;
+	}
+}
+
+void RenderingWindow::Present()
+{
+	if (isOpenGLMode_)
+	{
+		glfwSwapBuffers(glfwWindow_);
+	}
+}
+
+bool RenderingWindow::DoEvent()
+{
+	if (glfwWindowShouldClose(glfwWindow_) == GL_TRUE)
+	{
+		return false;
+	}
+
+	glfwPollEvents();
+
+	return true;
 }

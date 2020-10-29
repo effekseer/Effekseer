@@ -10,10 +10,7 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformVulkan()
-		: EffectPlatformLLGI(LLGI::DeviceType::Vulkan)
-	{
-	}
+	EffectPlatformVulkan() : EffectPlatformLLGI(LLGI::DeviceType::Vulkan) {}
 
 	virtual ~EffectPlatformVulkan();
 
