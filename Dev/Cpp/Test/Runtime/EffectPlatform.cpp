@@ -84,6 +84,9 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 		manager_->CreateCullingWorld(100.0f, 100.0f, 100.0f, 6);
 	}
 
+	// support multithread in 1.6
+	manager_->LaunchWorkerThreads(4);
+
 	isInitialized_ = true;
 }
 
