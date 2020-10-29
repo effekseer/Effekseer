@@ -263,7 +263,7 @@ void EffectPlatformDX9::ResetDevice()
 
 	for (size_t i = 0; i < effects_.size(); i++)
 	{
-		effects_[i]->ReloadResources(buffers_[i].data(), buffers_[i].size());
+		effects_[i]->ReloadResources(buffers_[i].data(), static_cast<int32_t>(buffers_[i].size()));
 	}
 
 	CreateCheckedSurface();

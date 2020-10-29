@@ -160,7 +160,7 @@ void EffectPlatformVulkan::CreateShaders()
 	{
 		LLGI::DataStructure d;
 		d.Data = b.data();
-		d.Size = b.size();
+		d.Size = static_cast<int32_t>(b.size());
 		data_vs.push_back(d);
 	}
 
@@ -168,12 +168,12 @@ void EffectPlatformVulkan::CreateShaders()
 	{
 		LLGI::DataStructure d;
 		d.Data = b.data();
-		d.Size = b.size();
+		d.Size = static_cast<int32_t>(b.size());
 		data_ps.push_back(d);
 	}
 
-	shader_vs_ = graphics_->CreateShader(data_vs.data(), data_vs.size());
-	shader_ps_ = graphics_->CreateShader(data_ps.data(), data_ps.size());
+	shader_vs_ = graphics_->CreateShader(data_vs.data(), static_cast<int32_t>(data_vs.size()));
+	shader_ps_ = graphics_->CreateShader(data_ps.data(), static_cast<int32_t>(data_ps.size()));
 }
 
 EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
