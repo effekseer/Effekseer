@@ -68,7 +68,6 @@ include_directories(
 set(common_lib)
 set(common_inc)
 
-list(APPEND common_lib Effekseer)
 list(APPEND common_lib EffekseerRendererGL)
 
 if(WIN32)
@@ -92,6 +91,8 @@ endif()
 if(BUILD_VULKAN)
     list(APPEND common_lib EffekseerRendererVulkan)
 endif()
+
+list(APPEND common_lib Effekseer)
 
 if (MSVC)
 else()
@@ -125,11 +126,6 @@ else()
             ${IOKIT_FRAMEWORK}
             ${CORE_FOUNDATION_FRAMEWORK}
             ${CORE_VIDEO_FRAMEWORK})
-    else()
-        list(APPEND common_lib GLEW )
-        find_package(X11 REQUIRED)
-        list(APPEND common_inc ${X11_INCLUDE_DIR})
-        list(APPEND common_lib ${X11_LIBRARIES})
     endif()
 
 endif()
@@ -181,7 +177,15 @@ target_link_libraries(
     Test
     ${common_lib}
     glfw3
+    dl
 )
+endif()
+
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+    target_link_libraries(Test ${X11_LIBRARIES})
+    find_package(Threads REQUIRED)
+    target_link_libraries(Test ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(FROM_CI)

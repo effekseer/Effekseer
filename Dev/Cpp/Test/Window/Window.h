@@ -27,15 +27,15 @@
 
 #endif
 
-class Window
+class RenderingWindow
 {
 private:
 	GLFWwindow* glfwWindow_ = nullptr;
 	bool isOpenGLMode_ = false;
 
 public:
-	Window(bool isOpenGLMode, std::array<int32_t,2> windowSize, const char* title);
-	virtual ~Window();
+	RenderingWindow(bool isOpenGLMode, std::array<int32_t,2> windowSize, const char* title);
+	virtual ~RenderingWindow();
 	void Present();
 	bool DoEvent();
 	void* GetNativePtr(int32_t index);

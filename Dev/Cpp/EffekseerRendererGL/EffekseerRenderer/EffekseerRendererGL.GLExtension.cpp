@@ -807,7 +807,7 @@ void glGenFramebuffers(GLsizei n, GLuint* ids)
 #if _WIN32
 	g_glGenFramebuffers(n, ids);
 #else
-	glGenFramebuffers(n, ids);
+	::glGenFramebuffers(n, ids);
 #endif
 }
 
@@ -816,7 +816,7 @@ void glBindFramebuffer(GLenum target, GLuint framebuffer)
 #if _WIN32
 	g_glBindFramebuffer(target, framebuffer);
 #else
-	glBindFramebuffer(target, framebuffer);
+	::glBindFramebuffer(target, framebuffer);
 #endif
 }
 
@@ -825,7 +825,7 @@ void glDeleteFramebuffers(GLsizei n, GLuint* framebuffers)
 #if _WIN32
 	g_glDeleteFramebuffers(n, framebuffers);
 #else
-	glDeleteFramebuffers(n, framebuffers);
+	::glDeleteFramebuffers(n, framebuffers);
 #endif
 }
 
@@ -842,7 +842,7 @@ void glFramebufferTexture2D(GLenum target,
 							 texture,
 							 level);
 #else
-	glFramebufferTexture2D(target,
+	::glFramebufferTexture2D(target,
 						   attachment,
 						   textarget,
 						   texture,

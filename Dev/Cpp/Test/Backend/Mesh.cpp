@@ -1,5 +1,7 @@
 #include "../TestHelper.h"
 #include "../Window/Window.h"
+
+#undef None
 #include <EffekseerRendererGL.h>
 
 #include <memory>
@@ -44,7 +46,7 @@ void main(void)
 
 void Backend_Mesh()
 {
-	auto window = std::make_shared<Window>(true, std::array<int, 2>({1280, 720}), "Backend.Mesh");
+	auto window = std::make_shared<RenderingWindow>(true, std::array<int, 2>({1280, 720}), "Backend.Mesh");
 
 	auto graphicsDevice = Effekseer::CreateReference(EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3));
 

@@ -1,7 +1,7 @@
 
 #include "Window.h"
 
-void* Window::GetNativePtr(int32_t index)
+void* RenderingWindow::GetNativePtr(int32_t index)
 {
 #ifdef _WIN32
 	if (index == 0)
@@ -28,7 +28,7 @@ void* Window::GetNativePtr(int32_t index)
 	return nullptr;
 }
 
-Window::Window(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title)
+RenderingWindow::RenderingWindow(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title)
 {
 	isOpenGLMode_ = isOpenGLMode;
 
@@ -65,7 +65,7 @@ Window::Window(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char*
 	}
 }
 
-Window::~Window()
+RenderingWindow::~RenderingWindow()
 {
 	if (glfwWindow_ != nullptr)
 	{
@@ -75,7 +75,7 @@ Window::~Window()
 	}
 }
 
-void Window::Present()
+void RenderingWindow::Present()
 {
 	if (isOpenGLMode_)
 	{
@@ -83,7 +83,7 @@ void Window::Present()
 	}
 }
 
-bool Window::DoEvent()
+bool RenderingWindow::DoEvent()
 {
 	if (glfwWindowShouldClose(glfwWindow_) == GL_TRUE)
 	{
