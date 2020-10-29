@@ -142,7 +142,11 @@ public:
 
 		value.resize(count);
 
-		memcpy(value.data(), data_ + offset, sizeof(T) * count);
+		if (value.size() > 0)
+		{
+			memcpy(value.data(), data_ + offset, sizeof(T) * count);
+		}
+
 		offset += sizeof(T) * count;
 		return true;
 	}

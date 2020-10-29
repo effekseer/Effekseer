@@ -511,7 +511,6 @@ struct ParameterGenerationLocation
 			LineType type;
 		} line;
 
-		
 		struct
 		{
 			int32_t index;
@@ -961,14 +960,20 @@ struct ParameterRendererCommon
 				pos += sizeof(int);
 
 				Material.MaterialTextures.resize(textures);
-				memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+				if (Material.MaterialTextures.size() > 0)
+				{
+					memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+				}
 				pos += (sizeof(MaterialTextureParameter) * textures);
 
 				memcpy(&uniforms, pos, sizeof(int));
 				pos += sizeof(int);
 
 				Material.MaterialUniforms.resize(uniforms);
-				memcpy(Material.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+				if (Material.MaterialUniforms.size() > 0)
+				{
+					memcpy(Material.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+				}
 				pos += (sizeof(float) * 4 * uniforms);
 			}
 		}
@@ -1305,7 +1310,6 @@ struct ParameterAlphaCutoff
 
 		FPI = FOUR_POINT_INTERPOLATION,
 	} Type;
-
 
 	struct
 	{
