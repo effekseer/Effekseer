@@ -53,6 +53,7 @@ protected:
 	int32_t stride_ = 0;
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
+	bool fasterSngleRingModeEnabled_ = true;
 
 public:
 	RingRendererBase(RENDERER* renderer)
@@ -66,6 +67,28 @@ public:
 
 	virtual ~RingRendererBase()
 	{
+	}
+
+	/**
+		@brief	get a flag of single ring mode
+		@note
+		This flag means that a rendering of ring is faster with GPU on some condition.
+		Default is true.
+	*/
+	bool GetFasterSingleRingModeEnabled() const
+	{
+		return fasterSngleRingModeEnabled_;
+	}
+
+	/**
+		@brief	Set a flag of single ring mode
+		@note
+		please read getter
+	*/
+
+	void SetFasterSngleRingModeEnabled(bool value)
+	{
+		fasterSngleRingModeEnabled_ = value;
 	}
 
 protected:
@@ -104,40 +127,6 @@ protected:
 		{
 			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
-
-
-		/*
-		bool isAdvanced = state.IsAdvanced();
-
-		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
-		{
-			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting && isAdvanced)
-		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion && isAdvanced)
-		{
-			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (isAdvanced)
-		{
-			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-		{
-			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		else
-		{
-			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(param, inst, nullptr, camera);
-		}
-		*/
 	}
 
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
@@ -227,7 +216,7 @@ protected:
 
 	bool CanSingleRendering()
 	{
-		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default;
+		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default && fasterSngleRingModeEnabled_;
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
@@ -347,46 +336,41 @@ protected:
 		const int32_t advancedUVNum = 5;
 
 		float advancedUVCurrent[advancedUVNum] =
-		{
-			instanceParameter.AlphaUV.X,
-			instanceParameter.UVDistortionUV.X,
-			instanceParameter.BlendUV.X,
-			instanceParameter.BlendAlphaUV.X,
-			instanceParameter.BlendUVDistortionUV.X
-		};
+			{
+				instanceParameter.AlphaUV.X,
+				instanceParameter.UVDistortionUV.X,
+				instanceParameter.BlendUV.X,
+				instanceParameter.BlendAlphaUV.X,
+				instanceParameter.BlendUVDistortionUV.X};
 		const float advancedUVStep[advancedUVNum] =
-		{
-			instanceParameter.AlphaUV.Width / parameter.VertexCount,
-			instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
-			instanceParameter.BlendUV.Width / parameter.VertexCount,
-			instanceParameter.BlendAlphaUV.Width / parameter.VertexCount,
-			instanceParameter.BlendUVDistortionUV.Width / parameter.VertexCount
-		};
+			{
+				instanceParameter.AlphaUV.Width / parameter.VertexCount,
+				instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
+				instanceParameter.BlendUV.Width / parameter.VertexCount,
+				instanceParameter.BlendAlphaUV.Width / parameter.VertexCount,
+				instanceParameter.BlendUVDistortionUV.Width / parameter.VertexCount};
 		const float advancedUVv1[advancedUVNum] =
-		{
-			instanceParameter.AlphaUV.Y,
-			instanceParameter.UVDistortionUV.Y,
-			instanceParameter.BlendUV.Y,
-			instanceParameter.BlendAlphaUV.Y,
-			instanceParameter.BlendUVDistortionUV.Y
-		};
+			{
+				instanceParameter.AlphaUV.Y,
+				instanceParameter.UVDistortionUV.Y,
+				instanceParameter.BlendUV.Y,
+				instanceParameter.BlendAlphaUV.Y,
+				instanceParameter.BlendUVDistortionUV.Y};
 		const float advancedUVv2[advancedUVNum] =
-		{
-			advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
-			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
-			advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
-			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f,
-			advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height * 0.5f
-		};
+			{
+				advancedUVv1[0] + instanceParameter.AlphaUV.Height * 0.5f,
+				advancedUVv1[1] + instanceParameter.UVDistortionUV.Height * 0.5f,
+				advancedUVv1[2] + instanceParameter.BlendUV.Height * 0.5f,
+				advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height * 0.5f,
+				advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height * 0.5f};
 		const float advancedUVv3[advancedUVNum] =
-		{
-			advancedUVv1[0] + instanceParameter.AlphaUV.Height,
-			advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
-			advancedUVv1[2] + instanceParameter.BlendUV.Height,
-			advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height,
-			advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height
-		};
-		float advancedUVtexNext[advancedUVNum] = { 0.0f };
+			{
+				advancedUVv1[0] + instanceParameter.AlphaUV.Height,
+				advancedUVv1[1] + instanceParameter.UVDistortionUV.Height,
+				advancedUVv1[2] + instanceParameter.BlendUV.Height,
+				advancedUVv1[3] + instanceParameter.BlendAlphaUV.Height,
+				advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height};
+		float advancedUVtexNext[advancedUVNum] = {0.0f};
 
 		::Effekseer::Vec3f outerNext, innerNext, centerNext;
 
@@ -404,9 +388,9 @@ protected:
 			sin_ = sin_ * stepC + cos_ * stepS;
 			cos_ = t;
 
-			outerNext = ::Effekseer::Vec3f{ cos_ * outerRadius, sin_ * outerRadius, outerHeight };
-			innerNext = ::Effekseer::Vec3f{ cos_ * innerRadius, sin_ * innerRadius, innerHeight };
-			centerNext = ::Effekseer::Vec3f{ cos_ * centerRadius, sin_ * centerRadius, centerHeight };
+			outerNext = ::Effekseer::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
+			innerNext = ::Effekseer::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
+			centerNext = ::Effekseer::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
 
 			currentAngleDegree += stepAngleDegree;
 
@@ -561,7 +545,7 @@ protected:
 				// return back
 				float t_b;
 				t_b = old_c * (stepC)-old_s * (-stepS);
-				auto s_b = old_s * (stepC)+old_c * (-stepS);
+				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
 				::Effekseer::Vec3f outerBefore(c_b * outerRadius, s_b * outerRadius, outerHeight);
@@ -605,10 +589,10 @@ protected:
 				// return back
 				float t_b;
 				t_b = old_c * (stepC)-old_s * (-stepS);
-				auto s_b = old_s * (stepC)+old_c * (-stepS);
+				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::Vec3f outerBefore{ c_b * outerRadius, s_b * outerRadius, outerHeight };
+				::Effekseer::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
@@ -644,7 +628,7 @@ protected:
 
 				// rotate directions
 				::Effekseer::Mat43f matRot = mat43;
-				matRot.SetTranslation({ 0.0f, 0.0f, 0.0f });
+				matRot.SetTranslation({0.0f, 0.0f, 0.0f});
 
 				normalCurrent = ::Effekseer::Vec3f::Transform(normalCurrent, matRot);
 				normalNext = ::Effekseer::Vec3f::Transform(normalNext, matRot);
