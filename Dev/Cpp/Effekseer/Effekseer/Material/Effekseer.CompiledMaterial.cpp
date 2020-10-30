@@ -196,7 +196,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	offset = dst.size();
 
 	// info
-	size_t platformCount = platforms.size();
+	uint32_t platformCount = static_cast<uint32_t>(platforms.size());
 	dst.resize(dst.size() + sizeof(uint32_t));
 	memcpy(dst.data() + offset, &platformCount, sizeof(uint32_t));
 	offset = dst.size();
@@ -210,7 +210,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	}
 
 	// data
-	size_t originalDataSize = originalData.size();
+	uint32_t originalDataSize = static_cast<uint32_t>(originalData.size());
 	dst.resize(dst.size() + sizeof(uint32_t));
 	memcpy(dst.data() + offset, &originalDataSize, sizeof(uint32_t));
 	offset = dst.size();
