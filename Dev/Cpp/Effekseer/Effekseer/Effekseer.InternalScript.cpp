@@ -104,7 +104,7 @@ bool InternalScript::Load(uint8_t* data, int size)
 		}
 	}
 
-	reader.Read(operators, size - static_cast<int32_t>(reader.GetOffset()));
+	reader.Read(operators, static_cast<int32_t>(size - reader.GetOffset()));
 
 	if (reader.GetStatus() == BinaryReaderStatus::Failed)
 		return false;

@@ -286,7 +286,11 @@ void Instance::FirstUpdate()
 		if (pNode->CommonValues.RefEqMaxGeneration >= 0)
 		{
 			auto maxGene = static_cast<float>(pNode->CommonValues.MaxGeneration);
-			ApplyEq(maxGene, effect, instanceGlobal, m_pParent, &rand, pNode->CommonValues.RefEqMaxGeneration, maxGene);
+			ApplyEq(maxGene,
+					this->m_pEffectNode->m_effect,
+					this->m_pContainer->GetRootInstance(),
+					pNode->CommonValues.RefEqMaxGeneration,
+					maxGene);
 			maxGenerationChildrenCount[i] = static_cast<int32_t>(maxGene);
 		}
 		else

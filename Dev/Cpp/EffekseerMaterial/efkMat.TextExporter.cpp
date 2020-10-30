@@ -714,7 +714,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 		auto refractionInd = outputNode->GetInputPinIndex("Refraction");
 		option.HasRefraction = material->GetConnectedPins(outputNode->InputPins[refractionInd]).size() != 0;
-		option.ShadingModel = outputNode->Properties[0]->Floats[0];
+		option.ShadingModel = static_cast<int>(outputNode->Properties[0]->Floats[0]);
 	}
 	else
 	{
@@ -1228,7 +1228,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	if (node->Target->Parameter->Type == NodeType::TextureCoordinate)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
-			<< GetUVName(node->Target->Properties[0]->Floats[0]) << ";" << std::endl;
+			<< GetUVName(static_cast<int32_t>(node->Target->Properties[0]->Floats[0])) << ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Panner)
@@ -1240,7 +1240,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		speed_[1] = node->Target->Properties[0]->Floats[1];
 
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
-			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(index->Floats[0])) << "+"
+			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(static_cast<int32_t>(index->Floats[0]))) << "+"
 			<< (node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[2]) : GetInputArg(ValueType::Float2, speed_))
 			<< "*" << GetInputArg(ValueType::Float1, node->Inputs[1]) << ";" << std::endl;
 	}
