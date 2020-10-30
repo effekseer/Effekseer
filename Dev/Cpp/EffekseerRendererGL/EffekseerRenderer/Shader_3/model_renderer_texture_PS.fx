@@ -53,12 +53,12 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-layout(binding = 3) uniform sampler2D Sampler_g_uvDistortionSampler;
+layout(binding = 2) uniform sampler2D Sampler_g_uvDistortionSampler;
 layout(binding = 0) uniform sampler2D Sampler_g_colorSampler;
-layout(binding = 2) uniform sampler2D Sampler_g_alphaSampler;
-layout(binding = 6) uniform sampler2D Sampler_g_blendUVDistortionSampler;
-layout(binding = 4) uniform sampler2D Sampler_g_blendSampler;
-layout(binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
+layout(binding = 1) uniform sampler2D Sampler_g_alphaSampler;
+layout(binding = 5) uniform sampler2D Sampler_g_blendUVDistortionSampler;
+layout(binding = 3) uniform sampler2D Sampler_g_blendSampler;
+layout(binding = 4) uniform sampler2D Sampler_g_blendAlphaSampler;
 
 centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_Normal;

@@ -28,17 +28,13 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 fEdgeParameter; // x:threshold, y:colorScaling
 };
 
+#ifdef ENABLE_LIGHTING
 
-
-#ifdef ENABLE_COLOR_TEXTURE
 Texture2D	g_colorTexture		: register( t0 );
 SamplerState	g_colorSampler		: register( s0 );
-#endif
 
-#ifdef ENABLE_NORMAL_TEXTURE
 Texture2D	g_normalTexture		: register( t1 );
 SamplerState	g_normalSampler		: register( s1 );
-#endif
 
 Texture2D	    g_alphaTexture		: register( t2 );
 SamplerState	g_alphaSampler		: register( s2 );
@@ -55,6 +51,29 @@ SamplerState    g_blendAlphaSampler : register( s5 );
 Texture2D       g_blendUVDistortionTexture : register( t6 );
 SamplerState    g_blendUVDistortionSampler : register( s6 );
 
+#else
+
+
+Texture2D	g_colorTexture		: register( t0 );
+SamplerState	g_colorSampler		: register( s0 );
+
+Texture2D	    g_alphaTexture		: register( t1 );
+SamplerState	g_alphaSampler		: register( s1 );
+
+Texture2D       g_uvDistortionTexture : register( t2 );
+SamplerState    g_uvDistortionSampler : register( s2 );
+
+Texture2D       g_blendTexture : register( t3 );
+SamplerState    g_blendSampler : register( s3 );
+
+Texture2D       g_blendAlphaTexture : register( t4 );
+SamplerState    g_blendAlphaSampler : register( s4 );
+
+Texture2D       g_blendUVDistortionTexture : register( t5 );
+SamplerState    g_blendUVDistortionSampler : register( s5 );
+
+
+#endif
 
 struct PS_Input
 {

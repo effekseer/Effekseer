@@ -139,7 +139,7 @@ VS_Output main( const VS_Input Input )
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
-  CalculateAndStoreAdvancedParameter(Input.UV, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
+  CalculateAndStoreAdvancedParameter(Input.UV, Output.UV.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 
 	return Output;
 }

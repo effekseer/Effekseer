@@ -48,12 +48,12 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 fEdgeParameter;
 } _210;
 
-layout(set = 1, binding = 4) uniform sampler2D Sampler_g_uvDistortionSampler;
+layout(set = 1, binding = 3) uniform sampler2D Sampler_g_uvDistortionSampler;
 layout(set = 1, binding = 1) uniform sampler2D Sampler_g_colorSampler;
-layout(set = 1, binding = 3) uniform sampler2D Sampler_g_alphaSampler;
-layout(set = 1, binding = 7) uniform sampler2D Sampler_g_blendUVDistortionSampler;
-layout(set = 1, binding = 5) uniform sampler2D Sampler_g_blendSampler;
-layout(set = 1, binding = 6) uniform sampler2D Sampler_g_blendAlphaSampler;
+layout(set = 1, binding = 2) uniform sampler2D Sampler_g_alphaSampler;
+layout(set = 1, binding = 6) uniform sampler2D Sampler_g_blendUVDistortionSampler;
+layout(set = 1, binding = 4) uniform sampler2D Sampler_g_blendSampler;
+layout(set = 1, binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec3 Input_Normal;

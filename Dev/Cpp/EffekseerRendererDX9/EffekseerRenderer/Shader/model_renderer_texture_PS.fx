@@ -46,12 +46,12 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _210_fEdgeParameter : register(c12);
 };
 
-uniform sampler2D Sampler_g_uvDistortionSampler : register(s3);
+uniform sampler2D Sampler_g_uvDistortionSampler : register(s2);
 uniform sampler2D Sampler_g_colorSampler : register(s0);
-uniform sampler2D Sampler_g_alphaSampler : register(s2);
-uniform sampler2D Sampler_g_blendUVDistortionSampler : register(s6);
-uniform sampler2D Sampler_g_blendSampler : register(s4);
-uniform sampler2D Sampler_g_blendAlphaSampler : register(s5);
+uniform sampler2D Sampler_g_alphaSampler : register(s1);
+uniform sampler2D Sampler_g_blendUVDistortionSampler : register(s5);
+uniform sampler2D Sampler_g_blendSampler : register(s3);
+uniform sampler2D Sampler_g_blendAlphaSampler : register(s4);
 
 static float4 gl_FragCoord;
 static float2 Input_UV;
