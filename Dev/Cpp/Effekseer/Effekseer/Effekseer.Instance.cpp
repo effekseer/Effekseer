@@ -1779,7 +1779,7 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 
 	// For webgl bug (it makes slow if sampling points are too far on WebGL)
-	float far = 4.0;
+	float far = 4.0f;
 
 	if (uv.X < -far && uv.X + uv.Width < -far)
 	{
