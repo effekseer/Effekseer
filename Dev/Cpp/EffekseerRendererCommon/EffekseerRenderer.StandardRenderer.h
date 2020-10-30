@@ -175,7 +175,7 @@ struct StandardRendererState
 		Effekseer::NodeRendererBasicParameter* basicParam)
 	{
 		Collector = ShaderParameterCollector();
-		Collector.Collect(renderer, effect, basicParam, false, false);
+		Collector.Collect(renderer, effect, basicParam, false);
 
 		if (Collector.MaterialParam != nullptr && Collector.MaterialDataPtr != nullptr)
 		{

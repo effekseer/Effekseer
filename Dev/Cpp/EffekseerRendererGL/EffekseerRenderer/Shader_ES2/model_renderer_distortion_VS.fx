@@ -157,7 +157,7 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
     }
 }
 
-void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortionUV, vec4 blendUV, vec4 blendAlphaUV, vec4 blendUVDistortionUV, float flipbookIndexAndNextRate, float modelAlphaThreshold, inout VS_Output vsoutput)
+void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uvDistortionUV, vec4 blendUV, vec4 blendAlphaUV, vec4 blendUVDistortionUV, float flipbookIndexAndNextRate, float modelAlphaThreshold, inout VS_Output vsoutput)
 {
     vsoutput.Alpha_Dist_UV.x = (uv.x * alphaUV.z) + alphaUV.x;
     vsoutput.Alpha_Dist_UV.y = (uv.y * alphaUV.w) + alphaUV.y;
@@ -175,7 +175,7 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec4 alphaUV, vec4 uvDistortion
     vec2 param_1 = flipbookNextIndexUV;
     vec4 param_2 = CBVS0.fFlipbookParameter;
     float param_3 = flipbookIndexAndNextRate;
-    vec2 param_4 = uv;
+    vec2 param_4 = uv1;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
@@ -218,16 +218,17 @@ VS_Output _main(VS_Input Input)
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Input.UV;
-    vec4 param_1 = alphaUV;
-    vec4 param_2 = uvDistortionUV;
-    vec4 param_3 = blendUV;
-    vec4 param_4 = blendAlphaUV;
-    vec4 param_5 = blendUVDistortionUV;
-    float param_6 = flipbookIndexAndNextRate;
-    float param_7 = modelAlphaThreshold;
-    VS_Output param_8 = Output;
-    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8);
-    Output = param_8;
+    vec2 param_1 = Output.UV;
+    vec4 param_2 = alphaUV;
+    vec4 param_3 = uvDistortionUV;
+    vec4 param_4 = blendUV;
+    vec4 param_5 = blendAlphaUV;
+    vec4 param_6 = blendUVDistortionUV;
+    float param_7 = flipbookIndexAndNextRate;
+    float param_8 = modelAlphaThreshold;
+    VS_Output param_9 = Output;
+    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
+    Output = param_9;
     return Output;
 }
 

@@ -46,18 +46,18 @@ cbuffer PS_ConstanBuffer : register(b1)
     float4 _210_fEdgeParameter : packoffset(c12);
 };
 
-Texture2D<float4> g_uvDistortionTexture : register(t3);
-SamplerState g_uvDistortionSampler : register(s3);
+Texture2D<float4> g_uvDistortionTexture : register(t2);
+SamplerState g_uvDistortionSampler : register(s2);
 Texture2D<float4> g_colorTexture : register(t0);
 SamplerState g_colorSampler : register(s0);
-Texture2D<float4> g_alphaTexture : register(t2);
-SamplerState g_alphaSampler : register(s2);
-Texture2D<float4> g_blendUVDistortionTexture : register(t6);
-SamplerState g_blendUVDistortionSampler : register(s6);
-Texture2D<float4> g_blendTexture : register(t4);
-SamplerState g_blendSampler : register(s4);
-Texture2D<float4> g_blendAlphaTexture : register(t5);
-SamplerState g_blendAlphaSampler : register(s5);
+Texture2D<float4> g_alphaTexture : register(t1);
+SamplerState g_alphaSampler : register(s1);
+Texture2D<float4> g_blendUVDistortionTexture : register(t5);
+SamplerState g_blendUVDistortionSampler : register(s5);
+Texture2D<float4> g_blendTexture : register(t3);
+SamplerState g_blendSampler : register(s3);
+Texture2D<float4> g_blendAlphaTexture : register(t4);
+SamplerState g_blendAlphaSampler : register(s4);
 
 static float4 gl_FragCoord;
 static float2 Input_UV;

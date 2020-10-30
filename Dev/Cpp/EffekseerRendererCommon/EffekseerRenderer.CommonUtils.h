@@ -1072,7 +1072,7 @@ struct ShaderParameterCollector
 	}
 
 	//! TODO remove isModel
-	void Collect(Renderer* renderer, Effekseer::Effect* effect, Effekseer::NodeRendererBasicParameter* param, bool edgeFalloff, bool isModel)
+	void Collect(Renderer* renderer, Effekseer::Effect* effect, Effekseer::NodeRendererBasicParameter* param, bool edgeFalloff)
 	{
 		::Effekseer::TextureData* TexturePtr = nullptr;
 		::Effekseer::TextureData* NormalTexturePtr = nullptr;
@@ -1199,14 +1199,7 @@ struct ShaderParameterCollector
 			{
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::Default)
 				{
-					if (isModel)
-					{
-						TextureCount = 7;
-					}
-					else
-					{
-						TextureCount = 6;
-					}
+					TextureCount = 6;
 				}
 				else
 				{
@@ -1354,13 +1347,6 @@ struct ShaderParameterCollector
 				if (param->MaterialType != ::Effekseer::RendererMaterialType::Default)
 				{
 					offset += 1;
-				}
-				else
-				{
-					if (isModel)
-					{
-						offset += 1;
-					}
 				}
 
 				Textures[offset + 0] = AlphaTexturePtr;
