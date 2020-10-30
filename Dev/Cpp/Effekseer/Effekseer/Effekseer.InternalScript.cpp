@@ -102,7 +102,7 @@ bool InternalScript::Load(uint8_t* data, int size)
 		}
 	}
 
-	reader.Read(operators, size - reader.GetOffset());
+	reader.Read(operators, static_cast<int32_t>(size - reader.GetOffset()));
 
 	if (reader.GetStatus() == BinaryReaderStatus::Failed)
 		return false;
@@ -184,7 +184,7 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 		return ret;
 	}
 
-	int offset = 0;
+	size_t offset = 0;
 	for (int i = 0; i < operatorCount_; i++)
 	{
 		// type
@@ -238,11 +238,11 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 				registers[index] = tempInputs[0] / tempInputs[1];
 			else if (type == OperatorType::Sine)
 			{
-				registers[index] = sin(tempInputs[j]);
+				registers[index] = sinf(tempInputs[j]);
 			}
 			else if (type == OperatorType::Cos)
 			{
-				registers[index] = cos(tempInputs[j]);
+				registers[index] = cosf(tempInputs[j]);
 			}
 			else if (type == OperatorType::UnaryAdd)
 			{

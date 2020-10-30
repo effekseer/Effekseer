@@ -187,7 +187,7 @@ EffectFactory* Setting::GetEffectFactory(int32_t ind) const
 
 int32_t Setting::GetEffectFactoryCount() const
 {
-	return effectFactories.size();
+	return static_cast<int32_t>(effectFactories.size());
 }
 
 } // namespace Effekseer

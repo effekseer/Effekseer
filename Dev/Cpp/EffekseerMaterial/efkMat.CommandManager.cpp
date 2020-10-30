@@ -45,7 +45,7 @@ void CommandCollection::Execute()
 
 void CommandCollection::Unexecute()
 {
-	for (int i = commands.size() - 1; i >= 0; i--)
+	for (int i = (int)commands.size() - 1; i >= 0; i--)
 	{
 		commands[i]->Unexecute();
 	}

@@ -313,7 +313,7 @@ int32_t Node::GetInputPinIndex(const std::string& name)
 	for (size_t i = 0; i < InputPins.size(); i++)
 	{
 		if (Parameter->InputPins[i]->Name == name)
-			return i;
+			return static_cast<int32_t>(i);
 	}
 
 	return -1;
@@ -325,7 +325,7 @@ int32_t Node::GetOutputPinIndex(const std::string& name)
 	for (size_t i = 0; i < OutputPins.size(); i++)
 	{
 		if (Parameter->OutputPins[i]->Name == name)
-			return i;
+			return static_cast<int32_t>(i);
 	}
 
 	return -1;
@@ -762,25 +762,25 @@ void Material::LoadFromStrInternal(
 		{
 			if (node->Parameter->Properties[i]->Type == ValueType::Float1)
 			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
+				node->Properties[i]->Floats[0] = static_cast<float>(props_[i].get("Value1").get<double>());
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Float2)
 			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
+				node->Properties[i]->Floats[0] = static_cast<float>(props_[i].get("Value1").get<double>());
+				node->Properties[i]->Floats[1] = static_cast<float>(props_[i].get("Value2").get<double>());
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Float3)
 			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
+				node->Properties[i]->Floats[0] = static_cast<float>(props_[i].get("Value1").get<double>());
+				node->Properties[i]->Floats[1] = static_cast<float>(props_[i].get("Value2").get<double>());
+				node->Properties[i]->Floats[2] = static_cast<float>(props_[i].get("Value3").get<double>());
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Float4)
 			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
-				node->Properties[i]->Floats[3] = props_[i].get("Value4").get<double>();
+				node->Properties[i]->Floats[0] = static_cast<float>(props_[i].get("Value1").get<double>());
+				node->Properties[i]->Floats[1] = static_cast<float>(props_[i].get("Value2").get<double>());
+				node->Properties[i]->Floats[2] = static_cast<float>(props_[i].get("Value3").get<double>());
+				node->Properties[i]->Floats[3] = static_cast<float>(props_[i].get("Value4").get<double>());
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Bool)
 			{
@@ -793,7 +793,7 @@ void Material::LoadFromStrInternal(
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Int)
 			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+				node->Properties[i]->Floats[0] = static_cast<float>(props_[i].get("Value").get<double>());
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
 			{
@@ -811,7 +811,7 @@ void Material::LoadFromStrInternal(
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
 			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+				node->Properties[i]->Floats[0] = static_cast<float>(props_[i].get("Value").get<double>());
 			}
 			else
 			{
@@ -867,10 +867,10 @@ void Material::LoadFromStrInternal(
 
 			for (int i = 0; i < 2; i++)
 			{
-				CustomData[i].Values[0] = customdata[i].get("Value1").get<double>();
-				CustomData[i].Values[1] = customdata[i].get("Value2").get<double>();
-				CustomData[i].Values[2] = customdata[i].get("Value3").get<double>();
-				CustomData[i].Values[3] = customdata[i].get("Value4").get<double>();
+				CustomData[i].Values[0] = static_cast<float>(customdata[i].get("Value1").get<double>());
+				CustomData[i].Values[1] = static_cast<float>(customdata[i].get("Value2").get<double>());
+				CustomData[i].Values[2] = static_cast<float>(customdata[i].get("Value3").get<double>());
+				CustomData[i].Values[3] = static_cast<float>(customdata[i].get("Value4").get<double>());
 			}
 		}
 
@@ -1696,7 +1696,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	const char* prefix = "EFKM";
 	int version = 3;
 
-	int offset = 0;
+	size_t offset = 0;
 
 	offset = data.size();
 	data.resize(data.size() + 4);

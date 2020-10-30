@@ -198,7 +198,7 @@ public:
 	{
 		std::vector<std::basic_string<T>> elems;
 
-		int32_t start = 0;
+		size_t start = 0;
 
 		for (size_t i = 0; i < s.size(); i++)
 		{

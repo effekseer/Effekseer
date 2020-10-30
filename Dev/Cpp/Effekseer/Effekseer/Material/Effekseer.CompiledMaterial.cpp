@@ -21,32 +21,32 @@ public:
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
-		vertexShaders_.at(static_cast<int>(type)) = data;
+		vertexShaders_.at(static_cast<size_t>(type)) = data;
 	}
 
 	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
-		pixelShaders_.at(static_cast<int>(type)) = data;
+		pixelShaders_.at(static_cast<size_t>(type)) = data;
 	}
 
 	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override
 	{
-		return vertexShaders_.at(static_cast<int>(type)).data();
+		return vertexShaders_.at(static_cast<size_t>(type)).data();
 	}
 
 	int32_t GetVertexShaderSize(MaterialShaderType type) const override
 	{
-		return vertexShaders_.at(static_cast<int>(type)).size();
+		return static_cast<int32_t>(vertexShaders_.at(static_cast<size_t>(type)).size());
 	}
 
 	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
 	{
-		return pixelShaders_.at(static_cast<int>(type)).data();
+		return pixelShaders_.at(static_cast<size_t>(type)).data();
 	}
 
 	int32_t GetPixelShaderSize(MaterialShaderType type) const override
 	{
-		return pixelShaders_.at(static_cast<int>(type)).size();
+		return static_cast<int32_t>(pixelShaders_.at(static_cast<int>(type)).size());
 	}
 
 	int AddRef() override
@@ -175,7 +175,7 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vector<uint8_t>& originalData)
 {
 	dst.reserve(1024 * 64);
-	int32_t offset = 0;
+	size_t offset = 0;
 
 	struct Header
 	{
@@ -196,7 +196,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	offset = dst.size();
 
 	// info
-	int32_t platformCount = platforms.size();
+	size_t platformCount = platforms.size();
 	dst.resize(dst.size() + sizeof(uint32_t));
 	memcpy(dst.data() + offset, &platformCount, sizeof(uint32_t));
 	offset = dst.size();
@@ -210,7 +210,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	}
 
 	// data
-	uint32_t originalDataSize = originalData.size();
+	size_t originalDataSize = originalData.size();
 	dst.resize(dst.size() + sizeof(uint32_t));
 	memcpy(dst.data() + offset, &originalDataSize, sizeof(uint32_t));
 	offset = dst.size();

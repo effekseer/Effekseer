@@ -401,7 +401,7 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, int32_t pare
 					this->m_pContainer->GetRootInstance(),
 					pNode->CommonValues.RefEqMaxGeneration,
 					maxGene);
-			maxGenerationChildrenCount[i] = maxGene;
+			maxGenerationChildrenCount[i] = static_cast<int32_t>(maxGene);
 		}
 		else
 		{
