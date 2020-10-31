@@ -296,7 +296,7 @@ namespace Effekseer.GUI.Component
 				fs.Close();
 				fs.Dispose();
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}
