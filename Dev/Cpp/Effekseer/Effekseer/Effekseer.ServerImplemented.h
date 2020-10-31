@@ -67,7 +67,7 @@ private:
 
 	std::map<std::u16string, std::vector<uint8_t>> m_data;
 
-	std::vector<EFK_CHAR> m_materialPath;
+	std::vector<char16_t> m_materialPath;
 
 	void AddClient(InternalClient* client);
 	void RemoveClient(InternalClient* client);
@@ -81,15 +81,15 @@ public:
 
 	void Stop() override;
 
-	void Register(const EFK_CHAR* key, Effect* effect) override;
+	void Register(const char16_t* key, Effect* effect) override;
 
 	void Unregister(Effect* effect) override;
 
 	void Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
-	void SetMaterialPath(const EFK_CHAR* materialPath) override;
+	void SetMaterialPath(const char16_t* materialPath) override;
 
-	void Regist(const EFK_CHAR* key, Effect* effect) override;
+	void Regist(const char16_t* key, Effect* effect) override;
 
 	void Unregist(Effect* effect) override;
 };

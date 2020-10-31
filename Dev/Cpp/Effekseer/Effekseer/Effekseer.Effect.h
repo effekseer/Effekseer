@@ -119,7 +119,7 @@ public:
 	\~English load body data(parameters of effect) from a binary
 	\~Japanese	バイナリから本体(エフェクトのパラメーター)を読み込む。
 	*/
-	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath);
 
 	/**
 	@brief
@@ -190,14 +190,14 @@ public:
 		\~English this method is called when load a effect from binary
 		\~Japanese	バイナリからエフェクトを読み込む時に、このメソッドが呼ばれる。
 	*/
-	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath);
 
 	/**
 		@brief
 		\~English this method is called when load resources
 		\~Japanese	リソースを読み込む時に、このメソッドが呼ばれる。
 	*/
-	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const EFK_CHAR* materialPath);
+	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const char16_t* materialPath);
 
 	/**
 	@brief
@@ -244,7 +244,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -254,7 +254,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create(Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 	@brief	エフェクトを生成する。
@@ -265,7 +265,7 @@ public:
 	@param	materialPath	[in]	素材ロード時の基準パス
 	@return	エフェクト。失敗した場合はNULLを返す。
 */
-	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -275,7 +275,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create(Setting* setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
@@ -336,7 +336,7 @@ public:
 	@brief	\~English	Get a color image's path
 	\~Japanese	色画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetColorImagePath(int n) const = 0;
+	virtual const char16_t* GetColorImagePath(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタを取得する。
@@ -354,7 +354,7 @@ public:
 	@brief	\~English	Get a normal image's path
 	\~Japanese	法線画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetNormalImagePath(int n) const = 0;
+	virtual const char16_t* GetNormalImagePath(int n) const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
@@ -372,7 +372,7 @@ public:
 	@brief	\~English	Get a distortion image's path
 	\~Japanese	歪み画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetDistortionImagePath(int n) const = 0;
+	virtual const char16_t* GetDistortionImagePath(int n) const = 0;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。
@@ -388,7 +388,7 @@ public:
 	@brief	\~English	Get a wave's path
 	\~Japanese	音波形のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetWavePath(int n) const = 0;
+	virtual const char16_t* GetWavePath(int n) const = 0;
 
 	/**
 		@brief	格納されているモデルのポインタを取得する。
@@ -404,7 +404,7 @@ public:
 	@brief	\~English	Get a model's path
 	\~Japanese	モデルのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetModelPath(int n) const = 0;
+	virtual const char16_t* GetModelPath(int n) const = 0;
 
 	/**
 	@brief	\~English	Get a material's pointer
@@ -422,7 +422,7 @@ public:
 	@brief	\~English	Get a material's path
 	\~Japanese	マテリアルのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
+	virtual const char16_t* GetMaterialPath(int n) const = 0;
 
 	/**
 	@brief	\~English	Get a curve's pointer
@@ -440,7 +440,7 @@ public:
 	@brief	\~English	Get a curve's path
 	\~Japanese	カーブのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
+	virtual const char16_t* GetCurvePath(int n) const = 0;
 
 	/**
 	@brief	\~English	Get a procedual model's pointer
@@ -523,7 +523,7 @@ public:
 	*/
 	virtual bool Reload(void* data,
 						int32_t size,
-						const EFK_CHAR* materialPath = nullptr,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
@@ -548,8 +548,8 @@ public:
 		\~Japanese
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload(const EFK_CHAR* path,
-						const EFK_CHAR* materialPath = nullptr,
+	virtual bool Reload(const char16_t* path,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
@@ -589,7 +589,7 @@ public:
 						int32_t managersCount,
 						void* data,
 						int32_t size,
-						const EFK_CHAR* materialPath = nullptr,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
@@ -624,14 +624,14 @@ public:
 	*/
 	virtual bool Reload(Manager** managers,
 						int32_t managersCount,
-						const EFK_CHAR* path,
-						const EFK_CHAR* materialPath = nullptr,
+						const char16_t* path,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	virtual void ReloadResources(const void* data = nullptr, int32_t size = 0, const EFK_CHAR* materialPath = nullptr) = 0;
+	virtual void ReloadResources(const void* data = nullptr, int32_t size = 0, const char16_t* materialPath = nullptr) = 0;
 
 	/**
 		@brief	画像等リソースの破棄を行う。

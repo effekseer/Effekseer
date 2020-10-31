@@ -3,7 +3,7 @@
 namespace Effekseer
 {
 
-Model* ModelLoader::Load(const EFK_CHAR* path)
+Model* ModelLoader::Load(const char16_t* path)
 {
 	return nullptr;
 }

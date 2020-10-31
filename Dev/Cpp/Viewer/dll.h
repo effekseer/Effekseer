@@ -130,7 +130,7 @@ private:
 		virtual ~TextureLoader();
 
 	public:
-		Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
+		Effekseer::TextureData* Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
 
 		void Unload(Effekseer::TextureData* data) override;
 
@@ -151,7 +151,7 @@ private:
 		virtual ~SoundLoader();
 
 	public:
-		void* Load(const EFK_CHAR* path);
+		void* Load(const char16_t* path);
 
 		void Unload(void* data);
 
@@ -168,7 +168,7 @@ private:
 		virtual ~ModelLoader();
 
 	public:
-		Effekseer::Model* Load(const EFK_CHAR* path);
+		Effekseer::Model* Load(const char16_t* path);
 
 		void Unload(Effekseer::Model* data);
 
@@ -186,7 +186,7 @@ private:
 		virtual ~MaterialLoader();
 
 	public:
-		Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
+		Effekseer::MaterialData* Load(const char16_t* path) override;
 		std::u16string RootPath;
 
 		::Effekseer::MaterialLoader* GetOriginalLoader()

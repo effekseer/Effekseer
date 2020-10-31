@@ -64,9 +64,9 @@ class DefaultFileInterface : public FileInterface
 {
 private:
 public:
-	FileReader* OpenRead(const EFK_CHAR* path);
+	FileReader* OpenRead(const char16_t* path);
 
-	FileWriter* OpenWrite(const EFK_CHAR* path);
+	FileWriter* OpenWrite(const char16_t* path);
 };
 
 //----------------------------------------------------------------------------------

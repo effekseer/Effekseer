@@ -1767,19 +1767,19 @@ public:
 	FileInterface() = default;
 	virtual ~FileInterface() = default;
 
-	virtual FileReader* OpenRead(const EFK_CHAR* path) = 0;
+	virtual FileReader* OpenRead(const char16_t* path) = 0;
 
 	/**
 		@brief
 		\~English	try to open a reader. It need not to succeeds in opening it.
 		\~Japanese	リーダーを開くことを試します。成功する必要はありません。
 	*/
-	virtual FileReader* TryOpenRead(const EFK_CHAR* path)
+	virtual FileReader* TryOpenRead(const char16_t* path)
 	{
 		return OpenRead(path);
 	}
 
-	virtual FileWriter* OpenWrite(const EFK_CHAR* path) = 0;
+	virtual FileWriter* OpenWrite(const char16_t* path) = 0;
 };
 
 } // namespace Effekseer
@@ -1851,9 +1851,9 @@ class DefaultFileInterface : public FileInterface
 {
 private:
 public:
-	FileReader* OpenRead(const EFK_CHAR* path);
+	FileReader* OpenRead(const char16_t* path);
 
-	FileWriter* OpenWrite(const EFK_CHAR* path);
+	FileWriter* OpenWrite(const char16_t* path);
 };
 
 //----------------------------------------------------------------------------------
@@ -1984,7 +1984,7 @@ public:
 	\~English load body data(parameters of effect) from a binary
 	\~Japanese	バイナリから本体(エフェクトのパラメーター)を読み込む。
 	*/
-	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath);
 
 	/**
 	@brief
@@ -2055,14 +2055,14 @@ public:
 		\~English this method is called when load a effect from binary
 		\~Japanese	バイナリからエフェクトを読み込む時に、このメソッドが呼ばれる。
 	*/
-	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath);
 
 	/**
 		@brief
 		\~English this method is called when load resources
 		\~Japanese	リソースを読み込む時に、このメソッドが呼ばれる。
 	*/
-	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const EFK_CHAR* materialPath);
+	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const char16_t* materialPath);
 
 	/**
 	@brief
@@ -2109,7 +2109,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -2119,7 +2119,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create(Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 	@brief	エフェクトを生成する。
@@ -2130,7 +2130,7 @@ public:
 	@param	materialPath	[in]	素材ロード時の基準パス
 	@return	エフェクト。失敗した場合はNULLを返す。
 */
-	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -2140,7 +2140,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
-	static Effect* Create(Setting* setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL);
+	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
@@ -2201,7 +2201,7 @@ public:
 	@brief	\~English	Get a color image's path
 	\~Japanese	色画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetColorImagePath(int n) const = 0;
+	virtual const char16_t* GetColorImagePath(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタを取得する。
@@ -2219,7 +2219,7 @@ public:
 	@brief	\~English	Get a normal image's path
 	\~Japanese	法線画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetNormalImagePath(int n) const = 0;
+	virtual const char16_t* GetNormalImagePath(int n) const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
@@ -2237,7 +2237,7 @@ public:
 	@brief	\~English	Get a distortion image's path
 	\~Japanese	歪み画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetDistortionImagePath(int n) const = 0;
+	virtual const char16_t* GetDistortionImagePath(int n) const = 0;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。
@@ -2253,7 +2253,7 @@ public:
 	@brief	\~English	Get a wave's path
 	\~Japanese	音波形のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetWavePath(int n) const = 0;
+	virtual const char16_t* GetWavePath(int n) const = 0;
 
 	/**
 		@brief	格納されているモデルのポインタを取得する。
@@ -2269,7 +2269,7 @@ public:
 	@brief	\~English	Get a model's path
 	\~Japanese	モデルのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetModelPath(int n) const = 0;
+	virtual const char16_t* GetModelPath(int n) const = 0;
 
 	/**
 	@brief	\~English	Get a material's pointer
@@ -2287,7 +2287,7 @@ public:
 	@brief	\~English	Get a material's path
 	\~Japanese	マテリアルのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
+	virtual const char16_t* GetMaterialPath(int n) const = 0;
 
 	/**
 	@brief	\~English	Get a curve's pointer
@@ -2305,7 +2305,7 @@ public:
 	@brief	\~English	Get a curve's path
 	\~Japanese	カーブのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetCurvePath(int n) const = 0;
+	virtual const char16_t* GetCurvePath(int n) const = 0;
 
 	/**
 	@brief	\~English	Get a procedual model's pointer
@@ -2388,7 +2388,7 @@ public:
 	*/
 	virtual bool Reload(void* data,
 						int32_t size,
-						const EFK_CHAR* materialPath = nullptr,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
@@ -2413,8 +2413,8 @@ public:
 		\~Japanese
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload(const EFK_CHAR* path,
-						const EFK_CHAR* materialPath = nullptr,
+	virtual bool Reload(const char16_t* path,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
@@ -2454,7 +2454,7 @@ public:
 						int32_t managersCount,
 						void* data,
 						int32_t size,
-						const EFK_CHAR* materialPath = nullptr,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
@@ -2489,14 +2489,14 @@ public:
 	*/
 	virtual bool Reload(Manager** managers,
 						int32_t managersCount,
-						const EFK_CHAR* path,
-						const EFK_CHAR* materialPath = nullptr,
+						const char16_t* path,
+						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	virtual void ReloadResources(const void* data = nullptr, int32_t size = 0, const EFK_CHAR* materialPath = nullptr) = 0;
+	virtual void ReloadResources(const void* data = nullptr, int32_t size = 0, const char16_t* materialPath = nullptr) = 0;
 
 	/**
 		@brief	画像等リソースの破棄を行う。
@@ -3528,7 +3528,7 @@ public:
 		エフェクトファイルを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual bool Load(const EFK_CHAR* path, void*& data, int32_t& size) = 0;
+	virtual bool Load(const char16_t* path, void*& data, int32_t& size) = 0;
 
 	/**
 		@brief	エフェクトファイルを破棄する。
@@ -3594,7 +3594,7 @@ public:
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual TextureData* Load(const EFK_CHAR* path, TextureType textureType)
+	virtual TextureData* Load(const char16_t* path, TextureType textureType)
 	{
 		return nullptr;
 	}
@@ -3674,7 +3674,7 @@ public:
 	\~English a pointer of loaded a model
 	\~Japanese 読み込まれたモデルのポインタ
 	*/
-	virtual Model* Load(const EFK_CHAR* path);
+	virtual Model* Load(const char16_t* path);
 
 	/**
 		@brief
@@ -3752,7 +3752,7 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const EFK_CHAR* path)
+	virtual MaterialData* Load(const char16_t* path)
 	{
 		return nullptr;
 	}
@@ -4168,7 +4168,7 @@ public:
 	カーブを読み込む。
 	::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const EFK_CHAR* path)
+	virtual void* Load(const char16_t* path)
 	{
 		::Effekseer::DefaultFileInterface fileInterface;
 		std::unique_ptr<::Effekseer::FileReader>reader(fileInterface.OpenRead(path));
@@ -4365,7 +4365,7 @@ public:
 		サウンドを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const EFK_CHAR* path)
+	virtual void* Load(const char16_t* path)
 	{
 		return NULL;
 	}
@@ -4692,7 +4692,7 @@ public:
 		\~English	an effect to be edit
 		\~Japanese	編集される対象のエフェクト
 	*/
-	virtual void Register(const EFK_CHAR* key, Effect* effect) = 0;
+	virtual void Register(const char16_t* key, Effect* effect) = 0;
 
 	/**
 		@brief
@@ -4724,14 +4724,14 @@ public:
 		\~English	Specify root path to load materials
 		\~Japanese	素材のルートパスを設定する。
 	*/
-	virtual void SetMaterialPath(const EFK_CHAR* materialPath) = 0;
+	virtual void SetMaterialPath(const char16_t* materialPath) = 0;
 
 	/**
 		@brief
 		\~English	deprecated
 		\~Japanese	非推奨
 	*/
-	virtual void Regist(const EFK_CHAR* key, Effect* effect) = 0;
+	virtual void Regist(const char16_t* key, Effect* effect) = 0;
 
 	/**
 		@brief
@@ -4787,8 +4787,8 @@ public:
 	virtual bool Start(char* host, uint16_t port) = 0;
 	virtual void Stop() = 0;
 
-	virtual void Reload(const EFK_CHAR* key, void* data, int32_t size) = 0;
-	virtual void Reload(Manager* manager, const EFK_CHAR* path, const EFK_CHAR* key) = 0;
+	virtual void Reload(const char16_t* key, void* data, int32_t size) = 0;
+	virtual void Reload(Manager* manager, const char16_t* path, const char16_t* key) = 0;
 	virtual bool IsConnected() = 0;
 };
 

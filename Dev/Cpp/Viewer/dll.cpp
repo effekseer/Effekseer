@@ -244,7 +244,7 @@ Native::TextureLoader::~TextureLoader()
 	ES_SAFE_DELETE(m_originalTextureLoader);
 }
 
-Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
+Effekseer::TextureData* Native::TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
 {
 	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
@@ -257,7 +257,7 @@ Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effe
 	}
 	else
 	{
-		auto t = m_originalTextureLoader->Load((EFK_CHAR*)dst, textureType);
+		auto t = m_originalTextureLoader->Load((char16_t*)dst, textureType);
 
 		if (t != nullptr)
 		{
@@ -284,9 +284,9 @@ Native::SoundLoader::~SoundLoader()
 {
 }
 
-void* Native::SoundLoader::Load(const EFK_CHAR* path)
+void* Native::SoundLoader::Load(const char16_t* path)
 {
-	EFK_CHAR dst[260];
+	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, (char16_t*)dst, 260);
 
 	return m_loader->Load(dst);
@@ -306,7 +306,7 @@ Native::ModelLoader::~ModelLoader()
 {
 }
 
-Effekseer::Model* Native::ModelLoader::Load(const EFK_CHAR* path)
+Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 {
 	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
@@ -323,7 +323,7 @@ Effekseer::Model* Native::ModelLoader::Load(const EFK_CHAR* path)
 		if (g_deviceType == efk::DeviceType::OpenGL)
 		{
 			auto loader = ::EffekseerRendererGL::CreateModelLoader();
-			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
+			auto m = (Effekseer::Model*)loader->Load((const char16_t*)dst);
 
 			if (m != nullptr)
 			{
@@ -339,7 +339,7 @@ Effekseer::Model* Native::ModelLoader::Load(const EFK_CHAR* path)
 		{
 			auto g = static_cast<efk::GraphicsDX11*>(graphics_);
 			auto loader = ::EffekseerRendererDX11::CreateModelLoader(g->GetDevice());
-			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
+			auto m = (Effekseer::Model*)loader->Load((const char16_t*)dst);
 
 			if (m != nullptr)
 			{
@@ -380,7 +380,7 @@ Native::MaterialLoader::~MaterialLoader()
 	ES_SAFE_DELETE(loader_);
 }
 
-Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
+Effekseer::MaterialData* Native::MaterialLoader::Load(const char16_t* path)
 {
 	if (loader_ == nullptr)
 	{
@@ -1097,7 +1097,7 @@ bool Native::IsConnectingNetwork()
 
 void Native::SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path)
 {
-	g_client->Reload((const EFK_CHAR*)key, data, size);
+	g_client->Reload((const char16_t*)key, data, size);
 }
 
 void Native::SetLightDirection(float x, float y, float z)

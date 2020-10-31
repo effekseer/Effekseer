@@ -291,7 +291,7 @@ void ServerImplemented::Stop()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Register(const EFK_CHAR* key, Effect* effect)
+void ServerImplemented::Register(const char16_t* key, Effect* effect)
 {
 	if (effect == NULL)
 		return;
@@ -435,7 +435,7 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount, Reloadi
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::SetMaterialPath(const EFK_CHAR* materialPath)
+void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 {
 	m_materialPath.clear();
 
@@ -448,7 +448,7 @@ void ServerImplemented::SetMaterialPath(const EFK_CHAR* materialPath)
 	m_materialPath.push_back(0);
 }
 
-void ServerImplemented::Regist(const EFK_CHAR* key, Effect* effect)
+void ServerImplemented::Regist(const char16_t* key, Effect* effect)
 {
 	Register(key, effect);
 }

@@ -352,7 +352,7 @@ MaterialLoader ::~MaterialLoader()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
+::Effekseer::MaterialData* MaterialLoader::Load(const char16_t* path)
 {
 	// code file
 	if (canLoadFromCache_)

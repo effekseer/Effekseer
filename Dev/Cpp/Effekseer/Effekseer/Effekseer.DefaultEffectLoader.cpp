@@ -33,7 +33,7 @@ DefaultEffectLoader::~DefaultEffectLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool DefaultEffectLoader::Load(const EFK_CHAR* path, void*& data, int32_t& size)
+bool DefaultEffectLoader::Load(const char16_t* path, void*& data, int32_t& size)
 {
 	assert(path != NULL);
 

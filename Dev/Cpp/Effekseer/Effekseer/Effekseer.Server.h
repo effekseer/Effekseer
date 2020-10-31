@@ -65,7 +65,7 @@ public:
 		\~English	an effect to be edit
 		\~Japanese	編集される対象のエフェクト
 	*/
-	virtual void Register(const EFK_CHAR* key, Effect* effect) = 0;
+	virtual void Register(const char16_t* key, Effect* effect) = 0;
 
 	/**
 		@brief
@@ -97,14 +97,14 @@ public:
 		\~English	Specify root path to load materials
 		\~Japanese	素材のルートパスを設定する。
 	*/
-	virtual void SetMaterialPath(const EFK_CHAR* materialPath) = 0;
+	virtual void SetMaterialPath(const char16_t* materialPath) = 0;
 
 	/**
 		@brief
 		\~English	deprecated
 		\~Japanese	非推奨
 	*/
-	virtual void Regist(const EFK_CHAR* key, Effect* effect) = 0;
+	virtual void Regist(const char16_t* key, Effect* effect) = 0;
 
 	/**
 		@brief

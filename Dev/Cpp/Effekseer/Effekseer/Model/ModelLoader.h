@@ -29,7 +29,7 @@ public:
 	\~English a pointer of loaded a model
 	\~Japanese 読み込まれたモデルのポインタ
 	*/
-	virtual Model* Load(const EFK_CHAR* path);
+	virtual Model* Load(const char16_t* path);
 
 	/**
 		@brief
