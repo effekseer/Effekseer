@@ -30,7 +30,7 @@ public:
 
 	virtual ~DefaultEffectLoader();
 
-	bool Load(const EFK_CHAR* path, void*& data, int32_t& size);
+	bool Load(const char16_t* path, void*& data, int32_t& size);
 
 	void Unload(void* data, int32_t size);
 };

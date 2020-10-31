@@ -32,7 +32,7 @@ public:
 	virtual ~TextureLoader();
 
 public:
-	Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
+	Effekseer::TextureData* Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
 
 	Effekseer::TextureData* Load(const void* data, int32_t size, Effekseer::TextureType textureType, bool isMipMapEnabled) override;
 

@@ -30,7 +30,7 @@ public:
 	MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache = true);
 	virtual ~MaterialLoader();
 
-	::Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
+	::Effekseer::MaterialData* Load(const char16_t* path) override;
 
 	::Effekseer::MaterialData* Load(const void* data, int32_t size, Effekseer::MaterialFileType fileType) override;
 

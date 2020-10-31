@@ -40,7 +40,7 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const EFK_CHAR* path)
+	virtual MaterialData* Load(const char16_t* path)
 	{
 		return nullptr;
 	}

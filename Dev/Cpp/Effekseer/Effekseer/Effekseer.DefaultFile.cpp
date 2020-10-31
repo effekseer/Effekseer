@@ -128,7 +128,7 @@ size_t DefaultFileWriter::GetLength()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-FileReader* DefaultFileInterface::OpenRead(const EFK_CHAR* path)
+FileReader* DefaultFileInterface::OpenRead(const char16_t* path)
 {
 	FILE* filePtr = NULL;
 #ifdef _WIN32
@@ -150,7 +150,7 @@ FileReader* DefaultFileInterface::OpenRead(const EFK_CHAR* path)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-FileWriter* DefaultFileInterface::OpenWrite(const EFK_CHAR* path)
+FileWriter* DefaultFileInterface::OpenWrite(const char16_t* path)
 {
 	FILE* filePtr = NULL;
 #ifdef _WIN32

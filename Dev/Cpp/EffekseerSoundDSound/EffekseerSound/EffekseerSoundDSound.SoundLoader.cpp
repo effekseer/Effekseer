@@ -220,7 +220,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	return soundData;
 }
 
-void* SoundLoader::Load(const EFK_CHAR* path)
+void* SoundLoader::Load(const char16_t* path)
 {
 	assert(path != NULL);
 

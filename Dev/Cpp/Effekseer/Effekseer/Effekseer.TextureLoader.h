@@ -44,7 +44,7 @@ public:
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual TextureData* Load(const EFK_CHAR* path, TextureType textureType)
+	virtual TextureData* Load(const char16_t* path, TextureType textureType)
 	{
 		return nullptr;
 	}

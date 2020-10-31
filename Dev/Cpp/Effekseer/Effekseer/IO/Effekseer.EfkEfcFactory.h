@@ -15,7 +15,7 @@ class EfkEfcFactory : public EffectFactory
 {
 private:
 public:
-	bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath) override;
+	bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath) override;
 
 	bool OnCheckIsBinarySupported(const void* data, int32_t size) override;
 };
