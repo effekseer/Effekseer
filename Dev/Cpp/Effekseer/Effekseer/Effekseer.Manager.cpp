@@ -203,7 +203,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 			ES_SAFE_RELEASE(drawset.ParameterPointer);
 			ES_SAFE_DELETE(drawset.GlobalPointer);
 
-			if (m_cullingWorld != NULL && drawset.CullingObjectPointer != nullptr)
+			if (m_cullingWorld != nullptr && drawset.CullingObjectPointer != nullptr)
 			{
 				m_cullingWorld->RemoveObject(drawset.CullingObjectPointer);
 				Culling3D::SafeRelease(drawset.CullingObjectPointer);
@@ -241,7 +241,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 
 			if (draw_set.IsRemoving)
 			{
-				if ((*it).second.RemovingCallback != NULL)
+				if ((*it).second.RemovingCallback != nullptr)
 				{
 					(*it).second.RemovingCallback(this, (*it).first, isRemovingManager);
 				}
@@ -345,7 +345,7 @@ void ManagerImplemented::ExecuteEvents()
 			}
 
 			ds.second.IsRemoving = true;
-			if (GetSoundPlayer() != NULL)
+			if (GetSoundPlayer() != nullptr)
 			{
 				GetSoundPlayer()->StopTag(ds.second.GlobalPointer);
 			}
@@ -367,23 +367,23 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	: m_autoFlip(autoFlip)
 	, m_NextHandle(0)
 	, m_instance_max(instance_max)
-	, m_setting(NULL)
+	, m_setting(nullptr)
 	, m_sequenceNumber(0)
 
-	, m_cullingWorld(NULL)
+	, m_cullingWorld(nullptr)
 	, m_culled(false)
 
-	, m_spriteRenderer(NULL)
-	, m_ribbonRenderer(NULL)
-	, m_ringRenderer(NULL)
-	, m_modelRenderer(NULL)
-	, m_trackRenderer(NULL)
+	, m_spriteRenderer(nullptr)
+	, m_ribbonRenderer(nullptr)
+	, m_ringRenderer(nullptr)
+	, m_modelRenderer(nullptr)
+	, m_trackRenderer(nullptr)
 
-	, m_soundPlayer(NULL)
+	, m_soundPlayer(nullptr)
 
-	, m_MallocFunc(NULL)
-	, m_FreeFunc(NULL)
-	, m_randFunc(NULL)
+	, m_MallocFunc(nullptr)
+	, m_FreeFunc(nullptr)
+	, m_randFunc(nullptr)
 	, m_randMax(0)
 {
 	m_setting = Setting::Create();
@@ -1245,11 +1245,11 @@ void ManagerImplemented::Flip()
 
 			if (ds.IsParameterChanged)
 			{
-				if (m_cullingWorld != NULL)
+				if (m_cullingWorld != nullptr)
 				{
 					auto isCreated = false;
 
-					if (ds.CullingObjectPointer == NULL)
+					if (ds.CullingObjectPointer == nullptr)
 					{
 						ds.CullingObjectPointer = Culling3D::Object::Create();
 						if (effect->Culling.Shape == CullingShape::Sphere)
@@ -1315,7 +1315,7 @@ void ManagerImplemented::Flip()
 			m_renderingDrawSetMaps[it.first] = it.second;
 		}
 
-		if (m_cullingWorld != NULL)
+		if (m_cullingWorld != nullptr)
 		{
 			for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
 			{
@@ -1632,7 +1632,7 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 
 	// Create an instance through a container
 	InstanceContainer* pContainer =
-		CreateInstanceContainer(drawSet.ParameterPointer->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, NULL);
+		CreateInstanceContainer(drawSet.ParameterPointer->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, nullptr);
 
 	drawSet.InstanceContainerPointer = pContainer;
 	drawSet.IsPreupdated = true;
@@ -1706,7 +1706,7 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 	pGlobal->ResetUpdatedFrame();
 
 	// Create an instance through a container
-	//drawSet.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, NULL);
+	//drawSet.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, nullptr);
 
 	auto isShown = drawSet.IsShown;
 	drawSet.IsShown = false;
@@ -2248,7 +2248,7 @@ void ManagerImplemented::CreateCullingWorld(float xsize, float ysize, float zsiz
 
 void ManagerImplemented::CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL)
 {
-	if (m_cullingWorld == NULL)
+	if (m_cullingWorld == nullptr)
 		return;
 
 	m_culledObjects.clear();
@@ -2286,7 +2286,7 @@ void ManagerImplemented::CalcCulling(const Matrix44& cameraProjMat, bool isOpenG
 
 void ManagerImplemented::RessignCulling()
 {
-	if (m_cullingWorld == NULL)
+	if (m_cullingWorld == nullptr)
 		return;
 
 	m_culledObjects.clear();

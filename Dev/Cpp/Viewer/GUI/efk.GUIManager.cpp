@@ -225,7 +225,7 @@ bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
 		PopItemWidth();
 	}
 
-	ImGuiWindow* picker_active_window = NULL;
+	ImGuiWindow* picker_active_window = nullptr;
 	if (!(flags & ImGuiColorEditFlags_NoSmallPreview))
 	{
 		if (!(flags & ImGuiColorEditFlags_NoInputs))
@@ -301,7 +301,7 @@ bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
 	}
 
 	// Convert back
-	if (picker_active_window == NULL)
+	if (picker_active_window == nullptr)
 	{
 		if (!value_changed_as_float)
 			for (int n = 0; n < 4; n++)
@@ -1169,7 +1169,7 @@ void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
 		if (!window->DC.GroupStack.empty())
 			x1 += window->DC.Indent.x;
 
-		ImGuiColumns* columns = (flags & ImGuiSeparatorFlags_SpanAllColumns) ? window->DC.CurrentColumns : NULL;
+		ImGuiColumns* columns = (flags & ImGuiSeparatorFlags_SpanAllColumns) ? window->DC.CurrentColumns : nullptr;
 		if (columns)
 			ImGui::PushColumnsBackground();
 
@@ -2046,7 +2046,7 @@ bool GUIManager::BeginFullscreen(const char16_t* label)
 									ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
-	const bool visible = ImGui::Begin(utf8str<256>(label), NULL, flags);
+	const bool visible = ImGui::Begin(utf8str<256>(label), nullptr, flags);
 	ImGui::PopStyleVar(2);
 
 	imguiWindowID = ImGui::GetID(utf8str<256>(label));

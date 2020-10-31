@@ -34,7 +34,7 @@ namespace EffekseerRendererLLGI
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -216,11 +216,11 @@ void RendererImplemented::GenerateIndexBuffer()
 
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: graphicsDevice_(nullptr)
-	, m_vertexBuffer(NULL)
-	, m_indexBuffer(NULL)
+	, m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
-	, m_renderState(NULL)
+	, m_renderState(nullptr)
 
 	, shader_(nullptr)
 	, shader_unlit_(nullptr)
@@ -309,21 +309,21 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	// Generate vertex buffer
 	{
 		GenerateVertexBuffer();
-		if (m_vertexBuffer == NULL)
+		if (m_vertexBuffer == nullptr)
 			return false;
 	}
 
 	// Generate index buffer
 	{
 		GenerateIndexBuffer();
-		if (m_indexBuffer == NULL)
+		if (m_indexBuffer == nullptr)
 			return false;
 	}
 
 	// Generate index buffer for rendering wireframes
 	{
 		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 8, false, false);
-		if (m_indexBufferForWireframe == NULL)
+		if (m_indexBufferForWireframe == nullptr)
 			return false;
 
 		m_indexBufferForWireframe->Lock();
@@ -390,7 +390,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 							 "StandardRenderer",
 							 layouts,
 							 false);
-	if (shader_ == NULL)
+	if (shader_ == nullptr)
 		return false;
 
 	shader_unlit_ = Shader::Create(graphicsDevice_,
@@ -401,7 +401,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 								   "StandardRenderer Distortion",
 								   layouts_distort,
 								   false);
-	if (shader_unlit_ == NULL)
+	if (shader_unlit_ == nullptr)
 		return false;
 
 	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
@@ -412,7 +412,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 									  "StandardRenderer",
 									  layouts_ad,
 									  false);
-	if (shader_ad_unlit_ == NULL)
+	if (shader_ad_unlit_ == nullptr)
 		return false;
 
 	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
@@ -423,7 +423,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 										   "StandardRenderer Distortion",
 										   layouts_distort_ad,
 										   false);
-	if (shader_ad_distortion_ == NULL)
+	if (shader_ad_distortion_ == nullptr)
 		return false;
 
 	std::vector<VertexLayout> layouts_lighting;
@@ -509,7 +509,7 @@ void RendererImplemented::SetRenderPassPipelineState(LLGI::RenderPassPipelineSta
 
 bool RendererImplemented::BeginRendering()
 {
-	assert(graphicsDevice_ != NULL);
+	assert(graphicsDevice_ != nullptr);
 
 	impl->CalculateCameraProjectionMatrix();
 
@@ -531,7 +531,7 @@ bool RendererImplemented::BeginRendering()
 
 bool RendererImplemented::EndRendering()
 {
-	assert(graphicsDevice_ != NULL);
+	assert(graphicsDevice_ != nullptr);
 
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -611,7 +611,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -620,7 +620,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(graphicsDevice_, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 

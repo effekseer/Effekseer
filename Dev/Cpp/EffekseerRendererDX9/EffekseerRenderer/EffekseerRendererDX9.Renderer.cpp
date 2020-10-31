@@ -116,7 +116,7 @@ static
 	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device));
 	return new EffekseerRenderer::TextureLoader(gd.get(), fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -128,7 +128,7 @@ static
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -137,7 +137,7 @@ static
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(device, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -151,24 +151,24 @@ Renderer* Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
 	{
 		return renderer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: m_d3d_device(NULL)
-	, m_vertexBuffer(NULL)
-	, m_indexBuffer(NULL)
+	: m_d3d_device(nullptr)
+	, m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
-	, m_state_vertexShader(NULL)
-	, m_state_pixelShader(NULL)
-	, m_state_vertexDeclaration(NULL)
-	, m_state_IndexData(NULL)
+	, m_state_vertexShader(nullptr)
+	, m_state_pixelShader(nullptr)
+	, m_state_vertexDeclaration(nullptr)
+	, m_state_IndexData(nullptr)
 	, m_state_pTexture({})
-	, m_renderState(NULL)
+	, m_renderState(nullptr)
 	, m_isChangedDevice(false)
 	, m_restorationOfStates(true)
 
@@ -259,7 +259,7 @@ void RendererImplemented::OnResetDevice()
 void RendererImplemented::GenerateIndexData()
 {
 	// generate an index buffer
-	if (m_indexBuffer != NULL)
+	if (m_indexBuffer != nullptr)
 	{
 		m_indexBuffer->Lock();
 
@@ -279,7 +279,7 @@ void RendererImplemented::GenerateIndexData()
 	}
 
 	// Generate index buffer for rendering wireframes
-	if (m_indexBufferForWireframe != NULL)
+	if (m_indexBufferForWireframe != nullptr)
 	{
 		m_indexBufferForWireframe->Lock();
 
@@ -310,21 +310,21 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 	// generate a vertex buffer
 	{
 		m_vertexBuffer = VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
-		if (m_vertexBuffer == NULL)
+		if (m_vertexBuffer == nullptr)
 			return false;
 	}
 
 	// generate an index buffer
 	{
 		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
-		if (m_indexBuffer == NULL)
+		if (m_indexBuffer == nullptr)
 			return false;
 	}
 
 	// generate an index buffer for a wireframe
 	{
 		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false, false);
-		if (m_indexBufferForWireframe == NULL)
+		if (m_indexBufferForWireframe == nullptr)
 			return false;
 	}
 
@@ -379,7 +379,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 								 "StandardRenderer",
 								 decl_ad,
 								 false);
-	if (m_shader_ad == NULL)
+	if (m_shader_ad == nullptr)
 		return false;
 
 	m_shader = Shader::Create(this,
@@ -390,7 +390,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 							  "StandardRenderer",
 							  decl,
 							  false);
-	if (m_shader == NULL)
+	if (m_shader == nullptr)
 		return false;
 
 	m_shader_ad_distortion = Shader::Create(this,
@@ -401,7 +401,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 											"StandardRenderer Distortion",
 											decl_ad_distortion,
 											false);
-	if (m_shader_ad_distortion == NULL)
+	if (m_shader_ad_distortion == nullptr)
 		return false;
 
 	m_shader_distortion = Shader::Create(this,
@@ -412,7 +412,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 										 "StandardRenderer Distortion",
 										 decl_distortion,
 										 false);
-	if (m_shader_distortion == NULL)
+	if (m_shader_distortion == nullptr)
 		return false;
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
@@ -458,7 +458,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 										  "StandardRenderer Lighting",
 										  decl_lighting,
 										  false);
-	if (m_shader_ad_lighting == NULL)
+	if (m_shader_ad_lighting == nullptr)
 		return false;
 
 	m_shader_lighting = Shader::Create(this,
@@ -469,7 +469,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 									   "StandardRenderer Lighting",
 									   decl_lighting,
 									   false);
-	if (m_shader_lighting == NULL)
+	if (m_shader_lighting == nullptr)
 		return false;
 
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
@@ -529,7 +529,7 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
-	assert(m_d3d_device != NULL);
+	assert(m_d3d_device != nullptr);
 
 	impl->CalculateCameraProjectionMatrix();
 
@@ -589,7 +589,7 @@ bool RendererImplemented::BeginRendering()
 	}
 
 	// ステート初期値設定
-	GetDevice()->SetTexture(0, NULL);
+	GetDevice()->SetTexture(0, nullptr);
 	GetDevice()->SetFVF(0);
 
 	GetDevice()->SetRenderState(D3DRS_COLORVERTEX, TRUE);
@@ -613,7 +613,7 @@ bool RendererImplemented::BeginRendering()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::EndRendering()
 {
-	assert(m_d3d_device != NULL);
+	assert(m_d3d_device != nullptr);
 
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -786,7 +786,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -798,7 +798,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(this, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -1077,7 +1077,7 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 	int32_t height = 1;
 	int32_t mipMapCount = 1;
 	LPDIRECT3DTEXTURE9 texture = nullptr;
-	hr = GetDevice()->CreateTexture(width, height, mipMapCount, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
+	hr = GetDevice()->CreateTexture(width, height, mipMapCount, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
 
 	if (FAILED(hr))
 	{
@@ -1085,7 +1085,7 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 	}
 
 	LPDIRECT3DTEXTURE9 tempTexture = nullptr;
-	hr = GetDevice()->CreateTexture(width, height, mipMapCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &tempTexture, NULL);
+	hr = GetDevice()->CreateTexture(width, height, mipMapCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &tempTexture, nullptr);
 
 	if (FAILED(hr))
 	{
@@ -1094,7 +1094,7 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 	}
 
 	D3DLOCKED_RECT locked;
-	if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
+	if (SUCCEEDED(tempTexture->LockRect(0, &locked, nullptr, 0)))
 	{
 		uint8_t* destBits = (uint8_t*)locked.pBits;
 		destBits[0] = buf[2];

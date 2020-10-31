@@ -207,8 +207,8 @@ ViewerParamater::ViewerParamater()
 
 static Effekseer::Manager::DrawParameter drawParameter;
 
-static ::Effekseer::Effect* effect_ = NULL;
-static ::EffekseerTool::Sound* sound_ = NULL;
+static ::Effekseer::Effect* effect_ = nullptr;
+static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
 static std::map<std::u16string, Effekseer::Model*> m_models;
 static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
@@ -216,7 +216,7 @@ static std::map<std::u16string, Effekseer::MaterialData*> g_materials_;
 
 static ::Effekseer::Vector3D g_focus_position;
 
-static ::Effekseer::Client* g_client = NULL;
+static ::Effekseer::Client* g_client = nullptr;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
@@ -312,7 +312,7 @@ Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
 
 	std::u16string key(dst);
-	Effekseer::Model* model = NULL;
+	Effekseer::Model* model = nullptr;
 
 	if (m_models.count(key) > 0)
 	{
@@ -362,7 +362,7 @@ Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 void Native::ModelLoader::Unload(Effekseer::Model* data)
 {
 	/*
-	if( data != NULL )
+	if( data != nullptr )
 	{
 		IDirect3DTexture9* texture = (IDirect3DTexture9*)data;
 		texture->Release();
@@ -683,7 +683,7 @@ bool Native::DestroyWindow()
 
 bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 {
-	assert(effect_ == NULL);
+	assert(effect_ == nullptr);
 
 	//handles_.clear();
 
@@ -698,7 +698,7 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 	}
 
 	effect_ = Effekseer::Effect::Create(setting_, pData, size);
-	assert(effect_ != NULL);
+	assert(effect_ != nullptr);
 
 	if (mainScreen_ != nullptr)
 	{

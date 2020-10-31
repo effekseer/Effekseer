@@ -15,9 +15,9 @@
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoader* CreateTextureLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
 
-::Effekseer::ModelLoader* CreateModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoader* CreateModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 struct FixedShader
 {

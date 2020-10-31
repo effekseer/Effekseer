@@ -236,7 +236,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 {
 	RingRenderer* renderer = manager->GetRingRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ZTest = RendererCommon.ZTest;
@@ -263,7 +263,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
 	RingRenderer* renderer = manager->GetRingRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ZTest = RendererCommon.ZTest;
@@ -347,7 +347,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 void EffectNodeRing::EndRendering(Manager* manager)
 {
 	RingRenderer* renderer = manager->GetRingRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		renderer->EndRendering(nodeParameter, m_userData);
 	}

@@ -507,7 +507,7 @@ public:
 	float GetDpiScale() const;
 
 	// Column
-	void Columns(int count = 1, const char* id = NULL, bool border = true);
+	void Columns(int count = 1, const char* id = nullptr, bool border = true);
 	void NextColumn();
 
 	float GetColumnWidth(int column_index = -1);
@@ -542,7 +542,7 @@ public:
 	void ProgressBar(float fraction, const Vec2& size);
 
 	// Widgets: Combo Box
-	bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id = NULL);
+	bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id = nullptr);
 	void EndCombo(); // only call EndCombo() if BeginCombo() returns true!
 
 	// Drags
@@ -581,7 +581,7 @@ public:
 						 float v_min = 0.0f,
 						 float v_max = 0.0f,
 						 const char* display_format = "%.3f",
-						 const char* display_format_max = NULL,
+						 const char* display_format_max = nullptr,
 						 float power = 1.0f);
 	bool DragInt(const char16_t* label,
 				 int* v,
@@ -599,7 +599,7 @@ public:
 					   int v_min = 0,
 					   int v_max = 0,
 					   const char* display_format = "%.0f",
-					   const char* display_format_max = NULL);
+					   const char* display_format_max = nullptr);
 
 	// Drags(Ex)
 	bool DragFloat1EfkEx(const char16_t* label,
@@ -679,14 +679,14 @@ public:
 	void EndMenuBar();
 	bool BeginMenu(const char16_t* label, bool enabled = true);
 	void EndMenu();
-	bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true);
+	bool MenuItem(const char16_t* label, const char* shortcut = nullptr, bool selected = false, bool enabled = true);
 	bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true);
 
 	// Popups
 	void OpenPopup(const char* str_id);
 	bool BeginPopup(const char* str_id, WindowFlags extra_flags = WindowFlags::None);
-	bool BeginPopupModal(const char16_t* name, bool* p_open = NULL, WindowFlags extra_flags = WindowFlags::None);
-	bool BeginPopupContextItem(const char* str_id = NULL, int mouse_button = 1);
+	bool BeginPopupModal(const char16_t* name, bool* p_open = nullptr, WindowFlags extra_flags = WindowFlags::None);
+	bool BeginPopupContextItem(const char* str_id = nullptr, int mouse_button = 1);
 	void EndPopup();
 	bool IsPopupOpen(const char* str_id);
 	void CloseCurrentPopup();

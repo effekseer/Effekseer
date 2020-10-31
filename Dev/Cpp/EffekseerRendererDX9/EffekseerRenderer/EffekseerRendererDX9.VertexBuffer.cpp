@@ -44,18 +44,18 @@ VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool
 		usage |= D3DUSAGE_DYNAMIC;
 	}
 
-	IDirect3DVertexBuffer9* vb = NULL;
-	HRESULT hr = renderer->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, NULL);
+	IDirect3DVertexBuffer9* vb = nullptr;
+	HRESULT hr = renderer->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
 
 	if (FAILED(hr))
 	{
 		// DirectX9ExではD3DPOOL_MANAGED使用不可
 		pool = D3DPOOL_DEFAULT;
-		hr = renderer->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, NULL);
+		hr = renderer->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
 	}
 
 	if (FAILED(hr))
-		return NULL;
+		return nullptr;
 
 	return new VertexBuffer(renderer, vb, size, isDynamic, hasRefCount);
 }
@@ -85,7 +85,7 @@ void VertexBuffer::OnChangeDevice()
 void VertexBuffer::OnResetDevice()
 {
 	// バッファ生成
-	if (m_buffer == NULL)
+	if (m_buffer == nullptr)
 	{
 		D3DPOOL pool = D3DPOOL_MANAGED;
 		int usage = D3DUSAGE_WRITEONLY;
@@ -97,15 +97,15 @@ void VertexBuffer::OnResetDevice()
 		}
 
 		LPDIRECT3DDEVICE9 device = GetRenderer()->GetDevice();
-		assert(device != NULL);
+		assert(device != nullptr);
 
-		HRESULT hr = device->CreateVertexBuffer(m_size, usage, 0, pool, &m_buffer, NULL);
+		HRESULT hr = device->CreateVertexBuffer(m_size, usage, 0, pool, &m_buffer, nullptr);
 
 		if (FAILED(hr))
 		{
 			// DirectX9ExではD3DPOOL_MANAGED使用不可
 			pool = D3DPOOL_DEFAULT;
-			hr = device->CreateVertexBuffer(m_size, usage, 0, pool, &m_buffer, NULL);
+			hr = device->CreateVertexBuffer(m_size, usage, 0, pool, &m_buffer, nullptr);
 		}
 	}
 }
@@ -119,7 +119,7 @@ void VertexBuffer::Lock()
 	assert(!m_ringBufferLock);
 
 	m_isLock = true;
-	m_resource = NULL;
+	m_resource = nullptr;
 	m_offset = 0;
 
 	m_buffer->Lock(0, 0, (void**)&m_resource, m_isDynamic ? D3DLOCK_DISCARD : 0);
@@ -175,7 +175,7 @@ void VertexBuffer::Unlock()
 {
 	assert(m_isLock || m_ringBufferLock);
 
-	m_resource = NULL;
+	m_resource = nullptr;
 	m_buffer->Unlock();
 
 	m_isLock = false;

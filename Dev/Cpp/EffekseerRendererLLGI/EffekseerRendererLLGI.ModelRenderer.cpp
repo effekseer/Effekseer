@@ -81,8 +81,8 @@ ModelRenderer::~ModelRenderer()
 ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader* fixedShader)
 {
 
-	assert(renderer != NULL);
-	assert(renderer->GetGraphics() != NULL);
+	assert(renderer != nullptr);
+	assert(renderer->GetGraphics() != nullptr);
 
 	std::vector<VertexLayout> layouts;
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
@@ -146,8 +146,8 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 											   layouts,
 											   true);
 
-	if (shader_lighting_texture_normal == NULL || shader_texture == NULL || shader_distortion_texture == NULL ||
-		shader_ad_lit == NULL || shader_ad_unlit == NULL || shader_ad_distortion == NULL)
+	if (shader_lighting_texture_normal == nullptr || shader_texture == nullptr || shader_distortion_texture == nullptr ||
+		shader_ad_lit == nullptr || shader_ad_unlit == nullptr || shader_ad_distortion == nullptr)
 	{
 		ES_SAFE_DELETE(shader_lighting_texture_normal);
 		ES_SAFE_DELETE(shader_texture);

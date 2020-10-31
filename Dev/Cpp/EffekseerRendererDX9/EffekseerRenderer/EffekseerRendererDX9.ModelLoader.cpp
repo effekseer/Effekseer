@@ -22,7 +22,7 @@ ModelLoader::ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterfa
 {
 	ES_SAFE_ADDREF(renderer_);
 
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -36,7 +36,7 @@ ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* f
 {
 	ES_SAFE_ADDREF(device);
 
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -106,7 +106,7 @@ Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 //----------------------------------------------------------------------------------
 void ModelLoader::Unload(Effekseer::Model* data)
 {
-	if (data != NULL)
+	if (data != nullptr)
 	{
 		auto model = (Effekseer::Model*)data;
 		delete model;

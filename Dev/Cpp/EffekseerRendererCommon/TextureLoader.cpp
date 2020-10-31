@@ -13,7 +13,7 @@ TextureLoader::TextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevic
 	, colorSpaceType_(colorSpaceType)
 {
 	ES_SAFE_ADDREF(graphicsDevice_);
-	if (fileInterface == NULL)
+	if (fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -28,7 +28,7 @@ Effekseer::TextureData* TextureLoader::Load(const char16_t* path, ::Effekseer::T
 {
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 
-	if (reader.get() != NULL)
+	if (reader.get() != nullptr)
 	{
 		auto path16 = std::u16string(path);
 		auto isMipEnabled = path16.find(u"_NoMip") == std::u16string::npos;

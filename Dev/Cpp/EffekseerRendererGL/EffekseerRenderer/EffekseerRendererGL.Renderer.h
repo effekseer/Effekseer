@@ -33,7 +33,7 @@ class GraphicsDevice;
 	::Effekseer::FileInterface* fileInterface = nullptr,
 	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
 ::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);

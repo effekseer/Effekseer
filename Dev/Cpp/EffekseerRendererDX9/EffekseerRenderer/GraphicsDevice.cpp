@@ -87,14 +87,14 @@ bool VertexBuffer::Allocate(int32_t size, bool isDynamic)
 		usage |= D3DUSAGE_DYNAMIC;
 	}
 
-	IDirect3DVertexBuffer9* vb = NULL;
-	HRESULT hr = graphicsDevice_->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, NULL);
+	IDirect3DVertexBuffer9* vb = nullptr;
+	HRESULT hr = graphicsDevice_->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
 
 	if (FAILED(hr))
 	{
 		// DirectX9Ex cannot use D3DPOOL_MANAGED
 		pool = D3DPOOL_DEFAULT;
-		hr = graphicsDevice_->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, NULL);
+		hr = graphicsDevice_->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
 	}
 
 	buffer_ = Effekseer::CreateUniqueReference(vb);
@@ -176,7 +176,7 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 		stride == 4 ? D3DFMT_INDEX32 : D3DFMT_INDEX16,
 		D3DPOOL_MANAGED,
 		&ib,
-		NULL);
+		nullptr);
 
 	if (FAILED(hr))
 	{
@@ -186,7 +186,7 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 															 stride == 4 ? D3DFMT_INDEX32 : D3DFMT_INDEX16,
 															 D3DPOOL_DEFAULT,
 															 &ib,
-															 NULL);
+															 nullptr);
 	}
 
 	buffer_ = Effekseer::CreateUniqueReference(ib);
@@ -334,7 +334,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	HRESULT hr;
 	LPDIRECT3DTEXTURE9 texture = nullptr;
 	hr =
-		device->CreateTexture(param.Size[0], param.Size[1], 1, param.GenerateMipmap ? D3DUSAGE_AUTOGENMIPMAP : 0, format, D3DPOOL_DEFAULT, &texture, NULL);
+		device->CreateTexture(param.Size[0], param.Size[1], 1, param.GenerateMipmap ? D3DUSAGE_AUTOGENMIPMAP : 0, format, D3DPOOL_DEFAULT, &texture, nullptr);
 
 	if (FAILED(hr))
 	{
@@ -342,7 +342,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	}
 
 	LPDIRECT3DTEXTURE9 tempTexture = nullptr;
-	hr = device->CreateTexture(param.Size[0], param.Size[1], 1, 0, format, D3DPOOL_SYSTEMMEM, &tempTexture, NULL);
+	hr = device->CreateTexture(param.Size[0], param.Size[1], 1, 0, format, D3DPOOL_SYSTEMMEM, &tempTexture, nullptr);
 
 	if (FAILED(hr))
 	{
@@ -354,7 +354,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	{
 		const uint8_t* srcBits = static_cast<const uint8_t*>(param.InitialData.data());
 		D3DLOCKED_RECT locked;
-		if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
+		if (SUCCEEDED(tempTexture->LockRect(0, &locked, nullptr, 0)))
 		{
 			uint8_t* destBits = (uint8_t*)locked.pBits;
 
@@ -410,7 +410,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	HRESULT hr;
 	LPDIRECT3DTEXTURE9 texture = nullptr;
 	hr =
-		device->CreateTexture(param.Size[0], param.Size[1], 0, D3DUSAGE_DEPTHSTENCIL, format, D3DPOOL_DEFAULT, &texture, NULL);
+		device->CreateTexture(param.Size[0], param.Size[1], 0, D3DUSAGE_DEPTHSTENCIL, format, D3DPOOL_DEFAULT, &texture, nullptr);
 
 	if (FAILED(hr))
 	{

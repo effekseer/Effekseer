@@ -83,7 +83,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 {
 	TrackRenderer* renderer = manager->GetTrackRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
 		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
@@ -145,7 +145,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 {
 	TrackRenderer* renderer = manager->GetTrackRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		renderer->EndRenderingGroup(m_nodeParameter, group->GetInstanceCount(), m_userData);
 	}
@@ -154,7 +154,7 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 	TrackRenderer* renderer = manager->GetTrackRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		float t = (float)instance.m_LivingTime / (float)instance.m_LivedTime;
 		int32_t time = (int32_t)instance.m_LivingTime;
@@ -192,7 +192,7 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 void EffectNodeTrack::EndRendering(Manager* manager)
 {
 	TrackRenderer* renderer = manager->GetTrackRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		renderer->EndRendering(m_nodeParameter, m_userData);
 	}

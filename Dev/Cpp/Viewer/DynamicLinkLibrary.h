@@ -47,7 +47,7 @@ public:
 #else
 		void* pProc = dlsym(dll_, name);
 #endif
-		if (pProc == NULL)
+		if (pProc == nullptr)
 		{
 			return nullptr;
 		}

@@ -819,7 +819,7 @@ public:
 		: m_renderer(renderer)
 		, m_ribbonCount(0)
 		, m_ringBufferOffset(0)
-		, m_ringBufferData(NULL)
+		, m_ringBufferData(nullptr)
 	{
 	}
 
@@ -871,7 +871,7 @@ protected:
 							void* userData,
 							const ::Effekseer::Mat44f& camera)
 	{
-		if (m_ringBufferData == NULL)
+		if (m_ringBufferData == nullptr)
 			return;
 		if (instanceParameter.InstanceCount < 2)
 			return;

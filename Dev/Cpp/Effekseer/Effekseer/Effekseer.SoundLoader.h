@@ -45,7 +45,7 @@ public:
 	*/
 	virtual void* Load(const char16_t* path)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	/**

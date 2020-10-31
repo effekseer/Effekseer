@@ -10,8 +10,8 @@ Object* Object::Create()
 }
 
 ObjectInternal::ObjectInternal()
-	: userData(NULL)
-	, world(NULL)
+	: userData(nullptr)
+	, world(nullptr)
 	, ObjectIndex(-1)
 {
 	currentStatus.Position = Vector3DF();
@@ -36,7 +36,7 @@ void ObjectInternal::SetPosition(Vector3DF pos)
 {
 	nextStatus.Position = pos;
 
-	if (world != NULL)
+	if (world != nullptr)
 	{
 		WorldInternal* w = (WorldInternal*)world;
 		w->RemoveObjectInternal(this);
@@ -51,7 +51,7 @@ void ObjectInternal::ChangeIntoAll()
 	nextStatus.Type = OBJECT_SHAPE_TYPE_ALL;
 	nextStatus.CalcRadius();
 
-	if (world != NULL)
+	if (world != nullptr)
 	{
 		WorldInternal* w = (WorldInternal*)world;
 		w->RemoveObjectInternal(this);
@@ -67,7 +67,7 @@ void ObjectInternal::ChangeIntoSphere(float radius)
 	nextStatus.Type = OBJECT_SHAPE_TYPE_SPHERE;
 	nextStatus.CalcRadius();
 
-	if (world != NULL)
+	if (world != nullptr)
 	{
 		WorldInternal* w = (WorldInternal*)world;
 		w->RemoveObjectInternal(this);
@@ -85,7 +85,7 @@ void ObjectInternal::ChangeIntoCuboid(Vector3DF size)
 	nextStatus.Type = OBJECT_SHAPE_TYPE_CUBOID;
 	nextStatus.CalcRadius();
 
-	if (world != NULL)
+	if (world != nullptr)
 	{
 		WorldInternal* w = (WorldInternal*)world;
 		w->RemoveObjectInternal(this);

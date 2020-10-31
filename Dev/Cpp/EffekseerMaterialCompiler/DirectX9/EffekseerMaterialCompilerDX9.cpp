@@ -33,8 +33,8 @@ static ID3DBlob* CompileVertexShader(const char* vertexShaderText,
 	hr = D3DCompile(vertexShaderText,
 					strlen(vertexShaderText),
 					vertexShaderFileName,
-					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : NULL,
-					NULL,
+					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : nullptr,
+					nullptr,
 					"main",
 					"vs_3_0",
 					flag,
@@ -53,7 +53,7 @@ static ID3DBlob* CompileVertexShader(const char* vertexShaderText,
 			log += "Unknown error\n";
 		}
 
-		if (error != NULL)
+		if (error != nullptr)
 		{
 			log += (const char*)error->GetBufferPointer();
 			error->Release();
@@ -83,8 +83,8 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	hr = D3DCompile(vertexShaderText,
 					strlen(vertexShaderText),
 					vertexShaderFileName,
-					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : NULL,
-					NULL,
+					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : nullptr,
+					nullptr,
 					"main",
 					"ps_3_0",
 					flag,
@@ -103,7 +103,7 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 			log += "Unknown error\n";
 		}
 
-		if (error != NULL)
+		if (error != nullptr)
 		{
 			log += (const char*)error->GetBufferPointer();
 			error->Release();

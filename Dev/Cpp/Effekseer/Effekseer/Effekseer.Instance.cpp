@@ -49,7 +49,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	ColorInheritance = Color(255, 255, 255, 255);
 	ColorParent = Color(255, 255, 255, 255);
 
-	InstanceGroup* group = NULL;
+	InstanceGroup* group = nullptr;
 
 	for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++)
 	{
@@ -63,7 +63,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 			break;
 		}
 
-		if (group != NULL)
+		if (group != nullptr)
 		{
 			group->NextUsedByInstance = allocated;
 			group = allocated;
@@ -431,7 +431,7 @@ void Instance::FirstUpdate()
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_FCurve)
 	{
-		assert(m_pEffectNode->TranslationFCurve != NULL);
+		assert(m_pEffectNode->TranslationFCurve != nullptr);
 
 		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets(rand);
 
@@ -569,7 +569,7 @@ void Instance::FirstUpdate()
 	}
 	else if (m_pEffectNode->RotationType == ParameterRotationType_FCurve)
 	{
-		assert(m_pEffectNode->RotationFCurve != NULL);
+		assert(m_pEffectNode->RotationFCurve != nullptr);
 
 		rotation_values.fcruve.offset = m_pEffectNode->RotationFCurve->GetOffsets(rand);
 	}
@@ -649,13 +649,13 @@ void Instance::FirstUpdate()
 	}
 	else if (m_pEffectNode->ScalingType == ParameterScalingType_FCurve)
 	{
-		assert(m_pEffectNode->ScalingFCurve != NULL);
+		assert(m_pEffectNode->ScalingFCurve != nullptr);
 
 		scaling_values.fcruve.offset = m_pEffectNode->ScalingFCurve->GetOffsets(rand);
 	}
 	else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleFCurve)
 	{
-		assert(m_pEffectNode->ScalingSingleFCurve != NULL);
+		assert(m_pEffectNode->ScalingSingleFCurve != nullptr);
 
 		scaling_values.single_fcruve.offset = m_pEffectNode->ScalingSingleFCurve->S.GetOffset(rand);
 	}
@@ -773,7 +773,7 @@ void Instance::FirstUpdate()
 		}
 
 		{
-			if (model != NULL)
+			if (model != nullptr)
 			{
 				Model::Emitter emitter;
 
@@ -1043,7 +1043,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	}
 
 	// Get parent color.
-	if (m_pParent != NULL)
+	if (m_pParent != nullptr)
 	{
 		if (m_pEffectNode->RendererCommon.ColorBindType == BindType::Always)
 		{
@@ -1052,7 +1052,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	}
 
 	/* 親の削除処理 */
-	if (m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
+	if (m_pParent != nullptr && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
 	{
 		CalculateParentMatrix(deltaFrame);
 		m_pParent = nullptr;
@@ -1260,11 +1260,11 @@ void Instance::CalculateMatrix(float deltaFrame)
 	// if( m_sequenceNumber == ((ManagerImplemented*)m_pManager)->GetSequenceNumber() ) return;
 	m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
 
-	assert(m_pEffectNode != NULL);
-	assert(m_pContainer != NULL);
+	assert(m_pEffectNode != nullptr);
+	assert(m_pContainer != nullptr);
 
 	// 親の処理
-	if (m_pParent != NULL)
+	if (m_pParent != nullptr)
 	{
 		CalculateParentMatrix(deltaFrame);
 	}
@@ -1301,7 +1301,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_FCurve)
 		{
-			assert(m_pEffectNode->TranslationFCurve != NULL);
+			assert(m_pEffectNode->TranslationFCurve != nullptr);
 			auto fcurve = m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localPosition = fcurve + translation_values.fcruve.offset;
 		}
@@ -1426,7 +1426,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->RotationType == ParameterRotationType_FCurve)
 		{
-			assert(m_pEffectNode->RotationFCurve != NULL);
+			assert(m_pEffectNode->RotationFCurve != nullptr);
 			auto fcurve = m_pEffectNode->RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localAngle = fcurve + rotation_values.fcruve.offset;
 		}
@@ -1470,13 +1470,13 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->ScalingType == ParameterScalingType_FCurve)
 		{
-			assert(m_pEffectNode->ScalingFCurve != NULL);
+			assert(m_pEffectNode->ScalingFCurve != nullptr);
 			auto fcurve = m_pEffectNode->ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localScaling = fcurve + scaling_values.fcruve.offset;
 		}
 		else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleFCurve)
 		{
-			assert(m_pEffectNode->ScalingSingleFCurve != NULL);
+			assert(m_pEffectNode->ScalingSingleFCurve != nullptr);
 			auto s = m_pEffectNode->ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
 			localScaling = {s, s, s};
 		}
@@ -1666,7 +1666,7 @@ void Instance::ApplyDynamicParameterToFixedScaling()
 //----------------------------------------------------------------------------------
 void Instance::Draw(Instance* next)
 {
-	assert(m_pEffectNode != NULL);
+	assert(m_pEffectNode != nullptr);
 
 	if (!m_pEffectNode->IsRendered)
 		return;
@@ -1686,7 +1686,7 @@ void Instance::Kill()
 {
 	if (m_State == INSTANCE_STATE_ACTIVE)
 	{
-		for (InstanceGroup* group = childrenGroups_; group != NULL; group = group->NextUsedByInstance)
+		for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 		{
 			group->IsReferencedFromInstance = false;
 		}

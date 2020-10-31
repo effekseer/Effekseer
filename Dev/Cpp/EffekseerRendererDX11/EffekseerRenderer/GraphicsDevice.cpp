@@ -93,7 +93,7 @@ bool VertexBuffer::Allocate(const void* src, int32_t size, bool isDynamic)
 	hSubResourceData.SysMemPitch = 0;
 	hSubResourceData.SysMemSlicePitch = 0;
 
-	ID3D11Buffer* vb = NULL;
+	ID3D11Buffer* vb = nullptr;
 	HRESULT hr = graphicsDevice_->GetDevice()->CreateBuffer(&hBufferDesc, src != nullptr ? &hSubResourceData : 0, &vb);
 	if (FAILED(hr))
 	{
@@ -183,7 +183,7 @@ bool IndexBuffer::Allocate(const void* src, int32_t elementCount, int32_t stride
 	hSubResourceData.SysMemPitch = 0;
 	hSubResourceData.SysMemSlicePitch = 0;
 
-	ID3D11Buffer* ib = NULL;
+	ID3D11Buffer* ib = nullptr;
 	if (FAILED(graphicsDevice_->GetDevice()->CreateBuffer(&hBufferDesc, src != nullptr ? &hSubResourceData : nullptr, &ib)))
 	{
 		return false;
@@ -479,7 +479,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	desc.MiscFlags = 0;
 
 	ID3D11Texture2D* texture = nullptr;
-	if (FAILED(device->CreateTexture2D(&desc, NULL, &texture)))
+	if (FAILED(device->CreateTexture2D(&desc, nullptr, &texture)))
 	{
 		return false;
 	}

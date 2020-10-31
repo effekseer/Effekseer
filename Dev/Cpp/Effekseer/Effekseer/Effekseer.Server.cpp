@@ -293,7 +293,7 @@ void ServerImplemented::Stop()
 //----------------------------------------------------------------------------------
 void ServerImplemented::Register(const char16_t* key, Effect* effect)
 {
-	if (effect == NULL)
+	if (effect == nullptr)
 		return;
 
 	std::u16string key_((const char16_t*)key);
@@ -324,7 +324,7 @@ void ServerImplemented::Register(const char16_t* key, Effect* effect)
 //----------------------------------------------------------------------------------
 void ServerImplemented::Unregister(Effect* effect)
 {
-	if (effect == NULL)
+	if (effect == nullptr)
 		return;
 
 	auto it = m_effects.begin();

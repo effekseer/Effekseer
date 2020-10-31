@@ -45,7 +45,7 @@ const char16_t* FileDialog::OpenDialog(const char16_t* filterList, const char16_
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
 
-	nfdchar_t* outPath = NULL;
+	nfdchar_t* outPath = nullptr;
 	nfdresult_t result = NFD_OpenDialog(filterList_, defaultPath_, &outPath);
 
 	if (result == NFD_OKAY)
@@ -78,7 +78,7 @@ const char16_t* FileDialog::SaveDialog(const char16_t* filterList, const char16_
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
 
-	nfdchar_t* outPath = NULL;
+	nfdchar_t* outPath = nullptr;
 	nfdresult_t result = NFD_SaveDialog(filterList_, defaultPath_, &outPath);
 
 	if (result == NFD_OKAY)

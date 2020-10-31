@@ -103,48 +103,48 @@ typedef void(EFK_STDCALL* FP_glFramebufferTexture2D)(GLenum target,
 													 GLuint texture,
 													 GLint level);
 
-static FP_glDeleteBuffers g_glDeleteBuffers = NULL;
-static FP_glCreateShader g_glCreateShader = NULL;
-static FP_glBindBuffer g_glBindBuffer = NULL;
-static FP_glGenBuffers g_glGenBuffers = NULL;
-static FP_glBufferData g_glBufferData = NULL;
-static FP_glBlendEquationSeparate g_glBlendEquationSeparate = NULL;
-static FP_glBlendFuncSeparate g_glBlendFuncSeparate = NULL;
-static FP_glBlendEquation g_glBlendEquation = NULL;
-static FP_glActiveTexture g_glActiveTexture = NULL;
-static FP_glUniform1i g_glUniform1i = NULL;
-static FP_glShaderSource g_glShaderSource = NULL;
-static FP_glCompileShader g_glCompileShader = NULL;
-static FP_glGetShaderiv g_glGetShaderiv = NULL;
-static FP_glCreateProgram g_glCreateProgram = NULL;
-static FP_glAttachShader g_glAttachShader = NULL;
-static FP_glDeleteProgram g_glDeleteProgram = NULL;
-static FP_glDeleteShader g_glDeleteShader = NULL;
-static FP_glLinkProgram g_glLinkProgram = NULL;
-static FP_glGetProgramiv g_glGetProgramiv = NULL;
-static FP_glGetShaderInfoLog g_glGetShaderInfoLog = NULL;
-static FP_glGetProgramInfoLog g_glGetProgramInfoLog = NULL;
-static FP_glGetAttribLocation g_glGetAttribLocation = NULL;
-static FP_glGetUniformLocation g_glGetUniformLocation = NULL;
-static FP_glUseProgram g_glUseProgram = NULL;
-static FP_glEnableVertexAttribArray g_glEnableVertexAttribArray = NULL;
-static FP_glDisableVertexAttribArray g_glDisableVertexAttribArray = NULL;
-static FP_glVertexAttribPointer g_glVertexAttribPointer = NULL;
-static FP_glUniformMatrix4fv g_glUniformMatrix4fv = NULL;
-static FP_glUniform4fv g_glUniform4fv = NULL;
-static FP_glGenerateMipmap g_glGenerateMipmap = NULL;
-static FP_glBufferSubData g_glBufferSubData = NULL;
-static FP_glGenVertexArrays g_glGenVertexArrays = NULL;
-static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
-static FP_glBindVertexArray g_glBindVertexArray = NULL;
+static FP_glDeleteBuffers g_glDeleteBuffers = nullptr;
+static FP_glCreateShader g_glCreateShader = nullptr;
+static FP_glBindBuffer g_glBindBuffer = nullptr;
+static FP_glGenBuffers g_glGenBuffers = nullptr;
+static FP_glBufferData g_glBufferData = nullptr;
+static FP_glBlendEquationSeparate g_glBlendEquationSeparate = nullptr;
+static FP_glBlendFuncSeparate g_glBlendFuncSeparate = nullptr;
+static FP_glBlendEquation g_glBlendEquation = nullptr;
+static FP_glActiveTexture g_glActiveTexture = nullptr;
+static FP_glUniform1i g_glUniform1i = nullptr;
+static FP_glShaderSource g_glShaderSource = nullptr;
+static FP_glCompileShader g_glCompileShader = nullptr;
+static FP_glGetShaderiv g_glGetShaderiv = nullptr;
+static FP_glCreateProgram g_glCreateProgram = nullptr;
+static FP_glAttachShader g_glAttachShader = nullptr;
+static FP_glDeleteProgram g_glDeleteProgram = nullptr;
+static FP_glDeleteShader g_glDeleteShader = nullptr;
+static FP_glLinkProgram g_glLinkProgram = nullptr;
+static FP_glGetProgramiv g_glGetProgramiv = nullptr;
+static FP_glGetShaderInfoLog g_glGetShaderInfoLog = nullptr;
+static FP_glGetProgramInfoLog g_glGetProgramInfoLog = nullptr;
+static FP_glGetAttribLocation g_glGetAttribLocation = nullptr;
+static FP_glGetUniformLocation g_glGetUniformLocation = nullptr;
+static FP_glUseProgram g_glUseProgram = nullptr;
+static FP_glEnableVertexAttribArray g_glEnableVertexAttribArray = nullptr;
+static FP_glDisableVertexAttribArray g_glDisableVertexAttribArray = nullptr;
+static FP_glVertexAttribPointer g_glVertexAttribPointer = nullptr;
+static FP_glUniformMatrix4fv g_glUniformMatrix4fv = nullptr;
+static FP_glUniform4fv g_glUniform4fv = nullptr;
+static FP_glGenerateMipmap g_glGenerateMipmap = nullptr;
+static FP_glBufferSubData g_glBufferSubData = nullptr;
+static FP_glGenVertexArrays g_glGenVertexArrays = nullptr;
+static FP_glDeleteVertexArrays g_glDeleteVertexArrays = nullptr;
+static FP_glBindVertexArray g_glBindVertexArray = nullptr;
 static FP_glGenSamplers g_glGenSamplers = nullptr;
 static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
 static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
 static FP_glBindSampler g_glBindSampler = nullptr;
 
-static FP_glMapBuffer g_glMapBuffer = NULL;
-static FP_glMapBufferRange g_glMapBufferRange = NULL;
-static FP_glUnmapBuffer g_glUnmapBuffer = NULL;
+static FP_glMapBuffer g_glMapBuffer = nullptr;
+static FP_glMapBufferRange g_glMapBufferRange = nullptr;
+static FP_glUnmapBuffer g_glUnmapBuffer = nullptr;
 
 static FP_glDrawElementsInstanced g_glDrawElementsInstanced = nullptr;
 
@@ -177,16 +177,16 @@ typedef void(EFK_STDCALL* FP_glDrawElementsInstancedANGLE)(GLenum mode,
 
 #endif
 
-static FP_glGenVertexArraysOES g_glGenVertexArraysOES = NULL;
-static FP_glDeleteVertexArraysOES g_glDeleteVertexArraysOES = NULL;
-static FP_glBindVertexArrayOES g_glBindVertexArrayOES = NULL;
+static FP_glGenVertexArraysOES g_glGenVertexArraysOES = nullptr;
+static FP_glDeleteVertexArraysOES g_glDeleteVertexArraysOES = nullptr;
+static FP_glBindVertexArrayOES g_glBindVertexArrayOES = nullptr;
 
-static FP_glMapBufferOES g_glMapBufferOES = NULL;
-static FP_glMapBufferRangeEXT g_glMapBufferRangeEXT = NULL;
-static FP_glUnmapBufferOES g_glUnmapBufferOES = NULL;
+static FP_glMapBufferOES g_glMapBufferOES = nullptr;
+static FP_glMapBufferRangeEXT g_glMapBufferRangeEXT = nullptr;
+static FP_glUnmapBufferOES g_glUnmapBufferOES = nullptr;
 
 #ifdef EMSCRIPTEN
-static FP_glDrawElementsInstancedANGLE g_glDrawElementsInstancedANGLE = NULL;
+static FP_glDrawElementsInstancedANGLE g_glDrawElementsInstancedANGLE = nullptr;
 #endif
 
 #endif
@@ -200,12 +200,12 @@ static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 #if _WIN32
 #define GET_PROC(name)                              \
 	g_##name = (FP_##name)wglGetProcAddress(#name); \
-	if (g_##name == NULL)                           \
+	if (g_##name == nullptr)                           \
 		return false;
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 #define GET_PROC(name)                              \
 	g_##name = (FP_##name)eglGetProcAddress(#name); \
-	if (g_##name == NULL)                           \
+	if (g_##name == nullptr)                           \
 		return false;
 #endif
 

@@ -1137,11 +1137,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	if (drawParam.InstanceCount > 1)
 	{
-		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, NULL, drawParam.PrimitiveCount);
+		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr, drawParam.PrimitiveCount);
 	}
 	else
 	{
-		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, NULL);
+		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr);
 	}
 
 	for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)

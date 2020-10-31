@@ -128,7 +128,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* settin
 void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 {
 	ModelRenderer* renderer = manager->GetModelRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		// nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -166,7 +166,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
 	ModelRenderer* renderer = manager->GetModelRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		// nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -242,7 +242,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 void EffectNodeModel::EndRendering(Manager* manager)
 {
 	ModelRenderer* renderer = manager->GetModelRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		// nodeParameter.TextureFilter = RendererCommon.FilterType;

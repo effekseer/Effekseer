@@ -77,7 +77,7 @@ bool RenderTextureDX11::Initialize(Effekseer::Tool::Vector2DI size, TextureForma
 		goto End;
 	}
 
-	hr = g->GetDevice()->CreateRenderTargetView(texture, NULL, &textureRTV);
+	hr = g->GetDevice()->CreateRenderTargetView(texture, nullptr, &textureRTV);
 	if (FAILED(hr))
 	{
 		goto End;
@@ -129,7 +129,7 @@ bool DepthTextureDX11::Initialize(int32_t width, int32_t height, uint32_t multis
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 
-	if (FAILED(g->GetDevice()->CreateTexture2D(&desc, NULL, &depthBuffer)))
+	if (FAILED(g->GetDevice()->CreateTexture2D(&desc, nullptr, &depthBuffer)))
 	{
 		goto End;
 	}
@@ -217,10 +217,8 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 	};
 	int32_t flevelCount = sizeof(flevels) / sizeof(D3D_FEATURE_LEVEL);
 
-	D3D_FEATURE_LEVEL currentFeatureLevel;
-
 	HRESULT hr = D3D11CreateDevice(
-		NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, debugFlag, flevels, flevelCount, D3D11_SDK_VERSION, &device_, NULL, &context);
+		nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, flevels, flevelCount, D3D11_SDK_VERSION, &device_, nullptr, &context);
 
 	if FAILED (hr)
 	{
@@ -249,7 +247,7 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 	}
 
 	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
-	if (dxgiFactory == NULL)
+	if (dxgiFactory == nullptr)
 	{
 		log += "Failed : GetParent\n";
 		goto End;
@@ -285,7 +283,7 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 		goto End;
 	}
 
-	if (FAILED(device_->CreateRenderTargetView(defaultRenderTarget, NULL, &renderTargetView)))
+	if (FAILED(device_->CreateRenderTargetView(defaultRenderTarget, nullptr, &renderTargetView)))
 	{
 		log += "Failed : CreateRenderTargetView\n";
 		goto End;
@@ -302,7 +300,7 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 	hTexture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	hTexture2dDesc.CPUAccessFlags = 0;
 	hTexture2dDesc.MiscFlags = 0;
-	if (FAILED(device_->CreateTexture2D(&hTexture2dDesc, NULL, &defaultDepthStencil)))
+	if (FAILED(device_->CreateTexture2D(&hTexture2dDesc, nullptr, &defaultDepthStencil)))
 	{
 		log += "Failed : CreateTexture2D\n";
 		goto End;
@@ -594,7 +592,7 @@ void GraphicsDX11::SaveTexture(RenderTexture* texture, std::vector<Effekseer::Co
 
 	pixels.resize(recordingTextureDesc.Width * recordingTextureDesc.Height);
 
-	for (int32_t h = 0; h < recordingTextureDesc.Height; h++)
+	for (UINT h = 0; h < recordingTextureDesc.Height; h++)
 	{
 		auto dst_ = &(pixels[h * recordingTextureDesc.Width]);
 		auto src_ = &(((uint8_t*)mr.pData)[h * mr.RowPitch]);
@@ -722,7 +720,7 @@ void GraphicsDX11::ResetDevice()
 		return;
 	}
 
-	if (FAILED(device_->CreateRenderTargetView(defaultRenderTarget, NULL, &renderTargetView)))
+	if (FAILED(device_->CreateRenderTargetView(defaultRenderTarget, nullptr, &renderTargetView)))
 	{
 		return;
 	}
@@ -739,7 +737,7 @@ void GraphicsDX11::ResetDevice()
 	hTexture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	hTexture2dDesc.CPUAccessFlags = 0;
 	hTexture2dDesc.MiscFlags = 0;
-	if (FAILED(device_->CreateTexture2D(&hTexture2dDesc, NULL, &defaultDepthStencil)))
+	if (FAILED(device_->CreateTexture2D(&hTexture2dDesc, nullptr, &defaultDepthStencil)))
 	{
 		return;
 	}

@@ -187,7 +187,7 @@ void Window::SetWindowIcon(const char16_t* iconPath)
 {
 	Effekseer::DefaultFileInterface file;
 	std::unique_ptr<Effekseer::FileReader> reader(file.OpenRead(iconPath));
-	if (reader.get() != NULL)
+	if (reader.get() != nullptr)
 	{
 		size_t size = reader->GetLength();
 		std::vector<uint8_t> data(size);
@@ -209,8 +209,8 @@ Vec2 Window::GetSize() const
 	int32_t w, h;
 	glfwGetWindowSize(window, &w, &h);
 	Vec2 s;
-	s.X = w;
-	s.Y = h;
+	s.X = (float)w;
+	s.Y = (float)h;
 	return s;
 }
 
@@ -270,8 +270,8 @@ Vec2 Window::GetMousePosition()
 	glfwGetCursorPos(window, &xpos, &ypos);
 
 	Vec2 ret;
-	ret.X = xpos;
-	ret.Y = ypos;
+	ret.X = (float)xpos;
+	ret.Y = (float)ypos;
 
 	return ret;
 }

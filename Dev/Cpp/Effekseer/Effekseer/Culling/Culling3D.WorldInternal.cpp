@@ -96,7 +96,7 @@ void WorldInternal::RemoveObject(Object* o)
 
 void WorldInternal::AddObjectInternal(Object* o)
 {
-	assert(o != NULL);
+	assert(o != nullptr);
 
 	ObjectInternal* o_ = (ObjectInternal*)o;
 
@@ -155,14 +155,14 @@ void WorldInternal::AddObjectInternal(Object* o)
 
 void WorldInternal::RemoveObjectInternal(Object* o)
 {
-	assert(o != NULL);
+	assert(o != nullptr);
 
 	ObjectInternal* o_ = (ObjectInternal*)o;
 
 	if (o_->GetCurrentStatus().Type == OBJECT_SHAPE_TYPE_ALL)
 	{
 		allLayers.RemoveObject(o);
-		o_->SetWorld(NULL);
+		o_->SetWorld(nullptr);
 		return;
 	}
 
@@ -176,7 +176,7 @@ void WorldInternal::RemoveObjectInternal(Object* o)
 		{
 			outofLayers.RemoveObject(o);
 		}
-		o_->SetWorld(NULL);
+		o_->SetWorld(nullptr);
 		return;
 	}
 
@@ -193,7 +193,7 @@ void WorldInternal::RemoveObjectInternal(Object* o)
 		{
 			if (layers[i]->RemoveObject(o))
 			{
-				((ObjectInternal*)o)->SetWorld(NULL);
+				((ObjectInternal*)o)->SetWorld(nullptr);
 				found = true;
 			}
 			else
@@ -207,7 +207,7 @@ void WorldInternal::RemoveObjectInternal(Object* o)
 
 	if (!found)
 	{
-		((ObjectInternal*)o)->SetWorld(NULL);
+		((ObjectInternal*)o)->SetWorld(nullptr);
 		outofLayers.RemoveObject(o);
 	}
 }

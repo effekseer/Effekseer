@@ -149,7 +149,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, Setting* setti
 void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 {
 	SpriteRenderer* renderer = manager->GetSpriteRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
 		// nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -178,7 +178,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 {
 	const InstanceValues& instValues = instance.rendererValues.sprite;
 	SpriteRenderer* renderer = manager->GetSpriteRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
 		// nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -285,7 +285,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 void EffectNodeSprite::EndRendering(Manager* manager)
 {
 	SpriteRenderer* renderer = manager->GetSpriteRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
 		// nodeParameter.TextureFilter = RendererCommon.FilterType;

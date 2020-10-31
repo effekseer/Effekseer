@@ -35,7 +35,7 @@ bool RenderedEffectGenerator::DistortingCallback::OnDistorting()
 
 void RenderedEffectGenerator::PlayEffect()
 {
-	assert(effect_ != NULL);
+	assert(effect_ != nullptr);
 
 	for (int32_t z = 0; z < behavior_.CountZ; z++)
 	{
@@ -209,13 +209,13 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Set
 	::Effekseer::ModelRenderer* model_renderer = renderer_->CreateModelRenderer();
 	::Effekseer::TrackRenderer* track_renderer = renderer_->CreateTrackRenderer();
 
-	if (sprite_renderer == NULL)
+	if (sprite_renderer == nullptr)
 	{
 		spdlog::trace("FAIL : CreateSpriteRenderer");
 		manager_->Destroy();
-		manager_ = NULL;
+		manager_ = nullptr;
 		renderer_->Destroy();
-		renderer_ = NULL;
+		renderer_ = nullptr;
 		return false;
 	}
 

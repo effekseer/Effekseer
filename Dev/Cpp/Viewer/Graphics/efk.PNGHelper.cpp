@@ -19,7 +19,7 @@ void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, const
 	if (fp == nullptr)
 		return;
 
-	png_structp pp = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_structp pp = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	png_infop ip = png_create_info_struct(pp);
 
 	/* èëÇ´çûÇ›èÄîı */
@@ -69,7 +69,7 @@ void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, const
 PNGHelper::PNGHelper()
 {
 #ifdef _WIN32
-	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
 	tempBuffer1.resize(2048 * 2048 * 4);
 #endif
 }

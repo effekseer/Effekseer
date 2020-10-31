@@ -18,7 +18,7 @@ namespace EffekseerRendererDX9
 @brief	テクスチャ読込クラスを生成する。
 */
 [[deprecated("please use CreateTextureLoader with GraphicsDevice")]]
-::Effekseer::TextureLoader* CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoader* CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 ::Effekseer::TextureLoader* CreateTextureLoader(
 	Effekseer::Backend::GraphicsDevice* graphicsDevice,
@@ -28,7 +28,7 @@ namespace EffekseerRendererDX9
 /**
 @brief	モデル読込クラスを生成する。
 */
-::Effekseer::ModelLoader* CreateModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoader* CreateModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 //----------------------------------------------------------------------------------
 //

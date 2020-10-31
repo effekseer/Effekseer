@@ -294,12 +294,12 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
+	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) = 0;
+	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 	@brief
@@ -527,7 +527,7 @@ namespace EffekseerRendererDX11
 /**
 @brief	モデル読込クラスを生成する。
 */
-::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 /**
 	@brief	描画クラス

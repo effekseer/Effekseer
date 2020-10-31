@@ -166,8 +166,8 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 {
-	assert(renderer != NULL);
-	assert(renderer->GetDevice() != NULL);
+	assert(renderer != nullptr);
+	assert(renderer->GetDevice() != nullptr);
 
 	// 座標(3) 法線(3)*3 UV(2)
 	D3DVERTEXELEMENT9 decl[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
@@ -233,8 +233,8 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 											decl,
 											true);
 
-	if (shader_ad_lit == NULL || shader_ad_unlit == NULL || shader_ad_distortion == NULL ||
-		shader_lit == NULL || shader_unlit == NULL || shader_distortion == NULL)
+	if (shader_ad_lit == nullptr || shader_ad_unlit == nullptr || shader_ad_distortion == nullptr ||
+		shader_lit == nullptr || shader_unlit == nullptr || shader_distortion == nullptr)
 	{
 		ES_SAFE_DELETE(shader_ad_lit);
 		ES_SAFE_DELETE(shader_ad_unlit);

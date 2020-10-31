@@ -38,7 +38,7 @@ void IndexBuffer::Unlock()
 {
 	assert(m_isLock);
 	indexBuffer->Unlock();
-	m_resource = NULL;
+	m_resource = nullptr;
 	m_isLock = false;
 }
 

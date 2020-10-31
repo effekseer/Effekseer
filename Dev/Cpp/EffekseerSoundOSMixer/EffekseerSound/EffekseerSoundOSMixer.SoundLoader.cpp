@@ -20,7 +20,7 @@ SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fi
 	: m_sound(sound)
 	, m_fileInterface(fileInterface)
 {
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -38,10 +38,10 @@ SoundLoader::~SoundLoader()
 //----------------------------------------------------------------------------------
 void* SoundLoader::Load(const char16_t* path)
 {
-	assert(path != NULL);
+	assert(path != nullptr);
 
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == NULL)
+	if (reader.get() == nullptr)
 		return nullptr;
 
 	size_t size = reader->GetLength();
@@ -59,7 +59,7 @@ void* SoundLoader::Load(const void* data, int32_t size)
 void SoundLoader::Unload(void* data)
 {
 	SoundData* soundData = (SoundData*)data;
-	if (soundData == NULL)
+	if (soundData == nullptr)
 	{
 		return;
 	}

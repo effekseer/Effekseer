@@ -89,14 +89,14 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	reader->Read(&chunkSize, 4);
 	if (memcmp(&chunkIdent, "RIFF", 4) != 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	// check WAVE symbol
 	reader->Read(&chunkIdent, 4);
 	if (memcmp(&chunkIdent, "WAVE", 4) != 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	WAVEFORMATEX wavefmt = {0};
@@ -130,7 +130,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	// check a format
 	if (wavefmt.wFormatTag != WAVE_FORMAT_PCM || wavefmt.nChannels > 2)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	uint8_t* buffer;
@@ -175,7 +175,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 		}
 		break;
 	default:
-		return NULL;
+		return nullptr;
 	}
 
 	// create DirectSound buffer
@@ -188,8 +188,8 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	dsdesc.guid3DAlgorithm = DS3DALG_DEFAULT;
 
 	IDirectSoundBuffer* dsbufTmp = 0;
-	IDirectSoundBuffer8* dsbuf = NULL;
-	hr = m_sound->GetDevice()->CreateSoundBuffer(&dsdesc, &dsbufTmp, NULL);
+	IDirectSoundBuffer8* dsbuf = nullptr;
+	hr = m_sound->GetDevice()->CreateSoundBuffer(&dsdesc, &dsbufTmp, nullptr);
 	if (hr == DS_OK)
 	{
 		hr = dsbufTmp->QueryInterface(IID_IDirectSoundBuffer8, (void**)&dsbuf);
@@ -198,17 +198,17 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	if (hr != DS_OK)
 	{
 		delete[] buffer;
-		return NULL;
+		return nullptr;
 	}
 
 	// lock a buffer and load data
 	LPVOID bufptr;
 	DWORD bufsize;
-	hr = dsbuf->Lock(0, 0, &bufptr, &bufsize, NULL, NULL, DSBLOCK_ENTIREBUFFER);
+	hr = dsbuf->Lock(0, 0, &bufptr, &bufsize, nullptr, nullptr, DSBLOCK_ENTIREBUFFER);
 	if (hr == DS_OK)
 	{
 		memcpy(bufptr, buffer, size);
-		hr = dsbuf->Unlock(bufptr, bufsize, NULL, 0);
+		hr = dsbuf->Unlock(bufptr, bufsize, nullptr, 0);
 	}
 	delete[] buffer;
 
@@ -222,10 +222,10 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 
 void* SoundLoader::Load(const char16_t* path)
 {
-	assert(path != NULL);
+	assert(path != nullptr);
 
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == NULL)
+	if (reader.get() == nullptr)
 		return false;
 
 	return Load(reader.get());
@@ -240,7 +240,7 @@ void* SoundLoader::Load(const void* data, int32_t size)
 void SoundLoader::Unload(void* data)
 {
 	SoundData* soundData = (SoundData*)data;
-	if (soundData == NULL)
+	if (soundData == nullptr)
 	{
 		return;
 	}

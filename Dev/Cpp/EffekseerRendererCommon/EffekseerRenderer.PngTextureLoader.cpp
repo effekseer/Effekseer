@@ -30,7 +30,7 @@ bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 
 	uint8_t* data_ = (uint8_t*)data;
 
-	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
 	png_set_read_fn(png, &data_, &PngReadData);
 
@@ -38,7 +38,7 @@ bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 
 	if (setjmp(png_jmpbuf(png)))
 	{
-		png_destroy_read_struct(&png, &png_info, NULL);
+		png_destroy_read_struct(&png, &png_info, nullptr);
 		return false;
 	}
 
@@ -68,12 +68,12 @@ bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 	{
 		png_set_palette_to_rgb(png);
 
-		png_bytep trans_alpha = NULL;
+		png_bytep trans_alpha = nullptr;
 		int num_trans = 0;
-		png_color_16p trans_color = NULL;
+		png_color_16p trans_color = nullptr;
 
 		png_get_tRNS(png, png_info, &trans_alpha, &num_trans, &trans_color);
-		if (trans_alpha != NULL)
+		if (trans_alpha != nullptr)
 		{
 			pixelBytes = 4;
 		}
@@ -109,14 +109,14 @@ bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 		{
 			for (int32_t i = 0; i < textureHeight; i++)
 			{
-				png_read_row(png, &image[(textureHeight - 1 - i) * pitch], NULL);
+				png_read_row(png, &image[(textureHeight - 1 - i) * pitch], nullptr);
 			}
 		}
 		else
 		{
 			for (int32_t i = 0; i < textureHeight; i++)
 			{
-				png_read_row(png, &image[i * pitch], NULL);
+				png_read_row(png, &image[i * pitch], nullptr);
 			}
 		}
 	}
@@ -160,7 +160,7 @@ bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 	}
 
 	delete[] image;
-	png_destroy_read_struct(&png, &png_info, NULL);
+	png_destroy_read_struct(&png, &png_info, nullptr);
 
 	return true;
 

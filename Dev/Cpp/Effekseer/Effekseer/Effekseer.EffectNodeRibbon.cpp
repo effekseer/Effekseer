@@ -139,7 +139,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 {
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
 		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
@@ -162,7 +162,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
@@ -196,7 +196,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 {
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		renderer->EndRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, m_userData);
 	}
@@ -209,7 +209,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		Color _color;
 		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
@@ -294,7 +294,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 void EffectNodeRibbon::EndRendering(Manager* manager)
 {
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
-	if (renderer != NULL)
+	if (renderer != nullptr)
 	{
 		renderer->EndRendering(m_nodeParameter, m_userData);
 	}

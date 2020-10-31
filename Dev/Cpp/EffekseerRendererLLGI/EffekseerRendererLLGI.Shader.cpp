@@ -14,8 +14,8 @@ Shader::Shader(Backend::GraphicsDevice* graphicsDevice,
 	, vertexShader_(vertexShader)
 	, pixelShader_(pixelShader)
 	, layouts_(layouts)
-	, m_vertexConstantBuffer(NULL)
-	, m_pixelConstantBuffer(NULL)
+	, m_vertexConstantBuffer(nullptr)
+	, m_pixelConstantBuffer(nullptr)
 {
 }
 
@@ -36,8 +36,8 @@ Shader* Shader::Create(Backend::GraphicsDevice* graphicsDevice,
 					   const std::vector<VertexLayout>& layouts,
 					   bool hasRefCount)
 {
-	assert(graphicsDevice != NULL);
-	assert(graphicsDevice->GetGraphics() != NULL);
+	assert(graphicsDevice != nullptr);
+	assert(graphicsDevice->GetGraphics() != nullptr);
 
 	auto vertexShader = graphicsDevice->GetGraphics()->CreateShader(vertexData, vertexDataCount);
 	auto pixelShader = graphicsDevice->GetGraphics()->CreateShader(pixelData, pixelDataCount);

@@ -40,11 +40,11 @@ bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
 EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
 	: m_effect(effect)
 	, generation_(0)
-	, m_userData(NULL)
+	, m_userData(nullptr)
 	, IsRendered(true)
-	, TranslationFCurve(NULL)
-	, RotationFCurve(NULL)
-	, ScalingFCurve(NULL)
+	, TranslationFCurve(nullptr)
+	, RotationFCurve(nullptr)
+	, ScalingFCurve(nullptr)
 	, SoundType(ParameterSoundType_None)
 	, RenderingOrder(RenderingOrder_FirstCreatedInstanceIsFirst)
 {
@@ -799,7 +799,7 @@ int EffectNodeImplemented::GetChildrenCount() const
 EffectNode* EffectNodeImplemented::GetChild(int index) const
 {
 	if (index >= GetChildrenCount())
-		return NULL;
+		return nullptr;
 	return m_Nodes[index];
 }
 
@@ -1036,7 +1036,7 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 	IRandObject& rand = instance.GetRandObject();
 
 	SoundPlayer* player = manager->GetSoundPlayer();
-	if (player == NULL)
+	if (player == nullptr)
 	{
 		return;
 	}
@@ -1184,7 +1184,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 
 EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode* parent, unsigned char*& pos)
 {
-	EffectNodeImplemented* effectnode = NULL;
+	EffectNodeImplemented* effectnode = nullptr;
 
 	int node_type = 0;
 	memcpy(&node_type, pos, sizeof(int));

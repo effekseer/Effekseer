@@ -159,7 +159,7 @@ bool EditorContent::Save()
 {
 	if (GetPath() == "")
 	{
-		nfdchar_t* outPath = NULL;
+		nfdchar_t* outPath = nullptr;
 		nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
 
 		if (result == NFD_OKAY)
@@ -430,7 +430,7 @@ void Editor::SaveAs()
 	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
 		return;
 
-	nfdchar_t* outPath = NULL;
+	nfdchar_t* outPath = nullptr;
 	nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
 
 	if (result == NFD_OKAY)
@@ -460,7 +460,7 @@ bool Editor::Load(const char* path)
 
 bool Editor::Load()
 {
-	nfdchar_t* outPath = NULL;
+	nfdchar_t* outPath = nullptr;
 	nfdresult_t result = NFD_OpenDialog("efkmat", "", &outPath);
 
 	if (result == NFD_OKAY)
@@ -1263,7 +1263,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 			if (ImGui::Button(nameStr.c_str()))
 			{
-				nfdchar_t* outPath = NULL;
+				nfdchar_t* outPath = nullptr;
 				nfdresult_t result = NFD_OpenDialog("png", "", &outPath);
 
 				if (result == NFD_OKAY)

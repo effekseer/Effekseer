@@ -23,14 +23,14 @@ Sound* Sound::Create(osm::Manager* soundManager)
 	{
 		return sound;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 SoundImplemented::SoundImplemented()
-	: m_manager(NULL)
+	: m_manager(nullptr)
 	, m_mute(false)
 {
 }

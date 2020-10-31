@@ -242,9 +242,9 @@ public:
 		@param	size			[in]	データ配列の長さ
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -252,9 +252,9 @@ public:
 		@param	path			[in]	読込元のパス
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	エフェクトを生成する。
@@ -263,9 +263,9 @@ public:
 	@param	size			[in]	データ配列の長さ
 	@param	magnification	[in]	読み込み時の拡大率
 	@param	materialPath	[in]	素材ロード時の基準パス
-	@return	エフェクト。失敗した場合はNULLを返す。
+	@return	エフェクト。失敗した場合はnullptrを返す。
 */
-	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -273,14 +273,14 @@ public:
 		@param	path			[in]	読込元のパス
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
-	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
+	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
 	/**
 	@brief

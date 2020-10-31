@@ -17,7 +17,7 @@ namespace EffekseerRendererGL
 ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType)
 	: m_fileInterface(fileInterface)
 {
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -37,7 +37,7 @@ Effekseer::Model* ModelLoader::Load(const char16_t* path)
 {
 	std::unique_ptr<Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 
-	if (reader.get() != NULL)
+	if (reader.get() != nullptr)
 	{
 		size_t size_model = reader->GetLength();
 		char* data_model = new char[size_model];
@@ -52,7 +52,7 @@ Effekseer::Model* ModelLoader::Load(const char16_t* path)
 		return model;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
@@ -64,7 +64,7 @@ Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 
 void ModelLoader::Unload(Effekseer::Model* data)
 {
-	if (data != NULL)
+	if (data != nullptr)
 	{
 		auto model = (Effekseer::Model*)data;
 		delete model;

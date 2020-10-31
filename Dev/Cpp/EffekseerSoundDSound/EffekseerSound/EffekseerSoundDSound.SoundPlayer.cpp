@@ -33,7 +33,7 @@ SoundPlayer::~SoundPlayer()
 {
 	if (m_sound->GetMute())
 	{
-		return NULL;
+		return nullptr;
 	}
 	SoundData* soundData = (SoundData*)parameter.Data;
 	if (soundData)
@@ -45,7 +45,7 @@ SoundPlayer::~SoundPlayer()
 			return (::Effekseer::SoundHandle)voice;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------

@@ -11,7 +11,7 @@ Grid::Grid()
 
 void Grid::AddObject(Object* o)
 {
-	assert(o != NULL);
+	assert(o != nullptr);
 
 	ObjectInternal* o_ = (ObjectInternal*)o;
 	assert(o_->ObjectIndex == -1);
@@ -22,7 +22,7 @@ void Grid::AddObject(Object* o)
 
 void Grid::RemoveObject(Object* o)
 {
-	assert(o != NULL);
+	assert(o != nullptr);
 
 	ObjectInternal* o_ = (ObjectInternal*)o;
 	assert(o_->ObjectIndex != -1);

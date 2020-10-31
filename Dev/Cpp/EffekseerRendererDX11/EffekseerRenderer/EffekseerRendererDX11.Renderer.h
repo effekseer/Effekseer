@@ -28,7 +28,7 @@ namespace EffekseerRendererDX11
 /**
 @brief	モデル読込クラスを生成する。
 */
-::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 /**
 	@brief	描画クラス

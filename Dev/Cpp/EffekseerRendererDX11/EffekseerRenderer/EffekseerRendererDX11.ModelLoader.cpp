@@ -22,7 +22,7 @@ ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileI
 {
 	ES_SAFE_ADDREF(device);
 
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -43,10 +43,10 @@ ModelLoader::~ModelLoader()
 Effekseer::Model* ModelLoader::Load(const char16_t* path)
 {
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == NULL)
+	if (reader.get() == nullptr)
 		return false;
 
-	if (reader.get() != NULL)
+	if (reader.get() != nullptr)
 	{
 		size_t size_model = reader->GetLength();
 		uint8_t* data_model = new uint8_t[size_model];
@@ -72,7 +72,7 @@ Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 //----------------------------------------------------------------------------------
 void ModelLoader::Unload(Effekseer::Model* data)
 {
-	if (data != NULL)
+	if (data != nullptr)
 	{
 		auto model = (Effekseer::Model*)data;
 		delete model;

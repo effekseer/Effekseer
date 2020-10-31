@@ -13,7 +13,7 @@ ModelLoader::ModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::F
 {
 	LLGI::SafeAddRef(graphicsDevice_);
 
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -27,10 +27,10 @@ ModelLoader::~ModelLoader()
 Effekseer::Model* ModelLoader::Load(const char16_t* path)
 {
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == NULL)
+	if (reader.get() == nullptr)
 		return nullptr;
 
-	if (reader.get() != NULL)
+	if (reader.get() != nullptr)
 	{
 		size_t size_model = reader->GetLength();
 		uint8_t* data_model = new uint8_t[size_model];
@@ -45,7 +45,7 @@ Effekseer::Model* ModelLoader::Load(const char16_t* path)
 		return model;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
@@ -61,7 +61,7 @@ Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 
 void ModelLoader::Unload(Effekseer::Model* data)
 {
-	if (data != NULL)
+	if (data != nullptr)
 	{
 		Effekseer::Model* model = (Effekseer::Model*)data;
 		delete model;

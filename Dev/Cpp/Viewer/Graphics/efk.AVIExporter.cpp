@@ -222,7 +222,7 @@ void AVIExporter::FinishToExportAVI(std::vector<uint8_t>& dst)
 	entry.dwChunkLength = width * height * 4;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		entry.dwChunkOffset = 4 + sizeof(Chunk) * i + width * height * 4 * i;
+		entry.dwChunkOffset = 4 + (uint32_t)sizeof(Chunk) * i + width * height * 4 * i;
 		ExportData(dst, &entry);
 	}
 }

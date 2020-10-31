@@ -157,8 +157,8 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 {
-	assert(renderer != NULL);
-	assert(renderer->GetDevice() != NULL);
+	assert(renderer != nullptr);
+	assert(renderer->GetDevice() != nullptr);
 
 	D3D11_INPUT_ELEMENT_DESC decl[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -229,7 +229,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 											ARRAYSIZE(decl),
 											true);
 
-	if (shader_advanced_lit == NULL || shader_advanced_unlit == NULL || shader_advanced_distortion == NULL || shader_lit == NULL || shader_unlit == NULL || shader_distortion == NULL)
+	if (shader_advanced_lit == nullptr || shader_advanced_unlit == nullptr || shader_advanced_distortion == nullptr || shader_lit == nullptr || shader_unlit == nullptr || shader_distortion == nullptr)
 	{
 		ES_SAFE_DELETE(shader_advanced_lit);
 		ES_SAFE_DELETE(shader_advanced_unlit);

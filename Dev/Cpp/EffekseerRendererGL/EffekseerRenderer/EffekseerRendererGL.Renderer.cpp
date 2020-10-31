@@ -66,7 +66,7 @@ namespace EffekseerRendererGL
 	ES_SAFE_RELEASE(gd);
 	return ret;
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -78,7 +78,7 @@ namespace EffekseerRendererGL
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface, colorSpaceType);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -87,7 +87,7 @@ namespace EffekseerRendererGL
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(fileInterface, deviceType);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -97,7 +97,7 @@ namespace EffekseerRendererGL
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new MaterialLoader(static_cast<GraphicsDevice*>(graphicsDevice), fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -110,7 +110,7 @@ Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 	{
 		return renderer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Renderer* Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
@@ -124,7 +124,7 @@ Renderer* Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::Graphics
 	{
 		return renderer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 int32_t RendererImplemented::GetIndexSpriteCount() const
@@ -143,13 +143,13 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType, GraphicsDevice* graphicsDevice)
-	: m_vertexBuffer(NULL)
-	, m_indexBuffer(NULL)
-	, m_indexBufferForWireframe(NULL)
+	: m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
+	, m_indexBufferForWireframe(nullptr)
 	, m_squareMaxCount(squareMaxCount)
-	, m_renderState(NULL)
+	, m_renderState(nullptr)
 	, m_restorationOfStates(true)
-	, m_currentVertexArray(NULL)
+	, m_currentVertexArray(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_vao_wire_frame(nullptr)
 	, m_distortingCallback(nullptr)
@@ -771,7 +771,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	{
 		m_vertexBuffer =
 			VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
-		if (m_vertexBuffer == NULL)
+		if (m_vertexBuffer == nullptr)
 			return;
 	}
 
@@ -852,7 +852,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -864,7 +864,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(fileInterface, GetDeviceType());
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -1026,7 +1026,7 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount;
 
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 
 	GLCheckError();
 }
@@ -1038,7 +1038,7 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount * instanceCount;
 
-	GLExt::glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL, instanceCount);
+	GLExt::glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
 
 	GLCheckError();
 }

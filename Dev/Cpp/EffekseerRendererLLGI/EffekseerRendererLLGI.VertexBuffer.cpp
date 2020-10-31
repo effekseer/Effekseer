@@ -119,7 +119,7 @@ void VertexBuffer::Unlock()
 		vertexBuffers[currentIndex]->Unlock();
 	}
 
-	m_resource = NULL;
+	m_resource = nullptr;
 	m_isLock = false;
 	m_ringBufferLock = false;
 }

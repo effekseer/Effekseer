@@ -30,7 +30,7 @@ void InstanceGlobal::operator delete(void* p)
 InstanceGlobal::InstanceGlobal()
 	: m_instanceCount(0)
 	, m_updatedFrame(0)
-	, m_rootContainer(NULL)
+	, m_rootContainer(nullptr)
 {
 	dynamicInputParameters.fill(0);
 }

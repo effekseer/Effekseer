@@ -84,7 +84,7 @@ std::string GetExecutingDirectory()
 	char buf[260];
 
 #ifdef _WIN32
-	int len = GetModuleFileNameA(NULL, buf, 260);
+	int len = GetModuleFileNameA(nullptr, buf, 260);
 	if (len <= 0)
 		return "";
 #elif defined(__APPLE__)
@@ -508,7 +508,7 @@ int mainLoop(int argc, char* argv[])
 			const float oldWindowRounding = ImGui::GetStyle().WindowRounding;
 			ImGui::GetStyle().WindowRounding = 0;
 
-			const bool visible = ImGui::Begin("MaterialEditor", NULL, ImVec2(0, 0), 1.0f, flags);
+			const bool visible = ImGui::Begin("MaterialEditor", nullptr, ImVec2(0, 0), 1.0f, flags);
 			ImGui::GetStyle().WindowRounding = oldWindowRounding;
 
 			if (visible)

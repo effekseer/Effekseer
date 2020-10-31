@@ -16,8 +16,8 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 SoundVoice::SoundVoice(SoundImplemented* sound)
 	: m_sound(sound)
-	, m_dsbuf(NULL)
-	, m_tag(NULL)
+	, m_dsbuf(nullptr)
+	, m_tag(nullptr)
 {
 }
 
@@ -79,14 +79,14 @@ void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer:
 //----------------------------------------------------------------------------------
 void SoundVoice::Stop()
 {
-	if (m_dsbuf == NULL)
+	if (m_dsbuf == nullptr)
 	{
 		return;
 	}
 	m_dsbuf->Stop();
 	m_dsbuf->Release();
-	m_dsbuf = NULL;
-	m_data = NULL;
+	m_dsbuf = nullptr;
+	m_data = nullptr;
 }
 
 //----------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void SoundVoice::Stop()
 //----------------------------------------------------------------------------------
 void SoundVoice::Pause(bool pause)
 {
-	if (m_dsbuf == NULL)
+	if (m_dsbuf == nullptr)
 	{
 		return;
 	}
@@ -113,7 +113,7 @@ void SoundVoice::Pause(bool pause)
 //----------------------------------------------------------------------------------
 bool SoundVoice::CheckPlaying()
 {
-	if (m_dsbuf == NULL)
+	if (m_dsbuf == nullptr)
 	{
 		return false;
 	}
@@ -154,7 +154,7 @@ SoundVoice* SoundVoiceContainer::GetVoice()
 {
 	if (m_voiceList.empty())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	// 停止ボイスを探す

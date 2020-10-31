@@ -960,7 +960,7 @@ public:
 			model = (MODEL*)param.EffectPointer->GetModel(param.ModelIndex);
 		}
 
-		if (model == NULL)
+		if (model == nullptr)
 			return;
 
 		auto isBackgroundRequired = collector_.IsBackgroundRequiredOnFirstPass && renderPassInd == 0;

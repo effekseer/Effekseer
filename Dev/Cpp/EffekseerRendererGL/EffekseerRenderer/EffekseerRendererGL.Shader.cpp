@@ -318,8 +318,8 @@ Shader::Shader(GraphicsDevice* graphicsDevice,
 	, m_deviceType(graphicsDevice->GetDeviceType())
 	, m_program(program)
 	, m_vertexSize(0)
-	, m_vertexConstantBuffer(NULL)
-	, m_pixelConstantBuffer(NULL)
+	, m_vertexConstantBuffer(nullptr)
+	, m_pixelConstantBuffer(nullptr)
 	, addHeader_(addHeader)
 {
 	m_textureSlots.fill(0);
@@ -410,7 +410,7 @@ Shader* Shader::Create(GraphicsDevice* graphicsDevice,
 	}
 	else
 	{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -557,7 +557,7 @@ void Shader::DisableAttribs()
 
 void Shader::SetVertex()
 {
-	const void* vertices = NULL;
+	const void* vertices = nullptr;
 
 	for (size_t i = 0; i < m_aid.size(); i++)
 	{

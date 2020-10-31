@@ -17,7 +17,7 @@ namespace Effekseer
 DefaultEffectLoader::DefaultEffectLoader(FileInterface* fileInterface)
 	: m_fileInterface(fileInterface)
 {
-	if (m_fileInterface == NULL)
+	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
@@ -35,13 +35,13 @@ DefaultEffectLoader::~DefaultEffectLoader()
 //----------------------------------------------------------------------------------
 bool DefaultEffectLoader::Load(const char16_t* path, void*& data, int32_t& size)
 {
-	assert(path != NULL);
+	assert(path != nullptr);
 
-	data = NULL;
+	data = nullptr;
 	size = 0;
 
 	std::unique_ptr<FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == NULL)
+	if (reader.get() == nullptr)
 		return false;
 
 	size = (int32_t)reader->GetLength();

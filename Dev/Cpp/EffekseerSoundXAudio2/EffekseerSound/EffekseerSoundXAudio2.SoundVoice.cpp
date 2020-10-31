@@ -15,9 +15,9 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 SoundVoice::SoundVoice(SoundImplemented* sound, const WAVEFORMATEX* format)
 	: m_sound(sound)
-	, m_xavoice(NULL)
-	, m_tag(NULL)
-	, m_data(NULL)
+	, m_xavoice(nullptr)
+	, m_tag(nullptr)
+	, m_data(nullptr)
 {
 	sound->GetDevice()->CreateSourceVoice(&m_xavoice, format);
 }
@@ -69,7 +69,7 @@ void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer:
 			return;
 		}
 	}
-	m_xavoice->SetOutputMatrix(NULL, soundData->channels, 2, matrix);
+	m_xavoice->SetOutputMatrix(nullptr, soundData->channels, 2, matrix);
 	m_xavoice->Start();
 }
 
@@ -139,7 +139,7 @@ SoundVoice* SoundVoiceContainer::GetVoice()
 {
 	if (m_voiceList.empty())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	// 停止ボイスを探す

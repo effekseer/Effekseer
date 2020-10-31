@@ -26,7 +26,7 @@ class DefaultEffectLoader : public EffectLoader
 	FileInterface* m_fileInterface;
 
 public:
-	DefaultEffectLoader(FileInterface* fileInterface = NULL);
+	DefaultEffectLoader(FileInterface* fileInterface = nullptr);
 
 	virtual ~DefaultEffectLoader();
 

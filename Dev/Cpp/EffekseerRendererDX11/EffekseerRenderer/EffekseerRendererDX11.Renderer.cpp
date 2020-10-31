@@ -118,7 +118,7 @@ static
 	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device, context));
 	return new EffekseerRenderer::TextureLoader(gd.get(), fileInterface, colorSpaceType);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -127,7 +127,7 @@ static
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(device, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -135,12 +135,12 @@ static
 //
 //----------------------------------------------------------------------------------
 OriginalState::OriginalState()
-	: m_blendState(NULL)
-	, m_depthStencilState(NULL)
+	: m_blendState(nullptr)
+	, m_depthStencilState(nullptr)
 	, m_depthStencilStateRef(0)
-	, m_vertexConstantBuffer(NULL)
-	, m_pixelConstantBuffer(NULL)
-	, m_layout(NULL)
+	, m_vertexConstantBuffer(nullptr)
+	, m_pixelConstantBuffer(nullptr)
+	, m_layout(nullptr)
 
 	, m_pRasterizerState(nullptr)
 	, m_pVS(nullptr)
@@ -199,8 +199,8 @@ void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context
 	context->VSSetConstantBuffers(0, 1, &m_vertexConstantBuffer);
 	context->PSSetConstantBuffers(0, 1, &m_pixelConstantBuffer);
 
-	context->VSSetShader(m_pVS, NULL, 0);
-	context->PSSetShader(m_pPS, NULL, 0);
+	context->VSSetShader(m_pVS, nullptr, 0);
+	context->PSSetShader(m_pPS, nullptr, 0);
 
 	context->IASetInputLayout(m_layout);
 
@@ -255,20 +255,20 @@ Renderer* Renderer::Create(
 	{
 		return renderer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: m_device(NULL)
-	, m_context(NULL)
-	, m_vertexBuffer(NULL)
-	, m_indexBuffer(NULL)
+	: m_device(nullptr)
+	, m_context(nullptr)
+	, m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
-	, m_renderState(NULL)
+	, m_renderState(nullptr)
 	, m_restorationOfStates(true)
 
 	, m_shader(nullptr)
@@ -362,14 +362,14 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	// generate a vertex buffer
 	{
 		m_vertexBuffer = VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
-		if (m_vertexBuffer == NULL)
+		if (m_vertexBuffer == nullptr)
 			return false;
 	}
 
 	// generate an index buffer
 	{
 		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
-		if (m_indexBuffer == NULL)
+		if (m_indexBuffer == nullptr)
 			return false;
 
 		m_indexBuffer->Lock();
@@ -392,7 +392,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	// Generate index buffer for rendering wireframes
 	{
 		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false, false);
-		if (m_indexBufferForWireframe == NULL)
+		if (m_indexBufferForWireframe == nullptr)
 			return false;
 
 		m_indexBufferForWireframe->Lock();
@@ -485,7 +485,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 							  decl,
 							  ARRAYSIZE(decl),
 							  false);
-	if (m_shader == NULL)
+	if (m_shader == nullptr)
 		return false;
 
 	m_shader_advanced = Shader::Create(this,
@@ -497,7 +497,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 									   decl_advanced,
 									   ARRAYSIZE(decl_advanced),
 									   false);
-	if (m_shader_advanced == NULL)
+	if (m_shader_advanced == nullptr)
 		return false;
 
 	m_shader_distortion = Shader::Create(this,
@@ -509,7 +509,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 										 decl_distortion,
 										 ARRAYSIZE(decl_distortion),
 										 false);
-	if (m_shader_distortion == NULL)
+	if (m_shader_distortion == nullptr)
 		return false;
 
 	m_shader_advanced_distortion = Shader::Create(this,
@@ -521,7 +521,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 												  decl_distortion_advanced,
 												  ARRAYSIZE(decl_distortion_advanced),
 												  false);
-	if (m_shader_advanced_distortion == NULL)
+	if (m_shader_advanced_distortion == nullptr)
 		return false;
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
@@ -545,7 +545,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 									   decl_lighting,
 									   ARRAYSIZE(decl_lighting),
 									   false);
-	if (m_shader_lighting == NULL)
+	if (m_shader_lighting == nullptr)
 		return false;
 
 	m_shader_advanced_lighting = Shader::Create(this,
@@ -557,7 +557,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 												decl_lighting_advanced,
 												ARRAYSIZE(decl_lighting_advanced),
 												false);
-	if (m_shader_advanced_lighting == NULL)
+	if (m_shader_advanced_lighting == nullptr)
 		return false;
 
 	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
@@ -597,7 +597,7 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
-	assert(m_device != NULL);
+	assert(m_device != nullptr);
 
 	impl->CalculateCameraProjectionMatrix();
 
@@ -622,7 +622,7 @@ bool RendererImplemented::BeginRendering()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::EndRendering()
 {
-	assert(m_device != NULL);
+	assert(m_device != nullptr);
 
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -740,7 +740,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -752,7 +752,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(this->GetDevice(), fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -929,8 +929,8 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	currentShader = shader;
-	GetContext()->VSSetShader(shader->GetVertexShader(), NULL, 0);
-	GetContext()->PSSetShader(shader->GetPixelShader(), NULL, 0);
+	GetContext()->VSSetShader(shader->GetVertexShader(), nullptr, 0);
+	GetContext()->PSSetShader(shader->GetPixelShader(), nullptr, 0);
 }
 
 //----------------------------------------------------------------------------------

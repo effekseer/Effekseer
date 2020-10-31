@@ -27,8 +27,8 @@ Shader::Shader(RendererImplemented* renderer,
 	, m_vertexShader(vertexShader)
 	, m_pixelShader(pixelShader)
 	, m_vertexDeclaration(vertexDeclaration)
-	, m_vertexConstantBuffer(NULL)
-	, m_pixelConstantBuffer(NULL)
+	, m_vertexConstantBuffer(nullptr)
+	, m_pixelConstantBuffer(nullptr)
 	, m_vertexRegisterCount(0)
 	, m_pixelRegisterCount(0)
 {
@@ -72,13 +72,13 @@ Shader* Shader::Create(RendererImplemented* renderer,
 					   D3DVERTEXELEMENT9 decl[],
 					   bool hasRefCount)
 {
-	assert(renderer != NULL);
-	assert(renderer->GetDevice() != NULL);
+	assert(renderer != nullptr);
+	assert(renderer->GetDevice() != nullptr);
 
 	HRESULT hr;
 
-	IDirect3DVertexShader9* vs = NULL;
-	IDirect3DPixelShader9* ps = NULL;
+	IDirect3DVertexShader9* vs = nullptr;
+	IDirect3DPixelShader9* ps = nullptr;
 
 	hr = renderer->GetDevice()->CreateVertexShader((const DWORD*)vertexShader, &vs);
 
@@ -87,7 +87,7 @@ Shader* Shader::Create(RendererImplemented* renderer,
 		printf("* %s Error\n", name);
 		printf("Unknown Error\n");
 
-		return NULL;
+		return nullptr;
 	}
 
 	hr = renderer->GetDevice()->CreatePixelShader((const DWORD*)pixelShader, &ps);
@@ -97,10 +97,10 @@ Shader* Shader::Create(RendererImplemented* renderer,
 		printf("* %s Error\n", name);
 		printf("Unknown Error\n");
 
-		return NULL;
+		return nullptr;
 	}
 
-	IDirect3DVertexDeclaration9* vertexDeclaration = NULL;
+	IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
 	hr = renderer->GetDevice()->CreateVertexDeclaration(decl, &vertexDeclaration);
 
 	if (FAILED(hr))
@@ -108,7 +108,7 @@ Shader* Shader::Create(RendererImplemented* renderer,
 		printf("* %s Error\n", name);
 		printf("Unknown Error\n");
 
-		return NULL;
+		return nullptr;
 	}
 
 	return new Shader(renderer,
@@ -134,7 +134,7 @@ void Shader::OnLostDevice()
 //----------------------------------------------------------------------------------
 void Shader::OnResetDevice()
 {
-	if (m_vertexShader == NULL)
+	if (m_vertexShader == nullptr)
 	{
 
 		GetRenderer()->GetDevice()->CreateVertexShader((const DWORD*)&m_vertexShaderData[0], &m_vertexShader);

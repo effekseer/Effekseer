@@ -253,7 +253,7 @@ void ClientImplemented::Reload(Manager* manager, const char16_t* path, const cha
 {
 	EffectLoader* loader = manager->GetEffectLoader();
 
-	void* data = NULL;
+	void* data = nullptr;
 	int32_t size = 0;
 
 	if (!loader->Load(path, data, size))

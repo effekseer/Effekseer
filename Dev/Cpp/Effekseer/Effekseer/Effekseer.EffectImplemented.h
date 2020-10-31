@@ -206,12 +206,12 @@ public:
 	/**
 		@brief	生成
 	*/
-	static Effect* Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath = NULL);
+	static Effect* Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	生成
 	*/
-	static Effect* Create(Setting* setting, void* pData, int size, float magnification, const char16_t* materialPath = NULL);
+	static Effect* Create(Setting* setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
 	// コンストラクタ
 	EffectImplemented(Manager* pManager, void* pData, int size);

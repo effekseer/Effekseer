@@ -59,7 +59,7 @@ public:
 	RingRendererBase(RENDERER* renderer)
 		: m_renderer(renderer)
 		, m_ringBufferOffset(0)
-		, m_ringBufferData(NULL)
+		, m_ringBufferData(nullptr)
 		, m_spriteCount(0)
 		, m_instanceCount(0)
 	{
@@ -789,7 +789,7 @@ public:
 
 	void EndRendering(const efkRingNodeParam& parameter, void* userData)
 	{
-		if (m_ringBufferData == NULL)
+		if (m_ringBufferData == nullptr)
 			return;
 
 		if (m_spriteCount == 0 && parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None)

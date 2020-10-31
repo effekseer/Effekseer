@@ -52,7 +52,7 @@ public:
 	{
 		::Effekseer::DefaultFileInterface fileInterface;
 		std::unique_ptr<::Effekseer::FileReader>reader(fileInterface.OpenRead(path));
-		if (reader.get() == NULL)
+		if (reader.get() == nullptr)
 		{
 			return nullptr;
 		}
@@ -121,7 +121,7 @@ public:
 	*/
 	virtual void Unload(void* data)
 	{
-		if (data != NULL)
+		if (data != nullptr)
 		{
 			Curve* curve = (Curve*)data;
 			ES_SAFE_DELETE(curve);

@@ -16,7 +16,7 @@ IndexBuffer::IndexBuffer(RendererImplemented* renderer, ID3D11Buffer* buffer, in
 	: DeviceObject(renderer, hasRefCount)
 	, IndexBufferBase(maxCount, isDynamic)
 	, m_buffer(buffer)
-	, m_lockedResource(NULL)
+	, m_lockedResource(nullptr)
 {
 	m_lockedResource = new uint8_t[sizeof(uint16_t) * maxCount];
 }
@@ -44,15 +44,15 @@ IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bo
 	hBufferDesc.StructureByteStride = sizeof(uint16_t);
 
 	D3D11_SUBRESOURCE_DATA hSubResourceData;
-	hSubResourceData.pSysMem = NULL;
+	hSubResourceData.pSysMem = nullptr;
 	hSubResourceData.SysMemPitch = 0;
 	hSubResourceData.SysMemSlicePitch = 0;
 
 	// 生成
-	ID3D11Buffer* ib = NULL;
-	if (FAILED(renderer->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &ib)))
+	ID3D11Buffer* ib = nullptr;
+	if (FAILED(renderer->GetDevice()->CreateBuffer(&hBufferDesc, nullptr, &ib)))
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return new IndexBuffer(renderer, ib, maxCount, isDynamic, hasRefCount);
@@ -102,10 +102,10 @@ void IndexBuffer::Unlock()
 	}
 	else
 	{
-		GetRenderer()->GetContext()->UpdateSubresource(m_buffer, 0, NULL, m_resource, 0, 0);
+		GetRenderer()->GetContext()->UpdateSubresource(m_buffer, 0, nullptr, m_resource, 0, 0);
 	}
 
-	m_resource = NULL;
+	m_resource = nullptr;
 	m_isLock = false;
 }
 

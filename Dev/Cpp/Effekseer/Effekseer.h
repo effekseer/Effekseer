@@ -133,27 +133,27 @@ typedef int(EFK_STDCALL* RandFunc)(void);
 typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
 
 #define ES_SAFE_ADDREF(val) \
-	if ((val) != NULL)      \
+	if ((val) != nullptr)      \
 	{                       \
 		(val)->AddRef();    \
 	}
 #define ES_SAFE_RELEASE(val) \
-	if ((val) != NULL)       \
+	if ((val) != nullptr)       \
 	{                        \
 		(val)->Release();    \
-		(val) = NULL;        \
+		(val) = nullptr;        \
 	}
 #define ES_SAFE_DELETE(val) \
-	if ((val) != NULL)      \
+	if ((val) != nullptr)      \
 	{                       \
 		delete (val);       \
-		(val) = NULL;       \
+		(val) = nullptr;       \
 	}
 #define ES_SAFE_DELETE_ARRAY(val) \
-	if ((val) != NULL)            \
+	if ((val) != nullptr)            \
 	{                             \
 		delete[](val);            \
-		(val) = NULL;             \
+		(val) = nullptr;             \
 	}
 
 #define EFK_ASSERT(x) assert(x)
@@ -2107,9 +2107,9 @@ public:
 		@param	size			[in]	データ配列の長さ
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -2117,9 +2117,9 @@ public:
 		@param	path			[in]	読込元のパス
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	エフェクトを生成する。
@@ -2128,9 +2128,9 @@ public:
 	@param	size			[in]	データ配列の長さ
 	@param	magnification	[in]	読み込み時の拡大率
 	@param	materialPath	[in]	素材ロード時の基準パス
-	@return	エフェクト。失敗した場合はNULLを返す。
+	@return	エフェクト。失敗した場合はnullptrを返す。
 */
-	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -2138,14 +2138,14 @@ public:
 		@param	path			[in]	読込元のパス
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = NULL);
+	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
-	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
+	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
 	/**
 	@brief
@@ -4172,7 +4172,7 @@ public:
 	{
 		::Effekseer::DefaultFileInterface fileInterface;
 		std::unique_ptr<::Effekseer::FileReader>reader(fileInterface.OpenRead(path));
-		if (reader.get() == NULL)
+		if (reader.get() == nullptr)
 		{
 			return nullptr;
 		}
@@ -4241,7 +4241,7 @@ public:
 	*/
 	virtual void Unload(void* data)
 	{
-		if (data != NULL)
+		if (data != nullptr)
 		{
 			Curve* curve = (Curve*)data;
 			ES_SAFE_DELETE(curve);
@@ -4367,7 +4367,7 @@ public:
 	*/
 	virtual void* Load(const char16_t* path)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	/**

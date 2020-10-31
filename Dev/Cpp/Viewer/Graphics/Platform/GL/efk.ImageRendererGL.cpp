@@ -219,7 +219,7 @@ void ImageRendererGL::Render()
 				stride = GL_UNSIGNED_INT;
 			}
 
-			glDrawElements(GL_TRIANGLES, 6, stride, NULL);
+			glDrawElements(GL_TRIANGLES, 6, stride, nullptr);
 
 			renderer->EndShader(shader_);
 			renderer->SetVertexArray(nullptr);

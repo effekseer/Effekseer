@@ -45,7 +45,7 @@ void GifHelper::AddImage(const std::vector<Effekseer::Color>& pixels)
 		}
 	}
 	gdImageTrueColorToPalette(frameImage, true, gdMaxColors);
-	gdImageGifAnimAdd(frameImage, fp, true, 0, 0, delay, gdDisposalNone, NULL);
+	gdImageGifAnimAdd(frameImage, fp, true, 0, 0, delay, gdDisposalNone, nullptr);
 	gdImageDestroy(frameImage);
 }
 } // namespace efk

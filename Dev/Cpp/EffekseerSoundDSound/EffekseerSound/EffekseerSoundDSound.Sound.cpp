@@ -23,16 +23,16 @@ Sound* Sound::Create(IDirectSound8* dsound)
 	{
 		return sound;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 SoundImplemented::SoundImplemented()
-	: m_dsound(NULL)
+	: m_dsound(nullptr)
 	, m_mute(false)
-	, m_voiceContainer(NULL)
+	, m_voiceContainer(nullptr)
 	, m_leftPos(0)
 	, m_rightPos(0)
 {

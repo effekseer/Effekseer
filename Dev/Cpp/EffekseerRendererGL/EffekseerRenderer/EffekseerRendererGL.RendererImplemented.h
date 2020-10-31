@@ -174,12 +174,12 @@ public:
 	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
-	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	/**
 		@brief	モデル読込クラスを生成する。
 	*/
-	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 

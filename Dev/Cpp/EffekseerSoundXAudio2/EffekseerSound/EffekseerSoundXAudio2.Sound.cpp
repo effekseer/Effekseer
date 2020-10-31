@@ -27,14 +27,14 @@ Sound* Sound::Create(IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoic
 	{
 		return sound;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 SoundImplemented::SoundImplemented()
-	: m_xaudio2(NULL)
+	: m_xaudio2(nullptr)
 	, m_mute(false)
 {
 	memset(m_voiceContainer, 0, sizeof(m_voiceContainer));
@@ -150,12 +150,12 @@ void SoundImplemented::SetMute(bool mute)
 //----------------------------------------------------------------------------------
 SoundVoice* SoundImplemented::GetVoice(int32_t channel)
 {
-	IXAudio2SourceVoice* voice = NULL;
+	IXAudio2SourceVoice* voice = nullptr;
 	if (channel >= 1 && channel <= 2)
 	{
 		return m_voiceContainer[channel - 1]->GetVoice();
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------

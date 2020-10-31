@@ -27,8 +27,8 @@ InstanceContainer::InstanceContainer(ManagerImplemented* pManager, EffectNode* p
 	: m_pManager(pManager)
 	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
 	, m_pGlobal(pGlobal)
-	, m_headGroups(NULL)
-	, m_tailGroups(NULL)
+	, m_headGroups(nullptr)
+	, m_tailGroups(nullptr)
 
 {
 	auto en = (EffectNodeImplemented*)pEffectNode;
@@ -45,8 +45,8 @@ InstanceContainer::~InstanceContainer()
 {
 	RemoveForcibly(false);
 
-	assert(m_headGroups == NULL);
-	assert(m_tailGroups == NULL);
+	assert(m_headGroups == nullptr);
+	assert(m_tailGroups == nullptr);
 
 	for (auto child : m_Children)
 	{
@@ -80,9 +80,9 @@ InstanceContainer* InstanceContainer::GetChild(int index)
 void InstanceContainer::RemoveInvalidGroups()
 {
 	/* 最後に存在する有効なグループ */
-	InstanceGroup* tailGroup = NULL;
+	InstanceGroup* tailGroup = nullptr;
 
-	for (InstanceGroup* group = m_headGroups; group != NULL;)
+	for (InstanceGroup* group = m_headGroups; group != nullptr;)
 	{
 		if (!group->IsReferencedFromInstance && group->GetInstanceCount() == 0)
 		{
@@ -95,7 +95,7 @@ void InstanceContainer::RemoveInvalidGroups()
 			}
 			group = next;
 
-			if (tailGroup != NULL)
+			if (tailGroup != nullptr)
 			{
 				tailGroup->NextUsedByContainer = next;
 			}
@@ -109,7 +109,7 @@ void InstanceContainer::RemoveInvalidGroups()
 
 	m_tailGroups = tailGroup;
 
-	assert(m_tailGroups == NULL || m_tailGroups->NextUsedByContainer == NULL);
+	assert(m_tailGroups == nullptr || m_tailGroups->NextUsedByContainer == nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -123,14 +123,14 @@ InstanceGroup* InstanceContainer::CreateInstanceGroup()
 		return nullptr;
 	}
 
-	if (m_tailGroups != NULL)
+	if (m_tailGroups != nullptr)
 	{
 		m_tailGroups->NextUsedByContainer = group;
 		m_tailGroups = group;
 	}
 	else
 	{
-		assert(m_headGroups == NULL);
+		assert(m_headGroups == nullptr);
 		m_headGroups = group;
 		m_tailGroups = group;
 	}
@@ -154,7 +154,7 @@ InstanceGroup* InstanceContainer::GetFirstGroup() const
 void InstanceContainer::Update(bool recursive, bool shown)
 {
 	// 更新
-	for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
+	for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 	{
 		group->Update(shown);
 	}
@@ -178,7 +178,7 @@ void InstanceContainer::SetBaseMatrix(bool recursive, const Mat43f& mat)
 {
 	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
-		for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
+		for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 		{
 			group->SetBaseMatrix(mat);
 		}
@@ -200,7 +200,7 @@ void InstanceContainer::RemoveForcibly(bool recursive)
 {
 	KillAllInstances(false);
 
-	for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
+	for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 	{
 		group->RemoveForcibly();
 	}
@@ -225,7 +225,7 @@ void InstanceContainer::Draw(bool recursive)
 		/* 個数計測 */
 		int32_t count = 0;
 		{
-			for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
+			for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 			{
 				for (auto instance : group->m_instances)
 				{
@@ -242,7 +242,7 @@ void InstanceContainer::Draw(bool recursive)
 			/* 描画 */
 			m_pEffectNode->BeginRendering(count, m_pManager);
 
-			for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
+			for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 			{
 				m_pEffectNode->BeginRenderingGroup(group, m_pManager);
 
@@ -315,7 +315,7 @@ void InstanceContainer::Draw(bool recursive)
 //----------------------------------------------------------------------------------
 void InstanceContainer::KillAllInstances(bool recursive)
 {
-	for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
+	for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 	{
 		group->KillAllInstances();
 	}

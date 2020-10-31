@@ -34,11 +34,11 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 Setting::Setting()
 	: m_coordinateSystem(CoordinateSystem::RH)
-	, m_effectLoader(NULL)
-	, m_textureLoader(NULL)
-	, m_soundLoader(NULL)
-	, m_modelLoader(NULL)
-	, m_curveLoader(NULL)
+	, m_effectLoader(nullptr)
+	, m_textureLoader(nullptr)
+	, m_soundLoader(nullptr)
+	, m_modelLoader(nullptr)
+	, m_curveLoader(nullptr)
 {
 	auto effectFactory = new EffectFactory();
 	effectFactories.push_back(effectFactory);

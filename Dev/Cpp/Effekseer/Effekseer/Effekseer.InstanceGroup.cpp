@@ -24,8 +24,8 @@ InstanceGroup::InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceC
 	, m_global(global)
 	, m_time(0)
 	, IsReferencedFromInstance(true)
-	, NextUsedByInstance(NULL)
-	, NextUsedByContainer(NULL)
+	, NextUsedByInstance(nullptr)
+	, NextUsedByContainer(nullptr)
 {
 	parentMatrix_ = Mat43f::Identity;
 }
@@ -48,7 +48,7 @@ void InstanceGroup::NotfyEraseInstance()
 //----------------------------------------------------------------------------------
 Instance* InstanceGroup::CreateInstance()
 {
-	Instance* instance = NULL;
+	Instance* instance = nullptr;
 
 	instance = m_manager->CreateInstance(m_effectNode, m_container, this);
 
@@ -69,7 +69,7 @@ Instance* InstanceGroup::GetFirst()
 	{
 		return m_instances.front();
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------

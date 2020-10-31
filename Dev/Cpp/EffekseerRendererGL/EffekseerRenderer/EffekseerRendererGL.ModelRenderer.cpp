@@ -423,14 +423,14 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 {
-	assert(renderer != NULL);
+	assert(renderer != nullptr);
 
-	Shader* shader_ad_lit = NULL;
-	Shader* shader_ad_unlit = NULL;
-	Shader* shader_ad_distortion = NULL;
-	Shader* shader_lit = NULL;
-	Shader* shader_unlit = NULL;
-	Shader* shader_distortion = NULL;
+	Shader* shader_ad_lit = nullptr;
+	Shader* shader_ad_unlit = nullptr;
+	Shader* shader_ad_distortion = nullptr;
+	Shader* shader_lit = nullptr;
+	Shader* shader_unlit = nullptr;
+	Shader* shader_distortion = nullptr;
 
 	ShaderCodeView ltnVS(get_model_renderer_lighting_texture_normal_VS(renderer->GetDeviceType()));
 	ShaderCodeView ltnPS(get_model_renderer_lighting_texture_normal_PS(renderer->GetDeviceType()));
@@ -446,27 +446,27 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
 	shader_ad_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true, false);
-	if (shader_ad_lit == NULL)
+	if (shader_ad_lit == nullptr)
 		goto End;
 
 	shader_ad_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true, false);
-	if (shader_ad_unlit == NULL)
+	if (shader_ad_unlit == nullptr)
 		goto End;
 
 	shader_ad_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true, false);
-	if (shader_ad_distortion == NULL)
+	if (shader_ad_distortion == nullptr)
 		goto End;
 
 	shader_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "ModelRenderer1", true, false);
-	if (shader_lit == NULL)
+	if (shader_lit == nullptr)
 		goto End;
 
 	shader_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "ModelRenderer5", true, false);
-	if (shader_unlit == NULL)
+	if (shader_unlit == nullptr)
 		goto End;
 
 	shader_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &dist_vs, 1, &dist_ps, 1, "ModelRenderer7", true, false);
-	if (shader_distortion == NULL)
+	if (shader_distortion == nullptr)
 		goto End;
 
 	// Transpiled shader is transposed

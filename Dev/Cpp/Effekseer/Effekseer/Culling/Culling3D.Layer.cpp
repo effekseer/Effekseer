@@ -23,7 +23,7 @@ Layer::~Layer()
 
 bool Layer::AddObject(Object* o)
 {
-	assert(o != NULL);
+	assert(o != nullptr);
 
 	ObjectInternal* o_ = (ObjectInternal*)o;
 
@@ -50,7 +50,7 @@ bool Layer::AddObject(Object* o)
 
 bool Layer::RemoveObject(Object* o)
 {
-	assert(o != NULL);
+	assert(o != nullptr);
 
 	ObjectInternal* o_ = (ObjectInternal*)o;
 

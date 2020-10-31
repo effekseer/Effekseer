@@ -31,7 +31,7 @@ namespace Effekseer
 static void PathCombine(char16_t* dst, const char16_t* src1, const char16_t* src2)
 {
 	int len1 = 0, len2 = 0;
-	if (src1 != NULL)
+	if (src1 != nullptr)
 	{
 		for (len1 = 0; src1[len1] != L'\0'; len1++)
 		{
@@ -42,7 +42,7 @@ static void PathCombine(char16_t* dst, const char16_t* src1, const char16_t* src
 			dst[len1++] = L'/';
 		}
 	}
-	if (src2 != NULL)
+	if (src2 != nullptr)
 	{
 		for (len2 = 0; src2[len2] != L'\0'; len2++)
 		{
@@ -407,17 +407,17 @@ Effect* Effect::Create(Manager* manager, const char16_t* path, float magnificati
 
 	EffectLoader* eLoader = setting->GetEffectLoader();
 
-	if (setting == NULL)
-		return NULL;
+	if (setting == nullptr)
+		return nullptr;
 
-	void* data = NULL;
+	void* data = nullptr;
 	int32_t size = 0;
 
 	if (!eLoader->Load(path, data, size))
-		return NULL;
+		return nullptr;
 
 	char16_t parentDir[512];
-	if (materialPath == NULL)
+	if (materialPath == nullptr)
 	{
 		GetParentDir(parentDir, path);
 		materialPath = parentDir;
@@ -730,7 +730,7 @@ void EffectImplemented::ResetReloadingBackup()
 	Setting* loader = GetSetting();
 
 	TextureLoader* textureLoader = loader->GetTextureLoader();
-	if (textureLoader != NULL)
+	if (textureLoader != nullptr)
 	{
 		for (auto it : reloadingBackup->images.GetCollection())
 		{
@@ -749,7 +749,7 @@ void EffectImplemented::ResetReloadingBackup()
 	}
 
 	SoundLoader* soundLoader = loader->GetSoundLoader();
-	if (soundLoader != NULL)
+	if (soundLoader != nullptr)
 	{
 		for (auto it : reloadingBackup->sounds.GetCollection())
 		{
@@ -759,7 +759,7 @@ void EffectImplemented::ResetReloadingBackup()
 
 	{
 		ModelLoader* modelLoader = loader->GetModelLoader();
-		if (modelLoader != NULL)
+		if (modelLoader != nullptr)
 		{
 			for (auto it : reloadingBackup->models.GetCollection())
 			{
@@ -773,14 +773,14 @@ void EffectImplemented::ResetReloadingBackup()
 
 Effect* EffectImplemented::Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath)
 {
-	if (pData == NULL || size == 0)
-		return NULL;
+	if (pData == nullptr || size == 0)
+		return nullptr;
 
 	EffectImplemented* effect = new EffectImplemented(pManager, pData, size);
 	if (!effect->Load(pData, size, magnification, materialPath, ReloadingThreadType::Main))
 	{
 		effect->Release();
-		effect = NULL;
+		effect = nullptr;
 	}
 	return effect;
 }
@@ -798,21 +798,21 @@ Effect* Effect::Create(Setting* setting, void* data, int32_t size, float magnifi
 //----------------------------------------------------------------------------------
 Effect* Effect::Create(Setting* setting, const char16_t* path, float magnification, const char16_t* materialPath)
 {
-	if (setting == NULL)
-		return NULL;
+	if (setting == nullptr)
+		return nullptr;
 	EffectLoader* eLoader = setting->GetEffectLoader();
 
-	if (setting == NULL)
-		return NULL;
+	if (setting == nullptr)
+		return nullptr;
 
-	void* data = NULL;
+	void* data = nullptr;
 	int32_t size = 0;
 
 	if (!eLoader->Load(path, data, size))
-		return NULL;
+		return nullptr;
 
 	char16_t parentDir[512];
-	if (materialPath == NULL)
+	if (materialPath == nullptr)
 	{
 		GetParentDir(parentDir, path);
 		materialPath = parentDir;
@@ -832,14 +832,14 @@ Effect* Effect::Create(Setting* setting, const char16_t* path, float magnificati
 //----------------------------------------------------------------------------------
 Effect* EffectImplemented::Create(Setting* setting, void* pData, int size, float magnification, const char16_t* materialPath)
 {
-	if (pData == NULL || size == 0)
-		return NULL;
+	if (pData == nullptr || size == 0)
+		return nullptr;
 
 	EffectImplemented* effect = new EffectImplemented(setting, pData, size);
 	if (!effect->Load(pData, size, magnification, materialPath, ReloadingThreadType::Main))
 	{
 		effect->Release();
-		effect = NULL;
+		effect = nullptr;
 	}
 	return effect;
 }
@@ -857,12 +857,12 @@ Effect* EffectImplemented::Create(Setting* setting, void* pData, int size, float
 //----------------------------------------------------------------------------------
 EffectImplemented::EffectImplemented(Manager* pManager, void* pData, int size)
 	: m_pManager((ManagerImplemented*)pManager)
-	, m_setting(NULL)
+	, m_setting(nullptr)
 	, m_reference(1)
 	, m_version(0)
 	, m_ImageCount(0)
-	, m_ImagePaths(NULL)
-	, m_pImages(NULL)
+	, m_ImagePaths(nullptr)
+	, m_pImages(nullptr)
 	, m_normalImageCount(0)
 	, m_normalImagePaths(nullptr)
 	, m_normalImages(nullptr)
@@ -881,13 +881,13 @@ EffectImplemented::EffectImplemented(Manager* pManager, void* pData, int size)
 //
 //----------------------------------------------------------------------------------
 EffectImplemented::EffectImplemented(Setting* setting, void* pData, int size)
-	: m_pManager(NULL)
+	: m_pManager(nullptr)
 	, m_setting(setting)
 	, m_reference(1)
 	, m_version(0)
 	, m_ImageCount(0)
-	, m_ImagePaths(NULL)
-	, m_pImages(NULL)
+	, m_ImagePaths(nullptr)
+	, m_pImages(nullptr)
 	, m_normalImageCount(0)
 	, m_normalImagePaths(nullptr)
 	, m_normalImages(nullptr)
@@ -1006,7 +1006,7 @@ void EffectImplemented::Reset()
 
 	for (int i = 0; i < m_ImageCount; i++)
 	{
-		if (m_ImagePaths[i] != NULL)
+		if (m_ImagePaths[i] != nullptr)
 			delete[] m_ImagePaths[i];
 	}
 
@@ -1018,7 +1018,7 @@ void EffectImplemented::Reset()
 	{
 		for (int i = 0; i < m_normalImageCount; i++)
 		{
-			if (m_normalImagePaths[i] != NULL)
+			if (m_normalImagePaths[i] != nullptr)
 				delete[] m_normalImagePaths[i];
 		}
 
@@ -1031,7 +1031,7 @@ void EffectImplemented::Reset()
 	{
 		for (int i = 0; i < m_distortionImageCount; i++)
 		{
-			if (m_distortionImagePaths[i] != NULL)
+			if (m_distortionImagePaths[i] != nullptr)
 				delete[] m_distortionImagePaths[i];
 		}
 
@@ -1043,7 +1043,7 @@ void EffectImplemented::Reset()
 
 	for (int i = 0; i < m_WaveCount; i++)
 	{
-		if (m_WavePaths[i] != NULL)
+		if (m_WavePaths[i] != nullptr)
 			delete[] m_WavePaths[i];
 	}
 	m_WaveCount = 0;
@@ -1053,7 +1053,7 @@ void EffectImplemented::Reset()
 
 	for (size_t i = 0; i < models_.size(); i++)
 	{
-		if (modelPaths_[i] != NULL)
+		if (modelPaths_[i] != nullptr)
 			delete[] modelPaths_[i];
 	}
 
@@ -1062,7 +1062,7 @@ void EffectImplemented::Reset()
 
 	for (int i = 0; i < materialCount_; i++)
 	{
-		if (materialPaths_[i] != NULL)
+		if (materialPaths_[i] != nullptr)
 			delete[] materialPaths_[i];
 	}
 	materialCount_ = 0;
@@ -1107,7 +1107,7 @@ void EffectImplemented::SetName(const char16_t* name)
 
 Setting* EffectImplemented::GetSetting() const
 {
-	if (m_setting != NULL)
+	if (m_setting != nullptr)
 		return m_setting;
 	return m_pManager->GetSetting();
 }
@@ -1382,7 +1382,7 @@ void EffectImplemented::SetCurve(int32_t index, void* data)
 
 bool EffectImplemented::Reload(void* data, int32_t size, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
 {
-	if (m_pManager == NULL)
+	if (m_pManager == nullptr)
 		return false;
 
 	std::array<Manager*, 1> managers;
@@ -1396,7 +1396,7 @@ bool EffectImplemented::Reload(void* data, int32_t size, const char16_t* materia
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Reload(const char16_t* path, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
 {
-	if (m_pManager == NULL)
+	if (m_pManager == nullptr)
 		return false;
 
 	std::array<Manager*, 1> managers;
@@ -1418,7 +1418,7 @@ bool EffectImplemented::Reload(Manager** managers,
 	if (!factory->OnCheckIsReloadSupported())
 		return false;
 
-	const char16_t* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
+	const char16_t* matPath = materialPath != nullptr ? materialPath : m_materialPath.c_str();
 
 	for (int32_t i = 0; i < managersCount; i++)
 	{
@@ -1475,17 +1475,17 @@ bool EffectImplemented::Reload(
 	Setting* loader = GetSetting();
 
 	EffectLoader* eLoader = loader->GetEffectLoader();
-	if (loader == NULL)
+	if (loader == nullptr)
 		return false;
 
-	void* data = NULL;
+	void* data = nullptr;
 	int32_t size = 0;
 
 	if (!eLoader->Load(path, data, size))
 		return false;
 
 	char16_t parentDir[512];
-	if (materialPath == NULL)
+	if (materialPath == nullptr)
 	{
 		GetParentDir(parentDir, path);
 		materialPath = parentDir;
@@ -1524,7 +1524,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 {
 	UnloadResources();
 
-	const char16_t* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
+	const char16_t* matPath = materialPath != nullptr ? materialPath : m_materialPath.c_str();
 
 	Setting* loader = GetSetting();
 
