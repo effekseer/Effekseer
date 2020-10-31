@@ -67,7 +67,7 @@ Effekseer::Model* ModelLoader::Load(const char16_t* path)
 		uint8_t* data_model = new uint8_t[size_model];
 		reader->Read(data_model, size_model);
 
-		auto model = new Effekseer::Model(data_model, size_model);
+		auto model = new Effekseer::Model(data_model, (int32_t)size_model);
 
 		// auto model = (Model*)Load(data_model, static_cast<int32_t>(size_model));
 
@@ -95,8 +95,6 @@ Effekseer::Model* ModelLoader::Load(const void* data, int32_t size)
 	{
 		return nullptr;
 	}
-
-	HRESULT hr;
 
 	auto model = new Effekseer::Model((uint8_t*)data, size);
 

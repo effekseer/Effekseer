@@ -45,7 +45,7 @@ Effekseer::Model* ModelLoader::Load(const char16_t* path)
 
 		// Model* model = (Model*)Load(data_model, (int32_t)size_model);
 
-		auto model = new Effekseer::Model((uint8_t*)data_model, size_model);
+		auto model = new Effekseer::Model((uint8_t*)data_model, (int32_t)size_model);
 
 		delete[] data_model;
 

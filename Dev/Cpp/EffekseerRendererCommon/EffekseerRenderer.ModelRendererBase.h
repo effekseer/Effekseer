@@ -1196,7 +1196,7 @@ public:
 
 			for (size_t loop = 0; loop < m_matrixes.size();)
 			{
-				int32_t modelCount = Effekseer::Min(static_cast<int32_t>(m_matrixes.size()) - loop, InstanceCount);
+				int32_t modelCount = Effekseer::Min(static_cast<int32_t>(m_matrixes.size()) - (int32_t)loop, InstanceCount);
 
 				for (int32_t num = 0; num < modelCount; num++)
 				{

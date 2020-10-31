@@ -94,54 +94,54 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(),
 															fixedShader->ModelLit_VS.data(),
-															fixedShader->ModelLit_VS.size(),
+															(int32_t)fixedShader->ModelLit_VS.size(),
 															fixedShader->ModelLit_PS.data(),
-															fixedShader->ModelLit_PS.size(),
+															(int32_t)fixedShader->ModelLit_PS.size(),
 															"ModelRendererLightingTextureNormal",
 															layouts,
 															true);
 
 	Shader* shader_texture = Shader::Create(renderer->GetGraphicsDevice(),
 											fixedShader->ModelUnlit_VS.data(),
-											fixedShader->ModelUnlit_VS.size(),
+											(int32_t)fixedShader->ModelUnlit_VS.size(),
 											fixedShader->ModelUnlit_PS.data(),
-											fixedShader->ModelUnlit_PS.size(),
+											(int32_t)fixedShader->ModelUnlit_PS.size(),
 											"ModelRendererTexture",
 											layouts,
 											true);
 
 	auto shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(),
 													fixedShader->ModelDistortion_VS.data(),
-													fixedShader->ModelDistortion_VS.size(),
+													(int32_t)fixedShader->ModelDistortion_VS.size(),
 													fixedShader->ModelDistortion_PS.data(),
-													fixedShader->ModelDistortion_PS.size(),
+													(int32_t)fixedShader->ModelDistortion_PS.size(),
 													"ModelRendererDistortionTexture",
 													layouts,
 													true);
 
 	Shader* shader_ad_lit = Shader::Create(renderer->GetGraphicsDevice(),
 										   fixedShader->AdvancedModelLit_VS.data(),
-										   fixedShader->AdvancedModelLit_VS.size(),
+										   (int32_t)fixedShader->AdvancedModelLit_VS.size(),
 										   fixedShader->AdvancedModelLit_PS.data(),
-										   fixedShader->AdvancedModelLit_PS.size(),
+										   (int32_t)fixedShader->AdvancedModelLit_PS.size(),
 										   "ModelRendererLightingTextureNormal",
 										   layouts,
 										   true);
 
 	Shader* shader_ad_unlit = Shader::Create(renderer->GetGraphicsDevice(),
 											 fixedShader->AdvancedModelUnlit_VS.data(),
-											 fixedShader->AdvancedModelUnlit_VS.size(),
+											 (int32_t)fixedShader->AdvancedModelUnlit_VS.size(),
 											 fixedShader->AdvancedModelUnlit_PS.data(),
-											 fixedShader->AdvancedModelUnlit_PS.size(),
+											 (int32_t)fixedShader->AdvancedModelUnlit_PS.size(),
 											 "ModelRendererTexture",
 											 layouts,
 											 true);
 
 	auto shader_ad_distortion = Shader::Create(renderer->GetGraphicsDevice(),
 											   fixedShader->AdvancedModelDistortion_VS.data(),
-											   fixedShader->AdvancedModelDistortion_VS.size(),
+											   (int32_t)fixedShader->AdvancedModelDistortion_VS.size(),
 											   fixedShader->AdvancedModelDistortion_PS.data(),
-											   fixedShader->AdvancedModelDistortion_PS.size(),
+											   (int32_t)fixedShader->AdvancedModelDistortion_PS.size(),
 											   "ModelRendererDistortionTexture",
 											   layouts,
 											   true);

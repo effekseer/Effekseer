@@ -178,7 +178,6 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 		}
 	}
 
-Exit:;
 	return textureData;
 }
 

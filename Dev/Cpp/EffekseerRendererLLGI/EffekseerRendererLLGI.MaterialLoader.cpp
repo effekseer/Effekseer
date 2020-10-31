@@ -163,9 +163,9 @@ MaterialLoader ::~MaterialLoader()
 
 			shader = Shader::Create(graphicsDevice_,
 									dataVS.data(),
-									resultVS.Binary.size(),
+									(int32_t)resultVS.Binary.size(),
 									dataPS.data(),
-									resultPS.Binary.size(),
+									(int32_t)resultPS.Binary.size(),
 									"MaterialStandardRenderer",
 									layouts,
 									true);
@@ -237,9 +237,9 @@ MaterialLoader ::~MaterialLoader()
 
 			shader = Shader::Create(graphicsDevice_,
 									dataVS.data(),
-									resultVS.Binary.size(),
+									(int32_t)resultVS.Binary.size(),
 									dataPS.data(),
-									resultPS.Binary.size(),
+									(int32_t)resultPS.Binary.size(),
 									"MaterialStandardRenderer",
 									layouts,
 									true);
@@ -306,9 +306,9 @@ MaterialLoader ::~MaterialLoader()
 
 		auto shader = Shader::Create(graphicsDevice_,
 									 dataVS.data(),
-									 resultVS.Binary.size(),
+									 (int32_t)resultVS.Binary.size(),
 									 dataPS.data(),
-									 resultPS.Binary.size(),
+									 (int32_t)resultPS.Binary.size(),
 									 "MaterialStandardModelRenderer",
 									 layouts,
 									 true);

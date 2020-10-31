@@ -21,26 +21,26 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 	for (size_t i = 0; i < result.Binary.size(); i++)
 	{
 		binarySize += sizeof(uint32_t);
-		binarySize += result.Binary[i].size();
+		binarySize += (uint32_t)result.Binary[i].size();
 	}
 
 	dst.resize(binarySize);
 
 	uint32_t offset = 0;
-	uint32_t count = result.Binary.size();
+	uint32_t count = (uint32_t)result.Binary.size();
 
-	memcpy(dst.data() + offset, &count, sizeof(int32_t));
-	offset += sizeof(int32_t);
+	memcpy(dst.data() + offset, &count, sizeof(uint32_t));
+	offset += (uint32_t)sizeof(int32_t);
 
 	for (size_t i = 0; i < result.Binary.size(); i++)
 	{
-		uint32_t size = result.Binary[i].size();
+		uint32_t size = (uint32_t)result.Binary[i].size();
 
-		memcpy(dst.data() + offset, &size, sizeof(int32_t));
+		memcpy(dst.data() + offset, &size, sizeof(uint32_t));
 		offset += sizeof(int32_t);
 
 		memcpy(dst.data() + offset, result.Binary[i].data(), result.Binary[i].size());
-		offset += result.Binary[i].size();
+		offset += (uint32_t)result.Binary[i].size();
 	}
 }
 
@@ -92,7 +92,7 @@ public:
 
 	int32_t GetVertexShaderSize(MaterialShaderType type) const override
 	{
-		return vertexShaders_.at(static_cast<int>(type)).size();
+		return (int32_t)vertexShaders_.at(static_cast<int>(type)).size();
 	}
 
 	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
@@ -102,7 +102,7 @@ public:
 
 	int32_t GetPixelShaderSize(MaterialShaderType type) const override
 	{
-		return pixelShaders_.at(static_cast<int>(type)).size();
+		return (int32_t)pixelShaders_.at(static_cast<int>(type)).size();
 	}
 
 	int AddRef() override

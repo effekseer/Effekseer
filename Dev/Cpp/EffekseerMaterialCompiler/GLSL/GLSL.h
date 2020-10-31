@@ -941,7 +941,7 @@ public:
 			}
 
 			// invalid texture
-			for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+			for (int32_t i = actualTextureCount; i < material->GetTextureCount(); i++)
 			{
 				auto textureIndex = material->GetTextureIndex(i);
 				auto textureName = std::string(material->GetTextureName(i));

@@ -156,8 +156,8 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	GLuint vert_shader, frag_shader;
 	GLint res_vs, res_fs, res_link;
 
-	int32_t vsOffset = 0;
-	int32_t psOffset = 0;
+	size_t vsOffset = 0;
+	size_t psOffset = 0;
 
 	// compile a vertex shader
 	if (addHeader)
@@ -184,7 +184,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	vsOffset += vsDataCount;
 
 	vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
-	GLExt::glShaderSource(vert_shader, vsOffset, src_data.data(), src_size.data());
+	GLExt::glShaderSource(vert_shader, (GLsizei)vsOffset, src_data.data(), src_size.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
@@ -213,7 +213,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	psOffset += psDataCount;
 
 	frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, psOffset, src_data.data(), src_size.data());
+	GLExt::glShaderSource(frag_shader, (GLsizei)psOffset, src_data.data(), src_size.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 
@@ -283,13 +283,13 @@ bool Shader::ReloadShader()
 	for (size_t i = 0; i < vsData.size(); i++)
 	{
 		vsData[i].Data = vsCodes_[i].Code.data();
-		vsData[i].Length = vsCodes_[i].Code.size();
+		vsData[i].Length = (int32_t)vsCodes_[i].Code.size();
 	}
 
 	for (size_t i = 0; i < psData.size(); i++)
 	{
 		psData[i].Data = psCodes_[i].Code.data();
-		psData[i].Length = psCodes_[i].Code.size();
+		psData[i].Length = (int32_t)psCodes_[i].Code.size();
 	}
 
 	if (CompileShader(m_deviceType, program, vsData.data(), vsData.size(), psData.data(), psData.size(), name_.c_str(), addHeader_))

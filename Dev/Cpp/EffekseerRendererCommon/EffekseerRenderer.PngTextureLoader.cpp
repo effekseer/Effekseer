@@ -107,14 +107,14 @@ bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 	{
 		if (rev)
 		{
-			for (uint32_t i = 0; i < textureHeight; i++)
+			for (int32_t i = 0; i < textureHeight; i++)
 			{
 				png_read_row(png, &image[(textureHeight - 1 - i) * pitch], NULL);
 			}
 		}
 		else
 		{
-			for (uint32_t i = 0; i < textureHeight; i++)
+			for (int32_t i = 0; i < textureHeight; i++)
 			{
 				png_read_row(png, &image[i * pitch], NULL);
 			}

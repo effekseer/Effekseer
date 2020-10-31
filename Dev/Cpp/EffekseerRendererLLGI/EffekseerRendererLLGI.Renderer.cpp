@@ -118,7 +118,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 		piplineState->VertexLayoutNames[i] = currentShader->GetVertexLayouts()[i].Name;
 		piplineState->VertexLayoutSemantics[i] = currentShader->GetVertexLayouts()[i].Semantic;
 	}
-	piplineState->VertexLayoutCount = currentShader->GetVertexLayouts().size();
+	piplineState->VertexLayoutCount = (int32_t)currentShader->GetVertexLayouts().size();
 
 	piplineState->Topology = currentTopologyType_;
 
@@ -384,9 +384,9 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 
 	shader_ = Shader::Create(graphicsDevice_,
 							 fixedShader_.SpriteUnlit_VS.data(),
-							 fixedShader_.SpriteUnlit_VS.size(),
+							 (int32_t)fixedShader_.SpriteUnlit_VS.size(),
 							 fixedShader_.SpriteUnlit_PS.data(),
-							 fixedShader_.SpriteUnlit_PS.size(),
+							 (int32_t)fixedShader_.SpriteUnlit_PS.size(),
 							 "StandardRenderer",
 							 layouts,
 							 false);
@@ -395,9 +395,9 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 
 	shader_unlit_ = Shader::Create(graphicsDevice_,
 								   fixedShader_.SpriteDistortion_VS.data(),
-								   fixedShader_.SpriteDistortion_VS.size(),
+								   (int32_t)fixedShader_.SpriteDistortion_VS.size(),
 								   fixedShader_.SpriteDistortion_PS.data(),
-								   fixedShader_.SpriteDistortion_PS.size(),
+								   (int32_t)fixedShader_.SpriteDistortion_PS.size(),
 								   "StandardRenderer Distortion",
 								   layouts_distort,
 								   false);
@@ -406,9 +406,9 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 
 	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
 									  fixedShader_.AdvancedSpriteUnlit_VS.data(),
-									  fixedShader_.AdvancedSpriteUnlit_VS.size(),
+									  (int32_t)fixedShader_.AdvancedSpriteUnlit_VS.size(),
 									  fixedShader_.AdvancedSpriteUnlit_PS.data(),
-									  fixedShader_.AdvancedSpriteUnlit_PS.size(),
+									  (int32_t)fixedShader_.AdvancedSpriteUnlit_PS.size(),
 									  "StandardRenderer",
 									  layouts_ad,
 									  false);
@@ -417,9 +417,9 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 
 	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
 										   fixedShader_.AdvancedSpriteDistortion_VS.data(),
-										   fixedShader_.AdvancedSpriteDistortion_VS.size(),
+										   (int32_t)fixedShader_.AdvancedSpriteDistortion_VS.size(),
 										   fixedShader_.AdvancedSpriteDistortion_PS.data(),
-										   fixedShader_.AdvancedSpriteDistortion_PS.size(),
+										   (int32_t)fixedShader_.AdvancedSpriteDistortion_PS.size(),
 										   "StandardRenderer Distortion",
 										   layouts_distort_ad,
 										   false);
@@ -449,18 +449,18 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 
 	shader_lit_ = Shader::Create(graphicsDevice_,
 								 fixedShader_.SpriteLit_VS.data(),
-								 fixedShader_.SpriteLit_VS.size(),
+								 (int32_t)fixedShader_.SpriteLit_VS.size(),
 								 fixedShader_.SpriteLit_PS.data(),
-								 fixedShader_.SpriteLit_PS.size(),
+								 (int32_t)fixedShader_.SpriteLit_PS.size(),
 								 "StandardRenderer Lighting",
 								 layouts_lighting,
 								 false);
 
 	shader_ad_lit_ = Shader::Create(graphicsDevice_,
 									fixedShader_.AdvancedSpriteLit_VS.data(),
-									fixedShader_.AdvancedSpriteLit_VS.size(),
+									(int32_t)fixedShader_.AdvancedSpriteLit_VS.size(),
 									fixedShader_.AdvancedSpriteLit_PS.data(),
-									fixedShader_.AdvancedSpriteLit_PS.size(),
+									(int32_t)fixedShader_.AdvancedSpriteLit_PS.size(),
 									"StandardRenderer Lighting",
 									layouts_lighting_ad,
 									false);

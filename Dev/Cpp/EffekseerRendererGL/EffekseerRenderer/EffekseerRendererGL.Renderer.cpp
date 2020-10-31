@@ -136,7 +136,7 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 	size = (std::min)(size, sizeof(EffekseerRenderer::DynamicVertex));
 	size = (std::min)(size, sizeof(EffekseerRenderer::LightingVertex));
 
-	return (vsSize / size / 4 + 1);
+	return (int32_t)(vsSize / size / 4 + 1);
 }
 
 //----------------------------------------------------------------------------------
@@ -626,7 +626,7 @@ bool RendererImplemented::BeginRendering()
 		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
 		{
 			GLint bound = 0;
-			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			GLExt::glActiveTexture(GL_TEXTURE0 + (GLenum)i);
 			glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
 			m_originalState.boundTextures[i] = bound;
 		}
@@ -675,7 +675,7 @@ bool RendererImplemented::EndRendering()
 
 		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
 		{
-			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			GLExt::glActiveTexture(GL_TEXTURE0 + (GLenum)i);
 			glBindTexture(GL_TEXTURE_2D, m_originalState.boundTextures[i]);
 		}
 		GLExt::glActiveTexture(GL_TEXTURE0);
@@ -1006,11 +1006,11 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
-		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, (void*)(vertexOffset / 4 * 6 * indexBufferCurrentStride_));
+		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, (void*)((size_t)vertexOffset / 4 * 6 * indexBufferCurrentStride_));
 	}
 	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		glDrawElements(GL_LINES, spriteCount * 8, stride, (void*)(vertexOffset / 4 * 8 * indexBufferCurrentStride_));
+		glDrawElements(GL_LINES, spriteCount * 8, stride, (void*)((size_t)vertexOffset / 4 * 8 * indexBufferCurrentStride_));
 	}
 
 	GLCheckError();

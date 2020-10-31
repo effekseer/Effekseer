@@ -492,7 +492,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 	}
 
 	graphicsDevice_ = new Backend::GraphicsDevice(device);
-	instancedVertexBuffer_ = graphicsDevice_->CreateVertexBuffer(instancedVertex.size() * sizeof(float), instancedVertex.data(), false);
+	instancedVertexBuffer_ = graphicsDevice_->CreateVertexBuffer((int32_t)(instancedVertex.size() * sizeof(float)), instancedVertex.data(), false);
 	return true;
 }
 
@@ -571,7 +571,7 @@ bool RendererImplemented::BeginRendering()
 
 		for (size_t i = 0; i < m_state_streamData.size(); i++)
 		{
-			GetDevice()->GetStreamSource(i, &m_state_streamData[i], &m_state_OffsetInBytes[i], &m_state_pStride[i]);
+			GetDevice()->GetStreamSource((UINT)i, &m_state_streamData[i], &m_state_OffsetInBytes[i], &m_state_pStride[i]);
 		}
 
 		GetDevice()->GetIndices(&m_state_IndexData);
@@ -661,15 +661,15 @@ bool RendererImplemented::EndRendering()
 
 		for (size_t i = 0; i < m_state_streamData.size(); i++)
 		{
-			GetDevice()->SetStreamSource(i, m_state_streamData[i], m_state_OffsetInBytes[i], m_state_pStride[i]);
+			GetDevice()->SetStreamSource((UINT)i, m_state_streamData[i], m_state_OffsetInBytes[i], m_state_pStride[i]);
 			ES_SAFE_RELEASE(m_state_streamData[i]);
 		}
 
 		GetDevice()->SetIndices(m_state_IndexData);
 		ES_SAFE_RELEASE(m_state_IndexData);
 
-		GetDevice()->SetVertexShaderConstantF(0, m_state_VertexShaderConstantF.data(), m_state_VertexShaderConstantF.size() / 4);
-		GetDevice()->SetVertexShaderConstantF(0, m_state_PixelShaderConstantF.data(), m_state_PixelShaderConstantF.size() / 4);
+		GetDevice()->SetVertexShaderConstantF(0, m_state_VertexShaderConstantF.data(), (UINT)m_state_VertexShaderConstantF.size() / 4);
+		GetDevice()->SetVertexShaderConstantF(0, m_state_PixelShaderConstantF.data(), (UINT)m_state_PixelShaderConstantF.size() / 4);
 
 		for (int i = 0; i < static_cast<int>(m_state_pTexture.size()); i++)
 		{
@@ -947,6 +947,7 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 	{
 		return m_shader;
 	}
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
