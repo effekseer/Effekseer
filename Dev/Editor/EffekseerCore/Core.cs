@@ -854,10 +854,8 @@ namespace Effekseer
 					{
 						case Language.English:
 							throw new Exception("Version Error : \nThe file is created with a newer version of the tool.\nPlease use the latest version of the tool.");
-							break;
 						case Language.Japanese:
 							throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
-							break;
 					}
 
 

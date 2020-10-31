@@ -166,7 +166,7 @@ namespace Effekseer.GUI.Dock
 			{
 				dirPath = Path.GetDirectoryName(path);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				return;
 			}
@@ -293,7 +293,7 @@ namespace Effekseer.GUI.Dock
 					// open process
 					System.Diagnostics.Process.Start(fileItem.FilePath);
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 				}
 			}
@@ -324,7 +324,7 @@ namespace Effekseer.GUI.Dock
 					System.Diagnostics.Process.Start(dirPath);
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}
