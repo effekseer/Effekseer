@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Menu
 {
@@ -165,117 +163,179 @@ namespace Effekseer.GUI.Menu
 
 		void ReloadMenu()
 		{
+			Section1();
+			Section2();
+			Section3();
+			Section4();
+			Section5();
+		}
 
-			Func<Func<bool>, MenuItem> create_menu_item_from_commands = (a) =>
+		private void Section5()
+		{
+			var menu = new Menu(new MultiLanguageString("Help"));
+
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.ViewHelp));
+			//menu.Controls.Add(create_menu_item_from_commands(Commands.OpenSample));
+
+			menu.Controls.Add(new MenuSeparator());
+
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.About));
+
+			this.Controls.Add(menu);
+		}
+
+		private void Section4()
+		{
+			var menu = new Menu(new MultiLanguageString("Window"));
+
 			{
 				var item = new MenuItem();
-				var attributes = a.Method.GetCustomAttributes(false);
-				var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
-				item.Label = NameAttribute.GetName(attributes);
-				item.Shortcut = Shortcuts.GetShortcutText(uniquename);
-				item.Clicked += () =>
-				{
-					a();
-				};
+				item.Label = new MultiLanguageString("ResetWindow");
+				item.Clicked += () => { Manager.ResetWindow(); };
+				menu.Controls.Add(item);
+			}
 
-				return item;
+			Action<MultiLanguageString, Type, string> setDockWindow = (s, t, icon) =>
+			{
+				var item = new MenuItem();
+				item.Label = s;
+				item.Clicked += () => { Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300), true); };
+				item.Icon = icon;
+				menu.Controls.Add(item);
 			};
 
+			setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Icons.PanelNodeTree);
+			setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Icons.PanelCommon);
+			setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Icons.PanelLocation);
+			setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Icons.PanelForceField);
+			setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues),
+				Icons.PanelGeneration);
+			setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Icons.PanelRotation);
+			setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Icons.PanelScale);
+			setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Icons.PanelDepth);
+			setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Icons.PanelRender);
+			setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues),
+				Icons.PanelRenderCommon);
+			setDockWindow(new MultiLanguageString("AdvancedRenderSettings"), typeof(Dock.AdvancedRenderCommonValues),
+				Icons.PanelDynamicParams);
+			setDockWindow(new MultiLanguageString("AdvancedRenderSettings2"), typeof(Dock.AdvancedRenderCommonValues2),
+				Icons.PanelDynamicParams);
+			setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Icons.PanelSound);
+			setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Icons.PanelFCurve);
+			setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Icons.PanelGlobal);
+			setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Icons.PanelCulling);
+			setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
+			menu.Controls.Add(new MenuSeparator());
+			setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Icons.PanelViewerCtrl);
+			setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Icons.PanelViewPoint);
+			setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Icons.PanelEnvironment);
+			setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Icons.PanelBehavior);
+			setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Icons.PanelNetwork);
+			setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Icons.PanelRecorder);
+			setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
+			setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Icons.PanelOptions);
+
+			this.Controls.Add(menu);
+		}
+
+		private void Section3()
+		{
+			var view = new MultiLanguageString("View");
+
+			var menu = new Menu(view);
+
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Play));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Stop));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Step));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.BackStep));
+
+			this.Controls.Add(menu);
+		}
+
+		private void Section2()
+		{
+			var edit = new MultiLanguageString("Edit");
+
+			var menu = new Menu(edit);
+
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.AddNode));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.InsertNode));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.RemoveNode));
+
+			menu.Controls.Add(new MenuSeparator());
+
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Copy));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Paste));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.PasteInfo));
+
+			menu.Controls.Add(new MenuSeparator());
+
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Undo));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Redo));
+
+			this.Controls.Add(menu);
+		}
+
+		private void Section1()
+		{
+			var file = new MultiLanguageString("Files");
+			var input = new MultiLanguageString("Import");
+			var output = new MultiLanguageString("Export");
+
+			var menu = new Menu(file);
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.New));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Open));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Overwrite));
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.SaveAs));
+
+			menu.Controls.Add(new MenuSeparator());
+
+			menu.Controls.Add(Section11(input));
+
+			menu.Controls.Add(Section12(output));
+
+			menu.Controls.Add(new MenuSeparator());
+
 			{
-				var file = new MultiLanguageString("Files");
-				var input = new MultiLanguageString("Import");
-				var output = new MultiLanguageString("Export");
+				ReloadRecentFiles();
+				menu.Controls.Add(recentFiles);
+			}
 
-				var menu = new Menu(file);
-				menu.Controls.Add(create_menu_item_from_commands(Commands.New));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Open));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Overwrite));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.SaveAs));
+			menu.Controls.Add(new MenuSeparator());
 
-				menu.Controls.Add(new MenuSeparator());
+			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Exit));
 
+			this.Controls.Add(menu);
+		}
+
+		private static Menu Section12(MultiLanguageString output)
+		{
+			var export_menu = new Menu(output, Icons.Empty);
+
+			for (int c = 0; c < Core.ExportScripts.Count; c++)
+			{
+				var item = new MenuItem();
+				var script = Core.ExportScripts[c];
+				item.Label = script.Title;
+				item.Clicked += () =>
 				{
-					var import_menu = new Menu(input, Icons.Empty);
+					var filter = script.Filter.Split('.').Last();
+					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
-					for (int c = 0; c < Core.ImportScripts.Count; c++)
+					if (!string.IsNullOrEmpty(result))
 					{
-						var item = new MenuItem();
-						var script = Core.ImportScripts[c];
-						item.Label = script.Title;
-						item.Clicked += () =>
+						if (System.IO.Path.GetExtension(result) != "." + filter)
 						{
-							var filter = script.Filter.Split('.').Last();
-							var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+							result += "." + filter;
+						}
 
-							if (!string.IsNullOrEmpty(result))
-							{
-								var filepath = result;
+						var filepath = result;
+						script.Function(filepath);
 
-								script.Function(filepath);
-								System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
-							}
-							else
-							{
-								return;
-							}
-
-							/*
-							OpenFileDialog ofd = new OpenFileDialog();
-
-							ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-							ofd.Filter = script.Filter;
-							ofd.FilterIndex = 2;
-							ofd.Multiselect = false;
-
-							if (ofd.ShowDialog() == DialogResult.OK)
-							{
-								var filepath = ofd.FileName;
-								script.Function(filepath);
-
-								System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
-							}
-							else
-							{
-								return;
-							}
-							*/
-						};
-						import_menu.Controls.Add(item);
+						System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 					}
 
-					menu.Controls.Add(import_menu);
-				}
-
-				{
-					var export_menu = new Menu(output, Icons.Empty);
-
-					for (int c = 0; c < Core.ExportScripts.Count; c++)
-					{
-						var item = new MenuItem();
-						var script = Core.ExportScripts[c];
-						item.Label = script.Title;
-						item.Clicked += () =>
-						{
-							var filter = script.Filter.Split('.').Last();
-							var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
-
-							if (!string.IsNullOrEmpty(result))
-							{
-								if (System.IO.Path.GetExtension(result) != "." + filter)
-								{
-									result += "." + filter;
-								}
-
-								var filepath = result;
-								script.Function(filepath);
-
-								System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
-							}
-							else
-							{
-								return;
-							}
-							/*
+					/*
 							SaveFileDialog ofd = new SaveFileDialog();
 
 							ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -295,130 +355,72 @@ namespace Effekseer.GUI.Menu
 								return;
 							}
 							*/
-						};
-						export_menu.Controls.Add(item);
+				};
+				export_menu.Controls.Add(item);
+			}
+
+			return export_menu;
+		}
+
+		private static Menu Section11(MultiLanguageString input)
+		{
+			var import_menu = new Menu(input, Icons.Empty);
+
+			for (int c = 0; c < Core.ImportScripts.Count; c++)
+			{
+				var item = new MenuItem();
+				var script = Core.ImportScripts[c];
+				item.Label = script.Title;
+				item.Clicked += () =>
+				{
+					var filter = script.Filter.Split('.').Last();
+					var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+					if (!string.IsNullOrEmpty(result))
+					{
+						var filepath = result;
+
+						script.Function(filepath);
+						System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 					}
 
-					menu.Controls.Add(export_menu);
-				}
+					/*
+							OpenFileDialog ofd = new OpenFileDialog();
 
-				menu.Controls.Add(new MenuSeparator());
+							ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
+							ofd.Filter = script.Filter;
+							ofd.FilterIndex = 2;
+							ofd.Multiselect = false;
 
-				{
-					ReloadRecentFiles();
-					menu.Controls.Add(recentFiles);
-				}
+							if (ofd.ShowDialog() == DialogResult.OK)
+							{
+								var filepath = ofd.FileName;
+								script.Function(filepath);
 
-				menu.Controls.Add(new MenuSeparator());
-
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Exit));
-
-				this.Controls.Add(menu);
-			}
-
-			{
-				var edit = new MultiLanguageString("Edit");
-
-				var menu = new Menu(edit);
-
-				menu.Controls.Add(create_menu_item_from_commands(Commands.AddNode));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.InsertNode));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.RemoveNode));
-
-				menu.Controls.Add(new MenuSeparator());
-
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Copy));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Paste));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.PasteInfo));
-
-				menu.Controls.Add(new MenuSeparator());
-
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Undo));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Redo));
-
-				this.Controls.Add(menu);
-			}
-
-			{
-				var view = new MultiLanguageString("View");
-
-				var menu = new Menu(view);
-
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Play));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Stop));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.Step));
-				menu.Controls.Add(create_menu_item_from_commands(Commands.BackStep));
-
-				this.Controls.Add(menu);
-			}
-
-			{
-				var menu = new Menu(new MultiLanguageString("Window"));
-
-				{
-					var item = new MenuItem();
-					item.Label = new MultiLanguageString("ResetWindow");
-					item.Clicked += () =>
-					{
-						Manager.ResetWindow();
-					};
-					menu.Controls.Add(item);
-				}
-
-				Action<MultiLanguageString, Type, string> setDockWindow = (s, t, icon) =>
-				{
-					var item = new MenuItem();
-					item.Label = s;
-					item.Clicked += () =>
-					{
-						Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300), true);
-					};
-					item.Icon = icon;
-					menu.Controls.Add(item);
+								System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+							}
+							else
+							{
+								return;
+							}
+							*/
 				};
-				
-				setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Icons.PanelNodeTree);
-				setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Icons.PanelCommon);
-				setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Icons.PanelLocation);
-				setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Icons.PanelForceField);
-				setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Icons.PanelGeneration);
-				setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Icons.PanelRotation);
-				setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Icons.PanelScale);
-				setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Icons.PanelDepth);
-				setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Icons.PanelRender);
-				setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon);
-				setDockWindow(new MultiLanguageString("AdvancedRenderSettings"), typeof(Dock.AdvancedRenderCommonValues), Icons.PanelDynamicParams);
-				setDockWindow(new MultiLanguageString("AdvancedRenderSettings2"), typeof(Dock.AdvancedRenderCommonValues2), Icons.PanelDynamicParams);
-				setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Icons.PanelSound);
-				setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Icons.PanelFCurve);
-				setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Icons.PanelGlobal);
-				setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Icons.PanelCulling);
-				setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
-				menu.Controls.Add(new MenuSeparator());
-				setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Icons.PanelViewerCtrl);
-				setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Icons.PanelViewPoint);
-				setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Icons.PanelEnvironment);
-				setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Icons.PanelBehavior);
-				setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Icons.PanelNetwork);
-				setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Icons.PanelRecorder);
-				setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
-				setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Icons.PanelOptions);
-
-				this.Controls.Add(menu);
+				import_menu.Controls.Add(item);
 			}
 
-			{
-				var menu = new Menu(new MultiLanguageString("Help"));
+			return import_menu;
+		}
 
-				menu.Controls.Add(create_menu_item_from_commands(Commands.ViewHelp));
-				//menu.Controls.Add(create_menu_item_from_commands(Commands.OpenSample));
+		private MenuItem CreateMenuItemFromCommands(Func<bool> onClicked)
+		{
+			var item = new MenuItem();
+			var attributes = onClicked.Method.GetCustomAttributes(false);
+			var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
+			item.Label = NameAttribute.GetName(attributes);
+			item.Shortcut = Shortcuts.GetShortcutText(uniquename);
+			item.Clicked += () => { onClicked(); };
 
-				menu.Controls.Add(new MenuSeparator());
-
-				menu.Controls.Add(create_menu_item_from_commands(Commands.About));
-
-				this.Controls.Add(menu);
-			}
+			return item;
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)
