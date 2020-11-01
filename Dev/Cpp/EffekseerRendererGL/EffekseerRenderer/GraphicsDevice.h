@@ -311,6 +311,11 @@ public:
 
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data) override;
 
+	std::string GetDeviceName() const override
+	{
+		return "OpenGL";
+	}
+
 	Texture* CreateTexture(GLuint buffer, const std::function<void()>& onDisposed);
 };
 

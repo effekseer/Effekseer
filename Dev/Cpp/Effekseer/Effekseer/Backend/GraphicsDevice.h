@@ -532,6 +532,11 @@ public:
 	virtual void EndRenderPass()
 	{
 	}
+
+	virtual std::string GetDeviceName() const
+	{
+		return "";
+	}
 };
 
 inline int32_t GetVertexLayoutFormatSize(VertexLayoutFormat format)

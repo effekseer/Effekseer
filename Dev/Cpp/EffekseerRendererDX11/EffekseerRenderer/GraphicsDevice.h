@@ -399,6 +399,11 @@ public:
 
 	void EndRenderPass() override;
 
+	std::string GetDeviceName() const override
+	{
+		return "DirectX11";
+	}
+
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data) override;
 
 	//! for DirectX11
