@@ -163,14 +163,16 @@ namespace Effekseer.GUI.Menu
 
 		private void ReloadMenu()
 		{
-			Section1();
-			Section2();
-			Section3();
-			SetupWindowMenu();
-			Section5();
+			SetupFilesMenu();
+			SetupEditMenu();
+			SetupViewMenu();
+
+			this.Controls.Add(WindowMenu.SetupWindowMenu());
+
+			SetupHelpMenu();
 		}
 
-		private void Section5()
+		private void SetupHelpMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Help"));
 
@@ -184,82 +186,7 @@ namespace Effekseer.GUI.Menu
 			this.Controls.Add(menu);
 		}
 
-		private sealed class DockSettings
-		{
-			public string Title { get; }
-			private readonly Type _type;
-			private readonly string _iconName;
-
-			public DockSettings(string title, Type type, string iconName)
-			{
-				Title = title;
-				_type = type;
-				_iconName = iconName;
-			}
-
-			public void AddTo(Menu menu)
-			{
-				var item = new MenuItem();
-				item.Label = new MultiLanguageString(Title);
-				item.Clicked += () => { Manager.SelectOrShowWindow(_type, new swig.Vec2(300, 300), true); };
-				item.Icon = _iconName;
-				menu.Controls.Add(item);
-			}
-		}
-
-		private void SetupWindowMenu()
-		{
-			var menu = new Menu(new MultiLanguageString("Window"));
-
-			{
-				var item = new MenuItem();
-				item.Label = new MultiLanguageString("ResetWindow");
-				item.Clicked += () => { Manager.ResetWindow(); };
-				menu.Controls.Add(item);
-			}
-
-			var settings = new[]
-			{
-				new DockSettings("NodeTree", typeof(Dock.NodeTreeView), Icons.PanelNodeTree),
-				new DockSettings("BasicSettings", typeof(Dock.CommonValues), Icons.PanelCommon),
-				new DockSettings("Position", typeof(Dock.LocationValues), Icons.PanelLocation),
-				new DockSettings("AttractionForces", typeof(Dock.LocationAbsValues), Icons.PanelForceField),
-				new DockSettings("SpawningMethod", typeof(Dock.GenerationLocationValues), Icons.PanelGeneration),
-				new DockSettings("Rotation", typeof(Dock.RotationValues), Icons.PanelRotation),
-				new DockSettings("Scale", typeof(Dock.ScaleValues), Icons.PanelScale),
-				new DockSettings("Depth", typeof(Dock.DepthValues), Icons.PanelDepth),
-				new DockSettings("RenderSettings", typeof(Dock.RendererValues), Icons.PanelRender),
-				new DockSettings("BasicRenderSettings", typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon),
-				new DockSettings("AdvancedRenderSettings", typeof(Dock.AdvancedRenderCommonValues), Icons.PanelDynamicParams),
-				new DockSettings("AdvancedRenderSettings2", typeof(Dock.AdvancedRenderCommonValues2), Icons.PanelDynamicParams),
-				new DockSettings("Sound", typeof(Dock.SoundValues), Icons.PanelSound),
-				new DockSettings("FCurves", typeof(Dock.FCurves), Icons.PanelFCurve),
-				new DockSettings("Global", typeof(Dock.GlobalValues), Icons.PanelGlobal),
-				new DockSettings("Culling", typeof(Dock.Culling), Icons.PanelCulling),
-				new DockSettings("DynamicParameter_Name", typeof(Dock.Dynamic), Icons.PanelDynamicParams),
-				new DockSettings("ViewerControls", typeof(Dock.ViewerController), Icons.PanelViewerCtrl),
-				new DockSettings("CameraSettings", typeof(Dock.ViewPoint), Icons.PanelViewPoint),
-				new DockSettings("Environment_Name", typeof(Dock.Environement), Icons.PanelEnvironment),
-				new DockSettings("Behavior", typeof(Dock.BehaviorValues), Icons.PanelBehavior),
-				new DockSettings("Network", typeof(Dock.Network), Icons.PanelNetwork),
-				new DockSettings("Recorder", typeof(Dock.Recorder), Icons.PanelRecorder),
-				new DockSettings("FileViewer", typeof(Dock.FileViewer), Icons.PanelFileViewer),
-				new DockSettings("Options", typeof(Dock.Option), Icons.PanelOptions),
-			};
-
-			foreach (var setting in settings)
-			{
-				setting.AddTo(menu);
-				if (setting.Title == "DynamicParameter_Name")
-				{
-					menu.Controls.Add(new MenuSeparator());
-				}
-			}
-
-			this.Controls.Add(menu);
-		}
-
-		private void Section3()
+		private void SetupViewMenu()
 		{
 			var view = new MultiLanguageString("View");
 
@@ -273,7 +200,7 @@ namespace Effekseer.GUI.Menu
 			this.Controls.Add(menu);
 		}
 
-		private void Section2()
+		private void SetupEditMenu()
 		{
 			var edit = new MultiLanguageString("Edit");
 
@@ -297,7 +224,7 @@ namespace Effekseer.GUI.Menu
 			this.Controls.Add(menu);
 		}
 
-		private void Section1()
+		private void SetupFilesMenu()
 		{
 			var file = new MultiLanguageString("Files");
 			var input = new MultiLanguageString("Import");
@@ -311,9 +238,9 @@ namespace Effekseer.GUI.Menu
 
 			menu.Controls.Add(new MenuSeparator());
 
-			menu.Controls.Add(Section11(input));
+			menu.Controls.Add(SetupImportSubMenu(input));
 
-			menu.Controls.Add(Section12(output));
+			menu.Controls.Add(SetupExportSubMenu(output));
 
 			menu.Controls.Add(new MenuSeparator());
 
@@ -329,7 +256,7 @@ namespace Effekseer.GUI.Menu
 			this.Controls.Add(menu);
 		}
 
-		private static Menu Section12(MultiLanguageString output)
+		private static Menu SetupExportSubMenu(MultiLanguageString output)
 		{
 			var export_menu = new Menu(output, Icons.Empty);
 
@@ -383,7 +310,7 @@ namespace Effekseer.GUI.Menu
 			return export_menu;
 		}
 
-		private static Menu Section11(MultiLanguageString input)
+		private static Menu SetupImportSubMenu(MultiLanguageString input)
 		{
 			var import_menu = new Menu(input, Icons.Empty);
 
