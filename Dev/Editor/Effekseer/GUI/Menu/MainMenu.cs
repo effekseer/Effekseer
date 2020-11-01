@@ -6,15 +6,14 @@ namespace Effekseer.GUI.Menu
 {
     class MainMenu : IRemovableControl
     {
-        public bool ShouldBeRemoved { get; } = false;
+		private readonly RecentFilesMenuManager recentFilesMenuManager = new RecentFilesMenuManager();
 
         internal List<IControl> Controls = new List<IControl>();
 
-		string currentTitle = string.Empty;
-
-		readonly Menu recentFiles = null;
-
-		bool isFirstUpdate = true;
+		private string currentTitle = string.Empty;
+		private bool isFirstUpdate = true;
+		
+		public bool ShouldBeRemoved { get; } = false;
 
 		public MainMenu()
 		{
@@ -22,11 +21,7 @@ namespace Effekseer.GUI.Menu
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnAfterSave += new EventHandler(Core_OnAfterSave);
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
-			RecentFiles.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
-
-			recentFiles = new Menu();
-			recentFiles.Label = new MultiLanguageString("RecentFiles");
-			recentFiles.Icon = Icons.Empty;
+			GUI.RecentFiles.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
 		}
 
         public void Update()
@@ -119,23 +114,9 @@ namespace Effekseer.GUI.Menu
 
 		}
 
-		void ReloadRecentFiles()
+		private void ReloadRecentFiles()
 		{
-			recentFiles.Controls.Clear();
-
-			var rf = RecentFiles.GetRecentFiles();
-
-			foreach (var f in rf)
-			{
-				var item = new MenuItem();
-				var file = f;
-				item.Label = file;
-				item.Clicked += () =>
-				{
-					Commands.Open(file);
-				};
-				recentFiles.Controls.Add(item);
-			}
+			recentFilesMenuManager.Reload();
 		}
 
 		private void ReloadTitle()
@@ -163,16 +144,14 @@ namespace Effekseer.GUI.Menu
 
 		private void ReloadMenu()
 		{
-			SetupFilesMenu();
-			SetupEditMenu();
-			SetupViewMenu();
-
+			this.Controls.Add(SetupFilesMenu(recentFilesMenuManager));
+			this.Controls.Add(SetupEditMenu());
+			this.Controls.Add(SetupViewMenu());
 			this.Controls.Add(WindowMenu.SetupWindowMenu());
-
-			SetupHelpMenu();
+			this.Controls.Add(SetupHelpMenu());
 		}
 
-		private void SetupHelpMenu()
+		private Menu SetupHelpMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Help"));
 
@@ -183,10 +162,10 @@ namespace Effekseer.GUI.Menu
 
 			menu.Controls.Add(CreateMenuItemFromCommands(Commands.About));
 
-			this.Controls.Add(menu);
+			return menu;
 		}
 
-		private void SetupViewMenu()
+		private Menu SetupViewMenu()
 		{
 			var view = new MultiLanguageString("View");
 
@@ -197,10 +176,10 @@ namespace Effekseer.GUI.Menu
 			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Step));
 			menu.Controls.Add(CreateMenuItemFromCommands(Commands.BackStep));
 
-			this.Controls.Add(menu);
+			return menu;
 		}
 
-		private void SetupEditMenu()
+		private Menu SetupEditMenu()
 		{
 			var edit = new MultiLanguageString("Edit");
 
@@ -221,10 +200,10 @@ namespace Effekseer.GUI.Menu
 			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Undo));
 			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Redo));
 
-			this.Controls.Add(menu);
+			return menu;
 		}
 
-		private void SetupFilesMenu()
+		private static Menu SetupFilesMenu(RecentFilesMenuManager recentFiles)
 		{
 			var file = new MultiLanguageString("Files");
 			var input = new MultiLanguageString("Import");
@@ -245,15 +224,28 @@ namespace Effekseer.GUI.Menu
 			menu.Controls.Add(new MenuSeparator());
 
 			{
-				ReloadRecentFiles();
-				menu.Controls.Add(recentFiles);
+				recentFiles.Reload();
+				menu.Controls.Add(recentFiles.Menu);
 			}
 
 			menu.Controls.Add(new MenuSeparator());
 
 			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Exit));
 
-			this.Controls.Add(menu);
+			return menu;
+		}
+		
+
+		private static MenuItem CreateMenuItemFromCommands(Func<bool> onClicked)
+		{
+			var item = new MenuItem();
+			var attributes = onClicked.Method.GetCustomAttributes(false);
+			var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
+			item.Label = NameAttribute.GetName(attributes);
+			item.Shortcut = Shortcuts.GetShortcutText(uniquename);
+			item.Clicked += () => { onClicked(); };
+
+			return item;
 		}
 
 		private static Menu SetupExportSubMenu(MultiLanguageString output)
@@ -357,18 +349,6 @@ namespace Effekseer.GUI.Menu
 			}
 
 			return import_menu;
-		}
-
-		private MenuItem CreateMenuItemFromCommands(Func<bool> onClicked)
-		{
-			var item = new MenuItem();
-			var attributes = onClicked.Method.GetCustomAttributes(false);
-			var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
-			item.Label = NameAttribute.GetName(attributes);
-			item.Shortcut = Shortcuts.GetShortcutText(uniquename);
-			item.Clicked += () => { onClicked(); };
-
-			return item;
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)
