@@ -6,13 +6,13 @@ namespace Effekseer.GUI.Menu
 {
     class MainMenu : IRemovableControl
     {
-        public bool ShouldBeRemoved { get; private set; } = false;
+        public bool ShouldBeRemoved { get; } = false;
 
         internal List<IControl> Controls = new List<IControl>();
 
 		string currentTitle = string.Empty;
 
-		Menu recentFiles = null;
+		readonly Menu recentFiles = null;
 
 		bool isFirstUpdate = true;
 
@@ -138,7 +138,7 @@ namespace Effekseer.GUI.Menu
 			}
 		}
 
-		void ReloadTitle()
+		private void ReloadTitle()
 		{
 			string filePath = Core.Root.GetFullPath();
 			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
@@ -161,12 +161,12 @@ namespace Effekseer.GUI.Menu
 			}
 		}
 
-		void ReloadMenu()
+		private void ReloadMenu()
 		{
 			Section1();
 			Section2();
 			Section3();
-			Section4();
+			SetupWindowMenu();
 			Section5();
 		}
 
@@ -184,7 +184,30 @@ namespace Effekseer.GUI.Menu
 			this.Controls.Add(menu);
 		}
 
-		private void Section4()
+		private sealed class DockSettings
+		{
+			public string Title { get; }
+			private readonly Type _type;
+			private readonly string _iconName;
+
+			public DockSettings(string title, Type type, string iconName)
+			{
+				Title = title;
+				_type = type;
+				_iconName = iconName;
+			}
+
+			public void AddTo(Menu menu)
+			{
+				var item = new MenuItem();
+				item.Label = new MultiLanguageString(Title);
+				item.Clicked += () => { Manager.SelectOrShowWindow(_type, new swig.Vec2(300, 300), true); };
+				item.Icon = _iconName;
+				menu.Controls.Add(item);
+			}
+		}
+
+		private void SetupWindowMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Window"));
 
@@ -195,45 +218,43 @@ namespace Effekseer.GUI.Menu
 				menu.Controls.Add(item);
 			}
 
-			Action<MultiLanguageString, Type, string> setDockWindow = (s, t, icon) =>
+			var settings = new[]
 			{
-				var item = new MenuItem();
-				item.Label = s;
-				item.Clicked += () => { Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300), true); };
-				item.Icon = icon;
-				menu.Controls.Add(item);
+				new DockSettings("NodeTree", typeof(Dock.NodeTreeView), Icons.PanelNodeTree),
+				new DockSettings("BasicSettings", typeof(Dock.CommonValues), Icons.PanelCommon),
+				new DockSettings("Position", typeof(Dock.LocationValues), Icons.PanelLocation),
+				new DockSettings("AttractionForces", typeof(Dock.LocationAbsValues), Icons.PanelForceField),
+				new DockSettings("SpawningMethod", typeof(Dock.GenerationLocationValues), Icons.PanelGeneration),
+				new DockSettings("Rotation", typeof(Dock.RotationValues), Icons.PanelRotation),
+				new DockSettings("Scale", typeof(Dock.ScaleValues), Icons.PanelScale),
+				new DockSettings("Depth", typeof(Dock.DepthValues), Icons.PanelDepth),
+				new DockSettings("RenderSettings", typeof(Dock.RendererValues), Icons.PanelRender),
+				new DockSettings("BasicRenderSettings", typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon),
+				new DockSettings("AdvancedRenderSettings", typeof(Dock.AdvancedRenderCommonValues), Icons.PanelDynamicParams),
+				new DockSettings("AdvancedRenderSettings2", typeof(Dock.AdvancedRenderCommonValues2), Icons.PanelDynamicParams),
+				new DockSettings("Sound", typeof(Dock.SoundValues), Icons.PanelSound),
+				new DockSettings("FCurves", typeof(Dock.FCurves), Icons.PanelFCurve),
+				new DockSettings("Global", typeof(Dock.GlobalValues), Icons.PanelGlobal),
+				new DockSettings("Culling", typeof(Dock.Culling), Icons.PanelCulling),
+				new DockSettings("DynamicParameter_Name", typeof(Dock.Dynamic), Icons.PanelDynamicParams),
+				new DockSettings("ViewerControls", typeof(Dock.ViewerController), Icons.PanelViewerCtrl),
+				new DockSettings("CameraSettings", typeof(Dock.ViewPoint), Icons.PanelViewPoint),
+				new DockSettings("Environment_Name", typeof(Dock.Environement), Icons.PanelEnvironment),
+				new DockSettings("Behavior", typeof(Dock.BehaviorValues), Icons.PanelBehavior),
+				new DockSettings("Network", typeof(Dock.Network), Icons.PanelNetwork),
+				new DockSettings("Recorder", typeof(Dock.Recorder), Icons.PanelRecorder),
+				new DockSettings("FileViewer", typeof(Dock.FileViewer), Icons.PanelFileViewer),
+				new DockSettings("Options", typeof(Dock.Option), Icons.PanelOptions),
 			};
 
-			setDockWindow(new MultiLanguageString("NodeTree"), typeof(Dock.NodeTreeView), Icons.PanelNodeTree);
-			setDockWindow(new MultiLanguageString("BasicSettings"), typeof(Dock.CommonValues), Icons.PanelCommon);
-			setDockWindow(new MultiLanguageString("Position"), typeof(Dock.LocationValues), Icons.PanelLocation);
-			setDockWindow(new MultiLanguageString("AttractionForces"), typeof(Dock.LocationAbsValues), Icons.PanelForceField);
-			setDockWindow(new MultiLanguageString("SpawningMethod"), typeof(Dock.GenerationLocationValues),
-				Icons.PanelGeneration);
-			setDockWindow(new MultiLanguageString("Rotation"), typeof(Dock.RotationValues), Icons.PanelRotation);
-			setDockWindow(new MultiLanguageString("Scale"), typeof(Dock.ScaleValues), Icons.PanelScale);
-			setDockWindow(new MultiLanguageString("Depth"), typeof(Dock.DepthValues), Icons.PanelDepth);
-			setDockWindow(new MultiLanguageString("RenderSettings"), typeof(Dock.RendererValues), Icons.PanelRender);
-			setDockWindow(new MultiLanguageString("BasicRenderSettings"), typeof(Dock.RendererCommonValues),
-				Icons.PanelRenderCommon);
-			setDockWindow(new MultiLanguageString("AdvancedRenderSettings"), typeof(Dock.AdvancedRenderCommonValues),
-				Icons.PanelDynamicParams);
-			setDockWindow(new MultiLanguageString("AdvancedRenderSettings2"), typeof(Dock.AdvancedRenderCommonValues2),
-				Icons.PanelDynamicParams);
-			setDockWindow(new MultiLanguageString("Sound"), typeof(Dock.SoundValues), Icons.PanelSound);
-			setDockWindow(new MultiLanguageString("FCurves"), typeof(Dock.FCurves), Icons.PanelFCurve);
-			setDockWindow(new MultiLanguageString("Global"), typeof(Dock.GlobalValues), Icons.PanelGlobal);
-			setDockWindow(new MultiLanguageString("Culling"), typeof(Dock.Culling), Icons.PanelCulling);
-			setDockWindow(new MultiLanguageString("DynamicParameter_Name"), typeof(Dock.Dynamic), Icons.PanelDynamicParams);
-			menu.Controls.Add(new MenuSeparator());
-			setDockWindow(new MultiLanguageString("ViewerControls"), typeof(Dock.ViewerController), Icons.PanelViewerCtrl);
-			setDockWindow(new MultiLanguageString("CameraSettings"), typeof(Dock.ViewPoint), Icons.PanelViewPoint);
-			setDockWindow(new MultiLanguageString("Environment_Name"), typeof(Dock.Environement), Icons.PanelEnvironment);
-			setDockWindow(new MultiLanguageString("Behavior"), typeof(Dock.BehaviorValues), Icons.PanelBehavior);
-			setDockWindow(new MultiLanguageString("Network"), typeof(Dock.Network), Icons.PanelNetwork);
-			setDockWindow(new MultiLanguageString("Recorder"), typeof(Dock.Recorder), Icons.PanelRecorder);
-			setDockWindow(new MultiLanguageString("FileViewer"), typeof(Dock.FileViewer), Icons.PanelFileViewer);
-			setDockWindow(new MultiLanguageString("Options"), typeof(Dock.Option), Icons.PanelOptions);
+			foreach (var setting in settings)
+			{
+				setting.AddTo(menu);
+				if (setting.Title == "DynamicParameter_Name")
+				{
+					menu.Controls.Add(new MenuSeparator());
+				}
+			}
 
 			this.Controls.Add(menu);
 		}
@@ -437,22 +458,22 @@ namespace Effekseer.GUI.Menu
 			}
 		}
 
-		void Core_OnAfterNew(object sender, EventArgs e)
+		private void Core_OnAfterNew(object sender, EventArgs e)
 		{
 			ReloadTitle();
 		}
 
-		void Core_OnAfterSave(object sender, EventArgs e)
+		private void Core_OnAfterSave(object sender, EventArgs e)
 		{
 			ReloadTitle();
 		}
 
-		void Core_OnAfterLoad(object sender, EventArgs e)
+		private void Core_OnAfterLoad(object sender, EventArgs e)
 		{
 			ReloadTitle();
 		}
 
-		void GUIManager_OnChangeRecentFiles(object sender, EventArgs e)
+		private void GUIManager_OnChangeRecentFiles(object sender, EventArgs e)
 		{
 			ReloadRecentFiles();
 		}
