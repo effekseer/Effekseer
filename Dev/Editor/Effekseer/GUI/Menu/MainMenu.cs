@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Effekseer.swig;
 
 namespace Effekseer.GUI.Menu
 {
@@ -6,10 +8,10 @@ namespace Effekseer.GUI.Menu
     {
 		private readonly RecentFilesMenuManager recentFilesMenuManager = new RecentFilesMenuManager();
 		private readonly CommandMenuProvider commandMenuProvider;
+		private readonly WindowTitleControl windowTitleControl = new WindowTitleControl();
 
         internal List<IControl> Controls = new List<IControl>();
 
-		private string currentTitle = string.Empty;
 		private bool isFirstUpdate = true;
 		
 		public bool ShouldBeRemoved { get; } = false;
@@ -17,10 +19,10 @@ namespace Effekseer.GUI.Menu
 		public MainMenu()
 		{
 			// assgin events
-			Core.OnAfterNew += (sender, e) => ReloadTitle();
-			Core.OnAfterSave += (sender, e) => ReloadTitle();
-			Core.OnAfterLoad += (sender, e) => ReloadTitle();
-			RecentFiles.OnChangeRecentFiles += (sender, e) => ReloadRecentFiles();
+			Core.OnAfterNew += (sender, e) => windowTitleControl.Reload();
+			Core.OnAfterSave += (sender, e) => windowTitleControl.Reload();
+			Core.OnAfterLoad += (sender, e) => windowTitleControl.Reload();
+			RecentFiles.OnChangeRecentFiles += (sender, e) => recentFilesMenuManager.Reload();
 
 			commandMenuProvider = new CommandMenuProvider(recentFilesMenuManager);
 		}
@@ -30,7 +32,7 @@ namespace Effekseer.GUI.Menu
 			if(isFirstUpdate)
 			{
 				ReloadMenu();
-				ReloadTitle();
+				windowTitleControl.Reload();
 				isFirstUpdate = false;
 			}
 
@@ -50,97 +52,79 @@ namespace Effekseer.GUI.Menu
 				Manager.NativeManager.EndMainMenuBar();
 			}
 
-			ReloadTitle();
+			windowTitleControl.Reload();
 		}
 
 		public void UpdateSystemBar()
 		{
 			Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, 8.0f * Manager.DpiScale));
-
 			Manager.NativeManager.BeginMainMenuBar();
 
 			var windowSize = Manager.NativeManager.GetWindowSize();
 
-			float iconSize = 28.0f * Manager.DpiScale;
-			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
-			Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
-			Manager.NativeManager.SetCursorPosY(0);
+			AddAppIcon();
+			AddCommands();
+			AddTitle(windowSize);
+			AddWindowButtons(windowSize);
 
-			foreach (var ctrl in Controls)
-			{
-				ctrl.Update();
-			}
+			Manager.NativeManager.EndMainMenuBar();
+			Manager.NativeManager.PopStyleVar(1);
+		}
 
+		private static void AddWindowButtons(Vec2 windowSize)
+		{
+			void ShowButton(int offset, ImageResource icon, Action onClick)
 			{
-				float pos = Manager.NativeManager.GetCursorPosX();
-				float textWidth = Manager.NativeManager.CalcTextSize(currentTitle).X;
-				float areaWidth = windowSize.X - pos - 56 * 3;
-				if (textWidth < areaWidth)
+				float buttonX = 44 * Manager.DpiScale;
+				float buttonY = 32 * Manager.DpiScale;
+
+				Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * offset);
+				if (Manager.NativeManager.ImageButtonOriginal(icon, buttonX, buttonY))
 				{
-					Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
-					Manager.NativeManager.Text(currentTitle);
+					onClick();
 				}
 			}
 
 			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
 			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
 
-			float buttonX = 44 * Manager.DpiScale;
-			float buttonY = 32 * Manager.DpiScale;
-
-			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 3);
-			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon("ButtonMin"), buttonX, buttonY))
-			{
-				Manager.NativeManager.SetWindowMinimized(true);
-			}
+			ShowButton(3, Images.GetIcon("ButtonMin"), () => Manager.NativeManager.SetWindowMinimized(true));
 
 			bool maximized = Manager.NativeManager.IsWindowMaximized();
-			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 2);
-			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon(maximized ? "ButtonMaxCancel" : "ButtonMax"), buttonX, buttonY))
-			{
-				Manager.NativeManager.SetWindowMaximized(!maximized);
-			}
+			ShowButton(2, Images.GetIcon(maximized ? "ButtonMaxCancel" : "ButtonMax"),
+				() => Manager.NativeManager.SetWindowMaximized(!maximized));
 
-			Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * 1);
-			if (Manager.NativeManager.ImageButtonOriginal(Images.GetIcon("ButtonClose"), buttonX, buttonY))
-			{
-				Manager.NativeManager.Close();
-			}
+			ShowButton(1, Images.GetIcon("ButtonClose"), () => Manager.NativeManager.Close());
 
 			Manager.NativeManager.PopStyleColor(2);
-
-			Manager.NativeManager.EndMainMenuBar();
-
-			Manager.NativeManager.PopStyleVar(1);
-
 		}
 
-		private void ReloadRecentFiles()
+		private void AddTitle(Vec2 windowSize)
 		{
-			recentFilesMenuManager.Reload();
+			float pos = Manager.NativeManager.GetCursorPosX();
+			float textWidth = Manager.NativeManager.CalcTextSize(windowTitleControl.CurrentTitle).X;
+			float areaWidth = windowSize.X - pos - 56 * 3;
+			if (textWidth < areaWidth)
+			{
+				Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
+				Manager.NativeManager.Text(windowTitleControl.CurrentTitle);
+			}
 		}
 
-		private void ReloadTitle()
+		private void AddCommands()
 		{
-			string filePath = Core.Root.GetFullPath();
-			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
-			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + fileName + "] ";
-
-			if (Core.IsChanged)
+			foreach (var ctrl in Controls)
 			{
-				newTitle += Resources.GetString("UnsavedChanges");
+				ctrl.Update();
 			}
+		}
 
-			if (swig.Native.IsDebugMode())
-			{
-				newTitle += " - DebugMode";
-			}
-
-			if (currentTitle != newTitle)
-			{
-				currentTitle = newTitle;
-				Manager.NativeManager.SetTitle(currentTitle);
-			}
+		private static void AddAppIcon()
+		{
+			float iconSize = 28.0f * Manager.DpiScale;
+			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
+			Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+			Manager.NativeManager.SetCursorPosY(0);
 		}
 
 		private void ReloadMenu()
