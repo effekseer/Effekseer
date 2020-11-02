@@ -4,13 +4,13 @@ using Effekseer.swig;
 
 namespace Effekseer.GUI.Menu
 {
-    class MainMenu : IRemovableControl
-    {
+	class MainMenu : IRemovableControl
+	{
 		private readonly RecentFilesMenuManager recentFilesMenuManager = new RecentFilesMenuManager();
 		private readonly CommandMenuProvider commandMenuProvider;
 		private readonly WindowTitleControl windowTitleControl = new WindowTitleControl();
 
-        internal List<IControl> Controls = new List<IControl>();
+		internal List<IControl> Controls = new List<IControl>();
 
 		private bool isFirstUpdate = true;
 		
@@ -27,8 +27,8 @@ namespace Effekseer.GUI.Menu
 			commandMenuProvider = new CommandMenuProvider(recentFilesMenuManager);
 		}
 
-        public void Update()
-        {
+		public void Update()
+		{
 			if(isFirstUpdate)
 			{
 				ReloadMenu();
