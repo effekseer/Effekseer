@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Effekseer.GUI.Menu
 {
@@ -19,10 +17,10 @@ namespace Effekseer.GUI.Menu
 		public MainMenu()
 		{
 			// assgin events
-			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
-			Core.OnAfterSave += new EventHandler(Core_OnAfterSave);
-			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
-			GUI.RecentFiles.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
+			Core.OnAfterNew += (sender, e) => ReloadTitle();
+			Core.OnAfterSave += (sender, e) => ReloadTitle();
+			Core.OnAfterLoad += (sender, e) => ReloadTitle();
+			RecentFiles.OnChangeRecentFiles += (sender, e) => ReloadRecentFiles();
 
 			commandMenuProvider = new CommandMenuProvider(recentFilesMenuManager);
 		}
@@ -152,40 +150,6 @@ namespace Effekseer.GUI.Menu
 			this.Controls.Add(commandMenuProvider.SetupViewMenu());
 			this.Controls.Add(WindowMenu.SetupWindowMenu());
 			this.Controls.Add(commandMenuProvider.SetupHelpMenu());
-		}
-
-		private void MainForm_Load(object sender, EventArgs e)
-		{
-			ReloadTitle();
-			ReloadMenu();
-		}
-
-		private void MainForm_Activated(object sender, EventArgs e)
-		{
-			if (Core.MainForm != null)
-			{
-				Core.Reload();
-			}
-		}
-
-		private void Core_OnAfterNew(object sender, EventArgs e)
-		{
-			ReloadTitle();
-		}
-
-		private void Core_OnAfterSave(object sender, EventArgs e)
-		{
-			ReloadTitle();
-		}
-
-		private void Core_OnAfterLoad(object sender, EventArgs e)
-		{
-			ReloadTitle();
-		}
-
-		private void GUIManager_OnChangeRecentFiles(object sender, EventArgs e)
-		{
-			ReloadRecentFiles();
 		}
 	}
 }
