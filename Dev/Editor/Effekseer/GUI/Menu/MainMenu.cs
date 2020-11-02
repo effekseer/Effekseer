@@ -7,6 +7,7 @@ namespace Effekseer.GUI.Menu
     class MainMenu : IRemovableControl
     {
 		private readonly RecentFilesMenuManager recentFilesMenuManager = new RecentFilesMenuManager();
+		private readonly CommandMenuProvider commandMenuProvider;
 
         internal List<IControl> Controls = new List<IControl>();
 
@@ -22,6 +23,8 @@ namespace Effekseer.GUI.Menu
 			Core.OnAfterSave += new EventHandler(Core_OnAfterSave);
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			GUI.RecentFiles.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
+
+			commandMenuProvider = new CommandMenuProvider(recentFilesMenuManager);
 		}
 
         public void Update()
@@ -144,11 +147,11 @@ namespace Effekseer.GUI.Menu
 
 		private void ReloadMenu()
 		{
-			this.Controls.Add(CommandMenuProvider.SetupFilesMenu(recentFilesMenuManager));
-			this.Controls.Add(CommandMenuProvider.SetupEditMenu());
-			this.Controls.Add(CommandMenuProvider.SetupViewMenu());
+			this.Controls.Add(commandMenuProvider.SetupFilesMenu());
+			this.Controls.Add(commandMenuProvider.SetupEditMenu());
+			this.Controls.Add(commandMenuProvider.SetupViewMenu());
 			this.Controls.Add(WindowMenu.SetupWindowMenu());
-			this.Controls.Add(CommandMenuProvider.SetupHelpMenu());
+			this.Controls.Add(commandMenuProvider.SetupHelpMenu());
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)

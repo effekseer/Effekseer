@@ -6,34 +6,45 @@ namespace Effekseer.GUI.Menu
 {
 	internal sealed class CommandMenuProvider
 	{
-		public static Menu SetupHelpMenu()
+		private readonly RecentFilesMenuManager _recentFiles;
+
+		public CommandMenuProvider(RecentFilesMenuManager recentFiles)
+		{
+			_recentFiles = recentFiles;
+		}
+
+		public Menu SetupHelpMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Help"));
 
-			menu.Controls.Add(CreateMenuItemFromCommands(Commands.ViewHelp));
+			AddRange(menu, new IControl[]
+			{
+				CreateMenuItemFromCommands(Commands.ViewHelp),
 
-			menu.Controls.Add(new MenuSeparator());
+				new MenuSeparator(),
 
-			menu.Controls.Add(CreateMenuItemFromCommands(Commands.About));
+				CreateMenuItemFromCommands(Commands.About),
+			});
 
 			return menu;
 		}
 
-		public static Menu SetupViewMenu()
+		public Menu SetupViewMenu()
 		{
-			var view = new MultiLanguageString("View");
+			var menu = new Menu(new MultiLanguageString("View"));
 
-			var menu = new Menu(view);
-
-			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Play));
-			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Stop));
-			menu.Controls.Add(CreateMenuItemFromCommands(Commands.Step));
-			menu.Controls.Add(CreateMenuItemFromCommands(Commands.BackStep));
+			AddRange(menu, new IControl[]
+			{
+				CreateMenuItemFromCommands(Commands.Play),
+				CreateMenuItemFromCommands(Commands.Stop),
+				CreateMenuItemFromCommands(Commands.Step),
+				CreateMenuItemFromCommands(Commands.BackStep),
+			});
 
 			return menu;
 		}
 
-		public static Menu SetupEditMenu()
+		public Menu SetupEditMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Edit"));
 
@@ -58,11 +69,11 @@ namespace Effekseer.GUI.Menu
 			return menu;
 		}
 
-		public static Menu SetupFilesMenu(RecentFilesMenuManager recentFiles)
+		public Menu SetupFilesMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Files"));
 			
-			recentFiles.Reload();
+			_recentFiles.Reload();
 			AddRange(menu, new IControl[]
 			{
 				CreateMenuItemFromCommands(Commands.New),
@@ -77,7 +88,7 @@ namespace Effekseer.GUI.Menu
 
 				new MenuSeparator(),
 
-				recentFiles.Menu,
+				_recentFiles.Menu,
 
 				new MenuSeparator(),
 
@@ -94,12 +105,12 @@ namespace Effekseer.GUI.Menu
 			var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
 			item.Label = NameAttribute.GetName(attributes);
 			item.Shortcut = Shortcuts.GetShortcutText(uniquename);
-			item.Clicked += () => { onClicked(); };
+			item.Clicked += () => onClicked();
 
 			return item;
 		}
 
-		private static void AddRange(Menu menu, IControl[] controls)
+		private void AddRange(Menu menu, IControl[] controls)
 		{
 			foreach (IControl control in controls)
 			{
@@ -107,7 +118,7 @@ namespace Effekseer.GUI.Menu
 			}
 		}
 
-		private static Menu SetupImportSubMenu(MultiLanguageString input)
+		private Menu SetupImportSubMenu(MultiLanguageString input)
 		{
 			var importMenu = new Menu(input, Icons.Empty);
 
@@ -123,7 +134,7 @@ namespace Effekseer.GUI.Menu
 			return importMenu;
 		}
 
-		private static void Import(ImportScript script)
+		private void Import(ImportScript script)
 		{
 			var filter = script.Filter.Split('.').Last();
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
@@ -140,7 +151,7 @@ namespace Effekseer.GUI.Menu
 		}
 		
 
-		private static Menu SetupExportSubMenu(MultiLanguageString output)
+		private Menu SetupExportSubMenu(MultiLanguageString output)
 		{
 			var exportMenu = new Menu(output, Icons.Empty);
 
@@ -156,7 +167,7 @@ namespace Effekseer.GUI.Menu
 			return exportMenu;
 		}
 
-		private static void Export(ExportScript script)
+		private void Export(ExportScript script)
 		{
 			var filter = script.Filter.Split('.').Last();
 			var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
