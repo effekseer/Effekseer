@@ -72,7 +72,7 @@ namespace Effekseer.GUI.Menu
 		public Menu SetupFilesMenu()
 		{
 			var menu = new Menu(new MultiLanguageString("Files"));
-			
+
 			_recentFiles.Reload();
 			AddRange(menu, new IControl[]
 			{
@@ -149,7 +149,7 @@ namespace Effekseer.GUI.Menu
 			script.Function(filepath);
 			System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 		}
-		
+
 
 		private Menu SetupExportSubMenu(MultiLanguageString output)
 		{

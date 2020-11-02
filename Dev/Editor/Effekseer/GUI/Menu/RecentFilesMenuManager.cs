@@ -1,32 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Effekseer.GUI.Menu
+﻿namespace Effekseer.GUI.Menu
 {
-	class RecentFilesMenuManager
+	internal sealed class RecentFilesMenuManager
 	{
-		public Menu Menu { get; } = null;
-
-		public RecentFilesMenuManager()
+		public Menu Menu { get; } = new Menu
 		{
-			Menu = new Menu();
-			Menu.Label = new MultiLanguageString("RecentFiles");
-			Menu.Icon = Icons.Empty;
-		}
-		
+			Label = new MultiLanguageString("RecentFiles"),
+			Icon = Icons.Empty
+		};
+
 		public void Reload()
 		{
 			Menu.Controls.Clear();
 
-			var rf = RecentFiles.GetRecentFiles();
-
-			foreach (var f in rf)
+			foreach (var file in RecentFiles.GetRecentFiles())
 			{
 				var item = new MenuItem();
-				var file = f;
 				item.Label = file;
 				item.Clicked += () =>
 				{

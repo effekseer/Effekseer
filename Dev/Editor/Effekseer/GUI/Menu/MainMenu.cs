@@ -4,36 +4,36 @@ using Effekseer.swig;
 
 namespace Effekseer.GUI.Menu
 {
-	class MainMenu : IRemovableControl
+	internal sealed class MainMenu : IRemovableControl
 	{
-		private readonly RecentFilesMenuManager recentFilesMenuManager = new RecentFilesMenuManager();
-		private readonly CommandMenuProvider commandMenuProvider;
-		private readonly WindowTitleControl windowTitleControl = new WindowTitleControl();
+		private readonly RecentFilesMenuManager _recentFilesMenuManager = new RecentFilesMenuManager();
+		private readonly CommandMenuProvider _commandMenuProvider;
+		private readonly WindowTitleControl _windowTitleControl = new WindowTitleControl();
 
 		internal List<IControl> Controls = new List<IControl>();
 
-		private bool isFirstUpdate = true;
+		private bool _isFirstUpdate = true;
 		
 		public bool ShouldBeRemoved { get; } = false;
 
 		public MainMenu()
 		{
 			// assgin events
-			Core.OnAfterNew += (sender, e) => windowTitleControl.Reload();
-			Core.OnAfterSave += (sender, e) => windowTitleControl.Reload();
-			Core.OnAfterLoad += (sender, e) => windowTitleControl.Reload();
-			RecentFiles.OnChangeRecentFiles += (sender, e) => recentFilesMenuManager.Reload();
+			Core.OnAfterNew += (sender, e) => _windowTitleControl.Reload();
+			Core.OnAfterSave += (sender, e) => _windowTitleControl.Reload();
+			Core.OnAfterLoad += (sender, e) => _windowTitleControl.Reload();
+			RecentFiles.OnChangeRecentFiles += (sender, e) => _recentFilesMenuManager.Reload();
 
-			commandMenuProvider = new CommandMenuProvider(recentFilesMenuManager);
+			_commandMenuProvider = new CommandMenuProvider(_recentFilesMenuManager);
 		}
 
 		public void Update()
 		{
-			if(isFirstUpdate)
+			if(_isFirstUpdate)
 			{
 				ReloadMenu();
-				windowTitleControl.Reload();
-				isFirstUpdate = false;
+				_windowTitleControl.Reload();
+				_isFirstUpdate = false;
 			}
 
 			if (Manager.IsWindowFrameless)
@@ -52,7 +52,7 @@ namespace Effekseer.GUI.Menu
 				Manager.NativeManager.EndMainMenuBar();
 			}
 
-			windowTitleControl.Reload();
+			_windowTitleControl.Reload();
 		}
 
 		public void UpdateSystemBar()
@@ -71,7 +71,7 @@ namespace Effekseer.GUI.Menu
 			Manager.NativeManager.PopStyleVar(1);
 		}
 
-		private static void AddWindowButtons(Vec2 windowSize)
+		private void AddWindowButtons(Vec2 windowSize)
 		{
 			void ShowButton(int offset, ImageResource icon, Action onClick)
 			{
@@ -102,12 +102,12 @@ namespace Effekseer.GUI.Menu
 		private void AddTitle(Vec2 windowSize)
 		{
 			float pos = Manager.NativeManager.GetCursorPosX();
-			float textWidth = Manager.NativeManager.CalcTextSize(windowTitleControl.CurrentTitle).X;
+			float textWidth = Manager.NativeManager.CalcTextSize(_windowTitleControl.CurrentTitle).X;
 			float areaWidth = windowSize.X - pos - 56 * 3;
 			if (textWidth < areaWidth)
 			{
 				Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
-				Manager.NativeManager.Text(windowTitleControl.CurrentTitle);
+				Manager.NativeManager.Text(_windowTitleControl.CurrentTitle);
 			}
 		}
 
@@ -119,7 +119,7 @@ namespace Effekseer.GUI.Menu
 			}
 		}
 
-		private static void AddAppIcon()
+		private void AddAppIcon()
 		{
 			float iconSize = 28.0f * Manager.DpiScale;
 			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
@@ -129,11 +129,11 @@ namespace Effekseer.GUI.Menu
 
 		private void ReloadMenu()
 		{
-			this.Controls.Add(commandMenuProvider.SetupFilesMenu());
-			this.Controls.Add(commandMenuProvider.SetupEditMenu());
-			this.Controls.Add(commandMenuProvider.SetupViewMenu());
+			this.Controls.Add(_commandMenuProvider.SetupFilesMenu());
+			this.Controls.Add(_commandMenuProvider.SetupEditMenu());
+			this.Controls.Add(_commandMenuProvider.SetupViewMenu());
 			this.Controls.Add(WindowMenu.SetupWindowMenu());
-			this.Controls.Add(commandMenuProvider.SetupHelpMenu());
+			this.Controls.Add(_commandMenuProvider.SetupHelpMenu());
 		}
 	}
 }

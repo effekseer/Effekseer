@@ -1,9 +1,9 @@
 ﻿namespace Effekseer.GUI.Menu
 {
-	class WindowTitleControl
+	internal sealed class WindowTitleControl
 	{
 		public string CurrentTitle { get; set; } = string.Empty;
-		
+
 		public void Reload()
 		{
 			string filePath = Core.Root.GetFullPath();
