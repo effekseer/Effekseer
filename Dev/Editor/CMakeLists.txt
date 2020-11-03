@@ -23,6 +23,7 @@ file(GLOB files_core
     EffekseerCore/IO/*.cs	
     EffekseerCore/Utils/*.cs
     EffekseerCore/Data/Value/Int2.cs
+    EffekseerCore/Data/Value/ObjectCollection.cs
 )
 
 list(APPEND files_core
