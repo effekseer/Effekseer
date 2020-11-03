@@ -142,9 +142,13 @@
     <Compile Include="GUI\Controls.cs" />
     <Compile Include="GUI\DragAndDrops.cs" />
     <Compile Include="GUI\Manager.cs" />
+    <Compile Include="GUI\Menu\CommandMenuProvider.cs" />
     <Compile Include="GUI\Menu\MainMenu.cs" />
     <Compile Include="GUI\Menu\Menu.cs" />
     <Compile Include="GUI\Menu\MenuItem.cs" />
+    <Compile Include="GUI\Menu\RecentFilesMenuManager.cs" />
+    <Compile Include="GUI\Menu\WindowMenu.cs" />
+    <Compile Include="GUI\Menu\WindowTitleControl.cs" />
     <Compile Include="GUI\Network.cs" />
     <Compile Include="GUI\ThumbnailManager.cs" />
     <Compile Include="GUI\Viewer.cs" />

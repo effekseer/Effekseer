@@ -1,6 +1,6 @@
 
 enable_language(CSharp)
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../release")
@@ -51,7 +51,6 @@ set_target_properties(EffekseerCore PROPERTIES
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
-target_compile_options(EffekseerCore PRIVATE "/langversion:6")
 
 
 file(GLOB files 
@@ -92,7 +91,6 @@ add_dependencies(EffekseerEditor EffekseerCore Viewer)
 target_link_libraries(EffekseerEditor EffekseerCore Viewer)
 
 target_compile_options(EffekseerEditor PRIVATE "/unsafe")
-target_compile_options(EffekseerEditor PRIVATE "/langversion:6")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
 
 target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
@@ -117,7 +115,6 @@ if (BUILD_TEST)
     set_target_properties(TestCSharp PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
     add_dependencies(TestCSharp EffekseerCore)
     target_link_libraries(TestCSharp EffekseerCore)
-    target_compile_options(TestCSharp PRIVATE "/langversion:6")
 
     if (MSVC)
         set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_DEBUG "Effekseer.TestCSharp" )
