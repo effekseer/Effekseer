@@ -63,6 +63,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 0, Value = (int)ParamaterType.SingleFCurve)]
 		public FCurveScalar SingleFCurve
 		{
 			get;
