@@ -699,6 +699,28 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
 
+			var compiler = new InternalScript.Compiler();
+
+			foreach (var value in Core.Dynamic.Equations.Values)
+			{
+				var cx = compiler.Compile(value.Code.Value);
+
+				var cs = new[] { cx };
+
+				foreach (var c in cs)
+				{
+					if (c.Bytecode != null)
+					{
+						data.Add(BitConverter.GetBytes((int)c.Bytecode.Length));
+						data.Add(c.Bytecode);
+					}
+					else
+					{
+						data.Add(BitConverter.GetBytes((int)0));
+					}
+				}
+			}
+
 			if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 			{
 				// export curves to a file
@@ -782,28 +804,6 @@ namespace Effekseer.Binary
 					data.Add((byte[])param.ColorLeftMiddle);
 					data.Add((byte[])param.ColorCenterMiddle);
 					data.Add((byte[])param.ColorRightMiddle);
-				}
-			}
-
-			var compiler = new InternalScript.Compiler();
-
-			foreach (var value in Core.Dynamic.Equations.Values)
-			{
-				var cx = compiler.Compile(value.Code.Value);
-
-				var cs = new []{ cx };
-
-				foreach(var c in cs)
-				{
-					if(c.Bytecode != null)
-					{
-						data.Add(BitConverter.GetBytes((int)c.Bytecode.Length));
-						data.Add(c.Bytecode);
-					}
-					else
-					{
-						data.Add(BitConverter.GetBytes((int)0));
-					}
 				}
 			}
 
