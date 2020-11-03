@@ -1779,26 +1779,26 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 
 	// For webgl bug (it makes slow if sampling points are too far on WebGL)
-	float far = 4.0f;
+	const float looppoint_uv = 4.0f;
 
-	if (uv.X < -far && uv.X + uv.Width < -far)
+	if (uv.X < -looppoint_uv && uv.X + uv.Width < -looppoint_uv)
 	{
-		uv.X += (-static_cast<int32_t>(uv.X) - far);
+		uv.X += (-static_cast<int32_t>(uv.X) - looppoint_uv);
 	}
 
-	if (uv.X > far && uv.X + uv.Width > far)
+	if (uv.X > looppoint_uv && uv.X + uv.Width > looppoint_uv)
 	{
-		uv.X -= (static_cast<int32_t>(uv.X) - far);
+		uv.X -= (static_cast<int32_t>(uv.X) - looppoint_uv);
 	}
 
-	if (uv.Y < -far && uv.Y + uv.Height < -far)
+	if (uv.Y < -looppoint_uv && uv.Y + uv.Height < -looppoint_uv)
 	{
-		uv.Y += (-static_cast<int32_t>(uv.Y) - far);
+		uv.Y += (-static_cast<int32_t>(uv.Y) - looppoint_uv);
 	}
 
-	if (uv.Y > far && uv.Y + uv.Height > far)
+	if (uv.Y > looppoint_uv && uv.Y + uv.Height > looppoint_uv)
 	{
-		uv.Y -= (static_cast<int32_t>(uv.Y) - far);
+		uv.Y -= (static_cast<int32_t>(uv.Y) - looppoint_uv);
 	}
 
 	return uv;
