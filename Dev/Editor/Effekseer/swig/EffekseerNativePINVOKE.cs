@@ -258,6 +258,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ImageResource_GetHeight___")]
   public static extern int ImageResource_GetHeight(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ImageResource_GetDeviceType___")]
+  public static extern int ImageResource_GetDeviceType(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_CountX_set___")]
   public static extern void ViewerEffectBehavior_CountX_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -779,6 +782,9 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_InvalidateTextureCache___")]
   public static extern bool Native_InvalidateTextureCache(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetIsGroundShown___")]
+  public static extern void Native_SetIsGroundShown(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetIsGridShown___")]
   public static extern void Native_SetIsGridShown(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, bool jarg3, bool jarg4, bool jarg5);

@@ -73,7 +73,6 @@ class IndexBuffer
 private:
 	std::shared_ptr<LLGI::IndexBuffer> buffer_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
-	int32_t elementCount_ = 0;
 	int32_t stride_ = 0;
 
 public:

@@ -4,6 +4,7 @@
 #include <Effekseer.h>
 #include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h>
 #include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RendererImplemented.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h>
 
 #include "../../efk.Graphics.h"
 
@@ -120,13 +121,14 @@ private:
 
 	ID3D11RasterizerState* rasterizerState = nullptr;
 	ID3D11RasterizerState* savedRasterizerState = nullptr;
+	std::shared_ptr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
 
 public:
 	GraphicsDX11();
 	virtual ~GraphicsDX11();
 
 	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode) override;
-	
+
 	void CopyTo(RenderTexture* src, RenderTexture* dst) override;
 
 	//void CopyToBackground() override;
@@ -141,9 +143,9 @@ public:
 
 	void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) override;
 
-//	void BeginRecord(int32_t width, int32_t height) override;
-//
-//	void EndRecord(std::vector<Effekseer::Color>& pixels) override;
+	//	void BeginRecord(int32_t width, int32_t height) override;
+	//
+	//	void EndRecord(std::vector<Effekseer::Color>& pixels) override;
 
 	void SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels) override;
 
@@ -166,6 +168,11 @@ public:
 	DeviceType GetDeviceType() const override
 	{
 		return DeviceType::DirectX11;
+	}
+
+	std::shared_ptr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override
+	{
+		return graphicsDevice_;
 	}
 };
 } // namespace efk

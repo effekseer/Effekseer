@@ -170,5 +170,10 @@ public:
 	Called when device is presented.
 	*/
 	std::function<void()> Presented;
+
+	virtual std::shared_ptr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice()
+	{
+		return nullptr;
+	}
 };
 } // namespace efk

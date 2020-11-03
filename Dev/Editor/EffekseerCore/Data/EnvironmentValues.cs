@@ -5,6 +5,13 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public class EnvironmentGroundValues
+	{
+		[Key(key = "Environment_IsGroundShown")]
+		[Undo(Undo = false)]
+		public Value.Boolean IsGroundShown { get; private set; } = new Value.Boolean(false);
+	}
+
 	public class EnvironmentBackgroundValues
 	{
 		[Name(language = Language.Japanese, value = "背景色")]
@@ -253,6 +260,10 @@ namespace Effekseer.Data
 		[IO(Export = true, Import = true)]
 		[TreeNode(key ="Environment_Background", id = "Environment_Background")]
 		public EnvironmentBackgroundValues Background { get; private set; }
+
+		[IO(Export = true, Import = true)]
+		[TreeNode(key = "Environment_Ground", id = "Environment_Ground")]
+		public EnvironmentGroundValues Ground { get; private set; } = new EnvironmentGroundValues();
 
 		[IO(Export = true, Import = true)]
 		[TreeNode(key= "Environment_Lighting", id = "Environment_Lighting")]

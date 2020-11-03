@@ -60,6 +60,44 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 	spdlog::trace("OK Background");
 
+	if (graphics_->GetGraphicsDevice() != nullptr)
+	{
+		staticMeshRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
+
+		if (staticMeshRenderer_ == nullptr)
+		{
+			return false;
+		}
+
+		Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData;
+		vbData.resize(4);
+		vbData[0].Pos = {-10.0f, 0.0f, -10.0f};
+		vbData[0].VColor = {90, 90, 90, 255};
+		vbData[1].Pos = {10.0f, 0.0f, -10.0f};
+		vbData[1].VColor = {90, 90, 90, 255};
+		vbData[2].Pos = {10.0f, 0.0f, 10.0f};
+		vbData[2].VColor = {90, 90, 90, 255};
+		vbData[3].Pos = {-10.0f, 0.0f, 10.0f};
+		vbData[3].VColor = {90, 90, 90, 255};
+
+		for (auto& vb : vbData)
+		{
+			vb.Normal = {0.0f, 1.0f, 0.0f};
+		}
+		Effekseer::CustomVector<int32_t> ibData;
+		ibData.resize(6);
+		ibData[0] = 0;
+		ibData[1] = 1;
+		ibData[2] = 2;
+		ibData[3] = 0;
+		ibData[4] = 2;
+		ibData[5] = 3;
+
+		auto staticMesh = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+
+		staticMeshRenderer_->SetStaticMesh(staticMesh);
+	}
+
 	return true;
 }
 
@@ -69,6 +107,18 @@ void MainScreenRenderedEffectGenerator::OnAfterClear()
 	if (backgroundData_ != nullptr)
 	{
 		background_->Rendering(backgroundData_, 1024, 1024);
+	}
+
+	if (staticMeshRenderer_ != nullptr && IsGroundShown)
+	{
+		Effekseer::Tool::RendererParameter param{};
+		param.CameraMatrix = renderer_->GetCameraMatrix();
+		param.ProjectionMatrix = renderer_->GetProjectionMatrix();
+		param.DirectionalLightDirection = renderer_->GetLightDirection().ToFloat4();
+		param.DirectionalLightColor = renderer_->GetLightColor().ToFloat4();
+		param.AmbientLightColor = renderer_->GetLightAmbientColor().ToFloat4();
+
+		staticMeshRenderer_->Render(param);
 	}
 
 	if (IsGridShown)

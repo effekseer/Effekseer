@@ -1038,6 +1038,11 @@ bool Native::InvalidateTextureCache()
 	return true;
 }
 
+void Native::SetIsGroundShown(bool value)
+{
+	mainScreen_->IsGroundShown = value;
+}
+
 void Native::SetIsGridShown(bool value, bool xy, bool xz, bool yz)
 {
 	mainScreen_->IsGridShown = value;
