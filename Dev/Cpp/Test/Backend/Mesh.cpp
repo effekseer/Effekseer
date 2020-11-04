@@ -102,6 +102,7 @@ Effekseer::Backend::RenderPass* GenerateRenderPass(Effekseer::Backend::GraphicsD
 	return nullptr;
 }
 
+#ifdef _WIN32
 Effekseer::Backend::RenderPass* GenerateRenderPass(Effekseer::Backend::GraphicsDevice* graphicsDevice, RenderingWindowDX11* window)
 {
 	auto gd = static_cast<EffekseerRendererDX11::Backend::GraphicsDevice*>(graphicsDevice);
@@ -112,26 +113,31 @@ Effekseer::Backend::RenderPass* GenerateRenderPass(Effekseer::Backend::GraphicsD
 	ES_SAFE_RELEASE(dt);
 	return rp;
 }
+#endif
 
 Effekseer::Backend::Shader* GenerateShader(Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::Backend::UniformLayout* layout, RenderingWindowGL*)
 {
 	return graphicsDevice->CreateShaderFromCodes(vs_shader_gl, ps_shader_gl, layout);
 }
 
+#ifdef _WIN32
 Effekseer::Backend::Shader* GenerateShader(Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::Backend::UniformLayout* layout, RenderingWindowDX11*)
 {
 	return graphicsDevice->CreateShaderFromCodes(vs_shader_dx11, ps_shader_dx11, layout);
 }
+#endif
 
 Effekseer::Backend::GraphicsDevice* GenerateGraphicsDevice(RenderingWindowGL* window)
 {
 	return EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 }
 
+#ifdef _WIN32
 Effekseer::Backend::GraphicsDevice* GenerateGraphicsDevice(RenderingWindowDX11* window)
 {
 	return EffekseerRendererDX11::CreateGraphicsDevice(window->GetDevice(), window->GetContext());
 }
+#endif
 
 template <typename WINDOW>
 void Backend_Mesh()
@@ -233,5 +239,9 @@ void Backend_Mesh()
 
 #if !defined(__FROM_CI__)
 TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh<RenderingWindowGL>(); });
+
+#ifdef _WIN32
 TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh<RenderingWindowDX11>(); });
+#endif
+
 #endif
