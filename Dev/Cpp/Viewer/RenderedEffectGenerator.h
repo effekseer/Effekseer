@@ -68,7 +68,7 @@ protected:
 	efk::Graphics* graphics_ = nullptr;
 	Effekseer::Manager* manager_ = nullptr;
 	EffekseerRenderer::Renderer* renderer_ = nullptr;
-	Effekseer::Effect* effect_ = nullptr;
+	Effekseer::EffectRef effect_ = nullptr;
 
 	efk::RenderTexture* renderTexture_ = nullptr;
 	efk::DepthTexture* depthTexture_ = nullptr;
@@ -113,13 +113,13 @@ public:
 	RenderedEffectGenerator();
 	virtual ~RenderedEffectGenerator();
 
-	bool Initialize(efk::Graphics* graphics, Effekseer::Setting* setting, int32_t spriteCount, bool isSRGBMode);
+	bool Initialize(efk::Graphics* graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
 	void Resize(const Vector2DI screenSize);
 	void Update();
 	void Update(int32_t frame);
 	void Render();
 	void Reset();
-	void SetEffect(Effekseer::Effect* effect);
+	void SetEffect(Effekseer::EffectRef effect);
 	void SetBehavior(const ViewerEffectBehavior& behavior);
 
 	int32_t GetInstanceCount()

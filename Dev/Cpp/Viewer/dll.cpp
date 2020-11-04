@@ -207,7 +207,7 @@ ViewerParamater::ViewerParamater()
 
 static Effekseer::Manager::DrawParameter drawParameter;
 
-static ::Effekseer::Effect* effect_ = nullptr;
+static ::Effekseer::EffectRef effect_ = nullptr;
 static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
 static std::map<std::u16string, Effekseer::Model*> m_models;
@@ -438,7 +438,7 @@ void Native::MaterialLoader::ReleaseAll()
 	materialFiles_.clear();
 }
 
-::Effekseer::Effect* Native::GetEffect()
+::Effekseer::EffectRef Native::GetEffect()
 {
 	return effect_;
 }
@@ -461,7 +461,6 @@ Native::~Native()
 	spdlog::trace("Begin Native::~Native()");
 
 	ES_SAFE_DELETE(g_client);
-	ES_SAFE_RELEASE(setting_);
 
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();
@@ -672,8 +671,6 @@ bool Native::DestroyWindow()
 
 	g_imageResources.clear();
 
-	ES_SAFE_RELEASE(effect_);
-
 	mainScreen_.reset();
 
 	ES_SAFE_DELETE(graphics_);
@@ -715,7 +712,7 @@ bool Native::RemoveEffect()
 		mainScreen_->Reset();
 	}
 
-	ES_SAFE_RELEASE(effect_);
+	effect_.Reset();
 	return true;
 }
 

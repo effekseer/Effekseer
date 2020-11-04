@@ -57,8 +57,8 @@ protected:
 	{
 		CustomVector<Vertex> vertexes;
 		CustomVector<Face> faces;
-		Backend::VertexBuffer* vertexBuffer = nullptr;
-		Backend::IndexBuffer* indexBuffer = nullptr;
+		RefPtr<Backend::VertexBuffer> vertexBuffer;
+		RefPtr<Backend::IndexBuffer> indexBuffer;
 	};
 
 	int32_t version_ = 0;
@@ -72,9 +72,9 @@ public:
 
 	virtual ~Model();
 
-	Backend::VertexBuffer* GetVertexBuffer(int32_t index) const;
+	const RefPtr<Backend::VertexBuffer>& GetVertexBuffer(int32_t index) const;
 
-	Backend::IndexBuffer* GetIndexBuffer(int32_t index) const;
+	const RefPtr<Backend::IndexBuffer>& GetIndexBuffer(int32_t index) const;
 
 	const Vertex* GetVertexes(int32_t index = 0) const;
 

@@ -234,13 +234,13 @@ public:
 	/**
 		@brief	設定クラスを取得する。
 	*/
-	virtual Setting* GetSetting() = 0;
+	virtual RefPtr<Setting> GetSetting() const = 0;
 
 	/**
 		@brief	設定クラスを設定する。
 		@param	setting	[in]	設定
 	*/
-	virtual void SetSetting(Setting* setting) = 0;
+	virtual void SetSetting(const RefPtr<Setting>& setting) = 0;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。
@@ -353,7 +353,7 @@ public:
 		@brief	エフェクトのルートだけを停止する。
 		@param	effect	[in]	エフェクト
 	*/
-	virtual void StopRoot(Effect* effect) = 0;
+	virtual void StopRoot(EffectRef& effect) = 0;
 
 	/**
 		@brief	エフェクトのインスタンスが存在しているか取得する。
@@ -754,7 +754,7 @@ public:
 		@param	z	[in]	Z座標
 		@return	エフェクトのインスタンスのハンドル
 	*/
-	virtual Handle Play(Effect* effect, float x, float y, float z) = 0;
+	virtual Handle Play(EffectRef& effect, float x, float y, float z) = 0;
 
 	/**
 		@brief
@@ -770,7 +770,7 @@ public:
 		\~English	A time to play from middle
 		\~Japanese	途中から再生するための時間
 	*/
-	virtual Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame = 0) = 0;
+	virtual Handle Play(EffectRef& effect, const Vector3D& position, int32_t startFrame = 0) = 0;
 
 	/**
 		@brief

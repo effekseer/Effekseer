@@ -789,15 +789,10 @@ RenderPass::~RenderPass()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool RenderPass::Init(Texture** textures, int32_t textureCount, Texture* depthTexture)
+bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture)
 {
-	textures_.resize(textureCount);
-	for (int32_t i = 0; i < textureCount; i++)
-	{
-		textures_[i] = Effekseer::CreateReference(textures[i], true);
-	}
-
-	depthTexture_ = Effekseer::CreateReference(depthTexture, true);
+	textures_ = textures;
+	depthTexture_ = depthTexture;
 
 	return true;
 }
@@ -860,8 +855,8 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 		return false;
 	}
 
-	shader_ = Effekseer::CreateReference(static_cast<Shader*>(param.ShaderPtr), true);
-	vertexLayout_ = Effekseer::CreateReference(static_cast<VertexLayout*>(param.VertexLayoutPtr), true);
+	auto shader = static_cast<Shader*>(param.ShaderPtr.Get());
+	auto vertexLayout = static_cast<VertexLayout*>(param.VertexLayoutPtr.Get());
 
 	D3D11_RASTERIZER_DESC rsDesc;
 
@@ -948,7 +943,7 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 
 	blendState_ = Effekseer::CreateUniqueReference(blendState);
 
-	if (vertexLayout_->GetElements().size() > LayoutElementMax)
+	if (vertexLayout->GetElements().size() > LayoutElementMax)
 	{
 		return false;
 	}
@@ -964,31 +959,33 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	std::array<D3D11_INPUT_ELEMENT_DESC, LayoutElementMax> elements;
 
 	int32_t layoutOffset = 0;
-	for (size_t i = 0; i < vertexLayout_->GetElements().size(); i++)
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 	{
-		elements[i].SemanticName = vertexLayout_->GetElements()[i].SemanticName.c_str();
-		elements[i].SemanticIndex = vertexLayout_->GetElements()[i].SemanticIndex;
-		elements[i].Format = formats[static_cast<int32_t>(vertexLayout_->GetElements()[i].Format)];
+		elements[i].SemanticName = vertexLayout->GetElements()[i].SemanticName.c_str();
+		elements[i].SemanticIndex = vertexLayout->GetElements()[i].SemanticIndex;
+		elements[i].Format = formats[static_cast<int32_t>(vertexLayout->GetElements()[i].Format)];
 		elements[i].InputSlot = 0;
 		elements[i].AlignedByteOffset = layoutOffset;
 		elements[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		elements[i].InstanceDataStepRate = 0;
-		layoutOffset += Effekseer::Backend::GetVertexLayoutFormatSize(vertexLayout_->GetElements()[i].Format);
+		layoutOffset += Effekseer::Backend::GetVertexLayoutFormatSize(vertexLayout->GetElements()[i].Format);
 	}
 
 	ID3D11InputLayout* inputLayout = nullptr;
 
 	if (FAILED(graphicsDevice_->GetDevice()->CreateInputLayout(
 			elements.data(),
-			static_cast<UINT>(vertexLayout_->GetElements().size()),
-			shader_->GetVertexShaderData().data(),
-			shader_->GetVertexShaderData().size(),
+			static_cast<UINT>(vertexLayout->GetElements().size()),
+			shader->GetVertexShaderData().data(),
+			shader->GetVertexShaderData().size(),
 			&inputLayout)))
 	{
 		return false;
 	}
 
 	inputLayout_ = Effekseer::CreateUniqueReference(inputLayout);
+
+	param_ = param;
 
 	return true;
 }
@@ -1081,124 +1078,115 @@ void GraphicsDevice::Unregister(DeviceObject* deviceObject)
 	objects_.erase(deviceObject);
 }
 
-VertexBuffer* GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
+Effekseer::Backend::VertexBufferRef GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
 {
-	auto ret = new VertexBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<VertexBuffer>(this);
 
 	if (!ret->Init(initialData, size, isDynamic))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride)
+Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride)
 {
-	auto ret = new IndexBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<IndexBuffer>(this);
 
 	if (!ret->Init(initialData, elementCount, stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-UniformBuffer* GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
+Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
 {
-	auto ret = new UniformBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<UniformBuffer>(this);
 
 	if (!ret->Init(size, initialData))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-VertexLayout* GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+Effekseer::Backend::VertexLayoutRef GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
 {
-	auto ret = new VertexLayout();
+	auto ret = Effekseer::MakeRefPtr<VertexLayout>();
 
 	if (!ret->Init(elements, elementCount))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-RenderPass* GraphicsDevice::CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture)
+Effekseer::Backend::RenderPassRef GraphicsDevice::CreateRenderPass(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef& depthTexture)
 {
-	auto ret = new RenderPass(this);
+	auto ret = Effekseer::MakeRefPtr<RenderPass>(this);
 
-	if (!ret->Init(reinterpret_cast<Texture**>(textures), textureCount, static_cast<Texture*>(depthTexture)))
+	if (!ret->Init(textures, depthTexture))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Shader* GraphicsDevice::CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
 {
-	auto ret = new Shader(this);
+	auto ret = Effekseer::MakeRefPtr<Shader>(this);
 
 	if (!ret->Init(vsData, vsDataSize, psData, psDataSize))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Shader* GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout)
 {
 	std::string log;
 	auto vsb = Effekseer::CreateUniqueReference(CompileVertexShader(vsCode, "", {}, log));
@@ -1216,13 +1204,12 @@ Shader* GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* ps
 	return nullptr;
 }
 
-PipelineState* GraphicsDevice::CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
+Effekseer::Backend::PipelineStateRef GraphicsDevice::CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
 {
-	auto ret = new PipelineState(this);
+	auto ret = Effekseer::MakeRefPtr<PipelineState>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
@@ -1238,17 +1225,19 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		return;
 	}
 
-	auto vb = static_cast<VertexBuffer*>(drawParam.VertexBufferPtr);
-	auto ib = static_cast<IndexBuffer*>(drawParam.IndexBufferPtr);
-	auto pip = static_cast<PipelineState*>(drawParam.PipelineStatePtr);
-	auto vub = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr);
-	auto pub = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr);
+	auto vb = static_cast<VertexBuffer*>(drawParam.VertexBufferPtr.Get());
+	auto ib = static_cast<IndexBuffer*>(drawParam.IndexBufferPtr.Get());
+	auto pip = static_cast<PipelineState*>(drawParam.PipelineStatePtr.Get());
+	auto vub = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr.Get());
+	auto pub = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr.Get());
+	auto shader = static_cast<Shader*>(pip->GetParam().ShaderPtr.Get());
+	auto vertexLayout = static_cast<VertexLayout*>(pip->GetParam().VertexLayoutPtr.Get());
 
 	{
 		uint32_t vertexSize = 0;
-		for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 		{
-			const auto& element = pip->GetVertexLayout()->GetElements()[i];
+			const auto& element = vertexLayout->GetElements()[i];
 			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
 		}
 
@@ -1282,8 +1271,8 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	}
 
 	{
-		context_->VSSetShader(pip->GetShader()->GetVertexShader(), nullptr, 0);
-		context_->PSSetShader(pip->GetShader()->GetPixelShader(), nullptr, 0);
+		context_->VSSetShader(shader->GetVertexShader(), nullptr, 0);
+		context_->PSSetShader(shader->GetPixelShader(), nullptr, 0);
 	}
 
 	{
@@ -1295,7 +1284,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	for (int32_t i = 0; i < drawParam.TextureCount; i++)
 	{
-		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i]);
+		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i].Get());
 		if (texture != nullptr)
 		{
 
@@ -1341,9 +1330,9 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	}
 }
 
-void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
+void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
 {
-	auto rp = static_cast<RenderPass*>(renderPass);
+	auto rp = static_cast<RenderPass*>(renderPass.Get());
 
 	if (rp->GetTextures().size() == 0)
 	{
@@ -1356,12 +1345,12 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass,
 
 	for (size_t i = 0; i < rp->GetTextures().size(); i++)
 	{
-		rtvs[i] = static_cast<Texture*>(rp->GetTextures()[i].get())->GetRTV();
+		rtvs[i] = static_cast<Texture*>(rp->GetTextures().at(i).Get())->GetRTV();
 	}
 
 	if (rp->GetDepthTexture() != nullptr)
 	{
-		dsv = static_cast<Texture*>(rp->GetDepthTexture().get())->GetDSV();
+		dsv = static_cast<Texture*>(rp->GetDepthTexture().Get())->GetDSV();
 	}
 
 	context_->OMSetRenderTargets(static_cast<UINT>(rp->GetTextures().size()), rtvs.data(), dsv);
@@ -1369,8 +1358,8 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass,
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	vp.Width = static_cast<float>(rp->GetTextures()[0]->GetSize()[0]);
-	vp.Height = static_cast<float>(rp->GetTextures()[0]->GetSize()[1]);
+	vp.Width = static_cast<float>(rp->GetTextures().at(0)->GetSize()[0]);
+	vp.Height = static_cast<float>(rp->GetTextures().at(0)->GetSize()[1]);
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	context_->RSSetViewports(1, &vp);
@@ -1395,27 +1384,26 @@ void GraphicsDevice::EndRenderPass()
 {
 }
 
-bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data)
+bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 {
 	if (buffer == nullptr)
 	{
 		return false;
 	}
 
-	auto b = static_cast<UniformBuffer*>(buffer);
+	auto b = static_cast<UniformBuffer*>(buffer.Get());
 
 	b->UpdateData(data, size, offset);
 
 	return true;
 }
 
-Texture* GraphicsDevice::CreateTexture(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(srv, rtv, dsv))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 

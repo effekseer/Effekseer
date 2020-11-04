@@ -21,7 +21,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* setting)
+void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting)
 {
 	if (Mode == EffectNodeModelMode::File)
 	{

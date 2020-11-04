@@ -31,7 +31,7 @@ static int g_window_height = 600;
 static ::Effekseer::Manager* g_manager = NULL;
 static ::EffekseerRenderer::Renderer* g_renderer = NULL;
 static ::EffekseerSound::Sound* g_sound = NULL;
-static ::Effekseer::Effect* g_effects[3];
+static ::Effekseer::EffectRef g_effects[3];
 static ::Effekseer::Vector3D g_position;
 
 static LPDIRECT3D9 g_d3d = NULL;

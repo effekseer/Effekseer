@@ -97,43 +97,46 @@ float4 main(PS_Input input): SV_Target
 
 )";
 
-Effekseer::Backend::RenderPass* GenerateRenderPass(Effekseer::Backend::GraphicsDevice* graphicsDevice, RenderingWindowGL* window)
+Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderingWindowGL* window)
 {
 	return nullptr;
 }
 
 #ifdef _WIN32
-Effekseer::Backend::RenderPass* GenerateRenderPass(Effekseer::Backend::GraphicsDevice* graphicsDevice, RenderingWindowDX11* window)
+Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderingWindowDX11* window)
 {
-	auto gd = static_cast<EffekseerRendererDX11::Backend::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<EffekseerRendererDX11::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto rt = gd->CreateTexture(nullptr, window->GetRenderTargetView(), nullptr);
 	auto dt = gd->CreateTexture(nullptr, nullptr, window->GetDepthStencilView());
-	auto rp = gd->CreateRenderPass(reinterpret_cast<Effekseer::Backend::Texture**>(&rt), 1, dt);
-	ES_SAFE_RELEASE(rt);
-	ES_SAFE_RELEASE(dt);
+
+	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> rts;
+	rts.resize(1);
+	rts.at(0) = rt;
+
+	auto rp = gd->CreateRenderPass(rts, dt);
 	return rp;
 }
 #endif
 
-Effekseer::Backend::Shader* GenerateShader(Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::Backend::UniformLayout* layout, RenderingWindowGL*)
+Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
 {
 	return graphicsDevice->CreateShaderFromCodes(vs_shader_gl, ps_shader_gl, layout);
 }
 
 #ifdef _WIN32
-Effekseer::Backend::Shader* GenerateShader(Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::Backend::UniformLayout* layout, RenderingWindowDX11*)
+Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
 {
 	return graphicsDevice->CreateShaderFromCodes(vs_shader_dx11, ps_shader_dx11, layout);
 }
 #endif
 
-Effekseer::Backend::GraphicsDevice* GenerateGraphicsDevice(RenderingWindowGL* window)
+Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice(RenderingWindowGL* window)
 {
 	return EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 }
 
 #ifdef _WIN32
-Effekseer::Backend::GraphicsDevice* GenerateGraphicsDevice(RenderingWindowDX11* window)
+Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice(RenderingWindowDX11* window)
 {
 	return EffekseerRendererDX11::CreateGraphicsDevice(window->GetDevice(), window->GetContext());
 }
@@ -144,7 +147,7 @@ void Backend_Mesh()
 {
 	auto window = std::make_shared<WINDOW>(std::array<int, 2>({1280, 720}), "Backend.Mesh");
 
-	std::shared_ptr<Effekseer::Backend::GraphicsDevice> graphicsDevice = Effekseer::CreateReference(GenerateGraphicsDevice(window.get()));
+	auto graphicsDevice = GenerateGraphicsDevice(window.get());
 
 	std::array<SimpleVertex, 4> vbData;
 	vbData[0].Position = {-0.5f, 0.5f, 0.5f};
@@ -156,7 +159,7 @@ void Backend_Mesh()
 	vbData[3].Position = {-0.5f, -0.5f, 0.5f};
 	vbData[3].Color = {0, 255, 0, 255};
 
-	auto vb = Effekseer::CreateReference(graphicsDevice->CreateVertexBuffer(sizeof(SimpleVertex) * 4, vbData.data(), false));
+	auto vb = graphicsDevice->CreateVertexBuffer(sizeof(SimpleVertex) * 4, vbData.data(), false);
 
 	std::array<int32_t, 6> ibData;
 	ibData[0] = 0;
@@ -166,7 +169,7 @@ void Backend_Mesh()
 	ibData[4] = 2;
 	ibData[5] = 3;
 
-	auto ib = Effekseer::CreateReference(graphicsDevice->CreateIndexBuffer(6, ibData.data(), Effekseer::Backend::IndexBufferStrideType::Stride4));
+	auto ib = graphicsDevice->CreateIndexBuffer(6, ibData.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 
 	// shader
 	Effekseer::Backend::UniformLayoutElement uniformLayoutElement;
@@ -178,10 +181,10 @@ void Backend_Mesh()
 	// constant buffer
 	std::array<float, 4> shiftVertex;
 	shiftVertex.fill(0);
-	auto cb = Effekseer::CreateReference(graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data()));
-	auto uniformLayout = Effekseer::CreateReference(new Effekseer::Backend::UniformLayout({}, {uniformLayoutElement}));
+	auto cb = graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data());
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<std::string>{}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
-	auto shader = Effekseer::CreateReference(GenerateShader(graphicsDevice.get(), uniformLayout.get(), window.get()));
+	auto shader = GenerateShader(graphicsDevice, uniformLayout, window.get());
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(3);
@@ -198,34 +201,34 @@ void Backend_Mesh()
 	vertexLayoutElements[2].SemanticIndex = 0;
 	vertexLayoutElements[2].SemanticName = "NORMAL";
 
-	auto vertexLayout = Effekseer::CreateReference(graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size())));
+	auto vertexLayout = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 
 	Effekseer::Backend::PipelineStateParameter pipParam;
 
 	// OpenGL doesn't require it
 	pipParam.FrameBufferPtr = nullptr;
-	pipParam.VertexLayoutPtr = vertexLayout.get();
-	pipParam.ShaderPtr = shader.get();
+	pipParam.VertexLayoutPtr = vertexLayout;
+	pipParam.ShaderPtr = shader;
 	pipParam.IsDepthTestEnabled = false;
 	pipParam.IsBlendEnabled = false;
 
-	auto pip = Effekseer::CreateReference(graphicsDevice->CreatePipelineState(pipParam));
+	auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
-	auto renderPass = Effekseer::CreateReference(GenerateRenderPass(graphicsDevice.get(), window.get()));
+	auto renderPass = GenerateRenderPass(graphicsDevice, window.get());
 	int count = 0;
 	while (count < 60 && window->DoEvent())
 	{
-		graphicsDevice->BeginRenderPass(renderPass.get(), true, true, Effekseer::Color(80, 80, 80, 255));
+		graphicsDevice->BeginRenderPass(renderPass, true, true, Effekseer::Color(80, 80, 80, 255));
 
 		shiftVertex[0] += 0.01f;
 		shiftVertex[0] = fmodf(shiftVertex[0], 0.5f);
-		graphicsDevice->UpdateUniformBuffer(cb.get(), sizeof(float) * 4, 0, shiftVertex.data());
+		graphicsDevice->UpdateUniformBuffer(cb, sizeof(float) * 4, 0, shiftVertex.data());
 
 		Effekseer::Backend::DrawParameter drawParam;
-		drawParam.VertexBufferPtr = vb.get();
-		drawParam.IndexBufferPtr = ib.get();
-		drawParam.PipelineStatePtr = pip.get();
-		drawParam.VertexUniformBufferPtr = cb.get();
+		drawParam.VertexBufferPtr = vb;
+		drawParam.IndexBufferPtr = ib;
+		drawParam.PipelineStatePtr = pip;
+		drawParam.VertexUniformBufferPtr = cb;
 		drawParam.PrimitiveCount = 2;
 		drawParam.InstanceCount = 1;
 		graphicsDevice->Draw(drawParam);

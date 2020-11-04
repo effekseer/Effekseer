@@ -22,6 +22,29 @@ using Direct3DTexture9Ptr = std::unique_ptr<IDirect3DTexture9, Effekseer::Refere
 using Direct3DSurface9Ptr = std::unique_ptr<IDirect3DSurface9, Effekseer::ReferenceDeleter<IDirect3DSurface9>>;
 
 class GraphicsDevice;
+class VertexBuffer;
+class IndexBuffer;
+class UniformBuffer;
+class Shader;
+class VertexLayout;
+class FrameBuffer;
+class Texture;
+class RenderPass;
+class PipelineState;
+class UniformLayout;
+
+using GraphicsDeviceRef = Effekseer::RefPtr<GraphicsDevice>;
+using VertexBufferRef = Effekseer::RefPtr<VertexBuffer>;
+using IndexBufferRef = Effekseer::RefPtr<IndexBuffer>;
+using UniformBufferRef = Effekseer::RefPtr<UniformBuffer>;
+using ShaderRef = Effekseer::RefPtr<Shader>;
+using VertexLayoutRef = Effekseer::RefPtr<VertexLayout>;
+using FrameBufferRef = Effekseer::RefPtr<FrameBuffer>;
+using TextureRef = Effekseer::RefPtr<Texture>;
+using RenderPassRef = Effekseer::RefPtr<RenderPass>;
+using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
+using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
+
 
 class DirtiedBlock
 {
@@ -172,11 +195,11 @@ public:
 
 	void Unregister(DeviceObject* deviceObject);
 
-	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
+	Effekseer::Backend::VertexBufferRef CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
-	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 };
 
 } // namespace Backend

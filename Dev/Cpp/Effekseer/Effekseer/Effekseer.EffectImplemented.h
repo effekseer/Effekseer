@@ -107,13 +107,11 @@ class EffectImplemented : public Effect, public ReferenceObject
 	static const int32_t SupportBinaryVersion = Version16Alpha2;
 
 protected:
-	ManagerImplemented* m_pManager;
-
-	Setting* m_setting;
+	RefPtr<Setting> m_setting;
 
 	mutable std::atomic<int32_t> m_reference;
 
-	EffectFactory* factory = nullptr;
+	RefPtr<EffectFactory> factory;
 
 	int m_version;
 
@@ -203,26 +201,17 @@ protected:
 	void ResetReloadingBackup();
 
 public:
-	/**
-		@brief	生成
-	*/
-	static Effect* Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	/**
-		@brief	生成
-	*/
-	static Effect* Create(Setting* setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+	static EffectRef Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	// コンストラクタ
+	static EffectRef Create(const RefPtr<Setting>& setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+
 	EffectImplemented(Manager* pManager, void* pData, int size);
 
-	// コンストラクタ
-	EffectImplemented(Setting* setting, void* pData, int size);
+	EffectImplemented(const RefPtr<Setting>& setting, void* pData, int size);
 
-	// デストラクタ
 	virtual ~EffectImplemented();
 
-	// Rootの取得
 	EffectNode* GetRoot() const override;
 
 	float GetMaginification() const override;
@@ -248,39 +237,21 @@ public:
 		return dynamicEquation;
 	}
 
-private:
-	/**
-		@brief	マネージャー取得
-	*/
-	Manager* GetManager() const;
-
 public:
 	const char16_t* GetName() const override;
 
 	void SetName(const char16_t* name) override;
 
-	/**
-	@brief	設定取得
-	*/
-	Setting* GetSetting() const override;
+	RefPtr<Setting> GetSetting() const override;
 
-	/**
-		@brief	エフェクトデータのバージョン取得
-	*/
 	int GetVersion() const override;
 
-	/**
-		@brief	格納されている画像のポインタを取得する。
-	*/
 	TextureData* GetColorImage(int n) const override;
 
 	int32_t GetColorImageCount() const override;
 
 	const char16_t* GetColorImagePath(int n) const override;
 
-	/**
-	@brief	格納されている画像のポインタを取得する。
-	*/
 	TextureData* GetNormalImage(int n) const override;
 
 	int32_t GetNormalImageCount() const override;
@@ -333,19 +304,6 @@ public:
 
 	void SetCurve(int32_t index, void* data) override;
 
-	/**
-		@brief	エフェクトのリロードを行う。
-	*/
-	bool Reload(void* data, int32_t size, const char16_t* materialPath, ReloadingThreadType reloadingThreadType) override;
-
-	/**
-		@brief	エフェクトのリロードを行う。
-	*/
-	bool Reload(const char16_t* path, const char16_t* materialPath, ReloadingThreadType reloadingThreadType) override;
-
-	/**
-		@brief	エフェクトのリロードを行う。
-	*/
 	bool Reload(Manager** managers,
 				int32_t managersCount,
 				void* data,
@@ -353,18 +311,12 @@ public:
 				const char16_t* materialPath,
 				ReloadingThreadType reloadingThreadType) override;
 
-	/**
-		@brief	エフェクトのリロードを行う。
-	*/
 	bool Reload(Manager** managers,
 				int32_t managersCount,
 				const char16_t* path,
 				const char16_t* materialPath,
 				ReloadingThreadType reloadingThreadType) override;
 
-	/**
-		@brief	画像等リソースの再読み込みを行う。
-	*/
 	void ReloadResources(const void* data, int32_t size, const char16_t* materialPath) override;
 
 	void UnloadResources(const char16_t* materialPath);

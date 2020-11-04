@@ -697,16 +697,16 @@ void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer)
 	GetCurrentCommandList()->SetIndexBuffer(indexBuffer);
 }
 
-void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t stride)
+void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t stride)
 {
-	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
 
 	SetVertexBuffer(vb->GetBuffer(), stride);
 }
 
-void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
-	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
 
 	SetIndexBuffer(ib->GetBuffer());
 }
@@ -890,7 +890,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		{
 			if (textures[i]->TexturePtr != nullptr)
 			{
-				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr);
+				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get());
 				auto t = texture->GetTexture().get();
 				GetCurrentCommandList()->SetTexture(
 					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);

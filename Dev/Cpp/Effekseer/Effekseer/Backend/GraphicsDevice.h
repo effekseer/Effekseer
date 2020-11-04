@@ -12,6 +12,32 @@ namespace Effekseer
 namespace Backend
 {
 
+class GraphicsDevice;
+class VertexBuffer;
+class IndexBuffer;
+class UniformBuffer;
+class Shader;
+class VertexLayout;
+class FrameBuffer;
+class Texture;
+class RenderPass;
+class PipelineState;
+class UniformLayout;
+
+using GraphicsDeviceRef = RefPtr<GraphicsDevice>;
+using VertexBufferRef = RefPtr<VertexBuffer>;
+using IndexBufferRef = RefPtr<IndexBuffer>;
+using UniformBufferRef = RefPtr<UniformBuffer>;
+using ShaderRef = RefPtr<Shader>;
+using VertexLayoutRef = RefPtr<VertexLayout>;
+using FrameBufferRef = RefPtr<FrameBuffer>;
+using TextureRef = RefPtr<Texture>;
+using RenderPassRef = RefPtr<RenderPass>;
+using PipelineStateRef = RefPtr<PipelineState>;
+using UniformLayoutRef = RefPtr<UniformLayout>;
+
+static const int32_t RenderTargetMax = 4;
+
 enum class TextureFormatType
 {
 	R8G8B8A8_UNORM,
@@ -223,15 +249,15 @@ struct DrawParameter
 public:
 	static const int TextureSlotCount = 8;
 
-	VertexBuffer* VertexBufferPtr = nullptr;
-	IndexBuffer* IndexBufferPtr = nullptr;
-	PipelineState* PipelineStatePtr = nullptr;
+	VertexBufferRef VertexBufferPtr;
+	IndexBufferRef IndexBufferPtr;
+	PipelineStateRef PipelineStatePtr;
 
-	UniformBuffer* VertexUniformBufferPtr = nullptr;
-	UniformBuffer* PixelUniformBufferPtr = nullptr;
+	UniformBufferRef VertexUniformBufferPtr;
+	UniformBufferRef PixelUniformBufferPtr;
 
 	int32_t TextureCount = 0;
-	std::array<Texture*, TextureSlotCount> TexturePtrs;
+	std::array<TextureRef, TextureSlotCount> TexturePtrs;
 	std::array<TextureWrapType, TextureSlotCount> TextureWrapTypes;
 	std::array<TextureSamplingType, TextureSlotCount> TextureSamplingTypes;
 
@@ -344,9 +370,9 @@ struct PipelineStateParameter
 	bool IsDepthWriteEnabled = false;
 	DepthFuncType DepthFunc = DepthFuncType::Less;
 
-	Shader* ShaderPtr = nullptr;
-	VertexLayout* VertexLayoutPtr = nullptr;
-	FrameBuffer* FrameBufferPtr = nullptr;
+	ShaderRef ShaderPtr;
+	VertexLayoutRef VertexLayoutPtr;
+	FrameBufferRef FrameBufferPtr;
 };
 
 struct TextureParameter
@@ -383,9 +409,9 @@ public:
 		@param	isDynamic	whether is the buffer dynamic? (for DirectX9, 11 or OpenGL)
 		@return	VertexBuffer
 	*/
-	virtual VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
+	virtual VertexBufferRef CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
 	{
-		return nullptr;
+		return VertexBufferRef{};
 	}
 
 	/**
@@ -395,9 +421,9 @@ public:
 		@param	stride	stride type
 		@return	IndexBuffer
 	*/
-	virtual IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, IndexBufferStrideType stride)
+	virtual IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, IndexBufferStrideType stride)
 	{
-		return nullptr;
+		return IndexBufferRef{};
 	}
 
 	/**
@@ -408,7 +434,7 @@ public:
 		@param	data	updating data
 		@return	Succeeded in updating?
 	*/
-	virtual bool UpdateVertexBuffer(VertexBuffer* buffer, int32_t size, int32_t offset, const void* data)
+	virtual bool UpdateVertexBuffer(VertexBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 	{
 		return false;
 	}
@@ -421,7 +447,7 @@ public:
 		@param	data	updating data
 		@return	Succeeded in updating?
 	*/
-	virtual bool UpdateIndexBuffer(IndexBuffer* buffer, int32_t size, int32_t offset, const void* data)
+	virtual bool UpdateIndexBuffer(IndexBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 	{
 		return false;
 	}
@@ -434,7 +460,7 @@ public:
 		@param	data	updating data
 		@return	Succeeded in updating?
 	*/
-	virtual bool UpdateUniformBuffer(UniformBuffer* buffer, int32_t size, int32_t offset, const void* data)
+	virtual bool UpdateUniformBuffer(UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 	{
 		return false;
 	}
@@ -444,9 +470,9 @@ public:
 		@param	elements	a pointer of array of vertex layout elements
 		@param	elementCount	the number of elements
 	*/
-	virtual VertexLayout* CreateVertexLayout(const VertexLayoutElement* elements, int32_t elementCount)
+	virtual VertexLayoutRef CreateVertexLayout(const VertexLayoutElement* elements, int32_t elementCount)
 	{
-		return nullptr;
+		return RefPtr<VertexLayout>{};
 	}
 
 	/**
@@ -455,39 +481,39 @@ public:
 		@param	initialData	the initial data of buffer. If it is null, not initialized.
 		@return	UniformBuffer
 	*/
-	virtual UniformBuffer* CreateUniformBuffer(int32_t size, const void* initialData)
+	virtual UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData)
 	{
-		return nullptr;
+		return UniformBufferRef{};
 	}
 
-	virtual PipelineState* CreatePipelineState(const PipelineStateParameter& param)
+	virtual PipelineStateRef CreatePipelineState(const PipelineStateParameter& param)
 	{
-		return nullptr;
+		return PipelineStateRef{};
 	}
 
-	virtual FrameBuffer* CreateFrameBuffer(const TextureFormatType* formats, int32_t formatCount, TextureFormatType* depthFormat)
+	virtual FrameBufferRef CreateFrameBuffer(const TextureFormatType* formats, int32_t formatCount, TextureFormatType depthFormat)
 	{
-		return nullptr;
+		return FrameBufferRef{};
 	}
 
-	virtual RenderPass* CreateRenderPass(Texture** textures, int32_t textureCount, Texture* depthTexture)
+	virtual RenderPassRef CreateRenderPass(FixedSizeVector<TextureRef, RenderTargetMax>& textures, TextureRef& depthTexture)
 	{
-		return nullptr;
+		return RenderPassRef{};
 	}
 
-	virtual Texture* CreateTexture(const TextureParameter& param)
+	virtual TextureRef CreateTexture(const TextureParameter& param)
 	{
-		return nullptr;
+		return TextureRef{};
 	}
 
-	virtual Texture* CreateRenderTexture(const RenderTextureParameter& param)
+	virtual TextureRef CreateRenderTexture(const RenderTextureParameter& param)
 	{
-		return nullptr;
+		return TextureRef{};
 	}
 
-	virtual Texture* CreateDepthTexture(const DepthTextureParameter& param)
+	virtual TextureRef CreateDepthTexture(const DepthTextureParameter& param)
 	{
-		return nullptr;
+		return TextureRef{};
 	}
 
 	/**
@@ -495,19 +521,19 @@ public:
 		@param	key	a key which specifies a shader
 		@return	Shader
 	*/
-	virtual Shader* CreateShaderFromKey(const char* key)
+	virtual ShaderRef CreateShaderFromKey(const char* key)
 	{
-		return nullptr;
+		return ShaderRef{};
 	}
 
-	virtual Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, UniformLayout* layout = nullptr)
+	virtual ShaderRef CreateShaderFromCodes(const char* vsCode, const char* psCode, UniformLayoutRef layout = nullptr)
 	{
-		return nullptr;
+		return ShaderRef{};
 	}
 
-	virtual Shader* CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
+	virtual ShaderRef CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
 	{
-		return nullptr;
+		return ShaderRef{};
 	}
 
 	/**
@@ -525,7 +551,7 @@ public:
 	{
 	}
 
-	virtual void BeginRenderPass(RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Color clearColor)
+	virtual void BeginRenderPass(RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Color clearColor)
 	{
 	}
 

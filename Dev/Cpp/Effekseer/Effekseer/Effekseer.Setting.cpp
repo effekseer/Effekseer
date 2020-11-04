@@ -40,12 +40,12 @@ Setting::Setting()
 	, m_modelLoader(nullptr)
 	, m_curveLoader(nullptr)
 {
-	auto effectFactory = new EffectFactory();
-	effectFactories.push_back(effectFactory);
+	auto effectFactory = MakeRefPtr<EffectFactory>();
+	AddEffectFactory(effectFactory);
 
 	// this function is for 1.6
-	auto efkefcFactory = new EfkEfcFactory();
-	effectFactories.push_back(efkefcFactory);
+	auto efkefcFactory = MakeRefPtr<EfkEfcFactory>();
+	AddEffectFactory(efkefcFactory);
 
 	procedualMeshGenerator_ = new ProcedualModelGenerator();
 }
@@ -69,9 +69,9 @@ Setting::~Setting()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Setting* Setting::Create()
+RefPtr<Setting> Setting::Create()
 {
-	return new Setting();
+	return RefPtr<Setting>(new Setting());
 }
 
 //----------------------------------------------------------------------------------
@@ -192,25 +192,23 @@ void Setting::SetProcedualMeshGenerator(ProcedualModelGenerator* generator)
 	procedualMeshGenerator_ = generator;
 }
 
-void Setting::AddEffectFactory(EffectFactory* effectFactory)
+void Setting::AddEffectFactory(const RefPtr<EffectFactory>& effectFactory)
 {
-
-	if (effectFactory == nullptr)
+	if (effectFactory.Get() == nullptr)
+	{
 		return;
-	ES_SAFE_ADDREF(effectFactory);
-	effectFactories.push_back(effectFactory);
+	}
+
+	auto effectFactoryCopied = effectFactory;
+	effectFactories.emplace_back(effectFactoryCopied);
 }
 
 void Setting::ClearEffectFactory()
 {
-	for (auto& e : effectFactories)
-	{
-		ES_SAFE_RELEASE(e);
-	}
 	effectFactories.clear();
 }
 
-EffectFactory* Setting::GetEffectFactory(int32_t ind) const
+const RefPtr<EffectFactory>& Setting::GetEffectFactory(int32_t ind) const
 {
 	return effectFactories[ind];
 }

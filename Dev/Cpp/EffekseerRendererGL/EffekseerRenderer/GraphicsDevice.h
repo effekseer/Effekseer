@@ -14,6 +14,29 @@ namespace Backend
 {
 
 class GraphicsDevice;
+class VertexBuffer;
+class IndexBuffer;
+class UniformBuffer;
+class Shader;
+class VertexLayout;
+class FrameBuffer;
+class Texture;
+class RenderPass;
+class PipelineState;
+class UniformLayout;
+
+using GraphicsDeviceRef = Effekseer::RefPtr<GraphicsDevice>;
+using VertexBufferRef = Effekseer::RefPtr<VertexBuffer>;
+using IndexBufferRef = Effekseer::RefPtr<IndexBuffer>;
+using UniformBufferRef = Effekseer::RefPtr<UniformBuffer>;
+using ShaderRef = Effekseer::RefPtr<Shader>;
+using VertexLayoutRef = Effekseer::RefPtr<VertexLayout>;
+using FrameBufferRef = Effekseer::RefPtr<FrameBuffer>;
+using TextureRef = Effekseer::RefPtr<Texture>;
+using RenderPassRef = Effekseer::RefPtr<RenderPass>;
+using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
+using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
+
 
 class DeviceObject
 {
@@ -178,12 +201,12 @@ private:
 	GLuint program_ = 0;
 	GLuint vao_ = 0;
 
-	std::shared_ptr<Effekseer::Backend::UniformLayout> layout_ = nullptr;
+	Effekseer::Backend::UniformLayoutRef layout_ = nullptr;
 
 public:
 	Shader(GraphicsDevice* graphicsDevice);
 	~Shader() override;
-	bool Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout);
+	bool Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef& layout);
 
 	GLuint GetProgram() const
 	{
@@ -195,7 +218,7 @@ public:
 		return vao_;
 	}
 
-	const std::shared_ptr<Effekseer::Backend::UniformLayout>& GetLayout() const
+	const Effekseer::Backend::UniformLayoutRef& GetLayout() const
 	{
 		return layout_;
 	}
@@ -207,8 +230,6 @@ class PipelineState
 {
 private:
 	Effekseer::Backend::PipelineStateParameter param_;
-	std::shared_ptr<Shader> shader_;
-	std::shared_ptr<VertexLayout> vertexLayout_;
 
 public:
 	PipelineState() = default;
@@ -220,16 +241,6 @@ public:
 	{
 		return param_;
 	}
-
-	const std::shared_ptr<Shader>& GetShader() const
-	{
-		return shader_;
-	}
-
-	const std::shared_ptr<VertexLayout>& GetVertexLayout() const
-	{
-		return vertexLayout_;
-	}
 };
 
 class RenderPass
@@ -239,14 +250,14 @@ class RenderPass
 private:
 	GLuint buffer_ = 0;
 	GraphicsDevice* graphicsDevice_ = nullptr;
-	Effekseer::CustomVector<std::shared_ptr<Texture>> textures_;
-	std::shared_ptr<Texture> depthTexture_;
+	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> textures_;
+	Effekseer::Backend::TextureRef depthTexture_;
 
 public:
 	RenderPass(GraphicsDevice* graphicsDevice);
 	~RenderPass() override;
 
-	bool Init(Texture** textures, int32_t textureCount, Texture* depthTexture);
+	bool Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture);
 
 	GLuint GetBuffer() const
 	{
@@ -280,35 +291,35 @@ public:
 
 	void Unregister(DeviceObject* deviceObject);
 
-	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
+	Effekseer::Backend::VertexBufferRef CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
-	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 
-	Texture* CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
 
-	Texture* CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
 
-	UniformBuffer* CreateUniformBuffer(int32_t size, const void* initialData) override;
+	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 
-	VertexLayout* CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
+	Effekseer::Backend::VertexLayoutRef CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
 
-	RenderPass* CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture) override;
+	Effekseer::Backend::RenderPassRef CreateRenderPass(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef& depthTexture) override;
 
-	Shader* CreateShaderFromKey(const char* key) override;
+	Effekseer::Backend::ShaderRef CreateShaderFromKey(const char* key) override;
 
-	Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout) override;
+	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout) override;
 
-	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
+	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
 	void Draw(const Effekseer::Backend::DrawParameter& drawParam) override;
 
-	void BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;
+	void BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;
 
 	void EndRenderPass() override;
 
-	bool UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data) override;
+	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
 	std::string GetDeviceName() const override
 	{

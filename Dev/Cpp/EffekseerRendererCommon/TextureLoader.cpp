@@ -183,11 +183,6 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 
 void TextureLoader::Unload(Effekseer::TextureData* data)
 {
-	if (data != nullptr && data->TexturePtr != nullptr)
-	{
-		ES_SAFE_RELEASE(data->TexturePtr);
-	}
-
 	if (data != nullptr)
 	{
 		delete data;

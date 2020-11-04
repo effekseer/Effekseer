@@ -171,7 +171,7 @@ public:
 	*/
 	std::function<void()> Presented;
 
-	virtual std::shared_ptr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice()
+	virtual Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice()
 	{
 		return nullptr;
 	}

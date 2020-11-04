@@ -195,7 +195,7 @@ bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t win
 	glGenFramebuffers(1, &frameBufferForCopySrc);
 	glGenFramebuffers(1, &frameBufferForCopyDst);
 
-	graphicsDevice_ = std::make_shared<EffekseerRendererGL::Backend::GraphicsDevice>(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	graphicsDevice_ = Effekseer::MakeRefPtr<EffekseerRendererGL::Backend::GraphicsDevice>(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 
 	return true;
 }

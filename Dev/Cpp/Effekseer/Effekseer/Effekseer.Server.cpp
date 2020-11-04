@@ -291,38 +291,19 @@ void ServerImplemented::Stop()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Register(const char16_t* key, Effect* effect)
+void ServerImplemented::Register(const char16_t* key, EffectRef& effect)
 {
 	if (effect == nullptr)
 		return;
 
 	std::u16string key_((const char16_t*)key);
-
-	if (m_effects.count(key_) > 0)
-	{
-		m_effects[key_]->Release();
-	}
-
-	m_effects[key_] = effect;
-	m_effects[key_]->AddRef();
-
-	if (m_data.count(key_) > 0)
-	{
-		if (m_materialPath.size() > 1)
-		{
-			m_effects[key_]->Reload(&(m_data[key_][0]), (int32_t)m_data.size(), &(m_materialPath[0]));
-		}
-		else
-		{
-			m_effects[key_]->Reload(&(m_data[key_][0]), (int32_t)m_data.size());
-		}
-	}
+	m_effects[key_] = {effect, false};
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Unregister(Effect* effect)
+void ServerImplemented::Unregister(EffectRef& effect)
 {
 	if (effect == nullptr)
 		return;
@@ -332,9 +313,8 @@ void ServerImplemented::Unregister(Effect* effect)
 
 	while (it != it_end)
 	{
-		if ((*it).second == effect)
+		if ((*it).second.EffectPtr == effect)
 		{
-			(*it).second->Release();
 			m_effects.erase(it);
 			return;
 		}
@@ -359,6 +339,30 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount, Reloadi
 		delete (*it);
 	}
 	m_removedClients.clear();
+
+	for (auto& kv : m_effects)
+	{
+		if (kv.second.IsRegistering)
+		{
+			continue;
+		}
+
+		kv.second.IsRegistering = false;
+
+		auto key_ = kv.first;
+
+		if (m_data.count(kv.first) > 0)
+		{
+			if (m_materialPath.size() > 1)
+			{
+				m_effects[key_].EffectPtr->Reload(managers, managerCount, &(m_data[key_][0]), (int32_t)m_data.size(), &(m_materialPath[0]));
+			}
+			else
+			{
+				m_effects[key_].EffectPtr->Reload(managers, managerCount, &(m_data[key_][0]), (int32_t)m_data.size());
+			}
+		}
+	}
 
 	for (std::set<InternalClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
@@ -402,25 +406,12 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount, Reloadi
 
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(
+						m_effects[key].EffectPtr->Reload(
 							managers, managerCount, data_.data(), (int32_t)data_.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(managers, managerCount, data_.data(), (int32_t)data_.size(), nullptr, reloadingThreadType);
-					}
-				}
-				else
-				{
-					auto& data_ = m_data[key];
-
-					if (m_materialPath.size() > 1)
-					{
-						m_effects[key]->Reload(data_.data(), (int32_t)data_.size(), &(m_materialPath[0]), reloadingThreadType);
-					}
-					else
-					{
-						m_effects[key]->Reload(data_.data(), (int32_t)data_.size(), nullptr, reloadingThreadType);
+						m_effects[key].EffectPtr->Reload(managers, managerCount, data_.data(), (int32_t)data_.size(), nullptr, reloadingThreadType);
 					}
 				}
 			}
@@ -446,16 +437,6 @@ void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 		pos++;
 	}
 	m_materialPath.push_back(0);
-}
-
-void ServerImplemented::Regist(const char16_t* key, Effect* effect)
-{
-	Register(key, effect);
-}
-
-void ServerImplemented::Unregist(Effect* effect)
-{
-	Unregister(effect);
 }
 
 //----------------------------------------------------------------------------------

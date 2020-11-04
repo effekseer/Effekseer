@@ -26,7 +26,7 @@ private:
 	class alignas(32) DrawSet
 	{
 	public:
-		Effect* ParameterPointer;
+		EffectRef ParameterPointer;
 		InstanceContainer* InstanceContainerPointer;
 		InstanceGlobal* GlobalPointer;
 		Culling3D::Object* CullingObjectPointer;
@@ -66,7 +66,7 @@ private:
 		//! a bit mask for group
 		int64_t GroupMask = 0;
 
-		DrawSet(Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
+		DrawSet(EffectRef& effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 			: ParameterPointer(effect)
 			, InstanceContainerPointer(pContainer)
 			, GlobalPointer(pGlobal)
@@ -169,7 +169,7 @@ private:
 	std::mutex m_renderingMutex;
 	bool m_isLockedWithRenderingMutex = false;
 
-	Setting* m_setting;
+	RefPtr<Setting> m_setting;
 
 	int m_updateTime;
 	int m_drawTime;
@@ -202,7 +202,7 @@ private:
 
 	int m_randMax;
 
-	Handle AddDrawSet(Effect* effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer);
+	Handle AddDrawSet(EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer);
 
 	void StopStoppingEffects();
 
@@ -279,9 +279,9 @@ public:
 
 	void SetTrackRenderer(TrackRenderer* renderer) override;
 
-	Setting* GetSetting() override;
+	RefPtr<Setting> GetSetting() const override;
 
-	void SetSetting(Setting* setting) override;
+	void SetSetting(const RefPtr<Setting>& setting) override;
 
 	EffectLoader* GetEffectLoader() override;
 
@@ -317,7 +317,7 @@ public:
 
 	void StopRoot(Handle handle) override;
 
-	void StopRoot(Effect* effect) override;
+	void StopRoot(EffectRef& effect) override;
 
 	bool Exists(Handle handle) override;
 
@@ -427,9 +427,9 @@ public:
 
 	void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
-	Handle Play(Effect* effect, float x, float y, float z) override;
+	Handle Play(EffectRef& effect, float x, float y, float z) override;
 
-	Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame) override;
+	Handle Play(EffectRef& effect, const Vector3D& position, int32_t startFrame) override;
 
 	int GetCameraCullingMaskToShowAllEffects() override;
 
@@ -439,9 +439,9 @@ public:
 
 	int32_t GetRestInstancesCount() const override;
 
-	void BeginReloadEffect(Effect* effect, bool doLockThread);
+	void BeginReloadEffect(EffectRef& effect, bool doLockThread);
 
-	void EndReloadEffect(Effect* effect, bool doLockThread);
+	void EndReloadEffect(EffectRef& effect, bool doLockThread);
 
 	void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
 

@@ -25,7 +25,7 @@ static int g_window_width = 800;
 static int g_window_height = 600;
 static ::Effekseer::Manager* g_manager = NULL;
 static ::EffekseerRenderer::Renderer* g_renderer = NULL;
-static ::Effekseer::Effect* g_effect = NULL;
+static ::Effekseer::EffectRef g_effect = NULL;
 static ::Effekseer::Handle g_handle = -1;
 static ::Effekseer::Vector3D g_position;
 
@@ -459,7 +459,7 @@ int main(int argc, char** argv)
 
 	// Extend a format which can be loaded
 	// 読み込めるフォーマットを拡張する
-	g_manager->GetSetting()->AddEffectFactory(new glmEffectFactory());
+	g_manager->GetSetting()->AddEffectFactory(Effekseer::MakeRefPtr<glmEffectFactory>());
 
 	// Specify functions to draw from the instance
 	// 描画用インスタンスから描画機能を設定する
@@ -506,10 +506,6 @@ int main(int argc, char** argv)
 	// To finalize OpenGL, make context enabled
 	// OpenGLを終了するために、コンテキストを有効にする
 	wglMakeCurrent(g_hDC, g_hGLRC);
-
-	// Dispose the effect
-	// エフェクトを破棄する
-	ES_SAFE_RELEASE(g_effect);
 
 	// First dispose the instance for managing effects
 	// 先にエフェクト管理用インスタンスを破棄する

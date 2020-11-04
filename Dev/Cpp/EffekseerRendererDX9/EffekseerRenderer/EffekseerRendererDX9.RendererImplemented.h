@@ -110,7 +110,7 @@ private:
 	bool m_restorationOfStates;
 
 	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
-	Backend::VertexBuffer* instancedVertexBuffer_ = nullptr;
+	Effekseer::Backend::VertexBufferRef instancedVertexBuffer_;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
@@ -240,8 +240,8 @@ public:
 	void SetIndexBuffer(IndexBuffer* indexBuffer);
 	void SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer);
 
-	void SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size);
-	void SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer);
+	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
+	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
 
 	void SetLayout(Shader* shader);
 	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);

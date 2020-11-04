@@ -12,9 +12,10 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
+class Effect;
+
+using EffectRef = RefPtr<Effect>;
 
 /**
 @brief
@@ -244,7 +245,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -254,7 +255,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	エフェクトを生成する。
@@ -265,7 +266,7 @@ public:
 	@param	materialPath	[in]	素材ロード時の基準パス
 	@return	エフェクト。失敗した場合はnullptrを返す。
 */
-	static Effect* Create(Setting* setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const RefPtr<Setting>& setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -275,7 +276,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create(Setting* setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const RefPtr<Setting>& setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
@@ -299,7 +300,7 @@ public:
 	@brief	設定を取得する。
 	@return	設定
 	*/
-	virtual Setting* GetSetting() const = 0;
+	virtual RefPtr<Setting> GetSetting() const = 0;
 
 	/**
 	@brief	\~English	Get the magnification multiplied by the magnification at the time of loaded and exported.
@@ -495,62 +496,6 @@ public:
 		\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
 	virtual void SetCurve(int32_t index, void* data) = 0;
-
-	/**
-		@brief
-		\~English	Reload this effect
-		\~Japanese	エフェクトのリロードを行う。
-		@param	data
-		\~English	An effect's data
-		\~Japanese	エフェクトのデータ
-		@param	size
-		\~English	An effect's size
-		\~Japanese	エフェクトのデータサイズ
-		@param	materialPath
-		\~English	A path where reaources are loaded
-		\~Japanese	リソースの読み込み元
-		@param	reloadingThreadType
-		\~English	A thread where reload function is called
-		\~Japanese	リロードの関数が呼ばれるスレッド
-		@return
-		\~English	Result
-		\~Japanese	結果
-		@note
-		\~English
-		If reloadingThreadType is RenderThread, new resources aren't loaded and old resources aren't disposed.
-		\~Japanese
-		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
-	*/
-	virtual bool Reload(void* data,
-						int32_t size,
-						const char16_t* materialPath = nullptr,
-						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
-
-	/**
-		@brief
-		\~English	Reload this effect
-		\~Japanese	エフェクトのリロードを行う。
-		@param	path
-		\~English	An effect's path
-		\~Japanese	エフェクトのパス
-		@param	materialPath
-		\~English	A path where reaources are loaded
-		\~Japanese	リソースの読み込み元
-		@param	reloadingThreadType
-		\~English	A thread where reload function is called
-		\~Japanese	リロードの関数が呼ばれるスレッド
-		@return
-		\~English	Result
-		\~Japanese	結果
-		@note
-		\~English
-		If reloadingThreadType is RenderThread, new resources aren't loaded and old resources aren't disposed.
-		\~Japanese
-		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
-	*/
-	virtual bool Reload(const char16_t* path,
-						const char16_t* materialPath = nullptr,
-						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief

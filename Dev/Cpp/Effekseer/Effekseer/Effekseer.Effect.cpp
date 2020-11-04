@@ -396,14 +396,14 @@ EffectFactory::~EffectFactory()
 {
 }
 
-Effect* Effect::Create(Manager* manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(Manager* manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(manager, data, size, magnification, materialPath);
 }
 
-Effect* Effect::Create(Manager* manager, const char16_t* path, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(Manager* manager, const char16_t* path, float magnification, const char16_t* materialPath)
 {
-	Setting* setting = manager->GetSetting();
+	auto setting = manager->GetSetting();
 
 	EffectLoader* eLoader = setting->GetEffectLoader();
 
@@ -423,7 +423,7 @@ Effect* Effect::Create(Manager* manager, const char16_t* path, float magnificati
 		materialPath = parentDir;
 	}
 
-	Effect* effect = EffectImplemented::Create(manager, data, size, magnification, materialPath);
+	auto effect = EffectImplemented::Create(manager, data, size, magnification, materialPath);
 
 	eLoader->Unload(data, size);
 
@@ -727,7 +727,7 @@ void EffectImplemented::ResetReloadingBackup()
 	if (reloadingBackup == nullptr)
 		return;
 
-	Setting* loader = GetSetting();
+	auto loader = GetSetting();
 
 	TextureLoader* textureLoader = loader->GetTextureLoader();
 	if (textureLoader != nullptr)
@@ -771,12 +771,12 @@ void EffectImplemented::ResetReloadingBackup()
 	reloadingBackup.reset();
 }
 
-Effect* EffectImplemented::Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
 
-	EffectImplemented* effect = new EffectImplemented(pManager, pData, size);
+	auto effect = MakeRefPtr<EffectImplemented>(pManager, pData, size);
 	if (!effect->Load(pData, size, magnification, materialPath, ReloadingThreadType::Main))
 	{
 		effect->Release();
@@ -788,7 +788,7 @@ Effect* EffectImplemented::Create(Manager* pManager, void* pData, int size, floa
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* Effect::Create(Setting* setting, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const RefPtr<Setting>& setting, void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(setting, data, size, magnification, materialPath);
 }
@@ -796,7 +796,7 @@ Effect* Effect::Create(Setting* setting, void* data, int32_t size, float magnifi
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* Effect::Create(Setting* setting, const char16_t* path, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const RefPtr<Setting>& setting, const char16_t* path, float magnification, const char16_t* materialPath)
 {
 	if (setting == nullptr)
 		return nullptr;
@@ -818,7 +818,7 @@ Effect* Effect::Create(Setting* setting, const char16_t* path, float magnificati
 		materialPath = parentDir;
 	}
 
-	Effect* effect = EffectImplemented::Create(setting, data, size, magnification, materialPath);
+	auto effect = EffectImplemented::Create(setting, data, size, magnification, materialPath);
 
 	eLoader->Unload(data, size);
 
@@ -830,15 +830,14 @@ Effect* Effect::Create(Setting* setting, const char16_t* path, float magnificati
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* EffectImplemented::Create(Setting* setting, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(const RefPtr<Setting>& setting, void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
 
-	EffectImplemented* effect = new EffectImplemented(setting, pData, size);
+	auto effect = MakeRefPtr<EffectImplemented>(setting, pData, size);
 	if (!effect->Load(pData, size, magnification, materialPath, ReloadingThreadType::Main))
 	{
-		effect->Release();
 		effect = nullptr;
 	}
 	return effect;
@@ -856,8 +855,7 @@ Effect* EffectImplemented::Create(Setting* setting, void* pData, int size, float
 //
 //----------------------------------------------------------------------------------
 EffectImplemented::EffectImplemented(Manager* pManager, void* pData, int size)
-	: m_pManager((ManagerImplemented*)pManager)
-	, m_setting(nullptr)
+	: m_setting(pManager->GetSetting())
 	, m_reference(1)
 	, m_version(0)
 	, m_ImageCount(0)
@@ -872,17 +870,14 @@ EffectImplemented::EffectImplemented(Manager* pManager, void* pData, int size)
 	, m_defaultRandomSeed(-1)
 
 {
-	ES_SAFE_ADDREF(m_pManager);
-
 	Culling.Shape = CullingShape::NoneShape;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectImplemented::EffectImplemented(Setting* setting, void* pData, int size)
-	: m_pManager(nullptr)
-	, m_setting(setting)
+EffectImplemented::EffectImplemented(const RefPtr<Setting>& setting, void* pData, int size)
+	: m_setting(setting)
 	, m_reference(1)
 	, m_version(0)
 	, m_ImageCount(0)
@@ -895,8 +890,6 @@ EffectImplemented::EffectImplemented(Setting* setting, void* pData, int size)
 	, m_distortionImagePaths(nullptr)
 	, m_distortionImages(nullptr)
 {
-	ES_SAFE_ADDREF(m_setting);
-
 	Culling.Shape = CullingShape::NoneShape;
 }
 
@@ -908,11 +901,6 @@ EffectImplemented::~EffectImplemented()
 	ResetReloadingBackup();
 	Reset();
 	SetLoadingParameter(nullptr);
-
-	ES_SAFE_RELEASE(m_setting);
-	ES_SAFE_RELEASE(m_pManager);
-
-	ES_SAFE_RELEASE(factory);
 }
 
 //----------------------------------------------------------------------------------
@@ -936,7 +924,7 @@ float EffectImplemented::GetMaginification() const
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Load(void* pData, int size, float mag, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
 {
-	ES_SAFE_RELEASE(factory);
+	factory.Reset();
 
 	if (m_setting != nullptr)
 	{
@@ -946,22 +934,6 @@ bool EffectImplemented::Load(void* pData, int size, float mag, const char16_t* m
 
 			if (f->OnCheckIsBinarySupported(pData, size))
 			{
-				ES_SAFE_ADDREF(f);
-				factory = f;
-				break;
-			}
-		}
-	}
-
-	if (m_pManager != nullptr)
-	{
-		for (int i = 0; i < m_pManager->GetSetting()->GetEffectFactoryCount(); i++)
-		{
-			auto f = m_pManager->GetSetting()->GetEffectFactory(i);
-
-			if (f->OnCheckIsBinarySupported(pData, size))
-			{
-				ES_SAFE_ADDREF(f);
 				factory = f;
 				break;
 			}
@@ -1090,11 +1062,6 @@ void EffectImplemented::SetLoadingParameter(ReferenceObject* obj)
 	loadingObject = obj;
 }
 
-Manager* EffectImplemented::GetManager() const
-{
-	return m_pManager;
-}
-
 const char16_t* EffectImplemented::GetName() const
 {
 	return name_.c_str();
@@ -1105,11 +1072,9 @@ void EffectImplemented::SetName(const char16_t* name)
 	name_ = name;
 }
 
-Setting* EffectImplemented::GetSetting() const
+RefPtr<Setting> EffectImplemented::GetSetting() const
 {
-	if (m_setting != nullptr)
-		return m_setting;
-	return m_pManager->GetSetting();
+	return m_setting;
 }
 
 //----------------------------------------------------------------------------------
@@ -1380,34 +1345,6 @@ void EffectImplemented::SetCurve(int32_t index, void* data)
 	curves_[index] = data;
 }
 
-bool EffectImplemented::Reload(void* data, int32_t size, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
-{
-	if (m_pManager == nullptr)
-		return false;
-
-	std::array<Manager*, 1> managers;
-	managers[0] = m_pManager;
-
-	return Reload(managers.data(), static_cast<int32_t>(managers.size()), data, size, materialPath, reloadingThreadType);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-bool EffectImplemented::Reload(const char16_t* path, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
-{
-	if (m_pManager == nullptr)
-		return false;
-
-	std::array<Manager*, 1> managers;
-	managers[0] = m_pManager;
-
-	return Reload(managers.data(), static_cast<int32_t>(managers.size()), path, materialPath, reloadingThreadType);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool EffectImplemented::Reload(Manager** managers,
 							   int32_t managersCount,
 							   void* data,
@@ -1430,7 +1367,10 @@ bool EffectImplemented::Reload(Manager** managers,
 		}
 
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->BeginReloadEffect(this, true);
+
+		this->AddRef();
+		auto temp = EffectRef(this);
+		manager->BeginReloadEffect(temp, true);
 	}
 
 	// HACK for scale
@@ -1457,7 +1397,9 @@ bool EffectImplemented::Reload(Manager** managers,
 		}
 
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->EndReloadEffect(this, true);
+		this->AddRef();
+		auto temp = EffectRef(this);
+		manager->EndReloadEffect(temp, true);
 	}
 
 	return false;
@@ -1472,7 +1414,7 @@ bool EffectImplemented::Reload(
 	if (!factory->OnCheckIsReloadSupported())
 		return false;
 
-	Setting* loader = GetSetting();
+	auto loader = GetSetting();
 
 	EffectLoader* eLoader = loader->GetEffectLoader();
 	if (loader == nullptr)
@@ -1496,7 +1438,10 @@ bool EffectImplemented::Reload(
 	for (int32_t i = 0; i < managersCount; i++)
 	{
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->BeginReloadEffect(this, lockCount == 0);
+
+		this->AddRef();
+		auto temp = EffectRef(this);
+		manager->BeginReloadEffect(temp, lockCount == 0);
 		lockCount++;
 	}
 
@@ -1509,7 +1454,10 @@ bool EffectImplemented::Reload(
 	{
 		lockCount--;
 		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		manager->EndReloadEffect(this, lockCount == 0);
+
+		this->AddRef();
+		auto temp = EffectRef(this);
+		manager->EndReloadEffect(temp, lockCount == 0);
 	}
 
 	eLoader->Unload(data, size);
@@ -1526,7 +1474,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 
 	const char16_t* matPath = materialPath != nullptr ? materialPath : m_materialPath.c_str();
 
-	Setting* loader = GetSetting();
+	auto loader = GetSetting();
 
 	// reloading on render thread
 	if (isReloadingOnRenderingThread)
@@ -1625,7 +1573,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 
 void EffectImplemented::UnloadResources(const char16_t* materialPath)
 {
-	Setting* loader = GetSetting();
+	auto loader = GetSetting();
 
 	// reloading on render thread
 	if (isReloadingOnRenderingThread)

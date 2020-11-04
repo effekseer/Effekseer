@@ -48,9 +48,9 @@
 namespace EffekseerRendererGL
 {
 
-::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(OpenGLDeviceType deviceType)
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType)
 {
-	return new Backend::GraphicsDevice(deviceType);
+	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType);
 }
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType)
@@ -953,15 +953,15 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 	}
 }
 
-void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size)
+void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
-	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
 	SetVertexBuffer(vb->GetBuffer(), size);
 }
 
-void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
-	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
 	SetIndexBuffer(ib->GetBuffer());
 }
 
@@ -1217,7 +1217,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		{
 			if (textures[i]->TexturePtr != nullptr)
 			{
-				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr);
+				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get());
 				id = texture->GetBuffer();
 			}
 			else

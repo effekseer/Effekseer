@@ -424,7 +424,8 @@ void ReloadTest()
 		auto restCount1 = platform->GetManager()->GetInstanceCount(handle);
 		platform->TakeScreenshot("Reload_0.png");
 
-		platform->GetEffects()[0]->Reload((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		auto manager = platform->GetManager();
+		platform->GetEffects()[0]->Reload(&manager, 1, (GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
 
 		//platform->Update();
 
@@ -572,8 +573,6 @@ void InstanceDisposeTestPlatform(EffectPlatform* platform)
 	{
 		auto effect = Effekseer::Effect::Create(
 			platform->GetManager(), (GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/Model_Parameters1.efk").c_str());
-
-		ES_SAFE_RELEASE(effect);
 	}
 }
 

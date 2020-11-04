@@ -554,7 +554,7 @@ static ImTextureID ToImTextureID(ImageResource* image)
 			{
 				if (texture->TexturePtr != nullptr)
 				{
-					auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture->TexturePtr);
+					auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture->TexturePtr.Get());
 					return reinterpret_cast<ImTextureID>(t->GetSRV());
 				}
 				else if (texture->UserPtr != nullptr)
@@ -566,7 +566,7 @@ static ImTextureID ToImTextureID(ImageResource* image)
 
 			if (texture->TexturePtr != nullptr)
 			{
-				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture->TexturePtr);
+				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture->TexturePtr.Get());
 				return reinterpret_cast<ImTextureID>(static_cast<size_t>(t->GetBuffer()));
 			}
 			else

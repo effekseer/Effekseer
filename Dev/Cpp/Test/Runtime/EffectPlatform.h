@@ -34,7 +34,7 @@ protected:
 	EffectPlatformInitializingParameter initParam_;
 
 protected:
-	std::vector<Effekseer::Effect*> effects_;
+	std::vector<Effekseer::EffectRef> effects_;
 	std::vector<std::vector<uint8_t>> buffers_;
 	std::vector<uint32_t> checkeredPattern_;
 
@@ -102,7 +102,7 @@ public:
 		return manager_;
 	}
 
-	const std::vector<Effekseer::Effect*>& GetEffects() const
+	const std::vector<Effekseer::EffectRef>& GetEffects() const
 	{
 		return effects_;
 	}

@@ -110,10 +110,10 @@ static
 //
 //-----------------------------------------------------------------------------------
 
-::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(ID3D11Device* device,
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(ID3D11Device* device,
 														   ID3D11DeviceContext* context)
 {
-	return new Backend::GraphicsDevice(device, context);
+	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 }
 
 ::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device,
@@ -837,15 +837,15 @@ void RendererImplemented::SetIndexBuffer(ID3D11Buffer* indexBuffer)
 	GetContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
-void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size)
+void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
-	auto ptr = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	auto ptr = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
 	SetVertexBuffer(ptr->GetBuffer(), size);
 }
 
-void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
-	auto ptr = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	auto ptr = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
 	SetIndexBuffer(ptr->GetBuffer());
 }
 
@@ -980,7 +980,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else if (textures[i]->TexturePtr != nullptr)
 		{
-			auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr);
+			auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get());
 			srv[i] = texture->GetSRV();
 		}
 		else

@@ -471,7 +471,7 @@ Shader::~Shader()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
+bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef& layout)
 {
 	GLint vsCodeLen = static_cast<GLint>(strlen(vsCode));
 	GLint psCodeLen = static_cast<GLint>(strlen(psCode));
@@ -540,7 +540,7 @@ bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::Un
 		GLExt::glGenVertexArrays(1, &vao_);
 	}
 
-	layout_ = Effekseer::CreateReference(layout, true);
+	layout_ = layout;
 
 	return true;
 }
@@ -548,8 +548,6 @@ bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::Un
 bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
 {
 	param_ = param;
-	shader_ = Effekseer::CreateReference(static_cast<Shader*>(param.ShaderPtr), true);
-	vertexLayout_ = Effekseer::CreateReference(static_cast<VertexLayout*>(param.VertexLayoutPtr), true);
 	return true;
 }
 
@@ -570,8 +568,11 @@ RenderPass::~RenderPass()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool RenderPass::Init(Texture** textures, int32_t textureCount, Texture* depthTexture)
+bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture)
 {
+	textures_ = textures;
+	depthTexture_ = depthTexture;
+
 	GLExt::glGenFramebuffers(1, &buffer_);
 	if (buffer_ == 0)
 	{
@@ -583,23 +584,18 @@ bool RenderPass::Init(Texture** textures, int32_t textureCount, Texture* depthTe
 
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
 
-	for (int32_t i = 0; i < textureCount; i++)
+	for (int32_t i = 0; i < textures.size(); i++)
 	{
-		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i]->GetBuffer(), 0);
+		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, static_cast<Texture*>(textures.at(i).Get())->GetBuffer(), 0);
 	}
 
 	if (depthTexture != nullptr)
 	{
-		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->GetBuffer(), 0);
+		GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<Texture*>(depthTexture.Get())->GetBuffer(), 0);
 	}
 
-	textures_.resize(textureCount);
-	for (int32_t i = 0; i < textureCount; i++)
-	{
-		textures_[i] = Effekseer::CreateReference(textures[i], true);
-	}
-
-	depthTexture_ = Effekseer::CreateReference(depthTexture, true);
+	textures_ = textures;
+	depthTexture_ = depthTexture;
 
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 	return true;
@@ -655,13 +651,12 @@ void GraphicsDevice::Unregister(DeviceObject* deviceObject)
 	objects_.erase(deviceObject);
 }
 
-VertexBuffer* GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
+Effekseer::Backend::VertexBufferRef GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
 {
-	auto ret = new VertexBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<VertexBuffer>(this);
 
 	if (!ret->Init(size, isDynamic))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
@@ -670,13 +665,12 @@ VertexBuffer* GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initi
 	return ret;
 }
 
-IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride)
+Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride)
 {
-	auto ret = new IndexBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<IndexBuffer>(this);
 
 	if (!ret->Init(elementCount, stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
@@ -685,109 +679,101 @@ IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void*
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-UniformBuffer* GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
+Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
 {
-	auto ret = new UniformBuffer();
+	auto ret = Effekseer::MakeRefPtr<UniformBuffer>();
 
 	if (!ret->Init(size, initialData))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-VertexLayout* GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+Effekseer::Backend::VertexLayoutRef GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
 {
-	auto ret = new VertexLayout();
+	auto ret = Effekseer::MakeRefPtr<VertexLayout>();
 
 	if (!ret->Init(elements, elementCount))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-RenderPass* GraphicsDevice::CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture)
+Effekseer::Backend::RenderPassRef GraphicsDevice::CreateRenderPass(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef& depthTexture)
 {
-	auto ret = new RenderPass(this);
+	auto ret = Effekseer::MakeRefPtr<RenderPass>(this);
 
-	if (!ret->Init(reinterpret_cast<Texture**>(textures), textureCount, static_cast<Texture*>(depthTexture)))
+	if (!ret->Init(textures, depthTexture))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-PipelineState* GraphicsDevice::CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
+Effekseer::Backend::PipelineStateRef GraphicsDevice::CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param)
 {
-	auto ret = new PipelineState();
+	auto ret = Effekseer::MakeRefPtr<PipelineState>();
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
 	return ret;
 }
 
-Shader* GraphicsDevice::CreateShaderFromKey(const char* key)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromKey(const char* key)
 {
 	return nullptr;
 }
 
-Shader* GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout)
 {
-	auto ret = new Shader(this);
+	auto ret = Effekseer::MakeRefPtr<Shader>(this);
 
 	if (!ret->Init(vsCode, psCode, layout))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
@@ -803,8 +789,9 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		return;
 	}
 
-	auto pip = static_cast<PipelineState*>(drawParam.PipelineStatePtr);
-	auto& shader = pip->GetShader();
+	auto pip = static_cast<PipelineState*>(drawParam.PipelineStatePtr.Get());
+	auto shader = static_cast<Shader*>(pip->GetParam().ShaderPtr.Get());
+	auto vertexLayout = static_cast<VertexLayout*>(pip->GetParam().VertexLayoutPtr.Get());
 
 	if (shader->GetLayout() == nullptr)
 	{
@@ -819,9 +806,9 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		GLExt::glBindVertexArray(shader->GetVAO());
 	}
 
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr)->GetBuffer());
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(drawParam.IndexBufferPtr)->GetBuffer());
-	GLExt::glUseProgram(pip->GetShader()->GetProgram());
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr.Get())->GetBuffer());
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(drawParam.IndexBufferPtr.Get())->GetBuffer());
+	GLExt::glUseProgram(shader->GetProgram());
 
 	// textures
 	auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
@@ -837,7 +824,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 		GLExt::glUniform1i(textureSlot, i);
 
-		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i]);
+		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i].Get());
 		if (texture != nullptr)
 		{
 			GLExt::glActiveTexture(GL_TEXTURE0 + i);
@@ -919,11 +906,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
 		{
-			uniformBuffer = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr);
+			uniformBuffer = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr.Get());
 		}
 		else if (element.Stage == Effekseer::Backend::ShaderStageType::Pixel)
 		{
-			uniformBuffer = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr);
+			uniformBuffer = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr.Get());
 		}
 
 		if (uniformBuffer != nullptr)
@@ -958,16 +945,16 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	// layouts
 	{
 		int32_t vertexSize = 0;
-		for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 		{
-			const auto& element = pip->GetVertexLayout()->GetElements()[i];
+			const auto& element = vertexLayout->GetElements()[i];
 			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
 		}
 
 		uint16_t offset = 0;
-		for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 		{
-			const auto& element = pip->GetVertexLayout()->GetElements()[i];
+			const auto& element = vertexLayout->GetElements()[i];
 			auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
 
 			GLenum type = {};
@@ -1176,9 +1163,9 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr);
 	}
 
-	for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 	{
-		const auto& element = pip->GetVertexLayout()->GetElements()[i];
+		const auto& element = vertexLayout->GetElements()[i];
 		auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
 
 		if (loc >= 0)
@@ -1195,11 +1182,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	GLCheckError();
 }
 
-void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
+void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
 {
 	if (renderPass != nullptr)
 	{
-		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass)->GetBuffer());
+		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass.Get())->GetBuffer());
 	}
 
 	GLbitfield flag = 0;
@@ -1230,14 +1217,14 @@ void GraphicsDevice::EndRenderPass()
 	GLCheckError();
 }
 
-bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data)
+bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 {
 	if (buffer == nullptr)
 	{
 		return false;
 	}
 
-	auto b = static_cast<UniformBuffer*>(buffer);
+	auto b = static_cast<UniformBuffer*>(buffer.Get());
 
 	b->UpdateData(data, size, offset);
 
@@ -1250,7 +1237,6 @@ Texture* GraphicsDevice::CreateTexture(GLuint buffer, const std::function<void()
 
 	if (!ret->Init(buffer, onDisposed))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 

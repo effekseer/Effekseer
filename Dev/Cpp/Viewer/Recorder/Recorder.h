@@ -33,12 +33,12 @@ private:
 public:
 	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
 			   efk::Graphics* graphics,
-			   Effekseer::Setting* setting,
+			   Effekseer::RefPtr<Effekseer::Setting> setting,
 			   const RecordingParameter& recordingParameter,
 			   Effekseer::Tool::Vector2DI imageSize,
 			   bool isSRGBMode,
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
-			   Effekseer::Effect* effect);
+			   Effekseer::EffectRef effect);
 
 	bool Step(Native* native, int frames);
 

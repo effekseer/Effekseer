@@ -132,28 +132,33 @@ typedef int(EFK_STDCALL* RandFunc)(void);
 */
 typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
 
-#define ES_SAFE_ADDREF(val) \
-	if ((val) != nullptr)      \
-	{                       \
-		(val)->AddRef();    \
+#define ES_SAFE_ADDREF(val)                                                                     \
+	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
+	if ((val) != nullptr)                                                                       \
+	{                                                                                           \
+		(val)->AddRef();                                                                        \
 	}
-#define ES_SAFE_RELEASE(val) \
-	if ((val) != nullptr)       \
-	{                        \
-		(val)->Release();    \
-		(val) = nullptr;        \
+#define ES_SAFE_RELEASE(val)                                                                    \
+	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
+	if ((val) != nullptr)                                                                       \
+	{                                                                                           \
+		(val)->Release();                                                                       \
+		(val) = nullptr;                                                                        \
 	}
-#define ES_SAFE_DELETE(val) \
-	if ((val) != nullptr)      \
-	{                       \
-		delete (val);       \
-		(val) = nullptr;       \
+
+#define ES_SAFE_DELETE(val)                                                                     \
+	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
+	if ((val) != nullptr)                                                                       \
+	{                                                                                           \
+		delete (val);                                                                           \
+		(val) = nullptr;                                                                        \
 	}
-#define ES_SAFE_DELETE_ARRAY(val) \
-	if ((val) != nullptr)            \
-	{                             \
-		delete[](val);            \
-		(val) = nullptr;             \
+#define ES_SAFE_DELETE_ARRAY(val)                                                               \
+	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
+	if ((val) != nullptr)                                                                       \
+	{                                                                                           \
+		delete[](val);                                                                          \
+		(val) = nullptr;                                                                        \
 	}
 
 #define EFK_ASSERT(x) assert(x)
@@ -507,7 +512,8 @@ inline int32_t ConvertUtf8ToUtf16(int16_t* dst, int32_t dst_size, const int8_t* 
 //
 //----------------------------------------------------------------------------------
 /**
-@brief	参照カウンタのインターフェース
+	@brief	\~english	An interface of reference counter
+			\~japanese	参照カウンタのインターフェース
 */
 class IReference
 {
@@ -529,6 +535,50 @@ public:
 	@return	減算後の参照カウンタ
 	*/
 	virtual int Release() = 0;
+};
+
+/**
+	@brief	\~english	A reference counter
+			\~japanese	参照カウンタ
+*/
+class ReferenceObject : public IReference
+{
+private:
+	mutable std::atomic<int32_t> m_reference;
+
+public:
+	ReferenceObject()
+		: m_reference(1)
+	{
+	}
+
+	virtual ~ReferenceObject()
+	{
+	}
+
+	virtual int AddRef()
+	{
+		std::atomic_fetch_add_explicit(&m_reference, 1, std::memory_order_consume);
+
+		return m_reference;
+	}
+
+	virtual int GetRef()
+	{
+		return m_reference;
+	}
+
+	virtual int Release()
+	{
+		bool destroy = std::atomic_fetch_sub_explicit(&m_reference, 1, std::memory_order_consume) == 1;
+		if (destroy)
+		{
+			delete this;
+			return 0;
+		}
+
+		return m_reference;
+	}
 };
 
 /**
@@ -574,51 +624,149 @@ inline std::shared_ptr<T> CreateReference(T* ptr, bool addRef = false)
 	return std::shared_ptr<T>(ptr, ReferenceDeleter<T>());
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-@brief	参照カウンタオブジェクト
-*/
-class ReferenceObject : public IReference
+template <typename T>
+inline void SafeAddRef(T* val)
 {
-private:
-	mutable std::atomic<int32_t> m_reference;
+	if (val != nullptr)
+	{
+		val->AddRef();
+	}
+}
+
+template <typename T>
+inline void SafeRelease(T*& val)
+{
+	if (val != nullptr)
+	{
+		val->Release();
+		val = nullptr;
+	}
+}
+
+/**
+	@brief	\~english	A smart pointer for reference counter
+			\~japanese	参照カウンタ向けスマートポインタ
+*/
+template <typename T>
+class RefPtr
+{
+	T* ptr_ = nullptr;
 
 public:
-	ReferenceObject()
-		: m_reference(1)
+	RefPtr() = default;
+
+	explicit RefPtr(T* p)
 	{
+		ptr_ = p;
 	}
 
-	virtual ~ReferenceObject()
+	RefPtr(std::nullptr_t)
 	{
+		ptr_ = nullptr;
 	}
 
-	virtual int AddRef()
+	~RefPtr()
 	{
-		std::atomic_fetch_add_explicit(&m_reference, 1, std::memory_order_consume);
-
-		return m_reference;
+		SafeRelease(ptr_);
 	}
 
-	virtual int GetRef()
+	RefPtr(const RefPtr<T>& o)
 	{
-		return m_reference;
+		SafeAddRef(o.ptr_);
+		SafeRelease(ptr_);
+		ptr_ = o.ptr_;
 	}
 
-	virtual int Release()
+	void Reset()
 	{
-		bool destroy = std::atomic_fetch_sub_explicit(&m_reference, 1, std::memory_order_consume) == 1;
-		if (destroy)
-		{
-			delete this;
-			return 0;
-		}
+		SafeRelease(ptr_);
+	}
 
-		return m_reference;
+	T* operator->() const
+	{
+		return Get();
+	}
+
+	T* Get() const
+	{
+		return ptr_;
+	}
+
+	RefPtr<T>& operator=(const RefPtr<T>& o)
+	{
+		SafeAddRef(o.ptr_);
+		SafeRelease(ptr_);
+		ptr_ = o.ptr_;
+		return *this;
+	}
+
+	template <class U>
+	void operator=(RefPtr<U>& o)
+	{
+		SafeAddRef(o.ptr_);
+		SafeRelease(ptr_);
+		ptr_ = o.ptr_;
+	}
+
+	template <class U>
+	RefPtr(RefPtr<U>& o)
+	{
+		SafeAddRef(o.Get());
+		SafeRelease(ptr_);
+		ptr_ = o.Get();
+	}
+
+	void* Pin()
+	{
+		SafeAddRef(ptr_);
+		return ptr_;
+	}
+
+	static void Unpin(void* p)
+	{
+		auto ptr = reinterpret_cast<T*>(p);
+		SafeRelease(ptr);
+	}
+
+	static RefPtr<T> FromPinned(void* p)
+	{
+		auto ptr = reinterpret_cast<T*>(p);
+		SafeRelease(ptr);
+		return RefPtr<T>(ptr);
 	}
 };
+
+template <class T, class U>
+inline bool operator==(const RefPtr<T>& lhs, const RefPtr<U>& rhs)
+{
+	return lhs.Get() == rhs.Get();
+}
+template <class T, class U>
+inline bool operator!=(const RefPtr<T>& lhs, const RefPtr<U>& rhs)
+{
+	return lhs.Get() != rhs.Get();
+}
+
+template <class T>
+inline bool operator==(const RefPtr<T>& lhs, const std::nullptr_t& rhs)
+{
+	return lhs.Get() == rhs;
+}
+template <class T>
+inline bool operator!=(const RefPtr<T>& lhs, const std::nullptr_t& rhs)
+{
+	return lhs.Get() != rhs;
+}
+
+template <class T, class... Arg>
+RefPtr<T> MakeRefPtr(Arg&&... args)
+{
+	return RefPtr<T>(new T(args...));
+}
+
+using EffectRef = RefPtr<Effect>;
+using ManagerRef = RefPtr<Manager>;
+
 
 /**
 	@brief	This object generates random values.
@@ -634,6 +782,73 @@ public:
 	virtual float GetRand() = 0;
 
 	virtual float GetRand(float min_, float max_) = 0;
+};
+
+template <typename T, size_t N>
+struct FixedSizeVector
+{
+private:
+	std::array<T, N> internal_;
+	size_t size_ = 0;
+
+public:
+	T& at(size_t n)
+	{
+		assert(n < size_);
+		return internal_.at(n);
+	}
+
+	const T& at(size_t n) const
+	{
+		assert(n < size_);
+
+		return internal_.at(n);
+	}
+
+	const T* data() const
+	{
+		return internal_.data();
+	}
+
+	void resize(size_t nsize)
+	{
+		assert(nsize <= internal_.size());
+		size_ = nsize;
+	}
+
+	bool operator==(FixedSizeVector<T, N> const& rhs) const
+	{
+		if (size_ != rhs.size_)
+			return false;
+
+		for (size_t i = 0; i < size_; i++)
+		{
+			if (internal_[i] != rhs.internal_[i])
+				return false;
+		}
+
+		return true;
+	}
+
+	bool operator!=(FixedSizeVector<T, N> const& rhs) const
+	{
+		return !(*this == rhs);
+	}
+
+	size_t size() const
+	{
+		return size_;
+	}
+
+	size_t get_hash() const
+	{
+		auto h = std::hash<size_t>()(size());
+		for (size_t i = 0; i < size(); i++)
+		{
+			h += std::hash<T>()(at(i));
+		}
+		return h;
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -662,7 +877,7 @@ struct TextureData
 	bool HasMipmap = true;
 
 	//! A backend which contains a native data
-	class Backend::Texture* TexturePtr = nullptr;
+	RefPtr<Backend::Texture> TexturePtr;
 };
 
 enum class ShadingModelType : int32_t

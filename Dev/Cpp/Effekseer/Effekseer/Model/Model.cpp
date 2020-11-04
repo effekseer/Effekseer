@@ -75,19 +75,14 @@ Model::Model(void* data, int32_t size)
 
 Model ::~Model()
 {
-	for (auto& model : models_)
-	{
-		ES_SAFE_RELEASE(model.vertexBuffer);
-		ES_SAFE_RELEASE(model.indexBuffer);
-	}
 }
 
-Backend::VertexBuffer* Model::GetVertexBuffer(int32_t index) const
+const RefPtr<Backend::VertexBuffer>& Model::GetVertexBuffer(int32_t index) const
 {
 	return models_[index].vertexBuffer;
 }
 
-Backend::IndexBuffer* Model::GetIndexBuffer(int32_t index) const
+const RefPtr<Backend::IndexBuffer>& Model::GetIndexBuffer(int32_t index) const
 {
 	return models_[index].indexBuffer;
 }
@@ -314,7 +309,6 @@ bool Model::StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice)
 	for (int32_t f = 0; f < GetFrameCount(); f++)
 	{
 		{
-			ES_SAFE_RELEASE(models_[f].vertexBuffer);
 			models_[f].vertexBuffer = graphicsDevice->CreateVertexBuffer(sizeof(Effekseer::Model::Vertex) * GetVertexCount(f), models_[f].vertexes.data(), false);
 			if (models_[f].vertexBuffer == nullptr)
 			{
@@ -323,7 +317,6 @@ bool Model::StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice)
 		}
 
 		{
-			ES_SAFE_RELEASE(models_[f].indexBuffer);
 			models_[f].indexBuffer = graphicsDevice->CreateIndexBuffer(3 * GetFaceCount(f), models_[f].faces.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 			if (models_[f].indexBuffer == nullptr)
 			{

@@ -31,7 +31,7 @@ static int g_window_height = 600;
 static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 static ::EffekseerSound::Sound*			g_sound = NULL;
-static ::Effekseer::Effect*				g_effect = NULL;
+static ::Effekseer::EffectRef			g_effect = NULL;
 
 static LPDIRECT3D9						g_d3d = NULL;
 static LPDIRECT3DDEVICE9				g_d3d_device = NULL;
@@ -321,9 +321,6 @@ int main(int argc, char **argv)
 	// スレッド破棄
 	g_esc = true;
 	g_thread.join();
-
-	// エフェクトの破棄
-	ES_SAFE_RELEASE( g_effect );
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager->Destroy();

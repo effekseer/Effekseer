@@ -29,6 +29,28 @@ using D3D11BlendStatePtr = std::unique_ptr<ID3D11BlendState, Effekseer::Referenc
 using D3D11SamplerStatePtr = std::unique_ptr<ID3D11SamplerState, Effekseer::ReferenceDeleter<ID3D11SamplerState>>;
 
 class GraphicsDevice;
+class VertexBuffer;
+class IndexBuffer;
+class UniformBuffer;
+class Shader;
+class VertexLayout;
+class FrameBuffer;
+class Texture;
+class RenderPass;
+class PipelineState;
+class UniformLayout;
+
+using GraphicsDeviceRef = Effekseer::RefPtr<GraphicsDevice>;
+using VertexBufferRef = Effekseer::RefPtr<VertexBuffer>;
+using IndexBufferRef = Effekseer::RefPtr<IndexBuffer>;
+using UniformBufferRef = Effekseer::RefPtr<UniformBuffer>;
+using ShaderRef = Effekseer::RefPtr<Shader>;
+using VertexLayoutRef = Effekseer::RefPtr<VertexLayout>;
+using FrameBufferRef = Effekseer::RefPtr<FrameBuffer>;
+using TextureRef = Effekseer::RefPtr<Texture>;
+using RenderPassRef = Effekseer::RefPtr<RenderPass>;
+using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
+using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
 class DirtiedBlock
 {
@@ -231,21 +253,21 @@ class RenderPass
 {
 private:
 	GraphicsDevice* graphicsDevice_ = nullptr;
-	Effekseer::CustomVector<std::shared_ptr<Texture>> textures_;
-	std::shared_ptr<Texture> depthTexture_;
+	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> textures_;
+	Effekseer::Backend::TextureRef depthTexture_;
 
 public:
 	RenderPass(GraphicsDevice* graphicsDevice);
 	~RenderPass() override;
 
-	bool Init(Texture** textures, int32_t textureCount, Texture* depthTexture);
+	bool Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture);
 
-	Effekseer::CustomVector<std::shared_ptr<Texture>>& GetTextures()
+	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& GetTextures()
 	{
 		return textures_;
 	}
 
-	std::shared_ptr<Texture> GetDepthTexture()
+	Effekseer::Backend::TextureRef& GetDepthTexture()
 	{
 		return depthTexture_;
 	}
@@ -291,8 +313,6 @@ class PipelineState
 private:
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	Effekseer::Backend::PipelineStateParameter param_;
-	std::shared_ptr<Shader> shader_;
-	std::shared_ptr<VertexLayout> vertexLayout_;
 
 	D3D11RasterizerStatePtr rasterizerState_;
 	D3D11DepthStencilStatePtr depthStencilState_;
@@ -308,16 +328,6 @@ public:
 	const Effekseer::Backend::PipelineStateParameter& GetParam() const
 	{
 		return param_;
-	}
-
-	const std::shared_ptr<Shader>& GetShader() const
-	{
-		return shader_;
-	}
-
-	const std::shared_ptr<VertexLayout>& GetVertexLayout() const
-	{
-		return vertexLayout_;
 	}
 
 	ID3D11RasterizerState* GetRasterizerState() const
@@ -370,31 +380,31 @@ public:
 
 	void Unregister(DeviceObject* deviceObject);
 
-	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
+	Effekseer::Backend::VertexBufferRef CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
-	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 
-	Texture* CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
 
-	Texture* CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
 
-	UniformBuffer* CreateUniformBuffer(int32_t size, const void* initialData) override;
+	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 
-	VertexLayout* CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
+	Effekseer::Backend::VertexLayoutRef CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
 
-	RenderPass* CreateRenderPass(Effekseer::Backend::Texture** textures, int32_t textureCount, Effekseer::Backend::Texture* depthTexture) override;
+	Effekseer::Backend::RenderPassRef CreateRenderPass(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef& depthTexture) override;
 
-	Shader* CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize) override;
+	Effekseer::Backend::ShaderRef CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize) override;
 
-	Shader* CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayout* layout = nullptr) override;
+	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout = nullptr) override;
 
-	PipelineState* CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
+	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
 	void Draw(const Effekseer::Backend::DrawParameter& drawParam) override;
 
-	void BeginRenderPass(Effekseer::Backend::RenderPass* renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;
+	void BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;
 
 	void EndRenderPass() override;
 
@@ -403,10 +413,10 @@ public:
 		return "DirectX11";
 	}
 
-	bool UpdateUniformBuffer(Effekseer::Backend::UniformBuffer* buffer, int32_t size, int32_t offset, const void* data) override;
+	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
 	//! for DirectX11
-	Texture* CreateTexture(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
+	Effekseer::Backend::TextureRef CreateTexture(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
 };
 
 } // namespace Backend
