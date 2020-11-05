@@ -6,7 +6,7 @@
 #include "EffekseerRendererGL.GLExtension.h"
 #include "EffekseerRendererGL.Renderer.h"
 
-#define __INTERNAL_DEBUG__
+// #define __INTERNAL_DEBUG__
 
 #ifdef __ANDROID__
 
@@ -40,7 +40,7 @@ static const char g_header_vs_gl3_src[] = "#version 330\n"
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
-										  "#define CENTROID centroid\n" \
+										  "#define CENTROID centroid\n"
 										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n";
 
@@ -54,7 +54,7 @@ static const char g_header_fs_gl3_src[] = "#version 330\n"
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
-										  "#define CENTROID centroid\n" \
+										  "#define CENTROID centroid\n"
 										  "#define TEX2D texture\n"
 										  "layout (location = 0) out vec4 FRAGCOLOR;\n";
 
@@ -66,7 +66,7 @@ static const char g_header_vs_gles3_src[] = "#version 300 es\n"
 )"
 											"precision mediump float;\n"
 											"#define IN in\n"
-											"#define CENTROID centroid\n" \
+											"#define CENTROID centroid\n"
 											"#define TEX2D textureLod\n"
 											"#define OUT out\n";
 
@@ -78,7 +78,7 @@ static const char g_header_fs_gles3_src[] = "#version 300 es\n"
 )"
 											"precision mediump float;\n"
 											"#define IN in\n"
-											"#define CENTROID centroid\n" \
+											"#define CENTROID centroid\n"
 											"#define TEX2D texture\n"
 											"layout (location = 0) out vec4 FRAGCOLOR;\n";
 
@@ -89,7 +89,7 @@ static const char g_header_vs_gles2_src[] = "precision mediump float;\n"
 #define float4 vec4
 )"
 											"#define IN attribute\n"
-											"#define CENTROID\n" \
+											"#define CENTROID\n"
 											"#define TEX2D texture2DLod\n"
 											"#define OUT varying\n";
 
@@ -100,7 +100,7 @@ static const char g_header_fs_gles2_src[] = "precision mediump float;\n"
 #define float4 vec4
 )"
 											"#define IN varying\n"
-											"#define CENTROID\n" \
+											"#define CENTROID\n"
 											"#define TEX2D texture2D\n"
 											"#define FRAGCOLOR gl_FragColor\n";
 
@@ -114,7 +114,7 @@ static const char g_header_vs_gl2_src[] = "#version 120\n"
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN attribute\n"
-										  "#define CENTROID\n" \
+										  "#define CENTROID\n"
 										  "#define TEX2D texture2DLod\n"
 										  "#define OUT varying\n";
 
@@ -128,7 +128,7 @@ static const char g_header_fs_gl2_src[] = "#version 120\n"
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN varying\n"
-										  "#define CENTROID\n" \
+										  "#define CENTROID\n"
 										  "#define TEX2D texture2D\n"
 										  "#define FRAGCOLOR gl_FragColor\n";
 
@@ -557,8 +557,6 @@ void Shader::DisableAttribs()
 
 void Shader::SetVertex()
 {
-	const void* vertices = nullptr;
-
 	for (size_t i = 0; i < m_aid.size(); i++)
 	{
 		if (m_aid[i] >= 0)
@@ -568,7 +566,7 @@ void Shader::SetVertex()
 										 m_layout[i].type,
 										 m_layout[i].normalized,
 										 m_vertexSize,
-										 (uint8_t*)vertices + m_layout[i].offset);
+										 reinterpret_cast<GLvoid*>(m_layout[i].offset));
 		}
 	}
 }

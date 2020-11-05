@@ -11,9 +11,9 @@ namespace Effekseer
 
 int32_t RandLCG(int32_t& seed)
 {
-	const int a = 1103515245;
-	const int c = 12345;
-	const int m = 2147483647;
+	const int64_t a = 1103515245;
+	const int64_t c = 12345;
+	const int64_t m = 2147483647;
 
 	seed = (seed * a + c) & m;
 	return seed % 0x7fff;

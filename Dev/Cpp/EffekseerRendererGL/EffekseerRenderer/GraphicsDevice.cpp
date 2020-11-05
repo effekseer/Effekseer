@@ -973,7 +973,6 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			GLenum type = {};
 			int32_t count = {};
 			GLboolean isNormalized = false;
-			const void* vertices = nullptr;
 
 			if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)
 			{
@@ -1019,7 +1018,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 											 type,
 											 isNormalized,
 											 vertexSize,
-											 (uint8_t*)vertices + offset);
+											 reinterpret_cast<GLvoid*>(offset));
 			}
 
 			offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
