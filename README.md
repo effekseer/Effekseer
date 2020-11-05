@@ -51,6 +51,12 @@ Repositories
 Development
 =========
 
+### Roadmap
+
+[English](docs/Roadmap_En.md)
+
+[日本語](docs/Roadmap_Ja.md)
+
 ### Branch
 
 * master 1.6(WIP)
