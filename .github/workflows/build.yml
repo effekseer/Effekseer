@@ -9,9 +9,11 @@ on:
     branches:
       - master
       - 15x
-jobs:     
 
+env:
+  EFFEKSEER_VERSION: 160Alpha2
 
+jobs:
   tests:
     name: Run Tests
     runs-on: vs2017-win2016
@@ -110,22 +112,15 @@ jobs:
         if: matrix.name == 'windows'
         uses: actions/upload-artifact@v2
         with:
-          name: Effekseer-runtime
+          name: Effekseer-runtime-${{ env.EFFEKSEER_VERSION }}
           path: EffekseerRuntime
 
       - name: Upload ${{matrix.name}} Tool
         uses: actions/upload-artifact@v2
         with:
-          name: Effekseer-${{matrix.name}}
+          name: Effekseer-${{matrix.name}}-${{ env.EFFEKSEER_VERSION }}
           path: EffekseerTool*
-          
-      - name: Upload mac Tool (dmg)
-        if: matrix.name == 'mac'
-        uses: actions/upload-artifact@v2
-        with:
-          name: Effekseer-${{matrix.name}}.dmg
-          path: Dev/Effekseer.dmg
-  
+
   Deploy:
     needs: [tests,Build]
     runs-on: ubuntu-latest
@@ -133,29 +128,23 @@ jobs:
      
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-windows
+          name: Effekseer-windows-${{ env.EFFEKSEER_VERSION }}
           path: dist/
                 
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-linux
+          name: Effekseer-linux-${{ env.EFFEKSEER_VERSION }}
           path: dist/
       
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-runtime
+          name: Effekseer-runtime-${{ env.EFFEKSEER_VERSION }}
           path: dist/EffekseerRuntime
       
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-mac
+          name: Effekseer-mac-${{ env.EFFEKSEER_VERSION }}
           path: dist/
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: Effekseer-mac.dmg
-          path: dist/
-                  
       
       - name: Prepare Release
         run: |
