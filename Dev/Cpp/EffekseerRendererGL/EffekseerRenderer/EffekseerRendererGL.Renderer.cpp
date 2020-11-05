@@ -1140,11 +1140,11 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
-		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, (void*)(vertexOffset / 4 * 6 * indexBufferCurrentStride_));
+		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, reinterpret_cast<GLvoid*>(static_cast<size_t>(vertexOffset / 4 * 6 * indexBufferCurrentStride_)));
 	}
 	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		glDrawElements(GL_LINES, spriteCount * 8, stride, (void*)(vertexOffset / 4 * 8 * indexBufferCurrentStride_));
+		glDrawElements(GL_LINES, spriteCount * 8, stride, reinterpret_cast<GLvoid*>(static_cast<size_t>(vertexOffset / 4 * 8 * indexBufferCurrentStride_)));
 	}
 
 	GLCheckError();

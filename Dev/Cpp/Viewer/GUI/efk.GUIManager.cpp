@@ -658,7 +658,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 		return true;
 	};
 
-	window->Iconify = [this](float f) -> void {
+	window->Iconify = [this](int f) -> void {
 		if (this->callback != nullptr)
 		{
 			this->callback->Iconify(f);

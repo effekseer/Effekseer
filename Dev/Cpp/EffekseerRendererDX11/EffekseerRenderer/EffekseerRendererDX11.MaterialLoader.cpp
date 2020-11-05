@@ -142,6 +142,9 @@ MaterialLoader ::~MaterialLoader()
 					return DXGI_FORMAT_R32G32B32_FLOAT;
 				if (i == 4)
 					return DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+				assert(0);
+				return DXGI_FORMAT_R32_FLOAT;
 			};
 			if (material.GetCustomData1Count() > 0)
 			{

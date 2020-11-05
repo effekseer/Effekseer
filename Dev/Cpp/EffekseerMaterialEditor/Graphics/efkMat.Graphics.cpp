@@ -217,7 +217,7 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Color[3] = 255;
 
 				auto key = std::tuple<Vector3, Vector3>(vertexes[index_offset + v].Pos, normal);
-				pairVertexes[key].emplace_back(index_offset + v);
+				pairVertexes[key].emplace_back(static_cast<int32_t>(index_offset + v));
 			}
 			index_offset += shapes[s].mesh.num_face_vertices[f];
 		}

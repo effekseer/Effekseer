@@ -213,6 +213,9 @@ MaterialLoader ::~MaterialLoader()
 					return LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
 				if (i == 4)
 					return LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT;
+
+				assert(0);
+				return LLGI::VertexLayoutFormat::R32_FLOAT;
 			};
 			if (material.GetCustomData1Count() > 0)
 			{
