@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 include(ExternalProject)
 
 # Solution name
@@ -94,22 +94,14 @@ if(BUILD_VULKAN)
 
         # Hack for GLSLANG
         if (MSVC)
-    	    if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-    		    foreach (flag CMAKE_C_FLAGS
-    			    CMAKE_C_FLAGS_DEBUG
-    			    CMAKE_C_FLAGS_RELEASE
-    			    CMAKE_CXX_FLAGS
-    			    CMAKE_CXX_FLAGS_DEBUG
-    			    CMAKE_CXX_FLAGS_RELEASE)
-    
-    			    if (${flag} MATCHES "/MD")
-    				    string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-    			    endif()
-    			    if (${flag} MATCHES "/MDd")
-    				    string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-        			endif()
-        		endforeach()
-    	    endif()
+            # CMAKE_MSVC_RUNTIME_LIBRARY can be only used if minimum required is larger than 3.17
+            if(USE_MSVC_RUNTIME_LIBRARY_DLL)
+                cmake_policy(SET CMP0091 NEW)
+                set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+            else()
+                cmake_policy(SET CMP0091 NEW)
+                set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+            endif()
         endif()
 
         set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
