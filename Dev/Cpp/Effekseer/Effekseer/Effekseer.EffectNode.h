@@ -59,7 +59,8 @@ public:
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 			Color all;
@@ -269,7 +270,8 @@ struct LocationAbsParameter
 {
 	LocationAbsType type = LocationAbsType::None;
 
-	union {
+	union
+	{
 		struct
 		{
 
@@ -461,7 +463,8 @@ struct ParameterGenerationLocation
 		Order = 1,
 	};
 
-	union {
+	union
+	{
 		struct
 		{
 			random_vector3d location;
@@ -589,7 +592,8 @@ struct ParameterCustomData
 {
 	ParameterCustomDataType Type = ParameterCustomDataType::None;
 
-	union {
+	union
+	{
 		ParameterCustomDataFixed Fixed;
 		ParameterCustomDataRandom Random;
 		ParameterCustomDataEasing Easing;
@@ -767,7 +771,8 @@ struct ParameterRendererCommon
 		vector2d Speed;
 	};
 
-	union {
+	union
+	{
 		struct
 		{
 		} Default;
@@ -902,15 +907,23 @@ struct ParameterRendererCommon
 				pos += sizeof(int);
 
 				Material.MaterialTextures.resize(textures);
-				memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
-				pos += (sizeof(MaterialTextureParameter) * textures);
+
+				if (textures > 0)
+				{
+					memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+					pos += (sizeof(MaterialTextureParameter) * textures);
+				}
 
 				memcpy(&uniforms, pos, sizeof(int));
 				pos += sizeof(int);
 
 				Material.MaterialUniforms.resize(uniforms);
-				memcpy(Material.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
-				pos += (sizeof(float) * 4 * uniforms);
+
+				if (uniforms > 0)
+				{
+					memcpy(Material.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+					pos += (sizeof(float) * 4 * uniforms);
+				}
 			}
 		}
 		else
@@ -1207,7 +1220,8 @@ struct ParameterAlphaCrunch
 		FPI = FOUR_POINT_INTERPOLATION,
 	} Type;
 
-	union {
+	union
+	{
 		struct
 		{
 			int32_t RefEq;
