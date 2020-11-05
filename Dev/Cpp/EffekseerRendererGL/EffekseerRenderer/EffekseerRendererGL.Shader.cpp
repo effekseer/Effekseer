@@ -479,13 +479,11 @@ void Shader::DisableAttribs()
 
 void Shader::SetVertex()
 {
-	const void* vertices = NULL;
-
 	for (size_t i = 0; i < m_aid.size(); i++)
 	{
 		if (m_aid[i] >= 0)
 		{
-			GLExt::glVertexAttribPointer(m_aid[i], m_layout[i].count, m_layout[i].type, m_layout[i].normalized, m_vertexSize, (uint8_t*)vertices + m_layout[i].offset);
+			GLExt::glVertexAttribPointer(m_aid[i], m_layout[i].count, m_layout[i].type, m_layout[i].normalized, m_vertexSize, reinterpret_cast<GLvoid*>(m_layout[i].offset));
 		}
 	}
 }
