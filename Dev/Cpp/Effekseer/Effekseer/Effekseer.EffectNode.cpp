@@ -1025,7 +1025,7 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 		alpha *= v;
 	}
 
-	return alpha;
+	return Clamp(alpha, 1.0f, 0.0f);
 }
 
 //----------------------------------------------------------------------------------
