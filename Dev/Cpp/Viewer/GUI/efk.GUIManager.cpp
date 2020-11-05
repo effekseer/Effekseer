@@ -567,7 +567,7 @@ static ImTextureID ToImTextureID(ImageResource* image)
 			if (texture->TexturePtr != nullptr)
 			{
 				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture->TexturePtr);
-				return reinterpret_cast<ImTextureID>(t->GetBuffer());
+				return reinterpret_cast<ImTextureID>(static_cast<size_t>(t->GetBuffer()));
 			}
 			else
 			{
@@ -719,7 +719,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 		return true;
 	};
 
-	window->Iconify = [this](float f) -> void {
+	window->Iconify = [this](int f) -> void {
 		if (this->callback != nullptr)
 		{
 			this->callback->Iconify(f);

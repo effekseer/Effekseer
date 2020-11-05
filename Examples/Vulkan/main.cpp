@@ -213,15 +213,16 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 	// A code to initialize DirectX12 is too long, so I use LLGI
 	// Vulkan初期化のためのコードは長すぎるのでLLGIを使用する。
 
+	LLGI::PlatformParameter platformParam{};
+	platformParam.Device = LLGI::DeviceType::Vulkan;
+	platformParam.WaitVSync = true;
+
 	context->window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow("Vulkan", LLGI::Vec2I(windowWidth, windowHeight)));
 	if (context->window == nullptr)
 	{
 		goto FAILED;
 	}
 
-	LLGI::PlatformParameter platformParam;
-	platformParam.Device = LLGI::DeviceType::Vulkan;
-	platformParam.WaitVSync = true;
 	context->platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, context->window.get()));
 
 	if (context->platform == nullptr)

@@ -239,6 +239,9 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 
 	// A code to initialize DirectX12 is too long, so I use LLGI
 	// DirectX12初期化のためのコードは長すぎるのでLLGIを使用する。
+	LLGI::PlatformParameter platformParam{};
+	platformParam.Device = LLGI::DeviceType::DirectX12;
+	platformParam.WaitVSync = true;
 
 	context->window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow("DirectX12", LLGI::Vec2I(windowWidth, windowHeight)));
 	if (context->window == nullptr)
@@ -246,9 +249,6 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 		goto FAILED;
 	}
 
-	LLGI::PlatformParameter platformParam;
-	platformParam.Device = LLGI::DeviceType::DirectX12;
-	platformParam.WaitVSync = true;
 	context->platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, context->window.get()));
 
 	if (context->platform == nullptr)

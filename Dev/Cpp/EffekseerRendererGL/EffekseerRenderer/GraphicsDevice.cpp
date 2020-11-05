@@ -964,7 +964,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
 		}
 
-		int32_t offset = 0;
+		uint16_t offset = 0;
 		for (size_t i = 0; i < pip->GetVertexLayout()->GetElements().size(); i++)
 		{
 			const auto& element = pip->GetVertexLayout()->GetElements()[i];
