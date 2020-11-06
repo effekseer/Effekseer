@@ -17,7 +17,6 @@ namespace Effekseer.Binary
         Ring = 4,
 		Model = 5,
 		Track = 6,
-		ProcedualModel = 7,
 	};
 
 	[StructLayout(LayoutKind.Sequential)]

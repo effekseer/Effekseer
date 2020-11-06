@@ -22,6 +22,7 @@ file(GLOB files_core
     EffekseerCore/Utl/*.cs	
     EffekseerCore/IO/*.cs	
     EffekseerCore/Utils/*.cs
+    EffekseerCore/Data/ProcedualModelValues.cs
     EffekseerCore/Data/Value/Int2.cs
     EffekseerCore/Data/Value/ObjectCollection.cs
 )
@@ -67,7 +68,9 @@ file(GLOB files
     Effekseer/swig/*.cs
     Effekseer/Utils/*.cs
     Effekseer/Process/*.cs
+    Effekseer/GUI/Dock/ProcedualModel.cs
     Effekseer/GUI/Component/Int2.cs
+	Effekseer/GUI/Component/ObjectReference.cs
     )
 
 list(APPEND files

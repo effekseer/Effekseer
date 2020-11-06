@@ -174,6 +174,8 @@ namespace Effekseer
 
 		static Data.DynamicValues dynamic_ = new Data.DynamicValues();
 
+		static Data.ProcedualModelValues procedualModels = new ProcedualModelValues();
+
 		static int start_frame = 0;
 
 		static int end_frame = 160;
@@ -357,6 +359,11 @@ namespace Effekseer
 		public static Data.DynamicValues Dynamic
 		{
 			get { return dynamic_; }
+		}
+
+		public static Data.ProcedualModelValues ProcedualModel
+		{
+			get { return procedualModels; }
 		}
 
 		/// <summary>
@@ -739,6 +746,8 @@ namespace Effekseer
 
 			dynamic_ = new Data.DynamicValues();
 
+			procedualModels.ProcedualModels.Clear();
+
 			// Add a root node
 			Root.AddChild();
 			Command.CommandManager.Clear();
@@ -763,6 +772,7 @@ namespace Effekseer
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
 			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
 			var dynamicElement = Data.IO.SaveObjectToElement(doc, "Dynamic", Dynamic, false);
+			var procedualModelElement = Data.IO.SaveObjectToElement(doc, "ProcedualModel", ProcedualModel, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -772,6 +782,7 @@ namespace Effekseer
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
 			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
+			if (procedualModelElement != null) project_root.AppendChild(procedualModelElement);
 
 			// recording option (this option is stored in local or global)
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
@@ -947,6 +958,13 @@ namespace Effekseer
 			{
 				var o = dynamic_ as object;
 				Data.IO.LoadObjectFromElement(dynamicElement as System.Xml.XmlElement, ref o, false);
+			}
+
+			var procedualElement = doc["EffekseerProject"]["ProcedualModel"];
+			if (procedualElement != null)
+			{
+				var o = procedualModels as object;
+				Data.IO.LoadObjectFromElement(procedualElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			// recording option (this option is stored in local or global)
