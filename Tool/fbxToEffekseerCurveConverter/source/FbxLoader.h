@@ -1,7 +1,9 @@
 #pragma once
 
+#define FBXSDK_SHARED
 #include <fbxsdk.h>
 #include <vector>
+#include <string>
 
 struct FbxNurbsCurveData
 {

@@ -53,7 +53,8 @@ bool FbxCurveConverter::Export(const std::string _Filepath, const FbxInfo& _pFbx
 	std::ofstream ofs(lFilepath, std::ios::out | std::ios::binary);
 
 	// export version
-	ofs.write((char*)&ConverterVersion, sizeof(int));
+	int version = ConverterVersion;
+	ofs.write((char*)&version, sizeof(int));
 
 	// export controll point count
 	ofs.write((char*)&pCurve->mControllPointCount, sizeof(int));
