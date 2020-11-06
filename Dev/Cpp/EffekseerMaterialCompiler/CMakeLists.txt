@@ -208,3 +208,8 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
 
     set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER "Compiler") 
 endif()
+
+if(APPLE)
+    set_target_properties(EffekseerMaterialCompilerMetal PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+    set_target_properties(EffekseerMaterialCompilerGL PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+endif()
