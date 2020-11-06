@@ -6,6 +6,79 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
+	class ObjectCollection
+	{
+		public static T Select<T>(string paramName, string id, T currentSelected, bool hasDefault, Data.Value.ObjectCollection<T> collection) where T : class, Data.Value.INamedObject, new()
+		{
+			var nextSelected = currentSelected;
+
+			var v = collection.Values.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == currentSelected).FirstOrDefault();
+
+			string selectedID = "";
+
+			if (hasDefault)
+			{
+				selectedID = "Default###Selected";
+			}
+
+			if (v != null)
+			{
+				selectedID = v.Item1.Name.Value + "###SelectedObj" + v.Item2.ToString();
+			}
+
+			if (Manager.NativeManager.BeginCombo(paramName + "###Selected" + id, selectedID, swig.ComboFlags.None))
+			{
+
+				if (hasDefault)
+				{
+					bool is_selected = v == null;
+
+					var name = "Default###Selected";
+
+					if (Manager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
+					{
+						nextSelected = null;
+					}
+
+					if (is_selected)
+					{
+						Manager.NativeManager.SetItemDefaultFocus();
+					}
+				}
+
+				for (int i = 0; i < collection.Values.Count; i++)
+				{
+					bool is_selected = (collection.Values[i] == currentSelected);
+
+					string name = string.Empty;
+
+					if (collection.Values[i].Name.Value == string.Empty)
+					{
+						name = "(Noname)" + "###ObjName" + i.ToString();
+					}
+					else
+					{
+						name = collection.Values[i].Name.Value + "###ObjName" + i.ToString();
+					}
+
+					if (Manager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
+					{
+						nextSelected = collection.Values[i];
+					}
+
+					if (is_selected)
+					{
+						Manager.NativeManager.SetItemDefaultFocus();
+					}
+				}
+
+				Manager.NativeManager.EndCombo();
+			}
+
+			return nextSelected;
+		}
+	}
+
 	class Functions
 	{
 		public static string GetFilepathWithExtentions(string filepath, string extention)

@@ -74,7 +74,7 @@ namespace Effekseer.GUI.Dock
 			
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 			
-			var nextParam = Component.DynamicSelector.Select("", "", Core.Dynamic.Equations.Selected, false, true);
+			var nextParam = Component.ObjectCollection.Select("", "", Core.Dynamic.Equations.Selected, false, Core.Dynamic.Equations);
 
 			if (Core.Dynamic.Equations.Selected != nextParam)
 			{
@@ -87,7 +87,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
-				Core.Dynamic.Equations.Add();
+				Core.Dynamic.Equations.New();
 			}
 
 			Manager.NativeManager.SameLine();

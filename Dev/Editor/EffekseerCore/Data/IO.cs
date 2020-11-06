@@ -16,6 +16,89 @@ namespace Effekseer.Data
 
 		static Dictionary<Type, Action<XmlElement, object, bool>> loadEvents = new Dictionary<Type, Action<XmlElement, object, bool>>();
 
+		static List<MethodInfo> loadingMethodInfos = new List<MethodInfo>();
+
+		static List<MethodInfo> savingMethodInfos = new List<MethodInfo>();
+
+		static IO()
+		{
+			var methods = typeof(IO).GetMethods();
+			loadingMethodInfos = methods.Where(_ => _.IsStatic && _.Name == "LoadFromElement" && _.GetParameters().Length == 3).ToList();
+			savingMethodInfos = methods.Where(_ => _.IsStatic && _.Name == "SaveToElement" && _.GetParameters().Length == 4).ToList();
+		}
+
+		static bool CreateLoadingMethod(Type target, Type t = null)
+		{
+			if (t == null)
+				t = target;
+
+			if (loadEvents.ContainsKey(target))
+				return true;
+
+			if(t.IsGenericType)
+			{
+				var def = t.GetGenericTypeDefinition();
+
+				var found = loadingMethodInfos.FirstOrDefault(_ =>
+				{
+					var param = _.GetParameters();
+					return param.Length == 3 && param[1].ParameterType.IsGenericType && param[1].ParameterType.GetGenericTypeDefinition() == def;
+				});
+
+				if(found != null)
+				{
+					var m = found.MakeGenericMethod(new[] { t.GenericTypeArguments[0] });
+					loadEvents.Add(target, (e, o, b) => { 
+						m.Invoke(null, new[] { e, o, b }); 
+					});
+					return true;
+				}
+			}
+
+			if (t.BaseType != typeof(Object))
+			{
+				return CreateLoadingMethod(target, t.BaseType);
+			}
+
+			return false;
+		}
+
+		static bool CreateSavingMethod(Type target, Type t = null)
+		{
+			if (t == null)
+				t = target;
+
+			if (saveEvents.ContainsKey(target))
+				return true;
+
+			if (t.IsGenericType)
+			{
+				var def = t.GetGenericTypeDefinition();
+
+				var found = savingMethodInfos.FirstOrDefault(_ =>
+				{
+					var param = _.GetParameters();
+					return param[2].ParameterType.IsGenericType && param[2].ParameterType.GetGenericTypeDefinition() == def;
+				});
+
+				if (found != null)
+				{
+					var m = found.MakeGenericMethod(new[] { t.GenericTypeArguments[0] });
+					saveEvents.Add(target, (e, s, o, b) => {
+						return (XmlElement)m.Invoke(null, new[] { e, s, o, b });
+					});
+					return true;
+				}
+			}
+
+			if (t.BaseType != typeof(Object))
+			{
+				return CreateSavingMethod(target, t.BaseType);
+			}
+
+			return false;
+		}
+
 		public static void ExtendSupportedType(Type type, Func<XmlDocument, string, object, bool, XmlElement>  save, Action<XmlElement, object, bool> load)
 		{
 			saveEvents.Add(type, save);
@@ -44,7 +127,7 @@ namespace Effekseer.Data
 						e_o.AppendChild(element as XmlNode);
 					}
 				}
-				else if(saveEvents.ContainsKey(property.PropertyType))
+				else if(CreateSavingMethod(property.PropertyType) && saveEvents.ContainsKey(property.PropertyType))
 				{
 					var property_value = property.GetValue(o, null);
 					var element = saveEvents[property.PropertyType](doc, property.Name, property_value, isClip);
@@ -319,14 +402,15 @@ namespace Effekseer.Data
 			return e;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicEquationCollection collection, bool isClip)
+		public static XmlElement SaveToElement<T>(XmlDocument doc, string element_name, Data.Value.ObjectCollection<T> collection, bool isClip) where T : class, new()
 		{
 			var e = doc.CreateElement(element_name);
 			for (int i = 0; i < collection.Values.Count; i++)
 			{
 				var name = collection.Values[i].GetType().Name;
 				// a node must be generated
-				var e_node = SaveToElement(doc, name, collection.Values[i], true);
+
+				var e_node = (XmlNode)SaveObjectToElement(doc, name, collection.Values[i], true);
 				if (e_node != null)
 				{
 					e.AppendChild(e_node);
@@ -801,7 +885,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.Value.DynamicEquationReference de, bool isClip)
+		public static XmlElement SaveToElement<T>(XmlDocument doc, string element_name, Data.Value.ObjectReference<T> de, bool isClip) where T : class
 		{
 			var d_ind = de.Index;
 			if (d_ind >= 0)
@@ -834,7 +918,7 @@ namespace Effekseer.Data
 					var property_value = property.GetValue(o, null);
 					method.Invoke(null, new object[] { ch_node, property_value, isClip });
 				}
-				else if(loadEvents.ContainsKey(property.PropertyType))
+				else if(CreateLoadingMethod(property.PropertyType) && loadEvents.ContainsKey(property.PropertyType))
 				{
 					var property_value = property.GetValue(o, null);
 					loadEvents[property.PropertyType](ch_node, property_value, isClip);
@@ -1068,16 +1152,20 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Data.DynamicEquationCollection collection, bool isClip)
+		public static void LoadFromElement<T>(XmlElement e, Data.Value.ObjectCollection<T> collection, bool isClip) where T : class, new()
 		{
-			collection.Values.Clear();
+			collection.Clear();
 
 			for (var i = 0; i < e.ChildNodes.Count; i++)
 			{
 				var e_child = e.ChildNodes[i] as XmlElement;
-				var element = new DynamicEquation(collection);
-				LoadFromElement(e_child, element, isClip);
-				collection.Values.Add(element);
+				var element = new T();
+
+				var obj = (Object)element;
+
+				LoadObjectFromElement(e_child, ref obj, isClip);
+
+				collection.Add(element);
 			}
 		}
 
@@ -1653,15 +1741,10 @@ namespace Effekseer.Data
 			if (e_x != null) LoadFromElement(e_x, value.Code, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, Data.Value.DynamicEquationReference de, bool isClip)
+		public static void LoadFromElement<T>(XmlElement e, Data.Value.ObjectReference<T> de, bool isClip) where T : class
 		{
 			var ind = e.GetTextAsInt();
-
-			if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
-			{
-				var d = Core.Dynamic.Equations.Values[ind];
-				de.SetValue(d);
-			}
+			de.SetValueWithIndex(ind);
 		}
 	}
 }
