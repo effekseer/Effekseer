@@ -163,6 +163,8 @@ target_link_libraries(
     ${CORE_FOUNDATION_FRAMEWORK}
     ${CORE_VIDEO_FRAMEWORK})
 
+    set_target_properties(EffekseerMaterialEditor PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+
 else()
 
 # For Linux
