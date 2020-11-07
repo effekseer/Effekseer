@@ -700,20 +700,23 @@ public:
 		return *this;
 	}
 
+
 	template <class U>
-	void operator=(RefPtr<U>& o)
+	void operator=(const RefPtr<U>& o)
 	{
-		SafeAddRef(o.ptr_);
+		auto ptr = o.Get();
+		SafeAddRef(ptr);
 		SafeRelease(ptr_);
-		ptr_ = o.ptr_;
+		ptr_ = ptr;
 	}
 
 	template <class U>
-	RefPtr(RefPtr<U>& o)
+	RefPtr(const RefPtr<U>& o)
 	{
-		SafeAddRef(o.Get());
+		auto ptr = o.Get();
+		SafeAddRef(ptr);
 		SafeRelease(ptr_);
-		ptr_ = o.Get();
+		ptr_ = ptr;
 	}
 
 	void* Pin()
