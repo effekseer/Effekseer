@@ -94,10 +94,6 @@ void EffectPlatform::Terminate()
 {
 	PreDestroyDevice();
 
-	for (auto& effect : effects_)
-	{
-		effect->Release();
-	}
 	effects_.clear();
 
 	if (renderer_ != nullptr)
