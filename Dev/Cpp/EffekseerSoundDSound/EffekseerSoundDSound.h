@@ -71,7 +71,7 @@ struct SoundData
 /**
 	@brief	サウンドクラス
 */
-class Sound
+class Sound : public Effekseer::IReference
 {
 protected:
 	Sound() {}

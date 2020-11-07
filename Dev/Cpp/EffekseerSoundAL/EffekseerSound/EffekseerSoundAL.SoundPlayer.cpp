@@ -17,6 +17,7 @@ namespace EffekseerSound
 SoundPlayer::SoundPlayer( SoundImplemented* sound )
 	: m_sound	( sound )
 {
+	ES_SAFE_ADDREF(m_sound);
 }
 
 //----------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ SoundPlayer::SoundPlayer( SoundImplemented* sound )
 //----------------------------------------------------------------------------------
 SoundPlayer::~SoundPlayer()
 {
+	ES_SAFE_RELEASE(m_sound);
 }
 
 //----------------------------------------------------------------------------------
