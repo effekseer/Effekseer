@@ -40,7 +40,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, Effekseer::ReferenceObject
 {
 	IXAudio2*				m_xaudio2;
 	X3DAUDIO_HANDLE			m_x3daudio;
@@ -84,6 +84,19 @@ public:
 
 	void Calculate3DSound(const ::Effekseer::Vector3D& position, 
 		float distance, int32_t input, int32_t output, float matrix[]);
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 //----------------------------------------------------------------------------------

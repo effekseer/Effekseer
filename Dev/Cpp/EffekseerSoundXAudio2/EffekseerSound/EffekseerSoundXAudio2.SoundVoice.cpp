@@ -19,6 +19,8 @@ SoundVoice::SoundVoice(SoundImplemented* sound, const WAVEFORMATEX* format)
 	, m_tag(nullptr)
 	, m_data(nullptr)
 {
+	ES_SAFE_ADDREF(m_sound);
+
 	sound->GetDevice()->CreateSourceVoice(&m_xavoice, format);
 }
 
@@ -31,6 +33,8 @@ SoundVoice::~SoundVoice()
 	{
 		m_xavoice->DestroyVoice();
 	}
+
+	ES_SAFE_RELEASE(m_sound);
 }
 
 //----------------------------------------------------------------------------------
