@@ -33,146 +33,152 @@ int main(int argc, char** argv)
 
 	InitializeWindowAndDevice(windowWidth, windowHeight);
 
-	// Create a renderer of effects
-	// エフェクトのレンダラーの作成
-	auto format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	auto renderer = ::EffekseerRendererDX12::Create(GetDevice(), GetCommandQueue(), 3, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
-
-	// Create a memory pool
-	// メモリプールの作成
-	EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk = EffekseerRendererDX12::CreateSingleFrameMemoryPool(renderer);
-
-	// Create a command list
-	// コマンドリストの作成
-	EffekseerRenderer::CommandList* commandListEfk = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk);
-
-	// Create a manager of effects
-	// エフェクトのマネージャーの作成
-	auto manager = ::Effekseer::Manager::Create(8000);
-
-	// Sprcify rendering modules
-	// 描画モジュールの設定
-	manager->SetSpriteRenderer(renderer->CreateSpriteRenderer());
-	manager->SetRibbonRenderer(renderer->CreateRibbonRenderer());
-	manager->SetRingRenderer(renderer->CreateRingRenderer());
-	manager->SetTrackRenderer(renderer->CreateTrackRenderer());
-	manager->SetModelRenderer(renderer->CreateModelRenderer());
-
-	// Specify a texture, model and material loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// テクスチャ、モデル、マテリアルローダーの設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	manager->SetTextureLoader(renderer->CreateTextureLoader());
-	manager->SetModelLoader(renderer->CreateModelLoader());
-	manager->SetMaterialLoader(renderer->CreateMaterialLoader());
-
-	// Specify sound modules
-	// サウンドモジュールの設定
-	IXAudio2* xAudio2 = GetIXAudio2();
-	auto sound = ::EffekseerSound::Sound::Create(xAudio2, 16, 16);
-
-	// Specify a metho to play sound from an instance of sound
-	// 音再生用インスタンスから再生機能を指定
-	manager->SetSoundPlayer(sound->CreateSoundPlayer());
-
-	// Specify a sound data loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// サウンドデータの読込機能を設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	manager->SetSoundLoader(sound->CreateSoundLoader());
-
-	// Specify a position of view
-	// 視点位置を確定
-	auto g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
-
-	// Specify a projection matrix
-	// 投影行列を設定
-	renderer->SetProjectionMatrix(
-		::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
-
-	// Specify a camera matrix
-	// カメラ行列を設定
-	renderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-	// Load an effect
-	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
-
-	int32_t time = 0;
-	Effekseer::Handle handle = 0;
-
-	while (BeginFrame())
+	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
+	// However, if it is disposed before the end of COM, it will go wrong, so we add a scope.
+	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
+	// ただし、COMの終了前に削除されるとおかしくなるので、スコープを追加する。
 	{
-		// Call on starting of a frame
-		// フレームの開始時に呼ぶ
-		sfMemoryPoolEfk->NewFrame();
+		// Create a renderer of effects
+		// エフェクトのレンダラーの作成
+		auto format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		auto renderer = ::EffekseerRendererDX12::Create(GetDevice(), GetCommandQueue(), 3, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
 
-		// Begin a command list
-		// コマンドリストを開始する。
-		EffekseerRendererDX12::BeginCommandList(commandListEfk, GetCommandList());
-		renderer->SetCommandList(commandListEfk);
+		// Create a memory pool
+		// メモリプールの作成
+		EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk = EffekseerRendererDX12::CreateSingleFrameMemoryPool(renderer);
 
-		if (time % 120 == 0)
+		// Create a command list
+		// コマンドリストの作成
+		EffekseerRenderer::CommandList* commandListEfk = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk);
+
+		// Create a manager of effects
+		// エフェクトのマネージャーの作成
+		auto manager = ::Effekseer::Manager::Create(8000);
+
+		// Sprcify rendering modules
+		// 描画モジュールの設定
+		manager->SetSpriteRenderer(renderer->CreateSpriteRenderer());
+		manager->SetRibbonRenderer(renderer->CreateRibbonRenderer());
+		manager->SetRingRenderer(renderer->CreateRingRenderer());
+		manager->SetTrackRenderer(renderer->CreateTrackRenderer());
+		manager->SetModelRenderer(renderer->CreateModelRenderer());
+
+		// Specify a texture, model and material loader
+		// It can be extended by yourself. It is loaded from a file on now.
+		// テクスチャ、モデル、マテリアルローダーの設定する。
+		// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
+		manager->SetTextureLoader(renderer->CreateTextureLoader());
+		manager->SetModelLoader(renderer->CreateModelLoader());
+		manager->SetMaterialLoader(renderer->CreateMaterialLoader());
+
+		// Specify sound modules
+		// サウンドモジュールの設定
+		IXAudio2* xAudio2 = GetIXAudio2();
+		auto sound = ::EffekseerSound::Sound::Create(xAudio2, 16, 16);
+
+		// Specify a metho to play sound from an instance of sound
+		// 音再生用インスタンスから再生機能を指定
+		manager->SetSoundPlayer(sound->CreateSoundPlayer());
+
+		// Specify a sound data loader
+		// It can be extended by yourself. It is loaded from a file on now.
+		// サウンドデータの読込機能を設定する。
+		// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
+		manager->SetSoundLoader(sound->CreateSoundLoader());
+
+		// Specify a position of view
+		// 視点位置を確定
+		auto g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+
+		// Specify a projection matrix
+		// 投影行列を設定
+		renderer->SetProjectionMatrix(
+			::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
+
+		// Specify a camera matrix
+		// カメラ行列を設定
+		renderer->SetCameraMatrix(
+			::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+		// Load an effect
+		// エフェクトの読込
+		auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
+
+		int32_t time = 0;
+		Effekseer::Handle handle = 0;
+
+		while (BeginFrame())
 		{
-			// Play an effect
-			// エフェクトの再生
-			handle = manager->Play(effect, 0, 0, 0);
+			// Call on starting of a frame
+			// フレームの開始時に呼ぶ
+			sfMemoryPoolEfk->NewFrame();
+
+			// Begin a command list
+			// コマンドリストを開始する。
+			EffekseerRendererDX12::BeginCommandList(commandListEfk, GetCommandList());
+			renderer->SetCommandList(commandListEfk);
+
+			if (time % 120 == 0)
+			{
+				// Play an effect
+				// エフェクトの再生
+				handle = manager->Play(effect, 0, 0, 0);
+			}
+
+			if (time % 120 == 119)
+			{
+				// Stop effects
+				// エフェクトの停止
+				manager->StopEffect(handle);
+			}
+
+			// Move the effect
+			// エフェクトの移動
+			manager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+
+			// Update the manager
+			// マネージャーの更新
+			manager->Update();
+
+			// Begin to rendering effects
+			// エフェクトの描画開始処理を行う。
+			renderer->BeginRendering();
+
+			// Render effects
+			// エフェクトの描画を行う。
+			manager->Draw();
+
+			// Finish to rendering effects
+			// エフェクトの描画終了処理を行う。
+			renderer->EndRendering();
+
+			// Finish a command list
+			// コマンドリストを終了する。
+			renderer->SetCommandList(nullptr);
+			EffekseerRendererDX12::EndCommandList(commandListEfk);
+
+			// Ececute functions about DirectX
+			// DirectXの処理
+			EndFrame();
+
+			time++;
 		}
 
-		if (time % 120 == 119)
-		{
-			// Stop effects
-			// エフェクトの停止
-			manager->StopEffect(handle);
-		}
+		// Dispose the manager
+		// マネージャーの破棄
+		manager->Destroy();
 
-		// Move the effect
-		// エフェクトの移動
-		manager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+		// Dispose the sound
+		// サウンドの破棄
+		sound->Destroy();
 
-		// Update the manager
-		// マネージャーの更新
-		manager->Update();
+		ES_SAFE_RELEASE(sfMemoryPoolEfk);
+		ES_SAFE_RELEASE(commandListEfk);
 
-		// Begin to rendering effects
-		// エフェクトの描画開始処理を行う。
-		renderer->BeginRendering();
-
-		// Render effects
-		// エフェクトの描画を行う。
-		manager->Draw();
-
-		// Finish to rendering effects
-		// エフェクトの描画終了処理を行う。
-		renderer->EndRendering();
-
-		// Finish a command list
-		// コマンドリストを終了する。
-		renderer->SetCommandList(nullptr);
-		EffekseerRendererDX12::EndCommandList(commandListEfk);
-
-		// Ececute functions about DirectX
-		// DirectXの処理
-		EndFrame();
-
-		time++;
+		// Dispose the renderer
+		// レンダラーの破棄
+		renderer->Destroy();
 	}
-
-	// Dispose the manager
-	// マネージャーの破棄
-	manager->Destroy();
-
-	// Dispose the sound
-	// サウンドの破棄
-	sound->Destroy();
-
-	ES_SAFE_RELEASE(sfMemoryPoolEfk);
-	ES_SAFE_RELEASE(commandListEfk);
-
-	// Dispose the renderer
-	// レンダラーの破棄
-	renderer->Destroy();
 
 	TerminateWindowAndDevice();
 
