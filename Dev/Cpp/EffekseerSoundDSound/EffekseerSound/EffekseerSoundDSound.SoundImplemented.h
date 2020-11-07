@@ -24,7 +24,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, Effekseer::ReferenceObject
 {
 	IDirectSound8*			m_dsound;
 
@@ -68,6 +68,19 @@ public:
 	void SetPanRange( int32_t leftPos, int32_t rightPos );
 
 	float CalculatePan( const Effekseer::Vector3D& position );
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 //----------------------------------------------------------------------------------

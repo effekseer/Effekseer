@@ -23,7 +23,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, Effekseer::ReferenceObject
 {
 	SoundVoiceContainer*	m_voiceContainer;
 	bool					m_mute;
@@ -56,6 +56,19 @@ public:
 	void PauseTag( ::Effekseer::SoundTag tag, bool pause );
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 //----------------------------------------------------------------------------------

@@ -24,7 +24,7 @@ using SoundData = osm::Sound;
 //
 //----------------------------------------------------------------------------------
 
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, Effekseer::ReferenceObject
 {
 public:
 	struct Instance
@@ -86,6 +86,19 @@ public:
 
 	void Calculate3DSound( const ::Effekseer::Vector3D& position, 
 		float rolloffDistance, float& rolloff, float& pan );
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 //----------------------------------------------------------------------------------

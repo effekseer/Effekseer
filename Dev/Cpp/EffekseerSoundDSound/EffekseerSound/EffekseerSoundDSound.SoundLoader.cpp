@@ -71,6 +71,7 @@ SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fi
 	: m_sound(sound)
 	, m_fileInterface(fileInterface)
 {
+	ES_SAFE_ADDREF(m_sound);
 }
 
 //----------------------------------------------------------------------------------
@@ -78,6 +79,7 @@ SoundLoader::SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fi
 //----------------------------------------------------------------------------------
 SoundLoader::~SoundLoader()
 {
+	ES_SAFE_RELEASE(m_sound);
 }
 
 void* SoundLoader::Load(::Effekseer::FileReader* reader)

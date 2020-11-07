@@ -19,6 +19,7 @@ SoundVoice::SoundVoice(SoundImplemented* sound)
 	, m_dsbuf(nullptr)
 	, m_tag(nullptr)
 {
+	ES_SAFE_ADDREF(m_sound);
 }
 
 //----------------------------------------------------------------------------------
@@ -32,6 +33,7 @@ SoundVoice::~SoundVoice()
 	{
 		m_dsbuf->Release();
 	}
+	ES_SAFE_RELEASE(m_sound);
 }
 
 //----------------------------------------------------------------------------------
