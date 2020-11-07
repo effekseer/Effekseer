@@ -50,7 +50,7 @@ namespace EffekseerRendererGL
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType)
 {
-	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType);
+	return static_cast<::Effekseer::Backend::GraphicsDeviceRef>(Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType));
 }
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType)
