@@ -30,15 +30,16 @@ class StaticMesh
 private:
 	int32_t vertexCount_;
 	int32_t indexCount_;
-	std::shared_ptr<Backend::VertexBuffer> vb_;
-	std::shared_ptr<Backend::IndexBuffer> ib_;
+	Backend::VertexBufferRef vb_;
+	Backend::IndexBufferRef ib_;
 
 public:
-	std::shared_ptr<Backend::VertexBuffer>& GetVertexBuffer()
+	Backend::VertexBufferRef& GetVertexBuffer()
 	{
 		return vb_;
 	}
-	std::shared_ptr<Backend::IndexBuffer>& GetIndexBuffer()
+
+	Backend::IndexBufferRef& GetIndexBuffer()
 	{
 		return ib_;
 	}
@@ -48,7 +49,7 @@ public:
 		return indexCount_;
 	}
 
-	static std::shared_ptr<StaticMesh> Create(std::shared_ptr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes);
+	static std::shared_ptr<StaticMesh> Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes);
 };
 
 class StaticMeshRenderer
@@ -67,19 +68,19 @@ private:
 		std::array<float, 4> ambientLightColor;
 	};
 
-	std::shared_ptr<Backend::GraphicsDevice> graphicsDevice_;
-	std::shared_ptr<Backend::UniformBuffer> uniformBufferVS_;
-	std::shared_ptr<Backend::UniformBuffer> uniformBufferPS_;
-	std::shared_ptr<Backend::UniformLayout> uniformLayout_;
-	std::shared_ptr<Backend::Shader> shader_;
-	std::shared_ptr<Backend::PipelineState> pip_;
-	std::shared_ptr<Backend::VertexLayout> vertexLayout_;
+	Backend::GraphicsDeviceRef graphicsDevice_;
+	Backend::UniformBufferRef uniformBufferVS_;
+	Backend::UniformBufferRef uniformBufferPS_;
+	Backend::UniformLayoutRef uniformLayout_;
+	Backend::ShaderRef shader_;
+	Backend::PipelineStateRef pip_;
+	Backend::VertexLayoutRef vertexLayout_;
 
 	std::shared_ptr<StaticMesh> staticMesh_;
 
 
 public:
-	static std::shared_ptr<StaticMeshRenderer> Create(std::shared_ptr<Backend::GraphicsDevice> graphicsDevice);
+	static std::shared_ptr<StaticMeshRenderer> Create(RefPtr<Backend::GraphicsDevice> graphicsDevice);
 	StaticMeshRenderer();
 	void Render(const RendererParameter& rendererParameter);
 

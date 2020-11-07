@@ -31,7 +31,7 @@ static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 static ::EffekseerSound::Sound*			g_sound = NULL;
 static ::Effekseer::Vector3D			g_position;
-static ::Effekseer::Effect*				g_effect = NULL;
+static ::Effekseer::EffectRef			g_effect = NULL;
 static ::Effekseer::Handle				g_handle = -1;
 
 static LPDIRECT3D9						g_d3d = NULL;
@@ -397,9 +397,6 @@ int main(int argc, char **argv)
 
 	// エフェクトの停止
 	g_manager->StopEffect(g_handle);
-
-	// エフェクトの破棄
-	ES_SAFE_RELEASE(g_effect);
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager->Destroy();

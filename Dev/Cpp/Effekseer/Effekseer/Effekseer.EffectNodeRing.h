@@ -234,7 +234,7 @@ public:
 	{
 	}
 
-	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
+	void LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting) override;
 
 	void BeginRendering(int32_t count, Manager* manager) override;
 

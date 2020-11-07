@@ -219,7 +219,7 @@ private:
 
 	efk::Graphics* graphics_ = nullptr;
 
-	Effekseer::Setting* setting_ = nullptr;
+	Effekseer::RefPtr<Effekseer::Setting> setting_;
 
 	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
 
@@ -227,7 +227,7 @@ private:
 
 	EffekseerTool::ViewPointController viewPointCtrl_;
 
-	::Effekseer::Effect* GetEffect();
+	::Effekseer::EffectRef GetEffect();
 
 public:
 	Native();

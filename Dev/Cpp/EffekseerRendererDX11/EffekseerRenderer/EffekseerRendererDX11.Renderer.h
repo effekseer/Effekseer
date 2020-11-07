@@ -17,7 +17,7 @@ namespace EffekseerRendererDX11
 //
 //----------------------------------------------------------------------------------
 
-::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(ID3D11Device* device,
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(ID3D11Device* device,
 														   ID3D11DeviceContext* context);
 
 /**

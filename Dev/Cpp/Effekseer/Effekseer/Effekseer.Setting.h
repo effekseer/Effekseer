@@ -37,24 +37,18 @@ private:
 	MaterialLoader* m_materialLoader = nullptr;
 	CurveLoader* m_curveLoader = nullptr;
 	ProcedualModelGenerator* procedualMeshGenerator_ = nullptr;
-	std::vector<EffectFactory*> effectFactories;
+	std::vector<RefPtr<EffectFactory>> effectFactories;
 
 protected:
-	/**
-		@brief	コンストラクタ
-		*/
 	Setting();
 
-	/**
-		@brief	デストラクタ
-		*/
 	~Setting();
 
 public:
 	/**
 		@brief	設定インスタンスを生成する。
 	*/
-	static Setting* Create();
+	static RefPtr<Setting> Create();
 
 	/**
 	@brief	座標系を取得する。
@@ -184,14 +178,14 @@ public:
 		\~English	Add effect factory
 		\~Japanese Effect factoryを追加する。
 	*/
-	void AddEffectFactory(EffectFactory* effectFactory);
+	void AddEffectFactory(const RefPtr<EffectFactory>& effectFactory);
 
 	/**
 		@brief
 		\~English	Get effect factory
 		\~Japanese Effect Factoryを取得する。
 	*/
-	EffectFactory* GetEffectFactory(int32_t ind) const;
+	const RefPtr<EffectFactory>& GetEffectFactory(int32_t ind) const;
 
 	/**
 		@brief

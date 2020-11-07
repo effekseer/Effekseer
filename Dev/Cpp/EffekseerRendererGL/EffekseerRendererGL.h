@@ -525,7 +525,7 @@ namespace EffekseerRendererGL
 
 class GraphicsDevice;
 
-::Effekseer::Backend::GraphicsDevice* CreateGraphicsDevice(OpenGLDeviceType deviceType);
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType);
 
 ::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 

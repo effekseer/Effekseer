@@ -103,8 +103,6 @@ RenderedEffectGenerator::RenderedEffectGenerator()
 
 RenderedEffectGenerator ::~RenderedEffectGenerator()
 {
-	ES_SAFE_RELEASE(effect_);
-
 	if (renderer_ != nullptr)
 	{
 		renderer_->Destroy();
@@ -118,7 +116,7 @@ RenderedEffectGenerator ::~RenderedEffectGenerator()
 	}
 }
 
-bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Setting* setting, int32_t spriteCount, bool isSRGBMode)
+bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
 {
 	graphics_ = graphics;
 
@@ -529,11 +527,9 @@ void RenderedEffectGenerator::Reset()
 	manager_->Update();
 }
 
-void RenderedEffectGenerator::SetEffect(Effekseer::Effect* effect)
+void RenderedEffectGenerator::SetEffect(Effekseer::EffectRef effect)
 {
 	handles_.clear();
-	ES_SAFE_ADDREF(effect);
-	ES_SAFE_RELEASE(effect_);
 	effect_ = effect;
 }
 

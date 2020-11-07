@@ -121,7 +121,7 @@ private:
 
 	ID3D11RasterizerState* rasterizerState = nullptr;
 	ID3D11RasterizerState* savedRasterizerState = nullptr;
-	std::shared_ptr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
+	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
 
 public:
 	GraphicsDX11();
@@ -170,7 +170,7 @@ public:
 		return DeviceType::DirectX11;
 	}
 
-	std::shared_ptr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override
+	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override
 	{
 		return graphicsDevice_;
 	}

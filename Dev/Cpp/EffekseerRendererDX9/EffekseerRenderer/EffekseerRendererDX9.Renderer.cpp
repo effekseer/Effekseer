@@ -215,7 +215,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
-	ES_SAFE_RELEASE(instancedVertexBuffer_);
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
@@ -860,15 +859,15 @@ void RendererImplemented::SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer)
 	GetDevice()->SetIndices(indexBuffer);
 }
 
-void RendererImplemented::SetVertexBuffer(Effekseer::Backend::VertexBuffer* vertexBuffer, int32_t size)
+void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
-	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer);
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
 	SetVertexBuffer(vb->GetBuffer(), size);
 }
 
-void RendererImplemented::SetIndexBuffer(Effekseer::Backend::IndexBuffer* indexBuffer)
+void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
-	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer);
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
 	SetIndexBuffer(ib->GetBuffer());
 }
 
@@ -914,7 +913,8 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount * instanceCount;
 
-	GetDevice()->SetStreamSource(1, instancedVertexBuffer_->GetBuffer(), 0, sizeof(float));
+	auto vb = static_cast<Backend::VertexBuffer*>(instancedVertexBuffer_.Get());
+	GetDevice()->SetStreamSource(1, vb->GetBuffer(), 0, sizeof(float));
 	GetDevice()->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | instanceCount);
 	GetDevice()->SetStreamSourceFreq(1, D3DSTREAMSOURCE_INSTANCEDATA | 1);
 
@@ -1000,7 +1000,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			{
 				if (textures[i]->TexturePtr != nullptr)
 				{
-					auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr)->GetTexture();
+					auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get())->GetTexture();
 					GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, texture);
 				}
 				else
@@ -1018,7 +1018,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		{
 			if (textures[i]->TexturePtr != nullptr)
 			{
-				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr)->GetTexture();
+				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get())->GetTexture();
 				GetDevice()->SetTexture(i, texture);
 			}
 			else

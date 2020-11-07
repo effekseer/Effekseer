@@ -17,6 +17,29 @@ namespace Backend
 {
 
 class GraphicsDevice;
+class VertexBuffer;
+class IndexBuffer;
+class UniformBuffer;
+class Shader;
+class VertexLayout;
+class FrameBuffer;
+class Texture;
+class RenderPass;
+class PipelineState;
+class UniformLayout;
+
+using GraphicsDeviceRef = Effekseer::RefPtr<GraphicsDevice>;
+using VertexBufferRef = Effekseer::RefPtr<VertexBuffer>;
+using IndexBufferRef = Effekseer::RefPtr<IndexBuffer>;
+using UniformBufferRef = Effekseer::RefPtr<UniformBuffer>;
+using ShaderRef = Effekseer::RefPtr<Shader>;
+using VertexLayoutRef = Effekseer::RefPtr<VertexLayout>;
+using FrameBufferRef = Effekseer::RefPtr<FrameBuffer>;
+using TextureRef = Effekseer::RefPtr<Texture>;
+using RenderPassRef = Effekseer::RefPtr<RenderPass>;
+using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
+using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
+
 
 class DeviceObject
 {
@@ -27,9 +50,6 @@ public:
 	virtual void OnResetDevice();
 };
 
-/**
-	@brief	VertexBuffer of OpenGL
-*/
 class VertexBuffer
 	: public DeviceObject,
 	  public Effekseer::Backend::VertexBuffer
@@ -63,9 +83,6 @@ public:
 	}
 };
 
-/**
-	@brief	IndexBuffer of OpenGL
-*/
 class IndexBuffer
 	: public DeviceObject,
 	  public Effekseer::Backend::IndexBuffer
@@ -117,9 +134,6 @@ public:
 	}
 };
 
-/**
-	@brief	GraphicsDevice of OpenGL
-*/
 class GraphicsDevice
 	: public Effekseer::Backend::GraphicsDevice
 {
@@ -142,11 +156,11 @@ public:
 
 	void Unregister(DeviceObject* deviceObject);
 
-	VertexBuffer* CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
+	Effekseer::Backend::VertexBufferRef CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic) override;
 
-	IndexBuffer* CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
+	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Texture* CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 };
 
 } // namespace Backend

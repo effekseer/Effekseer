@@ -30,7 +30,7 @@ static int g_window_height = 600;
 static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 static ::EffekseerSound::Sound*			g_sound = NULL;
-static ::Effekseer::Effect*				g_effect = NULL;
+static ::Effekseer::EffectRef			g_effect = NULL;
 static ::Effekseer::Handle				g_handle = -1;
 static ::Effekseer::Vector3D			g_position;
 
@@ -299,9 +299,6 @@ int main(int argc, char **argv)
 	g_server->Register( u"test", g_effect );
 
 	MainLoop();
-
-	// エフェクトの破棄
-	ES_SAFE_RELEASE( g_effect );
 
 	// サーバーの破棄
 	ES_SAFE_DELETE( g_server );

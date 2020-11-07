@@ -2,6 +2,21 @@
 
 ### Broken changes
 
+#### Effekseer::RefPtr
+
+Almost pointers are replaced into SmartPointer. You don't need to consider about releasing memories.
+
+Please replace
+
+Effekseer::Effect* -> Effekseer::EffekseerRef
+
+You have not to release Effekseer::EffectRef yourself.
+If you want to release it, Please call Reset.
+
+#### Effekseer::Effect
+
+Effect::Reload without manager were abolished. Please use Effect::Reload with manager
+
 #### Effekseer::Backend::GraphicsDevice
 
 EffekseerRenderer::GraphicsDevice and DeviceObjectCollection were abolished and replaced.

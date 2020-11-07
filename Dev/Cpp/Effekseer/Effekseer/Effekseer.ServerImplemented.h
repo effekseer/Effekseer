@@ -52,6 +52,13 @@ private:
 	};
 
 private:
+
+	struct EffectParameter
+	{
+		EffectRef EffectPtr;
+		bool IsRegistering;
+	};
+
 	EfkSocket m_socket;
 	uint16_t m_port;
 
@@ -63,7 +70,7 @@ private:
 	std::set<InternalClient*> m_clients;
 	std::set<InternalClient*> m_removedClients;
 
-	std::map<std::u16string, Effect*> m_effects;
+	std::map<std::u16string, EffectParameter> m_effects;
 
 	std::map<std::u16string, std::vector<uint8_t>> m_data;
 
@@ -81,17 +88,13 @@ public:
 
 	void Stop() override;
 
-	void Register(const char16_t* key, Effect* effect) override;
+	void Register(const char16_t* key, EffectRef& effect) override;
 
-	void Unregister(Effect* effect) override;
+	void Unregister(EffectRef& effect) override;
 
 	void Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
 	void SetMaterialPath(const char16_t* materialPath) override;
-
-	void Regist(const char16_t* key, Effect* effect) override;
-
-	void Unregist(Effect* effect) override;
 };
 
 //----------------------------------------------------------------------------------

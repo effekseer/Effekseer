@@ -471,13 +471,12 @@ void GraphicsDevice::Unregister(DeviceObject* deviceObject)
 	objects_.erase(deviceObject);
 }
 
-VertexBuffer* GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
+Effekseer::Backend::VertexBufferRef GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initialData, bool isDynamic)
 {
-	auto ret = new VertexBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<VertexBuffer>(this);
 
 	if (!ret->Init(size, isDynamic))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
@@ -486,13 +485,12 @@ VertexBuffer* GraphicsDevice::CreateVertexBuffer(int32_t size, const void* initi
 	return ret;
 }
 
-IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride)
+Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride)
 {
-	auto ret = new IndexBuffer(this);
+	auto ret = Effekseer::MakeRefPtr<IndexBuffer>(this);
 
 	if (!ret->Init(elementCount, stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 
@@ -501,13 +499,12 @@ IndexBuffer* GraphicsDevice::CreateIndexBuffer(int32_t elementCount, const void*
 	return ret;
 }
 
-Texture* GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
 	{
-		ES_SAFE_RELEASE(ret);
 		return nullptr;
 	}
 

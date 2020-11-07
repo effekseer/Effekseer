@@ -27,10 +27,10 @@ namespace Effekseer
 namespace Tool
 {
 
-std::shared_ptr<StaticMesh> StaticMesh::Create(std::shared_ptr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes)
+std::shared_ptr<StaticMesh> StaticMesh::Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes)
 {
-	auto vb = Effekseer::CreateReference(graphicsDevice->CreateVertexBuffer(static_cast<int32_t>(sizeof(StaticMeshVertex) * vertexes.size()), vertexes.data(), false));
-	auto ib = Effekseer::CreateReference(graphicsDevice->CreateIndexBuffer(static_cast<int32_t>(indexes.size()), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride4));
+	auto vb = graphicsDevice->CreateVertexBuffer(static_cast<int32_t>(sizeof(StaticMeshVertex) * vertexes.size()), vertexes.data(), false);
+	auto ib = graphicsDevice->CreateIndexBuffer(static_cast<int32_t>(indexes.size()), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 
 	if (vb == nullptr || ib == nullptr)
 	{
@@ -48,7 +48,7 @@ StaticMeshRenderer::StaticMeshRenderer()
 {
 }
 
-std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(std::shared_ptr<Backend::GraphicsDevice> graphicsDevice)
+std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::GraphicsDevice> graphicsDevice)
 {
 	// shader
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
@@ -76,21 +76,21 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(std::shared_ptr<B
 	uniformLayoutElements[4].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
 
 	// constant buffer
-	auto vcb = Effekseer::CreateReference(graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferVS), nullptr));
-	auto pcb = Effekseer::CreateReference(graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferPS), nullptr));
-	auto uniformLayout = Effekseer::CreateReference(new Effekseer::Backend::UniformLayout({}, std::move(uniformLayoutElements)));
+	auto vcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferVS), nullptr);
+	auto pcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferPS), nullptr);
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(CustomVector<std::string>{}, std::move(uniformLayoutElements));
 
-	std::shared_ptr<Effekseer::Backend::Shader> shader;
+	Effekseer::Backend::ShaderRef shader;
 
 	if (graphicsDevice->GetDeviceName() == "DirectX11")
 	{
 #ifdef _WIN32
-		shader = Effekseer::CreateReference(graphicsDevice->CreateShaderFromBinary(VS::g_main, sizeof(VS::g_main), PS::g_main, sizeof(PS::g_main)));
+		shader = graphicsDevice->CreateShaderFromBinary(VS::g_main, sizeof(VS::g_main), PS::g_main, sizeof(PS::g_main));
 #endif
 	}
 	else
 	{
-		shader = Effekseer::CreateReference(graphicsDevice->CreateShaderFromCodes(gl_static_mesh_vs, gl_static_mesh_ps, uniformLayout.get()));
+		shader = graphicsDevice->CreateShaderFromCodes(gl_static_mesh_vs, gl_static_mesh_ps, uniformLayout);
 	}
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
@@ -112,19 +112,19 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(std::shared_ptr<B
 	vertexLayoutElements[3].SemanticIndex = 1;
 	vertexLayoutElements[3].SemanticName = "NORMAL";
 
-	auto vertexLayout = Effekseer::CreateReference(graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size())));
+	auto vertexLayout = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 
 	Effekseer::Backend::PipelineStateParameter pipParam;
 
 	// OpenGL doesn't require it
 	pipParam.FrameBufferPtr = nullptr;
-	pipParam.VertexLayoutPtr = vertexLayout.get();
-	pipParam.ShaderPtr = shader.get();
+	pipParam.VertexLayoutPtr = vertexLayout;
+	pipParam.ShaderPtr = shader;
 	pipParam.IsDepthTestEnabled = true;
 	pipParam.IsDepthWriteEnabled = true;
 	pipParam.IsBlendEnabled = false;
 
-	auto pip = Effekseer::CreateReference(graphicsDevice->CreatePipelineState(pipParam));
+	auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
 	auto ret = std::make_shared<StaticMeshRenderer>();
 
@@ -164,15 +164,15 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 	ups.directionalLightColor = rendererParameter.DirectionalLightColor;
 	ups.ambientLightColor = rendererParameter.AmbientLightColor;
 
-	graphicsDevice_->UpdateUniformBuffer(uniformBufferVS_.get(), sizeof(UniformBufferVS), 0, &uvs);
-	graphicsDevice_->UpdateUniformBuffer(uniformBufferPS_.get(), sizeof(UniformBufferPS), 0, &ups);
+	graphicsDevice_->UpdateUniformBuffer(uniformBufferVS_, sizeof(UniformBufferVS), 0, &uvs);
+	graphicsDevice_->UpdateUniformBuffer(uniformBufferPS_, sizeof(UniformBufferPS), 0, &ups);
 
 	Effekseer::Backend::DrawParameter drawParam;
-	drawParam.VertexBufferPtr = staticMesh_->GetVertexBuffer().get();
-	drawParam.IndexBufferPtr = staticMesh_->GetIndexBuffer().get();
-	drawParam.PipelineStatePtr = pip_.get();
-	drawParam.VertexUniformBufferPtr = uniformBufferVS_.get();
-	drawParam.PixelUniformBufferPtr = uniformBufferPS_.get();
+	drawParam.VertexBufferPtr = staticMesh_->GetVertexBuffer();
+	drawParam.IndexBufferPtr = staticMesh_->GetIndexBuffer();
+	drawParam.PipelineStatePtr = pip_;
+	drawParam.VertexUniformBufferPtr = uniformBufferVS_;
+	drawParam.PixelUniformBufferPtr = uniformBufferPS_;
 	drawParam.PrimitiveCount = staticMesh_->GetIndexCount() / 3;
 	drawParam.InstanceCount = 1;
 	graphicsDevice_->Draw(drawParam);

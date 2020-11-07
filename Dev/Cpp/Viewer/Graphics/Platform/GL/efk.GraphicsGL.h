@@ -70,7 +70,7 @@ private:
 	std::shared_ptr<RenderTextureGL> backTarget;
 	GLuint frameBufferForCopySrc = 0;
 	GLuint frameBufferForCopyDst = 0;
-	std::shared_ptr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
+	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
 
 public:
 	GraphicsGL();
@@ -111,7 +111,7 @@ public:
 		return DeviceType::OpenGL;
 	}
 
-	std::shared_ptr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override
+	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override
 	{
 		return graphicsDevice_;
 	}
