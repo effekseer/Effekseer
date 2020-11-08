@@ -207,7 +207,6 @@ ViewerParamater::ViewerParamater()
 
 static Effekseer::Manager::DrawParameter drawParameter;
 
-static ::Effekseer::EffectRef effect_ = nullptr;
 static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
 static std::map<std::u16string, Effekseer::Model*> m_models;

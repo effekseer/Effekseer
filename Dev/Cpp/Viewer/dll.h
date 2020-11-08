@@ -206,6 +206,8 @@ private:
 
 	bool m_isSRGBMode = false;
 
+	::Effekseer::EffectRef effect_ = nullptr;
+
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
