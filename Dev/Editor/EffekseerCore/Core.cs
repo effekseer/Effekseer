@@ -148,7 +148,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.6α2";
+		public const string Version = "1.6α3";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -919,9 +919,16 @@ namespace Effekseer
 
 			if (toolVersion <= ParseVersion("1.60α2"))
 			{
-				var updater = new Utils.ProjectVersionUpdator16Alpha1To16x();
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16Alpha2();
 				updater.Update(doc);
 			}
+
+			if (toolVersion < ParseVersion("1.60α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
+				updater.Update(doc);
+			}
+
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -1041,7 +1048,13 @@ namespace Effekseer
 
 			if (toolVersion < ParseVersion("1.60α2"))
 			{
-				var updater = new Utils.ProjectVersionUpdator16Alpha1To16x();
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16Alpha2();
+				updater.Update(root_node);
+			}
+
+			if (toolVersion < ParseVersion("1.60α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
 				updater.Update(root_node);
 			}
 

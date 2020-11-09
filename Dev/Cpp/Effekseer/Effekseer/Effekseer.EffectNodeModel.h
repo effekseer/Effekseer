@@ -75,9 +75,6 @@ public:
 
 	StandardColorParameter AllColor;
 
-	bool EnableFalloff;
-	ModelRenderer::FalloffParameter FalloffParam;
-
 	ModelReferenceType Mode = ModelReferenceType::File;
 
 	EffectNodeModel(Effect* effect, unsigned char*& pos)

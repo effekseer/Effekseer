@@ -1560,6 +1560,9 @@ public:
 
 	ParameterAlphaCutoff AlphaCutoff;
 
+	bool EnableFalloff = false;
+	FalloffParameter FalloffParam {};
+
 	ParameterSoundType SoundType;
 	ParameterSound Sound;
 

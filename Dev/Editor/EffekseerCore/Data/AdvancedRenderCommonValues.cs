@@ -250,8 +250,50 @@ namespace Effekseer.Data
 		}
 	}
 
+	public class FalloffParameter
+	{
+		[IO(Export = true)]
+		[Key(key = "FalloffParameter_ColorBlendType")]
+		public Value.Enum<BlendType> ColorBlendType { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "FalloffParameter_BeginColor")]
+		public Value.Color BeginColor { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "FalloffParameter_EndColor")]
+		public Value.Color EndColor { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "FalloffParameter_Pow")]
+		public Value.Float Pow { get; private set; }
+
+		public FalloffParameter()
+		{
+			ColorBlendType = new Value.Enum<BlendType>(BlendType.Add);
+			BeginColor = new Value.Color(0, 0, 0, 255);
+			EndColor = new Value.Color(255, 255, 255, 255);
+			Pow = new Value.Float(1, 100, 1);
+		}
+
+		public enum BlendType : int
+		{
+			[Key(key = "FalloffParameter_BlendType_Add")]
+			Add = 0,
+
+			[Key(key = "FalloffParameter_BlendType_Sub")]
+			Sub = 1,
+
+			[Key(key = "FalloffParameter_BlendType_Mul")]
+			Mul = 2,
+		}
+	}
+
+
 	public class AdvancedRenderCommonValues
 	{
+		const int FalloffParameterID = 1000;
+
 		[Selector(ID = 100)]
 		[IO(Export = true)]
 		[Key(key = "AdvancedRenderCommonValues_EnableAlphaTexture")]
@@ -274,7 +316,17 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
-        public AdvancedRenderCommonValues(Value.Path basepath)
+		[Selector(ID = FalloffParameterID)]
+		[IO(Export = true)]
+		[Key(key = "ModelParameter_EnableFalloff")]
+		public Value.Boolean EnableFalloff { get; private set; } = new Value.Boolean(false);
+
+		[Selected(ID = FalloffParameterID, Value = 0)]
+		[IO(Export = true)]
+		public FalloffParameter FalloffParam { get; private set; } = new FalloffParameter();
+
+
+		public AdvancedRenderCommonValues(Value.Path basepath)
         {
 			EnableAlphaTexture = new Value.Boolean(false);
 			AlphaTextureParam = new AlphaTextureParameter(basepath);

@@ -92,7 +92,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const RefPtr<Se
 
 	AllColor.load(pos, m_effect->GetVersion());
 
-	if (m_effect->GetVersion() >= 1600)
+	if (Version16Alpha3 > m_effect->GetVersion() && m_effect->GetVersion() >= Version16Alpha1)
 	{
 		int FalloffFlag = 0;
 		memcpy(&FalloffFlag, pos, sizeof(int));
@@ -101,13 +101,9 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const RefPtr<Se
 
 		if (EnableFalloff)
 		{
-			memcpy(&FalloffParam, pos, sizeof(ModelRenderer::FalloffParameter));
-			pos += sizeof(ModelRenderer::FalloffParameter);
+			memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
+			pos += sizeof(FalloffParameter);
 		}
-	}
-	else
-	{
-		EnableFalloff = false;
 	}
 }
 

@@ -688,6 +688,20 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = AlphaCutoff.Type != ParameterAlphaCutoff::EType::FIXED || AlphaCutoff.Fixed.Threshold != 0.0f;
 		}
 
+		if (m_effect->GetVersion() >= Version16Alpha3)
+		{
+			int FalloffFlag = 0;
+			memcpy(&FalloffFlag, pos, sizeof(int));
+			pos += sizeof(int);
+			EnableFalloff = (FalloffFlag == 1);
+
+			if (EnableFalloff)
+			{
+				memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
+				pos += sizeof(FalloffParameter);
+			}
+		}
+
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
 		// rescale intensity after 1.5
