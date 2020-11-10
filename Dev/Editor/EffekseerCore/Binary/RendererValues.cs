@@ -105,9 +105,9 @@ namespace Effekseer.Binary
 
 
 			// Fallback
-			if (version < ExporterVersion.Ver16Alpha1)
+			if (version < ExporterVersion.Ver16Alpha2)
 			{
-				if(value != null && value.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
+				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
 				{
 					value = null;
 				}
@@ -506,36 +506,51 @@ namespace Effekseer.Binary
                 }
 				*/
             }
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
-			{
-				var param = value.ProcedualModel.Parameter;
-				var index = pmodel_and_index[param];
-				data.Add((index).GetBytes());
-			}
 			else if (value.Type.Value == Data.RendererValues.ParamaterType.Model)
 			{
 				var param = value.Model;
 
-				data.Add((1.0f).GetBytes());
-
-				if (param.Model.RelativePath != string.Empty)
+				if (version >= ExporterVersion.Ver16Alpha3)
 				{
-					var relative_path = param.Model.RelativePath;
+					var refType = (int)value.Model.ModelReference.Value;
+					data.Add((refType).GetBytes());
+				}
 
-					if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+				if (value.Model.ModelReference.Value == Data.ModelReferenceType.File)
+				{
+					data.Add((1.0f).GetBytes());
+
+					if (param.Model.RelativePath != string.Empty)
 					{
-						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+						var relative_path = param.Model.RelativePath;
+
+						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+						{
+							relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+						}
+						else
+						{
+							relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+						}
+
+						data.Add(model_and_index[relative_path].GetBytes());
 					}
 					else
 					{
-						relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+						data.Add((-1).GetBytes());
 					}
-
-					data.Add(model_and_index[relative_path].GetBytes());
 				}
-				else
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
 				{
-					data.Add((-1).GetBytes());
+					if(value.Model.Reference.Value != null)
+					{
+						var ind = pmodel_and_index[value.Model.Reference.Value];
+						data.Add(ind.GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
 				}
 
 				data.Add(param.Billboard);
@@ -545,6 +560,7 @@ namespace Effekseer.Binary
 				// 全体色
 				OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing, param.Color_FCurve);
 
+				/*
 				if(version >= ExporterVersion.Ver16Alpha1)
 				{
 					if (value.EnableFalloff)
@@ -561,6 +577,7 @@ namespace Effekseer.Binary
 						data.Add((0).GetBytes());
 					}
 				}
+				*/
 			}
 			else if (value.Type.Value == Data.RendererValues.ParamaterType.Track)
 			{

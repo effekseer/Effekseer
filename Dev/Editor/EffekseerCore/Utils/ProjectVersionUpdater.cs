@@ -294,7 +294,7 @@ namespace Effekseer.Utils
 		}
 	}
 
-	class ProjectVersionUpdator16Alpha1To16x : ProjectVersionUpdator
+	class ProjectVersionUpdator16Alpha1To16Alpha2 : ProjectVersionUpdator
 	{
 		public override bool Update(System.Xml.XmlDocument document)
 		{
@@ -426,6 +426,57 @@ namespace Effekseer.Utils
 					convert(labs["LocalForceField1"]);
 					convert(labs["LocalForceField2"]);
 					convert(labs["LocalForceField3"]);
+				}
+			}
+
+			return true;
+		}
+	}
+
+	class ProjectVersionUpdator16Alpha2To16x : ProjectVersionUpdator
+	{
+		public override bool Update(System.Xml.XmlDocument document)
+		{
+			List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
+
+			Action<System.Xml.XmlNode> collectNodes = null;
+			collectNodes = (node) =>
+			{
+				if (node.Name == "Node")
+				{
+					nodes.Add(node);
+				}
+
+				for (int i = 0; i < node.ChildNodes.Count; i++)
+				{
+					collectNodes(node.ChildNodes[i]);
+				}
+			};
+
+			collectNodes((XmlNode)document);
+
+			foreach (var node in nodes)
+			{
+				var rv = node["DrawingValues"];
+				var rcv = node["AdvancedRendererCommonValuesValues"];
+
+				if (rv != null)
+				{
+					if((rv["EnableFalloff"] != null || rv["FalloffParam"] != null) && rcv == null)
+					{
+						node.AppendChild(document.CreateElement("AdvancedRendererCommonValuesValues"));
+						rcv = node["AdvancedRendererCommonValuesValues"];
+					}
+
+					if (rv["EnableFalloff"] != null)
+					{
+						rcv.AppendChild(rv["EnableFalloff"]);
+					}
+
+					if (rv["FalloffParam"] != null)
+					{
+						rcv.AppendChild(rv["FalloffParam"]);
+					}
 				}
 			}
 

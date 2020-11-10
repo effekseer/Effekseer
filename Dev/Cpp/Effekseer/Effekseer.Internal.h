@@ -44,6 +44,27 @@ struct NodeRendererTextureUVTypeParameter
 	void Load(uint8_t*& pos, int32_t version);
 };
 
+struct FalloffParameter
+{
+	enum BlendType
+	{
+		Add = 0,
+		Sub = 1,
+		Mul = 2,
+	} ColorBlendType;
+	Color BeginColor;
+	Color EndColor;
+	float Pow;
+
+	FalloffParameter()
+	{
+		ColorBlendType = BlendType::Add;
+		BeginColor = Color(255, 255, 255, 255);
+		EndColor = Color(255, 255, 255, 255);
+		Pow = 1.0f;
+	}
+};
+
 } // namespace Effekseer
 
 #endif // __EFFEKSEER_PARAMETERS_H__
@@ -413,27 +434,6 @@ namespace Effekseer
 class ModelRenderer
 {
 public:
-	struct FalloffParameter
-	{
-		enum BlendType
-		{
-			Add = 0,
-			Sub = 1,
-			Mul = 2,
-		} ColorBlendType;
-		Color BeginColor;
-		Color EndColor;
-		float Pow;
-
-		FalloffParameter()
-		{
-			ColorBlendType = BlendType::Add;
-			BeginColor = Color(255, 255, 255, 255);
-			EndColor = Color(255, 255, 255, 255);
-			Pow = 1.0f;
-		}
-	};
-
 	struct NodeParameter
 	{
 		Effect* EffectPointer;

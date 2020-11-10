@@ -13,7 +13,8 @@ namespace Effekseer.Binary
 		Ver1500 = 1500,
 		Ver16Alpha1 = 1600,
 		Ver16Alpha2 = 1601,
-		Latest = Ver16Alpha2,
+		Ver16Alpha3 = 1602,
+		Latest = Ver16Alpha3,
 	}
 
 	public class Exporter
@@ -564,21 +565,21 @@ namespace Effekseer.Binary
 				{
 					var _node = node as Data.Node;
 
-					if (IsRenderedNode(_node) && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
+					if (IsRenderedNode(_node) && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model && _node.DrawingValues.Model.ModelReference.Value == ModelReferenceType.ProdecualModel)
 					{
-						var param = _node.DrawingValues.ProcedualModel.Parameter;
-
-						if (!ProcedualModels.Contains(param))
+						var param = _node.DrawingValues.Model.Reference.Value;
+						
+						if (param != null && !ProcedualModels.Contains(param))
 						{
 							ProcedualModels.Add(param);
 						}
 					}
 
-					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.ProcedualModel)
+					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.Model && _node.GenerationLocationValues.Model.ModelReference.Value == ModelReferenceType.ProdecualModel)
 					{
-						var param = _node.GenerationLocationValues.ProcedualModel.Model;
+						var param = _node.GenerationLocationValues.Model.Reference.Value;
 
-						if (!ProcedualModels.Contains(param))
+						if (param != null && !ProcedualModels.Contains(param))
 						{
 							ProcedualModels.Add(param);
 						}
@@ -596,9 +597,9 @@ namespace Effekseer.Binary
 			Dictionary<ProcedualModelParameter, int> procedual_mesh_and_index = new Dictionary<ProcedualModelParameter, int>();
 			{
 				int index = 0;
-				foreach (var wave in ProcedualModels.ToList().OrderBy(_ => _))
+				foreach (var mesh in ProcedualModels.ToList().OrderBy(_ => _))
 				{
-					procedual_mesh_and_index.Add(wave, index);
+					procedual_mesh_and_index.Add(mesh, index);
 					index++;
 				}
 			}
@@ -892,10 +893,6 @@ namespace Effekseer.Binary
 				else if (n.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track)
 				{
 					data.Add(((int)NodeType.Track).GetBytes());
-				}
-				else if (n.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.ProcedualModel)
-				{
-					data.Add(((int)NodeType.ProcedualModel).GetBytes());
 				}
 				else
 				{

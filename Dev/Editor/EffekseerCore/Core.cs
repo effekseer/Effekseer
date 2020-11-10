@@ -148,7 +148,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.6α2";
+		public const string Version = "1.6α3";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -173,6 +173,8 @@ namespace Effekseer
 		static Data.RecordingValues recording = new Data.RecordingValues();
 
 		static Data.DynamicValues dynamic_ = new Data.DynamicValues();
+
+		static Data.ProcedualModelValues procedualModels = new ProcedualModelValues();
 
 		static int start_frame = 0;
 
@@ -357,6 +359,11 @@ namespace Effekseer
 		public static Data.DynamicValues Dynamic
 		{
 			get { return dynamic_; }
+		}
+
+		public static Data.ProcedualModelValues ProcedualModel
+		{
+			get { return procedualModels; }
 		}
 
 		/// <summary>
@@ -739,6 +746,8 @@ namespace Effekseer
 
 			dynamic_ = new Data.DynamicValues();
 
+			procedualModels.ProcedualModels.Clear();
+
 			// Add a root node
 			Root.AddChild();
 			Command.CommandManager.Clear();
@@ -763,6 +772,7 @@ namespace Effekseer
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
 			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
 			var dynamicElement = Data.IO.SaveObjectToElement(doc, "Dynamic", Dynamic, false);
+			var procedualModelElement = Data.IO.SaveObjectToElement(doc, "ProcedualModel", ProcedualModel, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -772,6 +782,7 @@ namespace Effekseer
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
 			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
+			if (procedualModelElement != null) project_root.AppendChild(procedualModelElement);
 
 			// recording option (this option is stored in local or global)
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
@@ -908,9 +919,16 @@ namespace Effekseer
 
 			if (toolVersion <= ParseVersion("1.60α2"))
 			{
-				var updater = new Utils.ProjectVersionUpdator16Alpha1To16x();
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16Alpha2();
 				updater.Update(doc);
 			}
+
+			if (toolVersion < ParseVersion("1.60α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
+				updater.Update(doc);
+			}
+
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -947,6 +965,13 @@ namespace Effekseer
 			{
 				var o = dynamic_ as object;
 				Data.IO.LoadObjectFromElement(dynamicElement as System.Xml.XmlElement, ref o, false);
+			}
+
+			var procedualElement = doc["EffekseerProject"]["ProcedualModel"];
+			if (procedualElement != null)
+			{
+				var o = procedualModels as object;
+				Data.IO.LoadObjectFromElement(procedualElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			// recording option (this option is stored in local or global)
@@ -1023,7 +1048,13 @@ namespace Effekseer
 
 			if (toolVersion < ParseVersion("1.60α2"))
 			{
-				var updater = new Utils.ProjectVersionUpdator16Alpha1To16x();
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16Alpha2();
+				updater.Update(root_node);
+			}
+
+			if (toolVersion < ParseVersion("1.60α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
 				updater.Update(root_node);
 			}
 
