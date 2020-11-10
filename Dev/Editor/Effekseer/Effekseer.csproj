@@ -96,6 +96,7 @@
     <Compile Include="GUI\Component\Int2.cs" />
     <Compile Include="GUI\Component\IntWithInifinite.cs" />
     <Compile Include="GUI\Component\IntWithRandom.cs" />
+    <Compile Include="GUI\Component\ObjectReference.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
     <Compile Include="GUI\Component\PathForCurve.cs" />
     <Compile Include="GUI\Component\PathForImage.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\Dock\Option.cs" />
     <Compile Include="GUI\Dock\PostEffect.cs" />
+    <Compile Include="GUI\Dock\ProcedualModel.cs" />
     <Compile Include="GUI\Dock\Recorder.cs" />
     <Compile Include="GUI\Dock\RendererCommonValues.cs" />
     <Compile Include="GUI\Dock\RendererValues.cs" />
