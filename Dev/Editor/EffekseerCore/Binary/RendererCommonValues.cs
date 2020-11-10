@@ -74,17 +74,56 @@ namespace Effekseer.Binary
 				return texAndInd[image.RelativePath];
 			}
 
+			int ReadTexIdAndInfo(bool isEnabled, PathForImage path, Dictionary<string, int> texAndInd, ref TextureInformation textureInfo)
+			{
+				return isEnabled
+					? GetTexIdAndInfo(path, texAndInd, ref textureInfo)
+					: -1;
+			}
+
+			int ReadAlphaTexture(Dictionary<string, int> texAndInd)
+			{
+				return ReadTexIdAndInfo(advanceValue.EnableAlphaTexture,
+					advanceValue.AlphaTextureParam.Texture,
+					texAndInd,
+					ref alphaTexInfo);
+			}
+
+			int ReadUvDistortionTexture(Dictionary<string, int> texAndInd)
+			{
+				return ReadTexIdAndInfo(advanceValue.EnableUVDistortionTexture,
+					advanceValue.UVDistortionTextureParam.Texture,
+					texAndInd,
+					ref uvDistortionTexInfo);
+			}
+
+			int ReadBlendAlphaTexture(Dictionary<string, int> texAndInd)
+			{
+				return ReadTexIdAndInfo(advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
+					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture,
+					texAndInd,
+					ref blendAlphaTexInfo);
+			}
+
+			int ReadBlendUvDistortionTexture(Dictionary<string, int> texAndInd)
+			{
+				return ReadTexIdAndInfo(advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
+					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
+					texAndInd,
+					ref blendUVDistortionTexInfo);
+			}
+
+			int ReadBlendTexture(Dictionary<string, int> texAndInd)
+			{
+				return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
+					texAndInd,
+					ref blendTexInfo);
+			}
+
 			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 			{
 				IEnumerable<int> ReadAsDefaultMaterial()
 				{
-					int ReadTextureIdAndInfo(bool isEnabled, PathForImage path, ref TextureInformation textureInfo)
-					{
-						return isEnabled
-							? GetTexIdAndInfo(path, texture_and_index, ref textureInfo)
-							: -1;
-					}
-
 					// texture1
 					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
 
@@ -97,28 +136,18 @@ namespace Effekseer.Binary
 					}
 
 					// alpha texture
-					yield return ReadTextureIdAndInfo(advanceValue.EnableAlphaTexture, advanceValue.AlphaTextureParam.Texture,
-						ref alphaTexInfo);
-
+					yield return ReadAlphaTexture(texture_and_index);
 					// uv distortion texture
-					yield return ReadTextureIdAndInfo(advanceValue.EnableUVDistortionTexture,
-						advanceValue.UVDistortionTextureParam.Texture, ref uvDistortionTexInfo);
+					yield return ReadUvDistortionTexture(texture_and_index);
 
 					// blend texture
 					if (advanceValue2.EnableBlendTexture)
 					{
-						yield return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
-							texture_and_index,
-							ref blendTexInfo);
-
+						yield return ReadBlendTexture(texture_and_index);
 						// blend alpha texture
-						yield return ReadTextureIdAndInfo(advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
-							advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, ref blendAlphaTexInfo);
-
+						yield return ReadBlendAlphaTexture(texture_and_index);
 						// blend uv distortion texture
-						yield return ReadTextureIdAndInfo(advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
-							advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
-							ref blendUVDistortionTexInfo);
+						yield return ReadBlendUvDistortionTexture(texture_and_index);
 					}
 					else
 					{
@@ -134,13 +163,6 @@ namespace Effekseer.Binary
 			{
 				IEnumerable<int> ReadAsBackDistortionXXX()
 				{
-					int Hoge(bool isEnabled, PathForImage path, ref TextureInformation textureInfo)
-					{
-						return isEnabled
-							? GetTexIdAndInfo(path, distortionTexture_and_index, ref textureInfo)
-							: -1;
-					}
-
 					// texture1
 					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index);
 
@@ -153,27 +175,18 @@ namespace Effekseer.Binary
 					}
 
 					// alpha texture
-					yield return Hoge(advanceValue.EnableAlphaTexture, advanceValue.AlphaTextureParam.Texture,
-						ref alphaTexInfo);
-
+					yield return ReadAlphaTexture(distortionTexture_and_index);
 					// uv distortion texture
-					yield return Hoge(advanceValue.EnableUVDistortionTexture,
-						advanceValue.UVDistortionTextureParam.Texture, ref uvDistortionTexInfo);
+					yield return ReadUvDistortionTexture(distortionTexture_and_index);
 
 					// blend texture
 					if (advanceValue2.EnableBlendTexture)
 					{
-						yield return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
-							distortionTexture_and_index, ref blendTexInfo);
-
+						yield return ReadBlendTexture(distortionTexture_and_index);
 						// blend alpha texture
-						yield return Hoge(advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
-							advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, ref blendAlphaTexInfo);
-
+						yield return ReadBlendAlphaTexture(distortionTexture_and_index);
 						// blend uv distortion texture
-						yield return Hoge(advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
-							advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
-							ref blendUVDistortionTexInfo);
+						yield return ReadBlendUvDistortionTexture(distortionTexture_and_index);
 					}
 					else
 					{
@@ -189,13 +202,6 @@ namespace Effekseer.Binary
 			{
 				IEnumerable<int> ReadAsLighting()
 				{
-					int Hoge(bool isEnabled, PathForImage path, ref TextureInformation textureInfo)
-					{
-						return isEnabled
-							? GetTexIdAndInfo(path, texture_and_index, ref textureInfo)
-							: -1;
-					}
-
 					// texture1
 					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
 
@@ -208,28 +214,18 @@ namespace Effekseer.Binary
 					}
 
 					// alpha texture
-					yield return Hoge(advanceValue.EnableAlphaTexture, advanceValue.AlphaTextureParam.Texture,
-						ref alphaTexInfo);
-
+					yield return ReadAlphaTexture(texture_and_index);
 					// uv distortion texture
-					yield return Hoge(advanceValue.EnableUVDistortionTexture,
-						advanceValue.UVDistortionTextureParam.Texture, ref uvDistortionTexInfo);
+					yield return ReadUvDistortionTexture(texture_and_index);
 
 					// blend texture
 					if (advanceValue2.EnableBlendTexture)
 					{
-						yield return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
-							texture_and_index,
-							ref blendTexInfo);
-
+						yield return ReadBlendTexture(texture_and_index);
 						// blend alpha texture
-						yield return Hoge(advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
-							advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, ref blendAlphaTexInfo);
-
+						yield return ReadBlendAlphaTexture(texture_and_index);
 						// blend uv distortion texture
-						yield return Hoge(advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
-							advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
-							ref blendUVDistortionTexInfo);
+						yield return ReadBlendUvDistortionTexture(texture_and_index);
 					}
 					else
 					{
