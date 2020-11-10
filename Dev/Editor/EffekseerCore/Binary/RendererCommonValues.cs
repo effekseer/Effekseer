@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Effekseer.Data.Value;
 using Effekseer.Utl;
 
 
@@ -11,7 +12,14 @@ namespace Effekseer.Binary
 	{
 		delegate int GetTexIDAndInfo(Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef);
 
-		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Data.AdvancedRenderCommonValues2 advanceValue2, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererCommonValues value,
+			Data.AdvancedRenderCommonValues advanceValue,
+			Data.AdvancedRenderCommonValues2 advanceValue2,
+			Dictionary<string, int> texture_and_index,
+			Dictionary<string, int> normalTexture_and_index,
+			Dictionary<string, int> distortionTexture_and_index,
+			Dictionary<string, int> material_and_index,
+			ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -21,7 +29,7 @@ namespace Effekseer.Binary
 
 			var uvDistortionTexInfo = new TextureInformation();
 
-			var blendTexInfo = new TextureInformation();
+			var blendTexInfo = new TextureInformation(); 
 
 			var blendAlphaTexInfo = new TextureInformation();
 
@@ -38,26 +46,24 @@ namespace Effekseer.Binary
 				}
 			}
 
-			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
+			int GetTexIdAndStoreSize(PathForImage image, int number, Dictionary<string, int> texAndInd)
 			{
 				var tempTexInfo = new TextureInformation();
 
 				if (texAndInd.ContainsKey(image.RelativePath) && tempTexInfo.Load(image.AbsolutePath))
 				{
-					if(value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
+					if (value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
 					{
 						texInfo.Load(image.AbsolutePath);
 					}
 
 					return texAndInd[image.RelativePath];
 				}
-				else
-				{
-					return -1;
-				}
-			};
 
-			GetTexIDAndInfo getTexIDAndInfo = (Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef) =>
+				return -1;
+			}
+
+			int GetTexIdAndInfo(PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef)
 			{
 				var tempTexInfo = new TextureInformation();
 
@@ -68,75 +74,85 @@ namespace Effekseer.Binary
 				}
 
 				return -1;
-			};
+			}
 
 			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 			{
-				// texture1
-				data.Add(getTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
-
-				// texture2
-				data.Add((-1).GetBytes());
-
-				if (version >= ExporterVersion.Ver16Alpha1)
+				IEnumerable<int> DefaultMaterial_RefactorXX()
 				{
-					// alpha texture
-					if (advanceValue.EnableAlphaTexture)
-					{
-						data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
-					}
-					else
-					{
-						data.Add((-1).GetBytes());
-					}
+					// texture1
+					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
 
-					// uv distortion texture
-					if (advanceValue.EnableUVDistortionTexture)
-					{
-						data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
-					}
-					else
-					{
-						data.Add((-1).GetBytes());
-					}
+					// texture2
+					yield return (-1);
 
-					// blend texture
-					if (advanceValue2.EnableBlendTexture)
+					if (version >= ExporterVersion.Ver16Alpha1)
 					{
-						data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
-
-						// blend alpha texture
-						if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
+						// alpha texture
+						if (advanceValue.EnableAlphaTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+							yield return GetTexIdAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo);
 						}
 						else
 						{
-							data.Add((-1).GetBytes());
+							yield return (-1);
 						}
 
-						// blend uv distortion texture
-						if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
+						// uv distortion texture
+						if (advanceValue.EnableUVDistortionTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+							yield return GetTexIdAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index,
+								ref uvDistortionTexInfo);
 						}
 						else
 						{
-							data.Add((-1).GetBytes());
+							yield return (-1);
 						}
-					}
-					else
-					{
-						data.Add((-1).GetBytes());
-						data.Add((-1).GetBytes());
-						data.Add((-1).GetBytes());
+
+						// blend texture
+						if (advanceValue2.EnableBlendTexture)
+						{
+							yield return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, texture_and_index,
+								ref blendTexInfo);
+
+							// blend alpha texture
+							if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
+							{
+								yield return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture,
+									texture_and_index, ref blendAlphaTexInfo);
+							}
+							else
+							{
+								yield return (-1);
+							}
+
+							// blend uv distortion texture
+							if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
+							{
+								yield return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo);
+							}
+							else
+							{
+								yield return (-1);
+							}
+						}
+						else
+						{
+							yield return (-1);
+							yield return (-1);
+							yield return (-1);
+						}
 					}
 				}
+
+				data.AddRange(DefaultMaterial_RefactorXX()
+					.Select(x => x.GetBytes())
+					.ToList());
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
 			{
 				// texture1
-				data.Add(getTexIDAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index).GetBytes());
+				data.Add(GetTexIdAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index).GetBytes());
 
 				// texture2
 				data.Add((-1).GetBytes());
@@ -146,7 +162,7 @@ namespace Effekseer.Binary
 					// alpha texture
 					if (advanceValue.EnableAlphaTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+						data.Add(GetTexIdAndInfo(advanceValue.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
 					}
 					else
 					{
@@ -156,7 +172,7 @@ namespace Effekseer.Binary
 					// uv distortion texture
 					if (advanceValue.EnableUVDistortionTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, distortionTexture_and_index, ref uvDistortionTexInfo).GetBytes());
+						data.Add(GetTexIdAndInfo(advanceValue.UVDistortionTextureParam.Texture, distortionTexture_and_index, ref uvDistortionTexInfo).GetBytes());
 					}
 					else
 					{
@@ -166,12 +182,12 @@ namespace Effekseer.Binary
 					// blend texture
 					if (advanceValue2.EnableBlendTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
+						data.Add(GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, distortionTexture_and_index, ref blendTexInfo).GetBytes());
 
 						// blend alpha texture
 						if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
+							data.Add(GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, distortionTexture_and_index, ref blendAlphaTexInfo).GetBytes());
 						}
 						else
 						{
@@ -181,7 +197,7 @@ namespace Effekseer.Binary
 						// blend uv distortion texture
 						if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, distortionTexture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+							data.Add(GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, distortionTexture_and_index, ref blendUVDistortionTexInfo).GetBytes());
 						}
 						else
 						{
@@ -199,17 +215,17 @@ namespace Effekseer.Binary
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 			{
 				// texture1
-				data.Add(getTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
+				data.Add(GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
 
 				// texture2
-				data.Add(getTexIDAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
+				data.Add(GetTexIdAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
 
 				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					// alpha texture
 					if (advanceValue.EnableAlphaTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+						data.Add(GetTexIdAndInfo(advanceValue.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
 					}
 					else
 					{
@@ -219,7 +235,7 @@ namespace Effekseer.Binary
 					// uv distortion texture
 					if (advanceValue.EnableUVDistortionTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
+						data.Add(GetTexIdAndInfo(advanceValue.UVDistortionTextureParam.Texture, texture_and_index, ref uvDistortionTexInfo).GetBytes());
 					}
 					else
 					{
@@ -229,12 +245,12 @@ namespace Effekseer.Binary
 					// blend texture
 					if (advanceValue2.EnableBlendTexture)
 					{
-						data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
+						data.Add(GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture, texture_and_index, ref blendTexInfo).GetBytes());
 
 						// blend alpha texture
 						if (advanceValue2.BlendTextureParams.EnableBlendAlphaTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
+							data.Add(GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture, texture_and_index, ref blendAlphaTexInfo).GetBytes());
 						}
 						else
 						{
@@ -244,7 +260,7 @@ namespace Effekseer.Binary
 						// blend uv distortion texture
 						if (advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture)
 						{
-							data.Add(getTexIDAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
+							data.Add(GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture, texture_and_index, ref blendUVDistortionTexInfo).GetBytes());
 						}
 						else
 						{
@@ -294,12 +310,12 @@ namespace Effekseer.Binary
 					if (texture.Item2.Type == TextureType.Value)
 					{
 						data.Add((1).GetBytes());
-						data.Add(getTexIDAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes());
+						data.Add(GetTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes());
 					}
 					else
 					{
 						data.Add((0).GetBytes());
-						data.Add(getTexIDAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes());
+						data.Add(GetTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes());
 
 					}
 				}
