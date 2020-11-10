@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Effekseer.Data;
 using Effekseer.Data.Value;
 using Effekseer.Utl;
 
@@ -120,6 +121,35 @@ namespace Effekseer.Binary
 					ref blendTexInfo);
 			}
 
+			IEnumerable<int> ReadTextureInfo(Dictionary<string, int> texAndInd)
+			{
+				if (version < ExporterVersion.Ver16Alpha1)
+				{
+					yield break;
+				}
+
+				// alpha texture
+				yield return ReadAlphaTexture(texAndInd);
+				// uv distortion texture
+				yield return ReadUvDistortionTexture(texAndInd);
+
+				// blend texture
+				if (advanceValue2.EnableBlendTexture)
+				{
+					yield return ReadBlendTexture(texAndInd);
+					// blend alpha texture
+					yield return ReadBlendAlphaTexture(texAndInd);
+					// blend uv distortion texture
+					yield return ReadBlendUvDistortionTexture(texAndInd);
+				}
+				else
+				{
+					yield return -1;
+					yield return -1;
+					yield return -1;
+				}
+			}
+
 			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 			{
 				IEnumerable<int> ReadAsDefaultMaterial()
@@ -130,30 +160,9 @@ namespace Effekseer.Binary
 					// texture2
 					yield return -1;
 
-					if (version < ExporterVersion.Ver16Alpha1)
+					foreach (int i in ReadTextureInfo(texture_and_index))
 					{
-						yield break;
-					}
-
-					// alpha texture
-					yield return ReadAlphaTexture(texture_and_index);
-					// uv distortion texture
-					yield return ReadUvDistortionTexture(texture_and_index);
-
-					// blend texture
-					if (advanceValue2.EnableBlendTexture)
-					{
-						yield return ReadBlendTexture(texture_and_index);
-						// blend alpha texture
-						yield return ReadBlendAlphaTexture(texture_and_index);
-						// blend uv distortion texture
-						yield return ReadBlendUvDistortionTexture(texture_and_index);
-					}
-					else
-					{
-						yield return -1;
-						yield return -1;
-						yield return -1;
+						yield return i;
 					}
 				}
 
@@ -169,30 +178,9 @@ namespace Effekseer.Binary
 					// texture2
 					yield return -1;
 
-					if (version < ExporterVersion.Ver16Alpha1)
+					foreach (var element in ReadTextureInfo(distortionTexture_and_index))
 					{
-						yield break;
-					}
-
-					// alpha texture
-					yield return ReadAlphaTexture(distortionTexture_and_index);
-					// uv distortion texture
-					yield return ReadUvDistortionTexture(distortionTexture_and_index);
-
-					// blend texture
-					if (advanceValue2.EnableBlendTexture)
-					{
-						yield return ReadBlendTexture(distortionTexture_and_index);
-						// blend alpha texture
-						yield return ReadBlendAlphaTexture(distortionTexture_and_index);
-						// blend uv distortion texture
-						yield return ReadBlendUvDistortionTexture(distortionTexture_and_index);
-					}
-					else
-					{
-						yield return -1;
-						yield return -1;
-						yield return -1;
+						yield return element;
 					}
 				}
 
@@ -208,30 +196,9 @@ namespace Effekseer.Binary
 					// texture2
 					yield return GetTexIdAndStoreSize(value.NormalTexture, 2, normalTexture_and_index);
 
-					if (version < ExporterVersion.Ver16Alpha1)
+					foreach (var item in ReadTextureInfo(texture_and_index))
 					{
-						yield break;
-					}
-
-					// alpha texture
-					yield return ReadAlphaTexture(texture_and_index);
-					// uv distortion texture
-					yield return ReadUvDistortionTexture(texture_and_index);
-
-					// blend texture
-					if (advanceValue2.EnableBlendTexture)
-					{
-						yield return ReadBlendTexture(texture_and_index);
-						// blend alpha texture
-						yield return ReadBlendAlphaTexture(texture_and_index);
-						// blend uv distortion texture
-						yield return ReadBlendUvDistortionTexture(texture_and_index);
-					}
-					else
-					{
-						yield return -1;
-						yield return -1;
-						yield return -1;
+						yield return item;
 					}
 				}
 
@@ -239,87 +206,54 @@ namespace Effekseer.Binary
 			}
 			else
 			{
-				var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath);
-				if(materialInfo == null)
+				IEnumerable<byte[]> Byteses()
 				{
-					materialInfo = new MaterialInformation();
+					var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath) ??
+						new MaterialInformation();
+					var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
+					var uniforms = value.MaterialFile.GetUniforms(materialInfo);
+
+					// maximum slot limitation
+					if (textures.Length > Constant.UserTextureSlotCount)
+					{
+						textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
+					}
+
+					yield return material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath)
+						? material_and_index[value.MaterialFile.Path.RelativePath].GetBytes()
+						: (-1).GetBytes();
+
+					yield return textures.Length.GetBytes();
+
+					foreach (var texture in textures)
+					{
+						var texture_ = texture.Item1.Value as Data.Value.PathForImage;
+						if (texture.Item2.Type == TextureType.Value)
+						{
+							yield return 1.GetBytes();
+							yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes();
+						}
+						else
+						{
+							yield return 0.GetBytes();
+							yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes();
+						}
+					}
+
+					yield return uniforms.Count.GetBytes();
+
+					foreach (var uniform in uniforms)
+					{
+						float[] floats = GetUniformsVertexes(uniform);
+
+						yield return floats[0].GetBytes();
+						yield return floats[1].GetBytes();
+						yield return floats[2].GetBytes();
+						yield return floats[3].GetBytes();
+					}
 				}
 
-				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
-				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
-
-				// maximum slot limitation
-				if(textures.Length > Constant.UserTextureSlotCount)
-				{
-					textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
-				}
-
-				if(material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath))
-				{
-					data.Add(material_and_index[value.MaterialFile.Path.RelativePath].GetBytes());
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-
-				}
-
-				data.Add(textures.Length.GetBytes());
-
-				foreach (var texture in textures)
-				{
-					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
-					if (texture.Item2.Type == TextureType.Value)
-					{
-						data.Add(1.GetBytes());
-						data.Add(GetTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes());
-					}
-					else
-					{
-						data.Add(0.GetBytes());
-						data.Add(GetTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes());
-
-					}
-				}
-
-				data.Add(uniforms.Count.GetBytes());
-
-				foreach (var uniform in uniforms)
-				{
-					float[] floats = new float[4];
-					
-					if(uniform.Item1 == null)
-					{
-						floats = uniform.Item2.DefaultValues.ToArray();
-					}
-					else if(uniform.Item1.Value is Data.Value.Float)
-					{
-						floats[0] = (uniform.Item1.Value as Data.Value.Float).Value;
-					}
-					else if (uniform.Item1.Value is Data.Value.Vector2D)
-					{
-						floats[0] = (uniform.Item1.Value as Data.Value.Vector2D).X.Value;
-						floats[1] = (uniform.Item1.Value as Data.Value.Vector2D).Y.Value;
-					}
-					else if (uniform.Item1.Value is Data.Value.Vector3D)
-					{
-						floats[0] = (uniform.Item1.Value as Data.Value.Vector3D).X.Value;
-						floats[1] = (uniform.Item1.Value as Data.Value.Vector3D).Y.Value;
-						floats[2] = (uniform.Item1.Value as Data.Value.Vector3D).Z.Value;
-					}
-					else if (uniform.Item1.Value is Data.Value.Vector4D)
-					{
-						floats[0] = (uniform.Item1.Value as Data.Value.Vector4D).X.Value;
-						floats[1] = (uniform.Item1.Value as Data.Value.Vector4D).Y.Value;
-						floats[2] = (uniform.Item1.Value as Data.Value.Vector4D).Z.Value;
-						floats[3] = (uniform.Item1.Value as Data.Value.Vector4D).W.Value;
-					}
-
-					data.Add(floats[0].GetBytes());
-					data.Add(floats[1].GetBytes());
-					data.Add(floats[2].GetBytes());
-					data.Add(floats[3].GetBytes());
-				}
+				data.AddRange(Byteses());
 			}
 
 			data.Add(value.AlphaBlend);
@@ -667,6 +601,41 @@ namespace Effekseer.Binary
 			}
 
 			return data.ToArray().ToArray();
+		}
+		
+
+		static float[] GetUniformsVertexes(Tuple35<MaterialFileParameter.ValueStatus, MaterialInformation.UniformInformation> tuple35)
+		{
+			float[] floats1 = new float[4];
+
+			if (tuple35.Item1 == null)
+			{
+				floats1 = tuple35.Item2.DefaultValues.ToArray();
+			}
+			else if (tuple35.Item1.Value is Float float1)
+			{
+				floats1[0] = float1.Value;
+			}
+			else if (tuple35.Item1.Value is Vector2D float2)
+			{
+				floats1[0] = float2.X.Value;
+				floats1[1] = float2.Y.Value;
+			}
+			else if (tuple35.Item1.Value is Data.Value.Vector3D float3)
+			{
+				floats1[0] = float3.X.Value;
+				floats1[1] = float3.Y.Value;
+				floats1[2] = float3.Z.Value;
+			}
+			else if (tuple35.Item1.Value is Vector4D float4)
+			{
+				floats1[0] = float4.X.Value;
+				floats1[1] = float4.Y.Value;
+				floats1[2] = float4.Z.Value;
+				floats1[3] = float4.W.Value;
+			}
+
+			return floats1;
 		}
 
 		public static byte[] GetUVBytes(TextureInformation _TexInfo,
