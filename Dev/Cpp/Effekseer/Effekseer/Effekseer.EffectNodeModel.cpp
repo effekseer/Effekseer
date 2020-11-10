@@ -29,8 +29,15 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const RefPtr<Se
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Model\n");
 
-	memcpy(&Mode, pos, sizeof(int));
-	pos += sizeof(int);
+	if (m_effect->GetVersion() >= Version16Alpha3)
+	{
+		memcpy(&Mode, pos, sizeof(int));
+		pos += sizeof(int);
+	}
+	else
+	{
+		Mode = ModelReferenceType::File;
+	}
 
 	if (Mode == ModelReferenceType::File)
 	{
