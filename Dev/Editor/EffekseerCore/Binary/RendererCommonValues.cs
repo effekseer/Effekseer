@@ -149,112 +149,112 @@ namespace Effekseer.Binary
 					yield return -1;
 				}
 			}
-
-			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
+			
+			IEnumerable<int> ReadAsDefaultMaterial()
 			{
-				IEnumerable<int> ReadAsDefaultMaterial()
+				// texture1
+				yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
+
+				// texture2
+				yield return -1;
+
+				foreach (int i in ReadTextureInfo(texture_and_index))
 				{
-					// texture1
-					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
+					yield return i;
+				}
+			}
+			
+			IEnumerable<int> ReadAsBackDistortion()
+			{
+				// texture1
+				yield return GetTexIdAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index);
 
-					// texture2
-					yield return -1;
+				// texture2
+				yield return -1;
 
-					foreach (int i in ReadTextureInfo(texture_and_index))
+				foreach (var element in ReadTextureInfo(distortionTexture_and_index))
+				{
+					yield return element;
+				}
+			}
+			
+			IEnumerable<int> ReadAsLighting()
+			{
+				// texture1
+				yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
+
+				// texture2
+				yield return GetTexIdAndStoreSize(value.NormalTexture, 2, normalTexture_and_index);
+
+				foreach (var item in ReadTextureInfo(texture_and_index))
+				{
+					yield return item;
+				}
+			}
+			
+			IEnumerable<byte[]> ReadAsFile()
+			{
+				var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath) ??
+					new MaterialInformation();
+				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
+				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
+
+				// maximum slot limitation
+				if (textures.Length > Constant.UserTextureSlotCount)
+				{
+					textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
+				}
+
+				yield return material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath)
+					? material_and_index[value.MaterialFile.Path.RelativePath].GetBytes()
+					: (-1).GetBytes();
+
+				yield return textures.Length.GetBytes();
+
+				foreach (var texture in textures)
+				{
+					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
+					if (texture.Item2.Type == TextureType.Value)
 					{
-						yield return i;
+						yield return 1.GetBytes();
+						yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes();
+					}
+					else
+					{
+						yield return 0.GetBytes();
+						yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes();
 					}
 				}
 
-				data.AddRange(ReadAsDefaultMaterial().Select(x => x.GetBytes()));
-			}
-			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
-			{
-				IEnumerable<int> ReadAsBackDistortionXXX()
+				yield return uniforms.Count.GetBytes();
+
+				foreach (var uniform in uniforms)
 				{
-					// texture1
-					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index);
+					float[] floats = GetUniformsVertexes(uniform);
 
-					// texture2
-					yield return -1;
-
-					foreach (var element in ReadTextureInfo(distortionTexture_and_index))
-					{
-						yield return element;
-					}
+					yield return floats[0].GetBytes();
+					yield return floats[1].GetBytes();
+					yield return floats[2].GetBytes();
+					yield return floats[3].GetBytes();
 				}
-
-				data.AddRange(ReadAsBackDistortionXXX().Select(x => x.GetBytes()));
 			}
-			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
+
+			IEnumerable<byte[]> ReadCommandValues()
 			{
-				IEnumerable<int> ReadAsLighting()
+				switch (value.Material.Value)
 				{
-					// texture1
-					yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
-
-					// texture2
-					yield return GetTexIdAndStoreSize(value.NormalTexture, 2, normalTexture_and_index);
-
-					foreach (var item in ReadTextureInfo(texture_and_index))
-					{
-						yield return item;
-					}
+					case Data.RendererCommonValues.MaterialType.Default:
+						return ReadAsDefaultMaterial().Select(x => x.GetBytes());
+					case Data.RendererCommonValues.MaterialType.BackDistortion:
+						return ReadAsBackDistortion().Select(x => x.GetBytes());
+					case Data.RendererCommonValues.MaterialType.Lighting:
+						return ReadAsLighting().Select(x => x.GetBytes());
+					default:
+						return ReadAsFile();
 				}
-
-				data.AddRange(ReadAsLighting().Select(x => x.GetBytes()));
 			}
-			else
-			{
-				IEnumerable<byte[]> Byteses()
-				{
-					var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath) ??
-						new MaterialInformation();
-					var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
-					var uniforms = value.MaterialFile.GetUniforms(materialInfo);
 
-					// maximum slot limitation
-					if (textures.Length > Constant.UserTextureSlotCount)
-					{
-						textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
-					}
-
-					yield return material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath)
-						? material_and_index[value.MaterialFile.Path.RelativePath].GetBytes()
-						: (-1).GetBytes();
-
-					yield return textures.Length.GetBytes();
-
-					foreach (var texture in textures)
-					{
-						var texture_ = texture.Item1.Value as Data.Value.PathForImage;
-						if (texture.Item2.Type == TextureType.Value)
-						{
-							yield return 1.GetBytes();
-							yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes();
-						}
-						else
-						{
-							yield return 0.GetBytes();
-							yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes();
-						}
-					}
-
-					yield return uniforms.Count.GetBytes();
-
-					foreach (var uniform in uniforms)
-					{
-						float[] floats = GetUniformsVertexes(uniform);
-
-						yield return floats[0].GetBytes();
-						yield return floats[1].GetBytes();
-						yield return floats[2].GetBytes();
-						yield return floats[3].GetBytes();
-					}
-				}
-
-				data.AddRange(Byteses());
-			}
+			data.AddRange(ReadCommandValues());
 
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);
@@ -281,23 +281,8 @@ namespace Effekseer.Binary
 				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Wrap);
 			}
 
-			if (value.ZTest.GetValue())
-			{
-				data.Add(1.GetBytes());
-			}
-			else
-			{
-				data.Add(0.GetBytes());
-			}
-
-			if (value.ZWrite.GetValue())
-			{
-				data.Add(1.GetBytes());
-			}
-			else
-			{
-				data.Add(0.GetBytes());
-			}
+			data.Add(value.ZTest.GetValue() ? 1.GetBytes() : 0.GetBytes());
+			data.Add(value.ZWrite.GetValue() ? 1.GetBytes() : 0.GetBytes());
 
 			data.Add(value.FadeInType);
 			if (value.FadeInType.Value == Data.RendererCommonValues.FadeType.Use)
