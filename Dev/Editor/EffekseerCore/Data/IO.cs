@@ -855,6 +855,58 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveScalar value, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			var timeline = SaveToElement(doc, "Timeline", value.Timeline, isClip);
+			var keys = doc.CreateElement("Keys");
+			var s_value = doc.CreateElement("S");
+
+			int index = 0;
+
+			Action<Value.FCurve<float>, XmlElement> setValues = (v, xml) =>
+			{
+				index = 0;
+
+				var st = SaveToElement(doc, "StartType", v.StartType, isClip);
+				var et = SaveToElement(doc, "EndType", v.EndType, isClip);
+				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax, isClip);
+				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin, isClip);
+				var s = SaveToElement(doc, "Sampling", v.Sampling, isClip);
+
+				if (st != null) xml.AppendChild(st);
+				if (et != null) xml.AppendChild(et);
+				if (omax != null) xml.AppendChild(omax);
+				if (omin != null) xml.AppendChild(omin);
+				if (s != null) xml.AppendChild(s);
+
+				foreach (var k_ in v.Keys)
+				{
+					var k = doc.CreateElement("Key" + index.ToString());
+					k.AppendChild(doc.CreateTextElement("Frame", k_.Frame.ToString()));
+					k.AppendChild(doc.CreateTextElement("Value", k_.ValueAsFloat.ToString()));
+					k.AppendChild(doc.CreateTextElement("LeftX", k_.LeftX.ToString()));
+					k.AppendChild(doc.CreateTextElement("LeftY", k_.LeftY.ToString()));
+					k.AppendChild(doc.CreateTextElement("RightX", k_.RightX.ToString()));
+					k.AppendChild(doc.CreateTextElement("RightY", k_.RightY.ToString()));
+
+					k.AppendChild(doc.CreateTextElement("InterpolationType", k_.InterpolationType.GetValueAsInt()));
+
+					xml.AppendChild(k);
+					index++;
+				}
+			};
+
+			setValues(value.S, s_value);
+
+			if (timeline != null) keys.AppendChild(timeline);
+			if (s_value.ChildNodes.Count > 0) keys.AppendChild(s_value);
+			if (keys.ChildNodes.Count > 0) e.AppendChild(keys);
+
+			return e.ChildNodes.Count > 0 ? e : null;
+		}
+
+
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicInput value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
@@ -1724,6 +1776,68 @@ namespace Effekseer.Data
 			if (e_g != null) import(value.G, e_g);
 			if (e_b != null) import(value.B, e_b);
 			if (e_a != null) import(value.A, e_a);
+		}
+
+		public static void LoadFromElement(XmlElement e, Value.FCurveScalar value, bool isClip)
+		{
+			var e_keys = e["Keys"] as XmlElement;
+			if (e_keys == null) return;
+
+			var e_timeline = e_keys["Timeline"] as XmlElement;
+			var e_s = e_keys["S"] as XmlElement;
+
+			Action<Data.Value.FCurve<float>, XmlElement> import = (v_, e_) =>
+			{
+				foreach (XmlElement r in e_.ChildNodes)
+				{
+					if (r.Name.StartsWith("Key"))
+					{
+						var f = r.GetTextAsInt("Frame");
+						var v = r.GetTextAsFloat("Value");
+						var lx = r.GetTextAsFloat("LeftX");
+						var ly = r.GetTextAsFloat("LeftY");
+						var rx = r.GetTextAsFloat("RightX");
+						var ry = r.GetTextAsFloat("RightY");
+						var i = r.GetTextAsInt("InterpolationType");
+						var s = r.GetTextAsInt("Sampling");
+
+						var t = new Value.FCurveKey<float>(f, v);
+						t.SetLeftDirectly(lx, ly);
+						t.SetRightDirectly(rx, ry);
+						t.InterpolationType.SetValue(i);
+
+						v_.AddKeyDirectly(t);
+					}
+					else if (r.Name.StartsWith("StartType"))
+					{
+						var v = r.GetTextAsInt();
+						v_.StartType.SetValue(v);
+					}
+					else if (r.Name.StartsWith("EndType"))
+					{
+						var v = r.GetTextAsInt();
+						v_.EndType.SetValue(v);
+					}
+					else if (r.Name.StartsWith("OffsetMax"))
+					{
+						var v = r.GetTextAsFloat();
+						v_.OffsetMax.SetValueDirectly(v);
+					}
+					else if (r.Name.StartsWith("OffsetMin"))
+					{
+						var v = r.GetTextAsFloat();
+						v_.OffsetMin.SetValueDirectly(v);
+					}
+					else if (r.Name.StartsWith("Sampling"))
+					{
+						var v = r.GetTextAsInt();
+						v_.Sampling.SetValueDirectly(v);
+					}
+				}
+			};
+
+			if (e_timeline != null) LoadFromElement(e_timeline, value.Timeline, isClip);
+			if (e_s != null) import(value.S, e_s);
 		}
 
 		public static void LoadFromElement(XmlElement e, Data.DynamicInput value, bool isClip)
