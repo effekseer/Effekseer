@@ -67,6 +67,11 @@ public:
 	virtual ~DepthTextureDX11();
 	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
+	ID3D11Texture2D* GetTexture() const
+	{
+		return depthBuffer;
+	}
+
 	ID3D11DepthStencilView* GetDepthStencilView() const
 	{
 		return depthStencilView;
@@ -94,30 +99,17 @@ private:
 	IDXGIFactory* dxgiFactory = nullptr;
 	IDXGISwapChain* swapChain = nullptr;
 
+	//! default
 	ID3D11Texture2D* defaultRenderTarget = nullptr;
 	ID3D11Texture2D* defaultDepthStencil = nullptr;
 	ID3D11RenderTargetView* renderTargetView = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 
-	//ID3D11Texture2D* backTexture = nullptr;
-	//ID3D11ShaderResourceView* backTextureSRV = nullptr;
-
-	ID3D11RenderTargetView* currentRenderTargetView = nullptr;
+	std::array<ID3D11RenderTargetView*, 4> currentRenderTargetViews;
 	ID3D11DepthStencilView* currentDepthStencilView = nullptr;
 
 	RenderTexture* backupRenderTarget = nullptr;
 	DepthTexture* backupDepthStencil = nullptr;
-
-	/*
-	LPDIRECT3D9			d3d = nullptr;
-	LPDIRECT3DDEVICE9	d3d_device = nullptr;
-
-	IDirect3DSurface9*	renderDefaultTarget = nullptr;
-	IDirect3DSurface9*	renderDefaultDepth = nullptr;
-
-	IDirect3DSurface9*	backTarget = nullptr;
-	IDirect3DTexture9*	backTargetTexture = nullptr;
-	*/
 
 	ID3D11RasterizerState* rasterizerState = nullptr;
 	ID3D11RasterizerState* savedRasterizerState = nullptr;
@@ -131,8 +123,6 @@ public:
 
 	void CopyTo(RenderTexture* src, RenderTexture* dst) override;
 
-	//void CopyToBackground() override;
-
 	void Resize(int32_t width, int32_t height) override;
 
 	bool Present() override;
@@ -141,11 +131,7 @@ public:
 
 	void EndScene() override;
 
-	void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) override;
-
-	//	void BeginRecord(int32_t width, int32_t height) override;
-	//
-	//	void EndRecord(std::vector<Effekseer::Color>& pixels) override;
+	void SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture) override;
 
 	void SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels) override;
 
@@ -158,8 +144,6 @@ public:
 	int GetMultisampleLevel(TextureFormat format) override;
 
 	void ResetDevice() override;
-
-	//void* GetBack() override;
 
 	ID3D11Device* GetDevice() const;
 

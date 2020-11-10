@@ -6,6 +6,11 @@
 
 namespace efk
 {
+
+#include "../../Shaders/GLSL_GL_Header/line_ps.h"
+#include "../../Shaders/GLSL_GL_Header/line_vs.h"
+
+/*
 static const char g_sprite_vs_src[] =
 	R"(
 IN vec4 atPosition;
@@ -64,46 +69,33 @@ static const char g_sprite_fs_no_texture_src[] = "IN lowp vec4 vaColor;\n"
 												 "void main() {\n"
 												 "FRAGCOLOR = vaColor;\n"
 												 "}\n";
+*/
 
 LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer)
 	: LineRenderer(renderer)
 {
 	this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
 
-	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
-	EffekseerRendererGL::ShaderCodeView lineCodeDataPS(g_sprite_fs_texture_src);
-	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
-
-	auto shader_ =
-		EffekseerRendererGL::Shader::Create(this->renderer->GetIntetnalGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataPS, 1, "Standard Tex");
+	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(gl_line_vs);
+	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(gl_line_ps);
 
 	auto shader_no_texture_ =
-		EffekseerRendererGL::Shader::Create(this->renderer->GetIntetnalGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex");
+		EffekseerRendererGL::Shader::Create(this->renderer->GetIntetnalGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex", true, false);
 
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
-		{"atPosition", GL_FLOAT, 3, 0, false}, {"atColor", GL_UNSIGNED_BYTE, 4, 12, true}, {"atTexCoord", GL_FLOAT, 2, 16, false}};
+		{"Input_Pos", GL_FLOAT, 3, 0, false}, {"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true}, {"Input_UV", GL_FLOAT, 2, 16, false}};
 
-	shader_->GetAttribIdList(3, sprite_attribs);
-	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-
-	shader_->AddVertexConstantLayout(EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatCamera"), 0);
-
-	shader_->AddVertexConstantLayout(
-		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
-
-	shader_->SetTextureSlot(0, shader_->GetUniformId("uTexture0"));
 
 	shader_no_texture_->GetAttribIdList(3, sprite_attribs);
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
 	shader_no_texture_->AddVertexConstantLayout(
-		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatCamera"), 0);
+		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("CBVS0.mCamera"), 0);
 
 	shader_no_texture_->AddVertexConstantLayout(
-		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
 
 	this->shader = shader_no_texture_;
-	ES_SAFE_DELETE(shader_);
 
 	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 1024, true, true);
 
@@ -170,6 +162,10 @@ void LineRendererGL::Render()
 	Effekseer::Matrix44 constantVSBuffer[2];
 	constantVSBuffer[0] = renderer->GetCameraMatrix();
 	constantVSBuffer[1] = renderer->GetProjectionMatrix();
+
+	constantVSBuffer[0].Transpose();
+	constantVSBuffer[1].Transpose();
+
 	renderer->SetVertexBufferToShader(constantVSBuffer, sizeof(Effekseer::Matrix44) * 2, 0);
 
 	shader->SetConstantBuffer();

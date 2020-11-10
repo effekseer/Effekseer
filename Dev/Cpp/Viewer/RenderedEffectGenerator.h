@@ -84,6 +84,11 @@ protected:
 	std::shared_ptr<efk::RenderTexture> hdrRenderTexture;
 	std::shared_ptr<efk::RenderTexture> linearRenderTexture;
 	std::shared_ptr<efk::DepthTexture> depthTexture;
+
+	//! depth texture to send a renderer for softparticles
+	std::shared_ptr<efk::RenderTexture> depthRenderTextureMSAA;
+	std::shared_ptr<efk::RenderTexture> depthRenderTexture;
+
 	std::shared_ptr<efk::RenderTexture> backTexture;
 	std::shared_ptr<efk::RenderTexture> viewRenderTexture;
 
