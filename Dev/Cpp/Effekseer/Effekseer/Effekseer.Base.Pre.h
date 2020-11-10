@@ -734,7 +734,7 @@ public:
 	static RefPtr<T> FromPinned(void* p)
 	{
 		auto ptr = reinterpret_cast<T*>(p);
-		SafeRelease(ptr);
+		SafeAddRef(ptr);
 		return RefPtr<T>(ptr);
 	}
 };
