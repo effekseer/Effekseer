@@ -754,22 +754,19 @@ void Instance::FirstUpdate()
 		float r = m_pEffectNode->GenerationLocation.sphere.radius.getValue(rand);
 		m_GenerationLocation = Mat43f::Translation(0, r, 0) * mat_x * mat_y;
 	}
-	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL ||
-			 m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_PROCEDUAL_MODEL)
+	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL)
 	{
 		m_GenerationLocation = Mat43f::Identity;
 		Model* model = nullptr;
-		ParameterGenerationLocation::eModelType type;
+		const ParameterGenerationLocation::eModelType type = m_pEffectNode->GenerationLocation.model.type;
 
-		if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL)
+		if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::File)
 		{
-			type = m_pEffectNode->GenerationLocation.model.type;
 			model = m_pEffectNode->GetEffect()->GetModel(m_pEffectNode->GenerationLocation.model.index);
 		}
-		else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_PROCEDUAL_MODEL)
+		else if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::Procedual)
 		{
-			type = m_pEffectNode->GenerationLocation.procedualModel.type;
-			model = m_pEffectNode->GetEffect()->GetProcedualModel(m_pEffectNode->GenerationLocation.procedualModel.index);
+			model = m_pEffectNode->GetEffect()->GetProcedualModel(m_pEffectNode->GenerationLocation.model.index);
 		}
 
 		{

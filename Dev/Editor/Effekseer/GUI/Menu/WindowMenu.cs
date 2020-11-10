@@ -22,6 +22,7 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("Global", typeof(Dock.GlobalValues), Icons.PanelGlobal),
 			new DockSettings("Culling", typeof(Dock.Culling), Icons.PanelCulling),
 			new DockSettings("DynamicParameter_Name", typeof(Dock.Dynamic), Icons.PanelDynamicParams),
+			new DockSettings("ProcedualModel_Name", typeof(Dock.ProcedualModel), Icons.PanelDynamicParams),
 			new DockSettings("ViewerControls", typeof(Dock.ViewerController), Icons.PanelViewerCtrl),
 			new DockSettings("CameraSettings", typeof(Dock.ViewPoint), Icons.PanelViewPoint),
 			new DockSettings("Environment_Name", typeof(Dock.Environement), Icons.PanelEnvironment),
@@ -46,7 +47,7 @@ namespace Effekseer.GUI.Menu
 			foreach (var setting in DockSettingsArray)
 			{
 				setting.AddTo(menu);
-				if (setting.Title == "DynamicParameter_Name")
+				if (setting.Title == "ProcedualModel_Name")
 				{
 					menu.Controls.Add(new MenuSeparator());
 				}

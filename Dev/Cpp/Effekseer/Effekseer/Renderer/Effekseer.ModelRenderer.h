@@ -10,6 +10,7 @@
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
+#include "../Parameter/Effekseer.Parameters.h"
 #include "../SIMD/Effekseer.Mat43f.h"
 #include "../SIMD/Effekseer.Vec2f.h"
 #include "../SIMD/Effekseer.Vec3f.h"
@@ -26,27 +27,6 @@ namespace Effekseer
 class ModelRenderer
 {
 public:
-	struct FalloffParameter
-	{
-		enum BlendType
-		{
-			Add = 0,
-			Sub = 1,
-			Mul = 2,
-		} ColorBlendType;
-		Color BeginColor;
-		Color EndColor;
-		float Pow;
-
-		FalloffParameter()
-		{
-			ColorBlendType = BlendType::Add;
-			BeginColor = Color(255, 255, 255, 255);
-			EndColor = Color(255, 255, 255, 255);
-			Pow = 1.0f;
-		}
-	};
-
 	struct NodeParameter
 	{
 		Effect* EffectPointer;

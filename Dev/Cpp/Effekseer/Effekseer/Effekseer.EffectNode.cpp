@@ -688,6 +688,20 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = AlphaCutoff.Type != ParameterAlphaCutoff::EType::FIXED || AlphaCutoff.Fixed.Threshold != 0.0f;
 		}
 
+		if (m_effect->GetVersion() >= Version16Alpha3)
+		{
+			int FalloffFlag = 0;
+			memcpy(&FalloffFlag, pos, sizeof(int));
+			pos += sizeof(int);
+			EnableFalloff = (FalloffFlag == 1);
+
+			if (EnableFalloff)
+			{
+				memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
+				pos += sizeof(FalloffParameter);
+			}
+		}
+
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
 		// rescale intensity after 1.5
@@ -1217,17 +1231,12 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 	else if (node_type == EFFECT_NODE_TYPE_MODEL)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeModel\n");
-		effectnode = new EffectNodeModel(effect, pos, EffectNodeModelMode::File);
+		effectnode = new EffectNodeModel(effect, pos);
 	}
 	else if (node_type == EFFECT_NODE_TYPE_TRACK)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeTrack\n");
 		effectnode = new EffectNodeTrack(effect, pos);
-	}
-	else if (node_type == EFFECT_NODE_TYPE_PROCEDUAL_MODEL)
-	{
-		EffekseerPrintDebug("* Create : EffectNodeProcedualModel\n");
-		effectnode = new EffectNodeModel(effect, pos, EffectNodeModelMode::Procedual);
 	}
 	else
 	{

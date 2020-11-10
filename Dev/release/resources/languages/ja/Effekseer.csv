@@ -314,3 +314,6 @@ Recording_Scale_Desc,Enlarge the area to record images.
 ,
 PermissionError_File,ファイル {0} を読み込めません。アクセス権限がない可能性があります。
 PermissionError_File_Mac,エフェクトに関連するファイルをホームディレクトリにファイルを移動すると解決する場合があります。
+
+ModelReferenceType_File_Name,ファイル
+ModelReferenceType_ProdecualModel_Name,プロシージャルモデル

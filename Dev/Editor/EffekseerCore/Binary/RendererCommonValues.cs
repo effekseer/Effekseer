@@ -671,6 +671,23 @@ namespace Effekseer.Binary
 				data.Add(AlphaCutoffValues.GetBytes(advanceValue.AlphaCutoffParam, version));
 			}
 
+			if (version >= ExporterVersion.Ver16Alpha3)
+			{
+				if (advanceValue.EnableFalloff)
+				{
+					data.Add((1).GetBytes());
+
+					data.Add(advanceValue.FalloffParam.ColorBlendType);
+					data.Add(advanceValue.FalloffParam.BeginColor);
+					data.Add(advanceValue.FalloffParam.EndColor);
+					data.Add(BitConverter.GetBytes(advanceValue.FalloffParam.Pow.Value));
+				}
+				else
+				{
+					data.Add((0).GetBytes());
+				}
+			}
+
 			return data.ToArray().ToArray();
 		}
 
