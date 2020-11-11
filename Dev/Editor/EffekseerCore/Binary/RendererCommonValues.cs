@@ -10,6 +10,8 @@ namespace Effekseer.Binary
 {
 	class RendererCommonValues
 	{
+		private static readonly MaterialSerializer MaterialSerializerInstance = new MaterialSerializer();
+
 		public static byte[] GetBytes(Data.RendererCommonValues value,
 			Data.AdvancedRenderCommonValues advanceValue,
 			Data.AdvancedRenderCommonValues2 advanceValue2,
@@ -27,7 +29,7 @@ namespace Effekseer.Binary
 
 			var uvDistortionTexInfo = new TextureInformation();
 
-			var blendTexInfo = new TextureInformation(); 
+			var blendTexInfo = new TextureInformation();
 
 			var blendAlphaTexInfo = new TextureInformation();
 
@@ -44,217 +46,13 @@ namespace Effekseer.Binary
 				}
 			}
 
-			int GetTexIdAndStoreSize(PathForImage image, int number, Dictionary<string, int> texAndInd)
 			{
-				var tempTexInfo = new TextureInformation();
-
-				if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(image.AbsolutePath))
-				{
-					return -1;
-				}
-
-				if (value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
-				{
-					texInfo.Load(image.AbsolutePath);
-				}
-
-				return texAndInd[image.RelativePath];
-
+				var aggregator = new TextureValuesAggregator(value, advanceValue, advanceValue2,
+					texInfo, alphaTexInfo, uvDistortionTexInfo, blendTexInfo, blendAlphaTexInfo, blendUVDistortionTexInfo);
+				MaterialSerializerInstance.AddCommandValues(version, value, aggregator,
+					texture_and_index, distortionTexture_and_index, normalTexture_and_index, material_and_index);
+				data.AddRange(aggregator.CurrentData);
 			}
-
-			int GetTexIdAndInfo(PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef)
-			{
-				var tempTexInfo = new TextureInformation();
-
-				if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(image.AbsolutePath))
-				{
-					return -1;
-				}
-
-				texInfoRef.Load(image.AbsolutePath);
-				return texAndInd[image.RelativePath];
-			}
-
-			int ReadTexIdAndInfo(bool isEnabled, PathForImage path, Dictionary<string, int> texAndInd, ref TextureInformation textureInfo)
-			{
-				return isEnabled
-					? GetTexIdAndInfo(path, texAndInd, ref textureInfo)
-					: -1;
-			}
-
-			int ReadAlphaTexture(Dictionary<string, int> texAndInd)
-			{
-				return ReadTexIdAndInfo(advanceValue.EnableAlphaTexture,
-					advanceValue.AlphaTextureParam.Texture,
-					texAndInd,
-					ref alphaTexInfo);
-			}
-
-			int ReadUvDistortionTexture(Dictionary<string, int> texAndInd)
-			{
-				return ReadTexIdAndInfo(advanceValue.EnableUVDistortionTexture,
-					advanceValue.UVDistortionTextureParam.Texture,
-					texAndInd,
-					ref uvDistortionTexInfo);
-			}
-
-			int ReadBlendAlphaTexture(Dictionary<string, int> texAndInd)
-			{
-				return ReadTexIdAndInfo(advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
-					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture,
-					texAndInd,
-					ref blendAlphaTexInfo);
-			}
-
-			int ReadBlendUvDistortionTexture(Dictionary<string, int> texAndInd)
-			{
-				return ReadTexIdAndInfo(advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
-					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
-					texAndInd,
-					ref blendUVDistortionTexInfo);
-			}
-
-			int ReadBlendTexture(Dictionary<string, int> texAndInd)
-			{
-				return GetTexIdAndInfo(advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
-					texAndInd,
-					ref blendTexInfo);
-			}
-
-			IEnumerable<int> ReadTextureInfo(Dictionary<string, int> texAndInd)
-			{
-				if (version < ExporterVersion.Ver16Alpha1)
-				{
-					yield break;
-				}
-
-				// alpha texture
-				yield return ReadAlphaTexture(texAndInd);
-				// uv distortion texture
-				yield return ReadUvDistortionTexture(texAndInd);
-
-				// blend texture
-				if (advanceValue2.EnableBlendTexture)
-				{
-					yield return ReadBlendTexture(texAndInd);
-					// blend alpha texture
-					yield return ReadBlendAlphaTexture(texAndInd);
-					// blend uv distortion texture
-					yield return ReadBlendUvDistortionTexture(texAndInd);
-				}
-				else
-				{
-					yield return -1;
-					yield return -1;
-					yield return -1;
-				}
-			}
-			
-			IEnumerable<int> ReadAsDefaultMaterial()
-			{
-				// texture1
-				yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
-
-				// texture2
-				yield return -1;
-
-				foreach (int i in ReadTextureInfo(texture_and_index))
-				{
-					yield return i;
-				}
-			}
-			
-			IEnumerable<int> ReadAsBackDistortion()
-			{
-				// texture1
-				yield return GetTexIdAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index);
-
-				// texture2
-				yield return -1;
-
-				foreach (var element in ReadTextureInfo(distortionTexture_and_index))
-				{
-					yield return element;
-				}
-			}
-			
-			IEnumerable<int> ReadAsLighting()
-			{
-				// texture1
-				yield return GetTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
-
-				// texture2
-				yield return GetTexIdAndStoreSize(value.NormalTexture, 2, normalTexture_and_index);
-
-				foreach (var item in ReadTextureInfo(texture_and_index))
-				{
-					yield return item;
-				}
-			}
-			
-			IEnumerable<byte[]> ReadAsFile()
-			{
-				var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath) ??
-					new MaterialInformation();
-				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
-				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
-
-				// maximum slot limitation
-				if (textures.Length > Constant.UserTextureSlotCount)
-				{
-					textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
-				}
-
-				yield return material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath)
-					? material_and_index[value.MaterialFile.Path.RelativePath].GetBytes()
-					: (-1).GetBytes();
-
-				yield return textures.Length.GetBytes();
-
-				foreach (var texture in textures)
-				{
-					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
-					if (texture.Item2.Type == TextureType.Value)
-					{
-						yield return 1.GetBytes();
-						yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes();
-					}
-					else
-					{
-						yield return 0.GetBytes();
-						yield return GetTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes();
-					}
-				}
-
-				yield return uniforms.Count.GetBytes();
-
-				foreach (var uniform in uniforms)
-				{
-					float[] floats = GetUniformsVertexes(uniform);
-
-					yield return floats[0].GetBytes();
-					yield return floats[1].GetBytes();
-					yield return floats[2].GetBytes();
-					yield return floats[3].GetBytes();
-				}
-			}
-
-			IEnumerable<byte[]> ReadCommandValues()
-			{
-				switch (value.Material.Value)
-				{
-					case Data.RendererCommonValues.MaterialType.Default:
-						return ReadAsDefaultMaterial().Select(x => x.GetBytes());
-					case Data.RendererCommonValues.MaterialType.BackDistortion:
-						return ReadAsBackDistortion().Select(x => x.GetBytes());
-					case Data.RendererCommonValues.MaterialType.Lighting:
-						return ReadAsLighting().Select(x => x.GetBytes());
-					default:
-						return ReadAsFile();
-				}
-			}
-
-			data.AddRange(ReadCommandValues());
 
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);
@@ -475,7 +273,7 @@ namespace Effekseer.Binary
 
 			// Custom data1 from 1.5
 			data.Add(value.CustomData1.CustomData);
-			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed2D)
+			if (value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed2D)
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.Y.Value));
@@ -499,7 +297,7 @@ namespace Effekseer.Binary
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData1.FCurve;
 				var bytes1 = value_.GetBytes();
@@ -587,7 +385,6 @@ namespace Effekseer.Binary
 
 			return data.ToArray().ToArray();
 		}
-		
 
 		static float[] GetUniformsVertexes(Tuple35<MaterialFileParameter.ValueStatus, MaterialInformation.UniformInformation> tuple35)
 		{
@@ -671,7 +468,7 @@ namespace Effekseer.Binary
 				{
 					data.Add(value_.FrameLength.Value.Value.GetBytes());
 				}
-			
+
 				data.Add(value_.FrameCountX.Value.GetBytes());
 				data.Add(value_.FrameCountY.Value.GetBytes());
 				data.Add(value_.LoopType);
@@ -716,6 +513,270 @@ namespace Effekseer.Binary
 			}
 
 			return data.ToArray().ToArray();
+		}
+
+		private sealed class MaterialSerializer
+		{
+			private void AddTextureInfo(ExporterVersion version,
+				Dictionary<string, int> texAndInd,
+				TextureValuesAggregator aggregator)
+			{
+				if (version < ExporterVersion.Ver16Alpha1)
+				{
+					return;
+				}
+
+				aggregator.AddAlphaTexture(texAndInd);
+				aggregator.AddUvDistortionTexture(texAndInd);
+
+				if (aggregator.IsBlendTextureEnabled)
+				{
+					aggregator.AddBlendTexture(texAndInd);
+					aggregator.AddBlendAlphaTexture(texAndInd);
+					aggregator.AddBlendUvDistortionTexture(texAndInd);
+				}
+				else
+				{
+					aggregator.AddInt(-1);
+					aggregator.AddInt(-1);
+					aggregator.AddInt(-1);
+				}
+			}
+
+			private void AddAsDefaultMaterial(ExporterVersion version,
+				Dictionary<string, int> texture_and_index,
+				Data.RendererCommonValues value,
+				TextureValuesAggregator aggregator)
+			{
+				aggregator.AddTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
+				aggregator.AddInt(-1);
+				AddTextureInfo(version, texture_and_index, aggregator);
+			}
+
+			private void AddAsBackDistortion(ExporterVersion version,
+				Dictionary<string, int> distortionTexture_and_index,
+				Data.RendererCommonValues value,
+				TextureValuesAggregator aggregator)
+			{
+				aggregator.AddTexIdAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index);
+				aggregator.AddInt(-1);
+				AddTextureInfo(version, distortionTexture_and_index, aggregator);
+			}
+
+			private void AddAsLighting(ExporterVersion version,
+				Dictionary<string, int> texture_and_index,
+				Dictionary<string, int> normalTexture_and_index,
+				Data.RendererCommonValues value,
+				TextureValuesAggregator aggregator)
+			{
+				aggregator.AddTexIdAndStoreSize(value.ColorTexture, 1, texture_and_index);
+				aggregator.AddTexIdAndStoreSize(value.NormalTexture, 2, normalTexture_and_index);
+				AddTextureInfo(version, texture_and_index, aggregator);
+			}
+
+			private void AddAsFile(TextureValuesAggregator aggregator,
+				Data.RendererCommonValues value,
+				Dictionary<string, int> texture_and_index,
+				Dictionary<string, int> normalTexture_and_index,
+				Dictionary<string, int> material_and_index)
+			{
+				var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath) ??
+					new MaterialInformation();
+				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
+				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
+
+				// maximum slot limitation
+				if (textures.Length > Constant.UserTextureSlotCount)
+				{
+					textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
+				}
+
+				aggregator.AddInt(material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath)
+					? material_and_index[value.MaterialFile.Path.RelativePath]
+					: (-1));
+
+				aggregator.AddInt(textures.Length);
+
+				foreach (var texture in textures)
+				{
+					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
+					if (texture.Item2.Type == TextureType.Value)
+					{
+						aggregator.AddInt(1);
+						aggregator.AddTexIdAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index);
+					}
+					else
+					{
+						aggregator.AddInt(0);
+						aggregator.AddTexIdAndStoreSize(texture_, texture.Item2.Priority, texture_and_index);
+					}
+				}
+
+				aggregator.AddInt(uniforms.Count);
+
+				foreach (var uniform in uniforms)
+				{
+					float[] floats = GetUniformsVertexes(uniform);
+
+					aggregator.AddFloat(floats[0]);
+					aggregator.AddFloat(floats[1]);
+					aggregator.AddFloat(floats[2]);
+					aggregator.AddFloat(floats[3]);
+				}
+			}
+
+			public void AddCommandValues(ExporterVersion version,
+				Data.RendererCommonValues value,
+				TextureValuesAggregator aggregator,
+				Dictionary<string, int> texture_and_index,
+				Dictionary<string, int> distortionTexture_and_index,
+				Dictionary<string, int> normalTexture_and_index,
+				Dictionary<string, int> material_and_index)
+			{
+				switch (value.Material.Value)
+				{
+					case Data.RendererCommonValues.MaterialType.Default:
+						AddAsDefaultMaterial(version, texture_and_index, value, aggregator);
+						break;
+					case Data.RendererCommonValues.MaterialType.BackDistortion:
+						AddAsBackDistortion(version, distortionTexture_and_index, value, aggregator);
+						break;
+					case Data.RendererCommonValues.MaterialType.Lighting:
+						AddAsLighting(version, texture_and_index, normalTexture_and_index, value, aggregator);
+						break;
+					default:
+						AddAsFile(aggregator, value, texture_and_index, normalTexture_and_index, material_and_index);
+						break;
+				}
+			}
+		}
+
+		private sealed class TextureValuesAggregator
+		{
+			private readonly Data.RendererCommonValues _value;
+			private readonly AdvancedRenderCommonValues _advanceValue;
+			private readonly AdvancedRenderCommonValues2 _advanceValue2;
+			private TextureInformation _texInfo;
+			private TextureInformation _alpha;
+			private TextureInformation _uvDistortion;
+			private TextureInformation _blend;
+			private TextureInformation _blendAlpha;
+			private TextureInformation _blendUvDistortion;
+			private readonly List<byte[]> _data = new List<byte[]>();
+
+			public TextureValuesAggregator(
+				Data.RendererCommonValues value,
+				AdvancedRenderCommonValues advanceValue,
+				AdvancedRenderCommonValues2 advanceValue2,
+				TextureInformation texInfo,
+				TextureInformation alpha,
+				TextureInformation uvDistortion,
+				TextureInformation blend,
+				TextureInformation blendAlpha,
+				TextureInformation blendUvDistortion)
+			{
+				_value = value;
+				_advanceValue = advanceValue;
+				_advanceValue2 = advanceValue2;
+				_texInfo = texInfo;
+				_alpha = alpha;
+				_uvDistortion = uvDistortion;
+				_blend = blend;
+				_blendAlpha = blendAlpha;
+				_blendUvDistortion = blendUvDistortion;
+			}
+
+			public IEnumerable<byte[]> CurrentData => _data;
+			public bool IsBlendTextureEnabled => _advanceValue2.EnableBlendTexture;
+
+			public void AddInt(int value)
+			{
+				_data.Add(value.GetBytes());
+			}
+
+			public void AddFloat(float value)
+			{
+				_data.Add(value.GetBytes());
+			}
+
+			public void AddTexIdAndStoreSize(PathForImage image, int number, Dictionary<string, int> texAndInd)
+			{
+				var tempTexInfo = new TextureInformation();
+
+				if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(image.AbsolutePath))
+				{
+					AddInt(-1);
+					return;
+				}
+
+				if (_value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None
+					&& number == (int)_value.UVTextureReferenceTarget.Value)
+				{
+					_texInfo.Load(image.AbsolutePath);
+				}
+
+				AddInt(texAndInd[image.RelativePath]);
+			}
+
+			private int GetTexIdAndInfo(PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef)
+			{
+				var tempTexInfo = new TextureInformation();
+
+				if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(image.AbsolutePath))
+				{
+					return -1;
+				}
+
+				texInfoRef.Load(image.AbsolutePath);
+				return texAndInd[image.RelativePath];
+			}
+
+			private void AddTexIdAndInfo(bool isEnabled, PathForImage path, Dictionary<string, int> texAndInd, ref TextureInformation textureInfo)
+			{
+				var value = isEnabled
+					? GetTexIdAndInfo(path, texAndInd, ref textureInfo)
+					: -1;
+				AddInt(value);
+			}
+
+			public void AddAlphaTexture(Dictionary<string, int> texAndInd)
+			{
+				AddTexIdAndInfo(_advanceValue.EnableAlphaTexture,
+					_advanceValue.AlphaTextureParam.Texture,
+					texAndInd,
+					ref _alpha);
+			}
+
+			public void AddUvDistortionTexture(Dictionary<string, int> texAndInd)
+			{
+				AddTexIdAndInfo(_advanceValue.EnableUVDistortionTexture,
+					_advanceValue.UVDistortionTextureParam.Texture,
+					texAndInd,
+					ref _uvDistortion);
+			}
+
+			public void AddBlendAlphaTexture(Dictionary<string, int> texAndInd)
+			{
+				AddTexIdAndInfo(_advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
+					_advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture,
+					texAndInd,
+					ref _blendAlpha);
+			}
+
+			public void AddBlendUvDistortionTexture(Dictionary<string, int> texAndInd)
+			{
+				AddTexIdAndInfo(_advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
+					_advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
+					texAndInd,
+					ref _blendUvDistortion);
+			}
+
+			public void AddBlendTexture(Dictionary<string, int> texAndInd)
+			{
+				GetTexIdAndInfo(_advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
+					texAndInd,
+					ref _blend);
+			}
 		}
 	}
 
