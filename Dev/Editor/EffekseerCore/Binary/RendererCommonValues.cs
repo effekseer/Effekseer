@@ -49,7 +49,7 @@ namespace Effekseer.Binary
 			{
 				var aggregator = new TextureValuesAggregator(value, advanceValue, advanceValue2,
 					texInfo, alphaTexInfo, uvDistortionTexInfo, blendTexInfo, blendAlphaTexInfo, blendUVDistortionTexInfo);
-				MaterialSerializerInstance.AddCommandValues(version, value, aggregator,
+				MaterialSerializerInstance.AddMaterialData(version, value, aggregator,
 					texture_and_index, distortionTexture_and_index, normalTexture_and_index, material_and_index);
 				data.AddRange(aggregator.CurrentData);
 			}
@@ -103,91 +103,17 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(easing[1]));
 				data.Add(BitConverter.GetBytes(easing[2]));
 			}
-
-			// sprcification change(1.5)
+			
+			// specification change(1.5)
 			float width = 128.0f;
 			float height = 128.0f;
 
 			if (texInfo.Width > 0 && texInfo.Height > 0)
 			{
-				width = (float)texInfo.Width;
-				height = (float)texInfo.Height;
+				width = (float) texInfo.Width;
+				height = (float) texInfo.Height;
 			}
-
-			data.Add(value.UV);
-			if (value.UV.Value == Data.RendererCommonValues.UVType.Default)
-			{
-			}
-			else if (value.UV.Value == Data.RendererCommonValues.UVType.Fixed)
-			{
-				var value_ = value.UVFixed;
-				data.Add((value_.Start.X / width).GetBytes());
-				data.Add((value_.Start.Y / height).GetBytes());
-				data.Add((value_.Size.X / width).GetBytes());
-				data.Add((value_.Size.Y / height).GetBytes());
-			}
-			else if (value.UV.Value == Data.RendererCommonValues.UVType.Animation)
-			{
-				var value_ = value.UVAnimation;
-
-				data.Add((value_.AnimationParams.Start.X / width).GetBytes());
-				data.Add((value_.AnimationParams.Start.Y / height).GetBytes());
-				data.Add((value_.AnimationParams.Size.X / width).GetBytes());
-				data.Add((value_.AnimationParams.Size.Y / height).GetBytes());
-
-				if (value_.AnimationParams.FrameLength.Infinite)
-				{
-					var inf = int.MaxValue / 100;
-					data.Add(inf.GetBytes());
-				}
-				else
-				{
-					data.Add(value_.AnimationParams.FrameLength.Value.Value.GetBytes());
-				}
-
-				data.Add(value_.AnimationParams.FrameCountX.Value.GetBytes());
-				data.Add(value_.AnimationParams.FrameCountY.Value.GetBytes());
-				data.Add(value_.AnimationParams.LoopType);
-
-				data.Add(value_.AnimationParams.StartSheet.Max.GetBytes());
-				data.Add(value_.AnimationParams.StartSheet.Min.GetBytes());
-
-				data.Add(value_.FlipbookInterpolationType);
-			}
-			else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
-			{
-				var value_ = value.UVScroll;
-				data.Add((value_.Start.X.Max / width).GetBytes());
-				data.Add((value_.Start.Y.Max / height).GetBytes());
-				data.Add((value_.Start.X.Min / width).GetBytes());
-				data.Add((value_.Start.Y.Min / height).GetBytes());
-
-				data.Add((value_.Size.X.Max / width).GetBytes());
-				data.Add((value_.Size.Y.Max / height).GetBytes());
-				data.Add((value_.Size.X.Min / width).GetBytes());
-				data.Add((value_.Size.Y.Min / height).GetBytes());
-
-				data.Add((value_.Speed.X.Max / width).GetBytes());
-				data.Add((value_.Speed.Y.Max / height).GetBytes());
-				data.Add((value_.Speed.X.Min / width).GetBytes());
-				data.Add((value_.Speed.Y.Min / height).GetBytes());
-			}
-			else if (value.UV.Value == Data.RendererCommonValues.UVType.FCurve)
-			{
-				{
-					var value_ = value.UVFCurve.Start;
-					var bytes1 = value_.GetBytes(1.0f / width, 1.0f / height);
-					List<byte[]> _data = new List<byte[]>();
-					data.Add(bytes1);
-				}
-
-				{
-					var value_ = value.UVFCurve.Size;
-					var bytes1 = value_.GetBytes(1.0f / width, 1.0f / height);
-					List<byte[]> _data = new List<byte[]>();
-					data.Add(bytes1);
-				}
-			}
+			data.Add(SerializeUv(value, width, height));
 
 
 			if (version >= ExporterVersion.Ver16Alpha1)
@@ -386,6 +312,33 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
+		private static byte[] SerializeUv(Data.RendererCommonValues value, float width, float height)
+		{
+			var aggregator = new UvAggregator(width, height);
+			aggregator.Add(value.UV);
+
+			switch (value.UV.Value)
+			{
+				case Data.RendererCommonValues.UVType.Default:
+					break;
+				case Data.RendererCommonValues.UVType.Fixed:
+					SerializeFixedUv(value.UVFixed, aggregator);
+					break;
+				case Data.RendererCommonValues.UVType.Animation:
+					SerializeAnimationUvRefactor(value.UVAnimation.AnimationParams, aggregator);
+					aggregator.Add(value.UVAnimation.FlipbookInterpolationType);
+					break;
+				case Data.RendererCommonValues.UVType.Scroll:
+					SerializeScrollUvRefactor(value.UVScroll, aggregator);
+					break;
+				case Data.RendererCommonValues.UVType.FCurve:
+					SerializeFCurveUv(value.UVFCurve, aggregator);
+					break;
+			}
+
+			return aggregator.CurrentData.ToArray().ToArray();
+		}
+
 		static float[] GetUniformsVertexes(Tuple35<MaterialFileParameter.ValueStatus, MaterialInformation.UniformInformation> tuple35)
 		{
 			float[] floats1 = new float[4];
@@ -427,8 +380,6 @@ namespace Effekseer.Binary
 						Data.RendererCommonValues.UVScrollParamater _Scroll,
 						Data.RendererCommonValues.UVFCurveParamater _FCurve)
 		{
-			List<byte[]> data = new List<byte[]>();
-
 			// sprcification change(1.5)
 			float width = 128.0f;
 			float height = 128.0f;
@@ -439,80 +390,120 @@ namespace Effekseer.Binary
 				height = (float)_TexInfo.Height;
 			}
 
-			data.Add(_UVType);
-			if (_UVType == Data.RendererCommonValues.UVType.Default)
+			var aggregator = new UvAggregator(width, height);
+			aggregator.Add(_UVType);
+
+			switch (_UVType.Value)
 			{
-			}
-			else if (_UVType == Data.RendererCommonValues.UVType.Fixed)
-			{
-				var value_ = _Fixed;
-				data.Add((value_.Start.X / width).GetBytes());
-				data.Add((value_.Start.Y / height).GetBytes());
-				data.Add((value_.Size.X / width).GetBytes());
-				data.Add((value_.Size.Y / height).GetBytes());
-			}
-			else if (_UVType == Data.RendererCommonValues.UVType.Animation)
-			{
-				var value_ = _Animation;
-				data.Add((value_.Start.X / width).GetBytes());
-				data.Add((value_.Start.Y / height).GetBytes());
-				data.Add((value_.Size.X / width).GetBytes());
-				data.Add((value_.Size.Y / height).GetBytes());
-
-				if (value_.FrameLength.Infinite)
-				{
-					var inf = int.MaxValue / 100;
-					data.Add(inf.GetBytes());
-				}
-				else
-				{
-					data.Add(value_.FrameLength.Value.Value.GetBytes());
-				}
-
-				data.Add(value_.FrameCountX.Value.GetBytes());
-				data.Add(value_.FrameCountY.Value.GetBytes());
-				data.Add(value_.LoopType);
-
-				data.Add(value_.StartSheet.Max.GetBytes());
-				data.Add(value_.StartSheet.Min.GetBytes());
-
-			}
-			else if (_UVType == Data.RendererCommonValues.UVType.Scroll)
-			{
-				var value_ = _Scroll;
-				data.Add((value_.Start.X.Max / width).GetBytes());
-				data.Add((value_.Start.Y.Max / height).GetBytes());
-				data.Add((value_.Start.X.Min / width).GetBytes());
-				data.Add((value_.Start.Y.Min / height).GetBytes());
-
-				data.Add((value_.Size.X.Max / width).GetBytes());
-				data.Add((value_.Size.Y.Max / height).GetBytes());
-				data.Add((value_.Size.X.Min / width).GetBytes());
-				data.Add((value_.Size.Y.Min / height).GetBytes());
-
-				data.Add((value_.Speed.X.Max / width).GetBytes());
-				data.Add((value_.Speed.Y.Max / height).GetBytes());
-				data.Add((value_.Speed.X.Min / width).GetBytes());
-				data.Add((value_.Speed.Y.Min / height).GetBytes());
-			}
-			else if (_UVType == Data.RendererCommonValues.UVType.FCurve)
-			{
-				{
-					var value_ = _FCurve.Start;
-					var bytes1 = value_.GetBytes(1.0f / width);
-					List<byte[]> _data = new List<byte[]>();
-					data.Add(bytes1);
-				}
-
-				{
-					var value_ = _FCurve.Size;
-					var bytes1 = value_.GetBytes(1.0f / height);
-					List<byte[]> _data = new List<byte[]>();
-					data.Add(bytes1);
-				}
+				case Data.RendererCommonValues.UVType.Default:
+					break;
+				case Data.RendererCommonValues.UVType.Fixed:
+					SerializeFixedUv(_Fixed, aggregator);
+					break;
+				case Data.RendererCommonValues.UVType.Animation:
+					SerializeAnimationUvRefactor(_Animation, aggregator);
+					break;
+				case Data.RendererCommonValues.UVType.Scroll:
+					SerializeScrollUvRefactor(_Scroll, aggregator);
+					break;
+				case Data.RendererCommonValues.UVType.FCurve:
+					SerializeFCurveUv(_FCurve, aggregator);
+					break;
 			}
 
-			return data.ToArray().ToArray();
+			return aggregator.CurrentData.ToArray().ToArray();
+		}
+
+		private static void SerializeFCurveUv(Data.RendererCommonValues.UVFCurveParamater curve, UvAggregator aggregator)
+		{
+			var width = aggregator.Width;
+			var height = aggregator.Height;
+			aggregator.Add(curve.Start.GetBytes(1.0f / width, 1.0f / height));
+			aggregator.Add(curve.Size.GetBytes(1.0f / width, 1.0f / height));
+		}
+
+		private static void SerializeFixedUv(Data.RendererCommonValues.UVFixedParamater uvFixed,
+			UvAggregator aggregator)
+		{
+			aggregator.AddVector2D(uvFixed.Start);
+			aggregator.AddVector2D(uvFixed.Size);
+		}
+
+		private static void SerializeAnimationUvRefactor(Data.RendererCommonValues.UVAnimationParamater uvAnimation, UvAggregator aggregator)
+		{
+			aggregator.AddVector2D(uvAnimation.Start);
+			aggregator.AddVector2D(uvAnimation.Size);
+
+			var frameLength = uvAnimation.FrameLength.Infinite
+				? (int.MaxValue / 100)
+				: uvAnimation.FrameLength.Value.Value;
+			aggregator.AddInt(frameLength);
+
+			aggregator.AddInt(uvAnimation.FrameCountX.Value);
+			aggregator.AddInt(uvAnimation.FrameCountY.Value);
+			aggregator.Add(uvAnimation.LoopType);
+
+			aggregator.AddInt(uvAnimation.StartSheet.Max);
+			aggregator.AddInt(uvAnimation.StartSheet.Min);
+		}
+
+
+		private static void SerializeScrollUvRefactor(
+			Data.RendererCommonValues.UVScrollParamater uvScroll,
+			UvAggregator aggregator)
+		{
+			aggregator.AddRandomVector2D(uvScroll.Start);
+			aggregator.AddRandomVector2D(uvScroll.Size);
+			aggregator.AddRandomVector2D(uvScroll.Speed);
+		}
+
+		private class UvSerializer
+		{
+			
+		}
+
+		private sealed class UvAggregator
+		{
+			public float Width { get; }
+			public float Height { get; }
+			private readonly List<byte[]> _data = new List<byte[]>();
+
+			public IEnumerable<byte[]> CurrentData => _data;
+
+			public UvAggregator(float width, float height)
+			{
+				Width = width;
+				Height = height;
+			}
+
+			public void AddInt(int value)
+			{
+				_data.Add(value.GetBytes());
+			}
+
+			public void AddFloat(float value)
+			{
+				_data.Add(value.GetBytes());
+			}
+
+			public void Add(byte[] value)
+			{
+				_data.Add(value);
+			}
+
+			public void AddVector2D(Vector2D vector)
+			{
+				AddFloat(vector.X / Width);
+				AddFloat(vector.Y / Height);
+			}
+
+			public void AddRandomVector2D(Vector2DWithRandom vector)
+			{
+				AddFloat(vector.X.Max / Width);
+				AddFloat(vector.Y.Max / Height);
+				AddFloat(vector.X.Min / Width);
+				AddFloat(vector.Y.Min / Height);
+			}
 		}
 
 		private sealed class MaterialSerializer
@@ -625,7 +616,7 @@ namespace Effekseer.Binary
 				}
 			}
 
-			public void AddCommandValues(ExporterVersion version,
+			public void AddMaterialData(ExporterVersion version,
 				Data.RendererCommonValues value,
 				TextureValuesAggregator aggregator,
 				Dictionary<string, int> texture_and_index,
