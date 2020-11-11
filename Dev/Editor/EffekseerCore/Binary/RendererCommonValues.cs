@@ -103,14 +103,8 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(easing[1]));
 				data.Add(BitConverter.GetBytes(easing[2]));
 			}
-			
-			var serializer = new UvSerializer(value.UV,
-				value.UVFixed,
-				value.UVAnimation.AnimationParams,
-				value.UVScroll,
-				value.UVFCurve);
-			serializer.SizeForGetBytes(texInfo, out float width, out float height);
-			data.Add(serializer.SerializeUv(width, height));
+
+			data.Add(new BasicUvSerializer(value).SerializeUv(texInfo));
 
 
 			if (version >= ExporterVersion.Ver16Alpha1)
@@ -350,25 +344,75 @@ namespace Effekseer.Binary
 						Data.RendererCommonValues.UVScrollParamater _Scroll,
 						Data.RendererCommonValues.UVFCurveParamater _FCurve)
 		{
-			var serializer = new UvSerializer(_UVType, _Fixed, _Animation, _Scroll, _FCurve);
-			serializer.SizeForGetUVBytes(_TexInfo, out float width, out float height);
-			return serializer.SerializeUv(width, height);
+			var serializer = new AdvancedUvSerializer(_UVType, _Fixed, _Animation, _Scroll, _FCurve);
+			return serializer.SerializeUv(_TexInfo);
 		}
 
-		private class AdvancedUvSerializer
+		private sealed class BasicUvSerializer : UvSerializer
 		{
+			private readonly Data.RendererCommonValues.UVAnimationSupportedFrameBlendParameter _animationParameter;
 
+			public BasicUvSerializer(Data.RendererCommonValues value)
+				: base(value.UV, value.UVFixed, value.UVAnimation.AnimationParams, value.UVScroll, value.UVFCurve)
+			{
+				_animationParameter = value.UVAnimation;
+			}
+
+			protected override void GetSize(TextureInformation texInfo, out float width, out float height)
+			{
+				// specification change(1.5)
+				width = 128.0f;
+				height = 128.0f;
+
+				if (texInfo.Width > 0 && texInfo.Height > 0)
+				{
+					width = texInfo.Width;
+					height = texInfo.Height;
+				}
+			}
+
+			public override void SerializeAnimationUv(UvAggregator aggregator)
+			{
+				base.SerializeAnimationUv(aggregator);
+				aggregator.Add(_animationParameter.FlipbookInterpolationType);
+			}
 		}
 
-		private class UvSerializer
+		private sealed class AdvancedUvSerializer : UvSerializer
 		{
-			public Enum<Data.RendererCommonValues.UVType> UvType { get; }
-			public Data.RendererCommonValues.UVFixedParamater Fixed { get; }
-			public Data.RendererCommonValues.UVAnimationParamater Animation { get; }
-			public Data.RendererCommonValues.UVScrollParamater Scroll { get; }
-			public Data.RendererCommonValues.UVFCurveParamater FCurve { get; }
+			public AdvancedUvSerializer(
+				Enum<Data.RendererCommonValues.UVType> uvType,
+				Data.RendererCommonValues.UVFixedParamater @fixed,
+				Data.RendererCommonValues.UVAnimationParamater animation,
+				Data.RendererCommonValues.UVScrollParamater scroll,
+				Data.RendererCommonValues.UVFCurveParamater fCurve)
+				: base(uvType, @fixed, animation, scroll, fCurve)
+			{
+			}
 
-			public UvSerializer(Data.Value.Enum<Data.RendererCommonValues.UVType> uvType,
+			protected override void GetSize(TextureInformation texInfo, out float width, out float height)
+			{
+				// specification change(1.5)
+				width = 128.0f;
+				height = 128.0f;
+
+				if (texInfo.Width > width && texInfo.Height > height)
+				{
+					width = texInfo.Width;
+					height = texInfo.Height;
+				}
+			}
+		}
+
+		private abstract class UvSerializer
+		{
+			private Enum<Data.RendererCommonValues.UVType> UvType { get; }
+			private Data.RendererCommonValues.UVFixedParamater Fixed { get; }
+			private Data.RendererCommonValues.UVAnimationParamater Animation { get; }
+			private Data.RendererCommonValues.UVScrollParamater Scroll { get; }
+			private Data.RendererCommonValues.UVFCurveParamater FCurve { get; }
+
+			protected UvSerializer(Enum<Data.RendererCommonValues.UVType> uvType,
 				Data.RendererCommonValues.UVFixedParamater @fixed,
 				Data.RendererCommonValues.UVAnimationParamater animation,
 				Data.RendererCommonValues.UVScrollParamater scroll,
@@ -381,8 +425,10 @@ namespace Effekseer.Binary
 				FCurve = fCurve;
 			}
 
-			public byte[] SerializeUv(float width, float height)
+			public byte[] SerializeUv(TextureInformation texInfo)
 			{
+				GetSize(texInfo, out float width, out float height);
+
 				var aggregator = new UvAggregator(width, height);
 				aggregator.Add(UvType);
 
@@ -407,31 +453,7 @@ namespace Effekseer.Binary
 				return aggregator.CurrentData.ToArray().ToArray();
 			}
 
-			public void SizeForGetBytes(TextureInformation texInfo, out float width, out float height)
-			{
-				// specification change(1.5)
-				width = 128.0f;
-				height = 128.0f;
-
-				if (texInfo.Width > 0 && texInfo.Height > 0)
-				{
-					width = (float) texInfo.Width;
-					height = (float) texInfo.Height;
-				}
-			}
-
-			public void SizeForGetUVBytes(TextureInformation texInfo, out float width, out float height)
-			{
-				// specification change(1.5)
-				width = 128.0f;
-				height = 128.0f;
-
-				if (texInfo.Width > width && texInfo.Height > height)
-				{
-					width = (float)texInfo.Width;
-					height = (float)texInfo.Height;
-				}
-			}
+			protected abstract void GetSize(TextureInformation texInfo, out float width, out float height);
 
 			public virtual void SerializeFCurveUv(UvAggregator aggregator)
 			{
