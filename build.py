@@ -220,6 +220,8 @@ if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
          'Mac/Effekseer.app/Contents/Resources/')
     copy('/Library/Frameworks/Mono.framework/Libraries/libMonoPosixHelper.dylib',
          'Mac/Effekseer.app/Contents/Resources/')
+    copy('/Library/Frameworks/Mono.framework/Libraries/libmono-native-compat.dylib',
+         'Mac/Effekseer.app/Contents/Resources/')
     copytree('release/resources',
              'Mac/Effekseer.app/Contents/Resources/resources')
     copytree('release/scripts', 'Mac/Effekseer.app/Contents/Resources/scripts')
