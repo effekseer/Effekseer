@@ -104,16 +104,13 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(easing[2]));
 			}
 			
-			// specification change(1.5)
-			float width = 128.0f;
-			float height = 128.0f;
-
-			if (texInfo.Width > 0 && texInfo.Height > 0)
-			{
-				width = (float) texInfo.Width;
-				height = (float) texInfo.Height;
-			}
-			data.Add(SerializeUv(value, width, height));
+			var serializer = new UvSerializer(value.UV,
+				value.UVFixed,
+				value.UVAnimation.AnimationParams,
+				value.UVScroll,
+				value.UVFCurve);
+			serializer.SizeForGetBytes(texInfo, out float width, out float height);
+			data.Add(serializer.SerializeUv(width, height));
 
 
 			if (version >= ExporterVersion.Ver16Alpha1)
@@ -312,33 +309,6 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		private static byte[] SerializeUv(Data.RendererCommonValues value, float width, float height)
-		{
-			var aggregator = new UvAggregator(width, height);
-			aggregator.Add(value.UV);
-
-			switch (value.UV.Value)
-			{
-				case Data.RendererCommonValues.UVType.Default:
-					break;
-				case Data.RendererCommonValues.UVType.Fixed:
-					SerializeFixedUv(value.UVFixed, aggregator);
-					break;
-				case Data.RendererCommonValues.UVType.Animation:
-					SerializeAnimationUvRefactor(value.UVAnimation.AnimationParams, aggregator);
-					aggregator.Add(value.UVAnimation.FlipbookInterpolationType);
-					break;
-				case Data.RendererCommonValues.UVType.Scroll:
-					SerializeScrollUvRefactor(value.UVScroll, aggregator);
-					break;
-				case Data.RendererCommonValues.UVType.FCurve:
-					SerializeFCurveUv(value.UVFCurve, aggregator);
-					break;
-			}
-
-			return aggregator.CurrentData.ToArray().ToArray();
-		}
-
 		static float[] GetUniformsVertexes(Tuple35<MaterialFileParameter.ValueStatus, MaterialInformation.UniformInformation> tuple35)
 		{
 			float[] floats1 = new float[4];
@@ -380,86 +350,128 @@ namespace Effekseer.Binary
 						Data.RendererCommonValues.UVScrollParamater _Scroll,
 						Data.RendererCommonValues.UVFCurveParamater _FCurve)
 		{
-			// sprcification change(1.5)
-			float width = 128.0f;
-			float height = 128.0f;
-
-			if (_TexInfo.Width > width && _TexInfo.Height > height)
-			{
-				width = (float)_TexInfo.Width;
-				height = (float)_TexInfo.Height;
-			}
-
-			var aggregator = new UvAggregator(width, height);
-			aggregator.Add(_UVType);
-
-			switch (_UVType.Value)
-			{
-				case Data.RendererCommonValues.UVType.Default:
-					break;
-				case Data.RendererCommonValues.UVType.Fixed:
-					SerializeFixedUv(_Fixed, aggregator);
-					break;
-				case Data.RendererCommonValues.UVType.Animation:
-					SerializeAnimationUvRefactor(_Animation, aggregator);
-					break;
-				case Data.RendererCommonValues.UVType.Scroll:
-					SerializeScrollUvRefactor(_Scroll, aggregator);
-					break;
-				case Data.RendererCommonValues.UVType.FCurve:
-					SerializeFCurveUv(_FCurve, aggregator);
-					break;
-			}
-
-			return aggregator.CurrentData.ToArray().ToArray();
+			var serializer = new UvSerializer(_UVType, _Fixed, _Animation, _Scroll, _FCurve);
+			serializer.SizeForGetUVBytes(_TexInfo, out float width, out float height);
+			return serializer.SerializeUv(width, height);
 		}
 
-		private static void SerializeFCurveUv(Data.RendererCommonValues.UVFCurveParamater curve, UvAggregator aggregator)
+		private class AdvancedUvSerializer
 		{
-			var width = aggregator.Width;
-			var height = aggregator.Height;
-			aggregator.Add(curve.Start.GetBytes(1.0f / width, 1.0f / height));
-			aggregator.Add(curve.Size.GetBytes(1.0f / width, 1.0f / height));
-		}
 
-		private static void SerializeFixedUv(Data.RendererCommonValues.UVFixedParamater uvFixed,
-			UvAggregator aggregator)
-		{
-			aggregator.AddVector2D(uvFixed.Start);
-			aggregator.AddVector2D(uvFixed.Size);
-		}
-
-		private static void SerializeAnimationUvRefactor(Data.RendererCommonValues.UVAnimationParamater uvAnimation, UvAggregator aggregator)
-		{
-			aggregator.AddVector2D(uvAnimation.Start);
-			aggregator.AddVector2D(uvAnimation.Size);
-
-			var frameLength = uvAnimation.FrameLength.Infinite
-				? (int.MaxValue / 100)
-				: uvAnimation.FrameLength.Value.Value;
-			aggregator.AddInt(frameLength);
-
-			aggregator.AddInt(uvAnimation.FrameCountX.Value);
-			aggregator.AddInt(uvAnimation.FrameCountY.Value);
-			aggregator.Add(uvAnimation.LoopType);
-
-			aggregator.AddInt(uvAnimation.StartSheet.Max);
-			aggregator.AddInt(uvAnimation.StartSheet.Min);
-		}
-
-
-		private static void SerializeScrollUvRefactor(
-			Data.RendererCommonValues.UVScrollParamater uvScroll,
-			UvAggregator aggregator)
-		{
-			aggregator.AddRandomVector2D(uvScroll.Start);
-			aggregator.AddRandomVector2D(uvScroll.Size);
-			aggregator.AddRandomVector2D(uvScroll.Speed);
 		}
 
 		private class UvSerializer
 		{
-			
+			public Enum<Data.RendererCommonValues.UVType> UvType { get; }
+			public Data.RendererCommonValues.UVFixedParamater Fixed { get; }
+			public Data.RendererCommonValues.UVAnimationParamater Animation { get; }
+			public Data.RendererCommonValues.UVScrollParamater Scroll { get; }
+			public Data.RendererCommonValues.UVFCurveParamater FCurve { get; }
+
+			public UvSerializer(Data.Value.Enum<Data.RendererCommonValues.UVType> uvType,
+				Data.RendererCommonValues.UVFixedParamater @fixed,
+				Data.RendererCommonValues.UVAnimationParamater animation,
+				Data.RendererCommonValues.UVScrollParamater scroll,
+				Data.RendererCommonValues.UVFCurveParamater fCurve)
+			{
+				UvType = uvType;
+				Fixed = @fixed;
+				Animation = animation;
+				Scroll = scroll;
+				FCurve = fCurve;
+			}
+
+			public byte[] SerializeUv(float width, float height)
+			{
+				var aggregator = new UvAggregator(width, height);
+				aggregator.Add(UvType);
+
+				switch (UvType.Value)
+				{
+					case Data.RendererCommonValues.UVType.Default:
+						break;
+					case Data.RendererCommonValues.UVType.Fixed:
+						SerializeFixedUv(aggregator);
+						break;
+					case Data.RendererCommonValues.UVType.Animation:
+						SerializeAnimationUv(aggregator);
+						break;
+					case Data.RendererCommonValues.UVType.Scroll:
+						SerializeScrollUv(aggregator);
+						break;
+					case Data.RendererCommonValues.UVType.FCurve:
+						SerializeFCurveUv(aggregator);
+						break;
+				}
+
+				return aggregator.CurrentData.ToArray().ToArray();
+			}
+
+			public void SizeForGetBytes(TextureInformation texInfo, out float width, out float height)
+			{
+				// specification change(1.5)
+				width = 128.0f;
+				height = 128.0f;
+
+				if (texInfo.Width > 0 && texInfo.Height > 0)
+				{
+					width = (float) texInfo.Width;
+					height = (float) texInfo.Height;
+				}
+			}
+
+			public void SizeForGetUVBytes(TextureInformation texInfo, out float width, out float height)
+			{
+				// specification change(1.5)
+				width = 128.0f;
+				height = 128.0f;
+
+				if (texInfo.Width > width && texInfo.Height > height)
+				{
+					width = (float)texInfo.Width;
+					height = (float)texInfo.Height;
+				}
+			}
+
+			public virtual void SerializeFCurveUv(UvAggregator aggregator)
+			{
+				var width = aggregator.Width;
+				var height = aggregator.Height;
+				aggregator.Add(FCurve.Start.GetBytes(1.0f / width, 1.0f / height));
+				aggregator.Add(FCurve.Size.GetBytes(1.0f / width, 1.0f / height));
+			}
+
+			public virtual void SerializeFixedUv(UvAggregator aggregator)
+			{
+				aggregator.AddVector2D(Fixed.Start);
+				aggregator.AddVector2D(Fixed.Size);
+			}
+
+			public virtual void SerializeAnimationUv(UvAggregator aggregator)
+			{
+				aggregator.AddVector2D(Animation.Start);
+				aggregator.AddVector2D(Animation.Size);
+
+				var frameLength = Animation.FrameLength.Infinite
+					? (int.MaxValue / 100)
+					: Animation.FrameLength.Value.Value;
+				aggregator.AddInt(frameLength);
+
+				aggregator.AddInt(Animation.FrameCountX.Value);
+				aggregator.AddInt(Animation.FrameCountY.Value);
+				aggregator.Add(Animation.LoopType);
+
+				aggregator.AddInt(Animation.StartSheet.Max);
+				aggregator.AddInt(Animation.StartSheet.Min);
+			}
+
+
+			public virtual void SerializeScrollUv(UvAggregator aggregator)
+			{
+				aggregator.AddRandomVector2D(Scroll.Start);
+				aggregator.AddRandomVector2D(Scroll.Size);
+				aggregator.AddRandomVector2D(Scroll.Speed);
+			}
 		}
 
 		private sealed class UvAggregator
