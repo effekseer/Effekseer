@@ -127,9 +127,10 @@ namespace Effekseer.Binary.RenderData
 
 		public void AddBlendTexture(Dictionary<string, int> texAndInd)
 		{
-			GetTexIdAndInfo(_advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
+			var value = GetTexIdAndInfo(_advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
 				texAndInd,
 				ref _blend);
+			AddInt(value);
 		}
 	}
 }
