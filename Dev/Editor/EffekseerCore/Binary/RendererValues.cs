@@ -332,8 +332,16 @@ namespace Effekseer.Binary
 			data.Add(ringParameter.VertexCount.Value.GetBytes());
 
 			AddViewingAngle();
-			AddOuterRing();
-			AddInnerRing();
+
+			AddLocation(ringParameter.Outer,
+				ringParameter.Outer_Fixed,
+				ringParameter.Outer_PVA,
+				ringParameter.Outer_Easing);
+			AddLocation(ringParameter.Inner,
+				ringParameter.Inner_Fixed,
+				ringParameter.Inner_PVA,
+				ringParameter.Inner_Easing);
+
 			AddCenterRatio();
 
 			AddColor(ringParameter.OuterColor,
@@ -351,7 +359,7 @@ namespace Effekseer.Binary
 
 			void AddViewingAngle()
 			{
-				// viewing angle (it will removed)
+				// it will removed
 
 				data.Add(ringParameter.ViewingAngle);
 				if (ringParameter.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Fixed)
@@ -379,56 +387,31 @@ namespace Effekseer.Binary
 				}
 			}
 
-			void AddOuterRing()
+			void AddLocation(Enum<Data.RendererValues.RingParamater.LocationType> locationType,
+				Data.RendererValues.RingParamater.FixedLocation @fixed,
+				Data.RendererValues.RingParamater.PVALocation pva,
+				Vector2DEasingParamater easingParam)
 			{
-				data.Add(ringParameter.Outer);
-				if (ringParameter.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
+				data.Add(locationType);
+				if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
 				{
-					data.Add((ringParameter.Outer_Fixed.Location.X.Value).GetBytes());
-					data.Add((ringParameter.Outer_Fixed.Location.Y.Value).GetBytes());
+					data.Add((@fixed.Location.X.Value).GetBytes());
+					data.Add((@fixed.Location.Y.Value).GetBytes());
 				}
-				else if (ringParameter.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.PVA)
+				else if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.PVA)
 				{
-					data.Add(ringParameter.Outer_PVA.Location.GetBytes());
-					data.Add(ringParameter.Outer_PVA.Velocity.GetBytes());
-					data.Add(ringParameter.Outer_PVA.Acceleration.GetBytes());
+					data.Add(pva.Location.GetBytes());
+					data.Add(pva.Velocity.GetBytes());
+					data.Add(pva.Acceleration.GetBytes());
 				}
-				else if (ringParameter.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
+				else if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
 				{
 					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.Outer_Easing.StartSpeed.Value,
-						(float) ringParameter.Outer_Easing.EndSpeed.Value);
+						(float) easingParam.StartSpeed.Value,
+						(float) easingParam.EndSpeed.Value);
 
-					data.Add((byte[]) ringParameter.Outer_Easing.Start.GetBytes());
-					data.Add((byte[]) ringParameter.Outer_Easing.End.GetBytes());
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
-				}
-			}
-
-			void AddInnerRing()
-			{
-				data.Add(ringParameter.Inner);
-				if (ringParameter.Inner.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
-				{
-					data.Add((ringParameter.Inner_Fixed.Location.X.Value).GetBytes());
-					data.Add((ringParameter.Inner_Fixed.Location.Y.Value).GetBytes());
-				}
-				else if (ringParameter.Inner.GetValue() == Data.RendererValues.RingParamater.LocationType.PVA)
-				{
-					data.Add(ringParameter.Inner_PVA.Location.GetBytes());
-					data.Add(ringParameter.Inner_PVA.Velocity.GetBytes());
-					data.Add(ringParameter.Inner_PVA.Acceleration.GetBytes());
-				}
-				else if (ringParameter.Inner.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
-				{
-					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.Inner_Easing.StartSpeed.Value,
-						(float) ringParameter.Inner_Easing.EndSpeed.Value);
-
-					data.Add((byte[]) ringParameter.Inner_Easing.Start.GetBytes());
-					data.Add((byte[]) ringParameter.Inner_Easing.End.GetBytes());
+					data.Add((byte[]) easingParam.Start.GetBytes());
+					data.Add((byte[]) easingParam.End.GetBytes());
 					data.Add(BitConverter.GetBytes(easing[0]));
 					data.Add(BitConverter.GetBytes(easing[1]));
 					data.Add(BitConverter.GetBytes(easing[2]));
