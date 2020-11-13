@@ -1,17 +1,12 @@
-﻿using Effekseer.Data.Value;
+﻿using Effekseer.Data.Group;
 using Effekseer.Utl;
 
 namespace Effekseer.Binary.RenderData
 {
 	internal sealed class AdvancedUvSerializer : UvSerializer
 	{
-		public AdvancedUvSerializer(
-			Enum<Data.RendererCommonValues.UVType> uvType,
-			Data.RendererCommonValues.UVFixedParamater @fixed,
-			Data.RendererCommonValues.UVAnimationParamater animation,
-			Data.RendererCommonValues.UVScrollParamater scroll,
-			Data.RendererCommonValues.UVFCurveParamater fCurve)
-			: base(uvType, @fixed, animation, scroll, fCurve)
+		public AdvancedUvSerializer(IUvCommandValues values)
+			: base(values.UV, values.UVFixed, values.UVAnimation, values.UVScroll, values.UVFCurve)
 		{
 		}
 
