@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Effekseer.Binary.RenderData;
 using Effekseer.Data;
 using Effekseer.Data.Group;
+using Effekseer.Data.Value;
 using Effekseer.Utl;
 
 namespace Effekseer.Binary
@@ -108,24 +109,13 @@ namespace Effekseer.Binary
 
 			if (version >= ExporterVersion.Ver16Alpha1)
 			{
-				void AddUv(TextureInformation texInfoL, IUvCommandValues param)
-				{
-					data.Add(GetUVBytes(
-						texInfoL,
-						param.UV,
-						param.UVFixed,
-						param.UVAnimation,
-						param.UVScroll,
-						param.UVFCurve));
-				}
-
-				AddUv(alphaTexInfo, advanceValue.AlphaTextureParam);
-				AddUv(uvDistortionTexInfo, advanceValue.UVDistortionTextureParam);
+				data.Add(GetUvBytes(alphaTexInfo, advanceValue.AlphaTextureParam));
+				data.Add(GetUvBytes(uvDistortionTexInfo, advanceValue.UVDistortionTextureParam));
 
 				// uv distortion intensity
 				data.Add(advanceValue.UVDistortionTextureParam.UVDistortionIntensity.GetBytes());
 
-				AddUv(blendTexInfo, advanceValue2.BlendTextureParams.BlendTextureParam);
+				data.Add(GetUvBytes(blendTexInfo, advanceValue2.BlendTextureParams.BlendTextureParam));
 
 				// blend texture blend type
 				if (advanceValue2.EnableBlendTexture && advanceValue2.BlendTextureParams.BlendTextureParam.Texture.RelativePath != string.Empty)
@@ -137,8 +127,8 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 
-				AddUv(blendAlphaTexInfo, advanceValue2.BlendTextureParams.BlendAlphaTextureParam);
-				AddUv(blendUVDistortionTexInfo, advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam);
+				data.Add(GetUvBytes(blendAlphaTexInfo, advanceValue2.BlendTextureParams.BlendAlphaTextureParam));
+				data.Add(GetUvBytes(blendUVDistortionTexInfo, advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam));
 
 				// blend uv distoriton intensity
 				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity.GetBytes());
@@ -266,16 +256,14 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-
-		public static byte[] GetUVBytes(TextureInformation _TexInfo,
-			Data.Value.Enum<Data.RendererCommonValues.UVType> _UVType,
-			Data.RendererCommonValues.UVFixedParamater _Fixed,
-			Data.RendererCommonValues.UVAnimationParamater _Animation,
-			Data.RendererCommonValues.UVScrollParamater _Scroll,
-			Data.RendererCommonValues.UVFCurveParamater _FCurve)
+		private static byte[] GetUvBytes(TextureInformation texInfoL, IUvCommandValues param)
 		{
-			var serializer = new AdvancedUvSerializer(_UVType, _Fixed, _Animation, _Scroll, _FCurve);
-			return serializer.SerializeUv(_TexInfo);
+			var serializer = new AdvancedUvSerializer(param.UV,
+				param.UVFixed,
+				param.UVAnimation,
+				param.UVScroll,
+				param.UVFCurve);
+			return serializer.SerializeUv(texInfoL);
 		}
 	}
 }
