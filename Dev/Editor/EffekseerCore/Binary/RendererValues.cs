@@ -103,7 +103,6 @@ namespace Effekseer.Binary
 		{
 			List<byte[]> data = new List<byte[]>();
 
-
 			// Fallback
 			if (version < ExporterVersion.Ver16Alpha2)
 			{
@@ -113,44 +112,35 @@ namespace Effekseer.Binary
 				}
 			}
 
-			if (value == null)
+			if (value != null)
 			{
-				data.Add(((int)(Data.RendererValues.ParamaterType.None)).GetBytes());
+				data.Add(value.Type.GetValueAsInt().GetBytes());
+				switch (value.Type.Value)
+				{
+					case Data.RendererValues.ParamaterType.None:
+						break;
+					case Data.RendererValues.ParamaterType.Sprite:
+						SpriteRefactorXxx(value, data);
+						break;
+					case Data.RendererValues.ParamaterType.Ribbon:
+						RibbonRefactorXxx(value, data);
+						break;
+					case Data.RendererValues.ParamaterType.Ring:
+						RingRefactorXxx(value, data);
+						break;
+					case Data.RendererValues.ParamaterType.Model:
+						ModelRefactorXxx(value, model_and_index, pmodel_and_index, version, data);
+						break;
+					case Data.RendererValues.ParamaterType.Track:
+						TrackRefactorXxx(value, data);
+						break;
+				}
 			}
 			else
 			{
-				data.Add(value.Type.GetValueAsInt().GetBytes());
+				data.Add(((int)Data.RendererValues.ParamaterType.None).GetBytes());
 			}
 
-			if (value == null)
-			{ 
-			
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.None)
-			{
-				
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Sprite)
-			{
-				SpriteRefactorXxx(value, data);
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Ribbon)
-			{
-				RibbonRefactorXxx(value, data);
-			}
-            else if (value.Type.Value == Data.RendererValues.ParamaterType.Ring)
-			{
-				RingRefactorXxx(value, data);
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Model)
-			{
-				ModelRefactorXxx(value, model_and_index, pmodel_and_index, version, data);
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Track)
-			{
-				TrackRefactorXxx(value, data);
-			}
-			
 			return data.ToArray().ToArray();
 		}
 		
