@@ -513,13 +513,13 @@ namespace Effekseer.Binary
 			// テクスチャ番号
 			/*
 				if (ringParamater.ColorTexture.RelativePath != string.Empty)
-                {
-                    data.Add(texture_and_index[ringParamater.ColorTexture.RelativePath].GetBytes());
-                }
-                else
-                {
-                    data.Add((-1).GetBytes());
-                }
+				{
+					data.Add(texture_and_index[ringParamater.ColorTexture.RelativePath].GetBytes());
+				}
+				else
+				{
+					data.Add((-1).GetBytes());
+				}
 				*/
 		}
 
