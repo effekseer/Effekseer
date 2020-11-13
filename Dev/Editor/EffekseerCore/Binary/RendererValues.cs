@@ -149,7 +149,7 @@ namespace Effekseer.Binary
 
 			return data.ToArray().ToArray();
 		}
-		
+
 		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data)
 		{
 			var param = value.Sprite;
@@ -176,13 +176,10 @@ namespace Effekseer.Binary
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing((float) value.Sprite.ColorAll_Easing.StartSpeed.Value,
-						(float) value.Sprite.ColorAll_Easing.EndSpeed.Value);
 					data.Add((byte[]) value.Sprite.ColorAll_Easing.Start);
 					data.Add((byte[]) value.Sprite.ColorAll_Easing.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+
+					AddEasing(data, value.Sprite.ColorAll_Easing.StartSpeed, value.Sprite.ColorAll_Easing.EndSpeed);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
 				{
@@ -242,6 +239,14 @@ namespace Effekseer.Binary
 			}
 		}
 
+		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
+		{
+			var easing = Utl.MathUtl.Easing((float) start.Value, (float) end.Value);
+			data.Add(BitConverter.GetBytes(easing[0]));
+			data.Add(BitConverter.GetBytes(easing[1]));
+			data.Add(BitConverter.GetBytes(easing[2]));
+		}
+
 		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
 		{
 			var ribbonParameter = value.Ribbon;
@@ -273,13 +278,10 @@ namespace Effekseer.Binary
 				}
 				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing((float) ribbonParameter.ColorAll_Easing.StartSpeed.Value,
-						(float) ribbonParameter.ColorAll_Easing.EndSpeed.Value);
 					data.Add((byte[]) ribbonParameter.ColorAll_Easing.Start);
 					data.Add((byte[]) ribbonParameter.ColorAll_Easing.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+
+					AddEasing(data, ribbonParameter.ColorAll_Easing.StartSpeed, ribbonParameter.ColorAll_Easing.EndSpeed);
 				}
 			}
 
@@ -373,17 +375,13 @@ namespace Effekseer.Binary
 				}
 				else if (ringParameter.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.ViewingAngle_Easing.StartSpeed.Value,
-						(float) ringParameter.ViewingAngle_Easing.EndSpeed.Value);
-
 					data.Add(ringParameter.ViewingAngle_Easing.Start.Max.GetBytes());
 					data.Add(ringParameter.ViewingAngle_Easing.Start.Min.GetBytes());
 					data.Add(ringParameter.ViewingAngle_Easing.End.Max.GetBytes());
 					data.Add(ringParameter.ViewingAngle_Easing.End.Min.GetBytes());
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+
+					AddEasing(data, ringParameter.ViewingAngle_Easing.StartSpeed,
+						ringParameter.ViewingAngle_Easing.EndSpeed);
 				}
 			}
 
@@ -406,15 +404,10 @@ namespace Effekseer.Binary
 				}
 				else if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing(
-						(float) easingParam.StartSpeed.Value,
-						(float) easingParam.EndSpeed.Value);
-
 					data.Add((byte[]) easingParam.Start.GetBytes());
 					data.Add((byte[]) easingParam.End.GetBytes());
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+
+					AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 				}
 			}
 
@@ -432,17 +425,13 @@ namespace Effekseer.Binary
 				}
 				else if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.CenterRatio_Easing.StartSpeed.Value,
-						(float) ringParameter.CenterRatio_Easing.EndSpeed.Value);
-
 					data.Add(ringParameter.CenterRatio_Easing.Start.Max.GetBytes());
 					data.Add(ringParameter.CenterRatio_Easing.Start.Min.GetBytes());
 					data.Add(ringParameter.CenterRatio_Easing.End.Max.GetBytes());
 					data.Add(ringParameter.CenterRatio_Easing.End.Min.GetBytes());
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+
+					AddEasing(data, ringParameter.CenterRatio_Easing.StartSpeed,
+						ringParameter.CenterRatio_Easing.EndSpeed);
 				}
 			}
 
@@ -462,14 +451,10 @@ namespace Effekseer.Binary
 				}
 				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing(
-						(float) easingParam.StartSpeed.Value,
-						(float) easingParam.EndSpeed.Value);
 					data.Add((byte[]) easingParam.Start);
 					data.Add((byte[]) easingParam.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+
+					AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 				}
 			}
 		}
