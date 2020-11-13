@@ -119,38 +119,13 @@ namespace Effekseer.Binary
 						param.UVFCurve));
 				}
 
-				void AddAlphaUv(AlphaTextureParameter param)
-				{
-					AddUv(alphaTexInfo, param);
-				}
-
-				void AddDistortionUv(UVDistortionTextureParameter param)
-				{
-					AddUv(uvDistortionTexInfo, param);
-				}
-
-				void AddBlendUv(BlendTextureParameter param)
-				{
-					AddUv(blendTexInfo, param);
-				}
-
-				void AddBlendAlphaUv(BlendAlphaTextureParameter param)
-				{
-					AddUv(blendAlphaTexInfo, param);
-				}
-
-				void AddBlendDistortionUv(BlendUVDistortionTextureParameter param)
-				{
-					AddUv(blendUVDistortionTexInfo, param);
-				}
-
-				AddAlphaUv(advanceValue.AlphaTextureParam);
-				AddDistortionUv(advanceValue.UVDistortionTextureParam);
+				AddUv(alphaTexInfo, advanceValue.AlphaTextureParam);
+				AddUv(uvDistortionTexInfo, advanceValue.UVDistortionTextureParam);
 
 				// uv distortion intensity
 				data.Add(advanceValue.UVDistortionTextureParam.UVDistortionIntensity.GetBytes());
 
-				AddBlendUv(advanceValue2.BlendTextureParams.BlendTextureParam);
+				AddUv(blendTexInfo, advanceValue2.BlendTextureParams.BlendTextureParam);
 
 				// blend texture blend type
 				if (advanceValue2.EnableBlendTexture && advanceValue2.BlendTextureParams.BlendTextureParam.Texture.RelativePath != string.Empty)
@@ -162,8 +137,8 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 
-				AddBlendAlphaUv(advanceValue2.BlendTextureParams.BlendAlphaTextureParam);
-				AddBlendDistortionUv(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam);
+				AddUv(blendAlphaTexInfo, advanceValue2.BlendTextureParams.BlendAlphaTextureParam);
+				AddUv(blendUVDistortionTexInfo, advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam);
 
 				// blend uv distoriton intensity
 				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity.GetBytes());
