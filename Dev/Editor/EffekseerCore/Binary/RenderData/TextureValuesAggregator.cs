@@ -22,22 +22,17 @@ namespace Effekseer.Binary.RenderData
 			Data.RendererCommonValues value,
 			AdvancedRenderCommonValues advanceValue,
 			AdvancedRenderCommonValues2 advanceValue2,
-			TextureInformation texInfo,
-			TextureInformation alpha,
-			TextureInformation uvDistortion,
-			TextureInformation blend,
-			TextureInformation blendAlpha,
-			TextureInformation blendUvDistortion)
+			TextureInformationRepository repo)
 		{
 			_value = value;
 			_advanceValue = advanceValue;
 			_advanceValue2 = advanceValue2;
-			_texInfo = texInfo;
-			_alpha = alpha;
-			_uvDistortion = uvDistortion;
-			_blend = blend;
-			_blendAlpha = blendAlpha;
-			_blendUvDistortion = blendUvDistortion;
+			_texInfo = repo.Texture;
+			_alpha = repo.Alpha;
+			_uvDistortion = repo.UvDistortion;
+			_blend = repo.Blend;
+			_blendAlpha = repo.BlendAlpha;
+			_blendUvDistortion = repo.BlendUvDistortion;
 		}
 
 		public IEnumerable<byte[]> CurrentData => _data;
