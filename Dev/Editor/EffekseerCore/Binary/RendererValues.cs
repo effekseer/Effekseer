@@ -176,10 +176,7 @@ namespace Effekseer.Binary
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
 				{
-					data.Add((byte[]) value.Sprite.ColorAll_Easing.Start);
-					data.Add((byte[]) value.Sprite.ColorAll_Easing.End);
-
-					AddEasing(data, value.Sprite.ColorAll_Easing.StartSpeed, value.Sprite.ColorAll_Easing.EndSpeed);
+					AddColorAllEasing(data, value.Sprite.ColorAll_Easing);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
 				{
@@ -278,10 +275,7 @@ namespace Effekseer.Binary
 				}
 				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
 				{
-					data.Add((byte[]) ribbonParameter.ColorAll_Easing.Start);
-					data.Add((byte[]) ribbonParameter.ColorAll_Easing.End);
-
-					AddEasing(data, ribbonParameter.ColorAll_Easing.StartSpeed, ribbonParameter.ColorAll_Easing.EndSpeed);
+					AddColorAllEasing(data, ribbonParameter.ColorAll_Easing);
 				}
 			}
 
@@ -319,6 +313,13 @@ namespace Effekseer.Binary
 					data.Add(pos_r);
 				}
 			}
+		}
+
+		private static void AddColorAllEasing(List<byte[]> data, ColorEasingParamater easingParam)
+		{
+			data.Add((byte[]) easingParam.Start);
+			data.Add((byte[]) easingParam.End);
+			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
 
 		private static void AddRingData(Data.RendererValues value, List<byte[]> data)
@@ -375,13 +376,7 @@ namespace Effekseer.Binary
 				}
 				else if (ringParameter.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Easing)
 				{
-					data.Add(ringParameter.ViewingAngle_Easing.Start.Max.GetBytes());
-					data.Add(ringParameter.ViewingAngle_Easing.Start.Min.GetBytes());
-					data.Add(ringParameter.ViewingAngle_Easing.End.Max.GetBytes());
-					data.Add(ringParameter.ViewingAngle_Easing.End.Min.GetBytes());
-
-					AddEasing(data, ringParameter.ViewingAngle_Easing.StartSpeed,
-						ringParameter.ViewingAngle_Easing.EndSpeed);
+					AddFloatEasing(data, ringParameter.ViewingAngle_Easing);
 				}
 			}
 
@@ -425,13 +420,7 @@ namespace Effekseer.Binary
 				}
 				else if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Easing)
 				{
-					data.Add(ringParameter.CenterRatio_Easing.Start.Max.GetBytes());
-					data.Add(ringParameter.CenterRatio_Easing.Start.Min.GetBytes());
-					data.Add(ringParameter.CenterRatio_Easing.End.Max.GetBytes());
-					data.Add(ringParameter.CenterRatio_Easing.End.Min.GetBytes());
-
-					AddEasing(data, ringParameter.CenterRatio_Easing.StartSpeed,
-						ringParameter.CenterRatio_Easing.EndSpeed);
+					AddFloatEasing(data, ringParameter.CenterRatio_Easing);
 				}
 			}
 
@@ -451,12 +440,18 @@ namespace Effekseer.Binary
 				}
 				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Easing)
 				{
-					data.Add((byte[]) easingParam.Start);
-					data.Add((byte[]) easingParam.End);
-
-					AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
+					AddColorAllEasing(data, easingParam);
 				}
 			}
+		}
+
+		private static void AddFloatEasing(List<byte[]> data, FloatEasingParamater easingParam)
+		{
+			data.Add(easingParam.Start.Max.GetBytes());
+			data.Add(easingParam.Start.Min.GetBytes());
+			data.Add(easingParam.End.Max.GetBytes());
+			data.Add(easingParam.End.Min.GetBytes());
+			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
 
 		private static void AddModelData(Data.RendererValues value, Dictionary<string, int> model_and_index,
@@ -576,12 +571,7 @@ namespace Effekseer.Binary
 			}
 			else if (color.Value == Data.StandardColorType.Easing)
 			{
-				var easing = Utl.MathUtl.Easing((float)color_Easing.StartSpeed.Value, (float)color_Easing.EndSpeed.Value);
-				data.Add((byte[])color_Easing.Start);
-				data.Add((byte[])color_Easing.End);
-				data.Add(BitConverter.GetBytes(easing[0]));
-				data.Add(BitConverter.GetBytes(easing[1]));
-				data.Add(BitConverter.GetBytes(easing[2]));
+				AddColorAllEasing(data, color_Easing);
 			}
 			else if (color.Value == Data.StandardColorType.FCurve)
 			{
