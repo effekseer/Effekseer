@@ -531,42 +531,7 @@ namespace Effekseer.Binary
 				data.Add((refType).GetBytes());
 			}
 
-			if (value.Model.ModelReference.Value == Data.ModelReferenceType.File)
-			{
-				data.Add((1.0f).GetBytes());
-
-				if (param.Model.RelativePath != string.Empty)
-				{
-					var relative_path = param.Model.RelativePath;
-
-					if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
-					{
-						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
-					}
-					else
-					{
-						relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
-					}
-
-					data.Add(model_and_index[relative_path].GetBytes());
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-				}
-			}
-			else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
-			{
-				if (value.Model.Reference.Value != null)
-				{
-					var ind = pmodel_and_index[value.Model.Reference.Value];
-					data.Add(ind.GetBytes());
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-				}
-			}
+			AddModelReference();
 
 			data.Add(param.Billboard);
 
@@ -576,24 +541,45 @@ namespace Effekseer.Binary
 			OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
 				param.Color_FCurve);
 
-			/*
-				if(version >= ExporterVersion.Ver16Alpha1)
+			void AddModelReference()
+			{
+				if (value.Model.ModelReference.Value == Data.ModelReferenceType.File)
 				{
-					if (value.EnableFalloff)
-					{
-						data.Add((1).GetBytes());
+					data.Add((1.0f).GetBytes());
 
-						data.Add(value.FalloffParam.ColorBlendType);
-						data.Add(value.FalloffParam.BeginColor);
-						data.Add(value.FalloffParam.EndColor);
-						data.Add(BitConverter.GetBytes(value.FalloffParam.Pow.Value));
+					if (param.Model.RelativePath != string.Empty)
+					{
+						var relative_path = param.Model.RelativePath;
+
+						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+						{
+							relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+						}
+						else
+						{
+							relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+						}
+
+						data.Add(model_and_index[relative_path].GetBytes());
 					}
 					else
 					{
-						data.Add((0).GetBytes());
+						data.Add((-1).GetBytes());
 					}
 				}
-				*/
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				{
+					if (value.Model.Reference.Value != null)
+					{
+						var ind = pmodel_and_index[value.Model.Reference.Value];
+						data.Add(ind.GetBytes());
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+					}
+				}
+			}
 		}
 
 		private static void TrackRefactorXxx(Data.RendererValues value, List<byte[]> data)
