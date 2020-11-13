@@ -503,18 +503,18 @@ namespace Effekseer.Binary
 
 					if (param.Model.RelativePath != string.Empty)
 					{
-						var relative_path = param.Model.RelativePath;
+						var relativePath = param.Model.RelativePath;
 
-						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relativePath)))
 						{
-							relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+							relativePath = System.IO.Path.GetFileNameWithoutExtension(relativePath) + ".efkmodel";
 						}
 						else
 						{
-							relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+							relativePath = System.IO.Path.ChangeExtension(relativePath, ".efkmodel");
 						}
 
-						data.Add(model_and_index[relative_path].GetBytes());
+						data.Add(model_and_index[relativePath].GetBytes());
 					}
 					else
 					{
