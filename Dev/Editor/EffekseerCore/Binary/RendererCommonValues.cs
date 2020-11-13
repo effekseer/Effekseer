@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Effekseer.Binary.RenderData;
 using Effekseer.Data;
 using Effekseer.Data.Group;
-using Effekseer.Data.Value;
 using Effekseer.Utl;
 
 namespace Effekseer.Binary
@@ -35,11 +34,6 @@ namespace Effekseer.Binary
 
 			var texInfoRepo = new TextureInformationRepository();
 			var texInfo = texInfoRepo.Texture;
-			var alphaTexInfo = texInfoRepo.Alpha;
-			var uvDistortionTexInfo = texInfoRepo.UvDistortion;
-			var blendTexInfo = texInfoRepo.Blend;
-			var blendAlphaTexInfo = texInfoRepo.BlendAlpha;
-			var blendUVDistortionTexInfo = texInfoRepo.BlendUvDistortion;
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
@@ -52,13 +46,15 @@ namespace Effekseer.Binary
 				}
 			}
 
-			{
-				var aggregator = new TextureValuesAggregator(value, advanceValue, advanceValue2,
-					texInfo, alphaTexInfo, uvDistortionTexInfo, blendTexInfo, blendAlphaTexInfo, blendUVDistortionTexInfo);
-				MaterialSerializerInstance.AddMaterialData(version, value, aggregator,
-					texture_and_index, distortionTexture_and_index, normalTexture_and_index, material_and_index);
-				data.AddRange(aggregator.CurrentData);
-			}
+			data.AddRange(GetTextureValues(value,
+				advanceValue,
+				advanceValue2,
+				texture_and_index,
+				normalTexture_and_index,
+				distortionTexture_and_index,
+				material_and_index,
+				version,
+				texInfoRepo));
 
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);
@@ -115,7 +111,7 @@ namespace Effekseer.Binary
 
 			if (version >= ExporterVersion.Ver16Alpha1)
 			{
-				AddUvBytes(advanceValue, advanceValue2, data, alphaTexInfo, uvDistortionTexInfo, blendTexInfo, blendAlphaTexInfo, blendUVDistortionTexInfo);
+				AddUvBytes(advanceValue, advanceValue2, data, texInfoRepo);
 			}
 
 
@@ -240,17 +236,27 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		private static void AddUvBytes(AdvancedRenderCommonValues advanceValue, AdvancedRenderCommonValues2 advanceValue2,
-			List<byte[]> data, TextureInformation alphaTexInfo, TextureInformation uvDistortionTexInfo, TextureInformation blendTexInfo,
-			TextureInformation blendAlphaTexInfo, TextureInformation blendUVDistortionTexInfo)
+		private static IEnumerable<byte[]> GetTextureValues(Data.RendererCommonValues value, AdvancedRenderCommonValues advanceValue,
+			AdvancedRenderCommonValues2 advanceValue2, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index,
+			Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version,
+			TextureInformationRepository texInfoRepo)
 		{
-			data.Add(GetUvBytes(alphaTexInfo, advanceValue.AlphaTextureParam));
-			data.Add(GetUvBytes(uvDistortionTexInfo, advanceValue.UVDistortionTextureParam));
+			var aggregator = new TextureValuesAggregator(value, advanceValue, advanceValue2, texInfoRepo);
+			MaterialSerializerInstance.AddMaterialData(version, value, aggregator,
+				texture_and_index, distortionTexture_and_index, normalTexture_and_index, material_and_index);
+			return aggregator.CurrentData;
+		}
+
+		private static void AddUvBytes(AdvancedRenderCommonValues advanceValue, AdvancedRenderCommonValues2 advanceValue2,
+			List<byte[]> data, TextureInformationRepository repo)
+		{
+			data.Add(GetUvBytes(repo.Alpha, advanceValue.AlphaTextureParam));
+			data.Add(GetUvBytes(repo.UvDistortion, advanceValue.UVDistortionTextureParam));
 
 			// uv distortion intensity
 			data.Add(advanceValue.UVDistortionTextureParam.UVDistortionIntensity.GetBytes());
 
-			data.Add(GetUvBytes(blendTexInfo, advanceValue2.BlendTextureParams.BlendTextureParam));
+			data.Add(GetUvBytes(repo.Blend, advanceValue2.BlendTextureParams.BlendTextureParam));
 
 			// blend texture blend type
 			if (advanceValue2.EnableBlendTexture &&
@@ -263,10 +269,10 @@ namespace Effekseer.Binary
 				data.Add((-1).GetBytes());
 			}
 
-			data.Add(GetUvBytes(blendAlphaTexInfo, advanceValue2.BlendTextureParams.BlendAlphaTextureParam));
-			data.Add(GetUvBytes(blendUVDistortionTexInfo, advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam));
+			data.Add(GetUvBytes(repo.BlendAlpha, advanceValue2.BlendTextureParams.BlendAlphaTextureParam));
+			data.Add(GetUvBytes(repo.BlendUvDistortion, advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam));
 
-			// blend uv distoriton intensity
+			// blend uv distortion intensity
 			data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity.GetBytes());
 		}
 
