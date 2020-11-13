@@ -176,7 +176,7 @@ namespace Effekseer.Binary
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
 				{
-					AddColorAllEasing(data, value.Sprite.ColorAll_Easing);
+					AddColorEasing(data, value.Sprite.ColorAll_Easing);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
 				{
@@ -267,7 +267,7 @@ namespace Effekseer.Binary
 				}
 				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
 				{
-					AddColorAllEasing(data, ribbonParameter.ColorAll_Easing);
+					AddColorEasing(data, ribbonParameter.ColorAll_Easing);
 				}
 			}
 
@@ -425,7 +425,7 @@ namespace Effekseer.Binary
 				}
 				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Easing)
 				{
-					AddColorAllEasing(data, easingParam);
+					AddColorEasing(data, easingParam);
 				}
 			}
 		}
@@ -547,7 +547,7 @@ namespace Effekseer.Binary
 			}
 			else if (color.Value == Data.StandardColorType.Easing)
 			{
-				AddColorAllEasing(data, color_Easing);
+				AddColorEasing(data, color_Easing);
 			}
 			else if (color.Value == Data.StandardColorType.FCurve)
 			{
@@ -564,7 +564,7 @@ namespace Effekseer.Binary
 			data.Add(BitConverter.GetBytes(easing[2]));
 		}
 		
-		private static void AddColorAllEasing(List<byte[]> data, ColorEasingParamater easingParam)
+		private static void AddColorEasing(List<byte[]> data, ColorEasingParamater easingParam)
 		{
 			data.Add((byte[]) easingParam.Start);
 			data.Add((byte[]) easingParam.End);
