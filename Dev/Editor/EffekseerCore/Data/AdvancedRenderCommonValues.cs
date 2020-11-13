@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Effekseer.Data.Group;
 
 namespace Effekseer.Data
 {
-	public class AlphaTextureParameter
+	public class AlphaTextureParameter : IUvCommandValues
 	{
 		[IO(Export = true)]
 		[Key(key = "AlphaTextureParameter_Texture")]
@@ -58,7 +59,7 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class UVDistortionTextureParameter
+	public class UVDistortionTextureParameter : IUvCommandValues
 	{
 		[IO(Export = true)]
 		[Key(key = "UVDistortionTextureParameter_Texture")]

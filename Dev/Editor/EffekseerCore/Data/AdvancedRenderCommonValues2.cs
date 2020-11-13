@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Effekseer.Data.Group;
 
 namespace Effekseer.Data
 {
@@ -17,7 +18,7 @@ namespace Effekseer.Data
 		Mul = 3,
 	}
 
-	public class BlendTextureParameter
+	public class BlendTextureParameter : IUvCommandValues
 	{
 		[IO(Export = true)]
 		[Key(key = "BlendTextureParameter_Texture")]
@@ -75,7 +76,7 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class BlendAlphaTextureParameter
+	public class BlendAlphaTextureParameter : IUvCommandValues
 	{
 		[IO(Export = true)]
 		[Key(key = "BlendAlphaTextureParameter_Texture")]
@@ -128,7 +129,7 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class BlendUVDistortionTextureParameter
+	public class BlendUVDistortionTextureParameter : IUvCommandValues
 	{
 		[IO(Export = true)]
 		[Key(key = "BlendUVDistortionTextureParameter_Texture")]
