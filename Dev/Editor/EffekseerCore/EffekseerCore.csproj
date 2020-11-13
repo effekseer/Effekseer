@@ -117,6 +117,7 @@
     <Compile Include="Binary\RenderData\TextureValuesAggregator.cs" />
     <Compile Include="Binary\RenderData\UvAggregator.cs" />
     <Compile Include="Binary\RenderData\UvSerializer.cs" />
+    <Compile Include="Data\Group\IUvCommandValues.cs" />
     <Compile Include="Command\CommandManager.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
