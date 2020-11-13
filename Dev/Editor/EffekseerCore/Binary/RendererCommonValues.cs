@@ -106,41 +106,56 @@ namespace Effekseer.Binary
 
 			if (version >= ExporterVersion.Ver16Alpha1)
 			{
+				void AddAlphaUv()
+				{
+					data.Add(GetUVBytes
+					(
+						alphaTexInfo,
+						advanceValue.AlphaTextureParam.UV,
+						advanceValue.AlphaTextureParam.UVFixed,
+						advanceValue.AlphaTextureParam.UVAnimation,
+						advanceValue.AlphaTextureParam.UVScroll,
+						advanceValue.AlphaTextureParam.UVFCurve
+					));
+				}
+
 				// alpha texture
-				data.Add(GetUVBytes
-				(
-				alphaTexInfo,
-				advanceValue.AlphaTextureParam.UV,
-				advanceValue.AlphaTextureParam.UVFixed,
-				advanceValue.AlphaTextureParam.UVAnimation,
-				advanceValue.AlphaTextureParam.UVScroll,
-				advanceValue.AlphaTextureParam.UVFCurve
-				));
+				AddAlphaUv();
+
+				void AddDistortionUv()
+				{
+					data.Add(GetUVBytes
+					(
+						uvDistortionTexInfo,
+						advanceValue.UVDistortionTextureParam.UV,
+						advanceValue.UVDistortionTextureParam.UVFixed,
+						advanceValue.UVDistortionTextureParam.UVAnimation,
+						advanceValue.UVDistortionTextureParam.UVScroll,
+						advanceValue.UVDistortionTextureParam.UVFCurve
+					));
+				}
 
 				// uv distortion texture
-				data.Add(GetUVBytes
-				(
-				uvDistortionTexInfo,
-				advanceValue.UVDistortionTextureParam.UV,
-				advanceValue.UVDistortionTextureParam.UVFixed,
-				advanceValue.UVDistortionTextureParam.UVAnimation,
-				advanceValue.UVDistortionTextureParam.UVScroll,
-				advanceValue.UVDistortionTextureParam.UVFCurve
-				));
+				AddDistortionUv();
 
 				// uv distortion intensity
 				data.Add(advanceValue.UVDistortionTextureParam.UVDistortionIntensity.GetBytes());
 
+				void AddBlendUv()
+				{
+					data.Add(GetUVBytes
+					(
+						blendTexInfo,
+						advanceValue2.BlendTextureParams.BlendTextureParam.UV,
+						advanceValue2.BlendTextureParams.BlendTextureParam.UVFixed,
+						advanceValue2.BlendTextureParams.BlendTextureParam.UVAnimation,
+						advanceValue2.BlendTextureParams.BlendTextureParam.UVScroll,
+						advanceValue2.BlendTextureParams.BlendTextureParam.UVFCurve
+					));
+				}
+
 				// blend texture
-				data.Add(GetUVBytes
-				(
-				blendTexInfo,
-				advanceValue2.BlendTextureParams.BlendTextureParam.UV,
-				advanceValue2.BlendTextureParams.BlendTextureParam.UVFixed,
-				advanceValue2.BlendTextureParams.BlendTextureParam.UVAnimation,
-				advanceValue2.BlendTextureParams.BlendTextureParam.UVScroll,
-				advanceValue2.BlendTextureParams.BlendTextureParam.UVFCurve
-				));
+				AddBlendUv();
 
 				// blend texture blend type
 				if (advanceValue2.EnableBlendTexture && advanceValue2.BlendTextureParams.BlendTextureParam.Texture.RelativePath != string.Empty)
@@ -152,27 +167,37 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 
+				void AddBlendAlphaUv()
+				{
+					data.Add(GetUVBytes
+					(
+						blendAlphaTexInfo,
+						advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UV,
+						advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVFixed,
+						advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVAnimation,
+						advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVScroll,
+						advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVFCurve
+					));
+				}
+
 				// blend alpha texture
-				data.Add(GetUVBytes
-				(
-					blendAlphaTexInfo,
-					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UV,
-					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVFixed,
-					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVAnimation,
-					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVScroll,
-					advanceValue2.BlendTextureParams.BlendAlphaTextureParam.UVFCurve
-				));
+				AddBlendAlphaUv();
+
+				void AddBlendDistortionUv()
+				{
+					data.Add(GetUVBytes
+					(
+						blendUVDistortionTexInfo,
+						advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UV,
+						advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVFixed,
+						advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVAnimation,
+						advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVScroll,
+						advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve
+					));
+				}
 
 				// blend uv distoriton texture
-				data.Add(GetUVBytes
-				(
-					blendUVDistortionTexInfo,
-					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UV,
-					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVFixed,
-					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVAnimation,
-					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVScroll,
-					advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve
-				));
+				AddBlendDistortionUv();
 
 				// blend uv distoriton intensity
 				data.Add(advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.UVDistortionIntensity.GetBytes());
