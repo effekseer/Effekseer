@@ -8,7 +8,7 @@ namespace Effekseer.Binary
 {
 	class GenerationLocationValues
 	{
-		public static byte[] GetBytes(Data.GenerationLocationValues value, Data.ParentEffectType parentEffectType, Dictionary<string, int> model_and_index, Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.GenerationLocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> model_and_index, SortedDictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 			if (value.EffectsRotation)

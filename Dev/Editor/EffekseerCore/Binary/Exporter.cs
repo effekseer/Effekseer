@@ -312,7 +312,8 @@ namespace Effekseer.Binary
 
 			get_textures(rootNode);
 
-            Dictionary<string, int> texture_and_index = new Dictionary<string, int>();
+			
+            var texture_and_index = new SortedDictionary<string, int>();
             {
                 int index = 0;
                 foreach (var texture in UsedTextures.ToList().OrderBy(_ => _))
@@ -322,7 +323,7 @@ namespace Effekseer.Binary
                 }
             }
 
-			Dictionary<string, int> normalTexture_and_index = new Dictionary<string, int>();
+			var normalTexture_and_index = new SortedDictionary<string, int>();
 			{
 				int index = 0;
 				foreach (var texture in UsedNormalTextures.ToList().OrderBy(_ => _))
@@ -332,7 +333,7 @@ namespace Effekseer.Binary
 				}
 			}
 
-			Dictionary<string, int> distortionTexture_and_index = new Dictionary<string, int>();
+			var distortionTexture_and_index = new SortedDictionary<string, int>();
 			{
 				int index = 0;
 				foreach (var texture in UsedDistortionTextures.ToList().OrderBy(_ => _))
@@ -376,7 +377,7 @@ namespace Effekseer.Binary
 
             get_waves(rootNode);
 
-            Dictionary<string, int> wave_and_index = new Dictionary<string, int>();
+            var wave_and_index = new SortedDictionary<string, int>();
             {
                 int index = 0;
                 foreach (var wave in Sounds.ToList().OrderBy(_ => _))
@@ -453,7 +454,7 @@ namespace Effekseer.Binary
 
 			get_models(rootNode);
 
-			Dictionary<string, int> model_and_index = new Dictionary<string, int>();
+			var model_and_index = new SortedDictionary<string, int>();
 			{
 				int index = 0;
 				foreach (var model in Models.ToList().OrderBy(_ => _))
@@ -491,7 +492,7 @@ namespace Effekseer.Binary
 
 			get_materials(rootNode);
 
-			Dictionary<string, int> material_and_index = new Dictionary<string, int>();
+			var material_and_index = new SortedDictionary<string, int>();
 			{
 				int index = 0;
 				foreach (var wave in Materials.ToList().OrderBy(_ => _))
@@ -501,7 +502,7 @@ namespace Effekseer.Binary
 				}
 			}
 
-			Dictionary<string, int> curve_and_index = new Dictionary<string, int>();
+			var curve_and_index = new SortedDictionary<string, int>();
 
 			Action<Data.NodeBase> get_curves = null;
 			get_curves = (node) =>
@@ -594,7 +595,7 @@ namespace Effekseer.Binary
 
 			get_procedual_models(rootNode);
 
-			Dictionary<ProcedualModelParameter, int> procedual_mesh_and_index = new Dictionary<ProcedualModelParameter, int>();
+			var procedual_mesh_and_index = new SortedDictionary<ProcedualModelParameter, int>();
 			{
 				int index = 0;
 				foreach (var mesh in ProcedualModels.ToList().OrderBy(_ => _))

@@ -9,9 +9,9 @@ namespace Effekseer.Binary
 {
 	class RendererCommonValues
 	{
-		delegate int GetTexIDAndInfo(Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef);
+		delegate int GetTexIDAndInfo(Data.Value.PathForImage image, SortedDictionary<string, int> texAndInd, ref TextureInformation texInfoRef);
 
-		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Data.AdvancedRenderCommonValues2 advanceValue2, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererCommonValues value, Data.AdvancedRenderCommonValues advanceValue, Data.AdvancedRenderCommonValues2 advanceValue2, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> distortionTexture_and_index, SortedDictionary<string, int> material_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -38,7 +38,7 @@ namespace Effekseer.Binary
 				}
 			}
 
-			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
+			Func<Data.Value.PathForImage, int, SortedDictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, SortedDictionary<string, int> texAndInd) =>
 			{
 				var tempTexInfo = new TextureInformation();
 
@@ -57,7 +57,7 @@ namespace Effekseer.Binary
 				}
 			};
 
-			GetTexIDAndInfo getTexIDAndInfo = (Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef) =>
+			GetTexIDAndInfo getTexIDAndInfo = (Data.Value.PathForImage image, SortedDictionary<string, int> texAndInd, ref TextureInformation texInfoRef) =>
 			{
 				var tempTexInfo = new TextureInformation();
 
