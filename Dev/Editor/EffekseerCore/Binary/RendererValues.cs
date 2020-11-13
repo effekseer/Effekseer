@@ -149,97 +149,88 @@ namespace Effekseer.Binary
 			var param = value.Sprite;
 
 			data.Add(param.RenderingOrder);
-			//data.Add(sprite_paramater.AlphaBlend);
 			data.Add(param.Billboard);
+			data.Add(param.ColorAll);	// 全体色
+			AddStandardColor();
+			data.Add(param.Color);	// 部分色
+			AddColor();
+			data.Add(BitConverter.GetBytes((int) Data.RendererValues.SpriteParamater.PositionType.Fixed));	// 座標
+			AddPosition();
 
-			// 全体色
-			data.Add(param.ColorAll);
-
-			if (param.ColorAll.Value == Data.StandardColorType.Fixed)
+			void AddStandardColor()
 			{
-				var color_all = (byte[]) param.ColorAll_Fixed;
-				data.Add(color_all);
-			}
-			else if (param.ColorAll.Value == Data.StandardColorType.Random)
-			{
-				var color_random = (byte[]) param.ColorAll_Random;
-				data.Add(color_random);
-			}
-			else if (param.ColorAll.Value == Data.StandardColorType.Easing)
-			{
-				var easing = Utl.MathUtl.Easing((float) value.Sprite.ColorAll_Easing.StartSpeed.Value,
-					(float) value.Sprite.ColorAll_Easing.EndSpeed.Value);
-				data.Add((byte[]) value.Sprite.ColorAll_Easing.Start);
-				data.Add((byte[]) value.Sprite.ColorAll_Easing.End);
-				data.Add(BitConverter.GetBytes(easing[0]));
-				data.Add(BitConverter.GetBytes(easing[1]));
-				data.Add(BitConverter.GetBytes(easing[2]));
-			}
-			else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
-			{
-				var bytes = param.ColorAll_FCurve.FCurve.GetBytes();
-				data.Add(bytes);
-			}
-
-			// 部分色
-			data.Add(param.Color);
-
-			if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Default)
-			{
-			}
-			else if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Fixed)
-			{
-				var color_ll = (byte[]) param.Color_Fixed_LL;
-				var color_lr = (byte[]) param.Color_Fixed_LR;
-				var color_ul = (byte[]) param.Color_Fixed_UL;
-				var color_ur = (byte[]) param.Color_Fixed_UR;
-
-				data.Add(color_ll);
-				data.Add(color_lr);
-				data.Add(color_ul);
-				data.Add(color_ur);
+				if (param.ColorAll.Value == Data.StandardColorType.Fixed)
+				{
+					var color_all = (byte[]) param.ColorAll_Fixed;
+					data.Add(color_all);
+				}
+				else if (param.ColorAll.Value == Data.StandardColorType.Random)
+				{
+					var color_random = (byte[]) param.ColorAll_Random;
+					data.Add(color_random);
+				}
+				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
+				{
+					var easing = Utl.MathUtl.Easing((float) value.Sprite.ColorAll_Easing.StartSpeed.Value,
+						(float) value.Sprite.ColorAll_Easing.EndSpeed.Value);
+					data.Add((byte[]) value.Sprite.ColorAll_Easing.Start);
+					data.Add((byte[]) value.Sprite.ColorAll_Easing.End);
+					data.Add(BitConverter.GetBytes(easing[0]));
+					data.Add(BitConverter.GetBytes(easing[1]));
+					data.Add(BitConverter.GetBytes(easing[2]));
+				}
+				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
+				{
+					var bytes = param.ColorAll_FCurve.FCurve.GetBytes();
+					data.Add(bytes);
+				}
 			}
 
-			// 座標
-			//data.Add(sprite_paramater.Position);
-			data.Add(BitConverter.GetBytes((int) Data.RendererValues.SpriteParamater.PositionType.Fixed));
+			void AddColor()
+			{
+				if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Default)
+				{
+				}
+				else if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Fixed)
+				{
+					var color_ll = (byte[]) param.Color_Fixed_LL;
+					var color_lr = (byte[]) param.Color_Fixed_LR;
+					var color_ul = (byte[]) param.Color_Fixed_UL;
+					var color_ur = (byte[]) param.Color_Fixed_UR;
 
-			if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Default)
-			{
-				data.Add(BitConverter.GetBytes(-0.5f));
-				data.Add(BitConverter.GetBytes(-0.5f));
-				data.Add(BitConverter.GetBytes(+0.5f));
-				data.Add(BitConverter.GetBytes(-0.5f));
-				data.Add(BitConverter.GetBytes(-0.5f));
-				data.Add(BitConverter.GetBytes(+0.5f));
-				data.Add(BitConverter.GetBytes(+0.5f));
-				data.Add(BitConverter.GetBytes(+0.5f));
+					data.Add(color_ll);
+					data.Add(color_lr);
+					data.Add(color_ul);
+					data.Add(color_ur);
+				}
 			}
-			else if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Fixed)
-			{
-				var pos_ll = (byte[]) param.Position_Fixed_LL.GetBytes();
-				var pos_lr = (byte[]) param.Position_Fixed_LR.GetBytes();
-				var pos_ul = (byte[]) param.Position_Fixed_UL.GetBytes();
-				var pos_ur = (byte[]) param.Position_Fixed_UR.GetBytes();
 
-				data.Add(pos_ll);
-				data.Add(pos_lr);
-				data.Add(pos_ul);
-				data.Add(pos_ur);
-			}
-			
+			void AddPosition()
+			{
+				if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Default)
+				{
+					data.Add(BitConverter.GetBytes(-0.5f));
+					data.Add(BitConverter.GetBytes(-0.5f));
+					data.Add(BitConverter.GetBytes(+0.5f));
+					data.Add(BitConverter.GetBytes(-0.5f));
+					data.Add(BitConverter.GetBytes(-0.5f));
+					data.Add(BitConverter.GetBytes(+0.5f));
+					data.Add(BitConverter.GetBytes(+0.5f));
+					data.Add(BitConverter.GetBytes(+0.5f));
+				}
+				else if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Fixed)
+				{
+					var pos_ll = (byte[]) param.Position_Fixed_LL.GetBytes();
+					var pos_lr = (byte[]) param.Position_Fixed_LR.GetBytes();
+					var pos_ul = (byte[]) param.Position_Fixed_UL.GetBytes();
+					var pos_ur = (byte[]) param.Position_Fixed_UR.GetBytes();
 
-			// テクスチャ番号
-			/*
-			if (sprite_paramater.ColorTexture.RelativePath != string.Empty)
-			{
-				data.Add(texture_and_index[sprite_paramater.ColorTexture.RelativePath].GetBytes());
+					data.Add(pos_ll);
+					data.Add(pos_lr);
+					data.Add(pos_ul);
+					data.Add(pos_ur);
+				}
 			}
-			else
-			{
-				data.Add((-1).GetBytes());
-			}
-			*/
 		}
 
 		private static void RibbonRefactorXxx(Data.RendererValues value, List<byte[]> data)
