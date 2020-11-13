@@ -53,12 +53,20 @@ namespace Effekseer.Data.Value
 				() =>
 				{
 					_value = new_value;
-					OnChanged?.Invoke(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
+
+					if (OnChanged != null)
+					{ 
+						OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
+					}
 				},
 				() =>
 				{
 					_value = old_value;
-					OnChanged?.Invoke(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
+
+					if (OnChanged != null)
+					{
+						OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
+					}
 				});
 
 			Command.CommandManager.Execute(cmd);
@@ -69,7 +77,11 @@ namespace Effekseer.Data.Value
 			if (_value == value) return;
 
 			_value = value;
-			OnChanged?.Invoke(this, new ChangedValueEventArgs(_value, ChangedValueType.Execute));
+
+			if (OnChanged != null)
+			{
+				OnChanged(this, new ChangedValueEventArgs(_value, ChangedValueType.Execute));
+			}
 		}
 
 		public static implicit operator bool(Boolean value)

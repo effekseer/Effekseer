@@ -99,12 +99,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binary\RenderData\AdvancedUvSerializer.cs" />
     <Compile Include="Binary\AlphaCutoffValues.cs" />
-    <Compile Include="Binary\RenderData\BasicUvSerializer.cs" />
     <Compile Include="Binary\CommonValues.cs" />
     <Compile Include="Binary\GenerationLocationValues.cs" />
-    <Compile Include="Binary\RenderData\MaterialSerializer.cs" />
     <Compile Include="Binary\RendererValues.cs" />
     <Compile Include="Binary\Exporter.cs" />
     <Compile Include="Binary\RotationValues.cs" />
@@ -114,9 +111,6 @@
     <Compile Include="Binary\Define.cs" />
     <Compile Include="Binary\SoundValues.cs" />
     <Compile Include="Binary\RendererCommonValues.cs" />
-    <Compile Include="Binary\RenderData\TextureValuesAggregator.cs" />
-    <Compile Include="Binary\RenderData\UvAggregator.cs" />
-    <Compile Include="Binary\RenderData\UvSerializer.cs" />
     <Compile Include="Command\CommandManager.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
