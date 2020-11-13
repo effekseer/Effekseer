@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Effekseer.Data;
+using Effekseer.Data.Value;
 using Effekseer.Utl;
 
 namespace Effekseer.Binary
@@ -99,7 +100,12 @@ namespace Effekseer.Binary
 
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> model_and_index, Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererValues value,
+			Dictionary<string, int> texture_and_index,
+			Dictionary<string, int> normalTexture_and_index,
+			Dictionary<string, int> model_and_index,
+			Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index,
+			ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -120,19 +126,19 @@ namespace Effekseer.Binary
 					case Data.RendererValues.ParamaterType.None:
 						break;
 					case Data.RendererValues.ParamaterType.Sprite:
-						SpriteRefactorXxx(value, data);
+						AddSpriteData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ribbon:
-						RibbonRefactorXxx(value, data);
+						AddRibbonData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ring:
-						RingRefactorXxx(value, data);
+						AddRingData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Model:
-						ModelRefactorXxx(value, model_and_index, pmodel_and_index, version, data);
+						AddModelData(value, model_and_index, pmodel_and_index, version, data);
 						break;
 					case Data.RendererValues.ParamaterType.Track:
-						TrackRefactorXxx(value, data);
+						AddTrackData(value, data);
 						break;
 				}
 			}
@@ -144,7 +150,7 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 		
-		private static void SpriteRefactorXxx(Data.RendererValues value, List<byte[]> data)
+		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data)
 		{
 			var param = value.Sprite;
 
@@ -236,7 +242,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void RibbonRefactorXxx(Data.RendererValues value, List<byte[]> data)
+		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
 		{
 			var ribbonParameter = value.Ribbon;
 
@@ -313,7 +319,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void RingRefactorXxx(Data.RendererValues value, List<byte[]> data)
+		private static void AddRingData(Data.RendererValues value, List<byte[]> data)
 		{
 			var ringParameter = value.Ring;
 
@@ -329,9 +335,19 @@ namespace Effekseer.Binary
 			AddOuterRing();
 			AddInnerRing();
 			AddCenterRatio();
-			AddOuterColor();
-			AddCenterColor();
-			AddInnerColor();
+
+			AddColor(ringParameter.OuterColor,
+				ringParameter.OuterColor_Fixed,
+				ringParameter.OuterColor_Random,
+				ringParameter.OuterColor_Easing);
+			AddColor(ringParameter.CenterColor,
+				ringParameter.CenterColor_Fixed,
+				ringParameter.CenterColor_Random,
+				ringParameter.CenterColor_Easing);
+			AddColor(ringParameter.InnerColor,
+				ringParameter.InnerColor_Fixed,
+				ringParameter.InnerColor_Random,
+				ringParameter.InnerColor_Easing);
 
 			void AddViewingAngle()
 			{
@@ -447,72 +463,27 @@ namespace Effekseer.Binary
 				}
 			}
 
-			void AddOuterColor()
+			void AddColor(Enum<Data.RendererValues.RingParamater.ColorType> parameter,
+				Color @fixed,
+				ColorWithRandom random,
+				ColorEasingParamater easingParam)
 			{
-				data.Add(ringParameter.OuterColor);
-				if (ringParameter.OuterColor.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
+				data.Add(parameter);
+				if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
 				{
-					data.Add((byte[]) ringParameter.OuterColor_Fixed);
+					data.Add((byte[]) @fixed);
 				}
-				else if (ringParameter.OuterColor.Value == Data.RendererValues.RingParamater.ColorType.Random)
+				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Random)
 				{
-					data.Add((byte[]) ringParameter.OuterColor_Random);
+					data.Add((byte[]) random);
 				}
-				else if (ringParameter.OuterColor.Value == Data.RendererValues.RingParamater.ColorType.Easing)
+				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Easing)
 				{
 					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.OuterColor_Easing.StartSpeed.Value,
-						(float) ringParameter.OuterColor_Easing.EndSpeed.Value);
-					data.Add((byte[]) ringParameter.OuterColor_Easing.Start);
-					data.Add((byte[]) ringParameter.OuterColor_Easing.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
-				}
-			}
-
-			void AddCenterColor()
-			{
-				data.Add(ringParameter.CenterColor);
-				if (ringParameter.CenterColor.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
-				{
-					data.Add((byte[]) ringParameter.CenterColor_Fixed);
-				}
-				else if (ringParameter.CenterColor.Value == Data.RendererValues.RingParamater.ColorType.Random)
-				{
-					data.Add((byte[]) ringParameter.CenterColor_Random);
-				}
-				else if (ringParameter.CenterColor.Value == Data.RendererValues.RingParamater.ColorType.Easing)
-				{
-					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.CenterColor_Easing.StartSpeed.Value,
-						(float) ringParameter.CenterColor_Easing.EndSpeed.Value);
-					data.Add((byte[]) ringParameter.CenterColor_Easing.Start);
-					data.Add((byte[]) ringParameter.CenterColor_Easing.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
-				}
-			}
-
-			void AddInnerColor()
-			{
-				data.Add(ringParameter.InnerColor);
-				if (ringParameter.InnerColor.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
-				{
-					data.Add((byte[]) ringParameter.InnerColor_Fixed);
-				}
-				else if (ringParameter.InnerColor.Value == Data.RendererValues.RingParamater.ColorType.Random)
-				{
-					data.Add((byte[]) ringParameter.InnerColor_Random);
-				}
-				else if (ringParameter.InnerColor.Value == Data.RendererValues.RingParamater.ColorType.Easing)
-				{
-					var easing = Utl.MathUtl.Easing(
-						(float) ringParameter.InnerColor_Easing.StartSpeed.Value,
-						(float) ringParameter.InnerColor_Easing.EndSpeed.Value);
-					data.Add((byte[]) ringParameter.InnerColor_Easing.Start);
-					data.Add((byte[]) ringParameter.InnerColor_Easing.End);
+						(float) easingParam.StartSpeed.Value,
+						(float) easingParam.EndSpeed.Value);
+					data.Add((byte[]) easingParam.Start);
+					data.Add((byte[]) easingParam.End);
 					data.Add(BitConverter.GetBytes(easing[0]));
 					data.Add(BitConverter.GetBytes(easing[1]));
 					data.Add(BitConverter.GetBytes(easing[2]));
@@ -520,7 +491,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void ModelRefactorXxx(Data.RendererValues value, Dictionary<string, int> model_and_index,
+		private static void AddModelData(Data.RendererValues value, Dictionary<string, int> model_and_index,
 			Dictionary<ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version, List<byte[]> data)
 		{
 			var param = value.Model;
@@ -582,7 +553,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void TrackRefactorXxx(Data.RendererValues value, List<byte[]> data)
+		private static void AddTrackData(Data.RendererValues value, List<byte[]> data)
 		{
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
