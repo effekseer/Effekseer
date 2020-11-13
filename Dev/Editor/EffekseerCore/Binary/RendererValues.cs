@@ -236,14 +236,6 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
-		{
-			var easing = Utl.MathUtl.Easing((float) start.Value, (float) end.Value);
-			data.Add(BitConverter.GetBytes(easing[0]));
-			data.Add(BitConverter.GetBytes(easing[1]));
-			data.Add(BitConverter.GetBytes(easing[2]));
-		}
-
 		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
 		{
 			var ribbonParameter = value.Ribbon;
@@ -313,13 +305,6 @@ namespace Effekseer.Binary
 					data.Add(pos_r);
 				}
 			}
-		}
-
-		private static void AddColorAllEasing(List<byte[]> data, ColorEasingParamater easingParam)
-		{
-			data.Add((byte[]) easingParam.Start);
-			data.Add((byte[]) easingParam.End);
-			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
 
 		private static void AddRingData(Data.RendererValues value, List<byte[]> data)
@@ -443,15 +428,6 @@ namespace Effekseer.Binary
 					AddColorAllEasing(data, easingParam);
 				}
 			}
-		}
-
-		private static void AddFloatEasing(List<byte[]> data, FloatEasingParamater easingParam)
-		{
-			data.Add(easingParam.Start.Max.GetBytes());
-			data.Add(easingParam.Start.Min.GetBytes());
-			data.Add(easingParam.End.Max.GetBytes());
-			data.Add(easingParam.End.Min.GetBytes());
-			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
 
 		private static void AddModelData(Data.RendererValues value, Dictionary<string, int> model_and_index,
@@ -578,6 +554,30 @@ namespace Effekseer.Binary
 				var bytes = color_FCurve.FCurve.GetBytes();
 				data.Add(bytes);
 			}
+		}
+
+		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
+		{
+			var easing = Utl.MathUtl.Easing((float) start.Value, (float) end.Value);
+			data.Add(BitConverter.GetBytes(easing[0]));
+			data.Add(BitConverter.GetBytes(easing[1]));
+			data.Add(BitConverter.GetBytes(easing[2]));
+		}
+		
+		private static void AddColorAllEasing(List<byte[]> data, ColorEasingParamater easingParam)
+		{
+			data.Add((byte[]) easingParam.Start);
+			data.Add((byte[]) easingParam.End);
+			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
+		}
+		
+		private static void AddFloatEasing(List<byte[]> data, FloatEasingParamater easingParam)
+		{
+			data.Add(easingParam.Start.Max.GetBytes());
+			data.Add(easingParam.Start.Min.GetBytes());
+			data.Add(easingParam.End.Max.GetBytes());
+			data.Add(easingParam.End.Min.GetBytes());
+			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
 	}
 }
