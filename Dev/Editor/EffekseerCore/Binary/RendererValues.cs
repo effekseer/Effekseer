@@ -150,15 +150,14 @@ namespace Effekseer.Binary
 
 			data.Add(param.RenderingOrder);
 			data.Add(param.Billboard);
-			data.Add(param.ColorAll);	// 全体色
-			AddStandardColor();
-			data.Add(param.Color);	// 部分色
-			AddColor();
-			data.Add(BitConverter.GetBytes((int) Data.RendererValues.SpriteParamater.PositionType.Fixed));	// 座標
+
+			AddColorAll();
+			AddPartialColor();
 			AddPosition();
 
-			void AddStandardColor()
+			void AddColorAll()
 			{
+				data.Add(param.ColorAll);	// 全体色
 				if (param.ColorAll.Value == Data.StandardColorType.Fixed)
 				{
 					var color_all = (byte[]) param.ColorAll_Fixed;
@@ -186,8 +185,10 @@ namespace Effekseer.Binary
 				}
 			}
 
-			void AddColor()
+			void AddPartialColor()
 			{
+				data.Add(param.Color);
+
 				if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Default)
 				{
 				}
@@ -207,6 +208,8 @@ namespace Effekseer.Binary
 
 			void AddPosition()
 			{
+				data.Add(BitConverter.GetBytes((int) Data.RendererValues.SpriteParamater.PositionType.Fixed));
+
 				if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Default)
 				{
 					data.Add(BitConverter.GetBytes(-0.5f));
@@ -235,91 +238,79 @@ namespace Effekseer.Binary
 
 		private static void RibbonRefactorXxx(Data.RendererValues value, List<byte[]> data)
 		{
-			var ribbonParamater = value.Ribbon;
-
-			//data.Add(ribbonParamater.AlphaBlend);
+			var ribbonParameter = value.Ribbon;
 
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
 
-			if (ribbonParamater.ViewpointDependent)
-			{
-				data.Add((1).GetBytes());
-			}
-			else
-			{
-				data.Add((0).GetBytes());
-			}
+			data.Add((ribbonParameter.ViewpointDependent ? 1 : 0).GetBytes());
 
-			// 全体色
-			data.Add(ribbonParamater.ColorAll);
+			AddColorAll();
+			AddPartialColor();
+			AddPosition();
 
-			if (ribbonParamater.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Fixed)
+			data.Add(BitConverter.GetBytes(ribbonParameter.SplineDivision.Value));
+
+			void AddColorAll()
 			{
-				var color_all = (byte[]) ribbonParamater.ColorAll_Fixed;
-				data.Add(color_all);
-			}
-			else if (ribbonParamater.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Random)
-			{
-				var color_random = (byte[]) ribbonParamater.ColorAll_Random;
-				data.Add(color_random);
-			}
-			else if (ribbonParamater.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
-			{
-				var easing = Utl.MathUtl.Easing((float) ribbonParamater.ColorAll_Easing.StartSpeed.Value,
-					(float) ribbonParamater.ColorAll_Easing.EndSpeed.Value);
-				data.Add((byte[]) ribbonParamater.ColorAll_Easing.Start);
-				data.Add((byte[]) ribbonParamater.ColorAll_Easing.End);
-				data.Add(BitConverter.GetBytes(easing[0]));
-				data.Add(BitConverter.GetBytes(easing[1]));
-				data.Add(BitConverter.GetBytes(easing[2]));
-			}
+				data.Add(ribbonParameter.ColorAll);
 
-			// 部分色
-			data.Add(ribbonParamater.Color);
-
-			if (ribbonParamater.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Default)
-			{
-			}
-			else if (ribbonParamater.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Fixed)
-			{
-				var color_l = (byte[]) ribbonParamater.Color_Fixed_L;
-				var color_r = (byte[]) ribbonParamater.Color_Fixed_R;
-
-				data.Add(color_l);
-				data.Add(color_r);
-			}
-
-			// 座標
-			//data.Add(ribbonParamater.Position);
-			data.Add(BitConverter.GetBytes((int) Data.RendererValues.RibbonParamater.PositionType.Fixed));
-
-			if (ribbonParamater.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Default)
-			{
-				data.Add(BitConverter.GetBytes(-0.5f));
-				data.Add(BitConverter.GetBytes(+0.5f));
-			}
-			else if (ribbonParamater.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Fixed)
-			{
-				var pos_l = (byte[]) ribbonParamater.Position_Fixed_L.GetBytes();
-				var pos_r = (byte[]) ribbonParamater.Position_Fixed_R.GetBytes();
-				data.Add(pos_l);
-				data.Add(pos_r);
-			}
-
-			data.Add(BitConverter.GetBytes(ribbonParamater.SplineDivision.Value));
-
-			// テクスチャ番号
-			/*
-				if (ribbonParamater.ColorTexture.RelativePath != string.Empty)
+				if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Fixed)
 				{
-					data.Add(texture_and_index[ribbonParamater.ColorTexture.RelativePath].GetBytes());
+					var color_all = (byte[]) ribbonParameter.ColorAll_Fixed;
+					data.Add(color_all);
 				}
-				else
+				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Random)
 				{
-					data.Add((-1).GetBytes());
+					var color_random = (byte[]) ribbonParameter.ColorAll_Random;
+					data.Add(color_random);
 				}
-				*/
+				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
+				{
+					var easing = Utl.MathUtl.Easing((float) ribbonParameter.ColorAll_Easing.StartSpeed.Value,
+						(float) ribbonParameter.ColorAll_Easing.EndSpeed.Value);
+					data.Add((byte[]) ribbonParameter.ColorAll_Easing.Start);
+					data.Add((byte[]) ribbonParameter.ColorAll_Easing.End);
+					data.Add(BitConverter.GetBytes(easing[0]));
+					data.Add(BitConverter.GetBytes(easing[1]));
+					data.Add(BitConverter.GetBytes(easing[2]));
+				}
+			}
+
+			void AddPartialColor()
+			{
+				data.Add(ribbonParameter.Color);
+
+				if (ribbonParameter.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Default)
+				{
+				}
+				else if (ribbonParameter.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Fixed)
+				{
+					var color_l = (byte[]) ribbonParameter.Color_Fixed_L;
+					var color_r = (byte[]) ribbonParameter.Color_Fixed_R;
+
+					data.Add(color_l);
+					data.Add(color_r);
+				}
+			}
+
+			void AddPosition()
+			{
+				data.Add(BitConverter.GetBytes((int) Data.RendererValues.RibbonParamater.PositionType.Fixed));
+
+				if (ribbonParameter.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Default)
+				{
+					data.Add(BitConverter.GetBytes(-0.5f));
+					data.Add(BitConverter.GetBytes(+0.5f));
+				}
+				else if (ribbonParameter.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Fixed)
+				{
+					var pos_l = (byte[]) ribbonParameter.Position_Fixed_L.GetBytes();
+					var pos_r = (byte[]) ribbonParameter.Position_Fixed_R.GetBytes();
+					data.Add(pos_l);
+					data.Add(pos_r);
+				}
+			}
 		}
 
 		private static void RingRefactorXxx(Data.RendererValues value, List<byte[]> data)
