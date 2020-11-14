@@ -49,6 +49,11 @@ bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, TextureFormat 
 		glFormat = GL_RED;
 		glType = GL_HALF_FLOAT;
 		break;
+	case TextureFormat::R32F:
+		glInternalFormat = GL_R32F;
+		glFormat = GL_RED;
+		glType = GL_FLOAT;
+		break;
 	default:
 		assert(0);
 		return false;
@@ -107,7 +112,7 @@ bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisam
 	{
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
 		// Set filter
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -119,10 +124,12 @@ bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisam
 	{
 		glGenRenderbuffers(1, &renderbuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, GL_DEPTH_COMPONENT24, width, height);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, GL_DEPTH_COMPONENT32, width, height);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	}
 	assert(glGetError() == GL_NO_ERROR);
+
+	size_ = {width, height};
 
 	return true;
 }
@@ -220,7 +227,7 @@ void GraphicsGL::CopyTo(RenderTexture* src, RenderTexture* dst)
 
 		auto s = static_cast<RenderTextureGL*>(src);
 		auto d = static_cast<RenderTextureGL*>(dst);
-		
+
 		if (s->GetSamplingCount() > 1)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
@@ -239,65 +246,6 @@ void GraphicsGL::CopyTo(RenderTexture* src, RenderTexture* dst)
 		glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 	}
 }
-/*
-void GraphicsGL::CopyToBackground()
-{
-#ifndef _WIN32
-	GLint backupFramebuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
-	if (backupFramebuffer <= 0)
-		return;
-#endif
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	uint32_t width = viewport[2];
-	uint32_t height = viewport[3];
-
-	if (!backTarget || backTarget->GetSize().X != width || backTarget->GetSize().Y != height)
-	{
-		backTarget = std::make_shared<RenderTextureGL>(this);
-		backTarget->Initialize(Effekseer::Tool::Vector2DI(width, height), TextureFormat::RGBA8U);
-	}
-
-#ifndef _WIN32
-
-	GLint rbtype;
-	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &rbtype);
-
-	if (rbtype == GL_RENDERBUFFER)
-	{
-		GLint renderbuffer;
-		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderbuffer);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
-	}
-	else if (rbtype == GL_TEXTURE_2D)
-	{
-		GLint renderTexture;
-		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderTexture);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
-	}
-#endif
-
-	auto rt = (RenderTextureGL*)currentRenderTexture;
-	if (rt->GetSamplingCount() > 1)
-	{
-		ResolveRenderTarget(currentRenderTexture, backTarget.get());
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D, (GLuint)backTarget->GetViewID());
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewport[0], viewport[1], width, height);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-#ifndef _WIN32
-	glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
-#endif
-}
-*/
 
 void GraphicsGL::Resize(int32_t width, int32_t height)
 {
@@ -326,14 +274,8 @@ void GraphicsGL::EndScene()
 {
 }
 
-void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
+void GraphicsGL::SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture)
 {
-	currentRenderTexture = renderTexture;
-	currentDepthTexture = depthTexture;
-
-	auto rt = (RenderTextureGL*)renderTexture;
-	auto dt = (DepthTextureGL*)depthTexture;
-
 	GLCheckError();
 
 	// reset
@@ -345,7 +287,7 @@ void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* dep
 	glActiveTexture(GL_TEXTURE0);
 	GLCheckError();
 
-	if (renderTexture == nullptr)
+	if (renderTextures == nullptr || renderTextureCount == 0)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDrawBuffer(GL_BACK);
@@ -354,6 +296,28 @@ void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* dep
 	else
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+		auto rt = (RenderTextureGL*)renderTextures[0];
+		auto dt = (DepthTextureGL*)depthTexture;
+
+		for (size_t i = 0; i < renderTextureCount; i++)
+		{
+			auto rti = (RenderTextureGL*)renderTextures[i];
+
+			if (rti == nullptr)
+			{
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
+			}
+			else if (rti->GetSamplingCount() > 1)
+			{
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rti->GetBuffer());
+			}
+			else
+			{
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rti->GetTexture(), 0);
+			}
+		}
 
 		if (rt->GetSamplingCount() > 1)
 		{
@@ -368,12 +332,15 @@ void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* dep
 
 		static const GLenum bufs[] = {
 			GL_COLOR_ATTACHMENT0,
+			GL_COLOR_ATTACHMENT1,
+			GL_COLOR_ATTACHMENT2,
+			GL_COLOR_ATTACHMENT3,
 		};
-		glDrawBuffers(1, bufs);
+		glDrawBuffers(renderTextureCount, bufs);
 
 		GLCheckError();
 
-		glViewport(0, 0, renderTexture->GetSize().X, renderTexture->GetSize().Y);
+		glViewport(0, 0, renderTextures[0]->GetSize().X, renderTextures[0]->GetSize().Y);
 	}
 }
 

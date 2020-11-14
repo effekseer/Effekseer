@@ -49,6 +49,9 @@ public:
 		return indexCount_;
 	}
 
+	Backend::TextureRef Texture;
+	bool IsLit = true;
+
 	static std::shared_ptr<StaticMesh> Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes);
 };
 
@@ -63,6 +66,7 @@ private:
 
 	struct UniformBufferPS
 	{
+		std::array<float, 4> isLit;
 		std::array<float, 4> directionalLightDirection;
 		std::array<float, 4> directionalLightColor;
 		std::array<float, 4> ambientLightColor;
@@ -75,6 +79,7 @@ private:
 	Backend::ShaderRef shader_;
 	Backend::PipelineStateRef pip_;
 	Backend::VertexLayoutRef vertexLayout_;
+	Backend::TextureRef dummyTexture_;
 
 	std::shared_ptr<StaticMesh> staticMesh_;
 

@@ -19,6 +19,7 @@ struct VS_Output
 	float2 UV : TEXCOORD0;
 	float4 Color : NORMAL0;
 	float3 Normal : NORMAL1;
+	float4 Position : NORMAL2;
 };
 
 VS_Output main(const VS_Input input)
@@ -30,5 +31,6 @@ VS_Output main(const VS_Input input)
 	output.UV = input.UV;
 	output.Color = input.Color;
 	output.Normal = input.Normal;
+	output.Position = output.Pos;
 	return output;
 }

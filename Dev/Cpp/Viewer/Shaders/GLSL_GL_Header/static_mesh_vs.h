@@ -18,6 +18,7 @@ struct VS_Output
     vec2 UV;
     vec4 Color;
     vec3 Normal;
+    vec4 Position;
 };
 
 struct VS_ConstantBuffer
@@ -35,6 +36,7 @@ layout(location = 3) in vec3 input_Normal;
 out vec2 _VSPS_UV;
 out vec4 _VSPS_Color;
 out vec3 _VSPS_Normal;
+out vec4 _VSPS_Position;
 
 VS_Output _main(VS_Input _input)
 {
@@ -45,6 +47,7 @@ VS_Output _main(VS_Input _input)
     _output.UV = _input.UV;
     _output.Color = _input.Color;
     _output.Normal = _input.Normal;
+    _output.Position = _output.Pos;
     return _output;
 }
 
@@ -60,6 +63,7 @@ void main()
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_Normal = flattenTemp.Normal;
+    _VSPS_Position = flattenTemp.Position;
 }
 
 )";

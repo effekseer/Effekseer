@@ -30,6 +30,7 @@ enum class TextureFormat
 	RGBA8U,
 	RGBA16F,
 	R16F,
+	R32F,
 };
 
 enum class TextureFeatureType
@@ -85,10 +86,6 @@ public:
 
 class Graphics
 {
-protected:
-	RenderTexture* currentRenderTexture = nullptr;
-	DepthTexture* currentDepthTexture = nullptr;
-
 public:
 	Graphics()
 	{
@@ -111,7 +108,19 @@ public:
 
 	virtual void EndScene() = 0;
 
-	virtual void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) = 0;
+	virtual void SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture) = 0;
+
+	void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
+	{
+		if (renderTexture == nullptr)
+		{
+			SetRenderTarget(nullptr, 0, depthTexture);
+		}
+		else
+		{
+			SetRenderTarget(&renderTexture, 1, depthTexture);
+		}
+	}
 
 	virtual void SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels) = 0;
 
@@ -122,15 +131,6 @@ public:
 	//virtual void* GetBack() = 0;
 
 	virtual DeviceType GetDeviceType() const = 0;
-
-	virtual RenderTexture* GetRenderTexture() const
-	{
-		return currentRenderTexture;
-	}
-	virtual DepthTexture* GetDepthTexture() const
-	{
-		return currentDepthTexture;
-	}
 
 	virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
 	{
