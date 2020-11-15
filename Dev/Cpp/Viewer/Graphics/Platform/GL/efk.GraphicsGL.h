@@ -41,11 +41,18 @@ class DepthTextureGL : public DepthTexture
 private:
 	GLuint texture = 0;
 	GLuint renderbuffer = 0;
+	Effekseer::Tool::Vector2DI size_;
 
 public:
 	DepthTextureGL(Graphics* graphics);
 	virtual ~DepthTextureGL();
 	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
+
+	
+	Effekseer::Tool::Vector2DI GetSize() const
+	{
+		return size_;
+	}
 
 	GLuint GetTexture()
 	{
@@ -90,7 +97,7 @@ public:
 
 	void EndScene() override;
 
-	void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) override;
+	void SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture) override;
 
 	//void BeginRecord(int32_t width, int32_t height) override;
 

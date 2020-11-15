@@ -5,23 +5,23 @@
 
 namespace efk
 {
-namespace Standard_VS
-{
-static
-#include "Shader/EffekseerRenderer.Tool_VS.h"
-} // namespace Standard_VS
 
-namespace Standard_PS
-{
-static
-#include "Shader/EffekseerRenderer.Tool_PS.h"
-} // namespace Standard_PS
 
-namespace StandardNoTexture_PS
+#ifdef _WIN32
+
+using BYTE = uint8_t;
+
+namespace VS
 {
-static
-#include "Shader/EffekseerRenderer.ToolNoTexture_PS.h"
-} // namespace StandardNoTexture_PS
+#include "../../Shaders/HLSL_DX11_Header/line_vs.h"
+}
+
+namespace PS
+{
+#include "../../Shaders/HLSL_DX11_Header/line_ps.h"
+}
+#endif
+
 
 LineRendererDX11::LineRendererDX11(EffekseerRenderer::Renderer* renderer)
 	: LineRenderer(renderer)
@@ -38,10 +38,10 @@ LineRendererDX11::LineRendererDX11(EffekseerRenderer::Renderer* renderer)
 	};
 
 	shader = EffekseerRendererDX11::Shader::Create(this->renderer,
-												   Standard_VS::g_VS,
-												   sizeof(Standard_VS::g_VS),
-												   StandardNoTexture_PS::g_PS,
-												   sizeof(StandardNoTexture_PS::g_PS),
+												   VS::g_main,
+												   sizeof(VS::g_main),
+												   PS::g_main,
+												   sizeof(PS::g_main),
 												   "StandardRenderer No Texture",
 												   decl,
 												   3,

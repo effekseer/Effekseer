@@ -50,13 +50,49 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 	spdlog::trace("OK Culling");
 
-	background_ = std::shared_ptr<::EffekseerRenderer::Paste>(::EffekseerRenderer::Paste::Create(graphics_, renderer_));
-	if (background_ == nullptr)
-	{
-		return false;
-	}
-
 	textureLoader_ = renderer_->CreateTextureLoader();
+
+	if (graphics_->GetGraphicsDevice() != nullptr)
+	{
+
+		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
+
+		if (backgroundRenderer_ == nullptr)
+		{
+			return false;
+		}
+
+		const float eps = 0.0001f;
+
+		Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData;
+		vbData.resize(4);
+		vbData[0].Pos = {-1.0f, 1.0f, 1.0f - eps};
+		vbData[1].Pos = {1.0f, 1.0f, 1.0f - eps};
+		vbData[2].Pos = {1.0f, -1.0f, 1.0f - eps};
+		vbData[3].Pos = {-1.0f, -1.0f, 1.0f - eps};
+
+		for (auto& vb : vbData)
+		{
+			vb.UV[0] = (vb.Pos[0] + 1.0f) / 2.0f;
+			vb.UV[1] = 1.0f - (vb.Pos[1] + 1.0f) / 2.0f;
+
+			vb.Normal = {0.0f, 1.0f, 0.0f};
+			vb.VColor = {255, 255, 255, 255};
+		}
+		Effekseer::CustomVector<int32_t> ibData;
+		ibData.resize(6);
+		ibData[0] = 0;
+		ibData[1] = 1;
+		ibData[2] = 2;
+		ibData[3] = 0;
+		ibData[4] = 2;
+		ibData[5] = 3;
+
+		backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+		backgroundMesh_->IsLit = false;
+
+		backgroundRenderer_->SetStaticMesh(backgroundMesh_);
+	}
 
 	spdlog::trace("OK Background");
 
@@ -103,10 +139,14 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 void MainScreenRenderedEffectGenerator::OnAfterClear()
 {
-	// Render background (the size of texture is ignored)
-	if (backgroundData_ != nullptr)
+	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundData_ != nullptr)
 	{
-		background_->Rendering(backgroundData_, 1024, 1024);
+		backgroundMesh_->Texture = backgroundData_->TexturePtr;
+
+		Effekseer::Tool::RendererParameter param{};
+		param.CameraMatrix.Indentity();
+		param.ProjectionMatrix.Indentity();
+		backgroundRenderer_->Render(param);
 	}
 
 	if (staticMeshRenderer_ != nullptr && IsGroundShown)

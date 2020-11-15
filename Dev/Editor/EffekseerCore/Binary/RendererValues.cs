@@ -100,12 +100,7 @@ namespace Effekseer.Binary
 
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value,
-			Dictionary<string, int> texture_and_index,
-			Dictionary<string, int> normalTexture_and_index,
-			Dictionary<string, int> model_and_index,
-			Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index,
-			ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, SortedDictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 

@@ -41,6 +41,9 @@ bool RenderTextureDX11::Initialize(Effekseer::Tool::Vector2DI size, TextureForma
 	case TextureFormat::R16F:
 		TexDesc.Format = DXGI_FORMAT_R16_FLOAT;
 		break;
+	case TextureFormat::R32F:
+		TexDesc.Format = DXGI_FORMAT_R32_FLOAT;
+		break;
 	default:
 		assert(0);
 		return false;
@@ -316,8 +319,10 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 		goto End;
 	}
 
+	currentRenderTargetViews.fill(nullptr);
+
 	context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
-	currentRenderTargetView = renderTargetView;
+	currentRenderTargetViews[0] = renderTargetView;
 	currentDepthStencilView = depthStencilView;
 
 	this->isSRGBMode = isSRGBMode;
@@ -377,97 +382,6 @@ void GraphicsDX11::CopyTo(RenderTexture* src, RenderTexture* dst)
 		context->CopyResource(d->GetTexture(), s->GetTexture());
 	}
 }
-/*
-void GraphicsDX11::CopyToBackground()
-{
-	HRESULT hr = S_OK;
-	ID3D11RenderTargetView* renderTargetView = nullptr;
-	ID3D11Texture2D* renderTexture = nullptr;
-	context->OMGetRenderTargets(1, &renderTargetView, nullptr);
-	renderTargetView->GetResource(reinterpret_cast<ID3D11Resource**>(&renderTexture));
-
-	// Get rendertarget infromation
-	D3D11_TEXTURE2D_DESC renderTextureDesc;
-	renderTexture->GetDesc(&renderTextureDesc);
-
-	D3D11_TEXTURE2D_DESC backGroundTextureDesc;
-	ZeroMemory(&backGroundTextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	if (backTexture != nullptr)
-	{
-		backTexture->GetDesc(&backGroundTextureDesc);
-	}
-
-	// Get scissor
-	UINT numScissorRects = 1;
-	D3D11_RECT scissorRect;
-	context->RSGetScissorRects(&numScissorRects, &scissorRect);
-
-	// Calculate area to draw
-	uint32_t width = renderTextureDesc.Width;
-	uint32_t height = renderTextureDesc.Height;
-	if (numScissorRects > 0)
-	{
-		width = scissorRect.right - scissorRect.left;
-		height = scissorRect.bottom - scissorRect.top;
-	}
-
-	// if size is changed, rebuild it
-	if (backTexture == nullptr || backGroundTextureDesc.Width != width || backGroundTextureDesc.Height != height ||
-		backGroundTextureDesc.Format != renderTextureDesc.Format)
-	{
-		ES_SAFE_RELEASE(backTexture);
-		ES_SAFE_RELEASE(backTextureSRV);
-
-		ZeroMemory(&backGroundTextureDesc, sizeof(backGroundTextureDesc));
-		backGroundTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-		backGroundTextureDesc.Format = renderTextureDesc.Format;
-		backGroundTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		backGroundTextureDesc.Width = width;
-		backGroundTextureDesc.Height = height;
-		backGroundTextureDesc.CPUAccessFlags = 0;
-		backGroundTextureDesc.MipLevels = 1;
-		backGroundTextureDesc.ArraySize = 1;
-		backGroundTextureDesc.SampleDesc.Count = 1;
-		backGroundTextureDesc.SampleDesc.Quality = 0;
-
-		HRESULT hr = S_OK;
-		hr = device_->CreateTexture2D(&backGroundTextureDesc, nullptr, &backTexture);
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		ZeroMemory(&srvDesc, sizeof(srvDesc));
-		srvDesc.Format = renderTextureDesc.Format;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = 1;
-		hr = device_->CreateShaderResourceView(backTexture, &srvDesc, &backTextureSRV);
-	}
-
-	if (width == renderTextureDesc.Width && height == renderTextureDesc.Height)
-	{
-		if (renderTextureDesc.SampleDesc.Count == backGroundTextureDesc.SampleDesc.Count)
-		{
-			// Copy to background
-			context->CopyResource(backTexture, renderTexture);
-		}
-		else
-		{
-			context->ResolveSubresource(backTexture, 0, renderTexture, 0, backGroundTextureDesc.Format);
-		}
-	}
-	else
-	{
-		D3D11_BOX srcBox;
-		srcBox.left = scissorRect.left;
-		srcBox.top = scissorRect.top;
-		srcBox.right = scissorRect.right;
-		srcBox.bottom = scissorRect.bottom;
-		srcBox.front = 0;
-		srcBox.back = 1;
-		context->CopySubresourceRegion(backTexture, 0, 0, 0, 0, renderTexture, 0, &srcBox);
-	}
-
-	ES_SAFE_RELEASE(renderTexture);
-	ES_SAFE_RELEASE(renderTargetView);
-}
-*/
 
 void GraphicsDX11::Resize(int32_t width, int32_t height)
 {
@@ -509,47 +423,51 @@ void GraphicsDX11::EndScene()
 	}
 }
 
-void GraphicsDX11::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
+void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture)
 {
-	currentRenderTexture = renderTexture;
-	currentDepthTexture = depthTexture;
-
-	auto rt = (RenderTextureDX11*)renderTexture;
-	auto dt = (DepthTextureDX11*)depthTexture;
-
-	if (renderTexture == nullptr)
+	if (renderTextures == nullptr || renderTextureCount == 0)
 	{
+		currentRenderTargetViews.fill(nullptr);
 		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
-		currentRenderTargetView = renderTargetView;
+		currentRenderTargetViews[0] = renderTargetView;
 		currentDepthStencilView = depthStencilView;
 	}
 	else
 	{
-		ID3D11RenderTargetView* renderTargetView_ = nullptr;
+		std::array<ID3D11RenderTargetView*, 4> renderTargetView_;
+		renderTargetView_.fill(nullptr);
+
+		auto dt = (DepthTextureDX11*)depthTexture;
+
 		ID3D11DepthStencilView* depthStencilView_ = nullptr;
 
-		if (rt != nullptr)
+		for (int32_t i = 0; i < renderTextureCount; i++)
 		{
-			renderTargetView_ = rt->GetRenderTargetView();
+			auto rt = (RenderTextureDX11*)renderTextures[i];
+			if (rt != nullptr)
+			{
+				renderTargetView_[i] = rt->GetRenderTargetView();			
+			}
 		}
 
+		
 		if (dt != nullptr)
 		{
 			depthStencilView_ = dt->GetDepthStencilView();
 		}
 
-		context->OMSetRenderTargets(1, &renderTargetView_, depthStencilView_);
+		context->OMSetRenderTargets(renderTextureCount, renderTargetView_.data(), depthStencilView_);
 
 		D3D11_VIEWPORT vp;
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
-		vp.Width = static_cast<float>(renderTexture->GetSize().X);
-		vp.Height = static_cast<float>(renderTexture->GetSize().Y);
+		vp.Width = static_cast<float>(renderTextures[0]->GetSize().X);
+		vp.Height = static_cast<float>(renderTextures[0]->GetSize().Y);
 		vp.MinDepth = 0.0f;
 		vp.MaxDepth = 1.0f;
 		context->RSSetViewports(1, &vp);
 
-		currentRenderTargetView = renderTargetView_;
+		currentRenderTargetViews = renderTargetView_;
 		currentDepthStencilView = depthStencilView_;
 	}
 }
@@ -609,11 +527,18 @@ void GraphicsDX11::SaveTexture(RenderTexture* texture, std::vector<Effekseer::Co
 void GraphicsDX11::Clear(Effekseer::Color color)
 {
 	float ClearColor[] = {color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f};
-	context->ClearRenderTargetView(currentRenderTargetView, ClearColor);
+
+	for (size_t i = 0; i < currentRenderTargetViews.size(); i++)
+	{
+		if (currentRenderTargetViews[i] == nullptr)
+			continue;
+
+		context->ClearRenderTargetView(currentRenderTargetViews[i], ClearColor);
+	}
 
 	if (currentDepthStencilView != nullptr)
 	{
-		context->ClearDepthStencilView(currentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);	
+		context->ClearDepthStencilView(currentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 }
 
@@ -755,7 +680,8 @@ void GraphicsDX11::ResetDevice()
 
 	context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-	currentRenderTargetView = renderTargetView;
+	currentRenderTargetViews.fill(nullptr);
+	currentRenderTargetViews[0] = renderTargetView;
 	currentDepthStencilView = depthStencilView;
 }
 

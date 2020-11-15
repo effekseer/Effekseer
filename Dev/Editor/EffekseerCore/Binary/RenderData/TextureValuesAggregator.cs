@@ -22,22 +22,17 @@ namespace Effekseer.Binary.RenderData
 			Data.RendererCommonValues value,
 			AdvancedRenderCommonValues advanceValue,
 			AdvancedRenderCommonValues2 advanceValue2,
-			TextureInformation texInfo,
-			TextureInformation alpha,
-			TextureInformation uvDistortion,
-			TextureInformation blend,
-			TextureInformation blendAlpha,
-			TextureInformation blendUvDistortion)
+			TextureInformationRepository repo)
 		{
 			_value = value;
 			_advanceValue = advanceValue;
 			_advanceValue2 = advanceValue2;
-			_texInfo = texInfo;
-			_alpha = alpha;
-			_uvDistortion = uvDistortion;
-			_blend = blend;
-			_blendAlpha = blendAlpha;
-			_blendUvDistortion = blendUvDistortion;
+			_texInfo = repo.Texture;
+			_alpha = repo.Alpha;
+			_uvDistortion = repo.UvDistortion;
+			_blend = repo.Blend;
+			_blendAlpha = repo.BlendAlpha;
+			_blendUvDistortion = repo.BlendUvDistortion;
 		}
 
 		public IEnumerable<byte[]> CurrentData => _data;
@@ -53,7 +48,7 @@ namespace Effekseer.Binary.RenderData
 			_data.Add(value.GetBytes());
 		}
 
-		public void AddTexIdAndStoreSize(PathForImage image, int number, Dictionary<string, int> texAndInd)
+		public void AddTexIdAndStoreSize(PathForImage image, int number, SortedDictionary<string, int> texAndInd)
 		{
 			var tempTexInfo = new TextureInformation();
 
@@ -72,7 +67,7 @@ namespace Effekseer.Binary.RenderData
 			AddInt(texAndInd[image.RelativePath]);
 		}
 
-		private int GetTexIdAndInfo(PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef)
+		private int GetTexIdAndInfo(PathForImage image, SortedDictionary<string, int> texAndInd, ref TextureInformation texInfoRef)
 		{
 			var tempTexInfo = new TextureInformation();
 
@@ -85,7 +80,7 @@ namespace Effekseer.Binary.RenderData
 			return texAndInd[image.RelativePath];
 		}
 
-		private void AddTexIdAndInfo(bool isEnabled, PathForImage path, Dictionary<string, int> texAndInd, ref TextureInformation textureInfo)
+		private void AddTexIdAndInfo(bool isEnabled, PathForImage path, SortedDictionary<string, int> texAndInd, ref TextureInformation textureInfo)
 		{
 			var value = isEnabled
 				? GetTexIdAndInfo(path, texAndInd, ref textureInfo)
@@ -93,7 +88,7 @@ namespace Effekseer.Binary.RenderData
 			AddInt(value);
 		}
 
-		public void AddAlphaTexture(Dictionary<string, int> texAndInd)
+		public void AddAlphaTexture(SortedDictionary<string, int> texAndInd)
 		{
 			AddTexIdAndInfo(_advanceValue.EnableAlphaTexture,
 				_advanceValue.AlphaTextureParam.Texture,
@@ -101,7 +96,7 @@ namespace Effekseer.Binary.RenderData
 				ref _alpha);
 		}
 
-		public void AddUvDistortionTexture(Dictionary<string, int> texAndInd)
+		public void AddUvDistortionTexture(SortedDictionary<string, int> texAndInd)
 		{
 			AddTexIdAndInfo(_advanceValue.EnableUVDistortionTexture,
 				_advanceValue.UVDistortionTextureParam.Texture,
@@ -109,7 +104,7 @@ namespace Effekseer.Binary.RenderData
 				ref _uvDistortion);
 		}
 
-		public void AddBlendAlphaTexture(Dictionary<string, int> texAndInd)
+		public void AddBlendAlphaTexture(SortedDictionary<string, int> texAndInd)
 		{
 			AddTexIdAndInfo(_advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
 				_advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture,
@@ -117,7 +112,7 @@ namespace Effekseer.Binary.RenderData
 				ref _blendAlpha);
 		}
 
-		public void AddBlendUvDistortionTexture(Dictionary<string, int> texAndInd)
+		public void AddBlendUvDistortionTexture(SortedDictionary<string, int> texAndInd)
 		{
 			AddTexIdAndInfo(_advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
 				_advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
@@ -125,7 +120,7 @@ namespace Effekseer.Binary.RenderData
 				ref _blendUvDistortion);
 		}
 
-		public void AddBlendTexture(Dictionary<string, int> texAndInd)
+		public void AddBlendTexture(SortedDictionary<string, int> texAndInd)
 		{
 			var value = GetTexIdAndInfo(_advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
 				texAndInd,

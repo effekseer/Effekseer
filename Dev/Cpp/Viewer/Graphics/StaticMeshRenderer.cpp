@@ -52,7 +52,7 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 {
 	// shader
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
-	uniformLayoutElements.resize(5);
+	uniformLayoutElements.resize(6);
 	uniformLayoutElements[0].Name = "CBVS0.projectionMatrix";
 	uniformLayoutElements[0].Offset = 0;
 	uniformLayoutElements[0].Stage = Effekseer::Backend::ShaderStageType::Vertex;
@@ -62,23 +62,27 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 	uniformLayoutElements[1].Stage = Effekseer::Backend::ShaderStageType::Vertex;
 	uniformLayoutElements[1].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
 
-	uniformLayoutElements[2].Name = "CBPS0.directionalLightDirection";
+	uniformLayoutElements[2].Name = "CBPS0.isLit";
 	uniformLayoutElements[2].Offset = 0;
 	uniformLayoutElements[2].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 	uniformLayoutElements[2].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
-	uniformLayoutElements[3].Name = "CBPS0.directionalLightColor";
+	uniformLayoutElements[3].Name = "CBPS0.directionalLightDirection";
 	uniformLayoutElements[3].Offset = sizeof(float) * 4;
 	uniformLayoutElements[3].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 	uniformLayoutElements[3].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
-	uniformLayoutElements[4].Name = "CBPS0.ambientLightColor";
+	uniformLayoutElements[4].Name = "CBPS0.directionalLightColor";
 	uniformLayoutElements[4].Offset = sizeof(float) * 8;
 	uniformLayoutElements[4].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 	uniformLayoutElements[4].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
+	uniformLayoutElements[5].Name = "CBPS0.ambientLightColor";
+	uniformLayoutElements[5].Offset = sizeof(float) * 12;
+	uniformLayoutElements[5].Stage = Effekseer::Backend::ShaderStageType::Pixel;
+	uniformLayoutElements[5].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
 
 	// constant buffer
 	auto vcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferVS), nullptr);
 	auto pcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferPS), nullptr);
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(CustomVector<std::string>{}, std::move(uniformLayoutElements));
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(CustomVector<std::string>{"Sampler_g_sampler"}, std::move(uniformLayoutElements));
 
 	Effekseer::Backend::ShaderRef shader;
 
@@ -135,6 +139,22 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 	ret->uniformBufferPS_ = pcb;
 	ret->vertexLayout_ = vertexLayout;
 
+	Backend::TextureParameter texParam;
+	const int32_t textureSize = 16;
+	texParam.Format = Backend::TextureFormatType::R8G8B8A8_UNORM;
+	texParam.Size = {textureSize, textureSize};
+
+	CustomVector<uint8_t> initialTexData;
+	initialTexData.resize(textureSize * textureSize * 4);
+	for (auto& v : initialTexData)
+	{
+		v = 255;
+	}
+
+	texParam.InitialData = std::move(initialTexData);
+
+	ret->dummyTexture_ = graphicsDevice->CreateTexture(texParam);
+
 	return ret;
 }
 
@@ -160,6 +180,7 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 		uvs.projectionMatrix.Transpose();
 	}
 
+	ups.isLit[0] = staticMesh_->IsLit ? 1.0f : 0.0f;
 	ups.directionalLightDirection = rendererParameter.DirectionalLightDirection;
 	ups.directionalLightColor = rendererParameter.DirectionalLightColor;
 	ups.ambientLightColor = rendererParameter.AmbientLightColor;
@@ -168,6 +189,12 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 	graphicsDevice_->UpdateUniformBuffer(uniformBufferPS_, sizeof(UniformBufferPS), 0, &ups);
 
 	Effekseer::Backend::DrawParameter drawParam;
+
+	drawParam.TextureCount = 1;
+	drawParam.TexturePtrs[0] = staticMesh_->Texture != nullptr ? staticMesh_->Texture : dummyTexture_;
+	drawParam.TextureSamplingTypes[0] = Backend::TextureSamplingType::Linear;
+	drawParam.TextureWrapTypes[0] = Backend::TextureWrapType::Repeat;
+
 	drawParam.VertexBufferPtr = staticMesh_->GetVertexBuffer();
 	drawParam.IndexBufferPtr = staticMesh_->GetIndexBuffer();
 	drawParam.PipelineStatePtr = pip_;

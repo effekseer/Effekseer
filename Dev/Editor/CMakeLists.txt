@@ -14,6 +14,7 @@ file(GLOB files_core
     EffekseerCore/Binary/RenderData/*.cs
     EffekseerCore/Command/*.cs
     EffekseerCore/Data/*.cs
+    EffekseerCore/Data/Group/*.cs
     EffekseerCore/Data/Value/*.cs
     EffekseerCore/Exporter/*.cs
     EffekseerCore/InternalScript/*.cs

@@ -246,6 +246,15 @@ void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
 
 	if (msaaSamples > 1)
 	{
+		depthRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+		depthRenderTextureMSAA->Initialize(screenSize, efk::TextureFormat::R32F, msaaSamples);
+	}
+
+	depthRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+	depthRenderTexture->Initialize(screenSize, efk::TextureFormat::R32F, 1);
+
+	if (msaaSamples > 1)
+	{
 		hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
 		hdrRenderTextureMSAA->Initialize(screenSize, textureFormat_, msaaSamples);
 	}
@@ -411,7 +420,7 @@ void RenderedEffectGenerator::Render()
 	graphics_->SetRenderTarget(viewRenderTexture.get(), nullptr);
 	if (config_.BackgroundColor.A != 255)
 	{
-		graphics_->Clear(config_.BackgroundColor);	
+		graphics_->Clear(config_.BackgroundColor);
 	}
 
 	renderer_->SetRenderMode(config_.RenderMode);
@@ -420,6 +429,46 @@ void RenderedEffectGenerator::Render()
 	renderer_->SetLightDirection(config_.LightDirection);
 	renderer_->SetLightColor(config_.LightColor);
 	renderer_->SetLightAmbientColor(config_.LightAmbientColor);
+
+	// clear
+	if (msaaSamples > 1)
+	{
+		auto rs = std::array<efk::RenderTexture*, 1>{depthRenderTextureMSAA.get()};
+		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
+	}
+	else
+	{
+		auto rs = std::array<efk::RenderTexture*, 1>{depthRenderTexture.get()};
+		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
+	}
+
+	graphics_->Clear({255, 255, 255, 255});
+
+	if (msaaSamples > 1)
+	{
+		auto rs = std::array<efk::RenderTexture*, 1>{hdrRenderTextureMSAA.get()};
+		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
+	}
+	else
+	{
+		auto rs = std::array<efk::RenderTexture*, 1>{hdrRenderTexture.get()};
+		graphics_->SetRenderTarget(rs.data(), 1, depthTexture.get());
+	}
+
+	graphics_->Clear(config_.BackgroundColor);
+
+	if (msaaSamples > 1)
+	{
+		auto rs = std::array<efk::RenderTexture*, 2>{hdrRenderTextureMSAA.get(), depthRenderTextureMSAA.get()};
+		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
+	}
+	else
+	{
+		auto rs = std::array<efk::RenderTexture*, 2>{hdrRenderTexture.get(), depthRenderTexture.get()};
+		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
+	}
+
+	OnAfterClear();
 
 	if (msaaSamples > 1)
 	{
@@ -430,10 +479,10 @@ void RenderedEffectGenerator::Render()
 		graphics_->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
 	}
 
-	// clear
-	graphics_->Clear(config_.BackgroundColor);
-
-	OnAfterClear();
+	if (msaaSamples > 1)
+	{
+		graphics_->ResolveRenderTarget(depthRenderTextureMSAA.get(), depthRenderTexture.get());
+	}
 
 	// HACK : grid renderer changes RenderMode
 	renderer_->SetRenderMode(config_.RenderMode);
