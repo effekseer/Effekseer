@@ -105,6 +105,7 @@
     <Compile Include="Binary\CommonValues.cs" />
     <Compile Include="Binary\GenerationLocationValues.cs" />
     <Compile Include="Binary\RenderData\MaterialSerializer.cs" />
+    <Compile Include="Binary\RendererCommonValues_Old.cs" />
     <Compile Include="Binary\RendererValues.cs" />
     <Compile Include="Binary\Exporter.cs" />
     <Compile Include="Binary\RotationValues.cs" />

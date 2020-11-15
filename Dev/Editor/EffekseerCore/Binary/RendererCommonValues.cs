@@ -14,10 +14,10 @@ namespace Effekseer.Binary
 		public static byte[] GetBytes(Data.RendererCommonValues value,
 			Data.AdvancedRenderCommonValues advanceValue,
 			Data.AdvancedRenderCommonValues2 advanceValue2,
-			Dictionary<string, int> texture_and_index,
-			Dictionary<string, int> normalTexture_and_index,
-			Dictionary<string, int> distortionTexture_and_index,
-			Dictionary<string, int> material_and_index,
+			SortedDictionary<string, int> texture_and_index,
+			SortedDictionary<string, int> normalTexture_and_index,
+			SortedDictionary<string, int> distortionTexture_and_index,
+			SortedDictionary<string, int> material_and_index,
 			ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();

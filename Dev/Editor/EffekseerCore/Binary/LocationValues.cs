@@ -10,7 +10,7 @@ namespace Effekseer.Binary
 {
 	class LocationValues
 	{
-		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType, Dictionary<string, int> curveAndIndex, ExporterVersion version)
+		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> curveAndIndex, ExporterVersion version)
 		{
 			//if (parentEffectType != Data.ParentEffectType.NotBind) magnification = 1.0f;
 

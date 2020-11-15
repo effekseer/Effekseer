@@ -10,10 +10,18 @@ struct PS_Input
     vec2 UV;
     vec4 Color;
     vec3 Normal;
+    vec4 Position;
+};
+
+struct PS_OUTPUT
+{
+    vec4 o0;
+    vec4 o1;
 };
 
 struct PS_ConstantBuffer
 {
+    vec4 isLit;
     vec4 directionalLightDirection;
     vec4 directionalLightColor;
     vec4 ambientLightColor;
@@ -21,21 +29,27 @@ struct PS_ConstantBuffer
 
 uniform PS_ConstantBuffer CBPS0;
 
+uniform sampler2D Sampler_g_sampler;
+
 in vec2 _VSPS_UV;
 in vec4 _VSPS_Color;
 in vec3 _VSPS_Normal;
-layout(location = 0) out vec4 _entryPointOutput;
+in vec4 _VSPS_Position;
+layout(location = 0) out vec4 _entryPointOutput_o0;
+layout(location = 1) out vec4 _entryPointOutput_o1;
 
-vec4 _main(PS_Input Input)
+PS_OUTPUT _main(PS_Input Input)
 {
-    vec4 _output = Input.Color;
-    float diffuse = max(dot(CBPS0.directionalLightDirection.xyz, Input.Normal), 0.0);
-    vec3 _47 = _output.xyz * ((CBPS0.directionalLightColor.xyz * diffuse) + CBPS0.ambientLightColor.xyz);
-    _output = vec4(_47.x, _47.y, _47.z, _output.w);
-    if (_output.w == 0.0)
+    PS_OUTPUT _output;
+    _output.o0 = Input.Color * texture(Sampler_g_sampler, Input.UV);
+    if (CBPS0.isLit.x > 0.0)
     {
-        discard;
+        float diffuse = max(dot(CBPS0.directionalLightDirection.xyz, Input.Normal), 0.0);
+        vec3 _73 = _output.o0.xyz * ((CBPS0.directionalLightColor.xyz * diffuse) + CBPS0.ambientLightColor.xyz);
+        _output.o0 = vec4(_73.x, _73.y, _73.z, _output.o0.w);
     }
+    _output.o1 = vec4(1.0);
+    _output.o1.x = Input.Position.z / Input.Position.w;
     return _output;
 }
 
@@ -46,8 +60,10 @@ void main()
     Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
     Input.Normal = _VSPS_Normal;
-    vec4 _84 = _main(Input);
-    _entryPointOutput = _84;
+    Input.Position = _VSPS_Position;
+    PS_OUTPUT flattenTemp = _main(Input);
+    _entryPointOutput_o0 = flattenTemp.o0;
+    _entryPointOutput_o1 = flattenTemp.o1;
 }
 
 )";

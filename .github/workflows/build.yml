@@ -55,7 +55,8 @@ jobs:
           - name: windows
             os: vs2017-win2016
           - name: mac
-            os: macos-latest 
+            os: macos-latest
+
     name: Build on ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -87,8 +88,8 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1 
-              export MONO_SDK_PATH=/Library/Frameworks/Mono.framework/Versions/6.4.0
           fi
+
           python3 build.py || python build.py
                 
       - name: Prepare Runtime
