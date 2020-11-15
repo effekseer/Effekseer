@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Effekseer.Data;
+using Effekseer.Data.Value;
 using Effekseer.Utl;
 
 namespace Effekseer.Binary
@@ -103,7 +104,6 @@ namespace Effekseer.Binary
 		{
 			List<byte[]> data = new List<byte[]>();
 
-
 			// Fallback
 			if (version < ExporterVersion.Ver16Alpha2)
 			{
@@ -113,83 +113,97 @@ namespace Effekseer.Binary
 				}
 			}
 
-			if (value == null)
+			if (value != null)
 			{
-				data.Add(((int)(Data.RendererValues.ParamaterType.None)).GetBytes());
+				data.Add(value.Type.GetValueAsInt().GetBytes());
+				switch (value.Type.Value)
+				{
+					case Data.RendererValues.ParamaterType.None:
+						break;
+					case Data.RendererValues.ParamaterType.Sprite:
+						AddSpriteData(value, data);
+						break;
+					case Data.RendererValues.ParamaterType.Ribbon:
+						AddRibbonData(value, data);
+						break;
+					case Data.RendererValues.ParamaterType.Ring:
+						AddRingData(value, data);
+						break;
+					case Data.RendererValues.ParamaterType.Model:
+						AddModelData(value, model_and_index, pmodel_and_index, version, data);
+						break;
+					case Data.RendererValues.ParamaterType.Track:
+						AddTrackData(value, data);
+						break;
+				}
 			}
 			else
 			{
-				data.Add(value.Type.GetValueAsInt().GetBytes());
+				data.Add(((int)Data.RendererValues.ParamaterType.None).GetBytes());
 			}
 
-			if (value == null)
-			{ 
-			
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.None)
+			return data.ToArray().ToArray();
+		}
+
+		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data)
+		{
+			var param = value.Sprite;
+
+			data.Add(param.RenderingOrder);
+			data.Add(param.Billboard);
+
+			AddColorAll();
+			AddPartialColor();
+			AddPosition();
+
+			void AddColorAll()
 			{
-				
-			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Sprite)
-			{
-				var param = value.Sprite;
-
-				data.Add(param.RenderingOrder);
-				//data.Add(sprite_paramater.AlphaBlend);
-				data.Add(param.Billboard);
-
-				// 全体色
-				data.Add(param.ColorAll);
-
+				data.Add(param.ColorAll);	// 全体色
 				if (param.ColorAll.Value == Data.StandardColorType.Fixed)
 				{
-					var color_all = (byte[])param.ColorAll_Fixed;
+					var color_all = (byte[]) param.ColorAll_Fixed;
 					data.Add(color_all);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Random)
 				{
-					var color_random = (byte[])param.ColorAll_Random;
+					var color_random = (byte[]) param.ColorAll_Random;
 					data.Add(color_random);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing((float)value.Sprite.ColorAll_Easing.StartSpeed.Value, (float)value.Sprite.ColorAll_Easing.EndSpeed.Value);
-					data.Add((byte[])value.Sprite.ColorAll_Easing.Start);
-					data.Add((byte[])value.Sprite.ColorAll_Easing.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+					AddColorEasing(data, value.Sprite.ColorAll_Easing);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
 				{
 					var bytes = param.ColorAll_FCurve.FCurve.GetBytes();
 					data.Add(bytes);
 				}
-				
-				// 部分色
+			}
+
+			void AddPartialColor()
+			{
 				data.Add(param.Color);
 
 				if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Default)
 				{
-					
 				}
 				else if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Fixed)
 				{
-					var color_ll = (byte[])param.Color_Fixed_LL;
-					var color_lr = (byte[])param.Color_Fixed_LR;
-					var color_ul = (byte[])param.Color_Fixed_UL;
-					var color_ur = (byte[])param.Color_Fixed_UR;
+					var color_ll = (byte[]) param.Color_Fixed_LL;
+					var color_lr = (byte[]) param.Color_Fixed_LR;
+					var color_ul = (byte[]) param.Color_Fixed_UL;
+					var color_ur = (byte[]) param.Color_Fixed_UR;
 
 					data.Add(color_ll);
 					data.Add(color_lr);
 					data.Add(color_ul);
 					data.Add(color_ur);
-					
 				}
+			}
 
-				// 座標
-				//data.Add(sprite_paramater.Position);
-				data.Add(BitConverter.GetBytes((int)Data.RendererValues.SpriteParamater.PositionType.Fixed));
+			void AddPosition()
+			{
+				data.Add(BitConverter.GetBytes((int) Data.RendererValues.SpriteParamater.PositionType.Fixed));
 
 				if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Default)
 				{
@@ -204,336 +218,258 @@ namespace Effekseer.Binary
 				}
 				else if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Fixed)
 				{
-					var pos_ll = (byte[])param.Position_Fixed_LL.GetBytes();
-					var pos_lr = (byte[])param.Position_Fixed_LR.GetBytes();
-					var pos_ul = (byte[])param.Position_Fixed_UL.GetBytes();
-					var pos_ur = (byte[])param.Position_Fixed_UR.GetBytes();
+					var pos_ll = (byte[]) param.Position_Fixed_LL.GetBytes();
+					var pos_lr = (byte[]) param.Position_Fixed_LR.GetBytes();
+					var pos_ul = (byte[]) param.Position_Fixed_UL.GetBytes();
+					var pos_ur = (byte[]) param.Position_Fixed_UR.GetBytes();
 
 					data.Add(pos_ll);
 					data.Add(pos_lr);
 					data.Add(pos_ul);
 					data.Add(pos_ur);
 				}
-
-				// テクスチャ番号
-				/*
-				if (sprite_paramater.ColorTexture.RelativePath != string.Empty)
-				{
-					data.Add(texture_and_index[sprite_paramater.ColorTexture.RelativePath].GetBytes());
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-				}
-				*/
 			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Ribbon)
+		}
+
+		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
+		{
+			var ribbonParameter = value.Ribbon;
+
+			// texture uv mode from 1.5
+			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
+
+			data.Add((ribbonParameter.ViewpointDependent ? 1 : 0).GetBytes());
+
+			AddColorAll();
+			AddPartialColor();
+			AddPosition();
+
+			data.Add(BitConverter.GetBytes(ribbonParameter.SplineDivision.Value));
+
+			void AddColorAll()
 			{
-				var ribbonParamater = value.Ribbon;
+				data.Add(ribbonParameter.ColorAll);
 
-				//data.Add(ribbonParamater.AlphaBlend);
-
-				// texture uv mode from 1.5
-				data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
-
-				if (ribbonParamater.ViewpointDependent)
+				if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Fixed)
 				{
-					data.Add((1).GetBytes());
-				}
-				else
-				{
-					data.Add((0).GetBytes());
-				}
-
-				// 全体色
-				data.Add(ribbonParamater.ColorAll);
-
-				if (ribbonParamater.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Fixed)
-				{
-					var color_all = (byte[])ribbonParamater.ColorAll_Fixed;
+					var color_all = (byte[]) ribbonParameter.ColorAll_Fixed;
 					data.Add(color_all);
 				}
-				else if (ribbonParamater.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Random)
+				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Random)
 				{
-					var color_random = (byte[])ribbonParamater.ColorAll_Random;
+					var color_random = (byte[]) ribbonParameter.ColorAll_Random;
 					data.Add(color_random);
 				}
-				else if (ribbonParamater.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
+				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing((float)ribbonParamater.ColorAll_Easing.StartSpeed.Value, (float)ribbonParamater.ColorAll_Easing.EndSpeed.Value);
-					data.Add((byte[])ribbonParamater.ColorAll_Easing.Start);
-					data.Add((byte[])ribbonParamater.ColorAll_Easing.End);
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+					AddColorEasing(data, ribbonParameter.ColorAll_Easing);
 				}
+			}
 
-				// 部分色
-				data.Add(ribbonParamater.Color);
+			void AddPartialColor()
+			{
+				data.Add(ribbonParameter.Color);
 
-				if (ribbonParamater.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Default)
+				if (ribbonParameter.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Default)
 				{
-
 				}
-				else if (ribbonParamater.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Fixed)
+				else if (ribbonParameter.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Fixed)
 				{
-					var color_l = (byte[])ribbonParamater.Color_Fixed_L;
-					var color_r = (byte[])ribbonParamater.Color_Fixed_R;
+					var color_l = (byte[]) ribbonParameter.Color_Fixed_L;
+					var color_r = (byte[]) ribbonParameter.Color_Fixed_R;
 
 					data.Add(color_l);
 					data.Add(color_r);
 				}
+			}
 
-				// 座標
-				//data.Add(ribbonParamater.Position);
-				data.Add(BitConverter.GetBytes((int)Data.RendererValues.RibbonParamater.PositionType.Fixed));
+			void AddPosition()
+			{
+				data.Add(BitConverter.GetBytes((int) Data.RendererValues.RibbonParamater.PositionType.Fixed));
 
-				if (ribbonParamater.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Default)
+				if (ribbonParameter.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Default)
 				{
 					data.Add(BitConverter.GetBytes(-0.5f));
 					data.Add(BitConverter.GetBytes(+0.5f));
 				}
-				else if (ribbonParamater.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Fixed)
+				else if (ribbonParameter.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Fixed)
 				{
-					var pos_l = (byte[])ribbonParamater.Position_Fixed_L.GetBytes();
-					var pos_r = (byte[])ribbonParamater.Position_Fixed_R.GetBytes();
+					var pos_l = (byte[]) ribbonParameter.Position_Fixed_L.GetBytes();
+					var pos_r = (byte[]) ribbonParameter.Position_Fixed_R.GetBytes();
 					data.Add(pos_l);
 					data.Add(pos_r);
 				}
-
-				data.Add(BitConverter.GetBytes(ribbonParamater.SplineDivision.Value));
-
-				// テクスチャ番号
-				/*
-				if (ribbonParamater.ColorTexture.RelativePath != string.Empty)
-				{
-					data.Add(texture_and_index[ribbonParamater.ColorTexture.RelativePath].GetBytes());
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-				}
-				*/
 			}
-            else if (value.Type.Value == Data.RendererValues.ParamaterType.Ring)
-            {
-                var ringParamater = value.Ring;
+		}
 
-                data.Add(ringParamater.RenderingOrder);
-                //data.Add(ringParamater.AlphaBlend);
-                data.Add(ringParamater.Billboard);
+		private static void AddRingData(Data.RendererValues value, List<byte[]> data)
+		{
+			var ringParameter = value.Ring;
 
-				// from 1.5
-				data.Add(RingShapeParameter.GetBytes(ringParamater.RingShape));
+			data.Add(ringParameter.RenderingOrder);
+			data.Add(ringParameter.Billboard);
 
-                data.Add(ringParamater.VertexCount.Value.GetBytes());
+			// from 1.5
+			data.Add(RingShapeParameter.GetBytes(ringParameter.RingShape));
 
-				// viewing angle (it will removed)
-				
-                data.Add(ringParamater.ViewingAngle);
-                if (ringParamater.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Fixed)
-                {
-                    data.Add(ringParamater.ViewingAngle_Fixed.Value.GetBytes());
-                }
-                else if (ringParamater.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Random)
-                {
-                    data.Add(ringParamater.ViewingAngle_Random.Max.GetBytes());
-                    data.Add(ringParamater.ViewingAngle_Random.Min.GetBytes());
-                }
-                else if (ringParamater.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.ViewingAngle_Easing.StartSpeed.Value,
-                        (float)ringParamater.ViewingAngle_Easing.EndSpeed.Value);
+			data.Add(ringParameter.VertexCount.Value.GetBytes());
 
-                    data.Add(ringParamater.ViewingAngle_Easing.Start.Max.GetBytes());
-                    data.Add(ringParamater.ViewingAngle_Easing.Start.Min.GetBytes());
-                    data.Add(ringParamater.ViewingAngle_Easing.End.Max.GetBytes());
-                    data.Add(ringParamater.ViewingAngle_Easing.End.Min.GetBytes());
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
-				
+			AddViewingAngle();
 
-                data.Add(ringParamater.Outer);
-                if (ringParamater.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
-                {
-                    data.Add((ringParamater.Outer_Fixed.Location.X.Value).GetBytes());
-					data.Add((ringParamater.Outer_Fixed.Location.Y.Value).GetBytes());
-                }
-                else if (ringParamater.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.PVA)
-                {
-					data.Add(ringParamater.Outer_PVA.Location.GetBytes());
-					data.Add(ringParamater.Outer_PVA.Velocity.GetBytes());
-					data.Add(ringParamater.Outer_PVA.Acceleration.GetBytes());
-                }
-                else if (ringParamater.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.Outer_Easing.StartSpeed.Value, 
-                        (float)ringParamater.Outer_Easing.EndSpeed.Value);
+			AddLocation(ringParameter.Outer,
+				ringParameter.Outer_Fixed,
+				ringParameter.Outer_PVA,
+				ringParameter.Outer_Easing);
+			AddLocation(ringParameter.Inner,
+				ringParameter.Inner_Fixed,
+				ringParameter.Inner_PVA,
+				ringParameter.Inner_Easing);
 
-                    data.Add((byte[])ringParamater.Outer_Easing.Start.GetBytes());
-                    data.Add((byte[])ringParamater.Outer_Easing.End.GetBytes());
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
+			AddCenterRatio();
 
-                data.Add(ringParamater.Inner);
-                if (ringParamater.Inner.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
-                {
-					data.Add((ringParamater.Inner_Fixed.Location.X.Value).GetBytes());
-					data.Add((ringParamater.Inner_Fixed.Location.Y.Value).GetBytes());
-                }
-                else if (ringParamater.Inner.GetValue() == Data.RendererValues.RingParamater.LocationType.PVA)
-                {
-					data.Add(ringParamater.Inner_PVA.Location.GetBytes());
-					data.Add(ringParamater.Inner_PVA.Velocity.GetBytes());
-					data.Add(ringParamater.Inner_PVA.Acceleration.GetBytes());
-                }
-                else if (ringParamater.Inner.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.Inner_Easing.StartSpeed.Value,
-                        (float)ringParamater.Inner_Easing.EndSpeed.Value);
+			AddColor(ringParameter.OuterColor,
+				ringParameter.OuterColor_Fixed,
+				ringParameter.OuterColor_Random,
+				ringParameter.OuterColor_Easing);
+			AddColor(ringParameter.CenterColor,
+				ringParameter.CenterColor_Fixed,
+				ringParameter.CenterColor_Random,
+				ringParameter.CenterColor_Easing);
+			AddColor(ringParameter.InnerColor,
+				ringParameter.InnerColor_Fixed,
+				ringParameter.InnerColor_Random,
+				ringParameter.InnerColor_Easing);
 
-                    data.Add((byte[])ringParamater.Inner_Easing.Start.GetBytes());
-                    data.Add((byte[])ringParamater.Inner_Easing.End.GetBytes());
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
-
-                data.Add(ringParamater.CenterRatio);
-                if (ringParamater.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Fixed)
-                {
-                    data.Add(ringParamater.CenterRatio_Fixed.Value.GetBytes());
-                }
-                else if (ringParamater.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Random)
-                {
-                    data.Add(ringParamater.CenterRatio_Random.Max.GetBytes());
-                    data.Add(ringParamater.CenterRatio_Random.Min.GetBytes());
-                }
-                else if (ringParamater.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.CenterRatio_Easing.StartSpeed.Value,
-                        (float)ringParamater.CenterRatio_Easing.EndSpeed.Value);
-
-                    data.Add(ringParamater.CenterRatio_Easing.Start.Max.GetBytes());
-                    data.Add(ringParamater.CenterRatio_Easing.Start.Min.GetBytes());
-                    data.Add(ringParamater.CenterRatio_Easing.End.Max.GetBytes());
-                    data.Add(ringParamater.CenterRatio_Easing.End.Min.GetBytes());
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
-
-                data.Add(ringParamater.OuterColor);
-                if (ringParamater.OuterColor.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
-                {
-                    data.Add((byte[])ringParamater.OuterColor_Fixed);
-                }
-                else if (ringParamater.OuterColor.Value == Data.RendererValues.RingParamater.ColorType.Random)
-                {
-                    data.Add((byte[])ringParamater.OuterColor_Random);
-                }
-                else if (ringParamater.OuterColor.Value == Data.RendererValues.RingParamater.ColorType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.OuterColor_Easing.StartSpeed.Value, 
-                        (float)ringParamater.OuterColor_Easing.EndSpeed.Value);
-                    data.Add((byte[])ringParamater.OuterColor_Easing.Start);
-                    data.Add((byte[])ringParamater.OuterColor_Easing.End);
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
-
-                data.Add(ringParamater.CenterColor);
-                if (ringParamater.CenterColor.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
-                {
-                    data.Add((byte[])ringParamater.CenterColor_Fixed);
-                }
-                else if (ringParamater.CenterColor.Value == Data.RendererValues.RingParamater.ColorType.Random)
-                {
-                    data.Add((byte[])ringParamater.CenterColor_Random);
-                }
-                else if (ringParamater.CenterColor.Value == Data.RendererValues.RingParamater.ColorType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.CenterColor_Easing.StartSpeed.Value,
-                        (float)ringParamater.CenterColor_Easing.EndSpeed.Value);
-                    data.Add((byte[])ringParamater.CenterColor_Easing.Start);
-                    data.Add((byte[])ringParamater.CenterColor_Easing.End);
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
-
-                data.Add(ringParamater.InnerColor);
-                if (ringParamater.InnerColor.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
-                {
-                    data.Add((byte[])ringParamater.InnerColor_Fixed);
-                }
-                else if (ringParamater.InnerColor.Value == Data.RendererValues.RingParamater.ColorType.Random)
-                {
-                    data.Add((byte[])ringParamater.InnerColor_Random);
-                }
-                else if (ringParamater.InnerColor.Value == Data.RendererValues.RingParamater.ColorType.Easing)
-                {
-                    var easing = Utl.MathUtl.Easing(
-                        (float)ringParamater.InnerColor_Easing.StartSpeed.Value,
-                        (float)ringParamater.InnerColor_Easing.EndSpeed.Value);
-                    data.Add((byte[])ringParamater.InnerColor_Easing.Start);
-                    data.Add((byte[])ringParamater.InnerColor_Easing.End);
-                    data.Add(BitConverter.GetBytes(easing[0]));
-                    data.Add(BitConverter.GetBytes(easing[1]));
-                    data.Add(BitConverter.GetBytes(easing[2]));
-                }
-
-                // テクスチャ番号
-                /*
-				if (ringParamater.ColorTexture.RelativePath != string.Empty)
-                {
-                    data.Add(texture_and_index[ringParamater.ColorTexture.RelativePath].GetBytes());
-                }
-                else
-                {
-                    data.Add((-1).GetBytes());
-                }
-				*/
-            }
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Model)
+			void AddViewingAngle()
 			{
-				var param = value.Model;
+				// it will removed
 
-				if (version >= ExporterVersion.Ver16Alpha3)
+				data.Add(ringParameter.ViewingAngle);
+				if (ringParameter.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Fixed)
 				{
-					var refType = (int)value.Model.ModelReference.Value;
-					data.Add((refType).GetBytes());
+					data.Add(ringParameter.ViewingAngle_Fixed.Value.GetBytes());
 				}
+				else if (ringParameter.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Random)
+				{
+					data.Add(ringParameter.ViewingAngle_Random.Max.GetBytes());
+					data.Add(ringParameter.ViewingAngle_Random.Min.GetBytes());
+				}
+				else if (ringParameter.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Easing)
+				{
+					AddFloatEasing(data, ringParameter.ViewingAngle_Easing);
+				}
+			}
 
+			void AddLocation(Enum<Data.RendererValues.RingParamater.LocationType> locationType,
+				Data.RendererValues.RingParamater.FixedLocation @fixed,
+				Data.RendererValues.RingParamater.PVALocation pva,
+				Vector2DEasingParamater easingParam)
+			{
+				data.Add(locationType);
+				if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
+				{
+					data.Add((@fixed.Location.X.Value).GetBytes());
+					data.Add((@fixed.Location.Y.Value).GetBytes());
+				}
+				else if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.PVA)
+				{
+					data.Add(pva.Location.GetBytes());
+					data.Add(pva.Velocity.GetBytes());
+					data.Add(pva.Acceleration.GetBytes());
+				}
+				else if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
+				{
+					data.Add((byte[]) easingParam.Start.GetBytes());
+					data.Add((byte[]) easingParam.End.GetBytes());
+
+					AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
+				}
+			}
+
+			void AddCenterRatio()
+			{
+				data.Add(ringParameter.CenterRatio);
+				if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Fixed)
+				{
+					data.Add(ringParameter.CenterRatio_Fixed.Value.GetBytes());
+				}
+				else if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Random)
+				{
+					data.Add(ringParameter.CenterRatio_Random.Max.GetBytes());
+					data.Add(ringParameter.CenterRatio_Random.Min.GetBytes());
+				}
+				else if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Easing)
+				{
+					AddFloatEasing(data, ringParameter.CenterRatio_Easing);
+				}
+			}
+
+			void AddColor(Enum<Data.RendererValues.RingParamater.ColorType> parameter,
+				Color @fixed,
+				ColorWithRandom random,
+				ColorEasingParamater easingParam)
+			{
+				data.Add(parameter);
+				if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
+				{
+					data.Add((byte[]) @fixed);
+				}
+				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Random)
+				{
+					data.Add((byte[]) random);
+				}
+				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Easing)
+				{
+					AddColorEasing(data, easingParam);
+				}
+			}
+		}
+
+		private static void AddModelData(
+			Data.RendererValues value,
+			SortedDictionary<string, int> model_and_index,
+			SortedDictionary<ProcedualModelParameter, int> pmodel_and_index,
+			ExporterVersion version,
+			List<byte[]> data)
+		{
+			var param = value.Model;
+
+			if (version >= ExporterVersion.Ver16Alpha3)
+			{
+				var refType = (int) value.Model.ModelReference.Value;
+				data.Add((refType).GetBytes());
+			}
+
+			AddModelReference();
+
+			data.Add(param.Billboard);
+
+			data.Add(((int) param.Culling.Value).GetBytes());
+
+			// 全体色
+			OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
+				param.Color_FCurve);
+
+			void AddModelReference()
+			{
 				if (value.Model.ModelReference.Value == Data.ModelReferenceType.File)
 				{
 					data.Add((1.0f).GetBytes());
 
 					if (param.Model.RelativePath != string.Empty)
 					{
-						var relative_path = param.Model.RelativePath;
+						var relativePath = param.Model.RelativePath;
 
-						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relativePath)))
 						{
-							relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+							relativePath = System.IO.Path.GetFileNameWithoutExtension(relativePath) + ".efkmodel";
 						}
 						else
 						{
-							relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+							relativePath = System.IO.Path.ChangeExtension(relativePath, ".efkmodel");
 						}
 
-						data.Add(model_and_index[relative_path].GetBytes());
+						data.Add(model_and_index[relativePath].GetBytes());
 					}
 					else
 					{
@@ -542,7 +478,7 @@ namespace Effekseer.Binary
 				}
 				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
 				{
-					if(value.Model.Reference.Value != null)
+					if (value.Model.Reference.Value != null)
 					{
 						var ind = pmodel_and_index[value.Model.Reference.Value];
 						data.Add(ind.GetBytes());
@@ -552,61 +488,40 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
-
-				data.Add(param.Billboard);
-
-				data.Add(((int)param.Culling.Value).GetBytes());
-
-				// 全体色
-				OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing, param.Color_FCurve);
-
-				/*
-				if(version >= ExporterVersion.Ver16Alpha1)
-				{
-					if (value.EnableFalloff)
-					{
-						data.Add((1).GetBytes());
-
-						data.Add(value.FalloffParam.ColorBlendType);
-						data.Add(value.FalloffParam.BeginColor);
-						data.Add(value.FalloffParam.EndColor);
-						data.Add(BitConverter.GetBytes(value.FalloffParam.Pow.Value));
-					}
-					else
-					{
-						data.Add((0).GetBytes());
-					}
-				}
-				*/
 			}
-			else if (value.Type.Value == Data.RendererValues.ParamaterType.Track)
-			{
-				// texture uv mode from 1.5
-				data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
+		}
 
-				var param = value.Track;
-				data.Add(param.TrackSizeFor);
-				data.Add(BitConverter.GetBytes(param.TrackSizeFor_Fixed.Value));
+		private static void AddTrackData(Data.RendererValues value, List<byte[]> data)
+		{
+			// texture uv mode from 1.5
+			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
 
-				data.Add(param.TrackSizeMiddle);
-				data.Add(BitConverter.GetBytes(param.TrackSizeMiddle_Fixed.Value));
+			var param = value.Track;
+			data.Add(param.TrackSizeFor);
+			data.Add(BitConverter.GetBytes(param.TrackSizeFor_Fixed.Value));
 
-				data.Add(param.TrackSizeBack);
-				data.Add(BitConverter.GetBytes(param.TrackSizeBack_Fixed.Value));
-				
-				data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
+			data.Add(param.TrackSizeMiddle);
+			data.Add(BitConverter.GetBytes(param.TrackSizeMiddle_Fixed.Value));
 
-				OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing, param.ColorLeft_FCurve);
-				OutputStandardColor(data, param.ColorLeftMiddle, param.ColorLeftMiddle_Fixed, param.ColorLeftMiddle_Random, param.ColorLeftMiddle_Easing, param.ColorLeftMiddle_FCurve);
+			data.Add(param.TrackSizeBack);
+			data.Add(BitConverter.GetBytes(param.TrackSizeBack_Fixed.Value));
 
-				OutputStandardColor(data, param.ColorCenter, param.ColorCenter_Fixed, param.ColorCenter_Random, param.ColorCenter_Easing, param.ColorCenter_FCurve);
-				OutputStandardColor(data, param.ColorCenterMiddle, param.ColorCenterMiddle_Fixed, param.ColorCenterMiddle_Random, param.ColorCenterMiddle_Easing, param.ColorCenterMiddle_FCurve);
+			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
 
-				OutputStandardColor(data, param.ColorRight, param.ColorRight_Fixed, param.ColorRight_Random, param.ColorRight_Easing, param.ColorRight_FCurve);
-				OutputStandardColor(data, param.ColorRightMiddle, param.ColorRightMiddle_Fixed, param.ColorRightMiddle_Random, param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
-			}
-			
-			return data.ToArray().ToArray();
+			OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing,
+				param.ColorLeft_FCurve);
+			OutputStandardColor(data, param.ColorLeftMiddle, param.ColorLeftMiddle_Fixed, param.ColorLeftMiddle_Random,
+				param.ColorLeftMiddle_Easing, param.ColorLeftMiddle_FCurve);
+
+			OutputStandardColor(data, param.ColorCenter, param.ColorCenter_Fixed, param.ColorCenter_Random,
+				param.ColorCenter_Easing, param.ColorCenter_FCurve);
+			OutputStandardColor(data, param.ColorCenterMiddle, param.ColorCenterMiddle_Fixed, param.ColorCenterMiddle_Random,
+				param.ColorCenterMiddle_Easing, param.ColorCenterMiddle_FCurve);
+
+			OutputStandardColor(data, param.ColorRight, param.ColorRight_Fixed, param.ColorRight_Random,
+				param.ColorRight_Easing, param.ColorRight_FCurve);
+			OutputStandardColor(data, param.ColorRightMiddle, param.ColorRightMiddle_Fixed, param.ColorRightMiddle_Random,
+				param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
 		}
 
 		private static void OutputStandardColor(
@@ -631,18 +546,37 @@ namespace Effekseer.Binary
 			}
 			else if (color.Value == Data.StandardColorType.Easing)
 			{
-				var easing = Utl.MathUtl.Easing((float)color_Easing.StartSpeed.Value, (float)color_Easing.EndSpeed.Value);
-				data.Add((byte[])color_Easing.Start);
-				data.Add((byte[])color_Easing.End);
-				data.Add(BitConverter.GetBytes(easing[0]));
-				data.Add(BitConverter.GetBytes(easing[1]));
-				data.Add(BitConverter.GetBytes(easing[2]));
+				AddColorEasing(data, color_Easing);
 			}
 			else if (color.Value == Data.StandardColorType.FCurve)
 			{
 				var bytes = color_FCurve.FCurve.GetBytes();
 				data.Add(bytes);
 			}
+		}
+
+		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
+		{
+			var easing = Utl.MathUtl.Easing((float) start.Value, (float) end.Value);
+			data.Add(BitConverter.GetBytes(easing[0]));
+			data.Add(BitConverter.GetBytes(easing[1]));
+			data.Add(BitConverter.GetBytes(easing[2]));
+		}
+		
+		private static void AddColorEasing(List<byte[]> data, ColorEasingParamater easingParam)
+		{
+			data.Add((byte[]) easingParam.Start);
+			data.Add((byte[]) easingParam.End);
+			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
+		}
+		
+		private static void AddFloatEasing(List<byte[]> data, FloatEasingParamater easingParam)
+		{
+			data.Add(easingParam.Start.Max.GetBytes());
+			data.Add(easingParam.Start.Min.GetBytes());
+			data.Add(easingParam.End.Max.GetBytes());
+			data.Add(easingParam.End.Min.GetBytes());
+			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
 	}
 }
