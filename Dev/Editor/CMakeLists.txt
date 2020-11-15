@@ -11,6 +11,7 @@ set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION v4.6.1)
 file(GLOB files_core
     EffekseerCore/*.cs
     EffekseerCore/Binary/*.cs
+    EffekseerCore/Binary/RenderData/*.cs
     EffekseerCore/Command/*.cs
     EffekseerCore/Data/*.cs
     EffekseerCore/Data/Value/*.cs
