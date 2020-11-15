@@ -9,7 +9,7 @@ namespace Effekseer.Binary.RenderData
 	internal sealed class MaterialSerializer
 	{
 		private void AddTextureInfo(ExporterVersion version,
-			Dictionary<string, int> texAndInd,
+			SortedDictionary<string, int> texAndInd,
 			TextureValuesAggregator aggregator)
 		{
 			if (version < ExporterVersion.Ver16Alpha1)
@@ -35,7 +35,7 @@ namespace Effekseer.Binary.RenderData
 		}
 
 		private void AddAsDefaultMaterial(ExporterVersion version,
-			Dictionary<string, int> texToIndex,
+			SortedDictionary<string, int> texToIndex,
 			Data.RendererCommonValues value,
 			TextureValuesAggregator aggregator)
 		{
@@ -45,7 +45,7 @@ namespace Effekseer.Binary.RenderData
 		}
 
 		private void AddAsBackDistortion(ExporterVersion version,
-			Dictionary<string, int> distortionToIndex,
+			SortedDictionary<string, int> distortionToIndex,
 			Data.RendererCommonValues value,
 			TextureValuesAggregator aggregator)
 		{
@@ -55,8 +55,8 @@ namespace Effekseer.Binary.RenderData
 		}
 
 		private void AddAsLighting(ExporterVersion version,
-			Dictionary<string, int> texToIndex,
-			Dictionary<string, int> normalTexToIndex,
+			SortedDictionary<string, int> texToIndex,
+			SortedDictionary<string, int> normalTexToIndex,
 			Data.RendererCommonValues value,
 			TextureValuesAggregator aggregator)
 		{
@@ -67,9 +67,9 @@ namespace Effekseer.Binary.RenderData
 
 		private void AddAsFile(TextureValuesAggregator aggregator,
 			Data.RendererCommonValues value,
-			Dictionary<string, int> texToIndex,
-			Dictionary<string, int> normalToIndex,
-			Dictionary<string, int> materialToIndex)
+			SortedDictionary<string, int> texToIndex,
+			SortedDictionary<string, int> normalToIndex,
+			SortedDictionary<string, int> materialToIndex)
 		{
 			var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath) ??
 				new MaterialInformation();
@@ -119,10 +119,10 @@ namespace Effekseer.Binary.RenderData
 		public void AddMaterialData(ExporterVersion version,
 			Data.RendererCommonValues value,
 			TextureValuesAggregator aggregator,
-			Dictionary<string, int> texToIndex,
-			Dictionary<string, int> distortionToIndex,
-			Dictionary<string, int> normalToIndex,
-			Dictionary<string, int> materialToIndex)
+			SortedDictionary<string, int> texToIndex,
+			SortedDictionary<string, int> distortionToIndex,
+			SortedDictionary<string, int> normalToIndex,
+			SortedDictionary<string, int> materialToIndex)
 		{
 			switch (value.Material.Value)
 			{
