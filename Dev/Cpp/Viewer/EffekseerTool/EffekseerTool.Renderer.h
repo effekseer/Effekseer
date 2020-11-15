@@ -18,8 +18,11 @@ private:
 	std::shared_ptr<::EffekseerRenderer::Grid> grid_;
 	std::shared_ptr<::EffekseerRenderer::Guide> guide_;
 	std::shared_ptr<::EffekseerRenderer::Culling> culling_;
-	std::shared_ptr<::EffekseerRenderer::Paste> background_;
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> staticMeshRenderer_;
+
+	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
+	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
+	
 
 	Effekseer::TextureLoader* textureLoader_ = nullptr;
 	Effekseer::TextureData* backgroundData_ = nullptr;

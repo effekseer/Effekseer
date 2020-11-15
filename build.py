@@ -188,10 +188,12 @@ if env['IGNORE_BUILD'] == '0':
 
     if isWin():
         call('build\\nuget.exe restore Dev/Editor/Effekseer.sln')
-    elif isMac():
-        call('mono ./build/nuget.exe restore Dev/Editor/Effekseer.sln')
 
-    if isWin() or isMac():
+    if isMac():
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r osx.10.11-x64')
+        call('cp -r Dev/release/osx.10.11-x64/publish/* Dev/release/')
+    elif isWin():
         if is_x86:
             call('"' + msbuild_path + '"' +
                  ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
@@ -208,29 +210,17 @@ if env['IGNORE_BUILD'] == '0':
         call('cp -r Dev/release/linux-x64/publish/* Dev/release/')
 
 if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
-
     cd('Dev')
-    call('cd release;mkbundle -o Effekseer Effekseer.exe --deps --sdk $MONO_SDK_PATH;otool -L Effekseer', env=env)
     mkdir('Mac/Effekseer.app/Contents/Resources/')
-    copy('release/Effekseer', 'Mac/Effekseer.app/Contents/Resources/')
-    copy('release/Effekseer.exe', 'Mac/Effekseer.app/Contents/Resources/')
-    copy('release/libViewer.dylib', 'Mac/Effekseer.app/Contents/Resources/')
-    copy('release/EffekseerCore.dll', 'Mac/Effekseer.app/Contents/Resources/')
-    copy('release/EffekseerMaterialEditor',
-         'Mac/Effekseer.app/Contents/Resources/')
-    copy('/Library/Frameworks/Mono.framework/Libraries/libMonoPosixHelper.dylib',
-         'Mac/Effekseer.app/Contents/Resources/')
-    copytree('release/resources',
-             'Mac/Effekseer.app/Contents/Resources/resources')
-    copytree('release/scripts', 'Mac/Effekseer.app/Contents/Resources/scripts')
-    copytree('release/tools', 'Mac/Effekseer.app/Contents/Resources/tools')
+    distutils.dir_util.copy_tree('release/', 'Mac/Effekseer.app/Contents/Resources/')
 
     call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/mqoToEffekseerModelConverter')
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
 
     os.makedirs('Mac/Package', exist_ok=True)
-    shutil.copytree('Mac/Effekseer.app', 'Mac/Package/Effekseer.app')
+
+    distutils.dir_util.copy_tree('Mac/Effekseer.app', 'Mac/Package/Effekseer.app')
     call('ln -s /Applications Applications > /dev/null 2>&1')
     call('mv Applications Mac/Package/')
     call('hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Mac/Package"')
@@ -248,3 +238,4 @@ if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
     distutils.dir_util.copy_tree(
         'ResourceData/samples', 'EffekseerToolMac/Sample')
     shutil.copy('docs/readme_sample.txt', 'EffekseerToolMac/Sample/readme.txt')
+
