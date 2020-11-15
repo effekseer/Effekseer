@@ -226,9 +226,15 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		private static IEnumerable<byte[]> GetTextureValues(Data.RendererCommonValues value, AdvancedRenderCommonValues advanceValue,
-			AdvancedRenderCommonValues2 advanceValue2, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index,
-			Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index, ExporterVersion version,
+		private static IEnumerable<byte[]> GetTextureValues(
+			Data.RendererCommonValues value,
+			AdvancedRenderCommonValues advanceValue,
+			AdvancedRenderCommonValues2 advanceValue2,
+			SortedDictionary<string, int> texture_and_index,
+			SortedDictionary<string, int> normalTexture_and_index,
+			SortedDictionary<string, int> distortionTexture_and_index,
+			SortedDictionary<string, int> material_and_index,
+			ExporterVersion version,
 			TextureInformationRepository texInfoRepo)
 		{
 			var aggregator = new TextureValuesAggregator(value, advanceValue, advanceValue2, texInfoRepo);
