@@ -425,8 +425,12 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddModelData(Data.RendererValues value, Dictionary<string, int> model_and_index,
-			Dictionary<ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version, List<byte[]> data)
+		private static void AddModelData(
+			Data.RendererValues value,
+			SortedDictionary<string, int> model_and_index,
+			SortedDictionary<ProcedualModelParameter, int> pmodel_and_index,
+			ExporterVersion version,
+			List<byte[]> data)
 		{
 			var param = value.Model;
 
