@@ -148,6 +148,9 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	texParam.Size = LLGI::Vec2I(param.Size[0], param.Size[1]);
 	texParam.MipMapCount = param.GenerateMipmap ? count : 1;
 
+	// TODO : Fix it
+	texParam.MipMapCount = 1;
+
 	LLGI::TextureFormatType format = LLGI::TextureFormatType::R8G8B8A8_UNORM;
 
 	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
