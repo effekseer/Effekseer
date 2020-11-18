@@ -1,6 +1,6 @@
 struct PS_Input
 {
-    float4 Position;
+    float4 PosVS;
     float4 VColor;
     float2 UV;
     float3 WorldN;
@@ -10,6 +10,7 @@ struct PS_Input
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
     float2 Others;
+    float4 PosP;
 };
 
 struct AdvancedParameter
@@ -26,15 +27,17 @@ struct AdvancedParameter
 
 cbuffer PS_ConstanBuffer : register(b1)
 {
-    float4 _209_fLightDirection : packoffset(c0);
-    float4 _209_fLightColor : packoffset(c1);
-    float4 _209_fLightAmbient : packoffset(c2);
-    float4 _209_fFlipbookParameter : packoffset(c3);
-    float4 _209_fUVDistortionParameter : packoffset(c4);
-    float4 _209_fBlendTextureParameter : packoffset(c5);
-    float4 _209_fEmissiveScaling : packoffset(c6);
-    float4 _209_fEdgeColor : packoffset(c7);
-    float4 _209_fEdgeParameter : packoffset(c8);
+    float4 _263_fLightDirection : packoffset(c0);
+    float4 _263_fLightColor : packoffset(c1);
+    float4 _263_fLightAmbient : packoffset(c2);
+    float4 _263_fFlipbookParameter : packoffset(c3);
+    float4 _263_fUVDistortionParameter : packoffset(c4);
+    float4 _263_fBlendTextureParameter : packoffset(c5);
+    float4 _263_fEmissiveScaling : packoffset(c6);
+    float4 _263_fEdgeColor : packoffset(c7);
+    float4 _263_fEdgeParameter : packoffset(c8);
+    float4 _263_softParticleAndReconstructionParam1 : packoffset(c9);
+    float4 _263_reconstructionParam2 : packoffset(c10);
 };
 
 Texture2D<float4> g_uvDistortionTexture : register(t3);
@@ -43,6 +46,8 @@ Texture2D<float4> g_normalTexture : register(t1);
 SamplerState g_normalSampler : register(s1);
 Texture2D<float4> g_colorTexture : register(t0);
 SamplerState g_colorSampler : register(s0);
+Texture2D<float4> g_depthTexture : register(t7);
+SamplerState g_depthSampler : register(s7);
 Texture2D<float4> g_alphaTexture : register(t2);
 SamplerState g_alphaSampler : register(s2);
 Texture2D<float4> g_blendUVDistortionTexture : register(t6);
@@ -62,6 +67,7 @@ static float4 Input_Alpha_Dist_UV;
 static float4 Input_Blend_Alpha_Dist_UV;
 static float4 Input_Blend_FBNextIndex_UV;
 static float2 Input_Others;
+static float4 Input_PosP;
 static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
@@ -75,6 +81,7 @@ struct SPIRV_Cross_Input
     float4 Input_Blend_Alpha_Dist_UV : TEXCOORD6;
     float4 Input_Blend_FBNextIndex_UV : TEXCOORD7;
     float2 Input_Others : TEXCOORD8;
+    float4 Input_PosP : TEXCOORD9;
     float4 gl_FragCoord : SV_Position;
 };
 
@@ -117,33 +124,43 @@ void ApplyFlipbook(inout float4 dst, Texture2D<float4> t, SamplerState s, float4
     }
 }
 
+float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, float2 reconstruct1, float4 reconstruct2)
+{
+    float _distance = softparticleParam;
+    float2 rescale = reconstruct1;
+    float4 params = reconstruct2;
+    float2 zs = float2((backgroundZ * rescale.x) + rescale.y, meshZ);
+    float2 depth = ((zs * params.w) - params.y.xx) / (params.x.xx - (zs * params.z));
+    return min(max((depth.y - depth.x) / _distance, 0.0f), 1.0f);
+}
+
 void ApplyTextureBlending(inout float4 dstColor, float4 blendColor, float blendType)
 {
     if (blendType == 0.0f)
     {
-        float3 _85 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
-        dstColor = float4(_85.x, _85.y, _85.z, dstColor.w);
+        float3 _93 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
+        dstColor = float4(_93.x, _93.y, _93.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0f)
         {
-            float3 _97 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = float4(_97.x, _97.y, _97.z, dstColor.w);
+            float3 _105 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = float4(_105.x, _105.y, _105.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0f)
             {
-                float3 _110 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = float4(_110.x, _110.y, _110.z, dstColor.w);
+                float3 _118 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = float4(_118.x, _118.y, _118.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0f)
                 {
-                    float3 _123 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = float4(_123.x, _123.y, _123.z, dstColor.w);
+                    float3 _131 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = float4(_131.x, _131.y, _131.z, dstColor.w);
                 }
             }
         }
@@ -155,48 +172,61 @@ float4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = _209_fUVDistortionParameter.zw;
+    float2 param_2 = _263_fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(g_uvDistortionTexture, g_uvDistortionSampler, param_1, param_2);
-    UVOffset *= _209_fUVDistortionParameter.x;
+    UVOffset *= _263_fUVDistortionParameter.x;
     float diffuse = 1.0f;
     float3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV + UVOffset).xyz;
     float3 texNormal = (loN - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
-    diffuse = max(dot(_209_fLightDirection.xyz, localNormal), 0.0f);
+    diffuse = max(dot(_263_fLightDirection.xyz, localNormal), 0.0f);
     float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV + UVOffset) * Input.VColor;
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, g_colorTexture, g_colorSampler, _209_fFlipbookParameter, Input.VColor, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
+    ApplyFlipbook(param_3, g_colorTexture, g_colorSampler, _263_fFlipbookParameter, Input.VColor, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
     Output = param_3;
+    float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
+    float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
+    screenUV.y = 1.0f - screenUV.y;
+    float backgroundZ = g_depthTexture.Sample(g_depthSampler, screenUV).x;
+    if (_263_softParticleAndReconstructionParam1.x != 0.0f)
+    {
+        float param_5 = backgroundZ;
+        float param_6 = screenPos.z;
+        float param_7 = _263_softParticleAndReconstructionParam1.x;
+        float2 param_8 = _263_softParticleAndReconstructionParam1.yz;
+        float4 param_9 = _263_reconstructionParam2;
+        Output.w *= SoftParticle(param_5, param_6, param_7, param_8, param_9);
+    }
     float4 AlphaTexColor = g_alphaTexture.Sample(g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    float2 param_5 = advancedParam.BlendUVDistortionUV;
-    float2 param_6 = _209_fUVDistortionParameter.zw;
-    float2 BlendUVOffset = UVDistortionOffset(g_blendUVDistortionTexture, g_blendUVDistortionSampler, param_5, param_6);
-    BlendUVOffset *= _209_fUVDistortionParameter.y;
+    float2 param_10 = advancedParam.BlendUVDistortionUV;
+    float2 param_11 = _263_fUVDistortionParameter.zw;
+    float2 BlendUVOffset = UVDistortionOffset(g_blendUVDistortionTexture, g_blendUVDistortionSampler, param_10, param_11);
+    BlendUVOffset *= _263_fUVDistortionParameter.y;
     float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     float4 BlendAlphaTextureColor = g_blendAlphaTexture.Sample(g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    float4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, _209_fBlendTextureParameter.x);
-    Output = param_7;
-    float3 _377 = Output.xyz * _209_fEmissiveScaling.x;
-    Output = float4(_377.x, _377.y, _377.z, Output.w);
+    float4 param_12 = Output;
+    ApplyTextureBlending(param_12, BlendTextureColor, _263_fBlendTextureParameter.x);
+    Output = param_12;
+    float3 _482 = Output.xyz * _263_fEmissiveScaling.x;
+    Output = float4(_482.x, _482.y, _482.z, Output.w);
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    float3 _402 = Output.xyz * (float3(diffuse, diffuse, diffuse) + float3(_209_fLightAmbient.xyz));
-    Output = float4(_402.x, _402.y, _402.z, Output.w);
-    float3 _423 = lerp(_209_fEdgeColor.xyz * _209_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _209_fEdgeParameter.x).xxx);
-    Output = float4(_423.x, _423.y, _423.z, Output.w);
+    float3 _507 = Output.xyz * (float3(diffuse, diffuse, diffuse) + float3(_263_fLightAmbient.xyz));
+    Output = float4(_507.x, _507.y, _507.z, Output.w);
+    float3 _528 = lerp(_263_fEdgeColor.xyz * _263_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _263_fEdgeParameter.x).xxx);
+    Output = float4(_528.x, _528.y, _528.z, Output.w);
     return Output;
 }
 
 void frag_main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.VColor = Input_VColor;
     Input.UV = Input_UV;
     Input.WorldN = Input_WorldN;
@@ -206,8 +236,9 @@ void frag_main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.Others = Input_Others;
-    float4 _466 = _main(Input);
-    _entryPointOutput = _466;
+    Input.PosP = Input_PosP;
+    float4 _574 = _main(Input);
+    _entryPointOutput = _574;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
@@ -222,6 +253,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;
     Input_Blend_FBNextIndex_UV = stage_input.Input_Blend_FBNextIndex_UV;
     Input_Others = stage_input.Input_Others;
+    Input_PosP = stage_input.Input_PosP;
     frag_main();
     SPIRV_Cross_Output stage_output;
     stage_output._entryPointOutput = _entryPointOutput;

@@ -5,10 +5,10 @@
 
 struct PS_Input
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
 };
@@ -20,6 +20,8 @@ struct VS_ConstantBuffer
     vec4 flipbookParameter;
     vec4 uvDistortionParameter;
     vec4 blendTextureParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform VS_ConstantBuffer CBPS0;
@@ -29,7 +31,7 @@ uniform sampler2D Sampler_g_backSampler;
 
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Pos;
+varying vec4 _VSPS_PosP;
 varying vec4 _VSPS_PosU;
 varying vec4 _VSPS_PosR;
 
@@ -37,7 +39,7 @@ vec4 _main(PS_Input Input)
 {
     vec4 Output = texture2D(Sampler_g_sampler, Input.UV);
     Output.w *= Input.Color.w;
-    vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
     vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -59,10 +61,10 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.PosU = _VSPS_PosU;
     Input.PosR = _VSPS_PosR;
     vec4 _182 = _main(Input);

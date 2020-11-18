@@ -1,10 +1,10 @@
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float2 UV;
     float4 Binormal;
     float4 Tangent;
-    float4 Pos;
+    float4 PosP;
     float4 Color;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
@@ -58,7 +58,7 @@ static float Input_Index;
 static float2 _entryPointOutput_UV;
 static float4 _entryPointOutput_Binormal;
 static float4 _entryPointOutput_Tangent;
-static float4 _entryPointOutput_Pos;
+static float4 _entryPointOutput_PosP;
 static float4 _entryPointOutput_Color;
 static float4 _entryPointOutput_Alpha_Dist_UV;
 static float4 _entryPointOutput_Blend_Alpha_Dist_UV;
@@ -81,7 +81,7 @@ struct SPIRV_Cross_Output
     centroid float2 _entryPointOutput_UV : TEXCOORD0;
     float4 _entryPointOutput_Binormal : TEXCOORD1;
     float4 _entryPointOutput_Tangent : TEXCOORD2;
-    float4 _entryPointOutput_Pos : TEXCOORD3;
+    float4 _entryPointOutput_PosP : TEXCOORD3;
     centroid float4 _entryPointOutput_Color : TEXCOORD4;
     float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
     float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD6;
@@ -250,12 +250,12 @@ VS_Output _main(VS_Input Input)
     localTangent = mul(matModel, localTangent);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.Position = mul(_365_mCameraProj, localPosition);
+    Output.PosVS = mul(_365_mCameraProj, localPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.Binormal = mul(_365_mCameraProj, localBinormal);
     Output.Tangent = mul(_365_mCameraProj, localTangent);
-    Output.Pos = Output.Position;
+    Output.PosP = Output.PosVS;
     Output.Color = modelColor;
     Output.UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * Output.UV.y);
     float2 param = Input.UV;
@@ -284,11 +284,11 @@ void vert_main()
     Input.Color = Input_Color;
     Input.Index = Input_Index;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _entryPointOutput_UV = flattenTemp.UV;
     _entryPointOutput_Binormal = flattenTemp.Binormal;
     _entryPointOutput_Tangent = flattenTemp.Tangent;
-    _entryPointOutput_Pos = flattenTemp.Pos;
+    _entryPointOutput_PosP = flattenTemp.PosP;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     _entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
@@ -313,7 +313,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
     stage_output._entryPointOutput_Binormal = _entryPointOutput_Binormal;
     stage_output._entryPointOutput_Tangent = _entryPointOutput_Tangent;
-    stage_output._entryPointOutput_Pos = _entryPointOutput_Pos;
+    stage_output._entryPointOutput_PosP = _entryPointOutput_PosP;
     stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_Alpha_Dist_UV = _entryPointOutput_Alpha_Dist_UV;
     stage_output._entryPointOutput_Blend_Alpha_Dist_UV = _entryPointOutput_Blend_Alpha_Dist_UV;

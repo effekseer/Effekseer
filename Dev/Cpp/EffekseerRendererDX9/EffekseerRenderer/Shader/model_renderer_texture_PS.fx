@@ -1,6 +1,6 @@
 struct PS_Input
 {
-    float4 Pos;
+    float4 PosVS;
     float2 UV;
     float3 Normal;
     float3 Binormal;
@@ -44,6 +44,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _210_fEmissiveScaling : register(c10);
     float4 _210_fEdgeColor : register(c11);
     float4 _210_fEdgeParameter : register(c12);
+    float4 _210_softParticleAndReconstructionParam1 : register(c13);
+    float4 _210_reconstructionParam2 : register(c14);
 };
 
 uniform sampler2D Sampler_g_uvDistortionSampler : register(s2);
@@ -218,7 +220,7 @@ float4 _main(PS_Input Input)
 void frag_main()
 {
     PS_Input Input;
-    Input.Pos = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = Input_UV;
     Input.Normal = Input_Normal;
     Input.Binormal = Input_Binormal;

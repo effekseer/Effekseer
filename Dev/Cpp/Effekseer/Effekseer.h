@@ -1024,6 +1024,8 @@ struct NodeRendererBasicParameter
 	//! copy from alphacutoff
 	bool IsAlphaCutoffEnabled = false;
 
+	float SoftParticleDistance = 0.0f;
+
 	//! Whether are particles rendered with AdvancedRenderer
 	bool GetIsRenderedWithAdvancedRenderer() const
 	{

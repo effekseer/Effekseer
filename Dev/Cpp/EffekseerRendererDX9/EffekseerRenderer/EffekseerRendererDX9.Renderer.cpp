@@ -172,8 +172,8 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_isChangedDevice(false)
 	, m_restorationOfStates(true)
 
-	, m_shader(nullptr)
-	, m_shader_distortion(nullptr)
+	, shader_unlit_(nullptr)
+	, shader_distortion_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -202,13 +202,13 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_standardRenderer);
 
-	ES_SAFE_DELETE(m_shader_ad);
-	ES_SAFE_DELETE(m_shader_ad_distortion);
-	ES_SAFE_DELETE(m_shader_ad_lighting);
+	ES_SAFE_DELETE(shader_ad_unlit_);
+	ES_SAFE_DELETE(shader_ad_distortion_);
+	ES_SAFE_DELETE(shader_ad_lit_);
 
-	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_distortion);
-	ES_SAFE_DELETE(m_shader_lighting);
+	ES_SAFE_DELETE(shader_unlit_);
+	ES_SAFE_DELETE(shader_distortion_);
+	ES_SAFE_DELETE(shader_lit_);
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
@@ -370,7 +370,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
 		D3DDECL_END()};
 
-	m_shader_ad = Shader::Create(this,
+	shader_ad_unlit_ = Shader::Create(this,
 								 Standard_VS_Ad::g_vs30_main,
 								 sizeof(Standard_VS_Ad::g_vs30_main),
 								 Standard_PS_Ad::g_ps30_main,
@@ -378,10 +378,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 								 "StandardRenderer",
 								 decl_ad,
 								 false);
-	if (m_shader_ad == nullptr)
+	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	m_shader = Shader::Create(this,
+	shader_unlit_ = Shader::Create(this,
 							  Standard_VS::g_vs30_main,
 							  sizeof(Standard_VS::g_vs30_main),
 							  Standard_PS::g_ps30_main,
@@ -389,10 +389,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 							  "StandardRenderer",
 							  decl,
 							  false);
-	if (m_shader == nullptr)
+	if (shader_unlit_ == nullptr)
 		return false;
 
-	m_shader_ad_distortion = Shader::Create(this,
+	shader_ad_distortion_ = Shader::Create(this,
 											Standard_Distortion_VS_Ad::g_vs30_main,
 											sizeof(Standard_Distortion_VS_Ad::g_vs30_main),
 											Standard_Distortion_PS_Ad::g_ps30_main,
@@ -400,10 +400,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 											"StandardRenderer Distortion",
 											decl_ad_distortion,
 											false);
-	if (m_shader_ad_distortion == nullptr)
+	if (shader_ad_distortion_ == nullptr)
 		return false;
 
-	m_shader_distortion = Shader::Create(this,
+	shader_distortion_ = Shader::Create(this,
 										 Standard_Distortion_VS::g_vs30_main,
 										 sizeof(Standard_Distortion_VS::g_vs30_main),
 										 Standard_Distortion_PS::g_ps30_main,
@@ -411,20 +411,8 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 										 "StandardRenderer Distortion",
 										 decl_distortion,
 										 false);
-	if (m_shader_distortion == nullptr)
+	if (shader_distortion_ == nullptr)
 		return false;
-
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
-
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
-
-	m_shader_ad->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_ad->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
-
-	m_shader_ad_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_ad_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
 
 	D3DVERTEXELEMENT9 decl_lighting[] = {
 		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
@@ -449,7 +437,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, sizeof(float) * 21, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 10}, // AlphaThreshold
 		D3DDECL_END()};
 
-	m_shader_ad_lighting = Shader::Create(this,
+	shader_ad_lit_ = Shader::Create(this,
 										  Standard_Lighting_VS_Ad::g_vs30_main,
 										  sizeof(Standard_Lighting_VS_Ad::g_vs30_main),
 										  Standard_Lighting_PS_Ad::g_ps30_main,
@@ -457,10 +445,10 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 										  "StandardRenderer Lighting",
 										  decl_lighting,
 										  false);
-	if (m_shader_ad_lighting == nullptr)
+	if (shader_ad_lit_ == nullptr)
 		return false;
 
-	m_shader_lighting = Shader::Create(this,
+	shader_lit_ = Shader::Create(this,
 									   Standard_Lighting_VS::g_vs30_main,
 									   sizeof(Standard_Lighting_VS::g_vs30_main),
 									   Standard_Lighting_PS::g_ps30_main,
@@ -468,14 +456,26 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 									   "StandardRenderer Lighting",
 									   decl_lighting,
 									   false);
-	if (m_shader_lighting == nullptr)
+	if (shader_lit_ == nullptr)
 		return false;
 
-	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
 
-	m_shader_ad_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_ad_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+	shader_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
+
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
+
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
+
+	shader_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
+
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
 
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
@@ -925,27 +925,27 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 {
 	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
 	{
-		return m_shader_ad_distortion;
+		return shader_ad_distortion_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
 	{
-		return m_shader_ad_lighting;
+		return shader_ad_lit_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
 	{
-		return m_shader_ad;
+		return shader_ad_unlit_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
 	{
-		return m_shader_distortion;
+		return shader_distortion_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
 	{
-		return m_shader_lighting;
+		return shader_lit_;
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
 	{
-		return m_shader;
+		return shader_unlit_;
 	}
 	return nullptr;
 }
@@ -1023,7 +1023,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			}
 			else
 			{
-				GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);			
+				GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);
 			}
 		}
 	}

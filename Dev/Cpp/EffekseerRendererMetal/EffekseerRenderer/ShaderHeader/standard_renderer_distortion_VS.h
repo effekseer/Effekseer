@@ -22,10 +22,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float4 Color;
     float2 UV;
-    float4 Pos;
+    float4 PosP;
     float4 PosU;
     float4 PosR;
     float4 Alpha_Dist_UV;
@@ -46,7 +46,7 @@ struct main0_out
 {
     float4 _entryPointOutput_Color [[user(locn0)]];
     float2 _entryPointOutput_UV [[user(locn1)]];
-    float4 _entryPointOutput_Pos [[user(locn2)]];
+    float4 _entryPointOutput_PosP [[user(locn2)]];
     float4 _entryPointOutput_PosU [[user(locn3)]];
     float4 _entryPointOutput_PosR [[user(locn4)]];
     float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
@@ -208,13 +208,13 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_256)
     localTangent /= float4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = v_256.mProj * cameraPos;
-    Output.Pos = Output.Position;
+    Output.PosVS = v_256.mProj * cameraPos;
+    Output.PosP = Output.PosVS;
     Output.PosU = v_256.mProj * localBinormal;
     Output.PosR = v_256.mProj * localTangent;
     Output.PosU /= float4(Output.PosU.w);
     Output.PosR /= float4(Output.PosR.w);
-    Output.Pos /= float4(Output.Pos.w);
+    Output.PosP /= float4(Output.PosP.w);
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * Input.UV.y);
@@ -240,10 +240,10 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.FlipbookIndex = in.Input_FlipbookIndex;
     Input.AlphaThreshold = in.Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input, v_256);
-    out.gl_Position = flattenTemp.Position;
+    out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_Pos = flattenTemp.Pos;
+    out._entryPointOutput_PosP = flattenTemp.PosP;
     out._entryPointOutput_PosU = flattenTemp.PosU;
     out._entryPointOutput_PosR = flattenTemp.PosR;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;

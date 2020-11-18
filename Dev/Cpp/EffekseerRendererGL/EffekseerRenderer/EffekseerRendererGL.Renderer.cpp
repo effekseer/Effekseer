@@ -382,8 +382,8 @@ bool RendererImplemented::Initialize()
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
-		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-		shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 6);
+		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererPixelBuffer));
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
@@ -396,9 +396,9 @@ bool RendererImplemented::Initialize()
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.emissiveScaling"), sizeof(float) * 4 * 3 + offset);
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.edgeColor"), sizeof(float) * 4 * 4 + offset);
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.edgeParameter"), sizeof(float) * 4 * 5 + offset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), sizeof(float) * 4 * 6 + offset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), sizeof(float) * 4 * 7 + offset);
 		}
-
-		applyPSAdvancedRendererParameterTexture(shader, 1);
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
@@ -408,6 +408,10 @@ bool RendererImplemented::Initialize()
 
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_sampler"));
 	}
+
+	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
+	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_g_depthSampler"));
 
 	vao_unlit_ = VertexArray::Create(this, shader_unlit_, GetVertexBuffer(), GetIndexBuffer(), false);
 	vao_ad_unlit_ = VertexArray::Create(this, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer(), false);
@@ -441,8 +445,8 @@ bool RendererImplemented::Initialize()
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
-		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-		shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 5);
+		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererDistortionPixelBuffer));
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
@@ -469,10 +473,14 @@ bool RendererImplemented::Initialize()
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.flipbookParameter"), 0 + offset);
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.uvDistortionParameter"), sizeof(float) * 4 * 1 + offset);
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.blendTextureParameter"), sizeof(float) * 4 * 2 + offset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), sizeof(float) * 4 * 3 + offset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), sizeof(float) * 4 * 4 + offset);
 		}
-
-		applyPSAdvancedRendererParameterTexture(shader, 2);
 	}
+
+	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
+	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_g_depthSampler"));
+	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_g_depthSampler"));
 
 	vao_ad_distortion_ = VertexArray::Create(this, shader_ad_distortion_, GetVertexBuffer(), GetIndexBuffer(), false);
 
@@ -510,8 +518,8 @@ bool RendererImplemented::Initialize()
 
 	for (auto shader : {shader_ad_lit_, shader_lit_})
 	{
-		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-		shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 9);
+		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererLitPixelBuffer));
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
@@ -537,10 +545,15 @@ bool RendererImplemented::Initialize()
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fEmissiveScaling"), sizeof(float) * 4 * 3 + offset);
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fEdgeColor"), sizeof(float) * 4 * 4 + offset);
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fEdgeParameter"), sizeof(float) * 4 * 5 + offset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), sizeof(float) * 4 * 6 + offset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), sizeof(float) * 4 * 7 + offset);
 		}
-
-		applyPSAdvancedRendererParameterTexture(shader, 2);
 	}
+
+	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
+	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_g_depthSampler"));
+
 
 	vao_ad_lit_ = VertexArray::Create(this, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer(), false);
 	vao_lit_ = VertexArray::Create(this, shader_lit_, GetVertexBuffer(), GetIndexBuffer(), false);
@@ -552,6 +565,7 @@ bool RendererImplemented::Initialize()
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+	GetImpl()->isSoftParticleEnabled = GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3;
 
 	if (GLExt::IsSupportedVertexArray())
 	{

@@ -15,7 +15,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float4 VColor;
     float2 UV;
     float3 WorldN;
@@ -238,7 +238,7 @@ VS_Output _main(VS_Input Input)
     float3 pixelNormalDir = float3(0.5f, 0.5f, 1.0f);
     float4 cameraPos = mul(_255_mCamera, float4(worldPos, 1.0f));
     cameraPos /= cameraPos.w.xxxx;
-    Output.Position = mul(_255_mProj, cameraPos);
+    Output.PosVS = mul(_255_mProj, cameraPos);
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
@@ -263,7 +263,7 @@ void vert_main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _entryPointOutput_VColor = flattenTemp.VColor;
     _entryPointOutput_UV = flattenTemp.UV;
     _entryPointOutput_WorldN = flattenTemp.WorldN;

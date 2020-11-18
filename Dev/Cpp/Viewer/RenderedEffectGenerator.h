@@ -2,6 +2,7 @@
 #pragma once
 
 #include "EffekseerTool/EffekseerTool.Sound.h"
+#include "Graphics/StaticMeshRenderer.h"
 #include "Graphics/efk.Graphics.h"
 #include "Graphics/efk.PostEffects.h"
 #include "Math/Vector2DI.h"
@@ -70,6 +71,10 @@ protected:
 	EffekseerRenderer::Renderer* renderer_ = nullptr;
 	Effekseer::EffectRef effect_ = nullptr;
 
+	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
+	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
+	Effekseer::Color backgroundMeshColor_{};
+
 	efk::RenderTexture* renderTexture_ = nullptr;
 	efk::DepthTexture* depthTexture_ = nullptr;
 
@@ -112,6 +117,8 @@ protected:
 	DistortingCallback* m_distortionCallback = nullptr;
 
 	RenderedEffectGeneratorConfig config_;
+
+	void UpdateBackgroundMesh(const Color& backgroundColor);
 
 public:
 	void PlayEffect();

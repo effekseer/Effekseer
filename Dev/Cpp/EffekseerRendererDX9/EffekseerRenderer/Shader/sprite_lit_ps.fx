@@ -1,6 +1,6 @@
 struct PS_Input
 {
-    float4 Position;
+    float4 PosVS;
     float4 VColor;
     float2 UV1;
     float2 UV2;
@@ -9,6 +9,7 @@ struct PS_Input
     float3 WorldT;
     float3 WorldB;
     float2 ScreenUV;
+    float4 PosP;
 };
 
 cbuffer VS_ConstantBuffer : register(b0)
@@ -22,6 +23,8 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 _69_fEmissiveScaling : register(c6);
     float4 _69_fEdgeColor : register(c7);
     float4 _69_fEdgeParameter : register(c8);
+    float4 _69_softParticleAndReconstructionParam1 : register(c9);
+    float4 _69_reconstructionParam2 : register(c10);
 };
 
 uniform sampler2D Sampler_g_normalSampler : register(s1);
@@ -36,6 +39,7 @@ static float3 Input_WorldN;
 static float3 Input_WorldT;
 static float3 Input_WorldB;
 static float2 Input_ScreenUV;
+static float4 Input_PosP;
 static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
@@ -48,6 +52,7 @@ struct SPIRV_Cross_Input
     float3 Input_WorldT : TEXCOORD5;
     float3 Input_WorldB : TEXCOORD6;
     float2 Input_ScreenUV : TEXCOORD7;
+    float4 Input_PosP : TEXCOORD8;
     float4 gl_FragCoord : VPOS;
 };
 
@@ -75,7 +80,7 @@ float4 _main(PS_Input Input)
 void frag_main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.VColor = Input_VColor;
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
@@ -84,8 +89,9 @@ void frag_main()
     Input.WorldT = Input_WorldT;
     Input.WorldB = Input_WorldB;
     Input.ScreenUV = Input_ScreenUV;
-    float4 _158 = _main(Input);
-    _entryPointOutput = _158;
+    Input.PosP = Input_PosP;
+    float4 _162 = _main(Input);
+    _entryPointOutput = _162;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
@@ -99,6 +105,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_WorldT = stage_input.Input_WorldT;
     Input_WorldB = stage_input.Input_WorldB;
     Input_ScreenUV = stage_input.Input_ScreenUV;
+    Input_PosP = stage_input.Input_PosP;
     frag_main();
     SPIRV_Cross_Output stage_output;
     stage_output._entryPointOutput = float4(_entryPointOutput);

@@ -17,7 +17,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float4 VColor;
     float2 UV1;
     float2 UV2;
@@ -26,6 +26,7 @@ struct VS_Output
     float3 WorldT;
     float3 WorldB;
     float2 ScreenUV;
+    float4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -46,6 +47,7 @@ struct main0_out
     float3 _entryPointOutput_WorldT [[user(locn5)]];
     float3 _entryPointOutput_WorldB [[user(locn6)]];
     float2 _entryPointOutput_ScreenUV [[user(locn7)]];
+    float4 _entryPointOutput_PosP [[user(locn8)]];
     float4 gl_Position [[position]];
 };
 
@@ -62,7 +64,7 @@ struct main0_in
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_62)
 {
-    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float3(0.0), float2(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float3(0.0), float2(0.0), float4(0.0) };
     float3 worldPos = Input.Pos;
     float3 worldNormal = (float3(Input.Normal.xyz) - float3(0.5)) * 2.0;
     float3 worldTangent = (float3(Input.Tangent.xyz) - float3(0.5)) * 2.0;
@@ -76,14 +78,14 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_62)
     Output.WorldT = worldTangent;
     float3 pixelNormalDir = float3(0.5, 0.5, 1.0);
     float4 cameraPos = v_62.mCamera * float4(worldPos, 1.0);
-    cameraPos /= float4(cameraPos.w);
-    Output.Position = v_62.mProj * cameraPos;
+    Output.PosVS = v_62.mProj * cameraPos;
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / float2(Output.Position.w);
+    Output.ScreenUV = Output.PosVS.xy / float2(Output.PosVS.w);
     Output.ScreenUV = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -98,7 +100,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_6
     Input.UV1 = in.Input_UV1;
     Input.UV2 = in.Input_UV2;
     VS_Output flattenTemp = _main(Input, v_62);
-    out.gl_Position = flattenTemp.Position;
+    out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_VColor = flattenTemp.VColor;
     out._entryPointOutput_UV1 = flattenTemp.UV1;
     out._entryPointOutput_UV2 = flattenTemp.UV2;
@@ -107,6 +109,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_6
     out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_WorldB = flattenTemp.WorldB;
     out._entryPointOutput_ScreenUV = flattenTemp.ScreenUV;
+    out._entryPointOutput_PosP = flattenTemp.PosP;
     return out;
 }
 

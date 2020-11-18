@@ -18,12 +18,12 @@ struct VS_Input
 
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float2 UV;
     float4 Normal;
     float4 Binormal;
     float4 Tangent;
-    float4 Pos;
+    float4 PosP;
     float4 Color;
 };
 
@@ -45,7 +45,7 @@ struct main0_out
     float4 _entryPointOutput_Normal [[user(locn1)]];
     float4 _entryPointOutput_Binormal [[user(locn2)]];
     float4 _entryPointOutput_Tangent [[user(locn3)]];
-    float4 _entryPointOutput_Pos [[user(locn4)]];
+    float4 _entryPointOutput_PosP [[user(locn4)]];
     float4 _entryPointOutput_Color [[user(locn5)]];
     float4 gl_Position [[position]];
 };
@@ -79,13 +79,13 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_31)
     localNormal = localPosition + normalize(localNormal - localPosition);
     localBinormal = localPosition + normalize(localBinormal - localPosition);
     localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.Position = v_31.mCameraProj * localPosition;
+    Output.PosVS = v_31.mCameraProj * localPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     Output.Normal = v_31.mCameraProj * localNormal;
     Output.Binormal = v_31.mCameraProj * localBinormal;
     Output.Tangent = v_31.mCameraProj * localTangent;
-    Output.Pos = Output.Position;
+    Output.PosP = Output.PosVS;
     Output.Color = modelColor;
     Output.UV.y = v_31.mUVInversed.x + (v_31.mUVInversed.y * Output.UV.y);
     return Output;
@@ -103,12 +103,12 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     Input.Color = in.Input_Color;
     Input.Index = gl_InstanceIndex;
     VS_Output flattenTemp = _main(Input, v_31);
-    out.gl_Position = flattenTemp.Position;
+    out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_Normal = flattenTemp.Normal;
     out._entryPointOutput_Binormal = flattenTemp.Binormal;
     out._entryPointOutput_Tangent = flattenTemp.Tangent;
-    out._entryPointOutput_Pos = flattenTemp.Pos;
+    out._entryPointOutput_PosP = flattenTemp.PosP;
     out._entryPointOutput_Color = flattenTemp.Color;
     return out;
 }

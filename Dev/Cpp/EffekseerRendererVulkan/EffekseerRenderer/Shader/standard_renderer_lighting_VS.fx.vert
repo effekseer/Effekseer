@@ -17,7 +17,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV;
     vec3 WorldN;
@@ -27,6 +27,7 @@ struct VS_Output
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
     vec2 Others;
+    vec4 PosP;
 };
 
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
@@ -57,6 +58,7 @@ layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
 layout(location = 6) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
 layout(location = 7) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
 layout(location = 8) out vec2 _entryPointOutput_Others;
+layout(location = 9) out vec4 _entryPointOutput_PosP;
 
 vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
@@ -171,7 +173,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
@@ -186,13 +188,14 @@ VS_Output _main(VS_Input Input)
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = vec4(worldPos, 1.0) * _255.mCamera;
     cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * _255.mProj;
+    Output.PosVS = cameraPos * _255.mProj;
     Output.VColor = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -211,7 +214,7 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    vec4 _position = flattenTemp.Position;
+    vec4 _position = flattenTemp.PosVS;
     _position.y = -_position.y;
     gl_Position = _position;
     _entryPointOutput_VColor = flattenTemp.VColor;
@@ -223,5 +226,6 @@ void main()
     _entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     _entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
     _entryPointOutput_Others = flattenTemp.Others;
+    _entryPointOutput_PosP = flattenTemp.PosP;
 }
 

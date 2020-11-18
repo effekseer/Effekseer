@@ -34,7 +34,7 @@ struct VS_Input
 
 struct VS_Output
 {
-	float4 Pos : SV_POSITION;
+	float4 PosVS : SV_POSITION;
 	linear centroid float2 UV : TEXCOORD0;
 #if ENABLE_NORMAL_TEXTURE
 	half3 Normal : TEXCOORD1;
@@ -42,6 +42,7 @@ struct VS_Output
 	half3 Tangent : TEXCOORD3;
 #endif
 	linear centroid float4 Color : COLOR;
+	float4 PosP : TEXCOORD4;
 };
 
 VS_Output main(const VS_Input Input)
@@ -70,7 +71,7 @@ VS_Output main(const VS_Input Input)
 #else
 	float4 cameraPosition = mul(matModel, localPosition);
 #endif
-	Output.Pos = mul(mCameraProj, cameraPosition);
+	Output.PosVS = mul(mCameraProj, cameraPosition);
 	Output.Color = modelColor;
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
@@ -104,6 +105,8 @@ VS_Output main(const VS_Input Input)
 #endif
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
+
+	Output.PosP = Output.PosVS;
 
 	return Output;
 }

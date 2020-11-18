@@ -14,10 +14,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float4 Color;
     float2 UV;
-    float4 Pos;
+    float4 PosP;
     float4 PosU;
     float4 PosR;
     float4 Alpha_Dist_UV;
@@ -51,7 +51,7 @@ static float Input_FlipbookIndex;
 static float Input_AlphaThreshold;
 static float4 _entryPointOutput_Color;
 static float2 _entryPointOutput_UV;
-static float4 _entryPointOutput_Pos;
+static float4 _entryPointOutput_PosP;
 static float4 _entryPointOutput_PosU;
 static float4 _entryPointOutput_PosR;
 static float4 _entryPointOutput_Alpha_Dist_UV;
@@ -77,7 +77,7 @@ struct SPIRV_Cross_Output
 {
     centroid float4 _entryPointOutput_Color : TEXCOORD0;
     centroid float2 _entryPointOutput_UV : TEXCOORD1;
-    float4 _entryPointOutput_Pos : TEXCOORD2;
+    float4 _entryPointOutput_PosP : TEXCOORD2;
     float4 _entryPointOutput_PosU : TEXCOORD3;
     float4 _entryPointOutput_PosR : TEXCOORD4;
     float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
@@ -232,13 +232,13 @@ VS_Output _main(VS_Input Input)
     localTangent /= localTangent.w.xxxx;
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = mul(_256_mProj, cameraPos);
-    Output.Pos = Output.Position;
+    Output.PosVS = mul(_256_mProj, cameraPos);
+    Output.PosP = Output.PosVS;
     Output.PosU = mul(_256_mProj, localBinormal);
     Output.PosR = mul(_256_mProj, localTangent);
     Output.PosU /= Output.PosU.w.xxxx;
     Output.PosR /= Output.PosR.w.xxxx;
-    Output.Pos /= Output.Pos.w.xxxx;
+    Output.PosP /= Output.PosP.w.xxxx;
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * Input.UV.y);
@@ -263,10 +263,10 @@ void vert_main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_Pos = flattenTemp.Pos;
+    _entryPointOutput_PosP = flattenTemp.PosP;
     _entryPointOutput_PosU = flattenTemp.PosU;
     _entryPointOutput_PosR = flattenTemp.PosR;
     _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
@@ -294,7 +294,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output.gl_Position = gl_Position;
     stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
-    stage_output._entryPointOutput_Pos = _entryPointOutput_Pos;
+    stage_output._entryPointOutput_PosP = _entryPointOutput_PosP;
     stage_output._entryPointOutput_PosU = _entryPointOutput_PosU;
     stage_output._entryPointOutput_PosR = _entryPointOutput_PosR;
     stage_output._entryPointOutput_Alpha_Dist_UV = _entryPointOutput_Alpha_Dist_UV;

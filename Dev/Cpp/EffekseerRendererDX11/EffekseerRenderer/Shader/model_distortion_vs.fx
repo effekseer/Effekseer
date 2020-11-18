@@ -26,20 +26,20 @@ struct VS_Input
 	float2 UV : TEXCOORD0;
 	float4 Color : NORMAL3;
 #if defined(ENABLE_DIVISOR)
-	float Index		: BLENDINDICES0;
+	float Index : BLENDINDICES0;
 #elif !defined(DISABLE_INSTANCE)
-	uint Index	: SV_InstanceID;
+	uint Index : SV_InstanceID;
 #endif
 };
 
 struct VS_Output
 {
-	float4 Position : SV_POSITION;
+	float4 PosVS : SV_POSITION;
 	linear centroid float2 UV : TEXCOORD0;
 	float4 Normal : TEXCOORD1;
 	float4 Binormal : TEXCOORD2;
 	float4 Tangent : TEXCOORD3;
-	float4 Pos : TEXCOORD4;
+	float4 PosP : TEXCOORD4;
 	linear centroid float4 Color : COLOR0;
 };
 
@@ -83,7 +83,7 @@ VS_Output main(const VS_Input Input)
 	localBinormal = localPosition + normalize(localBinormal - localPosition);
 	localTangent = localPosition + normalize(localTangent - localPosition);
 
-	Output.Position = mul(mCameraProj, localPosition);
+	Output.PosVS = mul(mCameraProj, localPosition);
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
@@ -91,7 +91,7 @@ VS_Output main(const VS_Input Input)
 	Output.Normal = mul(mCameraProj, localNormal);
 	Output.Binormal = mul(mCameraProj, localBinormal);
 	Output.Tangent = mul(mCameraProj, localTangent);
-	Output.Pos = Output.Position;
+	Output.PosP = Output.PosVS;
 
 	Output.Color = modelColor;
 

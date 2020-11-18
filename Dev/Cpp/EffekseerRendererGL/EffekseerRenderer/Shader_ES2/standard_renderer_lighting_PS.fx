@@ -4,7 +4,7 @@ precision highp int;
 
 struct PS_Input
 {
-    highp vec4 Position;
+    highp vec4 PosVS;
     highp vec4 VColor;
     highp vec2 UV;
     highp vec3 WorldN;
@@ -39,6 +39,8 @@ struct PS_ConstanBuffer
     highp vec4 fEmissiveScaling;
     highp vec4 fEdgeColor;
     highp vec4 fEdgeParameter;
+    highp vec4 softParticleAndReconstructionParam1;
+    highp vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -174,7 +176,7 @@ highp vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.VColor = _VSPS_VColor;
     Input.UV = _VSPS_UV;
     Input.WorldN = _VSPS_WorldN;

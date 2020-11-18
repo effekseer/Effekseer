@@ -6,10 +6,10 @@ static const char standard_renderer_distortion_PS_gl2[] = R"(
 
 struct PS_Input
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -37,6 +37,8 @@ struct PS_ConstanBuffer
     vec4 flipbookParameter;
     vec4 uvDistortionParameter;
     vec4 blendTextureParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -51,7 +53,7 @@ uniform sampler2D Sampler_g_backSampler;
 
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Pos;
+varying vec4 _VSPS_PosP;
 varying vec4 _VSPS_PosU;
 varying vec4 _VSPS_PosR;
 varying vec4 _VSPS_Alpha_Dist_UV;
@@ -156,7 +158,7 @@ vec4 _main(PS_Input Input)
     {
         discard;
     }
-    vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
     vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -165,6 +167,7 @@ vec4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
+    uv.y = 1.0 - uv.y;
     vec3 color = vec3(texture2D(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -173,18 +176,18 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.PosU = _VSPS_PosU;
     Input.PosR = _VSPS_PosR;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _467 = _main(Input);
-    gl_FragData[0] = _467;
+    vec4 _471 = _main(Input);
+    gl_FragData[0] = _471;
 }
 
 )";
@@ -197,10 +200,10 @@ static const char standard_renderer_distortion_PS_gl3[] = R"(
 
 struct PS_Input
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -228,12 +231,15 @@ struct PS_ConstanBuffer
     vec4 flipbookParameter;
     vec4 uvDistortionParameter;
     vec4 blendTextureParameter;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_g_uvDistortionSampler;
 uniform sampler2D Sampler_g_sampler;
+layout(binding = 7) uniform sampler2D Sampler_g_depthSampler;
 uniform sampler2D Sampler_g_alphaSampler;
 uniform sampler2D Sampler_g_blendUVDistortionSampler;
 uniform sampler2D Sampler_g_blendSampler;
@@ -242,7 +248,7 @@ uniform sampler2D Sampler_g_backSampler;
 
 centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
-in vec4 _VSPS_Pos;
+in vec4 _VSPS_PosP;
 in vec4 _VSPS_PosU;
 in vec4 _VSPS_PosR;
 in vec4 _VSPS_Alpha_Dist_UV;
@@ -285,33 +291,46 @@ void ApplyFlipbook(inout vec4 dst, vec4 flipbookParameter, vec4 vcolor, vec2 nex
     }
 }
 
+float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2 reconstruct1, vec4 reconstruct2)
+{
+    float _distance = softparticleParam;
+    vec2 rescale = reconstruct1;
+    vec4 params = reconstruct2;
+    float tempY = params.y;
+    params.y = params.z;
+    params.z = tempY;
+    vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
+    vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
+    return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
+}
+
 void ApplyTextureBlending(inout vec4 dstColor, vec4 blendColor, float blendType)
 {
     if (blendType == 0.0)
     {
-        vec3 _85 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_85.x, _85.y, _85.z, dstColor.w);
+        vec3 _93 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
+        dstColor = vec4(_93.x, _93.y, _93.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0)
         {
-            vec3 _97 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_97.x, _97.y, _97.z, dstColor.w);
+            vec3 _105 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = vec4(_105.x, _105.y, _105.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0)
             {
-                vec3 _110 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_110.x, _110.y, _110.z, dstColor.w);
+                vec3 _118 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = vec4(_118.x, _118.y, _118.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    vec3 _123 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_123.x, _123.y, _123.z, dstColor.w);
+                    vec3 _131 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = vec4(_131.x, _131.y, _131.z, dstColor.w);
                 }
             }
         }
@@ -332,23 +351,37 @@ vec4 _main(PS_Input Input)
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, CBPS0.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
     Output = param_3;
+    vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
+    vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
+    screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = 1.0 - screenUV.y;
+    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
+    {
+        float param_5 = backgroundZ;
+        float param_6 = screenPos.z;
+        float param_7 = CBPS0.softParticleAndReconstructionParam1.x;
+        vec2 param_8 = CBPS0.softParticleAndReconstructionParam1.yz;
+        vec4 param_9 = CBPS0.reconstructionParam2;
+        Output.w *= SoftParticle(param_5, param_6, param_7, param_8, param_9);
+    }
     vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    vec2 param_5 = advancedParam.BlendUVDistortionUV;
-    vec2 param_6 = CBPS0.uvDistortionParameter.zw;
-    vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
+    vec2 param_10 = advancedParam.BlendUVDistortionUV;
+    vec2 param_11 = CBPS0.uvDistortionParameter.zw;
+    vec2 BlendUVOffset = UVDistortionOffset(param_10, param_11, Sampler_g_blendUVDistortionSampler);
     BlendUVOffset *= CBPS0.uvDistortionParameter.y;
     vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    vec4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.blendTextureParameter.x);
-    Output = param_7;
+    vec4 param_12 = Output;
+    ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.blendTextureParameter.x);
+    Output = param_12;
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
     vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -357,6 +390,7 @@ vec4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
+    uv.y = 1.0 - uv.y;
     vec3 color = vec3(texture(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -365,18 +399,18 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.PosU = _VSPS_PosU;
     Input.PosR = _VSPS_PosR;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _467 = _main(Input);
-    _entryPointOutput = _467;
+    vec4 _587 = _main(Input);
+    _entryPointOutput = _587;
 }
 
 )";
@@ -388,10 +422,10 @@ precision highp int;
 
 struct PS_Input
 {
-    highp vec4 Position;
+    highp vec4 PosVS;
     highp vec4 Color;
     highp vec2 UV;
-    highp vec4 Pos;
+    highp vec4 PosP;
     highp vec4 PosU;
     highp vec4 PosR;
     highp vec4 Alpha_Dist_UV;
@@ -419,6 +453,8 @@ struct PS_ConstanBuffer
     highp vec4 flipbookParameter;
     highp vec4 uvDistortionParameter;
     highp vec4 blendTextureParameter;
+    highp vec4 softParticleAndReconstructionParam1;
+    highp vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -433,7 +469,7 @@ uniform  sampler2D Sampler_g_backSampler;
 
 varying  vec4 _VSPS_Color;
 varying  vec2 _VSPS_UV;
-varying  vec4 _VSPS_Pos;
+varying  vec4 _VSPS_PosP;
 varying  vec4 _VSPS_PosU;
 varying  vec4 _VSPS_PosR;
 varying  vec4 _VSPS_Alpha_Dist_UV;
@@ -538,7 +574,7 @@ highp vec4 _main(PS_Input Input)
     {
         discard;
     }
-    highp vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    highp vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     highp vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
     highp vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
     highp float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -547,6 +583,7 @@ highp vec4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
+    uv.y = 1.0 - uv.y;
     highp vec3 color = vec3(texture2D(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -555,18 +592,18 @@ highp vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.PosU = _VSPS_PosU;
     Input.PosR = _VSPS_PosR;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    highp vec4 _467 = _main(Input);
-    gl_FragData[0] = _467;
+    highp vec4 _471 = _main(Input);
+    gl_FragData[0] = _471;
 }
 
 )";
@@ -578,10 +615,10 @@ precision highp int;
 
 struct PS_Input
 {
-    highp vec4 Position;
+    highp vec4 PosVS;
     highp vec4 Color;
     highp vec2 UV;
-    highp vec4 Pos;
+    highp vec4 PosP;
     highp vec4 PosU;
     highp vec4 PosR;
     highp vec4 Alpha_Dist_UV;
@@ -609,12 +646,15 @@ struct PS_ConstanBuffer
     highp vec4 flipbookParameter;
     highp vec4 uvDistortionParameter;
     highp vec4 blendTextureParameter;
+    highp vec4 softParticleAndReconstructionParam1;
+    highp vec4 reconstructionParam2;
 };
 
 uniform PS_ConstanBuffer CBPS0;
 
 uniform highp sampler2D Sampler_g_uvDistortionSampler;
 uniform highp sampler2D Sampler_g_sampler;
+uniform highp sampler2D Sampler_g_depthSampler;
 uniform highp sampler2D Sampler_g_alphaSampler;
 uniform highp sampler2D Sampler_g_blendUVDistortionSampler;
 uniform highp sampler2D Sampler_g_blendSampler;
@@ -623,7 +663,7 @@ uniform highp sampler2D Sampler_g_backSampler;
 
 centroid in highp vec4 _VSPS_Color;
 centroid in highp vec2 _VSPS_UV;
-in highp vec4 _VSPS_Pos;
+in highp vec4 _VSPS_PosP;
 in highp vec4 _VSPS_PosU;
 in highp vec4 _VSPS_PosR;
 in highp vec4 _VSPS_Alpha_Dist_UV;
@@ -666,33 +706,46 @@ void ApplyFlipbook(inout highp vec4 dst, highp vec4 flipbookParameter, highp vec
     }
 }
 
+highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float softparticleParam, highp vec2 reconstruct1, highp vec4 reconstruct2)
+{
+    highp float _distance = softparticleParam;
+    highp vec2 rescale = reconstruct1;
+    highp vec4 params = reconstruct2;
+    highp float tempY = params.y;
+    params.y = params.z;
+    params.z = tempY;
+    highp vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
+    highp vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
+    return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
+}
+
 void ApplyTextureBlending(inout highp vec4 dstColor, highp vec4 blendColor, highp float blendType)
 {
     if (blendType == 0.0)
     {
-        highp vec3 _85 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_85.x, _85.y, _85.z, dstColor.w);
+        highp vec3 _93 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
+        dstColor = vec4(_93.x, _93.y, _93.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0)
         {
-            highp vec3 _97 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_97.x, _97.y, _97.z, dstColor.w);
+            highp vec3 _105 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = vec4(_105.x, _105.y, _105.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0)
             {
-                highp vec3 _110 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_110.x, _110.y, _110.z, dstColor.w);
+                highp vec3 _118 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = vec4(_118.x, _118.y, _118.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    highp vec3 _123 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_123.x, _123.y, _123.z, dstColor.w);
+                    highp vec3 _131 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = vec4(_131.x, _131.y, _131.z, dstColor.w);
                 }
             }
         }
@@ -713,23 +766,37 @@ highp vec4 _main(PS_Input Input)
     highp float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, CBPS0.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
     Output = param_3;
+    highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
+    highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
+    screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = 1.0 - screenUV.y;
+    highp float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
+    {
+        highp float param_5 = backgroundZ;
+        highp float param_6 = screenPos.z;
+        highp float param_7 = CBPS0.softParticleAndReconstructionParam1.x;
+        highp vec2 param_8 = CBPS0.softParticleAndReconstructionParam1.yz;
+        highp vec4 param_9 = CBPS0.reconstructionParam2;
+        Output.w *= SoftParticle(param_5, param_6, param_7, param_8, param_9);
+    }
     highp vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    highp vec2 param_5 = advancedParam.BlendUVDistortionUV;
-    highp vec2 param_6 = CBPS0.uvDistortionParameter.zw;
-    highp vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
+    highp vec2 param_10 = advancedParam.BlendUVDistortionUV;
+    highp vec2 param_11 = CBPS0.uvDistortionParameter.zw;
+    highp vec2 BlendUVOffset = UVDistortionOffset(param_10, param_11, Sampler_g_blendUVDistortionSampler);
     BlendUVOffset *= CBPS0.uvDistortionParameter.y;
     highp vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     highp vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    highp vec4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.blendTextureParameter.x);
-    Output = param_7;
+    highp vec4 param_12 = Output;
+    ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.blendTextureParameter.x);
+    Output = param_12;
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    highp vec2 pos = Input.Pos.xy / vec2(Input.Pos.w);
+    highp vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     highp vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
     highp vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
     highp float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
@@ -738,6 +805,7 @@ highp vec4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
+    uv.y = 1.0 - uv.y;
     highp vec3 color = vec3(texture(Sampler_g_backSampler, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     return Output;
@@ -746,18 +814,18 @@ highp vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Position = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Pos = _VSPS_Pos;
+    Input.PosP = _VSPS_PosP;
     Input.PosU = _VSPS_PosU;
     Input.PosR = _VSPS_PosR;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    highp vec4 _467 = _main(Input);
-    _entryPointOutput = _467;
+    highp vec4 _587 = _main(Input);
+    _entryPointOutput = _587;
 }
 
 )";

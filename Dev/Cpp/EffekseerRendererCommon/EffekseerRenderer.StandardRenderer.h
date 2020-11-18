@@ -51,6 +51,7 @@ struct StandardRendererState
 	uint8_t EdgeColor[4];
 	int32_t EdgeColorScaling;
 	bool IsAlphaCuttoffEnabled = false;
+	float SoftParticleDistance = 0.0f;
 
 	::Effekseer::RendererMaterialType MaterialType;
 	int32_t MaterialUniformCount = 0;
@@ -147,6 +148,10 @@ struct StandardRendererState
 
 		if (IsAlphaCuttoffEnabled != state.IsAlphaCuttoffEnabled)
 			return true;
+
+		if (SoftParticleDistance != state.SoftParticleDistance)
+			return true;
+
 		if (MaterialType != state.MaterialType)
 			return true;
 		if (MaterialUniformCount != state.MaterialUniformCount)
@@ -175,7 +180,7 @@ struct StandardRendererState
 		Effekseer::NodeRendererBasicParameter* basicParam)
 	{
 		Collector = ShaderParameterCollector();
-		Collector.Collect(renderer, effect, basicParam, false);
+		Collector.Collect(renderer, effect, basicParam, false, renderer->GetImpl()->isSoftParticleEnabled);
 
 		if (Collector.MaterialParam != nullptr && Collector.MaterialDataPtr != nullptr)
 		{
@@ -198,6 +203,153 @@ struct StandardRendererState
 	}
 };
 
+struct StandardRendererVertexBuffer
+{
+	Effekseer::Matrix44 constantVSBuffer[2];
+	float uvInversed[4];
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float enableInterpolation;
+				float loopType;
+				float divideX;
+				float divideY;
+			};
+		};
+	} flipbookParameter;
+};
+
+struct StandardRendererPixelBuffer
+{
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float enableInterpolation;
+				float interpolationType;
+			};
+		};
+	} flipbookParameter;
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float intensity;
+				float blendIntensity;
+				float uvInversed[2];
+			};
+		};
+	} uvDistortionParameter;
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float blendType;
+			};
+		};
+	} blendTextureParameter;
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float emissiveScaling;
+			};
+		};
+	};
+
+	struct
+	{
+		float Color[4];
+
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float Threshold;
+				float ColorScaling;
+			};
+		};
+	} edgeParameter;
+
+	SoftParticleParameter softParticle;
+};
+
+struct StandardRendererDistortionPixelBuffer
+{
+	float scale[4];
+	float uvInversed[4];
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float enableInterpolation;
+				float interpolationType;
+			};
+		};
+	} flipbookParameter;
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float intensity;
+				float blendIntensity;
+				float uvInversed[2];
+			};
+		};
+	} uvDistortionParameter;
+
+	struct
+	{
+		union {
+			float Buffer[4];
+
+			struct
+			{
+				float blendType;
+			};
+		};
+	} blendTextureParameter;
+
+	SoftParticleParameter softParticle;
+};
+
+struct StandardRendererLitPixelBuffer
+{
+	std::array<float, 4> lightDirection;
+	std::array<float, 4> lightColor;
+	std::array<float, 4> lightAmbientColor;
+	StandardRendererPixelBuffer Buffer;
+};
+
 template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
@@ -211,150 +363,6 @@ private:
 	std::vector<uint8_t> vertexCaches;
 	int32_t squareMaxSize_ = 0;
 	RendererShaderType renderingMode_ = RendererShaderType::Unlit;
-
-	struct VertexConstantBuffer
-	{
-		Effekseer::Matrix44 constantVSBuffer[2];
-		float uvInversed[4];
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float enableInterpolation;
-					float loopType;
-					float divideX;
-					float divideY;
-				};
-			};
-		} flipbookParameter;
-	};
-
-	struct PixelConstantBuffer
-	{
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float enableInterpolation;
-					float interpolationType;
-				};
-			};
-		} flipbookParameter;
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float intensity;
-					float blendIntensity;
-					float uvInversed[2];
-				};
-			};
-		} uvDistortionParameter;
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float blendType;
-				};
-			};
-		} blendTextureParameter;
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float emissiveScaling;
-				};
-			};
-		};
-
-		struct
-		{
-			float Color[4];
-
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float Threshold;
-					float ColorScaling;
-				};
-			};
-		} edgeParameter;
-	};
-
-	struct DistortionPixelConstantBuffer
-	{
-		float scale[4];
-		float uvInversed[4];
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float enableInterpolation;
-					float interpolationType;
-				};
-			};
-		} flipbookParameter;
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float intensity;
-					float blendIntensity;
-					float uvInversed[2];
-				};
-			};
-		} uvDistortionParameter;
-
-		struct
-		{
-			union
-			{
-				float Buffer[4];
-
-				struct
-				{
-					float blendType;
-				};
-			};
-		} blendTextureParameter;
-	};
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
@@ -538,6 +546,20 @@ public:
 		if (isBackgroundRequired)
 		{
 			textures[m_state.Collector.BackgroundIndex] = m_renderer->GetBackground();
+		}
+
+		::Effekseer::TextureData* depthTexture = nullptr;
+		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
+		m_renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
+
+		if (m_state.Collector.IsDepthRequired)
+		{
+			if (depthTexture == nullptr)
+			{
+				depthTexture = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+			}
+
+			textures[m_state.Collector.DepthIndex] = depthTexture;
 		}
 
 		int32_t vertexSize = bufferSize;
@@ -737,7 +759,7 @@ public:
 		}
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 		{
-			VertexConstantBuffer vcb;
+			StandardRendererVertexBuffer vcb;
 			vcb.constantVSBuffer[0] = ToStruct(mCamera);
 			vcb.constantVSBuffer[1] = ToStruct(mProj);
 			vcb.uvInversed[0] = uvInversed[0];
@@ -748,30 +770,18 @@ public:
 			vcb.flipbookParameter.divideX = static_cast<float>(m_state.FlipbookDivideX);
 			vcb.flipbookParameter.divideY = static_cast<float>(m_state.FlipbookDivideY);
 
-			m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
+			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
 			// ps
-			int32_t psOffset = 0;
-			float lightDirection[4];
-			float lightColor[4];
-			float lightAmbientColor[4];
+			StandardRendererLitPixelBuffer lpcb{};
 
-			::Effekseer::Vec3f lightDirection3 = m_renderer->GetLightDirection();
-			lightDirection3 = lightDirection3.Normalize();
-			VectorToFloat4(lightDirection3, lightDirection);
-			ColorToFloat4(m_renderer->GetLightColor(), lightColor);
-			ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+			auto lightDirection3 = m_renderer->GetLightDirection();
+			Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+			lpcb.lightDirection = lightDirection3.ToFloat4();
+			lpcb.lightColor = m_renderer->GetLightColor().ToFloat4();
+			lpcb.lightAmbientColor = m_renderer->GetLightAmbientColor().ToFloat4();
 
-			m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
-			psOffset += (sizeof(float) * 4);
-
-			m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
-			psOffset += (sizeof(float) * 4);
-
-			m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
-			psOffset += (sizeof(float) * 4);
-
-			PixelConstantBuffer pcb;
+			auto& pcb = lpcb.Buffer;
 			pcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
 			pcb.flipbookParameter.interpolationType = static_cast<float>(m_state.InterpolationType);
 
@@ -788,11 +798,20 @@ public:
 			pcb.edgeParameter.Threshold = m_state.EdgeThreshold;
 			pcb.edgeParameter.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
-			m_renderer->SetPixelBufferToShader(&pcb.flipbookParameter, sizeof(PixelConstantBuffer), psOffset);
+			pcb.softParticle.SetParam(
+				m_state.SoftParticleDistance,
+				reconstructionParam.DepthBufferScale,
+				reconstructionParam.DepthBufferOffset,
+				reconstructionParam.ProjectionMatrix33,
+				reconstructionParam.ProjectionMatrix34,
+				reconstructionParam.ProjectionMatrix43,
+				reconstructionParam.ProjectionMatrix44);
+
+			m_renderer->SetPixelBufferToShader(&lpcb, sizeof(StandardRendererLitPixelBuffer), 0);
 		}
 		else
 		{
-			VertexConstantBuffer vcb;
+			StandardRendererVertexBuffer vcb;
 			vcb.constantVSBuffer[0] = ToStruct(mCamera);
 			vcb.constantVSBuffer[1] = ToStruct(mProj);
 			vcb.uvInversed[0] = uvInversed[0];
@@ -805,11 +824,11 @@ public:
 			vcb.flipbookParameter.divideX = static_cast<float>(m_state.FlipbookDivideX);
 			vcb.flipbookParameter.divideY = static_cast<float>(m_state.FlipbookDivideY);
 
-			m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
+			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
 			if (distortion)
 			{
-				DistortionPixelConstantBuffer pcb;
+				StandardRendererDistortionPixelBuffer pcb;
 				pcb.scale[0] = m_state.DistortionIntensity;
 				pcb.uvInversed[0] = uvInversedBack[0];
 				pcb.uvInversed[1] = uvInversedBack[1];
@@ -824,11 +843,20 @@ public:
 
 				pcb.blendTextureParameter.blendType = static_cast<float>(m_state.TextureBlendType);
 
-				m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
+				pcb.softParticle.SetParam(
+					m_state.SoftParticleDistance,
+					reconstructionParam.DepthBufferScale,
+					reconstructionParam.DepthBufferOffset,
+					reconstructionParam.ProjectionMatrix33,
+					reconstructionParam.ProjectionMatrix34,
+					reconstructionParam.ProjectionMatrix43,
+					reconstructionParam.ProjectionMatrix44);
+
+				m_renderer->SetPixelBufferToShader(&pcb, sizeof(StandardRendererDistortionPixelBuffer), 0);
 			}
 			else
 			{
-				PixelConstantBuffer pcb;
+				StandardRendererPixelBuffer pcb;
 				pcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
 				pcb.flipbookParameter.interpolationType = static_cast<float>(m_state.InterpolationType);
 
@@ -845,7 +873,16 @@ public:
 				pcb.edgeParameter.Threshold = m_state.EdgeThreshold;
 				pcb.edgeParameter.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
-				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
+				pcb.softParticle.SetParam(
+					m_state.SoftParticleDistance,
+					reconstructionParam.DepthBufferScale,
+					reconstructionParam.DepthBufferOffset,
+					reconstructionParam.ProjectionMatrix33,
+					reconstructionParam.ProjectionMatrix34,
+					reconstructionParam.ProjectionMatrix43,
+					reconstructionParam.ProjectionMatrix44);
+
+				m_renderer->SetPixelBufferToShader(&pcb, sizeof(StandardRendererPixelBuffer), 0);
 			}
 		}
 

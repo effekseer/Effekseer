@@ -9,9 +9,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
+    vec4 PosP;
 };
 
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
@@ -27,19 +28,18 @@ layout(location = 1) in vec4 Input_Color;
 layout(location = 2) in vec2 Input_UV;
 layout(location = 0) centroid out vec4 _entryPointOutput_Color;
 layout(location = 1) centroid out vec2 _entryPointOutput_UV;
+layout(location = 2) out vec4 _entryPointOutput_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPos = pos4 * _40.mCamera;
-    cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * _40.mProj;
-    vec4 cameraPosU = cameraPos + vec4(0.0, 1.0, 0.0, 0.0);
-    vec4 cameraPosR = cameraPos + vec4(1.0, 0.0, 0.0, 0.0);
+    Output.PosVS = cameraPos * _40.mProj;
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = _40.mUVInversed.x + (_40.mUVInversed.y * Input.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -50,10 +50,11 @@ void main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     VS_Output flattenTemp = _main(Input);
-    vec4 _position = flattenTemp.Position;
+    vec4 _position = flattenTemp.PosVS;
     _position.y = -_position.y;
     gl_Position = _position;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
+    _entryPointOutput_PosP = flattenTemp.PosP;
 }
 

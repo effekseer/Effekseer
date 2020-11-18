@@ -16,7 +16,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV1;
     vec2 UV2;
@@ -25,6 +25,7 @@ struct VS_Output
     vec3 WorldT;
     vec3 WorldB;
     vec2 ScreenUV;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -51,10 +52,11 @@ varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
 varying vec2 _VSPS_ScreenUV;
+varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
@@ -68,14 +70,14 @@ VS_Output _main(VS_Input Input)
     Output.WorldT = worldTangent;
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = CBVS0.mCamera * vec4(worldPos, 1.0);
-    cameraPos /= vec4(cameraPos.w);
-    Output.Position = CBVS0.mProj * cameraPos;
+    Output.PosVS = CBVS0.mProj * cameraPos;
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / vec2(Output.Position.w);
+    Output.ScreenUV = Output.PosVS.xy / vec2(Output.PosVS.w);
     Output.ScreenUV = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -89,7 +91,7 @@ void main()
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV1 = flattenTemp.UV1;
     _VSPS_UV2 = flattenTemp.UV2;
@@ -98,6 +100,7 @@ void main()
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
     _VSPS_ScreenUV = flattenTemp.ScreenUV;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";
@@ -120,7 +123,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV1;
     vec2 UV2;
@@ -129,6 +132,7 @@ struct VS_Output
     vec3 WorldT;
     vec3 WorldB;
     vec2 ScreenUV;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -155,10 +159,11 @@ out vec3 _VSPS_WorldN;
 out vec3 _VSPS_WorldT;
 out vec3 _VSPS_WorldB;
 out vec2 _VSPS_ScreenUV;
+out vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
@@ -172,14 +177,14 @@ VS_Output _main(VS_Input Input)
     Output.WorldT = worldTangent;
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = vec4(worldPos, 1.0) * CBVS0.mCamera;
-    cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * CBVS0.mProj;
+    Output.PosVS = cameraPos * CBVS0.mProj;
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / vec2(Output.Position.w);
+    Output.ScreenUV = Output.PosVS.xy / vec2(Output.PosVS.w);
     Output.ScreenUV = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -193,7 +198,7 @@ void main()
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV1 = flattenTemp.UV1;
     _VSPS_UV2 = flattenTemp.UV2;
@@ -202,6 +207,7 @@ void main()
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
     _VSPS_ScreenUV = flattenTemp.ScreenUV;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";
@@ -221,7 +227,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV1;
     vec2 UV2;
@@ -230,6 +236,7 @@ struct VS_Output
     vec3 WorldT;
     vec3 WorldB;
     vec2 ScreenUV;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -256,10 +263,11 @@ varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
 varying vec2 _VSPS_ScreenUV;
+varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
@@ -273,14 +281,14 @@ VS_Output _main(VS_Input Input)
     Output.WorldT = worldTangent;
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = CBVS0.mCamera * vec4(worldPos, 1.0);
-    cameraPos /= vec4(cameraPos.w);
-    Output.Position = CBVS0.mProj * cameraPos;
+    Output.PosVS = CBVS0.mProj * cameraPos;
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / vec2(Output.Position.w);
+    Output.ScreenUV = Output.PosVS.xy / vec2(Output.PosVS.w);
     Output.ScreenUV = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -294,7 +302,7 @@ void main()
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV1 = flattenTemp.UV1;
     _VSPS_UV2 = flattenTemp.UV2;
@@ -303,6 +311,7 @@ void main()
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
     _VSPS_ScreenUV = flattenTemp.ScreenUV;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";
@@ -322,7 +331,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 VColor;
     vec2 UV1;
     vec2 UV2;
@@ -331,6 +340,7 @@ struct VS_Output
     vec3 WorldT;
     vec3 WorldB;
     vec2 ScreenUV;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -357,10 +367,11 @@ out vec3 _VSPS_WorldN;
 out vec3 _VSPS_WorldT;
 out vec3 _VSPS_WorldB;
 out vec2 _VSPS_ScreenUV;
+out vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
@@ -374,14 +385,14 @@ VS_Output _main(VS_Input Input)
     Output.WorldT = worldTangent;
     vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
     vec4 cameraPos = vec4(worldPos, 1.0) * CBVS0.mCamera;
-    cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * CBVS0.mProj;
+    Output.PosVS = cameraPos * CBVS0.mProj;
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / vec2(Output.Position.w);
+    Output.ScreenUV = Output.PosVS.xy / vec2(Output.PosVS.w);
     Output.ScreenUV = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -395,7 +406,7 @@ void main()
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_VColor = flattenTemp.VColor;
     _VSPS_UV1 = flattenTemp.UV1;
     _VSPS_UV2 = flattenTemp.UV2;
@@ -404,6 +415,7 @@ void main()
     _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_WorldB = flattenTemp.WorldB;
     _VSPS_ScreenUV = flattenTemp.ScreenUV;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 
 )";

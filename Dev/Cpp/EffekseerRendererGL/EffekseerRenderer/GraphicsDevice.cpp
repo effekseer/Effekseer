@@ -216,18 +216,20 @@ Texture::Texture(GraphicsDevice* graphicsDevice)
 
 Texture::~Texture()
 {
-	if (buffer_ > 0)
-	{
-		glDeleteTextures(1, &buffer_);
-		buffer_ = 0;
-	}
-
-	ES_SAFE_RELEASE(graphicsDevice_);
-
 	if (onDisposed_)
 	{
 		onDisposed_();
 	}
+	else
+	{
+		if (buffer_ > 0)
+		{
+			glDeleteTextures(1, &buffer_);
+			buffer_ = 0;
+		}
+	}
+
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
@@ -435,6 +437,7 @@ bool Texture::Init(GLuint buffer, const std::function<void()>& onDisposed)
 
 	buffer_ = buffer;
 	onDisposed_ = onDisposed;
+	hasMipmap_ = false;
 	return true;
 }
 
@@ -1231,9 +1234,9 @@ bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& b
 	return true;
 }
 
-Texture* GraphicsDevice::CreateTexture(GLuint buffer, const std::function<void()>& onDisposed)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(GLuint buffer, const std::function<void()>& onDisposed)
 {
-	auto ret = new Texture(this);
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(buffer, onDisposed))
 	{

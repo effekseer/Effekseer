@@ -15,6 +15,7 @@ class RenderTextureGL : public RenderTexture
 private:
 	GLuint texture = 0;
 	GLuint renderbuffer = 0;
+	Graphics* graphics = nullptr;
 
 public:
 	RenderTextureGL(Graphics* graphics);
@@ -78,6 +79,8 @@ private:
 	GLuint frameBufferForCopySrc = 0;
 	GLuint frameBufferForCopyDst = 0;
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
+	int32_t currentRenderTargetCount_ = 0;
+	bool hasDepthBuffer_ = false;
 
 public:
 	GraphicsGL();

@@ -5,12 +5,13 @@
 
 struct PS_Input
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
     vec3 Tangent;
     vec4 Color;
+    vec4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -18,6 +19,8 @@ struct VS_ConstantBuffer
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
 };
 
 uniform VS_ConstantBuffer CBPS0;
@@ -30,6 +33,7 @@ varying vec3 _VSPS_Normal;
 varying vec3 _VSPS_Binormal;
 varying vec3 _VSPS_Tangent;
 centroid varying vec4 _VSPS_Color;
+varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
@@ -49,13 +53,14 @@ vec4 _main(PS_Input Input)
 void main()
 {
     PS_Input Input;
-    Input.Pos = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
     Input.Color = _VSPS_Color;
-    vec4 _141 = _main(Input);
-    gl_FragData[0] = _141;
+    Input.PosP = _VSPS_PosP;
+    vec4 _145 = _main(Input);
+    gl_FragData[0] = _145;
 }
 

@@ -6,7 +6,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 	float4 mUVInversed;
 
 	// Unused
-    float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+	float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 }
 
 struct VS_Input
@@ -18,13 +18,10 @@ struct VS_Input
 
 struct VS_Output
 {
-	float4 Position : SV_POSITION;
+	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
-
-	//float4 Pos : TEXCOORD1;
-	//float4 PosU : TEXCOORD2;
-	//float4 PosR : TEXCOORD3;
+	float4 PosP : TEXCOORD1;
 };
 
 VS_Output main(const VS_Input Input)
@@ -33,24 +30,14 @@ VS_Output main(const VS_Input Input)
 	float4 pos4 = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
 
 	float4 cameraPos = mul(mCamera, pos4);
-	cameraPos = cameraPos / cameraPos.w;
-	Output.Position = mul(mProj, cameraPos);
-
-	//Output.Pos = Output.Position;
-
-	float4 cameraPosU = cameraPos + float4(0.0, 1.0, 0.0, 0.0);
-	float4 cameraPosR = cameraPos + float4(1.0, 0.0, 0.0, 0.0);
-	//Output.PosU = mul(mProj, cameraPosU);
-	//Output.PosR = mul(mProj, cameraPosR);
-	//
-	//Output.PosU /= Output.PosU.w;
-	//Output.PosR /= Output.PosR.w;
-	//Output.Pos /= Output.Pos.w;
+	Output.PosVS = mul(mProj, cameraPos);
 
 	Output.Color = Input.Color;
 	Output.UV = Input.UV;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+
+	Output.PosP = Output.PosVS;
 
 	return Output;
 }

@@ -20,10 +20,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -54,7 +54,7 @@ attribute float Input_FlipbookIndex;
 attribute float Input_AlphaThreshold;
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Pos;
+varying vec4 _VSPS_PosP;
 varying vec4 _VSPS_PosU;
 varying vec4 _VSPS_PosR;
 varying vec4 _VSPS_Alpha_Dist_UV;
@@ -196,13 +196,13 @@ VS_Output _main(VS_Input Input)
     localTangent /= vec4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = CBVS0.mProj * cameraPos;
-    Output.Pos = Output.Position;
+    Output.PosVS = CBVS0.mProj * cameraPos;
+    Output.PosP = Output.PosVS;
     Output.PosU = CBVS0.mProj * localBinormal;
     Output.PosR = CBVS0.mProj * localTangent;
     Output.PosU /= vec4(Output.PosU.w);
     Output.PosR /= vec4(Output.PosR.w);
-    Output.Pos /= vec4(Output.Pos.w);
+    Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
@@ -227,10 +227,10 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Pos = flattenTemp.Pos;
+    _VSPS_PosP = flattenTemp.PosP;
     _VSPS_PosU = flattenTemp.PosU;
     _VSPS_PosR = flattenTemp.PosR;
     _VSPS_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
@@ -263,10 +263,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -297,7 +297,7 @@ layout(location = 8) in float Input_FlipbookIndex;
 layout(location = 9) in float Input_AlphaThreshold;
 centroid out vec4 _VSPS_Color;
 centroid out vec2 _VSPS_UV;
-out vec4 _VSPS_Pos;
+out vec4 _VSPS_PosP;
 out vec4 _VSPS_PosU;
 out vec4 _VSPS_PosR;
 out vec4 _VSPS_Alpha_Dist_UV;
@@ -430,13 +430,13 @@ VS_Output _main(VS_Input Input)
     localTangent /= vec4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = cameraPos * CBVS0.mProj;
-    Output.Pos = Output.Position;
+    Output.PosVS = cameraPos * CBVS0.mProj;
+    Output.PosP = Output.PosVS;
     Output.PosU = localBinormal * CBVS0.mProj;
     Output.PosR = localTangent * CBVS0.mProj;
     Output.PosU /= vec4(Output.PosU.w);
     Output.PosR /= vec4(Output.PosR.w);
-    Output.Pos /= vec4(Output.Pos.w);
+    Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
@@ -461,10 +461,10 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Pos = flattenTemp.Pos;
+    _VSPS_PosP = flattenTemp.PosP;
     _VSPS_PosU = flattenTemp.PosU;
     _VSPS_PosR = flattenTemp.PosR;
     _VSPS_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
@@ -494,10 +494,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -528,7 +528,7 @@ attribute float Input_FlipbookIndex;
 attribute float Input_AlphaThreshold;
 varying vec4 _VSPS_Color;
 varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Pos;
+varying vec4 _VSPS_PosP;
 varying vec4 _VSPS_PosU;
 varying vec4 _VSPS_PosR;
 varying vec4 _VSPS_Alpha_Dist_UV;
@@ -670,13 +670,13 @@ VS_Output _main(VS_Input Input)
     localTangent /= vec4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = CBVS0.mProj * cameraPos;
-    Output.Pos = Output.Position;
+    Output.PosVS = CBVS0.mProj * cameraPos;
+    Output.PosP = Output.PosVS;
     Output.PosU = CBVS0.mProj * localBinormal;
     Output.PosR = CBVS0.mProj * localTangent;
     Output.PosU /= vec4(Output.PosU.w);
     Output.PosR /= vec4(Output.PosR.w);
-    Output.Pos /= vec4(Output.Pos.w);
+    Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
@@ -701,10 +701,10 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Pos = flattenTemp.Pos;
+    _VSPS_PosP = flattenTemp.PosP;
     _VSPS_PosU = flattenTemp.PosU;
     _VSPS_PosR = flattenTemp.PosR;
     _VSPS_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
@@ -734,10 +734,10 @@ struct VS_Input
 
 struct VS_Output
 {
-    vec4 Position;
+    vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec4 Pos;
+    vec4 PosP;
     vec4 PosU;
     vec4 PosR;
     vec4 Alpha_Dist_UV;
@@ -768,7 +768,7 @@ layout(location = 8) in float Input_FlipbookIndex;
 layout(location = 9) in float Input_AlphaThreshold;
 centroid out vec4 _VSPS_Color;
 centroid out vec2 _VSPS_UV;
-out vec4 _VSPS_Pos;
+out vec4 _VSPS_PosP;
 out vec4 _VSPS_PosU;
 out vec4 _VSPS_PosR;
 out vec4 _VSPS_Alpha_Dist_UV;
@@ -901,13 +901,13 @@ VS_Output _main(VS_Input Input)
     localTangent /= vec4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.Position = cameraPos * CBVS0.mProj;
-    Output.Pos = Output.Position;
+    Output.PosVS = cameraPos * CBVS0.mProj;
+    Output.PosP = Output.PosVS;
     Output.PosU = localBinormal * CBVS0.mProj;
     Output.PosR = localTangent * CBVS0.mProj;
     Output.PosU /= vec4(Output.PosU.w);
     Output.PosR /= vec4(Output.PosR.w);
-    Output.Pos /= vec4(Output.Pos.w);
+    Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
     Output.UV = Input.UV;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
@@ -932,10 +932,10 @@ void main()
     Input.FlipbookIndex = Input_FlipbookIndex;
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Pos = flattenTemp.Pos;
+    _VSPS_PosP = flattenTemp.PosP;
     _VSPS_PosU = flattenTemp.PosU;
     _VSPS_PosR = flattenTemp.PosR;
     _VSPS_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;

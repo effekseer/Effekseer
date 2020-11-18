@@ -158,4 +158,15 @@ void Renderer::SetBackgroundTexture(::Effekseer::TextureData* textureData)
 	assert(0);
 }
 
+void Renderer::GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam)
+{
+	impl->GetDepth(texture, reconstructionParam);
+}
+
+void Renderer::SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam)
+{
+	impl->SetDepth(texture, reconstructionParam);
+}
+
+
 } // namespace EffekseerRenderer

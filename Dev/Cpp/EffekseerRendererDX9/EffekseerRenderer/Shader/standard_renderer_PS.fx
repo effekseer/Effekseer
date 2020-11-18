@@ -1,9 +1,9 @@
 struct PS_Input
 {
-    float4 Pos;
+    float4 PosVS;
     float4 Color;
     float2 UV;
-    float4 Position;
+    float4 PosP;
     float4 PosU;
     float4 PosR;
     float4 Alpha_Dist_UV;
@@ -32,6 +32,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _209_emissiveScaling : register(c3);
     float4 _209_edgeColor : register(c4);
     float4 _209_edgeParameter : register(c5);
+    float4 _209_softParticleAndReconstructionParam1 : register(c6);
+    float4 _209_reconstructionParam2 : register(c7);
 };
 
 uniform sampler2D Sampler_g_uvDistortionSampler : register(s2);
@@ -44,7 +46,7 @@ uniform sampler2D Sampler_g_blendAlphaSampler : register(s4);
 static float4 gl_FragCoord;
 static float4 Input_Color;
 static float2 Input_UV;
-static float4 Input_Position;
+static float4 Input_PosP;
 static float4 Input_PosU;
 static float4 Input_PosR;
 static float4 Input_Alpha_Dist_UV;
@@ -57,7 +59,7 @@ struct SPIRV_Cross_Input
 {
     centroid float4 Input_Color : TEXCOORD0;
     centroid float2 Input_UV : TEXCOORD1;
-    float4 Input_Position : TEXCOORD2;
+    float4 Input_PosP : TEXCOORD2;
     float4 Input_PosU : TEXCOORD3;
     float4 Input_PosR : TEXCOORD4;
     float4 Input_Alpha_Dist_UV : TEXCOORD5;
@@ -179,10 +181,10 @@ float4 _main(PS_Input Input)
 void frag_main()
 {
     PS_Input Input;
-    Input.Pos = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.Color = Input_Color;
     Input.UV = Input_UV;
-    Input.Position = Input_Position;
+    Input.PosP = Input_PosP;
     Input.PosU = Input_PosU;
     Input.PosR = Input_PosR;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
@@ -198,7 +200,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     gl_FragCoord = stage_input.gl_FragCoord + float4(0.5f, 0.5f, 0.0f, 0.0f);
     Input_Color = stage_input.Input_Color;
     Input_UV = stage_input.Input_UV;
-    Input_Position = stage_input.Input_Position;
+    Input_PosP = stage_input.Input_PosP;
     Input_PosU = stage_input.Input_PosU;
     Input_PosR = stage_input.Input_PosR;
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;

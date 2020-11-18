@@ -8,7 +8,7 @@ using namespace metal;
 
 struct VS_Output
 {
-    float4 Pos;
+    float4 PosVS;
     float2 UV;
     float3 Normal;
     float3 Binormal;
@@ -18,6 +18,7 @@ struct VS_Output
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
     float2 Others;
+    float4 PosP;
 };
 
 struct VS_Input
@@ -62,6 +63,7 @@ struct main0_out
     float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
     float2 _entryPointOutput_Others [[user(locn8)]];
+    float4 _entryPointOutput_PosP [[user(locn9)]];
     float4 gl_Position [[position]];
 };
 
@@ -219,10 +221,10 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     float4 modelColor = v_365.fModelColor[index] * Input.Color;
     float flipbookIndexAndNextRate = v_365.fFlipbookIndexAndNextRate[index].x;
     float modelAlphaThreshold = v_365.fModelAlphaThreshold[index].x;
-    VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 cameraPosition = localPosition * matModel;
-    Output.Pos = v_365.mCameraProj * cameraPosition;
+    Output.PosVS = v_365.mCameraProj * cameraPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
@@ -242,6 +244,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     VS_Output param_9 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, v_365);
     Output = param_9;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -257,7 +260,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     Input.Color = in.Input_Color;
     Input.Index = gl_InstanceIndex;
     VS_Output flattenTemp = _main(Input, v_365);
-    out.gl_Position = flattenTemp.Pos;
+    out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_Normal = flattenTemp.Normal;
     out._entryPointOutput_Binormal = flattenTemp.Binormal;
@@ -267,6 +270,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     out._entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     out._entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
     out._entryPointOutput_Others = flattenTemp.Others;
+    out._entryPointOutput_PosP = flattenTemp.PosP;
     return out;
 }
 

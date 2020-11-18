@@ -223,6 +223,7 @@ struct ModelRendererPixelConstantBuffer
 	float LightDirection[4];
 	float LightColor[4];
 	float LightAmbientColor[4];
+	SoftParticleParameter softParticle;
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{
@@ -355,6 +356,8 @@ struct ModelRendererAdvancedPixelConstantBuffer
 		};
 	} EdgeParameter;
 
+	SoftParticleParameter softParticle;
+
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{
 		ModelFlipbookParameter.EnableInterpolation = enableInterpolation;
@@ -428,6 +431,8 @@ struct ModelRendererDistortionPixelConstantBuffer
 	float Interpolation[4];
 	float UVDistortion[4];
 	float TextureBlendType[4];
+
+	SoftParticleParameter softParticle;
 };
 
 enum class ModelRendererVertexType
@@ -816,7 +821,7 @@ public:
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 
 		collector_ = ShaderParameterCollector();
-		collector_.Collect(renderer, parameter.EffectPointer, parameter.BasicParameterPtr, parameter.EnableFalloff);
+		collector_.Collect(renderer, parameter.EffectPointer, parameter.BasicParameterPtr, parameter.EnableFalloff, renderer->GetImpl()->isSoftParticleEnabled);
 	}
 
 	template <typename RENDERER>
@@ -987,6 +992,20 @@ public:
 			collector_.Textures[collector_.BackgroundIndex] = renderer->GetBackground();
 		}
 
+		::Effekseer::TextureData* depthTexture = nullptr;
+		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
+		renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
+
+		if (collector_.IsDepthRequired)
+		{
+			if (depthTexture == nullptr)
+			{
+				depthTexture = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+			}
+
+			collector_.Textures[collector_.DepthIndex] = depthTexture;
+		}
+
 		// select shader
 		Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
 		// materialParam = nullptr;
@@ -1116,6 +1135,15 @@ public:
 				pcb->UVDistortion[3] = uvInversed[1];
 
 				pcb->TextureBlendType[0] = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
+
+				pcb->softParticle.SetParam(
+					param.BasicParameterPtr->SoftParticleDistance,
+					reconstructionParam.DepthBufferScale,
+					reconstructionParam.DepthBufferOffset,
+					reconstructionParam.ProjectionMatrix33,
+					reconstructionParam.ProjectionMatrix34,
+					reconstructionParam.ProjectionMatrix43,
+					reconstructionParam.ProjectionMatrix44);
 			}
 			else
 			{
@@ -1161,6 +1189,15 @@ public:
 					param.BasicParameterPtr->EdgeColor[3])));
 
 				pcb->SetEdgeParameter(param.BasicParameterPtr->EdgeThreshold, static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
+
+				pcb->softParticle.SetParam(
+					param.BasicParameterPtr->SoftParticleDistance,
+					reconstructionParam.DepthBufferScale,
+					reconstructionParam.DepthBufferOffset,
+					reconstructionParam.ProjectionMatrix33,
+					reconstructionParam.ProjectionMatrix34,
+					reconstructionParam.ProjectionMatrix43,
+					reconstructionParam.ProjectionMatrix44);
 			}
 		}
 

@@ -5,7 +5,7 @@
 
 struct VS_Output
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
@@ -15,6 +15,7 @@ struct VS_Output
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
     vec2 Others;
+    vec4 PosP;
 };
 
 struct VS_Input
@@ -70,6 +71,7 @@ out vec4 _VSPS_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_FBNextIndex_UV;
 out vec2 _VSPS_Others;
+out vec4 _VSPS_PosP;
 
 vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
@@ -202,10 +204,10 @@ VS_Output _main(VS_Input Input)
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     float flipbookIndexAndNextRate = CBVS0.fFlipbookIndexAndNextRate[index].x;
     float modelAlphaThreshold = CBVS0.fModelAlphaThreshold[index].x;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
-    Output.Pos = cameraPosition * CBVS0.mCameraProj;
+    Output.PosVS = cameraPosition * CBVS0.mCameraProj;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
@@ -225,6 +227,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_9 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
     Output = param_9;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -239,7 +242,7 @@ void main()
     Input.Color = Input_Color;
     Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Pos;
+    gl_Position = flattenTemp.PosVS;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Normal = flattenTemp.Normal;
     _VSPS_Binormal = flattenTemp.Binormal;
@@ -249,5 +252,6 @@ void main()
     _VSPS_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     _VSPS_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
     _VSPS_Others = flattenTemp.Others;
+    _VSPS_PosP = flattenTemp.PosP;
 }
 

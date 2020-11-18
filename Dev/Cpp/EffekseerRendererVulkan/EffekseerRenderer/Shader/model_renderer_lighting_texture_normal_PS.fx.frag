@@ -2,7 +2,7 @@
 
 struct PS_Input
 {
-    vec4 Pos;
+    vec4 PosVS;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
@@ -12,6 +12,7 @@ struct PS_Input
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
     vec2 Others;
+    vec4 PosP;
 };
 
 struct AdvancedParameter
@@ -46,7 +47,9 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
-} _210;
+    vec4 softParticleAndReconstructionParam1;
+    vec4 reconstructionParam2;
+} _264;
 
 layout(set = 1, binding = 4) uniform sampler2D Sampler_g_uvDistortionSampler;
 layout(set = 1, binding = 1) uniform sampler2D Sampler_g_colorSampler;
@@ -55,6 +58,7 @@ layout(set = 1, binding = 3) uniform sampler2D Sampler_g_alphaSampler;
 layout(set = 1, binding = 7) uniform sampler2D Sampler_g_blendUVDistortionSampler;
 layout(set = 1, binding = 5) uniform sampler2D Sampler_g_blendSampler;
 layout(set = 1, binding = 6) uniform sampler2D Sampler_g_blendAlphaSampler;
+layout(set = 1, binding = 8) uniform sampler2D Sampler_g_depthSampler;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec3 Input_Normal;
@@ -65,6 +69,7 @@ layout(location = 5) in vec4 Input_Alpha_Dist_UV;
 layout(location = 6) in vec4 Input_Blend_Alpha_Dist_UV;
 layout(location = 7) in vec4 Input_Blend_FBNextIndex_UV;
 layout(location = 8) in vec2 Input_Others;
+layout(location = 9) in vec4 Input_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
@@ -105,33 +110,43 @@ void ApplyTextureBlending(inout vec4 dstColor, vec4 blendColor, float blendType)
 {
     if (blendType == 0.0)
     {
-        vec3 _85 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_85.x, _85.y, _85.z, dstColor.w);
+        vec3 _93 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
+        dstColor = vec4(_93.x, _93.y, _93.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0)
         {
-            vec3 _97 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_97.x, _97.y, _97.z, dstColor.w);
+            vec3 _105 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = vec4(_105.x, _105.y, _105.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0)
             {
-                vec3 _110 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_110.x, _110.y, _110.z, dstColor.w);
+                vec3 _118 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = vec4(_118.x, _118.y, _118.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    vec3 _123 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_123.x, _123.y, _123.z, dstColor.w);
+                    vec3 _131 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = vec4(_131.x, _131.y, _131.z, dstColor.w);
                 }
             }
         }
     }
+}
+
+float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2 reconstruct1, vec4 reconstruct2)
+{
+    float _distance = softparticleParam;
+    vec2 rescale = reconstruct1;
+    vec4 params = reconstruct2;
+    vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
+    vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
+    return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
 }
 
 vec4 _main(PS_Input Input)
@@ -139,74 +154,87 @@ vec4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
-    vec2 param_2 = _210.fUVDistortionParameter.zw;
+    vec2 param_2 = _264.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_g_uvDistortionSampler);
-    UVOffset *= _210.fUVDistortionParameter.x;
+    UVOffset *= _264.fUVDistortionParameter.x;
     vec4 Output = texture(Sampler_g_colorSampler, Input.UV + UVOffset) * Input.Color;
     vec3 texNormal = (texture(Sampler_g_normalSampler, Input.UV + UVOffset).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _210.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_colorSampler);
+    ApplyFlipbook(param_3, _264.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_colorSampler);
     Output = param_3;
     vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_5 = advancedParam.BlendUVDistortionUV;
-    vec2 param_6 = _210.fUVDistortionParameter.zw;
+    vec2 param_6 = _264.fUVDistortionParameter.zw;
     vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
-    BlendUVOffset *= _210.fUVDistortionParameter.y;
+    BlendUVOffset *= _264.fUVDistortionParameter.y;
     vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, _210.fBlendTextureParameter.x);
+    ApplyTextureBlending(param_7, BlendTextureColor, _264.fBlendTextureParameter.x);
     Output = param_7;
-    float diffuse = max(dot(_210.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _383 = Output.xyz * ((_210.fLightColor.xyz * diffuse) + _210.fLightAmbient.xyz);
-    Output = vec4(_383.x, _383.y, _383.z, Output.w);
-    if (_210.fFalloffParam.Param.x == 1.0)
+    float diffuse = max(dot(_264.fLightDirection.xyz, localNormal), 0.0);
+    vec3 _437 = Output.xyz * ((_264.fLightColor.xyz * diffuse) + _264.fLightAmbient.xyz);
+    Output = vec4(_437.x, _437.y, _437.z, Output.w);
+    if (_264.fFalloffParam.Param.x == 1.0)
     {
-        vec3 cameraVec = normalize(-_210.fCameraFrontDirection.xyz);
+        vec3 cameraVec = normalize(-_264.fCameraFrontDirection.xyz);
         float CdotN = clamp(dot(cameraVec, vec3(localNormal.x, localNormal.y, localNormal.z)), 0.0, 1.0);
-        vec4 FalloffBlendColor = mix(_210.fFalloffParam.EndColor, _210.fFalloffParam.BeginColor, vec4(pow(CdotN, _210.fFalloffParam.Param.z)));
-        if (_210.fFalloffParam.Param.y == 0.0)
+        vec4 FalloffBlendColor = mix(_264.fFalloffParam.EndColor, _264.fFalloffParam.BeginColor, vec4(pow(CdotN, _264.fFalloffParam.Param.z)));
+        if (_264.fFalloffParam.Param.y == 0.0)
         {
-            vec3 _429 = Output.xyz + FalloffBlendColor.xyz;
-            Output = vec4(_429.x, _429.y, _429.z, Output.w);
+            vec3 _482 = Output.xyz + FalloffBlendColor.xyz;
+            Output = vec4(_482.x, _482.y, _482.z, Output.w);
         }
         else
         {
-            if (_210.fFalloffParam.Param.y == 1.0)
+            if (_264.fFalloffParam.Param.y == 1.0)
             {
-                vec3 _442 = Output.xyz - FalloffBlendColor.xyz;
-                Output = vec4(_442.x, _442.y, _442.z, Output.w);
+                vec3 _495 = Output.xyz - FalloffBlendColor.xyz;
+                Output = vec4(_495.x, _495.y, _495.z, Output.w);
             }
             else
             {
-                if (_210.fFalloffParam.Param.y == 2.0)
+                if (_264.fFalloffParam.Param.y == 2.0)
                 {
-                    vec3 _455 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = vec4(_455.x, _455.y, _455.z, Output.w);
+                    vec3 _508 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = vec4(_508.x, _508.y, _508.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    vec3 _468 = Output.xyz * _210.fEmissiveScaling.x;
-    Output = vec4(_468.x, _468.y, _468.z, Output.w);
+    vec3 _521 = Output.xyz * _264.fEmissiveScaling.x;
+    Output = vec4(_521.x, _521.y, _521.z, Output.w);
+    vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
+    vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
+    screenUV.y = 1.0 - screenUV.y;
+    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    if (!(_264.softParticleAndReconstructionParam1.x == 0.0))
+    {
+        float param_8 = backgroundZ;
+        float param_9 = screenPos.z;
+        float param_10 = _264.softParticleAndReconstructionParam1.x;
+        vec2 param_11 = _264.softParticleAndReconstructionParam1.yz;
+        vec4 param_12 = _264.reconstructionParam2;
+        Output.w *= SoftParticle(param_8, param_9, param_10, param_11, param_12);
+    }
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _499 = mix(_210.fEdgeColor.xyz * _210.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - _210.fEdgeParameter.x)));
-    Output = vec4(_499.x, _499.y, _499.z, Output.w);
+    vec3 _604 = mix(_264.fEdgeColor.xyz * _264.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - _264.fEdgeParameter.x)));
+    Output = vec4(_604.x, _604.y, _604.z, Output.w);
     return Output;
 }
 
 void main()
 {
     PS_Input Input;
-    Input.Pos = gl_FragCoord;
+    Input.PosVS = gl_FragCoord;
     Input.UV = Input_UV;
     Input.Normal = Input_Normal;
     Input.Binormal = Input_Binormal;
@@ -216,7 +244,8 @@ void main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.Others = Input_Others;
-    vec4 _542 = _main(Input);
-    _entryPointOutput = _542;
+    Input.PosP = Input_PosP;
+    vec4 _650 = _main(Input);
+    _entryPointOutput = _650;
 }
 

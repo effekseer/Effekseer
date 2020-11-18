@@ -10,7 +10,7 @@ struct VS_Input
 
 struct VS_Output
 {
-    float4 Position;
+    float4 PosVS;
     float4 VColor;
     float2 UV1;
     float2 UV2;
@@ -19,9 +19,10 @@ struct VS_Output
     float3 WorldT;
     float3 WorldB;
     float2 ScreenUV;
+    float4 PosP;
 };
 
-static const VS_Output _22 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xx };
+static const VS_Output _22 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -47,6 +48,7 @@ static float3 _entryPointOutput_WorldN;
 static float3 _entryPointOutput_WorldT;
 static float3 _entryPointOutput_WorldB;
 static float2 _entryPointOutput_ScreenUV;
+static float4 _entryPointOutput_PosP;
 
 struct SPIRV_Cross_Input
 {
@@ -68,6 +70,7 @@ struct SPIRV_Cross_Output
     float3 _entryPointOutput_WorldT : TEXCOORD5;
     float3 _entryPointOutput_WorldB : TEXCOORD6;
     float2 _entryPointOutput_ScreenUV : TEXCOORD7;
+    float4 _entryPointOutput_PosP : TEXCOORD8;
     float4 gl_Position : SV_Position;
 };
 
@@ -87,14 +90,14 @@ VS_Output _main(VS_Input Input)
     Output.WorldT = worldTangent;
     float3 pixelNormalDir = float3(0.5f, 0.5f, 1.0f);
     float4 cameraPos = mul(_62_mCamera, float4(worldPos, 1.0f));
-    cameraPos /= cameraPos.w.xxxx;
-    Output.Position = mul(_62_mProj, cameraPos);
+    Output.PosVS = mul(_62_mProj, cameraPos);
     Output.WorldP = worldPos;
     Output.VColor = Input.Color;
     Output.UV1 = uv1;
     Output.UV2 = uv2;
-    Output.ScreenUV = Output.Position.xy / Output.Position.w.xx;
+    Output.ScreenUV = Output.PosVS.xy / Output.PosVS.w.xx;
     Output.ScreenUV = float2(Output.ScreenUV.x + 1.0f, 1.0f - Output.ScreenUV.y) * 0.5f;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -108,7 +111,7 @@ void vert_main()
     Input.UV1 = Input_UV1;
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
-    gl_Position = flattenTemp.Position;
+    gl_Position = flattenTemp.PosVS;
     _entryPointOutput_VColor = flattenTemp.VColor;
     _entryPointOutput_UV1 = flattenTemp.UV1;
     _entryPointOutput_UV2 = flattenTemp.UV2;
@@ -117,6 +120,7 @@ void vert_main()
     _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_WorldB = flattenTemp.WorldB;
     _entryPointOutput_ScreenUV = flattenTemp.ScreenUV;
+    _entryPointOutput_PosP = flattenTemp.PosP;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
@@ -138,5 +142,6 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output._entryPointOutput_WorldT = _entryPointOutput_WorldT;
     stage_output._entryPointOutput_WorldB = _entryPointOutput_WorldB;
     stage_output._entryPointOutput_ScreenUV = _entryPointOutput_ScreenUV;
+    stage_output._entryPointOutput_PosP = _entryPointOutput_PosP;
     return stage_output;
 }

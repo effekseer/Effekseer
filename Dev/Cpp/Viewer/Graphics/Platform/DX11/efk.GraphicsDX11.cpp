@@ -89,6 +89,7 @@ bool RenderTextureDX11::Initialize(Effekseer::Tool::Vector2DI size, TextureForma
 	this->size_ = size;
 	this->samplingCount_ = multisample;
 	this->format_ = format;
+	this->texture_ = static_cast<EffekseerRendererDX11::Backend::GraphicsDevice*>(g->GetGraphicsDevice().Get())->CreateTexture(textureSRV, nullptr, nullptr);
 	return true;
 
 End:;
@@ -223,11 +224,12 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 	HRESULT hr = D3D11CreateDevice(
 		nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, flevels, flevelCount, D3D11_SDK_VERSION, &device_, nullptr, &context);
 
-	if FAILED (hr)
-	{
-		log += "Failed : D3D11CreateDevice\n";
-		goto End;
-	}
+	if
+		FAILED(hr)
+		{
+			log += "Failed : D3D11CreateDevice\n";
+			goto End;
+		}
 
 #if DEBUG
 	if (FAILED(device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&d3dDebug))))
@@ -446,11 +448,10 @@ void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t rende
 			auto rt = (RenderTextureDX11*)renderTextures[i];
 			if (rt != nullptr)
 			{
-				renderTargetView_[i] = rt->GetRenderTargetView();			
+				renderTargetView_[i] = rt->GetRenderTargetView();
 			}
 		}
 
-		
 		if (dt != nullptr)
 		{
 			depthStencilView_ = dt->GetDepthStencilView();
@@ -458,14 +459,19 @@ void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t rende
 
 		context->OMSetRenderTargets(renderTextureCount, renderTargetView_.data(), depthStencilView_);
 
-		D3D11_VIEWPORT vp;
-		vp.TopLeftX = 0;
-		vp.TopLeftY = 0;
-		vp.Width = static_cast<float>(renderTextures[0]->GetSize().X);
-		vp.Height = static_cast<float>(renderTextures[0]->GetSize().Y);
-		vp.MinDepth = 0.0f;
-		vp.MaxDepth = 1.0f;
-		context->RSSetViewports(1, &vp);
+		std::array<D3D11_VIEWPORT, 4> vps;
+
+		for (auto& vp : vps)
+		{
+			vp.TopLeftX = 0;
+			vp.TopLeftY = 0;
+			vp.Width = static_cast<float>(renderTextures[0]->GetSize().X);
+			vp.Height = static_cast<float>(renderTextures[0]->GetSize().Y);
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;	
+		}
+
+		context->RSSetViewports(renderTextureCount, vps.data());
 
 		currentRenderTargetViews = renderTargetView_;
 		currentDepthStencilView = depthStencilView_;
