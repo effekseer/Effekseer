@@ -1394,12 +1394,95 @@ struct SoftParticleParameter
 		softParticleAndReconstructionParam1[0] = softParticle;
 		softParticleAndReconstructionParam1[1] = rescale1;
 		softParticleAndReconstructionParam1[2] = rescale2;
-	
+
 		reconstructionParam2[0] = v33;
 		reconstructionParam2[1] = v34;
 		reconstructionParam2[2] = v43;
 		reconstructionParam2[3] = v44;
 	}
+};
+
+struct FlipbookParameter
+{
+	union {
+		float Buffer[4];
+
+		struct
+		{
+			float EnableInterpolation;
+			float InterpolationType;
+		};
+	};
+};
+
+struct UVDistortionParameter
+{
+	union {
+		float Buffer[4];
+
+		struct
+		{
+			float Intensity;
+			float BlendIntensity;
+			float UVInversed[2];
+		};
+	};
+};
+
+struct BlendTextureParameter
+{
+	union {
+		float Buffer[4];
+
+		struct
+		{
+			float BlendType;
+		};
+	};
+};
+
+struct EmmisiveParameter
+{
+	union {
+		float Buffer[4];
+
+		struct
+		{
+			float EmissiveScaling;
+		};
+	};
+};
+
+struct EdgeParameter
+{
+	float EdgeColor[4];
+
+	union {
+		float Buffer[4];
+
+		struct
+		{
+			float Threshold;
+			float ColorScaling;
+		};
+	};
+};
+
+struct FalloffParameter
+{
+	union {
+		float Buffer[4];
+
+		struct
+		{
+			float Enable;
+			float ColorBlendType;
+			float Pow;
+		};
+	};
+
+	float BeginColor[4];
+	float EndColor[4];
 };
 
 } // namespace EffekseerRenderer
