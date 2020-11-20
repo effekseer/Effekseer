@@ -88,8 +88,7 @@ struct ModelRendererAdvancedVertexConstantBuffer
 
 	struct
 	{
-		union
-		{
+		union {
 			float Buffer[4];
 
 			struct
@@ -223,7 +222,7 @@ struct ModelRendererPixelConstantBuffer
 	float LightDirection[4];
 	float LightColor[4];
 	float LightAmbientColor[4];
-	SoftParticleParameter softParticle;
+	SoftParticleParameter SoftParticleParam;
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{
@@ -249,11 +248,7 @@ struct ModelRendererPixelConstantBuffer
 	{
 	}
 
-	void SetEdgeColor(const std::array<float, 4>& edgeColor)
-	{
-	}
-
-	void SetEdgeParameter(float threshold, float colorScaling)
+	void SetEdgeParameter(const std::array<float, 4>& edgeColor, float threshold, float colorScaling)
 	{
 	}
 };
@@ -264,117 +259,34 @@ struct ModelRendererAdvancedPixelConstantBuffer
 	float LightColor[4];
 	float LightAmbientColor[4];
 
-	struct
-	{
-		union
-		{
-			float Buffer[4];
-
-			struct
-			{
-				float EnableInterpolation;
-				float InterpolationType;
-			};
-		};
-	} ModelFlipbookParameter;
-
-	struct
-	{
-		union
-		{
-			float Buffer[4];
-
-			struct
-			{
-				float Intensity;
-				float BlendIntensity;
-				float UVInversed[2];
-			};
-		};
-	} ModelUVDistortionParameter;
-
-	struct
-	{
-		union
-		{
-			float Buffer[4];
-
-			struct
-			{
-				float BlendType;
-			};
-		};
-	} ModelBlendTextureParameter;
+	FlipbookParameter FlipbookParam;
+	UVDistortionParameter UVDistortionParam;
+	BlendTextureParameter BlendTextureParam;
 
 	float CameraFrontDirection[4];
 
-	struct
-	{
-		union
-		{
-			float Buffer[4];
-
-			struct
-			{
-				float Enable;
-				float ColorBlendType;
-				float Pow;
-			};
-		};
-
-		float BeginColor[4];
-		float EndColor[4];
-
-	} FalloffParameter;
-
-	struct
-	{
-		union
-		{
-			float Buffer[4];
-
-			struct
-			{
-				float EmissiveScaling;
-			};
-		};
-	};
-
-	float EdgeColor[4];
-
-	struct
-	{
-		union
-		{
-			float Buffer[4];
-
-			struct
-			{
-				float Threshold;
-				float ColorScaling;
-			};
-		};
-	} EdgeParameter;
-
-	SoftParticleParameter softParticle;
+	FalloffParameter FalloffParam;
+	EmmisiveParameter EmmisiveParam;
+	EdgeParameter EdgeParam;
+	SoftParticleParameter SoftParticleParam;
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{
-		ModelFlipbookParameter.EnableInterpolation = enableInterpolation;
-		ModelFlipbookParameter.InterpolationType = interpolationType;
+		FlipbookParam.EnableInterpolation = enableInterpolation;
+		FlipbookParam.InterpolationType = interpolationType;
 	}
 
 	void SetModelUVDistortionParameter(float intensity, float blendIntensity, const std::array<float, 2>& uvInversed)
 	{
-		ModelUVDistortionParameter.Intensity = intensity;
-		ModelUVDistortionParameter.BlendIntensity = blendIntensity;
-		ModelUVDistortionParameter.UVInversed[0] = uvInversed[0];
-		ModelUVDistortionParameter.UVInversed[1] = uvInversed[1];
+		UVDistortionParam.Intensity = intensity;
+		UVDistortionParam.BlendIntensity = blendIntensity;
+		UVDistortionParam.UVInversed[0] = uvInversed[0];
+		UVDistortionParam.UVInversed[1] = uvInversed[1];
 	}
 
 	void SetModelBlendTextureParameter(float blendType)
 	{
-		ModelBlendTextureParameter.BlendType = blendType;
+		BlendTextureParam.BlendType = blendType;
 	}
 
 	void SetCameraFrontDirection(float x, float y, float z)
@@ -387,38 +299,34 @@ struct ModelRendererAdvancedPixelConstantBuffer
 
 	void SetFalloffParameter(float enable, float colorBlendType, float pow, const std::array<float, 4>& beginColor, const std::array<float, 4>& endColor)
 	{
-		FalloffParameter.Enable = enable;
-		FalloffParameter.ColorBlendType = colorBlendType;
-		FalloffParameter.Pow = pow;
+		FalloffParam.Enable = enable;
+		FalloffParam.ColorBlendType = colorBlendType;
+		FalloffParam.Pow = pow;
 
 		for (size_t i = 0; i < 4; i++)
 		{
-			FalloffParameter.BeginColor[i] = beginColor[i];
+			FalloffParam.BeginColor[i] = beginColor[i];
 		}
 
 		for (size_t i = 0; i < 4; i++)
 		{
-			FalloffParameter.EndColor[i] = endColor[i];
+			FalloffParam.EndColor[i] = endColor[i];
 		}
 	}
 
 	void SetEmissiveScaling(float emissiveScaling)
 	{
-		EmissiveScaling = emissiveScaling;
+		EmmisiveParam.EmissiveScaling = emissiveScaling;
 	}
 
-	void SetEdgeColor(const std::array<float, 4>& edgeColor)
+	void SetEdgeParameter(const std::array<float, 4>& edgeColor, float threshold, float colorScaling)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
-			EdgeColor[i] = edgeColor[i];
+			EdgeParam.EdgeColor[i] = edgeColor[i];
 		}
-	}
-
-	void SetEdgeParameter(float threshold, float colorScaling)
-	{
-		EdgeParameter.Threshold = threshold;
-		EdgeParameter.ColorScaling = colorScaling;
+		EdgeParam.Threshold = threshold;
+		EdgeParam.ColorScaling = colorScaling;
 	}
 };
 
@@ -428,10 +336,9 @@ struct ModelRendererDistortionPixelConstantBuffer
 	float UVInversedBack[4];
 
 	//! unused in none advanced renderer
-	float Interpolation[4];
-	float UVDistortion[4];
-	float TextureBlendType[4];
-
+	FlipbookParameter FlipbookParam;
+	UVDistortionParameter UVDistortionParam;
+	BlendTextureParameter BlendTextureParam;
 	SoftParticleParameter softParticle;
 };
 
@@ -1126,15 +1033,15 @@ public:
 				pcb->UVInversedBack[0] = uvInversedBack[0];
 				pcb->UVInversedBack[1] = uvInversedBack[1];
 
-				pcb->Interpolation[0] = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
-				pcb->Interpolation[1] = static_cast<float>(param.BasicParameterPtr->InterpolationType);
+				pcb->FlipbookParam.EnableInterpolation = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
+				pcb->FlipbookParam.InterpolationType = static_cast<float>(param.BasicParameterPtr->InterpolationType);
 
-				pcb->UVDistortion[0] = param.BasicParameterPtr->UVDistortionIntensity;
-				pcb->UVDistortion[1] = param.BasicParameterPtr->BlendUVDistortionIntensity;
-				pcb->UVDistortion[2] = uvInversed[0];
-				pcb->UVDistortion[3] = uvInversed[1];
+				pcb->UVDistortionParam.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
+				pcb->UVDistortionParam.BlendIntensity= param.BasicParameterPtr->BlendUVDistortionIntensity;
+				pcb->UVDistortionParam.UVInversed[0] = uvInversed[0];
+				pcb->UVDistortionParam.UVInversed[1] = uvInversed[1];
 
-				pcb->TextureBlendType[0] = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
+				pcb->BlendTextureParam.BlendType = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
 
 				pcb->softParticle.SetParam(
 					param.BasicParameterPtr->SoftParticleDistance,
@@ -1182,15 +1089,15 @@ public:
 					ColorToFloat4(param.FalloffParam.EndColor));
 
 				pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
-				pcb->SetEdgeColor(ColorToFloat4(Effekseer::Color(
-					param.BasicParameterPtr->EdgeColor[0],
-					param.BasicParameterPtr->EdgeColor[1],
-					param.BasicParameterPtr->EdgeColor[2],
-					param.BasicParameterPtr->EdgeColor[3])));
+				pcb->SetEdgeParameter(ColorToFloat4(Effekseer::Color(
+										  param.BasicParameterPtr->EdgeColor[0],
+										  param.BasicParameterPtr->EdgeColor[1],
+										  param.BasicParameterPtr->EdgeColor[2],
+										  param.BasicParameterPtr->EdgeColor[3])),
+									  param.BasicParameterPtr->EdgeThreshold,
+									  static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
 
-				pcb->SetEdgeParameter(param.BasicParameterPtr->EdgeThreshold, static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
-
-				pcb->softParticle.SetParam(
+				pcb->SoftParticleParam.SetParam(
 					param.BasicParameterPtr->SoftParticleDistance,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
