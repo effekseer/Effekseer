@@ -146,8 +146,9 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.IsProcedualMode = Mode == ModelReferenceType::Procedual;
+		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->BeginRendering(nodeParameter, count, m_userData);
+		renderer->BeginRendering(nodeParameter, count, nullptr);
 	}
 }
 
@@ -224,7 +225,9 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		}
 
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-		renderer->Rendering(nodeParameter, instanceParameter, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->Rendering(nodeParameter, instanceParameter, nullptr);
 	}
 }
 
@@ -262,7 +265,9 @@ void EffectNodeModel::EndRendering(Manager* manager)
 
 		nodeParameter.IsProcedualMode = Mode == ModelReferenceType::Procedual;
 
-		renderer->EndRendering(nodeParameter, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->EndRendering(nodeParameter, nullptr);
 	}
 }
 

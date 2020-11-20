@@ -32,26 +32,19 @@ public:
 	struct NodeParameter
 	{
 		Effect* EffectPointer;
-		// int32_t				ColorTextureIndex;
-		// AlphaBlendType			AlphaBlend;
-		// TextureFilterType	TextureFilter;
-		// TextureWrapType	TextureWrap;
 		bool ZTest;
 		bool ZWrite;
 		bool ViewpointDependent;
-
-		// bool				Distortion;
-		// float				DistortionIntensity;
 
 		bool IsRightHand;
 		int32_t SplineDivision;
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
-		// RendererMaterialType MaterialType = RendererMaterialType::Default;
-		// MaterialParameter* MaterialParameterPtr = nullptr;
 
 		bool EnableViewOffset = false;
+
+		RefPtr<RenderingUserData> UserData;
 	};
 
 	struct InstanceParameter

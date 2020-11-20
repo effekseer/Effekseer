@@ -98,8 +98,8 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
 		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
 		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
-
-		renderer->BeginRendering(m_nodeParameter, count, m_userData);
+		m_nodeParameter.UserData = GetRenderingUserData();
+		renderer->BeginRendering(m_nodeParameter, count, nullptr);
 	}
 }
 
@@ -138,7 +138,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 
-		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), m_userData);
+		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), nullptr);
 	}
 }
 
@@ -147,7 +147,7 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 	TrackRenderer* renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRenderingGroup(m_nodeParameter, group->GetInstanceCount(), m_userData);
+		renderer->EndRenderingGroup(m_nodeParameter, group->GetInstanceCount(), nullptr);
 	}
 }
 
@@ -181,7 +181,7 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
-		renderer->Rendering(m_nodeParameter, m_instanceParameter, m_userData);
+		renderer->Rendering(m_nodeParameter, m_instanceParameter, nullptr);
 		m_instanceParameter.InstanceIndex++;
 	}
 }
@@ -194,7 +194,7 @@ void EffectNodeTrack::EndRendering(Manager* manager)
 	TrackRenderer* renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(m_nodeParameter, m_userData);
+		renderer->EndRendering(m_nodeParameter, nullptr);
 	}
 }
 

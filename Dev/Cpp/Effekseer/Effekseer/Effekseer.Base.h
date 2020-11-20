@@ -120,6 +120,7 @@ enum eEffectNodeType
 	EFFECT_NODE_TYPE_DWORD = 0x7fffffff,
 };
 
+
 class StringHelper
 {
 public:

@@ -1066,6 +1066,23 @@ struct NodeRendererBasicParameter
 	}
 };
 
+/**
+	@brief
+	\~English	A user data for rendering in plugins.
+	\~Japanese	プラグイン向けの描画拡張データ
+*/
+class RenderingUserData : public ReferenceObject
+{
+public:
+	RenderingUserData() = default;
+	virtual ~RenderingUserData() = default;
+
+	virtual bool Equal(const RenderingUserData* rhs) const
+	{
+		return true;
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -2848,6 +2865,29 @@ public:
 	\~Japanese	インスタンスが存在する期間を計算する。
 	*/
 	virtual EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const = 0;
+
+	/**
+		@brief
+		\~English	Get a user data for rendering in plugins.
+		\~Japanese	プラグイン向けの描画拡張データを取得する。
+		@note
+		\~Japanese	詳細はSetterを参照。
+	*/
+	virtual RefPtr<RenderingUserData> GetRenderingUserData() = 0;
+
+	/**
+		@brief
+		\~English	Specify a user data for rendering in plugins.
+		\~Japanese	プラグイン向けの描画拡張データを設定する。
+		@note
+		\~English
+		This variable is passed to the Renderer at rendering time.
+		The variable is compared by the comparison function described by the inheritance of RenderingUserData, and if the values are different, DrawCall is issued.
+		\~Japanese
+		この変数は描画時にRendererに渡される。
+		変数は、RenderingUserDataの継承により記述される比較用の関数によって比較され、値が異なる場合、DrawCallを発行する。
+	*/
+	virtual void SetRenderingUserData(const RefPtr<RenderingUserData>& renderingUserData) = 0;
 };
 
 //----------------------------------------------------------------------------------

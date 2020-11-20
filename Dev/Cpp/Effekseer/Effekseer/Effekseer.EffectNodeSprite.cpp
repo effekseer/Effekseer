@@ -167,7 +167,9 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
-		renderer->BeginRendering(nodeParameter, count, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->BeginRendering(nodeParameter, count, nullptr);
 	}
 }
 
@@ -275,7 +277,9 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
-		renderer->Rendering(nodeParameter, instanceParameter, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->Rendering(nodeParameter, instanceParameter, nullptr);
 	}
 }
 
@@ -301,7 +305,9 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
-		renderer->EndRendering(nodeParameter, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->EndRendering(nodeParameter, nullptr);
 	}
 }
 

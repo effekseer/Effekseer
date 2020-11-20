@@ -1487,8 +1487,7 @@ protected:
 	// 子ノード
 	std::vector<EffectNodeImplemented*> m_Nodes;
 
-	// ユーザーデータ
-	void* m_userData;
+	RefPtr<RenderingUserData> renderingUserData_;
 
 	// コンストラクタ
 	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
@@ -1648,6 +1647,16 @@ public:
 	virtual eEffectNodeType GetType() const
 	{
 		return EFFECT_NODE_TYPE_NONE;
+	}
+
+	RefPtr<RenderingUserData> GetRenderingUserData() override
+	{
+		return renderingUserData_;
+	}
+
+	void SetRenderingUserData(const RefPtr<RenderingUserData>& renderingUserData) override
+	{
+		renderingUserData_ = renderingUserData;
 	}
 };
 //----------------------------------------------------------------------------------

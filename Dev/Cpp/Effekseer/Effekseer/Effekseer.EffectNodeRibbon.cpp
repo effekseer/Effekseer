@@ -154,8 +154,9 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
 		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
 		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		m_nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->BeginRendering(m_nodeParameter, count, m_userData);
+		renderer->BeginRendering(m_nodeParameter, count, nullptr);
 	}
 }
 
@@ -189,7 +190,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 
-		renderer->BeginRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, m_userData);
+		renderer->BeginRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, nullptr);
 	}
 }
 
@@ -198,7 +199,7 @@ void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, m_userData);
+		renderer->EndRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, nullptr);
 	}
 }
 
@@ -282,7 +283,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 			m_instanceParameter.Positions[1] = RibbonPosition.fixed.r;
 		}
 
-		renderer->Rendering(m_nodeParameter, m_instanceParameter, m_userData);
+		renderer->Rendering(m_nodeParameter, m_instanceParameter, nullptr);
 
 		m_instanceParameter.InstanceIndex++;
 	}
@@ -296,7 +297,7 @@ void EffectNodeRibbon::EndRendering(Manager* manager)
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(m_nodeParameter, m_userData);
+		renderer->EndRendering(m_nodeParameter, nullptr);
 	}
 }
 

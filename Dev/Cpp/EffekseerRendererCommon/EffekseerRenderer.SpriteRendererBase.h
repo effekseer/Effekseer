@@ -137,6 +137,8 @@ protected:
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
+		state.UserData = param.UserData;
+
 		state.CopyMaterialFromParameterToState(
 			m_renderer,
 			param.EffectPointer,

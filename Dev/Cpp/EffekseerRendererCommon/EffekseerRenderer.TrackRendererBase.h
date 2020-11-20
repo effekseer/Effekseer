@@ -964,7 +964,7 @@ public:
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		
+
 		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
 		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
 		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
@@ -991,6 +991,8 @@ public:
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
+
+		state.UserData = param.UserData;
 
 		state.CopyMaterialFromParameterToState(
 			m_renderer,

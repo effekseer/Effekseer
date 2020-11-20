@@ -42,6 +42,8 @@ public:
 	bool isRenderModeValid = true;
 	bool isSoftParticleEnabled = false;
 
+	Effekseer::RefPtr<Effekseer::RenderingUserData> CurrentRenderingUserData;
+
 	Impl() = default;
 	~Impl();
 

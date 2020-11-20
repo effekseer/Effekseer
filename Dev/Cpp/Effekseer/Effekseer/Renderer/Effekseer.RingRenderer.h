@@ -29,10 +29,6 @@ public:
 	struct NodeParameter
 	{
 		Effect* EffectPointer;
-		// int32_t				ColorTextureIndex;
-		// AlphaBlendType			AlphaBlend;
-		// TextureFilterType	TextureFilter;
-		// TextureWrapType	TextureWrap;
 		bool ZTest;
 		bool ZWrite;
 		BillboardType Billboard;
@@ -40,22 +36,15 @@ public:
 		bool IsRightHand;
 		float StartingFade = 0.0f;
 		float EndingFade = 0.0f;
-		// bool				Distortion;
-		// float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
-		// RendererMaterialType MaterialType = RendererMaterialType::Default;
-		// MaterialParameter* MaterialParameterPtr = nullptr;
-
-		// float				DepthOffset;
-		// bool				IsDepthOffsetScaledWithCamera;
-		// bool				IsDepthOffsetScaledWithParticleScale;
-
 		NodeRendererBasicParameter BasicParameter;
 
 		bool EnableViewOffset = false;
+
+		RefPtr<RenderingUserData> UserData;
 	};
 
 	struct InstanceParameter

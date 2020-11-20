@@ -32,15 +32,8 @@ public:
 	struct NodeParameter
 	{
 		Effect* EffectPointer;
-		// int32_t				ColorTextureIndex;
-		// AlphaBlendType			AlphaBlend;
-		// TextureFilterType	TextureFilter;
-		// TextureWrapType		TextureWrap;
 		bool ZTest;
 		bool ZWrite;
-
-		// bool				Distortion;
-		// float				DistortionIntensity;
 
 		int32_t SplineDivision;
 
@@ -53,6 +46,8 @@ public:
 		MaterialParameter* MaterialParameterPtr = nullptr;
 
 		bool EnableViewOffset = false;
+
+		RefPtr<RenderingUserData> UserData;
 	};
 
 	struct InstanceGroupParameter

@@ -1115,6 +1115,8 @@ public:
 									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
 									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
 
+		renderer->GetImpl()->CurrentRenderingUserData = param.UserData;
+
 		// Check time
 		auto stTime0 = m_times[0] % model->GetFrameCount();
 		auto isTimeSame = true;

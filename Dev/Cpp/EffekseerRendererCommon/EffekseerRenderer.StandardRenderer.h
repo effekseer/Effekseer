@@ -62,6 +62,8 @@ struct StandardRendererState
 
 	ShaderParameterCollector Collector{};
 
+	Effekseer::RefPtr<Effekseer::RenderingUserData> UserData{};
+
 	StandardRendererState()
 	{
 		DepthTest = false;
@@ -96,6 +98,8 @@ struct StandardRendererState
 		MaterialUniformCount = 0;
 		CustomData1Count = 0;
 		CustomData2Count = 0;
+
+		UserData.Reset();
 	}
 
 	bool operator!=(const StandardRendererState state)
@@ -171,6 +175,15 @@ struct StandardRendererState
 		if (CustomData1Count != state.CustomData1Count)
 			return true;
 
+		if (UserData == nullptr && state.UserData != nullptr)
+			return true;
+
+		if (UserData != nullptr && state.UserData == nullptr)
+			return true;
+
+		if (UserData != nullptr && state.UserData != nullptr && !UserData->Equal(state.UserData.Get()))
+			return true;
+
 		return false;
 	}
 
@@ -210,7 +223,8 @@ struct StandardRendererVertexBuffer
 
 	struct
 	{
-		union {
+		union
+		{
 			float Buffer[4];
 
 			struct
@@ -806,6 +820,7 @@ public:
 		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), stride);
 		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 		m_renderer->SetLayout(shader_);
+		m_renderer->GetImpl()->CurrentRenderingUserData = m_state.UserData;
 		m_renderer->DrawSprites(vertexSize / stride / 4, vbOffset / stride);
 
 		m_renderer->EndShader(shader_);

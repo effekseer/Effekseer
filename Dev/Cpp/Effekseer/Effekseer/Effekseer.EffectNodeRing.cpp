@@ -252,7 +252,9 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
-		renderer->BeginRendering(nodeParameter, count, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->BeginRendering(nodeParameter, count, nullptr);
 	}
 }
 
@@ -337,7 +339,9 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
-		renderer->Rendering(nodeParameter, instanceParameter, m_userData);
+		nodeParameter.UserData = GetRenderingUserData();
+
+		renderer->Rendering(nodeParameter, instanceParameter, nullptr);
 	}
 }
 
@@ -349,7 +353,7 @@ void EffectNodeRing::EndRendering(Manager* manager)
 	RingRenderer* renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(nodeParameter, m_userData);
+		renderer->EndRendering(nodeParameter, nullptr);
 	}
 }
 

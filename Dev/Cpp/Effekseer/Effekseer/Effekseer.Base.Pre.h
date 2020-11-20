@@ -1066,6 +1066,23 @@ struct NodeRendererBasicParameter
 	}
 };
 
+/**
+	@brief
+	\~English	A user data for rendering in plugins.
+	\~Japanese	プラグイン向けの描画拡張データ
+*/
+class RenderingUserData : public ReferenceObject
+{
+public:
+	RenderingUserData() = default;
+	virtual ~RenderingUserData() = default;
+
+	virtual bool Equal(const RenderingUserData* rhs) const
+	{
+		return true;
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
