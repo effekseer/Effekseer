@@ -24,8 +24,8 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_colorSampler;
-uniform highp sampler2D Sampler_g_normalSampler;
+uniform highp sampler2D Sampler_sampler_colorTex;
+uniform highp sampler2D Sampler_sampler_normalTex;
 
 centroid varying highp vec2 _VSPS_UV;
 varying highp vec3 _VSPS_Normal;
@@ -36,8 +36,8 @@ varying highp vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = texture2D(Sampler_g_colorSampler, Input.UV) * Input.Color;
-    highp vec3 texNormal = (texture2D(Sampler_g_normalSampler, Input.UV).xyz - vec3(0.5)) * 2.0;
+    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);

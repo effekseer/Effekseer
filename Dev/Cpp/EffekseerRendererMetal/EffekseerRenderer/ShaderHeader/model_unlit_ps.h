@@ -47,13 +47,13 @@ float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, t
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, thread texture2d<float> g_colorTexture, thread sampler g_colorSampler, thread texture2d<float> g_depthTexture, thread sampler g_depthSampler, constant VS_ConstantBuffer& v_124)
+float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex, constant VS_ConstantBuffer& v_124)
 {
-    float4 Output = g_colorTexture.sample(g_colorSampler, Input.UV) * Input.Color;
+    float4 Output = _colorTex.sample(sampler_colorTex, Input.UV) * Input.Color;
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = g_depthTexture.sample(g_depthSampler, screenUV).x;
+    float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
     if ((isunordered(v_124.softParticleAndReconstructionParam1.x, 0.0) || v_124.softParticleAndReconstructionParam1.x != 0.0))
     {
         float param = backgroundZ;
@@ -70,7 +70,7 @@ float4 _main(PS_Input Input, thread texture2d<float> g_colorTexture, thread samp
     return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_124 [[buffer(0)]], texture2d<float> g_colorTexture [[texture(0)]], texture2d<float> g_depthTexture [[texture(1)]], sampler g_colorSampler [[sampler(0)]], sampler g_depthSampler [[sampler(1)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_124 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _depthTex [[texture(1)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_depthTex [[sampler(1)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -78,7 +78,7 @@ fragment main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v
     Input.UV = in.Input_UV;
     Input.Color = in.Input_Color;
     Input.PosP = in.Input_PosP;
-    float4 _183 = _main(Input, g_colorTexture, g_colorSampler, g_depthTexture, g_depthSampler, v_124);
+    float4 _183 = _main(Input, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex, v_124);
     out._entryPointOutput = _183;
     return out;
 }

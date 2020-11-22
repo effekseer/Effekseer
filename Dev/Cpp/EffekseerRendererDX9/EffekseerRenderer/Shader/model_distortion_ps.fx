@@ -20,8 +20,8 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _73_reconstructionParam2 : register(c6);
 };
 
-uniform sampler2D Sampler_g_sampler : register(s0);
-uniform sampler2D Sampler_g_backSampler : register(s1);
+uniform sampler2D Sampler_sampler_colorTex : register(s0);
+uniform sampler2D Sampler_sampler_backTex : register(s1);
 
 static float4 gl_FragCoord;
 static float2 Input_UV;
@@ -50,7 +50,7 @@ struct SPIRV_Cross_Output
 
 float4 _main(PS_Input Input)
 {
-    float4 Output = tex2D(Sampler_g_sampler, Input.UV);
+    float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     float2 pos = Input.PosP.xy / Input.PosP.w.xx;
     float2 posU = Input.Tangent.xy / Input.Tangent.w.xx;
@@ -61,7 +61,7 @@ float4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0f) * 0.5f;
     uv.y = 1.0f - ((uv.y + 1.0f) * 0.5f);
     uv.y = _73_mUVInversedBack.x + (_73_mUVInversedBack.y * uv.y);
-    float3 color = float3(tex2D(Sampler_g_backSampler, uv).xyz);
+    float3 color = float3(tex2D(Sampler_sampler_backTex, uv).xyz);
     Output = float4(color.x, color.y, color.z, Output.w);
     if (Output.w == 0.0f)
     {

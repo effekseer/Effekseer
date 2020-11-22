@@ -18,10 +18,10 @@ cbuffer PS_ConstanBuffer : register(b1)
     float4 _124_reconstructionParam2 : packoffset(c7);
 };
 
-Texture2D<float4> g_texture : register(t0);
-SamplerState g_sampler : register(s0);
-Texture2D<float4> g_depthTexture : register(t1);
-SamplerState g_depthSampler : register(s1);
+Texture2D<float4> _colorTex : register(t0);
+SamplerState sampler_colorTex : register(s0);
+Texture2D<float4> _depthTex : register(t1);
+SamplerState sampler_depthTex : register(s1);
 
 static float4 gl_FragCoord;
 static float4 Input_Color;
@@ -54,11 +54,11 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, floa
 
 float4 _main(PS_Input Input)
 {
-    float4 Output = Input.Color * g_texture.Sample(g_sampler, Input.UV);
+    float4 Output = Input.Color * _colorTex.Sample(sampler_colorTex, Input.UV);
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
-    float backgroundZ = g_depthTexture.Sample(g_depthSampler, screenUV).x;
+    float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
     if (_124_softParticleAndReconstructionParam1.x != 0.0f)
     {
         float param = backgroundZ;

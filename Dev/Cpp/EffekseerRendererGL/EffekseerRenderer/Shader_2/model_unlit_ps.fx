@@ -22,7 +22,7 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform sampler2D Sampler_g_colorSampler;
+uniform sampler2D Sampler_sampler_colorTex;
 
 centroid varying vec2 _VSPS_UV;
 centroid varying vec4 _VSPS_Color;
@@ -30,7 +30,7 @@ varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture2D(Sampler_g_colorSampler, Input.UV) * Input.Color;
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     if (Output.w == 0.0)
     {
         discard;

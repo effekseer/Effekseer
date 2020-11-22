@@ -29,12 +29,12 @@
 #include "../../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
-#include "ShaderHeader/standard_renderer_PS.h"
-#include "ShaderHeader/standard_renderer_VS.h"
-#include "ShaderHeader/standard_renderer_distortion_PS.h"
-#include "ShaderHeader/standard_renderer_distortion_VS.h"
-#include "ShaderHeader/standard_renderer_lighting_PS.h"
-#include "ShaderHeader/standard_renderer_lighting_VS.h"
+#include "ShaderHeader/ad_sprite_distortion_ps.h"
+#include "ShaderHeader/ad_sprite_distortion_vs.h"
+#include "ShaderHeader/ad_sprite_lit_ps.h"
+#include "ShaderHeader/ad_sprite_lit_vs.h"
+#include "ShaderHeader/ad_sprite_unlit_ps.h"
+#include "ShaderHeader/ad_sprite_unlit_vs.h"
 
 #include "ShaderHeader/sprite_distortion_ps.h"
 #include "ShaderHeader/sprite_distortion_vs.h"
@@ -315,12 +315,12 @@ bool RendererImplemented::Initialize()
 
 	m_renderState = new RenderState(this);
 
-	ShaderCodeView unlit_ad_vs(get_standard_renderer_VS(GetDeviceType()));
-	ShaderCodeView unlit_ad_ps(get_standard_renderer_PS(GetDeviceType()));
-	ShaderCodeView distortion_ad_vs(get_standard_renderer_distortion_VS(GetDeviceType()));
-	ShaderCodeView distortion_ad_ps(get_standard_renderer_distortion_PS(GetDeviceType()));
-	ShaderCodeView lit_ad_vs(get_standard_renderer_lighting_VS(GetDeviceType()));
-	ShaderCodeView lit_ad_ps(get_standard_renderer_lighting_PS(GetDeviceType()));
+	ShaderCodeView unlit_ad_vs(get_ad_sprite_unlit_vs(GetDeviceType()));
+	ShaderCodeView unlit_ad_ps(get_ad_sprite_unlit_ps(GetDeviceType()));
+	ShaderCodeView distortion_ad_vs(get_ad_sprite_distortion_vs(GetDeviceType()));
+	ShaderCodeView distortion_ad_ps(get_ad_sprite_distortion_ps(GetDeviceType()));
+	ShaderCodeView lit_ad_vs(get_ad_sprite_lit_vs(GetDeviceType()));
+	ShaderCodeView lit_ad_ps(get_ad_sprite_lit_ps(GetDeviceType()));
 
 	ShaderCodeView unlit_vs(get_sprite_unlit_vs(GetDeviceType()));
 	ShaderCodeView unlit_ps(get_sprite_unlit_ps(GetDeviceType()));
@@ -350,11 +350,11 @@ bool RendererImplemented::Initialize()
 	shader_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Standard Lighting Tex", false, false);
 
 	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
-		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
-		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_g_uvDistortionSampler"));
-		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_g_blendSampler"));
-		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_g_blendAlphaSampler"));
-		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_g_blendUVDistortionSampler"));
+		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_sampler_alphaTex"));
+		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_sampler_uvDistortionTex"));
+		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_sampler_blendTex"));
+		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_sampler_blendAlphaTex"));
+		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_sampler_blendUVDistortionTex"));
 	};
 
 	// Unlit
@@ -406,12 +406,12 @@ bool RendererImplemented::Initialize()
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
 
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_sampler"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 	}
 
 	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
-	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_g_depthSampler"));
-	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
+	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	vao_unlit_ = VertexArray::Create(this, shader_unlit_, GetVertexBuffer(), GetIndexBuffer(), false);
 	vao_ad_unlit_ = VertexArray::Create(this, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer(), false);
@@ -461,8 +461,8 @@ bool RendererImplemented::Initialize()
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.mUVInversedBack"), sizeof(float) * 4);
 
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_sampler"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_g_backSampler"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
+		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
 										shader->GetUniformId("CBVS0.mflipbookParameter"),
@@ -479,8 +479,8 @@ bool RendererImplemented::Initialize()
 	}
 
 	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
-	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_g_depthSampler"));
-	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_g_depthSampler"));
+	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_sampler_depthTex"));
+	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 
 	vao_ad_distortion_ = VertexArray::Create(this, shader_ad_distortion_, GetVertexBuffer(), GetIndexBuffer(), false);
 
@@ -534,8 +534,8 @@ bool RendererImplemented::Initialize()
 		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fLightColor"), sizeof(float[4]) * 1);
 		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fLightAmbient"), sizeof(float[4]) * 2);
 
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorSampler"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_g_normalSampler"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
+		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
 
 		{
 			int32_t offset = sizeof(float) * 4 * 3;
@@ -551,8 +551,8 @@ bool RendererImplemented::Initialize()
 	}
 
 	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
-	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_g_depthSampler"));
-	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_sampler_depthTex"));
+	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
 
 
 	vao_ad_lit_ = VertexArray::Create(this, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer(), false);

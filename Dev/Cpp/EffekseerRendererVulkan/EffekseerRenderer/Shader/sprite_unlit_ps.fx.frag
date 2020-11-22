@@ -20,8 +20,8 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam2;
 } _124;
 
-layout(set = 1, binding = 1) uniform sampler2D Sampler_g_sampler;
-layout(set = 1, binding = 2) uniform sampler2D Sampler_g_depthSampler;
+layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
+layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_Color;
 layout(location = 1) centroid in vec2 Input_UV;
@@ -40,11 +40,11 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = Input.Color * texture(Sampler_g_sampler, Input.UV);
+    vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(_124.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param = backgroundZ;

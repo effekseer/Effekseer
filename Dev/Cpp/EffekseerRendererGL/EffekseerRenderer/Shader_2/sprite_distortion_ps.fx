@@ -26,8 +26,8 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform sampler2D Sampler_g_sampler;
-uniform sampler2D Sampler_g_backSampler;
+uniform sampler2D Sampler_sampler_colorTex;
+uniform sampler2D Sampler_sampler_backTex;
 
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
@@ -37,7 +37,7 @@ varying vec4 _VSPS_PosR;
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture2D(Sampler_g_sampler, Input.UV);
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
@@ -49,7 +49,7 @@ vec4 _main(PS_Input Input)
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
     uv.y = 1.0 - uv.y;
-    vec3 color = vec3(texture2D(Sampler_g_backSampler, uv).xyz);
+    vec3 color = vec3(texture2D(Sampler_sampler_backTex, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     if (Output.w == 0.0)
     {
