@@ -27,7 +27,9 @@ mkdir %RDIR%\Tool\scripts\export
 copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\scripts\export\.
 
 mkdir %RDIR%\Tool\tools
+copy Dev\release\tools\fbxToEffekseerCurveConverter.exe %RDIR%\Tool\tools\.
 copy Dev\release\tools\fbxToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
+copy Dev\release\tools\libfbxsdk.dll %RDIR%\Tool\tools\.
 copy Dev\release\tools\mqoToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
 
 copy Dev\release\tools\EffekseerMaterialCompilerDX9.dll %RDIR%\Tool\tools\.
