@@ -229,7 +229,13 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     localNormal = normalize(localNormal * matModel);
+    float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
+    localBinormal = normalize(localBinormal * matModel);
+    float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
+    localTangent = normalize(localTangent * matModel);
     Output.Normal = localNormal.xyz;
+    Output.Binormal = localBinormal.xyz;
+    Output.Tangent = localTangent.xyz;
     Output.Color = modelColor;
     Output.UV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * Output.UV.y);
     float2 param = Input.UV;

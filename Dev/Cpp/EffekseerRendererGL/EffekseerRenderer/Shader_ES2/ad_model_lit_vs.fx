@@ -208,7 +208,13 @@ VS_Output _main(VS_Input Input)
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     localNormal = normalize(CBVS0.mModel * localNormal);
+    vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
+    localBinormal = normalize(CBVS0.mModel * localBinormal);
+    vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
+    localTangent = normalize(CBVS0.mModel * localTangent);
     Output.Normal = localNormal.xyz;
+    Output.Binormal = localBinormal.xyz;
+    Output.Tangent = localTangent.xyz;
     Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     vec2 param = Input.UV;

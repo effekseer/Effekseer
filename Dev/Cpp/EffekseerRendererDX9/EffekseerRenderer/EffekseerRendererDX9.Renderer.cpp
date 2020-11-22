@@ -38,13 +38,13 @@ namespace EffekseerRendererDX9
 namespace Standard_VS_Ad
 {
 static
-#include "ShaderHeader/ad_sprite_lit_vs.h"
+#include "ShaderHeader/ad_sprite_unlit_vs.h"
 } // namespace Standard_VS_Ad
 
 namespace Standard_PS_Ad
 {
 static
-#include "ShaderHeader/ad_sprite_lit_ps.h"
+#include "ShaderHeader/ad_sprite_unlit_ps.h"
 } // namespace Standard_PS_Ad
 
 namespace Standard_Distortion_VS_Ad
