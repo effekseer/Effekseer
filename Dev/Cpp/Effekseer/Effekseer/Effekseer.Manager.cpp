@@ -524,7 +524,7 @@ void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)
 	}
 }
 
-uintptr_t ManagerImplemented::GetWorkerThreadHandle(uint32_t threadID)
+ThreadNativeHandleType ManagerImplemented::GetWorkerThreadHandle(uint32_t threadID)
 {
 	if (threadID < m_WorkerThreads.size())
 	{

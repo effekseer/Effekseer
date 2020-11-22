@@ -14,7 +14,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <thread>
 #include <vector>
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -98,6 +100,8 @@ namespace Backend
 {
 class Texture;
 }
+
+using ThreadNativeHandleType = std::thread::native_handle_type;
 
 /**
 	@brief	Memory Allocation function
@@ -278,7 +282,7 @@ enum class ZSortType : int32_t
 //-----------------------------------------------------------------------------------
 enum class RenderMode : int32_t
 {
-	Normal,	   // 通常描画
+	Normal,	// 通常描画
 	Wireframe, // ワイヤーフレーム描画
 };
 
@@ -700,7 +704,6 @@ public:
 		return *this;
 	}
 
-
 	template <class U>
 	void operator=(const RefPtr<U>& o)
 	{
@@ -769,7 +772,6 @@ RefPtr<T> MakeRefPtr(Arg&&... args)
 
 using EffectRef = RefPtr<Effect>;
 using ManagerRef = RefPtr<Manager>;
-
 
 /**
 	@brief	This object generates random values.
@@ -3016,7 +3018,7 @@ public:
 		\~English Get a thread handle (HANDLE(win32), pthread_t(posix) or etc.)
 		\~Japanese スレッドハンドルを取得する。(HANDLE(win32) や pthread_t(posix) など)
 	*/
-	virtual uintptr_t GetWorkerThreadHandle(uint32_t threadID) = 0;
+	virtual ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
 		@brief

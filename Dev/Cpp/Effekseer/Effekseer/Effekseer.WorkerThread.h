@@ -46,9 +46,9 @@ public:
 
 	void Shutdown();
 
-	uintptr_t GetThreadHandle()
+	ThreadNativeHandleType GetThreadHandle()
 	{
-		return (uintptr_t)m_Thread.native_handle();
+		return m_Thread.native_handle();
 	}
 
 	std::thread::id GetThreadId()
