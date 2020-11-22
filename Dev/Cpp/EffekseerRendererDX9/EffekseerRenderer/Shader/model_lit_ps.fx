@@ -18,8 +18,8 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 _79_reconstructionParam2 : register(c4);
 };
 
-uniform sampler2D Sampler_g_colorSampler : register(s0);
-uniform sampler2D Sampler_g_normalSampler : register(s1);
+uniform sampler2D Sampler_sampler_colorTex : register(s0);
+uniform sampler2D Sampler_sampler_normalTex : register(s1);
 
 static float4 gl_FragCoord;
 static float2 Input_UV;
@@ -48,8 +48,8 @@ struct SPIRV_Cross_Output
 
 float4 _main(PS_Input Input)
 {
-    float4 Output = tex2D(Sampler_g_colorSampler, Input.UV) * Input.Color;
-    float3 texNormal = (tex2D(Sampler_g_normalSampler, Input.UV).xyz - 0.5f.xxx) * 2.0f;
+    float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    float3 texNormal = (tex2D(Sampler_sampler_normalTex, Input.UV).xyz - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.Tangent), float3(Input.Binormal), float3(Input.Normal))));
     float diffuse = max(dot(_79_fLightDirection.xyz, localNormal), 0.0f);
     float3 _99 = Output.xyz * ((_79_fLightColor.xyz * diffuse) + _79_fLightAmbient.xyz);

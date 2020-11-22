@@ -145,23 +145,23 @@ void ApplyTextureBlending(thread float4& dstColor, float4 blendColor, float blen
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, thread texture2d<float> g_uvDistortionTexture, thread sampler g_uvDistortionSampler, constant PS_ConstanBuffer& v_263, thread texture2d<float> g_texture, thread sampler g_sampler, thread texture2d<float> g_depthTexture, thread sampler g_depthSampler, thread texture2d<float> g_alphaTexture, thread sampler g_alphaSampler, thread texture2d<float> g_blendUVDistortionTexture, thread sampler g_blendUVDistortionSampler, thread texture2d<float> g_blendTexture, thread sampler g_blendSampler, thread texture2d<float> g_blendAlphaTexture, thread sampler g_blendAlphaSampler)
+float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sampler sampler_uvDistortionTex, constant PS_ConstanBuffer& v_263, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex, thread texture2d<float> _alphaTex, thread sampler sampler_alphaTex, thread texture2d<float> _blendUVDistortionTex, thread sampler sampler_blendUVDistortionTex, thread texture2d<float> _blendTex, thread sampler sampler_blendTex, thread texture2d<float> _blendAlphaTex, thread sampler sampler_blendAlphaTex)
 {
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
     float2 param_2 = v_263.uvDistortionParameter.zw;
-    float2 UVOffset = UVDistortionOffset(g_uvDistortionTexture, g_uvDistortionSampler, param_1, param_2);
+    float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, param_1, param_2);
     UVOffset *= v_263.uvDistortionParameter.x;
-    float4 Output = Input.Color * g_texture.sample(g_sampler, (Input.UV + UVOffset));
+    float4 Output = Input.Color * _colorTex.sample(sampler_colorTex, (Input.UV + UVOffset));
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, g_texture, g_sampler, v_263.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
+    ApplyFlipbook(param_3, _colorTex, sampler_colorTex, v_263.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
     Output = param_3;
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = g_depthTexture.sample(g_depthSampler, screenUV).x;
+    float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
     if ((isunordered(v_263.softParticleAndReconstructionParam1.x, 0.0) || v_263.softParticleAndReconstructionParam1.x != 0.0))
     {
         float param_5 = backgroundZ;
@@ -171,15 +171,15 @@ float4 _main(PS_Input Input, thread texture2d<float> g_uvDistortionTexture, thre
         float4 param_9 = v_263.reconstructionParam2;
         Output.w *= SoftParticle(param_5, param_6, param_7, param_8, param_9);
     }
-    float4 AlphaTexColor = g_alphaTexture.sample(g_alphaSampler, (advancedParam.AlphaUV + UVOffset));
+    float4 AlphaTexColor = _alphaTex.sample(sampler_alphaTex, (advancedParam.AlphaUV + UVOffset));
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     float2 param_10 = advancedParam.BlendUVDistortionUV;
     float2 param_11 = v_263.uvDistortionParameter.zw;
-    float2 BlendUVOffset = UVDistortionOffset(g_blendUVDistortionTexture, g_blendUVDistortionSampler, param_10, param_11);
+    float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, param_10, param_11);
     BlendUVOffset.y = v_263.uvDistortionParameter.z + (v_263.uvDistortionParameter.w * BlendUVOffset.y);
     BlendUVOffset *= v_263.uvDistortionParameter.y;
-    float4 BlendTextureColor = g_blendTexture.sample(g_blendSampler, (advancedParam.BlendUV + BlendUVOffset));
-    float4 BlendAlphaTextureColor = g_blendAlphaTexture.sample(g_blendAlphaSampler, (advancedParam.BlendAlphaUV + BlendUVOffset));
+    float4 BlendTextureColor = _blendTex.sample(sampler_blendTex, (advancedParam.BlendUV + BlendUVOffset));
+    float4 BlendAlphaTextureColor = _blendAlphaTex.sample(sampler_blendAlphaTex, (advancedParam.BlendAlphaUV + BlendUVOffset));
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     float4 param_12 = Output;
     ApplyTextureBlending(param_12, BlendTextureColor, v_263.blendTextureParameter.x);
@@ -195,7 +195,7 @@ float4 _main(PS_Input Input, thread texture2d<float> g_uvDistortionTexture, thre
     return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_263 [[buffer(0)]], texture2d<float> g_uvDistortionTexture [[texture(2)]], texture2d<float> g_texture [[texture(0)]], texture2d<float> g_depthTexture [[texture(6)]], texture2d<float> g_alphaTexture [[texture(1)]], texture2d<float> g_blendUVDistortionTexture [[texture(5)]], texture2d<float> g_blendTexture [[texture(3)]], texture2d<float> g_blendAlphaTexture [[texture(4)]], sampler g_uvDistortionSampler [[sampler(2)]], sampler g_sampler [[sampler(0)]], sampler g_depthSampler [[sampler(6)]], sampler g_alphaSampler [[sampler(1)]], sampler g_blendUVDistortionSampler [[sampler(5)]], sampler g_blendSampler [[sampler(3)]], sampler g_blendAlphaSampler [[sampler(4)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_263 [[buffer(0)]], texture2d<float> _uvDistortionTex [[texture(2)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _depthTex [[texture(6)]], texture2d<float> _alphaTex [[texture(1)]], texture2d<float> _blendUVDistortionTex [[texture(5)]], texture2d<float> _blendTex [[texture(3)]], texture2d<float> _blendAlphaTex [[texture(4)]], sampler sampler_uvDistortionTex [[sampler(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_depthTex [[sampler(6)]], sampler sampler_alphaTex [[sampler(1)]], sampler sampler_blendUVDistortionTex [[sampler(5)]], sampler sampler_blendTex [[sampler(3)]], sampler sampler_blendAlphaTex [[sampler(4)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -209,7 +209,7 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = in.Input_Blend_FBNextIndex_UV;
     Input.Others = in.Input_Others;
-    float4 _516 = _main(Input, g_uvDistortionTexture, g_uvDistortionSampler, v_263, g_texture, g_sampler, g_depthTexture, g_depthSampler, g_alphaTexture, g_alphaSampler, g_blendUVDistortionTexture, g_blendUVDistortionSampler, g_blendTexture, g_blendSampler, g_blendAlphaTexture, g_blendAlphaSampler);
+    float4 _516 = _main(Input, _uvDistortionTex, sampler_uvDistortionTex, v_263, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex);
     out._entryPointOutput = _516;
     return out;
 }

@@ -60,11 +60,11 @@ template <int N>
 void ModelRenderer::InitRenderer()
 {
 	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
-		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_g_alphaSampler"));
-		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_g_uvDistortionSampler"));
-		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_g_blendSampler"));
-		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_g_blendAlphaSampler"));
-		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_g_blendUVDistortionSampler"));
+		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_sampler_alphaTex"));
+		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_sampler_uvDistortionTex"));
+		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_sampler_blendTex"));
+		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_sampler_blendAlphaTex"));
+		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_sampler_blendUVDistortionTex"));
 	};
 
 	for (size_t i = 0; i < 6; i++)
@@ -89,31 +89,31 @@ void ModelRenderer::InitRenderer()
 	for (auto& shader : {shader_ad_lit_, shader_lit_})
 	{
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorSampler"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_g_normalSampler"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
+		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
 	}
 	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
-	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_g_depthSampler"));
-	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_sampler_depthTex"));
+	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorSampler"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorTex"));
 	}
 	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
-	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_g_depthSampler"));
-	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_g_depthSampler"));
+	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
+	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_sampler"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_g_backSampler"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
+		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 	}
 	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
-	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_g_depthSampler"));
-	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_g_depthSampler"));
+	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_sampler_depthTex"));
+	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 
 	Shader* shaders[4];
 	shaders[0] = shader_ad_lit_;

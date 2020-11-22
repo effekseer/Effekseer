@@ -37,14 +37,14 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam2;
 } _263;
 
-layout(set = 1, binding = 4) uniform sampler2D Sampler_g_uvDistortionSampler;
-layout(set = 1, binding = 1) uniform sampler2D Sampler_g_sampler;
-layout(set = 1, binding = 3) uniform sampler2D Sampler_g_alphaSampler;
-layout(set = 1, binding = 7) uniform sampler2D Sampler_g_blendUVDistortionSampler;
-layout(set = 1, binding = 5) uniform sampler2D Sampler_g_blendSampler;
-layout(set = 1, binding = 6) uniform sampler2D Sampler_g_blendAlphaSampler;
-layout(set = 1, binding = 2) uniform sampler2D Sampler_g_backSampler;
-layout(set = 1, binding = 8) uniform sampler2D Sampler_g_depthSampler;
+layout(set = 1, binding = 4) uniform sampler2D Sampler_sampler_uvDistortionTex;
+layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
+layout(set = 1, binding = 3) uniform sampler2D Sampler_sampler_alphaTex;
+layout(set = 1, binding = 7) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
+layout(set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendTex;
+layout(set = 1, binding = 6) uniform sampler2D Sampler_sampler_blendAlphaTex;
+layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_backTex;
+layout(set = 1, binding = 8) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec4 Input_Binormal;
@@ -140,22 +140,22 @@ vec4 _main(PS_Input Input)
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
     vec2 param_2 = _263.fUVDistortionParameter.zw;
-    vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_g_uvDistortionSampler);
+    vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= _263.fUVDistortionParameter.x;
-    vec4 Output = texture(Sampler_g_sampler, Input.UV + UVOffset);
+    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _263.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
+    ApplyFlipbook(param_3, _263.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
-    vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
+    vec4 AlphaTexColor = texture(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_5 = advancedParam.BlendUVDistortionUV;
     vec2 param_6 = _263.fUVDistortionParameter.zw;
-    vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
+    vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_sampler_blendUVDistortionTex);
     BlendUVOffset *= _263.fUVDistortionParameter.y;
-    vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
-    vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
+    vec4 BlendTextureColor = texture(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
+    vec4 BlendAlphaTextureColor = texture(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_7 = Output;
     ApplyTextureBlending(param_7, BlendTextureColor, _263.fBlendTextureParameter.x);
@@ -173,12 +173,12 @@ vec4 _main(PS_Input Input)
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = _263.mUVInversedBack.x + (_263.mUVInversedBack.y * uv.y);
-    vec3 color = vec3(texture(Sampler_g_backSampler, uv).xyz);
+    vec3 color = vec3(texture(Sampler_sampler_backTex, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(_263.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param_8 = backgroundZ;

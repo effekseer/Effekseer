@@ -26,8 +26,8 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform sampler2D Sampler_g_colorSampler;
-uniform sampler2D Sampler_g_normalSampler;
+uniform sampler2D Sampler_sampler_colorTex;
+uniform sampler2D Sampler_sampler_normalTex;
 
 centroid varying vec2 _VSPS_UV;
 varying vec3 _VSPS_Normal;
@@ -38,8 +38,8 @@ varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture2D(Sampler_g_colorSampler, Input.UV) * Input.Color;
-    vec3 texNormal = (texture2D(Sampler_g_normalSampler, Input.UV).xyz - vec3(0.5)) * 2.0;
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
@@ -95,9 +95,9 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform sampler2D Sampler_g_colorSampler;
-uniform sampler2D Sampler_g_normalSampler;
-uniform sampler2D Sampler_g_depthSampler;
+uniform sampler2D Sampler_sampler_colorTex;
+uniform sampler2D Sampler_sampler_normalTex;
+uniform sampler2D Sampler_sampler_depthTex;
 
 centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_Normal;
@@ -122,8 +122,8 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture(Sampler_g_colorSampler, Input.UV) * Input.Color;
-    vec3 texNormal = (texture(Sampler_g_normalSampler, Input.UV).xyz - vec3(0.5)) * 2.0;
+    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _166 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
@@ -132,7 +132,7 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param = backgroundZ;
@@ -192,8 +192,8 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform  sampler2D Sampler_g_colorSampler;
-uniform  sampler2D Sampler_g_normalSampler;
+uniform  sampler2D Sampler_sampler_colorTex;
+uniform  sampler2D Sampler_sampler_normalTex;
 
 varying  vec2 _VSPS_UV;
 varying  vec3 _VSPS_Normal;
@@ -204,8 +204,8 @@ varying  vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = texture2D(Sampler_g_colorSampler, Input.UV) * Input.Color;
-    highp vec3 texNormal = (texture2D(Sampler_g_normalSampler, Input.UV).xyz - vec3(0.5)) * 2.0;
+    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
@@ -260,9 +260,9 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_colorSampler;
-uniform highp sampler2D Sampler_g_normalSampler;
-uniform highp sampler2D Sampler_g_depthSampler;
+uniform highp sampler2D Sampler_sampler_colorTex;
+uniform highp sampler2D Sampler_sampler_normalTex;
+uniform highp sampler2D Sampler_sampler_depthTex;
 
 centroid in highp vec2 _VSPS_UV;
 in highp vec3 _VSPS_Normal;
@@ -287,8 +287,8 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = texture(Sampler_g_colorSampler, Input.UV) * Input.Color;
-    highp vec3 texNormal = (texture(Sampler_g_normalSampler, Input.UV).xyz - vec3(0.5)) * 2.0;
+    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    highp vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _166 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
@@ -297,7 +297,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    highp float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         highp float param = backgroundZ;

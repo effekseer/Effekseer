@@ -1,28 +1,28 @@
 
-Texture2D g_texture : register(t0);
-SamplerState g_sampler : register(s0);
+Texture2D _colorTex : register(t0);
+SamplerState sampler_colorTex : register(s0);
 
-Texture2D g_backTexture : register(t1);
-SamplerState g_backSampler : register(s1);
+Texture2D _backTex : register(t1);
+SamplerState sampler_backTex : register(s1);
 
-Texture2D g_alphaTexture : register(t2);
-SamplerState g_alphaSampler : register(s2);
+Texture2D _alphaTex : register(t2);
+SamplerState sampler_alphaTex : register(s2);
 
-Texture2D g_uvDistortionTexture : register(t3);
-SamplerState g_uvDistortionSampler : register(s3);
+Texture2D _uvDistortionTex : register(t3);
+SamplerState sampler_uvDistortionTex : register(s3);
 
-Texture2D g_blendTexture : register(t4);
-SamplerState g_blendSampler : register(s4);
+Texture2D _blendTex : register(t4);
+SamplerState sampler_blendTex : register(s4);
 
-Texture2D g_blendAlphaTexture : register(t5);
-SamplerState g_blendAlphaSampler : register(s5);
+Texture2D _blendAlphaTex : register(t5);
+SamplerState sampler_blendAlphaTex : register(s5);
 
-Texture2D g_blendUVDistortionTexture : register(t6);
-SamplerState g_blendUVDistortionSampler : register(s6);
+Texture2D _blendUVDistortionTex : register(t6);
+SamplerState sampler_blendUVDistortionTex : register(s6);
 
 #ifndef DISABLED_SOFT_PARTICLE
-Texture2D g_depthTexture : register(t7);
-SamplerState g_depthSampler : register(s7);
+Texture2D _depthTex : register(t7);
+SamplerState sampler_depthTex : register(s7);
 #endif
 
 
@@ -69,25 +69,25 @@ float4 main(const PS_Input Input)
 {
 	AdvancedParameter advancedParam = DisolveAdvancedParameter(Input);
 
-	float2 UVOffset = UVDistortionOffset(g_uvDistortionTexture, g_uvDistortionSampler, advancedParam.UVDistortionUV, fUVDistortionParameter.zw);
+	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, fUVDistortionParameter.zw);
 	UVOffset *= fUVDistortionParameter.x;
 
-	float4 Output = g_texture.Sample(g_sampler, Input.UV + UVOffset);
+	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset);
 
 	Output.a = Output.a * Input.Color.a;
 
-	ApplyFlipbook(Output, g_texture, g_sampler, fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
+	ApplyFlipbook(Output, _colorTex, sampler_colorTex, fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
 
 	// apply alpha texture
-	float4 AlphaTexColor = g_alphaTexture.Sample(g_alphaSampler, advancedParam.AlphaUV + UVOffset);
+	float4 AlphaTexColor = _alphaTex.Sample(sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
 	Output.a *= AlphaTexColor.r * AlphaTexColor.a;
 
 	// blend texture uv offset
-	float2 BlendUVOffset = UVDistortionOffset(g_blendUVDistortionTexture, g_blendUVDistortionSampler, advancedParam.BlendUVDistortionUV, fUVDistortionParameter.zw);
+	float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, advancedParam.BlendUVDistortionUV, fUVDistortionParameter.zw);
 	BlendUVOffset *= fUVDistortionParameter.y;
 
-	float4 BlendTextureColor = g_blendTexture.Sample(g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
-	float4 BlendAlphaTextureColor = g_blendAlphaTexture.Sample(g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
+	float4 BlendTextureColor = _blendTex.Sample(sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
+	float4 BlendAlphaTextureColor = _blendAlphaTex.Sample(sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
 	BlendTextureColor.a *= BlendAlphaTextureColor.r * BlendAlphaTextureColor.a;
 
 	ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
@@ -116,7 +116,7 @@ float4 main(const PS_Input Input)
 	uv.y = 1.0 - uv.y;
 #endif
 
-	float3 color = g_backTexture.Sample(g_backSampler, uv);
+	float3 color = _backTex.Sample(sampler_backTex, uv);
 	Output.xyz = color;
 
 #ifndef DISABLED_SOFT_PARTICLE
@@ -129,7 +129,7 @@ float4 main(const PS_Input Input)
 	screenUV.y = 1.0 - screenUV.y;
 #endif
 
-	float backgroundZ = g_depthTexture.Sample(g_depthSampler, screenUV).x;
+	float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
 	if (softParticleAndReconstructionParam1.x != 0.0f)
 	{
 		Output.a *= SoftParticle(

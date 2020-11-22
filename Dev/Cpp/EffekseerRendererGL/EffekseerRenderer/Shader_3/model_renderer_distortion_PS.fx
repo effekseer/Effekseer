@@ -42,14 +42,14 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-layout(binding = 3) uniform sampler2D Sampler_g_uvDistortionSampler;
-layout(binding = 0) uniform sampler2D Sampler_g_sampler;
-layout(binding = 2) uniform sampler2D Sampler_g_alphaSampler;
-layout(binding = 6) uniform sampler2D Sampler_g_blendUVDistortionSampler;
-layout(binding = 4) uniform sampler2D Sampler_g_blendSampler;
-layout(binding = 5) uniform sampler2D Sampler_g_blendAlphaSampler;
-layout(binding = 1) uniform sampler2D Sampler_g_backSampler;
-layout(binding = 7) uniform sampler2D Sampler_g_depthSampler;
+layout(binding = 3) uniform sampler2D Sampler_sampler_uvDistortionTex;
+layout(binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(binding = 2) uniform sampler2D Sampler_sampler_alphaTex;
+layout(binding = 6) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
+layout(binding = 4) uniform sampler2D Sampler_sampler_blendTex;
+layout(binding = 5) uniform sampler2D Sampler_sampler_blendAlphaTex;
+layout(binding = 1) uniform sampler2D Sampler_sampler_backTex;
+layout(binding = 7) uniform sampler2D Sampler_sampler_depthTex;
 
 centroid in vec2 _VSPS_UV;
 in vec4 _VSPS_Binormal;
@@ -148,22 +148,22 @@ vec4 _main(PS_Input Input)
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
     vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
-    vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_g_uvDistortionSampler);
+    vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    vec4 Output = texture(Sampler_g_sampler, Input.UV + UVOffset);
+    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_sampler);
+    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
-    vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
+    vec4 AlphaTexColor = texture(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_5 = advancedParam.BlendUVDistortionUV;
     vec2 param_6 = CBPS0.fUVDistortionParameter.zw;
-    vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_g_blendUVDistortionSampler);
+    vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_sampler_blendUVDistortionTex);
     BlendUVOffset *= CBPS0.fUVDistortionParameter.y;
-    vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
-    vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
+    vec4 BlendTextureColor = texture(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
+    vec4 BlendAlphaTextureColor = texture(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_7 = Output;
     ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
@@ -182,13 +182,13 @@ vec4 _main(PS_Input Input)
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
     uv.y = 1.0 - uv.y;
-    vec3 color = vec3(texture(Sampler_g_backSampler, uv).xyz);
+    vec3 color = vec3(texture(Sampler_sampler_backTex, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param_8 = backgroundZ;

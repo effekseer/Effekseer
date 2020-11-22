@@ -15,7 +15,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 _72_reconstructionParam2 : register(c4);
 };
 
-uniform sampler2D Sampler_g_colorSampler : register(s0);
+uniform sampler2D Sampler_sampler_colorTex : register(s0);
 
 static float4 gl_FragCoord;
 static float2 Input_UV;
@@ -38,7 +38,7 @@ struct SPIRV_Cross_Output
 
 float4 _main(PS_Input Input)
 {
-    float4 Output = tex2D(Sampler_g_colorSampler, Input.UV) * Input.Color;
+    float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     if (Output.w == 0.0f)
     {
         discard;

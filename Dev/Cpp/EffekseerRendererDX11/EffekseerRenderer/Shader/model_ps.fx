@@ -11,27 +11,27 @@ cbuffer VS_ConstantBuffer : register(b0)
 }
 
 #ifdef ENABLE_COLOR_TEXTURE
-Texture2D g_colorTexture : register(t0);
-SamplerState g_colorSampler : register(s0);
+Texture2D _colorTex : register(t0);
+SamplerState sampler_colorTex : register(s0);
 #endif
 
 #ifdef ENABLE_NORMAL_TEXTURE
-Texture2D g_normalTexture : register(t1);
-SamplerState g_normalSampler : register(s1);
+Texture2D _normalTex : register(t1);
+SamplerState sampler_normalTex : register(s1);
 #endif
 
 #if ENABLE_LIGHTING
 
 #ifndef DISABLED_SOFT_PARTICLE
-Texture2D g_depthTexture : register(t2);
-SamplerState g_depthSampler : register(s2);
+Texture2D _depthTex : register(t2);
+SamplerState sampler_depthTex : register(s2);
 #endif
 
 #else
 
 #ifndef DISABLED_SOFT_PARTICLE
-Texture2D g_depthTexture : register(t1);
-SamplerState g_depthSampler : register(s1);
+Texture2D _depthTex : register(t1);
+SamplerState sampler_depthTex : register(s1);
 #endif
 
 #endif
@@ -55,10 +55,10 @@ struct PS_Input
 float4 main(const PS_Input Input)
 	: SV_Target
 {
-	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
+	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV) * Input.Color;
 
 #if ENABLE_LIGHTING && ENABLE_NORMAL_TEXTURE
-	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV).xyz - 0.5) * 2.0;
+	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(
 		mul(
 			texNormal,
@@ -78,7 +78,7 @@ float4 main(const PS_Input Input)
 	screenUV.y = 1.0 - screenUV.y;
 #endif
 
-	float backgroundZ = g_depthTexture.Sample(g_depthSampler, screenUV).x;
+	float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
 	if (softParticleAndReconstructionParam1.x != 0.0f)
 	{
 		Output.a *= SoftParticle(

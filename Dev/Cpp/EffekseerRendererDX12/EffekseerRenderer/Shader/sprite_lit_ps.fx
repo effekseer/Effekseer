@@ -27,12 +27,12 @@ cbuffer VS_ConstantBuffer : register(b1)
     float4 _129_reconstructionParam2 : packoffset(c10);
 };
 
-Texture2D<float4> g_normalTexture : register(t1);
-SamplerState g_normalSampler : register(s1);
-Texture2D<float4> g_colorTexture : register(t0);
-SamplerState g_colorSampler : register(s0);
-Texture2D<float4> g_depthTexture : register(t2);
-SamplerState g_depthSampler : register(s2);
+Texture2D<float4> _normalTex : register(t1);
+SamplerState sampler_normalTex : register(s1);
+Texture2D<float4> _colorTex : register(t0);
+SamplerState sampler_colorTex : register(s0);
+Texture2D<float4> _depthTex : register(t2);
+SamplerState sampler_depthTex : register(s2);
 
 static float4 gl_FragCoord;
 static float4 Input_VColor;
@@ -77,17 +77,17 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, floa
 
 float4 _main(PS_Input Input)
 {
-    float3 loN = g_normalTexture.Sample(g_normalSampler, Input.UV1).xyz;
+    float3 loN = _normalTex.Sample(sampler_normalTex, Input.UV1).xyz;
     float3 texNormal = (loN - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
     float diffuse = max(dot(_129_fLightDirection.xyz, localNormal), 0.0f);
-    float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV1) * Input.VColor;
+    float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV1) * Input.VColor;
     float3 _163 = Output.xyz * ((_129_fLightColor.xyz * diffuse) + float3(_129_fLightAmbient.xyz));
     Output = float4(_163.x, _163.y, _163.z, Output.w);
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
-    float backgroundZ = g_depthTexture.Sample(g_depthSampler, screenUV).x;
+    float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
     if (_129_softParticleAndReconstructionParam1.x != 0.0f)
     {
         float param = backgroundZ;

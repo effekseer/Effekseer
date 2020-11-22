@@ -24,7 +24,7 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_sampler;
+uniform highp sampler2D Sampler_sampler_colorTex;
 
 centroid varying highp vec4 _VSPS_Color;
 centroid varying highp vec2 _VSPS_UV;
@@ -32,7 +32,7 @@ varying highp vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = Input.Color * texture2D(Sampler_g_sampler, Input.UV);
+    highp vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV);
     if (Output.w == 0.0)
     {
         discard;

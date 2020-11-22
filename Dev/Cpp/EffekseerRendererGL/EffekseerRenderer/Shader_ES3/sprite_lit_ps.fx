@@ -33,9 +33,9 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_normalSampler;
-uniform highp sampler2D Sampler_g_colorSampler;
-uniform highp sampler2D Sampler_g_depthSampler;
+uniform highp sampler2D Sampler_sampler_normalTex;
+uniform highp sampler2D Sampler_sampler_colorTex;
+uniform highp sampler2D Sampler_sampler_depthTex;
 
 centroid in highp vec4 _VSPS_VColor;
 centroid in highp vec2 _VSPS_UV1;
@@ -63,18 +63,18 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec3 loN = texture(Sampler_g_normalSampler, Input.UV1).xyz;
+    highp vec3 loN = texture(Sampler_sampler_normalTex, Input.UV1).xyz;
     highp vec3 texNormal = (loN - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec4 Output = texture(Sampler_g_colorSampler, Input.UV1) * Input.VColor;
+    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV1) * Input.VColor;
     highp vec3 _171 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + vec3(CBPS0.fLightAmbient.xyz));
     Output = vec4(_171.x, _171.y, _171.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    highp float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         highp float param = backgroundZ;

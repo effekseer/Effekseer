@@ -26,7 +26,7 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform sampler2D Sampler_g_sampler;
+uniform sampler2D Sampler_sampler_colorTex;
 
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
@@ -34,7 +34,7 @@ varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = Input.Color * texture2D(Sampler_g_sampler, Input.UV);
+    vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV);
     if (Output.w == 0.0)
     {
         discard;
@@ -83,8 +83,8 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform sampler2D Sampler_g_sampler;
-uniform sampler2D Sampler_g_depthSampler;
+uniform sampler2D Sampler_sampler_colorTex;
+uniform sampler2D Sampler_sampler_depthTex;
 
 centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
@@ -106,12 +106,12 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = Input.Color * texture(Sampler_g_sampler, Input.UV);
+    vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param = backgroundZ;
@@ -168,7 +168,7 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform  sampler2D Sampler_g_sampler;
+uniform  sampler2D Sampler_sampler_colorTex;
 
 varying  vec4 _VSPS_Color;
 varying  vec2 _VSPS_UV;
@@ -176,7 +176,7 @@ varying  vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = Input.Color * texture2D(Sampler_g_sampler, Input.UV);
+    highp vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV);
     if (Output.w == 0.0)
     {
         discard;
@@ -224,8 +224,8 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_sampler;
-uniform highp sampler2D Sampler_g_depthSampler;
+uniform highp sampler2D Sampler_sampler_colorTex;
+uniform highp sampler2D Sampler_sampler_depthTex;
 
 centroid in highp vec4 _VSPS_Color;
 centroid in highp vec2 _VSPS_UV;
@@ -247,12 +247,12 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = Input.Color * texture(Sampler_g_sampler, Input.UV);
+    highp vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    highp float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         highp float param = backgroundZ;

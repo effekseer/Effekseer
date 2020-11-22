@@ -1,13 +1,13 @@
 
-Texture2D g_texture : register(t0);
-SamplerState g_sampler : register(s0);
+Texture2D _colorTex : register(t0);
+SamplerState sampler_colorTex : register(s0);
 
-Texture2D g_backTexture : register(t1);
-SamplerState g_backSampler : register(s1);
+Texture2D _backTex : register(t1);
+SamplerState sampler_backTex : register(s1);
 
 #ifndef DISABLED_SOFT_PARTICLE
-Texture2D g_depthTexture : register(t2);
-SamplerState g_depthSampler : register(s2);
+Texture2D _depthTex : register(t2);
+SamplerState sampler_depthTex : register(s2);
 #endif
 
 
@@ -42,7 +42,7 @@ struct PS_Input
 float4 main(const PS_Input Input)
 	: SV_Target
 {
-	float4 Output = g_texture.Sample(g_sampler, Input.UV);
+	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV);
 	Output.a = Output.a * Input.Color.a;
 
 	float2 pos = Input.PosP.xy / Input.PosP.w;
@@ -63,7 +63,7 @@ float4 main(const PS_Input Input)
 	uv.y = 1.0 - uv.y;
 #endif
 
-	float3 color = g_backTexture.Sample(g_backSampler, uv);
+	float3 color = _backTex.Sample(sampler_backTex, uv);
 	Output.xyz = color;
 
 #ifndef DISABLED_SOFT_PARTICLE
@@ -76,7 +76,7 @@ float4 main(const PS_Input Input)
 	screenUV.y = 1.0 - screenUV.y;
 #endif
 
-	float backgroundZ = g_depthTexture.Sample(g_depthSampler, screenUV).x;
+	float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
 	if (softParticleAndReconstructionParam1.x != 0.0f)
 	{
 		Output.a *= SoftParticle(

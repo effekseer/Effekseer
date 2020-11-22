@@ -34,8 +34,8 @@ struct VS_ConstantBuffer
 
 uniform VS_ConstantBuffer CBPS0;
 
-uniform sampler2D Sampler_g_normalSampler;
-uniform sampler2D Sampler_g_colorSampler;
+uniform sampler2D Sampler_sampler_normalTex;
+uniform sampler2D Sampler_sampler_colorTex;
 
 centroid varying vec4 _VSPS_VColor;
 centroid varying vec2 _VSPS_UV1;
@@ -49,11 +49,11 @@ varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
-    vec3 loN = texture2D(Sampler_g_normalSampler, Input.UV1).xyz;
+    vec3 loN = texture2D(Sampler_sampler_normalTex, Input.UV1).xyz;
     vec3 texNormal = (loN - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec4 Output = texture2D(Sampler_g_colorSampler, Input.UV1) * Input.VColor;
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV1) * Input.VColor;
     vec3 _104 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + vec3(CBPS0.fLightAmbient.xyz));
     Output = vec4(_104.x, _104.y, _104.z, Output.w);
     if (Output.w == 0.0)

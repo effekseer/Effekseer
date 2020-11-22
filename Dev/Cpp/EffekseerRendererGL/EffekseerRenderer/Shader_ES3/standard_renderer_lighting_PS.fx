@@ -46,14 +46,14 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform highp sampler2D Sampler_g_uvDistortionSampler;
-uniform highp sampler2D Sampler_g_normalSampler;
-uniform highp sampler2D Sampler_g_colorSampler;
-uniform highp sampler2D Sampler_g_depthSampler;
-uniform highp sampler2D Sampler_g_alphaSampler;
-uniform highp sampler2D Sampler_g_blendUVDistortionSampler;
-uniform highp sampler2D Sampler_g_blendSampler;
-uniform highp sampler2D Sampler_g_blendAlphaSampler;
+uniform highp sampler2D Sampler_sampler_uvDistortionTex;
+uniform highp sampler2D Sampler_sampler_normalTex;
+uniform highp sampler2D Sampler_sampler_colorTex;
+uniform highp sampler2D Sampler_sampler_depthTex;
+uniform highp sampler2D Sampler_sampler_alphaTex;
+uniform highp sampler2D Sampler_sampler_blendUVDistortionTex;
+uniform highp sampler2D Sampler_sampler_blendTex;
+uniform highp sampler2D Sampler_sampler_blendAlphaTex;
 
 centroid in highp vec4 _VSPS_VColor;
 centroid in highp vec2 _VSPS_UV;
@@ -153,23 +153,23 @@ highp vec4 _main(PS_Input Input)
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     highp vec2 param_1 = advancedParam.UVDistortionUV;
     highp vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
-    highp vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_g_uvDistortionSampler);
+    highp vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
     highp float diffuse = 1.0;
-    highp vec3 loN = texture(Sampler_g_normalSampler, Input.UV + UVOffset).xyz;
+    highp vec3 loN = texture(Sampler_sampler_normalTex, Input.UV + UVOffset).xyz;
     highp vec3 texNormal = (loN - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec4 Output = texture(Sampler_g_colorSampler, Input.UV + UVOffset) * Input.VColor;
+    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset) * Input.VColor;
     highp vec4 param_3 = Output;
     highp float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.VColor, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_g_colorSampler);
+    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.VColor, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    highp float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
     {
         highp float param_5 = backgroundZ;
@@ -179,14 +179,14 @@ highp vec4 _main(PS_Input Input)
         highp vec4 param_9 = CBPS0.reconstructionParam2;
         Output.w *= SoftParticle(param_5, param_6, param_7, param_8, param_9);
     }
-    highp vec4 AlphaTexColor = texture(Sampler_g_alphaSampler, advancedParam.AlphaUV + UVOffset);
+    highp vec4 AlphaTexColor = texture(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     highp vec2 param_10 = advancedParam.BlendUVDistortionUV;
     highp vec2 param_11 = CBPS0.fUVDistortionParameter.zw;
-    highp vec2 BlendUVOffset = UVDistortionOffset(param_10, param_11, Sampler_g_blendUVDistortionSampler);
+    highp vec2 BlendUVOffset = UVDistortionOffset(param_10, param_11, Sampler_sampler_blendUVDistortionTex);
     BlendUVOffset *= CBPS0.fUVDistortionParameter.y;
-    highp vec4 BlendTextureColor = texture(Sampler_g_blendSampler, advancedParam.BlendUV + BlendUVOffset);
-    highp vec4 BlendAlphaTextureColor = texture(Sampler_g_blendAlphaSampler, advancedParam.BlendAlphaUV + BlendUVOffset);
+    highp vec4 BlendTextureColor = texture(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
+    highp vec4 BlendAlphaTextureColor = texture(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     highp vec4 param_12 = Output;
     ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.fBlendTextureParameter.x);

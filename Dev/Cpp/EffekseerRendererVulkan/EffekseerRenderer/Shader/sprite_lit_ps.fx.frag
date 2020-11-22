@@ -29,9 +29,9 @@ layout(set = 1, binding = 0, std140) uniform VS_ConstantBuffer
     vec4 reconstructionParam2;
 } _129;
 
-layout(set = 1, binding = 2) uniform sampler2D Sampler_g_normalSampler;
-layout(set = 1, binding = 1) uniform sampler2D Sampler_g_colorSampler;
-layout(set = 1, binding = 3) uniform sampler2D Sampler_g_depthSampler;
+layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_normalTex;
+layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
+layout(set = 1, binding = 3) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_VColor;
 layout(location = 1) centroid in vec2 Input_UV1;
@@ -56,17 +56,17 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
 
 vec4 _main(PS_Input Input)
 {
-    vec3 loN = texture(Sampler_g_normalSampler, Input.UV1).xyz;
+    vec3 loN = texture(Sampler_sampler_normalTex, Input.UV1).xyz;
     vec3 texNormal = (loN - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(_129.fLightDirection.xyz, localNormal), 0.0);
-    vec4 Output = texture(Sampler_g_colorSampler, Input.UV1) * Input.VColor;
+    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV1) * Input.VColor;
     vec3 _163 = Output.xyz * ((_129.fLightColor.xyz * diffuse) + vec3(_129.fLightAmbient.xyz));
     Output = vec4(_163.x, _163.y, _163.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_g_depthSampler, screenUV).x;
+    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
     if (!(_129.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param = backgroundZ;
