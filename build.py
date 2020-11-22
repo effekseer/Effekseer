@@ -216,6 +216,7 @@ if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
 
     call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/mqoToEffekseerModelConverter')
+    call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerCurveConverter')
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
 
     os.makedirs('Mac/Package', exist_ok=True)
