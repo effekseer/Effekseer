@@ -11,7 +11,7 @@ namespace Effekseer
 	\~English	Model loader
 	\~Japanese	モデル読み込み破棄関数指定クラス
 */
-class ModelLoader
+class ModelLoader : public ReferenceObject
 {
 public:
 	ModelLoader() = default;

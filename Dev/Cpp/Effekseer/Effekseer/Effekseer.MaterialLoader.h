@@ -12,7 +12,7 @@ namespace Effekseer
 	\~English	Material loader
 	\~Japanese	マテリアル読み込み破棄関数指定クラス
 */
-class MaterialLoader
+class MaterialLoader : public ReferenceObject
 {
 public:
 	/**

@@ -18,7 +18,7 @@ namespace Effekseer
 /**
 	@brief	サウンド読み込み破棄関数指定クラス
 */
-class SoundLoader
+class SoundLoader : public ReferenceObject
 {
 public:
 	/**

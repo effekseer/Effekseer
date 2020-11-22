@@ -116,23 +116,23 @@ static
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 }
 
-::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device,
+::Effekseer::TextureLoaderRef CreateTextureLoader(ID3D11Device* device,
 												ID3D11DeviceContext* context,
 												::Effekseer::FileInterface* fileInterface,
 												::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device, context));
-	return new EffekseerRenderer::TextureLoader(gd.get(), fileInterface, colorSpaceType);
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(gd.get(), fileInterface, colorSpaceType));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(device, fileInterface);
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(device, fileInterface));
 #else
 	return nullptr;
 #endif
@@ -743,10 +743,10 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
 #else
 	return nullptr;
 #endif
@@ -755,19 +755,19 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(this->GetDevice(), fileInterface);
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(this->GetDevice(), fileInterface));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(this, fileInterface);
+	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(this, fileInterface));
 #else
 	return nullptr;
 #endif

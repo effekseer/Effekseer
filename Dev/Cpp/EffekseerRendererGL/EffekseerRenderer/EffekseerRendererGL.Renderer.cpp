@@ -58,11 +58,11 @@ namespace EffekseerRendererGL
 	return new GraphicsDevice(deviceType);
 }
 
-::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	auto gd = new Backend::GraphicsDevice(OpenGLDeviceType::OpenGL2);
-	auto ret = new EffekseerRenderer::TextureLoader(gd, fileInterface);
+	auto ret = ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(gd, fileInterface));
 	ES_SAFE_RELEASE(gd);
 	return ret;
 #else
@@ -70,32 +70,32 @@ namespace EffekseerRendererGL
 #endif
 }
 
-::Effekseer::TextureLoader* CreateTextureLoader(
+::Effekseer::TextureLoaderRef CreateTextureLoader(
 	Effekseer::Backend::GraphicsDevice* graphicsDevice,
 	::Effekseer::FileInterface* fileInterface,
 	::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface, colorSpaceType);
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface, colorSpaceType));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType)
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(fileInterface, deviceType);
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(fileInterface, deviceType));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(static_cast<GraphicsDevice*>(graphicsDevice), fileInterface);
+	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(static_cast<GraphicsDevice*>(graphicsDevice), fileInterface));
 #else
 	return nullptr;
 #endif
@@ -861,10 +861,10 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
 #else
 	return nullptr;
 #endif
@@ -873,19 +873,19 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(fileInterface, GetDeviceType());
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(fileInterface, GetDeviceType()));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(GetIntetnalGraphicsDevice(), fileInterface);
+	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(GetIntetnalGraphicsDevice(), fileInterface));
 #else
 	return nullptr;
 #endif

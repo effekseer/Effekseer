@@ -283,33 +283,33 @@ public:
 
 	void SetSetting(const RefPtr<Setting>& setting) override;
 
-	EffectLoader* GetEffectLoader() override;
+	EffectLoaderRef GetEffectLoader() override;
 
-	void SetEffectLoader(EffectLoader* effectLoader) override;
+	void SetEffectLoader(EffectLoaderRef effectLoader) override;
 
-	TextureLoader* GetTextureLoader() override;
+	TextureLoaderRef GetTextureLoader() override;
 
-	void SetTextureLoader(TextureLoader* textureLoader) override;
+	void SetTextureLoader(TextureLoaderRef textureLoader) override;
 
 	SoundPlayer* GetSoundPlayer() override;
 
 	void SetSoundPlayer(SoundPlayer* soundPlayer) override;
 
-	SoundLoader* GetSoundLoader() override;
+	SoundLoaderRef GetSoundLoader() override;
 
-	void SetSoundLoader(SoundLoader* soundLoader) override;
+	void SetSoundLoader(SoundLoaderRef soundLoader) override;
 
-	ModelLoader* GetModelLoader() override;
+	ModelLoaderRef GetModelLoader() override;
 
-	void SetModelLoader(ModelLoader* modelLoader) override;
+	void SetModelLoader(ModelLoaderRef modelLoader) override;
 
-	MaterialLoader* GetMaterialLoader() override;
+	MaterialLoaderRef GetMaterialLoader() override;
 
-	void SetMaterialLoader(MaterialLoader* loader) override;
+	void SetMaterialLoader(MaterialLoaderRef loader) override;
 
-	CurveLoader* GetCurveLoader() override;
+	CurveLoaderRef GetCurveLoader() override;
 
-	void SetCurveLoader(CurveLoader* loader) override;
+	void SetCurveLoader(CurveLoaderRef loader) override;
 
 	void StopEffect(Handle handle) override;
 

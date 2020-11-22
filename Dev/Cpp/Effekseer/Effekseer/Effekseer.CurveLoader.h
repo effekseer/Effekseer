@@ -23,7 +23,7 @@ namespace Effekseer
 /**
 @brief	カーブ読み込み破棄関数指定クラス
 */
-class CurveLoader
+class CurveLoader : public ReferenceObject
 {
 public:
 	/**

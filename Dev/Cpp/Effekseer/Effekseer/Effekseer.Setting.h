@@ -30,13 +30,13 @@ private:
 	//! coordinate system
 	CoordinateSystem m_coordinateSystem;
 
-	EffectLoader* m_effectLoader;
-	TextureLoader* m_textureLoader;
-	SoundLoader* m_soundLoader;
-	ModelLoader* m_modelLoader;
-	MaterialLoader* m_materialLoader = nullptr;
-	CurveLoader* m_curveLoader = nullptr;
-	ProcedualModelGenerator* procedualMeshGenerator_ = nullptr;
+	EffectLoaderRef m_effectLoader;
+	TextureLoaderRef m_textureLoader;
+	SoundLoaderRef m_soundLoader;
+	ModelLoaderRef m_modelLoader;
+	MaterialLoaderRef m_materialLoader;
+	CurveLoaderRef m_curveLoader;
+	ProcedualModelGeneratorRef procedualMeshGenerator_;
 	std::vector<RefPtr<EffectFactory>> effectFactories;
 
 protected:
@@ -69,49 +69,49 @@ public:
 		@brief	エフェクトローダーを取得する。
 		@return	エフェクトローダー
 		*/
-	EffectLoader* GetEffectLoader();
+	EffectLoaderRef GetEffectLoader();
 
 	/**
 		@brief	エフェクトローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetEffectLoader(EffectLoader* loader);
+	void SetEffectLoader(EffectLoaderRef loader);
 
 	/**
 		@brief	テクスチャローダーを取得する。
 		@return	テクスチャローダー
 		*/
-	TextureLoader* GetTextureLoader();
+	TextureLoaderRef GetTextureLoader();
 
 	/**
 		@brief	テクスチャローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetTextureLoader(TextureLoader* loader);
+	void SetTextureLoader(TextureLoaderRef loader);
 
 	/**
 		@brief	モデルローダーを取得する。
 		@return	モデルローダー
 		*/
-	ModelLoader* GetModelLoader();
+	ModelLoaderRef GetModelLoader();
 
 	/**
 		@brief	モデルローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetModelLoader(ModelLoader* loader);
+	void SetModelLoader(ModelLoaderRef loader);
 
 	/**
 		@brief	サウンドローダーを取得する。
 		@return	サウンドローダー
 		*/
-	SoundLoader* GetSoundLoader();
+	SoundLoaderRef GetSoundLoader();
 
 	/**
 		@brief	サウンドローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetSoundLoader(SoundLoader* loader);
+	void SetSoundLoader(SoundLoaderRef loader);
 
 	/**
 		@brief
@@ -121,7 +121,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	MaterialLoader* GetMaterialLoader();
+	MaterialLoaderRef GetMaterialLoader();
 
 	/**
 		@brief
@@ -131,7 +131,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 		*/
-	void SetMaterialLoader(MaterialLoader* loader);
+	void SetMaterialLoader(MaterialLoaderRef loader);
 
 	/**
 		@brief
@@ -141,7 +141,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	CurveLoader* GetCurveLoader();
+	CurveLoaderRef GetCurveLoader();
 
 	/**
 		@brief
@@ -151,7 +151,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	void SetCurveLoader(CurveLoader* loader);
+	void SetCurveLoader(CurveLoaderRef loader);
 
 	/**
 		@brief
@@ -161,7 +161,7 @@ public:
 		\~English	generator
 		\~Japanese ローダー
 	*/
-	ProcedualModelGenerator* GetProcedualMeshGenerator() const;
+	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const;
 
 	/**
 		@brief
@@ -171,7 +171,7 @@ public:
 		\~English	generator
 		\~Japanese generator
 	*/
-	void SetProcedualMeshGenerator(ProcedualModelGenerator* generator);
+	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator);
 
 	/**
 		@brief

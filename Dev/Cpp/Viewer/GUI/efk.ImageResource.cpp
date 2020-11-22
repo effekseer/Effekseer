@@ -5,7 +5,7 @@
 namespace efk
 {
 
-ImageResource::ImageResource(DeviceType deviceType, std::shared_ptr<Effekseer::TextureLoader> loader)
+ImageResource::ImageResource(DeviceType deviceType, Effekseer::TextureLoaderRef loader)
 	: deviceType_(deviceType)
 	, loader_(loader)
 {

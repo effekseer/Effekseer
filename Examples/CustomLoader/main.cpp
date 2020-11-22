@@ -143,7 +143,7 @@ int main(int argc, char** argv)
 	// The texture loader is extended by yourself.
 	// テクスチャ、モデル、マテリアルローダーの設定する。
 	// テクスチャローダーがで拡張されている。
-	manager->SetTextureLoader(new CustomTextureLoader());
+	manager->SetTextureLoader(::Effekseer::TextureLoaderRef(new CustomTextureLoader()));
 	manager->SetModelLoader(renderer->CreateModelLoader());
 	manager->SetMaterialLoader(renderer->CreateMaterialLoader());
 

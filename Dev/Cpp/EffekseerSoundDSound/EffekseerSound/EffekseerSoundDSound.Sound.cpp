@@ -101,9 +101,9 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundLoader* SoundImplemented::CreateSoundLoader()
+::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader()
 {
-	return new SoundLoader(this);
+	return ::Effekseer::SoundLoaderRef(new SoundLoader(this));
 }
 
 //----------------------------------------------------------------------------------

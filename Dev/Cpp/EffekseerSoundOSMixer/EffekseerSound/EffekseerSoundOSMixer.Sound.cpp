@@ -104,9 +104,9 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundLoader* SoundImplemented::CreateSoundLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return new SoundLoader(this, fileInterface);
+	return ::Effekseer::SoundLoaderRef(new SoundLoader(this, fileInterface));
 }
 
 //----------------------------------------------------------------------------------

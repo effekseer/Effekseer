@@ -11,7 +11,7 @@ class ImageResource
 {
 private:
 	DeviceType deviceType_;
-	std::shared_ptr<Effekseer::TextureLoader> loader_ = nullptr;
+	Effekseer::TextureLoaderRef loader_;
 	std::u16string path;
 	Effekseer::TextureData* textureData = nullptr;
 
@@ -20,7 +20,7 @@ public:
 	ImageResource() = default;
 
 #if !defined(SWIG)
-	ImageResource(DeviceType deviceType, std::shared_ptr<Effekseer::TextureLoader> loader);
+	ImageResource(DeviceType deviceType, Effekseer::TextureLoaderRef loader);
 #endif
 	virtual ~ImageResource();
 	bool Validate();

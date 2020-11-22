@@ -304,12 +304,12 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 	@brief
@@ -317,7 +317,7 @@ public:
 	\~japanese 標準のマテリアル読込クラスを生成する。
 
 	*/
-	virtual ::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	レンダーステートを強制的にリセットする。
@@ -517,7 +517,7 @@ namespace EffekseerRendererDX11
 /**
 @brief	テクスチャ読込クラスを生成する。
 */
-::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device,
+::Effekseer::TextureLoaderRef CreateTextureLoader(ID3D11Device* device,
 												ID3D11DeviceContext* context,
 												::Effekseer::FileInterface* fileInterface = nullptr,
 												::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
@@ -525,7 +525,7 @@ namespace EffekseerRendererDX11
 /**
 @brief	モデル読込クラスを生成する。
 */
-::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = nullptr);
+::Effekseer::ModelLoaderRef CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 /**
 	@brief	描画クラス

@@ -251,7 +251,7 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 //----------------------------------------------------------------------------------
 void ClientImplemented::Reload(Manager* manager, const char16_t* path, const char16_t* key)
 {
-	EffectLoader* loader = manager->GetEffectLoader();
+	EffectLoaderRef loader = manager->GetEffectLoader();
 
 	void* data = nullptr;
 	int32_t size = 0;

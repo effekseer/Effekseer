@@ -104,7 +104,7 @@ public:
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoader* CreateSoundLoader() = 0;
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader() = 0;
 	
 	/**
 		@brief	全発音を停止

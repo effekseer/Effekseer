@@ -18,7 +18,7 @@ namespace Effekseer
 /**
 	@brief	テクスチャ読み込み破棄関数指定クラス
 */
-class TextureLoader
+class TextureLoader : public ReferenceObject
 {
 public:
 	/**

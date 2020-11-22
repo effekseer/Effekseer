@@ -245,22 +245,22 @@ public:
 	/**
 		@brief	エフェクト読込クラスを取得する。
 	*/
-	virtual EffectLoader* GetEffectLoader() = 0;
+	virtual EffectLoaderRef GetEffectLoader() = 0;
 
 	/**
 		@brief	エフェクト読込クラスを設定する。
 	*/
-	virtual void SetEffectLoader(EffectLoader* effectLoader) = 0;
+	virtual void SetEffectLoader(EffectLoaderRef effectLoader) = 0;
 
 	/**
 		@brief	テクスチャ読込クラスを取得する。
 	*/
-	virtual TextureLoader* GetTextureLoader() = 0;
+	virtual TextureLoaderRef GetTextureLoader() = 0;
 
 	/**
 		@brief	テクスチャ読込クラスを設定する。
 	*/
-	virtual void SetTextureLoader(TextureLoader* textureLoader) = 0;
+	virtual void SetTextureLoader(TextureLoaderRef textureLoader) = 0;
 
 	/**
 		@brief	サウンド再生機能を取得する。
@@ -275,22 +275,22 @@ public:
 	/**
 		@brief	サウンド読込クラスを取得する
 	*/
-	virtual SoundLoader* GetSoundLoader() = 0;
+	virtual SoundLoaderRef GetSoundLoader() = 0;
 
 	/**
 		@brief	サウンド読込クラスを設定する。
 	*/
-	virtual void SetSoundLoader(SoundLoader* soundLoader) = 0;
+	virtual void SetSoundLoader(SoundLoaderRef soundLoader) = 0;
 
 	/**
 		@brief	モデル読込クラスを取得する。
 	*/
-	virtual ModelLoader* GetModelLoader() = 0;
+	virtual ModelLoaderRef GetModelLoader() = 0;
 
 	/**
 		@brief	モデル読込クラスを設定する。
 	*/
-	virtual void SetModelLoader(ModelLoader* modelLoader) = 0;
+	virtual void SetModelLoader(ModelLoaderRef modelLoader) = 0;
 
 	/**
 		@brief
@@ -300,7 +300,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual MaterialLoader* GetMaterialLoader() = 0;
+	virtual MaterialLoaderRef GetMaterialLoader() = 0;
 
 	/**
 		@brief
@@ -310,7 +310,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
+	virtual void SetMaterialLoader(MaterialLoaderRef loader) = 0;
 
 	/**
 		@brief
@@ -320,7 +320,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual CurveLoader* GetCurveLoader() = 0;
+	virtual CurveLoaderRef GetCurveLoader() = 0;
 
 	/**
 		@brief
@@ -330,7 +330,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual void SetCurveLoader(CurveLoader* loader) = 0;
+	virtual void SetCurveLoader(CurveLoaderRef loader) = 0;
 
 	/**
 		@brief	エフェクトを停止する。

@@ -14,6 +14,7 @@
 
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.TextureLoader.h"
+#include "Effekseer.MaterialLoader.h"
 
 #include "Effekseer.Setting.h"
 
@@ -27,6 +28,7 @@
 #include "Sound/Effekseer.SoundPlayer.h"
 
 #include "Model/ModelLoader.h"
+#include "Effekseer.CurveLoader.h"
 
 #include <algorithm>
 #include <iostream>
@@ -419,7 +421,7 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 		pooledContainers_.push((InstanceContainer*)&reservedContainerBuffer_[i * sizeof(InstanceContainer)]);
 	}
 
-	m_setting->SetEffectLoader(new DefaultEffectLoader());
+	m_setting->SetEffectLoader(Effect::CreateEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
 }
 
@@ -664,62 +666,62 @@ void ManagerImplemented::SetSetting(const RefPtr<Setting>& setting)
 	m_setting = setting;
 }
 
-EffectLoader* ManagerImplemented::GetEffectLoader()
+EffectLoaderRef ManagerImplemented::GetEffectLoader()
 {
 	return m_setting->GetEffectLoader();
 }
 
-void ManagerImplemented::SetEffectLoader(EffectLoader* effectLoader)
+void ManagerImplemented::SetEffectLoader(EffectLoaderRef effectLoader)
 {
 	m_setting->SetEffectLoader(effectLoader);
 }
 
-TextureLoader* ManagerImplemented::GetTextureLoader()
+TextureLoaderRef ManagerImplemented::GetTextureLoader()
 {
 	return m_setting->GetTextureLoader();
 }
 
-void ManagerImplemented::SetTextureLoader(TextureLoader* textureLoader)
+void ManagerImplemented::SetTextureLoader(TextureLoaderRef textureLoader)
 {
 	m_setting->SetTextureLoader(textureLoader);
 }
 
-SoundLoader* ManagerImplemented::GetSoundLoader()
+SoundLoaderRef ManagerImplemented::GetSoundLoader()
 {
 	return m_setting->GetSoundLoader();
 }
 
-void ManagerImplemented::SetSoundLoader(SoundLoader* soundLoader)
+void ManagerImplemented::SetSoundLoader(SoundLoaderRef soundLoader)
 {
 	m_setting->SetSoundLoader(soundLoader);
 }
 
-ModelLoader* ManagerImplemented::GetModelLoader()
+ModelLoaderRef ManagerImplemented::GetModelLoader()
 {
 	return m_setting->GetModelLoader();
 }
 
-void ManagerImplemented::SetModelLoader(ModelLoader* modelLoader)
+void ManagerImplemented::SetModelLoader(ModelLoaderRef modelLoader)
 {
 	m_setting->SetModelLoader(modelLoader);
 }
 
-MaterialLoader* ManagerImplemented::GetMaterialLoader()
+MaterialLoaderRef ManagerImplemented::GetMaterialLoader()
 {
 	return m_setting->GetMaterialLoader();
 }
 
-void ManagerImplemented::SetMaterialLoader(MaterialLoader* loader)
+void ManagerImplemented::SetMaterialLoader(MaterialLoaderRef loader)
 {
 	m_setting->SetMaterialLoader(loader);
 }
 
-CurveLoader* ManagerImplemented::GetCurveLoader()
+CurveLoaderRef ManagerImplemented::GetCurveLoader()
 {
 	return m_setting->GetCurveLoader();
 }
 
-void ManagerImplemented::SetCurveLoader(CurveLoader* loader)
+void ManagerImplemented::SetCurveLoader(CurveLoaderRef loader)
 {
 	m_setting->SetCurveLoader(loader);
 }
@@ -2004,6 +2006,11 @@ int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
 
 void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter)
 {
+	if (m_WorkerThreads.size() > 0)
+	{
+		m_WorkerThreads[0].WaitForComplete();
+	}
+
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	auto it = m_renderingDrawSetMaps.find(handle);
@@ -2064,6 +2071,11 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 
 void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParameter& drawParameter)
 {
+	if (m_WorkerThreads.size() > 0)
+	{
+		m_WorkerThreads[0].WaitForComplete();
+	}
+
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
@@ -2106,6 +2118,11 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 
 void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter)
 {
+	if (m_WorkerThreads.size() > 0)
+	{
+		m_WorkerThreads[0].WaitForComplete();
+	}
+
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);

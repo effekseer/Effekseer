@@ -123,7 +123,7 @@ private:
 	class TextureLoader : public ::Effekseer::TextureLoader
 	{
 	private:
-		Effekseer::TextureLoader* m_originalTextureLoader;
+		Effekseer::TextureLoaderRef m_originalTextureLoader;
 
 	public:
 		TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType);
@@ -134,7 +134,7 @@ private:
 
 		void Unload(Effekseer::TextureData* data) override;
 
-		Effekseer::TextureLoader* GetOriginalTextureLoader() const
+		Effekseer::TextureLoaderRef GetOriginalTextureLoader() const
 		{
 			return m_originalTextureLoader;
 		}
@@ -144,10 +144,10 @@ private:
 	class SoundLoader : public ::Effekseer::SoundLoader
 	{
 	private:
-		::Effekseer::SoundLoader* m_loader;
+		::Effekseer::SoundLoaderRef m_loader;
 
 	public:
-		SoundLoader(Effekseer::SoundLoader* loader);
+		SoundLoader(Effekseer::SoundLoaderRef loader);
 		virtual ~SoundLoader();
 
 	public:
@@ -178,7 +178,7 @@ private:
 	class MaterialLoader : public ::Effekseer::MaterialLoader
 	{
 	private:
-		Effekseer::MaterialLoader* loader_ = nullptr;
+		Effekseer::MaterialLoaderRef loader_ = nullptr;
 		std::unordered_map<std::u16string, std::shared_ptr<Effekseer::StaticFile>> materialFiles_;
 
 	public:
@@ -189,7 +189,7 @@ private:
 		Effekseer::MaterialData* Load(const char16_t* path) override;
 		std::u16string RootPath;
 
-		::Effekseer::MaterialLoader* GetOriginalLoader()
+		::Effekseer::MaterialLoaderRef GetOriginalLoader()
 		{
 			return loader_;
 		}
@@ -198,7 +198,6 @@ private:
 	};
 
 	Effekseer::Tool::ViewerEffectBehavior behavior_;
-	TextureLoader* m_textureLoader;
 
 	int32_t m_time;
 
@@ -222,6 +221,14 @@ private:
 	efk::Graphics* graphics_ = nullptr;
 
 	Effekseer::RefPtr<Effekseer::Setting> setting_;
+
+	Effekseer::RefPtr<TextureLoader> textureLoader_;
+
+	Effekseer::RefPtr<MaterialLoader> materialLoader_;
+
+	Effekseer::RefPtr<ModelLoader> modelLoader_;
+
+	Effekseer::RefPtr<SoundLoader> soundLoader_;
 
 	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
 

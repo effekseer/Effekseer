@@ -20,8 +20,6 @@ MainScreenRenderedEffectGenerator::~MainScreenRenderedEffectGenerator()
 		textureLoader_->Unload(backgroundData_);
 		backgroundData_ = nullptr;
 	}
-
-	ES_SAFE_DELETE(textureLoader_);
 }
 
 bool MainScreenRenderedEffectGenerator::InitializedPrePost()

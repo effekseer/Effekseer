@@ -65,34 +65,29 @@ struct Matrix43;
 struct Matrix44;
 struct RectF;
 
+class Setting;
 class Manager;
 class Effect;
 class EffectNode;
 
-class ParticleRenderer;
 class SpriteRenderer;
 class RibbonRenderer;
 class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
-class Setting;
 class EffectLoader;
 class TextureLoader;
 class MaterialLoader;
+class SoundLoader;
+class ModelLoader;
+class CurveLoader;
 
 class SoundPlayer;
-class SoundLoader;
-
-class ModelLoader;
-class ProcedualModelGenerator;
-
 class Model;
-
-class CurveLoader;
-class Curve;
-
 struct ProcedualModelParameter;
+class ProcedualModelGenerator;
+class Curve;
 
 typedef int Handle;
 
@@ -770,8 +765,23 @@ RefPtr<T> MakeRefPtr(Arg&&... args)
 	return RefPtr<T>(new T(args...));
 }
 
-using EffectRef = RefPtr<Effect>;
+using SettingRef = RefPtr<Setting>;
 using ManagerRef = RefPtr<Manager>;
+using EffectRef = RefPtr<Effect>;
+
+using SpriteRendererRef = RefPtr<SpriteRenderer>;
+using RibbonRendererRef = RefPtr<RibbonRenderer>;
+using RingRendererRef = RefPtr<RingRenderer>;
+using ModelRendererRef = RefPtr<ModelRenderer>;
+using TrackRendererRef = RefPtr<TrackRenderer>;
+
+using EffectLoaderRef = RefPtr<EffectLoader>;
+using TextureLoaderRef = RefPtr<TextureLoader>;
+using MaterialLoaderRef = RefPtr<MaterialLoader>;
+using SoundLoaderRef = RefPtr<SoundLoader>;
+using ModelLoaderRef = RefPtr<ModelLoader>;
+using CurveLoaderRef = RefPtr<CurveLoader>;
+using ProcedualModelGeneratorRef = RefPtr<ProcedualModelGenerator>;
 
 /**
 	@brief	This object generates random values.
@@ -2411,7 +2421,7 @@ public:
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
-	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
+	static ::Effekseer::EffectLoaderRef CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
 	/**
 	@brief
@@ -3145,22 +3155,22 @@ public:
 	/**
 		@brief	エフェクト読込クラスを取得する。
 	*/
-	virtual EffectLoader* GetEffectLoader() = 0;
+	virtual EffectLoaderRef GetEffectLoader() = 0;
 
 	/**
 		@brief	エフェクト読込クラスを設定する。
 	*/
-	virtual void SetEffectLoader(EffectLoader* effectLoader) = 0;
+	virtual void SetEffectLoader(EffectLoaderRef effectLoader) = 0;
 
 	/**
 		@brief	テクスチャ読込クラスを取得する。
 	*/
-	virtual TextureLoader* GetTextureLoader() = 0;
+	virtual TextureLoaderRef GetTextureLoader() = 0;
 
 	/**
 		@brief	テクスチャ読込クラスを設定する。
 	*/
-	virtual void SetTextureLoader(TextureLoader* textureLoader) = 0;
+	virtual void SetTextureLoader(TextureLoaderRef textureLoader) = 0;
 
 	/**
 		@brief	サウンド再生機能を取得する。
@@ -3175,22 +3185,22 @@ public:
 	/**
 		@brief	サウンド読込クラスを取得する
 	*/
-	virtual SoundLoader* GetSoundLoader() = 0;
+	virtual SoundLoaderRef GetSoundLoader() = 0;
 
 	/**
 		@brief	サウンド読込クラスを設定する。
 	*/
-	virtual void SetSoundLoader(SoundLoader* soundLoader) = 0;
+	virtual void SetSoundLoader(SoundLoaderRef soundLoader) = 0;
 
 	/**
 		@brief	モデル読込クラスを取得する。
 	*/
-	virtual ModelLoader* GetModelLoader() = 0;
+	virtual ModelLoaderRef GetModelLoader() = 0;
 
 	/**
 		@brief	モデル読込クラスを設定する。
 	*/
-	virtual void SetModelLoader(ModelLoader* modelLoader) = 0;
+	virtual void SetModelLoader(ModelLoaderRef modelLoader) = 0;
 
 	/**
 		@brief
@@ -3200,7 +3210,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual MaterialLoader* GetMaterialLoader() = 0;
+	virtual MaterialLoaderRef GetMaterialLoader() = 0;
 
 	/**
 		@brief
@@ -3210,7 +3220,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
+	virtual void SetMaterialLoader(MaterialLoaderRef loader) = 0;
 
 	/**
 		@brief
@@ -3220,7 +3230,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual CurveLoader* GetCurveLoader() = 0;
+	virtual CurveLoaderRef GetCurveLoader() = 0;
 
 	/**
 		@brief
@@ -3230,7 +3240,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	virtual void SetCurveLoader(CurveLoader* loader) = 0;
+	virtual void SetCurveLoader(CurveLoaderRef loader) = 0;
 
 	/**
 		@brief	エフェクトを停止する。
@@ -3738,13 +3748,14 @@ public:
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 /**
 	@brief	エフェクトファイル読み込み破棄関数指定クラス
 */
-class EffectLoader
+class EffectLoader : public ReferenceObject
 {
 public:
 	/**
@@ -3811,7 +3822,7 @@ namespace Effekseer
 /**
 	@brief	テクスチャ読み込み破棄関数指定クラス
 */
-class TextureLoader
+class TextureLoader : public ReferenceObject
 {
 public:
 	/**
@@ -3899,7 +3910,7 @@ namespace Effekseer
 	\~English	Model loader
 	\~Japanese	モデル読み込み破棄関数指定クラス
 */
-class ModelLoader
+class ModelLoader : public ReferenceObject
 {
 public:
 	ModelLoader() = default;
@@ -3967,7 +3978,7 @@ namespace Effekseer
 	\~English	Material loader
 	\~Japanese	マテリアル読み込み破棄関数指定クラス
 */
-class MaterialLoader
+class MaterialLoader : public ReferenceObject
 {
 public:
 	/**
@@ -4386,7 +4397,7 @@ namespace Effekseer
 /**
 @brief	カーブ読み込み破棄関数指定クラス
 */
-class CurveLoader
+class CurveLoader : public ReferenceObject
 {
 public:
 	/**
@@ -4583,7 +4594,7 @@ namespace Effekseer
 /**
 	@brief	サウンド読み込み破棄関数指定クラス
 */
-class SoundLoader
+class SoundLoader : public ReferenceObject
 {
 public:
 	/**
@@ -4683,13 +4694,13 @@ private:
 	//! coordinate system
 	CoordinateSystem m_coordinateSystem;
 
-	EffectLoader* m_effectLoader;
-	TextureLoader* m_textureLoader;
-	SoundLoader* m_soundLoader;
-	ModelLoader* m_modelLoader;
-	MaterialLoader* m_materialLoader = nullptr;
-	CurveLoader* m_curveLoader = nullptr;
-	ProcedualModelGenerator* procedualMeshGenerator_ = nullptr;
+	EffectLoaderRef m_effectLoader;
+	TextureLoaderRef m_textureLoader;
+	SoundLoaderRef m_soundLoader;
+	ModelLoaderRef m_modelLoader;
+	MaterialLoaderRef m_materialLoader;
+	CurveLoaderRef m_curveLoader;
+	ProcedualModelGeneratorRef procedualMeshGenerator_;
 	std::vector<RefPtr<EffectFactory>> effectFactories;
 
 protected:
@@ -4722,49 +4733,49 @@ public:
 		@brief	エフェクトローダーを取得する。
 		@return	エフェクトローダー
 		*/
-	EffectLoader* GetEffectLoader();
+	EffectLoaderRef GetEffectLoader();
 
 	/**
 		@brief	エフェクトローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetEffectLoader(EffectLoader* loader);
+	void SetEffectLoader(EffectLoaderRef loader);
 
 	/**
 		@brief	テクスチャローダーを取得する。
 		@return	テクスチャローダー
 		*/
-	TextureLoader* GetTextureLoader();
+	TextureLoaderRef GetTextureLoader();
 
 	/**
 		@brief	テクスチャローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetTextureLoader(TextureLoader* loader);
+	void SetTextureLoader(TextureLoaderRef loader);
 
 	/**
 		@brief	モデルローダーを取得する。
 		@return	モデルローダー
 		*/
-	ModelLoader* GetModelLoader();
+	ModelLoaderRef GetModelLoader();
 
 	/**
 		@brief	モデルローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetModelLoader(ModelLoader* loader);
+	void SetModelLoader(ModelLoaderRef loader);
 
 	/**
 		@brief	サウンドローダーを取得する。
 		@return	サウンドローダー
 		*/
-	SoundLoader* GetSoundLoader();
+	SoundLoaderRef GetSoundLoader();
 
 	/**
 		@brief	サウンドローダーを設定する。
 		@param	loader	[in]		ローダー
 		*/
-	void SetSoundLoader(SoundLoader* loader);
+	void SetSoundLoader(SoundLoaderRef loader);
 
 	/**
 		@brief
@@ -4774,7 +4785,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	MaterialLoader* GetMaterialLoader();
+	MaterialLoaderRef GetMaterialLoader();
 
 	/**
 		@brief
@@ -4784,7 +4795,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 		*/
-	void SetMaterialLoader(MaterialLoader* loader);
+	void SetMaterialLoader(MaterialLoaderRef loader);
 
 	/**
 		@brief
@@ -4794,7 +4805,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	CurveLoader* GetCurveLoader();
+	CurveLoaderRef GetCurveLoader();
 
 	/**
 		@brief
@@ -4804,7 +4815,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	void SetCurveLoader(CurveLoader* loader);
+	void SetCurveLoader(CurveLoaderRef loader);
 
 	/**
 		@brief
@@ -4814,7 +4825,7 @@ public:
 		\~English	generator
 		\~Japanese ローダー
 	*/
-	ProcedualModelGenerator* GetProcedualMeshGenerator() const;
+	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const;
 
 	/**
 		@brief
@@ -4824,7 +4835,7 @@ public:
 		\~English	generator
 		\~Japanese generator
 	*/
-	void SetProcedualMeshGenerator(ProcedualModelGenerator* generator);
+	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator);
 
 	/**
 		@brief

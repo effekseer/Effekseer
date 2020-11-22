@@ -29,18 +29,18 @@
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoaderRef CreateTextureLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface);
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-	return new ModelLoader(graphicsDevice, fileInterface);
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(graphicsDevice, fileInterface));
 }
 
 bool PiplineStateKey::operator<(const PiplineStateKey& v) const
@@ -606,27 +606,27 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this);
 }
 
-::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface);
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(graphicsDevice_, fileInterface);
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(graphicsDevice_, fileInterface));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return new MaterialLoader(graphicsDevice_, fileInterface, platformType_, materialCompiler_);
+	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(graphicsDevice_, fileInterface, platformType_, materialCompiler_));
 }
 
 Effekseer::TextureData* RendererImplemented::GetBackground()

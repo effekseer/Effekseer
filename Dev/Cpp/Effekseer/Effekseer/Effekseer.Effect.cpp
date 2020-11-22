@@ -405,7 +405,7 @@ EffectRef Effect::Create(Manager* manager, const char16_t* path, float magnifica
 {
 	auto setting = manager->GetSetting();
 
-	EffectLoader* eLoader = setting->GetEffectLoader();
+	EffectLoaderRef eLoader = setting->GetEffectLoader();
 
 	if (setting == nullptr)
 		return nullptr;
@@ -729,7 +729,7 @@ void EffectImplemented::ResetReloadingBackup()
 
 	auto loader = GetSetting();
 
-	TextureLoader* textureLoader = loader->GetTextureLoader();
+	TextureLoaderRef textureLoader = loader->GetTextureLoader();
 	if (textureLoader != nullptr)
 	{
 		for (auto it : reloadingBackup->images.GetCollection())
@@ -748,7 +748,7 @@ void EffectImplemented::ResetReloadingBackup()
 		}
 	}
 
-	SoundLoader* soundLoader = loader->GetSoundLoader();
+	SoundLoaderRef soundLoader = loader->GetSoundLoader();
 	if (soundLoader != nullptr)
 	{
 		for (auto it : reloadingBackup->sounds.GetCollection())
@@ -758,7 +758,7 @@ void EffectImplemented::ResetReloadingBackup()
 	}
 
 	{
-		ModelLoader* modelLoader = loader->GetModelLoader();
+		ModelLoaderRef modelLoader = loader->GetModelLoader();
 		if (modelLoader != nullptr)
 		{
 			for (auto it : reloadingBackup->models.GetCollection())
@@ -800,7 +800,7 @@ EffectRef Effect::Create(const RefPtr<Setting>& setting, const char16_t* path, f
 {
 	if (setting == nullptr)
 		return nullptr;
-	EffectLoader* eLoader = setting->GetEffectLoader();
+	EffectLoaderRef eLoader = setting->GetEffectLoader();
 
 	if (setting == nullptr)
 		return nullptr;
@@ -846,9 +846,9 @@ EffectRef EffectImplemented::Create(const RefPtr<Setting>& setting, void* pData,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::EffectLoader* Effect::CreateEffectLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::EffectLoaderRef Effect::CreateEffectLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return new ::Effekseer::DefaultEffectLoader(fileInterface);
+	return EffectLoaderRef(new ::Effekseer::DefaultEffectLoader(fileInterface));
 }
 
 //----------------------------------------------------------------------------------
@@ -1416,7 +1416,7 @@ bool EffectImplemented::Reload(
 
 	auto loader = GetSetting();
 
-	EffectLoader* eLoader = loader->GetEffectLoader();
+	EffectLoaderRef eLoader = loader->GetEffectLoader();
 	if (loader == nullptr)
 		return false;
 

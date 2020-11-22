@@ -65,34 +65,29 @@ struct Matrix43;
 struct Matrix44;
 struct RectF;
 
+class Setting;
 class Manager;
 class Effect;
 class EffectNode;
 
-class ParticleRenderer;
 class SpriteRenderer;
 class RibbonRenderer;
 class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
-class Setting;
 class EffectLoader;
 class TextureLoader;
 class MaterialLoader;
+class SoundLoader;
+class ModelLoader;
+class CurveLoader;
 
 class SoundPlayer;
-class SoundLoader;
-
-class ModelLoader;
-class ProcedualModelGenerator;
-
 class Model;
-
-class CurveLoader;
-class Curve;
-
 struct ProcedualModelParameter;
+class ProcedualModelGenerator;
+class Curve;
 
 typedef int Handle;
 
@@ -770,8 +765,23 @@ RefPtr<T> MakeRefPtr(Arg&&... args)
 	return RefPtr<T>(new T(args...));
 }
 
-using EffectRef = RefPtr<Effect>;
+using SettingRef = RefPtr<Setting>;
 using ManagerRef = RefPtr<Manager>;
+using EffectRef = RefPtr<Effect>;
+
+using SpriteRendererRef = RefPtr<SpriteRenderer>;
+using RibbonRendererRef = RefPtr<RibbonRenderer>;
+using RingRendererRef = RefPtr<RingRenderer>;
+using ModelRendererRef = RefPtr<ModelRenderer>;
+using TrackRendererRef = RefPtr<TrackRenderer>;
+
+using EffectLoaderRef = RefPtr<EffectLoader>;
+using TextureLoaderRef = RefPtr<TextureLoader>;
+using MaterialLoaderRef = RefPtr<MaterialLoader>;
+using SoundLoaderRef = RefPtr<SoundLoader>;
+using ModelLoaderRef = RefPtr<ModelLoader>;
+using CurveLoaderRef = RefPtr<CurveLoader>;
+using ProcedualModelGeneratorRef = RefPtr<ProcedualModelGenerator>;
 
 /**
 	@brief	This object generates random values.
