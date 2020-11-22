@@ -7,75 +7,74 @@
 namespace Sprite_Unlit_VS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.Standard_VS.h"
-} // namespace Sprite_Unlit_VS_Ad
+#include "ShaderHeader/ad_sprite_unlit_vs.h"
+} // namespace Sprite_Unlit_VS
 
 namespace Sprite_Unlit_PS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.Standard_PS.h"
-} // namespace Sprite_Unlit_PS_Ad
+#include "ShaderHeader/ad_sprite_unlit_ps.h"
+} // namespace Sprite_Unlit_PS
 
 namespace Sprite_Distortion_VS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.Standard_Distortion_VS.h"
-} // namespace Sprite_Distortion_VS_Ad
+#include "ShaderHeader/ad_sprite_distortion_vs.h"
+} // namespace Sprite_Distortion_VS
 
 namespace Sprite_Distortion_PS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.Standard_Distortion_PS.h"
-} // namespace Sprite_Distortion_PS_Ad
-
-namespace Model_Lit_VS_Ad
-{
-static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
-} // namespace Model_Lit_VS_Ad
-
-namespace Model_Lit_PS_Ad
-{
-static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
-
-} // namespace Model_Lit_PS_Ad
-
-namespace Model_Unlit_VS_Ad
-{
-static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
-} // namespace Model_Unlit_VS_Ad
-
-namespace Model_Unlit_PS_Ad
-{
-static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
-} // namespace Model_Unlit_PS_Ad
-
-namespace Model_Distortion_VS_Ad
-{
-static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
-} // namespace Model_Distortion_VS_Ad
-
-namespace Model_Distortion_PS_Ad
-{
-static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
-} // namespace Model_Distortion_PS_Ad
+#include "ShaderHeader/ad_sprite_distortion_ps.h"
+} // namespace Sprite_Distortion_PS
 
 namespace Sprite_Lit_VS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.Standard_Lighting_VS.h"
-} // namespace Sprite_Lit_VS_Ad
+#include "ShaderHeader/ad_sprite_lit_vs.h"
+} // namespace Sprite_Lit_VS
 
 namespace Sprite_Lit_PS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.Standard_Lighting_PS.h"
-} // namespace Sprite_Lit_PS_Ad
+#include "ShaderHeader/ad_sprite_lit_ps.h"
+} // namespace Sprite_Lit_PS
+
+namespace Model_Unlit_VS_Ad
+{
+static
+#include "ShaderHeader/ad_model_unlit_vs.h"
+} // namespace Model_Unlit_VS
+
+namespace Model_Unlit_PS_Ad
+{
+static
+#include "ShaderHeader/ad_model_unlit_ps.h"
+} // namespace Model_Unlit_PS
+
+namespace Model_Distortion_VS_Ad
+{
+static
+#include "ShaderHeader/ad_model_distortion_vs.h"
+} // namespace Model_Distortion_VS
+
+namespace Model_Distortion_PS_Ad
+{
+static
+#include "ShaderHeader/ad_model_distortion_ps.h"
+} // namespace Model_Distortion_PS
+
+namespace Model_Lit_VS_Ad
+{
+static
+#include "ShaderHeader/ad_model_lit_vs.h"
+} // namespace Model_Lit_VS
+
+namespace Model_Lit_PS_Ad
+{
+static
+#include "ShaderHeader/ad_model_lit_ps.h"
+} // namespace Model_Lit_PS
 
 namespace Sprite_Unlit_VS
 {

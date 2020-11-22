@@ -13,12 +13,12 @@
 #include "EffekseerRendererGL.VertexBuffer.h"
 #include <string>
 
-#include "ShaderHeader/model_renderer_distortion_PS.h"
-#include "ShaderHeader/model_renderer_distortion_VS.h"
-#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
-#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
-#include "ShaderHeader/model_renderer_texture_PS.h"
-#include "ShaderHeader/model_renderer_texture_VS.h"
+#include "ShaderHeader/ad_model_distortion_ps.h"
+#include "ShaderHeader/ad_model_distortion_vs.h"
+#include "ShaderHeader/ad_model_lit_ps.h"
+#include "ShaderHeader/ad_model_lit_vs.h"
+#include "ShaderHeader/ad_model_unlit_ps.h"
+#include "ShaderHeader/ad_model_unlit_vs.h"
 
 #include "ShaderHeader/model_distortion_ps.h"
 #include "ShaderHeader/model_distortion_vs.h"
@@ -448,12 +448,12 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	Shader* shader_unlit = nullptr;
 	Shader* shader_distortion = nullptr;
 
-	ShaderCodeView ltnVS(get_model_renderer_lighting_texture_normal_VS(renderer->GetDeviceType()));
-	ShaderCodeView ltnPS(get_model_renderer_lighting_texture_normal_PS(renderer->GetDeviceType()));
-	ShaderCodeView tVS(get_model_renderer_texture_VS(renderer->GetDeviceType()));
-	ShaderCodeView tPS(get_model_renderer_texture_PS(renderer->GetDeviceType()));
-	ShaderCodeView dVS(get_model_renderer_distortion_VS(renderer->GetDeviceType()));
-	ShaderCodeView dPS(get_model_renderer_distortion_PS(renderer->GetDeviceType()));
+	ShaderCodeView ad_lit_vs(get_ad_model_lit_vs(renderer->GetDeviceType()));
+	ShaderCodeView ad_lit_ps(get_ad_model_lit_ps(renderer->GetDeviceType()));
+	ShaderCodeView ad_unlit_vs(get_ad_model_unlit_vs(renderer->GetDeviceType()));
+	ShaderCodeView ad_unlit_ps(get_ad_model_unlit_ps(renderer->GetDeviceType()));
+	ShaderCodeView ad_dist_vs(get_ad_model_distortion_vs(renderer->GetDeviceType()));
+	ShaderCodeView ad_dist_ps(get_ad_model_distortion_ps(renderer->GetDeviceType()));
 	ShaderCodeView lit_vs(get_model_lit_vs(renderer->GetDeviceType()));
 	ShaderCodeView lit_ps(get_model_lit_ps(renderer->GetDeviceType()));
 	ShaderCodeView unlit_vs(get_model_unlit_vs(renderer->GetDeviceType()));
@@ -461,15 +461,15 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_vs(get_model_distortion_vs(renderer->GetDeviceType()));
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
-	shader_ad_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ltnVS, 1, &ltnPS, 1, "ModelRenderer1", true, false);
+	shader_ad_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ad_lit_vs, 1, &ad_lit_ps, 1, "ModelRenderer1", true, false);
 	if (shader_ad_lit == nullptr)
 		goto End;
 
-	shader_ad_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &tVS, 1, &tPS, 1, "ModelRenderer5", true, false);
+	shader_ad_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ad_unlit_vs, 1, &ad_unlit_ps, 1, "ModelRenderer5", true, false);
 	if (shader_ad_unlit == nullptr)
 		goto End;
 
-	shader_ad_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &dVS, 1, &dPS, 1, "ModelRenderer7", true, false);
+	shader_ad_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ad_dist_vs, 1, &ad_dist_ps, 1, "ModelRenderer7", true, false);
 	if (shader_ad_distortion == nullptr)
 		goto End;
 

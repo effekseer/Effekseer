@@ -15,17 +15,13 @@ gl_3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_3/'
 gl_es2_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_ES2/'
 gl_es3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_ES3/'
 
-verts = [root_path + 'standard_renderer_VS.fx', root_path + 'standard_renderer_lighting_VS.fx',
-         root_path + 'standard_renderer_distortion_VS.fx', root_path + 'model_renderer_texture_VS.fx', root_path +
-         'model_renderer_lighting_texture_normal_VS.fx', root_path +
-         'model_renderer_distortion_VS.fx',
-         root_path + 'sprite_unlit_vs.fx', root_path + 'sprite_lit_vs.fx', root_path + 'sprite_distortion_vs.fx', root_path + 'model_unlit_vs.fx', root_path + 'model_lit_vs.fx', root_path + 'model_distortion_vs.fx']
+verts = [
+        root_path + 'ad_sprite_unlit_vs.fx', root_path + 'ad_sprite_lit_vs.fx', root_path + 'ad_sprite_distortion_vs.fx', root_path + 'ad_model_unlit_vs.fx', root_path + 'ad_model_lit_vs.fx', root_path + 'ad_model_distortion_vs.fx',
+        root_path + 'sprite_unlit_vs.fx', root_path + 'sprite_lit_vs.fx', root_path + 'sprite_distortion_vs.fx', root_path + 'model_unlit_vs.fx', root_path + 'model_lit_vs.fx', root_path + 'model_distortion_vs.fx']
 
-frags = [root_path + 'standard_renderer_PS.fx', root_path + 'standard_renderer_lighting_PS.fx',
-         root_path + 'standard_renderer_distortion_PS.fx', root_path + 'model_renderer_texture_PS.fx', root_path +
-         'model_renderer_lighting_texture_normal_PS.fx', root_path +
-         'model_renderer_distortion_PS.fx',
-         root_path + 'sprite_unlit_ps.fx', root_path + 'sprite_lit_ps.fx', root_path + 'sprite_distortion_ps.fx', root_path + 'model_unlit_ps.fx', root_path + 'model_lit_ps.fx', root_path + 'model_distortion_ps.fx']
+frags = [
+        root_path + 'ad_sprite_unlit_ps.fx', root_path + 'ad_sprite_lit_ps.fx', root_path + 'ad_sprite_distortion_ps.fx', root_path + 'ad_model_unlit_ps.fx', root_path + 'ad_model_lit_ps.fx', root_path + 'ad_model_distortion_ps.fx',
+        root_path + 'sprite_unlit_ps.fx', root_path + 'sprite_lit_ps.fx', root_path + 'sprite_distortion_ps.fx', root_path + 'model_unlit_ps.fx', root_path + 'model_lit_ps.fx', root_path + 'model_distortion_ps.fx']
 
 
 def fix_dx9_vs(path):

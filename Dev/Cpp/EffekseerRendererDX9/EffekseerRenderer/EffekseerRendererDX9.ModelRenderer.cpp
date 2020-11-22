@@ -23,38 +23,38 @@ namespace EffekseerRendererDX9
 namespace ShaderLightingTextureNormal_VS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+#include "ShaderHeader/ad_model_lit_vs.h"
 } // namespace ShaderLightingTextureNormal_VS_Ad
 
 namespace ShaderLightingTextureNormal_PS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
+#include "ShaderHeader/ad_model_lit_ps.h"
 
 } // namespace ShaderLightingTextureNormal_PS_Ad
 
 namespace ShaderTexture_VS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+#include "ShaderHeader/ad_model_unlit_vs.h"
 } // namespace ShaderTexture_VS_Ad
 
 namespace ShaderTexture_PS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+#include "ShaderHeader/ad_model_unlit_ps.h"
 } // namespace ShaderTexture_PS_Ad
 
 namespace ShaderDistortionTexture_VS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+#include "ShaderHeader/ad_model_distortion_vs.h"
 } // namespace ShaderDistortionTexture_VS_Ad
 
 namespace ShaderDistortionTexture_PS_Ad
 {
 static
-#include "ShaderHeader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
+#include "ShaderHeader/ad_model_distortion_ps.h"
 } // namespace ShaderDistortionTexture_PS_Ad
 
 namespace ShaderLightingTextureNormal_VS

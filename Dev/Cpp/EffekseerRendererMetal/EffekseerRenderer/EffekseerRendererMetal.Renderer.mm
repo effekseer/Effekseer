@@ -15,23 +15,19 @@
 
 // #include "Shaders.h"
 
-#include "ShaderHeader/standard_renderer_VS.h"
-#include "ShaderHeader/standard_renderer_PS.h"
+#include "ShaderHeader/ad_sprite_distortion_ps.h"
+#include "ShaderHeader/ad_sprite_distortion_vs.h"
+#include "ShaderHeader/ad_sprite_lit_ps.h"
+#include "ShaderHeader/ad_sprite_lit_vs.h"
+#include "ShaderHeader/ad_sprite_unlit_ps.h"
+#include "ShaderHeader/ad_sprite_unlit_vs.h"
 
-#include "ShaderHeader/standard_renderer_lighting_VS.h"
-#include "ShaderHeader/standard_renderer_lighting_PS.h"
-
-#include "ShaderHeader/standard_renderer_distortion_VS.h"
-#include "ShaderHeader/standard_renderer_distortion_PS.h"
-
-#include "ShaderHeader/model_renderer_texture_VS.h"
-#include "ShaderHeader/model_renderer_texture_PS.h"
-
-#include "ShaderHeader/model_renderer_lighting_texture_normal_VS.h"
-#include "ShaderHeader/model_renderer_lighting_texture_normal_PS.h"
-
-#include "ShaderHeader/model_renderer_distortion_VS.h"
-#include "ShaderHeader/model_renderer_distortion_PS.h"
+#include "ShaderHeader/ad_model_distortion_ps.h"
+#include "ShaderHeader/ad_model_distortion_vs.h"
+#include "ShaderHeader/ad_model_lit_ps.h"
+#include "ShaderHeader/ad_model_lit_vs.h"
+#include "ShaderHeader/ad_model_unlit_ps.h"
+#include "ShaderHeader/ad_model_unlit_vs.h"
 
 #include "ShaderHeader/sprite_unlit_vs.h"
 #include "ShaderHeader/sprite_unlit_ps.h"
@@ -46,6 +42,8 @@
 #include "ShaderHeader/model_lit_ps.h"
 #include "ShaderHeader/model_distortion_vs.h"
 #include "ShaderHeader/model_distortion_ps.h"
+
+#define GENERATE_VIEW(x) {{x, static_cast<int32_t>(sizeof(x))}};
 
 namespace EffekseerRendererMetal
 {
@@ -87,34 +85,33 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
     if (!shader)
         return;
 
-    shader->AdvancedSpriteUnlit_VS = {{metal_standard_renderer_VS, (int32_t)sizeof(metal_standard_renderer_VS)}};
-    shader->AdvancedSpriteLit_VS = {{metal_standard_renderer_lighting_VS, (int32_t)sizeof(metal_standard_renderer_lighting_VS)}};
-    shader->AdvancedSpriteDistortion_VS = {{metal_standard_renderer_distortion_VS, (int32_t)sizeof(metal_standard_renderer_distortion_VS)}};
-    shader->AdvancedModelUnlit_VS = {{metal_model_renderer_texture_VS, (int32_t)sizeof(metal_model_renderer_texture_VS)}};
-    shader->AdvancedModelLit_VS = {{metal_model_renderer_lighting_texture_normal_VS, (int32_t)sizeof(metal_model_renderer_lighting_texture_normal_VS)}};
-    shader->AdvancedModelDistortion_VS = {{metal_model_renderer_distortion_VS, (int32_t)sizeof(metal_model_renderer_distortion_VS)}};
+	shader->AdvancedSpriteUnlit_VS = GENERATE_VIEW(metal_ad_sprite_unlit_vs);
+	shader->AdvancedSpriteUnlit_PS = GENERATE_VIEW(metal_ad_sprite_unlit_ps);
+	shader->AdvancedSpriteLit_VS = GENERATE_VIEW(metal_ad_sprite_lit_vs);
+	shader->AdvancedSpriteLit_PS = GENERATE_VIEW(metal_ad_sprite_lit_ps);
+	shader->AdvancedSpriteDistortion_VS = GENERATE_VIEW(metal_ad_sprite_distortion_vs);
+	shader->AdvancedSpriteDistortion_PS = GENERATE_VIEW(metal_ad_sprite_distortion_ps);
 
-    shader->AdvancedSpriteUnlit_PS = {{metal_standard_renderer_PS, (int32_t)sizeof(metal_standard_renderer_PS)}};
-    shader->AdvancedSpriteLit_PS = {{metal_standard_renderer_lighting_PS, (int32_t)sizeof(metal_standard_renderer_lighting_PS)}};
-    shader->AdvancedSpriteDistortion_PS = {{metal_standard_renderer_distortion_PS, (int32_t)sizeof(metal_standard_renderer_distortion_PS)}};
-    shader->AdvancedModelUnlit_PS = {{metal_model_renderer_texture_PS, (int32_t)sizeof(metal_model_renderer_texture_PS)}};
-    shader->AdvancedModelLit_PS = {{metal_model_renderer_lighting_texture_normal_PS, (int32_t)sizeof(metal_model_renderer_lighting_texture_normal_PS)}};
-    shader->AdvancedModelDistortion_PS = {{metal_model_renderer_distortion_PS, (int32_t)sizeof(metal_model_renderer_distortion_PS)}};
+	shader->AdvancedModelUnlit_VS = GENERATE_VIEW(metal_ad_model_unlit_vs);
+	shader->AdvancedModelUnlit_PS = GENERATE_VIEW(metal_ad_model_unlit_ps);
+	shader->AdvancedModelLit_VS = GENERATE_VIEW(metal_ad_model_lit_vs);
+	shader->AdvancedModelLit_PS = GENERATE_VIEW(metal_ad_model_lit_ps);
+	shader->AdvancedModelDistortion_VS = GENERATE_VIEW(metal_ad_model_distortion_vs);
+	shader->AdvancedModelDistortion_PS = GENERATE_VIEW(metal_ad_model_distortion_ps);
 
+	shader->SpriteUnlit_VS = GENERATE_VIEW(metal_sprite_unlit_vs);
+	shader->SpriteUnlit_PS = GENERATE_VIEW(metal_sprite_unlit_ps);
+	shader->SpriteLit_VS = GENERATE_VIEW(metal_sprite_lit_vs);
+	shader->SpriteLit_PS = GENERATE_VIEW(metal_sprite_lit_ps);
+	shader->SpriteDistortion_VS = GENERATE_VIEW(metal_sprite_distortion_vs);
+	shader->SpriteDistortion_PS = GENERATE_VIEW(metal_sprite_distortion_ps);
 
-    shader->SpriteUnlit_VS = {{metal_sprite_unlit_vs, (int32_t)sizeof(metal_sprite_unlit_vs)}};
-    shader->SpriteDistortion_VS = {{metal_sprite_distortion_vs, (int32_t)sizeof(metal_sprite_distortion_vs)}};
-    shader->SpriteLit_VS = {{metal_sprite_lit_vs, (int32_t)sizeof(metal_sprite_lit_vs)}};
-    shader->ModelUnlit_VS = {{metal_model_unlit_vs, (int32_t)sizeof(metal_model_unlit_vs)}};
-    shader->ModelDistortion_VS = {{metal_model_distortion_vs, (int32_t)sizeof(metal_model_distortion_vs)}};
-    shader->ModelLit_VS = {{metal_model_lit_vs, (int32_t)sizeof(metal_model_lit_vs)}};
-
-    shader->SpriteUnlit_PS = {{metal_sprite_unlit_ps, (int32_t)sizeof(metal_sprite_unlit_ps)}};
-    shader->SpriteDistortion_PS = {{metal_sprite_distortion_ps, (int32_t)sizeof(metal_sprite_distortion_ps)}};
-    shader->SpriteLit_PS = {{metal_sprite_lit_ps, (int32_t)sizeof(metal_sprite_lit_ps)}};
-    shader->ModelUnlit_PS = {{metal_model_unlit_ps, (int32_t)sizeof(metal_model_unlit_ps)}};
-    shader->ModelDistortion_PS = {{metal_model_distortion_ps, (int32_t)sizeof(metal_model_distortion_ps)}};
-    shader->ModelLit_PS = {{metal_model_lit_ps, (int32_t)sizeof(metal_model_lit_ps)}};
+	shader->ModelUnlit_VS = GENERATE_VIEW(metal_model_unlit_vs);
+	shader->ModelUnlit_PS = GENERATE_VIEW(metal_model_unlit_ps);
+	shader->ModelLit_VS = GENERATE_VIEW(metal_model_lit_vs);
+	shader->ModelLit_PS = GENERATE_VIEW(metal_model_lit_ps);
+	shader->ModelDistortion_VS = GENERATE_VIEW(metal_model_distortion_vs);
+	shader->ModelDistortion_PS = GENERATE_VIEW(metal_model_distortion_ps);
 }
 
 ::EffekseerRenderer::Renderer* Create(
