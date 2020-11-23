@@ -39,6 +39,7 @@ public:
 		int32_t ModelIndex;
 		float Magnification;
 		bool IsRightHand;
+		float Maginification = 1.0f;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;

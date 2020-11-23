@@ -34,6 +34,8 @@ public:
 		BillboardType Billboard;
 		int32_t VertexCount;
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 		float StartingFade = 0.0f;
 		float EndingFade = 0.0f;
 

@@ -57,6 +57,13 @@ inline auto MOD(T1 x, T2 y) -> decltype(x - y * floor(x/y)) {
 
 )";
 
+static const char* material_common_define_vs = R"(
+
+// Dummy
+float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam) { return 1.0f; }
+
+)";
+
 static const char g_material_model_vs_src_pre[] =
     R"(
 struct ShaderInput1 {
@@ -77,7 +84,7 @@ struct ShaderOutput1 {
   float3 v_WorldN;
   float3 v_WorldT;
   float3 v_WorldB;
-  float2 v_ScreenUV;
+  float4 v_PosP;
   //$C_OUT1$
   //$C_OUT2$
 };
@@ -138,8 +145,9 @@ static const char g_material_model_vs_src_suf2[] =
     o.v_UV2 = uv2;
     o.v_VColor = vcolor;
     o.gl_Position = u.ProjectionMatrix * float4(worldPos, 1.0);
-    o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
-    o.v_ScreenUV.xy = float2(o.v_ScreenUV.x + 1.0, o.v_ScreenUV.y + 1.0) * 0.5;
+    o.v_PosP = o.gl_Position;
+    //o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
+    //o.v_ScreenUV.xy = float2(o.v_ScreenUV.x + 1.0, o.v_ScreenUV.y + 1.0) * 0.5;
     return o;
 }
 )";
@@ -160,7 +168,7 @@ struct ShaderOutput1 {
   float3 v_WorldN;
   float3 v_WorldT;
   float3 v_WorldB;
-  float2 v_ScreenUV;
+  float4 v_PosP;
 };
 
 struct ShaderUniform1 {
@@ -194,7 +202,7 @@ struct ShaderOutput1 {
   float3 v_WorldN;
   float3 v_WorldT;
   float3 v_WorldB;
-  float2 v_ScreenUV;
+  float4 v_PosP;
   //$C_OUT1$
   //$C_OUT2$
 };
@@ -277,8 +285,9 @@ static const char g_material_sprite_vs_src_suf2[] =
 
     o.v_UV1 = uv1;
     o.v_UV2 = uv2;
-    o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
-    o.v_ScreenUV.xy = float2(o.v_ScreenUV.x + 1.0, o.v_ScreenUV.y + 1.0) * 0.5;
+    o.v_PosP = o.gl_Position;
+    //o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
+    //o.v_ScreenUV.xy = float2(o.v_ScreenUV.x + 1.0, o.v_ScreenUV.y + 1.0) * 0.5;
     return o;
 }
 
@@ -294,7 +303,7 @@ struct ShaderInput2 {
   float3 v_WorldN;
   float3 v_WorldT;
   float3 v_WorldB;
-  float2 v_ScreenUV;
+  float4 v_PosP;
   //$C_PIN1$
   //$C_PIN2$
 };
@@ -305,12 +314,29 @@ struct ShaderUniform2 {
   float4 mUVInversedBack;
   float4 predefined_uniform;
   float4 cameraPosition;
+  float4 reconstructionParam1;
+  float4 reconstructionParam2;
 //$UNIFORMS$
 };
 )";
 
 static const char g_material_fs_src_suf1[] =
     R"(
+
+float DepthFade(float2 screenUV, float meshZ, float softParticleParam)
+{
+	float backgroundZ = efk_depth.sample(s_efk_depth, screenUV).x;
+
+	float distance = softParticleParam;
+	float2 rescale = reconstructionParam1.yz;
+	float4 params = reconstructionParam2;
+
+	float2 zs = float2(backgroundZ * rescale.x + rescale.y, meshZ);
+
+	float2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);
+
+	return min(max((depth.y - depth.x) / distance, 0.0), 1.0);
+}
 
 #ifdef _MATERIAL_LIT_
 
@@ -392,6 +418,11 @@ fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUnifor
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.v_VColor;
     float3 objectScale = float3(1.0, 1.0, 1.0);
+    float2 screenUV = o.v_PosP.xy / o.v_PosP.w;
+	float meshZ =  o.v_PosP.z / o.v_PosP.w;
+    screenUV.xy = float2(screenUV.x + 1.0, screenUV.y + 1.0) * 0.5;
+    float2 screenUV_distort = screenUV;
+    screenUV = float2(screenUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * screenUV.y);
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
@@ -437,10 +468,10 @@ static const char g_material_fs_src_suf2_refraction[] =
     float3 dir = float3x3(tmpvar_1) * pixelNormalDir;
     float2 distortUV = dir.xy * (refraction - airRefraction);
 
-    distortUV += i.v_ScreenUV;
+    distortUV += screenUV_distort;
     distortUV = float2(distortUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * distortUV.y);
     distortUV.y = 1.0 - distortUV.y;
-    float4 bg = background.sample(s_background, distortUV);
+    float4 bg = efk_background.sample(s_efk_background, distortUV);
     o.gl_FragColor = bg;
 
     if(opacityMask <= 0.0) discard_fragment();
@@ -558,6 +589,11 @@ void ExportTexture(std::ostringstream& maincode, const char* name, int& index)
 void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite)
 {
     maincode << material_common_define;
+
+    if (stage == 0)
+	{
+		maincode << material_common_define_vs;
+	}
 
     if (stage == 0)
     {
@@ -724,9 +760,11 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
         if (isRefrection && stage == 1)
         {
             ExportUniform(userUniforms, 16, "cameraMat");
-            ExportTexture(textures, "background", t_index);
         }
-        
+
+        ExportTexture(textures, "efk_background", t_index);
+		ExportTexture(textures, "efk_depth", t_index);
+
         for (int32_t i = 0; i < material->GetUniformCount(); i++)
         {
             auto uniformName = material->GetUniformName(i);

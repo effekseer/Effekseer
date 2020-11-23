@@ -76,6 +76,8 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeRotator>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePolarCoords>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeDepthFade>>());
+
 	MakeGroups();
 }
 

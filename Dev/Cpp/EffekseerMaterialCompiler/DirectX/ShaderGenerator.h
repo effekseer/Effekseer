@@ -303,8 +303,10 @@ public:
 			{
 				ExportUniform(maincode, 4, "mUVInversedBack", 0);
 				ExportUniform(maincode, 4, "predefined_uniform", 1);
-				ExportUniform(maincode, 4, "cameraPosition", cind);
-				cind++;
+				ExportUniform(maincode, 4, "cameraPosition", cind + 0);
+				ExportUniform(maincode, 4, "reconstructionParam1", cind + 1);
+				ExportUniform(maincode, 4, "reconstructionParam2", cind + 2);
+				cind += 3;
 			}
 
 			if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
@@ -368,10 +370,11 @@ public:
 			}
 
 			// background
-			for (int32_t i = material->GetTextureCount(); i < material->GetTextureCount() + 1; i++)
-			{
-				ExportTexture(maincode, "background", i + textureSlotOffset);
-			}
+			ExportTexture(maincode, "efk_background", 0 + textureSlotOffset);
+			
+			// depth
+			ExportTexture(maincode, "efk_depth", 1 + textureSlotOffset);
+			
 
 			auto baseCode = std::string(material->GetGenericCode());
 			baseCode = Replace(baseCode, "$F1$", "float");

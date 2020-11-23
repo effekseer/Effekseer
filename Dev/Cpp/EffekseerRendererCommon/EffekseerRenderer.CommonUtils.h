@@ -861,6 +861,8 @@ struct MaterialShaderParameterGenerator
 	int32_t PixelInversedFlagOffset = -1;
 	int32_t PixelPredefinedOffset = -1;
 	int32_t PixelCameraPositionOffset = -1;
+	int32_t PixelReconstructionParam1Offset = -1;
+	int32_t PixelReconstructionParam2Offset = -1;
 	int32_t PixelLightDirectionOffset = -1;
 	int32_t PixelLightColorOffset = -1;
 	int32_t PixelLightAmbientColorOffset = -1;
@@ -964,6 +966,12 @@ struct MaterialShaderParameterGenerator
 		psOffset += sizeof(float) * 4;
 
 		PixelCameraPositionOffset = psOffset;
+		psOffset += sizeof(float) * 4;
+
+		PixelReconstructionParam1Offset = psOffset;
+		psOffset += sizeof(float) * 4;
+
+		PixelReconstructionParam2Offset = psOffset;
 		psOffset += sizeof(float) * 4;
 
 		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
@@ -1116,8 +1124,6 @@ struct ShaderParameterCollector
 					MaterialDataPtr = nullptr;
 				}
 			}
-
-			IsDepthRequired = false;
 		}
 		else if (param->MaterialType == ::Effekseer::RendererMaterialType::Lighting && isAdvanced)
 		{
@@ -1188,7 +1194,16 @@ struct ShaderParameterCollector
 				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Linear;
 				TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
 				BackgroundIndex = TextureCount;
-				TextureCount += 1;
+			}
+			TextureCount += 1;
+
+			if (IsDepthRequired)
+			{
+				// Store from external
+				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Linear;
+				TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
+				DepthIndex = TextureCount;
+				TextureCount += 1;			
 			}
 		}
 		else
@@ -1388,11 +1403,12 @@ struct SoftParticleParameter
 	std::array<float, 4> softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
 	std::array<float, 4> reconstructionParam2;
 
-	void SetParam(float softParticle, float rescale1, float rescale2, float v33, float v34, float v43, float v44)
+	void SetParam(float softParticle, float magnification, float rescale1, float rescale2, float v33, float v34, float v43, float v44)
 	{
-		softParticleAndReconstructionParam1[0] = softParticle;
+		softParticleAndReconstructionParam1[0] = softParticle * magnification;
 		softParticleAndReconstructionParam1[1] = rescale1;
 		softParticleAndReconstructionParam1[2] = rescale2;
+		softParticleAndReconstructionParam1[3] = magnification;
 
 		reconstructionParam2[0] = v33;
 		reconstructionParam2[1] = v34;

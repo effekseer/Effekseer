@@ -375,6 +375,15 @@ public:
 	int32_t WorldPosition() { return worldPositionID_; }
 
 	int32_t NormalPixelDir() { return pixelNormalDirID_; }
+
+	int32_t DepthFade(int32_t fadeDistance, const std::string& name = "")
+	{
+		auto selfID = AddVariable(ValueType::Float1, name);
+
+		str_ << exporter_->GetTypeName(ValueType::Float1) << " " << GetName(selfID) << "=CalcDepthFade(screenUV, meshZ, " << GetName(fadeDistance) << ");" << std::endl;
+
+		return selfID;
+	}
 };
 
 TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode, std::string suffix)
@@ -1465,6 +1474,26 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "objectScale"
 			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::DepthFade)
+	{
+		int distanceArg = 0;
+		int expArg = 0;
+
+		if (node->Inputs[0].IsConnected)
+		{
+			distanceArg = compiler->AddVariable(node->Inputs[0].Type, node->Inputs[0].Name);
+		}
+		else
+		{
+			distanceArg = compiler->AddConstant(node->Target->Properties[0]->Floats[0]);
+		}
+
+		compiler->DepthFade(distanceArg, node->Outputs[0].Name);
+
+		ret << compiler->Str();
+		compiler->Clear();
 	}
 
 	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)

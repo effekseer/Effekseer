@@ -315,6 +315,8 @@ public:
 
 	ar::Texture2D* GetTexture() { return texture_; }
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
+
+	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, Vector2 size, const void* initialData);
 };
 
 class TextureWithSampler
@@ -370,6 +372,8 @@ private:
 	ar::Context* context = nullptr;
 	std::vector<std::shared_ptr<TextureWithSampler>> textures_;
 	std::shared_ptr<Mesh> mesh_;
+	std::shared_ptr<Texture> black_;
+	std::shared_ptr<Texture> white_;
 
 public:
 	Preview();

@@ -37,6 +37,8 @@ public:
 		bool ViewpointDependent;
 
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 		int32_t SplineDivision;
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;

@@ -32,6 +32,8 @@ public:
 		bool ZWrite;
 		BillboardType Billboard;
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 
 		ZSortType ZSort;
 

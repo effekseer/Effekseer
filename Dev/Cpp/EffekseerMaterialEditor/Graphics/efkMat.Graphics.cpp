@@ -55,6 +55,9 @@ Texture::~Texture() { ar::SafeDelete(texture_); }
 
 bool Texture::Validate()
 {
+	if (path_ == "")
+		return false;
+
 	Invalidate();
 
 	auto path16 = Effekseer::utf8_to_utf16(path_);
@@ -80,7 +83,12 @@ bool Texture::Validate()
 	return true;
 }
 
-void Texture::Invalidate() { ar::SafeDelete(texture_); }
+void Texture::Invalidate() {
+	if (path_ == "")
+		return;
+
+	ar::SafeDelete(texture_); 
+}
 
 uint64_t Texture::GetInternal()
 {
@@ -112,6 +120,24 @@ std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, Vector2 size, const void* initialData)
+{
+	auto obj = std::make_shared<Texture>();
+
+	obj->texture_ = ar::Texture2D::Create(graphics->GetManager());
+	if (obj->texture_ == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (!obj->texture_->Initialize(graphics->GetManager(), size.X, size.Y, ar::TextureFormat::R8G8B8A8_UNORM, (void*)initialData, false))
+	{
+		return nullptr;
+	}
+
+	return obj;
 }
 
 std::map<std::string, std::shared_ptr<Texture>> TextureCache::textures_;
@@ -376,6 +402,15 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 
 	mesh_ = Mesh::Load(graphics_, "resources/meshes/sphere.obj");
 
+	std::array<uint8_t, 4> blackPixels;
+	std::array<uint8_t, 4> whitePixels;
+
+	blackPixels.fill(0);
+	whitePixels.fill(255);
+
+	black_ = Texture::Load(graphics_, {1, 1}, blackPixels.data());
+	white_ = Texture::Load(graphics_, {1, 1}, whitePixels.data());
+
 	return true;
 }
 
@@ -498,22 +533,22 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	if (shader == nullptr)
 		return false;
 
+	Matrix44 matProj;
+
+	if (ModelType == PreviewModelType::Screen)
+	{
+		matProj.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);	
+	}
+	else
+	{
+		matProj.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
+	}
+
 	for (auto layout : shader->GetPixelConstantLayouts())
 	{
 		if (layout.first == "uMatProjection")
 		{
-			if (ModelType == PreviewModelType::Screen)
-			{
-				Matrix44 mat;
-				mat.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);
-				constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
-			}
-			else
-			{
-				Matrix44 mat;
-				mat.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
-				constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
-			}
+			constantBuffer->SetData(matProj.Values, layout.second.GetSize(), layout.second.Offset);
 		}
 
 		if (layout.first == "uMatCamera")
@@ -552,6 +587,28 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			values[0] = 0.0f;
 			values[1] = 0.0f;
 			values[2] = 2.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "reconstructionParam1")
+		{			
+			float values[4];
+			values[0] = 0.0f;
+			values[1] = 1.0f;
+			values[2] = 0.0f;
+			values[3] = 1.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "reconstructionParam2")
+		{
+			float values[4];
+			values[0] = matProj.Values[2][2];
+			values[1] = matProj.Values[3][2];
+			values[2] = matProj.Values[2][3];
+			values[3] = matProj.Values[3][3];
 
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}
@@ -662,6 +719,11 @@ void Preview::Render()
 				}
 			}
 
+			if (pixelLayouts.count("efk_depth") > 0)
+			{
+				drawParam.PixelShaderTextures[pixelLayouts["efk_depth"].Index] = white_->GetTexture();
+			}
+
 			context->Draw(drawParam);
 		}
 		else
@@ -692,6 +754,11 @@ void Preview::Render()
 					drawParam.PixelShaderTextureWraps[ind] =
 						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
 				}
+			}
+
+			if (pixelLayouts.count("efk_depth") > 0)
+			{
+				drawParam.PixelShaderTextures[pixelLayouts["efk_depth"].Index] = white_->GetTexture();
 			}
 
 			context->Draw(drawParam);

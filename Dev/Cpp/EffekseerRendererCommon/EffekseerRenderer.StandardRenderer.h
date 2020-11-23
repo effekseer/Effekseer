@@ -52,6 +52,7 @@ struct StandardRendererState
 	int32_t EdgeColorScaling;
 	bool IsAlphaCuttoffEnabled = false;
 	float SoftParticleDistance = 0.0f;
+	float Maginification = 1.0f;
 
 	::Effekseer::RendererMaterialType MaterialType;
 	int32_t MaterialUniformCount = 0;
@@ -154,6 +155,8 @@ struct StandardRendererState
 			return true;
 
 		if (SoftParticleDistance != state.SoftParticleDistance)
+			return true;
+		if (Maginification != state.Maginification)
 			return true;
 
 		if (MaterialType != state.MaterialType)
@@ -644,6 +647,24 @@ public:
 			m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
+			SoftParticleParameter softParticleParam;
+
+			softParticleParam.SetParam(
+				m_state.SoftParticleDistance,
+				m_state.Maginification,
+				reconstructionParam.DepthBufferScale,
+				reconstructionParam.DepthBufferOffset,
+				reconstructionParam.ProjectionMatrix33,
+				reconstructionParam.ProjectionMatrix34,
+				reconstructionParam.ProjectionMatrix43,
+				reconstructionParam.ProjectionMatrix44);
+
+			m_renderer->SetPixelBufferToShader(softParticleParam.softParticleAndReconstructionParam1.data(), sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			m_renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam2.data(), sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
 			// shader model
 			if (m_state.Collector.MaterialDataPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
@@ -725,6 +746,7 @@ public:
 
 			pcb.SoftParticleParam.SetParam(
 				m_state.SoftParticleDistance,
+				m_state.Maginification,
 				reconstructionParam.DepthBufferScale,
 				reconstructionParam.DepthBufferOffset,
 				reconstructionParam.ProjectionMatrix33,
@@ -770,6 +792,7 @@ public:
 
 				pcb.SoftParticleParam.SetParam(
 					m_state.SoftParticleDistance,
+					m_state.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
 					reconstructionParam.ProjectionMatrix33,
@@ -800,6 +823,7 @@ public:
 
 				pcb.SoftParticleParam.SetParam(
 					m_state.SoftParticleDistance,
+					m_state.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
 					reconstructionParam.ProjectionMatrix33,
