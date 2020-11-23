@@ -8,18 +8,17 @@ namespace EffekseerRenderer
 {
 
 Renderer::Renderer()
+	: impl(new Impl())
 {
-	impl = new Impl();
 }
 
 Renderer::~Renderer()
 {
-	ES_SAFE_DELETE(impl);
 }
 
 Renderer::Impl* Renderer::GetImpl()
 {
-	return impl;
+	return impl.get();
 }
 
 ::Effekseer::Vector3D Renderer::GetLightDirection() const
