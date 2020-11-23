@@ -161,10 +161,10 @@ Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDevice* 
 	llgiinfo.aspect = info.aspect;
 
 	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
-	auto texture_ = g->GetGraphics()->CreateTexture((uint64_t)(&llgiinfo));
+	auto texture_ = g->CreateTexture((uint64_t)(&llgiinfo), [] {});
 
 	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture_;
+	textureData->TexturePtr = texture_;
 	textureData->UserID = 0;
 	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
 	textureData->Width = 0;
@@ -180,8 +180,6 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 
 void DeleteTextureData(::Effekseer::Backend::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData)
 {
-	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	texture->Release();
 	delete textureData;
 }
 

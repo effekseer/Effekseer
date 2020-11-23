@@ -40,7 +40,6 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
-
 class DeviceObject
 {
 private:
@@ -121,12 +120,15 @@ class Texture
 {
 	std::shared_ptr<LLGI::Texture> texture_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
+	std::function<void()> onDisposed_;
 
 public:
 	Texture(GraphicsDevice* graphicsDevice);
 	~Texture() override;
 
 	bool Init(const Effekseer::Backend::TextureParameter& param);
+
+	bool Init(uint64_t id, std::function<void()> onDisposed);
 
 	std::shared_ptr<LLGI::Texture>& GetTexture()
 	{
@@ -161,6 +163,8 @@ public:
 	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
 	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+
+	Effekseer::Backend::TextureRef CreateTexture(uint64_t id, const std::function<void()>& onDisposed);
 };
 
 } // namespace Backend

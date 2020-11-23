@@ -129,6 +129,10 @@ Texture::Texture(GraphicsDevice* graphicsDevice)
 
 Texture::~Texture()
 {
+	if (onDisposed_)
+	{
+		onDisposed_();
+	}
 	graphicsDevice_->Unregister(this);
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
@@ -224,6 +228,19 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	return true;
 }
 
+bool Texture::Init(uint64_t id, std::function<void()> onDisposed)
+{
+	auto texture = graphicsDevice_->GetGraphics()->CreateTexture(id);
+	if (texture == nullptr)
+	{
+		return false;
+	}
+
+	texture_ = LLGI::CreateSharedPtr(texture);
+	onDisposed_ = onDisposed;
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics)
 	: graphics_(graphics)
 {
@@ -299,6 +316,18 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Ba
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(param))
+	{
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(uint64_t id, const std::function<void()>& onDisposed)
+{
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
+
+	if (!ret->Init(id, onDisposed))
 	{
 		return nullptr;
 	}
