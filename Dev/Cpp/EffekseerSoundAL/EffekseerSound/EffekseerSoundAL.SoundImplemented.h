@@ -41,7 +41,7 @@ public:
 	
 	::Effekseer::SoundPlayer* CreateSoundPlayer();
 
-	::Effekseer::SoundLoader* CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
 	
 	void StopAllVoices();
 
