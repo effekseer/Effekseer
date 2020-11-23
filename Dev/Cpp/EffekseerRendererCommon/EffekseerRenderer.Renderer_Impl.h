@@ -1,7 +1,6 @@
 #ifndef __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 #define __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 
 #include "EffekseerRenderer.Renderer.h"
@@ -9,17 +8,17 @@
 namespace EffekseerRenderer
 {
 
-class Renderer::Impl final : public ::Effekseer::AlignedAllocationPolicy<16>
+class Renderer::Impl final : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 private:
-	::Effekseer::Mat44f projectionMat_;
-	::Effekseer::Mat44f cameraMat_;
-	::Effekseer::Mat44f cameraProjMat_;
+	::Effekseer::SIMD::Mat44f projectionMat_;
+	::Effekseer::SIMD::Mat44f cameraMat_;
+	::Effekseer::SIMD::Mat44f cameraProjMat_;
 
-	::Effekseer::Vec3f cameraPosition_;
-	::Effekseer::Vec3f cameraFrontDirection_;
+	::Effekseer::SIMD::Vec3f cameraPosition_;
+	::Effekseer::SIMD::Vec3f cameraFrontDirection_;
 
-	::Effekseer::Vec3f lightDirection_ = ::Effekseer::Vec3f(1.0f, 1.0f, 1.0f);
+	::Effekseer::SIMD::Vec3f lightDirection_ = ::Effekseer::SIMD::Vec3f(1.0f, 1.0f, 1.0f);
 	::Effekseer::Color lightColor_ = ::Effekseer::Color(255, 255, 255, 255);
 	::Effekseer::Color lightAmbient_ = ::Effekseer::Color(40, 40, 40, 255);
 

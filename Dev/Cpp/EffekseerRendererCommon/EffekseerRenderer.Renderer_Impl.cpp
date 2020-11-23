@@ -61,12 +61,12 @@ void Renderer::Impl::SetProjectionMatrix(const ::Effekseer::Matrix44& mat)
 
 void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
 {
-	cameraFrontDirection_ = ::Effekseer::Vec3f(mat.Values[0][2], mat.Values[1][2], mat.Values[2][2]);
+	cameraFrontDirection_ = ::Effekseer::SIMD::Vec3f(mat.Values[0][2], mat.Values[1][2], mat.Values[2][2]);
 
-	auto localPos = ::Effekseer::Vec3f(-mat.Values[3][0], -mat.Values[3][1], -mat.Values[3][2]);
+	auto localPos = ::Effekseer::SIMD::Vec3f(-mat.Values[3][0], -mat.Values[3][1], -mat.Values[3][2]);
 	auto f = cameraFrontDirection_;
-	auto r = ::Effekseer::Vec3f(mat.Values[0][0], mat.Values[1][0], mat.Values[2][0]);
-	auto u = ::Effekseer::Vec3f(mat.Values[0][1], mat.Values[1][1], mat.Values[2][1]);
+	auto r = ::Effekseer::SIMD::Vec3f(mat.Values[0][0], mat.Values[1][0], mat.Values[2][0]);
+	auto u = ::Effekseer::SIMD::Vec3f(mat.Values[0][1], mat.Values[1][1], mat.Values[2][1]);
 
 	cameraPosition_ = r * localPos.GetX() + u * localPos.GetY() + f * localPos.GetZ();
 

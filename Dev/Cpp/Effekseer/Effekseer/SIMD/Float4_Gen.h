@@ -1,7 +1,8 @@
-﻿#ifndef __EFFEKSEER_SIMD4F_GEN_H__
-#define __EFFEKSEER_SIMD4F_GEN_H__
+﻿
+#ifndef __EFFEKSEER_SIMD_FLOAT4_GEN_H__
+#define __EFFEKSEER_SIMD_FLOAT4_GEN_H__
 
-#include "Effekseer.SIMDType.h"
+#include "Base.h"
 
 #if defined(EFK_SIMD_GEN)
 
@@ -9,6 +10,9 @@
 #include <algorithm>
 
 namespace Effekseer
+{
+	
+namespace SIMD
 {
 
 inline float Sqrt(float x)
@@ -20,12 +24,12 @@ inline float Rsqrt(float x)
 	return 1.0f / std::sqrt(x);
 }
 
-struct SIMD4i;
+struct Int4;
 
 /**
 	@brief	simd class for generic
 */
-struct alignas(16) SIMD4f
+struct alignas(16) Float4
 {
 	union {
 		float vf[4];
@@ -33,10 +37,10 @@ struct alignas(16) SIMD4f
 		uint32_t vu[4];
 	};
 
-	SIMD4f() = default;
-	SIMD4f(const SIMD4f& rhs) = default;
-	SIMD4f(float x, float y, float z, float w) { vf[0] = x; vf[1] = y; vf[2] = z; vf[3] = w; }
-	SIMD4f(float i) { vf[0] = i; vf[1] = i; vf[2] = i; vf[3] = i; }
+	Float4() = default;
+	Float4(const Float4& rhs) = default;
+	Float4(float x, float y, float z, float w) { vf[0] = x; vf[1] = y; vf[2] = z; vf[3] = w; }
+	Float4(float i) { vf[0] = i; vf[1] = i; vf[2] = i; vf[3] = i; }
 
 	float GetX() const { return vf[0]; }
 	float GetY() const { return vf[1]; }
@@ -49,12 +53,12 @@ struct alignas(16) SIMD4f
 	void SetW(float o) { vf[3] = o; }
 
 	template <size_t LANE>
-	SIMD4f Dup() { return SIMD4f(vf[LANE], vf[LANE], vf[LANE], vf[LANE]); }
+	Float4 Dup() { return Float4(vf[LANE], vf[LANE], vf[LANE], vf[LANE]); }
 
-	SIMD4i Convert4i() const;
-	SIMD4i Cast4i() const;
+	Int4 Convert4i() const;
+	Int4 Cast4i() const;
 
-	SIMD4f& operator+=(const SIMD4f& rhs)
+	Float4& operator+=(const Float4& rhs)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -63,7 +67,7 @@ struct alignas(16) SIMD4f
 		return *this;
 	}
 
-	SIMD4f& operator-=(const SIMD4f& rhs)
+	Float4& operator-=(const Float4& rhs)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -72,7 +76,7 @@ struct alignas(16) SIMD4f
 		return *this;
 	}
 
-	SIMD4f& operator*=(const SIMD4f& rhs)
+	Float4& operator*=(const Float4& rhs)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -81,7 +85,7 @@ struct alignas(16) SIMD4f
 		return *this;
 	}
 
-	SIMD4f& operator*=(float rhs)
+	Float4& operator*=(float rhs)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -90,7 +94,7 @@ struct alignas(16) SIMD4f
 		return *this;
 	}
 
-	SIMD4f& operator/=(const SIMD4f& rhs)
+	Float4& operator/=(const Float4& rhs)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -99,7 +103,7 @@ struct alignas(16) SIMD4f
 		return *this;
 	}
 
-	SIMD4f& operator/=(float rhs)
+	Float4& operator/=(float rhs)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -108,61 +112,56 @@ struct alignas(16) SIMD4f
 		return *this;
 	}
 
-	static SIMD4f Load2(const void* mem);
-	static void Store2(void* mem, const SIMD4f& i);
-	static SIMD4f Load3(const void* mem);
-	static void Store3(void* mem, const SIMD4f& i);
-	static SIMD4f Load4(const void* mem);
-	static void Store4(void* mem, const SIMD4f& i);
+	static Float4 Load2(const void* mem);
+	static void Store2(void* mem, const Float4& i);
+	static Float4 Load3(const void* mem);
+	static void Store3(void* mem, const Float4& i);
+	static Float4 Load4(const void* mem);
+	static void Store4(void* mem, const Float4& i);
 
-	static SIMD4f SetZero();
-	static SIMD4f SetInt(int32_t x, int32_t y, int32_t z, int32_t w);
-	static SIMD4f SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w);
-	static SIMD4f Sqrt(const SIMD4f& in);
-	static SIMD4f Rsqrt(const SIMD4f& in);
-	static SIMD4f Abs(const SIMD4f& in);
-	static SIMD4f Min(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f Max(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f Floor(const SIMD4f& in);
-	static SIMD4f Ceil(const SIMD4f& in);
-	static SIMD4f MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
-	static SIMD4f MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+	static Float4 SetZero();
+	static Float4 SetInt(int32_t x, int32_t y, int32_t z, int32_t w);
+	static Float4 SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w);
+	static Float4 Sqrt(const Float4& in);
+	static Float4 Rsqrt(const Float4& in);
+	static Float4 Abs(const Float4& in);
+	static Float4 Min(const Float4& lhs, const Float4& rhs);
+	static Float4 Max(const Float4& lhs, const Float4& rhs);
+	static Float4 Floor(const Float4& in);
+	static Float4 Ceil(const Float4& in);
+	static Float4 MulAdd(const Float4& a, const Float4& b, const Float4& c);
+	static Float4 MulSub(const Float4& a, const Float4& b, const Float4& c);
 
 	template<size_t LANE>
-	static SIMD4f MulLane(const SIMD4f& lhs, const SIMD4f& rhs);
+	static Float4 MulLane(const Float4& lhs, const Float4& rhs);
 	template<size_t LANE>
-	static SIMD4f MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+	static Float4 MulAddLane(const Float4& a, const Float4& b, const Float4& c);
 	template<size_t LANE>
-	static SIMD4f MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+	static Float4 MulSubLane(const Float4& a, const Float4& b, const Float4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
-	static SIMD4f Swizzle(const SIMD4f& in);
+	static Float4 Swizzle(const Float4& in);
 
-	static SIMD4f Dot3(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f Cross3(const SIMD4f& lhs, const SIMD4f& rhs);
+	static Float4 Dot3(const Float4& lhs, const Float4& rhs);
+	static Float4 Cross3(const Float4& lhs, const Float4& rhs);
 
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
-	static SIMD4f Mask();
-	static uint32_t MoveMask(const SIMD4f& in);
-	static SIMD4f Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2);
-	static SIMD4f Equal(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f NotEqual(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f LessThan(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f LessEqual(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f GreaterThan(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f GreaterEqual(const SIMD4f& lhs, const SIMD4f& rhs);
-	static SIMD4f NearEqual(const SIMD4f& lhs, const SIMD4f& rhs, float epsilon = DefaultEpsilon);
-	static SIMD4f IsZero(const SIMD4f& in, float epsilon = DefaultEpsilon);
-	static void Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3);
+	static Float4 Mask();
+	static uint32_t MoveMask(const Float4& in);
+	static Float4 Select(const Float4& mask, const Float4& sel1, const Float4& sel2);
+	static Float4 Equal(const Float4& lhs, const Float4& rhs);
+	static Float4 NotEqual(const Float4& lhs, const Float4& rhs);
+	static Float4 LessThan(const Float4& lhs, const Float4& rhs);
+	static Float4 LessEqual(const Float4& lhs, const Float4& rhs);
+	static Float4 GreaterThan(const Float4& lhs, const Float4& rhs);
+	static Float4 GreaterEqual(const Float4& lhs, const Float4& rhs);
+	static Float4 NearEqual(const Float4& lhs, const Float4& rhs, float epsilon = DefaultEpsilon);
+	static Float4 IsZero(const Float4& in, float epsilon = DefaultEpsilon);
+	static void Transpose(Float4& s0, Float4& s1, Float4& s2, Float4& s3);
 };
 
-} // namespace Effekseer
-
-namespace Effekseer
+inline Float4 operator+(const Float4& lhs, const Float4& rhs)
 {
-
-inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
-{
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = lhs.vf[i] + rhs.vf[i];
@@ -170,9 +169,9 @@ inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f operator-(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 operator-(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = lhs.vf[i] - rhs.vf[i];
@@ -180,9 +179,9 @@ inline SIMD4f operator-(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f operator*(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 operator*(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = lhs.vf[i] * rhs.vf[i];
@@ -190,9 +189,9 @@ inline SIMD4f operator*(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f operator*(const SIMD4f& lhs, float rhs)
+inline Float4 operator*(const Float4& lhs, float rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = lhs.vf[i] * rhs;
@@ -200,9 +199,9 @@ inline SIMD4f operator*(const SIMD4f& lhs, float rhs)
 	return ret;
 }
 
-inline SIMD4f operator/(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 operator/(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = lhs.vf[i] / rhs.vf[i];
@@ -210,9 +209,9 @@ inline SIMD4f operator/(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f operator/(const SIMD4f& lhs, float rhs)
+inline Float4 operator/(const Float4& lhs, float rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = lhs.vf[i] / rhs;
@@ -220,9 +219,9 @@ inline SIMD4f operator/(const SIMD4f& lhs, float rhs)
 	return ret;
 }
 
-inline SIMD4f operator&(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 operator&(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = lhs.vu[i] & rhs.vu[i];
@@ -230,9 +229,9 @@ inline SIMD4f operator&(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f operator|(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 operator|(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = lhs.vu[i] | rhs.vu[i];
@@ -240,9 +239,9 @@ inline SIMD4f operator|(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f operator^(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 operator^(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = lhs.vu[i] ^ rhs.vu[i];
@@ -250,7 +249,7 @@ inline SIMD4f operator^(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline bool operator==(const SIMD4f& lhs, const SIMD4f& rhs)
+inline bool operator==(const Float4& lhs, const Float4& rhs)
 {
 	bool ret = true;
 	for (size_t i = 0; i < 4; i++)
@@ -260,7 +259,7 @@ inline bool operator==(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline bool operator!=(const SIMD4f& lhs, const SIMD4f& rhs)
+inline bool operator!=(const Float4& lhs, const Float4& rhs)
 {
 	bool ret = true;
 	for (size_t i = 0; i < 4; i++)
@@ -270,9 +269,9 @@ inline bool operator!=(const SIMD4f& lhs, const SIMD4f& rhs)
 	return !ret;
 }
 
-inline SIMD4f SIMD4f::Load2(const void* mem)
+inline Float4 Float4::Load2(const void* mem)
 {
-	SIMD4f ret;
+	Float4 ret;
 	memcpy(ret.vf, mem, sizeof(float) * 2);
 	// This code causes bugs in asmjs
 	// ret.vf[0] = *((float*)mem + 0);
@@ -280,7 +279,7 @@ inline SIMD4f SIMD4f::Load2(const void* mem)
 	return ret;
 }
 
-inline void SIMD4f::Store2(void* mem, const SIMD4f& i)
+inline void Float4::Store2(void* mem, const Float4& i)
 {
 	memcpy(mem, i.vf, sizeof(float) * 2);
 	// This code causes bugs in asmjs
@@ -288,9 +287,9 @@ inline void SIMD4f::Store2(void* mem, const SIMD4f& i)
 	// *((float*)mem + 1) = i.vf[1];
 }
 
-inline SIMD4f SIMD4f::Load3(const void* mem)
+inline Float4 Float4::Load3(const void* mem)
 {
-	SIMD4f ret;
+	Float4 ret;
 	memcpy(ret.vf, mem, sizeof(float) * 3);
 	// This code causes bugs in asmjs
 	// ret.vf[0] = *((float*)mem + 0);
@@ -299,7 +298,7 @@ inline SIMD4f SIMD4f::Load3(const void* mem)
 	return ret;
 }
 
-inline void SIMD4f::Store3(void* mem, const SIMD4f& i)
+inline void Float4::Store3(void* mem, const Float4& i)
 {
 	memcpy(mem, i.vf, sizeof(float) * 3);
 	// This code causes bugs in asmjs
@@ -308,9 +307,9 @@ inline void SIMD4f::Store3(void* mem, const SIMD4f& i)
 	// *((float*)mem + 2) = i.vf[2];
 }
 
-inline SIMD4f SIMD4f::Load4(const void* mem)
+inline Float4 Float4::Load4(const void* mem)
 {
-	SIMD4f ret;
+	Float4 ret;
 	memcpy(ret.vf, mem, sizeof(float) * 4);
 	// This code causes bugs in emscripten
 	// ret.vf[0] = *((float*)mem + 0);
@@ -320,7 +319,7 @@ inline SIMD4f SIMD4f::Load4(const void* mem)
 	return ret;
 }
 
-inline void SIMD4f::Store4(void* mem, const SIMD4f& i)
+inline void Float4::Store4(void* mem, const Float4& i)
 {
 	memcpy(mem, i.vf, sizeof(float) * 4);
 	// This code causes bugs in asmjs
@@ -330,9 +329,9 @@ inline void SIMD4f::Store4(void* mem, const SIMD4f& i)
 	// *((float*)mem + 3) = i.vf[3];
 }
 
-inline SIMD4f SIMD4f::SetZero()
+inline Float4 Float4::SetZero()
 {
-	SIMD4f ret;
+	Float4 ret;
 	ret.vf[0] = 0.0f;
 	ret.vf[1] = 0.0f;
 	ret.vf[2] = 0.0f;
@@ -340,9 +339,9 @@ inline SIMD4f SIMD4f::SetZero()
 	return ret;
 }
 
-inline SIMD4f SIMD4f::SetInt(int32_t x, int32_t y, int32_t z, int32_t w)
+inline Float4 Float4::SetInt(int32_t x, int32_t y, int32_t z, int32_t w)
 {
-	SIMD4f ret;
+	Float4 ret;
 	ret.vu[0] = (uint32_t)x;
 	ret.vu[1] = (uint32_t)y;
 	ret.vu[2] = (uint32_t)z;
@@ -350,9 +349,9 @@ inline SIMD4f SIMD4f::SetInt(int32_t x, int32_t y, int32_t z, int32_t w)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w)
+inline Float4 Float4::SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w)
 {
-	SIMD4f ret;
+	Float4 ret;
 	ret.vu[0] = (uint32_t)x;
 	ret.vu[1] = (uint32_t)y;
 	ret.vu[2] = (uint32_t)z;
@@ -360,9 +359,9 @@ inline SIMD4f SIMD4f::SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Sqrt(const SIMD4f& in)
+inline Float4 Float4::Sqrt(const Float4& in)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = std::sqrt(in.vf[i]);
@@ -370,9 +369,9 @@ inline SIMD4f SIMD4f::Sqrt(const SIMD4f& in)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Rsqrt(const SIMD4f& in)
+inline Float4 Float4::Rsqrt(const Float4& in)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = 1.0f / std::sqrt(in.vf[i]);
@@ -380,9 +379,9 @@ inline SIMD4f SIMD4f::Rsqrt(const SIMD4f& in)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Abs(const SIMD4f& in)
+inline Float4 Float4::Abs(const Float4& in)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = std::abs(in.vf[i]);
@@ -390,9 +389,9 @@ inline SIMD4f SIMD4f::Abs(const SIMD4f& in)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Min(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::Min(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = std::fmin(lhs.vf[i], rhs.vf[i]);
@@ -400,9 +399,9 @@ inline SIMD4f SIMD4f::Min(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Max(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::Max(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = std::fmax(lhs.vf[i], rhs.vf[i]);
@@ -410,9 +409,9 @@ inline SIMD4f SIMD4f::Max(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Floor(const SIMD4f& in)
+inline Float4 Float4::Floor(const Float4& in)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = std::floor(in.vf[i]);
@@ -420,9 +419,9 @@ inline SIMD4f SIMD4f::Floor(const SIMD4f& in)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Ceil(const SIMD4f& in)
+inline Float4 Float4::Ceil(const Float4& in)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = std::ceil(in.vf[i]);
@@ -430,9 +429,9 @@ inline SIMD4f SIMD4f::Ceil(const SIMD4f& in)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+inline Float4 Float4::MulAdd(const Float4& a, const Float4& b, const Float4& c)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = a.vf[i] + b.vf[i] * c.vf[i];
@@ -440,9 +439,9 @@ inline SIMD4f SIMD4f::MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+inline Float4 Float4::MulSub(const Float4& a, const Float4& b, const Float4& c)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = a.vf[i] - b.vf[i] * c.vf[i];
@@ -450,58 +449,58 @@ inline SIMD4f SIMD4f::MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Dot3(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::Dot3(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f muled = lhs * rhs;
-	return SIMD4f{muled.vf[0] + muled.vf[1] + muled.vf[2], 0.0f, 0.0f, 0.0f};
+	Float4 muled = lhs * rhs;
+	return Float4{muled.vf[0] + muled.vf[1] + muled.vf[2], 0.0f, 0.0f, 0.0f};
 }
 
-inline SIMD4f SIMD4f::Cross3(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::Cross3(const Float4& lhs, const Float4& rhs)
 {
-	return SIMD4f::Swizzle<1,2,0,3>(lhs) * SIMD4f::Swizzle<2,0,1,3>(rhs) -
-		SIMD4f::Swizzle<2,0,1,3>(lhs) * SIMD4f::Swizzle<1,2,0,3>(rhs);
+	return Float4::Swizzle<1,2,0,3>(lhs) * Float4::Swizzle<2,0,1,3>(rhs) -
+		Float4::Swizzle<2,0,1,3>(lhs) * Float4::Swizzle<1,2,0,3>(rhs);
 }
 
 template<size_t LANE>
-SIMD4f SIMD4f::MulLane(const SIMD4f& lhs, const SIMD4f& rhs)
+Float4 Float4::MulLane(const Float4& lhs, const Float4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return lhs * rhs.vf[LANE];
 }
 
 template<size_t LANE>
-SIMD4f SIMD4f::MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+Float4 Float4::MulAddLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return a + b * c.vf[LANE];
 }
 
 template<size_t LANE>
-SIMD4f SIMD4f::MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+Float4 Float4::MulSubLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return a - b * c.vf[LANE];
 }
 
 template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
-SIMD4f SIMD4f::Swizzle(const SIMD4f& in)
+Float4 Float4::Swizzle(const Float4& in)
 {
 	static_assert(indexX < 4, "indexX is must be less than 4.");
 	static_assert(indexY < 4, "indexY is must be less than 4.");
 	static_assert(indexZ < 4, "indexZ is must be less than 4.");
 	static_assert(indexW < 4, "indexW is must be less than 4.");
-	return SIMD4f{in.vf[indexX], in.vf[indexY], in.vf[indexZ], in.vf[indexW]};
+	return Float4{in.vf[indexX], in.vf[indexY], in.vf[indexZ], in.vf[indexW]};
 }
 
 
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
-SIMD4f SIMD4f::Mask()
+Float4 Float4::Mask()
 {
 	static_assert(X >= 2, "indexX is must be set 0 or 1.");
 	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
 	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
 	static_assert(W >= 2, "indexW is must be set 0 or 1.");
-	SIMD4f ret;
+	Float4 ret;
 	ret.vu[0] = 0xffffffff * X;
 	ret.vu[1] = 0xffffffff * Y;
 	ret.vu[2] = 0xffffffff * Z;
@@ -509,14 +508,14 @@ SIMD4f SIMD4f::Mask()
 	return ret;
 }
 
-inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
+inline uint32_t Float4::MoveMask(const Float4& in)
 {
 	return (in.vu[0] & 0x1) | (in.vu[1] & 0x2) | (in.vu[2] & 0x4) | (in.vu[3] & 0x8);
 }
 
-inline SIMD4f SIMD4f::Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2)
+inline Float4 Float4::Select(const Float4& mask, const Float4& sel1, const Float4& sel2)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (mask.vu[i] & sel1.vu[i]) | (~mask.vu[i] & sel2.vu[i]);
@@ -524,9 +523,9 @@ inline SIMD4f SIMD4f::Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4
 	return ret;
 }
 
-inline SIMD4f SIMD4f::Equal(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::Equal(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (lhs.vf[i] == rhs.vf[i]) ? 0xffffffff : 0;
@@ -534,9 +533,9 @@ inline SIMD4f SIMD4f::Equal(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::NotEqual(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::NotEqual(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (lhs.vf[i] != rhs.vf[i]) ? 0xffffffff : 0;
@@ -544,9 +543,9 @@ inline SIMD4f SIMD4f::NotEqual(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::LessThan(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::LessThan(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (lhs.vf[i] < rhs.vf[i]) ? 0xffffffff : 0;
@@ -554,9 +553,9 @@ inline SIMD4f SIMD4f::LessThan(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::LessEqual(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::LessEqual(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (lhs.vf[i] <= rhs.vf[i]) ? 0xffffffff : 0;
@@ -564,9 +563,9 @@ inline SIMD4f SIMD4f::LessEqual(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::GreaterThan(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::GreaterThan(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (lhs.vf[i] > rhs.vf[i]) ? 0xffffffff : 0;
@@ -574,9 +573,9 @@ inline SIMD4f SIMD4f::GreaterThan(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::GreaterEqual(const SIMD4f& lhs, const SIMD4f& rhs)
+inline Float4 Float4::GreaterEqual(const Float4& lhs, const Float4& rhs)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (lhs.vf[i] >= rhs.vf[i]) ? 0xffffffff : 0;
@@ -584,9 +583,9 @@ inline SIMD4f SIMD4f::GreaterEqual(const SIMD4f& lhs, const SIMD4f& rhs)
 	return ret;
 }
 
-inline SIMD4f SIMD4f::NearEqual(const SIMD4f& lhs, const SIMD4f& rhs, float epsilon)
+inline Float4 Float4::NearEqual(const Float4& lhs, const Float4& rhs, float epsilon)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (std::abs(lhs.vf[i] - rhs.vf[i]) <= epsilon) ? 0xffffffff : 0;
@@ -594,9 +593,9 @@ inline SIMD4f SIMD4f::NearEqual(const SIMD4f& lhs, const SIMD4f& rhs, float epsi
 	return ret;
 }
 
-inline SIMD4f SIMD4f::IsZero(const SIMD4f& in, float epsilon)
+inline Float4 Float4::IsZero(const Float4& in, float epsilon)
 {
-	SIMD4f ret;
+	Float4 ret;
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vu[i] = (std::abs(in.vf[i]) <= epsilon) ? 0xffffffff : 0;
@@ -604,7 +603,7 @@ inline SIMD4f SIMD4f::IsZero(const SIMD4f& in, float epsilon)
 	return ret;
 }
 
-inline void SIMD4f::Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3)
+inline void Float4::Transpose(Float4& s0, Float4& s1, Float4& s2, Float4& s3)
 {
 	std::swap(s0.vf[1], s1.vf[0]);
 	std::swap(s0.vf[2], s2.vf[0]);
@@ -614,8 +613,10 @@ inline void SIMD4f::Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3)
 	std::swap(s1.vf[3], s3.vf[1]);
 }
 
+} // namespace SIMD
+
 } // namespace Effekseer
 
-#endif
+#endif // defined(EFK_SIMD_GEN)
 
-#endif // __EFFEKSEER_SIMD4F_GEN_H__
+#endif // __EFFEKSEER_SIMD_FLOAT4_GEN_H__

@@ -1,20 +1,23 @@
 ﻿
-#ifndef __EFFEKSEER_VEC4F_H__
-#define __EFFEKSEER_VEC4F_H__
+#ifndef __EFFEKSEER_SIMD_VEC4F_H__
+#define __EFFEKSEER_SIMD_VEC4F_H__
 
-#include "Effekseer.SIMD4f.h"
+#include "Float4.h"
 #include "../Effekseer.Math.h"
 
 namespace Effekseer
 {
+	
+namespace SIMD
+{
 
 struct Vec4f
 {
-	SIMD4f s;
+	Float4 s;
 
 	Vec4f() = default;
 	Vec4f(const Vec4f& vec) = default;
-	Vec4f(const SIMD4f& vec): s(vec) {}
+	Vec4f(const Float4& vec): s(vec) {}
 
 	float GetX() const { return s.GetX(); }
 	float GetY() const { return s.GetY(); }
@@ -70,44 +73,46 @@ inline Vec4f operator/(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s 
 
 inline bool operator==(const Vec4f& lhs, const Vec4f& rhs)
 {
-	return SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) == 0xf;
+	return Float4::MoveMask(Float4::Equal(lhs.s, rhs.s)) == 0xf;
 }
 
 inline bool operator!=(const Vec4f& lhs, const Vec4f& rhs)
 {
-	return SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) != 0xf;
+	return Float4::MoveMask(Float4::Equal(lhs.s, rhs.s)) != 0xf;
 }
 
 inline Vec4f Vec4f::Sqrt(const Vec4f& i)
 {
-	return Vec4f{SIMD4f::Sqrt(i.s)};
+	return Vec4f{Float4::Sqrt(i.s)};
 }
 
 inline Vec4f Vec4f::Rsqrt(const Vec4f& i)
 {
-	return Vec4f{SIMD4f::Rsqrt(i.s)};
+	return Vec4f{Float4::Rsqrt(i.s)};
 }
 
 inline Vec4f Vec4f::Abs(const Vec4f& i)
 {
-	return Vec4f{SIMD4f::Abs(i.s)};
+	return Vec4f{Float4::Abs(i.s)};
 }
 
 inline Vec4f Vec4f::Min(const Vec4f& lhs, const Vec4f& rhs)
 {
-	return Vec4f{SIMD4f::Min(lhs.s, rhs.s)};
+	return Vec4f{Float4::Min(lhs.s, rhs.s)};
 }
 
 inline Vec4f Vec4f::Max(const Vec4f& lhs, const Vec4f& rhs)
 {
-	return Vec4f{SIMD4f::Max(lhs.s, rhs.s)};
+	return Vec4f{Float4::Max(lhs.s, rhs.s)};
 }
 
 inline bool Vec4f::Equal(const Vec4f& lhs, const Vec4f& rhs, float epsilon)
 {
-	return (SIMD4f::MoveMask(SIMD4f::NearEqual(lhs.s, rhs.s, epsilon)) & 0xf) == 0xf;
+	return (Float4::MoveMask(Float4::NearEqual(lhs.s, rhs.s, epsilon)) & 0xf) == 0xf;
 }
+
+} // namespace SIMD
 
 } // namespace Effekseer
 
-#endif // __EFFEKSEER_VEC4F_H__
+#endif // __EFFEKSEER_SIMD_VEC4F_H__

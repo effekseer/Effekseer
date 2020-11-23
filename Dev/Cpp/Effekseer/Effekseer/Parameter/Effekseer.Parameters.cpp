@@ -81,23 +81,23 @@ void ApplyEq(float& dstParam, Effect* e, InstanceGlobal* instg, Instance* parren
 }
 
 template <typename S>
-Vec3f ApplyEq_(
-	Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const int& dpInd, const Vec3f& originalParam, const S& scale, const S& scaleInv)
+SIMD::Vec3f ApplyEq_(
+	Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const int& dpInd, const SIMD::Vec3f& originalParam, const S& scale, const S& scaleInv)
 {
-	Vec3f param = originalParam;
+	SIMD::Vec3f param = originalParam;
 	if (dpInd >= 0)
 	{
-		param *= Vec3f(scaleInv[0], scaleInv[1], scaleInv[2]);
+		param *= SIMD::Vec3f(scaleInv[0], scaleInv[1], scaleInv[2]);
 
 		ApplyEq_(param, e, instg, parrentInstance, rand, dpInd, param);
 
-		param *= Vec3f(scale[0], scale[1], scale[2]);
+		param *= SIMD::Vec3f(scale[0], scale[1], scale[2]);
 	}
 	return param;
 }
 
-Vec3f ApplyEq(
-	Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const int& dpInd, const Vec3f& originalParam, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv)
+SIMD::Vec3f ApplyEq(
+	Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const int& dpInd, const SIMD::Vec3f& originalParam, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv)
 {
 	return ApplyEq_(e, instg, parrentInstance, rand, dpInd, originalParam, scale, scaleInv);
 }

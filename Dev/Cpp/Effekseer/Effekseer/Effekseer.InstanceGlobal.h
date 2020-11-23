@@ -8,8 +8,8 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
 #include "Effekseer.Random.h"
-#include "SIMD/Effekseer.Mat43f.h"
-#include "SIMD/Effekseer.Vec3f.h"
+#include "SIMD/Mat43f.h"
+#include "SIMD/Vec3f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -38,7 +38,7 @@ private:
 	float m_updatedFrame;
 
 	InstanceContainer* m_rootContainer;
-	Vec3f m_targetLocation = Vec3f(0.0f, 0.0f, 0.0f);
+	SIMD::Vec3f m_targetLocation = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 
 	RandObject m_randObjects;
 	std::array<float, 4> dynamicInputParameters;
@@ -95,7 +95,7 @@ public:
 	InstanceContainer* GetRootContainer() const;
 	void SetRootContainer(InstanceContainer* container);
 
-	const Vec3f& GetTargetLocation() const;
+	const SIMD::Vec3f& GetTargetLocation() const;
 	void SetTargetLocation(const Vector3D& location);
 };
 //----------------------------------------------------------------------------------

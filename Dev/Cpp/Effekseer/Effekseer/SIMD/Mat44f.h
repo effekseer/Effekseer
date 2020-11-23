@@ -1,23 +1,26 @@
 ﻿
-#ifndef __EFFEKSEER_MAT44F_H__
-#define __EFFEKSEER_MAT44F_H__
+#ifndef __EFFEKSEER_SIMD_MAT44F_H__
+#define __EFFEKSEER_SIMD_MAT44F_H__
 
-#include "Effekseer.SIMD4f.h"
-#include "Effekseer.Vec3f.h"
-#include "Effekseer.Vec4f.h"
-#include "Effekseer.Mat43f.h"
+#include "Float4.h"
+#include "Vec3f.h"
+#include "Vec4f.h"
+#include "Mat43f.h"
 
 namespace Effekseer
 {
 
 struct Matrix44;
 
+namespace SIMD
+{
+
 struct Mat44f
 {
-	SIMD4f X;
-	SIMD4f Y;
-	SIMD4f Z;
-	SIMD4f W;
+	Float4 X;
+	Float4 Y;
+	Float4 Z;
+	Float4 W;
 	
 	Mat44f() = default;
 	Mat44f(const Mat44f& rhs) = default;
@@ -108,54 +111,54 @@ inline bool operator!=(const Mat44f& lhs, const Mat44f& rhs)
 inline Mat44f operator*(const Mat44f& lhs, const Mat44f& rhs)
 {
 	Mat44f res;
-	res.X = SIMD4f::MulLane<0>(lhs.X, rhs.X);
-	res.X = SIMD4f::MulAddLane<1>(res.X, lhs.Y, rhs.X);
-	res.X = SIMD4f::MulAddLane<2>(res.X, lhs.Z, rhs.X);
-	res.X = SIMD4f::MulAddLane<3>(res.X, lhs.W, rhs.X);
+	res.X = Float4::MulLane<0>(lhs.X, rhs.X);
+	res.X = Float4::MulAddLane<1>(res.X, lhs.Y, rhs.X);
+	res.X = Float4::MulAddLane<2>(res.X, lhs.Z, rhs.X);
+	res.X = Float4::MulAddLane<3>(res.X, lhs.W, rhs.X);
 
-	res.Y = SIMD4f::MulLane<0>(lhs.X, rhs.Y);
-	res.Y = SIMD4f::MulAddLane<1>(res.Y, lhs.Y, rhs.Y);
-	res.Y = SIMD4f::MulAddLane<2>(res.Y, lhs.Z, rhs.Y);
-	res.Y = SIMD4f::MulAddLane<3>(res.Y, lhs.W, rhs.Y);
+	res.Y = Float4::MulLane<0>(lhs.X, rhs.Y);
+	res.Y = Float4::MulAddLane<1>(res.Y, lhs.Y, rhs.Y);
+	res.Y = Float4::MulAddLane<2>(res.Y, lhs.Z, rhs.Y);
+	res.Y = Float4::MulAddLane<3>(res.Y, lhs.W, rhs.Y);
 
-	res.Z = SIMD4f::MulLane<0>(lhs.X, rhs.Z);
-	res.Z = SIMD4f::MulAddLane<1>(res.Z, lhs.Y, rhs.Z);
-	res.Z = SIMD4f::MulAddLane<2>(res.Z, lhs.Z, rhs.Z);
-	res.Z = SIMD4f::MulAddLane<3>(res.Z, lhs.W, rhs.Z);
+	res.Z = Float4::MulLane<0>(lhs.X, rhs.Z);
+	res.Z = Float4::MulAddLane<1>(res.Z, lhs.Y, rhs.Z);
+	res.Z = Float4::MulAddLane<2>(res.Z, lhs.Z, rhs.Z);
+	res.Z = Float4::MulAddLane<3>(res.Z, lhs.W, rhs.Z);
 
-	res.W = SIMD4f::MulLane<0>(lhs.X, rhs.W);
-	res.W = SIMD4f::MulAddLane<1>(res.W, lhs.Y, rhs.W);
-	res.W = SIMD4f::MulAddLane<2>(res.W, lhs.Z, rhs.W);
-	res.W = SIMD4f::MulAddLane<3>(res.W, lhs.W, rhs.W);
+	res.W = Float4::MulLane<0>(lhs.X, rhs.W);
+	res.W = Float4::MulAddLane<1>(res.W, lhs.Y, rhs.W);
+	res.W = Float4::MulAddLane<2>(res.W, lhs.Z, rhs.W);
+	res.W = Float4::MulAddLane<3>(res.W, lhs.W, rhs.W);
 	return res;
 }
 
 inline Vec3f Vec3f::Transform(const Vec3f& lhs, const Mat44f& rhs)
 {
-	SIMD4f s0 = rhs.X;
-	SIMD4f s1 = rhs.Y;
-	SIMD4f s2 = rhs.Z;
-	SIMD4f s3 = rhs.W;
-	SIMD4f::Transpose(s0, s1, s2, s3);
+	Float4 s0 = rhs.X;
+	Float4 s1 = rhs.Y;
+	Float4 s2 = rhs.Z;
+	Float4 s3 = rhs.W;
+	Float4::Transpose(s0, s1, s2, s3);
 
-	SIMD4f res = SIMD4f::MulAddLane<0>(s3, s0, lhs.s);
-	res = SIMD4f::MulAddLane<1>(res, s1, lhs.s);
-	res = SIMD4f::MulAddLane<2>(res, s2, lhs.s);
+	Float4 res = Float4::MulAddLane<0>(s3, s0, lhs.s);
+	res = Float4::MulAddLane<1>(res, s1, lhs.s);
+	res = Float4::MulAddLane<2>(res, s2, lhs.s);
 	return Vec3f{res};
 }
 
 inline Vec4f Vec4f::Transform(const Vec4f& lhs, const Mat44f& rhs)
 {
-	SIMD4f s0 = rhs.X;
-	SIMD4f s1 = rhs.Y;
-	SIMD4f s2 = rhs.Z;
-	SIMD4f s3 = rhs.W;
-	SIMD4f::Transpose(s0, s1, s2, s3);
+	Float4 s0 = rhs.X;
+	Float4 s1 = rhs.Y;
+	Float4 s2 = rhs.Z;
+	Float4 s3 = rhs.W;
+	Float4::Transpose(s0, s1, s2, s3);
 
-	SIMD4f res = SIMD4f::MulLane<0>(s0, lhs.s);
-	res = SIMD4f::MulAddLane<1>(res, s1, lhs.s);
-	res = SIMD4f::MulAddLane<2>(res, s2, lhs.s);
-	res = SIMD4f::MulAddLane<3>(res, s3, lhs.s);
+	Float4 res = Float4::MulLane<0>(s0, lhs.s);
+	res = Float4::MulAddLane<1>(res, s1, lhs.s);
+	res = Float4::MulAddLane<2>(res, s2, lhs.s);
+	res = Float4::MulAddLane<3>(res, s3, lhs.s);
 	return res;
 }
 
@@ -173,6 +176,8 @@ inline Mat44f& Mat44f::operator*=(float rhs)
 	W *= rhs;
 	return *this;
 }
+
+} // namespace SIMD
 
 } // namespace Effekseer
 

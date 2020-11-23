@@ -3,31 +3,31 @@
 namespace Effekseer
 {
 
-Vec3f CurlNoise::Get(Vec3f pos) const
+SIMD::Vec3f CurlNoise::Get(SIMD::Vec3f pos) const
 {
 	pos *= Scale;
 
 	const float e = 1.0f / 1024.0f;
 
-	const Vec3f dx = Vec3f(e, 0.0, 0.0);
-	const Vec3f dy = Vec3f(0.0, e, 0.0);
-	const Vec3f dz = Vec3f(0.0, 0.0, e);
+	const SIMD::Vec3f dx = SIMD::Vec3f(e, 0.0, 0.0);
+	const SIMD::Vec3f dy = SIMD::Vec3f(0.0, e, 0.0);
+	const SIMD::Vec3f dz = SIMD::Vec3f(0.0, 0.0, e);
 
-	auto noise_x = [this](Vec3f v) -> Vec3f { return Vec3f(0.0f, ynoise_.OctaveNoise(Octave, v), znoise_.OctaveNoise(Octave, v)); };
+	auto noise_x = [this](SIMD::Vec3f v) -> SIMD::Vec3f { return SIMD::Vec3f(0.0f, ynoise_.OctaveNoise(Octave, v), znoise_.OctaveNoise(Octave, v)); };
 
-	auto noise_y = [this](Vec3f v) -> Vec3f { return Vec3f(xnoise_.OctaveNoise(Octave, v), 0.0f, znoise_.OctaveNoise(Octave, v)); };
+	auto noise_y = [this](SIMD::Vec3f v) -> SIMD::Vec3f { return SIMD::Vec3f(xnoise_.OctaveNoise(Octave, v), 0.0f, znoise_.OctaveNoise(Octave, v)); };
 
-	auto noise_z = [this](Vec3f v) -> Vec3f { return Vec3f(xnoise_.OctaveNoise(Octave, v), ynoise_.OctaveNoise(Octave, v), 0.0f); };
+	auto noise_z = [this](SIMD::Vec3f v) -> SIMD::Vec3f { return SIMD::Vec3f(xnoise_.OctaveNoise(Octave, v), ynoise_.OctaveNoise(Octave, v), 0.0f); };
 
-	Vec3f p_x = noise_x(pos + dx) - noise_x(pos - dx);
-	Vec3f p_y = noise_y(pos + dy) - noise_y(pos - dy);
-	Vec3f p_z = noise_z(pos + dz) - noise_z(pos - dz);
+	SIMD::Vec3f p_x = noise_x(pos + dx) - noise_x(pos - dx);
+	SIMD::Vec3f p_y = noise_y(pos + dy) - noise_y(pos - dy);
+	SIMD::Vec3f p_z = noise_z(pos + dz) - noise_z(pos - dz);
 
 	float x = p_y.GetZ() - p_z.GetY();
 	float y = p_z.GetX() - p_x.GetZ();
 	float z = p_x.GetY() - p_y.GetX();
 
-	return Vec3f(x, y, z) * (1.0f / (e * 2.0f));
+	return SIMD::Vec3f(x, y, z) * (1.0f / (e * 2.0f));
 }
 
 LightCurlNoise::LightCurlNoise(int32_t seed, float scale, int32_t octave)
@@ -43,27 +43,27 @@ LightCurlNoise::LightCurlNoise(int32_t seed, float scale, int32_t octave)
 		{
 			for (int32_t x = 0; x < 8; x++)
 			{
-				Vec3f v;
+				SIMD::Vec3f v;
 
-				auto fx = xnoise_.OctaveNoise(octave, Vec3f{
+				auto fx = xnoise_.OctaveNoise(octave, SIMD::Vec3f{
 														  x / 8.0f,
 														  y / 8.0f,
 														  z / 8.0f,
 													  });
 
-				auto fy = ynoise_.OctaveNoise(octave, Vec3f{
+				auto fy = ynoise_.OctaveNoise(octave, SIMD::Vec3f{
 														  x / 8.0f,
 														  y / 8.0f,
 														  z / 8.0f,
 													  });
 
-				auto fz = znoise_.OctaveNoise(octave, Vec3f{
+				auto fz = znoise_.OctaveNoise(octave, SIMD::Vec3f{
 														  x / 8.0f,
 														  y / 8.0f,
 														  z / 8.0f,
 													  });
 
-				v = Vec3f((fx - 0.5f) * 2.0f, (fy - 0.5f) * 2.0f, (fz - 0.5f) * 2.0f);
+				v = SIMD::Vec3f((fx - 0.5f) * 2.0f, (fy - 0.5f) * 2.0f, (fz - 0.5f) * 2.0f);
 				if (v.GetLength() < 0.00001f)
 				{
 					v.SetX(GetRand(-1.0f, 1.0f));
@@ -97,17 +97,17 @@ float LightCurlNoise::Unpack(const uint8_t v) const
 	return (static_cast<float>(v) / 255.0f - 0.5f) * 2.0f;
 }
 
-Vec3f LightCurlNoise::Get(Vec3f pos) const
+SIMD::Vec3f LightCurlNoise::Get(SIMD::Vec3f pos) const
 {
 	pos *= Scale;
 
 	const float e = 1.0f / 1024.0f;
 
-	const Vec3f dx = Vec3f(e, 0.0, 0.0);
-	const Vec3f dy = Vec3f(0.0, e, 0.0);
-	const Vec3f dz = Vec3f(0.0, 0.0, e);
+	const SIMD::Vec3f dx = SIMD::Vec3f(e, 0.0, 0.0);
+	const SIMD::Vec3f dy = SIMD::Vec3f(0.0, e, 0.0);
+	const SIMD::Vec3f dz = SIMD::Vec3f(0.0, 0.0, e);
 
-	auto noise = [this](Vec3f v) -> Vec3f {
+	auto noise = [this](SIMD::Vec3f v) -> SIMD::Vec3f {
 		v *= 8.0f;
 
 		auto xi = static_cast<int>(std::floor(v.GetX()));
@@ -151,7 +151,7 @@ Vec3f LightCurlNoise::Get(Vec3f pos) const
 		auto dy = lerp(vectorField_y_, xi, yi, zi, xf, yf, zf);
 		auto dz = lerp(vectorField_z_, xi, yi, zi, xf, yf, zf);
 
-		return Vec3f(dx, dy, dz);
+		return SIMD::Vec3f(dx, dy, dz);
 	};
 
 	return noise(pos);

@@ -10,9 +10,9 @@
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
-#include "../SIMD/Effekseer.Mat43f.h"
-#include "../SIMD/Effekseer.Vec2f.h"
-#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Mat43f.h"
+#include "../SIMD/Vec2f.h"
+#include "../SIMD/Vec3f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -51,7 +51,7 @@ public:
 	{
 		int32_t InstanceCount;
 		int32_t InstanceIndex;
-		Mat43f SRTMatrix43;
+		SIMD::Mat43f SRTMatrix43;
 		Color AllColor;
 
 		// Lower left, Lower right, Upper left, Upper right

@@ -120,7 +120,7 @@ void InstanceGlobal::SetRootContainer(InstanceContainer* container)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const Vec3f& InstanceGlobal::GetTargetLocation() const
+const SIMD::Vec3f& InstanceGlobal::GetTargetLocation() const
 {
 	return m_targetLocation;
 }

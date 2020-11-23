@@ -1,65 +1,68 @@
-#include "Effekseer.Mat44f.h"
-#include "../Effekseer.Matrix44.h"
+#include "Mat43f.h"
+#include "../Effekseer.Matrix43.h"
 #include <cmath>
 
 namespace Effekseer
 {
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-const Mat44f Mat44f::Identity = Mat44f(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Mat44f::Mat44f(const Matrix44& mat)
+	
+namespace SIMD
 {
-	X = SIMD4f::Load4(mat.Values[0]);
-	Y = SIMD4f::Load4(mat.Values[1]);
-	Z = SIMD4f::Load4(mat.Values[2]);
-	W = SIMD4f::Load4(mat.Values[3]);
-	SIMD4f::Transpose(X, Y, Z, W);
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+const Mat43f Mat43f::Identity = Mat43f(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0);
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+Mat43f::Mat43f(const Matrix43& mat)
+{
+	X = Float4::Load3(mat.Value[0]);
+	Y = Float4::Load3(mat.Value[1]);
+	Z = Float4::Load3(mat.Value[2]);
+	Float4 W = Float4::Load3(mat.Value[3]);
+	Float4::Transpose(X, Y, Z, W);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Mat44f::IsValid() const
+bool Mat43f::IsValid() const
 {
-	const SIMD4f nan{NAN};
-	const SIMD4f inf{INFINITY};
-	SIMD4f res = SIMD4f::Equal(X, nan) | SIMD4f::Equal(Y, nan) | SIMD4f::Equal(Z, nan) | SIMD4f::Equal(W, nan) | SIMD4f::Equal(X, inf) |
-				 SIMD4f::Equal(Y, inf) | SIMD4f::Equal(Z, inf) | SIMD4f::Equal(W, inf);
-	return SIMD4f::MoveMask(res) == 0;
+	const Float4 nan{NAN};
+	const Float4 inf{INFINITY};
+	Float4 res = Float4::Equal(X, nan) | Float4::Equal(Y, nan) | Float4::Equal(Z, nan) | Float4::Equal(X, inf) | Float4::Equal(Y, inf) |
+				 Float4::Equal(Z, inf);
+	return Float4::MoveMask(res) == 0;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Vec3f Mat44f::GetScale() const
+Vec3f Mat43f::GetScale() const
 {
-	SIMD4f x2 = X * X;
-	SIMD4f y2 = Y * Y;
-	SIMD4f z2 = Z * Z;
-	SIMD4f s2 = x2 + y2 + z2;
-	SIMD4f sq = SIMD4f::Sqrt(s2);
+	Float4 x2 = X * X;
+	Float4 y2 = Y * Y;
+	Float4 z2 = Z * Z;
+	Float4 s2 = x2 + y2 + z2;
+	Float4 sq = Float4::Sqrt(s2);
 	return Vec3f{sq};
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::GetRotation() const
+Mat43f Mat43f::GetRotation() const
 {
-	SIMD4f x2 = X * X;
-	SIMD4f y2 = Y * Y;
-	SIMD4f z2 = Z * Z;
-	SIMD4f s2 = x2 + y2 + z2;
-	SIMD4f rsq = SIMD4f::Rsqrt(s2);
+	Float4 x2 = X * X;
+	Float4 y2 = Y * Y;
+	Float4 z2 = Z * Z;
+	Float4 s2 = x2 + y2 + z2;
+	Float4 rsq = Float4::Rsqrt(s2);
 	rsq.SetW(0.0f);
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = X * rsq;
 	ret.Y = Y * rsq;
 	ret.Z = Z * rsq;
@@ -69,7 +72,7 @@ Mat44f Mat44f::GetRotation() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Vec3f Mat44f::GetTranslation() const
+Vec3f Mat43f::GetTranslation() const
 {
 	return Vec3f(X.GetW(), Y.GetW(), Z.GetW());
 }
@@ -77,26 +80,36 @@ Vec3f Mat44f::GetTranslation() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Mat44f::GetSRT(Vec3f& s, Mat44f& r, Vec3f& t) const
+void Mat43f::GetSRT(Vec3f& s, Mat43f& r, Vec3f& t) const
 {
-	SIMD4f x2 = X * X;
-	SIMD4f y2 = Y * Y;
-	SIMD4f z2 = Z * Z;
-	SIMD4f s2 = x2 + y2 + z2;
-	SIMD4f rsq = SIMD4f::Rsqrt(s2);
-	rsq.SetW(0.0f);
+	Float4 x2 = X * X;
+	Float4 y2 = Y * Y;
+	Float4 z2 = Z * Z;
+	Float4 s2 = x2 + y2 + z2;
 
-	s = SIMD4f(1.0f) / rsq;
-	r.X = X * rsq;
-	r.Y = Y * rsq;
-	r.Z = Z * rsq;
+	if (Vec3f(s2).IsZero())
+	{
+		s = Vec3f(0.0f);
+		r = Mat43f::Identity;
+	}
+	else
+	{
+		Float4 rsq = Float4::Rsqrt(s2);
+		rsq.SetW(0.0f);
+
+		s = Float4(1.0f) / rsq;
+		r.X = X * rsq;
+		r.Y = Y * rsq;
+		r.Z = Z * rsq;
+	}
+
 	t = Vec3f(X.GetW(), Y.GetW(), Z.GetW());
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Mat44f::SetTranslation(const Vec3f& t)
+void Mat43f::SetTranslation(const Vec3f& t)
 {
 	X.SetW(t.GetX());
 	Y.SetW(t.GetY());
@@ -106,117 +119,101 @@ void Mat44f::SetTranslation(const Vec3f& t)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::Transpose() const
+bool Mat43f::Equal(const Mat43f& lhs, const Mat43f& rhs, float epsilon)
 {
-	Mat44f ret = *this;
-	SIMD4f::Transpose(ret.X, ret.Y, ret.Z, ret.W);
-	return ret;
+	Float4 ret =
+		Float4::NearEqual(lhs.X, rhs.X, epsilon) & Float4::NearEqual(lhs.Y, rhs.Y, epsilon) & Float4::NearEqual(lhs.Z, rhs.Z, epsilon);
+	return (Float4::MoveMask(ret) & 0xf) == 0xf;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Mat44f::Equal(const Mat44f& lhs, const Mat44f& rhs, float epsilon)
+Mat43f Mat43f::SRT(const Vec3f& s, const Mat43f& r, const Vec3f& t)
 {
-	SIMD4f ret = SIMD4f::NearEqual(lhs.X, rhs.X, epsilon) & SIMD4f::NearEqual(lhs.Y, rhs.Y, epsilon) &
-				 SIMD4f::NearEqual(lhs.Z, rhs.Z, epsilon) & SIMD4f::NearEqual(lhs.W, rhs.W, epsilon);
-	return (SIMD4f::MoveMask(ret) & 0xf) == 0xf;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Mat44f Mat44f::SRT(const Vec3f& s, const Mat44f& r, const Vec3f& t)
-{
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = r.X * s.s;
 	ret.Y = r.Y * s.s;
 	ret.Z = r.Z * s.s;
 	ret.X.SetW(t.GetX());
 	ret.Y.SetW(t.GetY());
 	ret.Z.SetW(t.GetZ());
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::Scaling(float x, float y, float z)
+Mat43f Mat43f::Scaling(float x, float y, float z)
 {
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {x, 0.0f, 0.0f, 0.0f};
 	ret.Y = {0.0f, y, 0.0f, 0.0f};
 	ret.Z = {0.0f, 0.0f, z, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::Scaling(const Vec3f& scale)
+Mat43f Mat43f::Scaling(const Vec3f& scale)
 {
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {scale.GetX(), 0.0f, 0.0f, 0.0f};
 	ret.Y = {0.0f, scale.GetY(), 0.0f, 0.0f};
 	ret.Z = {0.0f, 0.0f, scale.GetZ(), 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationX(float angle)
+Mat43f Mat43f::RotationX(float angle)
 {
 	float c, s;
 	::Effekseer::SinCos(angle, s, c);
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {1.0f, 0.0f, 0.0f, 0.0f};
 	ret.Y = {0.0f, c, -s, 0.0f};
 	ret.Z = {0.0f, s, c, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationY(float angle)
+Mat43f Mat43f::RotationY(float angle)
 {
 	float c, s;
 	::Effekseer::SinCos(angle, s, c);
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {c, 0.0f, s, 0.0f};
 	ret.Y = {0.0f, 1.0f, 0.0f, 0.0f};
 	ret.Z = {-s, 0.0f, c, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationZ(float angle)
+Mat43f Mat43f::RotationZ(float angle)
 {
 	float c, s;
 	::Effekseer::SinCos(angle, s, c);
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {c, -s, 0.0f, 0.0f};
 	ret.Y = {s, c, 0.0f, 0.0f};
 	ret.Z = {0.0f, 0.0f, 1.0f, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationXYZ(float rx, float ry, float rz)
+Mat43f Mat43f::RotationXYZ(float rx, float ry, float rz)
 {
 	float cx, sx, cy, sy, cz, sz;
 
@@ -260,18 +257,17 @@ Mat44f Mat44f::RotationXYZ(float rx, float ry, float rz)
 	float m21 = cx * sy * sz - sx * cz;
 	float m22 = cx * cy;
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {m00, m10, m20, 0.0f};
 	ret.Y = {m01, m11, m21, 0.0f};
 	ret.Z = {m02, m12, m22, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationZXY(float rz, float rx, float ry)
+Mat43f Mat43f::RotationZXY(float rz, float rx, float ry)
 {
 	float cx, sx, cy, sy, cz, sz;
 
@@ -315,18 +311,17 @@ Mat44f Mat44f::RotationZXY(float rz, float rx, float ry)
 	float m21 = -sx;
 	float m22 = cx * cy;
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {m00, m10, m20, 0.0f};
 	ret.Y = {m01, m11, m21, 0.0f};
 	ret.Z = {m02, m12, m22, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationAxis(const Vec3f& axis, float angle)
+Mat43f Mat43f::RotationAxis(const Vec3f& axis, float angle)
 {
 	const float c = cosf(angle);
 	const float s = sinf(angle);
@@ -336,7 +331,7 @@ Mat44f Mat44f::RotationAxis(const Vec3f& axis, float angle)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::RotationAxis(const Vec3f& axis, float s, float c)
+Mat43f Mat43f::RotationAxis(const Vec3f& axis, float s, float c)
 {
 	const float cc = 1.0f - c;
 
@@ -352,38 +347,37 @@ Mat44f Mat44f::RotationAxis(const Vec3f& axis, float s, float c)
 	float m21 = cc * (axis.GetY() * axis.GetZ()) - (axis.GetX() * s);
 	float m22 = cc * (axis.GetZ() * axis.GetZ()) + c;
 
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {m00, m10, m20, 0.0f};
 	ret.Y = {m01, m11, m21, 0.0f};
 	ret.Z = {m02, m12, m22, 0.0f};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::Translation(float x, float y, float z)
+Mat43f Mat43f::Translation(float x, float y, float z)
 {
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {1.0f, 0.0f, 0.0f, x};
 	ret.Y = {0.0f, 1.0f, 0.0f, y};
 	ret.Z = {0.0f, 0.0f, 1.0f, z};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Mat44f Mat44f::Translation(const Vec3f& pos)
+Mat43f Mat43f::Translation(const Vec3f& pos)
 {
-	Mat44f ret;
+	Mat43f ret;
 	ret.X = {1.0f, 0.0f, 0.0f, pos.GetX()};
 	ret.Y = {0.0f, 1.0f, 0.0f, pos.GetY()};
 	ret.Z = {0.0f, 0.0f, 1.0f, pos.GetZ()};
-	ret.W = {0.0f, 0.0f, 0.0f, 1.0f};
 	return ret;
 }
+
+} // namespace SIMD
 
 } // namespace Effekseer

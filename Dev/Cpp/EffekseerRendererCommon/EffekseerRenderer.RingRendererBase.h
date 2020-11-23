@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 #include <assert.h>
 #include <math.h>
@@ -27,10 +26,10 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::RingRenderer::NodeParameter efkRingNodeParam;
 typedef ::Effekseer::RingRenderer::InstanceParameter efkRingInstanceParam;
-typedef ::Effekseer::Vec3f efkVector3D;
+typedef ::Effekseer::SIMD::Vec3f efkVector3D;
 
 template <typename RENDERER, bool FLIP_RGB_FLAG>
-class RingRendererBase : public ::Effekseer::RingRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
+class RingRendererBase : public ::Effekseer::RingRenderer, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 protected:
 	struct KeyValue
@@ -46,7 +45,7 @@ protected:
 
 	int32_t m_spriteCount;
 	int32_t m_instanceCount;
-	::Effekseer::Mat44f m_singleRenderingMatrix;
+	::Effekseer::SIMD::Mat44f m_singleRenderingMatrix;
 	::Effekseer::RendererMaterialType materialType_ = ::Effekseer::RendererMaterialType::Default;
 
 	int32_t vertexCount_ = 0;
@@ -95,7 +94,7 @@ protected:
 	void RenderingInstance(const efkRingInstanceParam& instanceParameter,
 						   const efkRingNodeParam& parameter,
 						   const StandardRendererState& state,
-						   const ::Effekseer::Mat44f& camera)
+						   const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		void* userData = nullptr;
 		const ShaderParameterCollector& collector = state.Collector;
@@ -201,7 +200,7 @@ protected:
 	void Rendering_(const efkRingNodeParam& parameter,
 					const efkRingInstanceParam& instanceParameter,
 					void* userData,
-					const ::Effekseer::Mat44f& camera)
+					const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None || CanSingleRendering())
 		{
@@ -226,21 +225,21 @@ protected:
 	void Rendering_Internal(const efkRingNodeParam& parameter,
 							const efkRingInstanceParam& instanceParameter,
 							void* userData,
-							const ::Effekseer::Mat44f& camera)
+							const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		::Effekseer::Mat43f mat43;
+		::Effekseer::SIMD::Mat43f mat43;
 
 		if (parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
 		{
-			Effekseer::Vec3f s;
-			Effekseer::Vec3f R;
-			Effekseer::Vec3f F;
+			Effekseer::SIMD::Vec3f s;
+			Effekseer::SIMD::Vec3f R;
+			Effekseer::SIMD::Vec3f F;
 
 			if (parameter.EnableViewOffset)
 			{
-				Effekseer::Mat43f instMat = instanceParameter.SRTMatrix43;
+				Effekseer::SIMD::Mat43f instMat = instanceParameter.SRTMatrix43;
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
 
@@ -260,11 +259,11 @@ protected:
 
 			if (CanSingleRendering())
 			{
-				mat43 = ::Effekseer::Mat43f::Scaling(s) * mat43;
+				mat43 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
 			}
 			else
 			{
-				mat43 = ::Effekseer::Mat43f::Scaling(s) * mat43;
+				mat43 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
 			}
 		}
 		else if (parameter.Billboard == ::Effekseer::BillboardType::Fixed)
@@ -318,9 +317,9 @@ protected:
 		const float stepS = sinf(stepAngle);
 		float cos_ = cosf(beginAngle);
 		float sin_ = sinf(beginAngle);
-		::Effekseer::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, outerHeight);
-		::Effekseer::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, innerHeight);
-		::Effekseer::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, centerHeight);
+		::Effekseer::SIMD::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, outerHeight);
+		::Effekseer::SIMD::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, innerHeight);
+		::Effekseer::SIMD::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, centerHeight);
 
 		float uv0Current = instanceParameter.UV.X;
 		const float uv0Step = instanceParameter.UV.Width / parameter.VertexCount;
@@ -375,7 +374,7 @@ protected:
 				advancedUVv1[4] + instanceParameter.BlendUVDistortionUV.Height};
 		float advancedUVtexNext[advancedUVNum] = {0.0f};
 
-		::Effekseer::Vec3f outerNext, innerNext, centerNext;
+		::Effekseer::SIMD::Vec3f outerNext, innerNext, centerNext;
 
 		float currentAngleDegree = 0;
 		float fadeStartAngle = parameter.StartingFade;
@@ -391,9 +390,9 @@ protected:
 			sin_ = sin_ * stepC + cos_ * stepS;
 			cos_ = t;
 
-			outerNext = ::Effekseer::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
-			innerNext = ::Effekseer::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
-			centerNext = ::Effekseer::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
+			outerNext = ::Effekseer::SIMD::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
+			innerNext = ::Effekseer::SIMD::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
+			centerNext = ::Effekseer::SIMD::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
 
 			currentAngleDegree += stepAngleDegree;
 
@@ -542,8 +541,8 @@ protected:
 			if (IsDistortionVertex<VERTEX>())
 			{
 				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
-				const auto binormalCurrent = ToStruct(v[5].Pos - v[0].Pos);
-				const auto binormalNext = ToStruct(v[7].Pos - v[2].Pos);
+				const auto binormalCurrent = ::Effekseer::SIMD::ToStruct(v[5].Pos - v[0].Pos);
+				const auto binormalNext = ::Effekseer::SIMD::ToStruct(v[7].Pos - v[2].Pos);
 
 				// return back
 				float t_b;
@@ -551,18 +550,18 @@ protected:
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::Vec3f outerBefore(c_b * outerRadius, s_b * outerRadius, outerHeight);
+				::Effekseer::SIMD::Vec3f outerBefore(c_b * outerRadius, s_b * outerRadius, outerHeight);
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
 				auto s_n = sin_ * stepC + cos_ * stepS;
 				auto c_n = t_n;
 
-				::Effekseer::Vec3f outerNN(c_n * outerRadius, s_n * outerRadius, outerHeight);
+				::Effekseer::SIMD::Vec3f outerNN(c_n * outerRadius, s_n * outerRadius, outerHeight);
 
-				::Effekseer::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
-				::Effekseer::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
-				::Effekseer::Vec3f tangent2 = (outerNN - outerNext).Normalize();
+				::Effekseer::SIMD::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
+				::Effekseer::SIMD::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
+				::Effekseer::SIMD::Vec3f tangent2 = (outerNN - outerNext).Normalize();
 
 				const auto tangentCurrent = ToStruct((tangent0 + tangent1) / 2.0f);
 				const auto tangentNext = ToStruct((tangent1 + tangent2) / 2.0f);
@@ -595,21 +594,21 @@ protected:
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
+				::Effekseer::SIMD::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
 				auto s_n = sin_ * stepC + cos_ * stepS;
 				auto c_n = t_n;
 
-				::Effekseer::Vec3f outerNN;
+				::Effekseer::SIMD::Vec3f outerNN;
 				outerNN.SetX(c_n * outerRadius);
 				outerNN.SetY(s_n * outerRadius);
 				outerNN.SetZ(outerHeight);
 
-				::Effekseer::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
-				::Effekseer::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
-				::Effekseer::Vec3f tangent2 = (outerNN - outerNext).Normalize();
+				::Effekseer::SIMD::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
+				::Effekseer::SIMD::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
+				::Effekseer::SIMD::Vec3f tangent2 = (outerNN - outerNext).Normalize();
 
 				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
 				auto tangentNext = (tangent1 + tangent2) / 2.0f;
@@ -617,11 +616,11 @@ protected:
 				auto binormalCurrent = v[5].Pos - v[0].Pos;
 				auto binormalNext = v[7].Pos - v[2].Pos;
 
-				::Effekseer::Vec3f normalCurrent;
-				::Effekseer::Vec3f normalNext;
+				::Effekseer::SIMD::Vec3f normalCurrent;
+				::Effekseer::SIMD::Vec3f normalNext;
 
-				normalCurrent = ::Effekseer::Vec3f::Cross(tangentCurrent, binormalCurrent);
-				normalNext = ::Effekseer::Vec3f::Cross(tangentNext, binormalNext);
+				normalCurrent = ::Effekseer::SIMD::Vec3f::Cross(tangentCurrent, binormalCurrent);
+				normalNext = ::Effekseer::SIMD::Vec3f::Cross(tangentNext, binormalNext);
 
 				if (!parameter.IsRightHand)
 				{
@@ -630,13 +629,13 @@ protected:
 				}
 
 				// rotate directions
-				::Effekseer::Mat43f matRot = mat43;
+				::Effekseer::SIMD::Mat43f matRot = mat43;
 				matRot.SetTranslation({0.0f, 0.0f, 0.0f});
 
-				normalCurrent = ::Effekseer::Vec3f::Transform(normalCurrent, matRot);
-				normalNext = ::Effekseer::Vec3f::Transform(normalNext, matRot);
-				tangentCurrent = ::Effekseer::Vec3f::Transform(tangentCurrent, matRot);
-				tangentNext = ::Effekseer::Vec3f::Transform(tangentNext, matRot);
+				normalCurrent = ::Effekseer::SIMD::Vec3f::Transform(normalCurrent, matRot);
+				normalNext = ::Effekseer::SIMD::Vec3f::Transform(normalNext, matRot);
+				tangentCurrent = ::Effekseer::SIMD::Vec3f::Transform(tangentCurrent, matRot);
+				tangentNext = ::Effekseer::SIMD::Vec3f::Transform(tangentNext, matRot);
 
 				normalCurrent = normalCurrent.Normalize();
 				normalNext = normalNext.Normalize();
@@ -735,11 +734,11 @@ protected:
 		m_ringBufferData += stride_ * singleVertexCount;
 	}
 
-	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, void* userData, const ::Effekseer::Mat44f& camera)
+	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, void* userData, const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (CanSingleRendering())
 		{
-			::Effekseer::Mat44f mat = m_singleRenderingMatrix * renderer->GetCameraMatrix();
+			::Effekseer::SIMD::Mat44f mat = m_singleRenderingMatrix * renderer->GetCameraMatrix();
 
 			renderer->GetStandardRenderer()->Rendering(mat, renderer->GetProjectionMatrix());
 		}
@@ -750,13 +749,13 @@ protected:
 			{
 				efkVector3D t = kv.Value.SRTMatrix43.GetTranslation();
 
-				Effekseer::Vec3f frontDirection = m_renderer->GetCameraFrontDirection();
+				Effekseer::SIMD::Vec3f frontDirection = m_renderer->GetCameraFrontDirection();
 				if (!param.IsRightHand)
 				{
 					frontDirection.SetZ(-frontDirection.GetZ());
 				}
 
-				kv.Key = Effekseer::Vec3f::Dot(t, frontDirection);
+				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
 			}
 
 			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)

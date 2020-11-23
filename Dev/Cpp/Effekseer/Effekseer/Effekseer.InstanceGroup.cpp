@@ -27,7 +27,7 @@ InstanceGroup::InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceC
 	, NextUsedByInstance(nullptr)
 	, NextUsedByContainer(nullptr)
 {
-	parentMatrix_ = Mat43f::Identity;
+	parentMatrix_ = SIMD::Mat43f::Identity;
 }
 
 //----------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void InstanceGroup::Update(bool shown)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::SetBaseMatrix(const Mat43f& mat)
+void InstanceGroup::SetBaseMatrix(const SIMD::Mat43f& mat)
 {
 	for (auto instance : m_instances)
 	{
@@ -118,7 +118,7 @@ void InstanceGroup::SetBaseMatrix(const Mat43f& mat)
 	}
 }
 
-void InstanceGroup::SetParentMatrix(const Mat43f& mat)
+void InstanceGroup::SetParentMatrix(const SIMD::Mat43f& mat)
 {
 	TranslationParentBindType tType = m_effectNode->CommonValues.TranslationBindType;
 	BindType rType = m_effectNode->CommonValues.RotationBindType;
@@ -140,8 +140,8 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 	}
 	else
 	{
-		Vec3f s, t;
-		Mat43f r;
+		SIMD::Vec3f s, t;
+		SIMD::Mat43f r;
 		mat.GetSRT(s, r, t);
 
 		if (tType == BindType::Always)
@@ -154,11 +154,11 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 		}
 		else if (tType == BindType::NotBind)
 		{
-			parentTranslation_ = Vec3f(0.0f, 0.0f, 0.0f);
+			parentTranslation_ = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 		}
 		else if (tType == TranslationParentBindType::NotBind_FollowParent)
 		{
-			parentTranslation_ = Vec3f(0.0f, 0.0f, 0.0f);
+			parentTranslation_ = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 		}
 
 		if (rType == BindType::Always)
@@ -171,7 +171,7 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 		}
 		else if (rType == BindType::NotBind)
 		{
-			parentRotation_ = Mat43f::Identity;
+			parentRotation_ = SIMD::Mat43f::Identity;
 		}
 
 		if (sType == BindType::Always)
@@ -184,7 +184,7 @@ void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 		}
 		else if (sType == BindType::NotBind)
 		{
-			parentScale_ = Vec3f(1.0f, 1.0f, 1.0f);
+			parentScale_ = SIMD::Vec3f(1.0f, 1.0f, 1.0f);
 		}
 	}
 }

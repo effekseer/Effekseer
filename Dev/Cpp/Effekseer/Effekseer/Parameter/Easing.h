@@ -54,7 +54,7 @@ template<> struct easing_type_information<float>
 	static const uint8_t elemNum = 1;
 };
 
-template<> struct easing_type_information<Vec3f>
+template<> struct easing_type_information<SIMD::Vec3f>
 {
 	using type = random_vector3d;
 	static constexpr uint8_t elemNum = 3;
@@ -550,10 +550,10 @@ public:
 	void Init(InstanceEasingType& instance, Effect* e, InstanceGlobal* instg, Instance* parent, IRandObject* rand);
 };
 
-class ParameterEasingVec3f : public ParameterEasing<Vec3f>
+class ParameterEasingSIMDVec3 : public ParameterEasing<SIMD::Vec3f>
 {
 public:
-	virtual Vec3f GetValue(const InstanceEasingType& instance, float time) override;
+	virtual SIMD::Vec3f GetValue(const InstanceEasingType& instance, float time) override;
 	void Init(InstanceEasingType& instance, Effect* e, InstanceGlobal* instg, Instance* parent, IRandObject* rand, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv);
 };
 

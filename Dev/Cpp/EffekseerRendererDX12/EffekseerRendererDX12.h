@@ -11,6 +11,7 @@ namespace EffekseerRendererDX12
 }
 
 #endif
+
 #ifndef __EFFEKSEERRENDERER_RENDERER_H__
 #define __EFFEKSEERRENDERER_RENDERER_H__
 
@@ -132,7 +133,7 @@ protected:
 	virtual ~Renderer();
 
 	class Impl;
-	Impl* impl = nullptr;
+	std::unique_ptr<Impl> impl;
 
 public:
 	/**

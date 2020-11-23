@@ -3,7 +3,7 @@
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
-#include "SIMD/Effekseer.SIMDUtils.h"
+#include "SIMD/Utils.h"
 
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Instance.h"
@@ -51,7 +51,7 @@ Manager* Manager::Create(int instance_max, bool autoFlip)
 	return new ManagerImplemented(instance_max, autoFlip);
 }
 
-Mat43f* ManagerImplemented::DrawSet::GetEnabledGlobalMatrix()
+SIMD::Mat43f* ManagerImplemented::DrawSet::GetEnabledGlobalMatrix()
 {
 	if (IsPreupdated)
 	{
@@ -258,7 +258,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 }
 
 InstanceContainer* ManagerImplemented::CreateInstanceContainer(
-	EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Mat43f& rootMatrix, Instance* pParent)
+	EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const SIMD::Mat43f& rootMatrix, Instance* pParent)
 {
 	if (pooledContainers_.empty())
 	{
@@ -904,14 +904,14 @@ void ManagerImplemented::SetRotation(Handle handle, float x, float y, float z)
 
 		if (mat_ != nullptr)
 		{
-			Mat43f r;
-			Vec3f s, t;
+			SIMD::Mat43f r;
+			SIMD::Vec3f s, t;
 
 			mat_->GetSRT(s, r, t);
 
-			r = Mat43f::RotationZXY(z, x, y);
+			r = SIMD::Mat43f::RotationZXY(z, x, y);
 
-			*mat_ = Mat43f::SRT(s, r, t);
+			*mat_ = SIMD::Mat43f::SRT(s, r, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -929,14 +929,14 @@ void ManagerImplemented::SetRotation(Handle handle, const Vector3D& axis, float 
 
 		if (mat_ != nullptr)
 		{
-			Mat43f r;
-			Vec3f s, t;
+			SIMD::Mat43f r;
+			SIMD::Vec3f s, t;
 
 			mat_->GetSRT(s, r, t);
 
-			r = Mat43f::RotationAxis(axis, angle);
+			r = SIMD::Mat43f::RotationAxis(axis, angle);
 
-			*mat_ = Mat43f::SRT(s, r, t);
+			*mat_ = SIMD::Mat43f::SRT(s, r, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -954,14 +954,14 @@ void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 
 		if (mat_ != nullptr)
 		{
-			Mat43f r;
-			Vec3f s, t;
+			SIMD::Mat43f r;
+			SIMD::Vec3f s, t;
 
 			mat_->GetSRT(s, r, t);
 
-			s = Vec3f(x, y, z);
+			s = SIMD::Vec3f(x, y, z);
 
-			*mat_ = Mat43f::SRT(s, r, t);
+			*mat_ = SIMD::Mat43f::SRT(s, r, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -1282,17 +1282,17 @@ void ManagerImplemented::Flip()
 						float radius = effect->Culling.Sphere.Radius;
 
 						{
-							Vec3f s = pInstance->GetGlobalMatrix43().GetScale();
+							SIMD::Vec3f s = pInstance->GetGlobalMatrix43().GetScale();
 							radius *= s.GetLength();
-							Vec3f culling_pos = Vec3f::Transform(Vec3f(effect->Culling.Location), pInstance->GetGlobalMatrix43());
+							SIMD::Vec3f culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), pInstance->GetGlobalMatrix43());
 							ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(culling_pos.GetX(), culling_pos.GetY(), culling_pos.GetZ()));
 						}
 
 						if (ds.DoUseBaseMatrix)
 						{
-							Vec3f s = ds.BaseMatrix.GetScale();
+							SIMD::Vec3f s = ds.BaseMatrix.GetScale();
 							radius *= s.GetLength();
-							Vec3f culling_pos = Vec3f::Transform(Vec3f(effect->Culling.Location), ds.BaseMatrix);
+							SIMD::Vec3f culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), ds.BaseMatrix);
 							ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(culling_pos.GetX(), culling_pos.GetY(), culling_pos.GetZ()));
 						}
 
@@ -1658,8 +1658,8 @@ bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer*
 	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping > FLT_MAX / 10)
 		return false;
 
-	Vec3f pos = drawSet.GlobalMatrix.GetTranslation();
-	auto distance = Vec3f::Dot(Vec3f(drawParameter.CameraPosition) - pos, Vec3f(drawParameter.CameraDirection));
+	SIMD::Vec3f pos = drawSet.GlobalMatrix.GetTranslation();
+	auto distance = SIMD::Vec3f::Dot(SIMD::Vec3f(drawParameter.CameraPosition) - pos, SIMD::Vec3f(drawParameter.CameraDirection));
 	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping < distance)
 	{
 		return true;
@@ -1982,7 +1982,7 @@ Handle ManagerImplemented::Play(EffectRef& effect, const Vector3D& position, int
 
 	auto& drawSet = m_DrawSets[handle];
 
-	drawSet.GlobalMatrix = Mat43f::Translation(position);
+	drawSet.GlobalMatrix = SIMD::Mat43f::Translation(position);
 
 	drawSet.IsParameterChanged = true;
 	drawSet.StartFrame = startFrame;

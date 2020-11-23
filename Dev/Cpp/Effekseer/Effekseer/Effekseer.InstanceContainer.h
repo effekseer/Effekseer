@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.IntrusiveList.h"
-#include "SIMD/Effekseer.Mat43f.h"
+#include "SIMD/Mat43f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -68,7 +68,7 @@ public:
 
 	void Update(bool recursive, bool shown);
 
-	void SetBaseMatrix(bool recursive, const Mat43f& mat);
+	void SetBaseMatrix(bool recursive, const SIMD::Mat43f& mat);
 
 	void RemoveForcibly(bool recursive);
 

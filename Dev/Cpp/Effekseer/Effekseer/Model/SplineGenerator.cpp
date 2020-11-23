@@ -3,7 +3,7 @@
 namespace Effekseer
 {
 
-void SplineGenerator::AddVertex(const Effekseer::Vec3f& v)
+void SplineGenerator::AddVertex(const Effekseer::SIMD::Vec3f& v)
 {
 	a.push_back(v);
 	if (a.size() >= 2)
@@ -26,9 +26,9 @@ void SplineGenerator::Calculate()
 
 	for (size_t i = 1; i < a.size() - 1; i++)
 	{
-		auto tmp = Effekseer::Vec3f(4.0, 4.0, 4.0) - w[i - 1];
+		auto tmp = Effekseer::SIMD::Vec3f(4.0, 4.0, 4.0) - w[i - 1];
 		c[i] = (c[i] - c[i - 1]) / tmp;
-		w[i] = Effekseer::Vec3f(1.0, 1.0, 1.0) / tmp;
+		w[i] = Effekseer::SIMD::Vec3f(1.0, 1.0, 1.0) / tmp;
 	}
 
 	for (size_t i = (a.size() - 1) - 1; i > 0; i--)
@@ -53,7 +53,7 @@ void SplineGenerator::Reset()
 	isSame.clear();
 }
 
-Vec3f SplineGenerator::GetValue(float t) const
+SIMD::Vec3f SplineGenerator::GetValue(float t) const
 {
 	int32_t j = (int32_t)floorf(t);
 

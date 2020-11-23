@@ -21,12 +21,12 @@ struct RefMinMax
 void ApplyEq(float& dstParam, Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, int dpInd, const float& originalParam);
 
 //! calculate dynamic equation and return a result
-Vec3f ApplyEq(Effect* e,
+SIMD::Vec3f ApplyEq(Effect* e,
 			  InstanceGlobal* instg,
 			  Instance* parrentInstance,
 			  IRandObject* rand,
 			  const int& dpInd,
-			  const Vec3f& originalParam,
+			  const SIMD::Vec3f& originalParam,
 			  const std::array<float, 3>& scale,
 			  const std::array<float, 3>& scaleInv);
 
