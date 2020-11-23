@@ -264,19 +264,19 @@ inline Int4 Int4::MulSubLane(const Int4& a, const Int4& b, const Int4& c)
 //}
 
 template <int COUNT>
-inline Int4 Effekseer::Int4::ShiftL(const Int4& lhs)
+inline Int4 Int4::ShiftL(const Int4& lhs)
 {
 	return vreinterpretq_s32_u32(vshlq_n_u32(vreinterpretq_u32_s32(lhs.s), COUNT));
 }
 
 template <int COUNT>
-inline Int4 Effekseer::Int4::ShiftR(const Int4& lhs)
+inline Int4 Int4::ShiftR(const Int4& lhs)
 {
 	return vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(lhs.s), COUNT));
 }
 
 template <int COUNT>
-inline Int4 Effekseer::Int4::ShiftRA(const Int4& lhs)
+inline Int4 Int4::ShiftRA(const Int4& lhs)
 {
 	return vshrq_n_s32(lhs.s, COUNT);
 }
