@@ -196,7 +196,7 @@ protected:
 	virtual ~Renderer();
 
 	class Impl;
-	Impl* impl = nullptr;
+	std::unique_ptr<Impl> impl;
 
 public:
 	/**

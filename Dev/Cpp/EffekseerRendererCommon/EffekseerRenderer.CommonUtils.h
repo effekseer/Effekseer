@@ -4,7 +4,6 @@
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 #include <Effekseer/Material/Effekseer.CompiledMaterial.h>
 #include <Effekseer/Model/SplineGenerator.h>
@@ -682,137 +681,137 @@ struct StrideView
 };
 
 void CalcBillboard(::Effekseer::BillboardType billboardType,
-				   Effekseer::Mat43f& dst,
-				   ::Effekseer::Vec3f& s,
-				   ::Effekseer::Vec3f& R,
-				   ::Effekseer::Vec3f& F,
-				   const ::Effekseer::Mat43f& src,
-				   const ::Effekseer::Vec3f& frontDirection);
+				   Effekseer::SIMD::Mat43f& dst,
+				   ::Effekseer::SIMD::Vec3f& s,
+				   ::Effekseer::SIMD::Vec3f& R,
+				   ::Effekseer::SIMD::Vec3f& F,
+				   const ::Effekseer::SIMD::Mat43f& src,
+				   const ::Effekseer::SIMD::Vec3f& frontDirection);
 
-void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 
-void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
-						  ::Effekseer::Vec3f& scaleValues,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
+						  ::Effekseer::SIMD::Vec3f& scaleValues,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 
-void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-						  ::Effekseer::Vec3f& translationValues,
-						  ::Effekseer::Vec3f& scaleValues,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
+						  ::Effekseer::SIMD::Vec3f& translationValues,
+						  ::Effekseer::SIMD::Vec3f& scaleValues,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 
-void ApplyDepthParameters(::Effekseer::Mat44f& mat,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat44f& mat,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 
-void ApplyViewOffset(::Effekseer::Mat43f& mat,
-					 const ::Effekseer::Mat44f& camera,
+void ApplyViewOffset(::Effekseer::SIMD::Mat43f& mat,
+					 const ::Effekseer::SIMD::Mat44f& camera,
 					 float distance);
 
-void ApplyViewOffset(::Effekseer::Mat44f& mat,
-					 const ::Effekseer::Mat44f& camera,
+void ApplyViewOffset(::Effekseer::SIMD::Mat44f& mat,
+					 const ::Effekseer::SIMD::Mat44f& camera,
 					 float distance);
 
 template <typename Vertex>
-inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
-	using namespace Effekseer;
+	using namespace Effekseer::SIMD;
 
-	SIMD4f m0 = mat.X;
-	SIMD4f m1 = mat.Y;
-	SIMD4f m2 = mat.Z;
-	SIMD4f m3 = SIMD4f::SetZero();
-	SIMD4f::Transpose(m0, m1, m2, m3);
+	Float4 m0 = mat.X;
+	Float4 m1 = mat.Y;
+	Float4 m2 = mat.Z;
+	Float4 m3 = Float4::SetZero();
+	Float4::Transpose(m0, m1, m2, m3);
 
 	for (int i = 0; i < count; i++)
 	{
-		SIMD4f iPos = SIMD4f::Load3(&vertexes[i].Pos);
+		Float4 iPos = Float4::Load3(&vertexes[i].Pos);
 
-		SIMD4f oPos = SIMD4f::MulAddLane<0>(m3, m0, iPos);
-		oPos = SIMD4f::MulAddLane<1>(oPos, m1, iPos);
-		oPos = SIMD4f::MulAddLane<2>(oPos, m2, iPos);
+		Float4 oPos = Float4::MulAddLane<0>(m3, m0, iPos);
+		oPos = Float4::MulAddLane<1>(oPos, m1, iPos);
+		oPos = Float4::MulAddLane<2>(oPos, m2, iPos);
 
-		SIMD4f::Store3(&vertexes[i].Pos, oPos);
+		Float4::Store3(&vertexes[i].Pos, oPos);
 	}
 }
 
 template <typename VertexDistortion>
-inline void TransformDistortionVertexes(VertexDistortion& vertexes, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformDistortionVertexes(VertexDistortion& vertexes, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
-	using namespace Effekseer;
+	using namespace Effekseer::SIMD;
 
-	SIMD4f m0 = mat.X;
-	SIMD4f m1 = mat.Y;
-	SIMD4f m2 = mat.Z;
-	SIMD4f m3 = SIMD4f::SetZero();
-	SIMD4f::Transpose(m0, m1, m2, m3);
+	Float4 m0 = mat.X;
+	Float4 m1 = mat.Y;
+	Float4 m2 = mat.Z;
+	Float4 m3 = Float4::SetZero();
+	Float4::Transpose(m0, m1, m2, m3);
 
 	for (int i = 0; i < count; i++)
 	{
-		SIMD4f iPos = SIMD4f::Load3(&vertexes[i].Pos);
-		SIMD4f iTangent = SIMD4f::Load3(&vertexes[i].Tangent);
-		SIMD4f iBinormal = SIMD4f::Load3(&vertexes[i].Binormal);
+		Float4 iPos = Float4::Load3(&vertexes[i].Pos);
+		Float4 iTangent = Float4::Load3(&vertexes[i].Tangent);
+		Float4 iBinormal = Float4::Load3(&vertexes[i].Binormal);
 
-		SIMD4f oPos = SIMD4f::MulAddLane<0>(m3, m0, iPos);
-		oPos = SIMD4f::MulAddLane<1>(oPos, m1, iPos);
-		oPos = SIMD4f::MulAddLane<2>(oPos, m2, iPos);
+		Float4 oPos = Float4::MulAddLane<0>(m3, m0, iPos);
+		oPos = Float4::MulAddLane<1>(oPos, m1, iPos);
+		oPos = Float4::MulAddLane<2>(oPos, m2, iPos);
 
-		SIMD4f oTangent = SIMD4f::MulLane<0>(m0, iTangent);
-		oTangent = SIMD4f::MulAddLane<1>(oTangent, m1, iTangent);
-		oTangent = SIMD4f::MulAddLane<2>(oTangent, m2, iTangent);
+		Float4 oTangent = Float4::MulLane<0>(m0, iTangent);
+		oTangent = Float4::MulAddLane<1>(oTangent, m1, iTangent);
+		oTangent = Float4::MulAddLane<2>(oTangent, m2, iTangent);
 
-		SIMD4f oBinormal = SIMD4f::MulLane<0>(m0, iBinormal);
-		oBinormal = SIMD4f::MulAddLane<1>(oBinormal, m1, iBinormal);
-		oBinormal = SIMD4f::MulAddLane<2>(oBinormal, m2, iBinormal);
+		Float4 oBinormal = Float4::MulLane<0>(m0, iBinormal);
+		oBinormal = Float4::MulAddLane<1>(oBinormal, m1, iBinormal);
+		oBinormal = Float4::MulAddLane<2>(oBinormal, m2, iBinormal);
 
-		SIMD4f::Store3(&vertexes[i].Pos, oPos);
-		SIMD4f::Store3(&vertexes[i].Tangent, oTangent);
-		SIMD4f::Store3(&vertexes[i].Binormal, oBinormal);
+		Float4::Store3(&vertexes[i].Pos, oPos);
+		Float4::Store3(&vertexes[i].Tangent, oTangent);
+		Float4::Store3(&vertexes[i].Binormal, oBinormal);
 	}
 }
 
-inline void TransformVertexes(StrideView<VertexDistortion>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<VertexDistortion>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformDistortionVertexes(v, count, mat);
 }
 
-inline void TransformVertexes(StrideView<SimpleVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<SimpleVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }
 
-inline void TransformVertexes(StrideView<DynamicVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<DynamicVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }
 
-inline void TransformVertexes(StrideView<LightingVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<LightingVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }
 
-inline void TransformVertexes(StrideView<AdvancedVertexDistortion>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<AdvancedVertexDistortion>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformDistortionVertexes(v, count, mat);
 }
 
-inline void TransformVertexes(StrideView<AdvancedSimpleVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<AdvancedSimpleVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }
 
-inline void TransformVertexes(StrideView<AdvancedLightingVertex>& v, int32_t count, const ::Effekseer::Mat43f& mat)
+inline void TransformVertexes(StrideView<AdvancedLightingVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }
@@ -824,7 +823,7 @@ inline void SwapRGBAToBGRA(Effekseer::Color& color)
 	color.R = temp.B;
 }
 
-inline Effekseer::Color PackVector3DF(const Effekseer::Vec3f& v)
+inline Effekseer::Color PackVector3DF(const Effekseer::SIMD::Vec3f& v)
 {
 	Effekseer::Color ret;
 	ret.R = static_cast<uint8_t>(Effekseer::Clamp(((v.GetX() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
@@ -834,7 +833,7 @@ inline Effekseer::Color PackVector3DF(const Effekseer::Vec3f& v)
 	return ret;
 }
 
-inline Effekseer::Vec3f SafeNormalize(const Effekseer::Vec3f& v)
+inline Effekseer::SIMD::Vec3f SafeNormalize(const Effekseer::SIMD::Vec3f& v)
 {
 	auto lengthSq = v.GetSquaredLength();
 	auto e = 0.0001f;
@@ -843,7 +842,7 @@ inline Effekseer::Vec3f SafeNormalize(const Effekseer::Vec3f& v)
 		return v;
 	}
 
-	return v * Effekseer::Rsqrt(lengthSq);
+	return v * Effekseer::SIMD::Rsqrt(lengthSq);
 }
 
 struct MaterialShaderParameterGenerator
@@ -895,10 +894,10 @@ struct MaterialShaderParameterGenerator
 		{
 			int32_t vsOffset = 0;
 			VertexProjectionMatrixOffset = vsOffset;
-			vsOffset += sizeof(Effekseer::Mat44f);
+			vsOffset += sizeof(Effekseer::SIMD::Mat44f);
 
 			VertexModelMatrixOffset = vsOffset;
-			vsOffset += sizeof(Effekseer::Mat44f) * instanceCount;
+			vsOffset += sizeof(Effekseer::SIMD::Mat44f) * instanceCount;
 
 			VertexModelUVOffset = vsOffset;
 			vsOffset += sizeof(float) * 4 * instanceCount;
@@ -936,10 +935,10 @@ struct MaterialShaderParameterGenerator
 		{
 			int32_t vsOffset = 0;
 			VertexCameraMatrixOffset = vsOffset;
-			vsOffset += sizeof(Effekseer::Mat44f);
+			vsOffset += sizeof(Effekseer::SIMD::Mat44f);
 
 			VertexProjectionMatrixOffset = vsOffset;
-			vsOffset += sizeof(Effekseer::Mat44f);
+			vsOffset += sizeof(Effekseer::SIMD::Mat44f);
 
 			VertexInversedFlagOffset = vsOffset;
 			vsOffset += sizeof(float) * 4;
@@ -982,7 +981,7 @@ struct MaterialShaderParameterGenerator
 		if (material.GetHasRefraction() && stage == 1)
 		{
 			PixelCameraMatrixOffset = psOffset;
-			psOffset += sizeof(Effekseer::Mat44f);
+			psOffset += sizeof(Effekseer::SIMD::Mat44f);
 		}
 
 		PixelUserUniformOffset = psOffset;

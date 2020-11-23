@@ -19,7 +19,7 @@
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
-#include "SIMD/Effekseer.SIMDUtils.h"
+#include "SIMD/Utils.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -289,7 +289,7 @@ struct LocationAbsParameter
 
 		} none;
 
-		Vec3f gravity;
+		SIMD::Vec3f gravity;
 
 		struct
 		{
@@ -1471,7 +1471,7 @@ enum eRenderingOrder
 @note
 エフェクトのノードの実体を生成する。
 */
-class EffectNodeImplemented : public EffectNode, public AlignedAllocationPolicy<16>
+class EffectNodeImplemented : public EffectNode, public SIMD::AlignedAllocationPolicy<16>
 {
 	friend class Manager;
 	friend class EffectImplemented;
@@ -1523,7 +1523,7 @@ public:
 	ParameterTranslationType TranslationType;
 	ParameterTranslationFixed TranslationFixed;
 	ParameterTranslationPVA TranslationPVA;
-	ParameterEasingVec3f TranslationEasing;
+	ParameterEasingSIMDVec3 TranslationEasing;
 	// ParameterTranslationEasing TranslationEasing;
 	FCurveVector3D* TranslationFCurve;
 	ParameterTranslationNurbsCurve TranslationNurbsCurve;
@@ -1534,7 +1534,7 @@ public:
 	ParameterRotationFixed RotationFixed;
 	ParameterRotationPVA RotationPVA;
 
-	ParameterEasingVec3f RotationEasing;
+	ParameterEasingSIMDVec3 RotationEasing;
 	// ParameterRotationEasing RotationEasing;
 	FCurveVector3D* RotationFCurve;
 
@@ -1544,7 +1544,7 @@ public:
 	ParameterScalingType ScalingType;
 	ParameterScalingFixed ScalingFixed;
 	ParameterScalingPVA ScalingPVA;
-	ParameterEasingVec3f ScalingEasing;
+	ParameterEasingSIMDVec3 ScalingEasing;
 	// ParameterScalingEasing ScalingEasing;
 	ParameterScalingSinglePVA ScalingSinglePVA;
 	easing_float ScalingSingleEasing;

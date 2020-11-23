@@ -6,12 +6,12 @@ namespace EffekseerRenderer
 {
 
 void CalcBillboard(::Effekseer::BillboardType billboardType,
-				   Effekseer::Mat43f& dst,
-				   ::Effekseer::Vec3f& s,
-				   ::Effekseer::Vec3f& R,
-				   ::Effekseer::Vec3f& F,
-				   const ::Effekseer::Mat43f& src,
-				   const ::Effekseer::Vec3f& frontDirection)
+				   Effekseer::SIMD::Mat43f& dst,
+				   ::Effekseer::SIMD::Vec3f& s,
+				   ::Effekseer::SIMD::Vec3f& R,
+				   ::Effekseer::SIMD::Vec3f& F,
+				   const ::Effekseer::SIMD::Mat43f& src,
+				   const ::Effekseer::SIMD::Vec3f& frontDirection)
 {
 	auto frontDir = frontDirection;
 
@@ -20,29 +20,29 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 	if (billboardType == ::Effekseer::BillboardType::Billboard || billboardType == ::Effekseer::BillboardType::RotatedBillboard ||
 		billboardType == ::Effekseer::BillboardType::YAxisFixed)
 	{
-		::Effekseer::Mat43f r;
-		::Effekseer::Vec3f t;
+		::Effekseer::SIMD::Mat43f r;
+		::Effekseer::SIMD::Vec3f t;
 		src.GetSRT(s, r, t);
 
-		::Effekseer::Vec3f U;
+		::Effekseer::SIMD::Vec3f U;
 
 		if (billboardType == ::Effekseer::BillboardType::Billboard)
 		{
-			::Effekseer::Vec3f Up(0.0f, 1.0f, 0.0f);
+			::Effekseer::SIMD::Vec3f Up(0.0f, 1.0f, 0.0f);
 
 			F = frontDir;
-			R = ::Effekseer::Vec3f::Cross(Up, F).Normalize();
-			U = ::Effekseer::Vec3f::Cross(F, R).Normalize();
+			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).Normalize();
+			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).Normalize();
 		}
 		else if (billboardType == ::Effekseer::BillboardType::RotatedBillboard)
 		{
-			::Effekseer::Vec3f Up(0.0f, 1.0f, 0.0f);
+			::Effekseer::SIMD::Vec3f Up(0.0f, 1.0f, 0.0f);
 
 			F = frontDir;
-			R = ::Effekseer::Vec3f::Cross(Up, F).Normalize();
-			U = ::Effekseer::Vec3f::Cross(F, R).Normalize();
+			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).Normalize();
+			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).Normalize();
 
-			float c_zx2 = Effekseer::Vec3f::Dot(r.Y, r.Y) - r.Y.GetZ() * r.Y.GetZ();
+			float c_zx2 = Effekseer::SIMD::Vec3f::Dot(r.Y, r.Y) - r.Y.GetZ() * r.Y.GetZ();
 			float c_zx = sqrt(std::max(0.0f, c_zx2));
 			float s_z = 0.0f;
 			float c_z = 0.0f;
@@ -58,18 +58,18 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 				c_z = 1.0f;
 			}
 
-			::Effekseer::Vec3f r_temp = R;
-			::Effekseer::Vec3f u_temp = U;
+			::Effekseer::SIMD::Vec3f r_temp = R;
+			::Effekseer::SIMD::Vec3f u_temp = U;
 
 			R = r_temp * c_z + u_temp * s_z;
 			U = u_temp * c_z - r_temp * s_z;
 		}
 		else if (billboardType == ::Effekseer::BillboardType::YAxisFixed)
 		{
-			U = ::Effekseer::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
+			U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
 			F = frontDir;
-			R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
-			F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
+			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
+			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
 		}
 
 		dst.X = {R.GetX(), U.GetX(), F.GetX(), t.GetX()};
@@ -78,7 +78,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 	}
 }
 
-static void FastScale(::Effekseer::Mat43f& mat, float scale)
+static void FastScale(::Effekseer::SIMD::Mat43f& mat, float scale)
 {
 	float x = mat.X.GetW();
 	float y = mat.Y.GetW();
@@ -93,7 +93,7 @@ static void FastScale(::Effekseer::Mat43f& mat, float scale)
 	mat.Z.SetW(z);
 }
 
-static void FastScale(::Effekseer::Mat44f& mat, float scale)
+static void FastScale(::Effekseer::SIMD::Mat44f& mat, float scale)
 {
 	float x = mat.X.GetW();
 	float y = mat.Y.GetW();
@@ -108,9 +108,9 @@ static void FastScale(::Effekseer::Mat44f& mat, float scale)
 	mat.Z.SetW(z);
 }
 
-void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {
@@ -172,11 +172,11 @@ void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 	}
 }
 
-void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-						  ::Effekseer::Vec3f& translationValues,
-						  ::Effekseer::Vec3f& scaleValues,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
+						  ::Effekseer::SIMD::Vec3f& translationValues,
+						  ::Effekseer::SIMD::Vec3f& scaleValues,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {
@@ -240,10 +240,10 @@ void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 	}
 }
 
-void ApplyDepthParameters(::Effekseer::Mat43f& mat,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
-						  ::Effekseer::Vec3f& scaleValues,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
+						  ::Effekseer::SIMD::Vec3f& scaleValues,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {
@@ -302,9 +302,9 @@ void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 	}
 }
 
-void ApplyDepthParameters(::Effekseer::Mat44f& mat,
-						  const ::Effekseer::Vec3f& cameraFront,
-						  const ::Effekseer::Vec3f& cameraPos,
+void ApplyDepthParameters(::Effekseer::SIMD::Mat44f& mat,
+						  const ::Effekseer::SIMD::Vec3f& cameraFront,
+						  const ::Effekseer::SIMD::Vec3f& cameraPos,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {
@@ -365,36 +365,36 @@ void ApplyDepthParameters(::Effekseer::Mat44f& mat,
 	}
 }
 
-void ApplyViewOffset(::Effekseer::Mat43f& mat,
-					 const ::Effekseer::Mat44f& camera,
+void ApplyViewOffset(::Effekseer::SIMD::Mat43f& mat,
+					 const ::Effekseer::SIMD::Mat44f& camera,
 					 float distance)
 {
 	::Effekseer::Matrix44 cameraMat;
 	::Effekseer::Matrix44::Inverse(cameraMat, ToStruct(camera));
 
-	::Effekseer::Vec3f ViewOffset = ::Effekseer::Vec3f::Load(cameraMat.Values[3]) + -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * distance;
+	::Effekseer::SIMD::Vec3f ViewOffset = ::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[3]) + -::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[2]) * distance;
 
-	::Effekseer::Vec3f localPos = mat.GetTranslation();
-	ViewOffset += (::Effekseer::Vec3f::Load(cameraMat.Values[0]) * localPos.GetX()+ 
-				   ::Effekseer::Vec3f::Load(cameraMat.Values[1]) * localPos.GetY() + 
-				   -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * localPos.GetZ());
+	::Effekseer::SIMD::Vec3f localPos = mat.GetTranslation();
+	ViewOffset += (::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[0]) * localPos.GetX()+ 
+				   ::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[1]) * localPos.GetY() + 
+				   -::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[2]) * localPos.GetZ());
 
 	mat.SetTranslation(ViewOffset);
 }
 
-void ApplyViewOffset(::Effekseer::Mat44f& mat,
-					 const ::Effekseer::Mat44f& camera,
+void ApplyViewOffset(::Effekseer::SIMD::Mat44f& mat,
+					 const ::Effekseer::SIMD::Mat44f& camera,
 					 float distance)
 {
 	::Effekseer::Matrix44 cameraMat;
 	::Effekseer::Matrix44::Inverse(cameraMat, ToStruct(camera));
 
-	::Effekseer::Vec3f ViewOffset = ::Effekseer::Vec3f::Load(cameraMat.Values[3]) + -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * distance;
+	::Effekseer::SIMD::Vec3f ViewOffset = ::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[3]) + -::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[2]) * distance;
 
-	::Effekseer::Vec3f localPos = mat.GetTranslation();
-	ViewOffset += (::Effekseer::Vec3f::Load(cameraMat.Values[0]) * localPos.GetX()+ 
-				   ::Effekseer::Vec3f::Load(cameraMat.Values[1]) * localPos.GetY() + 
-				   -::Effekseer::Vec3f::Load(cameraMat.Values[2]) * localPos.GetZ());
+	::Effekseer::SIMD::Vec3f localPos = mat.GetTranslation();
+	ViewOffset += (::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[0]) * localPos.GetX()+ 
+				   ::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[1]) * localPos.GetY() + 
+				   -::Effekseer::SIMD::Vec3f::Load(cameraMat.Values[2]) * localPos.GetZ());
 
 	mat.SetTranslation(ViewOffset);
 }

@@ -10,6 +10,7 @@ namespace EffekseerRendererMetal
 }
 
 #endif
+
 #ifndef __EFFEKSEERRENDERER_RENDERER_H__
 #define __EFFEKSEERRENDERER_RENDERER_H__
 
@@ -131,7 +132,7 @@ protected:
 	virtual ~Renderer();
 
 	class Impl;
-	Impl* impl = nullptr;
+	std::unique_ptr<Impl> impl;
 
 public:
 	/**
@@ -484,11 +485,11 @@ public:
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
 ::Effekseer::Backend::GraphicsDevice* CreateDevice();
 

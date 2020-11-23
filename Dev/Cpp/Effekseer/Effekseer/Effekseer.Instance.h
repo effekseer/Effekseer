@@ -7,11 +7,11 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 
-#include "SIMD/Effekseer.Mat43f.h"
-#include "SIMD/Effekseer.Mat44f.h"
-#include "SIMD/Effekseer.Vec2f.h"
-#include "SIMD/Effekseer.Vec3f.h"
-#include "SIMD/Effekseer.Vec4f.h"
+#include "SIMD/Mat43f.h"
+#include "SIMD/Mat44f.h"
+#include "SIMD/Vec2f.h"
+#include "SIMD/Vec3f.h"
+#include "SIMD/Vec4f.h"
 
 #include "Effekseer.Color.h"
 #include "Effekseer.IntrusiveList.h"
@@ -38,18 +38,18 @@ struct InstanceCustomData
 	{
 		struct
 		{
-			Vec2f start;
-			Vec2f end;
+			SIMD::Vec2f start;
+			SIMD::Vec2f end;
 		} easing;
 
 		struct
 		{
-			Vec2f value;
+			SIMD::Vec2f value;
 		} random;
 
 		struct
 		{
-			Vec2f offset;
+			SIMD::Vec2f offset;
 		} fcruve;
 
 		struct
@@ -72,11 +72,11 @@ protected:
 	InstanceCustomData customDataValues1;
 	InstanceCustomData customDataValues2;
 
-	Vec3f prevPosition_;
-	Vec3f prevGlobalPosition_;
+	SIMD::Vec3f prevPosition_;
+	SIMD::Vec3f prevGlobalPosition_;
 
-	Vec3f parentPosition_;
-	Vec3f steeringVec_;
+	SIMD::Vec3f parentPosition_;
+	SIMD::Vec3f steeringVec_;
 
 public:
 	static const int32_t ChildrenMax = 16;
@@ -122,28 +122,28 @@ public:
 	{
 		struct
 		{
-			Vec3f location;
+			SIMD::Vec3f location;
 		} fixed;
 
 		struct
 		{
-			Vec3f location;
-			Vec3f velocity;
-			Vec3f acceleration;
+			SIMD::Vec3f location;
+			SIMD::Vec3f velocity;
+			SIMD::Vec3f acceleration;
 		} random;
 
-		InstanceEasing<Vec3f> easing;
+		InstanceEasing<SIMD::Vec3f> easing;
 		/*
 		struct
 		{
-			Vec3f start;
-			Vec3f end;
+			SIMD::Vec3f start;
+			SIMD::Vec3f end;
 		} easing;
 		*/
 
 		struct
 		{
-			Vec3f offset;
+			SIMD::Vec3f offset;
 		} fcruve;
 
 		struct
@@ -157,29 +157,29 @@ public:
 	{
 		struct
 		{
-			Vec3f rotation;
+			SIMD::Vec3f rotation;
 		} fixed;
 
 		struct
 		{
-			Vec3f rotation;
-			Vec3f velocity;
-			Vec3f acceleration;
+			SIMD::Vec3f rotation;
+			SIMD::Vec3f velocity;
+			SIMD::Vec3f acceleration;
 		} random;
 
-		InstanceEasing<Vec3f> easing;
+		InstanceEasing<SIMD::Vec3f> easing;
 		/*
 		struct
 		{
-			Vec3f start;
-			Vec3f end;
+			SIMD::Vec3f start;
+			SIMD::Vec3f end;
 		} easing;
 		*/
 
 		struct
 		{
 			float rotation;
-			Vec3f axis;
+			SIMD::Vec3f axis;
 
 			union
 			{
@@ -200,7 +200,7 @@ public:
 
 		struct
 		{
-			Vec3f offset;
+			SIMD::Vec3f offset;
 		} fcruve;
 
 	} rotation_values;
@@ -209,23 +209,23 @@ public:
 	{
 		struct
 		{
-			Vec3f scale;
+			SIMD::Vec3f scale;
 		} fixed;
 
 		struct
 		{
-			Vec3f scale;
-			Vec3f velocity;
-			Vec3f acceleration;
+			SIMD::Vec3f scale;
+			SIMD::Vec3f velocity;
+			SIMD::Vec3f acceleration;
 		} random;
 
-		InstanceEasing<Vec3f> easing;
+		InstanceEasing<SIMD::Vec3f> easing;
 
 		/*
 		struct
 		{
-			Vec3f start;
-			Vec3f end;
+			SIMD::Vec3f start;
+			SIMD::Vec3f end;
 		} easing;
 		*/
 
@@ -244,7 +244,7 @@ public:
 
 		struct
 		{
-			Vec3f offset;
+			SIMD::Vec3f offset;
 		} fcruve;
 
 		struct
@@ -286,7 +286,7 @@ public:
 	RectF uvAreaOffsets[ParameterRendererCommon::UVParameterNum];
 
 	// Scroll speed for UV
-	Vec2f uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
+	SIMD::Vec2f uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
 
 	// The number of generated chiledren. (fixed size)
 	int32_t m_fixedGeneratedChildrenCount[ChildrenMax];
@@ -316,13 +316,13 @@ public:
 	float* m_nextGenerationTime;
 
 	// Spawning Method matrix
-	Mat43f m_GenerationLocation;
+	SIMD::Mat43f m_GenerationLocation;
 
 	// 変換用行列
-	Mat43f m_GlobalMatrix43;
+	SIMD::Mat43f m_GlobalMatrix43;
 
 	// 親の変換用行列
-	Mat43f m_ParentMatrix;
+	SIMD::Mat43f m_ParentMatrix;
 
 	// FirstUpdate実行前
 	bool m_IsFirstTime;
@@ -396,12 +396,12 @@ public:
 	/**
 		@brief	行列の取得
 	*/
-	const Mat43f& GetGlobalMatrix43() const;
+	const SIMD::Mat43f& GetGlobalMatrix43() const;
 
 	/**
 		@brief	初期化
 	*/
-	void Initialize(Instance* parent, int32_t instanceNumber, const Mat43f& globalMatrix);
+	void Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix);
 
 	/**
 		@brief	初回の更新

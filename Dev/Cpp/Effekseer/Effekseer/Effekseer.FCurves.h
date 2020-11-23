@@ -5,8 +5,8 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.InternalStruct.h"
 #include "Effekseer.Random.h"
-#include "SIMD/Effekseer.Vec2f.h"
-#include "SIMD/Effekseer.Vec3f.h"
+#include "SIMD/Vec2f.h"
+#include "SIMD/Vec3f.h"
 
 namespace Effekseer
 {
@@ -78,8 +78,8 @@ public:
 
 	int32_t Load(void* data, int32_t version);
 
-	Vec2f GetValues(float living, float life) const;
-	Vec2f GetOffsets(IRandObject& g) const;
+	SIMD::Vec2f GetValues(float living, float life) const;
+	SIMD::Vec2f GetOffsets(IRandObject& g) const;
 };
 
 class FCurveVector3D
@@ -92,8 +92,8 @@ public:
 
 	int32_t Load(void* data, int32_t version);
 
-	Vec3f GetValues(float living, float life) const;
-	Vec3f GetOffsets(IRandObject& g) const;
+	SIMD::Vec3f GetValues(float living, float life) const;
+	SIMD::Vec3f GetOffsets(IRandObject& g) const;
 };
 
 class FCurveVectorColor

@@ -297,9 +297,9 @@ private:
 		fc[3] = color.A / 255.0f;
 	}
 
-	void VectorToFloat4(const ::Effekseer::Vec3f& v, float fc[4])
+	void VectorToFloat4(const ::Effekseer::SIMD::Vec3f& v, float fc[4])
 	{
-		::Effekseer::SIMD4f::Store3(fc, v.s);
+		::Effekseer::SIMD::Float4::Store3(fc, v.s);
 		fc[3] = 1.0f;
 	}
 
@@ -394,7 +394,7 @@ public:
 		return m_state;
 	}
 
-	void Rendering(const Effekseer::Mat44f& mCamera, const Effekseer::Mat44f& mProj)
+	void Rendering(const Effekseer::SIMD::Mat44f& mCamera, const Effekseer::SIMD::Mat44f& mProj)
 	{
 		if (vertexCaches.size() == 0)
 			return;
@@ -441,8 +441,8 @@ public:
 		vertexCaches.clear();
 	}
 
-	void Rendering_(const Effekseer::Mat44f& mCamera,
-					const Effekseer::Mat44f& mProj,
+	void Rendering_(const Effekseer::SIMD::Mat44f& mCamera,
+					const Effekseer::SIMD::Mat44f& mProj,
 					int32_t bufferOffset,
 					int32_t bufferSize,
 					int32_t stride,
@@ -603,7 +603,7 @@ public:
 
 			// camera
 			float cameraPosition[4];
-			::Effekseer::Vec3f cameraPosition3 = m_renderer->GetCameraPosition();
+			::Effekseer::SIMD::Vec3f cameraPosition3 = m_renderer->GetCameraPosition();
 			VectorToFloat4(cameraPosition3, cameraPosition);
 			// time
 			std::array<float, 4> predefined_uniforms;
@@ -652,7 +652,7 @@ public:
 				float lightColor[4];
 				float lightAmbientColor[4];
 
-				::Effekseer::Vec3f lightDirection3 = m_renderer->GetLightDirection();
+				::Effekseer::SIMD::Vec3f lightDirection3 = m_renderer->GetLightDirection();
 				lightDirection3 = lightDirection3.Normalize();
 				VectorToFloat4(lightDirection3, lightDirection);
 				ColorToFloat4(m_renderer->GetLightColor(), lightColor);

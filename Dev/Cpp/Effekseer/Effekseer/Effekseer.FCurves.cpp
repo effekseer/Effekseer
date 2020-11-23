@@ -214,18 +214,18 @@ int32_t FCurveVector2D::Load(void* data, int32_t version)
 	return size;
 }
 
-Vec2f FCurveVector2D::GetValues(float living, float life) const
+SIMD::Vec2f FCurveVector2D::GetValues(float living, float life) const
 {
 	auto x = X.GetValue(living, life, Timeline);
 	auto y = Y.GetValue(living, life, Timeline);
-	return Vec2f{x, y};
+	return SIMD::Vec2f{x, y};
 }
 
-Vec2f FCurveVector2D::GetOffsets(IRandObject& g) const
+SIMD::Vec2f FCurveVector2D::GetOffsets(IRandObject& g) const
 {
 	auto x = X.GetOffset(g);
 	auto y = Y.GetOffset(g);
-	return Vec2f{x, y};
+	return SIMD::Vec2f{x, y};
 }
 
 int32_t FCurveVector3D::Load(void* data, int32_t version)
@@ -255,7 +255,7 @@ int32_t FCurveVector3D::Load(void* data, int32_t version)
 	return size;
 }
 
-Vec3f FCurveVector3D::GetValues(float living, float life) const
+SIMD::Vec3f FCurveVector3D::GetValues(float living, float life) const
 {
 	auto x = X.GetValue(living, life, Timeline);
 	auto y = Y.GetValue(living, life, Timeline);
@@ -263,7 +263,7 @@ Vec3f FCurveVector3D::GetValues(float living, float life) const
 	return {x, y, z};
 }
 
-Vec3f FCurveVector3D::GetOffsets(IRandObject& g) const
+SIMD::Vec3f FCurveVector3D::GetOffsets(IRandObject& g) const
 {
 	auto x = X.GetOffset(g);
 	auto y = Y.GetOffset(g);

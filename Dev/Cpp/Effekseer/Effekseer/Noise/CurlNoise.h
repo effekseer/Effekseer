@@ -1,9 +1,9 @@
 #ifndef __EFFEKSEER_CURL_NOISE_H__
 #define __EFFEKSEER_CURL_NOISE_H__
 
-#include "../SIMD/Effekseer.SIMD4f.h"
-#include "../SIMD/Effekseer.SIMD4i.h"
-#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Float4.h"
+#include "../SIMD/Int4.h"
+#include "../SIMD/Vec3f.h"
 #include "PerlinNoise.h"
 
 namespace Effekseer
@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	Vec3f Get(Vec3f pos) const;
+	SIMD::Vec3f Get(SIMD::Vec3f pos) const;
 };
 
 class LightCurlNoise
@@ -67,7 +67,7 @@ public:
 
 	LightCurlNoise(int32_t seed, float scale, int32_t octave);
 
-	Vec3f Get(Vec3f pos) const;
+	SIMD::Vec3f Get(SIMD::Vec3f pos) const;
 };
 
 } // namespace Effekseer

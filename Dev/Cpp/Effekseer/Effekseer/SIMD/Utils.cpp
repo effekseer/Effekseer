@@ -1,12 +1,15 @@
-#include "Effekseer.SIMDUtils.h"
+#include "Utils.h"
 #include "../Effekseer.InternalStruct.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
-#include "Effekseer.Vec2f.h"
-#include "Effekseer.Vec3f.h"
-#include "Effekseer.Vec4f.h"
+#include "Vec2f.h"
+#include "Vec3f.h"
+#include "Vec4f.h"
 
 namespace Effekseer
+{
+	
+namespace SIMD
 {
 
 //----------------------------------------------------------------------------------
@@ -36,5 +39,7 @@ Vec3f::Vec3f(const std::array<float, 3>& vec)
 	: s(vec[0], vec[1], vec[2], 0.0f)
 {
 }
+
+} // namespace SIMD
 
 } // namespace Effekseer

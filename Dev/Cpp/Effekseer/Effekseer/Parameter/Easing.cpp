@@ -63,11 +63,11 @@ void ParameterEasingFloat::Init(InstanceEasingType& instance, Effect* e, Instanc
 	}
 }
 
-Vec3f ParameterEasingVec3f::GetValue(const InstanceEasingType& instance, float time)
+SIMD::Vec3f ParameterEasingSIMDVec3::GetValue(const InstanceEasingType& instance, float time)
 {
 	if (isIndividualEnabled)
 	{
-		std::array<Vec3f, 3> values;
+		std::array<SIMD::Vec3f, 3> values;
 
 		for (size_t i = 0; i < 3; i++)
 		{
@@ -83,7 +83,7 @@ Vec3f ParameterEasingVec3f::GetValue(const InstanceEasingType& instance, float t
 			}
 		}
 
-		return Vec3f(values[0].GetX(), values[1].GetY(), values[2].GetZ());
+		return SIMD::Vec3f(values[0].GetX(), values[1].GetY(), values[2].GetZ());
 	}
 	else
 	{
@@ -98,7 +98,7 @@ Vec3f ParameterEasingVec3f::GetValue(const InstanceEasingType& instance, float t
 	}
 }
 
-void ParameterEasingVec3f::Init(InstanceEasingType& instance, Effect* e, InstanceGlobal* instg, Instance* parent, IRandObject* rand, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv)
+void ParameterEasingSIMDVec3::Init(InstanceEasingType& instance, Effect* e, InstanceGlobal* instg, Instance* parent, IRandObject* rand, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv)
 {
 	auto rvs = ApplyEq(e,
 					   instg,

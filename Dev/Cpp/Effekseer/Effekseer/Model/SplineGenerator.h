@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_SPLINE_GENERATOR_H__
 #define __EFFEKSEER_SPLINE_GENERATOR_H__
 
-#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Vec3f.h"
 #include "../Utils/Effekseer.CustomAllocator.h"
 #include <cstdint>
 #include <vector>
@@ -17,16 +17,16 @@ namespace Effekseer
 */
 class SplineGenerator
 {
-	CustomAlignedVector<Vec3f> a;
-	CustomAlignedVector<Vec3f> b;
-	CustomAlignedVector<Vec3f> c;
-	CustomAlignedVector<Vec3f> d;
-	CustomAlignedVector<Vec3f> w;
+	CustomAlignedVector<SIMD::Vec3f> a;
+	CustomAlignedVector<SIMD::Vec3f> b;
+	CustomAlignedVector<SIMD::Vec3f> c;
+	CustomAlignedVector<SIMD::Vec3f> d;
+	CustomAlignedVector<SIMD::Vec3f> w;
 	CustomVector<bool> isSame;
 	CustomVector<float> distances_;
 
 public:
-	void AddVertex(const Vec3f& v);
+	void AddVertex(const SIMD::Vec3f& v);
 
 	void Calculate();
 
@@ -34,7 +34,7 @@ public:
 
 	void Reset();
 
-	Vec3f GetValue(float t) const;
+	SIMD::Vec3f GetValue(float t) const;
 };
 
 } // namespace Effekseer

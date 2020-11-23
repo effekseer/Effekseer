@@ -8,8 +8,8 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.EffectNodeTrack.h"
 #include "Effekseer.IntrusiveList.h"
-#include "SIMD/Effekseer.Mat43f.h"
-#include "SIMD/Effekseer.Vec3f.h"
+#include "SIMD/Mat43f.h"
+#include "SIMD/Vec3f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -37,10 +37,10 @@ private:
 	InstanceGlobal* m_global;
 	int32_t m_time;
 
-	Mat43f parentMatrix_;
-	Mat43f parentRotation_;
-	Vec3f parentTranslation_;
-	Vec3f parentScale_;
+	SIMD::Mat43f parentMatrix_;
+	SIMD::Mat43f parentRotation_;
+	SIMD::Vec3f parentTranslation_;
+	SIMD::Vec3f parentScale_;
 
 	// インスタンスの実体
 	IntrusiveList<Instance> m_instances;
@@ -71,9 +71,9 @@ public:
 
 	void Update(bool shown);
 
-	void SetBaseMatrix(const Mat43f& mat);
+	void SetBaseMatrix(const SIMD::Mat43f& mat);
 
-	void SetParentMatrix(const Mat43f& mat);
+	void SetParentMatrix(const SIMD::Mat43f& mat);
 
 	void RemoveForcibly();
 
@@ -104,19 +104,19 @@ public:
 		return m_global;
 	}
 
-	const Mat43f& GetParentMatrix() const
+	const SIMD::Mat43f& GetParentMatrix() const
 	{
 		return parentMatrix_;
 	}
-	const Vec3f& GetParentTranslation() const
+	const SIMD::Vec3f& GetParentTranslation() const
 	{
 		return parentTranslation_;
 	}
-	const Mat43f& GetParentRotation() const
+	const SIMD::Mat43f& GetParentRotation() const
 	{
 		return parentRotation_;
 	}
-	const Vec3f& GetParentScale() const
+	const SIMD::Vec3f& GetParentScale() const
 	{
 		return parentScale_;
 	}

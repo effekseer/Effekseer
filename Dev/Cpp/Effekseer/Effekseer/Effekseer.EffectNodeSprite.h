@@ -56,10 +56,10 @@ struct SpritePositionParameter
 
 		struct
 		{
-			Vec2f ll;
-			Vec2f lr;
-			Vec2f ul;
-			Vec2f ur;
+			SIMD::Vec2f ll;
+			SIMD::Vec2f lr;
+			SIMD::Vec2f ul;
+			SIMD::Vec2f ur;
 		} fixed;
 	};
 };

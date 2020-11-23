@@ -1,3 +1,4 @@
+import os
 import re
 import codecs
 
@@ -11,21 +12,21 @@ class CreateHeader:
 		self.lines = []
 
 	def addLine(self,line):
-		self.lines.append(line + '\n')
+		self.lines.append(line)
 
 	def readLines(self,path):
 		f = codecs.open(path, 'r','utf-8_sig')
 		line = f.readline()
 		while line:
 			if isValidLine(line):
- 	 			self.lines.append(line)
+ 	 			self.lines.append(line.strip(os.linesep))
 			line = f.readline()
 		f.close()
 
 	def output(self,path):
 		f = codecs.open(path, 'w','utf-8_sig')
 		for line in self.lines:
-			f.write(line)
+			f.write(line + os.linesep)
 		f.close()
 
 
@@ -42,51 +43,58 @@ effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.File.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.DefaultFile.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Effect.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Manager.h')
-
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.EffectLoader.h')
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.TextureLoader.h')
-effekseerHeader.readLines('Effekseer/Effekseer/Model/ModelLoader.h')
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.MaterialLoader.h')
-
-effekseerHeader.readLines('Effekseer/Effekseer/Model/Model.h')
-
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Curve.h')
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.CurveLoader.h')
-
-effekseerHeader.readLines('Effekseer/Effekseer/Sound/Effekseer.SoundPlayer.h')
-
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.SoundLoader.h')
-
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Setting.h')
-
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Server.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Client.h')
-
 effekseerHeader.readLines('Effekseer/Effekseer/Backend/GraphicsDevice.h')
-
+effekseerHeader.addLine('')
+effekseerHeader.addLine('#include "Effekseer.Modules.h"')
+effekseerHeader.addLine('')
 effekseerHeader.output('Effekseer/Effekseer.h')
 
-effekseerInternalHeader = CreateHeader()
-effekseerInternalHeader.addLine('#pragma once')
-effekseerInternalHeader.addLine('#include "Effekseer.h"')
-effekseerInternalHeader.addLine('#include "Effekseer/SIMD/Effekseer.Vec2f.h"')
-effekseerInternalHeader.addLine('#include "Effekseer/SIMD/Effekseer.Vec3f.h"')
-effekseerInternalHeader.addLine('#include "Effekseer/SIMD/Effekseer.Vec4f.h"')
-effekseerInternalHeader.addLine('#include "Effekseer/SIMD/Effekseer.Mat43f.h"')
-effekseerInternalHeader.addLine('#include "Effekseer/SIMD/Effekseer.Mat44f.h"')
-effekseerInternalHeader.addLine('#include "Effekseer/SIMD/Effekseer.SIMDUtils.h"')
-effekseerInternalHeader.addLine('')
-effekseerInternalHeader.addLine('// A header to access internal data of effekseer')
-effekseerInternalHeader.addLine('')
+effekseerSimdHeader = CreateHeader()
+effekseerSimdHeader.addLine('#pragma once')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Base.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Float4_Gen.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Float4_NEON.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Float4_SSE.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Int4_Gen.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Int4_NEON.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Int4_SSE.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Bridge_Gen.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Bridge_NEON.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Bridge_SSE.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Vec2f.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Vec3f.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Vec4f.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Mat43f.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Mat44f.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Utils.h')
+effekseerSimdHeader.output('Effekseer/Effekseer.SIMD.h')
 
-effekseerInternalHeader.readLines('Effekseer/Effekseer/Parameter/Effekseer.Parameters.h')
-effekseerInternalHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.SpriteRenderer.h')
-effekseerInternalHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.RibbonRenderer.h')
-effekseerInternalHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.RingRenderer.h')
-effekseerInternalHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.ModelRenderer.h')
-effekseerInternalHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.TrackRenderer.h')
-
-effekseerInternalHeader.output('Effekseer/Effekseer.Internal.h')
+effekseerModulesHeader = CreateHeader()
+effekseerModulesHeader.addLine('#pragma once')
+effekseerModulesHeader.addLine('')
+effekseerModulesHeader.addLine('#include "Effekseer.h"')
+effekseerModulesHeader.addLine('#include "Effekseer.SIMD.h"')
+effekseerModulesHeader.addLine('')
+effekseerModulesHeader.addLine('// A header to access internal data of effekseer')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Parameter/Effekseer.Parameters.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.SpriteRenderer.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.RibbonRenderer.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.RingRenderer.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.ModelRenderer.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.TrackRenderer.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Effekseer.EffectLoader.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Effekseer.TextureLoader.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Model/ModelLoader.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Effekseer.MaterialLoader.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Model/Model.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Effekseer.Curve.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Effekseer.CurveLoader.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Sound/Effekseer.SoundPlayer.h')
+effekseerModulesHeader.readLines('Effekseer/Effekseer/Effekseer.SoundLoader.h')
+effekseerModulesHeader.output('Effekseer/Effekseer.Modules.h')
 
 effekseerRendererDX9Header = CreateHeader()
 effekseerRendererDX9Header.readLines('EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Base.Pre.h')

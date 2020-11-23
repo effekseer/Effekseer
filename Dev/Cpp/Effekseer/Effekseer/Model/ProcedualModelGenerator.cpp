@@ -3,7 +3,7 @@
 #include "../Model/Model.h"
 #include "../Noise/CurlNoise.h"
 #include "../Noise/PerlinNoise.h"
-#include "../SIMD/Effekseer.SIMDUtils.h"
+#include "../SIMD/Utils.h"
 #include "ProcedualModelParameter.h"
 #include "SplineGenerator.h"
 
@@ -16,10 +16,10 @@ namespace Effekseer
 
 struct ProcedualMeshVertex
 {
-	Vec3f Position;
-	Vec3f Normal;
-	Vec3f Tangent;
-	Vec2f UV;
+	SIMD::Vec3f Position;
+	SIMD::Vec3f Normal;
+	SIMD::Vec3f Tangent;
+	SIMD::Vec2f UV;
 	Color VColor;
 };
 
@@ -58,25 +58,25 @@ static float CalcSineWave(float x, float frequency, float offset, float power)
 	return sinf(x * frequency + offset) * power;
 }
 
-static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshVertex& v2, const ProcedualMeshVertex& v3, Vec3f& binormal, Vec3f& tangent)
+static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshVertex& v2, const ProcedualMeshVertex& v3, SIMD::Vec3f& binormal, SIMD::Vec3f& tangent)
 {
-	binormal = Vec3f();
-	tangent = Vec3f();
+	binormal = SIMD::Vec3f();
+	tangent = SIMD::Vec3f();
 
-	Vec3f cp0[3];
-	cp0[0] = Vec3f(v1.Position.GetX(), v1.UV.GetX(), v1.UV.GetY());
-	cp0[1] = Vec3f(v1.Position.GetY(), v1.UV.GetX(), v1.UV.GetY());
-	cp0[2] = Vec3f(v1.Position.GetZ(), v1.UV.GetX(), v1.UV.GetY());
+	SIMD::Vec3f cp0[3];
+	cp0[0] = SIMD::Vec3f(v1.Position.GetX(), v1.UV.GetX(), v1.UV.GetY());
+	cp0[1] = SIMD::Vec3f(v1.Position.GetY(), v1.UV.GetX(), v1.UV.GetY());
+	cp0[2] = SIMD::Vec3f(v1.Position.GetZ(), v1.UV.GetX(), v1.UV.GetY());
 
-	Vec3f cp1[3];
-	cp1[0] = Vec3f(v2.Position.GetX(), v2.UV.GetX(), v2.UV.GetY());
-	cp1[1] = Vec3f(v2.Position.GetY(), v2.UV.GetX(), v2.UV.GetY());
-	cp1[2] = Vec3f(v2.Position.GetZ(), v2.UV.GetX(), v2.UV.GetY());
+	SIMD::Vec3f cp1[3];
+	cp1[0] = SIMD::Vec3f(v2.Position.GetX(), v2.UV.GetX(), v2.UV.GetY());
+	cp1[1] = SIMD::Vec3f(v2.Position.GetY(), v2.UV.GetX(), v2.UV.GetY());
+	cp1[2] = SIMD::Vec3f(v2.Position.GetZ(), v2.UV.GetX(), v2.UV.GetY());
 
-	Vec3f cp2[3];
-	cp2[0] = Vec3f(v3.Position.GetX(), v3.UV.GetX(), v3.UV.GetY());
-	cp2[1] = Vec3f(v3.Position.GetY(), v3.UV.GetX(), v3.UV.GetY());
-	cp2[2] = Vec3f(v3.Position.GetZ(), v3.UV.GetX(), v3.UV.GetY());
+	SIMD::Vec3f cp2[3];
+	cp2[0] = SIMD::Vec3f(v3.Position.GetX(), v3.UV.GetX(), v3.UV.GetY());
+	cp2[1] = SIMD::Vec3f(v3.Position.GetY(), v3.UV.GetX(), v3.UV.GetY());
+	cp2[2] = SIMD::Vec3f(v3.Position.GetZ(), v3.UV.GetX(), v3.UV.GetY());
 
 	float u[3];
 	float v[3];
@@ -85,7 +85,7 @@ static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshV
 	{
 		auto v1 = cp1[i] - cp0[i];
 		auto v2 = cp2[i] - cp1[i];
-		auto abc = Vec3f::Cross(v1, v2);
+		auto abc = SIMD::Vec3f::Cross(v1, v2);
 
 		if (abc.GetX() == 0.0f)
 		{
@@ -98,25 +98,25 @@ static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshV
 		}
 	}
 
-	tangent = Vec3f(u[0], u[1], u[2]);
+	tangent = SIMD::Vec3f(u[0], u[1], u[2]);
 	tangent.Normalize();
 
-	binormal = Vec3f(v[0], v[1], v[2]);
+	binormal = SIMD::Vec3f(v[0], v[1], v[2]);
 	binormal.Normalize();
 }
 
 static void CalculateNormal(ProcedualMesh& mesh)
 {
-	CustomAlignedVector<Vec3f> faceNormals;
-	CustomAlignedVector<Vec3f> faceTangents;
+	CustomAlignedVector<SIMD::Vec3f> faceNormals;
+	CustomAlignedVector<SIMD::Vec3f> faceTangents;
 
 	faceNormals.resize(mesh.Faces.size());
 	faceTangents.resize(mesh.Faces.size());
 
 	for (size_t i = 0; i < faceNormals.size(); i++)
 	{
-		faceNormals[i] = Vec3f(0.0f, 0.0f, 0.0f);
-		faceTangents[i] = Vec3f(0.0f, 0.0f, 0.0f);
+		faceNormals[i] = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
+		faceTangents[i] = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 	}
 
 	for (size_t i = 0; i < mesh.Faces.size(); i++)
@@ -124,20 +124,20 @@ static void CalculateNormal(ProcedualMesh& mesh)
 		const auto& v1 = mesh.Vertexes[mesh.Faces[i].Indexes[0]];
 		const auto& v2 = mesh.Vertexes[mesh.Faces[i].Indexes[1]];
 		const auto& v3 = mesh.Vertexes[mesh.Faces[i].Indexes[2]];
-		const auto normal = Vec3f::Cross(v3.Position - v1.Position, v2.Position - v1.Position).Normalize();
+		const auto normal = SIMD::Vec3f::Cross(v3.Position - v1.Position, v2.Position - v1.Position).Normalize();
 
 		faceNormals[i] = normal;
-		Vec3f binotmal;
-		Vec3f tangent;
+		SIMD::Vec3f binotmal;
+		SIMD::Vec3f tangent;
 
 		CalcTangentSpace(v1, v2, v3, binotmal, tangent);
 
 		faceTangents[i] = tangent;
 	}
 
-	CustomAlignedUnorderedMap<Vec3f, Vec3f> normals;
-	CustomAlignedUnorderedMap<Vec3f, Vec3f> tangents;
-	CustomAlignedUnorderedMap<Vec3f, int32_t> vertexCounts;
+	CustomAlignedUnorderedMap<SIMD::Vec3f, SIMD::Vec3f> normals;
+	CustomAlignedUnorderedMap<SIMD::Vec3f, SIMD::Vec3f> tangents;
+	CustomAlignedUnorderedMap<SIMD::Vec3f, int32_t> vertexCounts;
 
 	for (size_t i = 0; i < mesh.Faces.size(); i++)
 	{
@@ -147,8 +147,8 @@ static void CalculateNormal(ProcedualMesh& mesh)
 
 			if (normals.count(key) == 0)
 			{
-				normals[key] = Vec3f(0.0f, 0.0f, 0.0f);
-				tangents[key] = Vec3f(0.0f, 0.0f, 0.0f);
+				normals[key] = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
+				tangents[key] = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 				vertexCounts[key] = 0;
 			}
 
@@ -284,7 +284,7 @@ struct RotatorSphere
 	float DepthMin;
 	float DepthMax;
 
-	Vec2f GetPosition(float value) const
+	SIMD::Vec2f GetPosition(float value) const
 	{
 		const auto depthMax = Clamp(DepthMax, 1.0f, -1.0f);
 		const auto depthMin = Clamp(DepthMin, 1.0f, -1.0f);
@@ -295,7 +295,7 @@ struct RotatorSphere
 		value = Clamp(value, 1.0f, 0.0f);
 		float axisPos = (DepthMax - DepthMin) * value + DepthMin;
 
-		return Vec2f(sqrt(Radius * Radius - axisPos * axisPos), axisPos);
+		return SIMD::Vec2f(sqrt(Radius * Radius - axisPos * axisPos), axisPos);
 	}
 };
 
@@ -304,11 +304,11 @@ struct RotatorCone
 	float Radius;
 	float Depth;
 
-	Vec2f GetPosition(float value) const
+	SIMD::Vec2f GetPosition(float value) const
 	{
 		value = Clamp(value, 1.0f, 0.0f);
 		float axisPos = Depth * value;
-		return Vec2f(Radius / Depth * axisPos, axisPos);
+		return SIMD::Vec2f(Radius / Depth * axisPos, axisPos);
 	}
 };
 
@@ -318,11 +318,11 @@ struct RotatorCylinder
 	float Radius2;
 	float Depth;
 
-	Vec2f GetPosition(float value) const
+	SIMD::Vec2f GetPosition(float value) const
 	{
 		value = Clamp(value, 1.0f, 0.0f);
 		float axisPos = Depth * value;
-		return Vec2f((Radius2 - Radius1) / Depth * axisPos + Radius1, axisPos);
+		return SIMD::Vec2f((Radius2 - Radius1) / Depth * axisPos + Radius1, axisPos);
 	}
 };
 
@@ -345,9 +345,9 @@ struct RotatorSpline3
 		generator.AddVertex({Point4[0], Point4[1], 0.0f});
 		generator.Calculate();
 
-		distances_.emplace_back((Vec2f(Point2) - Vec2f(Point1)).Length());
-		distances_.emplace_back((Vec2f(Point3) - Vec2f(Point2)).Length());
-		distances_.emplace_back((Vec2f(Point4) - Vec2f(Point3)).Length());
+		distances_.emplace_back((SIMD::Vec2f(Point2) - SIMD::Vec2f(Point1)).Length());
+		distances_.emplace_back((SIMD::Vec2f(Point3) - SIMD::Vec2f(Point2)).Length());
+		distances_.emplace_back((SIMD::Vec2f(Point4) - SIMD::Vec2f(Point3)).Length());
 
 		sumDistance_ = 0.0f;
 		for (auto d : distances_)
@@ -356,7 +356,7 @@ struct RotatorSpline3
 		}
 	}
 
-	Vec2f GetPosition(float value) const
+	SIMD::Vec2f GetPosition(float value) const
 	{
 		value = Clamp(value, 1.0f, 0.0f);
 
@@ -367,7 +367,7 @@ struct RotatorSpline3
 			if (distance <= distances_[i])
 			{
 				value = i + distance / distances_[i];
-				return Vec2f(generator.GetValue(value).GetX(), generator.GetValue(value).GetY());
+				return SIMD::Vec2f(generator.GetValue(value).GetX(), generator.GetValue(value).GetY());
 			}
 
 			distance -= distances_[i];
@@ -375,14 +375,14 @@ struct RotatorSpline3
 
 		value = static_cast<float>(distances_.size());
 
-		return Vec2f(generator.GetValue(value).GetX(), generator.GetValue(value).GetY());
+		return SIMD::Vec2f(generator.GetValue(value).GetX(), generator.GetValue(value).GetY());
 	}
 };
 
-static Vec3f WaveNoise(Vec3f v, std::array<float, 3> waveOffsets, std::array<float, 3> waveFrequency, std::array<float, 3> noiseScales)
+static SIMD::Vec3f WaveNoise(SIMD::Vec3f v, std::array<float, 3> waveOffsets, std::array<float, 3> waveFrequency, std::array<float, 3> noiseScales)
 {
 
-	return v + Vec3f(
+	return v + SIMD::Vec3f(
 				   CalcSineWave(v.GetY(), waveFrequency[0], waveOffsets[0], noiseScales[0]),
 				   CalcSineWave(v.GetY(), waveFrequency[1], waveOffsets[1], noiseScales[1]),
 				   CalcSineWave(v.GetY(), waveFrequency[2], waveOffsets[2], noiseScales[2]));
@@ -394,15 +394,15 @@ struct RotatorMeshGenerator
 	float AngleMax;
 	bool IsConnected = false;
 
-	std::function<Vec2f(float)> Rotator;
-	std::function<Vec3f(Vec3f)> Noise;
+	std::function<SIMD::Vec2f(float)> Rotator;
+	std::function<SIMD::Vec3f(SIMD::Vec3f)> Noise;
 
-	Vec3f GetPosition(float angleValue, float depthValue) const
+	SIMD::Vec3f GetPosition(float angleValue, float depthValue) const
 	{
 		depthValue = Clamp(depthValue, 1.0f, 0.0f);
 		auto angle = (AngleMax - AngleMin) * angleValue + AngleMin;
 
-		Vec2f pos2d = Rotator(depthValue);
+		SIMD::Vec2f pos2d = Rotator(depthValue);
 
 		float s;
 		float c;
@@ -413,7 +413,7 @@ struct RotatorMeshGenerator
 		auto rz = x * c;
 		auto y = pos2d.GetY();
 
-		return Vec3f(rx, y, rz);
+		return SIMD::Vec3f(rx, y, rz);
 	}
 
 	ProcedualMesh Generate(int32_t angleDivision, int32_t depthDivision) const
@@ -431,7 +431,7 @@ struct RotatorMeshGenerator
 			for (int32_t u = 0; u < angleDivision; u++)
 			{
 				ret.Vertexes[u + v * angleDivision].Position = GetPosition(u / float(angleDivision - 1), v / float(depthDivision - 1));
-				ret.Vertexes[u + v * angleDivision].UV = Vec2f(u / float(angleDivision - 1), 1.0f - v / float(depthDivision - 1));
+				ret.Vertexes[u + v * angleDivision].UV = SIMD::Vec2f(u / float(angleDivision - 1), 1.0f - v / float(depthDivision - 1));
 			}
 		}
 
@@ -487,17 +487,17 @@ struct RotatedWireMeshGenerator
 	std::array<float, 2> RibbonAngles;
 	std::array<float, 2> RibbonSizes;
 
-	std::function<Vec2f(float)> Rotator;
-	std::function<Vec3f(Vec3f)> Noise;
+	std::function<SIMD::Vec2f(float)> Rotator;
+	std::function<SIMD::Vec3f(SIMD::Vec3f)> Noise;
 
 	ProcedualModelCrossSectionType CrossSectionType;
 
-	Vec3f GetPosition(float angleValue, float depthValue) const
+	SIMD::Vec3f GetPosition(float angleValue, float depthValue) const
 	{
 		auto value = depthValue;
 		auto angle = angleValue;
 
-		Vec2f pos2d = Rotator(value);
+		SIMD::Vec2f pos2d = Rotator(value);
 
 		float s;
 		float c;
@@ -508,22 +508,22 @@ struct RotatedWireMeshGenerator
 		auto rz = x * c;
 		auto y = pos2d.GetY();
 
-		return Vec3f(rx, y, rz);
+		return SIMD::Vec3f(rx, y, rz);
 	}
 
 	ProcedualMesh Generate(RandObject& randObj) const
 	{
-		std::vector<Vec3f> vertexPoses;
+		std::vector<SIMD::Vec3f> vertexPoses;
 		std::vector<int32_t> edgeIDs;
 		std::vector<float> edgeUVs;
 
 		if (CrossSectionType == ProcedualModelCrossSectionType::Cross)
 		{
 			vertexPoses = {
-				Vec3f(-0.5f, 0.0f, 0.0f),
-				Vec3f(+0.5f, 0.0f, 0.0f),
-				Vec3f(0.0f, 0.0f, -0.5f),
-				Vec3f(0.0f, 0.0f, +0.5f),
+				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
+				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
+				SIMD::Vec3f(0.0f, 0.0f, -0.5f),
+				SIMD::Vec3f(0.0f, 0.0f, +0.5f),
 			};
 
 			edgeIDs = {
@@ -543,8 +543,8 @@ struct RotatedWireMeshGenerator
 		else if (CrossSectionType == ProcedualModelCrossSectionType::Plane)
 		{
 			vertexPoses = {
-				Vec3f(-0.5f, 0.0f, 0.0f),
-				Vec3f(+0.5f, 0.0f, 0.0f),
+				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
+				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
 			};
 
 			edgeIDs = {
@@ -560,7 +560,7 @@ struct RotatedWireMeshGenerator
 		else if (CrossSectionType == ProcedualModelCrossSectionType::Point)
 		{
 			vertexPoses = {
-				Vec3f(0.0f, 0.0f, 0.0f),
+				SIMD::Vec3f(0.0f, 0.0f, 0.0f),
 			};
 
 			edgeIDs = {
@@ -582,9 +582,9 @@ struct RotatedWireMeshGenerator
 			float currentAngle = (static_cast<float>(l) / static_cast<float>(Count) + RibbonNoises[0] * (randObj.GetRand() - 0.5f)) * EFK_PI * 2.0f;
 			float currentDepth = RibbonNoises[1] * randObj.GetRand();
 
-			CustomAlignedVector<Vec3f> vs;
-			CustomAlignedVector<Vec3f> binormals;
-			CustomAlignedVector<Vec3f> normals;
+			CustomAlignedVector<SIMD::Vec3f> vs;
+			CustomAlignedVector<SIMD::Vec3f> binormals;
+			CustomAlignedVector<SIMD::Vec3f> normals;
 
 			while (currentDepth < 1.0f - RibbonNoises[1] * randObj.GetRand())
 			{
@@ -594,7 +594,7 @@ struct RotatedWireMeshGenerator
 				auto pos_diff = GetPosition(currentAngle + eps * rotateSpeed, currentDepth + eps * depthSpeed);
 				auto pos_diff_angle = GetPosition(currentAngle + eps, currentDepth);
 				auto pos_diff_axis = GetPosition(currentAngle, currentDepth + eps);
-				auto normal = Vec3f::Cross(pos_diff_angle - pos, pos_diff_axis - pos);
+				auto normal = SIMD::Vec3f::Cross(pos_diff_angle - pos, pos_diff_axis - pos);
 
 				vs.emplace_back(pos);
 				normals.emplace_back(normal.Normalize());
@@ -609,7 +609,7 @@ struct RotatedWireMeshGenerator
 
 			for (int32_t v = 0; v < vs.size(); v++)
 			{
-				const auto tangent = Vec3f::Cross(normals[v], binormals[v]).Normalize();
+				const auto tangent = SIMD::Vec3f::Cross(normals[v], binormals[v]).Normalize();
 				const auto normal = normals[v];
 
 				const auto percent = v / static_cast<float>(vs.size() - 1);
@@ -626,7 +626,7 @@ struct RotatedWireMeshGenerator
 				for (size_t i = 0; i < vertexPoses.size(); i++)
 				{
 					ribbon.Vertexes[v * vertexPoses.size() + i].Position = vs[v] + (rtangent * vertexPoses[i].GetX() + binormals[v] * vertexPoses[i].GetY() + rnormal * vertexPoses[i].GetZ()) * scale;
-					ribbon.Vertexes[v * vertexPoses.size() + i].UV = Vec2f(edgeUVs[i], v / static_cast<float>(vs.size() - 1));
+					ribbon.Vertexes[v * vertexPoses.size() + i].UV = SIMD::Vec2f(edgeUVs[i], v / static_cast<float>(vs.size() - 1));
 				}
 			}
 
@@ -681,7 +681,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 	RandObject randObj;
 	CurlNoise curlNoise(0, 1.0f, 2);
 
-	std::function<Vec2f(float)> primitiveGenerator;
+	std::function<SIMD::Vec2f(float)> primitiveGenerator;
 
 	if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Sphere)
 	{
@@ -690,7 +690,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		rotator.DepthMax = parameter->Sphere.DepthMax;
 		rotator.Radius = parameter->Sphere.Radius;
 
-		primitiveGenerator = [rotator](float value) -> Vec2f {
+		primitiveGenerator = [rotator](float value) -> SIMD::Vec2f {
 			return rotator.GetPosition(value);
 		};
 	}
@@ -700,7 +700,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		rotator.Radius = parameter->Cone.Radius;
 		rotator.Depth = parameter->Cone.Depth;
 
-		primitiveGenerator = [rotator](float value) -> Vec2f {
+		primitiveGenerator = [rotator](float value) -> SIMD::Vec2f {
 			return rotator.GetPosition(value);
 		};
 	}
@@ -711,7 +711,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		rotator.Radius2 = parameter->Cylinder.Radius2;
 		rotator.Depth = parameter->Cylinder.Depth;
 
-		primitiveGenerator = [rotator](float value) -> Vec2f {
+		primitiveGenerator = [rotator](float value) -> SIMD::Vec2f {
 			return rotator.GetPosition(value);
 		};
 	}
@@ -724,7 +724,7 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		rotator.Point4 = parameter->Spline4.Point4;
 		rotator.Calculate();
 
-		primitiveGenerator = [rotator](float value) -> Vec2f {
+		primitiveGenerator = [rotator](float value) -> SIMD::Vec2f {
 			return rotator.GetPosition(value);
 		};
 	}
@@ -733,18 +733,18 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 		assert(0);
 	}
 
-	std::function<Vec3f(Vec3f)> noiseFunc = [parameter, &curlNoise](Vec3f v) -> Vec3f {
+	std::function<SIMD::Vec3f(SIMD::Vec3f)> noiseFunc = [parameter, &curlNoise](SIMD::Vec3f v) -> SIMD::Vec3f {
 		// tilt noise
 		{
 			float angleX = CalcSineWave(v.GetY(), parameter->TiltNoiseFrequency[0], parameter->TiltNoiseOffset[0], parameter->TiltNoisePower[0]);
 			float angleY = CalcSineWave(v.GetY(), parameter->TiltNoiseFrequency[1], parameter->TiltNoiseOffset[1], parameter->TiltNoisePower[1]);
 
-			Vec3f dirX(cos(angleX), sin(angleX), 0.0f);
-			Vec3f dirZ(0.0f, sin(angleY), cos(angleY));
-			Vec3f dirY = Vec3f::Cross(dirZ, dirX).Normalize();
-			dirZ = Vec3f::Cross(dirX, dirY).Normalize();
+			SIMD::Vec3f dirX(cos(angleX), sin(angleX), 0.0f);
+			SIMD::Vec3f dirZ(0.0f, sin(angleY), cos(angleY));
+			SIMD::Vec3f dirY = SIMD::Vec3f::Cross(dirZ, dirX).Normalize();
+			dirZ = SIMD::Vec3f::Cross(dirX, dirY).Normalize();
 
-			v = Vec3f(0.0f, v.GetY(), 0.0f) + dirX * v.GetX() + dirZ * v.GetZ();
+			v = SIMD::Vec3f(0.0f, v.GetY(), 0.0f) + dirX * v.GetX() + dirZ * v.GetZ();
 		}
 
 		v = WaveNoise(v,

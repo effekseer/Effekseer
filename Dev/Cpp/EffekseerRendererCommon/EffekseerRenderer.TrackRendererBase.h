@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
@@ -26,10 +25,10 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::TrackRenderer::NodeParameter efkTrackNodeParam;
 typedef ::Effekseer::TrackRenderer::InstanceParameter efkTrackInstanceParam;
-typedef ::Effekseer::Vec3f efkVector3D;
+typedef ::Effekseer::SIMD::Vec3f efkVector3D;
 
 template <typename RENDERER, bool FLIP_RGB_FLAG>
-class TrackRendererBase : public ::Effekseer::TrackRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
+class TrackRendererBase : public ::Effekseer::TrackRenderer, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 protected:
 	RENDERER* m_renderer;
@@ -445,7 +444,7 @@ protected:
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
-	void RenderSplines(const ::Effekseer::Mat44f& camera)
+	void RenderSplines(const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (instances.size() == 0)
 		{
@@ -500,9 +499,9 @@ protected:
 					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 				}
 
-				::Effekseer::Vec3f s;
-				::Effekseer::Mat43f r;
-				::Effekseer::Vec3f t;
+				::Effekseer::SIMD::Vec3f s;
+				::Effekseer::SIMD::Mat43f r;
+				::Effekseer::SIMD::Vec3f t;
 				mat.GetSRT(s, r, t);
 
 				ApplyDepthParameters(r,
@@ -660,14 +659,14 @@ protected:
 		// transform all vertecies
 		{
 			StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
-			Effekseer::Vec3f axisBefore;
+			Effekseer::SIMD::Vec3f axisBefore;
 
 			for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 			{
 				bool isFirst_ = (i == 0);
 				bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
-				Effekseer::Vec3f axis;
-				Effekseer::Vec3f pos;
+				Effekseer::SIMD::Vec3f axis;
+				Effekseer::SIMD::Vec3f pos;
 
 				if (isFirst_)
 				{
@@ -681,7 +680,7 @@ protected:
 				}
 				else
 				{
-					Effekseer::Vec3f axisOld = axisBefore;
+					Effekseer::SIMD::Vec3f axisOld = axisBefore;
 					axis = vs_[9].Pos - vs_[7].Pos;
 					axis = SafeNormalize(axis);
 					axisBefore = axis;
@@ -699,32 +698,32 @@ protected:
 				vm.Pos.Y = 0.0f;
 				vm.Pos.Z = 0.0f;
 
-				::Effekseer::Vec3f F;
-				::Effekseer::Vec3f R;
-				::Effekseer::Vec3f U;
+				::Effekseer::SIMD::Vec3f F;
+				::Effekseer::SIMD::Vec3f R;
+				::Effekseer::SIMD::Vec3f U;
 
 				// It can be optimized because X is only not zero.
 				/*
 				U = axis;
 
-				F = ::Effekseer::Vec3f(m_renderer->GetCameraFrontDirection()).Normalize();
-				R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
-				F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
+				F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection()).Normalize();
+				R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
+				F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
 
-				::Effekseer::Mat43f mat_rot(
+				::Effekseer::SIMD::Mat43f mat_rot(
 					-R.GetX(), -R.GetY(), -R.GetZ(),
 					 U.GetX(),  U.GetY(),  U.GetZ(),
 					 F.GetX(),  F.GetY(),  F.GetZ(),
 					pos.GetX(), pos.GetY(), pos.GetZ());
 
-				vl.Pos = ToStruct(::Effekseer::Vec3f::Transform(vl.Pos, mat_rot));
-				vm.Pos = ToStruct(::Effekseer::Vec3f::Transform(vm.Pos, mat_rot));
-				vr.Pos = ToStruct(::Effekseer::Vec3f::Transform(vr.Pos,mat_rot));
+				vl.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vl.Pos, mat_rot));
+				vm.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vm.Pos, mat_rot));
+				vr.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vr.Pos,mat_rot));
 				*/
 
 				U = axis;
 				F = m_renderer->GetCameraFrontDirection();
-				R = SafeNormalize(::Effekseer::Vec3f::Cross(U, F));
+				R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
 
 				assert(vl.Pos.Y == 0.0f);
 				assert(vr.Pos.Y == 0.0f);
@@ -745,7 +744,7 @@ protected:
 					vm.SetBinormal(binormalVector);
 					vr.SetBinormal(binormalVector);
 
-					::Effekseer::Vec3f tangent = vl.Pos - vr.Pos;
+					::Effekseer::SIMD::Vec3f tangent = vl.Pos - vr.Pos;
 					tangent.Normalize();
 
 					const auto tangentVector = ToStruct(tangent);
@@ -756,8 +755,8 @@ protected:
 				}
 				else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 				{
-					::Effekseer::Vec3f tangent = SafeNormalize(Effekseer::Vec3f(vl.Pos - vr.Pos));
-					Effekseer::Vec3f normal = SafeNormalize(Effekseer::Vec3f::Cross(tangent, axis));
+					::Effekseer::SIMD::Vec3f tangent = SafeNormalize(Effekseer::SIMD::Vec3f(vl.Pos - vr.Pos));
+					Effekseer::SIMD::Vec3f normal = SafeNormalize(Effekseer::SIMD::Vec3f::Cross(tangent, axis));
 
 					if (!parameter.IsRightHand)
 					{
@@ -880,7 +879,7 @@ protected:
 	void Rendering_(const efkTrackNodeParam& parameter,
 					const efkTrackInstanceParam& instanceParameter,
 					void* userData,
-					const ::Effekseer::Mat44f& camera)
+					const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
 		const ShaderParameterCollector& collector = state.Collector;
@@ -919,7 +918,7 @@ protected:
 	void Rendering_Internal(const efkTrackNodeParam& parameter,
 							const efkTrackInstanceParam& instanceParameter,
 							void* userData,
-							const ::Effekseer::Mat44f& camera)
+							const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (m_ringBufferData == nullptr)
 			return;

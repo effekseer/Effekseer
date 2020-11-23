@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 #include <algorithm>
 #include <assert.h>
@@ -28,10 +27,10 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::SpriteRenderer::NodeParameter efkSpriteNodeParam;
 typedef ::Effekseer::SpriteRenderer::InstanceParameter efkSpriteInstanceParam;
-typedef ::Effekseer::Vec3f efkVector3D;
+typedef ::Effekseer::SIMD::Vec3f efkVector3D;
 
 template <typename RENDERER, bool FLIP_RGB_FLAG>
-class SpriteRendererBase : public ::Effekseer::SpriteRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
+class SpriteRendererBase : public ::Effekseer::SpriteRenderer, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 protected:
 	RENDERER* m_renderer;
@@ -68,7 +67,7 @@ protected:
 	void RenderingInstance(const efkSpriteInstanceParam& instanceParameter,
 						   const efkSpriteNodeParam& parameter,
 						   const StandardRendererState& state,
-						   const ::Effekseer::Mat44f& camera)
+						   const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		void* userData = nullptr;
 		const ShaderParameterCollector& collector = state.Collector;
@@ -160,7 +159,7 @@ protected:
 	void Rendering_(const efkSpriteNodeParam& parameter,
 					const efkSpriteInstanceParam& instanceParameter,
 					void* userData,
-					const ::Effekseer::Mat44f& camera)
+					const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (parameter.ZSort == Effekseer::ZSortType::None)
 		{
@@ -181,7 +180,7 @@ protected:
 	void Rendering_Internal(const efkSpriteNodeParam& parameter,
 							const efkSpriteInstanceParam& instanceParameter,
 							void* userData,
-							const ::Effekseer::Mat44f& camera)
+							const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (m_ringBufferData == nullptr)
 			return;
@@ -295,14 +294,14 @@ protected:
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
 		{
-			Effekseer::Mat43f mat_rot = Effekseer::Mat43f::Identity;
-			Effekseer::Vec3f s;
-			Effekseer::Vec3f R;
-			Effekseer::Vec3f F;
+			Effekseer::SIMD::Mat43f mat_rot = Effekseer::SIMD::Mat43f::Identity;
+			Effekseer::SIMD::Vec3f s;
+			Effekseer::SIMD::Vec3f R;
+			Effekseer::SIMD::Vec3f F;
 
 			if (parameter.EnableViewOffset == true)
 			{
-				Effekseer::Mat43f instMat = instanceParameter.SRTMatrix43;
+				Effekseer::SIMD::Mat43f instMat = instanceParameter.SRTMatrix43;
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
 
@@ -360,9 +359,9 @@ protected:
 
 			for (int i = 0; i < 4; i++)
 			{
-				auto Pos = ::Effekseer::Vec3f::Load(&verteies[i].Pos);
-				Pos = ::Effekseer::Vec3f::Transform(Pos, mat);
-				::Effekseer::Vec3f::Store(&verteies[i].Pos, Pos);
+				auto Pos = ::Effekseer::SIMD::Vec3f::Load(&verteies[i].Pos);
+				Pos = ::Effekseer::SIMD::Vec3f::Transform(Pos, mat);
+				::Effekseer::SIMD::Vec3f::Store(&verteies[i].Pos, Pos);
 
 				// distortion
 				if (IsDistortionVertex<VERTEX>())
@@ -434,7 +433,7 @@ protected:
 					frontDirection.Z = -frontDirection.Z;
 				}
 
-				kv.Key = Effekseer::Vec3f::Dot(t, frontDirection);
+				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
 			}
 
 			if (param.ZSort == Effekseer::ZSortType::NormalOrder)

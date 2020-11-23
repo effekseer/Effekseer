@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
@@ -26,10 +25,10 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::RibbonRenderer::NodeParameter efkRibbonNodeParam;
 typedef ::Effekseer::RibbonRenderer::InstanceParameter efkRibbonInstanceParam;
-typedef ::Effekseer::Vec3f efkVector3D;
+typedef ::Effekseer::SIMD::Vec3f efkVector3D;
 
 template <typename RENDERER, bool FLIP_RGB_FLAG>
-class RibbonRendererBase : public ::Effekseer::RibbonRenderer, public ::Effekseer::AlignedAllocationPolicy<16>
+class RibbonRendererBase : public ::Effekseer::RibbonRenderer, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 private:
 protected:
@@ -361,7 +360,7 @@ protected:
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
-	void RenderSplines(const ::Effekseer::Mat44f& camera)
+	void RenderSplines(const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (instances.size() == 0)
 		{
@@ -385,16 +384,16 @@ protected:
 
 				if (parameter.ViewpointDependent)
 				{
-					::Effekseer::Mat43f mat = param.SRTMatrix43;
+					::Effekseer::SIMD::Mat43f mat = param.SRTMatrix43;
 
 					if (parameter.EnableViewOffset == true)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
 
-					::Effekseer::Vec3f s;
-					::Effekseer::Mat43f r;
-					::Effekseer::Vec3f t;
+					::Effekseer::SIMD::Vec3f s;
+					::Effekseer::SIMD::Mat43f r;
+					::Effekseer::SIMD::Vec3f t;
 					mat.GetSRT(s, r, t);
 
 					ApplyDepthParameters(r,
@@ -409,16 +408,16 @@ protected:
 					pl.SetX(pl.GetX() * s.GetX());
 					pr.SetX(pr.GetX() * s.GetX());
 
-					::Effekseer::Vec3f F;
-					::Effekseer::Vec3f R;
-					::Effekseer::Vec3f U;
+					::Effekseer::SIMD::Vec3f F;
+					::Effekseer::SIMD::Vec3f R;
+					::Effekseer::SIMD::Vec3f U;
 
-					U = ::Effekseer::Vec3f(r.X.GetY(), r.Y.GetY(), r.X.GetY());
-					F = ::Effekseer::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
-					R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
-					F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
+					U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.X.GetY());
+					F = ::Effekseer::SIMD::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
+					R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
+					F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
 
-					::Effekseer::Mat43f mat_rot(-R.GetX(),
+					::Effekseer::SIMD::Mat43f mat_rot(-R.GetX(),
 												-R.GetY(),
 												-R.GetZ(),
 												U.GetX(),
@@ -431,15 +430,15 @@ protected:
 												t.GetY(),
 												t.GetZ());
 
-					pl = ::Effekseer::Vec3f::Transform(pl, mat_rot);
-					pr = ::Effekseer::Vec3f::Transform(pr, mat_rot);
+					pl = ::Effekseer::SIMD::Vec3f::Transform(pl, mat_rot);
+					pr = ::Effekseer::SIMD::Vec3f::Transform(pr, mat_rot);
 
 					spline_left.AddVertex(pl);
 					spline_right.AddVertex(pr);
 				}
 				else
 				{
-					::Effekseer::Mat43f mat = param.SRTMatrix43;
+					::Effekseer::SIMD::Mat43f mat = param.SRTMatrix43;
 
 					if (parameter.EnableViewOffset == true)
 					{
@@ -453,8 +452,8 @@ protected:
 										 parameter.DepthParameterPtr,
 										 parameter.IsRightHand);
 
-					pl = ::Effekseer::Vec3f::Transform(pl, mat);
-					pr = ::Effekseer::Vec3f::Transform(pr, mat);
+					pl = ::Effekseer::SIMD::Vec3f::Transform(pl, mat);
+					pr = ::Effekseer::SIMD::Vec3f::Transform(pr, mat);
 
 					spline_left.AddVertex(pl);
 					spline_right.AddVertex(pr);
@@ -503,16 +502,16 @@ protected:
 
 				if (parameter.ViewpointDependent)
 				{
-					::Effekseer::Mat43f mat = param.SRTMatrix43;
+					::Effekseer::SIMD::Mat43f mat = param.SRTMatrix43;
 
 					if (parameter.EnableViewOffset == true)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
 
-					::Effekseer::Vec3f s;
-					::Effekseer::Mat43f r;
-					::Effekseer::Vec3f t;
+					::Effekseer::SIMD::Vec3f s;
+					::Effekseer::SIMD::Mat43f r;
+					::Effekseer::SIMD::Vec3f t;
 					mat.GetSRT(s, r, t);
 
 					ApplyDepthParameters(r,
@@ -533,17 +532,17 @@ protected:
 							verteies[i].Pos.X = verteies[i].Pos.X * s.GetX();
 						}
 
-						::Effekseer::Vec3f F;
-						::Effekseer::Vec3f R;
-						::Effekseer::Vec3f U;
+						::Effekseer::SIMD::Vec3f F;
+						::Effekseer::SIMD::Vec3f R;
+						::Effekseer::SIMD::Vec3f U;
 
-						U = ::Effekseer::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
+						U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
 
-						F = ::Effekseer::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
-						R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
-						F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
+						F = ::Effekseer::SIMD::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
+						R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
+						F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
 
-						::Effekseer::Mat43f mat_rot(-R.GetX(),
+						::Effekseer::SIMD::Mat43f mat_rot(-R.GetX(),
 													-R.GetY(),
 													-R.GetZ(),
 													U.GetX(),
@@ -558,7 +557,7 @@ protected:
 
 						for (int i = 0; i < 2; i++)
 						{
-							verteies[i].Pos = ToStruct(::Effekseer::Vec3f::Transform(verteies[i].Pos, mat_rot));
+							verteies[i].Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(verteies[i].Pos, mat_rot));
 						}
 					}
 				}
@@ -569,7 +568,7 @@ protected:
 					}
 					else
 					{
-						::Effekseer::Mat43f mat = param.SRTMatrix43;
+						::Effekseer::SIMD::Mat43f mat = param.SRTMatrix43;
 
 						if (parameter.EnableViewOffset == true)
 						{
@@ -585,7 +584,7 @@ protected:
 
 						for (int i = 0; i < 2; i++)
 						{
-							verteies[i].Pos = ToStruct(::Effekseer::Vec3f::Transform(verteies[i].Pos, mat));
+							verteies[i].Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(verteies[i].Pos, mat));
 						}
 					}
 				}
@@ -631,14 +630,14 @@ protected:
 		if (IsDistortionVertex<VERTEX>())
 		{
 			StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
-			Effekseer::Vec3f axisBefore;
+			Effekseer::SIMD::Vec3f axisBefore;
 
 			for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 			{
 				bool isFirst_ = (i == 0);
 				bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 
-				Effekseer::Vec3f axis;
+				Effekseer::SIMD::Vec3f axis;
 
 				if (isFirst_)
 				{
@@ -652,7 +651,7 @@ protected:
 				}
 				else
 				{
-					Effekseer::Vec3f axisOld = axisBefore;
+					Effekseer::SIMD::Vec3f axisOld = axisBefore;
 					axis = (vs_[5].Pos - vs_[3].Pos);
 					axis = SafeNormalize(axis);
 					axisBefore = axis;
@@ -661,7 +660,7 @@ protected:
 					axis = SafeNormalize(axis);
 				}
 
-				Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
+				Effekseer::SIMD::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
 				tangent = tangent.Normalize();
 
 				if (isFirst_ || isLast_)
@@ -693,14 +692,14 @@ protected:
 		else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
 		{
 			StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
-			Effekseer::Vec3f axisBefore;
+			Effekseer::SIMD::Vec3f axisBefore;
 
 			for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 			{
 				bool isFirst_ = (i == 0);
 				bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 
-				Effekseer::Vec3f axis;
+				Effekseer::SIMD::Vec3f axis;
 
 				if (isFirst_)
 				{
@@ -714,7 +713,7 @@ protected:
 				}
 				else
 				{
-					Effekseer::Vec3f axisOld = axisBefore;
+					Effekseer::SIMD::Vec3f axisOld = axisBefore;
 					axis = (vs_[5].Pos - vs_[3].Pos);
 					axis = SafeNormalize(axis);
 					axisBefore = axis;
@@ -723,10 +722,10 @@ protected:
 					axis = SafeNormalize(axis);
 				}
 
-				Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
+				Effekseer::SIMD::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
 				tangent = SafeNormalize(tangent);
 
-				Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(axis, tangent);
+				Effekseer::SIMD::Vec3f normal = Effekseer::SIMD::Vec3f::Cross(axis, tangent);
 				normal = SafeNormalize(normal);
 
 				if (!parameter.IsRightHand)
@@ -831,7 +830,7 @@ protected:
 	void Rendering_(const efkRibbonNodeParam& parameter,
 					const efkRibbonInstanceParam& instanceParameter,
 					void* userData,
-					const ::Effekseer::Mat44f& camera)
+					const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
 		const ShaderParameterCollector& collector = state.Collector;
@@ -869,7 +868,7 @@ protected:
 	void Rendering_Internal(const efkRibbonNodeParam& parameter,
 							const efkRibbonInstanceParam& instanceParameter,
 							void* userData,
-							const ::Effekseer::Mat44f& camera)
+							const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (m_ringBufferData == nullptr)
 			return;

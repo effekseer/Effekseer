@@ -1,6 +1,6 @@
 ﻿
-#ifndef __EFFEKSEER_SIMDTYPE_H__
-#define __EFFEKSEER_SIMDTYPE_H__
+#ifndef __EFFEKSEER_SIMD_BASE_H__
+#define __EFFEKSEER_SIMD_BASE_H__
 
 #include <cstdint>
 #include <cmath>
@@ -62,4 +62,6 @@
 
 #endif
 
-#endif // __EFFEKSEER_SIMDTYPE_H__
+const float DefaultEpsilon = 1e-6f;
+
+#endif // __EFFEKSEER_SIMD_BASE_H__

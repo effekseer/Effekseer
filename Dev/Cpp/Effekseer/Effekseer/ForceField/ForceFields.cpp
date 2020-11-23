@@ -1,6 +1,6 @@
 #include "ForceFields.h"
 #include "../Effekseer.Matrix44.h"
-#include "../SIMD/Effekseer.SIMDUtils.h"
+#include "../SIMD/Utils.h"
 #include "../Utils/Effekseer.BinaryReader.h"
 
 namespace Effekseer
@@ -46,9 +46,9 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 
 		if (IsRotated)
 		{
-			Rotation = Mat44f::RotationZXY(rotation.Z, rotation.X, rotation.Y);
+			Rotation = SIMD::Mat44f::RotationZXY(rotation.Z, rotation.X, rotation.Y);
 			Matrix44 invMat;
-			InvRotation = Mat44f(Matrix44::Inverse(invMat, ToStruct(Rotation)));
+			InvRotation = SIMD::Mat44f(Matrix44::Inverse(invMat, ToStruct(Rotation)));
 		}
 	}
 
@@ -151,7 +151,7 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 	{
 		std::array<float, 3> values;
 		br.Read(values);
-		Vec3f gravity{values};
+		SIMD::Vec3f gravity{values};
 		Gravity = std::make_unique<ForceFieldGravityParameter>();
 		Gravity->Gravity = gravity;
 		IsGlobal = true;
@@ -249,7 +249,7 @@ bool LocalForceFieldParameter::Load(uint8_t*& pos, int32_t version)
 	return true;
 }
 
-void LocalForceFieldParameter::MaintainGravityCompatibility(const Vec3f& gravity)
+void LocalForceFieldParameter::MaintainGravityCompatibility(const SIMD::Vec3f& gravity)
 {
 	HasValue = true;
 	IsGlobalEnabled = true;
@@ -272,7 +272,7 @@ void LocalForceFieldParameter::MaintainAttractiveForceCompatibility(const float 
 	LocalForceFields[3].IsGlobal = true;
 }
 
-void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification)
+void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification)
 {
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
@@ -294,14 +294,14 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 
 		if (field.IsRotated)
 		{
-			ffcp.PreviousSumVelocity = Vec3f::Transform(VelocitySum + ExternalVelocity, field.InvRotation);
-			ffcp.PreviousVelocity = Vec3f::Transform(Velocities[i], field.InvRotation);
-			ffcp.Position = Vec3f::Transform(ffcp.Position, field.InvRotation);
+			ffcp.PreviousSumVelocity = SIMD::Vec3f::Transform(VelocitySum + ExternalVelocity, field.InvRotation);
+			ffcp.PreviousVelocity = SIMD::Vec3f::Transform(Velocities[i], field.InvRotation);
+			ffcp.Position = SIMD::Vec3f::Transform(ffcp.Position, field.InvRotation);
 		}
 
 		ForceField ff;
 
-		Vec3f acc = Vec3f(0, 0, 0);
+		SIMD::Vec3f acc = SIMD::Vec3f(0, 0, 0);
 		if (field.Force != nullptr)
 		{
 			acc = ff.GetAcceleration(ffcp, *field.Force) * magnification;
@@ -350,13 +350,13 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 
 		if (field.IsRotated)
 		{
-			acc = Vec3f::Transform(acc, field.Rotation);
+			acc = SIMD::Vec3f::Transform(acc, field.Rotation);
 		}
 
 		Velocities[i] += acc;
 	}
 
-	VelocitySum = Vec3f(0, 0, 0);
+	VelocitySum = SIMD::Vec3f(0, 0, 0);
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
@@ -369,7 +369,7 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 	ModifyLocation += VelocitySum;
 }
 
-void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification, const Vec3f& targetPosition, float deltaFrame)
+void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame)
 {
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
@@ -393,14 +393,14 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 
 		if (field.IsRotated)
 		{
-			ffcp.PreviousSumVelocity = Vec3f::Transform(VelocitySum, field.InvRotation);
-			ffcp.PreviousVelocity = Vec3f::Transform(Velocities[i], field.InvRotation);
-			ffcp.Position = Vec3f::Transform(ffcp.Position, field.InvRotation);
+			ffcp.PreviousSumVelocity = SIMD::Vec3f::Transform(VelocitySum, field.InvRotation);
+			ffcp.PreviousVelocity = SIMD::Vec3f::Transform(Velocities[i], field.InvRotation);
+			ffcp.Position = SIMD::Vec3f::Transform(ffcp.Position, field.InvRotation);
 		}
 
 		ForceField ff;
 
-		Vec3f acc = Vec3f(0, 0, 0);
+		SIMD::Vec3f acc = SIMD::Vec3f(0, 0, 0);
 		if (field.Gravity != nullptr)
 		{
 			acc = ff.GetAcceleration(ffcp, *field.Gravity) * magnification;
@@ -434,13 +434,13 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 
 		if (field.IsRotated)
 		{
-			acc = Vec3f::Transform(acc, field.Rotation);
+			acc = SIMD::Vec3f::Transform(acc, field.Rotation);
 		}
 
 		Velocities[i] += acc;
 	}
 
-	VelocitySum = Vec3f(0, 0, 0);
+	VelocitySum = SIMD::Vec3f(0, 0, 0);
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
@@ -455,12 +455,12 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 
 void LocalForceFieldInstance::Reset()
 {
-	Velocities.fill(Vec3f(0, 0, 0));
-	VelocitySum = Vec3f(0, 0, 0);
-	ModifyLocation = Vec3f(0, 0, 0);
-	GlobalVelocitySum = Vec3f(0, 0, 0);
-	GlobalModifyLocation = Vec3f(0, 0, 0);
-	ExternalVelocity = Vec3f(0, 0, 0);
+	Velocities.fill(SIMD::Vec3f(0, 0, 0));
+	VelocitySum = SIMD::Vec3f(0, 0, 0);
+	ModifyLocation = SIMD::Vec3f(0, 0, 0);
+	GlobalVelocitySum = SIMD::Vec3f(0, 0, 0);
+	GlobalModifyLocation = SIMD::Vec3f(0, 0, 0);
+	ExternalVelocity = SIMD::Vec3f(0, 0, 0);
 }
 
 } // namespace Effekseer

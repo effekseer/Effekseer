@@ -1,9 +1,9 @@
 ﻿
-#ifndef __EFFEKSEER_VEC3F_H__
-#define __EFFEKSEER_VEC3F_H__
+#ifndef __EFFEKSEER_SIMD_VEC3F_H__
+#define __EFFEKSEER_SIMD_VEC3F_H__
 
 #include "../Effekseer.Math.h"
-#include "Effekseer.SIMD4f.h"
+#include "Float4.h"
 #include <functional>
 
 namespace Effekseer
@@ -11,12 +11,16 @@ namespace Effekseer
 
 struct Vector3D;
 struct vector3d;
+
+namespace SIMD
+{
+
 struct Mat43f;
 struct Mat44f;
 
 struct Vec3f
 {
-	SIMD4f s;
+	Float4 s;
 
 	explicit Vec3f() = default;
 	Vec3f(const Vec3f& vec) = default;
@@ -24,7 +28,7 @@ struct Vec3f
 		: s(x, y, z, 1.0f)
 	{
 	}
-	Vec3f(const SIMD4f& vec)
+	Vec3f(const Float4& vec)
 		: s(vec)
 	{
 	}
@@ -148,62 +152,62 @@ inline Vec3f operator/(const Vec3f& lhs, float rhs)
 
 inline bool operator==(const Vec3f& lhs, const Vec3f& rhs)
 {
-	return (SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) & 0x07) == 0x7;
+	return (Float4::MoveMask(Float4::Equal(lhs.s, rhs.s)) & 0x07) == 0x7;
 }
 
 inline bool operator!=(const Vec3f& lhs, const Vec3f& rhs)
 {
-	return (SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) & 0x07) != 0x7;
+	return (Float4::MoveMask(Float4::Equal(lhs.s, rhs.s)) & 0x07) != 0x7;
 }
 
 inline Vec3f Vec3f::Load(const void* mem)
 {
-	return SIMD4f::Load3(mem);
+	return Float4::Load3(mem);
 }
 
 inline void Vec3f::Store(void* mem, const Vec3f& i)
 {
-	SIMD4f::Store3(mem, i.s);
+	Float4::Store3(mem, i.s);
 }
 
 inline Vec3f Vec3f::Sqrt(const Vec3f& i)
 {
-	return Vec3f{SIMD4f::Sqrt(i.s)};
+	return Vec3f{Float4::Sqrt(i.s)};
 }
 
 inline Vec3f Vec3f::Rsqrt(const Vec3f& i)
 {
-	return Vec3f{SIMD4f::Rsqrt(i.s)};
+	return Vec3f{Float4::Rsqrt(i.s)};
 }
 
 inline Vec3f Vec3f::Abs(const Vec3f& i)
 {
-	return Vec3f{SIMD4f::Abs(i.s)};
+	return Vec3f{Float4::Abs(i.s)};
 }
 
 inline Vec3f Vec3f::Min(const Vec3f& lhs, const Vec3f& rhs)
 {
-	return Vec3f{SIMD4f::Min(lhs.s, rhs.s)};
+	return Vec3f{Float4::Min(lhs.s, rhs.s)};
 }
 
 inline Vec3f Vec3f::Max(const Vec3f& lhs, const Vec3f& rhs)
 {
-	return Vec3f{SIMD4f::Max(lhs.s, rhs.s)};
+	return Vec3f{Float4::Max(lhs.s, rhs.s)};
 }
 
 inline float Vec3f::Dot(const Vec3f& lhs, const Vec3f& rhs)
 {
-	return SIMD4f::Dot3(lhs.s, rhs.s).GetX();
+	return Float4::Dot3(lhs.s, rhs.s).GetX();
 }
 
 inline Vec3f Vec3f::Cross(const Vec3f& lhs, const Vec3f& rhs)
 {
-	return SIMD4f::Cross3(lhs.s, rhs.s);
+	return Float4::Cross3(lhs.s, rhs.s);
 }
 
 inline bool Vec3f::Equal(const Vec3f& lhs, const Vec3f& rhs, float epsilon)
 {
-	return (SIMD4f::MoveMask(SIMD4f::NearEqual(lhs.s, rhs.s, epsilon)) & 0x7) == 0x7;
+	return (Float4::MoveMask(Float4::NearEqual(lhs.s, rhs.s, epsilon)) & 0x7) == 0x7;
 }
 
 inline float Vec3f::GetSquaredLength() const
@@ -214,28 +218,30 @@ inline float Vec3f::GetSquaredLength() const
 
 inline float Vec3f::GetLength() const
 {
-	return Effekseer::Sqrt(GetSquaredLength());
+	return Effekseer::SIMD::Sqrt(GetSquaredLength());
 }
 
 inline bool Vec3f::IsZero(float epsiron) const
 {
-	return (SIMD4f::MoveMask(SIMD4f::IsZero(s, epsiron)) & 0x7) == 0x7;
+	return (Float4::MoveMask(Float4::IsZero(s, epsiron)) & 0x7) == 0x7;
 }
 
 inline Vec3f Vec3f::Normalize() const
 {
-	return *this * Effekseer::Rsqrt(GetSquaredLength());
+	return *this * Effekseer::SIMD::Rsqrt(GetSquaredLength());
 }
 
 inline Vec3f Vec3f::NormalizePrecisely() const
 {
-	return *this / Effekseer::Sqrt(GetSquaredLength());
+	return *this / Effekseer::SIMD::Sqrt(GetSquaredLength());
 }
 
 inline Vec3f Vec3f::NormalizeFast() const
 {
-	return *this * Effekseer::Rsqrt(GetSquaredLength());
+	return *this * Effekseer::SIMD::Rsqrt(GetSquaredLength());
 }
+
+} // namespace SIMD
 
 } // namespace Effekseer
 
@@ -243,9 +249,9 @@ namespace std
 {
 
 template <>
-struct hash<Effekseer::Vec3f>
+struct hash<Effekseer::SIMD::Vec3f>
 {
-	size_t operator()(const Effekseer::Vec3f& _Keyval) const noexcept
+	size_t operator()(const Effekseer::SIMD::Vec3f& _Keyval) const noexcept
 	{
 		return std::hash<float>()(_Keyval.GetX()) + std::hash<float>()(_Keyval.GetY()) + std::hash<float>()(_Keyval.GetZ());
 	}
@@ -253,4 +259,4 @@ struct hash<Effekseer::Vec3f>
 
 } // namespace std
 
-#endif // __EFFEKSEER_VEC3F_H__
+#endif // __EFFEKSEER_SIMD_VEC3F_H__

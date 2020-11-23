@@ -7,8 +7,8 @@
 #include "../Effekseer.Vector3D.h"
 #include "../Noise/CurlNoise.h"
 #include "../Noise/PerlinNoise.h"
-#include "../SIMD/Effekseer.Mat44f.h"
-#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Mat44f.h"
+#include "../SIMD/Vec3f.h"
 #include "../Utils/BinaryVersion.h"
 
 namespace Effekseer
@@ -16,12 +16,12 @@ namespace Effekseer
 
 struct ForceFieldCommonParameter
 {
-	Vec3f Position;
-	Vec3f PreviousVelocity;
-	Vec3f PreviousSumVelocity;
-	Vec3f FieldCenter;
-	Vec3f TargetPosition;
-	Mat44f FieldRotation;
+	SIMD::Vec3f Position;
+	SIMD::Vec3f PreviousVelocity;
+	SIMD::Vec3f PreviousSumVelocity;
+	SIMD::Vec3f FieldCenter;
+	SIMD::Vec3f TargetPosition;
+	SIMD::Mat44f FieldRotation;
 	bool IsFieldRotated = false;
 	float DeltaFrame;
 };
@@ -97,7 +97,7 @@ struct ForceFieldDragParameter
 
 struct ForceFieldGravityParameter
 {
-	Vec3f Gravity;
+	SIMD::Vec3f Gravity;
 };
 
 struct ForceFieldAttractiveForceParameter
@@ -215,7 +215,7 @@ public:
 	/**
 		@brief	Force
 	*/
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldForceParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldForceParameter& ffp)
 	{
 		float eps = 0.0000001f;
 		auto localPos = ffc.Position - ffc.FieldCenter;
@@ -233,16 +233,16 @@ public:
 	/**
 		@brief	Wind
 	*/
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldWindParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldWindParameter& ffp)
 	{
-		auto dir = Vec3f(0, 1, 0);
+		auto dir = SIMD::Vec3f(0, 1, 0);
 		return dir * ffp.Power;
 	}
 
 	/**
 		@brief	Vortex
 	*/
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldVortexParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldVortexParameter& ffp)
 	{
 		float eps = 0.0000001f;
 		auto localPos = ffc.Position - ffc.FieldCenter;
@@ -250,14 +250,14 @@ public:
 		auto distance = localPos.GetLength();
 
 		if (distance < eps)
-			return Vec3f(0.0f, 0.0f, 0.0f);
+			return SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 		if (abs(ffp.Power) < eps)
-			return Vec3f(0.0f, 0.0f, 0.0f);
+			return SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 
 		localPos /= distance;
 
-		auto axis = Vec3f(0, 1, 0);
-		Vec3f front = Vec3f::Cross(axis, localPos);
+		auto axis = SIMD::Vec3f(0, 1, 0);
+		SIMD::Vec3f front = SIMD::Vec3f::Cross(axis, localPos);
 
 		auto direction = 1.0f;
 		if (ffp.Power < 0)
@@ -278,12 +278,12 @@ public:
 	/**
 		@brief	Turbulence
 	*/
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldTurbulenceParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldTurbulenceParameter& ffp)
 	{
 		const float LightNoisePowerScale = 4.0f;
 
 		auto localPos = ffc.Position - ffc.FieldCenter;
-		Vec3f vel;
+		SIMD::Vec3f vel;
 
 		if (ffp.Noise != nullptr)
 		{
@@ -301,24 +301,24 @@ public:
 	/**
 		@brief	Drag
 	*/
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldDragParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldDragParameter& ffp)
 	{
 		return -ffc.PreviousSumVelocity * ffp.Power;
 	}
 
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldGravityParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldGravityParameter& ffp)
 	{
 		return ffp.Gravity;
 	}
 
-	Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldAttractiveForceParameter& ffp)
+	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldAttractiveForceParameter& ffp)
 	{
-		const Vec3f targetDifference = ffc.TargetPosition - ffc.Position;
+		const SIMD::Vec3f targetDifference = ffc.TargetPosition - ffc.Position;
 		const float targetDistance = targetDifference.GetLength();
 
 		if (targetDistance > 0.0f)
 		{
-			const Vec3f targetDirection = targetDifference / targetDistance;
+			const SIMD::Vec3f targetDirection = targetDifference / targetDistance;
 			float force = ffp.Force;
 
 			if (ffp.MinRange > 0.0f || ffp.MaxRange > 0.0f)
@@ -336,18 +336,18 @@ public:
 			if (ffc.DeltaFrame > 0)
 			{
 				float eps = 0.0001f;
-				auto ret = Vec3f(0.0f, 0.0f, 0.0f);
+				auto ret = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 				auto vel = ffc.PreviousVelocity;
 				vel += targetDirection * force * ffc.DeltaFrame;
 				float currentVelocity = vel.GetLength() + eps;
-				Vec3f currentDirection = vel / currentVelocity;
+				SIMD::Vec3f currentDirection = vel / currentVelocity;
 
 				vel = (targetDirection * ffp.Control + currentDirection * (1.0f - ffp.Control)) * currentVelocity;
 				return vel - ffc.PreviousVelocity;
 			}
 		}
 
-		return Vec3f(0.0f, 0.0f, 0.0f);
+		return SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 	}
 };
 
@@ -374,8 +374,8 @@ enum class LocalForceFieldType : int32_t
 struct LocalForceFieldElementParameter
 {
 	Vector3D Position;
-	Mat44f Rotation;
-	Mat44f InvRotation;
+	SIMD::Mat44f Rotation;
+	SIMD::Mat44f InvRotation;
 	bool IsRotated = false;
 	bool IsGlobal = false;
 
@@ -407,25 +407,25 @@ struct LocalForceFieldParameter
 
 	bool Load(uint8_t*& pos, int32_t version);
 
-	void MaintainGravityCompatibility(const Vec3f& gravity);
+	void MaintainGravityCompatibility(const SIMD::Vec3f& gravity);
 
 	void MaintainAttractiveForceCompatibility(const float force, const float control, const float minRange, const float maxRange);
 };
 
 struct LocalForceFieldInstance
 {
-	std::array<Vec3f, LocalFieldSlotMax> Velocities;
+	std::array<SIMD::Vec3f, LocalFieldSlotMax> Velocities;
 
-	Vec3f ExternalVelocity;
-	Vec3f VelocitySum;
-	Vec3f ModifyLocation;
+	SIMD::Vec3f ExternalVelocity;
+	SIMD::Vec3f VelocitySum;
+	SIMD::Vec3f ModifyLocation;
 
-	Vec3f GlobalVelocitySum;
-	Vec3f GlobalModifyLocation;
+	SIMD::Vec3f GlobalVelocitySum;
+	SIMD::Vec3f GlobalModifyLocation;
 
-	void Update(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification);
+	void Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification);
 
-	void UpdateGlobal(const LocalForceFieldParameter& parameter, const Vec3f& location, float magnification, const Vec3f& targetPosition, float deltaTime);
+	void UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaTime);
 
 	void Reset();
 };

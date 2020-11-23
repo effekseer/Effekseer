@@ -66,9 +66,9 @@ set(effekseer_src
     Effekseer/Parameter/Easing.cpp
     Effekseer/Parameter/Effekseer.Parameters.cpp
     Effekseer/Utils/Effekseer.CustomAllocator.cpp
-    Effekseer/SIMD/Effekseer.Mat43f.cpp
-    Effekseer/SIMD/Effekseer.Mat44f.cpp
-    Effekseer/SIMD/Effekseer.SIMDUtils.cpp
+    Effekseer/SIMD/Mat43f.cpp
+    Effekseer/SIMD/Mat44f.cpp
+    Effekseer/SIMD/Utils.cpp
     Effekseer/Noise/CurlNoise.cpp
     Effekseer/Noise/PerlinNoise.cpp
     Effekseer/ForceField/ForceFields.cpp
@@ -105,7 +105,8 @@ if(BUILD_UNITYPLUGIN)
 else()
     set(PublicHeader
         Effekseer.h
-        Effekseer.Internal.h)
+        Effekseer.Modules.h
+        Effekseer.SIMD.h)
 
     set_target_properties(
         ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER

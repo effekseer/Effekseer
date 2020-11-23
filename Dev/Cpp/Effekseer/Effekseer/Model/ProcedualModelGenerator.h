@@ -2,8 +2,8 @@
 #define __EFFEKSEER_PROCEDUAL_MODEL_GENERATOR_H__
 
 #include "../Effekseer.Base.h"
-#include "../SIMD/Effekseer.Vec2f.h"
-#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Vec2f.h"
+#include "../SIMD/Vec3f.h"
 #include "../Utils/Effekseer.CustomAllocator.h"
 
 namespace Effekseer

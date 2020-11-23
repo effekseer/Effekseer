@@ -392,7 +392,7 @@ void Matrix43::GetSRT(Vector3D& s, Matrix43& r, Vector3D& t) const
 void Matrix43::GetScale(Vector3D& s) const
 {
 #ifdef SSE_MODULE
-	Mat44f mat;
+	SIMD::Mat44f mat;
 	mat.X.SetX(Value[0][0]);
 	mat.X.SetY(Value[0][1]);
 	mat.X.SetZ(Value[0][2]);

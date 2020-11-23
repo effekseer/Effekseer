@@ -21,7 +21,7 @@ namespace EffekseerRendererDX11
 using Vertex = EffekseerRenderer::SimpleVertex;
 using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
-class OriginalState : public ::Effekseer::AlignedAllocationPolicy<16>
+class OriginalState : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 private:
 	std::array<ID3D11SamplerState*, Effekseer::TextureSlotMax> m_samplers;
@@ -70,7 +70,7 @@ public:
 	@note
 	ツール向けの描画機能。
 */
-class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject, public ::Effekseer::AlignedAllocationPolicy<16>
+class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 	friend class DeviceObject;
 
