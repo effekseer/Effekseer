@@ -138,7 +138,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const RefPtr<S
 //----------------------------------------------------------------------------------
 void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 {
-	RibbonRenderer* renderer = manager->GetRibbonRenderer();
+	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
 		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -162,7 +162,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 
 void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
-	RibbonRenderer* renderer = manager->GetRibbonRenderer();
+	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
@@ -196,7 +196,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 
 void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 {
-	RibbonRenderer* renderer = manager->GetRibbonRenderer();
+	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
 		renderer->EndRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, nullptr);
@@ -209,7 +209,7 @@ void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
-	RibbonRenderer* renderer = manager->GetRibbonRenderer();
+	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
 		Color _color;
@@ -294,7 +294,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 //----------------------------------------------------------------------------------
 void EffectNodeRibbon::EndRendering(Manager* manager)
 {
-	RibbonRenderer* renderer = manager->GetRibbonRenderer();
+	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
 		renderer->EndRendering(m_nodeParameter, nullptr);

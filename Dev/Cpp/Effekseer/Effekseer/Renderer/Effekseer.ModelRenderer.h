@@ -24,7 +24,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-class ModelRenderer
+class ModelRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter

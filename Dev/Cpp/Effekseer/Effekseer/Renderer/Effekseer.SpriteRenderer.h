@@ -22,7 +22,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-class SpriteRenderer
+class SpriteRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter

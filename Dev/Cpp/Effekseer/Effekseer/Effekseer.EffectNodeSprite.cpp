@@ -148,7 +148,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const RefPtr<S
 //----------------------------------------------------------------------------------
 void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 {
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -179,7 +179,7 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.sprite;
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -288,7 +288,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 //----------------------------------------------------------------------------------
 void EffectNodeSprite::EndRendering(Manager* manager)
 {
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
 	{
 		SpriteRenderer::NodeParameter nodeParameter;

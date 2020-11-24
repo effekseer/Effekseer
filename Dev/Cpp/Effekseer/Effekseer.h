@@ -774,6 +774,7 @@ using RibbonRendererRef = RefPtr<RibbonRenderer>;
 using RingRendererRef = RefPtr<RingRenderer>;
 using ModelRendererRef = RefPtr<ModelRenderer>;
 using TrackRendererRef = RefPtr<TrackRenderer>;
+using SoundPlayerRef = RefPtr<SoundPlayer>;
 
 using EffectLoaderRef = RefPtr<EffectLoader>;
 using TextureLoaderRef = RefPtr<TextureLoader>;
@@ -3095,52 +3096,52 @@ public:
 	/**
 		@brief	スプライト描画機能を取得する。
 	*/
-	virtual SpriteRenderer* GetSpriteRenderer() = 0;
+	virtual SpriteRendererRef GetSpriteRenderer() = 0;
 
 	/**
 		@brief	スプライト描画機能を設定する。
 	*/
-	virtual void SetSpriteRenderer(SpriteRenderer* renderer) = 0;
+	virtual void SetSpriteRenderer(SpriteRendererRef renderer) = 0;
 
 	/**
 		@brief	ストライプ描画機能を取得する。
 	*/
-	virtual RibbonRenderer* GetRibbonRenderer() = 0;
+	virtual RibbonRendererRef GetRibbonRenderer() = 0;
 
 	/**
 		@brief	ストライプ描画機能を設定する。
 	*/
-	virtual void SetRibbonRenderer(RibbonRenderer* renderer) = 0;
+	virtual void SetRibbonRenderer(RibbonRendererRef renderer) = 0;
 
 	/**
 		@brief	リング描画機能を取得する。
 	*/
-	virtual RingRenderer* GetRingRenderer() = 0;
+	virtual RingRendererRef GetRingRenderer() = 0;
 
 	/**
 		@brief	リング描画機能を設定する。
 	*/
-	virtual void SetRingRenderer(RingRenderer* renderer) = 0;
+	virtual void SetRingRenderer(RingRendererRef renderer) = 0;
 
 	/**
 		@brief	モデル描画機能を取得する。
 	*/
-	virtual ModelRenderer* GetModelRenderer() = 0;
+	virtual ModelRendererRef GetModelRenderer() = 0;
 
 	/**
 		@brief	モデル描画機能を設定する。
 	*/
-	virtual void SetModelRenderer(ModelRenderer* renderer) = 0;
+	virtual void SetModelRenderer(ModelRendererRef renderer) = 0;
 
 	/**
 		@brief	軌跡描画機能を取得する。
 	*/
-	virtual TrackRenderer* GetTrackRenderer() = 0;
+	virtual TrackRendererRef GetTrackRenderer() = 0;
 
 	/**
 		@brief	軌跡描画機能を設定する。
 	*/
-	virtual void SetTrackRenderer(TrackRenderer* renderer) = 0;
+	virtual void SetTrackRenderer(TrackRendererRef renderer) = 0;
 
 	/**
 		@brief	設定クラスを取得する。
@@ -3176,12 +3177,12 @@ public:
 	/**
 		@brief	サウンド再生機能を取得する。
 	*/
-	virtual SoundPlayer* GetSoundPlayer() = 0;
+	virtual SoundPlayerRef GetSoundPlayer() = 0;
 
 	/**
 		@brief	サウンド再生機能を設定する。
 	*/
-	virtual void SetSoundPlayer(SoundPlayer* soundPlayer) = 0;
+	virtual void SetSoundPlayer(SoundPlayerRef soundPlayer) = 0;
 
 	/**
 		@brief	サウンド読込クラスを取得する

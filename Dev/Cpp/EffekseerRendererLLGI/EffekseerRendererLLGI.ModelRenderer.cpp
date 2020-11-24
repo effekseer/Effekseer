@@ -78,7 +78,7 @@ ModelRenderer::~ModelRenderer()
 	LLGI::SafeRelease(graphicsDevice_);
 }
 
-ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader* fixedShader)
+ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShader* fixedShader)
 {
 
 	assert(renderer != nullptr);
@@ -157,7 +157,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 		ES_SAFE_DELETE(shader_ad_distortion);
 	}
 
-	return new ModelRenderer(renderer, shader_ad_lit, shader_ad_unlit, shader_ad_distortion, shader_lighting_texture_normal, shader_texture, shader_distortion_texture);
+	return ModelRendererRef(new ModelRenderer(renderer, shader_ad_lit, shader_ad_unlit, shader_ad_distortion, shader_lighting_texture_normal, shader_texture, shader_distortion_texture));
 }
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)

@@ -1058,7 +1058,7 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 {
 	IRandObject& rand = instance.GetRandObject();
 
-	SoundPlayer* player = manager->GetSoundPlayer();
+	SoundPlayerRef player = manager->GetSoundPlayer();
 	if (player == nullptr)
 	{
 		return;

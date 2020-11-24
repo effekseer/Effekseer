@@ -160,7 +160,7 @@ void ManagerImplemented::StopStoppingEffects()
 					if (canRemoved)
 					{
 						// when a sound is not playing.
-						if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
+						if (m_soundPlayer == nullptr || !m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
 						{
 							isRemoving = true;
 						}
@@ -440,14 +440,6 @@ ManagerImplemented::~ManagerImplemented()
 	// ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
 
 	Culling3D::SafeRelease(m_cullingWorld);
-
-	ES_SAFE_DELETE(m_spriteRenderer);
-	ES_SAFE_DELETE(m_ribbonRenderer);
-	ES_SAFE_DELETE(m_modelRenderer);
-	ES_SAFE_DELETE(m_trackRenderer);
-	ES_SAFE_DELETE(m_ringRenderer);
-
-	ES_SAFE_DELETE(m_soundPlayer);
 }
 
 Instance* ManagerImplemented::CreateInstance(EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
@@ -590,69 +582,63 @@ void ManagerImplemented::SetCoordinateSystem(CoordinateSystem coordinateSystem)
 	m_setting->SetCoordinateSystem(coordinateSystem);
 }
 
-SpriteRenderer* ManagerImplemented::GetSpriteRenderer()
+SpriteRendererRef ManagerImplemented::GetSpriteRenderer()
 {
 	return m_spriteRenderer;
 }
 
-void ManagerImplemented::SetSpriteRenderer(SpriteRenderer* renderer)
+void ManagerImplemented::SetSpriteRenderer(SpriteRendererRef renderer)
 {
-	ES_SAFE_DELETE(m_spriteRenderer);
 	m_spriteRenderer = renderer;
 }
 
-RibbonRenderer* ManagerImplemented::GetRibbonRenderer()
+RibbonRendererRef ManagerImplemented::GetRibbonRenderer()
 {
 	return m_ribbonRenderer;
 }
 
-void ManagerImplemented::SetRibbonRenderer(RibbonRenderer* renderer)
+void ManagerImplemented::SetRibbonRenderer(RibbonRendererRef renderer)
 {
-	ES_SAFE_DELETE(m_ribbonRenderer);
 	m_ribbonRenderer = renderer;
 }
 
-RingRenderer* ManagerImplemented::GetRingRenderer()
+RingRendererRef ManagerImplemented::GetRingRenderer()
 {
 	return m_ringRenderer;
 }
 
-void ManagerImplemented::SetRingRenderer(RingRenderer* renderer)
+void ManagerImplemented::SetRingRenderer(RingRendererRef renderer)
 {
-	ES_SAFE_DELETE(m_ringRenderer);
 	m_ringRenderer = renderer;
 }
 
-ModelRenderer* ManagerImplemented::GetModelRenderer()
+ModelRendererRef ManagerImplemented::GetModelRenderer()
 {
 	return m_modelRenderer;
 }
 
-void ManagerImplemented::SetModelRenderer(ModelRenderer* renderer)
+void ManagerImplemented::SetModelRenderer(ModelRendererRef renderer)
 {
-	ES_SAFE_DELETE(m_modelRenderer);
 	m_modelRenderer = renderer;
 }
 
-TrackRenderer* ManagerImplemented::GetTrackRenderer()
+TrackRendererRef ManagerImplemented::GetTrackRenderer()
 {
 	return m_trackRenderer;
 }
 
-void ManagerImplemented::SetTrackRenderer(TrackRenderer* renderer)
+void ManagerImplemented::SetTrackRenderer(TrackRendererRef renderer)
 {
-	ES_SAFE_DELETE(m_trackRenderer);
 	m_trackRenderer = renderer;
 }
 
-SoundPlayer* ManagerImplemented::GetSoundPlayer()
+SoundPlayerRef ManagerImplemented::GetSoundPlayer()
 {
 	return m_soundPlayer;
 }
 
-void ManagerImplemented::SetSoundPlayer(SoundPlayer* soundPlayer)
+void ManagerImplemented::SetSoundPlayer(SoundPlayerRef soundPlayer)
 {
-	ES_SAFE_DELETE(m_soundPlayer);
 	m_soundPlayer = soundPlayer;
 }
 

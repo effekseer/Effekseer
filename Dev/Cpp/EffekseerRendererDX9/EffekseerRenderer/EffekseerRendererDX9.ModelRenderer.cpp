@@ -164,7 +164,7 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
+ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 {
 	assert(renderer != nullptr);
 	assert(renderer->GetDevice() != nullptr);
@@ -244,7 +244,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 		ES_SAFE_DELETE(shader_distortion);
 	}
 
-	return new ModelRenderer(renderer, shader_ad_lit, shader_ad_unlit, shader_ad_distortion, shader_lit, shader_unlit, shader_distortion);
+	return ModelRendererRef(new ModelRenderer(renderer, shader_ad_lit, shader_ad_unlit, shader_ad_distortion, shader_lit, shader_unlit, shader_distortion));
 }
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
