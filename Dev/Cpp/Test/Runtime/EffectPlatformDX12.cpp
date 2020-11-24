@@ -69,7 +69,7 @@ public:
 
 		if (textureData_ != nullptr)
 		{
-			EffekseerRendererDX12::DeleteTextureData(renderer_, textureData_);
+			EffekseerRendererDX12::DeleteTextureData(textureData_);
 		}
 	}
 

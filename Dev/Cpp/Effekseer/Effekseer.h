@@ -717,6 +717,14 @@ public:
 		ptr_ = ptr;
 	}
 
+	template <class U>
+	RefPtr<U> DownCast()
+	{
+		auto ptr = Get();
+		SafeAddRef(ptr);
+		return RefPtr<U>(reinterpret_cast<U*>(ptr));
+	}
+
 	void* Pin()
 	{
 		SafeAddRef(ptr_);

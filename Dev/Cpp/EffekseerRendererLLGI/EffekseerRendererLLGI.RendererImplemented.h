@@ -52,7 +52,7 @@ protected:
 		Shader
 	*/
 
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
@@ -113,7 +113,7 @@ public:
 	void OnResetDevice() override;
 	;
 
-	bool Initialize(Backend::GraphicsDevice* graphicsDevice, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
+	bool Initialize(Backend::GraphicsDeviceRef graphicsDevice, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
 	bool Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
@@ -129,7 +129,7 @@ public:
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
-	Backend::GraphicsDevice* GetGraphicsDevice() const
+	Backend::GraphicsDeviceRef& GetGraphicsDevice()
 	{
 		return graphicsDevice_;
 	}

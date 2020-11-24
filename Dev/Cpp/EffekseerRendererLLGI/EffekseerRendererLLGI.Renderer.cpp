@@ -189,12 +189,12 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 void RendererImplemented::GenerateVertexBuffer()
 {
 	m_vertexBuffer =
-		VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
+		VertexBuffer::Create(graphicsDevice_.Get(), EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
 }
 
 void RendererImplemented::GenerateIndexBuffer()
 {
-	m_indexBuffer = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 6, false, false);
+	m_indexBuffer = IndexBuffer::Create(graphicsDevice_.Get(), m_squareMaxCount * 6, false, false);
 	if (m_indexBuffer == nullptr)
 		return;
 
@@ -286,16 +286,14 @@ void RendererImplemented::OnResetDevice()
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
 {
 
-	auto gd = new Backend::GraphicsDevice(graphics);
+	auto gd = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(graphics);
 
 	auto ret = Initialize(gd, renderPassPipelineState, isReversedDepth);
-
-	ES_SAFE_RELEASE(gd);
 
 	return ret;
 }
 
-bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
+bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									 LLGI::RenderPassPipelineState* renderPassPipelineState,
 									 bool isReversedDepth)
 {
@@ -322,7 +320,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 
 	// Generate index buffer for rendering wireframes
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 8, false, false);
+		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_.Get(), m_squareMaxCount * 8, false, false);
 		if (m_indexBufferForWireframe == nullptr)
 			return false;
 
@@ -382,7 +380,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 8});			 // FlipbookIndexAndNextRate
 	layouts_distort_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});			 // AlphaThreshold
 
-	shader_unlit_ = Shader::Create(graphicsDevice_,
+	shader_unlit_ = Shader::Create(graphicsDevice_.Get(),
 								   fixedShader_.SpriteUnlit_VS.data(),
 								   (int32_t)fixedShader_.SpriteUnlit_VS.size(),
 								   fixedShader_.SpriteUnlit_PS.data(),
@@ -393,7 +391,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	if (shader_unlit_ == nullptr)
 		return false;
 
-	shader_distortion_ = Shader::Create(graphicsDevice_,
+	shader_distortion_ = Shader::Create(graphicsDevice_.Get(),
 										fixedShader_.SpriteDistortion_VS.data(),
 										(int32_t)fixedShader_.SpriteDistortion_VS.size(),
 										fixedShader_.SpriteDistortion_PS.data(),
@@ -404,7 +402,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	if (shader_distortion_ == nullptr)
 		return false;
 
-	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
+	shader_ad_unlit_ = Shader::Create(graphicsDevice_.Get(),
 									  fixedShader_.AdvancedSpriteUnlit_VS.data(),
 									  (int32_t)fixedShader_.AdvancedSpriteUnlit_VS.size(),
 									  fixedShader_.AdvancedSpriteUnlit_PS.data(),
@@ -415,7 +413,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
+	shader_ad_distortion_ = Shader::Create(graphicsDevice_.Get(),
 										   fixedShader_.AdvancedSpriteDistortion_VS.data(),
 										   (int32_t)fixedShader_.AdvancedSpriteDistortion_VS.size(),
 										   fixedShader_.AdvancedSpriteDistortion_PS.data(),
@@ -447,7 +445,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // FlipbookIndexAndNextRate
 	layouts_lighting_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
 
-	shader_lit_ = Shader::Create(graphicsDevice_,
+	shader_lit_ = Shader::Create(graphicsDevice_.Get(),
 								 fixedShader_.SpriteLit_VS.data(),
 								 (int32_t)fixedShader_.SpriteLit_VS.size(),
 								 fixedShader_.SpriteLit_PS.data(),
@@ -456,7 +454,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDevice* graphicsDevice,
 								 layouts_lighting,
 								 false);
 
-	shader_ad_lit_ = Shader::Create(graphicsDevice_,
+	shader_ad_lit_ = Shader::Create(graphicsDevice_.Get(),
 									fixedShader_.AdvancedSpriteLit_VS.data(),
 									(int32_t)fixedShader_.AdvancedSpriteLit_VS.size(),
 									fixedShader_.AdvancedSpriteLit_PS.data(),
@@ -609,7 +607,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_.Get(), fileInterface));
 #else
 	return nullptr;
 #endif
@@ -618,7 +616,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::ModelLoaderRef(new ModelLoader(graphicsDevice_, fileInterface));
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(graphicsDevice_.Get(), fileInterface));
 #else
 	return nullptr;
 #endif
@@ -626,7 +624,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(graphicsDevice_, fileInterface, platformType_, materialCompiler_));
+	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(graphicsDevice_.Get(), fileInterface, platformType_, materialCompiler_));
 }
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
