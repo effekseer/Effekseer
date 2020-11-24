@@ -188,7 +188,7 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 void DeleteTextureData(Effekseer::TextureData* textureData)
 {
 	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	ES_SAFE_RELEASE(texture->Release());
+	ES_SAFE_RELEASE(texture);
 	delete textureData;
 }
 
@@ -258,7 +258,7 @@ void RendererImplemented::GenerateVertexBuffer()
 {
     // Metal doesn't need to update buffer to make sure it has the correct size
     auto sc = std::max(4000, m_squareMaxCount);
-    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * sc * 4, true, false);
+    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_.Get(), EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * sc * 4, true, false);
 }
 
 void RendererImplemented::GenerateIndexBuffer()
