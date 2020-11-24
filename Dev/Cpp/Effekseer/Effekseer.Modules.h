@@ -80,7 +80,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-class SpriteRenderer
+class SpriteRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter
@@ -183,7 +183,7 @@ struct NodeRendererTextureUVTypeParameter;
 //
 //----------------------------------------------------------------------------------
 
-class RibbonRenderer
+class RibbonRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter
@@ -293,7 +293,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-class RingRenderer
+class RingRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter
@@ -398,7 +398,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-class ModelRenderer
+class ModelRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter
@@ -504,7 +504,7 @@ struct NodeRendererTextureUVTypeParameter;
 //
 //----------------------------------------------------------------------------------
 
-class TrackRenderer
+class TrackRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter
@@ -1406,7 +1406,7 @@ namespace Effekseer
 typedef void* SoundHandle;
 typedef void* SoundTag;
 
-class SoundPlayer
+class SoundPlayer : public ReferenceObject
 {
 public:
 	struct InstanceParameter

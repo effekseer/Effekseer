@@ -437,7 +437,7 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
+ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 {
 	assert(renderer != nullptr);
 
@@ -496,7 +496,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer)
 		shader_distortion->SetIsTransposeEnabled(true);
 	}
 
-	return new ModelRenderer(renderer, shader_ad_lit, shader_ad_unlit, shader_ad_distortion, shader_lit, shader_unlit, shader_distortion);
+	return ModelRendererRef(new ModelRenderer(renderer, shader_ad_lit, shader_ad_unlit, shader_ad_distortion, shader_lit, shader_unlit, shader_distortion));
 End:;
 
 	ES_SAFE_DELETE(shader_ad_lit);

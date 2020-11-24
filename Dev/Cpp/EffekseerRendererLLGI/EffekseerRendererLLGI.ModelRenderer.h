@@ -16,6 +16,9 @@ typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
 typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
 typedef ::Effekseer::Vector3D efkVector3D;
 
+class ModelRenderer;
+typedef ::Effekseer::RefPtr<ModelRenderer> ModelRendererRef;
+
 class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 {
 private:
@@ -39,7 +42,7 @@ private:
 public:
 	virtual ~ModelRenderer();
 
-	static ModelRenderer* Create(RendererImplemented* renderer, FixedShader* fixedShader);
+	static ModelRendererRef Create(RendererImplemented* renderer, FixedShader* fixedShader);
 
 public:
 	void BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData) override;

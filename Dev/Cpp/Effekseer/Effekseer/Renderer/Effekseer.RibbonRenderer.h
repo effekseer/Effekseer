@@ -26,7 +26,7 @@ struct NodeRendererTextureUVTypeParameter;
 //
 //----------------------------------------------------------------------------------
 
-class RibbonRenderer
+class RibbonRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter

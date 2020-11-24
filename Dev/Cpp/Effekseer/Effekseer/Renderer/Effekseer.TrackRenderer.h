@@ -26,7 +26,7 @@ struct NodeRendererTextureUVTypeParameter;
 //
 //----------------------------------------------------------------------------------
 
-class TrackRenderer
+class TrackRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter

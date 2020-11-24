@@ -182,17 +182,17 @@ private:
 	std::set<Handle> m_culledObjectSets;
 	bool m_culled;
 
-	SpriteRenderer* m_spriteRenderer;
+	SpriteRendererRef m_spriteRenderer;
 
-	RibbonRenderer* m_ribbonRenderer;
+	RibbonRendererRef m_ribbonRenderer;
 
-	RingRenderer* m_ringRenderer;
+	RingRendererRef m_ringRenderer;
 
-	ModelRenderer* m_modelRenderer;
+	ModelRendererRef m_modelRenderer;
 
-	TrackRenderer* m_trackRenderer;
+	TrackRendererRef m_trackRenderer;
 
-	SoundPlayer* m_soundPlayer;
+	SoundPlayerRef m_soundPlayer;
 
 	MallocFunc m_MallocFunc;
 
@@ -259,25 +259,25 @@ public:
 
 	void SetCoordinateSystem(CoordinateSystem coordinateSystem) override;
 
-	SpriteRenderer* GetSpriteRenderer() override;
+	SpriteRendererRef GetSpriteRenderer() override;
 
-	void SetSpriteRenderer(SpriteRenderer* renderer) override;
+	void SetSpriteRenderer(SpriteRendererRef renderer) override;
 
-	RibbonRenderer* GetRibbonRenderer() override;
+	RibbonRendererRef GetRibbonRenderer() override;
 
-	void SetRibbonRenderer(RibbonRenderer* renderer) override;
+	void SetRibbonRenderer(RibbonRendererRef renderer) override;
 
-	RingRenderer* GetRingRenderer() override;
+	RingRendererRef GetRingRenderer() override;
 
-	void SetRingRenderer(RingRenderer* renderer) override;
+	void SetRingRenderer(RingRendererRef renderer) override;
 
-	ModelRenderer* GetModelRenderer() override;
+	ModelRendererRef GetModelRenderer() override;
 
-	void SetModelRenderer(ModelRenderer* renderer) override;
+	void SetModelRenderer(ModelRendererRef renderer) override;
 
-	TrackRenderer* GetTrackRenderer() override;
+	TrackRendererRef GetTrackRenderer() override;
 
-	void SetTrackRenderer(TrackRenderer* renderer) override;
+	void SetTrackRenderer(TrackRendererRef renderer) override;
 
 	RefPtr<Setting> GetSetting() const override;
 
@@ -291,9 +291,9 @@ public:
 
 	void SetTextureLoader(TextureLoaderRef textureLoader) override;
 
-	SoundPlayer* GetSoundPlayer() override;
+	SoundPlayerRef GetSoundPlayer() override;
 
-	void SetSoundPlayer(SoundPlayer* soundPlayer) override;
+	void SetSoundPlayer(SoundPlayerRef soundPlayer) override;
 
 	SoundLoaderRef GetSoundLoader() override;
 

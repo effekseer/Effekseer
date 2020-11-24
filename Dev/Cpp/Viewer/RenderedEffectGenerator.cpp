@@ -239,11 +239,11 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 	spdlog::trace("OK Check format");
 
-	::Effekseer::SpriteRenderer* sprite_renderer = renderer_->CreateSpriteRenderer();
-	::Effekseer::RibbonRenderer* ribbon_renderer = renderer_->CreateRibbonRenderer();
-	::Effekseer::RingRenderer* ring_renderer = renderer_->CreateRingRenderer();
-	::Effekseer::ModelRenderer* model_renderer = renderer_->CreateModelRenderer();
-	::Effekseer::TrackRenderer* track_renderer = renderer_->CreateTrackRenderer();
+	::Effekseer::SpriteRendererRef sprite_renderer = renderer_->CreateSpriteRenderer();
+	::Effekseer::RibbonRendererRef ribbon_renderer = renderer_->CreateRibbonRenderer();
+	::Effekseer::RingRendererRef ring_renderer = renderer_->CreateRingRenderer();
+	::Effekseer::ModelRendererRef model_renderer = renderer_->CreateModelRenderer();
+	::Effekseer::TrackRendererRef track_renderer = renderer_->CreateTrackRenderer();
 
 	if (sprite_renderer == nullptr)
 	{

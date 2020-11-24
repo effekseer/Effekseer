@@ -82,7 +82,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const RefPtr<Se
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
 		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
@@ -108,7 +108,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
 		m_currentGroupValues = group->rendererValues.track;
@@ -144,7 +144,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
 		renderer->EndRenderingGroup(m_nodeParameter, group->GetInstanceCount(), nullptr);
@@ -153,7 +153,7 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 
 void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
 		float t = (float)instance.m_LivingTime / (float)instance.m_LivedTime;
@@ -191,7 +191,7 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::EndRendering(Manager* manager)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
 		renderer->EndRendering(m_nodeParameter, nullptr);

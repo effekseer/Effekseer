@@ -23,7 +23,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-class RingRenderer
+class RingRenderer : public ReferenceObject
 {
 public:
 	struct NodeParameter

@@ -62,7 +62,7 @@ public:
 	
 	void Update();
 
-	::Effekseer::SoundPlayer* CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer();
 
 	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
 	

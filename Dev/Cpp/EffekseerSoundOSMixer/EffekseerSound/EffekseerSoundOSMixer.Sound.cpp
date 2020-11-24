@@ -96,9 +96,9 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundPlayer* SoundImplemented::CreateSoundPlayer()
+::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
-	return new SoundPlayer(this);
+	return ::Effekseer::SoundPlayerRef(new SoundPlayer(this));
 }
 
 //----------------------------------------------------------------------------------

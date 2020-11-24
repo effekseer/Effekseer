@@ -43,7 +43,7 @@ public:
 	void SetListener( const ::Effekseer::Vector3D& pos, 
 		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up );
 	
-	::Effekseer::SoundPlayer* CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer();
 
 	::Effekseer::SoundLoaderRef CreateSoundLoader();
 	

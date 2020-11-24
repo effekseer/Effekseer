@@ -108,7 +108,7 @@ public:
 	/**
 		@brief	サウンドプレイヤを生成する。
 	*/
-	virtual ::Effekseer::SoundPlayer* CreateSoundPlayer() = 0;
+	virtual ::Effekseer::SoundPlayerRef CreateSoundPlayer() = 0;
 
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。

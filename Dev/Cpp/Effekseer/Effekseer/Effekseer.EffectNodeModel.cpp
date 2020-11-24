@@ -119,7 +119,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const RefPtr<Se
 //----------------------------------------------------------------------------------
 void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 {
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -158,7 +158,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -236,7 +236,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 //----------------------------------------------------------------------------------
 void EffectNodeModel::EndRendering(Manager* manager)
 {
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;

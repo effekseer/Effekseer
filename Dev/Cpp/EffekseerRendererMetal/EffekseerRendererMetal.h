@@ -256,27 +256,27 @@ public:
 	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
-	virtual ::Effekseer::SpriteRenderer* CreateSpriteRenderer() = 0;
+	virtual ::Effekseer::SpriteRendererRef CreateSpriteRenderer() = 0;
 
 	/**
 		@brief	リボンレンダラーを生成する。
 	*/
-	virtual ::Effekseer::RibbonRenderer* CreateRibbonRenderer() = 0;
+	virtual ::Effekseer::RibbonRendererRef CreateRibbonRenderer() = 0;
 
 	/**
 		@brief	リングレンダラーを生成する。
 	*/
-	virtual ::Effekseer::RingRenderer* CreateRingRenderer() = 0;
+	virtual ::Effekseer::RingRendererRef CreateRingRenderer() = 0;
 
 	/**
 		@brief	モデルレンダラーを生成する。
 	*/
-	virtual ::Effekseer::ModelRenderer* CreateModelRenderer() = 0;
+	virtual ::Effekseer::ModelRendererRef CreateModelRenderer() = 0;
 
 	/**
 		@brief	軌跡レンダラーを生成する。
 	*/
-	virtual ::Effekseer::TrackRenderer* CreateTrackRenderer() = 0;
+	virtual ::Effekseer::TrackRendererRef CreateTrackRenderer() = 0;
 
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
