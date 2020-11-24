@@ -160,7 +160,7 @@ void ManagerImplemented::StopStoppingEffects()
 					if (canRemoved)
 					{
 						// when a sound is not playing.
-						if (m_soundPlayer != nullptr || !m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
+						if (m_soundPlayer == nullptr || !m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
 						{
 							isRemoving = true;
 						}
