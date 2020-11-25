@@ -64,6 +64,7 @@ namespace Effekseer
 			string format = "efk";
 			string export = string.Empty;
 			float magnification = 0.0f;
+			bool materialCache = false;
 
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -111,6 +112,10 @@ namespace Effekseer
 						float.TryParse(args[i], out magnification);
 					}
 				}
+				else if (args[i] == "--materialcache")
+				{
+					materialCache = true;
+				}
 				else
 				{
 					input = args[i];
@@ -119,13 +124,13 @@ namespace Effekseer
 
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
-				Exec(gui, input, output, export, format, magnification);
+				Exec(gui, input, output, export, format, magnification, materialCache);
 			}
 			else
 			{
 				try
 				{
-					Exec(gui, input, output, export, format, magnification);
+					Exec(gui, input, output, export, format, magnification, materialCache);
 				}
 				catch (Exception e)
 				{
@@ -134,7 +139,7 @@ namespace Effekseer
 			}
 		}
 
-		static void Exec(bool gui, string input, string output, string export, string format, float magnification)
+		static void Exec(bool gui, string input, string output, string export, string format, float magnification, bool materialCache)
 		{
 			// Register UI
 			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });
@@ -274,6 +279,18 @@ namespace Effekseer
 						var binary = binaryExporter.Export(magnification);
 						System.IO.File.WriteAllBytes(export, binary);
 					}
+				}
+			}
+			catch (Exception e)
+			{
+				System.Console.Error.WriteLine(e.Message);
+			}
+
+			try
+			{
+				if (materialCache)
+				{
+					IO.MaterialCacheGenerator.GenerateMaterialCaches();
 				}
 			}
 			catch (Exception e)

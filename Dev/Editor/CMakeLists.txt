@@ -65,6 +65,7 @@ file(GLOB files
     Effekseer/swig/*.cs
     Effekseer/Utils/*.cs
     Effekseer/Process/*.cs
+    Effekseer/IO/MaterialCacheGenerator.cs
     )
 
 list(APPEND files
