@@ -74,7 +74,7 @@ namespace EffekseerRendererMetal
     auto graphics = new LLGI::GraphicsMetal();
     graphics->Initialize(nullptr);
 
-	auto ret = Effekseer::MakeRef<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }
