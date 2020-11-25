@@ -154,6 +154,7 @@
     <Compile Include="GUI\Network.cs" />
     <Compile Include="GUI\ThumbnailManager.cs" />
     <Compile Include="GUI\Viewer.cs" />
+    <Compile Include="IO\MaterialCacheGenerator.cs" />
     <Compile Include="Plugin\ExportDefault.cs" />
     <Compile Include="Plugin\ExportEfkPkg.cs" />
     <Compile Include="Plugin\Exportglb.cs" />

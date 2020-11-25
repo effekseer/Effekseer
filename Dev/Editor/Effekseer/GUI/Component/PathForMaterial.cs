@@ -252,19 +252,7 @@ namespace Effekseer.GUI.Component
 
 		void GenerateCompiledMaterial()
 		{
-			var generator = new swig.CompiledMaterialGenerator();
-
-			string appDirectory = GUI.Manager.GetEntryDirectory();
-			string fullPath = System.IO.Path.Combine(appDirectory, "tools/");
-
-			generator.Initialize(fullPath);
-
-			if(absoluteFilePath != string.Empty)
-			{
-				generator.Compile(CreateBinaryFilePath(), binding.GetAbsolutePath());
-			}
-
-			generator.Dispose();
+			IO.MaterialCacheGenerator.GenerateMaterialCache(binding.GetAbsolutePath());
 
 			UpdateInformation();
 		}
@@ -298,10 +286,11 @@ namespace Effekseer.GUI.Component
 			matInfo = new Utl.MaterialInformation();
 			matInfo.Load(binding.GetAbsolutePath());
 
-			if(System.IO.File.Exists(CreateBinaryFilePath()))
+			var binaryPath = IO.MaterialCacheGenerator.CreateBinaryFilePath(binding.GetAbsolutePath());
+			if (System.IO.File.Exists(binaryPath))
 			{
 				compiledMatInfo = new Utl.CompiledMaterialInformation();
-				errorCode = compiledMatInfo.Load(CreateBinaryFilePath());
+				errorCode = compiledMatInfo.Load(binaryPath);
 			}
 			else
 			{
@@ -339,11 +328,6 @@ namespace Effekseer.GUI.Component
 			}
 
 			Manager.NativeManager.EndTooltip();
-		}
-
-		string CreateBinaryFilePath()
-		{
-			return binding.GetAbsolutePath() + "d";
 		}
 	}
 }

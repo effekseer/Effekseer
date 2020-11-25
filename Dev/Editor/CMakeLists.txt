@@ -73,6 +73,7 @@ file(GLOB files
     Effekseer/GUI/Dock/ProcedualModel.cs
     Effekseer/GUI/Component/Int2.cs
 	Effekseer/GUI/Component/ObjectReference.cs
+    Effekseer/IO/MaterialCacheGenerator.cs
     )
 
 list(APPEND files
