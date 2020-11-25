@@ -20,10 +20,10 @@ namespace EffekseerRendererMetal
 
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::Backend::GraphicsDevice* CreateDevice();
+::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
 
 ::EffekseerRenderer::Renderer* Create(
-                                      ::Effekseer::Backend::GraphicsDevice* graphicsDevice,
+                                      ::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
                                       int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
@@ -43,17 +43,17 @@ namespace EffekseerRendererMetal
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture);
 
-void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
+void DeleteTextureData(Effekseer::TextureData* textureData);
 
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
 
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDevice* graphicsDevice);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
 

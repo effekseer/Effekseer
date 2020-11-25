@@ -69,12 +69,12 @@ namespace EffekseerRendererMetal
     return ret;
 }
 
-::Effekseer::Backend::GraphicsDevice* CreateDevice()
+::Effekseer::Backend::GraphicsDeviceRef CreateDevice()
 {
     auto graphics = new LLGI::GraphicsMetal();
     graphics->Initialize(nullptr);
 
-	auto ret = new EffekseerRendererLLGI::Backend::GraphicsDevice(graphics);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }
@@ -115,7 +115,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 }
 
 ::EffekseerRenderer::Renderer* Create(
-                                      ::Effekseer::Backend::GraphicsDevice* graphicsDevice,
+                                      ::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
                                       int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
@@ -126,7 +126,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 
     CreateFixedShaderForMetal(&renderer->fixedShader_);
 
-	auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
+	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
     auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
     LLGI::RenderPassPipelineStateKey key;
     key.RenderTargetFormats.resize(1);
@@ -161,11 +161,9 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 
 	if (ret != nullptr)
 	{
-		ES_SAFE_RELEASE(graphicDevice);
 		return ret;
 	}
 
-	ES_SAFE_RELEASE(graphicDevice);
 	return nullptr;
 
 	auto graphics = new LLGI::GraphicsMetal();
@@ -187,10 +185,10 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 	return textureData;
 }
 
-void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData)
+void DeleteTextureData(Effekseer::TextureData* textureData)
 {
 	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	texture->Release();
+	ES_SAFE_RELEASE(texture);
 	delete textureData;
 }
 
@@ -201,10 +199,10 @@ void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
 	g->WaitFinish();
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
 	auto commandList = g->CreateCommandList(mp->GetInternal());
@@ -220,9 +218,9 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDevice* graphicsDevice)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
 	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
@@ -260,14 +258,14 @@ void RendererImplemented::GenerateVertexBuffer()
 {
     // Metal doesn't need to update buffer to make sure it has the correct size
     auto sc = std::max(4000, m_squareMaxCount);
-    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * sc * 4, true, false);
+    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_.Get(), EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * sc * 4, true, false);
 }
 
 void RendererImplemented::GenerateIndexBuffer()
 {
     auto sc = std::max(4000, m_squareMaxCount);
 
-	m_indexBuffer = EffekseerRendererLLGI::IndexBuffer::Create(graphicsDevice_, sc * 6, false, false);
+	m_indexBuffer = EffekseerRendererLLGI::IndexBuffer::Create(graphicsDevice_.Get(), sc * 6, false, false);
 	if (m_indexBuffer == nullptr)
 		return;
 

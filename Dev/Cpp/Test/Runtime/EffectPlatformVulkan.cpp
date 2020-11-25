@@ -116,7 +116,7 @@ public:
 
 		if (textureData_ != nullptr)
 		{
-			EffekseerRendererVulkan::DeleteTextureData(renderer_, textureData_);
+			EffekseerRendererVulkan::DeleteTextureData(textureData_);
 		}
 	}
 
