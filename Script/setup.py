@@ -18,8 +18,6 @@ if pf == 'Darwin':
     shutil.copyfile("../ResourceData/tool/tools/mac/fbxToEffekseerCurveConverter", "../Dev/release/tools/fbxToEffekseerCurveConverter")
     shutil.copyfile("../ResourceData/tool/tools/mac/libfbxsdk.dylib", "../Dev/release/tools/libfbxsdk.dylib")
 
-    shutil.copyfile("../ResourceData/tool/tools/mac/mqoToEffekseerModelConverter", "../Dev/release/tools/mqoToEffekseerModelConverter")
-
 if pf == 'Linux':
     shutil.copyfile("../ResourceData/tool/tools/linux/fbxToEffekseerModelConverter", "../Dev/release/tools/fbxToEffekseerModelConverter")
     shutil.copyfile("../ResourceData/tool/tools/linux/fbxToEffekseerCurveConverter", "../Dev/release/tools/fbxToEffekseerCurveConverter")

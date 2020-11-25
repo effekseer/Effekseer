@@ -66,6 +66,9 @@ file(GLOB files
     Effekseer/Utils/*.cs
     Effekseer/Process/*.cs
     Effekseer/IO/MaterialCacheGenerator.cs
+    Effekseer/IO/mqoToEffekseerModelConverter/*.cs
+    Effekseer/IO/mqoToEffekseerModelConverter/mqoIO/*.cs
+    Effekseer/IO/mqoToEffekseerModelConverter/mqoIO/Realtime/*.cs
     )
 
 list(APPEND files
