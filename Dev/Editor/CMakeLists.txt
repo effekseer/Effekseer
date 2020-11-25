@@ -74,6 +74,9 @@ file(GLOB files
     Effekseer/GUI/Component/Int2.cs
 	Effekseer/GUI/Component/ObjectReference.cs
     Effekseer/IO/MaterialCacheGenerator.cs
+    Effekseer/IO/mqoToEffekseerModelConverter/*.cs
+    Effekseer/IO/mqoToEffekseerModelConverter/mqoIO/*.cs
+    Effekseer/IO/mqoToEffekseerModelConverter/mqoIO/Realtime/*.cs
     )
 
 list(APPEND files

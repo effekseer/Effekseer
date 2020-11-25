@@ -394,12 +394,14 @@ namespace Effekseer.GUI.Component
 							converterPath += ".exe";
 						}
 
-						info.FileName = converterPath;
-						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
+						try
+						{
+							mqoToEffekseerModelConverter.Program.Call(new[] { oldFilepath, newFilepath, "-scale", omd.Magnification.ToString() });
+						}
+						catch
+						{
 
-						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
-						p.WaitForExit();
-						p.Dispose();
+						}
 
 						if (System.IO.File.Exists(newFilepath))
 						{
