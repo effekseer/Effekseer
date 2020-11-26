@@ -90,9 +90,6 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
     float _distance = softparticleParam;
     vec2 rescale = reconstruct1;
     vec4 params = reconstruct2;
-    float tempY = params.y;
-    params.y = params.z;
-    params.z = tempY;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
     return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
@@ -129,8 +126,8 @@ void main()
     Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
-    vec4 _195 = _main(Input);
-    _entryPointOutput = _195;
+    vec4 _187 = _main(Input);
+    _entryPointOutput = _187;
 }
 
 )";
@@ -225,9 +222,6 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
     highp float _distance = softparticleParam;
     highp vec2 rescale = reconstruct1;
     highp vec4 params = reconstruct2;
-    highp float tempY = params.y;
-    params.y = params.z;
-    params.z = tempY;
     highp vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     highp vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
     return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
@@ -264,8 +258,8 @@ void main()
     Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _195 = _main(Input);
-    _entryPointOutput = _195;
+    highp vec4 _187 = _main(Input);
+    _entryPointOutput = _187;
 }
 
 )";

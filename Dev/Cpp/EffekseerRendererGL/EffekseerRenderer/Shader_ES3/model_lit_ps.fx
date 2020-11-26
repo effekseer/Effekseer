@@ -41,9 +41,6 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
     highp float _distance = softparticleParam;
     highp vec2 rescale = reconstruct1;
     highp vec4 params = reconstruct2;
-    highp float tempY = params.y;
-    params.y = params.z;
-    params.z = tempY;
     highp vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     highp vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
     return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
@@ -55,8 +52,8 @@ highp vec4 _main(PS_Input Input)
     highp vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _166 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_166.x, _166.y, _166.z, Output.w);
+    highp vec3 _158 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_158.x, _158.y, _158.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -88,7 +85,7 @@ void main()
     Input.Tangent = _VSPS_Tangent;
     Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _264 = _main(Input);
-    _entryPointOutput = _264;
+    highp vec4 _256 = _main(Input);
+    _entryPointOutput = _256;
 }
 

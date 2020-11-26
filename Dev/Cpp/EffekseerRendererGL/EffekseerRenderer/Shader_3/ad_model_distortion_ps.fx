@@ -134,9 +134,6 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
     float _distance = softparticleParam;
     vec2 rescale = reconstruct1;
     vec4 params = reconstruct2;
-    float tempY = params.y;
-    params.y = params.z;
-    params.z = tempY;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
     return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
@@ -214,7 +211,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _587 = _main(Input);
-    _entryPointOutput = _587;
+    vec4 _579 = _main(Input);
+    _entryPointOutput = _579;
 }
 

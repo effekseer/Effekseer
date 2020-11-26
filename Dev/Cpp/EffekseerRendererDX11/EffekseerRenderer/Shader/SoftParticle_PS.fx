@@ -6,12 +6,6 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, floa
 	float2 rescale = reconstruct1;
 	float4 params = reconstruct2;
 
-	#ifdef __OPENGL__
-	float tempY = params.y;
-	params.y = params.z;
-	params.z = tempY;
-	#endif
-
 	float2 zs = float2(backgroundZ * rescale.x + rescale.y, meshZ);
 
 	float2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);

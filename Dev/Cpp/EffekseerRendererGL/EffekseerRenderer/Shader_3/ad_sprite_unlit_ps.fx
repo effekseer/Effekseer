@@ -101,9 +101,6 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
     float _distance = softparticleParam;
     vec2 rescale = reconstruct1;
     vec4 params = reconstruct2;
-    float tempY = params.y;
-    params.y = params.z;
-    params.z = tempY;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
     return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
@@ -182,14 +179,14 @@ vec4 _main(PS_Input Input)
     vec4 param_12 = Output;
     ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.blendTextureParameter.x);
     Output = param_12;
-    vec3 _456 = Output.xyz * CBPS0.emissiveScaling.x;
-    Output = vec4(_456.x, _456.y, _456.z, Output.w);
+    vec3 _448 = Output.xyz * CBPS0.emissiveScaling.x;
+    Output = vec4(_448.x, _448.y, _448.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _486 = mix(CBPS0.edgeColor.xyz * CBPS0.edgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.edgeParameter.x)));
-    Output = vec4(_486.x, _486.y, _486.z, Output.w);
+    vec3 _478 = mix(CBPS0.edgeColor.xyz * CBPS0.edgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.edgeParameter.x)));
+    Output = vec4(_478.x, _478.y, _478.z, Output.w);
     return Output;
 }
 
@@ -206,7 +203,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _528 = _main(Input);
-    _entryPointOutput = _528;
+    vec4 _520 = _main(Input);
+    _entryPointOutput = _520;
 }
 

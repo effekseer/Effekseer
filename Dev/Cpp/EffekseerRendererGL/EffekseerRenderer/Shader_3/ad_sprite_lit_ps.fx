@@ -107,9 +107,6 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
     float _distance = softparticleParam;
     vec2 rescale = reconstruct1;
     vec4 params = reconstruct2;
-    float tempY = params.y;
-    params.y = params.z;
-    params.z = tempY;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
     return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
@@ -192,16 +189,16 @@ vec4 _main(PS_Input Input)
     vec4 param_12 = Output;
     ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_12;
-    vec3 _494 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_494.x, _494.y, _494.z, Output.w);
+    vec3 _486 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_486.x, _486.y, _486.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _519 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_519.x, _519.y, _519.z, Output.w);
-    vec3 _540 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_540.x, _540.y, _540.z, Output.w);
+    vec3 _511 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
+    Output = vec4(_511.x, _511.y, _511.z, Output.w);
+    vec3 _532 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_532.x, _532.y, _532.z, Output.w);
     return Output;
 }
 
@@ -219,7 +216,7 @@ void main()
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
     Input.PosP = _VSPS_PosP;
-    vec4 _586 = _main(Input);
-    _entryPointOutput = _586;
+    vec4 _578 = _main(Input);
+    _entryPointOutput = _578;
 }
 

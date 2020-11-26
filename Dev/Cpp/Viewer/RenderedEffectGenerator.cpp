@@ -522,8 +522,8 @@ void RenderedEffectGenerator::Render()
 	reconstructionParam.DepthBufferScale = 1.0f;
 	reconstructionParam.DepthBufferOffset = 0.0f;
 	reconstructionParam.ProjectionMatrix33 = config_.ProjectionMatrix.Values[2][2];
-	reconstructionParam.ProjectionMatrix43 = config_.ProjectionMatrix.Values[3][2];
-	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[2][3];
+	reconstructionParam.ProjectionMatrix43 = config_.ProjectionMatrix.Values[2][3];
+	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[3][2];
 	reconstructionParam.ProjectionMatrix44 = config_.ProjectionMatrix.Values[3][3];
 
 	renderer_->SetDepth(depthRenderTexture->GetAsEffekseerBackend(), reconstructionParam);

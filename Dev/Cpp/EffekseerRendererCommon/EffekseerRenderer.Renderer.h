@@ -108,8 +108,8 @@ struct DepthReconstructionParameter
 	float DepthBufferScale = 1.0f;
 	float DepthBufferOffset = 0.0f;
 	float ProjectionMatrix33 = 0.0f;
-	float ProjectionMatrix43 = 0.0f;
 	float ProjectionMatrix34 = 0.0f;
+	float ProjectionMatrix43 = 0.0f;
 	float ProjectionMatrix44 = 0.0f;
 };
 
@@ -441,12 +441,6 @@ public:
 		@brief	
 		\~English	Specify a depth texture and parameters to reconstruct from z to depth
 		\~Japanese	深度画像とZから深度を復元するためのパラメーターを設定する。
-		@note
-		- ピクセルシェーダー側に深度を復元する式を増やす。
-		- 頂点シェーダーからピクセルシェーダーに深度を渡すようにする。
-		- 比較してアルファを変更するようにする。
-		- フェードの度合いのつけ方をUE4を参考に実装する。
-		- ツール側で床を出せるようにする。
 	*/
 	virtual void SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
 };
