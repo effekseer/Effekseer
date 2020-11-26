@@ -28,17 +28,17 @@ struct VS_Input
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCameraProj;
-    layout(row_major) mat4 mModel[10];
-    vec4 fUV[10];
-    vec4 fAlphaUV[10];
-    vec4 fUVDistortionUV[10];
-    vec4 fBlendUV[10];
-    vec4 fBlendAlphaUV[10];
-    vec4 fBlendUVDistortionUV[10];
+    layout(row_major) mat4 mModel[40];
+    vec4 fUV[40];
+    vec4 fAlphaUV[40];
+    vec4 fUVDistortionUV[40];
+    vec4 fBlendUV[40];
+    vec4 fBlendAlphaUV[40];
+    vec4 fBlendUVDistortionUV[40];
     vec4 fFlipbookParameter;
-    vec4 fFlipbookIndexAndNextRate[10];
-    vec4 fModelAlphaThreshold[10];
-    vec4 fModelColor[10];
+    vec4 fFlipbookIndexAndNextRate[40];
+    vec4 fModelAlphaThreshold[40];
+    vec4 fModelColor[40];
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;

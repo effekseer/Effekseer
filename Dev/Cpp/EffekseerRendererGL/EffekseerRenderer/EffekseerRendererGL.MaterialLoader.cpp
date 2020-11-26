@@ -224,13 +224,26 @@ static const int InstanceCount = 10;
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ProjectionMatrix"), parameterGenerator.VertexProjectionMatrixOffset);
 
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset);
+		if (instancing)
+		{
+			shader->AddVertexConstantLayout(
+				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset, InstanceCount);
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset, InstanceCount);
 
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset);
+			shader->AddVertexConstantLayout(
+				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset, InstanceCount);
+		}
+		else
+		{
+			shader->AddVertexConstantLayout(
+				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset);
+
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset);
+
+			shader->AddVertexConstantLayout(
+				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset);
+		}
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), parameterGenerator.VertexInversedFlagOffset);
@@ -241,16 +254,33 @@ static const int InstanceCount = 10;
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.VertexCameraPositionOffset);
 
-		if (material.GetCustomData1Count() > 0)
+		if (instancing)
 		{
-			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1"), parameterGenerator.VertexModelCustomData1Offset);
-		}
+			if (material.GetCustomData1Count() > 0)
+			{
+				shader->AddVertexConstantLayout(
+					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1s"), parameterGenerator.VertexModelCustomData1Offset, InstanceCount);
+			}
 
-		if (material.GetCustomData2Count() > 0)
+			if (material.GetCustomData2Count() > 0)
+			{
+				shader->AddVertexConstantLayout(
+					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2s"), parameterGenerator.VertexModelCustomData2Offset, InstanceCount);
+			}
+		}
+		else
 		{
-			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2"), parameterGenerator.VertexModelCustomData2Offset);
+			if (material.GetCustomData1Count() > 0)
+			{
+				shader->AddVertexConstantLayout(
+					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1"), parameterGenerator.VertexModelCustomData1Offset);
+			}
+
+			if (material.GetCustomData2Count() > 0)
+			{
+				shader->AddVertexConstantLayout(
+					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2"), parameterGenerator.VertexModelCustomData2Offset);
+			}
 		}
 
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)

@@ -25,9 +25,9 @@ struct VS_Output
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCameraProj;
-    layout(row_major) mat4 mModel[10];
-    vec4 fUV[10];
-    vec4 fModelColor[10];
+    layout(row_major) mat4 mModel[40];
+    vec4 fUV[40];
+    vec4 fModelColor[40];
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;

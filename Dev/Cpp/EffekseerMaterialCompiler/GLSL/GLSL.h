@@ -82,17 +82,17 @@ static const char g_material_model_vs_src_pre_uniform[] =
 	R"(
 uniform mat4 ProjectionMatrix;
 
-#ifdef _INSTANCING_
-
-uniform mat4 ModelMatrix[10];
-uniform vec4 UVOffset[10];
-uniform vec4 ModelColor[10];
-
-#else
+#ifdef __INSTANCING_DISABLED__
 
 uniform mat4 ModelMatrix;
 uniform vec4 UVOffset;
 uniform vec4 ModelColor;
+
+#else
+
+uniform mat4 ModelMatrix[_INSTANCE_COUNT_];
+uniform vec4 UVOffset[_INSTANCE_COUNT_];
+uniform vec4 ModelColor[_INSTANCE_COUNT_];
 
 #endif
 
@@ -119,14 +119,14 @@ vec2 GetUVBack(vec2 uv)
 
 void main()
 {
-#ifdef _INSTANCING_
-	mat4 modelMatrix = ModelMatrix[int(gl_InstanceID)];
-	vec4 uvOffset = UVOffset[int(gl_InstanceID)];
-	vec4 modelColor = ModelColor[int(gl_InstanceID)] * a_Color;
-#else
+#ifdef __INSTANCING_DISABLED__
 	mat4 modelMatrix = ModelMatrix;
 	vec4 uvOffset = UVOffset;
 	vec4 modelColor = ModelColor * a_Color;
+#else
+	mat4 modelMatrix = ModelMatrix[int(gl_InstanceID)];
+	vec4 uvOffset = UVOffset[int(gl_InstanceID)];
+	vec4 modelColor = ModelColor[int(gl_InstanceID)] * a_Color;
 #endif
 
 	mat3 modelMatRot = mat3(modelMatrix);
@@ -678,8 +678,7 @@ class ShaderGenerator
 					bool isSprite,
 					MaterialShaderType shaderType,
 					const std::string& baseCode,
-					bool useUniformBlock,
-					bool isInstancing)
+					bool useUniformBlock)
 	{
 		if (stage == 0)
 		{
@@ -705,9 +704,11 @@ class ShaderGenerator
 				{
 					maincode << GetType(material->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
 				}
-				else if (isInstancing)
+				else
 				{
+					maincode << "#ifndef __INSTANCING_DISABLED__" << std::endl;
 					maincode << GetType(4) + " customData1 = customData1s[int(gl_InstanceID)];\n";
+					maincode << "#endif" << std::endl;
 				}
 				maincode << "v_CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
 			}
@@ -718,9 +719,11 @@ class ShaderGenerator
 				{
 					maincode << GetType(material->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
 				}
-				else if (isInstancing)
+				else
 				{
+					maincode << "#ifndef __INSTANCING_DISABLED__" << std::endl;
 					maincode << GetType(4) + " customData2 = customData2s[int(gl_InstanceID)];\n";
+					maincode << "#endif" << std::endl;
 				}
 				maincode << "v_CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
 			}
@@ -780,7 +783,7 @@ public:
 							  bool useSet,
 							  int textureBindingOffset,
 							  bool isYInverted,
-							  bool isInstancing)
+							  int instanceCount)
 	{
 		useUniformBlock_ = useUniformBlock;
 		useSet_ = useSet;
@@ -803,9 +806,12 @@ public:
 				maincode << "#define _Y_INVERTED_ 1" << std::endl;
 			}
 
-			if (isInstancing)
+			maincode << "#define _INSTANCE_COUNT_ " << instanceCount << std::endl;
+			
+			// TODO : Replace DIRTY CODE
+			if (textureBindingOffset > 0)
 			{
-				maincode << "#define _INSTANCING_ 1" << std::endl;
+				// Vulkan
 				maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
 			}
 
@@ -874,25 +880,28 @@ public:
 			{
 				if (material->GetCustomData1Count() > 0)
 				{
-					if (isInstancing)
-					{
-						maincode << "uniform vec4 customData1s[10];" << std::endl;
-					}
-					else
-					{
-						maincode << "uniform vec4 customData1;" << std::endl;
-					}
+					maincode << R"(
+
+#ifdef __INSTANCING_DISABLED__
+uniform vec4 customData1;
+#else
+uniform vec4 customData1s[_INSTANCE_COUNT_];
+#endif
+)" << std::endl;
+
 				}
 				if (material->GetCustomData2Count() > 0)
 				{
-					if (isInstancing)
-					{
-						maincode << "uniform vec4 customData2s[10];" << std::endl;
-					}
-					else
-					{
-						maincode << "uniform vec4 customData2;" << std::endl;
-					}
+
+					maincode << R"(
+
+#ifdef __INSTANCING_DISABLED__
+uniform vec4 customData2;
+#else
+uniform vec4 customData2s[_INSTANCE_COUNT_];
+#endif
+)" << std::endl;
+
 				}
 			}
 
@@ -953,7 +962,7 @@ public:
 				baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
 			}
 
-			ExportMain(maincode, material, stage, isSprite, shaderType, baseCode, useUniformBlock, isInstancing);
+			ExportMain(maincode, material, stage, isSprite, shaderType, baseCode, useUniformBlock);
 
 			if (stage == 0)
 			{

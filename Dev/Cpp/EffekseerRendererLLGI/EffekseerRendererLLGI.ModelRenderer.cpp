@@ -11,7 +11,7 @@
 
 namespace EffekseerRendererLLGI
 {
-const int InstanceCount = 10;
+const int InstanceCount = 40;
 
 ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_ad_lit,

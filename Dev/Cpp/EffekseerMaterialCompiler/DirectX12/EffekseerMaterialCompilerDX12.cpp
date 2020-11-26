@@ -57,7 +57,7 @@ namespace DX12
 namespace Effekseer
 {
 
-static const int32_t InstanceCount = 10;
+static const int32_t InstanceCount = 40;
 
 class CompiledMaterialBinaryDX12 : public CompiledMaterialBinary, ReferenceObject
 {
