@@ -11,7 +11,7 @@
 
 namespace EffekseerRendererLLGI
 {
-const int InstanceCount = 40;
+const int LLGI_InstanceCount = 40;
 
 ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_ad_lit,
@@ -36,11 +36,11 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
-			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<InstanceCount>));
+			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<LLGI_InstanceCount>));
 			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedPixelConstantBuffer));
 		}
 
-		shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<InstanceCount>));
+		shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<LLGI_InstanceCount>));
 		shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
 	}
 
@@ -51,11 +51,11 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
-			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<InstanceCount>));
+			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<LLGI_InstanceCount>));
 			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 		}
 
-		m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<InstanceCount>));
+		m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<LLGI_InstanceCount>));
 		m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
 	}
 
@@ -199,7 +199,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, InstanceCount>(
+	EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, LLGI_InstanceCount>(
 		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
 }
 

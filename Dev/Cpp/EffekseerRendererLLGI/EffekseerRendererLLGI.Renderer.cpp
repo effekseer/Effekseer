@@ -633,7 +633,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
 {
-	if (m_background.UserPtr == nullptr)
+	if (m_background.UserPtr == nullptr && m_background.TexturePtr == nullptr)
 		return nullptr;
 	return &m_background;
 }
@@ -663,6 +663,7 @@ void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerDa
 	auto back = (LLGI::Texture*)m_background.UserPtr;
 	ES_SAFE_RELEASE(back);
 
+	m_background.TexturePtr = textuerData->TexturePtr;
 	m_background.UserPtr = texture;
 }
 

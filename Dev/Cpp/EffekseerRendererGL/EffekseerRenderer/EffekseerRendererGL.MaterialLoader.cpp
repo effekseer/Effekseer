@@ -13,7 +13,7 @@
 namespace EffekseerRendererGL
 {
 
-static const int InstanceCount = 10;
+static const int GL_InstanceCount = 10;
 
 ::Effekseer::MaterialData* MaterialLoader::LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary)
 {
@@ -191,7 +191,7 @@ static const int InstanceCount = 10;
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, instancing ? InstanceCount : 1);
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, instancing ? GL_InstanceCount : 1);
 
 		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypesModel[st]));
 		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypesModel[st]));
@@ -227,12 +227,12 @@ static const int InstanceCount = 10;
 		if (instancing)
 		{
 			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset, InstanceCount);
+				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset, GL_InstanceCount);
 
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset, InstanceCount);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset, GL_InstanceCount);
 
 			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset, InstanceCount);
+				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset, GL_InstanceCount);
 		}
 		else
 		{
@@ -259,13 +259,13 @@ static const int InstanceCount = 10;
 			if (material.GetCustomData1Count() > 0)
 			{
 				shader->AddVertexConstantLayout(
-					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1s"), parameterGenerator.VertexModelCustomData1Offset, InstanceCount);
+					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1s"), parameterGenerator.VertexModelCustomData1Offset, GL_InstanceCount);
 			}
 
 			if (material.GetCustomData2Count() > 0)
 			{
 				shader->AddVertexConstantLayout(
-					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2s"), parameterGenerator.VertexModelCustomData2Offset, InstanceCount);
+					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2s"), parameterGenerator.VertexModelCustomData2Offset, GL_InstanceCount);
 			}
 		}
 		else

@@ -31,9 +31,9 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     float4x4 mCameraProj;
-    float4x4 mModel[10];
-    float4 fUV[10];
-    float4 fModelColor[10];
+    float4x4 mModel[40];
+    float4 fUV[40];
+    float4 fModelColor[40];
     float4 fLightDirection;
     float4 fLightColor;
     float4 fLightAmbient;
