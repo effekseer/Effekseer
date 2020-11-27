@@ -131,6 +131,10 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float3 pixelNormalDir = worldNormal;
     
     float4 vcolor = modelColor;
+
+    // Dummy
+    float2 screenUV = float2(0.0f, 0.0f);
+    float meshZ =  0.0f;
 )";
 
 static const char g_material_model_vs_src_suf2[] =
@@ -241,6 +245,10 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.atColor;
+
+    // Dummy
+    float2 screenUV = float2(0.0f, 0.0f);
+    float meshZ =  0.0f;
 )";
 
 static const char g_material_sprite_vs_src_suf1[] =
@@ -268,6 +276,10 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     o.v_WorldT = worldTangent;
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.atColor;
+
+    // Dummy
+    float2 screenUV = float2(0.0f, 0.0f);
+    float meshZ =  0.0f;
 )";
 
 static const char g_material_sprite_vs_src_suf2[] =
@@ -323,7 +335,7 @@ struct ShaderUniform2 {
 static const char g_material_fs_src_suf1[] =
     R"(
 
-float DepthFade(float2 screenUV, float meshZ, float softParticleParam)
+float ReplacedDepthFade(texture2d<float> efk_depth, sampler s_efk_depth, float4 reconstructionParam1, float4 reconstructionParam2, float2 screenUV, float meshZ, float softParticleParam)
 {
 	float backgroundZ = efk_depth.sample(s_efk_depth, screenUV).x;
 
@@ -418,8 +430,8 @@ fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUnifor
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.v_VColor;
     float3 objectScale = float3(1.0, 1.0, 1.0);
-    float2 screenUV = o.v_PosP.xy / o.v_PosP.w;
-	float meshZ =  o.v_PosP.z / o.v_PosP.w;
+    float2 screenUV = i.v_PosP.xy / i.v_PosP.w;
+	float meshZ =  i.v_PosP.z / i.v_PosP.w;
     screenUV.xy = float2(screenUV.x + 1.0, screenUV.y + 1.0) * 0.5;
     float2 screenUV_distort = screenUV;
     screenUV = float2(screenUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * screenUV.y);
@@ -832,10 +844,16 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
             baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
         }
         
+        // Depth
+        if (stage == 1)
+        {
+            baseCode = Replace(baseCode, "CalcDepthFade(", "ReplacedDepthFade(efk_depth, s_efk_depth, u.reconstructionParam1, u.reconstructionParam2,");
+        }
+        
         ExportMain(maincode, material, stage, isSprite, shaderType, baseCode, textures.str());
         
         maincode.str(Replace(maincode.str(), "//$UNIFORMS$", userUniforms.str()));
-
+        
         if (stage == 0)
         {
             shaderData.CodeVS = maincode.str();
