@@ -291,7 +291,7 @@ void ServerImplemented::Stop()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Register(const char16_t* key, EffectRef& effect)
+void ServerImplemented::Register(const char16_t* key, const EffectRef& effect)
 {
 	if (effect == nullptr)
 		return;
@@ -303,7 +303,7 @@ void ServerImplemented::Register(const char16_t* key, EffectRef& effect)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Unregister(EffectRef& effect)
+void ServerImplemented::Unregister(const EffectRef& effect)
 {
 	if (effect == nullptr)
 		return;

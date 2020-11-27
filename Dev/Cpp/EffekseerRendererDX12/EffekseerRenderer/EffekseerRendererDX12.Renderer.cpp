@@ -166,14 +166,14 @@ namespace EffekseerRendererDX12
 	return ret;
 }
 
-::EffekseerRenderer::Renderer* Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
 									  DXGI_FORMAT depthFormat,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount)
 {
-	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
+	auto renderer = ::Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
 
 	auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const unsigned char* data, int32_t size) -> void {
 		ds.resize(1);
@@ -245,12 +245,10 @@ namespace EffekseerRendererDX12
 
 	ES_SAFE_RELEASE(pipelineState);
 
-	ES_SAFE_DELETE(renderer);
-
 	return nullptr;
 }
 
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
 									  ID3D12CommandQueue* commandQueue,
 									  int32_t swapBufferCount,
 									  DXGI_FORMAT* renderTargetFormats,

@@ -21,7 +21,7 @@ namespace EffekseerRendererDX12
 	@param	squareMaxCount	The number of maximum sprites
 	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
 									  DXGI_FORMAT depthFormat,
@@ -40,7 +40,7 @@ namespace EffekseerRendererDX12
 	@param	squareMaxCount	The number of maximum sprites
 	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
 									  ID3D12CommandQueue* commandQueue,
 									  int32_t swapBufferCount,
 									  DXGI_FORMAT* renderTargetFormats,

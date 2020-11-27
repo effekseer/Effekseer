@@ -317,7 +317,7 @@ public:
 
 	void StopRoot(Handle handle) override;
 
-	void StopRoot(EffectRef& effect) override;
+	void StopRoot(const EffectRef& effect) override;
 
 	bool Exists(Handle handle) override;
 
@@ -439,9 +439,9 @@ public:
 
 	int32_t GetRestInstancesCount() const override;
 
-	void BeginReloadEffect(EffectRef& effect, bool doLockThread);
+	void BeginReloadEffect(const EffectRef& effect, bool doLockThread);
 
-	void EndReloadEffect(EffectRef& effect, bool doLockThread);
+	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
 
 	void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
 

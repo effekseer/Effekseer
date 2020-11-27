@@ -739,7 +739,7 @@ void ManagerImplemented::StopRoot(Handle handle)
 	}
 }
 
-void ManagerImplemented::StopRoot(EffectRef& effect)
+void ManagerImplemented::StopRoot(const EffectRef& effect)
 {
 	for (auto& it : m_DrawSets)
 	{
@@ -2183,7 +2183,7 @@ int32_t ManagerImplemented::GetRestInstancesCount() const
 	return static_cast<int32_t>(pooledChunks_.size()) * InstanceChunk::InstancesOfChunk;
 }
 
-void ManagerImplemented::BeginReloadEffect(EffectRef& effect, bool doLockThread)
+void ManagerImplemented::BeginReloadEffect(const EffectRef& effect, bool doLockThread)
 {
 	if (doLockThread)
 	{
@@ -2206,7 +2206,7 @@ void ManagerImplemented::BeginReloadEffect(EffectRef& effect, bool doLockThread)
 	}
 }
 
-void ManagerImplemented::EndReloadEffect(EffectRef& effect, bool doLockThread)
+void ManagerImplemented::EndReloadEffect(const EffectRef& effect, bool doLockThread)
 {
 	for (auto& it : m_DrawSets)
 	{

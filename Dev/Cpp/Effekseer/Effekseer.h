@@ -3279,7 +3279,7 @@ public:
 		@brief	エフェクトのルートだけを停止する。
 		@param	effect	[in]	エフェクト
 	*/
-	virtual void StopRoot(EffectRef& effect) = 0;
+	virtual void StopRoot(const EffectRef& effect) = 0;
 
 	/**
 		@brief	エフェクトのインスタンスが存在しているか取得する。
@@ -4030,7 +4030,7 @@ public:
 		\~English	an effect to be edit
 		\~Japanese	編集される対象のエフェクト
 	*/
-	virtual void Register(const char16_t* key, EffectRef& effect) = 0;
+	virtual void Register(const char16_t* key, const EffectRef& effect) = 0;
 
 	/**
 		@brief
@@ -4040,7 +4040,7 @@ public:
 		\~English	an effect registered
 		\~Japanese	登録されているエフェクト
 	*/
-	virtual void Unregister(EffectRef& effect) = 0;
+	virtual void Unregister(const EffectRef& effect) = 0;
 
 	/**
 		@brief
