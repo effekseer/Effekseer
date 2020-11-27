@@ -90,6 +90,8 @@ public:
 		bool ZWrite;
 		BillboardType Billboard;
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 
 		ZSortType ZSort;
 
@@ -194,6 +196,8 @@ public:
 		bool ViewpointDependent;
 
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 		int32_t SplineDivision;
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
@@ -304,6 +308,8 @@ public:
 		BillboardType Billboard;
 		int32_t VertexCount;
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 		float StartingFade = 0.0f;
 		float EndingFade = 0.0f;
 
@@ -413,6 +419,7 @@ public:
 		int32_t ModelIndex;
 		float Magnification;
 		bool IsRightHand;
+		float Maginification = 1.0f;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
@@ -516,6 +523,8 @@ public:
 		int32_t SplineDivision;
 
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;

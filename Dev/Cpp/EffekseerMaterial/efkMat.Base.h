@@ -141,6 +141,8 @@ enum class NodeType
 	Fresnel,
 	Rotator,
 	PolarCoords,
+	
+	DepthFade,
 
 	Comment,
 	Function, // Unimplemented

@@ -55,6 +55,9 @@ float2 GetUVBack(float2 uv)
 	return uv;
 }
 
+// Dummy
+float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam) { return 1.0f; }
+
 )";
 
 static char* material_sprite_vs_pre_simple = R"(
@@ -76,7 +79,8 @@ struct VS_Output
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
+	float4 PosP : TEXCOORD6;
+	//float2 ScreenUV : TEXCOORD6;
 };
 
 cbuffer VSConstantBuffer : register(b0) {
@@ -113,7 +117,8 @@ struct VS_Output
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
+	float4 PosP : TEXCOORD6;
+	//float2 ScreenUV : TEXCOORD6;
 	//$C_OUT1$
 	//$C_OUT2$
 };
@@ -153,6 +158,10 @@ VS_Output main( const VS_Input Input )
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = Input.Color;
+
+	// Dummy
+	float2 screenUV = float2(0.0, 0.0);
+	float meshZ =  0.0f;
 )";
 
 static char* material_sprite_vs_suf1 = R"(
@@ -179,6 +188,10 @@ VS_Output main( const VS_Input Input )
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = Input.Color;
+
+	// Dummy
+	float2 screenUV = float2(0.0, 0.0);
+	float meshZ =  0.0f;
 )";
 
 static char* material_sprite_vs_suf2 = R"(
@@ -193,8 +206,10 @@ static char* material_sprite_vs_suf2 = R"(
 	Output.VColor = Input.Color;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
-	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+
+	Output.PosP = Output.Position;
+	//Output.ScreenUV = Output.Position.xy / Output.Position.w;
+	//Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
 
 	return Output;
 }
@@ -237,7 +252,8 @@ struct VS_Output
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
+	float4 PosP : TEXCOORD6;
+	//float2 ScreenUV : TEXCOORD6;
 	//$C_OUT1$
 	//$C_OUT2$
 };
@@ -315,6 +331,10 @@ VS_Output main( const VS_Input Input )
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = modelColor;
+
+	// Dummy
+	float2 screenUV = float2(0.0, 0.0);
+	float meshZ =  0.0f;
 )";
 
 static char* model_vs_suf2 = R"(
@@ -331,8 +351,10 @@ static char* model_vs_suf2 = R"(
 	Output.VColor = modelColor;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
-	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+
+	Output.PosP = Output.Position;
+	//Output.ScreenUV = Output.Position.xy / Output.Position.w;
+	//Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
 
 	return Output;
 }
@@ -366,7 +388,8 @@ R"(
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
-	float2 ScreenUV : TEXCOORD6;
+	float4 PosP : TEXCOORD6;
+	//float2 ScreenUV : TEXCOORD6;
 	//$C_PIN1$
 	//$C_PIN2$
 };
@@ -397,6 +420,31 @@ float2 GetUVBack(float2 uv)
 	uv.y = mUVInversedBack.z + mUVInversedBack.w * uv.y;
 	return uv;
 }
+
+float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam)
+{
+)"
+#if defined(_DIRECTX9)
+R"(
+	float backgroundZ = tex2D(efk_depth_sampler, GetUVBack(screenUV)).x;
+)"
+#else
+R"(
+	float backgroundZ = efk_depth_texture.Sample(efk_depth_sampler, GetUVBack(screenUV)).x;
+)"
+#endif
+R"(
+	float distance = softParticleParam * reconstructionParam1.w;
+	float2 rescale = reconstructionParam1.yz;
+	float4 params = reconstructionParam2;
+
+	float2 zs = float2(backgroundZ * rescale.x + rescale.y, meshZ);
+
+	float2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);
+
+	return min(max((depth.y - depth.x) / distance, 0.0), 1.0);
+}
+
 
 #ifdef _MATERIAL_LIT_
 
@@ -469,10 +517,13 @@ float4 main( const PS_Input Input ) : SV_Target
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = Input.VColor;
+
+	float2 screenUV = Input.PosP.xy / Input.PosP.w;
+	float meshZ =  Input.PosP.z / Input.PosP.w;
+	screenUV.xy = float2(screenUV.x + 1.0, 1.0 - screenUV.y) * 0.5;
 )";
 
 static char* g_material_ps_suf2_unlit = R"(
-
 
 	float4 Output = float4(emissive, opacity);
 
@@ -508,17 +559,17 @@ static char* g_material_ps_suf2_refraction = R"(
 
 	float2 distortUV = 	dir.xy * (refraction - airRefraction);
 
-	distortUV += Input.ScreenUV;
+	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
 
 )"
 #if defined(_DIRECTX9)
 R"(
-	float4 bg = tex2D(background_sampler, distortUV);
+	float4 bg = tex2D(efk_background_sampler, distortUV);
 )"
 #else
 R"(
-	float4 bg = background_texture.Sample(background_sampler, distortUV);
+	float4 bg = efk_background_texture.Sample(efk_background_sampler, distortUV);
 )"
 
 #endif

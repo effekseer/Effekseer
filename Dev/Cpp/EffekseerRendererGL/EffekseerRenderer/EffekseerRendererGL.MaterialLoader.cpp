@@ -137,6 +137,12 @@ static const int GL_InstanceCount = 10;
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
 
+		shader->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("reconstructionParam1"), parameterGenerator.PixelReconstructionParam1Offset);
+
+		shader->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("reconstructionParam2"), parameterGenerator.PixelReconstructionParam2Offset);
+
 		// shiding model
 		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
 		{
@@ -174,7 +180,10 @@ static const int GL_InstanceCount = 10;
 		}
 
 		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
+		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
+
+				lastIndex += 1;
+		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
 
 		materialData->TextureCount = material.GetTextureCount();
 		materialData->UniformCount = material.GetUniformCount();

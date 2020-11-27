@@ -87,7 +87,8 @@ struct ModelRendererAdvancedVertexConstantBuffer
 
 	struct
 	{
-		union {
+		union
+		{
 			float Buffer[4];
 
 			struct
@@ -626,6 +627,28 @@ protected:
 		renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
 		psOffset += (sizeof(float) * 4);
 
+		::Effekseer::TextureData* depthTexture = nullptr;
+		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
+		renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
+
+		SoftParticleParameter softParticleParam;
+
+		softParticleParam.SetParam(
+			0.0f,
+			param.Maginification,
+			reconstructionParam.DepthBufferScale,
+			reconstructionParam.DepthBufferOffset,
+			reconstructionParam.ProjectionMatrix33,
+			reconstructionParam.ProjectionMatrix34,
+			reconstructionParam.ProjectionMatrix43,
+			reconstructionParam.ProjectionMatrix44);
+
+		renderer->SetPixelBufferToShader(softParticleParam.softParticleAndReconstructionParam1.data(), sizeof(float) * 4, psOffset);
+		psOffset += (sizeof(float) * 4);
+
+		renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam2.data(), sizeof(float) * 4, psOffset);
+		psOffset += (sizeof(float) * 4);
+
 		// shader model
 		material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
 
@@ -1036,7 +1059,7 @@ public:
 				pcb->FlipbookParam.InterpolationType = static_cast<float>(param.BasicParameterPtr->InterpolationType);
 
 				pcb->UVDistortionParam.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
-				pcb->UVDistortionParam.BlendIntensity= param.BasicParameterPtr->BlendUVDistortionIntensity;
+				pcb->UVDistortionParam.BlendIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
 				pcb->UVDistortionParam.UVInversed[0] = uvInversed[0];
 				pcb->UVDistortionParam.UVInversed[1] = uvInversed[1];
 
@@ -1044,6 +1067,7 @@ public:
 
 				pcb->softParticle.SetParam(
 					param.BasicParameterPtr->SoftParticleDistance,
+					param.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
 					reconstructionParam.ProjectionMatrix33,
@@ -1098,6 +1122,7 @@ public:
 
 				pcb->SoftParticleParam.SetParam(
 					param.BasicParameterPtr->SoftParticleDistance,
+					param.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
 					reconstructionParam.ProjectionMatrix33,

@@ -38,6 +38,8 @@ public:
 		int32_t SplineDivision;
 
 		bool IsRightHand;
+		float Maginification = 1.0f;
+
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;

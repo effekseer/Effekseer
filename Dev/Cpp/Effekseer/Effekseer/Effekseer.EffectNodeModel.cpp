@@ -133,6 +133,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		// nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -172,6 +173,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		// nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -250,6 +252,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH;
+		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		// nodeParameter.DepthOffset = DepthValues.DepthOffset;

@@ -168,6 +168,7 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.UserData = GetRenderingUserData();
+		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		renderer->BeginRendering(nodeParameter, count, nullptr);
 	}
@@ -197,6 +198,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 		nodeParameter.ZSort = DepthValues.ZSort;
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		SpriteRenderer::InstanceParameter instanceParameter;
 		instanceParameter.AllColor = instValues._color;
@@ -306,6 +308,7 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		nodeParameter.UserData = GetRenderingUserData();
+		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		renderer->EndRendering(nodeParameter, nullptr);
 	}

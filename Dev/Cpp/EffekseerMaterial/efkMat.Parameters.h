@@ -1466,6 +1466,35 @@ public:
 	}
 };
 
+class NodeDepthFade : public NodeParameter
+{
+public:
+	NodeDepthFade()
+	{
+		Type = NodeType::DepthFade;
+		TypeName = "DepthFade";
+		Group = std::vector<std::string>{"Depth"};
+
+		auto inputFadeDistance = std::make_shared<PinParameter>();
+		inputFadeDistance->Name = "FadeDistance";
+		inputFadeDistance->Type = ValueType::Float1;
+		InputPins.push_back(inputFadeDistance);
+
+		auto inputFadeDistanceProp = std::make_shared<NodePropertyParameter>();
+		inputFadeDistanceProp->Name = "FadeDistance";
+		inputFadeDistanceProp->Type = ValueType::Float1;
+		inputFadeDistanceProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(inputFadeDistanceProp);
+
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Opacity";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+	}
+};
+
+
 #ifdef _DEBUG
 class NodeVertexTangentWS : public NodeParameter
 {
