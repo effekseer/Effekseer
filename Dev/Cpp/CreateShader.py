@@ -42,7 +42,7 @@ except:
     sys.exit(1)
 
 dx9_common_flags = ['-D', '__INST__', '10', '-D', 'ENABLE_DIVISOR', '1', '-D', 'DISABLED_SOFT_PARTICLE', '1']
-llgi_common_flags = ['-D', '__INST__', '10']
+llgi_common_flags = ['-D', '__INST__', '40']
 
 gl_common_flags = ['-D', '__INST__', '10', '-D', '__OPENGL__', '1', '--plain']
 gl2_common_flags = ['-D', 'DISABLE_INSTANCE', '1', '-D', '__OPENGL__', '1', '-D', '__OPENGL2__', '1', '--plain', '-D', 'DISABLED_SOFT_PARTICLE', '1']

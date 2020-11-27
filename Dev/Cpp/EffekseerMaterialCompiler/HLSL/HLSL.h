@@ -246,19 +246,7 @@ cbuffer VSConstantBuffer : register(b0) {
 
 )"
 
-#if defined(_DIRECTX11)
-							R"(
-float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
-
-float4 mUVInversed		: register(c244);
-float4 predefined_uniform : register(c245);
-float4 cameraPosition : register(c246);
-
-)"
-#elif defined(_DIRECTX9)
+#if defined(_DIRECTX9)
 
 							R"(
 
@@ -276,13 +264,13 @@ float4 cameraPosition : register(c66);
 #else
 R"(
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[10]		: register( c4 );
-float4	fUV[10]			: register( c44 );
-float4	fModelColor[10]		: register( c54 );
+float4x4 mModel[40]		: register( c4 );
+float4	fUV[40]			: register( c164 );
+float4	fModelColor[40]		: register( c204 );
 
-float4 mUVInversed		: register(c64);
-float4 predefined_uniform : register(c65);
-float4 cameraPosition : register(c66);
+float4 mUVInversed		: register(c244);
+float4 predefined_uniform : register(c245);
+float4 cameraPosition : register(c246);
 
 )"
 #endif

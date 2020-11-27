@@ -28,21 +28,21 @@ static const VS_Output _491 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.x
 cbuffer VS_ConstantBuffer : register(b0)
 {
     column_major float4x4 _365_mCameraProj : packoffset(c0);
-    column_major float4x4 _365_mModel[10] : packoffset(c4);
-    float4 _365_fUV[10] : packoffset(c44);
-    float4 _365_fAlphaUV[10] : packoffset(c54);
-    float4 _365_fUVDistortionUV[10] : packoffset(c64);
-    float4 _365_fBlendUV[10] : packoffset(c74);
-    float4 _365_fBlendAlphaUV[10] : packoffset(c84);
-    float4 _365_fBlendUVDistortionUV[10] : packoffset(c94);
-    float4 _365_fFlipbookParameter : packoffset(c104);
-    float4 _365_fFlipbookIndexAndNextRate[10] : packoffset(c105);
-    float4 _365_fModelAlphaThreshold[10] : packoffset(c115);
-    float4 _365_fModelColor[10] : packoffset(c125);
-    float4 _365_fLightDirection : packoffset(c135);
-    float4 _365_fLightColor : packoffset(c136);
-    float4 _365_fLightAmbient : packoffset(c137);
-    float4 _365_mUVInversed : packoffset(c138);
+    column_major float4x4 _365_mModel[40] : packoffset(c4);
+    float4 _365_fUV[40] : packoffset(c164);
+    float4 _365_fAlphaUV[40] : packoffset(c204);
+    float4 _365_fUVDistortionUV[40] : packoffset(c244);
+    float4 _365_fBlendUV[40] : packoffset(c284);
+    float4 _365_fBlendAlphaUV[40] : packoffset(c324);
+    float4 _365_fBlendUVDistortionUV[40] : packoffset(c364);
+    float4 _365_fFlipbookParameter : packoffset(c404);
+    float4 _365_fFlipbookIndexAndNextRate[40] : packoffset(c405);
+    float4 _365_fModelAlphaThreshold[40] : packoffset(c445);
+    float4 _365_fModelColor[40] : packoffset(c485);
+    float4 _365_fLightDirection : packoffset(c525);
+    float4 _365_fLightColor : packoffset(c526);
+    float4 _365_fLightAmbient : packoffset(c527);
+    float4 _365_mUVInversed : packoffset(c528);
 };
 
 

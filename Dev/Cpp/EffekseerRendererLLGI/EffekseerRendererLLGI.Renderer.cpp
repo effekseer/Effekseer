@@ -26,6 +26,8 @@
 #include "../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
+#include <iostream>
+
 namespace EffekseerRendererLLGI
 {
 
@@ -301,6 +303,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	renderPassPipelineState_ = renderPassPipelineState;
 	isReversedDepth_ = isReversedDepth;
 
+    LLGI::SetLogger([](LLGI::LogType type, const std::string& message){ std::cout << message << std::endl; });
+    
 	LLGI::SafeAddRef(graphicsDevice_);
 	LLGI::SafeAddRef(renderPassPipelineState_);
 
@@ -629,7 +633,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
 {
-	if (m_background.UserPtr == nullptr)
+	if (m_background.UserPtr == nullptr && m_background.TexturePtr == nullptr)
 		return nullptr;
 	return &m_background;
 }
@@ -659,6 +663,7 @@ void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerDa
 	auto back = (LLGI::Texture*)m_background.UserPtr;
 	ES_SAFE_RELEASE(back);
 
+	m_background.TexturePtr = textuerData->TexturePtr;
 	m_background.UserPtr = texture;
 }
 

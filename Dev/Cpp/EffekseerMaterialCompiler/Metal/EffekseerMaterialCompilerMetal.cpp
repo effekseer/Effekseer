@@ -66,17 +66,8 @@ struct ShaderInput1 {
   float3 a_Tangent [[attribute(3)]];
   float2 a_TexCoord [[attribute(4)]];
   float4 a_Color [[attribute(5)]];
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-    R"(
-  float a_InstanceID [[attribute(6)]];
-  float4 a_UVOffset [[attribute(7)]];
-  float4 a_ModelColor [[attribute(8)]];
-)"
-#endif
-    R"(
-
 };
+
 struct ShaderOutput1 {
   float4 gl_Position [[position]];
   float4 v_VColor;
@@ -92,21 +83,9 @@ struct ShaderOutput1 {
 };
 struct ShaderUniform1 {
   float4x4 ProjectionMatrix;
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-    R"(
-  float4x4 ModelMatrix[20];
-  float4 UVOffset[20];
-  float4 ModelColor[20];
-)"
-#else
-    R"(
-  float4x4 ModelMatrix;
-  float4 UVOffset;
-  float4 ModelColor;
-)"
-#endif
-    R"(
+  float4x4 ModelMatrix[40];
+  float4 UVOffset[40];
+  float4 ModelColor[40];
   float4 mUVInversed;
   float4 predefined_uniform;
   float4 cameraPosition;
@@ -116,26 +95,14 @@ struct ShaderUniform1 {
 
 static const char g_material_model_vs_src_suf1[] =
     R"(
-vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]]
+vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]], uint instanceIndex [[instance_id]]
 //$IN_TEX$
 )
 {
     ShaderOutput1 o;
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-    R"(
-    float4x4 modelMatrix = u.ModelMatrix[int(i.a_InstanceID)];
-    float4 uvOffset = i.a_UVOffset;
-    float4 modelColor = i.a_ModelColor;
-)"
-#else
-    R"(
-    float4x4 modelMatrix = u.ModelMatrix;
-    float4 uvOffset = u.UVOffset;
-    float4 modelColor = u.ModelColor * i.a_Color;
-)"
-#endif
-    R"(
+    float4x4 modelMatrix = u.ModelMatrix[instanceIndex];
+    float4 uvOffset = u.UVOffset[instanceIndex];
+    float4 modelColor = u.ModelColor[instanceIndex];
     float3x3 modelMatRot;
     modelMatRot[0] = modelMatrix[0].xyz;
     modelMatRot[1] = modelMatrix[1].xyz;
@@ -349,10 +316,12 @@ static const char g_material_fs_src_suf1[] =
 
 #define lightScale 3.14
 
+/*
 float saturate(float v)
 {
     return max(min(v, 1.0), 0.0);
 }
+*/
 
 float calcD_GGX(float roughness, float dotNH)
 {
@@ -397,7 +366,7 @@ float calcLightingGGX(float3 N, float3 V, float3 L, float roughness, float F0)
     return dotNL * D * F * G / 4.0;
 }
 
-float3 calcDirectionalLightDiffuseColor(float3 diffuseColor, float3 normal, float3 lightDir, float ao)
+float3 calcDirectionalLightDiffuseColor(float3 lightColor, float3 diffuseColor, float3 normal, float3 lightDir, float ao)
 {
     float3 color = float3(0.0,0.0,0.0);
 
@@ -428,11 +397,11 @@ fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUnifor
 static const char g_material_fs_src_suf2_lit[] =
     R"(
 
-    float3 viewDir = normalize(cameraPosition.xyz - worldPos);
-    float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
-    float3 specular = lightColor.xyz * lightScale * calcLightingGGX(pixelNormalDir, viewDir, lightDirection.xyz, roughness, 0.9);
+    float3 viewDir = normalize(u.cameraPosition.xyz - worldPos);
+    float3 diffuse = calcDirectionalLightDiffuseColor(u.lightColor.xyz, baseColor, pixelNormalDir, u.lightDirection.xyz, ambientOcclusion);
+    float3 specular = u.lightColor.xyz * lightScale * calcLightingGGX(pixelNormalDir, viewDir, u.lightDirection.xyz, roughness, 0.9);
 
-    float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse + baseColor * lightAmbientColor.xyz * ambientOcclusion, opacity);
+    float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse + baseColor * u.lightAmbientColor.xyz * ambientOcclusion, opacity);
     Output.xyz = Output.xyz + emissive.xyz;
 
     if(opacityMask <= 0.0) discard_fragment();

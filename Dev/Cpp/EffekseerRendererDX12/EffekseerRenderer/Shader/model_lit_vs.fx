@@ -25,13 +25,13 @@ static const VS_Output _58 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx,
 cbuffer VS_ConstantBuffer : register(b0)
 {
     column_major float4x4 _31_mCameraProj : packoffset(c0);
-    column_major float4x4 _31_mModel[10] : packoffset(c4);
-    float4 _31_fUV[10] : packoffset(c44);
-    float4 _31_fModelColor[10] : packoffset(c54);
-    float4 _31_fLightDirection : packoffset(c64);
-    float4 _31_fLightColor : packoffset(c65);
-    float4 _31_fLightAmbient : packoffset(c66);
-    float4 _31_mUVInversed : packoffset(c67);
+    column_major float4x4 _31_mModel[40] : packoffset(c4);
+    float4 _31_fUV[40] : packoffset(c164);
+    float4 _31_fModelColor[40] : packoffset(c204);
+    float4 _31_fLightDirection : packoffset(c244);
+    float4 _31_fLightColor : packoffset(c245);
+    float4 _31_fLightAmbient : packoffset(c246);
+    float4 _31_mUVInversed : packoffset(c247);
 };
 
 

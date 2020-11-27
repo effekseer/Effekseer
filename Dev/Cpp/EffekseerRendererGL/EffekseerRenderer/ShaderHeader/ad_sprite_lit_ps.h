@@ -247,7 +247,7 @@ uniform PS_ConstanBuffer CBPS0;
 uniform sampler2D Sampler_sampler_uvDistortionTex;
 uniform sampler2D Sampler_sampler_normalTex;
 uniform sampler2D Sampler_sampler_colorTex;
-layout(binding = 7) uniform sampler2D Sampler_sampler_depthTex;
+uniform sampler2D Sampler_sampler_depthTex;
 uniform sampler2D Sampler_sampler_alphaTex;
 uniform sampler2D Sampler_sampler_blendUVDistortionTex;
 uniform sampler2D Sampler_sampler_blendTex;

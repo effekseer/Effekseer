@@ -33,17 +33,17 @@ struct VS_Input
 struct VS_ConstantBuffer
 {
     float4x4 mCameraProj;
-    float4x4 mModel[10];
-    float4 fUV[10];
-    float4 fAlphaUV[10];
-    float4 fUVDistortionUV[10];
-    float4 fBlendUV[10];
-    float4 fBlendAlphaUV[10];
-    float4 fBlendUVDistortionUV[10];
+    float4x4 mModel[40];
+    float4 fUV[40];
+    float4 fAlphaUV[40];
+    float4 fUVDistortionUV[40];
+    float4 fBlendUV[40];
+    float4 fBlendAlphaUV[40];
+    float4 fBlendUVDistortionUV[40];
     float4 fFlipbookParameter;
-    float4 fFlipbookIndexAndNextRate[10];
-    float4 fModelAlphaThreshold[10];
-    float4 fModelColor[10];
+    float4 fFlipbookIndexAndNextRate[40];
+    float4 fModelAlphaThreshold[40];
+    float4 fModelColor[40];
     float4 fLightDirection;
     float4 fLightColor;
     float4 fLightAmbient;

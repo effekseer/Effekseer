@@ -31,6 +31,7 @@ def replace_3(code):
     code = code.replace('layout(binding = 4) ', '')
     code = code.replace('layout(binding = 5) ', '')
     code = code.replace('layout(binding = 6) ', '')
+    code = code.replace('layout(binding = 7) ', '')
     return code
 
 for fx in verts + frags:

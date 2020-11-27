@@ -145,7 +145,7 @@ public:
 
 		if (textureData_ != nullptr)
 		{
-			EffekseerRendererMetal::DeleteTextureData(renderer_, textureData_);
+			EffekseerRendererMetal::DeleteTextureData(textureData_);
 		}
 	}
 

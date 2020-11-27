@@ -788,6 +788,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 namespace Effekseer
 {
 
+static const int InstanceCount = 10;
+
 class CompiledMaterialBinaryGL : public CompiledMaterialBinary, ReferenceObject
 {
 private:
@@ -864,7 +866,7 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t 
 
 	auto saveBinary = [&material, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, false, false, false, false, 0, false, false);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, false, false, false, false, 0, false, InstanceCount);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};
