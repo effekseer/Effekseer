@@ -28,9 +28,9 @@
 static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
-static ::Effekseer::Manager* g_manager = NULL;
-static ::EffekseerRenderer::Renderer* g_renderer = NULL;
-static ::EffekseerSound::Sound* g_sound = NULL;
+static ::Effekseer::ManagerRef g_manager;
+static ::EffekseerRenderer::RendererRef g_renderer = NULL;
+static ::EffekseerSound::SoundRef g_sound = NULL;
 static ::Effekseer::EffectRef g_effects[3];
 static ::Effekseer::Vector3D g_position;
 
@@ -315,13 +315,13 @@ int main(int argc, char** argv)
 	}
 
 	// 先にエフェクト管理用インスタンスを破棄
-	g_manager->Destroy();
+	g_manager.Reset();
 
 	// 次に音再生用インスタンスを破棄
-	g_sound->Destroy();
+	g_sound.Reset();
 
 	// 次に描画用インスタンスを破棄
-	g_renderer->Destroy();
+	g_renderer.Reset();
 
 	// XAudio2の解放
 	if (g_xa2_master != NULL)

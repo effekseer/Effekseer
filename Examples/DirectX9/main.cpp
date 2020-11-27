@@ -170,15 +170,15 @@ int main(int argc, char** argv)
 
 		// Dispose the manager
 		// マネージャーの破棄
-		manager->Destroy();
+		manager.Reset();
 
 		// Dispose the sound
 		// サウンドの破棄
-		sound->Destroy();
+		sound.Reset();
 
 		// Dispose the renderer
 		// レンダラーの破棄
-		renderer->Destroy();
+		renderer.Reset();
 	}
 
 	TerminateWindowAndDevice();
