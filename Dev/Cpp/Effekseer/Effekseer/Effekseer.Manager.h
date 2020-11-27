@@ -97,7 +97,7 @@ public:
 		@param	autoFlip		[in]	自動でスレッド間のデータを入れ替えるかどうか、を指定する。trueの場合、Update時に入れ替わる。
 		@return	マネージャー
 	*/
-	static Manager* Create(int instance_max, bool autoFlip = true);
+	static ManagerRef Create(int instance_max, bool autoFlip = true);
 
 	/**
 		@brief マネージャーを破棄する。
@@ -234,7 +234,7 @@ public:
 	/**
 		@brief	設定クラスを取得する。
 	*/
-	virtual RefPtr<Setting> GetSetting() const = 0;
+	virtual const RefPtr<Setting>& GetSetting() const = 0;
 
 	/**
 		@brief	設定クラスを設定する。
@@ -353,7 +353,7 @@ public:
 		@brief	エフェクトのルートだけを停止する。
 		@param	effect	[in]	エフェクト
 	*/
-	virtual void StopRoot(EffectRef& effect) = 0;
+	virtual void StopRoot(const EffectRef& effect) = 0;
 
 	/**
 		@brief	エフェクトのインスタンスが存在しているか取得する。
@@ -754,7 +754,7 @@ public:
 		@param	z	[in]	Z座標
 		@return	エフェクトのインスタンスのハンドル
 	*/
-	virtual Handle Play(EffectRef& effect, float x, float y, float z) = 0;
+	virtual Handle Play(const EffectRef& effect, float x, float y, float z) = 0;
 
 	/**
 		@brief
@@ -770,7 +770,7 @@ public:
 		\~English	A time to play from middle
 		\~Japanese	途中から再生するための時間
 	*/
-	virtual Handle Play(EffectRef& effect, const Vector3D& position, int32_t startFrame = 0) = 0;
+	virtual Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame = 0) = 0;
 
 	/**
 		@brief
@@ -816,6 +816,8 @@ public:
 		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
 	*/
 	virtual void RessignCulling() = 0;
+
+	virtual ManagerImplemented* GetImplemented() = 0;
 };
 //----------------------------------------------------------------------------------
 //

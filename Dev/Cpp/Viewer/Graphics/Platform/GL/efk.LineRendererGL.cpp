@@ -71,11 +71,10 @@ static const char g_sprite_fs_no_texture_src[] = "IN lowp vec4 vaColor;\n"
 												 "}\n";
 */
 
-LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer)
+LineRendererGL::LineRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	: LineRenderer(renderer)
+	, renderer(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
-	this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
-
 	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(gl_line_vs);
 	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(gl_line_ps);
 
@@ -97,10 +96,10 @@ LineRendererGL::LineRendererGL(EffekseerRenderer::Renderer* renderer)
 
 	this->shader = shader_no_texture_;
 
-	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 1024, true, true);
+	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer.Get(), sizeof(EffekseerRendererGL::Vertex) * 1024, true, true);
 
 	vao = EffekseerRendererGL::VertexArray::Create(
-		this->renderer, shader_no_texture_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, nullptr, true);
+		this->renderer.Get(), shader_no_texture_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, nullptr, true);
 }
 
 LineRendererGL::~LineRendererGL()

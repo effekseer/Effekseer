@@ -23,9 +23,9 @@ typedef int(APIENTRY* PFNWGLSWAPINTERVALEXTPROC)(int);
 static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
-static ::Effekseer::Manager* g_manager = NULL;
-static ::EffekseerRenderer::Renderer* g_renderer = NULL;
-static ::Effekseer::EffectRef g_effect = NULL;
+static ::Effekseer::ManagerRef g_manager;
+static ::EffekseerRenderer::RendererRef g_renderer = NULL;
+static ::Effekseer::EffectRef g_effect;
 static ::Effekseer::Handle g_handle = -1;
 static ::Effekseer::Vector3D g_position;
 
@@ -509,11 +509,11 @@ int main(int argc, char** argv)
 
 	// First dispose the instance for managing effects
 	// 先にエフェクト管理用インスタンスを破棄する
-	g_manager->Destroy();
+	g_manager.Reset();
 
 	// Next dispose the instance for drawing effects
 	// 次に描画用インスタンスを破棄する
-	g_renderer->Destroy();
+	g_renderer.Reset();
 
 	// Finish OpenGL
 	// OpenGLを終了させる

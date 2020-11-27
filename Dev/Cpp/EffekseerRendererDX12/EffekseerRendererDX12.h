@@ -121,10 +121,13 @@ struct DepthReconstructionParameter
 	float DepthBufferScale = 1.0f;
 	float DepthBufferOffset = 0.0f;
 	float ProjectionMatrix33 = 0.0f;
-	float ProjectionMatrix43 = 0.0f;
 	float ProjectionMatrix34 = 0.0f;
+	float ProjectionMatrix43 = 0.0f;
 	float ProjectionMatrix44 = 0.0f;
 };
+
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
 
 class Renderer : public ::Effekseer::IReference
 {
@@ -454,12 +457,6 @@ public:
 		@brief	
 		\~English	Specify a depth texture and parameters to reconstruct from z to depth
 		\~Japanese	深度画像とZから深度を復元するためのパラメーターを設定する。
-		@note
-		- ピクセルシェーダー側に深度を復元する式を増やす。
-		- 頂点シェーダーからピクセルシェーダーに深度を渡すようにする。
-		- 比較してアルファを変更するようにする。
-		- フェードの度合いのつけ方をUE4を参考に実装する。
-		- ツール側で床を出せるようにする。
 	*/
 	virtual void SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
 };
@@ -493,7 +490,7 @@ namespace EffekseerRendererDX12
 	@param	squareMaxCount	The number of maximum sprites
 	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
 									  DXGI_FORMAT depthFormat,
@@ -512,7 +509,7 @@ namespace EffekseerRendererDX12
 	@param	squareMaxCount	The number of maximum sprites
 	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
 									  ID3D12CommandQueue* commandQueue,
 									  int32_t swapBufferCount,
 									  DXGI_FORMAT* renderTargetFormats,
@@ -521,23 +518,23 @@ namespace EffekseerRendererDX12
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
 
 Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
 void DeleteTextureData(Effekseer::TextureData* textureData);
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
 

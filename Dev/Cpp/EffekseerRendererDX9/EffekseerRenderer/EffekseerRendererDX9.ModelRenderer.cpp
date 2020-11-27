@@ -96,7 +96,7 @@ static
 
 const int32_t ModelRendererInstanceCount = 10;
 
-ModelRenderer::ModelRenderer(RendererImplemented* renderer,
+ModelRenderer::ModelRenderer(const RendererImplementedRef& renderer,
 							 Shader* shader_advanced_lit,
 							 Shader* shader_advanced_unlit,
 							 Shader* shader_advanced_distortion,
@@ -164,7 +164,7 @@ ModelRenderer::~ModelRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
+ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 {
 	assert(renderer != nullptr);
 	assert(renderer->GetDevice() != nullptr);
@@ -179,59 +179,59 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 								{1, 0, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6},
 								D3DDECL_END()};
 
-	Shader* shader_ad_lit = Shader::Create(renderer,
+	Shader* shader_ad_lit = Shader::Create(renderer.Get(),
 										   ShaderLightingTextureNormal_VS_Ad::g_vs30_main,
 										   sizeof(ShaderLightingTextureNormal_VS_Ad::g_vs30_main),
 										   ShaderLightingTextureNormal_PS_Ad::g_ps30_main,
 										   sizeof(ShaderLightingTextureNormal_PS_Ad::g_ps30_main),
 										   "ModelRendererLightingTextureNormal",
 										   decl,
-										   true);
+										   false);
 
-	Shader* shader_ad_unlit = Shader::Create(renderer,
+	Shader* shader_ad_unlit = Shader::Create(renderer.Get(),
 											 ShaderTexture_VS_Ad::g_vs30_main,
 											 sizeof(ShaderTexture_VS_Ad::g_vs30_main),
 											 ShaderTexture_PS_Ad::g_ps30_main,
 											 sizeof(ShaderTexture_PS_Ad::g_ps30_main),
 											 "ModelRendererTexture",
 											 decl,
-											 true);
+											 false);
 
-	auto shader_ad_distortion = Shader::Create(renderer,
+	auto shader_ad_distortion = Shader::Create(renderer.Get(),
 											   ShaderDistortionTexture_VS_Ad::g_vs30_main,
 											   sizeof(ShaderDistortionTexture_VS_Ad::g_vs30_main),
 											   ShaderDistortionTexture_PS_Ad::g_ps30_main,
 											   sizeof(ShaderDistortionTexture_PS_Ad::g_ps30_main),
 											   "ModelRendererDistortionTexture",
 											   decl,
-											   true);
+											   false);
 
-	Shader* shader_lit = Shader::Create(renderer,
+	Shader* shader_lit = Shader::Create(renderer.Get(),
 										ShaderLightingTextureNormal_VS::g_vs30_main,
 										sizeof(ShaderLightingTextureNormal_VS::g_vs30_main),
 										ShaderLightingTextureNormal_PS::g_ps30_main,
 										sizeof(ShaderLightingTextureNormal_PS::g_ps30_main),
 										"ModelRendererLightingTextureNormal",
 										decl,
-										true);
+										false);
 
-	Shader* shader_unlit = Shader::Create(renderer,
+	Shader* shader_unlit = Shader::Create(renderer.Get(),
 										  ShaderTexture_VS::g_vs30_main,
 										  sizeof(ShaderTexture_VS::g_vs30_main),
 										  ShaderTexture_PS::g_ps30_main,
 										  sizeof(ShaderTexture_PS::g_ps30_main),
 										  "ModelRendererTexture",
 										  decl,
-										  true);
+										  false);
 
-	auto shader_distortion = Shader::Create(renderer,
+	auto shader_distortion = Shader::Create(renderer.Get(),
 											ShaderDistortionTexture_VS::g_vs30_main,
 											sizeof(ShaderDistortionTexture_VS::g_vs30_main),
 											ShaderDistortionTexture_PS::g_ps30_main,
 											sizeof(ShaderDistortionTexture_PS::g_ps30_main),
 											"ModelRendererDistortionTexture",
 											decl,
-											true);
+											false);
 
 	if (shader_ad_lit == nullptr || shader_ad_unlit == nullptr || shader_ad_distortion == nullptr ||
 		shader_lit == nullptr || shader_unlit == nullptr || shader_distortion == nullptr)
@@ -249,12 +249,12 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
 {
-	BeginRendering_(m_renderer, parameter, count, userData);
+	BeginRendering_(m_renderer.Get(), parameter, count, userData);
 }
 
 void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData)
 {
-	Rendering_<RendererImplemented>(m_renderer, parameter, instanceParameter, userData);
+	Rendering_<RendererImplemented>(m_renderer.Get(), parameter, instanceParameter, userData);
 }
 
 //----------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		Effekseer::Model,
 		true,
 		ModelRendererInstanceCount>(
-		m_renderer,
+		m_renderer.Get(),
 		shader_advanced_lit_,
 		shader_advanced_unlit_,
 		shader_advanced_distortion_,

@@ -71,6 +71,9 @@ namespace EffekseerSound
 /**
 	@brief	サウンドクラス
 */
+class Sound;
+using SoundRef = Effekseer::RefPtr<Sound>;
+
 class Sound : public Effekseer::IReference
 {
 protected:
@@ -85,7 +88,7 @@ public:
 		@param	voiceCount2ch	[in]	ステレオボイス数
 		@return	インスタンス
 	*/
-	static Sound* Create( osm::Manager* soundManager );
+	static SoundRef Create( osm::Manager* soundManager );
 	
 	/**
 		@brief	このインスタンスを破棄する。

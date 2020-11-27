@@ -17,7 +17,7 @@ namespace efk
 class LineRendererGL : public LineRenderer
 {
 private:
-	EffekseerRendererGL::RendererImplemented* renderer = nullptr;
+	EffekseerRendererGL::RendererImplementedRef renderer;
 	EffekseerRenderer::ShaderBase* shader = nullptr;
 	EffekseerRenderer::VertexBufferBase* vertexBuffer = nullptr;
 	EffekseerRendererGL::VertexArray* vao = nullptr;
@@ -25,7 +25,7 @@ private:
 	std::vector<EffekseerRendererGL::Vertex> vertexies;
 
 public:
-	LineRendererGL(EffekseerRenderer::Renderer* renderer);
+	LineRendererGL(const EffekseerRenderer::RendererRef& renderer);
 	virtual ~LineRendererGL();
 
 	void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c) override;

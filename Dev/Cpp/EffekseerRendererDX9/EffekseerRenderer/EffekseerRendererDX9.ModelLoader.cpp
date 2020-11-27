@@ -16,12 +16,10 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface)
+ModelLoader::ModelLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterface* fileInterface)
 	: renderer_(renderer)
 	, m_fileInterface(fileInterface)
 {
-	ES_SAFE_ADDREF(renderer_);
-
 	if (m_fileInterface == nullptr)
 	{
 		m_fileInterface = &m_defaultFileInterface;
@@ -50,7 +48,6 @@ ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* f
 ModelLoader::~ModelLoader()
 {
 	ES_SAFE_RELEASE(device_);
-	ES_SAFE_RELEASE(renderer_);
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 

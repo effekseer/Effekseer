@@ -65,7 +65,7 @@ public:
 		\~English	an effect to be edit
 		\~Japanese	編集される対象のエフェクト
 	*/
-	virtual void Register(const char16_t* key, EffectRef& effect) = 0;
+	virtual void Register(const char16_t* key, const EffectRef& effect) = 0;
 
 	/**
 		@brief
@@ -75,7 +75,7 @@ public:
 		\~English	an effect registered
 		\~Japanese	登録されているエフェクト
 	*/
-	virtual void Unregister(EffectRef& effect) = 0;
+	virtual void Unregister(const EffectRef& effect) = 0;
 
 	/**
 		@brief
@@ -90,7 +90,7 @@ public:
 
 	*/
 	virtual void
-	Update(Manager** managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	Update(ManagerRef* managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief

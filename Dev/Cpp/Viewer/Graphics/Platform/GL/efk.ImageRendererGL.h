@@ -21,7 +21,7 @@ private:
 		::Effekseer::TextureData* TexturePtr = nullptr;
 	};
 
-	EffekseerRendererGL::RendererImplemented* renderer = nullptr;
+	EffekseerRendererGL::RendererImplementedRef renderer;
 	EffekseerRenderer::ShaderBase* shader = nullptr;
 	EffekseerRenderer::VertexBufferBase* vertexBuffer = nullptr;
 	EffekseerRenderer::ShaderBase* shader_no_texture = nullptr;
@@ -31,7 +31,7 @@ private:
 	std::vector<Sprite> sprites;
 
 public:
-	ImageRendererGL(EffekseerRenderer::Renderer* renderer);
+	ImageRendererGL(const EffekseerRenderer::RendererRef& renderer);
 
 	virtual ~ImageRendererGL();
 

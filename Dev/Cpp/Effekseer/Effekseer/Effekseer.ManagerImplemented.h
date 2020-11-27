@@ -66,7 +66,7 @@ private:
 		//! a bit mask for group
 		int64_t GroupMask = 0;
 
-		DrawSet(EffectRef& effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
+		DrawSet(const EffectRef& effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 			: ParameterPointer(effect)
 			, InstanceContainerPointer(pContainer)
 			, GlobalPointer(pGlobal)
@@ -202,7 +202,7 @@ private:
 
 	int m_randMax;
 
-	Handle AddDrawSet(EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer);
+	Handle AddDrawSet(const EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer);
 
 	void StopStoppingEffects();
 
@@ -222,9 +222,9 @@ public:
 
 	virtual ~ManagerImplemented();
 
-	Instance* CreateInstance(EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
+	Instance* CreateInstance(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
-	InstanceGroup* CreateInstanceGroup(EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal);
+	InstanceGroup* CreateInstanceGroup(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal);
 	void ReleaseGroup(InstanceGroup* group);
 
 	InstanceContainer*
@@ -279,7 +279,7 @@ public:
 
 	void SetTrackRenderer(TrackRendererRef renderer) override;
 
-	RefPtr<Setting> GetSetting() const override;
+	const RefPtr<Setting>& GetSetting() const override;
 
 	void SetSetting(const RefPtr<Setting>& setting) override;
 
@@ -317,7 +317,7 @@ public:
 
 	void StopRoot(Handle handle) override;
 
-	void StopRoot(EffectRef& effect) override;
+	void StopRoot(const EffectRef& effect) override;
 
 	bool Exists(Handle handle) override;
 
@@ -427,9 +427,9 @@ public:
 
 	void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
-	Handle Play(EffectRef& effect, float x, float y, float z) override;
+	Handle Play(const EffectRef& effect, float x, float y, float z) override;
 
-	Handle Play(EffectRef& effect, const Vector3D& position, int32_t startFrame) override;
+	Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame) override;
 
 	int GetCameraCullingMaskToShowAllEffects() override;
 
@@ -439,9 +439,9 @@ public:
 
 	int32_t GetRestInstancesCount() const override;
 
-	void BeginReloadEffect(EffectRef& effect, bool doLockThread);
+	void BeginReloadEffect(const EffectRef& effect, bool doLockThread);
 
-	void EndReloadEffect(EffectRef& effect, bool doLockThread);
+	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
 
 	void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
 
@@ -460,6 +460,11 @@ public:
 	virtual int Release() override
 	{
 		return ReferenceObject::Release();
+	}
+
+	ManagerImplemented* GetImplemented() override
+	{
+		return this;
 	}
 };
 

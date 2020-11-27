@@ -16,13 +16,13 @@ namespace efk
 class LineRendererDX11 : public LineRenderer
 {
 private:
-	EffekseerRendererDX11::RendererImplemented* renderer = nullptr;
+	EffekseerRendererDX11::RendererImplementedRef renderer;
 	EffekseerRenderer::ShaderBase* shader = nullptr;
 
 	std::vector<EffekseerRendererDX11::Vertex> vertexies;
 
 public:
-	LineRendererDX11(EffekseerRenderer::Renderer* renderer);
+	LineRendererDX11(const EffekseerRenderer::RendererRef& renderer);
 	virtual ~LineRendererDX11();
 
 	void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c) override;

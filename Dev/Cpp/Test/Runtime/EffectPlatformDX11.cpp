@@ -7,13 +7,13 @@ class DistortingCallbackDX11 : public EffekseerRenderer::DistortingCallback
 	ID3D11Device* g_D3d11Device = NULL;
 	ID3D11DeviceContext* g_D3d11Context = NULL;
 
-	::EffekseerRendererDX11::Renderer* renderer = nullptr;
+	::EffekseerRendererDX11::RendererRef renderer = nullptr;
 	ID3D11Texture2D* backGroundTexture = nullptr;
 	ID3D11ShaderResourceView* backGroundTextureSRV = nullptr;
 	D3D11_TEXTURE2D_DESC backGroundTextureDesc;
 
 public:
-	DistortingCallbackDX11(::EffekseerRendererDX11::Renderer* renderer)
+	DistortingCallbackDX11(::EffekseerRendererDX11::RendererRef renderer)
 		: renderer(renderer)
 	{
 		g_D3d11Device = renderer->GetDevice();
@@ -145,11 +145,11 @@ void EffectPlatformDX11::CreateCheckedTexture()
 	context_->Unmap(checkedTexture_, sr);
 }
 
-EffekseerRenderer::Renderer* EffectPlatformDX11::CreateRenderer()
+EffekseerRenderer::RendererRef EffectPlatformDX11::CreateRenderer()
 {
 	auto ret = EffekseerRendererDX11::Renderer::Create(device_, context_, 2000);
 
-	ret->SetDistortingCallback(new DistortingCallbackDX11((EffekseerRendererDX11::Renderer*)ret));
+	ret->SetDistortingCallback(new DistortingCallbackDX11((EffekseerRendererDX11::RendererRef)ret));
 
 	return ret;
 }

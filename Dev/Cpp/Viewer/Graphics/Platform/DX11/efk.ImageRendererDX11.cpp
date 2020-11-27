@@ -23,12 +23,11 @@ static
 #include "Shader/EffekseerRenderer.ToolNoTexture_PS.h"
 } // namespace StandardNoTexture_PS
 
-ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
+ImageRendererDX11::ImageRendererDX11(const EffekseerRenderer::RendererRef& renderer)
 	: ImageRenderer(renderer)
+	, renderer(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	spdlog::trace("Begin new ImageRendererDX11");
-
-	this->renderer = (EffekseerRendererDX11::RendererImplemented*)renderer;
 
 	// Position(3) Color(1) UV(2)
 
@@ -38,7 +37,7 @@ ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	shader = EffekseerRendererDX11::Shader::Create(this->renderer,
+	shader = EffekseerRendererDX11::Shader::Create(this->renderer.Get(),
 												   Standard_VS::g_VS,
 												   sizeof(Standard_VS::g_VS),
 												   Standard_PS::g_PS,
@@ -46,9 +45,9 @@ ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 												   "StandardRenderer",
 												   decl,
 												   3,
-												   true);
+												   false);
 
-	shader_no_texture = EffekseerRendererDX11::Shader::Create(this->renderer,
+	shader_no_texture = EffekseerRendererDX11::Shader::Create(this->renderer.Get(),
 															  Standard_VS::g_VS,
 															  sizeof(Standard_VS::g_VS),
 															  StandardNoTexture_PS::g_PS,
@@ -56,7 +55,7 @@ ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
 															  "StandardRenderer No Texture",
 															  decl,
 															  3,
-															  true);
+															  false);
 
 	if (shader != nullptr)
 	{

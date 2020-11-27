@@ -7,7 +7,7 @@ class EffectPlatformDX12 final : public EffectPlatformLLGI
 {
 protected:
 	void CreateShaders() override;
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
 	EffectPlatformDX12() : EffectPlatformLLGI(LLGI::DeviceType::DirectX12) {}

@@ -88,11 +88,11 @@ public:
 
 	void Stop() override;
 
-	void Register(const char16_t* key, EffectRef& effect) override;
+	void Register(const char16_t* key, const EffectRef& effect) override;
 
-	void Unregister(EffectRef& effect) override;
+	void Unregister(const EffectRef& effect) override;
 
-	void Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
+	void Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
 	void SetMaterialPath(const char16_t* materialPath) override;
 };

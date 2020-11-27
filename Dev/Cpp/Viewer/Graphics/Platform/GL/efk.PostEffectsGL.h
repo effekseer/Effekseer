@@ -15,7 +15,7 @@ namespace efk
 class BlitterGL
 {
 	Graphics* graphics = nullptr;
-	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
+	EffekseerRendererGL::RendererImplementedRef renderer_;
 
 	std::unique_ptr<EffekseerRendererGL::VertexBuffer> vertexBuffer;
 
@@ -27,7 +27,7 @@ public:
 	};
 	static const EffekseerRendererGL::ShaderAttribInfo shaderAttributes[2];
 
-	BlitterGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BlitterGL();
 
 	std::unique_ptr<EffekseerRendererGL::VertexArray> CreateVAO(EffekseerRendererGL::Shader* shader);
@@ -47,6 +47,7 @@ class BloomEffectGL : public BloomEffect
 	static const int BlurBuffers = 2;
 	static const int BlurIterations = 4;
 
+	EffekseerRendererGL::RendererImplementedRef renderer_;
 	BlitterGL blitter;
 
 	std::unique_ptr<EffekseerRendererGL::Shader> shaderExtract;
@@ -65,10 +66,9 @@ class BloomEffectGL : public BloomEffect
 	int32_t renderTextureHeight = 0;
 	std::unique_ptr<RenderTexture> extractBuffer;
 	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
-	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
 
 public:
-	BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	BloomEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BloomEffectGL();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -84,6 +84,7 @@ private:
 
 class TonemapEffectGL : public TonemapEffect
 {
+	EffekseerRendererGL::RendererImplementedRef renderer_;
 	BlitterGL blitter;
 
 	std::unique_ptr<EffekseerRendererGL::Shader> shaderCopy;
@@ -91,10 +92,9 @@ class TonemapEffectGL : public TonemapEffect
 
 	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoCopy;
 	std::unique_ptr<EffekseerRendererGL::VertexArray> vaoReinhard;
-	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
 
 public:
-	TonemapEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~TonemapEffectGL();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -110,14 +110,14 @@ public:
 
 class LinearToSRGBEffectGL : public LinearToSRGBEffect
 {
+	EffekseerRendererGL::RendererImplementedRef renderer_;
 	BlitterGL blitter;
 
 	std::unique_ptr<EffekseerRendererGL::Shader> shader_;
 	std::unique_ptr<EffekseerRendererGL::VertexArray> vao_;
-	EffekseerRendererGL::RendererImplemented* renderer_ = nullptr;
 
 public:
-	LinearToSRGBEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~LinearToSRGBEffectGL();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;

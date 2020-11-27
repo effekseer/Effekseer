@@ -23,8 +23,8 @@ private:
 	bool isTerminated_ = false;
 	float time_ = 0;
 
-	Effekseer::Manager* manager_ = nullptr;
-	EffekseerRenderer::Renderer* renderer_ = nullptr;
+	Effekseer::ManagerRef manager_;
+	EffekseerRenderer::RendererRef renderer_ = nullptr;
 	std::vector<Effekseer::Handle> effectHandles_;
 
 	void CreateCheckeredPattern(int width, int height, uint32_t* pixels);
@@ -38,12 +38,12 @@ protected:
 	std::vector<std::vector<uint8_t>> buffers_;
 	std::vector<uint32_t> checkeredPattern_;
 
-	EffekseerRenderer::Renderer* GetRenderer() const;
+	EffekseerRenderer::RendererRef GetRenderer() const;
 	virtual void* GetNativePtr(int32_t index)
 	{
 		return nullptr;
 	}
-	virtual EffekseerRenderer::Renderer* CreateRenderer() = 0;
+	virtual EffekseerRenderer::RendererRef CreateRenderer() = 0;
 
 	virtual void InitializeWindow()
 	{
@@ -97,7 +97,7 @@ public:
 		return false;
 	}
 
-	Effekseer::Manager* GetManager() const
+	Effekseer::ManagerRef GetManager() const
 	{
 		return manager_;
 	}

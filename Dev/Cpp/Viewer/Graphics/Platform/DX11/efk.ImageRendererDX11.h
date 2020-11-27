@@ -20,14 +20,14 @@ private:
 		::Effekseer::TextureData* TexturePtr = nullptr;
 	};
 
-	EffekseerRendererDX11::RendererImplemented* renderer = nullptr;
+	EffekseerRendererDX11::RendererImplementedRef renderer;
 	EffekseerRenderer::ShaderBase* shader = nullptr;
 	EffekseerRenderer::ShaderBase* shader_no_texture = nullptr;
 
 	std::vector<Sprite> sprites;
 
 public:
-	ImageRendererDX11(EffekseerRenderer::Renderer* renderer);
+	ImageRendererDX11(const EffekseerRenderer::RendererRef& renderer);
 
 	virtual ~ImageRendererDX11();
 

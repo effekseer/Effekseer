@@ -4,7 +4,7 @@
 namespace EffekseerRenderer
 {
 
-Paste::Paste(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+Paste::Paste(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 	imageRenderer = efk::ImageRenderer::Create(graphics, renderer);
 }
@@ -14,7 +14,7 @@ Paste::~Paste()
 	ES_SAFE_DELETE(imageRenderer);
 }
 
-Paste* Paste::Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+Paste* Paste::Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 	return new Paste(graphics, renderer);
 }

@@ -20,9 +20,9 @@ const int32_t DefaultSampleRate = 44100;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Sound* Sound::Create(IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoices)
+SoundRef Sound::Create(IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoices)
 {
-	SoundImplemented* sound = new SoundImplemented();
+	auto sound = Effekseer::MakeRefPtr<SoundImplemented>();
 	if (sound->Initialize(xaudio2, num1chVoices, num2chVoices))
 	{
 		return sound;
@@ -115,7 +115,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
-	return ::Effekseer::SoundPlayerRef(new SoundPlayer(this));
+	return ::Effekseer::MakeRefPtr<SoundPlayer>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return ::Effekseer::SoundLoaderRef(new SoundLoader(this, fileInterface));
+	return ::Effekseer::MakeRefPtr<SoundLoader>(this, fileInterface);
 }
 
 //----------------------------------------------------------------------------------

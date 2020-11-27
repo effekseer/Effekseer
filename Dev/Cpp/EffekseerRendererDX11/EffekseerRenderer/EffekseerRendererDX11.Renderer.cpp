@@ -123,7 +123,7 @@ static
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device, context));
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(gd.get(), fileInterface, colorSpaceType));
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gd.get(), fileInterface, colorSpaceType);
 #else
 	return nullptr;
 #endif
@@ -132,7 +132,7 @@ static
 ::Effekseer::ModelLoaderRef CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::ModelLoaderRef(new ModelLoader(device, fileInterface));
+	return ::Effekseer::MakeRefPtr<ModelLoader>(device, fileInterface);
 #else
 	return nullptr;
 #endif
@@ -254,10 +254,10 @@ void OriginalState::ReleaseState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer* Renderer::Create(
+RendererRef Renderer::Create(
 	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
 {
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
+	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
 	if (renderer->Initialize(device, context, depthFunc, isMSAAEnabled))
 	{
 		return renderer;
@@ -729,7 +729,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::ModelRendererRef RendererImplemented::CreateModelRenderer()
 {
-	return ModelRenderer::Create(this);
+	return ModelRenderer::Create(RendererImplementedRef::FromPinned(this));
 }
 
 //----------------------------------------------------------------------------------
@@ -746,7 +746,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_, fileInterface);
 #else
 	return nullptr;
 #endif
@@ -758,7 +758,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::ModelLoaderRef(new ModelLoader(this->GetDevice(), fileInterface));
+	return ::Effekseer::MakeRefPtr<ModelLoader>(this->GetDevice(), fileInterface);
 #else
 	return nullptr;
 #endif
@@ -767,7 +767,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(this, fileInterface));
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
 #else
 	return nullptr;
 #endif

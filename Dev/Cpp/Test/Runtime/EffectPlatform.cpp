@@ -15,7 +15,7 @@ void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pix
 	}
 }
 
-EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const
+EffekseerRenderer::RendererRef EffectPlatform::GetRenderer() const
 {
 	return renderer_;
 }
@@ -100,14 +100,6 @@ void EffectPlatform::Terminate()
 	{
 		renderer_->Destroy();
 		renderer_ = nullptr;
-	}
-
-	if (manager_ != nullptr)
-	{
-		// TODO release causes memory leaks
-		// manager_->Release();
-		manager_->Destroy();
-		manager_ = nullptr;
 	}
 
 	DestroyDevice();

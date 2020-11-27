@@ -101,11 +101,11 @@ namespace EffekseerRendererGL
 #endif
 }
 
-Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
+RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 {
 	GLExt::Initialize(deviceType);
 
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount, deviceType, nullptr);
+	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, deviceType, nullptr);
 	if (renderer->Initialize())
 	{
 		return renderer;
@@ -113,13 +113,13 @@ Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 	return nullptr;
 }
 
-Renderer* Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
+RendererRef Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
 {
 	auto g = static_cast<GraphicsDevice*>(graphicDevice);
 
 	GLExt::Initialize(g->GetDeviceType());
 
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount, g->GetDeviceType(), g);
+	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, g->GetDeviceType(), g);
 	if (renderer->Initialize())
 	{
 		return renderer;
@@ -864,7 +864,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_, fileInterface);
 #else
 	return nullptr;
 #endif
@@ -876,7 +876,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::ModelLoaderRef(new ModelLoader(fileInterface, GetDeviceType()));
+	return ::Effekseer::MakeRefPtr<ModelLoader>(fileInterface, GetDeviceType());
 #else
 	return nullptr;
 #endif
@@ -885,7 +885,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(GetIntetnalGraphicsDevice(), fileInterface));
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(GetIntetnalGraphicsDevice(), fileInterface);
 #else
 	return nullptr;
 #endif

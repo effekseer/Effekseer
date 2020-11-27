@@ -144,9 +144,9 @@ static
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer* Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
+RendererRef Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
 {
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
+	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
 	if (renderer->Initialize(device))
 	{
 		return renderer;
@@ -766,7 +766,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::ModelRendererRef RendererImplemented::CreateModelRenderer()
 {
-	return ModelRenderer::Create(this);
+	return ModelRenderer::Create(RendererImplementedRef::FromPinned(this));
 }
 
 //----------------------------------------------------------------------------------
@@ -795,7 +795,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::ModelLoaderRef(new ModelLoader(this, fileInterface));
+	return ::Effekseer::MakeRefPtr<ModelLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
 #else
 	return nullptr;
 #endif
@@ -803,7 +803,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(this, fileInterface));
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
 }
 
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)

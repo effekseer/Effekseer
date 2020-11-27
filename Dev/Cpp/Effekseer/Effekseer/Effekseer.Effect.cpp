@@ -396,12 +396,12 @@ EffectFactory::~EffectFactory()
 {
 }
 
-EffectRef Effect::Create(Manager* manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(ManagerRef manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(manager, data, size, magnification, materialPath);
 }
 
-EffectRef Effect::Create(Manager* manager, const char16_t* path, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(ManagerRef manager, const char16_t* path, float magnification, const char16_t* materialPath)
 {
 	auto setting = manager->GetSetting();
 
@@ -771,7 +771,7 @@ void EffectImplemented::ResetReloadingBackup()
 	reloadingBackup.reset();
 }
 
-EffectRef EffectImplemented::Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(ManagerRef pManager, void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
@@ -854,7 +854,7 @@ EffectRef EffectImplemented::Create(const RefPtr<Setting>& setting, void* pData,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectImplemented::EffectImplemented(Manager* pManager, void* pData, int size)
+EffectImplemented::EffectImplemented(ManagerRef pManager, void* pData, int size)
 	: m_setting(pManager->GetSetting())
 	, m_reference(1)
 	, m_version(0)
@@ -1345,7 +1345,7 @@ void EffectImplemented::SetCurve(int32_t index, void* data)
 	curves_[index] = data;
 }
 
-bool EffectImplemented::Reload(Manager** managers,
+bool EffectImplemented::Reload(ManagerRef* managers,
 							   int32_t managersCount,
 							   void* data,
 							   int32_t size,
@@ -1366,11 +1366,8 @@ bool EffectImplemented::Reload(Manager** managers,
 				continue;
 		}
 
-		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-
-		this->AddRef();
-		auto temp = EffectRef(this);
-		manager->BeginReloadEffect(temp, true);
+		auto manager = managers[i]->GetImplemented();
+		manager->BeginReloadEffect(EffectRef::FromPinned(this), true);
 	}
 
 	// HACK for scale
@@ -1396,10 +1393,8 @@ bool EffectImplemented::Reload(Manager** managers,
 				continue;
 		}
 
-		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-		this->AddRef();
-		auto temp = EffectRef(this);
-		manager->EndReloadEffect(temp, true);
+		auto manager = managers[i]->GetImplemented();
+		manager->EndReloadEffect(EffectRef::FromPinned(this), true);
 	}
 
 	return false;
@@ -1409,7 +1404,7 @@ bool EffectImplemented::Reload(Manager** managers,
 //
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Reload(
-	Manager** managers, int32_t managersCount, const char16_t* path, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
+	ManagerRef* managers, int32_t managersCount, const char16_t* path, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
 {
 	if (!factory->OnCheckIsReloadSupported())
 		return false;
@@ -1437,11 +1432,8 @@ bool EffectImplemented::Reload(
 
 	for (int32_t i = 0; i < managersCount; i++)
 	{
-		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-
-		this->AddRef();
-		auto temp = EffectRef(this);
-		manager->BeginReloadEffect(temp, lockCount == 0);
+		auto manager = managers[i]->GetImplemented();
+		manager->BeginReloadEffect(EffectRef::FromPinned(this), true);
 		lockCount++;
 	}
 
@@ -1453,11 +1445,8 @@ bool EffectImplemented::Reload(
 	for (int32_t i = 0; i < managersCount; i++)
 	{
 		lockCount--;
-		auto manager = static_cast<ManagerImplemented*>(managers[i]);
-
-		this->AddRef();
-		auto temp = EffectRef(this);
-		manager->EndReloadEffect(temp, lockCount == 0);
+		auto manager = managers[i]->GetImplemented();
+		manager->EndReloadEffect(EffectRef::FromPinned(this), true);
 	}
 
 	eLoader->Unload(data, size);

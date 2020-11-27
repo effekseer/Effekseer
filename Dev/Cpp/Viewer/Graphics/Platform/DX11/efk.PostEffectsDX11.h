@@ -22,12 +22,12 @@ class BlitterDX11
 	};
 
 	Graphics* graphics;
-	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
+	EffekseerRendererDX11::RendererImplementedRef renderer_;
 	std::unique_ptr<EffekseerRendererDX11::VertexBuffer> vertexBuffer;
 	ID3D11SamplerState* sampler = nullptr;
 
 public:
-	BlitterDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	BlitterDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BlitterDX11();
 
 	void Blit(EffekseerRendererDX11::Shader* shader,
@@ -44,20 +44,21 @@ class BloomEffectDX11 : public BloomEffect
 	static const int BlurBuffers = 2;
 	static const int BlurIterations = 4;
 
+	EffekseerRendererDX11::RendererImplementedRef renderer_;
+	BlitterDX11 blitter;
+
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderExtract;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderDownsample;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlend;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurH;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurV;
 
-	BlitterDX11 blitter;
 	Effekseer::Tool::Vector2DI renderTextureSize_;
 	std::unique_ptr<RenderTexture> extractBuffer;
 	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
-	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
 
 public:
-	BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BloomEffectDX11();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -73,13 +74,13 @@ private:
 
 class TonemapEffectDX11 : public TonemapEffect
 {
+	EffekseerRendererDX11::RendererImplementedRef renderer_;
+	BlitterDX11 blitter;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderReinhard;
-	BlitterDX11 blitter;
-	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
 
 public:
-	TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~TonemapEffectDX11();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;
@@ -95,12 +96,12 @@ public:
 
 class LinearToSRGBEffectDX11 : public LinearToSRGBEffect
 {
-	std::unique_ptr<EffekseerRendererDX11::Shader> shader_;
+	EffekseerRendererDX11::RendererImplementedRef renderer_;
 	BlitterDX11 blitter_;
-	EffekseerRendererDX11::RendererImplemented* renderer_ = nullptr;
+	std::unique_ptr<EffekseerRendererDX11::Shader> shader_;
 
 public:
-	LinearToSRGBEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	LinearToSRGBEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~LinearToSRGBEffectDX11();
 
 	void Render(RenderTexture* src, RenderTexture* dest) override;

@@ -36,6 +36,9 @@ namespace EffekseerRendererDX9
 /**
 	@brief	描画クラス
 */
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
 class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
@@ -53,7 +56,7 @@ public:
 		@param	squareMaxCount	[in]	最大描画スプライト数
 		@return	インスタンス
 	*/
-	static Renderer* Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount);
+	static RendererRef Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount);
 
 	/**
 		@brief	デバイスを取得する。

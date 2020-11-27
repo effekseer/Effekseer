@@ -113,6 +113,9 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix44 = 0.0f;
 };
 
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
 class Renderer : public ::Effekseer::IReference
 {
 protected:

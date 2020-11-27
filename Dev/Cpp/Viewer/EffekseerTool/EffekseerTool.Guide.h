@@ -21,12 +21,12 @@ class Guide
 private:
 	efk::ImageRenderer* imageRenderer = nullptr;
 
-	Guide(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	Guide(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 
 public:
 	virtual ~Guide();
 
-	static Guide* Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	static Guide* Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 
 public:
 	void Rendering(int32_t width, int32_t height, int32_t guide_width, int32_t guide_height);

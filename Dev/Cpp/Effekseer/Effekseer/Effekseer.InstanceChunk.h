@@ -31,7 +31,7 @@ public:
 
 	void GenerateChildrenInRequiredByInstanceGlobal(const InstanceGlobal* global);
 
-	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
+	Instance* CreateInstance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
 	int32_t GetAliveCount() const
 	{

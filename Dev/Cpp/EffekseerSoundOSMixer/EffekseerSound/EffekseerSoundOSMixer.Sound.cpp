@@ -16,9 +16,9 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Sound* Sound::Create(osm::Manager* soundManager)
+SoundRef Sound::Create(osm::Manager* soundManager)
 {
-	SoundImplemented* sound = new SoundImplemented();
+	auto sound = Effekseer::MakeRefPtr<SoundImplemented>();
 	if (sound->Initialize(soundManager))
 	{
 		return sound;
@@ -98,7 +98,7 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
-	return ::Effekseer::SoundPlayerRef(new SoundPlayer(this));
+	return ::Effekseer::MakeRefPtr<SoundPlayer>(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return ::Effekseer::SoundLoaderRef(new SoundLoader(this, fileInterface));
+	return ::Effekseer::MakeRefPtr<SoundLoader>(this, fileInterface);
 }
 
 //----------------------------------------------------------------------------------

@@ -202,11 +202,11 @@ protected:
 
 public:
 
-	static EffectRef Create(Manager* pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+	static EffectRef Create(ManagerRef pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
 	static EffectRef Create(const RefPtr<Setting>& setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	EffectImplemented(Manager* pManager, void* pData, int size);
+	EffectImplemented(ManagerRef pManager, void* pData, int size);
 
 	EffectImplemented(const RefPtr<Setting>& setting, void* pData, int size);
 
@@ -304,14 +304,14 @@ public:
 
 	void SetCurve(int32_t index, void* data) override;
 
-	bool Reload(Manager** managers,
+	bool Reload(ManagerRef* managers,
 				int32_t managersCount,
 				void* data,
 				int32_t size,
 				const char16_t* materialPath,
 				ReloadingThreadType reloadingThreadType) override;
 
-	bool Reload(Manager** managers,
+	bool Reload(ManagerRef* managers,
 				int32_t managersCount,
 				const char16_t* path,
 				const char16_t* materialPath,
@@ -337,6 +337,9 @@ public:
 	{
 		return ReferenceObject::Release();
 	}
+
+	EffectImplemented* GetImplemented() override { return this; }
+	const EffectImplemented* GetImplemented() const override { return this; }
 };
 //----------------------------------------------------------------------------------
 //

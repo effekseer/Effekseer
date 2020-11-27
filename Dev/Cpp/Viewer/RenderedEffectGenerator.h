@@ -67,9 +67,9 @@ class RenderedEffectGenerator
 
 protected:
 	efk::Graphics* graphics_ = nullptr;
-	Effekseer::Manager* manager_ = nullptr;
-	EffekseerRenderer::Renderer* renderer_ = nullptr;
-	Effekseer::EffectRef effect_ = nullptr;
+	Effekseer::ManagerRef manager_;
+	EffekseerRenderer::RendererRef renderer_;
+	Effekseer::EffectRef effect_;
 
 	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
@@ -162,12 +162,12 @@ public:
 		m_step = step;
 	}
 
-	EffekseerRenderer::Renderer* GetRenderer() const
+	const EffekseerRenderer::RendererRef& GetRenderer() const
 	{
 		return renderer_;
 	}
 
-	Effekseer::Manager* GetMamanager() const
+	Effekseer::ManagerRef GetMamanager() const
 	{
 		return manager_;
 	}

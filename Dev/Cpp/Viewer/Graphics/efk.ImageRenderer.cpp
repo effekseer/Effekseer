@@ -8,7 +8,7 @@
 
 namespace efk
 {
-ImageRenderer* ImageRenderer::Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+ImageRenderer* ImageRenderer::Create(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)

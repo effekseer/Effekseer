@@ -19,7 +19,7 @@ namespace EffekseerTool
 class Sound
 {
 private:
-	::EffekseerSound::Sound* m_sound;
+	::EffekseerSound::SoundRef m_sound;
 	osm::Manager* m_manager;
 	float m_volume;
 	bool m_mute;
@@ -69,7 +69,7 @@ public:
 	*/
 	void SetListener(const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up);
 
-	::EffekseerSound::Sound* GetSound()
+	::EffekseerSound::SoundRef GetSound()
 	{
 		return m_sound;
 	};

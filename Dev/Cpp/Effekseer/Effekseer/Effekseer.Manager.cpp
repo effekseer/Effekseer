@@ -46,9 +46,9 @@ Manager::DrawParameter::DrawParameter()
 	CameraCullingMask = 1;
 }
 
-Manager* Manager::Create(int instance_max, bool autoFlip)
+ManagerRef Manager::Create(int instance_max, bool autoFlip)
 {
-	return new ManagerImplemented(instance_max, autoFlip);
+	return MakeRefPtr<ManagerImplemented>(instance_max, autoFlip);
 }
 
 SIMD::Mat43f* ManagerImplemented::DrawSet::GetEnabledGlobalMatrix()
@@ -95,7 +95,7 @@ void ManagerImplemented::DrawSet::CopyMatrixFromInstanceToRoot()
 	}
 }
 
-Handle ManagerImplemented::AddDrawSet(EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer)
+Handle ManagerImplemented::AddDrawSet(const EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer)
 {
 	Handle Temp = m_NextHandle;
 
@@ -442,7 +442,7 @@ ManagerImplemented::~ManagerImplemented()
 	Culling3D::SafeRelease(m_cullingWorld);
 }
 
-Instance* ManagerImplemented::CreateInstance(EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
+Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 {
 	int32_t generationNumber = pEffectNode->GetGeneration();
 	assert(generationNumber < GenerationsMax);
@@ -472,7 +472,7 @@ Instance* ManagerImplemented::CreateInstance(EffectNode* pEffectNode, InstanceCo
 	return nullptr;
 }
 
-InstanceGroup* ManagerImplemented::CreateInstanceGroup(EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
+InstanceGroup* ManagerImplemented::CreateInstanceGroup(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 {
 	if (pooledGroups_.empty())
 	{
@@ -642,7 +642,7 @@ void ManagerImplemented::SetSoundPlayer(SoundPlayerRef soundPlayer)
 	m_soundPlayer = soundPlayer;
 }
 
-RefPtr<Setting> ManagerImplemented::GetSetting() const
+const RefPtr<Setting>& ManagerImplemented::GetSetting() const
 {
 	return m_setting;
 }
@@ -739,7 +739,7 @@ void ManagerImplemented::StopRoot(Handle handle)
 	}
 }
 
-void ManagerImplemented::StopRoot(EffectRef& effect)
+void ManagerImplemented::StopRoot(const EffectRef& effect)
 {
 	for (auto& it : m_DrawSets)
 	{
@@ -1927,17 +1927,17 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-Handle ManagerImplemented::Play(EffectRef& effect, float x, float y, float z)
+Handle ManagerImplemented::Play(const EffectRef& effect, float x, float y, float z)
 {
 	return Play(effect, Vector3D(x, y, z), 0);
 }
 
-Handle ManagerImplemented::Play(EffectRef& effect, const Vector3D& position, int32_t startFrame)
+Handle ManagerImplemented::Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame)
 {
 	if (effect == nullptr)
 		return -1;
 
-	auto e = static_cast<EffectImplemented*>(effect.Get());
+	auto e = effect->GetImplemented();
 
 	// Create root
 	InstanceGlobal* pGlobal = new InstanceGlobal();
@@ -2183,7 +2183,7 @@ int32_t ManagerImplemented::GetRestInstancesCount() const
 	return static_cast<int32_t>(pooledChunks_.size()) * InstanceChunk::InstancesOfChunk;
 }
 
-void ManagerImplemented::BeginReloadEffect(EffectRef& effect, bool doLockThread)
+void ManagerImplemented::BeginReloadEffect(const EffectRef& effect, bool doLockThread)
 {
 	if (doLockThread)
 	{
@@ -2206,7 +2206,7 @@ void ManagerImplemented::BeginReloadEffect(EffectRef& effect, bool doLockThread)
 	}
 }
 
-void ManagerImplemented::EndReloadEffect(EffectRef& effect, bool doLockThread)
+void ManagerImplemented::EndReloadEffect(const EffectRef& effect, bool doLockThread)
 {
 	for (auto& it : m_DrawSets)
 	{

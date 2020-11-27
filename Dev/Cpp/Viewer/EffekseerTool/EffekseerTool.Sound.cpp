@@ -28,9 +28,9 @@ Sound::Sound()
 //----------------------------------------------------------------------------------
 Sound::~Sound()
 {
-	if (m_sound)
+	if (m_sound != nullptr)
 	{
-		m_sound->Destroy();
+		m_sound.Reset();
 	}
 
 	if (m_manager)
@@ -76,7 +76,7 @@ void Sound::SetVolume(float volume)
 {
 	m_volume = volume;
 
-	if (m_sound)
+	if (m_sound != nullptr)
 	{
 		// m_sound->SetMasterVolume(volume);
 	}
@@ -89,7 +89,7 @@ void Sound::SetMute(bool mute)
 {
 	m_mute = mute;
 
-	if (m_sound)
+	if (m_sound != nullptr)
 	{
 		m_sound->SetMute(mute);
 	}
@@ -100,7 +100,7 @@ void Sound::SetMute(bool mute)
 //----------------------------------------------------------------------------------
 void Sound::SetListener(const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up)
 {
-	if (m_sound)
+	if (m_sound != nullptr)
 	{
 		m_sound->SetListener(pos, at, up);
 	}

@@ -21,7 +21,7 @@ namespace EffekseerRendererDX12
 	@param	squareMaxCount	The number of maximum sprites
 	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
 									  DXGI_FORMAT depthFormat,
@@ -40,7 +40,7 @@ namespace EffekseerRendererDX12
 	@param	squareMaxCount	The number of maximum sprites
 	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
 									  ID3D12CommandQueue* commandQueue,
 									  int32_t swapBufferCount,
 									  DXGI_FORMAT* renderTargetFormats,
@@ -49,23 +49,23 @@ namespace EffekseerRendererDX12
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
 
 Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
 void DeleteTextureData(Effekseer::TextureData* textureData);
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
 

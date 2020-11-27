@@ -150,14 +150,14 @@ void main() {
 const EffekseerRendererGL::ShaderAttribInfo BlitterGL::shaderAttributes[2] = {{"a_Position", GL_FLOAT, 2, 0, false},
 																			  {"a_TexCoord", GL_FLOAT, 2, 8, false}};
 
-BlitterGL::BlitterGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+BlitterGL::BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: graphics(graphics)
-	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	using namespace EffekseerRendererGL;
 
 	// Generate vertex data
-	vertexBuffer.reset(VertexBuffer::Create(renderer_, sizeof(Vertex) * 4, true, true));
+	vertexBuffer.reset(VertexBuffer::Create(renderer_.Get(), sizeof(Vertex) * 4, true, true));
 
 	vertexBuffer->Lock();
 	{
@@ -178,7 +178,7 @@ std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(Effekseer
 {
 	using namespace EffekseerRendererGL;
 
-	return std::unique_ptr<VertexArray>(VertexArray::Create(renderer_, shader, vertexBuffer.get(), renderer_->GetIndexBuffer(), true));
+	return std::unique_ptr<VertexArray>(VertexArray::Create(renderer_.Get(), shader, vertexBuffer.get(), renderer_->GetIndexBuffer(), true));
 }
 
 void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
@@ -239,10 +239,10 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 	renderer_->EndShader(shader);
 }
 
-BloomEffectGL::BloomEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: BloomEffect(graphics)
 	, blitter(graphics, renderer)
-	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	using namespace EffekseerRendererGL;
 
@@ -433,10 +433,10 @@ void BloomEffectGL::ReleaseBuffers()
 	}
 }
 
-TonemapEffectGL::TonemapEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: TonemapEffect(graphics)
 	, blitter(graphics, renderer)
-	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	using namespace EffekseerRendererGL;
 
@@ -498,10 +498,10 @@ void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	GLCheckError();
 }
 
-LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: LinearToSRGBEffect(graphics)
 	, blitter(graphics, renderer)
-	, renderer_(static_cast<EffekseerRendererGL::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	using namespace EffekseerRendererGL;
 

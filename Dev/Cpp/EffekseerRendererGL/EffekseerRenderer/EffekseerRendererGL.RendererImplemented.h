@@ -42,6 +42,9 @@ struct RenderStateSet
 	@note
 	ツール向けの描画機能。
 */
+class RendererImplemented;
+using RendererImplementedRef = ::Effekseer::RefPtr<RendererImplemented>;
+
 class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 {
 	friend class DeviceObject;
