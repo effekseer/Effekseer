@@ -182,7 +182,7 @@ private:
 		std::unordered_map<std::u16string, std::shared_ptr<Effekseer::StaticFile>> materialFiles_;
 
 	public:
-		MaterialLoader(EffekseerRenderer::Renderer* renderer);
+		MaterialLoader(const EffekseerRenderer::RendererRef& renderer);
 		virtual ~MaterialLoader();
 
 	public:
@@ -366,6 +366,6 @@ public:
 	static void SetFileLogger(const char16_t* path);
 
 #if !SWIG
-	EffekseerRenderer::Renderer* GetRenderer();
+	const EffekseerRenderer::RendererRef& GetRenderer();
 #endif
 };

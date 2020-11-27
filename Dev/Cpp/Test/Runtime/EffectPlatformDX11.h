@@ -21,7 +21,7 @@ private:
 	void CreateCheckedTexture();
 
 protected:
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
 	EffectPlatformDX11()

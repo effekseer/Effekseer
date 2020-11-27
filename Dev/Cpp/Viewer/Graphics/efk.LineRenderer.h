@@ -10,7 +10,7 @@ namespace efk
 class LineRenderer
 {
 public:
-	LineRenderer(EffekseerRenderer::Renderer* renderer)
+	LineRenderer(const EffekseerRenderer::RendererRef& renderer)
 	{
 	}
 	virtual ~LineRenderer()
@@ -27,6 +27,6 @@ public:
 
 	virtual void OnResetDevice() = 0;
 
-	static LineRenderer* Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	static LineRenderer* Create(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 };
 } // namespace efk

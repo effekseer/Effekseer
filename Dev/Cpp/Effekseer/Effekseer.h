@@ -91,6 +91,9 @@ class Curve;
 
 typedef int Handle;
 
+class ManagerImplemented;
+class EffectImplemented;
+
 namespace Backend
 {
 class Texture;
@@ -2395,7 +2398,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static EffectRef Create(Manager* manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(ManagerRef manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -2405,7 +2408,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static EffectRef Create(Manager* manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(ManagerRef manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	エフェクトを生成する。
@@ -2680,7 +2683,7 @@ public:
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload(Manager** managers,
+	virtual bool Reload(ManagerRef* managers,
 						int32_t managersCount,
 						void* data,
 						int32_t size,
@@ -2717,7 +2720,7 @@ public:
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload(Manager** managers,
+	virtual bool Reload(ManagerRef* managers,
 						int32_t managersCount,
 						const char16_t* path,
 						const char16_t* materialPath = nullptr,
@@ -2744,6 +2747,9 @@ public:
 	\~Japanese	エフェクトが存在する期間を計算する。
 	*/
 	virtual EffectTerm CalculateTerm() const = 0;
+
+	virtual EffectImplemented* GetImplemented() = 0;
+	virtual const EffectImplemented* GetImplemented() const = 0;
 };
 
 /**
@@ -3017,7 +3023,7 @@ public:
 		@param	autoFlip		[in]	自動でスレッド間のデータを入れ替えるかどうか、を指定する。trueの場合、Update時に入れ替わる。
 		@return	マネージャー
 	*/
-	static Manager* Create(int instance_max, bool autoFlip = true);
+	static ManagerRef Create(int instance_max, bool autoFlip = true);
 
 	/**
 		@brief マネージャーを破棄する。
@@ -3154,7 +3160,7 @@ public:
 	/**
 		@brief	設定クラスを取得する。
 	*/
-	virtual RefPtr<Setting> GetSetting() const = 0;
+	virtual const RefPtr<Setting>& GetSetting() const = 0;
 
 	/**
 		@brief	設定クラスを設定する。
@@ -3674,7 +3680,7 @@ public:
 		@param	z	[in]	Z座標
 		@return	エフェクトのインスタンスのハンドル
 	*/
-	virtual Handle Play(EffectRef& effect, float x, float y, float z) = 0;
+	virtual Handle Play(const EffectRef& effect, float x, float y, float z) = 0;
 
 	/**
 		@brief
@@ -3690,7 +3696,7 @@ public:
 		\~English	A time to play from middle
 		\~Japanese	途中から再生するための時間
 	*/
-	virtual Handle Play(EffectRef& effect, const Vector3D& position, int32_t startFrame = 0) = 0;
+	virtual Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame = 0) = 0;
 
 	/**
 		@brief
@@ -3736,6 +3742,8 @@ public:
 		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
 	*/
 	virtual void RessignCulling() = 0;
+
+	virtual ManagerImplemented* GetImplemented() = 0;
 };
 //----------------------------------------------------------------------------------
 //
@@ -4047,7 +4055,7 @@ public:
 
 	*/
 	virtual void
-	Update(Manager** managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	Update(ManagerRef* managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -4104,7 +4112,7 @@ public:
 	virtual void Stop() = 0;
 
 	virtual void Reload(const char16_t* key, void* data, int32_t size) = 0;
-	virtual void Reload(Manager* manager, const char16_t* path, const char16_t* key) = 0;
+	virtual void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) = 0;
 	virtual bool IsConnected() = 0;
 };
 

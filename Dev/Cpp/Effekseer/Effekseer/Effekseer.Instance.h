@@ -82,7 +82,7 @@ public:
 	static const int32_t ChildrenMax = 16;
 
 	// マネージャ
-	Manager* m_pManager;
+	ManagerImplemented* m_pManager;
 
 	// パラメーター
 	EffectNodeImplemented* m_pEffectNode;
@@ -371,7 +371,7 @@ public:
 	float m_AlphaThreshold;
 
 	// コンストラクタ
-	Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
+	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
 	// デストラクタ
 	virtual ~Instance();

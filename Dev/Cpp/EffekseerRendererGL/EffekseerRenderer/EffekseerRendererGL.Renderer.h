@@ -38,6 +38,9 @@ class GraphicsDevice;
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);
 
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
 class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
@@ -66,9 +69,9 @@ public:
 	\~english	instance
 	\~japanese	インスタンス
 	*/
-	static Renderer* Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-	static Renderer* Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice);
+	static RendererRef Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

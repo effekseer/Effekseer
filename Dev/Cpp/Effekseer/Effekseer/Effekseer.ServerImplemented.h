@@ -92,7 +92,7 @@ public:
 
 	void Unregister(EffectRef& effect) override;
 
-	void Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
+	void Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
 	void SetMaterialPath(const char16_t* materialPath) override;
 };

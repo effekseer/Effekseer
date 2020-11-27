@@ -141,17 +141,6 @@ RenderedEffectGenerator::RenderedEffectGenerator()
 
 RenderedEffectGenerator ::~RenderedEffectGenerator()
 {
-	if (renderer_ != nullptr)
-	{
-		renderer_->Destroy();
-		renderer_ = nullptr;
-	}
-
-	if (manager_ != nullptr)
-	{
-		manager_->Destroy();
-		manager_ = nullptr;
-	}
 }
 
 bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
@@ -248,10 +237,6 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 	if (sprite_renderer == nullptr)
 	{
 		spdlog::trace("FAIL : CreateSpriteRenderer");
-		manager_->Destroy();
-		manager_ = nullptr;
-		renderer_->Destroy();
-		renderer_ = nullptr;
 		return false;
 	}
 
@@ -651,13 +636,13 @@ void RenderedEffectGenerator::CopyToBack()
 		textureData.TextureFormat = Effekseer::TextureFormatType::ABGR8;
 		textureData.UserPtr = nullptr;
 		textureData.UserID = (GLuint)(size_t)backTexture->GetViewID();
-		auto r = (::EffekseerRendererGL::Renderer*)renderer_;
+		auto r = (::EffekseerRendererGL::Renderer*)renderer_.Get();
 		r->SetBackgroundTexture(&textureData);
 	}
 #ifdef _WIN32
 	else if (graphics_->GetDeviceType() == efk::DeviceType::DirectX11)
 	{
-		auto r = (::EffekseerRendererDX11::Renderer*)renderer_;
+		auto r = (::EffekseerRendererDX11::Renderer*)renderer_.Get();
 		r->SetBackground((ID3D11ShaderResourceView*)backTexture->GetViewID());
 	}
 	else
@@ -671,13 +656,13 @@ void RenderedEffectGenerator::ResetBack()
 {
 	if (graphics_->GetDeviceType() == efk::DeviceType::OpenGL)
 	{
-		auto r = (::EffekseerRendererGL::Renderer*)renderer_;
+		auto r = (::EffekseerRendererGL::Renderer*)renderer_.Get();
 		r->SetBackground(0);
 	}
 #ifdef _WIN32
 	else if (graphics_->GetDeviceType() == efk::DeviceType::DirectX11)
 	{
-		auto r = (::EffekseerRendererDX11::Renderer*)renderer_;
+		auto r = (::EffekseerRendererDX11::Renderer*)renderer_.Get();
 		r->SetBackground(nullptr);
 	}
 #endif

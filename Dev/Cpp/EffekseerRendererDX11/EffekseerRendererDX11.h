@@ -148,6 +148,9 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix44 = 0.0f;
 };
 
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
 class Renderer : public ::Effekseer::IReference
 {
 protected:
@@ -530,6 +533,9 @@ namespace EffekseerRendererDX11
 /**
 	@brief	描画クラス
 */
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
 class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
@@ -550,7 +556,7 @@ public:
 		@param	isMSAAEnabled whether is MSAA enabled
 		@return	インスタンス
 	*/
-	static Renderer* Create(ID3D11Device* device,
+	static RendererRef Create(ID3D11Device* device,
 							ID3D11DeviceContext* context,
 							int32_t squareMaxCount,
 							D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,

@@ -71,6 +71,9 @@ struct SoundData
 /**
 	@brief	サウンドクラス
 */
+class Sound;
+using SoundRef = Effekseer::RefPtr<Sound>;
+
 class Sound : public Effekseer::IReference
 {
 protected:
@@ -85,7 +88,7 @@ public:
 		@param	voiceCount2ch	[in]	ステレオボイス数
 		@return	インスタンス
 	*/
-	static Sound* Create( IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoices );
+	static SoundRef Create( IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoices );
 	
 	/**
 		@brief	このインスタンスを破棄する。

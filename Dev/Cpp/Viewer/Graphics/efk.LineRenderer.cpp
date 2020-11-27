@@ -8,7 +8,7 @@
 
 namespace efk
 {
-LineRenderer* LineRenderer::Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+LineRenderer* LineRenderer::Create(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)

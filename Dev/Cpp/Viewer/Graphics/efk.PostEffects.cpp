@@ -8,7 +8,7 @@
 
 namespace efk
 {
-BloomEffect* PostEffect::CreateBloom(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+BloomEffect* PostEffect::CreateBloom(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)
@@ -24,7 +24,7 @@ BloomEffect* PostEffect::CreateBloom(Graphics* graphics, EffekseerRenderer::Rend
 	return nullptr;
 }
 
-TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)
@@ -40,7 +40,7 @@ TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics, EffekseerRenderer::
 	return nullptr;
 }
 
-LinearToSRGBEffect* PostEffect::CreateLinearToSRGB(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+LinearToSRGBEffect* PostEffect::CreateLinearToSRGB(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == DeviceType::DirectX11)

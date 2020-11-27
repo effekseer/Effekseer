@@ -775,7 +775,7 @@ void GUIManager::InitializeGUI(Native* native)
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		ImGui_ImplGlfw_InitForVulkan(window->GetGLFWWindows(), true);
-		auto r = (EffekseerRendererDX11::Renderer*)native->GetRenderer();
+		auto r = (EffekseerRendererDX11::Renderer*)native->GetRenderer().Get();
 		ImGui_ImplDX11_Init(r->GetDevice(), r->GetContext());
 	}
 	else

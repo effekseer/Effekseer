@@ -71,6 +71,9 @@ struct SoundData
 /**
 	@brief	サウンドクラス
 */
+class Sound;
+using SoundRef = Effekseer::RefPtr<Sound>;
+
 class Sound : public Effekseer::IReference
 {
 protected:
@@ -83,7 +86,7 @@ public:
 		@param	dsound	[in]	DirectSound8のデバイス
 		@return	インスタンス
 	*/
-	static Sound* Create( IDirectSound8* dsound );
+	static SoundRef Create( IDirectSound8* dsound );
 	
 	/**
 		@brief	このインスタンスを破棄する。
@@ -104,7 +107,7 @@ public:
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader() = 0;
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader(::Effekseer::FileInterface* fileInterface) = 0;
 	
 	/**
 		@brief	全発音を停止

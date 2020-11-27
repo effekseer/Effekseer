@@ -66,11 +66,10 @@ static const char g_sprite_fs_no_texture_src[] = "IN lowp vec4 vaColor;\n"
 												 "FRAGCOLOR = vaColor;\n"
 												 "}\n";
 
-ImageRendererGL::ImageRendererGL(EffekseerRenderer::Renderer* renderer)
+ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	: ImageRenderer(renderer)
+	, renderer(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
-	this->renderer = (EffekseerRendererGL::RendererImplemented*)renderer;
-
 	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
 	EffekseerRendererGL::ShaderCodeView lineCodeDataPS(g_sprite_fs_texture_src);
 	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
@@ -106,12 +105,12 @@ ImageRendererGL::ImageRendererGL(EffekseerRenderer::Renderer* renderer)
 	this->shader = shader_;
 	this->shader_no_texture = shader_no_texture_;
 
-	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true, true);
+	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer.Get(), sizeof(EffekseerRendererGL::Vertex) * 12, true, true);
 
 	vao = EffekseerRendererGL::VertexArray::Create(
-		this->renderer, shader_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, this->renderer->GetIndexBuffer(), true);
+		this->renderer.Get(), shader_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, this->renderer->GetIndexBuffer(), true);
 	vao_nt = EffekseerRendererGL::VertexArray::Create(
-		this->renderer, shader_no_texture_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, this->renderer->GetIndexBuffer(), true);
+		this->renderer.Get(), shader_no_texture_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, this->renderer->GetIndexBuffer(), true);
 }
 
 ImageRendererGL::~ImageRendererGL()

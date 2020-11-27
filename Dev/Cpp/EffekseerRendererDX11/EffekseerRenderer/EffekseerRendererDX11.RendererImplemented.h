@@ -70,6 +70,9 @@ public:
 	@note
 	ツール向けの描画機能。
 */
+class RendererImplemented;
+using RendererImplementedRef = ::Effekseer::RefPtr<RendererImplemented>;
+
 class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 	friend class DeviceObject;

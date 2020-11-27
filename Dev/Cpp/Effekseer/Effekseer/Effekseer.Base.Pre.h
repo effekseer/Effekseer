@@ -91,6 +91,9 @@ class Curve;
 
 typedef int Handle;
 
+class ManagerImplemented;
+class EffectImplemented;
+
 namespace Backend
 {
 class Texture;

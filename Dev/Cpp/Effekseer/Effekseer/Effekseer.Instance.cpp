@@ -23,9 +23,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
+Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 	: m_pManager(pManager)
-	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
+	, m_pEffectNode(pEffectNode)
 	, m_pContainer(pContainer)
 	, ownGroup_(pGroup)
 	, childrenGroups_(nullptr)

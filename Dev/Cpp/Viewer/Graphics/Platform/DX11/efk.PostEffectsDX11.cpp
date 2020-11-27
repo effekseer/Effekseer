@@ -69,15 +69,15 @@ static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
 	{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
-BlitterDX11::BlitterDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+BlitterDX11::BlitterDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: graphics(graphics)
-	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
 	// Generate vertex data
-	vertexBuffer.reset(VertexBuffer::Create(renderer_, sizeof(Vertex) * 4, true, true));
+	vertexBuffer.reset(VertexBuffer::Create(renderer_.Get(), sizeof(Vertex) * 4, true, false));
 	vertexBuffer->Lock();
 	{
 		Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
@@ -165,16 +165,16 @@ void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
 	renderer_->GetRenderState()->Pop();
 }
 
-BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: BloomEffect(graphics)
 	, blitter(graphics, renderer)
-	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
 	// Extract shader
-	shaderExtract.reset(Shader::Create(renderer_,
+	shaderExtract.reset(Shader::Create(renderer_.Get(),
 									   PostFX_Basic_VS::g_VS,
 									   sizeof(PostFX_Basic_VS::g_VS),
 									   PostFX_Extract_PS::g_PS,
@@ -182,7 +182,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									   "Bloom extract",
 									   PostFx_ShaderDecl,
 									   2,
-									   true));
+									   false));
 
 	if (shaderExtract != nullptr)
 	{
@@ -196,7 +196,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 	}
 
 	// Downsample shader
-	shaderDownsample.reset(Shader::Create(renderer_,
+	shaderDownsample.reset(Shader::Create(renderer_.Get(),
 										  PostFX_Basic_VS::g_VS,
 										  sizeof(PostFX_Basic_VS::g_VS),
 										  PostFX_Downsample_PS::g_PS,
@@ -204,10 +204,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 										  "Bloom downsample",
 										  PostFx_ShaderDecl,
 										  2,
-										  true));
+										  false));
 
 	// Blend shader
-	shaderBlend.reset(Shader::Create(renderer_,
+	shaderBlend.reset(Shader::Create(renderer_.Get(),
 									 PostFX_Basic_VS::g_VS,
 									 sizeof(PostFX_Basic_VS::g_VS),
 									 PostFX_Blend_PS::g_PS,
@@ -215,10 +215,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									 "Bloom blend",
 									 PostFx_ShaderDecl,
 									 2,
-									 true));
+									 false));
 
 	// Blur(horizontal) shader
-	shaderBlurH.reset(Shader::Create(renderer_,
+	shaderBlurH.reset(Shader::Create(renderer_.Get(),
 									 PostFX_Basic_VS::g_VS,
 									 sizeof(PostFX_Basic_VS::g_VS),
 									 PostFX_BlurH_PS::g_PS,
@@ -226,10 +226,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									 "Bloom blurH",
 									 PostFx_ShaderDecl,
 									 2,
-									 true));
+									 false));
 
 	// Blur(vertical) shader
-	shaderBlurV.reset(Shader::Create(renderer_,
+	shaderBlurV.reset(Shader::Create(renderer_.Get(),
 									 PostFX_Basic_VS::g_VS,
 									 sizeof(PostFX_Basic_VS::g_VS),
 									 PostFX_BlurV_PS::g_PS,
@@ -237,7 +237,7 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer
 									 "Bloom blurV",
 									 PostFx_ShaderDecl,
 									 2,
-									 true));
+									 false));
 }
 
 BloomEffectDX11::~BloomEffectDX11()
@@ -375,17 +375,17 @@ void BloomEffectDX11::ReleaseBuffers()
 	}
 }
 
-TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: TonemapEffect(graphics)
 	, blitter(graphics, renderer)
-	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
 
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
 	// Copy shader
-	shaderCopy.reset(Shader::Create(renderer_,
+	shaderCopy.reset(Shader::Create(renderer_.Get(),
 									PostFX_Basic_VS::g_VS,
 									sizeof(PostFX_Basic_VS::g_VS),
 									PostFX_Copy_PS::g_PS,
@@ -393,10 +393,10 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Rend
 									"Tonemap Copy",
 									PostFx_ShaderDecl,
 									2,
-									true));
+									false));
 
 	// Reinhard shader
-	shaderReinhard.reset(Shader::Create(renderer_,
+	shaderReinhard.reset(Shader::Create(renderer_.Get(),
 										PostFX_Basic_VS::g_VS,
 										sizeof(PostFX_Basic_VS::g_VS),
 										PostFX_Tonemap_PS::g_PS,
@@ -404,7 +404,7 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, EffekseerRenderer::Rend
 										"Tonemap Reinhard",
 										PostFx_ShaderDecl,
 										2,
-										true));
+										false));
 
 	if (shaderReinhard != nullptr)
 	{
@@ -441,17 +441,17 @@ void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
 	}
 }
 
-LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: LinearToSRGBEffect(graphics)
 	, blitter_(graphics, renderer)
-	, renderer_(static_cast<EffekseerRendererDX11::RendererImplemented*>(renderer))
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
 
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererDX11;
 
 	// Copy shader
-	shader_.reset(Shader::Create(renderer_,
+	shader_.reset(Shader::Create(renderer_.Get(),
 								 PostFX_Basic_VS::g_VS,
 								 sizeof(PostFX_Basic_VS::g_VS),
 								 PostFX_LinearToSRGB_PS::g_PS,
@@ -459,7 +459,7 @@ LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, EffekseerRend
 								 "LinearToSRGB",
 								 PostFx_ShaderDecl,
 								 2,
-								 true));
+								 false));
 
 	if (shader_ != nullptr)
 	{

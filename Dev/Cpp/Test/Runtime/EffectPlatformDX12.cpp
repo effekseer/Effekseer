@@ -56,11 +56,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformDX12* platform_ = nullptr;
-	::EffekseerRenderer::Renderer* renderer_ = nullptr;
+	::EffekseerRenderer::RendererRef renderer_ = nullptr;
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer)
+	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::RendererRef renderer) : platform_(platform), renderer_(renderer)
 	{
 	}
 
@@ -125,7 +125,7 @@ void EffectPlatformDX12::CreateShaders()
 	shader_ps_ = graphics_->CreateShader(data_ps.data(), static_cast<int32_t>(data_ps.size()));
 }
 
-EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
+EffekseerRenderer::RendererRef EffectPlatformDX12::CreateRenderer()
 {
 	auto g = static_cast<LLGI::GraphicsDX12*>(graphics_);
 	auto p = static_cast<LLGI::PlatformDX12*>(platform_);

@@ -5,14 +5,14 @@
 
 class DistortingCallbackDX9 : public EffekseerRenderer::DistortingCallback
 {
-	::EffekseerRendererDX9::Renderer* renderer = nullptr;
+	::EffekseerRendererDX9::RendererRef renderer = nullptr;
 	LPDIRECT3DDEVICE9 device = nullptr;
 	LPDIRECT3DTEXTURE9 texture = nullptr;
 	int32_t texWidth_ = 0;
 	int32_t texHeight_ = 0;
 
 public:
-	DistortingCallbackDX9(::EffekseerRendererDX9::Renderer* renderer, LPDIRECT3DDEVICE9 device, int texWidth, int texHeight);
+	DistortingCallbackDX9(::EffekseerRendererDX9::RendererRef renderer, LPDIRECT3DDEVICE9 device, int texWidth, int texHeight);
 
 	virtual ~DistortingCallbackDX9();
 
@@ -36,7 +36,7 @@ private:
 	void CreateCheckedSurface();
 
 protected:
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
 	EffectPlatformDX9()

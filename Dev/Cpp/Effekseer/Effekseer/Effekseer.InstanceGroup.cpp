@@ -17,9 +17,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceGroup::InstanceGroup(Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global)
-	: m_manager((ManagerImplemented*)manager)
-	, m_effectNode((EffectNodeImplemented*)effectNode)
+InstanceGroup::InstanceGroup(ManagerImplemented* manager, EffectNodeImplemented* effectNode, InstanceContainer* container, InstanceGlobal* global)
+	: m_manager(manager)
+	, m_effectNode(effectNode)
 	, m_container(container)
 	, m_global(global)
 	, m_time(0)

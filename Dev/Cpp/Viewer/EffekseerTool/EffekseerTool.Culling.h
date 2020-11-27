@@ -19,12 +19,12 @@ class Culling
 {
 private:
 	efk::LineRenderer* lineRenderer = nullptr;
-	Culling(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	Culling(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 
 public:
 	virtual ~Culling();
 
-	static Culling* Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	static Culling* Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 
 public:
 	void Rendering(bool isRightHand);

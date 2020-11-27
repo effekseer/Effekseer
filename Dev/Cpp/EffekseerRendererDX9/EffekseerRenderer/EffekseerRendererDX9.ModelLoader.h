@@ -22,7 +22,7 @@ namespace EffekseerRendererDX9
 class ModelLoader : public ::Effekseer::ModelLoader
 {
 private:
-	RendererImplemented* renderer_ = nullptr;
+	RendererImplementedRef renderer_;
 	LPDIRECT3DDEVICE9 device_ = nullptr;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
@@ -30,7 +30,7 @@ private:
 	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 public:
-	ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface);
+	ModelLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterface* fileInterface);
 	ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface);
 	virtual ~ModelLoader();
 

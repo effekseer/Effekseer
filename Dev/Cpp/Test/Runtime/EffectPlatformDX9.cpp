@@ -2,7 +2,7 @@
 #include "../../3rdParty/stb/stb_image_write.h"
 #include <assert.h>
 
-DistortingCallbackDX9::DistortingCallbackDX9(::EffekseerRendererDX9::Renderer* renderer,
+DistortingCallbackDX9::DistortingCallbackDX9(::EffekseerRendererDX9::RendererRef renderer,
 											 LPDIRECT3DDEVICE9 device,
 											 int texWidth,
 											 int texHeight)
@@ -61,10 +61,10 @@ void EffectPlatformDX9::CreateCheckedSurface()
 	checkedSurface_->UnlockRect();
 }
 
-EffekseerRenderer::Renderer* EffectPlatformDX9::CreateRenderer()
+EffekseerRenderer::RendererRef EffectPlatformDX9::CreateRenderer()
 {
 	auto ret = EffekseerRendererDX9::Renderer::Create(device_, 2000);
-	distorting_ = new DistortingCallbackDX9((EffekseerRendererDX9::Renderer*)ret, device_, initParam_.WindowSize[0], initParam_.WindowSize[1]);
+	distorting_ = new DistortingCallbackDX9((EffekseerRendererDX9::RendererRef)ret, device_, initParam_.WindowSize[0], initParam_.WindowSize[1]);
 	ret->SetDistortingCallback(distorting_);
 	return ret;
 }
@@ -222,7 +222,7 @@ void EffectPlatformDX9::ResetDevice()
 
 	distorting_->Lost();
 
-	auto renderer = static_cast<EffekseerRendererDX9::Renderer*>(GetRenderer());
+	auto renderer = static_cast<EffekseerRendererDX9::Renderer*>(GetRenderer().Get());
 
 	for (size_t i = 0; i < effects_.size(); i++)
 	{

@@ -3,13 +3,13 @@
 
 class DistortingCallbackGL : public EffekseerRenderer::DistortingCallback
 {
-	::EffekseerRendererGL::Renderer* renderer = nullptr;
+	::EffekseerRendererGL::RendererRef renderer = nullptr;
 	GLuint texture = 0;
 	int32_t width_ = 0;
 	int32_t height_ = 0;
 
 public:
-	DistortingCallbackGL(::EffekseerRendererGL::Renderer* renderer, int width, int height)
+	DistortingCallbackGL(::EffekseerRendererGL::RendererRef renderer, int width, int height)
 		: renderer(renderer)
 		, width_(width)
 		, height_(height)
@@ -37,7 +37,7 @@ public:
 	}
 };
 
-EffekseerRenderer::Renderer* EffectPlatformGL::CreateRenderer()
+EffekseerRenderer::RendererRef EffectPlatformGL::CreateRenderer()
 {
 	auto ret = EffekseerRendererGL::Renderer::Create(2000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 

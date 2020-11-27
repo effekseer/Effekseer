@@ -5,7 +5,7 @@
 namespace EffekseerRenderer
 {
 
-Culling::Culling(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+Culling::Culling(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: IsShown(false)
 	, Radius(0.0f)
 	, X(0.0f)
@@ -20,7 +20,7 @@ Culling::~Culling()
 	ES_SAFE_DELETE(lineRenderer);
 }
 
-Culling* Culling::Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+Culling* Culling::Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 	return new Culling(graphics, renderer);
 }

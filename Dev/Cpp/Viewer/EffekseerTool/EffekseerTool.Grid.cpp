@@ -13,7 +13,7 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::Grid(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+Grid::Grid(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: m_lineCount(0)
 	, m_gridLength(2.0f)
 	, IsShownXY(false)
@@ -34,7 +34,7 @@ Grid::~Grid()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid* Grid::Create(efk::Graphics* graphics, EffekseerRenderer::Renderer* renderer)
+Grid* Grid::Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
 	return new Grid(graphics, renderer);
 }

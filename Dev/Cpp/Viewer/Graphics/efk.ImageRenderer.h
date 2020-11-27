@@ -9,7 +9,7 @@ namespace efk
 class ImageRenderer
 {
 public:
-	ImageRenderer(EffekseerRenderer::Renderer* renderer)
+	ImageRenderer(const EffekseerRenderer::RendererRef& renderer)
 	{
 	}
 
@@ -30,6 +30,6 @@ public:
 
 	virtual void OnResetDevice() = 0;
 
-	static ImageRenderer* Create(Graphics* graphics, EffekseerRenderer::Renderer* renderer);
+	static ImageRenderer* Create(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 };
 } // namespace efk

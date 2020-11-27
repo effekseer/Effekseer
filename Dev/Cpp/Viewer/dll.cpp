@@ -364,7 +364,7 @@ void Native::ModelLoader::Unload(Effekseer::Model* data)
 	*/
 }
 
-Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer)
+Native::MaterialLoader::MaterialLoader(const EffekseerRenderer::RendererRef& renderer)
 {
 	loader_ = renderer->CreateMaterialLoader();
 }
@@ -1163,13 +1163,13 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	Effekseer::TextureLoaderRef loader = nullptr;
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
-		auto r = (EffekseerRendererGL::Renderer*)mainScreen_->GetRenderer();
+		auto r = (EffekseerRendererGL::Renderer*)mainScreen_->GetRenderer().Get();
 		loader = EffekseerRendererGL::CreateTextureLoader();
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
-		auto r = (EffekseerRendererDX11::Renderer*)mainScreen_->GetRenderer();
+		auto r = (EffekseerRendererDX11::Renderer*)mainScreen_->GetRenderer().Get();
 		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
 	}
 	else
@@ -1312,7 +1312,7 @@ void Native::SetFileLogger(const char16_t* path)
 	spdlog::trace("End Native::SetFileLogger");
 }
 
-EffekseerRenderer::Renderer* Native::GetRenderer()
+const EffekseerRenderer::RendererRef& Native::GetRenderer()
 {
 	return mainScreen_->GetRenderer();
 }

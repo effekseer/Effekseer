@@ -14,21 +14,18 @@ namespace EffekseerRendererDX9
 
 const int32_t ModelRendererInstanceCount = 10;
 
-MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface)
-	: fileInterface_(fileInterface)
+MaterialLoader::MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterface* fileInterface)
+	: renderer_(renderer)
+	, fileInterface_(fileInterface)
 {
 	if (fileInterface == nullptr)
 	{
 		fileInterface_ = &defaultFileInterface_;
 	}
-
-	renderer_ = renderer;
-	ES_SAFE_ADDREF(renderer_);
 }
 
 MaterialLoader ::~MaterialLoader()
 {
-	ES_SAFE_RELEASE(renderer_);
 }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const char16_t* path)
@@ -107,7 +104,7 @@ MaterialLoader ::~MaterialLoader()
 										{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 										D3DDECL_END()};
 
-			shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
+			shader = Shader::Create(renderer_.Get(),
 									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
 									binary->GetVertexShaderSize(shaderTypes[st]),
 									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
@@ -168,7 +165,7 @@ MaterialLoader ::~MaterialLoader()
 
 			decl[count] = D3DDECL_END();
 
-			shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
+			shader = Shader::Create(renderer_.Get(),
 									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
 									binary->GetVertexShaderSize(shaderTypes[st]),
 									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
@@ -217,7 +214,7 @@ MaterialLoader ::~MaterialLoader()
 		// compile
 		std::string log;
 
-		auto shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
+		auto shader = Shader::Create(renderer_.Get(),
 									 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
 									 binary->GetVertexShaderSize(shaderTypesModel[st]),
 									 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),

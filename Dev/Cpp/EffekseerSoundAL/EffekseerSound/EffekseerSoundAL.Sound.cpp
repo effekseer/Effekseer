@@ -17,9 +17,9 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Sound* Sound::Create( int32_t numVoices )
+SoundRef Sound::Create( int32_t numVoices )
 {
-	SoundImplemented* sound = new SoundImplemented();
+	auto sound = Effekseer::MakeRef<SoundImplemented>();
 	if( sound->Initialize( numVoices ) )
 	{
 		return sound;
@@ -88,7 +88,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
-	return ::Effekseer::SoundPlayerRef(new SoundPlayer(this));
+	return ::Effekseer::MakeRef<SoundPlayer>(this);
 }
 	
 //----------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader( ::Effekseer::FileInterface* fileInterface )
 {
-	return ::Effekseer::SoundLoaderRef(new SoundLoader( fileInterface ));
+	return ::Effekseer::MakeRef<SoundLoader>(fileInterface);
 }
 
 //----------------------------------------------------------------------------------
