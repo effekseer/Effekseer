@@ -269,10 +269,10 @@ namespace EffekseerRendererDX12
 	return nullptr;
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture)
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateTextureData(r->GetGraphicsDevice(), texture);
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
+	return CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), texture);
 }
 
 Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture)
@@ -296,10 +296,10 @@ void DeleteTextureData(Effekseer::TextureData* textureData)
 	ES_SAFE_DELETE(textureData);
 }
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	FlushAndWait(r->GetGraphicsDevice());
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
+	FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()));
 }
 
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
@@ -309,11 +309,11 @@ void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 	g->WaitFinish();
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
+	return CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), memoryPool);
 }
 
 EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
@@ -328,10 +328,10 @@ EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::Graphics
 	return ret;
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
+	return CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()));
 }
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
