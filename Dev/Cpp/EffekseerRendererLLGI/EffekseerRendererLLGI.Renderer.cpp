@@ -26,6 +26,8 @@
 #include "../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
+#include <iostream>
+
 namespace EffekseerRendererLLGI
 {
 
@@ -301,6 +303,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	renderPassPipelineState_ = renderPassPipelineState;
 	isReversedDepth_ = isReversedDepth;
 
+    LLGI::SetLogger([](LLGI::LogType type, const std::string& message){ std::cout << message << std::endl; });
+    
 	LLGI::SafeAddRef(graphicsDevice_);
 	LLGI::SafeAddRef(renderPassPipelineState_);
 
