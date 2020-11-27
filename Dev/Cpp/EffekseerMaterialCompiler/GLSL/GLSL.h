@@ -418,12 +418,6 @@ float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam)
 	vec2 rescale = reconstructionParam1.yz;
 	vec4 params = reconstructionParam2;
 
-	#ifdef __OPENGL__
-	float tempY = params.y;
-	params.y = params.z;
-	params.z = tempY;
-	#endif
-
 	vec2 zs = vec2(backgroundZ * rescale.x + rescale.y, meshZ);
 
 	vec2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);
