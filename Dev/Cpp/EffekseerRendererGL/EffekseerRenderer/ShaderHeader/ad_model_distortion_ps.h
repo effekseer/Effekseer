@@ -244,7 +244,7 @@ uniform sampler2D Sampler_sampler_blendUVDistortionTex;
 uniform sampler2D Sampler_sampler_blendTex;
 uniform sampler2D Sampler_sampler_blendAlphaTex;
 uniform sampler2D Sampler_sampler_backTex;
-layout(binding = 7) uniform sampler2D Sampler_sampler_depthTex;
+uniform sampler2D Sampler_sampler_depthTex;
 
 centroid in vec2 _VSPS_UV;
 in vec4 _VSPS_Binormal;
