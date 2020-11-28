@@ -21,8 +21,6 @@ ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDevice
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
-
-	graphicsDevice_ = new Backend::GraphicsDevice(deviceType);
 }
 
 //----------------------------------------------------------------------------------
@@ -30,7 +28,6 @@ ModelLoader::ModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDevice
 //----------------------------------------------------------------------------------
 ModelLoader::~ModelLoader()
 {
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 Effekseer::Model* ModelLoader::Load(const char16_t* path)

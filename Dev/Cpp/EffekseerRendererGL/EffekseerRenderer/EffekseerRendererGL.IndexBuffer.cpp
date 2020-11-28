@@ -13,8 +13,8 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
-	: DeviceObject(renderer, renderer->GetIntetnalGraphicsDevice(), hasRefCount)
+IndexBuffer::IndexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, GLuint buffer, int maxCount, bool isDynamic, int32_t stride)
+	: DeviceObject(graphicsDevice.Get())
 	, IndexBufferBase(maxCount, isDynamic)
 	, m_buffer(buffer)
 {
@@ -34,11 +34,11 @@ IndexBuffer::~IndexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount)
+IndexBuffer* IndexBuffer::Create(const Backend::GraphicsDeviceRef& graphicsDevice, int maxCount, bool isDynamic, int32_t stride)
 {
 	GLuint ib;
 	GLExt::glGenBuffers(1, &ib);
-	return new IndexBuffer(renderer, ib, maxCount, isDynamic, stride, hasRefCount);
+	return new IndexBuffer(graphicsDevice, ib, maxCount, isDynamic, stride);
 }
 
 //-----------------------------------------------------------------------------------

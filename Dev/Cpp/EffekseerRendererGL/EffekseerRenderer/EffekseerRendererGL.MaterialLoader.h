@@ -13,12 +13,10 @@ class CompiledMaterialBinary;
 namespace EffekseerRendererGL
 {
 
-class GraphicsDevice;
-
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	bool canLoadFromCache_ = false;
 
 	::Effekseer::FileInterface* fileInterface_ = nullptr;
@@ -27,7 +25,7 @@ private:
 	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache = true);
+	MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache = true);
 	virtual ~MaterialLoader();
 
 	::Effekseer::MaterialData* Load(const char16_t* path) override;

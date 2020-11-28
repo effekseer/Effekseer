@@ -21,21 +21,21 @@ class IndexBuffer : public DeviceObject, public ::EffekseerRenderer::IndexBuffer
 private:
 	GLuint m_buffer;
 
-	IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount);
+	IndexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, GLuint buffer, int maxCount, bool isDynamic, int32_t stride);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, int32_t stride, bool hasRefCount);
+	static IndexBuffer* Create(const Backend::GraphicsDeviceRef& graphicsDevice, int maxCount, bool isDynamic, int32_t stride);
 
 	GLuint GetInterface()
 	{
 		return m_buffer;
 	}
 
-public: // デバイス復旧用
-	virtual void OnLostDevice() override;
-	virtual void OnResetDevice() override;
+public:
+	void OnLostDevice() override;
+	void OnResetDevice() override;
 
 public:
 	void Lock() override;

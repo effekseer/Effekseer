@@ -146,7 +146,7 @@ private:
 
 	bool ReloadShader();
 
-	Shader(GraphicsDevice* graphicsDevice,
+	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 		   GLuint program,
 		   const ShaderCodeView* vsData,
 		   size_t vsDataCount,
@@ -164,7 +164,7 @@ public:
 public:
 	virtual ~Shader();
 
-	static Shader* Create(GraphicsDevice* graphicsDevice,
+	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 						  const ShaderCodeView* vsData,
 						  size_t vsDataCount,
 						  const ShaderCodeView* psData,

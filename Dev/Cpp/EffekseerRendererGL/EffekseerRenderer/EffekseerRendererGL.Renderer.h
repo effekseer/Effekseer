@@ -18,24 +18,16 @@
 namespace EffekseerRendererGL
 {
 
-class GraphicsDevice;
-
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType);
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
-
-[[deprecated("please use CreateTextureLoader with GraphicsDevice")]]
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr,
-												::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
-
 ::Effekseer::TextureLoaderRef CreateTextureLoader(
-	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 	::Effekseer::FileInterface* fileInterface = nullptr,
 	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-::Effekseer::MaterialLoaderRef CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);
 
 class Renderer;
@@ -71,7 +63,7 @@ public:
 	*/
 	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-	static RendererRef Create(int32_t squareMaxCount, EffekseerRenderer::GraphicsDevice* graphicDevice);
+	static RendererRef Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

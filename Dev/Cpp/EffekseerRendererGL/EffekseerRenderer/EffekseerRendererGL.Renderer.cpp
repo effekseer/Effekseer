@@ -3,7 +3,6 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.Renderer.h"
-#include "EffekseerRendererGL.DeviceObjectCollection.h"
 #include "EffekseerRendererGL.RenderState.h"
 #include "EffekseerRendererGL.RendererImplemented.h"
 
@@ -53,11 +52,6 @@ namespace EffekseerRendererGL
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType);
 }
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(OpenGLDeviceType deviceType)
-{
-	return new GraphicsDevice(deviceType);
-}
-
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
@@ -71,12 +65,12 @@ namespace EffekseerRendererGL
 }
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(
-	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 	::Effekseer::FileInterface* fileInterface,
 	::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface, colorSpaceType));
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice.Get(), fileInterface, colorSpaceType);
 #else
 	return nullptr;
 #endif
@@ -91,11 +85,11 @@ namespace EffekseerRendererGL
 #endif
 }
 
-::Effekseer::MaterialLoaderRef CreateMaterialLoader(EffekseerRenderer::GraphicsDevice* graphicsDevice,
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(static_cast<GraphicsDevice*>(graphicsDevice), fileInterface));
+	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(graphicsDevice.DownCast<Backend::GraphicsDevice>(), fileInterface));
 #else
 	return nullptr;
 #endif
@@ -103,23 +97,16 @@ namespace EffekseerRendererGL
 
 RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 {
-	GLExt::Initialize(deviceType);
-
-	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, deviceType, nullptr);
-	if (renderer->Initialize())
-	{
-		return renderer;
-	}
-	return nullptr;
+	return Create(CreateGraphicsDevice(deviceType), squareMaxCount);
 }
 
-RendererRef Renderer::Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice)
+RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount)
 {
-	auto g = static_cast<GraphicsDevice*>(graphicDevice);
+	auto g = graphicsDevice.DownCast<Backend::GraphicsDevice>();
 
 	GLExt::Initialize(g->GetDeviceType());
 
-	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, g->GetDeviceType(), g);
+	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, g);
 	if (renderer->Initialize())
 	{
 		return renderer;
@@ -142,7 +129,7 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType, GraphicsDevice* graphicsDevice)
+RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::GraphicsDeviceRef graphicsDevice)
 	: m_vertexBuffer(nullptr)
 	, m_indexBuffer(nullptr)
 	, m_indexBufferForWireframe(nullptr)
@@ -153,23 +140,12 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	, m_standardRenderer(nullptr)
 	, m_vao_wire_frame(nullptr)
 	, m_distortingCallback(nullptr)
-
-	, m_deviceType(deviceType)
-	, graphicsDevice_intetnal_(graphicsDevice)
+	, m_deviceType(graphicsDevice->GetDeviceType())
 {
 	m_background.UserID = 0;
 	m_background.HasMipmap = false;
 
-	if (graphicsDevice == nullptr)
-	{
-		graphicsDevice_intetnal_ = new GraphicsDevice(deviceType);
-	}
-	else
-	{
-		ES_SAFE_ADDREF(graphicsDevice_intetnal_);
-	}
-
-	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType);
+	graphicsDevice_ = graphicsDevice;
 }
 
 //----------------------------------------------------------------------------------
@@ -206,8 +182,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
-
-	ES_SAFE_RELEASE(graphicsDevice_intetnal_);
 	
 	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
 	{
@@ -218,14 +192,14 @@ RendererImplemented::~RendererImplemented()
 
 void RendererImplemented::OnLostDevice()
 {
-	if (graphicsDevice_intetnal_ != nullptr)
-		graphicsDevice_intetnal_->OnLostDevice();
+	if (graphicsDevice_ != nullptr)
+		graphicsDevice_->LostDevice();
 }
 
 void RendererImplemented::OnResetDevice()
 {
-	if (graphicsDevice_intetnal_ != nullptr)
-		graphicsDevice_intetnal_->OnResetDevice();
+	if (graphicsDevice_ != nullptr)
+		graphicsDevice_->ResetDevice();
 
 	GenerateIndexData();
 }
@@ -412,8 +386,8 @@ bool RendererImplemented::Initialize()
 	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 
-	vao_unlit_ = VertexArray::Create(this, shader_unlit_, GetVertexBuffer(), GetIndexBuffer(), false);
-	vao_ad_unlit_ = VertexArray::Create(this, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer(), false);
+	vao_unlit_ = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), GetIndexBuffer());
+	vao_ad_unlit_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer());
 
 	// Distortion
 	static ShaderAttribInfo sprite_attribs_distortion_ad[10] = {
@@ -481,9 +455,9 @@ bool RendererImplemented::Initialize()
 	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 
-	vao_ad_distortion_ = VertexArray::Create(this, shader_ad_distortion_, GetVertexBuffer(), GetIndexBuffer(), false);
+	vao_ad_distortion_ = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, GetVertexBuffer(), GetIndexBuffer());
 
-	vao_distortion_ = VertexArray::Create(this, shader_distortion_, GetVertexBuffer(), GetIndexBuffer(), false);
+	vao_distortion_ = VertexArray::Create(graphicsDevice_, shader_distortion_, GetVertexBuffer(), GetIndexBuffer());
 
 	// Lit
 
@@ -554,10 +528,10 @@ bool RendererImplemented::Initialize()
 	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
 
 
-	vao_ad_lit_ = VertexArray::Create(this, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer(), false);
-	vao_lit_ = VertexArray::Create(this, shader_lit_, GetVertexBuffer(), GetIndexBuffer(), false);
+	vao_ad_lit_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer());
+	vao_lit_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), GetIndexBuffer());
 
-	m_vao_wire_frame = VertexArray::Create(this, shader_unlit_, GetVertexBuffer(), m_indexBufferForWireframe, false);
+	m_vao_wire_frame = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), m_indexBufferForWireframe);
 
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
@@ -783,21 +757,21 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	// generate a vertex buffer
 	{
 		m_vertexBuffer =
-			VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
+			VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true);
 		if (m_vertexBuffer == nullptr)
 			return;
 	}
 
 	// generate an index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create(this, GetIndexSpriteCount() * 6, false, indexBufferStride_, false);
+		m_indexBuffer = IndexBuffer::Create(graphicsDevice_, GetIndexSpriteCount() * 6, false, indexBufferStride_);
 		if (m_indexBuffer == nullptr)
 			return;
 	}
 
 	// generate an index buffer for a wireframe
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create(this, GetIndexSpriteCount() * 8, false, indexBufferStride_, false);
+		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_, GetIndexSpriteCount() * 8, false, indexBufferStride_);
 		if (m_indexBufferForWireframe == nullptr)
 			return;
 	}

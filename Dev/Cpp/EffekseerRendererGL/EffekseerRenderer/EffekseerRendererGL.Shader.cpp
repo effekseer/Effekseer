@@ -283,7 +283,7 @@ bool Shader::ReloadShader()
 	return true;
 }
 
-Shader::Shader(GraphicsDevice* graphicsDevice,
+Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 			   GLuint program,
 			   const ShaderCodeView* vsData,
 			   size_t vsDataCount,
@@ -292,7 +292,7 @@ Shader::Shader(GraphicsDevice* graphicsDevice,
 			   const char* name,
 			   bool hasRefCount,
 			   bool addHeader)
-	: DeviceObject(nullptr, graphicsDevice, hasRefCount)
+	: DeviceObject(graphicsDevice.Get())
 	, m_deviceType(graphicsDevice->GetDeviceType())
 	, m_program(program)
 	, m_vertexSize(0)
@@ -371,7 +371,7 @@ Shader::~Shader()
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
 
-Shader* Shader::Create(GraphicsDevice* graphicsDevice,
+Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 					   const ShaderCodeView* vsData,
 					   size_t vsDataCount,
 					   const ShaderCodeView* psData,

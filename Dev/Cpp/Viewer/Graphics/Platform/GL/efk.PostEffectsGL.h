@@ -30,7 +30,7 @@ public:
 	BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BlitterGL();
 
-	std::unique_ptr<EffekseerRendererGL::VertexArray> CreateVAO(EffekseerRendererGL::Shader* shader);
+	std::unique_ptr<EffekseerRendererGL::VertexArray> CreateVAO(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, EffekseerRendererGL::Shader* shader);
 
 	void Blit(EffekseerRendererGL::Shader* shader,
 			  EffekseerRendererGL::VertexArray* vao,

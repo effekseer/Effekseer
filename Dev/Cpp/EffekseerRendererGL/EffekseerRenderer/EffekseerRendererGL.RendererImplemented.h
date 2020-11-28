@@ -8,7 +8,6 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 #include "EffekseerRendererGL.Base.h"
-#include "EffekseerRendererGL.DeviceObjectCollection.h"
 #include "EffekseerRendererGL.Renderer.h"
 #include "GraphicsDevice.h"
 
@@ -17,7 +16,6 @@ namespace EffekseerRendererGL
 
 using Vertex = EffekseerRenderer::SimpleVertex;
 using VertexDistortion = EffekseerRenderer::VertexDistortion;
-class GraphicsDevice;
 
 struct RenderStateSet
 {
@@ -51,7 +49,6 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 
 private:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
-	GraphicsDevice* graphicsDevice_intetnal_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer = nullptr;
@@ -107,7 +104,7 @@ private:
 	int32_t GetIndexSpriteCount() const;
 
 public:
-	RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType, GraphicsDevice* graphicsDevice);
+	RendererImplemented(int32_t squareMaxCount, Backend::GraphicsDeviceRef graphicsDevice);
 
 	~RendererImplemented();
 
@@ -252,9 +249,9 @@ public:
 
 	bool IsVertexArrayObjectSupported() const override;
 
-	GraphicsDevice* GetIntetnalGraphicsDevice() const
+	Backend::GraphicsDeviceRef& GetIntetnalGraphicsDevice()
 	{
-		return graphicsDevice_intetnal_;
+		return graphicsDevice_;
 	}
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override

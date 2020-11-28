@@ -156,8 +156,10 @@ BlitterGL::BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& r
 {
 	using namespace EffekseerRendererGL;
 
+	auto gd = this->renderer_->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
+
 	// Generate vertex data
-	vertexBuffer.reset(VertexBuffer::Create(renderer_.Get(), sizeof(Vertex) * 4, true, true));
+	vertexBuffer.reset(VertexBuffer::Create(gd, sizeof(Vertex) * 4, true));
 
 	vertexBuffer->Lock();
 	{
@@ -174,11 +176,12 @@ BlitterGL::~BlitterGL()
 {
 }
 
-std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(EffekseerRendererGL::Shader* shader)
+std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, EffekseerRendererGL::Shader* shader)
 {
 	using namespace EffekseerRendererGL;
+	auto gd = graphicsDevice.DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 
-	return std::unique_ptr<VertexArray>(VertexArray::Create(renderer_.Get(), shader, vertexBuffer.get(), renderer_->GetIndexBuffer(), true));
+	return std::unique_ptr<VertexArray>(VertexArray::Create(gd, shader, vertexBuffer.get(), renderer_->GetIndexBuffer()));
 }
 
 void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
@@ -292,11 +295,11 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
-	vaoExtract = blitter.CreateVAO(shaderExtract.get());
-	vaoDownsample = blitter.CreateVAO(shaderDownsample.get());
-	vaoBlend = blitter.CreateVAO(shaderBlend.get());
-	vaoBlurH = blitter.CreateVAO(shaderBlurH.get());
-	vaoBlurV = blitter.CreateVAO(shaderBlurV.get());
+	vaoExtract = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderExtract.get());
+	vaoDownsample = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderDownsample.get());
+	vaoBlend = blitter.CreateVAO(renderer->GetGraphicsDevice(),shaderBlend.get());
+	vaoBlurH = blitter.CreateVAO(renderer->GetGraphicsDevice(),shaderBlurH.get());
+	vaoBlurV = blitter.CreateVAO(renderer->GetGraphicsDevice(),shaderBlurV.get());
 }
 
 BloomEffectGL::~BloomEffectGL()
@@ -459,8 +462,8 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderReinhard->GetUniformId("u_Exposure"), 0);
 
 	// Setup VAOs
-	vaoCopy = blitter.CreateVAO(shaderCopy.get());
-	vaoReinhard = blitter.CreateVAO(shaderReinhard.get());
+	vaoCopy = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderCopy.get());
+	vaoReinhard = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderReinhard.get());
 }
 
 TonemapEffectGL::~TonemapEffectGL()
@@ -514,7 +517,7 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRe
 	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
-	vao_ = blitter.CreateVAO(shader_.get());
+	vao_ = blitter.CreateVAO(renderer->GetGraphicsDevice(), shader_.get());
 }
 
 LinearToSRGBEffectGL::~LinearToSRGBEffectGL()

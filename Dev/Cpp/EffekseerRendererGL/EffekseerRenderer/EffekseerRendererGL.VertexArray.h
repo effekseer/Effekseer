@@ -24,13 +24,13 @@ private:
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer;
 
-	VertexArray(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
+	VertexArray(const Backend::GraphicsDeviceRef& graphicsDevice, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer);
 
 public:
 	virtual ~VertexArray();
 
 	static VertexArray*
-	Create(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
+	Create(const Backend::GraphicsDeviceRef& graphicsDevice, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer);
 
 	GLuint GetInterface() const
 	{
@@ -46,9 +46,9 @@ public:
 		return m_indexBuffer;
 	}
 
-public: // デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
+public:
+	void OnLostDevice() override;
+	void OnResetDevice() override;
 
 private:
 	void Init();

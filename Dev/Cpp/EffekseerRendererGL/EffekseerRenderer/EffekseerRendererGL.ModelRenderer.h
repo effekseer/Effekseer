@@ -46,7 +46,7 @@ private:
 	Shader* shader_unlit_ = nullptr;
 	Shader* shader_distortion_ = nullptr;
 
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
 	template <int N>
 	void InitRenderer();

@@ -22,7 +22,6 @@ class ModelLoader : public ::Effekseer::ModelLoader
 private:
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 public:
 	ModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType);

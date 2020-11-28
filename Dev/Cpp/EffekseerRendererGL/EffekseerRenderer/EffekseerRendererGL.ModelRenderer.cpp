@@ -380,7 +380,7 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	, shader_unlit_(shader_unlit)
 	, shader_distortion_(shader_distortion)
 {
-
+	graphicsDevice_ = renderer->GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
 		InitRenderer<InstanceCount>();
@@ -398,19 +398,17 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
 	}
 
-	m_va[0] = VertexArray::Create(renderer, shader_ad_lit_, nullptr, nullptr, true);
-	m_va[1] = VertexArray::Create(renderer, shader_ad_unlit_, nullptr, nullptr, true);
-	m_va[2] = VertexArray::Create(renderer, shader_ad_distortion_, nullptr, nullptr, true);
-	m_va[3] = VertexArray::Create(renderer, shader_lit_, nullptr, nullptr, true);
-	m_va[4] = VertexArray::Create(renderer, shader_unlit_, nullptr, nullptr, true);
-	m_va[5] = VertexArray::Create(renderer, shader_distortion_, nullptr, nullptr, true);
+	m_va[0] = VertexArray::Create(graphicsDevice_, shader_ad_lit_, nullptr, nullptr);
+	m_va[1] = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, nullptr, nullptr);
+	m_va[2] = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, nullptr, nullptr);
+	m_va[3] = VertexArray::Create(graphicsDevice_, shader_lit_, nullptr, nullptr);
+	m_va[4] = VertexArray::Create(graphicsDevice_, shader_unlit_, nullptr, nullptr);
+	m_va[5] = VertexArray::Create(graphicsDevice_, shader_distortion_, nullptr, nullptr);
 
 	if (GLExt::IsSupportedVertexArray())
 	{
 		GLExt::glBindVertexArray(currentVAO);
 	}
-
-	graphicsDevice_ = new Backend::GraphicsDevice(renderer->GetDeviceType());
 }
 
 //----------------------------------------------------------------------------------
@@ -430,8 +428,6 @@ ModelRenderer::~ModelRenderer()
 	ES_SAFE_DELETE(shader_ad_unlit_);
 	ES_SAFE_DELETE(shader_ad_lit_);
 	ES_SAFE_DELETE(shader_ad_distortion_);
-
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -572,7 +568,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	model->StoreBufferToGPU(graphicsDevice_);
+	model->StoreBufferToGPU(graphicsDevice_.Get());
 	if (!model->GetIsBufferStoredOnGPU())
 	{
 		return;

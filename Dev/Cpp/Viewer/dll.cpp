@@ -223,7 +223,8 @@ Native::TextureLoader::TextureLoader(efk::Graphics* graphics, Effekseer::ColorSp
 {
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
-		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader(nullptr, colorSpaceType);
+		auto g = static_cast<efk::GraphicsGL*>(graphics);
+		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader(g->GetGraphicsDevice(), nullptr, colorSpaceType);
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
@@ -669,6 +670,11 @@ bool Native::DestroyWindow()
 	mainScreen_.reset();
 
 	ES_SAFE_DELETE(graphics_);
+
+	textureLoader_.Reset();
+	effect_.Reset();
+	setting_.Reset();
+	materialLoader_.Reset();
 
 	return true;
 }
@@ -1164,7 +1170,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
 		auto r = (EffekseerRendererGL::Renderer*)mainScreen_->GetRenderer().Get();
-		loader = EffekseerRendererGL::CreateTextureLoader();
+		loader = EffekseerRendererGL::CreateTextureLoader(r->GetGraphicsDevice());
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)

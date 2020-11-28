@@ -6,7 +6,6 @@
 
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "Effekseer/Material/Effekseer.CompiledMaterial.h"
-#include "EffekseerRendererGL.DeviceObjectCollection.h"
 
 #undef min
 
@@ -373,7 +372,7 @@ static const int GL_InstanceCount = 10;
 	return materialData;
 }
 
-MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache)
+MaterialLoader::MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache)
 	: fileInterface_(fileInterface)
 	, canLoadFromCache_(canLoadFromCache)
 {
@@ -383,12 +382,10 @@ MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice, ::Effekseer::File
 	}
 
 	graphicsDevice_ = graphicsDevice;
-	ES_SAFE_ADDREF(graphicsDevice_);
 }
 
 MaterialLoader ::~MaterialLoader()
 {
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const char16_t* path)
