@@ -256,11 +256,6 @@ int main(int argc, char** argv)
 	SetCurrentDirectoryA(current_path);
 #endif
 
-	for (int i = 0; i < 3; i++)
-	{
-		g_effects[i] = NULL;
-	}
-
 	InitWindow();
 
 	// 描画用インスタンスの生成
@@ -311,7 +306,7 @@ int main(int argc, char** argv)
 	// エフェクトの破棄
 	for (int i = 0; i < 3; i++)
 	{
-		ES_SAFE_RELEASE(g_effects[i]);
+		g_effects[i].Reset();
 	}
 
 	// 先にエフェクト管理用インスタンスを破棄

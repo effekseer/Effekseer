@@ -29,8 +29,8 @@ static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
 static ::Effekseer::ManagerRef			g_manager;
-static ::EffekseerRenderer::RendererRef	g_renderer = NULL;
-static ::EffekseerSound::SoundRef			g_sound = NULL;
+static ::EffekseerRenderer::RendererRef	g_renderer;
+static ::EffekseerSound::SoundRef		g_sound;
 static ::Effekseer::EffectRef			g_effect;
 
 static LPDIRECT3D9						g_d3d = NULL;
@@ -321,6 +321,9 @@ int main(int argc, char **argv)
 	// スレッド破棄
 	g_esc = true;
 	g_thread.join();
+
+	// エフェクトをアンロード
+	g_effect.Reset();
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager.Reset();
