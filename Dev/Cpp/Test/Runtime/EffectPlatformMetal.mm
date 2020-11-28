@@ -132,11 +132,10 @@ fragment main0_out main0(main0_in in [[stage_in]], texture2d<float> txt [[textur
 class DistortingCallbackMetal : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformMetal* platform_ = nullptr;
-	::EffekseerRenderer::Renderer* renderer_ = nullptr;
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackMetal(EffectPlatformMetal* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer)
+	DistortingCallbackMetal(EffectPlatformMetal* platform) : platform_(platform)
 	{
 	}
 
@@ -149,15 +148,15 @@ public:
 		}
 	}
 
-	virtual bool OnDistorting() override
+	bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 		if (textureData_ == nullptr)
 		{
 			auto tex = (LLGI::TextureMetal*)(platform_->GetCheckedTexture());
-			textureData_ = EffekseerRendererMetal::CreateTextureData(renderer_, tex->GetImpl()->texture);
+			textureData_ = EffekseerRendererMetal::CreateTextureData(renderer->GetGraphicsDevice(), tex->GetImpl()->texture);
 		}
 
-		renderer_->SetBackgroundTexture(textureData_);
+		renderer->SetBackgroundTexture(textureData_);
 
 		return true;
 	}
@@ -200,11 +199,11 @@ void EffectPlatformMetal::CreateShaders()
 	shader_ps_ = graphics_->CreateShader(data_ps.data(), data_ps.size());
 }
 
-EffekseerRenderer::Renderer* EffectPlatformMetal::CreateRenderer()
+EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 {
 	auto renderer = EffekseerRendererMetal::Create(10000, MTLPixelFormatRGBA8Unorm,  MTLPixelFormatDepth32Float, false);
 
-	renderer->SetDistortingCallback(new DistortingCallbackMetal(this, renderer));
+	renderer->SetDistortingCallback(new DistortingCallbackMetal(this));
 
 	sfMemoryPoolEfk_ = EffekseerRendererMetal::CreateSingleFrameMemoryPool(renderer);
 	commandListEfk_ = EffekseerRendererMetal::CreateCommandList(renderer, sfMemoryPoolEfk_);

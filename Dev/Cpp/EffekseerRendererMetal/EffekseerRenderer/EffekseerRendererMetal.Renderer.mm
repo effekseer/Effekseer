@@ -114,14 +114,14 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	shader->ModelDistortion_PS = GENERATE_VIEW(metal_model_distortion_ps);
 }
 
-::EffekseerRenderer::Renderer* Create(
+::EffekseerRenderer::RendererRef Create(
                                       ::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
                                       int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth)
 {
-    RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
+    auto renderer = Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
     renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
 
     CreateFixedShaderForMetal(&renderer->fixedShader_);
@@ -145,12 +145,10 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 
     ES_SAFE_RELEASE(pipelineState);
 
-    ES_SAFE_DELETE(renderer);
-
     return nullptr;
 }
 
-::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+::EffekseerRenderer::RendererRef Create(int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth)
@@ -165,9 +163,6 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	}
 
 	return nullptr;
-
-	auto graphics = new LLGI::GraphicsMetal();
-    graphics->Initialize(nullptr);
 }
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
@@ -185,6 +180,20 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 	return textureData;
 }
 
+Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
+{
+    auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
+    auto texturePtr = g->CreateTexture((uint64_t)texture, []()-> void{});
+
+    auto textureData = new Effekseer::TextureData();
+    textureData->TexturePtr = texturePtr;
+    textureData->UserID = 0;
+    textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+    textureData->Width = 0;
+    textureData->Height = 0;
+    return textureData;
+}
+
 void DeleteTextureData(Effekseer::TextureData* textureData)
 {
 	auto texture = (LLGI::Texture*)textureData->UserPtr;
@@ -192,9 +201,9 @@ void DeleteTextureData(Effekseer::TextureData* textureData)
 	delete textureData;
 }
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+    auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
 	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
 	g->WaitFinish();
 }
@@ -211,10 +220,10 @@ EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::Graphics
 	return ret;
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+    auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
 	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
 }
 
@@ -228,9 +237,9 @@ EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effeksee
 	return ret;
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+    auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
     return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
 }
 
