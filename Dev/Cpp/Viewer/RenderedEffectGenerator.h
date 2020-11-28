@@ -53,13 +53,13 @@ class RenderedEffectGenerator
 	{
 	private:
 		efk::Graphics* graphics_ = nullptr;
-		RenderedEffectGenerator* renderer_ = nullptr;
+		RenderedEffectGenerator* generator_ = nullptr;
 
 	public:
-		DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* renderer);
+		DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* generator);
 		virtual ~DistortingCallback();
 
-		bool OnDistorting();
+		bool OnDistorting(EffekseerRenderer::Renderer* renderer) override;
 
 		bool IsEnabled = true;
 		bool Blit = true;

@@ -99,12 +99,15 @@ class GraphicsDevice;
 
 namespace EffekseerRenderer
 {
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
 
 /**
-	@brief	背景を歪ませるエフェクトを描画する前に実行されるコールバック
+	@brief	
+	\~english A callback to distort a background before drawing
+	\~japanese 背景を歪ませるエフェクトを描画する前に実行されるコールバック
+	
 */
 class DistortingCallback
 {
@@ -116,7 +119,15 @@ public:
 	{
 	}
 
-	virtual bool OnDistorting()
+	/**
+	@brief	
+	\~english A callback
+	\~japanese コールバック
+	@note
+	\~english Don't hold renderer in the instance
+	\~japanese インスタンス内にrendererを保持してはいけない
+	*/
+	virtual bool OnDistorting(Renderer* renderer)
 	{
 		return false;
 	}
@@ -188,9 +199,6 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix43 = 0.0f;
 	float ProjectionMatrix44 = 0.0f;
 };
-
-class Renderer;
-using RendererRef = ::Effekseer::RefPtr<Renderer>;
 
 class Renderer : public ::Effekseer::IReference
 {

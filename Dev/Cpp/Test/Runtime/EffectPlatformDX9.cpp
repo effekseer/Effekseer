@@ -6,8 +6,7 @@ DistortingCallbackDX9::DistortingCallbackDX9(::EffekseerRendererDX9::RendererRef
 											 LPDIRECT3DDEVICE9 device,
 											 int texWidth,
 											 int texHeight)
-	: renderer(renderer)
-	, device(device)
+	: device(device)
 	, texWidth_(texWidth)
 	, texHeight_(texHeight)
 {
@@ -19,7 +18,7 @@ DistortingCallbackDX9::~DistortingCallbackDX9()
 	ES_SAFE_RELEASE(texture);
 }
 
-bool DistortingCallbackDX9::OnDistorting()
+bool DistortingCallbackDX9::OnDistorting(EffekseerRenderer::Renderer* renderer)
 {
 	IDirect3DSurface9* targetSurface = nullptr;
 	IDirect3DSurface9* texSurface = nullptr;
@@ -37,7 +36,7 @@ bool DistortingCallbackDX9::OnDistorting()
 	ES_SAFE_RELEASE(texSurface);
 	ES_SAFE_RELEASE(targetSurface);
 
-	renderer->SetBackground(texture);
+	reinterpret_cast<EffekseerRendererDX9::Renderer*>(renderer)->SetBackground(texture);
 
 	return true;
 }

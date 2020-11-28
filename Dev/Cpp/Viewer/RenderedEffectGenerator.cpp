@@ -13,9 +13,9 @@ namespace Effekseer
 namespace Tool
 {
 
-RenderedEffectGenerator::DistortingCallback::DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* renderer)
+RenderedEffectGenerator::DistortingCallback::DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* generator)
 	: graphics_(graphics)
-	, renderer_(renderer)
+	, generator_(generator)
 {
 }
 
@@ -23,11 +23,11 @@ RenderedEffectGenerator::DistortingCallback::~DistortingCallback()
 {
 }
 
-bool RenderedEffectGenerator::DistortingCallback::OnDistorting()
+bool RenderedEffectGenerator::DistortingCallback::OnDistorting(EffekseerRenderer::Renderer* renderer)
 {
 	if (Blit)
 	{
-		renderer_->CopyToBack();
+		generator_->CopyToBack();
 	}
 
 	return IsEnabled;

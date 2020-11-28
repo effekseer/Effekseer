@@ -458,7 +458,7 @@ public:
 			auto callback = m_renderer->GetDistortingCallback();
 			if (callback != nullptr)
 			{
-				if (!callback->OnDistorting())
+				if (!callback->OnDistorting(m_renderer))
 				{
 					return;
 				}

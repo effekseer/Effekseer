@@ -5,7 +5,6 @@
 
 class DistortingCallbackDX9 : public EffekseerRenderer::DistortingCallback
 {
-	::EffekseerRendererDX9::RendererRef renderer = nullptr;
 	LPDIRECT3DDEVICE9 device = nullptr;
 	LPDIRECT3DTEXTURE9 texture = nullptr;
 	int32_t texWidth_ = 0;
@@ -16,7 +15,7 @@ public:
 
 	virtual ~DistortingCallbackDX9();
 
-	virtual bool OnDistorting() override;
+	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override;
 
 	void Lost();
 

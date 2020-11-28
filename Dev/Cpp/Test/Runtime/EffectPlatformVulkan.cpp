@@ -102,12 +102,11 @@ void main()
 class DistortingCallbackVulkan : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformVulkan* platform_ = nullptr;
-	::EffekseerRenderer::Renderer* renderer_ = nullptr;
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackVulkan(EffectPlatformVulkan* platform, ::EffekseerRenderer::Renderer* renderer)
-		: platform_(platform), renderer_(renderer)
+	DistortingCallbackVulkan(EffectPlatformVulkan* platform)
+		: platform_(platform)
 	{
 	}
 
@@ -120,7 +119,7 @@ public:
 		}
 	}
 
-	virtual bool OnDistorting() override
+	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 
 		if (textureData_ == nullptr)
@@ -130,10 +129,10 @@ public:
 			info.image = static_cast<VkImage>(tex->GetImage());
 			info.format = static_cast<VkFormat>(tex->GetVulkanFormat());
 			info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
-			textureData_ = EffekseerRendererVulkan::CreateTextureData(renderer_, info);
+			textureData_ = EffekseerRendererVulkan::CreateTextureData(renderer->GetGraphicsDevice(), info);
 		}
 
-		renderer_->SetBackgroundTexture(textureData_);
+		renderer->SetBackgroundTexture(textureData_);
 
 		return true;
 	}
@@ -194,7 +193,7 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 													  renderPassInfo,
 													  10000);
 
-	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this, renderer.Get()));
+	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this));
 
 	sfMemoryPoolEfk_ = EffekseerRendererVulkan::CreateSingleFrameMemoryPool(renderer);
 	commandListEfk_ = EffekseerRendererVulkan::CreateCommandList(renderer, sfMemoryPoolEfk_);
