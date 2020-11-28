@@ -505,7 +505,7 @@ namespace EffekseerRendererMetal
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
 
-::EffekseerRenderer::Renderer* Create(
+::EffekseerRenderer::RendererRef Create(
                                       ::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
                                       int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
@@ -519,26 +519,28 @@ namespace EffekseerRendererMetal
 @param squareMaxCount	the number of maximum sprites
 @return	instance
 */
-::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+::EffekseerRenderer::RendererRef Create(int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, id<MTLTexture> texture);
+
+Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
 void DeleteTextureData(Effekseer::TextureData* textureData);
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 
 EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer*Refrenderer);
 
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLRenderCommandEncoder> encoder);
 
