@@ -202,13 +202,13 @@ protected:
 
 public:
 
-	static EffectRef Create(ManagerRef pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const ManagerRef& pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	static EffectRef Create(const RefPtr<Setting>& setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const SettingRef& setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	EffectImplemented(ManagerRef pManager, void* pData, int size);
+	EffectImplemented(const ManagerRef& pManager, void* pData, int size);
 
-	EffectImplemented(const RefPtr<Setting>& setting, void* pData, int size);
+	EffectImplemented(const SettingRef& setting, void* pData, int size);
 
 	virtual ~EffectImplemented();
 
@@ -242,7 +242,7 @@ public:
 
 	void SetName(const char16_t* name) override;
 
-	RefPtr<Setting> GetSetting() const override;
+	const SettingRef& GetSetting() const override;
 
 	int GetVersion() const override;
 

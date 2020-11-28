@@ -396,12 +396,12 @@ EffectFactory::~EffectFactory()
 {
 }
 
-EffectRef Effect::Create(ManagerRef manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const ManagerRef& manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(manager, data, size, magnification, materialPath);
 }
 
-EffectRef Effect::Create(ManagerRef manager, const char16_t* path, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const ManagerRef& manager, const char16_t* path, float magnification, const char16_t* materialPath)
 {
 	auto setting = manager->GetSetting();
 
@@ -771,7 +771,7 @@ void EffectImplemented::ResetReloadingBackup()
 	reloadingBackup.reset();
 }
 
-EffectRef EffectImplemented::Create(ManagerRef pManager, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(const ManagerRef& pManager, void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
@@ -779,8 +779,7 @@ EffectRef EffectImplemented::Create(ManagerRef pManager, void* pData, int size, 
 	auto effect = MakeRefPtr<EffectImplemented>(pManager, pData, size);
 	if (!effect->Load(pData, size, magnification, materialPath, ReloadingThreadType::Main))
 	{
-		effect->Release();
-		effect = nullptr;
+		return nullptr;
 	}
 	return effect;
 }
@@ -788,7 +787,7 @@ EffectRef EffectImplemented::Create(ManagerRef pManager, void* pData, int size, 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectRef Effect::Create(const RefPtr<Setting>& setting, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const SettingRef& setting, void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(setting, data, size, magnification, materialPath);
 }
@@ -796,7 +795,7 @@ EffectRef Effect::Create(const RefPtr<Setting>& setting, void* data, int32_t siz
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectRef Effect::Create(const RefPtr<Setting>& setting, const char16_t* path, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const SettingRef& setting, const char16_t* path, float magnification, const char16_t* materialPath)
 {
 	if (setting == nullptr)
 		return nullptr;
@@ -830,7 +829,7 @@ EffectRef Effect::Create(const RefPtr<Setting>& setting, const char16_t* path, f
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectRef EffectImplemented::Create(const RefPtr<Setting>& setting, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(const SettingRef& setting, void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
@@ -854,7 +853,7 @@ EffectRef EffectImplemented::Create(const RefPtr<Setting>& setting, void* pData,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectImplemented::EffectImplemented(ManagerRef pManager, void* pData, int size)
+EffectImplemented::EffectImplemented(const ManagerRef& pManager, void* pData, int size)
 	: m_setting(pManager->GetSetting())
 	, m_reference(1)
 	, m_version(0)
@@ -876,7 +875,7 @@ EffectImplemented::EffectImplemented(ManagerRef pManager, void* pData, int size)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectImplemented::EffectImplemented(const RefPtr<Setting>& setting, void* pData, int size)
+EffectImplemented::EffectImplemented(const SettingRef& setting, void* pData, int size)
 	: m_setting(setting)
 	, m_reference(1)
 	, m_version(0)
@@ -1072,7 +1071,7 @@ void EffectImplemented::SetName(const char16_t* name)
 	name_ = name;
 }
 
-RefPtr<Setting> EffectImplemented::GetSetting() const
+const SettingRef& EffectImplemented::GetSetting() const
 {
 	return m_setting;
 }
