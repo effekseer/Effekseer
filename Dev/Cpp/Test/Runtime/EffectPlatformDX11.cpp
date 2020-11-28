@@ -7,17 +7,15 @@ class DistortingCallbackDX11 : public EffekseerRenderer::DistortingCallback
 	ID3D11Device* g_D3d11Device = NULL;
 	ID3D11DeviceContext* g_D3d11Context = NULL;
 
-	::EffekseerRendererDX11::RendererRef renderer = nullptr;
 	ID3D11Texture2D* backGroundTexture = nullptr;
 	ID3D11ShaderResourceView* backGroundTextureSRV = nullptr;
 	D3D11_TEXTURE2D_DESC backGroundTextureDesc;
 
 public:
-	DistortingCallbackDX11(::EffekseerRendererDX11::RendererRef renderer)
-		: renderer(renderer)
+	DistortingCallbackDX11(ID3D11Device* device, ID3D11DeviceContext* context)
 	{
-		g_D3d11Device = renderer->GetDevice();
-		g_D3d11Context = renderer->GetContext();
+		g_D3d11Device = device;
+		g_D3d11Context = context;
 	}
 
 	virtual ~DistortingCallbackDX11()
@@ -77,7 +75,7 @@ public:
 		}
 	}
 
-	virtual bool OnDistorting() override
+	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 		HRESULT hr = S_OK;
 
@@ -100,7 +98,7 @@ public:
 		ES_SAFE_RELEASE(renderTexture);
 		ES_SAFE_RELEASE(renderTargetView);
 
-		renderer->SetBackground(backGroundTextureSRV);
+		reinterpret_cast<EffekseerRendererDX11::Renderer*>(renderer)->SetBackground(backGroundTextureSRV);
 
 		return true;
 	}
@@ -149,7 +147,7 @@ EffekseerRenderer::RendererRef EffectPlatformDX11::CreateRenderer()
 {
 	auto ret = EffekseerRendererDX11::Renderer::Create(device_, context_, 2000);
 
-	ret->SetDistortingCallback(new DistortingCallbackDX11((EffekseerRendererDX11::RendererRef)ret));
+	ret->SetDistortingCallback(new DistortingCallbackDX11(device_, context_));
 
 	return ret;
 }

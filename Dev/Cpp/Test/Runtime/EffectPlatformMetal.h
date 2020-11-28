@@ -6,7 +6,7 @@ class EffectPlatformMetal final : public EffectPlatformLLGI
 {
 protected:
 	void CreateShaders() override;
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
 	EffectPlatformMetal() : EffectPlatformLLGI(LLGI::DeviceType::Metal) {}

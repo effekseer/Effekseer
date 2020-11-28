@@ -3,15 +3,13 @@
 
 class DistortingCallbackGL : public EffekseerRenderer::DistortingCallback
 {
-	::EffekseerRendererGL::RendererRef renderer = nullptr;
 	GLuint texture = 0;
 	int32_t width_ = 0;
 	int32_t height_ = 0;
 
 public:
-	DistortingCallbackGL(::EffekseerRendererGL::RendererRef renderer, int width, int height)
-		: renderer(renderer)
-		, width_(width)
+	DistortingCallbackGL(int width, int height)
+		: width_(width)
 		, height_(height)
 	{
 		glGenTextures(1, &texture);
@@ -25,13 +23,13 @@ public:
 		glDeleteTextures(1, &texture);
 	}
 
-	virtual bool OnDistorting() override
+	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width_, height_);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		renderer->SetBackground(texture);
+		reinterpret_cast<::EffekseerRendererGL::Renderer*>(renderer)->SetBackground(texture);
 
 		return true;
 	}
@@ -41,7 +39,7 @@ EffekseerRenderer::RendererRef EffectPlatformGL::CreateRenderer()
 {
 	auto ret = EffekseerRendererGL::Renderer::Create(2000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 
-	ret->SetDistortingCallback(new DistortingCallbackGL(ret, initParam_.WindowSize[0], initParam_.WindowSize[1]));
+	ret->SetDistortingCallback(new DistortingCallbackGL(initParam_.WindowSize[0], initParam_.WindowSize[1]));
 
 	return ret;
 }

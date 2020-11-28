@@ -37,3 +37,7 @@ etc...
 #### Effekseer::TextureLoader
 
 Added an argument about mipmap
+
+#### EffekseerRenderer::DistortionCallback
+
+Added renderer as an argument

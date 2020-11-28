@@ -56,11 +56,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformDX12* platform_ = nullptr;
-	::EffekseerRenderer::RendererRef renderer_ = nullptr;
 	Effekseer::TextureData* textureData_ = nullptr;
 
 public:
-	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::RendererRef renderer) : platform_(platform), renderer_(renderer)
+	DistortingCallbackDX12(EffectPlatformDX12* platform) : platform_(platform)
 	{
 	}
 
@@ -73,16 +72,16 @@ public:
 		}
 	}
 
-	virtual bool OnDistorting() override
+	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 
 		if (textureData_ == nullptr)
 		{
 			auto tex = (LLGI::TextureDX12*)(platform_->GetCheckedTexture());
-			textureData_ = EffekseerRendererDX12::CreateTextureData(renderer_, tex->Get());
+			textureData_ = EffekseerRendererDX12::CreateTextureData(renderer->GetGraphicsDevice(), tex->Get());
 		}
 
-		renderer_->SetBackgroundTexture(textureData_);
+		renderer->SetBackgroundTexture(textureData_);
 
 		return true;
 	}
@@ -135,7 +134,7 @@ EffekseerRenderer::RendererRef EffectPlatformDX12::CreateRenderer()
 	auto renderer = EffekseerRendererDX12::Create(
 		g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, DXGI_FORMAT_D32_FLOAT, false, 10000);
 
-	renderer->SetDistortingCallback(new DistortingCallbackDX12(this, renderer));
+	renderer->SetDistortingCallback(new DistortingCallbackDX12(this));
 
 	sfMemoryPoolEfk_ = EffekseerRendererDX12::CreateSingleFrameMemoryPool(renderer);
 	commandListEfk_ = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk_);
