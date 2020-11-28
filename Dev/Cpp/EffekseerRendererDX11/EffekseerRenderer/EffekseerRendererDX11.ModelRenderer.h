@@ -33,7 +33,7 @@ private:
 	Shader* shader_lit_;
 	Shader* shader_unlit_;
 	Shader* shader_distortion_;
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
 	ModelRenderer(const RendererImplementedRef& renderer,
 				  Shader* shader_advanced_lit,

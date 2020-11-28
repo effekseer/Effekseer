@@ -90,12 +90,12 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	return ret;
 }
 
-::EffekseerRenderer::Renderer*
+::EffekseerRenderer::RendererRef
 Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
 {
 	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 
-	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
+	auto renderer = Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
 	CreateFixedShaderForVulkan(&renderer->fixedShader_);
 
 	LLGI::RenderPassPipelineStateKey key;
@@ -112,7 +112,6 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 
 	if (!renderer->Initialize(gd, pipelineState, false))
 	{
-		ES_SAFE_RELEASE(renderer);
 		ES_SAFE_RELEASE(pipelineState);
 		return nullptr;
 	}
@@ -125,13 +124,13 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 	return renderer;
 }
 
-::EffekseerRenderer::Renderer* Create(VkPhysicalDevice physicalDevice,
-									  VkDevice device,
-									  VkQueue transfarQueue,
-									  VkCommandPool transfarCommandPool,
-									  int32_t swapBufferCount,
-									  RenderPassInformation renderPassInformation,
-									  int32_t squareMaxCount)
+::EffekseerRenderer::RendererRef Create(VkPhysicalDevice physicalDevice,
+										VkDevice device,
+										VkQueue transfarQueue,
+										VkCommandPool transfarCommandPool,
+										int32_t swapBufferCount,
+										RenderPassInformation renderPassInformation,
+										int32_t squareMaxCount)
 {
 	auto graphicDevice = CreateGraphicsDevice(physicalDevice, device, transfarQueue, transfarCommandPool, swapBufferCount);
 
@@ -177,10 +176,9 @@ void DeleteTextureData(Effekseer::TextureData* textureData)
 	ES_SAFE_DELETE(textureData);
 }
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	FlushAndWait(r->GetGraphicsDevice());
+	FlushAndWait(renderer->GetGraphicsDevice());
 }
 
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
@@ -190,11 +188,10 @@ void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 	g->WaitFinish();
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
+	return CreateCommandList(renderer->GetGraphicsDevice(), memoryPool);
 }
 
 EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
@@ -209,10 +206,9 @@ EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::Graphics
 	return ret;
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
+	return CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
 }
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)

@@ -167,5 +167,9 @@ void Renderer::SetDepth(::Effekseer::Backend::TextureRef texture, const DepthRec
 	impl->SetDepth(texture, reconstructionParam);
 }
 
+Effekseer::Backend::GraphicsDeviceRef Renderer::GetGraphicsDevice() const
+{
+	return nullptr;
+}
 
 } // namespace EffekseerRenderer

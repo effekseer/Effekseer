@@ -112,7 +112,7 @@ private:
 
 	bool m_restorationOfStates;
 
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	Effekseer::Backend::VertexBufferRef instancedVertexBuffer_;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
@@ -268,6 +268,8 @@ public:
 	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
+
+	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
 
 	virtual int GetRef()
 	{

@@ -318,8 +318,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
-
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -579,7 +577,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	GetImpl()->CreateProxyTextures(this);
 	GetImpl()->isSoftParticleEnabled = true;
 
-	graphicsDevice_ = new Backend::GraphicsDevice(device, context);
+	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 
 	return true;
 }
@@ -746,7 +744,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_, fileInterface);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 #else
 	return nullptr;
 #endif
@@ -1089,7 +1087,7 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	}
 }
 
-Backend::GraphicsDevice* RendererImplemented::GetGraphicsDevice() const
+Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const
 {
 	return graphicsDevice_;
 }

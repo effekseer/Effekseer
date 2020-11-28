@@ -71,7 +71,7 @@ public:
 	*/
 	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-	static RendererRef Create(int32_t squareMaxCount, ::EffekseerRenderer::GraphicsDevice* graphicDevice);
+	static RendererRef Create(int32_t squareMaxCount, EffekseerRenderer::GraphicsDevice* graphicDevice);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

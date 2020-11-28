@@ -91,7 +91,7 @@ namespace EffekseerRendererGL
 #endif
 }
 
-::Effekseer::MaterialLoaderRef CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
@@ -169,7 +169,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 		ES_SAFE_ADDREF(graphicsDevice_intetnal_);
 	}
 
-	graphicsDevice_ = new Backend::GraphicsDevice(deviceType);
+	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType);
 }
 
 //----------------------------------------------------------------------------------
@@ -208,8 +208,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
 	ES_SAFE_RELEASE(graphicsDevice_intetnal_);
-	ES_SAFE_RELEASE(graphicsDevice_);
-
+	
 	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
 	{
 		GLExt::glDeleteVertexArrays(1, &defaultVertexArray_);
@@ -864,7 +863,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_, fileInterface);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
 #else
 	return nullptr;
 #endif

@@ -129,7 +129,12 @@ public:
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
-	Backend::GraphicsDeviceRef& GetGraphicsDevice()
+	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override
+	{
+		return graphicsDevice_;
+	}
+
+	Backend::GraphicsDeviceRef& GetGraphicsDeviceInternal()
 	{
 		return graphicsDevice_;
 	}

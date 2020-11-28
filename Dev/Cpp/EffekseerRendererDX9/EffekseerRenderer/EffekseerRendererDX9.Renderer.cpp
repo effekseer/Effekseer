@@ -214,8 +214,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
-
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -490,7 +488,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		instancedVertex[i] = static_cast<float>(i);
 	}
 
-	graphicsDevice_ = new Backend::GraphicsDevice(device);
+	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
 	instancedVertexBuffer_ = graphicsDevice_->CreateVertexBuffer((int32_t)(instancedVertex.size() * sizeof(float)), instancedVertex.data(), false);
 	return true;
 }
@@ -783,7 +781,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_, fileInterface));
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice_.Get(), fileInterface));
 #else
 	return nullptr;
 #endif
@@ -1129,6 +1127,11 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 	{
 		delete data;
 	}
+}
+
+Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const
+{
+	return graphicsDevice_;
 }
 
 } // namespace EffekseerRendererDX9

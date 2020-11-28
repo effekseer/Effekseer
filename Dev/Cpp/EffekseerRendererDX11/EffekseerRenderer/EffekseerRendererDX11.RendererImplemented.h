@@ -115,7 +115,7 @@ private:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
 public:
 	/**
@@ -262,7 +262,7 @@ public:
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
-	Backend::GraphicsDevice* GetGraphicsDevice() const;
+	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
 
 	virtual int GetRef()
 	{

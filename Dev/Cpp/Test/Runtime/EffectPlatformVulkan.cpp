@@ -176,7 +176,7 @@ void EffectPlatformVulkan::CreateShaders()
 	shader_ps_ = graphics_->CreateShader(data_ps.data(), static_cast<int32_t>(data_ps.size()));
 }
 
-EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
+EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 {
 	auto g = static_cast<LLGI::GraphicsVulkan*>(graphics_);
 	auto p = static_cast<LLGI::PlatformVulkan*>(platform_);
@@ -194,7 +194,7 @@ EffekseerRenderer::Renderer* EffectPlatformVulkan::CreateRenderer()
 													  renderPassInfo,
 													  10000);
 
-	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this, renderer));
+	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this, renderer.Get()));
 
 	sfMemoryPoolEfk_ = EffekseerRendererVulkan::CreateSingleFrameMemoryPool(renderer);
 	commandListEfk_ = EffekseerRendererVulkan::CreateCommandList(renderer, sfMemoryPoolEfk_);

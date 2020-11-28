@@ -27,7 +27,7 @@ struct RenderPassInformation
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(
 	VkPhysicalDevice physicalDevice, VkDevice device, VkQueue transfarQueue, VkCommandPool transfarCommandPool, int32_t swapBufferCount);
 
-::EffekseerRenderer::Renderer*
+::EffekseerRenderer::RendererRef
 Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
 
 /**
@@ -37,7 +37,7 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 @param squareMaxCount	the number of maximum sprites
 @return	instance
 */
-::EffekseerRenderer::Renderer* Create(VkPhysicalDevice physicalDevice,
+::EffekseerRenderer::RendererRef Create(VkPhysicalDevice physicalDevice,
 									  VkDevice device,
 									  VkQueue transfarQueue,
 									  VkCommandPool transfarCommandPool,
@@ -55,13 +55,13 @@ void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
 
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 

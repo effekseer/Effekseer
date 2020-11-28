@@ -96,11 +96,8 @@ void EffectPlatform::Terminate()
 
 	effects_.clear();
 
-	if (renderer_ != nullptr)
-	{
-		renderer_->Destroy();
-		renderer_ = nullptr;
-	}
+	manager_.Reset();
+	renderer_.Reset();
 
 	DestroyDevice();
 

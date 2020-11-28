@@ -50,7 +50,7 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 	friend class DeviceObject;
 
 private:
-	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	GraphicsDevice* graphicsDevice_intetnal_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
@@ -255,6 +255,11 @@ public:
 	GraphicsDevice* GetIntetnalGraphicsDevice() const
 	{
 		return graphicsDevice_intetnal_;
+	}
+
+	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override
+	{
+		return graphicsDevice_;	
 	}
 
 	virtual int GetRef() override

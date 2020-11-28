@@ -7,7 +7,7 @@ class EffectPlatformVulkan final : public EffectPlatformLLGI
 {
 protected:
 	void CreateShaders() override;
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
 	EffectPlatformVulkan() : EffectPlatformLLGI(LLGI::DeviceType::Vulkan) {}
