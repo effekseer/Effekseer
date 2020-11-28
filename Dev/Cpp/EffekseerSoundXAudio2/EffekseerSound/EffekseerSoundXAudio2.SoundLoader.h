@@ -32,7 +32,7 @@ public:
 	void* Load(::Effekseer::FileReader* reader);
 
 public:
-	void* Load(const EFK_CHAR* path) override;
+	void* Load(const char16_t* path) override;
 
 	void* Load(const void* data, int32_t size) override;
 

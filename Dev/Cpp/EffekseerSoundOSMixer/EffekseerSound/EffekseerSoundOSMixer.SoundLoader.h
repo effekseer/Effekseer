@@ -31,7 +31,7 @@ public:
 	virtual ~SoundLoader();
 
 public:
-	void* Load(const EFK_CHAR* path);
+	void* Load(const char16_t* path);
 
 	void Unload(void* data);
 };
