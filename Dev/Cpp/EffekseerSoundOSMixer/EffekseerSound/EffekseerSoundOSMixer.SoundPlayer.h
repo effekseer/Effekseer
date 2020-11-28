@@ -6,7 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.h"
-#include "../EffekseerSoundOSMixer.h"
+#include "EffekseerSoundOSMixer.SoundImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -23,10 +23,10 @@ class SoundPlayer
 	: public ::Effekseer::SoundPlayer
 {
 private:
-	SoundImplemented*	m_sound;
+	SoundImplementedRef	m_sound;
 
 public:
-	SoundPlayer( SoundImplemented* sound );
+	SoundPlayer( const SoundImplementedRef& sound );
 
 	virtual ~SoundPlayer();
 

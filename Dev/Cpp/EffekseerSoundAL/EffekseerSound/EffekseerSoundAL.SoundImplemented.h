@@ -70,6 +70,7 @@ public:
 		return ::Effekseer::ReferenceObject::Release();
 	}
 };
+using SoundImplementedRef = ::Effekseer::RefPtr<SoundImplemented>;
 
 //----------------------------------------------------------------------------------
 //

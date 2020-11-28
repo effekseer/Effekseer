@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.h"
+#include "EffekseerSoundXAudio2.SoundImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -16,16 +17,14 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 
-class SoundImplemented;
-
 class SoundLoader : public ::Effekseer::SoundLoader
 {
-	SoundImplemented* m_sound;
+	SoundImplementedRef m_sound;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	SoundLoader(SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface = NULL);
+	SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterface* fileInterface = NULL);
 
 	virtual ~SoundLoader();
 

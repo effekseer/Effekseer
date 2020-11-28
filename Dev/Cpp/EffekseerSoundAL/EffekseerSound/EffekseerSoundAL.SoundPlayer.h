@@ -6,7 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.h"
-#include "../EffekseerSoundAL.h"
+#include "EffekseerSoundAL.SoundImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -17,16 +17,14 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 
-class SoundImplemented;
-
 class SoundPlayer
 	: public ::Effekseer::SoundPlayer
 {
 private:
-	SoundImplemented*	m_sound;
+	SoundImplementedRef	m_sound;
 
 public:
-	SoundPlayer( SoundImplemented* sound );
+	SoundPlayer( const SoundImplementedRef& sound );
 
 	virtual ~SoundPlayer();
 

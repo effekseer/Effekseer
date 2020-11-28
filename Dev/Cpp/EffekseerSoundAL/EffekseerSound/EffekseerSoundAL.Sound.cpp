@@ -88,7 +88,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
-	return ::Effekseer::MakeRefPtr<SoundPlayer>(this);
+	return ::Effekseer::MakeRefPtr<SoundPlayer>(SoundImplementedRef::FromPinned(this));
 }
 	
 //----------------------------------------------------------------------------------

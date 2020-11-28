@@ -98,7 +98,7 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
-	return ::Effekseer::MakeRefPtr<SoundPlayer>(this);
+	return ::Effekseer::MakeRefPtr<SoundPlayer>(SoundImplementedRef::FromPinned(this));
 }
 
 //----------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void SoundImplemented::Update()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<SoundLoader>(this, fileInterface);
+	return ::Effekseer::MakeRefPtr<SoundLoader>(SoundImplementedRef::FromPinned(this), fileInterface);
 }
 
 //----------------------------------------------------------------------------------
