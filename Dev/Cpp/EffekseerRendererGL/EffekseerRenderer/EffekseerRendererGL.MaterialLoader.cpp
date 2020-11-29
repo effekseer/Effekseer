@@ -181,7 +181,7 @@ static const int GL_InstanceCount = 10;
 		lastIndex += 1;
 		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
 
-				lastIndex += 1;
+		lastIndex += 1;
 		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
 
 		materialData->TextureCount = material.GetTextureCount();
@@ -346,7 +346,10 @@ static const int GL_InstanceCount = 10;
 		}
 
 		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
+		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
+
+		lastIndex += 1;
+		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
 
 		if (st == 0)
 		{
