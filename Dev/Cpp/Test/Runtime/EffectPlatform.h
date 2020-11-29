@@ -120,6 +120,8 @@ public:
 		{
 			Effekseer::Backend::TextureParameter texParam;
 			texParam.InitialData.resize(sizeof(float) * 4);
+			texParam.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
+			texParam.Size = {1, 1};
 			memcpy(texParam.InitialData.data(), posArray.data(), texParam.InitialData.size());
 
 			auto depth = GetRenderer()->GetGraphicsDevice()->CreateTexture(texParam);

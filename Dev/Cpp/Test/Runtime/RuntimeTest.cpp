@@ -114,7 +114,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->GetRenderer()->SetCameraMatrix(mat);
 		platform->GenerateDepth();
 
-		// TODO softparticle
+		single16Test(u"SoftParticle01", "SoftParticle01");
 
 		platform->GetRenderer()->SetCameraMatrix(cameraMat);
 	}
