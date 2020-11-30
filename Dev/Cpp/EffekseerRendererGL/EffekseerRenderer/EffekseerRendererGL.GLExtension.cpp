@@ -103,6 +103,8 @@ typedef void(EFK_STDCALL* FP_glFramebufferTexture2D)(GLenum target,
 													 GLuint texture,
 													 GLint level);
 
+typedef void(EFK_STDCALL* FP_glDrawBuffers)(GLsizei n, const GLenum* bufs);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = nullptr;
 static FP_glCreateShader g_glCreateShader = nullptr;
 static FP_glBindBuffer g_glBindBuffer = nullptr;
@@ -157,6 +159,8 @@ static FP_glBindFramebuffer g_glBindFramebuffer = nullptr;
 static FP_glDeleteFramebuffers g_glDeleteFramebuffers = nullptr;
 
 static FP_glFramebufferTexture2D g_glFramebufferTexture2D = nullptr;
+
+static FP_glDrawBuffers g_glDrawBuffers = nullptr;
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
@@ -284,6 +288,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glDeleteFramebuffers);
 
 	GET_PROC(glFramebufferTexture2D);
+
+	GET_PROC(glDrawBuffers);
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 	g_isSurrpotedBufferRange = (g_glMapBufferRange && g_glUnmapBuffer);
@@ -847,6 +853,15 @@ void glFramebufferTexture2D(GLenum target,
 						   textarget,
 						   texture,
 						   level);
+#endif
+}
+
+void glDrawBuffers(GLsizei n, const GLenum* bufs)
+{
+#if _WIN32
+	g_glDrawBuffers(n, bufs);
+#else
+	::glDrawBuffers(n, bufs);
 #endif
 }
 

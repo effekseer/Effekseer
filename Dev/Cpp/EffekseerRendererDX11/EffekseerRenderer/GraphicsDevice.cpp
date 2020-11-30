@@ -1282,7 +1282,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	int32_t indexPerPrimitive{};
 
-	if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Line)
+	if (pip->GetParam().Topology == Effekseer::Backend::TopologyType::Point)
 	{
 		indexPerPrimitive = 1;
 		context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);

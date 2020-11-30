@@ -239,6 +239,10 @@ void glFramebufferTexture2D(GLenum target,
 							GLenum textarget,
 							GLuint texture,
 							GLint level);
+
+
+void glDrawBuffers(GLsizei n, const GLenum* bufs);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

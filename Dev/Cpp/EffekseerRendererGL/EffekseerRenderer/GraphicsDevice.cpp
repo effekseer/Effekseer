@@ -600,6 +600,14 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 	textures_ = textures;
 	depthTexture_ = depthTexture;
 
+	const GLenum bufs[] = {
+		GL_COLOR_ATTACHMENT0,
+		GL_COLOR_ATTACHMENT1,
+		GL_COLOR_ATTACHMENT2,
+		GL_COLOR_ATTACHMENT3,
+	};
+	GLExt::glDrawBuffers(textures.size(), bufs);
+
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 	return true;
 }
