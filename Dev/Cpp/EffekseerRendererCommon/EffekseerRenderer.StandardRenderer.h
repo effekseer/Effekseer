@@ -482,7 +482,7 @@ public:
 
 		if (m_state.Collector.IsDepthRequired)
 		{
-			if (depthTexture == nullptr)
+			if (depthTexture == nullptr || (m_state.SoftParticleDistance == 0.0f && m_state.Collector.ShaderType != RendererShaderType::Material))
 			{
 				depthTexture = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 			}
