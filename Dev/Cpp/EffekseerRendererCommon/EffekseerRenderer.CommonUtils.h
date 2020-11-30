@@ -1500,5 +1500,7 @@ struct FalloffParameter
 	float EndColor[4];
 };
 
+void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType format, const std::array<int, 2>& size, int32_t& sizePerWidth, int32_t& height);
+
 } // namespace EffekseerRenderer
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

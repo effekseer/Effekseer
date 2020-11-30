@@ -1,4 +1,6 @@
 #include "GraphicsDevice.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
+
 #include <d3dcompiler.h>
 
 namespace EffekseerRendererDX11
@@ -463,6 +465,8 @@ bool Texture::Init(
 	int32_t sizePerWidth = 0;
 	int32_t height = 0;
 
+	EffekseerRenderer::CalculateAlignedTextureInformation(format, size, sizePerWidth, height);
+
 	const int32_t blockSize = 4;
 	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
 		return ((size + alignement - 1) / alignement) * alignement;
@@ -470,74 +474,50 @@ bool Texture::Init(
 
 	if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
 	{
-		sizePerWidth = 4 * size[0];
-		height = size[1];
 		dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
 	{
-		sizePerWidth = 4 * size[0];
-		height = size[1];
 		dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::R8_UNORM)
 	{
-		sizePerWidth = 1 * size[0];
-		height = size[1];
 		dxgiFormat = DXGI_FORMAT_R8_UNORM;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
 	{
-		sizePerWidth = 8 * size[0];
-		height = size[1];
 		dxgiFormat = DXGI_FORMAT_R16G16_FLOAT;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
 	{
-		sizePerWidth = 16 * size[0];
-		height = size[1];
 		dxgiFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
 	{
-		sizePerWidth = 32 * size[0];
-		height = size[1];
 		dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC1)
 	{
-		sizePerWidth = 8 * aligned(size[0], blockSize) / blockSize;
-		height = aligned(size[1], blockSize) / blockSize;
 		dxgiFormat = DXGI_FORMAT_BC1_UNORM;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC2)
 	{
-		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
-		height = aligned(size[1], blockSize) / blockSize;
 		dxgiFormat = DXGI_FORMAT_BC2_UNORM;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC3)
 	{
-		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
-		height = aligned(size[1], blockSize) / blockSize;
 		dxgiFormat = DXGI_FORMAT_BC3_UNORM;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
 	{
-		sizePerWidth = 8 * aligned(size[0], blockSize) / blockSize;
-		height = aligned(size[1], blockSize) / blockSize;
 		dxgiFormat = DXGI_FORMAT_BC1_UNORM_SRGB;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
 	{
-		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
-		height = aligned(size[1], blockSize) / blockSize;
 		dxgiFormat = DXGI_FORMAT_BC2_UNORM_SRGB;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 	{
-		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
-		height = aligned(size[1], blockSize) / blockSize;
 		dxgiFormat = DXGI_FORMAT_BC3_UNORM_SRGB;
 	}
 

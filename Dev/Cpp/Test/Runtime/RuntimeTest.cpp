@@ -105,6 +105,19 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		single16Test(u"EdgeFallOff01", "EdgeFallOff01");
 		single16Test(u"TGA01", "TGA01");
 	}
+
+	{
+		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
+		
+		Effekseer::Matrix44 mat;
+		mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+		platform->GetRenderer()->SetCameraMatrix(mat);
+		platform->GenerateDepth();
+
+		single16Test(u"SoftParticle01", "SoftParticle01");
+
+		platform->GetRenderer()->SetCameraMatrix(cameraMat);
+	}
 }
 
 void BasicRuntimeDeviceLostTest()

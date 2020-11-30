@@ -399,4 +399,76 @@ void ApplyViewOffset(::Effekseer::SIMD::Mat44f& mat,
 	mat.SetTranslation(ViewOffset);
 }
 
+void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType format, const std::array<int, 2>& size, int32_t& sizePerWidth, int32_t& height)
+{
+	sizePerWidth = 0;
+	height = 0;
+
+	const int32_t blockSize = 4;
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+		return ((size + alignement - 1) / alignement) * alignement;
+	};
+
+	if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
+	{
+		sizePerWidth = 4 * size[0];
+		height = size[1];
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+	{
+		sizePerWidth = 4 * size[0];
+		height = size[1];
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R8_UNORM)
+	{
+		sizePerWidth = 1 * size[0];
+		height = size[1];
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
+	{
+		sizePerWidth = sizeof(float) * 2 * size[0];
+		height = size[1];
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
+	{
+		sizePerWidth = sizeof(float) * 4 / 2 * size[0];
+		height = size[1];
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
+	{
+		sizePerWidth = sizeof(float) * 4 * size[0];
+		height = size[1];
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC1)
+	{
+		sizePerWidth = 8 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC2)
+	{
+		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC3)
+	{
+		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
+	{
+		sizePerWidth = 8 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
+	{
+		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+	{
+		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+}
+
 } // namespace EffekseerRenderer

@@ -1,4 +1,5 @@
 #include "GraphicsDevice.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 
 namespace EffekseerRendererDX9
 {
@@ -271,6 +272,8 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	int32_t sizePerWidth = 0;
 	int32_t height = 0;
 
+	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, param.Size, sizePerWidth, height);
+
 	const int32_t blockSize = 4;
 	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
 		return ((size + alignement - 1) / alignement) * alignement;
@@ -278,56 +281,40 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 	if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM || param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
 	{
-		sizePerWidth = 4 * param.Size[0];
-		height = param.Size[1];
 		format = D3DFMT_A8R8G8B8;
 		isSwapRequired = true;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
 	{
-		sizePerWidth = 1 * param.Size[0];
-		height = param.Size[1];
 		format = D3DFMT_L8;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
 	{
-		sizePerWidth = 8 * param.Size[0];
-		height = param.Size[1];
 		format = D3DFMT_G16R16F;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
 	{
-		sizePerWidth = 16 * param.Size[0];
-		height = param.Size[1];
 		format = D3DFMT_A16B16G16R16F;
 		isSwapRequired = true;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
 	{
-		sizePerWidth = 32 * param.Size[0];
-		height = param.Size[1];
 		format = D3DFMT_A32B32G32R32F;
 		isSwapRequired = true;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
 			 param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
 	{
-		sizePerWidth = 8 * aligned(param.Size[0], blockSize) / blockSize;
-		height = aligned(param.Size[1], blockSize) / blockSize;
 		format = D3DFMT_DXT1;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
 			 param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
 	{
-		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
-		height = aligned(param.Size[1], blockSize) / blockSize;
 		format = D3DFMT_DXT3;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
 			 param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 	{
-		sizePerWidth = 16 * aligned(param.Size[0], blockSize) / blockSize;
-		height = aligned(param.Size[1], blockSize) / blockSize;
 		format = D3DFMT_DXT5;
 	}
 
