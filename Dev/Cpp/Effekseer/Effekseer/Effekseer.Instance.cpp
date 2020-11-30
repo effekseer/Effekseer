@@ -1712,7 +1712,15 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 	else if (UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
-		auto& uvTimeOffset = uvTimeOffsets[index];
+		auto uvTimeOffset = uvTimeOffsets[index];
+
+		// TODO : refactor
+
+		// Avoid overflow
+		if(uvTimeOffset > std::numeric_limits<int32_t>::max() / 1000)
+		{
+			uvTimeOffset = std::numeric_limits<int32_t>::max() / 1000;
+		}
 
 		auto time = m_LivingTime + uvTimeOffset;
 
