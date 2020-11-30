@@ -231,8 +231,6 @@ public:
 	CreateInstanceContainer(EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const SIMD::Mat43f& rootMatrix, Instance* pParent);
 	void ReleaseInstanceContainer(InstanceContainer* container);
 
-	void Destroy() override;
-
 	void LaunchWorkerThreads(uint32_t threadCount) override;
 
 	ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) override;

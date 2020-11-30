@@ -117,8 +117,6 @@ public:
 
 	bool Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
-	void Destroy() override;
-
 	void SetRestorationOfStatesFlag(bool flag) override;
 
 	void SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState);

@@ -100,13 +100,6 @@ public:
 	static ManagerRef Create(int instance_max, bool autoFlip = true);
 
 	/**
-		@brief マネージャーを破棄する。
-		@note
-		このマネージャーから生成されたエフェクトは全て強制的に破棄される。
-	*/
-	virtual void Destroy() = 0;
-
-	/**
 		@brief
 		\~English Starts a specified number of worker threads
 		\~Japanese 指定した数のワーカースレッドを起動する

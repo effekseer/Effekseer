@@ -33,13 +33,9 @@
 #ifdef _WIN32
 //#include <windows.h>
 #elif defined(_PSVITA)
-#include "Effekseer.PSVita.h"
 #elif defined(_PS4)
-#include "Effekseer.PS4.h"
 #elif defined(_SWITCH)
-#include "Effekseer.Switch.h"
 #elif defined(_XBOXONE)
-#include "Effekseer.XBoxOne.h"
 #else
 #include <pthread.h>
 #include <sys/time.h>

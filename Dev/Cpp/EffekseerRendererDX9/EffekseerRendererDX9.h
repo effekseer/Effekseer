@@ -185,11 +185,6 @@ public:
 	virtual void OnResetDevice() = 0;
 
 	/**
-		@brief	このインスタンスを破棄する。
-	*/
-	virtual void Destroy() = 0;
-
-	/**
 		@brief	ステートを復帰するかどうかのフラグを設定する。
 	*/
 	virtual void SetRestorationOfStatesFlag(bool flag) = 0;

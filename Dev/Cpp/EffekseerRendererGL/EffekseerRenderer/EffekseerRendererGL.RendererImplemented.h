@@ -113,8 +113,6 @@ public:
 
 	bool Initialize();
 
-	void Destroy() override;
-
 	void SetRestorationOfStatesFlag(bool flag) override;
 
 	/**

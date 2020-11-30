@@ -493,11 +493,6 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	return true;
 }
 
-void RendererImplemented::Destroy()
-{
-	Release();
-}
-
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
 }

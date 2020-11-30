@@ -33,13 +33,9 @@
 #ifdef _WIN32
 //#include <windows.h>
 #elif defined(_PSVITA)
-#include "Effekseer.PSVita.h"
 #elif defined(_PS4)
-#include "Effekseer.PS4.h"
 #elif defined(_SWITCH)
-#include "Effekseer.Switch.h"
 #elif defined(_XBOXONE)
-#include "Effekseer.XBoxOne.h"
 #else
 #include <pthread.h>
 #include <sys/time.h>
@@ -3024,13 +3020,6 @@ public:
 		@return	マネージャー
 	*/
 	static ManagerRef Create(int instance_max, bool autoFlip = true);
-
-	/**
-		@brief マネージャーを破棄する。
-		@note
-		このマネージャーから生成されたエフェクトは全て強制的に破棄される。
-	*/
-	virtual void Destroy() = 0;
 
 	/**
 		@brief

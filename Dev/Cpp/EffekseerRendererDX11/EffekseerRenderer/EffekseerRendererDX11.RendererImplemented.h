@@ -136,8 +136,6 @@ public:
 	*/
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled);
 
-	void Destroy();
-
 	void SetRestorationOfStatesFlag(bool flag);
 
 	/**

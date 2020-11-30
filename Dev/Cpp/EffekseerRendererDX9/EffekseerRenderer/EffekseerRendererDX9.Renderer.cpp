@@ -496,14 +496,6 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::Destroy()
-{
-	Release();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
 	m_restorationOfStates = flag;

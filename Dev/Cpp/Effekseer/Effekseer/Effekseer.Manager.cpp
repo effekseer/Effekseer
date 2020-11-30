@@ -427,6 +427,11 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 
 ManagerImplemented::~ManagerImplemented()
 {
+	if (m_WorkerThreads.size() > 0)
+	{
+		m_WorkerThreads[0].WaitForComplete();
+	}
+
 	StopAllEffects();
 
 	ExecuteEvents();
@@ -487,25 +492,6 @@ void ManagerImplemented::ReleaseGroup(InstanceGroup* group)
 {
 	group->~InstanceGroup();
 	pooledGroups_.push(group);
-}
-
-void ManagerImplemented::Destroy()
-{
-	if (m_WorkerThreads.size() > 0)
-	{
-		m_WorkerThreads[0].WaitForComplete();
-	}
-
-	StopAllEffects();
-
-	ExecuteEvents();
-
-	for (int i = 0; i < 5; i++)
-	{
-		GCDrawSet(true);
-	}
-
-	Release();
 }
 
 void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)

@@ -567,14 +567,6 @@ bool RendererImplemented::Initialize()
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::Destroy()
-{
-	Release();
-}
-
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
 	m_restorationOfStates = flag;
