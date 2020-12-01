@@ -21,11 +21,6 @@ copy Dev\release\EffekseerMaterialEditor.exe %RDIR%\Tool\.
 copy Dev\release\Viewer.dll %RDIR%\Tool\.
 copy Dev\release\Newtonsoft.Json.dll %RDIR%\Tool\.
 
-
-mkdir %RDIR%\Tool\scripts
-mkdir %RDIR%\Tool\scripts\export
-copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\scripts\export\.
-
 mkdir %RDIR%\Tool\tools
 copy Dev\release\tools\fbxToEffekseerCurveConverter.exe %RDIR%\Tool\tools\.
 copy Dev\release\tools\fbxToEffekseerModelConverter.exe %RDIR%\Tool\tools\.

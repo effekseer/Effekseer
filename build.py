@@ -222,7 +222,6 @@ if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
          'Mac/Effekseer.app/Contents/Resources/')
     copytree('release/resources',
              'Mac/Effekseer.app/Contents/Resources/resources')
-    copytree('release/scripts', 'Mac/Effekseer.app/Contents/Resources/scripts')
     copytree('release/tools', 'Mac/Effekseer.app/Contents/Resources/tools')
 
     call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
