@@ -1217,6 +1217,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		{
 			currentTextures_[i].UserID = 0;
 			currentTextures_[i].UserPtr = nullptr;
+			currentTextures_[i].TexturePtr = nullptr;
+
 			m_renderState->GetActiveState().TextureIDs[i] = 0;
 		}
 
