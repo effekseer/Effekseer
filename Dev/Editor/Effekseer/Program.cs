@@ -211,29 +211,16 @@ namespace Effekseer
 						Plugin.ExportDefault.Call);
 					Core.ExportScripts.Add(defaultExporter);
 
-                    Script.ExportScript glTFExporter = new Script.ExportScript(
-                        Script.ScriptPosition.External,
-                        Plugin.ExportglTF.UniqueName,
-                        Plugin.ExportglTF.Author,
-                        Plugin.ExportglTF.Title,
-                        Plugin.ExportglTF.Description,
-                        Plugin.ExportglTF.Filter,
-                        Plugin.ExportglTF.Call);
-                    Core.ExportScripts.Add(glTFExporter);
-
-                    Script.ExportScript glbExporter = new Script.ExportScript(
-                        Script.ScriptPosition.External,
-                        Plugin.Exportglb.UniqueName,
-                        Plugin.Exportglb.Author,
-                        Plugin.Exportglb.Title,
-                        Plugin.Exportglb.Description,
-                        Plugin.Exportglb.Filter,
-                        Plugin.Exportglb.Call);
-                    Core.ExportScripts.Add(glbExporter);
-                }
-
-                
-
+					Script.ImportScript efkpkgImporter = new Script.ImportScript(
+						Script.ScriptPosition.External,
+						Plugin.ImportEfkPkg.UniqueName,
+						Plugin.ImportEfkPkg.Author,
+						Plugin.ImportEfkPkg.Title,
+						Plugin.ImportEfkPkg.Description,
+						Plugin.ImportEfkPkg.Filter,
+						Plugin.ImportEfkPkg.Call);
+					Core.ImportScripts.Add(efkpkgImporter);
+				}
 
 				System.OperatingSystem os = System.Environment.OSVersion;
 				swig.DeviceType deviceType = swig.DeviceType.DirectX11;

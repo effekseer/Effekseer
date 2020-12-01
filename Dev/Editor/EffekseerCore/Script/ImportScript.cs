@@ -19,7 +19,7 @@ namespace Effekseer.Script
 			private set;
 		}
 
-		internal ImportScript(ScriptPosition scriptposition, string uniquename, string author, string title, string description, string filter, Action<string> function)
+		public ImportScript(ScriptPosition scriptposition, string uniquename, string author, string title, string description, string filter, Action<string> function)
 		{
 			ScriptPosition = scriptposition;
 			UniqueName = uniquename;
