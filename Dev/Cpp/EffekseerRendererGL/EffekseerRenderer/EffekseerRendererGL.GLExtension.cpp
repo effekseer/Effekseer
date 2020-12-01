@@ -860,6 +860,7 @@ void glDrawBuffers(GLsizei n, const GLenum* bufs)
 {
 #if _WIN32
 	g_glDrawBuffers(n, bufs);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
 #else
 	::glDrawBuffers(n, bufs);
 #endif

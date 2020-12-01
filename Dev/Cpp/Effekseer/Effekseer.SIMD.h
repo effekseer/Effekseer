@@ -1986,7 +1986,7 @@ Int4 Int4::Swizzle(const Int4& in)
 }
 
 template <int COUNT>
-inline Int4 Effekseer::Int4::ShiftL(const Int4& lhs)
+inline Int4 Int4::ShiftL(const Int4& lhs)
 {
 	Int4 ret;
 	for (size_t i = 0; i < 4; i++)
@@ -1997,7 +1997,7 @@ inline Int4 Effekseer::Int4::ShiftL(const Int4& lhs)
 }
 
 template <int COUNT>
-inline Int4 Effekseer::Int4::ShiftR(const Int4& lhs)
+inline Int4 Int4::ShiftR(const Int4& lhs)
 {
 	Int4 ret;
 	for (size_t i = 0; i < 4; i++)
@@ -2008,7 +2008,7 @@ inline Int4 Effekseer::Int4::ShiftR(const Int4& lhs)
 }
 
 template <int COUNT>
-inline Int4 Effekseer::Int4::ShiftRA(const Int4& lhs)
+inline Int4 Int4::ShiftRA(const Int4& lhs)
 {
 	Int4 ret;
 	for (size_t i = 0; i < 4; i++)
