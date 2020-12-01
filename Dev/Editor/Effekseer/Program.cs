@@ -197,26 +197,6 @@ namespace Effekseer
 						Plugin.ExportDefault.Filter,
 						Plugin.ExportDefault.Call);
 					Core.ExportScripts.Add(defaultExporter);
-
-                    Script.ExportScript glTFExporter = new Script.ExportScript(
-                        Script.ScriptPosition.External,
-                        Plugin.ExportglTF.UniqueName,
-                        Plugin.ExportglTF.Author,
-                        Plugin.ExportglTF.Title,
-                        Plugin.ExportglTF.Description,
-                        Plugin.ExportglTF.Filter,
-                        Plugin.ExportglTF.Call);
-                    Core.ExportScripts.Add(glTFExporter);
-
-                    Script.ExportScript glbExporter = new Script.ExportScript(
-                        Script.ScriptPosition.External,
-                        Plugin.Exportglb.UniqueName,
-                        Plugin.Exportglb.Author,
-                        Plugin.Exportglb.Title,
-                        Plugin.Exportglb.Description,
-                        Plugin.Exportglb.Filter,
-                        Plugin.Exportglb.Call);
-                    Core.ExportScripts.Add(glbExporter);
                 }
 
                 

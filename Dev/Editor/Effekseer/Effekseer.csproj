@@ -159,8 +159,6 @@
     <Compile Include="IO\mqoToEffekseerModelConverter\Vector3D.cs" />
     <Compile Include="IO\mqoToEffekseerModelConverter\Vector4D.cs" />
     <Compile Include="Plugin\ExportDefault.cs" />
-    <Compile Include="Plugin\Exportglb.cs" />
-    <Compile Include="Plugin\ExportglTF.cs" />
     <Compile Include="Process\MaterialEditor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
