@@ -72,7 +72,7 @@ static const char g_header_fs_gles3_src[] = "#version 300 es\n"
 
 static const char g_header_vs_gles2_src[] = "precision mediump float;\n"
 											R"(
-#define __INSTANCING_DISABLED__ 1
+#define EFK__INSTANCING_DISABLED__ 1
 )"
 											"#define IN attribute\n"
 											"#define CENTROID\n"
@@ -89,7 +89,7 @@ static const char g_header_fs_gles2_src[] = "precision mediump float;\n"
 
 static const char g_header_vs_gl2_src[] = "#version 120\n"
 										  R"(
-#define __INSTANCING_DISABLED__ 1
+#define EFK__INSTANCING_DISABLED__ 1
 )"
 										  "#define lowp\n"
 										  "#define mediump\n"

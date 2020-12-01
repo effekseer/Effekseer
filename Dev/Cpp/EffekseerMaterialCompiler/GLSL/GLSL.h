@@ -43,7 +43,7 @@ static const char* material_common_vs_define = R"()"
 
 
 // Dummy
-float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam) { return 1.0f; }
+float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam) { return 1.0; }
 
 )";
 
@@ -92,7 +92,7 @@ static const char g_material_model_vs_src_pre_uniform[] =
 	R"(
 uniform mat4 ProjectionMatrix;
 
-#ifdef __INSTANCING_DISABLED__
+#ifdef EFK__INSTANCING_DISABLED__
 
 uniform mat4 ModelMatrix;
 uniform vec4 UVOffset;
@@ -129,7 +129,7 @@ vec2 GetUVBack(vec2 uv)
 
 void main()
 {
-#ifdef __INSTANCING_DISABLED__
+#ifdef EFK__INSTANCING_DISABLED__
 	mat4 modelMatrix = ModelMatrix;
 	vec4 uvOffset = UVOffset;
 	vec4 modelColor = ModelColor * a_Color;
@@ -546,7 +546,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 	distortUV = GetUVBack(distortUV);	
 
 	#ifdef _Y_INVERTED_
-	distortUV.y = 1.0f - distortUV.y;
+	distortUV.y = 1.0 - distortUV.y;
 	#endif
 
 	vec4 bg = TEX2D(efk_background, distortUV);
@@ -646,9 +646,6 @@ class ShaderGenerator
 		}
 		else
 		{
-			// DIRTY CODE : TODO Refactoring
-			maincode << "#define __OPENGL__ 1" << std::endl;
-
 			maincode << material_common_define_not_450;
 		}
 
@@ -763,7 +760,7 @@ class ShaderGenerator
 				}
 				else
 				{
-					maincode << "#ifndef __INSTANCING_DISABLED__" << std::endl;
+					maincode << "#ifndef EFK__INSTANCING_DISABLED__" << std::endl;
 					maincode << GetType(4) + " customData1 = customData1s[int(gl_InstanceID)];\n";
 					maincode << "#endif" << std::endl;
 				}
@@ -778,7 +775,7 @@ class ShaderGenerator
 				}
 				else
 				{
-					maincode << "#ifndef __INSTANCING_DISABLED__" << std::endl;
+					maincode << "#ifndef EFK__INSTANCING_DISABLED__" << std::endl;
 					maincode << GetType(4) + " customData2 = customData2s[int(gl_InstanceID)];\n";
 					maincode << "#endif" << std::endl;
 				}
@@ -937,7 +934,7 @@ public:
 				{
 					maincode << R"(
 
-#ifdef __INSTANCING_DISABLED__
+#ifdef EFK__INSTANCING_DISABLED__
 uniform vec4 customData1;
 #else
 uniform vec4 customData1s[_INSTANCE_COUNT_];
@@ -950,7 +947,7 @@ uniform vec4 customData1s[_INSTANCE_COUNT_];
 
 					maincode << R"(
 
-#ifdef __INSTANCING_DISABLED__
+#ifdef EFK__INSTANCING_DISABLED__
 uniform vec4 customData2;
 #else
 uniform vec4 customData2s[_INSTANCE_COUNT_];
