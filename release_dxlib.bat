@@ -1,8 +1,5 @@
-SET RDIR=Effekseer150
-SET RDIR_R=EffekseerRuntime150
 
-rmdir %RDIR%
-mkdir %RDIR%
+SET RDIR_R=EffekseerRuntime_DXLib
 
 rmdir %RDIR_R%
 mkdir %RDIR_R%
@@ -185,6 +182,9 @@ copy VS16WIN64\Dev\Cpp\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %
 
 
 copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\Compiled\include\.
+copy Dev\Cpp\Effekseer\Effekseer.Modules.h %RDIR_R%\Compiled\include\.
+copy Dev\Cpp\Effekseer\Effekseer.SIMD.h %RDIR_R%\Compiled\include\.
+
 copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\Compiled\include\.
 copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR_R%\Compiled\include\.
 copy Dev\Cpp\EffekseerRendererDX12\EffekseerRendererDX12.h %RDIR_R%\Compiled\include\.
