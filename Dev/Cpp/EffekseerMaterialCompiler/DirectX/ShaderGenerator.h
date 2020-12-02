@@ -369,6 +369,8 @@ public:
 				ExportTexture(maincode, material->GetTextureName(i), i + textureSlotOffset);
 			}
 
+			textureSlotOffset += actualTextureCount;
+
 			// background
 			ExportTexture(maincode, "efk_background", 0 + textureSlotOffset);
 			
