@@ -110,32 +110,29 @@ static
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-::Effekseer::TextureLoaderRef CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
+
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(LPDIRECT3DDEVICE9 device)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device));
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(gd.get(), fileInterface));
-#else
-	return nullptr;
-#endif
+	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
 }
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(
-	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 	::Effekseer::FileInterface* fileInterface,
 	::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice, fileInterface));
+	return ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(graphicsDevice.Get(), fileInterface));
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoaderRef CreateModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::ModelLoaderRef(new ModelLoader(device, fileInterface));
+	auto gd = graphicsDevice.DownCast<Backend::GraphicsDevice>();
+	return ::Effekseer::ModelLoaderRef(new ModelLoader(gd->GetDevice(), fileInterface));
 #else
 	return nullptr;
 #endif

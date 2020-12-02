@@ -14,21 +14,14 @@
 namespace EffekseerRendererDX9
 {
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
-[[deprecated("please use CreateTextureLoader with GraphicsDevice")]]
-::Effekseer::TextureLoaderRef CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = nullptr);
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(LPDIRECT3DDEVICE9 device);
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(
-	Effekseer::Backend::GraphicsDevice* graphicsDevice,
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 	::Effekseer::FileInterface* fileInterface = nullptr,
 	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
-::Effekseer::ModelLoaderRef CreateModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = nullptr);
+::Effekseer::ModelLoaderRef CreateModelLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 //----------------------------------------------------------------------------------
 //

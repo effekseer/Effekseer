@@ -20,18 +20,11 @@ namespace EffekseerRendererDX11
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(ID3D11Device* device,
 														   ID3D11DeviceContext* context);
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
-::Effekseer::TextureLoaderRef CreateTextureLoader(ID3D11Device* device,
-												ID3D11DeviceContext* context,
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
 												::Effekseer::FileInterface* fileInterface = nullptr,
 												::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
-::Effekseer::ModelLoaderRef CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = nullptr);
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 /**
 	@brief	描画クラス

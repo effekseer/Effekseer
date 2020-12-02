@@ -116,23 +116,22 @@ static
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 }
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(ID3D11Device* device,
-												ID3D11DeviceContext* context,
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
 												::Effekseer::FileInterface* fileInterface,
 												::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	auto gd = Effekseer::CreateReference(new Backend::GraphicsDevice(device, context));
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gd.get(), fileInterface, colorSpaceType);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
 #else
 	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoaderRef CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<ModelLoader>(device, fileInterface);
+	auto gd = gprahicsDevice.DownCast<Backend::GraphicsDevice>();
+	return ::Effekseer::MakeRefPtr<ModelLoader>(gd->GetDevice(), fileInterface);
 #else
 	return nullptr;
 #endif

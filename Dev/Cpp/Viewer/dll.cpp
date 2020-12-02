@@ -230,7 +230,7 @@ Native::TextureLoader::TextureLoader(efk::Graphics* graphics, Effekseer::ColorSp
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto g = static_cast<efk::GraphicsDX11*>(graphics);
-		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(g->GetDevice(), g->GetContext(), nullptr, colorSpaceType);
+		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(g->GetGraphicsDevice(), nullptr, colorSpaceType);
 	}
 	else
 	{
@@ -335,7 +335,7 @@ Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 		else if (g_deviceType == efk::DeviceType::DirectX11)
 		{
 			auto g = static_cast<efk::GraphicsDX11*>(graphics_);
-			auto loader = ::EffekseerRendererDX11::CreateModelLoader(g->GetDevice());
+			auto loader = ::EffekseerRendererDX11::CreateModelLoader(g->GetGraphicsDevice());
 			auto m = (Effekseer::Model*)loader->Load((const char16_t*)dst);
 
 			if (m != nullptr)
@@ -1176,7 +1176,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto r = (EffekseerRendererDX11::Renderer*)mainScreen_->GetRenderer().Get();
-		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
+		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetGraphicsDevice());
 	}
 	else
 	{
