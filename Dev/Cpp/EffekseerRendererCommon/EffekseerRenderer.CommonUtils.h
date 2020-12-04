@@ -515,163 +515,163 @@ using enable_if_contain_advanced_t = typename std::enable_if<std::is_same<typena
 template <typename U>
 using enable_ifnot_contain_advanced_t = typename std::enable_if<std::is_same<typename ContainAdvancedData<U>::Value, float>::value, std::nullptr_t>::type;
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexAlphaUV(const U& v)
 {
 	return {v.AlphaUV[0], v.AlphaUV[1]};
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexAlphaUV(const U& v)
 {
 	return {0.0f, 0.0f};
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexUVDistortionUV(const U& v)
 {
 	return {v.UVDistortionUV[0], v.UVDistortionUV[1]};
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexUVDistortionUV(const U& v)
 {
 	return {0.0f, 0.0f};
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexBlendUV(const U& v)
 {
 	return {v.BlendUV[0], v.BlendUV[1]};
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexBlendUV(const U& v)
 {
 	return {0.0f, 0.0f};
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexBlendAlphaUV(const U& v)
 {
 	return {v.BlendAlphaUV[0], v.BlendAlphaUV[1]};
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexBlendAlphaUV(const U& v)
 {
 	return {0.0f, 0.0f};
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexBlendUVDistortionUV(const U& v)
 {
 	return {v.BlendUVDistortionUV[0], v.BlendUVDistortionUV[1]};
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 std::array<float, 2> GetVertexBlendUVDistortionUV(const U& v)
 {
 	return {0.0f, 0.0f};
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 float GetVertexFlipbookIndexAndNextRate(const U& v)
 {
 	return v.FlipbookIndexAndNextRate;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 float GetVertexFlipbookIndexAndNextRate(const U& v)
 {
 	return 0.0f;
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 float GetVertexAlphaThreshold(const U& v)
 {
 	return v.AlphaThreshold;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 float GetVertexAlphaThreshold(const U& v)
 {
 	return 0.0f;
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexAlphaUV(U& v, float value, int32_t ind)
 {
 	v.AlphaUV[ind] = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexAlphaUV(U& v, float value, int32_t ind)
 {
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexUVDistortionUV(U& v, float value, int32_t ind)
 {
 	v.UVDistortionUV[ind] = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexUVDistortionUV(U& v, float value, int32_t ind)
 {
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexBlendUV(U& v, float value, int32_t ind)
 {
 	v.BlendUV[ind] = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexBlendUV(U& v, float value, int32_t ind)
 {
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexBlendAlphaUV(U& v, float value, int32_t ind)
 {
 	v.BlendAlphaUV[ind] = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexBlendAlphaUV(U& v, float value, int32_t ind)
 {
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexBlendUVDistortionUV(U& v, float value, int32_t ind)
 {
 	v.BlendUVDistortionUV[ind] = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexBlendUVDistortionUV(U& v, float value, int32_t ind)
 {
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexFlipbookIndexAndNextRate(U& v, float value)
 {
 	v.FlipbookIndexAndNextRate = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexFlipbookIndexAndNextRate(U& v, float value)
 {
 }
 
-template <typename U, typename enable_if_contain_advanced_t<U> = nullptr>
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
 void SetVertexAlphaThreshold(U& v, float value)
 {
 	v.AlphaThreshold = value;
 }
 
-template <typename U, typename enable_ifnot_contain_advanced_t<U> = nullptr>
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
 void SetVertexAlphaThreshold(U& v, float value)
 {
 }
