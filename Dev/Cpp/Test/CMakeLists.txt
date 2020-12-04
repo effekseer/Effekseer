@@ -20,6 +20,7 @@ set(effekseer_test_src
     Runtime/RuntimeTest.cpp
     Runtime/Performance.cpp
     Runtime/TextureFormats.cpp
+    Runtime/Vertex.cpp
     Backend/Mesh.cpp
 )
 

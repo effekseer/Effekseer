@@ -212,65 +212,65 @@ protected:
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
 
-		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
-		verteies[0].SetAlphaUV(instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
+		SetVertexAlphaUV(verteies[0], instanceParameter.AlphaUV.X, 0);
+		SetVertexAlphaUV(verteies[0], instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
 
-		verteies[1].SetAlphaUV(instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
-		verteies[1].SetAlphaUV(instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
+		SetVertexAlphaUV(verteies[1], instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
+		SetVertexAlphaUV(verteies[1], instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height, 1);
 
-		verteies[2].SetAlphaUV(instanceParameter.AlphaUV.X, 0);
-		verteies[2].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
+		SetVertexAlphaUV(verteies[2], instanceParameter.AlphaUV.X, 0);
+		SetVertexAlphaUV(verteies[2], instanceParameter.AlphaUV.Y, 1);
 
-		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
-		verteies[3].SetAlphaUV(instanceParameter.AlphaUV.Y, 1);
+		SetVertexAlphaUV(verteies[3], instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width, 0);
+		SetVertexAlphaUV(verteies[3], instanceParameter.AlphaUV.Y, 1);
 
-		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.X, 0);
-		verteies[0].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
+		SetVertexUVDistortionUV(verteies[0], instanceParameter.UVDistortionUV.X, 0);
+		SetVertexUVDistortionUV(verteies[0], instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
 
-		verteies[1].SetUVDistortionUV(instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
-		verteies[1].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
+		SetVertexUVDistortionUV(verteies[1], instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
+		SetVertexUVDistortionUV(verteies[1], instanceParameter.UVDistortionUV.Y + instanceParameter.UVDistortionUV.Height, 1);
 
-		verteies[2].SetUVDistortionUV(instanceParameter.UVDistortionUV.X, 0);
-		verteies[2].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y, 1);
+		SetVertexUVDistortionUV(verteies[2], instanceParameter.UVDistortionUV.X, 0);
+		SetVertexUVDistortionUV(verteies[2], instanceParameter.UVDistortionUV.Y, 1);
 
-		verteies[3].SetUVDistortionUV(instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
-		verteies[3].SetUVDistortionUV(instanceParameter.UVDistortionUV.Y, 1);
+		SetVertexUVDistortionUV(verteies[3], instanceParameter.UVDistortionUV.X + instanceParameter.UVDistortionUV.Width, 0);
+		SetVertexUVDistortionUV(verteies[3], instanceParameter.UVDistortionUV.Y, 1);
 
-		verteies[0].SetBlendUV(instanceParameter.BlendUV.X, 0);
-		verteies[0].SetBlendUV(instanceParameter.BlendUV.Y + instanceParameter.BlendUV.Height, 1);
+		SetVertexBlendUV(verteies[0], instanceParameter.BlendUV.X, 0);
+		SetVertexBlendUV(verteies[0], instanceParameter.BlendUV.Y + instanceParameter.BlendUV.Height, 1);
 
-		verteies[1].SetBlendUV(instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
-		verteies[1].SetBlendUV(instanceParameter.BlendUV.Y + instanceParameter.BlendUV.Height, 1);
+		SetVertexBlendUV(verteies[1], instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
+		SetVertexBlendUV(verteies[1], instanceParameter.BlendUV.Y + instanceParameter.BlendUV.Height, 1);
 
-		verteies[2].SetBlendUV(instanceParameter.BlendUV.X, 0);
-		verteies[2].SetBlendUV(instanceParameter.BlendUV.Y, 1);
+		SetVertexBlendUV(verteies[2], instanceParameter.BlendUV.X, 0);
+		SetVertexBlendUV(verteies[2], instanceParameter.BlendUV.Y, 1);
 
-		verteies[3].SetBlendUV(instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
-		verteies[3].SetBlendUV(instanceParameter.BlendUV.Y, 1);
+		SetVertexBlendUV(verteies[3], instanceParameter.BlendUV.X + instanceParameter.BlendUV.Width, 0);
+		SetVertexBlendUV(verteies[3], instanceParameter.BlendUV.Y, 1);
 
-		verteies[0].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X, 0);
-		verteies[0].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y + instanceParameter.BlendAlphaUV.Height, 1);
+		SetVertexBlendAlphaUV(verteies[0], instanceParameter.BlendAlphaUV.X, 0);
+		SetVertexBlendAlphaUV(verteies[0], instanceParameter.BlendAlphaUV.Y + instanceParameter.BlendAlphaUV.Height, 1);
 
-		verteies[1].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
-		verteies[1].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y + instanceParameter.BlendAlphaUV.Height, 1);
+		SetVertexBlendAlphaUV(verteies[1], instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
+		SetVertexBlendAlphaUV(verteies[1], instanceParameter.BlendAlphaUV.Y + instanceParameter.BlendAlphaUV.Height, 1);
 
-		verteies[2].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X, 0);
-		verteies[2].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y, 1);
+		SetVertexBlendAlphaUV(verteies[2], instanceParameter.BlendAlphaUV.X, 0);
+		SetVertexBlendAlphaUV(verteies[2], instanceParameter.BlendAlphaUV.Y, 1);
 
-		verteies[3].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
-		verteies[3].SetBlendAlphaUV(instanceParameter.BlendAlphaUV.Y, 1);
+		SetVertexBlendAlphaUV(verteies[3], instanceParameter.BlendAlphaUV.X + instanceParameter.BlendAlphaUV.Width, 0);
+		SetVertexBlendAlphaUV(verteies[3], instanceParameter.BlendAlphaUV.Y, 1);
 
-		verteies[0].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X, 0);
-		verteies[0].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y + instanceParameter.BlendUVDistortionUV.Height, 1);
+		SetVertexBlendUVDistortionUV(verteies[0], instanceParameter.BlendUVDistortionUV.X, 0);
+		SetVertexBlendUVDistortionUV(verteies[0], instanceParameter.BlendUVDistortionUV.Y + instanceParameter.BlendUVDistortionUV.Height, 1);
 
-		verteies[1].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
-		verteies[1].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y + instanceParameter.BlendUVDistortionUV.Height, 1);
+		SetVertexBlendUVDistortionUV(verteies[1], instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
+		SetVertexBlendUVDistortionUV(verteies[1], instanceParameter.BlendUVDistortionUV.Y + instanceParameter.BlendUVDistortionUV.Height, 1);
 
-		verteies[2].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X, 0);
-		verteies[2].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y, 1);
+		SetVertexBlendUVDistortionUV(verteies[2], instanceParameter.BlendUVDistortionUV.X, 0);
+		SetVertexBlendUVDistortionUV(verteies[2], instanceParameter.BlendUVDistortionUV.Y, 1);
 
-		verteies[3].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
-		verteies[3].SetBlendUVDistortionUV(instanceParameter.BlendUVDistortionUV.Y, 1);
+		SetVertexBlendUVDistortionUV(verteies[3], instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
+		SetVertexBlendUVDistortionUV(verteies[3], instanceParameter.BlendUVDistortionUV.Y, 1);
 
 		// distortion
 		if (IsDistortionVertex<VERTEX>())
