@@ -1,4 +1,6 @@
 ﻿#include "TestHelper.h"
+#include <Effekseer.h>
+#include <iostream>
 
 #if _WIN32
 #define _CRTDBG_MAP_ALLOC
@@ -13,6 +15,8 @@ int main(int argc, char* argv[])
 #if _WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+
+	Effekseer::SetLogger([](Effekseer::LogType type, const std::string& s) -> void { std::cout << s << std::endl; });
 
 	// You can specify "Test --filter=*.* to run a single test"
 	auto parsed = TestHelper::ParseArg(argc, argv);

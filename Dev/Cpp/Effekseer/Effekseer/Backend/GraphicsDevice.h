@@ -78,6 +78,13 @@ enum class ShaderStageType
 	Pixel,
 };
 
+enum class TextureType
+{
+	Color2D,
+	Render,
+	Depth,
+};
+
 struct UniformLayoutElement
 {
 	ShaderStageType Stage = ShaderStageType::Vertex;
@@ -176,6 +183,7 @@ class Texture
 	: public ReferenceObject
 {
 protected:
+	TextureType type_ = {};
 	TextureFormatType format_;
 	std::array<int32_t, 2> size_;
 	bool hasMipmap_;
@@ -197,6 +205,11 @@ public:
 	bool GetHasMipmap() const
 	{
 		return hasMipmap_;
+	}
+
+	TextureType GetTextureType() const
+	{
+		return type_;
 	}
 };
 

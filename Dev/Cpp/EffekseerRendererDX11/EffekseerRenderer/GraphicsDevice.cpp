@@ -613,12 +613,20 @@ bool Texture::Init(
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
-	return Init(param.Format, param.GenerateMipmap, param.Size, param.InitialData, false);
+	auto ret = Init(param.Format, param.GenerateMipmap, param.Size, param.InitialData, false);
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
+	return ret;
 }
 
 bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 {
-	return Init(param.Format, false, param.Size, {}, true);
+	auto ret = Init(param.Format, false, param.Size, {}, true);
+
+	type_ = Effekseer::Backend::TextureType::Render;
+
+	return ret;
 }
 
 bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
@@ -702,6 +710,9 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	texture_ = Effekseer::CreateUniqueReference(texture);
 	dsv_ = Effekseer::CreateUniqueReference(depthStencilView);
 	srv_ = Effekseer::CreateUniqueReference(srv);
+
+	type_ = Effekseer::Backend::TextureType::Depth;
+
 	return true;
 }
 
@@ -742,6 +753,8 @@ bool Texture::Init(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, I
 	size_[1] = desc.Height;
 
 	ES_SAFE_RELEASE(resource);
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
 
 	return true;
 }

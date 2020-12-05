@@ -371,6 +371,9 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	ES_SAFE_RELEASE(tempTexture);
 
 	texture_ = Effekseer::CreateUniqueReference(texture);
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
 	return true;
 }
 
@@ -415,6 +418,9 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 
 	texture_ = Effekseer::CreateUniqueReference(texture);
 	surface_ = Effekseer::CreateUniqueReference(surface);
+
+	type_ = Effekseer::Backend::TextureType::Depth;
+
 	return true;
 }
 

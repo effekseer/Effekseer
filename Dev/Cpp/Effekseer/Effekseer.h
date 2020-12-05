@@ -10,6 +10,7 @@
 #include <atomic>
 #include <cfloat>
 #include <climits>
+#include <functional>
 #include <memory>
 #include <stdint.h>
 #include <stdio.h>
@@ -276,7 +277,7 @@ enum class ZSortType : int32_t
 //-----------------------------------------------------------------------------------
 enum class RenderMode : int32_t
 {
-	Normal,	// 通常描画
+	Normal,	   // 通常描画
 	Wireframe, // ワイヤーフレーム描画
 };
 
@@ -756,6 +757,12 @@ inline bool operator!=(const RefPtr<T>& lhs, const RefPtr<U>& rhs)
 }
 
 template <class T>
+inline bool operator<(const RefPtr<T>& lhs, const RefPtr<T>& rhs)
+{
+	return lhs.Get() < rhs.Get();
+}
+
+template <class T>
 inline bool operator==(const RefPtr<T>& lhs, const std::nullptr_t& rhs)
 {
 	return lhs.Get() == rhs;
@@ -877,6 +884,18 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+enum class LogType
+{
+	Info,
+	Warning,
+	Error,
+	Debug,
+};
+
+void SetLogger(const std::function<void(LogType, const std::string&)>& logger);
+
+void Log(LogType logType, const std::string& message);
 
 enum class ColorSpaceType : int32_t
 {
@@ -4195,6 +4214,13 @@ enum class ShaderStageType
 	Pixel,
 };
 
+enum class TextureType
+{
+	Color2D,
+	Render,
+	Depth,
+};
+
 struct UniformLayoutElement
 {
 	ShaderStageType Stage = ShaderStageType::Vertex;
@@ -4293,6 +4319,7 @@ class Texture
 	: public ReferenceObject
 {
 protected:
+	TextureType type_ = {};
 	TextureFormatType format_;
 	std::array<int32_t, 2> size_;
 	bool hasMipmap_;
@@ -4314,6 +4341,11 @@ public:
 	bool GetHasMipmap() const
 	{
 		return hasMipmap_;
+	}
+
+	TextureType GetTextureType() const
+	{
+		return type_;
 	}
 };
 

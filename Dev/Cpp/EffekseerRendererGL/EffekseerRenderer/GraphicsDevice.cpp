@@ -381,7 +381,11 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
-	return InitInternal(param);
+	auto ret = InitInternal(param);
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
+	return ret;
 }
 
 bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
@@ -390,7 +394,11 @@ bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 	paramInternal.Size = param.Size;
 	paramInternal.Format = param.Format;
 	paramInternal.GenerateMipmap = false;
-	return Init(paramInternal);
+	auto ret = Init(paramInternal);
+
+	type_ = Effekseer::Backend::TextureType::Render;
+
+	return ret;
 }
 
 bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
@@ -427,7 +435,9 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	format_ = param.Format;
 	hasMipmap_ = false;
 
-	return false;
+	type_ = Effekseer::Backend::TextureType::Depth;
+
+	return true;
 }
 
 bool Texture::Init(GLuint buffer, const std::function<void()>& onDisposed)
@@ -438,6 +448,9 @@ bool Texture::Init(GLuint buffer, const std::function<void()>& onDisposed)
 	buffer_ = buffer;
 	onDisposed_ = onDisposed;
 	hasMipmap_ = false;
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
 	return true;
 }
 
@@ -573,6 +586,27 @@ RenderPass::~RenderPass()
 
 bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture)
 {
+	for (int32_t i = 0; i < textures.size(); i++)
+	{
+		if (textures.at(i) == nullptr)
+		{
+			Effekseer::Log(Effekseer::LogType::Error, "RenderPass : textures " + std::to_string(i) + " must not be null.");
+			return false;
+		}
+
+		if (textures.at(i)->GetTextureType() != Effekseer::Backend::TextureType::Render)
+		{
+			Effekseer::Log(Effekseer::LogType::Error, "RenderPass : textures " + std::to_string(i) + " must be Render.");
+			return false;
+		}
+	}
+
+	if (depthTexture != nullptr && depthTexture->GetTextureType() != Effekseer::Backend::TextureType::Depth)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "RenderPass : depthTexture must be Depth.");
+		return false;
+	}
+
 	textures_ = textures;
 	depthTexture_ = depthTexture;
 
@@ -1199,6 +1233,11 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 	{
 		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass.Get())->GetBuffer());
 	}
+	else
+	{
+		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDrawBuffer(GL_BACK);
+	}
 
 	GLbitfield flag = 0;
 
@@ -1206,6 +1245,7 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 	{
 		flag |= GL_COLOR_BUFFER_BIT;
 		glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f, clearColor.B / 255.0f, clearColor.A / 255.0f);
+		GLCheckError();
 	}
 
 	if (isDepthCleared)

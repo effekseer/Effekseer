@@ -225,6 +225,9 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	texture->Unlock();
 
 	texture_ = LLGI::CreateSharedPtr(texture);
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
 	return true;
 }
 
@@ -238,6 +241,9 @@ bool Texture::Init(uint64_t id, std::function<void()> onDisposed)
 
 	texture_ = LLGI::CreateSharedPtr(texture);
 	onDisposed_ = onDisposed;
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
 	return true;
 }
 
