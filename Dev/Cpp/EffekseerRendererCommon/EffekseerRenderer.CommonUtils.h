@@ -13,12 +13,39 @@
 #include <functional>
 #include <math.h>
 #include <string.h>
+#include <type_traits>
 
 namespace EffekseerRenderer
 {
 
 using VertexFloat3 = ::Effekseer::Vector3D;
 using VertexColor = ::Effekseer::Color;
+
+inline void SwapRGBAToBGRA(Effekseer::Color& color)
+{
+	auto temp = color;
+	color.B = temp.R;
+	color.R = temp.B;
+}
+
+inline Effekseer::Color PackVector3DF(const Effekseer::SIMD::Vec3f& v)
+{
+	Effekseer::Color ret;
+	ret.R = static_cast<uint8_t>(Effekseer::Clamp(((v.GetX() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
+	ret.G = static_cast<uint8_t>(Effekseer::Clamp(((v.GetY() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
+	ret.B = static_cast<uint8_t>(Effekseer::Clamp(((v.GetZ() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
+	ret.A = 255;
+	return ret;
+}
+
+inline Effekseer::Vector3D UnpackVector3DF(const Effekseer::Color& v)
+{
+	Effekseer::Vector3D ret;
+	ret.X = (v.R / 255.0 * 2.0f - 1.0f);
+	ret.Y = (v.G / 255.0 * 2.0f - 1.0f);
+	ret.Z = (v.B / 255.0 * 2.0f - 1.0f);
+	return ret;
+}
 
 struct DynamicVertex
 {
@@ -36,26 +63,6 @@ struct DynamicVertex
 	};
 
 	float UV2[2];
-
-	void SetAlphaUV(float value, int index)
-	{
-	}
-
-	void SetUVDistortionUV(float value, int index)
-	{
-	}
-
-	void SetBlendUV(float value, int index)
-	{
-	}
-
-	void SetBlendAlphaUV(float value, int index)
-	{
-	}
-
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-	}
 
 	void SetFlipbookIndexAndNextRate(float value)
 	{
@@ -124,21 +131,6 @@ struct LightingVertex
 
 	float UV2[2];
 
-	void SetAlphaUV(float value, int index)
-	{
-	}
-	void SetUVDistortionUV(float value, int index)
-	{
-	}
-	void SetBlendUV(float value, int index)
-	{
-	}
-	void SetBlendAlphaUV(float value, int index)
-	{
-	}
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-	}
 	void SetFlipbookIndexAndNextRate(float value)
 	{
 	}
@@ -192,21 +184,6 @@ struct SimpleVertex
 		float UV2[2];
 	};
 
-	void SetAlphaUV(float value, int index)
-	{
-	}
-	void SetUVDistortionUV(float value, int index)
-	{
-	}
-	void SetBlendUV(float value, int index)
-	{
-	}
-	void SetBlendAlphaUV(float value, int index)
-	{
-	}
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-	}
 	void SetFlipbookIndexAndNextRate(float value)
 	{
 	}
@@ -253,27 +230,14 @@ struct VertexDistortion
 	union {
 		float UV[2];
 		//! dummy for template
+		float UV1[2];
+		//! dummy for template
 		float UV2[2];
 	};
 
 	VertexFloat3 Binormal;
 	VertexFloat3 Tangent;
 
-	void SetAlphaUV(float value, int index)
-	{
-	}
-	void SetUVDistortionUV(float value, int index)
-	{
-	}
-	void SetBlendUV(float value, int index)
-	{
-	}
-	void SetBlendAlphaUV(float value, int index)
-	{
-	}
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-	}
 	void SetFlipbookIndexAndNextRate(float value)
 	{
 	}
@@ -339,26 +303,6 @@ struct AdvancedLightingVertex
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
-	void SetAlphaUV(float value, int index)
-	{
-		AlphaUV[index] = value;
-	}
-	void SetUVDistortionUV(float value, int index)
-	{
-		UVDistortionUV[index] = value;
-	}
-	void SetBlendUV(float value, int index)
-	{
-		BlendUV[index] = value;
-	}
-	void SetBlendAlphaUV(float value, int index)
-	{
-		BlendAlphaUV[index] = value;
-	}
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-		BlendUVDistortionUV[index] = value;
-	}
 	void SetFlipbookIndexAndNextRate(float value)
 	{
 		FlipbookIndexAndNextRate = value;
@@ -411,6 +355,8 @@ struct AdvancedSimpleVertex
 	union {
 		float UV[2];
 		//! dummy for template
+		float UV1[2];
+		//! dummy for template
 		float UV2[2];
 	};
 
@@ -422,26 +368,6 @@ struct AdvancedSimpleVertex
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
-	void SetAlphaUV(float value, int index)
-	{
-		AlphaUV[index] = value;
-	}
-	void SetUVDistortionUV(float value, int index)
-	{
-		UVDistortionUV[index] = value;
-	}
-	void SetBlendUV(float value, int index)
-	{
-		BlendUV[index] = value;
-	}
-	void SetBlendAlphaUV(float value, int index)
-	{
-		BlendAlphaUV[index] = value;
-	}
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-		BlendUVDistortionUV[index] = value;
-	}
 	void SetFlipbookIndexAndNextRate(float value)
 	{
 		FlipbookIndexAndNextRate = value;
@@ -490,6 +416,8 @@ struct AdvancedVertexDistortion
 	union {
 		float UV[2];
 		//! dummy for template
+		float UV1[2];
+		//! dummy for template
 		float UV2[2];
 	};
 
@@ -504,26 +432,6 @@ struct AdvancedVertexDistortion
 	float FlipbookIndexAndNextRate;
 	float AlphaThreshold;
 
-	void SetAlphaUV(float value, int index)
-	{
-		AlphaUV[index] = value;
-	}
-	void SetUVDistortionUV(float value, int index)
-	{
-		UVDistortionUV[index] = value;
-	}
-	void SetBlendUV(float value, int index)
-	{
-		BlendUV[index] = value;
-	}
-	void SetBlendAlphaUV(float value, int index)
-	{
-		BlendAlphaUV[index] = value;
-	}
-	void SetBlendUVDistortionUV(float value, int index)
-	{
-		BlendUVDistortionUV[index] = value;
-	}
 	void SetFlipbookIndexAndNextRate(float value)
 	{
 		FlipbookIndexAndNextRate = value;
@@ -565,6 +473,208 @@ struct AdvancedVertexDistortion
 	{
 	}
 };
+
+template <typename U>
+class ContainAdvancedData
+{
+public:
+	using Value = int;
+};
+
+template <>
+class ContainAdvancedData<SimpleVertex>
+{
+public:
+	using Value = float;
+};
+
+template <>
+class ContainAdvancedData<LightingVertex>
+{
+public:
+	using Value = float;
+};
+
+template <>
+class ContainAdvancedData<VertexDistortion>
+{
+public:
+	using Value = float;
+};
+
+template <>
+class ContainAdvancedData<DynamicVertex>
+{
+public:
+	using Value = float;
+};
+
+template <typename U>
+using enable_if_contain_advanced_t = typename std::enable_if<std::is_same<typename ContainAdvancedData<U>::Value, int>::value, std::nullptr_t>::type;
+
+template <typename U>
+using enable_ifnot_contain_advanced_t = typename std::enable_if<std::is_same<typename ContainAdvancedData<U>::Value, float>::value, std::nullptr_t>::type;
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexAlphaUV(const U& v)
+{
+	return {v.AlphaUV[0], v.AlphaUV[1]};
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexAlphaUV(const U& v)
+{
+	return {0.0f, 0.0f};
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexUVDistortionUV(const U& v)
+{
+	return {v.UVDistortionUV[0], v.UVDistortionUV[1]};
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexUVDistortionUV(const U& v)
+{
+	return {0.0f, 0.0f};
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexBlendUV(const U& v)
+{
+	return {v.BlendUV[0], v.BlendUV[1]};
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexBlendUV(const U& v)
+{
+	return {0.0f, 0.0f};
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexBlendAlphaUV(const U& v)
+{
+	return {v.BlendAlphaUV[0], v.BlendAlphaUV[1]};
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexBlendAlphaUV(const U& v)
+{
+	return {0.0f, 0.0f};
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexBlendUVDistortionUV(const U& v)
+{
+	return {v.BlendUVDistortionUV[0], v.BlendUVDistortionUV[1]};
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+std::array<float, 2> GetVertexBlendUVDistortionUV(const U& v)
+{
+	return {0.0f, 0.0f};
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+float GetVertexFlipbookIndexAndNextRate(const U& v)
+{
+	return v.FlipbookIndexAndNextRate;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+float GetVertexFlipbookIndexAndNextRate(const U& v)
+{
+	return 0.0f;
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+float GetVertexAlphaThreshold(const U& v)
+{
+	return v.AlphaThreshold;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+float GetVertexAlphaThreshold(const U& v)
+{
+	return 0.0f;
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexAlphaUV(U& v, float value, int32_t ind)
+{
+	v.AlphaUV[ind] = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexAlphaUV(U& v, float value, int32_t ind)
+{
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexUVDistortionUV(U& v, float value, int32_t ind)
+{
+	v.UVDistortionUV[ind] = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexUVDistortionUV(U& v, float value, int32_t ind)
+{
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexBlendUV(U& v, float value, int32_t ind)
+{
+	v.BlendUV[ind] = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexBlendUV(U& v, float value, int32_t ind)
+{
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexBlendAlphaUV(U& v, float value, int32_t ind)
+{
+	v.BlendAlphaUV[ind] = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexBlendAlphaUV(U& v, float value, int32_t ind)
+{
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexBlendUVDistortionUV(U& v, float value, int32_t ind)
+{
+	v.BlendUVDistortionUV[ind] = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexBlendUVDistortionUV(U& v, float value, int32_t ind)
+{
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexFlipbookIndexAndNextRate(U& v, float value)
+{
+	v.FlipbookIndexAndNextRate = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexFlipbookIndexAndNextRate(U& v, float value)
+{
+}
+
+template <typename U, enable_if_contain_advanced_t<U> = nullptr>
+void SetVertexAlphaThreshold(U& v, float value)
+{
+	v.AlphaThreshold = value;
+}
+
+template <typename U, enable_ifnot_contain_advanced_t<U> = nullptr>
+void SetVertexAlphaThreshold(U& v, float value)
+{
+}
 
 static int32_t GetMaximumVertexSizeInAllTypes()
 {
@@ -814,23 +924,6 @@ inline void TransformVertexes(StrideView<AdvancedSimpleVertex>& v, int32_t count
 inline void TransformVertexes(StrideView<AdvancedLightingVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	TransformStandardVertexes(v, count, mat);
-}
-
-inline void SwapRGBAToBGRA(Effekseer::Color& color)
-{
-	auto temp = color;
-	color.B = temp.R;
-	color.R = temp.B;
-}
-
-inline Effekseer::Color PackVector3DF(const Effekseer::SIMD::Vec3f& v)
-{
-	Effekseer::Color ret;
-	ret.R = static_cast<uint8_t>(Effekseer::Clamp(((v.GetX() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
-	ret.G = static_cast<uint8_t>(Effekseer::Clamp(((v.GetY() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
-	ret.B = static_cast<uint8_t>(Effekseer::Clamp(((v.GetZ() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
-	ret.A = 255;
-	return ret;
 }
 
 inline Effekseer::SIMD::Vec3f SafeNormalize(const Effekseer::SIMD::Vec3f& v)
@@ -1203,7 +1296,7 @@ struct ShaderParameterCollector
 				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Linear;
 				TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
 				DepthIndex = TextureCount;
-				TextureCount += 1;			
+				TextureCount += 1;
 			}
 		}
 		else

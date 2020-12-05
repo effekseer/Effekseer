@@ -104,133 +104,133 @@ protected:
 		}
 		else if (TARGET == 2)
 		{
-			v[0].SetAlphaUV(uvX1, 0);
-			v[0].SetAlphaUV(uvY1, 1);
+			SetVertexAlphaUV(v[0], uvX1, 0);
+			SetVertexAlphaUV(v[0], uvY1, 1);
 
-			v[1].SetAlphaUV(uvX2, 0);
-			v[1].SetAlphaUV(uvY1, 1);
+			SetVertexAlphaUV(v[1], uvX2, 0);
+			SetVertexAlphaUV(v[1], uvY1, 1);
 
-			v[4].SetAlphaUV(uvX2, 0);
-			v[4].SetAlphaUV(uvY1, 1);
+			SetVertexAlphaUV(v[4], uvX2, 0);
+			SetVertexAlphaUV(v[4], uvY1, 1);
 
-			v[5].SetAlphaUV(uvX3, 0);
-			v[5].SetAlphaUV(uvY1, 1);
+			SetVertexAlphaUV(v[5], uvX3, 0);
+			SetVertexAlphaUV(v[5], uvY1, 1);
 
-			v[2].SetAlphaUV(uvX1, 0);
-			v[2].SetAlphaUV(uvY2, 1);
+			SetVertexAlphaUV(v[2], uvX1, 0);
+			SetVertexAlphaUV(v[2], uvY2, 1);
 
-			v[3].SetAlphaUV(uvX2, 0);
-			v[3].SetAlphaUV(uvY2, 1);
+			SetVertexAlphaUV(v[3], uvX2, 0);
+			SetVertexAlphaUV(v[3], uvY2, 1);
 
-			v[6].SetAlphaUV(uvX2, 0);
-			v[6].SetAlphaUV(uvY2, 1);
+			SetVertexAlphaUV(v[6], uvX2, 0);
+			SetVertexAlphaUV(v[6], uvY2, 1);
 
-			v[7].SetAlphaUV(uvX3, 0);
-			v[7].SetAlphaUV(uvY2, 1);
+			SetVertexAlphaUV(v[7], uvX3, 0);
+			SetVertexAlphaUV(v[7], uvY2, 1);
 		}
 		else if (TARGET == 3)
 		{
-			v[0].SetUVDistortionUV(uvX1, 0);
-			v[0].SetUVDistortionUV(uvY1, 1);
+			SetVertexUVDistortionUV(v[0], uvX1, 0);
+			SetVertexUVDistortionUV(v[0], uvY1, 1);
 
-			v[1].SetUVDistortionUV(uvX2, 0);
-			v[1].SetUVDistortionUV(uvY1, 1);
+			SetVertexUVDistortionUV(v[1], uvX2, 0);
+			SetVertexUVDistortionUV(v[1], uvY1, 1);
 
-			v[4].SetUVDistortionUV(uvX2, 0);
-			v[4].SetUVDistortionUV(uvY1, 1);
+			SetVertexUVDistortionUV(v[4], uvX2, 0);
+			SetVertexUVDistortionUV(v[4], uvY1, 1);
 
-			v[5].SetUVDistortionUV(uvX3, 0);
-			v[5].SetUVDistortionUV(uvY1, 1);
+			SetVertexUVDistortionUV(v[5], uvX3, 0);
+			SetVertexUVDistortionUV(v[5], uvY1, 1);
 
-			v[2].SetUVDistortionUV(uvX1, 0);
-			v[2].SetUVDistortionUV(uvY2, 1);
+			SetVertexUVDistortionUV(v[2], uvX1, 0);
+			SetVertexUVDistortionUV(v[2], uvY2, 1);
 
-			v[3].SetUVDistortionUV(uvX2, 0);
-			v[3].SetUVDistortionUV(uvY2, 1);
+			SetVertexUVDistortionUV(v[3], uvX2, 0);
+			SetVertexUVDistortionUV(v[3], uvY2, 1);
 
-			v[6].SetUVDistortionUV(uvX2, 0);
-			v[6].SetUVDistortionUV(uvY2, 1);
+			SetVertexUVDistortionUV(v[6], uvX2, 0);
+			SetVertexUVDistortionUV(v[6], uvY2, 1);
 
-			v[7].SetUVDistortionUV(uvX3, 0);
-			v[7].SetUVDistortionUV(uvY2, 1);
+			SetVertexUVDistortionUV(v[7], uvX3, 0);
+			SetVertexUVDistortionUV(v[7], uvY2, 1);
 		}
 		else if (TARGET == 4)
 		{
-			v[0].SetBlendUV(uvX1, 0);
-			v[0].SetBlendUV(uvY1, 1);
+			SetVertexBlendUV(v[0], uvX1, 0);
+			SetVertexBlendUV(v[0], uvY1, 1);
 
-			v[1].SetBlendUV(uvX2, 0);
-			v[1].SetBlendUV(uvY1, 1);
+			SetVertexBlendUV(v[1], uvX2, 0);
+			SetVertexBlendUV(v[1], uvY1, 1);
 
-			v[4].SetBlendUV(uvX2, 0);
-			v[4].SetBlendUV(uvY1, 1);
+			SetVertexBlendUV(v[4], uvX2, 0);
+			SetVertexBlendUV(v[4], uvY1, 1);
 
-			v[5].SetBlendUV(uvX3, 0);
-			v[5].SetBlendUV(uvY1, 1);
+			SetVertexBlendUV(v[5], uvX3, 0);
+			SetVertexBlendUV(v[5], uvY1, 1);
 
-			v[2].SetBlendUV(uvX1, 0);
-			v[2].SetBlendUV(uvY2, 1);
+			SetVertexBlendUV(v[2], uvX1, 0);
+			SetVertexBlendUV(v[2], uvY2, 1);
 
-			v[3].SetBlendUV(uvX2, 0);
-			v[3].SetBlendUV(uvY2, 1);
+			SetVertexBlendUV(v[3], uvX2, 0);
+			SetVertexBlendUV(v[3], uvY2, 1);
 
-			v[6].SetBlendUV(uvX2, 0);
-			v[6].SetBlendUV(uvY2, 1);
+			SetVertexBlendUV(v[6], uvX2, 0);
+			SetVertexBlendUV(v[6], uvY2, 1);
 
-			v[7].SetBlendUV(uvX3, 0);
-			v[7].SetBlendUV(uvY2, 1);
+			SetVertexBlendUV(v[7], uvX3, 0);
+			SetVertexBlendUV(v[7], uvY2, 1);
 		}
 		else if (TARGET == 5)
 		{
-			v[0].SetBlendAlphaUV(uvX1, 0);
-			v[0].SetBlendAlphaUV(uvY1, 1);
+			SetVertexBlendAlphaUV(v[0], uvX1, 0);
+			SetVertexBlendAlphaUV(v[0], uvY1, 1);
 
-			v[1].SetBlendAlphaUV(uvX2, 0);
-			v[1].SetBlendAlphaUV(uvY1, 1);
+			SetVertexBlendAlphaUV(v[1], uvX2, 0);
+			SetVertexBlendAlphaUV(v[1], uvY1, 1);
 
-			v[4].SetBlendAlphaUV(uvX2, 0);
-			v[4].SetBlendAlphaUV(uvY1, 1);
+			SetVertexBlendAlphaUV(v[4], uvX2, 0);
+			SetVertexBlendAlphaUV(v[4], uvY1, 1);
 
-			v[5].SetBlendAlphaUV(uvX3, 0);
-			v[5].SetBlendAlphaUV(uvY1, 1);
+			SetVertexBlendAlphaUV(v[5], uvX3, 0);
+			SetVertexBlendAlphaUV(v[5], uvY1, 1);
 
-			v[2].SetBlendAlphaUV(uvX1, 0);
-			v[2].SetBlendAlphaUV(uvY2, 1);
+			SetVertexBlendAlphaUV(v[2], uvX1, 0);
+			SetVertexBlendAlphaUV(v[2], uvY2, 1);
 
-			v[3].SetBlendAlphaUV(uvX2, 0);
-			v[3].SetBlendAlphaUV(uvY2, 1);
+			SetVertexBlendAlphaUV(v[3], uvX2, 0);
+			SetVertexBlendAlphaUV(v[3], uvY2, 1);
 
-			v[6].SetBlendAlphaUV(uvX2, 0);
-			v[6].SetBlendAlphaUV(uvY2, 1);
+			SetVertexBlendAlphaUV(v[6], uvX2, 0);
+			SetVertexBlendAlphaUV(v[6], uvY2, 1);
 
-			v[7].SetBlendAlphaUV(uvX3, 0);
-			v[7].SetBlendAlphaUV(uvY2, 1);
+			SetVertexBlendAlphaUV(v[7], uvX3, 0);
+			SetVertexBlendAlphaUV(v[7], uvY2, 1);
 		}
 		else if (TARGET == 6)
 		{
-			v[0].SetBlendUVDistortionUV(uvX1, 0);
-			v[0].SetBlendUVDistortionUV(uvY1, 1);
+			SetVertexBlendUVDistortionUV(v[0], uvX1, 0);
+			SetVertexBlendUVDistortionUV(v[0], uvY1, 1);
 
-			v[1].SetBlendUVDistortionUV(uvX2, 0);
-			v[1].SetBlendUVDistortionUV(uvY1, 1);
+			SetVertexBlendUVDistortionUV(v[1], uvX2, 0);
+			SetVertexBlendUVDistortionUV(v[1], uvY1, 1);
 
-			v[4].SetBlendUVDistortionUV(uvX2, 0);
-			v[4].SetBlendUVDistortionUV(uvY1, 1);
+			SetVertexBlendUVDistortionUV(v[4], uvX2, 0);
+			SetVertexBlendUVDistortionUV(v[4], uvY1, 1);
 
-			v[5].SetBlendUVDistortionUV(uvX3, 0);
-			v[5].SetBlendUVDistortionUV(uvY1, 1);
+			SetVertexBlendUVDistortionUV(v[5], uvX3, 0);
+			SetVertexBlendUVDistortionUV(v[5], uvY1, 1);
 
-			v[2].SetBlendUVDistortionUV(uvX1, 0);
-			v[2].SetBlendUVDistortionUV(uvY2, 1);
+			SetVertexBlendUVDistortionUV(v[2], uvX1, 0);
+			SetVertexBlendUVDistortionUV(v[2], uvY2, 1);
 
-			v[3].SetBlendUVDistortionUV(uvX2, 0);
-			v[3].SetBlendUVDistortionUV(uvY2, 1);
+			SetVertexBlendUVDistortionUV(v[3], uvX2, 0);
+			SetVertexBlendUVDistortionUV(v[3], uvY2, 1);
 
-			v[6].SetBlendUVDistortionUV(uvX2, 0);
-			v[6].SetBlendUVDistortionUV(uvY2, 1);
+			SetVertexBlendUVDistortionUV(v[6], uvX2, 0);
+			SetVertexBlendUVDistortionUV(v[6], uvY2, 1);
 
-			v[7].SetBlendUVDistortionUV(uvX3, 0);
-			v[7].SetBlendUVDistortionUV(uvY2, 1);
+			SetVertexBlendUVDistortionUV(v[7], uvX3, 0);
+			SetVertexBlendUVDistortionUV(v[7], uvY2, 1);
 		}
 	}
 
