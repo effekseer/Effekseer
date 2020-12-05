@@ -69,7 +69,13 @@ jobs:
       - run: |
           git lfs install
           git lfs pull
-      
+
+      - name: Install Cmake for macOS (because of libpng)
+        if: matrix.name == 'mac'
+        uses: jwlawson/actions-setup-cmake@v1.4
+        with:
+          cmake-version: '3.18.x'
+
       - name: Install Linux Dependencies
         if: matrix.name == 'linux'
         run: |
