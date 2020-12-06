@@ -113,7 +113,6 @@ namespace Effekseer.GUI.Component
 				if (isControlsChanged)
 				{
 					SetValue(bindingObject, 0);
-					isControlsChanged = false;
 				}
 
 				controlRows.Lock();
@@ -202,7 +201,6 @@ namespace Effekseer.GUI.Component
 				if (isControlsChanged)
 				{
 					SetValue(bindingObject, 0);
-					isControlsChanged = false;
 				}
 
 				return indent;
@@ -248,6 +246,8 @@ namespace Effekseer.GUI.Component
 
 					bindingObject = null;
 				}
+
+				isControlsChanged = false;
 			}
 
 			void RegisterValue(object value, int indent)
