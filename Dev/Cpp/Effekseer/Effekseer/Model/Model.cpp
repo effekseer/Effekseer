@@ -87,6 +87,11 @@ const RefPtr<Backend::IndexBuffer>& Model::GetIndexBuffer(int32_t index) const
 	return models_[index].indexBuffer;
 }
 
+const RefPtr<Backend::IndexBuffer>& Model::GetWireIndexBuffer(int32_t index) const
+{
+	return models_[index].wireIndexBuffer;
+}
+
 const Model::Vertex* Model::GetVertexes(int32_t index) const
 {
 	return models_[index].vertexes.data();
@@ -332,6 +337,55 @@ bool Model::StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice)
 bool Model::GetIsBufferStoredOnGPU() const
 {
 	return isBufferStoredOnGPU_;
+}
+
+bool Model::GenerateWireIndexBuffer(Backend::GraphicsDevice* graphicsDevice)
+{
+	if (isWireIndexBufferGenerated_)
+	{
+		return true;
+	}
+
+		if (graphicsDevice == nullptr)
+	{
+		return false;
+	}
+
+	for (int32_t f = 0; f < GetFrameCount(); f++)
+	{
+		CustomVector<int32_t> indexes;
+		indexes.reserve(GetFaceCount(f) * 6);
+
+		auto fp = GetFaces(f);
+
+		for (int32_t i = 0; i < GetFaceCount(f); i++)
+		{
+			indexes.emplace_back(fp->Indexes[0]);
+			indexes.emplace_back(fp->Indexes[1]);
+			indexes.emplace_back(fp->Indexes[1]);
+			indexes.emplace_back(fp->Indexes[2]);
+			indexes.emplace_back(fp->Indexes[2]);
+			indexes.emplace_back(fp->Indexes[0]);
+			fp++;
+		}
+
+		{
+			models_[f].wireIndexBuffer = graphicsDevice->CreateIndexBuffer(indexes.size(), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
+			if (models_[f].wireIndexBuffer == nullptr)
+			{
+				return false;
+			}
+		}
+	}
+
+	isWireIndexBufferGenerated_ = true;
+
+	return isWireIndexBufferGenerated_;
+}
+
+bool Model::GetIsWireIndexBufferGenerated() const
+{
+	return isWireIndexBufferGenerated_;
 }
 
 } // namespace Effekseer

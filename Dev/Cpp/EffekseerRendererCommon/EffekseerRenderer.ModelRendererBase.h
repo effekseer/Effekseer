@@ -1161,7 +1161,18 @@ public:
 
 			// Invalid unless layout is set after buffer
 			renderer->SetVertexBuffer(model->GetVertexBuffer(stTime0), sizeof(Effekseer::Model::Vertex));
-			renderer->SetIndexBuffer(model->GetIndexBuffer(stTime0));
+
+			int32_t indexPerFace = 3;
+			if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+			{
+				renderer->SetIndexBuffer(model->GetWireIndexBuffer(stTime0));
+				indexPerFace = 6;
+			}
+			else
+			{
+				renderer->SetIndexBuffer(model->GetIndexBuffer(stTime0));
+			}
+
 			renderer->SetLayout(shader_);
 
 			for (size_t loop = 0; loop < m_matrixes.size();)
@@ -1237,7 +1248,7 @@ public:
 
 				if (VertexType == ModelRendererVertexType::Instancing)
 				{
-					renderer->DrawPolygonInstanced(model->GetVertexCount(stTime0), model->GetFaceCount(stTime0) * 3, modelCount);
+					renderer->DrawPolygonInstanced(model->GetVertexCount(stTime0), model->GetFaceCount(stTime0) * indexPerFace, modelCount);
 				}
 				else
 				{
@@ -1256,7 +1267,18 @@ public:
 
 				// Invalid unless layout is set after buffer
 				renderer->SetVertexBuffer(model->GetVertexBuffer(stTime), sizeof(Effekseer::Model::Vertex));
-				renderer->SetIndexBuffer(model->GetIndexBuffer(stTime));
+
+				int32_t indexPerFace = 3;
+				if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+				{
+					renderer->SetIndexBuffer(model->GetWireIndexBuffer(stTime));
+					indexPerFace = 6;
+				}
+				else
+				{
+					renderer->SetIndexBuffer(model->GetIndexBuffer(stTime));
+				}
+
 				renderer->SetLayout(shader_);
 
 				vcb->ModelMatrix[0] = m_matrixes[loop];
@@ -1308,7 +1330,7 @@ public:
 				}
 
 				shader_->SetConstantBuffer();
-				renderer->DrawPolygon(model->GetVertexCount(stTime), model->GetFaceCount(stTime) * 3);
+				renderer->DrawPolygon(model->GetVertexCount(stTime), model->GetFaceCount(stTime) * indexPerFace);
 
 				loop += 1;
 			}

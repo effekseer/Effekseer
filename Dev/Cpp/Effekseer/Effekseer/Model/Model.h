@@ -59,11 +59,13 @@ protected:
 		CustomVector<Face> faces;
 		RefPtr<Backend::VertexBuffer> vertexBuffer;
 		RefPtr<Backend::IndexBuffer> indexBuffer;
+		RefPtr<Backend::IndexBuffer> wireIndexBuffer;
 	};
 
 	int32_t version_ = 0;
 	CustomVector<InternalModel> models_;
 	bool isBufferStoredOnGPU_ = false;
+	bool isWireIndexBufferGenerated_ = false;
 
 public:
 	Model(const CustomVector<Vertex>& vertecies, const CustomVector<Face>& faces);
@@ -75,6 +77,8 @@ public:
 	const RefPtr<Backend::VertexBuffer>& GetVertexBuffer(int32_t index) const;
 
 	const RefPtr<Backend::IndexBuffer>& GetIndexBuffer(int32_t index) const;
+
+	const RefPtr<Backend::IndexBuffer>& GetWireIndexBuffer(int32_t index) const;
 
 	const Vertex* GetVertexes(int32_t index = 0) const;
 
@@ -99,6 +103,10 @@ public:
 	bool StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice);
 
 	bool GetIsBufferStoredOnGPU() const;
+
+	bool GenerateWireIndexBuffer(Backend::GraphicsDevice* graphicsDevice);
+
+	bool GetIsWireIndexBufferGenerated() const;
 };
 
 } // namespace Effekseer
