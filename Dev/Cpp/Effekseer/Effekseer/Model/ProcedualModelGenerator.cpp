@@ -124,6 +124,13 @@ static void CalculateNormal(ProcedualMesh& mesh)
 		const auto& v1 = mesh.Vertexes[mesh.Faces[i].Indexes[0]];
 		const auto& v2 = mesh.Vertexes[mesh.Faces[i].Indexes[1]];
 		const auto& v3 = mesh.Vertexes[mesh.Faces[i].Indexes[2]];
+
+		const auto eps = 0.0001f;
+		if ((v1.Position - v2.Position).GetLength() < eps || (v2.Position - v3.Position).GetLength() < eps || (v1.Position - v3.Position).GetLength() < eps)
+		{
+			continue;
+		}
+
 		const auto normal = SIMD::Vec3f::Cross(v3.Position - v1.Position, v2.Position - v1.Position).Normalize();
 
 		faceNormals[i] = normal;
@@ -139,17 +146,29 @@ static void CalculateNormal(ProcedualMesh& mesh)
 	CustomAlignedUnorderedMap<SIMD::Vec3f, SIMD::Vec3f> tangents;
 	CustomAlignedUnorderedMap<SIMD::Vec3f, int32_t> vertexCounts;
 
+	auto generateKey = [](SIMD::Vec3f s) -> SIMD::Vec3f {
+		s.SetX(roundf(s.GetX() * 1024.0f));
+		s.SetY(roundf(s.GetY() * 1024.0f));
+		s.SetZ(roundf(s.GetZ() * 1024.0f));
+		return s;
+	};
+
 	for (size_t i = 0; i < mesh.Faces.size(); i++)
 	{
 		for (size_t j = 0; j < 3; j++)
 		{
-			const auto& key = mesh.Vertexes[mesh.Faces[i].Indexes[j]].Position;
+			const auto& key = generateKey(mesh.Vertexes[mesh.Faces[i].Indexes[j]].Position);
 
 			if (normals.count(key) == 0)
 			{
 				normals[key] = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 				tangents[key] = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 				vertexCounts[key] = 0;
+			}
+
+			if (faceNormals[i] == SIMD::Vec3f(0.0f, 0.0f, 0.0f))
+			{
+				continue;
 			}
 
 			normals[key] += faceNormals[i];
@@ -160,7 +179,7 @@ static void CalculateNormal(ProcedualMesh& mesh)
 
 	for (size_t i = 0; i < mesh.Vertexes.size(); i++)
 	{
-		const auto& key = mesh.Vertexes[i].Position;
+		const auto& key = generateKey(mesh.Vertexes[i].Position);
 		mesh.Vertexes[i].Normal = normals[key] / static_cast<float>(vertexCounts[key]);
 		mesh.Vertexes[i].Tangent = tangents[key] / static_cast<float>(vertexCounts[key]);
 	}
@@ -286,16 +305,29 @@ struct RotatorSphere
 
 	SIMD::Vec2f GetPosition(float value) const
 	{
-		const auto depthMax = Clamp(DepthMax, 1.0f, -1.0f);
-		const auto depthMin = Clamp(DepthMin, 1.0f, -1.0f);
+		const auto depthMax = Clamp(DepthMax, Radius, -Radius);
+		const auto depthMin = Clamp(DepthMin, Radius, -Radius);
+
+		float angleMax = atan2f(depthMax, sqrtf(Radius * Radius - depthMax * depthMax));
+		float angleMin = atan2f(depthMin, sqrtf(Radius * Radius - depthMin * depthMin));
+
+		float angle = (angleMax - angleMin) * value + angleMin;
+
+		if (value == 1.0f)
+		{
+			angle = angleMax;
+		}
+		else if (value == 0.0f)
+		{
+			angle = angleMin;
+		}
 
 		float valueMin = depthMin * Radius;
 		float valueMax = depthMax * Radius;
 
 		value = Clamp(value, 1.0f, 0.0f);
-		float axisPos = (DepthMax - DepthMin) * value + DepthMin;
 
-		return SIMD::Vec2f(sqrt(Radius * Radius - axisPos * axisPos), axisPos);
+		return SIMD::Vec2f(cosf(angle) * Radius, sinf(angle) * Radius);
 	}
 };
 
@@ -321,8 +353,9 @@ struct RotatorCylinder
 	SIMD::Vec2f GetPosition(float value) const
 	{
 		value = Clamp(value, 1.0f, 0.0f);
+
 		float axisPos = Depth * value;
-		return SIMD::Vec2f((Radius2 - Radius1) / Depth * axisPos + Radius1, axisPos);
+		return SIMD::Vec2f((Radius2 - Radius1) * value + Radius1, axisPos);
 	}
 };
 

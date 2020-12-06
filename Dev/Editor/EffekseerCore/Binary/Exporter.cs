@@ -34,7 +34,7 @@ namespace Effekseer.Binary
 
 		public HashSet<string> Curves = new HashSet<string>();
 
-		public HashSet<Data.ProcedualModelParameter> ProcedualModels = new HashSet<ProcedualModelParameter>();
+		public List<ProcedualModelParameter> ProcedualModels = new List<ProcedualModelParameter>();
 
 		/// <summary>
 		/// Export effect data
@@ -65,7 +65,7 @@ namespace Effekseer.Binary
 
 			Curves = new HashSet<string>();
 
-			ProcedualModels = new HashSet<ProcedualModelParameter>();
+			ProcedualModels = new List<ProcedualModelParameter>();
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -599,7 +599,7 @@ namespace Effekseer.Binary
 			var procedual_mesh_and_index = new SortedDictionary<ProcedualModelParameter, int>();
 			{
 				int index = 0;
-				foreach (var mesh in ProcedualModels.ToList().OrderBy(_ => _))
+				foreach (var mesh in ProcedualModels)
 				{
 					procedual_mesh_and_index.Add(mesh, index);
 					index++;

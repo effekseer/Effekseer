@@ -182,9 +182,7 @@ namespace Effekseer.Data
 
 			if (Type.Value == ProcedualModelType.Mesh)
 			{
-				if (AngleBeginEnd.X != param.AngleBeginEnd.X)
-					return false;
-				if (AngleBeginEnd.Y != param.AngleBeginEnd.Y)
+				if (!AngleBeginEnd.ValueEquals(param.AngleBeginEnd))
 					return false;
 				if (!Divisions.ValueEquals(param.Divisions))
 					return false;
