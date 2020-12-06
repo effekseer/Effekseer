@@ -270,7 +270,7 @@ namespace Effekseer.GUI.Component
 					}
 					else
 					{
-						var props = value.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+						var props = value.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).OrderBy(x => x.MetadataToken);
 						editableValues = props.Select(_ => Data.EditableValue.Create(_.GetValue(value), _)).ToArray();
 					}
 
