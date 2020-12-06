@@ -289,6 +289,15 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
+	if (m_renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+	{
+		model->GenerateWireIndexBuffer(graphicsDevice_);
+		if (!model->GetIsWireIndexBufferGenerated())
+		{
+			return;
+		}
+	}
+
 	EndRendering_<
 		RendererImplemented,
 		Shader,
