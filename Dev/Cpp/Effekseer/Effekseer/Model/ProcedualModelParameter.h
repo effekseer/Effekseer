@@ -82,17 +82,26 @@ enum class ProcedualModelCrossSectionType : int32_t
 	Point,
 };
 
+enum class ProcedualModelAxisType : int32_t
+{
+	X,
+	Y,
+	Z,
+};
+
 struct ProcedualModelParameter
 {
 	ProcedualModelType Type;
 	ProcedualModelPrimitiveType PrimitiveType;
+	ProcedualModelAxisType AxisType = ProcedualModelAxisType::Y;
 
-	union {
+	union
+	{
 		struct
 		{
 			float AngleBegin;
 			float AngleEnd;
-			std::array<int,2> Divisions;
+			std::array<int, 2> Divisions;
 		} Mesh;
 
 		struct
@@ -107,7 +116,8 @@ struct ProcedualModelParameter
 		} Ribbon;
 	};
 
-	union {
+	union
+	{
 		struct
 		{
 			float Radius;
@@ -149,6 +159,7 @@ struct ProcedualModelParameter
 	std::array<float, 3> CurlNoiseOffset = {};
 	std::array<float, 3> CurlNoisePower = {};
 
+	std::array<float, 2> ColorCenterArea = {0.0f, 0.0f};
 	Color ColorLeft;
 	Color ColorCenter;
 	Color ColorRight;
@@ -257,6 +268,11 @@ struct ProcedualModelParameter
 			assert(0);
 		}
 
+		if (AxisType != rhs.AxisType)
+		{
+			return static_cast<int32_t>(AxisType) < static_cast<int32_t>(rhs.AxisType);
+		}
+
 		if (TiltNoiseFrequency != rhs.TiltNoiseFrequency)
 			return TiltNoiseFrequency < rhs.TiltNoiseFrequency;
 
@@ -301,6 +317,9 @@ struct ProcedualModelParameter
 
 		if (ColorRightMiddle != rhs.ColorRightMiddle)
 			return ColorRightMiddle < rhs.ColorRightMiddle;
+
+		if (ColorCenterArea != rhs.ColorCenterArea)
+			return ColorCenterArea < rhs.ColorCenterArea;
 
 		return false;
 	}
@@ -358,6 +377,8 @@ struct ProcedualModelParameter
 			reader.Read(Spline4.Point4);
 		}
 
+		reader.Read(AxisType);
+
 		reader.Read(TiltNoiseFrequency);
 		reader.Read(TiltNoiseOffset);
 		reader.Read(TiltNoisePower);
@@ -376,6 +397,7 @@ struct ProcedualModelParameter
 		reader.Read(ColorLeftMiddle);
 		reader.Read(ColorCenterMiddle);
 		reader.Read(ColorRightMiddle);
+		reader.Read(ColorCenterArea);
 
 		return true;
 	}

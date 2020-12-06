@@ -35,6 +35,16 @@ namespace Effekseer.Data
 		Point,
 	}
 
+	public enum ProcedualModelAxisType : int
+	{
+		[Key(key = "ProcedualModelAxisType_X")]
+		X,
+		[Key(key = "ProcedualModelAxisType_Y")]
+		Y,
+		[Key(key = "ProcedualModelAxisType_Z")]
+		Z,
+	}
+
 	public class ProcedualModelParameter : INamedObject
 	{
 		const int SelecterType = 100;
@@ -126,6 +136,9 @@ namespace Effekseer.Data
 		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Spline4)]
 		public Value.Vector2D Point4 { get; private set; } = new Value.Vector2D(1.0f, 2.0f);
 
+		[Key(key = "PM_AxisType")]
+		public Enum<AxisType> AxisType { get; private set; } = new Enum<AxisType>(Data.AxisType.YAxis);
+
 		[Key(key = "PM_TiltNoiseFreq")]
 		public Value.Vector2D TiltNoiseFrequency { get; private set; } = new Value.Vector2D(1.0f, 1.0f, x_step: 0.01f, y_step: 0.01f);
 
@@ -170,6 +183,9 @@ namespace Effekseer.Data
 
 		[Key(key = "PM_ColorRightMiddle")]
 		public Value.Color ColorRightMiddle { get; private set; } = new Value.Color(255, 255, 255, 255);
+
+		[Key(key = "PM_ColorCenterArea")]
+		public Value.Vector2D ColorCenterArea { get; private set; } = new Value.Vector2D(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.01f, y_step: 0.01f);
 
 		public override bool Equals(object obj)
 		{
@@ -254,6 +270,9 @@ namespace Effekseer.Data
 				throw new Exception();
 			}
 
+			if (AxisType.Value != param.AxisType.Value)
+				return false;
+
 			if (!TiltNoiseFrequency.ValueEquals(param.TiltNoiseFrequency))
 				return false;
 			if (!TiltNoiseOffset.ValueEquals(param.TiltNoiseOffset))
@@ -287,6 +306,10 @@ namespace Effekseer.Data
 				return false;
 			if (!ColorRightMiddle.ValueEquals(param.ColorRightMiddle))
 				return false;
+
+			if (!ColorCenterArea.ValueEquals(param.ColorCenterArea))
+				return false;
+
 			return true;
 		}
 
@@ -332,6 +355,7 @@ namespace Effekseer.Data
 				throw new Exception();
 			}
 
+			hash = Utils.Misc.CombineHashCodes(new[] { hash, AxisType.Value.GetHashCode() });
 
 			hash = Utils.Misc.CombineHashCodes(new[] { hash, TiltNoiseFrequency.GetValueHashCode(), TiltNoiseOffset.GetValueHashCode(), TiltNoisePower.GetValueHashCode() });
 			hash = Utils.Misc.CombineHashCodes(new[] { hash, WaveNoiseFrequency.GetValueHashCode(), WaveNoiseOffset.GetValueHashCode(), WaveNoisePower.GetValueHashCode() });
@@ -339,6 +363,8 @@ namespace Effekseer.Data
 
 			hash = Utils.Misc.CombineHashCodes(new[] { hash, ColorLeft.GetValueHashCode(), ColorCenter.GetValueHashCode(), ColorRight.GetValueHashCode() });
 			hash = Utils.Misc.CombineHashCodes(new[] { hash, ColorLeftMiddle.GetValueHashCode(), ColorCenterMiddle.GetValueHashCode(), ColorRightMiddle.GetValueHashCode() });
+
+			hash = Utils.Misc.CombineHashCodes(new[] { hash, ColorCenterArea.GetValueHashCode() });
 
 			return hash;
 		}

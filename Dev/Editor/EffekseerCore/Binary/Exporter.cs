@@ -791,6 +791,9 @@ namespace Effekseer.Binary
 						data.Add((byte[])param.Point4);
 					}
 
+					var axisType = (int)param.AxisType.Value;
+					data.Add(axisType.GetBytes());
+
 					data.Add((byte[])param.TiltNoiseFrequency);
 					data.Add((byte[])param.TiltNoiseOffset);
 					data.Add((byte[])param.TiltNoisePower);
@@ -807,6 +810,7 @@ namespace Effekseer.Binary
 					data.Add((byte[])param.ColorLeftMiddle);
 					data.Add((byte[])param.ColorCenterMiddle);
 					data.Add((byte[])param.ColorRightMiddle);
+					data.Add((byte[])param.ColorCenterArea);
 				}
 			}
 
