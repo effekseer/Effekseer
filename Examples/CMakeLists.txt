@@ -48,7 +48,10 @@ if(WIN32)
 endif()
 
 add_subdirectory(OpenGL)
-add_subdirectory(OpenAL)
+
+if(WIN32)
+    add_subdirectory(OpenAL)
+endif()
 
 if (BUILD_VULKAN)
     add_subdirectory(Vulkan)
