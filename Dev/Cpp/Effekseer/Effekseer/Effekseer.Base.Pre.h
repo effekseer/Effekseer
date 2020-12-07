@@ -651,6 +651,9 @@ class RefPtr
 {
 	T* ptr_ = nullptr;
 
+	template <typename U>
+	friend class RefPtr;
+
 public:
 	RefPtr() = default;
 
@@ -709,10 +712,28 @@ public:
 	}
 
 	template <class U>
+	void operator=(RefPtr<U>&& o)
+	{
+		auto ptr = o.Get();
+		o.ptr_ = nullptr;
+		SafeRelease(ptr_);
+		ptr_ = ptr;
+	}
+
+	template <class U>
 	RefPtr(const RefPtr<U>& o)
 	{
 		auto ptr = o.Get();
 		SafeAddRef(ptr);
+		SafeRelease(ptr_);
+		ptr_ = ptr;
+	}
+
+	template <class U>
+	RefPtr(RefPtr<U>&& o)
+	{
+		auto ptr = o.Get();
+		o.ptr_ = nullptr;
 		SafeRelease(ptr_);
 		ptr_ = ptr;
 	}
