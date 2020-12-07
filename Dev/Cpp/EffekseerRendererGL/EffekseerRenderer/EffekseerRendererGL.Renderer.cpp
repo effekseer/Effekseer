@@ -86,7 +86,7 @@ namespace EffekseerRendererGL
 }
 
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::Effekseer::FileInterface* fileInterface)
+													::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(graphicsDevice.DownCast<Backend::GraphicsDevice>(), fileInterface));
@@ -119,7 +119,6 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 	int vsSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
 
 	size_t size = sizeof(EffekseerRenderer::SimpleVertex);
-	size = (std::min)(size, sizeof(VertexDistortion));
 	size = (std::min)(size, sizeof(EffekseerRenderer::DynamicVertex));
 	size = (std::min)(size, sizeof(EffekseerRenderer::LightingVertex));
 
@@ -182,7 +181,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
-	
+
 	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
 	{
 		GLExt::glDeleteVertexArrays(1, &defaultVertexArray_);
@@ -390,31 +389,33 @@ bool RendererImplemented::Initialize()
 	vao_ad_unlit_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer());
 
 	// Distortion
-	static ShaderAttribInfo sprite_attribs_distortion_ad[10] = {
+	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_normal_ad[11] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false},
 		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_UV", GL_FLOAT, 2, 16, false},
-		{"Input_Binormal", GL_FLOAT, 3, 24, false},
-		{"Input_Tangent", GL_FLOAT, 3, 36, false},
+		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
+		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
+		{"Input_UV1", GL_FLOAT, 2, 24, false},
+		{"Input_UV2", GL_FLOAT, 2, 32, false},
 
-		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 12, false},
-		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 16, false},
-		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 18, false},
-		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 22, false},
-		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 23, false},
+		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 10, false},
+		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 14, false},
+		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 16, false},
+		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 20, false},
+		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 21, false},
 	};
 
-	shader_ad_distortion_->GetAttribIdList(10, sprite_attribs_distortion_ad);
-
-	static ShaderAttribInfo sprite_attribs_distortion[5] = {
+	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_normal[6] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false},
 		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_UV", GL_FLOAT, 2, 16, false},
-		{"Input_Binormal", GL_FLOAT, 3, 24, false},
-		{"Input_Tangent", GL_FLOAT, 3, 36, false},
+		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
+		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
+		{"Input_UV1", GL_FLOAT, 2, 24, false},
+		{"Input_UV2", GL_FLOAT, 2, 32, false},
 	};
 
-	shader_distortion_->GetAttribIdList(5, sprite_attribs_distortion);
+	shader_ad_distortion_->GetAttribIdList(11, sprite_attribs_normal_ad);
+
+	shader_distortion_->GetAttribIdList(6, sprite_attribs_normal);
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
@@ -461,33 +462,9 @@ bool RendererImplemented::Initialize()
 
 	// Lit
 
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting_ad[11] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false},
-		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
-		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
-		{"Input_UV1", GL_FLOAT, 2, 24, false},
-		{"Input_UV2", GL_FLOAT, 2, 32, false},
+	shader_ad_lit_->GetAttribIdList(11, sprite_attribs_normal_ad);
 
-		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 10, false},
-		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 14, false},
-		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 16, false},
-		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 20, false},
-		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 21, false},
-	};
-
-	shader_ad_lit_->GetAttribIdList(11, sprite_attribs_lighting_ad);
-
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false},
-		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
-		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
-		{"Input_UV1", GL_FLOAT, 2, 24, false},
-		{"Input_UV2", GL_FLOAT, 2, 32, false},
-	};
-
-	shader_lit_->GetAttribIdList(6, sprite_attribs_lighting);
+	shader_lit_->GetAttribIdList(6, sprite_attribs_normal);
 
 	for (auto shader : {shader_ad_lit_, shader_lit_})
 	{
@@ -526,7 +503,6 @@ bool RendererImplemented::Initialize()
 	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
 	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_sampler_depthTex"));
 	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
-
 
 	vao_ad_lit_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer());
 	vao_lit_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), GetIndexBuffer());

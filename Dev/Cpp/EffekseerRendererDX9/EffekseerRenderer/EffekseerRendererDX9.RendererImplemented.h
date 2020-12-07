@@ -16,7 +16,7 @@ namespace EffekseerRendererDX9
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-using VertexDistortion = EffekseerRenderer::VertexDistortion;
+//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 /**
 	@brief	描画クラス

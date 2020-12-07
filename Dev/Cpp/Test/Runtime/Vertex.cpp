@@ -90,10 +90,10 @@ void VertexTest()
 {
 	VertexTest<EffekseerRenderer::AdvancedSimpleVertex>(true);
 	VertexTest<EffekseerRenderer::AdvancedLightingVertex>(true);
-	VertexTest<EffekseerRenderer::AdvancedVertexDistortion>(true);
+	//VertexTest<EffekseerRenderer::AdvancedVertexDistortion>(true);
 	VertexTest<EffekseerRenderer::SimpleVertex>(false);
 	VertexTest<EffekseerRenderer::LightingVertex>(false);
-	VertexTest<EffekseerRenderer::VertexDistortion>(false);
+	//VertexTest<EffekseerRenderer::VertexDistortion>(false);
 	VertexTest<EffekseerRenderer::DynamicVertex>(false);
 }
 TestRegister Runtime_VertexTest("Runtime.Vertex", []() -> void { VertexTest(); });

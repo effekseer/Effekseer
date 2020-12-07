@@ -24,7 +24,7 @@ namespace EffekseerRendererLLGI
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-using VertexDistortion = EffekseerRenderer::VertexDistortion;
+//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 class PiplineStateKey
 {

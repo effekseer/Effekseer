@@ -737,23 +737,7 @@ protected:
 				vm.Pos = ToStruct(pos);
 				vr.Pos = ToStruct(-R * vr.Pos.X + pos);
 
-				if (IsDistortionVertex<VERTEX>())
-				{
-					const auto binormalVector = ToStruct(axis);
-					vl.SetBinormal(binormalVector);
-					vm.SetBinormal(binormalVector);
-					vr.SetBinormal(binormalVector);
-
-					::Effekseer::SIMD::Vec3f tangent = vl.Pos - vr.Pos;
-					tangent.Normalize();
-
-					const auto tangentVector = ToStruct(tangent);
-
-					vl.SetTangent(tangentVector);
-					vm.SetTangent(tangentVector);
-					vr.SetTangent(tangentVector);
-				}
-				else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
+				if (VertexNormalRequired<VERTEX>())
 				{
 					::Effekseer::SIMD::Vec3f tangent = SafeNormalize(Effekseer::SIMD::Vec3f(vl.Pos - vr.Pos));
 					Effekseer::SIMD::Vec3f normal = SafeNormalize(Effekseer::SIMD::Vec3f::Cross(tangent, axis));
@@ -811,7 +795,7 @@ protected:
 		// calculate UV
 		AssignUVs<VERTEX, 0>(parameter, verteies);
 
-		if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
+		if (VertexUV2Required<VERTEX>())
 		{
 			AssignUVs<VERTEX, 1>(parameter, verteies);
 		}
@@ -894,7 +878,7 @@ protected:
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedBackDistortion)
 		{
-			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedUnlit)
 		{
@@ -906,7 +890,7 @@ protected:
 		}
 		else if (collector.ShaderType == RendererShaderType::BackDistortion)
 		{
-			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{

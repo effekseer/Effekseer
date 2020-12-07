@@ -82,14 +82,6 @@ struct DynamicVertex
 		}
 	}
 
-	void SetTangent(const VertexFloat3& tangent)
-	{
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-	}
-
 	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
@@ -148,14 +140,6 @@ struct LightingVertex
 		}
 	}
 
-	void SetTangent(const VertexFloat3& tangent)
-	{
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-	}
-
 	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
@@ -199,70 +183,6 @@ struct SimpleVertex
 		{
 			std::swap(Col.R, Col.B);
 		}
-	}
-
-	void SetTangent(const VertexFloat3& tangent)
-	{
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-	}
-
-	void SetPackedNormal(const VertexColor& normal)
-	{
-	}
-
-	void SetPackedTangent(const VertexColor& tangent)
-	{
-	}
-
-	void SetUV2(float u, float v)
-	{
-	}
-};
-
-struct VertexDistortion
-{
-	VertexFloat3 Pos;
-	VertexColor Col;
-
-	union {
-		float UV[2];
-		//! dummy for template
-		float UV1[2];
-		//! dummy for template
-		float UV2[2];
-	};
-
-	VertexFloat3 Binormal;
-	VertexFloat3 Tangent;
-
-	void SetFlipbookIndexAndNextRate(float value)
-	{
-	}
-	void SetAlphaThreshold(float value)
-	{
-	}
-
-	void SetColor(const VertexColor& color, bool flipRGB)
-	{
-		Col = color;
-
-		if (flipRGB)
-		{
-			std::swap(Col.R, Col.B);
-		}
-	}
-
-	void SetTangent(const VertexFloat3& tangent)
-	{
-		Tangent = tangent;
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-		Binormal = binormal;
 	}
 
 	void SetPackedNormal(const VertexColor& normal)
@@ -322,14 +242,6 @@ struct AdvancedLightingVertex
 		}
 	}
 
-	void SetTangent(const VertexFloat3& tangent)
-	{
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-	}
-
 	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
@@ -387,80 +299,6 @@ struct AdvancedSimpleVertex
 		}
 	}
 
-	void SetTangent(const VertexFloat3& tangent)
-	{
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-	}
-
-	void SetPackedNormal(const VertexColor& normal)
-	{
-	}
-
-	void SetPackedTangent(const VertexColor& tangent)
-	{
-	}
-
-	void SetUV2(float u, float v)
-	{
-	}
-};
-
-struct AdvancedVertexDistortion
-{
-	VertexFloat3 Pos;
-	VertexColor Col;
-
-	union {
-		float UV[2];
-		//! dummy for template
-		float UV1[2];
-		//! dummy for template
-		float UV2[2];
-	};
-
-	VertexFloat3 Binormal;
-	VertexFloat3 Tangent;
-
-	float AlphaUV[2];
-	float UVDistortionUV[2];
-	float BlendUV[2];
-	float BlendAlphaUV[2];
-	float BlendUVDistortionUV[2];
-	float FlipbookIndexAndNextRate;
-	float AlphaThreshold;
-
-	void SetFlipbookIndexAndNextRate(float value)
-	{
-		FlipbookIndexAndNextRate = value;
-	}
-	void SetAlphaThreshold(float value)
-	{
-		AlphaThreshold = value;
-	}
-
-	void SetColor(const VertexColor& color, bool flipRGB)
-	{
-		Col = color;
-
-		if (flipRGB)
-		{
-			std::swap(Col.R, Col.B);
-		}
-	}
-
-	void SetTangent(const VertexFloat3& tangent)
-	{
-		Tangent = tangent;
-	}
-
-	void SetBinormal(const VertexFloat3& binormal)
-	{
-		Binormal = binormal;
-	}
-
 	void SetPackedNormal(const VertexColor& normal)
 	{
 	}
@@ -490,13 +328,6 @@ public:
 
 template <>
 class ContainAdvancedData<LightingVertex>
-{
-public:
-	using Value = float;
-};
-
-template <>
-class ContainAdvancedData<VertexDistortion>
 {
 public:
 	using Value = float;
@@ -679,10 +510,8 @@ void SetVertexAlphaThreshold(U& v, float value)
 static int32_t GetMaximumVertexSizeInAllTypes()
 {
 	size_t size = sizeof(DynamicVertexWithCustomData);
-	size = (std::max)(size, sizeof(VertexDistortion));
 	size = (std::max)(size, sizeof(SimpleVertex));
 	size = (std::max)(size, sizeof(LightingVertex));
-	size = (std::max)(size, sizeof(AdvancedVertexDistortion));
 	size = (std::max)(size, sizeof(AdvancedSimpleVertex));
 	size = (std::max)(size, sizeof(AdvancedLightingVertex));
 
@@ -690,49 +519,37 @@ static int32_t GetMaximumVertexSizeInAllTypes()
 };
 
 template <typename T>
-inline bool IsDistortionVertex()
+inline bool VertexNormalRequired()
 {
 	return false;
 }
 
 template <>
-inline bool IsDistortionVertex<VertexDistortion>()
+inline bool VertexNormalRequired<DynamicVertex>()
 {
 	return true;
 }
 
 template <>
-inline bool IsDistortionVertex<AdvancedVertexDistortion>()
+inline bool VertexNormalRequired<LightingVertex>()
+{
+	return true;
+}
+
+template <>
+inline bool VertexNormalRequired<AdvancedLightingVertex>()
 {
 	return true;
 }
 
 template <typename T>
-inline bool IsDynamicVertex()
+inline bool VertexUV2Required()
 {
 	return false;
 }
 
 template <>
-inline bool IsDynamicVertex<DynamicVertex>()
-{
-	return true;
-}
-
-template <typename T>
-inline bool IsLightingVertex()
-{
-	return false;
-}
-
-template <>
-inline bool IsLightingVertex<LightingVertex>()
-{
-	return true;
-}
-
-template <>
-inline bool IsLightingVertex<AdvancedLightingVertex>()
+inline bool VertexUV2Required<DynamicVertex>()
 {
 	return true;
 }
@@ -834,7 +651,7 @@ void ApplyViewOffset(::Effekseer::SIMD::Mat44f& mat,
 					 float distance);
 
 template <typename Vertex>
-inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
+inline void TransformVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
 	using namespace Effekseer::SIMD;
 
@@ -854,76 +671,6 @@ inline void TransformStandardVertexes(Vertex& vertexes, int32_t count, const ::E
 
 		Float4::Store3(&vertexes[i].Pos, oPos);
 	}
-}
-
-template <typename VertexDistortion>
-inline void TransformDistortionVertexes(VertexDistortion& vertexes, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	using namespace Effekseer::SIMD;
-
-	Float4 m0 = mat.X;
-	Float4 m1 = mat.Y;
-	Float4 m2 = mat.Z;
-	Float4 m3 = Float4::SetZero();
-	Float4::Transpose(m0, m1, m2, m3);
-
-	for (int i = 0; i < count; i++)
-	{
-		Float4 iPos = Float4::Load3(&vertexes[i].Pos);
-		Float4 iTangent = Float4::Load3(&vertexes[i].Tangent);
-		Float4 iBinormal = Float4::Load3(&vertexes[i].Binormal);
-
-		Float4 oPos = Float4::MulAddLane<0>(m3, m0, iPos);
-		oPos = Float4::MulAddLane<1>(oPos, m1, iPos);
-		oPos = Float4::MulAddLane<2>(oPos, m2, iPos);
-
-		Float4 oTangent = Float4::MulLane<0>(m0, iTangent);
-		oTangent = Float4::MulAddLane<1>(oTangent, m1, iTangent);
-		oTangent = Float4::MulAddLane<2>(oTangent, m2, iTangent);
-
-		Float4 oBinormal = Float4::MulLane<0>(m0, iBinormal);
-		oBinormal = Float4::MulAddLane<1>(oBinormal, m1, iBinormal);
-		oBinormal = Float4::MulAddLane<2>(oBinormal, m2, iBinormal);
-
-		Float4::Store3(&vertexes[i].Pos, oPos);
-		Float4::Store3(&vertexes[i].Tangent, oTangent);
-		Float4::Store3(&vertexes[i].Binormal, oBinormal);
-	}
-}
-
-inline void TransformVertexes(StrideView<VertexDistortion>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformDistortionVertexes(v, count, mat);
-}
-
-inline void TransformVertexes(StrideView<SimpleVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformStandardVertexes(v, count, mat);
-}
-
-inline void TransformVertexes(StrideView<DynamicVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformStandardVertexes(v, count, mat);
-}
-
-inline void TransformVertexes(StrideView<LightingVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformStandardVertexes(v, count, mat);
-}
-
-inline void TransformVertexes(StrideView<AdvancedVertexDistortion>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformDistortionVertexes(v, count, mat);
-}
-
-inline void TransformVertexes(StrideView<AdvancedSimpleVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformStandardVertexes(v, count, mat);
-}
-
-inline void TransformVertexes(StrideView<AdvancedLightingVertex>& v, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
-{
-	TransformStandardVertexes(v, count, mat);
 }
 
 inline Effekseer::SIMD::Vec3f SafeNormalize(const Effekseer::SIMD::Vec3f& v)

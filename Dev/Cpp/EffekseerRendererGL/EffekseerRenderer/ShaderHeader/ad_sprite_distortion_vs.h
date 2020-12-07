@@ -8,9 +8,10 @@ struct VS_Input
 {
     vec3 Pos;
     vec4 Color;
-    vec2 UV;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec4 Normal;
+    vec4 Tangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Alpha_Dist_UV;
     vec2 BlendUV;
     vec4 Blend_Alpha_Dist_UV;
@@ -44,9 +45,10 @@ uniform VS_ConstantBuffer CBVS0;
 
 attribute vec3 Input_Pos;
 attribute vec4 Input_Color;
-attribute vec2 Input_UV;
-attribute vec3 Input_Binormal;
-attribute vec3 Input_Tangent;
+attribute vec4 Input_Normal;
+attribute vec4 Input_Tangent;
+attribute vec2 Input_UV1;
+attribute vec2 Input_UV2;
 attribute vec4 Input_Alpha_Dist_UV;
 attribute vec2 Input_BlendUV;
 attribute vec4 Input_Blend_Alpha_Dist_UV;
@@ -186,8 +188,11 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
+    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
+    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
+    vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 localBinormal = vec4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
+    vec4 localTangent = vec4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
     localBinormal = CBVS0.mCamera * localBinormal;
     localTangent = CBVS0.mCamera * localTangent;
     vec4 cameraPos = CBVS0.mCamera * pos4;
@@ -204,8 +209,8 @@ VS_Output _main(VS_Input Input)
     Output.PosR /= vec4(Output.PosR.w);
     Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
@@ -218,9 +223,10 @@ void main()
     VS_Input Input;
     Input.Pos = Input_Pos;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
-    Input.Binormal = Input_Binormal;
+    Input.Normal = Input_Normal;
     Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.BlendUV = Input_BlendUV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
@@ -251,9 +257,10 @@ struct VS_Input
 {
     vec3 Pos;
     vec4 Color;
-    vec2 UV;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec4 Normal;
+    vec4 Tangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Alpha_Dist_UV;
     vec2 BlendUV;
     vec4 Blend_Alpha_Dist_UV;
@@ -287,14 +294,15 @@ uniform VS_ConstantBuffer CBVS0;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
-layout(location = 2) in vec2 Input_UV;
-layout(location = 3) in vec3 Input_Binormal;
-layout(location = 4) in vec3 Input_Tangent;
-layout(location = 5) in vec4 Input_Alpha_Dist_UV;
-layout(location = 6) in vec2 Input_BlendUV;
-layout(location = 7) in vec4 Input_Blend_Alpha_Dist_UV;
-layout(location = 8) in float Input_FlipbookIndex;
-layout(location = 9) in float Input_AlphaThreshold;
+layout(location = 2) in vec4 Input_Normal;
+layout(location = 3) in vec4 Input_Tangent;
+layout(location = 4) in vec2 Input_UV1;
+layout(location = 5) in vec2 Input_UV2;
+layout(location = 6) in vec4 Input_Alpha_Dist_UV;
+layout(location = 7) in vec2 Input_BlendUV;
+layout(location = 8) in vec4 Input_Blend_Alpha_Dist_UV;
+layout(location = 9) in float Input_FlipbookIndex;
+layout(location = 10) in float Input_AlphaThreshold;
 centroid out vec4 _VSPS_Color;
 centroid out vec2 _VSPS_UV;
 out vec4 _VSPS_PosP;
@@ -420,8 +428,11 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
+    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
+    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
+    vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 localBinormal = vec4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
+    vec4 localTangent = vec4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
     localBinormal *= CBVS0.mCamera;
     localTangent *= CBVS0.mCamera;
     vec4 cameraPos = pos4 * CBVS0.mCamera;
@@ -438,8 +449,8 @@ VS_Output _main(VS_Input Input)
     Output.PosR /= vec4(Output.PosR.w);
     Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
@@ -452,9 +463,10 @@ void main()
     VS_Input Input;
     Input.Pos = Input_Pos;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
-    Input.Binormal = Input_Binormal;
+    Input.Normal = Input_Normal;
     Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.BlendUV = Input_BlendUV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
@@ -482,9 +494,10 @@ struct VS_Input
 {
     vec3 Pos;
     vec4 Color;
-    vec2 UV;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec4 Normal;
+    vec4 Tangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Alpha_Dist_UV;
     vec2 BlendUV;
     vec4 Blend_Alpha_Dist_UV;
@@ -518,9 +531,10 @@ uniform VS_ConstantBuffer CBVS0;
 
 attribute vec3 Input_Pos;
 attribute vec4 Input_Color;
-attribute vec2 Input_UV;
-attribute vec3 Input_Binormal;
-attribute vec3 Input_Tangent;
+attribute vec4 Input_Normal;
+attribute vec4 Input_Tangent;
+attribute vec2 Input_UV1;
+attribute vec2 Input_UV2;
 attribute vec4 Input_Alpha_Dist_UV;
 attribute vec2 Input_BlendUV;
 attribute vec4 Input_Blend_Alpha_Dist_UV;
@@ -660,8 +674,11 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
+    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
+    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
+    vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 localBinormal = vec4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
+    vec4 localTangent = vec4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
     localBinormal = CBVS0.mCamera * localBinormal;
     localTangent = CBVS0.mCamera * localTangent;
     vec4 cameraPos = CBVS0.mCamera * pos4;
@@ -678,8 +695,8 @@ VS_Output _main(VS_Input Input)
     Output.PosR /= vec4(Output.PosR.w);
     Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
@@ -692,9 +709,10 @@ void main()
     VS_Input Input;
     Input.Pos = Input_Pos;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
-    Input.Binormal = Input_Binormal;
+    Input.Normal = Input_Normal;
     Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.BlendUV = Input_BlendUV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
@@ -722,9 +740,10 @@ struct VS_Input
 {
     vec3 Pos;
     vec4 Color;
-    vec2 UV;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec4 Normal;
+    vec4 Tangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Alpha_Dist_UV;
     vec2 BlendUV;
     vec4 Blend_Alpha_Dist_UV;
@@ -758,14 +777,15 @@ uniform VS_ConstantBuffer CBVS0;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
-layout(location = 2) in vec2 Input_UV;
-layout(location = 3) in vec3 Input_Binormal;
-layout(location = 4) in vec3 Input_Tangent;
-layout(location = 5) in vec4 Input_Alpha_Dist_UV;
-layout(location = 6) in vec2 Input_BlendUV;
-layout(location = 7) in vec4 Input_Blend_Alpha_Dist_UV;
-layout(location = 8) in float Input_FlipbookIndex;
-layout(location = 9) in float Input_AlphaThreshold;
+layout(location = 2) in vec4 Input_Normal;
+layout(location = 3) in vec4 Input_Tangent;
+layout(location = 4) in vec2 Input_UV1;
+layout(location = 5) in vec2 Input_UV2;
+layout(location = 6) in vec4 Input_Alpha_Dist_UV;
+layout(location = 7) in vec2 Input_BlendUV;
+layout(location = 8) in vec4 Input_Blend_Alpha_Dist_UV;
+layout(location = 9) in float Input_FlipbookIndex;
+layout(location = 10) in float Input_AlphaThreshold;
 centroid out vec4 _VSPS_Color;
 centroid out vec2 _VSPS_UV;
 out vec4 _VSPS_PosP;
@@ -891,8 +911,11 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
+    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
+    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
+    vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 localBinormal = vec4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
+    vec4 localTangent = vec4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
     localBinormal *= CBVS0.mCamera;
     localTangent *= CBVS0.mCamera;
     vec4 cameraPos = pos4 * CBVS0.mCamera;
@@ -909,8 +932,8 @@ VS_Output _main(VS_Input Input)
     Output.PosR /= vec4(Output.PosR.w);
     Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
@@ -923,9 +946,10 @@ void main()
     VS_Input Input;
     Input.Pos = Input_Pos;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
-    Input.Binormal = Input_Binormal;
+    Input.Normal = Input_Normal;
     Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.BlendUV = Input_BlendUV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;

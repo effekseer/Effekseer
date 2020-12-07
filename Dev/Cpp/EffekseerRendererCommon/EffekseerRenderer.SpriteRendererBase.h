@@ -81,7 +81,7 @@ protected:
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedBackDistortion)
 		{
-			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedUnlit)
 		{
@@ -93,7 +93,7 @@ protected:
 		}
 		else if (collector.ShaderType == RendererShaderType::BackDistortion)
 		{
-			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{
@@ -272,17 +272,7 @@ protected:
 		SetVertexBlendUVDistortionUV(verteies[3], instanceParameter.BlendUVDistortionUV.X + instanceParameter.BlendUVDistortionUV.Width, 0);
 		SetVertexBlendUVDistortionUV(verteies[3], instanceParameter.BlendUVDistortionUV.Y, 1);
 
-		// distortion
-		if (IsDistortionVertex<VERTEX>())
-		{
-			StrideView<VertexDistortion> vs(verteies.pointerOrigin_, stride_, 4);
-			for (auto i = 0; i < 4; i++)
-			{
-				vs[i].SetTangent(Effekseer::Vector3D(1.0f, 0.0f, 0.0f));
-				vs[i].SetBinormal(Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
-			}
-		}
-		else if (IsLightingVertex<VERTEX>() || IsDynamicVertex<VERTEX>())
+		if (VertexUV2Required<VERTEX>())
 		{
 			StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 			vs[0].SetUV2(0.0f, 1.0f);
@@ -328,7 +318,7 @@ protected:
 
 			TransformVertexes(verteies, 4, mat_rot);
 
-			if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
+			if (VertexNormalRequired<VERTEX>())
 			{
 				if (!parameter.IsRightHand)
 				{
@@ -364,19 +354,7 @@ protected:
 				Pos = ::Effekseer::SIMD::Vec3f::Transform(Pos, mat);
 				::Effekseer::SIMD::Vec3f::Store(&verteies[i].Pos, Pos);
 
-				// distortion
-				if (IsDistortionVertex<VERTEX>())
-				{
-					auto vs = (VertexDistortion*)&verteies[i];
-					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
-					auto tangentY = efkVector3D(mat.X.GetY(), mat.Y.GetY(), mat.Z.GetY());
-					tangentX = tangentX.Normalize();
-					tangentY = tangentY.Normalize();
-
-					verteies[i].SetTangent(ToStruct(tangentX));
-					verteies[i].SetBinormal(ToStruct(tangentY));
-				}
-				else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
+				if (VertexNormalRequired<VERTEX>())
 				{
 					StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
