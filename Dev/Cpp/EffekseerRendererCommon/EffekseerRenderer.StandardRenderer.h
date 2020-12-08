@@ -332,7 +332,7 @@ public:
 		}
 		else if (renderingMode_ == RendererShaderType::BackDistortion)
 		{
-			stride = sizeof(VertexDistortion);
+			stride = sizeof(LightingVertex);
 		}
 		else if (renderingMode_ == RendererShaderType::Unlit)
 		{
@@ -344,7 +344,7 @@ public:
 		}
 		else if (renderingMode_ == RendererShaderType::AdvancedBackDistortion)
 		{
-			stride = sizeof(AdvancedVertexDistortion);
+			stride = sizeof(AdvancedLightingVertex);
 		}
 		else if (renderingMode_ == RendererShaderType::AdvancedUnlit)
 		{

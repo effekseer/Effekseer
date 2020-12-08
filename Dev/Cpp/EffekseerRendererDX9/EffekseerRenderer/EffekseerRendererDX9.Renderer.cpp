@@ -338,78 +338,13 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, sizeof(float) * 17, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7}, // AlphaThreshold
 		D3DDECL_END()};
 
-	D3DVERTEXELEMENT9 decl_ad_distortion[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-		{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
-		{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
-		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5}, // AlphaTextureUV + UVDistortionTextureUV
-		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6}, // BlendUV
-		{0, sizeof(float) * 18, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7}, // BlendAlphaUV + BlendUVDistortionUV
-		{0, sizeof(float) * 22, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 8}, // FlipbookIndexAndNextRate
-		{0, sizeof(float) * 23, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 9}, // AlphaThreshold
-		D3DDECL_END()};
-
 	D3DVERTEXELEMENT9 decl[] = {
 		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
 		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
 		D3DDECL_END()};
 
-	D3DVERTEXELEMENT9 decl_distortion[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-		{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
-		{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
-		D3DDECL_END()};
-
-	shader_ad_unlit_ = Shader::Create(this,
-								 Standard_VS_Ad::g_vs30_main,
-								 sizeof(Standard_VS_Ad::g_vs30_main),
-								 Standard_PS_Ad::g_ps30_main,
-								 sizeof(Standard_PS_Ad::g_ps30_main),
-								 "StandardRenderer",
-								 decl_ad,
-								 false);
-	if (shader_ad_unlit_ == nullptr)
-		return false;
-
-	shader_unlit_ = Shader::Create(this,
-							  Standard_VS::g_vs30_main,
-							  sizeof(Standard_VS::g_vs30_main),
-							  Standard_PS::g_ps30_main,
-							  sizeof(Standard_PS::g_ps30_main),
-							  "StandardRenderer",
-							  decl,
-							  false);
-	if (shader_unlit_ == nullptr)
-		return false;
-
-	shader_ad_distortion_ = Shader::Create(this,
-											Standard_Distortion_VS_Ad::g_vs30_main,
-											sizeof(Standard_Distortion_VS_Ad::g_vs30_main),
-											Standard_Distortion_PS_Ad::g_ps30_main,
-											sizeof(Standard_Distortion_PS_Ad::g_ps30_main),
-											"StandardRenderer Distortion",
-											decl_ad_distortion,
-											false);
-	if (shader_ad_distortion_ == nullptr)
-		return false;
-
-	shader_distortion_ = Shader::Create(this,
-										 Standard_Distortion_VS::g_vs30_main,
-										 sizeof(Standard_Distortion_VS::g_vs30_main),
-										 Standard_Distortion_PS::g_ps30_main,
-										 sizeof(Standard_Distortion_PS::g_ps30_main),
-										 "StandardRenderer Distortion",
-										 decl_distortion,
-										 false);
-	if (shader_distortion_ == nullptr)
-		return false;
-
-	D3DVERTEXELEMENT9 decl_lighting[] = {
+	D3DVERTEXELEMENT9 decl_normal[] = {
 		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
 		{0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
@@ -418,7 +353,7 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
 		D3DDECL_END()};
 
-	D3DVERTEXELEMENT9 decl_lighting_ad[] = {
+	D3DVERTEXELEMENT9 decl_normal_ad[] = {
 		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
 		{0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
@@ -432,25 +367,69 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		{0, sizeof(float) * 21, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 10}, // AlphaThreshold
 		D3DDECL_END()};
 
+	shader_ad_unlit_ = Shader::Create(this,
+									  Standard_VS_Ad::g_vs30_main,
+									  sizeof(Standard_VS_Ad::g_vs30_main),
+									  Standard_PS_Ad::g_ps30_main,
+									  sizeof(Standard_PS_Ad::g_ps30_main),
+									  "StandardRenderer",
+									  decl_ad,
+									  false);
+	if (shader_ad_unlit_ == nullptr)
+		return false;
+
+	shader_unlit_ = Shader::Create(this,
+								   Standard_VS::g_vs30_main,
+								   sizeof(Standard_VS::g_vs30_main),
+								   Standard_PS::g_ps30_main,
+								   sizeof(Standard_PS::g_ps30_main),
+								   "StandardRenderer",
+								   decl,
+								   false);
+	if (shader_unlit_ == nullptr)
+		return false;
+
+	shader_ad_distortion_ = Shader::Create(this,
+										   Standard_Distortion_VS_Ad::g_vs30_main,
+										   sizeof(Standard_Distortion_VS_Ad::g_vs30_main),
+										   Standard_Distortion_PS_Ad::g_ps30_main,
+										   sizeof(Standard_Distortion_PS_Ad::g_ps30_main),
+										   "StandardRenderer Distortion",
+										   decl_normal_ad,
+										   false);
+	if (shader_ad_distortion_ == nullptr)
+		return false;
+
+	shader_distortion_ = Shader::Create(this,
+										Standard_Distortion_VS::g_vs30_main,
+										sizeof(Standard_Distortion_VS::g_vs30_main),
+										Standard_Distortion_PS::g_ps30_main,
+										sizeof(Standard_Distortion_PS::g_ps30_main),
+										"StandardRenderer Distortion",
+										decl_normal,
+										false);
+	if (shader_distortion_ == nullptr)
+		return false;
+
 	shader_ad_lit_ = Shader::Create(this,
-										  Standard_Lighting_VS_Ad::g_vs30_main,
-										  sizeof(Standard_Lighting_VS_Ad::g_vs30_main),
-										  Standard_Lighting_PS_Ad::g_ps30_main,
-										  sizeof(Standard_Lighting_PS_Ad::g_ps30_main),
-										  "StandardRenderer Lighting",
-										  decl_lighting,
-										  false);
+									Standard_Lighting_VS_Ad::g_vs30_main,
+									sizeof(Standard_Lighting_VS_Ad::g_vs30_main),
+									Standard_Lighting_PS_Ad::g_ps30_main,
+									sizeof(Standard_Lighting_PS_Ad::g_ps30_main),
+									"StandardRenderer Lighting",
+									decl_normal_ad,
+									false);
 	if (shader_ad_lit_ == nullptr)
 		return false;
 
 	shader_lit_ = Shader::Create(this,
-									   Standard_Lighting_VS::g_vs30_main,
-									   sizeof(Standard_Lighting_VS::g_vs30_main),
-									   Standard_Lighting_PS::g_ps30_main,
-									   sizeof(Standard_Lighting_PS::g_ps30_main),
-									   "StandardRenderer Lighting",
-									   decl_lighting,
-									   false);
+								 Standard_Lighting_VS::g_vs30_main,
+								 sizeof(Standard_Lighting_VS::g_vs30_main),
+								 Standard_Lighting_PS::g_ps30_main,
+								 sizeof(Standard_Lighting_PS::g_ps30_main),
+								 "StandardRenderer Lighting",
+								 decl_normal,
+								 false);
 	if (shader_lit_ == nullptr)
 		return false;
 

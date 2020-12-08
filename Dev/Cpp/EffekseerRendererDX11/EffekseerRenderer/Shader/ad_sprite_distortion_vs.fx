@@ -12,10 +12,10 @@ struct VS_Input
 {
 	float3 Pos : POSITION0;
 	float4 Color : NORMAL0;
-	float2 UV : TEXCOORD0;
-
-	float3 Binormal : NORMAL1;
-	float3 Tangent : NORMAL2;
+	float4 Normal : NORMAL1;
+	float4 Tangent : NORMAL2;
+	float2 UV1 : TEXCOORD0;
+	float2 UV2 : TEXCOORD1;
 
 	float4 Alpha_Dist_UV : TEXCOORD1;
 	float2 BlendUV : TEXCOORD2;
@@ -51,8 +51,12 @@ VS_Output main(const VS_Input Input)
 	VS_Output Output = (VS_Output)0;
 	float4 pos4 = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
 
-	float4 localBinormal = {Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0};
-	float4 localTangent = {Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0};
+	float3 worldNormal = (Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
+	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
+	float3 worldBinormal = cross(worldNormal, worldTangent);
+
+	float4 localBinormal = {Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0};
+	float4 localTangent = {Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0};
 	localBinormal = mul(mCamera, localBinormal);
 	localTangent = mul(mCamera, localTangent);
 
@@ -77,9 +81,9 @@ VS_Output main(const VS_Input Input)
 	Output.PosP /= Output.PosP.w;
 
 	Output.Color = Input.Color;
-	Output.UV = Input.UV;
+	Output.UV = Input.UV1;
 
-	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV1.y;
 
 	CalculateAndStoreAdvancedParameter(Input, Output);
 

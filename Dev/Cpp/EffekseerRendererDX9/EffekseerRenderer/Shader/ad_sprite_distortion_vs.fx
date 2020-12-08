@@ -2,9 +2,10 @@ struct VS_Input
 {
     float3 Pos;
     float4 Color;
-    float2 UV;
-    float3 Binormal;
-    float3 Tangent;
+    float4 Normal;
+    float4 Tangent;
+    float2 UV1;
+    float2 UV2;
     float4 Alpha_Dist_UV;
     float2 BlendUV;
     float4 Blend_Alpha_Dist_UV;
@@ -30,10 +31,10 @@ static const VS_Output _347 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.x
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _256_mCamera : register(c0);
-    column_major float4x4 _256_mProj : register(c4);
-    float4 _256_mUVInversed : register(c8);
-    float4 _256_mflipbookParameter : register(c9);
+    column_major float4x4 _255_mCamera : register(c0);
+    column_major float4x4 _255_mProj : register(c4);
+    float4 _255_mUVInversed : register(c8);
+    float4 _255_mflipbookParameter : register(c9);
 };
 
 static const float4 gl_HalfPixel = 0.0f.xxxx;
@@ -41,9 +42,10 @@ static const float4 gl_HalfPixel = 0.0f.xxxx;
 static float4 gl_Position;
 static float3 Input_Pos;
 static float4 Input_Color;
-static float2 Input_UV;
-static float3 Input_Binormal;
-static float3 Input_Tangent;
+static float4 Input_Normal;
+static float4 Input_Tangent;
+static float2 Input_UV1;
+static float2 Input_UV2;
 static float4 Input_Alpha_Dist_UV;
 static float2 Input_BlendUV;
 static float4 Input_Blend_Alpha_Dist_UV;
@@ -63,14 +65,15 @@ struct SPIRV_Cross_Input
 {
     float3 Input_Pos : TEXCOORD0;
     float4 Input_Color : TEXCOORD1;
-    float2 Input_UV : TEXCOORD2;
-    float3 Input_Binormal : TEXCOORD3;
-    float3 Input_Tangent : TEXCOORD4;
-    float4 Input_Alpha_Dist_UV : TEXCOORD5;
-    float2 Input_BlendUV : TEXCOORD6;
-    float4 Input_Blend_Alpha_Dist_UV : TEXCOORD7;
-    float Input_FlipbookIndex : TEXCOORD8;
-    float Input_AlphaThreshold : TEXCOORD9;
+    float4 Input_Normal : TEXCOORD2;
+    float4 Input_Tangent : TEXCOORD3;
+    float2 Input_UV1 : TEXCOORD4;
+    float2 Input_UV2 : TEXCOORD5;
+    float4 Input_Alpha_Dist_UV : TEXCOORD6;
+    float2 Input_BlendUV : TEXCOORD7;
+    float4 Input_Blend_Alpha_Dist_UV : TEXCOORD8;
+    float Input_FlipbookIndex : TEXCOORD9;
+    float Input_AlphaThreshold : TEXCOORD10;
 };
 
 struct SPIRV_Cross_Output
@@ -196,18 +199,18 @@ void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 f
 void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutput)
 {
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
-    vsoutput.Alpha_Dist_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
     vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_FBNextIndex_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
-    vsoutput.Blend_Alpha_Dist_UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _256_mUVInversed.x + (_256_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Blend_Alpha_Dist_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
     float flipbookRate = 0.0f;
     float2 flipbookNextIndexUV = 0.0f.xx;
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = _256_mflipbookParameter;
+    float4 param_2 = _255_mflipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     float2 param_4 = vsoutput.UV;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -222,26 +225,29 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = _347;
     float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
-    float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0f);
-    localBinormal = mul(_256_mCamera, localBinormal);
-    localTangent = mul(_256_mCamera, localTangent);
-    float4 cameraPos = mul(_256_mCamera, pos4);
+    float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
+    float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
+    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float4 localBinormal = float4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0f);
+    float4 localTangent = float4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0f);
+    localBinormal = mul(_255_mCamera, localBinormal);
+    localTangent = mul(_255_mCamera, localTangent);
+    float4 cameraPos = mul(_255_mCamera, pos4);
     cameraPos /= cameraPos.w.xxxx;
     localBinormal /= localBinormal.w.xxxx;
     localTangent /= localTangent.w.xxxx;
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.PosVS = mul(_256_mProj, cameraPos);
+    Output.PosVS = mul(_255_mProj, cameraPos);
     Output.PosP = Output.PosVS;
-    Output.PosU = mul(_256_mProj, localBinormal);
-    Output.PosR = mul(_256_mProj, localTangent);
+    Output.PosU = mul(_255_mProj, localBinormal);
+    Output.PosR = mul(_255_mProj, localTangent);
     Output.PosU /= Output.PosU.w.xxxx;
     Output.PosR /= Output.PosR.w.xxxx;
     Output.PosP /= Output.PosP.w.xxxx;
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * Input.UV1.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
@@ -254,9 +260,10 @@ void vert_main()
     VS_Input Input;
     Input.Pos = Input_Pos;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
-    Input.Binormal = Input_Binormal;
+    Input.Normal = Input_Normal;
     Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.BlendUV = Input_BlendUV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
@@ -281,9 +288,10 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     Input_Pos = stage_input.Input_Pos;
     Input_Color = stage_input.Input_Color;
-    Input_UV = stage_input.Input_UV;
-    Input_Binormal = stage_input.Input_Binormal;
+    Input_Normal = stage_input.Input_Normal;
     Input_Tangent = stage_input.Input_Tangent;
+    Input_UV1 = stage_input.Input_UV1;
+    Input_UV2 = stage_input.Input_UV2;
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
     Input_BlendUV = stage_input.Input_BlendUV;
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;

@@ -117,8 +117,8 @@ static
 }
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												::Effekseer::FileInterface* fileInterface,
-												::Effekseer::ColorSpaceType colorSpaceType)
+												  ::Effekseer::FileInterface* fileInterface,
+												  ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
@@ -436,28 +436,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 17, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 	};
 
-	D3D11_INPUT_ELEMENT_DESC decl_distortion_advanced[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUV + UVDistortionTextureUV
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
-		{"TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 18, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
-		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 22, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 23, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
-	};
-
-	D3D11_INPUT_ELEMENT_DESC decl_distortion[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
-	D3D11_INPUT_ELEMENT_DESC decl_lighting_advanced[] = {
+	D3D11_INPUT_ELEMENT_DESC decl_normal_advanced[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -471,7 +450,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 21, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 	};
 
-	D3D11_INPUT_ELEMENT_DESC decl_lighting[] = {
+	D3D11_INPUT_ELEMENT_DESC decl_normal[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -481,74 +460,74 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	};
 
 	shader_unlit_ = Shader::Create(this,
-							  Standard_VS::g_main,
-							  sizeof(Standard_VS::g_main),
-							  Standard_PS::g_main,
-							  sizeof(Standard_PS::g_main),
-							  "StandardRenderer",
-							  decl,
-							  ARRAYSIZE(decl),
-							  false);
+								   Standard_VS::g_main,
+								   sizeof(Standard_VS::g_main),
+								   Standard_PS::g_main,
+								   sizeof(Standard_PS::g_main),
+								   "StandardRenderer",
+								   decl,
+								   ARRAYSIZE(decl),
+								   false);
 	if (shader_unlit_ == nullptr)
 		return false;
 
 	shader_ad_unlit_ = Shader::Create(this,
-									   Standard_VS_Ad::g_main,
-									   sizeof(Standard_VS_Ad::g_main),
-									   Standard_PS_Ad::g_main,
-									   sizeof(Standard_PS_Ad::g_main),
-									   "StandardRenderer",
-									   decl_advanced,
-									   ARRAYSIZE(decl_advanced),
-									   false);
+									  Standard_VS_Ad::g_main,
+									  sizeof(Standard_VS_Ad::g_main),
+									  Standard_PS_Ad::g_main,
+									  sizeof(Standard_PS_Ad::g_main),
+									  "StandardRenderer",
+									  decl_advanced,
+									  ARRAYSIZE(decl_advanced),
+									  false);
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
 	shader_distortion_ = Shader::Create(this,
-										 Standard_Distortion_VS::g_main,
-										 sizeof(Standard_Distortion_VS::g_main),
-										 Standard_Distortion_PS::g_main,
-										 sizeof(Standard_Distortion_PS::g_main),
-										 "StandardRenderer Distortion",
-										 decl_distortion,
-										 ARRAYSIZE(decl_distortion),
-										 false);
+										Standard_Distortion_VS::g_main,
+										sizeof(Standard_Distortion_VS::g_main),
+										Standard_Distortion_PS::g_main,
+										sizeof(Standard_Distortion_PS::g_main),
+										"StandardRenderer Distortion",
+										decl_normal,
+										ARRAYSIZE(decl_normal),
+										false);
 	if (shader_distortion_ == nullptr)
 		return false;
 
 	shader_ad_distortion_ = Shader::Create(this,
-												  Standard_Distortion_VS_Ad::g_main,
-												  sizeof(Standard_Distortion_VS_Ad::g_main),
-												  Standard_Distortion_PS_Ad::g_main,
-												  sizeof(Standard_Distortion_PS_Ad::g_main),
-												  "StandardRenderer Distortion",
-												  decl_distortion_advanced,
-												  ARRAYSIZE(decl_distortion_advanced),
-												  false);
+										   Standard_Distortion_VS_Ad::g_main,
+										   sizeof(Standard_Distortion_VS_Ad::g_main),
+										   Standard_Distortion_PS_Ad::g_main,
+										   sizeof(Standard_Distortion_PS_Ad::g_main),
+										   "StandardRenderer Distortion",
+										   decl_normal_advanced,
+										   ARRAYSIZE(decl_normal_advanced),
+										   false);
 	if (shader_ad_distortion_ == nullptr)
 		return false;
 
 	shader_lit_ = Shader::Create(this,
-									   Standard_Lighting_VS::g_main,
-									   sizeof(Standard_Lighting_VS::g_main),
-									   Standard_Lighting_PS::g_main,
-									   sizeof(Standard_Lighting_PS::g_main),
-									   "StandardRenderer Lighting",
-									   decl_lighting,
-									   ARRAYSIZE(decl_lighting),
-									   false);
+								 Standard_Lighting_VS::g_main,
+								 sizeof(Standard_Lighting_VS::g_main),
+								 Standard_Lighting_PS::g_main,
+								 sizeof(Standard_Lighting_PS::g_main),
+								 "StandardRenderer Lighting",
+								 decl_normal,
+								 ARRAYSIZE(decl_normal),
+								 false);
 	if (shader_lit_ == nullptr)
 		return false;
 
 	shader_ad_lit_ = Shader::Create(this,
-												Standard_Lighting_VS_Ad::g_main,
-												sizeof(Standard_Lighting_VS_Ad::g_main),
-												Standard_Lighting_PS_Ad::g_main,
-												sizeof(Standard_Lighting_PS_Ad::g_main),
-												"StandardRenderer Lighting",
-												decl_lighting_advanced,
-												ARRAYSIZE(decl_lighting_advanced),
-												false);
+									Standard_Lighting_VS_Ad::g_main,
+									sizeof(Standard_Lighting_VS_Ad::g_main),
+									Standard_Lighting_PS_Ad::g_main,
+									sizeof(Standard_Lighting_PS_Ad::g_main),
+									"StandardRenderer Lighting",
+									decl_normal_advanced,
+									ARRAYSIZE(decl_normal_advanced),
+									false);
 	if (shader_ad_lit_ == nullptr)
 		return false;
 

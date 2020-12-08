@@ -7,9 +7,10 @@ struct VS_Input
 {
     vec3 Pos;
     vec4 Color;
-    vec2 UV;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec4 Normal;
+    vec4 Tangent;
+    vec2 UV1;
+    vec2 UV2;
 };
 
 struct VS_Output
@@ -34,9 +35,10 @@ uniform VS_ConstantBuffer CBVS0;
 
 attribute vec3 Input_Pos;
 attribute vec4 Input_Color;
-attribute vec2 Input_UV;
-attribute vec3 Input_Binormal;
-attribute vec3 Input_Tangent;
+attribute vec4 Input_Normal;
+attribute vec4 Input_Tangent;
+attribute vec2 Input_UV1;
+attribute vec2 Input_UV2;
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
 varying vec4 _VSPS_PosP;
@@ -47,8 +49,11 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
+    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
+    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
+    vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 localBinormal = vec4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
+    vec4 localTangent = vec4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
     localBinormal = CBVS0.mCamera * localBinormal;
     localTangent = CBVS0.mCamera * localTangent;
     vec4 cameraPos = CBVS0.mCamera * pos4;
@@ -65,8 +70,8 @@ VS_Output _main(VS_Input Input)
     Output.PosR /= vec4(Output.PosR.w);
     Output.PosP /= vec4(Output.PosP.w);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
     return Output;
 }
 
@@ -75,9 +80,10 @@ void main()
     VS_Input Input;
     Input.Pos = Input_Pos;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
-    Input.Binormal = Input_Binormal;
+    Input.Normal = Input_Normal;
     Input.Tangent = Input_Tangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;

@@ -15,7 +15,7 @@ namespace EffekseerRendererGL
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-using VertexDistortion = EffekseerRenderer::VertexDistortion;
+//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 struct RenderStateSet
 {

@@ -108,7 +108,7 @@ protected:
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedBackDistortion)
 		{
-			Rendering_Internal<AdvancedVertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedUnlit)
 		{
@@ -120,7 +120,7 @@ protected:
 		}
 		else if (collector.ShaderType == RendererShaderType::BackDistortion)
 		{
-			Rendering_Internal<VertexDistortion, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{
@@ -562,54 +562,7 @@ protected:
 				v[vi].SetAlphaThreshold(instanceParameter.AlphaThreshold);
 			}
 
-			// distortion
-			if (IsDistortionVertex<VERTEX>())
-			{
-				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
-				const auto binormalCurrent = ::Effekseer::SIMD::ToStruct(v[5].Pos - v[0].Pos);
-				const auto binormalNext = ::Effekseer::SIMD::ToStruct(v[7].Pos - v[2].Pos);
-
-				// return back
-				float t_b;
-				t_b = old_c * (stepC)-old_s * (-stepS);
-				auto s_b = old_s * (stepC) + old_c * (-stepS);
-				auto c_b = t_b;
-
-				::Effekseer::SIMD::Vec3f outerBefore(c_b * outerRadius, s_b * outerRadius, outerHeight);
-
-				// next
-				auto t_n = cos_ * stepC - sin_ * stepS;
-				auto s_n = sin_ * stepC + cos_ * stepS;
-				auto c_n = t_n;
-
-				::Effekseer::SIMD::Vec3f outerNN(c_n * outerRadius, s_n * outerRadius, outerHeight);
-
-				::Effekseer::SIMD::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
-				::Effekseer::SIMD::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
-				::Effekseer::SIMD::Vec3f tangent2 = (outerNN - outerNext).Normalize();
-
-				const auto tangentCurrent = ToStruct((tangent0 + tangent1) / 2.0f);
-				const auto tangentNext = ToStruct((tangent1 + tangent2) / 2.0f);
-
-				vs[0].SetTangent(tangentCurrent);
-				vs[0].SetBinormal(binormalCurrent);
-				vs[1].SetTangent(tangentCurrent);
-				vs[1].SetBinormal(binormalCurrent);
-				vs[2].SetTangent(tangentNext);
-				vs[2].SetBinormal(binormalNext);
-				vs[3].SetTangent(tangentNext);
-				vs[3].SetBinormal(binormalNext);
-
-				vs[4].SetTangent(tangentCurrent);
-				vs[4].SetBinormal(binormalCurrent);
-				vs[5].SetTangent(tangentCurrent);
-				vs[5].SetBinormal(binormalCurrent);
-				vs[6].SetTangent(tangentNext);
-				vs[6].SetBinormal(binormalNext);
-				vs[7].SetTangent(tangentNext);
-				vs[7].SetBinormal(binormalNext);
-			}
-			else if (IsDynamicVertex<VERTEX>() || IsLightingVertex<VERTEX>())
+			if (VertexNormalRequired<VERTEX>())
 			{
 				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
 

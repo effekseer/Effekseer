@@ -19,7 +19,7 @@ namespace EffekseerRendererDX11
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-using VertexDistortion = EffekseerRenderer::VertexDistortion;
+//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 class OriginalState : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {

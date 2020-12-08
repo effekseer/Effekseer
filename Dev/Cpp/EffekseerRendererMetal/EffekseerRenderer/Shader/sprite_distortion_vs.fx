@@ -9,9 +9,10 @@ struct VS_Input
 {
     float3 Pos;
     float4 Color;
-    float2 UV;
-    float3 Binormal;
-    float3 Tangent;
+    float4 Normal;
+    float4 Tangent;
+    float2 UV1;
+    float2 UV2;
 };
 
 struct VS_Output
@@ -46,49 +47,54 @@ struct main0_in
 {
     float3 Input_Pos [[attribute(0)]];
     float4 Input_Color [[attribute(1)]];
-    float2 Input_UV [[attribute(2)]];
-    float3 Input_Binormal [[attribute(3)]];
-    float3 Input_Tangent [[attribute(4)]];
+    float4 Input_Normal [[attribute(2)]];
+    float4 Input_Tangent [[attribute(3)]];
+    float2 Input_UV1 [[attribute(4)]];
+    float2 Input_UV2 [[attribute(5)]];
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_63)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_88)
 {
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
-    localBinormal = v_63.mCamera * localBinormal;
-    localTangent = v_63.mCamera * localTangent;
-    float4 cameraPos = v_63.mCamera * pos4;
+    float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
+    float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
+    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float4 localBinormal = float4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
+    float4 localTangent = float4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
+    localBinormal = v_88.mCamera * localBinormal;
+    localTangent = v_88.mCamera * localTangent;
+    float4 cameraPos = v_88.mCamera * pos4;
     cameraPos /= float4(cameraPos.w);
     localBinormal /= float4(localBinormal.w);
     localTangent /= float4(localTangent.w);
     localBinormal = cameraPos + normalize(localBinormal - cameraPos);
     localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.PosVS = v_63.mProj * cameraPos;
+    Output.PosVS = v_88.mProj * cameraPos;
     Output.PosP = Output.PosVS;
-    Output.PosU = v_63.mProj * localBinormal;
-    Output.PosR = v_63.mProj * localTangent;
+    Output.PosU = v_88.mProj * localBinormal;
+    Output.PosR = v_88.mProj * localTangent;
     Output.PosU /= float4(Output.PosU.w);
     Output.PosR /= float4(Output.PosR.w);
     Output.PosP /= float4(Output.PosP.w);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = v_63.mUVInversed.x + (v_63.mUVInversed.y * Input.UV.y);
+    Output.UV = Input.UV1;
+    Output.UV.y = v_88.mUVInversed.x + (v_88.mUVInversed.y * Input.UV1.y);
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_63 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_88 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
     Input.Pos = in.Input_Pos;
     Input.Color = in.Input_Color;
-    Input.UV = in.Input_UV;
-    Input.Binormal = in.Input_Binormal;
+    Input.Normal = in.Input_Normal;
     Input.Tangent = in.Input_Tangent;
-    VS_Output flattenTemp = _main(Input, v_63);
+    Input.UV1 = in.Input_UV1;
+    Input.UV2 = in.Input_UV2;
+    VS_Output flattenTemp = _main(Input, v_88);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;
