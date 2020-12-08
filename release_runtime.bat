@@ -91,12 +91,12 @@ copy docs\releasenotes_runtime.txt %RDIR_R%\releasenotes.txt
 
 copy Release\CMakeLists.txt %RDIR_R%\.
 robocopy Downloads\glfw %RDIR_R%\Examples\Utils\glfw\. /S
-copy Release\build_msvc2017.bat %RDIR_R%\build_msvc2017_x86.bat
-copy Release\build_msvc2019.bat %RDIR_R%\build_msvc2019_x86.bat
-copy Release\build_vulkan_msvc2019.bat %RDIR_R%\build_vulkan_msvc2019_x86.bat
-copy Release\build_msvc2017.bat %RDIR_R%\build_msvc2017_x64.bat
-copy Release\build_msvc2019.bat %RDIR_R%\build_msvc2019_x64.bat
-copy Release\build_vulkan_msvc2019.bat %RDIR_R%\build_vulkan_msvc2019_x64.bat
+copy Release\build_msvc2017_x86.bat %RDIR_R%\build_msvc2017_x86.bat
+copy Release\build_msvc2019_x86.bat %RDIR_R%\build_msvc2019_x86.bat
+copy Release\build_vulkan_msvc2019_x86.bat %RDIR_R%\build_vulkan_msvc2019_x86.bat
+copy Release\build_msvc2017_x64.bat %RDIR_R%\build_msvc2017_x64.bat
+copy Release\build_msvc2019_x64.bat %RDIR_R%\build_msvc2019_x64.bat
+copy Release\build_vulkan_msvc2019_x64.bat %RDIR_R%\build_vulkan_msvc2019_x64.bat
 
 copy Release\build_macOS.sh %RDIR_R%\build_macOS.sh
 
