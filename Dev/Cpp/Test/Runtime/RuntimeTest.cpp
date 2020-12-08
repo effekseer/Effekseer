@@ -98,6 +98,9 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Update_Easing", "Update_Easing");
 	single15Test(u"Update_MultiModel", "Update_MultiModel");
 
+	single15Test(u"Material_UV1", "Material_UV1");
+	single15Test(u"Material_UV2", "Material_UV2");
+
 	{
 		single16Test(u"Flip01", "Flip01");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
