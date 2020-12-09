@@ -22,6 +22,13 @@ struct PS_Input
 #endif
 };
 
+struct FalloffParameter
+{
+	float4 Param; // x:enable, y:colorblendtype, z:pow
+	float4 BeginColor;
+	float4 EndColor;
+};
+
 cbuffer PS_ConstanBuffer : register(b0)
 {
 	float4 fLightDirection;
@@ -30,8 +37,13 @@ cbuffer PS_ConstanBuffer : register(b0)
 
 	float4 fFlipbookParameter; // x:enable, y:interpolationType
 
-	float4 fUVDistortionParameter; // x:intensity, y: blendIntensity, zw:uvInversed
+	float4 fUVDistortionParameter; // x:intensity, y:blendIntensity, zw:uvInversed
+
 	float4 fBlendTextureParameter; // x:blendType
+
+	float4 fCameraFrontDirection;
+
+	FalloffParameter fFalloffParam;
 
 	float4 fEmissiveScaling; // x:emissiveScaling
 

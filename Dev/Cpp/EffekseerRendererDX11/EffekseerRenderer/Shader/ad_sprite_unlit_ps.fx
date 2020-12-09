@@ -22,20 +22,38 @@ Texture2D _depthTex : register(t6);
 SamplerState sampler_depthTex : register(s6);
 #endif
 
+struct FalloffParameter
+{
+	float4 Param; // x:enable, y:colorblendtype, z:pow
+	float4 BeginColor;
+	float4 EndColor;
+};
+
 cbuffer PS_ConstanBuffer : register(b0)
 {
-	float4 flipbookParameter;	 // x:enable, y:interpolationType
-	float4 uvDistortionParameter; // x:intensity, y:blendIntensity, zw:uvInversed
-	float4 blendTextureParameter; // x:blendType
-	float4 emissiveScaling;		  // x:emissiveScaling
-	float4 edgeColor;
-	float4 edgeParameter; // x:threshold, y:colorScaling
+	float4 fLightDirection;
+	float4 fLightColor;
+	float4 fLightAmbient;
+
+	float4 fFlipbookParameter; // x:enable, y:interpolationType
+
+	float4 fUVDistortionParameter; // x:intensity, y:blendIntensity, zw:uvInversed
+
+	float4 fBlendTextureParameter; // x:blendType
+
+	float4 fCameraFrontDirection;
+
+	FalloffParameter fFalloffParam;
+
+	float4 fEmissiveScaling; // x:emissiveScaling
+
+	float4 fEdgeColor;
+	float4 fEdgeParameter; // x:threshold, y:colorScaling
 
 	// which is used for only softparticle
 	float4 softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
 	float4 reconstructionParam2;
 };
-
 struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
@@ -64,12 +82,12 @@ float4 main(const PS_Input Input)
 {
 	AdvancedParameter advancedParam = DisolveAdvancedParameter(Input);
 
-	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, uvDistortionParameter.zw);
-	UVOffset *= uvDistortionParameter.x;
+	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, fUVDistortionParameter.zw);
+	UVOffset *= fUVDistortionParameter.x;
 
 	float4 Output = Input.Color * _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset);
 
-	ApplyFlipbook(Output, _colorTex, sampler_colorTex, flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
+	ApplyFlipbook(Output, _colorTex, sampler_colorTex, fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
 
 #ifndef DISABLED_SOFT_PARTICLE
 	// softparticle
@@ -98,17 +116,17 @@ float4 main(const PS_Input Input)
 	Output.a *= AlphaTexColor.r * AlphaTexColor.a;
 
 	// blend texture uv offset
-	float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, advancedParam.BlendUVDistortionUV, uvDistortionParameter.zw);
-	BlendUVOffset.y = uvDistortionParameter.z + uvDistortionParameter.w * BlendUVOffset.y;
-	BlendUVOffset *= uvDistortionParameter.y;
+	float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, advancedParam.BlendUVDistortionUV, fUVDistortionParameter.zw);
+	BlendUVOffset.y = fUVDistortionParameter.z + fUVDistortionParameter.w * BlendUVOffset.y;
+	BlendUVOffset *= fUVDistortionParameter.y;
 
 	float4 BlendTextureColor = _blendTex.Sample(sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
 	float4 BlendAlphaTextureColor = _blendAlphaTex.Sample(sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
 	BlendTextureColor.a *= BlendAlphaTextureColor.r * BlendAlphaTextureColor.a;
 
-	ApplyTextureBlending(Output, BlendTextureColor, blendTextureParameter.x);
+	ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
 
-	Output.rgb *= emissiveScaling.x;
+	Output.rgb *= fEmissiveScaling.x;
 
 	// zero + alpha threshold
 	if (Output.a <= max(0.0, advancedParam.AlphaThreshold))
@@ -117,9 +135,9 @@ float4 main(const PS_Input Input)
 	}
 
 	Output.rgb = lerp(
-		edgeColor.rgb * edgeParameter.y,
+		fEdgeColor.rgb * fEdgeParameter.y,
 		Output.rgb,
-		ceil((Output.a - advancedParam.AlphaThreshold) - edgeParameter.x));
+		ceil((Output.a - advancedParam.AlphaThreshold) - fEdgeParameter.x));
 
 	return Output;
 }

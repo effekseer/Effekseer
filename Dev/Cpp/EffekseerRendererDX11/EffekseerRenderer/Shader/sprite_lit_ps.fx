@@ -12,17 +12,28 @@ struct PS_Input
 	float4 PosP : TEXCOORD7;
 };
 
-cbuffer VS_ConstantBuffer : register(b0)
+struct FalloffParameter
+{
+	float4 Param; // x:enable, y:colorblendtype, z:pow
+	float4 BeginColor;
+	float4 EndColor;
+};
+
+cbuffer PS_ConstanBuffer : register(b0)
 {
 	float4 fLightDirection;
 	float4 fLightColor;
 	float4 fLightAmbient;
 
-	// Unused
 	float4 fFlipbookParameter; // x:enable, y:interpolationType
 
-	float4 fUVDistortionParameter; // x:intensity, y: blendIntensity, zw:uvInversed
+	float4 fUVDistortionParameter; // x:intensity, y:blendIntensity, zw:uvInversed
+
 	float4 fBlendTextureParameter; // x:blendType
+
+	float4 fCameraFrontDirection;
+
+	FalloffParameter fFalloffParam;
 
 	float4 fEmissiveScaling; // x:emissiveScaling
 
@@ -32,7 +43,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 	// which is used for only softparticle
 	float4 softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
 	float4 reconstructionParam2;
-}
+};
 
 Texture2D _colorTex : register(t0);
 SamplerState sampler_colorTex : register(s0);

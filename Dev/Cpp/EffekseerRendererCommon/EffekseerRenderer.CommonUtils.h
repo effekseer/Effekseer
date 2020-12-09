@@ -1340,6 +1340,99 @@ struct FalloffParameter
 	float EndColor[4];
 };
 
+struct PixelConstantBuffer
+{
+	//! Lit only
+	std::array<float,4> LightDirection;
+	std::array<float, 4> LightColor;
+	std::array<float, 4> LightAmbientColor;
+
+	FlipbookParameter FlipbookParam;
+	UVDistortionParameter UVDistortionParam;
+	BlendTextureParameter BlendTextureParam;
+
+	//! model only
+	float CameraFrontDirection[4];
+
+	//! model only
+	FalloffParameter FalloffParam;
+
+	EmmisiveParameter EmmisiveParam;
+	EdgeParameter EdgeParam;
+	SoftParticleParameter SoftParticleParam;
+
+	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
+	{
+		FlipbookParam.EnableInterpolation = enableInterpolation;
+		FlipbookParam.InterpolationType = interpolationType;
+	}
+
+	void SetModelUVDistortionParameter(float intensity, float blendIntensity, const std::array<float, 2>& uvInversed)
+	{
+		UVDistortionParam.Intensity = intensity;
+		UVDistortionParam.BlendIntensity = blendIntensity;
+		UVDistortionParam.UVInversed[0] = uvInversed[0];
+		UVDistortionParam.UVInversed[1] = uvInversed[1];
+	}
+
+	void SetModelBlendTextureParameter(float blendType)
+	{
+		BlendTextureParam.BlendType = blendType;
+	}
+
+	void SetCameraFrontDirection(float x, float y, float z)
+	{
+		CameraFrontDirection[0] = x;
+		CameraFrontDirection[1] = y;
+		CameraFrontDirection[2] = z;
+		CameraFrontDirection[3] = 0.0f;
+	}
+
+	void SetFalloffParameter(float enable, float colorBlendType, float pow, const std::array<float, 4>& beginColor, const std::array<float, 4>& endColor)
+	{
+		FalloffParam.Enable = enable;
+		FalloffParam.ColorBlendType = colorBlendType;
+		FalloffParam.Pow = pow;
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			FalloffParam.BeginColor[i] = beginColor[i];
+		}
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			FalloffParam.EndColor[i] = endColor[i];
+		}
+	}
+
+	void SetEmissiveScaling(float emissiveScaling)
+	{
+		EmmisiveParam.EmissiveScaling = emissiveScaling;
+	}
+
+	void SetEdgeParameter(const std::array<float, 4>& edgeColor, float threshold, float colorScaling)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			EdgeParam.EdgeColor[i] = edgeColor[i];
+		}
+		EdgeParam.Threshold = threshold;
+		EdgeParam.ColorScaling = colorScaling;
+	}
+};
+
+struct PixelConstantBufferDistortion
+{
+	float DistortionIntencity[4];
+	float UVInversedBack[4];
+
+	//! unused in none advanced renderer
+	FlipbookParameter FlipbookParam;
+	UVDistortionParameter UVDistortionParam;
+	BlendTextureParameter BlendTextureParam;
+	SoftParticleParameter SoftParticleParam;
+};
+
 void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType format, const std::array<int, 2>& size, int32_t& sizePerWidth, int32_t& height);
 
 } // namespace EffekseerRenderer

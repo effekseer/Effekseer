@@ -241,43 +241,6 @@ struct StandardRendererVertexBuffer
 	} flipbookParameter;
 };
 
-struct StandardRendererPixelBuffer
-{
-	FlipbookParameter FlipbookParam;
-
-	UVDistortionParameter UVDistortionParam;
-
-	BlendTextureParameter BlendTextureParam;
-
-	EmmisiveParameter EmmisiveParam;
-
-	EdgeParameter EdgeParam;
-
-	SoftParticleParameter SoftParticleParam;
-};
-
-struct StandardRendererDistortionPixelBuffer
-{
-	float scale[4];
-	float uvInversed[4];
-
-	FlipbookParameter FlipbookParam;
-
-	UVDistortionParameter UVDistortionParam;
-
-	BlendTextureParameter BlendTextureParam;
-
-	SoftParticleParameter SoftParticleParam;
-};
-
-struct StandardRendererLitPixelBuffer
-{
-	std::array<float, 4> lightDirection;
-	std::array<float, 4> lightColor;
-	std::array<float, 4> lightAmbientColor;
-	StandardRendererPixelBuffer Buffer;
-};
-
 template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
@@ -719,15 +682,14 @@ public:
 			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
 			// ps
-			StandardRendererLitPixelBuffer lpcb{};
+			PixelConstantBuffer pcb{};
 
 			auto lightDirection3 = m_renderer->GetLightDirection();
 			Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
-			lpcb.lightDirection = lightDirection3.ToFloat4();
-			lpcb.lightColor = m_renderer->GetLightColor().ToFloat4();
-			lpcb.lightAmbientColor = m_renderer->GetLightAmbientColor().ToFloat4();
+			pcb.LightDirection = lightDirection3.ToFloat4();
+			pcb.LightColor = m_renderer->GetLightColor().ToFloat4();
+			pcb.LightAmbientColor = m_renderer->GetLightAmbientColor().ToFloat4();
 
-			auto& pcb = lpcb.Buffer;
 			pcb.FlipbookParam.EnableInterpolation = static_cast<float>(m_state.EnableInterpolation);
 			pcb.FlipbookParam.InterpolationType = static_cast<float>(m_state.InterpolationType);
 
@@ -754,7 +716,7 @@ public:
 				reconstructionParam.ProjectionMatrix43,
 				reconstructionParam.ProjectionMatrix44);
 
-			m_renderer->SetPixelBufferToShader(&lpcb, sizeof(StandardRendererLitPixelBuffer), 0);
+			m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 		}
 		else
 		{
@@ -775,10 +737,10 @@ public:
 
 			if (distortion)
 			{
-				StandardRendererDistortionPixelBuffer pcb;
-				pcb.scale[0] = m_state.DistortionIntensity;
-				pcb.uvInversed[0] = uvInversedBack[0];
-				pcb.uvInversed[1] = uvInversedBack[1];
+				PixelConstantBufferDistortion pcb;
+				pcb.DistortionIntencity[0] = m_state.DistortionIntensity;
+				pcb.UVInversedBack[0] = uvInversedBack[0];
+				pcb.UVInversedBack[1] = uvInversedBack[1];
 
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(m_state.EnableInterpolation);
 				pcb.FlipbookParam.InterpolationType = static_cast<float>(m_state.InterpolationType);
@@ -800,11 +762,11 @@ public:
 					reconstructionParam.ProjectionMatrix43,
 					reconstructionParam.ProjectionMatrix44);
 
-				m_renderer->SetPixelBufferToShader(&pcb, sizeof(StandardRendererDistortionPixelBuffer), 0);
+				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBufferDistortion), 0);
 			}
 			else
 			{
-				StandardRendererPixelBuffer pcb;
+				PixelConstantBuffer pcb;
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(m_state.EnableInterpolation);
 				pcb.FlipbookParam.InterpolationType = static_cast<float>(m_state.InterpolationType);
 
@@ -831,7 +793,7 @@ public:
 					reconstructionParam.ProjectionMatrix43,
 					reconstructionParam.ProjectionMatrix44);
 
-				m_renderer->SetPixelBufferToShader(&pcb, sizeof(StandardRendererPixelBuffer), 0);
+				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}
 		}
 

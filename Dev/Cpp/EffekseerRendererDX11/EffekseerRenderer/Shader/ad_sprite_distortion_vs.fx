@@ -17,11 +17,11 @@ struct VS_Input
 	float2 UV1 : TEXCOORD0;
 	float2 UV2 : TEXCOORD1;
 
-	float4 Alpha_Dist_UV : TEXCOORD1;
-	float2 BlendUV : TEXCOORD2;
-	float4 Blend_Alpha_Dist_UV : TEXCOORD3;
-	float FlipbookIndex : TEXCOORD4;
-	float AlphaThreshold : TEXCOORD5;
+	float4 Alpha_Dist_UV : TEXCOORD2;
+	float2 BlendUV : TEXCOORD3;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD4;
+	float FlipbookIndex : TEXCOORD5;
+	float AlphaThreshold : TEXCOORD6;
 };
 
 struct VS_Output
