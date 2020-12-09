@@ -1371,25 +1371,24 @@ namespace Effekseer.Data
 				value.SetCenter(center);
 			}
 
+			int valueMax = value.DefaultValueMax;
+			int valueMin = value.DefaultValueMin;
+
 			if (e_max != null)
 			{
-				var max = e_max.GetTextAsInt();
-				value.SetMax(max);
-			}
-			else
-			{
-				value.SetMax(value.DefaultValueMax);
+				valueMax = e_max.GetTextAsInt();
 			}
 
 			if (e_min != null)
 			{
-				var min = e_min.GetTextAsInt();
-				value.SetMin(min);
+				valueMin = e_min.GetTextAsInt();
 			}
-			else
-			{
-				value.SetMin(value.DefaultValueMin);
-			}
+
+			var correctMin = Math.Min(valueMax, valueMin);
+			var correctMax = Math.Max(valueMax, valueMin);
+
+			value.SetMax(correctMax);
+			value.SetMin(correctMin);
 
 			if (e_da != null)
 			{
@@ -1425,25 +1424,24 @@ namespace Effekseer.Data
 				value.SetCenter(center);
 			}
 
+			var valueMax = value.DefaultValueMax;
+			var valueMin = value.DefaultValueMin;
+
 			if (e_max != null)
 			{
-				var max = e_max.GetTextAsFloat();
-				value.SetMax(max);
-			}
-			else
-			{
-				value.SetMax(value.DefaultValueMax);
+				valueMax = e_max.GetTextAsFloat();
 			}
 
 			if (e_min != null)
 			{
-				var min = e_min.GetTextAsFloat();
-				value.SetMin(min);
+				valueMin = e_min.GetTextAsFloat();
 			}
-			else
-			{
-				value.SetMin(value.DefaultValueMin);
-			}
+
+			var correctMin = Math.Min(valueMax, valueMin);
+			var correctMax = Math.Max(valueMax, valueMin);
+
+			value.SetMax(correctMax);
+			value.SetMin(correctMin);
 
 			if (e_da != null)
 			{

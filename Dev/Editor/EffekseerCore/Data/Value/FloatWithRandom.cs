@@ -243,6 +243,8 @@ namespace Effekseer.Data.Value
 
 		public void SetMaxDirectly(float value)
 		{
+			value = Math.Min(value, _max);
+
 			_value_max = value;
 		}
 
@@ -290,6 +292,8 @@ namespace Effekseer.Data.Value
 
 		public void SetMinDirectly(float value)
 		{
+			value = Math.Max(value, _min);
+
 			_value_min = value;
 		}
 
