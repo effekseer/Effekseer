@@ -240,7 +240,11 @@ void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuff
 	assert(commandList != nullptr);
 
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
-	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginExternal(nativeCommandList);
+
+	LLGI::PlatformContextVulkan context;
+	context.commandBuffer = nativeCommandList;
+
+	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginWithPlatform(&context);
 }
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList)
