@@ -1236,7 +1236,7 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 	else
 	{
 		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDrawBuffer(GL_BACK);
+		GLExt::glDrawBuffer(GL_BACK);
 	}
 
 	GLbitfield flag = 0;
