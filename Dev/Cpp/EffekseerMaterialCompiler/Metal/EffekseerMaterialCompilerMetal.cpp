@@ -152,7 +152,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 
     // UV
     float2 uv1 = i.a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
-    float2 uv2 = uv1;
+    float2 uv2 = i.a_TexCoord.xy;
 
     float3 pixelNormalDir = worldNormal;
     
