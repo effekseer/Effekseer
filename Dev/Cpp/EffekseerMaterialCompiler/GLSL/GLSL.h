@@ -285,7 +285,7 @@ void main() {
 	// UV
 	vec2 uv1 = atTexCoord.xy;
 	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	vec2 uv2 = uv1;
+	vec2 uv2 = atTexCoord.xy;
 
 	// NBT
 	vec3 worldNormal = vec3(0.0, 0.0, 0.0);
