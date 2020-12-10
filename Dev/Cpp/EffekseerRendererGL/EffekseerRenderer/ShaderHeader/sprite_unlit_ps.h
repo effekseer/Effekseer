@@ -12,14 +12,26 @@ struct PS_Input
     vec4 PosP;
 };
 
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
-    vec4 emissiveScaling;
-    vec4 edgeColor;
-    vec4 edgeParameter;
+    vec4 fLightDirection;
+    vec4 fLightColor;
+    vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
@@ -69,14 +81,26 @@ struct PS_Input
     vec4 PosP;
 };
 
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
-    vec4 emissiveScaling;
-    vec4 edgeColor;
-    vec4 edgeParameter;
+    vec4 fLightDirection;
+    vec4 fLightColor;
+    vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
@@ -132,8 +156,8 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _188 = _main(Input);
-    _entryPointOutput = _188;
+    vec4 _189 = _main(Input);
+    _entryPointOutput = _189;
 }
 
 )";
@@ -151,14 +175,26 @@ struct PS_Input
     highp vec4 PosP;
 };
 
+struct FalloffParameter
+{
+    highp vec4 Param;
+    highp vec4 BeginColor;
+    highp vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
-    highp vec4 flipbookParameter;
-    highp vec4 uvDistortionParameter;
-    highp vec4 blendTextureParameter;
-    highp vec4 emissiveScaling;
-    highp vec4 edgeColor;
-    highp vec4 edgeParameter;
+    highp vec4 fLightDirection;
+    highp vec4 fLightColor;
+    highp vec4 fLightAmbient;
+    highp vec4 fFlipbookParameter;
+    highp vec4 fUVDistortionParameter;
+    highp vec4 fBlendTextureParameter;
+    highp vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    highp vec4 fEmissiveScaling;
+    highp vec4 fEdgeColor;
+    highp vec4 fEdgeParameter;
     highp vec4 softParticleAndReconstructionParam1;
     highp vec4 reconstructionParam2;
 };
@@ -207,14 +243,26 @@ struct PS_Input
     highp vec4 PosP;
 };
 
+struct FalloffParameter
+{
+    highp vec4 Param;
+    highp vec4 BeginColor;
+    highp vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
-    highp vec4 flipbookParameter;
-    highp vec4 uvDistortionParameter;
-    highp vec4 blendTextureParameter;
-    highp vec4 emissiveScaling;
-    highp vec4 edgeColor;
-    highp vec4 edgeParameter;
+    highp vec4 fLightDirection;
+    highp vec4 fLightColor;
+    highp vec4 fLightAmbient;
+    highp vec4 fFlipbookParameter;
+    highp vec4 fUVDistortionParameter;
+    highp vec4 fBlendTextureParameter;
+    highp vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    highp vec4 fEmissiveScaling;
+    highp vec4 fEdgeColor;
+    highp vec4 fEdgeParameter;
     highp vec4 softParticleAndReconstructionParam1;
     highp vec4 reconstructionParam2;
 };
@@ -270,8 +318,8 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _188 = _main(Input);
-    _entryPointOutput = _188;
+    highp vec4 _189 = _main(Input);
+    _entryPointOutput = _189;
 }
 
 )";

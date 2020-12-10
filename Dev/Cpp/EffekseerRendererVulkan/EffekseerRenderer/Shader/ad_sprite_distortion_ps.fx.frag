@@ -30,9 +30,9 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 } _263;
@@ -139,14 +139,14 @@ vec4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
-    vec2 param_2 = _263.uvDistortionParameter.zw;
+    vec2 param_2 = _263.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
-    UVOffset *= _263.uvDistortionParameter.x;
+    UVOffset *= _263.fUVDistortionParameter.x;
     vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _263.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_3, _263.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
@@ -164,14 +164,14 @@ vec4 _main(PS_Input Input)
     vec4 AlphaTexColor = texture(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_10 = advancedParam.BlendUVDistortionUV;
-    vec2 param_11 = _263.uvDistortionParameter.zw;
+    vec2 param_11 = _263.fUVDistortionParameter.zw;
     vec2 BlendUVOffset = UVDistortionOffset(param_10, param_11, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset *= _263.uvDistortionParameter.y;
+    BlendUVOffset *= _263.fUVDistortionParameter.y;
     vec4 BlendTextureColor = texture(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_12 = Output;
-    ApplyTextureBlending(param_12, BlendTextureColor, _263.blendTextureParameter.x);
+    ApplyTextureBlending(param_12, BlendTextureColor, _263.fBlendTextureParameter.x);
     Output = param_12;
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {

@@ -14,18 +14,18 @@ struct PS_Input
     vec4 PosR;
 };
 
-struct VS_ConstantBuffer
+struct PS_ConstanBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_backTex;
@@ -90,18 +90,18 @@ struct PS_Input
     vec4 PosR;
 };
 
-struct VS_ConstantBuffer
+struct PS_ConstanBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_backTex;
@@ -191,18 +191,18 @@ struct PS_Input
     highp vec4 PosR;
 };
 
-struct VS_ConstantBuffer
+struct PS_ConstanBuffer
 {
     highp vec4 g_scale;
     highp vec4 mUVInversedBack;
-    highp vec4 flipbookParameter;
-    highp vec4 uvDistortionParameter;
-    highp vec4 blendTextureParameter;
+    highp vec4 fFlipbookParameter;
+    highp vec4 fUVDistortionParameter;
+    highp vec4 fBlendTextureParameter;
     highp vec4 softParticleAndReconstructionParam1;
     highp vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform  sampler2D Sampler_sampler_colorTex;
 uniform  sampler2D Sampler_sampler_backTex;
@@ -266,18 +266,18 @@ struct PS_Input
     highp vec4 PosR;
 };
 
-struct VS_ConstantBuffer
+struct PS_ConstanBuffer
 {
     highp vec4 g_scale;
     highp vec4 mUVInversedBack;
-    highp vec4 flipbookParameter;
-    highp vec4 uvDistortionParameter;
-    highp vec4 blendTextureParameter;
+    highp vec4 fFlipbookParameter;
+    highp vec4 fUVDistortionParameter;
+    highp vec4 fBlendTextureParameter;
     highp vec4 softParticleAndReconstructionParam1;
     highp vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_backTex;

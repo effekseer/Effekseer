@@ -13,18 +13,18 @@ struct PS_Input
     vec4 PosR;
 };
 
-struct VS_ConstantBuffer
+struct PS_ConstanBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_backTex;

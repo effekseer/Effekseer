@@ -37,11 +37,11 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
 			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<LLGI_InstanceCount>));
-			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedPixelConstantBuffer));
+			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBuffer));
 		}
 
 		shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<LLGI_InstanceCount>));
-		shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
+		shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBufferDistortion));
 	}
 
 	{
@@ -52,11 +52,11 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
 			shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<LLGI_InstanceCount>));
-			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
+			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBuffer));
 		}
 
 		m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<LLGI_InstanceCount>));
-		m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererDistortionPixelConstantBuffer));
+		m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBufferDistortion));
 	}
 
 	VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;

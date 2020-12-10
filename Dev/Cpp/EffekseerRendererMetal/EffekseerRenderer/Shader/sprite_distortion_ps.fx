@@ -15,13 +15,13 @@ struct PS_Input
     float4 PosR;
 };
 
-struct VS_ConstantBuffer
+struct PS_ConstanBuffer
 {
     float4 g_scale;
     float4 mUVInversedBack;
-    float4 flipbookParameter;
-    float4 uvDistortionParameter;
-    float4 blendTextureParameter;
+    float4 fFlipbookParameter;
+    float4 fUVDistortionParameter;
+    float4 fBlendTextureParameter;
     float4 softParticleAndReconstructionParam1;
     float4 reconstructionParam2;
 };
@@ -52,7 +52,7 @@ float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, t
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, constant VS_ConstantBuffer& v_129, thread texture2d<float> _backTex, thread sampler sampler_backTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
+float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, constant PS_ConstanBuffer& v_129, thread texture2d<float> _backTex, thread sampler sampler_backTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
 {
     float4 Output = _colorTex.sample(sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
@@ -87,7 +87,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler s
     return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_129 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _backTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_backTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_129 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _backTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_backTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;

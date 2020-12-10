@@ -217,131 +217,6 @@ struct ModelRendererMaterialVertexConstantBuffer
 	}
 };
 
-struct ModelRendererPixelConstantBuffer
-{
-	float LightDirection[4];
-	float LightColor[4];
-	float LightAmbientColor[4];
-	SoftParticleParameter SoftParticleParam;
-
-	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
-	{
-	}
-
-	void SetModelUVDistortionParameter(float intensity, float blendIntensity, const std::array<float, 2>& uvInversed)
-	{
-	}
-
-	void SetModelBlendTextureParameter(float blendType)
-	{
-	}
-
-	void SetCameraFrontDirection(float x, float y, float z)
-	{
-	}
-
-	void SetFalloffParameter(float enable, float colorBlendType, float pow, const std::array<float, 4>& beginColor, const std::array<float, 4>& endColor)
-	{
-	}
-
-	void SetEmissiveScaling(float emissiveScaling)
-	{
-	}
-
-	void SetEdgeParameter(const std::array<float, 4>& edgeColor, float threshold, float colorScaling)
-	{
-	}
-};
-
-struct ModelRendererAdvancedPixelConstantBuffer
-{
-	float LightDirection[4];
-	float LightColor[4];
-	float LightAmbientColor[4];
-
-	FlipbookParameter FlipbookParam;
-	UVDistortionParameter UVDistortionParam;
-	BlendTextureParameter BlendTextureParam;
-
-	float CameraFrontDirection[4];
-
-	FalloffParameter FalloffParam;
-	EmmisiveParameter EmmisiveParam;
-	EdgeParameter EdgeParam;
-	SoftParticleParameter SoftParticleParam;
-
-	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
-	{
-		FlipbookParam.EnableInterpolation = enableInterpolation;
-		FlipbookParam.InterpolationType = interpolationType;
-	}
-
-	void SetModelUVDistortionParameter(float intensity, float blendIntensity, const std::array<float, 2>& uvInversed)
-	{
-		UVDistortionParam.Intensity = intensity;
-		UVDistortionParam.BlendIntensity = blendIntensity;
-		UVDistortionParam.UVInversed[0] = uvInversed[0];
-		UVDistortionParam.UVInversed[1] = uvInversed[1];
-	}
-
-	void SetModelBlendTextureParameter(float blendType)
-	{
-		BlendTextureParam.BlendType = blendType;
-	}
-
-	void SetCameraFrontDirection(float x, float y, float z)
-	{
-		CameraFrontDirection[0] = x;
-		CameraFrontDirection[1] = y;
-		CameraFrontDirection[2] = z;
-		CameraFrontDirection[3] = 0.0f;
-	}
-
-	void SetFalloffParameter(float enable, float colorBlendType, float pow, const std::array<float, 4>& beginColor, const std::array<float, 4>& endColor)
-	{
-		FalloffParam.Enable = enable;
-		FalloffParam.ColorBlendType = colorBlendType;
-		FalloffParam.Pow = pow;
-
-		for (size_t i = 0; i < 4; i++)
-		{
-			FalloffParam.BeginColor[i] = beginColor[i];
-		}
-
-		for (size_t i = 0; i < 4; i++)
-		{
-			FalloffParam.EndColor[i] = endColor[i];
-		}
-	}
-
-	void SetEmissiveScaling(float emissiveScaling)
-	{
-		EmmisiveParam.EmissiveScaling = emissiveScaling;
-	}
-
-	void SetEdgeParameter(const std::array<float, 4>& edgeColor, float threshold, float colorScaling)
-	{
-		for (size_t i = 0; i < 4; i++)
-		{
-			EdgeParam.EdgeColor[i] = edgeColor[i];
-		}
-		EdgeParam.Threshold = threshold;
-		EdgeParam.ColorScaling = colorScaling;
-	}
-};
-
-struct ModelRendererDistortionPixelConstantBuffer
-{
-	float DistortionIntencity[4];
-	float UVInversedBack[4];
-
-	//! unused in none advanced renderer
-	FlipbookParameter FlipbookParam;
-	UVDistortionParameter UVDistortionParam;
-	BlendTextureParameter BlendTextureParam;
-	SoftParticleParameter softParticle;
-};
-
 enum class ModelRendererVertexType
 {
 	Instancing,
@@ -418,6 +293,12 @@ protected:
 	void VectorToFloat4(const ::Effekseer::SIMD::Vec3f& v, float fc[4])
 	{
 		::Effekseer::SIMD::Float4::Store3(fc, v.s);
+		fc[3] = 1.0f;
+	}
+
+	void VectorToFloat4(const ::Effekseer::SIMD::Vec3f& v, std::array<float,4>& fc)
+	{
+		::Effekseer::SIMD::Float4::Store3(fc.data(), v.s);
 		fc[3] = 1.0f;
 	}
 
@@ -848,26 +729,26 @@ public:
 			if (materialParam != nullptr && materialParam->MaterialIndex >= 0 &&
 				param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
 			{
-				RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererMaterialVertexConstantBuffer<InstanceCount>, ModelRendererPixelConstantBuffer>(
+				RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererMaterialVertexConstantBuffer<InstanceCount>, false>(
 					renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
 			}
 			else
 			{
 				if (collector_.DoRequireAdvancedRenderer())
 				{
-					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererAdvancedVertexConstantBuffer<InstanceCount>, ModelRendererAdvancedPixelConstantBuffer>(
+					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererAdvancedVertexConstantBuffer<InstanceCount>, true>(
 						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
 				}
 				else
 				{
-					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererVertexConstantBuffer<InstanceCount>, ModelRendererPixelConstantBuffer>(
+					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererVertexConstantBuffer<InstanceCount>, false>(
 						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
 				}
 			}
 		}
 	}
 
-	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount, typename VertexConstantBufferType, typename PixelConstantBufferType>
+	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount, typename VertexConstantBufferType, bool REQUIRE_ADVANCED_DATA>
 	void RenderPass(RENDERER* renderer,
 					SHADER* advanced_shader_lit,
 					SHADER* advanced_shader_unlit,
@@ -1049,7 +930,7 @@ public:
 
 			if (distortion)
 			{
-				ModelRendererDistortionPixelConstantBuffer* pcb = (ModelRendererDistortionPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
+				auto pcb = (PixelConstantBufferDistortion*)shader_->GetPixelConstantBuffer();
 				pcb->DistortionIntencity[0] = param.BasicParameterPtr->DistortionIntensity;
 
 				pcb->UVInversedBack[0] = uvInversedBack[0];
@@ -1065,7 +946,7 @@ public:
 
 				pcb->BlendTextureParam.BlendType = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
 
-				pcb->softParticle.SetParam(
+				pcb->SoftParticleParam.SetParam(
 					param.BasicParameterPtr->SoftParticleDistance,
 					param.Maginification,
 					reconstructionParam.DepthBufferScale,
@@ -1077,7 +958,7 @@ public:
 			}
 			else
 			{
-				PixelConstantBufferType* pcb = (PixelConstantBufferType*)shader_->GetPixelConstantBuffer();
+				auto pcb = (PixelConstantBuffer*)shader_->GetPixelConstantBuffer();
 
 				// specify predefined parameters
 				if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
@@ -1090,35 +971,40 @@ public:
 
 				{
 					ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
-					ColorToFloat4(renderer->GetLightColor(), pcb->LightColor);
+					pcb->LightColor = ColorToFloat4(renderer->GetLightColor());
+					
 				}
 
 				{
 					ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
-					ColorToFloat4(renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
+					pcb->LightAmbientColor = ColorToFloat4(renderer->GetLightAmbientColor());
 				}
 
-				pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
-				pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
-				pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
+				if (REQUIRE_ADVANCED_DATA)
+				{
+					pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
+					pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
+					pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
 
-				::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
-				pcb->SetCameraFrontDirection(-CameraFront.X, -CameraFront.Y, -CameraFront.Z);
-				pcb->SetFalloffParameter(
-					static_cast<float>(param.EnableFalloff),
-					static_cast<float>(param.FalloffParam.ColorBlendType),
-					static_cast<float>(param.FalloffParam.Pow),
-					ColorToFloat4(param.FalloffParam.BeginColor),
-					ColorToFloat4(param.FalloffParam.EndColor));
+					::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
+					pcb->SetCameraFrontDirection(-CameraFront.X, -CameraFront.Y, -CameraFront.Z);
+					pcb->SetFalloffParameter(
+						static_cast<float>(param.EnableFalloff),
+						static_cast<float>(param.FalloffParam.ColorBlendType),
+						static_cast<float>(param.FalloffParam.Pow),
+						ColorToFloat4(param.FalloffParam.BeginColor),
+						ColorToFloat4(param.FalloffParam.EndColor));
 
-				pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
-				pcb->SetEdgeParameter(ColorToFloat4(Effekseer::Color(
-										  param.BasicParameterPtr->EdgeColor[0],
-										  param.BasicParameterPtr->EdgeColor[1],
-										  param.BasicParameterPtr->EdgeColor[2],
-										  param.BasicParameterPtr->EdgeColor[3])),
-									  param.BasicParameterPtr->EdgeThreshold,
-									  static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
+					pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
+					pcb->SetEdgeParameter(ColorToFloat4(Effekseer::Color(
+											  param.BasicParameterPtr->EdgeColor[0],
+											  param.BasicParameterPtr->EdgeColor[1],
+											  param.BasicParameterPtr->EdgeColor[2],
+											  param.BasicParameterPtr->EdgeColor[3])),
+										  param.BasicParameterPtr->EdgeThreshold,
+										  static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
+
+				}
 
 				pcb->SoftParticleParam.SetParam(
 					param.BasicParameterPtr->SoftParticleDistance,

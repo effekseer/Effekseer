@@ -25,22 +25,7 @@ Texture2D _depthTex : register(t7);
 SamplerState sampler_depthTex : register(s7);
 #endif
 
-
-cbuffer PS_ConstanBuffer : register(b0)
-{
-	float4 g_scale;
-	float4 mUVInversedBack;
-
-	float4 fFlipbookParameter; // x:enable, y:interpolationType
-
-	float4 fUVDistortionParameter; // x:intensity, y:blendIntensity, zw:uvInversed
-
-	float4 fBlendTextureParameter; // x:blendType
-
-	// which is used for only softparticle
-	float4 softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
-	float4 reconstructionParam2;
-};
+#include "Distortion_Common_PS.fx"
 
 struct PS_Input
 {

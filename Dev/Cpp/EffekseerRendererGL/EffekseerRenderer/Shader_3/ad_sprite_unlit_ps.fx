@@ -29,14 +29,26 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
-    vec4 emissiveScaling;
-    vec4 edgeColor;
-    vec4 edgeParameter;
+    vec4 fLightDirection;
+    vec4 fLightColor;
+    vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
@@ -144,13 +156,13 @@ vec4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
-    vec2 param_2 = CBPS0.uvDistortionParameter.zw;
+    vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
-    UVOffset *= CBPS0.uvDistortionParameter.x;
+    UVOffset *= CBPS0.fUVDistortionParameter.x;
     vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV + UVOffset);
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, CBPS0.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
@@ -169,24 +181,24 @@ vec4 _main(PS_Input Input)
     vec4 AlphaTexColor = texture(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_10 = advancedParam.BlendUVDistortionUV;
-    vec2 param_11 = CBPS0.uvDistortionParameter.zw;
+    vec2 param_11 = CBPS0.fUVDistortionParameter.zw;
     vec2 BlendUVOffset = UVDistortionOffset(param_10, param_11, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset.y = CBPS0.uvDistortionParameter.z + (CBPS0.uvDistortionParameter.w * BlendUVOffset.y);
-    BlendUVOffset *= CBPS0.uvDistortionParameter.y;
+    BlendUVOffset.y = CBPS0.fUVDistortionParameter.z + (CBPS0.fUVDistortionParameter.w * BlendUVOffset.y);
+    BlendUVOffset *= CBPS0.fUVDistortionParameter.y;
     vec4 BlendTextureColor = texture(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_12 = Output;
-    ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.blendTextureParameter.x);
+    ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_12;
-    vec3 _448 = Output.xyz * CBPS0.emissiveScaling.x;
-    Output = vec4(_448.x, _448.y, _448.z, Output.w);
+    vec3 _451 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_451.x, _451.y, _451.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _478 = mix(CBPS0.edgeColor.xyz * CBPS0.edgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.edgeParameter.x)));
-    Output = vec4(_478.x, _478.y, _478.z, Output.w);
+    vec3 _482 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_482.x, _482.y, _482.z, Output.w);
     return Output;
 }
 
@@ -203,7 +215,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _520 = _main(Input);
-    _entryPointOutput = _520;
+    vec4 _524 = _main(Input);
+    _entryPointOutput = _524;
 }
 

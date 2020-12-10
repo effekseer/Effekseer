@@ -30,6 +30,13 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
     vec4 fLightDirection;
@@ -38,6 +45,8 @@ struct PS_ConstanBuffer
     vec4 fFlipbookParameter;
     vec4 fUVDistortionParameter;
     vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
@@ -189,16 +198,16 @@ vec4 _main(PS_Input Input)
     vec4 param_12 = Output;
     ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_12;
-    vec3 _486 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_486.x, _486.y, _486.z, Output.w);
+    vec3 _489 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_489.x, _489.y, _489.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _511 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_511.x, _511.y, _511.z, Output.w);
-    vec3 _532 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_532.x, _532.y, _532.z, Output.w);
+    vec3 _514 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
+    Output = vec4(_514.x, _514.y, _514.z, Output.w);
+    vec3 _535 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_535.x, _535.y, _535.z, Output.w);
     return Output;
 }
 
@@ -216,7 +225,7 @@ void main()
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
     Input.PosP = _VSPS_PosP;
-    vec4 _578 = _main(Input);
-    _entryPointOutput = _578;
+    vec4 _581 = _main(Input);
+    _entryPointOutput = _581;
 }
 

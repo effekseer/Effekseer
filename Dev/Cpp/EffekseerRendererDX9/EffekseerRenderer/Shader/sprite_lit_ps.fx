@@ -12,19 +12,28 @@ struct PS_Input
     float4 PosP;
 };
 
-cbuffer VS_ConstantBuffer : register(b0)
+struct FalloffParameter
 {
-    float4 _69_fLightDirection : register(c0);
-    float4 _69_fLightColor : register(c1);
-    float4 _69_fLightAmbient : register(c2);
-    float4 _69_fFlipbookParameter : register(c3);
-    float4 _69_fUVDistortionParameter : register(c4);
-    float4 _69_fBlendTextureParameter : register(c5);
-    float4 _69_fEmissiveScaling : register(c6);
-    float4 _69_fEdgeColor : register(c7);
-    float4 _69_fEdgeParameter : register(c8);
-    float4 _69_softParticleAndReconstructionParam1 : register(c9);
-    float4 _69_reconstructionParam2 : register(c10);
+    float4 Param;
+    float4 BeginColor;
+    float4 EndColor;
+};
+
+cbuffer PS_ConstanBuffer : register(b0)
+{
+    float4 _70_fLightDirection : register(c0);
+    float4 _70_fLightColor : register(c1);
+    float4 _70_fLightAmbient : register(c2);
+    float4 _70_fFlipbookParameter : register(c3);
+    float4 _70_fUVDistortionParameter : register(c4);
+    float4 _70_fBlendTextureParameter : register(c5);
+    float4 _70_fCameraFrontDirection : register(c6);
+    FalloffParameter _70_fFalloffParam : register(c7);
+    float4 _70_fEmissiveScaling : register(c10);
+    float4 _70_fEdgeColor : register(c11);
+    float4 _70_fEdgeParameter : register(c12);
+    float4 _70_softParticleAndReconstructionParam1 : register(c13);
+    float4 _70_reconstructionParam2 : register(c14);
 };
 
 uniform sampler2D Sampler_sampler_normalTex : register(s1);
@@ -66,10 +75,10 @@ float4 _main(PS_Input Input)
     float3 loN = tex2D(Sampler_sampler_normalTex, Input.UV1).xyz;
     float3 texNormal = (loN - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
-    float diffuse = max(dot(_69_fLightDirection.xyz, localNormal), 0.0f);
+    float diffuse = max(dot(_70_fLightDirection.xyz, localNormal), 0.0f);
     float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV1) * Input.VColor;
-    float3 _104 = Output.xyz * ((_69_fLightColor.xyz * diffuse) + float3(_69_fLightAmbient.xyz));
-    Output = float4(_104.x, _104.y, _104.z, Output.w);
+    float3 _105 = Output.xyz * ((_70_fLightColor.xyz * diffuse) + float3(_70_fLightAmbient.xyz));
+    Output = float4(_105.x, _105.y, _105.z, Output.w);
     if (Output.w == 0.0f)
     {
         discard;
@@ -90,8 +99,8 @@ void frag_main()
     Input.WorldB = Input_WorldB;
     Input.ScreenUV = Input_ScreenUV;
     Input.PosP = Input_PosP;
-    float4 _162 = _main(Input);
-    _entryPointOutput = _162;
+    float4 _163 = _main(Input);
+    _entryPointOutput = _163;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
