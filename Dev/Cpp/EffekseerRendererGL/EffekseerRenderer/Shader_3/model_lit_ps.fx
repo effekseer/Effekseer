@@ -14,16 +14,31 @@ struct PS_Input
     vec4 PosP;
 };
 
-struct VS_ConstantBuffer
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
+struct PS_ConstanBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 layout(binding = 0) uniform sampler2D Sampler_sampler_colorTex;
 layout(binding = 1) uniform sampler2D Sampler_sampler_normalTex;
@@ -53,8 +68,8 @@ vec4 _main(PS_Input Input)
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _158 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_158.x, _158.y, _158.z, Output.w);
+    vec3 _159 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_159.x, _159.y, _159.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -86,7 +101,7 @@ void main()
     Input.Tangent = _VSPS_Tangent;
     Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
-    vec4 _256 = _main(Input);
-    _entryPointOutput = _256;
+    vec4 _259 = _main(Input);
+    _entryPointOutput = _259;
 }
 

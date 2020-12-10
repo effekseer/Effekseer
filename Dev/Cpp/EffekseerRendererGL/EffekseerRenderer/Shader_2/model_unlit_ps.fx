@@ -11,16 +11,31 @@ struct PS_Input
     vec4 PosP;
 };
 
-struct VS_ConstantBuffer
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
+struct PS_ConstanBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 

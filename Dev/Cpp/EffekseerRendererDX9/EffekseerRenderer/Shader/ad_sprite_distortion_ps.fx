@@ -28,9 +28,9 @@ cbuffer PS_ConstanBuffer : register(b0)
 {
     float4 _209_g_scale : register(c0);
     float4 _209_mUVInversedBack : register(c1);
-    float4 _209_flipbookParameter : register(c2);
-    float4 _209_uvDistortionParameter : register(c3);
-    float4 _209_blendTextureParameter : register(c4);
+    float4 _209_fFlipbookParameter : register(c2);
+    float4 _209_fUVDistortionParameter : register(c3);
+    float4 _209_fBlendTextureParameter : register(c4);
     float4 _209_softParticleAndReconstructionParam1 : register(c5);
     float4 _209_reconstructionParam2 : register(c6);
 };
@@ -146,26 +146,26 @@ float4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = _209_uvDistortionParameter.zw;
+    float2 param_2 = _209_fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
-    UVOffset *= _209_uvDistortionParameter.x;
+    UVOffset *= _209_fUVDistortionParameter.x;
     float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _209_flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_3, _209_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     float4 AlphaTexColor = tex2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     float2 param_5 = advancedParam.BlendUVDistortionUV;
-    float2 param_6 = _209_uvDistortionParameter.zw;
+    float2 param_6 = _209_fUVDistortionParameter.zw;
     float2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset *= _209_uvDistortionParameter.y;
+    BlendUVOffset *= _209_fUVDistortionParameter.y;
     float4 BlendTextureColor = tex2D(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     float4 BlendAlphaTextureColor = tex2D(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     float4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, _209_blendTextureParameter.x);
+    ApplyTextureBlending(param_7, BlendTextureColor, _209_fBlendTextureParameter.x);
     Output = param_7;
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {

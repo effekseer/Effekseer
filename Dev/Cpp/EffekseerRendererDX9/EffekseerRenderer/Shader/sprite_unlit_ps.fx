@@ -6,16 +6,28 @@ struct PS_Input
     float4 PosP;
 };
 
+struct FalloffParameter
+{
+    float4 Param;
+    float4 BeginColor;
+    float4 EndColor;
+};
+
 cbuffer PS_ConstanBuffer : register(b0)
 {
-    float4 _72_flipbookParameter : register(c0);
-    float4 _72_uvDistortionParameter : register(c1);
-    float4 _72_blendTextureParameter : register(c2);
-    float4 _72_emissiveScaling : register(c3);
-    float4 _72_edgeColor : register(c4);
-    float4 _72_edgeParameter : register(c5);
-    float4 _72_softParticleAndReconstructionParam1 : register(c6);
-    float4 _72_reconstructionParam2 : register(c7);
+    float4 _73_fLightDirection : register(c0);
+    float4 _73_fLightColor : register(c1);
+    float4 _73_fLightAmbient : register(c2);
+    float4 _73_fFlipbookParameter : register(c3);
+    float4 _73_fUVDistortionParameter : register(c4);
+    float4 _73_fBlendTextureParameter : register(c5);
+    float4 _73_fCameraFrontDirection : register(c6);
+    FalloffParameter _73_fFalloffParam : register(c7);
+    float4 _73_fEmissiveScaling : register(c10);
+    float4 _73_fEdgeColor : register(c11);
+    float4 _73_fEdgeParameter : register(c12);
+    float4 _73_softParticleAndReconstructionParam1 : register(c13);
+    float4 _73_reconstructionParam2 : register(c14);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);

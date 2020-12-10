@@ -29,6 +29,13 @@ struct AdvancedParameter
     highp float AlphaThreshold;
 };
 
+struct FalloffParameter
+{
+    highp vec4 Param;
+    highp vec4 BeginColor;
+    highp vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
     highp vec4 fLightDirection;
@@ -37,6 +44,8 @@ struct PS_ConstanBuffer
     highp vec4 fFlipbookParameter;
     highp vec4 fUVDistortionParameter;
     highp vec4 fBlendTextureParameter;
+    highp vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
     highp vec4 fEmissiveScaling;
     highp vec4 fEdgeColor;
     highp vec4 fEdgeParameter;
@@ -188,16 +197,16 @@ highp vec4 _main(PS_Input Input)
     highp vec4 param_12 = Output;
     ApplyTextureBlending(param_12, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_12;
-    highp vec3 _486 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_486.x, _486.y, _486.z, Output.w);
+    highp vec3 _489 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_489.x, _489.y, _489.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    highp vec3 _511 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_511.x, _511.y, _511.z, Output.w);
-    highp vec3 _532 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_532.x, _532.y, _532.z, Output.w);
+    highp vec3 _514 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
+    Output = vec4(_514.x, _514.y, _514.z, Output.w);
+    highp vec3 _535 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_535.x, _535.y, _535.z, Output.w);
     return Output;
 }
 
@@ -215,7 +224,7 @@ void main()
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _578 = _main(Input);
-    _entryPointOutput = _578;
+    highp vec4 _581 = _main(Input);
+    _entryPointOutput = _581;
 }
 

@@ -29,14 +29,26 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
 struct PS_ConstanBuffer
 {
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
-    vec4 emissiveScaling;
-    vec4 edgeColor;
-    vec4 edgeParameter;
+    vec4 fLightDirection;
+    vec4 fLightColor;
+    vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 };
@@ -132,35 +144,35 @@ vec4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
-    vec2 param_2 = CBPS0.uvDistortionParameter.zw;
+    vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
-    UVOffset *= CBPS0.uvDistortionParameter.x;
+    UVOffset *= CBPS0.fUVDistortionParameter.x;
     vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset);
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, CBPS0.flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     vec4 AlphaTexColor = texture2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     vec2 param_5 = advancedParam.BlendUVDistortionUV;
-    vec2 param_6 = CBPS0.uvDistortionParameter.zw;
+    vec2 param_6 = CBPS0.fUVDistortionParameter.zw;
     vec2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset.y = CBPS0.uvDistortionParameter.z + (CBPS0.uvDistortionParameter.w * BlendUVOffset.y);
-    BlendUVOffset *= CBPS0.uvDistortionParameter.y;
+    BlendUVOffset.y = CBPS0.fUVDistortionParameter.z + (CBPS0.fUVDistortionParameter.w * BlendUVOffset.y);
+    BlendUVOffset *= CBPS0.fUVDistortionParameter.y;
     vec4 BlendTextureColor = texture2D(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     vec4 BlendAlphaTextureColor = texture2D(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     vec4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.blendTextureParameter.x);
+    ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_7;
-    vec3 _341 = Output.xyz * CBPS0.emissiveScaling.x;
-    Output = vec4(_341.x, _341.y, _341.z, Output.w);
+    vec3 _342 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_342.x, _342.y, _342.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _371 = mix(CBPS0.edgeColor.xyz * CBPS0.edgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.edgeParameter.x)));
-    Output = vec4(_371.x, _371.y, _371.z, Output.w);
+    vec3 _373 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_373.x, _373.y, _373.z, Output.w);
     return Output;
 }
 
@@ -177,7 +189,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _413 = _main(Input);
-    gl_FragData[0] = _413;
+    vec4 _415 = _main(Input);
+    gl_FragData[0] = _415;
 }
 

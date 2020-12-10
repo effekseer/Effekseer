@@ -13,16 +13,31 @@ struct PS_Input
     highp vec4 PosP;
 };
 
-struct VS_ConstantBuffer
+struct FalloffParameter
+{
+    highp vec4 Param;
+    highp vec4 BeginColor;
+    highp vec4 EndColor;
+};
+
+struct PS_ConstanBuffer
 {
     highp vec4 fLightDirection;
     highp vec4 fLightColor;
     highp vec4 fLightAmbient;
+    highp vec4 fFlipbookParameter;
+    highp vec4 fUVDistortionParameter;
+    highp vec4 fBlendTextureParameter;
+    highp vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    highp vec4 fEmissiveScaling;
+    highp vec4 fEdgeColor;
+    highp vec4 fEdgeParameter;
     highp vec4 softParticleAndReconstructionParam1;
     highp vec4 reconstructionParam2;
 };
 
-uniform VS_ConstantBuffer CBPS0;
+uniform PS_ConstanBuffer CBPS0;
 
 uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_normalTex;
@@ -40,8 +55,8 @@ highp vec4 _main(PS_Input Input)
     highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_99.x, _99.y, _99.z, Output.w);
+    highp vec3 _100 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_100.x, _100.y, _100.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -59,7 +74,7 @@ void main()
     Input.Tangent = _VSPS_Tangent;
     Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _145 = _main(Input);
-    gl_FragData[0] = _145;
+    highp vec4 _146 = _main(Input);
+    gl_FragData[0] = _146;
 }
 

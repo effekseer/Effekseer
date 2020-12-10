@@ -9,13 +9,28 @@ struct PS_Input
     float4 PosP;
 };
 
-cbuffer VS_ConstantBuffer : register(b1)
+struct FalloffParameter
 {
-    float4 _138_fLightDirection : packoffset(c0);
-    float4 _138_fLightColor : packoffset(c1);
-    float4 _138_fLightAmbient : packoffset(c2);
-    float4 _138_softParticleAndReconstructionParam1 : packoffset(c3);
-    float4 _138_reconstructionParam2 : packoffset(c4);
+    float4 Param;
+    float4 BeginColor;
+    float4 EndColor;
+};
+
+cbuffer PS_ConstanBuffer : register(b1)
+{
+    float4 _139_fLightDirection : packoffset(c0);
+    float4 _139_fLightColor : packoffset(c1);
+    float4 _139_fLightAmbient : packoffset(c2);
+    float4 _139_fFlipbookParameter : packoffset(c3);
+    float4 _139_fUVDistortionParameter : packoffset(c4);
+    float4 _139_fBlendTextureParameter : packoffset(c5);
+    float4 _139_fCameraFrontDirection : packoffset(c6);
+    FalloffParameter _139_fFalloffParam : packoffset(c7);
+    float4 _139_fEmissiveScaling : packoffset(c10);
+    float4 _139_fEdgeColor : packoffset(c11);
+    float4 _139_fEdgeParameter : packoffset(c12);
+    float4 _139_softParticleAndReconstructionParam1 : packoffset(c13);
+    float4 _139_reconstructionParam2 : packoffset(c14);
 };
 
 Texture2D<float4> _colorTex : register(t0);
@@ -65,20 +80,20 @@ float4 _main(PS_Input Input)
     float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV) * Input.Color;
     float3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.Tangent), float3(Input.Binormal), float3(Input.Normal))));
-    float diffuse = max(dot(_138_fLightDirection.xyz, localNormal), 0.0f);
-    float3 _158 = Output.xyz * ((_138_fLightColor.xyz * diffuse) + _138_fLightAmbient.xyz);
-    Output = float4(_158.x, _158.y, _158.z, Output.w);
+    float diffuse = max(dot(_139_fLightDirection.xyz, localNormal), 0.0f);
+    float3 _159 = Output.xyz * ((_139_fLightColor.xyz * diffuse) + _139_fLightAmbient.xyz);
+    Output = float4(_159.x, _159.y, _159.z, Output.w);
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
     float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
-    if (_138_softParticleAndReconstructionParam1.x != 0.0f)
+    if (_139_softParticleAndReconstructionParam1.x != 0.0f)
     {
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        float param_2 = _138_softParticleAndReconstructionParam1.x;
-        float2 param_3 = _138_softParticleAndReconstructionParam1.yz;
-        float4 param_4 = _138_reconstructionParam2;
+        float param_2 = _139_softParticleAndReconstructionParam1.x;
+        float2 param_3 = _139_softParticleAndReconstructionParam1.yz;
+        float4 param_4 = _139_reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0f)
@@ -98,8 +113,8 @@ void frag_main()
     Input.Tangent = Input_Tangent;
     Input.Color = Input_Color;
     Input.PosP = Input_PosP;
-    float4 _252 = _main(Input);
-    _entryPointOutput = _252;
+    float4 _255 = _main(Input);
+    _entryPointOutput = _255;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

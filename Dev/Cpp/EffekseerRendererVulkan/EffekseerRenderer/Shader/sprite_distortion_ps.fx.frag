@@ -10,13 +10,13 @@ struct PS_Input
     vec4 PosR;
 };
 
-layout(set = 1, binding = 0, std140) uniform VS_ConstantBuffer
+layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
-    vec4 flipbookParameter;
-    vec4 uvDistortionParameter;
-    vec4 blendTextureParameter;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
 } _129;

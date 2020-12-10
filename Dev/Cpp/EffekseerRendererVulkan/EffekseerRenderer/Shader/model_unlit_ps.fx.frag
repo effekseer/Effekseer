@@ -8,14 +8,29 @@ struct PS_Input
     vec4 PosP;
 };
 
-layout(set = 1, binding = 0, std140) uniform VS_ConstantBuffer
+struct FalloffParameter
+{
+    vec4 Param;
+    vec4 BeginColor;
+    vec4 EndColor;
+};
+
+layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
     vec4 fLightAmbient;
+    vec4 fFlipbookParameter;
+    vec4 fUVDistortionParameter;
+    vec4 fBlendTextureParameter;
+    vec4 fCameraFrontDirection;
+    FalloffParameter fFalloffParam;
+    vec4 fEmissiveScaling;
+    vec4 fEdgeColor;
+    vec4 fEdgeParameter;
     vec4 softParticleAndReconstructionParam1;
     vec4 reconstructionParam2;
-} _124;
+} _125;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
@@ -42,13 +57,13 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-    if (!(_124.softParticleAndReconstructionParam1.x == 0.0))
+    if (!(_125.softParticleAndReconstructionParam1.x == 0.0))
     {
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        float param_2 = _124.softParticleAndReconstructionParam1.x;
-        vec2 param_3 = _124.softParticleAndReconstructionParam1.yz;
-        vec4 param_4 = _124.reconstructionParam2;
+        float param_2 = _125.softParticleAndReconstructionParam1.x;
+        vec2 param_3 = _125.softParticleAndReconstructionParam1.yz;
+        vec4 param_4 = _125.reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0)
@@ -65,7 +80,7 @@ void main()
     Input.UV = Input_UV;
     Input.Color = Input_Color;
     Input.PosP = Input_PosP;
-    vec4 _183 = _main(Input);
-    _entryPointOutput = _183;
+    vec4 _185 = _main(Input);
+    _entryPointOutput = _185;
 }
 

@@ -28,9 +28,9 @@ cbuffer PS_ConstanBuffer : register(b1)
 {
     float4 _263_g_scale : packoffset(c0);
     float4 _263_mUVInversedBack : packoffset(c1);
-    float4 _263_flipbookParameter : packoffset(c2);
-    float4 _263_uvDistortionParameter : packoffset(c3);
-    float4 _263_blendTextureParameter : packoffset(c4);
+    float4 _263_fFlipbookParameter : packoffset(c2);
+    float4 _263_fUVDistortionParameter : packoffset(c3);
+    float4 _263_fBlendTextureParameter : packoffset(c4);
     float4 _263_softParticleAndReconstructionParam1 : packoffset(c5);
     float4 _263_reconstructionParam2 : packoffset(c6);
 };
@@ -165,14 +165,14 @@ float4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = _263_uvDistortionParameter.zw;
+    float2 param_2 = _263_fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, param_1, param_2);
-    UVOffset *= _263_uvDistortionParameter.x;
+    UVOffset *= _263_fUVDistortionParameter.x;
     float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset);
     Output.w *= Input.Color.w;
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _colorTex, sampler_colorTex, _263_flipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
+    ApplyFlipbook(param_3, _colorTex, sampler_colorTex, _263_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
     Output = param_3;
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
@@ -190,14 +190,14 @@ float4 _main(PS_Input Input)
     float4 AlphaTexColor = _alphaTex.Sample(sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     float2 param_10 = advancedParam.BlendUVDistortionUV;
-    float2 param_11 = _263_uvDistortionParameter.zw;
+    float2 param_11 = _263_fUVDistortionParameter.zw;
     float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, param_10, param_11);
-    BlendUVOffset *= _263_uvDistortionParameter.y;
+    BlendUVOffset *= _263_fUVDistortionParameter.y;
     float4 BlendTextureColor = _blendTex.Sample(sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     float4 BlendAlphaTextureColor = _blendAlphaTex.Sample(sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     float4 param_12 = Output;
-    ApplyTextureBlending(param_12, BlendTextureColor, _263_blendTextureParameter.x);
+    ApplyTextureBlending(param_12, BlendTextureColor, _263_fBlendTextureParameter.x);
     Output = param_12;
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {

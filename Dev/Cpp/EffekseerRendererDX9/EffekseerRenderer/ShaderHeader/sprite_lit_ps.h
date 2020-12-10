@@ -10,18 +10,18 @@
 //
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_normalTex;
-//   float4 _69_fLightAmbient;
-//   float4 _69_fLightColor;
-//   float4 _69_fLightDirection;
+//   float4 _70_fLightAmbient;
+//   float4 _70_fLightColor;
+//   float4 _70_fLightDirection;
 //
 //
 // Registers:
 //
 //   Name                      Reg   Size
 //   ------------------------- ----- ----
-//   _69_fLightDirection       c0       1
-//   _69_fLightColor           c1       1
-//   _69_fLightAmbient         c2       1
+//   _70_fLightDirection       c0       1
+//   _70_fLightColor           c1       1
+//   _70_fLightAmbient         c2       1
 //   Sampler_sampler_colorTex  s0       1
 //   Sampler_sampler_normalTex s1       1
 //
@@ -96,16 +96,16 @@ const BYTE g_ps30_main[] =
     171, 171,   4,   0,  12,   0, 
       1,   0,   1,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  54,  57,  95, 102,  76, 
+     95,  55,  48,  95, 102,  76, 
     105, 103, 104, 116,  65, 109, 
      98, 105, 101, 110, 116,   0, 
     171, 171,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  54,  57,  95, 102,  76, 
+     95,  55,  48,  95, 102,  76, 
     105, 103, 104, 116,  67, 111, 
-    108, 111, 114,   0,  95,  54, 
-     57,  95, 102,  76, 105, 103, 
+    108, 111, 114,   0,  95,  55, 
+     48,  95, 102,  76, 105, 103, 
     104, 116,  68, 105, 114, 101, 
      99, 116, 105, 111, 110,   0, 
     112, 115,  95,  51,  95,  48, 

@@ -8,13 +8,13 @@ struct PS_Input
     float4 PosR;
 };
 
-cbuffer VS_ConstantBuffer : register(b1)
+cbuffer PS_ConstanBuffer : register(b1)
 {
     float4 _129_g_scale : packoffset(c0);
     float4 _129_mUVInversedBack : packoffset(c1);
-    float4 _129_flipbookParameter : packoffset(c2);
-    float4 _129_uvDistortionParameter : packoffset(c3);
-    float4 _129_blendTextureParameter : packoffset(c4);
+    float4 _129_fFlipbookParameter : packoffset(c2);
+    float4 _129_fUVDistortionParameter : packoffset(c3);
+    float4 _129_fBlendTextureParameter : packoffset(c4);
     float4 _129_softParticleAndReconstructionParam1 : packoffset(c5);
     float4 _129_reconstructionParam2 : packoffset(c6);
 };
