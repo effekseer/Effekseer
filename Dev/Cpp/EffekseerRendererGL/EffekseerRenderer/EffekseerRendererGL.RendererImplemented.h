@@ -277,6 +277,10 @@ private:
 	void GenerateIndexDataStride();
 };
 
+void AssignPixelConstantBuffer(Shader* shader);
+
+void AssignDistortionPixelConstantBuffer(Shader* shader);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

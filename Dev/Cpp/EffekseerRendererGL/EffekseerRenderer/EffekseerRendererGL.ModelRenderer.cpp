@@ -193,66 +193,7 @@ void ModelRenderer::InitRenderer()
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		int psOffset = 0;
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightDirection"), psOffset);
-
-		psOffset += sizeof(float[4]) * 1;
-
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightColor"), psOffset);
-
-		psOffset += sizeof(float[4]) * 1;
-
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fLightAmbient"), psOffset);
-
-		psOffset += sizeof(float[4]) * 1;
-
-		if (isAd)
-		{
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFlipbookParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fUVDistortionParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fBlendTextureParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fCameraFrontDirection"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFalloffParam.Param"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFalloffParam.BeginColor"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fFalloffParam.EndColor"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fEmissiveScaling"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fEdgeColor"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.fEdgeParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-		}
-
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), psOffset);
-		psOffset += sizeof(float[4]) * 1;
-		shaders[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders[i]->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
-		psOffset += sizeof(float[4]) * 1;
+		AssignPixelConstantBuffer(shaders[i]);
 	}
 
 	Shader* shaders_d[2];
@@ -331,37 +272,7 @@ void ModelRenderer::InitRenderer()
 
 		vsOffset += sizeof(float[4]) * 1;
 
-		int psOffset = 0;
-
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.g_scale"), psOffset);
-
-		psOffset += sizeof(float[4]) * 1;
-
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.mUVInversedBack"), psOffset);
-
-		psOffset += sizeof(float[4]) * 1;
-
-		if (isAd)
-		{
-			shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.fFlipbookParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders_d[i]->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.fUVDistortionParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-
-			shaders_d[i]->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.fBlendTextureParameter"), psOffset);
-
-			psOffset += sizeof(float[4]) * 1;
-		}
-
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), psOffset);
-		psOffset += sizeof(float[4]) * 1;
-		shaders_d[i]->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaders_d[i]->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
-		psOffset += sizeof(float[4]) * 1;
+		AssignDistortionPixelConstantBuffer(shaders_d[i]);
 	}
 }
 
