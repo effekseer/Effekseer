@@ -77,12 +77,10 @@ LAYOUT(5) IN vec4 a_Color;
 LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
 LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
 LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
-LAYOUT(3) OUT mediump vec3 v_WorldP;
-LAYOUT(4) OUT mediump vec3 v_WorldN;
-LAYOUT(5) OUT mediump vec3 v_WorldT;
-LAYOUT(6) OUT mediump vec3 v_WorldB;
-LAYOUT(7) OUT mediump vec4 v_PosP;
-//LAYOUT(7) OUT mediump vec2 v_ScreenUV;
+LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
+LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
+LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
+LAYOUT(6) OUT mediump vec4 v_PosP;
 //$C_OUT1$
 //$C_OUT2$
 )";
@@ -172,10 +170,12 @@ static const char g_material_model_vs_src_suf2[] =
 	R"(
 	worldPos = worldPos + worldPositionOffset;
 
-	v_WorldP = worldPos;
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
+	v_WorldN_PX.w = worldPos.x;
+	v_WorldB_PY.w = worldPos.y;
+	v_WorldT_PZ.w = worldPos.z;
+	v_WorldN_PX.xyz = worldNormal;
+	v_WorldB_PY.xyz = worldBinormal;
+	v_WorldT_PZ.xyz = worldTangent;
 	v_UV1 = uv1;
 	v_UV2 = uv2;
 	v_VColor = vcolor;
@@ -202,12 +202,10 @@ LAYOUT(2) IN vec4 atTexCoord;
 LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
 LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
 LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
-LAYOUT(3) OUT mediump vec3 v_WorldP;
-LAYOUT(4) OUT mediump vec3 v_WorldN;
-LAYOUT(5) OUT mediump vec3 v_WorldT;
-LAYOUT(6) OUT mediump vec3 v_WorldB;
-//LAYOUT(7) OUT mediump vec2 v_ScreenUV;
-LAYOUT(7) OUT mediump vec4 v_PosP;
+LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
+LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
+LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
+LAYOUT(6) OUT mediump vec4 v_PosP;
 )";
 
 static const char g_material_sprite_vs_src_pre_simple_uniform[] =
@@ -237,12 +235,10 @@ LAYOUT(5) IN vec2 atTexCoord2;
 LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
 LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
 LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
-LAYOUT(3) OUT mediump vec3 v_WorldP;
-LAYOUT(4) OUT mediump vec3 v_WorldN;
-LAYOUT(5) OUT mediump vec3 v_WorldT;
-LAYOUT(6) OUT mediump vec3 v_WorldB;
-//LAYOUT(7) OUT mediump vec2 v_ScreenUV;
-LAYOUT(7) OUT mediump vec4 v_PosP;
+LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
+LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
+LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
+LAYOUT(6) OUT mediump vec4 v_PosP;
 //$C_OUT1$
 //$C_OUT2$
 )";
@@ -291,9 +287,9 @@ void main() {
 	vec3 worldNormal = vec3(0.0, 0.0, 0.0);
 	vec3 worldBinormal = vec3(0.0, 0.0, 0.0);
 	vec3 worldTangent = vec3(0.0, 0.0, 0.0);
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
+	v_WorldN_PX.xyz = worldNormal;
+	v_WorldB_PY.xyz = worldBinormal;
+	v_WorldT_PZ.xyz = worldTangent;
 
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = atColor;
@@ -334,9 +330,9 @@ void main() {
 	vec3 worldTangent = (atTangent - vec3(0.5, 0.5, 0.5)) * 2.0;
 	vec3 worldBinormal = cross(worldNormal, worldTangent);
 
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
+	v_WorldN_PX.xyz = worldNormal;
+	v_WorldB_PY.xyz = worldBinormal;
+	v_WorldT_PZ.xyz = worldTangent;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = atColor;
 )";
@@ -351,7 +347,9 @@ static const char g_material_sprite_vs_src_suf2[] =
 
 	gl_Position = uMatProjection * cameraPos;
 
-	v_WorldP = worldPos;
+	v_WorldN_PX.w = worldPos.x;
+	v_WorldB_PY.w = worldPos.y;
+	v_WorldT_PZ.w = worldPos.z;
 	v_VColor = vcolor;
 
 	v_UV1 = uv1;
@@ -373,12 +371,10 @@ static const char g_material_fs_src_pre[] =
 LAYOUT(0) CENTROID IN lowp vec4 v_VColor;
 LAYOUT(1) CENTROID IN mediump vec2 v_UV1;
 LAYOUT(2) CENTROID IN mediump vec2 v_UV2;
-LAYOUT(3) IN mediump vec3 v_WorldP;
-LAYOUT(4) IN mediump vec3 v_WorldN;
-LAYOUT(5) IN mediump vec3 v_WorldT;
-LAYOUT(6) IN mediump vec3 v_WorldB;
-LAYOUT(7) IN mediump vec4 v_PosP;
-//LAYOUT(7) IN mediump vec2 v_ScreenUV;
+LAYOUT(3) IN mediump vec4 v_WorldN_PX;
+LAYOUT(4) IN mediump vec4 v_WorldB_PY;
+LAYOUT(5) IN mediump vec4 v_WorldT_PZ;
+LAYOUT(6) IN mediump vec4 v_PosP;
 //$C_PIN1$
 //$C_PIN2$
 
@@ -493,10 +489,10 @@ void main()
 {
 	vec2 uv1 = v_UV1;
 	vec2 uv2 = v_UV2;
-	vec3 worldPos = v_WorldP;
-	vec3 worldNormal = v_WorldN;
-	vec3 worldTangent = v_WorldT;
-	vec3 worldBinormal = v_WorldB;
+	vec3 worldPos = vec3(v_WorldN_PX.w, v_WorldB_PY.w, v_WorldT_PZ.w);
+	vec3 worldNormal = v_WorldN_PX.xyz;
+	vec3 worldTangent = v_WorldT_PZ.xyz;
+	vec3 worldBinormal = v_WorldB_PY.xyz;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = v_VColor;
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
@@ -1028,7 +1024,7 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 
 		// custom data
 		int32_t layoutOffset = 6;
-		int32_t pvLayoutOffset = 8;
+		int32_t pvLayoutOffset = 7;
 
 		if (material->GetCustomData1Count() > 0)
 		{
