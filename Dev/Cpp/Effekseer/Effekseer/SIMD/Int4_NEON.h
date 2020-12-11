@@ -294,7 +294,7 @@ inline Int4 Int4::Mask()
 
 inline uint32_t Int4::MoveMask(const Int4& in)
 {
-	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_s32_u32(in.s));
+	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_u32_s32(in.s));
 	uint16_t u16[4];
 	vst1_u16(u16, u16x4);
 	return (u16[0] & 1) | (u16[1] & 2) | (u16[2] & 4) | (u16[3] & 8);
@@ -302,32 +302,32 @@ inline uint32_t Int4::MoveMask(const Int4& in)
 
 inline Int4 Int4::Equal(const Int4& lhs, const Int4& rhs)
 {
-	return vceqq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vceqq_s32(lhs.s, rhs.s));
 }
 
 inline Int4 Int4::NotEqual(const Int4& lhs, const Int4& rhs)
 {
-	return vmvnq_u32(vceqq_s32(lhs.s, rhs.s));
+	return vreinterpretq_s32_u32(vmvnq_u32(vceqq_s32(lhs.s, rhs.s)));
 }
 
 inline Int4 Int4::LessThan(const Int4& lhs, const Int4& rhs)
 {
-	return vcltq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vcltq_s32(lhs.s, rhs.s));
 }
 
 inline Int4 Int4::LessEqual(const Int4& lhs, const Int4& rhs)
 {
-	return vcleq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vcleq_s32(lhs.s, rhs.s));
 }
 
 inline Int4 Int4::GreaterThan(const Int4& lhs, const Int4& rhs)
 {
-	return vcgtq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vcgtq_s32(lhs.s, rhs.s));
 }
 
 inline Int4 Int4::GreaterEqual(const Int4& lhs, const Int4& rhs)
 {
-	return vcgeq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vcgeq_s32(lhs.s, rhs.s));
 }
 
 inline Int4 Int4::NearEqual(const Int4& lhs, const Int4& rhs, int32_t epsilon)
