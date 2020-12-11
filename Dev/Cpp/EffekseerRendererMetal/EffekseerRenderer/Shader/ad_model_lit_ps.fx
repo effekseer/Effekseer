@@ -8,11 +8,11 @@ using namespace metal;
 struct PS_Input
 {
     float4 PosVS;
-    float2 UV;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
     float4 Color;
+    float2 UV;
+    float3 WorldN;
+    float3 WorldB;
+    float3 WorldT;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
@@ -63,11 +63,11 @@ struct main0_out
 
 struct main0_in
 {
-    float2 Input_UV [[user(locn0), centroid_perspective]];
-    float3 Input_Normal [[user(locn1)]];
-    float3 Input_Binormal [[user(locn2)]];
-    float3 Input_Tangent [[user(locn3)]];
-    float4 Input_Color [[user(locn4), centroid_perspective]];
+    float4 Input_Color [[user(locn0), centroid_perspective]];
+    float2 Input_UV [[user(locn1), centroid_perspective]];
+    float3 Input_WorldN [[user(locn2)]];
+    float3 Input_WorldB [[user(locn3)]];
+    float3 Input_WorldT [[user(locn4)]];
     float4 Input_Alpha_Dist_UV [[user(locn5)]];
     float4 Input_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 Input_Blend_FBNextIndex_UV [[user(locn7)]];
@@ -168,7 +168,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
     UVOffset *= v_264.fUVDistortionParameter.x;
     float4 Output = _colorTex.sample(sampler_colorTex, (Input.UV + UVOffset)) * Input.Color;
     float3 texNormal = (_normalTex.sample(sampler_normalTex, (Input.UV + UVOffset)).xyz - float3(0.5)) * 2.0;
-    float3 localNormal = normalize(float3x3(float3(Input.Tangent), float3(Input.Binormal), float3(Input.Normal)) * texNormal);
+    float3 localNormal = normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, _colorTex, sampler_colorTex, v_264.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
@@ -245,11 +245,11 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     main0_out out = {};
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = in.Input_UV;
-    Input.Normal = in.Input_Normal;
-    Input.Binormal = in.Input_Binormal;
-    Input.Tangent = in.Input_Tangent;
     Input.Color = in.Input_Color;
+    Input.UV = in.Input_UV;
+    Input.WorldN = in.Input_WorldN;
+    Input.WorldB = in.Input_WorldB;
+    Input.WorldT = in.Input_WorldT;
     Input.Alpha_Dist_UV = in.Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = in.Input_Blend_FBNextIndex_UV;

@@ -5,11 +5,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec4 Color;
     highp vec2 UV;
+    highp vec4 ProjBinormal;
+    highp vec4 ProjTangent;
     highp vec4 PosP;
-    highp vec4 PosU;
-    highp vec4 PosR;
+    highp vec4 Color;
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
     highp vec4 Blend_FBNextIndex_UV;
@@ -50,11 +50,11 @@ uniform highp sampler2D Sampler_sampler_blendTex;
 uniform highp sampler2D Sampler_sampler_blendAlphaTex;
 uniform highp sampler2D Sampler_sampler_backTex;
 
-centroid in highp vec4 _VSPS_Color;
 centroid in highp vec2 _VSPS_UV;
+in highp vec4 _VSPS_ProjBinormal;
+in highp vec4 _VSPS_ProjTangent;
 in highp vec4 _VSPS_PosP;
-in highp vec4 _VSPS_PosU;
-in highp vec4 _VSPS_PosR;
+centroid in highp vec4 _VSPS_Color;
 in highp vec4 _VSPS_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_FBNextIndex_UV;
@@ -183,8 +183,8 @@ highp vec4 _main(PS_Input Input)
         discard;
     }
     highp vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    highp vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    highp vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    highp vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    highp vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     highp float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     highp float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     highp vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -201,11 +201,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
-    Input.PosU = _VSPS_PosU;
-    Input.PosR = _VSPS_PosR;
+    Input.Color = _VSPS_Color;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;

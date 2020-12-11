@@ -16,11 +16,11 @@ struct VS_Input
 struct VS_Output
 {
     float4 PosVS;
-    float4 VColor;
+    float4 Color;
     float2 UV;
     float3 WorldN;
-    float3 WorldT;
     float3 WorldB;
+    float3 WorldT;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
@@ -51,11 +51,11 @@ static float2 Input_BlendUV;
 static float4 Input_Blend_Alpha_Dist_UV;
 static float Input_FlipbookIndex;
 static float Input_AlphaThreshold;
-static float4 _entryPointOutput_VColor;
+static float4 _entryPointOutput_Color;
 static float2 _entryPointOutput_UV;
 static float3 _entryPointOutput_WorldN;
-static float3 _entryPointOutput_WorldT;
 static float3 _entryPointOutput_WorldB;
+static float3 _entryPointOutput_WorldT;
 static float4 _entryPointOutput_Alpha_Dist_UV;
 static float4 _entryPointOutput_Blend_Alpha_Dist_UV;
 static float4 _entryPointOutput_Blend_FBNextIndex_UV;
@@ -78,11 +78,11 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    centroid float4 _entryPointOutput_VColor : TEXCOORD0;
+    centroid float4 _entryPointOutput_Color : TEXCOORD0;
     centroid float2 _entryPointOutput_UV : TEXCOORD1;
     float3 _entryPointOutput_WorldN : TEXCOORD2;
-    float3 _entryPointOutput_WorldT : TEXCOORD3;
-    float3 _entryPointOutput_WorldB : TEXCOORD4;
+    float3 _entryPointOutput_WorldB : TEXCOORD3;
+    float3 _entryPointOutput_WorldT : TEXCOORD4;
     float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
     float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD6;
     float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD7;
@@ -229,17 +229,14 @@ VS_Output _main(VS_Input Input)
     float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
-    float2 uv2 = Input.UV1;
     uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
-    uv2.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv2.y);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    float3 pixelNormalDir = float3(0.5f, 0.5f, 1.0f);
     float4 cameraPos = mul(_255_mCamera, float4(worldPos, 1.0f));
     cameraPos /= cameraPos.w.xxxx;
     Output.PosVS = mul(_255_mProj, cameraPos);
-    Output.VColor = Input.Color;
+    Output.Color = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
@@ -264,11 +261,11 @@ void vert_main()
     Input.AlphaThreshold = Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;
-    _entryPointOutput_VColor = flattenTemp.VColor;
+    _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
     _entryPointOutput_WorldN = flattenTemp.WorldN;
-    _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_WorldB = flattenTemp.WorldB;
+    _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     _entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     _entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
@@ -293,11 +290,11 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     vert_main();
     SPIRV_Cross_Output stage_output;
     stage_output.gl_Position = gl_Position;
-    stage_output._entryPointOutput_VColor = _entryPointOutput_VColor;
+    stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
     stage_output._entryPointOutput_WorldN = _entryPointOutput_WorldN;
-    stage_output._entryPointOutput_WorldT = _entryPointOutput_WorldT;
     stage_output._entryPointOutput_WorldB = _entryPointOutput_WorldB;
+    stage_output._entryPointOutput_WorldT = _entryPointOutput_WorldT;
     stage_output._entryPointOutput_Alpha_Dist_UV = _entryPointOutput_Alpha_Dist_UV;
     stage_output._entryPointOutput_Blend_Alpha_Dist_UV = _entryPointOutput_Blend_Alpha_Dist_UV;
     stage_output._entryPointOutput_Blend_FBNextIndex_UV = _entryPointOutput_Blend_FBNextIndex_UV;

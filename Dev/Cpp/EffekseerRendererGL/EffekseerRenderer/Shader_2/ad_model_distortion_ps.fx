@@ -7,8 +7,8 @@ struct PS_Input
 {
     vec4 PosVS;
     vec2 UV;
-    vec4 Binormal;
-    vec4 Tangent;
+    vec4 ProjBinormal;
+    vec4 ProjTangent;
     vec4 PosP;
     vec4 Color;
     vec4 Alpha_Dist_UV;
@@ -51,8 +51,8 @@ uniform sampler2D Sampler_sampler_blendAlphaTex;
 uniform sampler2D Sampler_sampler_backTex;
 
 centroid varying vec2 _VSPS_UV;
-varying vec4 _VSPS_Binormal;
-varying vec4 _VSPS_Tangent;
+varying vec4 _VSPS_ProjBinormal;
+varying vec4 _VSPS_ProjTangent;
 varying vec4 _VSPS_PosP;
 centroid varying vec4 _VSPS_Color;
 varying vec4 _VSPS_Alpha_Dist_UV;
@@ -158,8 +158,8 @@ vec4 _main(PS_Input Input)
         discard;
     }
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    vec2 posU = Input.Tangent.xy / vec2(Input.Tangent.w);
-    vec2 posR = Input.Binormal.xy / vec2(Input.Binormal.w);
+    vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -177,8 +177,8 @@ void main()
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
     Input.UV = _VSPS_UV;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;

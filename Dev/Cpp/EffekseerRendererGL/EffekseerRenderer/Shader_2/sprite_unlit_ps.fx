@@ -45,7 +45,7 @@ varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV);
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     if (Output.w == 0.0)
     {
         discard;

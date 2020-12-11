@@ -3,11 +3,9 @@
 struct VS_Output
 {
     vec4 PosVS;
-    vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
     vec4 Color;
+    vec2 UV;
+    vec3 WorldN;
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
@@ -52,16 +50,14 @@ layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
 layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
-layout(location = 0) centroid out vec2 _entryPointOutput_UV;
-layout(location = 1) out vec3 _entryPointOutput_Normal;
-layout(location = 2) out vec3 _entryPointOutput_Binormal;
-layout(location = 3) out vec3 _entryPointOutput_Tangent;
-layout(location = 4) centroid out vec4 _entryPointOutput_Color;
-layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
-layout(location = 6) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
-layout(location = 7) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
-layout(location = 8) out vec2 _entryPointOutput_Others;
-layout(location = 9) out vec4 _entryPointOutput_PosP;
+layout(location = 0) centroid out vec4 _entryPointOutput_Color;
+layout(location = 1) centroid out vec2 _entryPointOutput_UV;
+layout(location = 2) out vec3 _entryPointOutput_WorldN;
+layout(location = 3) out vec4 _entryPointOutput_Alpha_Dist_UV;
+layout(location = 4) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
+layout(location = 5) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
+layout(location = 6) out vec2 _entryPointOutput_Others;
+layout(location = 7) out vec4 _entryPointOutput_PosP;
 
 vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
 {
@@ -194,7 +190,7 @@ VS_Output _main(VS_Input Input)
     vec4 modelColor = _365.fModelColor[index] * Input.Color;
     float flipbookIndexAndNextRate = _365.fFlipbookIndexAndNextRate[index].x;
     float modelAlphaThreshold = _365.fModelAlphaThreshold[index].x;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
     Output.PosVS = cameraPosition * _365.mCameraProj;
@@ -202,7 +198,7 @@ VS_Output _main(VS_Input Input)
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     localNormal = normalize(localNormal * matModel);
-    Output.Normal = localNormal.xyz;
+    Output.WorldN = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * Output.UV.y);
     vec2 param = Input.UV;
@@ -235,11 +231,9 @@ void main()
     vec4 _position = flattenTemp.PosVS;
     _position.y = -_position.y;
     gl_Position = _position;
-    _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_Normal = flattenTemp.Normal;
-    _entryPointOutput_Binormal = flattenTemp.Binormal;
-    _entryPointOutput_Tangent = flattenTemp.Tangent;
     _entryPointOutput_Color = flattenTemp.Color;
+    _entryPointOutput_UV = flattenTemp.UV;
+    _entryPointOutput_WorldN = flattenTemp.WorldN;
     _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     _entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     _entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;

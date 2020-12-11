@@ -7,11 +7,11 @@ static const char model_lit_ps_gl2[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
+    vec4 Color;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
     vec3 Tangent;
-    vec4 Color;
     vec4 PosP;
 };
 
@@ -44,11 +44,11 @@ uniform PS_ConstanBuffer CBPS0;
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_normalTex;
 
+centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
 varying vec3 _VSPS_Normal;
 varying vec3 _VSPS_Binormal;
 varying vec3 _VSPS_Tangent;
-centroid varying vec4 _VSPS_Color;
 varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
@@ -70,11 +70,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
     vec4 _146 = _main(Input);
     gl_FragData[0] = _146;
@@ -91,11 +91,11 @@ static const char model_lit_ps_gl3[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
+    vec4 Color;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
     vec3 Tangent;
-    vec4 Color;
     vec4 PosP;
 };
 
@@ -129,11 +129,11 @@ uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_normalTex;
 uniform sampler2D Sampler_sampler_depthTex;
 
+centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_Normal;
 in vec3 _VSPS_Binormal;
 in vec3 _VSPS_Tangent;
-centroid in vec4 _VSPS_Color;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
@@ -180,11 +180,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
     vec4 _259 = _main(Input);
     _entryPointOutput = _259;
@@ -200,11 +200,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
+    highp vec4 Color;
     highp vec2 UV;
     highp vec3 Normal;
     highp vec3 Binormal;
     highp vec3 Tangent;
-    highp vec4 Color;
     highp vec4 PosP;
 };
 
@@ -237,11 +237,11 @@ uniform PS_ConstanBuffer CBPS0;
 uniform  sampler2D Sampler_sampler_colorTex;
 uniform  sampler2D Sampler_sampler_normalTex;
 
+varying  vec4 _VSPS_Color;
 varying  vec2 _VSPS_UV;
 varying  vec3 _VSPS_Normal;
 varying  vec3 _VSPS_Binormal;
 varying  vec3 _VSPS_Tangent;
-varying  vec4 _VSPS_Color;
 varying  vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
@@ -263,11 +263,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
     highp vec4 _146 = _main(Input);
     gl_FragData[0] = _146;
@@ -283,11 +283,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
+    highp vec4 Color;
     highp vec2 UV;
     highp vec3 Normal;
     highp vec3 Binormal;
     highp vec3 Tangent;
-    highp vec4 Color;
     highp vec4 PosP;
 };
 
@@ -321,11 +321,11 @@ uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_normalTex;
 uniform highp sampler2D Sampler_sampler_depthTex;
 
+centroid in highp vec4 _VSPS_Color;
 centroid in highp vec2 _VSPS_UV;
 in highp vec3 _VSPS_Normal;
 in highp vec3 _VSPS_Binormal;
 in highp vec3 _VSPS_Tangent;
-centroid in highp vec4 _VSPS_Color;
 in highp vec4 _VSPS_PosP;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
@@ -372,11 +372,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
     highp vec4 _259 = _main(Input);
     _entryPointOutput = _259;

@@ -3,11 +3,11 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
     vec4 Color;
+    vec2 UV;
+    vec3 WorldN;
+    vec3 WorldB;
+    vec3 WorldT;
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
@@ -60,11 +60,11 @@ layout(set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendTex;
 layout(set = 1, binding = 6) uniform sampler2D Sampler_sampler_blendAlphaTex;
 layout(set = 1, binding = 8) uniform sampler2D Sampler_sampler_depthTex;
 
-layout(location = 0) centroid in vec2 Input_UV;
-layout(location = 1) in vec3 Input_Normal;
-layout(location = 2) in vec3 Input_Binormal;
-layout(location = 3) in vec3 Input_Tangent;
-layout(location = 4) centroid in vec4 Input_Color;
+layout(location = 0) centroid in vec4 Input_Color;
+layout(location = 1) centroid in vec2 Input_UV;
+layout(location = 2) in vec3 Input_WorldN;
+layout(location = 3) in vec3 Input_WorldB;
+layout(location = 4) in vec3 Input_WorldT;
 layout(location = 5) in vec4 Input_Alpha_Dist_UV;
 layout(location = 6) in vec4 Input_Blend_Alpha_Dist_UV;
 layout(location = 7) in vec4 Input_Blend_FBNextIndex_UV;
@@ -159,7 +159,7 @@ vec4 _main(PS_Input Input)
     UVOffset *= _264.fUVDistortionParameter.x;
     vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset) * Input.Color;
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV + UVOffset).xyz - vec3(0.5)) * 2.0;
-    vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
+    vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, _264.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
@@ -235,11 +235,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = Input_UV;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
     Input.Color = Input_Color;
+    Input.UV = Input_UV;
+    Input.WorldN = Input_WorldN;
+    Input.WorldB = Input_WorldB;
+    Input.WorldT = Input_WorldT;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;

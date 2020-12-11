@@ -5,11 +5,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
+    highp vec4 Color;
     highp vec2 UV;
     highp vec3 Normal;
     highp vec3 Binormal;
     highp vec3 Tangent;
-    highp vec4 Color;
     highp vec4 PosP;
 };
 
@@ -42,11 +42,11 @@ uniform PS_ConstanBuffer CBPS0;
 uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_normalTex;
 
+centroid varying highp vec4 _VSPS_Color;
 centroid varying highp vec2 _VSPS_UV;
 varying highp vec3 _VSPS_Normal;
 varying highp vec3 _VSPS_Binormal;
 varying highp vec3 _VSPS_Tangent;
-centroid varying highp vec4 _VSPS_Color;
 varying highp vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
@@ -68,11 +68,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
     highp vec4 _146 = _main(Input);
     gl_FragData[0] = _146;

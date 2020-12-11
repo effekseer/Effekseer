@@ -1,4 +1,6 @@
+#include "ad_model_unlit_ps.fx"
 
+/*
 Texture2D _colorTex : register(t0);
 SamplerState sampler_colorTex : register(s0);
 
@@ -60,9 +62,11 @@ struct PS_Input
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
 
-	float4 PosP : TEXCOORD1;
-	float4 PosU : TEXCOORD2;
-	float4 PosR : TEXCOORD3;
+#ifdef ENABLE_LIGHTING
+	float3 WorldN : TEXCOORD1;
+	float3 WorldB : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
+#endif
 
 	float4 Alpha_Dist_UV : TEXCOORD4;
 	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
@@ -72,6 +76,10 @@ struct PS_Input
 
 	// x - FlipbookRate, y - AlphaThreshold
 	float2 Others : TEXCOORD7;
+
+#ifndef DISABLED_SOFT_PARTICLE
+	float4 PosP : TEXCOORD8;
+#endif
 };
 
 #include "ad_common_ps.fx"
@@ -141,3 +149,4 @@ float4 main(const PS_Input Input)
 
 	return Output;
 }
+*/

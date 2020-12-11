@@ -7,8 +7,8 @@ static const char model_unlit_ps_gl2[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
     vec4 Color;
+    vec2 UV;
     vec4 PosP;
 };
 
@@ -40,8 +40,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 
-centroid varying vec2 _VSPS_UV;
 centroid varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
 varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
@@ -58,8 +58,8 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
     vec4 _69 = _main(Input);
     gl_FragData[0] = _69;
@@ -76,8 +76,8 @@ static const char model_unlit_ps_gl3[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
     vec4 Color;
+    vec2 UV;
     vec4 PosP;
 };
 
@@ -110,8 +110,8 @@ uniform PS_ConstanBuffer CBPS0;
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_depthTex;
 
-centroid in vec2 _VSPS_UV;
 centroid in vec4 _VSPS_Color;
+centroid in vec2 _VSPS_UV;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
@@ -153,8 +153,8 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
     vec4 _189 = _main(Input);
     _entryPointOutput = _189;
@@ -170,8 +170,8 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec2 UV;
     highp vec4 Color;
+    highp vec2 UV;
     highp vec4 PosP;
 };
 
@@ -203,8 +203,8 @@ uniform PS_ConstanBuffer CBPS0;
 
 uniform  sampler2D Sampler_sampler_colorTex;
 
-varying  vec2 _VSPS_UV;
 varying  vec4 _VSPS_Color;
+varying  vec2 _VSPS_UV;
 varying  vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
@@ -221,8 +221,8 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
     highp vec4 _69 = _main(Input);
     gl_FragData[0] = _69;
@@ -238,8 +238,8 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec2 UV;
     highp vec4 Color;
+    highp vec2 UV;
     highp vec4 PosP;
 };
 
@@ -272,8 +272,8 @@ uniform PS_ConstanBuffer CBPS0;
 uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_depthTex;
 
-centroid in highp vec2 _VSPS_UV;
 centroid in highp vec4 _VSPS_Color;
+centroid in highp vec2 _VSPS_UV;
 in highp vec4 _VSPS_PosP;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
@@ -315,8 +315,8 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
     highp vec4 _189 = _main(Input);
     _entryPointOutput = _189;

@@ -10,8 +10,8 @@ struct PS_Input
 {
     float4 PosVS;
     float2 UV;
-    float4 Binormal;
-    float4 Tangent;
+    float4 ProjBinormal;
+    float4 ProjTangent;
     float4 PosP;
     float4 Color;
     float4 Alpha_Dist_UV;
@@ -51,8 +51,8 @@ struct main0_out
 struct main0_in
 {
     float2 Input_UV [[user(locn0), centroid_perspective]];
-    float4 Input_Binormal [[user(locn1)]];
-    float4 Input_Tangent [[user(locn2)]];
+    float4 Input_ProjBinormal [[user(locn1)]];
+    float4 Input_ProjTangent [[user(locn2)]];
     float4 Input_PosP [[user(locn3)]];
     float4 Input_Color [[user(locn4), centroid_perspective]];
     float4 Input_Alpha_Dist_UV [[user(locn5)]];
@@ -175,8 +175,8 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
         discard_fragment();
     }
     float2 pos = Input.PosP.xy / float2(Input.PosP.w);
-    float2 posU = Input.Tangent.xy / float2(Input.Tangent.w);
-    float2 posR = Input.Binormal.xy / float2(Input.Binormal.w);
+    float2 posR = Input.ProjTangent.xy / float2(Input.ProjTangent.w);
+    float2 posU = Input.ProjBinormal.xy / float2(Input.ProjBinormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * v_263.g_scale.x;
     float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * v_263.g_scale.x;
     float2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -207,8 +207,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
     Input.UV = in.Input_UV;
-    Input.Binormal = in.Input_Binormal;
-    Input.Tangent = in.Input_Tangent;
+    Input.ProjBinormal = in.Input_ProjBinormal;
+    Input.ProjTangent = in.Input_ProjTangent;
     Input.PosP = in.Input_PosP;
     Input.Color = in.Input_Color;
     Input.Alpha_Dist_UV = in.Input_Alpha_Dist_UV;

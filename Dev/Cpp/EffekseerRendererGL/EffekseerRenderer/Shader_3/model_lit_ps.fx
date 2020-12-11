@@ -6,11 +6,11 @@
 struct PS_Input
 {
     vec4 PosVS;
+    vec4 Color;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
     vec3 Tangent;
-    vec4 Color;
     vec4 PosP;
 };
 
@@ -44,11 +44,11 @@ layout(binding = 0) uniform sampler2D Sampler_sampler_colorTex;
 layout(binding = 1) uniform sampler2D Sampler_sampler_normalTex;
 layout(binding = 2) uniform sampler2D Sampler_sampler_depthTex;
 
+centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_Normal;
 in vec3 _VSPS_Binormal;
 in vec3 _VSPS_Tangent;
-centroid in vec4 _VSPS_Color;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
@@ -95,11 +95,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.Normal = _VSPS_Normal;
     Input.Binormal = _VSPS_Binormal;
     Input.Tangent = _VSPS_Tangent;
-    Input.Color = _VSPS_Color;
     Input.PosP = _VSPS_PosP;
     vec4 _259 = _main(Input);
     _entryPointOutput = _259;

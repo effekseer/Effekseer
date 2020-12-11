@@ -53,7 +53,7 @@ struct SPIRV_Cross_Output
 
 float4 _main(PS_Input Input)
 {
-    float4 Output = Input.Color * tex2D(Sampler_sampler_colorTex, Input.UV);
+    float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     if (Output.w == 0.0f)
     {
         discard;

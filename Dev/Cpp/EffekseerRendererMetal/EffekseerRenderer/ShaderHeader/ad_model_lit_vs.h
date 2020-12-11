@@ -9,11 +9,11 @@ using namespace metal;
 struct VS_Output
 {
     float4 PosVS;
-    float2 UV;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
     float4 Color;
+    float2 UV;
+    float3 WorldN;
+    float3 WorldB;
+    float3 WorldT;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
@@ -54,11 +54,11 @@ struct VS_ConstantBuffer
 
 struct main0_out
 {
-    float2 _entryPointOutput_UV [[user(locn0)]];
-    float3 _entryPointOutput_Normal [[user(locn1)]];
-    float3 _entryPointOutput_Binormal [[user(locn2)]];
-    float3 _entryPointOutput_Tangent [[user(locn3)]];
-    float4 _entryPointOutput_Color [[user(locn4)]];
+    float4 _entryPointOutput_Color [[user(locn0)]];
+    float2 _entryPointOutput_UV [[user(locn1)]];
+    float3 _entryPointOutput_WorldN [[user(locn2)]];
+    float3 _entryPointOutput_WorldB [[user(locn3)]];
+    float3 _entryPointOutput_WorldT [[user(locn4)]];
     float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
     float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
@@ -221,7 +221,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     float4 modelColor = v_365.fModelColor[index] * Input.Color;
     float flipbookIndexAndNextRate = v_365.fFlipbookIndexAndNextRate[index].x;
     float modelAlphaThreshold = v_365.fModelAlphaThreshold[index].x;
-    VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 cameraPosition = localPosition * matModel;
     Output.PosVS = v_365.mCameraProj * cameraPosition;
@@ -233,9 +233,9 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     localBinormal = normalize(localBinormal * matModel);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
     localTangent = normalize(localTangent * matModel);
-    Output.Normal = localNormal.xyz;
-    Output.Binormal = localBinormal.xyz;
-    Output.Tangent = localTangent.xyz;
+    Output.WorldN = localNormal.xyz;
+    Output.WorldB = localBinormal.xyz;
+    Output.WorldT = localTangent.xyz;
     Output.Color = modelColor;
     Output.UV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * Output.UV.y);
     float2 param = Input.UV;
@@ -267,11 +267,11 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     Input.Index = gl_InstanceIndex;
     VS_Output flattenTemp = _main(Input, v_365);
     out.gl_Position = flattenTemp.PosVS;
-    out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_Normal = flattenTemp.Normal;
-    out._entryPointOutput_Binormal = flattenTemp.Binormal;
-    out._entryPointOutput_Tangent = flattenTemp.Tangent;
     out._entryPointOutput_Color = flattenTemp.Color;
+    out._entryPointOutput_UV = flattenTemp.UV;
+    out._entryPointOutput_WorldN = flattenTemp.WorldN;
+    out._entryPointOutput_WorldB = flattenTemp.WorldB;
+    out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     out._entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     out._entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;

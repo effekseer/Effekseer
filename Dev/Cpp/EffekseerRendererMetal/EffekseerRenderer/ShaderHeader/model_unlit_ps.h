@@ -9,8 +9,8 @@ using namespace metal;
 struct PS_Input
 {
     float4 PosVS;
-    float2 UV;
     float4 Color;
+    float2 UV;
     float4 PosP;
 };
 
@@ -45,8 +45,8 @@ struct main0_out
 
 struct main0_in
 {
-    float2 Input_UV [[user(locn0), centroid_perspective]];
-    float4 Input_Color [[user(locn1), centroid_perspective]];
+    float4 Input_Color [[user(locn0), centroid_perspective]];
+    float2 Input_UV [[user(locn1), centroid_perspective]];
     float4 Input_PosP [[user(locn2)]];
 };
 
@@ -90,8 +90,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     main0_out out = {};
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = in.Input_UV;
     Input.Color = in.Input_Color;
+    Input.UV = in.Input_UV;
     Input.PosP = in.Input_PosP;
     float4 _185 = _main(Input, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex, v_125);
     out._entryPointOutput = _185;

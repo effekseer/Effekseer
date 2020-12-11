@@ -44,7 +44,7 @@
 // SV_POSITION              0   xyzw        0      POS  float   xyzw
 // COLOR                    0   xyzw        1     NONE  float   xyzw
 // TEXCOORD                 0   xy          2     NONE  float   xy  
-// TEXCOORD                 1   xyzw        3     NONE  float   xyzw
+// TEXCOORD                 4   xyzw        3     NONE  float   xyzw
 //
 vs_4_0
 dcl_constantbuffer cb0[9], immediateIndexed
@@ -75,10 +75,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67,  59, 246, 
-    225, 149,  80, 110, 121, 152, 
-    228,  15,   2,   7,  63,  92, 
-    182, 142,   1,   0,   0,   0, 
+     68,  88,  66,  67, 148, 206, 
+    187, 102, 206, 248, 253,  95, 
+    187, 158, 106, 117, 241,  36, 
+    168, 171,   1,   0,   0,   0, 
      40,   5,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     132,   1,   0,   0, 248,   1, 
@@ -174,7 +174,7 @@ const BYTE g_main[] =
       0,   0,   0,   0,   3,   0, 
       0,   0,   2,   0,   0,   0, 
       3,  12,   0,   0, 122,   0, 
-      0,   0,   1,   0,   0,   0, 
+      0,   0,   4,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 
       0,   0,   3,   0,   0,   0, 
      15,   0,   0,   0,  83,  86, 

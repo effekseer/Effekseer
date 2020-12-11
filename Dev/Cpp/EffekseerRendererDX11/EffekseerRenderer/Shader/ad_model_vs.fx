@@ -63,12 +63,13 @@ struct VS_Input
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float2 UV : TEXCOORD0;
-
-	float3 Normal : TEXCOORD1;
-	float3 Binormal : TEXCOORD2;
-	float3 Tangent : TEXCOORD3;
 	linear centroid float4 Color : COLOR;
+	linear centroid float2 UV : TEXCOORD0;
+	float3 WorldN : TEXCOORD1;
+#if ENABLE_LIGHTING
+	float3 WorldB : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
+#endif
 
 	float4 Alpha_Dist_UV : TEXCOORD4;
 	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
@@ -154,9 +155,9 @@ VS_Output main(const VS_Input Input)
 	localTangent = normalize(mul(matModel, localTangent));
 #endif
 
-	Output.Normal = localNormal.xyz;
-	Output.Binormal = localBinormal.xyz;
-	Output.Tangent = localTangent.xyz;
+	Output.WorldN = localNormal.xyz;
+	Output.WorldB = localBinormal.xyz;
+	Output.WorldT = localTangent.xyz;
 #else
 
 #ifdef DISABLE_INSTANCE
@@ -166,7 +167,7 @@ VS_Output main(const VS_Input Input)
 	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
 	localNormal = normalize(mul(matModel, localNormal));
 #endif
-	Output.Normal = localNormal.xyz;
+	Output.WorldN = localNormal.xyz;
 #endif
 	Output.Color = modelColor;
 

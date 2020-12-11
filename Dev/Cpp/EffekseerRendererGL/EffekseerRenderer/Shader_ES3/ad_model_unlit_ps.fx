@@ -5,11 +5,9 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec2 UV;
-    highp vec3 Normal;
-    highp vec3 Binormal;
-    highp vec3 Tangent;
     highp vec4 Color;
+    highp vec2 UV;
+    highp vec3 WorldN;
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
     highp vec4 Blend_FBNextIndex_UV;
@@ -63,11 +61,9 @@ uniform highp sampler2D Sampler_sampler_blendTex;
 uniform highp sampler2D Sampler_sampler_blendAlphaTex;
 uniform highp sampler2D Sampler_sampler_depthTex;
 
-centroid in highp vec2 _VSPS_UV;
-in highp vec3 _VSPS_Normal;
-in highp vec3 _VSPS_Binormal;
-in highp vec3 _VSPS_Tangent;
 centroid in highp vec4 _VSPS_Color;
+centroid in highp vec2 _VSPS_UV;
+in highp vec3 _VSPS_WorldN;
 in highp vec4 _VSPS_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_FBNextIndex_UV;
@@ -180,33 +176,33 @@ highp vec4 _main(PS_Input Input)
     if (CBPS0.fFalloffParam.Param.x == 1.0)
     {
         highp vec3 cameraVec = normalize(-CBPS0.fCameraFrontDirection.xyz);
-        highp float CdotN = clamp(dot(cameraVec, normalize(Input.Normal)), 0.0, 1.0);
+        highp float CdotN = clamp(dot(cameraVec, normalize(Input.WorldN)), 0.0, 1.0);
         highp vec4 FalloffBlendColor = mix(CBPS0.fFalloffParam.EndColor, CBPS0.fFalloffParam.BeginColor, vec4(pow(CdotN, CBPS0.fFalloffParam.Param.z)));
         if (CBPS0.fFalloffParam.Param.y == 0.0)
         {
-            highp vec3 _420 = Output.xyz + FalloffBlendColor.xyz;
-            Output = vec4(_420.x, _420.y, _420.z, Output.w);
+            highp vec3 _418 = Output.xyz + FalloffBlendColor.xyz;
+            Output = vec4(_418.x, _418.y, _418.z, Output.w);
         }
         else
         {
             if (CBPS0.fFalloffParam.Param.y == 1.0)
             {
-                highp vec3 _433 = Output.xyz - FalloffBlendColor.xyz;
-                Output = vec4(_433.x, _433.y, _433.z, Output.w);
+                highp vec3 _431 = Output.xyz - FalloffBlendColor.xyz;
+                Output = vec4(_431.x, _431.y, _431.z, Output.w);
             }
             else
             {
                 if (CBPS0.fFalloffParam.Param.y == 2.0)
                 {
-                    highp vec3 _446 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = vec4(_446.x, _446.y, _446.z, Output.w);
+                    highp vec3 _444 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = vec4(_444.x, _444.y, _444.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    highp vec3 _459 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_459.x, _459.y, _459.z, Output.w);
+    highp vec3 _458 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_458.x, _458.y, _458.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -234,17 +230,15 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
+    Input.WorldN = _VSPS_WorldN;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _592 = _main(Input);
-    _entryPointOutput = _592;
+    highp vec4 _586 = _main(Input);
+    _entryPointOutput = _586;
 }
 

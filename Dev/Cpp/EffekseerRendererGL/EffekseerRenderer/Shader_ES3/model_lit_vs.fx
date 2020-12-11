@@ -17,11 +17,11 @@ struct VS_Input
 struct VS_Output
 {
     vec4 PosVS;
+    vec4 Color;
     vec2 UV;
     vec3 Normal;
     vec3 Binormal;
     vec3 Tangent;
-    vec4 Color;
     vec4 PosP;
 };
 
@@ -50,11 +50,11 @@ layout(location = 5) in vec4 Input_Color;
 #else
 uniform int SPIRV_Cross_BaseInstance;
 #endif
+centroid out vec4 _VSPS_Color;
 centroid out vec2 _VSPS_UV;
 out vec3 _VSPS_Normal;
 out vec3 _VSPS_Binormal;
 out vec3 _VSPS_Tangent;
-centroid out vec4 _VSPS_Color;
 out vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
@@ -63,7 +63,7 @@ VS_Output _main(VS_Input Input)
     mat4 matModel = CBVS0.mModel[index];
     vec4 uv = CBVS0.fUV[index];
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = localPosition * matModel;
     Output.PosVS = cameraPosition * CBVS0.mCameraProj;
@@ -96,11 +96,11 @@ void main()
     Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;
+    _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
     _VSPS_Normal = flattenTemp.Normal;
     _VSPS_Binormal = flattenTemp.Binormal;
     _VSPS_Tangent = flattenTemp.Tangent;
-    _VSPS_Color = flattenTemp.Color;
     _VSPS_PosP = flattenTemp.PosP;
 }
 

@@ -9,8 +9,8 @@ struct VS_Output
 {
     float4 PosVS;
     float2 UV;
-    float4 Binormal;
-    float4 Tangent;
+    float4 ProjBinormal;
+    float4 ProjTangent;
     float4 PosP;
     float4 Color;
     float4 Alpha_Dist_UV;
@@ -53,8 +53,8 @@ struct VS_ConstantBuffer
 struct main0_out
 {
     float2 _entryPointOutput_UV [[user(locn0)]];
-    float4 _entryPointOutput_Binormal [[user(locn1)]];
-    float4 _entryPointOutput_Tangent [[user(locn2)]];
+    float4 _entryPointOutput_ProjBinormal [[user(locn1)]];
+    float4 _entryPointOutput_ProjTangent [[user(locn2)]];
     float4 _entryPointOutput_PosP [[user(locn3)]];
     float4 _entryPointOutput_Color [[user(locn4)]];
     float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
@@ -230,8 +230,8 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     Output.PosVS = v_365.mCameraProj * localPosition;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.Binormal = v_365.mCameraProj * localBinormal;
-    Output.Tangent = v_365.mCameraProj * localTangent;
+    Output.ProjBinormal = v_365.mCameraProj * localBinormal;
+    Output.ProjTangent = v_365.mCameraProj * localTangent;
     Output.PosP = Output.PosVS;
     Output.Color = modelColor;
     Output.UV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * Output.UV.y);
@@ -264,8 +264,8 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     VS_Output flattenTemp = _main(Input, v_365);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_Binormal = flattenTemp.Binormal;
-    out._entryPointOutput_Tangent = flattenTemp.Tangent;
+    out._entryPointOutput_ProjBinormal = flattenTemp.ProjBinormal;
+    out._entryPointOutput_ProjTangent = flattenTemp.ProjTangent;
     out._entryPointOutput_PosP = flattenTemp.PosP;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;

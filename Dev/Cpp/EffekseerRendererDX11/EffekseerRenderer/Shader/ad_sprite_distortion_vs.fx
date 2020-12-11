@@ -27,12 +27,11 @@ struct VS_Input
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
-
-	float4 PosP : TEXCOORD1;
-	float4 PosU : TEXCOORD2;
-	float4 PosR : TEXCOORD3;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
+	linear centroid float4 Color : COLOR0;
 
 	float4 Alpha_Dist_UV : TEXCOORD4;
 	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
@@ -55,30 +54,20 @@ VS_Output main(const VS_Input Input)
 	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldBinormal = cross(worldNormal, worldTangent);
 
-	float4 localBinormal = {Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0};
-	float4 localTangent = {Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0};
-	localBinormal = mul(mCamera, localBinormal);
-	localTangent = mul(mCamera, localTangent);
-
 	float4 cameraPos = mul(mCamera, pos4);
 	cameraPos = cameraPos / cameraPos.w;
-
-	localBinormal = localBinormal / localBinormal.w;
-	localTangent = localTangent / localTangent.w;
-
-	localBinormal = cameraPos + normalize(localBinormal - cameraPos);
-	localTangent = cameraPos + normalize(localTangent - cameraPos);
 
 	Output.PosVS = mul(mProj, cameraPos);
 
 	Output.PosP = Output.PosVS;
 
-	Output.PosU = mul(mProj, localBinormal);
-	Output.PosR = mul(mProj, localTangent);
-
-	Output.PosU /= Output.PosU.w;
-	Output.PosR /= Output.PosR.w;
-	Output.PosP /= Output.PosP.w;
+	float4 localTangent = pos4;
+	float4 localBinormal = pos4;
+	localTangent.xyz += worldTangent;
+	localBinormal.xyz += worldBinormal;
+	
+	Output.ProjTangent = mul(mProj, mul(mCamera, localTangent));
+	Output.ProjBinormal = mul(mProj, mul(mCamera, localBinormal));
 
 	Output.Color = Input.Color;
 	Output.UV = Input.UV1;

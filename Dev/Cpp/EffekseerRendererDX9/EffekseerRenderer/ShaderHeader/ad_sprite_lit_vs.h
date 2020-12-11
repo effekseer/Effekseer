@@ -52,7 +52,7 @@
     add r1.xyz, c10.x, v3
     add r1.xyz, r1, r1
     mul r2.xyz, r0.zxyw, r1.yzxw
-    mad o4.xyz, r0.yzxw, r1.zxyw, -r2
+    mad o3.xyz, r0.yzxw, r1.zxyw, -r2
     mad r2.x, c8.y, v4.y, c8.x
     mul r3, c1, v0.y
     mad r3, c0, v0.x, r3
@@ -198,7 +198,7 @@
     mov r2.z, v4.x
     mov o1.xy, r2.zxzw
     mov o2.xyz, r0
-    mov o3.xyz, r1
+    mov o4.xyz, r1
     mov o5.xz, v5
     mov o6.xz, v7
     mov r3.w, v6.x
@@ -319,7 +319,7 @@ const BYTE g_vs30_main[] =
       0,   3,   2,   0,   7, 128, 
       0,   0, 210, 128,   1,   0, 
     201, 128,   4,   0,   0,   4, 
-      4,   0,   7, 224,   0,   0, 
+      3,   0,   7, 224,   0,   0, 
     201, 128,   1,   0, 210, 128, 
       2,   0, 228, 129,   4,   0, 
       0,   4,   2,   0,   1, 128, 
@@ -691,7 +691,7 @@ const BYTE g_vs30_main[] =
       3, 224,   2,   0, 226, 128, 
       1,   0,   0,   2,   2,   0, 
       7, 224,   0,   0, 228, 128, 
-      1,   0,   0,   2,   3,   0, 
+      1,   0,   0,   2,   4,   0, 
       7, 224,   1,   0, 228, 128, 
       1,   0,   0,   2,   5,   0, 
       5, 224,   5,   0, 228, 144, 

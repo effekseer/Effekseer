@@ -6,11 +6,11 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec4 VColor;
+    vec4 Color;
     vec2 UV;
     vec3 WorldN;
-    vec3 WorldT;
     vec3 WorldB;
+    vec3 WorldT;
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
@@ -56,18 +56,18 @@ struct PS_ConstanBuffer
 uniform PS_ConstanBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_uvDistortionTex;
-uniform sampler2D Sampler_sampler_normalTex;
 uniform sampler2D Sampler_sampler_colorTex;
+uniform sampler2D Sampler_sampler_normalTex;
 uniform sampler2D Sampler_sampler_alphaTex;
 uniform sampler2D Sampler_sampler_blendUVDistortionTex;
 uniform sampler2D Sampler_sampler_blendTex;
 uniform sampler2D Sampler_sampler_blendAlphaTex;
 
-centroid varying vec4 _VSPS_VColor;
+centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
 varying vec3 _VSPS_WorldN;
-varying vec3 _VSPS_WorldT;
 varying vec3 _VSPS_WorldB;
+varying vec3 _VSPS_WorldT;
 varying vec4 _VSPS_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_FBNextIndex_UV;
@@ -148,15 +148,12 @@ vec4 _main(PS_Input Input)
     vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    float diffuse = 1.0;
-    vec3 loN = texture2D(Sampler_sampler_normalTex, Input.UV + UVOffset).xyz;
-    vec3 texNormal = (loN - vec3(0.5)) * 2.0;
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset) * Input.Color;
+    vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV + UVOffset).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
-    diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset) * Input.VColor;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.VColor, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     vec4 AlphaTexColor = texture2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
@@ -170,16 +167,45 @@ vec4 _main(PS_Input Input)
     vec4 param_7 = Output;
     ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_7;
-    vec3 _378 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_378.x, _378.y, _378.z, Output.w);
+    float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
+    vec3 _383 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_383.x, _383.y, _383.z, Output.w);
+    if (CBPS0.fFalloffParam.Param.x == 1.0)
+    {
+        vec3 cameraVec = normalize(-CBPS0.fCameraFrontDirection.xyz);
+        float CdotN = clamp(dot(cameraVec, vec3(localNormal.x, localNormal.y, localNormal.z)), 0.0, 1.0);
+        vec4 FalloffBlendColor = mix(CBPS0.fFalloffParam.EndColor, CBPS0.fFalloffParam.BeginColor, vec4(pow(CdotN, CBPS0.fFalloffParam.Param.z)));
+        if (CBPS0.fFalloffParam.Param.y == 0.0)
+        {
+            vec3 _429 = Output.xyz + FalloffBlendColor.xyz;
+            Output = vec4(_429.x, _429.y, _429.z, Output.w);
+        }
+        else
+        {
+            if (CBPS0.fFalloffParam.Param.y == 1.0)
+            {
+                vec3 _442 = Output.xyz - FalloffBlendColor.xyz;
+                Output = vec4(_442.x, _442.y, _442.z, Output.w);
+            }
+            else
+            {
+                if (CBPS0.fFalloffParam.Param.y == 2.0)
+                {
+                    vec3 _455 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = vec4(_455.x, _455.y, _455.z, Output.w);
+                }
+            }
+        }
+        Output.w *= FalloffBlendColor.w;
+    }
+    vec3 _468 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_468.x, _468.y, _468.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _403 = Output.xyz * (vec3(diffuse, diffuse, diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_403.x, _403.y, _403.z, Output.w);
-    vec3 _425 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_425.x, _425.y, _425.z, Output.w);
+    vec3 _499 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_499.x, _499.y, _499.z, Output.w);
     return Output;
 }
 
@@ -187,16 +213,16 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.VColor = _VSPS_VColor;
+    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.WorldN = _VSPS_WorldN;
-    Input.WorldT = _VSPS_WorldT;
     Input.WorldB = _VSPS_WorldB;
+    Input.WorldT = _VSPS_WorldT;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
-    vec4 _468 = _main(Input);
-    gl_FragData[0] = _468;
+    vec4 _542 = _main(Input);
+    gl_FragData[0] = _542;
 }
 

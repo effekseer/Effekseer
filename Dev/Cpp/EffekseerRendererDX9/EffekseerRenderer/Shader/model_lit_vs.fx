@@ -12,15 +12,15 @@ struct VS_Input
 struct VS_Output
 {
     float4 PosVS;
+    float4 Color;
     float2 UV;
     float3 Normal;
     float3 Binormal;
     float3 Tangent;
-    float4 Color;
     float4 PosP;
 };
 
-static const VS_Output _59 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _59 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -44,11 +44,11 @@ static float3 Input_Tangent;
 static float2 Input_UV;
 static float4 Input_Color;
 static float Input_Index;
+static float4 _entryPointOutput_Color;
 static float2 _entryPointOutput_UV;
 static float3 _entryPointOutput_Normal;
 static float3 _entryPointOutput_Binormal;
 static float3 _entryPointOutput_Tangent;
-static float4 _entryPointOutput_Color;
 static float4 _entryPointOutput_PosP;
 
 struct SPIRV_Cross_Input
@@ -64,11 +64,11 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    centroid float2 _entryPointOutput_UV : TEXCOORD0;
-    float3 _entryPointOutput_Normal : TEXCOORD1;
-    float3 _entryPointOutput_Binormal : TEXCOORD2;
-    float3 _entryPointOutput_Tangent : TEXCOORD3;
-    centroid float4 _entryPointOutput_Color : TEXCOORD4;
+    centroid float4 _entryPointOutput_Color : TEXCOORD0;
+    centroid float2 _entryPointOutput_UV : TEXCOORD1;
+    float3 _entryPointOutput_Normal : TEXCOORD2;
+    float3 _entryPointOutput_Binormal : TEXCOORD3;
+    float3 _entryPointOutput_Tangent : TEXCOORD4;
     float4 _entryPointOutput_PosP : TEXCOORD5;
     float4 gl_Position : POSITION;
 };
@@ -112,11 +112,11 @@ void vert_main()
     Input.Index = Input_Index;
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;
+    _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
     _entryPointOutput_Normal = flattenTemp.Normal;
     _entryPointOutput_Binormal = flattenTemp.Binormal;
     _entryPointOutput_Tangent = flattenTemp.Tangent;
-    _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_PosP = flattenTemp.PosP;
     gl_Position.x = gl_Position.x - gl_HalfPixel.x * gl_Position.w;
     gl_Position.y = gl_Position.y + gl_HalfPixel.y * gl_Position.w;
@@ -134,11 +134,11 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     vert_main();
     SPIRV_Cross_Output stage_output;
     stage_output.gl_Position = gl_Position;
+    stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
     stage_output._entryPointOutput_Normal = _entryPointOutput_Normal;
     stage_output._entryPointOutput_Binormal = _entryPointOutput_Binormal;
     stage_output._entryPointOutput_Tangent = _entryPointOutput_Tangent;
-    stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_PosP = _entryPointOutput_PosP;
     return stage_output;
 }

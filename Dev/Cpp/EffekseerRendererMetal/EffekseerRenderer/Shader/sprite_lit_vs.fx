@@ -18,14 +18,11 @@ struct VS_Input
 struct VS_Output
 {
     float4 PosVS;
-    float4 VColor;
-    float2 UV1;
-    float2 UV2;
-    float3 WorldP;
+    float4 Color;
+    float2 UV;
     float3 WorldN;
-    float3 WorldT;
     float3 WorldB;
-    float2 ScreenUV;
+    float3 WorldT;
     float4 PosP;
 };
 
@@ -39,15 +36,12 @@ struct VS_ConstantBuffer
 
 struct main0_out
 {
-    float4 _entryPointOutput_VColor [[user(locn0)]];
-    float2 _entryPointOutput_UV1 [[user(locn1)]];
-    float2 _entryPointOutput_UV2 [[user(locn2)]];
-    float3 _entryPointOutput_WorldP [[user(locn3)]];
-    float3 _entryPointOutput_WorldN [[user(locn4)]];
-    float3 _entryPointOutput_WorldT [[user(locn5)]];
-    float3 _entryPointOutput_WorldB [[user(locn6)]];
-    float2 _entryPointOutput_ScreenUV [[user(locn7)]];
-    float4 _entryPointOutput_PosP [[user(locn8)]];
+    float4 _entryPointOutput_Color [[user(locn0)]];
+    float2 _entryPointOutput_UV [[user(locn1)]];
+    float3 _entryPointOutput_WorldN [[user(locn2)]];
+    float3 _entryPointOutput_WorldB [[user(locn3)]];
+    float3 _entryPointOutput_WorldT [[user(locn4)]];
+    float4 _entryPointOutput_PosP [[user(locn5)]];
     float4 gl_Position [[position]];
 };
 
@@ -62,34 +56,27 @@ struct main0_in
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_62)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_60)
 {
-    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float3(0.0), float2(0.0), float4(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0) };
     float3 worldPos = Input.Pos;
     float3 worldNormal = (float3(Input.Normal.xyz) - float3(0.5)) * 2.0;
     float3 worldTangent = (float3(Input.Tangent.xyz) - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
-    float2 uv2 = Input.UV1;
-    uv1.y = v_62.mUVInversed.x + (v_62.mUVInversed.y * uv1.y);
-    uv2.y = v_62.mUVInversed.x + (v_62.mUVInversed.y * uv2.y);
+    uv1.y = v_60.mUVInversed.x + (v_60.mUVInversed.y * uv1.y);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    float3 pixelNormalDir = float3(0.5, 0.5, 1.0);
-    float4 cameraPos = v_62.mCamera * float4(worldPos, 1.0);
-    Output.PosVS = v_62.mProj * cameraPos;
-    Output.WorldP = worldPos;
-    Output.VColor = Input.Color;
-    Output.UV1 = uv1;
-    Output.UV2 = uv2;
-    Output.ScreenUV = Output.PosVS.xy / float2(Output.PosVS.w);
-    Output.ScreenUV = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+    float4 cameraPos = v_60.mCamera * float4(worldPos, 1.0);
+    Output.PosVS = v_60.mProj * cameraPos;
+    Output.Color = Input.Color;
+    Output.UV = uv1;
     Output.PosP = Output.PosVS;
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_62 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_60 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -99,16 +86,13 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_6
     Input.Tangent = in.Input_Tangent;
     Input.UV1 = in.Input_UV1;
     Input.UV2 = in.Input_UV2;
-    VS_Output flattenTemp = _main(Input, v_62);
+    VS_Output flattenTemp = _main(Input, v_60);
     out.gl_Position = flattenTemp.PosVS;
-    out._entryPointOutput_VColor = flattenTemp.VColor;
-    out._entryPointOutput_UV1 = flattenTemp.UV1;
-    out._entryPointOutput_UV2 = flattenTemp.UV2;
-    out._entryPointOutput_WorldP = flattenTemp.WorldP;
+    out._entryPointOutput_Color = flattenTemp.Color;
+    out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_WorldN = flattenTemp.WorldN;
-    out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_WorldB = flattenTemp.WorldB;
-    out._entryPointOutput_ScreenUV = flattenTemp.ScreenUV;
+    out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_PosP = flattenTemp.PosP;
     return out;
 }

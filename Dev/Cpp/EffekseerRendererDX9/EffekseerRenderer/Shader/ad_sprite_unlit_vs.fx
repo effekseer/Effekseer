@@ -15,16 +15,14 @@ struct VS_Output
     float4 PosVS;
     float4 Color;
     float2 UV;
-    float4 PosP;
-    float4 PosU;
-    float4 PosR;
+    float3 WorldN;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
     float2 Others;
 };
 
-static const VS_Output _348 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+static const VS_Output _347 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -47,9 +45,7 @@ static float Input_FlipbookIndex;
 static float Input_AlphaThreshold;
 static float4 _entryPointOutput_Color;
 static float2 _entryPointOutput_UV;
-static float4 _entryPointOutput_PosP;
-static float4 _entryPointOutput_PosU;
-static float4 _entryPointOutput_PosR;
+static float3 _entryPointOutput_WorldN;
 static float4 _entryPointOutput_Alpha_Dist_UV;
 static float4 _entryPointOutput_Blend_Alpha_Dist_UV;
 static float4 _entryPointOutput_Blend_FBNextIndex_UV;
@@ -71,13 +67,11 @@ struct SPIRV_Cross_Output
 {
     centroid float4 _entryPointOutput_Color : TEXCOORD0;
     centroid float2 _entryPointOutput_UV : TEXCOORD1;
-    float4 _entryPointOutput_PosP : TEXCOORD2;
-    float4 _entryPointOutput_PosU : TEXCOORD3;
-    float4 _entryPointOutput_PosR : TEXCOORD4;
-    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD5;
-    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD6;
-    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD7;
-    float2 _entryPointOutput_Others : TEXCOORD8;
+    float3 _entryPointOutput_WorldN : TEXCOORD2;
+    float4 _entryPointOutput_Alpha_Dist_UV : TEXCOORD3;
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV : TEXCOORD4;
+    float4 _entryPointOutput_Blend_FBNextIndex_UV : TEXCOORD5;
+    float2 _entryPointOutput_Others : TEXCOORD6;
     float4 gl_Position : POSITION;
 };
 
@@ -214,15 +208,15 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _348;
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 cameraPos = mul(_256_mCamera, pos4);
+    VS_Output Output = _347;
+    float3 worldPos = Input.Pos;
+    float2 uv1 = Input.UV;
+    uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
+    float4 cameraPos = mul(_256_mCamera, float4(worldPos, 1.0f));
     cameraPos /= cameraPos.w.xxxx;
-    Output.PosP = mul(_256_mProj, cameraPos);
-    Output.PosVS = Output.PosP;
+    Output.PosVS = mul(_256_mProj, cameraPos);
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = _256_mUVInversed.x + (_256_mUVInversed.y * Input.UV.y);
+    Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
@@ -245,9 +239,7 @@ void vert_main()
     gl_Position = flattenTemp.PosVS;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_PosP = flattenTemp.PosP;
-    _entryPointOutput_PosU = flattenTemp.PosU;
-    _entryPointOutput_PosR = flattenTemp.PosR;
+    _entryPointOutput_WorldN = flattenTemp.WorldN;
     _entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     _entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     _entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
@@ -271,9 +263,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output.gl_Position = gl_Position;
     stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
-    stage_output._entryPointOutput_PosP = _entryPointOutput_PosP;
-    stage_output._entryPointOutput_PosU = _entryPointOutput_PosU;
-    stage_output._entryPointOutput_PosR = _entryPointOutput_PosR;
+    stage_output._entryPointOutput_WorldN = _entryPointOutput_WorldN;
     stage_output._entryPointOutput_Alpha_Dist_UV = _entryPointOutput_Alpha_Dist_UV;
     stage_output._entryPointOutput_Blend_Alpha_Dist_UV = _entryPointOutput_Blend_Alpha_Dist_UV;
     stage_output._entryPointOutput_Blend_FBNextIndex_UV = _entryPointOutput_Blend_FBNextIndex_UV;

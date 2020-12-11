@@ -1,11 +1,11 @@
 struct PS_Input
 {
     float4 PosVS;
-    float2 UV;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
     float4 Color;
+    float2 UV;
+    float3 WorldN;
+    float3 WorldB;
+    float3 WorldT;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
@@ -67,11 +67,11 @@ Texture2D<float4> _depthTex : register(t7);
 SamplerState sampler_depthTex : register(s7);
 
 static float4 gl_FragCoord;
-static float2 Input_UV;
-static float3 Input_Normal;
-static float3 Input_Binormal;
-static float3 Input_Tangent;
 static float4 Input_Color;
+static float2 Input_UV;
+static float3 Input_WorldN;
+static float3 Input_WorldB;
+static float3 Input_WorldT;
 static float4 Input_Alpha_Dist_UV;
 static float4 Input_Blend_Alpha_Dist_UV;
 static float4 Input_Blend_FBNextIndex_UV;
@@ -81,11 +81,11 @@ static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
 {
-    centroid float2 Input_UV : TEXCOORD0;
-    float3 Input_Normal : TEXCOORD1;
-    float3 Input_Binormal : TEXCOORD2;
-    float3 Input_Tangent : TEXCOORD3;
-    centroid float4 Input_Color : TEXCOORD4;
+    centroid float4 Input_Color : TEXCOORD0;
+    centroid float2 Input_UV : TEXCOORD1;
+    float3 Input_WorldN : TEXCOORD2;
+    float3 Input_WorldB : TEXCOORD3;
+    float3 Input_WorldT : TEXCOORD4;
     float4 Input_Alpha_Dist_UV : TEXCOORD5;
     float4 Input_Blend_Alpha_Dist_UV : TEXCOORD6;
     float4 Input_Blend_FBNextIndex_UV : TEXCOORD7;
@@ -186,7 +186,7 @@ float4 _main(PS_Input Input)
     UVOffset *= _264_fUVDistortionParameter.x;
     float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset) * Input.Color;
     float3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV + UVOffset).xyz - 0.5f.xxx) * 2.0f;
-    float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.Tangent), float3(Input.Binormal), float3(Input.Normal))));
+    float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, _colorTex, sampler_colorTex, _264_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
@@ -262,11 +262,11 @@ void frag_main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = Input_UV;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
     Input.Color = Input_Color;
+    Input.UV = Input_UV;
+    Input.WorldN = Input_WorldN;
+    Input.WorldB = Input_WorldB;
+    Input.WorldT = Input_WorldT;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
@@ -279,11 +279,11 @@ void frag_main()
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     gl_FragCoord = stage_input.gl_FragCoord;
-    Input_UV = stage_input.Input_UV;
-    Input_Normal = stage_input.Input_Normal;
-    Input_Binormal = stage_input.Input_Binormal;
-    Input_Tangent = stage_input.Input_Tangent;
     Input_Color = stage_input.Input_Color;
+    Input_UV = stage_input.Input_UV;
+    Input_WorldN = stage_input.Input_WorldN;
+    Input_WorldB = stage_input.Input_WorldB;
+    Input_WorldT = stage_input.Input_WorldT;
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;
     Input_Blend_FBNextIndex_UV = stage_input.Input_Blend_FBNextIndex_UV;

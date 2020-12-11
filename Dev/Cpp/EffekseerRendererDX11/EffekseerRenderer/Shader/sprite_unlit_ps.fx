@@ -1,4 +1,6 @@
+#include "model_unlit_ps.fx"
 
+/*
 Texture2D _colorTex : register(t0);
 SamplerState sampler_colorTex : register(s0);
 
@@ -12,7 +14,7 @@ struct PS_Input
 	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
-	float4 PosP : TEXCOORD1;
+	float4 PosP : TEXCOORD4;
 };
 
 struct FalloffParameter
@@ -82,3 +84,4 @@ float4 main(const PS_Input Input)
 
 	return Output;
 }
+*/

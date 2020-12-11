@@ -56,7 +56,7 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV);
+    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;

@@ -5,14 +5,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec4 VColor;
-    highp vec2 UV1;
-    highp vec2 UV2;
-    highp vec3 WorldP;
-    highp vec3 WorldN;
-    highp vec3 WorldT;
-    highp vec3 WorldB;
-    highp vec2 ScreenUV;
+    highp vec4 Color;
+    highp vec2 UV;
+    highp vec3 Normal;
+    highp vec3 Binormal;
+    highp vec3 Tangent;
     highp vec4 PosP;
 };
 
@@ -42,28 +39,24 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-uniform highp sampler2D Sampler_sampler_normalTex;
 uniform highp sampler2D Sampler_sampler_colorTex;
+uniform highp sampler2D Sampler_sampler_normalTex;
 
-centroid varying highp vec4 _VSPS_VColor;
-centroid varying highp vec2 _VSPS_UV1;
-centroid varying highp vec2 _VSPS_UV2;
-varying highp vec3 _VSPS_WorldP;
-varying highp vec3 _VSPS_WorldN;
-varying highp vec3 _VSPS_WorldT;
-varying highp vec3 _VSPS_WorldB;
-varying highp vec2 _VSPS_ScreenUV;
+centroid varying highp vec4 _VSPS_Color;
+centroid varying highp vec2 _VSPS_UV;
+varying highp vec3 _VSPS_Normal;
+varying highp vec3 _VSPS_Binormal;
+varying highp vec3 _VSPS_Tangent;
 varying highp vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec3 loN = texture2D(Sampler_sampler_normalTex, Input.UV1).xyz;
-    highp vec3 texNormal = (loN - vec3(0.5)) * 2.0;
-    highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
+    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
+    highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV1) * Input.VColor;
-    highp vec3 _105 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_105.x, _105.y, _105.z, Output.w);
+    highp vec3 _100 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_100.x, _100.y, _100.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -75,16 +68,13 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.VColor = _VSPS_VColor;
-    Input.UV1 = _VSPS_UV1;
-    Input.UV2 = _VSPS_UV2;
-    Input.WorldP = _VSPS_WorldP;
-    Input.WorldN = _VSPS_WorldN;
-    Input.WorldT = _VSPS_WorldT;
-    Input.WorldB = _VSPS_WorldB;
-    Input.ScreenUV = _VSPS_ScreenUV;
+    Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
+    Input.Normal = _VSPS_Normal;
+    Input.Binormal = _VSPS_Binormal;
+    Input.Tangent = _VSPS_Tangent;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _163 = _main(Input);
-    gl_FragData[0] = _163;
+    highp vec4 _146 = _main(Input);
+    gl_FragData[0] = _146;
 }
 

@@ -35,13 +35,13 @@ struct VS_Input
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
+	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
-#if ENABLE_NORMAL_TEXTURE
+#if ENABLE_LIGHTING
 	half3 Normal : TEXCOORD1;
 	half3 Binormal : TEXCOORD2;
 	half3 Tangent : TEXCOORD3;
 #endif
-	linear centroid float4 Color : COLOR;
 	float4 PosP : TEXCOORD4;
 };
 

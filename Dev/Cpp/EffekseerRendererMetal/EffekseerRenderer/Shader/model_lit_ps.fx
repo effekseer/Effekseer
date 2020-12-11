@@ -8,11 +8,11 @@ using namespace metal;
 struct PS_Input
 {
     float4 PosVS;
+    float4 Color;
     float2 UV;
     float3 Normal;
     float3 Binormal;
     float3 Tangent;
-    float4 Color;
     float4 PosP;
 };
 
@@ -47,11 +47,11 @@ struct main0_out
 
 struct main0_in
 {
-    float2 Input_UV [[user(locn0), centroid_perspective]];
-    float3 Input_Normal [[user(locn1)]];
-    float3 Input_Binormal [[user(locn2)]];
-    float3 Input_Tangent [[user(locn3)]];
-    float4 Input_Color [[user(locn4), centroid_perspective]];
+    float4 Input_Color [[user(locn0), centroid_perspective]];
+    float2 Input_UV [[user(locn1), centroid_perspective]];
+    float3 Input_Normal [[user(locn2)]];
+    float3 Input_Binormal [[user(locn3)]];
+    float3 Input_Tangent [[user(locn4)]];
     float4 Input_PosP [[user(locn5)]];
 };
 
@@ -100,11 +100,11 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     main0_out out = {};
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
+    Input.Color = in.Input_Color;
     Input.UV = in.Input_UV;
     Input.Normal = in.Input_Normal;
     Input.Binormal = in.Input_Binormal;
     Input.Tangent = in.Input_Tangent;
-    Input.Color = in.Input_Color;
     Input.PosP = in.Input_PosP;
     float4 _255 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_139, _depthTex, sampler_depthTex);
     out._entryPointOutput = _255;

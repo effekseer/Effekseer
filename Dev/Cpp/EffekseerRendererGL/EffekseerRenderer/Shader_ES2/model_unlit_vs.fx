@@ -13,8 +13,8 @@ struct VS_Input
 struct VS_Output
 {
     vec4 PosVS;
-    vec2 UV;
     vec4 Color;
+    vec2 UV;
     vec4 PosP;
 };
 
@@ -38,15 +38,15 @@ attribute vec3 Input_Binormal;
 attribute vec3 Input_Tangent;
 attribute vec2 Input_UV;
 attribute vec4 Input_Color;
-centroid varying vec2 _VSPS_UV;
 centroid varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
 varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
     vec4 uv = CBVS0.fUV;
     vec4 modelColor = CBVS0.fModelColor * Input.Color;
-    VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0));
+    VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPosition = CBVS0.mModel * localPosition;
     Output.PosVS = CBVS0.mCameraProj * cameraPosition;
@@ -69,8 +69,8 @@ void main()
     Input.Color = Input_Color;
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;
-    _VSPS_UV = flattenTemp.UV;
     _VSPS_Color = flattenTemp.Color;
+    _VSPS_UV = flattenTemp.UV;
     _VSPS_PosP = flattenTemp.PosP;
 }
 
