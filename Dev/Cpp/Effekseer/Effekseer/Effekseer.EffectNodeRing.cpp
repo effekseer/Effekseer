@@ -23,7 +23,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting)
+void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
 	int32_t type = 0;
 	memcpy(&type, pos, sizeof(int));

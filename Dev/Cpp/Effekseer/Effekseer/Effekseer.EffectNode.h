@@ -1495,7 +1495,7 @@ protected:
 	// デストラクタ
 	virtual ~EffectNodeImplemented();
 
-	void LoadParameter(unsigned char*& pos, EffectNode* parent, const RefPtr<Setting>& setting);
+	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
 
 	// 初期化
 	void Initialize();
@@ -1585,7 +1585,7 @@ public:
 
 	EffectModelParameter GetEffectModelParameter() override;
 
-	virtual void LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting);
+	virtual void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting);
 
 	/**
 	@brief	描画開始

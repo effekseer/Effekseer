@@ -169,7 +169,7 @@ private:
 	std::mutex m_renderingMutex;
 	bool m_isLockedWithRenderingMutex = false;
 
-	RefPtr<Setting> m_setting;
+	SettingRef m_setting;
 
 	int m_updateTime;
 	int m_drawTime;
@@ -277,9 +277,9 @@ public:
 
 	void SetTrackRenderer(TrackRendererRef renderer) override;
 
-	const RefPtr<Setting>& GetSetting() const override;
+	const SettingRef& GetSetting() const override;
 
-	void SetSetting(const RefPtr<Setting>& setting) override;
+	void SetSetting(const SettingRef& setting) override;
 
 	EffectLoaderRef GetEffectLoader() override;
 

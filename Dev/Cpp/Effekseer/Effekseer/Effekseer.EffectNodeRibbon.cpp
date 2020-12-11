@@ -22,7 +22,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting)
+void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
 	int32_t type = 0;
 	memcpy(&type, pos, sizeof(int));

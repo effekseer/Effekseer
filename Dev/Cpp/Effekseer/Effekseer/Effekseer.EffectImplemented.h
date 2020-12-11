@@ -107,7 +107,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	static const int32_t SupportBinaryVersion = Version16Alpha4;
 
 protected:
-	RefPtr<Setting> m_setting;
+	SettingRef m_setting;
 
 	mutable std::atomic<int32_t> m_reference;
 

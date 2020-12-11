@@ -644,12 +644,12 @@ void ManagerImplemented::SetSoundPlayer(SoundPlayerRef soundPlayer)
 	m_soundPlayer = soundPlayer;
 }
 
-const RefPtr<Setting>& ManagerImplemented::GetSetting() const
+const SettingRef& ManagerImplemented::GetSetting() const
 {
 	return m_setting;
 }
 
-void ManagerImplemented::SetSetting(const RefPtr<Setting>& setting)
+void ManagerImplemented::SetSetting(const SettingRef& setting)
 {
 	m_setting = setting;
 }

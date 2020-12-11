@@ -52,7 +52,7 @@ EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* parent, const RefPtr<Setting>& setting)
+void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting)
 {
 	int size = 0;
 	int node_type = 0;
@@ -958,7 +958,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const RefPtr<Setting>& setting)
+void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
 	int32_t type = 0;
 	memcpy(&type, pos, sizeof(int));

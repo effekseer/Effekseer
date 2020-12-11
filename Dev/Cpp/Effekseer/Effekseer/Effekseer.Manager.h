@@ -227,13 +227,13 @@ public:
 	/**
 		@brief	設定クラスを取得する。
 	*/
-	virtual const RefPtr<Setting>& GetSetting() const = 0;
+	virtual const SettingRef& GetSetting() const = 0;
 
 	/**
 		@brief	設定クラスを設定する。
 		@param	setting	[in]	設定
 	*/
-	virtual void SetSetting(const RefPtr<Setting>& setting) = 0;
+	virtual void SetSetting(const SettingRef& setting) = 0;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。

@@ -48,7 +48,7 @@ public:
 	/**
 		@brief	設定インスタンスを生成する。
 	*/
-	static RefPtr<Setting> Create();
+	static SettingRef Create();
 
 	/**
 	@brief	座標系を取得する。
