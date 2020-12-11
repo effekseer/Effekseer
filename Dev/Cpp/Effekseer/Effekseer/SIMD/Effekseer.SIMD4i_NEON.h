@@ -296,7 +296,7 @@ inline SIMD4i SIMD4i::Mask()
 
 inline uint32_t SIMD4i::MoveMask(const SIMD4i& in)
 {
-	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_s32_u32(in.s));
+	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_u32_s32(in.s));
 	uint16_t u16[4];
 	vst1_u16(u16, u16x4);
 	return (u16[0] & 1) | (u16[1] & 2) | (u16[2] & 4) | (u16[3] & 8);
@@ -304,32 +304,30 @@ inline uint32_t SIMD4i::MoveMask(const SIMD4i& in)
 
 inline SIMD4i SIMD4i::Equal(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return vceqq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vceqq_s32(lhs.s, rhs.s));
 }
 
 inline SIMD4i SIMD4i::NotEqual(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return vmvnq_u32(vceqq_s32(lhs.s, rhs.s));
+	return vreinterpretq_s32_u32(vmvnq_u32(vceqq_s32(lhs.s, rhs.s)));
 }
 
 inline SIMD4i SIMD4i::LessThan(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return vcltq_s32(lhs.s, rhs.s);
-}
+	return vreinterpretq_s32_u32(vcltq_s32(lhs.s, rhs.s)); }
 
 inline SIMD4i SIMD4i::LessEqual(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return vcleq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vcleq_s32(lhs.s, rhs.s)); 
 }
 
 inline SIMD4i SIMD4i::GreaterThan(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return vcgtq_s32(lhs.s, rhs.s);
-}
+	return vreinterpretq_s32_u32(vcgtq_s32(lhs.s, rhs.s)); }
 
 inline SIMD4i SIMD4i::GreaterEqual(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return vcgeq_s32(lhs.s, rhs.s);
+	return vreinterpretq_s32_u32(vcgeq_s32(lhs.s, rhs.s)); 
 }
 
 inline SIMD4i SIMD4i::NearEqual(const SIMD4i& lhs, const SIMD4i& rhs, int32_t epsilon)

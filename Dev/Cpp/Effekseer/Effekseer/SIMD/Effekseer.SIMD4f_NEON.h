@@ -379,7 +379,7 @@ inline SIMD4f SIMD4f::Mask()
 
 inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
 {
-	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_f32_u32(in.s));
+	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_u32_f32(in.s));
 	uint16_t u16[4];
 	vst1_u16(u16, u16x4);
 	return (u16[0] & 1) | (u16[1] & 2) | (u16[2] & 4) | (u16[3] & 8);
