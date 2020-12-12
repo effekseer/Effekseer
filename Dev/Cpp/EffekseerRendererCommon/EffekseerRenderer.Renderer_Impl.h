@@ -16,8 +16,8 @@ private:
 	::Effekseer::Mat44f cameraMat_;
 	::Effekseer::Mat44f cameraProjMat_;
 
-	::Effekseer::Vec3f cameraPosition_;
-	::Effekseer::Vec3f cameraFrontDirection_;
+	::Effekseer::Vec3f cameraPosition_{0.0f, 0.0f, 0.0f};
+	::Effekseer::Vec3f cameraFrontDirection_{0.0f, 0.0f, 1.0f};
 
 	::Effekseer::Vec3f lightDirection_ = ::Effekseer::Vec3f(1.0f, 1.0f, 1.0f);
 	::Effekseer::Color lightColor_ = ::Effekseer::Color(255, 255, 255, 255);
@@ -31,6 +31,8 @@ private:
 
 	::Effekseer::TextureData* whiteProxyTexture_ = nullptr;
 	::Effekseer::TextureData* normalProxyTexture_ = nullptr;
+
+	void SetCameraParameterInternal(const ::Effekseer::Vec3f& front, const ::Effekseer::Vec3f& position);
 
 public:
 	int32_t drawcallCount = 0;

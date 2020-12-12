@@ -15,8 +15,6 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 {
 	auto frontDir = frontDirection;
 
-	assert(abs(frontDir.GetLength() - 1.0f) < 0.0001f);
-
 	if (billboardType == ::Effekseer::BillboardType::Billboard || billboardType == ::Effekseer::BillboardType::RotatedBillboard ||
 		billboardType == ::Effekseer::BillboardType::YAxisFixed)
 	{
