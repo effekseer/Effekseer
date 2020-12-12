@@ -15,8 +15,8 @@ private:
 	::Effekseer::SIMD::Mat44f cameraMat_;
 	::Effekseer::SIMD::Mat44f cameraProjMat_;
 
-	::Effekseer::SIMD::Vec3f cameraPosition_;
-	::Effekseer::SIMD::Vec3f cameraFrontDirection_;
+	::Effekseer::SIMD::Vec3f cameraPosition_{0.0f, 0.0f, 0.0f};
+	::Effekseer::SIMD::Vec3f cameraFrontDirection_{0.0f, 0.0f, 1.0f};
 
 	::Effekseer::SIMD::Vec3f lightDirection_ = ::Effekseer::SIMD::Vec3f(1.0f, 1.0f, 1.0f);
 	::Effekseer::Color lightColor_ = ::Effekseer::Color(255, 255, 255, 255);
@@ -34,6 +34,8 @@ private:
 
 	::Effekseer::Backend::TextureRef depthBackendTexture_ = nullptr;
 	DepthReconstructionParameter reconstructionParam_;
+
+	void SetCameraParameterInternal(const ::Effekseer::SIMD::Vec3f& front, const ::Effekseer::SIMD::Vec3f& position);
 
 public:
 	int32_t drawcallCount = 0;
