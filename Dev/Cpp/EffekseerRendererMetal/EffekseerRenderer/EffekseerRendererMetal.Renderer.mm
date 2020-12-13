@@ -165,40 +165,17 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	return nullptr;
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
+Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
 	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
-	auto texture_ = g->CreateTexture((uint64_t)texture);
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture_;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 0;
-	textureData->Height = 0;
-	return textureData;
+	return g->CreateTexture((uint64_t)texture);
 }
 
-Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
+Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
 {
     auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-    auto texturePtr = g->CreateTexture((uint64_t)texture, []()-> void{});
-
-    auto textureData = new Effekseer::TextureData();
-    textureData->TexturePtr = texturePtr;
-    textureData->UserID = 0;
-    textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-    textureData->Width = 0;
-    textureData->Height = 0;
-    return textureData;
-}
-
-void DeleteTextureData(Effekseer::TextureData* textureData)
-{
-	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	ES_SAFE_RELEASE(texture);
-	delete textureData;
+    return g->CreateTexture((uint64_t)texture, []()-> void{});
 }
 
 void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
