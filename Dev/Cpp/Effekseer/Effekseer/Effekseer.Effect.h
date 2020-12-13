@@ -127,7 +127,7 @@ public:
 	\~English set texture data into specified index
 	\~Japanese	指定されたインデックスにテクスチャを設定する。
 	*/
-	void SetTexture(Effect* effect, int32_t index, TextureType type, TextureData* data);
+	void SetTexture(Effect* effect, int32_t index, TextureType type, TextureRef data);
 
 	/**
 	@brief
@@ -326,7 +326,7 @@ public:
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual TextureData* GetColorImage(int n) const = 0;
+	virtual TextureRef GetColorImage(int n) const = 0;
 
 	/**
 	@brief	格納されている画像のポインタの個数を取得する。
@@ -344,7 +344,7 @@ public:
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual TextureData* GetNormalImage(int n) const = 0;
+	virtual TextureRef GetNormalImage(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタの個数を取得する。
@@ -362,7 +362,7 @@ public:
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual TextureData* GetDistortionImage(int n) const = 0;
+	virtual TextureRef GetDistortionImage(int n) const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタの個数を取得する。
@@ -466,7 +466,7 @@ public:
 		\~English set texture data into specified index
 		\~Japanese	指定されたインデックスにテクスチャを設定する。
 	*/
-	virtual void SetTexture(int32_t index, TextureType type, TextureData* data) = 0;
+	virtual void SetTexture(int32_t index, TextureType type, TextureRef data) = 0;
 
 	/**
 		@brief

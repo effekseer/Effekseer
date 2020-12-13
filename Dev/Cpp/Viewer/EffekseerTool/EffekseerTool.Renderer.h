@@ -24,8 +24,8 @@ private:
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
 	
 
-	Effekseer::TextureLoaderRef textureLoader_ = nullptr;
-	Effekseer::TextureData* backgroundData_ = nullptr;
+	Effekseer::TextureLoaderRef textureLoader_;
+	Effekseer::TextureRef backgroundTexture_;
 	std::u16string backgroundPath;
 
 public:

@@ -13,7 +13,7 @@ private:
 	DeviceType deviceType_;
 	Effekseer::TextureLoaderRef loader_;
 	std::u16string path;
-	Effekseer::TextureData* textureData = nullptr;
+	Effekseer::TextureRef texture;
 
 public:
 	//! dummy
@@ -31,11 +31,11 @@ public:
 	}
 	int32_t GetWidth() const
 	{
-		return textureData->Width;
+		return texture->GetSize()[0];
 	}
 	int32_t GetHeight() const
 	{
-		return textureData->Height;
+		return texture->GetSize()[1];
 	}
 
 	DeviceType GetDeviceType() const
@@ -48,9 +48,9 @@ public:
 	{
 		this->path = path;
 	}
-	Effekseer::TextureData*& GetTextureData()
+	const Effekseer::TextureRef& GetTexture()
 	{
-		return textureData;
+		return texture;
 	}
 #endif
 };

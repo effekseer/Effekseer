@@ -154,7 +154,7 @@ void LineRendererGL::Render()
 	renderer->SetVertexArray(vao);
 	renderer->BeginShader((EffekseerRendererGL::Shader*)shader);
 
-	Effekseer::TextureData* textures[2];
+	Effekseer::TextureRef textures[2];
 	textures[0] = nullptr;
 	textures[1] = nullptr;
 

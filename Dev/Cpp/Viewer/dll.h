@@ -130,9 +130,9 @@ private:
 		virtual ~TextureLoader();
 
 	public:
-		Effekseer::TextureData* Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
+		Effekseer::TextureRef Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
 
-		void Unload(Effekseer::TextureData* data) override;
+		void Unload(Effekseer::TextureRef data) override;
 
 		Effekseer::TextureLoaderRef GetOriginalTextureLoader() const
 		{

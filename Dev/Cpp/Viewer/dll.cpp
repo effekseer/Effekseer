@@ -208,7 +208,7 @@ ViewerParamater::ViewerParamater()
 static Effekseer::Manager::DrawParameter drawParameter;
 
 static ::EffekseerTool::Sound* sound_ = nullptr;
-static std::map<std::u16string, Effekseer::TextureData*> m_textures;
+static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::Model*> m_models;
 static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
 static std::map<std::u16string, Effekseer::MaterialData*> g_materials_;
@@ -243,7 +243,7 @@ Native::TextureLoader::~TextureLoader()
 {
 }
 
-Effekseer::TextureData* Native::TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
+Effekseer::TextureRef Native::TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
 {
 	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
@@ -269,7 +269,7 @@ Effekseer::TextureData* Native::TextureLoader::Load(const char16_t* path, ::Effe
 	return nullptr;
 }
 
-void Native::TextureLoader::Unload(Effekseer::TextureData* data)
+void Native::TextureLoader::Unload(Effekseer::TextureRef data)
 {
 	// m_originalTextureLoader->Unload(data);
 }

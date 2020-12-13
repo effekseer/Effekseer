@@ -164,6 +164,8 @@ public:
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
 
+	bool Init(IDirect3DTexture9* texture);
+
 	IDirect3DTexture9* GetTexture() const
 	{
 		return texture_.get();
@@ -200,6 +202,10 @@ public:
 	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
 	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+
+	//! for DirectX9
+	Effekseer::Backend::TextureRef CreateTexture(IDirect3DTexture9* texture);
+
 };
 
 } // namespace Backend

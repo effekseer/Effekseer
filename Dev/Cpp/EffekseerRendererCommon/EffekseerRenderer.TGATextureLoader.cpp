@@ -44,7 +44,7 @@ bool TGATextureLoader::Load(const void* data, int32_t size)
 	int MapSize = textureWidth * textureHeight * 4;
 	textureData.resize(MapSize);
 
-	uint8_t* SrcTextureData = &data_texture[TGA_HEADER_SIZE];
+	uint8_t* SrcTextureRef = &data_texture[TGA_HEADER_SIZE];
 
 	for (int h = 0; h < textureHeight; h++)
 	{
@@ -58,7 +58,7 @@ bool TGATextureLoader::Load(const void* data, int32_t size)
 
 			for (int c = 0; c < ColorStep; c++)
 			{
-				textureData[LU_Index + c] = SrcTextureData[LD_Index + c];
+				textureData[LU_Index + c] = SrcTextureRef[LD_Index + c];
 			}
 
 			if (ColorStep == 2)

@@ -87,7 +87,7 @@ bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, TextureFormat 
 	this->size_ = size;
 	this->samplingCount_ = multisample;
 	this->format_ = format;
-	this->texture_ = static_cast<EffekseerRendererGL::Backend::GraphicsDevice*>(g->GetGraphicsDevice().Get())->CreateTexture(texture, [] {});
+	this->texture_ = static_cast<EffekseerRendererGL::Backend::GraphicsDevice*>(g->GetGraphicsDevice().Get())->CreateTexture(texture, false, [] {});
 	return true;
 }
 

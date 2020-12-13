@@ -20,7 +20,7 @@ public:
 	virtual void Draw(const Effekseer::Vector3D positions[],
 					  const Effekseer::Vector2D uvs[],
 					  const Effekseer::Color colors[],
-					  ::Effekseer::TextureData* texturePtr) = 0;
+					  ::Effekseer::TextureRef texturePtr) = 0;
 
 	virtual void Render() = 0;
 

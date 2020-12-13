@@ -229,7 +229,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
-	m_background.UserPtr = nullptr;
 }
 
 RendererImplemented::~RendererImplemented()
@@ -250,10 +249,6 @@ RendererImplemented::~RendererImplemented()
 	GetImpl()->DeleteProxyTextures(this);
 
 	ES_SAFE_DELETE(m_distortingCallback);
-
-	auto p = (LLGI::Texture*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-
 	ES_SAFE_DELETE(m_standardRenderer);
 
 	ES_SAFE_DELETE(shader_unlit_);
@@ -607,40 +602,19 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 	return ::Effekseer::MaterialLoaderRef(new MaterialLoader(graphicsDevice_.Get(), fileInterface, platformType_, materialCompiler_));
 }
 
-Effekseer::TextureData* RendererImplemented::GetBackground()
-{
-	if (m_background.UserPtr == nullptr && m_background.TexturePtr == nullptr)
-		return nullptr;
-	return &m_background;
-}
-
 void RendererImplemented::SetBackground(LLGI::Texture* background)
 {
-	ES_SAFE_ADDREF(background);
-
-	auto p = (LLGI::Texture*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-	m_background.UserPtr = background;
-}
-
-void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerData)
-{
-	if (textuerData == nullptr)
+	if (m_backgroundLLGI == nullptr)
 	{
-		auto back = (LLGI::Texture*)m_background.UserPtr;
-		ES_SAFE_RELEASE(back);
-		m_background.UserPtr = nullptr;
-		return;
+		m_backgroundLLGI = graphicsDevice_->CreateTexture(background);
+	}
+	else
+	{
+		auto texture = static_cast<Backend::Texture*>(m_backgroundLLGI.Get());
+		texture->Init(background);
 	}
 
-	auto texture = static_cast<LLGI::Texture*>(textuerData->UserPtr);
-	ES_SAFE_ADDREF(texture);
-
-	auto back = (LLGI::Texture*)m_background.UserPtr;
-	ES_SAFE_RELEASE(back);
-
-	m_background.TexturePtr = textuerData->TexturePtr;
-	m_background.UserPtr = texture;
+	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundLLGI : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -845,7 +819,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count)
 {
 	auto state = GetRenderState()->GetActiveState();
 	LLGI::TextureWrapMode ws[2];
@@ -867,23 +841,12 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else
 		{
-			if (textures[i]->TexturePtr != nullptr)
-			{
-				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get());
-				auto t = texture->GetTexture().get();
-				GetCurrentCommandList()->SetTexture(
-					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
-				GetCurrentCommandList()->SetTexture(
-					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
-			}
-			else
-			{
-				auto t = (LLGI::Texture*)(textures[i]->UserPtr);
-				GetCurrentCommandList()->SetTexture(
-					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
-				GetCurrentCommandList()->SetTexture(
-					t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
-			}
+			auto texture = static_cast<Backend::Texture*>(textures[i].Get());
+			auto t = texture->GetTexture().get();
+			GetCurrentCommandList()->SetTexture(
+				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
+			GetCurrentCommandList()->SetTexture(
+				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
 		}
 	}
 }
@@ -892,60 +855,6 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
-}
-
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
-{
-	std::array<uint8_t, 4> buf;
-
-	if (type == EffekseerRenderer::ProxyTextureType::White)
-	{
-		buf.fill(255);
-	}
-	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
-	{
-		buf.fill(127);
-		buf[2] = 255;
-		buf[3] = 255;
-	}
-	else
-	{
-		assert(0);
-	}
-
-	LLGI::TextureInitializationParameter texParam;
-	texParam.Size = LLGI::Vec2I(16, 16);
-	auto texture = GetGraphics()->CreateTexture(texParam);
-	auto texbuf = reinterpret_cast<uint8_t*>(texture->Lock());
-
-	for (int32_t i = 0; i < 16 * 16; i++)
-	{
-		memcpy(texbuf + i * 4, buf.data(), 4);
-	}
-
-	texture->Unlock();
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 16;
-	textureData->Height = 16;
-	return textureData;
-}
-
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
-{
-	if (data != nullptr && data->UserPtr != nullptr)
-	{
-		auto texture = (LLGI::Texture*)data->UserPtr;
-		texture->Release();
-	}
-
-	if (data != nullptr)
-	{
-		delete data;
-	}
 }
 
 } // namespace EffekseerRendererLLGI

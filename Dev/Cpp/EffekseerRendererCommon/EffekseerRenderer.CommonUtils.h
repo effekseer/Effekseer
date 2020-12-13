@@ -858,7 +858,7 @@ struct ShaderParameterCollector
 	Effekseer::MaterialData* MaterialDataPtr = nullptr;
 
 	int32_t TextureCount = 0;
-	std::array<::Effekseer::TextureData*, Effekseer::TextureSlotMax> Textures;
+	std::array<::Effekseer::TextureRef, Effekseer::TextureSlotMax> Textures;
 	std::array<::Effekseer::TextureFilterType, Effekseer::TextureSlotMax> TextureFilterTypes;
 	std::array<::Effekseer::TextureWrapType, Effekseer::TextureSlotMax> TextureWrapTypes;
 
@@ -915,13 +915,13 @@ struct ShaderParameterCollector
 
 	void Collect(Renderer* renderer, Effekseer::Effect* effect, Effekseer::NodeRendererBasicParameter* param, bool edgeFalloff, bool isSoftParticleEnabled)
 	{
-		::Effekseer::TextureData* TexturePtr = nullptr;
-		::Effekseer::TextureData* NormalTexturePtr = nullptr;
-		::Effekseer::TextureData* AlphaTexturePtr = nullptr;
-		::Effekseer::TextureData* UVDistortionTexturePtr = nullptr;
-		::Effekseer::TextureData* BlendTexturePtr = nullptr;
-		::Effekseer::TextureData* BlendAlphaTexturePtr = nullptr;
-		::Effekseer::TextureData* BlendUVDistortionTexturePtr = nullptr;
+		::Effekseer::TextureRef TexturePtr = nullptr;
+		::Effekseer::TextureRef NormalTexturePtr = nullptr;
+		::Effekseer::TextureRef AlphaTexturePtr = nullptr;
+		::Effekseer::TextureRef UVDistortionTexturePtr = nullptr;
+		::Effekseer::TextureRef BlendTexturePtr = nullptr;
+		::Effekseer::TextureRef BlendAlphaTexturePtr = nullptr;
+		::Effekseer::TextureRef BlendUVDistortionTexturePtr = nullptr;
 
 		Textures.fill(nullptr);
 		TextureFilterTypes.fill(::Effekseer::TextureFilterType::Linear);

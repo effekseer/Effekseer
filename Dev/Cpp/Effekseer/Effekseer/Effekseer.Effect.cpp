@@ -14,6 +14,7 @@
 #include "Effekseer.Setting.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
+#include "Backend/GraphicsDevice.h"
 #include "Model/ModelLoader.h"
 #include "Model/ProcedualModelGenerator.h"
 #include "Model/ProcedualModelParameter.h"
@@ -119,7 +120,7 @@ bool EffectFactory::LoadBody(Effect* effect, const void* data, int32_t size, flo
 	return effect_->LoadBody(data_, size, magnification);
 }
 
-void EffectFactory::SetTexture(Effect* effect, int32_t index, TextureType type, TextureData* data)
+void EffectFactory::SetTexture(Effect* effect, int32_t index, TextureType type, TextureRef data)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
 
@@ -462,7 +463,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 	if (m_ImageCount > 0)
 	{
 		m_ImagePaths = new char16_t*[m_ImageCount];
-		m_pImages = new TextureData*[m_ImageCount];
+		m_pImages = new TextureRef[m_ImageCount];
 
 		for (int i = 0; i < m_ImageCount; i++)
 		{
@@ -484,7 +485,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		if (m_normalImageCount > 0)
 		{
 			m_normalImagePaths = new char16_t*[m_normalImageCount];
-			m_normalImages = new TextureData*[m_normalImageCount];
+			m_normalImages = new TextureRef[m_normalImageCount];
 
 			for (int i = 0; i < m_normalImageCount; i++)
 			{
@@ -504,7 +505,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		if (m_distortionImageCount > 0)
 		{
 			m_distortionImagePaths = new char16_t*[m_distortionImageCount];
-			m_distortionImages = new TextureData*[m_distortionImageCount];
+			m_distortionImages = new TextureRef[m_distortionImageCount];
 
 			for (int i = 0; i < m_distortionImageCount; i++)
 			{
@@ -1087,7 +1088,7 @@ int EffectImplemented::GetVersion() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureData* EffectImplemented::GetColorImage(int n) const
+TextureRef EffectImplemented::GetColorImage(int n) const
 {
 	if (n < 0 || n >= GetColorImageCount())
 	{
@@ -1107,7 +1108,7 @@ const char16_t* EffectImplemented::GetColorImagePath(int n) const
 	return m_ImagePaths[n];
 }
 
-TextureData* EffectImplemented::GetNormalImage(int n) const
+TextureRef EffectImplemented::GetNormalImage(int n) const
 {
 	/* 強制的に互換をとる */
 	if (this->m_version <= 8)
@@ -1133,7 +1134,7 @@ const char16_t* EffectImplemented::GetNormalImagePath(int n) const
 	return m_normalImagePaths[n];
 }
 
-TextureData* EffectImplemented::GetDistortionImage(int n) const
+TextureRef EffectImplemented::GetDistortionImage(int n) const
 {
 	/* 強制的に互換をとる */
 	if (this->m_version <= 8)
@@ -1254,7 +1255,7 @@ const ProcedualModelParameter* EffectImplemented::GetProcedualModelParameter(int
 	return &procedualModelParameters_[n];
 }
 
-void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureData* data)
+void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureRef data)
 {
 	auto textureLoader = GetSetting()->GetTextureLoader();
 
@@ -1474,7 +1475,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 			char16_t fullPath[512];
 			PathCombine(fullPath, matPath, m_ImagePaths[ind]);
 
-			TextureData* value = nullptr;
+			TextureRef value = nullptr;
 			if (reloadingBackup->images.Pop(fullPath, value))
 			{
 				m_pImages[ind] = value;
@@ -1486,7 +1487,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 			char16_t fullPath[512];
 			PathCombine(fullPath, matPath, m_normalImagePaths[ind]);
 
-			TextureData* value = nullptr;
+			TextureRef value = nullptr;
 			if (reloadingBackup->normalImages.Pop(fullPath, value))
 			{
 				m_normalImages[ind] = value;
@@ -1498,7 +1499,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 			char16_t fullPath[512];
 			PathCombine(fullPath, matPath, m_distortionImagePaths[ind]);
 
-			TextureData* value = nullptr;
+			TextureRef value = nullptr;
 			if (reloadingBackup->distortionImages.Pop(fullPath, value))
 			{
 				m_distortionImages[ind] = value;

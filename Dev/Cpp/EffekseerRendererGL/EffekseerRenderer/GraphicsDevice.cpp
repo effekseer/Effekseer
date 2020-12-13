@@ -440,14 +440,14 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	return true;
 }
 
-bool Texture::Init(GLuint buffer, const std::function<void()>& onDisposed)
+bool Texture::Init(GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed)
 {
 	if (buffer == 0)
 		return false;
 
 	buffer_ = buffer;
 	onDisposed_ = onDisposed;
-	hasMipmap_ = false;
+	hasMipmap_ = hasMipmap;
 
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
@@ -1285,11 +1285,11 @@ bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& b
 	return true;
 }
 
-Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(GLuint buffer, const std::function<void()>& onDisposed)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed)
 {
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
-	if (!ret->Init(buffer, onDisposed))
+	if (!ret->Init(buffer, hasMipmap, onDisposed))
 	{
 		return nullptr;
 	}

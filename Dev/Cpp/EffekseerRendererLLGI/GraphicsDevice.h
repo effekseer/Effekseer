@@ -130,6 +130,8 @@ public:
 
 	bool Init(uint64_t id, std::function<void()> onDisposed);
 
+	bool Init(LLGI::Texture* texture);
+
 	std::shared_ptr<LLGI::Texture>& GetTexture()
 	{
 		return texture_;
@@ -165,6 +167,8 @@ public:
 	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 
 	Effekseer::Backend::TextureRef CreateTexture(uint64_t id, const std::function<void()>& onDisposed);
+
+	Effekseer::Backend::TextureRef CreateTexture(LLGI::Texture* texture);
 };
 
 } // namespace Backend

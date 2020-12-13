@@ -282,8 +282,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
-	m_background.UserPtr = nullptr;
-
 	m_state = new OriginalState();
 }
 
@@ -297,10 +295,6 @@ RendererImplemented::~RendererImplemented()
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
-
-	auto p = (ID3D11ShaderResourceView*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-
 	ES_SAFE_DELETE(m_standardRenderer);
 
 	ES_SAFE_DELETE(shader_unlit_);
@@ -416,6 +410,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 		m_indexBufferForWireframe->Unlock();
 	}
+
+	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 
 	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
 
@@ -554,8 +550,6 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 	GetImpl()->CreateProxyTextures(this);
 	GetImpl()->isSoftParticleEnabled = true;
-
-	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 
 	return true;
 }
@@ -741,20 +735,19 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 #endif
 }
 
-Effekseer::TextureData* RendererImplemented::GetBackground()
-{
-	if (m_background.UserPtr == nullptr)
-		return nullptr;
-	return &m_background;
-}
-
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 {
-	ES_SAFE_ADDREF(background);
+	if (m_backgroundDX11 == nullptr)
+	{
+		m_backgroundDX11 = graphicsDevice_->CreateTexture(background, nullptr, nullptr);
+	}
+	else
+	{
+		auto texture = static_cast<Backend::Texture*>(m_backgroundDX11.Get());
+		texture->Init(background, nullptr, nullptr);
+	}
 
-	auto p = (ID3D11ShaderResourceView*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-	m_background.UserPtr = background;
+	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundDX11 : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -938,7 +931,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count)
 {
 	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> srv;
 	for (int32_t i = 0; i < count; i++)
@@ -947,14 +940,10 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		{
 			srv[i] = nullptr;
 		}
-		else if (textures[i]->TexturePtr != nullptr)
-		{
-			auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get());
-			srv[i] = texture->GetSRV();
-		}
 		else
 		{
-			srv[i] = (ID3D11ShaderResourceView*)textures[i]->UserPtr;
+			auto texture = static_cast<Backend::Texture*>(textures[i].Get());
+			srv[i] = texture->GetSRV();
 		}
 	}
 
@@ -966,95 +955,6 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
-}
-
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
-{
-	std::array<uint8_t, 4> buf;
-
-	if (type == EffekseerRenderer::ProxyTextureType::White)
-	{
-		buf.fill(255);
-	}
-	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
-	{
-		buf.fill(127);
-		buf[2] = 255;
-		buf[3] = 255;
-	}
-	else
-	{
-		assert(0);
-	}
-
-	ID3D11Texture2D* tex = nullptr;
-
-	D3D11_TEXTURE2D_DESC TexDesc{};
-	TexDesc.Width = 1;
-	TexDesc.Height = 1;
-	TexDesc.ArraySize = 1;
-	TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	TexDesc.SampleDesc.Count = 1;
-	TexDesc.SampleDesc.Quality = 0;
-	TexDesc.Usage = D3D11_USAGE_DEFAULT;
-	TexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	TexDesc.CPUAccessFlags = 0;
-	TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = buf.data();
-	data.SysMemPitch = TexDesc.Width * 4;
-	data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
-
-	HRESULT hr = GetDevice()->CreateTexture2D(&TexDesc, nullptr, &tex);
-
-	if (FAILED(hr))
-	{
-		return nullptr;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
-	desc.Format = TexDesc.Format;
-	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	desc.Texture2D.MipLevels = -1;
-
-	ID3D11ShaderResourceView* texture = nullptr;
-	hr = GetDevice()->CreateShaderResourceView(tex, &desc, &texture);
-	if (FAILED(hr))
-	{
-		ES_SAFE_RELEASE(texture);
-		return nullptr;
-	}
-
-	GetContext()->UpdateSubresource(tex, 0, 0, buf.data(), data.SysMemPitch, 0);
-
-	ES_SAFE_RELEASE(tex);
-
-	// Generate mipmap
-	GetContext()->GenerateMips(texture);
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = TexDesc.Width;
-	textureData->Height = TexDesc.Height;
-
-	return textureData;
-}
-
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
-{
-	if (data != nullptr && data->UserPtr != nullptr)
-	{
-		auto texture = (ID3D11ShaderResourceView*)data->UserPtr;
-		texture->Release();
-	}
-
-	if (data != nullptr)
-	{
-		delete data;
-	}
 }
 
 Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const

@@ -424,6 +424,20 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	return true;
 }
 
+bool Texture::Init(IDirect3DTexture9* texture)
+{
+	texture_.reset(texture);
+	surface_.reset();
+
+	type_ = Effekseer::Backend::TextureType::Color2D;
+
+	D3DSURFACE_DESC desc;
+	texture_->GetLevelDesc(0, &desc);
+	size_ = {(int32_t)desc.Width, (int32_t)desc.Height};
+
+	return true;
+}
+
 GraphicsDevice::GraphicsDevice(IDirect3DDevice9* device)
 {
 	device_ = Effekseer::CreateUniqueReference(device, true);
@@ -502,6 +516,11 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Ba
 	}
 
 	return ret;
+}
+
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(IDirect3DTexture9* texture)
+{
+	return Effekseer::Backend::TextureRef();
 }
 
 } // namespace Backend

@@ -247,7 +247,7 @@ class StandardRenderer
 private:
 	RENDERER* m_renderer;
 
-	Effekseer::TextureData* m_texture;
+	Effekseer::TextureRef m_texture;
 
 	StandardRendererState m_state;
 
@@ -439,7 +439,7 @@ public:
 			textures[m_state.Collector.BackgroundIndex] = m_renderer->GetBackground();
 		}
 
-		::Effekseer::TextureData* depthTexture = nullptr;
+		::Effekseer::TextureRef depthTexture = nullptr;
 		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
 		m_renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
 
@@ -529,7 +529,7 @@ public:
 			state.TextureWrapTypes[i] = m_state.Collector.TextureWrapTypes[i];
 		}
 
-		m_renderer->SetTextures(shader_, reinterpret_cast<Effekseer::TextureData**>(textures.data()), m_state.Collector.TextureCount);
+		m_renderer->SetTextures(shader_, reinterpret_cast<Effekseer::TextureRef*>(textures.data()), m_state.Collector.TextureCount);
 
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;

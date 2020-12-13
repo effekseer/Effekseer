@@ -93,8 +93,9 @@ class EffectImplemented;
 
 namespace Backend
 {
-class Texture;
+	class Texture;
 }
+using Texture = Backend::Texture;
 
 using ThreadNativeHandleType = std::thread::native_handle_type;
 
@@ -803,6 +804,7 @@ RefPtr<T> MakeRefPtr(Arg&&... args)
 using SettingRef = RefPtr<Setting>;
 using ManagerRef = RefPtr<Manager>;
 using EffectRef = RefPtr<Effect>;
+using TextureRef = RefPtr<Texture>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;
@@ -922,25 +924,6 @@ enum class ColorSpaceType : int32_t
 {
 	Gamma,
 	Linear,
-};
-
-/**
-	@brief	\~english	Texture data
-			\~japanese	テクスチャデータ
-*/
-struct TextureData
-{
-	int32_t Width;
-	int32_t Height;
-	TextureFormatType TextureFormat;
-	void* UserPtr;
-	int64_t UserID;
-
-	//! for OpenGL, it is ignored in other apis
-	bool HasMipmap = true;
-
-	//! A backend which contains a native data
-	RefPtr<Backend::Texture> TexturePtr;
 };
 
 enum class ShadingModelType : int32_t

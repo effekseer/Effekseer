@@ -56,7 +56,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformDX12* platform_ = nullptr;
-	Effekseer::TextureData* textureData_ = nullptr;
+	Effekseer::TextureRef texture_ = nullptr;
 
 public:
 	DistortingCallbackDX12(EffectPlatformDX12* platform) : platform_(platform)
@@ -65,23 +65,18 @@ public:
 
 	virtual ~DistortingCallbackDX12()
 	{
-
-		if (textureData_ != nullptr)
-		{
-			EffekseerRendererDX12::DeleteTextureData(textureData_);
-		}
+		texture_.Reset();
 	}
 
 	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
-
-		if (textureData_ == nullptr)
+		if (texture_ == nullptr)
 		{
 			auto tex = (LLGI::TextureDX12*)(platform_->GetCheckedTexture());
-			textureData_ = EffekseerRendererDX12::CreateTextureData(renderer->GetGraphicsDevice(), tex->Get());
+			texture_ = EffekseerRendererDX12::CreateTexture(renderer->GetGraphicsDevice(), tex->Get());
 		}
 
-		renderer->SetBackgroundTexture(textureData_);
+		renderer->SetBackground(texture_);
 
 		return true;
 	}

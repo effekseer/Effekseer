@@ -15,10 +15,10 @@ namespace EffekseerTool
 
 MainScreenRenderedEffectGenerator::~MainScreenRenderedEffectGenerator()
 {
-	if (backgroundData_ != nullptr)
+	if (backgroundTexture_ != nullptr)
 	{
-		textureLoader_->Unload(backgroundData_);
-		backgroundData_ = nullptr;
+		textureLoader_->Unload(backgroundTexture_);
+		backgroundTexture_.Reset();
 	}
 }
 
@@ -137,9 +137,9 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 void MainScreenRenderedEffectGenerator::OnAfterClear()
 {
-	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundData_ != nullptr)
+	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundTexture_ != nullptr)
 	{
-		backgroundMesh_->Texture = backgroundData_->TexturePtr;
+		backgroundMesh_->Texture = backgroundTexture_;
 
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix.Indentity();
@@ -193,13 +193,13 @@ void MainScreenRenderedEffectGenerator::LoadBackgroundImage(const char16_t* path
 
 	backgroundPath = path;
 
-	if (backgroundData_ != nullptr)
+	if (backgroundTexture_ != nullptr)
 	{
-		textureLoader_->Unload(backgroundData_);
-		backgroundData_ = nullptr;
+		textureLoader_->Unload(backgroundTexture_);
+		backgroundTexture_.Reset();
 	}
 
-	backgroundData_ = textureLoader_->Load(path, Effekseer::TextureType::Color);
+	backgroundTexture_ = textureLoader_->Load(path, Effekseer::TextureType::Color);
 }
 
 ViewPointController::ViewPointController()
