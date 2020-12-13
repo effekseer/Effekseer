@@ -169,7 +169,7 @@ Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, id<
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
 	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
-	return g->CreateTexture((uint64_t)texture);
+	return g->CreateTexture((uint64_t)texture, []()-> void{});
 }
 
 Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)

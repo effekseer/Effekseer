@@ -4,7 +4,7 @@
 
 #include <Effekseer.h>
 #include <LLGI.CommandList.h>
-#include <LLGI.Constantbuffer.h>
+#include <LLGI.ConstantBuffer.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.IndexBuffer.h>
 #include <LLGI.VertexBuffer.h>
