@@ -85,9 +85,9 @@ public:
 		}
 	};
 
-	HolderCollection<TextureData*> images;
-	HolderCollection<TextureData*> normalImages;
-	HolderCollection<TextureData*> distortionImages;
+	HolderCollection<TextureRef> images;
+	HolderCollection<TextureRef> normalImages;
+	HolderCollection<TextureRef> distortionImages;
 	HolderCollection<void*> sounds;
 	HolderCollection<Model*> models;
 	HolderCollection<MaterialData*> materials;
@@ -117,15 +117,15 @@ protected:
 
 	int m_ImageCount;
 	char16_t** m_ImagePaths;
-	TextureData** m_pImages;
+	TextureRef* m_pImages;
 
 	int m_normalImageCount;
 	char16_t** m_normalImagePaths;
-	TextureData** m_normalImages;
+	TextureRef* m_normalImages;
 
 	int m_distortionImageCount;
 	char16_t** m_distortionImagePaths;
-	TextureData** m_distortionImages;
+	TextureRef* m_distortionImages;
 
 	int m_WaveCount = 0;
 	char16_t** m_WavePaths = nullptr;
@@ -246,19 +246,19 @@ public:
 
 	int GetVersion() const override;
 
-	TextureData* GetColorImage(int n) const override;
+	TextureRef GetColorImage(int n) const override;
 
 	int32_t GetColorImageCount() const override;
 
 	const char16_t* GetColorImagePath(int n) const override;
 
-	TextureData* GetNormalImage(int n) const override;
+	TextureRef GetNormalImage(int n) const override;
 
 	int32_t GetNormalImageCount() const override;
 
 	const char16_t* GetNormalImagePath(int n) const override;
 
-	TextureData* GetDistortionImage(int n) const override;
+	TextureRef GetDistortionImage(int n) const override;
 
 	int32_t GetDistortionImageCount() const override;
 
@@ -294,7 +294,7 @@ public:
 
 	const ProcedualModelParameter* GetProcedualModelParameter(int n) const override;
 
-	void SetTexture(int32_t index, TextureType type, TextureData* data) override;
+	void SetTexture(int32_t index, TextureType type, TextureRef data) override;
 
 	void SetSound(int32_t index, void* data) override;
 

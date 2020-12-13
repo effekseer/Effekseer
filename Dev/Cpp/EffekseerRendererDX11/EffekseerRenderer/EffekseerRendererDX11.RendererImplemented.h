@@ -102,14 +102,14 @@ private:
 
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 
-	Effekseer::TextureData m_background;
-
 	std::set<DeviceObject*> m_deviceObjects;
 
 	// ステート
 	OriginalState* m_state;
 
 	bool m_restorationOfStates;
+
+	::Effekseer::TextureRef m_backgroundDX11;
 
 	D3D11_COMPARISON_FUNC m_depthFunc;
 
@@ -213,11 +213,6 @@ public:
 	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	/**
-	@brief	背景を取得する。
-	*/
-	Effekseer::TextureData* GetBackground() override;
-
-	/**
 		@brief	背景を設定する。
 	*/
 	void SetBackground(ID3D11ShaderResourceView* background) override;
@@ -252,13 +247,9 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count);
 
 	void ResetRenderState();
-
-	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
-
-	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
 

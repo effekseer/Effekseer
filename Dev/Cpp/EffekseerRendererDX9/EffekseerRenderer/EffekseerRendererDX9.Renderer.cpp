@@ -174,8 +174,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
-	m_background.UserPtr = nullptr;
-
 	m_state_streamData.fill(nullptr);
 	m_state_OffsetInBytes.fill(0);
 	m_state_pStride.fill(0);
@@ -193,10 +191,6 @@ RendererImplemented::~RendererImplemented()
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
-
-	auto p = (IDirect3DTexture9*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-
 	ES_SAFE_DELETE(m_standardRenderer);
 
 	ES_SAFE_DELETE(shader_ad_unlit_);
@@ -324,6 +318,8 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 
 	// インデックスデータの生成
 	GenerateIndexData();
+
+	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
 
 	m_renderState = new RenderState(this);
 
@@ -464,7 +460,6 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 		instancedVertex[i] = static_cast<float>(i);
 	}
 
-	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
 	instancedVertexBuffer_ = graphicsDevice_->CreateVertexBuffer((int32_t)(instancedVertex.size() * sizeof(float)), instancedVertex.data(), false);
 	return true;
 }
@@ -774,12 +769,17 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
-	ES_SAFE_ADDREF(background);
+	if (m_backgroundDX9 == nullptr)
+	{
+		m_backgroundDX9 = graphicsDevice_->CreateTexture(background);
+	}
+	else
+	{
+		auto texture = static_cast<Backend::Texture*>(m_backgroundDX9.Get());
+		texture->Init(background);
+	}
 
-	auto p = (IDirect3DTexture9*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-
-	m_background.UserPtr = background;
+	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundDX9 : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -951,7 +951,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count)
 {
 	for (int32_t i = 0; i < count; i++)
 	{
@@ -964,15 +964,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			}
 			else
 			{
-				if (textures[i]->TexturePtr != nullptr)
-				{
-					auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get())->GetTexture();
-					GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, texture);
-				}
-				else
-				{
-					GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, (IDirect3DTexture9*)textures[i]->UserPtr);
-				}
+				auto texture = static_cast<Backend::Texture*>(textures[i].Get())->GetTexture();
+				GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, texture);
 			}
 		}
 
@@ -982,15 +975,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else
 		{
-			if (textures[i]->TexturePtr != nullptr)
-			{
-				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get())->GetTexture();
-				GetDevice()->SetTexture(i, texture);
-			}
-			else
-			{
-				GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);
-			}
+			auto texture = static_cast<Backend::Texture*>(textures[i].Get())->GetTexture();
+			GetDevice()->SetTexture(i, texture);
 		}
 	}
 }
@@ -1017,84 +1003,6 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
-}
-
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
-{
-	std::array<uint8_t, 4> buf;
-
-	if (type == EffekseerRenderer::ProxyTextureType::White)
-	{
-		buf.fill(255);
-	}
-	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
-	{
-		buf.fill(127);
-		buf[2] = 255;
-		buf[3] = 255;
-	}
-	else
-	{
-		assert(0);
-	}
-
-	HRESULT hr;
-	int32_t width = 1;
-	int32_t height = 1;
-	int32_t mipMapCount = 1;
-	LPDIRECT3DTEXTURE9 texture = nullptr;
-	hr = GetDevice()->CreateTexture(width, height, mipMapCount, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
-
-	if (FAILED(hr))
-	{
-		return nullptr;
-	}
-
-	LPDIRECT3DTEXTURE9 tempTexture = nullptr;
-	hr = GetDevice()->CreateTexture(width, height, mipMapCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &tempTexture, nullptr);
-
-	if (FAILED(hr))
-	{
-		ES_SAFE_RELEASE(texture);
-		return nullptr;
-	}
-
-	D3DLOCKED_RECT locked;
-	if (SUCCEEDED(tempTexture->LockRect(0, &locked, nullptr, 0)))
-	{
-		uint8_t* destBits = (uint8_t*)locked.pBits;
-		destBits[0] = buf[2];
-		destBits[2] = buf[0];
-		destBits[1] = buf[1];
-		destBits[3] = buf[3];
-
-		tempTexture->UnlockRect(0);
-	}
-
-	hr = GetDevice()->UpdateTexture(tempTexture, texture);
-	ES_SAFE_RELEASE(tempTexture);
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = width;
-	textureData->Height = height;
-	return textureData;
-}
-
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
-{
-	if (data != nullptr && data->UserPtr != nullptr)
-	{
-		IDirect3DTexture9* texture = (IDirect3DTexture9*)data->UserPtr;
-		texture->Release();
-	}
-
-	if (data != nullptr)
-	{
-		delete data;
-	}
 }
 
 Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const

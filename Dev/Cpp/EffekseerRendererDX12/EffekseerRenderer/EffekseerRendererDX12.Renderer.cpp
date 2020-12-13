@@ -269,31 +269,16 @@ namespace EffekseerRendererDX12
 	return nullptr;
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture)
+Effekseer::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	return CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), texture);
+	return CreateTexture(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), texture);
 }
 
-Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture)
+Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture)
 {
 	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto texture_ = g->CreateTexture((uint64_t)texture, [] {});
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->TexturePtr = texture_;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 0;
-	textureData->Height = 0;
-	return textureData;
-}
-
-void DeleteTextureData(Effekseer::TextureData* textureData)
-{
-	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	ES_SAFE_RELEASE(texture);
-	ES_SAFE_DELETE(textureData);
+	return g->CreateTexture((uint64_t)texture, [] {});
 }
 
 void FlushAndWait(::EffekseerRenderer::RendererRef renderer)

@@ -141,9 +141,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::Graphi
 	, m_distortingCallback(nullptr)
 	, m_deviceType(graphicsDevice->GetDeviceType())
 {
-	m_background.UserID = 0;
-	m_background.HasMipmap = false;
-
 	graphicsDevice_ = graphicsDevice;
 }
 
@@ -797,13 +794,17 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 void RendererImplemented::SetBackground(GLuint background, bool hasMipmap)
 {
-	m_background.UserID = background;
-	m_background.HasMipmap = hasMipmap;
-}
+	if (m_backgroundGL == nullptr)
+	{
+		m_backgroundGL = graphicsDevice_->CreateTexture(background, hasMipmap, nullptr);
+	}
+	else
+	{
+		auto texture = static_cast<Backend::Texture*>(m_backgroundGL.Get());
+		texture->Init(background, hasMipmap, nullptr);
+	}
 
-void RendererImplemented::SetBackgroundTexture(::Effekseer::TextureData* textureData)
-{
-	m_background = *textureData;
+	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundGL : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -1117,7 +1118,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count)
 {
 	GLCheckError();
 
@@ -1133,15 +1134,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		GLuint id = 0;
 		if (textures[i] != nullptr)
 		{
-			if (textures[i]->TexturePtr != nullptr)
-			{
-				auto texture = static_cast<Backend::Texture*>(textures[i]->TexturePtr.Get());
-				id = texture->GetBuffer();
-			}
-			else
-			{
-				id = (GLuint)textures[i]->UserID;
-			}
+			auto texture = static_cast<Backend::Texture*>(textures[i].Get());
+			id = texture->GetBuffer();
 		}
 
 		GLExt::glActiveTexture(GL_TEXTURE0 + i);
@@ -1150,15 +1144,12 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		if (textures[i] != nullptr)
 		{
 			m_renderState->GetActiveState().TextureIDs[i] = id;
-			currentTextures_[i] = *textures[i];
+			currentTextures_[i] = textures[i];
 		}
 		else
 		{
-			currentTextures_[i].UserID = 0;
-			currentTextures_[i].UserPtr = nullptr;
-			currentTextures_[i].TexturePtr = nullptr;
-
 			m_renderState->GetActiveState().TextureIDs[i] = 0;
+			currentTextures_[i].Reset();
 		}
 
 		if (shader->GetTextureSlotEnable(i))
@@ -1178,58 +1169,6 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
-}
-
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
-{
-
-	GLint bound = 0;
-	GLExt::glActiveTexture(GL_TEXTURE0);
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
-
-	std::array<uint8_t, 4> buf;
-
-	if (type == EffekseerRenderer::ProxyTextureType::White)
-	{
-		buf.fill(255);
-	}
-	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
-	{
-		buf.fill(127);
-		buf[2] = 255;
-		buf[3] = 255;
-	}
-	else
-	{
-		assert(0);
-	}
-
-	GLuint texture = 0;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf.data());
-
-	// Generate mipmap
-	GLExt::glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, bound);
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = nullptr;
-	textureData->UserID = texture;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 1;
-	textureData->Height = 1;
-	return textureData;
-}
-
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
-{
-	if (data != nullptr)
-	{
-		GLuint texture = (GLuint)data->UserID;
-		glDeleteTextures(1, &texture);
-		delete data;
-	}
 }
 
 bool RendererImplemented::IsVertexArrayObjectSupported() const

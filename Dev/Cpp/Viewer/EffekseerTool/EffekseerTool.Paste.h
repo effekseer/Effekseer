@@ -29,7 +29,7 @@ public:
 	static Paste* Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 
 public:
-	void Rendering(::Effekseer::TextureData* texture, int32_t width, int32_t height);
+	void Rendering(::Effekseer::TextureRef texture, int32_t width, int32_t height);
 };
 //----------------------------------------------------------------------------------
 //

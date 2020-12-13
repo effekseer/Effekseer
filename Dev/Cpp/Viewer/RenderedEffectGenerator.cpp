@@ -511,7 +511,7 @@ void RenderedEffectGenerator::Render()
 	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[3][2];
 	reconstructionParam.ProjectionMatrix44 = config_.ProjectionMatrix.Values[3][3];
 
-	renderer_->SetDepth(depthRenderTexture->GetAsEffekseerBackend(), reconstructionParam);
+	renderer_->SetDepth(depthRenderTexture->GetAsEffekseerTexture(), reconstructionParam);
 
 	// HACK : grid renderer changes RenderMode
 	renderer_->SetRenderMode(config_.RenderMode);
@@ -627,49 +627,12 @@ void RenderedEffectGenerator::CopyToBack()
 		graphics_->CopyTo(hdrRenderTexture.get(), backTexture.get());
 	}
 
-	if (graphics_->GetDeviceType() == efk::DeviceType::OpenGL)
-	{
-		::Effekseer::TextureData textureData;
-		textureData.HasMipmap = false;
-		textureData.Width = 1024;  // dummy
-		textureData.Height = 1024; // dummy
-		textureData.TextureFormat = Effekseer::TextureFormatType::ABGR8;
-		textureData.UserPtr = nullptr;
-		textureData.UserID = (GLuint)(size_t)backTexture->GetViewID();
-		auto r = (::EffekseerRendererGL::Renderer*)renderer_.Get();
-		r->SetBackgroundTexture(&textureData);
-	}
-#ifdef _WIN32
-	else if (graphics_->GetDeviceType() == efk::DeviceType::DirectX11)
-	{
-		auto r = (::EffekseerRendererDX11::Renderer*)renderer_.Get();
-		r->SetBackground((ID3D11ShaderResourceView*)backTexture->GetViewID());
-	}
-	else
-	{
-		assert(0);
-	}
-#endif
+	renderer_->SetBackground(backTexture->GetAsEffekseerTexture());
 }
 
 void RenderedEffectGenerator::ResetBack()
 {
-	if (graphics_->GetDeviceType() == efk::DeviceType::OpenGL)
-	{
-		auto r = (::EffekseerRendererGL::Renderer*)renderer_.Get();
-		r->SetBackground(0);
-	}
-#ifdef _WIN32
-	else if (graphics_->GetDeviceType() == efk::DeviceType::DirectX11)
-	{
-		auto r = (::EffekseerRendererDX11::Renderer*)renderer_.Get();
-		r->SetBackground(nullptr);
-	}
-#endif
-	else
-	{
-		assert(0);
-	}
+	renderer_->SetBackground(nullptr);
 }
 
 } // namespace Tool

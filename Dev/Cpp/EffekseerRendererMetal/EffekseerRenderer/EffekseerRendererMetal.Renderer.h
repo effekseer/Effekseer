@@ -41,11 +41,9 @@ namespace EffekseerRendererMetal
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, id<MTLTexture> texture);
+Effekseer::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, id<MTLTexture> texture);
 
-Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
-
-void DeleteTextureData(Effekseer::TextureData* textureData);
+Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
 void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 

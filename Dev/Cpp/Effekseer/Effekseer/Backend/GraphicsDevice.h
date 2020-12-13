@@ -3,6 +3,8 @@
 #define __EFFEKSEER_GRAPHICS_DEVICE_H__
 
 #include "../Effekseer.Base.Pre.h"
+#include "../Effekseer.Color.h"
+#include "../Utils/Effekseer.CustomAllocator.h"
 #include <array>
 #include <stdint.h>
 #include <string>
@@ -184,9 +186,9 @@ class Texture
 {
 protected:
 	TextureType type_ = {};
-	TextureFormatType format_;
-	std::array<int32_t, 2> size_;
-	bool hasMipmap_;
+	TextureFormatType format_ = {};
+	std::array<int32_t, 2> size_ = {};
+	bool hasMipmap_ = false;
 
 public:
 	Texture() = default;

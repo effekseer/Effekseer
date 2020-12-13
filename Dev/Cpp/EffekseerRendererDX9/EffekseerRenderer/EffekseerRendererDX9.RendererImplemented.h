@@ -60,8 +60,6 @@ private:
 
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 
-	::Effekseer::TextureData m_background;
-
 	std::set<DeviceObject*> m_deviceObjects;
 
 	// ステート
@@ -116,6 +114,8 @@ private:
 	Effekseer::Backend::VertexBufferRef instancedVertexBuffer_;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+
+	::Effekseer::TextureRef m_backgroundDX9;
 
 public:
 	/**
@@ -213,16 +213,6 @@ public:
 	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	/**
-	@brief	背景を取得する。
-	*/
-	Effekseer::TextureData* GetBackground() override
-	{
-		if (m_background.UserPtr == nullptr)
-			return nullptr;
-		return &m_background;
-	}
-
-	/**
 	@brief	背景を設定する。
 	*/
 	void SetBackground(IDirect3DTexture9* background) override;
@@ -257,15 +247,11 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count);
 
 	void ChangeDevice(LPDIRECT3DDEVICE9 device);
 
 	void ResetRenderState();
-
-	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
-
-	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
 

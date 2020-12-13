@@ -18,7 +18,7 @@ private:
 	struct Sprite
 	{
 		std::array<EffekseerRendererGL::Vertex, 4> Verteies;
-		::Effekseer::TextureData* TexturePtr = nullptr;
+		::Effekseer::TextureRef TexturePtr = nullptr;
 	};
 
 	EffekseerRendererGL::RendererImplementedRef renderer;
@@ -38,7 +38,7 @@ public:
 	void Draw(const Effekseer::Vector3D positions[],
 			  const Effekseer::Vector2D uvs[],
 			  const Effekseer::Color colors[],
-			  ::Effekseer::TextureData* texturePtr) override;
+			  ::Effekseer::TextureRef texturePtr) override;
 
 	void Render() override;
 

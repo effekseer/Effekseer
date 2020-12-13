@@ -24,7 +24,7 @@ TextureLoader::~TextureLoader()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-Effekseer::TextureData* TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
+Effekseer::TextureRef TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
 {
 	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 
@@ -33,23 +33,20 @@ Effekseer::TextureData* TextureLoader::Load(const char16_t* path, ::Effekseer::T
 		auto path16 = std::u16string(path);
 		auto isMipEnabled = path16.find(u"_NoMip") == std::u16string::npos;
 
-		size_t size_texture = reader->GetLength();
-		char* data_texture = new char[size_texture];
-		reader->Read(data_texture, size_texture);
+		size_t fileSize = reader->GetLength();
+		std::vector<uint8_t> fileData(fileSize);
+		reader->Read(fileData.data(), fileSize);
 
-		Effekseer::TextureData* textureData = Load(data_texture, static_cast<int32_t>(size_texture), textureType, isMipEnabled);
-		delete[] data_texture;
-		return textureData;
+		return Load(fileData.data(), static_cast<int32_t>(fileSize), textureType, isMipEnabled);
 	}
 
 	return nullptr;
 }
 
-Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType, bool isMipMapEnabled)
+Effekseer::TextureRef TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType, bool isMipMapEnabled)
 {
 	auto size_texture = size;
 	auto data_texture = (uint8_t*)data;
-	Effekseer::TextureData* textureData = nullptr;
 
 	if (size_texture < 4)
 	{
@@ -77,21 +74,7 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 				param.GenerateMipmap = isMipMapEnabled;
 				param.InitialData.assign(pngTextureLoader_.GetData().begin(), pngTextureLoader_.GetData().end());
 
-				Effekseer::TextureData* textureData = nullptr;
-				auto backendTexture = graphicsDevice_->CreateTexture(param);
-				if (backendTexture != nullptr)
-				{
-					textureData = new Effekseer::TextureData();
-					textureData->UserPtr = nullptr;
-					textureData->UserID = 0;
-					textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-					textureData->Width = pngTextureLoader_.GetWidth();
-					textureData->Height = pngTextureLoader_.GetHeight();
-					textureData->HasMipmap = backendTexture->GetHasMipmap();
-					textureData->TexturePtr = backendTexture;
-				}
-
-				return textureData;
+				return graphicsDevice_->CreateTexture(param);
 			}
 		}
 	}
@@ -117,22 +100,7 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 			param.InitialData.assign(ddsTextureLoader_.GetTextures().at(0).Data.begin(), ddsTextureLoader_.GetTextures().at(0).Data.end());
 			param.GenerateMipmap = false; // TODO : Support nomipmap
 
-			Effekseer::TextureData* textureData = nullptr;
-
-			auto backendTexture = graphicsDevice_->CreateTexture(param);
-			if (backendTexture != nullptr)
-			{
-				textureData = new Effekseer::TextureData();
-				textureData->UserPtr = nullptr;
-				textureData->UserID = 0;
-				textureData->TextureFormat = ddsTextureLoader_.GetTextureFormat();
-				textureData->Width = backendTexture->GetSize()[0];
-				textureData->Height = backendTexture->GetSize()[1];
-				textureData->HasMipmap = backendTexture->GetHasMipmap();
-				textureData->TexturePtr = backendTexture;
-			}
-
-			return textureData;
+			return graphicsDevice_->CreateTexture(param);
 		}
 	}
 	else
@@ -158,35 +126,16 @@ Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effe
 				param.GenerateMipmap = isMipMapEnabled;
 				param.InitialData.assign(tgaTextureLoader_.GetData().begin(), tgaTextureLoader_.GetData().end());
 
-				Effekseer::TextureData* textureData = nullptr;
-
-				auto backendTexture = graphicsDevice_->CreateTexture(param);
-				if (backendTexture != nullptr)
-				{
-					textureData = new Effekseer::TextureData();
-					textureData->UserPtr = nullptr;
-					textureData->UserID = 0;
-					textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-					textureData->Width = tgaTextureLoader_.GetWidth();
-					textureData->Height = tgaTextureLoader_.GetHeight();
-					textureData->TexturePtr = backendTexture;
-					textureData->HasMipmap = backendTexture->GetHasMipmap();
-				}
-
-				return textureData;
+				return graphicsDevice_->CreateTexture(param);
 			}
 		}
 	}
 
-	return textureData;
+	return nullptr;
 }
 
-void TextureLoader::Unload(Effekseer::TextureData* data)
+void TextureLoader::Unload(Effekseer::TextureRef data)
 {
-	if (data != nullptr)
-	{
-		delete data;
-	}
 }
 
 } // namespace EffekseerRenderer

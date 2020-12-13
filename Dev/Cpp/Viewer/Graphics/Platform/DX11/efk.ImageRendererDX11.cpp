@@ -87,7 +87,7 @@ ImageRendererDX11::~ImageRendererDX11()
 void ImageRendererDX11::Draw(const Effekseer::Vector3D positions[],
 							 const Effekseer::Vector2D uvs[],
 							 const Effekseer::Color colors[],
-							 ::Effekseer::TextureData* texturePtr)
+							 ::Effekseer::TextureRef texturePtr)
 {
 	Sprite s;
 

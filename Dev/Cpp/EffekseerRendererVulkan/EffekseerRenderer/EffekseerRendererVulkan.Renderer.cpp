@@ -144,13 +144,13 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 	return nullptr;
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
+Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateTextureData(r->GetGraphicsDevice(), info);
+	return CreateTexture(r->GetGraphicsDevice(), info);
 }
 
-Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info)
+Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info)
 {
 	LLGI::VulkanImageInfo llgiinfo;
 	llgiinfo.image = info.image;
@@ -158,22 +158,7 @@ Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRe
 	llgiinfo.aspect = info.aspect;
 
 	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto texture_ = g->CreateTexture((uint64_t)(&llgiinfo), [] {});
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->TexturePtr = texture_;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 0;
-	textureData->Height = 0;
-	return textureData;
-}
-
-void DeleteTextureData(Effekseer::TextureData* textureData)
-{
-	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	ES_SAFE_RELEASE(texture);
-	ES_SAFE_DELETE(textureData);
+	return g->CreateTexture((uint64_t)(&llgiinfo), [] {});
 }
 
 void FlushAndWait(::EffekseerRenderer::RendererRef renderer)

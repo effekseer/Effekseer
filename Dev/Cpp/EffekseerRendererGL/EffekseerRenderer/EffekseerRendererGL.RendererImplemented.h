@@ -80,8 +80,6 @@ private:
 
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 
-	Effekseer::TextureData m_background;
-
 	OpenGLDeviceType m_deviceType;
 
 	// for restoring states
@@ -91,8 +89,10 @@ private:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
+	::Effekseer::TextureRef m_backgroundGL;
+
 	// textures which are specified currently
-	std::vector<::Effekseer::TextureData> currentTextures_;
+	std::vector<::Effekseer::TextureRef> currentTextures_;
 
 	VertexArray* m_currentVertexArray;
 
@@ -181,19 +181,7 @@ public:
 
 	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
-	/**
-	@brief	背景を取得する。
-	*/
-	Effekseer::TextureData* GetBackground() override
-	{
-		if (m_background.UserID == 0)
-			return nullptr;
-		return &m_background;
-	}
-
 	void SetBackground(GLuint background, bool hasMipmap) override;
-
-	void SetBackgroundTexture(::Effekseer::TextureData* textureData) override;
 
 	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;
 
@@ -227,15 +215,11 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count);
 
 	void ResetRenderState() override;
 
-	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
-
-	void DeleteProxyTexture(Effekseer::TextureData* data) override;
-
-	const std::vector<::Effekseer::TextureData>& GetCurrentTextures() const
+	const std::vector<::Effekseer::TextureRef>& GetCurrentTextures() const
 	{
 		return currentTextures_;
 	}

@@ -164,7 +164,7 @@ public:
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
 
-	bool Init(GLuint buffer, const std::function<void()>& onDisposed);
+	bool Init(GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed);
 
 	GLuint GetBuffer() const
 	{
@@ -325,7 +325,7 @@ public:
 		return "OpenGL";
 	}
 
-	Effekseer::Backend::TextureRef CreateTexture(GLuint buffer, const std::function<void()>& onDisposed);
+	Effekseer::Backend::TextureRef CreateTexture(GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed);
 };
 
 } // namespace Backend

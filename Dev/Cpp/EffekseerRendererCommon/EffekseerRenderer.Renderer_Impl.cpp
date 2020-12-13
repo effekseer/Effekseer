@@ -7,7 +7,6 @@ namespace EffekseerRenderer
 
 Renderer::Impl::~Impl()
 {
-	ES_SAFE_DELETE(depthTexture_);
 }
 
 void Renderer::Impl::SetCameraParameterInternal(const ::Effekseer::SIMD::Vec3f& front, const ::Effekseer::SIMD::Vec3f& position)
@@ -125,7 +124,7 @@ void Renderer::Impl::DeleteProxyTextures(Renderer* renderer)
 	normalProxyTexture_ = nullptr;
 }
 
-::Effekseer::TextureData* Renderer::Impl::GetProxyTexture(EffekseerRenderer::ProxyTextureType type)
+::Effekseer::TextureRef Renderer::Impl::GetProxyTexture(EffekseerRenderer::ProxyTextureType type)
 {
 	if (type == EffekseerRenderer::ProxyTextureType::White)
 		return whiteProxyTexture_;
@@ -200,36 +199,26 @@ void Renderer::Impl::SetRenderMode(Effekseer::RenderMode renderMode)
 	renderMode_ = renderMode;
 }
 
-void Renderer::Impl::GetDepth(::Effekseer::TextureData*& texture, DepthReconstructionParameter& reconstructionParam)
+const ::Effekseer::TextureRef& Renderer::Impl::GetBackground()
+{
+	return backgroundTexture_;
+}
+
+void Renderer::Impl::SetBackground(::Effekseer::TextureRef texture)
+{
+	backgroundTexture_ = texture;
+}
+
+void Renderer::Impl::GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam)
 {
 	texture = depthTexture_;
 	reconstructionParam = reconstructionParam_;
 }
 
-void Renderer::Impl::GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam)
-{
-	texture = depthBackendTexture_;
-	reconstructionParam = reconstructionParam_;
-}
-
 void Renderer::Impl::SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam)
 {
-	depthBackendTexture_ = texture;
+	depthTexture_ = texture;
 	reconstructionParam_ = reconstructionParam;
-
-	if (texture != nullptr)
-	{
-		if (depthTexture_ == nullptr)
-		{
-			depthTexture_ = new Effekseer::TextureData();		
-		}
-		depthTexture_->HasMipmap = depthBackendTexture_->GetHasMipmap();
-		depthTexture_->TexturePtr = depthBackendTexture_;
-	}
-	else if (texture == nullptr && depthTexture_ != nullptr)
-	{
-		ES_SAFE_DELETE(depthTexture_);
-	}
 }
 
 } // namespace EffekseerRenderer

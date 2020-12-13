@@ -32,11 +32,11 @@ public:
 	virtual ~TextureLoader();
 
 public:
-	Effekseer::TextureData* Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
+	Effekseer::TextureRef Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
 
-	Effekseer::TextureData* Load(const void* data, int32_t size, Effekseer::TextureType textureType, bool isMipMapEnabled) override;
+	Effekseer::TextureRef Load(const void* data, int32_t size, Effekseer::TextureType textureType, bool isMipMapEnabled) override;
 
-	void Unload(Effekseer::TextureData* data) override;
+	void Unload(Effekseer::TextureRef data) override;
 };
 
 } // namespace EffekseerRenderer

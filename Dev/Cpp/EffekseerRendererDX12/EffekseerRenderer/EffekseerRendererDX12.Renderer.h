@@ -49,11 +49,9 @@ namespace EffekseerRendererDX12
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
+Effekseer::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
 
-Effekseer::TextureData* CreateTextureData(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
-
-void DeleteTextureData(Effekseer::TextureData* textureData);
+Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
 void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 

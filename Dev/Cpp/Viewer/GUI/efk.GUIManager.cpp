@@ -546,32 +546,20 @@ static ImTextureID ToImTextureID(ImageResource* image)
 {
 	if (image != nullptr)
 	{
-		Effekseer::TextureData* texture = image->GetTextureData();
+		Effekseer::TextureRef texture = image->GetTexture();
 		if (texture != nullptr)
 		{
 #ifdef _WIN32
 			if (image->GetDeviceType() == DeviceType::DirectX11)
 			{
-				if (texture->TexturePtr != nullptr)
-				{
-					auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture->TexturePtr.Get());
-					return reinterpret_cast<ImTextureID>(t->GetSRV());
-				}
-				else if (texture->UserPtr != nullptr)
-				{
-					return (ImTextureID)texture->UserPtr;
-				}
+				auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture.Get());
+				return reinterpret_cast<ImTextureID>(t->GetSRV());
 			}
 #endif
-
-			if (texture->TexturePtr != nullptr)
+			if (image->GetDeviceType() == DeviceType::OpenGL)
 			{
-				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture->TexturePtr.Get());
+				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture.Get());
 				return reinterpret_cast<ImTextureID>(static_cast<size_t>(t->GetBuffer()));
-			}
-			else
-			{
-				return (ImTextureID)texture->UserID;
 			}
 		}
 	}
