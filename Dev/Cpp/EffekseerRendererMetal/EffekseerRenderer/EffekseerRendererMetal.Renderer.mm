@@ -168,7 +168,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
+	auto g = r->GetGraphicsDeviceInternal();
 	return g->CreateTexture((uint64_t)texture, []()-> void{});
 }
 
