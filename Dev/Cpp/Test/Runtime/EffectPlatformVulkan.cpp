@@ -102,7 +102,7 @@ void main()
 class DistortingCallbackVulkan : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformVulkan* platform_ = nullptr;
-	Effekseer::TextureData* textureData_ = nullptr;
+	Effekseer::TextureRef texture_ = nullptr;
 
 public:
 	DistortingCallbackVulkan(EffectPlatformVulkan* platform)
@@ -112,27 +112,23 @@ public:
 
 	virtual ~DistortingCallbackVulkan()
 	{
-
-		if (textureData_ != nullptr)
-		{
-			EffekseerRendererVulkan::DeleteTextureData(textureData_);
-		}
+		texture_.Reset();
 	}
 
 	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 
-		if (textureData_ == nullptr)
+		if (texture_ == nullptr)
 		{
 			auto tex = (LLGI::TextureVulkan*)(platform_->GetCheckedTexture());
 			EffekseerRendererVulkan::VulkanImageInfo info;
 			info.image = static_cast<VkImage>(tex->GetImage());
 			info.format = static_cast<VkFormat>(tex->GetVulkanFormat());
 			info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
-			textureData_ = EffekseerRendererVulkan::CreateTextureData(renderer->GetGraphicsDevice(), info);
+			texture_ = EffekseerRendererVulkan::CreateTexture(renderer->GetGraphicsDevice(), info);
 		}
 
-		renderer->SetBackgroundTexture(textureData_);
+		renderer->SetBackground(texture_);
 
 		return true;
 	}
