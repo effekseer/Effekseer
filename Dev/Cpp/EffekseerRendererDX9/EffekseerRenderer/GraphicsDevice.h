@@ -155,6 +155,8 @@ class Texture
 	Direct3DTexture9Ptr texture_ = nullptr;
 	Direct3DSurface9Ptr surface_ = nullptr;
 	GraphicsDevice* graphicsDevice_ = nullptr;
+	std::function<void(IDirect3DTexture9*&)> onLostDevice_;
+	std::function<void(IDirect3DTexture9*&)> onResetDevice_;
 
 public:
 	Texture(GraphicsDevice* graphicsDevice);
@@ -164,7 +166,11 @@ public:
 
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
 
-	bool Init(IDirect3DTexture9* texture);
+	bool Init(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice);
+
+	void OnLostDevice() override;
+
+	void OnResetDevice() override;
 
 	IDirect3DTexture9* GetTexture() const
 	{
@@ -204,7 +210,7 @@ public:
 	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
 
 	//! for DirectX9
-	Effekseer::Backend::TextureRef CreateTexture(IDirect3DTexture9* texture);
+	Effekseer::Backend::TextureRef CreateTexture(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice);
 
 };
 

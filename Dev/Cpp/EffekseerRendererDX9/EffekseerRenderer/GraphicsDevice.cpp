@@ -424,8 +424,11 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	return true;
 }
 
-bool Texture::Init(IDirect3DTexture9* texture)
+bool Texture::Init(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice)
 {
+	onLostDevice_ = onLostDevice;
+	onResetDevice_ = onResetDevice;
+
 	texture_.reset(texture);
 	surface_.reset();
 
@@ -436,6 +439,43 @@ bool Texture::Init(IDirect3DTexture9* texture)
 	size_ = {(int32_t)desc.Width, (int32_t)desc.Height};
 
 	return true;
+}
+
+void Texture::OnLostDevice()
+{
+	if (onLostDevice_)
+	{
+		if (texture_ != nullptr)
+		{
+			texture_->AddRef();		
+		}
+
+		auto texture = texture_.get();
+		onLostDevice_(texture);
+		texture_.reset(texture);
+	}
+}
+
+void Texture::OnResetDevice()
+{
+	if (onResetDevice_)
+	{
+		if (texture_ != nullptr)
+		{
+			texture_->AddRef();
+		}
+		
+		auto texture = texture_.get();
+		onResetDevice_(texture);
+		texture_.reset(texture);
+
+		if (texture_ != nullptr)
+		{
+			D3DSURFACE_DESC desc;
+			texture_->GetLevelDesc(0, &desc);
+			size_ = {(int32_t)desc.Width, (int32_t)desc.Height};
+		}
+	}
 }
 
 GraphicsDevice::GraphicsDevice(IDirect3DDevice9* device)
@@ -518,9 +558,16 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Ba
 	return ret;
 }
 
-Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(IDirect3DTexture9* texture)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice)
 {
-	return Effekseer::Backend::TextureRef();
+	auto ret = Effekseer::MakeRefPtr<Texture>(this);
+
+	if (!ret->Init(texture, onLostDevice, onResetDevice))
+	{
+		return nullptr;
+	}
+
+	return ret;
 }
 
 } // namespace Backend

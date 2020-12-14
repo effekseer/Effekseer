@@ -769,14 +769,16 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
+	Effekseer::SafeAddRef(background);
+
 	if (m_backgroundDX9 == nullptr)
 	{
-		m_backgroundDX9 = graphicsDevice_->CreateTexture(background);
+		m_backgroundDX9 = graphicsDevice_->CreateTexture(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
 	}
 	else
 	{
 		auto texture = static_cast<Backend::Texture*>(m_backgroundDX9.Get());
-		texture->Init(background);
+		texture->Init(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
 	}
 
 	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundDX9 : nullptr);
