@@ -16,9 +16,9 @@ struct VS_Output
     vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec3 WorldN;
+    vec3 WorldB;
+    vec3 WorldT;
     vec4 PosP;
 };
 
@@ -42,9 +42,9 @@ layout(location = 4) in vec2 Input_UV;
 layout(location = 5) in vec4 Input_Color;
 layout(location = 0) centroid out vec4 _entryPointOutput_Color;
 layout(location = 1) centroid out vec2 _entryPointOutput_UV;
-layout(location = 2) out vec3 _entryPointOutput_Normal;
-layout(location = 3) out vec3 _entryPointOutput_Binormal;
-layout(location = 4) out vec3 _entryPointOutput_Tangent;
+layout(location = 2) out vec3 _entryPointOutput_WorldN;
+layout(location = 3) out vec3 _entryPointOutput_WorldB;
+layout(location = 4) out vec3 _entryPointOutput_WorldT;
 layout(location = 5) out vec4 _entryPointOutput_PosP;
 
 VS_Output _main(VS_Input Input)
@@ -66,9 +66,9 @@ VS_Output _main(VS_Input Input)
     localBinormal = normalize(localBinormal * matModel);
     vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
     localTangent = normalize(localTangent * matModel);
-    Output.Normal = localNormal.xyz;
-    Output.Binormal = localBinormal.xyz;
-    Output.Tangent = localTangent.xyz;
+    Output.WorldN = localNormal.xyz;
+    Output.WorldB = localBinormal.xyz;
+    Output.WorldT = localTangent.xyz;
     Output.UV.y = _31.mUVInversed.x + (_31.mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;
@@ -90,9 +90,9 @@ void main()
     gl_Position = _position;
     _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
-    _entryPointOutput_Normal = flattenTemp.Normal;
-    _entryPointOutput_Binormal = flattenTemp.Binormal;
-    _entryPointOutput_Tangent = flattenTemp.Tangent;
+    _entryPointOutput_WorldN = flattenTemp.WorldN;
+    _entryPointOutput_WorldB = flattenTemp.WorldB;
+    _entryPointOutput_WorldT = flattenTemp.WorldT;
     _entryPointOutput_PosP = flattenTemp.PosP;
 }
 

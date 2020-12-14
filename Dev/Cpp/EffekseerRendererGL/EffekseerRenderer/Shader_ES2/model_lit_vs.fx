@@ -15,9 +15,9 @@ struct VS_Output
     vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec3 WorldN;
+    vec3 WorldB;
+    vec3 WorldT;
     vec4 PosP;
 };
 
@@ -43,9 +43,9 @@ attribute vec2 Input_UV;
 attribute vec4 Input_Color;
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
-varying vec3 _VSPS_Normal;
-varying vec3 _VSPS_Binormal;
-varying vec3 _VSPS_Tangent;
+varying vec3 _VSPS_WorldN;
+varying vec3 _VSPS_WorldB;
+varying vec3 _VSPS_WorldT;
 varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
@@ -65,9 +65,9 @@ VS_Output _main(VS_Input Input)
     localBinormal = normalize(CBVS0.mModel * localBinormal);
     vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
     localTangent = normalize(CBVS0.mModel * localTangent);
-    Output.Normal = localNormal.xyz;
-    Output.Binormal = localBinormal.xyz;
-    Output.Tangent = localTangent.xyz;
+    Output.WorldN = localNormal.xyz;
+    Output.WorldB = localBinormal.xyz;
+    Output.WorldT = localTangent.xyz;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;
@@ -86,9 +86,9 @@ void main()
     gl_Position = flattenTemp.PosVS;
     _VSPS_Color = flattenTemp.Color;
     _VSPS_UV = flattenTemp.UV;
-    _VSPS_Normal = flattenTemp.Normal;
-    _VSPS_Binormal = flattenTemp.Binormal;
-    _VSPS_Tangent = flattenTemp.Tangent;
+    _VSPS_WorldN = flattenTemp.WorldN;
+    _VSPS_WorldB = flattenTemp.WorldB;
+    _VSPS_WorldT = flattenTemp.WorldT;
     _VSPS_PosP = flattenTemp.PosP;
 }
 

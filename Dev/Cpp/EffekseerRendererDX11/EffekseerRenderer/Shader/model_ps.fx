@@ -61,9 +61,9 @@ struct PS_Input
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
 #if ENABLE_LIGHTING
-	half3 Normal : TEXCOORD1;
-	half3 Binormal : TEXCOORD2;
-	half3 Tangent : TEXCOORD3;
+	half3 WorldN : TEXCOORD1;
+	half3 WorldB : TEXCOORD2;
+	half3 WorldT : TEXCOORD3;
 #endif
 	float4 PosP : TEXCOORD4;
 };
@@ -80,7 +80,7 @@ float4 main(const PS_Input Input)
 	half3 localNormal = (half3)normalize(
 		mul(
 			texNormal,
-			half3x3((half3)Input.Tangent, (half3)Input.Binormal, (half3)Input.Normal)));
+			half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
 
 	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);

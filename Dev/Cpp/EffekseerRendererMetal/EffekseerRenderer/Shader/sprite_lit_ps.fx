@@ -10,9 +10,9 @@ struct PS_Input
     float4 PosVS;
     float4 Color;
     float2 UV;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
+    float3 WorldN;
+    float3 WorldB;
+    float3 WorldT;
     float4 PosP;
 };
 
@@ -49,9 +49,9 @@ struct main0_in
 {
     float4 Input_Color [[user(locn0), centroid_perspective]];
     float2 Input_UV [[user(locn1), centroid_perspective]];
-    float3 Input_Normal [[user(locn2)]];
-    float3 Input_Binormal [[user(locn3)]];
-    float3 Input_Tangent [[user(locn4)]];
+    float3 Input_WorldN [[user(locn2)]];
+    float3 Input_WorldB [[user(locn3)]];
+    float3 Input_WorldT [[user(locn4)]];
     float4 Input_PosP [[user(locn5)]];
 };
 
@@ -71,7 +71,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler s
 {
     float4 Output = _colorTex.sample(sampler_colorTex, Input.UV) * Input.Color;
     float3 texNormal = (_normalTex.sample(sampler_normalTex, Input.UV).xyz - float3(0.5)) * 2.0;
-    float3 localNormal = normalize(float3x3(float3(Input.Tangent), float3(Input.Binormal), float3(Input.Normal)) * texNormal);
+    float3 localNormal = normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
     float diffuse = fast::max(dot(v_139.fLightDirection.xyz, localNormal), 0.0);
     float3 _159 = Output.xyz * ((v_139.fLightColor.xyz * diffuse) + v_139.fLightAmbient.xyz);
     Output = float4(_159.x, _159.y, _159.z, Output.w);
@@ -102,9 +102,9 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.PosVS = gl_FragCoord;
     Input.Color = in.Input_Color;
     Input.UV = in.Input_UV;
-    Input.Normal = in.Input_Normal;
-    Input.Binormal = in.Input_Binormal;
-    Input.Tangent = in.Input_Tangent;
+    Input.WorldN = in.Input_WorldN;
+    Input.WorldB = in.Input_WorldB;
+    Input.WorldT = in.Input_WorldT;
     Input.PosP = in.Input_PosP;
     float4 _255 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_139, _depthTex, sampler_depthTex);
     out._entryPointOutput = _255;

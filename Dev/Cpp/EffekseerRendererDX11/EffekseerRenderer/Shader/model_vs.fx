@@ -38,9 +38,9 @@ struct VS_Output
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
 #if ENABLE_LIGHTING
-	half3 Normal : TEXCOORD1;
-	half3 Binormal : TEXCOORD2;
-	half3 Tangent : TEXCOORD3;
+	half3 WorldN : TEXCOORD1;
+	half3 WorldB : TEXCOORD2;
+	half3 WorldT : TEXCOORD3;
 #endif
 	float4 PosP : TEXCOORD4;
 };
@@ -99,9 +99,9 @@ VS_Output main(const VS_Input Input)
 	localTangent = normalize(mul(matModel, localTangent));
 #endif
 
-	Output.Normal = localNormal.xyz;
-	Output.Binormal = localBinormal.xyz;
-	Output.Tangent = localTangent.xyz;
+	Output.WorldN = localNormal.xyz;
+	Output.WorldB = localBinormal.xyz;
+	Output.WorldT = localTangent.xyz;
 #endif
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;

@@ -22,9 +22,9 @@ struct VS_Output
     float4 PosVS;
     float4 Color;
     float2 UV;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
+    float3 WorldN;
+    float3 WorldB;
+    float3 WorldT;
     float4 PosP;
 };
 
@@ -44,9 +44,9 @@ struct main0_out
 {
     float4 _entryPointOutput_Color [[user(locn0)]];
     float2 _entryPointOutput_UV [[user(locn1)]];
-    float3 _entryPointOutput_Normal [[user(locn2)]];
-    float3 _entryPointOutput_Binormal [[user(locn3)]];
-    float3 _entryPointOutput_Tangent [[user(locn4)]];
+    float3 _entryPointOutput_WorldN [[user(locn2)]];
+    float3 _entryPointOutput_WorldB [[user(locn3)]];
+    float3 _entryPointOutput_WorldT [[user(locn4)]];
     float4 _entryPointOutput_PosP [[user(locn5)]];
     float4 gl_Position [[position]];
 };
@@ -81,9 +81,9 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_31)
     localBinormal = normalize(localBinormal * matModel);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
     localTangent = normalize(localTangent * matModel);
-    Output.Normal = localNormal.xyz;
-    Output.Binormal = localBinormal.xyz;
-    Output.Tangent = localTangent.xyz;
+    Output.WorldN = localNormal.xyz;
+    Output.WorldB = localBinormal.xyz;
+    Output.WorldT = localTangent.xyz;
     Output.UV.y = v_31.mUVInversed.x + (v_31.mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;
@@ -104,9 +104,9 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_Normal = flattenTemp.Normal;
-    out._entryPointOutput_Binormal = flattenTemp.Binormal;
-    out._entryPointOutput_Tangent = flattenTemp.Tangent;
+    out._entryPointOutput_WorldN = flattenTemp.WorldN;
+    out._entryPointOutput_WorldB = flattenTemp.WorldB;
+    out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_PosP = flattenTemp.PosP;
     return out;
 }

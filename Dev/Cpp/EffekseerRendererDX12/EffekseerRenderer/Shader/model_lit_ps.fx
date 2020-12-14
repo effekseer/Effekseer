@@ -3,9 +3,9 @@ struct PS_Input
     float4 PosVS;
     float4 Color;
     float2 UV;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
+    float3 WorldN;
+    float3 WorldB;
+    float3 WorldT;
     float4 PosP;
 };
 
@@ -43,9 +43,9 @@ SamplerState sampler_depthTex : register(s2);
 static float4 gl_FragCoord;
 static float4 Input_Color;
 static float2 Input_UV;
-static float3 Input_Normal;
-static float3 Input_Binormal;
-static float3 Input_Tangent;
+static float3 Input_WorldN;
+static float3 Input_WorldB;
+static float3 Input_WorldT;
 static float4 Input_PosP;
 static float4 _entryPointOutput;
 
@@ -53,9 +53,9 @@ struct SPIRV_Cross_Input
 {
     centroid float4 Input_Color : TEXCOORD0;
     centroid float2 Input_UV : TEXCOORD1;
-    float3 Input_Normal : TEXCOORD2;
-    float3 Input_Binormal : TEXCOORD3;
-    float3 Input_Tangent : TEXCOORD4;
+    float3 Input_WorldN : TEXCOORD2;
+    float3 Input_WorldB : TEXCOORD3;
+    float3 Input_WorldT : TEXCOORD4;
     float4 Input_PosP : TEXCOORD5;
     float4 gl_FragCoord : SV_Position;
 };
@@ -79,7 +79,7 @@ float4 _main(PS_Input Input)
 {
     float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV) * Input.Color;
     float3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5f.xxx) * 2.0f;
-    float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.Tangent), float3(Input.Binormal), float3(Input.Normal))));
+    float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
     float diffuse = max(dot(_139_fLightDirection.xyz, localNormal), 0.0f);
     float3 _159 = Output.xyz * ((_139_fLightColor.xyz * diffuse) + _139_fLightAmbient.xyz);
     Output = float4(_159.x, _159.y, _159.z, Output.w);
@@ -109,9 +109,9 @@ void frag_main()
     Input.PosVS = gl_FragCoord;
     Input.Color = Input_Color;
     Input.UV = Input_UV;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
+    Input.WorldN = Input_WorldN;
+    Input.WorldB = Input_WorldB;
+    Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
     float4 _255 = _main(Input);
     _entryPointOutput = _255;
@@ -122,9 +122,9 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     gl_FragCoord = stage_input.gl_FragCoord;
     Input_Color = stage_input.Input_Color;
     Input_UV = stage_input.Input_UV;
-    Input_Normal = stage_input.Input_Normal;
-    Input_Binormal = stage_input.Input_Binormal;
-    Input_Tangent = stage_input.Input_Tangent;
+    Input_WorldN = stage_input.Input_WorldN;
+    Input_WorldB = stage_input.Input_WorldB;
+    Input_WorldT = stage_input.Input_WorldT;
     Input_PosP = stage_input.Input_PosP;
     frag_main();
     SPIRV_Cross_Output stage_output;

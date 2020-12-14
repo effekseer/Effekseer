@@ -9,9 +9,9 @@ struct PS_Input
     vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec3 WorldN;
+    vec3 WorldB;
+    vec3 WorldT;
     vec4 PosP;
 };
 
@@ -46,16 +46,16 @@ uniform sampler2D Sampler_sampler_normalTex;
 
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
-varying vec3 _VSPS_Normal;
-varying vec3 _VSPS_Binormal;
-varying vec3 _VSPS_Tangent;
+varying vec3 _VSPS_WorldN;
+varying vec3 _VSPS_WorldB;
+varying vec3 _VSPS_WorldT;
 varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
     vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
-    vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
+    vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _100 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_100.x, _100.y, _100.z, Output.w);
@@ -72,9 +72,9 @@ void main()
     Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
+    Input.WorldN = _VSPS_WorldN;
+    Input.WorldB = _VSPS_WorldB;
+    Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
     vec4 _146 = _main(Input);
     gl_FragData[0] = _146;
@@ -93,9 +93,9 @@ struct PS_Input
     vec4 PosVS;
     vec4 Color;
     vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
+    vec3 WorldN;
+    vec3 WorldB;
+    vec3 WorldT;
     vec4 PosP;
 };
 
@@ -131,9 +131,9 @@ uniform sampler2D Sampler_sampler_depthTex;
 
 centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
-in vec3 _VSPS_Normal;
-in vec3 _VSPS_Binormal;
-in vec3 _VSPS_Tangent;
+in vec3 _VSPS_WorldN;
+in vec3 _VSPS_WorldB;
+in vec3 _VSPS_WorldT;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
@@ -151,7 +151,7 @@ vec4 _main(PS_Input Input)
 {
     vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
-    vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
+    vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _159 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_159.x, _159.y, _159.z, Output.w);
@@ -182,9 +182,9 @@ void main()
     Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
+    Input.WorldN = _VSPS_WorldN;
+    Input.WorldB = _VSPS_WorldB;
+    Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
     vec4 _259 = _main(Input);
     _entryPointOutput = _259;
@@ -202,9 +202,9 @@ struct PS_Input
     highp vec4 PosVS;
     highp vec4 Color;
     highp vec2 UV;
-    highp vec3 Normal;
-    highp vec3 Binormal;
-    highp vec3 Tangent;
+    highp vec3 WorldN;
+    highp vec3 WorldB;
+    highp vec3 WorldT;
     highp vec4 PosP;
 };
 
@@ -239,16 +239,16 @@ uniform  sampler2D Sampler_sampler_normalTex;
 
 varying  vec4 _VSPS_Color;
 varying  vec2 _VSPS_UV;
-varying  vec3 _VSPS_Normal;
-varying  vec3 _VSPS_Binormal;
-varying  vec3 _VSPS_Tangent;
+varying  vec3 _VSPS_WorldN;
+varying  vec3 _VSPS_WorldB;
+varying  vec3 _VSPS_WorldT;
 varying  vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
     highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
-    highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
+    highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _100 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_100.x, _100.y, _100.z, Output.w);
@@ -265,9 +265,9 @@ void main()
     Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
+    Input.WorldN = _VSPS_WorldN;
+    Input.WorldB = _VSPS_WorldB;
+    Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
     highp vec4 _146 = _main(Input);
     gl_FragData[0] = _146;
@@ -285,9 +285,9 @@ struct PS_Input
     highp vec4 PosVS;
     highp vec4 Color;
     highp vec2 UV;
-    highp vec3 Normal;
-    highp vec3 Binormal;
-    highp vec3 Tangent;
+    highp vec3 WorldN;
+    highp vec3 WorldB;
+    highp vec3 WorldT;
     highp vec4 PosP;
 };
 
@@ -323,9 +323,9 @@ uniform highp sampler2D Sampler_sampler_depthTex;
 
 centroid in highp vec4 _VSPS_Color;
 centroid in highp vec2 _VSPS_UV;
-in highp vec3 _VSPS_Normal;
-in highp vec3 _VSPS_Binormal;
-in highp vec3 _VSPS_Tangent;
+in highp vec3 _VSPS_WorldN;
+in highp vec3 _VSPS_WorldB;
+in highp vec3 _VSPS_WorldT;
 in highp vec4 _VSPS_PosP;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
@@ -343,7 +343,7 @@ highp vec4 _main(PS_Input Input)
 {
     highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     highp vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
-    highp vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
+    highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _159 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_159.x, _159.y, _159.z, Output.w);
@@ -374,9 +374,9 @@ void main()
     Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
+    Input.WorldN = _VSPS_WorldN;
+    Input.WorldB = _VSPS_WorldB;
+    Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
     highp vec4 _259 = _main(Input);
     _entryPointOutput = _259;
