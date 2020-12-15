@@ -64,7 +64,7 @@ float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, t
 static inline __attribute__((always_inline))
 float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex, constant PS_ConstanBuffer& v_125)
 {
-    float4 Output = Input.Color * _colorTex.sample(sampler_colorTex, Input.UV);
+    float4 Output = _colorTex.sample(sampler_colorTex, Input.UV) * Input.Color;
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;

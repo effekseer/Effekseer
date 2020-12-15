@@ -10,18 +10,18 @@
 //
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_normalTex;
-//   float4 _70_fLightAmbient;
-//   float4 _70_fLightColor;
-//   float4 _70_fLightDirection;
+//   float4 _80_fLightAmbient;
+//   float4 _80_fLightColor;
+//   float4 _80_fLightDirection;
 //
 //
 // Registers:
 //
 //   Name                      Reg   Size
 //   ------------------------- ----- ----
-//   _70_fLightDirection       c0       1
-//   _70_fLightColor           c1       1
-//   _70_fLightAmbient         c2       1
+//   _80_fLightDirection       c0       1
+//   _80_fLightColor           c1       1
+//   _80_fLightAmbient         c2       1
 //   Sampler_sampler_colorTex  s0       1
 //   Sampler_sampler_normalTex s1       1
 //
@@ -30,9 +30,9 @@
     def c3, -1, -0, -0.5, 0
     dcl_texcoord_centroid v0
     dcl_texcoord1_centroid v1.xy
-    dcl_texcoord4 v2.xyz
-    dcl_texcoord5 v3.xyz
-    dcl_texcoord6 v4.xyz
+    dcl_texcoord2 v2.xyz
+    dcl_texcoord3 v3.xyz
+    dcl_texcoord4 v4.xyz
     dcl_2d s0
     dcl_2d s1
     texld r0, v1, s0
@@ -42,8 +42,8 @@
     texld r1, v1, s1
     add r1.xyz, r1, c3.z
     add r1.xyz, r1, r1
-    mul r2.xyz, r1.y, v4
-    mad r1.xyw, r1.x, v3.xyzz, r2.xyzz
+    mul r2.xyz, r1.y, v3
+    mad r1.xyw, r1.x, v4.xyzz, r2.xyzz
     mad r1.xyz, r1.z, v2, r1.xyww
     nrm r2.xyz, r1
     dp3 r1.x, c0, r2
@@ -96,15 +96,15 @@ const BYTE g_ps30_main[] =
     171, 171,   4,   0,  12,   0, 
       1,   0,   1,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  55,  48,  95, 102,  76, 
+     95,  56,  48,  95, 102,  76, 
     105, 103, 104, 116,  65, 109, 
      98, 105, 101, 110, 116,   0, 
     171, 171,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  55,  48,  95, 102,  76, 
+     95,  56,  48,  95, 102,  76, 
     105, 103, 104, 116,  67, 111, 
-    108, 111, 114,   0,  95,  55, 
+    108, 111, 114,   0,  95,  56, 
      48,  95, 102,  76, 105, 103, 
     104, 116,  68, 105, 114, 101, 
      99, 116, 105, 111, 110,   0, 
@@ -126,11 +126,11 @@ const BYTE g_ps30_main[] =
      79, 144,  31,   0,   0,   2, 
       5,   0,   1, 128,   1,   0, 
      67, 144,  31,   0,   0,   2, 
-      5,   0,   4, 128,   2,   0, 
+      5,   0,   2, 128,   2,   0, 
       7, 144,  31,   0,   0,   2, 
-      5,   0,   5, 128,   3,   0, 
+      5,   0,   3, 128,   3,   0, 
       7, 144,  31,   0,   0,   2, 
-      5,   0,   6, 128,   4,   0, 
+      5,   0,   4, 128,   4,   0, 
       7, 144,  31,   0,   0,   2, 
       0,   0,   0, 144,   0,   8, 
      15, 160,  31,   0,   0,   2, 
@@ -155,10 +155,10 @@ const BYTE g_ps30_main[] =
       1,   0, 228, 128,   1,   0, 
     228, 128,   5,   0,   0,   3, 
       2,   0,   7, 128,   1,   0, 
-     85, 128,   4,   0, 228, 144, 
+     85, 128,   3,   0, 228, 144, 
       4,   0,   0,   4,   1,   0, 
      11, 128,   1,   0,   0, 128, 
-      3,   0, 164, 144,   2,   0, 
+      4,   0, 164, 144,   2,   0, 
     164, 128,   4,   0,   0,   4, 
       1,   0,   7, 128,   1,   0, 
     170, 128,   2,   0, 228, 144, 

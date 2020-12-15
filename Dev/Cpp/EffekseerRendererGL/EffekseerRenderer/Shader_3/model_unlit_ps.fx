@@ -6,8 +6,8 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
     vec4 Color;
+    vec2 UV;
     vec4 PosP;
 };
 
@@ -40,8 +40,8 @@ uniform PS_ConstanBuffer CBPS0;
 layout(binding = 0) uniform sampler2D Sampler_sampler_colorTex;
 layout(binding = 1) uniform sampler2D Sampler_sampler_depthTex;
 
-centroid in vec2 _VSPS_UV;
 centroid in vec4 _VSPS_Color;
+centroid in vec2 _VSPS_UV;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
@@ -83,8 +83,8 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
     vec4 _189 = _main(Input);
     _entryPointOutput = _189;

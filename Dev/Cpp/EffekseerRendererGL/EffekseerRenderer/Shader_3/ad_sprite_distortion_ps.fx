@@ -6,11 +6,11 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec4 Color;
     vec2 UV;
+    vec4 ProjBinormal;
+    vec4 ProjTangent;
     vec4 PosP;
-    vec4 PosU;
-    vec4 PosR;
+    vec4 Color;
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
@@ -51,11 +51,11 @@ layout(binding = 4) uniform sampler2D Sampler_sampler_blendTex;
 layout(binding = 5) uniform sampler2D Sampler_sampler_blendAlphaTex;
 layout(binding = 1) uniform sampler2D Sampler_sampler_backTex;
 
-centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
+in vec4 _VSPS_ProjBinormal;
+in vec4 _VSPS_ProjTangent;
 in vec4 _VSPS_PosP;
-in vec4 _VSPS_PosU;
-in vec4 _VSPS_PosR;
+centroid in vec4 _VSPS_Color;
 in vec4 _VSPS_Alpha_Dist_UV;
 in vec4 _VSPS_Blend_Alpha_Dist_UV;
 in vec4 _VSPS_Blend_FBNextIndex_UV;
@@ -184,8 +184,8 @@ vec4 _main(PS_Input Input)
         discard;
     }
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -202,11 +202,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
-    Input.PosU = _VSPS_PosU;
-    Input.PosR = _VSPS_PosR;
+    Input.Color = _VSPS_Color;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;

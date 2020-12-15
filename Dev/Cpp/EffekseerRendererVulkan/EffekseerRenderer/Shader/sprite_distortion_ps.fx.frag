@@ -3,11 +3,11 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec4 Color;
     vec2 UV;
+    vec4 ProjBinormal;
+    vec4 ProjTangent;
     vec4 PosP;
-    vec4 PosU;
-    vec4 PosR;
+    vec4 Color;
 };
 
 layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
@@ -25,11 +25,11 @@ layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_backTex;
 layout(set = 1, binding = 3) uniform sampler2D Sampler_sampler_depthTex;
 
-layout(location = 0) centroid in vec4 Input_Color;
-layout(location = 1) centroid in vec2 Input_UV;
-layout(location = 2) in vec4 Input_PosP;
-layout(location = 3) in vec4 Input_PosU;
-layout(location = 4) in vec4 Input_PosR;
+layout(location = 0) centroid in vec2 Input_UV;
+layout(location = 1) in vec4 Input_ProjBinormal;
+layout(location = 2) in vec4 Input_ProjTangent;
+layout(location = 3) in vec4 Input_PosP;
+layout(location = 4) centroid in vec4 Input_Color;
 layout(location = 0) out vec4 _entryPointOutput;
 
 float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2 reconstruct1, vec4 reconstruct2)
@@ -47,8 +47,8 @@ vec4 _main(PS_Input Input)
     vec4 Output = texture(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _129.g_scale.x;
     float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _129.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -81,11 +81,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = Input_Color;
     Input.UV = Input_UV;
+    Input.ProjBinormal = Input_ProjBinormal;
+    Input.ProjTangent = Input_ProjTangent;
     Input.PosP = Input_PosP;
-    Input.PosU = Input_PosU;
-    Input.PosR = Input_PosR;
+    Input.Color = Input_Color;
     vec4 _284 = _main(Input);
     _entryPointOutput = _284;
 }

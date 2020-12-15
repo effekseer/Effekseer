@@ -11,21 +11,21 @@ struct VS_Input
 struct VS_Output
 {
     float4 PosVS;
-    float4 Color;
     float2 UV;
+    float4 ProjBinormal;
+    float4 ProjTangent;
     float4 PosP;
-    float4 PosU;
-    float4 PosR;
+    float4 Color;
 };
 
-static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _88_mCamera : packoffset(c0);
-    column_major float4x4 _88_mProj : packoffset(c4);
-    float4 _88_mUVInversed : packoffset(c8);
-    float4 _88_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _60_mCamera : packoffset(c0);
+    column_major float4x4 _60_mProj : packoffset(c4);
+    float4 _60_mUVInversed : packoffset(c8);
+    float4 _60_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -36,11 +36,11 @@ static float4 Input_Normal;
 static float4 Input_Tangent;
 static float2 Input_UV1;
 static float2 Input_UV2;
-static float4 _entryPointOutput_Color;
 static float2 _entryPointOutput_UV;
+static float4 _entryPointOutput_ProjBinormal;
+static float4 _entryPointOutput_ProjTangent;
 static float4 _entryPointOutput_PosP;
-static float4 _entryPointOutput_PosU;
-static float4 _entryPointOutput_PosR;
+static float4 _entryPointOutput_Color;
 
 struct SPIRV_Cross_Input
 {
@@ -54,11 +54,11 @@ struct SPIRV_Cross_Input
 
 struct SPIRV_Cross_Output
 {
-    centroid float4 _entryPointOutput_Color : TEXCOORD0;
-    centroid float2 _entryPointOutput_UV : TEXCOORD1;
-    float4 _entryPointOutput_PosP : TEXCOORD2;
-    float4 _entryPointOutput_PosU : TEXCOORD3;
-    float4 _entryPointOutput_PosR : TEXCOORD4;
+    centroid float2 _entryPointOutput_UV : TEXCOORD0;
+    float4 _entryPointOutput_ProjBinormal : TEXCOORD1;
+    float4 _entryPointOutput_ProjTangent : TEXCOORD2;
+    float4 _entryPointOutput_PosP : TEXCOORD3;
+    centroid float4 _entryPointOutput_Color : TEXCOORD4;
     float4 gl_Position : SV_Position;
 };
 
@@ -69,26 +69,20 @@ VS_Output _main(VS_Input Input)
     float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
     float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
     float3 worldBinormal = cross(worldNormal, worldTangent);
-    float4 localBinormal = float4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0f);
-    float4 localTangent = float4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0f);
-    localBinormal = mul(_88_mCamera, localBinormal);
-    localTangent = mul(_88_mCamera, localTangent);
-    float4 cameraPos = mul(_88_mCamera, pos4);
-    cameraPos /= cameraPos.w.xxxx;
-    localBinormal /= localBinormal.w.xxxx;
-    localTangent /= localTangent.w.xxxx;
-    localBinormal = cameraPos + normalize(localBinormal - cameraPos);
-    localTangent = cameraPos + normalize(localTangent - cameraPos);
-    Output.PosVS = mul(_88_mProj, cameraPos);
+    float4 cameraPos = mul(_60_mCamera, pos4);
+    Output.PosVS = mul(_60_mProj, cameraPos);
     Output.PosP = Output.PosVS;
-    Output.PosU = mul(_88_mProj, localBinormal);
-    Output.PosR = mul(_88_mProj, localTangent);
-    Output.PosU /= Output.PosU.w.xxxx;
-    Output.PosR /= Output.PosR.w.xxxx;
-    Output.PosP /= Output.PosP.w.xxxx;
+    float4 localTangent = pos4;
+    float4 localBinormal = pos4;
+    float3 _82 = localTangent.xyz + worldTangent;
+    localTangent = float4(_82.x, _82.y, _82.z, localTangent.w);
+    float3 _88 = localBinormal.xyz + worldBinormal;
+    localBinormal = float4(_88.x, _88.y, _88.z, localBinormal.w);
+    Output.ProjTangent = mul(_60_mProj, mul(_60_mCamera, localTangent));
+    Output.ProjBinormal = mul(_60_mProj, mul(_60_mCamera, localBinormal));
     Output.Color = Input.Color;
     Output.UV = Input.UV1;
-    Output.UV.y = _88_mUVInversed.x + (_88_mUVInversed.y * Input.UV1.y);
+    Output.UV.y = _60_mUVInversed.x + (_60_mUVInversed.y * Input.UV1.y);
     return Output;
 }
 
@@ -103,11 +97,11 @@ void vert_main()
     Input.UV2 = Input_UV2;
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;
-    _entryPointOutput_Color = flattenTemp.Color;
     _entryPointOutput_UV = flattenTemp.UV;
+    _entryPointOutput_ProjBinormal = flattenTemp.ProjBinormal;
+    _entryPointOutput_ProjTangent = flattenTemp.ProjTangent;
     _entryPointOutput_PosP = flattenTemp.PosP;
-    _entryPointOutput_PosU = flattenTemp.PosU;
-    _entryPointOutput_PosR = flattenTemp.PosR;
+    _entryPointOutput_Color = flattenTemp.Color;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
@@ -121,10 +115,10 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     vert_main();
     SPIRV_Cross_Output stage_output;
     stage_output.gl_Position = gl_Position;
-    stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     stage_output._entryPointOutput_UV = _entryPointOutput_UV;
+    stage_output._entryPointOutput_ProjBinormal = _entryPointOutput_ProjBinormal;
+    stage_output._entryPointOutput_ProjTangent = _entryPointOutput_ProjTangent;
     stage_output._entryPointOutput_PosP = _entryPointOutput_PosP;
-    stage_output._entryPointOutput_PosU = _entryPointOutput_PosU;
-    stage_output._entryPointOutput_PosR = _entryPointOutput_PosR;
+    stage_output._entryPointOutput_Color = _entryPointOutput_Color;
     return stage_output;
 }

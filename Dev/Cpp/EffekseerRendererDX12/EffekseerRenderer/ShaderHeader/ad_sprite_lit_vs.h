@@ -90,7 +90,7 @@ add r0.xyz, r0.xyzx, r0.xyzx
 add r1.xyz, v3.xyzx, l(-0.500000, -0.500000, -0.500000, 0.000000)
 add r1.xyz, r1.xyzx, r1.xyzx
 mul r2.xyz, r0.zxyz, r1.yzxy
-mad o4.xyz, r0.yzxy, r1.zxyz, -r2.xyzx
+mad o3.xyz, r0.yzxy, r1.zxyz, -r2.xyzx
 mad r2.x, cb0[8].y, v4.y, cb0[8].x
 mul r3.xyzw, v0.yyyy, cb0[1].xyzw
 mad r3.xyzw, cb0[0].xyzw, v0.xxxx, r3.xyzw
@@ -180,7 +180,7 @@ mov o7.xyzw, r4.wxyz
 mov o9.xyzw, r3.xyzw
 mov o10.xyzw, r3.xyzw
 mov o2.xyz, r0.xyzx
-mov o3.xyz, r1.xyzx
+mov o4.xyz, r1.xyzx
 mov r2.z, v4.x
 mov o1.xy, r2.zxzz
 mov r5.y, v10.x
@@ -191,10 +191,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67,   6, 232, 
-    149, 241, 119, 128,   4, 105, 
-     14,  56,  21, 124, 203, 173, 
-    168, 166,   1,   0,   0,   0, 
+     68,  88,  66,  67, 149, 218, 
+     20, 133, 162,  78,  23,  48, 
+    197, 247,   1, 191, 145,  48, 
+    208, 229,   1,   0,   0,   0, 
     208,  16,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     156,   1,   0,   0, 192,   2, 
@@ -437,7 +437,7 @@ const BYTE g_main[] =
       0,   0, 150,   4,  16,   0, 
       1,   0,   0,   0,  50,   0, 
       0,  10, 114,  32,  16,   0, 
-      4,   0,   0,   0, 150,   4, 
+      3,   0,   0,   0, 150,   4, 
      16,   0,   0,   0,   0,   0, 
      38,   9,  16,   0,   1,   0, 
       0,   0,  70,   2,  16, 128, 
@@ -871,7 +871,7 @@ const BYTE g_main[] =
      16,   0,   2,   0,   0,   0, 
      70,   2,  16,   0,   0,   0, 
       0,   0,  54,   0,   0,   5, 
-    114,  32,  16,   0,   3,   0, 
+    114,  32,  16,   0,   4,   0, 
       0,   0,  70,   2,  16,   0, 
       1,   0,   0,   0,  54,   0, 
       0,   5,  66,   0,  16,   0, 

@@ -1,8 +1,8 @@
 struct PS_Input
 {
     float4 PosVS;
-    float2 UV;
     float4 Color;
+    float2 UV;
     float4 PosP;
 };
 
@@ -33,15 +33,15 @@ cbuffer PS_ConstanBuffer : register(b0)
 uniform sampler2D Sampler_sampler_colorTex : register(s0);
 
 static float4 gl_FragCoord;
-static float2 Input_UV;
 static float4 Input_Color;
+static float2 Input_UV;
 static float4 Input_PosP;
 static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
 {
-    centroid float2 Input_UV : TEXCOORD0;
-    centroid float4 Input_Color : TEXCOORD1;
+    centroid float4 Input_Color : TEXCOORD0;
+    centroid float2 Input_UV : TEXCOORD1;
     float4 Input_PosP : TEXCOORD2;
     float4 gl_FragCoord : VPOS;
 };
@@ -65,8 +65,8 @@ void frag_main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = Input_UV;
     Input.Color = Input_Color;
+    Input.UV = Input_UV;
     Input.PosP = Input_PosP;
     float4 _69 = _main(Input);
     _entryPointOutput = _69;
@@ -75,8 +75,8 @@ void frag_main()
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     gl_FragCoord = stage_input.gl_FragCoord + float4(0.5f, 0.5f, 0.0f, 0.0f);
-    Input_UV = stage_input.Input_UV;
     Input_Color = stage_input.Input_Color;
+    Input_UV = stage_input.Input_UV;
     Input_PosP = stage_input.Input_PosP;
     frag_main();
     SPIRV_Cross_Output stage_output;

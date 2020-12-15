@@ -15,10 +15,9 @@ struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
 	linear centroid float2 UV : TEXCOORD0;
-	float4 Normal : TEXCOORD1;
-	float4 Binormal : TEXCOORD2;
-	float4 Tangent : TEXCOORD3;
-	float4 PosP : TEXCOORD4;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
 	linear centroid float4 Color : COLOR0;
 };
 
@@ -31,8 +30,8 @@ float4 main(const PS_Input Input)
 	Output.a = Output.a * Input.Color.a;
 
 	float2 pos = Input.PosP.xy / Input.PosP.w;
-	float2 posU = Input.Tangent.xy / Input.Tangent.w;
-	float2 posR = Input.Binormal.xy / Input.Binormal.w;
+	float2 posR = Input.ProjTangent.xy / Input.ProjTangent.w;
+	float2 posU = Input.ProjBinormal.xy / Input.ProjBinormal.w;
 
 	float xscale = (Output.x * 2.0 - 1.0) * Input.Color.x * g_scale.x;
 	float yscale = (Output.y * 2.0 - 1.0) * Input.Color.y * g_scale.x;

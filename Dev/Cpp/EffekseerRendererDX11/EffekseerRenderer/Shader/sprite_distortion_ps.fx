@@ -15,12 +15,11 @@ SamplerState sampler_depthTex : register(s2);
 struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
-
-	float4 PosP : TEXCOORD1;
-	float4 PosU : TEXCOORD2;
-	float4 PosR : TEXCOORD3;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
+	linear centroid float4 Color : COLOR0;
 };
 
 #include "SoftParticle_PS.fx"
@@ -32,8 +31,8 @@ float4 main(const PS_Input Input)
 	Output.a = Output.a * Input.Color.a;
 
 	float2 pos = Input.PosP.xy / Input.PosP.w;
-	float2 posU = Input.PosU.xy / Input.PosU.w;
-	float2 posR = Input.PosR.xy / Input.PosR.w;
+	float2 posR = Input.ProjTangent.xy / Input.ProjTangent.w;
+	float2 posU = Input.ProjBinormal.xy / Input.ProjBinormal.w;
 
 	float xscale = (Output.x * 2.0 - 1.0) * Input.Color.x * g_scale.x;
 	float yscale = (Output.y * 2.0 - 1.0) * Input.Color.y * g_scale.x;

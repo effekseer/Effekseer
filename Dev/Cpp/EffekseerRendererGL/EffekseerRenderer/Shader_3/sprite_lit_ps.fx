@@ -6,14 +6,11 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec4 VColor;
-    vec2 UV1;
-    vec2 UV2;
-    vec3 WorldP;
+    vec4 Color;
+    vec2 UV;
     vec3 WorldN;
-    vec3 WorldT;
     vec3 WorldB;
-    vec2 ScreenUV;
+    vec3 WorldT;
     vec4 PosP;
 };
 
@@ -43,18 +40,15 @@ struct PS_ConstanBuffer
 
 uniform PS_ConstanBuffer CBPS0;
 
-layout(binding = 1) uniform sampler2D Sampler_sampler_normalTex;
 layout(binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(binding = 1) uniform sampler2D Sampler_sampler_normalTex;
 layout(binding = 2) uniform sampler2D Sampler_sampler_depthTex;
 
-centroid in vec4 _VSPS_VColor;
-centroid in vec2 _VSPS_UV1;
-centroid in vec2 _VSPS_UV2;
-in vec3 _VSPS_WorldP;
+centroid in vec4 _VSPS_Color;
+centroid in vec2 _VSPS_UV;
 in vec3 _VSPS_WorldN;
-in vec3 _VSPS_WorldT;
 in vec3 _VSPS_WorldB;
-in vec2 _VSPS_ScreenUV;
+in vec3 _VSPS_WorldT;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
@@ -70,13 +64,12 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
 
 vec4 _main(PS_Input Input)
 {
-    vec3 loN = texture(Sampler_sampler_normalTex, Input.UV1).xyz;
-    vec3 texNormal = (loN - vec3(0.5)) * 2.0;
+    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV1) * Input.VColor;
-    vec3 _164 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + vec3(CBPS0.fLightAmbient.xyz));
-    Output = vec4(_164.x, _164.y, _164.z, Output.w);
+    vec3 _159 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_159.x, _159.y, _159.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -102,16 +95,13 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.VColor = _VSPS_VColor;
-    Input.UV1 = _VSPS_UV1;
-    Input.UV2 = _VSPS_UV2;
-    Input.WorldP = _VSPS_WorldP;
+    Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
     Input.WorldN = _VSPS_WorldN;
-    Input.WorldT = _VSPS_WorldT;
     Input.WorldB = _VSPS_WorldB;
-    Input.ScreenUV = _VSPS_ScreenUV;
+    Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _276 = _main(Input);
-    _entryPointOutput = _276;
+    vec4 _259 = _main(Input);
+    _entryPointOutput = _259;
 }
 

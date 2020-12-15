@@ -684,6 +684,8 @@ public:
 			// ps
 			PixelConstantBuffer pcb{};
 
+			pcb.FalloffParam.Enable = 0;
+
 			auto lightDirection3 = m_renderer->GetLightDirection();
 			Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
 			pcb.LightDirection = lightDirection3.ToFloat4();

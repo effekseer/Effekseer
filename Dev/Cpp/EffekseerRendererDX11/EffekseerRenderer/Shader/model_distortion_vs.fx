@@ -36,10 +36,9 @@ struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
 	linear centroid float2 UV : TEXCOORD0;
-	float4 Normal : TEXCOORD1;
-	float4 Binormal : TEXCOORD2;
-	float4 Tangent : TEXCOORD3;
-	float4 PosP : TEXCOORD4;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
 	linear centroid float4 Color : COLOR0;
 };
 
@@ -88,9 +87,8 @@ VS_Output main(const VS_Input Input)
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
-	Output.Normal = mul(mCameraProj, localNormal);
-	Output.Binormal = mul(mCameraProj, localBinormal);
-	Output.Tangent = mul(mCameraProj, localTangent);
+	Output.ProjBinormal = mul(mCameraProj, localBinormal);
+	Output.ProjTangent = mul(mCameraProj, localTangent);
 	Output.PosP = Output.PosVS;
 
 	Output.Color = modelColor;

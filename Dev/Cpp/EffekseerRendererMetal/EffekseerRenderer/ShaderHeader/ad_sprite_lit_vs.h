@@ -24,11 +24,11 @@ struct VS_Input
 struct VS_Output
 {
     float4 PosVS;
-    float4 VColor;
+    float4 Color;
     float2 UV;
     float3 WorldN;
-    float3 WorldT;
     float3 WorldB;
+    float3 WorldT;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
@@ -46,11 +46,11 @@ struct VS_ConstantBuffer
 
 struct main0_out
 {
-    float4 _entryPointOutput_VColor [[user(locn0)]];
+    float4 _entryPointOutput_Color [[user(locn0)]];
     float2 _entryPointOutput_UV [[user(locn1)]];
     float3 _entryPointOutput_WorldN [[user(locn2)]];
-    float3 _entryPointOutput_WorldT [[user(locn3)]];
-    float3 _entryPointOutput_WorldB [[user(locn4)]];
+    float3 _entryPointOutput_WorldB [[user(locn3)]];
+    float3 _entryPointOutput_WorldT [[user(locn4)]];
     float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
     float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
@@ -206,17 +206,14 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
     float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
-    float2 uv2 = Input.UV1;
     uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
-    uv2.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv2.y);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    float3 pixelNormalDir = float3(0.5, 0.5, 1.0);
     float4 cameraPos = v_255.mCamera * float4(worldPos, 1.0);
     cameraPos /= float4(cameraPos.w);
     Output.PosVS = v_255.mProj * cameraPos;
-    Output.VColor = Input.Color;
+    Output.Color = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
@@ -243,11 +240,11 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.AlphaThreshold = in.Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input, v_255);
     out.gl_Position = flattenTemp.PosVS;
-    out._entryPointOutput_VColor = flattenTemp.VColor;
+    out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_WorldN = flattenTemp.WorldN;
-    out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_WorldB = flattenTemp.WorldB;
+    out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     out._entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     out._entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;

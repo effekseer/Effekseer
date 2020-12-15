@@ -66,7 +66,7 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, floa
 
 float4 _main(PS_Input Input)
 {
-    float4 Output = Input.Color * _colorTex.Sample(sampler_colorTex, Input.UV);
+    float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV) * Input.Color;
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;

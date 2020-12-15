@@ -91,12 +91,13 @@ SamplerState sampler_depthTex : register(s6);
 struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float2 UV : TEXCOORD0;
-
-	float3 Normal : TEXCOORD1;
-	float3 Binormal : TEXCOORD2;
-	float3 Tangent : TEXCOORD3;
 	linear centroid float4 Color : COLOR;
+	linear centroid float2 UV : TEXCOORD0;
+	float3 WorldN : TEXCOORD1;
+#if ENABLE_LIGHTING
+	float3 WorldB : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
+#endif
 
 	float4 Alpha_Dist_UV : TEXCOORD4;
 	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
@@ -130,7 +131,7 @@ float4 main(const PS_Input Input)
 	half3 localNormal = (half3)normalize(
 		mul(
 			texNormal,
-			half3x3((half3)Input.Tangent, (half3)Input.Binormal, (half3)Input.Normal)));
+			half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
 #endif
 
 	ApplyFlipbook(Output, _colorTex, sampler_colorTex, fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
@@ -161,7 +162,7 @@ float4 main(const PS_Input Input)
 #if ENABLE_LIGHTING
 		float CdotN = saturate(dot(cameraVec, float3(localNormal.x, localNormal.y, localNormal.z)));
 #else
-		float CdotN = saturate(dot(cameraVec, normalize(Input.Normal)));
+		float CdotN = saturate(dot(cameraVec, normalize(Input.WorldN)));
 #endif
 		float4 FalloffBlendColor = lerp(fFalloffParam.EndColor, fFalloffParam.BeginColor, pow(CdotN, fFalloffParam.Param.z));
 

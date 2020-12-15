@@ -32,17 +32,13 @@ cbuffer PS_ConstanBuffer : register(b0)
 	float4 reconstructionParam2;
 };
 
-#ifdef ENABLE_COLOR_TEXTURE
 Texture2D _colorTex : register(t0);
 SamplerState sampler_colorTex : register(s0);
-#endif
-
-#ifdef ENABLE_NORMAL_TEXTURE
-Texture2D _normalTex : register(t1);
-SamplerState sampler_normalTex : register(s1);
-#endif
 
 #if ENABLE_LIGHTING
+
+Texture2D _normalTex : register(t1);
+SamplerState sampler_normalTex : register(s1);
 
 #ifndef DISABLED_SOFT_PARTICLE
 Texture2D _depthTex : register(t2);
@@ -62,13 +58,13 @@ SamplerState sampler_depthTex : register(s1);
 struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float2 UV : TEXCOORD0;
-#if ENABLE_NORMAL_TEXTURE
-	half3 Normal : TEXCOORD1;
-	half3 Binormal : TEXCOORD2;
-	half3 Tangent : TEXCOORD3;
-#endif
 	linear centroid float4 Color : COLOR;
+	linear centroid float2 UV : TEXCOORD0;
+#if ENABLE_LIGHTING
+	half3 WorldN : TEXCOORD1;
+	half3 WorldB : TEXCOORD2;
+	half3 WorldT : TEXCOORD3;
+#endif
 	float4 PosP : TEXCOORD4;
 };
 
@@ -79,12 +75,12 @@ float4 main(const PS_Input Input)
 {
 	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV) * Input.Color;
 
-#if ENABLE_LIGHTING && ENABLE_NORMAL_TEXTURE
+#if ENABLE_LIGHTING
 	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(
 		mul(
 			texNormal,
-			half3x3((half3)Input.Tangent, (half3)Input.Binormal, (half3)Input.Normal)));
+			half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
 
 	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);

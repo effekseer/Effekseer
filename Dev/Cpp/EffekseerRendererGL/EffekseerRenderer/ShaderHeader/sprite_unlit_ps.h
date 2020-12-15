@@ -46,7 +46,7 @@ varying vec4 _VSPS_PosP;
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV);
+    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     if (Output.w == 0.0)
     {
         discard;
@@ -127,7 +127,7 @@ float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2
 
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV);
+    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -209,7 +209,7 @@ varying  vec4 _VSPS_PosP;
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = Input.Color * texture2D(Sampler_sampler_colorTex, Input.UV);
+    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     if (Output.w == 0.0)
     {
         discard;
@@ -289,7 +289,7 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float
 
 highp vec4 _main(PS_Input Input)
 {
-    highp vec4 Output = Input.Color * texture(Sampler_sampler_colorTex, Input.UV);
+    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;

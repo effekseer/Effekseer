@@ -23,13 +23,12 @@ struct VS_Output
     float4 PosVS;
     float4 Color;
     float2 UV;
-    float4 PosP;
-    float4 PosU;
-    float4 PosR;
+    float3 WorldN;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
     float2 Others;
+    float4 PosP;
 };
 
 struct VS_ConstantBuffer
@@ -44,13 +43,12 @@ struct main0_out
 {
     float4 _entryPointOutput_Color [[user(locn0)]];
     float2 _entryPointOutput_UV [[user(locn1)]];
-    float4 _entryPointOutput_PosP [[user(locn2)]];
-    float4 _entryPointOutput_PosU [[user(locn3)]];
-    float4 _entryPointOutput_PosR [[user(locn4)]];
-    float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
-    float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
-    float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
-    float2 _entryPointOutput_Others [[user(locn8)]];
+    float3 _entryPointOutput_WorldN [[user(locn2)]];
+    float4 _entryPointOutput_Alpha_Dist_UV [[user(locn3)]];
+    float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn4)]];
+    float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn5)]];
+    float2 _entryPointOutput_Others [[user(locn6)]];
+    float4 _entryPointOutput_PosP [[user(locn7)]];
     float4 gl_Position [[position]];
 };
 
@@ -192,19 +190,20 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_256)
 {
-    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 cameraPos = v_256.mCamera * pos4;
+    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
+    float3 worldPos = Input.Pos;
+    float2 uv1 = Input.UV;
+    uv1.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * uv1.y);
+    float4 cameraPos = v_256.mCamera * float4(worldPos, 1.0);
     cameraPos /= float4(cameraPos.w);
-    Output.PosP = v_256.mProj * cameraPos;
-    Output.PosVS = Output.PosP;
+    Output.PosVS = v_256.mProj * cameraPos;
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * Input.UV.y);
+    Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, v_256);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -224,13 +223,12 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;
-    out._entryPointOutput_PosP = flattenTemp.PosP;
-    out._entryPointOutput_PosU = flattenTemp.PosU;
-    out._entryPointOutput_PosR = flattenTemp.PosR;
+    out._entryPointOutput_WorldN = flattenTemp.WorldN;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     out._entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     out._entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
     out._entryPointOutput_Others = flattenTemp.Others;
+    out._entryPointOutput_PosP = flattenTemp.PosP;
     return out;
 }
 

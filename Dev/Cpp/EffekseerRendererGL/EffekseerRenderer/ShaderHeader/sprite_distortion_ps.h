@@ -7,11 +7,11 @@ static const char sprite_distortion_ps_gl2[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
-    vec4 Color;
     vec2 UV;
+    vec4 ProjBinormal;
+    vec4 ProjTangent;
     vec4 PosP;
-    vec4 PosU;
-    vec4 PosR;
+    vec4 Color;
 };
 
 struct PS_ConstanBuffer
@@ -30,19 +30,19 @@ uniform PS_ConstanBuffer CBPS0;
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_backTex;
 
-centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
+varying vec4 _VSPS_ProjBinormal;
+varying vec4 _VSPS_ProjTangent;
 varying vec4 _VSPS_PosP;
-varying vec4 _VSPS_PosU;
-varying vec4 _VSPS_PosR;
+centroid varying vec4 _VSPS_Color;
 
 vec4 _main(PS_Input Input)
 {
     vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -63,11 +63,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
-    Input.PosU = _VSPS_PosU;
-    Input.PosR = _VSPS_PosR;
+    Input.Color = _VSPS_Color;
     vec4 _182 = _main(Input);
     gl_FragData[0] = _182;
 }
@@ -83,11 +83,11 @@ static const char sprite_distortion_ps_gl3[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
-    vec4 Color;
     vec2 UV;
+    vec4 ProjBinormal;
+    vec4 ProjTangent;
     vec4 PosP;
-    vec4 PosU;
-    vec4 PosR;
+    vec4 Color;
 };
 
 struct PS_ConstanBuffer
@@ -107,11 +107,11 @@ uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_backTex;
 uniform sampler2D Sampler_sampler_depthTex;
 
-centroid in vec4 _VSPS_Color;
 centroid in vec2 _VSPS_UV;
+in vec4 _VSPS_ProjBinormal;
+in vec4 _VSPS_ProjTangent;
 in vec4 _VSPS_PosP;
-in vec4 _VSPS_PosU;
-in vec4 _VSPS_PosR;
+centroid in vec4 _VSPS_Color;
 layout(location = 0) out vec4 _entryPointOutput;
 
 float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2 reconstruct1, vec4 reconstruct2)
@@ -129,8 +129,8 @@ vec4 _main(PS_Input Input)
     vec4 Output = texture(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -165,11 +165,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
-    Input.PosU = _VSPS_PosU;
-    Input.PosR = _VSPS_PosR;
+    Input.Color = _VSPS_Color;
     vec4 _292 = _main(Input);
     _entryPointOutput = _292;
 }
@@ -184,11 +184,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec4 Color;
     highp vec2 UV;
+    highp vec4 ProjBinormal;
+    highp vec4 ProjTangent;
     highp vec4 PosP;
-    highp vec4 PosU;
-    highp vec4 PosR;
+    highp vec4 Color;
 };
 
 struct PS_ConstanBuffer
@@ -207,19 +207,19 @@ uniform PS_ConstanBuffer CBPS0;
 uniform  sampler2D Sampler_sampler_colorTex;
 uniform  sampler2D Sampler_sampler_backTex;
 
-varying  vec4 _VSPS_Color;
 varying  vec2 _VSPS_UV;
+varying  vec4 _VSPS_ProjBinormal;
+varying  vec4 _VSPS_ProjTangent;
 varying  vec4 _VSPS_PosP;
-varying  vec4 _VSPS_PosU;
-varying  vec4 _VSPS_PosR;
+varying  vec4 _VSPS_Color;
 
 highp vec4 _main(PS_Input Input)
 {
     highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     highp vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    highp vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    highp vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    highp vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    highp vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     highp float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     highp float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     highp vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -240,11 +240,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
-    Input.PosU = _VSPS_PosU;
-    Input.PosR = _VSPS_PosR;
+    Input.Color = _VSPS_Color;
     highp vec4 _182 = _main(Input);
     gl_FragData[0] = _182;
 }
@@ -259,11 +259,11 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec4 Color;
     highp vec2 UV;
+    highp vec4 ProjBinormal;
+    highp vec4 ProjTangent;
     highp vec4 PosP;
-    highp vec4 PosU;
-    highp vec4 PosR;
+    highp vec4 Color;
 };
 
 struct PS_ConstanBuffer
@@ -283,11 +283,11 @@ uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_backTex;
 uniform highp sampler2D Sampler_sampler_depthTex;
 
-centroid in highp vec4 _VSPS_Color;
 centroid in highp vec2 _VSPS_UV;
+in highp vec4 _VSPS_ProjBinormal;
+in highp vec4 _VSPS_ProjTangent;
 in highp vec4 _VSPS_PosP;
-in highp vec4 _VSPS_PosU;
-in highp vec4 _VSPS_PosR;
+centroid in highp vec4 _VSPS_Color;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
 highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp float softparticleParam, highp vec2 reconstruct1, highp vec4 reconstruct2)
@@ -305,8 +305,8 @@ highp vec4 _main(PS_Input Input)
     highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV);
     Output.w *= Input.Color.w;
     highp vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
-    highp vec2 posU = Input.PosU.xy / vec2(Input.PosU.w);
-    highp vec2 posR = Input.PosR.xy / vec2(Input.PosR.w);
+    highp vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
+    highp vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
     highp float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * CBPS0.g_scale.x;
     highp float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * CBPS0.g_scale.x;
     highp vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
@@ -341,11 +341,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
+    Input.ProjBinormal = _VSPS_ProjBinormal;
+    Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
-    Input.PosU = _VSPS_PosU;
-    Input.PosR = _VSPS_PosR;
+    Input.Color = _VSPS_Color;
     highp vec4 _292 = _main(Input);
     _entryPointOutput = _292;
 }

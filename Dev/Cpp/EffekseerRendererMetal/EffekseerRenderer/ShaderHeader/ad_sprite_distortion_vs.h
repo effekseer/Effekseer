@@ -24,11 +24,11 @@ struct VS_Input
 struct VS_Output
 {
     float4 PosVS;
-    float4 Color;
     float2 UV;
+    float4 ProjBinormal;
+    float4 ProjTangent;
     float4 PosP;
-    float4 PosU;
-    float4 PosR;
+    float4 Color;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
@@ -45,11 +45,11 @@ struct VS_ConstantBuffer
 
 struct main0_out
 {
-    float4 _entryPointOutput_Color [[user(locn0)]];
-    float2 _entryPointOutput_UV [[user(locn1)]];
-    float4 _entryPointOutput_PosP [[user(locn2)]];
-    float4 _entryPointOutput_PosU [[user(locn3)]];
-    float4 _entryPointOutput_PosR [[user(locn4)]];
+    float2 _entryPointOutput_UV [[user(locn0)]];
+    float4 _entryPointOutput_ProjBinormal [[user(locn1)]];
+    float4 _entryPointOutput_ProjTangent [[user(locn2)]];
+    float4 _entryPointOutput_PosP [[user(locn3)]];
+    float4 _entryPointOutput_Color [[user(locn4)]];
     float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
     float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
@@ -198,28 +198,23 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
-    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
     float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
     float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
-    float4 localBinormal = float4(Input.Pos.x + worldBinormal.x, Input.Pos.y + worldBinormal.y, Input.Pos.z + worldBinormal.z, 1.0);
-    float4 localTangent = float4(Input.Pos.x + worldTangent.x, Input.Pos.y + worldTangent.y, Input.Pos.z + worldTangent.z, 1.0);
-    localBinormal = v_255.mCamera * localBinormal;
-    localTangent = v_255.mCamera * localTangent;
     float4 cameraPos = v_255.mCamera * pos4;
     cameraPos /= float4(cameraPos.w);
-    localBinormal /= float4(localBinormal.w);
-    localTangent /= float4(localTangent.w);
-    localBinormal = cameraPos + normalize(localBinormal - cameraPos);
-    localTangent = cameraPos + normalize(localTangent - cameraPos);
     Output.PosVS = v_255.mProj * cameraPos;
     Output.PosP = Output.PosVS;
-    Output.PosU = v_255.mProj * localBinormal;
-    Output.PosR = v_255.mProj * localTangent;
-    Output.PosU /= float4(Output.PosU.w);
-    Output.PosR /= float4(Output.PosR.w);
-    Output.PosP /= float4(Output.PosP.w);
+    float4 localTangent = pos4;
+    float4 localBinormal = pos4;
+    float3 _399 = localTangent.xyz + worldTangent;
+    localTangent = float4(_399.x, _399.y, _399.z, localTangent.w);
+    float3 _405 = localBinormal.xyz + worldBinormal;
+    localBinormal = float4(_405.x, _405.y, _405.z, localBinormal.w);
+    Output.ProjTangent = v_255.mProj * (v_255.mCamera * localTangent);
+    Output.ProjBinormal = v_255.mProj * (v_255.mCamera * localBinormal);
     Output.Color = Input.Color;
     Output.UV = Input.UV1;
     Output.UV.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * Input.UV1.y);
@@ -247,11 +242,11 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.AlphaThreshold = in.Input_AlphaThreshold;
     VS_Output flattenTemp = _main(Input, v_255);
     out.gl_Position = flattenTemp.PosVS;
-    out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;
+    out._entryPointOutput_ProjBinormal = flattenTemp.ProjBinormal;
+    out._entryPointOutput_ProjTangent = flattenTemp.ProjTangent;
     out._entryPointOutput_PosP = flattenTemp.PosP;
-    out._entryPointOutput_PosU = flattenTemp.PosU;
-    out._entryPointOutput_PosR = flattenTemp.PosR;
+    out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     out._entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     out._entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;

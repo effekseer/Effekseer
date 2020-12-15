@@ -6,11 +6,11 @@
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
     vec4 Color;
+    vec2 UV;
+    vec3 WorldN;
+    vec3 WorldB;
+    vec3 WorldT;
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
@@ -63,11 +63,11 @@ uniform sampler2D Sampler_sampler_blendUVDistortionTex;
 uniform sampler2D Sampler_sampler_blendTex;
 uniform sampler2D Sampler_sampler_blendAlphaTex;
 
-centroid varying vec2 _VSPS_UV;
-varying vec3 _VSPS_Normal;
-varying vec3 _VSPS_Binormal;
-varying vec3 _VSPS_Tangent;
 centroid varying vec4 _VSPS_Color;
+centroid varying vec2 _VSPS_UV;
+varying vec3 _VSPS_WorldN;
+varying vec3 _VSPS_WorldB;
+varying vec3 _VSPS_WorldT;
 varying vec4 _VSPS_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_FBNextIndex_UV;
@@ -150,7 +150,7 @@ vec4 _main(PS_Input Input)
     UVOffset *= CBPS0.fUVDistortionParameter.x;
     vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset) * Input.Color;
     vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV + UVOffset).xyz - vec3(0.5)) * 2.0;
-    vec3 localNormal = normalize(mat3(vec3(Input.Tangent), vec3(Input.Binormal), vec3(Input.Normal)) * texNormal);
+    vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
@@ -213,11 +213,11 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
-    Input.Normal = _VSPS_Normal;
-    Input.Binormal = _VSPS_Binormal;
-    Input.Tangent = _VSPS_Tangent;
     Input.Color = _VSPS_Color;
+    Input.UV = _VSPS_UV;
+    Input.WorldN = _VSPS_WorldN;
+    Input.WorldB = _VSPS_WorldB;
+    Input.WorldT = _VSPS_WorldT;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
