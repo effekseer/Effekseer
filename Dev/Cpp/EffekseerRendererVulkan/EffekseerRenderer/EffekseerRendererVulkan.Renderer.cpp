@@ -4,7 +4,7 @@
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "EffekseerMaterialCompilerVulkan.h"
 
-#include "ShaderHeader/ad_sprite_distortion_ps.h"
+#include "ShaderHeader/ad_model_distortion_ps.h"
 #include "ShaderHeader/ad_sprite_distortion_vs.h"
 #include "ShaderHeader/ad_sprite_lit_ps.h"
 #include "ShaderHeader/ad_sprite_lit_vs.h"
@@ -18,7 +18,7 @@
 #include "ShaderHeader/ad_model_unlit_ps.h"
 #include "ShaderHeader/ad_model_unlit_vs.h"
 
-#include "ShaderHeader/sprite_distortion_ps.h"
+#include "ShaderHeader/model_distortion_ps.h"
 #include "ShaderHeader/sprite_distortion_vs.h"
 #include "ShaderHeader/sprite_lit_ps.h"
 #include "ShaderHeader/sprite_lit_vs.h"
@@ -48,7 +48,7 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	shader->AdvancedSpriteLit_VS = GENERATE_VIEW(ad_sprite_lit_vs);
 	shader->AdvancedSpriteLit_PS = GENERATE_VIEW(ad_sprite_lit_ps);
 	shader->AdvancedSpriteDistortion_VS = GENERATE_VIEW(ad_sprite_distortion_vs);
-	shader->AdvancedSpriteDistortion_PS = GENERATE_VIEW(ad_sprite_distortion_ps);
+	shader->AdvancedSpriteDistortion_PS = GENERATE_VIEW(ad_model_distortion_ps);
 
 	shader->AdvancedModelUnlit_VS = GENERATE_VIEW(ad_model_unlit_vs);
 	shader->AdvancedModelUnlit_PS = GENERATE_VIEW(ad_model_unlit_ps);
@@ -62,7 +62,7 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	shader->SpriteLit_VS = GENERATE_VIEW(sprite_lit_vs);
 	shader->SpriteLit_PS = GENERATE_VIEW(sprite_lit_ps);
 	shader->SpriteDistortion_VS = GENERATE_VIEW(sprite_distortion_vs);
-	shader->SpriteDistortion_PS = GENERATE_VIEW(sprite_distortion_ps);
+	shader->SpriteDistortion_PS = GENERATE_VIEW(model_distortion_ps);
 
 	shader->ModelUnlit_VS = GENERATE_VIEW(model_unlit_vs);
 	shader->ModelUnlit_PS = GENERATE_VIEW(model_unlit_ps);

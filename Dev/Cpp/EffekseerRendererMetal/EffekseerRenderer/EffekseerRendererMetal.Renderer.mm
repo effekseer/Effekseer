@@ -15,7 +15,6 @@
 
 // #include "Shaders.h"
 
-#include "ShaderHeader/ad_sprite_distortion_ps.h"
 #include "ShaderHeader/ad_sprite_distortion_vs.h"
 #include "ShaderHeader/ad_sprite_lit_ps.h"
 #include "ShaderHeader/ad_sprite_lit_vs.h"
@@ -34,7 +33,6 @@
 #include "ShaderHeader/sprite_lit_vs.h"
 #include "ShaderHeader/sprite_lit_ps.h"
 #include "ShaderHeader/sprite_distortion_vs.h"
-#include "ShaderHeader/sprite_distortion_ps.h"
 
 #include "ShaderHeader/model_unlit_vs.h"
 #include "ShaderHeader/model_unlit_ps.h"
@@ -90,7 +88,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	shader->AdvancedSpriteLit_VS = GENERATE_VIEW(metal_ad_sprite_lit_vs);
 	shader->AdvancedSpriteLit_PS = GENERATE_VIEW(metal_ad_sprite_lit_ps);
 	shader->AdvancedSpriteDistortion_VS = GENERATE_VIEW(metal_ad_sprite_distortion_vs);
-	shader->AdvancedSpriteDistortion_PS = GENERATE_VIEW(metal_ad_sprite_distortion_ps);
+	shader->AdvancedSpriteDistortion_PS = GENERATE_VIEW(metal_ad_model_distortion_ps);
 
 	shader->AdvancedModelUnlit_VS = GENERATE_VIEW(metal_ad_model_unlit_vs);
 	shader->AdvancedModelUnlit_PS = GENERATE_VIEW(metal_ad_model_unlit_ps);
@@ -104,7 +102,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	shader->SpriteLit_VS = GENERATE_VIEW(metal_sprite_lit_vs);
 	shader->SpriteLit_PS = GENERATE_VIEW(metal_sprite_lit_ps);
 	shader->SpriteDistortion_VS = GENERATE_VIEW(metal_sprite_distortion_vs);
-	shader->SpriteDistortion_PS = GENERATE_VIEW(metal_sprite_distortion_ps);
+	shader->SpriteDistortion_PS = GENERATE_VIEW(metal_model_distortion_ps);
 
 	shader->ModelUnlit_VS = GENERATE_VIEW(metal_model_unlit_vs);
 	shader->ModelUnlit_PS = GENERATE_VIEW(metal_model_unlit_ps);

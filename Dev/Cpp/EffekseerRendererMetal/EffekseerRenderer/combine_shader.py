@@ -4,8 +4,8 @@ import sys
 verts = ['ad_sprite_unlit_vs', 'ad_sprite_lit_vs', 'ad_sprite_distortion_vs', 'ad_model_unlit_vs',  'ad_model_lit_vs', 'ad_model_distortion_vs',
          'sprite_unlit_vs', 'sprite_lit_vs', 'sprite_distortion_vs', 'model_unlit_vs',  'model_lit_vs', 'model_distortion_vs']
 
-frags = ['ad_sprite_unlit_ps', 'ad_sprite_lit_ps', 'ad_sprite_distortion_ps', 'ad_model_unlit_ps',  'ad_model_lit_ps', 'ad_model_distortion_ps',
-         'sprite_unlit_ps', 'sprite_lit_ps', 'sprite_distortion_ps', 'model_unlit_ps',  'model_lit_ps', 'model_distortion_ps']
+frags = ['ad_sprite_unlit_ps', 'ad_sprite_lit_ps', 'ad_model_unlit_ps',  'ad_model_lit_ps', 'ad_model_distortion_ps',
+         'sprite_unlit_ps', 'sprite_lit_ps', 'model_unlit_ps',  'model_lit_ps', 'model_distortion_ps']
 
 
 root_path = 'Shader/'

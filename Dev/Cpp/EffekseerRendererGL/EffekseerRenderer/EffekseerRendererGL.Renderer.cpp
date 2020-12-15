@@ -28,14 +28,14 @@
 #include "../../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
-#include "ShaderHeader/ad_sprite_distortion_ps.h"
+#include "ShaderHeader/ad_model_distortion_ps.h"
 #include "ShaderHeader/ad_sprite_distortion_vs.h"
 #include "ShaderHeader/ad_sprite_lit_ps.h"
 #include "ShaderHeader/ad_sprite_lit_vs.h"
 #include "ShaderHeader/ad_sprite_unlit_ps.h"
 #include "ShaderHeader/ad_sprite_unlit_vs.h"
 
-#include "ShaderHeader/sprite_distortion_ps.h"
+#include "ShaderHeader/model_distortion_ps.h"
 #include "ShaderHeader/sprite_distortion_vs.h"
 #include "ShaderHeader/sprite_lit_ps.h"
 #include "ShaderHeader/sprite_lit_vs.h"
@@ -287,14 +287,14 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView unlit_ad_vs(get_ad_sprite_unlit_vs(GetDeviceType()));
 	ShaderCodeView unlit_ad_ps(get_ad_sprite_unlit_ps(GetDeviceType()));
 	ShaderCodeView distortion_ad_vs(get_ad_sprite_distortion_vs(GetDeviceType()));
-	ShaderCodeView distortion_ad_ps(get_ad_sprite_distortion_ps(GetDeviceType()));
+	ShaderCodeView distortion_ad_ps(get_ad_model_distortion_ps(GetDeviceType()));
 	ShaderCodeView lit_ad_vs(get_ad_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ad_ps(get_ad_sprite_lit_ps(GetDeviceType()));
 
 	ShaderCodeView unlit_vs(get_sprite_unlit_vs(GetDeviceType()));
 	ShaderCodeView unlit_ps(get_sprite_unlit_ps(GetDeviceType()));
 	ShaderCodeView distortion_vs(get_sprite_distortion_vs(GetDeviceType()));
-	ShaderCodeView distortion_ps(get_sprite_distortion_ps(GetDeviceType()));
+	ShaderCodeView distortion_ps(get_model_distortion_ps(GetDeviceType()));
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_sprite_lit_ps(GetDeviceType()));
 
