@@ -20,8 +20,8 @@ verts = [
         root_path + 'sprite_unlit_vs.fx', root_path + 'sprite_lit_vs.fx', root_path + 'sprite_distortion_vs.fx', root_path + 'model_unlit_vs.fx', root_path + 'model_lit_vs.fx', root_path + 'model_distortion_vs.fx']
 
 frags = [
-        root_path + 'ad_sprite_unlit_ps.fx', root_path + 'ad_sprite_lit_ps.fx', root_path + 'ad_sprite_distortion_ps.fx', root_path + 'ad_model_unlit_ps.fx', root_path + 'ad_model_lit_ps.fx', root_path + 'ad_model_distortion_ps.fx',
-        root_path + 'sprite_unlit_ps.fx', root_path + 'sprite_lit_ps.fx', root_path + 'sprite_distortion_ps.fx', root_path + 'model_unlit_ps.fx', root_path + 'model_lit_ps.fx', root_path + 'model_distortion_ps.fx']
+        root_path + 'ad_sprite_unlit_ps.fx', root_path + 'ad_sprite_lit_ps.fx', root_path + 'ad_model_unlit_ps.fx', root_path + 'ad_model_lit_ps.fx', root_path + 'ad_model_distortion_ps.fx',
+        root_path + 'sprite_unlit_ps.fx', root_path + 'sprite_lit_ps.fx', root_path + 'model_unlit_ps.fx', root_path + 'model_lit_ps.fx', root_path + 'model_distortion_ps.fx']
 
 
 def fix_dx9_vs(path):

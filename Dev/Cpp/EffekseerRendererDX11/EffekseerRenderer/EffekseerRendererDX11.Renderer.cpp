@@ -55,7 +55,7 @@ static
 namespace Standard_Distortion_PS_Ad
 {
 static
-#include "ShaderHeader/ad_sprite_distortion_ps.h"
+#include "ShaderHeader/ad_model_distortion_ps.h"
 } // namespace Standard_Distortion_PS_Ad
 
 namespace Standard_Lighting_VS_Ad
@@ -91,7 +91,7 @@ static
 namespace Standard_Distortion_PS
 {
 static
-#include "ShaderHeader/sprite_distortion_ps.h"
+#include "ShaderHeader/model_distortion_ps.h"
 } // namespace Standard_Distortion_PS
 
 namespace Standard_Lighting_VS
