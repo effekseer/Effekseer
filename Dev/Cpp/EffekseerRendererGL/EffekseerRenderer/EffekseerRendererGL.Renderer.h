@@ -30,6 +30,8 @@ namespace EffekseerRendererGL
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);
 
+Effekseer::Backend::TextureRef CreateTexture(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed);
+
 class Renderer;
 using RendererRef = ::Effekseer::RefPtr<Renderer>;
 

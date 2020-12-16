@@ -95,6 +95,12 @@ namespace EffekseerRendererGL
 #endif
 }
 
+Effekseer::Backend::TextureRef CreateTexture(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed)
+{
+	auto gd = graphicsDevice.DownCast<Backend::GraphicsDevice>();
+	return gd->CreateTexture(buffer, hasMipmap, onDisposed);
+}
+
 RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 {
 	return Create(CreateGraphicsDevice(deviceType), squareMaxCount);

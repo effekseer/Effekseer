@@ -137,6 +137,12 @@ static
 #endif
 }
 
+::Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
+{
+	auto gd = gprahicsDevice.DownCast<Backend::GraphicsDevice>();
+	return gd->CreateTexture(srv, rtv, dsv);
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

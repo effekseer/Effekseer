@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -94,7 +95,7 @@ class EffectImplemented;
 
 namespace Backend
 {
-	class Texture;
+class Texture;
 }
 using Texture = Backend::Texture;
 
