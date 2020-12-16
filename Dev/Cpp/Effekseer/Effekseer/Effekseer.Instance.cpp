@@ -757,7 +757,7 @@ void Instance::FirstUpdate()
 	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL)
 	{
 		m_GenerationLocation = SIMD::Mat43f::Identity;
-		Model* model = nullptr;
+		ModelRef model = nullptr;
 		const ParameterGenerationLocation::eModelType type = m_pEffectNode->GenerationLocation.model.type;
 
 		if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::File)

@@ -323,7 +323,7 @@ static void ChangeAxis(ProcedualMesh& mesh, ProcedualModelAxisType axisType)
 	}
 }
 
-static Model* ConvertMeshToModel(const ProcedualMesh& mesh)
+static ModelRef ConvertMeshToModel(const ProcedualMesh& mesh)
 {
 	CustomVector<Model::Vertex> vs;
 	CustomVector<Model::Face> faces;
@@ -349,7 +349,7 @@ static Model* ConvertMeshToModel(const ProcedualMesh& mesh)
 		faces[i].Indexes[2] = mesh.Faces[i].Indexes[2];
 	}
 
-	return new Model(vs, faces);
+	return ::Effekseer::MakeRefPtr<Model>(vs, faces);
 }
 
 struct RotatorSphere
@@ -759,7 +759,7 @@ struct RotatedWireMeshGenerator
 	}
 };
 
-Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* parameter)
+ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parameter)
 {
 	if (parameter == nullptr)
 	{
@@ -888,12 +888,8 @@ Model* ProcedualModelGenerator::Generate(const ProcedualModelParameter* paramete
 	return nullptr;
 }
 
-void ProcedualModelGenerator::Ungenerate(Model* model)
+void ProcedualModelGenerator::Ungenerate(ModelRef model)
 {
-	if (model != nullptr)
-	{
-		delete model;
-	}
 }
 
 } // namespace Effekseer

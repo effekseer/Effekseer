@@ -808,6 +808,7 @@ using ManagerRef = RefPtr<Manager>;
 using EffectRef = RefPtr<Effect>;
 using TextureRef = RefPtr<Texture>;
 using SoundDataRef = RefPtr<SoundData>;
+using ModelRef = RefPtr<Model>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;

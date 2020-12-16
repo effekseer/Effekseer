@@ -89,7 +89,7 @@ public:
 	HolderCollection<TextureRef> normalImages;
 	HolderCollection<TextureRef> distortionImages;
 	HolderCollection<SoundDataRef> sounds;
-	HolderCollection<Model*> models;
+	HolderCollection<ModelRef> models;
 	HolderCollection<MaterialData*> materials;
 	HolderCollection<void*> curves;
 };
@@ -131,10 +131,10 @@ protected:
 	char16_t** m_WavePaths = nullptr;
 	SoundDataRef* m_pWaves = nullptr;
 
-	CustomVector<Model*> models_;
+	CustomVector<ModelRef> models_;
 	CustomVector<char16_t*> modelPaths_;
 
-	CustomVector<Model*> procedualModels_;
+	CustomVector<ModelRef> procedualModels_;
 	CustomVector<ProcedualModelParameter> procedualModelParameters_;
 
 	int32_t materialCount_ = 0;
@@ -270,7 +270,7 @@ public:
 
 	const char16_t* GetWavePath(int n) const override;
 
-	Model* GetModel(int n) const override;
+	ModelRef GetModel(int n) const override;
 
 	int32_t GetModelCount() const override;
 
@@ -288,7 +288,7 @@ public:
 
 	const char16_t* GetCurvePath(int n) const override;
 
-	Model* GetProcedualModel(int n) const override;
+	ModelRef GetProcedualModel(int n) const override;
 
 	int32_t GetProcedualModelCount() const override;
 
@@ -298,7 +298,7 @@ public:
 
 	void SetSound(int32_t index, SoundDataRef data) override;
 
-	void SetModel(int32_t index, Model* data) override;
+	void SetModel(int32_t index, ModelRef data) override;
 
 	void SetMaterial(int32_t index, MaterialData* data) override;
 

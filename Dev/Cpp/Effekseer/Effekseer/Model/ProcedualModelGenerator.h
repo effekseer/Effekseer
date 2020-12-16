@@ -15,9 +15,9 @@ public:
 	ProcedualModelGenerator() = default;
 	virtual ~ProcedualModelGenerator() = default;
 
-	virtual Model* Generate(const ProcedualModelParameter* parameter);
+	virtual ModelRef Generate(const ProcedualModelParameter* parameter);
 
-	virtual void Ungenerate(Model* model);
+	virtual void Ungenerate(ModelRef model);
 };
 
 } // namespace Effekseer

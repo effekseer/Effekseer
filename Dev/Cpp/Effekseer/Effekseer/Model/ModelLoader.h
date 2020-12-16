@@ -3,6 +3,7 @@
 #define __EFFEKSEER_MODELLOADER_H__
 
 #include "../Effekseer.Base.h"
+#include "Model.h"
 
 namespace Effekseer
 {
@@ -29,7 +30,7 @@ public:
 	\~English a pointer of loaded a model
 	\~Japanese 読み込まれたモデルのポインタ
 	*/
-	virtual Model* Load(const char16_t* path);
+	virtual ModelRef Load(const char16_t* path);
 
 	/**
 		@brief
@@ -45,7 +46,7 @@ public:
 		\~English	a pointer of loaded model
 		\~Japanese	読み込まれたモデルのポインタ
 	*/
-	virtual Effekseer::Model* Load(const void* data, int32_t size);
+	virtual ModelRef Load(const void* data, int32_t size);
 
 	/**
 		@brief
@@ -55,7 +56,7 @@ public:
 		\~English	a pointer of loaded a model
 		\~Japanese	読み込まれたモデルのポインタ
 	*/
-	virtual void Unload(Model* data);
+	virtual void Unload(ModelRef data);
 };
 
 //----------------------------------------------------------------------------------

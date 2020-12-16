@@ -11,9 +11,9 @@ Model::Model(const CustomVector<Vertex>& vertecies, const CustomVector<Face>& fa
 	models_[0].faces = faces;
 }
 
-Model::Model(void* data, int32_t size)
+Model::Model(const void* data, int32_t size)
 {
-	uint8_t* p = (uint8_t*)data;
+	const uint8_t* p = (const uint8_t*)data;
 
 	memcpy(&version_, p, sizeof(int32_t));
 	p += sizeof(int32_t);
