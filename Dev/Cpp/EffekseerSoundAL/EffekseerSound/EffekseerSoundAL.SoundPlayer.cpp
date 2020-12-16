@@ -35,8 +35,8 @@ SoundPlayer::~SoundPlayer()
 	if (m_sound->GetMute()) {
 		return NULL;
 	}
-	SoundData* soundData = (SoundData*)parameter.Data;
-	if (soundData) {
+
+	if (parameter.Data != nullptr) {
 		SoundVoice* voice = m_sound->GetVoice();
 		if (voice) {
 			voice->Play(tag, parameter);
