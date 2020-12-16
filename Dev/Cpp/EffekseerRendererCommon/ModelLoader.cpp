@@ -23,7 +23,7 @@ ModelLoader::~ModelLoader()
 	std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
 	if (reader.get() == nullptr)
 	{
-		return false;
+		return nullptr;
 	}
 
 	size_t size = reader->GetLength();
