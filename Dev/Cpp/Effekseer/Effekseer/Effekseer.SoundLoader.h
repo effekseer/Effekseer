@@ -87,7 +87,7 @@ public:
 		サウンドを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(SoundDataRef& data)
+	virtual void Unload(SoundDataRef data)
 	{
 		data.Reset();
 	}

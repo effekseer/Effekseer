@@ -291,7 +291,7 @@ Native::SoundLoader::~SoundLoader()
 	return m_loader->Load(dst);
 }
 
-void Native::SoundLoader::Unload(::Effekseer::SoundDataRef& soundData)
+void Native::SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
 	m_loader->Unload(soundData);
 }

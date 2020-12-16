@@ -205,15 +205,14 @@ SoundLoader::~SoundLoader()
 	return Load(&reader);
 }
 
-void SoundLoader::Unload(::Effekseer::SoundDataRef& soundData)
+void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
 	if (soundData != nullptr)
 	{
 		// stop a voice which plays this data
 		m_sound->StopData(soundData);
 		SoundData* soundDataImpl = (SoundData*)soundData.Get();
-		ES_SAFE_DELETE_ARRAY((uint8_t*)soundDataImpl->buffer.pAudioData);
-		soundData = nullptr;
+		ES_SAFE_DELETE_ARRAY(soundDataImpl->buffer.pAudioData);
 	}
 }
 

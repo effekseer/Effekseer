@@ -64,14 +64,13 @@ SoundLoader::~SoundLoader()
 	return soundData;
 }
 
-void SoundLoader::Unload(::Effekseer::SoundDataRef& soundData)
+void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
 	if (soundData != nullptr)
 	{
 		m_sound->StopData(soundData);
 		SoundData* soundDataImpl = (SoundData*)soundData.Get();
 		ES_SAFE_RELEASE(soundDataImpl->osmSound);
-		soundData = nullptr;
 	}
 }
 

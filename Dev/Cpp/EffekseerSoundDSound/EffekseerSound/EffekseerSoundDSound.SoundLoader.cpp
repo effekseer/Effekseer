@@ -237,7 +237,7 @@ SoundLoader::~SoundLoader()
 	return Load(&reader);
 }
 
-void SoundLoader::Unload(::Effekseer::SoundDataRef& soundData)
+void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
 	if (soundData != nullptr)
 	{
@@ -245,7 +245,6 @@ void SoundLoader::Unload(::Effekseer::SoundDataRef& soundData)
 		m_sound->StopData(soundData);
 		SoundData* soundDataImpl = (SoundData*)soundData.Get();
 		ES_SAFE_RELEASE(soundDataImpl->buffer);
-		soundData = nullptr;
 	}
 }
 

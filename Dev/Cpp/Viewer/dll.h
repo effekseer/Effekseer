@@ -153,7 +153,7 @@ private:
 	public:
 		::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
-		void Unload(::Effekseer::SoundDataRef& data) override;
+		void Unload(::Effekseer::SoundDataRef soundData) override;
 
 		std::u16string RootPath;
 	};

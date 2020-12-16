@@ -35,7 +35,7 @@ public:
 
 	::Effekseer::SoundDataRef Load(const void* data, int32_t size) override;
 
-	void Unload(::Effekseer::SoundDataRef& soundData) override;
+	void Unload(::Effekseer::SoundDataRef soundData) override;
 };
 
 //----------------------------------------------------------------------------------

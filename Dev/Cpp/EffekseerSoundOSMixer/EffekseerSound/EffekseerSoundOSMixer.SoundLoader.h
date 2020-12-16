@@ -34,7 +34,7 @@ public:
 public:
 	::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
-	void Unload(::Effekseer::SoundDataRef& soundData) override;
+	void Unload(::Effekseer::SoundDataRef soundData) override;
 };
 
 //----------------------------------------------------------------------------------

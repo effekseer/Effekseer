@@ -188,13 +188,13 @@ SoundLoader::~SoundLoader()
 	return Load(reader.get());
 }
 	
-void* SoundLoader::Load(const void* data, int32_t size)
+::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
 	auto reader = SupportOpenAL::BinaryFileReader(data, size);
 	return Load(&reader);
 }
 
-void SoundLoader::Unload( ::Effekseer::SoundDataRef& soundData )
+void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )
 {
 	if (soundData != nullptr)
 	{
