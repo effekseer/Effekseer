@@ -157,7 +157,7 @@ bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopData(SoundData* soundData)
+void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	m_voiceContainer->StopData(soundData);
 }

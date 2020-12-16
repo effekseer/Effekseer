@@ -46,27 +46,35 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-	
 /**
 	@brief	サウンドデータ
 */
-struct SoundData
-{	
+class SoundData : public ::Effekseer::SoundData
+{
+public:
+	int32_t GetChannels() const  { return channels; }
+	int32_t GetSampleRate() const  { return sampleRate; }
+	const XAUDIO2_BUFFER* GetBuffer() const { return &buffer; }
+
+private:
+	friend class SoundLoader;
+
 	/**
 		@brief	チャンネル数。
 	*/
-	int32_t			channels;
+	int32_t			channels = 0;
 	
 	/**
 		@brief	サンプリング周波数。
 	*/
-	int32_t			sampleRate;
+	int32_t			sampleRate = 0;
 
 	/**
 		@brief	XAudio2ソースボイス用バッファ。
 	*/
-	XAUDIO2_BUFFER	buffer;
+	XAUDIO2_BUFFER	buffer = {};
 };
+using SoundDataRef = Effekseer::RefPtr<SoundData>;
 
 /**
 	@brief	サウンドクラス

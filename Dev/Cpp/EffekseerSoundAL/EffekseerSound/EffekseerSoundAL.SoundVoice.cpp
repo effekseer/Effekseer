@@ -33,10 +33,13 @@ SoundVoice::~SoundVoice()
 void SoundVoice::Play( ::Effekseer::SoundTag tag, 
 	const ::Effekseer::SoundPlayer::InstanceParameter& parameter )
 {
-	SoundData* soundData = (SoundData*)parameter.Data;
-	
+	if (parameter.Data == nullptr) {
+		return;
+	}
+	SoundData* soundDataImpl = (SoundData*)parameter.Data.Get();
+
 	m_tag = tag;
-	alSourcei(m_source, AL_BUFFER, soundData->buffer);
+	alSourcei(m_source, AL_BUFFER, soundDataImpl->GetBuffer());
 	alSourcef(m_source, AL_PITCH, powf(2.0f, parameter.Pitch));
 	alSourcef(m_source, AL_GAIN, parameter.Volume);
 	

@@ -80,6 +80,7 @@ class SoundLoader;
 class ModelLoader;
 class CurveLoader;
 
+class SoundData;
 class SoundPlayer;
 class Model;
 struct ProcedualModelParameter;
@@ -805,6 +806,7 @@ using SettingRef = RefPtr<Setting>;
 using ManagerRef = RefPtr<Manager>;
 using EffectRef = RefPtr<Effect>;
 using TextureRef = RefPtr<Texture>;
+using SoundDataRef = RefPtr<SoundData>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;

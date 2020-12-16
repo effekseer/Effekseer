@@ -63,7 +63,7 @@ public:
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
 	
-	void StopData( SoundData* soundData );
+	void StopData( const ::Effekseer::SoundDataRef& soundData );
 
 	void SetPanRange( int32_t leftPos, int32_t rightPos );
 

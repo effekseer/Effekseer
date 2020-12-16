@@ -1428,7 +1428,7 @@ class SoundPlayer : public ReferenceObject
 public:
 	struct InstanceParameter
 	{
-		void*		Data;
+		SoundDataRef	Data;
 		float		Volume;
 		float		Pan;
 		float		Pitch;
@@ -1484,6 +1484,19 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 /**
+	@brief	サウンドデータ
+*/
+class SoundData : public ReferenceObject
+{
+public:
+	explicit SoundData() = default;
+	virtual ~SoundData() = default;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
 	@brief	サウンド読み込み破棄関数指定クラス
 */
 class SoundLoader : public ReferenceObject
@@ -1511,7 +1524,7 @@ public:
 		サウンドを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const char16_t* path)
+	virtual SoundDataRef Load(const char16_t* path)
 	{
 		return nullptr;
 	}
@@ -1530,7 +1543,7 @@ public:
 		\~English	a pointer of loaded texture
 		\~Japanese	読み込まれたサウンドのポインタ
 	*/
-	virtual void* Load(const void* data, int32_t size)
+	virtual SoundDataRef Load(const void* data, int32_t size)
 	{
 		return nullptr;
 	}
@@ -1542,8 +1555,9 @@ public:
 		サウンドを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(void* source)
+	virtual void Unload(SoundDataRef data)
 	{
+		data.Reset();
 	}
 };
 

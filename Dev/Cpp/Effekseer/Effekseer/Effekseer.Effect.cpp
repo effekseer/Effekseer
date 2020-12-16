@@ -143,7 +143,7 @@ void EffectFactory::SetTexture(Effect* effect, int32_t index, TextureType type, 
 	}
 }
 
-void EffectFactory::SetSound(Effect* effect, int32_t index, void* data)
+void EffectFactory::SetSound(Effect* effect, int32_t index, SoundDataRef data)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
 
@@ -528,7 +528,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		if (m_WaveCount > 0)
 		{
 			m_WavePaths = new char16_t*[m_WaveCount];
-			m_pWaves = new void*[m_WaveCount];
+			m_pWaves = new SoundDataRef[m_WaveCount];
 
 			for (int i = 0; i < m_WaveCount; i++)
 			{
@@ -1160,7 +1160,7 @@ const char16_t* EffectImplemented::GetDistortionImagePath(int n) const
 	return m_distortionImagePaths[n];
 }
 
-void* EffectImplemented::GetWave(int n) const
+SoundDataRef EffectImplemented::GetWave(int n) const
 {
 	return m_pWaves[n];
 }
@@ -1293,7 +1293,7 @@ void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureRef d
 	}
 }
 
-void EffectImplemented::SetSound(int32_t index, void* data)
+void EffectImplemented::SetSound(int32_t index, SoundDataRef data)
 {
 	auto soundLoader = GetSetting()->GetSoundLoader();
 	assert(0 <= index && index < m_WaveCount);
@@ -1511,7 +1511,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 			char16_t fullPath[512];
 			PathCombine(fullPath, matPath, m_WavePaths[ind]);
 
-			void* value = nullptr;
+			SoundDataRef value;
 			if (reloadingBackup->sounds.Pop(fullPath, value))
 			{
 				m_pWaves[ind] = value;

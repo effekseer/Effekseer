@@ -50,8 +50,16 @@ namespace EffekseerSound
 /**
 	@brief	サウンドデータ
 */
-struct SoundData
+class SoundData : public ::Effekseer::SoundData
 {	
+public:
+	int32_t GetChannels() const { return channels; }
+	int32_t GetSampleRate() const { return sampleRate; }
+	const IDirectSoundBuffer8* GetBuffer() const { return buffer; }
+
+private:
+	friend class SoundLoader;
+
 	/**
 		@brief	チャンネル数。
 	*/
@@ -67,6 +75,7 @@ struct SoundData
 	*/
 	IDirectSoundBuffer8* buffer;
 };
+using SoundDataRef = ::Effekseer::RefPtr<SoundData>;
 
 /**
 	@brief	サウンドクラス

@@ -27,14 +27,14 @@ class SoundLoader : public ::Effekseer::SoundLoader
 public:
 	SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterface* fileInterface = NULL);
 
-	void* Load(const void* data, int32_t size) override;
+	::Effekseer::SoundDataRef Load(const void* data, int32_t size) override;
 
 	virtual ~SoundLoader();
 
 public:
-	void* Load(const char16_t* path);
+	::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
-	void Unload(void* data);
+	void Unload(::Effekseer::SoundDataRef soundData) override;
 };
 
 //----------------------------------------------------------------------------------

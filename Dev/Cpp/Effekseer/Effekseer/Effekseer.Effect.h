@@ -135,7 +135,7 @@ public:
 	\~Japanese	指定されたインデックスに音を設定する。
 	*/
 
-	void SetSound(Effect* effect, int32_t index, void* data);
+	void SetSound(Effect* effect, int32_t index, SoundDataRef data);
 
 	/**
 	@brief
@@ -378,7 +378,7 @@ public:
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
-	virtual void* GetWave(int n) const = 0;
+	virtual SoundDataRef GetWave(int n) const = 0;
 
 	/**
 	@brief	格納されている音波形のポインタの個数を取得する。
@@ -474,7 +474,7 @@ public:
 		\~Japanese	指定されたインデックスに音を設定する。
 	*/
 
-	virtual void SetSound(int32_t index, void* data) = 0;
+	virtual void SetSound(int32_t index, SoundDataRef data) = 0;
 
 	/**
 		@brief

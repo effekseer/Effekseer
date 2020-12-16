@@ -42,24 +42,24 @@ SoundVoice::~SoundVoice()
 //----------------------------------------------------------------------------------
 void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer::InstanceParameter& parameter)
 {
-	SoundData* soundData = (SoundData*)parameter.Data;
+	SoundData* soundData = (SoundData*)parameter.Data.Get();
 
 	m_tag = tag;
-	m_data = soundData;
-	m_xavoice->SubmitSourceBuffer(&soundData->buffer);
-	m_xavoice->SetSourceSampleRate(soundData->sampleRate);
+	m_data = parameter.Data;
+	m_xavoice->SubmitSourceBuffer(soundData->GetBuffer());
+	m_xavoice->SetSourceSampleRate(soundData->GetSampleRate());
 	m_xavoice->SetVolume(parameter.Volume);
 	m_xavoice->SetFrequencyRatio(powf(2.0f, parameter.Pitch));
 
 	float matrix[2 * 4];
 	if (parameter.Mode3D)
 	{
-		m_sound->Calculate3DSound(parameter.Position, parameter.Distance, soundData->channels, 2, matrix);
+		m_sound->Calculate3DSound(parameter.Position, parameter.Distance, soundData->GetChannels(), 2, matrix);
 	}
 	else
 	{
 		float rad = ((parameter.Pan + 1.0f) * 0.5f) * (3.1415926f * 0.5f);
-		switch (soundData->channels)
+		switch (soundData->GetChannels())
 		{
 		case 1:
 			matrix[0] = cosf(rad);
@@ -73,7 +73,7 @@ void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer:
 			return;
 		}
 	}
-	m_xavoice->SetOutputMatrix(nullptr, soundData->channels, 2, matrix);
+	m_xavoice->SetOutputMatrix(nullptr, soundData->GetChannels(), 2, matrix);
 	m_xavoice->Start();
 }
 
@@ -84,6 +84,7 @@ void SoundVoice::Stop()
 {
 	m_xavoice->Stop();
 	m_xavoice->FlushSourceBuffers();
+	m_data = nullptr;
 }
 
 //----------------------------------------------------------------------------------
@@ -220,7 +221,7 @@ bool SoundVoiceContainer::CheckPlayingTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundVoiceContainer::StopData(SoundData* soundData)
+void SoundVoiceContainer::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	std::list<SoundVoice*>::iterator it;
 	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)

@@ -283,7 +283,7 @@ Native::SoundLoader::~SoundLoader()
 {
 }
 
-void* Native::SoundLoader::Load(const char16_t* path)
+::Effekseer::SoundDataRef Native::SoundLoader::Load(const char16_t* path)
 {
 	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, (char16_t*)dst, 260);
@@ -291,9 +291,9 @@ void* Native::SoundLoader::Load(const char16_t* path)
 	return m_loader->Load(dst);
 }
 
-void Native::SoundLoader::Unload(void* handle)
+void Native::SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
-	m_loader->Unload(handle);
+	m_loader->Unload(soundData);
 }
 
 Native::ModelLoader::ModelLoader(efk::Graphics* graphics)
