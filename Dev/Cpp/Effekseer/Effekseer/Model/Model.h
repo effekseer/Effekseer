@@ -24,7 +24,7 @@ class IndexBuffer;
 	\~English	Model class
 	\~Japanese	モデルクラス
 */
-class Model
+class Model : public ReferenceObject
 {
 public:
 	static const int32_t Version = 1;
@@ -70,7 +70,7 @@ protected:
 public:
 	Model(const CustomVector<Vertex>& vertecies, const CustomVector<Face>& faces);
 
-	Model(void* data, int32_t size);
+	Model(const void* data, int32_t size);
 
 	virtual ~Model();
 

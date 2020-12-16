@@ -267,7 +267,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	Effekseer::Model* model = nullptr;
+	Effekseer::ModelRef model = nullptr;
 
 	if (parameter.IsProcedualMode)
 	{

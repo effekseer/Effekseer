@@ -209,7 +209,7 @@ static Effekseer::Manager::DrawParameter drawParameter;
 
 static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureRef> m_textures;
-static std::map<std::u16string, Effekseer::Model*> m_models;
+static std::map<std::u16string, Effekseer::ModelRef> m_models;
 static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
 static std::map<std::u16string, Effekseer::MaterialData*> g_materials_;
 
@@ -305,13 +305,13 @@ Native::ModelLoader::~ModelLoader()
 {
 }
 
-Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
+Effekseer::ModelRef Native::ModelLoader::Load(const char16_t* path)
 {
 	char16_t dst[260];
 	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
 
 	std::u16string key(dst);
-	Effekseer::Model* model = nullptr;
+	Effekseer::ModelRef model = nullptr;
 
 	if (m_models.count(key) > 0)
 	{
@@ -322,7 +322,7 @@ Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 		if (g_deviceType == efk::DeviceType::OpenGL)
 		{
 			auto loader = ::EffekseerRendererGL::CreateModelLoader();
-			auto m = (Effekseer::Model*)loader->Load((const char16_t*)dst);
+			auto m = (Effekseer::ModelRef)loader->Load((const char16_t*)dst);
 
 			if (m != nullptr)
 			{
@@ -336,7 +336,7 @@ Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 		{
 			auto g = static_cast<efk::GraphicsDX11*>(graphics_);
 			auto loader = ::EffekseerRendererDX11::CreateModelLoader(g->GetGraphicsDevice());
-			auto m = (Effekseer::Model*)loader->Load((const char16_t*)dst);
+			auto m = (Effekseer::ModelRef)loader->Load((const char16_t*)dst);
 
 			if (m != nullptr)
 			{
@@ -354,7 +354,7 @@ Effekseer::Model* Native::ModelLoader::Load(const char16_t* path)
 	}
 }
 
-void Native::ModelLoader::Unload(Effekseer::Model* data)
+void Native::ModelLoader::Unload(Effekseer::ModelRef data)
 {
 	/*
 	if( data != nullptr )
@@ -1018,7 +1018,7 @@ bool Native::InvalidateTextureCache()
 		auto it_end = m_models.end();
 		while (it != it_end)
 		{
-			ES_SAFE_DELETE((*it).second);
+			modelLoader_->Unload((*it).second);
 			++it;
 		}
 		m_models.clear();

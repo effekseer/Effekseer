@@ -168,9 +168,9 @@ private:
 		virtual ~ModelLoader();
 
 	public:
-		Effekseer::Model* Load(const char16_t* path);
+		Effekseer::ModelRef Load(const char16_t* path);
 
-		void Unload(Effekseer::Model* data);
+		void Unload(Effekseer::ModelRef data);
 
 		std::u16string RootPath;
 	};

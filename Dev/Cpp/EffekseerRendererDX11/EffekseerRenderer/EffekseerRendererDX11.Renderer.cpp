@@ -10,20 +10,16 @@
 #include "EffekseerRendererDX11.IndexBuffer.h"
 #include "EffekseerRendererDX11.Shader.h"
 #include "EffekseerRendererDX11.VertexBuffer.h"
-//#include "EffekseerRendererDX11.SpriteRenderer.h"
-//#include "EffekseerRendererDX11.RibbonRenderer.h"
-//#include "EffekseerRendererDX11.RingRenderer.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
-//#include "EffekseerRendererDX11.TrackRenderer.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
-#include "EffekseerRendererDX11.ModelLoader.h"
-//#include "EffekseerRendererDX11.TextureLoader.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
+#include "../../EffekseerRendererCommon/ModelLoader.h"
+
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/TextureLoader.h"
 #endif
@@ -129,12 +125,7 @@ static
 
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	auto gd = gprahicsDevice.DownCast<Backend::GraphicsDevice>();
-	return ::Effekseer::MakeRefPtr<ModelLoader>(gd->GetDevice(), fileInterface);
-#else
-	return nullptr;
-#endif
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(gprahicsDevice, fileInterface);
 }
 
 ::Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
@@ -725,20 +716,12 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<ModelLoader>(this->GetDevice(), fileInterface);
-#else
-	return nullptr;
-#endif
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice_, fileInterface);
 }
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return ::Effekseer::MakeRefPtr<MaterialLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
-#else
-	return nullptr;
-#endif
 }
 
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)

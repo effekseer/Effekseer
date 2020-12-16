@@ -764,15 +764,15 @@ public:
 		if (param.ModelIndex < 0)
 			return;
 
-		MODEL* model = nullptr;
+		::Effekseer::RefPtr<MODEL> model;
 
 		if (param.IsProcedualMode)
 		{
-			model = (MODEL*)param.EffectPointer->GetProcedualModel(param.ModelIndex);
+			model = param.EffectPointer->GetProcedualModel(param.ModelIndex);
 		}
 		else
 		{
-			model = (MODEL*)param.EffectPointer->GetModel(param.ModelIndex);
+			model = param.EffectPointer->GetModel(param.ModelIndex);
 		}
 
 		if (model == nullptr)

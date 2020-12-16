@@ -15,6 +15,7 @@
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
 #include "Backend/GraphicsDevice.h"
+#include "Model/Model.h"
 #include "Model/ModelLoader.h"
 #include "Model/ProcedualModelGenerator.h"
 #include "Model/ProcedualModelParameter.h"
@@ -151,7 +152,7 @@ void EffectFactory::SetSound(Effect* effect, int32_t index, SoundDataRef data)
 	effect_->m_pWaves[index] = data;
 }
 
-void EffectFactory::SetModel(Effect* effect, int32_t index, Model* data)
+void EffectFactory::SetModel(Effect* effect, int32_t index, ModelRef data)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
 	assert(0 <= index && index < effect_->models_.size());
@@ -172,7 +173,7 @@ void EffectFactory::SetCurve(Effect* effect, int32_t index, void* data)
 	effect_->curves_[index] = data;
 }
 
-void EffectFactory::SetProcedualModel(Effect* effect, int32_t index, Model* data)
+void EffectFactory::SetProcedualModel(Effect* effect, int32_t index, ModelRef data)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
 	assert(0 <= index && index < effect_->procedualModels_.size());
@@ -1175,7 +1176,7 @@ const char16_t* EffectImplemented::GetWavePath(int n) const
 	return m_WavePaths[n];
 }
 
-Model* EffectImplemented::GetModel(int n) const
+ModelRef EffectImplemented::GetModel(int n) const
 {
 	if (n < 0 || n >= GetModelCount())
 	{
@@ -1230,7 +1231,7 @@ const char16_t* EffectImplemented::GetCurvePath(int n) const
 	return curvePaths_[n];
 }
 
-Model* EffectImplemented::GetProcedualModel(int n) const
+ModelRef EffectImplemented::GetProcedualModel(int n) const
 {
 	if (n < 0 || n >= GetProcedualModelCount())
 	{
@@ -1306,7 +1307,7 @@ void EffectImplemented::SetSound(int32_t index, SoundDataRef data)
 	m_pWaves[index] = data;
 }
 
-void EffectImplemented::SetModel(int32_t index, Model* data)
+void EffectImplemented::SetModel(int32_t index, ModelRef data)
 {
 	auto modelLoader = GetSetting()->GetModelLoader();
 	assert(0 <= index && index < models_.size());
@@ -1523,7 +1524,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 			char16_t fullPath[512];
 			PathCombine(fullPath, matPath, modelPaths_[ind]);
 
-			Model* value = nullptr;
+			ModelRef value = nullptr;
 			if (reloadingBackup->models.Pop(fullPath, value))
 			{
 				models_[ind] = value;
