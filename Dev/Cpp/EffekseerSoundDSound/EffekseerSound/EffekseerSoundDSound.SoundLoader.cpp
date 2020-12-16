@@ -80,7 +80,7 @@ SoundLoader::~SoundLoader()
 {
 }
 
-void* SoundLoader::Load(::Effekseer::FileReader* reader)
+::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReader* reader)
 {
 	HRESULT hr;
 	uint32_t chunkIdent, chunkSize;
@@ -212,7 +212,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	}
 	delete[] buffer;
 
-	SoundData* soundData = new SoundData;
+	SoundDataRef soundData = ::Effekseer::MakeRefPtr<SoundData>();
 	soundData->channels = wavefmt.nChannels;
 	soundData->sampleRate = wavefmt.nSamplesPerSec;
 	soundData->buffer = dsbuf;
@@ -220,7 +220,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader)
 	return soundData;
 }
 
-void* SoundLoader::Load(const char16_t* path)
+::Effekseer::SoundDataRef SoundLoader::Load(const char16_t* path)
 {
 	assert(path != nullptr);
 
@@ -231,23 +231,22 @@ void* SoundLoader::Load(const char16_t* path)
 	return Load(reader.get());
 }
 
-void* SoundLoader::Load(const void* data, int32_t size)
+::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
 	auto reader = SupportDSound::BinaryFileReader(data, size);
 	return Load(&reader);
 }
 
-void SoundLoader::Unload(void* data)
+void SoundLoader::Unload(::Effekseer::SoundDataRef& soundData)
 {
-	SoundData* soundData = (SoundData*)data;
-	if (soundData == nullptr)
+	if (soundData != nullptr)
 	{
-		return;
+		// stop a voice which plays this data
+		m_sound->StopData(soundData);
+		SoundData* soundDataImpl = (SoundData*)soundData.Get();
+		ES_SAFE_RELEASE(soundDataImpl->buffer);
+		soundData = nullptr;
 	}
-
-	m_sound->StopData(soundData);
-	soundData->buffer->Release();
-	delete soundData;
 }
 
 } // namespace EffekseerSound

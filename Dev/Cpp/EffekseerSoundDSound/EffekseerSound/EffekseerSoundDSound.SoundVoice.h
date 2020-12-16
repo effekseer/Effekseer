@@ -22,7 +22,7 @@ class SoundImplemented;
 class SoundVoice
 {
 	SoundImplemented*		m_sound;
-	SoundData*				m_data;
+	::Effekseer::SoundDataRef	m_data;
 	IDirectSoundBuffer8*	m_dsbuf;
 	::Effekseer::SoundTag	m_tag;
 
@@ -42,7 +42,7 @@ public:
 
 	::Effekseer::SoundTag GetTag() const	{return m_tag;}
 
-	::Effekseer::SoundTag GetData() const	{return m_data;}
+	const ::Effekseer::SoundDataRef& GetData() const	{return m_data;}
 };
 
 class SoundVoiceContainer
@@ -62,7 +62,7 @@ public:
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
 
-	void StopData( SoundData* soundData );
+	void StopData( const ::Effekseer::SoundDataRef& soundData );
 
 	void StopAll();
 };

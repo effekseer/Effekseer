@@ -35,14 +35,16 @@ SoundPlayer::~SoundPlayer()
 	{
 		return nullptr;
 	}
-	SoundData* soundData = (SoundData*)parameter.Data;
-	if (soundData == nullptr)
+
+	if (parameter.Data == nullptr)
 	{
 		return nullptr;
 	}
 
+	auto soundDataImpl = (const SoundData*)parameter.Data.Get();
+
 	auto device = m_sound->GetDevice();
-	int32_t id = device->Play(soundData);
+	int32_t id = device->Play((osm::Sound*)soundDataImpl->GetOsmSound());
 
 	if (parameter.Pitch != 0.0f)
 	{
@@ -71,7 +73,7 @@ SoundPlayer::~SoundPlayer()
 	SoundImplemented::Instance instance;
 	instance.id = id;
 	instance.tag = tag;
-	instance.data = soundData;
+	instance.data = parameter.Data;
 	m_sound->AddInstance(instance);
 
 	return reinterpret_cast<Effekseer::SoundHandle>(static_cast<int64_t>(id));

@@ -27,7 +27,7 @@ class SoundPlayer : public ReferenceObject
 public:
 	struct InstanceParameter
 	{
-		void*		Data;
+		SoundDataRef	Data;
 		float		Volume;
 		float		Pan;
 		float		Pitch;

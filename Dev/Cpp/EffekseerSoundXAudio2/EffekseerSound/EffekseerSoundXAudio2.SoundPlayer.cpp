@@ -35,10 +35,11 @@ SoundPlayer::~SoundPlayer()
 	{
 		return nullptr;
 	}
-	SoundData* soundData = (SoundData*)parameter.Data;
-	if (soundData)
+
+	if (parameter.Data != nullptr)
 	{
-		SoundVoice* voice = m_sound->GetVoice(soundData->channels);
+		SoundData* soundDataImpl = (SoundData*)parameter.Data.Get();
+		SoundVoice* voice = m_sound->GetVoice(soundDataImpl->GetChannels());
 		if (voice)
 		{
 			voice->Play(tag, parameter);

@@ -41,17 +41,19 @@ SoundVoice::~SoundVoice()
 //----------------------------------------------------------------------------------
 void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer::InstanceParameter& parameter)
 {
+	SoundData* soundData = (SoundData*)parameter.Data.Get();
+
 	Stop();
 
-	m_data = (SoundData*)parameter.Data;
+	m_data = parameter.Data;
 
-	m_sound->GetDevice()->DuplicateSoundBuffer((IDirectSoundBuffer*)m_data->buffer, (IDirectSoundBuffer**)&m_dsbuf);
+	m_sound->GetDevice()->DuplicateSoundBuffer((IDirectSoundBuffer*)soundData->GetBuffer(), (IDirectSoundBuffer**)&m_dsbuf);
 
 	m_tag = tag;
 
 	m_dsbuf->SetVolume((LONG)(2000.0f * log10f(parameter.Volume)));
 
-	m_dsbuf->SetFrequency((DWORD)(m_data->sampleRate * powf(2.0f, parameter.Pitch)));
+	m_dsbuf->SetFrequency((DWORD)(soundData->GetSampleRate() * powf(2.0f, parameter.Pitch)));
 
 	if (parameter.Mode3D)
 	{
@@ -233,7 +235,7 @@ bool SoundVoiceContainer::CheckPlayingTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundVoiceContainer::StopData(SoundData* soundData)
+void SoundVoiceContainer::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	std::list<SoundVoice*>::iterator it;
 	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)

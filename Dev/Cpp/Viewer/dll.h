@@ -151,9 +151,9 @@ private:
 		virtual ~SoundLoader();
 
 	public:
-		void* Load(const char16_t* path);
+		::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
-		void Unload(void* data);
+		void Unload(::Effekseer::SoundDataRef& data) override;
 
 		std::u16string RootPath;
 	};

@@ -187,7 +187,7 @@ bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopData(SoundData* soundData)
+void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
 	{

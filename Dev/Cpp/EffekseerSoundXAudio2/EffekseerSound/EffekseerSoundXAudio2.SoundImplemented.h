@@ -80,7 +80,7 @@ public:
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
 
-	void StopData( SoundData* soundData );
+	void StopData( const ::Effekseer::SoundDataRef& soundData );
 
 	void Calculate3DSound(const ::Effekseer::Vector3D& position, 
 		float distance, int32_t input, int32_t output, float matrix[]);

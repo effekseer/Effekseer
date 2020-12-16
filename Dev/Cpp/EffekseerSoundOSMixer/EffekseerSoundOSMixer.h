@@ -46,28 +46,34 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-	
-/**
-	@brief	サウンドデータ
-*/
-//struct SoundData
-//{	
-//	/**
-//		@brief	チャンネル数。
-//	*/
-//	int32_t			channels;
-//	
-//	/**
-//		@brief	サンプリング周波数。
-//	*/
-//	int32_t			sampleRate;
-//
-//	/**
-//		@brief	OSMixerソースボイス用バッファ。
-//	*/
-//	OSMIXER_BUFFER	buffer;
-//};
+class SoundData : public ::Effekseer::SoundData
+{
+public:
+	const osm::Sound* GetOsmSound() const { return osmSound; }
 
+private:
+	friend class SoundLoader;
+
+	/**
+		@brief	チャンネル数。
+	*/
+	int32_t			channels;
+	
+	/**
+		@brief	サンプリング周波数。
+	*/
+	int32_t			sampleRate;
+
+	/**
+		@brief	OpenSoundMixerバッファ。
+	*/
+	osm::Sound*		osmSound;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+	
 /**
 	@brief	サウンドクラス
 */

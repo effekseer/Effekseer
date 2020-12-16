@@ -88,7 +88,7 @@ public:
 	HolderCollection<TextureRef> images;
 	HolderCollection<TextureRef> normalImages;
 	HolderCollection<TextureRef> distortionImages;
-	HolderCollection<void*> sounds;
+	HolderCollection<SoundDataRef> sounds;
 	HolderCollection<Model*> models;
 	HolderCollection<MaterialData*> materials;
 	HolderCollection<void*> curves;
@@ -129,7 +129,7 @@ protected:
 
 	int m_WaveCount = 0;
 	char16_t** m_WavePaths = nullptr;
-	void** m_pWaves = nullptr;
+	SoundDataRef* m_pWaves = nullptr;
 
 	CustomVector<Model*> models_;
 	CustomVector<char16_t*> modelPaths_;
@@ -264,7 +264,7 @@ public:
 
 	const char16_t* GetDistortionImagePath(int n) const override;
 
-	void* GetWave(int n) const override;
+	SoundDataRef GetWave(int n) const override;
 
 	int32_t GetWaveCount() const override;
 
@@ -296,7 +296,7 @@ public:
 
 	void SetTexture(int32_t index, TextureType type, TextureRef data) override;
 
-	void SetSound(int32_t index, void* data) override;
+	void SetSound(int32_t index, SoundDataRef data) override;
 
 	void SetModel(int32_t index, Model* data) override;
 
