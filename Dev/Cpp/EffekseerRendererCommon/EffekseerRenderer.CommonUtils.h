@@ -41,9 +41,9 @@ inline Effekseer::Color PackVector3DF(const Effekseer::SIMD::Vec3f& v)
 inline Effekseer::Vector3D UnpackVector3DF(const Effekseer::Color& v)
 {
 	Effekseer::Vector3D ret;
-	ret.X = (v.R / 255.0 * 2.0f - 1.0f);
-	ret.Y = (v.G / 255.0 * 2.0f - 1.0f);
-	ret.Z = (v.B / 255.0 * 2.0f - 1.0f);
+	ret.X = (static_cast<float>(v.R) / 255.0f * 2.0f - 1.0f);
+	ret.Y = (static_cast<float>(v.G) / 255.0f * 2.0f - 1.0f);
+	ret.Z = (static_cast<float>(v.B) / 255.0f * 2.0f - 1.0f);
 	return ret;
 }
 
