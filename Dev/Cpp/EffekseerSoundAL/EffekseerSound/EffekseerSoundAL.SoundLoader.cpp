@@ -167,7 +167,7 @@ SoundLoader::~SoundLoader()
 
 	ALenum format = (wavefmt.nChannels == 2) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 
-	auto soundData = ::Effekseer::MakePtrRef<SoundData>;
+	auto soundData = ::Effekseer::MakeRefPtr<SoundData>;
 	soundData->channels = wavefmt.nChannels;
 	soundData->sampleRate = wavefmt.nSamplesPerSec;
 	alGenBuffers(1, &soundData->buffer);

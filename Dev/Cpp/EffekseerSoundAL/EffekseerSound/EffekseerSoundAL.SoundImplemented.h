@@ -32,22 +32,22 @@ public:
 	SoundImplemented();
 	virtual ~SoundImplemented();
 
-	void Destroy();
+	void Destroy() override;
 
 	bool Initialize( int32_t numVoices );
 	
 	void SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up );
+		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) override;
 	
-	::Effekseer::SoundPlayerRef CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer() override;
 
-	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) override;
 	
-	void StopAllVoices();
+	void StopAllVoices() override;
 
-	void SetMute( bool mute );
+	void SetMute( bool mute ) override;
 
-	bool GetMute()			{return m_mute;}
+	bool GetMute() 			{return m_mute;}
 
 	SoundVoice* GetVoice();
 	
