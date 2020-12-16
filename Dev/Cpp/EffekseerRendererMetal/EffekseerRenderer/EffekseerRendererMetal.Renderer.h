@@ -14,11 +14,11 @@
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
 
