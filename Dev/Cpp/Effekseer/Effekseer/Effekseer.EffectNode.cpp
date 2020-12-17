@@ -887,6 +887,9 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	else
 	{
 		param.EnableFalloff = false;
+		param.FalloffParam.BeginColor.fill(1.0f);
+		param.FalloffParam.EndColor.fill(1.0f);
+		param.FalloffParam.Pow = 1.0f;
 	}
 
 	param.EmissiveScaling = RendererCommon.EmissiveScaling;

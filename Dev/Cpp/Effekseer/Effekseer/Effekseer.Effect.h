@@ -643,8 +643,8 @@ struct EffectBasicRenderParameter
 	struct
 	{
 		int32_t ColorBlendType;
-		float BeginColor[4];
-		float EndColor[4];
+		std::array<float, 4> BeginColor;
+		std::array<float, 4> EndColor;
 		float Pow = 1.0f;
 	} FalloffParam;
 
