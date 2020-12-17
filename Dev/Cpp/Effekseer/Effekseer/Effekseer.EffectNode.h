@@ -715,7 +715,7 @@ struct ParameterRendererCommon
 	int32_t BlendUVDistortionTextureIndex = -1;
 
 	//! material index in MaterialType::File
-	MaterialParameter Material;
+	MaterialRenderData MaterialRenderData;
 
 	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
 
@@ -956,7 +956,7 @@ struct ParameterRendererCommon
 			}
 			else
 			{
-				memcpy(&Material.MaterialIndex, pos, sizeof(int));
+				memcpy(&MaterialRenderData.MaterialIndex, pos, sizeof(int));
 				pos += sizeof(int);
 
 				int32_t textures = 0;
@@ -965,20 +965,20 @@ struct ParameterRendererCommon
 				memcpy(&textures, pos, sizeof(int));
 				pos += sizeof(int);
 
-				Material.MaterialTextures.resize(textures);
-				if (Material.MaterialTextures.size() > 0)
+				MaterialRenderData.MaterialTextures.resize(textures);
+				if (MaterialRenderData.MaterialTextures.size() > 0)
 				{
-					memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+					memcpy(MaterialRenderData.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
 				}
 				pos += (sizeof(MaterialTextureParameter) * textures);
 
 				memcpy(&uniforms, pos, sizeof(int));
 				pos += sizeof(int);
 
-				Material.MaterialUniforms.resize(uniforms);
-				if (Material.MaterialUniforms.size() > 0)
+				MaterialRenderData.MaterialUniforms.resize(uniforms);
+				if (MaterialRenderData.MaterialUniforms.size() > 0)
 				{
-					memcpy(Material.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+					memcpy(MaterialRenderData.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
 				}
 				pos += (sizeof(float) * 4 * uniforms);
 			}
@@ -1290,11 +1290,11 @@ struct ParameterRendererCommon
 
 		if (BasicParameter.MaterialType == RendererMaterialType::File)
 		{
-			BasicParameter.MaterialParameterPtr = &Material;
+			BasicParameter.MaterialRenderDataPtr = &MaterialRenderData;
 		}
 		else
 		{
-			BasicParameter.MaterialParameterPtr = nullptr;
+			BasicParameter.MaterialRenderDataPtr = nullptr;
 		}
 
 		if (BasicParameter.MaterialType != RendererMaterialType::Lighting)

@@ -1,9 +1,9 @@
-﻿#include "Effekseer.Material.h"
+﻿#include "Effekseer.MaterialFile.h"
 
 namespace Effekseer
 {
 
-bool Material::Load(const uint8_t* data, int32_t size)
+bool MaterialFile::Load(const uint8_t* data, int32_t size)
 {
 	int offset = 0;
 
@@ -175,127 +175,127 @@ bool Material::Load(const uint8_t* data, int32_t size)
 	return true;
 }
 
-ShadingModelType Material::GetShadingModel() const
+ShadingModelType MaterialFile::GetShadingModel() const
 {
 	return shadingModel_;
 }
 
-void Material::SetShadingModel(ShadingModelType shadingModel)
+void MaterialFile::SetShadingModel(ShadingModelType shadingModel)
 {
 	shadingModel_ = shadingModel;
 }
 
-bool Material::GetIsSimpleVertex() const
+bool MaterialFile::GetIsSimpleVertex() const
 {
 	return isSimpleVertex_;
 }
 
-void Material::SetIsSimpleVertex(bool isSimpleVertex)
+void MaterialFile::SetIsSimpleVertex(bool isSimpleVertex)
 {
 	isSimpleVertex_ = isSimpleVertex;
 }
 
-bool Material::GetHasRefraction() const
+bool MaterialFile::GetHasRefraction() const
 {
 	return hasRefraction_;
 }
 
-void Material::SetHasRefraction(bool hasRefraction)
+void MaterialFile::SetHasRefraction(bool hasRefraction)
 {
 	hasRefraction_ = hasRefraction;
 }
 
-const char* Material::GetGenericCode() const
+const char* MaterialFile::GetGenericCode() const
 {
 	return genericCode_.c_str();
 }
 
-void Material::SetGenericCode(const char* code)
+void MaterialFile::SetGenericCode(const char* code)
 {
 	genericCode_ = code;
 }
 
-uint64_t Material::GetGUID() const
+uint64_t MaterialFile::GetGUID() const
 {
 	return guid_;
 }
 
-void Material::SetGUID(uint64_t guid)
+void MaterialFile::SetGUID(uint64_t guid)
 {
 	guid_ = guid;
 }
 
-TextureWrapType Material::GetTextureWrap(int32_t index) const
+TextureWrapType MaterialFile::GetTextureWrap(int32_t index) const
 {
 	return textures_.at(index).Wrap;
 }
 
-void Material::SetTextureWrap(int32_t index, TextureWrapType value)
+void MaterialFile::SetTextureWrap(int32_t index, TextureWrapType value)
 {
 	textures_.at(index).Wrap = value;
 }
 
-int32_t Material::GetTextureIndex(int32_t index) const
+int32_t MaterialFile::GetTextureIndex(int32_t index) const
 {
 	return textures_.at(index).Index;
 }
 
-void Material::SetTextureIndex(int32_t index, int32_t value)
+void MaterialFile::SetTextureIndex(int32_t index, int32_t value)
 {
 	textures_.at(index).Index = value;
 }
 
-const char* Material::GetTextureName(int32_t index) const
+const char* MaterialFile::GetTextureName(int32_t index) const
 {
 	return textures_.at(index).Name.c_str();
 }
 
-void Material::SetTextureName(int32_t index, const char* name)
+void MaterialFile::SetTextureName(int32_t index, const char* name)
 {
 	textures_.at(index).Name = name;
 }
 
-int32_t Material::GetTextureCount() const
+int32_t MaterialFile::GetTextureCount() const
 {
 	return static_cast<int32_t>(textures_.size());
 }
 
-void Material::SetTextureCount(int32_t count)
+void MaterialFile::SetTextureCount(int32_t count)
 {
 	textures_.resize(count);
 }
 
-int32_t Material::GetUniformIndex(int32_t index) const
+int32_t MaterialFile::GetUniformIndex(int32_t index) const
 {
 	return uniforms_.at(index).Index;
 }
 
-void Material::SetUniformIndex(int32_t index, int32_t value)
+void MaterialFile::SetUniformIndex(int32_t index, int32_t value)
 {
 	uniforms_.at(index).Index = value;
 }
 
-const char* Material::GetUniformName(int32_t index) const
+const char* MaterialFile::GetUniformName(int32_t index) const
 {
 	return uniforms_.at(index).Name.c_str();
 }
 
-void Material::SetUniformName(int32_t index, const char* name)
+void MaterialFile::SetUniformName(int32_t index, const char* name)
 {
 	uniforms_.at(index).Name = name;
 }
 
-int32_t Material::GetUniformCount() const
+int32_t MaterialFile::GetUniformCount() const
 {
 	return static_cast<int32_t>(uniforms_.size());
 }
 
-void Material::SetUniformCount(int32_t count)
+void MaterialFile::SetUniformCount(int32_t count)
 {
 	uniforms_.resize(count);
 }
 
-int32_t Material::GetCustomData1Count() const
+int32_t MaterialFile::GetCustomData1Count() const
 {
 	if (customData1Count_ == 0)
 		return 0;
@@ -304,12 +304,12 @@ int32_t Material::GetCustomData1Count() const
 	return std::max(customDataMinCount_, customData1Count_);
 }
 
-void Material::SetCustomData1Count(int32_t count)
+void MaterialFile::SetCustomData1Count(int32_t count)
 {
 	customData1Count_ = count;
 }
 
-int32_t Material::GetCustomData2Count() const
+int32_t MaterialFile::GetCustomData2Count() const
 {
 	if (customData2Count_ == 0)
 		return 0;
@@ -318,7 +318,7 @@ int32_t Material::GetCustomData2Count() const
 	return std::max(customDataMinCount_, customData2Count_);
 }
 
-void Material::SetCustomData2Count(int32_t count)
+void MaterialFile::SetCustomData2Count(int32_t count)
 {
 	customData2Count_ = count;
 }

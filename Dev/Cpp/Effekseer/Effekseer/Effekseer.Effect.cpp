@@ -159,7 +159,7 @@ void EffectFactory::SetModel(Effect* effect, int32_t index, ModelRef data)
 	effect_->models_[index] = data;
 }
 
-void EffectFactory::SetMaterial(Effect* effect, int32_t index, MaterialData* data)
+void EffectFactory::SetMaterial(Effect* effect, int32_t index, MaterialRef data)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
 	assert(0 <= index && index < effect_->materialCount_);
@@ -576,7 +576,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		if (materialCount_ > 0)
 		{
 			materialPaths_ = new char16_t*[materialCount_];
-			materials_ = new MaterialData*[materialCount_];
+			materials_ = new MaterialRef[materialCount_];
 
 			for (int i = 0; i < materialCount_; i++)
 			{
@@ -1196,7 +1196,7 @@ const char16_t* EffectImplemented::GetModelPath(int n) const
 	return modelPaths_[n];
 }
 
-MaterialData* EffectImplemented::GetMaterial(int n) const
+MaterialRef EffectImplemented::GetMaterial(int n) const
 {
 	if (n < 0 || n >= GetMaterialCount())
 	{
@@ -1320,7 +1320,7 @@ void EffectImplemented::SetModel(int32_t index, ModelRef data)
 	models_[index] = data;
 }
 
-void EffectImplemented::SetMaterial(int32_t index, MaterialData* data)
+void EffectImplemented::SetMaterial(int32_t index, MaterialRef data)
 {
 	auto materialLoader = GetSetting()->GetMaterialLoader();
 	assert(0 <= index && index < materialCount_);
@@ -1536,7 +1536,7 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const ch
 			char16_t fullPath[512];
 			PathCombine(fullPath, matPath, materialPaths_[ind]);
 
-			MaterialData* value = nullptr;
+			MaterialRef value = nullptr;
 			if (reloadingBackup->materials.Pop(fullPath, value))
 			{
 				materials_[ind] = value;

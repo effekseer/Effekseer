@@ -15,9 +15,9 @@ public:
 
 	virtual ~MaterialCompilerMetal() = default;
     
-    CompiledMaterialBinary* Compile(Material* material, int32_t maximumTextureCount);
+    CompiledMaterialBinary* Compile(MaterialFile* materialFile, int32_t maximumTextureCount);
 
-    CompiledMaterialBinary* Compile(Material* material) override;
+    CompiledMaterialBinary* Compile(MaterialFile* materialFile) override;
 
     int AddRef() override { return ReferenceObject::AddRef(); }
 

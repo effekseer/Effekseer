@@ -13,7 +13,7 @@
 namespace Effekseer
 {
 
-class Material
+class MaterialFile
 {
 private:
 	const int32_t customDataMinCount_ = 2;
@@ -49,8 +49,8 @@ private:
 	std::vector<Uniform> uniforms_;
 
 public:
-	Material() = default;
-	virtual ~Material() = default;
+	MaterialFile() = default;
+	virtual ~MaterialFile() = default;
 
 	virtual bool Load(const uint8_t* data, int32_t size);
 

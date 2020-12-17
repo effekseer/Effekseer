@@ -45,7 +45,7 @@ public:
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 		RendererMaterialType MaterialType = RendererMaterialType::Default;
-		MaterialParameter* MaterialParameterPtr = nullptr;
+		MaterialRenderData* MaterialRenderData = nullptr;
 
 		bool EnableViewOffset = false;
 

@@ -2,7 +2,7 @@
 #define __EFFEKSEER_MATERIAL_COMPILER_H__
 
 #include "../Effekseer.Base.h"
-#include "Effekseer.Material.h"
+#include "Effekseer.MaterialFile.h"
 #include <map>
 #include <stdint.h>
 #include <stdio.h>
@@ -47,7 +47,7 @@ public:
 	/**
 	 * @bbrief compile and store data into the cache
 	 */
-	virtual CompiledMaterialBinary* Compile(Material* material) = 0;
+	virtual CompiledMaterialBinary* Compile(MaterialFile* materialFile) = 0;
 };
 
 } // namespace Effekseer

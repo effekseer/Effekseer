@@ -436,8 +436,8 @@ protected:
 	template <typename RENDERER, typename SHADER, int InstanceCount>
 	void StoreFileUniform(RENDERER* renderer,
 						  SHADER* shader_,
-						  Effekseer::MaterialData* material,
-						  Effekseer::MaterialParameter* materialParam,
+						  Effekseer::MaterialRef material,
+						  Effekseer::MaterialRenderData* materialRenderData,
 						  const efkModelNodeParam& param,
 						  int32_t renderPassInd,
 						  float*& cutomData1Ptr,
@@ -491,9 +491,9 @@ protected:
 			vsOffset += (sizeof(float) * 4) * InstanceCount;
 		}
 
-		for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)
+		for (size_t i = 0; i < materialRenderData->MaterialUniforms.size(); i++)
 		{
-			renderer->SetVertexBufferToShader(materialParam->MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
+			renderer->SetVertexBufferToShader(materialRenderData->MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 		}
 
@@ -531,7 +531,7 @@ protected:
 		psOffset += (sizeof(float) * 4);
 
 		// shader model
-		material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
+		material = param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex);
 
 		if (material->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 		{
@@ -564,9 +564,9 @@ protected:
 			psOffset += (sizeof(float) * 16);
 		}
 
-		for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)
+		for (size_t i = 0; i < materialRenderData->MaterialUniforms.size(); i++)
 		{
-			renderer->SetPixelBufferToShader(materialParam->MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
+			renderer->SetPixelBufferToShader(materialRenderData->MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 		}
 	}
@@ -614,11 +614,11 @@ public:
 		customData2Sorted_.clear();
 
 		if (parameter.BasicParameterPtr->MaterialType == ::Effekseer::RendererMaterialType::File &&
-			parameter.BasicParameterPtr->MaterialParameterPtr != nullptr &&
-			parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0 &&
-			parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex) != nullptr)
+			parameter.BasicParameterPtr->MaterialRenderDataPtr != nullptr &&
+			parameter.BasicParameterPtr->MaterialRenderDataPtr->MaterialIndex >= 0 &&
+			parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialRenderDataPtr->MaterialIndex) != nullptr)
 		{
-			auto material = parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
+			auto material = parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialRenderDataPtr->MaterialIndex);
 			customData1Count_ = material->CustomData1;
 			customData2Count_ = material->CustomData2;
 		}
@@ -709,10 +709,10 @@ public:
 
 		int32_t renderPassCount = 1;
 
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
+		if (param.BasicParameterPtr->MaterialRenderDataPtr != nullptr && param.BasicParameterPtr->MaterialRenderDataPtr->MaterialIndex >= 0)
 		{
-			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
-			if (materialData != nullptr && materialData->IsRefractionRequired)
+			auto material = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialRenderDataPtr->MaterialIndex);
+			if (material != nullptr && material->IsRefractionRequired)
 			{
 				// refraction, standard
 				renderPassCount = 2;
@@ -724,10 +724,10 @@ public:
 
 		for (int32_t renderPassInd = 0; renderPassInd < renderPassCount; renderPassInd++)
 		{
-			Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
+			Effekseer::MaterialRenderData* materialRenderData = param.BasicParameterPtr->MaterialRenderDataPtr;
 
-			if (materialParam != nullptr && materialParam->MaterialIndex >= 0 &&
-				param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
+			if (materialRenderData != nullptr && materialRenderData->MaterialIndex >= 0 &&
+				param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex) != nullptr)
 			{
 				RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererMaterialVertexConstantBuffer<InstanceCount>, false>(
 					renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
@@ -817,16 +817,16 @@ public:
 		}
 
 		// select shader
-		Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
-		// materialParam = nullptr;
-		Effekseer::MaterialData* material = nullptr;
+		Effekseer::MaterialRenderData* materialRenderData = param.BasicParameterPtr->MaterialRenderDataPtr;
+		// materialRenderData = nullptr;
+		Effekseer::MaterialRef material = nullptr;
 		SHADER* shader_ = nullptr;
 		bool renderDistortedBackground = false;
 
-		if (materialParam != nullptr && materialParam->MaterialIndex >= 0 &&
-			param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
+		if (materialRenderData != nullptr && materialRenderData->MaterialIndex >= 0 &&
+			param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex) != nullptr)
 		{
-			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
+			material = param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex);
 
 			if (material != nullptr && material->IsRefractionRequired)
 			{
@@ -913,10 +913,10 @@ public:
 		float* cutomData1Ptr = nullptr;
 		float* cutomData2Ptr = nullptr;
 
-		if (materialParam != nullptr && material != nullptr)
+		if (materialRenderData != nullptr && material != nullptr)
 		{
 			StoreFileUniform<RENDERER, SHADER, InstanceCount>(
-				renderer, shader_, material, materialParam, param, renderPassInd, cutomData1Ptr, cutomData2Ptr);
+				renderer, shader_, material, materialRenderData, param, renderPassInd, cutomData1Ptr, cutomData2Ptr);
 		}
 		else
 		{

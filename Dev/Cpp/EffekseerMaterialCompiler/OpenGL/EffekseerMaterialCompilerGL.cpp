@@ -518,7 +518,7 @@ void ExportUniform(std::ostringstream& maincode, int32_t type, const char* name)
 
 void ExportTexture(std::ostringstream& maincode, const char* name) { maincode << "uniform sampler2D " << name << ";" << std::endl; }
 
-void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite)
+void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite)
 {
 	maincode << material_common_define;
 
@@ -526,7 +526,7 @@ void ExportHeader(std::ostringstream& maincode, Material* material, int stage, b
 	{
 		if (isSprite)
 		{
-			if (material->GetIsSimpleVertex())
+			if (materialFile->GetIsSimpleVertex())
 			{
 				maincode << g_material_sprite_vs_src_pre_simple;
 			}
@@ -547,13 +547,13 @@ void ExportHeader(std::ostringstream& maincode, Material* material, int stage, b
 }
 
 void ExportMain(
-	std::ostringstream& maincode, Material* material, int stage, bool isSprite, MaterialShaderType shaderType, const std::string& baseCode)
+	std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite, MaterialShaderType shaderType, const std::string& baseCode)
 {
 	if (stage == 0)
 	{
 		if (isSprite)
 		{
-			if (material->GetIsSimpleVertex())
+			if (materialFile->GetIsSimpleVertex())
 			{
 				maincode << g_material_sprite_vs_src_suf1_simple;
 			}
@@ -567,22 +567,22 @@ void ExportMain(
 			maincode << g_material_model_vs_src_suf1;
 		}
 
-		if (material->GetCustomData1Count() > 0)
+		if (materialFile->GetCustomData1Count() > 0)
 		{
 			if (isSprite)
 			{
-				maincode << GetType(material->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
+				maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
 			}
-			maincode << "v_CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
+			maincode << "v_CustomData1 = customData1" + GetElement(materialFile->GetCustomData1Count()) + ";\n";
 		}
 
-		if (material->GetCustomData2Count() > 0)
+		if (materialFile->GetCustomData2Count() > 0)
 		{
 			if (isSprite)
 			{
-				maincode << GetType(material->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
+				maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
 			}
-			maincode << "v_CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
+			maincode << "v_CustomData2 = customData2" + GetElement(materialFile->GetCustomData2Count()) + ";\n";
 		}
 
 		maincode << baseCode;
@@ -600,14 +600,14 @@ void ExportMain(
 	{
 		maincode << g_material_fs_src_suf1;
 
-		if (material->GetCustomData1Count() > 0)
+		if (materialFile->GetCustomData1Count() > 0)
 		{
-			maincode << GetType(material->GetCustomData1Count()) + " customData1 = v_CustomData1;\n";
+			maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = v_CustomData1;\n";
 		}
 
-		if (material->GetCustomData2Count() > 0)
+		if (materialFile->GetCustomData2Count() > 0)
 		{
-			maincode << GetType(material->GetCustomData2Count()) + " customData2 = v_CustomData2;\n";
+			maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = v_CustomData2;\n";
 		}
 
 		maincode << baseCode;
@@ -618,11 +618,11 @@ void ExportMain(
 		}
 		else
 		{
-			if (material->GetShadingModel() == Effekseer::ShadingModelType::Lit)
+			if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Lit)
 			{
 				maincode << g_material_fs_src_suf2_lit;
 			}
-			else if (material->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
+			else if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
 			{
 				maincode << g_material_fs_src_suf2_unlit;
 			}
@@ -630,11 +630,11 @@ void ExportMain(
 	}
 }
 
-ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount)
+ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderType, int32_t maximumTextureCount)
 {
 	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 	bool isRefrection =
-		material->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
+		materialFile->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
 
 	ShaderData shaderData;
 
@@ -642,14 +642,14 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 	{
 		std::ostringstream maincode;
 
-		ExportHeader(maincode, material, stage, isSprite);
+		ExportHeader(maincode, materialFile, stage, isSprite);
 
-		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
+		int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
 
 		for (size_t i = 0; i < actualTextureCount; i++)
 		{
-			auto textureIndex = material->GetTextureIndex(i);
-			auto textureName = material->GetTextureName(i);
+			auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = materialFile->GetTextureName(i);
 
 			ExportTexture(maincode, textureName);
 		}
@@ -659,7 +659,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			ExportTexture(maincode, "background");
 		}
 
-		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
+		if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
 			ExportUniform(maincode, 4, "lightDirection");
 			ExportUniform(maincode, 4, "lightColor");
@@ -667,7 +667,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 		}
-		else if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
+		else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
 		{
 		}
 
@@ -678,25 +678,25 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 		if (!isSprite && stage == 0)
 		{
-			if (material->GetCustomData1Count() > 0)
+			if (materialFile->GetCustomData1Count() > 0)
 			{
 				maincode << "uniform vec4 customData1;" << std::endl;
 			}
-			if (material->GetCustomData2Count() > 0)
+			if (materialFile->GetCustomData2Count() > 0)
 			{
 				maincode << "uniform vec4 customData2;" << std::endl;
 			}
 		}
 
-		for (int32_t i = 0; i < material->GetUniformCount(); i++)
+		for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
 		{
-			auto uniformIndex = material->GetUniformIndex(i);
-			auto uniformName = material->GetUniformName(i);
+			auto uniformIndex = materialFile->GetUniformIndex(i);
+			auto uniformName = materialFile->GetUniformName(i);
 
 			ExportUniform(maincode, 4, uniformName);
 		}
 
-		auto baseCode = std::string(material->GetGenericCode());
+		auto baseCode = std::string(materialFile->GetGenericCode());
 		baseCode = Replace(baseCode, "$F1$", "float");
 		baseCode = Replace(baseCode, "$F2$", "vec2");
 		baseCode = Replace(baseCode, "$F3$", "vec3");
@@ -708,8 +708,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		// replace textures
 		for (size_t i = 0; i < actualTextureCount; i++)
 		{
-			auto textureIndex = material->GetTextureIndex(i);
-			auto textureName = std::string(material->GetTextureName(i));
+			auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = std::string(materialFile->GetTextureName(i));
 
 			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
 			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
@@ -727,10 +727,10 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		}
 
 		// invalid texture
-		for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+		for (size_t i = actualTextureCount; i < materialFile->GetTextureCount(); i++)
 		{
-			auto textureIndex = material->GetTextureIndex(i);
-			auto textureName = std::string(material->GetTextureName(i));
+			auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = std::string(materialFile->GetTextureName(i));
 
 			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
 			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
@@ -739,7 +739,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
 		}
 
-		ExportMain(maincode, material, stage, isSprite, shaderType, baseCode);
+		ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode);
 
 		if (stage == 0)
 		{
@@ -752,30 +752,30 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 	}
 
 	// custom data
-	if (material->GetCustomData1Count() > 0)
+	if (materialFile->GetCustomData1Count() > 0)
 	{
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN1$", "IN " + GetType(material->GetCustomData1Count()) + " atCustomData1;");
+				Replace(shaderData.CodeVS, "//$C_IN1$", "IN " + GetType(materialFile->GetCustomData1Count()) + " atCustomData1;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT1$", "OUT mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+			Replace(shaderData.CodeVS, "//$C_OUT1$", "OUT mediump " + GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN1$", "IN mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+			Replace(shaderData.CodePS, "//$C_PIN1$", "IN mediump " + GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
 	}
 
-	if (material->GetCustomData2Count() > 0)
+	if (materialFile->GetCustomData2Count() > 0)
 	{
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + GetType(material->GetCustomData2Count()) + " atCustomData2;");
+				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + GetType(materialFile->GetCustomData2Count()) + " atCustomData2;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
 	}
 
 	return shaderData;
@@ -852,7 +852,7 @@ public:
 	}
 };
 
-CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryGL();
 
@@ -864,14 +864,14 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t 
 		return ret;
 	};
 
-	auto saveBinary = [&material, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, false, false, false, false, 0, false, InstanceCount);
+		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, false, false, false, false, 0, false, InstanceCount);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};
 
-	if (material->GetHasRefraction())
+	if (materialFile->GetHasRefraction())
 	{
 		saveBinary(MaterialShaderType::Refraction);
 		saveBinary(MaterialShaderType::RefractionModel);
@@ -883,9 +883,9 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t 
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material)
+CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile)
 {
-	return Compile(material, Effekseer::UserTextureSlotMax);
+	return Compile(materialFile, Effekseer::UserTextureSlotMax);
 }
 
 } // namespace Effekseer

@@ -90,7 +90,7 @@ public:
 	HolderCollection<TextureRef> distortionImages;
 	HolderCollection<SoundDataRef> sounds;
 	HolderCollection<ModelRef> models;
-	HolderCollection<MaterialData*> materials;
+	HolderCollection<MaterialRef> materials;
 	HolderCollection<void*> curves;
 };
 
@@ -139,7 +139,7 @@ protected:
 
 	int32_t materialCount_ = 0;
 	char16_t** materialPaths_ = nullptr;
-	MaterialData** materials_ = nullptr;
+	MaterialRef* materials_ = nullptr;
 
 	int32_t curveCount_ = 0;
 	char16_t** curvePaths_ = nullptr;
@@ -276,7 +276,7 @@ public:
 
 	const char16_t* GetModelPath(int n) const override;
 
-	MaterialData* GetMaterial(int n) const override;
+	MaterialRef GetMaterial(int n) const override;
 
 	int32_t GetMaterialCount() const override;
 
@@ -300,7 +300,7 @@ public:
 
 	void SetModel(int32_t index, ModelRef data) override;
 
-	void SetMaterial(int32_t index, MaterialData* data) override;
+	void SetMaterial(int32_t index, MaterialRef data) override;
 
 	void SetCurve(int32_t index, void* data) override;
 
