@@ -28,9 +28,6 @@ struct FixedShader
 	std::vector<LLGI::DataStructure> ModelLit_VS;
 	std::vector<LLGI::DataStructure> ModelDistortion_VS;
 
-	std::vector<LLGI::DataStructure> SpriteUnlit_PS;
-	std::vector<LLGI::DataStructure> SpriteLit_PS;
-	std::vector<LLGI::DataStructure> SpriteDistortion_PS;
 	std::vector<LLGI::DataStructure> ModelUnlit_PS;
 	std::vector<LLGI::DataStructure> ModelLit_PS;
 	std::vector<LLGI::DataStructure> ModelDistortion_PS;
@@ -42,9 +39,6 @@ struct FixedShader
 	std::vector<LLGI::DataStructure> AdvancedModelLit_VS;
 	std::vector<LLGI::DataStructure> AdvancedModelDistortion_VS;
 
-	std::vector<LLGI::DataStructure> AdvancedSpriteUnlit_PS;
-	std::vector<LLGI::DataStructure> AdvancedSpriteLit_PS;
-	std::vector<LLGI::DataStructure> AdvancedSpriteDistortion_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelUnlit_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelLit_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelDistortion_PS;

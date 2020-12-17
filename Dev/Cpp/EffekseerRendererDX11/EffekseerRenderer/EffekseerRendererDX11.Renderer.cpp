@@ -39,7 +39,7 @@ static
 namespace Standard_PS_Ad
 {
 static
-#include "ShaderHeader/ad_sprite_unlit_ps.h"
+#include "ShaderHeader/ad_model_unlit_ps.h"
 } // namespace Standard_PS_Ad
 
 namespace Standard_Distortion_VS_Ad
@@ -63,7 +63,7 @@ static
 namespace Standard_Lighting_PS_Ad
 {
 static
-#include "ShaderHeader/ad_sprite_lit_ps.h"
+#include "ShaderHeader/ad_model_lit_ps.h"
 } // namespace Standard_Lighting_PS_Ad
 
 namespace Standard_VS
@@ -75,7 +75,7 @@ static
 namespace Standard_PS
 {
 static
-#include "ShaderHeader/sprite_unlit_ps.h"
+#include "ShaderHeader/model_unlit_ps.h"
 } // namespace Standard_PS
 
 namespace Standard_Distortion_VS
@@ -99,7 +99,7 @@ static
 namespace Standard_Lighting_PS
 {
 static
-#include "ShaderHeader/sprite_lit_ps.h"
+#include "ShaderHeader/model_lit_ps.h"
 } // namespace Standard_Lighting_PS
 
 //-----------------------------------------------------------------------------------

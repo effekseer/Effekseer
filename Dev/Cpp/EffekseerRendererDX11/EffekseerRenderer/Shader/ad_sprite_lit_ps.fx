@@ -1,1 +1,0 @@
-#include "ad_model_lit_ps.fx"
