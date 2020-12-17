@@ -10,35 +10,17 @@ static
 #include "ShaderHeader/ad_sprite_unlit_vs.h"
 } // namespace Sprite_Unlit_VS
 
-namespace Sprite_Unlit_PS_Ad
-{
-static
-#include "ShaderHeader/ad_sprite_unlit_ps.h"
-} // namespace Sprite_Unlit_PS
-
 namespace Sprite_Distortion_VS_Ad
 {
 static
 #include "ShaderHeader/ad_sprite_distortion_vs.h"
 } // namespace Sprite_Distortion_VS
 
-namespace Sprite_Distortion_PS_Ad
-{
-static
-#include "ShaderHeader/ad_model_distortion_ps.h"
-} // namespace Sprite_Distortion_PS
-
 namespace Sprite_Lit_VS_Ad
 {
 static
 #include "ShaderHeader/ad_sprite_lit_vs.h"
 } // namespace Sprite_Lit_VS
-
-namespace Sprite_Lit_PS_Ad
-{
-static
-#include "ShaderHeader/ad_sprite_lit_ps.h"
-} // namespace Sprite_Lit_PS
 
 namespace Model_Unlit_VS_Ad
 {
@@ -82,35 +64,17 @@ static
 #include "ShaderHeader/sprite_unlit_vs.h"
 } // namespace Sprite_Unlit_VS
 
-namespace Sprite_Unlit_PS
-{
-static
-#include "ShaderHeader/sprite_unlit_ps.h"
-} // namespace Sprite_Unlit_PS
-
 namespace Sprite_Distortion_VS
 {
 static
 #include "ShaderHeader/sprite_distortion_vs.h"
 } // namespace Sprite_Distortion_VS
 
-namespace Sprite_Distortion_PS
-{
-static
-#include "ShaderHeader/model_distortion_ps.h"
-} // namespace Sprite_Distortion_PS
-
 namespace Sprite_Lit_VS
 {
 static
 #include "ShaderHeader/sprite_lit_vs.h"
 } // namespace Sprite_Lit_VS
-
-namespace Sprite_Lit_PS
-{
-static
-#include "ShaderHeader/sprite_lit_ps.h"
-} // namespace Sprite_Lit_PS
 
 namespace Model_Unlit_VS
 {
@@ -183,11 +147,8 @@ namespace EffekseerRendererDX12
 	};
 
 	allocate_(renderer->fixedShader_.AdvancedSpriteUnlit_VS, Sprite_Unlit_VS_Ad::g_main, sizeof(Sprite_Unlit_VS_Ad::g_main));
-	allocate_(renderer->fixedShader_.AdvancedSpriteUnlit_PS, Sprite_Unlit_PS_Ad::g_main, sizeof(Sprite_Unlit_PS_Ad::g_main));
 	allocate_(renderer->fixedShader_.AdvancedSpriteDistortion_VS, Sprite_Distortion_VS_Ad::g_main, sizeof(Sprite_Distortion_VS_Ad::g_main));
-	allocate_(renderer->fixedShader_.AdvancedSpriteDistortion_PS, Sprite_Distortion_PS_Ad::g_main, sizeof(Sprite_Distortion_PS_Ad::g_main));
 	allocate_(renderer->fixedShader_.AdvancedSpriteLit_VS, Sprite_Lit_VS_Ad::g_main, sizeof(Sprite_Lit_VS_Ad::g_main));
-	allocate_(renderer->fixedShader_.AdvancedSpriteLit_PS, Sprite_Lit_PS_Ad::g_main, sizeof(Sprite_Lit_PS_Ad::g_main));
 
 	allocate_(renderer->fixedShader_.AdvancedModelUnlit_VS, Model_Unlit_VS_Ad::g_main, sizeof(Model_Unlit_VS_Ad::g_main));
 	allocate_(renderer->fixedShader_.AdvancedModelUnlit_PS, Model_Unlit_PS_Ad::g_main, sizeof(Model_Unlit_PS_Ad::g_main));
@@ -197,13 +158,8 @@ namespace EffekseerRendererDX12
 	allocate_(renderer->fixedShader_.AdvancedModelLit_PS, Model_Lit_PS_Ad::g_main, sizeof(Model_Lit_PS_Ad::g_main));
 
 	allocate_(renderer->fixedShader_.SpriteUnlit_VS, Sprite_Unlit_VS::g_main, sizeof(Sprite_Unlit_VS::g_main));
-	allocate_(renderer->fixedShader_.SpriteUnlit_PS, Sprite_Unlit_PS::g_main, sizeof(Sprite_Unlit_PS::g_main));
-
 	allocate_(renderer->fixedShader_.SpriteDistortion_VS, Sprite_Distortion_VS::g_main, sizeof(Sprite_Distortion_VS::g_main));
-	allocate_(renderer->fixedShader_.SpriteDistortion_PS, Sprite_Distortion_PS::g_main, sizeof(Sprite_Distortion_PS::g_main));
-
 	allocate_(renderer->fixedShader_.SpriteLit_VS, Sprite_Lit_VS::g_main, sizeof(Sprite_Lit_VS::g_main));
-	allocate_(renderer->fixedShader_.SpriteLit_PS, Sprite_Lit_PS::g_main, sizeof(Sprite_Lit_PS::g_main));
 
 	allocate_(renderer->fixedShader_.ModelUnlit_VS, Model_Unlit_VS::g_main, sizeof(Model_Unlit_VS::g_main));
 	allocate_(renderer->fixedShader_.ModelUnlit_PS, Model_Unlit_PS::g_main, sizeof(Model_Unlit_PS::g_main));
