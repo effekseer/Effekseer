@@ -715,7 +715,7 @@ struct ParameterRendererCommon
 	int32_t BlendUVDistortionTextureIndex = -1;
 
 	//! material index in MaterialType::File
-	MaterialRenderData MaterialRenderData;
+	MaterialRenderData MaterialData;
 
 	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
 
@@ -956,7 +956,7 @@ struct ParameterRendererCommon
 			}
 			else
 			{
-				memcpy(&MaterialRenderData.MaterialIndex, pos, sizeof(int));
+				memcpy(&MaterialData.MaterialIndex, pos, sizeof(int));
 				pos += sizeof(int);
 
 				int32_t textures = 0;
@@ -965,20 +965,20 @@ struct ParameterRendererCommon
 				memcpy(&textures, pos, sizeof(int));
 				pos += sizeof(int);
 
-				MaterialRenderData.MaterialTextures.resize(textures);
-				if (MaterialRenderData.MaterialTextures.size() > 0)
+				MaterialData.MaterialTextures.resize(textures);
+				if (MaterialData.MaterialTextures.size() > 0)
 				{
-					memcpy(MaterialRenderData.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+					memcpy(MaterialData.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
 				}
 				pos += (sizeof(MaterialTextureParameter) * textures);
 
 				memcpy(&uniforms, pos, sizeof(int));
 				pos += sizeof(int);
 
-				MaterialRenderData.MaterialUniforms.resize(uniforms);
-				if (MaterialRenderData.MaterialUniforms.size() > 0)
+				MaterialData.MaterialUniforms.resize(uniforms);
+				if (MaterialData.MaterialUniforms.size() > 0)
 				{
-					memcpy(MaterialRenderData.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+					memcpy(MaterialData.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
 				}
 				pos += (sizeof(float) * 4 * uniforms);
 			}
@@ -1290,7 +1290,7 @@ struct ParameterRendererCommon
 
 		if (BasicParameter.MaterialType == RendererMaterialType::File)
 		{
-			BasicParameter.MaterialRenderDataPtr = &MaterialRenderData;
+			BasicParameter.MaterialRenderDataPtr = &MaterialData;
 		}
 		else
 		{
