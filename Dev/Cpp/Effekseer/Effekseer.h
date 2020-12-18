@@ -87,6 +87,7 @@ class Model;
 struct ProcedualModelParameter;
 class ProcedualModelGenerator;
 class Curve;
+class Material;
 
 typedef int Handle;
 
@@ -809,6 +810,8 @@ using EffectRef = RefPtr<Effect>;
 using TextureRef = RefPtr<Texture>;
 using SoundDataRef = RefPtr<SoundData>;
 using ModelRef = RefPtr<Model>;
+using MaterialRef = RefPtr<Material>;
+using CurveRef = RefPtr<Curve>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;
@@ -970,7 +973,6 @@ public:
 	Material() = default;
 	virtual ~Material() = default;
 };
-using MaterialRef = RefPtr<Material>;
 
 /**
 	@brief	\~english	Textures used by material
@@ -2333,7 +2335,7 @@ public:
 	\~English set curve data into specified index
 	\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
-	void SetCurve(Effect* effect, int32_t index, void* data);
+	void SetCurve(Effect* effect, int32_t index, CurveRef data);
 
 	/**
 	@brief
@@ -2606,7 +2608,7 @@ public:
 	@brief	\~English	Get a curve's pointer
 	\~Japanese	格納されているカーブのポインタを取得する。
 	*/
-	virtual void* GetCurve(int n) const = 0;
+	virtual CurveRef GetCurve(int n) const = 0;
 
 	/**
 	@brief	\~English	Get the number of stored curve pointer
@@ -2672,7 +2674,7 @@ public:
 		\~English set curve data into specified index
 		\~Japanese	指定されたインデックスにカーブを設定する。
 	*/
-	virtual void SetCurve(int32_t index, void* data) = 0;
+	virtual void SetCurve(int32_t index, CurveRef data) = 0;
 
 	/**
 		@brief

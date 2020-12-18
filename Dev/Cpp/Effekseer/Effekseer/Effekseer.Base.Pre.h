@@ -87,6 +87,7 @@ class Model;
 struct ProcedualModelParameter;
 class ProcedualModelGenerator;
 class Curve;
+class Material;
 
 typedef int Handle;
 
@@ -809,6 +810,8 @@ using EffectRef = RefPtr<Effect>;
 using TextureRef = RefPtr<Texture>;
 using SoundDataRef = RefPtr<SoundData>;
 using ModelRef = RefPtr<Model>;
+using MaterialRef = RefPtr<Material>;
+using CurveRef = RefPtr<Curve>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;
@@ -970,7 +973,6 @@ public:
 	Material() = default;
 	virtual ~Material() = default;
 };
-using MaterialRef = RefPtr<Material>;
 
 /**
 	@brief	\~english	Textures used by material

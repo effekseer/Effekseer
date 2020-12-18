@@ -91,7 +91,7 @@ public:
 	HolderCollection<SoundDataRef> sounds;
 	HolderCollection<ModelRef> models;
 	HolderCollection<MaterialRef> materials;
-	HolderCollection<void*> curves;
+	HolderCollection<CurveRef> curves;
 };
 
 /**
@@ -115,38 +115,32 @@ protected:
 
 	int m_version;
 
-	int m_ImageCount;
-	char16_t** m_ImagePaths;
-	TextureRef* m_pImages;
+	CustomVector<std::unique_ptr<char16_t[]>> m_ImagePaths;
+	CustomVector<TextureRef> m_pImages;
 
-	int m_normalImageCount;
-	char16_t** m_normalImagePaths;
-	TextureRef* m_normalImages;
+	CustomVector<std::unique_ptr<char16_t[]>> m_normalImagePaths;
+	CustomVector<TextureRef> m_normalImages;
 
-	int m_distortionImageCount;
-	char16_t** m_distortionImagePaths;
-	TextureRef* m_distortionImages;
+	CustomVector<std::unique_ptr<char16_t[]>> m_distortionImagePaths;
+	CustomVector<TextureRef> m_distortionImages;
 
-	int m_WaveCount = 0;
-	char16_t** m_WavePaths = nullptr;
-	SoundDataRef* m_pWaves = nullptr;
+	CustomVector<std::unique_ptr<char16_t[]>> m_WavePaths;
+	CustomVector<SoundDataRef> m_pWaves;
 
+	CustomVector<std::unique_ptr<char16_t[]>> modelPaths_;
 	CustomVector<ModelRef> models_;
-	CustomVector<char16_t*> modelPaths_;
 
 	CustomVector<ModelRef> procedualModels_;
 	CustomVector<ProcedualModelParameter> procedualModelParameters_;
 
-	int32_t materialCount_ = 0;
-	char16_t** materialPaths_ = nullptr;
-	MaterialRef* materials_ = nullptr;
+	CustomVector<std::unique_ptr<char16_t[]>> materialPaths_;
+	CustomVector<MaterialRef> materials_;
 
-	int32_t curveCount_ = 0;
-	char16_t** curvePaths_ = nullptr;
-	void** curves_ = nullptr;
+	CustomVector<std::unique_ptr<char16_t[]>> curvePaths_;
+	CustomVector<CurveRef> curves_;
 
 	std::u16string name_;
-	std::basic_string<char16_t> m_materialPath;
+	std::u16string materialPath_;
 
 	//! dynamic inputs
 	std::array<float, 4> defaultDynamicInputs;
@@ -282,7 +276,7 @@ public:
 
 	const char16_t* GetMaterialPath(int n) const override;
 
-	void* GetCurve(int n) const override;
+	CurveRef GetCurve(int n) const override;
 
 	int32_t GetCurveCount() const override;
 
@@ -302,7 +296,7 @@ public:
 
 	void SetMaterial(int32_t index, MaterialRef data) override;
 
-	void SetCurve(int32_t index, void* data) override;
+	void SetCurve(int32_t index, CurveRef data) override;
 
 	bool Reload(ManagerRef* managers,
 				int32_t managersCount,

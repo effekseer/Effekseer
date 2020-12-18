@@ -48,7 +48,7 @@ public:
 	カーブを読み込む。
 	::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load(const char16_t* path)
+	virtual Effekseer::CurveRef Load(const char16_t* path)
 	{
 		::Effekseer::DefaultFileInterface fileInterface;
 		std::unique_ptr<::Effekseer::FileReader>reader(fileInterface.OpenRead(path));
@@ -57,7 +57,7 @@ public:
 			return nullptr;
 		}
 
-		Effekseer::Curve* curve = new Effekseer::Curve();
+		auto curve = Effekseer::MakeRefPtr<Effekseer::Curve>();
 
 		// load converter version
 		int converter_version = 0;
@@ -109,7 +109,7 @@ public:
 			curve->mLength += len;
 		}
 
-		return static_cast<void*>(curve);
+		return curve;
 	}
 
 	/**
@@ -119,13 +119,8 @@ public:
 	カーブを破棄する。
 	::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload(void* data)
+	virtual void Unload(CurveRef data)
 	{
-		if (data != nullptr)
-		{
-			Curve* curve = (Curve*)data;
-			ES_SAFE_DELETE(curve);
-		}
 	}
 };
 

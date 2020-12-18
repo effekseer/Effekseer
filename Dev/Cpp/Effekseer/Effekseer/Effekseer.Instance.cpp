@@ -444,7 +444,7 @@ void Instance::FirstUpdate()
 
 		if (NurbsCurveParam.Index != -1)
 		{
-			Curve* curve = static_cast<Curve*>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
+			CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
 			float moveSpeed = NurbsCurveParam.MoveSpeed;
 			int32_t loopType = NurbsCurveParam.LoopType;
 
@@ -1308,7 +1308,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 
 			if (NurbsCurveParam.Index != -1)
 			{
-				Curve* curve = static_cast<Curve*>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
+				CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
 				float moveSpeed = NurbsCurveParam.MoveSpeed;
 				int32_t loopType = NurbsCurveParam.LoopType;
 

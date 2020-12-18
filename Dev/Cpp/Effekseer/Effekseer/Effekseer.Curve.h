@@ -34,7 +34,7 @@ public:
 \~English	Curve class
 \~Japanese	カーブクラス
 */
-class Curve
+class Curve : public ReferenceObject
 {
 	friend class CurveLoader;
 public:
@@ -96,7 +96,7 @@ public:
 	{
 	}
 
-	Curve(void* data, int32_t size)
+	Curve(const void* data, int32_t size)
 	{
 		uint8_t* pData = new uint8_t[size];
 		memcpy(pData, data, size);
