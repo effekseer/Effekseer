@@ -873,7 +873,7 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, int32_t maximumTextureCount)
 {
 	// to use options
 	auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerVulkan());
@@ -942,6 +942,9 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material)
+{
+	return Compile(material, Effekseer::UserTextureSlotMax);
+}
 
 } // namespace Effekseer

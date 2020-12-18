@@ -1310,7 +1310,7 @@ struct EmmisiveParameter
 
 struct EdgeParameter
 {
-	float EdgeColor[4];
+	std::array<float, 4> EdgeColor;
 
 	union {
 		float Buffer[4];
@@ -1336,8 +1336,8 @@ struct FalloffParameter
 		};
 	};
 
-	float BeginColor[4];
-	float EndColor[4];
+	std::array<float,4> BeginColor;
+	std::array<float,4> EndColor;
 };
 
 struct PixelConstantBuffer

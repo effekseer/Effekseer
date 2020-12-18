@@ -704,7 +704,7 @@ public:
 
 			pcb.EmmisiveParam.EmissiveScaling = m_state.EmissiveScaling;
 
-			ColorToFloat4(Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]), pcb.EdgeParam.EdgeColor);
+			pcb.EdgeParam.EdgeColor =Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]).ToFloat4();
 			pcb.EdgeParam.Threshold = m_state.EdgeThreshold;
 			pcb.EdgeParam.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
@@ -781,7 +781,7 @@ public:
 
 				pcb.EmmisiveParam.EmissiveScaling = m_state.EmissiveScaling;
 
-				ColorToFloat4(Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]), pcb.EdgeParam.EdgeColor);
+				pcb.EdgeParam.EdgeColor = Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]).ToFloat4();
 				pcb.EdgeParam.Threshold = m_state.EdgeThreshold;
 				pcb.EdgeParam.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
