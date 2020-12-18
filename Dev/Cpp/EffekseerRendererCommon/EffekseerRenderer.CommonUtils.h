@@ -1086,11 +1086,11 @@ struct ShaderParameterCollector
 			// color/distortion
 			if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 			{
-				TexturePtr = effect->GetDistortionImage(param->Texture1Index);
+				TexturePtr = effect->GetDistortionImage(param->TextureIndexes[0]);
 			}
 			else
 			{
-				TexturePtr = effect->GetColorImage(param->Texture1Index);
+				TexturePtr = effect->GetColorImage(param->TextureIndexes[0]);
 			}
 
 			if (TexturePtr == nullptr && renderer != nullptr)
@@ -1099,8 +1099,8 @@ struct ShaderParameterCollector
 			}
 
 			Textures[0] = TexturePtr;
-			TextureFilterTypes[0] = param->TextureFilter1;
-			TextureWrapTypes[0] = param->TextureWrap1;
+			TextureFilterTypes[0] = param->TextureFilters[0];
+			TextureWrapTypes[0] = param->TextureWraps[0];
 
 			// normal/background
 			if (param->MaterialType != ::Effekseer::RendererMaterialType::Default)
@@ -1113,7 +1113,7 @@ struct ShaderParameterCollector
 				}
 				else if (param->MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 				{
-					NormalTexturePtr = effect->GetNormalImage(param->Texture2Index);
+					NormalTexturePtr = effect->GetNormalImage(param->TextureIndexes[1]);
 
 					if (NormalTexturePtr == nullptr && renderer != nullptr)
 					{
@@ -1130,8 +1130,8 @@ struct ShaderParameterCollector
 				}
 				else
 				{
-					TextureFilterTypes[1] = param->TextureFilter2;
-					TextureWrapTypes[1] = param->TextureWrap2;
+					TextureFilterTypes[1] = param->TextureFilters[1];
+					TextureWrapTypes[1] = param->TextureWraps[1];
 				}
 			}
 
@@ -1139,11 +1139,11 @@ struct ShaderParameterCollector
 			{
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					AlphaTexturePtr = effect->GetDistortionImage(param->Texture3Index);
+					AlphaTexturePtr = effect->GetDistortionImage(param->TextureIndexes[2]);
 				}
 				else
 				{
-					AlphaTexturePtr = effect->GetColorImage(param->Texture3Index);
+					AlphaTexturePtr = effect->GetColorImage(param->TextureIndexes[2]);
 				}
 
 				if (AlphaTexturePtr == nullptr && renderer != nullptr)
@@ -1153,11 +1153,11 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					UVDistortionTexturePtr = effect->GetDistortionImage(param->Texture4Index);
+					UVDistortionTexturePtr = effect->GetDistortionImage(param->TextureIndexes[3]);
 				}
 				else
 				{
-					UVDistortionTexturePtr = effect->GetColorImage(param->Texture4Index);
+					UVDistortionTexturePtr = effect->GetColorImage(param->TextureIndexes[3]);
 				}
 
 				if (UVDistortionTexturePtr == nullptr && renderer != nullptr)
@@ -1167,11 +1167,11 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					BlendTexturePtr = effect->GetDistortionImage(param->Texture5Index);
+					BlendTexturePtr = effect->GetDistortionImage(param->TextureIndexes[4]);
 				}
 				else
 				{
-					BlendTexturePtr = effect->GetColorImage(param->Texture5Index);
+					BlendTexturePtr = effect->GetColorImage(param->TextureIndexes[4]);
 				}
 
 				if (BlendTexturePtr == nullptr && renderer != nullptr)
@@ -1181,11 +1181,11 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					BlendAlphaTexturePtr = effect->GetDistortionImage(param->Texture6Index);
+					BlendAlphaTexturePtr = effect->GetDistortionImage(param->TextureIndexes[5]);
 				}
 				else
 				{
-					BlendAlphaTexturePtr = effect->GetColorImage(param->Texture6Index);
+					BlendAlphaTexturePtr = effect->GetColorImage(param->TextureIndexes[5]);
 				}
 
 				if (BlendAlphaTexturePtr == nullptr && renderer != nullptr)
@@ -1195,11 +1195,11 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					BlendUVDistortionTexturePtr = effect->GetDistortionImage(param->Texture7Index);
+					BlendUVDistortionTexturePtr = effect->GetDistortionImage(param->TextureIndexes[6]);
 				}
 				else
 				{
-					BlendUVDistortionTexturePtr = effect->GetColorImage(param->Texture7Index);
+					BlendUVDistortionTexturePtr = effect->GetColorImage(param->TextureIndexes[6]);
 				}
 
 				if (BlendUVDistortionTexturePtr == nullptr && renderer != nullptr)
@@ -1215,24 +1215,24 @@ struct ShaderParameterCollector
 				}
 
 				Textures[offset + 0] = AlphaTexturePtr;
-				TextureFilterTypes[offset + 0] = param->TextureFilter3;
-				TextureWrapTypes[offset + 0] = param->TextureWrap3;
+				TextureFilterTypes[offset + 0] = param->TextureFilters[2];
+				TextureWrapTypes[offset + 0] = param->TextureWraps[2];
 
 				Textures[offset + 1] = UVDistortionTexturePtr;
-				TextureFilterTypes[offset + 1] = param->TextureFilter4;
-				TextureWrapTypes[offset + 1] = param->TextureWrap4;
+				TextureFilterTypes[offset + 1] = param->TextureFilters[3];
+				TextureWrapTypes[offset + 1] = param->TextureWraps[3];
 
 				Textures[offset + 2] = BlendTexturePtr;
-				TextureFilterTypes[offset + 2] = param->TextureFilter5;
-				TextureWrapTypes[offset + 2] = param->TextureWrap5;
+				TextureFilterTypes[offset + 2] = param->TextureFilters[4];
+				TextureWrapTypes[offset + 2] = param->TextureWraps[4];
 
 				Textures[offset + 3] = BlendAlphaTexturePtr;
-				TextureFilterTypes[offset + 3] = param->TextureFilter6;
-				TextureWrapTypes[offset + 3] = param->TextureWrap6;
+				TextureFilterTypes[offset + 3] = param->TextureFilters[5];
+				TextureWrapTypes[offset + 3] = param->TextureWraps[5];
 
 				Textures[offset + 4] = BlendUVDistortionTexturePtr;
-				TextureFilterTypes[offset + 4] = param->TextureFilter7;
-				TextureWrapTypes[offset + 4] = param->TextureWrap7;
+				TextureFilterTypes[offset + 4] = param->TextureFilters[6];
+				TextureWrapTypes[offset + 4] = param->TextureWraps[6];
 			}
 		}
 	}

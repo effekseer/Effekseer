@@ -119,7 +119,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 		memcpy(&SpriteTexture, pos, sizeof(int));
 		pos += sizeof(int);
 		RendererCommon.ColorTextureIndex = SpriteTexture;
-		RendererCommon.BasicParameter.Texture1Index = SpriteTexture;
+		RendererCommon.BasicParameter.TextureIndexes[0] = SpriteTexture;
 	}
 
 	// 右手系左手系変換
