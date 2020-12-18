@@ -15,9 +15,9 @@ public:
 
 	virtual ~MaterialCompilerVulkan() = default;
 
-	CompiledMaterialBinary* Compile(Material* material, int32_t maximumTextureCount);
+	CompiledMaterialBinary* Compile(MaterialFile* material, int32_t maximumTextureCount);
 
-	CompiledMaterialBinary* Compile(Material* material) override;
+	CompiledMaterialBinary* Compile(MaterialFile* material) override;
 
 	int AddRef() override { return ReferenceObject::AddRef(); }
 
