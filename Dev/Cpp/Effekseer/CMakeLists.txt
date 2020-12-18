@@ -59,7 +59,7 @@ set(effekseer_src
     Effekseer/Culling/Culling3D.ReferenceObject.cpp
     Effekseer/Culling/Culling3D.Vector3DF.cpp
     Effekseer/Culling/Culling3D.WorldInternal.cpp
-    Effekseer/Material/Effekseer.Material.cpp
+    Effekseer/Material/Effekseer.MaterialFile.cpp
     Effekseer/Material/Effekseer.CompiledMaterial.cpp
     Effekseer/Material/Effekseer.MaterialCompiler.cpp
     Effekseer/IO/Effekseer.EfkEfcFactory.cpp

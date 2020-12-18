@@ -530,7 +530,7 @@ public:
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 		RendererMaterialType MaterialType = RendererMaterialType::Default;
-		MaterialParameter* MaterialParameterPtr = nullptr;
+		MaterialRenderData* MaterialRenderDataPtr = nullptr;
 
 		bool EnableViewOffset = false;
 
@@ -998,7 +998,7 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const char16_t* path)
+	virtual MaterialRef Load(const char16_t* path)
 	{
 		return nullptr;
 	}
@@ -1020,7 +1020,7 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType)
+	virtual MaterialRef Load(const void* data, int32_t size, MaterialFileType fileType)
 	{
 		return nullptr;
 	}
@@ -1033,7 +1033,7 @@ public:
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual void Unload(MaterialData* data)
+	virtual void Unload(MaterialRef data)
 	{
 	}
 };

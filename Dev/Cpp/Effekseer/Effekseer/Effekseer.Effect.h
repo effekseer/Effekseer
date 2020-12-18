@@ -149,7 +149,7 @@ public:
 	\~English set material data into specified index
 	\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
-	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
+	void SetMaterial(Effect* effect, int32_t index, MaterialRef data);
 
 	/**
 	@brief
@@ -411,7 +411,7 @@ public:
 	@brief	\~English	Get a material's pointer
 	\~Japanese	格納されているマテリアルのポインタを取得する。
 	*/
-	virtual MaterialData* GetMaterial(int n) const = 0;
+	virtual MaterialRef GetMaterial(int n) const = 0;
 
 	/**
 	@brief	\~English	Get the number of stored material pointer
@@ -488,7 +488,7 @@ public:
 		\~English set material data into specified index
 		\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
-	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
+	virtual void SetMaterial(int32_t index, MaterialRef data) = 0;
 
 	/**
 		@brief

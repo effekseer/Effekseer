@@ -774,11 +774,11 @@ EffectNodeImplemented::~EffectNodeImplemented()
 
 void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2)
 {
-	if (this->RendererCommon.BasicParameter.MaterialParameterPtr != nullptr)
+	if (this->RendererCommon.BasicParameter.MaterialRenderDataPtr != nullptr)
 	{
-		if (this->RendererCommon.BasicParameter.MaterialParameterPtr->MaterialIndex >= 0)
+		if (this->RendererCommon.BasicParameter.MaterialRenderDataPtr->MaterialIndex >= 0)
 		{
-			auto material = m_effect->GetMaterial(this->RendererCommon.BasicParameter.MaterialParameterPtr->MaterialIndex);
+			auto material = m_effect->GetMaterial(this->RendererCommon.BasicParameter.MaterialRenderDataPtr->MaterialIndex);
 
 			if (material != nullptr)
 			{

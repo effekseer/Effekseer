@@ -89,8 +89,8 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 	auto srcData = load(srcPath);
 	auto dstData = load(dstPath);
 
-	Effekseer::Material material;
-	material.Load(srcData.data(), static_cast<int32_t>(srcData.size()));
+	Effekseer::MaterialFile materialFile;
+	materialFile.Load(srcData.data(), static_cast<int32_t>(srcData.size()));
 
 	Effekseer::CompiledMaterial cm;
 
@@ -99,7 +99,7 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		cm.Load(dstData.data(), static_cast<int32_t>(dstData.size()));
 	}
 
-	if (cm.GUID != material.GetGUID())
+	if (cm.GUID != materialFile.GetGUID())
 	{
 		cm = Effekseer::CompiledMaterial();
 	}
@@ -128,8 +128,8 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		std::vector<uint8_t> psRefractionModelBinary;
 
 		auto compile_and_store =
-			[&compiler, &material](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> void {
-			auto binary = compiler->Compile(&material);
+			[&compiler, &materialFile](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> void {
+			auto binary = compiler->Compile(&materialFile);
 
 			if (binary != nullptr)
 			{
@@ -163,7 +163,7 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		compiler->Release();
 	}
 
-	cm.Save(dstData, material.GetGUID(), srcData);
+	cm.Save(dstData, materialFile.GetGUID(), srcData);
 
 	std::ofstream file(dstPath, std::ios::out | std::ios::binary | std::ios::trunc);
 	if (file.bad())

@@ -211,7 +211,7 @@ static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
 static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
-static std::map<std::u16string, Effekseer::MaterialData*> g_materials_;
+static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
 static ::Effekseer::Vector3D g_focus_position;
 
@@ -374,7 +374,7 @@ Native::MaterialLoader::~MaterialLoader()
 {
 }
 
-Effekseer::MaterialData* Native::MaterialLoader::Load(const char16_t* path)
+Effekseer::MaterialRef Native::MaterialLoader::Load(const char16_t* path)
 {
 	if (loader_ == nullptr)
 	{
@@ -393,7 +393,7 @@ Effekseer::MaterialData* Native::MaterialLoader::Load(const char16_t* path)
 	else
 	{
 		std::shared_ptr<Effekseer::StaticFile> staticFile;
-		::Effekseer::MaterialData* t = nullptr;
+		::Effekseer::MaterialRef t = nullptr;
 
 		if (staticFile == nullptr)
 		{

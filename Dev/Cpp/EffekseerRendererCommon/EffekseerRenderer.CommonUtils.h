@@ -716,20 +716,20 @@ struct MaterialShaderParameterGenerator
 	int32_t VertexModelCustomData1Offset = -1;
 	int32_t VertexModelCustomData2Offset = -1;
 
-	MaterialShaderParameterGenerator(const ::Effekseer::Material& material, bool isModel, int32_t stage, int32_t instanceCount)
+	MaterialShaderParameterGenerator(const ::Effekseer::MaterialFile& materialFile, bool isModel, int32_t stage, int32_t instanceCount)
 	{
 		if (isModel)
 		{
 			VertexSize = sizeof(::Effekseer::Model::Vertex);
 		}
-		else if (material.GetIsSimpleVertex())
+		else if (materialFile.GetIsSimpleVertex())
 		{
 			VertexSize = sizeof(EffekseerRenderer::SimpleVertex);
 		}
 		else
 		{
 			VertexSize = sizeof(EffekseerRenderer::DynamicVertex) +
-						 sizeof(float) * (material.GetCustomData1Count() + material.GetCustomData2Count());
+						 sizeof(float) * (materialFile.GetCustomData1Count() + materialFile.GetCustomData2Count());
 		}
 
 		if (isModel)
@@ -756,20 +756,20 @@ struct MaterialShaderParameterGenerator
 			VertexCameraPositionOffset = vsOffset;
 			vsOffset += sizeof(float) * 4;
 
-			if (material.GetCustomData1Count() > 0)
+			if (materialFile.GetCustomData1Count() > 0)
 			{
 				VertexModelCustomData1Offset = vsOffset;
 				vsOffset += sizeof(float) * 4 * instanceCount;
 			}
 
-			if (material.GetCustomData2Count() > 0)
+			if (materialFile.GetCustomData2Count() > 0)
 			{
 				VertexModelCustomData2Offset = vsOffset;
 				vsOffset += sizeof(float) * 4 * instanceCount;
 			}
 
 			VertexUserUniformOffset = vsOffset;
-			vsOffset += sizeof(float) * 4 * material.GetUniformCount();
+			vsOffset += sizeof(float) * 4 * materialFile.GetUniformCount();
 
 			VertexShaderUniformBufferSize = vsOffset;
 		}
@@ -792,7 +792,7 @@ struct MaterialShaderParameterGenerator
 			vsOffset += sizeof(float) * 4;
 
 			VertexUserUniformOffset = vsOffset;
-			vsOffset += sizeof(float) * 4 * material.GetUniformCount();
+			vsOffset += sizeof(float) * 4 * materialFile.GetUniformCount();
 
 			VertexShaderUniformBufferSize = vsOffset;
 		}
@@ -814,7 +814,7 @@ struct MaterialShaderParameterGenerator
 		PixelReconstructionParam2Offset = psOffset;
 		psOffset += sizeof(float) * 4;
 
-		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
+		if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
 		{
 			PixelLightDirectionOffset = psOffset;
 			psOffset += sizeof(float) * 4;
@@ -826,14 +826,14 @@ struct MaterialShaderParameterGenerator
 			psOffset += sizeof(float) * 4;
 		}
 
-		if (material.GetHasRefraction() && stage == 1)
+		if (materialFile.GetHasRefraction() && stage == 1)
 		{
 			PixelCameraMatrixOffset = psOffset;
 			psOffset += sizeof(Effekseer::SIMD::Mat44f);
 		}
 
 		PixelUserUniformOffset = psOffset;
-		psOffset += sizeof(float) * 4 * material.GetUniformCount();
+		psOffset += sizeof(float) * 4 * materialFile.GetUniformCount();
 
 		PixelShaderUniformBufferSize = psOffset;
 	}
@@ -854,8 +854,8 @@ struct ShaderParameterCollector
 {
 	RendererShaderType ShaderType{};
 
-	Effekseer::MaterialParameter* MaterialParam = nullptr;
-	Effekseer::MaterialData* MaterialDataPtr = nullptr;
+	Effekseer::MaterialRenderData* MaterialRenderDataPtr = nullptr;
+	Effekseer::MaterialRef MaterialDataPtr = nullptr;
 
 	int32_t TextureCount = 0;
 	std::array<::Effekseer::TextureRef, Effekseer::TextureSlotMax> Textures;
@@ -880,7 +880,7 @@ struct ShaderParameterCollector
 		if (ShaderType != state.ShaderType)
 			return true;
 
-		if (MaterialParam != state.MaterialParam)
+		if (MaterialRenderDataPtr != state.MaterialRenderDataPtr)
 			return true;
 
 		if (MaterialDataPtr != state.MaterialDataPtr)
@@ -937,10 +937,10 @@ struct ShaderParameterCollector
 
 		if (param->MaterialType == ::Effekseer::RendererMaterialType::File)
 		{
-			MaterialParam = param->MaterialParameterPtr;
-			if (MaterialParam != nullptr)
+			MaterialRenderDataPtr = param->MaterialRenderDataPtr;
+			if (MaterialRenderDataPtr != nullptr)
 			{
-				MaterialDataPtr = effect->GetMaterial(param->MaterialParameterPtr->MaterialIndex);
+				MaterialDataPtr = effect->GetMaterial(param->MaterialRenderDataPtr->MaterialIndex);
 
 				if (MaterialDataPtr != nullptr && !MaterialDataPtr->IsSimpleVertex)
 				{
@@ -951,16 +951,16 @@ struct ShaderParameterCollector
 				else
 				{
 					ShaderType = RendererShaderType::Unlit;
-					MaterialParam = nullptr;
+					MaterialRenderDataPtr = nullptr;
 					MaterialDataPtr = nullptr;
 				}
 
 				// Validate parameters
-				if (MaterialDataPtr != nullptr && (MaterialDataPtr->TextureCount != MaterialParam->MaterialTextures.size() ||
-												   MaterialDataPtr->UniformCount != MaterialParam->MaterialUniforms.size()))
+				if (MaterialDataPtr != nullptr && (MaterialDataPtr->TextureCount != MaterialRenderDataPtr->MaterialTextures.size() ||
+												   MaterialDataPtr->UniformCount != MaterialRenderDataPtr->MaterialUniforms.size()))
 				{
 					ShaderType = RendererShaderType::Unlit;
-					MaterialParam = nullptr;
+					MaterialRenderDataPtr = nullptr;
 					MaterialDataPtr = nullptr;
 				}
 			}
@@ -996,16 +996,16 @@ struct ShaderParameterCollector
 			assert(0);
 		}
 
-		if (MaterialParam != nullptr && MaterialDataPtr != nullptr)
+		if (MaterialRenderDataPtr != nullptr && MaterialDataPtr != nullptr)
 		{
-			TextureCount = static_cast<int32_t>(Effekseer::Min(MaterialParam->MaterialTextures.size(), ::Effekseer::UserTextureSlotMax));
+			TextureCount = static_cast<int32_t>(Effekseer::Min(MaterialRenderDataPtr->MaterialTextures.size(), ::Effekseer::UserTextureSlotMax));
 			for (size_t i = 0; i < TextureCount; i++)
 			{
-				if (MaterialParam->MaterialTextures[i].Type == 1)
+				if (MaterialRenderDataPtr->MaterialTextures[i].Type == 1)
 				{
-					if (MaterialParam->MaterialTextures[i].Index >= 0)
+					if (MaterialRenderDataPtr->MaterialTextures[i].Index >= 0)
 					{
-						Textures[i] = effect->GetNormalImage(MaterialParam->MaterialTextures[i].Index);
+						Textures[i] = effect->GetNormalImage(MaterialRenderDataPtr->MaterialTextures[i].Index);
 					}
 					else
 					{
@@ -1014,9 +1014,9 @@ struct ShaderParameterCollector
 				}
 				else
 				{
-					if (MaterialParam->MaterialTextures[i].Index >= 0)
+					if (MaterialRenderDataPtr->MaterialTextures[i].Index >= 0)
 					{
-						Textures[i] = effect->GetColorImage(MaterialParam->MaterialTextures[i].Index);
+						Textures[i] = effect->GetColorImage(MaterialRenderDataPtr->MaterialTextures[i].Index);
 					}
 					else
 					{

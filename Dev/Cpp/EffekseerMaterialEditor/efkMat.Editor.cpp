@@ -14,7 +14,7 @@
 #include <efkMat.StringContainer.h>
 #include <efkMat.TextExporter.h>
 
-#include "../Effekseer/Effekseer/Material/Effekseer.Material.h"
+#include "../Effekseer/Effekseer/Material/Effekseer.MaterialFile.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
 
@@ -32,7 +32,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	EffekseerMaterial::TextExporter exporter;
 	auto result = (&exporter)->Export(material, node);
 
-	auto efkMaterial = Effekseer::Material();
+	auto efkMaterial = Effekseer::MaterialFile();
 	efkMaterial.SetGenericCode(result.Code.c_str());
 	efkMaterial.SetIsSimpleVertex(false);
 	efkMaterial.SetHasRefraction(result.HasRefraction);

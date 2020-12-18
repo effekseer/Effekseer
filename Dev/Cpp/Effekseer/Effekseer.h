@@ -951,7 +951,7 @@ enum class RendererMaterialType : int32_t
 	@brief	\~english	Material data
 			\~japanese	マテリアルデータ
 */
-class MaterialData
+class Material : public ReferenceObject
 {
 public:
 	ShadingModelType ShadingModel = ShadingModelType::Lit;
@@ -967,9 +967,10 @@ public:
 	void* RefractionUserPtr = nullptr;
 	void* RefractionModelUserPtr = nullptr;
 
-	MaterialData() = default;
-	virtual ~MaterialData() = default;
+	Material() = default;
+	virtual ~Material() = default;
 };
+using MaterialRef = RefPtr<Material>;
 
 /**
 	@brief	\~english	Textures used by material
@@ -986,7 +987,7 @@ struct MaterialTextureParameter
 	@brief	\~english	Material parameter for shaders
 			\~japanese	シェーダー向けマテリアルパラメーター
 */
-struct MaterialParameter
+struct MaterialRenderData
 {
 	//! material index in MaterialType::File
 	int32_t MaterialIndex = -1;
@@ -1028,7 +1029,7 @@ struct NodeRendererBasicParameter
 	int32_t Texture7Index = -1;
 
 	float DistortionIntensity = 0.0f;
-	MaterialParameter* MaterialParameterPtr = nullptr;
+	MaterialRenderData* MaterialRenderDataPtr = nullptr;
 	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
 
 	TextureFilterType TextureFilter1 = TextureFilterType::Nearest;
@@ -2325,7 +2326,7 @@ public:
 	\~English set material data into specified index
 	\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
-	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
+	void SetMaterial(Effect* effect, int32_t index, MaterialRef data);
 
 	/**
 	@brief
@@ -2587,7 +2588,7 @@ public:
 	@brief	\~English	Get a material's pointer
 	\~Japanese	格納されているマテリアルのポインタを取得する。
 	*/
-	virtual MaterialData* GetMaterial(int n) const = 0;
+	virtual MaterialRef GetMaterial(int n) const = 0;
 
 	/**
 	@brief	\~English	Get the number of stored material pointer
@@ -2664,7 +2665,7 @@ public:
 		\~English set material data into specified index
 		\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
-	virtual void SetMaterial(int32_t index, MaterialData* data) = 0;
+	virtual void SetMaterial(int32_t index, MaterialRef data) = 0;
 
 	/**
 		@brief

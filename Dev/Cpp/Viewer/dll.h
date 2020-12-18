@@ -186,7 +186,7 @@ private:
 		virtual ~MaterialLoader();
 
 	public:
-		Effekseer::MaterialData* Load(const char16_t* path) override;
+		Effekseer::MaterialRef Load(const char16_t* path) override;
 		std::u16string RootPath;
 
 		::Effekseer::MaterialLoaderRef GetOriginalLoader()

@@ -198,16 +198,16 @@ struct StandardRendererState
 		Collector = ShaderParameterCollector();
 		Collector.Collect(renderer, effect, basicParam, false, renderer->GetImpl()->isSoftParticleEnabled);
 
-		if (Collector.MaterialParam != nullptr && Collector.MaterialDataPtr != nullptr)
+		if (Collector.MaterialRenderDataPtr != nullptr && Collector.MaterialDataPtr != nullptr)
 		{
 			CustomData1Count = Collector.MaterialDataPtr->CustomData1;
 			CustomData2Count = Collector.MaterialDataPtr->CustomData2;
 
 			MaterialUniformCount =
-				static_cast<int32_t>(Effekseer::Min(Collector.MaterialParam->MaterialUniforms.size(), MaterialUniforms.size()));
+				static_cast<int32_t>(Effekseer::Min(Collector.MaterialRenderDataPtr->MaterialUniforms.size(), MaterialUniforms.size()));
 			for (size_t i = 0; i < MaterialUniformCount; i++)
 			{
-				MaterialUniforms[i] = Collector.MaterialParam->MaterialUniforms[i];
+				MaterialUniforms[i] = Collector.MaterialRenderDataPtr->MaterialUniforms[i];
 			}
 		}
 		else
