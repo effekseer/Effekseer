@@ -831,19 +831,19 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	EffectBasicRenderParameter param;
 	param.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
-	param.AlphaTexWrapType = RendererCommon.Wrap3Type;
+	param.AlphaTexWrapType = RendererCommon.WrapTypes[2];
 
 	param.UVDistortionIndex = RendererCommon.UVDistortionTextureIndex;
-	param.UVDistortionTexWrapType = RendererCommon.Wrap4Type;
+	param.UVDistortionTexWrapType = RendererCommon.WrapTypes[3];
 
 	param.BlendTextureIndex = RendererCommon.BlendTextureIndex;
-	param.BlendTexWrapType = RendererCommon.Wrap5Type;
+	param.BlendTexWrapType = RendererCommon.WrapTypes[4];
 
 	param.BlendAlphaTextureIndex = RendererCommon.BlendAlphaTextureIndex;
-	param.BlendAlphaTexWrapType = RendererCommon.Wrap6Type;
+	param.BlendAlphaTexWrapType = RendererCommon.WrapTypes[5];
 
 	param.BlendUVDistortionTextureIndex = RendererCommon.BlendUVDistortionTextureIndex;
-	param.BlendUVDistortionTexWrapType = RendererCommon.Wrap7Type;
+	param.BlendUVDistortionTexWrapType = RendererCommon.WrapTypes[6];
 
 	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
 	{
@@ -903,8 +903,8 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.AlphaBlend = RendererCommon.AlphaBlend;
 	param.Distortion = RendererCommon.Distortion;
 	param.DistortionIntensity = RendererCommon.DistortionIntensity;
-	param.FilterType = RendererCommon.FilterType;
-	param.WrapType = RendererCommon.WrapType;
+	param.FilterType = RendererCommon.FilterTypes[0];
+	param.WrapType = RendererCommon.WrapTypes[0];
 	param.ZTest = RendererCommon.ZTest;
 	param.ZWrite = RendererCommon.ZWrite;
 	return param;
@@ -914,13 +914,13 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 {
 	RendererCommon.ColorTextureIndex = param.ColorTextureIndex;
 	RendererCommon.AlphaTextureIndex = param.AlphaTextureIndex;
-	RendererCommon.Wrap3Type = param.AlphaTexWrapType;
+	RendererCommon.WrapTypes[2] = param.AlphaTexWrapType;
 
 	RendererCommon.UVDistortionTextureIndex = param.UVDistortionIndex;
-	RendererCommon.Wrap4Type = param.UVDistortionTexWrapType;
+	RendererCommon.WrapTypes[3] = param.UVDistortionTexWrapType;
 
 	RendererCommon.BlendTextureIndex = param.BlendTextureIndex;
-	RendererCommon.Wrap5Type = param.BlendTexWrapType;
+	RendererCommon.WrapTypes[4] = param.BlendTexWrapType;
 
 	if (param.FlipbookParams.Enable)
 	{
@@ -938,8 +938,8 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	RendererCommon.AlphaBlend = param.AlphaBlend;
 	RendererCommon.Distortion = param.Distortion;
 	RendererCommon.DistortionIntensity = param.DistortionIntensity;
-	RendererCommon.FilterType = param.FilterType;
-	RendererCommon.WrapType = param.WrapType;
+	RendererCommon.FilterTypes[0] = param.FilterType;
+	RendererCommon.WrapTypes[0] = param.WrapType;
 	RendererCommon.ZTest = param.ZTest;
 	RendererCommon.ZWrite = param.ZWrite;
 }

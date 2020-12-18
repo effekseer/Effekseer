@@ -719,37 +719,12 @@ struct ParameterRendererCommon
 
 	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
 
-	TextureFilterType FilterType = TextureFilterType::Nearest;
-
-	TextureWrapType WrapType = TextureWrapType::Repeat;
-
-	TextureFilterType Filter2Type = TextureFilterType::Nearest;
-
-	TextureWrapType Wrap2Type = TextureWrapType::Repeat;
-
-	TextureFilterType Filter3Type = TextureFilterType::Nearest;
-
-	TextureWrapType Wrap3Type = TextureWrapType::Repeat;
-
-	TextureFilterType Filter4Type = TextureFilterType::Nearest;
-
-	TextureWrapType Wrap4Type = TextureWrapType::Repeat;
-
-	TextureFilterType Filter5Type = TextureFilterType::Nearest;
-
-	TextureWrapType Wrap5Type = TextureWrapType::Repeat;
-
-	TextureFilterType Filter6Type = TextureFilterType::Nearest;
-
-	TextureWrapType Wrap6Type = TextureWrapType::Repeat;
+	std::array<TextureFilterType, TextureSlotMax> FilterTypes;
+	std::array<TextureWrapType, TextureSlotMax> WrapTypes;
 
 	float UVDistortionIntensity = 1.0f;
 
 	int32_t TextureBlendType = -1;
-
-	TextureFilterType Filter7Type = TextureFilterType::Nearest;
-
-	TextureWrapType Wrap7Type = TextureWrapType::Repeat;
 
 	float BlendUVDistortionIntensity = 1.0f;
 
@@ -882,6 +857,9 @@ struct ParameterRendererCommon
 		{
 			UVTypes[i] = UV_DEFAULT;
 		}
+
+		FilterTypes.fill(TextureFilterType::Nearest);
+		WrapTypes.fill(TextureWrapType::Repeat);
 	}
 
 	~ParameterRendererCommon()
@@ -992,74 +970,44 @@ struct ParameterRendererCommon
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 
-		memcpy(&FilterType, pos, sizeof(int));
+		memcpy(&FilterTypes[0], pos, sizeof(int));
 		pos += sizeof(int);
 
-		memcpy(&WrapType, pos, sizeof(int));
+		memcpy(&WrapTypes[0], pos, sizeof(int));
 		pos += sizeof(int);
 
 		if (version >= 15)
 		{
-			memcpy(&Filter2Type, pos, sizeof(int));
+			memcpy(&FilterTypes[1], pos, sizeof(int));
 			pos += sizeof(int);
 
-			memcpy(&Wrap2Type, pos, sizeof(int));
+			memcpy(&WrapTypes[1], pos, sizeof(int));
 			pos += sizeof(int);
 		}
 		else
 		{
-			Filter2Type = FilterType;
-			Wrap2Type = WrapType;
+			FilterTypes[1] = FilterTypes[0];
+			WrapTypes[1] = WrapTypes[0];
 		}
 
 		if (version >= 1600)
 		{
-			memcpy(&Filter3Type, pos, sizeof(int));
-			pos += sizeof(int);
+			for (size_t i = 2; i < 7; i++)
+			{
+				memcpy(&FilterTypes[i], pos, sizeof(int));
+				pos += sizeof(int);
 
-			memcpy(&Wrap3Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Filter4Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Wrap4Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Filter5Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Wrap5Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Filter6Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Wrap6Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Filter7Type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			memcpy(&Wrap7Type, pos, sizeof(int));
-			pos += sizeof(int);
+				memcpy(&WrapTypes[i], pos, sizeof(int));
+				pos += sizeof(int);
+			}
 		}
 		else
 		{
-			Filter3Type = FilterType;
-			Wrap3Type = WrapType;
-
-			Filter4Type = FilterType;
-			Wrap4Type = WrapType;
-
-			Filter5Type = FilterType;
-			Wrap5Type = WrapType;
-
-			Filter6Type = FilterType;
-			Wrap6Type = WrapType;
-
-			Filter7Type = FilterType;
-			Wrap7Type = WrapType;
+			for (size_t i = 2; i < 7; i++)
+			{
+				FilterTypes[i] = FilterTypes[0];
+				WrapTypes[i] = WrapTypes[0];
+			}
 		}
 
 		if (version >= 5)
@@ -1240,32 +1188,18 @@ struct ParameterRendererCommon
 
 		// copy to basic parameter
 		BasicParameter.AlphaBlend = AlphaBlend;
-		BasicParameter.TextureFilter1 = FilterType;
-		BasicParameter.TextureFilter2 = Filter2Type;
-		BasicParameter.TextureFilter3 = Filter3Type;
-		BasicParameter.TextureFilter4 = Filter4Type;
-		BasicParameter.TextureFilter5 = Filter5Type;
-		BasicParameter.TextureFilter6 = Filter6Type;
-		BasicParameter.TextureFilter7 = Filter7Type;
-
-		BasicParameter.TextureWrap1 = WrapType;
-		BasicParameter.TextureWrap2 = Wrap2Type;
-
-		BasicParameter.TextureWrap3 = Wrap3Type;
-		BasicParameter.TextureWrap4 = Wrap4Type;
-		BasicParameter.TextureWrap5 = Wrap5Type;
-		BasicParameter.TextureWrap6 = Wrap6Type;
-		BasicParameter.TextureWrap7 = Wrap7Type;
-
+		BasicParameter.TextureFilters = FilterTypes;
+		BasicParameter.TextureWraps = WrapTypes;
+		
 		BasicParameter.DistortionIntensity = DistortionIntensity;
 		BasicParameter.MaterialType = MaterialType;
-		BasicParameter.Texture1Index = ColorTextureIndex;
-		BasicParameter.Texture2Index = Texture2Index;
-		BasicParameter.Texture3Index = AlphaTextureIndex;
-		BasicParameter.Texture4Index = UVDistortionTextureIndex;
-		BasicParameter.Texture5Index = BlendTextureIndex;
-		BasicParameter.Texture6Index = BlendAlphaTextureIndex;
-		BasicParameter.Texture7Index = BlendUVDistortionTextureIndex;
+		BasicParameter.TextureIndexes[0] = ColorTextureIndex;
+		BasicParameter.TextureIndexes[1] = Texture2Index;
+		BasicParameter.TextureIndexes[2] = AlphaTextureIndex;
+		BasicParameter.TextureIndexes[3] = UVDistortionTextureIndex;
+		BasicParameter.TextureIndexes[4] = BlendTextureIndex;
+		BasicParameter.TextureIndexes[5] = BlendAlphaTextureIndex;
+		BasicParameter.TextureIndexes[6] = BlendUVDistortionTextureIndex;
 
 		BasicParameter.UVDistortionIntensity = UVDistortionIntensity;
 
@@ -1299,8 +1233,8 @@ struct ParameterRendererCommon
 
 		if (BasicParameter.MaterialType != RendererMaterialType::Lighting)
 		{
-			BasicParameter.TextureFilter2 = TextureFilterType::Nearest;
-			BasicParameter.TextureWrap2 = TextureWrapType::Clamp;
+			BasicParameter.TextureFilters[1] = TextureFilterType::Nearest;
+			BasicParameter.TextureWraps[1] = TextureWrapType::Clamp;
 		}
 	}
 };
@@ -1560,7 +1494,7 @@ public:
 	ParameterAlphaCutoff AlphaCutoff;
 
 	bool EnableFalloff = false;
-	FalloffParameter FalloffParam {};
+	FalloffParameter FalloffParam{};
 
 	ParameterSoundType SoundType;
 	ParameterSound Sound;

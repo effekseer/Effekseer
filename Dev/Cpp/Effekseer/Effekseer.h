@@ -1022,36 +1022,15 @@ struct NodeRendererDepthParameter
 struct NodeRendererBasicParameter
 {
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
-	int32_t Texture1Index = -1;
-	int32_t Texture2Index = -1;
-	int32_t Texture3Index = -1;
-	int32_t Texture4Index = -1;
-	int32_t Texture5Index = -1;
-	int32_t Texture6Index = -1;
-	int32_t Texture7Index = -1;
+
+	std::array<int32_t, TextureSlotMax> TextureIndexes;
 
 	float DistortionIntensity = 0.0f;
 	MaterialRenderData* MaterialRenderDataPtr = nullptr;
 	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
 
-	TextureFilterType TextureFilter1 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap1 = TextureWrapType::Repeat;
-	TextureFilterType TextureFilter2 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap2 = TextureWrapType::Repeat;
-	TextureFilterType TextureFilter3 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap3 = TextureWrapType::Repeat;
-
-	TextureFilterType TextureFilter4 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap4 = TextureWrapType::Repeat;
-
-	TextureFilterType TextureFilter5 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap5 = TextureWrapType::Repeat;
-
-	TextureFilterType TextureFilter6 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap6 = TextureWrapType::Repeat;
-
-	TextureFilterType TextureFilter7 = TextureFilterType::Nearest;
-	TextureWrapType TextureWrap7 = TextureWrapType::Repeat;
+	std::array<TextureFilterType, TextureSlotMax> TextureFilters;
+	std::array<TextureWrapType, TextureSlotMax> TextureWraps;
 
 	float UVDistortionIntensity = 1.0f;
 
@@ -1076,26 +1055,26 @@ struct NodeRendererBasicParameter
 
 	float SoftParticleDistance = 0.0f;
 
+	NodeRendererBasicParameter()
+	{
+		TextureIndexes.fill(-1);
+		TextureFilters.fill(TextureFilterType::Nearest);
+		TextureWraps.fill(TextureWrapType::Repeat);
+	}
+
 	//! Whether are particles rendered with AdvancedRenderer
 	bool GetIsRenderedWithAdvancedRenderer() const
 	{
 		if (MaterialType == RendererMaterialType::File)
 			return false;
 
-		if (Texture3Index >= 0)
-			return true;
-
-		if (Texture4Index >= 0)
-			return true;
-
-		if (Texture5Index >= 0)
-			return true;
-
-		if (Texture6Index >= 0)
-			return true;
-
-		if (Texture7Index >= 0)
-			return true;
+		for (size_t i = 2; i < TextureIndexes.size(); i++)
+		{
+			if(TextureIndexes[i] >= 0)
+			{
+				return true;
+			}
+		}
 
 		if (EnableInterpolation)
 			return true;
