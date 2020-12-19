@@ -196,13 +196,13 @@ protected:
 
 public:
 
-	static EffectRef Create(const ManagerRef& pManager, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const ManagerRef& pManager, const void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	static EffectRef Create(const SettingRef& setting, void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const SettingRef& setting, const void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
-	EffectImplemented(const ManagerRef& pManager, void* pData, int size);
+	EffectImplemented(const ManagerRef& pManager, const void* pData, int size);
 
-	EffectImplemented(const SettingRef& setting, void* pData, int size);
+	EffectImplemented(const SettingRef& setting, const void* pData, int size);
 
 	virtual ~EffectImplemented();
 
@@ -210,7 +210,7 @@ public:
 
 	float GetMaginification() const override;
 
-	bool Load(void* pData, int size, float mag, const char16_t* materialPath, ReloadingThreadType reloadingThreadType);
+	bool Load(const void* pData, int size, float mag, const char16_t* materialPath, ReloadingThreadType reloadingThreadType);
 
 	/**
 		@breif	何も読み込まれていない状態に戻す
@@ -300,7 +300,7 @@ public:
 
 	bool Reload(ManagerRef* managers,
 				int32_t managersCount,
-				void* data,
+				const void* data,
 				int32_t size,
 				const char16_t* materialPath,
 				ReloadingThreadType reloadingThreadType) override;

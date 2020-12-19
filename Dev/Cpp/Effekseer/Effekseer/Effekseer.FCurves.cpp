@@ -12,10 +12,10 @@ FCurve::FCurve(float defaultValue)
 {
 }
 
-int32_t FCurve::Load(void* data, int32_t version)
+int32_t FCurve::Load(const void* data, int32_t version)
 {
 	int32_t size = 0;
-	uint8_t* p = (uint8_t*)data;
+	const uint8_t* p = (const uint8_t*)data;
 
 	memcpy(&start_, p, sizeof(int32_t));
 	p += sizeof(int32_t);
@@ -162,10 +162,10 @@ void FCurve::Maginify(float value)
 	}
 }
 
-int32_t FCurveScalar::Load(void* data, int32_t version)
+int32_t FCurveScalar::Load(const void* data, int32_t version)
 {
 	int32_t size = 0;
-	uint8_t* p = (uint8_t*)data;
+	const uint8_t* p = (const uint8_t*)data;
 
 	if (version >= 1600)
 	{
@@ -191,10 +191,10 @@ float FCurveScalar::GetOffsets(IRandObject& g) const
 	return S.GetOffset(g);
 }
 
-int32_t FCurveVector2D::Load(void* data, int32_t version)
+int32_t FCurveVector2D::Load(const void* data, int32_t version)
 {
 	int32_t size = 0;
-	uint8_t* p = (uint8_t*)data;
+	const uint8_t* p = (const uint8_t*)data;
 
 	if (version >= 15)
 	{
@@ -228,10 +228,10 @@ SIMD::Vec2f FCurveVector2D::GetOffsets(IRandObject& g) const
 	return SIMD::Vec2f{x, y};
 }
 
-int32_t FCurveVector3D::Load(void* data, int32_t version)
+int32_t FCurveVector3D::Load(const void* data, int32_t version)
 {
 	int32_t size = 0;
-	uint8_t* p = (uint8_t*)data;
+	const uint8_t* p = (const uint8_t*)data;
 
 	if (version >= 15)
 	{
@@ -271,10 +271,10 @@ SIMD::Vec3f FCurveVector3D::GetOffsets(IRandObject& g) const
 	return {x, y, z};
 }
 
-int32_t FCurveVectorColor::Load(void* data, int32_t version)
+int32_t FCurveVectorColor::Load(const void* data, int32_t version)
 {
 	int32_t size = 0;
-	uint8_t* p = (uint8_t*)data;
+	const uint8_t* p = (const uint8_t*)data;
 
 	if (version >= 15)
 	{

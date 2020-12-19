@@ -41,7 +41,7 @@ private:
 
 public:
 	FCurve(float defaultValue);
-	int32_t Load(void* data, int32_t version);
+	int32_t Load(const void* data, int32_t version);
 
 	float GetValue(float living, float life, FCurveTimelineType type) const;
 
@@ -63,7 +63,7 @@ public:
 	FCurveTimelineType Timeline = FCurveTimelineType::Time;
 	FCurve S = FCurve(0);
 
-	int32_t Load(void* data, int32_t version);
+	int32_t Load(const void* data, int32_t version);
 
 	float GetValues(float living, float life) const;
 	float GetOffsets(IRandObject& g) const;
@@ -76,7 +76,7 @@ public:
 	FCurve X = FCurve(0);
 	FCurve Y = FCurve(0);
 
-	int32_t Load(void* data, int32_t version);
+	int32_t Load(const void* data, int32_t version);
 
 	SIMD::Vec2f GetValues(float living, float life) const;
 	SIMD::Vec2f GetOffsets(IRandObject& g) const;
@@ -90,7 +90,7 @@ public:
 	FCurve Y = FCurve(0);
 	FCurve Z = FCurve(0);
 
-	int32_t Load(void* data, int32_t version);
+	int32_t Load(const void* data, int32_t version);
 
 	SIMD::Vec3f GetValues(float living, float life) const;
 	SIMD::Vec3f GetOffsets(IRandObject& g) const;
@@ -105,7 +105,7 @@ public:
 	FCurve B = FCurve(255);
 	FCurve A = FCurve(255);
 
-	int32_t Load(void* data, int32_t version);
+	int32_t Load(const void* data, int32_t version);
 
 	std::array<float, 4> GetValues(float living, float life) const;
 	std::array<float, 4> GetOffsets(IRandObject& g) const;

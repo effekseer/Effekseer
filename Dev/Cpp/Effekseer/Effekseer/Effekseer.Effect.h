@@ -245,7 +245,7 @@ public:
 		@param	materialPath	[in]	素材ロード時の基準パス
 		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static EffectRef Create(const ManagerRef& manager, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const ManagerRef& manager, const void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -266,7 +266,7 @@ public:
 	@param	materialPath	[in]	素材ロード時の基準パス
 	@return	エフェクト。失敗した場合はnullptrを返す。
 */
-	static EffectRef Create(const SettingRef& setting, void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
+	static EffectRef Create(const SettingRef& setting, const void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -532,7 +532,7 @@ public:
 	*/
 	virtual bool Reload(ManagerRef* managers,
 						int32_t managersCount,
-						void* data,
+						const void* data,
 						int32_t size,
 						const char16_t* materialPath = nullptr,
 						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;

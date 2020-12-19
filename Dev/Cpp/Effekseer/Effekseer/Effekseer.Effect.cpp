@@ -397,7 +397,7 @@ EffectFactory::~EffectFactory()
 {
 }
 
-EffectRef Effect::Create(const ManagerRef& manager, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const ManagerRef& manager, const void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(manager, data, size, magnification, materialPath);
 }
@@ -766,7 +766,7 @@ void EffectImplemented::ResetReloadingBackup()
 	reloadingBackup.reset();
 }
 
-EffectRef EffectImplemented::Create(const ManagerRef& pManager, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(const ManagerRef& pManager, const void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
@@ -782,7 +782,7 @@ EffectRef EffectImplemented::Create(const ManagerRef& pManager, void* pData, int
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectRef Effect::Create(const SettingRef& setting, void* data, int32_t size, float magnification, const char16_t* materialPath)
+EffectRef Effect::Create(const SettingRef& setting, const void* data, int32_t size, float magnification, const char16_t* materialPath)
 {
 	return EffectImplemented::Create(setting, data, size, magnification, materialPath);
 }
@@ -824,7 +824,7 @@ EffectRef Effect::Create(const SettingRef& setting, const char16_t* path, float 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectRef EffectImplemented::Create(const SettingRef& setting, void* pData, int size, float magnification, const char16_t* materialPath)
+EffectRef EffectImplemented::Create(const SettingRef& setting, const void* pData, int size, float magnification, const char16_t* materialPath)
 {
 	if (pData == nullptr || size == 0)
 		return nullptr;
@@ -848,7 +848,7 @@ EffectRef EffectImplemented::Create(const SettingRef& setting, void* pData, int 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectImplemented::EffectImplemented(const ManagerRef& pManager, void* pData, int size)
+EffectImplemented::EffectImplemented(const ManagerRef& pManager, const void* pData, int size)
 	: m_setting(pManager->GetSetting())
 	, m_reference(1)
 	, m_version(0)
@@ -861,7 +861,7 @@ EffectImplemented::EffectImplemented(const ManagerRef& pManager, void* pData, in
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectImplemented::EffectImplemented(const SettingRef& setting, void* pData, int size)
+EffectImplemented::EffectImplemented(const SettingRef& setting, const void* pData, int size)
 	: m_setting(setting)
 	, m_reference(1)
 	, m_version(0)
@@ -898,7 +898,7 @@ float EffectImplemented::GetMaginification() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Load(void* pData, int size, float mag, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
+bool EffectImplemented::Load(const void* pData, int size, float mag, const char16_t* materialPath, ReloadingThreadType reloadingThreadType)
 {
 	factory.Reset();
 
@@ -1317,7 +1317,7 @@ void EffectImplemented::SetCurve(int32_t index, CurveRef data)
 
 bool EffectImplemented::Reload(ManagerRef* managers,
 							   int32_t managersCount,
-							   void* data,
+							   const void* data,
 							   int32_t size,
 							   const char16_t* materialPath,
 							   ReloadingThreadType reloadingThreadType)
