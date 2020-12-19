@@ -224,18 +224,18 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = _348;
-    float3 worldPos = Input.Pos;
     float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
     float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
     uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 cameraPos = mul(_255_mCamera, pos4);
+    cameraPos /= cameraPos.w.xxxx;
+    Output.PosVS = mul(_255_mProj, cameraPos);
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    float4 cameraPos = mul(_255_mCamera, float4(worldPos, 1.0f));
-    cameraPos /= cameraPos.w.xxxx;
-    Output.PosVS = mul(_255_mProj, cameraPos);
     Output.Color = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;

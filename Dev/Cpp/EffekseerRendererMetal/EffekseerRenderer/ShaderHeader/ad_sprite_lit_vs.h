@@ -201,18 +201,18 @@ static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
-    float3 worldPos = Input.Pos;
     float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
     float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
     float2 uv1 = Input.UV1;
     uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    float4 cameraPos = v_255.mCamera * pos4;
+    cameraPos /= float4(cameraPos.w);
+    Output.PosVS = v_255.mProj * cameraPos;
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    float4 cameraPos = v_255.mCamera * float4(worldPos, 1.0);
-    cameraPos /= float4(cameraPos.w);
-    Output.PosVS = v_255.mProj * cameraPos;
     Output.Color = Input.Color;
     Output.UV = uv1;
     VS_Input param = Input;

@@ -199,29 +199,30 @@ static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0) };
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
     float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
+    float2 uv1 = Input.UV1;
+    uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 cameraPos = v_255.mCamera * pos4;
     cameraPos /= float4(cameraPos.w);
     Output.PosVS = v_255.mProj * cameraPos;
-    Output.PosP = Output.PosVS;
     float4 localTangent = pos4;
     float4 localBinormal = pos4;
-    float3 _399 = localTangent.xyz + worldTangent;
-    localTangent = float4(_399.x, _399.y, _399.z, localTangent.w);
-    float3 _405 = localBinormal.xyz + worldBinormal;
-    localBinormal = float4(_405.x, _405.y, _405.z, localBinormal.w);
+    float3 _407 = localTangent.xyz + worldTangent;
+    localTangent = float4(_407.x, _407.y, _407.z, localTangent.w);
+    float3 _413 = localBinormal.xyz + worldBinormal;
+    localBinormal = float4(_413.x, _413.y, _413.z, localBinormal.w);
     Output.ProjTangent = v_255.mProj * (v_255.mCamera * localTangent);
     Output.ProjBinormal = v_255.mProj * (v_255.mCamera * localBinormal);
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
-    Output.UV.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * Input.UV1.y);
+    Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, v_255);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

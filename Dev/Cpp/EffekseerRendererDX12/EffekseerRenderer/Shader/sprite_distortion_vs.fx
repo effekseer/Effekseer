@@ -22,10 +22,10 @@ static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _60_mCamera : packoffset(c0);
-    column_major float4x4 _60_mProj : packoffset(c4);
-    float4 _60_mUVInversed : packoffset(c8);
-    float4 _60_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _68_mCamera : packoffset(c0);
+    column_major float4x4 _68_mProj : packoffset(c4);
+    float4 _68_mUVInversed : packoffset(c8);
+    float4 _68_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -65,24 +65,26 @@ struct SPIRV_Cross_Output
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = _21;
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
-    float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
+    float3 worldPos = Input.Pos;
+    float3 worldNormal = (float3(Input.Normal.xyz) - 0.5f.xxx) * 2.0f;
+    float3 worldTangent = (float3(Input.Tangent.xyz) - 0.5f.xxx) * 2.0f;
     float3 worldBinormal = cross(worldNormal, worldTangent);
-    float4 cameraPos = mul(_60_mCamera, pos4);
-    Output.PosVS = mul(_60_mProj, cameraPos);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 cameraPos = mul(_68_mCamera, pos4);
+    Output.PosVS = mul(_68_mProj, cameraPos);
     Output.PosP = Output.PosVS;
+    float2 uv1 = Input.UV1;
+    uv1.y = _68_mUVInversed.x + (_68_mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     float4 localTangent = pos4;
     float4 localBinormal = pos4;
-    float3 _82 = localTangent.xyz + worldTangent;
-    localTangent = float4(_82.x, _82.y, _82.z, localTangent.w);
-    float3 _88 = localBinormal.xyz + worldBinormal;
-    localBinormal = float4(_88.x, _88.y, _88.z, localBinormal.w);
-    Output.ProjTangent = mul(_60_mProj, mul(_60_mCamera, localTangent));
-    Output.ProjBinormal = mul(_60_mProj, mul(_60_mCamera, localBinormal));
+    float3 _106 = localTangent.xyz + worldTangent;
+    localTangent = float4(_106.x, _106.y, _106.z, localTangent.w);
+    float3 _112 = localBinormal.xyz + worldBinormal;
+    localBinormal = float4(_112.x, _112.y, _112.z, localBinormal.w);
+    Output.ProjTangent = mul(_68_mProj, mul(_68_mCamera, localTangent));
+    Output.ProjBinormal = mul(_68_mProj, mul(_68_mCamera, localBinormal));
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
-    Output.UV.y = _60_mUVInversed.x + (_60_mUVInversed.y * Input.UV1.y);
     return Output;
 }
 

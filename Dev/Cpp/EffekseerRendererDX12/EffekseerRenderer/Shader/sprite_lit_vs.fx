@@ -23,10 +23,10 @@ static const VS_Output _22 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _60_mCamera : packoffset(c0);
-    column_major float4x4 _60_mProj : packoffset(c4);
-    float4 _60_mUVInversed : packoffset(c8);
-    float4 _60_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _69_mCamera : packoffset(c0);
+    column_major float4x4 _69_mProj : packoffset(c4);
+    float4 _69_mUVInversed : packoffset(c8);
+    float4 _69_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -72,16 +72,17 @@ VS_Output _main(VS_Input Input)
     float3 worldNormal = (float3(Input.Normal.xyz) - 0.5f.xxx) * 2.0f;
     float3 worldTangent = (float3(Input.Tangent.xyz) - 0.5f.xxx) * 2.0f;
     float3 worldBinormal = cross(worldNormal, worldTangent);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 cameraPos = mul(_69_mCamera, pos4);
+    Output.PosVS = mul(_69_mProj, cameraPos);
+    Output.PosP = Output.PosVS;
     float2 uv1 = Input.UV1;
-    uv1.y = _60_mUVInversed.x + (_60_mUVInversed.y * uv1.y);
+    uv1.y = _69_mUVInversed.x + (_69_mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    float4 cameraPos = mul(_60_mCamera, float4(worldPos, 1.0f));
-    Output.PosVS = mul(_60_mProj, cameraPos);
     Output.Color = Input.Color;
-    Output.UV = uv1;
-    Output.PosP = Output.PosVS;
     return Output;
 }
 

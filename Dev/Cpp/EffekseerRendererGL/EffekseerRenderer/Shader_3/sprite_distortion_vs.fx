@@ -48,24 +48,26 @@ centroid out vec4 _VSPS_Color;
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
-    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
-    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
+    vec3 worldPos = Input.Pos;
+    vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
+    vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
     vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPos = pos4 * CBVS0.mCamera;
     Output.PosVS = cameraPos * CBVS0.mProj;
     Output.PosP = Output.PosVS;
+    vec2 uv1 = Input.UV1;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     vec4 localTangent = pos4;
     vec4 localBinormal = pos4;
-    vec3 _82 = localTangent.xyz + worldTangent;
-    localTangent = vec4(_82.x, _82.y, _82.z, localTangent.w);
-    vec3 _88 = localBinormal.xyz + worldBinormal;
-    localBinormal = vec4(_88.x, _88.y, _88.z, localBinormal.w);
+    vec3 _106 = localTangent.xyz + worldTangent;
+    localTangent = vec4(_106.x, _106.y, _106.z, localTangent.w);
+    vec3 _112 = localBinormal.xyz + worldBinormal;
+    localBinormal = vec4(_112.x, _112.y, _112.z, localBinormal.w);
     Output.ProjTangent = (localTangent * CBVS0.mCamera) * CBVS0.mProj;
     Output.ProjBinormal = (localBinormal * CBVS0.mCamera) * CBVS0.mProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
     return Output;
 }
 

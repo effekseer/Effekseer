@@ -54,16 +54,17 @@ VS_Output _main(VS_Input Input)
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
     vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 cameraPos = CBVS0.mCamera * pos4;
+    Output.PosVS = CBVS0.mProj * cameraPos;
+    Output.PosP = Output.PosVS;
     vec2 uv1 = Input.UV1;
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    vec4 cameraPos = CBVS0.mCamera * vec4(worldPos, 1.0);
-    Output.PosVS = CBVS0.mProj * cameraPos;
     Output.Color = Input.Color;
-    Output.UV = uv1;
-    Output.PosP = Output.PosVS;
     return Output;
 }
 

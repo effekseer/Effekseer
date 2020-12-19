@@ -223,29 +223,30 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = _348;
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
     float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
     float3 worldBinormal = cross(worldNormal, worldTangent);
+    float2 uv1 = Input.UV1;
+    uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 cameraPos = mul(_255_mCamera, pos4);
     cameraPos /= cameraPos.w.xxxx;
     Output.PosVS = mul(_255_mProj, cameraPos);
-    Output.PosP = Output.PosVS;
     float4 localTangent = pos4;
     float4 localBinormal = pos4;
-    float3 _399 = localTangent.xyz + worldTangent;
-    localTangent = float4(_399.x, _399.y, _399.z, localTangent.w);
-    float3 _405 = localBinormal.xyz + worldBinormal;
-    localBinormal = float4(_405.x, _405.y, _405.z, localBinormal.w);
+    float3 _407 = localTangent.xyz + worldTangent;
+    localTangent = float4(_407.x, _407.y, _407.z, localTangent.w);
+    float3 _413 = localBinormal.xyz + worldBinormal;
+    localBinormal = float4(_413.x, _413.y, _413.z, localBinormal.w);
     Output.ProjTangent = mul(_255_mProj, mul(_255_mCamera, localTangent));
     Output.ProjBinormal = mul(_255_mProj, mul(_255_mCamera, localBinormal));
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
-    Output.UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * Input.UV1.y);
+    Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
