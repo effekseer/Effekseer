@@ -34,7 +34,7 @@ ConstValue2_Name,V2,V2
 Alpha_Name,Alpha,アルファ
 Name_Name,Name,名称
 Input_Name,V,V
-Output_Name," "," "
+Output_Name, , 
 Comment_Name,Comment,コメント
 Priority_Name,Priority,優先度
 Priority_Desc,"The lower the priority, the higher the screen is shown in other editors.",低い優先度ほど、他のエディタの画面の上の位置に表示されます。
@@ -251,7 +251,16 @@ PolarCoords_Node_Desc,"Outputs UVs located on the radiation from the center.
 You can specify how many images are arranged in one round and the rotation angle.","中央から放射上に配置されたUVを出力します。
 一周で画像が何枚配置されるか、や回転の角度を設定できます。"
 ,,
-ConvertParam_Name,Convert to parameter,"パラメーターに変換 "
+Depth_Name,Depth,深度
+,,
+DepthFade_Name,DepthFade,フェード(深度)
+DepthFade_Desc,"Output a smaller value as it gets closer to the background object.
+Output 1 if the distance is farther than FadeDistance, 0 if the distance is 0.","背景のオブジェクトに近づくにしたがって小さな値を出力します。
+FadeDistanceより距離が離れていれば1、距離が0で0を出力します。"
+,,
+ConvertParam_Name,Convert to parameter,パラメーターに変換 
+,,
+,,
 ,,
 Error_SameNode,Error_SameNode,×　同じノードには接続できません。
 Error_SamePin,Error_SamePin,×　同じピンには接続できません。
