@@ -85,11 +85,11 @@ VS_Output main(const VS_Input Input)
 	float4 localPosition = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
 
 #ifdef DISABLE_INSTANCE
-	float4 cameraPosition = mul(mModel, localPosition);
+	localPosition = mul(mModel, localPosition);
 #else
-	float4 cameraPosition = mul(matModel, localPosition);
+	localPosition = mul(matModel, localPosition);
 #endif
-	Output.PosVS = mul(mCameraProj, cameraPosition);
+	Output.PosVS = mul(mCameraProj, localPosition);
 	Output.Color = modelColor;
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
