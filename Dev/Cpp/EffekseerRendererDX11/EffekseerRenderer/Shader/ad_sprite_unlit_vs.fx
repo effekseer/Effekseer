@@ -8,7 +8,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 	float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 };
 
-#ifdef ENABLE_LIGHTING
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 
 struct VS_Input
 {
@@ -42,6 +42,29 @@ struct VS_Input
 
 #endif
 
+#if defined(ENABLE_DISTORTION)
+
+struct VS_Output
+{
+	float4 PosVS : SV_POSITION;
+	linear centroid float2 UV : TEXCOORD0;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
+	linear centroid float4 Color : COLOR0;
+
+	float4 Alpha_Dist_UV : TEXCOORD4;
+	float4 Blend_Alpha_Dist_UV : TEXCOORD5;
+
+	// BlendUV, FlipbookNextIndexUV
+	float4 Blend_FBNextIndex_UV : TEXCOORD6;
+
+	// x - FlipbookRate, y - AlphaThreshold
+	float2 Others : TEXCOORD7;
+};
+
+#else
+
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
@@ -67,36 +90,51 @@ struct VS_Output
 #endif
 };
 
+#endif
+
 #include "ad_sprite_common_vs.fx"
 
 VS_Output main(const VS_Input Input)
 {
 	VS_Output Output = (VS_Output)0;
-	float3 worldPos = Input.Pos;
-#ifdef ENABLE_LIGHTING
+
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float3 worldNormal = (Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldBinormal = cross(worldNormal, worldTangent);
 #endif
 
 	// UV
-#ifdef ENABLE_LIGHTING
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float2 uv1 = Input.UV1;
 #else
 	float2 uv1 = Input.UV;
 #endif
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 
+	float4 pos4 = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
+
+	float4 cameraPos = mul(mCamera, pos4);
+	cameraPos = cameraPos / cameraPos.w;
+	Output.PosVS = mul(mProj, cameraPos);
+
 #ifdef ENABLE_LIGHTING
 	// NBT
 	Output.WorldN = worldNormal;
 	Output.WorldB = worldBinormal;
 	Output.WorldT = worldTangent;
-#endif
 
-	float4 cameraPos = mul(mCamera, float4(worldPos, 1.0));
-	cameraPos = cameraPos / cameraPos.w;
-	Output.PosVS = mul(mProj, cameraPos);
+#elif defined(ENABLE_DISTORTION)
+
+	float4 localTangent = pos4;
+	float4 localBinormal = pos4;
+	localTangent.xyz += worldTangent;
+	localBinormal.xyz += worldBinormal;
+	
+	Output.ProjTangent = mul(mProj, mul(mCamera, localTangent));
+	Output.ProjBinormal = mul(mProj, mul(mCamera, localBinormal));
+
+#endif
 
 	Output.Color = Input.Color;
 	Output.UV = uv1;

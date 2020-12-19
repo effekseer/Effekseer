@@ -9,7 +9,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 	float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 }
 
-#ifdef ENABLE_LIGHTING
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 
 struct VS_Input
 {
@@ -32,6 +32,20 @@ struct VS_Input
 
 #endif
 
+#if defined(ENABLE_DISTORTION)
+
+struct VS_Output
+{
+	float4 PosVS : SV_POSITION;
+	linear centroid float2 UV : TEXCOORD0;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
+	linear centroid float4 Color : COLOR0;
+};
+
+#else
+
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
@@ -47,39 +61,52 @@ struct VS_Output
 	float4 PosP : TEXCOORD4;
 };
 
+#endif
+
 VS_Output main(const VS_Input Input)
 {
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
 
-#ifdef ENABLE_LIGHTING
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float3 worldNormal = (Input.Normal - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldTangent = (Input.Tangent - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldBinormal = cross(worldNormal, worldTangent);
 #endif
 
+	float4 pos4 = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
+	float4 cameraPos = mul(mCamera, pos4);
+	Output.PosVS = mul(mProj, cameraPos);
+
+	Output.PosP = Output.PosVS;
+
 	// UV
-#ifdef ENABLE_LIGHTING
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float2 uv1 = Input.UV1;
 #else
 	float2 uv1 = Input.UV;
 #endif
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	Output.UV = uv1;
 
-	// NBT
+	// NBT or distortion
 #ifdef ENABLE_LIGHTING
 	Output.WorldN = worldNormal;
 	Output.WorldB = worldBinormal;
 	Output.WorldT = worldTangent;
+
+#elif defined(ENABLE_DISTORTION)
+	float4 localTangent = pos4;
+	float4 localBinormal = pos4;
+	localTangent.xyz += worldTangent;
+	localBinormal.xyz += worldBinormal;
+	
+	Output.ProjTangent = mul(mProj, mul(mCamera, localTangent));
+	Output.ProjBinormal = mul(mProj, mul(mCamera, localBinormal));
 #endif
 
-	float4 cameraPos = mul(mCamera, float4(worldPos, 1.0));
-	Output.PosVS = mul(mProj, cameraPos);
-
 	Output.Color = Input.Color;
-	Output.UV = uv1;
 
-	Output.PosP = Output.PosVS;
 
 	return Output;
 }
