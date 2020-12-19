@@ -32,18 +32,36 @@ struct VS_Input
 #endif
 };
 
+#if defined(ENABLE_DISTORTION)
+
+struct VS_Output
+{
+	float4 PosVS : SV_POSITION;
+	linear centroid float2 UV : TEXCOORD0;
+	float4 ProjBinormal : TEXCOORD1;
+	float4 ProjTangent : TEXCOORD2;
+	float4 PosP : TEXCOORD3;
+	linear centroid float4 Color : COLOR0;
+};
+
+#else
+
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
 	linear centroid float2 UV : TEXCOORD0;
-#if ENABLE_LIGHTING
-	half3 WorldN : TEXCOORD1;
-	half3 WorldB : TEXCOORD2;
-	half3 WorldT : TEXCOORD3;
+
+#ifdef ENABLE_LIGHTING
+	float3 WorldN : TEXCOORD1;
+	float3 WorldB : TEXCOORD2;
+	float3 WorldT : TEXCOORD3;
 #endif
+
 	float4 PosP : TEXCOORD4;
 };
+
+#endif
 
 VS_Output main(const VS_Input Input)
 {
@@ -67,41 +85,52 @@ VS_Output main(const VS_Input Input)
 	float4 localPosition = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
 
 #ifdef DISABLE_INSTANCE
-	float4 cameraPosition = mul(mModel, localPosition);
+	localPosition = mul(mModel, localPosition);
 #else
-	float4 cameraPosition = mul(matModel, localPosition);
+	localPosition = mul(matModel, localPosition);
 #endif
-	Output.PosVS = mul(mCameraProj, cameraPosition);
+	Output.PosVS = mul(mCameraProj, localPosition);
 	Output.Color = modelColor;
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
-#if ENABLE_LIGHTING
+#if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
+
+	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
+	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
+	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
 
 #ifdef DISABLE_INSTANCE
-	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
-	localNormal = normalize(mul(mModel, localNormal));
-
-	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
-	localBinormal = normalize(mul(mModel, localBinormal));
-
-	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
-	localTangent = normalize(mul(mModel, localTangent));
+	localNormal = mul(mModel, localNormal);
+	localBinormal = mul(mModel, localBinormal);
+	localTangent = mul(mModel, localTangent);
 #else
-	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
-	localNormal = normalize(mul(matModel, localNormal));
-
-	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
-	localBinormal = normalize(mul(matModel, localBinormal));
-
-	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
-	localTangent = normalize(mul(matModel, localTangent));
+	localNormal = mul(matModel, localNormal);
+	localBinormal = mul(matModel, localBinormal);
+	localTangent = mul(matModel, localTangent);
 #endif
+
+	localNormal = normalize(localNormal);
+	localBinormal = normalize(localBinormal);
+	localTangent = normalize(localTangent);
+
+#if defined(ENABLE_LIGHTING)
 
 	Output.WorldN = localNormal.xyz;
 	Output.WorldB = localBinormal.xyz;
 	Output.WorldT = localTangent.xyz;
+
+#elif defined(ENABLE_DISTORTION)
+
+	localBinormal = localPosition + localBinormal;
+	localTangent = localPosition + localTangent;
+
+	Output.ProjBinormal = mul(mCameraProj, localBinormal);
+	Output.ProjTangent = mul(mCameraProj, localTangent);
+
+#endif
+
 #endif
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;

@@ -77,24 +77,26 @@ VS_Output _main(VS_Input Input)
     float4 modelColor = _31_fModelColor[index] * Input.Color;
     VS_Output Output = _57;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0f);
-    float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
-    float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0f);
     localPosition = mul(matModel, localPosition);
+    Output.PosVS = mul(_31_mCameraProj, localPosition);
+    Output.Color = modelColor;
+    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
+    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
+    float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0f);
+    float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0f);
     localNormal = mul(matModel, localNormal);
     localBinormal = mul(matModel, localBinormal);
     localTangent = mul(matModel, localTangent);
-    localNormal = localPosition + normalize(localNormal - localPosition);
-    localBinormal = localPosition + normalize(localBinormal - localPosition);
-    localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.PosVS = mul(_31_mCameraProj, localPosition);
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    localNormal = normalize(localNormal);
+    localBinormal = normalize(localBinormal);
+    localTangent = normalize(localTangent);
+    localBinormal = localPosition + localBinormal;
+    localTangent = localPosition + localTangent;
     Output.ProjBinormal = mul(_31_mCameraProj, localBinormal);
     Output.ProjTangent = mul(_31_mCameraProj, localTangent);
-    Output.PosP = Output.PosVS;
-    Output.Color = modelColor;
     Output.UV.y = _31_mUVInversed.x + (_31_mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

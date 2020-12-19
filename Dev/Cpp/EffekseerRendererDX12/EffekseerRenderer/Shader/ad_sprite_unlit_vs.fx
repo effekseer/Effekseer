@@ -211,10 +211,10 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = _347;
-    float3 worldPos = Input.Pos;
     float2 uv1 = Input.UV;
     uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
-    float4 cameraPos = mul(_256_mCamera, float4(worldPos, 1.0f));
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 cameraPos = mul(_256_mCamera, pos4);
     cameraPos /= cameraPos.w.xxxx;
     Output.PosVS = mul(_256_mProj, cameraPos);
     Output.Color = Input.Color;

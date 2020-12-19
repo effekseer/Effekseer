@@ -62,8 +62,8 @@ VS_Output _main(VS_Input Input)
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPosition = localPosition * matModel;
-    Output.PosVS = cameraPosition * CBVS0.mCameraProj;
+    localPosition *= matModel;
+    Output.PosVS = localPosition * CBVS0.mCameraProj;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;

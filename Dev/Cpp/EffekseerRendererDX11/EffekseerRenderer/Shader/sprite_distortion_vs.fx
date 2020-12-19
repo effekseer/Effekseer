@@ -1,4 +1,8 @@
 
+#define ENABLE_DISTORTION
+#include "sprite_unlit_vs.fx"
+
+/*
 cbuffer VS_ConstantBuffer : register(b0)
 {
 	float4x4 mCamera;
@@ -58,3 +62,5 @@ VS_Output main(const VS_Input Input)
 
 	return Output;
 }
+
+*/

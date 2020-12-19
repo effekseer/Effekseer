@@ -239,8 +239,8 @@ VS_Output _main(VS_Input Input)
     float modelAlphaThreshold = _365_fModelAlphaThreshold[index].x;
     VS_Output Output = _494;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 cameraPosition = mul(matModel, localPosition);
-    Output.PosVS = mul(_365_mCameraProj, cameraPosition);
+    localPosition = mul(matModel, localPosition);
+    Output.PosVS = mul(_365_mCameraProj, localPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);

@@ -66,24 +66,26 @@ VS_Output _main(VS_Input Input)
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 localNormal = vec4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
-    vec4 localBinormal = vec4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    vec4 localTangent = vec4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
     localPosition *= matModel;
+    Output.PosVS = localPosition * CBVS0.mCameraProj;
+    Output.Color = modelColor;
+    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
+    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
+    vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
     localNormal *= matModel;
     localBinormal *= matModel;
     localTangent *= matModel;
-    localNormal = localPosition + normalize(localNormal - localPosition);
-    localBinormal = localPosition + normalize(localBinormal - localPosition);
-    localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.PosVS = localPosition * CBVS0.mCameraProj;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    localNormal = normalize(localNormal);
+    localBinormal = normalize(localBinormal);
+    localTangent = normalize(localTangent);
+    localBinormal = localPosition + localBinormal;
+    localTangent = localPosition + localTangent;
     Output.ProjBinormal = localBinormal * CBVS0.mCameraProj;
     Output.ProjTangent = localTangent * CBVS0.mCameraProj;
-    Output.PosP = Output.PosVS;
-    Output.Color = modelColor;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

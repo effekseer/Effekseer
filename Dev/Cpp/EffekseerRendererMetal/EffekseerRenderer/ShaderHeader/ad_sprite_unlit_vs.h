@@ -191,10 +191,10 @@ static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_256)
 {
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
-    float3 worldPos = Input.Pos;
     float2 uv1 = Input.UV;
     uv1.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * uv1.y);
-    float4 cameraPos = v_256.mCamera * float4(worldPos, 1.0);
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    float4 cameraPos = v_256.mCamera * pos4;
     cameraPos /= float4(cameraPos.w);
     Output.PosVS = v_256.mProj * cameraPos;
     Output.Color = Input.Color;

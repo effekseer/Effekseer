@@ -67,24 +67,26 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_31)
     float4 modelColor = v_31.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 localNormal = float4(Input.Pos.x + Input.Normal.x, Input.Pos.y + Input.Normal.y, Input.Pos.z + Input.Normal.z, 1.0);
-    float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0);
-    float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0);
     localPosition *= matModel;
+    Output.PosVS = v_31.mCameraProj * localPosition;
+    Output.Color = modelColor;
+    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
+    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
+    float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
+    float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
     localNormal *= matModel;
     localBinormal *= matModel;
     localTangent *= matModel;
-    localNormal = localPosition + normalize(localNormal - localPosition);
-    localBinormal = localPosition + normalize(localBinormal - localPosition);
-    localTangent = localPosition + normalize(localTangent - localPosition);
-    Output.PosVS = v_31.mCameraProj * localPosition;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    localNormal = normalize(localNormal);
+    localBinormal = normalize(localBinormal);
+    localTangent = normalize(localTangent);
+    localBinormal = localPosition + localBinormal;
+    localTangent = localPosition + localTangent;
     Output.ProjBinormal = v_31.mCameraProj * localBinormal;
     Output.ProjTangent = v_31.mCameraProj * localTangent;
-    Output.PosP = Output.PosVS;
-    Output.Color = modelColor;
     Output.UV.y = v_31.mUVInversed.x + (v_31.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

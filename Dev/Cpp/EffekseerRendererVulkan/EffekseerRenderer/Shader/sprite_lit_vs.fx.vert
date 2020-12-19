@@ -27,7 +27,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     layout(row_major) mat4 mProj;
     vec4 mUVInversed;
     vec4 mflipbookParameter;
-} _60;
+} _69;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
@@ -49,16 +49,17 @@ VS_Output _main(VS_Input Input)
     vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
     vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
     vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 cameraPos = pos4 * _69.mCamera;
+    Output.PosVS = cameraPos * _69.mProj;
+    Output.PosP = Output.PosVS;
     vec2 uv1 = Input.UV1;
-    uv1.y = _60.mUVInversed.x + (_60.mUVInversed.y * uv1.y);
+    uv1.y = _69.mUVInversed.x + (_69.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.WorldN = worldNormal;
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
-    vec4 cameraPos = vec4(worldPos, 1.0) * _60.mCamera;
-    Output.PosVS = cameraPos * _60.mProj;
     Output.Color = Input.Color;
-    Output.UV = uv1;
-    Output.PosP = Output.PosVS;
     return Output;
 }
 

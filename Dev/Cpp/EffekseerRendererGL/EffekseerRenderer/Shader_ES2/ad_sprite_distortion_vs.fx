@@ -183,25 +183,25 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec2(0.0));
-    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
     vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
     vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec2 uv1 = Input.UV1;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 cameraPos = CBVS0.mCamera * pos4;
     cameraPos /= vec4(cameraPos.w);
     Output.PosVS = CBVS0.mProj * cameraPos;
-    Output.PosP = Output.PosVS;
     vec4 localTangent = pos4;
     vec4 localBinormal = pos4;
-    vec3 _408 = localTangent.xyz + worldTangent;
-    localTangent = vec4(_408.x, _408.y, _408.z, localTangent.w);
-    vec3 _414 = localBinormal.xyz + worldBinormal;
-    localBinormal = vec4(_414.x, _414.y, _414.z, localBinormal.w);
+    vec3 _416 = localTangent.xyz + worldTangent;
+    localTangent = vec4(_416.x, _416.y, _416.z, localTangent.w);
+    vec3 _422 = localBinormal.xyz + worldBinormal;
+    localBinormal = vec4(_422.x, _422.y, _422.z, localBinormal.w);
     Output.ProjTangent = CBVS0.mProj * (CBVS0.mCamera * localTangent);
     Output.ProjBinormal = CBVS0.mProj * (CBVS0.mCamera * localBinormal);
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Input.UV1.y);
+    Output.UV = uv1;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

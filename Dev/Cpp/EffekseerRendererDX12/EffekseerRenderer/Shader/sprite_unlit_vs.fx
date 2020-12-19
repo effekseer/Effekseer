@@ -17,10 +17,10 @@ static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _34_mCamera : packoffset(c0);
-    column_major float4x4 _34_mProj : packoffset(c4);
-    float4 _34_mUVInversed : packoffset(c8);
-    float4 _34_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _43_mCamera : packoffset(c0);
+    column_major float4x4 _43_mProj : packoffset(c4);
+    float4 _43_mUVInversed : packoffset(c8);
+    float4 _43_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -51,13 +51,14 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = _21;
     float3 worldPos = Input.Pos;
-    float2 uv1 = Input.UV;
-    uv1.y = _34_mUVInversed.x + (_34_mUVInversed.y * uv1.y);
-    float4 cameraPos = mul(_34_mCamera, float4(worldPos, 1.0f));
-    Output.PosVS = mul(_34_mProj, cameraPos);
-    Output.Color = Input.Color;
-    Output.UV = uv1;
+    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 cameraPos = mul(_43_mCamera, pos4);
+    Output.PosVS = mul(_43_mProj, cameraPos);
     Output.PosP = Output.PosVS;
+    float2 uv1 = Input.UV;
+    uv1.y = _43_mUVInversed.x + (_43_mUVInversed.y * uv1.y);
+    Output.UV = uv1;
+    Output.Color = Input.Color;
     return Output;
 }
 

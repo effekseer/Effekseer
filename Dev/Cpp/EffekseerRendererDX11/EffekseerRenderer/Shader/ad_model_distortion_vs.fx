@@ -1,4 +1,7 @@
+#define ENABLE_DISTORTION
+#include "ad_model_vs.fx"
 
+/*
 cbuffer VS_ConstantBuffer : register(b0)
 {
 	float4x4 mCameraProj;
@@ -142,3 +145,4 @@ VS_Output main(const VS_Input Input)
 
 	return Output;
 }
+*/

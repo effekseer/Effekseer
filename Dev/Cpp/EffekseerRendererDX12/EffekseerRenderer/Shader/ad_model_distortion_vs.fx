@@ -23,7 +23,7 @@ struct VS_Input
     uint Index;
 };
 
-static const VS_Output _491 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
+static const VS_Output _493 = { 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -232,29 +232,33 @@ VS_Output _main(VS_Input Input)
     uint index = Input.Index;
     float4x4 matModel = _365_mModel[index];
     float4 uv = _365_fUV[index];
-    float4 modelColor = _365_fModelColor[index];
     float4 alphaUV = _365_fAlphaUV[index];
     float4 uvDistortionUV = _365_fUVDistortionUV[index];
     float4 blendUV = _365_fBlendUV[index];
     float4 blendAlphaUV = _365_fBlendAlphaUV[index];
     float4 blendUVDistortionUV = _365_fBlendUVDistortionUV[index];
+    float4 modelColor = _365_fModelColor[index] * Input.Color;
     float flipbookIndexAndNextRate = _365_fFlipbookIndexAndNextRate[index].x;
     float modelAlphaThreshold = _365_fModelAlphaThreshold[index].x;
-    VS_Output Output = _491;
+    VS_Output Output = _493;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 localBinormal = float4(Input.Pos.x + Input.Binormal.x, Input.Pos.y + Input.Binormal.y, Input.Pos.z + Input.Binormal.z, 1.0f);
-    float4 localTangent = float4(Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0f);
     localPosition = mul(matModel, localPosition);
-    localBinormal = mul(matModel, localBinormal);
-    localTangent = mul(matModel, localTangent);
-    localBinormal = localPosition + normalize(localBinormal - localPosition);
-    localTangent = localPosition + normalize(localTangent - localPosition);
     Output.PosVS = mul(_365_mCameraProj, localPosition);
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
+    float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0f);
+    float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0f);
+    localNormal = mul(matModel, localNormal);
+    localBinormal = mul(matModel, localBinormal);
+    localTangent = mul(matModel, localTangent);
+    localNormal = normalize(localNormal);
+    localBinormal = normalize(localBinormal);
+    localTangent = normalize(localTangent);
+    localBinormal = localPosition + localBinormal;
+    localTangent = localPosition + localTangent;
     Output.ProjBinormal = mul(_365_mCameraProj, localBinormal);
     Output.ProjTangent = mul(_365_mCameraProj, localTangent);
-    Output.PosP = Output.PosVS;
     Output.Color = modelColor;
     Output.UV.y = _365_mUVInversed.x + (_365_mUVInversed.y * Output.UV.y);
     float2 param = Input.UV;
@@ -269,6 +273,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_9 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
     Output = param_9;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

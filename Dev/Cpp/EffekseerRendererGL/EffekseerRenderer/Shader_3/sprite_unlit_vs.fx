@@ -39,13 +39,14 @@ VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec3 worldPos = Input.Pos;
+    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 cameraPos = pos4 * CBVS0.mCamera;
+    Output.PosVS = cameraPos * CBVS0.mProj;
+    Output.PosP = Output.PosVS;
     vec2 uv1 = Input.UV;
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
-    vec4 cameraPos = vec4(worldPos, 1.0) * CBVS0.mCamera;
-    Output.PosVS = cameraPos * CBVS0.mProj;
-    Output.Color = Input.Color;
     Output.UV = uv1;
-    Output.PosP = Output.PosVS;
+    Output.Color = Input.Color;
     return Output;
 }
 
