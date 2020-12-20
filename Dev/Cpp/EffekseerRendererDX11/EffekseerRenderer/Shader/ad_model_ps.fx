@@ -28,7 +28,8 @@ cbuffer PS_ConstanBuffer : register(b0)
 	float4 fEdgeParameter; // x:threshold, y:colorScaling
 
 	// which is used for only softparticle
-	float4 softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
+	float4 softParticleParam;
+	float4 reconstructionParam1;
 	float4 reconstructionParam2;
 };
 
@@ -194,14 +195,14 @@ float4 main(const PS_Input Input)
 	screenUV.y = 1.0 - screenUV.y;
 #endif
 
-	float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
-	if (softParticleAndReconstructionParam1.x != 0.0f)
+	if (softParticleParam.w != 0.0f)
 	{
+		float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
 		Output.a *= SoftParticle(
 			backgroundZ,
 			screenPos.z,
-			softParticleAndReconstructionParam1.x,
-			softParticleAndReconstructionParam1.yz,
+			softParticleParam,
+			reconstructionParam1,
 			reconstructionParam2);
 	}
 #endif

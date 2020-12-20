@@ -42,8 +42,9 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _208_fEmissiveScaling : register(c10);
     float4 _208_fEdgeColor : register(c11);
     float4 _208_fEdgeParameter : register(c12);
-    float4 _208_softParticleAndReconstructionParam1 : register(c13);
-    float4 _208_reconstructionParam2 : register(c14);
+    float4 _208_softParticleParam : register(c13);
+    float4 _208_reconstructionParam1 : register(c14);
+    float4 _208_reconstructionParam2 : register(c15);
 };
 
 uniform sampler2D Sampler_sampler_uvDistortionTex : register(s2);

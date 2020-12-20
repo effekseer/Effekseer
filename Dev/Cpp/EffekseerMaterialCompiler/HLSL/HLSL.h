@@ -434,8 +434,8 @@ R"(
 )"
 #endif
 R"(
-	float distance = softParticleParam * reconstructionParam1.w;
-	float2 rescale = reconstructionParam1.yz;
+	float distance = softParticleParam * predefined_uniform.y;
+	float2 rescale = reconstructionParam1.xy;
 	float4 params = reconstructionParam2;
 
 	float2 zs = float2(backgroundZ * rescale.x + rescale.y, meshZ);

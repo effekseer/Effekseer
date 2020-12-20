@@ -227,6 +227,12 @@ namespace Effekseer.Binary
 			{
 				data.Add(advanceValue.SoftParticleDistance.GetBytes());
 			}
+			
+			if (version >= ExporterVersion.Ver16Alpha5)
+			{
+				data.Add(advanceValue.SoftParticleDistanceNear.GetBytes());
+				data.Add(advanceValue.SoftParticleDistanceNearOffset.GetBytes());
+			}
 
 			return data.ToArray().ToArray();
 		}

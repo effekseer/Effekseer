@@ -335,12 +335,12 @@ struct ShaderUniform2 {
 static const char g_material_fs_src_suf1[] =
     R"(
 
-float ReplacedDepthFade(texture2d<float> efk_depth, sampler s_efk_depth, float4 reconstructionParam1, float4 reconstructionParam2, float2 screenUV, float meshZ, float softParticleParam)
+float ReplacedDepthFade(texture2d<float> efk_depth, sampler s_efk_depth, float4 reconstructionParam1, float4 reconstructionParam2, float magnification, float2 screenUV, float meshZ, float softParticleParam)
 {
 	float backgroundZ = efk_depth.sample(s_efk_depth, screenUV).x;
 
-	float distance = softParticleParam;
-	float2 rescale = reconstructionParam1.yz;
+	float distance = softParticleParam * magnification;
+	float2 rescale = reconstructionParam1.xy;
 	float4 params = reconstructionParam2;
 
 	float2 zs = float2(backgroundZ * rescale.x + rescale.y, meshZ);
@@ -790,7 +790,8 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
         baseCode = Replace(baseCode, "$F3$", "float3");
         baseCode = Replace(baseCode, "$F4$", "float4");
         baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
-        baseCode = Replace(baseCode, "$UV$", "uv");
+		baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
+		baseCode = Replace(baseCode, "$UV$", "uv");
         baseCode = Replace(baseCode, "$MOD", "mod");
         
         
@@ -847,7 +848,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
         // Depth
         if (stage == 1)
         {
-            baseCode = Replace(baseCode, "CalcDepthFade(", "ReplacedDepthFade(efk_depth, s_efk_depth, u.reconstructionParam1, u.reconstructionParam2,");
+            baseCode = Replace(baseCode, "CalcDepthFade(", "ReplacedDepthFade(efk_depth, s_efk_depth, u.reconstructionParam1, u.reconstructionParam2,u.predefined_uniform.y,");
         }
         
         ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode, textures.str());

@@ -51,7 +51,9 @@ struct StandardRendererState
 	uint8_t EdgeColor[4];
 	int32_t EdgeColorScaling;
 	bool IsAlphaCuttoffEnabled = false;
-	float SoftParticleDistance = 0.0f;
+	float SoftParticleDistanceFar = 0.0f;
+	float SoftParticleDistanceNear = 0.0f;
+	float SoftParticleDistanceNearOffset = 0.0f;
 	float Maginification = 1.0f;
 
 	::Effekseer::RendererMaterialType MaterialType;
@@ -154,8 +156,15 @@ struct StandardRendererState
 		if (IsAlphaCuttoffEnabled != state.IsAlphaCuttoffEnabled)
 			return true;
 
-		if (SoftParticleDistance != state.SoftParticleDistance)
+		if (SoftParticleDistanceFar != state.SoftParticleDistanceFar)
 			return true;
+
+		if (SoftParticleDistanceNear != state.SoftParticleDistanceNear)
+			return true;
+
+		if (SoftParticleDistanceNearOffset != state.SoftParticleDistanceNearOffset)
+			return true;
+
 		if (Maginification != state.Maginification)
 			return true;
 
@@ -197,6 +206,10 @@ struct StandardRendererState
 	{
 		Collector = ShaderParameterCollector();
 		Collector.Collect(renderer, effect, basicParam, false, renderer->GetImpl()->isSoftParticleEnabled);
+
+		SoftParticleDistanceFar = basicParam->SoftParticleDistanceFar;
+		SoftParticleDistanceNear = basicParam->SoftParticleDistanceNear;
+		SoftParticleDistanceNearOffset = basicParam->SoftParticleDistanceNearOffset;
 
 		if (Collector.MaterialRenderDataPtr != nullptr && Collector.MaterialDataPtr != nullptr)
 		{
@@ -445,7 +458,10 @@ public:
 
 		if (m_state.Collector.IsDepthRequired)
 		{
-			if (depthTexture == nullptr || (m_state.SoftParticleDistance == 0.0f && m_state.Collector.ShaderType != RendererShaderType::Material))
+			if (depthTexture == nullptr || (m_state.SoftParticleDistanceFar == 0.0f &&
+											m_state.SoftParticleDistanceNear == 0.0f &&
+											m_state.SoftParticleDistanceNearOffset == 0.0f &&
+											m_state.Collector.ShaderType != RendererShaderType::Material))
 			{
 				depthTexture = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 			}
@@ -575,6 +591,7 @@ public:
 			std::array<float, 4> predefined_uniforms;
 			predefined_uniforms.fill(0.5f);
 			predefined_uniforms[0] = m_renderer->GetTime();
+			predefined_uniforms[1] = m_state.Maginification;
 
 			// vs
 			int32_t vsOffset = 0;
@@ -613,8 +630,10 @@ public:
 			SoftParticleParameter softParticleParam;
 
 			softParticleParam.SetParam(
-				m_state.SoftParticleDistance,
-				m_state.Maginification,
+				0.0f,
+				0.0f,
+				0.0f,
+				0.0f,
 				reconstructionParam.DepthBufferScale,
 				reconstructionParam.DepthBufferOffset,
 				reconstructionParam.ProjectionMatrix33,
@@ -622,7 +641,7 @@ public:
 				reconstructionParam.ProjectionMatrix43,
 				reconstructionParam.ProjectionMatrix44);
 
-			m_renderer->SetPixelBufferToShader(softParticleParam.softParticleAndReconstructionParam1.data(), sizeof(float) * 4, psOffset);
+			m_renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam1.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			m_renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam2.data(), sizeof(float) * 4, psOffset);
@@ -704,12 +723,14 @@ public:
 
 			pcb.EmmisiveParam.EmissiveScaling = m_state.EmissiveScaling;
 
-			pcb.EdgeParam.EdgeColor =Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]).ToFloat4();
+			pcb.EdgeParam.EdgeColor = Effekseer::Color(m_state.EdgeColor[0], m_state.EdgeColor[1], m_state.EdgeColor[2], m_state.EdgeColor[3]).ToFloat4();
 			pcb.EdgeParam.Threshold = m_state.EdgeThreshold;
 			pcb.EdgeParam.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
 			pcb.SoftParticleParam.SetParam(
-				m_state.SoftParticleDistance,
+				m_state.SoftParticleDistanceFar,
+				m_state.SoftParticleDistanceNear,
+				m_state.SoftParticleDistanceNearOffset,
 				m_state.Maginification,
 				reconstructionParam.DepthBufferScale,
 				reconstructionParam.DepthBufferOffset,
@@ -755,7 +776,9 @@ public:
 				pcb.BlendTextureParam.BlendType = static_cast<float>(m_state.TextureBlendType);
 
 				pcb.SoftParticleParam.SetParam(
-					m_state.SoftParticleDistance,
+					m_state.SoftParticleDistanceFar,
+					m_state.SoftParticleDistanceNear,
+					m_state.SoftParticleDistanceNearOffset,
 					m_state.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
@@ -786,7 +809,9 @@ public:
 				pcb.EdgeParam.ColorScaling = static_cast<float>(m_state.EdgeColorScaling);
 
 				pcb.SoftParticleParam.SetParam(
-					m_state.SoftParticleDistance,
+					m_state.SoftParticleDistanceFar,
+					m_state.SoftParticleDistanceNear,
+					m_state.SoftParticleDistanceNearOffset,
 					m_state.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,

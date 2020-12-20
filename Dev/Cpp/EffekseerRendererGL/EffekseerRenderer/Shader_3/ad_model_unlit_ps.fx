@@ -48,7 +48,8 @@ struct PS_ConstanBuffer
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
-    vec4 softParticleAndReconstructionParam1;
+    vec4 softParticleParam;
+    vec4 reconstructionParam1;
     vec4 reconstructionParam2;
 };
 
@@ -139,14 +140,18 @@ void ApplyTextureBlending(inout vec4 dstColor, vec4 blendColor, float blendType)
     }
 }
 
-float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2 reconstruct1, vec4 reconstruct2)
+float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 reconstruct1, vec4 reconstruct2)
 {
-    float _distance = softparticleParam;
-    vec2 rescale = reconstruct1;
+    float distanceFar = softparticleParam.x;
+    float distanceNear = softparticleParam.y;
+    float distanceNearOffset = softparticleParam.z;
+    vec2 rescale = reconstruct1.xy;
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
+    float alphaFar = (depth.y - depth.x) / distanceFar;
+    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
 vec4 _main(PS_Input Input)
@@ -181,40 +186,40 @@ vec4 _main(PS_Input Input)
         vec4 FalloffBlendColor = mix(CBPS0.fFalloffParam.EndColor, CBPS0.fFalloffParam.BeginColor, vec4(pow(CdotN, CBPS0.fFalloffParam.Param.z)));
         if (CBPS0.fFalloffParam.Param.y == 0.0)
         {
-            vec3 _418 = Output.xyz + FalloffBlendColor.xyz;
-            Output = vec4(_418.x, _418.y, _418.z, Output.w);
+            vec3 _438 = Output.xyz + FalloffBlendColor.xyz;
+            Output = vec4(_438.x, _438.y, _438.z, Output.w);
         }
         else
         {
             if (CBPS0.fFalloffParam.Param.y == 1.0)
             {
-                vec3 _431 = Output.xyz - FalloffBlendColor.xyz;
-                Output = vec4(_431.x, _431.y, _431.z, Output.w);
+                vec3 _451 = Output.xyz - FalloffBlendColor.xyz;
+                Output = vec4(_451.x, _451.y, _451.z, Output.w);
             }
             else
             {
                 if (CBPS0.fFalloffParam.Param.y == 2.0)
                 {
-                    vec3 _444 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = vec4(_444.x, _444.y, _444.z, Output.w);
+                    vec3 _464 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = vec4(_464.x, _464.y, _464.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    vec3 _458 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_458.x, _458.y, _458.z, Output.w);
+    vec3 _478 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_478.x, _478.y, _478.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-    if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
+    if (!(CBPS0.softParticleParam.w == 0.0))
     {
+        float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_8 = backgroundZ;
         float param_9 = screenPos.z;
-        float param_10 = CBPS0.softParticleAndReconstructionParam1.x;
-        vec2 param_11 = CBPS0.softParticleAndReconstructionParam1.yz;
+        vec4 param_10 = CBPS0.softParticleParam;
+        vec4 param_11 = CBPS0.reconstructionParam1;
         vec4 param_12 = CBPS0.reconstructionParam2;
         Output.w *= SoftParticle(param_8, param_9, param_10, param_11, param_12);
     }
@@ -222,8 +227,8 @@ vec4 _main(PS_Input Input)
     {
         discard;
     }
-    vec3 _546 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_546.x, _546.y, _546.z, Output.w);
+    vec3 _566 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_566.x, _566.y, _566.z, Output.w);
     return Output;
 }
 
@@ -239,7 +244,7 @@ void main()
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.Others = _VSPS_Others;
     Input.PosP = _VSPS_PosP;
-    vec4 _586 = _main(Input);
-    _entryPointOutput = _586;
+    vec4 _606 = _main(Input);
+    _entryPointOutput = _606;
 }
 

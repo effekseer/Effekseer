@@ -48,7 +48,8 @@ struct PS_ConstanBuffer
     highp vec4 fEmissiveScaling;
     highp vec4 fEdgeColor;
     highp vec4 fEdgeParameter;
-    highp vec4 softParticleAndReconstructionParam1;
+    highp vec4 softParticleParam;
+    highp vec4 reconstructionParam1;
     highp vec4 reconstructionParam2;
 };
 

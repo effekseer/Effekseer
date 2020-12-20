@@ -114,14 +114,14 @@ float4 main(const PS_Input Input)
 	screenUV.y = 1.0 - screenUV.y;
 #endif
 
-	float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
-	if (softParticleAndReconstructionParam1.x != 0.0f)
+	if (softParticleParam.w != 0.0f)
 	{
+		float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
 		Output.a *= SoftParticle(
 			backgroundZ,
 			screenPos.z,
-			softParticleAndReconstructionParam1.x,
-			softParticleAndReconstructionParam1.yz,
+			softParticleParam,
+			reconstructionParam1,
 			reconstructionParam2);
 	}
 #endif

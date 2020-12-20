@@ -57,6 +57,7 @@ Library::Library()
 
 	// Constant
 	Contents.push_back(std::make_shared<LibraryContent<NodeTime>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeEffectScale>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeCameraPositionWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant1>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant2>>());

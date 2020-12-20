@@ -11,6 +11,7 @@ cbuffer PS_ConstanBuffer : register(b0)
 	float4 fBlendTextureParameter; // x:blendType
 
 	// which is used for only softparticle
-	float4 softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
+	float4 softParticleParam;
+	float4 reconstructionParam1;
 	float4 reconstructionParam2;
 };

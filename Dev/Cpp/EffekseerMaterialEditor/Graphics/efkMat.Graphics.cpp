@@ -648,9 +648,10 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	{
 		if (layout.first == "predefined_uniform")
 		{
-			float values[4];
+			std::array<float,4> values;
 			values[0] = time;
-			constantBuffer->SetData(&time, layout.second.GetSize(), layout.second.Offset);
+			values[1] = 1.0f;
+			constantBuffer->SetData(values.data(), layout.second.GetSize(), layout.second.Offset);
 		}
 
 		if (layout.first == "customData1")

@@ -125,6 +125,7 @@ enum class NodeType
 	SampleTexture,
 
 	Time,
+	EffectScale,
 	CameraPositionWS, //! 1500
 
 	VertexNormalWS,

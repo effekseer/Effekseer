@@ -36,7 +36,8 @@ struct PS_ConstanBuffer
     float4 fEmissiveScaling;
     float4 fEdgeColor;
     float4 fEdgeParameter;
-    float4 softParticleAndReconstructionParam1;
+    float4 softParticleParam;
+    float4 reconstructionParam1;
     float4 reconstructionParam2;
 };
 
@@ -56,36 +57,40 @@ struct main0_in
 };
 
 static inline __attribute__((always_inline))
-float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, thread const float& softparticleParam, thread const float2& reconstruct1, thread const float4& reconstruct2)
+float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, thread const float4& softparticleParam, thread const float4& reconstruct1, thread const float4& reconstruct2)
 {
-    float _distance = softparticleParam;
-    float2 rescale = reconstruct1;
+    float distanceFar = softparticleParam.x;
+    float distanceNear = softparticleParam.y;
+    float distanceNearOffset = softparticleParam.z;
+    float2 rescale = reconstruct1.xy;
     float4 params = reconstruct2;
     float2 zs = float2((backgroundZ * rescale.x) + rescale.y, meshZ);
     float2 depth = ((zs * params.w) - float2(params.y)) / (float2(params.x) - (zs * params.z));
-    return fast::min(fast::max((depth.y - depth.x) / _distance, 0.0), 1.0);
+    float alphaFar = (depth.y - depth.x) / distanceFar;
+    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    return fast::min(fast::max(fast::min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _normalTex, thread sampler sampler_normalTex, constant PS_ConstanBuffer& v_139, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
+float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _normalTex, thread sampler sampler_normalTex, constant PS_ConstanBuffer& v_159, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
 {
     float4 Output = _colorTex.sample(sampler_colorTex, Input.UV) * Input.Color;
     float3 texNormal = (_normalTex.sample(sampler_normalTex, Input.UV).xyz - float3(0.5)) * 2.0;
     float3 localNormal = normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
-    float diffuse = fast::max(dot(v_139.fLightDirection.xyz, localNormal), 0.0);
-    float3 _159 = Output.xyz * ((v_139.fLightColor.xyz * diffuse) + v_139.fLightAmbient.xyz);
-    Output = float4(_159.x, _159.y, _159.z, Output.w);
+    float diffuse = fast::max(dot(v_159.fLightDirection.xyz, localNormal), 0.0);
+    float3 _179 = Output.xyz * ((v_159.fLightColor.xyz * diffuse) + v_159.fLightAmbient.xyz);
+    Output = float4(_179.x, _179.y, _179.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
-    if ((isunordered(v_139.softParticleAndReconstructionParam1.x, 0.0) || v_139.softParticleAndReconstructionParam1.x != 0.0))
+    if ((isunordered(v_159.softParticleParam.w, 0.0) || v_159.softParticleParam.w != 0.0))
     {
+        float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        float param_2 = v_139.softParticleAndReconstructionParam1.x;
-        float2 param_3 = v_139.softParticleAndReconstructionParam1.yz;
-        float4 param_4 = v_139.reconstructionParam2;
+        float4 param_2 = v_159.softParticleParam;
+        float4 param_3 = v_159.reconstructionParam1;
+        float4 param_4 = v_159.reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0)
@@ -95,7 +100,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler s
     return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_139 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _normalTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_normalTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_159 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _normalTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_normalTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -106,8 +111,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.WorldB = in.Input_WorldB;
     Input.WorldT = in.Input_WorldT;
     Input.PosP = in.Input_PosP;
-    float4 _255 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_139, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _255;
+    float4 _275 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_159, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _275;
     return out;
 }
 

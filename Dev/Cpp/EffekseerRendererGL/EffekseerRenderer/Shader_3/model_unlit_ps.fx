@@ -31,7 +31,8 @@ struct PS_ConstanBuffer
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
-    vec4 softParticleAndReconstructionParam1;
+    vec4 softParticleParam;
+    vec4 reconstructionParam1;
     vec4 reconstructionParam2;
 };
 
@@ -45,14 +46,18 @@ centroid in vec2 _VSPS_UV;
 in vec4 _VSPS_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
 
-float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, vec2 reconstruct1, vec4 reconstruct2)
+float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 reconstruct1, vec4 reconstruct2)
 {
-    float _distance = softparticleParam;
-    vec2 rescale = reconstruct1;
+    float distanceFar = softparticleParam.x;
+    float distanceNear = softparticleParam.y;
+    float distanceNearOffset = softparticleParam.z;
+    vec2 rescale = reconstruct1.xy;
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    return min(max((depth.y - depth.x) / _distance, 0.0), 1.0);
+    float alphaFar = (depth.y - depth.x) / distanceFar;
+    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
 vec4 _main(PS_Input Input)
@@ -62,13 +67,13 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-    if (!(CBPS0.softParticleAndReconstructionParam1.x == 0.0))
+    if (!(CBPS0.softParticleParam.w == 0.0))
     {
+        float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        float param_2 = CBPS0.softParticleAndReconstructionParam1.x;
-        vec2 param_3 = CBPS0.softParticleAndReconstructionParam1.yz;
+        vec4 param_2 = CBPS0.softParticleParam;
+        vec4 param_3 = CBPS0.reconstructionParam1;
         vec4 param_4 = CBPS0.reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
@@ -86,7 +91,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _189 = _main(Input);
-    _entryPointOutput = _189;
+    vec4 _209 = _main(Input);
+    _entryPointOutput = _209;
 }
 

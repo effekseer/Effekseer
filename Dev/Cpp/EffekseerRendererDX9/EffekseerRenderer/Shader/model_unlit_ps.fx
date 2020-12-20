@@ -26,8 +26,9 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _73_fEmissiveScaling : register(c10);
     float4 _73_fEdgeColor : register(c11);
     float4 _73_fEdgeParameter : register(c12);
-    float4 _73_softParticleAndReconstructionParam1 : register(c13);
-    float4 _73_reconstructionParam2 : register(c14);
+    float4 _73_softParticleParam : register(c13);
+    float4 _73_reconstructionParam1 : register(c14);
+    float4 _73_reconstructionParam2 : register(c15);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);

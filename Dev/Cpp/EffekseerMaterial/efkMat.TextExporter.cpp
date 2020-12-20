@@ -27,6 +27,7 @@ private:
 	int32_t cameraPositionID_ = 0;
 	int32_t worldPositionID_ = 0;
 	int32_t pixelNormalDirID_ = 0;
+	int32_t effectScaleID_ = 0;
 
 	ValueType GetType(int32_t id) const { return variables_.at(id).Type; }
 
@@ -64,6 +65,7 @@ public:
 		cameraPositionID_ = AddVariable(ValueType::Float3, "cameraPosition.xyz");
 		worldPositionID_ = AddVariable(ValueType::Float3, "worldPos");
 		pixelNormalDirID_ = AddVariable(ValueType::Float3, "pixelNormalDir");
+		effectScaleID_ = AddVariable(ValueType::Float1, "$EFFECTSCALE$");
 	}
 
 	std::string GetName(int32_t id) const { return variables_.at(id).Name; }
@@ -369,6 +371,8 @@ public:
 
 		return selfID;
 	}
+
+	int32_t EffectScale() { return effectScaleID_; }
 
 	int32_t CameraPosition() { return cameraPositionID_; }
 
@@ -1397,6 +1401,11 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			ret << GetTypeName(node->Outputs[rgbInd].Type) << " " << node->Outputs[rgbInd].Name << "=" << node->Outputs[rgbaInd].Name
 				<< ".xyz;" << std::endl;
 		}
+	}
+
+	if (node->Target->Parameter->Type == NodeType::EffectScale)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << compiler->GetName(compiler->EffectScale()) << ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Time)

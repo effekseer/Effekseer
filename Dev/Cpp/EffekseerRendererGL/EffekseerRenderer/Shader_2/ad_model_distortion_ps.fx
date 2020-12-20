@@ -36,7 +36,8 @@ struct PS_ConstanBuffer
     vec4 fFlipbookParameter;
     vec4 fUVDistortionParameter;
     vec4 fBlendTextureParameter;
-    vec4 softParticleAndReconstructionParam1;
+    vec4 softParticleParam;
+    vec4 reconstructionParam1;
     vec4 reconstructionParam2;
 };
 

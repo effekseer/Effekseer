@@ -410,8 +410,8 @@ float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam)
 {
 	float backgroundZ = TEX2D(efk_depth, GetUVBack(screenUV)).x;
 
-	float distance = softParticleParam * reconstructionParam1.w;
-	vec2 rescale = reconstructionParam1.yz;
+	float distance = softParticleParam * predefined_uniform.y;
+	vec2 rescale = reconstructionParam1.xy;
 	vec4 params = reconstructionParam2;
 
 	vec2 zs = vec2(backgroundZ * rescale.x + rescale.y, meshZ);
@@ -973,6 +973,7 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 			baseCode = Replace(baseCode, "$F3$", "vec3");
 			baseCode = Replace(baseCode, "$F4$", "vec4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+			baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
 			baseCode = Replace(baseCode, "$UV$", "uv");
 			baseCode = Replace(baseCode, "$MOD", "mod");
 
