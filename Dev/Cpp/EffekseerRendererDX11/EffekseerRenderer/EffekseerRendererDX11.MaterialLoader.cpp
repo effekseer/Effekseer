@@ -40,12 +40,7 @@ MaterialLoader ::~MaterialLoader()
 			data.resize(size);
 			reader->Read(data.data(), size);
 
-			auto material = Load(data.data(), (int32_t)size, ::Effekseer::MaterialFileType::Compiled);
-
-			if (material != nullptr)
-			{
-				return material;
-			}
+			return Load(data.data(), (int32_t)size, ::Effekseer::MaterialFileType::Compiled);
 		}
 	}
 
@@ -60,9 +55,7 @@ MaterialLoader ::~MaterialLoader()
 			data.resize(size);
 			reader->Read(data.data(), size);
 
-			auto material = Load(data.data(), (int32_t)size, ::Effekseer::MaterialFileType::Code);
-
-			return material;
+			return Load(data.data(), (int32_t)size, ::Effekseer::MaterialFileType::Code);
 		}
 	}
 

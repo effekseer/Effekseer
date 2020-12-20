@@ -124,7 +124,7 @@ void Renderer::Impl::DeleteProxyTextures(Renderer* renderer)
 	normalProxyTexture_ = nullptr;
 }
 
-::Effekseer::TextureRef Renderer::Impl::GetProxyTexture(EffekseerRenderer::ProxyTextureType type)
+::Effekseer::Backend::TextureRef Renderer::Impl::GetProxyTexture(EffekseerRenderer::ProxyTextureType type)
 {
 	if (type == EffekseerRenderer::ProxyTextureType::White)
 		return whiteProxyTexture_;
@@ -199,12 +199,12 @@ void Renderer::Impl::SetRenderMode(Effekseer::RenderMode renderMode)
 	renderMode_ = renderMode;
 }
 
-const ::Effekseer::TextureRef& Renderer::Impl::GetBackground()
+const ::Effekseer::Backend::TextureRef& Renderer::Impl::GetBackground()
 {
 	return backgroundTexture_;
 }
 
-void Renderer::Impl::SetBackground(::Effekseer::TextureRef texture)
+void Renderer::Impl::SetBackground(::Effekseer::Backend::TextureRef texture)
 {
 	backgroundTexture_ = texture;
 }

@@ -22,6 +22,7 @@
 #include "Effekseer.Setting.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 #include "Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.Resource.h"
 
 //----------------------------------------------------------------------------------
 //

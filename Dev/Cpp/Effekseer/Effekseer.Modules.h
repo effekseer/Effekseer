@@ -802,7 +802,7 @@ class IndexBuffer;
 	\~English	Model class
 	\~Japanese	モデルクラス
 */
-class Model : public ReferenceObject
+class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;
@@ -1061,7 +1061,7 @@ class IndexBuffer;
 	\~English	Model class
 	\~Japanese	モデルクラス
 */
-class Model : public ReferenceObject
+class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;
@@ -1182,7 +1182,7 @@ public:
 \~English	Curve class
 \~Japanese	カーブクラス
 */
-class Curve : public ReferenceObject
+class Curve : public Resource
 {
 	friend class CurveLoader;
 public:
@@ -1589,7 +1589,7 @@ namespace Effekseer
 /**
 	@brief	サウンドデータ
 */
-class SoundData : public ReferenceObject
+class SoundData : public Resource
 {
 public:
 	explicit SoundData() = default;

@@ -151,17 +151,17 @@ void Renderer::SetTime(float time)
 	impl->SetTime(time);
 }
 
-const ::Effekseer::TextureRef& Renderer::GetBackground()
+const ::Effekseer::Backend::TextureRef& Renderer::GetBackground()
 {
 	return impl->GetBackground();
 }
 
-void Renderer::SetBackground(::Effekseer::TextureRef texture)
+void Renderer::SetBackground(::Effekseer::Backend::TextureRef texture)
 {
 	impl->SetBackground(texture);
 }
 
-::Effekseer::TextureRef Renderer::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
+::Effekseer::Backend::TextureRef Renderer::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
 {
 	std::array<uint8_t, 4> buf;
 
@@ -186,17 +186,17 @@ void Renderer::SetBackground(::Effekseer::TextureRef texture)
 	return GetGraphicsDevice()->CreateTexture(param);
 }
 
-void Renderer::DeleteProxyTexture(::Effekseer::TextureRef& texture)
+void Renderer::DeleteProxyTexture(::Effekseer::Backend::TextureRef& texture)
 {
 	texture.Reset();
 }
 
-void Renderer::GetDepth(::Effekseer::TextureRef& texture, DepthReconstructionParameter& reconstructionParam)
+void Renderer::GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam)
 {
 	impl->GetDepth(texture, reconstructionParam);
 }
 
-void Renderer::SetDepth(::Effekseer::TextureRef texture, const DepthReconstructionParameter& reconstructionParam)
+void Renderer::SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam)
 {
 	impl->SetDepth(texture, reconstructionParam);
 }

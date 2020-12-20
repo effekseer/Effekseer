@@ -109,7 +109,7 @@ private:
 
 	bool m_restorationOfStates;
 
-	::Effekseer::TextureRef m_backgroundDX11;
+	::Effekseer::Backend::TextureRef m_backgroundDX11;
 
 	D3D11_COMPARISON_FUNC m_depthFunc;
 
@@ -247,7 +247,7 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count);
+	void SetTextures(Shader* shader, ::Effekseer::Backend::TextureRef* textures, int32_t count);
 
 	void ResetRenderState();
 

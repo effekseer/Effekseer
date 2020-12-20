@@ -552,13 +552,13 @@ static ImTextureID ToImTextureID(ImageResource* image)
 #ifdef _WIN32
 			if (image->GetDeviceType() == DeviceType::DirectX11)
 			{
-				auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture.Get());
+				auto t = static_cast<EffekseerRendererDX11::Backend::Texture*>(texture->GetBackend().Get());
 				return reinterpret_cast<ImTextureID>(t->GetSRV());
 			}
 #endif
 			if (image->GetDeviceType() == DeviceType::OpenGL)
 			{
-				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture.Get());
+				auto t = static_cast<EffekseerRendererGL::Backend::Texture*>(texture->GetBackend().Get());
 				return reinterpret_cast<ImTextureID>(static_cast<size_t>(t->GetBuffer()));
 			}
 		}

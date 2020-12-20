@@ -17,6 +17,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 class EffectFactory;
+class ResourceManager;
 
 /**
 	@brief	設定クラス
@@ -29,15 +30,10 @@ class Setting : public ReferenceObject
 private:
 	//! coordinate system
 	CoordinateSystem m_coordinateSystem;
-
 	EffectLoaderRef m_effectLoader;
-	TextureLoaderRef m_textureLoader;
-	SoundLoaderRef m_soundLoader;
-	ModelLoaderRef m_modelLoader;
-	MaterialLoaderRef m_materialLoader;
-	CurveLoaderRef m_curveLoader;
-	ProcedualModelGeneratorRef procedualMeshGenerator_;
-	std::vector<RefPtr<EffectFactory>> effectFactories;
+
+	std::vector<RefPtr<EffectFactory>> effectFactories_;
+	RefPtr<ResourceManager> resourceManager_;
 
 protected:
 	Setting();
@@ -76,41 +72,65 @@ public:
 		@param	loader	[in]		ローダー
 		*/
 	void SetEffectLoader(EffectLoaderRef loader);
+	
+	/**
+		@brief
+		\~English get a texture loader
+		\~Japanese テクスチャローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	TextureLoaderRef GetTextureLoader() const;
 
 	/**
-		@brief	テクスチャローダーを取得する。
-		@return	テクスチャローダー
-		*/
-	TextureLoaderRef GetTextureLoader();
-
-	/**
-		@brief	テクスチャローダーを設定する。
-		@param	loader	[in]		ローダー
-		*/
+		@brief
+		\~English specfiy a texture loader
+		\~Japanese テクスチャローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
 	void SetTextureLoader(TextureLoaderRef loader);
 
 	/**
-		@brief	モデルローダーを取得する。
-		@return	モデルローダー
-		*/
-	ModelLoaderRef GetModelLoader();
+		@brief
+		\~English get a model loader
+		\~Japanese モデルローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	ModelLoaderRef GetModelLoader() const;
 
 	/**
-		@brief	モデルローダーを設定する。
-		@param	loader	[in]		ローダー
-		*/
+		@brief
+		\~English specfiy a model loader
+		\~Japanese モデルローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
 	void SetModelLoader(ModelLoaderRef loader);
 
 	/**
-		@brief	サウンドローダーを取得する。
-		@return	サウンドローダー
-		*/
-	SoundLoaderRef GetSoundLoader();
+		@brief
+		\~English get a sound loader
+		\~Japanese サウンドローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	SoundLoaderRef GetSoundLoader() const;
 
 	/**
-		@brief	サウンドローダーを設定する。
-		@param	loader	[in]		ローダー
-		*/
+		@brief
+		\~English specfiy a sound loader
+		\~Japanese サウンドローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
 	void SetSoundLoader(SoundLoaderRef loader);
 
 	/**
@@ -121,7 +141,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	MaterialLoaderRef GetMaterialLoader();
+	MaterialLoaderRef GetMaterialLoader() const;
 
 	/**
 		@brief
@@ -130,7 +150,7 @@ public:
 		@param	loader
 		\~English	loader
 		\~Japanese ローダー
-		*/
+	*/
 	void SetMaterialLoader(MaterialLoaderRef loader);
 
 	/**
@@ -141,7 +161,7 @@ public:
 		\~English	loader
 		\~Japanese ローダー
 	*/
-	CurveLoaderRef GetCurveLoader();
+	CurveLoaderRef GetCurveLoader() const;
 
 	/**
 		@brief
@@ -159,7 +179,7 @@ public:
 		\~Japanese メッシュジェネレーターを取得する。
 		@return
 		\~English	generator
-		\~Japanese ローダー
+		\~Japanese ジェネレータ
 	*/
 	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const;
 
@@ -169,7 +189,7 @@ public:
 		\~Japanese メッシュジェネレーターを設定する。
 		@param	generator
 		\~English	generator
-		\~Japanese generator
+		\~Japanese ジェネレータ
 	*/
 	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator);
 
@@ -200,6 +220,13 @@ public:
 		\~Japanese Effect Factoryの数を取得する。
 	*/
 	int32_t GetEffectFactoryCount() const;
+	
+	/**
+		@brief
+		\~English	Get resource manager
+		\~Japanese Resource Managerを取得する。
+	*/
+	const RefPtr<ResourceManager>& GetResourceManager() const;
 };
 
 //----------------------------------------------------------------------------------

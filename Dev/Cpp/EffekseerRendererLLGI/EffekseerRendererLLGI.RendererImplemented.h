@@ -82,7 +82,7 @@ protected:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
-	::Effekseer::TextureRef m_backgroundLLGI;
+	::Effekseer::Backend::TextureRef m_backgroundLLGI;
 
 	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
@@ -228,7 +228,7 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::Backend::TextureRef* textures, int32_t count);
 
 	void ResetRenderState() override;
 

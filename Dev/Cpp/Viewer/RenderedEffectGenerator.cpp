@@ -511,7 +511,7 @@ void RenderedEffectGenerator::Render()
 	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[3][2];
 	reconstructionParam.ProjectionMatrix44 = config_.ProjectionMatrix.Values[3][3];
 
-	renderer_->SetDepth(depthRenderTexture->GetAsEffekseerTexture(), reconstructionParam);
+	renderer_->SetDepth(depthRenderTexture->GetAsBackend(), reconstructionParam);
 
 	// HACK : grid renderer changes RenderMode
 	renderer_->SetRenderMode(config_.RenderMode);
@@ -627,7 +627,7 @@ void RenderedEffectGenerator::CopyToBack()
 		graphics_->CopyTo(hdrRenderTexture.get(), backTexture.get());
 	}
 
-	renderer_->SetBackground(backTexture->GetAsEffekseerTexture());
+	renderer_->SetBackground(backTexture->GetAsBackend());
 }
 
 void RenderedEffectGenerator::ResetBack()

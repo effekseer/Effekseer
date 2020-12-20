@@ -858,7 +858,7 @@ struct ShaderParameterCollector
 	Effekseer::MaterialRef MaterialDataPtr = nullptr;
 
 	int32_t TextureCount = 0;
-	std::array<::Effekseer::TextureRef, Effekseer::TextureSlotMax> Textures;
+	std::array<::Effekseer::Backend::TextureRef, Effekseer::TextureSlotMax> Textures;
 	std::array<::Effekseer::TextureFilterType, Effekseer::TextureSlotMax> TextureFilterTypes;
 	std::array<::Effekseer::TextureWrapType, Effekseer::TextureSlotMax> TextureWrapTypes;
 
@@ -915,13 +915,13 @@ struct ShaderParameterCollector
 
 	void Collect(Renderer* renderer, Effekseer::Effect* effect, Effekseer::NodeRendererBasicParameter* param, bool edgeFalloff, bool isSoftParticleEnabled)
 	{
-		::Effekseer::TextureRef TexturePtr = nullptr;
-		::Effekseer::TextureRef NormalTexturePtr = nullptr;
-		::Effekseer::TextureRef AlphaTexturePtr = nullptr;
-		::Effekseer::TextureRef UVDistortionTexturePtr = nullptr;
-		::Effekseer::TextureRef BlendTexturePtr = nullptr;
-		::Effekseer::TextureRef BlendAlphaTexturePtr = nullptr;
-		::Effekseer::TextureRef BlendUVDistortionTexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef TexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef NormalTexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef AlphaTexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef UVDistortionTexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef BlendTexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef BlendAlphaTexturePtr = nullptr;
+		::Effekseer::Backend::TextureRef BlendUVDistortionTexturePtr = nullptr;
 
 		Textures.fill(nullptr);
 		TextureFilterTypes.fill(::Effekseer::TextureFilterType::Linear);
@@ -1005,7 +1005,8 @@ struct ShaderParameterCollector
 				{
 					if (MaterialRenderDataPtr->MaterialTextures[i].Index >= 0)
 					{
-						Textures[i] = effect->GetNormalImage(MaterialRenderDataPtr->MaterialTextures[i].Index);
+						auto resource = effect->GetNormalImage(MaterialRenderDataPtr->MaterialTextures[i].Index);
+						Textures[i] = (resource != nullptr) ? resource->GetBackend() : nullptr;
 					}
 					else
 					{
@@ -1016,7 +1017,8 @@ struct ShaderParameterCollector
 				{
 					if (MaterialRenderDataPtr->MaterialTextures[i].Index >= 0)
 					{
-						Textures[i] = effect->GetColorImage(MaterialRenderDataPtr->MaterialTextures[i].Index);
+						auto resource = effect->GetColorImage(MaterialRenderDataPtr->MaterialTextures[i].Index);
+						Textures[i] = (resource != nullptr) ? resource->GetBackend() : nullptr;
 					}
 					else
 					{
@@ -1086,11 +1088,13 @@ struct ShaderParameterCollector
 			// color/distortion
 			if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 			{
-				TexturePtr = effect->GetDistortionImage(param->TextureIndexes[0]);
+				auto resource = effect->GetDistortionImage(param->TextureIndexes[0]);
+				TexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 			}
 			else
 			{
-				TexturePtr = effect->GetColorImage(param->TextureIndexes[0]);
+				auto resource = effect->GetColorImage(param->TextureIndexes[0]);
+				TexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 			}
 
 			if (TexturePtr == nullptr && renderer != nullptr)
@@ -1113,7 +1117,8 @@ struct ShaderParameterCollector
 				}
 				else if (param->MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 				{
-					NormalTexturePtr = effect->GetNormalImage(param->TextureIndexes[1]);
+					auto resource = effect->GetNormalImage(param->TextureIndexes[1]);
+					NormalTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 
 					if (NormalTexturePtr == nullptr && renderer != nullptr)
 					{
@@ -1139,11 +1144,13 @@ struct ShaderParameterCollector
 			{
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					AlphaTexturePtr = effect->GetDistortionImage(param->TextureIndexes[2]);
+					auto resource = effect->GetDistortionImage(param->TextureIndexes[2]);
+					AlphaTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 				else
 				{
-					AlphaTexturePtr = effect->GetColorImage(param->TextureIndexes[2]);
+					auto resource = effect->GetColorImage(param->TextureIndexes[2]);
+					AlphaTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 
 				if (AlphaTexturePtr == nullptr && renderer != nullptr)
@@ -1153,11 +1160,13 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					UVDistortionTexturePtr = effect->GetDistortionImage(param->TextureIndexes[3]);
+					auto resource = effect->GetDistortionImage(param->TextureIndexes[3]);
+					UVDistortionTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 				else
 				{
-					UVDistortionTexturePtr = effect->GetColorImage(param->TextureIndexes[3]);
+					auto resource = effect->GetColorImage(param->TextureIndexes[3]);
+					UVDistortionTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 
 				if (UVDistortionTexturePtr == nullptr && renderer != nullptr)
@@ -1167,11 +1176,13 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					BlendTexturePtr = effect->GetDistortionImage(param->TextureIndexes[4]);
+					auto resource = effect->GetDistortionImage(param->TextureIndexes[4]);
+					BlendTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 				else
 				{
-					BlendTexturePtr = effect->GetColorImage(param->TextureIndexes[4]);
+					auto resource = effect->GetColorImage(param->TextureIndexes[4]);
+					BlendTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 
 				if (BlendTexturePtr == nullptr && renderer != nullptr)
@@ -1181,11 +1192,13 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					BlendAlphaTexturePtr = effect->GetDistortionImage(param->TextureIndexes[5]);
+					auto resource = effect->GetDistortionImage(param->TextureIndexes[5]);
+					BlendAlphaTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 				else
 				{
-					BlendAlphaTexturePtr = effect->GetColorImage(param->TextureIndexes[5]);
+					auto resource = effect->GetColorImage(param->TextureIndexes[5]);
+					BlendAlphaTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 
 				if (BlendAlphaTexturePtr == nullptr && renderer != nullptr)
@@ -1195,11 +1208,13 @@ struct ShaderParameterCollector
 
 				if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
 				{
-					BlendUVDistortionTexturePtr = effect->GetDistortionImage(param->TextureIndexes[6]);
+					auto resource = effect->GetDistortionImage(param->TextureIndexes[6]);
+					BlendUVDistortionTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 				else
 				{
-					BlendUVDistortionTexturePtr = effect->GetColorImage(param->TextureIndexes[6]);
+					auto resource = effect->GetColorImage(param->TextureIndexes[6]);
+					BlendUVDistortionTexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
 				}
 
 				if (BlendUVDistortionTexturePtr == nullptr && renderer != nullptr)

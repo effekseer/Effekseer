@@ -23,7 +23,7 @@ private:
 public:
 	void NewFrame() override;
 
-	Effekseer::TextureRef CreateTexture(ID3D12Resource* texture) override;
+	Effekseer::Backend::TextureRef CreateTexture(ID3D12Resource* texture) override;
 
 	RendererImplemented(int32_t squareMaxCount);
 	virtual ~RendererImplemented();

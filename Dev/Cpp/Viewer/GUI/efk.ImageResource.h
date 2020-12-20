@@ -31,11 +31,11 @@ public:
 	}
 	int32_t GetWidth() const
 	{
-		return texture->GetSize()[0];
+		return texture->GetWidth();
 	}
 	int32_t GetHeight() const
 	{
-		return texture->GetSize()[1];
+		return texture->GetHeight();
 	}
 
 	DeviceType GetDeviceType() const
