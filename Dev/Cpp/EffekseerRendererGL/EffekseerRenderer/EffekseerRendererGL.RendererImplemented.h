@@ -89,10 +89,10 @@ private:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
-	::Effekseer::TextureRef m_backgroundGL;
+	::Effekseer::Backend::TextureRef m_backgroundGL;
 
 	// textures which are specified currently
-	std::vector<::Effekseer::TextureRef> currentTextures_;
+	std::vector<::Effekseer::Backend::TextureRef> currentTextures_;
 
 	VertexArray* m_currentVertexArray;
 
@@ -215,11 +215,11 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::Backend::TextureRef* textures, int32_t count);
 
 	void ResetRenderState() override;
 
-	const std::vector<::Effekseer::TextureRef>& GetCurrentTextures() const
+	const std::vector<::Effekseer::Backend::TextureRef>& GetCurrentTextures() const
 	{
 		return currentTextures_;
 	}

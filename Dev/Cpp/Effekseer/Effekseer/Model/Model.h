@@ -8,6 +8,7 @@
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
 #include "../Utils/Effekseer.CustomAllocator.h"
+#include "../Effekseer.Resource.h"
 
 namespace Effekseer
 {
@@ -24,7 +25,7 @@ class IndexBuffer;
 	\~English	Model class
 	\~Japanese	モデルクラス
 */
-class Model : public ReferenceObject
+class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;

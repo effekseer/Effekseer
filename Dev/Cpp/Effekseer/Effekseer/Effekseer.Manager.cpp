@@ -1,6 +1,7 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
 
+#include "Effekseer.Resource.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
 #include "SIMD/Utils.h"

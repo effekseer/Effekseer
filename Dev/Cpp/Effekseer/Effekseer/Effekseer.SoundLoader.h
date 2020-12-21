@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.Resource.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -18,7 +19,7 @@ namespace Effekseer
 /**
 	@brief	サウンドデータ
 */
-class SoundData : public ReferenceObject
+class SoundData : public Resource
 {
 public:
 	explicit SoundData() = default;

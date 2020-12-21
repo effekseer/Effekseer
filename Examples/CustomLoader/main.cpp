@@ -78,7 +78,10 @@ public:
 			param.Format = ::Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 			param.GenerateMipmap = true;
 			param.InitialData.assign(pixels, pixels + width * height * 4);
-			return graphicsDevice_->CreateTexture(param);
+
+			auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
+			texture->SetBackend(graphicsDevice_->CreateTexture(param));
+			return texture;
 		}
 
 		return nullptr;

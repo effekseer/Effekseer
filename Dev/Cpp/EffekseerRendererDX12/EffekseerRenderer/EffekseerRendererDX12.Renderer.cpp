@@ -225,13 +225,13 @@ namespace EffekseerRendererDX12
 	return nullptr;
 }
 
-Effekseer::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture)
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
 	return CreateTexture(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), texture);
 }
 
-Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture)
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture)
 {
 	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	return g->CreateTexture((uint64_t)texture, [] {});

@@ -920,7 +920,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, ::Effekseer::Backend::TextureRef* textures, int32_t count)
 {
 	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> srv;
 	for (int32_t i = 0; i < count; i++)

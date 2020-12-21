@@ -200,7 +200,8 @@ void ImageRendererGL::Render()
 
 			if (sprites[i].TexturePtr != nullptr)
 			{
-				renderer->SetTextures(shader_, &(sprites[i]).TexturePtr, 1);
+				auto texture = sprites[i].TexturePtr->GetBackend();
+				renderer->SetTextures(shader_, &texture, 1);
 			}
 
 			renderer->GetRenderState()->Update(true);

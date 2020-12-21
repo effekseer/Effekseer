@@ -508,7 +508,7 @@ protected:
 		renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
 		psOffset += (sizeof(float) * 4);
 
-		::Effekseer::TextureRef depthTexture = nullptr;
+		::Effekseer::Backend::TextureRef depthTexture = nullptr;
 		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
 		renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
 
@@ -802,7 +802,7 @@ public:
 			collector_.Textures[collector_.BackgroundIndex] = renderer->GetBackground();
 		}
 
-		::Effekseer::TextureRef depthTexture = nullptr;
+		::Effekseer::Backend::TextureRef depthTexture = nullptr;
 		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
 		renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
 
@@ -904,7 +904,7 @@ public:
 			state.TextureWrapTypes[i] = collector_.TextureWrapTypes[i];
 		}
 
-		renderer->SetTextures(shader_, reinterpret_cast<Effekseer::TextureRef*>(collector_.Textures.data()), collector_.TextureCount);
+		renderer->SetTextures(shader_, collector_.Textures.data(), collector_.TextureCount);
 
 		renderer->GetRenderState()->Update(distortion);
 

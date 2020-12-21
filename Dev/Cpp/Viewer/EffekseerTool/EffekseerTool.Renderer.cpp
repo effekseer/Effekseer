@@ -139,7 +139,7 @@ void MainScreenRenderedEffectGenerator::OnAfterClear()
 {
 	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundTexture_ != nullptr)
 	{
-		backgroundMesh_->Texture = backgroundTexture_;
+		backgroundMesh_->Texture = backgroundTexture_->GetBackend();
 
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix.Indentity();

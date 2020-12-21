@@ -8,6 +8,7 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.Vector3D.h"
+#include "Effekseer.Resource.h"
 
 #include <vector>
 #include <limits>
@@ -34,7 +35,7 @@ public:
 \~English	Curve class
 \~Japanese	カーブクラス
 */
-class Curve : public ReferenceObject
+class Curve : public Resource
 {
 	friend class CurveLoader;
 public:

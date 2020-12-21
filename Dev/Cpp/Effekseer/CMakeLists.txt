@@ -46,6 +46,8 @@ set(effekseer_src
     Effekseer/Effekseer.Matrix44.cpp
     Effekseer/Effekseer.Random.cpp
     Effekseer/Effekseer.RectF.cpp
+    Effekseer/Effekseer.Resource.cpp
+    Effekseer/Effekseer.ResourceManager.cpp
     Effekseer/Effekseer.Setting.cpp
     Effekseer/Effekseer.Server.cpp
     Effekseer/Effekseer.Socket.cpp

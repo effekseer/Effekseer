@@ -3,12 +3,14 @@
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
 #include "../Effekseer.Base.Pre.h"
+#include <memory>
 #include <list>
 #include <map>
 #include <new>
 #include <set>
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 namespace Effekseer
 {
@@ -160,6 +162,7 @@ bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&)
 	return false;
 }
 
+using CustomString = std::basic_string<char16_t, std::char_traits<char16_t>, CustomAllocator<char16_t>>;
 template <class T>
 using CustomVector = std::vector<T, CustomAllocator<T>>;
 template <class T>

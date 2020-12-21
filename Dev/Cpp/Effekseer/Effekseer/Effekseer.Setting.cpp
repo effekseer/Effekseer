@@ -3,15 +3,15 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.Setting.h"
-
 #include "Effekseer.RectF.h"
+#include "Effekseer.EffectLoader.h"
 
 #include "Effekseer.CurveLoader.h"
-#include "Effekseer.EffectLoader.h"
 #include "Effekseer.MaterialLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
 #include "Model/ModelLoader.h"
+#include "Model/ProcedualModelGenerator.h"
 
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
@@ -21,7 +21,7 @@
 
 #include "Effekseer.Effect.h"
 #include "IO/Effekseer.EfkEfcFactory.h"
-#include "Model/ProcedualModelGenerator.h"
+#include "Effekseer.ResourceManager.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -42,7 +42,8 @@ Setting::Setting()
 	auto efkefcFactory = MakeRefPtr<EfkEfcFactory>();
 	AddEffectFactory(efkefcFactory);
 
-	procedualMeshGenerator_ = ProcedualModelGeneratorRef(new ProcedualModelGenerator());
+	resourceManager_ = MakeRefPtr<ResourceManager>();
+	resourceManager_->SetProcedualMeshGenerator(MakeRefPtr<ProcedualModelGenerator>());
 }
 
 //----------------------------------------------------------------------------------
@@ -96,9 +97,9 @@ void Setting::SetEffectLoader(EffectLoaderRef loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoaderRef Setting::GetTextureLoader()
+TextureLoaderRef Setting::GetTextureLoader() const
 {
-	return m_textureLoader;
+	return resourceManager_->GetTextureLoader();
 }
 
 //----------------------------------------------------------------------------------
@@ -106,15 +107,15 @@ TextureLoaderRef Setting::GetTextureLoader()
 //----------------------------------------------------------------------------------
 void Setting::SetTextureLoader(TextureLoaderRef loader)
 {
-	m_textureLoader = loader;
+	resourceManager_->SetTextureLoader(loader);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoaderRef Setting::GetModelLoader()
+ModelLoaderRef Setting::GetModelLoader() const
 {
-	return m_modelLoader;
+	return resourceManager_->GetModelLoader();
 }
 
 //----------------------------------------------------------------------------------
@@ -122,15 +123,15 @@ ModelLoaderRef Setting::GetModelLoader()
 //----------------------------------------------------------------------------------
 void Setting::SetModelLoader(ModelLoaderRef loader)
 {
-	m_modelLoader = loader;
+	resourceManager_->SetModelLoader(loader);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoaderRef Setting::GetSoundLoader()
+SoundLoaderRef Setting::GetSoundLoader() const
 {
-	return m_soundLoader;
+	return resourceManager_->GetSoundLoader();
 }
 
 //----------------------------------------------------------------------------------
@@ -138,39 +139,60 @@ SoundLoaderRef Setting::GetSoundLoader()
 //----------------------------------------------------------------------------------
 void Setting::SetSoundLoader(SoundLoaderRef loader)
 {
-	m_soundLoader = loader;
+	resourceManager_->SetSoundLoader(loader);
 }
 
-MaterialLoaderRef Setting::GetMaterialLoader()
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+MaterialLoaderRef Setting::GetMaterialLoader() const
 {
-	return m_materialLoader;
+	return resourceManager_->GetMaterialLoader();
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void Setting::SetMaterialLoader(MaterialLoaderRef loader)
 {
-	m_materialLoader = loader;
+	resourceManager_->SetMaterialLoader(loader);
 }
 
-CurveLoaderRef Setting::GetCurveLoader()
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+CurveLoaderRef Setting::GetCurveLoader() const
 {
-	return m_curveLoader;
+	return resourceManager_->GetCurveLoader();
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void Setting::SetCurveLoader(CurveLoaderRef loader)
 {
-	m_curveLoader = loader;
+	resourceManager_->SetCurveLoader(loader);
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 ProcedualModelGeneratorRef Setting::GetProcedualMeshGenerator() const
 {
-	return procedualMeshGenerator_;
+	return resourceManager_->GetProcedualMeshGenerator();
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void Setting::SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator)
 {
-	procedualMeshGenerator_ = generator;
+	resourceManager_->SetProcedualMeshGenerator(generator);
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void Setting::AddEffectFactory(const RefPtr<EffectFactory>& effectFactory)
 {
 	if (effectFactory.Get() == nullptr)
@@ -179,25 +201,39 @@ void Setting::AddEffectFactory(const RefPtr<EffectFactory>& effectFactory)
 	}
 
 	auto effectFactoryCopied = effectFactory;
-	effectFactories.emplace_back(effectFactoryCopied);
+	effectFactories_.emplace_back(effectFactoryCopied);
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void Setting::ClearEffectFactory()
 {
-	effectFactories.clear();
+	effectFactories_.clear();
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 const RefPtr<EffectFactory>& Setting::GetEffectFactory(int32_t ind) const
 {
-	return effectFactories[ind];
+	return effectFactories_[ind];
 }
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 int32_t Setting::GetEffectFactoryCount() const
 {
-	return static_cast<int32_t>(effectFactories.size());
+	return static_cast<int32_t>(effectFactories_.size());
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+const RefPtr<ResourceManager>& Setting::GetResourceManager() const
+{
+	return resourceManager_;
 }
 
 } // namespace Effekseer
-  //----------------------------------------------------------------------------------
-  //
-  //----------------------------------------------------------------------------------

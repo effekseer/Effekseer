@@ -81,6 +81,7 @@ class SoundLoader;
 class ModelLoader;
 class CurveLoader;
 
+class Texture;
 class SoundData;
 class SoundPlayer;
 class Model;
@@ -98,7 +99,6 @@ namespace Backend
 {
 class Texture;
 }
-using Texture = Backend::Texture;
 
 using ThreadNativeHandleType = std::thread::native_handle_type;
 
@@ -948,30 +948,6 @@ enum class RendererMaterialType : int32_t
 	BackDistortion = 6,
 	Lighting = 7,
 	File = 128,
-};
-
-/**
-	@brief	\~english	Material data
-			\~japanese	マテリアルデータ
-*/
-class Material : public ReferenceObject
-{
-public:
-	ShadingModelType ShadingModel = ShadingModelType::Lit;
-	bool IsSimpleVertex = false;
-	bool IsRefractionRequired = false;
-	int32_t CustomData1 = 0;
-	int32_t CustomData2 = 0;
-	int32_t TextureCount = 0;
-	int32_t UniformCount = 0;
-	std::array<TextureWrapType, UserTextureSlotMax> TextureWrapTypes;
-	void* UserPtr = nullptr;
-	void* ModelUserPtr = nullptr;
-	void* RefractionUserPtr = nullptr;
-	void* RefractionModelUserPtr = nullptr;
-
-	Material() = default;
-	virtual ~Material() = default;
 };
 
 /**

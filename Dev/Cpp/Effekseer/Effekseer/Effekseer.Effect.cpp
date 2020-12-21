@@ -14,7 +14,9 @@
 #include "Effekseer.Setting.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
+#include "Effekseer.ResourceManager.h"
 #include "Backend/GraphicsDevice.h"
+#include "Effekseer.Resource.h"
 #include "Model/Model.h"
 #include "Model/ModelLoader.h"
 #include "Model/ProcedualModelGenerator.h"
@@ -207,174 +209,128 @@ bool EffectFactory::OnLoading(Effect* effect, const void* data, int32_t size, fl
 
 void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t size, const char16_t* materialPath)
 {
-	auto textureLoader = effect->GetSetting()->GetTextureLoader();
-	auto soundLoader = effect->GetSetting()->GetSoundLoader();
-	auto modelLoader = effect->GetSetting()->GetModelLoader();
-	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
-	auto curveLoader = effect->GetSetting()->GetCurveLoader();
-	auto pmGenerator = effect->GetSetting()->GetProcedualMeshGenerator();
+	auto resourceMgr = effect->GetSetting()->GetResourceManager();
 
-	if (textureLoader != nullptr)
+	for (auto i = 0; i < effect->GetColorImageCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetColorImageCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetColorImagePath(i));
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetColorImagePath(i));
 
-			auto resource = textureLoader->Load(fullPath, TextureType::Color);
-			SetTexture(effect, i, TextureType::Color, resource);
-		}
-
-		for (auto i = 0; i < effect->GetNormalImageCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetNormalImagePath(i));
-
-			auto resource = textureLoader->Load(fullPath, TextureType::Normal);
-			SetTexture(effect, i, TextureType::Normal, resource);
-		}
-
-		for (auto i = 0; i < effect->GetDistortionImageCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetDistortionImagePath(i));
-
-			auto resource = textureLoader->Load(fullPath, TextureType::Distortion);
-			SetTexture(effect, i, TextureType::Distortion, resource);
-		}
+		auto resource = resourceMgr->LoadTexture(fullPath, TextureType::Color);
+		SetTexture(effect, i, TextureType::Color, resource);
 	}
 
-	if (soundLoader != nullptr)
+	for (auto i = 0; i < effect->GetNormalImageCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetWaveCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetWavePath(i));
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetNormalImagePath(i));
 
-			auto resource = soundLoader->Load(fullPath);
-			SetSound(effect, i, resource);
-		}
+		auto resource = resourceMgr->LoadTexture(fullPath, TextureType::Normal);
+		SetTexture(effect, i, TextureType::Normal, resource);
 	}
 
-	if (modelLoader != nullptr)
+	for (auto i = 0; i < effect->GetDistortionImageCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetModelCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetModelPath(i));
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetDistortionImagePath(i));
 
-			auto resource = modelLoader->Load(fullPath);
-			SetModel(effect, i, resource);
-		}
+		auto resource = resourceMgr->LoadTexture(fullPath, TextureType::Distortion);
+		SetTexture(effect, i, TextureType::Distortion, resource);
 	}
 
-	if (materialLoader != nullptr)
+	for (auto i = 0; i < effect->GetWaveCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetMaterialCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetMaterialPath(i));
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetWavePath(i));
 
-			auto resource = materialLoader->Load(fullPath);
-			SetMaterial(effect, i, resource);
-		}
+		auto resource = resourceMgr->LoadSoundData(fullPath);
+		SetSound(effect, i, resource);
 	}
 
-	if (curveLoader != nullptr)
+	for (auto i = 0; i < effect->GetModelCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetCurveCount(); i++)
-		{
-			char16_t fullPath[512];
-			PathCombine(fullPath, materialPath, effect->GetCurvePath(i));
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetModelPath(i));
 
-			auto resource = curveLoader->Load(fullPath);
-			SetCurve(effect, i, resource);
-		}
+		auto resource = resourceMgr->LoadModel(fullPath);
+		SetModel(effect, i, resource);
 	}
 
-	if (pmGenerator != nullptr)
+	for (auto i = 0; i < effect->GetMaterialCount(); i++)
 	{
-		for (int32_t ind = 0; ind < effect->GetProcedualModelCount(); ind++)
-		{
-			auto model = pmGenerator->Generate(effect->GetProcedualModelParameter(ind));
-			SetProcedualModel(effect, ind, model);
-		}
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetMaterialPath(i));
+
+		auto resource = resourceMgr->LoadMaterial(fullPath);
+		SetMaterial(effect, i, resource);
+	}
+
+	for (auto i = 0; i < effect->GetCurveCount(); i++)
+	{
+		char16_t fullPath[512];
+		PathCombine(fullPath, materialPath, effect->GetCurvePath(i));
+
+		auto resource = resourceMgr->LoadCurve(fullPath);
+		SetCurve(effect, i, resource);
+	}
+
+	for (int32_t ind = 0; ind < effect->GetProcedualModelCount(); ind++)
+	{
+		auto model = resourceMgr->GenerateProcedualModel(effect->GetProcedualModelParameter(ind));
+		SetProcedualModel(effect, ind, model);
 	}
 }
 
 void EffectFactory::OnUnloadingResource(Effect* effect)
 {
-	auto textureLoader = effect->GetSetting()->GetTextureLoader();
-	auto soundLoader = effect->GetSetting()->GetSoundLoader();
-	auto modelLoader = effect->GetSetting()->GetModelLoader();
-	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
-	auto curveLoader = effect->GetSetting()->GetCurveLoader();
-	auto pmGenerator = effect->GetSetting()->GetProcedualMeshGenerator();
+	auto resourceMgr = effect->GetSetting()->GetResourceManager();
 
-	if (textureLoader != nullptr)
+	for (auto i = 0; i < effect->GetColorImageCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetColorImageCount(); i++)
-		{
-			textureLoader->Unload(effect->GetColorImage(i));
-			SetTexture(effect, i, TextureType::Color, nullptr);
-		}
-
-		for (auto i = 0; i < effect->GetNormalImageCount(); i++)
-		{
-			textureLoader->Unload(effect->GetNormalImage(i));
-			SetTexture(effect, i, TextureType::Normal, nullptr);
-		}
-
-		for (auto i = 0; i < effect->GetDistortionImageCount(); i++)
-		{
-			textureLoader->Unload(effect->GetDistortionImage(i));
-			SetTexture(effect, i, TextureType::Distortion, nullptr);
-		}
+		resourceMgr->UnloadTexture(effect->GetColorImage(i));
+		SetTexture(effect, i, TextureType::Color, nullptr);
 	}
 
-	if (soundLoader != nullptr)
+	for (auto i = 0; i < effect->GetNormalImageCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetWaveCount(); i++)
-		{
-			soundLoader->Unload(effect->GetWave(i));
-			SetSound(effect, i, nullptr);
-		}
+		resourceMgr->UnloadTexture(effect->GetNormalImage(i));
+		SetTexture(effect, i, TextureType::Normal, nullptr);
 	}
 
-	if (modelLoader != nullptr)
+	for (auto i = 0; i < effect->GetDistortionImageCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetModelCount(); i++)
-		{
-			modelLoader->Unload(effect->GetModel(i));
-			SetModel(effect, i, nullptr);
-		}
+		resourceMgr->UnloadTexture(effect->GetDistortionImage(i));
+		SetTexture(effect, i, TextureType::Distortion, nullptr);
 	}
 
-	if (materialLoader != nullptr)
+	for (auto i = 0; i < effect->GetWaveCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetMaterialCount(); i++)
-		{
-			materialLoader->Unload(effect->GetMaterial(i));
-			SetMaterial(effect, i, nullptr);
-		}
+		resourceMgr->UnloadSoundData(effect->GetWave(i));
+		SetSound(effect, i, nullptr);
+	}
+	\
+	for (auto i = 0; i < effect->GetModelCount(); i++)
+	{
+		resourceMgr->UnloadModel(effect->GetModel(i));
+		SetModel(effect, i, nullptr);
 	}
 
-	if (curveLoader != nullptr)
+	for (auto i = 0; i < effect->GetMaterialCount(); i++)
 	{
-		for (auto i = 0; i < effect->GetCurveCount(); i++)
-		{
-			curveLoader->Unload(effect->GetCurve(i));
-			SetCurve(effect, i, nullptr);
-		}
+		resourceMgr->UnloadMaterial(effect->GetMaterial(i));
+		SetMaterial(effect, i, nullptr);
 	}
 
-	if (pmGenerator != nullptr)
+	for (auto i = 0; i < effect->GetCurveCount(); i++)
 	{
-		for (int32_t ind = 0; ind < effect->GetProcedualModelCount(); ind++)
-		{
-			pmGenerator->Ungenerate(effect->GetProcedualModel(ind));
-			SetProcedualModel(effect, ind, nullptr);
-		}
+		resourceMgr->UnloadCurve(effect->GetCurve(i));
+		SetCurve(effect, i, nullptr);
+	}
+
+	for (int32_t ind = 0; ind < effect->GetProcedualModelCount(); ind++)
+	{
+		resourceMgr->UngenerateProcedualModel(effect->GetProcedualModel(ind));
+		SetProcedualModel(effect, ind, nullptr);
 	}
 }
 
@@ -723,44 +679,31 @@ void EffectImplemented::ResetReloadingBackup()
 		return;
 
 	auto loader = GetSetting();
+	auto resourceMgr = loader->GetResourceManager();
 
-	TextureLoaderRef textureLoader = loader->GetTextureLoader();
-	if (textureLoader != nullptr)
+	for (auto it : reloadingBackup->images.GetCollection())
 	{
-		for (auto it : reloadingBackup->images.GetCollection())
-		{
-			textureLoader->Unload(it.second.value);
-		}
-
-		for (auto it : reloadingBackup->normalImages.GetCollection())
-		{
-			textureLoader->Unload(it.second.value);
-		}
-
-		for (auto it : reloadingBackup->distortionImages.GetCollection())
-		{
-			textureLoader->Unload(it.second.value);
-		}
+		resourceMgr->UnloadTexture(it.second.value);
 	}
 
-	SoundLoaderRef soundLoader = loader->GetSoundLoader();
-	if (soundLoader != nullptr)
+	for (auto it : reloadingBackup->normalImages.GetCollection())
 	{
-		for (auto it : reloadingBackup->sounds.GetCollection())
-		{
-			soundLoader->Unload(it.second.value);
-		}
+		resourceMgr->UnloadTexture(it.second.value);
 	}
 
+	for (auto it : reloadingBackup->distortionImages.GetCollection())
 	{
-		ModelLoaderRef modelLoader = loader->GetModelLoader();
-		if (modelLoader != nullptr)
-		{
-			for (auto it : reloadingBackup->models.GetCollection())
-			{
-				modelLoader->Unload(it.second.value);
-			}
-		}
+		resourceMgr->UnloadTexture(it.second.value);
+	}
+
+	for (auto it : reloadingBackup->sounds.GetCollection())
+	{
+		resourceMgr->UnloadSoundData(it.second.value);
+	}
+
+	for (auto it : reloadingBackup->models.GetCollection())
+	{
+		resourceMgr->UnloadModel(it.second.value);
 	}
 
 	reloadingBackup.reset();
@@ -1227,14 +1170,14 @@ const ProcedualModelParameter* EffectImplemented::GetProcedualModelParameter(int
 
 void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureRef data)
 {
-	auto textureLoader = GetSetting()->GetTextureLoader();
+	auto resourceMgr = GetSetting()->GetResourceManager();
 
 	if (type == TextureType::Color)
 	{
 		assert(0 <= index && index < m_pImages.size());
-		if (textureLoader != nullptr)
+		if (m_pImages[index] != nullptr)
 		{
-			textureLoader->Unload(GetColorImage(index));
+			resourceMgr->UnloadTexture(m_pImages[index]);
 		}
 
 		m_pImages[index] = data;
@@ -1243,9 +1186,9 @@ void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureRef d
 	if (type == TextureType::Normal)
 	{
 		assert(0 <= index && index < m_normalImages.size());
-		if (textureLoader != nullptr)
+		if (m_normalImages[index] != nullptr)
 		{
-			textureLoader->Unload(GetNormalImage(index));
+			resourceMgr->UnloadTexture(m_normalImages[index]);
 		}
 
 		m_normalImages[index] = data;
@@ -1254,9 +1197,9 @@ void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureRef d
 	if (type == TextureType::Distortion)
 	{
 		assert(0 <= index && index < m_distortionImages.size());
-		if (textureLoader != nullptr)
+		if (m_distortionImages[index] != nullptr)
 		{
-			textureLoader->Unload(GetDistortionImage(index));
+			resourceMgr->UnloadTexture(m_distortionImages[index]);
 		}
 
 		m_distortionImages[index] = data;
@@ -1265,53 +1208,33 @@ void EffectImplemented::SetTexture(int32_t index, TextureType type, TextureRef d
 
 void EffectImplemented::SetSound(int32_t index, SoundDataRef data)
 {
-	auto soundLoader = GetSetting()->GetSoundLoader();
+	auto resourceMgr = GetSetting()->GetResourceManager();
 	assert(0 <= index && index < m_pWaves.size());
-
-	if (soundLoader != nullptr)
-	{
-		soundLoader->Unload(GetWave(index));
-	}
-
+	resourceMgr->UnloadSoundData(m_pWaves[index]);
 	m_pWaves[index] = data;
 }
 
 void EffectImplemented::SetModel(int32_t index, ModelRef data)
 {
-	auto modelLoader = GetSetting()->GetModelLoader();
+	auto resourceMgr = GetSetting()->GetResourceManager();
 	assert(0 <= index && index < models_.size());
-
-	if (modelLoader != nullptr)
-	{
-		modelLoader->Unload(GetModel(index));
-	}
-
+	resourceMgr->UnloadModel(models_[index]);
 	models_[index] = data;
 }
 
 void EffectImplemented::SetMaterial(int32_t index, MaterialRef data)
 {
-	auto materialLoader = GetSetting()->GetMaterialLoader();
+	auto resourceMgr = GetSetting()->GetResourceManager();
 	assert(0 <= index && index < materials_.size());
-
-	if (materialLoader != nullptr)
-	{
-		materialLoader->Unload(GetMaterial(index));
-	}
-
+	resourceMgr->UnloadMaterial(materials_[index]);
 	materials_[index] = data;
 }
 
 void EffectImplemented::SetCurve(int32_t index, CurveRef data)
 {
-	auto curveLoader = GetSetting()->GetCurveLoader();
+	auto resourceMgr = GetSetting()->GetResourceManager();
 	assert(0 <= index && index < curves_.size());
-
-	if (curveLoader != nullptr)
-	{
-		curveLoader->Unload(GetCurve(index));
-	}
-
+	resourceMgr->UnloadCurve(curves_[index]);
 	curves_[index] = data;
 }
 

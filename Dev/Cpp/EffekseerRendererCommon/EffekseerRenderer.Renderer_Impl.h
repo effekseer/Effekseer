@@ -28,11 +28,11 @@ private:
 
 	Effekseer::RenderMode renderMode_ = Effekseer::RenderMode::Normal;
 
-	::Effekseer::TextureRef whiteProxyTexture_;
-	::Effekseer::TextureRef normalProxyTexture_;
+	::Effekseer::Backend::TextureRef whiteProxyTexture_;
+	::Effekseer::Backend::TextureRef normalProxyTexture_;
 
-	::Effekseer::TextureRef backgroundTexture_;
-	::Effekseer::TextureRef depthTexture_;
+	::Effekseer::Backend::TextureRef backgroundTexture_;
+	::Effekseer::Backend::TextureRef depthTexture_;
 	DepthReconstructionParameter reconstructionParam_;
 
 	void SetCameraParameterInternal(const ::Effekseer::SIMD::Vec3f& front, const ::Effekseer::SIMD::Vec3f& position);
@@ -82,7 +82,7 @@ public:
 
 	void DeleteProxyTextures(Renderer* renderer);
 
-	::Effekseer::TextureRef GetProxyTexture(EffekseerRenderer::ProxyTextureType type);
+	::Effekseer::Backend::TextureRef GetProxyTexture(EffekseerRenderer::ProxyTextureType type);
 
 	UVStyle GetTextureUVStyle() const;
 
@@ -108,13 +108,13 @@ public:
 
 	void SetRenderMode(Effekseer::RenderMode renderMode);
 
-	const ::Effekseer::TextureRef& GetBackground();
+	const ::Effekseer::Backend::TextureRef& GetBackground();
 
-	void SetBackground(::Effekseer::TextureRef texture);
+	void SetBackground(::Effekseer::Backend::TextureRef texture);
 
-	void GetDepth(::Effekseer::TextureRef& texture, DepthReconstructionParameter& reconstructionParam);
+	void GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam);
 
-	void SetDepth(::Effekseer::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
+	void SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
 };
 
 } // namespace EffekseerRenderer

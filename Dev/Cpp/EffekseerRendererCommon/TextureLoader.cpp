@@ -37,7 +37,8 @@ Effekseer::TextureRef TextureLoader::Load(const char16_t* path, ::Effekseer::Tex
 		std::vector<uint8_t> fileData(fileSize);
 		reader->Read(fileData.data(), fileSize);
 
-		return Load(fileData.data(), static_cast<int32_t>(fileSize), textureType, isMipEnabled);
+		auto texture = Load(fileData.data(), static_cast<int32_t>(fileSize), textureType, isMipEnabled);
+		return texture;
 	}
 
 	return nullptr;
@@ -74,7 +75,9 @@ Effekseer::TextureRef TextureLoader::Load(const void* data, int32_t size, Effeks
 				param.GenerateMipmap = isMipMapEnabled;
 				param.InitialData.assign(pngTextureLoader_.GetData().begin(), pngTextureLoader_.GetData().end());
 
-				return graphicsDevice_->CreateTexture(param);
+				auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
+				texture->SetBackend(graphicsDevice_->CreateTexture(param));
+				return texture;
 			}
 		}
 	}
@@ -100,7 +103,9 @@ Effekseer::TextureRef TextureLoader::Load(const void* data, int32_t size, Effeks
 			param.InitialData.assign(ddsTextureLoader_.GetTextures().at(0).Data.begin(), ddsTextureLoader_.GetTextures().at(0).Data.end());
 			param.GenerateMipmap = false; // TODO : Support nomipmap
 
-			return graphicsDevice_->CreateTexture(param);
+			auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
+			texture->SetBackend(graphicsDevice_->CreateTexture(param));
+			return texture;
 		}
 	}
 	else
@@ -126,7 +131,9 @@ Effekseer::TextureRef TextureLoader::Load(const void* data, int32_t size, Effeks
 				param.GenerateMipmap = isMipMapEnabled;
 				param.InitialData.assign(tgaTextureLoader_.GetData().begin(), tgaTextureLoader_.GetData().end());
 
-				return graphicsDevice_->CreateTexture(param);
+				auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
+				texture->SetBackend(graphicsDevice_->CreateTexture(param));
+				return texture;
 			}
 		}
 	}

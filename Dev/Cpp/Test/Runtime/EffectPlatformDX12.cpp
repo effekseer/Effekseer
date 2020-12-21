@@ -56,7 +56,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformDX12* platform_ = nullptr;
-	Effekseer::TextureRef texture_ = nullptr;
+	Effekseer::Backend::TextureRef texture_ = nullptr;
 
 public:
 	DistortingCallbackDX12(EffectPlatformDX12* platform) : platform_(platform)

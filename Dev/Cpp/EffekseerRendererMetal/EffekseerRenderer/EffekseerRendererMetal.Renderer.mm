@@ -151,14 +151,14 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	return nullptr;
 }
 
-Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
 	auto g = r->GetGraphicsDeviceInternal();
 	return g->CreateTexture((uint64_t)texture, []()-> void{});
 }
 
-Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
 {
     auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
     return g->CreateTexture((uint64_t)texture, []()-> void{});

@@ -810,7 +810,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureRef* textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::TextureRef* textures, int32_t count)
 {
 	auto state = GetRenderState()->GetActiveState();
 	LLGI::TextureWrapMode ws[2];
