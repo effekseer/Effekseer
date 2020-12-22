@@ -3,14 +3,14 @@
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
 #include "../Effekseer.Base.Pre.h"
-#include <memory>
 #include <list>
 #include <map>
+#include <memory>
 #include <new>
 #include <set>
+#include <string>
 #include <unordered_map>
 #include <vector>
-#include <string>
 
 namespace Effekseer
 {
@@ -181,5 +181,19 @@ template <class T, class U>
 using CustomAlignedUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
 
 } // namespace Effekseer
+
+namespace std
+{
+template <>
+struct hash<Effekseer::CustomString>
+{
+public:
+	size_t operator()(const Effekseer::CustomString& o) const noexcept
+	{
+		return std::hash<std::u16string>()(std::u16string{o.c_str()});
+	}
+};
+
+} // namespace std
 
 #endif // __EFFEKSEER_BASE_PRE_H__
