@@ -89,7 +89,7 @@ private:
 	struct CachedResources
 	{
 		LOADER loader;
-		CustomUnorderedMap<std::u16string_view, LoadCounted<RESOURCE>> cached;
+		CustomUnorderedMap<CustomString, LoadCounted<RESOURCE>> cached;
 
 		template <typename... Arg>
 		RESOURCE Load(const char16_t* path, Arg&&... args)
@@ -106,7 +106,7 @@ private:
 				if (resource != nullptr)
 				{
 					resource->SetPath(path);
-					std::u16string_view view = resource->GetPath();
+					const CustomString view = resource->GetPath();
 					cached.emplace(view, LoadCounted<RESOURCE>{ resource, 1 } );
 					return resource;
 				}
