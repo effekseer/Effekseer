@@ -117,6 +117,8 @@
   "Constant_Name": "定数",
   "Time_Node_Name": "時間",
   "Time_Node_Desc": "現在の時間を秒単位で出力します。",
+  "EffectScale_Node_Name": "エフェクト拡大率",
+  "EffectScale_Node_Desc": "エフェクトファイルを読み込んだときに指定される拡大率を取得します。",
   "CameraPositionWS_Node_Name": "カメラ位置",
   "CameraPositionWS_Node_Desc": "カメラの位置を出力します。",
   "Constant1_Node_Name": "定数1",

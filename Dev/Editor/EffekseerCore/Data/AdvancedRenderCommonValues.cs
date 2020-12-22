@@ -326,11 +326,13 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public FalloffParameter FalloffParam { get; private set; } = new FalloffParameter();
 
-		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistance")]
+		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistanceFar")]
 		public Value.Float SoftParticleDistance { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
 
+		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistanceNear")]
 		public Value.Float SoftParticleDistanceNear { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
 
+		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistanceNearOffset")]
 		public Value.Float SoftParticleDistanceNearOffset { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
 
 		public AdvancedRenderCommonValues(Value.Path basepath)

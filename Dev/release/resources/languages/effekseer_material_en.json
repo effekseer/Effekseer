@@ -117,6 +117,8 @@
   "Constant_Name": "Constant",
   "Time_Node_Name": "Time",
   "Time_Node_Desc": "Outputs the current time in seconds.",
+  "EffectScale_Node_Name": "EffectScale",
+  "EffectScale_Node_Desc": "Gets the scale specified when the effect file is loaded.",
   "CameraPositionWS_Node_Name": "CameraPosition",
   "CameraPositionWS_Node_Desc": "Outputs the camera position.",
   "Constant1_Node_Name": "Constant1",
