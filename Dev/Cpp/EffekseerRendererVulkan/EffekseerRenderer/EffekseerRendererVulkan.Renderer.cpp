@@ -134,13 +134,13 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 	return nullptr;
 }
 
-Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
 	return CreateTexture(r->GetGraphicsDevice(), info);
 }
 
-Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info)
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info)
 {
 	LLGI::VulkanImageInfo llgiinfo;
 	llgiinfo.image = info.image;

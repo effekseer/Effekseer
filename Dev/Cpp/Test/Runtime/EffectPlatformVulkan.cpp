@@ -102,7 +102,7 @@ void main()
 class DistortingCallbackVulkan : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformVulkan* platform_ = nullptr;
-	Effekseer::TextureRef texture_ = nullptr;
+	Effekseer::Backend::TextureRef texture_ = nullptr;
 
 public:
 	DistortingCallbackVulkan(EffectPlatformVulkan* platform)

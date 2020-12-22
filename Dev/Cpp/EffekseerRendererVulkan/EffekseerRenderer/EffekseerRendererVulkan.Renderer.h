@@ -45,9 +45,9 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 									  RenderPassInformation renderPassInformation,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info);
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info);
 
-Effekseer::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info);
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info);
 
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
 
