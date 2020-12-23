@@ -1255,15 +1255,19 @@ struct ShaderParameterCollector
 
 struct SoftParticleParameter
 {
-	std::array<float, 4> softParticleAndReconstructionParam1; // x:softparticle y:reconstruction
+	std::array<float, 4> softParticleParams;
+	std::array<float, 4> reconstructionParam1;
 	std::array<float, 4> reconstructionParam2;
 
-	void SetParam(float softParticle, float magnification, float rescale1, float rescale2, float v33, float v34, float v43, float v44)
+	void SetParam(float distanceFar, float distanceNear, float distanceNearOffset, float magnification, float rescale1, float rescale2, float v33, float v34, float v43, float v44)
 	{
-		softParticleAndReconstructionParam1[0] = softParticle * magnification;
-		softParticleAndReconstructionParam1[1] = rescale1;
-		softParticleAndReconstructionParam1[2] = rescale2;
-		softParticleAndReconstructionParam1[3] = magnification;
+		softParticleParams[0] = distanceFar * magnification;
+		softParticleParams[1] = distanceNear * magnification;
+		softParticleParams[2] = distanceNearOffset * magnification;
+		softParticleParams[3] = distanceFar != 0.0f || distanceNear != 0.0f || distanceNearOffset != 0.0f ? 1.0f : 0.0f;
+
+		reconstructionParam1[0] = rescale1;
+		reconstructionParam1[1] = rescale2;
 
 		reconstructionParam2[0] = v33;
 		reconstructionParam2[1] = v34;

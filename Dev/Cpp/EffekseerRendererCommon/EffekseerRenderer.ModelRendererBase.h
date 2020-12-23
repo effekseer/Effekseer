@@ -296,7 +296,7 @@ protected:
 		fc[3] = 1.0f;
 	}
 
-	void VectorToFloat4(const ::Effekseer::SIMD::Vec3f& v, std::array<float,4>& fc)
+	void VectorToFloat4(const ::Effekseer::SIMD::Vec3f& v, std::array<float, 4>& fc)
 	{
 		::Effekseer::SIMD::Float4::Store3(fc.data(), v.s);
 		fc[3] = 1.0f;
@@ -465,6 +465,7 @@ protected:
 		std::array<float, 4> predefined_uniforms;
 		predefined_uniforms.fill(0.5f);
 		predefined_uniforms[0] = renderer->GetTime();
+		predefined_uniforms[1] = param.Magnification;
 
 		// vs
 		int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 2) * InstanceCount;
@@ -516,6 +517,8 @@ protected:
 
 		softParticleParam.SetParam(
 			0.0f,
+			0.0f,
+			0.0f,
 			param.Maginification,
 			reconstructionParam.DepthBufferScale,
 			reconstructionParam.DepthBufferOffset,
@@ -524,7 +527,7 @@ protected:
 			reconstructionParam.ProjectionMatrix43,
 			reconstructionParam.ProjectionMatrix44);
 
-		renderer->SetPixelBufferToShader(softParticleParam.softParticleAndReconstructionParam1.data(), sizeof(float) * 4, psOffset);
+		renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam1.data(), sizeof(float) * 4, psOffset);
 		psOffset += (sizeof(float) * 4);
 
 		renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam2.data(), sizeof(float) * 4, psOffset);
@@ -808,7 +811,10 @@ public:
 
 		if (collector_.IsDepthRequired)
 		{
-			if (depthTexture == nullptr || (param.BasicParameterPtr->SoftParticleDistance == 0.0f && collector_.ShaderType != RendererShaderType::Material))
+			if (depthTexture == nullptr || (param.BasicParameterPtr->SoftParticleDistanceFar == 0.0f &&
+											param.BasicParameterPtr->SoftParticleDistanceNear == 0.0f &&
+											param.BasicParameterPtr->SoftParticleDistanceNearOffset == 0.0f &&
+											collector_.ShaderType != RendererShaderType::Material))
 			{
 				depthTexture = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 			}
@@ -947,7 +953,9 @@ public:
 				pcb->BlendTextureParam.BlendType = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
 
 				pcb->SoftParticleParam.SetParam(
-					param.BasicParameterPtr->SoftParticleDistance,
+					param.BasicParameterPtr->SoftParticleDistanceFar,
+					param.BasicParameterPtr->SoftParticleDistanceNear,
+					param.BasicParameterPtr->SoftParticleDistanceNearOffset,
 					param.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,
@@ -972,7 +980,6 @@ public:
 				{
 					ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
 					pcb->LightColor = ColorToFloat4(renderer->GetLightColor());
-					
 				}
 
 				{
@@ -1003,11 +1010,12 @@ public:
 											  param.BasicParameterPtr->EdgeColor[3])),
 										  param.BasicParameterPtr->EdgeThreshold,
 										  static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
-
 				}
 
 				pcb->SoftParticleParam.SetParam(
-					param.BasicParameterPtr->SoftParticleDistance,
+					param.BasicParameterPtr->SoftParticleDistanceFar,
+					param.BasicParameterPtr->SoftParticleDistanceNear,
+					param.BasicParameterPtr->SoftParticleDistanceNearOffset,
 					param.Maginification,
 					reconstructionParam.DepthBufferScale,
 					reconstructionParam.DepthBufferOffset,

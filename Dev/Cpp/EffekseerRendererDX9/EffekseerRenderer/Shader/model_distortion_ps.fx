@@ -15,8 +15,9 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _73_fFlipbookParameter : register(c2);
     float4 _73_fUVDistortionParameter : register(c3);
     float4 _73_fBlendTextureParameter : register(c4);
-    float4 _73_softParticleAndReconstructionParam1 : register(c5);
-    float4 _73_reconstructionParam2 : register(c6);
+    float4 _73_softParticleParam : register(c5);
+    float4 _73_reconstructionParam1 : register(c6);
+    float4 _73_reconstructionParam2 : register(c7);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);

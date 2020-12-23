@@ -1029,7 +1029,9 @@ struct NodeRendererBasicParameter
 	//! copy from alphacutoff
 	bool IsAlphaCutoffEnabled = false;
 
-	float SoftParticleDistance = 0.0f;
+	float SoftParticleDistanceFar = 0.0f;
+	float SoftParticleDistanceNear = 0.0f;
+	float SoftParticleDistanceNearOffset = 0.0f;
 
 	NodeRendererBasicParameter()
 	{

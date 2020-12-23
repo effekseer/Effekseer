@@ -15,19 +15,20 @@ struct FalloffParameter
 
 cbuffer PS_ConstanBuffer : register(b1)
 {
-    float4 _125_fLightDirection : packoffset(c0);
-    float4 _125_fLightColor : packoffset(c1);
-    float4 _125_fLightAmbient : packoffset(c2);
-    float4 _125_fFlipbookParameter : packoffset(c3);
-    float4 _125_fUVDistortionParameter : packoffset(c4);
-    float4 _125_fBlendTextureParameter : packoffset(c5);
-    float4 _125_fCameraFrontDirection : packoffset(c6);
-    FalloffParameter _125_fFalloffParam : packoffset(c7);
-    float4 _125_fEmissiveScaling : packoffset(c10);
-    float4 _125_fEdgeColor : packoffset(c11);
-    float4 _125_fEdgeParameter : packoffset(c12);
-    float4 _125_softParticleAndReconstructionParam1 : packoffset(c13);
-    float4 _125_reconstructionParam2 : packoffset(c14);
+    float4 _136_fLightDirection : packoffset(c0);
+    float4 _136_fLightColor : packoffset(c1);
+    float4 _136_fLightAmbient : packoffset(c2);
+    float4 _136_fFlipbookParameter : packoffset(c3);
+    float4 _136_fUVDistortionParameter : packoffset(c4);
+    float4 _136_fBlendTextureParameter : packoffset(c5);
+    float4 _136_fCameraFrontDirection : packoffset(c6);
+    FalloffParameter _136_fFalloffParam : packoffset(c7);
+    float4 _136_fEmissiveScaling : packoffset(c10);
+    float4 _136_fEdgeColor : packoffset(c11);
+    float4 _136_fEdgeParameter : packoffset(c12);
+    float4 _136_softParticleParam : packoffset(c13);
+    float4 _136_reconstructionParam1 : packoffset(c14);
+    float4 _136_reconstructionParam2 : packoffset(c15);
 };
 
 Texture2D<float4> _colorTex : register(t0);
@@ -54,14 +55,18 @@ struct SPIRV_Cross_Output
     float4 _entryPointOutput : SV_Target0;
 };
 
-float SoftParticle(float backgroundZ, float meshZ, float softparticleParam, float2 reconstruct1, float4 reconstruct2)
+float SoftParticle(float backgroundZ, float meshZ, float4 softparticleParam, float4 reconstruct1, float4 reconstruct2)
 {
-    float _distance = softparticleParam;
-    float2 rescale = reconstruct1;
+    float distanceFar = softparticleParam.x;
+    float distanceNear = softparticleParam.y;
+    float distanceNearOffset = softparticleParam.z;
+    float2 rescale = reconstruct1.xy;
     float4 params = reconstruct2;
     float2 zs = float2((backgroundZ * rescale.x) + rescale.y, meshZ);
     float2 depth = ((zs * params.w) - params.y.xx) / (params.x.xx - (zs * params.z));
-    return min(max((depth.y - depth.x) / _distance, 0.0f), 1.0f);
+    float alphaFar = (depth.y - depth.x) / distanceFar;
+    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    return min(max(min(alphaFar, alphaNear), 0.0f), 1.0f);
 }
 
 float4 _main(PS_Input Input)
@@ -70,14 +75,14 @@ float4 _main(PS_Input Input)
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
-    float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
-    if (_125_softParticleAndReconstructionParam1.x != 0.0f)
+    if (_136_softParticleParam.w != 0.0f)
     {
+        float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        float param_2 = _125_softParticleAndReconstructionParam1.x;
-        float2 param_3 = _125_softParticleAndReconstructionParam1.yz;
-        float4 param_4 = _125_reconstructionParam2;
+        float4 param_2 = _136_softParticleParam;
+        float4 param_3 = _136_reconstructionParam1;
+        float4 param_4 = _136_reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0f)
@@ -94,8 +99,8 @@ void frag_main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    float4 _185 = _main(Input);
-    _entryPointOutput = _185;
+    float4 _205 = _main(Input);
+    _entryPointOutput = _205;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

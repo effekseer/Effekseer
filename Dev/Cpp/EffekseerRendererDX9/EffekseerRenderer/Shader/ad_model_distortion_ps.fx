@@ -31,8 +31,9 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _209_fFlipbookParameter : register(c2);
     float4 _209_fUVDistortionParameter : register(c3);
     float4 _209_fBlendTextureParameter : register(c4);
-    float4 _209_softParticleAndReconstructionParam1 : register(c5);
-    float4 _209_reconstructionParam2 : register(c6);
+    float4 _209_softParticleParam : register(c5);
+    float4 _209_reconstructionParam1 : register(c6);
+    float4 _209_reconstructionParam2 : register(c7);
 };
 
 uniform sampler2D Sampler_sampler_uvDistortionTex : register(s3);

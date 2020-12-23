@@ -704,12 +704,16 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		if (m_effect->GetVersion() >= Version16Alpha4)
 		{
-			memcpy(&RendererCommon.BasicParameter.SoftParticleDistance, pos, sizeof(float));
+			memcpy(&RendererCommon.BasicParameter.SoftParticleDistanceFar, pos, sizeof(float));
 			pos += sizeof(float);
 		}
-		else
+
+		if (m_effect->GetVersion() >= Version16Alpha5)
 		{
-			RendererCommon.BasicParameter.SoftParticleDistance = 0.0f;
+			memcpy(&RendererCommon.BasicParameter.SoftParticleDistanceNear, pos, sizeof(float));
+			pos += sizeof(float);
+			memcpy(&RendererCommon.BasicParameter.SoftParticleDistanceNearOffset, pos, sizeof(float));
+			pos += sizeof(float);
 		}
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
