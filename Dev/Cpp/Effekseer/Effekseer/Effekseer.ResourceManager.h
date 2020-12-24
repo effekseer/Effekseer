@@ -99,6 +99,7 @@ private:
 				auto it = cached.find(path);
 				if (it != cached.end())
 				{
+					it->second.loadCount++;
 					return it->second.resource;
 				}
 
