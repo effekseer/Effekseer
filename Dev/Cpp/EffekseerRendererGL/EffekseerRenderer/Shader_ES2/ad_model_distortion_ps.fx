@@ -5,7 +5,7 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec2 UV;
+    highp vec4 UV_Others;
     highp vec4 ProjBinormal;
     highp vec4 ProjTangent;
     highp vec4 PosP;
@@ -13,7 +13,6 @@ struct PS_Input
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
     highp vec4 Blend_FBNextIndex_UV;
-    highp vec2 Others;
 };
 
 struct AdvancedParameter
@@ -50,7 +49,7 @@ uniform highp sampler2D Sampler_sampler_blendTex;
 uniform highp sampler2D Sampler_sampler_blendAlphaTex;
 uniform highp sampler2D Sampler_sampler_backTex;
 
-centroid varying highp vec2 _VSPS_UV;
+centroid varying highp vec4 _VSPS_UV_Others;
 varying highp vec4 _VSPS_ProjBinormal;
 varying highp vec4 _VSPS_ProjTangent;
 varying highp vec4 _VSPS_PosP;
@@ -58,7 +57,6 @@ centroid varying highp vec4 _VSPS_Color;
 varying highp vec4 _VSPS_Alpha_Dist_UV;
 varying highp vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying highp vec4 _VSPS_Blend_FBNextIndex_UV;
-varying highp vec2 _VSPS_Others;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
 {
@@ -69,8 +67,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -135,7 +133,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     highp vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset);
+    highp vec4 Output = texture2D(Sampler_sampler_colorTex, vec2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     highp vec4 param_3 = Output;
     highp float param_4 = advancedParam.FlipbookRate;
@@ -176,7 +174,7 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
+    Input.UV_Others = _VSPS_UV_Others;
     Input.ProjBinormal = _VSPS_ProjBinormal;
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
@@ -184,8 +182,7 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    Input.Others = _VSPS_Others;
-    highp vec4 _471 = _main(Input);
-    gl_FragData[0] = _471;
+    highp vec4 _470 = _main(Input);
+    gl_FragData[0] = _470;
 }
 

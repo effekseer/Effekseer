@@ -2,12 +2,11 @@ struct PS_Input
 {
     float4 PosVS;
     float4 Color;
-    float2 UV;
+    float4 UV_Others;
     float3 WorldN;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
-    float2 Others;
     float4 PosP;
 };
 
@@ -65,25 +64,23 @@ SamplerState sampler_depthTex : register(s6);
 
 static float4 gl_FragCoord;
 static float4 Input_Color;
-static float2 Input_UV;
+static float4 Input_UV_Others;
 static float3 Input_WorldN;
 static float4 Input_Alpha_Dist_UV;
 static float4 Input_Blend_Alpha_Dist_UV;
 static float4 Input_Blend_FBNextIndex_UV;
-static float2 Input_Others;
 static float4 Input_PosP;
 static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
 {
     centroid float4 Input_Color : TEXCOORD0;
-    centroid float2 Input_UV : TEXCOORD1;
+    centroid float4 Input_UV_Others : TEXCOORD1;
     float3 Input_WorldN : TEXCOORD2;
     float4 Input_Alpha_Dist_UV : TEXCOORD3;
     float4 Input_Blend_Alpha_Dist_UV : TEXCOORD4;
     float4 Input_Blend_FBNextIndex_UV : TEXCOORD5;
-    float2 Input_Others : TEXCOORD6;
-    float4 Input_PosP : TEXCOORD7;
+    float4 Input_PosP : TEXCOORD6;
     float4 gl_FragCoord : SV_Position;
 };
 
@@ -101,8 +98,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -181,7 +178,7 @@ float4 _main(PS_Input Input)
     float2 param_2 = _282_fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, param_1, param_2);
     UVOffset *= _282_fUVDistortionParameter.x;
-    float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset) * Input.Color;
+    float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV_Others.xy + UVOffset) * Input.Color;
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, _colorTex, sampler_colorTex, _282_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
@@ -205,29 +202,29 @@ float4 _main(PS_Input Input)
         float4 FalloffBlendColor = lerp(_282_fFalloffParam.EndColor, _282_fFalloffParam.BeginColor, pow(CdotN, _282_fFalloffParam.Param.z).xxxx);
         if (_282_fFalloffParam.Param.y == 0.0f)
         {
-            float3 _438 = Output.xyz + FalloffBlendColor.xyz;
-            Output = float4(_438.x, _438.y, _438.z, Output.w);
+            float3 _439 = Output.xyz + FalloffBlendColor.xyz;
+            Output = float4(_439.x, _439.y, _439.z, Output.w);
         }
         else
         {
             if (_282_fFalloffParam.Param.y == 1.0f)
             {
-                float3 _451 = Output.xyz - FalloffBlendColor.xyz;
-                Output = float4(_451.x, _451.y, _451.z, Output.w);
+                float3 _452 = Output.xyz - FalloffBlendColor.xyz;
+                Output = float4(_452.x, _452.y, _452.z, Output.w);
             }
             else
             {
                 if (_282_fFalloffParam.Param.y == 2.0f)
                 {
-                    float3 _464 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = float4(_464.x, _464.y, _464.z, Output.w);
+                    float3 _465 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = float4(_465.x, _465.y, _465.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    float3 _478 = Output.xyz * _282_fEmissiveScaling.x;
-    Output = float4(_478.x, _478.y, _478.z, Output.w);
+    float3 _479 = Output.xyz * _282_fEmissiveScaling.x;
+    Output = float4(_479.x, _479.y, _479.z, Output.w);
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
@@ -245,8 +242,8 @@ float4 _main(PS_Input Input)
     {
         discard;
     }
-    float3 _562 = lerp(_282_fEdgeColor.xyz * _282_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _282_fEdgeParameter.x).xxx);
-    Output = float4(_562.x, _562.y, _562.z, Output.w);
+    float3 _563 = lerp(_282_fEdgeColor.xyz * _282_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _282_fEdgeParameter.x).xxx);
+    Output = float4(_563.x, _563.y, _563.z, Output.w);
     return Output;
 }
 
@@ -255,27 +252,25 @@ void frag_main()
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
     Input.Color = Input_Color;
-    Input.UV = Input_UV;
+    Input.UV_Others = Input_UV_Others;
     Input.WorldN = Input_WorldN;
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
-    Input.Others = Input_Others;
     Input.PosP = Input_PosP;
-    float4 _602 = _main(Input);
-    _entryPointOutput = _602;
+    float4 _599 = _main(Input);
+    _entryPointOutput = _599;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     gl_FragCoord = stage_input.gl_FragCoord;
     Input_Color = stage_input.Input_Color;
-    Input_UV = stage_input.Input_UV;
+    Input_UV_Others = stage_input.Input_UV_Others;
     Input_WorldN = stage_input.Input_WorldN;
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;
     Input_Blend_FBNextIndex_UV = stage_input.Input_Blend_FBNextIndex_UV;
-    Input_Others = stage_input.Input_Others;
     Input_PosP = stage_input.Input_PosP;
     frag_main();
     SPIRV_Cross_Output stage_output;

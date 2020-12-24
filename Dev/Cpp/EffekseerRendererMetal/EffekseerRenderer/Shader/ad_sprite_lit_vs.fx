@@ -24,14 +24,13 @@ struct VS_Output
 {
     float4 PosVS;
     float4 Color;
-    float2 UV;
+    float4 UV_Others;
     float3 WorldN;
     float3 WorldB;
     float3 WorldT;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
-    float2 Others;
     float4 PosP;
 };
 
@@ -46,15 +45,14 @@ struct VS_ConstantBuffer
 struct main0_out
 {
     float4 _entryPointOutput_Color [[user(locn0)]];
-    float2 _entryPointOutput_UV [[user(locn1)]];
+    float4 _entryPointOutput_UV_Others [[user(locn1)]];
     float3 _entryPointOutput_WorldN [[user(locn2)]];
     float3 _entryPointOutput_WorldB [[user(locn3)]];
     float3 _entryPointOutput_WorldT [[user(locn4)]];
     float4 _entryPointOutput_Alpha_Dist_UV [[user(locn5)]];
     float4 _entryPointOutput_Blend_Alpha_Dist_UV [[user(locn6)]];
     float4 _entryPointOutput_Blend_FBNextIndex_UV [[user(locn7)]];
-    float2 _entryPointOutput_Others [[user(locn8)]];
-    float4 _entryPointOutput_PosP [[user(locn9)]];
+    float4 _entryPointOutput_PosP [[user(locn8)]];
     float4 gl_Position [[position]];
 };
 
@@ -187,19 +185,19 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
     float2 param_1 = flipbookNextIndexUV;
     float4 param_2 = v_255.mflipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
-    float2 param_4 = vsoutput.UV;
+    float2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
     vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
-    vsoutput.Others.x = flipbookRate;
-    vsoutput.Others.y = vsinput.AlphaThreshold;
+    vsoutput.UV_Others.z = flipbookRate;
+    vsoutput.UV_Others.w = vsinput.AlphaThreshold;
 }
 
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
-    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
+    VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
     float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
     float3 worldBinormal = cross(worldNormal, worldTangent);
@@ -213,7 +211,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
     Output.WorldB = worldBinormal;
     Output.WorldT = worldTangent;
     Output.Color = Input.Color;
-    Output.UV = uv1;
+    Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, v_255);
@@ -240,14 +238,13 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     VS_Output flattenTemp = _main(Input, v_255);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
-    out._entryPointOutput_UV = flattenTemp.UV;
+    out._entryPointOutput_UV_Others = flattenTemp.UV_Others;
     out._entryPointOutput_WorldN = flattenTemp.WorldN;
     out._entryPointOutput_WorldB = flattenTemp.WorldB;
     out._entryPointOutput_WorldT = flattenTemp.WorldT;
     out._entryPointOutput_Alpha_Dist_UV = flattenTemp.Alpha_Dist_UV;
     out._entryPointOutput_Blend_Alpha_Dist_UV = flattenTemp.Blend_Alpha_Dist_UV;
     out._entryPointOutput_Blend_FBNextIndex_UV = flattenTemp.Blend_FBNextIndex_UV;
-    out._entryPointOutput_Others = flattenTemp.Others;
     out._entryPointOutput_PosP = flattenTemp.PosP;
     return out;
 }

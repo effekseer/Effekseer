@@ -47,7 +47,8 @@ struct VS_Input
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float2 UV : TEXCOORD0;
+	// xy uv z - FlipbookRate, w - AlphaThreshold
+	linear centroid float4 UV_Others : TEXCOORD0;
 	float4 ProjBinormal : TEXCOORD1;
 	float4 ProjTangent : TEXCOORD2;
 	float4 PosP : TEXCOORD3;
@@ -58,9 +59,6 @@ struct VS_Output
 
 	// BlendUV, FlipbookNextIndexUV
 	float4 Blend_FBNextIndex_UV : TEXCOORD6;
-
-	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD7;
 };
 
 #else
@@ -69,7 +67,8 @@ struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
-	linear centroid float2 UV : TEXCOORD0;
+	// xy uv z - FlipbookRate, w - AlphaThreshold
+	linear centroid float4 UV_Others : TEXCOORD0;
 	float3 WorldN : TEXCOORD1;
 #ifdef ENABLE_LIGHTING
 	float3 WorldB : TEXCOORD2;
@@ -82,11 +81,8 @@ struct VS_Output
 	// BlendUV, FlipbookNextIndexUV
 	float4 Blend_FBNextIndex_UV : TEXCOORD6;
 
-	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD7;
-
 #ifndef DISABLED_SOFT_PARTICLE
-	float4 PosP : TEXCOORD8;
+	float4 PosP : TEXCOORD7;
 #endif
 };
 
@@ -137,7 +133,7 @@ VS_Output main(const VS_Input Input)
 #endif
 
 	Output.Color = Input.Color;
-	Output.UV = uv1;
+	Output.UV_Others.xy = uv1;
 
 	CalculateAndStoreAdvancedParameter(Input, Output);
 

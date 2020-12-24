@@ -31,11 +31,11 @@ uniform PS_ConstanBuffer CBPS0;
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_backTex;
 
-centroid varying vec2 _VSPS_UV;
+varying vec2 _VSPS_UV;
 varying vec4 _VSPS_ProjBinormal;
 varying vec4 _VSPS_ProjTangent;
 varying vec4 _VSPS_PosP;
-centroid varying vec4 _VSPS_Color;
+varying vec4 _VSPS_Color;
 
 vec4 _main(PS_Input Input)
 {

@@ -65,7 +65,8 @@ struct VS_Input
 struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float2 UV : TEXCOORD0;
+	// xy uv z - FlipbookRate, w - AlphaThreshold
+	linear centroid float4 UV_Others : TEXCOORD0;
 	float4 ProjBinormal : TEXCOORD1;
 	float4 ProjTangent : TEXCOORD2;
 	float4 PosP : TEXCOORD3;
@@ -76,9 +77,6 @@ struct VS_Output
 
 	// BlendUV, FlipbookNextIndexUV
 	float4 Blend_FBNextIndex_UV : TEXCOORD6;
-
-	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD7;
 };
 
 #else
@@ -87,7 +85,8 @@ struct VS_Output
 {
 	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
-	linear centroid float2 UV : TEXCOORD0;
+	// xy uv z - FlipbookRate, w - AlphaThreshold
+	linear centroid float4 UV_Others : TEXCOORD0;
 	float3 WorldN : TEXCOORD1;
 #if ENABLE_LIGHTING
 	float3 WorldB : TEXCOORD2;
@@ -100,11 +99,8 @@ struct VS_Output
 	// BlendUV, FlipbookNextIndexUV
 	float4 Blend_FBNextIndex_UV : TEXCOORD6;
 
-	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD7;
-
 #ifndef DISABLED_SOFT_PARTICLE
-	float4 PosP : TEXCOORD8;
+	float4 PosP : TEXCOORD7;
 #endif
 };
 
@@ -155,8 +151,8 @@ VS_Output main(const VS_Input Input)
 
 	Output.PosVS = mul(mCameraProj, localPosition);
 
-	Output.UV.x = Input.UV.x * uv.z + uv.x;
-	Output.UV.y = Input.UV.y * uv.w + uv.y;
+	Output.UV_Others.x = Input.UV.x * uv.z + uv.x;
+	Output.UV_Others.y = Input.UV.y * uv.w + uv.y;
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
@@ -205,9 +201,9 @@ VS_Output main(const VS_Input Input)
 #endif
 	Output.Color = modelColor;
 
-	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
+	Output.UV_Others.y = mUVInversed.x + mUVInversed.y * Output.UV_Others.y;
 
-	CalculateAndStoreAdvancedParameter(Input.UV, Output.UV.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
+	CalculateAndStoreAdvancedParameter(Input.UV, Output.UV_Others.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 
 #ifndef DISABLED_SOFT_PARTICLE
 	Output.PosP = Output.PosVS;

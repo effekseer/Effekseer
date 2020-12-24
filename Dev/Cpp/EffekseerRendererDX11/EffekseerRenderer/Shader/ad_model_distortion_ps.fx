@@ -30,7 +30,8 @@ SamplerState sampler_depthTex : register(s7);
 struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
-	linear centroid float2 UV : TEXCOORD0;
+	// xy uv z - FlipbookRate, w - AlphaThreshold
+	linear centroid float4 UV_Others : TEXCOORD0;
 	float4 ProjBinormal : TEXCOORD1;
 	float4 ProjTangent : TEXCOORD2;
 	float4 PosP : TEXCOORD3;
@@ -41,9 +42,6 @@ struct PS_Input
 
 	// BlendUV, FlipbookNextIndexUV
 	float4 Blend_FBNextIndex_UV : TEXCOORD6;
-
-	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD7;
 };
 
 #include "ad_common_ps.fx"
@@ -57,7 +55,7 @@ float4 main(const PS_Input Input)
 	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, fUVDistortionParameter.zw);
 	UVOffset *= fUVDistortionParameter.x;
 
-	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset);
+	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV_Others + UVOffset);
 
 	Output.a = Output.a * Input.Color.a;
 

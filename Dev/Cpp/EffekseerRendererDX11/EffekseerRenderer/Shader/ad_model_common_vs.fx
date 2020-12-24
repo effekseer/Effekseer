@@ -29,8 +29,8 @@ void CalculateAndStoreAdvancedParameter(in float2 uv, in float2 uv1, in float4 a
 	ApplyFlipbookVS(flipbookRate, flipbookNextIndexUV, fFlipbookParameter, flipbookIndexAndNextRate, uv1);
 
 	vsoutput.Blend_FBNextIndex_UV.zw = flipbookNextIndexUV;
-	vsoutput.Others.x = flipbookRate;
-	vsoutput.Others.y = modelAlphaThreshold;
+	vsoutput.UV_Others.z = flipbookRate;
+	vsoutput.UV_Others.w = modelAlphaThreshold;
 
 	// flip
 	vsoutput.Alpha_Dist_UV.y = mUVInversed.x + mUVInversed.y * vsoutput.Alpha_Dist_UV.y;

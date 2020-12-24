@@ -1,7 +1,7 @@
 struct PS_Input
 {
     float4 PosVS;
-    float2 UV;
+    float4 UV_Others;
     float4 ProjBinormal;
     float4 ProjTangent;
     float4 PosP;
@@ -9,7 +9,6 @@ struct PS_Input
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
-    float2 Others;
 };
 
 struct AdvancedParameter
@@ -45,7 +44,7 @@ uniform sampler2D Sampler_sampler_blendAlphaTex : register(s5);
 uniform sampler2D Sampler_sampler_backTex : register(s1);
 
 static float4 gl_FragCoord;
-static float2 Input_UV;
+static float4 Input_UV_Others;
 static float4 Input_ProjBinormal;
 static float4 Input_ProjTangent;
 static float4 Input_PosP;
@@ -53,12 +52,11 @@ static float4 Input_Color;
 static float4 Input_Alpha_Dist_UV;
 static float4 Input_Blend_Alpha_Dist_UV;
 static float4 Input_Blend_FBNextIndex_UV;
-static float2 Input_Others;
 static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
 {
-    centroid float2 Input_UV : TEXCOORD0;
+    centroid float4 Input_UV_Others : TEXCOORD0;
     float4 Input_ProjBinormal : TEXCOORD1;
     float4 Input_ProjTangent : TEXCOORD2;
     float4 Input_PosP : TEXCOORD3;
@@ -66,7 +64,6 @@ struct SPIRV_Cross_Input
     float4 Input_Alpha_Dist_UV : TEXCOORD5;
     float4 Input_Blend_Alpha_Dist_UV : TEXCOORD6;
     float4 Input_Blend_FBNextIndex_UV : TEXCOORD7;
-    float2 Input_Others : TEXCOORD8;
     float4 gl_FragCoord : VPOS;
 };
 
@@ -84,8 +81,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -150,7 +147,7 @@ float4 _main(PS_Input Input)
     float2 param_2 = _209_fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= _209_fUVDistortionParameter.x;
-    float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV + UVOffset);
+    float4 Output = tex2D(Sampler_sampler_colorTex, float2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
@@ -190,7 +187,7 @@ void frag_main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = Input_UV;
+    Input.UV_Others = Input_UV_Others;
     Input.ProjBinormal = Input_ProjBinormal;
     Input.ProjTangent = Input_ProjTangent;
     Input.PosP = Input_PosP;
@@ -198,15 +195,14 @@ void frag_main()
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
-    Input.Others = Input_Others;
-    float4 _467 = _main(Input);
-    _entryPointOutput = _467;
+    float4 _466 = _main(Input);
+    _entryPointOutput = _466;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     gl_FragCoord = stage_input.gl_FragCoord + float4(0.5f, 0.5f, 0.0f, 0.0f);
-    Input_UV = stage_input.Input_UV;
+    Input_UV_Others = stage_input.Input_UV_Others;
     Input_ProjBinormal = stage_input.Input_ProjBinormal;
     Input_ProjTangent = stage_input.Input_ProjTangent;
     Input_PosP = stage_input.Input_PosP;
@@ -214,7 +210,6 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;
     Input_Blend_FBNextIndex_UV = stage_input.Input_Blend_FBNextIndex_UV;
-    Input_Others = stage_input.Input_Others;
     frag_main();
     SPIRV_Cross_Output stage_output;
     stage_output._entryPointOutput = float4(_entryPointOutput);
