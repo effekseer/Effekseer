@@ -7,7 +7,7 @@ static const char ad_model_distortion_ps_gl2[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
+    vec4 UV_Others;
     vec4 ProjBinormal;
     vec4 ProjTangent;
     vec4 PosP;
@@ -15,7 +15,6 @@ struct PS_Input
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
-    vec2 Others;
 };
 
 struct AdvancedParameter
@@ -52,15 +51,14 @@ uniform sampler2D Sampler_sampler_blendTex;
 uniform sampler2D Sampler_sampler_blendAlphaTex;
 uniform sampler2D Sampler_sampler_backTex;
 
-centroid varying vec2 _VSPS_UV;
+varying vec4 _VSPS_UV_Others;
 varying vec4 _VSPS_ProjBinormal;
 varying vec4 _VSPS_ProjTangent;
 varying vec4 _VSPS_PosP;
-centroid varying vec4 _VSPS_Color;
+varying vec4 _VSPS_Color;
 varying vec4 _VSPS_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying vec4 _VSPS_Blend_FBNextIndex_UV;
-varying vec2 _VSPS_Others;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
 {
@@ -71,8 +69,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -137,7 +135,7 @@ vec4 _main(PS_Input Input)
     vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset);
+    vec4 Output = texture2D(Sampler_sampler_colorTex, vec2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
@@ -178,7 +176,7 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
+    Input.UV_Others = _VSPS_UV_Others;
     Input.ProjBinormal = _VSPS_ProjBinormal;
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
@@ -186,9 +184,8 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    Input.Others = _VSPS_Others;
-    vec4 _471 = _main(Input);
-    gl_FragData[0] = _471;
+    vec4 _470 = _main(Input);
+    gl_FragData[0] = _470;
 }
 
 )";
@@ -202,7 +199,7 @@ static const char ad_model_distortion_ps_gl3[] = R"(
 struct PS_Input
 {
     vec4 PosVS;
-    vec2 UV;
+    vec4 UV_Others;
     vec4 ProjBinormal;
     vec4 ProjTangent;
     vec4 PosP;
@@ -210,7 +207,6 @@ struct PS_Input
     vec4 Alpha_Dist_UV;
     vec4 Blend_Alpha_Dist_UV;
     vec4 Blend_FBNextIndex_UV;
-    vec2 Others;
 };
 
 struct AdvancedParameter
@@ -248,7 +244,7 @@ uniform sampler2D Sampler_sampler_blendAlphaTex;
 uniform sampler2D Sampler_sampler_backTex;
 uniform sampler2D Sampler_sampler_depthTex;
 
-centroid in vec2 _VSPS_UV;
+centroid in vec4 _VSPS_UV_Others;
 in vec4 _VSPS_ProjBinormal;
 in vec4 _VSPS_ProjTangent;
 in vec4 _VSPS_PosP;
@@ -256,7 +252,6 @@ centroid in vec4 _VSPS_Color;
 in vec4 _VSPS_Alpha_Dist_UV;
 in vec4 _VSPS_Blend_Alpha_Dist_UV;
 in vec4 _VSPS_Blend_FBNextIndex_UV;
-in vec2 _VSPS_Others;
 layout(location = 0) out vec4 _entryPointOutput;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
@@ -268,8 +263,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -348,7 +343,7 @@ vec4 _main(PS_Input Input)
     vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset);
+    vec4 Output = texture(Sampler_sampler_colorTex, vec2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     vec4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
@@ -403,7 +398,7 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
+    Input.UV_Others = _VSPS_UV_Others;
     Input.ProjBinormal = _VSPS_ProjBinormal;
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
@@ -411,9 +406,8 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    Input.Others = _VSPS_Others;
-    vec4 _598 = _main(Input);
-    _entryPointOutput = _598;
+    vec4 _596 = _main(Input);
+    _entryPointOutput = _596;
 }
 
 )";
@@ -426,7 +420,7 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec2 UV;
+    highp vec4 UV_Others;
     highp vec4 ProjBinormal;
     highp vec4 ProjTangent;
     highp vec4 PosP;
@@ -434,7 +428,6 @@ struct PS_Input
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
     highp vec4 Blend_FBNextIndex_UV;
-    highp vec2 Others;
 };
 
 struct AdvancedParameter
@@ -471,7 +464,7 @@ uniform  sampler2D Sampler_sampler_blendTex;
 uniform  sampler2D Sampler_sampler_blendAlphaTex;
 uniform  sampler2D Sampler_sampler_backTex;
 
-varying  vec2 _VSPS_UV;
+varying  vec4 _VSPS_UV_Others;
 varying  vec4 _VSPS_ProjBinormal;
 varying  vec4 _VSPS_ProjTangent;
 varying  vec4 _VSPS_PosP;
@@ -479,7 +472,6 @@ varying  vec4 _VSPS_Color;
 varying  vec4 _VSPS_Alpha_Dist_UV;
 varying  vec4 _VSPS_Blend_Alpha_Dist_UV;
 varying  vec4 _VSPS_Blend_FBNextIndex_UV;
-varying  vec2 _VSPS_Others;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
 {
@@ -490,8 +482,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -556,7 +548,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     highp vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    highp vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV + UVOffset);
+    highp vec4 Output = texture2D(Sampler_sampler_colorTex, vec2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     highp vec4 param_3 = Output;
     highp float param_4 = advancedParam.FlipbookRate;
@@ -597,7 +589,7 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
+    Input.UV_Others = _VSPS_UV_Others;
     Input.ProjBinormal = _VSPS_ProjBinormal;
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
@@ -605,9 +597,8 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    Input.Others = _VSPS_Others;
-    highp vec4 _471 = _main(Input);
-    gl_FragData[0] = _471;
+    highp vec4 _470 = _main(Input);
+    gl_FragData[0] = _470;
 }
 
 )";
@@ -620,7 +611,7 @@ precision highp int;
 struct PS_Input
 {
     highp vec4 PosVS;
-    highp vec2 UV;
+    highp vec4 UV_Others;
     highp vec4 ProjBinormal;
     highp vec4 ProjTangent;
     highp vec4 PosP;
@@ -628,7 +619,6 @@ struct PS_Input
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
     highp vec4 Blend_FBNextIndex_UV;
-    highp vec2 Others;
 };
 
 struct AdvancedParameter
@@ -666,7 +656,7 @@ uniform highp sampler2D Sampler_sampler_blendAlphaTex;
 uniform highp sampler2D Sampler_sampler_backTex;
 uniform highp sampler2D Sampler_sampler_depthTex;
 
-centroid in highp vec2 _VSPS_UV;
+centroid in highp vec4 _VSPS_UV_Others;
 in highp vec4 _VSPS_ProjBinormal;
 in highp vec4 _VSPS_ProjTangent;
 in highp vec4 _VSPS_PosP;
@@ -674,7 +664,6 @@ centroid in highp vec4 _VSPS_Color;
 in highp vec4 _VSPS_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_FBNextIndex_UV;
-in highp vec2 _VSPS_Others;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
 AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
@@ -686,8 +675,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -766,7 +755,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     highp vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset);
+    highp vec4 Output = texture(Sampler_sampler_colorTex, vec2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     highp vec4 param_3 = Output;
     highp float param_4 = advancedParam.FlipbookRate;
@@ -821,7 +810,7 @@ void main()
 {
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
-    Input.UV = _VSPS_UV;
+    Input.UV_Others = _VSPS_UV_Others;
     Input.ProjBinormal = _VSPS_ProjBinormal;
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
@@ -829,9 +818,8 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    Input.Others = _VSPS_Others;
-    highp vec4 _598 = _main(Input);
-    _entryPointOutput = _598;
+    highp vec4 _596 = _main(Input);
+    _entryPointOutput = _596;
 }
 
 )";

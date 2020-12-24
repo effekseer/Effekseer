@@ -9,12 +9,11 @@ struct PS_Input
 {
     float4 PosVS;
     float4 Color;
-    float2 UV;
+    float4 UV_Others;
     float3 WorldN;
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
-    float2 Others;
     float4 PosP;
 };
 
@@ -63,13 +62,12 @@ struct main0_out
 struct main0_in
 {
     float4 Input_Color [[user(locn0), centroid_perspective]];
-    float2 Input_UV [[user(locn1), centroid_perspective]];
+    float4 Input_UV_Others [[user(locn1), centroid_perspective]];
     float3 Input_WorldN [[user(locn2)]];
     float4 Input_Alpha_Dist_UV [[user(locn3)]];
     float4 Input_Blend_Alpha_Dist_UV [[user(locn4)]];
     float4 Input_Blend_FBNextIndex_UV [[user(locn5)]];
-    float2 Input_Others [[user(locn6)]];
-    float4 Input_PosP [[user(locn7)]];
+    float4 Input_PosP [[user(locn6)]];
 };
 
 static inline __attribute__((always_inline))
@@ -82,8 +80,8 @@ AdvancedParameter DisolveAdvancedParameter(thread const PS_Input& psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -167,7 +165,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
     float2 param_2 = v_282.fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, param_1, param_2);
     UVOffset *= v_282.fUVDistortionParameter.x;
-    float4 Output = _colorTex.sample(sampler_colorTex, (Input.UV + UVOffset)) * Input.Color;
+    float4 Output = _colorTex.sample(sampler_colorTex, (Input.UV_Others.xy + UVOffset)) * Input.Color;
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, _colorTex, sampler_colorTex, v_282.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
@@ -191,29 +189,29 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
         float4 FalloffBlendColor = mix(v_282.fFalloffParam.EndColor, v_282.fFalloffParam.BeginColor, float4(pow(CdotN, v_282.fFalloffParam.Param.z)));
         if (v_282.fFalloffParam.Param.y == 0.0)
         {
-            float3 _438 = Output.xyz + FalloffBlendColor.xyz;
-            Output = float4(_438.x, _438.y, _438.z, Output.w);
+            float3 _439 = Output.xyz + FalloffBlendColor.xyz;
+            Output = float4(_439.x, _439.y, _439.z, Output.w);
         }
         else
         {
             if (v_282.fFalloffParam.Param.y == 1.0)
             {
-                float3 _451 = Output.xyz - FalloffBlendColor.xyz;
-                Output = float4(_451.x, _451.y, _451.z, Output.w);
+                float3 _452 = Output.xyz - FalloffBlendColor.xyz;
+                Output = float4(_452.x, _452.y, _452.z, Output.w);
             }
             else
             {
                 if (v_282.fFalloffParam.Param.y == 2.0)
                 {
-                    float3 _464 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = float4(_464.x, _464.y, _464.z, Output.w);
+                    float3 _465 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = float4(_465.x, _465.y, _465.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    float3 _478 = Output.xyz * v_282.fEmissiveScaling.x;
-    Output = float4(_478.x, _478.y, _478.z, Output.w);
+    float3 _479 = Output.xyz * v_282.fEmissiveScaling.x;
+    Output = float4(_479.x, _479.y, _479.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -231,8 +229,8 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
     {
         discard_fragment();
     }
-    float3 _562 = mix(v_282.fEdgeColor.xyz * v_282.fEdgeParameter.y, Output.xyz, float3(ceil((Output.w - advancedParam.AlphaThreshold) - v_282.fEdgeParameter.x)));
-    Output = float4(_562.x, _562.y, _562.z, Output.w);
+    float3 _563 = mix(v_282.fEdgeColor.xyz * v_282.fEdgeParameter.y, Output.xyz, float3(ceil((Output.w - advancedParam.AlphaThreshold) - v_282.fEdgeParameter.x)));
+    Output = float4(_563.x, _563.y, _563.z, Output.w);
     return Output;
 }
 
@@ -242,15 +240,14 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
     Input.Color = in.Input_Color;
-    Input.UV = in.Input_UV;
+    Input.UV_Others = in.Input_UV_Others;
     Input.WorldN = in.Input_WorldN;
     Input.Alpha_Dist_UV = in.Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = in.Input_Blend_FBNextIndex_UV;
-    Input.Others = in.Input_Others;
     Input.PosP = in.Input_PosP;
-    float4 _602 = _main(Input, _uvDistortionTex, sampler_uvDistortionTex, v_282, _colorTex, sampler_colorTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _602;
+    float4 _599 = _main(Input, _uvDistortionTex, sampler_uvDistortionTex, v_282, _colorTex, sampler_colorTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _599;
     return out;
 }
 

@@ -24,8 +24,8 @@ AdvancedParameter DisolveAdvancedParameter(in PS_Input psinput)
 	ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
 	ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
 	ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-	ret.FlipbookRate = psinput.Others.x;
-	ret.AlphaThreshold = psinput.Others.y;
+	ret.FlipbookRate = psinput.UV_Others.z;
+	ret.AlphaThreshold = psinput.UV_Others.w;
 	return ret;
 }
 

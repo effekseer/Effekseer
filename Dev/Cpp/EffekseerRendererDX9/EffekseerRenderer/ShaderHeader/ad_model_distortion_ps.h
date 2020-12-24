@@ -43,7 +43,7 @@
     ps_3_0
     def c5, -1, -2, -3, 0.5
     def c6, 2, -1, 0, -0
-    dcl_texcoord_centroid v0.xy
+    dcl_texcoord_centroid v0
     dcl_texcoord1 v1.xyw
     dcl_texcoord2 v2.xyw
     dcl_texcoord3 v3.xyw
@@ -51,7 +51,6 @@
     dcl_texcoord5 v5
     dcl_texcoord6 v6
     dcl_texcoord7 v7
-    dcl_texcoord8 v8.xy
     dcl_2d s0
     dcl_2d s1
     dcl_2d s2
@@ -70,14 +69,14 @@
     mov r0.y, c6.y
     add r0.y, r0.y, c2.y
     mad r2.xyz, r2.xyww, v4.xyww, -r1
-    mad r2.xyz, v8.x, r2, r1
+    mad r2.xyz, v0.z, r2, r1
     cmp r2.xyz, -r0_abs.y, r2, r1
     cmp r1.xyz, -c2.x, r1, r2
     mad r0.xy, r0.xzzw, c3.x, v5
     texld r0, r0, s2
     mul r0.x, r0.w, r0.x
     mul r0.y, r0.x, r1.z
-    max r0.z, v8.y, c6.z
+    max r0.z, v0.w, c6.z
     mad r0.x, r1.z, -r0.x, r0.z
     cmp r2, r0.x, c6.y, c6.w
     texkill r2
@@ -267,7 +266,7 @@ const BYTE g_ps30_main[] =
       0,   0, 128, 191,   0,   0, 
       0,   0,   0,   0,   0, 128, 
      31,   0,   0,   2,   5,   0, 
-      0, 128,   0,   0,  67, 144, 
+      0, 128,   0,   0,  79, 144, 
      31,   0,   0,   2,   5,   0, 
       1, 128,   1,   0,  11, 144, 
      31,   0,   0,   2,   5,   0, 
@@ -282,8 +281,6 @@ const BYTE g_ps30_main[] =
       6, 128,   6,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
       7, 128,   7,   0,  15, 144, 
-     31,   0,   0,   2,   5,   0, 
-      8, 128,   8,   0,   3, 144, 
      31,   0,   0,   2,   0,   0, 
       0, 144,   0,   8,  15, 160, 
      31,   0,   0,   2,   0,   0, 
@@ -331,7 +328,7 @@ const BYTE g_ps30_main[] =
       2,   0, 244, 128,   4,   0, 
     244, 144,   1,   0, 228, 129, 
       4,   0,   0,   4,   2,   0, 
-      7, 128,   8,   0,   0, 144, 
+      7, 128,   0,   0, 170, 144, 
       2,   0, 228, 128,   1,   0, 
     228, 128,  88,   0,   0,   4, 
       2,   0,   7, 128,   0,   0, 
@@ -352,8 +349,8 @@ const BYTE g_ps30_main[] =
       0,   3,   0,   0,   2, 128, 
       0,   0,   0, 128,   1,   0, 
     170, 128,  11,   0,   0,   3, 
-      0,   0,   4, 128,   8,   0, 
-     85, 144,   6,   0, 170, 160, 
+      0,   0,   4, 128,   0,   0, 
+    255, 144,   6,   0, 170, 160, 
       4,   0,   0,   4,   0,   0, 
       1, 128,   1,   0, 170, 128, 
       0,   0,   0, 129,   0,   0, 

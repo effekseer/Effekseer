@@ -14,11 +14,11 @@
 //   sampler2D Sampler_sampler_blendUVDistortionTex;
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_uvDistortionTex;
-//   float4 _208_fBlendTextureParameter;
-//   float4 _208_fCameraFrontDirection;
-//   float4 _208_fEdgeColor;
-//   float4 _208_fEdgeParameter;
-//   float4 _208_fEmissiveScaling;
+//   float4 _209_fBlendTextureParameter;
+//   float4 _209_fCameraFrontDirection;
+//   float4 _209_fEdgeColor;
+//   float4 _209_fEdgeParameter;
+//   float4 _209_fEmissiveScaling;
 //   
 //   struct
 //   {
@@ -26,24 +26,24 @@
 //       float4 BeginColor;
 //       float4 EndColor;
 //
-//   } _208_fFalloffParam;
+//   } _209_fFalloffParam;
 //   
-//   float4 _208_fFlipbookParameter;
-//   float4 _208_fUVDistortionParameter;
+//   float4 _209_fFlipbookParameter;
+//   float4 _209_fUVDistortionParameter;
 //
 //
 // Registers:
 //
 //   Name                                 Reg   Size
 //   ------------------------------------ ----- ----
-//   _208_fFlipbookParameter              c3       1
-//   _208_fUVDistortionParameter          c4       1
-//   _208_fBlendTextureParameter          c5       1
-//   _208_fCameraFrontDirection           c6       1
-//   _208_fFalloffParam                   c7       3
-//   _208_fEmissiveScaling                c10      1
-//   _208_fEdgeColor                      c11      1
-//   _208_fEdgeParameter                  c12      1
+//   _209_fFlipbookParameter              c3       1
+//   _209_fUVDistortionParameter          c4       1
+//   _209_fBlendTextureParameter          c5       1
+//   _209_fCameraFrontDirection           c6       1
+//   _209_fFalloffParam                   c7       3
+//   _209_fEmissiveScaling                c10      1
+//   _209_fEdgeColor                      c11      1
+//   _209_fEdgeParameter                  c12      1
 //   Sampler_sampler_colorTex             s0       1
 //   Sampler_sampler_alphaTex             s1       1
 //   Sampler_sampler_uvDistortionTex      s2       1
@@ -56,12 +56,11 @@
     def c0, 2, -1, -2, -3
     def c1, 0, -1, -0, 0
     dcl_texcoord_centroid v0
-    dcl_texcoord1_centroid v1.xy
+    dcl_texcoord1_centroid v1
     dcl_texcoord2 v2.xyz
     dcl_texcoord3 v3
     dcl_texcoord4 v4
     dcl_texcoord5 v5
-    dcl_texcoord6 v6.xy
     dcl_2d s0
     dcl_2d s1
     dcl_2d s2
@@ -79,7 +78,7 @@
     mov r3.yzw, c0
     add r0.y, r3.y, c3.y
     mad r2, r2, v0, -r1
-    mad r2, v6.x, r2, r1
+    mad r2, v1.z, r2, r1
     cmp r2, -r0_abs.y, r2, r1
     cmp r1, -c3.x, r1, r2
     mad r0.xy, r0.xzzw, c4.x, v3
@@ -123,13 +122,13 @@
     cmp r3.xyz, -r1.w, r3, r2
     mul r3.w, r0.w, r2.w
     cmp r0, -r1_abs.x, r3, r0
-    max r1.x, v6.y, c1.x
+    max r1.x, v1.w, c1.x
     add r1.x, -r0.w, r1.x
     cmp r1, r1.x, c1.y, c1.z
     texkill r1
     mov r1.y, c12.y
     mul r1.xyz, r1.y, c11
-    add r1.w, r0.w, -v6.y
+    add r1.w, r0.w, -v1.w
     add r1.w, r1.w, -c12.x
     frc r2.x, -r1.w
     add r1.w, r1.w, r2.x
@@ -243,28 +242,28 @@ const BYTE g_ps30_main[] =
       4,   0,  12,   0,   1,   0, 
       1,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  50, 
-     48,  56,  95, 102,  66, 108, 
+     48,  57,  95, 102,  66, 108, 
     101, 110, 100,  84, 101, 120, 
     116, 117, 114, 101,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114,   0,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  50,  48,  56,  95, 102, 
+     95,  50,  48,  57,  95, 102, 
      67,  97, 109, 101, 114,  97, 
      70, 114, 111, 110, 116,  68, 
     105, 114, 101,  99, 116, 105, 
     111, 110,   0,  95,  50,  48, 
-     56,  95, 102,  69, 100, 103, 
+     57,  95, 102,  69, 100, 103, 
     101,  67, 111, 108, 111, 114, 
-      0,  95,  50,  48,  56,  95, 
+      0,  95,  50,  48,  57,  95, 
     102,  69, 100, 103, 101,  80, 
      97, 114,  97, 109, 101, 116, 
     101, 114,   0,  95,  50,  48, 
-     56,  95, 102,  69, 109, 105, 
+     57,  95, 102,  69, 109, 105, 
     115, 115, 105, 118, 101,  83, 
      99,  97, 108, 105, 110, 103, 
-      0,  95,  50,  48,  56,  95, 
+      0,  95,  50,  48,  57,  95, 
     102,  70,  97, 108, 108, 111, 
     102, 102,  80,  97, 114,  97, 
     109,   0,  80,  97, 114,  97, 
@@ -281,11 +280,11 @@ const BYTE g_ps30_main[] =
     236,   2,   0,   0,   5,   0, 
       0,   0,   1,   0,  12,   0, 
       1,   0,   3,   0,  16,   3, 
-      0,   0,  95,  50,  48,  56, 
+      0,   0,  95,  50,  48,  57, 
      95, 102,  70, 108, 105, 112, 
      98, 111, 111, 107,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  50,  48,  56, 
+    114,   0,  95,  50,  48,  57, 
      95, 102,  85,  86,  68, 105, 
     115, 116, 111, 114, 116, 105, 
     111, 110,  80,  97, 114,  97, 
@@ -311,7 +310,7 @@ const BYTE g_ps30_main[] =
       5,   0,   0, 128,   0,   0, 
      79, 144,  31,   0,   0,   2, 
       5,   0,   1, 128,   1,   0, 
-     67, 144,  31,   0,   0,   2, 
+     79, 144,  31,   0,   0,   2, 
       5,   0,   2, 128,   2,   0, 
       7, 144,  31,   0,   0,   2, 
       5,   0,   3, 128,   3,   0, 
@@ -320,8 +319,6 @@ const BYTE g_ps30_main[] =
      15, 144,  31,   0,   0,   2, 
       5,   0,   5, 128,   5,   0, 
      15, 144,  31,   0,   0,   2, 
-      5,   0,   6, 128,   6,   0, 
-      3, 144,  31,   0,   0,   2, 
       0,   0,   0, 144,   0,   8, 
      15, 160,  31,   0,   0,   2, 
       0,   0,   0, 144,   1,   8, 
@@ -366,8 +363,8 @@ const BYTE g_ps30_main[] =
      15, 128,   2,   0, 228, 128, 
       0,   0, 228, 144,   1,   0, 
     228, 129,   4,   0,   0,   4, 
-      2,   0,  15, 128,   6,   0, 
-      0, 144,   2,   0, 228, 128, 
+      2,   0,  15, 128,   1,   0, 
+    170, 144,   2,   0, 228, 128, 
       1,   0, 228, 128,  88,   0, 
       0,   4,   2,   0,  15, 128, 
       0,   0,  85, 140,   2,   0, 
@@ -494,7 +491,7 @@ const BYTE g_ps30_main[] =
       0, 140,   3,   0, 228, 128, 
       0,   0, 228, 128,  11,   0, 
       0,   3,   1,   0,   1, 128, 
-      6,   0,  85, 144,   1,   0, 
+      1,   0, 255, 144,   1,   0, 
       0, 160,   2,   0,   0,   3, 
       1,   0,   1, 128,   0,   0, 
     255, 129,   1,   0,   0, 128, 
@@ -509,7 +506,7 @@ const BYTE g_ps30_main[] =
       1,   0,  85, 128,  11,   0, 
     228, 160,   2,   0,   0,   3, 
       1,   0,   8, 128,   0,   0, 
-    255, 128,   6,   0,  85, 145, 
+    255, 128,   1,   0, 255, 145, 
       2,   0,   0,   3,   1,   0, 
       8, 128,   1,   0, 255, 128, 
      12,   0,   0, 161,  19,   0, 

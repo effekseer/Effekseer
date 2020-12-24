@@ -93,7 +93,8 @@ struct PS_Input
 {
 	float4 PosVS : SV_POSITION;
 	linear centroid float4 Color : COLOR;
-	linear centroid float2 UV : TEXCOORD0;
+	// xy uv z - FlipbookRate, w - AlphaThreshold
+	linear centroid float4 UV_Others : TEXCOORD0;
 	float3 WorldN : TEXCOORD1;
 #if ENABLE_LIGHTING
 	float3 WorldB : TEXCOORD2;
@@ -106,11 +107,8 @@ struct PS_Input
 	// BlendUV, FlipbookNextIndexUV
 	float4 Blend_FBNextIndex_UV : TEXCOORD6;
 
-	// x - FlipbookRate, y - AlphaThreshold
-	float2 Others : TEXCOORD7;
-
 #ifndef DISABLED_SOFT_PARTICLE
-	float4 PosP : TEXCOORD8;
+	float4 PosP : TEXCOORD7;
 #endif
 };
 
@@ -125,10 +123,10 @@ float4 main(const PS_Input Input)
 	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, fUVDistortionParameter.zw);
 	UVOffset *= fUVDistortionParameter.x;
 
-	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV + UVOffset) * Input.Color;
+	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV_Others.xy + UVOffset) * Input.Color;
 
 #if ENABLE_LIGHTING
-	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV + UVOffset).xyz - 0.5) * 2.0;
+	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV_Others.xy + UVOffset).xyz - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(
 		mul(
 			texNormal,

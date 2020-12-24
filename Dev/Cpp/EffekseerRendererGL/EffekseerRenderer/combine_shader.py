@@ -14,6 +14,9 @@ gl_es3_root_path = 'Shader_ES3/'
 
 gl_dst_path = 'ShaderHeader/'
 
+def replace_2(code):
+    code = code.replace('centroid ', '')
+    return code
 
 def replace_es2(code):
     code = code.replace('#version 200 es', '')
@@ -35,7 +38,7 @@ def replace_3(code):
 
 for fx in verts + frags:
     f_gl_2 = open(gl_2_root_path + fx + '.fx', 'r')
-    gl_2 = f_gl_2.read()
+    gl_2 = replace_2(f_gl_2.read())
 
     f_gl_3 = open(gl_3_root_path + fx + '.fx', 'r')
     gl_3 = replace_3(f_gl_3.read())

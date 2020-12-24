@@ -6,12 +6,11 @@ struct PS_Input
 {
     highp vec4 PosVS;
     highp vec4 Color;
-    highp vec2 UV;
+    highp vec4 UV_Others;
     highp vec3 WorldN;
     highp vec4 Alpha_Dist_UV;
     highp vec4 Blend_Alpha_Dist_UV;
     highp vec4 Blend_FBNextIndex_UV;
-    highp vec2 Others;
     highp vec4 PosP;
 };
 
@@ -63,12 +62,11 @@ uniform highp sampler2D Sampler_sampler_blendAlphaTex;
 uniform highp sampler2D Sampler_sampler_depthTex;
 
 centroid in highp vec4 _VSPS_Color;
-centroid in highp vec2 _VSPS_UV;
+centroid in highp vec4 _VSPS_UV_Others;
 in highp vec3 _VSPS_WorldN;
 in highp vec4 _VSPS_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_Alpha_Dist_UV;
 in highp vec4 _VSPS_Blend_FBNextIndex_UV;
-in highp vec2 _VSPS_Others;
 in highp vec4 _VSPS_PosP;
 layout(location = 0) out highp vec4 _entryPointOutput;
 
@@ -81,8 +79,8 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     ret.BlendAlphaUV = psinput.Blend_Alpha_Dist_UV.xy;
     ret.BlendUVDistortionUV = psinput.Blend_Alpha_Dist_UV.zw;
     ret.FlipbookNextIndexUV = psinput.Blend_FBNextIndex_UV.zw;
-    ret.FlipbookRate = psinput.Others.x;
-    ret.AlphaThreshold = psinput.Others.y;
+    ret.FlipbookRate = psinput.UV_Others.z;
+    ret.AlphaThreshold = psinput.UV_Others.w;
     return ret;
 }
 
@@ -161,7 +159,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 param_2 = CBPS0.fUVDistortionParameter.zw;
     highp vec2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
     UVOffset *= CBPS0.fUVDistortionParameter.x;
-    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV + UVOffset) * Input.Color;
+    highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV_Others.xy + UVOffset) * Input.Color;
     highp vec4 param_3 = Output;
     highp float param_4 = advancedParam.FlipbookRate;
     ApplyFlipbook(param_3, CBPS0.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
@@ -185,29 +183,29 @@ highp vec4 _main(PS_Input Input)
         highp vec4 FalloffBlendColor = mix(CBPS0.fFalloffParam.EndColor, CBPS0.fFalloffParam.BeginColor, vec4(pow(CdotN, CBPS0.fFalloffParam.Param.z)));
         if (CBPS0.fFalloffParam.Param.y == 0.0)
         {
-            highp vec3 _438 = Output.xyz + FalloffBlendColor.xyz;
-            Output = vec4(_438.x, _438.y, _438.z, Output.w);
+            highp vec3 _439 = Output.xyz + FalloffBlendColor.xyz;
+            Output = vec4(_439.x, _439.y, _439.z, Output.w);
         }
         else
         {
             if (CBPS0.fFalloffParam.Param.y == 1.0)
             {
-                highp vec3 _451 = Output.xyz - FalloffBlendColor.xyz;
-                Output = vec4(_451.x, _451.y, _451.z, Output.w);
+                highp vec3 _452 = Output.xyz - FalloffBlendColor.xyz;
+                Output = vec4(_452.x, _452.y, _452.z, Output.w);
             }
             else
             {
                 if (CBPS0.fFalloffParam.Param.y == 2.0)
                 {
-                    highp vec3 _464 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = vec4(_464.x, _464.y, _464.z, Output.w);
+                    highp vec3 _465 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = vec4(_465.x, _465.y, _465.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    highp vec3 _478 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_478.x, _478.y, _478.z, Output.w);
+    highp vec3 _479 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_479.x, _479.y, _479.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -226,8 +224,8 @@ highp vec4 _main(PS_Input Input)
     {
         discard;
     }
-    highp vec3 _566 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_566.x, _566.y, _566.z, Output.w);
+    highp vec3 _567 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_567.x, _567.y, _567.z, Output.w);
     return Output;
 }
 
@@ -236,14 +234,13 @@ void main()
     PS_Input Input;
     Input.PosVS = gl_FragCoord;
     Input.Color = _VSPS_Color;
-    Input.UV = _VSPS_UV;
+    Input.UV_Others = _VSPS_UV_Others;
     Input.WorldN = _VSPS_WorldN;
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    Input.Others = _VSPS_Others;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _606 = _main(Input);
-    _entryPointOutput = _606;
+    highp vec4 _603 = _main(Input);
+    _entryPointOutput = _603;
 }
 
