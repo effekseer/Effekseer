@@ -59,7 +59,7 @@ namespace Effekseer
 
 static const int32_t DX12_InstanceCount = 40;
 
-class CompiledMaterialBinaryDX12 : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryDX12 : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;

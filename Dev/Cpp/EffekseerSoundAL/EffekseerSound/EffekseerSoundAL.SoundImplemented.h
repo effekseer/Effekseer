@@ -23,7 +23,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound, Effekseer::ReferenceObject
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 	SoundVoiceContainer*	m_voiceContainer;
 	bool					m_mute;

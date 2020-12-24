@@ -24,7 +24,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound, Effekseer::ReferenceObject
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 	IDirectSound8*			m_dsound;
 

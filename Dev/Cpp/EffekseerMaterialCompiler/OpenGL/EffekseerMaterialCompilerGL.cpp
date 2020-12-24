@@ -790,7 +790,7 @@ namespace Effekseer
 
 static const int InstanceCount = 10;
 
-class CompiledMaterialBinaryGL : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryGL : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;

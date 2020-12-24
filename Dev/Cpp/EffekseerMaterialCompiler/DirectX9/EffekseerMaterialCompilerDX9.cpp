@@ -128,7 +128,7 @@ namespace Effekseer
 
 const int32_t DX9_ModelRendererInstanceCount = 10;
 
-class CompiledMaterialBinaryDX9 : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryDX9 : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;

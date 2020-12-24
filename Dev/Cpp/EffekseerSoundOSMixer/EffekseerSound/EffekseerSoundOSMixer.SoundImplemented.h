@@ -19,7 +19,7 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 
-class SoundImplemented : public Sound, Effekseer::ReferenceObject
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 public:
 	struct Instance

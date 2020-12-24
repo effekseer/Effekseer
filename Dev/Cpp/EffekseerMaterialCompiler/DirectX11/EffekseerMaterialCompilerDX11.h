@@ -7,7 +7,7 @@
 namespace Effekseer
 {
 
-class MaterialCompilerDX11 : public MaterialCompiler, ReferenceObject
+class MaterialCompilerDX11 : public MaterialCompiler, public ReferenceObject
 {
 private:
 public:

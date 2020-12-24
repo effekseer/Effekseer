@@ -40,7 +40,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound, Effekseer::ReferenceObject
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 	IXAudio2*				m_xaudio2;
 	X3DAUDIO_HANDLE			m_x3daudio;

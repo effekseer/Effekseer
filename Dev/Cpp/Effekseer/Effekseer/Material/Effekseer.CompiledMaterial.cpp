@@ -3,7 +3,7 @@
 namespace Effekseer
 {
 
-class CompiledMaterialBinaryInternal : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryInternal : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;

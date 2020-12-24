@@ -7,7 +7,7 @@
 namespace Effekseer
 {
 
-class MaterialCompilerMetal : public MaterialCompiler, ReferenceObject
+class MaterialCompilerMetal : public MaterialCompiler, public ReferenceObject
 {
 private:
 public:

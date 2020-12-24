@@ -902,7 +902,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 namespace Effekseer
 {
 
-class CompiledMaterialBinaryMetal : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryMetal : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
     std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
