@@ -3,14 +3,14 @@
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
 #include "../Effekseer.Base.Pre.h"
+#include <memory>
 #include <list>
 #include <map>
-#include <memory>
 #include <new>
 #include <set>
-#include <string>
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 namespace Effekseer
 {
@@ -175,25 +175,66 @@ template <class T, class U>
 using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
 template <class T, class U>
 using CustomAlignedMap = std::map<T, U, std::less<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
-template <class T, class U>
-using CustomUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAllocator<std::pair<const T, U>>>;
-template <class T, class U>
-using CustomAlignedUnorderedMap = std::unordered_map<T, U, std::hash<T>, std::equal_to<T>, CustomAlignedAllocator<std::pair<const T, U>>>;
+template <class T, class U, class Hasher = std::hash<T>, class KeyEq = std::equal_to<T>>
+using CustomUnorderedMap = std::unordered_map<T, U, Hasher, KeyEq, CustomAllocator<std::pair<const T, U>>>;
+template <class T, class U, class Hasher = std::hash<T>, class KeyEq = std::equal_to<T>>
+using CustomAlignedUnorderedMap = std::unordered_map<T, U, Hasher, KeyEq, CustomAlignedAllocator<std::pair<const T, U>>>;
 
-} // namespace Effekseer
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+class StringView
+{
+	using Traits = std::char_traits<char16_t>;
 
-namespace std
-{
-template <>
-struct hash<Effekseer::CustomString>
-{
 public:
-	size_t operator()(const Effekseer::CustomString& o) const noexcept
+	StringView(): ptr_(nullptr), size_(0) {}
+
+	StringView(const char16_t* ptr): ptr_(ptr), size_(Traits::length(ptr)) {}
+
+	StringView(const char16_t* ptr, size_t size): ptr_(ptr), size_(size) {}
+
+	template <size_t N>
+	StringView(const char16_t ptr[N]): ptr_(ptr), size_(N) {}
+
+	StringView(const CustomString& str): ptr_(str.data()), size_(str.size()) {}
+
+	const char16_t* data() const { return ptr_; }
+
+	size_t size() const { return size_; }
+
+	bool operator==(const StringView& rhs) const
 	{
-		return std::hash<std::u16string>()(std::u16string{o.c_str()});
+		return size() == rhs.size() && Traits::compare(data(), rhs.data(), size());
 	}
+
+	bool operator!=(const StringView& rhs) const
+	{
+		return size() != rhs.size() || !Traits::compare(data(), rhs.data(), size());
+	}
+
+	struct Hash {
+		size_t operator()(const StringView& key) const
+		{
+			constexpr size_t basis = (sizeof(size_t) == 8) ? 14695981039346656037ULL : 2166136261U;
+			constexpr size_t prime = (sizeof(size_t) == 8) ? 1099511628211ULL : 16777619U;
+
+			const uint8_t* data = reinterpret_cast<const uint8_t*>(key.data());
+			size_t count = key.size() * sizeof(char16_t);
+			size_t val = basis;
+			for (size_t i = 0; i < count; i++) {
+				val ^= static_cast<size_t>(data[i]);
+				val *= prime;
+			}
+			return val;
+		}
+	};
+
+private:
+	const char16_t* ptr_;
+	size_t size_;
 };
 
-} // namespace std
+} // namespace Effekseer
 
 #endif // __EFFEKSEER_BASE_PRE_H__
