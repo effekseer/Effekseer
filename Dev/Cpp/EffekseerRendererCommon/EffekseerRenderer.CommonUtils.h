@@ -937,6 +937,7 @@ struct ShaderParameterCollector
 
 		DepthIndex = -1;
 		IsDepthRequired = isSoftParticleEnabled;
+		MaterialRenderDataPtr = nullptr;
 
 		auto isMaterial = param->MaterialType == ::Effekseer::RendererMaterialType::File && param->MaterialRenderDataPtr != nullptr;
 		if (isMaterial)
@@ -954,8 +955,8 @@ struct ShaderParameterCollector
 			}
 
 			// Validate parameters
-			if (isMaterial && (MaterialDataPtr->TextureCount != MaterialRenderDataPtr->MaterialTextures.size() ||
-							   MaterialDataPtr->UniformCount != MaterialRenderDataPtr->MaterialUniforms.size()))
+			if (isMaterial && (MaterialDataPtr->TextureCount != param->MaterialRenderDataPtr->MaterialTextures.size() ||
+							   MaterialDataPtr->UniformCount != param->MaterialRenderDataPtr->MaterialUniforms.size()))
 			{
 				isMaterial = false;
 			}
