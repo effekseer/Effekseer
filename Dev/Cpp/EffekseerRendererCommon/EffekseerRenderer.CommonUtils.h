@@ -56,7 +56,8 @@ struct DynamicVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -115,7 +116,8 @@ struct LightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -162,7 +164,8 @@ struct SimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union {
+	union
+	{
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -207,7 +210,8 @@ struct AdvancedLightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -264,7 +268,8 @@ struct AdvancedSimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union {
+	union
+	{
 		float UV[2];
 		//! dummy for template
 		float UV1[2];
@@ -933,7 +938,35 @@ struct ShaderParameterCollector
 		DepthIndex = -1;
 		IsDepthRequired = isSoftParticleEnabled;
 
+		auto isMaterial = param->MaterialType == ::Effekseer::RendererMaterialType::File && param->MaterialRenderDataPtr != nullptr;
+		if (isMaterial)
+		{
+			MaterialDataPtr = effect->GetMaterial(param->MaterialRenderDataPtr->MaterialIndex);
+
+			if (MaterialDataPtr == nullptr)
+			{
+				isMaterial = false;
+			}
+
+			if (isMaterial && MaterialDataPtr->IsSimpleVertex)
+			{
+				isMaterial = false;
+			}
+
+			// Validate parameters
+			if (isMaterial && (MaterialDataPtr->TextureCount != MaterialRenderDataPtr->MaterialTextures.size() ||
+							   MaterialDataPtr->UniformCount != MaterialRenderDataPtr->MaterialUniforms.size()))
+			{
+				isMaterial = false;
+			}
+		}
+
 		auto isAdvanced = param->GetIsRenderedWithAdvancedRenderer() || edgeFalloff;
+
+		if (isMaterial)
+		{
+			IsDepthRequired = true;
+		}
 
 		if (param->MaterialType == ::Effekseer::RendererMaterialType::File)
 		{
@@ -942,26 +975,12 @@ struct ShaderParameterCollector
 			{
 				MaterialDataPtr = effect->GetMaterial(param->MaterialRenderDataPtr->MaterialIndex);
 
-				if (MaterialDataPtr != nullptr && !MaterialDataPtr->IsSimpleVertex)
-				{
-					ShaderType = RendererShaderType::Material;
-					IsBackgroundRequiredOnFirstPass = MaterialDataPtr->IsRefractionRequired;
-					HasMultiPass = true;
-				}
-				else
-				{
-					ShaderType = RendererShaderType::Unlit;
-					MaterialRenderDataPtr = nullptr;
-					MaterialDataPtr = nullptr;
-				}
+				ShaderType = RendererShaderType::Material;
+				IsBackgroundRequiredOnFirstPass = MaterialDataPtr->IsRefractionRequired;
 
-				// Validate parameters
-				if (MaterialDataPtr != nullptr && (MaterialDataPtr->TextureCount != MaterialRenderDataPtr->MaterialTextures.size() ||
-												   MaterialDataPtr->UniformCount != MaterialRenderDataPtr->MaterialUniforms.size()))
+				if (IsBackgroundRequiredOnFirstPass)
 				{
-					ShaderType = RendererShaderType::Unlit;
-					MaterialRenderDataPtr = nullptr;
-					MaterialDataPtr = nullptr;
+					HasMultiPass = true;
 				}
 			}
 		}
@@ -993,7 +1012,8 @@ struct ShaderParameterCollector
 		}
 		else
 		{
-			assert(0);
+			// Fallback
+			ShaderType = RendererShaderType::Unlit;
 		}
 
 		if (MaterialRenderDataPtr != nullptr && MaterialDataPtr != nullptr)
@@ -1278,7 +1298,8 @@ struct SoftParticleParameter
 
 struct FlipbookParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1291,7 +1312,8 @@ struct FlipbookParameter
 
 struct UVDistortionParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1305,7 +1327,8 @@ struct UVDistortionParameter
 
 struct BlendTextureParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1317,7 +1340,8 @@ struct BlendTextureParameter
 
 struct EmmisiveParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1331,7 +1355,8 @@ struct EdgeParameter
 {
 	std::array<float, 4> EdgeColor;
 
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1344,7 +1369,8 @@ struct EdgeParameter
 
 struct FalloffParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1355,14 +1381,14 @@ struct FalloffParameter
 		};
 	};
 
-	std::array<float,4> BeginColor;
-	std::array<float,4> EndColor;
+	std::array<float, 4> BeginColor;
+	std::array<float, 4> EndColor;
 };
 
 struct PixelConstantBuffer
 {
 	//! Lit only
-	std::array<float,4> LightDirection;
+	std::array<float, 4> LightDirection;
 	std::array<float, 4> LightColor;
 	std::array<float, 4> LightAmbientColor;
 
