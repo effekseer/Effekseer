@@ -99,7 +99,7 @@ void ModelRenderer::InitRenderer()
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
 		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_g_colorTex"));
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 	}
 	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
 	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
