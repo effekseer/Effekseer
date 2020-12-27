@@ -23,29 +23,24 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-struct FalloffParameter
-{
-    float4 Param;
-    float4 BeginColor;
-    float4 EndColor;
-};
-
 cbuffer PS_ConstanBuffer : register(b0)
 {
-    float4 _210_fLightDirection : register(c0);
-    float4 _210_fLightColor : register(c1);
-    float4 _210_fLightAmbient : register(c2);
-    float4 _210_fFlipbookParameter : register(c3);
-    float4 _210_fUVDistortionParameter : register(c4);
-    float4 _210_fBlendTextureParameter : register(c5);
-    float4 _210_fCameraFrontDirection : register(c6);
-    FalloffParameter _210_fFalloffParam : register(c7);
-    float4 _210_fEmissiveScaling : register(c10);
-    float4 _210_fEdgeColor : register(c11);
-    float4 _210_fEdgeParameter : register(c12);
-    float4 _210_softParticleParam : register(c13);
-    float4 _210_reconstructionParam1 : register(c14);
-    float4 _210_reconstructionParam2 : register(c15);
+    float4 _209_fLightDirection : register(c0);
+    float4 _209_fLightColor : register(c1);
+    float4 _209_fLightAmbient : register(c2);
+    float4 _209_fFlipbookParameter : register(c3);
+    float4 _209_fUVDistortionParameter : register(c4);
+    float4 _209_fBlendTextureParameter : register(c5);
+    float4 _209_fCameraFrontDirection : register(c6);
+    float4 _209_fFalloffParameter : register(c7);
+    float4 _209_fFalloffBeginColor : register(c8);
+    float4 _209_fFalloffEndColor : register(c9);
+    float4 _209_fEmissiveScaling : register(c10);
+    float4 _209_fEdgeColor : register(c11);
+    float4 _209_fEdgeParameter : register(c12);
+    float4 _209_softParticleParam : register(c13);
+    float4 _209_reconstructionParam1 : register(c14);
+    float4 _209_reconstructionParam2 : register(c15);
 };
 
 uniform sampler2D Sampler_sampler_uvDistortionTex : register(s3);
@@ -157,51 +152,51 @@ float4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = _210_fUVDistortionParameter.zw;
+    float2 param_2 = _209_fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
-    UVOffset *= _210_fUVDistortionParameter.x;
+    UVOffset *= _209_fUVDistortionParameter.x;
     float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV_Others.xy + UVOffset) * Input.Color;
     float3 texNormal = (tex2D(Sampler_sampler_normalTex, Input.UV_Others.xy + UVOffset).xyz - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
     float4 param_3 = Output;
     float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _210_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_3, _209_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4, Sampler_sampler_colorTex);
     Output = param_3;
     float4 AlphaTexColor = tex2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     float2 param_5 = advancedParam.BlendUVDistortionUV;
-    float2 param_6 = _210_fUVDistortionParameter.zw;
+    float2 param_6 = _209_fUVDistortionParameter.zw;
     float2 BlendUVOffset = UVDistortionOffset(param_5, param_6, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset *= _210_fUVDistortionParameter.y;
+    BlendUVOffset *= _209_fUVDistortionParameter.y;
     float4 BlendTextureColor = tex2D(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     float4 BlendAlphaTextureColor = tex2D(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     float4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, _210_fBlendTextureParameter.x);
+    ApplyTextureBlending(param_7, BlendTextureColor, _209_fBlendTextureParameter.x);
     Output = param_7;
-    float diffuse = max(dot(_210_fLightDirection.xyz, localNormal), 0.0f);
-    float3 _385 = Output.xyz * ((_210_fLightColor.xyz * diffuse) + _210_fLightAmbient.xyz);
-    Output = float4(_385.x, _385.y, _385.z, Output.w);
-    if (_210_fFalloffParam.Param.x == 1.0f)
+    float diffuse = max(dot(_209_fLightDirection.xyz, localNormal), 0.0f);
+    float3 _384 = Output.xyz * ((_209_fLightColor.xyz * diffuse) + _209_fLightAmbient.xyz);
+    Output = float4(_384.x, _384.y, _384.z, Output.w);
+    if (_209_fFalloffParameter.x == 1.0f)
     {
-        float3 cameraVec = normalize(-_210_fCameraFrontDirection.xyz);
+        float3 cameraVec = normalize(-_209_fCameraFrontDirection.xyz);
         float CdotN = clamp(dot(cameraVec, float3(localNormal.x, localNormal.y, localNormal.z)), 0.0f, 1.0f);
-        float4 FalloffBlendColor = lerp(_210_fFalloffParam.EndColor, _210_fFalloffParam.BeginColor, pow(CdotN, _210_fFalloffParam.Param.z).xxxx);
-        if (_210_fFalloffParam.Param.y == 0.0f)
+        float4 FalloffBlendColor = lerp(_209_fFalloffEndColor, _209_fFalloffBeginColor, pow(CdotN, _209_fFalloffParameter.z).xxxx);
+        if (_209_fFalloffParameter.y == 0.0f)
         {
             float3 _430 = Output.xyz + FalloffBlendColor.xyz;
             Output = float4(_430.x, _430.y, _430.z, Output.w);
         }
         else
         {
-            if (_210_fFalloffParam.Param.y == 1.0f)
+            if (_209_fFalloffParameter.y == 1.0f)
             {
                 float3 _443 = Output.xyz - FalloffBlendColor.xyz;
                 Output = float4(_443.x, _443.y, _443.z, Output.w);
             }
             else
             {
-                if (_210_fFalloffParam.Param.y == 2.0f)
+                if (_209_fFalloffParameter.y == 2.0f)
                 {
                     float3 _456 = Output.xyz * FalloffBlendColor.xyz;
                     Output = float4(_456.x, _456.y, _456.z, Output.w);
@@ -210,14 +205,14 @@ float4 _main(PS_Input Input)
         }
         Output.w *= FalloffBlendColor.w;
     }
-    float3 _469 = Output.xyz * _210_fEmissiveScaling.x;
-    Output = float4(_469.x, _469.y, _469.z, Output.w);
+    float3 _470 = Output.xyz * _209_fEmissiveScaling.x;
+    Output = float4(_470.x, _470.y, _470.z, Output.w);
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    float3 _501 = lerp(_210_fEdgeColor.xyz * _210_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _210_fEdgeParameter.x).xxx);
-    Output = float4(_501.x, _501.y, _501.z, Output.w);
+    float3 _502 = lerp(_209_fEdgeColor.xyz * _209_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _209_fEdgeParameter.x).xxx);
+    Output = float4(_502.x, _502.y, _502.z, Output.w);
     return Output;
 }
 
@@ -233,8 +228,8 @@ void frag_main()
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
-    float4 _540 = _main(Input);
-    _entryPointOutput = _540;
+    float4 _541 = _main(Input);
+    _entryPointOutput = _541;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

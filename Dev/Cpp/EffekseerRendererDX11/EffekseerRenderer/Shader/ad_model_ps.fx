@@ -1,11 +1,4 @@
 
-struct FalloffParameter
-{
-	float4 Param; // x:enable, y:colorblendtype, z:pow
-	float4 BeginColor;
-	float4 EndColor;
-};
-
 cbuffer PS_ConstanBuffer : register(b0)
 {
 	float4 fLightDirection;
@@ -20,7 +13,9 @@ cbuffer PS_ConstanBuffer : register(b0)
 
 	float4 fCameraFrontDirection;
 
-	FalloffParameter fFalloffParam;
+	float4 fFalloffParameter; // x:enable, y:colorblendtype, z:pow
+	float4 fFalloffBeginColor;
+	float4 fFalloffEndColor;
 
 	float4 fEmissiveScaling; // x:emissiveScaling
 
@@ -155,7 +150,7 @@ float4 main(const PS_Input Input)
 #endif
 
 	// apply falloff
-	if (fFalloffParam.Param.x == 1)
+	if (fFalloffParameter.x == 1)
 	{
 		float3 cameraVec = normalize(-fCameraFrontDirection.xyz);
 #if ENABLE_LIGHTING
@@ -163,17 +158,17 @@ float4 main(const PS_Input Input)
 #else
 		float CdotN = saturate(dot(cameraVec, normalize(Input.WorldN)));
 #endif
-		float4 FalloffBlendColor = lerp(fFalloffParam.EndColor, fFalloffParam.BeginColor, pow(CdotN, fFalloffParam.Param.z));
+		float4 FalloffBlendColor = lerp(fFalloffEndColor, fFalloffBeginColor, pow(CdotN, fFalloffParameter.z));
 
-		if (fFalloffParam.Param.y == 0) // add
+		if (fFalloffParameter.y == 0) // add
 		{
 			Output.rgb += FalloffBlendColor.rgb;
 		}
-		else if (fFalloffParam.Param.y == 1) // sub
+		else if (fFalloffParameter.y == 1) // sub
 		{
 			Output.rgb -= FalloffBlendColor.rgb;
 		}
-		else if (fFalloffParam.Param.y == 2) // mul
+		else if (fFalloffParameter.y == 2) // mul
 		{
 			Output.rgb *= FalloffBlendColor.rgb;
 		}

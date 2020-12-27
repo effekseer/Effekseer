@@ -28,13 +28,6 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-struct FalloffParameter
-{
-    vec4 Param;
-    vec4 BeginColor;
-    vec4 EndColor;
-};
-
 struct PS_ConstanBuffer
 {
     vec4 fLightDirection;
@@ -44,7 +37,9 @@ struct PS_ConstanBuffer
     vec4 fUVDistortionParameter;
     vec4 fBlendTextureParameter;
     vec4 fCameraFrontDirection;
-    FalloffParameter fFalloffParam;
+    vec4 fFalloffParameter;
+    vec4 fFalloffBeginColor;
+    vec4 fFalloffEndColor;
     vec4 fEmissiveScaling;
     vec4 fEdgeColor;
     vec4 fEdgeParameter;
@@ -167,28 +162,28 @@ vec4 _main(PS_Input Input)
     ApplyTextureBlending(param_7, BlendTextureColor, CBPS0.fBlendTextureParameter.x);
     Output = param_7;
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _385 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_385.x, _385.y, _385.z, Output.w);
-    if (CBPS0.fFalloffParam.Param.x == 1.0)
+    vec3 _384 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_384.x, _384.y, _384.z, Output.w);
+    if (CBPS0.fFalloffParameter.x == 1.0)
     {
         vec3 cameraVec = normalize(-CBPS0.fCameraFrontDirection.xyz);
         float CdotN = clamp(dot(cameraVec, vec3(localNormal.x, localNormal.y, localNormal.z)), 0.0, 1.0);
-        vec4 FalloffBlendColor = mix(CBPS0.fFalloffParam.EndColor, CBPS0.fFalloffParam.BeginColor, vec4(pow(CdotN, CBPS0.fFalloffParam.Param.z)));
-        if (CBPS0.fFalloffParam.Param.y == 0.0)
+        vec4 FalloffBlendColor = mix(CBPS0.fFalloffEndColor, CBPS0.fFalloffBeginColor, vec4(pow(CdotN, CBPS0.fFalloffParameter.z)));
+        if (CBPS0.fFalloffParameter.y == 0.0)
         {
             vec3 _430 = Output.xyz + FalloffBlendColor.xyz;
             Output = vec4(_430.x, _430.y, _430.z, Output.w);
         }
         else
         {
-            if (CBPS0.fFalloffParam.Param.y == 1.0)
+            if (CBPS0.fFalloffParameter.y == 1.0)
             {
                 vec3 _443 = Output.xyz - FalloffBlendColor.xyz;
                 Output = vec4(_443.x, _443.y, _443.z, Output.w);
             }
             else
             {
-                if (CBPS0.fFalloffParam.Param.y == 2.0)
+                if (CBPS0.fFalloffParameter.y == 2.0)
                 {
                     vec3 _456 = Output.xyz * FalloffBlendColor.xyz;
                     Output = vec4(_456.x, _456.y, _456.z, Output.w);
@@ -197,14 +192,14 @@ vec4 _main(PS_Input Input)
         }
         Output.w *= FalloffBlendColor.w;
     }
-    vec3 _469 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_469.x, _469.y, _469.z, Output.w);
+    vec3 _470 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_470.x, _470.y, _470.z, Output.w);
     if (Output.w <= max(0.0, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    vec3 _501 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_501.x, _501.y, _501.z, Output.w);
+    vec3 _502 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_502.x, _502.y, _502.z, Output.w);
     return Output;
 }
 
@@ -220,7 +215,7 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    vec4 _540 = _main(Input);
-    gl_FragData[0] = _540;
+    vec4 _541 = _main(Input);
+    gl_FragData[0] = _541;
 }
 
