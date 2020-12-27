@@ -1198,15 +1198,15 @@ void AssignPixelConstantBuffer(Shader* shader)
 
 	psOffset += sizeof(float[4]) * 1;
 
-	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fFalloffParam.Param"), psOffset);
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fFalloffParameter"), psOffset);
 
 	psOffset += sizeof(float[4]) * 1;
 
-	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fFalloffParam.BeginColor"), psOffset);
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fFalloffBeginColor"), psOffset);
 
 	psOffset += sizeof(float[4]) * 1;
 
-	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fFalloffParam.EndColor"), psOffset);
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fFalloffEndColor"), psOffset);
 
 	psOffset += sizeof(float[4]) * 1;
 
@@ -1222,7 +1222,9 @@ void AssignPixelConstantBuffer(Shader* shader)
 
 	psOffset += sizeof(float[4]) * 1;
 
-	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), psOffset);
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleParam"), psOffset);
+	psOffset += sizeof(float[4]) * 1;
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam1"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
@@ -1254,7 +1256,9 @@ void AssignDistortionPixelConstantBuffer(Shader* shader)
 
 	psOffset += sizeof(float[4]) * 1;
 
-	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleAndReconstructionParam1"), psOffset);
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.softParticleParam"), psOffset);
+	psOffset += sizeof(float[4]) * 1;
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam1"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
 	psOffset += sizeof(float[4]) * 1;

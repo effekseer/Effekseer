@@ -10,13 +10,6 @@ struct PS_Input
     highp vec4 PosP;
 };
 
-struct FalloffParameter
-{
-    highp vec4 Param;
-    highp vec4 BeginColor;
-    highp vec4 EndColor;
-};
-
 struct PS_ConstanBuffer
 {
     highp vec4 fLightDirection;
@@ -26,7 +19,9 @@ struct PS_ConstanBuffer
     highp vec4 fUVDistortionParameter;
     highp vec4 fBlendTextureParameter;
     highp vec4 fCameraFrontDirection;
-    FalloffParameter fFalloffParam;
+    highp vec4 fFalloffParameter;
+    highp vec4 fFalloffBeginColor;
+    highp vec4 fFalloffEndColor;
     highp vec4 fEmissiveScaling;
     highp vec4 fEdgeColor;
     highp vec4 fEdgeParameter;
@@ -90,7 +85,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _209 = _main(Input);
-    _entryPointOutput = _209;
+    highp vec4 _208 = _main(Input);
+    _entryPointOutput = _208;
 }
 

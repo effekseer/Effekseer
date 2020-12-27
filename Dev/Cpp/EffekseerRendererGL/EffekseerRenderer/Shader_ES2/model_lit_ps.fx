@@ -13,13 +13,6 @@ struct PS_Input
     highp vec4 PosP;
 };
 
-struct FalloffParameter
-{
-    highp vec4 Param;
-    highp vec4 BeginColor;
-    highp vec4 EndColor;
-};
-
 struct PS_ConstanBuffer
 {
     highp vec4 fLightDirection;
@@ -29,7 +22,9 @@ struct PS_ConstanBuffer
     highp vec4 fUVDistortionParameter;
     highp vec4 fBlendTextureParameter;
     highp vec4 fCameraFrontDirection;
-    FalloffParameter fFalloffParam;
+    highp vec4 fFalloffParameter;
+    highp vec4 fFalloffBeginColor;
+    highp vec4 fFalloffEndColor;
     highp vec4 fEmissiveScaling;
     highp vec4 fEdgeColor;
     highp vec4 fEdgeParameter;
@@ -56,8 +51,8 @@ highp vec4 _main(PS_Input Input)
     highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _100 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_100.x, _100.y, _100.z, Output.w);
+    highp vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_99.x, _99.y, _99.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -75,7 +70,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _146 = _main(Input);
-    gl_FragData[0] = _146;
+    highp vec4 _145 = _main(Input);
+    gl_FragData[0] = _145;
 }
 
