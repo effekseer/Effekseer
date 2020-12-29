@@ -23,14 +23,30 @@ void ResourceManager_Basic()
 	auto resourceManager = Effekseer::MakeRefPtr<Effekseer::ResourceManager>();
 	resourceManager->SetTextureLoader(Effekseer::MakeRefPtr<MockTextureLoader>());
 
-	auto texture = resourceManager->LoadTexture(u"Test", Effekseer::TextureType::Color);
-	resourceManager->UnloadTexture(texture);
-
-	if (texture->GetRef() != 1)
+	auto texture1 = resourceManager->LoadTexture(u"Test", Effekseer::TextureType::Color);
+	if (texture1 == nullptr)
 	{
-		// Bug
-		// throw "";
+		throw std::exception("Failed.");
 	}
+	auto texture2 = resourceManager->LoadTexture(u"Test", Effekseer::TextureType::Color);
+	if (texture1 != texture2)
+	{
+		throw std::exception("Failed.");
+	}
+
+	resourceManager->UnloadTexture(texture1);
+	resourceManager->UnloadTexture(texture2);
+
+	if (texture1->GetRef() != 2)
+	{
+		throw std::exception("Failed.");
+	}
+	texture2.Reset();
+	if (texture1->GetRef() != 1)
+	{
+		throw std::exception("Failed.");
+	}
+	texture1.Reset();
 }
 
 TestRegister ResourceManager_Basic_Test("ResourceManager.Basic", []() -> void { ResourceManager_Basic(); });
