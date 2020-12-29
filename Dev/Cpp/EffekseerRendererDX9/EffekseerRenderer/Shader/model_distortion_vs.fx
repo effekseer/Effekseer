@@ -81,8 +81,11 @@ VS_Output _main(VS_Input Input)
     float4 worldPos = mul(mModel, localPos);
     Output.PosVS = mul(_32_mCameraProj, worldPos);
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    float2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = _32_mUVInversed.x + (_32_mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0f);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0f);
@@ -94,7 +97,6 @@ VS_Output _main(VS_Input Input)
     worldTangent = normalize(worldTangent);
     Output.ProjBinormal = mul(_32_mCameraProj, worldPos + worldBinormal);
     Output.ProjTangent = mul(_32_mCameraProj, worldPos + worldTangent);
-    Output.UV.y = _32_mUVInversed.x + (_32_mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;
 }

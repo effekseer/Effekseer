@@ -55,9 +55,11 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = CBVS0.mModel * localPos;
     Output.PosVS = CBVS0.mCameraProj * worldPos;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -148,9 +150,11 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = localPos * mModel;
     Output.PosVS = worldPos * CBVS0.mCameraProj;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -228,9 +232,11 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = CBVS0.mModel * localPos;
     Output.PosVS = CBVS0.mCameraProj * worldPos;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -318,9 +324,11 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = localPos * mModel;
     Output.PosVS = worldPos * CBVS0.mCameraProj;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     Output.PosP = Output.PosVS;
     return Output;
 }

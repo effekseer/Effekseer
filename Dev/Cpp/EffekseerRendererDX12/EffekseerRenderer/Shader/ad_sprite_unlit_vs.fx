@@ -210,11 +210,11 @@ VS_Output _main(VS_Input Input)
     float4x4 mCameraProj = mul(_256_mProj, _256_mCamera);
     VS_Output Output = _358;
     float2 uv1 = Input.UV;
+    uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     Output.PosVS = mul(mCameraProj, worldPos);
     Output.Color = Input.Color;
-    Output.UV_Others.y = _256_mUVInversed.x + (_256_mUVInversed.y * Output.UV_Others.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

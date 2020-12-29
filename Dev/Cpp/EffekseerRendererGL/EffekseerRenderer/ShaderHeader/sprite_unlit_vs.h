@@ -43,8 +43,9 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 uv1 = Input.UV;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -109,8 +110,9 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 uv1 = Input.UV;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -172,8 +174,9 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 uv1 = Input.UV;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -235,8 +238,9 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 uv1 = Input.UV;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.PosP = Output.PosVS;
     return Output;
 }

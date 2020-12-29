@@ -52,10 +52,11 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
+    vec2 uv1 = Input.UV1;
+    uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.ProjTangent = (worldPos + worldTangent) * mCameraProj;
     Output.ProjBinormal = (worldPos + worldBinormal) * mCameraProj;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;
 }

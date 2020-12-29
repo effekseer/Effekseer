@@ -67,11 +67,12 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_21)
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV = Input.UV1;
+    float2 uv1 = Input.UV1;
+    uv1.y = v_21.mUVInversed.x + (v_21.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
-    Output.UV.y = v_21.mUVInversed.x + (v_21.mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;
 }

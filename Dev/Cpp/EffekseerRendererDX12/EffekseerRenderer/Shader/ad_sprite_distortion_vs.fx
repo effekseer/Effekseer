@@ -225,13 +225,13 @@ VS_Output _main(VS_Input Input)
     float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
     float2 uv1 = Input.UV1;
+    uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     Output.PosVS = mul(mCameraProj, worldPos);
     Output.ProjTangent = mul(mCameraProj, worldPos + worldTangent);
     Output.ProjBinormal = mul(mCameraProj, worldPos + worldBinormal);
     Output.Color = Input.Color;
-    Output.UV_Others.y = _255_mUVInversed.x + (_255_mUVInversed.y * Output.UV_Others.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

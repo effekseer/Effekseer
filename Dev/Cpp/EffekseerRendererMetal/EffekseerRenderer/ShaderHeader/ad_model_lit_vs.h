@@ -223,8 +223,11 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 worldPos = localPosition * mModel;
     Output.PosVS = v_365.mCameraProj * worldPos;
-    Output.UV_Others.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV_Others.y = (Input.UV.y * uv.w) + uv.y;
+    float2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * outputUV.y);
+    Output.UV_Others = float4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
@@ -238,7 +241,6 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    Output.UV_Others.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * Output.UV_Others.y);
     float2 param = Input.UV;
     float2 param_1 = Output.UV_Others.xy;
     float4 param_2 = alphaUV;

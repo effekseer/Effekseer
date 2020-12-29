@@ -164,11 +164,11 @@ VS_Output _main(VS_Input Input)
     mat4 mCameraProj = _256.mCamera * _256.mProj;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec2 uv1 = Input.UV;
+    uv1.y = _256.mUVInversed.x + (_256.mUVInversed.y * uv1.y);
     Output.UV_Others = vec4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
-    Output.UV_Others.y = _256.mUVInversed.x + (_256.mUVInversed.y * Output.UV_Others.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
