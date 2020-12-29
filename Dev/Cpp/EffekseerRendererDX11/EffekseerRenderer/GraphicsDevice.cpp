@@ -608,6 +608,8 @@ bool Texture::Init(
 		rtv_ = Effekseer::CreateUniqueReference(rtv);
 	}
 
+	size_ = size;
+
 	return true;
 }
 

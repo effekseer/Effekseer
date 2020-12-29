@@ -226,6 +226,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 	texture_ = LLGI::CreateSharedPtr(texture);
 
+	size_ = param.Size;
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
 	return true;

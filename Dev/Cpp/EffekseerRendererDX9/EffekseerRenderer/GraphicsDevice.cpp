@@ -372,6 +372,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 	texture_ = Effekseer::CreateUniqueReference(texture);
 
+	size_ = param.Size;
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
 	return true;
@@ -419,6 +420,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	texture_ = Effekseer::CreateUniqueReference(texture);
 	surface_ = Effekseer::CreateUniqueReference(surface);
 
+	size_ = param.Size;
 	type_ = Effekseer::Backend::TextureType::Depth;
 
 	return true;
