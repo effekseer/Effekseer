@@ -88,8 +88,11 @@ VS_Output main(const VS_Input Input)
 	Output.PosVS = mul(mCameraProj, worldPos);
 	Output.Color = modelColor;
 
-	Output.UV.x = Input.UV.x * uv.z + uv.x;
-	Output.UV.y = Input.UV.y * uv.w + uv.y;
+	float2 outputUV = Input.UV;
+	outputUV.x = outputUV.x * uv.z + uv.x;
+	outputUV.y = outputUV.y * uv.w + uv.y;
+	outputUV.y = mUVInversed.x + mUVInversed.y * outputUV.y;
+	Output.UV = outputUV;
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 
@@ -117,8 +120,6 @@ VS_Output main(const VS_Input Input)
 #endif
 
 #endif
-
-	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
 	Output.PosP = Output.PosVS;
 

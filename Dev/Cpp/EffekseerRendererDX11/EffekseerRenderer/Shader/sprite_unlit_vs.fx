@@ -80,10 +80,12 @@ VS_Output main(const VS_Input Input)
 
 	// UV
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
-	Output.UV = Input.UV1;
+	float2 uv1 = Input.UV1;
 #else
-	Output.UV = Input.UV;
+	float2 uv1 = Input.UV;
 #endif
+	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	Output.UV = uv1;
 
 #ifdef ENABLE_LIGHTING
 	// NBT
@@ -95,8 +97,6 @@ VS_Output main(const VS_Input Input)
 	Output.ProjTangent = mul(mCameraProj, worldPos + worldTangent);
 	Output.ProjBinormal = mul(mCameraProj, worldPos + worldBinormal);
 #endif
-
-	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
 	Output.PosP = Output.PosVS;
 

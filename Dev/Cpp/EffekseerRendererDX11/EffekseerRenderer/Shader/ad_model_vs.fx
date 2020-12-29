@@ -147,8 +147,11 @@ VS_Output main(const VS_Input Input)
 
 	Output.PosVS = mul(mCameraProj, worldPos);
 
-	Output.UV_Others.x = Input.UV.x * uv.z + uv.x;
-	Output.UV_Others.y = Input.UV.y * uv.w + uv.y;
+	float2 outputUV = Input.UV;
+	outputUV.x = outputUV.x * uv.z + uv.x;
+	outputUV.y = outputUV.y * uv.w + uv.y;
+	outputUV.y = mUVInversed.x + mUVInversed.y * outputUV.y;
+	Output.UV_Others.xy = outputUV;
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
@@ -182,8 +185,6 @@ VS_Output main(const VS_Input Input)
 	
 #endif
 	Output.Color = modelColor;
-
-	Output.UV_Others.y = mUVInversed.x + mUVInversed.y * Output.UV_Others.y;
 
 	CalculateAndStoreAdvancedParameter(Input.UV, Output.UV_Others.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 

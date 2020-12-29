@@ -107,6 +107,7 @@ VS_Output main(const VS_Input Input)
 #else
 	float2 uv1 = Input.UV;
 #endif
+	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	Output.UV_Others.xy = uv1;
 
 	float4 worldPos = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
@@ -125,8 +126,6 @@ VS_Output main(const VS_Input Input)
 #endif
 
 	Output.Color = Input.Color;
-
-	Output.UV_Others.y = mUVInversed.x + mUVInversed.y * Output.UV_Others.y;
 
 	CalculateAndStoreAdvancedParameter(Input, Output);
 
