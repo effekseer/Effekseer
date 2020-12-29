@@ -25,7 +25,7 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     mat4 mCameraProj;
-    mat4 mModel[10];
+    mat4 mModel_Inst[10];
     vec4 fUV[10];
     vec4 fModelColor[10];
     vec4 fLightDirection;
@@ -54,17 +54,19 @@ out vec4 _VSPS_PosP;
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 matModel = CBVS0.mModel[index];
+    mat4 mModel = CBVS0.mModel_Inst[index];
     vec4 uv = CBVS0.fUV[index];
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
-    vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = localPosition * CBVS0.mCameraProj;
+    vec4 localPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 worldPos = localPos * mModel;
+    Output.PosVS = worldPos * CBVS0.mCameraProj;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     Output.PosP = Output.PosVS;
     return Output;
 }

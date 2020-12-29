@@ -180,21 +180,20 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
+    mat4 mCameraProj = transpose(CBVS0.mProj * CBVS0.mCamera);
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
-    vec3 worldNormal = (Input.Normal.xyz - vec3(0.5)) * 2.0;
-    vec3 worldTangent = (Input.Tangent.xyz - vec3(0.5)) * 2.0;
-    vec3 worldBinormal = cross(worldNormal, worldTangent);
+    vec4 worldNormal = vec4((Input.Normal.xyz - vec3(0.5)) * 2.0, 0.0);
+    vec4 worldTangent = vec4((Input.Tangent.xyz - vec3(0.5)) * 2.0, 0.0);
+    vec4 worldBinormal = vec4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
     vec2 uv1 = Input.UV1;
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
-    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPos = CBVS0.mCamera * pos4;
-    cameraPos /= vec4(cameraPos.w);
-    Output.PosVS = CBVS0.mProj * cameraPos;
-    Output.WorldN = worldNormal;
-    Output.WorldB = worldBinormal;
-    Output.WorldT = worldTangent;
-    Output.Color = Input.Color;
     Output.UV_Others = vec4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
+    Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

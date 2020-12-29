@@ -50,13 +50,15 @@ VS_Output _main(VS_Input Input)
     vec4 uv = CBVS0.fUV;
     vec4 modelColor = CBVS0.fModelColor * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
-    vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition = CBVS0.mModel * localPosition;
-    Output.PosVS = CBVS0.mCameraProj * localPosition;
+    vec4 localPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 worldPos = CBVS0.mModel * localPos;
+    Output.PosVS = CBVS0.mCameraProj * worldPos;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
-    Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     Output.PosP = Output.PosVS;
     return Output;
 }

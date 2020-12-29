@@ -22,7 +22,7 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _348 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _358 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -207,15 +207,14 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _348;
+    float4x4 mCameraProj = mul(_256_mProj, _256_mCamera);
+    VS_Output Output = _358;
     float2 uv1 = Input.UV;
     uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 cameraPos = mul(_256_mCamera, pos4);
-    cameraPos /= cameraPos.w.xxxx;
-    Output.PosVS = mul(_256_mProj, cameraPos);
-    Output.Color = Input.Color;
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    Output.PosVS = mul(mCameraProj, worldPos);
+    Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

@@ -166,15 +166,14 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
+    mat4 mCameraProj = CBVS0.mCamera * CBVS0.mProj;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec2 uv1 = Input.UV;
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
-    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPos = pos4 * CBVS0.mCamera;
-    cameraPos /= vec4(cameraPos.w);
-    Output.PosVS = cameraPos * CBVS0.mProj;
-    Output.Color = Input.Color;
     Output.UV_Others = vec4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
+    Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

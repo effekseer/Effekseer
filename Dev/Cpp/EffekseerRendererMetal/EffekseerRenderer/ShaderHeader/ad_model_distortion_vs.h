@@ -33,7 +33,7 @@ struct VS_Input
 struct VS_ConstantBuffer
 {
     float4x4 mCameraProj;
-    float4x4 mModel[40];
+    float4x4 mModel_Inst[40];
     float4 fUV[40];
     float4 fAlphaUV[40];
     float4 fUVDistortionUV[40];
@@ -207,7 +207,7 @@ static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
 {
     uint index = Input.Index;
-    float4x4 matModel = transpose(v_365.mModel[index]);
+    float4x4 mModel = transpose(v_365.mModel_Inst[index]);
     float4 uv = v_365.fUV[index];
     float4 alphaUV = v_365.fAlphaUV[index];
     float4 uvDistortionUV = v_365.fUVDistortionUV[index];
@@ -219,25 +219,25 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     float modelAlphaThreshold = v_365.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = v_365.mCameraProj * localPosition;
-    Output.UV_Others.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV_Others.y = (Input.UV.y * uv.w) + uv.y;
+    float4 worldPos = localPosition * mModel;
+    Output.PosVS = v_365.mCameraProj * worldPos;
+    float2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * outputUV.y);
+    Output.UV_Others = float4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
-    localNormal *= matModel;
-    localBinormal *= matModel;
-    localTangent *= matModel;
-    localNormal = normalize(localNormal);
-    localBinormal = normalize(localBinormal);
-    localTangent = normalize(localTangent);
-    localBinormal = localPosition + localBinormal;
-    localTangent = localPosition + localTangent;
-    Output.ProjBinormal = v_365.mCameraProj * localBinormal;
-    Output.ProjTangent = v_365.mCameraProj * localTangent;
+    float4 worldNormal = localNormal * mModel;
+    float4 worldBinormal = localBinormal * mModel;
+    float4 worldTangent = localTangent * mModel;
+    worldNormal = normalize(worldNormal);
+    worldBinormal = normalize(worldBinormal);
+    worldTangent = normalize(worldTangent);
+    Output.ProjTangent = v_365.mCameraProj * (worldPos + worldTangent);
+    Output.ProjBinormal = v_365.mCameraProj * (worldPos + worldBinormal);
     Output.Color = modelColor;
-    Output.UV_Others.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * Output.UV_Others.y);
     float2 param = Input.UV;
     float2 param_1 = Output.UV_Others.xy;
     float4 param_2 = alphaUV;

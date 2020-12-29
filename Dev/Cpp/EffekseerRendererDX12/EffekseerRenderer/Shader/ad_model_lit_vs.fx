@@ -28,7 +28,7 @@ static const VS_Output _494 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.
 cbuffer VS_ConstantBuffer : register(b0)
 {
     column_major float4x4 _365_mCameraProj : packoffset(c0);
-    column_major float4x4 _365_mModel[40] : packoffset(c4);
+    column_major float4x4 _365_mModel_Inst[40] : packoffset(c4);
     float4 _365_fUV[40] : packoffset(c164);
     float4 _365_fAlphaUV[40] : packoffset(c204);
     float4 _365_fUVDistortionUV[40] : packoffset(c244);
@@ -230,7 +230,7 @@ void CalculateAndStoreAdvancedParameter(float2 uv, float2 uv1, float4 alphaUV, f
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    float4x4 matModel = _365_mModel[index];
+    float4x4 mModel = _365_mModel_Inst[index];
     float4 uv = _365_fUV[index];
     float4 alphaUV = _365_fAlphaUV[index];
     float4 uvDistortionUV = _365_fUVDistortionUV[index];
@@ -242,24 +242,26 @@ VS_Output _main(VS_Input Input)
     float modelAlphaThreshold = _365_fModelAlphaThreshold[index].x;
     VS_Output Output = _494;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    localPosition = mul(matModel, localPosition);
-    Output.PosVS = mul(_365_mCameraProj, localPosition);
-    Output.UV_Others.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV_Others.y = (Input.UV.y * uv.w) + uv.y;
+    float4 worldPos = mul(mModel, localPosition);
+    Output.PosVS = mul(_365_mCameraProj, worldPos);
+    float2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = _365_mUVInversed.x + (_365_mUVInversed.y * outputUV.y);
+    Output.UV_Others = float4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0f);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0f);
-    localNormal = mul(matModel, localNormal);
-    localBinormal = mul(matModel, localBinormal);
-    localTangent = mul(matModel, localTangent);
-    localNormal = normalize(localNormal);
-    localBinormal = normalize(localBinormal);
-    localTangent = normalize(localTangent);
-    Output.WorldN = localNormal.xyz;
-    Output.WorldB = localBinormal.xyz;
-    Output.WorldT = localTangent.xyz;
+    float4 worldNormal = mul(mModel, localNormal);
+    float4 worldBinormal = mul(mModel, localBinormal);
+    float4 worldTangent = mul(mModel, localTangent);
+    worldNormal = normalize(worldNormal);
+    worldBinormal = normalize(worldBinormal);
+    worldTangent = normalize(worldTangent);
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    Output.UV_Others.y = _365_mUVInversed.x + (_365_mUVInversed.y * Output.UV_Others.y);
     float2 param = Input.UV;
     float2 param_1 = Output.UV_Others.xy;
     float4 param_2 = alphaUV;

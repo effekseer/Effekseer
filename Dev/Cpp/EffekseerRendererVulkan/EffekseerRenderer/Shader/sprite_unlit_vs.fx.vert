@@ -21,7 +21,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     layout(row_major) mat4 mProj;
     vec4 mUVInversed;
     vec4 mflipbookParameter;
-} _43;
+} _21;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
@@ -32,16 +32,15 @@ layout(location = 2) out vec4 _entryPointOutput_PosP;
 
 VS_Output _main(VS_Input Input)
 {
+    mat4 mCameraProj = _21.mCamera * _21.mProj;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
-    vec3 worldPos = Input.Pos;
-    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPos = pos4 * _43.mCamera;
-    Output.PosVS = cameraPos * _43.mProj;
-    Output.PosP = Output.PosVS;
-    vec2 uv1 = Input.UV;
-    uv1.y = _43.mUVInversed.x + (_43.mUVInversed.y * uv1.y);
-    Output.UV = uv1;
+    vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
+    vec2 uv1 = Input.UV;
+    uv1.y = _21.mUVInversed.x + (_21.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

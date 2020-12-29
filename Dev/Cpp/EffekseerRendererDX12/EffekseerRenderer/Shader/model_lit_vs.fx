@@ -25,7 +25,7 @@ static const VS_Output _58 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx
 cbuffer VS_ConstantBuffer : register(b0)
 {
     column_major float4x4 _31_mCameraProj : packoffset(c0);
-    column_major float4x4 _31_mModel[40] : packoffset(c4);
+    column_major float4x4 _31_mModel_Inst[40] : packoffset(c4);
     float4 _31_fUV[40] : packoffset(c164);
     float4 _31_fModelColor[40] : packoffset(c204);
     float4 _31_fLightDirection : packoffset(c244);
@@ -75,29 +75,31 @@ struct SPIRV_Cross_Output
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    float4x4 matModel = _31_mModel[index];
+    float4x4 mModel = _31_mModel_Inst[index];
     float4 uv = _31_fUV[index];
     float4 modelColor = _31_fModelColor[index] * Input.Color;
     VS_Output Output = _58;
-    float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    localPosition = mul(matModel, localPosition);
-    Output.PosVS = mul(_31_mCameraProj, localPosition);
+    float4 localPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    float4 worldPos = mul(mModel, localPos);
+    Output.PosVS = mul(_31_mCameraProj, worldPos);
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    float2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = _31_mUVInversed.x + (_31_mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0f);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0f);
-    localNormal = mul(matModel, localNormal);
-    localBinormal = mul(matModel, localBinormal);
-    localTangent = mul(matModel, localTangent);
-    localNormal = normalize(localNormal);
-    localBinormal = normalize(localBinormal);
-    localTangent = normalize(localTangent);
-    Output.WorldN = localNormal.xyz;
-    Output.WorldB = localBinormal.xyz;
-    Output.WorldT = localTangent.xyz;
-    Output.UV.y = _31_mUVInversed.x + (_31_mUVInversed.y * Output.UV.y);
+    float4 worldNormal = mul(mModel, localNormal);
+    float4 worldBinormal = mul(mModel, localBinormal);
+    float4 worldTangent = mul(mModel, localTangent);
+    worldNormal = normalize(worldNormal);
+    worldBinormal = normalize(worldBinormal);
+    worldTangent = normalize(worldTangent);
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
     Output.PosP = Output.PosVS;
     return Output;
 }

@@ -24,7 +24,7 @@ struct VS_Output
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCameraProj;
-    layout(row_major) mat4 mModel[40];
+    layout(row_major) mat4 mModel_Inst[40];
     vec4 fUV[40];
     vec4 fModelColor[40];
     vec4 fLightDirection;
@@ -48,30 +48,30 @@ layout(location = 4) centroid out vec4 _entryPointOutput_Color;
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 matModel = _31.mModel[index];
+    mat4 mModel = _31.mModel_Inst[index];
     vec4 uv = _31.fUV[index];
     vec4 modelColor = _31.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
-    vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = localPosition * _31.mCameraProj;
+    vec4 localPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 worldPos = localPos * mModel;
+    Output.PosVS = worldPos * _31.mCameraProj;
     Output.Color = modelColor;
-    Output.UV.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV.y = (Input.UV.y * uv.w) + uv.y;
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = _31.mUVInversed.x + (_31.mUVInversed.y * outputUV.y);
+    Output.UV = outputUV;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
     vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
-    localNormal *= matModel;
-    localBinormal *= matModel;
-    localTangent *= matModel;
-    localNormal = normalize(localNormal);
-    localBinormal = normalize(localBinormal);
-    localTangent = normalize(localTangent);
-    localBinormal = localPosition + localBinormal;
-    localTangent = localPosition + localTangent;
-    Output.ProjBinormal = localBinormal * _31.mCameraProj;
-    Output.ProjTangent = localTangent * _31.mCameraProj;
-    Output.UV.y = _31.mUVInversed.x + (_31.mUVInversed.y * Output.UV.y);
+    vec4 worldNormal = localNormal * mModel;
+    vec4 worldBinormal = localBinormal * mModel;
+    vec4 worldTangent = localTangent * mModel;
+    worldNormal = normalize(worldNormal);
+    worldBinormal = normalize(worldBinormal);
+    worldTangent = normalize(worldTangent);
+    Output.ProjBinormal = (worldPos + worldBinormal) * _31.mCameraProj;
+    Output.ProjTangent = (worldPos + worldTangent) * _31.mCameraProj;
     Output.PosP = Output.PosVS;
     return Output;
 }

@@ -26,7 +26,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     layout(row_major) mat4 mProj;
     vec4 mUVInversed;
     vec4 mflipbookParameter;
-} _68;
+} _21;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
@@ -42,27 +42,20 @@ layout(location = 4) centroid out vec4 _entryPointOutput_Color;
 
 VS_Output _main(VS_Input Input)
 {
+    mat4 mCameraProj = _21.mCamera * _21.mProj;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
-    vec3 worldPos = Input.Pos;
-    vec3 worldNormal = (vec3(Input.Normal.xyz) - vec3(0.5)) * 2.0;
-    vec3 worldTangent = (vec3(Input.Tangent.xyz) - vec3(0.5)) * 2.0;
-    vec3 worldBinormal = cross(worldNormal, worldTangent);
-    vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPos = pos4 * _68.mCamera;
-    Output.PosVS = cameraPos * _68.mProj;
-    Output.PosP = Output.PosVS;
-    vec2 uv1 = Input.UV1;
-    uv1.y = _68.mUVInversed.x + (_68.mUVInversed.y * uv1.y);
-    Output.UV = uv1;
-    vec4 localTangent = pos4;
-    vec4 localBinormal = pos4;
-    vec3 _106 = localTangent.xyz + worldTangent;
-    localTangent = vec4(_106.x, _106.y, _106.z, localTangent.w);
-    vec3 _112 = localBinormal.xyz + worldBinormal;
-    localBinormal = vec4(_112.x, _112.y, _112.z, localBinormal.w);
-    Output.ProjTangent = (localTangent * _68.mCamera) * _68.mProj;
-    Output.ProjBinormal = (localBinormal * _68.mCamera) * _68.mProj;
+    vec4 worldNormal = vec4((Input.Normal.xyz - vec3(0.5)) * 2.0, 0.0);
+    vec4 worldTangent = vec4((Input.Tangent.xyz - vec3(0.5)) * 2.0, 0.0);
+    vec4 worldBinormal = vec4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
+    vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
+    vec2 uv1 = Input.UV1;
+    uv1.y = _21.mUVInversed.x + (_21.mUVInversed.y * uv1.y);
+    Output.UV = uv1;
+    Output.ProjTangent = (worldPos + worldTangent) * mCameraProj;
+    Output.ProjBinormal = (worldPos + worldBinormal) * mCameraProj;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

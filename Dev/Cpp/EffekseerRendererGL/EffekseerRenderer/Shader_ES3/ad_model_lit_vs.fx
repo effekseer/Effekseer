@@ -31,7 +31,7 @@ struct VS_Input
 struct VS_ConstantBuffer
 {
     mat4 mCameraProj;
-    mat4 mModel[10];
+    mat4 mModel_Inst[10];
     vec4 fUV[10];
     vec4 fAlphaUV[10];
     vec4 fUVDistortionUV[10];
@@ -192,7 +192,7 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 matModel = CBVS0.mModel[index];
+    mat4 mModel = CBVS0.mModel_Inst[index];
     vec4 uv = CBVS0.fUV[index];
     vec4 alphaUV = CBVS0.fAlphaUV[index];
     vec4 uvDistortionUV = CBVS0.fUVDistortionUV[index];
@@ -204,24 +204,26 @@ VS_Output _main(VS_Input Input)
     float modelAlphaThreshold = CBVS0.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = localPosition * CBVS0.mCameraProj;
-    Output.UV_Others.x = (Input.UV.x * uv.z) + uv.x;
-    Output.UV_Others.y = (Input.UV.y * uv.w) + uv.y;
+    vec4 worldPos = localPosition * mModel;
+    Output.PosVS = worldPos * CBVS0.mCameraProj;
+    vec2 outputUV = Input.UV;
+    outputUV.x = (outputUV.x * uv.z) + uv.x;
+    outputUV.y = (outputUV.y * uv.w) + uv.y;
+    outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
+    Output.UV_Others = vec4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
     vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
-    localNormal *= matModel;
-    localBinormal *= matModel;
-    localTangent *= matModel;
-    localNormal = normalize(localNormal);
-    localBinormal = normalize(localBinormal);
-    localTangent = normalize(localTangent);
-    Output.WorldN = localNormal.xyz;
-    Output.WorldB = localBinormal.xyz;
-    Output.WorldT = localTangent.xyz;
+    vec4 worldNormal = localNormal * mModel;
+    vec4 worldBinormal = localBinormal * mModel;
+    vec4 worldTangent = localTangent * mModel;
+    worldNormal = normalize(worldNormal);
+    worldBinormal = normalize(worldBinormal);
+    worldTangent = normalize(worldTangent);
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    Output.UV_Others.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV_Others.y);
     vec2 param = Input.UV;
     vec2 param_1 = Output.UV_Others.xy;
     vec4 param_2 = alphaUV;
