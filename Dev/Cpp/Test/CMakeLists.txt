@@ -21,7 +21,9 @@ set(effekseer_test_src
     Runtime/Performance.cpp
     Runtime/TextureFormats.cpp
     Runtime/Vertex.cpp
+    Runtime/ResourceManager.cpp
     Backend/Mesh.cpp
+    Backend/RenderPassTest.cpp
 )
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)

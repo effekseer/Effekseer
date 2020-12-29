@@ -317,5 +317,5 @@ void RenderPassTest()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_RenderPassTest_GL("Backend.RenderPassTest", []() -> void { RenderPassTest<RenderingWindowGL>(); });
+TestRegister Test_Backend_RenderPass("Backend.RenderPass", []() -> void { RenderPassTest<RenderingWindowGL>(); });
 #endif

@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.Resource.h"
+#include "Model/ProcedualModelGenerator.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -17,39 +18,72 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-/**
-	@brief	リソースマネージャ
-*/
 class ResourceManager : public ReferenceObject
 {
 public:
 	ResourceManager() = default;
 
 	~ResourceManager() = default;
-	
-	TextureLoaderRef GetTextureLoader() const { return cachedTextures_.loader; }
 
-	void SetTextureLoader(TextureLoaderRef loader) { cachedTextures_.loader = loader; }
+	TextureLoaderRef GetTextureLoader() const
+	{
+		return cachedTextures_.loader;
+	}
 
-	ModelLoaderRef GetModelLoader() const { return cachedModels_.loader; }
+	void SetTextureLoader(TextureLoaderRef loader)
+	{
+		cachedTextures_.loader = loader;
+	}
 
-	void SetModelLoader(ModelLoaderRef loader) { cachedModels_.loader = loader; }
+	ModelLoaderRef GetModelLoader() const
+	{
+		return cachedModels_.loader;
+	}
 
-	SoundLoaderRef GetSoundLoader() const { return cachedSounds_.loader; }
+	void SetModelLoader(ModelLoaderRef loader)
+	{
+		cachedModels_.loader = loader;
+	}
 
-	void SetSoundLoader(SoundLoaderRef loader) { cachedSounds_.loader = loader; }
+	SoundLoaderRef GetSoundLoader() const
+	{
+		return cachedSounds_.loader;
+	}
 
-	MaterialLoaderRef GetMaterialLoader() const { return cachedMaterials_.loader; }
+	void SetSoundLoader(SoundLoaderRef loader)
+	{
+		cachedSounds_.loader = loader;
+	}
 
-	void SetMaterialLoader(MaterialLoaderRef loader) { cachedMaterials_.loader = loader; }
+	MaterialLoaderRef GetMaterialLoader() const
+	{
+		return cachedMaterials_.loader;
+	}
 
-	CurveLoaderRef GetCurveLoader() const { return cachedCurves_.loader; }
+	void SetMaterialLoader(MaterialLoaderRef loader)
+	{
+		cachedMaterials_.loader = loader;
+	}
 
-	void SetCurveLoader(CurveLoaderRef loader) { cachedCurves_.loader = loader; }
+	CurveLoaderRef GetCurveLoader() const
+	{
+		return cachedCurves_.loader;
+	}
 
-	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const { return procedualMeshGenerator_; }
+	void SetCurveLoader(CurveLoaderRef loader)
+	{
+		cachedCurves_.loader = loader;
+	}
 
-	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator) { procedualMeshGenerator_ = generator; }
+	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const
+	{
+		return procedualMeshGenerator_;
+	}
+
+	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator)
+	{
+		procedualMeshGenerator_ = generator;
+	}
 
 	TextureRef LoadTexture(const char16_t* path, TextureType textureType);
 
@@ -108,7 +142,7 @@ private:
 				{
 					resource->SetPath(path);
 					const StringView view = resource->GetPath();
-					cached.emplace(view, LoadCounted<RESOURCE>{ resource, 1 } );
+					cached.emplace(view, LoadCounted<RESOURCE>{resource, 1});
 					return resource;
 				}
 			}
