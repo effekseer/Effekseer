@@ -31,7 +31,7 @@ struct VS_Input
 struct VS_ConstantBuffer
 {
     float4x4 mCameraProj;
-    float4x4 mModel[40];
+    float4x4 mModel_Inst[40];
     float4 fUV[40];
     float4 fAlphaUV[40];
     float4 fUVDistortionUV[40];
@@ -204,7 +204,7 @@ static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
 {
     uint index = Input.Index;
-    float4x4 matModel = transpose(v_365.mModel[index]);
+    float4x4 mModel = transpose(v_365.mModel_Inst[index]);
     float4 uv = v_365.fUV[index];
     float4 alphaUV = v_365.fAlphaUV[index];
     float4 uvDistortionUV = v_365.fUVDistortionUV[index];
@@ -216,12 +216,12 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     float modelAlphaThreshold = v_365.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = v_365.mCameraProj * localPosition;
+    float4 worldPos = localPosition * mModel;
+    Output.PosVS = v_365.mCameraProj * worldPos;
     Output.UV_Others.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV_Others.y = (Input.UV.y * uv.w) + uv.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
-    localNormal = normalize(localNormal * matModel);
+    localNormal = normalize(localNormal * mModel);
     Output.WorldN = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV_Others.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * Output.UV_Others.y);

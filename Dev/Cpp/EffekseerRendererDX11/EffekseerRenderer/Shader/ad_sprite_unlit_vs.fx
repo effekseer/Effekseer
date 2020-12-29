@@ -92,12 +92,13 @@ struct VS_Output
 
 VS_Output main(const VS_Input Input)
 {
+	float4x4 mCameraProj = mul(mProj, mCamera);
 	VS_Output Output = (VS_Output)0;
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
-	float3 worldNormal = (Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldBinormal = cross(worldNormal, worldTangent);
+	float4 worldNormal = float4((Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0, 0.0);
+	float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0, 0.0);
+	float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
 #endif
 
 	// UV
@@ -106,34 +107,26 @@ VS_Output main(const VS_Input Input)
 #else
 	float2 uv1 = Input.UV;
 #endif
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	Output.UV_Others.xy = uv1;
 
-	float4 pos4 = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
+	float4 worldPos = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
 
-	float4 cameraPos = mul(mCamera, pos4);
-	cameraPos = cameraPos / cameraPos.w;
-	Output.PosVS = mul(mProj, cameraPos);
+	Output.PosVS = mul(mCameraProj, worldPos);
 
 #ifdef ENABLE_LIGHTING
 	// NBT
-	Output.WorldN = worldNormal;
-	Output.WorldB = worldBinormal;
-	Output.WorldT = worldTangent;
+	Output.WorldN = worldNormal.xyz;
+	Output.WorldB = worldBinormal.xyz;
+	Output.WorldT = worldTangent.xyz;
 
 #elif defined(ENABLE_DISTORTION)
-
-	float4 localTangent = pos4;
-	float4 localBinormal = pos4;
-	localTangent.xyz += worldTangent;
-	localBinormal.xyz += worldBinormal;
-	
-	Output.ProjTangent = mul(mProj, mul(mCamera, localTangent));
-	Output.ProjBinormal = mul(mProj, mul(mCamera, localBinormal));
-
+	Output.ProjTangent = mul(mCameraProj, worldPos + worldTangent);
+	Output.ProjBinormal = mul(mCameraProj, worldPos + worldBinormal);
 #endif
 
 	Output.Color = Input.Color;
-	Output.UV_Others.xy = uv1;
+
+	Output.UV_Others.y = mUVInversed.x + mUVInversed.y * Output.UV_Others.y;
 
 	CalculateAndStoreAdvancedParameter(Input, Output);
 

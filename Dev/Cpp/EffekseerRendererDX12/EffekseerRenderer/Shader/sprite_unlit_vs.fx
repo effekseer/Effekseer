@@ -13,14 +13,14 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
+static const VS_Output _36 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _43_mCamera : packoffset(c0);
-    column_major float4x4 _43_mProj : packoffset(c4);
-    float4 _43_mUVInversed : packoffset(c8);
-    float4 _43_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _21_mCamera : packoffset(c0);
+    column_major float4x4 _21_mProj : packoffset(c4);
+    float4 _21_mUVInversed : packoffset(c8);
+    float4 _21_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -49,16 +49,14 @@ struct SPIRV_Cross_Output
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _21;
-    float3 worldPos = Input.Pos;
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 cameraPos = mul(_43_mCamera, pos4);
-    Output.PosVS = mul(_43_mProj, cameraPos);
-    Output.PosP = Output.PosVS;
-    float2 uv1 = Input.UV;
-    uv1.y = _43_mUVInversed.x + (_43_mUVInversed.y * uv1.y);
-    Output.UV = uv1;
+    float4x4 mCameraProj = mul(_21_mProj, _21_mCamera);
+    VS_Output Output = _36;
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    Output.PosVS = mul(mCameraProj, worldPos);
     Output.Color = Input.Color;
+    Output.UV = Input.UV;
+    Output.UV.y = _21_mUVInversed.x + (_21_mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

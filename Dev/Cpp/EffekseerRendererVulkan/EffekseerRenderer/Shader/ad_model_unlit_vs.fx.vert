@@ -26,7 +26,7 @@ struct VS_Input
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCameraProj;
-    layout(row_major) mat4 mModel[40];
+    layout(row_major) mat4 mModel_Inst[40];
     vec4 fUV[40];
     vec4 fAlphaUV[40];
     vec4 fUVDistortionUV[40];
@@ -178,7 +178,7 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 matModel = _365.mModel[index];
+    mat4 mModel = _365.mModel_Inst[index];
     vec4 uv = _365.fUV[index];
     vec4 alphaUV = _365.fAlphaUV[index];
     vec4 uvDistortionUV = _365.fUVDistortionUV[index];
@@ -190,12 +190,12 @@ VS_Output _main(VS_Input Input)
     float modelAlphaThreshold = _365.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = localPosition * _365.mCameraProj;
+    vec4 worldPos = localPosition * mModel;
+    Output.PosVS = worldPos * _365.mCameraProj;
     Output.UV_Others.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV_Others.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
-    localNormal = normalize(localNormal * matModel);
+    localNormal = normalize(localNormal * mModel);
     Output.WorldN = localNormal.xyz;
     Output.Color = modelColor;
     Output.UV_Others.y = _365.mUVInversed.x + (_365.mUVInversed.y * Output.UV_Others.y);

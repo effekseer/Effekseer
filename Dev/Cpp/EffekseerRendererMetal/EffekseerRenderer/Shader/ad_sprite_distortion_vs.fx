@@ -195,26 +195,19 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
+    float4x4 mCameraProj = transpose(v_255.mProj * v_255.mCamera);
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
-    float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
-    float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
-    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float4 worldNormal = float4((Input.Normal.xyz - float3(0.5)) * 2.0, 0.0);
+    float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5)) * 2.0, 0.0);
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
     float2 uv1 = Input.UV1;
-    uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 cameraPos = v_255.mCamera * pos4;
-    cameraPos /= float4(cameraPos.w);
-    Output.PosVS = v_255.mProj * cameraPos;
-    float4 localTangent = pos4;
-    float4 localBinormal = pos4;
-    float3 _408 = localTangent.xyz + worldTangent;
-    localTangent = float4(_408.x, _408.y, _408.z, localTangent.w);
-    float3 _414 = localBinormal.xyz + worldBinormal;
-    localBinormal = float4(_414.x, _414.y, _414.z, localBinormal.w);
-    Output.ProjTangent = v_255.mProj * (v_255.mCamera * localTangent);
-    Output.ProjBinormal = v_255.mProj * (v_255.mCamera * localBinormal);
-    Output.Color = Input.Color;
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
+    Output.ProjTangent = (worldPos + worldTangent) * mCameraProj;
+    Output.ProjBinormal = (worldPos + worldBinormal) * mCameraProj;
+    Output.Color = Input.Color;
+    Output.UV_Others.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * Output.UV_Others.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, v_255);

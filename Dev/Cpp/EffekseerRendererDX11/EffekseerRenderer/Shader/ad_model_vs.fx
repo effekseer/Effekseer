@@ -12,7 +12,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 	float4 fBlendAlphaUV;
 	float4 fBlendUVDistortionUV;
 #else
-	float4x4 mModel[__INST__];
+	float4x4 mModel_Inst[__INST__];
 	float4 fUV[__INST__];
 	float4 fAlphaUV[__INST__];
 	float4 fUVDistortionUV[__INST__];
@@ -128,7 +128,7 @@ VS_Output main(const VS_Input Input)
 	uint index = Input.Index;
 #endif
 
-	float4x4 matModel = mModel[index];
+	float4x4 mModel = mModel_Inst[index];
 	float4 uv = fUV[index];
 	float4 alphaUV = fAlphaUV[index];
 	float4 uvDistortionUV = fUVDistortionUV[index];
@@ -143,13 +143,9 @@ VS_Output main(const VS_Input Input)
 	VS_Output Output = (VS_Output)0;
 	float4 localPosition = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};
 
-#ifdef DISABLE_INSTANCE
-	localPosition = mul(mModel, localPosition);
-#else
-	localPosition = mul(matModel, localPosition);
-#endif
+	float4 worldPos = mul(mModel, localPosition);
 
-	Output.PosVS = mul(mCameraProj, localPosition);
+	Output.PosVS = mul(mCameraProj, worldPos);
 
 	Output.UV_Others.x = Input.UV.x * uv.z + uv.x;
 	Output.UV_Others.y = Input.UV.y * uv.w + uv.y;
@@ -159,43 +155,29 @@ VS_Output main(const VS_Input Input)
 	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
 	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
 
-#ifdef DISABLE_INSTANCE
-	localNormal = mul(mModel, localNormal);
-	localBinormal = mul(mModel, localBinormal);
-	localTangent = mul(mModel, localTangent);
-#else
-	localNormal = mul(matModel, localNormal);
-	localBinormal = mul(matModel, localBinormal);
-	localTangent = mul(matModel, localTangent);
-#endif
+	float4 worldNormal = mul(mModel, localNormal);
+	float4 worldBinormal = mul(mModel, localBinormal);
+	float4 worldTangent = mul(mModel, localTangent);
 
-	localNormal = normalize(localNormal);
-	localBinormal = normalize(localBinormal);
-	localTangent = normalize(localTangent);
+	worldNormal = normalize(worldNormal);
+	worldBinormal = normalize(worldBinormal);
+	worldTangent = normalize(worldTangent);
 
 #if defined(ENABLE_LIGHTING)
 
-	Output.WorldN = localNormal.xyz;
-	Output.WorldB = localBinormal.xyz;
-	Output.WorldT = localTangent.xyz;
+	Output.WorldN = worldNormal.xyz;
+	Output.WorldB = worldBinormal.xyz;
+	Output.WorldT = worldTangent.xyz;
 
 #elif defined(ENABLE_DISTORTION)
-
-	localBinormal = localPosition + localBinormal;
-	localTangent = localPosition + localTangent;
-
-	Output.ProjBinormal = mul(mCameraProj, localBinormal);
-	Output.ProjTangent = mul(mCameraProj, localTangent);
+	Output.ProjTangent = mul(mCameraProj, worldPos + worldTangent);
+	Output.ProjBinormal = mul(mCameraProj, worldPos + worldBinormal);
 #endif
 
 #else
 	// Unlit
 	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
-#ifdef DISABLE_INSTANCE
 	localNormal = normalize(mul(mModel, localNormal));
-#else
-	localNormal = normalize(mul(matModel, localNormal));
-#endif
 	Output.WorldN = localNormal.xyz;
 	
 #endif

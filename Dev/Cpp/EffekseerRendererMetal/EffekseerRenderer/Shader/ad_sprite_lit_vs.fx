@@ -197,21 +197,20 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
+    float4x4 mCameraProj = transpose(v_255.mProj * v_255.mCamera);
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
-    float3 worldNormal = (Input.Normal.xyz - float3(0.5)) * 2.0;
-    float3 worldTangent = (Input.Tangent.xyz - float3(0.5)) * 2.0;
-    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float4 worldNormal = float4((Input.Normal.xyz - float3(0.5)) * 2.0, 0.0);
+    float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5)) * 2.0, 0.0);
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
     float2 uv1 = Input.UV1;
-    uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 cameraPos = v_255.mCamera * pos4;
-    cameraPos /= float4(cameraPos.w);
-    Output.PosVS = v_255.mProj * cameraPos;
-    Output.WorldN = worldNormal;
-    Output.WorldB = worldBinormal;
-    Output.WorldT = worldTangent;
-    Output.Color = Input.Color;
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
+    Output.Color = Input.Color;
+    Output.UV_Others.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * Output.UV_Others.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, v_255);

@@ -26,7 +26,7 @@ struct VS_Output
     float4 Blend_FBNextIndex_UV;
 };
 
-static const VS_Output _349 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _359 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -220,21 +220,20 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _349;
-    float3 worldNormal = (Input.Normal.xyz - 0.5f.xxx) * 2.0f;
-    float3 worldTangent = (Input.Tangent.xyz - 0.5f.xxx) * 2.0f;
-    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float4x4 mCameraProj = mul(_255_mProj, _255_mCamera);
+    VS_Output Output = _359;
+    float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
+    float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
     float2 uv1 = Input.UV1;
-    uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 cameraPos = mul(_255_mCamera, pos4);
-    cameraPos /= cameraPos.w.xxxx;
-    Output.PosVS = mul(_255_mProj, cameraPos);
-    Output.WorldN = worldNormal;
-    Output.WorldB = worldBinormal;
-    Output.WorldT = worldTangent;
-    Output.Color = Input.Color;
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    Output.PosVS = mul(mCameraProj, worldPos);
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
+    Output.Color = Input.Color;
+    Output.UV_Others.y = _255_mUVInversed.x + (_255_mUVInversed.y * Output.UV_Others.y);
     VS_Input param = Input;
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);

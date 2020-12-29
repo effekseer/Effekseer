@@ -45,29 +45,27 @@ struct main0_in
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_43)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_21)
 {
+    float4x4 mCameraProj = transpose(v_21.mProj * v_21.mCamera);
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float4(0.0) };
-    float3 worldPos = Input.Pos;
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    float4 cameraPos = v_43.mCamera * pos4;
-    Output.PosVS = v_43.mProj * cameraPos;
-    Output.PosP = Output.PosVS;
-    float2 uv1 = Input.UV;
-    uv1.y = v_43.mUVInversed.x + (v_43.mUVInversed.y * uv1.y);
-    Output.UV = uv1;
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    Output.PosVS = worldPos * mCameraProj;
     Output.Color = Input.Color;
+    Output.UV = Input.UV;
+    Output.UV.y = v_21.mUVInversed.x + (v_21.mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_43 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_21 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
     Input.Pos = in.Input_Pos;
     Input.Color = in.Input_Color;
     Input.UV = in.Input_UV;
-    VS_Output flattenTemp = _main(Input, v_43);
+    VS_Output flattenTemp = _main(Input, v_21);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;

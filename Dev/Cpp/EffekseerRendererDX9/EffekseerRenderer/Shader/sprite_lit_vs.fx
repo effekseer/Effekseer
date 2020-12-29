@@ -19,14 +19,14 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _22 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx };
+static const VS_Output _37 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _69_mCamera : register(c0);
-    column_major float4x4 _69_mProj : register(c4);
-    float4 _69_mUVInversed : register(c8);
-    float4 _69_mflipbookParameter : register(c9);
+    column_major float4x4 _21_mCamera : register(c0);
+    column_major float4x4 _21_mProj : register(c4);
+    float4 _21_mUVInversed : register(c8);
+    float4 _21_mflipbookParameter : register(c9);
 };
 
 static const float4 gl_HalfPixel = 0.0f.xxxx;
@@ -68,22 +68,20 @@ struct SPIRV_Cross_Output
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _22;
-    float3 worldPos = Input.Pos;
-    float3 worldNormal = (float3(Input.Normal.xyz) - 0.5f.xxx) * 2.0f;
-    float3 worldTangent = (float3(Input.Tangent.xyz) - 0.5f.xxx) * 2.0f;
-    float3 worldBinormal = cross(worldNormal, worldTangent);
-    float4 pos4 = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    float4 cameraPos = mul(_69_mCamera, pos4);
-    Output.PosVS = mul(_69_mProj, cameraPos);
-    Output.PosP = Output.PosVS;
-    float2 uv1 = Input.UV1;
-    uv1.y = _69_mUVInversed.x + (_69_mUVInversed.y * uv1.y);
-    Output.UV = uv1;
-    Output.WorldN = worldNormal;
-    Output.WorldB = worldBinormal;
-    Output.WorldT = worldTangent;
+    float4x4 mCameraProj = mul(_21_mProj, _21_mCamera);
+    VS_Output Output = _37;
+    float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
+    float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
+    float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
+    Output.PosVS = mul(mCameraProj, worldPos);
     Output.Color = Input.Color;
+    Output.UV = Input.UV1;
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
+    Output.UV.y = _21_mUVInversed.x + (_21_mUVInversed.y * Output.UV.y);
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

@@ -22,7 +22,7 @@ struct VS_Output
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCameraProj;
-    layout(row_major) mat4 mModel[40];
+    layout(row_major) mat4 mModel_Inst[40];
     vec4 fUV[40];
     vec4 fModelColor[40];
     vec4 fLightDirection;
@@ -44,13 +44,13 @@ layout(location = 2) out vec4 _entryPointOutput_PosP;
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 matModel = _31.mModel[index];
+    mat4 mModel = _31.mModel_Inst[index];
     vec4 uv = _31.fUV[index];
     vec4 modelColor = _31.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
-    vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = localPosition * _31.mCameraProj;
+    vec4 localPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 worldPos = localPos * mModel;
+    Output.PosVS = worldPos * _31.mCameraProj;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;

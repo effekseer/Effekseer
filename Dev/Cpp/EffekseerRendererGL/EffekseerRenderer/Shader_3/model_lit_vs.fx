@@ -31,7 +31,7 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     mat4 mCameraProj;
-    mat4 mModel[10];
+    mat4 mModel_Inst[10];
     vec4 fUV[10];
     vec4 fModelColor[10];
     vec4 fLightDirection;
@@ -63,28 +63,28 @@ out vec4 _VSPS_PosP;
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 matModel = CBVS0.mModel[index];
+    mat4 mModel = CBVS0.mModel_Inst[index];
     vec4 uv = CBVS0.fUV[index];
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
-    vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    localPosition *= matModel;
-    Output.PosVS = localPosition * CBVS0.mCameraProj;
+    vec4 localPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
+    vec4 worldPos = localPos * mModel;
+    Output.PosVS = worldPos * CBVS0.mCameraProj;
     Output.Color = modelColor;
     Output.UV.x = (Input.UV.x * uv.z) + uv.x;
     Output.UV.y = (Input.UV.y * uv.w) + uv.y;
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
     vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
-    localNormal *= matModel;
-    localBinormal *= matModel;
-    localTangent *= matModel;
-    localNormal = normalize(localNormal);
-    localBinormal = normalize(localBinormal);
-    localTangent = normalize(localTangent);
-    Output.WorldN = localNormal.xyz;
-    Output.WorldB = localBinormal.xyz;
-    Output.WorldT = localTangent.xyz;
+    vec4 worldNormal = localNormal * mModel;
+    vec4 worldBinormal = localBinormal * mModel;
+    vec4 worldTangent = localTangent * mModel;
+    worldNormal = normalize(worldNormal);
+    worldBinormal = normalize(worldBinormal);
+    worldTangent = normalize(worldTangent);
+    Output.WorldN = worldNormal.xyz;
+    Output.WorldB = worldBinormal.xyz;
+    Output.WorldT = worldTangent.xyz;
     Output.UV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * Output.UV.y);
     Output.PosP = Output.PosVS;
     return Output;

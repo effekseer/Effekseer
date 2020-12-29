@@ -130,7 +130,14 @@ void ModelRenderer::InitRenderer()
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mModel"), vsOffset, N);
+		if (VertexType == EffekseerRenderer::ModelRendererVertexType::Instancing)
+		{
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mModel_Inst"), vsOffset, N);
+		}
+		else
+		{
+			shaders[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders[i]->GetUniformId("CBVS0.mModel"), vsOffset, N);
+		}
 
 		vsOffset += sizeof(Effekseer::Matrix44) * N;
 
@@ -209,7 +216,14 @@ void ModelRenderer::InitRenderer()
 
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mModel"), vsOffset, N);
+		if (VertexType == EffekseerRenderer::ModelRendererVertexType::Instancing)
+		{
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mModel_Inst"), vsOffset, N);
+		}
+		else
+		{
+			shaders_d[i]->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shaders_d[i]->GetUniformId("CBVS0.mModel"), vsOffset, N);
+		}
 
 		vsOffset += sizeof(Effekseer::Matrix44) * N;
 
@@ -294,8 +308,8 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	graphicsDevice_ = renderer->GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		InitRenderer<InstanceCount>();
 		VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
+		InitRenderer<InstanceCount>();
 	}
 	else
 	{
