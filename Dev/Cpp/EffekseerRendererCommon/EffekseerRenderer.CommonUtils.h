@@ -974,14 +974,16 @@ struct ShaderParameterCollector
 			MaterialRenderDataPtr = param->MaterialRenderDataPtr;
 			if (MaterialRenderDataPtr != nullptr)
 			{
-				MaterialDataPtr = effect->GetMaterial(param->MaterialRenderDataPtr->MaterialIndex);
-
-				ShaderType = RendererShaderType::Material;
-				IsBackgroundRequiredOnFirstPass = MaterialDataPtr->IsRefractionRequired;
-
-				if (IsBackgroundRequiredOnFirstPass)
+				MaterialDataPtr = effect->GetMaterial(MaterialRenderDataPtr->MaterialIndex);
+				if (MaterialDataPtr != nullptr)
 				{
-					HasMultiPass = true;
+					ShaderType = RendererShaderType::Material;
+					IsBackgroundRequiredOnFirstPass = MaterialDataPtr->IsRefractionRequired;
+
+					if (IsBackgroundRequiredOnFirstPass)
+					{
+						HasMultiPass = true;
+					}
 				}
 			}
 		}
