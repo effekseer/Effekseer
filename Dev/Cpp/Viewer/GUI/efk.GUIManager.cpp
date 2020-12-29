@@ -25,6 +25,9 @@
 
 #include "../dll.h"
 
+#ifdef __linux__
+	#include <gtk/gtk.h>
+#endif
 namespace ImGui
 {
 static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -664,6 +667,9 @@ GUIManager::~GUIManager()
 
 bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType)
 {
+	#ifdef __linux__
+		gtk_disable_setlocale();
+	#endif
 	window = new efk::Window();
 
 	this->deviceType = deviceType;
