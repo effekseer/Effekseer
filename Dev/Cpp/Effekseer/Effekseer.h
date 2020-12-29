@@ -582,17 +582,6 @@ public:
 
 		return m_reference;
 	}
-
-	/*static void* operator new(std::size_t size) noexcept
-	{
-		void* p = ::operator new(size);
-		return p;
-	}
-
-	static void operator delete(void* p) noexcept
-	{
-		::operator delete(p);
-	}*/
 };
 
 /**
@@ -1315,12 +1304,12 @@ public:
 
 	bool operator==(const StringView& rhs) const
 	{
-		return size() == rhs.size() || Traits::compare(data(), rhs.data(), size());
+		return size() == rhs.size() && Traits::compare(data(), rhs.data(), size()) == 0;
 	}
 
 	bool operator!=(const StringView& rhs) const
 	{
-		return size() != rhs.size() || !Traits::compare(data(), rhs.data(), size());
+		return size() != rhs.size() || Traits::compare(data(), rhs.data(), size()) != 0;
 	}
 
 	struct Hash {

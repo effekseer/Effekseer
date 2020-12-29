@@ -205,12 +205,12 @@ public:
 
 	bool operator==(const StringView& rhs) const
 	{
-		return size() == rhs.size() && Traits::compare(data(), rhs.data(), size());
+		return size() == rhs.size() && Traits::compare(data(), rhs.data(), size()) == 0;
 	}
 
 	bool operator!=(const StringView& rhs) const
 	{
-		return size() != rhs.size() || !Traits::compare(data(), rhs.data(), size());
+		return size() != rhs.size() || Traits::compare(data(), rhs.data(), size()) != 0;
 	}
 
 	struct Hash {
