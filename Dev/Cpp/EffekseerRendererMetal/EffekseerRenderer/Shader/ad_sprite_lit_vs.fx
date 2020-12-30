@@ -39,7 +39,7 @@ struct VS_ConstantBuffer
     float4x4 mCamera;
     float4x4 mProj;
     float4 mUVInversed;
-    float4 mflipbookParameter;
+    float4 fFlipbookParameter;
 };
 
 struct main0_out
@@ -183,7 +183,7 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
     float2 flipbookNextIndexUV = float2(0.0);
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = v_255.mflipbookParameter;
+    float4 param_2 = v_255.fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     float2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);

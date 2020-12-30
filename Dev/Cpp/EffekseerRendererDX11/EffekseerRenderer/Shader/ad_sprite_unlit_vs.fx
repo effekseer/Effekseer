@@ -5,7 +5,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 	float4x4 mProj;
 	float4 mUVInversed;
 
-	float4 mflipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+	float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
 };
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)

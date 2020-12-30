@@ -354,7 +354,7 @@ bool RendererImplemented::Initialize()
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
 		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mflipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.fFlipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
@@ -420,7 +420,7 @@ bool RendererImplemented::Initialize()
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
-										shader->GetUniformId("CBVS0.mflipbookParameter"),
+										shader->GetUniformId("CBVS0.fFlipbookParameter"),
 										sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 
 		AssignDistortionPixelConstantBuffer(shader);

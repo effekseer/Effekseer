@@ -20,7 +20,7 @@ void CalculateAndStoreAdvancedParameter(in VS_Input vsinput, inout VS_Output vso
 	// flipbook interpolation
 	float flipbookRate = 0.0f;
 	float2 flipbookNextIndexUV = 0.0f;
-	ApplyFlipbookVS(flipbookRate, flipbookNextIndexUV, mflipbookParameter, vsinput.FlipbookIndex, vsoutput.UV_Others.xy);
+	ApplyFlipbookVS(flipbookRate, flipbookNextIndexUV, fFlipbookParameter, vsinput.FlipbookIndex, vsoutput.UV_Others.xy);
 
 	vsoutput.Blend_FBNextIndex_UV.zw = flipbookNextIndexUV;
 	vsoutput.UV_Others.z = flipbookRate;

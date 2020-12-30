@@ -34,7 +34,7 @@ cbuffer VS_ConstantBuffer : register(b0)
     column_major float4x4 _255_mCamera : packoffset(c0);
     column_major float4x4 _255_mProj : packoffset(c4);
     float4 _255_mUVInversed : packoffset(c8);
-    float4 _255_mflipbookParameter : packoffset(c9);
+    float4 _255_fFlipbookParameter : packoffset(c9);
 };
 
 
@@ -209,7 +209,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     float2 flipbookNextIndexUV = 0.0f.xx;
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = _255_mflipbookParameter;
+    float4 param_2 = _255_fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     float2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);

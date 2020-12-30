@@ -32,7 +32,7 @@ struct VS_ConstantBuffer
     mat4 mCamera;
     mat4 mProj;
     vec4 mUVInversed;
-    vec4 mflipbookParameter;
+    vec4 fFlipbookParameter;
 };
 
 uniform VS_ConstantBuffer CBVS0;
@@ -161,7 +161,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = CBVS0.mflipbookParameter;
+    vec4 param_2 = CBVS0.fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     vec2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -247,7 +247,7 @@ struct VS_ConstantBuffer
     mat4 mCamera;
     mat4 mProj;
     vec4 mUVInversed;
-    vec4 mflipbookParameter;
+    vec4 fFlipbookParameter;
 };
 
 uniform VS_ConstantBuffer CBVS0;
@@ -368,7 +368,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = CBVS0.mflipbookParameter;
+    vec4 param_2 = CBVS0.fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     vec2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -452,7 +452,7 @@ struct VS_ConstantBuffer
     mat4 mCamera;
     mat4 mProj;
     vec4 mUVInversed;
-    vec4 mflipbookParameter;
+    vec4 fFlipbookParameter;
 };
 
 uniform VS_ConstantBuffer CBVS0;
@@ -581,7 +581,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = CBVS0.mflipbookParameter;
+    vec4 param_2 = CBVS0.fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     vec2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
@@ -664,7 +664,7 @@ struct VS_ConstantBuffer
     mat4 mCamera;
     mat4 mProj;
     vec4 mUVInversed;
-    vec4 mflipbookParameter;
+    vec4 fFlipbookParameter;
 };
 
 uniform VS_ConstantBuffer CBVS0;
@@ -785,7 +785,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = CBVS0.mflipbookParameter;
+    vec4 param_2 = CBVS0.fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     vec2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);

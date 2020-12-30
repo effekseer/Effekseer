@@ -574,6 +574,125 @@ protected:
 		}
 	}
 
+	template <typename RENDERER, typename SHADER, int InstanceCount, typename VertexConstantBufferType, bool REQUIRE_ADVANCED_DATA, bool DISTORTION>
+	void StoreFixedUniforms(RENDERER* renderer,
+							SHADER* shader_,
+							const efkModelNodeParam& param)
+	{
+		VertexConstantBufferType* vcb = (VertexConstantBufferType*)shader_->GetVertexConstantBuffer();
+		std::array<float, 4> uvInversed;
+		std::array<float, 4> uvInversedBack;
+
+		GetInversedFlags(renderer, uvInversed, uvInversedBack);
+
+		vcb->UVInversed[0] = uvInversed[0];
+		vcb->UVInversed[1] = uvInversed[1];
+
+		::Effekseer::Backend::TextureRef depthTexture = nullptr;
+		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
+		renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
+
+		SoftParticleParameter softParticleParam;
+
+		if (DISTORTION)
+		{
+			auto pcb = (PixelConstantBufferDistortion*)shader_->GetPixelConstantBuffer();
+			pcb->DistortionIntencity[0] = param.BasicParameterPtr->DistortionIntensity;
+
+			pcb->UVInversedBack[0] = uvInversedBack[0];
+			pcb->UVInversedBack[1] = uvInversedBack[1];
+
+			pcb->FlipbookParam.EnableInterpolation = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
+			pcb->FlipbookParam.InterpolationType = static_cast<float>(param.BasicParameterPtr->InterpolationType);
+
+			pcb->UVDistortionParam.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
+			pcb->UVDistortionParam.BlendIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
+			pcb->UVDistortionParam.UVInversed[0] = uvInversed[0];
+			pcb->UVDistortionParam.UVInversed[1] = uvInversed[1];
+
+			pcb->BlendTextureParam.BlendType = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
+
+			pcb->SoftParticleParam.SetParam(
+				param.BasicParameterPtr->SoftParticleDistanceFar,
+				param.BasicParameterPtr->SoftParticleDistanceNear,
+				param.BasicParameterPtr->SoftParticleDistanceNearOffset,
+				param.Maginification,
+				reconstructionParam.DepthBufferScale,
+				reconstructionParam.DepthBufferOffset,
+				reconstructionParam.ProjectionMatrix33,
+				reconstructionParam.ProjectionMatrix34,
+				reconstructionParam.ProjectionMatrix43,
+				reconstructionParam.ProjectionMatrix44);
+		}
+		else
+		{
+			auto pcb = (PixelConstantBuffer*)shader_->GetPixelConstantBuffer();
+
+			// specify predefined parameters
+			if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+			{
+				::Effekseer::SIMD::Vec3f lightDirection = renderer->GetLightDirection();
+				lightDirection = lightDirection.Normalize();
+				VectorToFloat4(lightDirection, vcb->LightDirection);
+				VectorToFloat4(lightDirection, pcb->LightDirection);
+			}
+
+			{
+				ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
+				pcb->LightColor = ColorToFloat4(renderer->GetLightColor());
+			}
+
+			{
+				ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
+				pcb->LightAmbientColor = ColorToFloat4(renderer->GetLightAmbientColor());
+			}
+
+			if (REQUIRE_ADVANCED_DATA)
+			{
+				pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
+				pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
+				pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
+
+				::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
+				pcb->SetCameraFrontDirection(-CameraFront.X, -CameraFront.Y, -CameraFront.Z);
+				pcb->SetFalloffParameter(
+					static_cast<float>(param.EnableFalloff),
+					static_cast<float>(param.FalloffParam.ColorBlendType),
+					static_cast<float>(param.FalloffParam.Pow),
+					ColorToFloat4(param.FalloffParam.BeginColor),
+					ColorToFloat4(param.FalloffParam.EndColor));
+
+				pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
+				pcb->SetEdgeParameter(ColorToFloat4(Effekseer::Color(
+										  param.BasicParameterPtr->EdgeColor[0],
+										  param.BasicParameterPtr->EdgeColor[1],
+										  param.BasicParameterPtr->EdgeColor[2],
+										  param.BasicParameterPtr->EdgeColor[3])),
+									  param.BasicParameterPtr->EdgeThreshold,
+									  static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
+			}
+
+			pcb->SoftParticleParam.SetParam(
+				param.BasicParameterPtr->SoftParticleDistanceFar,
+				param.BasicParameterPtr->SoftParticleDistanceNear,
+				param.BasicParameterPtr->SoftParticleDistanceNearOffset,
+				param.Maginification,
+				reconstructionParam.DepthBufferScale,
+				reconstructionParam.DepthBufferOffset,
+				reconstructionParam.ProjectionMatrix33,
+				reconstructionParam.ProjectionMatrix34,
+				reconstructionParam.ProjectionMatrix43,
+				reconstructionParam.ProjectionMatrix44);
+		}
+
+		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
+
+		vcb->SetModelFlipbookParameter(static_cast<float>(param.BasicParameterPtr->EnableInterpolation),
+									   static_cast<float>(param.BasicParameterPtr->UVLoopType),
+									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
+									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
+	}
+
 public:
 	ModelRendererVertexType VertexType = ModelRendererVertexType::Single;
 
@@ -923,115 +1042,20 @@ public:
 		{
 			StoreFileUniform<RENDERER, SHADER, InstanceCount>(
 				renderer, shader_, material, materialRenderData, param, renderPassInd, cutomData1Ptr, cutomData2Ptr);
+
+			vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 		}
 		else
 		{
-			std::array<float, 4> uvInversed;
-			std::array<float, 4> uvInversedBack;
-
-			GetInversedFlags(renderer, uvInversed, uvInversedBack);
-
-			vcb->UVInversed[0] = uvInversed[0];
-			vcb->UVInversed[1] = uvInversed[1];
-
 			if (distortion)
 			{
-				auto pcb = (PixelConstantBufferDistortion*)shader_->GetPixelConstantBuffer();
-				pcb->DistortionIntencity[0] = param.BasicParameterPtr->DistortionIntensity;
-
-				pcb->UVInversedBack[0] = uvInversedBack[0];
-				pcb->UVInversedBack[1] = uvInversedBack[1];
-
-				pcb->FlipbookParam.EnableInterpolation = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
-				pcb->FlipbookParam.InterpolationType = static_cast<float>(param.BasicParameterPtr->InterpolationType);
-
-				pcb->UVDistortionParam.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
-				pcb->UVDistortionParam.BlendIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
-				pcb->UVDistortionParam.UVInversed[0] = uvInversed[0];
-				pcb->UVDistortionParam.UVInversed[1] = uvInversed[1];
-
-				pcb->BlendTextureParam.BlendType = static_cast<float>(param.BasicParameterPtr->TextureBlendType);
-
-				pcb->SoftParticleParam.SetParam(
-					param.BasicParameterPtr->SoftParticleDistanceFar,
-					param.BasicParameterPtr->SoftParticleDistanceNear,
-					param.BasicParameterPtr->SoftParticleDistanceNearOffset,
-					param.Maginification,
-					reconstructionParam.DepthBufferScale,
-					reconstructionParam.DepthBufferOffset,
-					reconstructionParam.ProjectionMatrix33,
-					reconstructionParam.ProjectionMatrix34,
-					reconstructionParam.ProjectionMatrix43,
-					reconstructionParam.ProjectionMatrix44);
+				StoreFixedUniforms<RENDERER, SHADER, InstanceCount, VertexConstantBufferType, REQUIRE_ADVANCED_DATA, true>(renderer, shader_, param);
 			}
 			else
 			{
-				auto pcb = (PixelConstantBuffer*)shader_->GetPixelConstantBuffer();
-
-				// specify predefined parameters
-				if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-				{
-					::Effekseer::SIMD::Vec3f lightDirection = renderer->GetLightDirection();
-					lightDirection = lightDirection.Normalize();
-					VectorToFloat4(lightDirection, vcb->LightDirection);
-					VectorToFloat4(lightDirection, pcb->LightDirection);
-				}
-
-				{
-					ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
-					pcb->LightColor = ColorToFloat4(renderer->GetLightColor());
-				}
-
-				{
-					ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
-					pcb->LightAmbientColor = ColorToFloat4(renderer->GetLightAmbientColor());
-				}
-
-				if (REQUIRE_ADVANCED_DATA)
-				{
-					pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
-					pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
-					pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
-
-					::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
-					pcb->SetCameraFrontDirection(-CameraFront.X, -CameraFront.Y, -CameraFront.Z);
-					pcb->SetFalloffParameter(
-						static_cast<float>(param.EnableFalloff),
-						static_cast<float>(param.FalloffParam.ColorBlendType),
-						static_cast<float>(param.FalloffParam.Pow),
-						ColorToFloat4(param.FalloffParam.BeginColor),
-						ColorToFloat4(param.FalloffParam.EndColor));
-
-					pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
-					pcb->SetEdgeParameter(ColorToFloat4(Effekseer::Color(
-											  param.BasicParameterPtr->EdgeColor[0],
-											  param.BasicParameterPtr->EdgeColor[1],
-											  param.BasicParameterPtr->EdgeColor[2],
-											  param.BasicParameterPtr->EdgeColor[3])),
-										  param.BasicParameterPtr->EdgeThreshold,
-										  static_cast<float>(param.BasicParameterPtr->EdgeColorScaling));
-				}
-
-				pcb->SoftParticleParam.SetParam(
-					param.BasicParameterPtr->SoftParticleDistanceFar,
-					param.BasicParameterPtr->SoftParticleDistanceNear,
-					param.BasicParameterPtr->SoftParticleDistanceNearOffset,
-					param.Maginification,
-					reconstructionParam.DepthBufferScale,
-					reconstructionParam.DepthBufferOffset,
-					reconstructionParam.ProjectionMatrix33,
-					reconstructionParam.ProjectionMatrix34,
-					reconstructionParam.ProjectionMatrix43,
-					reconstructionParam.ProjectionMatrix44);
+				StoreFixedUniforms<RENDERER, SHADER, InstanceCount, VertexConstantBufferType, REQUIRE_ADVANCED_DATA, false>(renderer, shader_, param);
 			}
 		}
-
-		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
-
-		vcb->SetModelFlipbookParameter(static_cast<float>(param.BasicParameterPtr->EnableInterpolation),
-									   static_cast<float>(param.BasicParameterPtr->UVLoopType),
-									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
-									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
 
 		renderer->GetImpl()->CurrentRenderingUserData = param.UserData;
 
