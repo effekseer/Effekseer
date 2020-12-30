@@ -29,7 +29,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     layout(row_major) mat4 mCamera;
     layout(row_major) mat4 mProj;
     vec4 mUVInversed;
-    vec4 mflipbookParameter;
+    vec4 fFlipbookParameter;
 } _256;
 
 layout(location = 0) in vec3 Input_Pos;
@@ -148,7 +148,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = _256.mflipbookParameter;
+    vec4 param_2 = _256.fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     vec2 param_4 = vsoutput.UV_Others.xy;
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
