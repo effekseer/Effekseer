@@ -27,7 +27,7 @@ struct VS_Output
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCamera;
-    layout(row_major) mat4 mProj;
+    layout(row_major) mat4 mCameraProj;
     vec4 mUVInversed;
     vec4 fFlipbookParameter;
 } _256;
@@ -161,13 +161,12 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 mCameraProj = _256.mCamera * _256.mProj;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec2 uv1 = Input.UV;
     uv1.y = _256.mUVInversed.x + (_256.mUVInversed.y * uv1.y);
     Output.UV_Others = vec4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * mCameraProj;
+    Output.PosVS = worldPos * _256.mCameraProj;
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;

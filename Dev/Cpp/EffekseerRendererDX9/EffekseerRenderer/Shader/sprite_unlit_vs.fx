@@ -13,14 +13,14 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _36 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
+static const VS_Output _21 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _21_mCamera : register(c0);
-    column_major float4x4 _21_mProj : register(c4);
-    float4 _21_mUVInversed : register(c8);
-    float4 _21_mflipbookParameter : register(c9);
+    column_major float4x4 _39_mCamera : register(c0);
+    column_major float4x4 _39_mCameraProj : register(c4);
+    float4 _39_mUVInversed : register(c8);
+    float4 _39_mflipbookParameter : register(c9);
 };
 
 static const float4 gl_HalfPixel = 0.0f.xxxx;
@@ -50,13 +50,12 @@ struct SPIRV_Cross_Output
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 mCameraProj = mul(_21_mProj, _21_mCamera);
-    VS_Output Output = _36;
+    VS_Output Output = _21;
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    Output.PosVS = mul(mCameraProj, worldPos);
+    Output.PosVS = mul(_39_mCameraProj, worldPos);
     Output.Color = Input.Color;
     float2 uv1 = Input.UV;
-    uv1.y = _21_mUVInversed.x + (_21_mUVInversed.y * uv1.y);
+    uv1.y = _39_mUVInversed.x + (_39_mUVInversed.y * uv1.y);
     Output.UV = uv1;
     Output.PosP = Output.PosVS;
     return Output;

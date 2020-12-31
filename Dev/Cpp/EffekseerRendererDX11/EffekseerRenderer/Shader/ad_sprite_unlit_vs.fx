@@ -2,7 +2,7 @@
 cbuffer VS_ConstantBuffer : register(b0)
 {
 	float4x4 mCamera;
-	float4x4 mProj;
+	float4x4 mCameraProj;
 	float4 mUVInversed;
 
 	float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
@@ -92,7 +92,6 @@ struct VS_Output
 
 VS_Output main(const VS_Input Input)
 {
-	float4x4 mCameraProj = mul(mProj, mCamera);
 	VS_Output Output = (VS_Output)0;
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)

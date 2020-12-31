@@ -27,7 +27,7 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     mat4 mCamera;
-    mat4 mProj;
+    mat4 mCameraProj;
     vec4 mUVInversed;
     vec4 mflipbookParameter;
 };
@@ -49,13 +49,12 @@ varying vec4 _VSPS_PosP;
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 mCameraProj = transpose(CBVS0.mProj * CBVS0.mCamera);
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
     vec4 worldNormal = vec4((Input.Normal.xyz - vec3(0.5)) * 2.0, 0.0);
     vec4 worldTangent = vec4((Input.Tangent.xyz - vec3(0.5)) * 2.0, 0.0);
     vec4 worldBinormal = vec4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * mCameraProj;
+    Output.PosVS = CBVS0.mCameraProj * worldPos;
     Output.Color = Input.Color;
     vec2 uv1 = Input.UV1;
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);

@@ -33,7 +33,7 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     float4x4 mCamera;
-    float4x4 mProj;
+    float4x4 mCameraProj;
     float4 mUVInversed;
     float4 fFlipbookParameter;
 };
@@ -188,13 +188,12 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_256)
 {
-    float4x4 mCameraProj = transpose(v_256.mProj * v_256.mCamera);
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float2 uv1 = Input.UV;
     uv1.y = v_256.mUVInversed.x + (v_256.mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * mCameraProj;
+    Output.PosVS = v_256.mCameraProj * worldPos;
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;

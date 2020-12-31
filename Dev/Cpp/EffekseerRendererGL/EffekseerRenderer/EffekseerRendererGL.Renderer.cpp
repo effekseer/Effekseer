@@ -358,7 +358,7 @@ bool RendererImplemented::Initialize()
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
+		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCameraProj"), sizeof(Effekseer::Matrix44));
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
 
@@ -411,7 +411,7 @@ bool RendererImplemented::Initialize()
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
 		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
+			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCameraProj"), sizeof(Effekseer::Matrix44));
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
@@ -448,7 +448,7 @@ bool RendererImplemented::Initialize()
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
 		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
+			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCameraProj"), sizeof(Effekseer::Matrix44));
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
