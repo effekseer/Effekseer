@@ -250,7 +250,8 @@ bool Texture::Init(uint64_t id, std::function<void()> onDisposed)
 
 bool Texture::Init(LLGI::Texture* texture)
 {
-	texture_.reset(texture);
+	LLGI::SafeAddRef(texture);
+	texture_ = LLGI::CreateSharedPtr(texture);
 	type_ = Effekseer::Backend::TextureType::Color2D;
 	auto size = texture_->GetSizeAs2D();
 	size_ = {size.X, size.Y};
