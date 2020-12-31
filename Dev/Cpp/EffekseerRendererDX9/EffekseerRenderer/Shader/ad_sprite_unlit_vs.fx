@@ -21,12 +21,12 @@ struct VS_Output
     float4 Blend_FBNextIndex_UV;
 };
 
-static const VS_Output _358 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _348 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
     column_major float4x4 _256_mCamera : register(c0);
-    column_major float4x4 _256_mProj : register(c4);
+    column_major float4x4 _256_mCameraProj : register(c4);
     float4 _256_mUVInversed : register(c8);
     float4 _256_fFlipbookParameter : register(c9);
 };
@@ -205,13 +205,12 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 mCameraProj = mul(_256_mProj, _256_mCamera);
-    VS_Output Output = _358;
+    VS_Output Output = _348;
     float2 uv1 = Input.UV;
     uv1.y = _256_mUVInversed.x + (_256_mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    Output.PosVS = mul(mCameraProj, worldPos);
+    Output.PosVS = mul(_256_mCameraProj, worldPos);
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;

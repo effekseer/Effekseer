@@ -26,12 +26,12 @@ struct VS_Output
     float4 Blend_FBNextIndex_UV;
 };
 
-static const VS_Output _358 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _349 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
     column_major float4x4 _255_mCamera : packoffset(c0);
-    column_major float4x4 _255_mProj : packoffset(c4);
+    column_major float4x4 _255_mCameraProj : packoffset(c4);
     float4 _255_mUVInversed : packoffset(c8);
     float4 _255_fFlipbookParameter : packoffset(c9);
 };
@@ -219,8 +219,7 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 mCameraProj = mul(_255_mProj, _255_mCamera);
-    VS_Output Output = _358;
+    VS_Output Output = _349;
     float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
@@ -228,9 +227,9 @@ VS_Output _main(VS_Input Input)
     uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    Output.PosVS = mul(mCameraProj, worldPos);
-    Output.ProjTangent = mul(mCameraProj, worldPos + worldTangent);
-    Output.ProjBinormal = mul(mCameraProj, worldPos + worldBinormal);
+    Output.PosVS = mul(_255_mCameraProj, worldPos);
+    Output.ProjTangent = mul(_255_mCameraProj, worldPos + worldTangent);
+    Output.ProjBinormal = mul(_255_mCameraProj, worldPos + worldBinormal);
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;

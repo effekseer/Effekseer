@@ -36,7 +36,7 @@ struct VS_Output
 struct VS_ConstantBuffer
 {
     float4x4 mCamera;
-    float4x4 mProj;
+    float4x4 mCameraProj;
     float4 mUVInversed;
     float4 fFlipbookParameter;
 };
@@ -195,7 +195,6 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 static inline __attribute__((always_inline))
 VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
 {
-    float4x4 mCameraProj = transpose(v_255.mProj * v_255.mCamera);
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 worldNormal = float4((Input.Normal.xyz - float3(0.5)) * 2.0, 0.0);
     float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5)) * 2.0, 0.0);
@@ -204,9 +203,9 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_255)
     uv1.y = v_255.mUVInversed.x + (v_255.mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * mCameraProj;
-    Output.ProjTangent = (worldPos + worldTangent) * mCameraProj;
-    Output.ProjBinormal = (worldPos + worldBinormal) * mCameraProj;
+    Output.PosVS = v_255.mCameraProj * worldPos;
+    Output.ProjTangent = v_255.mCameraProj * (worldPos + worldTangent);
+    Output.ProjBinormal = v_255.mCameraProj * (worldPos + worldBinormal);
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;

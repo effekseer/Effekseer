@@ -689,7 +689,7 @@ public:
 		{
 			StandardRendererVertexBuffer vcb;
 			vcb.constantVSBuffer[0] = ToStruct(mCamera);
-			vcb.constantVSBuffer[1] = ToStruct(mProj);
+			vcb.constantVSBuffer[1] = ToStruct(mCamera * mProj);
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
 
@@ -745,7 +745,7 @@ public:
 		{
 			StandardRendererVertexBuffer vcb;
 			vcb.constantVSBuffer[0] = ToStruct(mCamera);
-			vcb.constantVSBuffer[1] = ToStruct(mProj);
+			vcb.constantVSBuffer[1] = ToStruct(mCamera * mProj);
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
 			vcb.uvInversed[2] = 0.0f;

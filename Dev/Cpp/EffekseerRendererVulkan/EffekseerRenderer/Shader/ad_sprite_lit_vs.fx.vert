@@ -32,7 +32,7 @@ struct VS_Output
 layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 {
     layout(row_major) mat4 mCamera;
-    layout(row_major) mat4 mProj;
+    layout(row_major) mat4 mCameraProj;
     vec4 mUVInversed;
     vec4 fFlipbookParameter;
 } _255;
@@ -171,7 +171,6 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    mat4 mCameraProj = _255.mCamera * _255.mProj;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 worldNormal = vec4((Input.Normal.xyz - vec3(0.5)) * 2.0, 0.0);
     vec4 worldTangent = vec4((Input.Tangent.xyz - vec3(0.5)) * 2.0, 0.0);
@@ -180,7 +179,7 @@ VS_Output _main(VS_Input Input)
     uv1.y = _255.mUVInversed.x + (_255.mUVInversed.y * uv1.y);
     Output.UV_Others = vec4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * mCameraProj;
+    Output.PosVS = worldPos * _255.mCameraProj;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;

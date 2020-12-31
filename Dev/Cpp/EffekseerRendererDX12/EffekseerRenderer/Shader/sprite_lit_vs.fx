@@ -19,14 +19,14 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _37 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx };
+static const VS_Output _22 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _21_mCamera : packoffset(c0);
-    column_major float4x4 _21_mProj : packoffset(c4);
-    float4 _21_mUVInversed : packoffset(c8);
-    float4 _21_mflipbookParameter : packoffset(c9);
+    column_major float4x4 _73_mCamera : packoffset(c0);
+    column_major float4x4 _73_mCameraProj : packoffset(c4);
+    float4 _73_mUVInversed : packoffset(c8);
+    float4 _73_mflipbookParameter : packoffset(c9);
 };
 
 
@@ -67,16 +67,15 @@ struct SPIRV_Cross_Output
 
 VS_Output _main(VS_Input Input)
 {
-    float4x4 mCameraProj = mul(_21_mProj, _21_mCamera);
-    VS_Output Output = _37;
+    VS_Output Output = _22;
     float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    Output.PosVS = mul(mCameraProj, worldPos);
+    Output.PosVS = mul(_73_mCameraProj, worldPos);
     Output.Color = Input.Color;
     float2 uv1 = Input.UV1;
-    uv1.y = _21_mUVInversed.x + (_21_mUVInversed.y * uv1.y);
+    uv1.y = _73_mUVInversed.x + (_73_mUVInversed.y * uv1.y);
     Output.UV = uv1;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
