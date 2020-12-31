@@ -303,12 +303,9 @@ void RenderPassTest()
 {
 	RenderPassTestContext<WINDOW> renderPassTestContext;
 	int count = 0;
-	while (count < 10000 && renderPassTestContext.window->DoEvent())
+	while (count < 60 && renderPassTestContext.window->DoEvent())
 	{
-		if (count % 10 == 0)
-		{
-			renderPassTestContext.Update();
-		}
+		renderPassTestContext.Update();
 		renderPassTestContext.Render();
 		renderPassTestContext.window->Present();
 
