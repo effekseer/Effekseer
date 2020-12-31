@@ -606,6 +606,8 @@ public:
 */
 struct EffectBasicRenderParameter
 {
+	int32_t MaterialIndex = -1;
+
 	int32_t ColorTextureIndex;
 
 	int32_t AlphaTextureIndex;

@@ -834,6 +834,8 @@ EffectNode* EffectNodeImplemented::GetChild(int index) const
 EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 {
 	EffectBasicRenderParameter param;
+	param.MaterialIndex = RendererCommon.MaterialData.MaterialIndex;
+
 	param.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 	param.AlphaTextureIndex = RendererCommon.AlphaTextureIndex;
 	param.AlphaTexWrapType = RendererCommon.WrapTypes[2];
