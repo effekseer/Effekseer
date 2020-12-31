@@ -17,41 +17,41 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 /**
-@brief	カーブ読み込み破棄関数指定クラス
+	\~English	Curve loader
+	\~Japanese	カーブ読み込み破棄関数指定クラス
 */
 class CurveLoader : public ReferenceObject
 {
+private:
+	::Effekseer::DefaultFileInterface defaultFileInterface_;
+	::Effekseer::FileInterface* fileInterface_ = nullptr;
+
 public:
-	/**
-	@brief	コンストラクタ
-	*/
-	CurveLoader()
+
+	CurveLoader(::Effekseer::FileInterface* fileInterface = nullptr)
 	{
+		fileInterface_ = &defaultFileInterface_;
 	}
 
-	/**
-	@brief	デストラクタ
-	*/
-	virtual ~CurveLoader()
-	{
-	}
+	virtual ~CurveLoader() = default;
 
-	/**
-	@brief	Nカーブを読み込む。
-	@param	path	[in]	読み込み元パス
-	@return	カーブのポインタ
-	@note
-	カーブを読み込む。
-	::Effekseer::Effect::Create実行時に使用される。
+	/*
+	@brief
+	\~English load a curve
+	\~Japanese カーブを読み込む。
+	@param path
+	\~English a file path
+	\~Japanese 読み込み元パス
+	@ return
+	\~English a pointer of loaded a curve
+	\~Japanese 読み込まれたカーブのポインタ
 	*/
 	virtual Effekseer::CurveRef Load(const char16_t* path)
 	{
-		::Effekseer::DefaultFileInterface fileInterface;
-		std::unique_ptr<::Effekseer::FileReader>reader(fileInterface.OpenRead(path));
+		
+		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
 		if (reader.get() == nullptr)
 		{
 			return nullptr;
@@ -113,11 +113,12 @@ public:
 	}
 
 	/**
-	@brief	カーブを破棄する。
-	@param	data	[in]	カーブ
-	@note
-	カーブを破棄する。
-	::Effekseer::Effectのインスタンスが破棄された時に使用される。
+		@brief
+		\~English	dispose a curve
+		\~Japanese	カーブを破棄する。
+		@param	data
+		\~English	a pointer of loaded a curve
+		\~Japanese	読み込まれたカーブのポインタ
 	*/
 	virtual void Unload(CurveRef data)
 	{

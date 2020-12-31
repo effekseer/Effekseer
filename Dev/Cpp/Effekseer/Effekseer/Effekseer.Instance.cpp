@@ -441,10 +441,9 @@ void Instance::FirstUpdate()
 	{
 		// TODO refactoring
 		auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
-
-		if (NurbsCurveParam.Index != -1)
+		CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
+		if (curve != nullptr)
 		{
-			CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
 			float moveSpeed = NurbsCurveParam.MoveSpeed;
 			int32_t loopType = NurbsCurveParam.LoopType;
 
@@ -1305,10 +1304,9 @@ void Instance::CalculateMatrix(float deltaFrame)
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
 		{
 			auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
-
-			if (NurbsCurveParam.Index != -1)
+			CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
+			if (curve != nullptr)
 			{
-				CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
 				float moveSpeed = NurbsCurveParam.MoveSpeed;
 				int32_t loopType = NurbsCurveParam.LoopType;
 
