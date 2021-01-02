@@ -397,9 +397,13 @@ namespace Effekseer.GUI
 		public static bool RenameNode()
 		{
 			var selected = Core.SelectedNode;
-			var renameNode = new GUI.Dialog.RenameNode();
-			renameNode.Show(selected);
-			return true;
+			if (selected != null)
+			{
+				var renameNode = new GUI.Dialog.RenameNode();
+				renameNode.Show(selected);
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
