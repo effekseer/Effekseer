@@ -58,14 +58,27 @@ void GLFW_CloseCallback(GLFWwindow* w)
 	}
 }
 
-void GLFW_WindowFocusCallback(GLFWwindow* w, int f)
+void GLFW_WindowFocusCallback(GLFWwindow* gltfWindow, int focused)
 {
+	auto window = (Window*)glfwGetWindowUserPointer(gltfWindow);
 
-	auto w_ = (Window*)glfwGetWindowUserPointer(w);
-
-	if (f > 0 && w_->Focused != nullptr)
+	if (focused)
 	{
-		w_->Focused();
+		if (window->Focused != nullptr)
+		{
+			window->Focused();
+		}
+
+		// If there is modal window, it will be focused.
+		ImGuiContext& g = *GImGui;
+		for (size_t i = 0; i < g.Viewports.size(); i++)
+		{
+			const auto viewport = g.Viewports[i];
+			if (viewport->Window != nullptr && (viewport->Window->Flags & ImGuiWindowFlags_Modal) != 0)
+			{
+				glfwFocusWindow((GLFWwindow*)viewport->PlatformHandle);
+			}
+		}
 	}
 }
 
