@@ -9,7 +9,6 @@ namespace Effekseer.Binary.RenderData
 	{
 		private readonly Data.RendererCommonValues _value;
 		private readonly AdvancedRenderCommonValues _advanceValue;
-		private readonly AdvancedRenderCommonValues2 _advanceValue2;
 		private readonly TextureInformation _texInfo;
 		private TextureInformation _alpha;
 		private TextureInformation _uvDistortion;
@@ -21,12 +20,10 @@ namespace Effekseer.Binary.RenderData
 		public TextureValuesAggregator(
 			Data.RendererCommonValues value,
 			AdvancedRenderCommonValues advanceValue,
-			AdvancedRenderCommonValues2 advanceValue2,
 			TextureInformationRepository repo)
 		{
 			_value = value;
 			_advanceValue = advanceValue;
-			_advanceValue2 = advanceValue2;
 			_texInfo = repo.Texture;
 			_alpha = repo.Alpha;
 			_uvDistortion = repo.UvDistortion;
@@ -36,7 +33,7 @@ namespace Effekseer.Binary.RenderData
 		}
 
 		public IEnumerable<byte[]> CurrentData => _data;
-		public bool IsBlendTextureEnabled => _advanceValue2.EnableBlendTexture;
+		public bool IsBlendTextureEnabled => _advanceValue.BlendTextureParams.Enabled;
 
 		public void AddInt(int value)
 		{
@@ -90,7 +87,7 @@ namespace Effekseer.Binary.RenderData
 
 		public void AddAlphaTexture(SortedDictionary<string, int> texAndInd)
 		{
-			AddTexIdAndInfo(_advanceValue.EnableAlphaTexture,
+			AddTexIdAndInfo(_advanceValue.AlphaTextureParam.Enabled,
 				_advanceValue.AlphaTextureParam.Texture,
 				texAndInd,
 				ref _alpha);
@@ -98,7 +95,7 @@ namespace Effekseer.Binary.RenderData
 
 		public void AddUvDistortionTexture(SortedDictionary<string, int> texAndInd)
 		{
-			AddTexIdAndInfo(_advanceValue.EnableUVDistortionTexture,
+			AddTexIdAndInfo(_advanceValue.UVDistortionTextureParam.Enabled,
 				_advanceValue.UVDistortionTextureParam.Texture,
 				texAndInd,
 				ref _uvDistortion);
@@ -106,23 +103,23 @@ namespace Effekseer.Binary.RenderData
 
 		public void AddBlendAlphaTexture(SortedDictionary<string, int> texAndInd)
 		{
-			AddTexIdAndInfo(_advanceValue2.BlendTextureParams.EnableBlendAlphaTexture,
-				_advanceValue2.BlendTextureParams.BlendAlphaTextureParam.Texture,
+			AddTexIdAndInfo(_advanceValue.BlendTextureParams.EnableBlendAlphaTexture,
+				_advanceValue.BlendTextureParams.BlendAlphaTextureParam.Texture,
 				texAndInd,
 				ref _blendAlpha);
 		}
 
 		public void AddBlendUvDistortionTexture(SortedDictionary<string, int> texAndInd)
 		{
-			AddTexIdAndInfo(_advanceValue2.BlendTextureParams.EnableBlendUVDistortionTexture,
-				_advanceValue2.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
+			AddTexIdAndInfo(_advanceValue.BlendTextureParams.EnableBlendUVDistortionTexture,
+				_advanceValue.BlendTextureParams.BlendUVDistortionTextureParam.Texture,
 				texAndInd,
 				ref _blendUvDistortion);
 		}
 
 		public void AddBlendTexture(SortedDictionary<string, int> texAndInd)
 		{
-			var value = GetTexIdAndInfo(_advanceValue2.BlendTextureParams.BlendTextureParam.Texture,
+			var value = GetTexIdAndInfo(_advanceValue.BlendTextureParams.BlendTextureParam.Texture,
 				texAndInd,
 				ref _blend);
 			AddInt(value);

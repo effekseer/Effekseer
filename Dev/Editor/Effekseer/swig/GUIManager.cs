@@ -433,6 +433,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool ToggleButton(string label, ref bool p_checked) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ToggleButton(swigCPtr, label, ref p_checked);
+    return ret;
+  }
+
   public bool InputInt(string label, int[] v, int step, int step_fast) {
     bool ret = EffekseerNativePINVOKE.GUIManager_InputInt__SWIG_0(swigCPtr, label, v, step, step_fast);
     return ret;
@@ -959,6 +964,21 @@ public class GUIManager : global::System.IDisposable {
 
   public bool ColorEdit4(string label, float[] col) {
     bool ret = EffekseerNativePINVOKE.GUIManager_ColorEdit4__SWIG_1(swigCPtr, label, col);
+    return ret;
+  }
+
+  public bool CollapsingHeader(string label, TreeNodeFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_CollapsingHeader__SWIG_0(swigCPtr, label, (int)flags);
+    return ret;
+  }
+
+  public bool CollapsingHeader(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_CollapsingHeader__SWIG_1(swigCPtr, label);
+    return ret;
+  }
+
+  public bool CollapsingHeaderWithToggle(string label, TreeNodeFlags flags, string toggle_id, ref bool p_checked) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_CollapsingHeaderWithToggle(swigCPtr, label, (int)flags, toggle_id, ref p_checked);
     return ret;
   }
 

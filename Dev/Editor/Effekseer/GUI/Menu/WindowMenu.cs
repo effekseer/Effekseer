@@ -16,7 +16,6 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("RenderSettings", typeof(Dock.RendererValues), Icons.PanelRender),
 			new DockSettings("BasicRenderSettings", typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon),
 			new DockSettings("AdvancedRenderSettings", typeof(Dock.AdvancedRenderCommonValues), Icons.PanelDynamicParams),
-			new DockSettings("AdvancedRenderSettings2", typeof(Dock.AdvancedRenderCommonValues2), Icons.PanelDynamicParams),
 			new DockSettings("Sound", typeof(Dock.SoundValues), Icons.PanelSound),
 			new DockSettings("FCurves", typeof(Dock.FCurves), Icons.PanelFCurve),
 			new DockSettings("Global", typeof(Dock.GlobalValues), Icons.PanelGlobal),

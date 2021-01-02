@@ -1427,6 +1427,56 @@ bool GUIManager::RadioButton(const char16_t* label, bool active)
 	return ImGui::RadioButton(utf8str<256>(label), active);
 }
 
+bool GUIManager::ToggleButton(const char16_t* label, bool* p_checked)
+{
+	utf8str<256> labelU8(label);
+	
+	const auto& style = ImGui::GetStyle();
+
+	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	float frameHeight = ImGui::GetFrameHeight();
+	float height = frameHeight * 0.8f;
+	float width = height * 2.5f;
+	float radius = height * 0.50f;
+	cursorPos.y += (frameHeight - height) * 0.5f;
+
+	ImGui::SetCursorScreenPos(cursorPos);
+	ImGui::InvisibleButton(labelU8, ImVec2(width, height));
+	if (ImGui::IsItemClicked())
+		*p_checked = !*p_checked;
+
+	float t = *p_checked ? 1.0f : 0.0f;
+
+	ImGuiContext& g = *GImGui;
+	float ANIM_SPEED = 0.08f;
+	if (g.LastActiveId == g.CurrentWindow->GetID(labelU8))// && g.LastActiveIdTimer < ANIM_SPEED)
+	{
+		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
+		t = *p_checked ? (t_anim) : (1.0f - t_anim);
+	}
+
+	ImU32 col_bg;
+	if (ImGui::IsItemHovered())
+		col_bg = ImGui::GetColorU32(ImLerp(style.Colors[ImGuiCol_ButtonHovered], ImVec4(0.56f, 0.83f, 0.26f, 1.0f), t));
+	else
+		col_bg = ImGui::GetColorU32(ImLerp(style.Colors[ImGuiCol_Button], ImVec4(0.46f, 0.73f, 0.20f, 1.0f), t));
+
+	drawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + width, cursorPos.y + height), col_bg, height * 0.5f);
+	
+	float textHeight = ImGui::GetTextLineHeight();
+	float textOffsetY = (height - textHeight) * 0.5f - 1.0f;
+	if (*p_checked)
+		drawList->AddText(ImVec2(cursorPos.x + textHeight / 2, cursorPos.y + textOffsetY), IM_COL32(255, 255, 255, 255), "ON");
+	else
+		drawList->AddText(ImVec2(cursorPos.x + width / 2 - textHeight / 8, cursorPos.y + textOffsetY), IM_COL32(230, 230, 230, 255), "OFF");
+	
+	drawList->AddCircleFilled(ImVec2(cursorPos.x + radius + t * (width - radius * 2.0f), cursorPos.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
+	
+	return *p_checked;
+}
+
 bool GUIManager::InputInt(const char16_t* label, int* v, int step, int step_fast)
 {
 	return ImGui::InputInt(utf8str<256>(label), v, step, step_fast);
@@ -1652,6 +1702,31 @@ const char16_t* GUIManager::GetInputTextResult()
 bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)
 {
 	return ImGui::ColorEdit4_(utf8str<256>(label), col, (int)flags);
+}
+
+bool GUIManager::CollapsingHeader(const char16_t* label, TreeNodeFlags flags)
+{
+	return ImGui::CollapsingHeader(utf8str<256>(label), (int)flags);
+}
+
+bool GUIManager::CollapsingHeaderWithToggle(const char16_t* label, TreeNodeFlags flags, const char16_t* toggle_id, bool* p_checked)
+{
+	ImVec2 cursorPosBefore = ImGui::GetCursorScreenPos();
+	ImVec2 region = ImGui::GetContentRegionAvail();
+
+	bool result = CollapsingHeader(label, (TreeNodeFlags)((uint32_t)flags | ImGuiTreeNodeFlags_AllowItemOverlap));
+
+	ImVec2 cursorPosAfter = ImGui::GetCursorScreenPos();
+
+	float toggleHeight = ImGui::GetFrameHeight() * 0.8f;
+	float toggleWidth = toggleHeight * 2.5f;
+	ImGui::SetCursorScreenPos(ImVec2(cursorPosBefore.x + region.x - toggleWidth, cursorPosBefore.y));
+
+	ToggleButton(toggle_id, p_checked);
+
+	ImGui::SetCursorScreenPos(cursorPosAfter);
+
+	return result;
 }
 
 bool GUIManager::TreeNode(const char16_t* label)

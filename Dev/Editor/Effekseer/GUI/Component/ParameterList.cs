@@ -96,6 +96,8 @@ namespace Effekseer.GUI.Component
 
 			Utils.DelayedList<TypeRow> controlRows = new Utils.DelayedList<TypeRow>();
 
+			Boolean controlEnabled = null;
+
 			bool isControlsChanged = false;
 
 			public TypeRowCollection()
@@ -121,8 +123,6 @@ namespace Effekseer.GUI.Component
 				{
 					var c = controlRows.Internal[i].Control as IParameterControl;
 
-
-
 					if (controlRows.Internal[i].Children != null)
 					{
 						var item = controlRows.Internal[i];
@@ -140,21 +140,57 @@ namespace Effekseer.GUI.Component
 							// Tree view
 							var label = item.Label.ToString() + "###" + item.TreeNodeID;
 
-							var opened = Manager.NativeManager.TreeNode(label);
-
-							Manager.NativeManager.NextColumn();
-
-							Manager.NativeManager.NextColumn();
-
-							if (opened)
+							if (item.BindingValue is Data.Group.IToggleMode)
 							{
-								indent = item.Children.Update(indent);
-							}
+								// CollapsingHeader with toggle
+								Manager.NativeManager.Columns(1);
+								Manager.NativeManager.Spacing();
 
-							if (opened)
-							{
-								Manager.NativeManager.TreePop();
+								var toggleId = "###" + item.TreeNodeID + "_toggle";
+								var toggleMode = item.BindingValue as Data.Group.IToggleMode;
+								bool enabled = toggleMode.Enabled.GetValue();
+
+								bool opened = Manager.NativeManager.CollapsingHeaderWithToggle(label, swig.TreeNodeFlags.None, toggleId, ref enabled);
+
+								if (enabled != toggleMode.Enabled.GetValue())
+								{
+									toggleMode.Enabled.SetValue(enabled);
+								}
+
+								if (opened && !enabled)
+								{
+									string message = MultiLanguageTextProvider.GetText("TreeDisabled_Message");
+									Manager.NativeManager.TextWrapped(message);
+								}
+
+								Manager.NativeManager.Columns(2);
+
+								if (opened && enabled)
+								{
+									indent = item.Children.Update(indent);
+								}
 							}
+							else
+							{
+								// Simple CollapsingHeader
+								Manager.NativeManager.Columns(1);
+								Manager.NativeManager.Spacing();
+
+								bool opened = Manager.NativeManager.CollapsingHeader(label);
+
+								Manager.NativeManager.Columns(2);
+
+								if (opened)
+								{
+									indent = item.Children.Update(indent);
+								}
+							}
+							//var opened = Manager.NativeManager.TreeNode(label);
+
+							//if (opened)
+							//{
+							//	Manager.NativeManager.TreePop();
+							//}
 						}
 						continue;
 					}
@@ -391,16 +427,17 @@ namespace Effekseer.GUI.Component
 					row.Children.SetValue(null, 0);
 				}
 
-				if (row.Control == null) return;
-
-				row.ControlDynamic.SetBinding(null);
+				if (row.ControlDynamic != null)
+				{
+					row.ControlDynamic.SetBinding(null);
+				}
 
 				if (bindingObject != null)
 				{
 					var o0 = row.BindingValue as Data.Value.EnumBase;
 					var o1 = row.BindingValue as Data.Value.PathForImage;
 					var o2 = row.BindingValue as Data.IEditableValueCollection;
-				var o3 = row.BindingValue as Data.Value.Boolean;
+					var o3 = row.BindingValue as Data.Value.Boolean;
 					if (o0 != null && row.IsSelector)
 					{
 						o0.OnChanged -= ChangeSelector;
@@ -419,7 +456,7 @@ namespace Effekseer.GUI.Component
 					}
 				}
 
-				if (removeControls)
+				if (removeControls && row.Control != null)
 				{
 					if (row.Control is Control)
 					{
@@ -494,7 +531,7 @@ namespace Effekseer.GUI.Component
 
 			public TypeRowCollection Children;
 
-			Data.EditableValue editableValue;
+			public Data.EditableValue EditableValue { get; private set; }
 
 			public object Title
 			{
@@ -578,15 +615,15 @@ namespace Effekseer.GUI.Component
 			/// <param name="propInfo"></param>
 			public TypeRow(Data.EditableValue propInfo)
 			{
-				editableValue = propInfo;
+				EditableValue = propInfo;
 
-				Title = editableValue.Title;
-				Description = editableValue.Description;
-				EnableUndo = editableValue.IsUndoEnabled;
-				var shown = editableValue.IsShown;
+				Title = EditableValue.Title;
+				Description = EditableValue.Description;
+				EnableUndo = EditableValue.IsUndoEnabled;
+				var shown = EditableValue.IsShown;
 
 				IParameterControl gui = null;
-				var type = editableValue.Value.GetType();
+				var type = EditableValue.Value.GetType();
 
 				if (!shown)
 				{
@@ -708,7 +745,7 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new FCurveButton();
 				}
-				else if (editableValue.Value is Data.IEditableValueCollection)
+				else if (EditableValue.Value is Data.IEditableValueCollection)
 				{
 					gui = new Dummy();
 				}
@@ -727,10 +764,10 @@ namespace Effekseer.GUI.Component
 					dgui.Initialize(types[0]);
 				}
 
-				if (editableValue.SelfSelectorID >= 0)
+				if (EditableValue.SelfSelectorID >= 0)
 				{
 					IsSelector = true;
-					SelfSelectorID = editableValue.SelfSelectorID;
+					SelfSelectorID = EditableValue.SelfSelectorID;
 				}
 				else
 				{
@@ -761,14 +798,14 @@ namespace Effekseer.GUI.Component
 			public void SetSelector(List<TypeRow> sameLayerRows)
 			{
 				// Selector
-				if (editableValue.TargetSelectorID >= 0)
+				if (EditableValue.TargetSelectorID >= 0)
 				{
-					var selector = sameLayerRows.Where(_ => _.IsSelector && _.SelfSelectorID == editableValue.TargetSelectorID).LastOrDefault();
+					var selector = sameLayerRows.Where(_ => _.IsSelector && _.SelfSelectorID == EditableValue.TargetSelectorID).LastOrDefault();
 
 					if (selector != null)
 					{
 						Selector = selector;
-						RequiredSelectorValues = editableValue.RequiredSelectorValues;
+						RequiredSelectorValues = EditableValue.RequiredSelectorValues;
 					}
 				}
 			}
@@ -776,7 +813,7 @@ namespace Effekseer.GUI.Component
 			public bool IsShown()
 			{
 				if (Parent != null && !Parent.IsShown()) return false;
-				if (!editableValue.IsShown) return false;
+				if (!EditableValue.IsShown) return false;
 
 				if (Selector == null) return true;
 				if (!Selector.IsShown()) return false;

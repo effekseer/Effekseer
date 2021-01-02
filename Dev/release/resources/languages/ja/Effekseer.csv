@@ -317,3 +317,5 @@ PermissionError_File_Mac,エフェクトに関連するファイルをホーム�
 
 ModelReferenceType_File_Name,ファイル
 ModelReferenceType_ProdecualModel_Name,プロシージャルモデル
+
+TreeDisabled_Message,トグルをONにすると設定項目が表示されます。

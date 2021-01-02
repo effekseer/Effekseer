@@ -148,7 +148,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.6α5";
+		public const string Version = "1.6α6";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -929,6 +929,12 @@ namespace Effekseer
 				updater.Update(doc);
 			}
 
+			if (toolVersion < ParseVersion("1.60α6"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha5To16x();
+				updater.Update(doc);
+			}
+
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -1281,6 +1287,7 @@ namespace Effekseer
 			versionText = versionText.Replace("α3", "");
 			versionText = versionText.Replace("α4", "");
 			versionText = versionText.Replace("α5", "");
+			versionText = versionText.Replace("α6", "");
 
 			versionText = versionText.Replace("β1", "");
 			versionText = versionText.Replace("β2", "");
@@ -1624,7 +1631,7 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
-					if (node.AdvancedRendererCommonValuesValues.EnableAlphaTexture == true &&
+					if (node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled == true &&
 					    node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
 						var enType = "Alpha";
@@ -1643,7 +1650,7 @@ namespace Effekseer
 						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Size));
 					}
 
-					if (node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture == true &&
+					if (node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Enabled == true &&
 						node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
 						var enType = "UVDistortion";
@@ -1662,9 +1669,9 @@ namespace Effekseer
 						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Size));
 					}
 
-					if (node.AdvancedRendererCommonValues2Values.EnableBlendTexture == true)
+					if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.Enabled == true)
 					{
-						if (node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 						{
 							var enType = "Blend";
 							var jpType = "ブレンド";
@@ -1678,12 +1685,12 @@ namespace Effekseer
 								endName = jpType + "UV(大きさ)";
 							}
 
-							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.UVFCurve.Start));
-							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.UVFCurve.Size));
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UVFCurve.Size));
 						}
 
-						if (node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendAlphaTexture == true &&
-							node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture == true &&
+							node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 						{
 							var enType = "BlendAlpha";
 							var jpType = "ブレンドアルファ";
@@ -1697,12 +1704,12 @@ namespace Effekseer
 								endName = jpType + "UV(大きさ)";
 							}
 
-							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Start));
-							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Size));
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Size));
 						}
 
-						if (node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendUVDistortionTexture == true &&
-							node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture == true &&
+							node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 						{
 							var enType = "BlendUVDistortion";
 							var jpType = "ブレンドUV歪み";
@@ -1716,8 +1723,8 @@ namespace Effekseer
 								endName = jpType + "UV(大きさ)";
 							}
 
-							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Start));
-							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Size));
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Size));
 						}
 					}
 

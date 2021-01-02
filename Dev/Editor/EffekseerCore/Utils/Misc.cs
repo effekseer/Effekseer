@@ -105,34 +105,34 @@ namespace Effekseer.Utils
 						if (exporterVersion >= Binary.ExporterVersion.Ver16Alpha1)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+							if (_node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled && alpha_relative_path != string.Empty)
 							{
 								resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture);
 							}
 
 							var uvDistortion_relative_path = _node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture && uvDistortion_relative_path != string.Empty)
+							if (_node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Enabled && uvDistortion_relative_path != string.Empty)
 							{
 								resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture);
 							}
 
-							var blend_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValues2Values.EnableBlendTexture && blend_relative_path != string.Empty)
+							var blend_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.Texture.RelativePath;
+							if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.Enabled && blend_relative_path != string.Empty)
 							{
-								resources.ColorTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.Texture);
+								resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.Texture);
 
-								var blend_alpha_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendAlphaTexture &&
+								var blend_alpha_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture &&
 									blend_alpha_relative_path != string.Empty)
 								{
-									resources.ColorTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.Texture);
+									resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture);
 								}
 
-								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendUVDistortionTexture && 
+								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture && 
 									blend_uv_distortion_relative_path != string.Empty)
 								{
-									resources.ColorTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
+									resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
 								}
 							}
 						}
@@ -148,34 +148,34 @@ namespace Effekseer.Utils
 						if (exporterVersion >= Binary.ExporterVersion.Ver16Alpha1)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+							if (_node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled && alpha_relative_path != string.Empty)
 							{
 								resources.DistortionTextures.Add(_node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture);
 							}
 
 							var uvDistortion_relative_path = _node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture && uvDistortion_relative_path != string.Empty)
+							if (_node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Enabled && uvDistortion_relative_path != string.Empty)
 							{
 								resources.DistortionTextures.Add(_node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture);
 							}
 
-							var blend_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValues2Values.EnableBlendTexture && blend_relative_path != string.Empty)
+							var blend_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.Texture.RelativePath;
+							if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.Enabled && blend_relative_path != string.Empty)
 							{
-								resources.DistortionTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.Texture);
+								resources.DistortionTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.Texture);
 
-								var blend_alpha_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendAlphaTexture &&
+								var blend_alpha_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture &&
 									blend_alpha_relative_path != string.Empty)
 								{
-									resources.DistortionTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.Texture);
+									resources.DistortionTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture);
 								}
 
-								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendUVDistortionTexture &&
+								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture &&
 									blend_uv_distortion_relative_path != string.Empty)
 								{
-									resources.DistortionTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
+									resources.DistortionTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
 								}
 							}
 						}
@@ -197,34 +197,34 @@ namespace Effekseer.Utils
 						if (exporterVersion >= Binary.ExporterVersion.Ver16Alpha1)
 						{
 							var alpha_relative_path = _node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValuesValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+							if (_node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled && alpha_relative_path != string.Empty)
 							{
 								resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Texture);
 							}
 
 							var uvDistortion_relative_path = _node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValuesValues.EnableUVDistortionTexture && uvDistortion_relative_path != string.Empty)
+							if (_node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Enabled && uvDistortion_relative_path != string.Empty)
 							{
 								resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Texture);
 							}
 
-							var blend_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.Texture.RelativePath;
-							if (_node.AdvancedRendererCommonValues2Values.EnableBlendTexture && blend_relative_path != string.Empty)
+							var blend_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.Texture.RelativePath;
+							if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.Enabled && blend_relative_path != string.Empty)
 							{
-								resources.ColorTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendTextureParam.Texture);
+								resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.Texture);
 
-								var blend_alpha_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendAlphaTexture &&
+								var blend_alpha_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture &&
 									blend_alpha_relative_path != string.Empty)
 								{
-									resources.ColorTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendAlphaTextureParam.Texture);
+									resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.Texture);
 								}
 
-								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValues2Values.BlendTextureParams.EnableBlendUVDistortionTexture && 
+								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture && 
 									blend_uv_distortion_relative_path != string.Empty)
 								{
-									resources.ColorTextures.Add(_node.AdvancedRendererCommonValues2Values.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
+									resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
 								}
 							}
 						}

@@ -23,6 +23,7 @@ BlendUVDistortionTextureParameter_Intensity_Name,Blend UV Distortion Intensity
 BlendUVDistortionTextureParameter_Filter_Name,Filter(Blend UV Distortion Texture)
 BlendUVDistortionTextureParameter_Wrap_Name,Wrap(Blend UV Distortion Texture)
 
+BlendTextureParameters_Name,Blend Texture
 BlendTextureParameters_EnableBlendAlphaTexture_Name,Enable Blend Alpha Texture
 BlendTextureParameters_EnableBlendUVDistortionTexture_Name,Enable Blend UV Distortion Texture
 
@@ -46,13 +47,20 @@ AlphaCutoffParameter_ParameterType_FPI_Name,Four Point Interpolation
 AlphaCutoffParameter_ParameterType_Easing_Name,Easing
 AlphaCutoffParameter_ParameterType_FCurve_Name,F-Curve
 
-AdvancedRenderCommonValues_EnableAlphaTexture_Name,Enable Alpha Texture
-AdvancedRenderCommonValues_EnableUVDistortionTexture_Name,Enable UVDistortion Texture
-AdvancedRenderCommonValues_EnableBlendTexture_Name,Enable Blend Texture
+FalloffParameter_Name,Falloff
+FalloffParameter_ColorBlendType_Name,Color Blend Type
+FalloffParameter_BeginColor_Name,Begin Color
+FalloffParameter_EndColor_Name,End Color
+FalloffParameter_Pow_Name,Pow
 
-AdvancedRenderCommonValues_SoftParticleDistanceFar_Name,SoftParticle(Far)
-AdvancedRenderCommonValues_SoftParticleDistanceFar_Desc,If the distance between the background object and the particle is shorter than the specified distance, particles become translucent.
-AdvancedRenderCommonValues_SoftParticleDistanceNear_Name,SoftParticle(Near)
-AdvancedRenderCommonValues_SoftParticleDistanceNear_Desc,If an offset subtracted from the distance between a camera and the particle is shorter than the specified distance, particles become translucent.
-AdvancedRenderCommonValues_SoftParticleDistanceNearOffset_Name,SoftParticle(Offset, Near)
-AdvancedRenderCommonValues_SoftParticleDistanceNearOffset_Desc,Offset for a near distance
+FalloffParameter_BlendType_Add_Name,Add
+Falloffparameter_BlendType_Sub_Name,Sub
+FalloffParameter_BlendType_Mul_Name,Mul
+
+SoftParticleParameters_Name,Soft Particle
+SoftParticleParameters_DistanceFar_Name,Far Distance
+SoftParticleParameters_DistanceFar_Desc,If the distance between the background object and the particle is shorter than the specified distance, particles become translucent.
+SoftParticleParameters_DistanceNear_Name,Near Distance
+SoftParticleParameters_DistanceNear_Desc,If an offset subtracted from the distance between a camera and the particle is shorter than the specified distance, particles become translucent.
+SoftParticleParameters_DistanceNearOffset_Name,Near Distance Offset
+SoftParticleParameters_DistanceNearOffset_Desc,Offset for a near distance

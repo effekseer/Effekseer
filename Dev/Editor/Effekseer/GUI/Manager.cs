@@ -183,7 +183,6 @@ namespace Effekseer.GUI
 			typeof(Dock.Dynamic),
 			typeof(Dock.ProcedualModel),
 			typeof(Dock.AdvancedRenderCommonValues),
-			typeof(Dock.AdvancedRenderCommonValues2),
 		};
 
 		static Dock.DockManager dockManager = null;
