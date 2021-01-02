@@ -3404,6 +3404,13 @@ public:
 
 	/**
 		@brief
+		\~English set a model data into specified index
+		\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	virtual void SetProcedualModel(int32_t index, ModelRef data) = 0;
+
+	/**
+		@brief
 		\~English	Reload this effect
 		\~Japanese	エフェクトのリロードを行う。
 		@param	managers

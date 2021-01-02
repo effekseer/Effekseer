@@ -298,6 +298,8 @@ public:
 
 	void SetCurve(int32_t index, CurveRef data) override;
 
+	void SetProcedualModel(int32_t index, ModelRef data) override;
+
 	bool Reload(ManagerRef* managers,
 				int32_t managersCount,
 				const void* data,

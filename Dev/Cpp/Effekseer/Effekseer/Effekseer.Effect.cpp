@@ -3,6 +3,7 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
+#include "Backend/GraphicsDevice.h"
 #include "Effekseer.CurveLoader.h"
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.EffectImplemented.h"
@@ -11,12 +12,11 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.MaterialLoader.h"
+#include "Effekseer.Resource.h"
+#include "Effekseer.ResourceManager.h"
 #include "Effekseer.Setting.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#include "Effekseer.ResourceManager.h"
-#include "Backend/GraphicsDevice.h"
-#include "Effekseer.Resource.h"
 #include "Model/Model.h"
 #include "Model/ModelLoader.h"
 #include "Model/ProcedualModelGenerator.h"
@@ -308,7 +308,7 @@ void EffectFactory::OnUnloadingResource(Effect* effect)
 		resourceMgr->UnloadSoundData(effect->GetWave(i));
 		SetSound(effect, i, nullptr);
 	}
-	\
+
 	for (auto i = 0; i < effect->GetModelCount(); i++)
 	{
 		resourceMgr->UnloadModel(effect->GetModel(i));
@@ -1124,7 +1124,7 @@ CurveRef EffectImplemented::GetCurve(int n) const
 	{
 		return nullptr;
 	}
-	
+
 	return curves_[n];
 }
 
@@ -1139,7 +1139,7 @@ const char16_t* EffectImplemented::GetCurvePath(int n) const
 	{
 		return nullptr;
 	}
-	
+
 	return curvePaths_[n].get();
 }
 
@@ -1236,6 +1236,14 @@ void EffectImplemented::SetCurve(int32_t index, CurveRef data)
 	assert(0 <= index && index < curves_.size());
 	resourceMgr->UnloadCurve(curves_[index]);
 	curves_[index] = data;
+}
+
+void EffectImplemented::SetProcedualModel(int32_t index, ModelRef data)
+{
+	auto resourceMgr = GetSetting()->GetResourceManager();
+	assert(0 <= index && index < procedualModels_.size());
+	resourceMgr->UngenerateProcedualModel(procedualModels_[index]);
+	procedualModels_[index] = data;
 }
 
 bool EffectImplemented::Reload(ManagerRef* managers,
