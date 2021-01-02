@@ -120,6 +120,7 @@ bool Window::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Devic
 	glfwSetWindowIconifyCallback(window, GLFW_IconifyCallback);
 	glfwSetWindowMaximizeCallback(window, GLFW_MaximizeCallback);
 	// glfwSetWindowContentScaleCallback(window, GLFW_ContentScaleCallback);
+	glfwSetWindowSizeLimits(window, 320, 240, GLFW_DONT_CARE, GLFW_DONT_CARE);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
