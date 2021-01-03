@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
-
+			Core.OnBeforeLoad += Core_OnBeforeLoad;
 			Read();
 
 			TabToolTip = Resources.GetString("ProcedualModel_Name");
@@ -32,6 +32,7 @@ namespace Effekseer.GUI.Dock
 
 			Core.OnAfterLoad -= OnAfterLoad;
 			Core.OnAfterNew -= OnAfterLoad;
+			Core.OnBeforeLoad -= Core_OnBeforeLoad;
 		}
 
 		protected override void UpdateInternal()
@@ -75,6 +76,12 @@ namespace Effekseer.GUI.Dock
 		{
 			Read();
 		}
+
+		private void Core_OnBeforeLoad(object sender, EventArgs e)
+		{
+			paramerterList.SetValue(null);
+		}
+
 	}
 }
 
