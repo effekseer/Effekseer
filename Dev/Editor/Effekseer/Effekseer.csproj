@@ -115,7 +115,6 @@
     <Compile Include="GUI\Dialog\MessageBox.cs" />
     <Compile Include="GUI\Dialog\OpenModel.cs" />
     <Compile Include="GUI\Dock\AdvancedRenderCommonValues.cs" />
-    <Compile Include="GUI\Dock\AdvancedRenderCommonValues2.cs" />
     <Compile Include="GUI\Dock\CommonValues.cs" />
     <Compile Include="GUI\Dock\DepthValues.cs" />
     <Compile Include="GUI\Dock\DockManager.cs" />

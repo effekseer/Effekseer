@@ -125,7 +125,6 @@
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Data\AdvancedRenderCommonValues.cs" />
-    <Compile Include="Data\AdvancedRenderCommonValues2.cs" />
     <Compile Include="Data\DepthValues.cs" />
     <Compile Include="Data\Dynamic.cs" />
     <Compile Include="Data\EffectCullingValues.cs" />
