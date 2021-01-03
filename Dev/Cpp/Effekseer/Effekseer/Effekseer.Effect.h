@@ -673,6 +673,10 @@ struct EffectBasicRenderParameter
 	bool ZTest;
 	bool Distortion;
 	float DistortionIntensity;
+
+	float SoftParticleDistanceFar = 0.0f;
+	float SoftParticleDistanceNear = 0.0f;
+	float SoftParticleDistanceNearOffset = 0.0f;
 };
 
 /**

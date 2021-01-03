@@ -928,6 +928,11 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.WrapType = RendererCommon.WrapTypes[0];
 	param.ZTest = RendererCommon.ZTest;
 	param.ZWrite = RendererCommon.ZWrite;
+
+	param.SoftParticleDistanceFar = RendererCommon.BasicParameter.SoftParticleDistanceFar;
+	param.SoftParticleDistanceNear = RendererCommon.BasicParameter.SoftParticleDistanceNear;
+	param.SoftParticleDistanceNearOffset = RendererCommon.BasicParameter.SoftParticleDistanceNearOffset;
+
 	return param;
 }
 
