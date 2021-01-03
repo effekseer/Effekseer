@@ -515,22 +515,24 @@ namespace Effekseer.Utils
 					if (enableAlphaTexture != null)
 					{
 						var alphaTextureParam = rcv1["AlphaTextureParam"] as XmlNode;
-						alphaTextureParam.PrependChild(document.CreateTextElement("Enabled", enableAlphaTexture.InnerText));
+						alphaTextureParam?.PrependChild(document.CreateTextElement("Enabled", enableAlphaTexture.InnerText));
 					}
 
 					var enableUVDistortion = rcv1["EnableUVDistortion"];
 					if (enableUVDistortion != null)
 					{
 						var uvDistortionParam = rcv1["UVDistortionParam"] as XmlNode;
-						uvDistortionParam.PrependChild(document.CreateTextElement("Enabled", enableUVDistortion.InnerText));
+						uvDistortionParam?.PrependChild(document.CreateTextElement("Enabled", enableUVDistortion.InnerText));
 					}
 
 					var alphaCutoffParam = rcv1["AlphaCutoffParam"] as XmlNode;
 					if (alphaCutoffParam != null)
 					{
+						var typeNode = alphaCutoffParam["Type"];
+						var fixedNode = alphaCutoffParam["Fixed"];
 						bool enableAlphaCutoff =
-							int.Parse(alphaCutoffParam["Type"].InnerText) != 0 ||
-							float.Parse(alphaCutoffParam["Fixed"]["Threshold"].InnerText) != 0.0f;
+							(typeNode != null && int.Parse(typeNode.InnerText) != 0) ||
+							(fixedNode != null && float.Parse(fixedNode["Threshold"].InnerText) != 0.0f);
 						alphaCutoffParam.PrependChild(document.CreateTextElement("Enabled", enableAlphaCutoff.ToString()));
 					}
 

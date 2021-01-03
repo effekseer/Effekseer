@@ -690,6 +690,12 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 	if (materialLoader_ != nullptr) materialLoader_->RootPath = std::u16string(Path);
 	if (soundLoader_ != nullptr) soundLoader_->RootPath = std::u16string(Path);
 
+	// To release caches
+	if (effect_ != nullptr)
+	{
+		effect_->UnloadResources();
+	}
+
 	effect_ = Effekseer::Effect::Create(setting_, pData, size);
 	assert(effect_ != nullptr);
 
@@ -708,7 +714,14 @@ bool Native::RemoveEffect()
 		mainScreen_->Reset();
 	}
 
+	// To release caches
+	if (effect_ != nullptr)
+	{
+		effect_->UnloadResources();
+	}
+
 	effect_.Reset();
+
 	return true;
 }
 
