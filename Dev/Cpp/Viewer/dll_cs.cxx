@@ -4333,6 +4333,22 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_RadioButton
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ToggleButton___(void * jarg1, void * jarg2, unsigned int * jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool *arg3 = (bool *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (bool *)jarg3; 
+  result = (bool)(arg1)->ToggleButton((char16_t const *)arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputInt__SWIG_0___(void * jarg1, void * jarg2, int* jarg3, int jarg4, int jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -6843,6 +6859,56 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ColorEdit4_
   jresult = result; 
   
   
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CollapsingHeader__SWIG_0___(void * jarg1, void * jarg2, int jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::TreeNodeFlags arg3 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (efk::TreeNodeFlags)jarg3; 
+  result = (bool)(arg1)->CollapsingHeader((char16_t const *)arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CollapsingHeader__SWIG_1___(void * jarg1, void * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->CollapsingHeader((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CollapsingHeaderWithToggle___(void * jarg1, void * jarg2, int jarg3, void * jarg4, unsigned int * jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::TreeNodeFlags arg3 ;
+  char16_t *arg4 = (char16_t *) 0 ;
+  bool *arg5 = (bool *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (efk::TreeNodeFlags)jarg3; 
+  arg4 = (char16_t *)jarg4; 
+  arg5 = (bool *)jarg5; 
+  result = (bool)(arg1)->CollapsingHeaderWithToggle((char16_t const *)arg2,arg3,(char16_t const *)arg4,arg5);
+  jresult = result; 
   return jresult;
 }
 

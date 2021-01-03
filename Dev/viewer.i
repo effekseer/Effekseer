@@ -54,6 +54,7 @@ class"
 
 %apply bool *INOUT { bool* p_open }
 %apply bool *INOUT { bool* p_selected }
+%apply bool *INOUT { bool* p_checked }
 
 %apply int INOUT[] { int* v_current_min }
 %apply int INOUT[] { int* v_current_max }

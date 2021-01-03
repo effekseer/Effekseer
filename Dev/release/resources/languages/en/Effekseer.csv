@@ -317,3 +317,5 @@ PermissionError_File_Mac,Moving the files associated with the effect to your hom
 
 ModelReferenceType_File_Name,File
 ModelReferenceType_ProdecualModel_Name,ProcedualModel
+
+TreeDisabled_Message,"If the toggle is turned on, the setting items will be displayed."

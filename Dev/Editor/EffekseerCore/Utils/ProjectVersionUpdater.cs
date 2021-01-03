@@ -483,4 +483,115 @@ namespace Effekseer.Utils
 			return true;
 		}
 	}
+
+	class ProjectVersionUpdator16Alpha5To16x : ProjectVersionUpdator
+	{
+		public override bool Update(System.Xml.XmlDocument document)
+		{
+			List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
+
+			Action<System.Xml.XmlNode> collectNodes = null;
+			collectNodes = (node) =>
+			{
+				if (node.Name == "Node")
+				{
+					nodes.Add(node);
+				}
+
+				for (int i = 0; i < node.ChildNodes.Count; i++)
+				{
+					collectNodes(node.ChildNodes[i]);
+				}
+			};
+
+			collectNodes((XmlNode)document);
+
+			foreach (var node in nodes)
+			{
+				var rcv1 = node["AdvancedRendererCommonValuesValues"];
+				if (rcv1 != null)
+				{
+					var enableAlphaTexture = rcv1["EnableAlphaTexture"];
+					if (enableAlphaTexture != null)
+					{
+						var alphaTextureParam = rcv1["AlphaTextureParam"] as XmlNode;
+						alphaTextureParam.PrependChild(document.CreateTextElement("Enabled", enableAlphaTexture.InnerText));
+					}
+
+					var enableUVDistortion = rcv1["EnableUVDistortion"];
+					if (enableUVDistortion != null)
+					{
+						var uvDistortionParam = rcv1["UVDistortionParam"] as XmlNode;
+						uvDistortionParam.PrependChild(document.CreateTextElement("Enabled", enableUVDistortion.InnerText));
+					}
+
+					var alphaCutoffParam = rcv1["AlphaCutoffParam"] as XmlNode;
+					if (alphaCutoffParam != null)
+					{
+						bool enableAlphaCutoff =
+							int.Parse(alphaCutoffParam["Type"].InnerText) != 0 ||
+							float.Parse(alphaCutoffParam["Fixed"]["Threshold"].InnerText) != 0.0f;
+						alphaCutoffParam.PrependChild(document.CreateTextElement("Enabled", enableAlphaCutoff.ToString()));
+					}
+
+					var enableFalloff = rcv1["EnableFalloff"];
+					if (enableFalloff != null)
+					{
+						var falloffParam = rcv1["FalloffParam"] as XmlNode;
+						falloffParam.PrependChild(document.CreateTextElement("Enabled", enableFalloff.InnerText));
+					}
+
+					var softParticleDistance = rcv1["SoftParticleDistance"];
+					var softParticleDistanceNear = rcv1["SoftParticleDistanceNear"];
+					var softParticleDistanceNearOffset = rcv1["SoftParticleDistanceNearOffset"];
+
+					if (softParticleDistance != null || softParticleDistanceNear != null || softParticleDistanceNearOffset != null)
+					{
+						var softParticleParams = document.CreateElement("SoftParticleParams");
+						
+						if (softParticleDistance != null)
+						{
+							softParticleParams.AppendChild(document.CreateTextElement("Enabled", (softParticleDistance.GetTextAsFloat() != 0.0f).ToString()));
+							softParticleParams.AppendChild(document.CreateTextElement("Distance", softParticleDistance.InnerText));
+						}
+						if (softParticleDistanceNear != null)
+						{
+							softParticleParams.AppendChild(document.CreateTextElement("DistanceNear", softParticleDistanceNear.InnerText));
+						}
+						if (softParticleDistanceNearOffset != null)
+						{
+							softParticleParams.AppendChild(document.CreateTextElement("DistanceNearOffset", softParticleDistanceNearOffset.InnerText));
+						}
+
+						rcv1.AppendChild(softParticleParams);
+					}
+				}
+
+				var rcv2 = node["AdvancedRendererCommonValues2Values"];
+				if (rcv2 != null)
+				{
+					node.RemoveChild(rcv2);
+
+					if (rcv1 == null)
+					{
+						rcv1 = document.CreateElement("AdvancedRendererCommonValuesValues");
+						node.AppendChild(rcv1);
+					}
+
+					var blendTextureParams = rcv2["BlendTextureParams"];
+					var enableBlendTexture = rcv2["EnableBlendTexture"];
+
+					if (enableBlendTexture != null && blendTextureParams != null)
+					{
+						rcv2.RemoveChild(blendTextureParams);
+						rcv2.RemoveChild(enableBlendTexture);
+						blendTextureParams.AppendChild(document.CreateTextElement("Enabled", enableBlendTexture.InnerText));
+						rcv1.AppendChild(blendTextureParams);
+					}
+				}
+			}
+
+			return true;
+		}
+	}
 }

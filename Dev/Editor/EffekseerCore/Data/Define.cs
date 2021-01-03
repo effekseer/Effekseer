@@ -740,6 +740,12 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
+
+		public string enabledFlag
+		{
+			get;
+			set;
+		}
 	}
 
 	/// <summary>
@@ -859,7 +865,6 @@ namespace Effekseer.Data
 				{
 					ret.Title = new MultiLanguageString(treeNode.key);
 				}
-
 			}
 
 			return ret;

@@ -675,17 +675,31 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RendererCommon.reset();
 		}
 
-		if (m_effect->GetVersion() >= 1600)
+		if (m_effect->GetVersion() >= Version16Alpha1)
 		{
-			AlphaCutoff.load(pos, m_effect->GetVersion());
-			RendererCommon.BasicParameter.EdgeThreshold = AlphaCutoff.EdgeThreshold;
-			RendererCommon.BasicParameter.EdgeColor[0] = AlphaCutoff.EdgeColor.R;
-			RendererCommon.BasicParameter.EdgeColor[1] = AlphaCutoff.EdgeColor.G;
-			RendererCommon.BasicParameter.EdgeColor[2] = AlphaCutoff.EdgeColor.B;
-			RendererCommon.BasicParameter.EdgeColor[3] = AlphaCutoff.EdgeColor.A;
-			RendererCommon.BasicParameter.EdgeColorScaling = AlphaCutoff.EdgeColorScaling;
+			bool alphaCutoffEnabled = true;
 
-			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = AlphaCutoff.Type != ParameterAlphaCutoff::EType::FIXED || AlphaCutoff.Fixed.Threshold != 0.0f;
+			if (m_effect->GetVersion() >= Version16Alpha6)
+			{
+				int32_t AlphaCutoffFlag = 0;
+				memcpy(&AlphaCutoffFlag, pos, sizeof(int));
+				pos += sizeof(int);
+				alphaCutoffEnabled = (AlphaCutoffFlag == 1);
+			}
+			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = alphaCutoffEnabled;
+
+			if (alphaCutoffEnabled)
+			{
+				AlphaCutoff.load(pos, m_effect->GetVersion());
+				RendererCommon.BasicParameter.EdgeThreshold = AlphaCutoff.EdgeThreshold;
+				RendererCommon.BasicParameter.EdgeColor[0] = AlphaCutoff.EdgeColor.R;
+				RendererCommon.BasicParameter.EdgeColor[1] = AlphaCutoff.EdgeColor.G;
+				RendererCommon.BasicParameter.EdgeColor[2] = AlphaCutoff.EdgeColor.B;
+				RendererCommon.BasicParameter.EdgeColor[3] = AlphaCutoff.EdgeColor.A;
+				RendererCommon.BasicParameter.EdgeColorScaling = AlphaCutoff.EdgeColorScaling;
+
+				RendererCommon.BasicParameter.IsAlphaCutoffEnabled = AlphaCutoff.Type != ParameterAlphaCutoff::EType::FIXED || AlphaCutoff.Fixed.Threshold != 0.0f;
+			}
 		}
 
 		if (m_effect->GetVersion() >= Version16Alpha3)

@@ -86,13 +86,6 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[IO(Export = true)]
-		public AdvancedRenderCommonValues2 AdvancedRendererCommonValues2Values
-		{
-			get;
-			private set;
-		}
-
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
@@ -113,7 +106,6 @@ namespace Effekseer.Data
             DrawingValues = new RendererValues(basepath);
             SoundValues = new SoundValues(basepath);
 			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
-			AdvancedRendererCommonValues2Values = new Data.AdvancedRenderCommonValues2(basepath);
 		}
 	}
 }

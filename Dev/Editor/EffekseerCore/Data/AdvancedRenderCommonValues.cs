@@ -6,8 +6,12 @@ using Effekseer.Data.Group;
 
 namespace Effekseer.Data
 {
-	public class AlphaTextureParameter : IUvCommandValues
+	public class AlphaTextureParameter : IUvCommandValues, IToggleMode
 	{
+		[IO(Export = true)]
+		[Shown(Shown = false)]
+		public Value.Boolean Enabled { get; private set; } = new Value.Boolean(false);
+
 		[IO(Export = true)]
 		[Key(key = "AlphaTextureParameter_Texture")]
 		public Value.PathForImage Texture { get; private set; }
@@ -59,8 +63,12 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class UVDistortionTextureParameter : IUvCommandValues
+	public class UVDistortionTextureParameter : IUvCommandValues, IToggleMode
 	{
+		[IO(Export = true)]
+		[Shown(Shown = false)]
+		public Value.Boolean Enabled { get; private set; } = new Value.Boolean(false);
+
 		[IO(Export = true)]
 		[Key(key = "UVDistortionTextureParameter_Texture")]
 		public Value.PathForImage Texture { get; private set; }
@@ -117,8 +125,12 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class AlphaCutoffParameter
+	public class AlphaCutoffParameter : IToggleMode
 	{
+		[IO(Export = true)]
+		[Shown(Shown = false)]
+		public Value.Boolean Enabled { get; private set; } = new Value.Boolean(false);
+
 		[Selector(ID = 0)]
 		[IO(Export = true)]
 		[Key(key = "AlphaCutoffParameter_ParameterType")]
@@ -251,8 +263,12 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class FalloffParameter
+	public class FalloffParameter : IToggleMode
 	{
+		[IO(Export = true)]
+		[Shown(Shown = false)]
+		public Value.Boolean Enabled { get; private set; } = new Value.Boolean(false);
+
 		[IO(Export = true)]
 		[Key(key = "FalloffParameter_ColorBlendType")]
 		public Value.Enum<BlendType> ColorBlendType { get; private set; }
@@ -291,59 +307,280 @@ namespace Effekseer.Data
 	}
 
 
+	public enum AdvancedAlphaBlendType : int
+	{
+		[Key(key = "AdvancedAlphaBlendType_AlphaBlend")]
+		Blend = 0,
+		[Key(key = "AlphaBlendType_Add")]
+		Add = 1,
+		[Key(key = "AlphaBlendType_Sub")]
+		Sub = 2,
+		[Key(key = "AlphaBlendType_Mul")]
+		Mul = 3,
+	}
+
+	public class BlendTextureParameter : IUvCommandValues
+	{
+		[IO(Export = true)]
+		[Key(key = "BlendTextureParameter_Texture")]
+		public Value.PathForImage Texture { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendTextureParameter_BlendType")]
+		public Value.Enum<AdvancedAlphaBlendType> BlendType { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendTextureParameter_Filter")]
+		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendTextureParameter_Wrap")]
+		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+		[Selector(ID = 103)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV4")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 103, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 103, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 103, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 103, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 103, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
+		public BlendTextureParameter(Value.Path basepath)
+		{
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
+			BlendType = new Value.Enum<AdvancedAlphaBlendType>(AdvancedAlphaBlendType.Blend);
+			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
+		}
+	}
+
+	public class BlendAlphaTextureParameter : IUvCommandValues
+	{
+		[IO(Export = true)]
+		[Key(key = "BlendAlphaTextureParameter_Texture")]
+		public Value.PathForImage Texture { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendAlphaTextureParameter_Filter")]
+		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendAlphaTextureParameter_Wrap")]
+		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+		[Selector(ID = 104)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV5")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 104, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 104, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 104, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 104, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 104, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
+		public BlendAlphaTextureParameter(Value.Path basepath)
+		{
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
+			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
+		}
+	}
+
+	public class BlendUVDistortionTextureParameter : IUvCommandValues
+	{
+		[IO(Export = true)]
+		[Key(key = "BlendUVDistortionTextureParameter_Texture")]
+		public Value.PathForImage Texture { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendUVDistortionTextureParameter_Intensity")]
+		public Value.Float UVDistortionIntensity { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendUVDistortionTextureParameter_Filter")]
+		public Value.Enum<RendererCommonValues.FilterType> Filter { get; private set; }
+
+		[IO(Export = true)]
+		[Key(key = "BlendUVDistortionTextureParameter_Wrap")]
+		public Value.Enum<RendererCommonValues.WrapType> Wrap { get; private set; }
+
+		[Selector(ID = 105)]
+		[IO(Export = true)]
+		[Key(key = "BRS_UV6")]
+		public Value.Enum<RendererCommonValues.UVType> UV { get; private set; }
+
+		[Selected(ID = 105, Value = 0)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVDefaultParamater UVDefault { get; private set; }
+
+		[Selected(ID = 105, Value = 1)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFixedParamater UVFixed { get; private set; }
+
+		[Selected(ID = 105, Value = 2)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVAnimationParamater UVAnimation { get; private set; }
+
+		[Selected(ID = 105, Value = 3)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVScrollParamater UVScroll { get; private set; }
+
+		[Selected(ID = 105, Value = 4)]
+		[IO(Export = true)]
+		public RendererCommonValues.UVFCurveParamater UVFCurve { get; private set; }
+
+		public BlendUVDistortionTextureParameter(Value.Path basepath)
+		{
+			Texture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
+			UVDistortionIntensity = new Value.Float(0.01f, 100.0f, -100.0f, 0.01f);
+			Filter = new Value.Enum<RendererCommonValues.FilterType>(RendererCommonValues.FilterType.Linear);
+			Wrap = new Value.Enum<RendererCommonValues.WrapType>(RendererCommonValues.WrapType.Repeat);
+			UV = new Value.Enum<RendererCommonValues.UVType>();
+			UVDefault = new RendererCommonValues.UVDefaultParamater();
+			UVFixed = new RendererCommonValues.UVFixedParamater();
+			UVAnimation = new RendererCommonValues.UVAnimationParamater();
+			UVScroll = new RendererCommonValues.UVScrollParamater();
+			UVFCurve = new RendererCommonValues.UVFCurveParamater();
+		}
+	}
+
+	public class BlendTextureParameters : IToggleMode
+	{
+		[IO(Export = true)]
+		[Shown(Shown = false)]
+		public Value.Boolean Enabled { get; private set; } = new Value.Boolean(false);
+
+		[IO(Export = true)]
+		public BlendTextureParameter BlendTextureParam { get; private set; }
+
+		[Selector(ID = 400)]
+		[IO(Export = true)]
+		[Key(key = "BlendTextureParameters_EnableBlendAlphaTexture")]
+		public Value.Boolean EnableBlendAlphaTexture { get; private set; }
+
+		[Selected(ID = 400, Value = 0)]
+		[IO(Export = true)]
+		public BlendAlphaTextureParameter BlendAlphaTextureParam { get; private set; }
+
+		[Selector(ID = 500)]
+		[IO(Export = true)]
+		[Key(key = "BlendTextureParameters_EnableBlendUVDistortionTexture")]
+		public Value.Boolean EnableBlendUVDistortionTexture { get; private set; }
+
+		[Selected(ID = 500, Value = 0)]
+		[IO(Export = true)]
+		public BlendUVDistortionTextureParameter BlendUVDistortionTextureParam { get; private set; }
+
+		public BlendTextureParameters(Value.Path basepath)
+		{
+			BlendTextureParam = new BlendTextureParameter(basepath);
+
+			EnableBlendAlphaTexture = new Value.Boolean(false);
+			BlendAlphaTextureParam = new BlendAlphaTextureParameter(basepath);
+
+			EnableBlendUVDistortionTexture = new Value.Boolean(false);
+			BlendUVDistortionTextureParam = new BlendUVDistortionTextureParameter(basepath);
+		}
+	}
+
+	public class SoftParticleParameters : IToggleMode
+	{
+		[IO(Export = true)]
+		[Shown(Shown = false)]
+		public Value.Boolean Enabled { get; private set; } = new Value.Boolean(false);
+
+		[IO(Export = true)]
+		[Key(key = "SoftParticleParameters_DistanceFar")]
+		public Value.Float Distance { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
+
+		[IO(Export = true)]
+		[Key(key = "SoftParticleParameters_DistanceNear")]
+		public Value.Float DistanceNear { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
+
+		[IO(Export = true)]
+		[Key(key = "SoftParticleParameters_DistanceNearOffset")]
+		public Value.Float DistanceNearOffset { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
+	}
+
 	public class AdvancedRenderCommonValues
 	{
 		const int FalloffParameterID = 1000;
 
-		[Selector(ID = 100)]
 		[IO(Export = true)]
-		[Key(key = "AdvancedRenderCommonValues_EnableAlphaTexture")]
-		public Value.Boolean EnableAlphaTexture { get; private set; }
-
-		[IO(Export = true)]
-		[Selected(ID = 100, Value = 0)]
+		[TreeNode(id = "AlphaTextureParameter_Texture_Name", key = "AlphaTextureParameter_Texture_Name")]
 		public AlphaTextureParameter AlphaTextureParam { get; private set; }
 
-
-		[Selector(ID = 200)]
 		[IO(Export = true)]
-		[Key(key = "AdvancedRenderCommonValues_EnableUVDistortionTexture")]
-		public Value.Boolean EnableUVDistortionTexture { get; private set; }
-
-		[IO(Export = true)]
-		[Selected(ID = 200, Value = 0)]
+		[TreeNode(id = "UVDistortionTextureParameter_Texture_Name", key = "UVDistortionTextureParameter_Texture_Name")]
 		public UVDistortionTextureParameter UVDistortionTextureParam { get; private set; }
 
 		[IO(Export = true)]
+		[TreeNode(id = "AlphaCutoffParameter_ParameterType_Name", key = "AlphaCutoffParameter_ParameterType_Name")]
 		public AlphaCutoffParameter AlphaCutoffParam { get; private set; }
 
-		[Selector(ID = FalloffParameterID)]
 		[IO(Export = true)]
-		[Key(key = "ModelParameter_EnableFalloff")]
-		public Value.Boolean EnableFalloff { get; private set; } = new Value.Boolean(false);
-
-		[Selected(ID = FalloffParameterID, Value = 0)]
-		[IO(Export = true)]
+		[TreeNode(id = "FalloffParameter_Name", key = "FalloffParameter_Name")]
 		public FalloffParameter FalloffParam { get; private set; } = new FalloffParameter();
 
-		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistanceFar")]
-		public Value.Float SoftParticleDistance { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
+		[IO(Export = true)]
+		[TreeNode(id = "BlendTextureParameters_Name", key = "BlendTextureParameters_Name")]
+		public BlendTextureParameters BlendTextureParams { get; private set; }
 
-		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistanceNear")]
-		public Value.Float SoftParticleDistanceNear { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
-
-		[Key(key = "AdvancedRenderCommonValues_SoftParticleDistanceNearOffset")]
-		public Value.Float SoftParticleDistanceNearOffset { get; private set; } = new Value.Float(0.0f, float.MaxValue, 0.0f, 0.1f);
+		[IO(Export = true)]
+		[TreeNode(id = "SoftParticleParameters_Name", key = "SoftParticleParameters_Name")]
+		public SoftParticleParameters SoftParticleParams { get; private set; }
 
 		public AdvancedRenderCommonValues(Value.Path basepath)
         {
-			EnableAlphaTexture = new Value.Boolean(false);
 			AlphaTextureParam = new AlphaTextureParameter(basepath);
-
-			EnableUVDistortionTexture = new Value.Boolean(false);
 			UVDistortionTextureParam = new UVDistortionTextureParameter(basepath);
-
 			AlphaCutoffParam = new AlphaCutoffParameter();
-        }
+			BlendTextureParams = new BlendTextureParameters(basepath);
+			SoftParticleParams = new SoftParticleParameters();
+		}
     }
 }

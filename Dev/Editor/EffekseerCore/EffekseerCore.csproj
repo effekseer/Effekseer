@@ -119,13 +119,13 @@
     <Compile Include="Binary\RenderData\UvAggregator.cs" />
     <Compile Include="Binary\RenderData\UvSerializer.cs" />
     <Compile Include="Binary\RenderData\TextureInformationRepository.cs" />
+    <Compile Include="Data\Group\IToggleMode.cs" />
     <Compile Include="Data\Group\IUvCommandValues.cs" />
     <Compile Include="Command\CommandManager.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Data\AdvancedRenderCommonValues.cs" />
-    <Compile Include="Data\AdvancedRenderCommonValues2.cs" />
     <Compile Include="Data\DepthValues.cs" />
     <Compile Include="Data\Dynamic.cs" />
     <Compile Include="Data\EffectCullingValues.cs" />
