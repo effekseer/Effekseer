@@ -207,6 +207,9 @@ if env['IGNORE_BUILD'] == '0':
     else:
         call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r linux-x64')
+        call('chmod +x Dev/release/tools/fbxToEffekseerCurveConverter')
+        call('chmod +x Dev/release/tools/fbxToEffekseerModelConverter')
+        call('chmod +x Dev/release/tools/libfbxsdk.so')
         call('cp -r Dev/release/linux-x64/publish/* Dev/release/')
 
 if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
