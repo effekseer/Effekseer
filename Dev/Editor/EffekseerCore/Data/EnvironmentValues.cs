@@ -7,9 +7,17 @@ namespace Effekseer.Data
 {
 	public class EnvironmentGroundValues
 	{
-		[Key(key = "Environment_IsGroundShown")]
+		[Key(key = "EnvironmentGround_IsShown")]
 		[Undo(Undo = false)]
-		public Value.Boolean IsGroundShown { get; private set; } = new Value.Boolean(false);
+		public Value.Boolean IsShown { get; private set; } = new Value.Boolean(false);
+
+		[Key(key = "EnvironmentGround_Height")]
+		[Undo(Undo = false)]
+		public Value.Float Height { get; private set; } = new Value.Float(0.0f, 1000.0f, -1000.0f);
+
+		[Key(key = "EnvironmentGround_Extent")]
+		[Undo(Undo = false)]
+		public Value.Int Extent { get; private set; } = new Value.Int(10, 1000, 1);
 	}
 
 	public class EnvironmentBackgroundValues

@@ -307,7 +307,7 @@ public:
 
 	bool InvalidateTextureCache();
 
-	void SetIsGroundShown(bool value);
+	void SetGroundParameters(bool shown, float height, int32_t extent);
 
 	void SetIsGridShown(bool value, bool xy, bool xz, bool yz);
 

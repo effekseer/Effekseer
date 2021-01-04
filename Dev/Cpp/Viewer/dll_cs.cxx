@@ -2710,13 +2710,17 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_InvalidateTextu
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetIsGroundShown___(void * jarg1, unsigned int jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetGroundParameters___(void * jarg1, unsigned int jarg2, float jarg3, int jarg4) {
   Native *arg1 = (Native *) 0 ;
   bool arg2 ;
+  float arg3 ;
+  int32_t arg4 ;
   
   arg1 = (Native *)jarg1; 
   arg2 = jarg2 ? true : false; 
-  (arg1)->SetIsGroundShown(arg2);
+  arg3 = (float)jarg3; 
+  arg4 = (int32_t)jarg4; 
+  (arg1)->SetGroundParameters(arg2,arg3,arg4);
 }
 
 

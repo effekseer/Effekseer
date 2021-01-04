@@ -203,8 +203,8 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public void SetIsGroundShown(bool value) {
-    EffekseerNativePINVOKE.Native_SetIsGroundShown(swigCPtr, value);
+  public void SetGroundParameters(bool shown, float offsetY, int extent) {
+    EffekseerNativePINVOKE.Native_SetGroundParameters(swigCPtr, shown, offsetY, extent);
   }
 
   public void SetIsGridShown(bool value, bool xy, bool xz, bool yz) {

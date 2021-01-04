@@ -1,2 +1,5 @@
 ﻿Environment_Ground,地面
-Environment_IsGroundShown_Name,地面の表示
+EnvironmentGround_IsShown_Name,地面の表示
+EnvironmentGround_IsShown_Desc,"地面を表示するかどうか切り替えます。"
+EnvironmentGround_Height_Name,地面の高さ
+EnvironmentGround_Extent_Name,地面の広さ

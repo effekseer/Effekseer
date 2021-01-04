@@ -505,7 +505,10 @@ namespace Effekseer.GUI
 				}
 
 				// update environment
-				native.SetIsGroundShown(Core.Environment.Ground.IsGroundShown.Value);
+				native.SetGroundParameters(
+					Core.Environment.Ground.IsShown.Value,
+					Core.Environment.Ground.Height.Value,
+					Core.Environment.Ground.Extent.Value);
 
 				native.SetBackgroundColor(
 				(byte)Core.Environment.Background.BackgroundColor.R,

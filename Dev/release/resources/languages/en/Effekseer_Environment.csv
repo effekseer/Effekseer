@@ -1,2 +1,5 @@
 ﻿Environment_Ground,Ground
-Environment_IsGroundShown_Name,"Toggle the visibility of the ground"
+EnvironmentGround_IsShown_Name,Ground Visible
+EnvironmentGround_IsShown_Desc,"Toggle the visibility of the ground"
+EnvironmentGround_Height_Name,Ground Height
+EnvironmentGround_Extent_Name,Ground Extent

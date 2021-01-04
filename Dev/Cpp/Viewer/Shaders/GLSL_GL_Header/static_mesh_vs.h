@@ -25,6 +25,7 @@ struct VS_ConstantBuffer
 {
     mat4 projectionMatrix;
     mat4 cameraMatrix;
+    mat4 worldMatrix;
 };
 
 uniform VS_ConstantBuffer CBVS0;
@@ -41,7 +42,8 @@ out vec4 _VSPS_Position;
 VS_Output _main(VS_Input _input)
 {
     vec4 localPos = vec4(_input.Pos, 1.0);
-    vec4 cameraPos = localPos * CBVS0.cameraMatrix;
+    vec4 worldPos = localPos * CBVS0.worldMatrix;
+    vec4 cameraPos = worldPos * CBVS0.cameraMatrix;
     VS_Output _output;
     _output.Pos = cameraPos * CBVS0.projectionMatrix;
     _output.UV = _input.UV;

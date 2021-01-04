@@ -27,9 +27,9 @@ namespace Effekseer
 namespace Tool
 {
 
-std::shared_ptr<StaticMesh> StaticMesh::Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes)
+std::shared_ptr<StaticMesh> StaticMesh::Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes, bool isDyanmic)
 {
-	auto vb = graphicsDevice->CreateVertexBuffer(static_cast<int32_t>(sizeof(StaticMeshVertex) * vertexes.size()), vertexes.data(), false);
+	auto vb = graphicsDevice->CreateVertexBuffer(static_cast<int32_t>(sizeof(StaticMeshVertex) * vertexes.size()), vertexes.data(), isDyanmic);
 	auto ib = graphicsDevice->CreateIndexBuffer(static_cast<int32_t>(indexes.size()), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 
 	if (vb == nullptr || ib == nullptr)
@@ -52,7 +52,7 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 {
 	// shader
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
-	uniformLayoutElements.resize(6);
+	uniformLayoutElements.resize(7);
 	uniformLayoutElements[0].Name = "CBVS0.projectionMatrix";
 	uniformLayoutElements[0].Offset = 0;
 	uniformLayoutElements[0].Stage = Effekseer::Backend::ShaderStageType::Vertex;
@@ -61,23 +61,27 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 	uniformLayoutElements[1].Offset = sizeof(float) * 16;
 	uniformLayoutElements[1].Stage = Effekseer::Backend::ShaderStageType::Vertex;
 	uniformLayoutElements[1].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
+	uniformLayoutElements[2].Name = "CBVS0.worldMatrix";
+	uniformLayoutElements[2].Offset = sizeof(float) * 32;
+	uniformLayoutElements[2].Stage = Effekseer::Backend::ShaderStageType::Vertex;
+	uniformLayoutElements[2].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
 
-	uniformLayoutElements[2].Name = "CBPS0.isLit";
-	uniformLayoutElements[2].Offset = 0;
-	uniformLayoutElements[2].Stage = Effekseer::Backend::ShaderStageType::Pixel;
-	uniformLayoutElements[2].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
-	uniformLayoutElements[3].Name = "CBPS0.directionalLightDirection";
-	uniformLayoutElements[3].Offset = sizeof(float) * 4;
+	uniformLayoutElements[3].Name = "CBPS0.isLit";
+	uniformLayoutElements[3].Offset = 0;
 	uniformLayoutElements[3].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 	uniformLayoutElements[3].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
-	uniformLayoutElements[4].Name = "CBPS0.directionalLightColor";
-	uniformLayoutElements[4].Offset = sizeof(float) * 8;
+	uniformLayoutElements[4].Name = "CBPS0.directionalLightDirection";
+	uniformLayoutElements[4].Offset = sizeof(float) * 4;
 	uniformLayoutElements[4].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 	uniformLayoutElements[4].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
-	uniformLayoutElements[5].Name = "CBPS0.ambientLightColor";
-	uniformLayoutElements[5].Offset = sizeof(float) * 12;
+	uniformLayoutElements[5].Name = "CBPS0.directionalLightColor";
+	uniformLayoutElements[5].Offset = sizeof(float) * 8;
 	uniformLayoutElements[5].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 	uniformLayoutElements[5].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
+	uniformLayoutElements[6].Name = "CBPS0.ambientLightColor";
+	uniformLayoutElements[6].Offset = sizeof(float) * 12;
+	uniformLayoutElements[6].Stage = Effekseer::Backend::ShaderStageType::Pixel;
+	uniformLayoutElements[6].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
 
 	// constant buffer
 	auto vcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferVS), nullptr);
@@ -170,6 +174,7 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 
 	uvs.projectionMatrix = rendererParameter.ProjectionMatrix;
 	uvs.cameraMatrix = rendererParameter.CameraMatrix;
+	uvs.worldMatrix = rendererParameter.WorldMatrix;
 
 	if (graphicsDevice_->GetDeviceName() == "DirectX11")
 	{
@@ -178,6 +183,7 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 	{
 		uvs.cameraMatrix.Transpose();
 		uvs.projectionMatrix.Transpose();
+		uvs.worldMatrix.Transpose();
 	}
 
 	ups.isLit[0] = staticMesh_->IsLit ? 1.0f : 0.0f;
@@ -208,6 +214,11 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 void StaticMeshRenderer::SetStaticMesh(const std::shared_ptr<StaticMesh>& mesh)
 {
 	staticMesh_ = mesh;
+}
+
+std::shared_ptr<StaticMesh>& StaticMeshRenderer::GetStaticMesh()
+{
+	return staticMesh_;
 }
 
 } // namespace Tool

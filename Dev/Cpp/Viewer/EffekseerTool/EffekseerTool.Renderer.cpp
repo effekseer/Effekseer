@@ -103,33 +103,40 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 			return false;
 		}
 
-		Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData;
-		vbData.resize(4);
-		vbData[0].Pos = {-10.0f, 0.0f, -10.0f};
-		vbData[0].VColor = {90, 90, 90, 255};
-		vbData[1].Pos = {10.0f, 0.0f, -10.0f};
-		vbData[1].VColor = {90, 90, 90, 255};
-		vbData[2].Pos = {10.0f, 0.0f, 10.0f};
-		vbData[2].VColor = {90, 90, 90, 255};
-		vbData[3].Pos = {-10.0f, 0.0f, 10.0f};
-		vbData[3].VColor = {90, 90, 90, 255};
+		Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData(4);
+		Effekseer::CustomVector<int32_t> ibData = {0, 1, 2, 0, 2, 3};
 
-		for (auto& vb : vbData)
+		auto staticMesh = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData, true);
+
+		// 市松模様のテクスチャを作成
+		Effekseer::Backend::TextureParameter texParams;
+		texParams.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+		texParams.Size = {128, 128};
+		texParams.InitialData.resize(texParams.Size[0] * texParams.Size[1] * 4);
+		for (size_t i = 0; i < texParams.InitialData.size() / 4; i++)
 		{
-			vb.Normal = {0.0f, 1.0f, 0.0f};
+			const size_t x = i % texParams.Size[0] * 2 / texParams.Size[0];
+			const size_t y = i / texParams.Size[1] * 2 / texParams.Size[1];
+			if (x ^ y == 0)
+			{
+				texParams.InitialData[i * 4 + 0] = 90;
+				texParams.InitialData[i * 4 + 1] = 90;
+				texParams.InitialData[i * 4 + 2] = 90;
+				texParams.InitialData[i * 4 + 3] = 255;
+			}
+			else
+			{
+				texParams.InitialData[i * 4 + 0] = 60;
+				texParams.InitialData[i * 4 + 1] = 60;
+				texParams.InitialData[i * 4 + 2] = 60;
+				texParams.InitialData[i * 4 + 3] = 255;
+			}
 		}
-		Effekseer::CustomVector<int32_t> ibData;
-		ibData.resize(6);
-		ibData[0] = 0;
-		ibData[1] = 1;
-		ibData[2] = 2;
-		ibData[3] = 0;
-		ibData[4] = 2;
-		ibData[5] = 3;
-
-		auto staticMesh = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+		staticMesh->Texture = graphics_->GetGraphicsDevice()->CreateTexture(texParams);
 
 		staticMeshRenderer_->SetStaticMesh(staticMesh);
+
+		UpdateGround();
 	}
 
 	return true;
@@ -144,6 +151,7 @@ void MainScreenRenderedEffectGenerator::OnAfterClear()
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix.Indentity();
 		param.ProjectionMatrix.Indentity();
+		param.WorldMatrix.Indentity();
 		backgroundRenderer_->Render(param);
 	}
 
@@ -152,10 +160,10 @@ void MainScreenRenderedEffectGenerator::OnAfterClear()
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix = renderer_->GetCameraMatrix();
 		param.ProjectionMatrix = renderer_->GetProjectionMatrix();
+		param.WorldMatrix.Translation(0.0f, GroundHeight, 0.0f);
 		param.DirectionalLightDirection = renderer_->GetLightDirection().ToFloat4();
 		param.DirectionalLightColor = renderer_->GetLightColor().ToFloat4();
 		param.AmbientLightColor = renderer_->GetLightAmbientColor().ToFloat4();
-
 		staticMeshRenderer_->Render(param);
 	}
 
@@ -200,6 +208,32 @@ void MainScreenRenderedEffectGenerator::LoadBackgroundImage(const char16_t* path
 	}
 
 	backgroundTexture_ = textureLoader_->Load(path, Effekseer::TextureType::Color);
+}
+
+void MainScreenRenderedEffectGenerator::UpdateGround()
+{
+	std::array<Effekseer::Tool::StaticMeshVertex, 4> vbData;
+
+	vbData[0].Pos = {-(float)GroundExtent, 0.0f, -(float)GroundExtent};
+	vbData[0].VColor = {255, 255, 255, 255};
+	vbData[0].UV = {0.0f, 0.0f};
+	vbData[1].Pos = {(float)GroundExtent, 0.0f, -(float)GroundExtent};
+	vbData[1].VColor = {255, 255, 255, 255};
+	vbData[1].UV = {(float)GroundExtent, 0.0f};
+	vbData[2].Pos = {(float)GroundExtent, 0.0f, (float)GroundExtent};
+	vbData[2].VColor = {255, 255, 255, 255};
+	vbData[2].UV = {(float)GroundExtent, (float)GroundExtent};
+	vbData[3].Pos = {-(float)GroundExtent, 0.0f, (float)GroundExtent};
+	vbData[3].VColor = {255, 255, 255, 255};
+	vbData[3].UV = {0.0f, (float)GroundExtent};
+
+	for (auto& vb : vbData)
+	{
+		vb.Normal = {0.0f, 1.0f, 0.0f};
+	}
+
+	staticMeshRenderer_->GetStaticMesh()->GetVertexBuffer()->UpdateData(
+		vbData.data(), static_cast<int32_t>(vbData.size() * sizeof(Effekseer::Tool::StaticMeshVertex)), 0);
 }
 
 ViewPointController::ViewPointController()

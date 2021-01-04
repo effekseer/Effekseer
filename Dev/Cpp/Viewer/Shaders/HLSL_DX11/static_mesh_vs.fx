@@ -3,6 +3,7 @@ cbuffer VS_ConstantBuffer : register(b0)
 {
 	float4x4 projectionMatrix;
 	float4x4 cameraMatrix;
+	float4x4 worldMatrix;
 }
 
 struct VS_Input
@@ -26,7 +27,8 @@ VS_Output main(const VS_Input input)
 {
 	VS_Output output;
 	float4 localPos = float4(input.Pos, 1.0f);
-	float4 cameraPos = mul(cameraMatrix, localPos);
+	float4 worldPos = mul(worldMatrix, localPos);
+	float4 cameraPos = mul(cameraMatrix, worldPos);
 	output.Pos = mul(projectionMatrix, cameraPos);
 	output.UV = input.UV;
 	output.Color = input.Color;

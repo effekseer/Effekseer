@@ -63,9 +63,15 @@ public:
 
 	bool IsGroundShown = false;
 
+	float GroundHeight = 0.0f;
+
+	int32_t GroundExtent = 10;
+
 	Effekseer::Vector3D CullingPosition;
 
 	void LoadBackgroundImage(const char16_t* path);
+
+	void UpdateGround();
 };
 
 class ViewPointController

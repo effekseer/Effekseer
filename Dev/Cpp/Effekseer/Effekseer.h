@@ -2326,6 +2326,8 @@ class VertexBuffer
 public:
 	VertexBuffer() = default;
 	virtual ~VertexBuffer() = default;
+
+	virtual void UpdateData(const void* src, int32_t size, int32_t offset) = 0;
 };
 
 class IndexBuffer
@@ -2338,6 +2340,8 @@ protected:
 public:
 	IndexBuffer() = default;
 	virtual ~IndexBuffer() = default;
+
+	virtual void UpdateData(const void* src, int32_t size, int32_t offset) = 0;
 
 	IndexBufferStrideType GetStrideType() const
 	{

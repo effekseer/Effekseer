@@ -410,7 +410,9 @@ namespace Effekseer.GUI
 			Core.Environment.Background.BackgroundColor.A.OnChanged += OnChanged;
 			Core.Environment.Background.BackgroundImage.OnChanged += OnChanged;
 
-			Core.Environment.Ground.IsGroundShown.OnChanged += OnChanged;
+			Core.Environment.Ground.IsShown.OnChanged += OnChanged;
+			Core.Environment.Ground.Height.OnChanged += OnChanged;
+			Core.Environment.Ground.Extent.OnChanged += OnChanged;
 
 			Core.Culling.IsShown.OnChanged += OnChanged;
 			Core.Culling.Type.OnChanged += OnChanged;

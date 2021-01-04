@@ -12,6 +12,7 @@ struct RendererParameter
 {
 	Effekseer::Matrix44 ProjectionMatrix;
 	Effekseer::Matrix44 CameraMatrix;
+	Effekseer::Matrix44 WorldMatrix;
 	std::array<float, 4> DirectionalLightDirection;
 	std::array<float, 4> DirectionalLightColor;
 	std::array<float, 4> AmbientLightColor;
@@ -52,7 +53,7 @@ public:
 	Backend::TextureRef Texture;
 	bool IsLit = true;
 
-	static std::shared_ptr<StaticMesh> Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes);
+	static std::shared_ptr<StaticMesh> Create(Effekseer::RefPtr<Backend::GraphicsDevice> graphicsDevice, Effekseer::CustomVector<StaticMeshVertex> vertexes, Effekseer::CustomVector<int32_t> indexes, bool isDyanmic = false);
 };
 
 class StaticMeshRenderer
@@ -62,6 +63,7 @@ private:
 	{
 		Effekseer::Matrix44 projectionMatrix;
 		Effekseer::Matrix44 cameraMatrix;
+		Effekseer::Matrix44 worldMatrix;
 	};
 
 	struct UniformBufferPS
@@ -90,6 +92,8 @@ public:
 	void Render(const RendererParameter& rendererParameter);
 
 	void SetStaticMesh(const std::shared_ptr<StaticMesh>& mesh);
+
+	std::shared_ptr<StaticMesh>& GetStaticMesh();
 };
 
 } // namespace Tool
