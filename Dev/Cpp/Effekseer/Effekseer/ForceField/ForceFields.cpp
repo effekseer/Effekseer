@@ -450,7 +450,7 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 		VelocitySum += Velocities[i];
 	}
 
-	GlobalModifyLocation += VelocitySum;
+	GlobalModifyLocation += VelocitySum * deltaFrame;
 }
 
 void LocalForceFieldInstance::Reset()

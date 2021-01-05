@@ -227,7 +227,7 @@ public:
 			return dir * ffp.Power / distance;
 		}
 
-		return dir * ffp.Power;
+		return dir * ffp.Power * ffc.DeltaFrame;
 	}
 
 	/**
@@ -236,7 +236,7 @@ public:
 	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldWindParameter& ffp)
 	{
 		auto dir = SIMD::Vec3f(0, 1, 0);
-		return dir * ffp.Power;
+		return dir * ffp.Power * ffc.DeltaFrame;
 	}
 
 	/**
@@ -272,7 +272,7 @@ public:
 
 		auto xlen = power / distance * (power / 2.0f);
 		auto flen = sqrt(power * power - xlen * xlen);
-		return (front * flen - localPos * xlen) * direction - ffc.PreviousVelocity;
+		return ((front * flen - localPos * xlen) * direction - ffc.PreviousVelocity) * ffc.DeltaFrame;
 	}
 
 	/**
@@ -295,7 +295,7 @@ public:
 		}
 
 		auto acc = vel - ffc.PreviousVelocity;
-		return acc;
+		return acc * ffc.DeltaFrame;
 	}
 
 	/**
@@ -303,12 +303,12 @@ public:
 	*/
 	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldDragParameter& ffp)
 	{
-		return -ffc.PreviousSumVelocity * ffp.Power;
+		return -ffc.PreviousSumVelocity * ffp.Power * ffc.DeltaFrame;
 	}
 
 	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldGravityParameter& ffp)
 	{
-		return ffp.Gravity;
+		return ffp.Gravity * ffc.DeltaFrame;
 	}
 
 	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldAttractiveForceParameter& ffp)
