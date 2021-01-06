@@ -1,56 +1,58 @@
-﻿ProcedualModel_Name,Procedual model
+﻿ProcedualModel_Name,プロシージャルモデル
 
-ProcedualModelType_Mesh_Name,Mesh
-ProcedualModelType_Ribbon_Name,Ribbon
+ProcedualModelType_Mesh_Name,メッシュ
+ProcedualModelType_Ribbon_Name,リボン
 
-ProcedualModelPrimitiveType_Sphere_Name,Sphere
-ProcedualModelPrimitiveType_Cone_Name,Cone
-ProcedualModelPrimitiveType_Cylinder_Name,Cylinder
-ProcedualModelPrimitiveType_Spline_Name,Spline
+ProcedualModelPrimitiveType_Sphere_Name,球
+ProcedualModelPrimitiveType_Cone_Name,コーン
+ProcedualModelPrimitiveType_Cylinder_Name,円柱
+ProcedualModelPrimitiveType_Spline_Name,スプライン
 
-ProcedualModelCrossSectionType_Plane_Name,Plane
-ProcedualModelCrossSectionType_Cross_Name,Cross
-ProcedualModelCrossSectionType_Point_Name,Point
+ProcedualModelCrossSectionType_Plane_Name,平面
+ProcedualModelCrossSectionType_Cross_Name,十字
+ProcedualModelCrossSectionType_Point_Name,点
 
-PM_Type_Name,Type
-PM_AngleBeginEnd_Name,Region(Angle)
-PM_Divisions_Name,Division
-PM_Rotate_Name,Rotated angle
-PM_Vertices_Name,The number of vertices
-PM_Count_Name,THe number of ribbons
-PM_RibbonScales_Name,Thiness of ribbon
-PM_RibbonAngles_Name,Angles of ribbon
-PM_RibbonNoises_Name,Noises to length
+PM_Type_Name,種類
+PM_AngleBeginEnd_Name,範囲(角度)
+PM_Divisions_Name,分割数
+PM_Rotate_Name,回転角度
+PM_Vertices_Name,頂点数
+PM_Count_Name,リボンの本数
+PM_RibbonScales_Name,太さ
+PM_RibbonAngles_Name,角度
+PM_RibbonNoises_Name,ノイズ(長さ)
 
-PM_PrimitiveType_Name,PrimitiveType
-PM_Radius_Name,Radius1
-PM_Radius2_Name,Radius2
-PM_Depth_Name,Depth
-PM_DepthMin_Name,Depth(Bottom)
-PM_DepthMax_Name,Depth(Top)
+PM_PrimitiveType_Name,形状の種類
+PM_Radius_Name,半径1
+PM_Radius2_Name,半径2
+PM_Depth_Name,深さ
+PM_DepthMin_Name,深さ(下)
+PM_DepthMax_Name,深さ(上)
 
-PM_Point1_Name,Point1
-PM_Point2_Name,Point2
-PM_Point3_Name,Point3
-PM_Point4_Name,Point4
+PM_Point1_Name,点1
+PM_Point2_Name,点2
+PM_Point3_Name,点3
+PM_Point4_Name,点4
 
-PM_TiltNoiseFreq_Name,TiltNoise Frequency
-PM_TiltNoiseOffset_Name,TiltNoise Offset
-PM_TiltNoisePower_Name,TiltNoise Power
+PM_AxisType_Name,軸
 
-PM_WaveNoiseFreq_Name,WaveNoise Frequency
-PM_WaveNoiseOffset_Name,WaveNoise Offset
-PM_WaveNoisePower_Name,WaveNoise Power
+PM_TiltNoiseFreq_Name,チルトノイズ 頻度
+PM_TiltNoiseOffset_Name,チルトノイズ オフセット
+PM_TiltNoisePower_Name,チルトノイズ 力
 
-PM_CurlNoiseFreq_Name,CurlNoise Frequency
-PM_CurlNoiseOffset_Name,CurlNoise Offset
-PM_CurlNoisePower_Name,CurlNoise Power
+PM_WaveNoiseFreq_Name,波ノイズ 頻度
+PM_WaveNoiseOffset_Name,波ノイズ オフセット
+PM_WaveNoisePower_Name,波ノイズ 力
 
-PM_ColorLeft_Name,Color-Left
-PM_ColorCenter_Name,Color-Center
-PM_ColorRight_Name,Color-Right
-PM_ColorLeftMiddle_Name,Color-LeftMiddle
-PM_ColorCenterMiddle_Name,Color-CenterMiddle
-PM_ColorRightMiddle_Name,Color-RightMiddle
+PM_CurlNoiseFreq_Name,カールノイズ 頻度
+PM_CurlNoiseOffset_Name,カールノイズ オフセット
+PM_CurlNoisePower_Name,カールノイズ 力
 
+PM_ColorLeft_Name,色-左
+PM_ColorCenter_Name,色-中央
+PM_ColorRight_Name,色-右
+PM_ColorLeftMiddle_Name,色-左中央
+PM_ColorCenterMiddle_Name,色-中央-中央
+PM_ColorRightMiddle_Name,色-右中央
+PM_ColorCenterArea_Name,中央領域割合
 

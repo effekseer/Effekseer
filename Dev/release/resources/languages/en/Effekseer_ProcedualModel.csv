@@ -22,7 +22,7 @@ PM_RibbonScales_Name,Thiness of ribbon
 PM_RibbonAngles_Name,Angles of ribbon
 PM_RibbonNoises_Name,Noises to length
 
-PM_PrimitiveType_Name,PrimitiveType
+PM_PrimitiveType_Name,Shape Type
 PM_Radius_Name,Radius1
 PM_Radius2_Name,Radius2
 PM_Depth_Name,Depth
@@ -33,6 +33,8 @@ PM_Point1_Name,Point1
 PM_Point2_Name,Point2
 PM_Point3_Name,Point3
 PM_Point4_Name,Point4
+
+PM_AxisType_Name,Axis
 
 PM_TiltNoiseFreq_Name,TiltNoise Frequency
 PM_TiltNoiseOffset_Name,TiltNoise Offset
@@ -52,3 +54,4 @@ PM_ColorRight_Name,Color-Right
 PM_ColorLeftMiddle_Name,Color-LeftMiddle
 PM_ColorCenterMiddle_Name,Color-CenterMiddle
 PM_ColorRightMiddle_Name,Color-RightMiddle
+PM_ColorCenterArea_Name, Rate of center area
