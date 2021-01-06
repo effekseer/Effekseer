@@ -810,6 +810,26 @@ public:
 	*/
 	virtual void RessignCulling() = 0;
 
+	/**
+		@brief
+		\~English	Lock rendering events
+		\~Japanese	レンダリングのイベントをロックする。
+		@note
+		\~English	I recommend to read internal codes.
+		\~Japanese	内部コードを読むことを勧めます。
+	*/
+	virtual void LockRendering() = 0;
+
+	/**
+		@brief
+		\~English	Unlock rendering events
+		\~Japanese	レンダリングのイベントをアンロックする。
+		@note
+		\~English	I recommend to read internal codes.
+		\~Japanese	内部コードを読むことを勧めます。
+	*/
+	virtual void UnlockRendering() = 0;
+
 	virtual ManagerImplemented* GetImplemented() = 0;
 };
 //----------------------------------------------------------------------------------

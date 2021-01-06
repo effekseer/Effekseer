@@ -460,6 +460,10 @@ public:
 		return ReferenceObject::Release();
 	}
 
+	void LockRendering() override;
+
+	void UnlockRendering() override;
+
 	ManagerImplemented* GetImplemented() override
 	{
 		return this;
