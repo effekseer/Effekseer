@@ -24,8 +24,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "Effekseerパッケージ";
-				return "Effekseer package";
+				return Resources.GetString("EfkPkgFormat");
 			}
 		}
 
@@ -33,8 +32,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "Effekseerパッケージで出力する。";
-				return "Export as Effekseer package";
+				return Resources.GetString("ImportEfkPkgFormatDescription");
 			}
 		}
 
@@ -42,8 +40,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "Effekseerパッケージ (*.efkpkg)|*.efkpkg";
-				return "Effekseer package (*.efkpkg)|*.efkpkg";
+				return Resources.GetString("EfkPkgFormatFilter");
 			}
 		}
 

@@ -233,6 +233,10 @@ Material_OldFomatCache,"キャッシュ - 古いフォーマット
 DefaultFormat,標準形式
 ExportDefaultFormat,標準形式で出力する。
 DefaultFormatExample,標準形式 (*.efk)|*.efk
+EfkPkgFormat,Effekseerパッケージ
+ExportEfkPkgFormatDescription,Effekseerパッケージでエクスポートする
+ImportEfkPkgFormatDescription,Effekseerパッケージからインポートする
+EfkPkgFormatFilter,"Effekseerパッケージ (*.efkpkg)|*.efkpkg"
 Maginification,拡大率
 GlbFormat,glb形式
 ExportAsGlbFormat,glb形式で出力する。
