@@ -231,6 +231,10 @@ Please regenerate."
 DefaultFormat,Default format
 ExportDefaultFormat,Export as default format
 DefaultFormatExample,Default format (*.efk)|*.efk
+EfkPkgFormat,Effekseer package
+ExportEfkPkgFormatDescription,Export as Effekseer package
+ImportEfkPkgFormatDescription,Import from Effekseer package
+EfkPkgFormatFilter,"Effekseer package (*.efkpkg)|*.efkpkg"
 Maginification,Maginification
 GlbFormat,glb format
 ExportAsGlbFormat,Export as glb format

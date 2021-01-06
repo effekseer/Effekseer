@@ -37,7 +37,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("EfkPkgFormatDescription");
+				return Resources.GetString("ExportEfkPkgFormatDescription");
 			}
 		}
 
