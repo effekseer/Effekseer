@@ -272,7 +272,7 @@ void LocalForceFieldParameter::MaintainAttractiveForceCompatibility(const float 
 	LocalForceFields[3].IsGlobal = true;
 }
 
-void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification)
+void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame)
 {
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
@@ -290,6 +290,7 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		ffcp.Position = location / magnification;
 		ffcp.PreviousSumVelocity = VelocitySum + ExternalVelocity;
 		ffcp.PreviousVelocity = Velocities[i];
+		ffcp.DeltaFrame = deltaFrame;
 		ffcp.IsFieldRotated = field.IsRotated;
 
 		if (field.IsRotated)
@@ -366,7 +367,7 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		VelocitySum += Velocities[i];
 	}
 
-	ModifyLocation += VelocitySum;
+	ModifyLocation += VelocitySum * deltaFrame;
 }
 
 void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame)

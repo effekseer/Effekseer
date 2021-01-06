@@ -1494,7 +1494,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 
 		currentLocalPosition += forceField_.ModifyLocation;
 		forceField_.ExternalVelocity = localVelocity;
-		forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification());
+		forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame);
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance(*this, m_pManager);
