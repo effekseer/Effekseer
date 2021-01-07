@@ -654,6 +654,12 @@ protected:
 				pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
 
 				::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
+
+				if (!param.IsRightHand)
+				{
+					CameraFront = -CameraFront;
+				}
+
 				pcb->SetCameraFrontDirection(-CameraFront.X, -CameraFront.Y, -CameraFront.Z);
 				pcb->SetFalloffParameter(
 					static_cast<float>(param.EnableFalloff),
