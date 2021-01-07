@@ -163,7 +163,7 @@ namespace Effekseer.Data.Value
 		{
 			var old_values = values;
 			var old_selected = selected;
-			var new_values = new List<ObjectHolder<T>>(values);
+			var new_values = new List<ObjectHolder<T>>();
 			
 			var cmd = new Command.DelegateCommand(
 				() =>

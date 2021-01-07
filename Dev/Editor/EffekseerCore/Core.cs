@@ -821,7 +821,7 @@ namespace Effekseer
 			return;
 		}
 
-		public static Data.NodeRoot LoadFromXml(string xml, string path)
+		static Data.NodeRoot LoadFromXml(string xml, string path)
 		{
 			var doc = new System.Xml.XmlDocument();
 			doc.LoadXml(xml);
@@ -1142,6 +1142,8 @@ namespace Effekseer
 			SelectedNode = null;
 
 			ResourceCache.Reset();
+			dynamic_ = new DynamicValues();
+			procedualModels.ProcedualModels.Clear();
 
 			OnBeforeLoad?.Invoke(null, null);
 
