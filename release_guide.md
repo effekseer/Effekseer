@@ -100,6 +100,30 @@ if (!temp_input_is_active && hovered && g.IO.MouseReleased[0] && g.IO.MouseClick
 
 ```
 
+- void ImGui::NextColumn()
+
+```diff
+    PopItemWidth();
+    PopClipRect();
+
+    const float column_padding = g.Style.ItemSpacing.x;
+    float column_padding = g.Style.ItemSpacing.x;
+    columns->LineMaxY = ImMax(columns->LineMaxY, window->DC.CursorPos.y);
+    if (++columns->Current < columns->Count)
+    {
+        // FIXME-COLUMNS: Unnecessary, could be locked?
+        window->DC.ColumnsOffset.x = GetColumnOffset(columns->Current) - window->DC.Indent.x + column_padding;
+        columns->Splitter.SetCurrentChannel(window->DrawList, columns->Current + 1);
+
++       if (columns->Current + 1 == columns->Count)
++       {
++           column_padding /= 2;
++       }
+    }
+    else
+    {
+```
+
 ### docking window tabs
 
 - imgui_internal.h

@@ -97,7 +97,7 @@ namespace Effekseer.GUI.Dock
 
 			TabToolTip = Resources.GetString("FCurves");
 
-			//NoPadding = true;
+			NoPadding = true;
 			NoScrollBar = true;
 
 			// auto zoom event
@@ -147,6 +147,8 @@ namespace Effekseer.GUI.Dock
 			}
 
 			{
+				Manager.NativeManager.Spacing();
+
 				swig.Vec2 size = new swig.Vec2(24 * dpiScale, 24 * dpiScale);
 
 				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
@@ -278,6 +280,8 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PopItemWidth();
 
+			Manager.NativeManager.Separator();
+
 			CheckAndApplyUpdate(treeNodes);
 
 			isFirstUpdate = false;
@@ -397,6 +401,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.BeginChild("##FCurveDetails", new swig.Vec2());
 			Manager.NativeManager.PushItemWidth(80 * Manager.DpiScale);
+			Manager.NativeManager.Spacing();
 
 			if (selectedInd >= 0)
 			{
@@ -624,6 +629,7 @@ namespace Effekseer.GUI.Dock
 				timeline.SetBinding(null);
 			}
 
+			Manager.NativeManager.Spacing();
 			Manager.NativeManager.PopItemWidth();
 			Manager.NativeManager.EndChild();
 		}

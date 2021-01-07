@@ -7781,7 +7781,7 @@ void ImGui::NextColumn()
     PopItemWidth();
     PopClipRect();
 
-    const float column_padding = g.Style.ItemSpacing.x;
+    float column_padding = g.Style.ItemSpacing.x;
     columns->LineMaxY = ImMax(columns->LineMaxY, window->DC.CursorPos.y);
     if (++columns->Current < columns->Count)
     {
@@ -7789,6 +7789,11 @@ void ImGui::NextColumn()
         // FIXME-COLUMNS: Unnecessary, could be locked?
         window->DC.ColumnsOffset.x = GetColumnOffset(columns->Current) - window->DC.Indent.x + column_padding;
         columns->Splitter.SetCurrentChannel(window->DrawList, columns->Current + 1);
+
+        if (columns->Current + 1 == columns->Count)
+        {
+            column_padding /= 2;
+        }
     }
     else
     {
