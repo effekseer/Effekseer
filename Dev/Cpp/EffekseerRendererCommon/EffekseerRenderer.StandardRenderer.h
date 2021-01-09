@@ -264,7 +264,10 @@ private:
 
 	StandardRendererState m_state;
 
-	std::vector<uint8_t> vertexCaches;
+	//! WebAssembly requires a much time to resize std::vector (in a profiler at least) so reduce to call resize
+	std::vector<uint8_t> vertexCaches_;
+	int32_t vertexCacheOffset_ = 0;
+
 	int32_t squareMaxSize_ = 0;
 	RendererShaderType renderingMode_ = RendererShaderType::Unlit;
 
@@ -287,7 +290,7 @@ public:
 		: squareMaxSize_(renderer->GetSquareMaxCount())
 	{
 		m_renderer = renderer;
-		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
+		vertexCaches_.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
 	}
 
 	virtual ~StandardRenderer()
@@ -346,17 +349,23 @@ public:
 	{
 		stride = CalculateCurrentStride();
 
+		const int32_t requiredSize = count * stride;
 		{
 			int32_t renderVertexMaxSize = squareMaxSize_ * stride * 4;
 
-			if (count * stride + (int32_t)vertexCaches.size() > renderVertexMaxSize)
+			if (requiredSize + vertexCacheOffset_ > renderVertexMaxSize)
 			{
 				Rendering();
 			}
 
-			auto old = vertexCaches.size();
-			vertexCaches.resize(count * stride + vertexCaches.size());
-			data = (vertexCaches.data() + old);
+			const auto oldOffset = vertexCacheOffset_;
+			vertexCacheOffset_ += requiredSize;
+			if (vertexCaches_.size() < vertexCacheOffset_)
+			{
+				vertexCaches_.resize(vertexCacheOffset_);
+			}
+
+			data = (vertexCaches_.data() + oldOffset);
 		}
 	}
 
@@ -375,7 +384,7 @@ public:
 
 	void Rendering(const Effekseer::SIMD::Mat44f& mCamera, const Effekseer::SIMD::Mat44f& mProj)
 	{
-		if (vertexCaches.size() == 0)
+		if (vertexCacheOffset_ == 0)
 			return;
 
 		int32_t stride = CalculateCurrentStride();
@@ -398,26 +407,25 @@ public:
 			while (true)
 			{
 				// only sprite
-				int32_t renderBufferSize = (int32_t)vertexCaches.size() - offset;
+				int32_t renderBufferSize = vertexCacheOffset_ - offset;
 
 				int32_t renderVertexMaxSize = squareMaxSize_ * stride * 4;
 
 				if (renderBufferSize > renderVertexMaxSize)
 				{
-					renderBufferSize =
-						(Effekseer::Min(renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (stride * 4)) * (stride * 4);
+					renderBufferSize = (renderVertexMaxSize / (stride * 4)) * (stride * 4);
 				}
 
 				Rendering_(mCamera, mProj, offset, renderBufferSize, stride, passInd);
 
 				offset += renderBufferSize;
 
-				if (offset == vertexCaches.size())
+				if (offset == vertexCacheOffset_)
 					break;
 			}
 		}
 
-		vertexCaches.clear();
+		vertexCacheOffset_ = 0;
 	}
 
 	void Rendering_(const Effekseer::SIMD::Mat44f& mCamera,
@@ -479,7 +487,7 @@ public:
 			if (vb->RingBufferLock(vertexSize, vbOffset, vbData, stride * 4))
 			{
 				assert(vbData != nullptr);
-				memcpy(vbData, vertexCaches.data() + bufferOffset, vertexSize);
+				memcpy(vbData, vertexCaches_.data() + bufferOffset, vertexSize);
 				vb->Unlock();
 			}
 			else
