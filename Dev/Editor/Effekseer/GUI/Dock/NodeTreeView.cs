@@ -74,11 +74,11 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
-			float showHideButtonOffset = 32 * Manager.DpiScale;
+			float showHideButtonOffset = 16 * Manager.DpiScale;
 
 			isPopupShown = false;
 
-			var windowSize = Manager.NativeManager.GetWindowSize();
+			var windowSize = Manager.NativeManager.GetContentRegionAvail();
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
 
