@@ -222,13 +222,13 @@ namespace Effekseer.Data
 
 			[IO(Export = true)]
 			[Key(key = "AlphaCutoffParameter_EdgeParameter_ColorScaling")]
-			public Value.Int EdgeColorScaling { get; private set; }
+			public Value.Float EdgeColorScaling { get; private set; }
 
 			public EdgeParameter()
 			{
 				EdgeThreshold = new Value.Float(0.0f, 1.0f, 0.0f, 0.01f);
 				EdgeColor = new Value.Color(255, 255, 255, 255);
-				EdgeColorScaling = new Value.Int(1, int.MaxValue, 0);
+				EdgeColorScaling = new Value.Float(1, int.MaxValue, 0);
 			}
 		}
 
