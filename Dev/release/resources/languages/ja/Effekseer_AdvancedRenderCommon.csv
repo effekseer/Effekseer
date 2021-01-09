@@ -53,7 +53,7 @@ FalloffParameter_EndColor_Name,終了色
 FalloffParameter_Pow_Name,指数
 
 FalloffParameter_BlendType_Add_Name,加算
-Falloffparameter_BlendType_Sub_Name,減算
+FalloffParameter_BlendType_Sub_Name,減算
 FalloffParameter_BlendType_Mul_Name,乗算
 
 SoftParticleParameters_Name,ソフトパーティクル

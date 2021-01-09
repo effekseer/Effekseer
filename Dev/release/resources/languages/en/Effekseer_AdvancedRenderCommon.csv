@@ -54,7 +54,7 @@ FalloffParameter_EndColor_Name,End Color
 FalloffParameter_Pow_Name,Pow
 
 FalloffParameter_BlendType_Add_Name,Add
-Falloffparameter_BlendType_Sub_Name,Sub
+FalloffParameter_BlendType_Sub_Name,Sub
 FalloffParameter_BlendType_Mul_Name,Mul
 
 SoftParticleParameters_Name,Soft Particle
