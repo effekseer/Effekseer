@@ -1024,7 +1024,7 @@ struct NodeRendererBasicParameter
 
 	float EdgeThreshold = 0.0f;
 	uint8_t EdgeColor[4] = {0};
-	int32_t EdgeColorScaling = 1;
+	float EdgeColorScaling = 1.0f;
 
 	//! copy from alphacutoff
 	bool IsAlphaCutoffEnabled = false;

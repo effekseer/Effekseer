@@ -1276,7 +1276,7 @@ struct ParameterAlphaCutoff
 
 	float EdgeThreshold;
 	Color EdgeColor;
-	int32_t EdgeColorScaling;
+	float EdgeColorScaling;
 
 	ParameterAlphaCutoff()
 		: Type(ParameterAlphaCutoff::EType::FIXED)
@@ -1325,8 +1325,18 @@ struct ParameterAlphaCutoff
 		memcpy(&EdgeColor, pos, sizeof(Color));
 		pos += sizeof(int32_t);
 
-		memcpy(&EdgeColorScaling, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (version >= Version16Alpha7)
+		{
+			memcpy(&EdgeColorScaling, pos, sizeof(float));
+			pos += sizeof(float);		
+		}
+		else
+		{
+			int32_t temp = 0;
+			memcpy(&temp, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+			EdgeColorScaling = temp;
+		}
 	}
 };
 

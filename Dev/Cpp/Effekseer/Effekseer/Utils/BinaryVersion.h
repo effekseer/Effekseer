@@ -14,6 +14,7 @@ const int32_t Version16Alpha3 = 1602;
 const int32_t Version16Alpha4 = 1603;
 const int32_t Version16Alpha5 = 1604;
 const int32_t Version16Alpha6 = 1605;
+const int32_t Version16Alpha7 = 1606;
 
 } // namespace Effekseer
 

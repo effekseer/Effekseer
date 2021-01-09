@@ -49,7 +49,7 @@ struct StandardRendererState
 
 	float EdgeThreshold;
 	uint8_t EdgeColor[4];
-	int32_t EdgeColorScaling;
+	float EdgeColorScaling;
 	bool IsAlphaCuttoffEnabled = false;
 	float SoftParticleDistanceFar = 0.0f;
 	float SoftParticleDistanceNear = 0.0f;
