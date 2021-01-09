@@ -146,10 +146,13 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.SetColumnWidth(2, contentSize.X * 0.26f);
 			}
 
-			{
-				Manager.NativeManager.Spacing();
+			Manager.NativeManager.Spacing();
 
-				swig.Vec2 size = new swig.Vec2(24 * dpiScale, 24 * dpiScale);
+			// Toolbar
+			{
+				Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.ItemSpacing, new swig.Vec2(4.0f * dpiScale, 0.0f));
+
+				swig.Vec2 size = new swig.Vec2(20 * dpiScale, 20 * dpiScale);
 
 				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
 				{
@@ -199,13 +202,14 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				Manager.NativeManager.Button("?");
+				Manager.NativeManager.Button("?", size.X, size.Y);
 				
-				// if (Component.Functions.CanShowTip())
 				if (Manager.NativeManager.IsItemHovered())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
 				}
+
+				Manager.NativeManager.PopStyleVar();
 			}
 
 			// hot key
@@ -315,7 +319,7 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateTreeNode(TreeNode treeNode)
 		{
-			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen;
+			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
 			string nodeName = treeNode.ParamTreeNode.Node.Name.Value;
 			if (Manager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
@@ -1516,7 +1520,7 @@ namespace Effekseer.GUI.Dock
 
 					string labelName = Name + " : " + names[i] + " (" + value + ")";
 					string labelID = "###FCurveLabel_" + nodeName + "_" + Name + "_" + names[i];
-					if (Manager.NativeManager.Selectable(labelName + labelID, properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick))
+					if (Manager.NativeManager.Selectable(labelName + labelID, properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick | swig.SelectableFlags.SpanAllColumns))
 					{
 						if(Manager.NativeManager.IsMouseDoubleClicked(0))
 						{
@@ -1567,7 +1571,7 @@ namespace Effekseer.GUI.Dock
 					float movedY = 0;
 					int changedType = 0;
 
-					bool isSelected = false;
+					bool isSelected = true;
 
 					if (Manager.NativeManager.FCurve(
 						ids[i],
