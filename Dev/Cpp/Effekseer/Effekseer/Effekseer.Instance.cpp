@@ -1492,9 +1492,12 @@ void Instance::CalculateMatrix(float deltaFrame)
 			currentLocalPosition = localPosition;
 		}
 
-		currentLocalPosition += forceField_.ModifyLocation;
-		forceField_.ExternalVelocity = localVelocity;
-		forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame);
+		if (m_pEffectNode->LocalForceField.HasValue)
+		{
+			currentLocalPosition += forceField_.ModifyLocation;
+			forceField_.ExternalVelocity = localVelocity;
+			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame);		
+		}
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance(*this, m_pManager);
