@@ -718,8 +718,7 @@ namespace Effekseer.Data
 						k.AppendChild(doc.CreateTextElement("LeftY", k_.LeftY.ToString()));
 						k.AppendChild(doc.CreateTextElement("RightX", k_.RightX.ToString()));
 						k.AppendChild(doc.CreateTextElement("RightY", k_.RightY.ToString()));
-
-						k.AppendChild(doc.CreateTextElement("InterpolationType", k_.InterpolationType.GetValueAsInt()));
+						k.AppendChild(doc.CreateTextElement("InterpolationType", ((int)k_.InterpolationType).ToString()));
 
 						xml.AppendChild(k);
 						index++;
@@ -773,8 +772,7 @@ namespace Effekseer.Data
 					k.AppendChild(doc.CreateTextElement("LeftY", k_.LeftY.ToString()));
 					k.AppendChild(doc.CreateTextElement("RightX", k_.RightX.ToString()));
 					k.AppendChild(doc.CreateTextElement("RightY", k_.RightY.ToString()));
-
-					k.AppendChild(doc.CreateTextElement("InterpolationType", k_.InterpolationType.GetValueAsInt()));
+					k.AppendChild(doc.CreateTextElement("InterpolationType", ((int)k_.InterpolationType).ToString()));
 
 					xml.AppendChild(k);
 					index++;
@@ -831,8 +829,7 @@ namespace Effekseer.Data
 					k.AppendChild(doc.CreateTextElement("LeftY", k_.LeftY.ToString()));
 					k.AppendChild(doc.CreateTextElement("RightX", k_.RightX.ToString()));
 					k.AppendChild(doc.CreateTextElement("RightY", k_.RightY.ToString()));
-
-					k.AppendChild(doc.CreateTextElement("InterpolationType", k_.InterpolationType.GetValueAsInt()));
+					k.AppendChild(doc.CreateTextElement("InterpolationType", ((int)k_.InterpolationType).ToString()));
 
 					xml.AppendChild(k);
 					index++;
@@ -889,8 +886,7 @@ namespace Effekseer.Data
 					k.AppendChild(doc.CreateTextElement("LeftY", k_.LeftY.ToString()));
 					k.AppendChild(doc.CreateTextElement("RightX", k_.RightX.ToString()));
 					k.AppendChild(doc.CreateTextElement("RightY", k_.RightY.ToString()));
-
-					k.AppendChild(doc.CreateTextElement("InterpolationType", k_.InterpolationType.GetValueAsInt()));
+					k.AppendChild(doc.CreateTextElement("InterpolationType", ((int)k_.InterpolationType).ToString()));
 
 					xml.AppendChild(k);
 					index++;
@@ -1606,7 +1602,7 @@ namespace Effekseer.Data
 						var t = new Value.FCurveKey<float>(f, v);
 						t.SetLeftDirectly(lx, ly);
 						t.SetRightDirectly(rx, ry);
-						t.InterpolationType.SetValue(i);
+						t.SetInterpolationType((Value.FCurveInterpolation)i);
 
 						v_.AddKeyDirectly(t);
 					}
@@ -1670,7 +1666,7 @@ namespace Effekseer.Data
 						var t = new Value.FCurveKey<float>(f, v);
 						t.SetLeftDirectly(lx, ly);
 						t.SetRightDirectly(rx, ry);
-						t.InterpolationType.SetValue(i);
+						t.SetInterpolationType((Value.FCurveInterpolation)i);
 
 						v_.AddKeyDirectly(t);
 					}
@@ -1727,7 +1723,7 @@ namespace Effekseer.Data
 							var t = new Value.FCurveKey<int>(f, (int)v);
 							t.SetLeftDirectly(lx, ly);
 							t.SetRightDirectly(rx, ry);
-							t.InterpolationType.SetValue(i);
+							t.SetInterpolationType((Value.FCurveInterpolation)i);
 
 							v_.AddKeyDirectly(t);
 						}
@@ -1802,7 +1798,7 @@ namespace Effekseer.Data
 						var t = new Value.FCurveKey<float>(f, v);
 						t.SetLeftDirectly(lx, ly);
 						t.SetRightDirectly(rx, ry);
-						t.InterpolationType.SetValue(i);
+						t.SetInterpolationType((Value.FCurveInterpolation)i);
 
 						v_.AddKeyDirectly(t);
 					}
