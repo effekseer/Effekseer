@@ -9,7 +9,7 @@ BasicSettings,共通
 Behavior,振る舞い
 CameraMode,カメラの種類
 CameraSettings,視点操作
-Complement,補完
+Complement,補間
 ConfirmSaveChanged,[{0}] は変更されています。保存しますか？
 Connect,接続
 Culling,カリング
@@ -148,7 +148,7 @@ FCurve_Paste_Desc,キーポイントを貼り付けます。
 AutoZoom,自動ズーム
 AutoZoom_Desc,自動的にグラフの高さを調節する
 FCurve_Operation_Instruction_Desc,操作説明 (マウスオーバー)
-FCurveCtrl_Desc,"ダブルクリック-点の追加、削除
+FCurveCtrl_Desc,"ダブルクリック - 点の追加、削除
 Alt+ホイール - 横方向拡大
 Ctrl+ホイール - 縦方向拡大
 Alt+左クリック - 複数選択と編集
