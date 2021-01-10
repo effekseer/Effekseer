@@ -1290,6 +1290,9 @@ namespace Effekseer
 			versionText = versionText.Replace("α4", "");
 			versionText = versionText.Replace("α5", "");
 			versionText = versionText.Replace("α6", "");
+			versionText = versionText.Replace("α7", "");
+			versionText = versionText.Replace("α8", "");
+			versionText = versionText.Replace("α9", "");
 
 			versionText = versionText.Replace("β1", "");
 			versionText = versionText.Replace("β2", "");
