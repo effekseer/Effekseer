@@ -32,20 +32,23 @@ namespace Effekseer.GUI.Dock
 
 	class FCurves : DockPanel
 	{
-
-		string frame_text = Resources.GetString("Frame");
-		string value_text = Resources.GetString("Value");
-		string start_text = Resources.GetString("Start");
-		string end_text = Resources.GetString("End");
-		string type_text = Resources.GetString("Complement");
-		string sampling_text = Resources.GetString("Sampling");
-		string left_text = Resources.GetString("Left");
-		string right_text = Resources.GetString("Right");
-		string offset_text = Resources.GetString("Offset");
-		string timelineMode_Name = Resources.GetString("FCurve_TimelineMode_Name");
-		string timelineMode_Desc = Resources.GetString("FCurve_TimelineMode_Desc");
-		string offset_min_text = Resources.GetString("Min");
-		string offset_max_text = Resources.GetString("Max");
+		class Texts
+		{
+			public string frame = Resources.GetString("Frame");
+			public string value = Resources.GetString("Value");
+			public string start = Resources.GetString("Start");
+			public string end = Resources.GetString("End");
+			public string type = Resources.GetString("Complement");
+			public string sampling = Resources.GetString("Sampling");
+			public string left = Resources.GetString("Left");
+			public string right = Resources.GetString("Right");
+			public string offset = Resources.GetString("Offset");
+			public string timelineMode_Name = Resources.GetString("FCurve_TimelineMode_Name");
+			public string timelineMode_Desc = Resources.GetString("FCurve_TimelineMode_Desc");
+			public string offsetMin = Resources.GetString("Min");
+			public string offsetMax = Resources.GetString("Max");
+		}
+		Texts texts = new Texts();
 
 		Utl.ParameterTreeNode paramaterTreeNode = null;
 
@@ -82,16 +85,16 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 
 			startCurve.Initialize(typeof(Data.Value.FCurveEdge));
-			startCurve.InternalLabel = start_text + "##Start";
+			startCurve.InternalLabel = texts.start + "##Start";
 
 			endCurve.Initialize(typeof(Data.Value.FCurveEdge));
-			endCurve.InternalLabel = end_text + "##End";
+			endCurve.InternalLabel = texts.end + "##End";
 
 			type.Initialize(typeof(Data.Value.FCurveInterpolation));
-			type.InternalLabel = type_text + "##Type";
+			type.InternalLabel = texts.type + "##Type";
 
 			timeline.Initialize(typeof(Data.Value.FCurveTimelineMode));
-			timeline.InternalLabel = timelineMode_Name + "##Timeline";
+			timeline.InternalLabel = texts.timelineMode_Name + "##Timeline";
 
 			OnChanged();
 
@@ -108,7 +111,7 @@ namespace Effekseer.GUI.Dock
 				float min_y, max_y;
 				GetRange(treeNodes, out min_y, out max_y);
 
-				if(min_y < autoZoomRangeMin && y < 0)
+				if (min_y < autoZoomRangeMin && y < 0)
 				{
 					autoZoomRangeMin += y;
 					autoZoomRangeMax += y;
@@ -223,7 +226,7 @@ namespace Effekseer.GUI.Dock
 				}
 
 				// Delete points
-				if(Manager.NativeManager.IsKeyDown(delete_num))
+				if (Manager.NativeManager.IsKeyDown(delete_num))
 				{
 					DeleteSelectedPoints();
 					canControl = false;
@@ -239,7 +242,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.NextColumn();
 
-			if(isAutoZoomMode)
+			if (isAutoZoomMode)
 			{
 				if (canCurveControl)
 				{
@@ -271,7 +274,7 @@ namespace Effekseer.GUI.Dock
 			autoZoomRangeMin = float.MaxValue;
 			autoZoomRangeMax = float.MinValue;
 
-			if(canControl)
+			if (canControl)
 			{
 				Manager.NativeManager.StartSelectingAreaFCurve();
 			}
@@ -410,7 +413,7 @@ namespace Effekseer.GUI.Dock
 			if (selectedInd >= 0)
 			{
 				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
-				if (Manager.NativeManager.DragInt(frame_text, frameKey))
+				if (Manager.NativeManager.DragInt(texts.frame, frameKey))
 				{
 					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
 
@@ -432,13 +435,13 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(frame_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selectedInd >= 0)
 			{
 				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
-				if (Manager.NativeManager.DragFloat(value_text, frameValue))
+				if (Manager.NativeManager.DragFloat(texts.value, frameValue))
 				{
 					var diff = frameValue[0] - selected.Item2.Values[selectedInd];
 
@@ -460,14 +463,14 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(value_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.value, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Left key
 			if (selectedInd >= 0)
 			{
 				var leftValues = new float[] { selected.Item2.LeftKeys[selectedInd], selected.Item2.LeftValues[selectedInd] };
-				if (Manager.NativeManager.DragFloat2(left_text, leftValues))
+				if (Manager.NativeManager.DragFloat2(texts.left, leftValues))
 				{
 					selected.Item2.LeftKeys[selectedInd] = leftValues[0];
 					selected.Item2.LeftValues[selectedInd] = leftValues[1];
@@ -487,14 +490,14 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(left_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.left, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Right key
 			if (selectedInd >= 0)
 			{
 				var rightValues = new float[] { selected.Item2.RightKeys[selectedInd], selected.Item2.RightValues[selectedInd] };
-				if (Manager.NativeManager.DragFloat2(right_text, rightValues))
+				if (Manager.NativeManager.DragFloat2(texts.right, rightValues))
 				{
 					selected.Item2.RightKeys[selectedInd] = rightValues[0];
 					selected.Item2.RightValues[selectedInd] = rightValues[1];
@@ -514,16 +517,16 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(right_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.right, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selectedInd >= 0)
 			{
-				if (Manager.NativeManager.BeginCombo(type_text, type.FieldNames[selected.Item2.Interpolations[selectedInd]].ToString(), swig.ComboFlags.None))
+				if (Manager.NativeManager.BeginCombo(texts.type, type.FieldNames[selected.Item2.Interpolations[selectedInd]].ToString(), swig.ComboFlags.None))
 				{
 					for (int i = 0; i < type.FieldNames.Count; i++)
 					{
-						bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[selectedInd]] == type.FieldNames[i]);
+						bool is_selected = i == (int)selected.Item2.Interpolations[selectedInd];
 
 						if (Manager.NativeManager.Selectable(type.FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
 						{
@@ -544,7 +547,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(type_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.type, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			Manager.NativeManager.Separator();
@@ -560,7 +563,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(start_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.start, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// End curve
@@ -574,7 +577,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(end_text, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.end, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Sampling
@@ -582,7 +585,7 @@ namespace Effekseer.GUI.Dock
 			{
 				var sampling = new int[] { selected.Item1.Sampling };
 
-				if (Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
+				if (Manager.NativeManager.InputInt(texts.sampling + "##SamplingText", sampling))
 				{
 					selected.Item1.Sampling.SetValue(sampling[0]);
 				}
@@ -591,13 +594,13 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(sampling_text + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.sampling + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Offset label
 			if (selected.Item1 != null)
 			{
-				var offset_id = offset_text + "##OffsetMinMax";
+				var offset_id = texts.offset + "##OffsetMinMax";
 				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
 
 				if (Manager.NativeManager.DragFloat2(offset_id, offsets))
@@ -610,7 +613,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(offset_text + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.offset + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selected.Item1 == null)
@@ -629,7 +632,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
 				timeline.SetBinding(null);
 			}
 
@@ -915,9 +918,9 @@ namespace Effekseer.GUI.Dock
 			{
 				foreach (var fcurve in t.FCurves)
 				{
-					if(o == fcurve.GetValueAsObject())
+					if (o == fcurve.GetValueAsObject())
 					{
-						foreach(var prop in fcurve.Properties)
+						foreach (var prop in fcurve.Properties)
 						{
 							prop.Selected = true;
 							prop.IsShown = true;
@@ -940,12 +943,12 @@ namespace Effekseer.GUI.Dock
 
 			recurse = (t) =>
 			{
-				foreach(var fcurve in t.FCurves)
+				foreach (var fcurve in t.FCurves)
 				{
 					fcurve.Unselect();
 				}
 
-				foreach(var c in t.Children)
+				foreach (var c in t.Children)
 				{
 					recurse(c);
 				}
@@ -1052,7 +1055,7 @@ namespace Effekseer.GUI.Dock
 
 			recurse(treeNodes);
 
-			if(moved != null)
+			if (moved != null)
 			{
 				moved(x, y);
 			}
@@ -1078,13 +1081,13 @@ namespace Effekseer.GUI.Dock
 
 			var flatten = flattenFcurves;
 
-			foreach(var curve in flatten)
+			foreach (var curve in flatten)
 			{
-				for(int ind = 0; ind < curve.Properties.Length; ind++)
+				for (int ind = 0; ind < curve.Properties.Length; ind++)
 				{
 					var prop = curve.Properties[ind];
 
-					if(!prop.KVSelected.Any(_=>_ > 0))
+					if (!prop.KVSelected.Any(_=>_ > 0))
 					{
 						continue;
 					}
@@ -1094,9 +1097,9 @@ namespace Effekseer.GUI.Dock
 					copiedCurve.Index = ind;
 					copiedCurve.ID = curve.ID;
 					
-					for(int i = 0; i < prop.KVSelected.Length; i++)
+					for (int i = 0; i < prop.KVSelected.Length; i++)
 					{
-						if(prop.KVSelected[i] > 0)
+						if (prop.KVSelected[i] > 0)
 						{
 							var p = new FCurveCopiedData.Point();
 							p.Key = prop.Keys[i];
@@ -1121,9 +1124,9 @@ namespace Effekseer.GUI.Dock
 
 			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
 
-			foreach(var curve in data.Curves)
+			foreach (var curve in data.Curves)
 			{
-				foreach(var p in curve.Points)
+				foreach (var p in curve.Points)
 				{
 					p.Key -= xmin;
 					p.LeftKey -= xmin;
@@ -1166,7 +1169,7 @@ namespace Effekseer.GUI.Dock
 
 					var copiedCurve = candidates.FirstOrDefault(_ => _.ID == curve.ID);
 
-					if(copiedCurve == null)
+					if (copiedCurve == null)
 					{
 						copiedCurve = data.Curves.FirstOrDefault(_ => _.Index == ind);
 					}
@@ -1174,7 +1177,7 @@ namespace Effekseer.GUI.Dock
 					if (copiedCurve != null)
 					{
 						
-						for(int i = 0; i < copiedCurve.Points.Count; i++)
+						for (int i = 0; i < copiedCurve.Points.Count; i++)
 						{
 							prop.KVSelected = new byte[] { 0 }.Concat(prop.KVSelected).ToArray();
 						}
@@ -1206,7 +1209,7 @@ namespace Effekseer.GUI.Dock
 				foreach (var fcurve in t.FCurves)
 				{
 					var r = fcurve.GetSelectedFCurve();
-					if(r.Item1 != null)
+					if (r.Item1 != null)
 					{
 						rets.Add(r);
 					}
@@ -1441,7 +1444,7 @@ namespace Effekseer.GUI.Dock
 				properties = new FCurveProperty[length];
 				ids = new int[length];
 
-				for(int i = 0; i < length; i++)
+				for (int i = 0; i < length; i++)
 				{
 					properties[i] = new FCurveProperty();
 					ids[i] = Manager.GetUniqueID();
@@ -1457,11 +1460,11 @@ namespace Effekseer.GUI.Dock
 				value_min = float.MaxValue;
 				value_max = float.MinValue;
 
-				foreach(var prop in properties)
+				foreach (var prop in properties)
 				{
 					if (!prop.IsShown) continue;
 
-					for(int i = 0; i < prop.KVSelected.Length - 1; i++)
+					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
 					{
 						value_min = Math.Min(prop.Values[i], value_min);
 						value_max = Math.Max(prop.Values[i], value_max);
@@ -1476,7 +1479,7 @@ namespace Effekseer.GUI.Dock
 				if (value_min == float.MaxValue || value_max == float.MinValue)
 				{
 					// todo set from outer
-					if(defaultValue == 255)
+					if (defaultValue == 255)
 					{
 						value_min = 0;
 						value_max = 255;
@@ -1500,9 +1503,9 @@ namespace Effekseer.GUI.Dock
 				int count = properties.Count(_ => _.Selected);
 				if (count != 1) return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
 
-				for(int i = 0; i < properties.Length; i++)
+				for (int i = 0; i < properties.Length; i++)
 				{
-					if(properties[i].Selected)
+					if (properties[i].Selected)
 					{
 						return new Tuple35<Data.Value.IFCurve, FCurveProperty>(fcurves[i], properties[i]);
 					}
@@ -1514,7 +1517,7 @@ namespace Effekseer.GUI.Dock
 			public void UpdateTree(string nodeName)
 			{
 
-				for(int i = 0; i < properties.Length; i++)
+				for (int i = 0; i < properties.Length; i++)
 				{
 					var value = this.fcurves[i].GetValue(Manager.Viewer.Current);
 
@@ -1522,11 +1525,11 @@ namespace Effekseer.GUI.Dock
 					string labelID = "###FCurveLabel_" + nodeName + "_" + Name + "_" + names[i];
 					if (Manager.NativeManager.Selectable(labelName + labelID, properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick | swig.SelectableFlags.SpanAllColumns))
 					{
-						if(Manager.NativeManager.IsMouseDoubleClicked(0))
+						if (Manager.NativeManager.IsMouseDoubleClicked(0))
 						{
 							properties[i].IsShown = true;
 
-							if(this.fcurves[i].Keys.Count() > 0)
+							if (this.fcurves[i].Keys.Count() > 0)
 							{
 								var max = this.fcurves[i].Keys.Max(_ => _.ValueAsFloat);
 								var min = this.fcurves[i].Keys.Min(_ => _.ValueAsFloat);
@@ -1557,11 +1560,11 @@ namespace Effekseer.GUI.Dock
 
 			public void UpdateGraph(ref bool canControl)
 			{
-				for(int i = 0; i < properties.Length; i++)
+				for (int i = 0; i < properties.Length; i++)
 				{
 					if (!properties[i].IsShown) continue;
 
-					if(!properties[i].IsDirtied)
+					if (!properties[i].IsDirtied)
 					{
 						properties[i].CopyValuesFromDataIfSizeDifferent(fcurves[i]);
 					}
@@ -1624,9 +1627,9 @@ namespace Effekseer.GUI.Dock
 							}
 						}
 						
-						if(properties[i].Keys.Length - 1 != newCount && newCount != -1)
+						if (properties[i].Keys.Length - 1 != newCount && newCount != -1)
 						{
-							if(properties[i].Keys.Length == newCount)
+							if (properties[i].Keys.Length == newCount)
 							{
 								properties[i].Keys = properties[i].Keys.Concat(new[] { 0.0f }).ToArray();
 								properties[i].Values = properties[i].Values.Concat(new[] { 0.0f }).ToArray();
@@ -1650,7 +1653,7 @@ namespace Effekseer.GUI.Dock
 							properties[i].IsDirtied = true;
 						}
 
-						for(int k = 0; k < properties[i].Values.Length; k++)
+						for (int k = 0; k < properties[i].Values.Length; k++)
 						{
 							if (properties[i].Values[k] < v_min) properties[i].Values[k] = v_min;
 							if (properties[i].Values[k] > v_max) properties[i].Values[k] = v_max;
@@ -1781,7 +1784,7 @@ namespace Effekseer.GUI.Dock
 
 			public void EnlargeAnchors()
 			{
-				foreach(var prop in properties)
+				foreach (var prop in properties)
 				{
 					if (!prop.IsShown) continue;
 					if (!prop.Selected) continue;
@@ -1886,7 +1889,7 @@ namespace Effekseer.GUI.Dock
 
 			public void Unselect()
 			{
-				foreach(var prop in properties)
+				foreach (var prop in properties)
 				{
 					prop.Selected = false;
 				}
@@ -1904,7 +1907,7 @@ namespace Effekseer.GUI.Dock
 			{
 				Command.CommandManager.StartCollection();
 
-				for(int i = 0; i < properties.Length; i++)
+				for (int i = 0; i < properties.Length; i++)
 				{
 					if (!properties[i].IsDirtied) continue;
 					
@@ -2026,7 +2029,7 @@ namespace Effekseer.GUI.Dock
 			/// <param name="index"></param>
 			public void Clip(int index)
 			{
-				if(index > 0)
+				if (index > 0)
 				{
 					LeftKeys[index] = System.Math.Max(LeftKeys[index], Keys[index - 1]);
 				}
@@ -2042,12 +2045,12 @@ namespace Effekseer.GUI.Dock
 
 			public int GetSelectedIndex()
 			{
-				if(KVSelected.Take(KVSelected.Count() - 1).Count(_ => _ > 0) != 1)
+				if (KVSelected.Take(KVSelected.Count() - 1).Count(_ => _ > 0) != 1)
 				{
 					return -1;
 				}
 
-				for(int i = 0; i < KVSelected.Count() - 1; i++)
+				for (int i = 0; i < KVSelected.Count() - 1; i++)
 				{
 					if (KVSelected[i] > 0) return i;
 				}
