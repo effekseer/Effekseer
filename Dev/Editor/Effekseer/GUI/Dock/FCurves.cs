@@ -1594,7 +1594,7 @@ namespace Effekseer.GUI.Dock
 						properties[i].Keys.Length - 1,
 						defaultValue,
 						false,
-						canControl,
+						true,
 						properties[i].Color,
 						properties[i].Selected,
 						v_min,

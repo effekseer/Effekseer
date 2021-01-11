@@ -31,6 +31,8 @@ enum class FCurveStorageValues : ImGuiID
 	SELECTING_AREA_END_X,
 	SELECTING_AREA_END_Y,
 	STATE,
+	CONTEXT_MENU_ORIGIN_X,
+	CONTEXT_MENU_ORIGIN_Y,
 };
 
 class FCurveContext
@@ -139,7 +141,7 @@ namespace ImGui
 		return diff.x * diff.x + diff.y * diff.y < radius * radius;
 	}
 
-	bool IsHoveredOnLine(const ImVec2& v, ImGuiWindow* window, const ImVec2& a, const ImVec2& b, ImU32 col, float thickness)
+	bool IsHoveredOnLine(const ImVec2& v, ImGuiWindow* window, const ImVec2& a, const ImVec2& b, ImU32 col, float thickness, ImVec2* tangent = nullptr)
 	{
 		if ((col & IM_COL32_A_MASK) == 0)
 			return false;
@@ -165,6 +167,7 @@ namespace ImGui
 			if (ImLength(component1) > ImLength(p1)) continue;
 			if (ImLength(component2) > thickness) continue;
 			isHovered = true;
+			if (tangent) *tangent = v - component2 - ImVec2(0.5f, 0.5f);
 			break;
 		}
 	
@@ -173,7 +176,7 @@ namespace ImGui
 		return isHovered;
 	}
 
-	bool IsHoveredOnBezierCurve(const ImVec2& v, ImGuiWindow* window, const ImVec2& pos0, const ImVec2& cp0, const ImVec2& cp1, const ImVec2& pos1, ImU32 col, float thickness)
+	bool IsHoveredOnBezierCurve(const ImVec2& v, ImGuiWindow* window, const ImVec2& pos0, const ImVec2& cp0, const ImVec2& cp1, const ImVec2& pos1, ImU32 col, float thickness, ImVec2* tangent = nullptr)
 	{
 		if ((col & IM_COL32_A_MASK) == 0)
 			return false;
@@ -199,6 +202,7 @@ namespace ImGui
 			if (ImLength(component1) > ImLength(p1)) continue;
 			if (ImLength(component2) > thickness) continue;
 			isHovered = true;
+			if (tangent) *tangent = v - component2;
 			break;
 		}
 
@@ -207,13 +211,191 @@ namespace ImGui
 		return isHovered;
 	}
 
+	bool IsHoveredOnFCurve(
+		float* keys, float* values,
+		float* leftHandleKeys, float* leftHandleValues,
+		float* rightHandleKeys, float* rightHandleValues,
+		ImFCurveInterporationType* interporations,
+		ImFCurveEdgeType startEdge,
+		ImFCurveEdgeType endEdge,
+		ImU32 col, int count, ImVec2* tangent = nullptr)
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+
+		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
+		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
+
+		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
+		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+
+		const ImRect innerRect = window->InnerRect;
+		float width = innerRect.Max.x - innerRect.Min.x;
+		float height = innerRect.Max.y - innerRect.Min.y;
+
+		auto transform_f2s = [&](const ImVec2& p) -> ImVec2
+		{
+			return ImVec2((p.x - offset_x) * scale_x + innerRect.Min.x, (-p.y - offset_y) * scale_y + innerRect.Min.y + height / 2);
+		};
+
+		auto transform_s2f = [&](const ImVec2& p) -> ImVec2
+		{
+			return ImVec2((p.x - innerRect.Min.x) / scale_x + offset_x, -((p.y - innerRect.Min.y - height / 2) / scale_y + offset_y));
+		};
+
+		bool isLineHovered = false;
+
+		auto checkHovered = [&](float offset, bool isReversed) -> void
+		{
+			if (isReversed)
+			{
+				auto distance = keys[count - 1] - keys[0];
+				offset += distance;
+
+				for (int i = 0; i < count - 1; i++)
+				{
+					auto v1 = ImVec2(-keys[i + 0] + offset, values[i + 0]);
+					auto v2 = ImVec2(-keys[i + 1] + offset, values[i + 1]);
+
+					auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
+					auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+					if (interporations[i] == ImFCurveInterporationType::Cubic)
+					{
+						isLineHovered = isLineHovered || IsHoveredOnBezierCurve(
+							GetMousePos(), window,
+							transform_f2s(v1),
+							transform_f2s(cp1),
+							transform_f2s(cp2),
+							transform_f2s(v2),
+							col, 2, tangent);
+					}
+					else
+					{
+						isLineHovered = isLineHovered || IsHoveredOnLine(
+							GetMousePos(), window,
+							transform_f2s(v1),
+							transform_f2s(v2),
+							col, 2, tangent);
+					}
+
+					if (isLineHovered) break;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < count - 1; i++)
+				{
+					auto v1 = ImVec2(keys[i + 0] + offset, values[i + 0]);
+					auto v2 = ImVec2(keys[i + 1] + offset, values[i + 1]);
+
+					auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
+					auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+					if (interporations[i] == ImFCurveInterporationType::Cubic)
+					{
+						isLineHovered = isLineHovered || IsHoveredOnBezierCurve(
+							GetMousePos(), window,
+							transform_f2s(v1),
+							transform_f2s(cp1),
+							transform_f2s(cp2),
+							transform_f2s(v2),
+							col, 2, tangent);
+					}
+					else
+					{
+						isLineHovered = isLineHovered || IsHoveredOnLine(
+							GetMousePos(), window,
+							transform_f2s(v1),
+							transform_f2s(v2),
+							col, 2, tangent);
+					}
+
+					if (isLineHovered) break;
+				}
+			}
+		};
+
+		// start
+		{
+			auto v1 = ImVec2(keys[0], values[0]);
+			auto v2 = ImVec2(transform_s2f(innerRect.Min).x, values[0]);
+
+			if (startEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
+			{
+				isLineHovered = isLineHovered || IsHoveredOnLine(
+					GetMousePos(), window,
+					transform_f2s(v1),
+					transform_f2s(v2),
+					col, 2, tangent);
+			}
+			else if (startEdge == ImFCurveEdgeType::Loop)
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x > v2.x)
+				{
+					v1.x -= distance;
+					checkHovered(v1.x - keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
+				}
+			}
+			else
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x > v2.x)
+				{
+					v1.x -= distance;
+					checkHovered(v1.x + keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
+				}
+			}
+		}
+
+		// center
+		checkHovered(0, false);
+
+		// end
+		{
+			auto v1 = ImVec2(keys[count - 1], values[count - 1]);
+			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, values[count - 1]);
+
+			if (endEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
+			{
+				isLineHovered = isLineHovered || IsHoveredOnLine(
+					GetMousePos(), window,
+					transform_f2s(v1),
+					transform_f2s(v2),
+					col, 2, tangent);
+			}
+			else if (endEdge == ImFCurveEdgeType::Loop)
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x < v2.x)
+				{
+					checkHovered(v1.x - keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
+					v1.x += distance;
+				}
+			}
+			else
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x < v2.x)
+				{
+					checkHovered(v1.x + keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
+					v1.x += distance;
+				}
+			}
+		}
+
+		if (tangent)
+		{
+			*tangent = transform_s2f(*tangent);
+		}
+
+		return isLineHovered;
+	}
+
 	void DrawMaker(ImGuiWindow* window, ImVec2 pos, float size, uint32_t color, int32_t thickness)
 	{
+		window->DrawList->AddCircleFilled(pos, size + thickness, 0xAA000000, 8);
 		window->DrawList->AddCircleFilled(pos, size, color, 8);
-		//window->DrawList->AddLine(ImVec2(pos.x + size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
-		//window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y + size), color, thickness);
-		//window->DrawList->AddLine(ImVec2(pos.x + size, pos.y), ImVec2(pos.x, pos.y + size), color, thickness);
-		//window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
 	}
 
 	void ClampHandles(
@@ -565,7 +747,6 @@ namespace ImGui
 		return true;
 	}
 
-
 	bool NoPointFCurve(
 		int fcurve_id,
 		float* keys, float* values,
@@ -619,7 +800,7 @@ namespace ImGui
 			auto v1 = ImVec2(transform_s2f(innerRect.Min).x, defaultValue);
 			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, defaultValue);
 
-			isLineHovered = isLineHovered | IsHoveredOnLine(
+			isLineHovered = isLineHovered || IsHoveredOnLine(
 				GetMousePos(), window,
 				transform_f2s(v1),
 				transform_f2s(v2),
@@ -636,7 +817,7 @@ namespace ImGui
 				auto v = transform_s2f(mousePos);
 
 				keys[0] = v.x;
-				values[0] = v.y;
+				values[0] = defaultValue;
 				leftHandleKeys[0] = v.x;
 				leftHandleValues[0] = v.y;
 				rightHandleKeys[0] = v.x;
@@ -654,7 +835,7 @@ namespace ImGui
 		{
 			if (isLineHovered)
 			{
-				(*newSelected) = (*newSelected) | isLineHovered;
+				(*newSelected) = (*newSelected) || isLineHovered;
 				hasControlled = true;
 			}
 		}
@@ -682,13 +863,126 @@ namespace ImGui
 		return hasControlled;
 	}
 
-	bool AddPointFCurve(
+	bool AddFCurvePoint(ImVec2 v,
 		float* keys, float* values,
 		float* leftHandleKeys, float* leftHandleValues,
 		float* rightHandleKeys, float* rightHandleValues,
-		ImFCurveInterporationType* interporations)
+		ImFCurveInterporationType* interporations,
+		bool* kv_selected, int count, int* newCount)
 	{
-		return false;
+		bool result = false;
+
+		v.x = (int32_t)(v.x + 0.5);
+
+		if (v.x < keys[0])
+		{
+			for (int j = count; j > 0; j--)
+			{
+				keys[j] = keys[j - 1];
+				values[j] = values[j - 1];
+				leftHandleKeys[j] = leftHandleKeys[j - 1];
+				leftHandleValues[j] = leftHandleValues[j - 1];
+				rightHandleKeys[j] = rightHandleKeys[j - 1];
+				rightHandleValues[j] = rightHandleValues[j - 1];
+				kv_selected[j] = kv_selected[j - 1];
+				interporations[j] = interporations[j - 1];
+			}
+
+			keys[0] = v.x;
+			values[0] = v.y;
+			leftHandleKeys[0] = v.x;
+			leftHandleValues[0] = v.y;
+			rightHandleKeys[0] = v.x;
+			rightHandleValues[0] = v.y;
+			kv_selected[0] = false;
+			interporations[0] = ImFCurveInterporationType::Linear;
+
+			(*newCount) = count + 1;
+			result = true;
+		}
+		else if (v.x >= keys[count - 1])
+		{
+			keys[count] = v.x;
+			values[count] = v.y;
+			leftHandleKeys[count] = v.x;
+			leftHandleValues[count] = v.y;
+			rightHandleKeys[count] = v.x;
+			rightHandleValues[count] = v.y;
+			kv_selected[count] = false;
+			interporations[count] = ImFCurveInterporationType::Linear;
+
+			(*newCount) = count + 1;
+			result = true;
+		}
+		else
+		{
+			for (int i = 0; i < count - 1; i++)
+			{
+				if (keys[i] <= v.x && v.x < keys[i + 1])
+				{
+					for (int j = count; j > i; j--)
+					{
+						keys[j] = keys[j - 1];
+						values[j] = values[j - 1];
+						leftHandleKeys[j] = leftHandleKeys[j - 1];
+						leftHandleValues[j] = leftHandleValues[j - 1];
+						rightHandleKeys[j] = rightHandleKeys[j - 1];
+						rightHandleValues[j] = rightHandleValues[j - 1];
+						kv_selected[j] = kv_selected[j - 1];
+						interporations[j] = interporations[j - 1];
+					}
+
+					keys[i + 1] = v.x;
+					values[i + 1] = v.y;
+					leftHandleKeys[i + 1] = v.x;
+					leftHandleValues[i + 1] = v.y;
+					rightHandleKeys[i + 1] = v.x;
+					rightHandleValues[i + 1] = v.y;
+					kv_selected[i + 1] = false;
+					interporations[i + 1] = ImFCurveInterporationType::Linear;
+
+					(*newCount) = count + 1;
+					result = true;
+					break;
+				}
+			}
+		}
+
+		ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
+
+		return result;
+	}
+
+	bool RemoveFCurvePoint(ImVec2 v,
+		float* keys, float* values,
+		float* leftHandleKeys, float* leftHandleValues,
+		float* rightHandleKeys, float* rightHandleValues,
+		ImFCurveInterporationType* interporations,
+		bool* kv_selected, int count, int* newCount)
+	{
+		bool result = false;
+
+		for (int i = 0; i < count; i++)
+		{
+			if (!IsHovered(v, ImVec2(keys[i], values[i]), 3))
+				continue;
+		
+			for (int j = i; j < count; j++)
+			{
+				keys[j] = keys[j + 1];
+				values[j] = values[j + 1];
+				leftHandleKeys[j] = leftHandleKeys[j + 1];
+				leftHandleValues[j] = leftHandleValues[j + 1];
+				rightHandleKeys[j] = rightHandleKeys[j + 1];
+				rightHandleValues[j] = rightHandleValues[j + 1];
+				kv_selected[j] = kv_selected[j + 1];
+				interporations[j] = interporations[j + 1];
+			}
+		
+			(*newCount) = count - 1;
+			
+			return true;
+		}
 	}
 
 	bool FCurve(
@@ -788,7 +1082,7 @@ namespace ImGui
 			ImVec2 end;
 			context.GetSelectingArea(begin, end);
 
-			if (!GetIO().KeyShift && !GetIO().KeyAlt)
+			if (!GetIO().KeyCtrl && !GetIO().KeyAlt)
 			{
 				for (int j = 0; j < count; j++)
 				{
@@ -811,155 +1105,11 @@ namespace ImGui
 		auto over_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0.0f);
 		bool isOnPoint = false;
 
-
-		bool isLineHovered = false;
-		{
-			auto checkHovered = [&](float offset, bool isReversed) -> void
-			{
-				if (isReversed)
-				{
-					auto distance = keys[count - 1] - keys[0];
-					offset += distance;
-
-					for (int i = 0; i < count - 1; i++)
-					{
-						auto v1 = ImVec2(-keys[i + 0] + offset, values[i + 0]);
-						auto v2 = ImVec2(-keys[i + 1] + offset, values[i + 1]);
-
-						auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
-						auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
-
-						if (interporations[i] == ImFCurveInterporationType::Cubic)
-						{
-							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(cp1),
-								transform_f2s(cp2),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-						else
-						{
-							isLineHovered = isLineHovered | IsHoveredOnLine(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-
-						if (isLineHovered) break;
-					}
-				}
-				else
-				{
-					for (int i = 0; i < count - 1; i++)
-					{
-						auto v1 = ImVec2(keys[i + 0] + offset, values[i + 0]);
-						auto v2 = ImVec2(keys[i + 1] + offset, values[i + 1]);
-
-						auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
-						auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
-
-						if (interporations[i] == ImFCurveInterporationType::Cubic)
-						{
-							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(cp1),
-								transform_f2s(cp2),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-						else
-						{
-							isLineHovered = isLineHovered | IsHoveredOnLine(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-
-						if (isLineHovered) break;
-					}
-				}
-			};
-
-			// start
-			{
-				auto v1 = ImVec2(keys[0], values[0]);
-				auto v2 = ImVec2(transform_s2f(innerRect.Min).x, values[0]);
-
-				if (startEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
-				{
-					isLineHovered = isLineHovered | IsHoveredOnLine(
-						GetMousePos(), window,
-						transform_f2s(v1),
-						transform_f2s(v2),
-						col,
-						2);
-				}
-				else if (startEdge == ImFCurveEdgeType::Loop)
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x > v2.x)
-					{
-						v1.x -= distance;
-						checkHovered(v1.x - keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
-					}
-				}
-				else
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x > v2.x)
-					{
-						v1.x -= distance;
-						checkHovered(v1.x + keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
-					}
-				}
-			}
-
-			// center
-			checkHovered(0, false);
-
-			// end
-			{
-				auto v1 = ImVec2(keys[count - 1], values[count - 1]);
-				auto v2 = ImVec2(transform_s2f(innerRect.Max).x, values[count - 1]);
-
-				if (endEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
-				{
-					isLineHovered = isLineHovered | IsHoveredOnLine(
-						GetMousePos(), window,
-						transform_f2s(v1),
-						transform_f2s(v2),
-						col,
-						2);
-				}
-				else if (endEdge == ImFCurveEdgeType::Loop)
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x < v2.x)
-					{
-						checkHovered(v1.x - keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
-						v1.x += distance;
-					}
-				}
-				else
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x < v2.x)
-					{
-						checkHovered(v1.x + keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
-						v1.x += distance;
-					}
-				}
-			}
-		}
+		ImVec2 lineHoveredPos = {};
+		bool isLineHovered = IsHoveredOnFCurve(keys, values, 
+			leftHandleKeys, leftHandleValues, 
+			rightHandleKeys, rightHandleValues, 
+			interporations, startEdge, endEdge, col, count, &lineHoveredPos);
 
 		auto lineThiness = 1.5f;
 		if (selected) lineThiness++;
@@ -1102,130 +1252,6 @@ namespace ImGui
 			}
 		}
 
-		// remove point
-		if (!hasControlled && selected && IsMouseDoubleClicked(0))
-		{
-			auto mousePos = GetMousePos();
-			auto v = transform_s2f(mousePos);
-
-			for (int i = 0; i < count; i++)
-			{
-				auto p = transform_f2s(ImVec2(keys[i], values[i]));
-
-				if (!IsHovered(mousePos, p, 3))
-					continue;
-
-				for (int j = i; j < count; j++)
-				{
-					keys[j] = keys[j + 1];
-					values[j] = values[j + 1];
-					leftHandleKeys[j] = leftHandleKeys[j + 1];
-					leftHandleValues[j] = leftHandleValues[j + 1];
-					rightHandleKeys[j] = rightHandleKeys[j + 1];
-					rightHandleValues[j] = rightHandleValues[j + 1];
-					kv_selected[j] = kv_selected[j + 1];
-					interporations[j] = interporations[j + 1];
-				}
-
-				(*newCount) = count - 1;
-				count = count - 1;
-				hasControlled = true;
-				break;
-			}
-		}
-
-		// Add point
-		if (!hasControlled && selected)
-		{
-			if (isLineHovered && IsMouseDoubleClicked(0))
-			{
-				auto mousePos = GetMousePos();
-				auto v = transform_s2f(mousePos);
-
-				// make int
-				v.x = (int32_t)(v.x + 0.5);
-
-				if (v.x < keys[0])
-				{
-					for (int j = count; j > 0; j--)
-					{
-						keys[j] = keys[j - 1];
-						values[j] = values[j - 1];
-						leftHandleKeys[j] = leftHandleKeys[j - 1];
-						leftHandleValues[j] = leftHandleValues[j - 1];
-						rightHandleKeys[j] = rightHandleKeys[j - 1];
-						rightHandleValues[j] = rightHandleValues[j - 1];
-						kv_selected[j] = kv_selected[j - 1];
-						interporations[j] = interporations[j - 1];
-					}
-
-					keys[0] = v.x;
-					values[0] = v.y;
-					leftHandleKeys[0] = v.x;
-					leftHandleValues[0] = v.y;
-					rightHandleKeys[0] = v.x;
-					rightHandleValues[0] = v.y;
-					kv_selected[0] = false;
-					interporations[0] = ImFCurveInterporationType::Linear;
-
-					(*newCount) = count + 1;
-					count = count + 1;
-					hasControlled = true;
-				}
-				else if (v.x >= keys[count - 1])
-				{
-					keys[count] = v.x;
-					values[count] = v.y;
-					leftHandleKeys[count] = v.x;
-					leftHandleValues[count] = v.y;
-					rightHandleKeys[count] = v.x;
-					rightHandleValues[count] = v.y;
-					kv_selected[count] = false;
-					interporations[count] = ImFCurveInterporationType::Linear;
-
-					(*newCount) = count + 1;
-					count = count + 1;
-					hasControlled = true;
-				}
-				else
-				{
-					for (int i = 0; i < count - 1; i++)
-					{
-						if (keys[i] <= v.x && v.x < keys[i + 1])
-						{
-							for (int j = count; j > i; j--)
-							{
-								keys[j] = keys[j - 1];
-								values[j] = values[j - 1];
-								leftHandleKeys[j] = leftHandleKeys[j - 1];
-								leftHandleValues[j] = leftHandleValues[j - 1];
-								rightHandleKeys[j] = rightHandleKeys[j - 1];
-								rightHandleValues[j] = rightHandleValues[j - 1];
-								kv_selected[j] = kv_selected[j - 1];
-								interporations[j] = interporations[j - 1];
-							}
-
-							keys[i + 1] = v.x;
-							values[i + 1] = v.y;
-							leftHandleKeys[i + 1] = v.x;
-							leftHandleValues[i + 1] = v.y;
-							rightHandleKeys[i + 1] = v.x;
-							rightHandleValues[i + 1] = v.y;
-							kv_selected[i + 1] = false;
-							interporations[i + 1] = ImFCurveInterporationType::Linear;
-
-							(*newCount) = count + 1;
-							count = count + 1;
-							hasControlled = true;
-							break;
-						}
-					}
-				}
-
-				ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
-			}
-		}
-
 		// move points
 		if (!hasControlled && selected)
 		{
@@ -1241,19 +1267,23 @@ namespace ImGui
 				auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 				auto cursorPos = GetCursorPos();
 
-				SetCursorScreenPos(ImVec2(pos.x - pointSize, pos.y - pointSize));
+				ImVec2 p(pos.x - pointSize, pos.y - pointSize);
+				SetCursorScreenPos(p);
 
 				InvisibleButton("", ImVec2(pointSize * 2, pointSize * 2));
 
 				bool isDrawPositionRequired = false;
 
-				if (IsItemHovered())
+				bool isActive = IsItemActive();
+				bool itemHovered = IsItemHovered();
+
+				if (itemHovered)
 				{
 					isDrawPositionRequired = true;
 					isOnPoint = true;
 				}
 
-				if (IsItemActive() && IsMouseClicked(0))
+				if (itemHovered && IsMouseClicked(0))
 				{
 					if (!GetIO().KeyShift && !GetIO().KeyAlt)
 					{
@@ -1275,7 +1305,20 @@ namespace ImGui
 					hasControlled = true;
 				}
 
-				if (IsItemActive() && IsMouseDragging(0))
+				// Remove
+				if (itemHovered && IsMouseDoubleClicked(0))
+				{
+					RemoveFCurvePoint(transform_s2f(p), keys, values, 
+						leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues,
+						interporations, kv_selected, count, newCount);
+					count = *newCount;
+				}
+
+				if (isActive && IsMouseClicked(0))
+				{
+				}
+
+				if (isActive && IsMouseDragging(0))
 				{
 					movedIndex = i;
 					hasControlled = true;
@@ -1294,6 +1337,14 @@ namespace ImGui
 
 				PopID();
 				SetCursorScreenPos(cursorPos);
+
+				if (itemHovered && IsMouseReleased(1))
+				{
+					ImVec2 v = transform_s2f(p);
+					ImGui::OpenPopup("FCurveMenu_Remove");
+					window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, v.x);
+					window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, v.y);
+				}
 
 				// out of window
 				if (isChanged && over_y != 0.0f)
@@ -1459,7 +1510,7 @@ namespace ImGui
 
 				if (isDrawPositionRequired)
 				{
-					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 1);
 
 					char text[255];
 					sprintf(text, "(%.3f, %.3f)", leftHandleKeys[i], leftHandleValues[i]);
@@ -1551,7 +1602,7 @@ namespace ImGui
 
 				if (isDrawPositionRequired)
 				{
-					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 1);
 
 					char text[255];
 					sprintf(text, "(%.3f, %.3f)", rightHandleKeys[i], rightHandleValues[i]);
@@ -1602,13 +1653,70 @@ namespace ImGui
 			}
 		}
 
+		// Add point
+		if (!hasControlled && selected && !isOnPoint)
+		{
+			if (isLineHovered && IsMouseDoubleClicked(0))
+			{
+				hasControlled = AddFCurvePoint(lineHoveredPos, 
+					keys, values, leftHandleKeys, leftHandleValues, 
+					rightHandleKeys, rightHandleValues, interporations,
+					kv_selected, count, newCount);
+				count = *newCount;
+			}
+
+			if (isLineHovered && IsMouseReleased(1))
+			{
+				ImGui::OpenPopup("FCurveMenu_Add");
+				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, lineHoveredPos.x);
+				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, lineHoveredPos.y);
+			}
+		}
+
 		// is line selected
-		if (newSelected != nullptr && !hasControlled && !isLocked &&!isOnPoint && IsMouseClicked(0))
+		if (newSelected != nullptr && !hasControlled && !isLocked && !isOnPoint && IsMouseClicked(0))
 		{
 			if (isLineHovered)
 			{
-				(*newSelected) = (*newSelected) | isLineHovered;
+				(*newSelected) = (*newSelected) || isLineHovered;
 				hasControlled = true;
+
+				for (int i = 0; i < count; i++)
+				{
+					kv_selected[i] = false;
+				}
+			}
+		}
+
+		if (!hasControlled && selected)
+		{
+			if (ImGui::BeginPopup("FCurveMenu_Add"))
+			{
+				if (ImGui::Selectable("Add"))
+				{
+					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
+					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
+					hasControlled = AddFCurvePoint({x, y}, 
+						keys, values, leftHandleKeys, leftHandleValues, 
+						rightHandleKeys, rightHandleValues, interporations,
+						kv_selected, count, newCount);
+					count = *newCount;
+				}
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginPopup("FCurveMenu_Remove"))
+			{
+				if (ImGui::Selectable("Remove"))
+				{
+					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
+					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
+					hasControlled = RemoveFCurvePoint({x, y}, keys, values, 
+						leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues,
+						interporations, kv_selected, count, newCount);
+					count = *newCount;
+				}
+				ImGui::EndPopup();
 			}
 		}
 
@@ -1632,7 +1740,7 @@ namespace ImGui
 					float pointSize = 3;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
-					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xCCFFFFFF, 2);
 				}
 			}
 		}
