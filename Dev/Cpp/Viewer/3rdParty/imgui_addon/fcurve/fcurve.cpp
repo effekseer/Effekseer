@@ -384,11 +384,6 @@ namespace ImGui
 			}
 		}
 
-		if (tangent)
-		{
-			*tangent = transform_s2f(*tangent);
-		}
-
 		return isLineHovered;
 	}
 
@@ -747,122 +742,6 @@ namespace ImGui
 		return true;
 	}
 
-	bool NoPointFCurve(
-		int fcurve_id,
-		float* keys, float* values,
-		float* leftHandleKeys, float* leftHandleValues,
-		float* rightHandleKeys, float* rightHandleValues,
-		ImFCurveInterporationType* interporations,
-		bool* kv_selected,
-		int count,
-		float defaultValue,
-		bool isLocked,
-		bool canControl,
-		ImU32 col,
-		bool selected,
-		int* newCount,
-		bool* newSelected)
-	{
-		PushID(fcurve_id);
-
-		ImGuiWindow* window = GetCurrentWindow();
-
-		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
-		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
-
-		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
-		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
-
-		const ImRect innerRect = window->InnerRect;
-		float width = innerRect.Max.x - innerRect.Min.x;
-		float height = innerRect.Max.y - innerRect.Min.y;
-
-		auto transform_f2s = [&](const ImVec2& p) -> ImVec2
-		{
-			return ImVec2((p.x - offset_x) * scale_x + innerRect.Min.x, (-p.y - offset_y) * scale_y + innerRect.Min.y + height / 2);
-		};
-
-		auto transform_s2f = [&](const ImVec2& p) -> ImVec2
-		{
-			return ImVec2((p.x - innerRect.Min.x) / scale_x + offset_x, -((p.y - innerRect.Min.y - height / 2) / scale_y + offset_y));
-		};
-
-
-		bool hasControlled = !canControl;
-
-		if (isLocked)
-		{
-			hasControlled = true;
-		}
-
-		bool isLineHovered = false;
-		{
-			auto v1 = ImVec2(transform_s2f(innerRect.Min).x, defaultValue);
-			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, defaultValue);
-
-			isLineHovered = isLineHovered || IsHoveredOnLine(
-				GetMousePos(), window,
-				transform_f2s(v1),
-				transform_f2s(v2),
-				col,
-				2);
-		}
-
-		// Add point
-		if (!hasControlled && selected)
-		{
-			if (isLineHovered && IsMouseDoubleClicked(0))
-			{
-				auto mousePos = GetMousePos();
-				auto v = transform_s2f(mousePos);
-
-				keys[0] = v.x;
-				values[0] = defaultValue;
-				leftHandleKeys[0] = v.x;
-				leftHandleValues[0] = v.y;
-				rightHandleKeys[0] = v.x;
-				rightHandleValues[0] = v.y;
-				kv_selected[0] = false;
-				interporations[0] = ImFCurveInterporationType::Linear;
-
-				(*newCount) = count + 1;
-				hasControlled = true;
-			}
-		}
-
-		// is line selected
-		if (newSelected != nullptr && !hasControlled && !isLocked && IsMouseClicked(0))
-		{
-			if (isLineHovered)
-			{
-				(*newSelected) = (*newSelected) || isLineHovered;
-				hasControlled = true;
-			}
-		}
-
-		// render curve
-
-		auto lineThiness = 1;
-		if (selected) lineThiness++;
-		if (isLineHovered) lineThiness++;
-
-		// start
-		{
-			auto v1 = ImVec2(transform_s2f(innerRect.Min).x, defaultValue);
-			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, defaultValue);
-
-			window->DrawList->AddLine(
-				transform_f2s(v1),
-				transform_f2s(v2),
-				col,
-				lineThiness);
-		}
-
-		PopID();
-
-		return hasControlled;
-	}
-
 	bool AddFCurvePoint(ImVec2 v,
 		float* keys, float* values,
 		float* leftHandleKeys, float* leftHandleValues,
@@ -966,7 +845,7 @@ namespace ImGui
 		{
 			if (!IsHovered(v, ImVec2(keys[i], values[i]), 3))
 				continue;
-		
+
 			for (int j = i; j < count; j++)
 			{
 				keys[j] = keys[j + 1];
@@ -978,11 +857,149 @@ namespace ImGui
 				kv_selected[j] = kv_selected[j + 1];
 				interporations[j] = interporations[j + 1];
 			}
-		
+
 			(*newCount) = count - 1;
-			
+
 			return true;
 		}
+	}
+
+	bool NoPointFCurve(
+		int fcurve_id,
+		float* keys, float* values,
+		float* leftHandleKeys, float* leftHandleValues,
+		float* rightHandleKeys, float* rightHandleValues,
+		ImFCurveInterporationType* interporations,
+		bool* kv_selected,
+		int count,
+		float defaultValue,
+		bool isLocked,
+		bool canControl,
+		ImU32 col,
+		bool selected,
+		int* newCount,
+		bool* newSelected)
+	{
+		PushID(fcurve_id);
+
+		ImGuiWindow* window = GetCurrentWindow();
+
+		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
+		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
+
+		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
+		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+
+		const ImRect innerRect = window->InnerRect;
+		float width = innerRect.Max.x - innerRect.Min.x;
+		float height = innerRect.Max.y - innerRect.Min.y;
+
+		auto transform_f2s = [&](const ImVec2& p) -> ImVec2
+		{
+			return ImVec2((p.x - offset_x) * scale_x + innerRect.Min.x, (-p.y - offset_y) * scale_y + innerRect.Min.y + height / 2);
+		};
+
+		auto transform_s2f = [&](const ImVec2& p) -> ImVec2
+		{
+			return ImVec2((p.x - innerRect.Min.x) / scale_x + offset_x, -((p.y - innerRect.Min.y - height / 2) / scale_y + offset_y));
+		};
+
+
+		bool hasControlled = !canControl;
+
+		if (isLocked)
+		{
+			hasControlled = true;
+		}
+
+		ImVec2 lineHoveredPos = {};
+		bool isLineHovered = false;
+		{
+			auto v1 = ImVec2(transform_s2f(innerRect.Min).x, defaultValue);
+			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, defaultValue);
+
+			isLineHovered = isLineHovered || IsHoveredOnLine(
+				GetMousePos(), window,
+				transform_f2s(v1),
+				transform_f2s(v2),
+				col, 2, &lineHoveredPos);
+			lineHoveredPos = transform_s2f(lineHoveredPos);
+		}
+
+		// Add point
+		if (!hasControlled && selected)
+		{
+			if (isLineHovered && IsMouseDoubleClicked(0))
+			{
+				auto mousePos = GetMousePos();
+				auto v = transform_s2f(mousePos);
+
+				keys[0] = v.x;
+				values[0] = defaultValue;
+				leftHandleKeys[0] = v.x;
+				leftHandleValues[0] = v.y;
+				rightHandleKeys[0] = v.x;
+				rightHandleValues[0] = v.y;
+				kv_selected[0] = false;
+				interporations[0] = ImFCurveInterporationType::Linear;
+
+				(*newCount) = count + 1;
+				hasControlled = true;
+			}
+
+			if (isLineHovered && IsMouseReleased(1))
+			{
+				ImGui::OpenPopup("FCurveMenu_Add");
+				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, lineHoveredPos.x);
+				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, lineHoveredPos.y);
+			}
+			if (ImGui::BeginPopup("FCurveMenu_Add"))
+			{
+				if (ImGui::Selectable("Add"))
+				{
+					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
+					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
+					hasControlled = AddFCurvePoint({x, y}, 
+						keys, values, leftHandleKeys, leftHandleValues, 
+						rightHandleKeys, rightHandleValues, interporations,
+						kv_selected, count, newCount);
+					count = *newCount;
+				}
+				ImGui::EndPopup();
+			}
+		}
+
+		// is line selected
+		if (newSelected != nullptr && !hasControlled && !isLocked && IsMouseClicked(0))
+		{
+			if (isLineHovered)
+			{
+				(*newSelected) = (*newSelected) || isLineHovered;
+				hasControlled = true;
+			}
+		}
+
+		// render curve
+
+		auto lineThiness = 1;
+		if (selected) lineThiness++;
+		if (isLineHovered) lineThiness++;
+
+		// start
+		{
+			auto v1 = ImVec2(transform_s2f(innerRect.Min).x, defaultValue);
+			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, defaultValue);
+
+			window->DrawList->AddLine(
+				transform_f2s(v1),
+				transform_f2s(v2),
+				col,
+				lineThiness);
+		}
+
+		PopID();
+
+		return hasControlled;
 	}
 
 	bool FCurve(
@@ -1110,6 +1127,7 @@ namespace ImGui
 			leftHandleKeys, leftHandleValues, 
 			rightHandleKeys, rightHandleValues, 
 			interporations, startEdge, endEdge, col, count, &lineHoveredPos);
+		lineHoveredPos = transform_s2f(lineHoveredPos);
 
 		auto lineThiness = 1.5f;
 		if (selected) lineThiness++;
