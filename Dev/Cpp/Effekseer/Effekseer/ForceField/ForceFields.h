@@ -129,7 +129,14 @@ public:
 			return 0.0f;
 		}
 
-		return power / powf(distance - fffc.MinDistance, fffc.Power);
+		const auto deg = powf(distance - fffc.MinDistance, fffc.Power);
+
+		if (deg == 0.0f)
+		{
+			return power;
+		}
+
+		return power / deg;
 	}
 
 	//! Tube
@@ -146,7 +153,7 @@ public:
 			return 0.0f;
 		}
 
-		if (distance < fffc.MinDistance)
+		if (distance <= fffc.MinDistance)
 		{
 			return 0.0f;
 		}
@@ -167,7 +174,14 @@ public:
 			return 0.0f;
 		}
 
-		return power / powf(distance, fffc.Power) / powf(tubeRadius - ffft.MinRadius, ffft.RadiusPower);
+		const auto deg = powf(distance, fffc.Power) * powf(tubeRadius - ffft.MinRadius, ffft.RadiusPower);
+
+		if (deg == 0.0f)
+		{
+			return power;
+		}
+
+		return power / deg;
 	}
 
 	float GetPower(float power,
@@ -182,7 +196,7 @@ public:
 			return 0.0f;
 		}
 
-		if (distance < fffc.MinDistance)
+		if (distance <= fffc.MinDistance)
 		{
 			return 0.0f;
 		}
@@ -205,7 +219,10 @@ public:
 		}
 
 		const auto e = 0.000001f;
-		return power / powf(distance, fffc.Power) / powf((angle - ffft.MinAngle) / (ffft.MaxAngle - ffft.MinAngle + e), ffft.AnglePower);
+
+		const auto deg = powf(distance, fffc.Power) * powf((angle - ffft.MinAngle) / (ffft.MaxAngle - ffft.MinAngle + e), ffft.AnglePower);
+
+		return power / deg;
 	}
 };
 
@@ -291,7 +308,7 @@ public:
 		}
 		else if (ffp.LightNoise != nullptr)
 		{
-			vel = ffp.LightNoise->Get(localPos) * ffp.Power * LightNoisePowerScale;		
+			vel = ffp.LightNoise->Get(localPos) * ffp.Power * LightNoisePowerScale;
 		}
 
 		auto acc = vel - ffc.PreviousVelocity;
