@@ -2091,7 +2091,8 @@ void GUIManager::DrawLineBackground(float height, uint32_t col)
 
 bool GUIManager::BeginFullscreen(const char16_t* label)
 {
-	float offsetY = (mainWindow_->IsFrameless()) ? (32.0f * GetDpiScale()) : (ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale());
+	ImGuiWindow* mainMenu = ImGui::FindWindowByName("##MainMenuBar");
+	float offsetY = (mainMenu) ? (mainMenu->Size.y) : (ImGui::GetTextLineHeightWithSpacing() + 1 * GetDpiScale());
 
 	ImVec2 windowSize;
 	windowSize.x = ImGui::GetIO().DisplaySize.x;

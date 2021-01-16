@@ -74,7 +74,7 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
-			float showHideButtonOffset = 16 * Manager.DpiScale;
+			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight();
 
 			isPopupShown = false;
 

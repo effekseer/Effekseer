@@ -35,7 +35,10 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			float textHeight = Manager.NativeManager.GetTextLineHeight();
+			float frameHeight = Manager.NativeManager.GetFrameHeightWithSpacing();
 			float dpiScale = Manager.DpiScale;
+			float padding = 4.0f * dpiScale;
 
 			IsHovered = false;
 
@@ -43,23 +46,23 @@ namespace Effekseer.GUI.Dock
 
 			// Menu
 			contentSize.X = System.Math.Max(1, contentSize.X);
-			contentSize.Y = System.Math.Max(1, contentSize.Y - 30 * dpiScale);
+			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
 
 			var p = Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y);
 			Manager.NativeManager.Image(p, (int)contentSize.X, (int)contentSize.Y);
 
 			IsHovered = Manager.NativeManager.IsWindowHovered();
 
-			Manager.NativeManager.Indent(4 * dpiScale);
+			Manager.NativeManager.Indent(padding);
 
 			// Enum
-			Manager.NativeManager.PushItemWidth(120 * dpiScale);
+			Manager.NativeManager.PushItemWidth(textHeight * 7.0f);
 			renderMode.Update();
 			Manager.NativeManager.PopItemWidth();
 
 			Manager.NativeManager.SameLine();
 
-			Manager.NativeManager.PushItemWidth(50 * dpiScale);
+			Manager.NativeManager.PushItemWidth(textHeight * 2.5f);
 			viewMode.Update();
 			Manager.NativeManager.PopItemWidth();
 

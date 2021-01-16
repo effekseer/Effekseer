@@ -74,11 +74,12 @@ namespace Effekseer.GUI.Menu
 
 		private void AddWindowButtons(Vec2 windowSize)
 		{
+			var size = Manager.NativeManager.GetWindowSize();
+			float buttonY = size.Y - 1;
+			float buttonX = buttonY * 44 / 32;
+
 			void ShowButton(int offset, ImageResource icon, Action onClick)
 			{
-				float buttonX = 44 * Manager.DpiScale;
-				float buttonY = 32 * Manager.DpiScale;
-
 				Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * offset);
 				if (Manager.NativeManager.ImageButtonOriginal(icon, buttonX, buttonY))
 				{
@@ -102,9 +103,12 @@ namespace Effekseer.GUI.Menu
 
 		private void AddTitle(Vec2 windowSize)
 		{
+			var size = Manager.NativeManager.GetWindowSize();
+			float buttonX = size.Y * 44 / 32;
+
 			float pos = Manager.NativeManager.GetCursorPosX();
 			float textWidth = Manager.NativeManager.CalcTextSize(_windowTitleControl.CurrentTitle).X;
-			float areaWidth = windowSize.X - pos - 56 * 3;
+			float areaWidth = windowSize.X - pos - buttonX * 3;
 			if (textWidth < areaWidth)
 			{
 				Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
