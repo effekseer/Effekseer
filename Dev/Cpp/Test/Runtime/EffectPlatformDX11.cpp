@@ -145,9 +145,20 @@ void EffectPlatformDX11::CreateCheckedTexture()
 
 EffekseerRenderer::RendererRef EffectPlatformDX11::CreateRenderer()
 {
-	auto ret = EffekseerRendererDX11::Renderer::Create(device_, context_, 2000);
+	ID3D11DeviceContext* context = nullptr;
 
-	ret->SetDistortingCallback(new DistortingCallbackDX11(device_, context_));
+	if (isDefferedContextMode_)
+	{
+		context = defferedContext_;
+	}
+	else
+	{
+		context = context_;
+	}
+
+	auto ret = EffekseerRendererDX11::Renderer::Create(device_, context, 2000);
+
+	ret->SetDistortingCallback(new DistortingCallbackDX11(device_, context));
 
 	return ret;
 }
@@ -164,6 +175,7 @@ EffectPlatformDX11::~EffectPlatformDX11()
 	ES_SAFE_RELEASE(adapter_);
 	ES_SAFE_RELEASE(dxgiDevice_);
 	ES_SAFE_RELEASE(context_);
+	ES_SAFE_RELEASE(defferedContext_);
 	ES_SAFE_RELEASE(device_);
 }
 
@@ -266,19 +278,55 @@ void EffectPlatformDX11::InitializeDevice(const EffectPlatformInitializingParame
 	context_->RSSetViewports(1, &vp);
 
 	CreateCheckedTexture();
+
+	if (FAILED(device_->CreateDeferredContext(0, &defferedContext_)))
+	{
+		throw "Failed : CreateDeferredContext";
+	}
 }
 
 void EffectPlatformDX11::BeginRendering()
 {
-	float ClearColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
-	context_->ClearRenderTargetView(renderTargetView_, ClearColor);
-	context_->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	ID3D11DeviceContext* context = nullptr;
 
-	context_->CopyResource(backBuffer_, checkedTexture_);
+	if (isDefferedContextMode_)
+	{
+		GetRenderer().DownCast<EffekseerRendererDX11::Renderer>()->ResetStateForDefferedContext();
+
+		context = defferedContext_;
+
+		context->OMSetRenderTargets(1, &renderTargetView_, depthStencilView_);
+
+		D3D11_VIEWPORT vp;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		vp.Width = (float)initParam_.WindowSize[0];
+		vp.Height = (float)initParam_.WindowSize[1];
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		context->RSSetViewports(1, &vp);
+	}
+	else
+	{
+		context = context_;
+	}
+
+	float ClearColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
+	context->ClearRenderTargetView(renderTargetView_, ClearColor);
+	context->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	context->CopyResource(backBuffer_, checkedTexture_);
 }
 
 void EffectPlatformDX11::EndRendering()
 {
+	if (isDefferedContextMode_)
+	{
+		ID3D11CommandList* cl = nullptr;
+		defferedContext_->FinishCommandList(false, &cl);
+		context_->ExecuteCommandList(cl, false);
+		cl->Release();
+	}
 }
 
 void EffectPlatformDX11::Present()

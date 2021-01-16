@@ -49,6 +49,9 @@ public:
 	bool RingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
 	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
 	void Unlock();
+
+	//! next ring buffer lock must discard a buffer
+	void DiscardForcely();
 };
 
 //-----------------------------------------------------------------------------------
