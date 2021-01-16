@@ -90,8 +90,7 @@ void VertexBuffer::Lock()
 	m_resource = (uint8_t*)m_lockedResource;
 	m_offset = 0;
 
-	/* 次のRingBufferLockは強制的にDiscard */
-	m_vertexRingOffset = m_size;
+	DiscardForcely();
 }
 
 //-----------------------------------------------------------------------------------
@@ -177,6 +176,11 @@ void VertexBuffer::Unlock()
 	m_resource = nullptr;
 	m_isLock = false;
 	m_ringBufferLock = false;
+}
+
+void VertexBuffer::DiscardForcely()
+{
+	m_vertexRingOffset = m_size;
 }
 
 //-----------------------------------------------------------------------------------

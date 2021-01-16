@@ -253,6 +253,8 @@ public:
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
 
+	void ResetStateForDefferedContext() override;
+
 	virtual int GetRef()
 	{
 		return ::Effekseer::ReferenceObject::GetRef();

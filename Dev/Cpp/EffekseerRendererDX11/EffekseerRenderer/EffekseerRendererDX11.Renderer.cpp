@@ -951,6 +951,11 @@ Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() c
 	return graphicsDevice_;
 }
 
+void RendererImplemented::ResetStateForDefferedContext()
+{
+	m_vertexBuffer->DiscardForcely();
+}
+
 } // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //

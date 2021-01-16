@@ -69,6 +69,14 @@ public:
 				\~Japanese	背景を設定する
 	*/
 	virtual void SetBackground(ID3D11ShaderResourceView* background) = 0;
+
+	/**
+		@brief	\~English	Reset internal states for DefferedContext
+				\~Japanese	DefferedContextのために、内部の状態をリセットする。
+		@note	\~English	Please call before BeginRendering after FinishCommandList
+				\~Japanese	FinishCommandListの後でBeginRenderingの前に呼んでください。
+	*/
+	virtual void ResetStateForDefferedContext() = 0;
 };
 
 //----------------------------------------------------------------------------------
