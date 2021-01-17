@@ -843,25 +843,24 @@ namespace ImGui
 
 		for (int i = 0; i < count; i++)
 		{
-			if (!IsHovered(v, ImVec2(keys[i], values[i]), 3))
-				continue;
-
-			for (int j = i; j < count; j++)
+			if (IsHovered(v, ImVec2(keys[i], values[i]), 3))
 			{
-				keys[j] = keys[j + 1];
-				values[j] = values[j + 1];
-				leftHandleKeys[j] = leftHandleKeys[j + 1];
-				leftHandleValues[j] = leftHandleValues[j + 1];
-				rightHandleKeys[j] = rightHandleKeys[j + 1];
-				rightHandleValues[j] = rightHandleValues[j + 1];
-				kv_selected[j] = kv_selected[j + 1];
-				interporations[j] = interporations[j + 1];
+				for (int j = i; j < count; j++)
+				{
+					keys[j] = keys[j + 1];
+					values[j] = values[j + 1];
+					leftHandleKeys[j] = leftHandleKeys[j + 1];
+					leftHandleValues[j] = leftHandleValues[j + 1];
+					rightHandleKeys[j] = rightHandleKeys[j + 1];
+					rightHandleValues[j] = rightHandleValues[j + 1];
+					kv_selected[j] = kv_selected[j + 1];
+					interporations[j] = interporations[j + 1];
+				}
+				(*newCount) = count - 1;
+				return true;
 			}
-
-			(*newCount) = count - 1;
-
-			return true;
 		}
+		return false;
 	}
 
 	bool NoPointFCurve(
