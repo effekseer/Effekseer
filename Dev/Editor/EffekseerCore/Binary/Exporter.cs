@@ -599,7 +599,7 @@ namespace Effekseer.Binary
 
 			get_procedual_models(rootNode);
 
-			var procedual_mesh_and_index = new SortedDictionary<ProcedualModelParameter, int>();
+			var procedual_mesh_and_index = new Dictionary<ProcedualModelParameter, int>();
 			{
 				int index = 0;
 				foreach (var mesh in ProcedualModels)
@@ -740,11 +740,9 @@ namespace Effekseer.Binary
 				}
 
 				// export procedual meshes
-				data.Add(BitConverter.GetBytes(procedual_mesh_and_index.Count));
-				foreach (var pm in procedual_mesh_and_index)
+				data.Add(BitConverter.GetBytes(ProcedualModels.Count));
+				foreach (var param in ProcedualModels)
 				{
-					var param = pm.Key;
-
 					var type = (int)param.Type.Value;
 					data.Add(type.GetBytes());
 

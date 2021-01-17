@@ -187,6 +187,7 @@ namespace Effekseer.Data
 		[Key(key = "PM_ColorCenterArea")]
 		public Value.Vector2D ColorCenterArea { get; private set; } = new Value.Vector2D(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.01f, y_step: 0.01f);
 
+		/*
 		public override bool Equals(object obj)
 		{
 			var param = obj as ProcedualModelParameter;
@@ -368,6 +369,7 @@ namespace Effekseer.Data
 
 			return hash;
 		}
+		*/
 	}
 
 	public class ProcedualModelCollection : Value.ObjectCollection<ProcedualModelParameter>
