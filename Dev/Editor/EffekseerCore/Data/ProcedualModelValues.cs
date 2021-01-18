@@ -83,7 +83,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_RibbonAngles")]
-		public Value.Vector2D RibbonAngles { get; private set; } = new Value.Vector2D(0.2f, 0.2f);
+		public Value.Vector2D RibbonAngles { get; private set; } = new Value.Vector2D(0.0f, 0.0f);
 
 		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_RibbonNoises")]
