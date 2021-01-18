@@ -610,8 +610,8 @@ struct RotatedWireMeshGenerator
 			vertexPoses = {
 				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
 				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
-				SIMD::Vec3f(0.0f, 0.0f, +0.5f),
 				SIMD::Vec3f(0.0f, 0.0f, -0.5f),
+				SIMD::Vec3f(0.0f, 0.0f, +0.5f),
 			};
 
 			edgeIDs = {
