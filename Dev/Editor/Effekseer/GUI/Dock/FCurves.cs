@@ -1577,7 +1577,7 @@ namespace Effekseer.GUI.Dock
 					float movedY = 0;
 					int changedType = 0;
 
-					bool isSelected = true;
+					bool isSelected = false;
 
 					if (Manager.NativeManager.FCurve(
 						ids[i],
