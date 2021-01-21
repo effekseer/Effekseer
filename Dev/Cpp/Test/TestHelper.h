@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cstdio>
 #include <functional>
 #include <map>
 #include <memory>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -38,3 +40,10 @@ struct TestRegister
 		TestHelper::RegisterTest(name, func);
 	}
 };
+
+#define EXPECT_TRUE(condition)                                          \
+	if (!(condition))                                                   \
+	{                                                                   \
+		printf("%s(%d): FAILED: " #condition "\n", __FILE__, __LINE__); \
+		abort();                                                        \
+	}

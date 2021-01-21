@@ -50,40 +50,13 @@ void VertexTest(bool isValidValue)
 		return 0.0f;
 	};
 
-	if (!(alphaUV[0] == getExpect(1.0f) && alphaUV[1] == getExpect(2.0f)))
-	{
-		throw std::exception("Failed.");
-	}
-
-	if (!(uvdistUV[0] == getExpect(3.0f) && uvdistUV[1] == getExpect(4.0f)))
-	{
-		throw std::exception("Failed.");
-	}
-
-	if (!(blendUV[0] == getExpect(5.0f) && blendUV[1] == getExpect(6.0f)))
-	{
-		throw std::exception("Failed.");
-	}
-
-	if (!(blendAlphaUV[0] == getExpect(7.0f) && blendAlphaUV[1] == getExpect(8.0f)))
-	{
-		throw std::exception("Failed.");
-	}
-
-	if (!(blendUVDistUV[0] == getExpect(9.0f) && blendUVDistUV[1] == getExpect(10.0f)))
-	{
-		throw std::exception("Failed.");
-	}
-
-	if (!(flip == getExpect(11.0f)))
-	{
-		throw std::exception("Failed.");
-	}
-
-	if (!(alphaThreshold == getExpect(12.0f)))
-	{
-		throw std::exception("Failed.");
-	}
+	EXPECT_TRUE(alphaUV[0] == getExpect(1.0f) && alphaUV[1] == getExpect(2.0f))
+	EXPECT_TRUE(uvdistUV[0] == getExpect(3.0f) && uvdistUV[1] == getExpect(4.0f))
+	EXPECT_TRUE(blendUV[0] == getExpect(5.0f) && blendUV[1] == getExpect(6.0f))
+	EXPECT_TRUE(blendAlphaUV[0] == getExpect(7.0f) && blendAlphaUV[1] == getExpect(8.0f))
+	EXPECT_TRUE(blendUVDistUV[0] == getExpect(9.0f) && blendUVDistUV[1] == getExpect(10.0f))
+	EXPECT_TRUE(flip == getExpect(11.0f))
+	EXPECT_TRUE(alphaThreshold == getExpect(12.0f))
 }
 
 void VertexTest()
