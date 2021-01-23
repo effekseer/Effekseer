@@ -592,8 +592,6 @@ protected:
 		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
 		renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
 
-		SoftParticleParameter softParticleParam;
-
 		if (DISTORTION)
 		{
 			auto pcb = (PixelConstantBufferDistortion*)shader_->GetPixelConstantBuffer();
