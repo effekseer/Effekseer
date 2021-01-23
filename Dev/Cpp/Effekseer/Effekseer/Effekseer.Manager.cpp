@@ -206,7 +206,6 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 
 			if (m_cullingWorld != NULL && drawset.CullingObjectPointer != nullptr)
 			{
-				m_cullingWorld->RemoveObject(drawset.CullingObjectPointer);
 				Culling3D::SafeRelease(drawset.CullingObjectPointer);
 			}
 
@@ -246,6 +245,11 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 				{
 					(*it).second.RemovingCallback(this, (*it).first, isRemovingManager);
 				}
+                
+                		if (m_cullingWorld != NULL && (*it).second.CullingObjectPointer != nullptr)
+                		{
+                    			m_cullingWorld->RemoveObject((*it).second.CullingObjectPointer);
+                		}
 
 				m_RemovingDrawSets[0][(*it).first] = (*it).second;
 				m_DrawSets.erase(it++);
