@@ -12,7 +12,7 @@ void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, const
 	FILE* fp = _wfopen(filepath, L"wb");
 #else
 	char filepath8[1024];
-	Effekseer::ConvertUtf16ToUtf8((int8_t*)filepath8, sizeof(filepath8), (const int16_t*)filepath);
+	Effekseer::ConvertUtf16ToUtf8(filepath8, sizeof(filepath8), filepath);
 	FILE* fp = fopen(filepath8, "wb");
 #endif
 
