@@ -51,7 +51,7 @@ void InstanceChunk::GenerateChildrenInRequired()
 	{
 		if (instancesAlive_[i])
 		{
-			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+			auto instance = reinterpret_cast<Instance*>(instances_[i]);
 
 			instance->GenerateChildrenInRequired();
 		}

@@ -113,7 +113,7 @@ void Instance::GenerateChildrenInRequired()
 		return;
 	}
 
-	const float currentTime = m_LivingTime;
+	const float& currentTime = m_LivingTime;
 
 	auto effect = this->m_pEffectNode->m_effect;
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
@@ -158,24 +158,6 @@ void Instance::GenerateChildrenInRequired()
 				break;
 			}
 		}
-
-		/*int32_t instanceNumberOffset = m_generatedChildrenCount[i];
-
-		// GenerationTimeOffset can be minus value.
-		// Minus frame particles is generated simultaniously at frame 0.
-		while (maxGenerationChildrenCount[i] > m_generatedChildrenCount[i] &&
-			m_nextGenerationTime[i] <= currentTime)
-		{
-			m_generatedChildrenCount[i]++;
-
-			auto gt = ApplyEq(node->CommonValues.RefEqGenerationTime, node->CommonValues.GenerationTime);
-			m_nextGenerationTime[i] += Max(0.0f, gt.getValue(rand));
-		}
-
-		int32_t generatingCount = m_generatedChildrenCount[i] - instanceNumberOffset;
-
-		// Create instances
-		group->CreateInstances(instanceNumberOffset, generatingCount, m_LivingTime, m_GlobalMatrix43);*/
 	}
 }
 
