@@ -134,9 +134,9 @@ FileReader* DefaultFileInterface::OpenRead(const char16_t* path)
 #ifdef _WIN32
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
 #else
-	int8_t path8[256];
-	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
-	filePtr = fopen((const char*)path8, "rb");
+	char path8[256];
+	ConvertUtf16ToUtf8(path8, 256, path);
+	filePtr = fopen(path8, "rb");
 #endif
 
 	if (filePtr == nullptr)
@@ -156,9 +156,9 @@ FileWriter* DefaultFileInterface::OpenWrite(const char16_t* path)
 #ifdef _WIN32
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"wb");
 #else
-	int8_t path8[256];
-	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
-	filePtr = fopen((const char*)path8, "wb");
+	char path8[256];
+	ConvertUtf16ToUtf8(path8, 256, path);
+	filePtr = fopen(path8, "wb");
 #endif
 
 	if (filePtr == nullptr)
