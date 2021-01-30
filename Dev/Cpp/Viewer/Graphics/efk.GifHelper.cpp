@@ -17,9 +17,9 @@ bool GifHelper::Initialize(const char16_t* path, int32_t width, int32_t height, 
 #ifdef _WIN32
 	_wfopen_s(&fp, (const wchar_t*)path, L"wb");
 #else
-	int8_t path8[1024];
-	Effekseer::ConvertUtf16ToUtf8(path8, sizeof(path8), (const int16_t*)path);
-	fp = fopen((const char*)path8, "wb");
+	char path8[1024];
+	Effekseer::ConvertUtf16ToUtf8(path8, sizeof(path8), path);
+	fp = fopen(path8, "wb");
 #endif
 
 	gdImageGifAnimBegin(img, fp, false, 0);
