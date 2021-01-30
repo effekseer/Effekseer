@@ -348,7 +348,7 @@ public:
 			for (auto i = 0; i < effect->GetColorImageCount(); i++)
 			{
 				char path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)path, 260, (int16_t*)effect->GetColorImagePath(i));
+				Effekseer::ConvertUtf16ToUtf8(path, 260, effect->GetColorImagePath(i));
 				auto buf = glbData_.images[i];
 				auto resource = textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Color, true);
 				SetTexture(effect, i, Effekseer::TextureType::Color, resource);
@@ -357,7 +357,7 @@ public:
 			for (auto i = 0; i < effect->GetNormalImageCount(); i++)
 			{
 				char path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)path, 260, (int16_t*)effect->GetColorImagePath(i));
+				Effekseer::ConvertUtf16ToUtf8(path, 260, effect->GetColorImagePath(i));
 				auto buf = glbData_.normalImages[i];
 				auto resource =
 					textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Normal, true);
@@ -367,7 +367,7 @@ public:
 			for (auto i = 0; i < effect->GetDistortionImageCount(); i++)
 			{
 				char path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)path, 260, (int16_t*)effect->GetColorImagePath(i));
+				Effekseer::ConvertUtf16ToUtf8(path, 260, effect->GetColorImagePath(i));
 				auto buf = glbData_.distortionImages[i];
 				auto resource = textureLoader->Load(
 					(const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Distortion, true);

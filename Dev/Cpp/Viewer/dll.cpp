@@ -1323,7 +1323,7 @@ void Native::SetFileLogger(const char16_t* path)
 	auto fileLogger = spdlog::basic_logger_mt("logger", wpath.generic_string().c_str());
 #else
 	char cpath[512];
-	Effekseer::ConvertUtf16ToUtf8(reinterpret_cast<int8_t*>(cpath), 512, reinterpret_cast<const int16_t*>(path));
+	Effekseer::ConvertUtf16ToUtf8(cpath, 512, path);
 	auto fileLogger = spdlog::basic_logger_mt("logger", cpath);
 #endif
 
