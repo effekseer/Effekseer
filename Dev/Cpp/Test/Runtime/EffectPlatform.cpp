@@ -109,8 +109,8 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path, Effekseer::Vector3D
 	// reset time
 	time_ = 0;
 
-	int8_t path8[256];
-	Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+	char path8[256];
+	Effekseer::ConvertUtf16ToUtf8(path8, 256, path);
 
 	FILE* filePtr = NULL;
 #ifdef _WIN32

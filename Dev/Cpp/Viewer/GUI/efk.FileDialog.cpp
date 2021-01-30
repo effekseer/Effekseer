@@ -42,8 +42,8 @@ std::u16string FileDialog::temp = u"";
 const char16_t* FileDialog::OpenDialog(const char16_t* filterList, const char16_t* defaultPath)
 {
 	char filterList_[256], defaultPath_[1024];
-	Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
-	Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
+	Effekseer::ConvertUtf16ToUtf8(filterList_, sizeof(filterList_), filterList);
+	Effekseer::ConvertUtf16ToUtf8(defaultPath_, sizeof(defaultPath_), defaultPath);
 
 	nfdchar_t* outPath = nullptr;
 	nfdresult_t result = NFD_OpenDialog(filterList_, defaultPath_, &outPath);
@@ -75,8 +75,8 @@ const char16_t* FileDialog::SaveDialog(const char16_t* filterList, const char16_
 	// auto filterList_ = utf16_to_utf8(filterList);
 	// auto defaultPath_ = utf16_to_utf8(defaultPath);
 	char filterList_[256], defaultPath_[1024];
-	Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
-	Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
+	Effekseer::ConvertUtf16ToUtf8(filterList_, sizeof(filterList_), filterList);
+	Effekseer::ConvertUtf16ToUtf8(defaultPath_, sizeof(defaultPath_), defaultPath);
 
 	nfdchar_t* outPath = nullptr;
 	nfdresult_t result = NFD_SaveDialog(filterList_, defaultPath_, &outPath);

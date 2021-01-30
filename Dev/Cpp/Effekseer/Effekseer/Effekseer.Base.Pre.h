@@ -344,21 +344,18 @@ T Clamp(T t, U max_, V min_)
 	return t;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 /**
-	@brief	文字コードを変換する。(UTF16 -> UTF8)
-	@param	dst	[out]	出力配列の先頭ポインタ
-	@param	dst_size	[in]	出力配列の長さ
-	@param	src			[in]	入力配列の先頭ポインタ
-	@return	文字数
+    @brief    Convert UTF16 into UTF8
+    @param    dst    a pointer to destination buffer
+    @param    dst_size    a length of destination buffer
+    @param    src            a source buffer
+    @return    length except 0
 */
-inline int32_t ConvertUtf16ToUtf8(int8_t* dst, int32_t dst_size, const int16_t* src)
+inline int32_t ConvertUtf16ToUtf8(char* dst, int32_t dst_size, const char16_t* src)
 {
 	int32_t cnt = 0;
-	const int16_t* wp = src;
-	int8_t* cp = dst;
+	const char16_t* wp = src;
+	char* cp = dst;
 
 	if (dst_size == 0)
 		return 0;
@@ -367,7 +364,7 @@ inline int32_t ConvertUtf16ToUtf8(int8_t* dst, int32_t dst_size, const int16_t* 
 
 	for (cnt = 0; cnt < dst_size;)
 	{
-		int16_t wc = *wp++;
+		char16_t wc = *wp++;
 		if (wc == 0)
 		{
 			break;
@@ -455,65 +452,6 @@ inline int32_t ConvertUtf8ToUtf16(char16_t* dst, int32_t dst_size, const char* s
 	return i;
 }
 
-/**
-	@brief	文字コードを変換する。(UTF8 -> UTF16)
-	@param	dst	[out]	出力配列の先頭ポインタ
-	@param	dst_size	[in]	出力配列の長さ
-	@param	src			[in]	入力配列の先頭ポインタ
-	@return	文字数
-*/
-inline int32_t ConvertUtf8ToUtf16(int16_t* dst, int32_t dst_size, const int8_t* src)
-{
-	int32_t i, code;
-	int8_t c0, c1, c2;
-
-	if (dst_size == 0)
-		return 0;
-
-	dst_size -= 1;
-
-	for (i = 0; i < dst_size; i++)
-	{
-		int16_t wc;
-
-		c0 = *src++;
-		if (c0 == '\0')
-		{
-			break;
-		}
-		// UTF8からUTF16に変換
-		code = (uint8_t)c0 >> 4;
-		if (code <= 7)
-		{
-			// 8bit文字
-			wc = c0;
-		}
-		else if (code >= 12 && code <= 13)
-		{
-			// 16bit文字
-			c1 = *src++;
-			wc = ((c0 & 0x1F) << 6) | (c1 & 0x3F);
-		}
-		else if (code == 14)
-		{
-			// 24bit文字
-			c1 = *src++;
-			c2 = *src++;
-			wc = ((c0 & 0x0F) << 12) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
-		}
-		else
-		{
-			continue;
-		}
-		dst[i] = wc;
-	}
-	dst[i] = 0;
-	return i;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 /**
 	@brief	\~english	An interface of reference counter
 			\~japanese	参照カウンタのインターフェース

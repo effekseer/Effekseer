@@ -148,13 +148,13 @@ public:
 		char pathWOE[256];
 		char ext_[256];
 		//char path8_dst[256];
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
 
 		auto ss = std::stringstream();
 		ss << pathWOE << "." << std::to_string(index) << ext_;
 
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)ss.str().c_str());
+		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
 
 		spdlog::trace("RecorderCallbackSprite : {}", ss.str().c_str());
 
@@ -215,14 +215,14 @@ public:
 
 		char pathWOE[256];
 		char ext_[256];
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
 
 		auto ss = std::stringstream();
 		ss << pathWOE << ext_;
 
 		//		sprintf(path8_dst, "%s%s", pathWOE, ext_);
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)ss.str().c_str());
+		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
 
 		spdlog::trace("RecorderCallbackSpriteSheet : {}", ss.str());
 
@@ -272,14 +272,14 @@ public:
 
 		char pathWOE[256];
 		char ext_[256];
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
 
 		auto ss = std::stringstream();
 		ss << pathWOE << ext_;
 
 		//sprintf(path8_dst, "%s%s", pathWOE, ext_);
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)ss.str().c_str());
+		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
 
 		spdlog::trace("RecorderCallbackGif : {}", ss.str());
 
@@ -323,8 +323,8 @@ public:
 
 		char pathWOE[256];
 		char ext_[256];
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
 
 		auto ss = std::stringstream();
 		ss << pathWOE << ext_;
@@ -333,7 +333,7 @@ public:
 
 		spdlog::trace("RecorderCallbackAvi : {}", ss.str());
 
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)ss.str().c_str());
+		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
 
 #ifdef _WIN32
 		_wfopen_s(&fp, (const wchar_t*)path_, L"wb");
@@ -388,14 +388,14 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 		auto path = recordingParameter_.GetPath();
 
 		char pathWOE[256];
-		char16_t* path_[256];
-		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)path);
+		char16_t path_[256];
+		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, path);
 
 		auto ss = std::stringstream();
 		ss << pathWOE << "_add";
 
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 256, (const int8_t*)ss.str().c_str());
-		recordingParameter2_.SetPath((const char16_t*)path_);
+		Effekseer::ConvertUtf8ToUtf16(path_, 256, ss.str().c_str());
+		recordingParameter2_.SetPath(path_);
 	}
 
 	if (recordingParameter_.RecordingMode == RecordingModeType::Sprite)

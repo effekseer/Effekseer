@@ -1282,7 +1282,7 @@ void Native::OpenOrCreateMaterial(const char16_t* path)
 
 	char u8path[260];
 
-	Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
+	Effekseer::ConvertUtf16ToUtf8(u8path, 260, path);
 
 	IPC::CommandData commandData;
 	commandData.Type = IPC::CommandType::OpenOrCreateMaterial;

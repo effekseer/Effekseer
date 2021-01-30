@@ -133,11 +133,16 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	outputUniforms = result.Uniforms;
 }
 
-NodeUserDataObject::NodeUserDataObject() {}
+NodeUserDataObject::NodeUserDataObject()
+{
+}
 
-NodeUserDataObject::~NodeUserDataObject() {}
+NodeUserDataObject::~NodeUserDataObject()
+{
+}
 
-EditorContent::EditorContent(Editor* editor) : editor_(editor)
+EditorContent::EditorContent(Editor* editor)
+	: editor_(editor)
 {
 	material_ = std::make_shared<EffekseerMaterial::Material>();
 	material_->Initialize();
@@ -183,7 +188,7 @@ void EditorContent::SaveAs(const char* path)
 	material_->Save(data, path);
 
 	char16_t path16[260];
-	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
+	Effekseer::ConvertUtf8ToUtf16(path16, 260, path);
 
 	std::string pathstr = path;
 	int ext_i = pathstr.find_last_of(".");
@@ -207,7 +212,7 @@ void EditorContent::SaveAs(const char* path)
 	else
 	{
 		char16_t path16[260];
-		Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)(std::string(path) + ".efkmat").c_str());
+		Effekseer::ConvertUtf8ToUtf16(path16, 260, (std::string(path) + ".efkmat").c_str());
 
 		FILE* fp = nullptr;
 #ifdef _WIN32
@@ -234,7 +239,7 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 	FILE* fp = nullptr;
 #ifdef _WIN32
 	char16_t path16[260];
-	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
+	Effekseer::ConvertUtf8ToUtf16(path16, 260, path);
 	_wfopen_s(&fp, (const wchar_t*)path16, L"rb");
 #else
 	fp = fopen(path, "rb");
@@ -324,7 +329,10 @@ void EditorContent::UpdatePath(const char* path)
 	}
 }
 
-std::shared_ptr<Material> EditorContent::GetMaterial() { return material_; }
+std::shared_ptr<Material> EditorContent::GetMaterial()
+{
+	return material_;
+}
 
 std::string EditorContent::GetName()
 {
@@ -350,11 +358,20 @@ std::string EditorContent::GetName()
 	}
 }
 
-std::string EditorContent::GetPath() { return path_; }
+std::string EditorContent::GetPath()
+{
+	return path_;
+}
 
-bool EditorContent::GetIsChanged() { return previousChangedID_ != material_->GetCommandManager()->GetHistoryID(); }
+bool EditorContent::GetIsChanged()
+{
+	return previousChangedID_ != material_->GetCommandManager()->GetHistoryID();
+}
 
-void EditorContent::ClearIsChanged() { previousChangedID_ = material_->GetCommandManager()->GetHistoryID(); }
+void EditorContent::ClearIsChanged()
+{
+	previousChangedID_ = material_->GetCommandManager()->GetHistoryID();
+}
 
 static const char* label_new_node = "##NEW_NODE";
 static const char* label_edit_link = "##EDIT_LINK";
@@ -1820,7 +1837,10 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	node->ClearPosDirtied();
 }
 
-void Editor::UpdateLink(std::shared_ptr<Link> link) { ed::Link(link->GUID, link->InputPin->GUID, link->OutputPin->GUID); }
+void Editor::UpdateLink(std::shared_ptr<Link> link)
+{
+	ed::Link(link->GUID, link->InputPin->GUID, link->OutputPin->GUID);
+}
 
 bool Editor::GetIsSelectedDirty()
 {
@@ -1829,6 +1849,9 @@ bool Editor::GetIsSelectedDirty()
 	return ret;
 }
 
-void Editor::ClearDirtiedSelectedFlags() { isSelectedDirty_ = false; }
+void Editor::ClearDirtiedSelectedFlags()
+{
+	isSelectedDirty_ = false;
+}
 
 } // namespace EffekseerMaterial
