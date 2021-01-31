@@ -1403,10 +1403,16 @@ private:
 	::Effekseer::FileInterface* fileInterface_ = nullptr;
 
 public:
-
 	CurveLoader(::Effekseer::FileInterface* fileInterface = nullptr)
 	{
-		fileInterface_ = &defaultFileInterface_;
+		if (fileInterface != nullptr)
+		{
+			fileInterface_ = fileInterface;
+		}
+		else
+		{
+			fileInterface_ = &defaultFileInterface_;
+		}
 	}
 
 	virtual ~CurveLoader() = default;
@@ -1424,7 +1430,7 @@ public:
 	*/
 	virtual Effekseer::CurveRef Load(const char16_t* path)
 	{
-		
+
 		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
 		if (reader.get() == nullptr)
 		{
