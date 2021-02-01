@@ -301,7 +301,8 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		shader_lit_,
 		shader_unlit_,
 		shader_distortion_,
-		parameter);
+		parameter,
+		userData);
 }
 
 //----------------------------------------------------------------------------------

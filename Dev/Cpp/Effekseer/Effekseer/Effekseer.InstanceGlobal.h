@@ -45,6 +45,8 @@ private:
 
 	float nextDeltaFrame_ = 0.0f;
 
+	void* m_userData = nullptr;
+
 	//! placement new
 	static void* operator new(size_t size);
 
@@ -97,6 +99,9 @@ public:
 
 	const SIMD::Vec3f& GetTargetLocation() const;
 	void SetTargetLocation(const Vector3D& location);
+
+	void SetUserData(void* userData) { m_userData = userData; }
+	void* GetUserData() const { return m_userData; }
 };
 //----------------------------------------------------------------------------------
 //

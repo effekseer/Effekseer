@@ -1545,6 +1545,7 @@ public:
 		bool		Mode3D;
 		Vector3D	Position;
 		float		Distance;
+		void*		UserData;
 	};
 
 public:

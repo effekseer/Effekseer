@@ -44,6 +44,7 @@ public:
 	bool isSoftParticleEnabled = false;
 
 	Effekseer::RefPtr<Effekseer::RenderingUserData> CurrentRenderingUserData;
+	void* CurrentHandleUserData = nullptr;
 
 	Impl() = default;
 	~Impl();

@@ -999,32 +999,32 @@ void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const Set
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 }
 
-void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* manager)
-{
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::EndRendering(Manager* manager)
+void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
+{
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void EffectNodeImplemented::EndRendering(Manager* manager, void* userData)
 {
 }
 
@@ -1083,7 +1083,7 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
+void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, void* userData, Manager* manager)
 {
 	IRandObject& rand = instance.GetRandObject();
 
@@ -1104,6 +1104,7 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 		parameter.Mode3D = (Sound.PanType == ParameterSoundPanType_3D);
 		parameter.Position = ToStruct(instance.GetGlobalMatrix43().GetTranslation());
 		parameter.Distance = Sound.Distance;
+		parameter.UserData = userData;
 
 		player->Play(tag, parameter);
 	}

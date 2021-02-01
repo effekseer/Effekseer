@@ -146,7 +146,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
@@ -170,14 +170,14 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.UserData = GetRenderingUserData();
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
-		renderer->BeginRendering(nodeParameter, count, nullptr);
+		renderer->BeginRendering(nodeParameter, count, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.sprite;
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();
@@ -281,14 +281,14 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->Rendering(nodeParameter, instanceParameter, nullptr);
+		renderer->Rendering(nodeParameter, instanceParameter, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::EndRendering(Manager* manager)
+void EffectNodeSprite::EndRendering(Manager* manager, void* userData)
 {
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
@@ -310,7 +310,7 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 		nodeParameter.UserData = GetRenderingUserData();
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
-		renderer->EndRendering(nodeParameter, nullptr);
+		renderer->EndRendering(nodeParameter, userData);
 	}
 }
 

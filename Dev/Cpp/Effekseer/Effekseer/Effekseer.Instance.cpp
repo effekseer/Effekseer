@@ -997,7 +997,8 @@ void Instance::Update(float deltaFrame, bool shown)
 
 			if (living_time <= (float)soundValues.delay && (float)soundValues.delay < living_time_p)
 			{
-				m_pEffectNode->PlaySound_(*this, m_pContainer->GetRootInstance(), m_pManager);
+				auto instanceGlobal = m_pContainer->GetRootInstance();
+				m_pEffectNode->PlaySound_(*this, instanceGlobal, instanceGlobal->GetUserData(), m_pManager);
 			}
 		}
 	}
@@ -1644,7 +1645,7 @@ void Instance::ApplyDynamicParameterToFixedScaling()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Instance::Draw(Instance* next)
+void Instance::Draw(Instance* next, void* userData)
 {
 	assert(m_pEffectNode != nullptr);
 
@@ -1656,7 +1657,7 @@ void Instance::Draw(Instance* next)
 		CalculateMatrix(0);
 	}
 
-	m_pEffectNode->Rendering(*this, next, m_pManager);
+	m_pEffectNode->Rendering(*this, next, m_pManager, userData);
 }
 
 //----------------------------------------------------------------------------------

@@ -416,7 +416,7 @@ public:
 	/**
 		@brief	Draw instance
 	*/
-	void Draw(Instance* next);
+	void Draw(Instance* next, void* userData);
 
 	/**
 		@brief	破棄

@@ -136,7 +136,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
@@ -158,11 +158,11 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 		m_nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->BeginRendering(m_nodeParameter, count, nullptr);
+		renderer->BeginRendering(m_nodeParameter, count, userData);
 	}
 }
 
-void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
@@ -192,23 +192,23 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 
-		renderer->BeginRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, nullptr);
+		renderer->BeginRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, userData);
 	}
 }
 
-void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, nullptr);
+		renderer->EndRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
@@ -285,7 +285,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 			m_instanceParameter.Positions[1] = RibbonPosition.fixed.r;
 		}
 
-		renderer->Rendering(m_nodeParameter, m_instanceParameter, nullptr);
+		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
 
 		m_instanceParameter.InstanceIndex++;
 	}
@@ -294,12 +294,12 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::EndRendering(Manager* manager)
+void EffectNodeRibbon::EndRendering(Manager* manager, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(m_nodeParameter, nullptr);
+		renderer->EndRendering(m_nodeParameter, userData);
 	}
 }
 

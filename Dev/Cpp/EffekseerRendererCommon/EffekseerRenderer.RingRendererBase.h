@@ -96,39 +96,38 @@ protected:
 						   const StandardRendererState& state,
 						   const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		void* userData = nullptr;
 		const ShaderParameterCollector& collector = state.Collector;
 		if (collector.ShaderType == RendererShaderType::Material)
 		{
-			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedLit)
 		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedBackDistortion)
 		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedUnlit)
 		{
-			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::Lit)
 		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::BackDistortion)
 		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else
 		{
-			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 	}
 
-	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
+	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param, void* userData)
 	{
 		m_spriteCount = 0;
 		int32_t singleVertexCount = param.VertexCount * 8;
@@ -179,7 +178,8 @@ protected:
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-		state.UserData = param.UserData;
+		state.RenderingUserData = param.UserData;
+		state.HandleUserData = userData;
 
 		state.CopyMaterialFromParameterToState(
 			m_renderer,
@@ -199,7 +199,6 @@ protected:
 
 	void Rendering_(const efkRingNodeParam& parameter,
 					const efkRingInstanceParam& instanceParameter,
-					void* userData,
 					const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None || CanSingleRendering())
@@ -224,7 +223,6 @@ protected:
 	template <typename VERTEX, bool FLIP_RGB>
 	void Rendering_Internal(const efkRingNodeParam& parameter,
 							const efkRingInstanceParam& instanceParameter,
-							void* userData,
 							const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		::Effekseer::SIMD::Mat43f mat43;
@@ -711,7 +709,7 @@ protected:
 		m_ringBufferData += stride_ * singleVertexCount;
 	}
 
-	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, void* userData, const ::Effekseer::SIMD::Mat44f& camera)
+	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (CanSingleRendering())
 		{
@@ -756,14 +754,14 @@ protected:
 public:
 	void BeginRendering(const efkRingNodeParam& parameter, int32_t count, void* userData)
 	{
-		BeginRendering_(m_renderer, count, parameter);
+		BeginRendering_(m_renderer, count, parameter, userData);
 	}
 
 	void Rendering(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData)
 	{
 		if (m_spriteCount == m_renderer->GetSquareMaxCount())
 			return;
-		Rendering_(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
+		Rendering_(parameter, instanceParameter, m_renderer->GetCameraMatrix());
 	}
 
 	void EndRendering(const efkRingNodeParam& parameter, void* userData)
@@ -774,7 +772,7 @@ public:
 		if (m_spriteCount == 0 && parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None)
 			return;
 
-		EndRendering_(m_renderer, parameter, userData, m_renderer->GetCameraMatrix());
+		EndRendering_(m_renderer, parameter, m_renderer->GetCameraMatrix());
 	}
 };
 //----------------------------------------------------------------------------------
