@@ -80,7 +80,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
@@ -101,14 +101,14 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 
 		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 		m_nodeParameter.UserData = GetRenderingUserData();
-		renderer->BeginRendering(m_nodeParameter, count, nullptr);
+		renderer->BeginRendering(m_nodeParameter, count, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
@@ -140,20 +140,20 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 
-		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), nullptr);
+		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), userData);
 	}
 }
 
-void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRenderingGroup(m_nodeParameter, group->GetInstanceCount(), nullptr);
+		renderer->EndRenderingGroup(m_nodeParameter, group->GetInstanceCount(), userData);
 	}
 }
 
-void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
@@ -183,7 +183,7 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
-		renderer->Rendering(m_nodeParameter, m_instanceParameter, nullptr);
+		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
 		m_instanceParameter.InstanceIndex++;
 	}
 }
@@ -191,12 +191,12 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::EndRendering(Manager* manager)
+void EffectNodeTrack::EndRendering(Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(m_nodeParameter, nullptr);
+		renderer->EndRendering(m_nodeParameter, userData);
 	}
 }
 

@@ -511,12 +511,12 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	if (VertexType == EffekseerRenderer::ModelRendererVertexType::Instancing)
 	{
 		EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, InstanceCount>(
-			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
+			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter, userData);
 	}
 	else
 	{
 		EndRendering_<RendererImplemented, Shader, Effekseer::Model, false, 1>(
-			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter);
+			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter, userData);
 	}
 }
 

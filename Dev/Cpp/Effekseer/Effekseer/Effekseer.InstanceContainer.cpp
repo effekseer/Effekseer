@@ -239,11 +239,13 @@ void InstanceContainer::Draw(bool recursive)
 
 		if (count > 0 && m_pEffectNode->IsRendered)
 		{
-			m_pEffectNode->BeginRendering(count, m_pManager);
+			void* userData = m_pGlobal->GetUserData();
+			
+			m_pEffectNode->BeginRendering(count, m_pManager, userData);
 
 			for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 			{
-				m_pEffectNode->BeginRenderingGroup(group, m_pManager);
+				m_pEffectNode->BeginRenderingGroup(group, m_pManager, userData);
 
 				if (m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst)
 				{
@@ -258,11 +260,11 @@ void InstanceContainer::Draw(bool recursive)
 
 							if (it_temp != group->m_instances.end())
 							{
-								(*it)->Draw((*it_temp));
+								(*it)->Draw((*it_temp), userData);
 							}
 							else
 							{
-								(*it)->Draw(nullptr);
+								(*it)->Draw(nullptr, userData);
 							}
 						}
 
@@ -282,21 +284,21 @@ void InstanceContainer::Draw(bool recursive)
 
 							if (it_temp != group->m_instances.rend())
 							{
-								(*it)->Draw((*it_temp));
+								(*it)->Draw((*it_temp), userData);
 							}
 							else
 							{
-								(*it)->Draw(nullptr);
+								(*it)->Draw(nullptr, userData);
 							}
 						}
 						it++;
 					}
 				}
 
-				m_pEffectNode->EndRenderingGroup(group, m_pManager);
+				m_pEffectNode->EndRenderingGroup(group, m_pManager, userData);
 			}
 
-			m_pEffectNode->EndRendering(m_pManager);
+			m_pEffectNode->EndRendering(m_pManager, userData);
 		}
 	}
 

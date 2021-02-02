@@ -233,7 +233,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	RingRendererRef renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
@@ -255,14 +255,14 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 
 		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->BeginRendering(nodeParameter, count, nullptr);
+		renderer->BeginRendering(nodeParameter, count, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
 	RingRendererRef renderer = manager->GetRingRenderer();
@@ -342,19 +342,19 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 
 		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->Rendering(nodeParameter, instanceParameter, nullptr);
+		renderer->Rendering(nodeParameter, instanceParameter, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::EndRendering(Manager* manager)
+void EffectNodeRing::EndRendering(Manager* manager, void* userData)
 {
 	RingRendererRef renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(nodeParameter, nullptr);
+		renderer->EndRendering(nodeParameter, userData);
 	}
 }
 

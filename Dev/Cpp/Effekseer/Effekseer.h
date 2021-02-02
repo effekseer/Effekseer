@@ -4253,6 +4253,13 @@ public:
 	virtual void SetAutoDrawing(Handle handle, bool autoDraw) = 0;
 
 	/**
+		@brief
+		\~English	Specify a user pointer for custom renderer and custom sound player
+		\~Japanese	ハンドルごとにカスタムレンダラーやカスタムサウンド向けにユーザーポインタを設定する。
+	*/
+	virtual void SetUserData(Handle handle, void* userData) = 0;
+
+	/**
 		@brief	今までのPlay等の処理をUpdate実行時に適用するようにする。
 	*/
 	virtual void Flip() = 0;

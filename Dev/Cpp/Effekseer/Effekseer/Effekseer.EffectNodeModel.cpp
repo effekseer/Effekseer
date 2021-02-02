@@ -117,7 +117,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
@@ -149,14 +149,14 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.IsProcedualMode = Mode == ModelReferenceType::Procedual;
 		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->BeginRendering(nodeParameter, count, nullptr);
+		renderer->BeginRendering(nodeParameter, count, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
+void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
 	ModelRendererRef renderer = manager->GetModelRenderer();
@@ -229,14 +229,14 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->Rendering(nodeParameter, instanceParameter, nullptr);
+		renderer->Rendering(nodeParameter, instanceParameter, userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::EndRendering(Manager* manager)
+void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 {
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
@@ -270,7 +270,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 
 		nodeParameter.UserData = GetRenderingUserData();
 
-		renderer->EndRendering(nodeParameter, nullptr);
+		renderer->EndRendering(nodeParameter, userData);
 	}
 }
 

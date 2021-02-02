@@ -65,7 +65,8 @@ struct StandardRendererState
 
 	ShaderParameterCollector Collector{};
 
-	Effekseer::RefPtr<Effekseer::RenderingUserData> UserData{};
+	Effekseer::RefPtr<Effekseer::RenderingUserData> RenderingUserData{};
+	void* HandleUserData;
 
 	StandardRendererState()
 	{
@@ -102,7 +103,8 @@ struct StandardRendererState
 		CustomData1Count = 0;
 		CustomData2Count = 0;
 
-		UserData.Reset();
+		RenderingUserData.Reset();
+		HandleUserData = nullptr;
 	}
 
 	bool operator!=(const StandardRendererState state)
@@ -187,13 +189,16 @@ struct StandardRendererState
 		if (CustomData1Count != state.CustomData1Count)
 			return true;
 
-		if (UserData == nullptr && state.UserData != nullptr)
+		if (RenderingUserData == nullptr && state.RenderingUserData != nullptr)
 			return true;
 
-		if (UserData != nullptr && state.UserData == nullptr)
+		if (RenderingUserData != nullptr && state.RenderingUserData == nullptr)
 			return true;
 
-		if (UserData != nullptr && state.UserData != nullptr && !UserData->Equal(state.UserData.Get()))
+		if (RenderingUserData != nullptr && state.RenderingUserData != nullptr && !RenderingUserData->Equal(state.RenderingUserData.Get()))
+			return true;
+
+		if (HandleUserData != state.HandleUserData)
 			return true;
 
 		return false;
@@ -841,7 +846,8 @@ public:
 		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), stride);
 		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 		m_renderer->SetLayout(shader_);
-		m_renderer->GetImpl()->CurrentRenderingUserData = m_state.UserData;
+		m_renderer->GetImpl()->CurrentRenderingUserData = m_state.RenderingUserData;
+		m_renderer->GetImpl()->CurrentHandleUserData = m_state.HandleUserData;
 		m_renderer->DrawSprites(vertexSize / stride / 4, vbOffset / stride);
 
 		m_renderer->EndShader(shader_);

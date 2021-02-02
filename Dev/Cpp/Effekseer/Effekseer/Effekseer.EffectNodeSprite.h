@@ -133,11 +133,11 @@ public:
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
-	void BeginRendering(int32_t count, Manager* manager) override;
+	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
 
-	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) override;
+	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData) override;
 
-	void EndRendering(Manager* manager) override;
+	void EndRendering(Manager* manager, void* userData) override;
 
 	void InitializeRenderedInstance(Instance& instance, Manager* manager) override;
 

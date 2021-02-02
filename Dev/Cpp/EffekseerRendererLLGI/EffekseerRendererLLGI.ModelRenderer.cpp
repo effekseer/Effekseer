@@ -209,7 +209,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	}
 
 	EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, LLGI_InstanceCount>(
-		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
+		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter, userData);
 }
 
 } // namespace EffekseerRendererLLGI

@@ -862,7 +862,6 @@ public:
 protected:
 	void Rendering_(const efkTrackNodeParam& parameter,
 					const efkTrackInstanceParam& instanceParameter,
-					void* userData,
 					const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
@@ -870,38 +869,37 @@ protected:
 
 		if (collector.ShaderType == RendererShaderType::Material)
 		{
-			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<DynamicVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedLit)
 		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedBackDistortion)
 		{
-			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedLightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::AdvancedUnlit)
 		{
-			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<AdvancedSimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::Lit)
 		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else if (collector.ShaderType == RendererShaderType::BackDistortion)
 		{
-			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<LightingVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 		else
 		{
-			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<SimpleVertex, FLIP_RGB_FLAG>(parameter, instanceParameter, camera);
 		}
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
 	void Rendering_Internal(const efkTrackNodeParam& parameter,
 							const efkTrackInstanceParam& instanceParameter,
-							void* userData,
 							const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (m_ringBufferData == nullptr)
@@ -932,7 +930,7 @@ protected:
 public:
 	void Rendering(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData) override
 	{
-		Rendering_(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
+		Rendering_(parameter, instanceParameter, m_renderer->GetCameraMatrix());
 	}
 
 	void BeginRenderingGroup(const efkTrackNodeParam& param, int32_t count, void* userData) override
@@ -975,7 +973,8 @@ public:
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-		state.UserData = param.UserData;
+		state.RenderingUserData = param.UserData;
+		state.HandleUserData = userData;
 
 		state.CopyMaterialFromParameterToState(
 			m_renderer,

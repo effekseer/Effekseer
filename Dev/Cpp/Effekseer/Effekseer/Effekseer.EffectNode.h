@@ -1534,24 +1534,24 @@ public:
 	/**
 	@brief	描画開始
 	*/
-	virtual void BeginRendering(int32_t count, Manager* manager);
+	virtual void BeginRendering(int32_t count, Manager* manager, void* userData);
 
 	/**
 	@brief	グループ描画開始
 	*/
-	virtual void BeginRenderingGroup(InstanceGroup* group, Manager* manager);
+	virtual void BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData);
 
-	virtual void EndRenderingGroup(InstanceGroup* group, Manager* manager);
+	virtual void EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData);
 
 	/**
 	@brief	描画
 	*/
-	virtual void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager);
+	virtual void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData);
 
 	/**
 	@brief	描画終了
 	*/
-	virtual void EndRendering(Manager* manager);
+	virtual void EndRendering(Manager* manager, void* userData);
 
 	/**
 	@brief	インスタンスグループ描画時初期化
@@ -1576,7 +1576,7 @@ public:
 	/**
 	@brief	サウンド再生
 	*/
-	virtual void PlaySound_(Instance& instance, SoundTag tag, Manager* manager);
+	virtual void PlaySound_(Instance& instance, SoundTag tag, void* userData, Manager* manager);
 
 	EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const override;
 

@@ -826,7 +826,8 @@ public:
 					   SHADER* shader_lit,
 					   SHADER* shader_unlit,
 					   SHADER* shader_distortion,
-					   const efkModelNodeParam& param)
+					   const efkModelNodeParam& param,
+					   void* userData)
 	{
 		if (m_matrixes.size() == 0)
 			return;
@@ -856,19 +857,19 @@ public:
 				param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex) != nullptr)
 			{
 				RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererMaterialVertexConstantBuffer<InstanceCount>, false>(
-					renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
+					renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd, userData);
 			}
 			else
 			{
 				if (collector_.DoRequireAdvancedRenderer())
 				{
 					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererAdvancedVertexConstantBuffer<InstanceCount>, true>(
-						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
+						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd, userData);
 				}
 				else
 				{
 					RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount, ModelRendererVertexConstantBuffer<InstanceCount>, false>(
-						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd);
+						renderer, advanced_shader_lit, advanced_shader_unlit, advanced_shader_distortion, shader_lit, shader_unlit, shader_distortion, param, renderPassInd, userData);
 				}
 			}
 		}
@@ -883,7 +884,8 @@ public:
 					SHADER* shader_unlit,
 					SHADER* shader_distortion,
 					const efkModelNodeParam& param,
-					int32_t renderPassInd)
+					int32_t renderPassInd,
+					void* userData)
 	{
 		if (m_matrixes.size() == 0)
 			return;
@@ -1062,6 +1064,7 @@ public:
 		}
 
 		renderer->GetImpl()->CurrentRenderingUserData = param.UserData;
+		renderer->GetImpl()->CurrentHandleUserData = userData;
 
 		// Check time
 		auto stTime0 = m_times[0] % model->GetFrameCount();

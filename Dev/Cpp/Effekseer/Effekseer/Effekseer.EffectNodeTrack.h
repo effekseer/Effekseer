@@ -152,15 +152,15 @@ public:
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
-	void BeginRendering(int32_t count, Manager* manager) override;
+	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
 
-	void BeginRenderingGroup(InstanceGroup* group, Manager* manager) override;
+	void BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData) override;
 
-	void EndRenderingGroup(InstanceGroup* group, Manager* manager) override;
+	void EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData) override;
 
-	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) override;
+	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData) override;
 
-	void EndRendering(Manager* manager) override;
+	void EndRendering(Manager* manager, void* userData) override;
 
 	void InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager) override;
 
