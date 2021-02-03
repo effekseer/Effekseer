@@ -192,8 +192,6 @@ target_link_libraries(
     ${common_lib}
     debug glfw3d
     optimized glfw3
-    debug easy_profilerd
-    optimized easy_profiler
 )
 else()
 target_link_libraries(
