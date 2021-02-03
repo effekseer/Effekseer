@@ -93,6 +93,21 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(Effekseer)
 endif()
 
+if(BUILD_WITH_EASY_PROFILER)
+    target_compile_definitions(Effekseer PUBLIC BUILD_WITH_EASY_PROFILER)
+    target_include_directories(Effekseer PUBLIC ${EFK_PROFILER_INCLUDES})
+    target_link_directories(Effekseer PUBLIC ${EFK_PROFILER_LIBRARY_DIRECTORIES})
+
+    target_link_libraries(Effekseer PUBLIC 
+        debug ${EASY_PROFILER_LIB_DEBUG}
+        optimized ${EASY_PROFILER_LIB_RELEASE})
+
+    if(MSVC)
+        target_link_libraries(Effekseer PUBLIC psapi)
+    endif()
+
+    add_dependencies(Effekseer ExternalProject_easy_profiler)
+endif()
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /we4456 /we4458)

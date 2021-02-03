@@ -98,7 +98,7 @@ set_target_properties(EffekseerEditor PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
 add_dependencies(EffekseerEditor EffekseerCore Viewer)
-target_link_libraries(EffekseerEditor EffekseerCore Viewer)
+target_link_libraries(EffekseerEditor PRIVATE EffekseerCore Viewer)
 
 target_compile_options(EffekseerEditor PRIVATE "/unsafe")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
@@ -124,7 +124,7 @@ if (BUILD_TEST)
     
     set_target_properties(TestCSharp PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
     add_dependencies(TestCSharp EffekseerCore)
-    target_link_libraries(TestCSharp EffekseerCore)
+    target_link_libraries(TestCSharp PRIVATE EffekseerCore)
 
     if (MSVC)
         set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_DEBUG "Effekseer.TestCSharp" )

@@ -34,6 +34,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "Utils/Profiler.h"
+
 namespace Effekseer
 {
 
@@ -1194,6 +1196,8 @@ void ManagerImplemented::SetUserData(Handle handle, void* userData)
 
 void ManagerImplemented::Flip()
 {
+	PROFILER_BLOCK("Manager::Flip", profiler::colors::Red);
+
 	if (!m_autoFlip)
 	{
 		m_renderingMutex.lock();
@@ -1343,6 +1347,8 @@ void ManagerImplemented::Update(float deltaFrame)
 
 void ManagerImplemented::Update(const UpdateParameter& parameter)
 {
+	PROFILER_BLOCK("Manager::Update", profiler::colors::Red);
+
 	if (m_WorkerThreads.size() == 0)
 	{
 		DoUpdate(parameter);
@@ -1362,6 +1368,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 
 void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 {
+	PROFILER_BLOCK("Manager::DoUpdate", profiler::colors::Red);
 	// start to measure time
 	int64_t beginTime = ::Effekseer::GetTime();
 
@@ -1438,6 +1445,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
 					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
+						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
 							chunks[i]->UpdateInstances();
@@ -1736,6 +1744,8 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 
 void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 {
+	PROFILER_BLOCK("Manager::Draw", profiler::colors::Blue);
+
 	if (m_WorkerThreads.size() > 0)
 	{
 		m_WorkerThreads[0].WaitForComplete();

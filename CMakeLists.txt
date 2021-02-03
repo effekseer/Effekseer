@@ -72,6 +72,12 @@ if (BUILD_VERSION16)
     add_definitions(-D__EFFEKSEER_BUILD_VERSION17__)
 endif()
 
+option(BUILD_WITH_EASY_PROFILER "Build with easy_profiler to profile" OFF)
+
+if ()
+    add_definitions(-D__EFFEKSEER_BUILD_DX12__)
+endif()
+
 # for linux
 if(UNIX AND NOT APPLE)
     set(OpenGL_GL_PREFERENCE GLVND)
@@ -84,6 +90,33 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio|Xcode")
     set(BUILD_WITH_POSTFIX ON)
 else()
     set(BUILD_WITH_POSTFIX OFF)
+endif()
+
+if(BUILD_WITH_EASY_PROFILER)
+    ExternalProject_Add(
+        ExternalProject_easy_profiler
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/easy_profiler
+        PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/easy_profiler
+        INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/easy_profiler
+        CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/easy_profiler
+                        -DCMAKE_DEBUG_POSTFIX=d
+                        -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
+                        -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DBUILD_SHARED_LIBS=OFF
+                        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+    )
+
+    if(BUILD_WITH_POSTFIX)
+        set(EASY_PROFILER_LIB_DEBUG "easy_profilerd")
+        set(EASY_PROFILER_LIB_RELEASE "easy_profiler")
+    else()
+        set(EASY_PROFILER_LIB_DEBUG "easy_profiler")
+        set(EASY_PROFILER_LIB_RELEASE "easy_profiler")
+    endif()
+    
+    list(APPEND EFK_PROFILER_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/easy_profiler/include)
+    list(APPEND EFK_PROFILER_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/easy_profiler/lib)
+
 endif()
 
 if(BUILD_VULKAN)

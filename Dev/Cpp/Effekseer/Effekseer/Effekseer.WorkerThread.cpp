@@ -3,6 +3,8 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.WorkerThread.h"
 
+#include "Utils/Profiler.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -33,6 +35,7 @@ WorkerThread::~WorkerThread()
 void WorkerThread::Launch()
 {
 	m_Thread = std::thread([this]() {
+		PROFILER_THREAD("WorkerThread");
 		while (1)
 		{
 			std::unique_lock<std::mutex> lock(m_Mutex);
