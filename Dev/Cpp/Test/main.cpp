@@ -8,9 +8,10 @@
 #include <stdlib.h>
 #endif
 
+#ifdef BUILD_WITH_EASY_PROFILER
 #define EASY_PROFILER_STATIC
 #include <easy/profiler.h>
-
+#endif
 
 int main(int argc, char* argv[])
 {
