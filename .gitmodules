@@ -34,3 +34,6 @@
 [submodule "Dev/Cpp/3rdParty/glslang"]
 	path = Dev/Cpp/3rdParty/glslang
 	url = https://github.com/KhronosGroup/glslang.git
+[submodule "Dev/Cpp/3rdParty/easy_profiler"]
+	path = Dev/Cpp/3rdParty/easy_profiler
+	url = https://github.com/yse/easy_profiler.git

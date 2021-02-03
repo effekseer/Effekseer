@@ -158,12 +158,14 @@ if(BUILD_VULKAN)
     
     target_link_libraries(
         Test
+        PRIVATE 
         ${Vulkan_LIBRARIES}
     )
 
     # TODO Improve it
     target_link_libraries(
         Test
+        PRIVATE 
         glslang
         SPIRV
         OGLCompiler
@@ -179,16 +181,24 @@ endif()
 
 add_dependencies(Test ExternalProject_glfw)
 
+if(BUILD_WITH_EASY_PROFILER)
+    add_dependencies(Test ExternalProject_easy_profiler)
+endif()
+
 if (BUILD_WITH_POSTFIX)
 target_link_libraries(
     Test
+    PRIVATE 
     ${common_lib}
     debug glfw3d
     optimized glfw3
+    debug easy_profilerd
+    optimized easy_profiler
 )
 else()
 target_link_libraries(
     Test
+    PRIVATE 
     ${common_lib}
     glfw3
     dl
@@ -197,9 +207,9 @@ endif()
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
-    target_link_libraries(Test ${X11_LIBRARIES})
+    target_link_libraries(Test PRIVATE ${X11_LIBRARIES})
     find_package(Threads REQUIRED)
-    target_link_libraries(Test ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(Test PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(FROM_CI)
@@ -240,6 +250,7 @@ if(USE_LIBPNG_LOADER)
 
     target_link_libraries(
         ${PROJECT_NAME}
+        PRIVATE 
         debug "${ZLIB_LIB_DEBUG}"
         optimized "${ZLIB_LIB_RELEASE}"
         debug "${LIBPNG_LIB_DEBUG}"
