@@ -8,7 +8,7 @@ Requirements
 
 - git
 - git-lfs [Download](https://git-lfs.github.com/)
-- Visual Studio 2015 or later
+- Visual Studio 2017 or later
 - cmake (3.15 or later)
 
 ### macOS
@@ -110,3 +110,19 @@ python3 build.py
 cd Dev/release
 ./Effekseer
 ```
+
+## How to release
+
+* Windows
+
+Visual Studio 2017 are required.
+
+Please read ``` .github/workflows/build.yml ```
+
+* Mac
+
+Please read ``` .github/workflows/build.yml ```
+
+* Linux
+
+Please read ``` .github/workflows/build.yml ```
