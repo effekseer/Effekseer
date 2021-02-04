@@ -95,8 +95,8 @@ endif()
 
 if(BUILD_WITH_EASY_PROFILER)
     target_compile_definitions(Effekseer PUBLIC BUILD_WITH_EASY_PROFILER)
-    target_include_directories(Effekseer PUBLIC ${EFK_PROFILER_INCLUDES})
-    target_link_directories(Effekseer PUBLIC ${EFK_PROFILER_LIBRARY_DIRECTORIES})
+    target_include_directories(Effekseer PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_INCLUDES}>)
+    target_link_directories(Effekseer PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_LIBRARY_DIRECTORIES}>)
 
     target_link_libraries(Effekseer PUBLIC 
         debug ${EASY_PROFILER_LIB_DEBUG}
