@@ -37,8 +37,8 @@ LFF_Force_Gravitation_Name,距離による減衰
 LFF_TurbulenceType_Name,種類
 LFF_VortexType_Name,種類
 ,
-LFF_VortexType_ConstantAngle_Name,ConstantAngle
-LFF_VortexType_ConstantSpeed_Name,ConstantSpeed
+LFF_VortexType_ConstantAngle_Name,角度固定
+LFF_VortexType_ConstantSpeed_Name,速度固定
 ,
-LFF_TurbulenceType_Simple_Name,Simple
-LFF_TurbulenceType_Complicated_Name,Complicated
+LFF_TurbulenceType_Simple_Name,単純
+LFF_TurbulenceType_Complicated_Name,複雑

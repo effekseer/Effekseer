@@ -5,16 +5,16 @@ LFF_FalloffType_Cone_Name,Cone
 LFF_FalloffType_Tube_Name,Tube
 ,
 LFF_Falloff_Power_Name,Falloff Power
-LFF_Falloff_MaxDistance_Name,有効範囲(最大距離)
-LFF_Falloff_MinDistance_Name,有効範囲(最小距離)
+LFF_Falloff_MaxDistance_Name,Effective area (Max. Distance)
+LFF_Falloff_MinDistance_Name,Effective area (Min. Distance)
 ,
-LFF_Falloff_Tube_RadiusPower_Name,減衰力(半径)
-LFF_Falloff_Tube_MaxRadius_Name,有効範囲(最大半径)
-LFF_Falloff_Tube_MinRadius_Name,有効範囲(最小半径)
+LFF_Falloff_Tube_RadiusPower_Name,Falloff Power (Radius)
+LFF_Falloff_Tube_MaxRadius_Name,Effective area (Max. Radius)
+LFF_Falloff_Tube_MinRadius_Name,Effective area (Min. Radius)
 ,
-LFF_Falloff_Cone_AnglePower_Name,減衰力(角度)
-LFF_Falloff_Cone_MaxAngle_Name,有効範囲(最大角度)
-LFF_Falloff_Cone_MinAngle_Name,有効範囲(最小角度)
+LFF_Falloff_Cone_AnglePower_Name,Falloff Power (Angle)
+LFF_Falloff_Cone_MaxAngle_Name,Effective area (Max. Angle)
+LFF_Falloff_Cone_MinAngle_Name,Effective area (Min. Angle)
 ,
 LFF_Type_Name,Type
 LFF_Type_None_Name,None
@@ -28,13 +28,13 @@ LFF_Type_AttractiveForce_Name,Attraction (if point is set)
 ,
 LFF_Power_Name,Power
 LFF_Power_Desc,The strength of force field on particles.
-LFF_Position_Name,力場の位置
-LFF_Rotation_Name,力場の角度
+LFF_Position_Name,Position of force field
+LFF_Rotation_Name,Angle of force field
 ,
-LFF_Force_Gravitation_Name,距離による減衰
+LFF_Force_Gravitation_Name,Decay with distance
 ,
-LFF_TurbulenceType_Name,種類
-LFF_VortexType_Name,種類
+LFF_TurbulenceType_Name,Type
+LFF_VortexType_Name,Type
 ,
 LFF_VortexType_ConstantAngle_Name,ConstantAngle
 LFF_VortexType_ConstantSpeed_Name,ConstantSpeed

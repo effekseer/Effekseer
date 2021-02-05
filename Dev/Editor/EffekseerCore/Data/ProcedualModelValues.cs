@@ -163,7 +163,7 @@ namespace Effekseer.Data
 
 		[Key(key = "PM_CurlNoiseOffset")]
 		public Value.Vector3D CurlNoiseOffset { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
-		[Key(key = "PM_WaveNoisePower")]
+		[Key(key = "PM_CurlNoisePower")]
 		public Value.Vector3D CurlNoisePower { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 
 		[Key(key = "PM_ColorLeft")]

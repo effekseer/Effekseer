@@ -57,7 +57,7 @@ namespace Effekseer.Data
 
 			Power = new Value.Float(1.0f);
 
-			MaxDistance = new Value.Float();
+			MaxDistance = new Value.Float(1.0f);
 
 			MinDistance = new Value.Float();
 
@@ -80,9 +80,9 @@ namespace Effekseer.Data
 
 		public ForceFieldFalloffTube()
 		{
-			RadiusPower = new Value.Float();
+			RadiusPower = new Value.Float(1.0f);
 
-			MaxRadius = new Value.Float();
+			MaxRadius = new Value.Float(1.0f);
 
 			MinRadius = new Value.Float();
 		}
@@ -101,9 +101,9 @@ namespace Effekseer.Data
 
 		public ForceFieldFalloffCone()
 		{
-			AnglePower = new Value.Float();
+			AnglePower = new Value.Float(1.0f);
 
-			MaxAngle = new Value.Float();
+			MaxAngle = new Value.Float(180.0f);
 
 			MinAngle = new Value.Float();
 		}
