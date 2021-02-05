@@ -129,7 +129,7 @@ public:
 			return 0.0f;
 		}
 
-		const auto deg = powf(distance - fffc.MinDistance, fffc.Power);
+		const auto deg = powf(distance - fffc.MinDistance + 1.0f, fffc.Power);
 
 		if (deg == 0.0f)
 		{
@@ -174,7 +174,7 @@ public:
 			return 0.0f;
 		}
 
-		const auto deg = powf(distance, fffc.Power) * powf(tubeRadius - ffft.MinRadius, ffft.RadiusPower);
+		const auto deg = powf(distance+ 1.0f, fffc.Power) * powf(tubeRadius - ffft.MinRadius + 1.0f, ffft.RadiusPower);
 
 		if (deg == 0.0f)
 		{
@@ -220,7 +220,7 @@ public:
 
 		const auto e = 0.000001f;
 
-		const auto deg = powf(distance, fffc.Power) * powf((angle - ffft.MinAngle) / (ffft.MaxAngle - ffft.MinAngle + e), ffft.AnglePower);
+		const auto deg = powf(distance + 1.0f, fffc.Power) * powf((angle - ffft.MinAngle) / (ffft.MaxAngle - ffft.MinAngle + e) + 1.0f, ffft.AnglePower);
 
 		return power / deg;
 	}
