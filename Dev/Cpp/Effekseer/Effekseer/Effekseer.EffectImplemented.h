@@ -104,7 +104,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-	static const int32_t SupportBinaryVersion = Version16Alpha7;
+	static const int32_t SupportBinaryVersion = Version16Alpha8;
 
 protected:
 	SettingRef m_setting;

@@ -148,7 +148,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.6α7";
+		public const string Version = "1.6α8";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -1293,6 +1293,7 @@ namespace Effekseer
 			versionText = versionText.Replace("α7", "");
 			versionText = versionText.Replace("α8", "");
 			versionText = versionText.Replace("α9", "");
+			versionText = versionText.Replace("α10", "");
 
 			versionText = versionText.Replace("β1", "");
 			versionText = versionText.Replace("β2", "");
