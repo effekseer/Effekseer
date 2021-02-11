@@ -43,10 +43,6 @@ namespace Effekseer
 				return;
 			}
 
-#if DEBUG
-			Effekseer.IO.ChunkTest.Test();
-#endif
-
 			try
 			{
 				StartDirectory = System.IO.Directory.GetCurrentDirectory();
