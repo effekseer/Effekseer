@@ -75,13 +75,13 @@ namespace Effekseer.Binary
 					// export index
 					var relative_path = value.NurbsCurve.FilePath.RelativePath;
 
-					if (relative_path != System.IO.Path.GetFileName(value.NurbsCurve.FilePath.RelativePath))
+					if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
 					{
-						relative_path = System.IO.Path.GetDirectoryName(relative_path) + "/" + System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkcurve";
+						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkcurve";
 					}
 					else
 					{
-						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkcurve";
+						relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkcurve");
 					}
 
 					data.Add(curveAndIndex[relative_path].GetBytes());
