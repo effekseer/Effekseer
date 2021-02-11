@@ -288,8 +288,8 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = VelocitySum + ExternalVelocity;
-		ffcp.PreviousVelocity = Velocities[i];
+		ffcp.PreviousSumVelocity = (VelocitySum + ExternalVelocity) / magnification;
+		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.DeltaFrame = deltaFrame;
 		ffcp.IsFieldRotated = field.IsRotated;
 
@@ -386,8 +386,8 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = VelocitySum;
-		ffcp.PreviousVelocity = Velocities[i];
+		ffcp.PreviousSumVelocity = VelocitySum / magnification;
+		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.TargetPosition = targetPosition / magnification;
 		ffcp.DeltaFrame = deltaFrame;
 		ffcp.IsFieldRotated = field.IsRotated;
