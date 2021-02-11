@@ -8,54 +8,9 @@ using System.Xml;
 namespace Effekseer.IO
 {
 	/// <summary>
-	/// It should be made as unit test
-	/// </summary>
-	public class ChunkTest
-	{
-		public static void Test()
-		{
-			// a function to generate dummy data for testing
-			Func<int, byte[]> generateDummyData = (int n) =>
-			{
-				var ret = new byte[n];
-				var rand = new Random();
-
-				for (int i = 0; i < n; i++)
-				{
-					ret[i] = (byte)rand.Next(255);
-				}
-
-				return ret;
-			};
-
-			var src = new Chunk();
-			src.AddChunk("tes1", generateDummyData(25));
-			src.AddChunk("tes2", generateDummyData(255));
-			src.AddChunk("tes3", generateDummyData(256));
-			var saved = src.Save();
-
-			var dst = new Chunk();
-			dst.Load(saved);
-
-			if (!(src.Blocks[0].Chunk == dst.Blocks[0].Chunk)) throw new Exception();
-			if (!(src.Blocks[1].Chunk == dst.Blocks[1].Chunk)) throw new Exception();
-			if (!(src.Blocks[2].Chunk == dst.Blocks[2].Chunk)) throw new Exception();
-
-			if (!(src.Blocks[0].Buffer.Length == dst.Blocks[0].Buffer.Length)) throw new Exception();
-			if (!(src.Blocks[1].Buffer.Length == dst.Blocks[1].Buffer.Length)) throw new Exception();
-			if (!(src.Blocks[2].Buffer.Length == dst.Blocks[2].Buffer.Length)) throw new Exception();
-
-			if (!src.Blocks[0].Buffer.SequenceEqual(dst.Blocks[0].Buffer)) throw new Exception();
-			if (!src.Blocks[1].Buffer.SequenceEqual(dst.Blocks[1].Buffer)) throw new Exception();
-			if (!src.Blocks[2].Buffer.SequenceEqual(dst.Blocks[2].Buffer)) throw new Exception();
-		}
-	}
-
-	/// <summary>
 	/// Chunck to save or load
-	/// TODO create new file
 	/// </summary>
-	class Chunk
+	public class Chunk
 	{
 		public List<ChunkBlock> Blocks = new List<ChunkBlock>();
 
@@ -118,7 +73,7 @@ namespace Effekseer.IO
 		}
 	}
 
-	class ChunkBlock
+	public class ChunkBlock
 	{
 		public string Chunk;
 
