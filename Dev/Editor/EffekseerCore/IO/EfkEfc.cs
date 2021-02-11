@@ -333,6 +333,7 @@ namespace Effekseer.IO
 				exportStrs(binaryExporter.Models);
 				exportStrs(binaryExporter.Sounds);
 				exportStrs(binaryExporter.Materials);
+				exportStrs(binaryExporter.Curves);
 
 				infoData = data.SelectMany(_ => _).ToArray();
 			}

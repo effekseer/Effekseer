@@ -18,7 +18,8 @@ namespace Effekseer.Binary
 		Ver16Alpha5 = 1604,
 		Ver16Alpha6 = 1605,
 		Ver16Alpha7 = 1606,
-		Latest = Ver16Alpha7,
+		Ver16Alpha8 = 1607,
+		Latest = Ver16Alpha8,
 	}
 
 	public class Exporter
@@ -695,38 +696,6 @@ namespace Effekseer.Binary
 				data.Add(new byte[] { 0, 0 });
 			}
 
-			// export dynamic parameters
-			data.Add(BitConverter.GetBytes(Core.Dynamic.Inputs.Values.Count));
-			foreach (var value in Core.Dynamic.Inputs.Values)
-			{
-				float value_ = value.Input.Value;
-				data.Add(BitConverter.GetBytes(value_));
-			}
-
-			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
-
-			var compiler = new InternalScript.Compiler();
-
-			foreach (var value in Core.Dynamic.Equations.Values)
-			{
-				var cx = compiler.Compile(value.Code.Value);
-
-				var cs = new[] { cx };
-
-				foreach (var c in cs)
-				{
-					if (c.Bytecode != null)
-					{
-						data.Add(BitConverter.GetBytes((int)c.Bytecode.Length));
-						data.Add(c.Bytecode);
-					}
-					else
-					{
-						data.Add(BitConverter.GetBytes((int)0));
-					}
-				}
-			}
-
 			if (exporterVersion >= ExporterVersion.Ver16Alpha1)
 			{
 				// export curves to a file
@@ -812,6 +781,38 @@ namespace Effekseer.Binary
 					data.Add((byte[])param.ColorCenterMiddle);
 					data.Add((byte[])param.ColorRightMiddle);
 					data.Add((byte[])param.ColorCenterArea);
+				}
+			}
+
+			// export dynamic parameters
+			data.Add(BitConverter.GetBytes(Core.Dynamic.Inputs.Values.Count));
+			foreach (var value in Core.Dynamic.Inputs.Values)
+			{
+				float value_ = value.Input.Value;
+				data.Add(BitConverter.GetBytes(value_));
+			}
+
+			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
+
+			var compiler = new InternalScript.Compiler();
+
+			foreach (var value in Core.Dynamic.Equations.Values)
+			{
+				var cx = compiler.Compile(value.Code.Value);
+
+				var cs = new[] { cx };
+
+				foreach (var c in cs)
+				{
+					if (c.Bytecode != null)
+					{
+						data.Add(BitConverter.GetBytes((int)c.Bytecode.Length));
+						data.Add(c.Bytecode);
+					}
+					else
+					{
+						data.Add(BitConverter.GetBytes((int)0));
+					}
 				}
 			}
 
