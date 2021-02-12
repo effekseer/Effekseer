@@ -441,6 +441,18 @@ namespace Effekseer.Data
 			return doc.CreateTextElement(element_name, text);
 		}
 
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Int2 value, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
+
+			if (x != null) e.AppendChild(x);
+			if (y != null) e.AppendChild(y);
+
+			return e.ChildNodes.Count > 0 ? e : null;
+		}
+
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Float value, bool isClip)
 		{
 			if(value.DynamicEquation.Index >= 0)
@@ -1241,6 +1253,15 @@ namespace Effekseer.Data
 			{
 				value.SetValue(parsed);
 			}
+		}
+
+		public static void LoadFromElement(XmlElement e, Value.Int2 value, bool isClip)
+		{
+			var e_x = e["X"] as XmlElement;
+			var e_y = e["Y"] as XmlElement;
+
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Float value, bool isClip)
