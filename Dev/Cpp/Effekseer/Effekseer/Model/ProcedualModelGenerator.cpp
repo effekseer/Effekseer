@@ -714,7 +714,7 @@ struct RotatedWireMeshGenerator
 				for (size_t i = 0; i < vertexPoses.size(); i++)
 				{
 					ribbon.Vertexes[v * vertexPoses.size() + i].Position = vs[v] + (rtangent * vertexPoses[i].GetX() + binormals[v] * vertexPoses[i].GetY() + rnormal * vertexPoses[i].GetZ()) * scale;
-					ribbon.Vertexes[v * vertexPoses.size() + i].UV = SIMD::Vec2f(edgeUVs[i], v / static_cast<float>(vs.size() - 1));
+					ribbon.Vertexes[v * vertexPoses.size() + i].UV = SIMD::Vec2f(edgeUVs[i], 1.0f - v / static_cast<float>(vs.size() - 1));
 				}
 			}
 
