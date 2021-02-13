@@ -671,22 +671,23 @@ struct RotatedWireMeshGenerator
 				0.0f,
 			};
 		}
-
-		float depthSpeed = 1.0f / static_cast<float>(Vertices);
-		float rotateSpeed = Rotate * EFK_PI * 2.0f / static_cast<float>(Vertices);
-
+		
 		ProcedualMesh ret;
 
 		for (int32_t l = 0; l < Count; l++)
 		{
+			float currentDepth = RibbonNoises[1] / 2.0f * randObj.GetRand();
+			float endDepth = 1.0f - RibbonNoises[1] / 2.0f * randObj.GetRand();
 			float currentAngle = (static_cast<float>(l) / static_cast<float>(Count) + RibbonNoises[0] * (randObj.GetRand() - 0.5f)) * EFK_PI * 2.0f;
-			float currentDepth = RibbonNoises[1] * randObj.GetRand();
 
 			CustomAlignedVector<SIMD::Vec3f> vs;
 			CustomAlignedVector<SIMD::Vec3f> binormals;
 			CustomAlignedVector<SIMD::Vec3f> normals;
 
-			while (currentDepth < 1.0f - RibbonNoises[1] * randObj.GetRand())
+			float depthSpeed = (endDepth - currentDepth) / static_cast<float>(Vertices);
+			float rotateSpeed = Rotate * (endDepth - currentDepth) * EFK_PI * 2.0f / static_cast<float>(Vertices);
+
+			while (currentDepth < endDepth)
 			{
 				auto pos = GetPosition(currentAngle, currentDepth);
 
@@ -701,6 +702,11 @@ struct RotatedWireMeshGenerator
 				binormals.emplace_back((pos_diff - pos).Normalize());
 				currentDepth += depthSpeed;
 				currentAngle += rotateSpeed;
+			}
+
+			if (vs.size() < 2)
+			{
+				return {};
 			}
 
 			ProcedualMesh ribbon;

@@ -87,7 +87,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_RibbonNoises")]
-		public Value.Vector2D RibbonNoises { get; private set; } = new Value.Vector2D(0.0f, 0.0f);
+		public Value.Vector2D RibbonNoises { get; private set; } = new Value.Vector2D(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.1f, y_step: 0.1f);
 
 		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_Count")]
