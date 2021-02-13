@@ -609,22 +609,30 @@ struct RotatedWireMeshGenerator
 		{
 			vertexPoses = {
 				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
+				SIMD::Vec3f(+0.0f, 0.0f, 0.0f),
 				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
 				SIMD::Vec3f(0.0f, 0.0f, -0.5f),
+				SIMD::Vec3f(0.0f, 0.0f, +0.0f),
 				SIMD::Vec3f(0.0f, 0.0f, +0.5f),
 			};
 
 			edgeIDs = {
 				0,
 				1,
+				1,
 				2,
 				3,
+				4,
+				4,
+				5,
 			};
 
 			edgeUVs = {
 				0.0f,
+				0.5f,
 				1.0f,
 				0.0f,
+				0.5f,
 				1.0f,
 			};
 		}
@@ -632,16 +640,20 @@ struct RotatedWireMeshGenerator
 		{
 			vertexPoses = {
 				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
+				SIMD::Vec3f(+0.0f, 0.0f, 0.0f),
 				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
 			};
 
 			edgeIDs = {
 				0,
 				1,
+				1,
+				2,
 			};
 
 			edgeUVs = {
 				0.0f,
+				0.5f,
 				1.0f,
 			};
 		}
@@ -724,13 +736,13 @@ struct RotatedWireMeshGenerator
 			{
 				for (size_t i = 0; i < edgeIDs.size() / 2; i++)
 				{
-					ProcedualMeshFace face0;
-					ProcedualMeshFace face1;
+					ProcedualMeshFace face0{};
+					ProcedualMeshFace face1{};
 
-					int32_t v00 = (edgeIDs[i * 2 + 0]) + (v + 0) * static_cast<int32_t>(edgeIDs.size());
-					int32_t v10 = (edgeIDs[i * 2 + 1]) + (v + 0) * static_cast<int32_t>(edgeIDs.size());
-					int32_t v01 = (edgeIDs[i * 2 + 0]) + (v + 1) * static_cast<int32_t>(edgeIDs.size());
-					int32_t v11 = (edgeIDs[i * 2 + 1]) + (v + 1) * static_cast<int32_t>(edgeIDs.size());
+					int32_t v00 = (edgeIDs[i * 2 + 0]) + (v + 0) * static_cast<int32_t>(vertexPoses.size());
+					int32_t v10 = (edgeIDs[i * 2 + 1]) + (v + 0) * static_cast<int32_t>(vertexPoses.size());
+					int32_t v01 = (edgeIDs[i * 2 + 0]) + (v + 1) * static_cast<int32_t>(vertexPoses.size());
+					int32_t v11 = (edgeIDs[i * 2 + 1]) + (v + 1) * static_cast<int32_t>(vertexPoses.size());
 
 					face0.Indexes[0] = v00;
 					face0.Indexes[1] = v11;
