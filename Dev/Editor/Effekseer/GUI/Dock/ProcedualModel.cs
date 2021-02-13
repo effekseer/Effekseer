@@ -6,12 +6,14 @@ namespace Effekseer.GUI.Dock
 	class ProcedualModel : DockPanel
 	{
 		readonly Component.ParameterList paramerterList = null;
+		Component.CopyAndPaste candp = null;
 
 		public ProcedualModel()
 		{
 			Label = Icons.PanelDynamicParams + Resources.GetString("ProcedualModel_Name") + "###ProcedualModel";
 
 			paramerterList = new Component.ParameterList();
+			candp = new Component.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -24,6 +26,11 @@ namespace Effekseer.GUI.Dock
 		public void FixValues()
 		{
 			paramerterList.FixValues();
+		}
+
+		object GetTargetObject()
+		{
+			return Core.ProcedualModel.ProcedualModels.Selected;
 		}
 
 		public override void OnDisposed()
@@ -64,6 +71,7 @@ namespace Effekseer.GUI.Dock
 				Core.ProcedualModel.ProcedualModels.Delete(Core.ProcedualModel.ProcedualModels.Selected);
 			}
 
+			candp.Update();
 			paramerterList.Update();
 		}
 
