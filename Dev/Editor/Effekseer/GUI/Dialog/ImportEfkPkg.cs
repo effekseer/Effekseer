@@ -117,7 +117,7 @@ namespace Effekseer.GUI.Dialog
 			foreach (var file in efkpkg.AllFiles)
 			{
 				var import = new ImportFile();
-				import.DestinationName = file.Name;
+				import.DestinationName = file.RelativePath;
 				import.DoesImport = true;
 				import.ValidationPath(targetDirPath);
 				importFiles.Add(file, import);
@@ -187,7 +187,7 @@ namespace Effekseer.GUI.Dialog
 
 						foreach (var file in files)
 						{
-							file.Name = importFiles[file].DestinationName;
+							file.RelativePath = importFiles[file].DestinationName;
 						}
 
 						try
@@ -244,7 +244,7 @@ namespace Effekseer.GUI.Dialog
 				bool[] doesImport = new bool[] { import.DoesImport };
 
 				// source file
-				if (Manager.NativeManager.Checkbox(file.Name, doesImport))
+				if (Manager.NativeManager.Checkbox(file.RelativePath, doesImport))
 				{
 					SetFileImportSettings(file, doesImport[0]);
 				}
