@@ -171,6 +171,14 @@ public:
 	}
 
 	Vector3D CalcuratePoint(float t, float magnification) {
+		if (t == 0.0f && mControllPoint.size() > 0)
+		{
+			return {
+				static_cast<float>(mControllPoint[0].X * magnification),
+				static_cast<float>(mControllPoint[0].Y * magnification), 
+				static_cast<float>(mControllPoint[0].Z * magnification)};
+		}
+
 		int p = mOrder; // 次数
 
 		std::vector< double > bs(mControllPointCount); // B-Spline 基底関数の計算結果(重み値を積算)
