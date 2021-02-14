@@ -131,3 +131,5 @@ if (BUILD_TEST)
         set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_RELEASE "Effekseer.TestCSharp" )
     endif()
 endif()
+
+add_subdirectory(EffekseerLit)
