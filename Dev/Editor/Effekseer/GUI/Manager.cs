@@ -94,7 +94,7 @@ namespace Effekseer.GUI
 		}
 	}
 
-	public class Manager
+	public class Manager : GUIManager
 	{
 		class ManagerIOCallback : swig.IOCallback
 		{
@@ -109,10 +109,6 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public static swig.GUIManager NativeManager;
-		public static swig.Native Native;
-		public static swig.MainWindow MainWindow;
-		public static swig.IO IO;
 		static ManagerIOCallback ioCallback;
 
 		static GUIManagerCallback guiManagerCallback;

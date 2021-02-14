@@ -296,13 +296,8 @@ namespace Effekseer
 
 			if (gui)
 			{
-				while (GUI.Manager.NativeManager.DoEvents())
-				{
-					GUI.Manager.Update();
-				}
-
-				GUI.Manager.Terminate();
-				Process.MaterialEditor.Terminate();
+				var app = new App();
+				app.Run();
 			}
 
 			Core.Dispose();

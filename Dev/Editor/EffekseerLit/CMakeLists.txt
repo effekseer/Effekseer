@@ -12,31 +12,29 @@ set(EDITOR_ROOT ..)
 
 file(GLOB files 
     ${CMAKE_CURRENT_LIST_DIR}/*.cs
-    ${EDITOR_ROOT}/Effekseer/swig/*.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Dialog/*.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Component/*.cs
-    ${EDITOR_ROOT}/Effekseer/Utils/*.cs
+    #${EDITOR_ROOT}/Effekseer/GUI/Dialog/*.cs
+    #${EDITOR_ROOT}/Effekseer/GUI/Component/*.cs
+    #${EDITOR_ROOT}/Effekseer/Utils/*.cs
 )
 
 
 
-list(APPEND files
-    ${EDITOR_ROOT}/Effekseer/Define.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/RecentFiles.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Shortcuts.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Commands.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Manager.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Controls.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/ThumbnailManager.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Viewer.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Dock/DockManager.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Dock/EffectViwer.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Dock/DockPanel.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Dock/Environment.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Menu/Menu.cs
-    ${EDITOR_ROOT}/Effekseer/GUI/Menu/MenuItem.cs
-    ${EDITOR_ROOT}/Effekseer/Configs/WindowConfig.cs
-)
+#list(APPEND files
+#    ${EDITOR_ROOT}/Effekseer/GUI/RecentFiles.cs
+#    ${EDITOR_ROOT}/Effekseer/GUI/Shortcuts.cs
+#    ${EDITOR_ROOT}/Effekseer/GUI/Commands.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Manager.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Controls.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/ThumbnailManager.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Viewer.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Dock/DockManager.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Dock/EffectViwer.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Dock/DockPanel.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Dock/Environment.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Menu/Menu.cs
+#     ${EDITOR_ROOT}/Effekseer/GUI/Menu/MenuItem.cs
+#     ${EDITOR_ROOT}/Effekseer/Configs/WindowConfig.cs
+# )
 
 add_executable(EffekseerEditorLit
     ${files}
@@ -45,8 +43,7 @@ add_executable(EffekseerEditorLit
 set_target_properties(EffekseerEditorLit PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
-add_dependencies(EffekseerEditorLit EffekseerCore Viewer)
-target_link_libraries(EffekseerEditorLit PRIVATE EffekseerCore Viewer)
+target_link_libraries(EffekseerEditorLit PRIVATE EffekseerCoreGUI)
 
 target_compile_options(EffekseerEditorLit PRIVATE "/unsafe")
 #set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
