@@ -1,0 +1,19 @@
+
+enable_language(CSharp)
+cmake_minimum_required(VERSION 3.17)
+
+file(GLOB files
+    *.cs
+)
+
+add_library(EffekseerCoreGUI
+  SHARED
+  ${files}
+)
+
+set_target_properties(EffekseerCoreGUI PROPERTIES
+    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;System.IO.Compression.FileSystem")
+
+set_property(TARGET EffekseerCoreGUI PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2") 
+
+target_compile_options(EffekseerCoreGUI PRIVATE "/unsafe")

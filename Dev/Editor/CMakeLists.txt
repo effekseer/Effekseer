@@ -57,6 +57,11 @@ set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Jso
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
 
 
+
+add_subdirectory(EffekseerCoreGUI)
+
+
+
 file(GLOB files 
     Effekseer/*.cs
     Effekseer/Data/*.cs
