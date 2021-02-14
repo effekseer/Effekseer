@@ -85,11 +85,6 @@ file(GLOB files
     )
 
 list(APPEND files
-    Effekseer/swig/IO.cs
-    Effekseer/swig/IOCallback.cs
-    Effekseer/swig/SystemLanguage.cs
-    Effekseer/swig/MainWindow.cs
-    Effekseer/swig/MainWindowState.cs
     Effekseer/GUI/Dock/Environment.cs
     Effekseer/Configs/WindowConfig.cs
     Effekseer/GUI/ThumbnailManager.cs
@@ -102,8 +97,8 @@ add_executable(EffekseerEditor
 set_target_properties(EffekseerEditor PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
-add_dependencies(EffekseerEditor EffekseerCore Viewer)
-target_link_libraries(EffekseerEditor PRIVATE EffekseerCore Viewer)
+add_dependencies(EffekseerEditor EffekseerCore Viewer EffekseerCoreGUI)
+target_link_libraries(EffekseerEditor PRIVATE EffekseerCore Viewer EffekseerCoreGUI)
 
 target_compile_options(EffekseerEditor PRIVATE "/unsafe")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
@@ -137,4 +132,4 @@ if (BUILD_TEST)
     endif()
 endif()
 
-add_subdirectory(EffekseerLit)
+#add_subdirectory(EffekseerLit)
