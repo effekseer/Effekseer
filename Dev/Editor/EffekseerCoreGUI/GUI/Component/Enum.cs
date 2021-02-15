@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Enum : Control, IParameterControl
+	public class Enum : Control, IParameterControl
 	{
 		string id = "";
 

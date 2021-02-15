@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    class DockPanel : GroupControl, IRemovableControl, IDroppableControl
+	public class DockPanel : GroupControl, IRemovableControl, IDroppableControl
     {
 		public string Label { get; set; } = string.Empty;
 		
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		internal string TabToolTip = string.Empty;
+		protected string TabToolTip = string.Empty;
 
 		internal int IsInitialized = -1;
 

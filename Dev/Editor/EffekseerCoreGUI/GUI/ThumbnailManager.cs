@@ -6,12 +6,12 @@ using System.Text;
 
 namespace Effekseer.GUI
 {
-	class Thumbnail
+	public class Thumbnail
 	{
 		public swig.ImageResource Image = null;
 	}
 
-	class ThumbnailManager
+	public class ThumbnailManager
 	{
 		class IOCallback : swig.IOCallback
 		{
@@ -48,12 +48,12 @@ namespace Effekseer.GUI
 			return thumbnail;
 		}
 
-		internal static void Initialize()
+		public static void Initialize()
 		{
 			GUIManager.IO.AddCallback(callback);
 		}
 
-		internal static void Terminate()
+		public static void Terminate()
 		{
 			foreach(var th in thumbnails)
 			{

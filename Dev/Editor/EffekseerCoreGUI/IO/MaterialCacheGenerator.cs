@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.IO
 {
-	class MaterialCacheGenerator
+	public class MaterialCacheGenerator
 	{
 		public static void GenerateMaterialCaches()
 		{

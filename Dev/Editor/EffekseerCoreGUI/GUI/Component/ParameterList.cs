@@ -26,7 +26,7 @@ namespace Effekseer.GUI.Component
 		}
 	}
 
-	class ParameterList : GroupControl, IControl, IDroppableControl
+	public class ParameterList : GroupControl, IControl, IDroppableControl
 	{
 		TypeRowCollection collection = new TypeRowCollection();
 

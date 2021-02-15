@@ -11,7 +11,7 @@ using EfkN = Effekseer.swig.EffekseerNative;
 
 namespace Effekseer
 {
-	class Images
+	public class Images
 	{
 		public static swig.ImageResource Play;
 		public static swig.ImageResource Stop;

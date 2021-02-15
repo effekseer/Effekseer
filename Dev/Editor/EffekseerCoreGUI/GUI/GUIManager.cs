@@ -15,22 +15,30 @@ namespace Effekseer.GUI
 		public static swig.MainWindow MainWindow;
 		public static swig.IO IO;
 		public static Viewer Viewer;
-		internal static Network Network;
+		public static Network Network;
 
 
 		internal static bool DoesChangeColorOnChangedValue = true;
 
 		private static int nextID = 10;
 
-		private static bool isFontSizeDirtied = true;
+		protected static bool isFontSizeDirtied = true;
 
-		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
-		static Dock.DockManager dockManager = null;
-		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
+		public static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
+		public static Dock.DockManager dockManager = null;
+		public static Dock.DockPanel[] panels = new Dock.DockPanel[0];
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <remarks>
+		/// This order is important for dock panel.
+		/// </remarks>
+		public static Type[] dockTypes = null;
 
 		public static bool IsDockMode() { return dockManager != null; }
 
-		public static float TextOffsetY { get; private set; }
+		public static float TextOffsetY { get; set; }
 
 		public static float DpiScale
 		{
@@ -84,7 +92,7 @@ namespace Effekseer.GUI
 			return null;
 		}
 
-		internal static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
+		public static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
 		{
 			for (int i = 0; i < dockTypes.Length; i++)
 			{

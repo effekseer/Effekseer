@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-	class DockManager : GroupControl, IRemovableControl, IDroppableControl
+	public class DockManager : GroupControl, IRemovableControl, IDroppableControl
 	{
 		public string Label { get; set; } = string.Empty;
 

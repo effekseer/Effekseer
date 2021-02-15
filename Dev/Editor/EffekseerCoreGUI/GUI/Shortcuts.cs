@@ -130,7 +130,7 @@ namespace Effekseer.GUI
 		MENU = 348,
 	}
 
-	class Shortcuts
+	public class Shortcuts
 	{
 
 		const string ConfigPath = "config.shortcut.xml";
@@ -204,7 +204,7 @@ namespace Effekseer.GUI
 			}
 		}
 
-		internal static void Update()
+		public static void Update()
 		{
 			for (int i = 0; i < 512; i++)
 			{
@@ -217,7 +217,7 @@ namespace Effekseer.GUI
 			}
 		}
 
-		internal static void ProcessCmdKey(ref bool handle)
+		public static void ProcessCmdKey(ref bool handle)
 		{
 			handle = true;
 

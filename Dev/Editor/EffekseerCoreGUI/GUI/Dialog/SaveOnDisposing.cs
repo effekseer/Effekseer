@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dialog
 {
-	class SaveOnDisposing : IRemovableControl
+	public class SaveOnDisposing : IRemovableControl
     {
 		string title = string.Empty;
         string message = string.Empty;

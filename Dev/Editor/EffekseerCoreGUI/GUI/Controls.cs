@@ -39,7 +39,7 @@ namespace Effekseer.GUI
 	}
 
 
-	class Control : IDroppableControl
+	public class Control : IDroppableControl
 	{
 		public bool ShouldBeRemoved { get; protected set; } = false;
 
@@ -61,7 +61,7 @@ namespace Effekseer.GUI
 		}
 	}
 
-	class GroupControl : Control
+	public class GroupControl : Control
 	{
 		public Utils.DelayedList<IControl> Controls { get; } = new Utils.DelayedList<IControl>();
 

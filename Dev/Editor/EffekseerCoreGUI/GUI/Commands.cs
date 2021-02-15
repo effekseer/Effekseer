@@ -11,7 +11,7 @@ namespace Effekseer.GUI
 	/// <summary>
 	/// Commands called with shortcuts
 	/// </summary>
-	class Commands
+	public class Commands
 	{
 		public static void Register()
 		{

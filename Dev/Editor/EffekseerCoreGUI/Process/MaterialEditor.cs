@@ -9,7 +9,7 @@ using Effekseer.GUI;
 
 namespace Effekseer.Process
 {
-	class MaterialEditor
+	public class MaterialEditor
 	{
 		static System.Diagnostics.Process process = null;
 

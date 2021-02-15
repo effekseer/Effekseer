@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.GUI
 {
-	class RecentFiles
+	public class RecentFiles
 	{
 		public const string ConfigRecentFileName = "config.recent.xml";
 
@@ -27,7 +27,7 @@ namespace Effekseer.GUI
 			configRecentPath = System.IO.Path.Combine(Application.EntryDirectory, ConfigRecentFileName);
 		}
 
-		internal static void LoadRecentConfig()
+		public static void LoadRecentConfig()
 		{
 			if (System.IO.File.Exists(configRecentPath))
 			{
@@ -41,7 +41,7 @@ namespace Effekseer.GUI
 			}
 		}
 
-		internal static void SaveRecentConfig()
+		public static void SaveRecentConfig()
 		{
 			var rf = GetRecentFiles();
 

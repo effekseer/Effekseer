@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class ObjectCollection
+	public class ObjectCollection
 	{
 		public static T Select<T>(string paramName, string id, T currentSelected, bool hasDefault, Data.Value.ObjectCollection<T> collection) where T : class, Data.Value.INamedObject, new()
 		{
@@ -110,7 +110,7 @@ namespace Effekseer.GUI.Component
 		}
 
 	}
-	class CopyAndPaste : IControl
+	public class CopyAndPaste : IControl
 	{
 		string elementName = string.Empty;
 		Func<object> getter;

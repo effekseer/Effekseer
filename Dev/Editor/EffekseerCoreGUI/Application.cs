@@ -125,21 +125,7 @@ namespace Effekseer
 					Core.ImportScripts.Add(efkpkgImporter);
 				}
 
-				System.OperatingSystem os = System.Environment.OSVersion;
-				swig.DeviceType deviceType = swig.DeviceType.DirectX11;
-
-				if (!(os.Platform == PlatformID.Win32NT ||
-				os.Platform == PlatformID.Win32S ||
-				os.Platform == PlatformID.Win32Windows ||
-				os.Platform == PlatformID.WinCE))
-				{
-					deviceType = swig.DeviceType.OpenGL;
-				}
-
-				if (!GUI.Manager.Initialize(960, 540, deviceType))
-				{
-					return;
-				}
+				OnInitialize();
 			}
 		}
 
@@ -149,6 +135,12 @@ namespace Effekseer
 			{
 				OnUpdate();
 			}
+
+			OnTerminate();
+		}
+
+		protected virtual void OnInitialize()
+		{
 		}
 
 		protected virtual void OnUpdate()
@@ -185,7 +177,7 @@ namespace Effekseer
 			swig.GUIManager.show(obj, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 		}
 
-		private static void ExportError(Exception e)
+		public static void ExportError(Exception e)
 		{
 			string messageBase = "Error has been caused.";
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.GUI
 {
-	class Network
+	public class Network
 	{
 		public string Target { get; set; }
 		public int Port { get; set; }

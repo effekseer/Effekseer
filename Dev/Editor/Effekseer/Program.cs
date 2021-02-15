@@ -24,7 +24,7 @@ namespace Effekseer
 			}
 			catch(Exception e)
 			{
-				ExportError(e);
+				Application.ExportError(e);
 				return;
 			}
 
@@ -104,7 +104,7 @@ namespace Effekseer
 				}
 				catch (Exception e)
 				{
-					ExportError(e);
+					Application.ExportError(e);
 				}
 			}
 		}
@@ -194,7 +194,7 @@ namespace Effekseer
 
 		private static void ChangeLanguage()
 		{
-			MultiLanguageTextProvider.RootDirectory = GUI.Manager.GetEntryDirectory() + "/";
+			MultiLanguageTextProvider.RootDirectory = Application.EntryDirectory + "/";
 			MultiLanguageTextProvider.Reset();
 			MultiLanguageTextProvider.LoadCSV("Base.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer.csv");
