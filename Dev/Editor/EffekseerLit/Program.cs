@@ -34,16 +34,17 @@ namespace Effekseer
 			try
 			{
 				//StartDirectory = System.IO.Directory.GetCurrentDirectory();
-				EntryDirectory = GUI.Manager.GetEntryDirectory();
+				//EntryDirectory = GUI.Manager.GetEntryDirectory();
 			}
 			catch (Exception e)
 			{
-				ExportError(e);
+				//ExportError(e);
 				return;
 			}
 
-			Exec();
+			//Exec();
 		}
+#if false
 
 		static void Exec()
 		{
@@ -399,5 +400,6 @@ namespace Effekseer
 		public static swig.ImageResource GetIcon(string resourceName) {
 			return Icons.ContainsKey(resourceName) ? Icons[resourceName] : null;
 		}
+#endif
 	}
 }

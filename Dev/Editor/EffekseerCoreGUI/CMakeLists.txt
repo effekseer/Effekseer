@@ -6,11 +6,21 @@ file(GLOB files
     *.cs
     swig/*.cs
     GUI/*.cs
+    GUI/Component/*.cs
+    GUI/Dialog/*.cs
+    GUI/Dock/*.cs
+    IO/*.cs
+    Plugin/*.cs
+    Process/*.cs
+    Utils/*.cs
+    IO/mqoToEffekseerModelConverter/*.cs
+    IO/mqoToEffekseerModelConverter/mqoIO/*.cs
+    IO/mqoToEffekseerModelConverter/mqoIO/Realtime/*.cs
 )
 
 add_library(EffekseerCoreGUI
-  SHARED
-  ${files}
+    SHARED
+    ${files}
 )
 
 set_target_properties(EffekseerCoreGUI PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;System.IO.Compression.FileSystem")

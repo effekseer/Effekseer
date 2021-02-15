@@ -112,28 +112,8 @@ namespace Effekseer.GUI
 		static ManagerIOCallback ioCallback;
 
 		static GUIManagerCallback guiManagerCallback;
-	
-		static int nextID = 10;
-
-		static bool isFontSizeDirtied = true;
-
-		public static Viewer Viewer;
-
-		internal static Network Network;
 
 		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
-
-		internal static bool DoesChangeColorOnChangedValue = true;
-
-		public static float TextOffsetY {get; private set;}
-
-		public static float DpiScale
-		{
-			get
-			{
-				return NativeManager.GetDpiScale();
-			}
-		}
 
 		public static bool IsWindowFrameless { get; private set; }
 
@@ -181,15 +161,8 @@ namespace Effekseer.GUI
 			typeof(Dock.AdvancedRenderCommonValues),
 		};
 
-		static Dock.DockManager dockManager = null;
 
 		static Dock.EffectViwer effectViewer = null;
-
-		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
-
-		public static bool IsDockMode() { return dockManager != null; }
-
-		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 
 		public static bool Initialize(int width, int height, swig.DeviceType deviceType)
 		{
@@ -478,15 +451,6 @@ namespace Effekseer.GUI
 			swig.IO.Terminate();
 			IO.Dispose();
 			IO = null;
-		}
-
-		public static void UpdateFont()
-		{
-			isFontSizeDirtied = true;
-		}
-		public static void AddControl(IRemovableControl control)
-		{
-			Controls.Add(control);
 		}
 
 		static swig.Vec2 mousePos_pre;
@@ -790,64 +754,6 @@ namespace Effekseer.GUI
 			NativeManager.EndDockLayout();
 		}
 
-		internal static Dock.DockPanel GetWindow(Type t)
-		{
-			foreach(var panel in panels)
-			{
-				if (panel != null && panel.GetType() == t) return panel;
-			}
-
-			return null;
-		}
-
-		internal static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
-		{
-			for(int i = 0; i < dockTypes.Length; i++)
-			{
-				if (dockTypes[i] != t) continue;
-
-				if (panels[i] != null)
-				{
-					panels[i].SetFocus();
-					return panels[i];
-				}
-				else
-				{
-					if(defaultSize == null)
-					{
-						defaultSize = new swig.Vec2();
-					}
-
-					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
-					panels[i].InitialDockSize = defaultSize;
-					panels[i].IsInitialized = -1;
-					panels[i].ResetSize = resetRect;
-
-					if (dockManager != null)
-					{
-						dockManager.Controls.Add(panels[i]);
-					}
-					else
-					{
-						AddControl(panels[i]);
-					}
-
-					return panels[i];
-				}
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		/// get a scale based on font size for margin, etc.
-		/// </summary>
-		/// <returns></returns>
-		public static float GetUIScaleBasedOnFontSize()
-		{
-			return Core.Option.FontSize.Value / 16.0f * DpiScale;
-		}
-
 		static void Core_OnAfterLoad(object sender, EventArgs e)
 		{
 			Viewer.StopViewer();
@@ -961,37 +867,6 @@ namespace Effekseer.GUI
 			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
 			doc.InsertBefore(dec, project_root);
 			doc.Save(path);
-		}
-
-		/// <summary>
-		/// Get unique id in this aplication.
-		/// </summary>
-		/// <returns></returns>
-		public static int GetUniqueID()
-		{
-			nextID++;
-			return nextID;
-		}
-
-		/// <summary>
-		/// Get a directory where this application is located.
-		/// </summary>
-		/// <returns></returns>
-		public static string GetEntryDirectory()
-		{
-			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
-			string path = myAssembly.Location;
-			var dir = System.IO.Path.GetDirectoryName(path);
-
-			// for mkbundle
-			if (dir == string.Empty)
-			{
-				dir = System.IO.Path.GetDirectoryName(
-				System.IO.Path.GetFullPath(
-				Environment.GetCommandLineArgs()[0]));
-			}
-
-			return dir;
 		}
 	}
 }

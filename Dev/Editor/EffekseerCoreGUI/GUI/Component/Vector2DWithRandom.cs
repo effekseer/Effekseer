@@ -1,0 +1,270 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Effekseer.GUI.Component
+{
+	class Vector2DWithRandom : Control, IParameterControl
+	{
+		string id1 = "";
+		string id2 = "";
+		string id_r1 = "";
+		string id_r2 = "";
+		string id_c = "";
+
+		bool isPopupShown = false;
+
+		bool isActive = false;
+
+		Data.Value.Vector2DWithRandom binding = null;
+
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
+		float[] internalValue1 = new float[] { 0.0f, 0.0f };
+		float[] internalValue2 = new float[] { 0.0f, 0.0f };
+
+		public bool EnableUndo { get; set; } = true;
+
+		public Data.Value.Vector2DWithRandom Binding
+		{
+			get
+			{
+				return binding;
+			}
+			set
+			{
+				if (binding == value) return;
+
+				binding = value;
+
+				if (binding != null)
+				{
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						internalValue1[0] = binding.X.Center;
+						internalValue1[1] = binding.Y.Center;
+						internalValue2[0] = binding.X.Amplitude;
+						internalValue2[1] = binding.Y.Amplitude;
+					}
+					else
+					{
+						internalValue1[0] = binding.X.Min;
+						internalValue1[1] = binding.Y.Min;
+						internalValue2[0] = binding.X.Max;
+						internalValue2[1] = binding.Y.Max;
+					}
+				}
+			}
+		}
+
+		public Vector2DWithRandom()
+		{
+			id1 = "###" + GUIManager.GetUniqueID().ToString();
+			id2 = "###" + GUIManager.GetUniqueID().ToString();
+			id_r1 = "###" + GUIManager.GetUniqueID().ToString();
+			id_r2 = "###" + GUIManager.GetUniqueID().ToString();
+			id_c = "###" + GUIManager.GetUniqueID().ToString();
+		}
+
+		public void SetBinding(object o)
+		{
+			var o_ = o as Data.Value.Vector2DWithRandom;
+			Binding = o_;
+		}
+
+		public void FixValue()
+		{
+		}
+
+		void FixValueInternal(bool combined)
+		{
+			if (EnableUndo)
+			{
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				{
+					binding.X.SetCenter(internalValue1[0], combined);
+					binding.Y.SetCenter(internalValue1[1], combined);
+				}
+				else
+				{
+					binding.X.SetMin(internalValue1[0], combined);
+					binding.Y.SetMin(internalValue1[1], combined);
+				}
+			}
+			else
+			{
+				throw new Exception("Not Implemented.");
+			}
+
+			if (EnableUndo)
+			{
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				{
+					binding.X.SetAmplitude(internalValue2[0], combined);
+					binding.Y.SetAmplitude(internalValue2[1], combined);
+				}
+				else
+				{
+					binding.X.SetMax(internalValue2[0], combined);
+					binding.Y.SetMax(internalValue2[1], combined);
+				}
+			}
+			else
+			{
+				throw new Exception("Not Implemented.");
+			}
+		}
+
+		public override void OnDisposed()
+		{
+		}
+
+		public override void Update()
+		{
+			if (binding == null) return;
+
+			valueChangingProp.Enable(binding);
+
+			isPopupShown = false;
+
+			float step = 1.0f;
+
+			if (binding != null)
+			{
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				{
+					internalValue1[0] = binding.X.Center;
+					internalValue1[1] = binding.Y.Center;
+					internalValue2[0] = binding.X.Amplitude;
+					internalValue2[1] = binding.Y.Amplitude;
+				}
+				else
+				{
+					internalValue1[0] = binding.X.Min;
+					internalValue1[1] = binding.Y.Min;
+					internalValue2[0] = binding.X.Max;
+					internalValue2[1] = binding.Y.Max;
+				}
+
+				step = Binding.X.Step / 10.0f;
+			}
+
+			var txt_r1 = string.Empty;
+			var txt_r2 = string.Empty;
+
+			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+			{
+				txt_r1 = Resources.GetString("Mean");
+				txt_r2 = Resources.GetString("Deviation");
+			}
+			else
+			{
+				txt_r1 = Resources.GetString("Min");
+				txt_r2 = Resources.GetString("Max");
+			}
+
+			GUIManager.NativeManager.PushItemWidth(GUIManager.NativeManager.GetColumnWidth() - 48 * GUIManager.DpiScale);
+			if (GUIManager.NativeManager.DragFloat2EfkEx(id1, internalValue1, step,
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue,
+				"X:%.3f", "Y:%.3f"))
+			{
+				if (EnableUndo)
+				{
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						binding.X.SetCenter(internalValue1[0], isActive);
+						binding.Y.SetCenter(internalValue1[1], isActive);
+					}
+					else
+					{
+						binding.X.SetMin(internalValue1[0], isActive);
+						binding.Y.SetMin(internalValue1[1], isActive);
+					}
+				}
+				else
+				{
+					throw new Exception("Not Implemented.");
+				}
+			}
+
+			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+
+			Popup();
+
+			GUIManager.NativeManager.SameLine();
+			GUIManager.NativeManager.Text(txt_r1);
+
+			if (GUIManager.NativeManager.DragFloat2EfkEx(id2, internalValue2, step,
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue,
+				"X:" + "%.3f", "Y:" + "%.3f"))
+			{
+				if (EnableUndo)
+				{
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						binding.X.SetAmplitude(internalValue2[0], isActive);
+						binding.Y.SetAmplitude(internalValue2[1], isActive);
+					}
+					else
+					{
+						binding.X.SetMax(internalValue2[0], isActive);
+						binding.Y.SetMax(internalValue2[1], isActive);
+					}
+				}
+				else
+				{
+					throw new Exception("Not Implemented.");
+				}
+			}
+
+			isActive_Current |= GUIManager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
+
+			Popup();
+
+			GUIManager.NativeManager.SameLine();
+			GUIManager.NativeManager.Text(txt_r2);
+
+			GUIManager.NativeManager.PopItemWidth();
+
+			valueChangingProp.Disable();
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			{
+				var txt_r_r1 = Resources.GetString("Gauss");
+				var txt_r_r2 = Resources.GetString("Range");
+
+				if (GUIManager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+				{
+					binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+				}
+
+				GUIManager.NativeManager.SameLine();
+
+				if (GUIManager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+				{
+					binding.DrawnAs = Data.DrawnAs.MaxAndMin;
+				}
+
+				GUIManager.NativeManager.EndPopup();
+				isPopupShown = true;
+			}
+		}
+
+	}
+}
