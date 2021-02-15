@@ -13,6 +13,7 @@ set(EDITOR_ROOT ..)
 file(GLOB files 
     ${CMAKE_CURRENT_LIST_DIR}/*.cs
     GUI/*.cs
+    GUI/Dock/*.cs
     #${EDITOR_ROOT}/Effekseer/GUI/Component/*.cs
     #${EDITOR_ROOT}/Effekseer/Utils/*.cs
 )

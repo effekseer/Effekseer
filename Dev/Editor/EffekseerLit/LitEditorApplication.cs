@@ -16,6 +16,10 @@ namespace Effekseer
 			var dockTypes = new Type[]
 			{
 				typeof(Dock.FileViewer),
+				typeof(Dock.PrefabListDock),
+				typeof(Dock.TimelineDock),
+				typeof(Dock.NodePropertiesDock),
+				typeof(Dock.CellPropertiesDock),
 			};
 
 			Manager.dockTypes = dockTypes;
@@ -47,24 +51,50 @@ namespace Effekseer
 				}
 			}
 
-			var fileViewer = Manager.SelectOrShowWindow(typeof(GUI.Dock.FileViewer), null);
+			var fileViewer = Manager.SelectOrShowWindow(typeof(Dock.FileViewer), null);
+			var prefabListDock = Manager.SelectOrShowWindow(typeof(Dock.PrefabListDock), null);
+			var timelineDock = Manager.SelectOrShowWindow(typeof(Dock.TimelineDock), null);
+			var nodePropertiesDock = Manager.SelectOrShowWindow(typeof(Dock.NodePropertiesDock), null);
+			var cellPropertiesDock = Manager.SelectOrShowWindow(typeof(Dock.CellPropertiesDock), null);
+
 
 			uint windowId = Manager.NativeManager.BeginDockLayout();
 
 			uint dockLeftID = 0, dockRightID = 0;
-			Manager.NativeManager.DockSplitNode(windowId, swig.DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
-
-			uint dockLeftTop = 0, dockLeftBottom = 0;
-			Manager.NativeManager.DockSplitNode(dockLeftID, swig.DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
+			uint dockLeftLeftID = 0, dockLeftRightID = 0;
+			Manager.NativeManager.DockSplitNode(windowId, swig.DockSplitDir.Left, 0.35f, ref dockLeftID, ref dockRightID);
+			Manager.NativeManager.DockSplitNode(dockLeftID, swig.DockSplitDir.Left, 0.5f, ref dockLeftLeftID, ref dockLeftRightID);
 
 			uint dockRightTop = 0, dockRightBottom = 0;
-			Manager.NativeManager.DockSplitNode(dockRightID, swig.DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
+			Manager.NativeManager.DockSplitNode(dockRightID, swig.DockSplitDir.Top, 0.75f, ref dockRightTop, ref dockRightBottom);
 
-			Manager.NativeManager.DockSetNodeFlags(dockLeftTop, swig.DockNodeFlags.HiddenTabBar);
-			Manager.NativeManager.DockSetNodeFlags(dockLeftBottom, swig.DockNodeFlags.HiddenTabBar);
+			uint dockRightTopLeft = 0, dockRightTopRight = 0;
+			Manager.NativeManager.DockSplitNode(dockRightTop, swig.DockSplitDir.Left, 0.75f, ref dockRightTopLeft, ref dockRightTopRight);
 
-			Manager.NativeManager.DockSetWindow(dockLeftTop, Manager.effectViewer.WindowID);
-			Manager.NativeManager.DockSetWindow(dockLeftBottom, fileViewer.WindowID);
+			uint dockRightTopRightTop = 0, dockRightTopRightBottom = 0;
+			Manager.NativeManager.DockSplitNode(dockRightTopRight, swig.DockSplitDir.Top, 0.5f, ref dockRightTopRightTop, ref dockRightTopRightBottom);
+
+			//uint dockRightTop = 0, dockRightBottom = 0;
+			//Manager.NativeManager.DockSplitNode(dockRightID, swig.DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
+
+			//swig.DockNodeFlags flags = (swig.DockNodeFlags)0xFF;
+			swig.DockNodeFlags flags = swig.DockNodeFlags.NoTabBar | swig.DockNodeFlags.HiddenTabBar | swig.DockNodeFlags.NoWindowMenuButton | swig.DockNodeFlags.NoCloseButton | swig.DockNodeFlags.NoDocking;
+			Manager.NativeManager.DockSetNodeFlags(dockRightTopLeft, flags);
+			Manager.NativeManager.DockSetNodeFlags(dockLeftLeftID, flags);
+			Manager.NativeManager.DockSetNodeFlags(dockLeftRightID, flags);
+			Manager.NativeManager.DockSetNodeFlags(dockRightBottom, flags);
+			Manager.NativeManager.DockSetNodeFlags(dockRightTopRightTop, flags);
+			Manager.NativeManager.DockSetNodeFlags(dockRightTopRightBottom, flags);
+
+
+			Manager.NativeManager.DockSetWindow(dockRightTopLeft, Manager.effectViewer.WindowID);
+			Manager.NativeManager.DockSetWindow(dockLeftLeftID, fileViewer.WindowID);
+			Manager.NativeManager.DockSetWindow(dockLeftRightID, prefabListDock.WindowID);
+
+			Manager.NativeManager.DockSetWindow(dockRightBottom, timelineDock.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTopRightTop, nodePropertiesDock.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTopRightBottom, cellPropertiesDock.WindowID);
+
 
 			Manager.NativeManager.EndDockLayout();
 		}
