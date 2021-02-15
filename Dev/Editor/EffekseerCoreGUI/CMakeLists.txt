@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.17)
 file(GLOB files
     *.cs
     swig/*.cs
+    Configs/*.cs
     GUI/*.cs
     GUI/Component/*.cs
     GUI/Dialog/*.cs

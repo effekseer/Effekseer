@@ -8,130 +8,12 @@ using Effekseer.Utl;
 
 namespace Effekseer.GUI
 {
-	class GUIManagerCallback : swig.GUIManagerCallback
-	{
-		void HandleAction()
-		{
-		}
-
-
-		public override void Resized(int x, int y)
-		{			
-			if(x > 0 && y > 0)
-			{
-				Manager.Native.ResizeWindow(x, y);
-
-				Manager.WindowSize.X = x;
-				Manager.WindowSize.Y = y;
-			}
-
-			Manager.resizedCount = 5;
-			Manager.actualWidth = x;
-		}
-
-		public override void Focused()
-		{
-			Core.Reload();
-		}
-
-		public override void Droped()
-		{
-			var path = GetPath();
-			var handle = false;
-
-			Manager.Controls.Lock();
-
-			foreach (var c in Manager.Controls.Internal.OfType<Control>())
-			{
-				c.DispatchDropped(path, ref handle);
-			}
-
-			Manager.Controls.Unlock();
-		
-			if(!handle)
-			{
-				Commands.Open(this.GetPath());
-			}
-		}
-
-		public override bool Closing()
-		{
-			if (Manager.IgnoreDisposingDialogBox) return true;
-			if (!Core.IsChanged) return true;
-
-			var dialog = new Dialog.SaveOnDisposing(
-				() =>
-			{
-				Manager.IgnoreDisposingDialogBox = true;
-				Manager.NativeManager.Close();
-			});
-
-			return false;
-		}
-
-		public override void Iconify(int f)
-		{
-			base.Iconify(f);
-		}
-
-		public override void DpiChanged(float f)
-		{
-			Manager.UpdateFont();
-		}
-
-		public override bool ClickLink(string path)
-		{
-			try
-			{
-				System.Diagnostics.Process.Start(path);
-			}
-			catch
-			{
-				return false;
-			}
-
-			return true;
-		}
-	}
 
 	public class Manager : GUIManager
 	{
-		class ManagerIOCallback : swig.IOCallback
-		{
-			public override void OnFileChanged(StaticFileType fileType, string path)
-			{
-				var ext = System.IO.Path.GetExtension(path).ToLower();
-				if(ext == ".efkmat")
-				{
-					Core.UpdateResourcePaths(path);
-					Viewer.IsRequiredToReload = true;
-				}
-			}
-		}
-
-		static ManagerIOCallback ioCallback;
-
-		static GUIManagerCallback guiManagerCallback;
-
-		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
-
-		public static bool IsWindowFrameless { get; private set; }
-
-		static int resetCount = 0;
-		internal static int resizedCount = 0;
-		internal static int actualWidth = 1;
-
-        /// <summary>
-        /// if this flag is true, a dialog box on disposing is not shown
-        /// </summary>
-		internal static bool IgnoreDisposingDialogBox = false;
 
 
-		static Dock.EffectViwer effectViewer = null;
 
-		public static string WindowConfigFileFullPath { get { return System.IO.Path.Combine(Application.EntryDirectory, Application.Name + ".config.Dock.xml"); } }
-
-		public static string ImGuiINIFileFullPath { get { return System.IO.Path.Combine(Application.EntryDirectory, Application.Name + ".imgui.ini"); } }
 
 		public static bool Initialize(int width, int height, swig.DeviceType deviceType)
 		{
@@ -164,117 +46,11 @@ namespace Effekseer.GUI
 				typeof(Dock.AdvancedRenderCommonValues),
 			};
 
-			if (!InitializeBase(width, height, deviceType)) return false;
-
+			if (!InitializeBase(width, height, deviceType, () => new GUI.Menu.MainMenu())) return false;
 
 			var appDirectory = Application.EntryDirectory;
 
-			swig.MainWindowState state = new swig.MainWindowState();
 
-			if (System.Environment.OSVersion.Platform == PlatformID.Win32NT)
-			{
-				IsWindowFrameless = true;
-			}
-
-			// TODO : refactor
-			var windowConfig = new Configs.WindowConfig();
-			if(windowConfig.Load(WindowConfigFileFullPath))
-			{
-				state.PosX = windowConfig.WindowPosX;
-				state.PosY = windowConfig.WindowPosY;
-				state.Width = windowConfig.WindowWidth;
-				state.Height = windowConfig.WindowHeight;
-				state.IsMaximumMode = windowConfig.WindowIsMaximumMode;
-			}
-			else
-			{
-				state.PosX = -10000; // nodata
-				state.Width = 1280;
-				state.Height = 720;
-				windowConfig = null;
-			}
-
-			state.IsFrameless = IsWindowFrameless;
-
-			if (!swig.MainWindow.Initialize("Effekseer", state, false, deviceType == swig.DeviceType.OpenGL))
-			{
-				return false;
-			}
-			MainWindow = swig.MainWindow.GetInstance();
-
-			swig.IO.Initialize(1000);
-			IO = swig.IO.GetInstance();
-			ioCallback = new ManagerIOCallback();
-			IO.AddCallback(ioCallback);
-
-			Core.OnFileLoaded += (string path) => {
-
-#if DEBUG
-				Console.WriteLine("OnFileLoaded : " + path);
-#endif
-
-				var f = IO.LoadIPCFile(path);
-				if(f == null)
-				{
-					f = IO.LoadFile(path);
-				}
-
-				// TODO : refactor it
-				// Permission error
-				if(f != null && f.GetSize() == 0)
-				{
-					var message = MultiLanguageTextProvider.GetText("PermissionError_File");
-
-					if (swig.GUIManager.IsMacOSX())
-					{
-						message += "\n";
-						message += MultiLanguageTextProvider.GetText("PermissionError_File_Mac");
-					}
-
-					message = string.Format(message, System.IO.Path.GetFileName(path));
-
-					throw new FileLoadPermissionException(message);
-				}
-
-				if (f == null) return null;
-
-				byte[] ret = new byte[f.GetSize()];
-				System.Runtime.InteropServices.Marshal.Copy(f.GetData(), ret, 0, ret.Length);
-				f.Dispose();
-				return ret;
-			};
-
-			ThumbnailManager.Initialize();
-		
-			var mgr = new swig.GUIManager();
-			if (mgr.Initialize(MainWindow, deviceType))
-			{
-			}
-			else
-			{
-				mgr.Dispose();
-				mgr = null;
-				return false;
-			}
-
-			Native = new swig.Native();
-
-			Viewer = new Viewer(Native);
-			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
-			{
-				mgr.Dispose();
-				mgr = null;
-				return false;
-			}
-
-            mgr.InitializeGUI(Native);
-			
-			NativeManager = mgr;
-
-			Images.Load(GUI.Manager.Native);
-
-			guiManagerCallback = new GUIManagerCallback();
-			NativeManager.SetCallback(guiManagerCallback);
 
 			panels = new Dock.DockPanel[dockTypes.Length];
 
@@ -290,11 +66,11 @@ namespace Effekseer.GUI
 			Commands.Register();
 
 			// Add controls
-			var mainMenu = new GUI.Menu.MainMenu();
-			GUI.Manager.AddControl(mainMenu);
+			var mainMenu = new GUI.Menu.MainMenu();//createMainMenu();//
+			AddControl(mainMenu);
 
 			dockManager = new GUI.Dock.DockManager();
-			GUI.Manager.AddControl(dockManager);
+			AddControl(dockManager);
 
 			// Default 
 			effectViewer = new Dock.EffectViwer();
@@ -316,6 +92,8 @@ namespace Effekseer.GUI
 			}
 
 			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
+
+
 
 			Network = new Network(Native);
 			Network.Load();
@@ -399,7 +177,7 @@ namespace Effekseer.GUI
 			swig.GUIManager.SetIniFilename(ImGuiINIFileFullPath);
 
 			// check files
-			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
+			if (!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
 			{
 				ErrorUtils.ThrowFileNotfound();
 			}
@@ -695,18 +473,6 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public static void ResetWindow()
-		{
-			effectViewer?.Close();
-			effectViewer = null;
-
-			for (int i = 0; i < panels.Length; i++)
-			{
-				panels[i]?.Close();
-			}
-			resetCount = -5;
-		}
-
 		static void ResetWindowActually()
 		{
 			if (effectViewer == null)
@@ -754,81 +520,6 @@ namespace Effekseer.GUI
 			NativeManager.EndDockLayout();
 		}
 
-		static void Core_OnAfterLoad(object sender, EventArgs e)
-		{
-			Viewer.StopViewer();
-
-			if (Network.SendOnLoad)
-			{
-				Network.Send();
-			}
-		}
-
-		static void Core_OnAfterNew(object sender, EventArgs e)
-		{
-			Viewer.StopViewer();
-		}
-
-		static void Core_OnReload(object sender, EventArgs e)
-		{
-			Viewer.Reload(true);
-		}
-
-		static void OnChanged(object sender, EventArgs e)
-		{
-			Viewer.IsChanged = true;
-			
-			if (Network.SendOnEdit)
-			{
-				Network.Send();
-			}
-		}
-
-		/// <summary>
-		/// TODO refactor
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		public static bool LoadWindowConfig(string path)
-		{
-			if (!System.IO.File.Exists(path)) return false;
-
-			try
-			{
-				var doc = new System.Xml.XmlDocument();
-
-				doc.Load(path);
-
-				if (doc.ChildNodes.Count != 2) return false;
-				if (doc.ChildNodes[1].Name != "Root") return false;
-
-
-				var windowWidth = doc["Root"]["WindowWidth"]?.GetTextAsInt() ?? 1280;
-				var windowHeight = doc["Root"]["WindowHeight"]?.GetTextAsInt() ?? 720;
-
-				var docks = doc["Root"]["Docks"];
-
-				if (docks != null)
-				{
-					for (int i = 0; i < docks.ChildNodes.Count; i++)
-					{
-						var panel = docks.ChildNodes[i];
-						var type = dockTypes.FirstOrDefault(_ => _.ToString() == panel.Name);
-
-						if (type != null)
-						{
-							SelectOrShowWindow(type);
-						}
-					}
-				}
-			}
-			catch
-			{
-				return false;
-			}
-
-			return true;
-		}
 
 		/// <summary>
 		/// TODO refactor
