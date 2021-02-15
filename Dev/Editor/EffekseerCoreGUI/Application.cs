@@ -11,6 +11,18 @@ namespace Effekseer
 	public abstract class Application
 	{
 		/// <summary>
+		/// Application name.
+		/// </summary>
+		/// <remarks>
+		/// 設定ファイルの名前等に使用する。
+		/// </remarks>
+		public static string Name
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
 		/// Starting (current) directory
 		/// </summary>
 		public static string StartDirectory
@@ -41,8 +53,7 @@ namespace Effekseer
 				throw;
 			}
 
-
-
+			Name = Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName);
 
 			// Register UI
 			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });

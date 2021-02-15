@@ -129,6 +129,10 @@ namespace Effekseer.GUI
 
 		static Dock.EffectViwer effectViewer = null;
 
+		public static string WindowConfigFileFullPath { get { return System.IO.Path.Combine(Application.EntryDirectory, Application.Name + ".config.Dock.xml"); } }
+
+		public static string ImGuiINIFileFullPath { get { return System.IO.Path.Combine(Application.EntryDirectory, Application.Name + ".imgui.ini"); } }
+
 		public static bool Initialize(int width, int height, swig.DeviceType deviceType)
 		{
 			dockTypes = new Type[]
@@ -160,6 +164,9 @@ namespace Effekseer.GUI
 				typeof(Dock.AdvancedRenderCommonValues),
 			};
 
+			if (!InitializeBase(width, height, deviceType)) return false;
+
+
 			var appDirectory = Application.EntryDirectory;
 
 			swig.MainWindowState state = new swig.MainWindowState();
@@ -171,7 +178,7 @@ namespace Effekseer.GUI
 
 			// TODO : refactor
 			var windowConfig = new Configs.WindowConfig();
-			if(windowConfig.Load(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
+			if(windowConfig.Load(WindowConfigFileFullPath))
 			{
 				state.PosX = windowConfig.WindowPosX;
 				state.PosY = windowConfig.WindowPosY;
@@ -300,7 +307,7 @@ namespace Effekseer.GUI
 				AddControl(effectViewer);
 			}
 
-			if (LoadWindowConfig(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
+			if (LoadWindowConfig(WindowConfigFileFullPath))
 			{
 			}
 			else
@@ -389,8 +396,7 @@ namespace Effekseer.GUI
 			Core.OnReload += new EventHandler(Core_OnReload);
 
 			// Set imgui path
-			var entryDirectory = Application.EntryDirectory;
-			swig.GUIManager.SetIniFilename(entryDirectory + "/imgui.ini");
+			swig.GUIManager.SetIniFilename(ImGuiINIFileFullPath);
 
 			// check files
 			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
@@ -411,7 +417,7 @@ namespace Effekseer.GUI
 			var entryDirectory = Application.EntryDirectory;
 			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
-			SaveWindowConfig(entryDirectory + "/config.Dock.xml");
+			SaveWindowConfig(WindowConfigFileFullPath);
 
 			foreach (var p in panels)
 			{

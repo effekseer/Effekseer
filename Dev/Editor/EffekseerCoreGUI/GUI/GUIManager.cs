@@ -47,11 +47,10 @@ namespace Effekseer.GUI
 				return NativeManager.GetDpiScale();
 			}
 		}
-
-		//public static bool Initialize(int width, int height, swig.DeviceType deviceType)
-		//{
-		//	return true;
-		//}
+		protected static bool InitializeBase(int width, int height, swig.DeviceType deviceType)
+		{
+			return true;
+		}
 
 		/// <summary>
 		/// get a scale based on font size for margin, etc.
