@@ -54,7 +54,7 @@ namespace Effekseer
 			return native.LoadImageResource(fullPath);
 		}
 
-		public static void Load(swig.Native native)
+		public static void LoadCommonIcons(swig.Native native, string appIconPath)
 		{
 			Play = LoadAppResource(native, "resources/Play.png");
 			Stop = LoadAppResource(native, "resources/Stop.png");
@@ -65,7 +65,7 @@ namespace Effekseer
 			Icons["Copy"] = LoadAppResource(native, "resources/icons/Copy.png");
 			Icons["Paste"] = LoadAppResource(native, "resources/icons/Paste.png");
 
-			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
+			Icons["AppIcon"] = LoadAppResource(native, appIconPath);
 
 			Icons["VisibleShow"] = LoadAppResource(native, "resources/icons/Visible_Show.png");
 			Icons["VisibleHide"] = LoadAppResource(native, "resources/icons/Visible_Hide.png");

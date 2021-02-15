@@ -43,7 +43,7 @@ namespace Effekseer
 			};
 
 			Manager.dockTypes = dockTypes;
-			if (!Manager.Initialize(960, 540, () => new GUI.Menu.MainMenu()))
+			if (!Manager.Initialize(960, 540, () => new GUI.Menu.MainMenu(), System.IO.Path.Combine(EntryDirectory, "resources/icon.png")))
 			{
 				throw new InvalidOperationException("Initialization failed.");
 			}

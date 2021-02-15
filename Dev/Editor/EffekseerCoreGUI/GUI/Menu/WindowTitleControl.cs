@@ -8,7 +8,7 @@
 		{
 			string filePath = Core.Root.GetFullPath();
 			string fileName = string.IsNullOrEmpty(filePath) ? "NewFile" : System.IO.Path.GetFileName(filePath);
-			var newTitle = "Effekseer Version " + Core.Version + " " + "[" + fileName + "] ";
+			var newTitle = Application.Name + " Version " + Core.Version + " " + "[" + fileName + "] ";
 
 			if (Core.IsChanged)
 			{

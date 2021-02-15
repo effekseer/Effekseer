@@ -193,7 +193,7 @@ namespace Effekseer.GUI
 
 		public static string ImGuiINIFileFullPath { get { return System.IO.Path.Combine(Application.EntryDirectory, Application.Name + ".imgui.ini"); } }
 
-		public static bool Initialize(int width, int height, Func<IRemovableControl> createMainMenu)
+		public static bool Initialize(int width, int height, Func<IRemovableControl> createMainMenu, string appIconPath)
 		{
 			var appDirectory = Application.EntryDirectory;
 
@@ -310,7 +310,7 @@ namespace Effekseer.GUI
 			NativeManager = mgr;
 
 
-			Images.Load(Native);
+			Images.LoadCommonIcons(Native, appIconPath);
 
 
 			guiManagerCallback = new GUIManagerCallback();
@@ -324,7 +324,7 @@ namespace Effekseer.GUI
 			UpdateFont();
 
 			// Load window icon
-			NativeManager.SetWindowIcon(System.IO.Path.Combine(appDirectory, "resources/icon.png"));
+			NativeManager.SetWindowIcon(appIconPath);
 
 			// Load config
 			RecentFiles.LoadRecentConfig();
