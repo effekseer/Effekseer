@@ -287,7 +287,184 @@ namespace Effekseer.GUI
 			NativeManager.SetCallback(guiManagerCallback);
 
 
+
+			panels = new Dock.DockPanel[dockTypes.Length];
+
+			// Load font
+			UpdateFont();
+
+			// Load window icon
+			NativeManager.SetWindowIcon(System.IO.Path.Combine(appDirectory, "resources/icon.png"));
+
+			// Load config
+			RecentFiles.LoadRecentConfig();
+			Shortcuts.LoadShortcuts();
+			Commands.Register();
+
+			// Add controls
+			var mainMenu = createMainMenu();
+			AddControl(mainMenu);
+
+			dockManager = new GUI.Dock.DockManager();
+			AddControl(dockManager);
+
+			// Default 
+			effectViewer = new Dock.EffectViwer();
+			if (dockManager != null)
+			{
+				dockManager.Controls.Add(effectViewer);
+			}
+			else
+			{
+				AddControl(effectViewer);
+			}
+
+			if (LoadWindowConfig(WindowConfigFileFullPath))
+			{
+			}
+			else
+			{
+				ResetWindow();
+			}
+
+			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
+
+
+
+			Network = new Network(Native);
+			Network.Load();
+
+			Command.CommandManager.Changed += OnChanged;
+
+			Core.EffectBehavior.Location.X.OnChanged += OnChanged;
+			Core.EffectBehavior.Location.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.Location.Z.OnChanged += OnChanged;
+			Core.EffectBehavior.Rotation.X.OnChanged += OnChanged;
+			Core.EffectBehavior.Rotation.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.Rotation.Z.OnChanged += OnChanged;
+			Core.EffectBehavior.Scale.X.OnChanged += OnChanged;
+			Core.EffectBehavior.Scale.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.Scale.Z.OnChanged += OnChanged;
+
+			Core.EffectBehavior.LocationVelocity.X.OnChanged += OnChanged;
+			Core.EffectBehavior.LocationVelocity.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.LocationVelocity.Z.OnChanged += OnChanged;
+			Core.EffectBehavior.RotationVelocity.X.OnChanged += OnChanged;
+			Core.EffectBehavior.RotationVelocity.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.RotationVelocity.Z.OnChanged += OnChanged;
+			Core.EffectBehavior.ScaleVelocity.X.OnChanged += OnChanged;
+			Core.EffectBehavior.ScaleVelocity.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.ScaleVelocity.Z.OnChanged += OnChanged;
+			Core.EffectBehavior.RemovedTime.Infinite.OnChanged += OnChanged;
+			Core.EffectBehavior.RemovedTime.Value.OnChanged += OnChanged;
+
+			Core.EffectBehavior.TargetLocation.X.OnChanged += OnChanged;
+			Core.EffectBehavior.TargetLocation.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.TargetLocation.Z.OnChanged += OnChanged;
+
+			Core.EffectBehavior.CountX.OnChanged += OnChanged;
+			Core.EffectBehavior.CountY.OnChanged += OnChanged;
+			Core.EffectBehavior.CountZ.OnChanged += OnChanged;
+
+			Core.EffectBehavior.Distance.OnChanged += OnChanged;
+
+			Core.EffectBehavior.TimeSpan.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.R.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.G.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.B.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.A.OnChanged += OnChanged;
+
+			Core.EffectBehavior.PlaybackSpeed.OnChanged += OnChanged;
+
+			Core.Option.Magnification.OnChanged += OnChanged;
+			Core.Option.IsGridShown.OnChanged += OnChanged;
+			Core.Option.GridLength.OnChanged += OnChanged;
+			Core.Option.GridColor.R.OnChanged += OnChanged;
+			Core.Option.GridColor.G.OnChanged += OnChanged;
+			Core.Option.GridColor.B.OnChanged += OnChanged;
+			Core.Option.GridColor.A.OnChanged += OnChanged;
+			Core.Option.FPS.OnChanged += OnChanged;
+
+			Core.Option.DistortionType.OnChanged += OnChanged;
+			Core.Option.Coordinate.OnChanged += OnChanged;
+
+			Core.Environment.Background.BackgroundColor.R.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.G.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.B.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.A.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundImage.OnChanged += OnChanged;
+
+			Core.Environment.Ground.IsShown.OnChanged += OnChanged;
+			Core.Environment.Ground.Height.OnChanged += OnChanged;
+			Core.Environment.Ground.Extent.OnChanged += OnChanged;
+
+			Core.Culling.IsShown.OnChanged += OnChanged;
+			Core.Culling.Type.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.X.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.Y.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.Z.OnChanged += OnChanged;
+			Core.Culling.Sphere.Radius.OnChanged += OnChanged;
+
+			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
+			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
+			Core.OnReload += new EventHandler(Core_OnReload);
+
+			// Set imgui path
+			swig.GUIManager.SetIniFilename(ImGuiINIFileFullPath);
+
+			// check files
+			if (!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
+			{
+				ErrorUtils.ThrowFileNotfound();
+			}
+
+			if (!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png")))
+			{
+				ErrorUtils.ThrowFileNotfound();
+			}
+
 			return true;
+		}
+
+		public static void Terminate()
+		{
+			var entryDirectory = Application.EntryDirectory;
+			System.IO.Directory.SetCurrentDirectory(entryDirectory);
+
+			SaveWindowConfig(WindowConfigFileFullPath);
+
+			foreach (var p in panels)
+			{
+				if (p != null)
+				{
+					p.DispatchDisposed();
+				}
+			}
+
+			if (effectViewer != null)
+			{
+				effectViewer.DispatchDisposed();
+			}
+
+			Network.Save();
+			Shortcuts.SeveShortcuts();
+			RecentFiles.SaveRecentConfig();
+
+			Viewer.HideViewer();
+
+			NativeManager.SetCallback(null);
+			NativeManager.Terminate();
+
+			Images.Unload();
+
+			swig.MainWindow.Terminate();
+			MainWindow.Dispose();
+			MainWindow = null;
+
+			ThumbnailManager.Terminate();
+			swig.IO.Terminate();
+			IO.Dispose();
+			IO = null;
 		}
 
 		/// <summary>
@@ -454,6 +631,45 @@ namespace Effekseer.GUI
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// TODO refactor
+		/// </summary>
+		/// <param name="path"></param>
+		public static void SaveWindowConfig(string path)
+		{
+			var size = NativeManager.GetSize();
+
+			var state = MainWindow.GetState();
+			if (state.Width <= 0 || state.Height <= 0) return;
+
+			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+			System.Xml.XmlElement project_root = doc.CreateElement("Root");
+			project_root.AppendChild(doc.CreateTextElement("WindowWidth", state.Width.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowHeight", state.Height.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowPosX", state.PosX.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowPosY", state.PosY.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowIsMaximumMode", state.IsMaximumMode ? "1" : "0"));
+
+			System.Xml.XmlElement docks = doc.CreateElement("Docks");
+
+			foreach (var panel in panels)
+			{
+				if (panel != null)
+				{
+					docks.AppendChild(doc.CreateTextElement(panel.GetType().ToString(), "Open"));
+				}
+			}
+
+			project_root.AppendChild(docks);
+
+			doc.AppendChild(project_root);
+
+			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
+			doc.InsertBefore(dec, project_root);
+			doc.Save(path);
 		}
 	}
 }
