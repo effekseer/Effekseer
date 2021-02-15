@@ -7,24 +7,45 @@ using Effekseer.GUI;
 
 namespace Effekseer
 {
+	using Dock = Effekseer.GUI.Dock;
+
 	public class App : Application
 	{
 		protected override void OnInitialize()
 		{
-			System.OperatingSystem os = System.Environment.OSVersion;
-			swig.DeviceType deviceType = swig.DeviceType.DirectX11;
-
-			if (!(os.Platform == PlatformID.Win32NT ||
-			os.Platform == PlatformID.Win32S ||
-			os.Platform == PlatformID.Win32Windows ||
-			os.Platform == PlatformID.WinCE))
+			var dockTypes = new Type[]
 			{
-				deviceType = swig.DeviceType.OpenGL;
-			}
+				typeof(Dock.ViewerController),
+				typeof(Dock.NodeTreeView),
+				typeof(Dock.CommonValues),
+				typeof(Dock.LocationValues),
+				typeof(Dock.LocationAbsValues),
+				typeof(Dock.GenerationLocationValues),
+				typeof(Dock.RotationValues),
+				typeof(Dock.ScaleValues),
+				typeof(Dock.DepthValues),
+				typeof(Dock.RendererCommonValues),
+				typeof(Dock.RendererValues),
+				typeof(Dock.SoundValues),
+				typeof(Dock.FCurves),
+				typeof(Dock.ViewPoint),
+				typeof(Dock.Recorder),
+				typeof(Dock.Option),
+				typeof(Dock.Environement),
+				typeof(Dock.GlobalValues),
+				typeof(Dock.BehaviorValues),
+				typeof(Dock.Culling),
+				typeof(Dock.Network),
+				typeof(Dock.FileViewer),
+				typeof(Dock.Dynamic),
+				typeof(Dock.ProcedualModel),
+				typeof(Dock.AdvancedRenderCommonValues),
+			};
 
-			if (!GUI.Manager.Initialize(960, 540, deviceType))
+			GUI.Manager.dockTypes = dockTypes;
+			if (!GUI.Manager.Initialize(960, 540, () => new GUI.Menu.MainMenu()))
 			{
-				return;
+				throw new InvalidOperationException("Initialization failed.");
 			}
 		}
 

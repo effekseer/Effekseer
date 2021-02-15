@@ -193,7 +193,7 @@ namespace Effekseer.GUI
 
 		public static string ImGuiINIFileFullPath { get { return System.IO.Path.Combine(Application.EntryDirectory, Application.Name + ".imgui.ini"); } }
 
-		protected static bool InitializeBase(int width, int height, swig.DeviceType deviceType, Func<IRemovableControl> createMainMenu)
+		public static bool Initialize(int width, int height, Func<IRemovableControl> createMainMenu)
 		{
 			var appDirectory = Application.EntryDirectory;
 
@@ -223,6 +223,16 @@ namespace Effekseer.GUI
 			}
 
 			state.IsFrameless = IsWindowFrameless;
+
+			System.OperatingSystem os = System.Environment.OSVersion;
+			swig.DeviceType deviceType = swig.DeviceType.DirectX11;
+			if (!(os.Platform == PlatformID.Win32NT ||
+				os.Platform == PlatformID.Win32S ||
+				os.Platform == PlatformID.Win32Windows ||
+				os.Platform == PlatformID.WinCE))
+			{
+				deviceType = swig.DeviceType.OpenGL;
+			}
 
 			if (!swig.MainWindow.Initialize("Effekseer", state, false, deviceType == swig.DeviceType.OpenGL))
 			{
