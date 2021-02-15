@@ -11,7 +11,7 @@ namespace Effekseer.GUI.Menu
 	{
 		public void Update()
 		{
-			Manager.NativeManager.Separator();
+			GUIManager.NativeManager.Separator();
 		}
 	}
 
@@ -32,12 +32,12 @@ namespace Effekseer.GUI.Menu
         public MenuItem()
         {
             var rand = new Random();
-			id = "###" + Manager.GetUniqueID().ToString();
+			id = "###" + GUIManager.GetUniqueID().ToString();
 		}
 
         public void Update()
         {
-			if (Manager.NativeManager.MenuItem(Icon + " " +  Label + id, Shortcut, false, true))
+			if (GUIManager.NativeManager.MenuItem(Icon + " " +  Label + id, Shortcut, false, true))
             {
                 if(Clicked != null)
                 {

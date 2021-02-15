@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using EfkN = Effekseer.swig.EffekseerNative;
+using Effekseer.GUI;
 
 namespace Effekseer
 {
@@ -210,7 +211,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Environment.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_ProcedualModel.csv");
 
-			GUI.Manager.UpdateFont();
+			GUIManager.UpdateFont();
 		}
 	}
 }

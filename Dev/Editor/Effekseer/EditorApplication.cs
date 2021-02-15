@@ -42,8 +42,8 @@ namespace Effekseer
 				typeof(Dock.AdvancedRenderCommonValues),
 			};
 
-			GUI.Manager.dockTypes = dockTypes;
-			if (!GUI.Manager.Initialize(960, 540, () => new GUI.Menu.MainMenu()))
+			GUIManager.dockTypes = dockTypes;
+			if (!GUIManager.Initialize(960, 540, () => new GUI.Menu.MainMenu()))
 			{
 				throw new InvalidOperationException("Initialization failed.");
 			}
@@ -51,12 +51,12 @@ namespace Effekseer
 
 		protected override void OnUpdate()
 		{
-			GUI.Manager.Update();
+			GUIManager.Update();
 		}
 
 		protected override void OnTerminate()
 		{
-			GUI.Manager.Terminate();
+			GUIManager.Terminate();
 			Process.MaterialEditor.Terminate();
 		}
 

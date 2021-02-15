@@ -23,7 +23,7 @@ namespace Effekseer.GUI.Dock
 		{
 			if (opened)
 			{
-				//if (Manager.NativeManager.Begin(Label + id, ref opened))
+				//if (GUIManager.NativeManager.Begin(Label + id, ref opened))
 				if(GUIManager.NativeManager.BeginFullscreen(Label + id))
 				{
 					Controls.Lock();

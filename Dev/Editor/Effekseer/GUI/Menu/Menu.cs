@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Menu
 			Icon = icon;
 
 			var rand = new Random();
-			id = "###" + Manager.GetUniqueID().ToString();
+			id = "###" + GUIManager.GetUniqueID().ToString();
 		}
 
 		public void Update()
@@ -37,7 +37,7 @@ namespace Effekseer.GUI.Menu
 			if (Label != null) nativeLabel += Label;
 			nativeLabel += id;
 
-			if (Manager.NativeManager.BeginMenu(nativeLabel))
+			if (GUIManager.NativeManager.BeginMenu(nativeLabel))
 			{
 				Controls.Lock();
 				foreach (var ctrl in Controls.Internal)
@@ -46,7 +46,7 @@ namespace Effekseer.GUI.Menu
 				}
 				Controls.Unlock();
 
-				Manager.NativeManager.EndMenu();
+				GUIManager.NativeManager.EndMenu();
 			}
 		}
 	}

@@ -17,48 +17,48 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			var target = Manager.Network.Target;
-			var port = new int[] { Manager.Network.Port };
-			var autoConnect = new bool[] { Manager.Network.AutoConnect };
-			var sendOnLoad = new bool[] { Manager.Network.SendOnLoad };
-			var sendOnEdit = new bool[] { Manager.Network.SendOnEdit };
-			var sendOnSave = new bool[] { Manager.Network.SendOnSave };
+			var target = GUIManager.Network.Target;
+			var port = new int[] { GUIManager.Network.Port };
+			var autoConnect = new bool[] { GUIManager.Network.AutoConnect };
+			var sendOnLoad = new bool[] { GUIManager.Network.SendOnLoad };
+			var sendOnEdit = new bool[] { GUIManager.Network.SendOnEdit };
+			var sendOnSave = new bool[] { GUIManager.Network.SendOnSave };
 
-			if (Manager.NativeManager.InputText(Resources.GetString("NetworkAddress") + "###target", target))
+			if (GUIManager.NativeManager.InputText(Resources.GetString("NetworkAddress") + "###target", target))
 			{
-				Manager.Network.Target = Manager.NativeManager.GetInputTextResult();
+				GUIManager.Network.Target = GUIManager.NativeManager.GetInputTextResult();
 			}
 
-			if (Manager.NativeManager.InputInt(Resources.GetString("Port") + "###port", port))
+			if (GUIManager.NativeManager.InputInt(Resources.GetString("Port") + "###port", port))
 			{
-				Manager.Network.Port = port[0];
+				GUIManager.Network.Port = port[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("AutoConnect") + "###autoConnect", autoConnect))
+			if (GUIManager.NativeManager.Checkbox(Resources.GetString("AutoConnect") + "###autoConnect", autoConnect))
 			{
-				Manager.Network.AutoConnect = autoConnect[0];
+				GUIManager.Network.AutoConnect = autoConnect[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnLoad") + "###sendOnLoad", sendOnLoad))
+			if (GUIManager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnLoad") + "###sendOnLoad", sendOnLoad))
 			{
-				Manager.Network.SendOnLoad = sendOnLoad[0];
+				GUIManager.Network.SendOnLoad = sendOnLoad[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnEdit") + "###sendOnEdit", sendOnEdit))
+			if (GUIManager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnEdit") + "###sendOnEdit", sendOnEdit))
 			{
-				Manager.Network.SendOnEdit = sendOnEdit[0];
+				GUIManager.Network.SendOnEdit = sendOnEdit[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnSave") + "###sendOnSave", sendOnSave))
+			if (GUIManager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnSave") + "###sendOnSave", sendOnSave))
 			{
-				Manager.Network.SendOnSave = sendOnSave[0];
+				GUIManager.Network.SendOnSave = sendOnSave[0];
 			}
 
 			string state = string.Empty;
 			string connect = string.Empty;
 			bool enabled = false;
 
-			if (Manager.Network.IsConnected())
+			if (GUIManager.Network.IsConnected())
 			{
 				state = Resources.GetString("NetworkConnected");
 				connect = Resources.GetString("Disconnect");
@@ -71,19 +71,19 @@ namespace Effekseer.GUI.Dock
 				enabled = false;
 			}
 
-			Manager.NativeManager.Text(state);
+			GUIManager.NativeManager.Text(state);
 
-			if (Manager.NativeManager.Button(connect + "###connect"))
+			if (GUIManager.NativeManager.Button(connect + "###connect"))
 			{
-				if (Manager.Network.IsConnected())
+				if (GUIManager.Network.IsConnected())
 				{
-					Manager.Network.Disconnect();
+					GUIManager.Network.Disconnect();
 				}
 				else
 				{
-					Manager.Network.Connect();
+					GUIManager.Network.Connect();
 
-					if (!Manager.Network.IsConnected())
+					if (!GUIManager.Network.IsConnected())
 					{
 						var errorMessage = MultiLanguageTextProvider.GetText("Network_FailedToConnect");
 						swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
@@ -91,11 +91,11 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			if (Manager.NativeManager.Button(Resources.GetString("SendData") + "###send"))
+			if (GUIManager.NativeManager.Button(Resources.GetString("SendData") + "###send"))
 			{
 				if (enabled)
 				{
-					Manager.Network.Send();
+					GUIManager.Network.Send();
 				}
 			}
 		}

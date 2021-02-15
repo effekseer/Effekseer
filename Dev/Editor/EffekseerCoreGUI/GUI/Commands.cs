@@ -449,7 +449,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.OpenSample")]
 		static public bool OpenSample()
 		{
-			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
+			string rootDir = Path.GetDirectoryName(GUIManager.GetEntryDirectory());
 
 			var filter = Resources.GetString("ProjectFilterNew");
 

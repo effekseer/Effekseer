@@ -125,11 +125,11 @@ namespace Effekseer.GUI.Component
 			/*
 			if (isPopupShown) return;
 
-			if (Manager.NativeManager.BeginPopupContextItem(id_c))
+			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				Functions.ShowReset(binding, id_reset);
 
-				Manager.NativeManager.EndPopup();
+				GUIManager.NativeManager.EndPopup();
 
 				isPopupShown = true;
 			}

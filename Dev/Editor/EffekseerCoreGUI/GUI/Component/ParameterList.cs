@@ -185,11 +185,11 @@ namespace Effekseer.GUI.Component
 									indent = item.Children.Update(indent);
 								}
 							}
-							//var opened = Manager.NativeManager.TreeNode(label);
+							//var opened = GUIManager.NativeManager.TreeNode(label);
 
 							//if (opened)
 							//{
-							//	Manager.NativeManager.TreePop();
+							//	GUIManager.NativeManager.TreePop();
 							//}
 						}
 						continue;

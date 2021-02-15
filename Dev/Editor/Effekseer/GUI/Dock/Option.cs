@@ -55,7 +55,7 @@ namespace Effekseer.GUI.Dock
 
 		private void FontSize_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			Manager.UpdateFont();
+			GUIManager.UpdateFont();
 		}
 
 		private void GuiLanguage_OnChanged(object sender, ChangedValueEventArgs e_)

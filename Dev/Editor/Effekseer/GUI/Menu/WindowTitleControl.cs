@@ -23,7 +23,7 @@
 			if (CurrentTitle != newTitle)
 			{
 				CurrentTitle = newTitle;
-				Manager.NativeManager.SetTitle(CurrentTitle);
+				GUIManager.NativeManager.SetTitle(CurrentTitle);
 			}
 		}
 	}

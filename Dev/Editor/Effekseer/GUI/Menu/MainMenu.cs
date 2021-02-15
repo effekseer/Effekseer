@@ -37,20 +37,20 @@ namespace Effekseer.GUI.Menu
 				_isFirstUpdate = false;
 			}
 
-			if (Manager.IsWindowFrameless)
+			if (GUIManager.IsWindowFrameless)
 			{
 				UpdateSystemBar();
 			}
 			else
 			{
-				Manager.NativeManager.BeginMainMenuBar();
+				GUIManager.NativeManager.BeginMainMenuBar();
 
 				foreach (var ctrl in Controls)
 				{
 					ctrl.Update();
 				}
 
-				Manager.NativeManager.EndMainMenuBar();
+				GUIManager.NativeManager.EndMainMenuBar();
 			}
 
 			_windowTitleControl.Reload();
@@ -58,61 +58,61 @@ namespace Effekseer.GUI.Menu
 
 		public void UpdateSystemBar()
 		{
-			Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, 8.0f * Manager.DpiScale));
-			Manager.NativeManager.BeginMainMenuBar();
+			GUIManager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, 8.0f * GUIManager.DpiScale));
+			GUIManager.NativeManager.BeginMainMenuBar();
 
-			var windowSize = Manager.NativeManager.GetWindowSize();
+			var windowSize = GUIManager.NativeManager.GetWindowSize();
 
 			AddAppIcon();
 			AddCommands();
 			AddTitle(windowSize);
 			AddWindowButtons(windowSize);
 
-			Manager.NativeManager.EndMainMenuBar();
-			Manager.NativeManager.PopStyleVar(1);
+			GUIManager.NativeManager.EndMainMenuBar();
+			GUIManager.NativeManager.PopStyleVar(1);
 		}
 
 		private void AddWindowButtons(Vec2 windowSize)
 		{
-			var size = Manager.NativeManager.GetWindowSize();
+			var size = GUIManager.NativeManager.GetWindowSize();
 			float buttonY = size.Y - 1;
 			float buttonX = buttonY * 44 / 32;
 
 			void ShowButton(int offset, ImageResource icon, Action onClick)
 			{
-				Manager.NativeManager.SetCursorPosX(windowSize.X - buttonX * offset);
-				if (Manager.NativeManager.ImageButtonOriginal(icon, buttonX, buttonY))
+				GUIManager.NativeManager.SetCursorPosX(windowSize.X - buttonX * offset);
+				if (GUIManager.NativeManager.ImageButtonOriginal(icon, buttonX, buttonY))
 				{
 					onClick();
 				}
 			}
 
-			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
-			Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
+			GUIManager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x00000000);
+			GUIManager.NativeManager.PushStyleColor(swig.ImGuiColFlags.ButtonHovered, 0x20ffffff);
 
-			ShowButton(3, Images.GetIcon("ButtonMin"), () => Manager.NativeManager.SetWindowMinimized(true));
+			ShowButton(3, Images.GetIcon("ButtonMin"), () => GUIManager.NativeManager.SetWindowMinimized(true));
 
-			bool maximized = Manager.NativeManager.IsWindowMaximized();
+			bool maximized = GUIManager.NativeManager.IsWindowMaximized();
 			ShowButton(2, Images.GetIcon(maximized ? "ButtonMaxCancel" : "ButtonMax"),
-				() => Manager.NativeManager.SetWindowMaximized(!maximized));
+				() => GUIManager.NativeManager.SetWindowMaximized(!maximized));
 
-			ShowButton(1, Images.GetIcon("ButtonClose"), () => Manager.NativeManager.Close());
+			ShowButton(1, Images.GetIcon("ButtonClose"), () => GUIManager.NativeManager.Close());
 
-			Manager.NativeManager.PopStyleColor(2);
+			GUIManager.NativeManager.PopStyleColor(2);
 		}
 
 		private void AddTitle(Vec2 windowSize)
 		{
-			var size = Manager.NativeManager.GetWindowSize();
+			var size = GUIManager.NativeManager.GetWindowSize();
 			float buttonX = size.Y * 44 / 32;
 
-			float pos = Manager.NativeManager.GetCursorPosX();
-			float textWidth = Manager.NativeManager.CalcTextSize(_windowTitleControl.CurrentTitle).X;
+			float pos = GUIManager.NativeManager.GetCursorPosX();
+			float textWidth = GUIManager.NativeManager.CalcTextSize(_windowTitleControl.CurrentTitle).X;
 			float areaWidth = windowSize.X - pos - buttonX * 3;
 			if (textWidth < areaWidth)
 			{
-				Manager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
-				Manager.NativeManager.Text(_windowTitleControl.CurrentTitle);
+				GUIManager.NativeManager.SetCursorPosX(pos + (areaWidth - textWidth) / 2);
+				GUIManager.NativeManager.Text(_windowTitleControl.CurrentTitle);
 			}
 		}
 
@@ -126,10 +126,10 @@ namespace Effekseer.GUI.Menu
 
 		private void AddAppIcon()
 		{
-			float iconSize = 28.0f * Manager.DpiScale;
-			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
-			Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
-			Manager.NativeManager.SetCursorPosY(0);
+			float iconSize = 28.0f * GUIManager.DpiScale;
+			GUIManager.NativeManager.SetCursorPosY((GUIManager.NativeManager.GetFrameHeight() - iconSize) / 2);
+			GUIManager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+			GUIManager.NativeManager.SetCursorPosY(0);
 		}
 
 		private void ReloadMenu()
