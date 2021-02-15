@@ -31,18 +31,10 @@ namespace Effekseer
 		[HandleProcessCorruptedStateExceptions]
 		static void Main(string[] args)
 		{
-			try
-			{
-				//StartDirectory = System.IO.Directory.GetCurrentDirectory();
-				//EntryDirectory = GUI.Manager.GetEntryDirectory();
-			}
-			catch (Exception e)
-			{
-				//ExportError(e);
-				return;
-			}
-
-			//Exec();
+			var app = new App();
+			app.Initialize(true);
+			app.Run();
+			Core.Dispose();
 		}
 #if false
 

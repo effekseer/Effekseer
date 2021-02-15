@@ -4,7 +4,7 @@ using Effekseer.Script;
 
 namespace Effekseer.GUI.Menu
 {
-	internal sealed class CommandMenuProvider
+	public sealed class CommandMenuProvider
 	{
 		private readonly RecentFilesMenuManager _recentFiles;
 

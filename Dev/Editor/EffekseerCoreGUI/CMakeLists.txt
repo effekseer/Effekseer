@@ -10,6 +10,7 @@ file(GLOB files
     GUI/Component/*.cs
     GUI/Dialog/*.cs
     GUI/Dock/*.cs
+    GUI/Menu/*.cs
     IO/*.cs
     Plugin/*.cs
     Process/*.cs

@@ -1,6 +1,6 @@
 ﻿namespace Effekseer.GUI.Menu
 {
-	internal sealed class RecentFilesMenuManager
+	public sealed class RecentFilesMenuManager
 	{
 		public Menu Menu { get; } = new Menu
 		{

@@ -12,7 +12,7 @@ set(EDITOR_ROOT ..)
 
 file(GLOB files 
     ${CMAKE_CURRENT_LIST_DIR}/*.cs
-    #${EDITOR_ROOT}/Effekseer/GUI/Dialog/*.cs
+    GUI/*.cs
     #${EDITOR_ROOT}/Effekseer/GUI/Component/*.cs
     #${EDITOR_ROOT}/Effekseer/Utils/*.cs
 )
@@ -43,7 +43,7 @@ add_executable(EffekseerEditorLit
 set_target_properties(EffekseerEditorLit PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
-target_link_libraries(EffekseerEditorLit PRIVATE EffekseerCoreGUI)
+target_link_libraries(EffekseerEditorLit PRIVATE EffekseerCore EffekseerCoreGUI)
 
 target_compile_options(EffekseerEditorLit PRIVATE "/unsafe")
 #set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
