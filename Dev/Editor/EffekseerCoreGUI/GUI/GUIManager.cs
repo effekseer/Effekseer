@@ -112,6 +112,23 @@ namespace Effekseer.GUI
 			}
 		}
 
+		struct ViewportControllerResult
+		{
+			public bool Rotate;
+			public bool Slide;
+			public bool Zoom;
+		}
+
+		private const int LEFT_SHIFT = 340;
+		private const int RIGHT_SHIFT = 344;
+		private const int LEFT_CONTROL = 341;
+		private const int RIGHT_CONTROL = 345;
+		private const int LEFT_ALT = 342;
+		private const int RIGHT_ALT = 346;
+		private const int LEFT_SUPER = 343;
+		private const int RIGHT_SUPER = 347;
+
+
 
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
@@ -130,7 +147,7 @@ namespace Effekseer.GUI
 		public static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 		public static Dock.DockManager dockManager = null;
 		public static Dock.DockPanel[] panels = new Dock.DockPanel[0];
-		protected static Dock.EffectViwer effectViewer = null;
+		public static Dock.EffectViwer effectViewer = null;
 
 
 
@@ -142,6 +159,9 @@ namespace Effekseer.GUI
 		public static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
 		public static int resizedCount = 0;
 		public static int actualWidth = 1;
+
+		static swig.Vec2 mousePos_pre;
+		static bool isFirstUpdate = true;
 
 		/// <summary>
 		/// if this flag is true, a dialog box on disposing is not shown
@@ -466,6 +486,226 @@ namespace Effekseer.GUI
 			IO.Dispose();
 			IO = null;
 		}
+
+		public static void Update()
+		{
+			if (isFontSizeDirtied)
+			{
+				NativeManager.InvalidateFont();
+				var appDirectory = Application.EntryDirectory;
+				var type = Core.Option.Font.Value;
+
+				NativeManager.ClearAllFonts();
+
+				if (type == Data.FontType.Normal)
+				{
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Normal")), Core.Option.FontSize.Value);
+				}
+				else if (type == Data.FontType.Bold)
+				{
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Bold")), Core.Option.FontSize.Value);
+				}
+
+				NativeManager.AddFontFromAtlasImage(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png"), 0xec00, 24, 24, 16, 16);
+
+				isFontSizeDirtied = false;
+			}
+
+			// Reset
+
+			IO.Update();
+			Shortcuts.Update();
+			Network.Update();
+
+			var handle = false;
+			if (!handle)
+			{
+				if (!NativeManager.IsAnyItemActive())
+				{
+					Shortcuts.ProcessCmdKey(ref handle);
+				}
+			}
+
+			var mousePos = NativeManager.GetMousePosition();
+
+			if (isFirstUpdate)
+			{
+				mousePos_pre = mousePos;
+			}
+
+			if ((effectViewer == null && !NativeManager.IsAnyWindowHovered()) || (effectViewer != null && effectViewer.IsHovered))
+			{
+				var result = ControllViewport();
+
+				if (result.Slide)
+				{
+					var dx = mousePos.X - mousePos_pre.X;
+					var dy = mousePos.Y - mousePos_pre.Y;
+
+					if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._3D)
+					{
+						Viewer.Slide(dx / 30.0f, dy / 30.0f);
+					}
+					else if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._2D)
+					{
+						Viewer.Slide(dx / 16.0f, dy / 16.0f);
+					}
+				}
+				else if (NativeManager.GetMouseWheel() != 0)
+				{
+					Viewer.Zoom(NativeManager.GetMouseWheel());
+				}
+				else if (result.Zoom)
+				{
+					var dx = mousePos.X - mousePos_pre.X;
+					var dy = mousePos.Y - mousePos_pre.Y;
+					Viewer.Zoom(-dy * 0.25f);
+				}
+				else if (result.Rotate)
+				{
+					var dx = mousePos.X - mousePos_pre.X;
+					var dy = mousePos.Y - mousePos_pre.Y;
+
+					if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._3D)
+					{
+						Viewer.Rotate(dx, dy);
+					}
+					else if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._2D)
+					{
+						Viewer.Slide(dx / 16.0f, dy / 16.0f);
+					}
+				}
+			}
+
+			mousePos_pre = mousePos;
+
+			Viewer.UpdateViewer();
+
+			Native.UpdateWindow();
+
+			Native.ClearWindow(50, 50, 50, 0);
+
+			//if(effectViewer == null)
+			//{
+			//	Native.RenderWindow();
+			//}
+
+			NativeManager.ResetGUI();
+
+			if (resetCount < 0)
+			{
+				resetCount++;
+				if (resetCount == 0)
+				{
+					Application.Current.OnResetWindowActually();
+				}
+			}
+
+			if (resizedCount > 0)
+			{
+				resizedCount--;
+			}
+
+			Controls.Lock();
+
+			foreach (var c in Controls.Internal)
+			{
+				c.Update();
+			}
+
+			foreach (var _ in Controls.Internal)
+			{
+				if (!_.ShouldBeRemoved) continue;
+
+				var dp = _ as Dock.DockPanel;
+				if (dp != null)
+				{
+					dp.DispatchDisposed();
+				}
+			}
+
+			foreach (var _ in Controls.Internal)
+			{
+				if (!_.ShouldBeRemoved) continue;
+				Controls.Remove(_);
+			}
+
+			Controls.Unlock();
+
+			for (int i = 0; i < dockTypes.Length; i++)
+			{
+				if (panels[i] != null && panels[i].ShouldBeRemoved)
+				{
+					panels[i] = null;
+				}
+			}
+
+			NativeManager.RenderGUI(resizedCount == 0);
+
+			Native.Present();
+			NativeManager.Present();
+
+			isFirstUpdate = false;
+
+			// TODO more smart
+			// When minimized, suppress CPU activity
+			if (actualWidth == 0)
+			{
+				System.Threading.Thread.Sleep(16);
+			}
+		}
+
+		static ViewportControllerResult ControllViewport()
+		{
+			bool isLeftPressed = NativeManager.GetMouseButton(0) > 0;
+			bool isRightPressed = NativeManager.GetMouseButton(1) > 0;
+			bool isWheelPressed = NativeManager.GetMouseButton(2) > 0;
+
+			bool isShiftPressed = NativeManager.IsKeyDown(LEFT_SHIFT) || NativeManager.IsKeyDown(RIGHT_SHIFT);
+			bool isCtrlPressed = NativeManager.IsKeyDown(LEFT_CONTROL) || NativeManager.IsKeyDown(RIGHT_CONTROL);
+			bool isAltPressed = NativeManager.IsKeyDown(LEFT_ALT) || NativeManager.IsKeyDown(RIGHT_ALT);
+			bool isSuperPressed = NativeManager.IsKeyDown(LEFT_SUPER) || NativeManager.IsKeyDown(RIGHT_SUPER);
+
+			bool isSlidePressed = false;
+			bool isZoomPressed = false;
+			bool isRotatePressed = false;
+
+			switch (Core.Option.MouseMappingType.Value)
+			{
+				case Data.MouseMappingType.Effekseer:
+					isSlidePressed = isWheelPressed || (isRightPressed && isShiftPressed);
+					isZoomPressed = isRightPressed && isCtrlPressed;
+					isRotatePressed = isRightPressed;
+					break;
+
+				case Data.MouseMappingType.Blender:
+					isSlidePressed = isWheelPressed && isShiftPressed;
+					isZoomPressed = isWheelPressed && isCtrlPressed;
+					isRotatePressed = isWheelPressed;
+					break;
+
+				case Data.MouseMappingType.Maya:
+					isSlidePressed = isWheelPressed && isAltPressed;
+					isZoomPressed = isRightPressed && isAltPressed;
+					isRotatePressed = isLeftPressed && isAltPressed;
+					break;
+
+				case Data.MouseMappingType.Unity:
+					isSlidePressed = isRightPressed;
+					isZoomPressed = false;
+					isRotatePressed = isWheelPressed;
+					break;
+			}
+
+			ViewportControllerResult result;
+
+			result.Rotate = isRotatePressed;
+			result.Zoom = isZoomPressed;
+			result.Slide = isSlidePressed;
+
+			return result;
+		}
+
 
 		/// <summary>
 		/// get a scale based on font size for margin, etc.

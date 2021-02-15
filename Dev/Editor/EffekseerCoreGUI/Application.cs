@@ -11,6 +11,11 @@ namespace Effekseer
 	public abstract class Application
 	{
 		/// <summary>
+		/// This class global instance.
+		/// </summary>
+		public static Application Current { get; private set; }
+
+		/// <summary>
 		/// Application name.
 		/// </summary>
 		/// <remarks>
@@ -38,6 +43,12 @@ namespace Effekseer
 		{
 			get;
 			private set;
+		}
+		
+		protected Application()
+		{
+			if (Current != null) throw new InvalidOperationException(); // Prohibit multiple instances.
+			Current = this;
 		}
 
 		public void Initialize(bool gui)
@@ -159,6 +170,13 @@ namespace Effekseer
 		}
 
 		protected virtual void OnTerminate()
+		{
+		}
+
+		/// <summary>
+		/// 初回起動時や設定ファイルのリセット時などで、デフォルトのウィンドウレイアウトを復元する
+		/// </summary>
+		protected internal virtual void OnResetWindowActually()
 		{
 		}
 
