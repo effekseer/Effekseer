@@ -39,9 +39,9 @@ namespace Effekseer.GUI.Component
 
 		public PathForModel()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id3 = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id3 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -80,47 +80,47 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			float buttonSizeX = GUIManager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Model);
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			GUIManager.NativeManager.Text(filePath);
+			Manager.NativeManager.Text(filePath);
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Model);
 
-			if (GUIManager.NativeManager.IsItemHovered())
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				GUIManager.NativeManager.SetTooltip(filePath);
+				Manager.NativeManager.SetTooltip(filePath);
 			}
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			
 			if (filePath != string.Empty)
 			{
-				if (GUIManager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-				if (GUIManager.NativeManager.Button(Resources.GetString("ResetMaginification") + id3, buttonSizeX * 2))
+				if (Manager.NativeManager.Button(Resources.GetString("ResetMaginification") + id3, buttonSizeX * 2))
 				{
 					btn_reload_Click();
 				}
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
 
 			if (dd != null)
@@ -252,7 +252,7 @@ namespace Effekseer.GUI.Component
 
 				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
-				GUIManager.Viewer.Reload(true);
+				Manager.Viewer.Reload(true);
 			}
 
 			omd.OnOK = () =>
@@ -424,7 +424,7 @@ namespace Effekseer.GUI.Component
 
 				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
-				GUIManager.Viewer.Reload(true);
+				Manager.Viewer.Reload(true);
 
                 Read();
 			};

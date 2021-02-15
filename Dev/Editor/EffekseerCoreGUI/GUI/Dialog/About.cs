@@ -52,43 +52,43 @@ THE SOFTWARE.
             versionInfo = "Effekseer Version " + Core.Version;
 			title = Resources.GetString("InternalAbout");
 
-			GUIManager.AddControl(this);
+			Manager.AddControl(this);
         }
 
         public void Update()
         {
 			if (isFirstUpdate)
 			{
-				GUIManager.NativeManager.OpenPopup(id);
-				GUIManager.NativeManager.SetNextWindowSize(600 * GUIManager.DpiScale, 400 * GUIManager.DpiScale, swig.Cond.Appearing);
+				Manager.NativeManager.OpenPopup(id);
+				Manager.NativeManager.SetNextWindowSize(600 * Manager.DpiScale, 400 * Manager.DpiScale, swig.Cond.Appearing);
 				isFirstUpdate = false;
 			}
 
-			if (GUIManager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.None))
+			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.None))
             {
 				const float iconSize = 64;
 
-				GUIManager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+				Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				GUIManager.NativeManager.SetCursorPosY(GUIManager.NativeManager.GetCursorPosY() + iconSize / 2 - GUIManager.NativeManager.GetTextLineHeight() / 2);
-				GUIManager.NativeManager.Text(versionInfo);
+				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + iconSize / 2 - Manager.NativeManager.GetTextLineHeight() / 2);
+				Manager.NativeManager.Text(versionInfo);
 
-				GUIManager.NativeManager.Separator();
+				Manager.NativeManager.Separator();
 
-				GUIManager.NativeManager.Markdown(license);
+				Manager.NativeManager.Markdown(license);
 
-				GUIManager.NativeManager.Separator();
+				Manager.NativeManager.Separator();
 
-				GUIManager.NativeManager.SetCursorPosX(GUIManager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
+				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
 
-                if (GUIManager.NativeManager.Button("OK", 100))
+                if (Manager.NativeManager.Button("OK", 100))
                 {
                     ShouldBeRemoved = true;
                 }
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
             }
             else
             {

@@ -19,7 +19,7 @@ namespace Effekseer.GUI.Component
 		public ObjectReference(Data.Value.ObjectCollection<T> collection)
 		{
 			this.collection = collection;
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void FixValue()

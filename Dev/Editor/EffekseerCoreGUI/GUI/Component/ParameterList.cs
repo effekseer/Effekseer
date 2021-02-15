@@ -38,13 +38,13 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			GUIManager.NativeManager.Columns(2);
+			Manager.NativeManager.Columns(2);
 
-			var columnWidth = GUIManager.NativeManager.GetColumnWidth(0);
+			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
 
 			if (isFirstUpdate)
 			{
-				GUIManager.NativeManager.SetColumnWidth(0, 120 * GUIManager.GetUIScaleBasedOnFontSize());
+				Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
 			}
 
 			var indent = new IndentInformation();
@@ -52,7 +52,7 @@ namespace Effekseer.GUI.Component
 			indent.IsSelecter = false;
 			collection.Update(indent);
 
-			GUIManager.NativeManager.Columns(1);
+			Manager.NativeManager.Columns(1);
 
 			isFirstUpdate = false;
 		}
@@ -143,14 +143,14 @@ namespace Effekseer.GUI.Component
 							if (item.BindingValue is Data.Group.IToggleMode)
 							{
 								// CollapsingHeader with toggle
-								GUIManager.NativeManager.Columns(1);
-								GUIManager.NativeManager.Spacing();
+								Manager.NativeManager.Columns(1);
+								Manager.NativeManager.Spacing();
 
 								var toggleId = "###" + item.TreeNodeID + "_toggle";
 								var toggleMode = item.BindingValue as Data.Group.IToggleMode;
 								bool enabled = toggleMode.Enabled.GetValue();
 
-								bool opened = GUIManager.NativeManager.CollapsingHeaderWithToggle(label, swig.TreeNodeFlags.None, toggleId, ref enabled);
+								bool opened = Manager.NativeManager.CollapsingHeaderWithToggle(label, swig.TreeNodeFlags.None, toggleId, ref enabled);
 
 								if (enabled != toggleMode.Enabled.GetValue())
 								{
@@ -160,10 +160,10 @@ namespace Effekseer.GUI.Component
 								if (opened && !enabled)
 								{
 									string message = MultiLanguageTextProvider.GetText("TreeDisabled_Message");
-									GUIManager.NativeManager.TextWrapped(message);
+									Manager.NativeManager.TextWrapped(message);
 								}
 
-								GUIManager.NativeManager.Columns(2);
+								Manager.NativeManager.Columns(2);
 
 								if (opened && enabled)
 								{
@@ -173,23 +173,23 @@ namespace Effekseer.GUI.Component
 							else
 							{
 								// Simple CollapsingHeader
-								GUIManager.NativeManager.Columns(1);
-								GUIManager.NativeManager.Spacing();
+								Manager.NativeManager.Columns(1);
+								Manager.NativeManager.Spacing();
 
-								bool opened = GUIManager.NativeManager.CollapsingHeader(label);
+								bool opened = Manager.NativeManager.CollapsingHeader(label);
 
-								GUIManager.NativeManager.Columns(2);
+								Manager.NativeManager.Columns(2);
 
 								if (opened)
 								{
 									indent = item.Children.Update(indent);
 								}
 							}
-							//var opened = GUIManager.NativeManager.TreeNode(label);
+							//var opened = Manager.NativeManager.TreeNode(label);
 
 							//if (opened)
 							//{
-							//	GUIManager.NativeManager.TreePop();
+							//	Manager.NativeManager.TreePop();
 							//}
 						}
 						continue;
@@ -203,30 +203,30 @@ namespace Effekseer.GUI.Component
 						controlRows[i].IsSelector ||
 						(indent.Indent == controlRows[i].SelectorIndent && indent.IsSelecter)))
 					{
-						GUIManager.NativeManager.Separator();
+						Manager.NativeManager.Separator();
 					}
 
-					GUIManager.NativeManager.SetCursorPosY(GUIManager.NativeManager.GetCursorPosY() + GUIManager.TextOffsetY);
-					GUIManager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+					Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
+					Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
 
-					if (GUIManager.NativeManager.IsItemHovered())
+					if (Manager.NativeManager.IsItemHovered())
 					{
-						GUIManager.NativeManager.BeginTooltip();
+						Manager.NativeManager.BeginTooltip();
 
-						GUIManager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
-						GUIManager.NativeManager.Separator();
-						GUIManager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
+						Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+						Manager.NativeManager.Separator();
+						Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
 
-						GUIManager.NativeManager.EndTooltip();
+						Manager.NativeManager.EndTooltip();
 					}
 
-					GUIManager.NativeManager.NextColumn();
+					Manager.NativeManager.NextColumn();
 
-					GUIManager.NativeManager.PushItemWidth(-1);
+					Manager.NativeManager.PushItemWidth(-1);
 					c.Update();
-					GUIManager.NativeManager.PopItemWidth();
+					Manager.NativeManager.PopItemWidth();
 
-					GUIManager.NativeManager.NextColumn();
+					Manager.NativeManager.NextColumn();
 
 					indent.Indent = controlRows[i].SelectorIndent;
 					indent.IsSelecter = controlRows[i].IsSelector;

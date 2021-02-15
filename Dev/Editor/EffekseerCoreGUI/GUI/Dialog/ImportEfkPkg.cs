@@ -98,7 +98,7 @@ namespace Effekseer.GUI.Dialog
 			sourceFilePath = Utils.Misc.BackSlashToSlash(path);
 
 			// FileViewer Path or Current Effect Path or Current Directory
-			var fileViewer = (Dock.FileViewer)GUIManager.GetWindow(typeof(Dock.FileViewer));
+			var fileViewer = (Dock.FileViewer)Manager.GetWindow(typeof(Dock.FileViewer));
 			if (fileViewer != null && !string.IsNullOrEmpty(fileViewer.CurrentPath))
 			{
 				targetDirPath = fileViewer.CurrentPath;
@@ -123,62 +123,62 @@ namespace Effekseer.GUI.Dialog
 				importFiles.Add(file, import);
 			}
 
-			GUIManager.AddControl(this);
+			Manager.AddControl(this);
 		}
 
 		public void Update()
 		{
 			if (isFirstUpdate)
 			{
-				GUIManager.NativeManager.OpenPopup(id);
+				Manager.NativeManager.OpenPopup(id);
 				isFirstUpdate = false;
 			}
 
-			float dpiScale = GUIManager.DpiScale;
+			float dpiScale = Manager.DpiScale;
 
-			GUIManager.NativeManager.SetNextWindowSize(500 * dpiScale, 400 * dpiScale, swig.Cond.Once);
+			Manager.NativeManager.SetNextWindowSize(500 * dpiScale, 400 * dpiScale, swig.Cond.Once);
 
-			if (GUIManager.NativeManager.BeginPopupModal(title + id, ref opened))
+			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened))
 			{
 				{
 					var text = MultiLanguageTextProvider.GetText("ImportSourcePackage");
-					GUIManager.NativeManager.PushItemWidth(-1);
-					GUIManager.NativeManager.Text(text);
-					GUIManager.NativeManager.InputText("###SSourceFilePath", sourceFilePath, swig.InputTextFlags.ReadOnly);
-					GUIManager.NativeManager.PopItemWidth();
+					Manager.NativeManager.PushItemWidth(-1);
+					Manager.NativeManager.Text(text);
+					Manager.NativeManager.InputText("###SSourceFilePath", sourceFilePath, swig.InputTextFlags.ReadOnly);
+					Manager.NativeManager.PopItemWidth();
 				}
 				{
 					var text = MultiLanguageTextProvider.GetText("ImportDestinationDirectory");
-					GUIManager.NativeManager.PushItemWidth(-GUIManager.NativeManager.GetTextLineHeightWithSpacing());
-					GUIManager.NativeManager.Text(text);
+					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetTextLineHeightWithSpacing());
+					Manager.NativeManager.Text(text);
 					string icon = (targetDirPathValid) ? Icons.CommonCheck : Icons.CommonError;
-					if (GUIManager.NativeManager.InputText(icon + "###TargetDirPath", targetDirPath))
+					if (Manager.NativeManager.InputText(icon + "###TargetDirPath", targetDirPath))
 					{
-						targetDirPath = GUIManager.NativeManager.GetInputTextResult();
+						targetDirPath = Manager.NativeManager.GetInputTextResult();
 						targetDirPathValid = Directory.Exists(targetDirPath);
 						foreach (var file in EfkPkg.AllFiles)
 						{
 							importFiles[file].ValidationPath(targetDirPath);
 						}
 					}
-					GUIManager.NativeManager.PopItemWidth();
+					Manager.NativeManager.PopItemWidth();
 				}
 
-				GUIManager.NativeManager.Spacing();
+				Manager.NativeManager.Spacing();
 
-				var size = GUIManager.NativeManager.GetContentRegionAvail();
+				var size = Manager.NativeManager.GetContentRegionAvail();
 				UpdateFileList(new swig.Vec2(0, size.Y - 32 * dpiScale));
 
-				GUIManager.NativeManager.Spacing();
+				Manager.NativeManager.Spacing();
 
 				{
 					var textImport = MultiLanguageTextProvider.GetText("Import");
 					var textCancel = MultiLanguageTextProvider.GetText("Cancel");
 
 					float buttonWidth = 100 * dpiScale;
-					GUIManager.NativeManager.SetCursorPosX(GUIManager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth + 4 * dpiScale);
+					Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth + 4 * dpiScale);
 
-					if (GUIManager.NativeManager.Button(textImport, buttonWidth))
+					if (Manager.NativeManager.Button(textImport, buttonWidth))
 					{
 						var files = importFiles
 							.Where(kv => kv.Value.DoesImport)
@@ -203,15 +203,15 @@ namespace Effekseer.GUI.Dialog
 						ShouldBeRemoved = true;
 					}
 
-					GUIManager.NativeManager.SameLine();
+					Manager.NativeManager.SameLine();
 
-					if (GUIManager.NativeManager.Button(textCancel, buttonWidth))
+					if (Manager.NativeManager.Button(textCancel, buttonWidth))
 					{
 						ShouldBeRemoved = true;
 					}
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 			}
 			else
 			{
@@ -225,17 +225,17 @@ namespace Effekseer.GUI.Dialog
 			var textImportSourceFile = MultiLanguageTextProvider.GetText("ImportSourceFile");
 			var textImportDestinationFile = MultiLanguageTextProvider.GetText("ImportDestinationFile");
 
-			GUIManager.NativeManager.BeginChildFrame(1, size);
+			Manager.NativeManager.BeginChildFrame(1, size);
 
-			GUIManager.NativeManager.Columns(2);
+			Manager.NativeManager.Columns(2);
 
 			// display file table header
-			GUIManager.NativeManager.Text(textImportSourceFile);
-			GUIManager.NativeManager.NextColumn();
-			GUIManager.NativeManager.Text(textImportDestinationFile);
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.Text(textImportSourceFile);
+			Manager.NativeManager.NextColumn();
+			Manager.NativeManager.Text(textImportDestinationFile);
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.Separator();
+			Manager.NativeManager.Separator();
 
 			// display file table body
 			foreach (var file in EfkPkg.AllFiles)
@@ -244,30 +244,30 @@ namespace Effekseer.GUI.Dialog
 				bool[] doesImport = new bool[] { import.DoesImport };
 
 				// source file
-				if (GUIManager.NativeManager.Checkbox(file.RelativePath, doesImport))
+				if (Manager.NativeManager.Checkbox(file.RelativePath, doesImport))
 				{
 					SetFileImportSettings(file, doesImport[0]);
 				}
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
 				// destination file
 				if (import.DoesImport)
 				{
-					GUIManager.NativeManager.PushItemWidth(-GUIManager.NativeManager.GetTextLineHeight());
-					if (GUIManager.NativeManager.InputText(import.GetStateIcon() + "###" +
+					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetTextLineHeight());
+					if (Manager.NativeManager.InputText(import.GetStateIcon() + "###" +
 						file.HashName, import.DestinationName))
 					{
-						import.DestinationName = GUIManager.NativeManager.GetInputTextResult();
+						import.DestinationName = Manager.NativeManager.GetInputTextResult();
 						import.ValidationPath(targetDirPath);
 					}
-					GUIManager.NativeManager.PopItemWidth();
+					Manager.NativeManager.PopItemWidth();
 				}
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 			}
 
-			GUIManager.NativeManager.Columns(1);
+			Manager.NativeManager.Columns(1);
 
-			GUIManager.NativeManager.EndChildFrame();
+			Manager.NativeManager.EndChildFrame();
 		}
 
 		// Set file import settings

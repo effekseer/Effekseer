@@ -44,7 +44,7 @@ namespace Effekseer.Process
 		{
 			if (!IsRunning)
 				return;
-			GUIManager.Native.TerminateMaterialEditor();
+			Manager.Native.TerminateMaterialEditor();
 		}
 
 		public static bool IsRunning
@@ -58,7 +58,7 @@ namespace Effekseer.Process
 
 		public static void OpenOrCreateMaterial(string path)
 		{
-			GUIManager.Native.OpenOrCreateMaterial(path);
+			Manager.Native.OpenOrCreateMaterial(path);
 
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
 			{

@@ -59,10 +59,10 @@ namespace Effekseer.GUI.Component
 
 		public PathForImage()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_reset = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -111,9 +111,9 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			float buttonSizeX = GUIManager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -122,24 +122,24 @@ namespace Effekseer.GUI.Component
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			GUIManager.NativeManager.Text(filePath);
+			Manager.NativeManager.Text(filePath);
 
-			if (GUIManager.NativeManager.IsItemHovered())
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				GUIManager.NativeManager.SetTooltip(filePath);
+				Manager.NativeManager.SetTooltip(filePath);
 			}
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			
 			if(thumbnail != null)
 			{
-				if (GUIManager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
@@ -148,17 +148,17 @@ namespace Effekseer.GUI.Component
 				
 				if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				GUIManager.NativeManager.Text(infoText);
+				Manager.NativeManager.Text(infoText);
 
 				Popup();
 
 				if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 				
 				if(thumbnail != null)
 				{
@@ -167,15 +167,15 @@ namespace Effekseer.GUI.Component
 					float imageSizeY = image.GetHeight();
 					if (imageSizeX < imageSizeY)
 					{
-						GUIManager.NativeManager.Image(image, 128 * imageSizeX / imageSizeY, 128);
+						Manager.NativeManager.Image(image, 128 * imageSizeX / imageSizeY, 128);
 					}
 					else if (imageSizeX > imageSizeY)
 					{
-						GUIManager.NativeManager.Image(image, 128, 128 * imageSizeY / imageSizeX);
+						Manager.NativeManager.Image(image, 128, 128 * imageSizeY / imageSizeX);
 					}
 					else
 					{
-						GUIManager.NativeManager.Image(image, 128, 128);
+						Manager.NativeManager.Image(image, 128, 128);
 					}
 
 					Popup();
@@ -183,7 +183,7 @@ namespace Effekseer.GUI.Component
 
 				if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Image);
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
 
 			if (dd != null)
@@ -288,11 +288,11 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				Functions.ShowReset(binding, id_reset);
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 
 				isPopupShown = true;
 			}

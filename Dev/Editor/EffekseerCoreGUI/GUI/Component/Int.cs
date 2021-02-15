@@ -41,7 +41,7 @@ namespace Effekseer.GUI.Component
 
 		public Int()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -78,7 +78,7 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			if (GUIManager.NativeManager.DragInt(id, internalValue, binding.Step))
+			if (Manager.NativeManager.DragInt(id, internalValue, binding.Step))
 			{
 				if (EnableUndo)
 				{
@@ -90,7 +90,7 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{

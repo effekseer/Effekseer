@@ -48,10 +48,10 @@ namespace Effekseer.GUI.Component
 
 		public IntWithInifinite()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_d = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -93,9 +93,9 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			GUIManager.NativeManager.PushItemWidth(60);
+			Manager.NativeManager.PushItemWidth(60);
 
-			if (GUIManager.NativeManager.DragInt(id1, internalValue, binding.Value.Step, binding.Value.Min, binding.Value.Max))
+			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Value.Step, binding.Value.Min, binding.Value.Max))
 			{
 				if (EnableUndo)
 				{
@@ -109,9 +109,9 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -120,10 +120,10 @@ namespace Effekseer.GUI.Component
 
 			isActive = isActive_Current;
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
 			var inf = Resources.GetString("Infinite");
-			if (GUIManager.NativeManager.Checkbox(inf + id2, isInfinite))
+			if (Manager.NativeManager.Checkbox(inf + id2, isInfinite))
 			{
 				if (EnableUndo)
 				{
@@ -153,11 +153,11 @@ namespace Effekseer.GUI.Component
 
 			if (!binding.CanSelectDynamicEquation) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 
 				isPopupShown = true;
 			}

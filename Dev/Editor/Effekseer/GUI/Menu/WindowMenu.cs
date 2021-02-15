@@ -39,7 +39,7 @@ namespace Effekseer.GUI.Menu
 			{
 				var item = new MenuItem();
 				item.Label = new MultiLanguageString("ResetWindow");
-				item.Clicked += GUIManager.ResetWindow;
+				item.Clicked += Manager.ResetWindow;
 				menu.Controls.Add(item);
 			}
 
@@ -74,7 +74,7 @@ namespace Effekseer.GUI.Menu
 				var item = new MenuItem();
 				item.Label = new MultiLanguageString(Title);
 				item.Icon = _iconName;
-				item.Clicked += () => GUIManager.SelectOrShowWindow(_type, new swig.Vec2(300, 300), true);
+				item.Clicked += () => Manager.SelectOrShowWindow(_type, new swig.Vec2(300, 300), true);
 				menu.Controls.Add(item);
 			}
 		}

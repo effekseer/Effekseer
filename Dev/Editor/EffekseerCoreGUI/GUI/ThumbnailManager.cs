@@ -37,7 +37,7 @@ namespace Effekseer.GUI
 				return thumbnails[path];
 			}
 
-			var image = GUIManager.Native.LoadImageResource(path);
+			var image = Manager.Native.LoadImageResource(path);
 			if (image == null) return null;
 
 			Thumbnail thumbnail = new Thumbnail();
@@ -50,7 +50,7 @@ namespace Effekseer.GUI
 
 		public static void Initialize()
 		{
-			GUIManager.IO.AddCallback(callback);
+			Manager.IO.AddCallback(callback);
 		}
 
 		public static void Terminate()

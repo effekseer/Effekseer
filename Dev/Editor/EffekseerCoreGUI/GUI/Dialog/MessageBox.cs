@@ -23,31 +23,31 @@ namespace Effekseer.GUI.Dialog
             this.title = title;
             this.message = message;
 
-			GUIManager.AddControl(this);
+			Manager.AddControl(this);
 		}
 
         public void Update()
         {
 			if(isFirstUpdate)
 			{
-				GUIManager.NativeManager.OpenPopup(id);
+				Manager.NativeManager.OpenPopup(id);
 				isFirstUpdate = false;
 			}
 
-            if(GUIManager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
+            if(Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
             {
-				GUIManager.NativeManager.Text(message);
+				Manager.NativeManager.Text(message);
 
-				GUIManager.NativeManager.Separator();
+				Manager.NativeManager.Separator();
 
-				GUIManager.NativeManager.SetCursorPosX(GUIManager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
+				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
 
-				if (GUIManager.NativeManager.Button("OK", 100))
+				if (Manager.NativeManager.Button("OK", 100))
 				{
 					ShouldBeRemoved = true;
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
             }
             else
             {

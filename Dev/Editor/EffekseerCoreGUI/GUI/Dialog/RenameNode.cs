@@ -22,58 +22,58 @@ namespace Effekseer.GUI.Dialog
 		{
 			this.selectedNode = selectedNode;
 			this.name = selectedNode.Name;
-			GUIManager.AddControl(this);
+			Manager.AddControl(this);
 		}
 
 		public void Update()
 		{
 			if (isFirstUpdate)
 			{
-				GUIManager.NativeManager.OpenPopup(Resources.GetString("RenameNode") + "###RenameNodeDialog");
+				Manager.NativeManager.OpenPopup(Resources.GetString("RenameNode") + "###RenameNodeDialog");
 			}
 
-			if (GUIManager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
+			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
 				if (isFirstUpdate)
 				{
-					GUIManager.NativeManager.SetKeyboardFocusHere();
+					Manager.NativeManager.SetKeyboardFocusHere();
 				}
 
-				if (GUIManager.NativeManager.InputText("###RenameNodeInput", this.name, 
+				if (Manager.NativeManager.InputText("###RenameNodeInput", this.name, 
 					swig.InputTextFlags.AutoSelectAll | swig.InputTextFlags.EnterReturnsTrue))
 				{
 					this.selectedNode.Name.Value = this.name;
 					ShouldBeRemoved = true;
 				}
-				this.name = GUIManager.NativeManager.GetInputTextResult();
+				this.name = Manager.NativeManager.GetInputTextResult();
 				
-				if (GUIManager.NativeManager.IsKeyPressed(GUIManager.NativeManager.GetKeyIndex(swig.Key.Escape)))
+				if (Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Escape)))
 				{
 					ShouldBeRemoved = true;
 				}
 
-				GUIManager.NativeManager.Separator();
+				Manager.NativeManager.Separator();
 
-				float dpiScale = GUIManager.DpiScale;
+				float dpiScale = Manager.DpiScale;
 				float buttonWidth = 80 * dpiScale;
-				float areaWidth = GUIManager.NativeManager.GetContentRegionAvail().X;
+				float areaWidth = Manager.NativeManager.GetContentRegionAvail().X;
 
-				GUIManager.NativeManager.SetCursorPosX((areaWidth - buttonWidth * 2 + 8 * dpiScale) / 2);
+				Manager.NativeManager.SetCursorPosX((areaWidth - buttonWidth * 2 + 8 * dpiScale) / 2);
 
-				if (GUIManager.NativeManager.Button("OK", buttonWidth))
+				if (Manager.NativeManager.Button("OK", buttonWidth))
 				{
 					this.selectedNode.Name.Value = this.name;
 					ShouldBeRemoved = true;
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.Button(Resources.GetString("Cancel"), buttonWidth))
+				if (Manager.NativeManager.Button(Resources.GetString("Cancel"), buttonWidth))
 				{
 					ShouldBeRemoved = true;
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 			}
 			else
 			{

@@ -16,15 +16,15 @@ namespace Effekseer.GUI.Dock
 
 		public DockManager()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public override void Update()
 		{
 			if (opened)
 			{
-				//if (GUIManager.NativeManager.Begin(Label + id, ref opened))
-				if(GUIManager.NativeManager.BeginFullscreen(Label + id))
+				//if (Manager.NativeManager.Begin(Label + id, ref opened))
+				if(Manager.NativeManager.BeginFullscreen(Label + id))
 				{
 					Controls.Lock();
 
@@ -44,7 +44,7 @@ namespace Effekseer.GUI.Dock
 					Controls.Unlock();
 				}
 
-				GUIManager.NativeManager.End();
+				Manager.NativeManager.End();
 			}
 			else
 			{

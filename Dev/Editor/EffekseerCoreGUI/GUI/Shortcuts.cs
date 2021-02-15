@@ -213,7 +213,7 @@ namespace Effekseer.GUI
 
 			for (int i = 0; i < 512; i++)
 			{
-				currentKeys[i] = GUIManager.NativeManager.IsKeyDown(i);
+				currentKeys[i] = Manager.NativeManager.IsKeyDown(i);
 			}
 		}
 
@@ -224,7 +224,7 @@ namespace Effekseer.GUI
 			foreach (var shortcut in shortcuts)
 			{
 				var keys = shortcut.Value;
-				if (keys.IsPushed(GUIManager.NativeManager))
+				if (keys.IsPushed(Manager.NativeManager))
 				{
 					if (shortcut.Value.Function())
 					{

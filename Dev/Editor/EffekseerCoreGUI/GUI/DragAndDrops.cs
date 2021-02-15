@@ -22,32 +22,32 @@ namespace Effekseer.GUI
 
 		public static void UpdateFileSrc(string path, FileType type)
 		{
-			if (GUIManager.NativeManager.BeginDragDropSource())
+			if (Manager.NativeManager.BeginDragDropSource())
 			{
 				string key = type.ToString() + "File";
 				byte[] idBuf = Encoding.UTF8.GetBytes(path);
-				if (GUIManager.NativeManager.SetDragDropPayload(key, idBuf, idBuf.Length))
+				if (Manager.NativeManager.SetDragDropPayload(key, idBuf, idBuf.Length))
 				{
 				}
-				GUIManager.NativeManager.Text(path);
+				Manager.NativeManager.Text(path);
 
-				GUIManager.NativeManager.EndDragDropSource();
+				Manager.NativeManager.EndDragDropSource();
 			}
 		}
 
 		public static string UpdateFileDst(FileType type)
 		{
 			string str = null;
-			if (GUIManager.NativeManager.BeginDragDropTarget())
+			if (Manager.NativeManager.BeginDragDropTarget())
 			{
 				string key = type.ToString() + "File";
 				int size = 0;
-				if (GUIManager.NativeManager.AcceptDragDropPayload(key, tempBuffer, tempBuffer.Length, ref size))
+				if (Manager.NativeManager.AcceptDragDropPayload(key, tempBuffer, tempBuffer.Length, ref size))
 				{
 					str = Encoding.UTF8.GetString(tempBuffer.Take(size).ToArray());
 				}
 
-				GUIManager.NativeManager.EndDragDropTarget();
+				Manager.NativeManager.EndDragDropTarget();
 			}
 
 			return str;

@@ -81,20 +81,20 @@ namespace Effekseer.Plugin
 
 				this.path = path;
 				mag[0] = Effekseer.Core.Option.ExternalMagnification.GetValue();
-				GUIManager.AddControl(this);
+				Manager.AddControl(this);
 			}
 
 			public void Update()
 			{
 				if (isFirstUpdate)
 				{
-					GUIManager.NativeManager.OpenPopup(id);
+					Manager.NativeManager.OpenPopup(id);
 					isFirstUpdate = false;
 				}
 
-				if (GUIManager.NativeManager.BeginPopupModal(title + id, ref opened, Effekseer.swig.WindowFlags.AlwaysAutoResize))
+				if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, Effekseer.swig.WindowFlags.AlwaysAutoResize))
 				{
-					if (GUIManager.NativeManager.DragFloat(this.title, mag, 0.1f, 0, float.MaxValue))
+					if (Manager.NativeManager.DragFloat(this.title, mag, 0.1f, 0, float.MaxValue))
 					{
 
 					}
@@ -102,7 +102,7 @@ namespace Effekseer.Plugin
 					var save_text = MultiLanguageTextProvider.GetText("Save");
 					var cancel_text = MultiLanguageTextProvider.GetText("Cancel");
 
-					if (GUIManager.NativeManager.Button(save_text))
+					if (Manager.NativeManager.Button(save_text))
 					{
 						var binaryExporter = new Binary.Exporter();
 						var binary = binaryExporter.Export(Core.Root, mag[0]);
@@ -111,12 +111,12 @@ namespace Effekseer.Plugin
 						ShouldBeRemoved = true;
 					}
 
-					if (GUIManager.NativeManager.Button(cancel_text))
+					if (Manager.NativeManager.Button(cancel_text))
 					{
 						ShouldBeRemoved = true;
 					}
 
-					GUIManager.NativeManager.EndPopup();
+					Manager.NativeManager.EndPopup();
 				}
 				else
 				{

@@ -44,9 +44,9 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			float width = GUIManager.NativeManager.GetContentRegionAvail().X;
+			float width = Manager.NativeManager.GetContentRegionAvail().X;
 
-			GUIManager.NativeManager.PushItemWidth(width - GUIManager.NativeManager.GetTextLineHeight() * 5.5f);
+			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 
 			var nextParam = Component.ObjectCollection.Select("", "", Core.ProcedualModel.ProcedualModels.Selected, false, Core.ProcedualModel.ProcedualModels);
 
@@ -55,18 +55,18 @@ namespace Effekseer.GUI.Dock
 				Core.ProcedualModel.ProcedualModels.Selected = nextParam;
 			}
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
+			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
 				Core.ProcedualModel.ProcedualModels.New();
 			}
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
+			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
 			{
 				Core.ProcedualModel.ProcedualModels.Delete(Core.ProcedualModel.ProcedualModels.Selected);
 			}

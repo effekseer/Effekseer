@@ -60,15 +60,15 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			var viewerParameter = GUIManager.Viewer.GetViewerParamater();
+			var viewerParameter = Manager.Viewer.GetViewerParamater();
             viewerParameter.GuideWidth = Core.Recording.RecordingWidth.Value;
             viewerParameter.GuideHeight = Core.Recording.RecordingHeight.Value;
             viewerParameter.RendersGuide = Core.Recording.IsRecordingGuideShown;
 
-			float dpiScale = GUIManager.DpiScale;
-			var w = new int [] { GUIManager.Viewer.GetViewerParamater().GuideWidth };
-			var h = new int [] { GUIManager.Viewer.GetViewerParamater().GuideHeight };
-			var showGuide = new bool[] { GUIManager.Viewer.GetViewerParamater().RendersGuide };
+			float dpiScale = Manager.DpiScale;
+			var w = new int [] { Manager.Viewer.GetViewerParamater().GuideWidth };
+			var h = new int [] { Manager.Viewer.GetViewerParamater().GuideHeight };
+			var showGuide = new bool[] { Manager.Viewer.GetViewerParamater().RendersGuide };
 
             var startingFrame_ = new int[] { Core.Recording.RecordingStartingFrame.Value };
 			var endingFrame_ = new int[] { Core.Recording.RecordingEndingFrame.Value };
@@ -86,54 +86,54 @@ namespace Effekseer.GUI.Dock
 
 			// Recordingwindow
 			{
-				GUIManager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0, 140 * dpiScale), true, swig.WindowFlags.MenuBar);
+				Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0, 140 * dpiScale), true, swig.WindowFlags.MenuBar);
 
-				if (GUIManager.NativeManager.BeginMenuBar())
+				if (Manager.NativeManager.BeginMenuBar())
 				{
-					if (GUIManager.NativeManager.BeginMenu(areaTitle + "##RecordResTitle"))
+					if (Manager.NativeManager.BeginMenu(areaTitle + "##RecordResTitle"))
 					{
-						GUIManager.NativeManager.EndMenu();
+						Manager.NativeManager.EndMenu();
 					}
 
-					GUIManager.NativeManager.EndMenuBar();
+					Manager.NativeManager.EndMenuBar();
 				}
 
-				GUIManager.NativeManager.Columns(2);
-				GUIManager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
+				Manager.NativeManager.Columns(2);
+				Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-				GUIManager.NativeManager.Text(Resources.GetString("Width"));
+				Manager.NativeManager.Text(Resources.GetString("Width"));
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.PushItemWidth(-1);
-				if (GUIManager.NativeManager.DragInt("###w", w))
+				Manager.NativeManager.PushItemWidth(-1);
+				if (Manager.NativeManager.DragInt("###w", w))
 				{
 					viewerParameter.GuideWidth = w[0];
 					Core.Recording.RecordingWidth.SetValueDirectly(w[0]);
 				}
-				GUIManager.NativeManager.PopItemWidth();
+				Manager.NativeManager.PopItemWidth();
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.Text(Resources.GetString("Height"));
+				Manager.NativeManager.Text(Resources.GetString("Height"));
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.PushItemWidth(-1);
-				if (GUIManager.NativeManager.DragInt("###h", h))
+				Manager.NativeManager.PushItemWidth(-1);
+				if (Manager.NativeManager.DragInt("###h", h))
 				{
 					viewerParameter.GuideHeight = h[0];
 					Core.Recording.RecordingHeight.SetValueDirectly(h[0]);
 				}
-				GUIManager.NativeManager.PopItemWidth();
+				Manager.NativeManager.PopItemWidth();
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.Text(Resources.GetString("ShowGuide"));
+				Manager.NativeManager.Text(Resources.GetString("ShowGuide"));
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				if (GUIManager.NativeManager.Checkbox("###sg", showGuide))
+				if (Manager.NativeManager.Checkbox("###sg", showGuide))
 				{
 					viewerParameter.RendersGuide = showGuide[0];
 					Core.Recording.IsRecordingGuideShown.SetValueDirectly(showGuide[0]);
@@ -141,216 +141,216 @@ namespace Effekseer.GUI.Dock
 
 				// Scale
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.Text(scale_name.ToString());
+				Manager.NativeManager.Text(scale_name.ToString());
 
-				if(GUIManager.NativeManager.IsItemHovered())
+				if(Manager.NativeManager.IsItemHovered())
 				{
-					GUIManager.NativeManager.SetTooltip(scale_desc.ToString());
+					Manager.NativeManager.SetTooltip(scale_desc.ToString());
 				}
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
 				var recordingScale = new int[] { Core.Recording.RecordingScale.Value };
-				if (GUIManager.NativeManager.DragInt("###RecScale", recordingScale))
+				if (Manager.NativeManager.DragInt("###RecScale", recordingScale))
 				{
 					Core.Recording.RecordingScale.SetValue(recordingScale[0]);
 				}
 
-				GUIManager.NativeManager.Columns(1);
+				Manager.NativeManager.Columns(1);
 
-				GUIManager.NativeManager.EndChild();
+				Manager.NativeManager.EndChild();
 			}
 
 			// Recordingwindow
-			GUIManager.NativeManager.BeginChild("##OutputFrame", new swig.Vec2(0, 130 * dpiScale), true, swig.WindowFlags.MenuBar);
-			if (GUIManager.NativeManager.BeginMenuBar())
+			Manager.NativeManager.BeginChild("##OutputFrame", new swig.Vec2(0, 130 * dpiScale), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
 			{
-				if (GUIManager.NativeManager.BeginMenu(exportedFrameTitle + "##OutputFrameTitle"))
+				if (Manager.NativeManager.BeginMenu(exportedFrameTitle + "##OutputFrameTitle"))
 				{
-					GUIManager.NativeManager.EndMenu();
+					Manager.NativeManager.EndMenu();
 				}
 
-				GUIManager.NativeManager.EndMenuBar();
+				Manager.NativeManager.EndMenuBar();
 			}
 
-			GUIManager.NativeManager.Columns(2);
-			GUIManager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			GUIManager.NativeManager.Text(Resources.GetString("StartFrame"));
+			Manager.NativeManager.Text(Resources.GetString("StartFrame"));
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
-			if (GUIManager.NativeManager.DragInt("###sf", startingFrame_))
+			Manager.NativeManager.PushItemWidth(-1);
+			if (Manager.NativeManager.DragInt("###sf", startingFrame_))
 			{
                 Core.Recording.RecordingStartingFrame.SetValueDirectly(startingFrame_[0]);
 			}
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.Text(Resources.GetString("EndFrame"));
+			Manager.NativeManager.Text(Resources.GetString("EndFrame"));
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
-			if (GUIManager.NativeManager.DragInt("###ef", endingFrame_))
+			Manager.NativeManager.PushItemWidth(-1);
+			if (Manager.NativeManager.DragInt("###ef", endingFrame_))
 			{
                 Core.Recording.RecordingEndingFrame.SetValueDirectly(endingFrame_[0]);
 			}
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.Text(Resources.GetString("Frequency_Frame"));
+			Manager.NativeManager.Text(Resources.GetString("Frequency_Frame"));
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
-			if (GUIManager.NativeManager.DragInt("###ff", freq_))
+			Manager.NativeManager.PushItemWidth(-1);
+			if (Manager.NativeManager.DragInt("###ff", freq_))
 			{
                 Core.Recording.RecordingFrequency.SetValueDirectly(freq_[0]);
 			}
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.Columns(1);
+			Manager.NativeManager.Columns(1);
 
-			GUIManager.NativeManager.EndChild();
+			Manager.NativeManager.EndChild();
 
 			// ExportType
 			float exportTypeChildHeight = (selectedTypeIndex == 0 ? 90 : 60) * dpiScale;
-			GUIManager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, exportTypeChildHeight), true, swig.WindowFlags.MenuBar);
-			if (GUIManager.NativeManager.BeginMenuBar())
+			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, exportTypeChildHeight), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
 			{
-				if (GUIManager.NativeManager.BeginMenu(typeTitle + "##OutputTypeTitle"))
+				if (Manager.NativeManager.BeginMenu(typeTitle + "##OutputTypeTitle"))
 				{
-					GUIManager.NativeManager.EndMenu();
+					Manager.NativeManager.EndMenu();
 				}
 
-				GUIManager.NativeManager.EndMenuBar();
+				Manager.NativeManager.EndMenuBar();
 			}
 
-			GUIManager.NativeManager.Columns(2);
-			GUIManager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			GUIManager.NativeManager.Text(Resources.GetString("ExportedFrame"));
+			Manager.NativeManager.Text(Resources.GetString("ExportedFrame"));
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
-			if (GUIManager.NativeManager.BeginCombo("###extype", selectedExportTypes[selectedTypeIndex], swig.ComboFlags.None))
+			Manager.NativeManager.PushItemWidth(-1);
+			if (Manager.NativeManager.BeginCombo("###extype", selectedExportTypes[selectedTypeIndex], swig.ComboFlags.None))
 			{
 				for (int i = 0; i < selectedExportTypes.Length; i++)
 				{
-					if (GUIManager.NativeManager.Selectable(selectedExportTypes[i]))
+					if (Manager.NativeManager.Selectable(selectedExportTypes[i]))
 					{
 						selectedTypeIndex = i;
 						Core.Recording.RecordingExporter.SetValueDirectly((Data.RecordingExporterType)i);
-						GUIManager.NativeManager.SetItemDefaultFocus();
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
 			if (selectedTypeIndex == 0)
 			{
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.Text(Resources.GetString("XCount"));
+				Manager.NativeManager.Text(Resources.GetString("XCount"));
 
-				GUIManager.NativeManager.NextColumn();
+				Manager.NativeManager.NextColumn();
 
-				GUIManager.NativeManager.PushItemWidth(-1);
-				if (GUIManager.NativeManager.DragInt("###tn", theNumberOfImageH_))
+				Manager.NativeManager.PushItemWidth(-1);
+				if (Manager.NativeManager.DragInt("###tn", theNumberOfImageH_))
 				{
 					Core.Recording.RecordingHorizontalCount.SetValueDirectly(theNumberOfImageH_[0]);
 				}
-				GUIManager.NativeManager.PopItemWidth();
+				Manager.NativeManager.PopItemWidth();
 			}
 
-			GUIManager.NativeManager.EndChild();
+			Manager.NativeManager.EndChild();
 
 			// Recordingwindow
-			GUIManager.NativeManager.BeginChild("##Option", new swig.Vec2(0, 60 * dpiScale), true, swig.WindowFlags.MenuBar);
-			if (GUIManager.NativeManager.BeginMenuBar())
+			Manager.NativeManager.BeginChild("##Option", new swig.Vec2(0, 60 * dpiScale), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
 			{
-				if (GUIManager.NativeManager.BeginMenu(optionsTitle + "##OptionTitle"))
+				if (Manager.NativeManager.BeginMenu(optionsTitle + "##OptionTitle"))
 				{
-					GUIManager.NativeManager.EndMenu();
+					Manager.NativeManager.EndMenu();
 				}
 
-				GUIManager.NativeManager.EndMenuBar();
+				Manager.NativeManager.EndMenuBar();
 			}
 
-			GUIManager.NativeManager.Columns(2);
-			GUIManager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			GUIManager.NativeManager.Text(Resources.GetString("MakeTransparent"));
+			Manager.NativeManager.Text(Resources.GetString("MakeTransparent"));
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
-			if (GUIManager.NativeManager.BeginCombo("###tr", selectedAlphaTypes[selectedAlphaIndex], swig.ComboFlags.None))
+			Manager.NativeManager.PushItemWidth(-1);
+			if (Manager.NativeManager.BeginCombo("###tr", selectedAlphaTypes[selectedAlphaIndex], swig.ComboFlags.None))
 			{
 				for (int i = 0; i < selectedAlphaTypes.Length; i++)
 				{
-					if (GUIManager.NativeManager.Selectable(selectedAlphaTypes[i]))
+					if (Manager.NativeManager.Selectable(selectedAlphaTypes[i]))
 					{
 						selectedAlphaIndex = i;
                         Core.Recording.RecordingTransparentMethod.SetValueDirectly((Data.RecordingTransparentMethodType)i);
-                        GUIManager.NativeManager.SetItemDefaultFocus();
+                        Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.Columns(1);
+			Manager.NativeManager.Columns(1);
 
-			GUIManager.NativeManager.EndChild();
+			Manager.NativeManager.EndChild();
 
 			// Storage
-			GUIManager.NativeManager.BeginChild("##Storage", new swig.Vec2(0, 60 * dpiScale), true, swig.WindowFlags.MenuBar);
-			GUIManager.NativeManager.Columns(2);
-			GUIManager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
+			Manager.NativeManager.BeginChild("##Storage", new swig.Vec2(0, 60 * dpiScale), true, swig.WindowFlags.MenuBar);
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			GUIManager.NativeManager.Text(Resources.GetString("StorageTarget"));
+			Manager.NativeManager.Text(Resources.GetString("StorageTarget"));
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
-			if (GUIManager.NativeManager.BeginCombo("###st", selectedStorageTargets[selectedStorageTarget], swig.ComboFlags.None))
+			Manager.NativeManager.PushItemWidth(-1);
+			if (Manager.NativeManager.BeginCombo("###st", selectedStorageTargets[selectedStorageTarget], swig.ComboFlags.None))
 			{
 				for (int i = 0; i < selectedStorageTargets.Length; i++)
 				{
-					if (GUIManager.NativeManager.Selectable(selectedStorageTargets[i]))
+					if (Manager.NativeManager.Selectable(selectedStorageTargets[i]))
 					{
 						selectedStorageTarget = i;
 						Core.Recording.RecordingStorageTarget.SetValueDirectly((Data.RecordingStorageTargetTyoe)i);
-						GUIManager.NativeManager.SetItemDefaultFocus();
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.Columns(1);
+			Manager.NativeManager.Columns(1);
 
-			GUIManager.NativeManager.EndChild();
+			Manager.NativeManager.EndChild();
 
 
-			GUIManager.Viewer.SetViewerParamater(viewerParameter);
+			Manager.Viewer.SetViewerParamater(viewerParameter);
 
 			float buttonWidth = 100 * dpiScale;
-			GUIManager.NativeManager.SetCursorPosX(GUIManager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2);
+			Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2);
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("Record") + "###btn", buttonWidth))
+			if (Manager.NativeManager.Button(Resources.GetString("Record") + "###btn", buttonWidth))
 			{
 				var during = Core.Recording.RecordingEndingFrame.Value - Core.Recording.RecordingStartingFrame.Value;
 				if (during < 0)
@@ -364,7 +364,7 @@ namespace Effekseer.GUI.Dock
 				var count = during / Core.Recording.RecordingFrequency.Value + 1;
 				var horizontalCount = Core.Recording.RecordingHorizontalCount.Value;
 
-				if (GUIManager.Viewer != null)
+				if (Manager.Viewer != null)
 				{
 					var filter = string.Empty;
 
@@ -397,8 +397,8 @@ namespace Effekseer.GUI.Dock
 						filename += "." + filter;
                     }
 
-					var viewer = GUIManager.Viewer;
-					var param = GUIManager.Viewer.GetViewerParamater();
+					var viewer = Manager.Viewer;
+					var param = Manager.Viewer.GetViewerParamater();
 
 					//if (viewer.LoadEffectFunc != null)
 					{
@@ -462,7 +462,7 @@ namespace Effekseer.GUI.Dock
 
 					if (recordResult)
 					{
-						GUIManager.NativeManager.OpenPopup("###RecorderProgress");
+						Manager.NativeManager.OpenPopup("###RecorderProgress");
 					}
 					else
 					{
@@ -476,18 +476,18 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			GUIManager.NativeManager.SetNextWindowSize(320, 0, swig.Cond.Always);
+			Manager.NativeManager.SetNextWindowSize(320, 0, swig.Cond.Always);
 
 			UpdateProgressDialog();
 		}
 
 		private void UpdateProgressDialog()
 		{
-			if (GUIManager.NativeManager.BeginPopupModal(Resources.GetString("RecorderProgress") + "###RecorderProgress"))
+			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RecorderProgress") + "###RecorderProgress"))
 			{
-				float dpiScale = GUIManager.DpiScale;
+				float dpiScale = Manager.DpiScale;
 
-				var viewer = GUIManager.Viewer;
+				var viewer = Manager.Viewer;
 				float progress;
 
 				viewer.StepRecord(4);
@@ -496,30 +496,30 @@ namespace Effekseer.GUI.Dock
 				{
 					viewer.EndRecord();
 					progress = 1.0f;
-					GUIManager.NativeManager.CloseCurrentPopup();
+					Manager.NativeManager.CloseCurrentPopup();
 				}
 				else
 				{
 					progress = viewer.GetRecordingProgress();
 				}
 
-				GUIManager.NativeManager.PushItemWidth(-1);
+				Manager.NativeManager.PushItemWidth(-1);
 				
-				GUIManager.NativeManager.ProgressBar(progress, new swig.Vec2(-1, 0));
+				Manager.NativeManager.ProgressBar(progress, new swig.Vec2(-1, 0));
 
-				GUIManager.NativeManager.PopItemWidth();
+				Manager.NativeManager.PopItemWidth();
 
-				GUIManager.NativeManager.Spacing();
+				Manager.NativeManager.Spacing();
 
 				float buttonWidth = 100 * dpiScale;
-				GUIManager.NativeManager.SetCursorPosX(GUIManager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2 + 8 * dpiScale);
-				if (GUIManager.NativeManager.Button(Resources.GetString("RecorderAbort"), buttonWidth))
+				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2 + 8 * dpiScale);
+				if (Manager.NativeManager.Button(Resources.GetString("RecorderAbort"), buttonWidth))
 				{
 					viewer.EndRecord();
-					GUIManager.NativeManager.CloseCurrentPopup();
+					Manager.NativeManager.CloseCurrentPopup();
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 			}
 		}
 	}

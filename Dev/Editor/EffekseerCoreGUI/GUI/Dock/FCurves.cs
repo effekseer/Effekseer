@@ -130,93 +130,93 @@ namespace Effekseer.GUI.Dock
 			canControl = !isDetailControlling;
 			isDetailControlling = false;
 
-			float dpiScale = GUIManager.DpiScale;
-			var contentSize = GUIManager.NativeManager.GetContentRegionAvail();
+			float dpiScale = Manager.DpiScale;
+			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
-			GUIManager.NativeManager.PushItemWidth(-1);
+			Manager.NativeManager.PushItemWidth(-1);
 
 			if (Component.Functions.CanShowTip())
 			{
-				GUIManager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
+				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
 			}
 
-			GUIManager.NativeManager.Columns(3);
+			Manager.NativeManager.Columns(3);
 
 			if (isFirstUpdate)
 			{
-				GUIManager.NativeManager.SetColumnWidth(0, contentSize.X * 0.24f);
-				GUIManager.NativeManager.SetColumnWidth(1, contentSize.X * 0.5f);
-				GUIManager.NativeManager.SetColumnWidth(2, contentSize.X * 0.26f);
+				Manager.NativeManager.SetColumnWidth(0, contentSize.X * 0.24f);
+				Manager.NativeManager.SetColumnWidth(1, contentSize.X * 0.5f);
+				Manager.NativeManager.SetColumnWidth(2, contentSize.X * 0.26f);
 			}
 
-			GUIManager.NativeManager.Spacing();
+			Manager.NativeManager.Spacing();
 
 			// Toolbar
 			{
-				GUIManager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.ItemSpacing, new swig.Vec2(4.0f * dpiScale, 0.0f));
+				Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.ItemSpacing, new swig.Vec2(4.0f * dpiScale, 0.0f));
 
 				swig.Vec2 size = new swig.Vec2(20 * dpiScale, 20 * dpiScale);
 
-				if (GUIManager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
 				{
 					EnlargeAnchors();
 				}
 
-				if (GUIManager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.IsItemHovered())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("EnlargeAnchor") + "\n" + Resources.GetString("EnlargeAnchor_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("EnlargeAnchor") + "\n" + Resources.GetString("EnlargeAnchor_Desc"));
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), size.X, size.Y))
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), size.X, size.Y))
 				{
 					ShrinkAnchors();
 				}
 
-				if (GUIManager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.IsItemHovered())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("ShrinkAnchor") + "\n" + Resources.GetString("ShrinkAnchor_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("ShrinkAnchor") + "\n" + Resources.GetString("ShrinkAnchor_Desc"));
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 				{
 					Copy();
 				}
 
 				if (Component.Functions.CanShowTip())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 				{
 					Paste();
 				}
 
 				if (Component.Functions.CanShowTip())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				GUIManager.NativeManager.Button("?", size.X, size.Y);
+				Manager.NativeManager.Button("?", size.X, size.Y);
 				
-				if (GUIManager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.IsItemHovered())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
 				}
 
-				GUIManager.NativeManager.PopStyleVar();
+				Manager.NativeManager.PopStyleVar();
 			}
 
 			// hot key
-			if (IsDockActive() && !GUIManager.NativeManager.IsAnyItemActive() && canControl)
+			if (IsDockActive() && !Manager.NativeManager.IsAnyItemActive() && canControl)
 			{
 				int delete_num = 261;
 
@@ -226,21 +226,21 @@ namespace Effekseer.GUI.Dock
 				}
 
 				// Delete points
-				if (GUIManager.NativeManager.IsKeyDown(delete_num))
+				if (Manager.NativeManager.IsKeyDown(delete_num))
 				{
 					DeleteSelectedPoints();
 					canControl = false;
 				}
 			}
 
-			GUIManager.NativeManager.BeginChild("##FCurveTree", new swig.Vec2());
+			Manager.NativeManager.BeginChild("##FCurveTree", new swig.Vec2());
 			if (treeNodes != null)
 			{
 				UpdateTreeNode(treeNodes);
 			}
-			GUIManager.NativeManager.EndChild();
+			Manager.NativeManager.EndChild();
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
 			if (isAutoZoomMode)
 			{
@@ -259,13 +259,13 @@ namespace Effekseer.GUI.Dock
 				//autoZoomRangeMax = float.MinValue;
 			}
 
-			var graphSize = GUIManager.NativeManager.GetContentRegionAvail();
+			var graphSize = Manager.NativeManager.GetContentRegionAvail();
 			graphSize.X = Math.Max(graphSize.X, 32);
 			graphSize.Y = Math.Max(graphSize.Y, 32);
 
 			var scale = new swig.Vec2(12, 4);
 
-			if (GUIManager.NativeManager.BeginFCurve(1, graphSize, GUIManager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax))
+			if (Manager.NativeManager.BeginFCurve(1, graphSize, Manager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax))
 			{
 				UpdateGraph(treeNodes);
 			}
@@ -276,18 +276,18 @@ namespace Effekseer.GUI.Dock
 
 			if (canControl)
 			{
-				GUIManager.NativeManager.StartSelectingAreaFCurve();
+				Manager.NativeManager.StartSelectingAreaFCurve();
 			}
 
-			GUIManager.NativeManager.EndFCurve();
+			Manager.NativeManager.EndFCurve();
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
 			UpdateDetails();
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.Separator();
+			Manager.NativeManager.Separator();
 
 			CheckAndApplyUpdate(treeNodes);
 
@@ -325,7 +325,7 @@ namespace Effekseer.GUI.Dock
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
 			string nodeName = treeNode.ParamTreeNode.Node.Name.Value;
-			if (GUIManager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
+			if (Manager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
 			{
 				foreach (var fcurve in treeNode.FCurves)
 				{
@@ -337,7 +337,7 @@ namespace Effekseer.GUI.Dock
 					UpdateTreeNode(treeNode.Children[i]);
 				}
 
-				GUIManager.NativeManager.TreePop();
+				Manager.NativeManager.TreePop();
 			}
 		}
 
@@ -406,14 +406,14 @@ namespace Effekseer.GUI.Dock
 			var invalidValue = "/";
 			var selectedInd = selected.Item1 != null ? selected.Item2.GetSelectedIndex() : -1;
 
-			GUIManager.NativeManager.BeginChild("##FCurveDetails", new swig.Vec2());
-			GUIManager.NativeManager.PushItemWidth(80 * GUIManager.DpiScale);
-			GUIManager.NativeManager.Spacing();
+			Manager.NativeManager.BeginChild("##FCurveDetails", new swig.Vec2());
+			Manager.NativeManager.PushItemWidth(80 * Manager.DpiScale);
+			Manager.NativeManager.Spacing();
 
 			if (selectedInd >= 0)
 			{
 				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
-				if (GUIManager.NativeManager.DragInt(texts.frame, frameKey))
+				if (Manager.NativeManager.DragInt(texts.frame, frameKey))
 				{
 					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
 
@@ -426,7 +426,7 @@ namespace Effekseer.GUI.Dock
 					canCurveControl = false;
 				}
 
-				if (GUIManager.NativeManager.IsItemActive())
+				if (Manager.NativeManager.IsItemActive())
 				{
 					canCurveControl = false;
 					canControl = false;
@@ -435,13 +435,13 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selectedInd >= 0)
 			{
 				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
-				if (GUIManager.NativeManager.DragFloat(texts.value, frameValue))
+				if (Manager.NativeManager.DragFloat(texts.value, frameValue))
 				{
 					var diff = frameValue[0] - selected.Item2.Values[selectedInd];
 
@@ -454,7 +454,7 @@ namespace Effekseer.GUI.Dock
 					canCurveControl = false;
 				}
 
-				if (GUIManager.NativeManager.IsItemActive())
+				if (Manager.NativeManager.IsItemActive())
 				{
 					canCurveControl = false;
 					canControl = false;
@@ -463,14 +463,14 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.value, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.value, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Left key
 			if (selectedInd >= 0)
 			{
 				var leftValues = new float[] { selected.Item2.LeftKeys[selectedInd], selected.Item2.LeftValues[selectedInd] };
-				if (GUIManager.NativeManager.DragFloat2(texts.left, leftValues))
+				if (Manager.NativeManager.DragFloat2(texts.left, leftValues))
 				{
 					selected.Item2.LeftKeys[selectedInd] = leftValues[0];
 					selected.Item2.LeftValues[selectedInd] = leftValues[1];
@@ -481,7 +481,7 @@ namespace Effekseer.GUI.Dock
 					canCurveControl = false;
 				}
 
-				if (GUIManager.NativeManager.IsItemActive())
+				if (Manager.NativeManager.IsItemActive())
 				{
 					canCurveControl = false;
 					canControl = false;
@@ -490,14 +490,14 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.left, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.left, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Right key
 			if (selectedInd >= 0)
 			{
 				var rightValues = new float[] { selected.Item2.RightKeys[selectedInd], selected.Item2.RightValues[selectedInd] };
-				if (GUIManager.NativeManager.DragFloat2(texts.right, rightValues))
+				if (Manager.NativeManager.DragFloat2(texts.right, rightValues))
 				{
 					selected.Item2.RightKeys[selectedInd] = rightValues[0];
 					selected.Item2.RightValues[selectedInd] = rightValues[1];
@@ -508,7 +508,7 @@ namespace Effekseer.GUI.Dock
 					canCurveControl = false;
 				}
 
-				if (GUIManager.NativeManager.IsItemActive())
+				if (Manager.NativeManager.IsItemActive())
 				{
 					canCurveControl = false;
 					canControl = false;
@@ -517,18 +517,18 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.right, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.right, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selectedInd >= 0)
 			{
-				if (GUIManager.NativeManager.BeginCombo(texts.type, type.FieldNames[selected.Item2.Interpolations[selectedInd]].ToString(), swig.ComboFlags.None))
+				if (Manager.NativeManager.BeginCombo(texts.type, type.FieldNames[selected.Item2.Interpolations[selectedInd]].ToString(), swig.ComboFlags.None))
 				{
 					for (int i = 0; i < type.FieldNames.Count; i++)
 					{
 						bool is_selected = i == (int)selected.Item2.Interpolations[selectedInd];
 
-						if (GUIManager.NativeManager.Selectable(type.FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
+						if (Manager.NativeManager.Selectable(type.FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
 						{
 							selected.Item2.Interpolations[selectedInd] = i;
 							selected.Item2.IsDirtied = true;
@@ -537,21 +537,21 @@ namespace Effekseer.GUI.Dock
 
 						if (is_selected)
 						{
-							GUIManager.NativeManager.SetItemDefaultFocus();
+							Manager.NativeManager.SetItemDefaultFocus();
 						}
 					}
 
-					GUIManager.NativeManager.EndCombo();
+					Manager.NativeManager.EndCombo();
 				}
 
-				if (GUIManager.NativeManager.IsItemActive()) canControl = false;
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.type, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.type, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
-			GUIManager.NativeManager.Separator();
+			Manager.NativeManager.Separator();
 
 			// Start curve
 			if (selected.Item1 != null)
@@ -560,11 +560,11 @@ namespace Effekseer.GUI.Dock
 				startCurve.Update();
 				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
 
-				if (GUIManager.NativeManager.IsItemActive()) canControl = false;
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.start, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.start, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// End curve
@@ -574,11 +574,11 @@ namespace Effekseer.GUI.Dock
 				endCurve.Update();
 				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
 
-				if (GUIManager.NativeManager.IsItemActive()) canControl = false;
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.end, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.end, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Sampling
@@ -586,16 +586,16 @@ namespace Effekseer.GUI.Dock
 			{
 				var sampling = new int[] { selected.Item1.Sampling };
 
-				if (GUIManager.NativeManager.InputInt(texts.sampling + "##SamplingText", sampling))
+				if (Manager.NativeManager.InputInt(texts.sampling + "##SamplingText", sampling))
 				{
 					selected.Item1.Sampling.SetValue(sampling[0]);
 				}
 
-				if (GUIManager.NativeManager.IsItemActive()) canControl = false;
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.sampling + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.sampling + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Offset label
@@ -604,17 +604,17 @@ namespace Effekseer.GUI.Dock
 				var offset_id = texts.offset + "##OffsetMinMax";
 				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
 
-				if (GUIManager.NativeManager.DragFloat2(offset_id, offsets))
+				if (Manager.NativeManager.DragFloat2(offset_id, offsets))
 				{
 					selected.Item1.OffsetMin.SetValue(offsets[0]);
 					selected.Item1.OffsetMax.SetValue(offsets[1]);
 				}
 
-				if (GUIManager.NativeManager.IsItemActive()) canControl = false;
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.offset + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.offset + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selected.Item1 == null)
@@ -633,13 +633,13 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				GUIManager.NativeManager.InputText(texts.timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
 				timeline.SetBinding(null);
 			}
 
-			GUIManager.NativeManager.Spacing();
-			GUIManager.NativeManager.PopItemWidth();
-			GUIManager.NativeManager.EndChild();
+			Manager.NativeManager.Spacing();
+			Manager.NativeManager.PopItemWidth();
+			Manager.NativeManager.EndChild();
 		}
 
 		void GetRange(TreeNode treeNode, out float min_value, out float max_value)
@@ -1073,7 +1073,7 @@ namespace Effekseer.GUI.Dock
 			System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
 			System.IO.StringWriter writer = new System.IO.StringWriter();
 			serializer.Serialize(writer, copiedData);
-			GUIManager.NativeManager.SetClipboardText(writer.ToString());
+			Manager.NativeManager.SetClipboardText(writer.ToString());
 		}
 
 		public FCurveCopiedData CopyAsClass()
@@ -1143,7 +1143,7 @@ namespace Effekseer.GUI.Dock
 			try
 			{
 				System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
-				FCurveCopiedData data = serializer.Deserialize(new System.IO.StringReader(GUIManager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+				FCurveCopiedData data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
 				Paste(data);
 			}
 			catch
@@ -1155,7 +1155,7 @@ namespace Effekseer.GUI.Dock
 		public void Paste(FCurveCopiedData data)
 		{
 			var flatten = flattenFcurves.ToArray();
-			var offsetTime = GUIManager.Viewer.Current;
+			var offsetTime = Manager.Viewer.Current;
 
 			foreach (var curve in flatten)
 			{
@@ -1250,7 +1250,7 @@ namespace Effekseer.GUI.Dock
 			public TreeNode(FCurves window, Utl.ParameterTreeNode paramTreeNode)
 			{
 				this.window = window;
-				ID = "###" + GUIManager.GetUniqueID().ToString();
+				ID = "###" + Manager.GetUniqueID().ToString();
 
 				Children = new List<TreeNode>();
 				FCurves = new List<FCurve>();
@@ -1450,7 +1450,7 @@ namespace Effekseer.GUI.Dock
 				for (int i = 0; i < length; i++)
 				{
 					properties[i] = new FCurveProperty();
-					ids[i] = GUIManager.GetUniqueID();
+					ids[i] = Manager.GetUniqueID();
 					properties[i].Color = colors[i];
 				}
 
@@ -1522,13 +1522,13 @@ namespace Effekseer.GUI.Dock
 
 				for (int i = 0; i < properties.Length; i++)
 				{
-					var value = this.fcurves[i].GetValue(GUIManager.Viewer.Current);
+					var value = this.fcurves[i].GetValue(Manager.Viewer.Current);
 
 					string labelName = Name + " : " + names[i] + " (" + value + ")";
 					string labelID = "###FCurveLabel_" + nodeName + "_" + Name + "_" + names[i];
-					if (GUIManager.NativeManager.Selectable(labelName + labelID, properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick | swig.SelectableFlags.SpanAllColumns))
+					if (Manager.NativeManager.Selectable(labelName + labelID, properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick | swig.SelectableFlags.SpanAllColumns))
 					{
-						if (GUIManager.NativeManager.IsMouseDoubleClicked(0))
+						if (Manager.NativeManager.IsMouseDoubleClicked(0))
 						{
 							properties[i].IsShown = true;
 
@@ -1547,7 +1547,7 @@ namespace Effekseer.GUI.Dock
 						}
 						else
 						{
-							if (GUIManager.NativeManager.IsKeyDown(LEFT_SHIFT) || GUIManager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 							{
 								properties[i].IsShown = !properties[i].IsShown;
 							}
@@ -1579,7 +1579,7 @@ namespace Effekseer.GUI.Dock
 
 					bool isSelected = false;
 
-					if (GUIManager.NativeManager.FCurve(
+					if (Manager.NativeManager.FCurve(
 						ids[i],
 						properties[i].Keys,
 						properties[i].Values,
@@ -1615,11 +1615,11 @@ namespace Effekseer.GUI.Dock
 
 						if (isSelected)
 						{
-							if (GUIManager.NativeManager.IsKeyDown(LEFT_SHIFT) || GUIManager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 							{
 								properties[i].Selected = !properties[i].Selected;
 							}
-							else if (GUIManager.NativeManager.IsKeyDown(LEFT_ALT) || GUIManager.NativeManager.IsKeyDown(RIGHT_ALT))
+							else if (Manager.NativeManager.IsKeyDown(LEFT_ALT) || Manager.NativeManager.IsKeyDown(RIGHT_ALT))
 							{
 								properties[i].Selected = true;
 							}

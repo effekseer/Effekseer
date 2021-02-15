@@ -29,31 +29,31 @@ namespace Effekseer.GUI.Dialog
 			this.disposed = disposed;
 
 			// if already show window, don't add control
-			if(GUIManager.Controls.Internal.Any(_=>_ is SaveOnDisposing))
+			if(Manager.Controls.Internal.Any(_=>_ is SaveOnDisposing))
 			{
 				return;
 			}
 
-			GUIManager.AddControl(this);
+			Manager.AddControl(this);
 		}
 
 		public void Update()
 		{
-			float buttonSizeX = 100 * GUIManager.DpiScale;
+			float buttonSizeX = 100 * Manager.DpiScale;
 
 			if (isFirstUpdate)
             {
-				GUIManager.NativeManager.OpenPopup(id);
+				Manager.NativeManager.OpenPopup(id);
                 isFirstUpdate = false;
             }
 
-            if (GUIManager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
+            if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
             {
-				GUIManager.NativeManager.Text(message);
+				Manager.NativeManager.Text(message);
 
-				GUIManager.NativeManager.Separator();
+				Manager.NativeManager.Separator();
 
-                if (GUIManager.NativeManager.Button("Yes", buttonSizeX))
+                if (Manager.NativeManager.Button("Yes", buttonSizeX))
 				{
 					if(Commands.Overwrite())
 					{
@@ -62,22 +62,22 @@ namespace Effekseer.GUI.Dialog
 					}
                 }
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.Button("No", buttonSizeX))
+				if (Manager.NativeManager.Button("No", buttonSizeX))
                 {
                     ShouldBeRemoved = true;
 					disposed();        
                 }
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.Button("Cancel", buttonSizeX))
+				if (Manager.NativeManager.Button("Cancel", buttonSizeX))
                 {
                     ShouldBeRemoved = true;
                 }
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
             }
             else
             {

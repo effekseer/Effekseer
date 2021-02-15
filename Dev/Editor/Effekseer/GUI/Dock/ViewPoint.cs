@@ -29,14 +29,14 @@ namespace Effekseer.GUI.Dock
 		{
 			Label = Icons.PanelViewPoint + Resources.GetString("CameraSettings") + "###CameraSettings";
 
-			id_f = "###" + GUIManager.GetUniqueID().ToString();
-			id_rx = "###" + GUIManager.GetUniqueID().ToString();
-			id_ry = "###" + GUIManager.GetUniqueID().ToString();
-			id_d = "###" + GUIManager.GetUniqueID().ToString();
-			id_s = "###" + GUIManager.GetUniqueID().ToString();
-			id_t = "###" + GUIManager.GetUniqueID().ToString();
-            id_cs = "###" + GUIManager.GetUniqueID().ToString();
-            id_ce = "###" + GUIManager.GetUniqueID().ToString();
+			id_f = "###" + Manager.GetUniqueID().ToString();
+			id_rx = "###" + Manager.GetUniqueID().ToString();
+			id_ry = "###" + Manager.GetUniqueID().ToString();
+			id_d = "###" + Manager.GetUniqueID().ToString();
+			id_s = "###" + Manager.GetUniqueID().ToString();
+			id_t = "###" + Manager.GetUniqueID().ToString();
+            id_cs = "###" + Manager.GetUniqueID().ToString();
+            id_ce = "###" + Manager.GetUniqueID().ToString();
 
 			TabToolTip = Resources.GetString("CameraSettings");
 		}
@@ -52,7 +52,7 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			var viewerParameter = GUIManager.Viewer.GetViewerParamater();
+			var viewerParameter = Manager.Viewer.GetViewerParamater();
 
 			var fx = viewerParameter.FocusX;
 			var fy = viewerParameter.FocusY;
@@ -73,7 +73,7 @@ namespace Effekseer.GUI.Dock
 
 			bool dirty = false;
 
-            if (GUIManager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
+            if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
 			{
 				viewerParameter.FocusX = f[0];
 				viewerParameter.FocusY = f[1];
@@ -81,64 +81,64 @@ namespace Effekseer.GUI.Dock
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
 			{
 				viewerParameter.AngleX = rx_[0];
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.DragFloat(Resources.GetString("YRotation") + id_ry, ry_))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("YRotation") + id_ry, ry_))
 			{
 				viewerParameter.AngleY = ry_[0];
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.DragFloat(Resources.GetString("PoVDistance") + id_d, d))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("PoVDistance") + id_d, d))
 			{
 				viewerParameter.Distance = d[0];
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.DragFloat(Resources.GetString("Zoom") + id_s, s))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("Zoom") + id_s, s))
 			{
 				viewerParameter.RateOfMagnification = s[0];
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
             {
                 viewerParameter.ClippingStart = cs[0];
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
             {
                 viewerParameter.ClippingEnd = ce[0];
 				dirty = true;
 			}
 
-			if (GUIManager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
 			{
-				if(GUIManager.NativeManager.Selectable(viewTypes[0]))
+				if(Manager.NativeManager.Selectable(viewTypes[0]))
 				{
 					viewerParameter.IsPerspective = true;
 					viewerParameter.IsOrthographic = false;
-					GUIManager.NativeManager.SetItemDefaultFocus();
+					Manager.NativeManager.SetItemDefaultFocus();
 					dirty = true;
 				}
 
-				if (GUIManager.NativeManager.Selectable(viewTypes[1]))
+				if (Manager.NativeManager.Selectable(viewTypes[1]))
 				{
 					viewerParameter.IsOrthographic = true;
 					viewerParameter.IsPerspective = false;
-					GUIManager.NativeManager.SetItemDefaultFocus();
+					Manager.NativeManager.SetItemDefaultFocus();
 					dirty = true;
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
 
-            if (GUIManager.NativeManager.Button(Resources.GetString("Save") + "###btn1"))
+            if (Manager.NativeManager.Button(Resources.GetString("Save") + "###btn1"))
             {
                 var filter = "view";
 
@@ -168,7 +168,7 @@ namespace Effekseer.GUI.Dock
                 }
             }
 
-            if (GUIManager.NativeManager.Button(Resources.GetString("Load") + "###btn2"))
+            if (Manager.NativeManager.Button(Resources.GetString("Load") + "###btn2"))
             {
                 var filter = "view";
 
@@ -197,7 +197,7 @@ namespace Effekseer.GUI.Dock
 
 			if (dirty)
 			{
-				GUIManager.Viewer.SetViewerParamater(viewerParameter);
+				Manager.Viewer.SetViewerParamater(viewerParameter);
 			}
 		}
 	}

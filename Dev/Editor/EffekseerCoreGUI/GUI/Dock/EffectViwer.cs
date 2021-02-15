@@ -35,49 +35,49 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			float textHeight = GUIManager.NativeManager.GetTextLineHeight();
-			float frameHeight = GUIManager.NativeManager.GetFrameHeightWithSpacing();
-			float dpiScale = GUIManager.DpiScale;
+			float textHeight = Manager.NativeManager.GetTextLineHeight();
+			float frameHeight = Manager.NativeManager.GetFrameHeightWithSpacing();
+			float dpiScale = Manager.DpiScale;
 			float padding = 4.0f * dpiScale;
 
 			IsHovered = false;
 
-			var contentSize = GUIManager.NativeManager.GetContentRegionAvail();
+			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
 			// Menu
 			contentSize.X = System.Math.Max(1, contentSize.X);
 			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
 
-			var p = GUIManager.Native.RenderView((int)contentSize.X, (int)contentSize.Y);
-			GUIManager.NativeManager.Image(p, (int)contentSize.X, (int)contentSize.Y);
+			var p = Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y);
+			Manager.NativeManager.Image(p, (int)contentSize.X, (int)contentSize.Y);
 
-			IsHovered = GUIManager.NativeManager.IsWindowHovered();
+			IsHovered = Manager.NativeManager.IsWindowHovered();
 
-			GUIManager.NativeManager.Indent(padding);
+			Manager.NativeManager.Indent(padding);
 
 			// Enum
-			GUIManager.NativeManager.PushItemWidth(textHeight * 7.0f);
+			Manager.NativeManager.PushItemWidth(textHeight * 7.0f);
 			renderMode.Update();
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			GUIManager.NativeManager.PushItemWidth(textHeight * 2.5f);
+			Manager.NativeManager.PushItemWidth(textHeight * 2.5f);
 			viewMode.Update();
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
 			string perfText = 
-				"D:" + GUIManager.Native.GetAndResetDrawCall().ToString("D3") + "  " + 
-				"V:" + GUIManager.Native.GetAndResetVertexCount().ToString("D5") + "  " +
-				"P:" + GUIManager.Native.GetInstanceCount().ToString("D5") + " ";
+				"D:" + Manager.Native.GetAndResetDrawCall().ToString("D3") + "  " + 
+				"V:" + Manager.Native.GetAndResetVertexCount().ToString("D5") + "  " +
+				"P:" + Manager.Native.GetInstanceCount().ToString("D5") + " ";
 
-			GUIManager.NativeManager.SameLine(contentSize.X - GUIManager.NativeManager.CalcTextSize(perfText).X);
+			Manager.NativeManager.SameLine(contentSize.X - Manager.NativeManager.CalcTextSize(perfText).X);
 
 			// Display performance information
-			GUIManager.NativeManager.Text(perfText);
-			if (GUIManager.NativeManager.IsItemHovered())
+			Manager.NativeManager.Text(perfText);
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				GUIManager.NativeManager.SetTooltip(
+				Manager.NativeManager.SetTooltip(
 					"D: Draw calls of current rendering.\n" +
 					"V: Vertex count of current rendering.\n" +
 					"P: Particle count of current rendering.");

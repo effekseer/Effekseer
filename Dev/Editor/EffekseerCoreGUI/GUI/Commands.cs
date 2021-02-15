@@ -152,9 +152,9 @@ namespace Effekseer.GUI
 			{
 				Core.SaveTo(Core.Root.GetFullPath());
 
-				if (GUIManager.Network.SendOnSave)
+				if (Manager.Network.SendOnSave)
 				{
-					GUIManager.Network.Send();
+					Manager.Network.Send();
 				}
 			}
 
@@ -183,9 +183,9 @@ namespace Effekseer.GUI
 
 				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
-				if (GUIManager.Network.SendOnSave)
+				if (Manager.Network.SendOnSave)
 				{
-					GUIManager.Network.Send();
+					Manager.Network.Send();
 				}
 
 				return true;
@@ -198,7 +198,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Exit")]
 		public static bool Exit()
 		{
-			GUIManager.NativeManager.Close();
+			Manager.NativeManager.Close();
 			return true;
 		}
 
@@ -206,19 +206,19 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.PlayViewer")]
 		public static bool Play()
 		{
-			if (GUIManager.Viewer.IsPlaying && !GUIManager.Viewer.IsPaused)
+			if (Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
 			{
-				GUIManager.Viewer.PauseAndResumeViewer();
+				Manager.Viewer.PauseAndResumeViewer();
 			}
 			else
 			{
-				if (GUIManager.Viewer.IsPaused)
+				if (Manager.Viewer.IsPaused)
 				{
-					GUIManager.Viewer.PauseAndResumeViewer();
+					Manager.Viewer.PauseAndResumeViewer();
 				}
 				else
 				{
-					GUIManager.Viewer.PlayViewer();
+					Manager.Viewer.PlayViewer();
 				}
 			}
 
@@ -229,7 +229,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.StopViewer")]
 		public static bool Stop()
 		{
-			GUIManager.Viewer.StopViewer();
+			Manager.Viewer.StopViewer();
 			return true;
 		}
 
@@ -237,7 +237,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.StepViewer")]
 		public static bool Step()
 		{
-			GUIManager.Viewer.StepViewer(false);
+			Manager.Viewer.StepViewer(false);
 			return true;
 		}
 
@@ -245,7 +245,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.BackStepViewer")]
 		public static bool BackStep()
 		{
-			GUIManager.Viewer.BackStepViewer();
+			Manager.Viewer.BackStepViewer();
 			return true;
 		}
 
@@ -272,7 +272,7 @@ namespace Effekseer.GUI
 			if (Core.SelectedNode != null)
 			{
 				var data = Core.Copy(Core.SelectedNode);
-				GUIManager.NativeManager.SetClipboardText(data);
+				Manager.NativeManager.SetClipboardText(data);
 				return true;
 			}
 
@@ -285,7 +285,7 @@ namespace Effekseer.GUI
 		{
 			if (Core.SelectedNode != null)
 			{
-				var data = GUIManager.NativeManager.GetClipboardText();
+				var data = Manager.NativeManager.GetClipboardText();
 
 				var selected = Core.SelectedNode;
 
@@ -319,7 +319,7 @@ namespace Effekseer.GUI
 		{
 			if (Core.SelectedNode != null)
 			{
-				var data = GUIManager.NativeManager.GetClipboardText();
+				var data = Manager.NativeManager.GetClipboardText();
 
 				if(Core.IsValidXml(data))
 				{

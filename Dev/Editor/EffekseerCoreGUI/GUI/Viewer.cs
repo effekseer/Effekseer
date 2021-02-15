@@ -626,7 +626,7 @@ namespace Effekseer.GUI
 
 		unsafe void Export()
 		{
-			GUIManager.Viewer.SetDynamicInput(
+			Manager.Viewer.SetDynamicInput(
 				Core.Dynamic.Inputs.Values[0].Input.Value,
 				Core.Dynamic.Inputs.Values[1].Input.Value,
 				Core.Dynamic.Inputs.Values[2].Input.Value,
@@ -844,7 +844,7 @@ namespace Effekseer.GUI
 
 			if (viewerMode == Data.OptionValues.ViewMode._3D)
 			{
-				var param = GUIManager.Viewer.GetViewerParamater();
+				var param = Manager.Viewer.GetViewerParamater();
 				param.ViewerMode = (swig.ViewMode)viewerMode;
 				param.IsPerspective = true;
 				param.IsOrthographic = false;
@@ -853,14 +853,14 @@ namespace Effekseer.GUI
 				param.FocusZ = 0.0f;
 				param.AngleX = 30.0f;
 				param.AngleY = -30.0f;
-				GUIManager.Viewer.SetViewerParamater(param);
+				Manager.Viewer.SetViewerParamater(param);
 				Core.Option.IsXYGridShown.SetValueDirectly(false);
 				Core.Option.IsXZGridShown.SetValueDirectly(true);
 				Core.Option.IsYZGridShown.SetValueDirectly(false);
 			}
 			else if (viewerMode == Data.OptionValues.ViewMode._2D)
 			{
-				var param = GUIManager.Viewer.GetViewerParamater();
+				var param = Manager.Viewer.GetViewerParamater();
 				param.ViewerMode = (swig.ViewMode)viewerMode;
 				param.IsPerspective = false;
 				param.IsOrthographic = true;
@@ -869,7 +869,7 @@ namespace Effekseer.GUI
 				param.FocusZ = 0.0f;
 				param.AngleX = 0.0f;
 				param.AngleY = 0.0f;
-				GUIManager.Viewer.SetViewerParamater(param);
+				Manager.Viewer.SetViewerParamater(param);
 				Core.Option.IsXYGridShown.SetValueDirectly(true);
 				Core.Option.IsXZGridShown.SetValueDirectly(false);
 				Core.Option.IsYZGridShown.SetValueDirectly(false);

@@ -95,11 +95,11 @@ namespace Effekseer.GUI.Component
 
 		public ColorWithRandom()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_r1 = "###" + GUIManager.GetUniqueID().ToString();
-			id_r2 = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_r1 = "###" + Manager.GetUniqueID().ToString();
+			id_r2 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -135,9 +135,9 @@ namespace Effekseer.GUI.Component
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
 
-			GUIManager.NativeManager.PushItemWidth(GUIManager.NativeManager.GetColumnWidth() - 48 * GUIManager.DpiScale);
+			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
-			if (GUIManager.NativeManager.ColorEdit4(id1, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
+			if (Manager.NativeManager.ColorEdit4(id1, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
 				isWriting = true;
 
@@ -147,14 +147,14 @@ namespace Effekseer.GUI.Component
 			}
 
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			Popup();
 
-			GUIManager.NativeManager.SameLine();
-			GUIManager.NativeManager.Text(Resources.GetString("Min"));
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(Resources.GetString("Min"));
 
-			if (GUIManager.NativeManager.ColorEdit4(id2, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
+			if (Manager.NativeManager.ColorEdit4(id2, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
 				isWriting = true;
 
@@ -164,7 +164,7 @@ namespace Effekseer.GUI.Component
 			}
 
 
-			isActive_Current = isActive_Current || GUIManager.NativeManager.IsItemActive();
+			isActive_Current = isActive_Current || Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -175,10 +175,10 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			GUIManager.NativeManager.SameLine();
-			GUIManager.NativeManager.Text(Resources.GetString("Max"));
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(Resources.GetString("Max"));
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
 			valueChangingProp.Disable();
 		}
@@ -190,24 +190,24 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				var txt_r_r1 = "RGBA";
 				var txt_r_r2 = "HSVA";
 
-				if (GUIManager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.ColorSpace == Data.ColorSpace.RGBA))
+				if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.ColorSpace == Data.ColorSpace.RGBA))
 				{
 					binding.ChangeColorSpace(Data.ColorSpace.RGBA, true);
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.ColorSpace == Data.ColorSpace.HSVA))
+				if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.ColorSpace == Data.ColorSpace.HSVA))
 				{
 					binding.ChangeColorSpace(Data.ColorSpace.HSVA, true);
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 				isPopupShown = true;
 			}
 

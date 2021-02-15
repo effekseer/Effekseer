@@ -50,7 +50,7 @@ namespace Effekseer.GUI.Component
 
 		public ColorCtrl()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -84,7 +84,7 @@ namespace Effekseer.GUI.Component
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
 
-			if (GUIManager.NativeManager.ColorEdit4(id, internalValue, colorSpace))
+			if (Manager.NativeManager.ColorEdit4(id, internalValue, colorSpace))
 			{
 				if (EnableUndo)
 				{
@@ -101,7 +101,7 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Disable();
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{

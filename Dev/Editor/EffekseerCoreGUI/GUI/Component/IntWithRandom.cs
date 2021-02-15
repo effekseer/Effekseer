@@ -49,12 +49,12 @@ namespace Effekseer.GUI.Component
 
 		public IntWithRandom()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
-			id_r1 = "###" + GUIManager.GetUniqueID().ToString();
-			id_r2 = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_d1 = "###" + GUIManager.GetUniqueID().ToString();
-			id_d2 = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
+			id_r1 = "###" + Manager.GetUniqueID().ToString();
+			id_r2 = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d1 = "###" + Manager.GetUniqueID().ToString();
+			id_d2 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -144,7 +144,7 @@ namespace Effekseer.GUI.Component
 				range_2_max = binding.ValueMax;
 			}
 
-			if (GUIManager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step,
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step,
 				range_1_min, range_1_max,
 				range_2_min, range_2_max,
 				txt_r1 + ":" + "%.0f", txt_r2 + ":" + "%.0f"))
@@ -186,7 +186,7 @@ namespace Effekseer.GUI.Component
 			}
 
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -204,7 +204,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				if(binding.CanSelectDynamicEquation)
 				{
@@ -221,20 +221,20 @@ namespace Effekseer.GUI.Component
 					var txt_r_r1 = Resources.GetString("Gauss");
 					var txt_r_r2 = Resources.GetString("Range");
 
-					if (GUIManager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+					if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 					{
 						binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
 					}
 
-					GUIManager.NativeManager.SameLine();
+					Manager.NativeManager.SameLine();
 
-					if (GUIManager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+					if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
 					{
 						binding.DrawnAs = Data.DrawnAs.MaxAndMin;
 					}
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 
 				isPopupShown = true;
 			}

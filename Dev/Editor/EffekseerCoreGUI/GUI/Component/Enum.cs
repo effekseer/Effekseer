@@ -103,7 +103,7 @@ namespace Effekseer.GUI.Component
 
 		public Enum()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -134,13 +134,13 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(GUIManager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None))
+			if(Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None))
 			{
 				for(int i = 0; i < FieldNames.Count; i++)
 				{
 					bool is_selected = (FieldNames[v.Item2] == FieldNames[i]);
 
-					if (GUIManager.NativeManager.Selectable(FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
+					if (Manager.NativeManager.Selectable(FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
 					{
 						selectedValues = enums[i];
 
@@ -156,12 +156,12 @@ namespace Effekseer.GUI.Component
 						
 					if (is_selected)
 					{
-						GUIManager.NativeManager.SetItemDefaultFocus();
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
 
 			if (EnableUndo)

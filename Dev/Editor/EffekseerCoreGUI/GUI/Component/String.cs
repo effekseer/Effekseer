@@ -46,7 +46,7 @@ namespace Effekseer.GUI.Component
 
 		public String()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -94,9 +94,9 @@ namespace Effekseer.GUI.Component
 
 			if(binding.IsMultiLine)
 			{
-				if (GUIManager.NativeManager.InputTextMultiline(id, initialValue))
+				if (Manager.NativeManager.InputTextMultiline(id, initialValue))
 				{
-					var v = GUIManager.NativeManager.GetInputTextResult();
+					var v = Manager.NativeManager.GetInputTextResult();
 
 					if (EnableUndo)
 					{
@@ -110,9 +110,9 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				if (GUIManager.NativeManager.InputText(id, initialValue))
+				if (Manager.NativeManager.InputText(id, initialValue))
 				{
-					var v = GUIManager.NativeManager.GetInputTextResult();
+					var v = Manager.NativeManager.GetInputTextResult();
 
 					if (EnableUndo)
 					{
@@ -126,7 +126,7 @@ namespace Effekseer.GUI.Component
 			}
 
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if(isActive && !isActive_Current)
 			{

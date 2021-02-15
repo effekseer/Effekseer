@@ -42,8 +42,8 @@ namespace Effekseer
 				typeof(Dock.AdvancedRenderCommonValues),
 			};
 
-			GUIManager.dockTypes = dockTypes;
-			if (!GUIManager.Initialize(960, 540, () => new GUI.Menu.MainMenu()))
+			Manager.dockTypes = dockTypes;
+			if (!Manager.Initialize(960, 540, () => new GUI.Menu.MainMenu()))
 			{
 				throw new InvalidOperationException("Initialization failed.");
 			}
@@ -51,60 +51,60 @@ namespace Effekseer
 
 		protected override void OnUpdate()
 		{
-			GUIManager.Update();
+			Manager.Update();
 		}
 
 		protected override void OnTerminate()
 		{
-			GUIManager.Terminate();
+			Manager.Terminate();
 			Process.MaterialEditor.Terminate();
 		}
 
 		protected override void OnResetWindowActually()
 		{
-			if (GUIManager.effectViewer == null)
+			if (Manager.effectViewer == null)
 			{
-				GUIManager.effectViewer = new GUI.Dock.EffectViwer();
-				if (GUIManager.dockManager != null)
+				Manager.effectViewer = new GUI.Dock.EffectViwer();
+				if (Manager.dockManager != null)
 				{
-					GUIManager.dockManager.Controls.Add(GUIManager.effectViewer);
+					Manager.dockManager.Controls.Add(Manager.effectViewer);
 				}
 			}
 
-			var viewerController = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.ViewerController), null);
-			var nodeTreeView = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.NodeTreeView), null);
-			var commonValues = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.CommonValues), null);
-			var locationValues = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.LocationValues), null);
-			var rotationValues = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.RotationValues), null);
-			var scaleValues = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.ScaleValues), null);
-			var rendererCommonValues = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.RendererCommonValues), null);
-			var rendererValues = GUIManager.SelectOrShowWindow(typeof(GUI.Dock.RendererValues), null);
+			var viewerController = Manager.SelectOrShowWindow(typeof(GUI.Dock.ViewerController), null);
+			var nodeTreeView = Manager.SelectOrShowWindow(typeof(GUI.Dock.NodeTreeView), null);
+			var commonValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.CommonValues), null);
+			var locationValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.LocationValues), null);
+			var rotationValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.RotationValues), null);
+			var scaleValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.ScaleValues), null);
+			var rendererCommonValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.RendererCommonValues), null);
+			var rendererValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.RendererValues), null);
 
-			uint windowId = GUIManager.NativeManager.BeginDockLayout();
+			uint windowId = Manager.NativeManager.BeginDockLayout();
 
 			uint dockLeftID = 0, dockRightID = 0;
-			GUIManager.NativeManager.DockSplitNode(windowId, swig.DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
+			Manager.NativeManager.DockSplitNode(windowId, swig.DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
 
 			uint dockLeftTop = 0, dockLeftBottom = 0;
-			GUIManager.NativeManager.DockSplitNode(dockLeftID, swig.DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
+			Manager.NativeManager.DockSplitNode(dockLeftID, swig.DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
 
 			uint dockRightTop = 0, dockRightBottom = 0;
-			GUIManager.NativeManager.DockSplitNode(dockRightID, swig.DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
+			Manager.NativeManager.DockSplitNode(dockRightID, swig.DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
 
-			GUIManager.NativeManager.DockSetNodeFlags(dockLeftTop, swig.DockNodeFlags.HiddenTabBar);
-			GUIManager.NativeManager.DockSetNodeFlags(dockLeftBottom, swig.DockNodeFlags.HiddenTabBar);
+			Manager.NativeManager.DockSetNodeFlags(dockLeftTop, swig.DockNodeFlags.HiddenTabBar);
+			Manager.NativeManager.DockSetNodeFlags(dockLeftBottom, swig.DockNodeFlags.HiddenTabBar);
 
-			GUIManager.NativeManager.DockSetWindow(dockLeftTop, GUIManager.effectViewer.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockLeftBottom, viewerController.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightTop, commonValues.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightTop, locationValues.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightTop, rotationValues.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightTop, scaleValues.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightTop, rendererValues.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightTop, rendererCommonValues.WindowID);
-			GUIManager.NativeManager.DockSetWindow(dockRightBottom, nodeTreeView.WindowID);
+			Manager.NativeManager.DockSetWindow(dockLeftTop, Manager.effectViewer.WindowID);
+			Manager.NativeManager.DockSetWindow(dockLeftBottom, viewerController.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTop, commonValues.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTop, locationValues.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTop, rotationValues.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTop, scaleValues.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTop, rendererValues.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightTop, rendererCommonValues.WindowID);
+			Manager.NativeManager.DockSetWindow(dockRightBottom, nodeTreeView.WindowID);
 
-			GUIManager.NativeManager.EndDockLayout();
+			Manager.NativeManager.EndDockLayout();
 		}
 	}
 }

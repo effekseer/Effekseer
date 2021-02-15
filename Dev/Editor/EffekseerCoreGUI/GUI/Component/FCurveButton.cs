@@ -16,7 +16,7 @@ namespace Effekseer.GUI.Component
 
 		public FCurveButton()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void FixValue()
@@ -31,10 +31,10 @@ namespace Effekseer.GUI.Component
 		public override void Update()
 		{
 			
-			if(GUIManager.NativeManager.Button(Resources.GetString("FCurves") + id))
+			if(Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
 			{
-				var windowSize = GUIManager.NativeManager.GetWindowSize();
-				var panel = GUIManager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(windowSize.X *0.75f, windowSize.Y * 0.5f)) as Dock.FCurves;
+				var windowSize = Manager.NativeManager.GetWindowSize();
+				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(windowSize.X *0.75f, windowSize.Y * 0.5f)) as Dock.FCurves;
 				panel?.UnselectAll();
 				panel?.SelectFCurve(boundObject);
 			}	

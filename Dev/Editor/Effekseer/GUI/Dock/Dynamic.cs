@@ -34,7 +34,7 @@ namespace Effekseer.GUI.Dock
 
 		private static void Input_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			GUIManager.Viewer.SetDynamicInput(
+			Manager.Viewer.SetDynamicInput(
 				Core.Dynamic.Inputs.Values[0].Input.Value,
 				Core.Dynamic.Inputs.Values[1].Input.Value,
 				Core.Dynamic.Inputs.Values[2].Input.Value,
@@ -62,17 +62,17 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			GUIManager.NativeManager.Text(Resources.GetString("DynamicInput"));
+			Manager.NativeManager.Text(Resources.GetString("DynamicInput"));
 
 			paramerterListInput.Update();
 
-			GUIManager.NativeManager.Separator();
+			Manager.NativeManager.Separator();
 
-			GUIManager.NativeManager.Text(Resources.GetString("DynamicEquation"));
+			Manager.NativeManager.Text(Resources.GetString("DynamicEquation"));
 
-			float width = GUIManager.NativeManager.GetContentRegionAvail().X;
+			float width = Manager.NativeManager.GetContentRegionAvail().X;
 			
-			GUIManager.NativeManager.PushItemWidth(width - GUIManager.NativeManager.GetTextLineHeight() * 5.5f);
+			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 			
 			var nextParam = Component.ObjectCollection.Select("", "", Core.Dynamic.Equations.Selected, false, Core.Dynamic.Equations);
 
@@ -81,18 +81,18 @@ namespace Effekseer.GUI.Dock
 				Core.Dynamic.Equations.Selected = nextParam;
 			}
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
+			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
 				Core.Dynamic.Equations.New();
 			}
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
+			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
 			{
 				Core.Dynamic.Equations.Delete(Core.Dynamic.Equations.Selected);
 			}
@@ -100,7 +100,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList.Update();
 
 			if (Core.Dynamic.Equations.Selected != null
-				&& GUIManager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile")
+				&& Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile")
 				&& Core.Dynamic.Equations.Selected is DynamicEquation selected)
 			{
 				var compiler = new InternalScript.Compiler();
@@ -110,7 +110,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// show errors
-			GUIManager.NativeManager.Text(compileResult);
+			Manager.NativeManager.Text(compileResult);
 		}
 
 		private void Read()

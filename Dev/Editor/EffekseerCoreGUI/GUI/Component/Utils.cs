@@ -26,7 +26,7 @@ namespace Effekseer.GUI.Component
 				selectedID = v.Item1.Name.Value + "###SelectedObj" + v.Item2.ToString();
 			}
 
-			if (GUIManager.NativeManager.BeginCombo(paramName + "###Selected" + id, selectedID, swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(paramName + "###Selected" + id, selectedID, swig.ComboFlags.None))
 			{
 
 				if (hasDefault)
@@ -35,14 +35,14 @@ namespace Effekseer.GUI.Component
 
 					var name = "Default###Selected";
 
-					if (GUIManager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
+					if (Manager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
 					{
 						nextSelected = null;
 					}
 
 					if (is_selected)
 					{
-						GUIManager.NativeManager.SetItemDefaultFocus();
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
@@ -61,18 +61,18 @@ namespace Effekseer.GUI.Component
 						name = collection.Values[i].Name.Value + "###ObjName" + i.ToString();
 					}
 
-					if (GUIManager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
+					if (Manager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
 					{
 						nextSelected = collection.Values[i];
 					}
 
 					if (is_selected)
 					{
-						GUIManager.NativeManager.SetItemDefaultFocus();
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
 
 			return nextSelected;
@@ -93,19 +93,19 @@ namespace Effekseer.GUI.Component
 
 		public static bool CanShowTip()
 		{
-			return GUIManager.NativeManager.IsItemHovered() && GUIManager.NativeManager.GetHoveredIDTimer() > 0.25f;
+			return Manager.NativeManager.IsItemHovered() && Manager.NativeManager.GetHoveredIDTimer() > 0.25f;
 		}
 
 		public static void ShowReset(Data.IResettableValue value, string id)
 		{
-			if (GUIManager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
+			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
 			{
 				value.ResetValue();
 			}
 
 			if(CanShowTip())
 			{
-				GUIManager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
+				Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
 			}
 		}
 
@@ -125,7 +125,7 @@ namespace Effekseer.GUI.Component
 
 		public void Update()
 		{
-			float dpiScale = GUIManager.DpiScale;
+			float dpiScale = Manager.DpiScale;
 			swig.Vec2 size = new swig.Vec2(18 * dpiScale, 18 * dpiScale);
 
 			if (!Images.Icons.ContainsKey("Copy"))
@@ -133,25 +133,25 @@ namespace Effekseer.GUI.Component
 				ErrorUtils.ThrowFileNotfound();
 			}
 
-			if (GUIManager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
+			if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 			{
 				var o = getter();
 				if(o != null)
 				{
-					GUIManager.NativeManager.SetClipboardText(Core.Copy(elementName, o));
+					Manager.NativeManager.SetClipboardText(Core.Copy(elementName, o));
 				}
 			}
 
 			if(Functions.CanShowTip())
 			{
-				GUIManager.NativeManager.SetTooltip(Resources.GetString("Panel_Copy_Desc"));
+				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Copy_Desc"));
 			}
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			if (GUIManager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
+			if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 			{
-				var str = GUIManager.NativeManager.GetClipboardText();
+				var str = Manager.NativeManager.GetClipboardText();
 
 				if (!string.IsNullOrEmpty(str))
 				{
@@ -166,7 +166,7 @@ namespace Effekseer.GUI.Component
 
 			if (Functions.CanShowTip())
 			{
-				GUIManager.NativeManager.SetTooltip(Resources.GetString("Panel_Paste_Desc"));
+				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Paste_Desc"));
 			}
 		}
 	}
@@ -176,11 +176,11 @@ namespace Effekseer.GUI.Component
 
 		public void Enable(dynamic value)
 		{
-			if (GUIManager.DoesChangeColorOnChangedValue && (value?.IsValueChangedFromDefault ?? false))
+			if (Manager.DoesChangeColorOnChangedValue && (value?.IsValueChangedFromDefault ?? false))
 			{
 				flag = true;
-				GUIManager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Border, 0x77ffff11);
-				GUIManager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FrameBorderSize, 1);
+				Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Border, 0x77ffff11);
+				Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FrameBorderSize, 1);
 			}
 		}
 
@@ -188,8 +188,8 @@ namespace Effekseer.GUI.Component
 		{
 			if (flag)
 			{
-				GUIManager.NativeManager.PopStyleColor();
-				GUIManager.NativeManager.PopStyleVar();
+				Manager.NativeManager.PopStyleColor();
+				Manager.NativeManager.PopStyleVar();
 			}
 			flag = false;
 		}
@@ -206,9 +206,9 @@ namespace Effekseer.GUI.Component
 		{
 			if (dynamicEquation.Index != -1)
 			{
-				GUIManager.NativeManager.BeginTooltip();
-				GUIManager.NativeManager.Text(dynamicEquation.Value.Code.Value);
-				GUIManager.NativeManager.EndTooltip();
+				Manager.NativeManager.BeginTooltip();
+				Manager.NativeManager.Text(dynamicEquation.Value.Code.Value);
+				Manager.NativeManager.EndTooltip();
 			}
 		}
  	}
@@ -245,7 +245,7 @@ namespace Effekseer.GUI.Component
 
 		public LanguageSelector()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 
 			FieldNames.AddRange(LanguageTable.Languages.Select(_=> MultiLanguageTextProvider.GetText("Language_" + _)));
 		}
@@ -277,29 +277,29 @@ namespace Effekseer.GUI.Component
 			{
 			}
 
-			if (GUIManager.NativeManager.BeginCombo(id, FieldNames[LanguageTable.SelectedIndex], swig.ComboFlags.None, null))
+			if (Manager.NativeManager.BeginCombo(id, FieldNames[LanguageTable.SelectedIndex], swig.ComboFlags.None, null))
 			{
 				for (int i = 0; i < FieldNames.Count; i++)
 				{
 					bool is_selected = (FieldNames[LanguageTable.SelectedIndex] == FieldNames[i]);
 
-					if (GUIManager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None))
+					if (Manager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None))
 					{
 						LanguageTable.SelectLanguage(i);
 					}
 
 					if (is_selected)
 					{
-						GUIManager.NativeManager.SetItemDefaultFocus();
+						Manager.NativeManager.SetItemDefaultFocus();
 					}
 
 				}
 
-				GUIManager.NativeManager.EndCombo();
+				Manager.NativeManager.EndCombo();
 			}
 
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{

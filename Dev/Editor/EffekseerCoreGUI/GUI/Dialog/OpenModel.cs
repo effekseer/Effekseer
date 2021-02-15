@@ -32,14 +32,14 @@ namespace Effekseer.GUI.Dialog
 		public void Show(string title)
 		{
 			this.title = title;
-			GUIManager.AddControl(this);
+			Manager.AddControl(this);
 		}
 
 		public void Update()
 		{
 			if (isFirstUpdate)
 			{
-				GUIManager.NativeManager.OpenPopup(id);
+				Manager.NativeManager.OpenPopup(id);
 				isFirstUpdate = false;
 
 				if (Core.Language == Language.Japanese)
@@ -52,13 +52,13 @@ namespace Effekseer.GUI.Dialog
 				}
 			}
 
-			if (GUIManager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
+			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
-				GUIManager.NativeManager.Text(message);
+				Manager.NativeManager.Text(message);
 
 				var fs = new float[] { Magnification };
 
-				if(GUIManager.NativeManager.DragFloat("###mag", fs))
+				if(Manager.NativeManager.DragFloat("###mag", fs))
 				{
 					Magnification = fs[0];
 				}
@@ -66,7 +66,7 @@ namespace Effekseer.GUI.Dialog
 				var okText = MultiLanguageTextProvider.GetText("Save");
 				var cancelText = MultiLanguageTextProvider.GetText("Cancel");
 
-				if (GUIManager.NativeManager.Button(okText))
+				if (Manager.NativeManager.Button(okText))
 				{
 					OK = true;
 					ShouldBeRemoved = true;
@@ -76,7 +76,7 @@ namespace Effekseer.GUI.Dialog
 					}
 				}
 
-				if (GUIManager.NativeManager.Button(cancelText))
+				if (Manager.NativeManager.Button(cancelText))
 				{
 					ShouldBeRemoved = true;
 					if (OnCancel != null)
@@ -85,7 +85,7 @@ namespace Effekseer.GUI.Dialog
 					}
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 			}
 			else
 			{

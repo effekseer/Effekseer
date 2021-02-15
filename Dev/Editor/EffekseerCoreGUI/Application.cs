@@ -153,7 +153,7 @@ namespace Effekseer
 
 		public void Run()
 		{
-			while (GUI.GUIManager.NativeManager.DoEvents())
+			while (GUI.Manager.NativeManager.DoEvents())
 			{
 				OnUpdate();
 			}
@@ -198,7 +198,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Environment.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_ProcedualModel.csv");
 
-			GUIManager.UpdateFont();
+			Manager.UpdateFont();
 		}
 
 		private static void Core_OnOutputMessage(string obj)

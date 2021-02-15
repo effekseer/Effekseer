@@ -45,10 +45,10 @@ namespace Effekseer.GUI.Component
 
 		public PathForMaterial()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id3 = "###" + GUIManager.GetUniqueID().ToString();
-			id4 = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id3 = "###" + Manager.GetUniqueID().ToString();
+			id4 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -87,43 +87,43 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			float buttonSizeX = GUIManager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if (GUIManager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Material);
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
 			// show path
-			GUIManager.NativeManager.Text(relativeFilePath);
+			Manager.NativeManager.Text(relativeFilePath);
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Material);
 
-			if (GUIManager.NativeManager.IsItemHovered())
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				GUIManager.NativeManager.SetTooltip(relativeFilePath);
+				Manager.NativeManager.SetTooltip(relativeFilePath);
 			}
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			// 
 			if (absoluteFilePath != string.Empty)
 			{
 
-				if (GUIManager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.Button(Resources.GetString("Material_Edit_Name") + id3, buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Material_Edit_Name") + id3, buttonSizeX))
 				{
 					if(Process.MaterialEditor.Run())
 					{
@@ -133,12 +133,12 @@ namespace Effekseer.GUI.Component
 
 				if (Functions.CanShowTip())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("Material_Edit_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("Material_Edit_Desc"));
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				if (GUIManager.NativeManager.Button(Resources.GetString("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
+				if (Manager.NativeManager.Button(Resources.GetString("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
 				{
 					GenerateCompiledMaterial();
 				}
@@ -148,11 +148,11 @@ namespace Effekseer.GUI.Component
 					ShowInformation();
 				}
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
 			else
 			{
-				if (GUIManager.NativeManager.Button(Resources.GetString("Material_Create_Name"), buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Material_Create_Name"), buttonSizeX))
 				{
 					var filter = Resources.GetString("MaterialFilter");
 					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
@@ -184,9 +184,9 @@ namespace Effekseer.GUI.Component
 					}
 				}
 
-				if (GUIManager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.IsItemHovered())
 				{
-					GUIManager.NativeManager.SetTooltip(Resources.GetString("Material_Create_Desc"));
+					Manager.NativeManager.SetTooltip(Resources.GetString("Material_Create_Desc"));
 				}
 			}
 
@@ -269,7 +269,7 @@ namespace Effekseer.GUI.Component
 
 			System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
-			GUIManager.Viewer.Reload(true);
+			Manager.Viewer.Reload(true);
 
 			UpdateInformation();
 		}
@@ -300,34 +300,34 @@ namespace Effekseer.GUI.Component
 
 		void ShowInformation()
 		{
-			GUIManager.NativeManager.BeginTooltip();
+			Manager.NativeManager.BeginTooltip();
 
-			GUIManager.NativeManager.Text(Resources.GetString("Material_GenCache_Desc"));
+			Manager.NativeManager.Text(Resources.GetString("Material_GenCache_Desc"));
 
 			if (compiledMatInfo != null)
 			{
 				if(matInfo.GUID != compiledMatInfo.GUID)
 				{
-					GUIManager.NativeManager.Text(Resources.GetString("Material_OldCache"));
+					Manager.NativeManager.Text(Resources.GetString("Material_OldCache"));
 				}
 				else if(errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
 				{
-					GUIManager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
+					Manager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
 				}
 				else
 				{
 					foreach(var p in compiledMatInfo.Platforms)
 					{
-						GUIManager.NativeManager.Text(p.ToString());
+						Manager.NativeManager.Text(p.ToString());
 					}
 				}
 			}
 			else
 			{
-				GUIManager.NativeManager.Text(Resources.GetString("Material_NoneCache"));
+				Manager.NativeManager.Text(Resources.GetString("Material_NoneCache"));
 			}
 
-			GUIManager.NativeManager.EndTooltip();
+			Manager.NativeManager.EndTooltip();
 		}
 	}
 }

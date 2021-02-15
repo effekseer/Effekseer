@@ -22,7 +22,7 @@ namespace Effekseer.GUI.Dock
 
 		internal swig.Vec2 IconSize { get
 			{
-				float scale = GUIManager.DpiScale;
+				float scale = Manager.DpiScale;
 				return new swig.Vec2(18 * scale, 18 * scale);
 			}
 		}
@@ -47,7 +47,7 @@ namespace Effekseer.GUI.Dock
 		{
 			if(opened)
 			{
-				if (GUIManager.IsDockMode())
+				if (Manager.IsDockMode())
 				{
 					if (IsInitialized < 0)
 					{
@@ -56,7 +56,7 @@ namespace Effekseer.GUI.Dock
 
 					if (ResetSize)
 					{
-						GUIManager.NativeManager.SetNextWindowSize(InitialDockSize.X, InitialDockSize.Y, swig.Cond.Appearing);
+						Manager.NativeManager.SetNextWindowSize(InitialDockSize.X, InitialDockSize.Y, swig.Cond.Appearing);
 						ResetSize = false;
 					}
 
@@ -67,15 +67,15 @@ namespace Effekseer.GUI.Dock
 						flags = swig.WindowFlags.NoScrollbar;
 					}
 
-					if (NoPadding) GUIManager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(0.0f, 0.0f));
+					if (NoPadding) Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(0.0f, 0.0f));
 
-					bool dockEnabled = GUIManager.NativeManager.BeginDock(
+					bool dockEnabled = Manager.NativeManager.BeginDock(
 						Label, TabLabel, ref opened, Visibled && !NoCloseButton, flags);
 
-					Visibled = GUIManager.NativeManager.IsDockVisibled();
-					Windowed = GUIManager.NativeManager.IsDockWindowed();
+					Visibled = Manager.NativeManager.IsDockVisibled();
+					Windowed = Manager.NativeManager.IsDockWindowed();
 
-					if (NoPadding) GUIManager.NativeManager.PopStyleVar();
+					if (NoPadding) Manager.NativeManager.PopStyleVar();
 
 					if (dockEnabled)
 					{
@@ -91,11 +91,11 @@ namespace Effekseer.GUI.Dock
 						Controls.Unlock();
 					}
 
-					GUIManager.NativeManager.EndDock();
+					Manager.NativeManager.EndDock();
 				}
 				else
 				{
-					if (GUIManager.NativeManager.Begin(Label, ref opened))
+					if (Manager.NativeManager.Begin(Label, ref opened))
 					{
 						UpdateInternal();
 
@@ -110,7 +110,7 @@ namespace Effekseer.GUI.Dock
 						Controls.Unlock();
 					}
 
-					GUIManager.NativeManager.End();
+					Manager.NativeManager.End();
 				}
 			}
 			else
@@ -126,18 +126,18 @@ namespace Effekseer.GUI.Dock
 
 		public bool IsDockActive()
 		{
-			if (GUIManager.IsDockMode())
+			if (Manager.IsDockMode())
 			{
-				return GUIManager.NativeManager.IsDockFocused();
+				return Manager.NativeManager.IsDockFocused();
 			}
 			return false;
 		}
 
 		public void SetFocus()
 		{
-			if (GUIManager.IsDockMode())
+			if (Manager.IsDockMode())
 			{
-				GUIManager.NativeManager.SetDockFocus(WindowID);
+				Manager.NativeManager.SetDockFocus(WindowID);
 			}
 		}
 

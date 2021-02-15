@@ -67,13 +67,13 @@ namespace Effekseer.GUI.Component
 
 		public Vector3DWithRandom()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id_r1 = "###" + GUIManager.GetUniqueID().ToString();
-			id_r2 = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_d1 = "###" + GUIManager.GetUniqueID().ToString();
-			id_d2 = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id_r1 = "###" + Manager.GetUniqueID().ToString();
+			id_r2 = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d1 = "###" + Manager.GetUniqueID().ToString();
+			id_d2 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -181,8 +181,8 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Max");
 			}
 
-			GUIManager.NativeManager.PushItemWidth(GUIManager.NativeManager.GetColumnWidth() - 48 * GUIManager.DpiScale);
-			if (GUIManager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step,
+			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
+			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
@@ -209,12 +209,12 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			Popup();
 
-			GUIManager.NativeManager.SameLine();
-			GUIManager.NativeManager.Text(txt_r1);
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(txt_r1);
 
 			if (binding.IsDynamicEquationEnabled)
 			{
@@ -223,7 +223,7 @@ namespace Effekseer.GUI.Component
 				Popup();
 			}
 
-			if (GUIManager.NativeManager.DragFloat3EfkEx(id2, internalValue2, step,
+			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
@@ -250,7 +250,7 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			isActive_Current |= GUIManager.NativeManager.IsItemActive();
+			isActive_Current |= Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -261,8 +261,8 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			GUIManager.NativeManager.SameLine();
-			GUIManager.NativeManager.Text(txt_r2);
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(txt_r2);
 
 			if (binding.IsDynamicEquationEnabled)
 			{
@@ -272,7 +272,7 @@ namespace Effekseer.GUI.Component
 			}
 
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
 			valueChangingProp.Disable();
 		}
@@ -283,7 +283,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				if (binding.CanSelectDynamicEquation)
 				{
@@ -299,20 +299,20 @@ namespace Effekseer.GUI.Component
 					var txt_r_r1 = Resources.GetString("Gauss");
 					var txt_r_r2 = Resources.GetString("Range");
 
-					if (GUIManager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+					if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 					{
 						binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
 					}
 
-					GUIManager.NativeManager.SameLine();
+					Manager.NativeManager.SameLine();
 
-					if (GUIManager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+					if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
 					{
 						binding.DrawnAs = Data.DrawnAs.MaxAndMin;
 					}
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 				isPopupShown = true;
 			}
 		}

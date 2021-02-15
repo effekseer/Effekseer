@@ -45,9 +45,9 @@ namespace Effekseer.GUI.Component
 
 		public PathForSound()
 		{
-			id1 = "###" + GUIManager.GetUniqueID().ToString();
-			id2 = "###" + GUIManager.GetUniqueID().ToString();
-			id3 = "###" + GUIManager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id3 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -94,57 +94,57 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			float buttonSizeX = GUIManager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if(GUIManager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if(Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Sound);
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
-			GUIManager.NativeManager.Text(filePath);
+			Manager.NativeManager.Text(filePath);
 
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Sound);
 
-			if (GUIManager.NativeManager.IsItemHovered())
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				GUIManager.NativeManager.SetTooltip(filePath);
+				Manager.NativeManager.SetTooltip(filePath);
 			}
 
-			isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			if (filePath != string.Empty)
 			{
-				if (GUIManager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				GUIManager.NativeManager.Text(formatText1);
+				Manager.NativeManager.Text(formatText1);
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-				if (GUIManager.NativeManager.Button(Resources.GetString("PlayString") + id3, buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("PlayString") + id3, buttonSizeX))
 				{
 					btn_play_Click();
 				}
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
-				GUIManager.NativeManager.Text(formatText2);
+				Manager.NativeManager.Text(formatText2);
 
-				isHovered = isHovered || GUIManager.NativeManager.IsItemHovered();
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
 
 			if (dd != null)

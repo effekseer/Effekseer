@@ -39,7 +39,7 @@ namespace Effekseer.GUI.Component
 
         public Boolean()
         {
-			id = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
         public void SetBinding(object o)
@@ -61,7 +61,7 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			if (GUIManager.NativeManager.Checkbox(id, internalValue))
+			if (Manager.NativeManager.Checkbox(id, internalValue))
 			{
 				if (EnableUndo)
 				{

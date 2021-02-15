@@ -15,54 +15,54 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			int[] currentFrame = new int[] { GUIManager.Viewer.Current };
+			int[] currentFrame = new int[] { Manager.Viewer.Current };
 			int[] frameMin = new int[] { Core.StartFrame };
 			int[] frameMax = new int[] { Core.EndFrame };
 
-			GUIManager.NativeManager.PushItemWidth(-1);
+			Manager.NativeManager.PushItemWidth(-1);
 
-			if (GUIManager.NativeManager.SliderInt("###Timeline", currentFrame, Core.StartFrame, Core.EndFrame))
+			if (Manager.NativeManager.SliderInt("###Timeline", currentFrame, Core.StartFrame, Core.EndFrame))
 			{
-				GUIManager.Viewer.Current = currentFrame[0];
+				Manager.Viewer.Current = currentFrame[0];
 			}
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.Separator();
+			Manager.NativeManager.Separator();
 
-			GUIManager.NativeManager.PushItemWidth(200);
+			Manager.NativeManager.PushItemWidth(200);
 
-			if (GUIManager.NativeManager.DragIntRange2("###TimeRange", frameMin, frameMax, 1.0f, 0, 1200))
+			if (Manager.NativeManager.DragIntRange2("###TimeRange", frameMin, frameMax, 1.0f, 0, 1200))
 			{
 				Core.StartFrame = frameMin[0];
 				Core.EndFrame = frameMax[0];
 
-				GUIManager.Viewer.Current = System.Math.Max(GUIManager.Viewer.Current, Core.StartFrame);
-				GUIManager.Viewer.Current = System.Math.Min(GUIManager.Viewer.Current, Core.EndFrame);
+				Manager.Viewer.Current = System.Math.Max(Manager.Viewer.Current, Core.StartFrame);
+				Manager.Viewer.Current = System.Math.Min(Manager.Viewer.Current, Core.EndFrame);
 			}
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 			
-			float buttonSizeY = GUIManager.NativeManager.GetFrameHeight();
+			float buttonSizeY = Manager.NativeManager.GetFrameHeight();
 			float buttonSizeX = buttonSizeY * 2.2f;
 			
-			if(GUIManager.NativeManager.ImageButton(Images.BackStep, buttonSizeX, buttonSizeY))
+			if(Manager.NativeManager.ImageButton(Images.BackStep, buttonSizeX, buttonSizeY))
 			{
 				Commands.BackStep();
 			}
 
-			GUIManager.NativeManager.SameLine();
-			if(GUIManager.NativeManager.ImageButton(Images.Step, buttonSizeX, buttonSizeY))
+			Manager.NativeManager.SameLine();
+			if(Manager.NativeManager.ImageButton(Images.Step, buttonSizeX, buttonSizeY))
 			{
 				Commands.Step();
 			}
 
-			GUIManager.NativeManager.SameLine();
-			if(GUIManager.NativeManager.ImageButton(Images.Stop, buttonSizeX, buttonSizeY))
+			Manager.NativeManager.SameLine();
+			if(Manager.NativeManager.ImageButton(Images.Stop, buttonSizeX, buttonSizeY))
 			{
-				if(GUIManager.Viewer.IsPlaying && !GUIManager.Viewer.IsPaused)
+				if(Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
 				{
 					Commands.Stop();
 					Commands.Play();
@@ -73,29 +73,29 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			GUIManager.NativeManager.SameLine();
+			Manager.NativeManager.SameLine();
 
 			var icon = Images.Play;
-			if (GUIManager.Viewer.IsPlaying && !GUIManager.Viewer.IsPaused)
+			if (Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
 			{
 				icon = Images.Pause;
 			}
 
-			if (GUIManager.NativeManager.ImageButton(icon, buttonSizeX, buttonSizeY))
+			if (Manager.NativeManager.ImageButton(icon, buttonSizeX, buttonSizeY))
 			{
-				if (GUIManager.Viewer.IsPlaying && !GUIManager.Viewer.IsPaused)
+				if (Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
 				{
-					GUIManager.Viewer.PauseAndResumeViewer();
+					Manager.Viewer.PauseAndResumeViewer();
 				}
 				else
 				{
-					if (GUIManager.Viewer.IsPaused)
+					if (Manager.Viewer.IsPaused)
 					{
-						GUIManager.Viewer.PauseAndResumeViewer();
+						Manager.Viewer.PauseAndResumeViewer();
 					}
 					else
 					{
-						GUIManager.Viewer.PlayViewer();
+						Manager.Viewer.PlayViewer();
 					}
 				}
 			}

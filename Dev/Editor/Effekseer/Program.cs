@@ -211,7 +211,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Environment.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_ProcedualModel.csv");
 
-			GUIManager.UpdateFont();
+			Manager.UpdateFont();
 		}
 	}
 }

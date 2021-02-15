@@ -49,10 +49,10 @@ namespace Effekseer.GUI.Component
 		public Vector3D()
 		{
 			var rand = new Random();
-			id = "###" + GUIManager.GetUniqueID().ToString();
-			id_d = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_reset = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
+			id_d = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -108,7 +108,7 @@ namespace Effekseer.GUI.Component
 				step = Binding.X.Step / 10.0f;
 			}
 
-			if (GUIManager.NativeManager.DragFloat3EfkEx(id, internalValue, step,
+			if (Manager.NativeManager.DragFloat3EfkEx(id, internalValue, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
@@ -117,7 +117,7 @@ namespace Effekseer.GUI.Component
 				FixValueInternal(isActive);
 			}
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			Popup();
 
@@ -141,7 +141,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				Functions.ShowReset(binding, id_reset);
 
@@ -150,7 +150,7 @@ namespace Effekseer.GUI.Component
 					DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 
 				isPopupShown = true;
 			}

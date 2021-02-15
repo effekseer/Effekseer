@@ -46,9 +46,9 @@ namespace Effekseer.GUI.Component
 
 		public Int2()
 		{
-			id = "###" + GUIManager.GetUniqueID().ToString();
-			id_c = "###" + GUIManager.GetUniqueID().ToString();
-			id_reset = "###" + GUIManager.GetUniqueID().ToString();
+			id = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -98,7 +98,7 @@ namespace Effekseer.GUI.Component
 				step = binding.X.Step;
 			}
 
-			if (GUIManager.NativeManager.DragInt2EfkEx(id, internalValue, step,
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, step,
 				int.MinValue, int.MaxValue,
 				int.MinValue, int.MaxValue,
 				"X:" + "%.3f", "Y:" + "%.3f"))
@@ -108,7 +108,7 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			var isActive_Current = GUIManager.NativeManager.IsItemActive();
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -125,11 +125,11 @@ namespace Effekseer.GUI.Component
 			/*
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem(id_c))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				Functions.ShowReset(binding, id_reset);
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 
 				isPopupShown = true;
 			}

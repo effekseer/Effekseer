@@ -22,14 +22,14 @@ namespace Effekseer.GUI
 		{
 			if (x > 0 && y > 0)
 			{
-				GUIManager.Native.ResizeWindow(x, y);
+				Manager.Native.ResizeWindow(x, y);
 
-				GUIManager.WindowSize.X = x;
-				GUIManager.WindowSize.Y = y;
+				Manager.WindowSize.X = x;
+				Manager.WindowSize.Y = y;
 			}
 
-			GUIManager.resizedCount = 5;
-			GUIManager.actualWidth = x;
+			Manager.resizedCount = 5;
+			Manager.actualWidth = x;
 		}
 
 		public override void Focused()
@@ -42,14 +42,14 @@ namespace Effekseer.GUI
 			var path = GetPath();
 			var handle = false;
 
-			GUIManager.Controls.Lock();
+			Manager.Controls.Lock();
 
-			foreach (var c in GUIManager.Controls.Internal.OfType<Control>())
+			foreach (var c in Manager.Controls.Internal.OfType<Control>())
 			{
 				c.DispatchDropped(path, ref handle);
 			}
 
-			GUIManager.Controls.Unlock();
+			Manager.Controls.Unlock();
 
 			if (!handle)
 			{
@@ -59,14 +59,14 @@ namespace Effekseer.GUI
 
 		public override bool Closing()
 		{
-			if (GUIManager.IgnoreDisposingDialogBox) return true;
+			if (Manager.IgnoreDisposingDialogBox) return true;
 			if (!Core.IsChanged) return true;
 
 			var dialog = new Dialog.SaveOnDisposing(
 				() =>
 				{
-					GUIManager.IgnoreDisposingDialogBox = true;
-					GUIManager.NativeManager.Close();
+					Manager.IgnoreDisposingDialogBox = true;
+					Manager.NativeManager.Close();
 				});
 
 			return false;
@@ -79,7 +79,7 @@ namespace Effekseer.GUI
 
 		public override void DpiChanged(float f)
 		{
-			GUIManager.UpdateFont();
+			Manager.UpdateFont();
 		}
 
 		public override bool ClickLink(string path)
@@ -97,7 +97,7 @@ namespace Effekseer.GUI
 		}
 	}
 
-	public class GUIManager
+	public class Manager
 	{
 		public class ManagerIOCallback : swig.IOCallback
 		{

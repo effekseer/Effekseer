@@ -74,13 +74,13 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
-			float showHideButtonOffset = GUIManager.NativeManager.GetTextLineHeight();
+			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight();
 
 			isPopupShown = false;
 
-			var windowSize = GUIManager.NativeManager.GetContentRegionAvail();
-			GUIManager.NativeManager.Columns(2);
-			GUIManager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
+			var windowSize = Manager.NativeManager.GetContentRegionAvail();
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
 
 			// Assign tree node index
 			Action<Utils.DelayedList<NodeTreeViewNode>> assignIndex = null;
@@ -109,7 +109,7 @@ namespace Effekseer.GUI.Dock
 			}
 			Children.Unlock();
 
-			GUIManager.NativeManager.Columns(1);
+			Manager.NativeManager.Columns(1);
 
 			// Run exchange events
 			foreach (var pair in exchangeEvents)
@@ -165,7 +165,7 @@ namespace Effekseer.GUI.Dock
 			exchangeEvents.Clear();
 
 			// reset
-			if(!GUIManager.NativeManager.IsMouseDown(0))
+			if(!Manager.NativeManager.IsMouseDown(0))
 			{
 				isVisibleChanging = false;
 			}
@@ -234,14 +234,14 @@ namespace Effekseer.GUI.Dock
 		{
 			if (isPopupShown) return;
 
-			if (GUIManager.NativeManager.BeginPopupContextItem("##Popup"))
+			if (Manager.NativeManager.BeginPopupContextItem("##Popup"))
 			{
 				foreach(var item in menuItems)
 				{
 					item.Update();
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 				isPopupShown = true;
 			}
 		}
@@ -309,7 +309,7 @@ namespace Effekseer.GUI.Dock
 
 		public NodeTreeViewNode(NodeTreeView treeView, Data.NodeBase node, bool createChildren = false)
         {
-			UniqueID = GUIManager.GetUniqueID();
+			UniqueID = Manager.GetUniqueID();
 			id = "###" + UniqueID.ToString();
 
 			this.treeView = treeView;
@@ -405,14 +405,14 @@ namespace Effekseer.GUI.Dock
 		{
 			var visible = Node.IsRendered;
 
-			float buttonSize = GUIManager.NativeManager.GetTextLineHeight();
-			if (GUIManager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), buttonSize, buttonSize))
+			float buttonSize = Manager.NativeManager.GetTextLineHeight();
+			if (Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), buttonSize, buttonSize))
 			{
 				int LEFT_SHIFT = 340;
 				int RIGHT_SHIFT = 344;
 
-				if (GUIManager.NativeManager.IsKeyDown(LEFT_SHIFT) || 
-					GUIManager.NativeManager.IsKeyDown(RIGHT_SHIFT) ||
+				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || 
+					Manager.NativeManager.IsKeyDown(RIGHT_SHIFT) ||
 					((Node is Effekseer.Data.Node) && (Node as Effekseer.Data.Node).DrawingValues.Type.Value == Data.RendererValues.ParamaterType.None))
 				{
 					ChangeVisible(true, !visible);
@@ -427,7 +427,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Change value continuously
-			if (GUIManager.NativeManager.IsItemHovered() && treeView.isVisibleChanging)
+			if (Manager.NativeManager.IsItemHovered() && treeView.isVisibleChanging)
 			{
 				ChangeVisible(false, treeView.changingVisibleMode);
 			}
@@ -451,7 +451,7 @@ namespace Effekseer.GUI.Dock
 
 			if(requiredToExpand)
 			{
-				GUIManager.NativeManager.SetNextTreeNodeOpen(true);
+				Manager.NativeManager.SetNextTreeNodeOpen(true);
 				requiredToExpand = false;
 			}
 
@@ -469,36 +469,36 @@ namespace Effekseer.GUI.Dock
 			// Change background color
 			if(TreeNodeIndex % 2 == 1)
 			{
-				GUIManager.NativeManager.DrawLineBackground(GUIManager.NativeManager.GetTextLineHeight(), 0x0cffffff);
+				Manager.NativeManager.DrawLineBackground(Manager.NativeManager.GetTextLineHeight(), 0x0cffffff);
 			}
 
 			// Extend clickable space
 			var label = icon + " " + Node.Name + id;
-			IsExpanding = GUIManager.NativeManager.TreeNodeEx(label, flag);
+			IsExpanding = Manager.NativeManager.TreeNodeEx(label, flag);
 
 			SelectNodeIfClicked();
 
 			treeView.Popup();
 
 			// D&D Source
-			if (GUIManager.NativeManager.BeginDragDropSource())
+			if (Manager.NativeManager.BeginDragDropSource())
 			{
 				byte[] idBuf = BitConverter.GetBytes(UniqueID);
-				if (GUIManager.NativeManager.SetDragDropPayload(treeView.treePyloadName, idBuf, idBuf.Length))
+				if (Manager.NativeManager.SetDragDropPayload(treeView.treePyloadName, idBuf, idBuf.Length))
 				{
 				}
-				GUIManager.NativeManager.Text(this.Node.Name);
+				Manager.NativeManager.Text(this.Node.Name);
 
-				GUIManager.NativeManager.EndDragDropSource();
+				Manager.NativeManager.EndDragDropSource();
 			}
 
 			UpdateDDTargetNode();
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
 			UpdateVisibleButton();
 
-			GUIManager.NativeManager.NextColumn();
+			Manager.NativeManager.NextColumn();
 
 			if (IsExpanding)
 			{
@@ -517,15 +517,15 @@ namespace Effekseer.GUI.Dock
 				}
 
 				// pair with TreeNodeEx
-				GUIManager.NativeManager.TreePop();
+				Manager.NativeManager.TreePop();
 			}
 		}
 
 		private void SelectNodeIfClicked()
 		{
-			if (GUIManager.NativeManager.IsItemClicked(0) ||
-				GUIManager.NativeManager.IsItemClicked(1) ||
-				GUIManager.NativeManager.IsItemFocused())
+			if (Manager.NativeManager.IsItemClicked(0) ||
+				Manager.NativeManager.IsItemClicked(1) ||
+				Manager.NativeManager.IsItemFocused())
 			{
 				Core.SelectedNode = this.Node;
 			}
@@ -539,20 +539,20 @@ namespace Effekseer.GUI.Dock
 		{
 			// Hidden separator is a target to be dropped
 			// adjust a position
-			GUIManager.NativeManager.SetCursorPosY(GUIManager.NativeManager.GetCursorPosY() - 6);
-			GUIManager.NativeManager.HiddenSeparator(12, 6);
+			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
+			Manager.NativeManager.HiddenSeparator(12, 6);
 
-			if (GUIManager.NativeManager.BeginDragDropTarget())
+			if (Manager.NativeManager.BeginDragDropTarget())
 			{
 				int size = 0;
-				if (GUIManager.NativeManager.AcceptDragDropPayload(treeView.treePyloadName, treeView.treePyload, treeView.treePyload.Length, ref size))
+				if (Manager.NativeManager.AcceptDragDropPayload(treeView.treePyloadName, treeView.treePyload, treeView.treePyload.Length, ref size))
 				{
 					var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
 					treeView.exchangeEvents.Add(
 						Tuple.Create(sourceID, UniqueID, (isEnd ? MovingNodeEventType.AddLast : MovingNodeEventType.Insert)));
 				}
 
-				GUIManager.NativeManager.EndDragDropTarget();
+				Manager.NativeManager.EndDragDropTarget();
 			}
 		}
 
@@ -561,17 +561,17 @@ namespace Effekseer.GUI.Dock
 		/// </summary>
 		void UpdateDDTargetNode()
 		{
-			if (GUIManager.NativeManager.BeginDragDropTarget())
+			if (Manager.NativeManager.BeginDragDropTarget())
 			{
 				int size = 0;
-				if (GUIManager.NativeManager.AcceptDragDropPayload(treeView.treePyloadName, treeView.treePyload, treeView.treePyload.Length, ref size))
+				if (Manager.NativeManager.AcceptDragDropPayload(treeView.treePyloadName, treeView.treePyload, treeView.treePyload.Length, ref size))
 				{
 					var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
 					treeView.exchangeEvents.Add(
 						Tuple.Create(sourceID, UniqueID, MovingNodeEventType.AddAsChild));
 				}
 
-				GUIManager.NativeManager.EndDragDropTarget();
+				Manager.NativeManager.EndDragDropTarget();
 			}
 		}
 

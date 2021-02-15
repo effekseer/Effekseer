@@ -66,46 +66,46 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			GUIManager.NativeManager.PushItemWidth(-1);
+			Manager.NativeManager.PushItemWidth(-1);
 
 			// Address bar
 			{
 				// Back directory (BS shortcut key)
-				if (GUIManager.NativeManager.IsWindowFocused() &&
-					GUIManager.NativeManager.IsKeyPressed(GUIManager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
-					!GUIManager.NativeManager.IsAnyItemActive() &&
+				if (Manager.NativeManager.IsWindowFocused() &&
+					Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
+					!Manager.NativeManager.IsAnyItemActive() &&
 					!string.IsNullOrEmpty(CurrentPath))
 				{
 					UpdateFileListWithProjectPath(CurrentPath);
 				}
 
 				// Back directory
-				if (GUIManager.NativeManager.Button("↑") &&
+				if (Manager.NativeManager.Button("↑") &&
 					!String.IsNullOrEmpty(CurrentPath))
 				{
 					UpdateFileListWithProjectPath(CurrentPath);
 				}
 
-				GUIManager.NativeManager.SameLine();
+				Manager.NativeManager.SameLine();
 
 				// Display current directory
-				if (GUIManager.NativeManager.InputText("###AddressBar", addressText))
+				if (Manager.NativeManager.InputText("###AddressBar", addressText))
 				{
-					addressText = GUIManager.NativeManager.GetInputTextResult();
+					addressText = Manager.NativeManager.GetInputTextResult();
 					UpdateFileList(addressText);
 				}
-				if (GUIManager.NativeManager.IsItemActivated())
+				if (Manager.NativeManager.IsItemActivated())
 				{
 					addressEditing = true;
 				}
-				if (GUIManager.NativeManager.IsItemDeactivated())
+				if (Manager.NativeManager.IsItemDeactivated())
 				{
 					addressEditing = false;
 					addressText = CurrentPath;
 				}
 			}
 
-			GUIManager.NativeManager.Separator();
+			Manager.NativeManager.Separator();
 
 			// Display all files
 			for (int i = 0; i < items.Count; i++)
@@ -140,16 +140,16 @@ namespace Effekseer.GUI.Dock
 						break;
 				}
 
-				float iconPosX = GUIManager.NativeManager.GetCursorPosX();
+				float iconPosX = Manager.NativeManager.GetCursorPosX();
 
 				string caption = icon + " " + Path.GetFileName(item.FilePath);
-				if (GUIManager.NativeManager.Selectable(caption, item.Selected, swig.SelectableFlags.AllowDoubleClick))
+				if (Manager.NativeManager.Selectable(caption, item.Selected, swig.SelectableFlags.AllowDoubleClick))
 				{
-					if (GUIManager.NativeManager.IsCtrlKeyDown())
+					if (Manager.NativeManager.IsCtrlKeyDown())
 					{
 						item.Selected = !item.Selected;
 					}
-					else if (GUIManager.NativeManager.IsShiftKeyDown() && selectedIndex >= 0)
+					else if (Manager.NativeManager.IsShiftKeyDown() && selectedIndex >= 0)
 					{
 						int min = Math.Min(selectedIndex, i);
 						int max = Math.Max(selectedIndex, i);
@@ -166,19 +166,19 @@ namespace Effekseer.GUI.Dock
 					
 					selectedIndex = i;
 
-					if (GUIManager.NativeManager.IsMouseDoubleClicked(0) ||
-						GUIManager.NativeManager.IsKeyDown(GUIManager.NativeManager.GetKeyIndex(swig.Key.Enter)))
+					if (Manager.NativeManager.IsMouseDoubleClicked(0) ||
+						Manager.NativeManager.IsKeyDown(Manager.NativeManager.GetKeyIndex(swig.Key.Enter)))
 					{
 						OnFilePicked();
 					}
 				}
 
-				if (GUIManager.NativeManager.IsItemFocused())
+				if (Manager.NativeManager.IsItemFocused())
 				{
 					ResetSelected();
 				}
 
-				if (GUIManager.NativeManager.IsItemClicked(1))
+				if (Manager.NativeManager.IsItemClicked(1))
 				{
 					if (!item.Selected)
 					{
@@ -187,7 +187,7 @@ namespace Effekseer.GUI.Dock
 					}
 					selectedIndex = i;
 
-					GUIManager.NativeManager.OpenPopup(ContextMenuPopupId);
+					Manager.NativeManager.OpenPopup(ContextMenuPopupId);
 				}
 
 				// D&D
@@ -215,16 +215,16 @@ namespace Effekseer.GUI.Dock
 
 				if (image != null)
 				{
-					GUIManager.NativeManager.SameLine();
-					GUIManager.NativeManager.SetCursorPosX(iconPosX);
-					float iconSize = GUIManager.NativeManager.GetTextLineHeight();
-					GUIManager.NativeManager.Image(image, iconSize, iconSize);
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.SetCursorPosX(iconPosX);
+					float iconSize = Manager.NativeManager.GetTextLineHeight();
+					Manager.NativeManager.Image(image, iconSize, iconSize);
 				}
 			}
 
 			UpdateContextMenu();
 
-			GUIManager.NativeManager.PopItemWidth();
+			Manager.NativeManager.PopItemWidth();
 
 			if (shouldUpdateFileList)
 			{
@@ -236,21 +236,21 @@ namespace Effekseer.GUI.Dock
 		void UpdateContextMenu()
 		{
 			// File Context Menu
-			if (GUIManager.NativeManager.BeginPopup(ContextMenuPopupId))
+			if (Manager.NativeManager.BeginPopup(ContextMenuPopupId))
 			{
-				if (GUIManager.NativeManager.MenuItem(menuOpenFile))
+				if (Manager.NativeManager.MenuItem(menuOpenFile))
 				{
 					OnFilePicked();
 				}
 
-				if (GUIManager.NativeManager.MenuItem(menuShowInFileManager))
+				if (Manager.NativeManager.MenuItem(menuShowInFileManager))
 				{
 					ShowInFileManager();
 				}
 
-				GUIManager.NativeManager.Separator();
+				Manager.NativeManager.Separator();
 
-				if (GUIManager.NativeManager.MenuItem(menuImportFromPackage))
+				if (Manager.NativeManager.MenuItem(menuImportFromPackage))
 				{
 					if (!string.IsNullOrEmpty(CurrentPath))
 					{
@@ -258,7 +258,7 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				if (GUIManager.NativeManager.MenuItem(menuExportToPackage))
+				if (Manager.NativeManager.MenuItem(menuExportToPackage))
 				{
 					var files = items
 						.Where(it => it.Selected && Path.GetExtension(it.FilePath) == ".efkefc")
@@ -270,7 +270,7 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				GUIManager.NativeManager.EndPopup();
+				Manager.NativeManager.EndPopup();
 			}
 		}
 
@@ -349,7 +349,7 @@ namespace Effekseer.GUI.Dock
 							break;
 						case ".png":
 							Type = FileType.Image;
-							Image = Images.Load(GUIManager.Native, filePath);
+							Image = Images.Load(Manager.Native, filePath);
 							break;
 						case ".wav":
 							Type = FileType.Sound;
