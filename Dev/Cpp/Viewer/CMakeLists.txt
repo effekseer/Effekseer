@@ -23,6 +23,7 @@ FILE(GLOB hs
 	EffekseerTool/*.h
 	Graphics/*.h
 	GUI/*.h
+	NodeFrameTimeline/*.h
 	*.h
 )
 
@@ -34,6 +35,7 @@ FILE(GLOB cpps
 	EffekseerTool/*.cpp
 	Graphics/*.cpp
 	GUI/*.cpp
+	NodeFrameTimeline/*.cpp
 	*.cpp
 	*.cxx
 )

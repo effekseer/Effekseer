@@ -803,5 +803,9 @@ public:
 
 	// Markdown
 	void Markdown(const char16_t* text);
+
+	// NodeFrameTimeline
+	bool BeginNodeFrameTimeline();
+	void EndNodeFrameTimeline();
 };
 } // namespace efk

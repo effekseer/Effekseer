@@ -23,6 +23,8 @@
 
 #include "../3rdParty/Boxer/boxer.h"
 
+#include "../NodeFrameTimeline/NodeFrameTimeline.h"
+
 #include "../dll.h"
 
 #ifdef __linux__
@@ -2351,4 +2353,15 @@ void GUIManager::Markdown(const char16_t* text)
 
 	::ImGui::Markdown(textUtf8, strlen(textUtf8), markdownConfig_);
 }
+
+bool GUIManager::BeginNodeFrameTimeline()
+{
+	return NodeFrameTimeline::BeginNodeFrameTimeline();
+}
+
+void GUIManager::EndNodeFrameTimeline()
+{
+	NodeFrameTimeline::EndNodeFrameTimeline();
+}
+
 } // namespace efk

@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Dock
 			TabToolTip = Resources.GetString("Options");
 
 			NoPadding = true;
-			NoScrollBar = true;
+			NoScrollBar = false;
 			NoCloseButton = true;
 			AllowsShortTab = false;
 		}
@@ -31,6 +31,11 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			if (Manager.NativeManager.BeginNodeFrameTimeline())
+			{
+
+				Manager.NativeManager.EndNodeFrameTimeline();
+			}
 		}
 
 		void OnAfter(object sender, EventArgs e)
