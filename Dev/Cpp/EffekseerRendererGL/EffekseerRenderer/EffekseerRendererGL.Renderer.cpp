@@ -46,9 +46,9 @@
 namespace EffekseerRendererGL
 {
 
-::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType)
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
-	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType);
+	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType, isExtensionsEnabled);
 }
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
@@ -94,16 +94,14 @@ Effekseer::Backend::TextureRef CreateTexture(Effekseer::Backend::GraphicsDeviceR
 	return gd->CreateTexture(buffer, hasMipmap, onDisposed);
 }
 
-RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
+RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
-	return Create(CreateGraphicsDevice(deviceType), squareMaxCount);
+	return Create(CreateGraphicsDevice(deviceType, isExtensionsEnabled), squareMaxCount);
 }
 
 RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount)
 {
 	auto g = graphicsDevice.DownCast<Backend::GraphicsDevice>();
-
-	GLExt::Initialize(g->GetDeviceType());
 
 	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, g);
 	if (renderer->Initialize())

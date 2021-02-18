@@ -218,7 +218,7 @@ OpenGLDeviceType GetDeviceType()
 	return g_deviceType;
 }
 
-bool Initialize(OpenGLDeviceType deviceType)
+bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
 	if (g_isInitialized)
 		return true;
@@ -311,13 +311,20 @@ bool Initialize(OpenGLDeviceType deviceType)
 	g_isSurrpotedBufferRange = true;
 	g_isSurrpotedMapBuffer = true;
 #else
-	GET_PROC(glGenVertexArraysOES);
-	GET_PROC(glDeleteVertexArraysOES);
-	GET_PROC(glBindVertexArrayOES);
 	char* glExtensions = (char*)glGetString(GL_EXTENSIONS);
 
+	if (isExtensionsEnabled)
+	{
+		GET_PROC(glGenVertexArraysOES);
+		GET_PROC(glDeleteVertexArraysOES);
+		GET_PROC(glBindVertexArrayOES);	
+	}
+
 #if defined(__EMSCRIPTEN__)
-	GET_PROC(glDrawElementsInstancedANGLE);
+	if (isExtensionsEnabled)
+	{
+		GET_PROC(glDrawElementsInstancedANGLE);
+	}
 
 	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES &&
 								((glExtensions && strstr(glExtensions, "OES_vertex_array_object")) ? true : false));
@@ -333,8 +340,11 @@ bool Initialize(OpenGLDeviceType deviceType)
 	g_isSurrpotedBufferRange = false;
 	g_isSurrpotedMapBuffer = false;
 #else
-	GET_PROC(glMapBufferOES);
-	GET_PROC(glUnmapBufferOES);
+	if (isExtensionsEnabled)
+	{
+		GET_PROC(glMapBufferOES);
+		GET_PROC(glUnmapBufferOES);
+	}
 	g_isSurrpotedBufferRange = (g_glMapBufferRangeEXT && g_glUnmapBufferOES);
 	g_isSurrpotedMapBuffer =
 		(g_glMapBufferOES && g_glUnmapBufferOES && ((glExtensions && strstr(glExtensions, "GL_OES_mapbuffer")) ? true : false));

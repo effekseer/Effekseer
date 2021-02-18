@@ -646,10 +646,10 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 	return true;
 }
 
-GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType)
+GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	: deviceType_(deviceType)
 {
-	GLExt::Initialize(deviceType);
+	GLExt::Initialize(deviceType, isExtensionsEnabled);
 
 	if (deviceType == OpenGLDeviceType::OpenGL3 || deviceType == OpenGLDeviceType::OpenGLES3)
 	{

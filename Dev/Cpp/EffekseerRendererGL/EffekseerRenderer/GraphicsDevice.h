@@ -276,7 +276,7 @@ private:
 	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
 
 public:
-	GraphicsDevice(OpenGLDeviceType deviceType);
+	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
 	~GraphicsDevice() override;
 

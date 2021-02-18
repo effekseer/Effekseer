@@ -166,7 +166,7 @@ typedef char GLchar;
 #endif
 
 OpenGLDeviceType GetDeviceType();
-bool Initialize(OpenGLDeviceType deviceType);
+bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled);
 bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();
 bool IsSupportedMapBuffer();

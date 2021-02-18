@@ -18,7 +18,7 @@
 namespace EffekseerRendererGL
 {
 
-::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType);
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(
 	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
@@ -56,14 +56,14 @@ public:
 	@param	deviceType
 	\~english	device type of opengl
 	\~japanese	デバイスの種類
-	@param	graphicDevice
-	\~english	for a middleware. it should be nullptr.
-	\~japanese	ミドルウェア向け。 nullptrにすべきである。
+	@param	isExtensionsEnabled
+	\~english	whether does make extensions enabled.
+	\~japanese	拡張を有効にするかどうか
 	@return
 	\~english	instance
 	\~japanese	インスタンス
 	*/
-	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2, bool isExtensionsEnabled = true);
 
 	static RendererRef Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount);
 
