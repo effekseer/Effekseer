@@ -940,7 +940,7 @@ namespace ImGui
 				rightHandleKeys[0] = v.x;
 				rightHandleValues[0] = v.y;
 				kv_selected[0] = false;
-				interporations[0] = ImFCurveInterporationType::Linear;
+				interporations[0] = ImFCurveInterporationType::Cubic;
 
 				(*newCount) = count + 1;
 				hasControlled = true;
