@@ -3093,6 +3093,26 @@ public:
 		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
 	*/
 	virtual void RessignCulling() = 0;
+
+	/**
+		@brief
+		\~English	Lock rendering events
+		\~Japanese	レンダリングのイベントをロックする。
+		@note
+		\~English	I recommend to read internal codes.
+		\~Japanese	内部コードを読むことを勧めます。
+	*/
+	virtual void LockRendering() = 0;
+
+	/**
+		@brief
+		\~English	Unlock rendering events
+		\~Japanese	レンダリングのイベントをアンロックする。
+		@note
+		\~English	I recommend to read internal codes.
+		\~Japanese	内部コードを読むことを勧めます。
+	*/
+	virtual void UnlockRendering() = 0;
 };
 //----------------------------------------------------------------------------------
 //
@@ -3352,6 +3372,7 @@ public:
 
 #ifndef __EFFEKSEER_MATERIALLOADER_H__
 #define __EFFEKSEER_MATERIALLOADER_H__
+
 
 namespace Effekseer
 {
@@ -3800,8 +3821,8 @@ public:
 //----------------------------------------------------------------------------------
 #endif // __EFFEKSEER_MODEL_H__
 
-#ifndef __EFFEKSEER_SOUND_PLAYER_H__
-#define __EFFEKSEER_SOUND_PLAYER_H__
+#ifndef	__EFFEKSEER_SOUND_PLAYER_H__
+#define	__EFFEKSEER_SOUND_PLAYER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -3824,37 +3845,33 @@ class SoundPlayer
 public:
 	struct InstanceParameter
 	{
-		void* Data;
-		float Volume;
-		float Pan;
-		float Pitch;
-		bool Mode3D;
-		Vector3D Position;
-		float Distance;
+		void*		Data;
+		float		Volume;
+		float		Pan;
+		float		Pitch;
+		bool		Mode3D;
+		Vector3D	Position;
+		float		Distance;
 	};
 
 public:
-	SoundPlayer()
-	{
-	}
+	SoundPlayer() {}
 
-	virtual ~SoundPlayer()
-	{
-	}
+	virtual ~SoundPlayer() {}
 
-	virtual SoundHandle Play(SoundTag tag, const InstanceParameter& parameter) = 0;
+	virtual SoundHandle Play( SoundTag tag, const InstanceParameter& parameter ) = 0;
+	
+	virtual void Stop( SoundHandle handle, SoundTag tag ) = 0;
 
-	virtual void Stop(SoundHandle handle, SoundTag tag) = 0;
+	virtual void Pause( SoundHandle handle, SoundTag tag, bool pause ) = 0;
 
-	virtual void Pause(SoundHandle handle, SoundTag tag, bool pause) = 0;
+	virtual bool CheckPlaying( SoundHandle handle, SoundTag tag ) = 0;
 
-	virtual bool CheckPlaying(SoundHandle handle, SoundTag tag) = 0;
+	virtual void StopTag( SoundTag tag ) = 0;
 
-	virtual void StopTag(SoundTag tag) = 0;
+	virtual void PauseTag( SoundTag tag, bool pause ) = 0;
 
-	virtual void PauseTag(SoundTag tag, bool pause) = 0;
-
-	virtual bool CheckPlayingTag(SoundTag tag) = 0;
+	virtual bool CheckPlayingTag( SoundTag tag ) = 0;
 
 	virtual void StopAll() = 0;
 };
@@ -3862,11 +3879,11 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_SOUND_PLAYER_H__
+#endif	// __EFFEKSEER_SOUND_PLAYER_H__
 
 #ifndef __EFFEKSEER_SOUNDLOADER_H__
 #define __EFFEKSEER_SOUNDLOADER_H__

@@ -423,6 +423,10 @@ public:
 	{
 		return ReferenceObject::Release();
 	}
+
+	void LockRendering() override;
+
+	void UnlockRendering() override;
 };
 
 } // namespace Effekseer

@@ -2084,4 +2084,14 @@ void ManagerImplemented::RessignCulling()
 	m_cullingWorld->Reassign();
 }
 
+void ManagerImplemented::LockRendering()
+{
+	m_renderingMutex.lock();
+}
+
+void ManagerImplemented::UnlockRendering()
+{
+	m_renderingMutex.unlock();
+}
+
 } // namespace Effekseer
