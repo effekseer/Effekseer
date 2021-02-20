@@ -524,6 +524,9 @@ namespace Effekseer.GUI.Dock
 						{
 							selected.Item2.Interpolations[selectedInd] = i;
 							selected.Item2.IsDirtied = true;
+
+							canControl = false;
+							canCurveControl = false;
 						}
 
 						if (is_selected)
@@ -1266,18 +1269,19 @@ namespace Effekseer.GUI.Dock
 
 		interface IFCurveConverter
 		{
-			IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue);
+			IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue, int interpolationType);
 
 			void SetKeys(IFCurve fcurve, IFCurveKey[] keys);
 		}
 
 		class FloatFCurveConverter : IFCurveConverter
 		{
-			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue)
+			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue, int interpolationType)
 			{
 				var fcurveKey = new FCurveKey<float>(key, value);
 				fcurveKey.SetLeftDirectly(leftKey, leftValue);
 				fcurveKey.SetRightDirectly(rightKey, rightValue);
+				fcurveKey.InterpolationType.SetValueDirectly((FCurveInterpolation)interpolationType);
 				return fcurveKey;
 			}
 
@@ -1290,11 +1294,12 @@ namespace Effekseer.GUI.Dock
 
 		class IntFCurveConverter : IFCurveConverter
 		{
-			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue)
+			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue, int interpolationType)
 			{
 				var fcurveKey = new FCurveKey<int>(key, (int)value);
 				fcurveKey.SetLeftDirectly(leftKey, leftValue);
 				fcurveKey.SetRightDirectly(rightKey, rightValue);
+				fcurveKey.InterpolationType.SetValueDirectly((FCurveInterpolation)interpolationType);
 				return fcurveKey;
 			}
 
@@ -1923,7 +1928,8 @@ namespace Effekseer.GUI.Dock
 					for (int j = 0; j < properties[i].Keys.Length - 1; j++)
 					{
 						var v = properties[i].Values[j];
-						var key = converter.CreateKey((int)properties[i].Keys[j], v, properties[i].LeftKeys[j], properties[i].LeftValues[j], properties[i].RightKeys[j], properties[i].RightValues[j]);
+						var key = converter.CreateKey((int)properties[i].Keys[j], v, properties[i].LeftKeys[j], properties[i].LeftValues[j], properties[i].RightKeys[j], properties[i].RightValues[j], properties[i].Interpolations[j]);
+
 						keys.Add(key);
 					}
 
@@ -2094,9 +2100,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Interpolations.Length != plength)
 				{
-					var new_interpolations = new int[keyFrames.Length + 1];
-					Interpolations.CopyTo(new_interpolations, 0);
-					Interpolations = new_interpolations;
+					Interpolations = keyFrames.Select(_ => (int)_.InterpolationType.Value).Concat(new int[] { 0 }).ToArray();
 				}
 			}
 		}
