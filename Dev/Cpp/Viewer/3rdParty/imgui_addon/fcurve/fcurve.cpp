@@ -774,7 +774,7 @@ namespace ImGui
 			rightHandleKeys[0] = v.x;
 			rightHandleValues[0] = v.y;
 			kv_selected[0] = false;
-			interporations[0] = ImFCurveInterporationType::Linear;
+			interporations[0] = ImFCurveInterporationType::Cubic;
 
 			(*newCount) = count + 1;
 			result = true;
@@ -788,7 +788,7 @@ namespace ImGui
 			rightHandleKeys[count] = v.x;
 			rightHandleValues[count] = v.y;
 			kv_selected[count] = false;
-			interporations[count] = ImFCurveInterporationType::Linear;
+			interporations[count] = ImFCurveInterporationType::Cubic;
 
 			(*newCount) = count + 1;
 			result = true;
@@ -818,7 +818,7 @@ namespace ImGui
 					rightHandleKeys[i + 1] = v.x;
 					rightHandleValues[i + 1] = v.y;
 					kv_selected[i + 1] = false;
-					interporations[i + 1] = ImFCurveInterporationType::Linear;
+					interporations[i + 1] = ImFCurveInterporationType::Cubic;
 
 					(*newCount) = count + 1;
 					result = true;
