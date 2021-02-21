@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class ColorWithRandom
+	public class ColorWithRandom : IValueChangedFromDefault
 	{
 		public IntWithRandom R
 		{

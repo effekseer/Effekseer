@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class String
+	public class String : IValueChangedFromDefault
 	{
 		string _value = string.Empty;
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector3D : IResettableValue
+	public class Vector3D : IResettableValue, IValueChangedFromDefault
 	{
 		public Float X
 		{

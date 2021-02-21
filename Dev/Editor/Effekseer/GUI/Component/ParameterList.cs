@@ -104,6 +104,28 @@ namespace Effekseer.GUI.Component
 			{
 			}
 
+			public bool IsValueChangedFromDefault
+			{
+				get
+				{
+					foreach(var row in controlRows.Internal)
+					{
+						if(row.Children?.IsValueChangedFromDefault ?? false)
+						{
+							return true;
+						}
+
+						var value = row.BindingValue as Data.IValueChangedFromDefault;
+						if(value?.IsValueChangedFromDefault ?? false)
+						{
+							return true;
+						}
+					}
+
+					return false;
+				}
+			}
+
 			/// <summary>
 			/// 
 			/// </summary>
@@ -176,7 +198,19 @@ namespace Effekseer.GUI.Component
 								Manager.NativeManager.Columns(1);
 								Manager.NativeManager.Spacing();
 
+								var valueChanged = item.Children.IsValueChangedFromDefault;
+
+								if(valueChanged)
+								{
+									Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Header, 0xff75ba33);
+								}
+
 								bool opened = Manager.NativeManager.CollapsingHeader(label);
+
+								if (valueChanged)
+								{
+									Manager.NativeManager.PopStyleColor();
+								}
 
 								Manager.NativeManager.Columns(2);
 

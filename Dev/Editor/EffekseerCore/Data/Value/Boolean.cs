@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Boolean
+	public class Boolean : IValueChangedFromDefault
 	{
 		bool _value = false;
 

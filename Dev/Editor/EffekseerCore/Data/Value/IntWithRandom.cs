@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class IntWithRandom
+	public class IntWithRandom : IValueChangedFromDefault
 	{
 		int _value_center = 0;
 		int _value_max = 0;

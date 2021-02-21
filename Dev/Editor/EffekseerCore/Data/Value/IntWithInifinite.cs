@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class IntWithInifinite
+	public class IntWithInifinite : IValueChangedFromDefault
 	{
 		public Int Value
 		{

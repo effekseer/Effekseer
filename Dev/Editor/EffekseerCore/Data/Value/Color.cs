@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Color
+	public class Color : IValueChangedFromDefault
 	{
 		public Int R
 		{

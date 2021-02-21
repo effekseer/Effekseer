@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class Float : IResettableValue
+	public class Float : IResettableValue, IValueChangedFromDefault
 	{
 		float? _value = null;
 		float _max = float.MaxValue;

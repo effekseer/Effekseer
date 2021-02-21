@@ -885,4 +885,9 @@ namespace Effekseer.Data
 	{
 		void ResetValue();
 	}
+
+	public interface IValueChangedFromDefault
+	{
+		bool IsValueChangedFromDefault { get; }
+	}
 }

@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class Int
+	public class Int : IValueChangedFromDefault
 	{
 		int _value = 0;
 		int _max = int.MaxValue;

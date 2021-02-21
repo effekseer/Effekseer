@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class FloatWithRandom
+	public class FloatWithRandom : IValueChangedFromDefault
 	{
 		float _value_center = 0;
 		float _value_max = 0;
