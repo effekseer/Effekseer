@@ -821,13 +821,6 @@ namespace Effekseer
 			return;
 		}
 
-		static Data.NodeRoot LoadFromXml(string xml, string path)
-		{
-			var doc = new System.Xml.XmlDocument();
-			doc.LoadXml(xml);
-			return LoadFromXml(doc, path);
-		}
-
 		public static Data.NodeRoot LoadFromXml(System.Xml.XmlDocument doc, string path)
 		{
 			if (doc.ChildNodes.Count != 2) return null;
