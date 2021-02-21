@@ -289,7 +289,7 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class LocalForceField : IEditableValueCollection
+	public class LocalForceField
 	{
 		[Key(key = "LFF_Type")]
 		[Selector(ID = 10)]
@@ -412,49 +412,6 @@ namespace Effekseer.Data
 			Falloff = new ForceFieldFalloff();
 		}
 
-		public EditableValue[] GetValues()
-		{
-			var ret = new List<EditableValue>();
-
-			EditableValue ev = new EditableValue();
-			ev.Value = Type;
-
-			{
-				if (Core.Language == Language.English)
-				{
-					ev.Title = "ForceField" + number.ToString();
-				}
-
-				if (Core.Language == Language.Japanese)
-				{
-					ev.Title = "力場" + number.ToString();
-				}
-
-				ev.Description = "";
-			}
-
-			ev.IsShown = true;
-			ev.IsUndoEnabled = true;
-			ev.SelfSelectorID = 10;
-			ret.Add(ev);
-
-			ret.Add(EditableValue.Create(Position, this.GetType().GetProperty("Position")));
-			ret.Add(EditableValue.Create(Rotation, this.GetType().GetProperty("Rotation")));
-			ret.Add(EditableValue.Create(Power, this.GetType().GetProperty("Power")));
-
-			ret.Add(EditableValue.Create(Force, this.GetType().GetProperty("Force")));
-			ret.Add(EditableValue.Create(Wind, this.GetType().GetProperty("Wind")));
-			ret.Add(EditableValue.Create(Vortex, this.GetType().GetProperty("Vortex")));
-			ret.Add(EditableValue.Create(Turbulence, this.GetType().GetProperty("Turbulence")));
-			ret.Add(EditableValue.Create(Drag, this.GetType().GetProperty("Drag")));
-			ret.Add(EditableValue.Create(Gravity, this.GetType().GetProperty("Gravity")));
-			ret.Add(EditableValue.Create(AttractiveForce, this.GetType().GetProperty("AttractiveForce")));
-
-			ret.Add(EditableValue.Create(Falloff, this.GetType().GetProperty("Falloff")));
-
-			return ret.ToArray();
-		}
-
 		public event ChangedValueEventHandler OnChanged;
 
 		public void Changed()
@@ -469,15 +426,19 @@ namespace Effekseer.Data
 	public class LocationAbsValues
 	{
 		[IO(Export = true)]
+		[TreeNode(key = "LFF_FF_1", id = "LFF_FF_1")]
 		public LocalForceField LocalForceField1 { get; private set; }
 
 		[IO(Export = true)]
+		[TreeNode(key = "LFF_FF_2", id = "LFF_FF_2")]
 		public LocalForceField LocalForceField2 { get; private set; }
 
 		[IO(Export = true)]
+		[TreeNode(key = "LFF_FF_3", id = "LFF_FF_3")]
 		public LocalForceField LocalForceField3 { get; private set; }
 
 		[IO(Export = true)]
+		[TreeNode(key = "LFF_FF_4", id = "LFF_FF_4")]
 		public LocalForceField LocalForceField4 { get; private set; }
 
 		internal LocationAbsValues()

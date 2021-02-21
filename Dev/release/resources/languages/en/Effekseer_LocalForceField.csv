@@ -41,3 +41,8 @@ LFF_VortexType_ConstantSpeed_Name,ConstantSpeed
 ,
 LFF_TurbulenceType_Simple_Name,Simple
 LFF_TurbulenceType_Complicated_Name,Complicated
+,
+LFF_FF_1_Name,ForceField 1
+LFF_FF_2_Name,ForceField 2
+LFF_FF_3_Name,ForceField 3
+LFF_FF_4_Name,ForceField 4

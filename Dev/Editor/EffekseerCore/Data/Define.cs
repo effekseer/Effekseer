@@ -865,6 +865,10 @@ namespace Effekseer.Data
 				{
 					ret.Title = new MultiLanguageString(treeNode.key);
 				}
+				else if (MultiLanguageTextProvider.HasKey(treeNode.key + "_Name"))
+				{
+					ret.Title = new MultiLanguageString(treeNode.key + "_Name");
+				}
 			}
 
 			return ret;
