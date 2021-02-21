@@ -1,6 +1,8 @@
 
 # C++
 
+> NOTE: See also ARCHITECTURE.md
+
 ## CreateHeader.py
 
 To easy to include Effekseer, Effekseer makes a single header with a python script.
