@@ -394,21 +394,29 @@ namespace ImGui
 			auto fieldGridSizeX = screenGridSize * kByPixel;
 			auto fieldGridSizeY = screenGridSize * vByPixel;
 
-			fieldGridSizeX  = pow(5, (int32_t)logn(5, fieldGridSizeX) + 1);
-			fieldGridSizeY = pow(5, (int32_t)logn(5, fieldGridSizeY) + 1);
+			fieldGridSizeX  = pow(5, (int32_t)round(logn(5, fieldGridSizeX)));
+			fieldGridSizeY = pow(5, (int32_t)round(logn(5, fieldGridSizeY)));
 
 			auto sx = (int)(upperLeft_f.x / fieldGridSizeX) * fieldGridSizeX;
 			auto sy = (int)(upperLeft_f.y / fieldGridSizeY) * fieldGridSizeY;
 			auto ex = (int)(lowerRight_f.x / fieldGridSizeX) * fieldGridSizeX + fieldGridSizeX;
 			auto ey = (int)(lowerRight_f.y / fieldGridSizeY) * fieldGridSizeY - fieldGridSizeY;
 
-			for (auto y = sy; y >= ey; y -= fieldGridSizeY)
+			for (auto y = sy + fieldGridSizeY; y >= ey; y -= fieldGridSizeY)
 			{
+				for (int i = 1; i < 5; i++)
+				{
+					window->DrawList->AddLine(transform_f2s(ImVec2(upperLeft_f.x, y - fieldGridSizeY / 5.0f * i)), transform_f2s(ImVec2(lowerRight_f.x, y - fieldGridSizeY / 5.0f * i)), 0x25000000);
+				}
 				window->DrawList->AddLine(transform_f2s(ImVec2(upperLeft_f.x, y)), transform_f2s(ImVec2(lowerRight_f.x, y)), 0x55000000);
 			}
 
-			for (auto x = sx; x <= ex; x += fieldGridSizeX)
+			for (auto x = sx - fieldGridSizeX; x <= ex; x += fieldGridSizeX)
 			{
+				for (int i = 1; i < 5; i++)
+				{
+					window->DrawList->AddLine(transform_f2s(ImVec2(x + fieldGridSizeX / 5.0f * i, upperLeft_f.y)), transform_f2s(ImVec2(x + fieldGridSizeX / 5.0f * i, lowerRight_f.y)), 0x25000000);
+				}
 				window->DrawList->AddLine(transform_f2s(ImVec2(x, upperLeft_f.y)), transform_f2s(ImVec2(x, lowerRight_f.y)), 0x55000000);
 			}
 
