@@ -325,19 +325,23 @@ namespace Effekseer.GUI.Dock
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
 			string nodeName = treeNode.ParamTreeNode.Node.Name.Value;
-			if (Manager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
+
+			if(treeNode.FCurves.Count > 0)
 			{
-				foreach (var fcurve in treeNode.FCurves)
+				if (Manager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
 				{
-					fcurve.UpdateTree(nodeName);
-				}
+					foreach (var fcurve in treeNode.FCurves)
+					{
+						fcurve.UpdateTree(nodeName);
+					}
 
-				for (int i = 0; i < treeNode.Children.Count; i++)
-				{
-					UpdateTreeNode(treeNode.Children[i]);
+					Manager.NativeManager.TreePop();
 				}
+			}
 
-				Manager.NativeManager.TreePop();
+			for (int i = 0; i < treeNode.Children.Count; i++)
+			{
+				UpdateTreeNode(treeNode.Children[i]);
 			}
 		}
 
