@@ -573,7 +573,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 		for (int32_t i = 0; i < pmCount; i++)
 		{
-			procedualModelParameters_[i].Load(binaryReader);
+			procedualModelParameters_[i].Load(binaryReader, m_version);
 			procedualModels_[i] = nullptr;
 		}
 	};

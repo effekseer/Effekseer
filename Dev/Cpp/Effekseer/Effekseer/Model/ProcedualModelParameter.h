@@ -102,6 +102,7 @@ struct ProcedualModelParameter
 			float AngleBegin;
 			float AngleEnd;
 			std::array<int, 2> Divisions;
+			float Rotate;
 		} Mesh;
 
 		struct
@@ -159,13 +160,22 @@ struct ProcedualModelParameter
 	std::array<float, 3> CurlNoiseOffset = {};
 	std::array<float, 3> CurlNoisePower = {};
 
+	std::array<float, 2> ColorCenterPosition = {0.5f, 0.5f};
 	std::array<float, 2> ColorCenterArea = {0.0f, 0.0f};
-	Color ColorLeft;
-	Color ColorCenter;
-	Color ColorRight;
-	Color ColorLeftMiddle;
-	Color ColorCenterMiddle;
-	Color ColorRightMiddle;
+
+	Color ColorUpperLeft;
+	Color ColorUpperCenter;
+	Color ColorUpperRight;
+	Color ColorMiddleLeft;
+	Color ColorMiddleCenter;
+	Color ColorMiddleRight;
+	Color ColorLowerLeft;
+	Color ColorLowerCenter;
+	Color ColorLowerRight;
+
+	std::array<float, 3> VertexColorNoiseFrequency = {};
+	std::array<float, 3> VertexColorNoiseOffset = {};
+	std::array<float, 3> VertexColorNoisePower = {};
 
 	bool operator<(const ProcedualModelParameter& rhs) const
 	{
@@ -187,6 +197,9 @@ struct ProcedualModelParameter
 
 			if (Mesh.Divisions[1] != rhs.Mesh.Divisions[1])
 				return Mesh.Divisions[1] < rhs.Mesh.Divisions[1];
+
+			if (Mesh.Rotate != rhs.Mesh.Rotate)
+				return Mesh.Rotate < rhs.Mesh.Rotate;
 		}
 		else if (Type == ProcedualModelType::Ribbon)
 		{
@@ -300,32 +313,53 @@ struct ProcedualModelParameter
 		if (CurlNoisePower != rhs.CurlNoisePower)
 			return CurlNoisePower < rhs.CurlNoisePower;
 
-		if (ColorLeft != rhs.ColorLeft)
-			return ColorLeft < rhs.ColorLeft;
+		if (ColorUpperLeft != rhs.ColorUpperLeft)
+			return ColorUpperLeft < rhs.ColorUpperLeft;
 
-		if (ColorCenter != rhs.ColorCenter)
-			return ColorCenter < rhs.ColorCenter;
+		if (ColorUpperCenter != rhs.ColorUpperCenter)
+			return ColorUpperCenter < rhs.ColorUpperCenter;
 
-		if (ColorRight != rhs.ColorRight)
-			return ColorRight < rhs.ColorRight;
+		if (ColorUpperRight != rhs.ColorUpperRight)
+			return ColorUpperRight < rhs.ColorUpperRight;
 
-		if (ColorLeftMiddle != rhs.ColorLeftMiddle)
-			return ColorLeftMiddle < rhs.ColorLeftMiddle;
+		if (ColorMiddleLeft != rhs.ColorMiddleLeft)
+			return ColorMiddleLeft < rhs.ColorMiddleLeft;
 
-		if (ColorCenterMiddle != rhs.ColorCenterMiddle)
-			return ColorCenterMiddle < rhs.ColorCenterMiddle;
+		if (ColorMiddleCenter != rhs.ColorMiddleCenter)
+			return ColorMiddleCenter < rhs.ColorMiddleCenter;
 
-		if (ColorRightMiddle != rhs.ColorRightMiddle)
-			return ColorRightMiddle < rhs.ColorRightMiddle;
+		if (ColorMiddleRight != rhs.ColorMiddleRight)
+			return ColorMiddleRight < rhs.ColorMiddleRight;
+
+		if (ColorLowerLeft != rhs.ColorLowerLeft)
+			return ColorLowerLeft < rhs.ColorLowerLeft;
+
+		if (ColorLowerCenter != rhs.ColorLowerCenter)
+			return ColorLowerCenter < rhs.ColorLowerCenter;
+
+		if (ColorLowerRight != rhs.ColorLowerRight)
+			return ColorLowerRight < rhs.ColorLowerRight;
+
+		if (ColorCenterPosition != rhs.ColorCenterPosition)
+			return ColorCenterPosition < rhs.ColorCenterPosition;
 
 		if (ColorCenterArea != rhs.ColorCenterArea)
 			return ColorCenterArea < rhs.ColorCenterArea;
+
+		if (VertexColorNoiseFrequency != rhs.VertexColorNoiseFrequency)
+			return VertexColorNoiseFrequency < rhs.VertexColorNoiseFrequency;
+
+		if (VertexColorNoiseOffset != rhs.VertexColorNoiseOffset)
+			return VertexColorNoiseOffset < rhs.VertexColorNoiseOffset;
+
+		if (VertexColorNoisePower != rhs.VertexColorNoisePower)
+			return VertexColorNoisePower < rhs.VertexColorNoisePower;
 
 		return false;
 	}
 
 	template <bool T>
-	bool Load(BinaryReader<T>& reader)
+	bool Load(BinaryReader<T>& reader, int version)
 	{
 		reader.Read(Type);
 
@@ -334,6 +368,11 @@ struct ProcedualModelParameter
 			reader.Read(Mesh.AngleBegin);
 			reader.Read(Mesh.AngleEnd);
 			reader.Read(Mesh.Divisions);
+
+			if (version >= Version16Alpha9)
+			{
+				reader.Read(Mesh.Rotate);
+			}
 		}
 		else if (Type == ProcedualModelType::Ribbon)
 		{
@@ -391,13 +430,46 @@ struct ProcedualModelParameter
 		reader.Read(CurlNoiseOffset);
 		reader.Read(CurlNoisePower);
 
-		reader.Read(ColorLeft);
-		reader.Read(ColorCenter);
-		reader.Read(ColorRight);
-		reader.Read(ColorLeftMiddle);
-		reader.Read(ColorCenterMiddle);
-		reader.Read(ColorRightMiddle);
+		reader.Read(ColorUpperLeft);
+		reader.Read(ColorUpperCenter);
+		reader.Read(ColorUpperRight);
+
+		reader.Read(ColorMiddleLeft);
+		reader.Read(ColorMiddleCenter);
+		reader.Read(ColorMiddleRight);
+
+		if (version >= Version16Alpha9)
+		{
+			reader.Read(ColorLowerLeft);
+			reader.Read(ColorLowerCenter);
+			reader.Read(ColorLowerRight);
+		}
+		else
+		{
+			ColorLowerLeft = ColorUpperLeft;
+			ColorLowerCenter = ColorUpperCenter;
+			ColorLowerRight = ColorUpperRight;
+		}
+
+		if (version >= Version16Alpha9)
+		{
+			reader.Read(ColorCenterPosition);
+		}
+
 		reader.Read(ColorCenterArea);
+
+		if (version >= Version16Alpha9)
+		{
+			reader.Read(VertexColorNoiseFrequency);
+			reader.Read(VertexColorNoiseOffset);
+			reader.Read(VertexColorNoisePower);
+		}
+		else
+		{
+			VertexColorNoiseFrequency.fill(0.0f);
+			VertexColorNoiseOffset.fill(0.0f);
+			VertexColorNoisePower.fill(0.0f);
+		}
 
 		return true;
 	}

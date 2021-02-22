@@ -45,53 +45,57 @@ namespace Effekseer.Data
 		Z,
 	}
 
-	public class ProcedualModelParameter : INamedObject
+	public class ProceduralModelMeshParameter
 	{
-		const int SelecterType = 100;
-		const int SelecterPrimitive = 200;
-
-		public Value.String Name { get; private set; } = new Value.String("New Model");
-
-		[Selector(ID = SelecterType)]
-		[Key(key = "PM_Type")]
-		public Value.Enum<ProcedualModelType> Type { get; private set; } = new Value.Enum<ProcedualModelType>(ProcedualModelType.Mesh);
-
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Mesh)]
+		[Selected(Value = (int)ProcedualModelType.Mesh)]
 		[Key(key = "PM_AngleBeginEnd")]
 		public Value.Vector2D AngleBeginEnd { get; private set; } = new Value.Vector2D(0.0f, 360.0f);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Mesh)]
+		[Selected(Value = (int)ProcedualModelType.Mesh)]
 		[Key(key = "PM_Divisions")]
 		public Value.Int2 Divisions { get; private set; } = new Value.Int2(10, 10, x_min: 2, y_min: 2);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Mesh)]
+		[Key(key = "PM_Rotate")]
+		public Value.Float Rotate { get; private set; } = new Value.Float(0.0f);
+
+	}
+
+	public class ProceduralModelRibbonParameter
+	{
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_CrossSection")]
 		public Value.Enum<ProcedualModelCrossSectionType> CrossSection { get; private set; } = new Value.Enum<ProcedualModelCrossSectionType>(ProcedualModelCrossSectionType.Plane);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_Rotate")]
 		public Value.Float Rotate { get; private set; } = new Value.Float(1.0f);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_Vertices")]
 		public Value.Int Vertices { get; private set; } = new Value.Int(10, int.MaxValue, 2, 1);
 
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_RibbonScales")]
 		public Value.Vector2D RibbonScales { get; private set; } = new Value.Vector2D(0.2f, 0.2f, x_step: 0.01f, y_step: 0.01f);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_RibbonAngles")]
 		public Value.Vector2D RibbonAngles { get; private set; } = new Value.Vector2D(0.0f, 0.0f);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_RibbonNoises")]
 		public Value.Vector2D RibbonNoises { get; private set; } = new Value.Vector2D(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.1f, y_step: 0.1f);
 
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProcedualModelType.Ribbon)]
 		[Key(key = "PM_Count")]
 		public Value.Int Count { get; private set; } = new Value.Int(2, int.MaxValue, 1);
+	}
+
+	public class ProceduralModelShapeParameter
+	{
+		const int SelecterPrimitive = 200;
 
 		[Selector(ID = SelecterPrimitive)]
 		[Key(key = "PM_PrimitiveType")]
@@ -138,7 +142,10 @@ namespace Effekseer.Data
 
 		[Key(key = "PM_AxisType")]
 		public Enum<AxisType> AxisType { get; private set; } = new Enum<AxisType>(Data.AxisType.YAxis);
+	}
 
+	public class ProceduralModelShapeNoiseParameter
+	{
 		[Key(key = "PM_TiltNoiseFreq")]
 		public Value.Vector2D TiltNoiseFrequency { get; private set; } = new Value.Vector2D(1.0f, 1.0f, x_step: 0.01f, y_step: 0.01f);
 
@@ -158,218 +165,95 @@ namespace Effekseer.Data
 		public Value.Vector3D WaveNoisePower { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 
 		[Key(key = "PM_CurlNoiseFreq")]
-
 		public Value.Vector3D CurlNoiseFrequency { get; private set; } = new Value.Vector3D(1.0f, 1.0f, 1.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 
 		[Key(key = "PM_CurlNoiseOffset")]
 		public Value.Vector3D CurlNoiseOffset { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 		[Key(key = "PM_CurlNoisePower")]
 		public Value.Vector3D CurlNoisePower { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
+	}
 
-		[Key(key = "PM_ColorLeft")]
-		public Value.Color ColorLeft { get; private set; } = new Value.Color(255, 255, 255, 255);
+	public class ProceduralModelVertexColorParameter
+	{
+		[Key(key = "PM_ColorUpperLeft")]
+		public Value.Color ColorUpperLeft { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-		[Key(key = "PM_ColorCenter")]
-		public Value.Color ColorCenter { get; private set; } = new Value.Color(255, 255, 255, 255);
+		[Key(key = "PM_ColorUpperCenter")]
+		public Value.Color ColorUpperCenter { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-		[Key(key = "PM_ColorRight")]
-		public Value.Color ColorRight { get; private set; } = new Value.Color(255, 255, 255, 255);
+		[Key(key = "PM_ColorUpperRight")]
+		public Value.Color ColorUpperRight { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-		[Key(key = "PM_ColorLeftMiddle")]
-		public Value.Color ColorLeftMiddle { get; private set; } = new Value.Color(255, 255, 255, 255);
+		[Key(key = "PM_ColorMiddleLeft")]
+		public Value.Color ColorMiddleLeft { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-		[Key(key = "PM_ColorCenterMiddle")]
-		public Value.Color ColorCenterMiddle { get; private set; } = new Value.Color(255, 255, 255, 255);
+		[Key(key = "PM_ColorMiddleCenter")]
+		public Value.Color ColorMiddleCenter { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-		[Key(key = "PM_ColorRightMiddle")]
-		public Value.Color ColorRightMiddle { get; private set; } = new Value.Color(255, 255, 255, 255);
+		[Key(key = "PM_ColorMiddleRight")]
+		public Value.Color ColorMiddleRight { get; private set; } = new Value.Color(255, 255, 255, 255);
+
+		[Key(key = "PM_ColorLowerLeft")]
+		public Value.Color ColorLowerLeft { get; private set; } = new Value.Color(255, 255, 255, 255);
+
+		[Key(key = "PM_ColorLowerCenter")]
+		public Value.Color ColorLowerCenter { get; private set; } = new Value.Color(255, 255, 255, 255);
+
+		[Key(key = "PM_ColorLowerRight")]
+		public Value.Color ColorLowerRight { get; private set; } = new Value.Color(255, 255, 255, 255);
+
+		[Key(key = "PM_ColorCenterPosition")]
+		public Value.Vector2D ColorCenterPosition { get; private set; } = new Value.Vector2D(0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.01f, y_step: 0.01f);
 
 		[Key(key = "PM_ColorCenterArea")]
 		public Value.Vector2D ColorCenterArea { get; private set; } = new Value.Vector2D(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.01f, y_step: 0.01f);
+	}
 
-		/*
-		public override bool Equals(object obj)
-		{
-			var param = obj as ProcedualModelParameter;
-			if (param == null)
-				return false;
+	public class ProceduralModelVertexColorNoiseParameter
+	{
+		[Key(key = "PM_VertexColorNoiseFreq")]
+		public Value.Vector3D NoiseFrequency { get; private set; } = new Value.Vector3D(1.0f, 1.0f, 1.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 
-			if (Type.Value != param.Type.Value)
-				return false;
+		[Key(key = "PM_VertexColorNoiseOffset")]
+		public Value.Vector3D NoiseOffset { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
+		[Key(key = "PM_VertexColorNoisePower")]
+		public Value.Vector3D NoisePower { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
+	}
 
-			if (Type.Value == ProcedualModelType.Mesh)
-			{
-				if (!AngleBeginEnd.ValueEquals(param.AngleBeginEnd))
-					return false;
-				if (!Divisions.ValueEquals(param.Divisions))
-					return false;
-			}
-			else if (Type.Value == ProcedualModelType.Ribbon)
-			{
-				if (CrossSection.Value != param.CrossSection.Value)
-					return false;
-				if (Rotate.Value != param.Rotate.Value)
-					return false;
-				if (Vertices.Value != param.Vertices.Value)
-					return false;
-				if (!RibbonScales.ValueEquals(param.RibbonScales))
-					return false;
-				if (!RibbonAngles.ValueEquals(param.RibbonAngles))
-					return false;
-				if (!RibbonNoises.ValueEquals(param.RibbonNoises))
-					return false;
-				if (Count.Value != param.Count.Value)
-					return false;
-			}
-			else
-			{
-				throw new Exception();
-			}
+	public class ProcedualModelParameter : INamedObject
+	{
+		const int SelecterType = 100;
+		const int SelecterPrimitive = 200;
 
+		public Value.String Name { get; private set; } = new Value.String("New Model");
 
-			if (PrimitiveType.Value != param.PrimitiveType.Value)
-				return false;
+		[Selector(ID = SelecterType)]
+		[Key(key = "PM_Type")]
+		public Value.Enum<ProcedualModelType> Type { get; private set; } = new Value.Enum<ProcedualModelType>(ProcedualModelType.Mesh);
 
-			if (PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
-			{
-				if (Radius.Value != param.Radius.Value)
-					return false;
-				if (DepthMin.Value != param.DepthMin.Value)
-					return false;
-				if (DepthMax.Value != param.DepthMax.Value)
-					return false;
-			}
-			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cone)
-			{
-				if (Radius.Value != param.Radius.Value)
-					return false;
-				if (Depth.Value != param.Depth.Value)
-					return false;
-			}
-			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cylinder)
-			{
-				if (Radius.Value != param.Radius.Value)
-					return false;
-				if (Radius2.Value != param.Radius2.Value)
-					return false;
-				if (Depth.Value != param.Depth.Value)
-					return false;
-			}
-			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Spline4)
-			{
-				if (!Point1.ValueEquals(param.Point1))
-					return false;
-				if (!Point2.ValueEquals(param.Point2))
-					return false;
-				if (!Point3.ValueEquals(param.Point3))
-					return false;
-				if (!Point4.ValueEquals(param.Point4))
-					return false;
-			}
-			else
-			{
-				throw new Exception();
-			}
+		[IO(Export = true)]
+		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Mesh)]
+		public ProceduralModelMeshParameter Mesh { get; private set; } = new ProceduralModelMeshParameter();
 
-			if (AxisType.Value != param.AxisType.Value)
-				return false;
+		[IO(Export = true)]
+		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		public ProceduralModelRibbonParameter Ribbon { get; private set; } = new ProceduralModelRibbonParameter();
 
-			if (!TiltNoiseFrequency.ValueEquals(param.TiltNoiseFrequency))
-				return false;
-			if (!TiltNoiseOffset.ValueEquals(param.TiltNoiseOffset))
-				return false;
-			if (!TiltNoisePower.ValueEquals(param.TiltNoisePower))
-				return false;
+		[IO(Export = true)]
+		[TreeNode(key = "PM_Shape", id = "PM_Shape")]
+		public ProceduralModelShapeParameter Shape { get; private set; } = new ProceduralModelShapeParameter();
 
-			if (!WaveNoiseFrequency.ValueEquals(param.WaveNoiseFrequency))
-				return false;
-			if (!WaveNoiseOffset.ValueEquals(param.WaveNoiseOffset))
-				return false;
-			if (!WaveNoisePower.ValueEquals(param.WaveNoisePower))
-				return false;
+		[IO(Export = true)]
+		[TreeNode(key = "PM_ShapeNoise", id = "PM_ShapeNoise")]
+		public ProceduralModelShapeNoiseParameter ShapeNoise { get; private set; } = new ProceduralModelShapeNoiseParameter();
 
-			if (!CurlNoiseFrequency.ValueEquals(param.CurlNoiseFrequency))
-				return false;
-			if (!CurlNoiseOffset.ValueEquals(param.CurlNoiseOffset))
-				return false;
-			if (!CurlNoisePower.ValueEquals(param.CurlNoisePower))
-				return false;
+		[IO(Export = true)]
+		[TreeNode(key = "PM_VertexColor", id = "PM_VertexColor")]
+		public ProceduralModelVertexColorParameter VertexColor { get; private set; } = new ProceduralModelVertexColorParameter();
 
-			if (!ColorLeft.ValueEquals(param.ColorLeft))
-				return false;
-			if (!ColorCenter.ValueEquals(param.ColorCenter))
-				return false;
-			if (!ColorRight.ValueEquals(param.ColorRight))
-				return false;
-			if (!ColorLeftMiddle.ValueEquals(param.ColorLeftMiddle))
-				return false;
-			if (!ColorCenterMiddle.ValueEquals(param.ColorCenterMiddle))
-				return false;
-			if (!ColorRightMiddle.ValueEquals(param.ColorRightMiddle))
-				return false;
-
-			if (!ColorCenterArea.ValueEquals(param.ColorCenterArea))
-				return false;
-
-			return true;
-		}
-
-		public override int GetHashCode()
-		{
-			var hash = 0;
-
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, Type.Value.GetHashCode() });
-
-			if (Type.Value == ProcedualModelType.Mesh)
-			{
-				hash = Utils.Misc.CombineHashCodes(new[] { hash, AngleBeginEnd.X.Value.GetHashCode(), AngleBeginEnd.Y.Value.GetHashCode(), Divisions.GetValueHashCode() });
-			}
-			else if (Type.Value == ProcedualModelType.Ribbon)
-			{
-				hash = Utils.Misc.CombineHashCodes(new[] { hash, CrossSection.Value.GetHashCode(), Rotate.Value.GetHashCode(), Vertices.Value.GetHashCode(), RibbonScales.GetValueHashCode(), RibbonAngles.GetValueHashCode(), RibbonNoises.GetValueHashCode(), Count.Value.GetHashCode() });
-			}
-			else
-			{
-				throw new Exception();
-			}
-
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, PrimitiveType.Value.GetHashCode() });
-
-			if (PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
-			{
-				hash = Utils.Misc.CombineHashCodes(new[] { hash, DepthMin.Value.GetHashCode(), DepthMax.Value.GetHashCode(), Radius.Value.GetHashCode() });
-			}
-			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cone)
-			{
-				hash = Utils.Misc.CombineHashCodes(new[] { hash, Depth.Value.GetHashCode(), Radius.Value.GetHashCode() });
-			}
-			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Cylinder)
-			{
-				hash = Utils.Misc.CombineHashCodes(new[] { hash, Depth.Value.GetHashCode(), Radius.Value.GetHashCode(), Radius2.Value.GetHashCode() });
-			}
-			else if (PrimitiveType.Value == ProcedualModelPrimitiveType.Spline4)
-			{
-				hash = Utils.Misc.CombineHashCodes(new[] { hash, Point1.GetValueHashCode(), Point2.GetValueHashCode(), Point3.GetValueHashCode(), Point4.GetValueHashCode() });
-			}
-			else
-			{
-				throw new Exception();
-			}
-
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, AxisType.Value.GetHashCode() });
-
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, TiltNoiseFrequency.GetValueHashCode(), TiltNoiseOffset.GetValueHashCode(), TiltNoisePower.GetValueHashCode() });
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, WaveNoiseFrequency.GetValueHashCode(), WaveNoiseOffset.GetValueHashCode(), WaveNoisePower.GetValueHashCode() });
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, CurlNoiseFrequency.GetValueHashCode(), CurlNoiseOffset.GetValueHashCode(), CurlNoisePower.GetValueHashCode() });
-
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, ColorLeft.GetValueHashCode(), ColorCenter.GetValueHashCode(), ColorRight.GetValueHashCode() });
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, ColorLeftMiddle.GetValueHashCode(), ColorCenterMiddle.GetValueHashCode(), ColorRightMiddle.GetValueHashCode() });
-
-			hash = Utils.Misc.CombineHashCodes(new[] { hash, ColorCenterArea.GetValueHashCode() });
-
-			return hash;
-		}
-		*/
+		[IO(Export = true)]
+		[TreeNode(key = "PM_VertexColorNoise", id = "PM_VertexColorNoise")]
+		public ProceduralModelVertexColorNoiseParameter VertexColorNoise { get; private set; } = new ProceduralModelVertexColorNoiseParameter();
 	}
 
 	public class ProcedualModelCollection : Value.ObjectCollection<ProcedualModelParameter>
