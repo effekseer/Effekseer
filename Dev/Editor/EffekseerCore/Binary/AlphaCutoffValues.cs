@@ -45,7 +45,7 @@ namespace Effekseer.Binary
             }
             else if (value.Type == Data.AlphaCutoffParameter.ParameterType.Easing)
             {
-				Utils.ExportEasing(value.Easing, 1.0f, data, version);
+				Utils.ExportEasing(value.Easing, 1.0f, data, version, true);
 			}
             else if (value.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
             {

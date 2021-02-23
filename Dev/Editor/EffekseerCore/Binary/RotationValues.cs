@@ -70,13 +70,7 @@ namespace Effekseer.Binary
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.AxisEasing.Axis.GetBytes());
-				_data.Add(BitConverter.GetBytes(value.AxisEasing.Easing.Start.Max * (float)Math.PI / 180.0f));
-				_data.Add(BitConverter.GetBytes(value.AxisEasing.Easing.Start.Min * (float)Math.PI / 180.0f));
-				_data.Add(BitConverter.GetBytes(value.AxisEasing.Easing.End.Max * (float)Math.PI / 180.0f));
-				_data.Add(BitConverter.GetBytes(value.AxisEasing.Easing.End.Min * (float)Math.PI / 180.0f));
-				_data.Add(BitConverter.GetBytes(easing[0]));
-				_data.Add(BitConverter.GetBytes(easing[1]));
-				_data.Add(BitConverter.GetBytes(easing[2]));
+				Utils.ExportEasing(value.AxisEasing.Easing, (float)Math.PI / 180.0f, _data, version, version >= ExporterVersion.Ver16Alpha9);
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data.Count().GetBytes());
 				data.Add(__data);

@@ -720,6 +720,12 @@ namespace Effekseer.Data
 		}
 	}
 
+	public enum TreeNodeType
+	{
+		Large,
+		Small,
+	}
+
 	/// <summary>
 	/// For collection to create a treenode in GUI
 	/// </summary>
@@ -746,6 +752,12 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
+
+		public TreeNodeType type
+		{
+			get;
+			set;
+		} = TreeNodeType.Large;
 	}
 
 	/// <summary>
@@ -760,6 +772,7 @@ namespace Effekseer.Data
 		public bool IsShown = true;
 		public int SelfSelectorID = -1;
 		public string TreeNodeID = null;
+		public TreeNodeType TreeNodeType = TreeNodeType.Large;
 
 		/// <summary>
 		/// If this value is larger than 0, target selector id is used to show it.
@@ -860,6 +873,7 @@ namespace Effekseer.Data
 			if (treeNode != null)
 			{
 				ret.TreeNodeID = treeNode.id;
+				ret.TreeNodeType = treeNode.type;
 
 				if (MultiLanguageTextProvider.HasKey(treeNode.key))
 				{

@@ -19,10 +19,12 @@
 #include "Effekseer.EffectNodeRing.h"
 #include "Effekseer.EffectNodeRoot.h"
 #include "Effekseer.EffectNodeSprite.h"
+#include "Effekseer.Resource.h"
 #include "Effekseer.Setting.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 #include "Utils/Effekseer.BinaryReader.h"
-#include "Effekseer.Resource.h"
+
+#include "Utils/Compatiblity.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -373,9 +375,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(ParameterRotationAxisEasing));
-			memcpy(&RotationAxisEasing, pos, size);
-			pos += size;
+
+			memcpy(&RotationAxisEasing.axis, pos, sizeof(RotationAxisEasing.axis));
+			pos += sizeof(RotationAxisEasing.axis);
+
+			LoadFloatEasing(RotationAxisEasing.easing, pos, m_effect->GetVersion());
 		}
 		else if (RotationType == ParameterRotationType_FCurve)
 		{
@@ -448,8 +452,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(easing_float));
-			memcpy(&ScalingSingleEasing, pos, size);
+
+			ScalingSingleEasing.Load(pos, size, m_effect->GetVersion());
 			pos += size;
 		}
 		else if (ScalingType == ParameterScalingType_FCurve)
@@ -732,7 +736,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
-			// rescale intensity after 1.5
+		// rescale intensity after 1.5
 #ifndef __EFFEKSEER_FOR_UE4__ // Hack for EffekseerForUE4
 		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
 		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();

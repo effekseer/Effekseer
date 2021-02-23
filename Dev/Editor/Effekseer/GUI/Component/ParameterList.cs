@@ -195,28 +195,56 @@ namespace Effekseer.GUI.Component
 							else
 							{
 								// Simple CollapsingHeader
-								Manager.NativeManager.Columns(1);
-								Manager.NativeManager.Spacing();
-
-								var valueChanged = item.Children.IsValueChangedFromDefault;
-
-								if(valueChanged)
+								if(item.TreeNodeType == Data.TreeNodeType.Large)
 								{
-									Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Header, 0xff75ba33);
+									Manager.NativeManager.Columns(1);
+									Manager.NativeManager.Spacing();
+
+									var valueChanged = item.Children.IsValueChangedFromDefault;
+
+									if (valueChanged)
+									{
+										Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Header, 0xff75ba33);
+									}
+
+									bool opened = Manager.NativeManager.CollapsingHeader(label);
+
+									if (valueChanged)
+									{
+										Manager.NativeManager.PopStyleColor();
+									}
+
+									Manager.NativeManager.Columns(2);
+
+									if (opened)
+									{
+										indent = item.Children.Update(indent);
+									}
 								}
-
-								bool opened = Manager.NativeManager.CollapsingHeader(label);
-
-								if (valueChanged)
+								else
 								{
-									Manager.NativeManager.PopStyleColor();
-								}
+									var flag = swig.TreeNodeFlags.SpanFullWidth;
 
-								Manager.NativeManager.Columns(2);
+									Manager.NativeManager.Columns(1);
 
-								if (opened)
-								{
-									indent = item.Children.Update(indent);
+									if (Manager.NativeManager.TreeNodeEx(label, flag))
+									{
+										Manager.NativeManager.Columns(2);
+										indent = item.Children.Update(indent);
+
+										// Avoid Tree node bug
+										Manager.NativeManager.Columns(1);
+										Manager.NativeManager.TreePop();
+										Manager.NativeManager.Spacing();
+										Manager.NativeManager.Columns(2);
+									}
+									else
+									{
+										Manager.NativeManager.Columns(2);
+									}
+
+									//Manager.NativeManager.Spacing();
+
 								}
 							}
 							//var opened = Manager.NativeManager.TreeNode(label);
@@ -563,6 +591,8 @@ namespace Effekseer.GUI.Component
 		{
 			public string TreeNodeID = null;
 
+			public Data.TreeNodeType TreeNodeType = Data.TreeNodeType.Large;
+
 			public TypeRowCollection Children;
 
 			public Data.EditableValue EditableValue { get; private set; }
@@ -814,6 +844,7 @@ namespace Effekseer.GUI.Component
 				Label = Title;
 
 				TreeNodeID = propInfo.TreeNodeID;
+				TreeNodeType = propInfo.TreeNodeType;
 
 				ControlDynamic = Control;
 

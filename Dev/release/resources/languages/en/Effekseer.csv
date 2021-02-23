@@ -323,3 +323,5 @@ ModelReferenceType_File_Name,File
 ModelReferenceType_ProdecualModel_Name,ProceduralModel
 
 TreeDisabled_Message,"If the toggle is turned on, the setting items will be displayed."
+
+Easing_Parameter_Name,Easing Parameter

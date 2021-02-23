@@ -66,21 +66,7 @@ namespace Effekseer.Binary
 			}
 			else if (type == Data.ScaleValues.ParamaterType.SingleEasing)
 			{
-				var easing = Utl.MathUtl.Easing(
-					(float)value.SingleEasing.StartSpeed.Value,
-					(float)value.SingleEasing.EndSpeed.Value);
-
-				List<byte[]> _data = new List<byte[]>();
-                _data.Add(value.SingleEasing.Start.Max.GetBytes());
-                _data.Add(value.SingleEasing.Start.Min.GetBytes());
-                _data.Add(value.SingleEasing.End.Max.GetBytes());
-                _data.Add(value.SingleEasing.End.Min.GetBytes());
-                _data.Add(BitConverter.GetBytes(easing[0]));
-                _data.Add(BitConverter.GetBytes(easing[1]));
-                _data.Add(BitConverter.GetBytes(easing[2]));
-				var __data = _data.ToArray().ToArray();
-				data.Add(__data.Count().GetBytes());
-				data.Add(__data);
+				Utils.ExportEasing(value.SingleEasing, 1.0f, data, version, true);
 			}
 			else if (type == Data.ScaleValues.ParamaterType.FCurve)
 			{

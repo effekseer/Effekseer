@@ -5,6 +5,7 @@
 #include "../Utils/Effekseer.BinaryReader.h"
 #include <stdint.h>
 #include <stdio.h>
+#include "../Utils/BinaryVersion.h"
 
 namespace Effekseer
 {

@@ -20,6 +20,7 @@
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
 #include "SIMD/Utils.h"
+#include "Utils/BinaryVersion.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -365,7 +366,7 @@ struct ParameterRotationAxisPVA
 struct ParameterRotationAxisEasing
 {
 	random_vector3d axis;
-	easing_float easing;
+	ParameterEasingFloat easing{Version16Alpha9, Version16Alpha9};
 };
 
 //----------------------------------------------------------------------------------
@@ -1190,7 +1191,7 @@ struct ParameterRendererCommon
 		BasicParameter.AlphaBlend = AlphaBlend;
 		BasicParameter.TextureFilters = FilterTypes;
 		BasicParameter.TextureWraps = WrapTypes;
-		
+
 		BasicParameter.DistortionIntensity = DistortionIntensity;
 		BasicParameter.MaterialType = MaterialType;
 		BasicParameter.TextureIndexes[0] = ColorTextureIndex;
@@ -1267,7 +1268,7 @@ struct ParameterAlphaCutoff
 		random_float EndThreshold;
 	} FourPointInterpolation;
 
-	ParameterEasingFloat Easing;
+	ParameterEasingFloat Easing{Version16Alpha1, Version16Alpha1};
 
 	struct
 	{
@@ -1328,7 +1329,7 @@ struct ParameterAlphaCutoff
 		if (version >= Version16Alpha7)
 		{
 			memcpy(&EdgeColorScaling, pos, sizeof(float));
-			pos += sizeof(float);		
+			pos += sizeof(float);
 		}
 		else
 		{
@@ -1491,7 +1492,7 @@ public:
 	ParameterEasingSIMDVec3 ScalingEasing;
 	// ParameterScalingEasing ScalingEasing;
 	ParameterScalingSinglePVA ScalingSinglePVA;
-	easing_float ScalingSingleEasing;
+	ParameterEasingFloat ScalingSingleEasing{Version16Alpha9, Version16Alpha9};
 	FCurveVector3D* ScalingFCurve;
 	FCurveScalar* ScalingSingleFCurve = nullptr;
 
