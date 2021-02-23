@@ -9,12 +9,12 @@ using Effekseer.Data;
 namespace Effekseer.Binary
 {
 	enum NodeType : int
-	{ 
+	{
 		Root = -1,
 		None = 0,
 		Sprite = 2,
 		Ribbon = 3,
-        Ring = 4,
+		Ring = 4,
 		Model = 5,
 		Track = 6,
 	};
@@ -42,7 +42,7 @@ namespace Effekseer.Binary
 			{
 				Language language = Language.English;
 
-				if(Core.Option != null && Core.Option.LanguageSelector != null)
+				if (Core.Option != null && Core.Option.LanguageSelector != null)
 				{
 					language = Core.Language;
 				}
@@ -51,7 +51,7 @@ namespace Effekseer.Binary
 					language = LanguageGetter.GetLanguage();
 				}
 
-				if(language == Language.Japanese)
+				if (language == Language.Japanese)
 				{
 					Core.OnOutputLog(LogLevel.Warning, path + " が見つかりません。");
 				}
@@ -62,7 +62,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		public static void ExportEasing(FloatEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version)
+		public static void ExportEasing(FloatEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version, bool exportSize)
 		{
 			var refBuf1_1 = easingValue.Start.DynamicEquationMax.Index.GetBytes();
 			var refBuf1_2 = easingValue.Start.DynamicEquationMin.Index.GetBytes();
@@ -70,12 +70,16 @@ namespace Effekseer.Binary
 			var refBuf2_2 = easingValue.End.DynamicEquationMin.Index.GetBytes();
 
 			List<byte[]> _data = new List<byte[]>();
-			_data.Add(refBuf1_1);
-			_data.Add(refBuf1_2);
-			_data.Add(refBuf2_1);
-			_data.Add(refBuf2_2);
-			_data.Add(easingValue.Start.GetBytes(magnification));
-			_data.Add(easingValue.End.GetBytes(magnification));
+
+			if (version >= ExporterVersion.Ver16Alpha1)
+			{
+				_data.Add(refBuf1_1);
+				_data.Add(refBuf1_2);
+				_data.Add(refBuf2_1);
+				_data.Add(refBuf2_2);
+				_data.Add(easingValue.Start.GetBytes(magnification));
+				_data.Add(easingValue.End.GetBytes(magnification));
+			}
 
 			// middle
 			if (version >= ExporterVersion.Ver16Alpha1)
@@ -90,74 +94,54 @@ namespace Effekseer.Binary
 					_data.Add(refBuf3_2);
 					_data.Add(easingValue.Middle.GetBytes(magnification));
 				}
+			}
 
-				var type = easingValue.Type.Value;
+			var type = easingValue.Type.Value;
 
-				if (version >= ExporterVersion.Ver16Alpha1)
-				{
-					_data.Add(BitConverter.GetBytes((int)type));
+			if (version >= ExporterVersion.Ver16Alpha1)
+			{
+				_data.Add(BitConverter.GetBytes((int)type));
 
-					if (type == EasingType.LeftRightSpeed)
-					{
-						var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
-						_data.Add(BitConverter.GetBytes(easing[0]));
-						_data.Add(BitConverter.GetBytes(easing[1]));
-						_data.Add(BitConverter.GetBytes(easing[2]));
-					}
-				}
-				else
+				if (type == EasingType.LeftRightSpeed)
 				{
 					var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
 					_data.Add(BitConverter.GetBytes(easing[0]));
 					_data.Add(BitConverter.GetBytes(easing[1]));
 					_data.Add(BitConverter.GetBytes(easing[2]));
 				}
-
-				// Channel
-				if (version >= ExporterVersion.Ver16Alpha1)
-				{
-					if (easingValue.IsRandomGroupEnabled.Value)
-					{
-						Dictionary<int, int> id2ind = new Dictionary<int, int>();
-
-						var ids = new[] { easingValue.RandomGroupA.Value};
-
-						foreach (var id in ids)
-						{
-							if (!id2ind.ContainsKey(id))
-							{
-								id2ind.Add(id, id2ind.Count);
-							}
-						}
-
-						int channel = 0;
-						channel += (byte)id2ind[easingValue.RandomGroupA.Value] << 0;
-						_data.Add(BitConverter.GetBytes(channel));
-					}
-					else
-					{
-						int channel = 0;
-						channel += (byte)0 << 0;
-						_data.Add(BitConverter.GetBytes(channel));
-					}
-				}
-
-				// Individual
-				if (version >= ExporterVersion.Ver16Alpha1)
-				{
-					int individualTypeEnabled = easingValue.IsIndividualTypeEnabled.Value ? 1 : 0;
-					_data.Add(BitConverter.GetBytes(individualTypeEnabled));
-					if (easingValue.IsIndividualTypeEnabled.Value)
-					{
-						_data.Add(BitConverter.GetBytes((int)easingValue.Type_A.Value));
-					}
-				}
-
-				var __data = _data.ToArray().ToArray();
-				destination.Add(__data.Count().GetBytes());
-				destination.Add(__data);
-
 			}
+			else
+			{
+				var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
+				_data.Add(BitConverter.GetBytes(easing[0]));
+				_data.Add(BitConverter.GetBytes(easing[1]));
+				_data.Add(BitConverter.GetBytes(easing[2]));
+			}
+
+			// Channel
+			if (version >= ExporterVersion.Ver16Alpha1)
+			{
+				{
+					int channel = 0;
+					channel += (byte)0 << 0;
+					_data.Add(BitConverter.GetBytes(channel));
+				}
+			}
+
+			// Individual
+			if (version >= ExporterVersion.Ver16Alpha1)
+			{
+				int individualTypeEnabled = 0;
+				_data.Add(BitConverter.GetBytes(individualTypeEnabled));
+			}
+
+
+			var __data = _data.ToArray().ToArray();
+			if (exportSize)
+			{
+				destination.Add(__data.Count().GetBytes());
+			}
+			destination.Add(__data);
 		}
 
 		public static void ExportEasing(Vector3DEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version)

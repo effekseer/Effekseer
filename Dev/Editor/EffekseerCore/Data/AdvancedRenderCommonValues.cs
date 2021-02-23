@@ -146,6 +146,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
+		[TreeNode(id = "AlphaCutoffParameter_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
 		public FloatEasingParamater Easing { get; private set; }
 
 		[Selected(ID = 0, Value = 3)]

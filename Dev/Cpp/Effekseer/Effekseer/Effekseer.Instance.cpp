@@ -745,9 +745,9 @@ void Instance::FirstUpdate()
 		{
 			model = m_pEffectNode->GetEffect()->GetModel(m_pEffectNode->GenerationLocation.model.index);
 		}
-		else if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::Procedual)
+		else if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::Procedural)
 		{
-			model = m_pEffectNode->GetEffect()->GetProcedualModel(m_pEffectNode->GenerationLocation.model.index);
+			model = m_pEffectNode->GetEffect()->GetProceduralModel(m_pEffectNode->GenerationLocation.model.index);
 		}
 
 		{
@@ -1399,8 +1399,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->RotationType == ParameterRotationType_AxisEasing)
 		{
-			rotation_values.axis.rotation = m_pEffectNode->RotationAxisEasing.easing.getValue(
-				rotation_values.axis.easing.start, rotation_values.axis.easing.end, m_LivingTime / m_LivedTime);
+			rotation_values.axis.rotation = m_pEffectNode->RotationAxisEasing.easing.GetValue(rotation_values.axis.easing, m_LivingTime / m_LivedTime);
 		}
 		else if (m_pEffectNode->RotationType == ParameterRotationType_FCurve)
 		{
@@ -1442,8 +1441,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 		else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleEasing)
 		{
-			float s = m_pEffectNode->ScalingSingleEasing.getValue(
-				scaling_values.single_easing.start, scaling_values.single_easing.end, m_LivingTime / m_LivedTime);
+			float s = m_pEffectNode->ScalingSingleEasing.GetValue(scaling_values.single_easing, m_LivingTime / m_LivedTime);
 			localScaling = {s, s, s};
 		}
 		else if (m_pEffectNode->ScalingType == ParameterScalingType_FCurve)

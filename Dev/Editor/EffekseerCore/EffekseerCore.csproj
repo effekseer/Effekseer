@@ -133,7 +133,7 @@
     <Compile Include="Data\EnvironmentValues.cs" />
     <Compile Include="Data\OptionValues.cs" />
     <Compile Include="Data\PostEffectValues.cs" />
-    <Compile Include="Data\ProcedualModelValues.cs" />
+    <Compile Include="Data\ProceduralModelValues.cs" />
     <Compile Include="Data\RecordingValues.cs" />
     <Compile Include="Data\RendererCommonValues.cs" />
     <Compile Include="Data\CommonValues.cs" />

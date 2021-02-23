@@ -140,8 +140,8 @@ namespace Effekseer
 			// Register UI
 			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });
 
-			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.ProcedualModelReference), () => {
-				return new GUI.Component.ObjectReference<Data.ProcedualModelParameter>(Core.ProcedualModel.ProcedualModels);
+			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.ProceduralModelReference), () => {
+				return new GUI.Component.ObjectReference<Data.ProceduralModelParameter>(Core.ProceduralModel.ProceduralModels);
 			});
 
 			// Debug
@@ -324,7 +324,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_LocalForceField.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_AdvancedRenderCommon.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Environment.csv");
-			MultiLanguageTextProvider.LoadCSV("Effekseer_ProcedualModel.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_ProceduralModel.csv");
 
 			GUI.Manager.UpdateFont();
 		}

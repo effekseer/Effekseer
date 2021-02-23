@@ -3,14 +3,14 @@ using Effekseer.Data;
 
 namespace Effekseer.GUI.Dock
 {
-	class ProcedualModel : DockPanel
+	class ProceduralModel : DockPanel
 	{
 		readonly Component.ParameterList paramerterList = null;
 		Component.CopyAndPaste candp = null;
 
-		public ProcedualModel()
+		public ProceduralModel()
 		{
-			Label = Icons.PanelDynamicParams + Resources.GetString("ProcedualModel_Name") + "###ProcedualModel";
+			Label = Icons.PanelDynamicParams + Resources.GetString("ProceduralModel_Name") + "###ProceduralModel";
 
 			paramerterList = new Component.ParameterList();
 			candp = new Component.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnBeforeLoad += Core_OnBeforeLoad;
 			Read();
 
-			TabToolTip = Resources.GetString("ProcedualModel_Name");
+			TabToolTip = Resources.GetString("ProceduralModel_Name");
 		}
 
 		public void FixValues()
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 
 		object GetTargetObject()
 		{
-			return Core.ProcedualModel.ProcedualModels.Selected;
+			return Core.ProceduralModel.ProceduralModels.Selected;
 		}
 
 		public override void OnDisposed()
@@ -48,11 +48,11 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 
-			var nextParam = Component.ObjectCollection.Select("", "", Core.ProcedualModel.ProcedualModels.Selected, false, Core.ProcedualModel.ProcedualModels);
+			var nextParam = Component.ObjectCollection.Select("", "", Core.ProceduralModel.ProceduralModels.Selected, false, Core.ProceduralModel.ProceduralModels);
 
-			if (Core.ProcedualModel.ProcedualModels.Selected != nextParam)
+			if (Core.ProceduralModel.ProceduralModels.Selected != nextParam)
 			{
-				Core.ProcedualModel.ProcedualModels.Selected = nextParam;
+				Core.ProceduralModel.ProceduralModels.Selected = nextParam;
 			}
 
 			Manager.NativeManager.PopItemWidth();
@@ -61,14 +61,14 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
-				Core.ProcedualModel.ProcedualModels.New();
+				Core.ProceduralModel.ProceduralModels.New();
 			}
 
 			Manager.NativeManager.SameLine();
 
 			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
 			{
-				Core.ProcedualModel.ProcedualModels.Delete(Core.ProcedualModel.ProcedualModels.Selected);
+				Core.ProceduralModel.ProceduralModels.Delete(Core.ProceduralModel.ProceduralModels.Selected);
 			}
 
 			candp.Update();
@@ -77,7 +77,7 @@ namespace Effekseer.GUI.Dock
 
 		private void Read()
 		{
-			paramerterList.SetValue(Core.ProcedualModel.ProcedualModels);
+			paramerterList.SetValue(Core.ProceduralModel.ProceduralModels);
 		}
 
 		private void OnAfterLoad(object sender, EventArgs e)

@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.Resource.h"
-#include "Model/ProcedualModelGenerator.h"
+#include "Model/ProceduralModelGenerator.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -75,14 +75,14 @@ public:
 		cachedCurves_.loader = loader;
 	}
 
-	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const
+	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const
 	{
-		return procedualMeshGenerator_;
+		return proceduralMeshGenerator_;
 	}
 
-	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator)
+	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator)
 	{
-		procedualMeshGenerator_ = generator;
+		proceduralMeshGenerator_ = generator;
 	}
 
 	TextureRef LoadTexture(const char16_t* path, TextureType textureType);
@@ -105,12 +105,12 @@ public:
 
 	void UnloadCurve(CurveRef resource);
 
-	ModelRef GenerateProcedualModel(const ProcedualModelParameter* param);
+	ModelRef GenerateProceduralModel(const ProceduralModelParameter* param);
 
-	void UngenerateProcedualModel(ModelRef resource);
+	void UngenerateProceduralModel(ModelRef resource);
 
 private:
-	ProcedualModelGeneratorRef procedualMeshGenerator_;
+	ProceduralModelGeneratorRef proceduralMeshGenerator_;
 
 	template <typename T>
 	struct LoadCounted

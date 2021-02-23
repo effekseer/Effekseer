@@ -8,7 +8,7 @@ namespace Effekseer.Binary
 {
 	class GenerationLocationValues
 	{
-		public static byte[] GetBytes(Data.GenerationLocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.GenerationLocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProceduralModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 			if (value.EffectsRotation)
@@ -25,7 +25,7 @@ namespace Effekseer.Binary
 			// Fallback
 			if(version < ExporterVersion.Ver16Alpha1)
 			{
-				if(type == Data.GenerationLocationValues.ParameterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				if(type == Data.GenerationLocationValues.ParameterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					type = Data.GenerationLocationValues.ParameterType.Point;
 				}
@@ -83,7 +83,7 @@ namespace Effekseer.Binary
 						data.Add(((int)-1).GetBytes());
 					}
 				}
-				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					if(value.Model.Reference.Value != null)
 					{

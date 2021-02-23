@@ -336,7 +336,7 @@ namespace Effekseer.Utils
 						{
 							lff.AppendChild(document.CreateTextElement("Type", (int)LocalForceFieldType.AttractiveForce));
 						}
-						
+
 						if (labs["Gravity"] != null)
 						{
 							lff.AppendChild(labs["Gravity"]);
@@ -345,8 +345,8 @@ namespace Effekseer.Utils
 						if (labs["AttractiveForce"] != null)
 						{
 							lff.AppendChild(labs["AttractiveForce"]);
-							
-							if(lff["AttractiveForce"]["Force"] != null)
+
+							if (lff["AttractiveForce"]["Force"] != null)
 							{
 								var force = lff["AttractiveForce"]["Force"].GetTextAsFloat();
 								lff.AppendChild(document.CreateTextElement("Power", force.ToString()));
@@ -364,7 +364,7 @@ namespace Effekseer.Utils
 						var typeInt = elm["Type"]?.GetTextAsInt();
 						var type = typeInt.HasValue ? (Data.LocalForceFieldType)(typeInt.Value) : Data.LocalForceFieldType.None;
 
-						if(type == LocalForceFieldType.Turbulence)
+						if (type == LocalForceFieldType.Turbulence)
 						{
 							if (elm["Turbulence"] != null && elm["Turbulence"]["Strength"] != null)
 							{
@@ -379,7 +379,7 @@ namespace Effekseer.Utils
 						{
 							defaultPower = 0.1f;
 						}
-						
+
 						if (elm["Power"] != null)
 						{
 							defaultPower = elm["Power"].GetTextAsFloat();
@@ -462,7 +462,7 @@ namespace Effekseer.Utils
 
 				if (rv != null)
 				{
-					if((rv["EnableFalloff"] != null || rv["FalloffParam"] != null) && rcv == null)
+					if ((rv["EnableFalloff"] != null || rv["FalloffParam"] != null) && rcv == null)
 					{
 						node.AppendChild(document.CreateElement("AdvancedRendererCommonValuesValues"));
 						rcv = node["AdvancedRendererCommonValuesValues"];
@@ -550,7 +550,7 @@ namespace Effekseer.Utils
 					if (softParticleDistance != null || softParticleDistanceNear != null || softParticleDistanceNearOffset != null)
 					{
 						var softParticleParams = document.CreateElement("SoftParticleParams");
-						
+
 						if (softParticleDistance != null)
 						{
 							softParticleParams.AppendChild(document.CreateTextElement("Enabled", (softParticleDistance.GetTextAsFloat() != 0.0f).ToString()));
@@ -593,6 +593,114 @@ namespace Effekseer.Utils
 				}
 			}
 
+			return true;
+		}
+	}
+
+	class ProjectVersionUpdator16Alpha8To16x : ProjectVersionUpdator
+	{
+		public override bool Update(System.Xml.XmlDocument document)
+		{
+			var proceduralElement = document["EffekseerProject"]["ProcedualModel"];
+			if(proceduralElement != null)
+			{
+				document["EffekseerProject"].RemoveChild(proceduralElement);
+				var newNode = document.CreateElement("ProceduralModel");
+				var newNode2 = document.CreateElement("ProceduralModels");
+				newNode.AppendChild(newNode2);
+
+				List<XmlNode> children = new List<XmlNode>();
+
+				for(int i = 0; i < proceduralElement.FirstChild.ChildNodes.Count; i++)
+				{
+					children.Add(proceduralElement.FirstChild.ChildNodes[i]);
+				}
+
+				foreach(var child in children)
+				{
+					Action<XmlNode,XmlNode, string> moveElement = (XmlNode dst, XmlNode src, string name) => 
+					{
+						var node = src[name];
+						if(node != null)
+						{
+							dst.AppendChild(node);
+						}
+					};
+
+					Action<XmlNode, XmlNode, string, string> moveAndRenameElement = (XmlNode dst, XmlNode src, string newName, string name) =>
+					{
+						var node = src[name];
+						if (node != null)
+						{
+							src.RemoveChild(node);
+
+							var nn = document.CreateElement(newName);
+							while(node.ChildNodes.Count > 0)
+							{
+								nn.AppendChild(node.FirstChild);
+							}
+							dst.AppendChild(nn);
+						}
+					};
+
+					var mesh = document.CreateElement("Mesh");
+					var ribbon = document.CreateElement("Ribbon");
+					var shape = document.CreateElement("Shape");
+					var shapeNoise = document.CreateElement("ShapeNoise");
+					var vertexColor = document.CreateElement("VertexColor");
+					
+					moveElement(mesh, child, "AngleBeginEnd");
+					moveElement(mesh, child, "Divisions");
+
+					moveElement(ribbon, child, "CrossSection");
+					moveElement(ribbon, child, "Rotate");
+					moveElement(ribbon, child, "Vertices");
+					moveElement(ribbon, child, "RibbonScales");
+					moveElement(ribbon, child, "RibbonAngles");
+					moveElement(ribbon, child, "RibbonNoises");
+					moveElement(ribbon, child, "Count");
+
+					moveElement(shape, child, "PrimitiveType");
+					moveElement(shape, child, "Radius");
+					moveElement(shape, child, "Radius2");
+					moveElement(shape, child, "Depth");
+					moveElement(shape, child, "DepthMin");
+					moveElement(shape, child, "DepthMax");
+					moveElement(shape, child, "Point1");
+					moveElement(shape, child, "Point2");
+					moveElement(shape, child, "Point3");
+					moveElement(shape, child, "Point4");
+					moveElement(shape, child, "AxisType");
+
+					moveElement(shapeNoise, child, "TiltNoiseFrequency");
+					moveElement(shapeNoise, child, "TiltNoiseOffset");
+					moveElement(shapeNoise, child, "TiltNoisePower");
+					moveElement(shapeNoise, child, "WaveNoiseFrequency");
+					moveElement(shapeNoise, child, "WaveNoiseOffset");
+					moveElement(shapeNoise, child, "WaveNoisePower");
+					moveElement(shapeNoise, child, "CurlNoiseFrequency");
+					moveElement(shapeNoise, child, "CurlNoiseOffset");
+					moveElement(shapeNoise, child, "CurlNoisePower");
+
+					moveAndRenameElement(vertexColor, child, "ColorUpperLeft", "ColorLeft");
+					moveAndRenameElement(vertexColor, child, "ColorUpperCenter", "ColorCenter");
+					moveAndRenameElement(vertexColor, child, "ColorUpperRight", "ColorRight");
+					moveAndRenameElement(vertexColor, child, "ColorMiddleLeft", "ColorLeftMiddle");
+					moveAndRenameElement(vertexColor, child, "ColorMiddleCenter", "ColorCenterMiddle");
+					moveAndRenameElement(vertexColor, child, "ColorMiddleRight", "ColorRightMiddle");
+					moveElement(vertexColor, child, "ColorCenterArea");
+
+					child.AppendChild(mesh);
+					child.AppendChild(ribbon);
+					child.AppendChild(shape);
+					child.AppendChild(shapeNoise);
+					child.AppendChild(vertexColor);
+
+					newNode2.AppendChild(child);
+				}
+
+				document["EffekseerProject"].AppendChild(newNode);
+			}
 			return true;
 		}
 	}

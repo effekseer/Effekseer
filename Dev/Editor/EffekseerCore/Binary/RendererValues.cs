@@ -9,7 +9,7 @@ namespace Effekseer.Binary
 {
 	class RingShapeParameter
 	{
-		public static byte[] GetBytes(Data.RingShapeParameter value)
+		public static byte[] GetBytes(Data.RingShapeParameter value, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 			data.Add(BitConverter.GetBytes((int)value.Type.Value));
@@ -35,17 +35,7 @@ namespace Effekseer.Binary
 				}
 				if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing(
-						(float)value.Crescent.StartingAngle_Easing.StartSpeed.Value,
-						(float)value.Crescent.StartingAngle_Easing.EndSpeed.Value);
-
-					data.Add(value.Crescent.StartingAngle_Easing.Start.Max.GetBytes());
-					data.Add(value.Crescent.StartingAngle_Easing.Start.Min.GetBytes());
-					data.Add(value.Crescent.StartingAngle_Easing.End.Max.GetBytes());
-					data.Add(value.Crescent.StartingAngle_Easing.End.Min.GetBytes());
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+					Utils.ExportEasing(value.Crescent.StartingAngle_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
 				}
 
 				data.Add(((int)value.Crescent.EndingAngle.Value).GetBytes());
@@ -61,17 +51,7 @@ namespace Effekseer.Binary
 				}
 				if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Easing)
 				{
-					var easing = Utl.MathUtl.Easing(
-						(float)value.Crescent.EndingAngle_Easing.StartSpeed.Value,
-						(float)value.Crescent.EndingAngle_Easing.EndSpeed.Value);
-
-					data.Add(value.Crescent.EndingAngle_Easing.Start.Max.GetBytes());
-					data.Add(value.Crescent.EndingAngle_Easing.Start.Min.GetBytes());
-					data.Add(value.Crescent.EndingAngle_Easing.End.Max.GetBytes());
-					data.Add(value.Crescent.EndingAngle_Easing.End.Min.GetBytes());
-					data.Add(BitConverter.GetBytes(easing[0]));
-					data.Add(BitConverter.GetBytes(easing[1]));
-					data.Add(BitConverter.GetBytes(easing[2]));
+					Utils.ExportEasing(value.Crescent.EndingAngle_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
 				}
 			}
 
@@ -100,14 +80,14 @@ namespace Effekseer.Binary
 
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProceduralModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			// Fallback
 			if (version < ExporterVersion.Ver16Alpha2)
 			{
-				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					value = null;
 				}
@@ -127,7 +107,7 @@ namespace Effekseer.Binary
 						AddRibbonData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ring:
-						AddRingData(value, data);
+						AddRingData(value, data, version);
 						break;
 					case Data.RendererValues.ParamaterType.Model:
 						AddModelData(value, model_and_index, pmodel_and_index, version, data);
@@ -302,7 +282,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddRingData(Data.RendererValues value, List<byte[]> data)
+		private static void AddRingData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			var ringParameter = value.Ring;
 
@@ -310,7 +290,7 @@ namespace Effekseer.Binary
 			data.Add(ringParameter.Billboard);
 
 			// from 1.5
-			data.Add(RingShapeParameter.GetBytes(ringParameter.RingShape));
+			data.Add(RingShapeParameter.GetBytes(ringParameter.RingShape, version));
 
 			data.Add(ringParameter.VertexCount.Value.GetBytes());
 
@@ -400,7 +380,7 @@ namespace Effekseer.Binary
 				}
 				else if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Easing)
 				{
-					AddFloatEasing(data, ringParameter.CenterRatio_Easing);
+					Utils.ExportEasing(ringParameter.CenterRatio_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
 				}
 			}
 
@@ -428,7 +408,7 @@ namespace Effekseer.Binary
 		private static void AddModelData(
 			Data.RendererValues value,
 			SortedDictionary<string, int> model_and_index,
-			Dictionary<ProcedualModelParameter, int> pmodel_and_index,
+			Dictionary<ProceduralModelParameter, int> pmodel_and_index,
 			ExporterVersion version,
 			List<byte[]> data)
 		{
@@ -476,7 +456,7 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
-				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					if (value.Model.Reference.Value != null)
 					{

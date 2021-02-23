@@ -90,6 +90,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
+		[TreeNode(id = "StartingAngle_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
 		public FloatEasingParamater StartingAngle_Easing { get; private set; }
 
 		[Selector(ID = 1)]
@@ -105,6 +106,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 1, Value = 2)]
 		[IO(Export = true)]
+		[TreeNode(id = "EndingAngle_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
 		public FloatEasingParamater EndingAngle_Easing { get; private set; }
 
 		public RingShapeCrescentParameter()
@@ -614,7 +616,8 @@ namespace Effekseer.Data
 
             [Selected(ID = 3, Value = 2)]
             [IO(Export = true)]
-            public FloatEasingParamater CenterRatio_Easing { get; private set; }
+			[TreeNode(id = "CenterRatio_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
+			public FloatEasingParamater CenterRatio_Easing { get; private set; }
 
             [Selector(ID = 4)]
             [Name(language = Language.Japanese, value = "外輪色")]
@@ -863,8 +866,8 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Selected(ID = 100, Value = (int)ModelReferenceType.ProdecualModel)]
-			public ProcedualModelReference Reference { get; private set; } = new ProcedualModelReference();
+			[Selected(ID = 100, Value = (int)ModelReferenceType.ProceduralModel)]
+			public ProceduralModelReference Reference { get; private set; } = new ProceduralModelReference();
 
 			[Name(language = Language.Japanese, value = "配置方法")]
 			[Name(language = Language.English, value = "Configuration")]

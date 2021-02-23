@@ -429,7 +429,7 @@ public:
 
 		bool EnableViewOffset = false;
 
-		bool IsProcedualMode = false;
+		bool IsProceduralMode = false;
 
 		RefPtr<RenderingUserData> UserData;
 	};

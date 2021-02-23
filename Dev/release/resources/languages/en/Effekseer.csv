@@ -320,6 +320,8 @@ PermissionError_File,Cannot read file {0}. Cannot read file {0}. You may not hav
 PermissionError_File_Mac,Moving the files associated with the effect to your home directory may solve the problem.
 
 ModelReferenceType_File_Name,File
-ModelReferenceType_ProdecualModel_Name,ProcedualModel
+ModelReferenceType_ProdecualModel_Name,ProceduralModel
 
 TreeDisabled_Message,"If the toggle is turned on, the setting items will be displayed."
+
+Easing_Parameter_Name,Easing Parameter

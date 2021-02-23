@@ -19,7 +19,8 @@ namespace Effekseer.Binary
 		Ver16Alpha6 = 1605,
 		Ver16Alpha7 = 1606,
 		Ver16Alpha8 = 1607,
-		Latest = Ver16Alpha8,
+		Ver16Alpha9 = 1608,
+		Latest = Ver16Alpha9,
 	}
 
 	public class Exporter
@@ -38,7 +39,7 @@ namespace Effekseer.Binary
 
 		public HashSet<string> Curves = new HashSet<string>();
 
-		public List<ProcedualModelParameter> ProcedualModels = new List<ProcedualModelParameter>();
+		public List<ProceduralModelParameter> ProceduralModels = new List<ProceduralModelParameter>();
 
 		/// <summary>
 		/// Export effect data
@@ -69,7 +70,7 @@ namespace Effekseer.Binary
 
 			Curves = new HashSet<string>();
 
-			ProcedualModels = new List<ProcedualModelParameter>();
+			ProceduralModels = new List<ProceduralModelParameter>();
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -559,50 +560,50 @@ namespace Effekseer.Binary
 				}
 			}
 
-			// Procedual meshes
+			// Procedural meshes
 
-			Action<Data.NodeBase> get_procedual_models = null;
-			get_procedual_models = (node) =>
+			Action<Data.NodeBase> get_procedural_models = null;
+			get_procedural_models = (node) =>
 			{
 				if (node is Data.Node)
 				{
 					var _node = node as Data.Node;
 
-					if (IsRenderedNode(_node) && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model && _node.DrawingValues.Model.ModelReference.Value == ModelReferenceType.ProdecualModel)
+					if (IsRenderedNode(_node) && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model && _node.DrawingValues.Model.ModelReference.Value == ModelReferenceType.ProceduralModel)
 					{
 						var param = _node.DrawingValues.Model.Reference.Value;
 						
-						if (param != null && !ProcedualModels.Contains(param))
+						if (param != null && !ProceduralModels.Contains(param))
 						{
-							ProcedualModels.Add(param);
+							ProceduralModels.Add(param);
 						}
 					}
 
-					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.Model && _node.GenerationLocationValues.Model.ModelReference.Value == ModelReferenceType.ProdecualModel)
+					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.Model && _node.GenerationLocationValues.Model.ModelReference.Value == ModelReferenceType.ProceduralModel)
 					{
 						var param = _node.GenerationLocationValues.Model.Reference.Value;
 
-						if (param != null && !ProcedualModels.Contains(param))
+						if (param != null && !ProceduralModels.Contains(param))
 						{
-							ProcedualModels.Add(param);
+							ProceduralModels.Add(param);
 						}
 					}
 				}
 
 				for (int i = 0; i < node.Children.Count; i++)
 				{
-					get_procedual_models(node.Children[i]);
+					get_procedural_models(node.Children[i]);
 				}
 			};
 
-			get_procedual_models(rootNode);
+			get_procedural_models(rootNode);
 
-			var procedual_mesh_and_index = new Dictionary<ProcedualModelParameter, int>();
+			var procedural_mesh_and_index = new Dictionary<ProceduralModelParameter, int>();
 			{
 				int index = 0;
-				foreach (var mesh in ProcedualModels)
+				foreach (var mesh in ProceduralModels)
 				{
-					procedual_mesh_and_index.Add(mesh, index);
+					procedural_mesh_and_index.Add(mesh, index);
 					index++;
 				}
 			}
@@ -705,79 +706,91 @@ namespace Effekseer.Binary
 					data.Add(new byte[] { 0, 0 });
 				}
 
-				// export procedual meshes
-				data.Add(BitConverter.GetBytes(ProcedualModels.Count));
-				foreach (var param in ProcedualModels)
+				// export procedural meshes
+				data.Add(BitConverter.GetBytes(ProceduralModels.Count));
+				foreach (var param in ProceduralModels)
 				{
 					var type = (int)param.Type.Value;
 					data.Add(type.GetBytes());
 
-					if(param.Type.Value == ProcedualModelType.Mesh)
+					if(param.Type.Value == ProceduralModelType.Mesh)
 					{
-						data.Add(param.AngleBeginEnd.X.Value.GetBytes());
-						data.Add(param.AngleBeginEnd.Y.Value.GetBytes());
-						data.Add((byte[])param.Divisions);
+						data.Add(param.Mesh.AngleBeginEnd.X.Value.GetBytes());
+						data.Add(param.Mesh.AngleBeginEnd.Y.Value.GetBytes());
+						data.Add((byte[])param.Mesh.Divisions);
+						data.Add(param.Mesh.Rotate.Value.GetBytes());
 					}
 					else
 					{
-						data.Add(((int)param.CrossSection.Value).GetBytes());
-						data.Add(param.Rotate.Value.GetBytes());
-						data.Add(param.Vertices.Value.GetBytes());
-						data.Add((byte[])param.RibbonScales);
-						data.Add((byte[])param.RibbonAngles);
-						data.Add((byte[])param.RibbonNoises);
-						data.Add(param.Count.Value.GetBytes());
+						data.Add(((int)param.Ribbon.CrossSection.Value).GetBytes());
+						data.Add(param.Ribbon.Rotate.Value.GetBytes());
+						data.Add(param.Ribbon.Vertices.Value.GetBytes());
+						data.Add((byte[])param.Ribbon.RibbonScales);
+						data.Add((byte[])param.Ribbon.RibbonAngles);
+						data.Add((byte[])param.Ribbon.RibbonNoises);
+						data.Add(param.Ribbon.Count.Value.GetBytes());
 					}
 
-					var primitiveType = (int)param.PrimitiveType.Value;
+					var primitiveType = (int)param.Shape.PrimitiveType.Value;
 										
 					data.Add(primitiveType.GetBytes());
 
-					if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Sphere)
+					if (param.Shape.PrimitiveType.Value == ProceduralModelPrimitiveType.Sphere)
 					{
-						data.Add(param.Radius.Value.GetBytes());
-						data.Add(param.DepthMin.Value.GetBytes());
-						data.Add(param.DepthMax.Value.GetBytes());
+						data.Add(param.Shape.Radius.Value.GetBytes());
+						data.Add(param.Shape.DepthMin.Value.GetBytes());
+						data.Add(param.Shape.DepthMax.Value.GetBytes());
 					}
-					else if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Cone)
+					else if (param.Shape.PrimitiveType.Value == ProceduralModelPrimitiveType.Cone)
 					{
-						data.Add(param.Radius.Value.GetBytes());
-						data.Add(param.Depth.Value.GetBytes());
+						data.Add(param.Shape.Radius.Value.GetBytes());
+						data.Add(param.Shape.Depth.Value.GetBytes());
 					}
-					else if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Cylinder)
+					else if (param.Shape.PrimitiveType.Value == ProceduralModelPrimitiveType.Cylinder)
 					{
-						data.Add(param.Radius.Value.GetBytes());
-						data.Add(param.Radius2.Value.GetBytes());
-						data.Add(param.Depth.Value.GetBytes());
+						data.Add(param.Shape.Radius.Value.GetBytes());
+						data.Add(param.Shape.Radius2.Value.GetBytes());
+						data.Add(param.Shape.Depth.Value.GetBytes());
 					}
-					else if (param.PrimitiveType.Value == ProcedualModelPrimitiveType.Spline4)
+					else if (param.Shape.PrimitiveType.Value == ProceduralModelPrimitiveType.Spline4)
 					{
-						data.Add((byte[])param.Point1);
-						data.Add((byte[])param.Point2);
-						data.Add((byte[])param.Point3);
-						data.Add((byte[])param.Point4);
+						data.Add((byte[])param.Shape.Point1);
+						data.Add((byte[])param.Shape.Point2);
+						data.Add((byte[])param.Shape.Point3);
+						data.Add((byte[])param.Shape.Point4);
 					}
 
-					var axisType = (int)param.AxisType.Value;
+					var axisType = (int)param.Shape.AxisType.Value;
 					data.Add(axisType.GetBytes());
 
-					data.Add((byte[])param.TiltNoiseFrequency);
-					data.Add((byte[])param.TiltNoiseOffset);
-					data.Add((byte[])param.TiltNoisePower);
-					data.Add((byte[])param.WaveNoiseFrequency);
-					data.Add((byte[])param.WaveNoiseOffset);
-					data.Add((byte[])param.WaveNoisePower);
-					data.Add((byte[])param.CurlNoiseFrequency);
-					data.Add((byte[])param.CurlNoiseOffset);
-					data.Add((byte[])param.CurlNoisePower);
+					data.Add((byte[])param.ShapeNoise.TiltNoiseFrequency);
+					data.Add((byte[])param.ShapeNoise.TiltNoiseOffset);
+					data.Add((byte[])param.ShapeNoise.TiltNoisePower);
+					data.Add((byte[])param.ShapeNoise.WaveNoiseFrequency);
+					data.Add((byte[])param.ShapeNoise.WaveNoiseOffset);
+					data.Add((byte[])param.ShapeNoise.WaveNoisePower);
+					data.Add((byte[])param.ShapeNoise.CurlNoiseFrequency);
+					data.Add((byte[])param.ShapeNoise.CurlNoiseOffset);
+					data.Add((byte[])param.ShapeNoise.CurlNoisePower);
 
-					data.Add((byte[])param.ColorLeft);
-					data.Add((byte[])param.ColorCenter);
-					data.Add((byte[])param.ColorRight);
-					data.Add((byte[])param.ColorLeftMiddle);
-					data.Add((byte[])param.ColorCenterMiddle);
-					data.Add((byte[])param.ColorRightMiddle);
-					data.Add((byte[])param.ColorCenterArea);
+					data.Add((byte[])param.VertexColor.ColorUpperLeft);
+					data.Add((byte[])param.VertexColor.ColorUpperCenter);
+					data.Add((byte[])param.VertexColor.ColorUpperRight);
+					
+					data.Add((byte[])param.VertexColor.ColorMiddleLeft);
+					data.Add((byte[])param.VertexColor.ColorMiddleCenter);
+					data.Add((byte[])param.VertexColor.ColorMiddleRight);
+
+					data.Add((byte[])param.VertexColor.ColorLowerLeft);
+					data.Add((byte[])param.VertexColor.ColorLowerCenter);
+					data.Add((byte[])param.VertexColor.ColorLowerRight);
+
+					data.Add((byte[])param.VertexColor.ColorCenterPosition);
+					data.Add((byte[])param.VertexColor.ColorCenterArea);
+
+					data.Add((byte[])param.VertexColorNoise.NoiseFrequency);
+					data.Add((byte[])param.VertexColorNoise.NoiseOffset);
+					data.Add((byte[])param.VertexColorNoise.NoisePower);
 				}
 			}
 
@@ -935,7 +948,7 @@ namespace Effekseer.Binary
 				node_data.Add(LocationAbsValues.GetBytes(n.LocationAbsValues, n.CommonValues.ScaleEffectType, exporterVersion));
 				node_data.Add(RotationValues.GetBytes(n.RotationValues, exporterVersion));
 				node_data.Add(ScaleValues.GetBytes(n.ScalingValues, n.CommonValues.ScaleEffectType, exporterVersion));
-				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index, procedual_mesh_and_index,exporterVersion));
+				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index, procedural_mesh_and_index,exporterVersion));
 
 				// Export depth
                 node_data.Add(n.DepthValues.DepthOffset.Value.GetBytes());
@@ -976,11 +989,11 @@ namespace Effekseer.Binary
 
 				if (isRenderParamExported)
 				{
-					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index, procedual_mesh_and_index, exporterVersion));
+					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index, procedural_mesh_and_index, exporterVersion));
 				}
 				else
 				{
-					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index, procedual_mesh_and_index, exporterVersion));
+					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index, procedural_mesh_and_index, exporterVersion));
 				}
 
 				data.Add(node_data.ToArray().ToArray());

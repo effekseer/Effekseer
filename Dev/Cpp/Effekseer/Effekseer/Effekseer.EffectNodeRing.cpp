@@ -14,6 +14,8 @@
 
 #include "Effekseer.Setting.h"
 
+#include "Utils/Compatiblity.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -450,8 +452,7 @@ void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParamete
 	}
 	else if (param.type == RingSingleParameter::Easing)
 	{
-		memcpy(&param.easing, pos, sizeof(param.easing));
-		pos += sizeof(param.easing);
+		LoadFloatEasing(param.easing, pos, m_effect->GetVersion());
 	}
 }
 
@@ -587,7 +588,7 @@ void EffectNodeRing::UpdateSingleValues(Instance& instance, const RingSinglePara
 {
 	if (param.type == RingSingleParameter::Easing)
 	{
-		values.current = param.easing.getValue(values.easing.start, values.easing.end, instance.m_LivingTime / instance.m_LivedTime);
+		values.current = param.easing.GetValue(values.easing, instance.m_LivingTime / instance.m_LivedTime);
 	}
 }
 
