@@ -100,14 +100,14 @@ namespace Effekseer.Binary
 
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProcedualModelParameter, int> pmodel_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProceduralModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			// Fallback
 			if (version < ExporterVersion.Ver16Alpha2)
 			{
-				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					value = null;
 				}
@@ -428,7 +428,7 @@ namespace Effekseer.Binary
 		private static void AddModelData(
 			Data.RendererValues value,
 			SortedDictionary<string, int> model_and_index,
-			Dictionary<ProcedualModelParameter, int> pmodel_and_index,
+			Dictionary<ProceduralModelParameter, int> pmodel_and_index,
 			ExporterVersion version,
 			List<byte[]> data)
 		{
@@ -476,7 +476,7 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
-				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProdecualModel)
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					if (value.Model.Reference.Value != null)
 					{

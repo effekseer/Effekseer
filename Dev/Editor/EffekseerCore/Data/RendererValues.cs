@@ -863,8 +863,8 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Selected(ID = 100, Value = (int)ModelReferenceType.ProdecualModel)]
-			public ProcedualModelReference Reference { get; private set; } = new ProcedualModelReference();
+			[Selected(ID = 100, Value = (int)ModelReferenceType.ProceduralModel)]
+			public ProceduralModelReference Reference { get; private set; } = new ProceduralModelReference();
 
 			[Name(language = Language.Japanese, value = "配置方法")]
 			[Name(language = Language.English, value = "Configuration")]

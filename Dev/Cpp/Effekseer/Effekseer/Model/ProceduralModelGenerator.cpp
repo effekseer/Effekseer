@@ -1,10 +1,10 @@
-#include "ProcedualModelGenerator.h"
+#include "ProceduralModelGenerator.h"
 #include "../Effekseer.Random.h"
 #include "../Model/Model.h"
 #include "../Noise/CurlNoise.h"
 #include "../Noise/PerlinNoise.h"
 #include "../SIMD/Utils.h"
-#include "ProcedualModelParameter.h"
+#include "ProceduralModelParameter.h"
 #include "SplineGenerator.h"
 
 #define _USE_MATH_DEFINES
@@ -14,7 +14,7 @@
 namespace Effekseer
 {
 
-struct ProcedualMeshVertex
+struct ProceduralMeshVertex
 {
 	SIMD::Vec3f Position;
 	SIMD::Vec3f Normal;
@@ -23,17 +23,17 @@ struct ProcedualMeshVertex
 	Color VColor;
 };
 
-struct ProcedualMeshFace
+struct ProceduralMeshFace
 {
 	std::array<int32_t, 3> Indexes;
 };
 
-struct ProcedualMesh
+struct ProceduralMesh
 {
-	CustomAlignedVector<ProcedualMeshVertex> Vertexes;
-	CustomVector<ProcedualMeshFace> Faces;
+	CustomAlignedVector<ProceduralMeshVertex> Vertexes;
+	CustomVector<ProceduralMeshFace> Faces;
 
-	static ProcedualMesh Combine(ProcedualMesh mesh1, ProcedualMesh mesh2)
+	static ProceduralMesh Combine(ProceduralMesh mesh1, ProceduralMesh mesh2)
 	{
 		const auto vertexOffset = mesh1.Vertexes.size();
 		const auto faceOffset = mesh1.Faces.size();
@@ -58,7 +58,7 @@ static float CalcSineWave(float x, float frequency, float offset, float power)
 	return sinf(x * frequency + offset) * power;
 }
 
-static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshVertex& v2, const ProcedualMeshVertex& v3, SIMD::Vec3f& binormal, SIMD::Vec3f& tangent)
+static void CalcTangentSpace(const ProceduralMeshVertex& v1, const ProceduralMeshVertex& v2, const ProceduralMeshVertex& v3, SIMD::Vec3f& binormal, SIMD::Vec3f& tangent)
 {
 	binormal = SIMD::Vec3f();
 	tangent = SIMD::Vec3f();
@@ -105,7 +105,7 @@ static void CalcTangentSpace(const ProcedualMeshVertex& v1, const ProcedualMeshV
 	binormal.Normalize();
 }
 
-static void CalculateNormal(ProcedualMesh& mesh)
+static void CalculateNormal(ProceduralMesh& mesh)
 {
 	CustomAlignedVector<SIMD::Vec3f> faceNormals;
 	CustomAlignedVector<SIMD::Vec3f> faceTangents;
@@ -185,7 +185,7 @@ static void CalculateNormal(ProcedualMesh& mesh)
 	}
 }
 
-static void CalculateVertexColor(ProcedualMesh& mesh,
+static void CalculateVertexColor(ProceduralMesh& mesh,
 								 const Color& ColorUpperLeft,
 								 const Color& ColorUpperCenter,
 								 const Color& ColorUpperRight,
@@ -250,8 +250,8 @@ static void CalculateVertexColor(ProcedualMesh& mesh,
 	}
 }
 
-static void ApplyVertexColorNoise(ProcedualMesh& mesh,
-								  const ProcedualModelParameter& parameter)
+static void ApplyVertexColorNoise(ProceduralMesh& mesh,
+								  const ProceduralModelParameter& parameter)
 {
 	CurlNoise curlNoise(0, 1.0f, 2);
 
@@ -264,12 +264,12 @@ static void ApplyVertexColorNoise(ProcedualMesh& mesh,
 	}
 }
 
-static void ChangeAxis(ProcedualMesh& mesh, ProcedualModelAxisType axisType)
+static void ChangeAxis(ProceduralMesh& mesh, ProceduralModelAxisType axisType)
 {
-	if (axisType == ProcedualModelAxisType::Y)
+	if (axisType == ProceduralModelAxisType::Y)
 		return;
 
-	if (axisType == ProcedualModelAxisType::X)
+	if (axisType == ProceduralModelAxisType::X)
 	{
 		const auto swapAxis = [](SIMD::Vec3f& v) -> void {
 			auto x = v.GetX();
@@ -285,7 +285,7 @@ static void ChangeAxis(ProcedualMesh& mesh, ProcedualModelAxisType axisType)
 			swapAxis(v.Tangent);
 		}
 	}
-	else if (axisType == ProcedualModelAxisType::Z)
+	else if (axisType == ProceduralModelAxisType::Z)
 	{
 		const auto swapAxis = [](SIMD::Vec3f& v) -> void {
 			auto z = v.GetZ();
@@ -303,7 +303,7 @@ static void ChangeAxis(ProcedualMesh& mesh, ProcedualModelAxisType axisType)
 	}
 }
 
-static ModelRef ConvertMeshToModel(const ProcedualMesh& mesh)
+static ModelRef ConvertMeshToModel(const ProceduralMesh& mesh)
 {
 	CustomVector<Model::Vertex> vs;
 	CustomVector<Model::Face> faces;
@@ -485,12 +485,12 @@ struct RotatorMeshGenerator
 		return SIMD::Vec3f(rx, y, rz);
 	}
 
-	ProcedualMesh Generate(int32_t angleDivision, int32_t depthDivision) const
+	ProceduralMesh Generate(int32_t angleDivision, int32_t depthDivision) const
 	{
 		assert(depthDivision > 1);
 		assert(angleDivision > 1);
 
-		ProcedualMesh ret;
+		ProceduralMesh ret;
 
 		ret.Vertexes.resize(depthDivision * angleDivision);
 		ret.Faces.resize((depthDivision - 1) * (angleDivision - 1) * 2);
@@ -516,8 +516,8 @@ struct RotatorMeshGenerator
 		{
 			for (int32_t u = 0; u < angleDivision - 1; u++)
 			{
-				ProcedualMeshFace face0;
-				ProcedualMeshFace face1;
+				ProceduralMeshFace face0;
+				ProceduralMeshFace face1;
 
 				int32_t v00 = (u + 0) + (v + 0) * (angleDivision);
 				int32_t v10 = (u + 1) + (v + 0) * (angleDivision);
@@ -572,7 +572,7 @@ struct RotatedWireMeshGenerator
 	std::function<SIMD::Vec2f(float)> Rotator;
 	std::function<SIMD::Vec3f(SIMD::Vec3f)> Noise;
 
-	ProcedualModelCrossSectionType CrossSectionType;
+	ProceduralModelCrossSectionType CrossSectionType;
 
 	SIMD::Vec3f GetPosition(float angleValue, float depthValue) const
 	{
@@ -593,13 +593,13 @@ struct RotatedWireMeshGenerator
 		return SIMD::Vec3f(rx, y, rz);
 	}
 
-	ProcedualMesh Generate(RandObject& randObj) const
+	ProceduralMesh Generate(RandObject& randObj) const
 	{
 		std::vector<SIMD::Vec3f> vertexPoses;
 		std::vector<int32_t> edgeIDs;
 		std::vector<float> edgeUVs;
 
-		if (CrossSectionType == ProcedualModelCrossSectionType::Cross)
+		if (CrossSectionType == ProceduralModelCrossSectionType::Cross)
 		{
 			vertexPoses = {
 				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
@@ -630,7 +630,7 @@ struct RotatedWireMeshGenerator
 				1.0f,
 			};
 		}
-		else if (CrossSectionType == ProcedualModelCrossSectionType::Plane)
+		else if (CrossSectionType == ProceduralModelCrossSectionType::Plane)
 		{
 			vertexPoses = {
 				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
@@ -651,7 +651,7 @@ struct RotatedWireMeshGenerator
 				1.0f,
 			};
 		}
-		else if (CrossSectionType == ProcedualModelCrossSectionType::Point)
+		else if (CrossSectionType == ProceduralModelCrossSectionType::Point)
 		{
 			vertexPoses = {
 				SIMD::Vec3f(0.0f, 0.0f, 0.0f),
@@ -666,7 +666,7 @@ struct RotatedWireMeshGenerator
 			};
 		}
 		
-		ProcedualMesh ret;
+		ProceduralMesh ret;
 
 		for (int32_t l = 0; l < Count; l++)
 		{
@@ -703,7 +703,7 @@ struct RotatedWireMeshGenerator
 				return {};
 			}
 
-			ProcedualMesh ribbon;
+			ProceduralMesh ribbon;
 
 			ribbon.Vertexes.resize(vs.size() * vertexPoses.size());
 
@@ -736,8 +736,8 @@ struct RotatedWireMeshGenerator
 			{
 				for (size_t i = 0; i < edgeIDs.size() / 2; i++)
 				{
-					ProcedualMeshFace face0{};
-					ProcedualMeshFace face1{};
+					ProceduralMeshFace face0{};
+					ProceduralMeshFace face1{};
 
 					int32_t v00 = (edgeIDs[i * 2 + 0]) + (v + 0) * static_cast<int32_t>(vertexPoses.size());
 					int32_t v10 = (edgeIDs[i * 2 + 1]) + (v + 0) * static_cast<int32_t>(vertexPoses.size());
@@ -764,14 +764,14 @@ struct RotatedWireMeshGenerator
 
 			CalculateNormal(ribbon);
 
-			ret = ProcedualMesh::Combine(std::move(ret), std::move(ribbon));
+			ret = ProceduralMesh::Combine(std::move(ret), std::move(ribbon));
 		}
 
 		return std::move(ret);
 	}
 };
 
-ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parameter)
+ModelRef ProceduralModelGenerator::Generate(const ProceduralModelParameter* parameter)
 {
 	if (parameter == nullptr)
 	{
@@ -783,7 +783,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 
 	std::function<SIMD::Vec2f(float)> primitiveGenerator;
 
-	if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Sphere)
+	if (parameter->PrimitiveType == ProceduralModelPrimitiveType::Sphere)
 	{
 		RotatorSphere rotator;
 		rotator.DepthMin = parameter->Sphere.DepthMin;
@@ -794,7 +794,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 			return rotator.GetPosition(value);
 		};
 	}
-	else if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Cone)
+	else if (parameter->PrimitiveType == ProceduralModelPrimitiveType::Cone)
 	{
 		RotatorCone rotator;
 		rotator.Radius = parameter->Cone.Radius;
@@ -804,7 +804,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 			return rotator.GetPosition(value);
 		};
 	}
-	else if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Cylinder)
+	else if (parameter->PrimitiveType == ProceduralModelPrimitiveType::Cylinder)
 	{
 		RotatorCylinder rotator;
 		rotator.Radius1 = parameter->Cylinder.Radius1;
@@ -815,7 +815,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 			return rotator.GetPosition(value);
 		};
 	}
-	else if (parameter->PrimitiveType == ProcedualModelPrimitiveType::Spline4)
+	else if (parameter->PrimitiveType == ProceduralModelPrimitiveType::Spline4)
 	{
 		RotatorSpline3 rotator;
 		rotator.Point1 = parameter->Spline4.Point1;
@@ -855,7 +855,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 		return v + curlNoise.Get(v * parameter->CurlNoiseFrequency + parameter->CurlNoiseOffset) * parameter->CurlNoisePower;
 	};
 
-	if (parameter->Type == ProcedualModelType::Mesh)
+	if (parameter->Type == ProceduralModelType::Mesh)
 	{
 		const auto AngleBegin = parameter->Mesh.AngleBegin / 180.0f * EFK_PI;
 		const auto AngleEnd = parameter->Mesh.AngleEnd / 180.0f * EFK_PI;
@@ -890,7 +890,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 
 		return ConvertMeshToModel(generated);
 	}
-	else if (parameter->Type == ProcedualModelType::Ribbon)
+	else if (parameter->Type == ProceduralModelType::Ribbon)
 	{
 		auto generator = RotatedWireMeshGenerator();
 		generator.Rotator = primitiveGenerator;
@@ -929,7 +929,7 @@ ModelRef ProcedualModelGenerator::Generate(const ProcedualModelParameter* parame
 	return nullptr;
 }
 
-void ProcedualModelGenerator::Ungenerate(ModelRef model)
+void ProceduralModelGenerator::Ungenerate(ModelRef model)
 {
 }
 

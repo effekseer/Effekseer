@@ -6,56 +6,56 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-	public enum ProcedualModelType : int
+	public enum ProceduralModelType : int
 	{
-		[Key(key = "ProcedualModelType_Mesh")]
+		[Key(key = "ProceduralModelType_Mesh")]
 		Mesh,
-		[Key(key = "ProcedualModelType_Ribbon")]
+		[Key(key = "ProceduralModelType_Ribbon")]
 		Ribbon,
 	}
-	public enum ProcedualModelPrimitiveType : int
+	public enum ProceduralModelPrimitiveType : int
 	{
-		[Key(key = "ProcedualModelPrimitiveType_Sphere")]
+		[Key(key = "ProceduralModelPrimitiveType_Sphere")]
 		Sphere,
-		[Key(key = "ProcedualModelPrimitiveType_Cone")]
+		[Key(key = "ProceduralModelPrimitiveType_Cone")]
 		Cone,
-		[Key(key = "ProcedualModelPrimitiveType_Cylinder")]
+		[Key(key = "ProceduralModelPrimitiveType_Cylinder")]
 		Cylinder,
-		[Key(key = "ProcedualModelPrimitiveType_Spline")]
+		[Key(key = "ProceduralModelPrimitiveType_Spline")]
 		Spline4,
 	}
 
-	public enum ProcedualModelCrossSectionType : int
+	public enum ProceduralModelCrossSectionType : int
 	{
-		[Key(key = "ProcedualModelCrossSectionType_Plane")]
+		[Key(key = "ProceduralModelCrossSectionType_Plane")]
 		Plane,
-		[Key(key = "ProcedualModelCrossSectionType_Cross")]
+		[Key(key = "ProceduralModelCrossSectionType_Cross")]
 		Cross,
-		[Key(key = "ProcedualModelCrossSectionType_Point")]
+		[Key(key = "ProceduralModelCrossSectionType_Point")]
 		Point,
 	}
 
-	public enum ProcedualModelAxisType : int
+	public enum ProceduralModelAxisType : int
 	{
-		[Key(key = "ProcedualModelAxisType_X")]
+		[Key(key = "ProceduralModelAxisType_X")]
 		X,
-		[Key(key = "ProcedualModelAxisType_Y")]
+		[Key(key = "ProceduralModelAxisType_Y")]
 		Y,
-		[Key(key = "ProcedualModelAxisType_Z")]
+		[Key(key = "ProceduralModelAxisType_Z")]
 		Z,
 	}
 
 	public class ProceduralModelMeshParameter
 	{
-		[Selected(Value = (int)ProcedualModelType.Mesh)]
+		[Selected(Value = (int)ProceduralModelType.Mesh)]
 		[Key(key = "PM_AngleBeginEnd")]
 		public Value.Vector2D AngleBeginEnd { get; private set; } = new Value.Vector2D(0.0f, 360.0f);
 
-		[Selected(Value = (int)ProcedualModelType.Mesh)]
+		[Selected(Value = (int)ProceduralModelType.Mesh)]
 		[Key(key = "PM_Divisions")]
 		public Value.Int2 Divisions { get; private set; } = new Value.Int2(10, 10, x_min: 2, y_min: 2);
 
-		[Selected(Value = (int)ProcedualModelType.Mesh)]
+		[Selected(Value = (int)ProceduralModelType.Mesh)]
 		[Key(key = "PM_Rotate")]
 		public Value.Float Rotate { get; private set; } = new Value.Float(0.0f);
 
@@ -63,32 +63,32 @@ namespace Effekseer.Data
 
 	public class ProceduralModelRibbonParameter
 	{
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_CrossSection")]
-		public Value.Enum<ProcedualModelCrossSectionType> CrossSection { get; private set; } = new Value.Enum<ProcedualModelCrossSectionType>(ProcedualModelCrossSectionType.Plane);
+		public Value.Enum<ProceduralModelCrossSectionType> CrossSection { get; private set; } = new Value.Enum<ProceduralModelCrossSectionType>(ProceduralModelCrossSectionType.Plane);
 
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_Rotate")]
 		public Value.Float Rotate { get; private set; } = new Value.Float(1.0f);
 
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_Vertices")]
 		public Value.Int Vertices { get; private set; } = new Value.Int(10, int.MaxValue, 2, 1);
 
 
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_RibbonScales")]
 		public Value.Vector2D RibbonScales { get; private set; } = new Value.Vector2D(0.2f, 0.2f, x_step: 0.01f, y_step: 0.01f);
 
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_RibbonAngles")]
 		public Value.Vector2D RibbonAngles { get; private set; } = new Value.Vector2D(0.0f, 0.0f);
 
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_RibbonNoises")]
 		public Value.Vector2D RibbonNoises { get; private set; } = new Value.Vector2D(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x_step: 0.1f, y_step: 0.1f);
 
-		[Selected(Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(Value = (int)ProceduralModelType.Ribbon)]
 		[Key(key = "PM_Count")]
 		public Value.Int Count { get; private set; } = new Value.Int(2, int.MaxValue, 1);
 	}
@@ -99,45 +99,45 @@ namespace Effekseer.Data
 
 		[Selector(ID = SelecterPrimitive)]
 		[Key(key = "PM_PrimitiveType")]
-		public Value.Enum<ProcedualModelPrimitiveType> PrimitiveType { get; private set; } = new Value.Enum<ProcedualModelPrimitiveType>(ProcedualModelPrimitiveType.Sphere);
+		public Value.Enum<ProceduralModelPrimitiveType> PrimitiveType { get; private set; } = new Value.Enum<ProceduralModelPrimitiveType>(ProceduralModelPrimitiveType.Sphere);
 
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Sphere)]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Cone)]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Cylinder)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Sphere)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Cone)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Cylinder)]
 		[Key(key = "PM_Radius")]
 		public Value.Float Radius { get; private set; } = new Value.Float(1.0f);
 
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Cylinder)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Cylinder)]
 		[Key(key = "PM_Radius2")]
 		public Value.Float Radius2 { get; private set; } = new Value.Float(1.0f);
 
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Cone)]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Cylinder)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Cone)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Cylinder)]
 		[Key(key = "PM_Depth")]
 		public Value.Float Depth { get; private set; } = new Value.Float(1.0f);
 
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Sphere)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Sphere)]
 		[Key(key = "PM_DepthMin")]
 		public Value.Float DepthMin { get; private set; } = new Value.Float(-1.0f);
 
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Sphere)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Sphere)]
 		[Key(key = "PM_DepthMax")]
 		public Value.Float DepthMax { get; private set; } = new Value.Float(1.0f);
 
 		[Key(key = "PM_Point1")]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Spline4)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Spline4)]
 		public Value.Vector2D Point1 { get; private set; } = new Value.Vector2D(1.0f, 0.0f);
 
 		[Key(key = "PM_Point2")]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Spline4)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Spline4)]
 		public Value.Vector2D Point2 { get; private set; } = new Value.Vector2D(1.0f, 0.5f);
 
 		[Key(key = "PM_Point3")]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Spline4)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Spline4)]
 		public Value.Vector2D Point3 { get; private set; } = new Value.Vector2D(1.0f, 1.0f);
 
 		[Key(key = "PM_Point4")]
-		[Selected(ID = SelecterPrimitive, Value = (int)ProcedualModelPrimitiveType.Spline4)]
+		[Selected(ID = SelecterPrimitive, Value = (int)ProceduralModelPrimitiveType.Spline4)]
 		public Value.Vector2D Point4 { get; private set; } = new Value.Vector2D(1.0f, 2.0f);
 
 		[Key(key = "PM_AxisType")]
@@ -220,7 +220,7 @@ namespace Effekseer.Data
 		public Value.Vector3D NoisePower { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 	}
 
-	public class ProcedualModelParameter : INamedObject
+	public class ProceduralModelParameter : INamedObject
 	{
 		const int SelecterType = 100;
 		const int SelecterPrimitive = 200;
@@ -229,14 +229,14 @@ namespace Effekseer.Data
 
 		[Selector(ID = SelecterType)]
 		[Key(key = "PM_Type")]
-		public Value.Enum<ProcedualModelType> Type { get; private set; } = new Value.Enum<ProcedualModelType>(ProcedualModelType.Mesh);
+		public Value.Enum<ProceduralModelType> Type { get; private set; } = new Value.Enum<ProceduralModelType>(ProceduralModelType.Mesh);
 
 		[IO(Export = true)]
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Mesh)]
+		[Selected(ID = SelecterType, Value = (int)ProceduralModelType.Mesh)]
 		public ProceduralModelMeshParameter Mesh { get; private set; } = new ProceduralModelMeshParameter();
 
 		[IO(Export = true)]
-		[Selected(ID = SelecterType, Value = (int)ProcedualModelType.Ribbon)]
+		[Selected(ID = SelecterType, Value = (int)ProceduralModelType.Ribbon)]
 		public ProceduralModelRibbonParameter Ribbon { get; private set; } = new ProceduralModelRibbonParameter();
 
 		[IO(Export = true)]
@@ -256,13 +256,13 @@ namespace Effekseer.Data
 		public ProceduralModelVertexColorNoiseParameter VertexColorNoise { get; private set; } = new ProceduralModelVertexColorNoiseParameter();
 	}
 
-	public class ProcedualModelCollection : Value.ObjectCollection<ProcedualModelParameter>
+	public class ProceduralModelCollection : Value.ObjectCollection<ProceduralModelParameter>
 	{
-		public ProcedualModelCollection()
+		public ProceduralModelCollection()
 		{
 			CreateValue += () =>
 			{
-				return new ProcedualModelParameter();
+				return new ProceduralModelParameter();
 			};
 
 			GetEditableValues += (v) =>
@@ -271,7 +271,7 @@ namespace Effekseer.Data
 
 				EditableValue value = new EditableValue();
 				value.Value = v;
-				value.Title = Resources.GetString("ProcedualModel");
+				value.Title = Resources.GetString("ProceduralModel");
 				value.IsUndoEnabled = true;
 				ret.Add(value);
 
@@ -280,29 +280,29 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class ProcedualModelValues
+	public class ProceduralModelValues
 	{
-		public ProcedualModelCollection ProcedualModels { get; private set; } = new ProcedualModelCollection();
+		public ProceduralModelCollection ProceduralModels { get; private set; } = new ProceduralModelCollection();
 
-		public ProcedualModelValues()
+		public ProceduralModelValues()
 		{
 		}
 	}
 
-	public class ProcedualModelReference : ObjectReference<ProcedualModelParameter>
+	public class ProceduralModelReference : ObjectReference<ProceduralModelParameter>
 	{
-		public ProcedualModelReference()
+		public ProceduralModelReference()
 		{
-			GetHolder += (ProcedualModelParameter e) =>
+			GetHolder += (ProceduralModelParameter e) =>
 			{
-				return Core.ProcedualModel.ProcedualModels.GetHolder(e);
+				return Core.ProceduralModel.ProceduralModels.GetHolder(e);
 			};
 
 			GetValueWithIndex += (int ind) =>
 			{
-				if (0 <= ind && ind < Core.ProcedualModel.ProcedualModels.Values.Count)
+				if (0 <= ind && ind < Core.ProceduralModel.ProceduralModels.Values.Count)
 				{
-					return Core.ProcedualModel.ProcedualModels.Values[ind];
+					return Core.ProceduralModel.ProceduralModels.Values[ind];
 				}
 				return null;
 			};

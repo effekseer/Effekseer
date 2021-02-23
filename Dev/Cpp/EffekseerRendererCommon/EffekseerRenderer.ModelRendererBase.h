@@ -894,9 +894,9 @@ public:
 
 		::Effekseer::RefPtr<MODEL> model;
 
-		if (param.IsProcedualMode)
+		if (param.IsProceduralMode)
 		{
-			model = param.EffectPointer->GetProcedualModel(param.ModelIndex);
+			model = param.EffectPointer->GetProceduralModel(param.ModelIndex);
 		}
 		else
 		{

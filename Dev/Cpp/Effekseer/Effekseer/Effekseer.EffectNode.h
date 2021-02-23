@@ -53,7 +53,7 @@ bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
 enum class ModelReferenceType : int32_t
 {
 	File,
-	Procedual,
+	Procedural,
 };
 
 //----------------------------------------------------------------------------------

@@ -64,7 +64,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 			RendererCommon.BasicParameter.TextureWraps[1] = RendererCommon.BasicParameter.TextureWraps[0];
 		}
 	}
-	else if (Mode == ModelReferenceType::Procedual)
+	else if (Mode == ModelReferenceType::Procedural)
 	{
 		memcpy(&ModelIndex, pos, sizeof(int));
 		pos += sizeof(int);
@@ -146,7 +146,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* user
 		nodeParameter.FalloffParam = FalloffParam;
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
-		nodeParameter.IsProcedualMode = Mode == ModelReferenceType::Procedual;
+		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
 		nodeParameter.UserData = GetRenderingUserData();
 
 		renderer->BeginRendering(nodeParameter, count, userData);
@@ -186,7 +186,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
-		nodeParameter.IsProcedualMode = Mode == ModelReferenceType::Procedual;
+		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -266,7 +266,7 @@ void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 
 		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
 
-		nodeParameter.IsProcedualMode = Mode == ModelReferenceType::Procedual;
+		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
 
 		nodeParameter.UserData = GetRenderingUserData();
 

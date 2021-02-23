@@ -181,7 +181,7 @@ namespace Effekseer.GUI
 			typeof(Dock.Network),
 			typeof(Dock.FileViewer),
 			typeof(Dock.Dynamic),
-			typeof(Dock.ProcedualModel),
+			typeof(Dock.ProceduralModel),
 			typeof(Dock.AdvancedRenderCommonValues),
 		};
 

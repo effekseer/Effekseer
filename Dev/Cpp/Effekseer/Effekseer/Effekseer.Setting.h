@@ -181,7 +181,7 @@ public:
 		\~English	generator
 		\~Japanese ジェネレータ
 	*/
-	ProcedualModelGeneratorRef GetProcedualMeshGenerator() const;
+	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const;
 
 	/**
 		@brief
@@ -191,7 +191,7 @@ public:
 		\~English	generator
 		\~Japanese ジェネレータ
 	*/
-	void SetProcedualMeshGenerator(ProcedualModelGeneratorRef generator);
+	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator);
 
 	/**
 		@brief

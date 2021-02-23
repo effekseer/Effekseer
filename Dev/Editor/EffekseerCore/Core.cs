@@ -174,7 +174,7 @@ namespace Effekseer
 
 		static Data.DynamicValues dynamic_ = new Data.DynamicValues();
 
-		static Data.ProcedualModelValues procedualModels = new ProcedualModelValues();
+		static Data.ProceduralModelValues proceduralModels = new ProceduralModelValues();
 
 		static int start_frame = 0;
 
@@ -361,9 +361,9 @@ namespace Effekseer
 			get { return dynamic_; }
 		}
 
-		public static Data.ProcedualModelValues ProcedualModel
+		public static Data.ProceduralModelValues ProceduralModel
 		{
-			get { return procedualModels; }
+			get { return proceduralModels; }
 		}
 
 		/// <summary>
@@ -746,7 +746,7 @@ namespace Effekseer
 
 			dynamic_ = new Data.DynamicValues();
 
-			procedualModels.ProcedualModels.Clear();
+			proceduralModels.ProceduralModels.Clear();
 
 			// Add a root node
 			Root.AddChild();
@@ -772,7 +772,7 @@ namespace Effekseer
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
 			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
 			var dynamicElement = Data.IO.SaveObjectToElement(doc, "Dynamic", Dynamic, false);
-			var procedualModelElement = Data.IO.SaveObjectToElement(doc, "ProcedualModel", ProcedualModel, false);
+			var proceduralModelElement = Data.IO.SaveObjectToElement(doc, "ProceduralModel", ProceduralModel, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -782,7 +782,7 @@ namespace Effekseer
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
 			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
-			if (procedualModelElement != null) project_root.AppendChild(procedualModelElement);
+			if (proceduralModelElement != null) project_root.AppendChild(proceduralModelElement);
 
 			// recording option (this option is stored in local or global)
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
@@ -928,6 +928,11 @@ namespace Effekseer
 				updater.Update(doc);
 			}
 
+			if (toolVersion < ParseVersion("1.60α9"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha8To16x();
+				updater.Update(doc);
+			}
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -966,11 +971,11 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(dynamicElement as System.Xml.XmlElement, ref o, false);
 			}
 
-			var procedualElement = doc["EffekseerProject"]["ProcedualModel"];
-			if (procedualElement != null)
+			var proceduralElement = doc["EffekseerProject"]["ProceduralModel"];
+			if (proceduralElement != null)
 			{
-				var o = procedualModels as object;
-				Data.IO.LoadObjectFromElement(procedualElement as System.Xml.XmlElement, ref o, false);
+				var o = proceduralModels as object;
+				Data.IO.LoadObjectFromElement(proceduralElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			// recording option (this option is stored in local or global)
@@ -1136,7 +1141,7 @@ namespace Effekseer
 
 			ResourceCache.Reset();
 			dynamic_ = new DynamicValues();
-			procedualModels.ProcedualModels.Clear();
+			proceduralModels.ProceduralModels.Clear();
 
 			OnBeforeLoad?.Invoke(null, null);
 

@@ -14,8 +14,8 @@ file(GLOB effekseer_h
     Effekseer/Noise/*.h
     Effekseer/ForceField/*.h
     Effekseer/Backend/*.h
-    Effekseer/Model/ProcedualModelGenerator.h
-    Effekseer/Model/ProcedualModelParameter.h
+    Effekseer/Model/ProceduralModelGenerator.h
+    Effekseer/Model/ProceduralModelParameter.h
     Effekseer/Model/Model.h
     Effekseer/Model/ModelLoader.h
     Effekseer/Model/SplineGenerator.h
@@ -74,7 +74,7 @@ set(effekseer_src
     Effekseer/Noise/CurlNoise.cpp
     Effekseer/Noise/PerlinNoise.cpp
     Effekseer/ForceField/ForceFields.cpp
-    Effekseer/Model/ProcedualModelGenerator.cpp
+    Effekseer/Model/ProceduralModelGenerator.cpp
     Effekseer/Model/Model.cpp
     Effekseer/Model/ModelLoader.cpp
     Effekseer/Model/SplineGenerator.cpp

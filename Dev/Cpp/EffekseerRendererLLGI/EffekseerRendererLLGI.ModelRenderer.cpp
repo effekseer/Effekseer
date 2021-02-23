@@ -179,9 +179,9 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 
 	Effekseer::ModelRef model = nullptr;
 
-	if (parameter.IsProcedualMode)
+	if (parameter.IsProceduralMode)
 	{
-		model = parameter.EffectPointer->GetProcedualModel(parameter.ModelIndex);
+		model = parameter.EffectPointer->GetProceduralModel(parameter.ModelIndex);
 	}
 	else
 	{

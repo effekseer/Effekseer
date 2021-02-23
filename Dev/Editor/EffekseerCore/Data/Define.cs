@@ -31,7 +31,7 @@ namespace Effekseer.Data
 		[Key(key = "ModelReferenceType_File")]
 		File = 0,
 		[Key(key = "ModelReferenceType_ProdecualModel")]
-		ProdecualModel = 1,
+		ProceduralModel = 1,
 	}
 
 

@@ -745,9 +745,9 @@ void Instance::FirstUpdate()
 		{
 			model = m_pEffectNode->GetEffect()->GetModel(m_pEffectNode->GenerationLocation.model.index);
 		}
-		else if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::Procedual)
+		else if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::Procedural)
 		{
-			model = m_pEffectNode->GetEffect()->GetProcedualModel(m_pEffectNode->GenerationLocation.model.index);
+			model = m_pEffectNode->GetEffect()->GetProceduralModel(m_pEffectNode->GenerationLocation.model.index);
 		}
 
 		{

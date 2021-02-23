@@ -85,8 +85,8 @@ class Texture;
 class SoundData;
 class SoundPlayer;
 class Model;
-struct ProcedualModelParameter;
-class ProcedualModelGenerator;
+struct ProceduralModelParameter;
+class ProceduralModelGenerator;
 class Curve;
 class Material;
 
@@ -764,7 +764,7 @@ using MaterialLoaderRef = RefPtr<MaterialLoader>;
 using SoundLoaderRef = RefPtr<SoundLoader>;
 using ModelLoaderRef = RefPtr<ModelLoader>;
 using CurveLoaderRef = RefPtr<CurveLoader>;
-using ProcedualModelGeneratorRef = RefPtr<ProcedualModelGenerator>;
+using ProceduralModelGeneratorRef = RefPtr<ProceduralModelGenerator>;
 
 /**
 	@brief	This object generates random values.
