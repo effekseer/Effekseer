@@ -228,6 +228,8 @@ Material_NoneCache,Cache - None
 Material_OldCache,Cache - Old
 Material_OldFomatCache,"Cache - OldFormat
 Please regenerate."
+Material_NewFomatCache,"Cache - Too new format.
+Plese use later version."
 DefaultFormat,Default format
 ExportDefaultFormat,Export as default format
 DefaultFormatExample,Default format (*.efk)|*.efk

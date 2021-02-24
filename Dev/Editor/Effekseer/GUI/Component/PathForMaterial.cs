@@ -314,6 +314,10 @@ namespace Effekseer.GUI.Component
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
 				}
+				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooNewFormat)
+				{
+					Manager.NativeManager.Text(Resources.GetString("Material_NewFomatCache"));
+				}
 				else
 				{
 					foreach(var p in compiledMatInfo.Platforms)

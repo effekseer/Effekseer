@@ -230,6 +230,8 @@ Material_NoneCache,キャッシュ - なし
 Material_OldCache,キャッシュ - 古い
 Material_OldFomatCache,"キャッシュ - 古いフォーマット
 再生成してください。"
+Material_NewFomatCache,"キャッシュ - 新しすぎるフォーマット
+新しいバージョンを使用して下さい。"
 DefaultFormat,標準形式
 ExportDefaultFormat,標準形式で出力する。
 DefaultFormatExample,標準形式 (*.efk)|*.efk
