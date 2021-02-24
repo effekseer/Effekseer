@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
         public AdvancedRenderCommonValues()
         {
-            Label = Resources.GetString("AdvancedRenderSettings") + "###AdvancedRenderSettings";
+            Label = Icons.PanelAdvancedRenderCommon + Resources.GetString("AdvancedRenderSettings") + "###AdvancedRenderSettings";
 
             parameterList = new Component.ParameterList();
             parameterList.SetType(typeof(Data.AdvancedRenderCommonValues));

@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 
 		public ProceduralModel()
 		{
-			Label = Icons.PanelDynamicParams + Resources.GetString("ProceduralModel_Name") + "###ProceduralModel";
+			Label = Icons.PanelProceduralModel + Resources.GetString("ProceduralModel_Name") + "###ProceduralModel";
 
 			paramerterList = new Component.ParameterList();
 			candp = new Component.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
