@@ -1701,7 +1701,8 @@ RectF Instance::GetUV(const int32_t index) const
 		// Avoid overflow
 		if(uvTimeOffset > std::numeric_limits<int32_t>::max() / 1000)
 		{
-			uvTimeOffset = std::numeric_limits<int32_t>::max() / 1000;
+			const auto allFrameLength = UV.Animation.FrameCountX * UV.Animation.FrameCountY * UV.Animation.FrameLength;
+			uvTimeOffset -= allFrameLength * (std::numeric_limits<int32_t>::max() / 1000 / allFrameLength);
 		}
 
 		auto time = m_LivingTime + uvTimeOffset;
