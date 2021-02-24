@@ -791,6 +791,9 @@ namespace Effekseer.Binary
 					data.Add((byte[])param.VertexColorNoise.NoiseFrequency);
 					data.Add((byte[])param.VertexColorNoise.NoiseOffset);
 					data.Add((byte[])param.VertexColorNoise.NoisePower);
+
+					data.Add((byte[])param.UV.UVPosition);
+					data.Add((byte[])param.UV.UVSize);
 				}
 			}
 

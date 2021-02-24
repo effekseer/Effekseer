@@ -178,6 +178,10 @@ struct ProceduralModelParameter
 	std::array<float, 3> VertexColorNoiseOffset = {};
 	std::array<float, 3> VertexColorNoisePower = {};
 
+	std::array<float, 2> UVPosition = {0.0f, 0.5f};
+	std::array<float, 2> UVSize = {1.0f, 1.0f};
+
+
 	bool operator<(const ProceduralModelParameter& rhs) const
 	{
 		if (Type != rhs.Type)
@@ -356,6 +360,11 @@ struct ProceduralModelParameter
 		if (VertexColorNoisePower != rhs.VertexColorNoisePower)
 			return VertexColorNoisePower < rhs.VertexColorNoisePower;
 
+		if (UVPosition != rhs.UVPosition)
+			return UVPosition < rhs.UVPosition;
+		if (UVSize != rhs.UVSize)
+			return UVSize < rhs.UVSize;
+
 		return false;
 	}
 
@@ -470,6 +479,12 @@ struct ProceduralModelParameter
 			VertexColorNoiseFrequency.fill(0.0f);
 			VertexColorNoiseOffset.fill(0.0f);
 			VertexColorNoisePower.fill(0.0f);
+		}
+
+		if (version >= Version16Alpha9)
+		{
+			reader.Read(UVPosition);
+			reader.Read(UVSize);
 		}
 
 		return true;

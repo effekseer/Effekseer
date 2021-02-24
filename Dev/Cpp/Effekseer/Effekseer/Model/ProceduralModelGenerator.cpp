@@ -264,6 +264,16 @@ static void ApplyVertexColorNoise(ProceduralMesh& mesh,
 	}
 }
 
+static void ChangeUV(ProceduralMesh& mesh,
+					 const ProceduralModelParameter& parameter)
+{
+	for (auto& v : mesh.Vertexes)
+	{
+		v.UV.SetX(v.UV.GetX() * parameter.UVSize[0] + parameter.UVPosition[0]);
+		v.UV.SetY(v.UV.GetY() * parameter.UVSize[1] + parameter.UVPosition[1]);
+	}
+}
+
 static void ChangeAxis(ProceduralMesh& mesh, ProceduralModelAxisType axisType)
 {
 	if (axisType == ProceduralModelAxisType::Y)
@@ -887,6 +897,7 @@ ModelRef ProceduralModelGenerator::Generate(const ProceduralModelParameter* para
 
 		ApplyVertexColorNoise(generated, *parameter);
 		ChangeAxis(generated, parameter->AxisType);
+		ChangeUV(generated, *parameter);
 
 		return ConvertMeshToModel(generated);
 	}
@@ -922,6 +933,7 @@ ModelRef ProceduralModelGenerator::Generate(const ProceduralModelParameter* para
 
 		ApplyVertexColorNoise(generated, *parameter);
 		ChangeAxis(generated, parameter->AxisType);
+		ChangeUV(generated, *parameter);
 
 		return ConvertMeshToModel(generated);
 	}

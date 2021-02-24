@@ -73,4 +73,7 @@ PM_VertexColorNoiseFreq_Name,頂点カラーノイズ 頻度
 PM_VertexColorNoiseOffset_Name,頂点カラーノイズ オフセット
 PM_VertexColorNoisePower_Name,頂点カラーノイズ 力
 
+PM_UV_Name,UV
+PM_UVPosition_Name,UV位置
+PM_UVSize_Name,UV大きさ
 

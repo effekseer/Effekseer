@@ -220,6 +220,16 @@ namespace Effekseer.Data
 		public Value.Vector3D NoisePower { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 0.0f, x_step: 0.01f, y_step: 0.01f, z_step: 0.01f);
 	}
 
+	public class ProceduralModelUVParameter
+	{
+		[TreeNode(key = "PM_UVPosition", id = "PM_UVPosition")]
+		public Value.Vector2D UVPosition { get; private set; } = new Value.Vector2D(0.0f, 0.0f);
+
+		[TreeNode(key = "PM_UVSize", id = "PM_UVSize")]
+		public Value.Vector2D UVSize { get; private set; } = new Value.Vector2D(1.0f, 1.0f);
+
+	}
+
 	public class ProceduralModelParameter : INamedObject
 	{
 		const int SelecterType = 100;
@@ -254,6 +264,10 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		[TreeNode(key = "PM_VertexColorNoise", id = "PM_VertexColorNoise")]
 		public ProceduralModelVertexColorNoiseParameter VertexColorNoise { get; private set; } = new ProceduralModelVertexColorNoiseParameter();
+
+		[IO(Export = true)]
+		[TreeNode(key = "PM_UV", id = "PM_UV")]
+		public ProceduralModelUVParameter UV { get; private set; } = new ProceduralModelUVParameter();
 	}
 
 	public class ProceduralModelCollection : Value.ObjectCollection<ProceduralModelParameter>

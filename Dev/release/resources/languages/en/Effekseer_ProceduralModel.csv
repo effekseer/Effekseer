@@ -80,3 +80,6 @@ PM_VertexColorNoiseFreq_Name,VertexColorNoise Frequency
 PM_VertexColorNoiseOffset_Name,VertexColorNoise Offset
 PM_VertexColorNoisePower_Name,VertexColorNoise Power
 
+PM_UV_Name,UV
+PM_UVPosition_Name,UV Position
+PM_UVSize_Name,UV Size
