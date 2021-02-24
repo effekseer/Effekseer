@@ -580,13 +580,15 @@ bool Native::UpdateWindow()
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
 	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
 
+	drawParameter.IsSortingEffectsEnabled = true;
+
 	if (viewPointCtrl_.IsRightHand)
 	{
 		mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
 		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
 		::Effekseer::Vector3D::Transform(position, position, mat);
 
-		Effekseer::Vector3D::Normal(drawParameter.CameraDirection, position);
+		Effekseer::Vector3D::Normal(drawParameter.CameraFrontDirection, -position);
 
 		position.X += g_focus_position.X;
 		position.Y += g_focus_position.Y;
@@ -607,7 +609,7 @@ bool Native::UpdateWindow()
 		::Effekseer::Vector3D temp_focus = g_focus_position;
 		temp_focus.Z = -temp_focus.Z;
 
-		Effekseer::Vector3D::Normal(drawParameter.CameraDirection, position);
+		Effekseer::Vector3D::Normal(drawParameter.CameraFrontDirection, -position);
 
 		position.X += temp_focus.X;
 		position.Y += temp_focus.Y;
