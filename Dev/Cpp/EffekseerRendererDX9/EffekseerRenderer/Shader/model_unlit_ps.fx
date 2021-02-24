@@ -8,22 +8,22 @@ struct PS_Input
 
 cbuffer PS_ConstanBuffer : register(b0)
 {
-    float4 _72_fLightDirection : register(c0);
-    float4 _72_fLightColor : register(c1);
-    float4 _72_fLightAmbient : register(c2);
-    float4 _72_fFlipbookParameter : register(c3);
-    float4 _72_fUVDistortionParameter : register(c4);
-    float4 _72_fBlendTextureParameter : register(c5);
-    float4 _72_fCameraFrontDirection : register(c6);
-    float4 _72_fFalloffParameter : register(c7);
-    float4 _72_fFalloffBeginColor : register(c8);
-    float4 _72_fFalloffEndColor : register(c9);
-    float4 _72_fEmissiveScaling : register(c10);
-    float4 _72_fEdgeColor : register(c11);
-    float4 _72_fEdgeParameter : register(c12);
-    float4 _72_softParticleParam : register(c13);
-    float4 _72_reconstructionParam1 : register(c14);
-    float4 _72_reconstructionParam2 : register(c15);
+    float4 _35_fLightDirection : register(c0);
+    float4 _35_fLightColor : register(c1);
+    float4 _35_fLightAmbient : register(c2);
+    float4 _35_fFlipbookParameter : register(c3);
+    float4 _35_fUVDistortionParameter : register(c4);
+    float4 _35_fBlendTextureParameter : register(c5);
+    float4 _35_fCameraFrontDirection : register(c6);
+    float4 _35_fFalloffParameter : register(c7);
+    float4 _35_fFalloffBeginColor : register(c8);
+    float4 _35_fFalloffEndColor : register(c9);
+    float4 _35_fEmissiveScaling : register(c10);
+    float4 _35_fEdgeColor : register(c11);
+    float4 _35_fEdgeParameter : register(c12);
+    float4 _35_softParticleParam : register(c13);
+    float4 _35_reconstructionParam1 : register(c14);
+    float4 _35_reconstructionParam2 : register(c15);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);
@@ -50,6 +50,8 @@ struct SPIRV_Cross_Output
 float4 _main(PS_Input Input)
 {
     float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    float3 _45 = Output.xyz * _35_fEmissiveScaling.x;
+    Output = float4(_45.x, _45.y, _45.z, Output.w);
     if (Output.w == 0.0f)
     {
         discard;
@@ -64,8 +66,8 @@ void frag_main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    float4 _69 = _main(Input);
-    _entryPointOutput = _69;
+    float4 _83 = _main(Input);
+    _entryPointOutput = _83;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

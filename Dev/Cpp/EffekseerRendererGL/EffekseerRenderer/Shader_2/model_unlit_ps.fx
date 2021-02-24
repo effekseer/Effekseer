@@ -42,6 +42,8 @@ varying vec4 _VSPS_PosP;
 vec4 _main(PS_Input Input)
 {
     vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    vec3 _45 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_45.x, _45.y, _45.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -56,7 +58,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _69 = _main(Input);
-    gl_FragData[0] = _69;
+    vec4 _83 = _main(Input);
+    gl_FragData[0] = _83;
 }
 

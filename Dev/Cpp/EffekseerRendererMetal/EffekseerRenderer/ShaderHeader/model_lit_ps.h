@@ -76,6 +76,8 @@ float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler s
     float diffuse = fast::max(dot(v_158.fLightDirection.xyz, localNormal), 0.0);
     float3 _178 = Output.xyz * ((v_158.fLightColor.xyz * diffuse) + v_158.fLightAmbient.xyz);
     Output = float4(_178.x, _178.y, _178.z, Output.w);
+    float3 _187 = Output.xyz * v_158.fEmissiveScaling.x;
+    Output = float4(_187.x, _187.y, _187.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -107,8 +109,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.WorldB = in.Input_WorldB;
     Input.WorldT = in.Input_WorldT;
     Input.PosP = in.Input_PosP;
-    float4 _274 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_158, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _274;
+    float4 _282 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_158, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _282;
     return out;
 }
 

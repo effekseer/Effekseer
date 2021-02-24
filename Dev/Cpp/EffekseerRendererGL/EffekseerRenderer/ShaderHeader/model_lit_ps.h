@@ -55,6 +55,8 @@ vec4 _main(PS_Input Input)
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_99.x, _99.y, _99.z, Output.w);
+    vec3 _110 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_110.x, _110.y, _110.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -72,8 +74,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _145 = _main(Input);
-    gl_FragData[0] = _145;
+    vec4 _155 = _main(Input);
+    gl_FragData[0] = _155;
 }
 
 )";
@@ -151,6 +153,8 @@ vec4 _main(PS_Input Input)
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _178 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_178.x, _178.y, _178.z, Output.w);
+    vec3 _187 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_187.x, _187.y, _187.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -182,8 +186,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _278 = _main(Input);
-    _entryPointOutput = _278;
+    vec4 _286 = _main(Input);
+    _entryPointOutput = _286;
 }
 
 )";
@@ -244,6 +248,8 @@ highp vec4 _main(PS_Input Input)
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_99.x, _99.y, _99.z, Output.w);
+    highp vec3 _110 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_110.x, _110.y, _110.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -261,8 +267,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _145 = _main(Input);
-    gl_FragData[0] = _145;
+    highp vec4 _155 = _main(Input);
+    gl_FragData[0] = _155;
 }
 
 )";
@@ -339,6 +345,8 @@ highp vec4 _main(PS_Input Input)
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     highp vec3 _178 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_178.x, _178.y, _178.z, Output.w);
+    highp vec3 _187 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_187.x, _187.y, _187.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -370,8 +378,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _278 = _main(Input);
-    _entryPointOutput = _278;
+    highp vec4 _286 = _main(Input);
+    _entryPointOutput = _286;
 }
 
 )";

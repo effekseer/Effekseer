@@ -645,6 +645,8 @@ protected:
 				pcb->LightAmbientColor = ColorToFloat4(renderer->GetLightAmbientColor());
 			}
 
+			pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
+
 			if (REQUIRE_ADVANCED_DATA)
 			{
 				pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
@@ -666,7 +668,6 @@ protected:
 					ColorToFloat4(param.FalloffParam.BeginColor),
 					ColorToFloat4(param.FalloffParam.EndColor));
 
-				pcb->SetEmissiveScaling(static_cast<float>(param.BasicParameterPtr->EmissiveScaling));
 				pcb->SetEdgeParameter(ColorToFloat4(Effekseer::Color(
 										  param.BasicParameterPtr->EdgeColor[0],
 										  param.BasicParameterPtr->EdgeColor[1],

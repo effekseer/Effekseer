@@ -82,6 +82,8 @@ float4 main(const PS_Input Input)
 	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
 #endif
 
+	Output.rgb *= fEmissiveScaling.x;
+
 #ifndef DISABLED_SOFT_PARTICLE
 	// softparticle
 	float4 screenPos = Input.PosP / Input.PosP.w;

@@ -1004,9 +1004,6 @@ struct NodeRendererBasicParameter
 		if (IsAlphaCutoffEnabled)
 			return true;
 
-		if (EmissiveScaling != 1.0f)
-			return true;
-
 		return false;
 	}
 };

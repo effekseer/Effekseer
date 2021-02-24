@@ -65,6 +65,8 @@ float4 _main(PS_Input Input)
     float diffuse = max(dot(_79_fLightDirection.xyz, localNormal), 0.0f);
     float3 _99 = Output.xyz * ((_79_fLightColor.xyz * diffuse) + _79_fLightAmbient.xyz);
     Output = float4(_99.x, _99.y, _99.z, Output.w);
+    float3 _110 = Output.xyz * _79_fEmissiveScaling.x;
+    Output = float4(_110.x, _110.y, _110.z, Output.w);
     if (Output.w == 0.0f)
     {
         discard;
@@ -82,8 +84,8 @@ void frag_main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    float4 _145 = _main(Input);
-    _entryPointOutput = _145;
+    float4 _155 = _main(Input);
+    _entryPointOutput = _155;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

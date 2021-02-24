@@ -65,6 +65,8 @@ vec4 _main(PS_Input Input)
     float diffuse = max(dot(_158.fLightDirection.xyz, localNormal), 0.0);
     vec3 _178 = Output.xyz * ((_158.fLightColor.xyz * diffuse) + _158.fLightAmbient.xyz);
     Output = vec4(_178.x, _178.y, _178.z, Output.w);
+    vec3 _187 = Output.xyz * _158.fEmissiveScaling.x;
+    Output = vec4(_187.x, _187.y, _187.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -95,7 +97,7 @@ void main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    vec4 _274 = _main(Input);
-    _entryPointOutput = _274;
+    vec4 _282 = _main(Input);
+    _entryPointOutput = _282;
 }
 

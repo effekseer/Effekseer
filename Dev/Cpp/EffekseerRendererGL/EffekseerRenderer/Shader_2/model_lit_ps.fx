@@ -54,6 +54,8 @@ vec4 _main(PS_Input Input)
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
     vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_99.x, _99.y, _99.z, Output.w);
+    vec3 _110 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_110.x, _110.y, _110.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -71,7 +73,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _145 = _main(Input);
-    gl_FragData[0] = _145;
+    vec4 _155 = _main(Input);
+    gl_FragData[0] = _155;
 }
 
