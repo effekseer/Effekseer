@@ -214,22 +214,21 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 #if _DEBUG
 	debugFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	D3D_FEATURE_LEVEL flevels[] = {
+	D3D_FEATURE_LEVEL desigeredFeatureLevels[] = {
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
 		D3D_FEATURE_LEVEL_10_0,
 	};
-	int32_t flevelCount = sizeof(flevels) / sizeof(D3D_FEATURE_LEVEL);
+	int32_t flevelCount = sizeof(desigeredFeatureLevels) / sizeof(D3D_FEATURE_LEVEL);
 
 	HRESULT hr = D3D11CreateDevice(
-		nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, flevels, flevelCount, D3D11_SDK_VERSION, &device_, nullptr, &context);
+		nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, desigeredFeatureLevels, flevelCount, D3D11_SDK_VERSION, &device_, &flevel_, &context);
 
-	if
-		FAILED(hr)
-		{
-			log += "Failed : D3D11CreateDevice\n";
-			goto End;
-		}
+	if (FAILED(hr))
+	{
+		log += "Failed : D3D11CreateDevice\n";
+		goto End;
+	}
 
 #if DEBUG
 	if (FAILED(device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&d3dDebug))))
@@ -468,7 +467,7 @@ void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t rende
 			vp.Width = static_cast<float>(renderTextures[0]->GetSize().X);
 			vp.Height = static_cast<float>(renderTextures[0]->GetSize().Y);
 			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;	
+			vp.MaxDepth = 1.0f;
 		}
 
 		context->RSSetViewports(renderTextureCount, vps.data());
@@ -606,6 +605,12 @@ bool GraphicsDX11::CheckFormatSupport(TextureFormat format, TextureFeatureType f
 
 int GraphicsDX11::GetMultisampleLevel(TextureFormat format)
 {
+	// old video cards cannot be debugged on many contributor's environment
+	if (flevel_ != D3D_FEATURE_LEVEL_11_0)
+	{
+		return 1;
+	}
+
 	DXGI_FORMAT dxgiformat;
 
 	switch (format)

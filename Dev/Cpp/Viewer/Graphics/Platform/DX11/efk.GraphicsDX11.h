@@ -114,6 +114,7 @@ private:
 	ID3D11RasterizerState* rasterizerState = nullptr;
 	ID3D11RasterizerState* savedRasterizerState = nullptr;
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
+	D3D_FEATURE_LEVEL flevel_{};
 
 public:
 	GraphicsDX11();
