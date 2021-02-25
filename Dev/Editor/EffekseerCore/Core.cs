@@ -898,7 +898,7 @@ namespace Effekseer
 				replace(doc);
 			}
 
-			if (toolVersion < ParseVersion("1.50"))
+			if (toolVersion < ParseVersion("1.50β3"))
 			{
 				var updater = new Utils.ProjectVersionUpdator14xTo15x();
 				updater.Update(doc);
