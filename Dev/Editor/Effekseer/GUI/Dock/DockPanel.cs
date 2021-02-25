@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
     {
 		public string Label { get; set; } = string.Empty;
 		
-		public string TabLabel { get { return (AllowsShortTab) ? Label.Substring(0, 1) : Label; } }
+		public string TabLabel { get { return (AllowsShortTab) ? Label.Substring(0, 1) + "   " : Label; } }
 
 		public string WindowID { get { return Label.Substring(Label.IndexOf("###")); } }
 
