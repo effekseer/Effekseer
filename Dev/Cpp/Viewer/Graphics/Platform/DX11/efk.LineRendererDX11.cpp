@@ -107,7 +107,7 @@ void LineRendererDX11::Render()
 
 	shader->SetConstantBuffer();
 
-	renderer->GetRenderState()->Update(false);
+	renderer->GetRenderState()->Update(true);
 
 	renderer->SetLayout((EffekseerRendererDX11::Shader*)shader);
 
