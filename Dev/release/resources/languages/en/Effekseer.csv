@@ -225,7 +225,8 @@ On some platforms, effects cannot be played without using cache.
 A cache that can be used on both Windows and Mac is generated
 by generating the cache on Mac after generating the cache on Windows."
 Material_NoneCache,Cache - None
-Material_OldCache,Cache - Old
+Material_OldCache,"Cache - Old
+Please regenerate."
 Material_OldFomatCache,"Cache - OldFormat
 Please regenerate."
 Material_NewFomatCache,"Cache - Too new format.

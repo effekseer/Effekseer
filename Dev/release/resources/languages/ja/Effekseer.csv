@@ -227,7 +227,8 @@ Windowsでキャッシュを生成した後、キャッシュが存在する状�
 Macでキャッシュを生成すると、WindowsでもMacでも使用できるキャッシュが生成されます。
 "
 Material_NoneCache,キャッシュ - なし
-Material_OldCache,キャッシュ - 古い
+Material_OldCache,"キャッシュ - 古い
+再生成してください。"
 Material_OldFomatCache,"キャッシュ - 古いフォーマット
 再生成してください。"
 Material_NewFomatCache,"キャッシュ - 新しすぎるフォーマット
