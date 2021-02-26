@@ -414,11 +414,11 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
-			string helpPath = @"https://effekseer.github.io/Helps/15x/Tool/en/index.html";
+			string helpPath = @"https://effekseer.github.io/Helps/16x/Tool/en/index.html";
 
 			if (Core.Language == Language.Japanese)
 			{
-				helpPath = @"https://effekseer.github.io/Helps/15x/Tool/ja/index.html";
+				helpPath = @"https://effekseer.github.io/Helps/16x/Tool/ja/index.html";
 			}
 
 			try
