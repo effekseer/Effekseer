@@ -2,7 +2,6 @@
 #include "../Window/RenderingWindowGL.h"
 #include "Effekseer.h"
 #include <EffekseerRendererGL.h>
-#include <Effekseer\Utils\Effekseer.CustomAllocator.h>
 
 struct SimpleVertex
 {
@@ -103,7 +102,8 @@ public:
 		Effekseer::Backend::DepthTextureParameter depthTexParam;
 		depthTexParam.Size = texParam.Size;
 
-		renderPass = graphicsDevice->CreateRenderPass(textures, graphicsDevice->CreateDepthTexture(depthTexParam));
+        auto depthTex = graphicsDevice->CreateDepthTexture(depthTexParam);
+		renderPass = graphicsDevice->CreateRenderPass(textures, depthTex);
 	}
 };
 

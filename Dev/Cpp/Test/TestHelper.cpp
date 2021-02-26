@@ -58,7 +58,7 @@ std::u16string GetDirectoryPathAsU16(const char* path)
 	return std::u16string((const char16_t*)w.c_str());
 #else
 	char16_t dst[512];
-	Effekseer::ConvertUtf8ToUtf16((int16_t*)dst, 512, (const int8_t*)p.c_str());
+	Effekseer::ConvertUtf8ToUtf16(dst, 512, p.c_str());
 	return std::u16string(dst);
 #endif
 }

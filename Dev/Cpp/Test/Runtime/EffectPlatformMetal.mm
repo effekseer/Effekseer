@@ -132,8 +132,8 @@ fragment main0_out main0(main0_in in [[stage_in]], texture2d<float> txt [[textur
 class DistortingCallbackMetal : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformMetal* platform_ = nullptr;
-	Effekseer::TextureData* textureData_ = nullptr;
-
+    Effekseer::Backend::TextureRef texture_ = nullptr;
+    
 public:
 	DistortingCallbackMetal(EffectPlatformMetal* platform) : platform_(platform)
 	{
@@ -141,22 +141,18 @@ public:
 
 	virtual ~DistortingCallbackMetal()
 	{
-
-		if (textureData_ != nullptr)
-		{
-			EffekseerRendererMetal::DeleteTextureData(textureData_);
-		}
+        texture_.Reset();
 	}
 
 	bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
-		if (textureData_ == nullptr)
+        if (texture_ == nullptr)
 		{
 			auto tex = (LLGI::TextureMetal*)(platform_->GetCheckedTexture());
-			textureData_ = EffekseerRendererMetal::CreateTextureData(renderer->GetGraphicsDevice(), tex->GetImpl()->texture);
+			texture_ = EffekseerRendererMetal::CreateTexture(renderer->GetGraphicsDevice(), tex->GetImpl()->texture);
 		}
 
-		renderer->SetBackgroundTexture(textureData_);
+        renderer->SetBackground(texture_);
 
 		return true;
 	}
