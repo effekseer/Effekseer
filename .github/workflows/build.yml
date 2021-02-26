@@ -126,7 +126,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Effekseer-${{matrix.name}}-${{ env.EFFEKSEER_VERSION }}
-          path: EffekseerTool*
+          path: EffekseerTool
 
   Deploy:
     needs: [tests,Build]
