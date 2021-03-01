@@ -24,6 +24,7 @@ cbuffer PS_ConstanBuffer : register(b1)
     float4 _117_softParticleParam : packoffset(c13);
     float4 _117_reconstructionParam1 : packoffset(c14);
     float4 _117_reconstructionParam2 : packoffset(c15);
+    float4 _117_mUVInversedBack : packoffset(c16);
 };
 
 Texture2D<float4> _colorTex : register(t0);
@@ -72,6 +73,7 @@ float4 _main(PS_Input Input)
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
+    screenUV.y = _117_mUVInversedBack.x + (_117_mUVInversedBack.y * screenUV.y);
     if (_117_softParticleParam.w != 0.0f)
     {
         float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
@@ -96,8 +98,8 @@ void frag_main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    float4 _213 = _main(Input);
-    _entryPointOutput = _213;
+    float4 _223 = _main(Input);
+    _entryPointOutput = _223;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

@@ -26,6 +26,7 @@ cbuffer PS_ConstanBuffer : register(b0)
 	float4 softParticleParam;
 	float4 reconstructionParam1;
 	float4 reconstructionParam2;
+	float4 mUVInversedBack;
 };
 
 Texture2D _colorTex : register(t0);
@@ -93,6 +94,8 @@ float4 main(const PS_Input Input)
 #ifdef __OPENGL__
 	screenUV.y = 1.0 - screenUV.y;
 #endif
+
+	screenUV.y = mUVInversedBack.x + mUVInversedBack.y * screenUV.y;
 
 	if (softParticleParam.w != 0.0f)
 	{

@@ -28,17 +28,17 @@
 #endif
 
 #include "ShaderHeader/ad_model_distortion_ps.h"
-#include "ShaderHeader/ad_sprite_distortion_vs.h"
 #include "ShaderHeader/ad_model_lit_ps.h"
-#include "ShaderHeader/ad_sprite_lit_vs.h"
 #include "ShaderHeader/ad_model_unlit_ps.h"
+#include "ShaderHeader/ad_sprite_distortion_vs.h"
+#include "ShaderHeader/ad_sprite_lit_vs.h"
 #include "ShaderHeader/ad_sprite_unlit_vs.h"
 
 #include "ShaderHeader/model_distortion_ps.h"
-#include "ShaderHeader/sprite_distortion_vs.h"
 #include "ShaderHeader/model_lit_ps.h"
-#include "ShaderHeader/sprite_lit_vs.h"
 #include "ShaderHeader/model_unlit_ps.h"
+#include "ShaderHeader/sprite_distortion_vs.h"
+#include "ShaderHeader/sprite_lit_vs.h"
 #include "ShaderHeader/sprite_unlit_vs.h"
 
 #include "GraphicsDevice.h"
@@ -1225,6 +1225,9 @@ void AssignPixelConstantBuffer(Shader* shader)
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam1"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
+	psOffset += sizeof(float[4]) * 1;
+
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.mUVInversedBack"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
 }
 

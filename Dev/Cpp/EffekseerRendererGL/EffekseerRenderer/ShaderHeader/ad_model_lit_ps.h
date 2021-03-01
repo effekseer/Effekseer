@@ -47,6 +47,7 @@ struct PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
+    vec4 mUVInversedBack;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -272,6 +273,7 @@ struct PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
+    vec4 mUVInversedBack;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -441,6 +443,7 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * screenUV.y);
     if (!(CBPS0.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
@@ -455,8 +458,8 @@ vec4 _main(PS_Input Input)
     {
         discard;
     }
-    vec3 _631 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_631.x, _631.y, _631.z, Output.w);
+    vec3 _641 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_641.x, _641.y, _641.z, Output.w);
     return Output;
 }
 
@@ -473,8 +476,8 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _673 = _main(Input);
-    _entryPointOutput = _673;
+    vec4 _683 = _main(Input);
+    _entryPointOutput = _683;
 }
 
 )";
@@ -527,6 +530,7 @@ struct PS_ConstanBuffer
     highp vec4 softParticleParam;
     highp vec4 reconstructionParam1;
     highp vec4 reconstructionParam2;
+    highp vec4 mUVInversedBack;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -751,6 +755,7 @@ struct PS_ConstanBuffer
     highp vec4 softParticleParam;
     highp vec4 reconstructionParam1;
     highp vec4 reconstructionParam2;
+    highp vec4 mUVInversedBack;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -920,6 +925,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * screenUV.y);
     if (!(CBPS0.softParticleParam.w == 0.0))
     {
         highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
@@ -934,8 +940,8 @@ highp vec4 _main(PS_Input Input)
     {
         discard;
     }
-    highp vec3 _631 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_631.x, _631.y, _631.z, Output.w);
+    highp vec3 _641 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_641.x, _641.y, _641.z, Output.w);
     return Output;
 }
 
@@ -952,8 +958,8 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _673 = _main(Input);
-    _entryPointOutput = _673;
+    highp vec4 _683 = _main(Input);
+    _entryPointOutput = _683;
 }
 
 )";

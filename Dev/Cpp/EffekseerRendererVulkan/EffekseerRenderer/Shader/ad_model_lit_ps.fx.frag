@@ -44,6 +44,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
+    vec4 mUVInversedBack;
 } _282;
 
 layout(set = 1, binding = 4) uniform sampler2D Sampler_sampler_uvDistortionTex;
@@ -210,6 +211,7 @@ vec4 _main(PS_Input Input)
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = _282.mUVInversedBack.x + (_282.mUVInversedBack.y * screenUV.y);
     if (!(_282.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
@@ -224,8 +226,8 @@ vec4 _main(PS_Input Input)
     {
         discard;
     }
-    vec3 _627 = mix(_282.fEdgeColor.xyz * _282.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - _282.fEdgeParameter.x)));
-    Output = vec4(_627.x, _627.y, _627.z, Output.w);
+    vec3 _637 = mix(_282.fEdgeColor.xyz * _282.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - _282.fEdgeParameter.x)));
+    Output = vec4(_637.x, _637.y, _637.z, Output.w);
     return Output;
 }
 
@@ -242,7 +244,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.PosP = Input_PosP;
-    vec4 _669 = _main(Input);
-    _entryPointOutput = _669;
+    vec4 _679 = _main(Input);
+    _entryPointOutput = _679;
 }
 

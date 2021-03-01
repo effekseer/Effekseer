@@ -1408,6 +1408,7 @@ struct PixelConstantBuffer
 	EmmisiveParameter EmmisiveParam;
 	EdgeParameter EdgeParam;
 	SoftParticleParameter SoftParticleParam;
+	float UVInversedBack[4];
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{

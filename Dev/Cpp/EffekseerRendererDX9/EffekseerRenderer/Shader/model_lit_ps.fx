@@ -27,6 +27,7 @@ cbuffer PS_ConstanBuffer : register(b0)
     float4 _79_softParticleParam : register(c13);
     float4 _79_reconstructionParam1 : register(c14);
     float4 _79_reconstructionParam2 : register(c15);
+    float4 _79_mUVInversedBack : register(c16);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);

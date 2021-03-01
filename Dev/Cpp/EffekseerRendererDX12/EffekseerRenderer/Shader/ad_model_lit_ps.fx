@@ -42,6 +42,7 @@ cbuffer PS_ConstanBuffer : register(b1)
     float4 _282_softParticleParam : packoffset(c13);
     float4 _282_reconstructionParam1 : packoffset(c14);
     float4 _282_reconstructionParam2 : packoffset(c15);
+    float4 _282_mUVInversedBack : packoffset(c16);
 };
 
 Texture2D<float4> _uvDistortionTex : register(t3);
@@ -236,6 +237,7 @@ float4 _main(PS_Input Input)
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
+    screenUV.y = _282_mUVInversedBack.x + (_282_mUVInversedBack.y * screenUV.y);
     if (_282_softParticleParam.w != 0.0f)
     {
         float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
@@ -250,8 +252,8 @@ float4 _main(PS_Input Input)
     {
         discard;
     }
-    float3 _627 = lerp(_282_fEdgeColor.xyz * _282_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _282_fEdgeParameter.x).xxx);
-    Output = float4(_627.x, _627.y, _627.z, Output.w);
+    float3 _637 = lerp(_282_fEdgeColor.xyz * _282_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _282_fEdgeParameter.x).xxx);
+    Output = float4(_637.x, _637.y, _637.z, Output.w);
     return Output;
 }
 
@@ -268,8 +270,8 @@ void frag_main()
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
     Input.PosP = Input_PosP;
-    float4 _669 = _main(Input);
-    _entryPointOutput = _669;
+    float4 _679 = _main(Input);
+    _entryPointOutput = _679;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

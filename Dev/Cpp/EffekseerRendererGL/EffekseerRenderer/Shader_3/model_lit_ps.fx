@@ -32,6 +32,7 @@ struct PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
+    vec4 mUVInversedBack;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -76,6 +77,7 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * screenUV.y);
     if (!(CBPS0.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
@@ -103,7 +105,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _286 = _main(Input);
-    _entryPointOutput = _286;
+    vec4 _296 = _main(Input);
+    _entryPointOutput = _296;
 }
 

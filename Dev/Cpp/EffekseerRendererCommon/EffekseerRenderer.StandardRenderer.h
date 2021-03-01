@@ -752,6 +752,9 @@ public:
 				reconstructionParam.ProjectionMatrix43,
 				reconstructionParam.ProjectionMatrix44);
 
+			pcb.UVInversedBack[0] = uvInversedBack[0];
+			pcb.UVInversedBack[1] = uvInversedBack[1];
+
 			m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 		}
 		else
@@ -832,6 +835,9 @@ public:
 					reconstructionParam.ProjectionMatrix34,
 					reconstructionParam.ProjectionMatrix43,
 					reconstructionParam.ProjectionMatrix44);
+
+				pcb.UVInversedBack[0] = uvInversedBack[0];
+				pcb.UVInversedBack[1] = uvInversedBack[1];
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}

@@ -47,6 +47,7 @@ struct PS_ConstanBuffer
     float4 softParticleParam;
     float4 reconstructionParam1;
     float4 reconstructionParam2;
+    float4 mUVInversedBack;
 };
 
 struct main0_out
@@ -210,6 +211,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = v_281.mUVInversedBack.x + (v_281.mUVInversedBack.y * screenUV.y);
     if ((isunordered(v_281.softParticleParam.w, 0.0) || v_281.softParticleParam.w != 0.0))
     {
         float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
@@ -224,8 +226,8 @@ float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sa
     {
         discard_fragment();
     }
-    float3 _564 = mix(v_281.fEdgeColor.xyz * v_281.fEdgeParameter.y, Output.xyz, float3(ceil((Output.w - advancedParam.AlphaThreshold) - v_281.fEdgeParameter.x)));
-    Output = float4(_564.x, _564.y, _564.z, Output.w);
+    float3 _574 = mix(v_281.fEdgeColor.xyz * v_281.fEdgeParameter.y, Output.xyz, float3(ceil((Output.w - advancedParam.AlphaThreshold) - v_281.fEdgeParameter.x)));
+    Output = float4(_574.x, _574.y, _574.z, Output.w);
     return Output;
 }
 
@@ -241,8 +243,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = in.Input_Blend_FBNextIndex_UV;
     Input.PosP = in.Input_PosP;
-    float4 _600 = _main(Input, _uvDistortionTex, sampler_uvDistortionTex, v_281, _colorTex, sampler_colorTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _600;
+    float4 _610 = _main(Input, _uvDistortionTex, sampler_uvDistortionTex, v_281, _colorTex, sampler_colorTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _610;
     return out;
 }
 

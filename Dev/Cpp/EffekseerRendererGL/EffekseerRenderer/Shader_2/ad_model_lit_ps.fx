@@ -46,6 +46,7 @@ struct PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
+    vec4 mUVInversedBack;
 };
 
 uniform PS_ConstanBuffer CBPS0;

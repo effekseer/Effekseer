@@ -26,6 +26,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
+    vec4 mUVInversedBack;
 } _117;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
@@ -58,6 +59,7 @@ vec4 _main(PS_Input Input)
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
+    screenUV.y = _117.mUVInversedBack.x + (_117.mUVInversedBack.y * screenUV.y);
     if (!(_117.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
@@ -82,7 +84,7 @@ void main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    vec4 _213 = _main(Input);
-    _entryPointOutput = _213;
+    vec4 _223 = _main(Input);
+    _entryPointOutput = _223;
 }
 

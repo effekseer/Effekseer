@@ -688,6 +688,9 @@ protected:
 				reconstructionParam.ProjectionMatrix34,
 				reconstructionParam.ProjectionMatrix43,
 				reconstructionParam.ProjectionMatrix44);
+
+			pcb->UVInversedBack[0] = uvInversedBack[0];
+			pcb->UVInversedBack[1] = uvInversedBack[1];
 		}
 
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
