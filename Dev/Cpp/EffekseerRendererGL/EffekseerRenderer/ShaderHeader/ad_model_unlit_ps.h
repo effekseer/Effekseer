@@ -1,4 +1,5 @@
-#if !defined(__EMSCRIPTEN__)static const char ad_model_unlit_ps_gl2[] = R"(
+#if !defined(__EMSCRIPTEN__)
+static const char ad_model_unlit_ps_gl2[] = R"(
 #version 120
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require

@@ -49,7 +49,7 @@ for fx in verts + frags:
     f_gl_es3 = open(gl_es3_root_path + fx + '.fx', 'r')
     gl_es3 = f_gl_es3.read()
 
-    code = '#if !defined(__EMSCRIPTEN__)'
+    code = '#if !defined(__EMSCRIPTEN__)\n'
     code += ''
     code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gl2')
     code += gl_2
