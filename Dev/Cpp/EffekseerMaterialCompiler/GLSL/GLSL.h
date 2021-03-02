@@ -541,10 +541,6 @@ static const char g_material_fs_src_suf2_refraction[] =
 	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
 
-	#ifdef _Y_INVERTED_
-	distortUV.y = 1.0 - distortUV.y;
-	#endif
-
 	vec4 bg = TEX2D(efk_background, distortUV);
 	FRAGCOLOR = bg;
 
