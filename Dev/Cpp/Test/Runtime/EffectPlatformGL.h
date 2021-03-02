@@ -13,6 +13,7 @@ public:
 	EffectPlatformGL()
 		: EffectPlatformGLFW(true)
 	{
+		isBackgroundFlipped_ = true;
 	}
 
 	~EffectPlatformGL();
