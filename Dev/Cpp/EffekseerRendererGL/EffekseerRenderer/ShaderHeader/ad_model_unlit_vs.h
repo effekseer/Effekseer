@@ -1,4 +1,4 @@
-static const char ad_model_unlit_vs_gl2[] = R"(
+#if !defined(__EMSCRIPTEN__)static const char ad_model_unlit_vs_gl2[] = R"(
 #version 120
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require
@@ -503,6 +503,8 @@ void main()
 
 )";
 
+#endif
+
 static const char ad_model_unlit_vs_gles2[] = R"(
 
 
@@ -1005,10 +1007,12 @@ void main()
 
     static const char* get_ad_model_unlit_vs (EffekseerRendererGL::OpenGLDeviceType deviceType)
     {
+    #if !defined(__EMSCRIPTEN__)
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL3)
             return ad_model_unlit_vs_gl3;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
             return ad_model_unlit_vs_gl2;
+    #endif
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return ad_model_unlit_vs_gles3;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)

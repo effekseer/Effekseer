@@ -1,4 +1,4 @@
-static const char sprite_distortion_vs_gl2[] = R"(
+#if !defined(__EMSCRIPTEN__)static const char sprite_distortion_vs_gl2[] = R"(
 #version 120
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require
@@ -170,6 +170,8 @@ void main()
 
 )";
 
+#endif
+
 static const char sprite_distortion_vs_gles2[] = R"(
 
 
@@ -339,10 +341,12 @@ void main()
 
     static const char* get_sprite_distortion_vs (EffekseerRendererGL::OpenGLDeviceType deviceType)
     {
+    #if !defined(__EMSCRIPTEN__)
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL3)
             return sprite_distortion_vs_gl3;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
             return sprite_distortion_vs_gl2;
+    #endif
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return sprite_distortion_vs_gles3;
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)

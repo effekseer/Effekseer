@@ -49,7 +49,8 @@ for fx in verts + frags:
     f_gl_es3 = open(gl_es3_root_path + fx + '.fx', 'r')
     gl_es3 = f_gl_es3.read()
 
-    code = ''
+    code = '#if !defined(__EMSCRIPTEN__)'
+    code += ''
     code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gl2')
     code += gl_2
     code += ')";\n\n'
@@ -57,6 +58,7 @@ for fx in verts + frags:
     code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gl3')
     code += gl_3
     code += ')";\n\n'
+    code += '#endif\n\n'
 
     code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gles2')
     code += gl_es2
@@ -69,10 +71,12 @@ for fx in verts + frags:
     code += r'''
     static const char* get_{} (EffekseerRendererGL::OpenGLDeviceType deviceType)
     {{
+    #if !defined(__EMSCRIPTEN__)
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL3)
             return {}_{};
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGL2)
             return {}_{};
+    #endif
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES3)
             return {}_{};
         if (deviceType == EffekseerRendererGL::OpenGLDeviceType::OpenGLES2)
