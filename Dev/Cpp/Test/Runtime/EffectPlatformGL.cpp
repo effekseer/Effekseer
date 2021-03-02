@@ -50,14 +50,6 @@ EffectPlatformGL::~EffectPlatformGL()
 
 void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParameter& param)
 {
-	// flip checker pattern
-	for (size_t y = 0; y < initParam_.WindowSize[1] / 2; y++)
-	{
-		for (size_t x = 0; x < initParam_.WindowSize[0]; x++)
-		{
-			std::swap(checkeredPattern_[x + y * initParam_.WindowSize[0]], checkeredPattern_[x + (initParam_.WindowSize[1] - 1 - y) * initParam_.WindowSize[0]]);
-		}
-	}
 }
 
 void EffectPlatformGL::BeginRendering()

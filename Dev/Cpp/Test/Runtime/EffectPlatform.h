@@ -37,6 +37,7 @@ protected:
 	std::vector<Effekseer::EffectRef> effects_;
 	std::vector<std::vector<uint8_t>> buffers_;
 	std::vector<uint32_t> checkeredPattern_;
+	bool isBackgroundFlipped_ = false;
 
 	virtual void* GetNativePtr(int32_t index)
 	{
@@ -108,21 +109,43 @@ public:
 		auto projMat = renderer_->GetProjectionMatrix();
 		auto cameraMat = renderer_->GetCameraMatrix();
 
-		Effekseer::Vector3D pos{0.0f, 0.0f, 0.0f};
+		Effekseer::Vector3D posMiddle{0.0f, 0.0f, 0.0f};
 
-		Effekseer::Vector3D::TransformWithW(pos, pos, cameraMat);
-		Effekseer::Vector3D::TransformWithW(pos, pos, projMat);
+		Effekseer::Vector3D::TransformWithW(posMiddle, posMiddle, cameraMat);
+		Effekseer::Vector3D::TransformWithW(posMiddle, posMiddle, projMat);
 
-		std::array<float, 4> posArray;
-		posArray.fill(1.0f);
-		posArray[0] = pos.Z;
+		std::array<float, 4> posMiddleArray;
+		posMiddleArray.fill(1.0f);
+		posMiddleArray[0] = posMiddle.Z;
+
+		Effekseer::Vector3D posNear{0.0f, 0.0f, 1.0f};
+
+		Effekseer::Vector3D::TransformWithW(posNear, posNear, cameraMat);
+		Effekseer::Vector3D::TransformWithW(posNear, posNear, projMat);
+
+		std::array<float, 4> posNearArray;
+		posNearArray.fill(1.0f);
+		posNearArray[0] = posNear.Z;
 
 		{
+			const size_t heightSize = 10;
+
 			Effekseer::Backend::TextureParameter texParam;
-			texParam.InitialData.resize(sizeof(float) * 4);
+			texParam.InitialData.resize(sizeof(float) * 4 * heightSize);
 			texParam.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
-			texParam.Size = {1, 1};
-			memcpy(texParam.InitialData.data(), posArray.data(), texParam.InitialData.size());
+			texParam.Size = {1, heightSize};
+
+			for (size_t i = 0; i < heightSize; i++)
+			{
+				if ((i % 2 == 0 && !isBackgroundFlipped_) || (i % 2 == 1 && isBackgroundFlipped_))
+				{
+					memcpy(texParam.InitialData.data() + sizeof(float) * 4 * i, posMiddleArray.data(), sizeof(float) * 4);
+				}
+				else
+				{
+					memcpy(texParam.InitialData.data() + sizeof(float) * 4 * i, posNearArray.data(), sizeof(float) * 4);
+				}
+			}
 
 			auto depth = GetRenderer()->GetGraphicsDevice()->CreateTexture(texParam);
 

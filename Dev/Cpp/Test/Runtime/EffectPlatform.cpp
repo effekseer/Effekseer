@@ -4,13 +4,38 @@
 
 void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pixels)
 {
-	const uint32_t color[2] = {0xFF202020, 0xFF808080};
-
-	for (int y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		const uint32_t color[2] = {0xFF204020, 0xFF80A080};
+
+		for (int y = 0; y < height / 2; y++)
 		{
-			*pixels++ = color[(x / 20 % 2) ^ (y / 20 % 2)];
+			for (int x = 0; x < width; x++)
+			{
+				*pixels++ = color[(x / 20 % 2) ^ (y / 20 % 2)];
+			}
+		}
+	}
+
+	{
+		const uint32_t color[2] = {0xFF402020, 0xFFA08080};
+
+		for (int y = height / 2; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				*pixels++ = color[(x / 20 % 2) ^ (y / 20 % 2)];
+			}
+		}
+	}
+
+	if (isBackgroundFlipped_)
+	{
+		for (size_t y = 0; y < initParam_.WindowSize[1] / 2; y++)
+		{
+			for (size_t x = 0; x < initParam_.WindowSize[0]; x++)
+			{
+				std::swap(checkeredPattern_[x + y * initParam_.WindowSize[0]], checkeredPattern_[x + (initParam_.WindowSize[1] - 1 - y) * initParam_.WindowSize[0]]);
+			}
 		}
 	}
 }

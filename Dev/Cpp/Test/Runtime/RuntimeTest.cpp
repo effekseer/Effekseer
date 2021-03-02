@@ -121,6 +121,20 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 
 		platform->GetRenderer()->SetCameraMatrix(cameraMat);
 	}
+
+	{
+		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
+
+		Effekseer::Matrix44 mat;
+		mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+		platform->GetRenderer()->SetCameraMatrix(mat);
+		platform->GetRenderer()->SetBackgroundTextureUVStyle(EffekseerRenderer::UVStyle::VerticalFlipped);
+		platform->GenerateDepth();
+
+		single16Test(u"SoftParticle01", "SoftParticle01_Flipped");
+
+		platform->GetRenderer()->SetCameraMatrix(cameraMat);
+	}
 }
 
 void BasicRuntimeDeviceLostTest()
