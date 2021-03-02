@@ -59,7 +59,9 @@ Development
 
 ### Branch
 
-* master 1.6(WIP)
+* master 1.7(WIP)
+
+* [1.6x](https://github.com/effekseer/Effekseer/tree/16x)
 
 * [1.5x](https://github.com/effekseer/Effekseer/tree/15x)
 
