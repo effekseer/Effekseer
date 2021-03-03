@@ -39,7 +39,7 @@ float atan2(in float y, in float x) {
 
 static const char* material_common_vs_define = R"()"
 
-												   R"(
+											   R"(
 
 
 // Dummy
@@ -49,14 +49,14 @@ float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam) { retur
 
 static const char* material_common_vs_define_450 = R"()"
 
-											   R"(
+												   R"(
 #define TEX2D textureLod
 
 )";
 
 static const char* material_common_fs_define_450 = R"()"
 
-											   R"(
+												   R"(
 
 #define TEX2D texture
 
@@ -183,10 +183,11 @@ static const char g_material_model_vs_src_suf2[] =
 //	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
 //	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
 
+	v_PosP = gl_Position;
+
 	#ifdef _Y_INVERTED_
 	gl_Position.y = - gl_Position.y;
 	#endif
-	v_PosP = gl_Position;
 }
 )";
 
@@ -357,10 +358,11 @@ static const char g_material_sprite_vs_src_suf2[] =
 	//v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
 	//v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
 
+	v_PosP = gl_Position;
+
 	#ifdef _Y_INVERTED_
 	gl_Position.y = - gl_Position.y;
 	#endif
-	v_PosP = gl_Position;
 }
 
 )";
@@ -500,6 +502,10 @@ void main()
 	vec2 screenUV = v_PosP.xy / v_PosP.w;
 	float meshZ =   v_PosP.z / v_PosP.w;
 	screenUV.xy = vec2(screenUV.x + 1.0, screenUV.y + 1.0) * 0.5;
+
+#ifdef _SCREEN_FLIPPED_
+	screenUV.y = 1.0 - screenUV.y;
+#endif
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
@@ -829,6 +835,7 @@ public:
 							  bool useSet,
 							  int textureBindingOffset,
 							  bool isYInverted,
+							  bool isScreenFlipped,
 							  int instanceCount)
 	{
 		useUniformBlock_ = useUniformBlock;
@@ -852,8 +859,13 @@ public:
 				maincode << "#define _Y_INVERTED_ 1" << std::endl;
 			}
 
+			if (isScreenFlipped)
+			{
+				maincode << "#define _SCREEN_FLIPPED_ 1" << std::endl;
+			}
+
 			maincode << "#define _INSTANCE_COUNT_ " << instanceCount << std::endl;
-			
+
 			// TODO : Replace DIRTY CODE
 			if (textureBindingOffset > 0)
 			{
@@ -932,7 +944,6 @@ uniform vec4 customData1;
 uniform vec4 customData1s[_INSTANCE_COUNT_];
 #endif
 )" << std::endl;
-
 				}
 				if (materialFile->GetCustomData2Count() > 0)
 				{
@@ -945,7 +956,6 @@ uniform vec4 customData2;
 uniform vec4 customData2s[_INSTANCE_COUNT_];
 #endif
 )" << std::endl;
-
 				}
 			}
 

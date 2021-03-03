@@ -85,7 +85,7 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, 
 
 	auto saveBinary = [&materialFile, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, false, false, false, false, 0, false, InstanceCount);
+		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, false, false, false, false, 0, false, false, InstanceCount);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};

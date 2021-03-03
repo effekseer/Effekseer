@@ -923,7 +923,7 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, 
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
 		
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1, true, 40);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1, true, true, 40);
 
 		//auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
