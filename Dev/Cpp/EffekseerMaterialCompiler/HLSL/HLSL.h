@@ -28,6 +28,7 @@ R"(
 #define cbuffer ConstantBuffer
 #define SV_Target S_TARGET_OUTPUT
 #define SampleLevel SampleLOD
+#define SV_InstanceID S_INSTANCE_ID
 )"
 #endif
 ;
