@@ -294,6 +294,11 @@ static void ChangeAxis(ProceduralMesh& mesh, ProceduralModelAxisType axisType)
 			swapAxis(v.Normal);
 			swapAxis(v.Tangent);
 		}
+
+		for (auto& f : mesh.Faces)
+		{
+			std::swap(f.Indexes[0], f.Indexes[2]);
+		}
 	}
 	else if (axisType == ProceduralModelAxisType::Z)
 	{
@@ -309,6 +314,11 @@ static void ChangeAxis(ProceduralMesh& mesh, ProceduralModelAxisType axisType)
 			swapAxis(v.Position);
 			swapAxis(v.Normal);
 			swapAxis(v.Tangent);
+		}
+
+		for (auto& f : mesh.Faces)
+		{
+			std::swap(f.Indexes[0], f.Indexes[2]);
 		}
 	}
 }
