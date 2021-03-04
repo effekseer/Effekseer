@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 		string menuImportFromPackage;
 		string menuExportToPackage;
 		
-		System.IO.FileSystemWatcher directoryWatcher;
+		FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		bool shouldUpdateFileList = true;
 
 		const string ContextMenuPopupId = "###FileViewerPopupMenu";
@@ -28,11 +28,6 @@ namespace Effekseer.GUI.Dock
 		public FileViewer()
 		{
 			Label = Icons.PanelFileViewer + Resources.GetString("FileViewer") + "###FileVeiwer";
-			Core.OnAfterLoad += OnAfterLoad;
-			Core.OnAfterNew += OnAfterLoad;
-			Core.OnAfterSave += OnAfterSave;
-
-			UpdateFileListWithProjectPath(Core.Root.GetFullPath());
 
 			TabToolTip = Resources.GetString("FileViewer");
 
@@ -46,22 +41,27 @@ namespace Effekseer.GUI.Dock
 			{
 				menuShowInFileManager = Resources.GetString("FileViewer_ShowInExplorer");
 			}
+
 			menuImportFromPackage = Resources.GetString("FileViewer_ImportFromPackage");
 			menuExportToPackage = Resources.GetString("FileViewer_ExportToPackage");
 
-			directoryWatcher = new FileSystemWatcher();
 			directoryWatcher.Changed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Renamed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Deleted += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Created += (o, e) => { shouldUpdateFileList = true; };
 
-			UpdateFileList(Directory.GetCurrentDirectory());
+			UpdateFileListWithProjectPath(Core.Root.GetFullPath());
+
+			Core.OnAfterLoad += OnAfterLoad;
+			Core.OnAfterNew += OnAfterLoad;
+			Core.OnAfterSave += OnAfterSave;
 		}
 
 		public override void OnDisposed()
 		{
 			Core.OnAfterLoad -= OnAfterLoad;
 			Core.OnAfterNew -= OnAfterLoad;
+			Core.OnAfterSave -= OnAfterSave;
 		}
 
 		protected override void UpdateInternal()
