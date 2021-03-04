@@ -28,6 +28,7 @@ Supported platforms
 - DirectX9, DirectX11, DirectX12, Metal, Vulkan, OpenGL
 - WebGL
 - Unity
+- GodotEngine
 - UnrealEngine4
 - DX Library
 - Cocos2d-x
@@ -41,6 +42,8 @@ Repositories
 * [ForUnity](https://github.com/effekseer/EffekseerForUnity)
 
 * [ForUE4](https://github.com/effekseer/EffekseerForUE4)
+
+* [ForGodotEngine](https://github.com/effekseer/EffekseerForGodot3)
 
 * [ForCocos2d-x](https://github.com/effekseer/EffekseerForCocos2d-x)
 
