@@ -24,6 +24,7 @@ file(GLOB effekseer_h
 set(effekseer_src
     Effekseer/Effekseer.Client.cpp
     Effekseer/Effekseer.Color.cpp
+    Effekseer/Effekseer.CurveLoader.cpp
     Effekseer/Effekseer.DefaultEffectLoader.cpp
     Effekseer/Effekseer.DefaultFile.cpp
     Effekseer/Effekseer.Effect.cpp
