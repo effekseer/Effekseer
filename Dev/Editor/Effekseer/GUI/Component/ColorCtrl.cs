@@ -63,21 +63,21 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 			binding.SetValue(
-				(int)(internalValue[0] * 255),
-				(int)(internalValue[1] * 255),
-				(int)(internalValue[2] * 255),
-				(int)(internalValue[3] * 255),
+				(int)Math.Round(internalValue[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValue[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValue[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValue[3] * 255, MidpointRounding.AwayFromZero),
 				isActive);
 		}
 
-		public override void Update()
+		public unsafe override void Update()
 		{
 			if (binding != null)
 			{
-				internalValue[0] = binding.R / 255.0f;
-				internalValue[1] = binding.G / 255.0f;
-				internalValue[2] = binding.B / 255.0f;
-				internalValue[3] = binding.A / 255.0f;
+				StoreIfDifferentColor(ref internalValue[0], binding.R);
+				StoreIfDifferentColor(ref internalValue[1], binding.G);
+				StoreIfDifferentColor(ref internalValue[2], binding.B);
+				StoreIfDifferentColor(ref internalValue[3], binding.A);
 			}
 
 			valueChangingProp.Enable(binding);
@@ -92,10 +92,10 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					binding.R.SetValueDirectly((int)(internalValue[0] * 255));
-					binding.G.SetValueDirectly((int)(internalValue[1] * 255));
-					binding.B.SetValueDirectly((int)(internalValue[2] * 255));
-					binding.A.SetValueDirectly((int)(internalValue[3] * 255));
+					binding.R.SetValueDirectly((int)Math.Round(internalValue[0] * 255, MidpointRounding.AwayFromZero));
+					binding.G.SetValueDirectly((int)Math.Round(internalValue[1] * 255, MidpointRounding.AwayFromZero));
+					binding.B.SetValueDirectly((int)Math.Round(internalValue[2] * 255, MidpointRounding.AwayFromZero));
+					binding.A.SetValueDirectly((int)Math.Round(internalValue[3] * 255, MidpointRounding.AwayFromZero));
 				}
 			}
 
@@ -109,6 +109,17 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
+		}
+
+		void StoreIfDifferentColor(ref float dst, int src)
+		{
+			var v = Math.Round(dst * 255.0f, MidpointRounding.AwayFromZero);
+			if(v == src)
+			{
+				return;
+			}
+
+			dst = src / 255.0f;
 		}
 	}
 }
