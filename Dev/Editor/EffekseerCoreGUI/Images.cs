@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Effekseer.GUI
 {
-	class Images
+	public class Images
 	{
 		public static swig.ImageResource Play;
 		public static swig.ImageResource Stop;

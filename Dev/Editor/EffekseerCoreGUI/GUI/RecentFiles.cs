@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.GUI
 {
-	class RecentFiles
+	public class RecentFiles
 	{
 		public const string ConfigRecentFileName = "config.recent.xml";
 

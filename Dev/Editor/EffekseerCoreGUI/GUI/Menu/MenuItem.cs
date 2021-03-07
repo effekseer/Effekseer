@@ -7,7 +7,7 @@ using Effekseer.swig;
 
 namespace Effekseer.GUI.Menu
 {
-	class MenuSeparator : IControl
+	public class MenuSeparator : IControl
 	{
 		public void Update()
 		{
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Menu
 		}
 	}
 
-	class MenuItem : IControl
+	public class MenuItem : IControl
     {
         string id = "";
 

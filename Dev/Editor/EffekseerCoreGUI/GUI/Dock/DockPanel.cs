@@ -32,7 +32,7 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		internal string TabToolTip = string.Empty;
+		protected internal string TabToolTip = string.Empty;
 
 		internal int IsInitialized = -1;
 

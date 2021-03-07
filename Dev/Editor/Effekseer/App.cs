@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Effekseer.GUI;
+using Effekseer.swig;
 
 namespace Effekseer
 {
@@ -61,48 +62,52 @@ namespace Effekseer
 
 		protected override void OnUpdate()
 		{
-			Manager.Update();
 		}
 
 		protected override void OnTerminate()
 		{
-			Manager.Terminate();
-			Process.MaterialEditor.Terminate();
 		}
+
+		protected override void OnCreateMainMenu()
+		{
+			var mainMenu = new GUI.Menu.MainMenu();
+			GUI.Manager.AddControl(mainMenu);
+		}
+
 
 		protected override void OnResetWindowActually()
 		{
 			if (Manager.effectViewer == null)
 			{
-				Manager.effectViewer = new GUI.Dock.EffectViwer();
+				Manager.effectViewer = new Dock.EffectViwer();
 				if (Manager.dockManager != null)
 				{
 					Manager.dockManager.Controls.Add(Manager.effectViewer);
 				}
 			}
 
-			var viewerController = Manager.SelectOrShowWindow(typeof(GUI.Dock.ViewerController), null);
-			var nodeTreeView = Manager.SelectOrShowWindow(typeof(GUI.Dock.NodeTreeView), null);
-			var commonValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.CommonValues), null);
-			var locationValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.LocationValues), null);
-			var rotationValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.RotationValues), null);
-			var scaleValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.ScaleValues), null);
-			var rendererCommonValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.RendererCommonValues), null);
-			var rendererValues = Manager.SelectOrShowWindow(typeof(GUI.Dock.RendererValues), null);
+			var viewerController = Manager.SelectOrShowWindow(typeof(Dock.ViewerController), null);
+			var nodeTreeView = Manager.SelectOrShowWindow(typeof(Dock.NodeTreeView), null);
+			var commonValues = Manager.SelectOrShowWindow(typeof(Dock.CommonValues), null);
+			var locationValues = Manager.SelectOrShowWindow(typeof(Dock.LocationValues), null);
+			var rotationValues = Manager.SelectOrShowWindow(typeof(Dock.RotationValues), null);
+			var scaleValues = Manager.SelectOrShowWindow(typeof(Dock.ScaleValues), null);
+			var rendererCommonValues = Manager.SelectOrShowWindow(typeof(Dock.RendererCommonValues), null);
+			var rendererValues = Manager.SelectOrShowWindow(typeof(Dock.RendererValues), null);
 
 			uint windowId = Manager.NativeManager.BeginDockLayout();
 
 			uint dockLeftID = 0, dockRightID = 0;
-			Manager.NativeManager.DockSplitNode(windowId, swig.DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
+			Manager.NativeManager.DockSplitNode(windowId, DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
 
 			uint dockLeftTop = 0, dockLeftBottom = 0;
-			Manager.NativeManager.DockSplitNode(dockLeftID, swig.DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
+			Manager.NativeManager.DockSplitNode(dockLeftID, DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
 
 			uint dockRightTop = 0, dockRightBottom = 0;
-			Manager.NativeManager.DockSplitNode(dockRightID, swig.DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
+			Manager.NativeManager.DockSplitNode(dockRightID, DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
 
-			Manager.NativeManager.DockSetNodeFlags(dockLeftTop, swig.DockNodeFlags.HiddenTabBar);
-			Manager.NativeManager.DockSetNodeFlags(dockLeftBottom, swig.DockNodeFlags.HiddenTabBar);
+			Manager.NativeManager.DockSetNodeFlags(dockLeftTop, DockNodeFlags.HiddenTabBar);
+			Manager.NativeManager.DockSetNodeFlags(dockLeftBottom, DockNodeFlags.HiddenTabBar);
 
 			Manager.NativeManager.DockSetWindow(dockLeftTop, Manager.effectViewer.WindowID);
 			Manager.NativeManager.DockSetWindow(dockLeftBottom, viewerController.WindowID);

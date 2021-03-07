@@ -130,7 +130,7 @@ namespace Effekseer.GUI
 		MENU = 348,
 	}
 
-	class Shortcuts
+	public class Shortcuts
 	{
 
 		const string ConfigPath = "config.shortcut.xml";

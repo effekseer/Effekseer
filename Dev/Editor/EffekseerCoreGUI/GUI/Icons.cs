@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.GUI
 {
-	static class Icons
+	public static class Icons
 	{
 		public const string Empty              = "\xec00";
 		public const string PanelNodeTree      = "\xec01";

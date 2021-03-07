@@ -123,7 +123,7 @@ namespace Effekseer.GUI
 
 		public static Viewer Viewer;
 
-		internal static Network Network;
+		public static Network Network;
 
 		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
 
@@ -158,7 +158,7 @@ namespace Effekseer.GUI
 		/// </remarks>
 		static Type[] dockTypes;
 
-		static Dock.DockManager dockManager = null;
+		public static Dock.DockManager dockManager = null;
 
 		public static Dock.EffectViwer effectViewer = null;
 
@@ -294,8 +294,7 @@ namespace Effekseer.GUI
 			Commands.Register();
 
 			// Add controls
-			var mainMenu = new GUI.Menu.MainMenu();
-			GUI.Manager.AddControl(mainMenu);
+			Application.Current.OnCreateMainMenu();
 
 			dockManager = new GUI.Dock.DockManager();
 			GUI.Manager.AddControl(dockManager);
@@ -651,7 +650,7 @@ namespace Effekseer.GUI
 				resetCount++;
 				if (resetCount == 0)
 				{
-					ResetWindowActually();
+					Application.Current.OnResetWindowActually();
 				}
 			}
 
@@ -721,52 +720,6 @@ namespace Effekseer.GUI
 			resetCount = -5;
 		}
 
-		static void ResetWindowActually()
-		{
-			if (effectViewer == null)
-			{
-				effectViewer = new Dock.EffectViwer();
-				if (dockManager != null)
-				{
-					dockManager.Controls.Add(effectViewer);
-				}
-			}
-			
-			var viewerController = SelectOrShowWindow(typeof(Dock.ViewerController), null);
-			var nodeTreeView = SelectOrShowWindow(typeof(Dock.NodeTreeView), null);
-			var commonValues = SelectOrShowWindow(typeof(Dock.CommonValues), null);
-			var locationValues = SelectOrShowWindow(typeof(Dock.LocationValues), null);
-			var rotationValues = SelectOrShowWindow(typeof(Dock.RotationValues), null);
-			var scaleValues = SelectOrShowWindow(typeof(Dock.ScaleValues), null);
-			var rendererCommonValues = SelectOrShowWindow(typeof(Dock.RendererCommonValues), null);
-			var rendererValues = SelectOrShowWindow(typeof(Dock.RendererValues), null);
-
-			uint windowId = NativeManager.BeginDockLayout();
-
-			uint dockLeftID = 0, dockRightID = 0;
-			NativeManager.DockSplitNode(windowId, DockSplitDir.Left, 0.65f, ref dockLeftID, ref dockRightID);
-
-			uint dockLeftTop = 0, dockLeftBottom = 0;
-			NativeManager.DockSplitNode(dockLeftID, DockSplitDir.Top, 0.85f, ref dockLeftTop, ref dockLeftBottom);
-
-			uint dockRightTop = 0, dockRightBottom = 0;
-			NativeManager.DockSplitNode(dockRightID, DockSplitDir.Top, 0.6f, ref dockRightTop, ref dockRightBottom);
-
-			NativeManager.DockSetNodeFlags(dockLeftTop, DockNodeFlags.HiddenTabBar);
-			NativeManager.DockSetNodeFlags(dockLeftBottom, DockNodeFlags.HiddenTabBar);
-
-			NativeManager.DockSetWindow(dockLeftTop, effectViewer.WindowID);
-			NativeManager.DockSetWindow(dockLeftBottom, viewerController.WindowID);
-			NativeManager.DockSetWindow(dockRightTop, commonValues.WindowID);
-			NativeManager.DockSetWindow(dockRightTop, locationValues.WindowID);
-			NativeManager.DockSetWindow(dockRightTop, rotationValues.WindowID);
-			NativeManager.DockSetWindow(dockRightTop, scaleValues.WindowID);
-			NativeManager.DockSetWindow(dockRightTop, rendererValues.WindowID);
-			NativeManager.DockSetWindow(dockRightTop, rendererCommonValues.WindowID);
-			NativeManager.DockSetWindow(dockRightBottom, nodeTreeView.WindowID);
-
-			NativeManager.EndDockLayout();
-		}
 
 		internal static Dock.DockPanel GetWindow(Type t)
 		{
@@ -778,7 +731,7 @@ namespace Effekseer.GUI
 			return null;
 		}
 
-		internal static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
+		public static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
 		{
 			for(int i = 0; i < dockTypes.Length; i++)
 			{

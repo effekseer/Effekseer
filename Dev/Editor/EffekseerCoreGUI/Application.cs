@@ -167,8 +167,8 @@ namespace Effekseer
 			}
 
 			OnTerminate();
-				GUI.Manager.Terminate();
-				Process.MaterialEditor.Terminate();
+			GUI.Manager.Terminate();
+			Process.MaterialEditor.Terminate();
 		}
 
 		protected virtual void OnInitialize()
@@ -180,6 +180,13 @@ namespace Effekseer
 		}
 
 		protected virtual void OnTerminate()
+		{
+		}
+
+		/// <summary>
+		/// 初回起動時や設定ファイルのリセット時などで、デフォルトのウィンドウレイアウトを復元する
+		/// </summary>
+		protected internal virtual void OnCreateMainMenu()
 		{
 		}
 

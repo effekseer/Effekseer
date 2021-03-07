@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Menu
 {
-	class Menu : IControl
+	public class Menu : IControl
 	{
 		string id = "";
 
@@ -16,7 +16,7 @@ namespace Effekseer.GUI.Menu
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
-		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
+		public Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
 	
 		public Menu(MultiLanguageString label = null, string icon = null)
 		{

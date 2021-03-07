@@ -1,6 +1,6 @@
 ﻿namespace Effekseer.GUI.Menu
 {
-	internal sealed class WindowTitleControl
+	public sealed class WindowTitleControl
 	{
 		public string CurrentTitle { get; set; } = string.Empty;
 
