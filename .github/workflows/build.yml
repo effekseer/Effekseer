@@ -5,13 +5,15 @@ on:
     branches:
       - master
       - 15x
+      - 16x
   pull_request:
     branches:
       - master
       - 15x
+      - 16x
 
 env:
-  EFFEKSEER_VERSION: 160Beta1
+  EFFEKSEER_VERSION: 160Beta2
 
 jobs:
   tests:
