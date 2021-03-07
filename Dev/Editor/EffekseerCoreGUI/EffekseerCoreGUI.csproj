@@ -99,6 +99,82 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application.cs" />
+    <Compile Include="Configs\WindowConfig.cs" />
+    <Compile Include="Define.cs" />
+    <Compile Include="GUI\Commands.cs" />
+    <Compile Include="GUI\Component\Boolean.cs" />
+    <Compile Include="GUI\Component\ColorCtrl.cs" />
+    <Compile Include="GUI\Component\ColorWithRandom.cs" />
+    <Compile Include="GUI\Component\Dummy.cs" />
+    <Compile Include="GUI\Component\DynamicSelector.cs" />
+    <Compile Include="GUI\Component\Enum.cs" />
+    <Compile Include="GUI\Component\FCurveButton.cs" />
+    <Compile Include="GUI\Component\Float.cs" />
+    <Compile Include="GUI\Component\FloatWithRandom.cs" />
+    <Compile Include="GUI\Component\Int.cs" />
+    <Compile Include="GUI\Component\Int2.cs" />
+    <Compile Include="GUI\Component\IntWithInifinite.cs" />
+    <Compile Include="GUI\Component\IntWithRandom.cs" />
+    <Compile Include="GUI\Component\ObjectReference.cs" />
+    <Compile Include="GUI\Component\ParameterList.cs" />
+    <Compile Include="GUI\Component\PathForCurve.cs" />
+    <Compile Include="GUI\Component\PathForImage.cs" />
+    <Compile Include="GUI\Component\PathForMaterial.cs" />
+    <Compile Include="GUI\Component\PathForModel.cs" />
+    <Compile Include="GUI\Component\PathForSound.cs" />
+    <Compile Include="GUI\Component\String.cs" />
+    <Compile Include="GUI\Component\Utils.cs" />
+    <Compile Include="GUI\Component\Vector2D.cs" />
+    <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
+    <Compile Include="GUI\Component\Vector3D.cs" />
+    <Compile Include="GUI\Component\Vector3DWithRandom.cs" />
+    <Compile Include="GUI\Component\Vector4D.cs" />
+    <Compile Include="GUI\Controls.cs" />
+    <Compile Include="GUI\Dialog\About.cs" />
+    <Compile Include="GUI\Dialog\ImportEfkPkg.cs" />
+    <Compile Include="GUI\Dialog\MessageBox.cs" />
+    <Compile Include="GUI\Dialog\OpenModel.cs" />
+    <Compile Include="GUI\Dialog\RenameNode.cs" />
+    <Compile Include="GUI\Dialog\SaveOnDisposing.cs" />
+    <Compile Include="GUI\Dock\DockManager.cs" />
+    <Compile Include="GUI\Dock\DockPanel.cs" />
+    <Compile Include="GUI\Dock\EffectViwer.cs" />
+    <Compile Include="GUI\Dock\FCurves.cs" />
+    <Compile Include="GUI\Dock\FileViewer.cs" />
+    <Compile Include="GUI\DragAndDrops.cs" />
+    <Compile Include="GUI\Icons.cs" />
+    <Compile Include="GUI\Manager.cs" />
+    <Compile Include="GUI\Menu\CommandMenuProvider.cs" />
+    <Compile Include="GUI\Menu\Menu.cs" />
+    <Compile Include="GUI\Menu\MenuItem.cs" />
+    <Compile Include="GUI\Menu\RecentFilesMenuManager.cs" />
+    <Compile Include="GUI\Menu\WindowTitleControl.cs" />
+    <Compile Include="GUI\Network.cs" />
+    <Compile Include="GUI\RecentFiles.cs" />
+    <Compile Include="GUI\Shortcuts.cs" />
+    <Compile Include="GUI\ThumbnailManager.cs" />
+    <Compile Include="GUI\Viewer.cs" />
+    <Compile Include="Images.cs" />
+    <Compile Include="IO\MaterialCacheGenerator.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Color.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Matrix44.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Data.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Loader.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Loexer.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Face.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Material.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Model.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Object.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Vertex.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Program.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Vector2D.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Vector3D.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Vector4D.cs" />
+    <Compile Include="Plugin\ExportDefault.cs" />
+    <Compile Include="Plugin\ExportEfkPkg.cs" />
+    <Compile Include="Plugin\ImportEfkPkg.cs" />
+    <Compile Include="Process\MaterialEditor.cs" />
     <Compile Include="swig\ColorEditFlags.cs" />
     <Compile Include="swig\ComboFlags.cs" />
     <Compile Include="swig\CompiledMaterialGenerator.cs" />
@@ -142,9 +218,16 @@
     <Compile Include="swig\ViewerParamater.cs" />
     <Compile Include="swig\ViewMode.cs" />
     <Compile Include="swig\WindowFlags.cs" />
+    <Compile Include="Utils\DelayedList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
+      <Project>{e2495770-1734-4c77-8028-92040a1d36cb}</Project>
+      <Name>EffekseerCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
