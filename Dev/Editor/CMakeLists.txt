@@ -66,28 +66,15 @@ file(GLOB files
     Effekseer/*.cs
     Effekseer/Data/*.cs
     Effekseer/GUI/*.cs
-    #Effekseer/GUI/Component/*.cs
-    #Effekseer/GUI/Dialog/*.cs
     Effekseer/GUI/Dock/*.cs
     Effekseer/GUI/Menu/*.cs
-    #Effekseer/Plugin/*.cs
     Effekseer/Properties/*.cs
-    #Effekseer/swig/*.cs
     Effekseer/Utils/*.cs
-    #Effekseer/Process/*.cs
     Effekseer/GUI/Dock/ProceduralModel.cs
-    #Effekseer/GUI/Component/Int2.cs
-	#Effekseer/GUI/Component/ObjectReference.cs
-    #Effekseer/IO/MaterialCacheGenerator.cs
-    #Effekseer/IO/mqoToEffekseerModelConverter/*.cs
-    #Effekseer/IO/mqoToEffekseerModelConverter/mqoIO/*.cs
-    #Effekseer/IO/mqoToEffekseerModelConverter/mqoIO/Realtime/*.cs
-    )
+)
 
 list(APPEND files
     Effekseer/GUI/Dock/Environment.cs
-    #Effekseer/Configs/WindowConfig.cs
-    #Effekseer/GUI/ThumbnailManager.cs
 )
 
 add_executable(EffekseerEditor
