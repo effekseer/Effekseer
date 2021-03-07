@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EffekseerCore", "EffekseerCore\EffekseerCore.csproj", "{E2495770-1734-4C77-8028-92040A1D36CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Effekseer", "Effekseer\Effekseer.csproj", "{30984EBA-2329-4BAF-9E9D-88A5B62D7014}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB} = {5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCSharp", "TestCSharp\TestCSharp.csproj", "{BEAAA432-CABF-496D-866C-0AE102CDAEDC}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,24 +16,46 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCSharp", "TestCSharp\Te
 		{30984EBA-2329-4BAF-9E9D-88A5B62D7014} = {30984EBA-2329-4BAF-9E9D-88A5B62D7014}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EffekseerCoreGUI", "EffekseerCoreGUI\EffekseerCoreGUI.csproj", "{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2495770-1734-4C77-8028-92040A1D36CB}.Debug|x64.ActiveCfg = Debug|x64
 		{E2495770-1734-4C77-8028-92040A1D36CB}.Debug|x64.Build.0 = Debug|x64
+		{E2495770-1734-4C77-8028-92040A1D36CB}.Debug|x86.ActiveCfg = Debug|x86
+		{E2495770-1734-4C77-8028-92040A1D36CB}.Debug|x86.Build.0 = Debug|x86
 		{E2495770-1734-4C77-8028-92040A1D36CB}.Release|x64.ActiveCfg = Release|x64
 		{E2495770-1734-4C77-8028-92040A1D36CB}.Release|x64.Build.0 = Release|x64
+		{E2495770-1734-4C77-8028-92040A1D36CB}.Release|x86.ActiveCfg = Release|x86
+		{E2495770-1734-4C77-8028-92040A1D36CB}.Release|x86.Build.0 = Release|x86
 		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Debug|x64.ActiveCfg = Debug|x64
 		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Debug|x64.Build.0 = Debug|x64
+		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Debug|x86.ActiveCfg = Debug|x86
+		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Debug|x86.Build.0 = Debug|x86
 		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Release|x64.ActiveCfg = Release|x64
 		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Release|x64.Build.0 = Release|x64
+		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Release|x86.ActiveCfg = Release|x86
+		{30984EBA-2329-4BAF-9E9D-88A5B62D7014}.Release|x86.Build.0 = Release|x86
 		{BEAAA432-CABF-496D-866C-0AE102CDAEDC}.Debug|x64.ActiveCfg = Debug|x64
 		{BEAAA432-CABF-496D-866C-0AE102CDAEDC}.Debug|x64.Build.0 = Debug|x64
+		{BEAAA432-CABF-496D-866C-0AE102CDAEDC}.Debug|x86.ActiveCfg = Debug|x64
 		{BEAAA432-CABF-496D-866C-0AE102CDAEDC}.Release|x64.ActiveCfg = Release|x64
 		{BEAAA432-CABF-496D-866C-0AE102CDAEDC}.Release|x64.Build.0 = Release|x64
+		{BEAAA432-CABF-496D-866C-0AE102CDAEDC}.Release|x86.ActiveCfg = Release|x64
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Debug|x64.ActiveCfg = Debug|x64
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Debug|x64.Build.0 = Debug|x64
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Debug|x86.ActiveCfg = Debug|x86
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Debug|x86.Build.0 = Debug|x86
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Release|x64.ActiveCfg = Release|x64
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Release|x64.Build.0 = Release|x64
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Release|x86.ActiveCfg = Release|x86
+		{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

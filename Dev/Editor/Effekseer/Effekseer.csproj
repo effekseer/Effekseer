@@ -176,49 +176,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GUI\Shortcuts.cs" />
     <Compile Include="GUI\RecentFiles.cs" />
-    <Compile Include="swig\ColorEditFlags.cs" />
-    <Compile Include="swig\ComboFlags.cs" />
-    <Compile Include="swig\CompiledMaterialGenerator.cs" />
-    <Compile Include="swig\Cond.cs" />
-    <Compile Include="swig\DeviceType.cs" />
-    <Compile Include="swig\DialogButtons.cs" />
-    <Compile Include="swig\DialogSelection.cs" />
-    <Compile Include="swig\DialogStyle.cs" />
-    <Compile Include="swig\DistortionType.cs" />
-    <Compile Include="swig\DockNodeFlags.cs" />
-    <Compile Include="swig\DockSplitDir.cs" />
-    <Compile Include="swig\EffekseerNative.cs" />
-    <Compile Include="swig\EffekseerNativePINVOKE.cs" />
-    <Compile Include="swig\FCurveEdgeType.cs" />
-    <Compile Include="swig\FCurveInterporationType.cs" />
-    <Compile Include="swig\FileDialog.cs" />
-    <Compile Include="swig\GUIManager.cs" />
-    <Compile Include="swig\GUIManagerCallback.cs" />
-    <Compile Include="swig\ImageResource.cs" />
-    <Compile Include="swig\ImGuiColFlags.cs" />
-    <Compile Include="swig\ImGuiStyleVarFlags.cs" />
-    <Compile Include="swig\InputTextFlags.cs" />
-    <Compile Include="swig\IO.cs" />
-    <Compile Include="swig\IOCallback.cs" />
-    <Compile Include="swig\Key.cs" />
-    <Compile Include="swig\MainWindow.cs" />
-    <Compile Include="swig\MainWindowState.cs" />
-    <Compile Include="swig\MouseCursor.cs" />
-    <Compile Include="swig\Native.cs" />
-    <Compile Include="swig\RecordingModeType.cs" />
-    <Compile Include="swig\RecordingParameter.cs" />
-    <Compile Include="swig\RenderMode.cs" />
-    <Compile Include="swig\SelectableFlags.cs" />
-    <Compile Include="swig\StaticFile.cs" />
-    <Compile Include="swig\StaticFileType.cs" />
-    <Compile Include="swig\SystemLanguage.cs" />
-    <Compile Include="swig\TransparenceType.cs" />
-    <Compile Include="swig\TreeNodeFlags.cs" />
-    <Compile Include="swig\Vec2.cs" />
-    <Compile Include="swig\ViewerEffectBehavior.cs" />
-    <Compile Include="swig\ViewerParamater.cs" />
-    <Compile Include="swig\ViewMode.cs" />
-    <Compile Include="swig\WindowFlags.cs" />
     <Compile Include="Utils\CompileErrorGenerator.cs" />
     <Compile Include="Utils\DelayedList.cs" />
     <Compile Include="GUI\Dialog\SaveOnDisposing.cs" />
@@ -233,6 +190,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EffekseerCoreGUI\EffekseerCoreGUI.csproj">
+      <Project>{5f18afcd-cd2c-4097-9806-e0c5e3fb86cb}</Project>
+      <Name>EffekseerCoreGUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
       <Project>{e2495770-1734-4c77-8028-92040a1d36cb}</Project>
       <Name>EffekseerCore</Name>
