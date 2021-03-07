@@ -132,4 +132,4 @@ if (BUILD_TEST)
     endif()
 endif()
 
-#add_subdirectory(EffekseerLit)
+add_subdirectory(EffekseerLit)
