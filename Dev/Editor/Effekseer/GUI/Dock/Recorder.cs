@@ -406,9 +406,9 @@ namespace Effekseer.GUI.Dock
 					}
 
 					var tempDirectory = System.IO.Directory.GetCurrentDirectory();
-					System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
+					System.IO.Directory.SetCurrentDirectory(Application.StartDirectory);
 
-					Utils.Logger.Write(string.Format("SetCurrentDirectory : {0}", Program.StartDirectory));
+					Utils.Logger.Write(string.Format("SetCurrentDirectory : {0}", Application.StartDirectory));
 
 					string errorMessage = string.Empty;
 
