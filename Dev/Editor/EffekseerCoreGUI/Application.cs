@@ -51,7 +51,7 @@ namespace Effekseer
 			Current = this;
 		}
 
-		public void Initialize(bool gui)
+		public bool Initialize(bool gui)
 		{
 			// Setup Special Paths
 			{
@@ -63,7 +63,7 @@ namespace Effekseer
 				catch (Exception e)
 				{
 					ExportError(e);
-					return 1;
+					return false;
 				}
 
 				Name = Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName);
@@ -154,6 +154,8 @@ namespace Effekseer
 
 				OnInitialize();
 			}
+
+			return true;
 		}
 
 		public void Run()
@@ -210,13 +212,13 @@ namespace Effekseer
 			GUI.Manager.UpdateFont();
 		}
 
-		static void Core_OnOutputMessage(string obj)
+		private static void Core_OnOutputMessage(string obj)
 		{
 			swig.GUIManager.show(obj, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 		}
 
 
-		static void ExportError(Exception e)
+		public static void ExportError(Exception e)
 		{
 			string messageBase = "Error has been caused.";
 

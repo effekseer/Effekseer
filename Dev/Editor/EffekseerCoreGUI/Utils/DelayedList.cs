@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.Utils
 {
-	class DelayedList<T>
+	public class DelayedList<T>
 	{
 		int lockCount = 0;
 

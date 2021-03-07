@@ -16,12 +16,12 @@ namespace Effekseer.GUI
         bool ShouldBeRemoved { get; }
     }
 
-	interface IDroppableControl : IControl
+	public interface IDroppableControl : IControl
 	{
 		void OnDropped(string path, ref bool handle);
 	}
 
-	interface IParameterControl : IControl
+	public interface IParameterControl : IControl
 	{
 		/// <summary>
 		/// whether this parameter can be undo
@@ -39,7 +39,7 @@ namespace Effekseer.GUI
 	}
 
 
-	class Control : IDroppableControl
+	public class Control : IDroppableControl
 	{
 		public bool ShouldBeRemoved { get; protected set; } = false;
 
@@ -61,7 +61,7 @@ namespace Effekseer.GUI
 		}
 	}
 
-	class GroupControl : Control
+	public class GroupControl : Control
 	{
 		public Utils.DelayedList<IControl> Controls { get; } = new Utils.DelayedList<IControl>();
 

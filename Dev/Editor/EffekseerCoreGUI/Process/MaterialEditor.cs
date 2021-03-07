@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Effekseer.Process
 {
-	class MaterialEditor
+	public class MaterialEditor
 	{
 		static System.Diagnostics.Process process = null;
 

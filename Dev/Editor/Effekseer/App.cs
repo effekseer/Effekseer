@@ -13,6 +13,35 @@ namespace Effekseer
 	{
 		protected override void OnInitialize()
 		{
+			var dockTypes = new Type[]
+			{
+				typeof(Dock.ViewerController),
+				typeof(Dock.NodeTreeView),
+				typeof(Dock.CommonValues),
+				typeof(Dock.LocationValues),
+				typeof(Dock.LocationAbsValues),
+				typeof(Dock.GenerationLocationValues),
+				typeof(Dock.RotationValues),
+				typeof(Dock.ScaleValues),
+				typeof(Dock.DepthValues),
+				typeof(Dock.RendererCommonValues),
+				typeof(Dock.RendererValues),
+				typeof(Dock.SoundValues),
+				typeof(Dock.FCurves),
+				typeof(Dock.ViewPoint),
+				typeof(Dock.Recorder),
+				typeof(Dock.Option),
+				typeof(Dock.Environement),
+				typeof(Dock.GlobalValues),
+				typeof(Dock.BehaviorValues),
+				typeof(Dock.Culling),
+				typeof(Dock.Network),
+				typeof(Dock.FileViewer),
+				typeof(Dock.Dynamic),
+				typeof(Dock.ProceduralModel),
+				typeof(Dock.AdvancedRenderCommonValues),
+			};
+
 			System.OperatingSystem os = System.Environment.OSVersion;
 			swig.DeviceType deviceType = swig.DeviceType.DirectX11;
 
@@ -24,7 +53,7 @@ namespace Effekseer
 				deviceType = swig.DeviceType.OpenGL;
 			}
 
-			if (!GUI.Manager.Initialize(960, 540, deviceType))
+			if (!GUI.Manager.Initialize(960, 540, deviceType, dockTypes))
 			{
 				throw new InvalidOperationException("Initialization failed.");
 			}

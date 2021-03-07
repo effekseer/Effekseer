@@ -5,6 +5,19 @@ cmake_minimum_required(VERSION 3.17)
 file(GLOB files
     *.cs
     swig/*.cs
+    Configs/*.cs
+    GUI/*.cs
+    GUI/Component/*.cs
+    GUI/Dialog/*.cs
+    GUI/Dock/*.cs
+    GUI/Menu/*.cs
+    IO/*.cs
+    Plugin/*.cs
+    Process/*.cs
+    Utils/*.cs
+    IO/mqoToEffekseerModelConverter/*.cs
+    IO/mqoToEffekseerModelConverter/mqoIO/*.cs
+    IO/mqoToEffekseerModelConverter/mqoIO/Realtime/*.cs
 )
 
 add_library(EffekseerCoreGUI

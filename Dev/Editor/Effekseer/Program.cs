@@ -24,7 +24,7 @@ namespace Effekseer
 			}
 			catch(Exception e)
 			{
-				ExportError(e);
+				App.ExportError(e);
 				return 1;
 			}
 
@@ -104,7 +104,7 @@ namespace Effekseer
 				}
 				catch (Exception e)
 				{
-					ExportError(e);
+					App.ExportError(e);
 				}
 			}
 
@@ -114,7 +114,10 @@ namespace Effekseer
 		static int Exec(bool gui, string input, string output, string export, string format, float magnification, bool materialCache)
 		{
 			var app = new App();
-			app.Initialize(gui);
+			if (!app.Initialize(gui))
+			{
+				return 1;
+			}
 
 			try
 			{

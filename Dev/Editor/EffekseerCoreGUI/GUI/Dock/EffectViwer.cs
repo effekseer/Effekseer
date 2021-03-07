@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-	class EffectViwer : DockPanel
+	public class EffectViwer : DockPanel
 	{
 		public bool IsHovered = false;
 

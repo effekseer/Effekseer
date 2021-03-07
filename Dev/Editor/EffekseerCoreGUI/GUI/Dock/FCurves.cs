@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 		public List<Curve> Curves = new List<Curve>();
 	}
 
-	class FCurves : DockPanel
+	public class FCurves : DockPanel
 	{
 		class Texts
 		{

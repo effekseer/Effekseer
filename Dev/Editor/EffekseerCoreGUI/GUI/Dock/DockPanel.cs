@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    class DockPanel : GroupControl, IRemovableControl, IDroppableControl
+    public class DockPanel : GroupControl, IRemovableControl, IDroppableControl
     {
 		/// <summary>
 		/// Make easy to click

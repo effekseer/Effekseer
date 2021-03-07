@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Effekseer.GUI.Dock
 {
-	class FileViewer : DockPanel
+	public class FileViewer : DockPanel
 	{
 		public string CurrentPath { get; private set; }
 		string addressText = string.Empty;
