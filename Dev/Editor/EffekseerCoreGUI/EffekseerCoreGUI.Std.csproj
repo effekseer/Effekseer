@@ -10,4 +10,8 @@
     <DefineConstants>SCRIPT_ENABLED;DOTNET_STARNDARD;</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerCore\EffekseerCore.Std.csproj" />
+  </ItemGroup>
+
 </Project>
