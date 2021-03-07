@@ -29,7 +29,7 @@ namespace Effekseer
 
 		[STAThread]
 		[HandleProcessCorruptedStateExceptions]
-		static void Main(string[] args)
+		static int Main(string[] args)
 		{
 			// HACK code for mac
 			// To load libMonoPosix at first
@@ -40,7 +40,7 @@ namespace Effekseer
 			catch(Exception e)
 			{
 				ExportError(e);
-				return;
+				return 1;
 			}
 
 			try
@@ -51,7 +51,7 @@ namespace Effekseer
 			catch(Exception e)
 			{
 				ExportError(e);
-				return;
+				return 1;
 			}
 
 			bool gui = true;
@@ -120,22 +120,24 @@ namespace Effekseer
 
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
-				Exec(gui, input, output, export, format, magnification, materialCache);
+				return Exec(gui, input, output, export, format, magnification, materialCache);
 			}
 			else
 			{
 				try
 				{
-					Exec(gui, input, output, export, format, magnification, materialCache);
+					return Exec(gui, input, output, export, format, magnification, materialCache);
 				}
 				catch (Exception e)
 				{
 					ExportError(e);
 				}
 			}
+
+			return 1;
 		}
 
-		static void Exec(bool gui, string input, string output, string export, string format, float magnification, bool materialCache)
+		static int Exec(bool gui, string input, string output, string export, string format, float magnification, bool materialCache)
 		{
 			// Register UI
 			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });
@@ -231,7 +233,7 @@ namespace Effekseer
 
 				if (!GUI.Manager.Initialize(960, 540, deviceType))
 				{
-					return;
+					return 1;
 				}
 			}
 
@@ -286,7 +288,11 @@ namespace Effekseer
 			{
 				if (materialCache)
 				{
-					IO.MaterialCacheGenerator.GenerateMaterialCaches();
+					if(!IO.MaterialCacheGenerator.GenerateMaterialCaches())
+					{
+						Core.Dispose();
+						return 1;
+					}
 				}
 			}
 			catch (Exception e)
@@ -306,6 +312,8 @@ namespace Effekseer
 			}
 
 			Core.Dispose();
+
+			return 0;
 		}
 
 		private static void ChangeLanguage()

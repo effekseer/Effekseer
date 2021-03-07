@@ -8,7 +8,7 @@ namespace Effekseer.IO
 {
 	class MaterialCacheGenerator
 	{
-		public static void GenerateMaterialCaches()
+		public static bool GenerateMaterialCaches()
 		{
 			var exporter = new Binary.Exporter();
 			exporter.Export(Core.Root);
@@ -16,14 +16,19 @@ namespace Effekseer.IO
 			foreach(var path in exporter.Materials)
 			{
 				var materialPath = Utils.Misc.GetAbsolutePath(Core.Root.GetPath().GetAbsolutePath(), path);
-				GenerateMaterialCache(materialPath);
+				if(!GenerateMaterialCache(materialPath))
+				{
+					return false;
+				}
 			}
+
+			return true;
 		}
 		
-		public static void GenerateMaterialCache(string absolutePath)
+		public static bool GenerateMaterialCache(string absolutePath)
 		{
 			if (string.IsNullOrEmpty(absolutePath))
-				return;
+				return true;
 
 			var generator = new swig.CompiledMaterialGenerator();
 
@@ -32,9 +37,11 @@ namespace Effekseer.IO
 
 			generator.Initialize(fullPath);
 
-			generator.Compile(CreateBinaryFilePath(absolutePath), absolutePath);
+			var ret = generator.Compile(CreateBinaryFilePath(absolutePath), absolutePath);
 
 			generator.Dispose();
+
+			return ret;
 		}
 		public static string CreateBinaryFilePath(string absolutePath)
 		{

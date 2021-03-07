@@ -240,7 +240,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(MaterialFile* materialFile
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) -> bool {
 		auto generator = DirectX::ShaderGenerator(DX11::material_common_define,
 												  DX11::material_common_vs_functions,
 												  DX11::material_sprite_vs_pre,
@@ -260,18 +260,32 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(MaterialFile* materialFile
 
 		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, 0, 40);
 
-		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
-		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
+		auto vsBuffer = convertToVectorVS(shader.CodeVS);
+		auto psBuffer = convertToVectorPS(shader.CodePS);
+		if (vsBuffer.size() == 0 || psBuffer.size() == 0)
+		{
+			return false;
+		}
+
+		binary->SetVertexShaderData(type, vsBuffer);
+		binary->SetPixelShaderData(type, psBuffer);
+		return true;
 	};
 
 	if (materialFile->GetHasRefraction())
 	{
-		saveBinary(MaterialShaderType::Refraction);
-		saveBinary(MaterialShaderType::RefractionModel);
+		if (!saveBinary(MaterialShaderType::Refraction) ||
+			!saveBinary(MaterialShaderType::RefractionModel))
+		{
+			return nullptr;
+		}
 	}
 
-	saveBinary(MaterialShaderType::Standard);
-	saveBinary(MaterialShaderType::Model);
+	if (!saveBinary(MaterialShaderType::Standard) ||
+		!saveBinary(MaterialShaderType::Model))
+	{
+		return nullptr;
+	}
 
 	return binary;
 }

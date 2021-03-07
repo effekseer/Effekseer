@@ -111,12 +111,12 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 			continue;
 		}
 
-#if defined(_WIN32) && !defined(_WIN64) 
+#if defined(_WIN32) && !defined(_WIN64)
 		auto createCompiler = dll.second->GetProc<CreateCompilerFunc>("_CreateCompiler@0");
 #else
 		auto createCompiler = dll.second->GetProc<CreateCompilerFunc>("CreateCompiler");
 #endif
-		auto compiler = createCompiler();
+		auto compiler = Effekseer::RefPtr<Effekseer::MaterialCompiler>(createCompiler());
 
 		std::vector<uint8_t> vsStandardBinary;
 		std::vector<uint8_t> psStandardBinary;
@@ -128,24 +128,28 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		std::vector<uint8_t> psRefractionModelBinary;
 
 		auto compile_and_store =
-			[&compiler, &materialFile](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> void {
-			auto binary = compiler->Compile(&materialFile);
+			[&compiler, &materialFile](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> bool {
+			auto binary = Effekseer::RefPtr<Effekseer::CompiledMaterialBinary>(compiler->Compile(&materialFile));
 
 			if (binary != nullptr)
 			{
-
 				vs.resize(binary->GetVertexShaderSize(type));
 				memcpy(vs.data(), binary->GetVertexShaderData(type), binary->GetVertexShaderSize(type));
 
 				ps.resize(binary->GetPixelShaderSize(type));
 				memcpy(ps.data(), binary->GetPixelShaderData(type), binary->GetPixelShaderSize(type));
 			}
+
+			return binary != nullptr;
 		};
 
-		compile_and_store(Effekseer::MaterialShaderType::Standard, vsStandardBinary, psStandardBinary);
-		compile_and_store(Effekseer::MaterialShaderType::Model, vsModelBinary, psModelBinary);
-		compile_and_store(Effekseer::MaterialShaderType::Refraction, vsRefractionStandardBinary, psRefractionStandardBinary);
-		compile_and_store(Effekseer::MaterialShaderType::RefractionModel, vsRefractionModelBinary, psRefractionModelBinary);
+		if(!compile_and_store(Effekseer::MaterialShaderType::Standard, vsStandardBinary, psStandardBinary) ||
+			!compile_and_store(Effekseer::MaterialShaderType::Model, vsModelBinary, psModelBinary) || 
+			!compile_and_store(Effekseer::MaterialShaderType::Refraction, vsRefractionStandardBinary, psRefractionStandardBinary) ||
+			!compile_and_store(Effekseer::MaterialShaderType::RefractionModel, vsRefractionModelBinary, psRefractionModelBinary))
+		{
+			return false;
+		}
 
 		if (vsStandardBinary.size() > 0 && psStandardBinary.size() > 0 && vsModelBinary.size() > 0 && psModelBinary.size() > 0)
 		{
@@ -159,8 +163,6 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 						  psRefractionModelBinary,
 						  dll.first);
 		}
-
-		compiler->Release();
 	}
 
 	cm.Save(dstData, materialFile.GetGUID(), srcData);
