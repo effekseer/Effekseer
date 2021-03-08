@@ -511,7 +511,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 	distortUV += v_ScreenUV;
 	distortUV = GetUVBack(distortUV);	
 
-	#ifdef _Y_INVERTED_
+	#ifdef _BACK_FLIPPED_
 	distortUV.y = 1.0f - distortUV.y;
 	#endif
 
@@ -785,7 +785,8 @@ public:
 							  bool is450,
 							  bool useSet,
 							  int textureBindingOffset,
-							  bool isYInverted = false)
+							  bool isBackgroundFlipped,
+							  bool isYInverted)
 	{
 		useUniformBlock_ = useUniformBlock;
 		useSet_ = useSet;
@@ -802,6 +803,11 @@ public:
 			std::ostringstream maincode;
 
 			ExportHeader(maincode, material, stage, isSprite, isOutputDefined, is450);
+
+			if (isBackgroundFlipped)
+			{
+				maincode << "#define _BACK_FLIPPED_ 1" << std::endl;
+			}
 
 			if (isYInverted)
 			{
