@@ -20,7 +20,11 @@
 namespace Effekseer
 {
 
-//----------------------------------------------------------------------------------
+static bool IsInfiniteValue(int value)
+{
+	return std::numeric_limits<int32_t>::max() / 1000 < value;
+}
+	//----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
@@ -867,7 +871,11 @@ void Instance::FirstUpdate()
 		{
 			auto& uvTimeOffset = uvTimeOffsets[i];
 			uvTimeOffset = (int32_t)UV.Animation.StartFrame.getValue(rand);
-			uvTimeOffset *= UV.Animation.FrameLength;
+
+			if (!IsInfiniteValue(UV.Animation.FrameLength))
+			{
+				uvTimeOffset *= UV.Animation.FrameLength;
+			}
 		}
 		else if (UVType == ParameterRendererCommon::UV_SCROLL)
 		{
@@ -1696,18 +1704,20 @@ RectF Instance::GetUV(const int32_t index) const
 	{
 		auto uvTimeOffset = uvTimeOffsets[index];
 
-		// TODO : refactor
+		float time{};
+		int frameLength = UV.Animation.FrameLength;
 
-		// Avoid overflow
-		if(uvTimeOffset > std::numeric_limits<int32_t>::max() / 1000)
+		if (IsInfiniteValue(frameLength))
 		{
-			const auto allFrameLength = UV.Animation.FrameCountX * UV.Animation.FrameCountY * UV.Animation.FrameLength;
-			uvTimeOffset -= allFrameLength * (std::numeric_limits<int32_t>::max() / 1000 / allFrameLength);
+			time = uvTimeOffset;
+			frameLength = 1;
+		}
+		else
+		{
+			time = m_LivingTime + uvTimeOffset;
 		}
 
-		auto time = m_LivingTime + uvTimeOffset;
-
-		int32_t frameNum = (int32_t)(time / UV.Animation.FrameLength);
+		int32_t frameNum = (int32_t)(time / frameLength);
 		int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
 
 		if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
