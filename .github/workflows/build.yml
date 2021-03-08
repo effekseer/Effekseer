@@ -11,7 +11,7 @@ on:
       - 15x
 
 env:
-  EFFEKSEER_VERSION: 153a
+  EFFEKSEER_VERSION: 153c
 
 jobs:
   tests:
@@ -118,11 +118,11 @@ jobs:
         if: matrix.name == 'windows'
         uses: actions/upload-artifact@v2
         with:
-          name: EffekseerRntime${{ env.EFFEKSEER_VERSION }}
+          name: Effekseer-runtime-${{ env.EFFEKSEER_VERSION }}
           path: EffekseerRuntime
 
       - name: Upload ${{matrix.name}} Tool
         uses: actions/upload-artifact@v2
         with:
           name: Effekseer-${{matrix.name}}-${{ env.EFFEKSEER_VERSION }}
-          path: EffekseerTool*
+          path: EffekseerTool

@@ -4,7 +4,7 @@ set +x
 
 if [ "$RDIR" = "" ];
 then
-    export RDIR="$PWD/EffekseerToolLinux"
+    export RDIR="$PWD/EffekseerTool"
 fi
 
 

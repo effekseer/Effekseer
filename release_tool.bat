@@ -1,4 +1,4 @@
-SET RDIR=EffekseerToolWin
+SET RDIR=EffekseerTool
 
 rmdir %RDIR%
 mkdir %RDIR%
