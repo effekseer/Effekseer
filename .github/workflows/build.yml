@@ -57,7 +57,7 @@ jobs:
             os: vs2017-win2016
             label: Win
           - name: windows_x86
-            os: vs2017-win2016            
+            os: vs2017-win2016
             label: Win_x86
           - name: mac
             os: macos-latest 
