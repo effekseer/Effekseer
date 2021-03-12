@@ -193,6 +193,8 @@ if env['IGNORE_BUILD'] == '0':
         call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r osx.10.11-x64')
         call('cp -r Dev/release/osx.10.11-x64/publish/* Dev/release/')
+        call('rm -rf -r Dev/release/osx.10.11-x64')
+
     elif isWin():
         if is_x86:
             call('"' + msbuild_path + '"' +
