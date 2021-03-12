@@ -12,6 +12,7 @@ mkdir %RDIR%\Tool
 copy Dev\release\Effekseer.exe %RDIR%\Tool\.
 copy Dev\release\Effekseer.exe.config %RDIR%\Tool\.
 copy Dev\release\EffekseerCore.dll %RDIR%\Tool\.
+copy Dev\release\EffekseerCoreGUI.dll %RDIR%\Tool\.
 copy Dev\release\EffekseerViewer.dll %RDIR%\Tool\.
 copy Dev\release\IronPython.dll %RDIR%\Tool\.
 copy Dev\release\IronPython.Modules.dll %RDIR%\Tool\.

@@ -200,6 +200,8 @@ if env['IGNORE_BUILD'] == '0':
             call('"' + msbuild_path + '"' +
                  ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
             call('"' + msbuild_path + '"' +
+                 ' Dev/Editor/EffekseerCoreGUI/EffekseerCoreGUI.csproj /t:build /p:Configuration=Release /p:Platform=x86')
+            call('"' + msbuild_path + '"' +
                  ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
         else:
             call('"' + msbuild_path + '"' +
