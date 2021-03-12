@@ -60,7 +60,7 @@ jobs:
             os: vs2017-win2016
             label: Win_x86
           - name: mac
-            os: macos-latest 
+            os: macos-latest
             label: Mac
 
     name: Build on ${{ matrix.name }}
