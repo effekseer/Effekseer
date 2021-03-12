@@ -85,6 +85,10 @@ if(BUILD_UNITYPLUGIN)
     add_subdirectory(EffekseerRendererCommon)
 endif()
 
+if (BUILD_VIEWER OR BUILD_EDITOR)
+    add_subdirectory(3rdParty)
+endif()
+
 # set include directories
 include_directories(
 	Effekseer/

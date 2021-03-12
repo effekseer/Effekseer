@@ -59,13 +59,11 @@ if (WIN32)
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
-	3rdParty/Boxer/boxer.h
 )
 
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_win.cpp
-	3rdParty/Boxer/boxer_win.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	3rdParty/imgui_platform/imgui_impl_dx11.cpp
@@ -76,13 +74,11 @@ elseif(APPLE)
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
-	3rdParty/Boxer/boxer.h
 )
 
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_cocoa.m
-	3rdParty/Boxer/boxer_osx.mm
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 )
@@ -92,13 +88,11 @@ else()
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
-	3rdParty/Boxer/boxer.h
 )
 
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_gtk.c
-	3rdParty/Boxer/boxer_linux.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 )
@@ -153,6 +147,7 @@ target_link_libraries(
     Viewer
     PRIVATE
     EditorCommon
+    Boxer
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
     debug "${GD_LIB_DEBUG}"

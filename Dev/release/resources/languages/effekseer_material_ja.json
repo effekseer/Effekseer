@@ -158,6 +158,7 @@
   "Error_SameDirection": "×　同じ方向には接続できません。",
   "Error_Loop": "×　ループが発生しています。",
   "Error_Type": "×　型が異なります。",
+  "Error_NewVersion": "このファイルは新しすぎます。Effekseerを更新してください。",
   "Create_Link": "接続します。",
   "Create_Node": "ノードを作成します。",
   "Starting": "開始",

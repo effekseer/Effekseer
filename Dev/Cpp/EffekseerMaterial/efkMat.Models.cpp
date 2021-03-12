@@ -1643,7 +1643,7 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 
 std::string Material::SaveAsStr(const char* basePath) { return SaveAsStrInternal(nodes_, links_, basePath, SaveLoadAimType::IO); }
 
-bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath)
+ErrorCode Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath)
 {
 
 	int offset = 0;
@@ -1657,11 +1657,16 @@ bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library
 	prefix[4] = 0;
 
 	if (std::string("EFKM") != std::string(prefix))
-		return false;
+		return ErrorCode::InvalidFile;
 
 	int version = 0;
 	memcpy(&version, data.data() + offset, 4);
 	offset += sizeof(int);
+
+	if (version > lastestSupportedVersion_)
+	{
+		return ErrorCode::NewVersion;
+	}
 
 	uint64_t guid = 0;
 	memcpy(&guid, data.data() + offset, 8);
@@ -1686,7 +1691,7 @@ bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library
 		offset += chunk_size;
 	}
 
-	return true;
+	return ErrorCode::OK;
 }
 
 bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
