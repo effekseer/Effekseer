@@ -12,6 +12,7 @@
 #include "Effekseer.InstanceGroup.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
+#include "Effekseer.Setting.h"
 #include "Model/Model.h"
 
 //----------------------------------------------------------------------------------
@@ -24,7 +25,7 @@ static bool IsInfiniteValue(int value)
 {
 	return std::numeric_limits<int32_t>::max() / 1000 < value;
 }
-	//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
@@ -1485,7 +1486,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		{
 			currentLocalPosition += forceField_.ModifyLocation;
 			forceField_.ExternalVelocity = localVelocity;
-			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame);		
+			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
 		/* 描画部分の更新 */
@@ -1538,7 +1539,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		if (m_pEffectNode->LocalForceField.IsGlobalEnabled)
 		{
 			InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-			forceField_.UpdateGlobal(m_pEffectNode->LocalForceField, prevGlobalPosition_, m_pEffectNode->GetEffect()->GetMaginification(), instanceGlobal->GetTargetLocation(), deltaFrame);
+			forceField_.UpdateGlobal(m_pEffectNode->LocalForceField, prevGlobalPosition_, m_pEffectNode->GetEffect()->GetMaginification(), instanceGlobal->GetTargetLocation(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 			SIMD::Mat43f MatTraGlobal = SIMD::Mat43f::Translation(forceField_.GlobalModifyLocation);
 			m_GlobalMatrix43 *= MatTraGlobal;
 		}
