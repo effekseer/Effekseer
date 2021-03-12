@@ -105,6 +105,7 @@ target_link_libraries(
     EffekseerMaterial
     EditorCommon
     AltseedRHI
+    Boxer
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
 )

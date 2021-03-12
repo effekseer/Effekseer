@@ -159,9 +159,19 @@ public:
 	std::array<float, 4> Values;
 };
 
+enum class ErrorCode
+{
+	OK,
+	InvalidFile,
+	NotFound,
+	NewVersion,
+};
+
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
+	const int32_t lastestSupportedVersion_ = 3;
+
 	enum class SaveLoadAimType
 	{
 		IO,
@@ -259,7 +269,7 @@ public:
 
 	std::string SaveAsStr(const char* basePath);
 
-	bool Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
+	ErrorCode Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
 
 	bool Save(std::vector<uint8_t>& data, const char* basePath);
 

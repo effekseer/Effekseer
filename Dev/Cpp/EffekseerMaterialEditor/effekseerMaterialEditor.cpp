@@ -370,7 +370,7 @@ int mainLoop(int argc, char* argv[])
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
 					spdlog::trace("ICP - Receive - OpenOrCreateMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
-					if (!editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()))
+					if (editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()) == EffekseerMaterial::ErrorCode::NotFound)
 					{
 						editor->New();
 						editor->SaveAs(commandDataTOMaterialEditor.str.data());

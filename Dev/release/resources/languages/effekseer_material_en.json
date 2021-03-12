@@ -153,6 +153,7 @@
   "Error_SameDirection": "Error_SameDirection",
   "Error_Loop": "Error_Loop",
   "Error_Type": "Error_Type",
+  "Error_NewVersion": "The file is too new to open. Please Update Effekseer",
   "Create_Link": "Create_Link",
   "Create_Node": "Create_Node",
   "Starting": "Starting",
