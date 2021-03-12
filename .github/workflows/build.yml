@@ -50,14 +50,20 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        name: [linux,windows,mac]
+        name: [linux,windows_x64,windows_x86,mac]
         include:
           - name: linux
             os: ubuntu-latest
-          - name: windows
+            label: Linux
+          - name: windows_x64
             os: vs2017-win2016
+            label: Win
+          - name: windows_x86
+            os: vs2017-win2016
+            label: Win_x86
           - name: mac
             os: macos-latest
+            label: Mac
 
     name: Build on ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -97,11 +103,14 @@ jobs:
           then
               export PACKAGEING_FOR_MAC=1 
           fi
-
+          if [ "${{ matrix.name }}" = "windows_x86" ];
+          then
+              export X86=1 
+          fi
           python3 build.py || python build.py
                 
       - name: Prepare Runtime
-        if: matrix.name == 'windows'
+        if: matrix.name == 'windows_x64'
         run: |
           release_runtime.bat
         shell: cmd
@@ -109,7 +118,13 @@ jobs:
       - name: Prepare Windows Tool
         run: |
           release_tool.bat
-        if: matrix.name == 'windows'
+        if: matrix.name == 'windows_x64'
+        shell: cmd
+
+      - name: Prepare Windows Tool (x86)
+        run: |
+          release_tool.bat
+        if: matrix.name == 'windows_x86'
         shell: cmd
 
       - name: Prepare Linux Tool
@@ -118,16 +133,16 @@ jobs:
         if: matrix.name == 'linux'
 
       - name: Upload Runtime
-        if: matrix.name == 'windows'
+        if: matrix.name == 'windows_x64'
         uses: actions/upload-artifact@v2
         with:
-          name: Effekseer-runtime-${{ env.EFFEKSEER_VERSION }}
+          name: EffekseerRuntime${{ env.EFFEKSEER_VERSION }}
           path: EffekseerRuntime
 
       - name: Upload ${{matrix.name}} Tool
         uses: actions/upload-artifact@v2
         with:
-          name: Effekseer-${{matrix.name}}-${{ env.EFFEKSEER_VERSION }}
+          name: Effekseer${{ env.EFFEKSEER_VERSION }}${{matrix.label}}
           path: EffekseerTool
 
   Deploy:
