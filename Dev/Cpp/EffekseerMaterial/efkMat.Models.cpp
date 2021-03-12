@@ -1699,7 +1699,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// header
 
 	const char* prefix = "EFKM";
-	int version = 3;
+	int version = MaterialVersion15;
 
 	size_t offset = 0;
 
