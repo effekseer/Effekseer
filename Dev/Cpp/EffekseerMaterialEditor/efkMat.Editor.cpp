@@ -18,6 +18,8 @@
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
 
+#include <boxer.h>
+
 namespace EffekseerMaterial
 {
 
@@ -234,7 +236,7 @@ void EditorContent::SaveAs(const char* path)
 	previousChangedID_ = material_->GetCommandManager()->GetHistoryID();
 }
 
-bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
+ErrorCode EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 {
 	FILE* fp = nullptr;
 #ifdef _WIN32
@@ -246,7 +248,7 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 #endif
 	if (fp == nullptr)
 	{
-		return false;
+		return ErrorCode::NotFound;
 	}
 
 	std::vector<uint8_t> data;
@@ -260,12 +262,24 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 	fread(data.data(), 1, data.size(), fp);
 	fclose(fp);
 
-	material_->Load(data, library, path);
+	auto err = material_->Load(data, library, path);
+	if(err != ErrorCode::OK)
+	{
+		if(err == ErrorCode::NewVersion)
+		{
+			boxer::show(
+				StringContainer::GetValue("Error_NewVersion").c_str(),
+				"Error",
+				(boxer::Style::Error),
+				(boxer::Buttons::OK));
+		}
+		return err;
+	}
 
 	UpdatePath(path);
 
 	ClearIsChanged();
-	return true;
+	return ErrorCode::OK;
 }
 
 void EditorContent::UpdateBinary()
@@ -456,13 +470,13 @@ void Editor::SaveAs()
 	}
 }
 
-bool Editor::Load(const char* path)
+ErrorCode Editor::Load(const char* path)
 {
 	auto content = std::make_shared<EditorContent>(this);
-
-	if (!content->Load(path, library))
+	auto err = content->Load(path, library);
+	if (err != ErrorCode::OK)
 	{
-		return false;
+		return err;
 	}
 
 	contents_.push_back(content);
@@ -472,7 +486,7 @@ bool Editor::Load(const char* path)
 	isSelectedDirty_ = true;
 	content->IsLoading = true;
 
-	return true;
+	return ErrorCode::OK;
 }
 
 bool Editor::Load()
@@ -488,7 +502,7 @@ bool Editor::Load()
 	return false;
 }
 
-bool Editor::LoadOrSelect(const char* path)
+ErrorCode Editor::LoadOrSelect(const char* path)
 {
 	auto p = ResolvePath(path);
 
@@ -497,7 +511,7 @@ bool Editor::LoadOrSelect(const char* path)
 		if (contents_[i]->GetPath() == p)
 		{
 			selectedContentInd_ = i;
-			return true;
+			return ErrorCode::OK;
 		}
 	}
 

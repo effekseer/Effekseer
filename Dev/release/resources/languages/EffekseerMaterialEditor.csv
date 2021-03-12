@@ -269,6 +269,7 @@ Error_SamePin,Error_SamePin,×　同じピンには接続できません。
 Error_SameDirection,Error_SameDirection,×　同じ方向には接続できません。
 Error_Loop,Error_Loop,×　ループが発生しています。
 Error_Type,Error_Type,×　型が異なります。
+Error_NewVersion,The file is too new to open. Please Update Effekseer,このファイルは新しすぎます。Effekseerを更新してください。
 Create_Link,Create_Link,接続します。
 Create_Node,Create_Node,ノードを作成します。
 ,,
