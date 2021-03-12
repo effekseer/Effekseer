@@ -30,6 +30,9 @@ enum class CompiledMaterialPlatformType : int32_t
 class CompiledMaterial
 {
 	static const int32_t Version = 1;
+	static const int32_t CompiledMaterialVersion15 = 1;
+	static const int32_t LatestSupportVersion = CompiledMaterialVersion15;
+	static const int32_t OldestSupportVersion = CompiledMaterialVersion15;
 
 	std::map<CompiledMaterialPlatformType, std::unique_ptr<CompiledMaterialBinary, ReferenceDeleter<CompiledMaterialBinary>>> platforms;
 	std::vector<uint8_t> originalData_;

@@ -48,6 +48,10 @@ private:
 
 	std::vector<Uniform> uniforms_;
 
+	static const int32_t MaterialVersion15 = 3;
+	static const int32_t LatestSupportVersion = MaterialVersion15;
+	static const int32_t OldestSupportVersion = 0;
+
 public:
 	Material() = default;
 	virtual ~Material() = default;
