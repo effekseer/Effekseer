@@ -170,7 +170,8 @@ enum class ErrorCode
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
-	const int32_t lastestSupportedVersion_ = 3;
+	const int32_t MaterialVersion15 = 3;
+	const int32_t lastestSupportedVersion_ = MaterialVersion15;
 
 	enum class SaveLoadAimType
 	{
