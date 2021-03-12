@@ -130,10 +130,11 @@ env["MONO_SDK_PATH"] = os.getenv(
     'MONO_SDK_PATH', '/Library/Frameworks/Mono.framework/Versions/Current')
 env["PACKAGEING_FOR_MAC"] = os.getenv('PACKAGEING_FOR_MAC', '0')
 env["PACKAGEING_FOR_LINUX"] = os.getenv('PACKAGEING_FOR_LINUX', '0')
+env['X86'] = os.getenv('X86', '0')
 env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 
 
-is_x86 = 'x86' in sys.argv
+is_x86 = env['X86'] == '1'
 is_from_ci = 'from_ci' in sys.argv
 
 if env['IGNORE_BUILD'] == '0':
