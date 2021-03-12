@@ -370,7 +370,12 @@ MaterialLoader ::~MaterialLoader()
 
 		// compiled
 		Effekseer::Material material;
-		material.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size()));
+		if(!material.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size())))
+		{
+			std::cout << "Error : Invalid material is loaded." << std::endl;
+			return nullptr;
+		}
+
 		auto binary = compiled.GetBinary(platformType_);
 
 		return LoadAcutually(material, binary);
@@ -383,7 +388,12 @@ MaterialLoader ::~MaterialLoader()
 		}
 
 		Effekseer::Material material;
-		material.Load((const uint8_t*)data, size);
+		if(!material.Load((const uint8_t*)data, size))
+		{
+			std::cout << "Error : Invalid material is loaded." << std::endl;
+			return nullptr;	
+		}
+
 		auto binary = ::Effekseer::CreateUniqueReference(materialCompiler_->Compile(&material));
 
 		return LoadAcutually(material, binary.get());
