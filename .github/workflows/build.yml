@@ -152,22 +152,22 @@ jobs:
      
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-windows-${{ env.EFFEKSEER_VERSION }}
+          name: Effekseer${{ env.EFFEKSEER_VERSION }}Win
           path: dist/
                 
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-linux-${{ env.EFFEKSEER_VERSION }}
+          name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
           path: dist/
       
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-runtime-${{ env.EFFEKSEER_VERSION }}
+          name: EffekseerRuntime${{ env.EFFEKSEER_VERSION }}
           path: dist/EffekseerRuntime
       
       - uses: actions/download-artifact@v2
         with:
-          name: Effekseer-mac-${{ env.EFFEKSEER_VERSION }}
+          name: Effekseer${{ env.EFFEKSEER_VERSION }}Mac
           path: dist/
       
       - name: Prepare Release
