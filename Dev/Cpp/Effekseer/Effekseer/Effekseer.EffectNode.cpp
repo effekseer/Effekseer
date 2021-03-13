@@ -1042,14 +1042,14 @@ void EffectNodeImplemented::InitializeRenderedInstanceGroup(InstanceGroup& insta
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 }
 

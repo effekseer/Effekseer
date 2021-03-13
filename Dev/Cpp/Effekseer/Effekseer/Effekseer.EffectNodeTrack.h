@@ -164,9 +164,9 @@ public:
 
 	void InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager) override;
 
-	void InitializeRenderedInstance(Instance& instance, Manager* manager) override;
+	void InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
-	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
+	void UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
 	eEffectNodeType GetType() const override
 	{
