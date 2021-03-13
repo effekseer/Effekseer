@@ -1006,8 +1006,7 @@ void Instance::Update(float deltaFrame, bool shown)
 
 			if (living_time <= (float)soundValues.delay && (float)soundValues.delay < living_time_p)
 			{
-				auto instanceGlobal = m_pContainer->GetRootInstance();
-				m_pEffectNode->PlaySound_(*this, instanceGlobal, instanceGlobal->GetUserData(), m_pManager);
+				m_pManager->RequestToPlaySound(this, m_pEffectNode);
 			}
 		}
 	}
