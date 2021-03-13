@@ -225,15 +225,16 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
+	auto& instValues = instanceGroup.rendererValues.track;
 	IRandObject* rand = &instance.GetRandObject();
 	// Calculate only center
 	int32_t time = (int32_t)instance.m_LivingTime;
 	int32_t livedTime = (int32_t)instance.m_LivedTime;
 
 	Color c;
-	SetValues(c, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
+	SetValues(c, instance, instValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
@@ -246,14 +247,15 @@ void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* ma
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
+	auto& instValues = instanceGroup.rendererValues.track;
 	// Calculate only center
 	int32_t time = (int32_t)instance.m_LivingTime;
 	int32_t livedTime = (int32_t)instance.m_LivedTime;
 
 	Color c;
-	SetValues(c, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
+	SetValues(c, instance, instValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
 
 	instance.ColorInheritance = c;
 }

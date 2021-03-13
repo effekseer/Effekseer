@@ -977,7 +977,7 @@ void Instance::FirstUpdate()
 	}
 
 	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
-	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
+	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
 
 //----------------------------------------------------------------------------------
@@ -1489,7 +1489,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		}
 
 		/* 描画部分の更新 */
-		m_pEffectNode->UpdateRenderedInstance(*this, m_pManager);
+		m_pEffectNode->UpdateRenderedInstance(*this, *ownGroup_, m_pManager);
 
 		// 回転行列の作成
 		SIMD::Mat43f MatRot;
