@@ -1574,11 +1574,6 @@ public:
 	*/
 	virtual float GetFadeAlpha(const Instance& instance);
 
-	/**
-	@brief	サウンド再生
-	*/
-	virtual void PlaySound_(Instance& instance, SoundTag tag, void* userData, Manager* manager);
-
 	EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const override;
 
 	/**
