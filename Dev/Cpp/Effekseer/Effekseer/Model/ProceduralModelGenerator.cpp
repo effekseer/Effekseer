@@ -83,9 +83,7 @@ static void CalcTangentSpace(const ProceduralMeshVertex& v1, const ProceduralMes
 
 	for (int32_t i = 0; i < 3; i++)
 	{
-		auto v1 = cp1[i] - cp0[i];
-		auto v2 = cp2[i] - cp1[i];
-		auto abc = SIMD::Vec3f::Cross(v1, v2);
+		auto abc = SIMD::Vec3f::Cross(cp1[i] - cp0[i], cp2[i] - cp1[i]);
 
 		if (abc.GetX() == 0.0f)
 		{
