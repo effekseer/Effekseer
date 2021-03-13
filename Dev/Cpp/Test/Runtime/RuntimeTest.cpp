@@ -91,6 +91,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_Refraction", "Material_Refraction");
 	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
 	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
+	single15Test(u"BasicRenderSettings_Inherit_Color", "BasicRenderSettings_Inherit_Color");
 	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
 	single15Test(u"ForceFieldLocal_Old", "ForceFieldLocal_Old");
 	single15Test(u"Material_FresnelRotatorPolarCoords", "Material_FresnelRotatorPolarCoords");
