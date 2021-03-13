@@ -277,7 +277,7 @@ void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeModel::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 	IRandObject& rand = instance.GetRandObject();
 	InstanceValues& instValues = instance.rendererValues.model;
@@ -327,7 +327,7 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.model;
 
