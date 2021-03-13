@@ -1239,8 +1239,6 @@ void ManagerImplemented::Flip()
 		Preupdate(drawSet.second);
 	}
 
-	ExecuteSounds();
-
 	StopStoppingEffects();
 
 	ExecuteEvents();
@@ -1396,6 +1394,8 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 			m_WorkerThreads[0].WaitForComplete();
 		}
 	}
+
+	ExecuteSounds();
 }
 
 void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
@@ -1583,6 +1583,8 @@ void ManagerImplemented::UpdateHandle(Handle handle, float deltaFrame)
 			UpdateHandleInternal(drawSet);
 		}
 	}
+
+	ExecuteSounds();
 }
 
 void ManagerImplemented::UpdateHandleToMoveToFrame(Handle handle, float frame)
