@@ -258,9 +258,7 @@ static void CalcTangentSpace(const Vertex& v1, const Vertex& v2, const Vertex& v
 
 	for (int32_t i = 0; i < 3; i++)
 	{
-		auto v1 = cp1[i] - cp0[i];
-		auto v2 = cp2[i] - cp1[i];
-		auto abc = Vector3::Cross(v1, v2);
+		auto abc = Vector3::Cross(cp1[i] - cp0[i], cp2[i] - cp1[i]);
 
 		if (abc.X == 0.0f)
 		{

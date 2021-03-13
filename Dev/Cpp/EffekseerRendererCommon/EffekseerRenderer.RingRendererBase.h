@@ -225,7 +225,7 @@ protected:
 							const efkRingInstanceParam& instanceParameter,
 							const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		::Effekseer::SIMD::Mat43f mat43;
+		::Effekseer::SIMD::Mat43f mat43{};
 
 		if (parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||

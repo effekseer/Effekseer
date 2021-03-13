@@ -1259,7 +1259,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 	/* 更新処理 */
 	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
-		SIMD::Vec3f localPosition;
+		SIMD::Vec3f localPosition{};
 		SIMD::Vec3f localAngle;
 		SIMD::Vec3f localScaling;
 

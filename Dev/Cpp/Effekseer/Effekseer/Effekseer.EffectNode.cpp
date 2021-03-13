@@ -896,7 +896,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	if (GetType() == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
 	{
-		EffectNodeModel* pNodeModel = reinterpret_cast<EffectNodeModel*>(this);
+		EffectNodeModel* pNodeModel = static_cast<EffectNodeModel*>(this);
 		param.EnableFalloff = pNodeModel->EnableFalloff;
 		param.FalloffParam.ColorBlendType = static_cast<int32_t>(pNodeModel->FalloffParam.ColorBlendType);
 		param.FalloffParam.BeginColor[0] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.R) / 255.0f;

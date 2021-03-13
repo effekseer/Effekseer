@@ -685,7 +685,7 @@ public:
 	{
 		auto ptr = Get();
 		SafeAddRef(ptr);
-		return RefPtr<U>(reinterpret_cast<U*>(ptr));
+		return RefPtr<U>(static_cast<U*>(ptr));
 	}
 
 	void* Pin()
