@@ -214,6 +214,7 @@ if env['IGNORE_BUILD'] == '0':
         call('chmod +x Dev/release/tools/fbxToEffekseerModelConverter')
         call('chmod +x Dev/release/tools/libfbxsdk.so')
         call('cp -r Dev/release/linux-x64/publish/* Dev/release/')
+        call('rm -rf -r Dev/release/linux-x64')
 
 if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
     cd('Dev')
