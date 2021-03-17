@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_EFFECT_H__
-#define	__EFFEKSEER_EFFECT_H__
+#ifndef __EFFEKSEER_EFFECT_H__
+#define __EFFEKSEER_EFFECT_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -12,9 +12,10 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
+class Effect;
+
+using EffectRef = RefPtr<Effect>;
 
 /**
 @brief
@@ -38,7 +39,7 @@ struct EffectTerm
 	int32_t TermMax;
 };
 
-	/**
+/**
 @brief
 \~English	Terms where instances exists
 \~Japanese	インスタンスが存在する期間
@@ -119,14 +120,14 @@ public:
 	\~English load body data(parameters of effect) from a binary
 	\~Japanese	バイナリから本体(エフェクトのパラメーター)を読み込む。
 	*/
-	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath);
 
 	/**
 	@brief
 	\~English set texture data into specified index
 	\~Japanese	指定されたインデックスにテクスチャを設定する。
 	*/
-	void SetTexture(Effect* effect, int32_t index, TextureType type, TextureData* data);
+	void SetTexture(Effect* effect, int32_t index, TextureType type, TextureRef data);
 
 	/**
 	@brief
@@ -134,21 +135,35 @@ public:
 	\~Japanese	指定されたインデックスに音を設定する。
 	*/
 
-	void SetSound(Effect* effect, int32_t index, void* data);
+	void SetSound(Effect* effect, int32_t index, SoundDataRef data);
 
 	/**
 	@brief
 	\~English set model data into specified index
 	\~Japanese	指定されたインデックスにモデルを設定する。
 	*/
-	void SetModel(Effect* effect, int32_t index, void* data);
+	void SetModel(Effect* effect, int32_t index, ModelRef data);
 
 	/**
 	@brief
 	\~English set material data into specified index
 	\~Japanese	指定されたインデックスにマテリアルを設定する。
 	*/
-	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
+	void SetMaterial(Effect* effect, int32_t index, MaterialRef data);
+
+	/**
+	@brief
+	\~English set curve data into specified index
+	\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	void SetCurve(Effect* effect, int32_t index, CurveRef data);
+
+	/**
+	@brief
+	\~English set model data into specified index
+	\~Japanese	指定されたインデックスにモデルを設定する。
+	*/
+	void SetProceduralModel(Effect* effect, int32_t index, ModelRef data);
 
 	/**
 	@brief
@@ -159,7 +174,7 @@ public:
 
 	/**
 		@brief
-		\~English this method is called to check whether loaded binary are supported. 
+		\~English this method is called to check whether loaded binary are supported.
 		\~Japanese	バイナリがサポートされているか確認するためにこのメソッドが呼ばれる。
 	*/
 	virtual bool OnCheckIsBinarySupported(const void* data, int32_t size);
@@ -176,14 +191,14 @@ public:
 		\~English this method is called when load a effect from binary
 		\~Japanese	バイナリからエフェクトを読み込む時に、このメソッドが呼ばれる。
 	*/
-	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath);
 
 	/**
 		@brief
 		\~English this method is called when load resources
 		\~Japanese	リソースを読み込む時に、このメソッドが呼ばれる。
 	*/
-	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const EFK_CHAR* materialPath);
+	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const char16_t* materialPath);
 
 	/**
 	@brief
@@ -206,19 +221,21 @@ public:
 };
 
 /**
-	@brief	
+	@brief
 	\~English	Effect parameters
 	\~Japanese	エフェクトパラメータークラス
 */
-class Effect
-	: public IReference
+class Effect : public IReference
 {
 protected:
-	Effect() {}
-    virtual ~Effect() {}
+	Effect()
+	{
+	}
+	virtual ~Effect()
+	{
+	}
 
 public:
-
 	/**
 		@brief	エフェクトを生成する。
 		@param	manager			[in]	管理クラス
@@ -226,9 +243,9 @@ public:
 		@param	size			[in]	データ配列の長さ
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create( Manager* manager, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static EffectRef Create(const ManagerRef& manager, const void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -236,20 +253,20 @@ public:
 		@param	path			[in]	読込元のパス
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create( Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static EffectRef Create(const ManagerRef& manager, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
-		/**
-		@brief	エフェクトを生成する。
-		@param	setting			[in]	設定クラス
-		@param	data			[in]	データ配列の先頭のポインタ
-		@param	size			[in]	データ配列の長さ
-		@param	magnification	[in]	読み込み時の拡大率
-		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
-	*/
-	static Effect* Create( Setting*	setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	/**
+	@brief	エフェクトを生成する。
+	@param	setting			[in]	設定クラス
+	@param	data			[in]	データ配列の先頭のポインタ
+	@param	size			[in]	データ配列の長さ
+	@param	magnification	[in]	読み込み時の拡大率
+	@param	materialPath	[in]	素材ロード時の基準パス
+	@return	エフェクト。失敗した場合はnullptrを返す。
+*/
+	static EffectRef Create(const SettingRef& setting, const void* data, int32_t size, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 		@brief	エフェクトを生成する。
@@ -257,17 +274,17 @@ public:
 		@param	path			[in]	読込元のパス
 		@param	magnification	[in]	読み込み時の拡大率
 		@param	materialPath	[in]	素材ロード時の基準パス
-		@return	エフェクト。失敗した場合はNULLを返す。
+		@return	エフェクト。失敗した場合はnullptrを返す。
 	*/
-	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+	static EffectRef Create(const SettingRef& setting, const char16_t* path, float magnification = 1.0f, const char16_t* materialPath = nullptr);
 
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
-	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
+	static ::Effekseer::EffectLoaderRef CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
 	/**
-	@brief	
+	@brief
 	\~English	Get this effect's name. If this effect is loaded from file, default name is file name without extention.
 	\~Japanese	エフェクトの名前を取得する。もしファイルからエフェクトを読み込んだ場合、名前は拡張子を除いたファイル名である。
 	*/
@@ -283,14 +300,14 @@ public:
 	@brief	設定を取得する。
 	@return	設定
 	*/
-	virtual Setting* GetSetting() const = 0;
+	virtual const SettingRef& GetSetting() const = 0;
 
 	/**
 	@brief	\~English	Get the magnification multiplied by the magnification at the time of loaded and exported.
 			\~Japanese	読み込み時と出力時の拡大率をかけた拡大率を取得する。
 	*/
 	virtual float GetMaginification() const = 0;
-	
+
 	/**
 		@brief	エフェクトデータのバージョン取得
 	*/
@@ -299,7 +316,8 @@ public:
 	/**
 		@brief
 		\~English	Get loading parameter supecfied by EffectFactory. This parameter is not used unless EffectFactory is used
-		\~Japanese	EffectFactoryによって指定されたロード用パラメーターを取得する。EffectFactoryを使用しない限り、子のパラメーターは使用しない。
+		\~Japanese
+	   EffectFactoryによって指定されたロード用パラメーターを取得する。EffectFactoryを使用しない限り、子のパラメーターは使用しない。
 	*/
 	virtual ReferenceObject* GetLoadingParameter() const = 0;
 
@@ -308,7 +326,7 @@ public:
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual TextureData* GetColorImage( int n ) const = 0;
+	virtual TextureRef GetColorImage(int n) const = 0;
 
 	/**
 	@brief	格納されている画像のポインタの個数を取得する。
@@ -319,14 +337,14 @@ public:
 	@brief	\~English	Get a color image's path
 	\~Japanese	色画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetColorImagePath(int n) const = 0;
+	virtual const char16_t* GetColorImagePath(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual TextureData* GetNormalImage(int n) const = 0;
+	virtual TextureRef GetNormalImage(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタの個数を取得する。
@@ -337,14 +355,14 @@ public:
 	@brief	\~English	Get a normal image's path
 	\~Japanese	法線画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetNormalImagePath(int n) const = 0;
-	
+	virtual const char16_t* GetNormalImagePath(int n) const = 0;
+
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual TextureData* GetDistortionImage(int n) const = 0;
+	virtual TextureRef GetDistortionImage(int n) const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタの個数を取得する。
@@ -355,12 +373,12 @@ public:
 	@brief	\~English	Get a distortion image's path
 	\~Japanese	歪み画像のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetDistortionImagePath(int n) const = 0;
-	
+	virtual const char16_t* GetDistortionImagePath(int n) const = 0;
+
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
-	virtual void* GetWave( int n ) const = 0;
+	virtual SoundDataRef GetWave(int n) const = 0;
 
 	/**
 	@brief	格納されている音波形のポインタの個数を取得する。
@@ -371,12 +389,12 @@ public:
 	@brief	\~English	Get a wave's path
 	\~Japanese	音波形のパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetWavePath(int n) const = 0;
-	
+	virtual const char16_t* GetWavePath(int n) const = 0;
+
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
-	virtual void* GetModel( int n ) const = 0;
+	virtual ModelRef GetModel(int n) const = 0;
 
 	/**
 	@brief	格納されているモデルのポインタの個数を取得する。
@@ -387,16 +405,16 @@ public:
 	@brief	\~English	Get a model's path
 	\~Japanese	モデルのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetModelPath(int n) const = 0;
-	
+	virtual const char16_t* GetModelPath(int n) const = 0;
+
 	/**
 	@brief	\~English	Get a material's pointer
 	\~Japanese	格納されているマテリアルのポインタを取得する。
 	*/
-	virtual MaterialData* GetMaterial(int n) const = 0;
+	virtual MaterialRef GetMaterial(int n) const = 0;
 
 	/**
-	@brief	\~English	Get the number of stored material pointer 
+	@brief	\~English	Get the number of stored material pointer
 	\~Japanese	格納されているマテリアルのポインタの個数を取得する。
 	*/
 	virtual int32_t GetMaterialCount() const = 0;
@@ -405,58 +423,86 @@ public:
 	@brief	\~English	Get a material's path
 	\~Japanese	マテリアルのパスを取得する。
 	*/
-	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
+	virtual const char16_t* GetMaterialPath(int n) const = 0;
+
+	/**
+	@brief	\~English	Get a curve's pointer
+	\~Japanese	格納されているカーブのポインタを取得する。
+	*/
+	virtual CurveRef GetCurve(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored curve pointer
+	\~Japanese	格納されているカーブのポインタの個数を取得する。
+	*/
+	virtual int32_t GetCurveCount() const = 0;
+
+	/**
+	@brief	\~English	Get a curve's path
+	\~Japanese	カーブのパスを取得する。
+	*/
+	virtual const char16_t* GetCurvePath(int n) const = 0;
+
+	/**
+	@brief	\~English	Get a procedural model's pointer
+	\~Japanese	格納されているプロシージャルモデルのポインタを取得する。
+	*/
+	virtual ModelRef GetProceduralModel(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored procedural model's pointer
+	\~Japanese	格納されているプロシージャルモデルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetProceduralModelCount() const = 0;
+
+	/**
+	@brief	\~English	Get a procedural model's parameter
+	\~Japanese	格納されているプロシージャルモデルのパラメーターを取得する。
+	*/
+	virtual const ProceduralModelParameter* GetProceduralModelParameter(int n) const = 0;
 
 	/**
 		@brief
-		\~English	Reload this effect
-		\~Japanese	エフェクトのリロードを行う。
-		@param	data
-		\~English	An effect's data
-		\~Japanese	エフェクトのデータ
-		@param	size
-		\~English	An effect's size
-		\~Japanese	エフェクトのデータサイズ
-		@param	materialPath
-		\~English	A path where reaources are loaded
-		\~Japanese	リソースの読み込み元
-		@param	reloadingThreadType
-		\~English	A thread where reload function is called
-		\~Japanese	リロードの関数が呼ばれるスレッド
-		@return
-		\~English	Result
-		\~Japanese	結果
-		@note
-		\~English
-		If reloadingThreadType is RenderThread, new resources aren't loaded and old resources aren't disposed.
-		\~Japanese
-		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
+		\~English set texture data into specified index
+		\~Japanese	指定されたインデックスにテクスチャを設定する。
 	*/
-	virtual bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual void SetTexture(int32_t index, TextureType type, TextureRef data) = 0;
 
 	/**
 		@brief
-		\~English	Reload this effect
-		\~Japanese	エフェクトのリロードを行う。
-		@param	path
-		\~English	An effect's path
-		\~Japanese	エフェクトのパス
-		@param	materialPath
-		\~English	A path where reaources are loaded
-		\~Japanese	リソースの読み込み元
-		@param	reloadingThreadType
-		\~English	A thread where reload function is called
-		\~Japanese	リロードの関数が呼ばれるスレッド
-		@return
-		\~English	Result
-		\~Japanese	結果
-		@note
-		\~English
-		If reloadingThreadType is RenderThread, new resources aren't loaded and old resources aren't disposed.
-		\~Japanese
-		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
+		\~English set sound data into specified index
+		\~Japanese	指定されたインデックスに音を設定する。
 	*/
-	virtual bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+
+	virtual void SetSound(int32_t index, SoundDataRef data) = 0;
+
+	/**
+		@brief
+		\~English set model data into specified index
+		\~Japanese	指定されたインデックスにモデルを設定する。
+	*/
+	virtual void SetModel(int32_t index, ModelRef data) = 0;
+
+	/**
+		@brief
+		\~English set material data into specified index
+		\~Japanese	指定されたインデックスにマテリアルを設定する。
+	*/
+	virtual void SetMaterial(int32_t index, MaterialRef data) = 0;
+
+	/**
+		@brief
+		\~English set curve data into specified index
+		\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	virtual void SetCurve(int32_t index, CurveRef data) = 0;
+
+	/**
+		@brief
+		\~English set a model data into specified index
+		\~Japanese	指定されたインデックスにカーブを設定する。
+	*/
+	virtual void SetProceduralModel(int32_t index, ModelRef data) = 0;
 
 	/**
 		@brief
@@ -491,7 +537,12 @@ public:
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual bool Reload(ManagerRef* managers,
+						int32_t managersCount,
+						const void* data,
+						int32_t size,
+						const char16_t* materialPath = nullptr,
+						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -523,12 +574,16 @@ public:
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 		もし、reloadingThreadType が RenderThreadの場合、新規のリソースは読み込まれず、古いリソースは破棄されない。
 	*/
-	virtual bool Reload( Manager** managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = nullptr, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	virtual bool Reload(ManagerRef* managers,
+						int32_t managersCount,
+						const char16_t* path,
+						const char16_t* materialPath = nullptr,
+						ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	virtual void ReloadResources( const void* data = nullptr, int32_t size = 0, const EFK_CHAR* materialPath = nullptr ) = 0;
+	virtual void ReloadResources(const void* data = nullptr, int32_t size = 0, const char16_t* materialPath = nullptr) = 0;
 
 	/**
 		@brief	画像等リソースの破棄を行う。
@@ -546,6 +601,9 @@ public:
 	\~Japanese	エフェクトが存在する期間を計算する。
 	*/
 	virtual EffectTerm CalculateTerm() const = 0;
+
+	virtual EffectImplemented* GetImplemented() = 0;
+	virtual const EffectImplemented* GetImplemented() const = 0;
 };
 
 /**
@@ -555,18 +613,74 @@ public:
 */
 struct EffectBasicRenderParameter
 {
-	int32_t				ColorTextureIndex;
-	AlphaBlendType		AlphaBlend;
-	TextureFilterType	FilterType;
-	TextureWrapType		WrapType;
-	bool				ZWrite;
-	bool				ZTest;
-	bool				Distortion;
-	float				DistortionIntensity;
+	int32_t MaterialIndex = -1;
+
+	int32_t ColorTextureIndex;
+
+	int32_t AlphaTextureIndex;
+	TextureWrapType AlphaTexWrapType;
+
+	int32_t UVDistortionIndex;
+	TextureWrapType UVDistortionTexWrapType;
+
+	int32_t BlendTextureIndex;
+	TextureWrapType BlendTexWrapType;
+
+	int32_t BlendAlphaTextureIndex;
+	TextureWrapType BlendAlphaTexWrapType;
+
+	int32_t BlendUVDistortionTextureIndex;
+	TextureWrapType BlendUVDistortionTexWrapType;
+
+	struct FlipbookParameters
+	{
+		bool Enable;
+		int32_t LoopType;
+		int32_t DivideX;
+		int32_t DivideY;
+	} FlipbookParams;
+
+	RendererMaterialType MaterialType;
+
+	float UVDistortionIntensity;
+
+	int32_t TextureBlendType;
+
+	float BlendUVDistortionIntensity;
+
+	bool EnableFalloff;
+	struct
+	{
+		int32_t ColorBlendType;
+		std::array<float, 4> BeginColor;
+		std::array<float, 4> EndColor;
+		float Pow = 1.0f;
+	} FalloffParam;
+
+	float EmissiveScaling;
+
+	struct
+	{
+		float Color[4];
+		float Threshold;
+		int32_t ColorScaling;
+	} EdgeParam;
+
+	AlphaBlendType AlphaBlend;
+	TextureFilterType FilterType;
+	TextureWrapType WrapType;
+	bool ZWrite;
+	bool ZTest;
+	bool Distortion;
+	float DistortionIntensity;
+
+	float SoftParticleDistanceFar = 0.0f;
+	float SoftParticleDistanceNear = 0.0f;
+	float SoftParticleDistanceNearOffset = 0.0f;
 };
 
 /**
-@brief	
+@brief
 	\~English	Model parameter
 	\~Japanese	モデルパラメーター
 @note
@@ -576,7 +690,7 @@ struct EffectBasicRenderParameter
 */
 struct EffectModelParameter
 {
-	bool				Lighting;
+	bool Lighting;
 };
 
 /**
@@ -587,8 +701,12 @@ struct EffectModelParameter
 class EffectNode
 {
 public:
-	EffectNode() {}
-	virtual ~EffectNode(){}
+	EffectNode()
+	{
+	}
+	virtual ~EffectNode()
+	{
+	}
 
 	/**
 	@brief	ノードが所属しているエフェクトを取得する。
@@ -596,7 +714,7 @@ public:
 	virtual Effect* GetEffect() const = 0;
 
 	/**
-	@brief	
+	@brief
 	\~English	Get a generation in the node tree. The generation increases by 1 as it moves a child node.
 	\~Japanese	ノードツリーの世代を取得する。世代は子のノードになるにしたがって1増える。
 	*/
@@ -623,7 +741,7 @@ public:
 	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~English	Get a model parameter
 	\~Japanese	モデルパラメーターを取得する。
 	*/
@@ -635,13 +753,36 @@ public:
 	\~Japanese	インスタンスが存在する期間を計算する。
 	*/
 	virtual EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const = 0;
+
+	/**
+		@brief
+		\~English	Get a user data for rendering in plugins.
+		\~Japanese	プラグイン向けの描画拡張データを取得する。
+		@note
+		\~Japanese	詳細はSetterを参照。
+	*/
+	virtual RefPtr<RenderingUserData> GetRenderingUserData() = 0;
+
+	/**
+		@brief
+		\~English	Specify a user data for rendering in plugins.
+		\~Japanese	プラグイン向けの描画拡張データを設定する。
+		@note
+		\~English
+		This variable is passed to the Renderer at rendering time.
+		The variable is compared by the comparison function described by the inheritance of RenderingUserData, and if the values are different, DrawCall is issued.
+		\~Japanese
+		この変数は描画時にRendererに渡される。
+		変数は、RenderingUserDataの継承により記述される比較用の関数によって比較され、値が異なる場合、DrawCallを発行する。
+	*/
+	virtual void SetRenderingUserData(const RefPtr<RenderingUserData>& renderingUserData) = 0;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_EFFECT_H__
+#endif // __EFFEKSEER_EFFECT_H__

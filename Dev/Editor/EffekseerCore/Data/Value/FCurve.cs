@@ -360,7 +360,7 @@ namespace Effekseer.Data.Value
 				/* lIndとrIndの間 */
 				if (mInd == lInd)
 				{
-					if (keys[lInd].InterpolationType.Value == FCurveInterpolation.Linear)
+					if (keys[lInd].InterpolationType == FCurveInterpolation.Linear)
 					{
 						float subF = (float)(keys[rInd].Frame - keys[lInd].Frame);
 						var subV = ToFloat(keys[rInd].Value) - ToFloat(keys[lInd].Value);
@@ -369,7 +369,7 @@ namespace Effekseer.Data.Value
 
 						return subV / (float)(subF) * (float)(frame - keys[lInd].Frame) + ToFloat(keys[lInd].Value);
 					}
-					else if (keys[lInd].InterpolationType.Value == FCurveInterpolation.Bezier)
+					else if (keys[lInd].InterpolationType == FCurveInterpolation.Bezier)
 					{
 						if (keys[lInd].Frame == frame) return ToFloat(keys[lInd].Value);
 
@@ -702,7 +702,7 @@ namespace Effekseer.Data.Value
 		float RightXPrevious { get; }
 		float RightYPrevious { get; }
 
-		Enum<FCurveInterpolation> InterpolationType { get; }
+		FCurveInterpolation InterpolationType { get; }
 
 		void Commit(bool isCombined = false);
 
@@ -727,6 +727,7 @@ namespace Effekseer.Data.Value
 		float _left_y = 0;
 		float _right_x = 0;
 		float _right_y = 0;
+		FCurveInterpolation _interpolation_type = FCurveInterpolation.Bezier;
 
 
 		int _frame_temp = 0;
@@ -866,6 +867,14 @@ namespace Effekseer.Data.Value
 			}
 		}
 
+		public FCurveInterpolation InterpolationType
+		{
+			get
+			{
+				return _interpolation_type;
+			}
+		}
+
 		public void Commit(bool isCombined = false)
 		{
 			if (_frame == _frame_temp && 
@@ -954,8 +963,6 @@ namespace Effekseer.Data.Value
 
 			Command.CommandManager.Execute(cmd);
 		}
-
-		public Enum<FCurveInterpolation> InterpolationType { get; private set; }
 
 		public void SetFrame(int frame)
 		{
@@ -1191,6 +1198,11 @@ namespace Effekseer.Data.Value
 			}
 		}
 
+		public void SetInterpolationType(FCurveInterpolation interpolation_type)
+		{
+			_interpolation_type = interpolation_type;
+		}
+
 		public FCurveKey(int frame = 0, T value = default(T))
 		{
 			_frame = frame;
@@ -1207,8 +1219,6 @@ namespace Effekseer.Data.Value
 			_left_y_temp = ToFloat(value);
 			_right_y = ToFloat(value);
 			_right_y_temp = ToFloat(value);
-
-			InterpolationType = new Enum<FCurveInterpolation>(FCurveInterpolation.Bezier);
 		}
 
 		public event ChangedValueEventHandler OnChanged;

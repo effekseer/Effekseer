@@ -24,6 +24,11 @@ namespace Effekseer.Data
 		[Undo(Undo = false)]
 		[Shown(Shown = false)]
 		[IO(Export = true, Import = true)]
+		public Value.Int RecordingScale { get; private set; }
+
+		[Undo(Undo = false)]
+		[Shown(Shown = false)]
+		[IO(Export = true, Import = true)]
 		public Value.Int RecordingStartingFrame { get; private set; }
 
 		[Undo(Undo = false)]
@@ -60,6 +65,7 @@ namespace Effekseer.Data
 			RecordingWidth = new Value.Int(256);
 			RecordingHeight = new Value.Int(256);
 			IsRecordingGuideShown = new Value.Boolean(false);
+			RecordingScale = new Value.Int(1, int.MaxValue, 1, 1);
 			RecordingStartingFrame = new Value.Int(1);
 			RecordingEndingFrame = new Value.Int(30);
 			RecordingFrequency = new Value.Int(1);

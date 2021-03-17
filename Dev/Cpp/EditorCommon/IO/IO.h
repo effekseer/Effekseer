@@ -14,13 +14,14 @@ namespace Effekseer
 class IOCallback
 {
 public:
-	virtual void OnFileChanged(StaticFileType fileType, const char16_t* path) {}
+	virtual void OnFileChanged(StaticFileType fileType, const char16_t* path)
+	{
+	}
 };
 
 class IO
 {
 private:
-
 	std::u16string ReplaceSeparator(const char16_t* path);
 
 	static std::shared_ptr<IO> instance_;
@@ -33,10 +34,20 @@ private:
 		StaticFileType fileType_;
 		std::u16string path_;
 
-		FileInfo(StaticFileType fileType, std::u16string path) : fileType_(fileType), path_(path) {}
+		FileInfo(StaticFileType fileType, std::u16string path)
+			: fileType_(fileType)
+			, path_(path)
+		{
+		}
 
-		bool operator==(const FileInfo& right) { return fileType_ == right.fileType_ && path_ == right.path_; }
-		bool operator<(const FileInfo& right) const { return std::tie(fileType_, path_) < std::tie(right.fileType_, right.path_); }
+		bool operator==(const FileInfo& right)
+		{
+			return fileType_ == right.fileType_ && path_ == right.path_;
+		}
+		bool operator<(const FileInfo& right) const
+		{
+			return std::tie(fileType_, path_) < std::tie(right.fileType_, right.path_);
+		}
 	};
 
 	std::map<FileInfo, uint64_t> fileUpdateDates_;
@@ -64,7 +75,10 @@ public:
 	bool GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile);
 
 #ifndef SWIG
-	std::shared_ptr<IPC::KeyValueFileStorage> GetIPCStorage() { return ipcStorage_; }
+	std::shared_ptr<IPC::KeyValueFileStorage> GetIPCStorage()
+	{
+		return ipcStorage_;
+	}
 #endif
 
 	void Update();

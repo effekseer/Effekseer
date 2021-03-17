@@ -57,6 +57,7 @@ Library::Library()
 
 	// Constant
 	Contents.push_back(std::make_shared<LibraryContent<NodeTime>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeEffectScale>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeCameraPositionWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant1>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant2>>());
@@ -75,6 +76,8 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeFresnel>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeRotator>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePolarCoords>>());
+
+	Contents.push_back(std::make_shared<LibraryContent<NodeDepthFade>>());
 
 	MakeGroups();
 }

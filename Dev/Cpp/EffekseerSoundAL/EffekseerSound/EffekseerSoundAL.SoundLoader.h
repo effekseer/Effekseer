@@ -27,14 +27,14 @@ public:
 
 	virtual ~SoundLoader();
 
-	void* Load(::Effekseer::FileReader* reader);
+	::Effekseer::SoundDataRef Load(::Effekseer::FileReader* reader);
 
 public:
-	void* Load( const EFK_CHAR* path ) override;
+	::Effekseer::SoundDataRef Load( const char16_t* path ) override;
 
-	void* Load(const void* data, int32_t size) override;
+	::Effekseer::SoundDataRef Load(const void* data, int32_t size) override;
 
-	void Unload(void* data) override;
+	void Unload(::Effekseer::SoundDataRef soundData) override;
 };
 
 //----------------------------------------------------------------------------------

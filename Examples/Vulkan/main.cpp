@@ -7,11 +7,6 @@
 #include <EffekseerRendererVulkan.h>
 #include <Window.h>
 
-// HACK for Windows (LLGI is not separated perfectly)
-#ifdef _WIN32
-#pragma comment(lib, "d3dcompiler.lib")
-#endif
-
 bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight);
 void TerminateWindowAndDevice();
 bool BeginFrame();
@@ -42,7 +37,7 @@ int main(int argc, char** argv)
 	renderPassInfo.DoesPresentToScreen = true;
 	renderPassInfo.RenderTextureCount = 1;
 	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_B8G8R8A8_UNORM;
-	renderPassInfo.HasDepth = true;
+	renderPassInfo.DepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
 	auto renderer = ::EffekseerRendererVulkan::Create(
 		GetVkPhysicalDevice(), GetVkDevice(), GetVkQueue(), GetVkCommandPool(), GetSwapBufferCount(), renderPassInfo, 8000);
 
@@ -152,20 +147,16 @@ int main(int argc, char** argv)
 		time++;
 	}
 
-	// Release effects
-	// エフェクトの解放
-	ES_SAFE_RELEASE(effect);
-
 	// Dispose the manager
 	// マネージャーの破棄
-	manager->Destroy();
+	manager.Reset();
 
 	ES_SAFE_RELEASE(sfMemoryPoolEfk);
 	ES_SAFE_RELEASE(commandListEfk);
 
 	// Dispose the renderer
 	// レンダラーの破棄
-	renderer->Destroy();
+	renderer.Reset();
 
 	TerminateWindowAndDevice();
 
@@ -190,15 +181,24 @@ struct ContextLLGI
 
 std::shared_ptr<ContextLLGI> context;
 
-VkPhysicalDevice GetVkPhysicalDevice() { return static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetPysicalDevice(); }
+VkPhysicalDevice GetVkPhysicalDevice()
+{
+	return static_cast<VkPhysicalDevice>(static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetPysicalDevice());
+}
 
-VkDevice GetVkDevice() { return static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetDevice(); }
+VkDevice GetVkDevice() { return static_cast<VkDevice>(static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetDevice()); }
 
-VkQueue GetVkQueue() { return static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetQueue(); }
+VkQueue GetVkQueue() { return static_cast<VkQueue>(static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetQueue()); }
 
-VkCommandPool GetVkCommandPool() { return static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetCommandPool(); }
+VkCommandPool GetVkCommandPool()
+{
+	return static_cast<VkCommandPool>(static_cast<LLGI::GraphicsVulkan*>(context->graphics.get())->GetCommandPool());
+}
 
-VkCommandBuffer GetCommandList() { return static_cast<LLGI::CommandListVulkan*>(context->commandList)->GetCommandBuffer(); }
+VkCommandBuffer GetCommandList()
+{
+	return static_cast<VkCommandBuffer>(static_cast<LLGI::CommandListVulkan*>(context->commandList)->GetCommandBuffer());
+}
 
 int GetSwapBufferCount() { return 3; }
 
@@ -209,14 +209,16 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 	// A code to initialize DirectX12 is too long, so I use LLGI
 	// Vulkan初期化のためのコードは長すぎるのでLLGIを使用する。
 
+	LLGI::PlatformParameter platformParam{};
+	platformParam.Device = LLGI::DeviceType::Vulkan;
+	platformParam.WaitVSync = true;
+
 	context->window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow("Vulkan", LLGI::Vec2I(windowWidth, windowHeight)));
 	if (context->window == nullptr)
 	{
 		goto FAILED;
 	}
 
-	LLGI::PlatformParameter platformParam;
-	platformParam.Device = LLGI::DeviceType::Vulkan;
 	context->platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, context->window.get()));
 
 	if (context->platform == nullptr)
@@ -264,8 +266,7 @@ bool BeginFrame()
 	color.A = 255;
 
 	context->commandList->Begin();
-	context->commandList->BeginRenderPass(
-		context->platform->GetCurrentScreen(color, true, true));
+	context->commandList->BeginRenderPass(context->platform->GetCurrentScreen(color, true, true));
 
 	return true;
 }

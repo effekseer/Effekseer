@@ -23,9 +23,7 @@ private:
 public:
 	void NewFrame() override;
 
-	Effekseer::TextureData* CreateTextureData(ID3D12Resource* texture) override;
-
-	void DeleteTextureData(Effekseer::TextureData* textureData) override;
+	Effekseer::TextureRef CreateTexture(ID3D12Resource* texture) override;
 
 	RendererImplemented(int32_t squareMaxCount);
 	virtual ~RendererImplemented();
@@ -82,11 +80,11 @@ public:
 
 	::Effekseer::TrackRenderer* CreateTrackRenderer() override;
 
-	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
 
-	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+	::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
 
-	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
+	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	void ResetRenderState() override;
 

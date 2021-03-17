@@ -1,17 +1,17 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_GL_SHADER_H__
-#define	__EFFEKSEERRENDERER_GL_SHADER_H__
+#ifndef __EFFEKSEERRENDERER_GL_SHADER_H__
+#define __EFFEKSEERRENDERER_GL_SHADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.DeviceObject.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 //-----------------------------------------------------------------------------------
 //
@@ -28,109 +28,133 @@ namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 struct ShaderAttribInfo
 {
-	const char*	name;
-	GLenum		type;
-	uint16_t	count;
-	uint16_t	offset;
-	bool		normalized;
+	const char* name;
+	GLenum type;
+	uint16_t count;
+	uint16_t offset;
+	bool normalized;
 };
 
 struct ShaderUniformInfo
 {
-	const char*	name;
+	const char* name;
 };
 
 enum eConstantType
 {
 	CONSTANT_TYPE_MATRIX44 = 0,
-	CONSTANT_TYPE_MATRIX44_ARRAY = 10,
-	CONSTANT_TYPE_MATRIX44_ARRAY_END = 99,
-
 	CONSTANT_TYPE_VECTOR4 = 100,
-	CONSTANT_TYPE_VECTOR4_ARRAY = 110,
-	CONSTANT_TYPE_VECTOR4_ARRAY_END = 199,
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class Shader
-	: public DeviceObject
-	, public ::EffekseerRenderer::ShaderBase
+
+struct ShaderCodeView
+{
+	const char* Data;
+	int32_t Length;
+
+	ShaderCodeView()
+		: Data(nullptr)
+		, Length(0)
+	{
+	}
+
+	ShaderCodeView(const char* data)
+		: Data(data)
+		, Length(static_cast<int32_t>(strlen(data)))
+	{
+	}
+};
+
+class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
+	struct ShaderCode
+	{
+		std::vector<char> Code;
+	};
+
 	struct Layout
 	{
-		GLenum		type;
-		uint16_t	count;
-		uint16_t	offset;
-		bool		normalized;
+		GLenum type;
+		uint16_t count;
+		uint16_t offset;
+		bool normalized;
 	};
 
 	struct ShaderAttribInfoInternal
 	{
-		std::string	name;
-		GLenum		type;
-		uint16_t	count;
-		uint16_t	offset;
-		bool		normalized;
+		std::string name;
+		GLenum type;
+		uint16_t count;
+		uint16_t offset;
+		bool normalized;
 	};
 
 	struct ShaderUniformInfoInternal
 	{
-		std::string	name;
+		std::string name;
 	};
 
 	struct ConstantLayout
 	{
-		eConstantType	Type;
-		GLint			ID;
-		int32_t			Offset;
+		eConstantType Type;
+		GLint ID;
+		int32_t Offset;
+		int32_t Count;
 	};
 
-	OpenGLDeviceType deviceType_;
+	OpenGLDeviceType m_deviceType;
 	GLuint m_program;
 
-	std::vector<GLint>		m_aid;
-	std::vector<Layout>		m_layout;
+	std::vector<GLint> m_aid;
+	std::vector<Layout> m_layout;
 
-	int32_t					m_vertexSize;
+	int32_t m_vertexSize;
 
-	uint8_t*					m_vertexConstantBuffer;
-	uint8_t*					m_pixelConstantBuffer;
+	uint8_t* m_vertexConstantBuffer;
+	uint8_t* m_pixelConstantBuffer;
+	bool addHeader_ = true;
 
-	std::vector<ConstantLayout>	m_vertexConstantLayout;
-	std::vector<ConstantLayout>	m_pixelConstantLayout;
+	std::vector<ConstantLayout> m_vertexConstantLayout;
+	std::vector<ConstantLayout> m_pixelConstantLayout;
 
-	std::array<GLuint, Effekseer::TextureSlotMax> m_textureSlots;
+	std::array<GLint, Effekseer::TextureSlotMax> m_textureSlots;
 	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
 
-	std::vector<char>	m_vsSrc;
-	std::vector<char>	m_psSrc;
-	std::string				m_name;
+	std::string name_;
+	std::vector<ShaderCode> vsCodes_;
+	std::vector<ShaderCode> psCodes_;
 
-	std::vector<ShaderAttribInfoInternal>	attribs;
-	std::vector<ShaderUniformInfoInternal>	uniforms;
+	std::vector<ShaderAttribInfoInternal> attribs;
+	std::vector<ShaderUniformInfoInternal> uniforms;
 
-	static bool CompileShader(
-		OpenGLDeviceType deviceType,
-		GLuint& program,
-		const char* vs_src,
-		size_t vertexShaderSize,
-		const char* fs_src,
-		size_t pixelShaderSize,
-		const char* name);
+	bool isTransposeEnabled_ = false;
 
-	Shader(OpenGLDeviceType deviceType, 
-		Renderer* renderer,
-		DeviceObjectCollection* deviceObjectCollection,
-		GLuint program,
-		const char* vs_src,
-		size_t vertexShaderSize,
-		const char* fs_src,
-		size_t pixelShaderSize,
-		const char* name,
-		bool hasRefCount);
+	GLint baseInstance_ = -1;
+
+	static bool CompileShader(OpenGLDeviceType deviceType,
+							  GLuint& program,
+							  const ShaderCodeView* vsData,
+							  size_t vsDataCount,
+							  const ShaderCodeView* psData,
+							  size_t psDataCount,
+							  const char* name,
+							  bool addHeader);
+
+	bool ReloadShader();
+
+	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
+		   GLuint program,
+		   const ShaderCodeView* vsData,
+		   size_t vsDataCount,
+		   const ShaderCodeView* psData,
+		   size_t psDataCount,
+		   const char* name,
+		   bool hasRefCount,
+		   bool addHeader);
 
 	GLint GetAttribId(const char* name) const;
 
@@ -140,23 +164,14 @@ public:
 public:
 	virtual ~Shader();
 
-	static Shader* Create(
-		OpenGLDeviceType deviceType,
-		DeviceObjectCollection* deviceObjectCollection,
-						  const char* vs_src,
-						  size_t vertexShaderSize,
-						  const char* fs_src,
-						  size_t pixelShaderSize,
+	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice,
+						  const ShaderCodeView* vsData,
+						  size_t vsDataCount,
+						  const ShaderCodeView* psData,
+						  size_t psDataCount,
 						  const char* name,
-						  bool hasRefCount);
-
-	static Shader* Create(
-					  Renderer* renderer,
-					  const char* vs_src,
-					  size_t vertexShaderSize,
-					  const char* fs_src,
-					  size_t pixelShaderSize,
-					  const char* name);
+						  bool hasRefCount = true,
+						  bool addHeader = true);
 
 public:
 	virtual void OnLostDevice() override;
@@ -175,22 +190,31 @@ public:
 	void DisableAttribs();
 	void SetVertex();
 
-	void SetVertexSize(int32_t vertexSize);
-
 	void SetVertexConstantBufferSize(int32_t size) override;
 	void SetPixelConstantBufferSize(int32_t size) override;
 
-	void* GetVertexConstantBuffer()  override { return m_vertexConstantBuffer; }
-	void* GetPixelConstantBuffer()  override { return m_pixelConstantBuffer; }
+	void* GetVertexConstantBuffer() override
+	{
+		return m_vertexConstantBuffer;
+	}
+	void* GetPixelConstantBuffer() override
+	{
+		return m_pixelConstantBuffer;
+	}
 
-	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset);
-	void AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset);
+	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);
+	void AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);
 
 	void SetConstantBuffer() override;
 
-	void SetTextureSlot(int32_t index, GLuint value);
-	GLuint GetTextureSlot(int32_t index);
+	void SetTextureSlot(int32_t index, GLint value);
+	GLint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
+
+	void SetIsTransposeEnabled(bool isTransposeEnabled)
+	{
+		isTransposeEnabled_ = isTransposeEnabled;
+	}
 
 	bool IsValid() const;
 };
@@ -198,9 +222,9 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererGL
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_SHADER_H__
+#endif // __EFFEKSEERRENDERER_GL_SHADER_H__

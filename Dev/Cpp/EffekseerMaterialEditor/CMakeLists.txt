@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.0)
 # For MSVC
 if (MSVC)
     option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
+    set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
 endif()
 
@@ -66,32 +67,24 @@ add_executable(
 
 # Flags
 if (MSVC)
-    if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-        foreach (flag CMAKE_C_FLAGS
-            CMAKE_C_FLAGS_DEBUG
-            CMAKE_C_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS
-            CMAKE_CXX_FLAGS_DEBUG
-            CMAKE_CXX_FLAGS_RELEASE)
-
-            if (${flag} MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
-            if (${flag} MATCHES "/MDd")
-                string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-            endif()
-        endforeach()
+    # CMAKE_MSVC_RUNTIME_LIBRARY can be only used if minimum required is larger than 3.17
+    if(USE_MSVC_RUNTIME_LIBRARY_DLL)
+        cmake_policy(SET CMP0091 NEW)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    else()
+        cmake_policy(SET CMP0091 NEW)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
 endif()
 
-if(NOT APPLE)
+if(WIN32)
     add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
 endif()
 
 target_include_directories(
     EffekseerMaterialEditor
-	PRIVATE
-	${EFK_THIRDPARTY_INCLUDES}
+    PRIVATE
+    ${EFK_THIRDPARTY_INCLUDES}
     ../include/
     ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
     ../EffekseerMaterial/
@@ -110,7 +103,10 @@ target_link_directories(
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
+    EffekseerMaterial
     EditorCommon
+    AltseedRHI
+    Boxer
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
 )
@@ -125,10 +121,10 @@ if(USE_LIBPNG_LOADER)
     target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE
-        debug "${ZLIB_LIB_DEBUG}"
-        optimized "${ZLIB_LIB_RELEASE}"
         debug "${LIBPNG_LIB_DEBUG}"
         optimized "${LIBPNG_LIB_RELEASE}"
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
     )
 
 endif()
@@ -138,13 +134,11 @@ if (WIN32)
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    EffekseerMaterial
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
     debug libglew32d
-    optimized libglew32
-    AltseedRHI)
+    optimized libglew32)
 
 elseif(APPLE)
 
@@ -161,20 +155,17 @@ find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    EffekseerMaterial
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
-    AltseedRHI
-    z
-    EffekseerMaterial
     ${CMAKE_THREAD_LIBS_INIT}
     ${COCOA_FRAMEWORK}
-    ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
+    ${OPENGL_LIBRARIES}
     ${IOKIT_FRAMEWORK}
     ${CORE_FOUNDATION_FRAMEWORK}
     ${CORE_VIDEO_FRAMEWORK})
+
+    set_target_properties(EffekseerMaterialEditor PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 
 else()
 
@@ -190,30 +181,26 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
 include_directories(
-	${OPENGL_INCLUDE_DIR}
-	${GTK3_INCLUDE_DIRS}
-	${X11_INCLUDE_DIR})
+    ${OPENGL_INCLUDE_DIR}
+    ${GTK3_INCLUDE_DIRS}
+    ${X11_INCLUDE_DIR})
 
 link_directories(${GTK3_LIBRARY_DIRS})
 
 add_definitions(${GTK3_CFLAGS_OTHER})
 
 target_link_libraries(
-	EffekseerMaterialEditor
-	PRIVATE
-    EffekseerMaterial
-	Effekseer # to use shader loader
-	EffekseerRendererGL # to use shader loader
-	IPC
-    GLEW
+    EffekseerMaterialEditor
+    PRIVATE
+    Effekseer # to use shader loader
+    EffekseerRendererGL # to use shader loader
+    IPC
     dl
-    AltseedRHI
     stdc++fs
-    EffekseerMaterial
-	${CMAKE_THREAD_LIBS_INIT}
-	${OPENGL_LIBRARY}
-	${GTK3_LIBRARIES}
-	${X11_LIBRARIES})
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${OPENGL_LIBRARY}
+    ${GTK3_LIBRARIES}
+    ${X11_LIBRARIES})
 
 endif()
 

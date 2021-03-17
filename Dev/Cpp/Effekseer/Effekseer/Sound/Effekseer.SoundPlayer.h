@@ -22,18 +22,19 @@ namespace Effekseer
 typedef void* SoundHandle;
 typedef void* SoundTag;
 
-class SoundPlayer
+class SoundPlayer : public ReferenceObject
 {
 public:
 	struct InstanceParameter
 	{
-		void*		Data;
+		SoundDataRef	Data;
 		float		Volume;
 		float		Pan;
 		float		Pitch;
 		bool		Mode3D;
 		Vector3D	Position;
 		float		Distance;
+		void*		UserData;
 	};
 
 public:

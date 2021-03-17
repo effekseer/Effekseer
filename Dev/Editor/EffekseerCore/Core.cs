@@ -5,6 +5,8 @@ using System.Text;
 using Effekseer.Utl;
 using System.Globalization;
 using System.Threading;
+using Effekseer.Data;
+using Effekseer.Data.Value;
 
 namespace Effekseer
 {
@@ -35,7 +37,7 @@ namespace Effekseer
 			SelectLanguage(ind, callEvent);
 		}
 
-		public static IReadOnlyList<string> Languages { get { return languages; } }
+		public static List<string> Languages { get { return languages; } }
 
 		public static int SelectedIndex { get { return selectedIndex; } }
 
@@ -48,9 +50,14 @@ namespace Effekseer
 
 		static Dictionary<string, string> texts = new Dictionary<string, string>();
 
-		public static string Language { get; set; } = "en";
+		public static string Language { get; set; }
 
 		public static string RootDirectory = string.Empty;
+
+		static MultiLanguageTextProvider()
+		{
+			Language = "en";
+		}
 
 		public static void Reset()
 		{
@@ -69,27 +76,23 @@ namespace Effekseer
 
 		internal static void LoadCSV(string path, string language)
 		{
-			TinyCsvParser.CsvParserOptions csvParserOptions = new TinyCsvParser.CsvParserOptions(false, ',');
-			CsvKeyValueMapping csvMapper = new CsvKeyValueMapping();
-			TinyCsvParser.CsvParser<KeyValue> csvParser = new TinyCsvParser.CsvParser<KeyValue>(csvParserOptions, csvMapper);
-
-			var lines = System.IO.File.ReadAllLines(RootDirectory + "resources/languages/" + language + "/" + path, Encoding.UTF8).Select((line, index) => new TinyCsvParser.Model.Row(index, line));
-			var result = csvParser.Parse(lines).ToList();
-
-			foreach(var r in result)
+			using (var streamReader = new System.IO.StreamReader(RootDirectory + "resources/languages/" + language + "/" + path, Encoding.UTF8))
 			{
-				if(r.Result == null)
-				{
-					continue;
-				}
+				var records = Utils.CsvReaader.Read(streamReader.ReadToEnd());
 
-				if(texts.ContainsKey(r.Result.Key))
+				foreach(var record in records)
 				{
-					texts[r.Result.Key] = r.Result.Value;
-				}
-				else
-				{
-					texts.Add(r.Result.Key, r.Result.Value);
+					if (record.Count < 2) continue;
+					if (record[0] == string.Empty) continue;
+
+					if (texts.ContainsKey(record[0]))
+					{
+						texts[record[0]] = record[1];
+					}
+					else
+					{
+						texts.Add(record[0], record[1]);
+					}
 				}
 			}
 		}
@@ -107,22 +110,6 @@ namespace Effekseer
 				return ret;
 			}
 			return key;
-		}
-
-		public class KeyValue
-		{
-			public string Key { get; set; }
-			public string Value { get; set; }
-		}
-
-		class CsvKeyValueMapping : TinyCsvParser.Mapping.CsvMapping<KeyValue>
-		{
-			public CsvKeyValueMapping()
-				: base()
-			{
-				MapProperty(0, x => x.Key);
-				MapProperty(1, x => x.Value);
-			}
 		}
 	}
 
@@ -161,7 +148,7 @@ namespace Effekseer
 
 	public class Core
 	{
-		public const string Version = "1.51b";
+		public const string Version = "1.6β2";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -187,13 +174,15 @@ namespace Effekseer
 
 		static Data.DynamicValues dynamic_ = new Data.DynamicValues();
 
+		static Data.ProceduralModelValues proceduralModels = new ProceduralModelValues();
+
 		static int start_frame = 0;
 
 		static int end_frame = 160;
 
 		static bool is_loop = false;
 
-		static Language language;
+		//static Language language;
 		/*
 		public static IViewer Viewer
 		{
@@ -220,12 +209,6 @@ namespace Effekseer
 		}
 
 		public static Data.NodeRoot Root
-		{
-			get;
-			private set;
-		}
-
-		public static string FullPath
 		{
 			get;
 			private set;
@@ -318,8 +301,8 @@ namespace Effekseer
 				}
 			}
 		}
-
-        public static Script.ScriptCollection<Script.CommandScript> CommandScripts
+#if SCRIPT_ENABLED
+		public static Script.ScriptCollection<Script.CommandScript> CommandScripts
 		{
 			get;
 			private set;
@@ -342,7 +325,7 @@ namespace Effekseer
 			get;
 			private set;
 		}
-
+#endif
 		public static Data.OptionValues Option
 		{
 			get { return option; }
@@ -376,6 +359,11 @@ namespace Effekseer
 		public static Data.DynamicValues Dynamic
 		{
 			get { return dynamic_; }
+		}
+
+		public static Data.ProceduralModelValues ProceduralModel
+		{
+			get { return proceduralModels; }
 		}
 
 		/// <summary>
@@ -468,14 +456,14 @@ namespace Effekseer
 		static Core()
 		{
 			ResourceCache = new Utils.ResourceCache();
-
+#if SCRIPT_ENABLED
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();
 			SelectedScripts = new Script.ScriptCollection<Script.SelectedScript>();
 			ExportScripts = new Script.ScriptCollection<Script.ExportScript>();
 			ImportScripts = new Script.ScriptCollection<Script.ImportScript>();
-
-            // change a separator
-            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+#endif
+			// change a separator
+			System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
         }
@@ -485,8 +473,7 @@ namespace Effekseer
 			var entryDirectory = GetEntryDirectory() + "/";
 
 			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
-			FullPath = string.Empty;
-
+			
 			option = LoadOption(language);
 
 			New();
@@ -500,12 +487,12 @@ namespace Effekseer
 		static void InitializeScripts(string entryDirectory)
 		{
 			// Load scripts
+#if SCRIPT_ENABLED
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/export");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/command");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/selected");
-#if SCRIPT_ENABLED
 
 			Script.Compiler.Initialize();
 
@@ -759,10 +746,11 @@ namespace Effekseer
 
 			dynamic_ = new Data.DynamicValues();
 
+			proceduralModels.ProceduralModels.Clear();
+
 			// Add a root node
 			Root.AddChild();
 			Command.CommandManager.Clear();
-			FullPath = string.Empty;
 			IsChanged = false;
 
 			// Select child
@@ -774,20 +762,17 @@ namespace Effekseer
 			}
 		}
 
-		public static System.Xml.XmlDocument SaveAsXmlDocument(string basePath)
+		public static System.Xml.XmlDocument SaveAsXmlDocument(Data.NodeRoot rootNode)
 		{
-			basePath = System.IO.Path.GetFullPath(basePath);
-
-			FullPath = basePath;
-
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
-			var element = Data.IO.SaveObjectToElement(doc, "Root", Core.Root, false);
+			var element = Data.IO.SaveObjectToElement(doc, "Root", rootNode, false);
 
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
 			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
 			var dynamicElement = Data.IO.SaveObjectToElement(doc, "Dynamic", Dynamic, false);
+			var proceduralModelElement = Data.IO.SaveObjectToElement(doc, "ProceduralModel", ProceduralModel, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -797,6 +782,7 @@ namespace Effekseer
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
 			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
+			if (proceduralModelElement != null) project_root.AppendChild(proceduralModelElement);
 
 			// recording option (this option is stored in local or global)
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
@@ -828,32 +814,17 @@ namespace Effekseer
 
 		public static void SaveTo(string path)
 		{
+			Root.SetFullPath(System.IO.Path.GetFullPath(path));
+
 			var loader = new IO.EfkEfc();
-			loader.Save(path);
+			loader.Save(path, Core.Root, SaveAsXmlDocument(Core.Root));
 			return;
 		}
 
-		public static bool LoadFromXml(string xml, string basePath)
+		public static Data.NodeRoot LoadFromXml(System.Xml.XmlDocument doc, string path)
 		{
-			var doc = new System.Xml.XmlDocument();
-			doc.LoadXml(xml);
-			return LoadFromXml(doc, basePath);
-		}
-		public static bool LoadFromXml(System.Xml.XmlDocument doc, string basePath)
-		{
-			basePath = System.IO.Path.GetFullPath(basePath);
-
-			SelectedNode = null;
-
-			FullPath = basePath;
-
-			if (doc.ChildNodes.Count != 2) return false;
-			if (doc.ChildNodes[1].Name != "EffekseerProject") return false;
-
-			if (OnBeforeLoad != null)
-			{
-				OnBeforeLoad(null, null);
-			}
+			if (doc.ChildNodes.Count != 2) return null;
+			if (doc.ChildNodes[1].Name != "EffekseerProject") return null;
 
 			uint toolVersion = 0;
 			if (doc["EffekseerProject"]["ToolVersion"] != null)
@@ -869,10 +840,8 @@ namespace Effekseer
 					{
 						case Language.English:
 							throw new Exception("Version Error : \nThe file is created with a newer version of the tool.\nPlease use the latest version of the tool.");
-							break;
 						case Language.Japanese:
 							throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
-							break;
 					}
 
 
@@ -929,118 +898,44 @@ namespace Effekseer
 				replace(doc);
 			}
 
+			if (toolVersion < ParseVersion("1.50β3"))
 			{
-				Action<System.Xml.XmlNode> replace = null;
-				replace = (node) =>
-				{
-					if ((node.Name == "RenderCommon") && node.ChildNodes.Count > 0)
-					{
-						if(node["Distortion"] != null && node["Distortion"].GetText() == "True")
-						{
-							node.RemoveChild(node["Material"]);
-							node.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
-						}
-					}
-					else
-					{
-						for (int i = 0; i < node.ChildNodes.Count; i++)
-						{
-							replace(node.ChildNodes[i]);
-						}
-					}
-				};
-
-				replace(doc);
+				var updater = new Utils.ProjectVersionUpdator14xTo15x();
+				updater.Update(doc);
 			}
 
-			if (toolVersion < ParseVersion("1.50"))
+			if (toolVersion < ParseVersion("1.60α1"))
 			{
-				List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
+				var updater = new Utils.ProjectVersionUpdator15xTo16Alpha1();
+				updater.Update(doc);
+			}
 
-				Action<System.Xml.XmlNode> collectNodes = null;
-				collectNodes = (node) =>
-				{
-					if (node.Name == "Node")
-					{
-						nodes.Add(node);
-					}
+			if (toolVersion <= ParseVersion("1.60α2"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16Alpha2();
+				updater.Update(doc);
+			}
 
-					for (int i = 0; i < node.ChildNodes.Count; i++)
-					{
-						collectNodes(node.ChildNodes[i]);
-					}
-				};
+			if (toolVersion < ParseVersion("1.60α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
+				updater.Update(doc);
+			}
 
-				collectNodes(doc);
+			if (toolVersion < ParseVersion("1.60α6"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha5To16x();
+				updater.Update(doc);
+			}
 
-				foreach(var node in nodes)
-				{
-					var rendererCommon = node["RendererCommonValues"];
-					var renderer = node["DrawingValues"];
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["Lighting"] == null || renderer["Model"]["Lighting"].GetText() == "True")
-							{
-								if (node["Material"] != null)
-								{
-									rendererCommon.RemoveChild(node["Material"]);
-								}
-
-								rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.Lighting));
-							}
-						}
-					}
-
-					if (rendererCommon != null)
-					{
-						if (rendererCommon["Distortion"] != null && rendererCommon["Distortion"].GetText() == "True")
-						{
-							if(node["Material"] != null)
-							{
-								rendererCommon.RemoveChild(node["Material"]);
-							}
-
-							rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
-						}
-					}
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["NormalTexture"] != null)
-							{
-								if(rendererCommon["Filter"] != null)
-								{
-									rendererCommon.AppendChild(doc.CreateTextElement("Filter2", rendererCommon["Filter"].GetText()));
-								}
-
-								if (rendererCommon["Wrap"] != null)
-								{
-									rendererCommon.AppendChild(doc.CreateTextElement("Wrap2", rendererCommon["Wrap"].GetText()));
-								}
-							}
-						}
-					}
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["NormalTexture"] != null)
-							{
-								rendererCommon.AppendChild(doc.CreateTextElement("NormalTexture", renderer["Model"]["NormalTexture"].GetText()));
-							}
-						}
-					}
-				}
+			if (toolVersion < ParseVersion("1.60α9"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha8To16x();
+				updater.Update(doc);
 			}
 
 			var root = doc["EffekseerProject"]["Root"];
-			if (root == null) return false;
+			if (root == null) return null;
 
 			culling = new Data.EffectCullingValues();
 			globalValues = new Data.GlobalValues();
@@ -1076,6 +971,13 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(dynamicElement as System.Xml.XmlElement, ref o, false);
 			}
 
+			var proceduralElement = doc["EffekseerProject"]["ProceduralModel"];
+			if (proceduralElement != null)
+			{
+				var o = proceduralModels as object;
+				Data.IO.LoadObjectFromElement(proceduralElement as System.Xml.XmlElement, ref o, false);
+			}
+
 			// recording option (this option is stored in local or global)
 			if (doc["EffekseerProject"]["Recording"] != null)
 			{
@@ -1095,8 +997,10 @@ namespace Effekseer
 				version = doc["EffekseerProject"]["Version"].GetTextAsInt();
 			}
 
-			var root_node = new Data.NodeRoot() as object;
-			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node, false);
+			var root_node = new Data.NodeRoot();
+			root_node.SetFullPath(path);
+			var root_node_object = root_node as object;
+			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node_object, false);
 
 			// For compatibility
 			if (version < 3)
@@ -1131,134 +1035,49 @@ namespace Effekseer
 					}
 				};
 
-				convert(root_node as Data.NodeBase);
+				convert(root_node);
 			}
 
 			if (toolVersion < ParseVersion("1.50"))
 			{
-				Action<Data.NodeBase> convert = null;
-				convert = (n) =>
-				{
-					var n_ = n as Data.Node;
-
-					if (n_ != null && n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring)
-					{
-						var rp = n_.DrawingValues.Ring;
-						if (rp.ViewingAngle.Value != Data.RendererValues.RingParamater.ViewingAngleType.Fixed ||
-							rp.ViewingAngle_Fixed.Value != 360)
-						{
-							var rc = rp.RingShape.Crescent;
-							rp.RingShape.Type.SetValue(Data.RingShapeType.Crescent);
-							rc.StartingAngle.SetValue((Data.FixedRandomEasingType)(int)rp.ViewingAngle.Value);
-							rc.EndingAngle.SetValue((Data.FixedRandomEasingType)(int)rp.ViewingAngle.Value);
-
-							rc.StartingAngle_Fixed.SetValue((360 - rp.ViewingAngle_Fixed.Value) / 2 + 90);
-							rc.EndingAngle_Fixed.SetValue(360 - (360 - rp.ViewingAngle_Fixed.Value) / 2 + 90);
-
-							rc.StartingAngle_Random.SetMax((360 - rp.ViewingAngle_Random.Min) / 2 + 90);
-							rc.StartingAngle_Random.SetMin((360 - rp.ViewingAngle_Random.Max) / 2 + 90);
-
-							rc.EndingAngle_Random.SetMax(360 - (360 - rp.ViewingAngle_Random.Max) / 2 + 90);
-							rc.EndingAngle_Random.SetMin(360 - (360 - rp.ViewingAngle_Random.Min) / 2 + 90);
-
-							rc.StartingAngle_Easing.Start.SetMax((360 - rp.ViewingAngle_Easing.Start.Min) / 2 + 90);
-							rc.StartingAngle_Easing.Start.SetMin((360 - rp.ViewingAngle_Easing.Start.Max) / 2 + 90);
-							rc.StartingAngle_Easing.End.SetMax((360 - rp.ViewingAngle_Easing.End.Min) / 2 + 90);
-							rc.StartingAngle_Easing.End.SetMin((360 - rp.ViewingAngle_Easing.End.Max) / 2 + 90);
-
-							rc.EndingAngle_Easing.Start.SetMax(360 - (360 - rp.ViewingAngle_Easing.Start.Max) / 2 + 90);
-							rc.EndingAngle_Easing.Start.SetMin(360 - (360 - rp.ViewingAngle_Easing.Start.Min) / 2 + 90);
-							rc.EndingAngle_Easing.End.SetMax(360 - (360 - rp.ViewingAngle_Easing.End.Max) / 2 + 90);
-							rc.EndingAngle_Easing.End.SetMin(360 - (360 - rp.ViewingAngle_Easing.End.Min) / 2 + 90);
-						}
-					}
-
-					for (int i = 0; i < n.Children.Count; i++)
-					{
-						convert(n.Children[i]);
-					}
-				};
-
-				convert(root_node as Data.NodeBase);
+				var updater = new Utils.ProjectVersionUpdator14xTo15x();
+				updater.Update(root_node);
 			}
 
-			Root = root_node as Data.NodeRoot;
-
-			if (toolVersion < ParseVersion("1.50"))
+			if (toolVersion < ParseVersion("1.60α1"))
 			{
-				// Fcurve
-				var fcurves = GetFCurveParameterNode();
-
-				Action<ParameterTreeNode> convert = null;
-				convert = (n) =>
-				{
-					foreach (var fcurve in n.Parameters)
-					{
-						var fcurve2 = fcurve.Item2 as Data.Value.FCurveVector2D;
-						var fcurve3 = fcurve.Item2 as Data.Value.FCurveVector3D;
-						var fcurvecolor = fcurve.Item2 as Data.Value.FCurveColorRGBA;
-
-						if (fcurve2 != null)
-						{
-							fcurve2.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
-							if (!fcurve2.X.Sampling.IsValueAssigned) fcurve2.X.Sampling.SetValue(5);
-							if (!fcurve2.Y.Sampling.IsValueAssigned) fcurve2.Y.Sampling.SetValue(5);
-						}
-
-						if (fcurve3 != null)
-						{
-							fcurve3.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
-							if (!fcurve3.X.Sampling.IsValueAssigned) fcurve3.X.Sampling.SetValue(5);
-							if (!fcurve3.Y.Sampling.IsValueAssigned) fcurve3.Y.Sampling.SetValue(5);
-							if (!fcurve3.Z.Sampling.IsValueAssigned) fcurve3.Z.Sampling.SetValue(5);
-						}
-
-						if (fcurvecolor != null)
-						{
-							fcurvecolor.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
-							if (!fcurvecolor.R.Sampling.IsValueAssigned) fcurvecolor.R.Sampling.SetValue(5);
-							if (!fcurvecolor.G.Sampling.IsValueAssigned) fcurvecolor.G.Sampling.SetValue(5);
-							if (!fcurvecolor.B.Sampling.IsValueAssigned) fcurvecolor.B.Sampling.SetValue(5);
-							if (!fcurvecolor.A.Sampling.IsValueAssigned) fcurvecolor.A.Sampling.SetValue(5);
-						}
-					}
-
-					foreach(var c in n.Children)
-					{
-						convert(c);
-					}
-				};
-
-				convert(fcurves);
+				var updater = new Utils.ProjectVersionUpdator15xTo16Alpha1();
+				updater.Update(root_node);
 			}
-			
+
+			if (toolVersion < ParseVersion("1.60α2"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha1To16Alpha2();
+				updater.Update(root_node);
+			}
+
+			if (toolVersion < ParseVersion("1.60α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
+				updater.Update(root_node);
+			}
+
 			Command.CommandManager.Clear();
 			IsChanged = false;
 
-			if (OnAfterLoad != null)
-			{
-				OnAfterLoad(null, null);
-			}
-
-			return true;
+			return root_node;
 		}
 
-		public static bool LoadFrom(string path)
+		public static Data.NodeRoot LoadFromFile(string path)
 		{
-			var fullpath = System.IO.Path.GetFullPath(path);
-
-			if (!System.IO.File.Exists(fullpath)) return false;
-
-			ResourceCache.Reset();
-
 			// new format?
 			bool isNewFormat = false;
 			{
 				if (string.IsNullOrEmpty(path))
-					return false;
+					return null;
 
 				System.IO.FileStream fs = null;
-				if (!System.IO.File.Exists(path)) return false;
+				if (!System.IO.File.Exists(path)) return null;
 
 				try
 				{
@@ -1266,7 +1085,7 @@ namespace Effekseer
 				}
 				catch
 				{
-					return false;
+					return null;
 				}
 
 				var br = new System.IO.BinaryReader(fs);
@@ -1278,7 +1097,7 @@ namespace Effekseer
 				{
 					fs.Dispose();
 					br.Close();
-					return false;
+					return null;
 				}
 
 				if (buf[0] != 'E' ||
@@ -1297,16 +1116,46 @@ namespace Effekseer
 				br.Close();
 			}
 
-			if(isNewFormat)
+			NodeRoot nodeRoot;
+			if (isNewFormat)
 			{
 				var loader = new IO.EfkEfc();
-				return loader.Load(path);
+				var doc = loader.Load(path);
+				nodeRoot = LoadFromXml(doc, path);
+			}
+			else
+			{
+				var doc = new System.Xml.XmlDocument();
+				doc.Load(path);
+				nodeRoot = LoadFromXml(doc, path);
+			}
+			nodeRoot.SetFullPath(path);
+			return nodeRoot;
+		}
+
+		public static bool LoadFrom(string path)
+		{
+			var fullpath = System.IO.Path.GetFullPath(path);
+
+			SelectedNode = null;
+
+			ResourceCache.Reset();
+			dynamic_ = new DynamicValues();
+			proceduralModels.ProceduralModels.Clear();
+
+			OnBeforeLoad?.Invoke(null, null);
+
+			Data.NodeRoot loadedNode = LoadFromFile(fullpath);
+			if (loadedNode == null)
+			{
+				return false;
 			}
 
-			var doc = new System.Xml.XmlDocument();
-			doc.Load(path);
+			Core.Root = loadedNode;
 
-			return LoadFromXml(doc.InnerXml, path);
+			OnAfterLoad?.Invoke(null, null);
+
+			return true;
 		}
 
 		/// <summary>
@@ -1393,17 +1242,56 @@ namespace Effekseer
 
 		static uint ParseVersion(string versionText)
 		{
-			versionText = versionText.Replace("CTP1", "");
-			versionText = versionText.Replace("CTP2", "");
-			versionText = versionText.Replace("CTP3", "");
-			versionText = versionText.Replace("CTP4", "");
-			versionText = versionText.Replace("CTP5", "");
+			uint minorVersion = 0;
+
+			Func<string, uint, uint?> calcMinorVersion = (string key, uint baseId) =>
+			{
+				if (versionText.Contains(key))
+				{
+					var strs = versionText.Split(new[] { key }, StringSplitOptions.None);
+
+					if (strs.Length < 2)
+						return baseId;
+
+					uint id = 0;
+					uint.TryParse(strs[1], out id);
+					return id + baseId;
+				}
+
+				return null;
+			};
+
+			var alphaId = calcMinorVersion("α", 0);
+			var betaId = calcMinorVersion("β", 10);
+			var rcId = calcMinorVersion("RC", 20);
+
+			if(alphaId.HasValue)
+			{
+				minorVersion = alphaId.Value;
+			}
+			else if (betaId.HasValue)
+			{
+				minorVersion = betaId.Value;
+			}
+			else if (rcId.HasValue)
+			{
+				minorVersion = rcId.Value;
+			}
+			else
+			{
+				minorVersion = 30;
+			}
 
 			versionText = versionText.Replace("α1", "");
 			versionText = versionText.Replace("α2", "");
 			versionText = versionText.Replace("α3", "");
 			versionText = versionText.Replace("α4", "");
 			versionText = versionText.Replace("α5", "");
+			versionText = versionText.Replace("α6", "");
+			versionText = versionText.Replace("α7", "");
+			versionText = versionText.Replace("α8", "");
+			versionText = versionText.Replace("α9", "");
+			versionText = versionText.Replace("α10", "");
 
 			versionText = versionText.Replace("β1", "");
 			versionText = versionText.Replace("β2", "");
@@ -1427,6 +1315,18 @@ namespace Effekseer
 			versionText = versionText.Replace("g", "");
 			versionText = versionText.Replace("h", "");
 			versionText = versionText.Replace("i", "");
+			versionText = versionText.Replace("j", "");
+			versionText = versionText.Replace("k", "");
+			versionText = versionText.Replace("l", "");
+			versionText = versionText.Replace("m", "");
+			versionText = versionText.Replace("n", "");
+			versionText = versionText.Replace("o", "");
+			versionText = versionText.Replace("p", "");
+			versionText = versionText.Replace("q", "");
+			versionText = versionText.Replace("r", "");
+			versionText = versionText.Replace("s", "");
+			versionText = versionText.Replace("t", "");
+			versionText = versionText.Replace("u", "");
 
 			if (versionText.Length == 2) versionText += "000";
 			if (versionText.Length == 3) versionText += "00";
@@ -1436,6 +1336,8 @@ namespace Effekseer
 			uint version = 0;
 
 			uint.TryParse(versionText, out version);
+
+			version = (version * 100) + minorVersion;
 
 			return version;
 		}
@@ -1524,8 +1426,9 @@ namespace Effekseer
 		/// <summary>
 		/// Collect nodes contains enabled FCurve
 		/// </summary>
+		/// <param name="targetNode"></param>
 		/// <returns></returns>
-		public static Utl.ParameterTreeNode GetFCurveParameterNode()
+		public static Utl.ParameterTreeNode GetFCurveParameterNode(Data.NodeBase targetNode)
 		{
 			// not smart
 
@@ -1564,6 +1467,17 @@ namespace Effekseer
 						}
 
 						list.Add(Tuple35.Create(name, (object)node.ScalingValues.FCurve.FCurve));
+					}
+
+					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.SingleFCurve)
+					{
+						var name = "Scaling Factor(Single)";
+						if (Language == Language.Japanese)
+						{
+							name = "拡大率(単一)";
+						}
+
+						list.Add(Tuple35.Create(name, (object)node.ScalingValues.SingleFCurve));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
@@ -1721,17 +1635,112 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
-#if __EFFEKSEER_BUILD_VERSION16__
-					if (node.AlphaCrunchValues.Type == Data.AlphaCrunchValues.ParameterType.FCurve)
+					if (node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled == true &&
+					    node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+					{
+						var enType = "Alpha";
+						var jpType = "アルファ";
+
+						var startName = enType + "UV(Start)";
+						var endName	= enType + "UV(Size)";
+
+						if (Language == Language.Japanese)
+						{
+							startName = jpType + "UV(始点)";
+							endName = jpType + "UV(大きさ)";
+						}
+
+						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Start));
+						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Size));
+					}
+
+					if (node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Enabled == true &&
+						node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+					{
+						var enType = "UVDistortion";
+						var jpType = "UV歪み";
+
+						var startName = enType + "UV(Start)";
+						var endName	= enType + "UV(Size)";
+
+						if (Language == Language.Japanese)
+						{
+							startName = jpType + "UV(始点)";
+							endName	= jpType + "UV(大きさ)";
+						}
+
+						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Start));
+						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Size));
+					}
+
+					if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.Enabled == true)
+					{
+						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						{
+							var enType = "Blend";
+							var jpType = "ブレンド";
+
+							var startName = enType + "UV(Start)";
+							var endName = enType + "UV(Size)";
+
+							if (Language == Language.Japanese)
+							{
+								startName = jpType + "UV(始点)";
+								endName = jpType + "UV(大きさ)";
+							}
+
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UVFCurve.Size));
+						}
+
+						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture == true &&
+							node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						{
+							var enType = "BlendAlpha";
+							var jpType = "ブレンドアルファ";
+
+							var startName = enType + "UV(Start)";
+							var endName = enType + "UV(Size)";
+
+							if (Language == Language.Japanese)
+							{
+								startName = jpType + "UV(始点)";
+								endName = jpType + "UV(大きさ)";
+							}
+
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Size));
+						}
+
+						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture == true &&
+							node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						{
+							var enType = "BlendUVDistortion";
+							var jpType = "ブレンドUV歪み";
+
+							var startName = enType + "UV(Start)";
+							var endName = enType + "UV(Size)";
+
+							if (Language == Language.Japanese)
+							{
+								startName = jpType + "UV(始点)";
+								endName = jpType + "UV(大きさ)";
+							}
+
+							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Start));
+							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Size));
+						}
+					}
+
+					if (node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 					{
 						var name = "AlphaThreshold";
 						if (Language == Language.Japanese)
 						{
 							name = "アルファ閾値";
 						}
-						list.Add(Tuple35.Create(name, (object)node.AlphaCrunchValues.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.FCurve));
 					}
-#endif
 
 					return list.ToArray();
 				};
@@ -1765,7 +1774,7 @@ namespace Effekseer
 				};
 
 
-			return getParameterTreeNodes(Root);
+			return getParameterTreeNodes(targetNode);
 		}
 
 		/// <summary>

@@ -24,14 +24,17 @@ protected:
 	int32_t m_ringLockedOffset;
 	int32_t m_ringLockedSize;
 
-	VertexBuffer(GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount);
+	VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~VertexBuffer();
 
-	static VertexBuffer* Create(GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
+	static VertexBuffer* Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
 
-	LLGI::VertexBuffer* GetVertexBuffer() { return vertexBuffers[currentIndex]; }
+	LLGI::VertexBuffer* GetVertexBuffer()
+	{
+		return vertexBuffers[currentIndex];
+	}
 
 public:
 	void Lock() override;

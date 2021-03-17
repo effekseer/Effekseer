@@ -5,7 +5,7 @@
 #include <Effekseer.h>
 #include <vector>
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <Windows.h>
 #endif
 
@@ -41,7 +41,7 @@
 
 #else
 
-#if _WIN32
+#if defined(_WIN32)
 #include <GL/gl.h>
 #elif defined(__APPLE__)
 #define GL_SILENCE_DEPRECATION
@@ -69,66 +69,14 @@ enum class OpenGLDeviceType
 	OpenGL3,
 	OpenGLES2,
 	OpenGLES3,
-	Emscripten,
 };
 
 } // namespace EffekseerRendererGL
 
 #endif // __EFFEKSEERRENDERER_GL_BASE_PRE_H__
 
-#ifndef __EFFEKSEERRENDERER_GL_DEVICEOBJECT_COLLECTION_H__
-#define __EFFEKSEERRENDERER_GL_DEVICEOBJECT_COLLECTION_H__
-
-#include <set>
-#include <Effekseer.h>
-
-namespace EffekseerRendererGL
-{
-
-class DeviceObject;
-
-class DeviceObjectCollection : public ::Effekseer::ReferenceObject
-{
-	friend class DeviceObject;
-
-private:
-	std::set<DeviceObject*> deviceObjects_;
-
-	/**
-		@brief	register an object
-	*/
-	void Register(DeviceObject* device);
-
-	/**
-		@brief	unregister an object
-	*/
-	void Unregister(DeviceObject* device);
-
-public:
-	DeviceObjectCollection() = default;
-
-	~DeviceObjectCollection() = default;
-
-	/**
-		@brief
-		\~english Call when device lost causes
-		\~japanese デバイスロストが発生した時に実行する。
-	*/
-	void OnLostDevice();
-
-	/**
-		@brief
-		\~english Call when device reset causes
-		\~japanese デバイスがリセットされた時に実行する。
-	*/
-	void OnResetDevice();
-};
-
-} // namespace EffekseerRendererGL
-
-#endif // __EFFEKSEERRENDERER_GL_DEVICEOBJECT_H__
-#ifndef	__EFFEKSEERRENDERER_RENDERER_H__
-#define	__EFFEKSEERRENDERER_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_RENDERER_H__
+#define __EFFEKSEERRENDERER_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -138,26 +86,55 @@ public:
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+namespace Effekseer
+{
+namespace Backend
+{
+class VertexBuffer;
+class IndexBuffer;
+class GraphicsDevice;
+} // namespace Backend
+} // namespace Effekseer
+
 namespace EffekseerRenderer
 {
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
 
 /**
-	@brief	背景を歪ませるエフェクトを描画する前に実行されるコールバック
+	@brief	
+	\~english A callback to distort a background before drawing
+	\~japanese 背景を歪ませるエフェクトを描画する前に実行されるコールバック
+	
 */
 class DistortingCallback
 {
 public:
-	DistortingCallback() {}
-	virtual ~DistortingCallback() {}
+	DistortingCallback()
+	{
+	}
+	virtual ~DistortingCallback()
+	{
+	}
 
-	virtual bool OnDistorting() { return false; }
+	/**
+	@brief	
+	\~english A callback
+	\~japanese コールバック
+	@note
+	\~english Don't hold renderer in the instance
+	\~japanese インスタンス内にrendererを保持してはいけない
+	*/
+	virtual bool OnDistorting(Renderer* renderer)
+	{
+		return false;
+	}
 };
 
 /**
-	@brief	
+	@brief
 	\~english A status of UV when particles are rendered.
 	\~japanese パーティクルを描画する時のUVの状態
 */
@@ -188,8 +165,8 @@ class GraphicsDevice : public ::Effekseer::IReference
 public:
 	GraphicsDevice() = default;
 	virtual ~GraphicsDevice() = default;
-};	
-	
+};
+
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -208,21 +185,31 @@ public:
 		\~English	notify that new frame is started.
 		\~Japanese	新規フレームが始ったことを通知する。
 	*/
-	virtual void NewFrame() {}
+	virtual void NewFrame()
+	{
+	}
 };
 
-class Renderer
-	: public ::Effekseer::IReference
+struct DepthReconstructionParameter
+{
+	float DepthBufferScale = 1.0f;
+	float DepthBufferOffset = 0.0f;
+	float ProjectionMatrix33 = 0.0f;
+	float ProjectionMatrix34 = 0.0f;
+	float ProjectionMatrix43 = 0.0f;
+	float ProjectionMatrix44 = 0.0f;
+};
+
+class Renderer : public ::Effekseer::IReference
 {
 protected:
 	Renderer();
 	virtual ~Renderer();
 
 	class Impl;
-	Impl* impl = nullptr;
+	std::unique_ptr<Impl> impl;
 
 public:
-
 	/**
 		@brief	only for Effekseer backend developer. Effekseer User doesn't need it.
 	*/
@@ -237,11 +224,6 @@ public:
 		@brief	デバイスがリセットされた時に実行する。
 	*/
 	virtual void OnResetDevice() = 0;
-
-	/**
-		@brief	このインスタンスを破棄する。
-	*/
-	virtual void Destroy() = 0;
 
 	/**
 		@brief	ステートを復帰するかどうかのフラグを設定する。
@@ -301,7 +283,7 @@ public:
 	/**
 		@brief	Set a projection matrix
 	*/
-	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera matrix
@@ -311,7 +293,7 @@ public:
 	/**
 		@brief	Set a camera matrix
 	*/
-	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
+	virtual void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
 
 	/**
 		@brief	Get a camera projection matrix
@@ -334,7 +316,7 @@ public:
 
 	/**
 		@brief	Set a front direction and position of camera manually
-		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus, 
+		@param front (Right Hand) a direction from focus to eye, (Left Hand) a direction from eye to focus,
 		@note
 		These are set based on camera matrix automatically.
 		It is failed on some platform.
@@ -344,45 +326,45 @@ public:
 	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
-	virtual ::Effekseer::SpriteRenderer* CreateSpriteRenderer() = 0;
+	virtual ::Effekseer::SpriteRendererRef CreateSpriteRenderer() = 0;
 
 	/**
 		@brief	リボンレンダラーを生成する。
 	*/
-	virtual ::Effekseer::RibbonRenderer* CreateRibbonRenderer() = 0;
+	virtual ::Effekseer::RibbonRendererRef CreateRibbonRenderer() = 0;
 
 	/**
 		@brief	リングレンダラーを生成する。
 	*/
-	virtual ::Effekseer::RingRenderer* CreateRingRenderer() = 0;
+	virtual ::Effekseer::RingRendererRef CreateRingRenderer() = 0;
 
 	/**
 		@brief	モデルレンダラーを生成する。
 	*/
-	virtual ::Effekseer::ModelRenderer* CreateModelRenderer() = 0;
+	virtual ::Effekseer::ModelRendererRef CreateModelRenderer() = 0;
 
 	/**
 		@brief	軌跡レンダラーを生成する。
 	*/
-	virtual ::Effekseer::TrackRenderer* CreateTrackRenderer() = 0;
+	virtual ::Effekseer::TrackRendererRef CreateTrackRenderer() = 0;
 
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english Create default material loader
 	\~japanese 標準のマテリアル読込クラスを生成する。
 
 	*/
-	virtual ::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	レンダーステートを強制的にリセットする。
@@ -400,7 +382,7 @@ public:
 	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english Get draw call count
 	\~japanese ドローコールの回数を取得する
 	*/
@@ -435,7 +417,7 @@ public:
 	virtual Effekseer::RenderMode GetRenderMode() const;
 
 	/**
-	@brief	
+	@brief
 	\~english Specify a render mode.
 	\~japanese 描画モードを設定する。
 	*/
@@ -488,44 +470,73 @@ public:
 	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
 	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
-	virtual void SetCommandList(CommandList* commandList) {}
+	virtual void SetCommandList(CommandList* commandList)
+	{
+	}
+
+	/**
+		@brief	\~English	Get a background texture.
+		\~Japanese	背景を取得する。
+		@note
+		\~English	Textures are generated by a function specific to each backend or SetBackground.
+		\~Japanese	テクスチャは各バックエンド固有の関数かSetBackgroundで生成される。
+	*/
+	virtual const ::Effekseer::Backend::TextureRef& GetBackground();
 
 	/**
 	@brief
 	\~English	Specify a background texture.
 	\~Japanese	背景のテクスチャを設定する。
-	@note
-	\~English	Specified texture is not deleted by the renderer. This function is available except DirectX9, DirectX11.
-	\~Japanese	設定されたテクスチャはレンダラーによって削除されない。この関数はDirectX9、DirectX11以外で使用できる。
 	*/
-	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
+	virtual void SetBackground(::Effekseer::Backend::TextureRef texture);
 
 	/**
 	@brief
 	\~English	Create a proxy texture
 	\~Japanese	代替のテクスチャを生成する
 	*/
-	virtual Effekseer::TextureData* CreateProxyTexture(ProxyTextureType type) { return nullptr; }
+	virtual ::Effekseer::Backend::TextureRef CreateProxyTexture(ProxyTextureType type);
 
 	/**
 	@brief
 	\~English	Delete a proxy texture
 	\~Japanese	代替のテクスチャを削除する
 	*/
-	virtual void DeleteProxyTexture(Effekseer::TextureData* data) { }
+	virtual void DeleteProxyTexture(Effekseer::Backend::TextureRef& texture);
+
+	/**
+		@brief	
+		\~English	Get a depth texture and parameters to reconstruct from z to depth
+		\~Japanese	深度画像とZから深度を復元するためのパラメーターを取得する。
+	*/
+	virtual void GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam);
+
+	/**
+		@brief	
+		\~English	Specify a depth texture and parameters to reconstruct from z to depth
+		\~Japanese	深度画像とZから深度を復元するためのパラメーターを設定する。
+	*/
+	virtual void SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
+
+	/**
+		@brief	
+		\~English	Get the graphics device
+		\~Japanese	グラフィクスデバイスを取得する。
+	*/
+	virtual Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_RENDERER_H__
 
-#ifndef	__EFFEKSEERRENDERER_GL_RENDERER_H__
-#define	__EFFEKSEERRENDERER_GL_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_GL_RENDERER_H__
+#define __EFFEKSEERRENDERER_GL_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -541,31 +552,32 @@ public:
 namespace EffekseerRendererGL
 {
 
-class DeviceObjectCollection;
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+::Effekseer::TextureLoaderRef CreateTextureLoader(
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+	::Effekseer::FileInterface* fileInterface = nullptr,
+	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
-::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr, ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
-::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+												  ::Effekseer::FileInterface* fileInterface = nullptr);
 
-/**
-	@brief	描画クラス
-*/
-class Renderer
-	: public ::EffekseerRenderer::Renderer
+Effekseer::Backend::TextureRef CreateTexture(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed);
+
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
+class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	/**
@@ -578,16 +590,16 @@ public:
 	@param	deviceType
 	\~english	device type of opengl
 	\~japanese	デバイスの種類
-	@param	deviceObjectCollection
-	\~english	for a middleware. it should be nullptr.
-	\~japanese	ミドルウェア向け。 nullptrにすべきである。
+	@param	isExtensionsEnabled
+	\~english	whether does make extensions enabled.
+	\~japanese	拡張を有効にするかどうか
 	@return
 	\~english	instance
 	\~japanese	インスタンス
 	*/
-	static Renderer* Create(int32_t squareMaxCount,
-							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2,
-							DeviceObjectCollection* deviceObjectCollection = nullptr);
+	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2, bool isExtensionsEnabled = true);
+
+	static RendererRef Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount);
 
 	/**
 		@brief	最大描画スプライト数を取得する。
@@ -603,20 +615,13 @@ public:
 
 	/**
 	@brief
-	\~english	Get a background.
-	\~japanese	背景を取得する。
-	*/
-	virtual Effekseer::TextureData* GetBackground() = 0;
-
-	/**
-	@brief	
 	\~english	Specify a background.
 	\~japanese	背景を設定する。
 	*/
 	virtual void SetBackground(GLuint background, bool hasMipmap = false) = 0;
 
 	/**
-	@brief	
+	@brief
 	\~english get a device type
 	\~japanese デバイスの種類を取得する。
 	*/
@@ -630,49 +635,8 @@ public:
 	virtual bool IsVertexArrayObjectSupported() const = 0;
 };
 
+} // namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-/**
-	@brief	モデル
-*/
-class Model
-	: public Effekseer::Model
-{
-private:
-
-public:
-	struct InternalModel
-	{
-		GLuint		VertexBuffer;
-		GLuint		IndexBuffer;
-		int32_t		VertexCount;
-		int32_t		IndexCount;
-
-		std::vector<uint8_t> delayVertexBuffer;
-		std::vector<uint8_t> delayIndexBuffer;
-
-		InternalModel();
-
-		virtual ~InternalModel();
-
-		bool TryDelayLoad();
-	};
-
-
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
-
-
-	Model(void* data, int32_t size);
-	~Model();
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_GL_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_GL_RENDERER_H__

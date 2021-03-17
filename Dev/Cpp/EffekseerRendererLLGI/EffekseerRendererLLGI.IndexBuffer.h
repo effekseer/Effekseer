@@ -14,14 +14,17 @@ class IndexBuffer : public DeviceObject, public ::EffekseerRenderer::IndexBuffer
 private:
 	LLGI::IndexBuffer* indexBuffer = nullptr;
 
-	IndexBuffer(GraphicsDevice* graphicsDevice, LLGI::IndexBuffer* buffer, int maxCount, bool isDynamic, bool hasRefCount);
+	IndexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::IndexBuffer* buffer, int maxCount, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create(GraphicsDevice* graphicsDevice, int maxCount, bool isDynamic, bool hasRefCount);
+	static IndexBuffer* Create(Backend::GraphicsDevice* graphicsDevice, int maxCount, bool isDynamic, bool hasRefCount);
 
-	LLGI::IndexBuffer* GetIndexBuffer() { return indexBuffer; }
+	LLGI::IndexBuffer* GetIndexBuffer()
+	{
+		return indexBuffer;
+	}
 
 public:
 	void Lock();

@@ -1,4 +1,4 @@
-﻿
+
 #pragma once
 
 /**
@@ -15,14 +15,16 @@
 
 #include "../IPC/IPC.h"
 #include "GUI/efk.ImageResource.h"
+#include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
-enum class DistortionType
+namespace Effekseer
 {
-	Current,
-	Effekseer120,
-	Disabled,
-};
+namespace Tool
+{
+class Recorder;
+}
+} // namespace Effekseer
 
 enum class RenderMode
 {
@@ -60,67 +62,11 @@ public:
 	float CullingY;
 	float CullingZ;
 
-	DistortionType Distortion;
+	Effekseer::Tool::DistortionType Distortion;
 	RenderMode RenderingMode;
 	ViewMode ViewerMode;
 
 	ViewerParamater();
-};
-
-class ViewerEffectBehavior
-{
-public:
-	int32_t CountX;
-	int32_t CountY;
-	int32_t CountZ;
-
-	int32_t TimeSpan = 0;
-
-	uint8_t AllColorR = 255;
-	uint8_t AllColorG = 255;
-	uint8_t AllColorB = 255;
-	uint8_t AllColorA = 255;
-
-	float Distance;
-
-	int32_t RemovedTime;
-
-	float PositionX;
-	float PositionY;
-	float PositionZ;
-
-	float RotationX;
-	float RotationY;
-	float RotationZ;
-
-	float ScaleX;
-	float ScaleY;
-	float ScaleZ;
-
-	float PositionVelocityX;
-	float PositionVelocityY;
-	float PositionVelocityZ;
-
-	float RotationVelocityX;
-	float RotationVelocityY;
-	float RotationVelocityZ;
-
-	float ScaleVelocityX;
-	float ScaleVelocityY;
-	float ScaleVelocityZ;
-
-	float TargetPositionX;
-	float TargetPositionY;
-	float TargetPositionZ;
-
-	float DynamicInput1 = 0.0f;
-	float DynamicInput2 = 0.0f;
-	float DynamicInput3 = 0.0f;
-	float DynamicInput4 = 0.0f;
-
-	float PlaybackSpeed = 1.0f;
-
-	ViewerEffectBehavior();
 };
 
 enum class RecordingModeType
@@ -145,10 +91,22 @@ class RecordingParameter
 	std::u16string ext;
 
 public:
-	const char16_t* GetPath() const { return path.c_str(); }
-	const char16_t* GetExt() const { return ext.c_str(); }
-	void SetPath(const char16_t* value) { path = value; }
-	void SetExt(const char16_t* value) { ext = value; }
+	const char16_t* GetPath() const
+	{
+		return path.c_str();
+	}
+	const char16_t* GetExt() const
+	{
+		return ext.c_str();
+	}
+	void SetPath(const char16_t* value)
+	{
+		path = value;
+	}
+	void SetExt(const char16_t* value)
+	{
+		ext = value;
+	}
 
 	RecordingModeType RecordingMode;
 	int32_t Count = 0;
@@ -156,6 +114,7 @@ public:
 	int32_t OffsetFrame;
 	int32_t Freq;
 	TransparenceType Transparence;
+	int32_t Scale = 1;
 };
 
 class Native
@@ -164,35 +123,37 @@ private:
 	class TextureLoader : public ::Effekseer::TextureLoader
 	{
 	private:
-		EffekseerRenderer::Renderer* m_renderer;
-		Effekseer::TextureLoader* m_originalTextureLoader;
+		Effekseer::TextureLoaderRef m_originalTextureLoader;
 
 	public:
-		TextureLoader(EffekseerRenderer::Renderer* renderer, Effekseer::ColorSpaceType colorSpaceType);
+		TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType);
 		virtual ~TextureLoader();
 
 	public:
-		Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
+		Effekseer::TextureRef Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
 
-		void Unload(Effekseer::TextureData* data) override;
+		void Unload(Effekseer::TextureRef data) override;
 
-		Effekseer::TextureLoader* GetOriginalTextureLoader() const { return m_originalTextureLoader; }
+		Effekseer::TextureLoaderRef GetOriginalTextureLoader() const
+		{
+			return m_originalTextureLoader;
+		}
 		std::u16string RootPath;
 	};
 
 	class SoundLoader : public ::Effekseer::SoundLoader
 	{
 	private:
-		::Effekseer::SoundLoader* m_loader;
+		::Effekseer::SoundLoaderRef m_loader;
 
 	public:
-		SoundLoader(Effekseer::SoundLoader* loader);
+		SoundLoader(Effekseer::SoundLoaderRef loader);
 		virtual ~SoundLoader();
 
 	public:
-		void* Load(const EFK_CHAR* path);
+		::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
-		void Unload(void* data);
+		void Unload(::Effekseer::SoundDataRef soundData) override;
 
 		std::u16string RootPath;
 	};
@@ -200,16 +161,16 @@ private:
 	class ModelLoader : public ::Effekseer::ModelLoader
 	{
 	private:
-		EffekseerRenderer::Renderer* m_renderer;
+		efk::Graphics* graphics_ = nullptr;
 
 	public:
-		ModelLoader(EffekseerRenderer::Renderer* renderer);
+		ModelLoader(efk::Graphics* graphics);
 		virtual ~ModelLoader();
 
 	public:
-		void* Load(const EFK_CHAR* path);
+		Effekseer::ModelRef Load(const char16_t* path);
 
-		void Unload(void* data);
+		void Unload(Effekseer::ModelRef data);
 
 		std::u16string RootPath;
 	};
@@ -217,31 +178,34 @@ private:
 	class MaterialLoader : public ::Effekseer::MaterialLoader
 	{
 	private:
-		EffekseerRenderer::Renderer* renderer_ = nullptr;
-		Effekseer::MaterialLoader* loader_ = nullptr;
+		Effekseer::MaterialLoaderRef loader_ = nullptr;
 		std::unordered_map<std::u16string, std::shared_ptr<Effekseer::StaticFile>> materialFiles_;
 
 	public:
-		MaterialLoader(EffekseerRenderer::Renderer* renderer);
+		MaterialLoader(const EffekseerRenderer::RendererRef& renderer);
 		virtual ~MaterialLoader();
 
 	public:
-		Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
+		Effekseer::MaterialRef Load(const char16_t* path) override;
 		std::u16string RootPath;
 
-		::Effekseer::MaterialLoader* GetOriginalLoader() { return loader_; }
+		::Effekseer::MaterialLoaderRef GetOriginalLoader()
+		{
+			return loader_;
+		}
 
 		void ReleaseAll();
 	};
 
-	ViewerEffectBehavior m_effectBehavior;
-	TextureLoader* m_textureLoader;
+	Effekseer::Tool::ViewerEffectBehavior behavior_;
 
 	int32_t m_time;
 
 	int m_step;
 
 	bool m_isSRGBMode = false;
+
+	::Effekseer::EffectRef effect_ = nullptr;
 
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
@@ -252,7 +216,27 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
-	::Effekseer::Effect* GetEffect();
+	std::unique_ptr<Effekseer::Tool::Recorder> recorder;
+
+	efk::Graphics* graphics_ = nullptr;
+
+	Effekseer::RefPtr<Effekseer::Setting> setting_;
+
+	Effekseer::RefPtr<TextureLoader> textureLoader_;
+
+	Effekseer::RefPtr<MaterialLoader> materialLoader_;
+
+	Effekseer::RefPtr<ModelLoader> modelLoader_;
+
+	Effekseer::RefPtr<SoundLoader> soundLoader_;
+
+	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
+
+	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
+
+	EffekseerTool::ViewPointController viewPointCtrl_;
+
+	::Effekseer::EffectRef GetEffect();
 
 public:
 	Native();
@@ -295,21 +279,35 @@ public:
 
 	void* RenderView(int32_t width, int32_t height);
 
-	bool Record(RecordingParameter& recordingParameter);
+	bool BeginRecord(const RecordingParameter& recordingParameter);
+
+	bool StepRecord(int frames);
+
+	bool EndRecord();
+
+	bool IsRecording() const;
+
+	float GetRecordingProgress() const;
+
+	bool IsRecordCompleted() const;
+
+	bool Record(const RecordingParameter& recordingParameter);
 
 	ViewerParamater GetViewerParamater();
 
 	void SetViewerParamater(ViewerParamater& paramater);
 
-	ViewerEffectBehavior GetEffectBehavior();
+	Effekseer::Tool::ViewerEffectBehavior GetEffectBehavior();
 
-	void SetViewerEffectBehavior(ViewerEffectBehavior& behavior);
+	void SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior& behavior);
 
 	bool SetSoundMute(bool mute);
 
 	bool SetSoundVolume(float volume);
 
 	bool InvalidateTextureCache();
+
+	void SetGroundParameters(bool shown, float height, int32_t extent);
 
 	void SetIsGridShown(bool value, bool xy, bool xz, bool yz);
 
@@ -368,6 +366,6 @@ public:
 	static void SetFileLogger(const char16_t* path);
 
 #if !SWIG
-	EffekseerRenderer::Renderer* GetRenderer();
+	const EffekseerRenderer::RendererRef& GetRenderer();
 #endif
 };

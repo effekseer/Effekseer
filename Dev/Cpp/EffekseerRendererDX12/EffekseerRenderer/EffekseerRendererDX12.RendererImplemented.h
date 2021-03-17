@@ -23,9 +23,7 @@ private:
 public:
 	void NewFrame() override;
 
-	Effekseer::TextureData* CreateTextureData(ID3D12Resource* texture) override;
-
-	void DeleteTextureData(Effekseer::TextureData* textureData) override;
+	Effekseer::Backend::TextureRef CreateTexture(ID3D12Resource* texture) override;
 
 	RendererImplemented(int32_t squareMaxCount);
 	virtual ~RendererImplemented();
@@ -72,21 +70,21 @@ public:
 
 	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position) override;
 
-	::Effekseer::SpriteRenderer* CreateSpriteRenderer() override;
+	::Effekseer::SpriteRendererRef CreateSpriteRenderer() override;
 
-	::Effekseer::RibbonRenderer* CreateRibbonRenderer() override;
+	::Effekseer::RibbonRendererRef CreateRibbonRenderer() override;
 
-	::Effekseer::RingRenderer* CreateRingRenderer() override;
+	::Effekseer::RingRendererRef CreateRingRenderer() override;
 
-	::Effekseer::ModelRenderer* CreateModelRenderer() override;
+	::Effekseer::ModelRendererRef CreateModelRenderer() override;
 
-	::Effekseer::TrackRenderer* CreateTrackRenderer() override;
+	::Effekseer::TrackRendererRef CreateTrackRenderer() override;
 
-	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
-	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
+	::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
-	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
+	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	void ResetRenderState() override;
 

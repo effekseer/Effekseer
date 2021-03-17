@@ -7,8 +7,8 @@ namespace Effekseer.Data.Value
 {
 	public class PathForModel : Path
 	{
-		internal PathForModel(string filter, bool isRelativeSaved, string abspath = "")
-			: base(filter, isRelativeSaved, abspath)
+		internal PathForModel(Path basepath, string filter, bool isRelativeSaved, string abspath = "")
+			: base(basepath, filter, isRelativeSaved, abspath)
 		{
 		}
 	}

@@ -1,0 +1,79 @@
+﻿ProceduralModel_Name,プロシージャルモデル
+
+ProceduralModelType_Mesh_Name,メッシュ
+ProceduralModelType_Ribbon_Name,リボン
+
+ProceduralModelPrimitiveType_Sphere_Name,球
+ProceduralModelPrimitiveType_Cone_Name,コーン
+ProceduralModelPrimitiveType_Cylinder_Name,円柱
+ProceduralModelPrimitiveType_Spline_Name,スプライン
+
+ProceduralModelCrossSectionType_Plane_Name,平面
+ProceduralModelCrossSectionType_Cross_Name,十字
+ProceduralModelCrossSectionType_Point_Name,点
+
+PM_Type_Name,種類
+PM_AngleBeginEnd_Name,範囲(角度)
+PM_Divisions_Name,分割数
+PM_Rotate_Name,回転角度
+PM_Vertices_Name,頂点数
+PM_Count_Name,リボンの本数
+PM_RibbonScales_Name,太さ
+PM_RibbonAngles_Name,角度
+PM_RibbonNoises_Name,ノイズ(長さ)
+
+PM_Shape_Name,形状
+
+PM_PrimitiveType_Name,形状の種類
+PM_Radius_Name,半径1
+PM_Radius2_Name,半径2
+PM_Depth_Name,深さ
+PM_DepthMin_Name,深さ(下)
+PM_DepthMax_Name,深さ(上)
+
+PM_Point1_Name,点1
+PM_Point2_Name,点2
+PM_Point3_Name,点3
+PM_Point4_Name,点4
+
+PM_AxisType_Name,軸
+
+PM_ShapeNoise_Name,形状ノイズ
+
+PM_TiltNoiseFreq_Name,チルトノイズ 頻度
+PM_TiltNoiseOffset_Name,チルトノイズ オフセット
+PM_TiltNoisePower_Name,チルトノイズ 力
+
+PM_WaveNoiseFreq_Name,波ノイズ 頻度
+PM_WaveNoiseOffset_Name,波ノイズ オフセット
+PM_WaveNoisePower_Name,波ノイズ 力
+
+PM_CurlNoiseFreq_Name,カールノイズ 頻度
+PM_CurlNoiseOffset_Name,カールノイズ オフセット
+PM_CurlNoisePower_Name,カールノイズ 力
+
+PM_VertexColor_Name,頂点カラー
+
+PM_ColorUpperLeft_Name,色-左上
+PM_ColorUpperCenter_Name,色-中央上
+PM_ColorUpperRight_Name,色-右上
+PM_ColorMiddleLeft_Name,色-左中央
+PM_ColorMiddleCenter_Name,色-中央-中央
+PM_ColorMiddleRight_Name,色-右中央
+PM_ColorLowerLeft_Name,色-左下
+PM_ColorLowerCenter_Name,色-中央下
+PM_ColorLowerRight_Name,色-右上
+
+PM_ColorCenterPosition_Name,中央領域位置
+PM_ColorCenterArea_Name,中央領域割合
+
+PM_VertexColorNoise_Name,頂点カラーノイズ
+
+PM_VertexColorNoiseFreq_Name,頂点カラーノイズ 頻度
+PM_VertexColorNoiseOffset_Name,頂点カラーノイズ オフセット
+PM_VertexColorNoisePower_Name,頂点カラーノイズ 力
+
+PM_UV_Name,UV
+PM_UVPosition_Name,UV位置
+PM_UVSize_Name,UV大きさ
+

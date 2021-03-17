@@ -25,13 +25,23 @@ public:
 
 	void UpdateInstances();
 
+	void GenerateChildrenInRequired();
+
 	void UpdateInstancesByInstanceGlobal(const InstanceGlobal* global);
 
-	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
+	void GenerateChildrenInRequiredByInstanceGlobal(const InstanceGlobal* global);
 
-	int32_t GetAliveCount() const { return aliveCount_; }
+	Instance* CreateInstance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
-	bool IsInstanceCreatable() const { return aliveCount_ < InstancesOfChunk; }
+	int32_t GetAliveCount() const
+	{
+		return aliveCount_;
+	}
+
+	bool IsInstanceCreatable() const
+	{
+		return aliveCount_ < InstancesOfChunk;
+	}
 
 private:
 	std::array<uint8_t[sizeof(Instance)], InstancesOfChunk> instances_;

@@ -30,11 +30,11 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal SoundValues()
+		internal SoundValues(Value.Path basepath)
 		{
             Type = new Value.Enum<ParamaterType>(ParamaterType.None);
             None = new NoneParamater();
-            Sound = new SoundParamater();
+            Sound = new SoundParamater(basepath);
 		}
 
         public class NoneParamater
@@ -117,9 +117,9 @@ namespace Effekseer.Data
                 private set;
             }
 
-            internal SoundParamater()
+            internal SoundParamater(Value.Path basepath)
 			{
-				Wave = new Value.PathForSound(Resources.GetString("SoundFilter"), true, "");
+				Wave = new Value.PathForSound(basepath, Resources.GetString("SoundFilter"), true, "");
                 Volume = new Value.FloatWithRandom(1.0f, 1.0f, 0.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 Pitch = new Value.FloatWithRandom(0.0f, 2.0f, -2.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 PanType = new Value.Enum<ParamaterPanType>(ParamaterPanType.Sound2D);

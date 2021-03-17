@@ -9,7 +9,8 @@
     <OutputPath>../../release/</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <StartupObject>Effekseer.Program</StartupObject>
-    <AssemblyName>netcoreapp</AssemblyName>
+    <AssemblyName>Effekseer</AssemblyName>
+    <DefineConstants>SCRIPT_ENABLED;DOTNET_STARNDARD;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EffekseerCore\EffekseerCore.Std.csproj" />
+    <ProjectReference Include="..\EffekseerCoreGUI\EffekseerCoreGUI.Std.csproj" />
   </ItemGroup>
 
 </Project>

@@ -42,11 +42,12 @@ if(OpenAL_FOUND)
             Example_OpenAL
             PRIVATE
             ${CMAKE_THREAD_LIBS_INIT}
-            ${OPENGL_gl_LIBRARY}
+            ${OPENGL_LIBRARIES}
             debug "${LIBPNG_LIB_DEBUG}"
             optimized "${LIBPNG_LIB_RELEASE}"
-            z
-        )
+            debug "${ZLIB_LIB_DEBUG}"
+            optimized "${ZLIB_LIB_RELEASE}"
+	)
     endif()
    
     if(APPLE)

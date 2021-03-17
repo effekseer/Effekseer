@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace Effekseer.GUI.Dock
 {
-	class RotationValues : DockPanel
+	internal class RotationValues : DockPanel
 	{
 		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
@@ -15,7 +11,7 @@ namespace Effekseer.GUI.Dock
 
 		public RotationValues()
 		{
-			Label = Resources.GetString("Rotation") + "###Rotation";
+			Label = Icons.PanelRotation + Resources.GetString("Rotation") + "###Rotation";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RotationValues));
@@ -28,7 +24,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelRotation");
 			TabToolTip = Resources.GetString("Rotation");
 		}
 
@@ -57,7 +52,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList.Update();
 		}
 
-		object GetTargetObject()
+		private object GetTargetObject()
 		{
 			if (Core.SelectedNode != null)
 			{
@@ -68,17 +63,18 @@ namespace Effekseer.GUI.Dock
 			}
 			return null;
 		}
-		void Read()
+
+		private void Read()
 		{
 			paramerterList.SetValue(GetTargetObject());
 		}
 
-		void OnAfterLoad(object sender, EventArgs e)
+		private void OnAfterLoad(object sender, EventArgs e)
 		{
 			Read();
 		}
 
-		void OnAfterSelectNode(object sender, EventArgs e)
+		private void OnAfterSelectNode(object sender, EventArgs e)
 		{
 			Read();
 		}

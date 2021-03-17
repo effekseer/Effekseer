@@ -6,9 +6,9 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class Float : IResettableValue
+	public class Float : IResettableValue, IValueChangedFromDefault
 	{
-		float _value = 0;
+		float? _value = null;
 		float _max = float.MaxValue;
 		float _min = float.MinValue;
 		
@@ -68,11 +68,12 @@ namespace Effekseer.Data.Value
 
 		internal Float(float value = 0, float max = float.MaxValue, float min = float.MinValue, float step = 1.0f)
 		{
+			value = value.Clipping(_max, _min);
+
 			_max = max;
 			_min = min;
-			_value = value.Clipping(_max, _min);
+			DefaultValue = value;
 			Step = step;
-			DefaultValue = _value;
 
 			IsDynamicEquationEnabled = new Boolean();
 			DynamicEquation = new DynamicEquationReference();
@@ -93,17 +94,17 @@ namespace Effekseer.Data.Value
 
 		public float GetValue()
 		{
-			return _value;
+			return _value.HasValue ? _value.Value : DefaultValue;
 		}
 
 		public void SetValue(float value, bool isCombined = false)
 		{
 			value = value.Clipping(_max, _min);
 
-			if (value == _value) return;
+			if (value == Value) return;
 
-			float old_value = _value;
-			float new_value = value;
+			float? old_value = _value;
+			float? new_value = value;
 
 			var cmd = new Command.DelegateCommand(
 				() =>
@@ -140,7 +141,7 @@ namespace Effekseer.Data.Value
 
 		public static implicit operator float(Float value)
 		{
-			return value._value;
+			return value.GetValue();
 		}
 
 		public static explicit operator byte[](Float value)

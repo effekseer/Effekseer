@@ -46,13 +46,31 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal LocationValues()
+		[Selected(ID = 0, Value = 4)]
+		[IO(Export = true)]
+		public NurbsCurveParameter NurbsCurve
+		{
+			get;
+			private set;
+		}
+
+		[Selected(ID = 0, Value = 5)]
+		[IO(Export = true)]
+		public ViewOffsetParameter ViewOffset
+		{
+			get;
+			private set;
+		}
+
+		internal LocationValues(Value.Path basepath)
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Fixed);
 			Fixed = new FixedParamater();
 			PVA = new PVAParamater();
 			Easing = new Vector3DEasingParamater();
 			LocationFCurve = new Vector3DFCurveParameter();
+			NurbsCurve = new NurbsCurveParameter(basepath);
+			ViewOffset = new ViewOffsetParameter();
 
 			// dynamic parameter
 			Fixed.Location.CanSelectDynamicEquation = true;
@@ -65,10 +83,7 @@ namespace Effekseer.Data
 
 		public class FixedParamater
 		{
-			[Name(language = Language.Japanese, value = "位置")]
-			[Description(language = Language.Japanese, value = "インスタンスの位置")]
-			[Name(language = Language.English, value = "Location")]
-			[Description(language = Language.English, value = "Position of the instance")]
+			[Key(key = "Position_FixedParamater_Location")]
 			public Value.Vector3D Location
 			{
 				get;
@@ -83,30 +98,21 @@ namespace Effekseer.Data
 
 		public class PVAParamater
 		{
-			[Name(language = Language.Japanese, value = "位置")]
-			[Description(language = Language.Japanese, value = "インスタンスの初期位置")]
-			[Name(language = Language.English, value = "Pos")]
-			[Description(language = Language.English, value = "Position of the instance")]
+			[Key(key = "Position_PVAParamater_Location")]
 			public Value.Vector3DWithRandom Location
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "速度")]
-			[Description(language = Language.Japanese, value = "インスタンスの初期速度")]
-			[Name(language = Language.English, value = "Speed")]
-			[Description(language = Language.English, value = "Initial velocity of the instance")]
+			[Key(key = "Position_PVAParamater_Velocity")]
 			public Value.Vector3DWithRandom Velocity
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "加速度")]
-			[Description(language = Language.Japanese, value = "インスタンスの初期加速度")]
-			[Name(language = Language.English, value = "Accel")]
-			[Description(language = Language.English, value = "Acceleration of the instance")]
+			[Key(key = "Position_PVAParamater_Acceleration")]
 			public Value.Vector3DWithRandom Acceleration
 			{
 				get;
@@ -121,20 +127,88 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class NurbsCurveParameter
+		{
+			public enum NurbsLoopType : int
+			{
+				[Key(key = "Position_NurbsCurveParameter_NurbsLoopType_Repeat")]
+				Repeat = 0,
+
+				[Key(key = "Position_NurbsCurveParameter_NurbsLoopType_Stop")]
+				Stop = 1,
+			}
+
+			[IO(Export = true)]
+			[Key(key = "Position_NurbsCurveParameter_FileParh")]
+			public Value.PathForCurve FilePath
+			{
+				get;
+				private set;
+			}
+
+			[IO(Export = true)]
+			[Key(key = "Position_NurbsCurveParameter_Scale")]
+			public Value.Float Scale
+			{
+				get;
+				private set;
+			}
+
+			[IO(Export = true)]
+			[Key(key = "Position_NurbsCurveParameter_MoveSpeed")]
+			public Value.Float MoveSpeed
+			{
+				get;
+				private set;
+			}
+
+			[IO(Export = true)]
+			[Key(key = "Position_NurbsCurveParameter_LoopType")]
+			public Value.Enum<NurbsLoopType> LoopType
+			{
+				get;
+				private set;
+			}
+
+			public NurbsCurveParameter(Value.Path basepath)
+			{
+				FilePath = new Value.PathForCurve(basepath, Resources.GetString("CurveFilter"), true, "");
+				Scale = new Value.Float(1.0f);
+				MoveSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f);
+				LoopType = new Value.Enum<NurbsLoopType>(NurbsLoopType.Repeat);
+			}
+		}
+
+		public class ViewOffsetParameter
+		{
+			[IO(Export = true)]
+			[Key(key = "Position_ViewOffsetParameter_Distance")]
+			public Value.FloatWithRandom Distance
+			{
+				get;
+				private set;
+			}
+
+			public ViewOffsetParameter()
+			{
+				Distance = new Value.FloatWithRandom(3.0f, float.MaxValue, 0.0f, DrawnAs.CenterAndAmplitude, 0.5f);
+			}
+		}
+
 		public enum ParamaterType : int
 		{
-			[Name(value = "位置", language = Language.Japanese)]
-			[Name(value = "Set Position", language = Language.English)]
+			[Key(key = "Position_ParamaterType_Fixed")]
 			Fixed = 0,
-			[Name(value = "位置・速度・加速度", language = Language.Japanese)]
-			[Name(value = "PVA", language = Language.English)]
+			[Key(key = "Position_ParamaterType_PVA")]
 			PVA = 1,
-			[Name(value = "イージング", language = Language.Japanese)]
-			[Name(value = "Easing", language = Language.English)]
+			[Key(key = "Position_ParamaterType_Easing")]
 			Easing = 2,
-			[Name(value = "位置(Fカーブ)", language = Language.Japanese)]
-			[Name(value = "F-Curve", language = Language.English)]
+			[Key(key = "Position_ParamaterType_LocationFCurve")]
 			LocationFCurve = 3,
+			[Key(key = "Position_ParameterType_NurbsCurve")]
+			NurbsCurve = 4,
+			[Key(key = "Position_ParameterType_ViewOffset")]
+			ViewOffset = 5,
 		}
 	}
 }

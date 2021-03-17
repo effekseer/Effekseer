@@ -1,8 +1,9 @@
 ﻿
-#ifndef	__EFFEKSEER_SERVER_IMPLEMENTED_H__
-#define	__EFFEKSEER_SERVER_IMPLEMENTED_H__
+#ifndef __EFFEKSEER_SERVER_IMPLEMENTED_H__
+#define __EFFEKSEER_SERVER_IMPLEMENTED_H__
 
-#if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
+#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
+#if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------
 // Include
@@ -14,14 +15,15 @@
 
 #include <string>
 
-#include <vector>
-#include <set>
 #include <map>
+#include <set>
+#include <vector>
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer {
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -31,77 +33,79 @@ private:
 	class InternalClient
 	{
 	public:
-		std::thread		m_threadRecv;
-		EfkSocket	m_socket;
-		ServerImplemented*		m_server;
-		bool		m_active;
+		std::thread m_threadRecv;
+		EfkSocket m_socket;
+		ServerImplemented* m_server;
+		bool m_active;
 
-		std::vector<uint8_t>	m_recvBuffer;
+		std::vector<uint8_t> m_recvBuffer;
 
-		std::vector<std::vector<uint8_t> >	m_recvBuffers;
-		std::mutex						m_ctrlRecvBuffers;
+		std::vector<std::vector<uint8_t>> m_recvBuffers;
+		std::mutex m_ctrlRecvBuffers;
 
-		static void RecvAsync( void* data );
+		static void RecvAsync(void* data);
 
 	public:
-		InternalClient( EfkSocket socket_, ServerImplemented* server );
+		InternalClient(EfkSocket socket_, ServerImplemented* server);
 		~InternalClient();
 		void ShutDown();
 	};
 
 private:
-	EfkSocket	m_socket;
-	uint16_t	m_port;
 
-	std::thread		m_thread;
-	std::mutex		m_ctrlClients;
+	struct EffectParameter
+	{
+		EffectRef EffectPtr;
+		bool IsRegistering;
+	};
 
-	bool		m_running;
+	EfkSocket m_socket;
+	uint16_t m_port;
 
-	std::set<InternalClient*>	m_clients;
-	std::set<InternalClient*>	m_removedClients;
+	std::thread m_thread;
+	std::mutex m_ctrlClients;
 
-	std::map<std::u16string,Effect*>	m_effects;
+	bool m_running;
 
-	std::map<std::u16string,std::vector<uint8_t> >	m_data;
+	std::set<InternalClient*> m_clients;
+	std::set<InternalClient*> m_removedClients;
 
-	std::vector<EFK_CHAR>	m_materialPath;
+	std::map<std::u16string, EffectParameter> m_effects;
 
-	void AddClient( InternalClient* client );
-	void RemoveClient( InternalClient* client );
-	static void AcceptAsync( void* data );
+	std::map<std::u16string, std::vector<uint8_t>> m_data;
+
+	std::vector<char16_t> m_materialPath;
+
+	void AddClient(InternalClient* client);
+	void RemoveClient(InternalClient* client);
+	static void AcceptAsync(void* data);
 
 public:
-
 	ServerImplemented();
 	virtual ~ServerImplemented();
 
-	bool Start( uint16_t port ) override;
+	bool Start(uint16_t port) override;
 
 	void Stop() override;
 
-	void Register(const EFK_CHAR* key, Effect* effect) override;
+	void Register(const char16_t* key, const EffectRef& effect) override;
 
-	void Unregister(Effect* effect) override;
+	void Unregister(const EffectRef& effect) override;
 
-	void Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
+	void Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
-	void SetMaterialPath( const EFK_CHAR* materialPath ) override;
-
-	void Regist(const EFK_CHAR* key, Effect* effect) override;
-
-	void Unregist(Effect* effect) override;
-
+	void SetMaterialPath(const char16_t* materialPath) override;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif // #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif
 
-#endif	// __EFFEKSEER_SERVER_IMPLEMENTED_H__
+#endif // __EFFEKSEER_SERVER_IMPLEMENTED_H__

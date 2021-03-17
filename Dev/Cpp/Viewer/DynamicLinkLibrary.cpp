@@ -1,20 +1,27 @@
 #include "DynamicLinkLibrary.h"
 #include <assert.h>
 
-DynamicLinkLibrary::DynamicLinkLibrary() : reference_(1) { dll_ = nullptr; }
+DynamicLinkLibrary::DynamicLinkLibrary()
+	: reference_(1)
+{
+	dll_ = nullptr;
+}
 
-DynamicLinkLibrary ::~DynamicLinkLibrary() { Reset(); }
+DynamicLinkLibrary ::~DynamicLinkLibrary()
+{
+	Reset();
+}
 
 void DynamicLinkLibrary::Reset()
 {
-	if (dll_ != NULL)
+	if (dll_ != nullptr)
 	{
 #if _WIN32
 		::FreeLibrary(dll_);
 #else
 		dlclose(dll_);
 #endif
-		dll_ = NULL;
+		dll_ = nullptr;
 	}
 }
 
@@ -39,7 +46,10 @@ int DynamicLinkLibrary::AddRef()
 	return reference_;
 }
 
-int DynamicLinkLibrary::GetRef() { return reference_; }
+int DynamicLinkLibrary::GetRef()
+{
+	return reference_;
+}
 
 int DynamicLinkLibrary::Release()
 {

@@ -1,4 +1,4 @@
-﻿
+
 
 #include "EffekseerRendererLLGI.Renderer.h"
 #include "EffekseerRendererLLGI.RenderState.h"
@@ -8,55 +8,36 @@
 #include "EffekseerRendererLLGI.IndexBuffer.h"
 #include "EffekseerRendererLLGI.Shader.h"
 #include "EffekseerRendererLLGI.VertexBuffer.h"
-//#include "EffekseerRendererLLGI.SpriteRenderer.h"
-//#include "EffekseerRendererLLGI.RibbonRenderer.h"
-//#include "EffekseerRendererLLGI.RingRenderer.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
-//#include "EffekseerRendererLLGI.TrackRenderer.h"
 #include "EffekseerRendererLLGI.MaterialLoader.h"
-#include "EffekseerRendererLLGI.ModelLoader.h"
-#include "EffekseerRendererLLGI.TextureLoader.h"
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
+#include "../EffekseerRendererCommon/ModelLoader.h"
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+#include "../EffekseerRendererCommon/TextureLoader.h"
+#endif
+
+#include <iostream>
 
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(graphicsDevice, fileInterface);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice.Get(), fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-	return new ModelLoader(graphicsDevice, fileInterface);
-}
-
-void GraphicsDevice::Register(DeviceObject* device) { deviceObjects_.insert(device); }
-
-void GraphicsDevice::Unregister(DeviceObject* device) { deviceObjects_.erase(device); }
-
-void GraphicsDevice::OnLostDevice()
-{
-	for (auto& device : deviceObjects_)
-	{
-		device->OnLostDevice();
-	}
-}
-
-void GraphicsDevice::OnResetDevice()
-{
-	for (auto& device : deviceObjects_)
-	{
-		device->OnResetDevice();
-	}
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice, fileInterface);
 }
 
 bool PiplineStateKey::operator<(const PiplineStateKey& v) const
@@ -134,7 +115,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 		piplineState->VertexLayoutNames[i] = currentShader->GetVertexLayouts()[i].Name;
 		piplineState->VertexLayoutSemantics[i] = currentShader->GetVertexLayouts()[i].Semantic;
 	}
-	piplineState->VertexLayoutCount = currentShader->GetVertexLayouts().size();
+	piplineState->VertexLayoutCount = (int32_t)currentShader->GetVertexLayouts().size();
 
 	piplineState->Topology = currentTopologyType_;
 
@@ -192,7 +173,10 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	piplineState->SetRenderPassPipelineState(renderPassPipelineState_);
 
-	piplineState->Compile();
+	if (!piplineState->Compile())
+	{
+		assert(0);
+	}
 
 	piplineStates_[key] = piplineState;
 
@@ -201,24 +185,45 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 void RendererImplemented::GenerateVertexBuffer()
 {
-    // assume max vertex size is smaller than float * 10
-    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, sizeof(float) * 10 * m_squareMaxCount * 4, true, false);
+	m_vertexBuffer =
+		VertexBuffer::Create(graphicsDevice_.Get(), EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
+}
+
+void RendererImplemented::GenerateIndexBuffer()
+{
+	m_indexBuffer = IndexBuffer::Create(graphicsDevice_.Get(), m_squareMaxCount * 6, false, false);
+	if (m_indexBuffer == nullptr)
+		return;
+
+	m_indexBuffer->Lock();
+
+	for (int i = 0; i < m_squareMaxCount; i++)
+	{
+		uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
+		buf[0] = 3 + 4 * i;
+		buf[1] = 1 + 4 * i;
+		buf[2] = 0 + 4 * i;
+		buf[3] = 3 + 4 * i;
+		buf[4] = 0 + 4 * i;
+		buf[5] = 2 + 4 * i;
+	}
+
+	m_indexBuffer->Unlock();
 }
 
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: graphicsDevice_(nullptr)
-	, m_vertexBuffer(NULL)
-	, m_indexBuffer(NULL)
+	, m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
-	, m_renderState(NULL)
+	, m_renderState(nullptr)
 
-	, m_shader(nullptr)
-	, m_shader_distortion(nullptr)
+	, shader_unlit_(nullptr)
+	, shader_distortion_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
-	m_background.UserPtr = nullptr;
 }
 
 RendererImplemented::~RendererImplemented()
@@ -239,15 +244,15 @@ RendererImplemented::~RendererImplemented()
 	GetImpl()->DeleteProxyTextures(this);
 
 	ES_SAFE_DELETE(m_distortingCallback);
-
-	auto p = (LLGI::Texture*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-
 	ES_SAFE_DELETE(m_standardRenderer);
 
-	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_lighting);
-	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(shader_unlit_);
+	ES_SAFE_DELETE(shader_lit_);
+	ES_SAFE_DELETE(shader_distortion_);
+
+	ES_SAFE_DELETE(shader_ad_unlit_);
+	ES_SAFE_DELETE(shader_ad_lit_);
+	ES_SAFE_DELETE(shader_ad_distortion_);
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
@@ -262,23 +267,25 @@ RendererImplemented::~RendererImplemented()
 	LLGI::SafeRelease(graphicsDevice_);
 }
 
-void RendererImplemented::OnLostDevice() {}
+void RendererImplemented::OnLostDevice()
+{
+}
 
-void RendererImplemented::OnResetDevice() {}
+void RendererImplemented::OnResetDevice()
+{
+}
 
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
 {
 
-	auto gd = new GraphicsDevice(graphics);
+	auto gd = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(graphics);
 
 	auto ret = Initialize(gd, renderPassPipelineState, isReversedDepth);
-
-	ES_SAFE_RELEASE(gd);
 
 	return ret;
 }
 
-bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
+bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									 LLGI::RenderPassPipelineState* renderPassPipelineState,
 									 bool isReversedDepth)
 {
@@ -286,42 +293,29 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	renderPassPipelineState_ = renderPassPipelineState;
 	isReversedDepth_ = isReversedDepth;
 
+	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) { std::cout << message << std::endl; });
+
 	LLGI::SafeAddRef(graphicsDevice_);
 	LLGI::SafeAddRef(renderPassPipelineState_);
 
 	// Generate vertex buffer
 	{
-        GenerateVertexBuffer();
-		if (m_vertexBuffer == NULL)
+		GenerateVertexBuffer();
+		if (m_vertexBuffer == nullptr)
 			return false;
 	}
 
 	// Generate index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 6, false, false);
-		if (m_indexBuffer == NULL)
+		GenerateIndexBuffer();
+		if (m_indexBuffer == nullptr)
 			return false;
-
-		m_indexBuffer->Lock();
-
-		for (int i = 0; i < m_squareMaxCount; i++)
-		{
-			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
-			buf[0] = 3 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 0 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-		}
-
-		m_indexBuffer->Unlock();
 	}
 
 	// Generate index buffer for rendering wireframes
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 8, false, false);
-		if (m_indexBufferForWireframe == NULL)
+		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_.Get(), m_squareMaxCount * 8, false, false);
+		if (m_indexBufferForWireframe == nullptr)
 			return false;
 
 		m_indexBufferForWireframe->Lock();
@@ -347,85 +341,132 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 	// shader
 	// pos(3) color(1) uv(2)
 	std::vector<VertexLayout> layouts;
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2});
 
-	std::vector<VertexLayout> layouts_distort;
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 1});
-	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
+	std::vector<VertexLayout> layouts_ad;
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 2});
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 3}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});		 // BlendUV
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 5}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 6});			 // FlipbookIndexAndNextRate
+	layouts_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 7});			 // AlphaThreshold
 
-	m_shader = Shader::Create(graphicsDevice_,
-							  fixedShader_.StandardTexture_VS.data(),
-							  fixedShader_.StandardTexture_VS.size(),
-							  fixedShader_.StandardTexture_PS.data(),
-							  fixedShader_.StandardTexture_PS.size(),
-							  "StandardRenderer",
-							  layouts,
-							  false);
-	if (m_shader == NULL)
+	std::vector<VertexLayout> layouts_normal;
+	layouts_normal.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_normal.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_normal.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 2});
+	layouts_normal.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 3});
+	layouts_normal.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
+	layouts_normal.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
+
+	std::vector<VertexLayout> layouts_normal_ad;
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 1});
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 2});
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 3});
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 6}); // AlphaTextureUV + UVDistortionTextureUV
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 7});		  // BlendUV
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 8}); // BlendAlphaUV + BlendUVDistortionUV
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // FlipbookIndexAndNextRate
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
+
+	shader_unlit_ = Shader::Create(graphicsDevice_.Get(),
+								   fixedShader_.SpriteUnlit_VS.data(),
+								   (int32_t)fixedShader_.SpriteUnlit_VS.size(),
+								   fixedShader_.ModelUnlit_PS.data(),
+								   (int32_t)fixedShader_.ModelUnlit_PS.size(),
+								   "StandardRenderer",
+								   layouts,
+								   false);
+	if (shader_unlit_ == nullptr)
 		return false;
 
-	m_shader_distortion = Shader::Create(graphicsDevice_,
-										 fixedShader_.StandardDistortedTexture_VS.data(),
-										 fixedShader_.StandardDistortedTexture_VS.size(),
-										 fixedShader_.StandardDistortedTexture_PS.data(),
-										 fixedShader_.StandardDistortedTexture_PS.size(),
-										 "StandardRenderer Distortion",
-										 layouts_distort,
-										 false);
-	if (m_shader_distortion == NULL)
+	shader_distortion_ = Shader::Create(graphicsDevice_.Get(),
+										fixedShader_.SpriteDistortion_VS.data(),
+										(int32_t)fixedShader_.SpriteDistortion_VS.size(),
+										fixedShader_.ModelDistortion_PS.data(),
+										(int32_t)fixedShader_.ModelDistortion_PS.size(),
+										"StandardRenderer Distortion",
+										layouts_normal,
+										false);
+	if (shader_distortion_ == nullptr)
 		return false;
 
-	if (fixedShader_.StandardLightingTexture_VS.size() > 0 && fixedShader_.StandardLightingTexture_PS.size() > 0)
-	{
-		std::vector<VertexLayout> layouts_lighting;
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 1});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 2});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
-		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 1});
+	shader_ad_unlit_ = Shader::Create(graphicsDevice_.Get(),
+									  fixedShader_.AdvancedSpriteUnlit_VS.data(),
+									  (int32_t)fixedShader_.AdvancedSpriteUnlit_VS.size(),
+									  fixedShader_.AdvancedModelUnlit_PS.data(),
+									  (int32_t)fixedShader_.AdvancedModelUnlit_PS.size(),
+									  "StandardRenderer",
+									  layouts_ad,
+									  false);
+	if (shader_ad_unlit_ == nullptr)
+		return false;
 
-		m_shader_lighting = Shader::Create(graphicsDevice_,
-										   fixedShader_.StandardLightingTexture_VS.data(),
-										   fixedShader_.StandardLightingTexture_VS.size(),
-										   fixedShader_.StandardLightingTexture_PS.data(),
-										   fixedShader_.StandardLightingTexture_PS.size(),
-										   "StandardRenderer Lighting",
-										   layouts_lighting,
+	shader_ad_distortion_ = Shader::Create(graphicsDevice_.Get(),
+										   fixedShader_.AdvancedSpriteDistortion_VS.data(),
+										   (int32_t)fixedShader_.AdvancedSpriteDistortion_VS.size(),
+										   fixedShader_.AdvancedModelDistortion_PS.data(),
+										   (int32_t)fixedShader_.AdvancedModelDistortion_PS.size(),
+										   "StandardRenderer Distortion",
+										   layouts_normal_ad,
 										   false);
+	if (shader_ad_distortion_ == nullptr)
+		return false;
 
-		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-		m_shader_lighting->SetVertexRegisterCount(8 + 1);
+	shader_lit_ = Shader::Create(graphicsDevice_.Get(),
+								 fixedShader_.SpriteLit_VS.data(),
+								 (int32_t)fixedShader_.SpriteLit_VS.size(),
+								 fixedShader_.ModelLit_PS.data(),
+								 (int32_t)fixedShader_.ModelLit_PS.size(),
+								 "StandardRenderer Lighting",
+								 layouts_normal,
+								 false);
 
-		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
-		m_shader_lighting->SetPixelRegisterCount(12);
-	}
+	shader_ad_lit_ = Shader::Create(graphicsDevice_.Get(),
+									fixedShader_.AdvancedSpriteLit_VS.data(),
+									(int32_t)fixedShader_.AdvancedSpriteLit_VS.size(),
+									fixedShader_.AdvancedModelLit_PS.data(),
+									(int32_t)fixedShader_.AdvancedModelLit_PS.size(),
+									"StandardRenderer Lighting",
+									layouts_normal_ad,
+									false);
 
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader->SetVertexRegisterCount(8 + 1);
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_distortion->SetVertexRegisterCount(8 + 1);
+	shader_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
 
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1 + 1);
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	m_standardRenderer =
-		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_distortion);
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
+
+	shader_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
+	GetImpl()->isSoftParticleEnabled = true;
 
 	return true;
 }
 
-void RendererImplemented::Destroy() { Release(); }
-
-void RendererImplemented::SetRestorationOfStatesFlag(bool flag) {}
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+}
 
 void RendererImplemented::SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState)
 {
@@ -436,7 +477,7 @@ void RendererImplemented::SetRenderPassPipelineState(LLGI::RenderPassPipelineSta
 
 bool RendererImplemented::BeginRendering()
 {
-	assert(graphicsDevice_ != NULL);
+	assert(graphicsDevice_ != nullptr);
 
 	impl->CalculateCameraProjectionMatrix();
 
@@ -458,7 +499,7 @@ bool RendererImplemented::BeginRendering()
 
 bool RendererImplemented::EndRendering()
 {
-	assert(graphicsDevice_ != NULL);
+	assert(graphicsDevice_ != nullptr);
 
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -481,7 +522,10 @@ void RendererImplemented::SetCommandList(EffekseerRenderer::CommandList* command
 	commandList_ = static_cast<CommandList*>(commandList);
 }
 
-VertexBuffer* RendererImplemented::GetVertexBuffer() { return m_vertexBuffer; }
+VertexBuffer* RendererImplemented::GetVertexBuffer()
+{
+	return m_vertexBuffer;
+}
 
 IndexBuffer* RendererImplemented::GetIndexBuffer()
 {
@@ -495,91 +539,79 @@ IndexBuffer* RendererImplemented::GetIndexBuffer()
 	}
 }
 
-int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount; }
-
-::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState() { return m_renderState; }
-
-::Effekseer::SpriteRenderer* RendererImplemented::CreateSpriteRenderer()
+int32_t RendererImplemented::GetSquareMaxCount() const
 {
-	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return m_squareMaxCount;
 }
 
-::Effekseer::RibbonRenderer* RendererImplemented::CreateRibbonRenderer()
+::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
-	return new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return m_renderState;
 }
 
-::Effekseer::RingRenderer* RendererImplemented::CreateRingRenderer()
+::Effekseer::SpriteRendererRef RendererImplemented::CreateSpriteRenderer()
 {
-	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return ::Effekseer::SpriteRendererRef(new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, false>(this));
 }
 
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this, &fixedShader_); }
-
-::Effekseer::TrackRenderer* RendererImplemented::CreateTrackRenderer()
+::Effekseer::RibbonRendererRef RendererImplemented::CreateRibbonRenderer()
 {
-	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return ::Effekseer::RibbonRendererRef(new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, false>(this));
 }
 
-::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::RingRendererRef RendererImplemented::CreateRingRenderer()
+{
+	return ::Effekseer::RingRendererRef(new ::EffekseerRenderer::RingRendererBase<RendererImplemented, false>(this));
+}
+
+::Effekseer::ModelRendererRef RendererImplemented::CreateModelRenderer()
+{
+	return ModelRenderer::Create(this, &fixedShader_);
+}
+
+::Effekseer::TrackRendererRef RendererImplemented::CreateTrackRenderer()
+{
+	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
+}
+
+::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(graphicsDevice_, fileInterface);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(graphicsDevice_, fileInterface);
-#else
-	return NULL;
-#endif
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice_, fileInterface);
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return new MaterialLoader(graphicsDevice_, fileInterface, platformType_, materialCompiler_);
-}
-
-Effekseer::TextureData* RendererImplemented::GetBackground()
-{
-	if (m_background.UserPtr == nullptr)
-		return nullptr;
-	return &m_background;
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice_.Get(), fileInterface, platformType_, materialCompiler_);
 }
 
 void RendererImplemented::SetBackground(LLGI::Texture* background)
 {
-	ES_SAFE_ADDREF(background);
-
-	auto p = (LLGI::Texture*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-	m_background.UserPtr = background;
-}
-
-void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerData)
-{
-	if (textuerData == nullptr)
+	if (m_backgroundLLGI == nullptr)
 	{
-		auto back = (LLGI::Texture*)m_background.UserPtr;
-		ES_SAFE_RELEASE(back);
-		m_background.UserPtr = nullptr;
-		return;
+		m_backgroundLLGI = graphicsDevice_->CreateTexture(background);
+	}
+	else
+	{
+		auto texture = static_cast<Backend::Texture*>(m_backgroundLLGI.Get());
+		texture->Init(background);
 	}
 
-	auto texture = static_cast<LLGI::Texture*>(textuerData->UserPtr);
-	ES_SAFE_ADDREF(texture);
-
-	auto back = (LLGI::Texture*)m_background.UserPtr;
-	ES_SAFE_RELEASE(back);
-
-	m_background.UserPtr = texture;
+	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundLLGI : nullptr);
 }
 
-EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback() { return m_distortingCallback; }
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
@@ -604,7 +636,24 @@ void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
 	GetCurrentCommandList()->SetIndexBuffer(indexBuffer->GetIndexBuffer());
 }
 
-void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer) { GetCurrentCommandList()->SetIndexBuffer(indexBuffer); }
+void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer)
+{
+	GetCurrentCommandList()->SetIndexBuffer(indexBuffer);
+}
+
+void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t stride)
+{
+	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
+
+	SetVertexBuffer(vb->GetBuffer(), stride);
+}
+
+void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
+{
+	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
+
+	SetIndexBuffer(ib->GetBuffer());
+}
 
 void RendererImplemented::SetLayout(Shader* shader)
 {
@@ -667,6 +716,11 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 {
+	DrawPolygonInstanced(vertexCount, indexCount, 1);
+}
+
+void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount)
+{
 	// constant buffer
 	LLGI::ConstantBuffer* constantBufferVS = nullptr;
 	LLGI::ConstantBuffer* constantBufferPS = nullptr;
@@ -693,63 +747,54 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	GetCurrentCommandList()->SetPipelineState(piplineState);
 
 	impl->drawcallCount++;
-	impl->drawvertexCount += vertexCount;
+	impl->drawvertexCount += vertexCount * instanceCount;
 
 	GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, 0);
-	GetCurrentCommandList()->Draw(indexCount / 3);
+	GetCurrentCommandList()->Draw(indexCount / 3, instanceCount);
 
 	LLGI::SafeRelease(constantBufferVS);
 	LLGI::SafeRelease(constantBufferPS);
 }
 
-Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
+Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType type) const
 {
-	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
+	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader_distortion;
-		}
-		else
-		{
-			return m_shader_distortion;
-		}
+		return shader_ad_distortion_;
 	}
-	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			if (m_shader_lighting != nullptr)
-			{
-				return m_shader_lighting;
-			}
-			return m_shader;
-		}
-		else
-		{
-			if (m_shader_lighting != nullptr)
-			{
-				return m_shader_lighting;
-			}
-			return m_shader;
-		}
+		return shader_ad_lit_;
 	}
-	else
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader;
-		}
-		else
-		{
-			return m_shader;
-		}
+		return shader_ad_unlit_;
 	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
+	{
+		return shader_distortion_;
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
+	{
+		return shader_lit_;
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
+	{
+		return shader_unlit_;
+	}
+
+	return nullptr;
 }
 
-void RendererImplemented::BeginShader(Shader* shader) { currentShader = shader; }
+void RendererImplemented::BeginShader(Shader* shader)
+{
+	currentShader = shader;
+}
 
-void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
+void RendererImplemented::EndShader(Shader* shader)
+{
+	currentShader = nullptr;
+}
 
 void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
@@ -765,7 +810,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::TextureRef* textures, int32_t count)
 {
 	auto state = GetRenderState()->GetActiveState();
 	LLGI::TextureWrapMode ws[2];
@@ -787,7 +832,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else
 		{
-			auto t = (LLGI::Texture*)(textures[i]->UserPtr);
+			auto texture = static_cast<Backend::Texture*>(textures[i].Get());
+			auto t = texture->GetTexture().get();
 			GetCurrentCommandList()->SetTexture(
 				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
 			GetCurrentCommandList()->SetTexture(
@@ -800,60 +846,6 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
-}
-
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
-{
-	std::array<uint8_t, 4> buf;
-
-	if (type == EffekseerRenderer::ProxyTextureType::White)
-	{
-		buf.fill(255);
-	}
-	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
-	{
-		buf.fill(127);
-		buf[2] = 255;
-		buf[3] = 255;
-	}
-	else
-	{
-		assert(0);
-	}
-
-	LLGI::TextureInitializationParameter texParam;
-	texParam.Size = LLGI::Vec2I(16, 16);
-	auto texture = GetGraphics()->CreateTexture(texParam);
-	auto texbuf = reinterpret_cast<uint8_t*>(texture->Lock());
-
-	for (int32_t i = 0; i < 16 * 16; i++)
-	{
-		memcpy(texbuf + i * 4, buf.data(), 4);
-	}
-
-	texture->Unlock();
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 16;
-	textureData->Height = 16;
-	return textureData;
-}
-
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
-{
-	if (data != nullptr && data->UserPtr != nullptr)
-	{
-		auto texture = (LLGI::Texture*)data->UserPtr;
-		texture->Release();
-	}
-
-	if (data != nullptr)
-	{
-		delete data;
-	}
 }
 
 } // namespace EffekseerRendererLLGI

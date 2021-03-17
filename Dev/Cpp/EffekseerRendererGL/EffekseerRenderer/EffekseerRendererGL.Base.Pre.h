@@ -5,7 +5,7 @@
 #include <Effekseer.h>
 #include <vector>
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <Windows.h>
 #endif
 
@@ -41,7 +41,7 @@
 
 #else
 
-#if _WIN32
+#if defined(_WIN32)
 #include <GL/gl.h>
 #elif defined(__APPLE__)
 #define GL_SILENCE_DEPRECATION
@@ -69,7 +69,6 @@ enum class OpenGLDeviceType
 	OpenGL3,
 	OpenGLES2,
 	OpenGLES3,
-	Emscripten,
 };
 
 } // namespace EffekseerRendererGL

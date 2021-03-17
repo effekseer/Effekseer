@@ -84,7 +84,7 @@ std::string GetExecutingDirectory()
 	char buf[260];
 
 #ifdef _WIN32
-	int len = GetModuleFileNameA(NULL, buf, 260);
+	int len = GetModuleFileNameA(nullptr, buf, 260);
 	if (len <= 0)
 		return "";
 #elif defined(__APPLE__)
@@ -370,7 +370,7 @@ int mainLoop(int argc, char* argv[])
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
 					spdlog::trace("ICP - Receive - OpenOrCreateMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
-					if (!editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()))
+					if (editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()) == EffekseerMaterial::ErrorCode::NotFound)
 					{
 						editor->New();
 						editor->SaveAs(commandDataTOMaterialEditor.str.data());
@@ -508,7 +508,7 @@ int mainLoop(int argc, char* argv[])
 			const float oldWindowRounding = ImGui::GetStyle().WindowRounding;
 			ImGui::GetStyle().WindowRounding = 0;
 
-			const bool visible = ImGui::Begin("MaterialEditor", NULL, ImVec2(0, 0), 1.0f, flags);
+			const bool visible = ImGui::Begin("MaterialEditor", nullptr, ImVec2(0, 0), 1.0f, flags);
 			ImGui::GetStyle().WindowRounding = oldWindowRounding;
 
 			if (visible)
@@ -678,8 +678,17 @@ int mainLoop(int argc, char* argv[])
 
 				if (uobj != nullptr)
 				{
-					ImGui::Text(uobj->GetPreview()->VS.c_str());
-					ImGui::Text(uobj->GetPreview()->PS.c_str());
+					if (ImGui::TreeNode("VS"))
+					{
+						ImGui::Text(uobj->GetPreview()->VS.c_str());
+						ImGui::TreePop();
+					}
+					
+					if (ImGui::TreeNode("PS"))
+					{
+						ImGui::Text(uobj->GetPreview()->PS.c_str());
+						ImGui::TreePop();
+					}
 				}
 			}
 

@@ -3,6 +3,7 @@
 
 #include "efkMat.Base.h"
 #include "efkMat.Utils.h"
+#include <set>
 
 namespace EffekseerMaterial
 {
@@ -158,9 +159,19 @@ public:
 	std::array<float, 4> Values;
 };
 
+enum class ErrorCode
+{
+	OK,
+	InvalidFile,
+	NotFound,
+	NewVersion,
+};
+
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
+	const int32_t lastestSupportedVersion_ = MaterialVersion16;
+
 	enum class SaveLoadAimType
 	{
 		IO,
@@ -201,6 +212,8 @@ public:
 	void Initialize();
 
 	std::vector<std::shared_ptr<Pin>> GetConnectedPins(std::shared_ptr<Pin> pin);
+
+	std::unordered_set<std::shared_ptr<Pin>> GetRelatedPins(std::shared_ptr<Pin> pin);
 
 	ValueType GetPinType(DefaultType type);
 
@@ -256,7 +269,7 @@ public:
 
 	std::string SaveAsStr(const char* basePath);
 
-	bool Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
+	ErrorCode Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
 
 	bool Save(std::vector<uint8_t>& data, const char* basePath);
 

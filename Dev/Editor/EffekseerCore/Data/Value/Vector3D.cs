@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector3D : IResettableValue
+	public class Vector3D : IResettableValue, IValueChangedFromDefault
 	{
 		public Float X
 		{
@@ -95,6 +95,29 @@ namespace Effekseer.Data.Value
 			y.CopyTo(values, sizeof(float) * 1);
 			z.CopyTo(values, sizeof(float) * 2);
 			return values;
+		}
+
+		public bool ValueEquals(object obj)
+		{
+			var o = obj as Vector3D;
+			if (o == null)
+				return false;
+		
+			if (X.Value != o.X.Value)
+				return false;
+		
+			if (Y.Value != o.Y.Value)
+				return false;
+		
+			if (Z.Value != o.Z.Value)
+				return false;
+		
+			return true;
+		}
+
+		public int GetValueHashCode()
+		{
+			return Utils.Misc.CombineHashCodes(new[] { X.Value.GetHashCode(), Y.Value.GetHashCode(), Z.Value.GetHashCode() });
 		}
 	}
 }

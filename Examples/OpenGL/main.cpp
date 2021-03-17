@@ -109,17 +109,13 @@ int main(int argc, char** argv)
 		time++;
 	}
 
-	// Release effects
-	// エフェクトの解放
-	ES_SAFE_RELEASE(effect);
-
 	// Dispose the manager
 	// マネージャーの破棄
-	manager->Destroy();
+	manager.Reset();
 
 	// Dispose the renderer
 	// レンダラーの破棄
-	renderer->Destroy();
+	renderer.Reset();
 
 	TerminateWindowAndDevice();
 

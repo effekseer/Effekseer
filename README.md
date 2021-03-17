@@ -22,9 +22,28 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
+Supported platforms
+=========
+
+- DirectX9, DirectX11, DirectX12, Metal, Vulkan, OpenGL
+- WebGL
+- Unity
+- GodotEngine
+- UnrealEngine4
+- DX Library
+- Cocos2d-x
+- Console games (Please mail to effekseer(at)gmail.com)
+
+GodotEngine is planned in 1.6.
+
+Repositories
+=========
+
 * [ForUnity](https://github.com/effekseer/EffekseerForUnity)
 
 * [ForUE4](https://github.com/effekseer/EffekseerForUE4)
+
+* [ForGodotEngine](https://github.com/effekseer/EffekseerForGodot3)
 
 * [ForCocos2d-x](https://github.com/effekseer/EffekseerForCocos2d-x)
 
@@ -35,9 +54,17 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 Development
 =========
 
+### Roadmap
+
+[English](docs/Roadmap_En.md)
+
+[日本語](docs/Roadmap_Ja.md)
+
 ### Branch
 
-* master 1.6(WIP)
+* master 1.7(WIP)
+
+* [1.6x](https://github.com/effekseer/Effekseer/tree/16x)
 
 * [1.5x](https://github.com/effekseer/Effekseer/tree/15x)
 
@@ -53,67 +80,22 @@ Development
 
 [HowToBuild](docs/Development/HowToBuild.md)
 
+[Profiling](docs/Development/Profiling.md)
+
 [コーディングルール](docs/Development/CodingRule_Ja.md)
 
-Todo
-=========
+# For contributors
 
-Please read issues, Trello and TODO. We always welcome pull requests for improvements, bug fixes, and so on.
+Please read issues. We always welcome pull requests for improvements, bug fixes, and so on.
 
-issues、TrelloとTODOを読んでください。常時、機能追加、バグ修正といったプルリクエストを募集しております。
+issuesを読んでください。常時、機能追加、バグ修正といったプルリクエストを募集しております。
 
 [Issues](https://github.com/effekseer/Effekseer/issues)
 
-[Trello](https://trello.com/b/APLk8e6V/effekseer-wishlist)
-
-# RoadMap(1.6)
-
-- Optimize runtime
-- Add more force fields.
-- Start to support Godot
-
-## OnGoing
-
-- Support Metal
-- Support Vulkan
-
-[BackendRepository](https://github.com/altseed/LLGI)
-
-# Todo
-
-## Easy
+These are not on issue. But it is welcome.
 
 - Add samples (サンプルの追加)
 - Add tutorial documents (チュートリアルのドキュメントの追加)
 - Add tests for a runtime (ランタイムのテストの追加)
 - Translate documents from Japanese into English (ドキュメントの日本語から英語への翻訳)
 
-## Medium
-- Add model exporters for 3D modeling softwares
-
-## Hard
-
-- Support AfterEffects
-
-## Others
-- New method of rotation to match Z and moving direction.
-
-# For contributor
-
-## How to release
-
-* Windows
-
-Visual Studio 2017 are required.
-
-Please read ``` azure-pipelines.yml ```
-
-* Mac
-
-Please read ``` azure-pipelines.yml ```
-
-* Linux (not work now)
-
-Execute ```Dev/build.Linux.sh``` to compile and generate binary into Dev/release/
-
-I have not debuged Effekseer on Linux yet.

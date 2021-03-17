@@ -800,7 +800,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 
 
-void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
+static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result)
 {
 
 	uint32_t binarySize = 0;
@@ -873,7 +873,7 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, int32_t maximumTextureCount)
 {
 	// to use options
 	auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerVulkan());
@@ -923,7 +923,7 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
 		
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true, true, 1, true, true, 40);
 
 		//auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
@@ -942,6 +942,9 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material)
+{
+	return Compile(material, Effekseer::UserTextureSlotMax);
+}
 
 } // namespace Effekseer

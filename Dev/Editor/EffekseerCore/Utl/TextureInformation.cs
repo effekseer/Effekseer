@@ -55,8 +55,8 @@ namespace Effekseer.Utl
 				if (br.Read(buf, 0, 25) != 25)
 				{
 					fs.Dispose();
-                    br.Close();
-                    return false;
+					br.Close();
+					return false;
 				}
 
 				var width = new byte[] { buf[11], buf[10], buf[9], buf[8] };
@@ -70,8 +70,8 @@ namespace Effekseer.Utl
 				if (br.Read(buf, 0, 25) != 25)
 				{
 					fs.Dispose();
-                    br.Close();
-                    return false;
+					br.Close();
+					return false;
 				}
 
 				Width = BitConverter.ToInt32(buf, 8);
@@ -79,9 +79,38 @@ namespace Effekseer.Utl
 			}
 			else
 			{
-				fs.Dispose();
-                br.Close();
-                return false;
+				br.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+				if (br.Read(buf, 0, 18) != 18)
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+
+				var footer = new char[18];
+				br.BaseStream.Seek(br.BaseStream.Length - 18, System.IO.SeekOrigin.Begin);
+				if (br.Read(footer, 0, 18) != 18)
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+
+				string str = new string(footer);
+
+				if (str.Equals("TRUEVISION-XFILE.\0") == true ||
+					System.IO.Path.GetExtension(path) == ".tga")
+				{
+					// TGA
+					Width = buf[12] + buf[13] * 256;
+					Height = buf[14] + buf[15] * 256;
+				}
+				else
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
 			}
 
 			fs.Dispose();

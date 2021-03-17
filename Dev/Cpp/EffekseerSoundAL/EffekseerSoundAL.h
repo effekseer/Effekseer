@@ -57,8 +57,16 @@ namespace EffekseerSound
 /**
 	@brief	サウンドデータ
 */
-struct SoundData
+class SoundData : public ::Effekseer::SoundData
 {	
+public:
+	int32_t GetChannels() const  { return channels; }
+	int32_t GetSampleRate() const  { return sampleRate; }
+	ALuint GetBuffer() const { return buffer; }
+
+private:
+	friend class SoundLoader;
+
 	/**
 		@brief	チャンネル数。
 	*/
@@ -74,11 +82,15 @@ struct SoundData
 	*/
 	ALuint			buffer;
 };
+using SoundDataRef = Effekseer::RefPtr<SoundData>;
 
 /**
 	@brief	サウンドクラス
 */
-class Sound
+class Sound;
+using SoundRef = Effekseer::RefPtr<Sound>;
+
+class Sound : public Effekseer::IReference
 {
 protected:
 	Sound() {}
@@ -92,7 +104,7 @@ public:
 		@param	voiceCount2ch	[in]	ステレオボイス数
 		@return	インスタンス
 	*/
-	static Sound* Create( int32_t numVoices );
+	static SoundRef Create( int32_t numVoices );
 	
 	/**
 		@brief	このインスタンスを破棄する。
@@ -108,12 +120,12 @@ public:
 	/**
 		@brief	サウンドプレイヤを生成する。
 	*/
-	virtual ::Effekseer::SoundPlayer* CreateSoundPlayer() = 0;
+	virtual ::Effekseer::SoundPlayerRef CreateSoundPlayer() = 0;
 
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoader* CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
 	
 	/**
 		@brief	全発音を停止

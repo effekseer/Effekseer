@@ -13,34 +13,26 @@ class CompiledMaterialBinary;
 namespace EffekseerRendererGL
 {
 
-class DeviceObjectCollection;
-
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
-	OpenGLDeviceType deviceType_;
-	Renderer* renderer_ = nullptr;
-	DeviceObjectCollection* deviceObjectCollection_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	bool canLoadFromCache_ = false;
 
 	::Effekseer::FileInterface* fileInterface_ = nullptr;
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
 
-	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
+	::Effekseer::MaterialRef LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(OpenGLDeviceType deviceType,
-				   Renderer* renderer,
-				   DeviceObjectCollection* deviceObjectCollection,
-				   ::Effekseer::FileInterface* fileInterface,
-				   bool canLoadFromCache = true);
+	MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache = true);
 	virtual ~MaterialLoader();
 
-	::Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
+	::Effekseer::MaterialRef Load(const char16_t* path) override;
 
-	::Effekseer::MaterialData* Load(const void* data, int32_t size, Effekseer::MaterialFileType fileType) override;
+	::Effekseer::MaterialRef Load(const void* data, int32_t size, Effekseer::MaterialFileType fileType) override;
 
-	void Unload(::Effekseer::MaterialData* data) override;
+	void Unload(::Effekseer::MaterialRef data) override;
 };
 
 } // namespace EffekseerRendererGL

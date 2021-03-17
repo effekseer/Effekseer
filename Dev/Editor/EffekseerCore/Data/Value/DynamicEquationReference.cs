@@ -6,40 +6,23 @@ using System.Threading.Tasks;
 
 namespace Effekseer.Data.Value
 {
-	public class DynamicEquationReference
+	public class DynamicEquationReference : ObjectReference<DynamicEquation>
 	{
-		public DynamicEquation Value
+		public DynamicEquationReference()
 		{
-			get;
-			private set;
-		}
-
-		public void SetValue(DynamicEquation param)
-		{
-			if (param == Value) return;
-
-			var old_value = Value;
-			var new_value = param;
-
-			var cmd = new Command.DelegateCommand(
-				() =>
-				{
-					Value = new_value;
-				},
-				() =>
-				{
-					Value = old_value;
-				});
-
-			Command.CommandManager.Execute(cmd);
-		}
-
-		public int Index
-		{
-			get
+			GetHolder += (DynamicEquation e) =>
 			{
-				return Core.Dynamic.Equations.GetIndex(Value);
-			}
+				return Core.Dynamic.Equations.GetHolder(e);
+			};
+
+			GetValueWithIndex += (int ind) =>
+			{
+				if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
+				{
+					return Core.Dynamic.Equations.Values[ind];
+				}
+				return null;
+			};
 		}
 	}
 }

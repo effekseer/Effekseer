@@ -1,14 +1,15 @@
 ﻿AboutEffekseer,Effekseerについて
-System_FailedToInitialize,描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。
-AlphaCrunch,アルファクランチ
+System_FailedToInitialize,描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足、ビデオカードの仕様等が考えられます。
 AttractionForces,力場(ローカル)
 AutoConnect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,描画共通
+AdvancedRenderSettings,描画共通(高度)
+AdvancedRenderSettings2,描画共通(高度2)
 BasicSettings,共通
 Behavior,振る舞い
 CameraMode,カメラの種類
 CameraSettings,視点操作
-Complement,補完
+Complement,補間
 ConfirmSaveChanged,[{0}] は変更されています。保存しますか？
 Connect,接続
 Culling,カリング
@@ -18,7 +19,7 @@ Disconnect,切断
 Edit,編集
 End,終了
 EndFrame,終了フレーム
-Export,出力
+Export,エクスポート
 ExportAsAvi,AVIとして出力
 ExportAsGifAnimation,GIFアニメーションとして出力
 ExportAsImages,連番画像として出力
@@ -36,7 +37,11 @@ GenerateAlpha,生成
 GenerateAlpha2,生成(ブレンド+加算)
 Height,縦幅
 Help,ヘルプ
-Import,入力
+Import,インポート
+ImportSourcePackage,インポート元のパッケージ
+ImportDestinationDirectory,インポート先のディレクトリ
+ImportSourceFile,インポート元のファイル
+ImportDestinationFile,インポート先のファイル
 Infinite,無限
 InternalAbout,Effekseerについて
 InternalAddNode,ノードの追加
@@ -85,6 +90,8 @@ Range,"最大,最小"
 RecentFiles,最近使用したファイル
 Record,録画
 Recorder,録画
+RecorderProgress,録画中...
+RecorderAbort,中断
 Render,描画
 RenderSettings,描画
 ResetMaginification,倍率再設定
@@ -141,14 +148,15 @@ FCurve_Paste_Desc,キーポイントを貼り付けます。
 AutoZoom,自動ズーム
 AutoZoom_Desc,自動的にグラフの高さを調節する
 FCurve_Operation_Instruction_Desc,操作説明 (マウスオーバー)
-FCurveCtrl_Desc,"ダブルクリック-点の追加、削除
+FCurveCtrl_Desc,"ダブルクリック - 点の追加、削除
 Alt+ホイール - 横方向拡大
 Ctrl+ホイール - 縦方向拡大
 Alt+左クリック - 複数選択と編集
 Shift+左クリック - 選択切り替え
-ラベルのダブルクリック - 表示範囲自動変更"
+ラベルのダブルクリック - 表示範囲自動変更
+Delete - 点の削除"
 ,
-ImageFilter_,画像ファイル (*.png)|*.png
+ImageFilter_,画像ファイル (*.png,*.tga)|*.png;*.tga
 ModelFilter_,"モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"
 SoundFilter_,音声ファイル (*.wav)|*.wav
 ProjectFilter_,エフェクトプロジェクト (*.efkproj)|*.efkproj
@@ -157,10 +165,12 @@ Error_NotFound,{0} が見つかりません。
 ,
 EffekseerParticleFilter,efkefc
 MaterialFilter,efkmat
-ImageFilter,"png,dds"
+ImageFilter,"png,dds,tga"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"
+EffekseerPackageFilter,"efkpkg"
+CurveFilter,"efkcurve,fbx"
 ,
 ,
 Clipping,クリッピング
@@ -217,12 +227,19 @@ Windowsでキャッシュを生成した後、キャッシュが存在する状�
 Macでキャッシュを生成すると、WindowsでもMacでも使用できるキャッシュが生成されます。
 "
 Material_NoneCache,キャッシュ - なし
-Material_OldCache,キャッシュ - 古い
+Material_OldCache,"キャッシュ - 古い
+再生成してください。"
 Material_OldFomatCache,"キャッシュ - 古いフォーマット
 再生成してください。"
+Material_NewFomatCache,"キャッシュ - 新しすぎるフォーマット
+新しいバージョンを使用して下さい。"
 DefaultFormat,標準形式
 ExportDefaultFormat,標準形式で出力する。
 DefaultFormatExample,標準形式 (*.efk)|*.efk
+EfkPkgFormat,Effekseerパッケージ
+ExportEfkPkgFormatDescription,Effekseerパッケージでエクスポートする
+ImportEfkPkgFormatDescription,Effekseerパッケージからインポートする
+EfkPkgFormatFilter,"Effekseerパッケージ (*.efkpkg)|*.efkpkg"
 Maginification,拡大率
 GlbFormat,glb形式
 ExportAsGlbFormat,glb形式で出力する。
@@ -232,3 +249,82 @@ ExportAsGlTFFormat,glTF形式で出力する。
 GlTFFormatExample,glTF形式 (*.glTF)|*.glTF
 MismatchResourceError,リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。
 LayerLimitError,ノードツリーはルートを含めて {0} レイヤーまでに制限されています。
+FileViewer_OpenFile,開く
+FileViewer_DeleteFile,削除
+FileViewer_RenameFile,名前の変更
+FileViewer_ShowInExplorer,エクスプローラで表示
+FileViewer_ShowInFinder,Finderで表示
+FileViewer_ImportFromPackage,パッケージからインポート
+FileViewer_ExportToPackage,パッケージにエクスポート
+,
+Easing_Start_Name,始点
+Easing_Start_Desc,イージングの始点
+Easing_End_Name,終点
+Easing_End_Desc,イージングの終点
+Easing_Middle_Name,中間点
+Easing_Middle_Desc,イージングの中間点
+Easing_StartSpeed_Name,始点速度
+Easing_StartSpeed_Desc,始点速度
+Easing_EndSpeed_Name,終点速度
+Easing_EndSpeed_Desc,終点速度
+,
+Easing_StartSlowly3_Name,低速3
+Easing_StartSlowly2_Name,低速2
+Easing_StartSlowly1_Name,低速1
+Easing_StartNormal_Name,等速
+Easing_StartRapidly1_Name,高速1
+Easing_StartRapidly2_Name,高速2
+Easing_StartRapidly3_Name,高速3
+Easing_EndSlowly3_Name,低速3
+Easing_EndSlowly2_Name,低速2
+Easing_EndSlowly1_Name,低速1
+Easing_EndNormal_Name,等速
+Easing_EndRapidly1_Name,高速1
+Easing_EndRapidly2_Name,高速2
+Easing_EndRapidly3_Name,高速3
+Easing_IsMiddleEnabled_Name,中間点有効
+Easing_IsRandomGroupEnabled_Name,ランダムグループ有効
+Easing_RandomGroup_X_Name, X グループ
+Easing_RandomGroup_Y_Name, Y グループ
+Easing_RandomGroup_Z_Name, Z グループ
+Easing_IsIndividualTypeEnabled_Name,種類の独立
+Easing_IndividualType_X_Name, X 種類
+Easing_IndividualType_Y_Name, Y 種類
+Easing_IndividualType_Z_Name, Z 種類
+Easing_Type_Name,種類
+Easing_LeftRightSpeed_Name,左右速度イージング
+Easing_Linear_Name,線形
+Easing_EaseInQuadratic_Name,EaseInQuadratic
+Easing_EaseOutQuadratic_Name,EaseOutQuadratic
+Easing_EaseInOutQuadratic_Name,EaseInOutQuadratic
+Easing_EaseInCubic_Name,EaseInCubic
+Easing_EaseOutCubic_Name,EaseOutCubic
+Easing_EaseInOutCubic_Name,EaseInOutCubic
+Easing_EaseInQuartic_Name,EaseInQuartic
+Easing_EaseOutQuartic_Name,EaseOutQuartic
+Easing_EaseInOutQuartic_Name,EaseInOutQuartic
+Easing_EaseInQuintic_Name,EaseInQuintic
+Easing_EaseOutQuintic_Name,EaseOutQuintic
+Easing_EaseInOutQuintic_Name,EaseInOutQuintic
+Easing_EaseInBack_Name,EaseInBack
+Easing_EaseOutBack_Name,EaseOutBack
+Easing_EaseInOutBack_Name,EaseInOutBack
+Easing_EaseInBounce_Name,EaseInBounce
+Easing_EaseOutBounce_Name,EaseOutBounce
+Easing_EaseInOutBounce_Name,EaseInOutBounce
+,
+FCurve_Name,Fカーブ
+FCurve_Desc,Fカーブ
+,
+Recording_Scale_Name,拡大率
+Recording_Scale_Desc,録画範囲を拡大して出力します。
+,
+PermissionError_File,ファイル {0} を読み込めません。アクセス権限がない可能性があります。
+PermissionError_File_Mac,エフェクトに関連するファイルをホームディレクトリにファイルを移動すると解決する場合があります。
+
+ModelReferenceType_File_Name,ファイル
+ModelReferenceType_ProdecualModel_Name,プロシージャルモデル
+
+TreeDisabled_Message,トグルをONにすると設定項目が表示されます。
+
+Easing_Parameter_Name,イージングパラメーター

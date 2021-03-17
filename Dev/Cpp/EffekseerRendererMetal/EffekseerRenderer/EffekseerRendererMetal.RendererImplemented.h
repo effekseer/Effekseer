@@ -10,8 +10,10 @@ namespace EffekseerRendererMetal
 
 class RendererImplemented : public ::EffekseerRendererLLGI::RendererImplemented
 {
-    void GenerateVertexBuffer() override;
-    
+	void GenerateVertexBuffer() override;
+
+	void GenerateIndexBuffer() override;
+
 public:
 
     RendererImplemented(int32_t squareMaxCount): ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount)
@@ -20,6 +22,7 @@ public:
 	~RendererImplemented()
     {}
     
+    /*
     void SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer);
     
     void SetExternalRenderEncoder(id<MTLRenderCommandEncoder> extRenderEncoder);
@@ -27,6 +30,7 @@ public:
 	bool BeginRendering() override;
 
 	bool EndRendering() override;
+    */
     
     //::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 };

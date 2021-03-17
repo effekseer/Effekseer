@@ -4,19 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using Effekseer.Utl;
+using Effekseer.Data;
 
 namespace Effekseer.Binary
 {
 	class ScaleValues
 	{
-		public static byte[] GetBytes(Data.ScaleValues value, Data.ParentEffectType parentEffectType)
+		public static byte[] GetBytes(Data.ScaleValues value, Data.ParentEffectType parentEffectType, ExporterVersion version)
 		{
 			float magnification = 1.0f;
 
-			List<byte[]> data = new List<byte[]>();
-			data.Add(value.Type.GetValueAsInt().GetBytes());
+			var type = value.Type.Value;
 
-			if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.Fixed)
+			if(version < ExporterVersion.Ver16Alpha1)
+			{
+				if(type == Data.ScaleValues.ParamaterType.SingleFCurve)
+				{
+					type = Data.ScaleValues.ParamaterType.Fixed;
+				}
+			}
+
+			List<byte[]> data = new List<byte[]>();
+			data.Add(((int)type).GetBytes());
+
+			if (type == Data.ScaleValues.ParamaterType.Fixed)
 			{
 				var refBuf = value.Fixed.Scale.DynamicEquation.Index.GetBytes();
 				var mainBuf = Scaling_Fixed_Values.Create(value.Fixed,magnification).GetBytes();
@@ -24,7 +35,7 @@ namespace Effekseer.Binary
 				data.Add(refBuf);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.PVA)
+			else if (type == Data.ScaleValues.ParamaterType.PVA)
 			{
 				var refBuf1_1 = value.PVA.Scale.DynamicEquationMax.Index.GetBytes();
 				var refBuf1_2 = value.PVA.Scale.DynamicEquationMin.Index.GetBytes();
@@ -43,58 +54,30 @@ namespace Effekseer.Binary
 				data.Add(refBuf3_2);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.Easing)
+			else if (type == Data.ScaleValues.ParamaterType.Easing)
 			{
-				var easing = Utl.MathUtl.Easing(
-					(float)value.Easing.StartSpeed.Value,
-					(float)value.Easing.EndSpeed.Value);
-
-				var refBuf1_1 = value.Easing.Start.DynamicEquationMax.Index.GetBytes();
-				var refBuf1_2 = value.Easing.Start.DynamicEquationMin.Index.GetBytes();
-				var refBuf2_1 = value.Easing.End.DynamicEquationMax.Index.GetBytes();
-				var refBuf2_2 = value.Easing.End.DynamicEquationMin.Index.GetBytes();
-
-				List<byte[]> _data = new List<byte[]>();
-				_data.Add(refBuf1_1);
-				_data.Add(refBuf1_2);
-				_data.Add(refBuf2_1);
-				_data.Add(refBuf2_2);
-				_data.Add(value.Easing.Start.GetBytes(magnification));
-				_data.Add(value.Easing.End.GetBytes(magnification));
-				_data.Add(BitConverter.GetBytes(easing[0]));
-				_data.Add(BitConverter.GetBytes(easing[1]));
-				_data.Add(BitConverter.GetBytes(easing[2]));
-				var __data = _data.ToArray().ToArray();
-				data.Add(__data.Count().GetBytes());
-				data.Add(__data);
+				Utils.ExportEasing(value.Easing, magnification, data, version);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.SinglePVA)
+			else if (type == Data.ScaleValues.ParamaterType.SinglePVA)
 			{
 				var bytes = Scaling_SinglePVA_Values.Create(value.SinglePVA, magnification).GetBytes();
 				data.Add(bytes.Count().GetBytes());
 				data.Add(bytes);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.SingleEasing)
+			else if (type == Data.ScaleValues.ParamaterType.SingleEasing)
 			{
-				var easing = Utl.MathUtl.Easing(
-					(float)value.SingleEasing.StartSpeed.Value,
-					(float)value.SingleEasing.EndSpeed.Value);
-
-				List<byte[]> _data = new List<byte[]>();
-                _data.Add(value.SingleEasing.Start.Max.GetBytes());
-                _data.Add(value.SingleEasing.Start.Min.GetBytes());
-                _data.Add(value.SingleEasing.End.Max.GetBytes());
-                _data.Add(value.SingleEasing.End.Min.GetBytes());
-                _data.Add(BitConverter.GetBytes(easing[0]));
-                _data.Add(BitConverter.GetBytes(easing[1]));
-                _data.Add(BitConverter.GetBytes(easing[2]));
-				var __data = _data.ToArray().ToArray();
-				data.Add(__data.Count().GetBytes());
-				data.Add(__data);
+				Utils.ExportEasing(value.SingleEasing, 1.0f, data, version, true);
 			}
-			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.FCurve)
+			else if (type == Data.ScaleValues.ParamaterType.FCurve)
 			{
 				var bytes = value.FCurve.FCurve.GetBytes();
+
+				data.Add(bytes.Count().GetBytes());
+				data.Add(bytes);
+			}
+			else if (type == Data.ScaleValues.ParamaterType.SingleFCurve)
+			{
+				var bytes = value.SingleFCurve.GetBytes();
 
 				data.Add(bytes.Count().GetBytes());
 				data.Add(bytes);

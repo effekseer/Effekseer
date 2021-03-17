@@ -23,7 +23,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 	SoundVoiceContainer*	m_voiceContainer;
 	bool					m_mute;
@@ -32,22 +32,22 @@ public:
 	SoundImplemented();
 	virtual ~SoundImplemented();
 
-	void Destroy();
+	void Destroy() override;
 
 	bool Initialize( int32_t numVoices );
 	
 	void SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up );
+		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) override;
 	
-	::Effekseer::SoundPlayer* CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer() override;
 
-	::Effekseer::SoundLoader* CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) override;
 	
-	void StopAllVoices();
+	void StopAllVoices() override;
 
-	void SetMute( bool mute );
+	void SetMute( bool mute ) override;
 
-	bool GetMute()			{return m_mute;}
+	bool GetMute() 			{return m_mute;}
 
 	SoundVoice* GetVoice();
 	
@@ -56,7 +56,21 @@ public:
 	void PauseTag( ::Effekseer::SoundTag tag, bool pause );
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
+using SoundImplementedRef = ::Effekseer::RefPtr<SoundImplemented>;
 
 //----------------------------------------------------------------------------------
 //

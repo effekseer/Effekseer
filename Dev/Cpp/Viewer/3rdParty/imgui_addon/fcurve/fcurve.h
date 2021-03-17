@@ -24,11 +24,12 @@ namespace ImGui
 
 	bool StartSelectingAreaFCurve();
 
-	bool AddPointFCurve(
+	bool AddPointFCurve(ImVec2 v,
 		float* keys, float* values,
 		float* leftHandleKeys, float* leftHandleValues,
 		float* rightHandleKeys, float* rightHandleValues,
-		ImFCurveInterporationType* interporations);
+		ImFCurveInterporationType* interporations,
+		bool* kv_selected, int count, int* newCount);
 
 	bool FCurve(
 		int fcurve_id,

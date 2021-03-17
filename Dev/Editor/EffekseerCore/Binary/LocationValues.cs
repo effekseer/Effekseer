@@ -4,19 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using Effekseer.Utl;
+using Effekseer.Data;
 
 namespace Effekseer.Binary
 {
 	class LocationValues
 	{
-		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType)
+		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> curveAndIndex, ExporterVersion version)
 		{
 			//if (parentEffectType != Data.ParentEffectType.NotBind) magnification = 1.0f;
 
-			List<byte[]> data = new List<byte[]>();
-			data.Add(value.Type.GetValueAsInt().GetBytes());
+			var type = value.Type.Value;
 
-			if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Fixed)
+			// Fall back
+			if (version < ExporterVersion.Ver16Alpha1)
+			{
+				if (type == Data.LocationValues.ParamaterType.NurbsCurve ||
+					type == Data.LocationValues.ParamaterType.ViewOffset)
+				{
+					type = Data.LocationValues.ParamaterType.Fixed;
+				}
+			}
+
+			List<byte[]> data = new List<byte[]>();
+			data.Add(((int)type).GetBytes());
+
+			if (type == Data.LocationValues.ParamaterType.Fixed)
 			{
 				var refBuf = value.Fixed.Location.DynamicEquation.Index.GetBytes();
 				var mainBuf = Translation_Fixed_Values.Create(value.Fixed, 1.0f).GetBytes();
@@ -24,7 +37,7 @@ namespace Effekseer.Binary
 				data.Add(refBuf);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.PVA)
+			else if (type == Data.LocationValues.ParamaterType.PVA)
 			{
 				var refBuf1_1 = value.PVA.Location.DynamicEquationMax.Index.GetBytes();
 				var refBuf1_2 = value.PVA.Location.DynamicEquationMin.Index.GetBytes();
@@ -43,30 +56,11 @@ namespace Effekseer.Binary
 				data.Add(refBuf3_2);
 				data.Add(mainBuf);
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Easing)
+			else if (type == Data.LocationValues.ParamaterType.Easing)
 			{
-				var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
-
-				var refBuf1_1 = value.Easing.Start.DynamicEquationMax.Index.GetBytes();
-				var refBuf1_2 = value.Easing.Start.DynamicEquationMin.Index.GetBytes();
-				var refBuf2_1 = value.Easing.End.DynamicEquationMax.Index.GetBytes();
-				var refBuf2_2 = value.Easing.End.DynamicEquationMin.Index.GetBytes();
-
-				List<byte[]> _data = new List<byte[]>();
-				_data.Add(refBuf1_1);
-				_data.Add(refBuf1_2);
-				_data.Add(refBuf2_1);
-				_data.Add(refBuf2_2);
-				_data.Add(value.Easing.Start.GetBytes(1.0f));
-				_data.Add(value.Easing.End.GetBytes(1.0f));
-				_data.Add(BitConverter.GetBytes(easing[0]));
-				_data.Add(BitConverter.GetBytes(easing[1]));
-				_data.Add(BitConverter.GetBytes(easing[2]));
-				var __data = _data.ToArray().ToArray();
-				data.Add(__data.Count().GetBytes());
-				data.Add(__data);
+				Utils.ExportEasing(value.Easing, 1.0f, data, version);
 			}
-			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.LocationFCurve)
+			else if (type == Data.LocationValues.ParamaterType.LocationFCurve)
 			{
 				var bytes1 = value.LocationFCurve.FCurve.GetBytes();
 
@@ -74,9 +68,45 @@ namespace Effekseer.Binary
 				data.Add(bytes1.Count().GetBytes());
 				data.Add(bytes1);
 			}
+			else if (type == Data.LocationValues.ParamaterType.NurbsCurve)
+			{
+				if (value.NurbsCurve.FilePath.RelativePath != string.Empty)
+				{
+					// export index
+					var relative_path = value.NurbsCurve.FilePath.RelativePath;
+
+					if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+					{
+						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkcurve";
+					}
+					else
+					{
+						relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkcurve");
+					}
+
+					data.Add(curveAndIndex[relative_path].GetBytes());
+				}
+				else
+				{
+					data.Add((-1).GetBytes());
+				}
+
+				data.Add(BitConverter.GetBytes(value.NurbsCurve.Scale));
+
+				data.Add(BitConverter.GetBytes(value.NurbsCurve.MoveSpeed));
+
+				data.Add(value.NurbsCurve.LoopType.GetValueAsInt().GetBytes());
+			}
+			else if (type == Data.LocationValues.ParamaterType.ViewOffset)
+			{
+				data.Add(value.ViewOffset.Distance.Max.GetBytes());
+				data.Add(value.ViewOffset.Distance.Min.GetBytes());
+			}
 
 			return data.ToArray().ToArray();
 		}
+
+		
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -112,7 +142,7 @@ namespace Effekseer.Binary
 		static public Translation_PVA_Values Create(Data.LocationValues.PVAParamater value, float magnification)
 		{
 			var s_value = new Translation_PVA_Values();
-	
+
 			s_value.Position_Min = new Vector3D(
 				value.Location.X.Min * magnification,
 				value.Location.Y.Min * magnification,

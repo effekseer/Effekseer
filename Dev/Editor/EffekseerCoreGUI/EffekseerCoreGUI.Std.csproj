@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>x64</Platforms>
+    <OutputPath>../../release</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AssemblyName>EffekseerCoreGUI</AssemblyName>
+    <DefineConstants>SCRIPT_ENABLED;DOTNET_STARNDARD;</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerCore\EffekseerCore.Std.csproj" />
+  </ItemGroup>
+
+</Project>

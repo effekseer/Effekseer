@@ -8,7 +8,7 @@ namespace Effekseer.Binary
 {
 	class SoundValues
 	{
-		public static byte[] GetBytes(Data.SoundValues value, Dictionary<string, int> wave_and_index)
+		public static byte[] GetBytes(Data.SoundValues value, SortedDictionary<string, int> wave_and_index)
 		{
 			List<byte[]> data = new List<byte[]>();
 

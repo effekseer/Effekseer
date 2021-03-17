@@ -40,6 +40,15 @@ namespace Effekseer.Binary
 			data.Add(bytes.Count().GetBytes());
 			data.Add(bytes);
 
+			if (value.LocationEffectType == Data.TranslationParentEffectType.NotBind_FollowParent ||
+				value.LocationEffectType == Data.TranslationParentEffectType.WhenCreating_FollowParent)
+			{
+				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Max.GetBytes());
+				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Min.GetBytes());
+				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Max.GetBytes());
+				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Min.GetBytes());
+			}
+
 			return data.ToArray().ToArray();
 		}
 

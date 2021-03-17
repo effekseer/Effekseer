@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace Effekseer.GUI.Dock
 {
 	class GlobalValues : DockPanel
@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public GlobalValues()
         {
-			Label = Resources.GetString("Global") + "###Global";
+			Label = Icons.PanelGlobal + Resources.GetString("Global") + "###Global";
 
             paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GlobalValues));
@@ -20,7 +20,6 @@ namespace Effekseer.GUI.Dock
 
             Read();
 
-			Icon = Images.GetIcon("PanelGlobal");
 			TabToolTip = Resources.GetString("Global");
 		}
 

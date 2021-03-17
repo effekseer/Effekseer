@@ -46,32 +46,41 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-	
-/**
-	@brief	サウンドデータ
-*/
-//struct SoundData
-//{	
-//	/**
-//		@brief	チャンネル数。
-//	*/
-//	int32_t			channels;
-//	
-//	/**
-//		@brief	サンプリング周波数。
-//	*/
-//	int32_t			sampleRate;
-//
-//	/**
-//		@brief	OSMixerソースボイス用バッファ。
-//	*/
-//	OSMIXER_BUFFER	buffer;
-//};
+class SoundData : public ::Effekseer::SoundData
+{
+public:
+	const osm::Sound* GetOsmSound() const { return osmSound; }
 
+private:
+	friend class SoundLoader;
+
+	/**
+		@brief	チャンネル数。
+	*/
+	int32_t			channels;
+	
+	/**
+		@brief	サンプリング周波数。
+	*/
+	int32_t			sampleRate;
+
+	/**
+		@brief	OpenSoundMixerバッファ。
+	*/
+	osm::Sound*		osmSound;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+	
 /**
 	@brief	サウンドクラス
 */
-class Sound
+class Sound;
+using SoundRef = Effekseer::RefPtr<Sound>;
+
+class Sound : public Effekseer::IReference
 {
 protected:
 	Sound() {}
@@ -85,7 +94,7 @@ public:
 		@param	voiceCount2ch	[in]	ステレオボイス数
 		@return	インスタンス
 	*/
-	static Sound* Create( osm::Manager* soundManager );
+	static SoundRef Create( osm::Manager* soundManager );
 	
 	/**
 		@brief	このインスタンスを破棄する。
@@ -106,12 +115,12 @@ public:
 	/**
 		@brief	サウンドプレイヤを生成する。
 	*/
-	virtual ::Effekseer::SoundPlayer* CreateSoundPlayer() = 0;
+	virtual ::Effekseer::SoundPlayerRef CreateSoundPlayer() = 0;
 
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoader* CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
 	
 	/**
 		@brief	ミュート設定

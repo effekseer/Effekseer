@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX9_RENDERER_H__
-#define	__EFFEKSEERRENDERER_DX9_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_DX9_RENDERER_H__
+#define __EFFEKSEERRENDERER_DX9_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX9.Base.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
+#include "EffekseerRendererDX9.Base.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -14,15 +14,14 @@
 namespace EffekseerRendererDX9
 {
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
-::Effekseer::TextureLoader* CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(LPDIRECT3DDEVICE9 device);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
-::Effekseer::ModelLoader* CreateModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoaderRef CreateTextureLoader(
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+	::Effekseer::FileInterface* fileInterface = nullptr,
+	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+
+::Effekseer::ModelLoaderRef CreateModelLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 //----------------------------------------------------------------------------------
 //
@@ -30,12 +29,18 @@ namespace EffekseerRendererDX9
 /**
 	@brief	描画クラス
 */
-class Renderer
-	: public ::EffekseerRenderer::Renderer
+class Renderer;
+using RendererRef = ::Effekseer::RefPtr<Renderer>;
+
+class Renderer : public ::EffekseerRenderer::Renderer
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer()
+	{
+	}
+	virtual ~Renderer()
+	{
+	}
 
 public:
 	/**
@@ -44,7 +49,7 @@ public:
 		@param	squareMaxCount	[in]	最大描画スプライト数
 		@return	インスタンス
 	*/
-	static Renderer* Create( LPDIRECT3DDEVICE9 device, int32_t squareMaxCount );
+	static RendererRef Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount);
 
 	/**
 		@brief	デバイスを取得する。
@@ -54,12 +59,7 @@ public:
 	/**
 		@brief	デバイスロストリセット間でデバイス自体を再構築する際に外部からデバイスを設定する。
 	*/
-	virtual void ChangeDevice( LPDIRECT3DDEVICE9 device ) = 0;
-
-	/**
-	@brief	背景を取得する。
-	*/
-	virtual Effekseer::TextureData* GetBackground() = 0;
+	virtual void ChangeDevice(LPDIRECT3DDEVICE9 device) = 0;
 
 	/**
 	@brief	背景を設定する。
@@ -67,65 +67,8 @@ public:
 	virtual void SetBackground(IDirect3DTexture9* background) = 0;
 };
 
+} // namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-/**
-	@brief	モデル
-*/
-class Model : public Effekseer::Model
-{
-private:
-
-public:
-
-	struct InternalModel
-	{
-		IDirect3DVertexBuffer9*		VertexBuffer;
-		IDirect3DIndexBuffer9*		IndexBuffer;
-		int32_t						VertexCount;
-		int32_t						IndexCount;
-		int32_t						FaceCount;
-
-		InternalModel()
-		{
-			VertexBuffer = nullptr;
-			IndexBuffer = nullptr;
-			VertexCount = 0;
-			IndexCount = 0;
-			FaceCount = 0;
-		}
-
-		virtual ~InternalModel()
-		{
-			ES_SAFE_RELEASE(VertexBuffer);
-			ES_SAFE_RELEASE(IndexBuffer);
-		}
-	};
-
-	InternalModel*				InternalModels = nullptr;
-	int32_t						ModelCount;
-
-	Model( uint8_t* data, int32_t size )
-		: Effekseer::Model	( data, size )
-		, InternalModels	(nullptr)
-		, ModelCount		( 0 )
-	{
-		this->m_vertexSize = sizeof(VertexWithIndex);
-	}
-
-	virtual ~Model()
-	{
-		ES_SAFE_DELETE_ARRAY(InternalModels);
-	}
-};
-
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX9_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_DX9_RENDERER_H__

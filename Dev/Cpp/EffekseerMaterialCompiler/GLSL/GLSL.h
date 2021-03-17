@@ -9,7 +9,7 @@ namespace Effekseer
 namespace GLSL
 {
 
-static char* material_common_define_450 = R"(
+static const char* material_common_define_450 = R"(
 #version 450
 #define LAYOUT(ind) layout(location = ind)
 #define lowp
@@ -17,14 +17,15 @@ static char* material_common_define_450 = R"(
 #define highp
 #define IN in
 #define OUT out
+#define CENTROID centroid
 
 )";
 
-static char* material_common_define_not_450 = R"(
+static const char* material_common_define_not_450 = R"(
 #define LAYOUT(ind) 
 )";
 
-static char* material_common_define =
+static const char* material_common_define =
 	R"(
 #define MOD mod
 #define FRAC fract
@@ -36,17 +37,26 @@ float atan2(in float y, in float x) {
 
 )";
 
-static char* material_common_vs_define = R"()"
+static const char* material_common_vs_define = R"()"
 
-										 R"(
+											   R"(
 
+
+// Dummy
+float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam) { return 1.0; }
+
+)";
+
+static const char* material_common_vs_define_450 = R"()"
+
+												   R"(
 #define TEX2D textureLod
 
 )";
 
-static char* material_common_fs_define = R"()"
+static const char* material_common_fs_define_450 = R"()"
 
-										 R"(
+												   R"(
 
 #define TEX2D texture
 
@@ -62,24 +72,15 @@ LAYOUT(3) IN vec3 a_Tangent;
 LAYOUT(4) IN vec2 a_TexCoord;
 LAYOUT(5) IN vec4 a_Color;
 )"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-	R"(
-IN float a_InstanceID;
-IN vec4 a_UVOffset;
-IN vec4 a_ModelColor;
-)"
-#endif
-
 	R"(
 
-LAYOUT(0) OUT lowp vec4 v_VColor;
-LAYOUT(1) OUT mediump vec2 v_UV1;
-LAYOUT(2) OUT mediump vec2 v_UV2;
-LAYOUT(3) OUT mediump vec3 v_WorldP;
-LAYOUT(4) OUT mediump vec3 v_WorldN;
-LAYOUT(5) OUT mediump vec3 v_WorldT;
-LAYOUT(6) OUT mediump vec3 v_WorldB;
-LAYOUT(7) OUT mediump vec2 v_ScreenUV;
+LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
+LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
+LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
+LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
+LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
+LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
+LAYOUT(6) OUT mediump vec4 v_PosP;
 //$C_OUT1$
 //$C_OUT2$
 )";
@@ -88,21 +89,21 @@ static const char g_material_model_vs_src_pre_uniform[] =
 
 	R"(
 uniform mat4 ProjectionMatrix;
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-	R"(
-uniform mat4 ModelMatrix[20];
-uniform vec4 UVOffset[20];
-uniform vec4 ModelColor[20];
-)"
-#else
-	R"(
+
+#ifdef EFK__INSTANCING_DISABLED__
+
 uniform mat4 ModelMatrix;
 uniform vec4 UVOffset;
 uniform vec4 ModelColor;
-)"
+
+#else
+
+uniform mat4 ModelMatrix[_INSTANCE_COUNT_];
+uniform vec4 UVOffset[_INSTANCE_COUNT_];
+uniform vec4 ModelColor[_INSTANCE_COUNT_];
+
 #endif
-	R"(
+
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
 uniform vec4 cameraPosition;
@@ -126,21 +127,16 @@ vec2 GetUVBack(vec2 uv)
 
 void main()
 {
-)"
-#if defined(MODEL_SOFTWARE_INSTANCING)
-	R"(
-	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];
-	vec4 uvOffset = a_UVOffset;
-	vec4 modelColor = a_ModelColor;
-)"
-#else
-	R"(
+#ifdef EFK__INSTANCING_DISABLED__
 	mat4 modelMatrix = ModelMatrix;
 	vec4 uvOffset = UVOffset;
 	vec4 modelColor = ModelColor * a_Color;
-)"
+#else
+	mat4 modelMatrix = ModelMatrix[int(gl_InstanceID)];
+	vec4 uvOffset = UVOffset[int(gl_InstanceID)];
+	vec4 modelColor = ModelColor[int(gl_InstanceID)] * a_Color;
 #endif
-	R"(
+
 	mat3 modelMatRot = mat3(modelMatrix);
 	vec3 worldPos = (modelMatrix * a_Position).xyz;
 	vec3 worldNormal = normalize(modelMatRot * a_Normal);
@@ -155,7 +151,7 @@ void main()
 
 	// UV
 	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
-	vec2 uv2 = uv1;
+	vec2 uv2 = a_TexCoord.xy;
 
 	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
@@ -163,22 +159,35 @@ void main()
 	vec3 pixelNormalDir = worldNormal;
 	
 	vec4 vcolor = modelColor;
+
+	// Dummy
+	vec2 screenUV = vec2(0.0, 0.0);
+	float meshZ = 0.0;
+
 )";
 
 static const char g_material_model_vs_src_suf2[] =
 	R"(
 	worldPos = worldPos + worldPositionOffset;
 
-	v_WorldP = worldPos;
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
+	v_WorldN_PX.w = worldPos.x;
+	v_WorldB_PY.w = worldPos.y;
+	v_WorldT_PZ.w = worldPos.z;
+	v_WorldN_PX.xyz = worldNormal;
+	v_WorldB_PY.xyz = worldBinormal;
+	v_WorldT_PZ.xyz = worldTangent;
 	v_UV1 = uv1;
 	v_UV2 = uv2;
 	v_VColor = vcolor;
 	gl_Position = ProjectionMatrix * vec4(worldPos, 1.0);
-	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
-	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+//	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
+//	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+
+	v_PosP = gl_Position;
+
+	#ifdef _Y_INVERTED_
+	gl_Position.y = - gl_Position.y;
+	#endif
 }
 )";
 
@@ -191,14 +200,13 @@ LAYOUT(2) IN vec4 atTexCoord;
 )"
 
 	R"(
-LAYOUT(0) OUT lowp vec4 v_VColor;
-LAYOUT(1) OUT mediump vec2 v_UV1;
-LAYOUT(2) OUT mediump vec2 v_UV2;
-LAYOUT(3) OUT mediump vec3 v_WorldP;
-LAYOUT(4) OUT mediump vec3 v_WorldN;
-LAYOUT(5) OUT mediump vec3 v_WorldT;
-LAYOUT(6) OUT mediump vec3 v_WorldB;
-LAYOUT(7) OUT mediump vec2 v_ScreenUV;
+LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
+LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
+LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
+LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
+LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
+LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
+LAYOUT(6) OUT mediump vec4 v_PosP;
 )";
 
 static const char g_material_sprite_vs_src_pre_simple_uniform[] =
@@ -225,14 +233,13 @@ LAYOUT(5) IN vec2 atTexCoord2;
 )"
 
 	R"(
-LAYOUT(0) OUT lowp vec4 v_VColor;
-LAYOUT(1) OUT mediump vec2 v_UV1;
-LAYOUT(2) OUT mediump vec2 v_UV2;
-LAYOUT(3) OUT mediump vec3 v_WorldP;
-LAYOUT(4) OUT mediump vec3 v_WorldN;
-LAYOUT(5) OUT mediump vec3 v_WorldT;
-LAYOUT(6) OUT mediump vec3 v_WorldB;
-LAYOUT(7) OUT mediump vec2 v_ScreenUV;
+LAYOUT(0) CENTROID OUT lowp vec4 v_VColor;
+LAYOUT(1) CENTROID OUT mediump vec2 v_UV1;
+LAYOUT(2) CENTROID OUT mediump vec2 v_UV2;
+LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
+LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
+LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
+LAYOUT(6) OUT mediump vec4 v_PosP;
 //$C_OUT1$
 //$C_OUT2$
 )";
@@ -268,6 +275,10 @@ void main() {
 	vec3 worldPos = atPosition.xyz;
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
+	// Dummy
+	vec2 screenUV = vec2(0.0, 0.0);
+	float meshZ = 0.0;
+
 	// UV
 	vec2 uv1 = atTexCoord.xy;
 	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
@@ -277,9 +288,9 @@ void main() {
 	vec3 worldNormal = vec3(0.0, 0.0, 0.0);
 	vec3 worldBinormal = vec3(0.0, 0.0, 0.0);
 	vec3 worldTangent = vec3(0.0, 0.0, 0.0);
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
+	v_WorldN_PX.xyz = worldNormal;
+	v_WorldB_PY.xyz = worldBinormal;
+	v_WorldT_PZ.xyz = worldTangent;
 
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = atColor;
@@ -305,6 +316,10 @@ void main() {
 	vec3 worldPos = atPosition.xyz;
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
+	// Dummy
+	vec2 screenUV = vec2(0.0, 0.0);
+	float meshZ = 0.0;
+
 	// UV
 	vec2 uv1 = atTexCoord.xy;
 	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
@@ -316,9 +331,9 @@ void main() {
 	vec3 worldTangent = (atTangent - vec3(0.5, 0.5, 0.5)) * 2.0;
 	vec3 worldBinormal = cross(worldNormal, worldTangent);
 
-	v_WorldN = worldNormal;
-	v_WorldB = worldBinormal;
-	v_WorldT = worldTangent;
+	v_WorldN_PX.xyz = worldNormal;
+	v_WorldB_PY.xyz = worldBinormal;
+	v_WorldT_PZ.xyz = worldTangent;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = atColor;
 )";
@@ -333,13 +348,21 @@ static const char g_material_sprite_vs_src_suf2[] =
 
 	gl_Position = uMatProjection * cameraPos;
 
-	v_WorldP = worldPos;
+	v_WorldN_PX.w = worldPos.x;
+	v_WorldB_PY.w = worldPos.y;
+	v_WorldT_PZ.w = worldPos.z;
 	v_VColor = vcolor;
 
 	v_UV1 = uv1;
 	v_UV2 = uv2;
-	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
-	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+	//v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
+	//v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+
+	v_PosP = gl_Position;
+
+	#ifdef _Y_INVERTED_
+	gl_Position.y = - gl_Position.y;
+	#endif
 }
 
 )";
@@ -347,14 +370,13 @@ static const char g_material_sprite_vs_src_suf2[] =
 static const char g_material_fs_src_pre[] =
 	R"(
 
-LAYOUT(0) IN lowp vec4 v_VColor;
-LAYOUT(1) IN mediump vec2 v_UV1;
-LAYOUT(2) IN mediump vec2 v_UV2;
-LAYOUT(3) IN mediump vec3 v_WorldP;
-LAYOUT(4) IN mediump vec3 v_WorldN;
-LAYOUT(5) IN mediump vec3 v_WorldT;
-LAYOUT(6) IN mediump vec3 v_WorldB;
-LAYOUT(7) IN mediump vec2 v_ScreenUV;
+LAYOUT(0) CENTROID IN lowp vec4 v_VColor;
+LAYOUT(1) CENTROID IN mediump vec2 v_UV1;
+LAYOUT(2) CENTROID IN mediump vec2 v_UV2;
+LAYOUT(3) IN mediump vec4 v_WorldN_PX;
+LAYOUT(4) IN mediump vec4 v_WorldB_PY;
+LAYOUT(5) IN mediump vec4 v_WorldT_PZ;
+LAYOUT(6) IN mediump vec4 v_PosP;
 //$C_PIN1$
 //$C_PIN2$
 
@@ -366,6 +388,8 @@ static const char g_material_fs_src_pre_uniform[] =
 uniform vec4 mUVInversedBack;
 uniform vec4 predefined_uniform;
 uniform vec4 cameraPosition;
+uniform vec4 reconstructionParam1;
+uniform vec4 reconstructionParam2;
 
 )";
 
@@ -382,6 +406,21 @@ vec2 GetUVBack(vec2 uv)
 {
 	uv.y = mUVInversedBack.z + mUVInversedBack.w * uv.y;
 	return uv;
+}
+
+float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam)
+{
+	float backgroundZ = TEX2D(efk_depth, GetUVBack(screenUV)).x;
+
+	float distance = softParticleParam * predefined_uniform.y;
+	vec2 rescale = reconstructionParam1.xy;
+	vec4 params = reconstructionParam2;
+
+	vec2 zs = vec2(backgroundZ * rescale.x + rescale.y, meshZ);
+
+	vec2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);
+
+	return min(max((depth.y - depth.x) / distance, 0.0), 1.0);
 }
 
 #ifdef _MATERIAL_LIT_
@@ -452,13 +491,21 @@ void main()
 {
 	vec2 uv1 = v_UV1;
 	vec2 uv2 = v_UV2;
-	vec3 worldPos = v_WorldP;
-	vec3 worldNormal = v_WorldN;
-	vec3 worldTangent = v_WorldT;
-	vec3 worldBinormal = v_WorldB;
+	vec3 worldPos = vec3(v_WorldN_PX.w, v_WorldB_PY.w, v_WorldT_PZ.w);
+	vec3 worldNormal = v_WorldN_PX.xyz;
+	vec3 worldTangent = v_WorldT_PZ.xyz;
+	vec3 worldBinormal = v_WorldB_PY.xyz;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = v_VColor;
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
+
+	vec2 screenUV = v_PosP.xy / v_PosP.w;
+	float meshZ =   v_PosP.z / v_PosP.w;
+	screenUV.xy = vec2(screenUV.x + 1.0, screenUV.y + 1.0) * 0.5;
+
+#ifdef _SCREEN_FLIPPED_
+	screenUV.y = 1.0 - screenUV.y;
+#endif
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
@@ -466,7 +513,7 @@ static const char g_material_fs_src_suf2_lit[] =
 
 	vec3 viewDir = normalize(cameraPosition.xyz - worldPos);
 	vec3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
-	vec3 specular = lightColor.xyz * lightScale * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
+	vec3 specular = lightColor.xyz * lightScale * calcLightingGGX(pixelNormalDir, viewDir, lightDirection.xyz, roughness, 0.9);
 
 	vec4 Output =  vec4(metallic * specular + (1.0 - metallic) * diffuse + baseColor * lightAmbientColor.xyz * ambientOcclusion, opacity);
 	Output.xyz = Output.xyz + emissive.xyz;
@@ -497,10 +544,10 @@ static const char g_material_fs_src_suf2_refraction[] =
 	vec3 dir = mat3(cameraMat) * pixelNormalDir;
 	vec2 distortUV = dir.xy * (refraction - airRefraction);
 
-	distortUV += v_ScreenUV;
+	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
 
-	vec4 bg = TEX2D(background, distortUV);
+	vec4 bg = TEX2D(efk_background, distortUV);
 	FRAGCOLOR = bg;
 
 	if(opacityMask <= 0.0) discard;
@@ -519,7 +566,7 @@ class ShaderGenerator
 {
 	bool useUniformBlock_ = false;
 	bool useSet_ = false;
-	int32_t textuerBindingOffset_ = 0;
+	int32_t textureBindingOffset_ = 0;
 
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
@@ -575,12 +622,12 @@ class ShaderGenerator
 		{
 			if (useSet_)
 			{
-				maincode << "layout(set = " << stage << ", binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name
+				maincode << "layout(set = " << stage << ", binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
 						 << ";" << std::endl;
 			}
 			else
 			{
-				maincode << "layout(binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
+				maincode << "layout(binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
 			}
 		}
 		else
@@ -589,7 +636,7 @@ class ShaderGenerator
 		}
 	}
 
-	void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite, bool isOutputDefined, bool is450)
+	void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite, bool isOutputDefined, bool is450)
 	{
 		if (is450)
 		{
@@ -602,16 +649,21 @@ class ShaderGenerator
 
 		maincode << material_common_define;
 
+		if (stage == 0)
+		{
+			maincode << material_common_vs_define;
+		}
+
 		// Adhoc
 		if (is450)
 		{
 			if (stage == 0)
 			{
-				maincode << material_common_vs_define;
+				maincode << material_common_vs_define_450;
 			}
 			else if (stage == 1)
 			{
-				maincode << material_common_fs_define;
+				maincode << material_common_fs_define_450;
 			}
 		}
 
@@ -619,7 +671,7 @@ class ShaderGenerator
 		{
 			if (isSprite)
 			{
-				if (material->GetIsSimpleVertex())
+				if (materialFile->GetIsSimpleVertex())
 				{
 					maincode << g_material_sprite_vs_src_pre_simple;
 				}
@@ -646,13 +698,13 @@ class ShaderGenerator
 		}
 	}
 
-	void ExportDefaultUniform(std::ostringstream& maincode, Material* material, int stage, bool isSprite)
+	void ExportDefaultUniform(std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite)
 	{
 		if (stage == 0)
 		{
 			if (isSprite)
 			{
-				if (material->GetIsSimpleVertex())
+				if (materialFile->GetIsSimpleVertex())
 				{
 					maincode << g_material_sprite_vs_src_pre_simple_uniform;
 				}
@@ -673,7 +725,7 @@ class ShaderGenerator
 	}
 
 	void ExportMain(std::ostringstream& maincode,
-					Material* material,
+					MaterialFile* materialFile,
 					int stage,
 					bool isSprite,
 					MaterialShaderType shaderType,
@@ -684,7 +736,7 @@ class ShaderGenerator
 		{
 			if (isSprite)
 			{
-				if (material->GetIsSimpleVertex())
+				if (materialFile->GetIsSimpleVertex())
 				{
 					maincode << g_material_sprite_vs_src_suf1_simple;
 				}
@@ -698,22 +750,34 @@ class ShaderGenerator
 				maincode << g_material_model_vs_src_suf1;
 			}
 
-			if (material->GetCustomData1Count() > 0)
+			if (materialFile->GetCustomData1Count() > 0)
 			{
 				if (isSprite)
 				{
-					maincode << GetType(material->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
+					maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
 				}
-				maincode << "v_CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
+				else
+				{
+					maincode << "#ifndef EFK__INSTANCING_DISABLED__" << std::endl;
+					maincode << GetType(4) + " customData1 = customData1s[int(gl_InstanceID)];\n";
+					maincode << "#endif" << std::endl;
+				}
+				maincode << "v_CustomData1 = customData1" + GetElement(materialFile->GetCustomData1Count()) + ";\n";
 			}
 
-			if (material->GetCustomData2Count() > 0)
+			if (materialFile->GetCustomData2Count() > 0)
 			{
 				if (isSprite)
 				{
-					maincode << GetType(material->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
+					maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
 				}
-				maincode << "v_CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
+				else
+				{
+					maincode << "#ifndef EFK__INSTANCING_DISABLED__" << std::endl;
+					maincode << GetType(4) + " customData2 = customData2s[int(gl_InstanceID)];\n";
+					maincode << "#endif" << std::endl;
+				}
+				maincode << "v_CustomData2 = customData2" + GetElement(materialFile->GetCustomData2Count()) + ";\n";
 			}
 
 			maincode << baseCode;
@@ -731,14 +795,14 @@ class ShaderGenerator
 		{
 			maincode << g_material_fs_src_suf1;
 
-			if (material->GetCustomData1Count() > 0)
+			if (materialFile->GetCustomData1Count() > 0)
 			{
-				maincode << GetType(material->GetCustomData1Count()) + " customData1 = v_CustomData1;\n";
+				maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = v_CustomData1;\n";
 			}
 
-			if (material->GetCustomData2Count() > 0)
+			if (materialFile->GetCustomData2Count() > 0)
 			{
-				maincode << GetType(material->GetCustomData2Count()) + " customData2 = v_CustomData2;\n";
+				maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = v_CustomData2;\n";
 			}
 
 			maincode << baseCode;
@@ -749,11 +813,11 @@ class ShaderGenerator
 			}
 			else
 			{
-				if (material->GetShadingModel() == Effekseer::ShadingModelType::Lit)
+				if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Lit)
 				{
 					maincode << g_material_fs_src_suf2_lit;
 				}
-				else if (material->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
+				else if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
 				{
 					maincode << g_material_fs_src_suf2_unlit;
 				}
@@ -762,21 +826,24 @@ class ShaderGenerator
 	}
 
 public:
-	ShaderData GenerateShader(Material* material,
+	ShaderData GenerateShader(MaterialFile* materialFile,
 							  MaterialShaderType shaderType,
 							  int32_t maximumTextureCount,
 							  bool useUniformBlock,
 							  bool isOutputDefined,
 							  bool is450,
 							  bool useSet,
-							  bool textureBindingOffset)
+							  int textureBindingOffset,
+							  bool isYInverted,
+							  bool isScreenFlipped,
+							  int instanceCount)
 	{
 		useUniformBlock_ = useUniformBlock;
 		useSet_ = useSet;
-		textuerBindingOffset_ = textuerBindingOffset_;
+		textureBindingOffset_ = textureBindingOffset;
 
 		bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
-		bool isRefrection = material->GetHasRefraction() &&
+		bool isRefrection = materialFile->GetHasRefraction() &&
 							(shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
 
 		ShaderData shaderData;
@@ -785,22 +852,39 @@ public:
 		{
 			std::ostringstream maincode;
 
-			ExportHeader(maincode, material, stage, isSprite, isOutputDefined, is450);
+			ExportHeader(maincode, materialFile, stage, isSprite, isOutputDefined, is450);
 
-			int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
-
-			for (size_t i = 0; i < actualTextureCount; i++)
+			if (isYInverted)
 			{
-				auto textureIndex = material->GetTextureIndex(i);
-				auto textureName = material->GetTextureName(i);
+				maincode << "#define _Y_INVERTED_ 1" << std::endl;
+			}
+
+			if (isScreenFlipped)
+			{
+				maincode << "#define _SCREEN_FLIPPED_ 1" << std::endl;
+			}
+
+			maincode << "#define _INSTANCE_COUNT_ " << instanceCount << std::endl;
+
+			// TODO : Replace DIRTY CODE
+			if (textureBindingOffset > 0)
+			{
+				// Vulkan
+				maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
+			}
+
+			int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
+
+			for (int32_t i = 0; i < actualTextureCount; i++)
+			{
+				auto textureIndex = materialFile->GetTextureIndex(i);
+				auto textureName = materialFile->GetTextureName(i);
 
 				ExportTexture(maincode, textureName, i, stage);
 			}
 
-			for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
-			{
-				ExportTexture(maincode, "background", i, stage);
-			}
+			ExportTexture(maincode, "efk_background", actualTextureCount + 0, stage);
+			ExportTexture(maincode, "efk_depth", actualTextureCount + 1, stage);
 
 			// Uniform block begin
 			if (useUniformBlock)
@@ -829,9 +913,9 @@ public:
 				}
 			}
 
-			ExportDefaultUniform(maincode, material, stage, isSprite);
+			ExportDefaultUniform(maincode, materialFile, stage, isSprite);
 
-			if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
+			if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 			{
 				ExportUniform(maincode, 4, "lightDirection");
 				ExportUniform(maincode, 4, "lightColor");
@@ -839,7 +923,7 @@ public:
 
 				maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 			}
-			else if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
+			else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
 			{
 			}
 
@@ -850,20 +934,35 @@ public:
 
 			if (!isSprite && stage == 0)
 			{
-				if (material->GetCustomData1Count() > 0)
+				if (materialFile->GetCustomData1Count() > 0)
 				{
-					maincode << "uniform vec4 customData1;" << std::endl;
+					maincode << R"(
+
+#ifdef EFK__INSTANCING_DISABLED__
+uniform vec4 customData1;
+#else
+uniform vec4 customData1s[_INSTANCE_COUNT_];
+#endif
+)" << std::endl;
 				}
-				if (material->GetCustomData2Count() > 0)
+				if (materialFile->GetCustomData2Count() > 0)
 				{
-					maincode << "uniform vec4 customData2;" << std::endl;
+
+					maincode << R"(
+
+#ifdef EFK__INSTANCING_DISABLED__
+uniform vec4 customData2;
+#else
+uniform vec4 customData2s[_INSTANCE_COUNT_];
+#endif
+)" << std::endl;
 				}
 			}
 
-			for (int32_t i = 0; i < material->GetUniformCount(); i++)
+			for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
 			{
-				auto uniformIndex = material->GetUniformIndex(i);
-				auto uniformName = material->GetUniformName(i);
+				auto uniformIndex = materialFile->GetUniformIndex(i);
+				auto uniformName = materialFile->GetUniformName(i);
 
 				ExportUniform(maincode, 4, uniformName);
 			}
@@ -874,20 +973,21 @@ public:
 				maincode << "};" << std::endl;
 			}
 
-			auto baseCode = std::string(material->GetGenericCode());
+			auto baseCode = std::string(materialFile->GetGenericCode());
 			baseCode = Replace(baseCode, "$F1$", "float");
 			baseCode = Replace(baseCode, "$F2$", "vec2");
 			baseCode = Replace(baseCode, "$F3$", "vec3");
 			baseCode = Replace(baseCode, "$F4$", "vec4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+			baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
 			baseCode = Replace(baseCode, "$UV$", "uv");
 			baseCode = Replace(baseCode, "$MOD", "mod");
 
 			// replace textures
-			for (size_t i = 0; i < actualTextureCount; i++)
+			for (int32_t i = 0; i < actualTextureCount; i++)
 			{
-				auto textureIndex = material->GetTextureIndex(i);
-				auto textureName = std::string(material->GetTextureName(i));
+				auto textureIndex = materialFile->GetTextureIndex(i);
+				auto textureName = std::string(materialFile->GetTextureName(i));
 
 				std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
 				std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
@@ -905,10 +1005,10 @@ public:
 			}
 
 			// invalid texture
-			for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+			for (int32_t i = actualTextureCount; i < materialFile->GetTextureCount(); i++)
 			{
-				auto textureIndex = material->GetTextureIndex(i);
-				auto textureName = std::string(material->GetTextureName(i));
+				auto textureIndex = materialFile->GetTextureIndex(i);
+				auto textureName = std::string(materialFile->GetTextureName(i));
 
 				std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
 				std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
@@ -917,7 +1017,7 @@ public:
 				baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
 			}
 
-			ExportMain(maincode, material, stage, isSprite, shaderType, baseCode, useUniformBlock);
+			ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode, useUniformBlock);
 
 			if (stage == 0)
 			{
@@ -931,47 +1031,47 @@ public:
 
 		// custom data
 		int32_t layoutOffset = 6;
-		int32_t pvLayoutOffset = 8;
+		int32_t pvLayoutOffset = 7;
 
-		if (material->GetCustomData1Count() > 0)
+		if (materialFile->GetCustomData1Count() > 0)
 		{
 			if (isSprite)
 			{
 				shaderData.CodeVS = Replace(shaderData.CodeVS,
 											"//$C_IN1$",
 											"LAYOUT(" + std::to_string(layoutOffset) + ") " + "IN " +
-												GetType(material->GetCustomData1Count()) + " atCustomData1;");
+												GetType(materialFile->GetCustomData1Count()) + " atCustomData1;");
 			}
 			shaderData.CodeVS = Replace(shaderData.CodeVS,
 										"//$C_OUT1$",
 										"LAYOUT(" + std::to_string(pvLayoutOffset) + ") " + "OUT mediump " +
-											GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+											GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
 			shaderData.CodePS = Replace(shaderData.CodePS,
 										"//$C_PIN1$",
 										"LAYOUT(" + std::to_string(pvLayoutOffset) + ") " + "IN mediump " +
-											GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+											GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
 
 			layoutOffset += 1;
 			pvLayoutOffset += 1;
 		}
 
-		if (material->GetCustomData2Count() > 0)
+		if (materialFile->GetCustomData2Count() > 0)
 		{
 			if (isSprite)
 			{
 				shaderData.CodeVS = Replace(shaderData.CodeVS,
 											"//$C_IN2$",
 											"LAYOUT(" + std::to_string(layoutOffset) + ") " + "IN " +
-												GetType(material->GetCustomData2Count()) + " atCustomData2;");
+												GetType(materialFile->GetCustomData2Count()) + " atCustomData2;");
 			}
 			shaderData.CodeVS = Replace(shaderData.CodeVS,
 										"//$C_OUT2$",
 										"LAYOUT(" + std::to_string(pvLayoutOffset) + ") " + "OUT mediump " +
-											GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+											GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
 			shaderData.CodePS = Replace(shaderData.CodePS,
 										"//$C_PIN2$",
 										"LAYOUT(" + std::to_string(pvLayoutOffset) + ") " + "IN mediump " +
-											GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+											GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
 		}
 
 		return shaderData;

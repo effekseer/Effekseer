@@ -23,9 +23,9 @@ typedef int(APIENTRY* PFNWGLSWAPINTERVALEXTPROC)(int);
 static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
-static ::Effekseer::Manager* g_manager = NULL;
-static ::EffekseerRenderer::Renderer* g_renderer = NULL;
-static ::Effekseer::Effect* g_effect = NULL;
+static ::Effekseer::ManagerRef g_manager;
+static ::EffekseerRenderer::RendererRef g_renderer = NULL;
+static ::Effekseer::EffectRef g_effect;
 static ::Effekseer::Handle g_handle = -1;
 static ::Effekseer::Vector3D g_position;
 
@@ -348,29 +348,29 @@ public:
 			for (auto i = 0; i < effect->GetColorImageCount(); i++)
 			{
 				char path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)path, 260, (int16_t*)effect->GetColorImagePath(i));
+				Effekseer::ConvertUtf16ToUtf8(path, 260, effect->GetColorImagePath(i));
 				auto buf = glbData_.images[i];
-				auto resource = textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Color);
+				auto resource = textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Color, true);
 				SetTexture(effect, i, Effekseer::TextureType::Color, resource);
 			}
 
 			for (auto i = 0; i < effect->GetNormalImageCount(); i++)
 			{
 				char path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)path, 260, (int16_t*)effect->GetColorImagePath(i));
+				Effekseer::ConvertUtf16ToUtf8(path, 260, effect->GetColorImagePath(i));
 				auto buf = glbData_.normalImages[i];
 				auto resource =
-					textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Normal);
+					textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Normal, true);
 				SetTexture(effect, i, Effekseer::TextureType::Normal, resource);
 			}
 
 			for (auto i = 0; i < effect->GetDistortionImageCount(); i++)
 			{
 				char path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)path, 260, (int16_t*)effect->GetColorImagePath(i));
+				Effekseer::ConvertUtf16ToUtf8(path, 260, effect->GetColorImagePath(i));
 				auto buf = glbData_.distortionImages[i];
-				auto resource =
-					textureLoader->Load((const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Distortion);
+				auto resource = textureLoader->Load(
+					(const void*)(glbData_.bin + buf.byteOffset), buf.byteLength, Effekseer::TextureType::Distortion, true);
 				SetTexture(effect, i, Effekseer::TextureType::Distortion, resource);
 			}
 		}
@@ -459,7 +459,7 @@ int main(int argc, char** argv)
 
 	// Extend a format which can be loaded
 	// 読み込めるフォーマットを拡張する
-	g_manager->GetSetting()->AddEffectFactory(new glmEffectFactory());
+	g_manager->GetSetting()->AddEffectFactory(Effekseer::MakeRefPtr<glmEffectFactory>());
 
 	// Specify functions to draw from the instance
 	// 描画用インスタンスから描画機能を設定する
@@ -507,17 +507,13 @@ int main(int argc, char** argv)
 	// OpenGLを終了するために、コンテキストを有効にする
 	wglMakeCurrent(g_hDC, g_hGLRC);
 
-	// Dispose the effect
-	// エフェクトを破棄する
-	ES_SAFE_RELEASE(g_effect);
-
 	// First dispose the instance for managing effects
 	// 先にエフェクト管理用インスタンスを破棄する
-	g_manager->Destroy();
+	g_manager.Reset();
 
 	// Next dispose the instance for drawing effects
 	// 次に描画用インスタンスを破棄する
-	g_renderer->Destroy();
+	g_renderer.Reset();
 
 	// Finish OpenGL
 	// OpenGLを終了させる

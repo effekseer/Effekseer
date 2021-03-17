@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERSOUND_SOUND_LOADER_H__
-#define	__EFFEKSEERSOUND_SOUND_LOADER_H__
+#ifndef __EFFEKSEERSOUND_SOUND_LOADER_H__
+#define __EFFEKSEERSOUND_SOUND_LOADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.h"
-#include "../EffekseerSoundDSound.h"
+#include "EffekseerSoundDSound.SoundImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -17,33 +17,32 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 
-class SoundLoader
-	: public ::Effekseer::SoundLoader
+class SoundLoader : public ::Effekseer::SoundLoader
 {
-	SoundImplemented*	m_sound;
+	SoundImplementedRef m_sound;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	SoundLoader( SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface = NULL );
+	SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterface* fileInterface = NULL);
 
 	virtual ~SoundLoader();
 
-	void* Load(::Effekseer::FileReader* reader);
+	::Effekseer::SoundDataRef Load(::Effekseer::FileReader* reader);
 
 public:
-	void* Load( const EFK_CHAR* path ) override;
+	::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
-	void* Load(const void* data, int32_t size) override;
+	::Effekseer::SoundDataRef Load(const void* data, int32_t size) override;
 
-	void Unload(void* data) override;
+	void Unload(::Effekseer::SoundDataRef soundData) override;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERSOUND_SOUND_LOADER_H__
+#endif // __EFFEKSEERSOUND_SOUND_LOADER_H__

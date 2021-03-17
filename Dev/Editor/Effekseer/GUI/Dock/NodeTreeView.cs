@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,11 +27,11 @@ namespace Effekseer.GUI.Dock
 		/// <summary>
 		/// For maintain parameters when removing and adding immediately
 		/// </summary>
-		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeViewNode> temporalRemovingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeViewNode>();
+		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeViewNode> temporalChangingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeViewNode>();
 
 		public NodeTreeView()
         {
-			Label = Resources.GetString("NodeTree") + "###NodeTree";
+			Label = Icons.PanelNodeTree + Resources.GetString("NodeTree") + "###NodeTree";
 
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;
@@ -69,17 +69,16 @@ namespace Effekseer.GUI.Dock
 
 			Renew();
 
-			Icon = Images.GetIcon("PanelNodeTree");
 			TabToolTip = Resources.GetString("NodeTree");
 		}
 
 		override protected void UpdateInternal()
 		{
-			float showHideButtonOffset = 48 * Manager.DpiScale;
+			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight();
 
 			isPopupShown = false;
 
-			var windowSize = Manager.NativeManager.GetWindowSize();
+			var windowSize = Manager.NativeManager.GetContentRegionAvail();
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
 
@@ -135,25 +134,32 @@ namespace Effekseer.GUI.Dock
 				var n1 = findNode(pair.Item1, Children.Internal);
 				var n2 = findNode(pair.Item2, Children.Internal);
 
-				if (pair.Item3 == MovingNodeEventType.AddLast)
+				var isNode = n1.Node is Data.Node;
+
+				if(isNode)
 				{
-					Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, int.MaxValue);
-				}
-				else if (pair.Item3 == MovingNodeEventType.Insert)
-				{
-					// to avoid root node
-					if(n2.Node is Data.Node)
+					var movedNode = n1.Node as Data.Node;
+
+					if (pair.Item3 == MovingNodeEventType.AddLast)
 					{
-						Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+						Core.MoveNode(movedNode, n2.Node.Parent, int.MaxValue);
 					}
-				}
-				else if (pair.Item3 == MovingNodeEventType.AddAsChild)
-				{
-					Core.MoveNode(n1.Node as Data.Node, n2.Node, int.MaxValue);
-				}
-				else
-				{
-					throw new Exception();
+					else if (pair.Item3 == MovingNodeEventType.Insert)
+					{
+						// to avoid root node
+						if (n2.Node is Data.Node)
+						{
+							Core.MoveNode(movedNode, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+						}
+					}
+					else if (pair.Item3 == MovingNodeEventType.AddAsChild)
+					{
+						Core.MoveNode(movedNode, n2.Node, int.MaxValue);
+					}
+					else
+					{
+						throw new Exception();
+					}
 				}
 			}
 			exchangeEvents.Clear();
@@ -164,7 +170,7 @@ namespace Effekseer.GUI.Dock
 				isVisibleChanging = false;
 			}
 
-			temporalRemovingNodeTreeViews.Clear();
+			temporalChangingNodeTreeViews.Clear();
 		}
 
         /// <summary>
@@ -429,7 +435,7 @@ namespace Effekseer.GUI.Dock
 
         public void Update()
         {
-			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen;
+			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
 			if(Core.SelectedNode == this.Node)
 			{
@@ -449,18 +455,15 @@ namespace Effekseer.GUI.Dock
 				requiredToExpand = false;
 			}
 
-			// Tree
-			var temp = new[] { false };
-
-			var iconString = "NodeEmpty";
+			var icon = Icons.NodeTypeEmpty;
 			var node = Node as Data.Node;
 			if(node != null)
 			{
-				if(node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) iconString = "NodeSprite";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) iconString = "NodeRing";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) iconString = "NodeRibbon";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) iconString = "NodeModel";
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) iconString = "NodeTrack";
+				if(node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) icon = Icons.NodeTypeRing;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) icon = Icons.NodeTypeRibbon;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) icon = Icons.NodeTypeModel;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) icon = Icons.NodeTypeTrack;
 			}
 
 			// Change background color
@@ -470,8 +473,8 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Extend clickable space
-			var name = Node.Name + "                                                                " + id;
-			IsExpanding = Manager.NativeManager.TreeNodeEx(name, temp, Images.GetIcon(iconString), flag);
+			var label = icon + " " + Node.Name + id;
+			IsExpanding = Manager.NativeManager.TreeNodeEx(label, flag);
 
 			SelectNodeIfClicked();
 
@@ -585,9 +588,9 @@ namespace Effekseer.GUI.Dock
             }
 
 			NodeTreeViewNode treeViewNode = null;
-			if(treeView.temporalRemovingNodeTreeViews.ContainsKey(node))
+			if(treeView.temporalChangingNodeTreeViews.ContainsKey(node))
 			{
-				treeViewNode = treeView.temporalRemovingNodeTreeViews[node];
+				treeViewNode = treeView.temporalChangingNodeTreeViews[node];
 				treeViewNode.AddEvent(true);
 			}
 			else
@@ -618,7 +621,11 @@ namespace Effekseer.GUI.Dock
                 {
                     treenode.RemoveEvent(true);
                     Children.Remove(treenode);
-					treeView.temporalRemovingNodeTreeViews.Add(treenode.Node, treenode);
+
+					if (!treeView.temporalChangingNodeTreeViews.ContainsKey(node))
+					{
+						treeView.temporalChangingNodeTreeViews.Add(treenode.Node, treenode);
+					}
                     return;
                 }
             }

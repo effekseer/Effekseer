@@ -24,7 +24,7 @@ namespace EffekseerSound
 class SoundVoice;
 class SoundVoiceContainer;
 
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 	IDirectSound8*			m_dsound;
 
@@ -43,9 +43,9 @@ public:
 	void SetListener( const ::Effekseer::Vector3D& pos, 
 		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up );
 	
-	::Effekseer::SoundPlayer* CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer();
 
-	::Effekseer::SoundLoader* CreateSoundLoader();
+	::Effekseer::SoundLoaderRef CreateSoundLoader(::Effekseer::FileInterface* fileInterface);
 	
 	void StopAllVoices();
 
@@ -63,12 +63,26 @@ public:
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
 	
-	void StopData( SoundData* soundData );
+	void StopData( const ::Effekseer::SoundDataRef& soundData );
 
 	void SetPanRange( int32_t leftPos, int32_t rightPos );
 
 	float CalculatePan( const Effekseer::Vector3D& position );
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
+using SoundImplementedRef = ::Effekseer::RefPtr<SoundImplemented>;
 
 //----------------------------------------------------------------------------------
 //

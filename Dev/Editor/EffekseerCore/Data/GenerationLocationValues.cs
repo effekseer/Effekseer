@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.Data.Value;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,13 +78,13 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal GenerationLocationValues()
+		internal GenerationLocationValues(Value.Path basepath)
 		{
 			EffectsRotation = new Value.Boolean(false);
 			Type = new Value.Enum<ParameterType>();
 			Point = new PointParameter();
 			Sphere = new SphereParameter();
-			Model = new ModelParameter();
+			Model = new ModelParameter(basepath);
 			Circle = new CircleParameter();
 			Line = new LineParameter();
 		}
@@ -192,6 +193,16 @@ namespace Effekseer.Data
 
 		public class ModelParameter
 		{
+			const int ModelReferenceTypeID = 100;
+
+			[Selector(ID = ModelReferenceTypeID)]
+			public Value.Enum<ModelReferenceType> ModelReference
+			{
+				get;
+				private set;
+			} = new Enum<ModelReferenceType>(ModelReferenceType.File);
+
+			[Selected(ID = 100, Value = (int)ModelReferenceType.File)]
 			[Name(language = Language.Japanese, value = "モデル")]
 			[Description(language = Language.Japanese, value = "モデルファイル")]
 			[Name(language = Language.English, value = "Model")]
@@ -202,6 +213,13 @@ namespace Effekseer.Data
 				private set;
 			}
 
+			[Selected(ID = ModelReferenceTypeID, Value = (int)ModelReferenceType.ProceduralModel)]
+			public ProceduralModelReference Reference
+			{
+				get;
+				private set;
+			} = new ProceduralModelReference();
+
 			[Name(language = Language.Japanese, value = "生成位置種類")]
 			[Name(language = Language.English, value = "Method of Spawning")]
 			public Value.Enum<ModelType> Type
@@ -210,9 +228,9 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public ModelParameter()
+			public ModelParameter(Path basepath)
 			{
-                Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");				
+                Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");				
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}
@@ -304,7 +322,6 @@ namespace Effekseer.Data
 			[Name(value = "モデル", language = Language.Japanese)]
 			[Name(value = "Model", language = Language.English)]
 			Model = 2,
-			
 		}
 
 		public enum ModelType : int

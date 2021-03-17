@@ -10,6 +10,8 @@ set(srcs
     GUI/JapaneseFont.h
     GUI/MainWindow.h
     GUI/MainWindow.cpp
+    GUI/FramerateController.h
+    GUI/FramerateController.cpp
     IO/IO.h
     IO/IO.cpp
     IO/StaticFile.h
@@ -52,6 +54,10 @@ target_link_libraries(
     EditorCommon
     PRIVATE
     IPC)
+
+if(CLANG_FORMAT_ENABLED)
+    clang_format(${PROJECT_NAME})
+endif()
 
 
 if (WIN32)

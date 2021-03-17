@@ -1,0 +1,38 @@
+Node_IsRendered_Name,Visibility
+Node_IsRendered_Desc,"Whether to draw the instance to the viewport.
+Has nothing to do with the final output."
+,
+Node_Name_Name,Name
+Node_Name_Desc,The name of the node.
+BasicSettings_MaxGeneration_Name,Spawn Count
+BasicSettings_MaxGeneration_Desc,Number of instances to generate
+BasicSettings_LocationEffectType_Name,Inherit Position
+BasicSettings_LocationEffectType_Desc,When this instance should copy its parent node's position
+BasicSettings_RotationEffectType_Name,Inherit Rotation
+BasicSettings_RotationEffectType_Desc,When this instance should copy its parent node's rotation
+BasicSettings_ScaleEffectType_Name,Inherit Scale
+BasicSettings_ScaleEffectType_Desc,When this instance should copy its parent node's scale
+BasicSettings_RemoveWhenLifeIsExtinct_Name,Destroy after time
+BasicSettings_RemoveWhenLifeIsExtinct_Desc,
+BasicSettings_RemoveWhenParentIsRemoved_Name,Destroy with parent
+BasicSettings_RemoveWhenParentIsRemoved_Desc,
+BasicSettings_RemoveWhenAllChildrenAreRemoved_Name,"Destroy when no 
+more children"
+BasicSettings_RemoveWhenAllChildrenAreRemoved_Desc,
+BasicSettings_Life_Name,Time to live
+BasicSettings_Life_Desc,Length of time each instance survives
+BasicSettings_GenerationTime_Name,Spawn Rate
+BasicSettings_GenerationTime_Desc,Time between each instance generation
+BasicSettings_GenerationTimeOffset_Name,Initial Delay
+BasicSettings_GenerationTimeOffset_Desc,Amount of time that must elapse after instance spawns before it starts generating.
+,
+BasicSettings_ParentEffectType_NotBind_Name,Never
+BasicSettings_ParentEffectType_NotBind_Root_Name,Root dependent (deprecated)
+BasicSettings_ParentEffectType_WhenCreating_Name,Only on create
+BasicSettings_ParentEffectType_Already_Name,Always
+
+BasicSettings_TranslationParentEffectType_NotBind_FollowParent_Name,Never-FollowParent
+BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent_Name,Only on create-FollowParent
+
+BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed_Name,Max Follow Speed
+BasicSettings_SteeringBehaviorParameter_SteeringSpeed_Name,Steering Speed(%)

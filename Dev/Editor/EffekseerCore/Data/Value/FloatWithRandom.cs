@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class FloatWithRandom
+	public class FloatWithRandom : IValueChangedFromDefault
 	{
 		float _value_center = 0;
 		float _value_max = 0;
@@ -243,6 +243,8 @@ namespace Effekseer.Data.Value
 
 		public void SetMaxDirectly(float value)
 		{
+			value = Math.Min(value, _max);
+
 			_value_max = value;
 		}
 
@@ -290,6 +292,8 @@ namespace Effekseer.Data.Value
 
 		public void SetMinDirectly(float value)
 		{
+			value = Math.Max(value, _min);
+
 			_value_min = value;
 		}
 
@@ -345,6 +349,14 @@ namespace Effekseer.Data.Value
 			_value_center = new_center;
 			_value_max = new_max;
 			_value_min = new_min;
+		}
+
+		public byte[] GetBytes(float mul = 1.0f)
+		{
+			byte[] values = new byte[sizeof(float) * 2];
+			BitConverter.GetBytes(Max * mul).CopyTo(values, sizeof(float) * 0);
+			BitConverter.GetBytes(Min * mul).CopyTo(values, sizeof(float) * 1);
+			return values;
 		}
 	}
 }

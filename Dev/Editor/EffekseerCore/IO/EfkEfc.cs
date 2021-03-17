@@ -1,60 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Effekseer.IO
 {
 	/// <summary>
-	/// It should be made as unit test
-	/// </summary>
-	public class ChunkTest
-	{
-		public static void Test()
-		{
-			// a function to generate dummy data for testing
-			Func<int, byte[]> generateDummyData = (int n) =>
-			{
-				var ret = new byte[n];
-				var rand = new Random();
-
-				for (int i = 0; i < n; i++)
-				{
-					ret[i] = (byte)rand.Next(255);
-				}
-
-				return ret;
-			};
-
-			var src = new Chunk();
-			src.AddChunk("tes1", generateDummyData(25));
-			src.AddChunk("tes2", generateDummyData(255));
-			src.AddChunk("tes3", generateDummyData(256));
-			var saved = src.Save();
-
-			var dst = new Chunk();
-			dst.Load(saved);
-
-			if (!(src.Blocks[0].Chunk == dst.Blocks[0].Chunk)) throw new Exception();
-			if (!(src.Blocks[1].Chunk == dst.Blocks[1].Chunk)) throw new Exception();
-			if (!(src.Blocks[2].Chunk == dst.Blocks[2].Chunk)) throw new Exception();
-
-			if (!(src.Blocks[0].Buffer.Length == dst.Blocks[0].Buffer.Length)) throw new Exception();
-			if (!(src.Blocks[1].Buffer.Length == dst.Blocks[1].Buffer.Length)) throw new Exception();
-			if (!(src.Blocks[2].Buffer.Length == dst.Blocks[2].Buffer.Length)) throw new Exception();
-
-			if (!src.Blocks[0].Buffer.SequenceEqual(dst.Blocks[0].Buffer)) throw new Exception();
-			if (!src.Blocks[1].Buffer.SequenceEqual(dst.Blocks[1].Buffer)) throw new Exception();
-			if (!src.Blocks[2].Buffer.SequenceEqual(dst.Blocks[2].Buffer)) throw new Exception();
-		}
-	}
-
-	/// <summary>
 	/// Chunck to save or load
-	/// TODO create new file
 	/// </summary>
-	class Chunk
+	public class Chunk
 	{
 		public List<ChunkBlock> Blocks = new List<ChunkBlock>();
 
@@ -117,7 +73,7 @@ namespace Effekseer.IO
 		}
 	}
 
-	class ChunkBlock
+	public class ChunkBlock
 	{
 		public string Chunk;
 
@@ -310,14 +266,50 @@ namespace Effekseer.IO
 			return data.SelectMany(_ => _).ToArray();
 		}
 
-		public bool Save(string path)
+		public bool Save(string path, Data.NodeRoot rootNode, XmlDocument editorData)
 		{
-			// editor data
-			var editorData = Core.SaveAsXmlDocument(path);
+			Utils.Logger.Write(string.Format("Save : Start : {0}", path));
 
+			var allData = Save(rootNode, editorData);
+
+			try
+			{
+				System.IO.File.WriteAllBytes(path, allData);
+			}
+			catch (Exception e)
+			{
+				string messeage = "";
+				if (Core.Language == Language.English)
+				{
+					messeage = "Failed to save a file " + path + "\nThis error is \n";
+				}
+				else
+				{
+					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
+				}
+
+				messeage += e.ToString();
+
+				if (Core.OnOutputMessage != null)
+				{
+					Core.OnOutputMessage(messeage);
+				}
+
+				Utils.Logger.Write(string.Format("Save : Failed : {0}", e.ToString()));
+
+				return false;
+			}
+
+			Utils.Logger.Write(string.Format("Save : End"));
+
+			return true;
+		}
+
+		public byte[] Save(Data.NodeRoot rootNode, XmlDocument editorData)
+		{
 			// binary data
 			var binaryExporter = new Binary.Exporter();
-			var binaryDataLatest = binaryExporter.Export(1, Binary.ExporterVersion.Latest);  // TODO change magnification
+			var binaryDataLatest = binaryExporter.Export(rootNode, 1, Binary.ExporterVersion.Latest);  // TODO change magnification
 
 			// info data
 			byte[] infoData = null;
@@ -332,7 +324,7 @@ namespace Effekseer.IO
 					}
 				};
 
-				int infoVersion = 1500;
+				int infoVersion = (int)Binary.ExporterVersion.Latest;
 				data.Add(BitConverter.GetBytes(infoVersion));
 
 				exportStrs(binaryExporter.UsedTextures);
@@ -341,6 +333,7 @@ namespace Effekseer.IO
 				exportStrs(binaryExporter.Models);
 				exportStrs(binaryExporter.Sounds);
 				exportStrs(binaryExporter.Materials);
+				exportStrs(binaryExporter.Curves);
 
 				infoData = data.SelectMany(_ => _).ToArray();
 			}
@@ -364,27 +357,16 @@ namespace Effekseer.IO
 			if(Binary.ExporterVersion.Latest > Binary.ExporterVersion.Ver1500)
 			{
 				var binaryExporterFallback = new Binary.Exporter();
-				var binaryDataFallback = binaryExporterFallback.Export(1, Binary.ExporterVersion.Ver1500);
+				var binaryDataFallback = binaryExporterFallback.Export(Core.Root, 1, Binary.ExporterVersion.Ver1500);
 				chunk.AddChunk("BIN_", binaryDataFallback);
 			}
 
 			var chunkData = chunk.Save();
 
-			var allData = headerData.Concat(chunkData).ToArray();
-
-			try
-			{
-				System.IO.File.WriteAllBytes(path, allData);
-			}
-			catch
-			{
-				return false;
-			}
-
-			return true;
+			return headerData.Concat(chunkData).ToArray();
 		}
 
-		public bool Load(string path)
+		public XmlDocument Load(string path)
 		{
 			byte[] allData = null;
 			try
@@ -393,17 +375,22 @@ namespace Effekseer.IO
 			}
 			catch
 			{
-				return false;
+				return null;
 			}
 
-			if (allData.Length < 24) return false;
+			return Load(allData);
+		}
+
+		public XmlDocument Load(byte[] allData)
+		{
+			if (allData.Length < 24) return null;
 
 			if (allData[0] != 'E' ||
 				allData[1] != 'F' ||
 				allData[2] != 'K' ||
 				allData[3] != 'E')
 			{
-				return false;
+				return null;
 			}
 
 			var version = BitConverter.ToInt32(allData, 4);
@@ -416,10 +403,10 @@ namespace Effekseer.IO
 			var editBlock = chunk.Blocks.FirstOrDefault(_ => _.Chunk == "EDIT");
 			if (editBlock == null)
 			{
-				return false;
+				return null;
 			}
 
-			return Core.LoadFromXml(Decompress(editBlock.Buffer), path);
+			return Decompress(editBlock.Buffer);
 		}
 	}
 }

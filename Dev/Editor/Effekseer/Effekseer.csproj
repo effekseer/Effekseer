@@ -79,46 +79,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configs\WindowConfig.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="Data\ViewPoint.cs" />
-    <Compile Include="Define.cs" />
-    <Compile Include="GUI\Commands.cs" />
-    <Compile Include="GUI\Component\Boolean.cs" />
-    <Compile Include="GUI\Component\ColorCtrl.cs" />
-    <Compile Include="GUI\Component\ColorWithRandom.cs" />
-    <Compile Include="GUI\Component\Dummy.cs" />
-    <Compile Include="GUI\Component\DynamicSelector.cs" />
-    <Compile Include="GUI\Component\Enum.cs" />
-    <Compile Include="GUI\Component\FCurveButton.cs" />
-    <Compile Include="GUI\Component\Float.cs" />
-    <Compile Include="GUI\Component\FloatWithRandom.cs" />
-    <Compile Include="GUI\Component\Int.cs" />
-    <Compile Include="GUI\Component\IntWithInifinite.cs" />
-    <Compile Include="GUI\Component\IntWithRandom.cs" />
-    <Compile Include="GUI\Component\ParameterList.cs" />
-    <Compile Include="GUI\Component\PathForImage.cs" />
-    <Compile Include="GUI\Component\PathForMaterial.cs" />
-    <Compile Include="GUI\Component\PathForModel.cs" />
-    <Compile Include="GUI\Component\PathForSound.cs" />
-    <Compile Include="GUI\Component\String.cs" />
-    <Compile Include="GUI\Component\Utils.cs" />
-    <Compile Include="GUI\Component\Vector2D.cs" />
-    <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
-    <Compile Include="GUI\Component\Vector3D.cs" />
-    <Compile Include="GUI\Component\Vector3DWithRandom.cs" />
-    <Compile Include="GUI\Component\Vector4D.cs" />
-    <Compile Include="GUI\Dialog\About.cs" />
-    <Compile Include="GUI\Dialog\MessageBox.cs" />
-    <Compile Include="GUI\Dialog\OpenModel.cs" />
+    <Compile Include="GUI\Dock\AdvancedRenderCommonValues.cs" />
     <Compile Include="GUI\Dock\CommonValues.cs" />
     <Compile Include="GUI\Dock\DepthValues.cs" />
-    <Compile Include="GUI\Dock\DockManager.cs" />
-    <Compile Include="GUI\Dock\DockPanel.cs" />
     <Compile Include="GUI\Dock\Dynamic.cs" />
-    <Compile Include="GUI\Dock\EffectViwer.cs" />
     <Compile Include="GUI\Dock\Environment.cs" />
-    <Compile Include="GUI\Dock\FCurves.cs" />
-    <Compile Include="GUI\Dock\FileViewer.cs" />
     <Compile Include="GUI\Dock\GenerationLocationValues.cs" />
     <Compile Include="GUI\Dock\LocationAbsValues.cs" />
     <Compile Include="GUI\Dock\LocationValues.cs" />
@@ -126,6 +93,7 @@
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\Dock\Option.cs" />
     <Compile Include="GUI\Dock\PostEffect.cs" />
+    <Compile Include="GUI\Dock\ProceduralModel.cs" />
     <Compile Include="GUI\Dock\Recorder.cs" />
     <Compile Include="GUI\Dock\RendererCommonValues.cs" />
     <Compile Include="GUI\Dock\RendererValues.cs" />
@@ -134,78 +102,24 @@
     <Compile Include="GUI\Dock\SoundValues.cs" />
     <Compile Include="GUI\Dock\ViewerController.cs" />
     <Compile Include="GUI\Dock\ViewPoint.cs" />
-    <Compile Include="GUI\Controls.cs" />
-    <Compile Include="GUI\DragAndDrops.cs" />
-    <Compile Include="GUI\Manager.cs" />
     <Compile Include="GUI\Menu\MainMenu.cs" />
-    <Compile Include="GUI\Menu\Menu.cs" />
-    <Compile Include="GUI\Menu\MenuItem.cs" />
-    <Compile Include="GUI\Network.cs" />
-    <Compile Include="GUI\ThumbnailManager.cs" />
-    <Compile Include="GUI\Viewer.cs" />
-    <Compile Include="Plugin\ExportDefault.cs" />
-    <Compile Include="Plugin\Exportglb.cs" />
-    <Compile Include="Plugin\ExportglTF.cs" />
-    <Compile Include="Process\MaterialEditor.cs" />
+    <Compile Include="GUI\Menu\WindowMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GUI\Shortcuts.cs" />
-    <Compile Include="GUI\RecentFiles.cs" />
-    <Compile Include="swig\ColorEditFlags.cs" />
-    <Compile Include="swig\ComboFlags.cs" />
-    <Compile Include="swig\CompiledMaterialGenerator.cs" />
-    <Compile Include="swig\Cond.cs" />
-    <Compile Include="swig\DeviceType.cs" />
-    <Compile Include="swig\DialogButtons.cs" />
-    <Compile Include="swig\DialogSelection.cs" />
-    <Compile Include="swig\DialogStyle.cs" />
-    <Compile Include="swig\DistortionType.cs" />
-    <Compile Include="swig\DockSlot.cs" />
-    <Compile Include="swig\EffekseerNative.cs" />
-    <Compile Include="swig\EffekseerNativePINVOKE.cs" />
-    <Compile Include="swig\FCurveEdgeType.cs" />
-    <Compile Include="swig\FCurveInterporationType.cs" />
-    <Compile Include="swig\FileDialog.cs" />
-    <Compile Include="swig\GUIManager.cs" />
-    <Compile Include="swig\GUIManagerCallback.cs" />
-    <Compile Include="swig\ImageResource.cs" />
-    <Compile Include="swig\ImGuiColFlags.cs" />
-    <Compile Include="swig\ImGuiStyleVarFlags.cs" />
-    <Compile Include="swig\InputTextFlags.cs" />
-    <Compile Include="swig\IO.cs" />
-    <Compile Include="swig\IOCallback.cs" />
-    <Compile Include="swig\Key.cs" />
-    <Compile Include="swig\MainWindow.cs" />
-    <Compile Include="swig\MainWindowState.cs" />
-    <Compile Include="swig\MouseCursor.cs" />
-    <Compile Include="swig\Native.cs" />
-    <Compile Include="swig\RecordingModeType.cs" />
-    <Compile Include="swig\RecordingParameter.cs" />
-    <Compile Include="swig\RenderMode.cs" />
-    <Compile Include="swig\SelectableFlags.cs" />
-    <Compile Include="swig\StaticFile.cs" />
-    <Compile Include="swig\StaticFileType.cs" />
-    <Compile Include="swig\SystemLanguage.cs" />
-    <Compile Include="swig\TransparenceType.cs" />
-    <Compile Include="swig\TreeNodeFlags.cs" />
-    <Compile Include="swig\Vec2.cs" />
-    <Compile Include="swig\ViewerEffectBehavior.cs" />
-    <Compile Include="swig\ViewerParamater.cs" />
-    <Compile Include="swig\ViewMode.cs" />
-    <Compile Include="swig\WindowFlags.cs" />
     <Compile Include="Utils\CompileErrorGenerator.cs" />
-    <Compile Include="Utils\DelayedList.cs" />
-    <Compile Include="GUI\Dialog\SaveOnDisposing.cs" />
     <Compile Include="GUI\Dock\BehaviorValues.cs" />
     <Compile Include="GUI\Dock\Culling.cs" />
     <Compile Include="GUI\Dock\GlobalValues.cs" />
-    <Compile Include="GUI\Dialog\RenameNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EffekseerCoreGUI\EffekseerCoreGUI.csproj">
+      <Project>{5f18afcd-cd2c-4097-9806-e0c5e3fb86cb}</Project>
+      <Name>EffekseerCoreGUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
       <Project>{e2495770-1734-4c77-8028-92040a1d36cb}</Project>
       <Name>EffekseerCore</Name>

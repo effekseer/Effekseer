@@ -2,9 +2,9 @@
 #pragma once
 
 #include <AltseedRHI.h>
-#include <efkMat.TextExporter.h>
 #include <cmath>
 #include <cstring>
+#include <efkMat.TextExporter.h>
 
 namespace EffekseerMaterial
 {
@@ -35,7 +35,13 @@ struct Vector3
 
 	Vector3(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
+	bool operator==(const Vector3& o) const { return X == o.X && Y == o.Y && Z == o.Z; }
+
+	Vector3 operator+(const Vector3& o) const { return Vector3(X + o.X, Y + o.Y, Z + o.Z); }
+
 	Vector3 operator-(const Vector3& o) const { return Vector3(X - o.X, Y - o.Y, Z - o.Z); }
+
+	Vector3 operator/(const float& o) const { return Vector3(X / o, Y / o, Z / o); }
 
 	float GetLength() const { return sqrt(GetSquaredLength()); }
 
@@ -252,9 +258,7 @@ static void CalcTangentSpace(const Vertex& v1, const Vertex& v2, const Vertex& v
 
 	for (int32_t i = 0; i < 3; i++)
 	{
-		auto v1 = cp1[i] - cp0[i];
-		auto v2 = cp2[i] - cp1[i];
-		auto abc = Vector3::Cross(v1, v2);
+		auto abc = Vector3::Cross(cp1[i] - cp0[i], cp2[i] - cp1[i]);
 
 		if (abc.X == 0.0f)
 		{
@@ -309,6 +313,8 @@ public:
 
 	ar::Texture2D* GetTexture() { return texture_; }
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
+
+	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, Vector2 size, const void* initialData);
 };
 
 class TextureWithSampler
@@ -364,6 +370,8 @@ private:
 	ar::Context* context = nullptr;
 	std::vector<std::shared_ptr<TextureWithSampler>> textures_;
 	std::shared_ptr<Mesh> mesh_;
+	std::shared_ptr<Texture> black_;
+	std::shared_ptr<Texture> white_;
 
 public:
 	Preview();
@@ -389,3 +397,24 @@ public:
 };
 
 } // namespace EffekseerMaterial
+
+namespace std
+{
+template <> struct hash<EffekseerMaterial::Vector3>
+{
+	size_t operator()(const EffekseerMaterial::Vector3& _Keyval) const noexcept
+	{
+		return std::hash<float>()(_Keyval.X) + std::hash<float>()(_Keyval.Y) + std::hash<float>()(_Keyval.Z);
+	}
+};
+
+template <> struct hash < std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>>
+{
+	size_t operator()(const std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>& _Keyval) const noexcept
+	{
+		return std::hash<EffekseerMaterial::Vector3>()(std::get<0>(_Keyval)) +
+			   std::hash<EffekseerMaterial::Vector3>()(std::get<1>(_Keyval));
+	}
+};
+
+} // namespace std

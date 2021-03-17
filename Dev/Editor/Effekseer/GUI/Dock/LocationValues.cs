@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public LocationValues()
 		{
-			Label = Resources.GetString("Position") + "###Position";
+			Label = Icons.PanelLocation + Resources.GetString("Position") + "###Position";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationValues));
@@ -25,10 +25,12 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
-			
+
+			Controls.Add(candp);
+			Controls.Add(paramerterList);
+
 			Read();
 
-			Icon = Images.GetIcon("PanelLocation");
 			TabToolTip = Resources.GetString("Position");
 		}
 
@@ -51,10 +53,6 @@ namespace Effekseer.GUI.Dock
 			if (isFiestUpdate)
 			{
 			}
-
-			candp.Update();
-
-			paramerterList.Update();
 		}
 
 		object GetTargetObject()

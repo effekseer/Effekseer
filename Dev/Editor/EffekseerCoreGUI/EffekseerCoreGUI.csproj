@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5F18AFCD-CD2C-4097-9806-E0C5E3FB86CB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Effekseer</RootNamespace>
+    <AssemblyName>EffekseerCoreGUI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;MATERIAL_ENABLED;</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;MATERIAL_ENABLED;</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IronPython, Version=2.7.9.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronPython.2.7.9\lib\net45\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules, Version=2.7.9.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronPython.2.7.9\lib\net45\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Application.cs" />
+    <Compile Include="Configs\WindowConfig.cs" />
+    <Compile Include="Define.cs" />
+    <Compile Include="GUI\Commands.cs" />
+    <Compile Include="GUI\Component\Boolean.cs" />
+    <Compile Include="GUI\Component\ColorCtrl.cs" />
+    <Compile Include="GUI\Component\ColorWithRandom.cs" />
+    <Compile Include="GUI\Component\Dummy.cs" />
+    <Compile Include="GUI\Component\DynamicSelector.cs" />
+    <Compile Include="GUI\Component\Enum.cs" />
+    <Compile Include="GUI\Component\FCurveButton.cs" />
+    <Compile Include="GUI\Component\Float.cs" />
+    <Compile Include="GUI\Component\FloatWithRandom.cs" />
+    <Compile Include="GUI\Component\Int.cs" />
+    <Compile Include="GUI\Component\Int2.cs" />
+    <Compile Include="GUI\Component\IntWithInifinite.cs" />
+    <Compile Include="GUI\Component\IntWithRandom.cs" />
+    <Compile Include="GUI\Component\ObjectReference.cs" />
+    <Compile Include="GUI\Component\ParameterList.cs" />
+    <Compile Include="GUI\Component\PathForCurve.cs" />
+    <Compile Include="GUI\Component\PathForImage.cs" />
+    <Compile Include="GUI\Component\PathForMaterial.cs" />
+    <Compile Include="GUI\Component\PathForModel.cs" />
+    <Compile Include="GUI\Component\PathForSound.cs" />
+    <Compile Include="GUI\Component\String.cs" />
+    <Compile Include="GUI\Component\Utils.cs" />
+    <Compile Include="GUI\Component\Vector2D.cs" />
+    <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
+    <Compile Include="GUI\Component\Vector3D.cs" />
+    <Compile Include="GUI\Component\Vector3DWithRandom.cs" />
+    <Compile Include="GUI\Component\Vector4D.cs" />
+    <Compile Include="GUI\Controls.cs" />
+    <Compile Include="GUI\Dialog\About.cs" />
+    <Compile Include="GUI\Dialog\ImportEfkPkg.cs" />
+    <Compile Include="GUI\Dialog\MessageBox.cs" />
+    <Compile Include="GUI\Dialog\OpenModel.cs" />
+    <Compile Include="GUI\Dialog\RenameNode.cs" />
+    <Compile Include="GUI\Dialog\SaveOnDisposing.cs" />
+    <Compile Include="GUI\Dock\DockManager.cs" />
+    <Compile Include="GUI\Dock\DockPanel.cs" />
+    <Compile Include="GUI\Dock\EffectViwer.cs" />
+    <Compile Include="GUI\Dock\FCurves.cs" />
+    <Compile Include="GUI\Dock\FileViewer.cs" />
+    <Compile Include="GUI\DragAndDrops.cs" />
+    <Compile Include="GUI\Icons.cs" />
+    <Compile Include="GUI\Manager.cs" />
+    <Compile Include="GUI\Menu\CommandMenuProvider.cs" />
+    <Compile Include="GUI\Menu\Menu.cs" />
+    <Compile Include="GUI\Menu\MenuItem.cs" />
+    <Compile Include="GUI\Menu\RecentFilesMenuManager.cs" />
+    <Compile Include="GUI\Menu\WindowTitleControl.cs" />
+    <Compile Include="GUI\Network.cs" />
+    <Compile Include="GUI\RecentFiles.cs" />
+    <Compile Include="GUI\Shortcuts.cs" />
+    <Compile Include="GUI\ThumbnailManager.cs" />
+    <Compile Include="GUI\Viewer.cs" />
+    <Compile Include="Images.cs" />
+    <Compile Include="IO\MaterialCacheGenerator.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Color.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Matrix44.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Data.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Loader.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Loexer.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Face.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Material.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Model.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Object.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\mqoIO\Realtime\Vertex.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Program.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Vector2D.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Vector3D.cs" />
+    <Compile Include="IO\mqoToEffekseerModelConverter\Vector4D.cs" />
+    <Compile Include="Plugin\ExportDefault.cs" />
+    <Compile Include="Plugin\ExportEfkPkg.cs" />
+    <Compile Include="Plugin\ImportEfkPkg.cs" />
+    <Compile Include="Process\MaterialEditor.cs" />
+    <Compile Include="swig\ColorEditFlags.cs" />
+    <Compile Include="swig\ComboFlags.cs" />
+    <Compile Include="swig\CompiledMaterialGenerator.cs" />
+    <Compile Include="swig\Cond.cs" />
+    <Compile Include="swig\DeviceType.cs" />
+    <Compile Include="swig\DialogButtons.cs" />
+    <Compile Include="swig\DialogSelection.cs" />
+    <Compile Include="swig\DialogStyle.cs" />
+    <Compile Include="swig\DistortionType.cs" />
+    <Compile Include="swig\DockNodeFlags.cs" />
+    <Compile Include="swig\DockSplitDir.cs" />
+    <Compile Include="swig\EffekseerNative.cs" />
+    <Compile Include="swig\EffekseerNativePINVOKE.cs" />
+    <Compile Include="swig\FCurveEdgeType.cs" />
+    <Compile Include="swig\FCurveInterporationType.cs" />
+    <Compile Include="swig\FileDialog.cs" />
+    <Compile Include="swig\GUIManager.cs" />
+    <Compile Include="swig\GUIManagerCallback.cs" />
+    <Compile Include="swig\ImageResource.cs" />
+    <Compile Include="swig\ImGuiColFlags.cs" />
+    <Compile Include="swig\ImGuiStyleVarFlags.cs" />
+    <Compile Include="swig\InputTextFlags.cs" />
+    <Compile Include="swig\IO.cs" />
+    <Compile Include="swig\IOCallback.cs" />
+    <Compile Include="swig\Key.cs" />
+    <Compile Include="swig\MainWindow.cs" />
+    <Compile Include="swig\MainWindowState.cs" />
+    <Compile Include="swig\MouseCursor.cs" />
+    <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\RecordingModeType.cs" />
+    <Compile Include="swig\RecordingParameter.cs" />
+    <Compile Include="swig\RenderMode.cs" />
+    <Compile Include="swig\SelectableFlags.cs" />
+    <Compile Include="swig\StaticFile.cs" />
+    <Compile Include="swig\StaticFileType.cs" />
+    <Compile Include="swig\SystemLanguage.cs" />
+    <Compile Include="swig\TransparenceType.cs" />
+    <Compile Include="swig\TreeNodeFlags.cs" />
+    <Compile Include="swig\Vec2.cs" />
+    <Compile Include="swig\ViewerEffectBehavior.cs" />
+    <Compile Include="swig\ViewerParamater.cs" />
+    <Compile Include="swig\ViewMode.cs" />
+    <Compile Include="swig\WindowFlags.cs" />
+    <Compile Include="Utils\DelayedList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
+      <Project>{e2495770-1734-4c77-8028-92040a1d36cb}</Project>
+      <Name>EffekseerCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

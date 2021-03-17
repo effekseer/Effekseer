@@ -1,34 +1,23 @@
 ﻿
 #include "EffekseerRendererGL.DeviceObject.h"
-#include "EffekseerRendererGL.DeviceObjectCollection.h"
 #include "EffekseerRendererGL.RendererImplemented.h"
 
 namespace EffekseerRendererGL
 {
 
-DeviceObject::DeviceObject(RendererImplemented* renderer, DeviceObjectCollection* deviceObjectCollection, bool hasRefCount)
-	: renderer_(renderer), deviceObjectCollection_(deviceObjectCollection), hasRefCount_(hasRefCount)
+DeviceObject::DeviceObject(Backend::GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
 {
-	if (hasRefCount_)
-	{
-		ES_SAFE_ADDREF(renderer_);
-		ES_SAFE_ADDREF(deviceObjectCollection_);	
-	}
+	ES_SAFE_ADDREF(graphicsDevice_);
 
-	deviceObjectCollection_->Register(this);
+	graphicsDevice_->Register(this);
 }
 
 DeviceObject::~DeviceObject()
 {
-	deviceObjectCollection_->Unregister(this);
+	graphicsDevice_->Unregister(this);
 
-	if (hasRefCount_)
-	{
-		ES_SAFE_RELEASE(renderer_);
-		ES_SAFE_RELEASE(deviceObjectCollection_);
-	}
+	ES_SAFE_RELEASE(graphicsDevice_);
 }
-
-RendererImplemented* DeviceObject::GetRenderer() const { return renderer_; }
 
 } // namespace EffekseerRendererGL

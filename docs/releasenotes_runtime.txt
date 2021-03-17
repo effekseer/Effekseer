@@ -1,0 +1,48 @@
+## 1.6
+
+### Broken changes
+
+#### Effekseer::RefPtr
+
+Almost pointers are replaced into SmartPointer. You don't need to consider about releasing memories.
+
+Please replace
+
+Effekseer::Effect* -> Effekseer::EffekseerRef
+
+You have not to release Effekseer::EffectRef yourself.
+If you want to release it, Please call Reset.
+
+#### Effekseer::Effect
+
+Effect::Reload without manager were abolished. Please use Effect::Reload with manager
+
+#### Effekseer::Backend::GraphicsDevice
+
+EffekseerRenderer::GraphicsDevice and DeviceObjectCollection were abolished and replaced.
+
+We implemented Effekseer::Backend::GraphicsDevice, which contains platform devices.
+Some methods require an instance of GraphicsDevice.
+
+For example,
+
+CreateTextureLoader
+
+The instance are create with follow functions
+
+EffekseerRendererDX11::CreateGraphicsDevice
+EffekseerRendererGL::CreateGraphicsDevice
+etc...
+
+#### Effekseer::TextureLoader
+
+Added an argument about mipmap
+
+#### EffekseerRenderer::DistortionCallback
+
+Added renderer as an argument
+
+#### Effekseer::Manager::DrawPrameter::CameraDirection
+
+It was change into Effekseer::Manager::DrawPrameter::CameraFrontDirection and flipped a direction. It means that the direction is normalize(focus - position)
+

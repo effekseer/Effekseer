@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.0.0)
+cmake_minimum_required (VERSION 3.15)
 
 # C++ version
 if(WIN32)
@@ -9,21 +9,12 @@ endif()
 
 # MSVC Flag
 if (MSVC)
-    if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-        foreach (flag CMAKE_C_FLAGS
-            CMAKE_C_FLAGS_DEBUG
-            CMAKE_C_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS
-            CMAKE_CXX_FLAGS_DEBUG
-            CMAKE_CXX_FLAGS_RELEASE)
-
-            if (${flag} MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
-            if (${flag} MATCHES "/MDd")
-                string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-            endif()
-        endforeach()
+    if(USE_MSVC_RUNTIME_LIBRARY_DLL)
+        cmake_policy(SET CMP0091 NEW)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    else()
+        cmake_policy(SET CMP0091 NEW)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
 endif()
 
@@ -57,10 +48,17 @@ if(WIN32)
 endif()
 
 add_subdirectory(OpenGL)
-add_subdirectory(OpenAL)
+
+if(WIN32)
+    add_subdirectory(OpenAL)
+endif()
 
 if (BUILD_VULKAN)
     add_subdirectory(Vulkan)
+endif()
+
+if(APPLE)
+    add_subdirectory(Metal)
 endif()
 
 add_subdirectory(CustomLoader)

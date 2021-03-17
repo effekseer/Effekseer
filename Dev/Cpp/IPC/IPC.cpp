@@ -243,7 +243,7 @@ public:
 			}
 
 			uint32_t* params = reinterpret_cast<uint32_t*>(mem_.data);
-			params[0] = size;
+			params[0] = static_cast<uint32_t>(size);
 			params[1] = 0;
 		}
 
@@ -285,7 +285,7 @@ public:
 				memcpy(header->keys[i].key, key, strlen(key) + 1);
 				header->keys[i].key[strlen(key)] = 0;
 				header->keys[i].count += 1;
-				header->keys[i].offset = sizeof(Header) + fileSize * i;
+				header->keys[i].offset = static_cast<int32_t>(sizeof(Header) + fileSize * i);
 				return true;
 			}
 		}
@@ -326,7 +326,7 @@ public:
 		{
 			if (header->keys[i].count > 0 && std ::string(header->keys[i].key) == key_)
 			{
-				header->keys[i].offset = sizeof(Header) + fileSize * i;
+				header->keys[i].offset = static_cast<int32_t>(sizeof(Header) + fileSize * i);
 				header->keys[i].size = size;
 				header->keys[i].timestamp = timestamp;
 				memcpy(mem_.data + header->keys[i].offset, data, size);

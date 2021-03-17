@@ -1,0 +1,102 @@
+BRS_Material_Name,"Material"
+BRS_EmissiveScaling_Name,Emissive Scaling
+BRS_ColorTexture_Name,"Texture"
+BRS_ColorTexture_Desc,"Image that represents color/distortion"
+BRS_Filter_Name,"Filter"
+BRS_Wrap_Name,"Wrap"
+BRS_NormalTexture_Name,"Normal Map"
+BRS_NormalTexture_Desc,"Image representing normal vectors"
+BRS_Filter2_Name,"Filter"
+BRS_Wrap2_Name,"Wrap"
+BRS_DistortionIntensity_Name,"Distortion
+Intensity"
+BRS_AlphaBlend_Name,"Blend"
+BRS_ZWrite_Name,"Depth Set"
+BRS_ZTest_Name,"Depth Test"
+BRS_FadeInType_Name,"Fade-In"
+BRS_FadeOutType_Name,"Fade-Out"
+BRS_UV_Name,"UV"
+BRS_UV2_Name,"UV(Alpha Texture)"
+BRS_UV3_Name,"UV(UV Distortion Texture)"
+BRS_UV4_Name,"UV(Blend Texture)"
+BRS_UV5_Name,"UV(Blend Alpha Texture)"
+BRS_UV6_Name,"UV(Blend UV Distortion Texture)"
+BRS_UVTextureReferenceTarget_Name,"Referenced"
+BRS_ColorInheritType_Name,"Inherit Color"
+BRS_ColorInheritType_Desc,"When this instance should copy its parent node's color"
+BRS_CustomData1_Name,"Custom data"
+BRS_CustomData2_Name,"Custom data"
+MaterialType_Default_Name,Default
+MaterialType_BackDistortion_Name,Distortion(Back)
+MaterialType_Lighting_Name,Lighting
+MaterialType_File_Name,File
+FilterType_Nearest_Name,Nearest-Neighbor
+FilterType_Linear_Name,Linear Interpolation
+WrapType_Repeat_Name,Repeat
+WrapType_Clamp_Name,Clamp
+AlphaBlendType_Opacity_Name,Opacity
+AlphaBlendType_Blend_Name,Blend
+AlphaBlendType_Add_Name,Additive
+AlphaBlendType_Sub_Name,Subtract
+AlphaBlendType_Mul_Name,Multiply
+UVTextureReferenceTargetType_None_Name,None(128x128)
+UVTextureReferenceTargetType_Texture1_Name,Image1
+UVTextureReferenceTargetType_Texture2_Name,Image2
+UVTextureReferenceTargetType_Texture3_Name,Image3
+UVTextureReferenceTargetType_Texture4_Name,Image4
+MaterialFileParameter_Path_Name,"Path"
+BRS_FadeIn_Frame_Name,"Frame Count"
+BRS_FadeIn_Frame_Desc,"Duration in frames of the fade-in transition"
+BRS_FadeIn_StartSpeed_Name,"Ease In"
+BRS_FadeIn_StartSpeed_Desc,"Initial speed (of the tween)"
+BRS_FadeIn_EndSpeed_Name,"Ease Out"
+BRS_FadeIn_EndSpeed_Desc,"Final speed (of the tween)"
+BRS_FadeOut_Frame_Name,"Frame Count"
+BRS_FadeOut_Frame_Desc,"Duration in frames of the fade-out transition"
+BRS_FadeOut_StartSpeed_Name,"Ease In"
+BRS_FadeOut_StartSpeed_Desc,"Initial speed (of the tween)"
+BRS_FadeOut_EndSpeed_Name,"Ease Out"
+BRS_FadeOut_EndSpeed_Desc,"Final speed (of the tween)"
+FadeType_Use_Name,Enabled
+FadeType_None_Name,Disabled
+FadeType_Use_Name,Enabled
+FadeType_None_Name,Disabled
+UVType_Default_Name,Standard
+UVType_Fixed_Name,Fixed
+UVType_Animation_Name,Animation
+UVType_Scroll_Name,Scroll
+UVType_FCurve_Name,F-Curve
+CustomDataType_None_Name,None
+CustomDataType_Fixed2D_Name,Fixed2
+CustomDataType_Random2D_Name,Random2
+CustomDataType_Easing2D_Name,Easing2
+CustomDataType_FCurve2D_Name,FCurve2
+CustomDataType_Fixed4D_Name,Fixed4
+CustomDataType_FCurveColor_Name,FCurve-Color
+CustomDataType_None_Name,None
+CustomDataType_Fixed2D_Name,Fixed2
+CustomDataType_Random2D_Name,Random2
+CustomDataType_Easing2D_Name,Easing2
+CustomDataType_FCurve2D_Name,FCurve2
+CustomDataType_Fixed4D_Name,Fixed4
+CustomDataType_FCurveColor_Name,FCurve-Color
+UVFixedParamater_Start_Name,"Start"
+UVFixedParamater_Size_Name,"Size"
+UVAnimationParamater_Start_Name,"Start"
+UVAnimationParamater_Size_Name,"Size"
+UVAnimationParamater_FrameLength_Name,"Frame Length"
+UVAnimationParamater_FrameCountX_Name,"X-Count"
+UVAnimationParamater_FrameCountY_Name,"Y-Count"
+UVAnimationParamater_LoopType_Name,"Loop"
+UVAnimationParamater_StartSheet_Name,"Start Sheet"
+UVAnimationSupportedFrameBlendParameter_Type_Name,Flipbook Frame Blend Type
+UVScrollParamater_Start_Name,"Start"
+UVScrollParamater_Size_Name,"Size"
+UVScrollParamater_Speed_Name,"Scroll Speed"
+UVFCurveParamater_Start_Name,"Start"
+UVFCurveParamater_Size_Name,"Size"
+UVLoopType_Once_Name,None
+UVLoopType_Loop_Name,Loop
+UVLoopType_ReverceLoop_Name,Reverse Loop
+FlipbookInterpolationType_None_Name,None
+FlipbookInterpolationType_Lerp_Name,Lerp

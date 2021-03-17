@@ -1,4 +1,4 @@
-﻿
+
 #ifndef __EFFEKSEERRENDERER_METAL_RENDERER_H__
 #define __EFFEKSEERRENDERER_METAL_RENDERER_H__
 
@@ -14,16 +14,16 @@
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::ModelLoader* CreateModelLoader(::EffekseerRenderer::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice();
+::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
 
-::EffekseerRenderer::Renderer* Create(
-                                      ::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+::EffekseerRenderer::RendererRef Create(
+                                      ::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
                                       int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
@@ -36,32 +36,31 @@ namespace EffekseerRendererMetal
 @param squareMaxCount	the number of maximum sprites
 @return	instance
 */
-::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+::EffekseerRenderer::RendererRef Create(int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture);
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, id<MTLTexture> texture);
 
-void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef Refrenderer);
 
-/*
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLCommandBuffer> commandBuffer);
+void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLRenderCommandEncoder> encoder);
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList);
-*/
+
 } // namespace EffekseerRendererMetal
 
 #endif

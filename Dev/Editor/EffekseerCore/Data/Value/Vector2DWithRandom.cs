@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector2DWithRandom
+	public class Vector2DWithRandom : IValueChangedFromDefault
 	{
 		public FloatWithRandom X
 		{

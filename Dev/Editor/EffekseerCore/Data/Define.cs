@@ -25,48 +25,63 @@ namespace Effekseer.Data
 		Global,
 		Local,
 	}
-    public enum ParentEffectType : int
+
+	public enum ModelReferenceType
 	{
-		[Name(value = "なし", language = Language.Japanese)]
-		[Name(value = "Never", language = Language.English)]
+		[Key(key = "ModelReferenceType_File")]
+		File = 0,
+		[Key(key = "ModelReferenceType_ProdecualModel")]
+		ProceduralModel = 1,
+	}
+
+
+	public enum ParentEffectType : int
+	{
+		[Key(key = "BasicSettings_ParentEffectType_NotBind")]
 		NotBind = 0,
-		[Name(value = "なし(Root依存)-非推奨", language = Language.Japanese)]
-		[Name(value = "Root dependent (deprecated)", language = Language.English)]
+		[Key(key = "BasicSettings_ParentEffectType_NotBind_Root")]
 		NotBind_Root = 3,
-		[Name(value = "生成時のみ", language = Language.Japanese)]
-		[Name(value = "Only on create", language = Language.English)]
+		[Key(key = "BasicSettings_ParentEffectType_WhenCreating")]
 		WhenCreating = 1,
-		[Name(value = "常時", language = Language.Japanese)]
-		[Name(value = "Always", language = Language.English)]
+		[Key(key = "BasicSettings_ParentEffectType_Already")]
 		Already = 2,
+	}
+
+	public enum TranslationParentEffectType : int
+	{
+		[Key(key = "BasicSettings_ParentEffectType_NotBind")]
+		NotBind = 0,
+		[Key(key = "BasicSettings_ParentEffectType_NotBind_Root")]
+		NotBind_Root = 3,
+		[Key(key = "BasicSettings_ParentEffectType_WhenCreating")]
+		WhenCreating = 1,
+		[Key(key = "BasicSettings_ParentEffectType_Already")]
+		Already = 2,
+		[Key(key = "BasicSettings_TranslationParentEffectType_NotBind_FollowParent")]
+		NotBind_FollowParent = 4,
+		[Key(key = "BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent")]
+		WhenCreating_FollowParent = 5,
 	}
 
 	public enum AlphaBlendType : int
 	{
-		[Name(value = "不透明", language = Language.Japanese)]
-		[Name(value = "Opacity", language = Language.English)]
+		[Key(key = "AlphaBlendType_Opacity")]
 		Opacity = 0,
-		[Name(value = "通常", language = Language.Japanese)]
-		[Name(value = "Blend", language = Language.English)]
+		[Key(key = "AlphaBlendType_Blend")]
 		Blend = 1,
-		[Name(value = "加算", language = Language.Japanese)]
-		[Name(value = "Additive", language = Language.English)]
+		[Key(key = "AlphaBlendType_Add")]
 		Add = 2,
-		[Name(value = "減算", language = Language.Japanese)]
-		[Name(value = "Subtract", language = Language.English)]
+		[Key(key = "AlphaBlendType_Sub")]
 		Sub = 3,
-		[Name(value = "乗算", language = Language.Japanese)]
-		[Name(value = "Multiply", language = Language.English)]
+		[Key(key = "AlphaBlendType_Mul")]
 		Mul = 4,
 	}
 
 	public enum RenderingOrder : int
 	{
-		[Name(value = "生成順", language = Language.Japanese)]
-		[Name(value = "Order of spawn", language = Language.English)]
+		[Key(key = "RS_RenderingOrder_FirstCreatedInstanceIsFirst")]
 		FirstCreatedInstanceIsFirst = 0,
-		[Name(value = "生成順の逆", language = Language.Japanese)]
-		[Name(value = "Reversed", language = Language.English)]
+		[Key(key = "RS_RenderingOrder_FirstCreatedInstanceIsLast")]
 		FirstCreatedInstanceIsLast = 1,
 	}
 
@@ -83,53 +98,102 @@ namespace Effekseer.Data
 		Double = 2,
 	}
 
+	public enum EasingType : int
+	{
+		[Key(key = "Easing_LeftRightSpeed")]
+		LeftRightSpeed = 0,
+
+		[Key(key = "Easing_Linear")]
+		Linear = 1,
+
+		[Key(key = "Easing_EaseInQuadratic")]
+		EaseInQuadratic = 10,
+
+		[Key(key = "Easing_EaseOutQuadratic")]
+		EaseOutQuadratic = 11,
+
+		[Key(key = "Easing_EaseInOutQuadratic")]
+		EaseInOutQuadratic = 12,
+
+		[Key(key = "Easing_EaseInCubic")]
+		EaseInCubic = 20,
+
+		[Key(key = "Easing_EaseOutCubic")]
+		EaseOutCubic = 21,
+
+		[Key(key = "Easing_EaseInOutCubic")]
+		EaseInOutCubic = 22,
+
+		[Key(key = "Easing_EaseInQuartic")]
+		EaseInQuartic = 30,
+
+		[Key(key = "Easing_EaseOutQuartic")]
+		EaseOutQuartic = 31,
+
+		[Key(key = "Easing_EaseInOutQuartic")]
+		EaseInOutQuartic = 32,
+
+		[Key(key = "Easing_EaseInQuintic")]
+		EaseInQuintic = 40,
+
+		[Key(key = "Easing_EaseOutQuintic")]
+		EaseOutQuintic = 41,
+
+		[Key(key = "Easing_EaseInOutQuintic")]
+		EaseInOutQuintic = 42,
+
+		[Key(key = "Easing_EaseInBack")]
+		EaseInBack = 50,
+
+		[Key(key = "Easing_EaseOutBack")]
+		EaseOutBack = 51,
+
+		[Key(key = "Easing_EaseInOutBack")]
+		EaseInOutBack = 52,
+
+		[Key(key = "Easing_EaseInBounce")]
+		EaseInBounce = 60,
+
+		[Key(key = "Easing_EaseOutBounce")]
+		EaseOutBounce = 61,
+
+		[Key(key = "Easing_EaseInOutBounce")]
+		EaseInOutBounce = 62,
+	}
+
 	public enum EasingStart : int
 	{
-		[Name(value = "低速3", language = Language.Japanese)]
-		[Name(value = "Slowest", language = Language.English)]
+		[Key(key = "Easing_StartSlowly3")]
 		StartSlowly3 = -30,
-		[Name(value = "低速2", language = Language.Japanese)]
-		[Name(value = "Slower", language = Language.English)]
+		[Key(key = "Easing_StartSlowly2")]
 		StartSlowly2 = -20,
-		[Name(value = "低速1", language = Language.Japanese)]
-		[Name(value = "Slow", language = Language.English)]
+		[Key(key = "Easing_StartSlowly1")]
 		StartSlowly1 = -10,
-		[Name(value = "等速", language = Language.Japanese)]
-		[Name(value = "Normal", language = Language.English)]
+		[Key(key = "Easing_StartNormal")]
 		Start = 0,
-		[Name(value = "高速1", language = Language.Japanese)]
-		[Name(value = "Fast", language = Language.English)]
+		[Key(key = "Easing_StartRapidly1")]
 		StartRapidly1 = 10,
-		[Name(value = "高速2", language = Language.Japanese)]
-		[Name(value = "Faster", language = Language.English)]
+		[Key(key = "Easing_StartRapidly2")]
 		StartRapidly2 = 20,
-		[Name(value = "高速3", language = Language.Japanese)]
-		[Name(value = "Fastest", language = Language.English)]
+		[Key(key = "Easing_StartRapidly3")]
 		StartRapidly3 = 30,
 	}
 
 	public enum EasingEnd : int
 	{
-		[Name(value = "低速3", language = Language.Japanese)]
-		[Name(value = "Slowest", language = Language.English)]
+		[Key(key = "Easing_EndSlowly3")]
 		EndSlowly3 = -30,
-		[Name(value = "低速2", language = Language.Japanese)]
-		[Name(value = "Slower", language = Language.English)]
+		[Key(key = "Easing_EndSlowly2")]
 		EndSlowly2 = -20,
-		[Name(value = "低速1", language = Language.Japanese)]
-		[Name(value = "Slow", language = Language.English)]
+		[Key(key = "Easing_EndSlowly1")]
 		EndSlowly1 = -10,
-		[Name(value = "等速", language = Language.Japanese)]
-		[Name(value = "Normal", language = Language.English)]
+		[Key(key = "Easing_EndNormal")]
 		End = 0,
-		[Name(value = "高速1", language = Language.Japanese)]
-		[Name(value = "Fast", language = Language.English)]
+		[Key(key = "Easing_EndRapidly1")]
 		EndRapidly1 = 10,
-		[Name(value = "高速2", language = Language.Japanese)]
-		[Name(value = "Faster", language = Language.English)]
+		[Key(key = "Easing_EndRapidly2")]
 		EndRapidly2 = 20,
-		[Name(value = "高速3", language = Language.Japanese)]
-		[Name(value = "Fastest", language = Language.English)]
+		[Key(key = "Easing_EndRapidly3")]
 		EndRapidly3 = 30,
 	}
 
@@ -147,17 +211,13 @@ namespace Effekseer.Data
 
 	public enum StandardColorType : int
 	{
-		[Name(value = "固定", language = Language.Japanese)]
-		[Name(value = "Fixed", language = Language.English)]
+		[Key(key = "StandardColorType_Fixed")]
 		Fixed = 0,
-		[Name(value = "ランダム", language = Language.Japanese)]
-		[Name(value = "Random", language = Language.English)]
+		[Key(key = "StandardColorType_Random")]
 		Random = 1,
-		[Name(value = "イージング", language = Language.Japanese)]
-		[Name(value = "Easing", language = Language.English)]
+		[Key(key = "StandardColorType_Easing")]
 		Easing = 2,
-		[Name(value = "Fカーブ(RGBA)", language = Language.Japanese)]
-		[Name(value = "F-Curve (RGBA)", language = Language.English)]
+		[Key(key = "StandardColorType_FCurve")]
 		FCurve = 3,
 	}
 
@@ -169,41 +229,29 @@ namespace Effekseer.Data
 	}
 
 	public class ColorEasingParamater
-	{ 
-		[Name(language = Language.Japanese, value = "始点")]
-		[Description(language = Language.Japanese, value = "イージングの始点")]
-		[Name(language = Language.English, value = "Start")]
-		[Description(language = Language.English, value = "Starting point of easing")]
+	{
+		[Key(key = "Easing_Start")]
 		public Value.ColorWithRandom Start
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "終点")]
-		[Description(language = Language.Japanese, value = "イージングの終点")]
-		[Name(language = Language.English, value = "End")]
-		[Description(language = Language.English, value = "Value of easing at end")]
+		[Key(key = "Easing_End")]
 		public Value.ColorWithRandom End
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "始点速度")]
-		[Description(language = Language.Japanese, value = "始点速度")]
-		[Name(language = Language.English, value = "Ease In")]
-		[Description(language = Language.English, value = "Initial rate of easing")]
+		[Key(key = "Easing_StartSpeed")]
 		public Value.Enum<EasingStart> StartSpeed
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "終点速度")]
-		[Description(language = Language.Japanese, value = "終点速度")]
-		[Name(language = Language.English, value = "Ease Out")]
-		[Description(language = Language.English, value = "Rate of easing at end")]
+		[Key(key = "Easing_EndSpeed")]
 		public Value.Enum<EasingEnd> EndSpeed
 		{
 			get;
@@ -223,10 +271,7 @@ namespace Effekseer.Data
 
 	public class ColorFCurveParameter
 	{
-		[Name(language = Language.Japanese, value = "Fカーブ")]
-		[Description(language = Language.Japanese, value = "Fカーブ")]
-		[Name(language = Language.English, value = "F-Curve")]
-		[Description(language = Language.English, value = "F-Curve")]
+		[Key(key = "FCurve")]
 		[Shown(Shown = true)]
 		public Value.FCurveColorRGBA FCurve
 		{
@@ -249,94 +294,133 @@ namespace Effekseer.Data
 		}
 	}
 
-    public class FloatEasingParamater
-    {
-        [Name(language = Language.Japanese, value = "始点")]
-        [Description(language = Language.Japanese, value = "イージングの始点")]
-		[Name(language = Language.English, value = "Start")]
-		[Description(language = Language.English, value = "Starting point of easing")]
-        public Value.FloatWithRandom Start
-        {
-            get;
-            private set;
-        }
+	public class FloatEasingParamater
+	{
+		const int EasingTypeGroup = 200;
+		const int MiddlePoint = 300;
+		const int RandomGroup = 400;
+		const int IndividualType = 500;
 
-        [Name(language = Language.Japanese, value = "終点")]
-        [Description(language = Language.Japanese, value = "イージングの終点")]
-		[Name(language = Language.English, value = "End")]
-		[Description(language = Language.English, value = "Value of easing at end")]
-        public Value.FloatWithRandom End
-        {
-            get;
-            private set;
-        }
+		[Key(key = "Easing_Start")]
+		public Value.FloatWithRandom Start
+		{
+			get;
+			private set;
+		}
 
-        [Name(language = Language.Japanese, value = "始点速度")]
-        [Description(language = Language.Japanese, value = "始点速度")]
-		[Name(language = Language.English, value = "Ease In")]
-		[Description(language = Language.English, value = "Initial rate of easing")]
-        public Value.Enum<EasingStart> StartSpeed
-        {
-            get;
-            private set;
-        }
+		[Key(key = "Easing_End")]
+		public Value.FloatWithRandom End
+		{
+			get;
+			private set;
+		}
 
-        [Name(language = Language.Japanese, value = "終点速度")]
-        [Description(language = Language.Japanese, value = "終点速度")]
-		[Name(language = Language.English, value = "Ease Out")]
-		[Description(language = Language.English, value = "Rate of easing at end")]
-        public Value.Enum<EasingEnd> EndSpeed
-        {
-            get;
-            private set;
-        }
+		[Key(key = "Easing_TYpe")]
+		[Selector(ID = EasingTypeGroup)]
+		public Value.Enum<EasingType> Type
+		{
+			get;
+			private set;
+		}
 
-        internal FloatEasingParamater(float value = 0.0f, float max = float.MaxValue, float min = float.MinValue)
+		[Key(key = "Easing_StartSpeed")]
+		[Selected(ID = EasingTypeGroup, Value = (int)EasingType.LeftRightSpeed)]
+		public Value.Enum<EasingStart> StartSpeed
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_EndSpeed")]
+		[Selected(ID = EasingTypeGroup, Value = (int)EasingType.LeftRightSpeed)]
+		public Value.Enum<EasingEnd> EndSpeed
+		{
+			get;
+			private set;
+		}
+
+		[Selector(ID = MiddlePoint)]
+		[Key(key = "Easing_IsMiddleEnabled")]
+		public Value.Boolean IsMiddleEnabled { get; private set; }
+
+		[Selected(ID = MiddlePoint, Value = 0)]
+		[Key(key = "Easing_Middle")]
+		public Value.FloatWithRandom Middle
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_IsRandomGroupEnabled")]
+		[Selector(ID = RandomGroup)]
+
+		public Value.Boolean IsRandomGroupEnabled { get; private set; }
+
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Key(key = "Easing_RandomGroup_A")]
+		[Selected(ID = RandomGroup, Value = 0)]
+		public Value.Int RandomGroupA { get; private set; }
+
+		[Key(key = "Easing_IsIndividualTypeEnabled")]
+		[Selector(ID = IndividualType)]
+		public Value.Boolean IsIndividualTypeEnabled { get; private set; }
+
+		[Key(key = "Easing_IndividualType_A")]
+		[Selected(ID = IndividualType, Value = 0)]
+		public Value.Enum<EasingType> Type_A
+		{
+			get;
+			private set;
+		}
+
+		internal FloatEasingParamater(float value = 0.0f, float max = float.MaxValue, float min = float.MinValue)
         {
+			Type = new Value.Enum<EasingType>();
+
             Start = new Value.FloatWithRandom(value, max, min);
             End = new Value.FloatWithRandom(value, max, min);
             StartSpeed = new Value.Enum<EasingStart>(EasingStart.Start);
             EndSpeed = new Value.Enum<EasingEnd>(EasingEnd.End);
-        }
+
+			IsMiddleEnabled = new Value.Boolean(false);
+			Middle = new Value.FloatWithRandom(value, max, min);
+
+			IsRandomGroupEnabled = new Value.Boolean(false);
+
+			RandomGroupA = new Value.Int(0);
+
+			IsIndividualTypeEnabled = new Value.Boolean(false);
+			Type_A = new Value.Enum<EasingType>(EasingType.Linear);
+		}
     }
 
     public class Vector2DEasingParamater
     {
-        [Name(language = Language.Japanese, value = "始点")]
-        [Description(language = Language.Japanese, value = "イージングの始点")]
-		[Name(language = Language.English, value = "Start")]
-		[Description(language = Language.English, value = "Starting point of easing")]
+		[Key(key="Easing_Start")]
         public Value.Vector2DWithRandom Start
         {
             get;
             private set;
         }
 
-        [Name(language = Language.Japanese, value = "終点")]
-        [Description(language = Language.Japanese, value = "イージングの終点")]
-		[Name(language = Language.English, value = "End")]
-		[Description(language = Language.English, value = "Value of easing at end")]
-        public Value.Vector2DWithRandom End
+		[Key(key="Easing_End")]
+		public Value.Vector2DWithRandom End
         {
             get;
             private set;
         }
 
-        [Name(language = Language.Japanese, value = "始点速度")]
-        [Description(language = Language.Japanese, value = "始点速度")]
-		[Name(language = Language.English, value = "Ease In")]
-		[Description(language = Language.English, value = "Initial rate of easing")]
-        public Value.Enum<EasingStart> StartSpeed
+		[Key(key="Easing_StartSpeed")]
+		public Value.Enum<EasingStart> StartSpeed
         {
             get;
             private set;
         }
 
-        [Name(language = Language.Japanese, value = "終点速度")]
-        [Description(language = Language.Japanese, value = "終点速度")]
-		[Name(language = Language.English, value = "Ease Out")]
-		[Description(language = Language.English, value = "Rate of easing at end")]
-        public Value.Enum<EasingEnd> EndSpeed
+		[Key(key="Easing_EndSpeed")]
+		public Value.Enum<EasingEnd> EndSpeed
         {
             get;
             private set;
@@ -353,41 +437,119 @@ namespace Effekseer.Data
 
 	public class Vector3DEasingParamater
 	{
-		[Name(language = Language.Japanese, value = "始点")]
-		[Description(language = Language.Japanese, value = "イージングの始点")]
-		[Name(language = Language.English, value = "Start")]
-		[Description(language = Language.English, value = "Starting point of easing")]
+		const int EasingTypeGroup = 200;
+		const int MiddlePoint = 300;
+		const int RandomGroup = 400;
+		const int IndividualType = 500;
+
+		[Key(key = "Easing_Start")]
 		public Value.Vector3DWithRandom Start
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "終点")]
-		[Description(language = Language.Japanese, value = "イージングの終点")]
-		[Name(language = Language.English, value = "End")]
-		[Description(language = Language.English, value = "Value of easing at end")]
+		[Key(key = "Easing_End")]
 		public Value.Vector3DWithRandom End
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "始点速度")]
-		[Description(language = Language.Japanese, value = "始点速度")]
-		[Name(language = Language.English, value = "Ease In")]
-		[Description(language = Language.English, value = "Initial rate of easing")]
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Selector(ID = EasingTypeGroup)]
+		[Key(key = "Easing_Type")]
+		public Value.Enum<EasingType> Type
+		{
+			get;
+			private set;
+		}
+
+
+		[Key(key = "Easing_StartSpeed")]
+		[Selected(ID = EasingTypeGroup, Value = (int)EasingType.LeftRightSpeed)]
 		public Value.Enum<EasingStart> StartSpeed
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "終点速度")]
-		[Description(language = Language.Japanese, value = "終点速度")]
-		[Name(language = Language.English, value = "Ease Out")]
-		[Description(language = Language.English, value = "Rate of easing at end")]
+		// TODO : selector
+		[Key(key = "Easing_EndSpeed")]
+		[Selected(ID = EasingTypeGroup, Value = (int)EasingType.LeftRightSpeed)]
 		public Value.Enum<EasingEnd> EndSpeed
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_IsMiddleEnabled")]
+		[Selector(ID = MiddlePoint)]
+		public Value.Boolean IsMiddleEnabled { get; private set; }
+
+
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Key(key = "Easing_Middle")]
+		[Selected(ID = MiddlePoint, Value = 0)]
+		public Value.Vector3DWithRandom Middle
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_IsRandomGroupEnabled")]
+		[Selector(ID = RandomGroup)]
+
+		public Value.Boolean IsRandomGroupEnabled { get; private set; }
+
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Key(key = "Easing_RandomGroup_X")]
+		[Selected(ID = RandomGroup, Value = 0)]
+		public Value.Int RandomGroupX { get; private set; }
+
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Key(key = "Easing_RandomGroup_Y")]
+		[Selected(ID = RandomGroup, Value = 0)]
+		public Value.Int RandomGroupY { get; private set; }
+
+		/// <summary>
+		/// 1.6 or later
+		/// </summary>
+		[Key(key = "Easing_RandomGroup_Z")]
+		[Selected(ID = RandomGroup, Value = 0)]
+		public Value.Int RandomGroupZ { get; private set; }
+
+		[Key(key = "Easing_IsIndividualTypeEnabled")]
+		[Selector(ID = IndividualType)]
+		public Value.Boolean IsIndividualTypeEnabled { get; private set; }
+
+		[Key(key = "Easing_IndividualType_X")]
+		[Selected(ID = IndividualType, Value = 0)]
+		public Value.Enum<EasingType> TypeX
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_IndividualType_Y")]
+		[Selected(ID = IndividualType, Value = 0)]
+		public Value.Enum<EasingType> TypeY
+		{
+			get;
+			private set;
+		}
+
+		[Key(key = "Easing_IndividualType_Z")]
+		[Selected(ID = IndividualType, Value = 0)]
+		public Value.Enum<EasingType> TypeZ
 		{
 			get;
 			private set;
@@ -395,19 +557,30 @@ namespace Effekseer.Data
 
 		internal Vector3DEasingParamater(float defaultX = 0.0f, float defaultY = 0.0f, float defaultZ = 0.0f)
 		{
+			Type = new Value.Enum<EasingType>();
 			Start = new Value.Vector3DWithRandom(defaultX, defaultY, defaultZ);
+			Middle = new Value.Vector3DWithRandom(defaultX, defaultY, defaultZ);
 			End = new Value.Vector3DWithRandom(defaultX, defaultY, defaultZ);
 			StartSpeed = new Value.Enum<EasingStart>(EasingStart.Start);
 			EndSpeed = new Value.Enum<EasingEnd>(EasingEnd.End);
+
+			IsMiddleEnabled = new Value.Boolean(false);
+			IsRandomGroupEnabled = new Value.Boolean(false);
+
+			RandomGroupX = new Value.Int(0);
+			RandomGroupY = new Value.Int(1);
+			RandomGroupZ = new Value.Int(2);
+
+			IsIndividualTypeEnabled = new Value.Boolean(false);
+			TypeX = new Value.Enum<EasingType>(EasingType.Linear);
+			TypeY = new Value.Enum<EasingType>(EasingType.Linear);
+			TypeZ = new Value.Enum<EasingType>(EasingType.Linear);
 		}
 	}
 
 	public class Vector3DFCurveParameter
 	{
-		[Name(language = Language.Japanese, value = "Fカーブ")]
-		[Description(language = Language.Japanese, value = "Fカーブ")]
-		[Name(language = Language.English, value = "F-Curve")]
-		[Description(language = Language.English, value = "F-Curve")]
+		[Key(key = "FCurve")]
 		[Shown(Shown = true)]
 		public Value.FCurveVector3D FCurve
 		{
@@ -547,6 +720,46 @@ namespace Effekseer.Data
 		}
 	}
 
+	public enum TreeNodeType
+	{
+		Large,
+		Small,
+	}
+
+	/// <summary>
+	/// For collection to create a treenode in GUI
+	/// </summary>
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+	AllowMultiple = true,
+	Inherited = false)]
+	public class TreeNodeAttribute : Attribute
+	{
+		public string key
+		{
+			get;
+			set;
+		}
+
+		public string id
+		{
+			get;
+			set;
+		}
+
+		public string enabledFlag
+		{
+			get;
+			set;
+		}
+
+		public TreeNodeType type
+		{
+			get;
+			set;
+		} = TreeNodeType.Large;
+	}
+
 	/// <summary>
 	/// A class to show editable value in parameter list
 	/// </summary>
@@ -558,6 +771,8 @@ namespace Effekseer.Data
 		public bool IsUndoEnabled;
 		public bool IsShown = true;
 		public int SelfSelectorID = -1;
+		public string TreeNodeID = null;
+		public TreeNodeType TreeNodeType = TreeNodeType.Large;
 
 		/// <summary>
 		/// If this value is larger than 0, target selector id is used to show it.
@@ -613,8 +828,9 @@ namespace Effekseer.Data
 				ret.RequiredSelectorValues = selectedAttributes.Select(_ => _.Value).ToArray();
 			}
 
-			var nameKey = NameAttribute.GetKey(attributes);
-			if(string.IsNullOrEmpty(nameKey))
+			var key = KeyAttribute.GetKey(attributes);
+			var nameKey = key + "_Name";
+			if(string.IsNullOrEmpty(key))
 			{
 				nameKey = info.ReflectedType.Name + "_" + info.Name + "_Name";
 			}
@@ -626,10 +842,14 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Title = NameAttribute.GetName(attributes);
+				//if (!string.IsNullOrEmpty(ret.Title.ToString()))
+				//{
+				//	System.IO.File.AppendAllText("kv.csv", nameKey + ","  + "\"" + ret.Title.ToString() + "\"" + "\r\n");
+				//}
 			}
 
-			var descKey = DescriptionAttribute.GetKey(attributes);
-			if (string.IsNullOrEmpty(descKey))
+			var descKey = key + "_Desc";
+			if (string.IsNullOrEmpty(key))
 			{
 				descKey = info.ReflectedType.Name + "_" + info.Name + "_Desc";
 			}
@@ -641,6 +861,28 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Description = DescriptionAttribute.GetDescription(attributes);
+
+				//if(!string.IsNullOrEmpty(ret.Description.ToString()))
+				//{
+				//	System.IO.File.AppendAllText("kv.csv", descKey + "," + "\"" + ret.Description.ToString() + "\"" + "\r\n");
+				//}
+			}
+
+			var treeNode = attributes.OfType<TreeNodeAttribute>().FirstOrDefault();
+
+			if (treeNode != null)
+			{
+				ret.TreeNodeID = treeNode.id;
+				ret.TreeNodeType = treeNode.type;
+
+				if (MultiLanguageTextProvider.HasKey(treeNode.key))
+				{
+					ret.Title = new MultiLanguageString(treeNode.key);
+				}
+				else if (MultiLanguageTextProvider.HasKey(treeNode.key + "_Name"))
+				{
+					ret.Title = new MultiLanguageString(treeNode.key + "_Name");
+				}
 			}
 
 			return ret;
@@ -660,5 +902,10 @@ namespace Effekseer.Data
 	public interface IResettableValue
 	{
 		void ResetValue();
+	}
+
+	public interface IValueChangedFromDefault
+	{
+		bool IsValueChangedFromDefault { get; }
 	}
 }

@@ -7,24 +7,27 @@
 namespace EffekseerRendererLLGI
 {
 
-
 class DeviceObject
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 	//! whether does this instance inc and dec the reference count of renderer
 	bool hasRefCount_ = false;
 
 public:
-	DeviceObject(GraphicsDevice* graphicsDevice, bool hasRefCount);
+	DeviceObject(Backend::GraphicsDevice* graphicsDevice, bool hasRefCount);
 	virtual ~DeviceObject();
 
 public:
-	GraphicsDevice* GetGraphicsDevice() const;
+	Backend::GraphicsDevice* GetGraphicsDevice() const;
 
-	virtual void OnLostDevice() {}
-	virtual void OnResetDevice() {}
+	virtual void OnLostDevice()
+	{
+	}
+	virtual void OnResetDevice()
+	{
+	}
 };
 
 } // namespace EffekseerRendererLLGI

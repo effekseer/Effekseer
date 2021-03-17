@@ -1,5 +1,22 @@
-xbuild Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86
-xbuild Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86
+MSBUILD_EXISTS=`which msbuild >/dev/null 2>&1 ; echo $?`
+if [ ${MSBUILD_EXISTS} -ne 0 ]
+then
+    echo "You need to install 'msbuild'"
+    exit -1
+fi
+
+NUGET_EXISTS=`which nuget >/dev/null 2>&1 ; echo $?`
+if [ ${NUGET_EXISTS} -ne 0 ]
+then
+    echo "You need to install 'nuget' (package manager for C#)"
+    exit -1
+fi
+
+nuget install ./Editor/Effekseer/packages.config -o ./Editor/packages/
+nuget install ./Editor/EffekseerCore/packages.config -o ./Editor/packages/
+
+msbuild Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86
+msbuild Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86
 
 rm -rf Temp
 

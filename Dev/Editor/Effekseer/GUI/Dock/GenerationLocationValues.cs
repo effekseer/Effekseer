@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public GenerationLocationValues()
 		{
-			Label = Resources.GetString("SpawningMethod") + "###SpawningMethod";
+			Label = Icons.PanelGeneration + Resources.GetString("SpawningMethod") + "###SpawningMethod";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GenerationLocationValues));
@@ -28,7 +28,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelGenerationLocation");
 			TabToolTip = Resources.GetString("SpawningMethod");
 		}
 

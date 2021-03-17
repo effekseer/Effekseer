@@ -1,12 +1,12 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX11_MODEL_RENDERER_H__
-#define	__EFFEKSEERRENDERER_DX11_MODEL_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_DX11_MODEL_RENDERER_H__
+#define __EFFEKSEERRENDERER_DX11_MODEL_RENDERER_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX11.RendererImplemented.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.h"
+#include "EffekseerRendererDX11.RendererImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -18,39 +18,48 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
 typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
-typedef ::Effekseer::Vec3f efkVector3D;
+typedef ::Effekseer::SIMD::Vec3f efkVector3D;
 
-class ModelRenderer
-	: public ::EffekseerRenderer::ModelRendererBase
+class ModelRenderer;
+typedef ::Effekseer::RefPtr<ModelRenderer> ModelRendererRef;
+
+class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 {
 private:
-	RendererImplemented*			m_renderer;
-	Shader*							m_shader_lighting_texture_normal;
-	Shader*							m_shader_texture;
-	Shader*							m_shader_distortion_texture;
+	RendererImplementedRef m_renderer;
+	Shader* shader_advanced_lit_;
+	Shader* shader_advanced_unlit_;
+	Shader* shader_advanced_distortion_;
+	Shader* shader_lit_;
+	Shader* shader_unlit_;
+	Shader* shader_distortion_;
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
-	ModelRenderer( RendererImplemented* renderer,
-		Shader* shader_lighting_texture_normal,
-		Shader* shader_texture,
-		Shader* shader_distortion_texture);
+	ModelRenderer(const RendererImplementedRef& renderer,
+				  Shader* shader_advanced_lit,
+				  Shader* shader_advanced_unlit,
+				  Shader* shader_advanced_distortion,
+				  Shader* shader_lit,
+				  Shader* shader_unlit,
+				  Shader* shader_distortion);
+
 public:
-
 	virtual ~ModelRenderer();
 
-	static ModelRenderer* Create( RendererImplemented* renderer );
+	static ModelRendererRef Create(const RendererImplementedRef& renderer);
 
 public:
 	void BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData);
 
 	virtual void Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData) override;
 
-	void EndRendering( const efkModelNodeParam& parameter, void* userData );
+	void EndRendering(const efkModelNodeParam& parameter, void* userData);
 };
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX11_MODEL_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_DX11_MODEL_RENDERER_H__

@@ -14,13 +14,13 @@
     <ClCompile Include="..\..\..\Effekseer\Effekseer\Effekseer.Matrix43.cpp">
       <Filter>Effekseer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat43f.cpp">
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Mat43f.cpp">
       <Filter>Effekseer\SIMD</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat44f.cpp">
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Mat44f.cpp">
       <Filter>Effekseer\SIMD</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDUtils.cpp">
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Utils.cpp">
       <Filter>Effekseer\SIMD</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,49 +48,61 @@
     <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Math.h">
       <Filter>Effekseer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec4f.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Bridge_Gen.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat43f.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Bridge_NEON.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat44f.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Bridge_SSE.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Float4.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_Gen.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Float4_Gen.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_NEON.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Float4_NEON.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_SSE.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Float4_SSE.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDUtils.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Int4.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec2f.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Int4_Gen.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec3f.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Int4_NEON.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_Gen.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Int4_SSE.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_NEON.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Mat43f.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_SSE.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Mat44f.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Utils.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDType.h">
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Vec2f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Vec3f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Vec4f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Base.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Bridge.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
   </ItemGroup>

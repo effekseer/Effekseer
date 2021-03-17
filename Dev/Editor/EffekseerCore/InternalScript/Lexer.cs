@@ -60,6 +60,7 @@ namespace Effekseer.InternalScript
 			operators.Add('-');
 			operators.Add('*');
 			operators.Add('/');
+			operators.Add('%');
 		}
 
 		public LexerResult Analyze(string code)

@@ -1,0 +1,48 @@
+LFF_Falloff_Type_Name,Falloff Type
+LFF_FalloffType_None_Name,None
+LFF_FalloffType_Sphere_Name,Sphere
+LFF_FalloffType_Cone_Name,Cone
+LFF_FalloffType_Tube_Name,Tube
+,
+LFF_Falloff_Power_Name,Falloff Power
+LFF_Falloff_MaxDistance_Name,Effective area (Max. Distance)
+LFF_Falloff_MinDistance_Name,Effective area (Min. Distance)
+,
+LFF_Falloff_Tube_RadiusPower_Name,Falloff Power (Radius)
+LFF_Falloff_Tube_MaxRadius_Name,Effective area (Max. Radius)
+LFF_Falloff_Tube_MinRadius_Name,Effective area (Min. Radius)
+,
+LFF_Falloff_Cone_AnglePower_Name,Falloff Power (Angle)
+LFF_Falloff_Cone_MaxAngle_Name,Effective area (Max. Angle)
+LFF_Falloff_Cone_MinAngle_Name,Effective area (Min. Angle)
+,
+LFF_Type_Name,Type
+LFF_Type_None_Name,None
+LFF_Type_Force_Name,Force
+LFF_Type_Wind_Name,Wind
+LFF_Type_Vortex_Name,Vortex
+LFF_Type_Turbulence_Name,Turbulence
+LFF_Type_Drag_Name,Drag
+LFF_Type_Gravity_Name,Gravity
+LFF_Type_AttractiveForce_Name,Attraction (if point is set)
+,
+LFF_Power_Name,Power
+LFF_Power_Desc,The strength of force field on particles.
+LFF_Position_Name,Position of force field
+LFF_Rotation_Name,Angle of force field
+,
+LFF_Force_Gravitation_Name,Decay with distance
+,
+LFF_TurbulenceType_Name,Type
+LFF_VortexType_Name,Type
+,
+LFF_VortexType_ConstantAngle_Name,ConstantAngle
+LFF_VortexType_ConstantSpeed_Name,ConstantSpeed
+,
+LFF_TurbulenceType_Simple_Name,Simple
+LFF_TurbulenceType_Complicated_Name,Complicated
+,
+LFF_FF_1_Name,ForceField 1
+LFF_FF_2_Name,ForceField 2
+LFF_FF_3_Name,ForceField 3
+LFF_FF_4_Name,ForceField 4

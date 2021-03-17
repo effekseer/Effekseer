@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_ParameterNODE_RIBBON_H__
-#define	__EFFEKSEER_ParameterNODE_RIBBON_H__
+#ifndef __EFFEKSEER_ParameterNODE_RIBBON_H__
+#define __EFFEKSEER_ParameterNODE_RIBBON_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -27,8 +27,7 @@ struct RibbonAllColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 			Color all;
@@ -56,8 +55,7 @@ struct RibbonColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -81,8 +79,7 @@ struct RibbonPositionParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -99,19 +96,16 @@ struct RibbonPositionParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class EffectNodeRibbon
-	: public EffectNodeImplemented
+class EffectNodeRibbon : public EffectNodeImplemented
 {
 public:
-
 	struct InstanceValues
 	{
 		// 色
 		Color _color;
 		Color _original;
 
-		union
-		{
+		union {
 			struct
 			{
 				Color _color;
@@ -125,39 +119,37 @@ public:
 			struct
 			{
 				Color start;
-				Color  end;
+				Color end;
 
 			} easing;
 
 		} allColorValues;
 
-		union
-		{
+		union {
 
 		} colorValues;
 
-		union
-		{
+		union {
 
 		} positionValues;
 	};
 
-	RibbonRenderer::NodeParameter	m_nodeParameter;
+	RibbonRenderer::NodeParameter m_nodeParameter;
 	RibbonRenderer::InstanceParameter m_instanceParameter;
+
 public:
+	AlphaBlendType AlphaBlend;
 
-	AlphaBlendType		AlphaBlend;
+	int ViewpointDependent;
 
-	int				ViewpointDependent;
-
-	RibbonAllColorParameter	RibbonAllColor;
+	RibbonAllColorParameter RibbonAllColor;
 
 	RibbonColorParameter RibbonColor;
 	RibbonPositionParameter RibbonPosition;
 
 	int RibbonTexture;
 
-	int32_t	SplineDivision = 1;
+	int32_t SplineDivision = 1;
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
@@ -170,30 +162,33 @@ public:
 	{
 	}
 
-	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
+	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
-	void BeginRendering(int32_t count, Manager* manager) override;
+	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
 
-	void BeginRenderingGroup(InstanceGroup* group, Manager* manager) override;
+	void BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData) override;
 
-	void EndRenderingGroup(InstanceGroup* group, Manager* manager) override;
+	void EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData) override;
 
-	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) override;
+	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData) override;
 
-	void EndRendering(Manager* manager) override;
+	void EndRendering(Manager* manager, void* userData) override;
 
-	void InitializeRenderedInstance(Instance& instance, Manager* manager) override;
+	void InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
-	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
+	void UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
-	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_RIBBON; }
+	eEffectNodeType GetType() const override
+	{
+		return EFFECT_NODE_TYPE_RIBBON;
+	}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_ParameterNODE_RIBBON_H__
+#endif // __EFFEKSEER_ParameterNODE_RIBBON_H__

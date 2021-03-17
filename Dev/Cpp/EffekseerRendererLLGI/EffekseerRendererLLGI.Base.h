@@ -1,23 +1,23 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_LLGI_BASE_H__
-#define	__EFFEKSEERRENDERER_LLGI_BASE_H__
+#ifndef __EFFEKSEERRENDERER_LLGI_BASE_H__
+#define __EFFEKSEERRENDERER_LLGI_BASE_H__
 
 #include "EffekseerRendererLLGI.Base.Pre.h"
 
 #include <Effekseer.h>
 
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
 #include <assert.h>
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
 #include <string.h>
 
-#include <map>
-#include <vector>
-#include <set>
 #include <list>
-#include <string>
+#include <map>
 #include <queue>
+#include <set>
+#include <string>
+#include <vector>
 
 namespace EffekseerRendererLLGI
 {
@@ -42,6 +42,6 @@ class TrackRenderer;
 
 class TextureLoader;
 
-}
+} // namespace EffekseerRendererLLGI
 
-#endif	// __EFFEKSEERRENDERER_LLGI_BASE_H__
+#endif // __EFFEKSEERRENDERER_LLGI_BASE_H__

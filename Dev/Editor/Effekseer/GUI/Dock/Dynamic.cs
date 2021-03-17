@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using Effekseer.Data;
 
 namespace Effekseer.GUI.Dock
 {
 	class Dynamic : DockPanel
 	{
-		Component.ParameterList paramerterListInput = null;
-
-		Component.ParameterList paramerterList = null;
-
-		bool isFiestUpdate = true;
+		readonly Component.ParameterList paramerterListInput = null;
+		readonly Component.ParameterList paramerterList = null;
 
 		string compileResult = string.Empty;
 
 		public Dynamic()
 		{
-			Label = Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
+			Label = Icons.PanelDynamicParams + Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
 
 			paramerterListInput = new Component.ParameterList();
 			paramerterList = new Component.ParameterList();
@@ -35,11 +29,10 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			Icon = Images.GetIcon("PanelDynamicParameter");
 			TabToolTip = Resources.GetString("DynamicParameter_Name");
 		}
 
-		private void Input_OnChanged(object sender, ChangedValueEventArgs e)
+		private static void Input_OnChanged(object sender, ChangedValueEventArgs e)
 		{
 			Manager.Viewer.SetDynamicInput(
 				Core.Dynamic.Inputs.Values[0].Input.Value,
@@ -48,7 +41,7 @@ namespace Effekseer.GUI.Dock
 				Core.Dynamic.Inputs.Values[3].Input.Value);
 		}
 
-		private void Vectors_OnChanged(object sender, ChangedValueEventArgs e)
+		private static void Vectors_OnChanged(object sender, ChangedValueEventArgs e)
 		{
 		}
 
@@ -69,10 +62,6 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			if (isFiestUpdate)
-			{
-			}
-
 			Manager.NativeManager.Text(Resources.GetString("DynamicInput"));
 
 			paramerterListInput.Update();
@@ -85,7 +74,7 @@ namespace Effekseer.GUI.Dock
 			
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 			
-			var nextParam = Component.DynamicSelector.Select("", "", Core.Dynamic.Equations.Selected, false, true);
+			var nextParam = Component.ObjectCollection.Select("", "", Core.Dynamic.Equations.Selected, false, Core.Dynamic.Equations);
 
 			if (Core.Dynamic.Equations.Selected != nextParam)
 			{
@@ -98,7 +87,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
-				Core.Dynamic.Equations.Add();
+				Core.Dynamic.Equations.New();
 			}
 
 			Manager.NativeManager.SameLine();
@@ -110,34 +99,21 @@ namespace Effekseer.GUI.Dock
 
 			paramerterList.Update();
 
-			if (Core.Dynamic.Equations.Selected != null)
+			if (Core.Dynamic.Equations.Selected != null
+				&& Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile")
+				&& Core.Dynamic.Equations.Selected is DynamicEquation selected)
 			{
-				// TODO make good GUI
-				if (Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile"))
-				{
-					var selected = Core.Dynamic.Equations.Selected;
-					if (selected != null)
-					{
-						var compiler = new InternalScript.Compiler();
-						var result = compiler.Compile(selected.Code.Value);
+				var compiler = new InternalScript.Compiler();
+				var result = compiler.Compile(selected.Code.Value);
 
-						if (result.Error != null)
-						{
-							compileResult = Utils.CompileErrorGenerator.Generate(selected.Code.Value, result.Error);
-						}
-						else
-						{
-							compileResult = "OK";
-						}
-					}
-				}
+				compileResult = result.Error != null ? Utils.CompileErrorGenerator.Generate(selected.Code.Value, result.Error) : "OK";
 			}
 
 			// show errors
 			Manager.NativeManager.Text(compileResult);
 		}
 
-		void Read()
+		private void Read()
 		{
 			paramerterListInput.SetValue(Core.Dynamic.Inputs);
 			paramerterList.SetValue(Core.Dynamic.Equations);
@@ -163,7 +139,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList.SetValue(null);
 		}
 
-		void OnAfterLoad(object sender, EventArgs e)
+		private void OnAfterLoad(object sender, EventArgs e)
 		{
 			Core.Dynamic.Equations.OnChanged += Vectors_OnChanged;
 			Core.Dynamic.Inputs.Values[0].Input.OnChanged += Input_OnChanged;

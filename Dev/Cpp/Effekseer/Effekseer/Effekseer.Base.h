@@ -1,4 +1,4 @@
-﻿
+
 #ifndef __EFFEKSEER_BASE_H__
 #define __EFFEKSEER_BASE_H__
 
@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <iterator>
 #include <array>
 #include <cfloat>
 #include <chrono>
@@ -37,11 +38,8 @@ namespace Effekseer
 
 struct Color;
 
-class Manager;
 class ManagerImplemented;
-class Effect;
 class EffectImplemented;
-class EffectNode;
 class EffectNodeImplemented;
 class EffectNodeRoot;
 class EffectNodeSprite;
@@ -54,23 +52,9 @@ class Instance;
 class InstanceChunk;
 class InstanceGroup;
 
-class ParticleRenderer;
-class SpriteRenderer;
-class RibbonRenderer;
-class ModelRenderer;
-class TrackRenderer;
-
-class Setting;
 class FileReader;
 class FileWriter;
 class FileInterface;
-class EffectLoader;
-class TextureLoader;
-class SoundLoader;
-class ModelLoader;
-class MaterialLoader;
-
-class Model;
 class InternalScript;
 
 #ifdef _DEBUG_EFFEKSEER
@@ -113,18 +97,20 @@ enum eEffectNodeType
 	EFFECT_NODE_TYPE_RING = 4,
 	EFFECT_NODE_TYPE_MODEL = 5,
 	EFFECT_NODE_TYPE_TRACK = 6,
-
+	
 	EFFECT_NODE_TYPE_DWORD = 0x7fffffff,
 };
+
 
 class StringHelper
 {
 public:
-	template <typename T> static std::vector<std::basic_string<T>> Split(const std::basic_string<T>& s, T delim)
+	template <typename T>
+	static std::vector<std::basic_string<T>> Split(const std::basic_string<T>& s, T delim)
 	{
 		std::vector<std::basic_string<T>> elems;
 
-		int32_t start = 0;
+		size_t start = 0;
 
 		for (size_t i = 0; i < s.size(); i++)
 		{
@@ -161,7 +147,8 @@ public:
 		return target;
 	}
 
-	template <typename T, typename U> static std::basic_string<T> To(const U* str)
+	template <typename T, typename U>
+	static std::basic_string<T> To(const U* str)
 	{
 		std::basic_string<T> ret;
 		size_t len = 0;
@@ -184,7 +171,8 @@ public:
 class PathHelper
 {
 private:
-	template <typename T> static std::basic_string<T> Normalize(const std::vector<std::basic_string<T>>& paths)
+	template <typename T>
+	static std::basic_string<T> Normalize(const std::vector<std::basic_string<T>>& paths)
 	{
 		std::vector<std::basic_string<T>> elems;
 
@@ -223,7 +211,8 @@ private:
 	}
 
 public:
-	template <typename T> static std::basic_string<T> Normalize(const std::basic_string<T>& path)
+	template <typename T>
+	static std::basic_string<T> Normalize(const std::basic_string<T>& path)
 	{
 		if (path.size() == 0)
 			return path;
@@ -234,7 +223,8 @@ public:
 		return Normalize(paths);
 	}
 
-	template <typename T> static std::basic_string<T> Relative(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
+	template <typename T>
+	static std::basic_string<T> Relative(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
 	{
 		if (basePath.size() == 0 || targetPath.size() == 0)
 		{
@@ -284,7 +274,8 @@ public:
 		return ret;
 	}
 
-	template <typename T> static std::basic_string<T> Absolute(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
+	template <typename T>
+	static std::basic_string<T> Absolute(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
 	{
 		if (targetPath == StringHelper::To<T>(""))
 			return StringHelper::To<T>("");

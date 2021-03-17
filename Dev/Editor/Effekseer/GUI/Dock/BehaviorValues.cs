@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace Effekseer.GUI.Dock
 {   
 	class BehaviorValues : DockPanel
@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 
 		public BehaviorValues()
         {
-			Label = Resources.GetString("Behavior") + "###Behavior";
+			Label = Icons.PanelBehavior + Resources.GetString("Behavior") + "###Behavior";
 
             paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectBehaviorValues));
@@ -23,7 +23,6 @@ namespace Effekseer.GUI.Dock
 
             Read();
 
-			Icon = Images.GetIcon("PanelBehavior");
 			TabToolTip = Resources.GetString("Behavior");
 		}
 

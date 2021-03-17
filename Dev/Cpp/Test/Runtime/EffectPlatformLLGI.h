@@ -33,9 +33,15 @@ class LLGIWindow : public LLGI::Window
 	GLFWwindow* window_ = nullptr;
 
 public:
-	LLGIWindow(GLFWwindow* window) : window_(window) {}
+	LLGIWindow(GLFWwindow* window)
+		: window_(window)
+	{
+	}
 
-	bool OnNewFrame() override { return glfwWindowShouldClose(window_) == GL_FALSE; }
+	bool OnNewFrame() override
+	{
+		return glfwWindowShouldClose(window_) == GL_FALSE;
+	}
 
 	void* GetNativePtr(int32_t index) override
 	{
@@ -79,6 +85,19 @@ private:
 	GLFWwindow* glfwWindow_ = nullptr;
 #endif
 protected:
+	struct SimpleVertex
+	{
+		LLGI::Vec3F Pos;
+		LLGI::Vec2F UV;
+		LLGI::Color8 Color;
+	};
+
+	virtual void CreateShaders()
+	{
+	}
+	void CreateResources();
+	void CreateCheckedTexture();
+
 	LLGI::Window* llgiWindow_ = nullptr;
 
 	LLGI::Platform* platform_ = nullptr;
@@ -87,15 +106,40 @@ protected:
 	LLGI::CommandList* commandList_ = nullptr;
 	std::shared_ptr<LLGI::CommandListPool> commandListPool_ = nullptr;
 
+	EffekseerRenderer::CommandList* commandListEfk_ = nullptr;
+	EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk_ = nullptr;
+
+	LLGI::RenderPass* renderPass_ = nullptr;
+	LLGI::Texture* colorBuffer_ = nullptr;
+	LLGI::Texture* depthBuffer_ = nullptr;
+	LLGI::Shader* shader_vs_ = nullptr;
+	LLGI::Shader* shader_ps_ = nullptr;
+	LLGI::VertexBuffer* vb_ = nullptr;
+	LLGI::IndexBuffer* ib_ = nullptr;
+	LLGI::PipelineState* pip_ = nullptr;
+	LLGI::PipelineState* screenPip_ = nullptr;
+	LLGI::RenderPassPipelineState* rppip_ = nullptr;
+	LLGI::Texture* checkTexture_ = nullptr;
+	LLGI::TextureFormatType screenFormat_ = LLGI::TextureFormatType::R8G8B8A8_UNORM;
+	LLGI::DeviceType deviceType_;
+
+	void InitializeWindow() override;
 	void Present() override;
 	bool DoEvent() override;
 	void PreDestroyDevice() override;
 	void DestroyDevice() override;
 
 public:
-	EffectPlatformLLGI();
+	EffectPlatformLLGI(LLGI::DeviceType deviceType);
 	virtual ~EffectPlatformLLGI();
-	bool TakeScreenshot(const char* path);
 
-	LLGI::Graphics* GetGraphics() const { return graphics_; }
+	virtual void BeginRendering() override;
+	virtual void EndRendering() override;
+
+	bool TakeScreenshot(const char* path) override;
+
+	LLGI::Graphics* GetGraphics() const
+	{
+		return graphics_;
+	}
 };

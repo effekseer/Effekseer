@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererCommonValues()
 		{
-			Label = Resources.GetString("BasicRenderSettings") + "###BasicRenderSettings";
+			Label = Icons.PanelRenderCommon + Resources.GetString("BasicRenderSettings") + "###BasicRenderSettings";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererCommonValues));
@@ -31,7 +31,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelRendererCommon");
 			TabToolTip = Resources.GetString("BasicRenderSettings");
 		}
 

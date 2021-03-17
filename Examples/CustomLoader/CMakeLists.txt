@@ -35,7 +35,7 @@ if(NOT WIN32)
         Example_CustomLoader
         PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
-        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_LIBRARIES}
     )
 endif()
 
@@ -82,9 +82,10 @@ if(USE_LIBPNG_LOADER)
     target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE
+        debug "${LIBPNG_LIB_DEBUG}"
+        optimized "${LIBPNG_LIB_RELEASE}"
         debug "${ZLIB_LIB_DEBUG}"
         optimized "${ZLIB_LIB_RELEASE}"
-        debug "${LIBPNG_LIB_DEBUG}"
-	    optimized "${LIBPNG_LIB_RELEASE}"
-	)
+    )
+
 endif()

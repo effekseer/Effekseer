@@ -3,158 +3,109 @@
 
 #include "EffekseerTool.Base.h"
 
-#ifdef _WIN32
-#include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
-#endif
-
-#include "../Graphics/Platform/GL/efk.GraphicsGL.h"
+#include "../Graphics/StaticMeshRenderer.h"
+#include "../RenderedEffectGenerator.h"
 #include "../efk.Base.h"
-#include "../Graphics/efk.PostEffects.h"
-
 #include <functional>
+#include <string>
 
 namespace EffekseerTool
 {
 
-class Renderer
+class MainScreenRenderedEffectGenerator : public Effekseer::Tool::RenderedEffectGenerator
 {
 private:
-	class DistortingCallback
-		: public EffekseerRenderer::DistortingCallback
-	{
-	private:
-		efk::Graphics* renderer = nullptr;
-	public:
-		DistortingCallback(efk::Graphics* renderer);
-		virtual ~DistortingCallback();
+	std::shared_ptr<::EffekseerRenderer::Grid> grid_;
+	std::shared_ptr<::EffekseerRenderer::Guide> guide_;
+	std::shared_ptr<::EffekseerRenderer::Culling> culling_;
+	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> staticMeshRenderer_;
 
-		bool OnDistorting();
-
-		bool IsEnabled;
-		bool Blit;
-	};
-
-private:
-	efk::Graphics*	graphics = nullptr;
-
-	bool isScreenMode = false;
-
-	int32_t				currentWidth = 0;
-	int32_t				currentHeight = 0;
+	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
+	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
 	
-	int32_t				m_windowWidth = 0;
-	int32_t				m_windowHeight = 0;
-	int32_t				m_squareMaxCount;
-	float				m_orthoScale = 1.0f;
 
-	eProjectionType		m_projection;
+	Effekseer::TextureLoaderRef textureLoader_;
+	Effekseer::TextureRef backgroundTexture_;
+	std::u16string backgroundPath;
 
-	::EffekseerRenderer::Renderer*	m_renderer;
-	DistortingCallback*		m_distortionCallback;
-
-	::EffekseerRenderer::Grid*	m_grid;
-	::EffekseerRenderer::Guide*	m_guide;
-	::EffekseerRenderer::Culling*	m_culling;
-	::EffekseerRenderer::Paste*	m_background;
-	std::unique_ptr<efk::BloomEffect> m_bloomEffect;
-	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
-	std::unique_ptr<efk::LinearToSRGBEffect> m_linearToSRGBEffect;
-
-	bool		m_recording = false;
-	int32_t		m_recordingWidth = 0;
-	int32_t		m_recordingHeight = 0;
-
-	Effekseer::TextureLoader*	textureLoader = nullptr;
-	Effekseer::TextureData*		backgroundData = nullptr;
-
-	Effekseer::Matrix44	m_cameraMatTemp;
-	Effekseer::Matrix44	m_projMatTemp;
-
-	std::u16string	backgroundPath;
-
-	bool	m_isSRGBMode = false;
-
-	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
-	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
-
-	//! a render texture which is drawn at last
-	efk::RenderTexture* lastDstRenderTexture = nullptr;
-
-	//! a depth texture which is drawn at last
-	efk::DepthTexture* lastDstDepthTexture = nullptr;
-
-	std::shared_ptr<efk::RenderTexture> linearRenderTexture;
-	std::shared_ptr<efk::RenderTexture> hdrRenderTexture;
-	std::shared_ptr<efk::RenderTexture> hdrRenderTextureMSAA;
-	std::shared_ptr<efk::DepthTexture> depthTexture;
-	
-	int32_t		screenWidth = 0;
-	int32_t		screenHeight = 0;
-	uint32_t	msaaSamples = 4;
 public:
-	/**
-		@brief	Constructor
-	*/
-	Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType);
+	virtual ~MainScreenRenderedEffectGenerator();
 
-	/**
-		@brief	デストラクタ
-	*/
-	~Renderer();
+	bool InitializedPrePost();
 
-	/**
-		@brief	初期化を行う。
-	*/
-	bool Initialize( void* handle, int width, int height );
+	void OnAfterClear() override;
 
-	/**
-		@brief	画面に表示する。
-	*/
-	bool Present();
+	void OnBeforePostprocess() override;
 
-	/**
-		@brief	デバイスのリセット
-	*/
-	void ResetDevice();
+	Effekseer::Color GridColor = Effekseer::Color(255, 255, 255, 255);
 
-	/**
-		@brief	射影取得
-	*/
+	int32_t GuideWidth = 100;
+
+	int32_t GuideHeight = 100;
+
+	bool RendersGuide = false;
+
+	bool IsGridShown = true;
+
+	bool IsGridXYShown = false;
+
+	bool IsGridXZShown = true;
+
+	bool IsGridYZShown = false;
+
+	float GridLength = 2.0f;
+
+	bool IsCullingShown = false;
+
+	float CullingRadius = 0.0f;
+
+	bool IsRightHand = true;
+
+	bool IsGroundShown = false;
+
+	float GroundHeight = 0.0f;
+
+	int32_t GroundExtent = 10;
+
+	Effekseer::Vector3D CullingPosition;
+
+	void LoadBackgroundImage(const char16_t* path);
+
+	void UpdateGround();
+};
+
+class ViewPointController
+{
+private:
+	float m_orthoScale = 1.0f;
+	eProjectionType m_projection;
+	Effekseer::Matrix44 m_cameraMat;
+	Effekseer::Matrix44 m_projMat;
+	efk::DeviceType deviceType_;
+
+	int32_t screenWidth = 0;
+	int32_t screenHeight = 0;
+
+public:
+	ViewPointController();
+
+	~ViewPointController();
+
+	void Initialize(efk::DeviceType deviceType, int width, int height);
+
 	eProjectionType GetProjectionType();
 
-	/**
-		@brief	射影設定
-	*/
-	void SetProjectionType( eProjectionType type );
-
-	/**
-		@brief	画面サイズ変更
-	*/
-	bool Resize( int width, int height );
+	void SetProjectionType(eProjectionType type);
 
 	void RecalcProjection();
 
-	::EffekseerRenderer::Renderer*	GetRenderer() { return m_renderer; };
+	void SetPerspectiveFov(int width, int height);
 
-	/**
-		@brief	射影行列設定
-	*/
-	void SetPerspectiveFov( int width, int height );
+	void SetOrthographic(int width, int height);
 
-	/**
-		@brief	射影行列設定
-	*/
-	void SetOrthographic( int width, int height );
+	void SetOrthographicScale(float scale);
 
-	/**
-		@brief	射影行列設定
-	*/
-	void SetOrthographicScale( float scale );
-
-	/**
-		@brief	Orthographic表示の拡大率
-	*/
-	float	RateOfMagnification;
+	float RateOfMagnification;
 
 	/**
 		@brief	Z near
@@ -166,138 +117,31 @@ public:
 	*/
 	float ClippingEnd = 300.0f;
 
-	/**
-		@brief	ガイドの縦幅
-	*/
-	int32_t GuideWidth;
-
-	/**
-		@brief	ガイドの横幅
-	*/
-	int32_t	GuideHeight;
-
-	/**
-		@brief	ガイドを描画するかどうか
-	*/
-	bool RendersGuide;
-
-	/**
-		@brief	グリッドを表示するか?
-	*/
-	bool IsGridShown;
-
-	/**
-		@brief	XYグリッドを表示するか?
-	*/
-	bool IsGridXYShown;
-
-	/**
-		@brief	XZグリッドを表示するか?
-	*/
-	bool IsGridXZShown;
-
-	/**
-		@brief	YZグリッドを表示するか?
-	*/
-	bool IsGridYZShown;
-
-	/**
-		@brief	右手系か?
-	*/
 	bool IsRightHand;
 
-	/**
-		@brief	グリッドの長さ
-	*/
-	float GridLength;
-
-	bool IsCullingShown;
-
-	float CullingRadius;
-
-	Effekseer::Vector3D CullingPosition;
-
-	/**
-		@brief	The type of distortion
-	*/
-	DistortionType Distortion;
-
-	/**
-		@brief	背景色
-	*/
-	Effekseer::Color GridColor;
-
-	/**
-		@brief	背景色
-	*/
-	Effekseer::Color BackgroundColor;
-
-	/**
-	@brief	背景色
-	*/
 	Effekseer::RenderMode RenderingMode;
 
-	/**
-		@brief	背景が半透明か?
-	*/
-	bool IsBackgroundTranslucent;
+	void SetScreenSize(int32_t width, int32_t height);
 
-	/**
-		@brief	描画開始
-	*/
-	bool BeginRendering();
+	Effekseer::Tool::Vector2DI GetScreenSize() const
+	{
+		return Effekseer::Tool::Vector2DI(screenWidth, screenHeight);
+	}
 
-	/**
-		@brief	描画終了
-	*/
-	bool EndRendering();
+	Effekseer::Matrix44 GetCameraMatrix() const
+	{
+		return m_cameraMat;
+	}
 
-	bool BeginRenderToView(int32_t width, int32_t height);
+	void SetCameraMatrix(Effekseer::Matrix44 value)
+	{
+		m_cameraMat = value;
+	}
 
-	bool EndRenderToView();
-
-	void RenderPostEffect();
-
-	/**
-		@brief	録画開始
-	*/
-	bool BeginRecord( int32_t width, int32_t height );
-
-	/**
-	@brief	録画終了
-	*/
-	void EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha, bool removeAlpha);
-
-	/**
-		@brief	背景の読み込み
-	*/
-	void LoadBackgroundImage(const char16_t* path);
-
-	/**
-		@brief	copy current render target to background buffer
-	*/
-	void CopyToBackground();
-
-	/**
-		@brief	temp
-	*/
-	uint64_t GetViewID();
-
-	efk::Graphics* GetGraphics() const { return graphics; }
-
-	efk::BloomEffect* GetBloomEffect() const { return m_bloomEffect.get(); }
-	efk::TonemapEffect* GetTonemapEffect() const { return m_tonemapEffect.get(); }
-
-	/**
-		Called when device is losted.
-	*/
-	std::function<void()>	LostedDevice;
-
-	/**
-	Called when device is resetted.
-	*/
-	std::function<void()>	ResettedDevice;
-
+	Effekseer::Matrix44 GetProjectionMatrix() const
+	{
+		return m_projMat;
+	}
 };
 
-}
+} // namespace EffekseerTool

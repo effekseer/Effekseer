@@ -79,22 +79,33 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TinyCsvParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=d7df35b038077099, processorArchitecture=MSIL">
-      <HintPath>..\packages\TinyCsvParser.2.5.2\lib\net45\TinyCsvParser.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binary\RenderData\AdvancedUvSerializer.cs" />
+    <Compile Include="Binary\AlphaCutoffValues.cs" />
+    <Compile Include="Binary\RenderData\BasicUvSerializer.cs" />
     <Compile Include="Binary\CommonValues.cs" />
     <Compile Include="Binary\GenerationLocationValues.cs" />
+    <Compile Include="Binary\RenderData\MaterialSerializer.cs" />
+    <Compile Include="Binary\RendererCommonValues_Old.cs" />
     <Compile Include="Binary\RendererValues.cs" />
     <Compile Include="Binary\Exporter.cs" />
     <Compile Include="Binary\RotationValues.cs" />
@@ -104,10 +115,17 @@
     <Compile Include="Binary\Define.cs" />
     <Compile Include="Binary\SoundValues.cs" />
     <Compile Include="Binary\RendererCommonValues.cs" />
+    <Compile Include="Binary\RenderData\TextureValuesAggregator.cs" />
+    <Compile Include="Binary\RenderData\UvAggregator.cs" />
+    <Compile Include="Binary\RenderData\UvSerializer.cs" />
+    <Compile Include="Binary\RenderData\TextureInformationRepository.cs" />
+    <Compile Include="Data\Group\IToggleMode.cs" />
+    <Compile Include="Data\Group\IUvCommandValues.cs" />
     <Compile Include="Command\CommandManager.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Data\AdvancedRenderCommonValues.cs" />
     <Compile Include="Data\DepthValues.cs" />
     <Compile Include="Data\Dynamic.cs" />
     <Compile Include="Data\EffectCullingValues.cs" />
@@ -115,6 +133,7 @@
     <Compile Include="Data\EnvironmentValues.cs" />
     <Compile Include="Data\OptionValues.cs" />
     <Compile Include="Data\PostEffectValues.cs" />
+    <Compile Include="Data\ProceduralModelValues.cs" />
     <Compile Include="Data\RecordingValues.cs" />
     <Compile Include="Data\RendererCommonValues.cs" />
     <Compile Include="Data\CommonValues.cs" />
@@ -138,10 +157,14 @@
     <Compile Include="Data\Value\EnumBase.cs" />
     <Compile Include="Data\Value\FCurve.cs" />
     <Compile Include="Data\Value\FCurveColor.cs" />
+    <Compile Include="Data\Value\FCurveScalar.cs" />
     <Compile Include="Data\Value\FCurveVector2D.cs" />
     <Compile Include="Data\Value\FCurveVector3D.cs" />
     <Compile Include="Data\Value\Float.cs" />
     <Compile Include="Data\Value\FloatWithRandom.cs" />
+    <Compile Include="Data\Value\Int2.cs" />
+    <Compile Include="Data\Value\ObjectCollection.cs" />
+    <Compile Include="Data\Value\PathForCurve.cs" />
     <Compile Include="Data\Value\PathForImage.cs" />
     <Compile Include="Data\Value\Int.cs" />
     <Compile Include="Data\Value\IntWithInifinite.cs" />
@@ -165,10 +188,13 @@
     <Compile Include="InternalScript\Lexer.cs" />
     <Compile Include="InternalScript\Parser.cs" />
     <Compile Include="InternalScript\SSAGenerator.cs" />
-    <Compile Include="InternalScript\Tests.cs" />
     <Compile Include="IO\EfkEfc.cs" />
+    <Compile Include="IO\EfkPkg.cs" />
     <Compile Include="Utils\BinaryWriter.cs" />
+    <Compile Include="Utils\CsvReader.cs" />
+    <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\Misc.cs" />
+    <Compile Include="Utils\ProjectVersionUpdater.cs" />
     <Compile Include="Utils\ResourceCache.cs" />
     <Compile Include="Utils\Zlib.cs" />
     <Compile Include="Utl\BinaryReader.cs" />

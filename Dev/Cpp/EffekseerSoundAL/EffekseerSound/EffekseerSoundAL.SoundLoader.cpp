@@ -59,7 +59,7 @@ SoundLoader::~SoundLoader()
 {
 }
 
-void* SoundLoader::Load(::Effekseer::FileReader* reader) {
+::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReader* reader) {
 	uint32_t chunkIdent, chunkSize;
 	// check RIFF chunk
 	reader->Read(&chunkIdent, 4);
@@ -167,8 +167,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader) {
 
 	ALenum format = (wavefmt.nChannels == 2) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 
-	SoundData* soundData = new SoundData;
-	memset(soundData, 0, sizeof(SoundData));
+	auto soundData = ::Effekseer::MakeRefPtr<SoundData>();
 	soundData->channels = wavefmt.nChannels;
 	soundData->sampleRate = wavefmt.nSamplesPerSec;
 	alGenBuffers(1, &soundData->buffer);
@@ -178,7 +177,7 @@ void* SoundLoader::Load(::Effekseer::FileReader* reader) {
 	return soundData;
 }
 
-void* SoundLoader::Load( const EFK_CHAR* path )
+::Effekseer::SoundDataRef SoundLoader::Load( const char16_t* path )
 {
 	assert( path != NULL );
 	
@@ -189,20 +188,20 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	return Load(reader.get());
 }
 	
-void* SoundLoader::Load(const void* data, int32_t size)
+::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
 	auto reader = SupportOpenAL::BinaryFileReader(data, size);
 	return Load(&reader);
 }
 
-void SoundLoader::Unload( void* data )
+void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )
 {
-	SoundData* soundData = (SoundData*)data;
-	if (soundData == NULL) {
-		return;
+	if (soundData != nullptr)
+	{
+		SoundData* soundDataImpl = (SoundData*)soundData.Get();
+		alDeleteBuffers(1, &soundDataImpl->buffer);
+		soundData = nullptr;
 	}
-	alDeleteBuffers(1, &soundData->buffer);
-	delete soundData;
 }
 
 }

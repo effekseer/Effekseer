@@ -3,8 +3,11 @@
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
-#else
+#elif defined(_WIN32)
 #include <GL/glew.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
 #endif
 
 #include <Common/StringHelper.h>
@@ -52,6 +55,9 @@ Texture::~Texture() { ar::SafeDelete(texture_); }
 
 bool Texture::Validate()
 {
+	if (path_ == "")
+		return false;
+
 	Invalidate();
 
 	auto path16 = Effekseer::utf8_to_utf16(path_);
@@ -77,7 +83,12 @@ bool Texture::Validate()
 	return true;
 }
 
-void Texture::Invalidate() { ar::SafeDelete(texture_); }
+void Texture::Invalidate() {
+	if (path_ == "")
+		return;
+
+	ar::SafeDelete(texture_); 
+}
 
 uint64_t Texture::GetInternal()
 {
@@ -109,6 +120,24 @@ std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, Vector2 size, const void* initialData)
+{
+	auto obj = std::make_shared<Texture>();
+
+	obj->texture_ = ar::Texture2D::Create(graphics->GetManager());
+	if (obj->texture_ == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (!obj->texture_->Initialize(graphics->GetManager(), size.X, size.Y, ar::TextureFormat::R8G8B8A8_UNORM, (void*)initialData, false))
+	{
+		return nullptr;
+	}
+
+	return obj;
 }
 
 std::map<std::string, std::shared_ptr<Texture>> TextureCache::textures_;
@@ -179,6 +208,8 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 	std::vector<Vertex> vertexes;
 	std::vector<uint16_t> indexes;
 
+	std::unordered_map<std::tuple<Vector3, Vector3>, std::vector<int32_t>> pairVertexes;
+
 	// only single object
 	for (size_t s = 0; s < std::min(static_cast<size_t>(1), shapes.size()); s++)
 	{
@@ -213,12 +244,17 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
 				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
 				vertexes[index_offset + v].Color[3] = 255;
+
+				auto key = std::tuple<Vector3, Vector3>(vertexes[index_offset + v].Pos, normal);
+				pairVertexes[key].emplace_back(static_cast<int32_t>(index_offset + v));
 			}
 			index_offset += shapes[s].mesh.num_face_vertices[f];
 		}
 	}
 
 	// calc tangent
+	std::vector<Vector3> tangents;
+	tangents.resize(vertexes.size());
 	for (size_t i = 0; i < vertexes.size() / 3; i++)
 	{
 		auto& v0 = vertexes[i * 3 + 0];
@@ -230,7 +266,26 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 
 		CalcTangentSpace(v0, v1, v2, binormal, tangent);
 
-		v0.Tangent = Vertex::CreatePacked(tangent);
+		tangents[i * 3 + 0] = tangent;
+		tangents[i * 3 + 1] = tangent;
+		tangents[i * 3 + 2] = tangent;
+	}
+
+	for (auto& kv : pairVertexes)
+	{
+		Vector3 tangentsum = Vector3(0, 0, 0);
+
+		for (auto i : kv.second)
+		{
+			tangentsum = tangentsum + tangents[i];
+		}
+
+		tangentsum = tangentsum / static_cast<float>(kv.second.size());
+
+		for (auto i : kv.second)
+		{
+			vertexes[i].Tangent = Vertex::CreatePacked(tangentsum);
+		}
 	}
 
 	auto vb = ar::VertexBuffer::Create(graphics->GetManager());
@@ -347,6 +402,15 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 
 	mesh_ = Mesh::Load(graphics_, "resources/meshes/sphere.obj");
 
+	std::array<uint8_t, 4> blackPixels;
+	std::array<uint8_t, 4> whitePixels;
+
+	blackPixels.fill(0);
+	whitePixels.fill(255);
+
+	black_ = Texture::Load(graphics_, {1, 1}, blackPixels.data());
+	white_ = Texture::Load(graphics_, {1, 1}, whitePixels.data());
+
 	return true;
 }
 
@@ -355,6 +419,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
+										  "#define CENTROID centroid\n"
 										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n"
 										  "uniform vec4 customData1;\n"	 // HACK
@@ -365,6 +430,7 @@ static const char g_header_fs_gl3_src[] = ""
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
+										  "#define CENTROID centroid\n"
 										  "#define TEX2D texture\n"
 										  "layout (location = 0) out vec4 FRAGCOLOR;\n"
 										  "uniform vec4 customData1;\n"	 // HACK
@@ -467,22 +533,22 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	if (shader == nullptr)
 		return false;
 
+	Matrix44 matProj;
+
+	if (ModelType == PreviewModelType::Screen)
+	{
+		matProj.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);	
+	}
+	else
+	{
+		matProj.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
+	}
+
 	for (auto layout : shader->GetPixelConstantLayouts())
 	{
 		if (layout.first == "uMatProjection")
 		{
-			if (ModelType == PreviewModelType::Screen)
-			{
-				Matrix44 mat;
-				mat.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);
-				constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
-			}
-			else
-			{
-				Matrix44 mat;
-				mat.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
-				constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
-			}
+			constantBuffer->SetData(matProj.Values, layout.second.GetSize(), layout.second.Offset);
 		}
 
 		if (layout.first == "uMatCamera")
@@ -525,6 +591,28 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}
 
+		if (layout.first == "reconstructionParam1")
+		{			
+			float values[4];
+			values[0] = 0.0f;
+			values[1] = 1.0f;
+			values[2] = 0.0f;
+			values[3] = 1.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "reconstructionParam2")
+		{
+			float values[4];
+			values[0] = matProj.Values[2][2];
+			values[1] = matProj.Values[3][2];
+			values[2] = matProj.Values[2][3];
+			values[3] = matProj.Values[3][3];
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
 		if (layout.first == "lightDirection")
 		{
 			float values[4];
@@ -560,9 +648,10 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	{
 		if (layout.first == "predefined_uniform")
 		{
-			float values[4];
+			std::array<float,4> values;
 			values[0] = time;
-			constantBuffer->SetData(&time, layout.second.GetSize(), layout.second.Offset);
+			values[1] = 1.0f;
+			constantBuffer->SetData(values.data(), layout.second.GetSize(), layout.second.Offset);
 		}
 
 		if (layout.first == "customData1")
@@ -631,6 +720,11 @@ void Preview::Render()
 				}
 			}
 
+			if (pixelLayouts.count("efk_depth") > 0)
+			{
+				drawParam.PixelShaderTextures[pixelLayouts["efk_depth"].Index] = white_->GetTexture();
+			}
+
 			context->Draw(drawParam);
 		}
 		else
@@ -661,6 +755,11 @@ void Preview::Render()
 					drawParam.PixelShaderTextureWraps[ind] =
 						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
 				}
+			}
+
+			if (pixelLayouts.count("efk_depth") > 0)
+			{
+				drawParam.PixelShaderTextures[pixelLayouts["efk_depth"].Index] = white_->GetTexture();
 			}
 
 			context->Draw(drawParam);

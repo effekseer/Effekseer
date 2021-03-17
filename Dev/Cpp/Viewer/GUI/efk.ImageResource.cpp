@@ -5,46 +5,41 @@
 namespace efk
 {
 
-ImageResource::ImageResource(std::shared_ptr<Effekseer::TextureLoader> loader) : loader_(loader) {}
+ImageResource::ImageResource(DeviceType deviceType, Effekseer::TextureLoaderRef loader)
+	: deviceType_(deviceType)
+	, loader_(loader)
+{
+}
 
 ImageResource::~ImageResource()
 {
-	if (textureData != nullptr)
-	{
-		loader_->Unload(textureData);
-	}
+	Invalidate();
 }
 
 bool ImageResource::Validate()
 {
+	Invalidate();
+
 	auto staticFile = Effekseer::IO::GetInstance()->LoadFile(path.c_str());
 	if (staticFile == nullptr)
 		return false;
 
-	auto loaded = loader_->Load(staticFile->GetData(), staticFile->GetSize(), Effekseer::TextureType::Color);
+	texture = loader_->Load(staticFile->GetData(), staticFile->GetSize(), Effekseer::TextureType::Color, true);
 
-	if (loaded == nullptr)
+	if (texture == nullptr)
 		return false;
-
-	if (textureData != nullptr)
-	{
-		loader_->Unload(textureData);
-	}
-
-	textureData = loaded;
 
 	return true;
 }
 
 void ImageResource::Invalidate()
 {
-
-	if (textureData != nullptr)
+	if (texture != nullptr)
 	{
-		loader_->Unload(textureData);
+		loader_->Unload(texture);
 	}
 
-	textureData = nullptr;
+	texture = nullptr;
 }
 
 } // namespace efk

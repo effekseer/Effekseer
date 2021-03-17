@@ -3,3 +3,6 @@ Language_ja,日本語
 "",""
 "Save","保存"
 "Cancel","キャンセル"
+"",""
+"Font_Normal","resources/GenShinGothic-Monospace-Normal.ttf"
+"Font_Bold","resources/fonts/GenShinGothic-Monospace-Bold.ttf"

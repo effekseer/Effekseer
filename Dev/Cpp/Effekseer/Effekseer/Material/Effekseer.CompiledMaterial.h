@@ -2,13 +2,14 @@
 #ifndef __EFFEKSEER_COMPILED_MATERIAL_H__
 #define __EFFEKSEER_COMPILED_MATERIAL_H__
 
+#include "../Utils/BinaryVersion.h"
+#include "Effekseer.MaterialCompiler.h"
 #include <array>
 #include <assert.h>
 #include <map>
 #include <sstream>
 #include <string.h>
 #include <vector>
-#include "Effekseer.MaterialCompiler.h"
 
 namespace Effekseer
 {
@@ -29,14 +30,16 @@ enum class CompiledMaterialPlatformType : int32_t
 
 class CompiledMaterial
 {
-	static const int32_t Version = 1;
+	static const int32_t Version = CompiledMaterialVersion16;
+	static const int32_t LatestSupportVersion = CompiledMaterialVersion16;
+	static const int32_t OldestSupportVersion = CompiledMaterialVersion16;
 
 	std::map<CompiledMaterialPlatformType, std::unique_ptr<CompiledMaterialBinary, ReferenceDeleter<CompiledMaterialBinary>>> platforms;
 	std::vector<uint8_t> originalData_;
 
 public:
 	uint64_t GUID = 0;
-	
+
 	const std::vector<uint8_t>& GetOriginalData() const;
 
 	bool Load(const uint8_t* data, int32_t size);

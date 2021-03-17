@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_ParameterNODE_RING_H__
-#define	__EFFEKSEER_ParameterNODE_RING_H__
+#ifndef __EFFEKSEER_ParameterNODE_RING_H__
+#define __EFFEKSEER_ParameterNODE_RING_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -27,12 +27,13 @@ struct RingSingleParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		float fixed;
 		random_float random;
-		easing_float easing;
 	};
+
+	// TODO : make variant after C++17
+	ParameterEasingFloat easing{Version16Alpha9, Version16Alpha9};
 };
 
 //----------------------------------------------------------------------------------
@@ -48,21 +49,20 @@ struct RingLocationParameter
 
 		Parameter_DWORD = 0x7fffffff,
 	} type;
-	
-	union
-	{
+
+	union {
 		struct
 		{
 			vector2d location;
 		} fixed;
-	
+
 		struct
 		{
-			random_vector2d	location;
-			random_vector2d	velocity;
-			random_vector2d	acceleration;
+			random_vector2d location;
+			random_vector2d velocity;
+			random_vector2d acceleration;
 		} pva;
-		
+
 		easing_vector2d easing;
 	};
 };
@@ -81,8 +81,7 @@ struct RingColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{	
+	union {
 		Color fixed;
 		random_color random;
 		easing_color easing;
@@ -94,12 +93,11 @@ struct RingColorParameter
 //----------------------------------------------------------------------------------
 struct RingSingleValues
 {
-	float	current;
-	union
-	{
+	float current;
+	union {
 		struct
 		{
-			
+
 		} fixed;
 
 		struct
@@ -107,11 +105,7 @@ struct RingSingleValues
 
 		} random;
 
-		struct
-		{
-			float  start;
-			float  end;
-		} easing;
+		InstanceEasing<float> easing;
 	};
 };
 
@@ -120,26 +114,25 @@ struct RingSingleValues
 //----------------------------------------------------------------------------------
 struct RingLocationValues
 {
-	Vec2f	current;
+	SIMD::Vec2f current;
 
-	union
-	{
+	union {
 		struct
 		{
-	
+
 		} fixed;
 
 		struct
 		{
-			Vec2f  start;
-			Vec2f  velocity;
-			Vec2f  acceleration;
+			SIMD::Vec2f start;
+			SIMD::Vec2f velocity;
+			SIMD::Vec2f acceleration;
 		} pva;
 
 		struct
 		{
-			Vec2f  start;
-			Vec2f  end;
+			SIMD::Vec2f start;
+			SIMD::Vec2f end;
 		} easing;
 	};
 };
@@ -149,11 +142,10 @@ struct RingLocationValues
 //----------------------------------------------------------------------------------
 struct RingColorValues
 {
-	Color	current;
-	Color	original;
+	Color current;
+	Color original;
 
-	union
-	{
+	union {
 		struct
 		{
 			Color _color;
@@ -166,8 +158,8 @@ struct RingColorValues
 
 		struct
 		{
-			Color  start;
-			Color  end;
+			Color start;
+			Color end;
 		} easing;
 	};
 };
@@ -190,15 +182,13 @@ struct RingShapeParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class EffectNodeRing
-	: public EffectNodeImplemented
+class EffectNodeRing : public EffectNodeImplemented
 {
 	friend class Manager;
 	friend class Effect;
 	friend class Instance;
 
 public:
-
 	struct InstanceValues
 	{
 		RingSingleValues startingAngle;
@@ -212,20 +202,19 @@ public:
 	};
 
 public:
+	AlphaBlendType AlphaBlend;
+	BillboardType Billboard;
 
-	AlphaBlendType		AlphaBlend;
-	BillboardType	Billboard;
-
-	int32_t	VertexCount;
+	int32_t VertexCount;
 
 	RingShapeParameter Shape;
-	//RingSingleParameter	ViewingAngle;
+	// RingSingleParameter	ViewingAngle;
 
-	RingLocationParameter	OuterLocation;
-	RingLocationParameter	InnerLocation;
-	
-	RingSingleParameter	CenterRatio;
-	
+	RingLocationParameter OuterLocation;
+	RingLocationParameter InnerLocation;
+
+	RingSingleParameter CenterRatio;
+
 	RingColorParameter OuterColor;
 	RingColorParameter CenterColor;
 	RingColorParameter InnerColor;
@@ -234,7 +223,7 @@ public:
 
 	RingRenderer::NodeParameter nodeParameter;
 
-	EffectNodeRing( Effect* effect, unsigned char*& pos )
+	EffectNodeRing(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
 	}
@@ -243,45 +232,48 @@ public:
 	{
 	}
 
-	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
+	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
-	void BeginRendering(int32_t count, Manager* manager) override;
+	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
 
-	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) override;
+	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData) override;
 
-	void EndRendering(Manager* manager) override;
+	void EndRendering(Manager* manager, void* userData) override;
 
-	void InitializeRenderedInstance(Instance& instance, Manager* manager) override;
+	void InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
-	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
+	void UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
-	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_RING; }
+	eEffectNodeType GetType() const override
+	{
+		return EFFECT_NODE_TYPE_RING;
+	}
 
 private:
-	void LoadSingleParameter( unsigned char*& pos, RingSingleParameter& param );
+	void LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param);
 
-	void LoadLocationParameter( unsigned char*& pos, RingLocationParameter& param );
-	
-	void LoadColorParameter( unsigned char*& pos, RingColorParameter& param );
-	
-	void InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, InstanceGlobal* instanceGlobal);
+	void LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param);
 
-	void InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, InstanceGlobal* instanceGlobal);
-	
-	void InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, InstanceGlobal* instanceGlobal);
-	
-	void UpdateSingleValues( Instance& instance, const RingSingleParameter& param, RingSingleValues& values );
-	
-	void UpdateLocationValues( Instance& instance, const RingLocationParameter& param, RingLocationValues& values );
-	
-	void UpdateColorValues( Instance& instance, const RingColorParameter& param, RingColorValues& values );
+	void LoadColorParameter(unsigned char*& pos, RingColorParameter& param);
+
+	void InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, IRandObject* rand);
+
+	void InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, IRandObject* rand);
+
+	void InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, IRandObject* rand);
+
+	void UpdateSingleValues(Instance& instance, const RingSingleParameter& param, RingSingleValues& values);
+
+	void UpdateLocationValues(Instance& instance, const RingLocationParameter& param, RingLocationValues& values);
+
+	void UpdateColorValues(Instance& instance, const RingColorParameter& param, RingColorValues& values);
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_ParameterNODE_RING_H__
+#endif // __EFFEKSEER_ParameterNODE_RING_H__

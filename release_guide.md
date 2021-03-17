@@ -99,3 +99,77 @@ if (!temp_input_is_active && hovered && g.IO.MouseReleased[0] && g.IO.MouseClick
 // ================
 
 ```
+
+- void ImGui::NextColumn()
+
+```diff
+    PopItemWidth();
+    PopClipRect();
+
+    const float column_padding = g.Style.ItemSpacing.x;
+    float column_padding = g.Style.ItemSpacing.x;
+    columns->LineMaxY = ImMax(columns->LineMaxY, window->DC.CursorPos.y);
+    if (++columns->Current < columns->Count)
+    {
+        // FIXME-COLUMNS: Unnecessary, could be locked?
+        window->DC.ColumnsOffset.x = GetColumnOffset(columns->Current) - window->DC.Indent.x + column_padding;
+        columns->Splitter.SetCurrentChannel(window->DrawList, columns->Current + 1);
+
++       if (columns->Current + 1 == columns->Count)
++       {
++           column_padding /= 2;
++       }
+    }
+    else
+    {
+```
+
+### docking window tabs
+
+- imgui_internal.h
+
+```diff
+struct IMGUI_API ImGuiWindow
+    ...
+    bool                    DockTabWantClose    :1;
++   char                    DockTabLabel[32];
+
+public:
+```
+
+```diff
+    const char*         GetTabName(const ImGuiTabItem* tab) const
+    {
+        if (tab->Window)
+-           return tab->Window->Name;
++           return tab->Window->DockTabLabel;
+        IM_ASSERT(tab->NameOffset != -1 && tab->NameOffset < TabsNames.Buf.Size);
+        return TabsNames.Buf.Data + tab->NameOffset;
+    }
+```
+
+- imgui.cpp
+
+```diff
+ImGuiWindow::ImGuiWindow(ImGuiContext* context, const char* name)
+    : DrawListInst(&context->DrawListSharedData)
+{
+    ...
++    memset(DockTabLabel, 0, sizeof(DockTabLabel));
+}
+```
+
+- imgui_widgets.cpp
+
+```diff
+bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, ImGuiTabItemFlags flags, ImGuiWindow* docked_window)
+{
+    ...
+    // Render tab label, process close button
+    const ImGuiID close_button_id = p_open ? window->GetID((void*)((intptr_t)id + 1)) : 0;
+-   bool just_closed = TabItemLabelAndCloseButton(display_draw_list, bb, flags, tab_bar->FramePadding, label, id, close_button_id);
++   bool just_closed = TabItemLabelAndCloseButton(display_draw_list, bb, flags, tab_bar->FramePadding, tab_bar->GetTabName(tab), id, close_button_id);
+    if (just_closed && p_open != NULL)
+    {
+        *p_open = false;
+```

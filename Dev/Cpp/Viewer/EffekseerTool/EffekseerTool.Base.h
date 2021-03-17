@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERTOOL_BASE_H__
-#define	__EFFEKSEERTOOL_BASE_H__
+#ifndef __EFFEKSEERTOOL_BASE_H__
+#define __EFFEKSEERTOOL_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -16,7 +16,7 @@ class Grid;
 class Guide;
 class Culling;
 class Paste;
-}
+} // namespace EffekseerRenderer
 
 namespace EffekseerTool
 {
@@ -24,7 +24,7 @@ namespace EffekseerTool
 //
 //----------------------------------------------------------------------------------
 
-class Renderer;
+class ViewPointController;
 
 enum eProjectionType
 {
@@ -34,20 +34,11 @@ enum eProjectionType
 	PROJECTION_TYPE_DWORD = 0x7fffffff,
 };
 
-enum class DistortionType : int32_t
-{
-	Current,
-	Effekseer120,
-	Disabled,
-};
-
-
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerTool
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERTOOL_BASE_H__
+#endif // __EFFEKSEERTOOL_BASE_H__

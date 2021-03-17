@@ -12,12 +12,12 @@ namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBufferBase::IndexBufferBase( int maxCount, bool isDynamic )
-	: m_indexMaxCount	( maxCount )
-	, m_indexCount		( 0 )
-	, m_isDynamic		( false )
-	, m_isLock			( false )
-	, m_resource		( NULL )
+IndexBufferBase::IndexBufferBase(int maxCount, bool isDynamic)
+	: m_indexMaxCount(maxCount)
+	, m_indexCount(0)
+	, m_isDynamic(false)
+	, m_isLock(false)
+	, m_resource(nullptr)
 {
 }
 
@@ -31,11 +31,10 @@ IndexBufferBase::~IndexBufferBase()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void IndexBufferBase::Push( const void* buffer, int count )
+void IndexBufferBase::Push(const void* buffer, int count)
 {
-	assert( m_isLock );
-
-	memcpy( GetBufferDirect( count ), buffer, count * sizeof(uint16_t) );
+	assert(m_isLock);
+	memcpy(GetBufferDirect(count), buffer, count * stride_);
 }
 
 //-----------------------------------------------------------------------------------
@@ -57,14 +56,14 @@ int IndexBufferBase::GetMaxCount() const
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void* IndexBufferBase::GetBufferDirect( int count )
+void* IndexBufferBase::GetBufferDirect(int count)
 {
-	assert( m_isLock );
-	assert( m_indexMaxCount >= m_indexCount + count );
+	assert(m_isLock);
+	assert(m_indexMaxCount >= m_indexCount + count);
 
-	uint8_t* pBuffer = NULL;
+	uint8_t* pBuffer = nullptr;
 
-	pBuffer = (uint8_t*)m_resource + ( m_indexCount * sizeof(uint16_t) );
+	pBuffer = (uint8_t*)m_resource + (m_indexCount * stride_);
 	m_indexCount += count;
 
 	return pBuffer;
@@ -73,7 +72,7 @@ void* IndexBufferBase::GetBufferDirect( int count )
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

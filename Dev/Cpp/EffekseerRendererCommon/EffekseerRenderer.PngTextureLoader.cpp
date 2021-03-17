@@ -21,7 +21,7 @@ static void PngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 }
 #endif
 
-bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
+bool PngTextureLoader::Load(const void* data, int32_t size, bool rev)
 {
 #ifdef __EFFEKSEER_USE_LIBPNG__
 	textureWidth = 0;
@@ -30,7 +30,7 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 
 	uint8_t* data_ = (uint8_t*)data;
 
-	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
 	png_set_read_fn(png, &data_, &PngReadData);
 
@@ -38,11 +38,17 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 
 	if (setjmp(png_jmpbuf(png)))
 	{
-		png_destroy_read_struct(&png, &png_info, NULL);
+		png_destroy_read_struct(&png, &png_info, nullptr);
 		return false;
 	}
 
 	png_read_info(png, png_info);
+
+	const auto interlaceType = png_get_interlace_type(png, png_info);
+
+	int passes = 1;
+	if (interlaceType != PNG_INTERLACE_NONE)
+		passes = png_set_interlace_handling(png);
 
 	const png_byte bit_depth = png_get_bit_depth(png, png_info);
 	if (bit_depth < 8)
@@ -62,12 +68,12 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	{
 		png_set_palette_to_rgb(png);
 
-		png_bytep trans_alpha = NULL;
+		png_bytep trans_alpha = nullptr;
 		int num_trans = 0;
-		png_color_16p trans_color = NULL;
+		png_color_16p trans_color = nullptr;
 
 		png_get_tRNS(png, png_info, &trans_alpha, &num_trans, &trans_color);
-		if (trans_alpha != NULL)
+		if (trans_alpha != nullptr)
 		{
 			pixelBytes = 4;
 		}
@@ -97,18 +103,21 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	uint8_t* image = new uint8_t[textureWidth * textureHeight * pixelBytes];
 	uint32_t pitch = textureWidth * pixelBytes;
 
-	if (rev)
+	for (int pass = 0; pass < passes; pass++)
 	{
-		for (uint32_t i = 0; i < textureHeight; i++)
+		if (rev)
 		{
-			png_read_row(png, &image[(textureHeight - 1 - i) * pitch], NULL);
+			for (int32_t i = 0; i < textureHeight; i++)
+			{
+				png_read_row(png, &image[(textureHeight - 1 - i) * pitch], nullptr);
+			}
 		}
-	}
-	else
-	{
-		for (uint32_t i = 0; i < textureHeight; i++)
+		else
 		{
-			png_read_row(png, &image[i * pitch], NULL);
+			for (int32_t i = 0; i < textureHeight; i++)
+			{
+				png_read_row(png, &image[i * pitch], nullptr);
+			}
 		}
 	}
 
@@ -151,7 +160,7 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	}
 
 	delete[] image;
-	png_destroy_read_struct(&png, &png_info, NULL);
+	png_destroy_read_struct(&png, &png_info, nullptr);
 
 	return true;
 
@@ -228,10 +237,9 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 #endif
 }
 
-void PngTextureLoader::Unload() { textureData.clear(); }
-
-void PngTextureLoader::Initialize() {}
-
-void PngTextureLoader::Finalize() {}
+void PngTextureLoader::Unload()
+{
+	textureData.clear();
+}
 
 } // namespace EffekseerRenderer

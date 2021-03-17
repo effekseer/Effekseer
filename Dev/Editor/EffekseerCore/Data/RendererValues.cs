@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.Data.Value;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,18 +8,15 @@ namespace Effekseer.Data
 {
 	public enum TextureUVType
 	{
-		[Name(value = "Strech", language = Language.English)]
-		[Name(value = "ストレッチ", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_Type_Strech")]
 		Strech = 0,
-		[Name(value = "Tile", language = Language.English)]
-		[Name(value = "タイル", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_Type_Tile")]
 		Tile = 1,
 	}
 
 	public class TextureUVTypeParameter
 	{
-		[Name(value = "UV Type", language = Language.English)]
-		[Name(value = "UV タイプ", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_Type")]
 		[Selector(ID = 0)]
 		public Value.Enum<TextureUVType> Type
 		{
@@ -26,18 +24,15 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(value = "The number of tile on Head", language = Language.English)]
-		[Name(value = "頭のタイル数", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_TileEdgeHead")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
 		public Value.Int TileEdgeHead { get; private set; }
 
-		[Name(value = "The number of tile on Tail", language = Language.English)]
-		[Name(value = "尻尾のタイル数", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_TileEdgeTail")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
 		public Value.Int TileEdgeTail { get; private set; }
 
-		[Name(value = "Looping area", language = Language.English)]
-		[Name(value = "ループ領域", language = Language.Japanese)]
+		[Key(key = "TextureUVTypeParameter_TileLoopingArea")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
 		public Value.Vector2D TileLoopingArea { get; private set; }
 		public TextureUVTypeParameter()
@@ -95,6 +90,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
+		[TreeNode(id = "StartingAngle_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
 		public FloatEasingParamater StartingAngle_Easing { get; private set; }
 
 		[Selector(ID = 1)]
@@ -110,6 +106,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 1, Value = 2)]
 		[IO(Export = true)]
+		[TreeNode(id = "EndingAngle_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
 		public FloatEasingParamater EndingAngle_Easing { get; private set; }
 
 		public RingShapeCrescentParameter()
@@ -195,7 +192,7 @@ namespace Effekseer.Data
             get;
             private set;
         }
-
+		
 		[Selected(ID = 0, Value = 5)]
 		[IO(Export = true)]
 		public ModelParamater Model
@@ -204,16 +201,30 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal RendererValues()
+		/*
+		[Selector(ID = 100)]
+		[IO(Export = true)]
+		[Key(key = "ModelParameter_EnableFalloff")]
+		public Value.Boolean EnableFalloff { get; private set; }
+
+		[Selected(ID = 100, Value = 0)]
+		[IO(Export = true)]
+		public FalloffParameter FalloffParam { get; private set; }
+		*/
+
+		internal RendererValues(Path basepath)
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Sprite);
 			TextureUVType = new TextureUVTypeParameter();
 
-			Sprite = new SpriteParamater();
-            Ribbon = new RibbonParamater();
-			Track = new TrackParameter();
-            Ring = new RingParamater();
-			Model = new ModelParamater();
+			Sprite = new SpriteParamater(basepath);
+            Ribbon = new RibbonParamater(basepath);
+			Track = new TrackParameter(basepath);
+            Ring = new RingParamater(basepath);
+			Model = new ModelParamater(basepath);
+
+			// EnableFalloff = new Value.Boolean(false);
+			// FalloffParam = new FalloffParameter();
 		}
 
 		public class SpriteParamater
@@ -313,7 +324,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public SpriteParamater()
+			public SpriteParamater(Path basepath)
 			{
 				RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
 
@@ -338,7 +349,7 @@ namespace Effekseer.Data
 				Position_Fixed_LR = new Value.Vector2D(0.5f, -0.5f);
 				Position_Fixed_UL = new Value.Vector2D(-0.5f, 0.5f);
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
-				ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
+				ColorTexture = new Value.Path(basepath, "画像ファイル (*.png)|*.png", true, "");
 			}
 
             public enum ColorType : int
@@ -442,7 +453,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			public RibbonParamater()
+			public RibbonParamater(Path basepath)
 			{
 				AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 				ViewpointDependent = new Value.Boolean(false);
@@ -461,7 +472,7 @@ namespace Effekseer.Data
 
 				SplineDivision = new Value.Int(1, int.MaxValue, 1);
 
-				ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
+				ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
 			}
 
             public enum ColorAllType : int
@@ -605,7 +616,8 @@ namespace Effekseer.Data
 
             [Selected(ID = 3, Value = 2)]
             [IO(Export = true)]
-            public FloatEasingParamater CenterRatio_Easing { get; private set; }
+			[TreeNode(id = "CenterRatio_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
+			public FloatEasingParamater CenterRatio_Easing { get; private set; }
 
             [Selector(ID = 4)]
             [Name(language = Language.Japanese, value = "外輪色")]
@@ -667,7 +679,7 @@ namespace Effekseer.Data
                 private set;
             }
 
-            public RingParamater()
+            public RingParamater(Path basepath)
             {
 				RingShape = new RingShapeParameter();
                 RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
@@ -714,7 +726,7 @@ namespace Effekseer.Data
                 InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
                 InnerColor_Easing = new ColorEasingParamater();
 
-                ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
+                ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
             }
 
 			/// <summary>
@@ -834,6 +846,16 @@ namespace Effekseer.Data
 
 		public class ModelParamater
 		{
+			const int ModelReferenceTypeID = 100;
+
+			[Selector(ID = ModelReferenceTypeID)]
+			public Value.Enum<ModelReferenceType> ModelReference
+			{
+				get;
+				private set;
+			} = new Enum<ModelReferenceType>(ModelReferenceType.File);
+
+			[Selected(ID = 100, Value = (int)ModelReferenceType.File)]
 			[Name(language = Language.Japanese, value = "モデル")]
 			[Description(language = Language.Japanese, value = "モデルファイル")]
 			[Name(language = Language.English, value = "Model")]
@@ -844,6 +866,9 @@ namespace Effekseer.Data
 				private set;
 			}
 
+			[Selected(ID = 100, Value = (int)ModelReferenceType.ProceduralModel)]
+			public ProceduralModelReference Reference { get; private set; } = new ProceduralModelReference();
+
 			[Name(language = Language.Japanese, value = "配置方法")]
 			[Name(language = Language.English, value = "Configuration")]
 			public Value.Enum<BillboardType> Billboard { get; private set; }
@@ -852,9 +877,9 @@ namespace Effekseer.Data
 			[Name(language = Language.English, value = "Culling")]
 			public Value.Enum<CullingValues> Culling { get; private set; }
 
-			public ModelParamater()
+			public ModelParamater(Value.Path basepath)
 			{
-                Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");
+                Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 
@@ -1037,7 +1062,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorRightMiddle_FCurve { get; private set; }
 
 			
-			public TrackParameter()
+			public TrackParameter(Path basepath)
 			{
 				TrackSizeFor = new Value.Enum<TrackSizeType>(TrackSizeType.Fixed);
 				TrackSizeFor_Fixed = new Value.Float(1, float.MaxValue, 0);
@@ -1090,46 +1115,40 @@ namespace Effekseer.Data
 
 		public enum BillboardType : int
 		{
-			[Name(value = "ビルボード", language = Language.Japanese)]
-			[Name(value = "Billboard", language = Language.English)]
+			[Key(key = "BillboardType_Billboard")]
 			Billboard = 0,
-			[Name(value = "Z軸回転ビルボード", language = Language.Japanese)]
-			[Name(value = "Rotated Billboard", language = Language.English)]
+			[Key(key = "BillboardType_RotatedBillboard")]
 			RotatedBillboard = 3,
-			[Name(value = "Y軸固定", language = Language.Japanese)]
-			[Name(value = "Fixed Y-Axis", language = Language.English)]
+			[Key(key = "BillboardType_YAxisFixed")]
 			YAxisFixed = 1,
-			[Name(value = "固定", language = Language.Japanese)]
-			[Name(value = "Fixed", language = Language.English)]
+			[Key(key = "BillboardType_Fixed")]
 			Fixed = 2,
 		}
 
 		public enum ParamaterType : int
 		{
-			[Name(value = "無し", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
-			[Icon(resourceName = "NodeEmpty")]
+			[Key(key = "RS_ParameterType_None")]
+			[Icon(code = "\xec20")]
 			None = 0,
-			//Particle = 1,
-			[Name(value = "スプライト", language = Language.Japanese)]
-			[Name(value = "Sprite", language = Language.English)]
-			[Icon(resourceName = "NodeSprite")]
+
+			[Key(key = "RS_ParameterType_Sprite")]
+			[Icon(code = "\xec21")]
 			Sprite = 2,
-			[Name(value = "リボン", language = Language.Japanese)]
-			[Name(value = "Ribbon", language = Language.English)]
-			[Icon(resourceName = "NodeRibbon")]
-            Ribbon = 3,
-			[Name(value = "軌跡", language = Language.Japanese)]
-			[Name(value = "Track", language = Language.English)]
-			[Icon(resourceName = "NodeTrack")]
+
+			[Key(key = "RS_ParameterType_Ribbon")]
+			[Icon(code = "\xec22")]
+			Ribbon = 3,
+
+			[Key(key = "RS_ParameterType_Track")]
+			[Icon(code = "\xec23")]
 			Track = 6,
-            [Name(value = "リング", language = Language.Japanese)]
-			[Name(value = "Ring", language = Language.English)]
-			[Icon(resourceName = "NodeRing")]
-            Ring = 4,
-			[Name(value = "モデル", language = Language.Japanese)]
-			[Name(value = "Model", language = Language.English)]
-			[Icon(resourceName = "NodeModel")]
+
+			[Key(key = "RS_ParameterType_Ring")]
+			[Icon(code = "\xec24")]
+			Ring = 4,
+
+			[Key(key = "RS_ParameterType_Model")]
+			[Icon(code = "\xec25")]
 			Model = 5,
 		}
 

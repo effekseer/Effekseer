@@ -7,9 +7,14 @@
 namespace Effekseer
 {
 
-InstanceChunk::InstanceChunk() { std::fill(instancesAlive_.begin(), instancesAlive_.end(), false); }
+InstanceChunk::InstanceChunk()
+{
+	std::fill(instancesAlive_.begin(), instancesAlive_.end(), false);
+}
 
-InstanceChunk::~InstanceChunk() {}
+InstanceChunk::~InstanceChunk()
+{
+}
 
 void InstanceChunk::UpdateInstances()
 {
@@ -21,7 +26,8 @@ void InstanceChunk::UpdateInstances()
 
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				auto deltaTime = instance->GetInstanceGlobal()->NextDeltaFrame;
+				auto deltaTime = instance->GetInstanceGlobal()->GetNextDeltaFrame();
+
 				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
@@ -38,6 +44,20 @@ void InstanceChunk::UpdateInstances()
 		}
 	}
 }
+
+void InstanceChunk::GenerateChildrenInRequired()
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			auto instance = reinterpret_cast<Instance*>(instances_[i]);
+
+			instance->GenerateChildrenInRequired();
+		}
+	}
+}
+
 void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global)
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
@@ -45,14 +65,15 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 		if (instancesAlive_[i])
 		{
 			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
-			
-			if (global != instance->GetInstanceGlobal()) {
+
+			if (global != instance->GetInstanceGlobal())
+			{
 				continue;
 			}
 
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				auto deltaTime = global->NextDeltaFrame;
+				auto deltaTime = global->GetNextDeltaFrame();
 				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
@@ -70,7 +91,25 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 	}
 }
 
-Instance* InstanceChunk::CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
+void InstanceChunk::GenerateChildrenInRequiredByInstanceGlobal(const InstanceGlobal* global)
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+
+			if (global != instance->GetInstanceGlobal())
+			{
+				continue;
+			}
+
+			instance->GenerateChildrenInRequired();
+		}
+	}
+}
+
+Instance* InstanceChunk::CreateInstance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
 	{

@@ -19,16 +19,19 @@ namespace Effekseer
 void* InstanceGlobal::operator new(size_t size)
 {
 	assert(sizeof(InstanceGlobal) == size);
-	return GetMallocFunc()(size);
+	return GetMallocFunc()(static_cast<uint32_t>(size));
 }
 
-void InstanceGlobal::operator delete(void* p) {GetFreeFunc()(p, sizeof(InstanceGlobal)); }
+void InstanceGlobal::operator delete(void* p)
+{
+	GetFreeFunc()(p, sizeof(InstanceGlobal));
+}
 
 InstanceGlobal::InstanceGlobal()
-	: m_instanceCount	( 0 )
-	, m_updatedFrame	( 0 )
-	, m_rootContainer	( NULL )
-{ 
+	: m_instanceCount(0)
+	, m_updatedFrame(0)
+	, m_rootContainer(nullptr)
+{
 	dynamicInputParameters.fill(0);
 }
 
@@ -37,42 +40,28 @@ InstanceGlobal::InstanceGlobal()
 //----------------------------------------------------------------------------------
 InstanceGlobal::~InstanceGlobal()
 {
-	
 }
 
-void InstanceGlobal::BeginDeltaFrame(float frame) { NextDeltaFrame = frame; }
+float InstanceGlobal::GetNextDeltaFrame() const
+{
+	return nextDeltaFrame_;
+}
+
+void InstanceGlobal::BeginDeltaFrame(float frame)
+{
+	nextDeltaFrame_ = frame;
+}
 
 void InstanceGlobal::EndDeltaFrame()
 {
-	m_updatedFrame += NextDeltaFrame;
-	NextDeltaFrame = 0.0f;
+	m_updatedFrame += nextDeltaFrame_;
+	nextDeltaFrame_ = 0.0f;
 }
 
-std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index) {
+std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index)
+{
 	assert(0 <= index && index < dynamicEqResults.size());
 	return dynamicEqResults[index];
-}
-
-void InstanceGlobal::SetSeed(int64_t seed)
-{
-	m_seed = seed;
-}
-
-float InstanceGlobal::GetRand()
-{
-	const int a = 1103515245;
-	const int c = 12345;
-	const int m = 2147483647;
-	
-	m_seed = (m_seed * a + c) & m;
-	auto ret = m_seed % 0x7fff;
-
-	return (float)ret / (float) (0x7fff - 1);
-}
-
-float InstanceGlobal::GetRand(float min_, float max_)
-{
-	return GetRand() * (max_ - min_) + min_;
 }
 
 //----------------------------------------------------------------------------------
@@ -107,6 +96,11 @@ float InstanceGlobal::GetUpdatedFrame()
 	return m_updatedFrame;
 }
 
+void InstanceGlobal::ResetUpdatedFrame()
+{
+	m_updatedFrame = 0.0f;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -118,7 +112,7 @@ InstanceContainer* InstanceGlobal::GetRootContainer() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGlobal::SetRootContainer( InstanceContainer* container )
+void InstanceGlobal::SetRootContainer(InstanceContainer* container)
 {
 	m_rootContainer = container;
 }
@@ -126,38 +120,20 @@ void InstanceGlobal::SetRootContainer( InstanceContainer* container )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const Vec3f& InstanceGlobal::GetTargetLocation() const
+const SIMD::Vec3f& InstanceGlobal::GetTargetLocation() const
 {
 	return m_targetLocation;
 }
 
-void InstanceGlobal::SetTargetLocation( const Vector3D& location )
+void InstanceGlobal::SetTargetLocation(const Vector3D& location)
 {
 	m_targetLocation = location;
-}
-
-float InstanceGlobal::Rand(void* userData) { 
-	auto g = reinterpret_cast<InstanceGlobal*>(userData);
-	return g->GetRand();
-}
-
-float InstanceGlobal::RandSeed(void* userData, float randSeed)
-{
-	auto seed = static_cast<int64_t>(randSeed * 1024 * 8);
-	const int a = 1103515245;
-	const int c = 12345;
-	const int m = 2147483647;
-
-	seed = (seed * a + c) & m;
-	auto ret = seed % 0x7fff;
-
-	return (float)ret / (float)(0x7fff - 1);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

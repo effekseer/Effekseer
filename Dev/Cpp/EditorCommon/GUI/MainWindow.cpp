@@ -50,6 +50,8 @@ bool MainWindow::InitializeInternal(const char16_t* title, MainWindowState state
 		glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 	}
 
+	isFrameless = state.IsFrameless;
+	glfwWindowHint(GLFW_DECORATED, state.IsFrameless ? 0 : 1);
 	glfwWindowHint(GLFW_MAXIMIZED, state.IsMaximumMode ? 1 : 0);
 	auto window = glfwCreateWindow(state.Width, state.Height, utf16_to_utf8(title).c_str(), nullptr, nullptr);
 	if (window == nullptr)
@@ -78,7 +80,9 @@ bool MainWindow::InitializeInternal(const char16_t* title, MainWindowState state
 	return true;
 }
 
-MainWindow::MainWindow() {}
+MainWindow::MainWindow()
+{
+}
 
 MainWindow::~MainWindow()
 {
@@ -90,7 +94,10 @@ MainWindow::~MainWindow()
 	}
 }
 
-std::shared_ptr<MainWindow> MainWindow::GetInstance() { return instance_; }
+std::shared_ptr<MainWindow> MainWindow::GetInstance()
+{
+	return instance_;
+}
 
 bool MainWindow::Initialize(const char16_t* title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode)
 {
@@ -110,6 +117,7 @@ MainWindowState MainWindow::GetState()
 	glfwGetWindowSize(window_, &state.Width, &state.Height);
 	glfwGetWindowPos(window_, &state.PosX, &state.PosY);
 	state.IsMaximumMode = glfwGetWindowAttrib(window_, GLFW_MAXIMIZED) > 0;
+	state.IsFrameless = glfwGetWindowAttrib(window_, GLFW_DECORATED) == 0;
 	return state;
 }
 
@@ -125,8 +133,9 @@ void MainWindow::SetState(const MainWindowState& state)
 	glfwSetWindowAttrib(window_, GLFW_MAXIMIZED, state.IsMaximumMode ? 1 : 0);
 }
 
-float MainWindow::GetDPIScale() const { return dpiScale_; }
-
-void MainWindow::Terminate() { instance_ = nullptr; }
+void MainWindow::Terminate()
+{
+	instance_ = nullptr;
+}
 
 } // namespace Effekseer

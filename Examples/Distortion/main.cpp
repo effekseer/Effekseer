@@ -27,11 +27,11 @@
 static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
-static ::Effekseer::Manager*			g_manager = NULL;
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
-static ::EffekseerSound::Sound*			g_sound = NULL;
+static ::Effekseer::ManagerRef				g_manager;
+static ::EffekseerRendererDX9::RendererRef	g_renderer;
+static ::EffekseerSound::SoundRef			g_sound = NULL;
 static ::Effekseer::Vector3D			g_position;
-static ::Effekseer::Effect*				g_effect = NULL;
+static ::Effekseer::EffectRef			g_effect;
 static ::Effekseer::Handle				g_handle = -1;
 
 static LPDIRECT3D9						g_d3d = NULL;
@@ -130,12 +130,12 @@ public:
 	{
 		if (g_backgroundTexture == NULL)
 		{
-			((EffekseerRendererDX9::Renderer*)g_renderer)->SetBackground(NULL);
+			g_renderer->SetBackground(NULL);
 			return false;
 		}
 
 		CopyRenderTargetToBackground();
-		((EffekseerRendererDX9::Renderer*)g_renderer)->SetBackground(g_backgroundTexture);
+		g_renderer->SetBackground(g_backgroundTexture);
 		return true;
 	}
 };
@@ -358,7 +358,7 @@ int main(int argc, char **argv)
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
-	g_manager->SetTrackRenderer(g_renderer->CreateTrackRenderer());
+	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 	
 	// 描画用インスタンスからテクスチャの読込機能を設定
@@ -398,17 +398,14 @@ int main(int argc, char **argv)
 	// エフェクトの停止
 	g_manager->StopEffect(g_handle);
 
-	// エフェクトの破棄
-	ES_SAFE_RELEASE(g_effect);
-
 	// 先にエフェクト管理用インスタンスを破棄
-	g_manager->Destroy();
+	g_manager.Reset();
 
 	// 次に音再生用インスタンスを破棄
-	g_sound->Destroy();
+	g_sound.Reset();
 
 	// 次に描画用インスタンスを破棄
-	g_renderer->Destroy();
+	g_renderer.Reset();
 
 	// XAudio2の解放
 	if( g_xa2_master != NULL )

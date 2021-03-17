@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class IntWithRandom
+	public class IntWithRandom : IValueChangedFromDefault
 	{
 		int _value_center = 0;
 		int _value_max = 0;
@@ -241,6 +241,8 @@ namespace Effekseer.Data.Value
 
 		internal void SetMaxDirectly(int value)
 		{
+			value = Math.Min(value, _max);
+
 			_value_max = value;
 		}
 
@@ -288,6 +290,8 @@ namespace Effekseer.Data.Value
 
 		internal void SetMinDirectly(int value)
 		{
+			value = Math.Max(value, _min);
+
 			_value_min = value;
 		}
 

@@ -2,450 +2,488 @@
 #define NOMINMAX
 #endif
 
-#include <algorithm>
 #include "efk.PostEffectsDX11.h"
+#include <algorithm>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
 namespace efk
 {
-	namespace PostFX_Basic_VS
-	{
-		static
+namespace PostFX_Basic_VS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_Basic_VS.h"
-	}
+} // namespace PostFX_Basic_VS
 
-	namespace PostFX_Copy_PS
-	{
-		static
+namespace PostFX_Copy_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_Copy_PS.h"
-	}
+} // namespace PostFX_Copy_PS
 
-	namespace PostFX_Extract_PS
-	{
-		static
+namespace PostFX_Extract_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_Extract_PS.h"
-	}
+} // namespace PostFX_Extract_PS
 
-	namespace PostFX_Downsample_PS
-	{
-		static
+namespace PostFX_Downsample_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_Downsample_PS.h"
-	}
+} // namespace PostFX_Downsample_PS
 
-	namespace PostFX_Blend_PS
-	{
-		static
+namespace PostFX_Blend_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_Blend_PS.h"
-	}
+} // namespace PostFX_Blend_PS
 
-	namespace PostFX_BlurH_PS
-	{
-		static
+namespace PostFX_BlurH_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_BlurH_PS.h"
-	}
+} // namespace PostFX_BlurH_PS
 
-	namespace PostFX_BlurV_PS
-	{
-		static
+namespace PostFX_BlurV_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_BlurV_PS.h"
-	}
+} // namespace PostFX_BlurV_PS
 
-	namespace PostFX_Tonemap_PS
-	{
-		static
+namespace PostFX_Tonemap_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_Tonemap_PS.h"
-	}
+} // namespace PostFX_Tonemap_PS
 
-	namespace PostFX_LinearToSRGB_PS
-	{
-	static
+namespace PostFX_LinearToSRGB_PS
+{
+static
 #include "Shader/efk.GraphicsDX11.PostFX_LinearToSRGB_PS.h"
-	} // namespace PostFX_Tonemap_PS
+} // namespace PostFX_LinearToSRGB_PS
 
-	// Position(2) UV(2)
-	static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
+// Position(2) UV(2)
+static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
+	{"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
+};
 
-	BlitterDX11::BlitterDX11(Graphics* graphics)
-		: graphics(graphics)
+BlitterDX11::BlitterDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+	: graphics(graphics)
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	// Generate vertex data
+	vertexBuffer.reset(VertexBuffer::Create(renderer_.Get(), sizeof(Vertex) * 4, true, false));
+	vertexBuffer->Lock();
 	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
+		Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
+		verteces[0] = Vertex{-1.0f, 1.0f, 0.0f, 0.0f};
+		verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 1.0f};
+		verteces[2] = Vertex{1.0f, 1.0f, 1.0f, 0.0f};
+		verteces[3] = Vertex{1.0f, -1.0f, 1.0f, 1.0f};
+	}
+	vertexBuffer->Unlock();
 
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+	// Generate Sampler State
+	{
+		const D3D11_SAMPLER_DESC SamlerDesc = {
+			D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+			D3D11_TEXTURE_ADDRESS_CLAMP,
+			D3D11_TEXTURE_ADDRESS_CLAMP,
+			D3D11_TEXTURE_ADDRESS_CLAMP,
+			0.0f,
+			0,
+			D3D11_COMPARISON_ALWAYS,
+			{0.0f, 0.0f, 0.0f, 0.0f},
+			0.0f,
+			D3D11_FLOAT32_MAX,
+		};
 
-		// Generate vertex data
-		vertexBuffer.reset(VertexBuffer::Create(renderer, 
-			sizeof(Vertex) * 4, true));
-		vertexBuffer->Lock(); {
-			Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
-			verteces[0] = Vertex{-1.0f,  1.0f, 0.0f, 0.0f};
-			verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 1.0f};
-			verteces[2] = Vertex{ 1.0f,  1.0f, 1.0f, 0.0f};
-			verteces[3] = Vertex{ 1.0f, -1.0f, 1.0f, 1.0f};
-		}
-		vertexBuffer->Unlock();
+		renderer_->GetDevice()->CreateSamplerState(&SamlerDesc, &sampler);
+	}
+}
 
-		// Generate Sampler State
-		{
-			const D3D11_SAMPLER_DESC SamlerDesc = {
-				D3D11_FILTER_MIN_MAG_MIP_LINEAR,
-				D3D11_TEXTURE_ADDRESS_CLAMP,
-				D3D11_TEXTURE_ADDRESS_CLAMP,
-				D3D11_TEXTURE_ADDRESS_CLAMP,
-				0.0f,
-				0,
-				D3D11_COMPARISON_ALWAYS,
-				{ 0.0f, 0.0f, 0.0f, 0.0f },
-				0.0f,
-				D3D11_FLOAT32_MAX, };
+BlitterDX11::~BlitterDX11()
+{
+	ES_SAFE_RELEASE(sampler);
+}
 
-			renderer->GetDevice()->CreateSamplerState( &SamlerDesc, &sampler );
-		}
+void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
+					   int32_t numTextures,
+					   ID3D11ShaderResourceView* const* textures,
+					   const void* constantData,
+					   size_t constantDataSize,
+					   RenderTexture* dest,
+					   Effekseer::AlphaBlendType blendType)
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	auto& state = renderer_->GetRenderState()->Push();
+	state.AlphaBlend = blendType;
+	state.DepthWrite = false;
+	state.DepthTest = false;
+	state.CullingType = CullingType::Double;
+	state.TextureFilterTypes[0] = TextureFilterType::Linear;
+	state.TextureWrapTypes[0] = TextureWrapType::Clamp;
+	renderer_->GetRenderState()->Update(true);
+	renderer_->SetRenderMode(RenderMode::Normal);
+
+	renderer_->SetVertexBuffer(vertexBuffer.get(), sizeof(Vertex));
+	renderer_->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_R16_UINT, 0);
+	renderer_->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	renderer_->GetContext()->PSSetSamplers(0, 1, &sampler);
+
+	renderer_->BeginShader(shader);
+	renderer_->GetContext()->IASetInputLayout(shader->GetLayoutInterface());
+
+	if (constantData)
+	{
+		memcpy(shader->GetPixelConstantBuffer(), constantData, constantDataSize);
+		shader->SetConstantBuffer();
 	}
 
-	BlitterDX11::~BlitterDX11()
+	graphics->SetRenderTarget(dest, nullptr);
+	renderer_->GetContext()->PSSetShaderResources(0, numTextures, textures);
+
+	renderer_->GetContext()->Draw(4, 0);
+	renderer_->EndShader(shader);
+
+	// Reset texture/sampler state
 	{
-		ES_SAFE_RELEASE( sampler );
+		ID3D11ShaderResourceView* srv[4] = {};
+		renderer_->GetContext()->PSSetShaderResources(0, 4, srv);
+		ID3D11SamplerState* samplers[1] = {};
+		renderer_->GetContext()->PSSetSamplers(0, 1, samplers);
 	}
 
-	void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader, 
-		int32_t numTextures, ID3D11ShaderResourceView* const* textures, 
-		const void* constantData, size_t constantDataSize, RenderTexture* dest, 
-		Effekseer::AlphaBlendType blendType)
+	renderer_->GetRenderState()->Update(true);
+	renderer_->GetRenderState()->Pop();
+}
+
+BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+	: BloomEffect(graphics)
+	, blitter(graphics, renderer)
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	// Extract shader
+	shaderExtract.reset(Shader::Create(renderer_.Get(),
+									   PostFX_Basic_VS::g_VS,
+									   sizeof(PostFX_Basic_VS::g_VS),
+									   PostFX_Extract_PS::g_PS,
+									   sizeof(PostFX_Extract_PS::g_PS),
+									   "Bloom extract",
+									   PostFx_ShaderDecl,
+									   2,
+									   false));
+
+	if (shaderExtract != nullptr)
 	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		auto& state = renderer->GetRenderState()->Push();
-		state.AlphaBlend = blendType;
-		state.DepthWrite = false;
-		state.DepthTest = false;
-		state.CullingType = CullingType::Double;
-		state.TextureFilterTypes[0] = TextureFilterType::Linear;
-		state.TextureWrapTypes[0] = TextureWrapType::Clamp;
-		renderer->GetRenderState()->Update(false);
-		renderer->SetRenderMode(RenderMode::Normal);
-
-		renderer->SetVertexBuffer(vertexBuffer.get(), sizeof(Vertex));
-		renderer->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_R16_UINT, 0);
-		renderer->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		renderer->GetContext()->PSSetSamplers(0, 1, &sampler);
-
-		renderer->BeginShader(shader);
-		renderer->GetContext()->IASetInputLayout(shader->GetLayoutInterface());
-		
-		if (constantData)
-		{
-			memcpy(shader->GetPixelConstantBuffer(), constantData, constantDataSize);
-			shader->SetConstantBuffer();
-		}
-
-		graphics->SetRenderTarget(dest, nullptr);
-		renderer->GetContext()->PSSetShaderResources(0, numTextures, textures);
-		
-		renderer->GetContext()->Draw(4, 0);
-		renderer->EndShader(shader);
-
-		// Reset texture/sampler state
-		{
-			ID3D11ShaderResourceView* srv[4] = {};
-			renderer->GetContext()->PSSetShaderResources(0, 4, srv);
-			ID3D11SamplerState* samplers[1] = {};
-			renderer->GetContext()->PSSetSamplers(0, 1, samplers);
-		}
-
-		renderer->GetRenderState()->Update(true);
-		renderer->GetRenderState()->Pop();
+		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
+	}
+	else
+	{
+		spdlog::trace("FAIL Create shaderExtract");
+		isValid_ = false;
+		return;
 	}
 
-	BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
-		: BloomEffect(graphics), blitter(graphics)
+	// Downsample shader
+	shaderDownsample.reset(Shader::Create(renderer_.Get(),
+										  PostFX_Basic_VS::g_VS,
+										  sizeof(PostFX_Basic_VS::g_VS),
+										  PostFX_Downsample_PS::g_PS,
+										  sizeof(PostFX_Downsample_PS::g_PS),
+										  "Bloom downsample",
+										  PostFx_ShaderDecl,
+										  2,
+										  false));
+
+	// Blend shader
+	shaderBlend.reset(Shader::Create(renderer_.Get(),
+									 PostFX_Basic_VS::g_VS,
+									 sizeof(PostFX_Basic_VS::g_VS),
+									 PostFX_Blend_PS::g_PS,
+									 sizeof(PostFX_Blend_PS::g_PS),
+									 "Bloom blend",
+									 PostFx_ShaderDecl,
+									 2,
+									 false));
+
+	// Blur(horizontal) shader
+	shaderBlurH.reset(Shader::Create(renderer_.Get(),
+									 PostFX_Basic_VS::g_VS,
+									 sizeof(PostFX_Basic_VS::g_VS),
+									 PostFX_BlurH_PS::g_PS,
+									 sizeof(PostFX_BlurH_PS::g_PS),
+									 "Bloom blurH",
+									 PostFx_ShaderDecl,
+									 2,
+									 false));
+
+	// Blur(vertical) shader
+	shaderBlurV.reset(Shader::Create(renderer_.Get(),
+									 PostFX_Basic_VS::g_VS,
+									 sizeof(PostFX_Basic_VS::g_VS),
+									 PostFX_BlurV_PS::g_PS,
+									 sizeof(PostFX_BlurV_PS::g_PS),
+									 "Bloom blurV",
+									 PostFx_ShaderDecl,
+									 2,
+									 false));
+}
+
+BloomEffectDX11::~BloomEffectDX11()
+{
+}
+
+void BloomEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
+{
+	if (!enabled)
 	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
+		return;
+	}
 
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
 
-		// Extract shader
-		shaderExtract.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_Extract_PS::g_PS, sizeof(PostFX_Extract_PS::g_PS),
-			"Bloom extract", PostFx_ShaderDecl, 2));
+	if (renderTextureSize_ != src->GetSize())
+	{
+		SetupBuffers(src->GetSize());
+	}
 
-		if (shaderExtract != nullptr)
+	// Extract pass
+	{
+		const float knee = threshold * softKnee;
+		const float constantData[8] = {
+			threshold,
+			threshold - knee,
+			knee * 2.0f,
+			0.25f / (knee + 0.00001f),
+			intensity,
+		};
+		ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};
+		blitter.Blit(shaderExtract.get(), 1, textures, constantData, sizeof(constantData), extractBuffer.get());
+	}
+
+	// Shrink pass
+	for (int i = 0; i < BlurIterations; i++)
+	{
+		ID3D11ShaderResourceView* textures[1];
+		textures[0] = (i == 0) ? (ID3D11ShaderResourceView*)extractBuffer->GetViewID()
+							   : (ID3D11ShaderResourceView*)lowresBuffers[0][i - 1]->GetViewID();
+		blitter.Blit(shaderDownsample.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+	}
+
+	// Horizontal gaussian blur pass
+	for (int i = 0; i < BlurIterations; i++)
+	{
+		ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)lowresBuffers[0][i]->GetViewID()};
+		blitter.Blit(shaderBlurH.get(), 1, textures, nullptr, 0, lowresBuffers[1][i].get());
+	}
+
+	// Vertical gaussian blur pass
+	for (int i = 0; i < BlurIterations; i++)
+	{
+		ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)lowresBuffers[1][i]->GetViewID()};
+		blitter.Blit(shaderBlurV.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+	}
+
+	// Blending pass
+	{
+		ID3D11ShaderResourceView* textures[4] = {(ID3D11ShaderResourceView*)lowresBuffers[0][0]->GetViewID(),
+												 (ID3D11ShaderResourceView*)lowresBuffers[0][1]->GetViewID(),
+												 (ID3D11ShaderResourceView*)lowresBuffers[0][2]->GetViewID(),
+												 (ID3D11ShaderResourceView*)lowresBuffers[0][3]->GetViewID()};
+		blitter.Blit(shaderBlend.get(), 4, textures, nullptr, 0, dest, AlphaBlendType::Add);
+	}
+}
+
+void BloomEffectDX11::OnLostDevice()
+{
+	ReleaseBuffers();
+}
+
+void BloomEffectDX11::OnResetDevice()
+{
+}
+
+void BloomEffectDX11::SetupBuffers(Effekseer::Tool::Vector2DI size)
+{
+	ReleaseBuffers();
+
+	renderTextureSize_ = size;
+
+	// Create high brightness extraction buffer
+	{
+		extractBuffer.reset(RenderTexture::Create(graphics));
+
+		if (extractBuffer != nullptr)
 		{
-			shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
-			shaderExtract->SetPixelRegisterCount(2);		
+			extractBuffer->Initialize(size, TextureFormat::RGBA16F);
 		}
 		else
 		{
-			spdlog::trace("FAIL Create shaderExtract");
-		}
-
-		// Downsample shader
-		shaderDownsample.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_Downsample_PS::g_PS, sizeof(PostFX_Downsample_PS::g_PS),
-			"Bloom downsample", PostFx_ShaderDecl, 2));
-
-		// Blend shader
-		shaderBlend.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_Blend_PS::g_PS, sizeof(PostFX_Blend_PS::g_PS),
-			"Bloom blend", PostFx_ShaderDecl, 2));
-
-		// Blur(horizontal) shader
-		shaderBlurH.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_BlurH_PS::g_PS, sizeof(PostFX_BlurH_PS::g_PS),
-			"Bloom blurH", PostFx_ShaderDecl, 2));
-
-		// Blur(vertical) shader
-		shaderBlurV.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_BlurV_PS::g_PS, sizeof(PostFX_BlurV_PS::g_PS),
-			"Bloom blurV", PostFx_ShaderDecl, 2));
-	}
-
-	BloomEffectDX11::~BloomEffectDX11()
-	{
-	}
-
-	void BloomEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
-	{
-		if( !enabled )
-		{
+			spdlog::trace("FAIL Create extractBuffer");
+			isValid_ = false;
 			return;
 		}
-
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		if (renderTextureWidth  != src->GetWidth() || 
-			renderTextureHeight != src->GetHeight())
-		{
-			SetupBuffers(src->GetWidth(), src->GetHeight());
-		}
-
-		// Extract pass
-		{
-			const float knee = threshold * softKnee;
-			const float constantData[8] = {
-				threshold, 
-				threshold - knee, 
-				knee * 2.0f, 
-				0.25f / (knee + 0.00001f),
-				intensity,
-			};
-			ID3D11ShaderResourceView* textures[1] = {
-				(ID3D11ShaderResourceView*)src->GetViewID()};
-			blitter.Blit(shaderExtract.get(), 1, textures, constantData, sizeof(constantData), extractBuffer.get());
-		}
-
-		// Shrink pass
-		for (int i = 0; i < BlurIterations; i++)
-		{
-			ID3D11ShaderResourceView* textures[1];
-			textures[0] = (i == 0) ?
-				(ID3D11ShaderResourceView*)extractBuffer->GetViewID() : 
-				(ID3D11ShaderResourceView*)lowresBuffers[0][i - 1]->GetViewID();
-			blitter.Blit(shaderDownsample.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
-		}
-
-		// Horizontal gaussian blur pass
-		for (int i = 0; i < BlurIterations; i++)
-		{
-			ID3D11ShaderResourceView* textures[1] = {
-				(ID3D11ShaderResourceView*)lowresBuffers[0][i]->GetViewID()};
-			blitter.Blit(shaderBlurH.get(), 1, textures, nullptr, 0, lowresBuffers[1][i].get());
-		}
-
-		// Vertical gaussian blur pass
-		for (int i = 0; i < BlurIterations; i++)
-		{
-			ID3D11ShaderResourceView* textures[1] = {
-				(ID3D11ShaderResourceView*)lowresBuffers[1][i]->GetViewID()};
-			blitter.Blit(shaderBlurV.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
-		}
-		
-		// Blending pass
-		{
-			ID3D11ShaderResourceView* textures[4] = {
-				(ID3D11ShaderResourceView*)lowresBuffers[0][0]->GetViewID(),
-				(ID3D11ShaderResourceView*)lowresBuffers[0][1]->GetViewID(),
-				(ID3D11ShaderResourceView*)lowresBuffers[0][2]->GetViewID(),
-				(ID3D11ShaderResourceView*)lowresBuffers[0][3]->GetViewID()};
-			blitter.Blit(shaderBlend.get(), 4, textures, nullptr, 0, dest, AlphaBlendType::Add);
-		}
 	}
 
-	void BloomEffectDX11::OnLostDevice()
+	// Create low-resolution buffers
+	for (int i = 0; i < BlurBuffers; i++)
 	{
-		ReleaseBuffers();
-	}
-
-	void BloomEffectDX11::OnResetDevice()
-	{
-	}
-
-	void BloomEffectDX11::SetupBuffers(int32_t width, int32_t height)
-	{
-		ReleaseBuffers();
-
-		renderTextureWidth = width;
-		renderTextureHeight = height;
-
-		// Create high brightness extraction buffer
+		auto bufferSize = size;
+		for (int j = 0; j < BlurIterations; j++)
 		{
-			int32_t bufferWidth  = width;
-			int32_t bufferHeight = height;
-			extractBuffer.reset(RenderTexture::Create(graphics));
+			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);
+			bufferSize.Y = std::max(1, (bufferSize.Y + 1) / 2);
+			lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
 
-			if (extractBuffer != nullptr)
+			if (lowresBuffers[i][j] != nullptr)
 			{
-				extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);			
+				lowresBuffers[i][j]->Initialize(bufferSize, TextureFormat::RGBA16F);
 			}
 			else
 			{
-				spdlog::trace("FAIL Create extractBuffer");
+				spdlog::trace("FAIL Create lowresBuffers[i][j]");
+				isValid_ = false;
+				return;
 			}
 		}
-
-		// Create low-resolution buffers
-		for (int i = 0; i < BlurBuffers; i++) {
-			int32_t bufferWidth  = width;
-			int32_t bufferHeight = height;
-			for (int j = 0; j < BlurIterations; j++) {
-				bufferWidth  = std::max(1, (bufferWidth  + 1) / 2);
-				bufferHeight = std::max(1, (bufferHeight + 1) / 2);
-				lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
-
-				if (lowresBuffers[i][j] != nullptr)
-				{
-					lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);				
-				}
-				else
-				{
-					spdlog::trace("FAIL Create lowresBuffers[i][j]");
-				}
-			}
-		}
-	}
-
-	void BloomEffectDX11::ReleaseBuffers()
-	{
-		renderTextureWidth = 0;
-		renderTextureHeight = 0;
-
-		extractBuffer.reset();
-		for (int i = 0; i < BlurBuffers; i++) {
-			for (int j = 0; j < BlurIterations; j++) {
-				lowresBuffers[i][j].reset();
-			}
-		}
-	}
-
-	TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics)
-		: TonemapEffect(graphics), blitter(graphics)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		// Copy shader
-		shaderCopy.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_Copy_PS::g_PS, sizeof(PostFX_Copy_PS::g_PS),
-			"Tonemap Copy", PostFx_ShaderDecl, 2));
-
-		// Reinhard shader
-		shaderReinhard.reset(Shader::Create(renderer,
-			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_Tonemap_PS::g_PS, sizeof(PostFX_Tonemap_PS::g_PS),
-			"Tonemap Reinhard", PostFx_ShaderDecl, 2));
-
-		if (shaderReinhard != nullptr)
-		{
-			shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
-			shaderReinhard->SetPixelRegisterCount(1);
-		}
-		else
-		{
-			spdlog::trace("FAIL Create shaderReinhard");
-		}
-	}
-
-	TonemapEffectDX11::~TonemapEffectDX11()
-	{
-	}
-
-	void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		// Tonemap pass
-		ID3D11ShaderResourceView* textures[1] = {
-			(ID3D11ShaderResourceView*)src->GetViewID()};
-
-		if (algorithm == Algorithm::Off) {
-			blitter.Blit(shaderCopy.get(), 1, textures, nullptr, 0, dest);
-		} else if (algorithm == Algorithm::Reinhard) {
-			const float constantData[4] = {exposure, 16.0f * 16.0f};
-			blitter.Blit(shaderReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
-		}
-	}
-
-	LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics) : LinearToSRGBEffect(graphics), blitter_(graphics)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		// Copy shader
-		shader_.reset(Shader::Create(renderer,
-										PostFX_Basic_VS::g_VS,
-										sizeof(PostFX_Basic_VS::g_VS),
-									 PostFX_LinearToSRGB_PS::g_PS,
-									 sizeof(PostFX_LinearToSRGB_PS::g_PS),
-										"LinearToSRGB",
-										PostFx_ShaderDecl,
-										2));
-
-		if (shader_ != nullptr)
-		{
-		}
-		else
-		{
-			spdlog::trace("FAIL Create shaderLinearToSRGB");
-		}
-	}
-
-	LinearToSRGBEffectDX11::~LinearToSRGBEffectDX11() {}
-
-	void LinearToSRGBEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
-	{
-		using namespace Effekseer;
-		using namespace EffekseerRendererDX11;
-
-		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-
-		// LinearToSRGB pass
-		ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};
-
-		blitter_.Blit(shader_.get(), 1, textures, nullptr, 0, dest);
-
 	}
 }
+
+void BloomEffectDX11::ReleaseBuffers()
+{
+	renderTextureSize_ = Effekseer::Tool::Vector2DI();
+
+	extractBuffer.reset();
+	for (int i = 0; i < BlurBuffers; i++)
+	{
+		for (int j = 0; j < BlurIterations; j++)
+		{
+			lowresBuffers[i][j].reset();
+		}
+	}
+}
+
+TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+	: TonemapEffect(graphics)
+	, blitter(graphics, renderer)
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
+
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	// Copy shader
+	shaderCopy.reset(Shader::Create(renderer_.Get(),
+									PostFX_Basic_VS::g_VS,
+									sizeof(PostFX_Basic_VS::g_VS),
+									PostFX_Copy_PS::g_PS,
+									sizeof(PostFX_Copy_PS::g_PS),
+									"Tonemap Copy",
+									PostFx_ShaderDecl,
+									2,
+									false));
+
+	// Reinhard shader
+	shaderReinhard.reset(Shader::Create(renderer_.Get(),
+										PostFX_Basic_VS::g_VS,
+										sizeof(PostFX_Basic_VS::g_VS),
+										PostFX_Tonemap_PS::g_PS,
+										sizeof(PostFX_Tonemap_PS::g_PS),
+										"Tonemap Reinhard",
+										PostFx_ShaderDecl,
+										2,
+										false));
+
+	if (shaderReinhard != nullptr)
+	{
+		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
+	}
+	else
+	{
+		spdlog::trace("FAIL Create shaderReinhard");
+		isValid_ = false;
+		return;
+	}
+}
+
+TonemapEffectDX11::~TonemapEffectDX11()
+{
+}
+
+void TonemapEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	// Tonemap pass
+	ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};
+
+	if (algorithm == Algorithm::Off)
+	{
+		blitter.Blit(shaderCopy.get(), 1, textures, nullptr, 0, dest);
+	}
+	else if (algorithm == Algorithm::Reinhard)
+	{
+		const float constantData[4] = {exposure, 16.0f * 16.0f};
+		blitter.Blit(shaderReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
+	}
+}
+
+LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+	: LinearToSRGBEffect(graphics)
+	, blitter_(graphics, renderer)
+	, renderer_(EffekseerRendererDX11::RendererImplementedRef::FromPinned(renderer.Get()))
+
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	// Copy shader
+	shader_.reset(Shader::Create(renderer_.Get(),
+								 PostFX_Basic_VS::g_VS,
+								 sizeof(PostFX_Basic_VS::g_VS),
+								 PostFX_LinearToSRGB_PS::g_PS,
+								 sizeof(PostFX_LinearToSRGB_PS::g_PS),
+								 "LinearToSRGB",
+								 PostFx_ShaderDecl,
+								 2,
+								 false));
+
+	if (shader_ != nullptr)
+	{
+	}
+	else
+	{
+		spdlog::trace("FAIL Create shaderLinearToSRGB");
+		isValid_ = false;
+		return;
+	}
+}
+
+LinearToSRGBEffectDX11::~LinearToSRGBEffectDX11()
+{
+}
+
+void LinearToSRGBEffectDX11::Render(RenderTexture* src, RenderTexture* dest)
+{
+	using namespace Effekseer;
+	using namespace EffekseerRendererDX11;
+
+	// LinearToSRGB pass
+	ID3D11ShaderResourceView* textures[1] = {(ID3D11ShaderResourceView*)src->GetViewID()};
+
+	blitter_.Blit(shader_.get(), 1, textures, nullptr, 0, dest);
+}
+} // namespace efk

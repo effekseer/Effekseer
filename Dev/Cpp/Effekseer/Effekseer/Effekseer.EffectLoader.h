@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEER_EFFECTLOADER_H__
-#define	__EFFEKSEER_EFFECTLOADER_H__
+#ifndef __EFFEKSEER_EFFECTLOADER_H__
+#define __EFFEKSEER_EFFECTLOADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -10,25 +10,31 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer { 
+namespace Effekseer
+{
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 /**
 	@brief	エフェクトファイル読み込み破棄関数指定クラス
 */
-class EffectLoader
+class EffectLoader : public ReferenceObject
 {
 public:
 	/**
 		@brief	コンストラクタ
 	*/
-	EffectLoader() {}
+	EffectLoader()
+	{
+	}
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~EffectLoader() {}
+	virtual ~EffectLoader()
+	{
+	}
 
 	/**
 		@brief	エフェクトファイルを読み込む。
@@ -40,7 +46,7 @@ public:
 		エフェクトファイルを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual bool Load( const EFK_CHAR* path, void*& data, int32_t& size ) = 0;
+	virtual bool Load(const char16_t* path, void*& data, int32_t& size) = 0;
 
 	/**
 		@brief	エフェクトファイルを破棄する。
@@ -50,14 +56,14 @@ public:
 		エフェクトファイルを破棄する。
 		::Effekseer::Effect::Create実行終了時に使用される。
 	*/
-	virtual void Unload( void* data, int32_t size ) = 0;
+	virtual void Unload(void* data, int32_t size) = 0;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
+} // namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_EFFECTLOADER_H__
+#endif // __EFFEKSEER_EFFECTLOADER_H__

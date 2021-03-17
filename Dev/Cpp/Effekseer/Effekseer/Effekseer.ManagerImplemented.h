@@ -1,34 +1,21 @@
 ﻿
-#ifndef	__EFFEKSEER_MANAGER_IMPLEMENTED_H__
-#define	__EFFEKSEER_MANAGER_IMPLEMENTED_H__
+#ifndef __EFFEKSEER_MANAGER_IMPLEMENTED_H__
+#define __EFFEKSEER_MANAGER_IMPLEMENTED_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
+#include "Culling/Culling3D.h"
 #include "Effekseer.Base.h"
+#include "Effekseer.InstanceChunk.h"
+#include "Effekseer.IntrusiveList.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
-#include "Culling/Culling3D.h"
+#include "Effekseer.WorkerThread.h"
 #include "Utils/Effekseer.CustomAllocator.h"
-#include "Effekseer.IntrusiveList.h"
-#include "Effekseer.InstanceChunk.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
-/**
-	@brief エフェクト管理クラス(実装)
-*/
-class ManagerImplemented
-	: public Manager
-	, public ReferenceObject
+class ManagerImplemented : public Manager, public ReferenceObject
 {
 	friend class Effect;
 	friend class EffectNode;
@@ -36,87 +23,95 @@ class ManagerImplemented
 	friend class InstanceGroup;
 
 private:
-
-	/**
-		@brief	再生オブジェクトの組み合わせ
-	*/
-	class DrawSet
+	class alignas(32) DrawSet
 	{
 	public:
-		Effect*			ParameterPointer;
-		InstanceContainer*	InstanceContainerPointer;
-		InstanceGlobal*		GlobalPointer;
-		Culling3D::Object*	CullingObjectPointer;
-		bool				IsPaused;
-		bool				IsShown;
-		bool				IsAutoDrawing;
-		bool				IsRemoving;
-		bool				IsParameterChanged;
-		bool				DoUseBaseMatrix;
-		bool				GoingToStop;
-		bool				GoingToStopRoot;
-		EffectInstanceRemovingCallback	RemovingCallback;
-		
-		Mat43f				BaseMatrix;
-		Mat43f				GlobalMatrix;
+		EffectRef ParameterPointer;
+		InstanceContainer* InstanceContainerPointer;
+		InstanceGlobal* GlobalPointer;
+		Culling3D::Object* CullingObjectPointer;
+		int RandomSeed = 0;
+		bool IsPaused;
+		bool IsShown;
+		bool IsAutoDrawing;
+		bool IsRemoving;
+		bool IsParameterChanged;
+		bool DoUseBaseMatrix;
+		bool GoingToStop;
+		bool GoingToStopRoot;
+		EffectInstanceRemovingCallback RemovingCallback;
 
-		float				Speed;
+		SIMD::Mat43f BaseMatrix;
+		SIMD::Mat43f GlobalMatrix;
 
-		Handle				Self;
+		float Speed;
 
-		bool				IsPreupdated = false;
-		int32_t				StartFrame = 0;
+		Handle Self;
+
+		bool IsPreupdated = false;
+		int32_t StartFrame = 0;
 
 		int32_t Layer = 0;
 
-		DrawSet( Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
-			: ParameterPointer			( effect )
-			, InstanceContainerPointer	( pContainer )
-			, GlobalPointer				( pGlobal )
-			, CullingObjectPointer		( NULL )
-			, IsPaused					( false )
-			, IsShown					( true )
-			, IsAutoDrawing				( true )
-			, IsRemoving				( false )
-			, IsParameterChanged		( false )
-			, DoUseBaseMatrix			( false )
-			, GoingToStop				( false )
-			, GoingToStopRoot			( false )
-			, RemovingCallback			( NULL )
-			, Speed						( 1.0f )
-			, Self						( -1 )
+		//! a time (by 1/60) to progress an effect when Update is called
+		float NextUpdateFrame = 0.0f;
+
+		//! Rate of scale in relation to manager's time
+		float TimeScale = 1.0f;
+
+		//! HACK for GC (Instances must be updated after removing) If you use UpdateHandle, updating instance which is contained removing
+		//! effects is not called. It makes update called forcibly.
+		int32_t UpdateCountAfterRemoving = 0;
+
+		//! a bit mask for group
+		int64_t GroupMask = 0;
+
+		DrawSet(const EffectRef& effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
+			: ParameterPointer(effect)
+			, InstanceContainerPointer(pContainer)
+			, GlobalPointer(pGlobal)
+			, CullingObjectPointer(nullptr)
+			, IsPaused(false)
+			, IsShown(true)
+			, IsAutoDrawing(true)
+			, IsRemoving(false)
+			, IsParameterChanged(false)
+			, DoUseBaseMatrix(false)
+			, GoingToStop(false)
+			, GoingToStopRoot(false)
+			, RemovingCallback(nullptr)
+			, Speed(1.0f)
+			, Self(-1)
 		{
-		
 		}
 
 		DrawSet()
-			: ParameterPointer			( NULL )
-			, InstanceContainerPointer	( NULL )
-			, GlobalPointer				( NULL )
-			, CullingObjectPointer		( NULL )
-			, IsPaused					( false )
-			, IsShown					( true )
-			, IsRemoving				( false )
-			, IsParameterChanged		( false )
-			, DoUseBaseMatrix			( false )
-			, RemovingCallback			(NULL)
-			, Speed						( 1.0f )
-			, Self						( -1 )
+			: ParameterPointer(nullptr)
+			, InstanceContainerPointer(nullptr)
+			, GlobalPointer(nullptr)
+			, CullingObjectPointer(nullptr)
+			, IsPaused(false)
+			, IsShown(true)
+			, IsRemoving(false)
+			, IsParameterChanged(false)
+			, DoUseBaseMatrix(false)
+			, RemovingCallback(nullptr)
+			, Speed(1.0f)
+			, Self(-1)
 		{
-		
 		}
 
-		Mat43f* GetEnabledGlobalMatrix();
+		SIMD::Mat43f* GetEnabledGlobalMatrix();
 
 		void CopyMatrixFromInstanceToRoot();
 	};
 
 	struct CullingParameter
 	{
-		float		SizeX;
-		float		SizeY;
-		float		SizeZ;
-		int32_t		LayerCount;
+		float SizeX;
+		float SizeY;
+		float SizeZ;
+		int32_t LayerCount;
 
 		CullingParameter()
 		{
@@ -129,20 +124,22 @@ private:
 	} cullingCurrent, cullingNext;
 
 private:
-	/* 自動データ入れ替えフラグ */
-	bool m_autoFlip;
+	CustomVector<WorkerThread> m_WorkerThreads;
 
-	// 次のHandle
-	Handle		m_NextHandle;
+	//! whether does rendering and update handle flipped automatically
+	bool m_autoFlip = true;
+
+	//! next handle
+	Handle m_NextHandle = 0;
 
 	// 確保済みインスタンス数
 	int m_instance_max;
 
 	// buffers which is allocated while initializing
 	// 初期化中に確保されたバッファ
-	std::unique_ptr<InstanceChunk[]> reservedChunksBuffer_;
-	std::unique_ptr<uint8_t[]> reservedGroupBuffer_;
-	std::unique_ptr<uint8_t[]> reservedContainerBuffer_;
+	CustomAlignedVector<InstanceChunk> reservedChunksBuffer_;
+	CustomAlignedVector<uint8_t> reservedGroupBuffer_;
+	CustomAlignedVector<uint8_t> reservedContainerBuffer_;
 
 	// pooled instances. Thease are not used and waiting to be used.
 	// プールされたインスタンス。使用されておらず、使用されてるのを待っている。
@@ -156,362 +153,223 @@ private:
 	std::array<std::vector<InstanceChunk*>, GenerationsMax> instanceChunks_;
 	std::array<int32_t, GenerationsMax> creatableChunkOffsets_;
 
-	// 再生中オブジェクトの組み合わせ集合体
-	std::map<Handle,DrawSet>	m_DrawSets;
+	// playing objects
+	CustomAlignedMap<Handle, DrawSet> m_DrawSets;
 
-	// 破棄待ちオブジェクト
-	std::map<Handle,DrawSet>	m_RemovingDrawSets[2];
-
-	//! objects on rendering
-	CustomVector<DrawSet> m_renderingDrawSets;
+	//! objects which are waiting to be disposed
+	std::array<CustomAlignedMap<Handle, DrawSet>, 2> m_RemovingDrawSets;
 
 	//! objects on rendering
-	CustomMap<Handle,DrawSet> m_renderingDrawSetMaps;
+	CustomAlignedVector<DrawSet> m_renderingDrawSets;
+
+	//! objects on rendering temporaly (sorted)
+	CustomAlignedVector<DrawSet> sortedRenderingDrawSets_;
+
+	//! objects on rendering
+	CustomAlignedMap<Handle, DrawSet> m_renderingDrawSetMaps;
 
 	// mutex for rendering
-	std::mutex					m_renderingMutex;
-	bool						m_isLockedWithRenderingMutex = false;
+	std::mutex m_renderingMutex;
+	bool m_isLockedWithRenderingMutex = false;
 
-	/* 設定インスタンス */
-	Setting*					m_setting;
+	SettingRef m_setting;
 
-	int							m_updateTime;
-	int							m_drawTime;
+	int m_updateTime;
+	int m_drawTime;
 
-	/* 更新回数カウント */
-	uint32_t					m_sequenceNumber;
-	
-	/* カリング */
-	Culling3D::World*			m_cullingWorld;
+	uint32_t m_sequenceNumber;
 
-	/* カリング */
-	std::vector<DrawSet*>	m_culledObjects;
-	std::set<Handle>		m_culledObjectSets;
-	bool					m_culled;
+	Culling3D::World* m_cullingWorld;
 
-	/* スプライト描画機能用インスタンス */
-	SpriteRenderer*				m_spriteRenderer;
+	std::vector<DrawSet*> m_culledObjects;
+	std::set<Handle> m_culledObjectSets;
+	bool m_culled;
 
-	/* リボン描画機能用インスタンス */
-	RibbonRenderer*				m_ribbonRenderer;
+	SpriteRendererRef m_spriteRenderer;
 
-	/* リング描画機能用インスタンス */
-	RingRenderer*				m_ringRenderer;
+	RibbonRendererRef m_ribbonRenderer;
 
-	/* モデル描画機能用インスタンス */
-	ModelRenderer*				m_modelRenderer;
+	RingRendererRef m_ringRenderer;
 
-	/* トラック描画機能用インスタンス */
-	TrackRenderer*				m_trackRenderer;
+	ModelRendererRef m_modelRenderer;
 
-	/* サウンド再生用インスタンス */
-	SoundPlayer*				m_soundPlayer;
+	TrackRendererRef m_trackRenderer;
 
-	// メモリ確保関数
-	MallocFunc	m_MallocFunc;
+	SoundPlayerRef m_soundPlayer;
 
-	// メモリ破棄関数
-	FreeFunc	m_FreeFunc;
+	MallocFunc m_MallocFunc;
 
-	// ランダム関数
-	RandFunc	m_randFunc;
+	FreeFunc m_FreeFunc;
 
-	// ランダム関数最大値
-	int			m_randMax;
+	RandFunc m_randFunc;
 
-	// 描画オブジェクト追加
-	Handle AddDrawSet( Effect* effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer );
+	int m_randMax;
 
-	// 描画オブジェクト破棄処理
-	void GCDrawSet( bool isRemovingManager );
+	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
+	std::mutex m_soundMutex;
 
-	// メモリ確保関数
-	static void* EFK_STDCALL Malloc( unsigned int size );
+	Handle AddDrawSet(const EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer);
 
-	// メモリ破棄関数
-	static void EFK_STDCALL Free( void* p, unsigned int size );
+	void StopStoppingEffects();
 
-	// ランダム関数
+	//! GC Draw sets
+	void GCDrawSet(bool isRemovingManager);
+
+	static void* EFK_STDCALL Malloc(unsigned int size);
+
+	static void EFK_STDCALL Free(void* p, unsigned int size);
+
 	static int EFK_STDCALL Rand();
 
-	// 破棄等のイベントを実際に実行
 	void ExecuteEvents();
+
+	void ExecuteSounds();
+
+	void StoreSortingDrawSets(const Manager::DrawParameter& drawParameter);
+
 public:
+	ManagerImplemented(int instance_max, bool autoFlip);
 
-	// コンストラクタ
-	ManagerImplemented( int instance_max, bool autoFlip );
-
-	// デストラクタ
 	virtual ~ManagerImplemented();
 
-	/* Root以外のインスタンスバッファ生成(Flip,Update,終了時からのみ呼ばれる) */
-	Instance* CreateInstance( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup );
+	Instance* CreateInstance(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
-	InstanceGroup* CreateInstanceGroup( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal );
-	void ReleaseGroup( InstanceGroup* group );
+	InstanceGroup* CreateInstanceGroup(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal);
+	void ReleaseGroup(InstanceGroup* group);
 
-	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Mat43f& rootMatrix, Instance* pParent );
-	void ReleaseInstanceContainer( InstanceContainer* container );
+	InstanceContainer*
+	CreateInstanceContainer(EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const SIMD::Mat43f& rootMatrix, Instance* pParent);
+	void ReleaseInstanceContainer(InstanceContainer* container);
 
-	/**
-		@brief マネージャー破棄
-		@note
-		このマネージャーから生成されたエフェクトは全て強制的に破棄されます。
-	*/
-	void Destroy() override;
+	void LaunchWorkerThreads(uint32_t threadCount) override;
 
-	/**
-		@brief	更新番号を取得する。
-	*/
+	ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) override;
+
 	uint32_t GetSequenceNumber() const;
 
 	MallocFunc GetMallocFunc() const override;
 
-	void SetMallocFunc( MallocFunc func ) override;
+	void SetMallocFunc(MallocFunc func) override;
 
 	FreeFunc GetFreeFunc() const override;
 
-	void SetFreeFunc( FreeFunc func ) override;
+	void SetFreeFunc(FreeFunc func) override;
 
 	RandFunc GetRandFunc() const override;
 
-	void SetRandFunc( RandFunc func ) override;
+	void SetRandFunc(RandFunc func) override;
 
-	/**
-		@brief	ランダム最大値取得
-	*/
 	int GetRandMax() const override;
 
-	/**
-		@brief	ランダム関数設定
-	*/
-	void SetRandMax( int max_ ) override;
+	void SetRandMax(int max_) override;
 
-	/**
-		@brief	座標系を取得する。
-	*/
 	CoordinateSystem GetCoordinateSystem() const override;
 
-	/**
-		@brief	座標系を設定する。
-	*/
-	void SetCoordinateSystem( CoordinateSystem coordinateSystem ) override;
+	void SetCoordinateSystem(CoordinateSystem coordinateSystem) override;
 
-	/**
-		@brief	スプライト描画機能取得
-	*/
-	SpriteRenderer* GetSpriteRenderer() override;
+	SpriteRendererRef GetSpriteRenderer() override;
 
-	/**
-		@brief	スプライト描画機能設定
-	*/
-	void SetSpriteRenderer( SpriteRenderer* renderer ) override;
+	void SetSpriteRenderer(SpriteRendererRef renderer) override;
 
-	/**
-		@brief	リボン描画機能取得
-	*/
-	RibbonRenderer* GetRibbonRenderer() override;
+	RibbonRendererRef GetRibbonRenderer() override;
 
-	/**
-		@brief	リボン描画機能設定
-	*/
-	void SetRibbonRenderer( RibbonRenderer* renderer ) override;
+	void SetRibbonRenderer(RibbonRendererRef renderer) override;
 
-	/**
-		@brief	リング描画機能取得
-	*/
-	RingRenderer* GetRingRenderer() override;
+	RingRendererRef GetRingRenderer() override;
 
-	/**
-		@brief	リング描画機能設定
-	*/
-	void SetRingRenderer( RingRenderer* renderer ) override;
+	void SetRingRenderer(RingRendererRef renderer) override;
 
-	/**
-		@brief	モデル描画機能取得
-	*/
-	ModelRenderer* GetModelRenderer() override;
+	ModelRendererRef GetModelRenderer() override;
 
-	/**
-		@brief	モデル描画機能設定
-	*/
-	void SetModelRenderer( ModelRenderer* renderer ) override;
+	void SetModelRenderer(ModelRendererRef renderer) override;
 
-	/**
-		@brief	軌跡描画機能取得
-	*/
-	TrackRenderer* GetTrackRenderer() override;
+	TrackRendererRef GetTrackRenderer() override;
 
-	/**
-		@brief	軌跡描画機能設定
-	*/
-	void SetTrackRenderer( TrackRenderer* renderer ) override;
+	void SetTrackRenderer(TrackRendererRef renderer) override;
 
-	/**
-		@brief	設定クラスを取得する。
-	*/
-	Setting* GetSetting() override;
+	const SettingRef& GetSetting() const override;
 
-	/**
-		@brief	設定クラスを設定する。
-		@param	setting	[in]	設定
-	*/
-	void SetSetting(Setting* setting) override;
+	void SetSetting(const SettingRef& setting) override;
 
-	/**
-		@brief	エフェクト読込クラスを取得する。
-	*/
-	EffectLoader* GetEffectLoader() override;
+	EffectLoaderRef GetEffectLoader() override;
 
-	/**
-		@brief	エフェクト読込クラスを設定する。
-	*/
-	void SetEffectLoader( EffectLoader* effectLoader ) override;
+	void SetEffectLoader(EffectLoaderRef effectLoader) override;
 
-	/**
-		@brief	テクスチャ読込クラスを取得する。
-	*/
-	TextureLoader* GetTextureLoader() override;
+	TextureLoaderRef GetTextureLoader() override;
 
-	/**
-		@brief	テクスチャ読込クラスを設定する。
-	*/
-	void SetTextureLoader( TextureLoader* textureLoader ) override;
-	
-	/**
-		@brief	サウンド再生取得
-	*/
-	SoundPlayer* GetSoundPlayer() override;
+	void SetTextureLoader(TextureLoaderRef textureLoader) override;
 
-	/**
-		@brief	サウンド再生機能設定
-	*/
-	void SetSoundPlayer( SoundPlayer* soundPlayer ) override;
-	
-	/**
-		@brief	サウンド再生取得
-	*/
-	SoundLoader* GetSoundLoader() override;
+	SoundPlayerRef GetSoundPlayer() override;
 
-	/**
-		@brief	サウンド再生機能設定
-	*/
-	void SetSoundLoader( SoundLoader* soundLoader ) override;
+	void SetSoundPlayer(SoundPlayerRef soundPlayer) override;
 
-	/**
-		@brief	モデル読込クラスを取得する。
-	*/
-	ModelLoader* GetModelLoader() override;
+	SoundLoaderRef GetSoundLoader() override;
 
-	/**
-		@brief	モデル読込クラスを設定する。
-	*/
-	void SetModelLoader( ModelLoader* modelLoader ) override;
-	
-	MaterialLoader* GetMaterialLoader() override;
+	void SetSoundLoader(SoundLoaderRef soundLoader) override;
 
-	void SetMaterialLoader(MaterialLoader* loader) override;
+	ModelLoaderRef GetModelLoader() override;
 
-	/**
-		@brief	エフェクト停止
-	*/
-	void StopEffect( Handle handle ) override;
+	void SetModelLoader(ModelLoaderRef modelLoader) override;
 
-	/**
-		@brief	全てのエフェクト停止
-	*/
+	MaterialLoaderRef GetMaterialLoader() override;
+
+	void SetMaterialLoader(MaterialLoaderRef loader) override;
+
+	CurveLoaderRef GetCurveLoader() override;
+
+	void SetCurveLoader(CurveLoaderRef loader) override;
+
+	void StopEffect(Handle handle) override;
+
 	void StopAllEffects() override;
 
-	/**
-		@brief	エフェクト停止
-	*/
-	void StopRoot( Handle handle ) override;
+	void StopRoot(Handle handle) override;
 
-	/**
-		@brief	エフェクト停止
-	*/
-	void StopRoot( Effect* effect ) override;
+	void StopRoot(const EffectRef& effect) override;
 
-	/**
-		@brief	エフェクトのインスタンスが存在しているか取得する。
-		@param	handle	[in]	インスタンスのハンドル
-		@return	存在してるか?
-	*/
-	bool Exists( Handle handle ) override;
+	bool Exists(Handle handle) override;
 
-	int32_t GetInstanceCount( Handle handle ) override;
+	int32_t GetInstanceCount(Handle handle) override;
 
 	int32_t GetTotalInstanceCount() const override;
 
-	/**
-		@brief	エフェクトのインスタンスに設定されている行列を取得する。
-		@param	handle	[in]	インスタンスのハンドル
-		@return	行列
-	*/
-	Matrix43 GetMatrix( Handle handle ) override;
+	Matrix43 GetMatrix(Handle handle) override;
 
-	/**
-		@brief	エフェクトのインスタンスに変換行列を設定する。
-		@param	handle	[in]	インスタンスのハンドル
-		@param	mat		[in]	変換行列
-	*/
-	void SetMatrix( Handle handle, const Matrix43& mat ) override;
+	void SetMatrix(Handle handle, const Matrix43& mat) override;
 
-	Vector3D GetLocation( Handle handle ) override;
-	void SetLocation( Handle handle, float x, float y, float z ) override;
-	void SetLocation( Handle handle, const Vector3D& location ) override;
-	void AddLocation( Handle handle, const Vector3D& location ) override;
+	Vector3D GetLocation(Handle handle) override;
+	void SetLocation(Handle handle, float x, float y, float z) override;
+	void SetLocation(Handle handle, const Vector3D& location) override;
+	void AddLocation(Handle handle, const Vector3D& location) override;
 
-	/**
-		@brief	エフェクトのインスタンスの回転角度を指定する。(ラジアン)
-	*/
-	void SetRotation( Handle handle, float x, float y, float z ) override;
+	void SetRotation(Handle handle, float x, float y, float z) override;
 
-	/**
-		@brief	エフェクトのインスタンスの任意軸周りの反時計周りの回転角度を指定する。
-		@param	handle	[in]	インスタンスのハンドル
-		@param	axis	[in]	軸
-		@param	angle	[in]	角度(ラジアン)
-	*/
-	void SetRotation( Handle handle, const Vector3D& axis, float angle ) override;
+	void SetRotation(Handle handle, const Vector3D& axis, float angle) override;
 
-	/**
-		@brief	エフェクトのインスタンスの拡大率を指定する。
-		@param	handle	[in]	インスタンスのハンドル
-		@param	x		[in]	X方向拡大率
-		@param	y		[in]	Y方向拡大率
-		@param	z		[in]	Z方向拡大率
-	*/
-	void SetScale( Handle handle, float x, float y, float z ) override;
+	void SetScale(Handle handle, float x, float y, float z) override;
 
 	void SetAllColor(Handle handle, Color color) override;
 
-	// エフェクトのターゲット位置を指定する。
-	void SetTargetLocation( Handle handle, float x, float y, float z ) override;
-	void SetTargetLocation( Handle handle, const Vector3D& location ) override;
+	void SetTargetLocation(Handle handle, float x, float y, float z) override;
+	void SetTargetLocation(Handle handle, const Vector3D& location) override;
 
 	float GetDynamicInput(Handle handle, int32_t index) override;
 
 	void SetDynamicInput(Handle handle, int32_t index, float value) override;
 
-	Matrix43 GetBaseMatrix( Handle handle ) override;
+	Matrix43 GetBaseMatrix(Handle handle) override;
 
-	void SetBaseMatrix( Handle handle, const Matrix43& mat ) override;
+	void SetBaseMatrix(Handle handle, const Matrix43& mat) override;
 
-	/**
-		@brief	エフェクトのインスタンスに廃棄時のコールバックを設定する。
-		@param	handle	[in]	インスタンスのハンドル
-		@param	callback	[in]	コールバック
-	*/
-	void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback ) override;
+	void SetRemovingCallback(Handle handle, EffectInstanceRemovingCallback callback) override;
 
 	bool GetShown(Handle handle) override;
 
-	void SetShown( Handle handle, bool shown ) override;
-	
+	void SetShown(Handle handle, bool shown) override;
+
 	bool GetPaused(Handle handle) override;
 
-	void SetPaused( Handle handle, bool paused ) override;
+	void SetPaused(Handle handle, bool paused) override;
 
 	void SetPausedToAllEffects(bool paused) override;
 
@@ -519,24 +377,39 @@ public:
 
 	void SetLayer(Handle handle, int32_t layer) override;
 
+	int64_t GetGroupMask(Handle handle) const override;
+
+	void SetGroupMask(Handle handle, int64_t groupmask) override;
+
 	float GetSpeed(Handle handle) const override;
 
-	void SetSpeed( Handle handle, float speed ) override;
-	
-	void SetAutoDrawing( Handle handle, bool autoDraw ) override;
-	
+	void SetSpeed(Handle handle, float speed) override;
+
+	void SetTimeScaleByGroup(int64_t groupmask, float timeScale) override;
+
+	void SetTimeScaleByHandle(Handle handle, float timeScale) override;
+
+	void SetAutoDrawing(Handle handle, bool autoDraw) override;
+
+	void SetUserData(Handle handle, void* userData) override;
+
 	void Flip() override;
 
-	void Update( float deltaFrame ) override;
+	void Update(float deltaFrame) override;
+
+	void Update(const UpdateParameter& parameter) override;
+
+	void DoUpdate(const UpdateParameter& parameter);
 
 	void BeginUpdate() override;
 
 	void EndUpdate() override;
 
-	void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) override;
+	void UpdateHandle(Handle handle, float deltaFrame = 1.0f) override;
+
+	void UpdateHandleToMoveToFrame(Handle handle, float frame) override;
 
 private:
-
 	void UpdateInstancesByInstanceGlobal(const DrawSet& drawSet);
 
 	//! update draw sets
@@ -546,10 +419,14 @@ private:
 
 	//! whether container is disabled while rendering because of a distance between the effect and a camera
 	bool IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter);
- public:
 
+	void StopWithoutRemoveDrawSet(DrawSet& drawSet);
+
+	void ResetAndPlayWithDataSet(DrawSet& drawSet, float frame);
+
+public:
 	void Draw(const Manager::DrawParameter& drawParameter) override;
-	
+
 	void DrawBack(const Manager::DrawParameter& drawParameter) override;
 
 	void DrawFront(const Manager::DrawParameter& drawParameter) override;
@@ -560,58 +437,53 @@ private:
 
 	void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
-	Handle Play( Effect* effect, float x, float y, float z ) override;
+	Handle Play(const EffectRef& effect, float x, float y, float z) override;
 
-	Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame) override;
-	
+	Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame) override;
+
 	int GetCameraCullingMaskToShowAllEffects() override;
 
 	int GetUpdateTime() const override;
-	
+
 	int GetDrawTime() const override;
 
 	int32_t GetRestInstancesCount() const override;
 
-	/**
-		@brief	start reload
-	*/
-	void BeginReloadEffect( Effect* effect, bool doLockThread );
+	void BeginReloadEffect(const EffectRef& effect, bool doLockThread);
 
-	/**
-		@brief	end reload
-	*/
-	void EndReloadEffect( Effect* effect, bool doLockThread);
+	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
 
-	/**
-		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
-		@param	xsize	X方向幅
-		@param	ysize	Y方向幅
-		@param	zsize	Z方向幅
-		@param	layerCount	層数(大きいほどカリングの効率は上がるがメモリも大量に使用する)
-	*/
-	void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount) override;
+	void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
 
-	/**
-		@brief	カリングを行い、カリングされたオブジェクトのみを描画するようにする。
-		@param	cameraProjMat	カメラプロジェクション行列
-		@param	isOpenGL		OpenGLによる描画か?
-	*/
 	void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) override;
 
-	/**
-		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
-	*/
 	void RessignCulling() override;
 
-	virtual int GetRef() override { return ReferenceObject::GetRef(); }
-	virtual int AddRef() override { return ReferenceObject::AddRef(); }
-	virtual int Release() override { return ReferenceObject::Release(); }
+	virtual int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ReferenceObject::Release();
+	}
+
+	void LockRendering() override;
+
+	void UnlockRendering() override;
+
+	void RequestToPlaySound(Instance* instance, const EffectNodeImplemented* node);
+
+	ManagerImplemented* GetImplemented() override
+	{
+		return this;
+	}
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_MANAGER_IMPLEMENTED_H__
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_MANAGER_IMPLEMENTED_H__

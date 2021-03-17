@@ -3,7 +3,7 @@
 namespace Effekseer
 {
 
-class CompiledMaterialBinaryInternal : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryInternal : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
@@ -11,33 +11,64 @@ private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-	CompiledMaterialBinaryInternal() {}
+	CompiledMaterialBinaryInternal()
+	{
+	}
 
-	virtual ~CompiledMaterialBinaryInternal() {}
+	virtual ~CompiledMaterialBinaryInternal()
+	{
+	}
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
-		vertexShaders_.at(static_cast<int>(type)) = data;
+		vertexShaders_.at(static_cast<size_t>(type)) = data;
 	}
 
-	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data) { pixelShaders_.at(static_cast<int>(type)) = data; }
+	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+	{
+		pixelShaders_.at(static_cast<size_t>(type)) = data;
+	}
 
-	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<size_t>(type)).data();
+	}
 
-	int32_t GetVertexShaderSize(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetVertexShaderSize(MaterialShaderType type) const override
+	{
+		return static_cast<int32_t>(vertexShaders_.at(static_cast<size_t>(type)).size());
+	}
 
-	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<size_t>(type)).data();
+	}
 
-	int32_t GetPixelShaderSize(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetPixelShaderSize(MaterialShaderType type) const override
+	{
+		return static_cast<int32_t>(pixelShaders_.at(static_cast<int>(type)).size());
+	}
 
-	int AddRef() override { return ReferenceObject::AddRef(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-	int Release() override { return ReferenceObject::Release(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 
-	int GetRef() override { return ReferenceObject::GetRef(); }
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
-const std::vector<uint8_t>& CompiledMaterial::GetOriginalData() const { return originalData_; }
+const std::vector<uint8_t>& CompiledMaterial::GetOriginalData() const
+{
+	return originalData_;
+}
 
 bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 {
@@ -59,8 +90,14 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 	memcpy(&version, data + offset, 4);
 	offset += sizeof(int);
 
-	// bacause of camera position node, structure of uniform is changed
-	if (version == 0)
+	// bacause of camera position node, structure of uniform is changed, etc
+	if (version < OldestSupportVersion)
+	{
+		return false;
+	}
+
+	// Too new
+	if (version > LatestSupportVersion)
 	{
 		return false;
 	}
@@ -144,7 +181,7 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vector<uint8_t>& originalData)
 {
 	dst.reserve(1024 * 64);
-	int32_t offset = 0;
+	size_t offset = 0;
 
 	struct Header
 	{
@@ -165,7 +202,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	offset = dst.size();
 
 	// info
-	int32_t platformCount = platforms.size();
+	uint32_t platformCount = static_cast<uint32_t>(platforms.size());
 	dst.resize(dst.size() + sizeof(uint32_t));
 	memcpy(dst.data() + offset, &platformCount, sizeof(uint32_t));
 	offset = dst.size();
@@ -179,7 +216,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	}
 
 	// data
-	uint32_t originalDataSize = originalData.size();
+	uint32_t originalDataSize = static_cast<uint32_t>(originalData.size());
 	dst.resize(dst.size() + sizeof(uint32_t));
 	memcpy(dst.data() + offset, &originalDataSize, sizeof(uint32_t));
 	offset = dst.size();

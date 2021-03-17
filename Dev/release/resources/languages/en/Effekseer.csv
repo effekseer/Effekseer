@@ -1,9 +1,10 @@
 ﻿AboutEffekseer,About Effekseer
-System_FailedToInitialize,"Failed to generate drawing screen. DirectX version problems, memory shortage, and so on."
-AlphaCrunch,Alpha Crunch
+System_FailedToInitialize,"Failed to generate drawing screen. DirectX version problems, memory shortage, Video Card Specifications, and so on."
 AttractionForces,Force field (Local)
 AutoConnect,Auto-connect
 BasicRenderSettings,Basic Render Settings
+AdvancedRenderSettings,Advanced Render Settings
+AdvancedRenderSettings2,Advanced Render Settings2
 BasicSettings,Basic Settings
 Behavior,Behavior
 CameraMode,Camera Mode
@@ -36,6 +37,10 @@ GenerateAlpha2,Generate alpha(Blend+Add)
 Height,Height
 Help,Help
 Import,Import
+ImportSourcePackage,Source package
+ImportDestinationDirectory,Destination directory
+ImportSourceFile,Source files
+ImportDestinationFile,Destination files
 Infinite,Infinite
 InternalAbout,About Effekseer
 InternalAddNode,Add Node
@@ -84,6 +89,8 @@ Range,Range
 RecentFiles,Recent Files
 Record,Record
 Recorder,Recorder
+RecorderProgress,Progress in Recording...
+RecorderAbort,Abort
 Render,Render
 RenderSettings,Render Settings
 ResetMaginification,Reset maginification
@@ -140,14 +147,15 @@ FCurve_Paste_Desc,It pastes key points.
 AutoZoom,AutoZoom
 AutoZoom_Desc,Adjust graph's height automatically
 FCurve_Operation_Instruction_Desc,Operating Instructions(Mouse Over)
-FCurveCtrl_Desc,"- Double click - Add, Remove points
+FCurveCtrl_Desc,"Double click - Add, Remove points
 Alt+Wheel - Zoom horizontal
 Ctrl+Wheel - Zoom vertical
 Alt+LeftClick - Select multiple points and edit
 Shift+LeftClick - Switch selecting points
-Double click with labels - Change viewing area automatically"
+Double click with labels - Change viewing area automatically
+Delete - Remove a point"
 ,
-ImageFilter_,Image File (*.png)|*.png
+ImageFilter_,Image File (*.png,*.tga)|*.png;*.tga
 ModelFilter_,"Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"
 SoundFilter_,Sound File (*.wav)|*.wav
 ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
@@ -156,10 +164,12 @@ Error_NotFound,{0} is not found.
 ,
 EffekseerParticleFilter,efkefc
 MaterialFilter,efkmat
-ImageFilter,"png,dds"
+ImageFilter,"png,dds,tga"
 ModelFilter,"efkmodel,fbx,mqo"
 ProjectFilter,efkproj
 ProjectFilterNew,"efkproj,efkefc"
+EffekseerPackageFilter,"efkpkg"
+CurveFilter,"efkcurve,fbx"
 ,
 ,
 Clipping,Clipping
@@ -212,15 +222,22 @@ Material_GenCache_Name,Gen. Cache
 Material_GenCache_Desc,"It generates caches.
 If the generated cache is placed in the same directory as the material file, loading will be faster.
 On some platforms, effects cannot be played without using cache.
-A cache that can be used on both Windows and Mac is generated 
+A cache that can be used on both Windows and Mac is generated
 by generating the cache on Mac after generating the cache on Windows."
 Material_NoneCache,Cache - None
-Material_OldCache,Cache - Old
+Material_OldCache,"Cache - Old
+Please regenerate."
 Material_OldFomatCache,"Cache - OldFormat
 Please regenerate."
+Material_NewFomatCache,"Cache - Too new format.
+Plese use later version."
 DefaultFormat,Default format
 ExportDefaultFormat,Export as default format
 DefaultFormatExample,Default format (*.efk)|*.efk
+EfkPkgFormat,Effekseer package
+ExportEfkPkgFormatDescription,Export as Effekseer package
+ImportEfkPkgFormatDescription,Import from Effekseer package
+EfkPkgFormatFilter,"Effekseer package (*.efkpkg)|*.efkpkg"
 Maginification,Maginification
 GlbFormat,glb format
 ExportAsGlbFormat,Export as glb format
@@ -230,3 +247,84 @@ ExportAsGlTFFormat,Export as glTF format
 GlTFFormatExample,glTF format (*.glTF)|*.glTF
 MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.
 LayerLimitError,"The node tree is limited to {0} layers, including the root."
+FileViewer_OpenFile,Open
+FileViewer_DeleteFile,Delete
+FileViewer_RenameFile,Rename
+FileViewer_ShowInExplorer,Show in Explorer
+FileViewer_ShowInFinder,Show in Finder
+FileViewer_ImportFromPackage,Import from package
+FileViewer_ExportToPackage,Export to package
+,
+Easing_Start_Name,Start
+Easing_Start_Desc,Starting point of easing
+Easing_End_Name,End
+Easing_End_Desc,Value of easing at end
+Easing_Middle_Name,Middle
+Easing_Middle_Desc,Value of easing at middle point
+Easing_StartSpeed_Name,Ease In
+Easing_StartSpeed_Desc,Initial rate of easing
+Easing_EndSpeed_Name,Ease Out
+Easing_EndSpeed_Desc,Rate of easing at end
+,
+Easing_StartSlowly3_Name,Slowest
+Easing_StartSlowly2_Name,Slower
+Easing_StartSlowly1_Name,Slow
+Easing_StartNormal_Name,Normal
+Easing_StartRapidly1_Name,Fast
+Easing_StartRapidly2_Name,Faster
+Easing_StartRapidly3_Name,Fastest
+Easing_EndSlowly3_Name,Slowest
+Easing_EndSlowly2_Name,Slower
+Easing_EndSlowly1_Name,Slow
+Easing_EndNormal_Name,Normal
+Easing_EndRapidly1_Name,Fast
+Easing_EndRapidly2_Name,Faster
+Easing_EndRapidly3_Name,Fastest
+Easing_IsMiddleEnabled_Name,"Is Middle point 
+enabled"
+Easing_IsRandomGroupEnabled_Name,"Is Random group 
+enabled"
+Easing_RandomGroup_X_Name, X group
+Easing_RandomGroup_Y_Name, Y group
+Easing_RandomGroup_Z_Name, Z group
+Easing_IsIndividualTypeEnabled_Name,Is Type individual
+Easing_IndividualType_X_Name, X Type
+Easing_IndividualType_Y_Name, Y Type
+Easing_IndividualType_Z_Name, Z Type
+Easing_Type_Name,Type
+Easing_LeftRightSpeed_Name,EaseLeftRightSpeed
+Easing_Linear_Name,Linear
+Easing_EaseInQuadratic_Name,EaseInQuadratic
+Easing_EaseOutQuadratic_Name,EaseOutQuadratic
+Easing_EaseInOutQuadratic_Name,EaseInOutQuadratic
+Easing_EaseInCubic_Name,EaseInCubic
+Easing_EaseOutCubic_Name,EaseOutCubic
+Easing_EaseInOutCubic_Name,EaseInOutCubic
+Easing_EaseInQuartic_Name,EaseInQuartic
+Easing_EaseOutQuartic_Name,EaseOutQuartic
+Easing_EaseInOutQuartic_Name,EaseInOutQuartic
+Easing_EaseInQuintic_Name,EaseInQuintic
+Easing_EaseOutQuintic_Name,EaseOutQuintic
+Easing_EaseInOutQuintic_Name,EaseInOutQuintic
+Easing_EaseInBack_Name,EaseInBack
+Easing_EaseOutBack_Name,EaseOutBack
+Easing_EaseInOutBack_Name,EaseInOutBack
+Easing_EaseInBounce_Name,EaseInBounce
+Easing_EaseOutBounce_Name,EaseOutBounce
+Easing_EaseInOutBounce_Name,EaseInOutBounce
+,
+FCurve_Name,F-Curve
+FCurve_Desc,F-Curve
+,
+Recording_Scale_Name,Scale
+Recording_Scale_Desc,Enlarge the area to record images.
+,
+PermissionError_File,Cannot read file {0}. Cannot read file {0}. You may not have permission to read the file.
+PermissionError_File_Mac,Moving the files associated with the effect to your home directory may solve the problem.
+
+ModelReferenceType_File_Name,File
+ModelReferenceType_ProdecualModel_Name,ProceduralModel
+
+TreeDisabled_Message,"If the toggle is turned on, the setting items will be displayed."
+
+Easing_Parameter_Name,Easing Parameter

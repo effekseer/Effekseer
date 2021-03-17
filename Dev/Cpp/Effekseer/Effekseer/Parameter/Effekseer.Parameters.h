@@ -3,6 +3,7 @@
 #define __EFFEKSEER_PARAMETERS_H__
 
 #include "../Effekseer.Base.Pre.h"
+#include "../Effekseer.InternalStruct.h"
 
 namespace Effekseer
 {
@@ -32,6 +33,27 @@ struct NodeRendererTextureUVTypeParameter
 	float TileLoopAreaEnd = 0.0f;
 
 	void Load(uint8_t*& pos, int32_t version);
+};
+
+struct FalloffParameter
+{
+	enum BlendType
+	{
+		Add = 0,
+		Sub = 1,
+		Mul = 2,
+	} ColorBlendType;
+	Color BeginColor;
+	Color EndColor;
+	float Pow;
+
+	FalloffParameter()
+	{
+		ColorBlendType = BlendType::Add;
+		BeginColor = Color(255, 255, 255, 255);
+		EndColor = Color(255, 255, 255, 255);
+		Pow = 1.0f;
+	}
 };
 
 } // namespace Effekseer

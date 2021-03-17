@@ -8,7 +8,7 @@ namespace Effekseer.Binary
 {
 	class GenerationLocationValues
 	{
-		public static byte[] GetBytes(Data.GenerationLocationValues value, Data.ParentEffectType parentEffectType, Dictionary<string, int> model_and_index)
+		public static byte[] GetBytes(Data.GenerationLocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProceduralModelParameter, int> pmodel_and_index, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 			if (value.EffectsRotation)
@@ -20,13 +20,24 @@ namespace Effekseer.Binary
 				data.Add((0).GetBytes());
 			}
 
-			data.Add(value.Type.GetValueAsInt().GetBytes());
+			var type = value.Type.GetValue();
 
-			if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Point)
+			// Fallback
+			if(version < ExporterVersion.Ver16Alpha1)
+			{
+				if(type == Data.GenerationLocationValues.ParameterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
+				{
+					type = Data.GenerationLocationValues.ParameterType.Point;
+				}
+			}
+
+			data.Add(((int)type).GetBytes());
+
+			if (type == Data.GenerationLocationValues.ParameterType.Point)
 			{
 				data.Add(value.Point.Location.GetBytes(1.0f));
 			}
-			else if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Sphere)
+			else if (type == Data.GenerationLocationValues.ParameterType.Sphere)
 			{
 				data.Add((value.Sphere.Radius.Max).GetBytes());
 				data.Add((value.Sphere.Radius.Min).GetBytes());
@@ -35,24 +46,49 @@ namespace Effekseer.Binary
 				data.Add((value.Sphere.RotationY.Max / 180.0f * (float)Math.PI).GetBytes());
 				data.Add((value.Sphere.RotationY.Min / 180.0f * (float)Math.PI).GetBytes());
 			}
-			if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Model)
+			if (type == Data.GenerationLocationValues.ParameterType.Model)
 			{
-				var relative_path = value.Model.Model.RelativePath;
-
-				if(!string.IsNullOrEmpty(relative_path))
+				if(version >= ExporterVersion.Ver16Alpha3)
 				{
-					if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+					var refType = (int)value.Model.ModelReference.Value;
+					data.Add((refType).GetBytes());
+				}
+
+				if(value.Model.ModelReference.Value == Data.ModelReferenceType.File)
+				{
+					var relative_path = value.Model.Model.RelativePath;
+
+					if (!string.IsNullOrEmpty(relative_path))
 					{
-						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+						if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
+						{
+							relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+						}
+						else
+						{
+							relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+						}
+
+						if (model_and_index.ContainsKey(relative_path))
+						{
+							data.Add(model_and_index[relative_path].GetBytes());
+						}
+						else
+						{
+							data.Add(((int)-1).GetBytes());
+						}
 					}
 					else
 					{
-						relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
+						data.Add(((int)-1).GetBytes());
 					}
-
-					if (model_and_index.ContainsKey(relative_path))
+				}
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
+				{
+					if(value.Model.Reference.Value != null)
 					{
-						data.Add(model_and_index[relative_path].GetBytes());
+						var ind = pmodel_and_index[value.Model.Reference.Value];
+						data.Add(ind.GetBytes());
 					}
 					else
 					{
@@ -61,12 +97,12 @@ namespace Effekseer.Binary
 				}
 				else
 				{
-					data.Add(((int)-1).GetBytes());
+					throw new Exception();
 				}
 
-				data.Add( ((int)value.Model.Type.Value).GetBytes());
+				data.Add(((int)value.Model.Type.Value).GetBytes());
 			}
-			else if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Circle)
+			else if (type == Data.GenerationLocationValues.ParameterType.Circle)
 			{
 				data.Add((value.Circle.Division.Value).GetBytes());
 				data.Add((value.Circle.Radius.Max).GetBytes());
@@ -84,7 +120,7 @@ namespace Effekseer.Binary
 				data.Add((value.Circle.AngleNoize.Min / 180.0f * (float)Math.PI).GetBytes());
 			}
 
-			else if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Line)
+			else if (type == Data.GenerationLocationValues.ParameterType.Line)
 			{
 				data.Add((value.Line.Division.Value).GetBytes());
 				data.Add(value.Line.PositionStart.GetBytes(1.0f));

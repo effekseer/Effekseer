@@ -3,29 +3,25 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererDX11.Renderer.h"
-#include "EffekseerRendererDX11.RendererImplemented.h"
 #include "EffekseerRendererDX11.RenderState.h"
+#include "EffekseerRendererDX11.RendererImplemented.h"
 
+#include "EffekseerRendererDX11.DeviceObject.h"
+#include "EffekseerRendererDX11.IndexBuffer.h"
 #include "EffekseerRendererDX11.Shader.h"
 #include "EffekseerRendererDX11.VertexBuffer.h"
-#include "EffekseerRendererDX11.IndexBuffer.h"
-#include "EffekseerRendererDX11.DeviceObject.h"
-//#include "EffekseerRendererDX11.SpriteRenderer.h"
-//#include "EffekseerRendererDX11.RibbonRenderer.h"
-//#include "EffekseerRendererDX11.RingRenderer.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
-//#include "EffekseerRendererDX11.TrackRenderer.h"
-#include "EffekseerRendererDX11.TextureLoader.h"
-#include "EffekseerRendererDX11.ModelLoader.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
 
-#include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
-#include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
+#include "../../EffekseerRendererCommon/ModelLoader.h"
+
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/TextureLoader.h"
 #endif
 
 //----------------------------------------------------------------------------------
@@ -34,117 +30,120 @@
 namespace EffekseerRendererDX11
 {
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-namespace Standard_VS
-{
-	static
-#include "Shader/EffekseerRenderer.Standard_VS.h"
-}
-
-namespace Standard_PS
-{
-	static
-#include "Shader/EffekseerRenderer.Standard_PS.h"
-}
-
-namespace Standard_Distortion_VS
-{
-	static
-#include "Shader/EffekseerRenderer.Standard_Distortion_VS.h"
-}
-
-namespace Standard_Distortion_PS
-{
-	static
-#include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
-}
-
-namespace Standard_Lighting_VS
+namespace Standard_VS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_Lighting_VS.h"
-} // namespace Standard_Distortion_VS
+#include "ShaderHeader/ad_sprite_unlit_vs.h"
+} // namespace Standard_VS_Ad
 
-namespace Standard_Lighting_PS
+namespace Standard_PS_Ad
 {
 static
-#include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
-} // namespace Standard_Distortion_PS
+#include "ShaderHeader/ad_model_unlit_ps.h"
+} // namespace Standard_PS_Ad
 
-#else
+namespace Standard_Distortion_VS_Ad
+{
+static
+#include "ShaderHeader/ad_sprite_distortion_vs.h"
+} // namespace Standard_Distortion_VS_Ad
+
+namespace Standard_Distortion_PS_Ad
+{
+static
+#include "ShaderHeader/ad_model_distortion_ps.h"
+} // namespace Standard_Distortion_PS_Ad
+
+namespace Standard_Lighting_VS_Ad
+{
+static
+#include "ShaderHeader/ad_sprite_lit_vs.h"
+} // namespace Standard_Lighting_VS_Ad
+
+namespace Standard_Lighting_PS_Ad
+{
+static
+#include "ShaderHeader/ad_model_lit_ps.h"
+} // namespace Standard_Lighting_PS_Ad
 
 namespace Standard_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_VS.h"
+#include "ShaderHeader/sprite_unlit_vs.h"
 } // namespace Standard_VS
 
 namespace Standard_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_PS.h"
+#include "ShaderHeader/model_unlit_ps.h"
 } // namespace Standard_PS
 
 namespace Standard_Distortion_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Distortion_VS.h"
+#include "ShaderHeader/sprite_distortion_vs.h"
 } // namespace Standard_Distortion_VS
 
 namespace Standard_Distortion_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Distortion_PS.h"
+#include "ShaderHeader/model_distortion_ps.h"
 } // namespace Standard_Distortion_PS
 
 namespace Standard_Lighting_VS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Lighting_VS.h"
+#include "ShaderHeader/sprite_lit_vs.h"
 } // namespace Standard_Lighting_VS
 
 namespace Standard_Lighting_PS
 {
 static
-#include "Shader_15/EffekseerRenderer.Standard_Lighting_PS.h"
+#include "ShaderHeader/model_lit_ps.h"
 } // namespace Standard_Lighting_PS
-
-#endif
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device,
-												ID3D11DeviceContext* context,
-												::Effekseer::FileInterface* fileInterface,
-												::Effekseer::ColorSpaceType colorSpaceType)
+
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(ID3D11Device* device,
+															 ID3D11DeviceContext* context)
+{
+	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
+}
+
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+												  ::Effekseer::FileInterface* fileInterface,
+												  ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(device, context, fileInterface, colorSpaceType);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(device, fileInterface);
-#else
-	return NULL;
-#endif
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(gprahicsDevice, fileInterface);
+}
+
+::Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
+{
+	auto gd = gprahicsDevice.DownCast<Backend::GraphicsDevice>();
+	return gd->CreateTexture(srv, rtv, dsv);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 OriginalState::OriginalState()
-	: m_blendState		( NULL )
-	, m_depthStencilState	( NULL )
-	, m_depthStencilStateRef	( 0 )
-	, m_vertexConstantBuffer	( NULL )
-	, m_pixelConstantBuffer		( NULL )
-	, m_layout					( NULL )
+	: m_blendState(nullptr)
+	, m_depthStencilState(nullptr)
+	, m_depthStencilStateRef(0)
+	, m_vertexConstantBuffer(nullptr)
+	, m_pixelConstantBuffer(nullptr)
+	, m_layout(nullptr)
 
 	, m_pRasterizerState(nullptr)
 	, m_pVS(nullptr)
@@ -167,11 +166,11 @@ OriginalState::~OriginalState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context )
+void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context)
 {
 	context->PSGetSamplers(0, Effekseer::TextureSlotMax, m_samplers.data());
-	context->OMGetBlendState( &m_blendState, m_blendFactor.data(), &m_blendSampleMask );
-	context->OMGetDepthStencilState( &m_depthStencilState, &m_depthStencilStateRef );
+	context->OMGetBlendState(&m_blendState, m_blendFactor.data(), &m_blendSampleMask);
+	context->OMGetDepthStencilState(&m_depthStencilState, &m_depthStencilStateRef);
 	context->RSGetState(&m_pRasterizerState);
 
 	context->VSGetConstantBuffers(0, 1, &m_vertexConstantBuffer);
@@ -180,7 +179,7 @@ void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context
 	context->VSGetShader(&m_pVS, nullptr, nullptr);
 	context->PSGetShader(&m_pPS, nullptr, nullptr);
 
-	context->IAGetInputLayout( &m_layout );
+	context->IAGetInputLayout(&m_layout);
 
 	context->IAGetPrimitiveTopology(&m_topology);
 
@@ -193,20 +192,20 @@ void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context )
+void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context)
 {
 	context->PSSetSamplers(0, Effekseer::TextureSlotMax, m_samplers.data());
-	context->OMSetBlendState( m_blendState, m_blendFactor.data(), m_blendSampleMask );
-	context->OMSetDepthStencilState( m_depthStencilState, m_depthStencilStateRef );
+	context->OMSetBlendState(m_blendState, m_blendFactor.data(), m_blendSampleMask);
+	context->OMSetDepthStencilState(m_depthStencilState, m_depthStencilStateRef);
 	context->RSSetState(m_pRasterizerState);
 
 	context->VSSetConstantBuffers(0, 1, &m_vertexConstantBuffer);
 	context->PSSetConstantBuffers(0, 1, &m_pixelConstantBuffer);
 
-	context->VSSetShader(m_pVS, NULL, 0);
-	context->PSSetShader(m_pPS, NULL, 0);
+	context->VSSetShader(m_pVS, nullptr, 0);
+	context->PSSetShader(m_pPS, nullptr, 0);
 
-	context->IASetInputLayout( m_layout );
+	context->IASetInputLayout(m_layout);
 
 	context->IASetPrimitiveTopology(m_topology);
 
@@ -220,7 +219,7 @@ void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context
 //
 //----------------------------------------------------------------------------------
 void OriginalState::ReleaseState()
-{	
+{
 	for (size_t i = 0; i < m_samplers.size(); i++)
 	{
 		ES_SAFE_RELEASE(m_samplers[i]);
@@ -251,37 +250,35 @@ void OriginalState::ReleaseState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer* Renderer::Create(
+RendererRef Renderer::Create(
 	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
 {
-	RendererImplemented* renderer = new RendererImplemented( squareMaxCount );
-	if( renderer->Initialize( device, context, depthFunc, isMSAAEnabled) )
+	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
+	if (renderer->Initialize(device, context, depthFunc, isMSAAEnabled))
 	{
 		return renderer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-RendererImplemented::RendererImplemented( int32_t squareMaxCount )
-	: m_device	( NULL )
-	, m_context	( NULL )
-	, m_vertexBuffer( NULL )
-	, m_indexBuffer	( NULL )
-	, m_squareMaxCount	( squareMaxCount )
-	, m_coordinateSystem	( ::Effekseer::CoordinateSystem::RH )
-	, m_renderState		( NULL )
-	, m_restorationOfStates( true )
+RendererImplemented::RendererImplemented(int32_t squareMaxCount)
+	: m_device(nullptr)
+	, m_context(nullptr)
+	, m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
+	, m_squareMaxCount(squareMaxCount)
+	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
+	, m_renderState(nullptr)
+	, m_restorationOfStates(true)
 
-	, m_shader(nullptr)
-	, m_shader_distortion(nullptr)
+	, shader_unlit_(nullptr)
+	, shader_distortion_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
-	m_background.UserPtr = nullptr;
-
 	m_state = new OriginalState();
 }
 
@@ -295,24 +292,22 @@ RendererImplemented::~RendererImplemented()
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
-
-	auto p = (ID3D11ShaderResourceView*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-
 	ES_SAFE_DELETE(m_standardRenderer);
-	ES_SAFE_DELETE(m_shader);
 
-	ES_SAFE_DELETE(m_shader_distortion);
-	ES_SAFE_DELETE(m_shader_lighting);
+	ES_SAFE_DELETE(shader_unlit_);
+	ES_SAFE_DELETE(shader_distortion_);
+	ES_SAFE_DELETE(shader_lit_);
 
-	ES_SAFE_DELETE( m_state );
+	ES_SAFE_DELETE(shader_ad_unlit_);
+	ES_SAFE_DELETE(shader_ad_distortion_);
+	ES_SAFE_DELETE(shader_ad_lit_);
 
-	ES_SAFE_DELETE( m_renderState );
-	ES_SAFE_DELETE( m_vertexBuffer );
-	ES_SAFE_DELETE( m_indexBuffer );
+	ES_SAFE_DELETE(m_state);
+
+	ES_SAFE_DELETE(m_renderState);
+	ES_SAFE_DELETE(m_vertexBuffer);
+	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
-
-	assert(GetRef() == -6);
 }
 
 //----------------------------------------------------------------------------------
@@ -320,6 +315,11 @@ RendererImplemented::~RendererImplemented()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnLostDevice()
 {
+	if (graphicsDevice_ != nullptr)
+	{
+		graphicsDevice_->LostDevice();
+	}
+
 	for (auto& device : m_deviceObjects)
 	{
 		device->OnLostDevice();
@@ -335,8 +335,12 @@ void RendererImplemented::OnResetDevice()
 	{
 		device->OnResetDevice();
 	}
-}
 
+	if (graphicsDevice_ != nullptr)
+	{
+		graphicsDevice_->ResetDevice();
+	}
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -352,25 +356,23 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 	// generate a vertex buffer
 	{
-		// assume max vertex size is smaller than float * 10
-		m_vertexBuffer = VertexBuffer::Create( this, sizeof(float) * 10 * m_squareMaxCount * 4, true );
-		if( m_vertexBuffer == NULL ) return false;
+		m_vertexBuffer = VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
+		if (m_vertexBuffer == nullptr)
+			return false;
 	}
-
-	// 参照カウントの調整
-	Release();
 
 	// generate an index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
-		if( m_indexBuffer == NULL ) return false;
+		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
+		if (m_indexBuffer == nullptr)
+			return false;
 
 		m_indexBuffer->Lock();
 
 		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for( int i = 0; i < m_squareMaxCount; i++ )
+		for (int i = 0; i < m_squareMaxCount; i++)
 		{
-			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
+			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
 			buf[0] = 3 + 4 * i;
 			buf[1] = 1 + 4 * i;
 			buf[2] = 0 + 4 * i;
@@ -382,13 +384,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		m_indexBuffer->Unlock();
 	}
 
-	// 参照カウントの調整
-	Release();
-
 	// Generate index buffer for rendering wireframes
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false);
-		if (m_indexBufferForWireframe == NULL) return false;
+		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false, false);
+		if (m_indexBufferForWireframe == nullptr)
+			return false;
 
 		m_indexBufferForWireframe->Lock();
 
@@ -408,141 +408,147 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		m_indexBufferForWireframe->Unlock();
 	}
 
-	// 参照カウントの調整
-	Release();
+	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 
 	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
 
-
-	// シェーダー
-	// 座標(3) 色(1) UV(2)
-	D3D11_INPUT_ELEMENT_DESC decl [] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },	// AlphaTextureUV
-			{ "TEXCOORD", 2, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// FlipbookIndexAndNextRate
-			{ "TEXCOORD", 3, DXGI_FORMAT_R32_FLOAT,	0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// AlphaThreshold	
-#endif
+	D3D11_INPUT_ELEMENT_DESC decl[] = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	D3D11_INPUT_ELEMENT_DESC decl_distortion [] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // AlphaTextureUV
-		{ "TEXCOORD", 2, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },	// FlipbookIndexAndNextRate
-		{ "TEXCOORD", 3, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 15, D3D11_INPUT_PER_VERTEX_DATA, 0 },	// AlphaThreshold
-#endif
+	D3D11_INPUT_ELEMENT_DESC decl_advanced[] = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},	// AlphaTextureUV + UVDistortionTextureUV
+		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
+		{"TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
+		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
+		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 17, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 	};
 
-	D3D11_INPUT_ELEMENT_DESC decl_lighting[] = {
+	D3D11_INPUT_ELEMENT_DESC decl_normal_advanced[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUVs
-		{"TEXCOORD", 3, DXGI_FORMAT_R32_FLOAT,	  0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // FlipbookIndexAndNextRate
-		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT,	  0, sizeof(float) * 13, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaThreshold	
-#endif
-
+		{"TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUV + UVDistortionTextureUV
+		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
+		{"TEXCOORD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
+		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 20, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
+		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 21, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
 	};
 
-	m_shader = Shader::Create(
-		this,
-		Standard_VS::g_VS,
-		sizeof(Standard_VS::g_VS),
-		Standard_PS::g_PS,
-		sizeof(Standard_PS::g_PS),
-		"StandardRenderer", decl, ARRAYSIZE(decl));
-	if (m_shader == NULL) return false;
+	D3D11_INPUT_ELEMENT_DESC decl_normal[] = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
 
-	// 参照カウントの調整
-	Release();
-
-	m_shader_distortion = Shader::Create(
-		this,
-		Standard_Distortion_VS::g_VS,
-		sizeof(Standard_Distortion_VS::g_VS),
-		Standard_Distortion_PS::g_PS,
-		sizeof(Standard_Distortion_PS::g_PS),
-		"StandardRenderer Distortion", decl_distortion, ARRAYSIZE(decl_distortion));
-	if (m_shader_distortion == NULL) return false;
-
-	// 参照カウントの調整
-	Release();
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader->SetVertexRegisterCount(8 + 1 + 1);
-
-	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 1);
-	m_shader->SetPixelRegisterCount(1);
-
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetVertexRegisterCount(8 + 1 + 1);
-
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1 + 1 + 1);
-#else
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader->SetVertexRegisterCount(8 + 1);
-
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_distortion->SetVertexRegisterCount(8 + 1);
-
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1 + 1);
-#endif
-
-	m_shader_lighting = Shader::Create(this,
-									   Standard_Lighting_VS::g_VS,
-									   sizeof(Standard_Lighting_VS::g_VS),
-									   Standard_Lighting_PS::g_PS,
-									   sizeof(Standard_Lighting_PS::g_PS),
-										 "StandardRenderer Lighting",
-									   decl_lighting,
-									   ARRAYSIZE(decl_lighting));
-	if (m_shader_lighting == NULL)
+	shader_unlit_ = Shader::Create(this,
+								   Standard_VS::g_main,
+								   sizeof(Standard_VS::g_main),
+								   Standard_PS::g_main,
+								   sizeof(Standard_PS::g_main),
+								   "StandardRenderer",
+								   decl,
+								   ARRAYSIZE(decl),
+								   false);
+	if (shader_unlit_ == nullptr)
 		return false;
 
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
+	shader_ad_unlit_ = Shader::Create(this,
+									  Standard_VS_Ad::g_main,
+									  sizeof(Standard_VS_Ad::g_main),
+									  Standard_PS_Ad::g_main,
+									  sizeof(Standard_PS_Ad::g_main),
+									  "StandardRenderer",
+									  decl_advanced,
+									  ARRAYSIZE(decl_advanced),
+									  false);
+	if (shader_ad_unlit_ == nullptr)
+		return false;
 
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
-	m_shader_lighting->SetPixelRegisterCount(4);
-#else
-	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
+	shader_distortion_ = Shader::Create(this,
+										Standard_Distortion_VS::g_main,
+										sizeof(Standard_Distortion_VS::g_main),
+										Standard_Distortion_PS::g_main,
+										sizeof(Standard_Distortion_PS::g_main),
+										"StandardRenderer Distortion",
+										decl_normal,
+										ARRAYSIZE(decl_normal),
+										false);
+	if (shader_distortion_ == nullptr)
+		return false;
 
-	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
-	m_shader_lighting->SetPixelRegisterCount(12);
-#endif
+	shader_ad_distortion_ = Shader::Create(this,
+										   Standard_Distortion_VS_Ad::g_main,
+										   sizeof(Standard_Distortion_VS_Ad::g_main),
+										   Standard_Distortion_PS_Ad::g_main,
+										   sizeof(Standard_Distortion_PS_Ad::g_main),
+										   "StandardRenderer Distortion",
+										   decl_normal_advanced,
+										   ARRAYSIZE(decl_normal_advanced),
+										   false);
+	if (shader_ad_distortion_ == nullptr)
+		return false;
 
-	Release();
+	shader_lit_ = Shader::Create(this,
+								 Standard_Lighting_VS::g_main,
+								 sizeof(Standard_Lighting_VS::g_main),
+								 Standard_Lighting_PS::g_main,
+								 sizeof(Standard_Lighting_PS::g_main),
+								 "StandardRenderer Lighting",
+								 decl_normal,
+								 ARRAYSIZE(decl_normal),
+								 false);
+	if (shader_lit_ == nullptr)
+		return false;
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
-		this, m_shader, m_shader_distortion);
+	shader_ad_lit_ = Shader::Create(this,
+									Standard_Lighting_VS_Ad::g_main,
+									sizeof(Standard_Lighting_VS_Ad::g_main),
+									Standard_Lighting_PS_Ad::g_main,
+									sizeof(Standard_Lighting_PS_Ad::g_main),
+									"StandardRenderer Lighting",
+									decl_normal_advanced,
+									ARRAYSIZE(decl_normal_advanced),
+									false);
+	if (shader_ad_lit_ == nullptr)
+		return false;
+
+	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+
+	shader_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
+
+	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+
+	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
+
+	shader_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+
+	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+
+	m_standardRenderer =
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
+	GetImpl()->isSoftParticleEnabled = true;
 
 	return true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::Destroy()
-{
-	Release();
 }
 
 //----------------------------------------------------------------------------------
@@ -558,19 +564,19 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
-	assert( m_device != NULL );
-	
+	assert(m_device != nullptr);
+
 	impl->CalculateCameraProjectionMatrix();
-	
+
 	// ステートを保存する
-	if( m_restorationOfStates )
+	if (m_restorationOfStates)
 	{
-		m_state->SaveState( m_device, m_context );
+		m_state->SaveState(m_device, m_context);
 	}
 
 	// ステート初期設定
 	m_renderState->GetActiveState().Reset();
-	m_renderState->Update( true );
+	m_renderState->Update(true);
 
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -583,15 +589,15 @@ bool RendererImplemented::BeginRendering()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::EndRendering()
 {
-	assert( m_device != NULL );
-	
+	assert(m_device != nullptr);
+
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	// ステートを復元する
-	if( m_restorationOfStates )
+	if (m_restorationOfStates)
 	{
-		m_state->LoadState( m_device, m_context );
+		m_state->LoadState(m_device, m_context);
 		m_state->ReleaseState();
 	}
 
@@ -656,89 +662,81 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SpriteRenderer* RendererImplemented::CreateSpriteRenderer()
+::Effekseer::SpriteRendererRef RendererImplemented::CreateSpriteRenderer()
 {
-	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return ::Effekseer::SpriteRendererRef(new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, false>(this));
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::RibbonRenderer* RendererImplemented::CreateRibbonRenderer()
+::Effekseer::RibbonRendererRef RendererImplemented::CreateRibbonRenderer()
 {
-	return new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, Vertex, VertexDistortion>( this );
+	return ::Effekseer::RibbonRendererRef(new ::EffekseerRenderer::RibbonRendererBase<RendererImplemented, false>(this));
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::RingRenderer* RendererImplemented::CreateRingRenderer()
+::Effekseer::RingRendererRef RendererImplemented::CreateRingRenderer()
 {
-	return new ::EffekseerRenderer::RingRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return ::Effekseer::RingRendererRef(new ::EffekseerRenderer::RingRendererBase<RendererImplemented, false>(this));
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer()
+::Effekseer::ModelRendererRef RendererImplemented::CreateModelRenderer()
 {
-	return ModelRenderer::Create( this );
+	return ModelRenderer::Create(RendererImplementedRef::FromPinned(this));
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::TrackRenderer* RendererImplemented::CreateTrackRenderer()
+::Effekseer::TrackRendererRef RendererImplemented::CreateTrackRenderer()
 {
-	return new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
+	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader( ::Effekseer::FileInterface* fileInterface )
+::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(this->GetDevice(), this->GetContext(), fileInterface );
-#else
-	return NULL;
-#endif
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader( ::Effekseer::FileInterface* fileInterface )
-{
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(this->GetDevice(), fileInterface );
-#else
-	return NULL;
-#endif
-}
-
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) { 
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(this, fileInterface);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 #else
 	return nullptr;
 #endif
 }
 
-
-Effekseer::TextureData* RendererImplemented::GetBackground()
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
-	if (m_background.UserPtr == nullptr) return nullptr;
-	return &m_background;
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice_, fileInterface);
+}
+
+::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+{
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
 }
 
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 {
-	ES_SAFE_ADDREF(background);
+	if (m_backgroundDX11 == nullptr)
+	{
+		m_backgroundDX11 = graphicsDevice_->CreateTexture(background, nullptr, nullptr);
+	}
+	else
+	{
+		auto texture = static_cast<Backend::Texture*>(m_backgroundDX11.Get());
+		texture->Init(background, nullptr, nullptr);
+	}
 
-	auto p = (ID3D11ShaderResourceView*)m_background.UserPtr;
-	ES_SAFE_RELEASE(p);
-	m_background.UserPtr = background;
+	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundDX11 : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -760,26 +758,26 @@ void RendererImplemented::SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t si
 	ID3D11Buffer* vBuf = vertexBuffer;
 	uint32_t vertexSize = size;
 	uint32_t offset = 0;
-	GetContext()->IASetVertexBuffers( 0, 1, &vBuf, &vertexSize, &offset ); 
+	GetContext()->IASetVertexBuffers(0, 1, &vBuf, &vertexSize, &offset);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size )
+void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size)
 {
 	ID3D11Buffer* vBuf = vertexBuffer->GetInterface();
 	uint32_t vertexSize = size;
 	uint32_t offset = 0;
-	GetContext()->IASetVertexBuffers( 0, 1, &vBuf, &vertexSize, &offset ); 
+	GetContext()->IASetVertexBuffers(0, 1, &vBuf, &vertexSize, &offset);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
+void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
 {
-	GetContext()->IASetIndexBuffer( indexBuffer->GetInterface(), DXGI_FORMAT_R16_UINT, 0);
+	GetContext()->IASetIndexBuffer(indexBuffer->GetInterface(), DXGI_FORMAT_R16_UINT, 0);
 }
 
 //----------------------------------------------------------------------------------
@@ -787,13 +785,25 @@ void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(ID3D11Buffer* indexBuffer)
 {
-	GetContext()->IASetIndexBuffer( indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GetContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+}
+
+void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
+{
+	auto ptr = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
+	SetVertexBuffer(ptr->GetBuffer(), size);
+}
+
+void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
+{
+	auto ptr = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
+	SetIndexBuffer(ptr->GetBuffer());
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetLayout( Shader* shader )
+void RendererImplemented::SetLayout(Shader* shader)
 {
 	if (GetRenderMode() == Effekseer::RenderMode::Normal)
 	{
@@ -804,89 +814,81 @@ void RendererImplemented::SetLayout( Shader* shader )
 		GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	}
 
-	GetContext()->IASetInputLayout( shader->GetLayoutInterface() );
+	GetContext()->IASetInputLayout(shader->GetLayoutInterface());
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset )
+void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 {
 	impl->drawcallCount++;
 	impl->drawvertexCount += spriteCount * 4;
 
 	if (GetRenderMode() == Effekseer::RenderMode::Normal)
 	{
-		GetContext()->DrawIndexed(
-			spriteCount * 2 * 3,
-			0,
-			vertexOffset);
+		GetContext()->DrawIndexed(spriteCount * 2 * 3, 0, vertexOffset);
 	}
 	else
 	{
-		GetContext()->DrawIndexed(
-			spriteCount * 2 * 4,
-			0,
-			vertexOffset);
+		GetContext()->DrawIndexed(spriteCount * 2 * 4, 0, vertexOffset);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
+void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 {
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount;
 
-	GetContext()->DrawIndexed(
-		indexCount,
-		0,
-		0 );
+	GetContext()->DrawIndexed(indexCount, 0, 0);
 }
 
-Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
+void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount)
 {
-	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
+	impl->drawcallCount++;
+	impl->drawvertexCount += vertexCount * instanceCount;
+	GetContext()->DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+}
+
+Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType type) const
+{
+	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader_distortion;
-		}
-		else
-		{
-			return m_shader_distortion;
-		}
+		return shader_ad_distortion_;
 	}
-	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader_lighting;
-		}
-		else
-		{
-			return m_shader_lighting;
-		}
+		return shader_ad_lit_;
 	}
-	else
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
 	{
-		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
-		{
-			return m_shader;
-		}
-		else
-		{
-			return m_shader;
-		}
+		return shader_ad_unlit_;
 	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
+	{
+		return shader_distortion_;
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
+	{
+		return shader_lit_;
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
+	{
+		return shader_unlit_;
+	}
+
+	assert(0);
+	return nullptr;
 }
 
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	currentShader = shader;
-	GetContext()->VSSetShader( shader->GetVertexShader(), NULL, 0);
-	GetContext()->PSSetShader( shader->GetPixelShader(), NULL, 0);
+	GetContext()->VSSetShader(shader->GetVertexShader(), nullptr, 0);
+	GetContext()->PSSetShader(shader->GetPixelShader(), nullptr, 0);
 }
 
 //----------------------------------------------------------------------------------
@@ -900,6 +902,8 @@ void RendererImplemented::EndShader(Shader* shader)
 void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
 	assert(currentShader != nullptr);
+	assert(currentShader->GetVertexConstantBufferSize() >= size + dstOffset);
+
 	auto p = static_cast<uint8_t*>(currentShader->GetVertexConstantBuffer()) + dstOffset;
 	memcpy(p, data, size);
 }
@@ -907,6 +911,8 @@ void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size
 void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
 	assert(currentShader != nullptr);
+	assert(currentShader->GetPixelConstantBufferSize() >= size + dstOffset);
+
 	auto p = static_cast<uint8_t*>(currentShader->GetPixelConstantBuffer()) + dstOffset;
 	memcpy(p, data, size);
 }
@@ -914,7 +920,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, ::Effekseer::Backend::TextureRef* textures, int32_t count)
 {
 	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> srv;
 	for (int32_t i = 0; i < count; i++)
@@ -925,7 +931,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 		else
 		{
-			srv[i] = (ID3D11ShaderResourceView*)textures[i]->UserPtr;
+			auto texture = static_cast<Backend::Texture*>(textures[i].Get());
+			srv[i] = texture->GetSRV();
 		}
 	}
 
@@ -936,103 +943,20 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
-	m_renderState->Update( true );
+	m_renderState->Update(true);
 }
 
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
+Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const
 {
-	std::array<uint8_t, 4> buf;
-
-	if (type == EffekseerRenderer::ProxyTextureType::White)
-	{
-		buf.fill(255);
-	}
-	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
-	{
-		buf.fill(127);
-		buf[2] = 255;
-		buf[3] = 255;
-	}
-	else
-	{
-		assert(0);
-	}
-
-	ID3D11Texture2D* tex = nullptr;
-
-	D3D11_TEXTURE2D_DESC TexDesc{};
-	TexDesc.Width = 1;
-	TexDesc.Height = 1;
-	TexDesc.ArraySize = 1;
-	TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	TexDesc.SampleDesc.Count = 1;
-	TexDesc.SampleDesc.Quality = 0;
-	TexDesc.Usage = D3D11_USAGE_DEFAULT;
-	TexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	TexDesc.CPUAccessFlags = 0;
-	TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = buf.data();
-	data.SysMemPitch = TexDesc.Width * 4;
-	data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
-
-	HRESULT hr = GetDevice()->CreateTexture2D(&TexDesc, nullptr, &tex);
-
-	if (FAILED(hr))
-	{
-		return nullptr;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
-	desc.Format = TexDesc.Format;
-	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	desc.Texture2D.MipLevels = -1;
-
-	ID3D11ShaderResourceView* texture = nullptr;
-	hr = GetDevice()->CreateShaderResourceView(tex, &desc, &texture);
-	if (FAILED(hr))
-	{
-		ES_SAFE_RELEASE(texture);
-		return nullptr;
-	}
-
-	GetContext()->UpdateSubresource(tex, 0, 0, buf.data(), data.SysMemPitch, 0);
-
-	ES_SAFE_RELEASE(tex);
-
-	// Generate mipmap
-	GetContext()->GenerateMips(texture);
-
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = TexDesc.Width;
-	textureData->Height = TexDesc.Height;
-
-	return textureData;
+	return graphicsDevice_;
 }
 
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
+void RendererImplemented::ResetStateForDefferedContext()
 {
-	if (data != nullptr && data->UserPtr != nullptr)
-	{
-		auto texture = (ID3D11ShaderResourceView*)data->UserPtr;
-		texture->Release();
-	}
-
-	if (data != nullptr)
-	{
-		delete data;
-	}
+	m_vertexBuffer->DiscardForcely();
 }
 
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

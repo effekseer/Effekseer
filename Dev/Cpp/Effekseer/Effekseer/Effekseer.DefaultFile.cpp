@@ -2,21 +2,22 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include "Effekseer.DefaultFile.h"
 #include <assert.h>
 #include <stdio.h>
-#include "Effekseer.DefaultFile.h"
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-namespace Effekseer { 
+namespace Effekseer
+{
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultFileReader::DefaultFileReader( FILE* filePtr )
-	: m_filePtr( filePtr )
+DefaultFileReader::DefaultFileReader(FILE* filePtr)
+	: m_filePtr(filePtr)
 {
-	assert( filePtr != NULL );
+	assert(filePtr != nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -24,23 +25,23 @@ DefaultFileReader::DefaultFileReader( FILE* filePtr )
 //----------------------------------------------------------------------------------
 DefaultFileReader::~DefaultFileReader()
 {
-	fclose( m_filePtr );
+	fclose(m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-size_t DefaultFileReader::Read( void* buffer, size_t size )
+size_t DefaultFileReader::Read(void* buffer, size_t size)
 {
-	return fread( buffer, 1, size, m_filePtr );
+	return fread(buffer, 1, size, m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void DefaultFileReader::Seek( int position )
+void DefaultFileReader::Seek(int position)
 {
-	fseek( m_filePtr, (size_t)position, SEEK_SET );
+	fseek(m_filePtr, (size_t)position, SEEK_SET);
 }
 
 //----------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ void DefaultFileReader::Seek( int position )
 //----------------------------------------------------------------------------------
 int DefaultFileReader::GetPosition()
 {
-	return (int)ftell( m_filePtr );
+	return (int)ftell(m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
@@ -56,20 +57,20 @@ int DefaultFileReader::GetPosition()
 //----------------------------------------------------------------------------------
 size_t DefaultFileReader::GetLength()
 {
-	long position = ftell( m_filePtr );
-	fseek( m_filePtr, 0, SEEK_END );
-	long length = ftell( m_filePtr );
-	fseek( m_filePtr, position, SEEK_SET );
+	long position = ftell(m_filePtr);
+	fseek(m_filePtr, 0, SEEK_END);
+	long length = ftell(m_filePtr);
+	fseek(m_filePtr, position, SEEK_SET);
 	return (size_t)length;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DefaultFileWriter::DefaultFileWriter( FILE* filePtr )
-	: m_filePtr( filePtr )
+DefaultFileWriter::DefaultFileWriter(FILE* filePtr)
+	: m_filePtr(filePtr)
 {
-	assert( filePtr != NULL );
+	assert(filePtr != nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -77,15 +78,15 @@ DefaultFileWriter::DefaultFileWriter( FILE* filePtr )
 //----------------------------------------------------------------------------------
 DefaultFileWriter::~DefaultFileWriter()
 {
-	fclose( m_filePtr );
+	fclose(m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-size_t DefaultFileWriter::Write( const void* buffer, size_t size )
+size_t DefaultFileWriter::Write(const void* buffer, size_t size)
 {
-	return fwrite( buffer, 1, size, m_filePtr );
+	return fwrite(buffer, 1, size, m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
@@ -93,15 +94,15 @@ size_t DefaultFileWriter::Write( const void* buffer, size_t size )
 //----------------------------------------------------------------------------------
 void DefaultFileWriter::Flush()
 {
-	fflush( m_filePtr );
+	fflush(m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void DefaultFileWriter::Seek( int position )
+void DefaultFileWriter::Seek(int position)
 {
-	fseek( m_filePtr, (size_t)position, SEEK_SET );
+	fseek(m_filePtr, (size_t)position, SEEK_SET);
 }
 
 //----------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ void DefaultFileWriter::Seek( int position )
 //----------------------------------------------------------------------------------
 int DefaultFileWriter::GetPosition()
 {
-	return (int)ftell( m_filePtr );
+	return (int)ftell(m_filePtr);
 }
 
 //----------------------------------------------------------------------------------
@@ -117,61 +118,61 @@ int DefaultFileWriter::GetPosition()
 //----------------------------------------------------------------------------------
 size_t DefaultFileWriter::GetLength()
 {
-	long position = ftell( m_filePtr );
-	fseek( m_filePtr, 0, SEEK_END );
-	long length = ftell( m_filePtr );
-	fseek( m_filePtr, position, SEEK_SET );
+	long position = ftell(m_filePtr);
+	fseek(m_filePtr, 0, SEEK_END);
+	long length = ftell(m_filePtr);
+	fseek(m_filePtr, position, SEEK_SET);
 	return (size_t)length;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-FileReader* DefaultFileInterface::OpenRead( const EFK_CHAR* path )
+FileReader* DefaultFileInterface::OpenRead(const char16_t* path)
 {
-	FILE* filePtr = NULL;
+	FILE* filePtr = nullptr;
 #ifdef _WIN32
-	_wfopen_s( &filePtr, (const wchar_t*)path, L"rb" );
+	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
 #else
-	int8_t path8[256];
-	ConvertUtf16ToUtf8( path8, 256, (const int16_t*)path );
-	filePtr = fopen( (const char*)path8, "rb" );
+	char path8[256];
+	ConvertUtf16ToUtf8(path8, 256, path);
+	filePtr = fopen(path8, "rb");
 #endif
-	
-	if( filePtr == NULL )
+
+	if (filePtr == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
-	return new DefaultFileReader( filePtr );
+	return new DefaultFileReader(filePtr);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-FileWriter* DefaultFileInterface::OpenWrite( const EFK_CHAR* path )
+FileWriter* DefaultFileInterface::OpenWrite(const char16_t* path)
 {
-	FILE* filePtr = NULL;
+	FILE* filePtr = nullptr;
 #ifdef _WIN32
-	_wfopen_s( &filePtr, (const wchar_t*)path, L"wb" );
+	_wfopen_s(&filePtr, (const wchar_t*)path, L"wb");
 #else
-	int8_t path8[256];
-	ConvertUtf16ToUtf8( path8, 256, (const int16_t*)path );
-	filePtr = fopen( (const char*)path8, "wb" );
+	char path8[256];
+	ConvertUtf16ToUtf8(path8, 256, path);
+	filePtr = fopen(path8, "wb");
 #endif
-	
-	if( filePtr == NULL )
+
+	if (filePtr == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
-	return new DefaultFileWriter( filePtr );
+	return new DefaultFileWriter(filePtr);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
- } 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+} // namespace Effekseer
+  //----------------------------------------------------------------------------------
+  //
+  //----------------------------------------------------------------------------------

@@ -4,8 +4,8 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.DeviceObject.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -15,32 +15,40 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-class VertexArray
-	: public DeviceObject
+class VertexArray : public DeviceObject
 {
 private:
-	GLuint					m_vertexArray;
+	GLuint m_vertexArray;
 
-	Shader*					m_shader;
-	VertexBuffer*			m_vertexBuffer;
-	IndexBuffer*			m_indexBuffer;
+	Shader* m_shader;
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer;
 
-	VertexArray(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
+	VertexArray(const Backend::GraphicsDeviceRef& graphicsDevice, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer);
 
 public:
 	virtual ~VertexArray();
 
 	static VertexArray*
-	Create(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
+	Create(const Backend::GraphicsDeviceRef& graphicsDevice, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer);
 
-	GLuint GetInterface() const { return m_vertexArray; }
+	GLuint GetInterface() const
+	{
+		return m_vertexArray;
+	}
 
-	VertexBuffer* GetVertexBuffer() { return m_vertexBuffer; }
-	IndexBuffer* GetIndexBuffer() { return m_indexBuffer; }
+	VertexBuffer* GetVertexBuffer()
+	{
+		return m_vertexBuffer;
+	}
+	IndexBuffer* GetIndexBuffer()
+	{
+		return m_indexBuffer;
+	}
 
-public:	// デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
+public:
+	void OnLostDevice() override;
+	void OnResetDevice() override;
 
 private:
 	void Init();
@@ -50,7 +58,7 @@ private:
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+} // namespace EffekseerRendererGL
+  //-----------------------------------------------------------------------------------
+  //
+  //-----------------------------------------------------------------------------------

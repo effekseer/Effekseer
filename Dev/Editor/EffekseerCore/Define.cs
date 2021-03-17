@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -116,6 +116,40 @@ namespace Effekseer
             return string.Empty;
         }
     }
+
+	/// <summary>
+	/// attribute for parameter's key
+	/// </summary>
+	[AttributeUsage(
+	AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method,
+	AllowMultiple = true,
+	Inherited = false)]
+	public class KeyAttribute : Attribute
+	{
+		static KeyAttribute()
+		{
+		}
+
+		public string key
+		{
+			get;
+			set;
+		}
+
+
+		public static string GetKey(object[] attributes)
+		{
+			if (attributes != null && attributes.Length > 0)
+			{
+				foreach (var attribute in attributes.OfType<KeyAttribute>())
+				{
+					if (!String.IsNullOrEmpty(attribute.key)) return attribute.key;
+				}
+			}
+
+			return null;
+		}
+	}
 
 	/// <summary>
 	/// attribute for parameter's name
@@ -279,10 +313,10 @@ namespace Effekseer
 	{
 		public IconAttribute()
 		{
-			resourceName = string.Empty;
+			code = String.Empty;
 		}
 
-		public string resourceName
+		public string code
 		{
 			get;
 			set;
@@ -349,4 +383,12 @@ namespace Effekseer
             return new Tuple35<TV1, TV2>(t1, t2);
         }
     }
+
+	public class FileLoadPermissionException : Exception
+	{
+		public FileLoadPermissionException(string message) : base(message)
+		{
+
+		}
+	}
 }

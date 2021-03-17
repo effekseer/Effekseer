@@ -50,8 +50,16 @@ namespace EffekseerSound
 /**
 	@brief	サウンドデータ
 */
-struct SoundData
+class SoundData : public ::Effekseer::SoundData
 {	
+public:
+	int32_t GetChannels() const { return channels; }
+	int32_t GetSampleRate() const { return sampleRate; }
+	const IDirectSoundBuffer8* GetBuffer() const { return buffer; }
+
+private:
+	friend class SoundLoader;
+
 	/**
 		@brief	チャンネル数。
 	*/
@@ -67,11 +75,15 @@ struct SoundData
 	*/
 	IDirectSoundBuffer8* buffer;
 };
+using SoundDataRef = ::Effekseer::RefPtr<SoundData>;
 
 /**
 	@brief	サウンドクラス
 */
-class Sound
+class Sound;
+using SoundRef = Effekseer::RefPtr<Sound>;
+
+class Sound : public Effekseer::IReference
 {
 protected:
 	Sound() {}
@@ -83,7 +95,7 @@ public:
 		@param	dsound	[in]	DirectSound8のデバイス
 		@return	インスタンス
 	*/
-	static Sound* Create( IDirectSound8* dsound );
+	static SoundRef Create( IDirectSound8* dsound );
 	
 	/**
 		@brief	このインスタンスを破棄する。
@@ -99,12 +111,12 @@ public:
 	/**
 		@brief	サウンドプレイヤを生成する。
 	*/
-	virtual ::Effekseer::SoundPlayer* CreateSoundPlayer() = 0;
+	virtual ::Effekseer::SoundPlayerRef CreateSoundPlayer() = 0;
 
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoader* CreateSoundLoader() = 0;
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader(::Effekseer::FileInterface* fileInterface) = 0;
 	
 	/**
 		@brief	全発音を停止

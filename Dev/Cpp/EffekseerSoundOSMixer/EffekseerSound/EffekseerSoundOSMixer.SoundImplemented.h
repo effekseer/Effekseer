@@ -18,20 +18,15 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-using SoundData = osm::Sound;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-class SoundImplemented : public Sound
+class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
 public:
 	struct Instance
 	{
 		int32_t id;
 		Effekseer::SoundTag tag;
-		SoundData* data;
+		Effekseer::SoundDataRef data;
 	};
 
 	struct Listener
@@ -62,9 +57,9 @@ public:
 	
 	void Update();
 
-	::Effekseer::SoundPlayer* CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer();
 
-	::Effekseer::SoundLoader* CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
 	
 	void StopAll();
 
@@ -82,11 +77,25 @@ public:
 	
 	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
 
-	void StopData( SoundData* soundData );
+	void StopData( const ::Effekseer::SoundDataRef& soundData );
 
 	void Calculate3DSound( const ::Effekseer::Vector3D& position, 
 		float rolloffDistance, float& rolloff, float& pan );
+
+	virtual int GetRef() override
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
+using SoundImplementedRef = ::Effekseer::RefPtr<SoundImplemented>;
 
 //----------------------------------------------------------------------------------
 //

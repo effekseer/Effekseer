@@ -1,10 +1,22 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.15)
+
 project(Viewer CXX)
 
 # For Mac
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 endif()
+
+if (MSVC)
+    if(USE_MSVC_RUNTIME_LIBRARY_DLL)
+        cmake_policy(SET CMP0091 NEW)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    else()
+        cmake_policy(SET CMP0091 NEW)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
+endif()
+
 
 FILE(GLOB hs
 	3rdParty/imgui/*.h
@@ -26,18 +38,32 @@ FILE(GLOB cpps
 	*.cxx
 )
 
+list(APPEND cpps
+    RenderedEffectGenerator.cpp
+	Graphics/CommandList.cpp
+    Graphics/RenderPass.cpp
+	Graphics/StaticMeshRenderer.cpp
+    Recorder/Recorder.cpp
+)
+
+list(APPEND hs
+    RenderedEffectGenerator.h
+	Graphics/CommandList.h
+    Graphics/RenderPass.h
+	Graphics/StaticMeshRenderer.h
+    Recorder/Recorder.h
+)
+
 # OS Dependency
 if (WIN32)
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
-	3rdParty/Boxer/boxer.h
 )
 
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_win.cpp
-	3rdParty/Boxer/boxer_win.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	3rdParty/imgui_platform/imgui_impl_dx11.cpp
@@ -48,13 +74,11 @@ elseif(APPLE)
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
-	3rdParty/Boxer/boxer.h
 )
 
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_cocoa.m
-	3rdParty/Boxer/boxer_osx.mm
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 )
@@ -64,13 +88,11 @@ else()
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
-	3rdParty/Boxer/boxer.h
 )
 
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_gtk.c
-	3rdParty/Boxer/boxer_linux.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 )
@@ -105,26 +127,6 @@ list(APPEND cpps ${cpps_g})
 FilterFolder("${hs}")
 FilterFolder("${cpps}")
 
-# MSVC Flag
-if (MSVC)
-	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-		foreach (flag CMAKE_C_FLAGS
-			CMAKE_C_FLAGS_DEBUG
-			CMAKE_C_FLAGS_RELEASE
-			CMAKE_CXX_FLAGS
-			CMAKE_CXX_FLAGS_DEBUG
-			CMAKE_CXX_FLAGS_RELEASE)
-
-			if (${flag} MATCHES "/MD")
-				string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-			endif()
-			if (${flag} MATCHES "/MDd")
-				string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-			endif()
-		endforeach()
-	endif()
-endif()
-
 include_directories(
 	${EFK_THIRDPARTY_INCLUDES}
 	3rdParty/imgui/
@@ -145,6 +147,7 @@ target_link_libraries(
     Viewer
     PRIVATE
     EditorCommon
+    Boxer
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
     debug "${GD_LIB_DEBUG}"
@@ -162,13 +165,18 @@ add_dependencies(Viewer
 	ExternalProject_glfw 
 	ExternalProject_OpenSoundMixer)
 
-if(NOT APPLE)
+if(WIN32)
     add_dependencies(Viewer ExternalProject_glew)
 endif()
 
 link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
 )
+
+
+if(CLANG_FORMAT_ENABLED)
+    clang_format(Viewer)
+endif()
 
 if (WIN32)
 
@@ -202,20 +210,21 @@ elseif(APPLE)
     target_link_libraries(
         Viewer
         PRIVATE
-        Effekseer
         EffekseerRendererGL
         EffekseerSoundOSMixer
+        Effekseer
         IPC
         OpenSoundMixer
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}
         ${COCOA_FRAMEWORK}
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
+        ${OPENGL_LIBRARIES}
         ${IOKIT_FRAMEWORK}
         ${CORE_FOUNDATION_FRAMEWORK}
         ${CORE_VIDEO_FRAMEWORK})
+
+    set_target_properties(Viewer PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 
 else()
 
@@ -241,12 +250,13 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 target_link_libraries(
 	Viewer
 	PRIVATE
-	Effekseer
 	EffekseerRendererGL
 	EffekseerSoundOSMixer
+	Effekseer
 	IPC
 	dl
 	OpenSoundMixer
+	stdc++fs
 	${OPENGL_LIBRARY}
 	${CMAKE_THREAD_LIBS_INIT}
 	${PulseAudio_LIBRARY}

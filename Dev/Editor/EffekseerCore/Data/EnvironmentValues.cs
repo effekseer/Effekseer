@@ -5,6 +5,21 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public class EnvironmentGroundValues
+	{
+		[Key(key = "EnvironmentGround_IsShown")]
+		[Undo(Undo = false)]
+		public Value.Boolean IsShown { get; private set; } = new Value.Boolean(false);
+
+		[Key(key = "EnvironmentGround_Height")]
+		[Undo(Undo = false)]
+		public Value.Float Height { get; private set; } = new Value.Float(0.0f, 1000.0f, -1000.0f);
+
+		[Key(key = "EnvironmentGround_Extent")]
+		[Undo(Undo = false)]
+		public Value.Int Extent { get; private set; } = new Value.Int(10, 1000, 1);
+	}
+
 	public class EnvironmentBackgroundValues
 	{
 		[Name(language = Language.Japanese, value = "背景色")]
@@ -34,7 +49,7 @@ namespace Effekseer.Data
 			{
 				if (LasyBackgroundImage == null)
 				{
-					LasyBackgroundImage = new Value.PathForImage(Resources.GetString("ImageFilter"), false, "");
+					LasyBackgroundImage = new Value.PathForImage(null, Resources.GetString("ImageFilter"), false, "");
 				}
 				return LasyBackgroundImage;
 			}
@@ -251,12 +266,19 @@ namespace Effekseer.Data
 	public class EnvironmentValues
 	{
 		[IO(Export = true, Import = true)]
+		[TreeNode(key ="Environment_Background", id = "Environment_Background")]
 		public EnvironmentBackgroundValues Background { get; private set; }
 
 		[IO(Export = true, Import = true)]
+		[TreeNode(key = "Environment_Ground", id = "Environment_Ground")]
+		public EnvironmentGroundValues Ground { get; private set; } = new EnvironmentGroundValues();
+
+		[IO(Export = true, Import = true)]
+		[TreeNode(key= "Environment_Lighting", id = "Environment_Lighting")]
 		public EnvironmentLightingValues Lighting { get; private set; }
 
 		[IO(Export = true, Import = true)]
+		[TreeNode(key = "Environment_PostEffect", id = "Environment_PostEffect")]
 		public EnvironmentPostEffectValues PostEffect { get; private set; }
 
 		public EnvironmentValues()

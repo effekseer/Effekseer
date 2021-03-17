@@ -4,7 +4,7 @@
 namespace EffekseerRendererLLGI
 {
 
-VertexBuffer::VertexBuffer(GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount)
+VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount)
 	: DeviceObject(graphicsDevice, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
 	, m_vertexRingOffset(0)
@@ -26,7 +26,7 @@ VertexBuffer::~VertexBuffer()
 	ES_SAFE_DELETE(lockedResource_);
 }
 
-VertexBuffer* VertexBuffer::Create(GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
+VertexBuffer* VertexBuffer::Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
 {
 	auto vertexBuffer = graphicsDevice->GetGraphics()->CreateVertexBuffer(size);
 	if (vertexBuffer == nullptr)
@@ -57,7 +57,7 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 	if (size > m_size)
 		return false;
 
-	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment* alignment;
+	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
 
 	if ((int32_t)m_vertexRingOffset + size > m_size)
 	{
@@ -119,7 +119,7 @@ void VertexBuffer::Unlock()
 		vertexBuffers[currentIndex]->Unlock();
 	}
 
-	m_resource = NULL;
+	m_resource = nullptr;
 	m_isLock = false;
 	m_ringBufferLock = false;
 }

@@ -10,6 +10,7 @@ add_library(
 
 target_link_libraries(
     EffekseerMaterialCompilerGL
+    PRIVATE 
     Effekseer
 )
 
@@ -44,6 +45,7 @@ add_library(
 
 target_link_libraries(
     EffekseerMaterialCompilerMetal
+    PRIVATE 
     Effekseer
 )
 
@@ -77,6 +79,7 @@ if(WIN32)
 
     target_link_libraries(
         EffekseerMaterialCompilerDX11
+        PRIVATE 
         Effekseer
     )
 
@@ -105,6 +108,7 @@ if(WIN32)
 
     target_link_libraries(
         EffekseerMaterialCompilerDX9
+        PRIVATE 
         Effekseer
     )
 
@@ -135,6 +139,7 @@ if(WIN32 AND BUILD_DX12)
 
     target_link_libraries(
         EffekseerMaterialCompilerDX12
+        PRIVATE 
         Effekseer
         LLGI
     )
@@ -207,4 +212,9 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
         DEBUG_POSTFIX ".Debug")
 
     set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER "Compiler") 
+endif()
+
+if(APPLE)
+    set_target_properties(EffekseerMaterialCompilerMetal PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+    set_target_properties(EffekseerMaterialCompilerGL PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 endif()

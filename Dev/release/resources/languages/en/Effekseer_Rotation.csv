@@ -1,0 +1,30 @@
+﻿Rotation_ParamaterType_Fixed_Name,Fixed Angle
+Rotation_ParamaterType_PVA_Name,PVA
+Rotation_ParamaterType_Easing_Name,Easing
+Rotation_ParamaterType_AxisPVA_Name,PVA (Arbitrary Axis)
+Rotation_ParamaterType_AxisEasing_Name,Easing (Arbitrary Axis)
+Rotation_ParamaterType_RotationFCurve_Name,Rotation (F-Curve)
+Rotation_FixedParamater_Rotation_Name,Angle
+Rotation_FixedParamater_Rotation_Desc,"Rotation of the instance, in degrees"
+Rotation_PVAParamater_Rotation_Name,Angle
+Rotation_PVAParamater_Rotation_Desc,"Initial rotation of the instance, in degrees"
+Rotation_PVAParamater_Velocity_Name,"Angular
+Velocity"
+Rotation_PVAParamater_Velocity_Desc,"Initial angular velocity of the instance, in degrees"
+Rotation_PVAParamater_Acceleration_Name,"Angular
+Accel"
+Rotation_PVAParamater_Acceleration_Desc,"Acceleration of the instance's angular velocity, in degrees"
+Rotation_AxisPVAParamater_Axis_Name,"Axis of
+Rotation"
+Rotation_AxisPVAParamater_Axis_Desc,Axis of rotation of the instance
+Rotation_AxisPVAParamater_Rotation_Name,Angle
+Rotation_AxisPVAParamater_Rotation_Desc,"Initial rotation of the instance, in degrees"
+Rotation_AxisPVAParamater_Velocity_Name,"Angular
+Velocity"
+Rotation_AxisPVAParamater_Velocity_Desc,"Initial angular velocity of the instance, in degrees"
+Rotation_AxisPVAParamater_Acceleration_Name,"Angular
+Accel"
+Rotation_AxisPVAParamater_Acceleration_Desc,"Acceleration of the instance's angular velocity, in degrees"
+Rotation_AxisEasingParamater_Axis_Name,"Axis of
+Rotation"
+Rotation_AxisEasingParamater_Axis_Desc,Axis of rotation of the instance

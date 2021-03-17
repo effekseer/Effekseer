@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public SoundValues()
 		{
-			Label = Resources.GetString("Sound") + "###Sound";
+			Label = Icons.PanelSound + Resources.GetString("Sound") + "###Sound";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.SoundValues));
@@ -30,7 +30,6 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("PanelSound");
 			TabToolTip = Resources.GetString("Sound");
 		}
 

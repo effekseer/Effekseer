@@ -1,0 +1,25 @@
+﻿Scale_FixedParamater_Scale_Name,"Scaling Factor"
+Scale_FixedParamater_Scale_Desc,"Magnification of the instance"
+Scale_PVAParamater_Scale_Name,"Scaling Factor"
+Scale_PVAParamater_Scale_Desc,"Magnification of the instance"
+Scale_PVAParamater_Velocity_Name,"Expansion
+Speed"
+Scale_PVAParamater_Velocity_Desc,"The instance's initial rate of expansion"
+Scale_PVAParamater_Acceleration_Name,"Expansion
+Accel"
+Scale_PVAParamater_Acceleration_Desc,"Acceleration of the instance's expansion rate"
+Scale_SinglePVAParamater_Scale_Name,"Scaling Factor"
+Scale_SinglePVAParamater_Scale_Desc,"Magnification of the instance"
+Scale_SinglePVAParamater_Velocity_Name,"Expansion
+Speed"
+Scale_SinglePVAParamater_Velocity_Desc,"The instance's initial rate of expansion"
+Scale_SinglePVAParamater_Acceleration_Name,"Expansion
+Accel"
+Scale_SinglePVAParamater_Acceleration_Desc,"Acceleration of the instance's expansion rat"
+Scale_ParamaterType_Fixed_Name,Fixed Scale
+Scale_ParamaterType_PVA_Name,PVA
+Scale_ParamaterType_Easing_Name,Easing
+Scale_ParamaterType_FCurve_Name,F-Curve
+Scale_ParamaterType_SinglePVA_Name,PVA (Single)
+Scale_ParamaterType_SingleEasing_Name,Easing (Single)
+Scale_ParamaterType_SingleFCurve_Name,F-Curve (Single)

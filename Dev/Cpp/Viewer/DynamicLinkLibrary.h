@@ -6,8 +6,8 @@
 #ifdef _WIN32
 #include <Windows.h>
 #else
-#include <dlfcn.h>
 #include <cstddef>
+#include <dlfcn.h>
 #endif
 
 /**
@@ -39,14 +39,15 @@ public:
 	/**
 		@brief get a function pointer
 	*/
-	template <typename T> T GetProc(const char* name)
+	template <typename T>
+	T GetProc(const char* name)
 	{
 #if _WIN32
 		void* pProc = ::GetProcAddress(dll_, name);
 #else
 		void* pProc = dlsym(dll_, name);
 #endif
-		if (pProc == NULL)
+		if (pProc == nullptr)
 		{
 			return nullptr;
 		}

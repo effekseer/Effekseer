@@ -1,0 +1,64 @@
+﻿Options_RenderingMode_Name,Render Mode
+Options_RenderingMode_Desc,Render Mode of effects
+Options_ViewerMode_Name,View Mode
+Options_ViewerMode_Desc,View Mode of effect viewer.
+Options_GridColor_Name,Grid Color
+Options_GridColor_Desc,Color of the grid
+Options_IsGridShown_Name,Grid Visibility
+Options_IsGridShown_Desc,Toggle the visibility of the grid
+Options_IsXYGridShown_Name,X-Y Grid Visibility
+Options_IsXYGridShown_Desc,Toggle the visibility of the grid along the X-Y axes
+Options_IsXZGridShown_Name,X-Z Grid Visibility
+Options_IsXZGridShown_Desc,Toggle the visibility of the grid along the X-Z axes
+Options_IsYZGridShown_Name,Y-Z Grid Visibility
+Options_IsYZGridShown_Desc,Toggle the visibility of the grid along the Y-Z axes
+Options_GridLength_Name,Grid Size
+Options_GridLength_Desc,Dimensions of the displayed grid
+Options_Magnification_Name,Output Magnification
+Options_Magnification_Desc,Output magnification
+Options_ExternalMagnification_Name,Output Magnification
+Options_ExternalMagnification_Desc,Output magnification
+Options_FPS_Name,Output FPS
+Options_FPS_Desc,Output FPS
+Options_Coordinate_Name,Coordinate System
+Options_Coordinate_Desc,Coordinate system to use
+Options_ColorSpace_Name,Color Space
+Options_ColorSpace_Desc,Color Space
+Options_Font_Name,Font
+Options_Font_Desc,Font
+Options_FontSize_Name,Font size
+Options_FontSize_Desc,Font size
+Options_MouseRotInvX_Name,Mouse Rotation (X)
+Options_MouseRotInvX_Desc,Invert the rotation about the X-axis
+Options_MouseRotInvY_Name,Mouse Rotation (Y)
+Options_MouseRotInvY_Desc,Invert the rotation about the Y-axis
+Options_MouseSlideInvX_Name,Mouse Panning (X)
+Options_MouseSlideInvX_Desc,Invert the pan direction about the X-axis
+Options_MouseSlideInvY_Name,Mouse Panning (Y)
+Options_MouseSlideInvY_Desc,Invert the pan direction about the Y-axis
+Options_LanguageSelector_Name,Language
+Options_LanguageSelector_Desc,Langueage
+Options_DistortionType_Name,Distortion method
+Options_DistortionType_Desc,Distortion method
+Options_MouseMappingType_Name,Mouse mapping
+RenderMode_Normal_Name,Normal
+RenderMode_Wireframe_Name,Wireframe
+ViewMode_3D_Name,3D
+ViewMode_2D_Name,2D
+FPSType_60FPS_Name,60 FPS
+FPSType_30FPS_Name,30 FPS
+FPSType_20FPS_Name,20 FPS
+FPSType_15FPS_Name,15 FPS
+CoordinateType_Right_Name,Right-Handed
+CoordinateType_Left_Name,Left-Handed
+ColorSpaceType_GammaSpace_Name,GammaSpace
+ColorSpaceType_LinearSpace_Name,LinearSpace
+FontType_Normal_Name,Normal
+FontType_Bold_Name,Bold
+DistortionMethodType_Current_Name,Current
+DistortionMethodType_Effekseer120_Name,1.20 Compatible
+DistortionMethodType_Disabled_Name,Disabled
+MouseMappingType_Effekseer_Name,Effekseer
+MouseMappingType_Unity_Name,Unity
+MouseMappingType_Blender_Name,Blender
+MouseMappingType_Maya_Name,Maya

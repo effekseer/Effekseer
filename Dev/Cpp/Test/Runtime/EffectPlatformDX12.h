@@ -5,28 +5,12 @@
 
 class EffectPlatformDX12 final : public EffectPlatformLLGI
 {
-private:
-	void CreateCheckedTexture();
-
-	EffekseerRenderer::CommandList* commandListEfk_ = nullptr;
-	EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk_ = nullptr;
-
-	LLGI::RenderPass* renderPass_ = nullptr;
-	LLGI::Texture* colorBuffer_ = nullptr;
-	LLGI::Texture* depthBuffer_ = nullptr;
-	LLGI::Shader* shader_vs_ = nullptr;
-	LLGI::Shader* shader_ps_ = nullptr;
-	LLGI::VertexBuffer* vb_ = nullptr;
-	LLGI::IndexBuffer* ib_ = nullptr;
-	LLGI::PipelineState* pip_ = nullptr;
-	LLGI::RenderPassPipelineState* rppip_ = nullptr;
-	LLGI::Texture* checkTexture_ = nullptr;
-
 protected:
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	void CreateShaders() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
-	EffectPlatformDX12() : EffectPlatformLLGI() {}
+	EffectPlatformDX12() : EffectPlatformLLGI(LLGI::DeviceType::DirectX12) {}
 
 	virtual ~EffectPlatformDX12();
 

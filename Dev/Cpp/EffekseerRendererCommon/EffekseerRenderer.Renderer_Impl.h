@@ -1,7 +1,6 @@
 #ifndef __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 #define __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 
-#include <Effekseer.Internal.h>
 #include <Effekseer.h>
 
 #include "EffekseerRenderer.Renderer.h"
@@ -9,17 +8,17 @@
 namespace EffekseerRenderer
 {
 
-class Renderer::Impl : public ::Effekseer::AlignedAllocationPolicy<16>
+class Renderer::Impl final : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 private:
-	::Effekseer::Mat44f projectionMat_;
-	::Effekseer::Mat44f cameraMat_;
-	::Effekseer::Mat44f cameraProjMat_;
+	::Effekseer::SIMD::Mat44f projectionMat_;
+	::Effekseer::SIMD::Mat44f cameraMat_;
+	::Effekseer::SIMD::Mat44f cameraProjMat_;
 
-	::Effekseer::Vec3f cameraPosition_;
-	::Effekseer::Vec3f cameraFrontDirection_;
+	::Effekseer::SIMD::Vec3f cameraPosition_{0.0f, 0.0f, 0.0f};
+	::Effekseer::SIMD::Vec3f cameraFrontDirection_{0.0f, 0.0f, 1.0f};
 
-	::Effekseer::Vec3f lightDirection_ = ::Effekseer::Vec3f(1.0f, 1.0f, 1.0f);
+	::Effekseer::SIMD::Vec3f lightDirection_ = ::Effekseer::SIMD::Vec3f(1.0f, 1.0f, 1.0f);
 	::Effekseer::Color lightColor_ = ::Effekseer::Color(255, 255, 255, 255);
 	::Effekseer::Color lightAmbient_ = ::Effekseer::Color(40, 40, 40, 255);
 
@@ -29,13 +28,26 @@ private:
 
 	Effekseer::RenderMode renderMode_ = Effekseer::RenderMode::Normal;
 
-	::Effekseer::TextureData* whiteProxyTexture_ = nullptr;
-	::Effekseer::TextureData* normalProxyTexture_ = nullptr;
+	::Effekseer::Backend::TextureRef whiteProxyTexture_;
+	::Effekseer::Backend::TextureRef normalProxyTexture_;
+
+	::Effekseer::Backend::TextureRef backgroundTexture_;
+	::Effekseer::Backend::TextureRef depthTexture_;
+	DepthReconstructionParameter reconstructionParam_;
+
+	void SetCameraParameterInternal(const ::Effekseer::SIMD::Vec3f& front, const ::Effekseer::SIMD::Vec3f& position);
 
 public:
 	int32_t drawcallCount = 0;
 	int32_t drawvertexCount = 0;
 	bool isRenderModeValid = true;
+	bool isSoftParticleEnabled = false;
+
+	Effekseer::RefPtr<Effekseer::RenderingUserData> CurrentRenderingUserData;
+	void* CurrentHandleUserData = nullptr;
+
+	Impl() = default;
+	~Impl();
 
 	::Effekseer::Vector3D GetLightDirection() const;
 
@@ -71,7 +83,7 @@ public:
 
 	void DeleteProxyTextures(Renderer* renderer);
 
-	::Effekseer::TextureData* GetProxyTexture(EffekseerRenderer::ProxyTextureType type);
+	::Effekseer::Backend::TextureRef GetProxyTexture(EffekseerRenderer::ProxyTextureType type);
 
 	UVStyle GetTextureUVStyle() const;
 
@@ -96,6 +108,14 @@ public:
 	Effekseer::RenderMode GetRenderMode() const;
 
 	void SetRenderMode(Effekseer::RenderMode renderMode);
+
+	const ::Effekseer::Backend::TextureRef& GetBackground();
+
+	void SetBackground(::Effekseer::Backend::TextureRef texture);
+
+	void GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam);
+
+	void SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
 };
 
 } // namespace EffekseerRenderer

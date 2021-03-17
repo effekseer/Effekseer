@@ -8,6 +8,7 @@ class EffectPlatformDX11 final : public EffectPlatformGLFW
 private:
 	ID3D11Device* device_ = nullptr;
 	ID3D11DeviceContext* context_ = nullptr;
+	ID3D11DeviceContext* defferedContext_ = nullptr;
 	IDXGIDevice1* dxgiDevice_ = nullptr;
 	IDXGIAdapter* adapter_ = nullptr;
 	IDXGIFactory* dxgiFactory_ = nullptr;
@@ -18,13 +19,19 @@ private:
 	ID3D11DepthStencilView* depthStencilView_ = nullptr;
 	ID3D11Texture2D* checkedTexture_ = nullptr;
 
+	bool isDefferedContextMode_ = true;
+
 	void CreateCheckedTexture();
 
 protected:
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
-	EffectPlatformDX11() : EffectPlatformGLFW(false) {}
+	EffectPlatformDX11(bool isDefferedContextMode = false)
+		: EffectPlatformGLFW(false)
+		, isDefferedContextMode_(isDefferedContextMode)
+	{
+	}
 
 	~EffectPlatformDX11();
 

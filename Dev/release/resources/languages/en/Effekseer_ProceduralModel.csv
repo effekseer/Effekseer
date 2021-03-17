@@ -1,0 +1,85 @@
+﻿ProceduralModel_Name,Procedural model
+
+ProceduralModelType_Mesh_Name,Mesh
+ProceduralModelType_Ribbon_Name,Ribbon
+
+ProceduralModelPrimitiveType_Sphere_Name,Sphere
+ProceduralModelPrimitiveType_Cone_Name,Cone
+ProceduralModelPrimitiveType_Cylinder_Name,Cylinder
+ProceduralModelPrimitiveType_Spline_Name,Spline
+
+ProceduralModelCrossSectionType_Plane_Name,Plane
+ProceduralModelCrossSectionType_Cross_Name,Cross
+ProceduralModelCrossSectionType_Point_Name,Point
+
+PM_Type_Name,Type
+PM_AngleBeginEnd_Name,Region(Angle)
+PM_Divisions_Name,Division
+PM_Rotate_Name,Rotated angle
+PM_Vertices_Name,The number of vertices
+PM_Count_Name,The number of ribbons
+PM_RibbonScales_Name,Thiness of ribbon
+PM_RibbonAngles_Name,Angles of ribbon
+PM_RibbonNoises_Name,Noises to length
+
+PM_Shape_Name,Shape
+
+PM_PrimitiveType_Name,Shape Type
+PM_Radius_Name,Radius1
+PM_Radius2_Name,Radius2
+PM_Depth_Name,Depth
+PM_DepthMin_Name,Depth(Bottom)
+PM_DepthMax_Name,Depth(Top)
+
+PM_Point1_Name,Point1
+PM_Point2_Name,Point2
+PM_Point3_Name,Point3
+PM_Point4_Name,Point4
+
+PM_AxisType_Name,Axis
+
+PM_ShapeNoise_Name,Shape Noise
+
+PM_TiltNoiseFreq_Name,TiltNoise Frequency
+PM_TiltNoiseOffset_Name,TiltNoise Offset
+PM_TiltNoisePower_Name,TiltNoise Power
+
+PM_WaveNoiseFreq_Name,WaveNoise Frequency
+PM_WaveNoiseOffset_Name,WaveNoise Offset
+PM_WaveNoisePower_Name,WaveNoise Power
+
+PM_CurlNoiseFreq_Name,CurlNoise Frequency
+PM_CurlNoiseOffset_Name,CurlNoise Offset
+PM_CurlNoisePower_Name,CurlNoise Power
+
+PM_VertexColor_Name,Vertex Color
+
+PM_ColorLeft_Name,Color-Left
+PM_ColorCenter_Name,Color-Center
+PM_ColorRight_Name,Color-Right
+PM_ColorLeftMiddle_Name,Color-LeftMiddle
+PM_ColorCenterMiddle_Name,Color-CenterMiddle
+PM_ColorRightMiddle_Name,Color-RightMiddle
+
+PM_ColorUpperLeft_Name,Color-UpperLeft
+PM_ColorUpperCenter_Name,Color-UpperMiddle
+PM_ColorUpperRight_Name,Color-UpperRight
+PM_ColorMiddleLeft_Name,Color-MiddleLeft
+PM_ColorMiddleCenter_Name,Color-MiddleMiddle
+PM_ColorMiddleRight_Name,Color-MiddleRight
+PM_ColorLowerLeft_Name,Color-LowerLeft
+PM_ColorLowerCenter_Name,Color-LowerMiddle
+PM_ColorLowerRight_Name,Color-LowerRight
+
+PM_ColorCenterPosition_Name,Position of center area
+PM_ColorCenterArea_Name,Rate of center area
+
+PM_VertexColorNoise_Name,Vertex Color Noise
+
+PM_VertexColorNoiseFreq_Name,VertexColorNoise Frequency
+PM_VertexColorNoiseOffset_Name,VertexColorNoise Offset
+PM_VertexColorNoisePower_Name,VertexColorNoise Power
+
+PM_UV_Name,UV
+PM_UVPosition_Name,UV Position
+PM_UVSize_Name,UV Size

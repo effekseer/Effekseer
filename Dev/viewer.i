@@ -54,6 +54,7 @@ class"
 
 %apply bool *INOUT { bool* p_open }
 %apply bool *INOUT { bool* p_selected }
+%apply bool *INOUT { bool* p_checked }
 
 %apply int INOUT[] { int* v_current_min }
 %apply int INOUT[] { int* v_current_max }
@@ -79,6 +80,8 @@ class"
 
 %apply uint8_t INOUT[] { uint8_t* kv_selected }
 
+%apply uint32_t *INOUT { uint32_t* outId1 }
+%apply uint32_t *INOUT { uint32_t* outId2 }
 %apply int *INOUT { int* size }
 %apply uint8_t INOUT[] { uint8_t* data }
 %apply uint8_t INOUT[] { uint8_t* data_output }
@@ -97,6 +100,7 @@ class"
 %include "Cpp/Viewer/efk.Base.h"
 %include "Cpp/Viewer/GUI/efk.Vec2.h"
 %include "Cpp/Viewer/GUI/efk.ImageResource.h"
+%include "Cpp/Viewer/ViewerEffectBehavior.h"
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"

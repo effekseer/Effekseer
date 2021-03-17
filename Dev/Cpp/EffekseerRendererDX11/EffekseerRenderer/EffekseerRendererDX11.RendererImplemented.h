@@ -1,14 +1,15 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_DX11_RENDERER_IMPLEMENTED_H__
-#define	__EFFEKSEERRENDERER_DX11_RENDERER_IMPLEMENTED_H__
+#ifndef __EFFEKSEERRENDERER_DX11_RENDERER_IMPLEMENTED_H__
+#define __EFFEKSEERRENDERER_DX11_RENDERER_IMPLEMENTED_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX11.Base.h"
-#include "EffekseerRendererDX11.Renderer.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRendererDX11.Base.h"
+#include "EffekseerRendererDX11.Renderer.h"
+#include "GraphicsDevice.h"
 
 #ifdef _MSC_VER
 #include <xmmintrin.h>
@@ -18,47 +19,46 @@ namespace EffekseerRendererDX11
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-using VertexDistortion = EffekseerRenderer::VertexDistortion;
+//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
-class OriginalState
-	: public ::Effekseer::AlignedAllocationPolicy<16>
+class OriginalState : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 private:
 	std::array<ID3D11SamplerState*, Effekseer::TextureSlotMax> m_samplers;
 
-	ID3D11BlendState*	m_blendState;
+	ID3D11BlendState* m_blendState;
 	std::array<float, Effekseer::TextureSlotMax> m_blendFactor;
 	UINT m_blendSampleMask;
 
-	ID3D11DepthStencilState*	m_depthStencilState;
-	UINT						m_depthStencilStateRef;
+	ID3D11DepthStencilState* m_depthStencilState;
+	UINT m_depthStencilStateRef;
 
-	ID3D11RasterizerState*		m_pRasterizerState;
+	ID3D11RasterizerState* m_pRasterizerState;
 
-	ID3D11Buffer*				m_vertexConstantBuffer;
-	ID3D11Buffer*				m_pixelConstantBuffer;
+	ID3D11Buffer* m_vertexConstantBuffer;
+	ID3D11Buffer* m_pixelConstantBuffer;
 
-	ID3D11VertexShader*			m_pVS;
-	ID3D11PixelShader*			m_pPS;
+	ID3D11VertexShader* m_pVS;
+	ID3D11PixelShader* m_pPS;
 
-	ID3D11InputLayout*			m_layout;
-	D3D11_PRIMITIVE_TOPOLOGY	m_topology;
+	ID3D11InputLayout* m_layout;
+	D3D11_PRIMITIVE_TOPOLOGY m_topology;
 
 	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> m_psSRVs;
 
-	ID3D11Buffer*				m_pVB;
-	UINT						m_vbStrides;
-	UINT						m_vbOffset;
+	ID3D11Buffer* m_pVB;
+	UINT m_vbStrides;
+	UINT m_vbOffset;
 
-	ID3D11Buffer*				m_pIB;
-	DXGI_FORMAT					m_ibFormat;
-	UINT						m_ibOffset;
+	ID3D11Buffer* m_pIB;
+	DXGI_FORMAT m_ibFormat;
+	UINT m_ibOffset;
 
 public:
 	OriginalState();
 	~OriginalState();
-	void SaveState(ID3D11Device* device, ID3D11DeviceContext* context );
-	void LoadState(ID3D11Device* device, ID3D11DeviceContext* context );
+	void SaveState(ID3D11Device* device, ID3D11DeviceContext* context);
+	void LoadState(ID3D11Device* device, ID3D11DeviceContext* context);
 	void ReleaseState();
 };
 
@@ -70,52 +70,58 @@ public:
 	@note
 	ツール向けの描画機能。
 */
-class RendererImplemented
-	: public Renderer
-	, public ::Effekseer::ReferenceObject
-	, public ::Effekseer::AlignedAllocationPolicy<16>
+class RendererImplemented;
+using RendererImplementedRef = ::Effekseer::RefPtr<RendererImplemented>;
+
+class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
-friend class DeviceObject;
+	friend class DeviceObject;
 
 private:
-	ID3D11Device*			m_device;
-	ID3D11DeviceContext*	m_context;
+	ID3D11Device* m_device;
+	ID3D11DeviceContext* m_context;
 
-	VertexBuffer*		m_vertexBuffer;
-	IndexBuffer*		m_indexBuffer;
-	IndexBuffer*		m_indexBufferForWireframe = nullptr;
-	int32_t				m_squareMaxCount;
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer;
+	IndexBuffer* m_indexBufferForWireframe = nullptr;
+	int32_t m_squareMaxCount;
 
-	Shader* m_shader = nullptr;
-	Shader* m_shader_distortion = nullptr;
-	Shader* m_shader_lighting = nullptr;
+	Shader* shader_unlit_ = nullptr;
+	Shader* shader_distortion_ = nullptr;
+	Shader* shader_lit_ = nullptr;
+	Shader* shader_ad_unlit_ = nullptr;
+	Shader* shader_ad_distortion_ = nullptr;
+	Shader* shader_ad_lit_ = nullptr;
+
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
 	// 座標系
-	::Effekseer::CoordinateSystem			m_coordinateSystem;
+	::Effekseer::CoordinateSystem m_coordinateSystem;
 
-	::EffekseerRenderer::RenderStateBase*	m_renderState;
+	::EffekseerRenderer::RenderStateBase* m_renderState;
 
-	Effekseer::TextureData					m_background;
-
-	std::set<DeviceObject*>	m_deviceObjects;
+	std::set<DeviceObject*> m_deviceObjects;
 
 	// ステート
-	OriginalState*	m_state;
+	OriginalState* m_state;
 
-	bool	m_restorationOfStates;
+	bool m_restorationOfStates;
 
-	D3D11_COMPARISON_FUNC	m_depthFunc;
+	::Effekseer::Backend::TextureRef m_backgroundDX11;
+
+	D3D11_COMPARISON_FUNC m_depthFunc;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+
+	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
 public:
 	/**
 		@brief	コンストラクタ
 	*/
-	RendererImplemented( int32_t squareMaxCount );
+	RendererImplemented(int32_t squareMaxCount);
 
 	/**
 		@brief	デストラクタ
@@ -129,8 +135,6 @@ public:
 		@brief	初期化
 	*/
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled);
-
-	void Destroy();
 
 	void SetRestorationOfStatesFlag(bool flag);
 
@@ -174,44 +178,39 @@ public:
 	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
-	::Effekseer::SpriteRenderer* CreateSpriteRenderer();
+	::Effekseer::SpriteRendererRef CreateSpriteRenderer();
 
 	/**
 		@brief	リボンレンダラーを生成する。
 	*/
-	::Effekseer::RibbonRenderer* CreateRibbonRenderer();
-	
+	::Effekseer::RibbonRendererRef CreateRibbonRenderer();
+
 	/**
 		@brief	リングレンダラーを生成する。
 	*/
-	::Effekseer::RingRenderer* CreateRingRenderer();
+	::Effekseer::RingRendererRef CreateRingRenderer();
 
 	/**
 		@brief	モデルレンダラーを生成する。
 	*/
-	::Effekseer::ModelRenderer* CreateModelRenderer();
+	::Effekseer::ModelRendererRef CreateModelRenderer();
 
 	/**
 		@brief	軌跡レンダラーを生成する。
 	*/
-	::Effekseer::TrackRenderer* CreateTrackRenderer();
+	::Effekseer::TrackRendererRef CreateTrackRenderer();
 
 	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
-	::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
 	/**
 		@brief	モデル読込クラスを生成する。
 	*/
-	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
-	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
-
-	/**
-	@brief	背景を取得する。
-	*/
-	Effekseer::TextureData* GetBackground() override;
+	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
 	/**
 		@brief	背景を設定する。
@@ -222,18 +221,25 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
+	{
+		return m_standardRenderer;
+	}
 
-	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
+	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t size);
-	void SetIndexBuffer( IndexBuffer* indexBuffer );
+	void SetIndexBuffer(IndexBuffer* indexBuffer);
 	void SetIndexBuffer(ID3D11Buffer* indexBuffer);
 
-	void SetLayout( Shader* shader );
-	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );
-	void DrawPolygon( int32_t vertexCount, int32_t indexCount);
+	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
+	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
 
-	Shader* GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const;
+	void SetLayout(Shader* shader);
+	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);
+	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
+	void DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount);
+
+	Shader* GetShader(::EffekseerRenderer::RendererShaderType type) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
@@ -241,24 +247,33 @@ public:
 
 	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
+	void SetTextures(Shader* shader, ::Effekseer::Backend::TextureRef* textures, int32_t count);
 
 	void ResetRenderState();
 
-	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
+	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
 
-	void DeleteProxyTexture(Effekseer::TextureData* data) override;
+	void ResetStateForDefferedContext() override;
 
-	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef()
+	{
+		return ::Effekseer::ReferenceObject::GetRef();
+	}
+	virtual int AddRef()
+	{
+		return ::Effekseer::ReferenceObject::AddRef();
+	}
+	virtual int Release()
+	{
+		return ::Effekseer::ReferenceObject::Release();
+	}
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_DX11_RENDERER_IMPLEMENTED_H__
+#endif // __EFFEKSEERRENDERER_DX11_RENDERER_IMPLEMENTED_H__

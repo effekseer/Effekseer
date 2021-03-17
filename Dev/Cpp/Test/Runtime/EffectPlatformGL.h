@@ -7,10 +7,14 @@ class EffectPlatformGL final : public EffectPlatformGLFW
 {
 private:
 protected:
-	EffekseerRenderer::Renderer* CreateRenderer() override;
+	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
-	EffectPlatformGL() : EffectPlatformGLFW(true) {}
+	EffectPlatformGL()
+		: EffectPlatformGLFW(true)
+	{
+		isBackgroundFlipped_ = true;
+	}
 
 	~EffectPlatformGL();
 

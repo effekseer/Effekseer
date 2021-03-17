@@ -29,12 +29,15 @@ class CustomTextureLoader : public ::Effekseer::TextureLoader
 private:
 	::Effekseer::FileInterface* fileInterface_;
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
+	::Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
 
 public:
 	// FileInterface is a binary loader. A behavior can be changed with a inheritance
 	// FileInterfaceはバイナリローダーです。振る舞いを継承により変更できます。
-	CustomTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) : fileInterface_(fileInterface)
+	CustomTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr) : fileInterface_(fileInterface)
 	{
+		graphicsDevice_ = graphicsDevice;
+
 		if (fileInterface_ == nullptr)
 		{
 			fileInterface_ = &defaultFileInterface_;
@@ -43,7 +46,7 @@ public:
 	virtual ~CustomTextureLoader() = default;
 
 public:
-	Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override
+	Effekseer::TextureRef Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override
 	{
 		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
 
@@ -62,7 +65,7 @@ public:
 			uint8_t* pixels = (uint8_t*)EffekseerUtils::stbi_load_from_memory(
 				(EffekseerUtils::stbi_uc const*)data_texture.data(), static_cast<int>(size_texture), &width, &height, &bpp, 0);
 			
-			if (width == 0 || bpp < 3)
+			if (width == 0 || bpp < 4)
 			{
 				// Not supported
 				EffekseerUtils::stbi_image_free(pixels);
@@ -71,49 +74,22 @@ public:
 
 			// Load a image to GPU actually. Please see a code of each backends if you want to know what should be returned
 			// 実際にGPUに画像を読み込む。何を返すべきか知りたい場合、、各バックエンドのコードを読んでください。
-			GLuint texture = 0;
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
+			::Effekseer::Backend::TextureParameter param;
+			param.Format = ::Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+			param.GenerateMipmap = true;
+			param.InitialData.assign(pixels, pixels + width * height * 4);
 
-	
-			if (bpp == 4)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-			}
-			else if (bpp == 3)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-			}
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-
-			auto textureData = new Effekseer::TextureData();
-			textureData->UserPtr = nullptr;
-			textureData->UserID = texture;
-			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-			textureData->Width = width;
-			textureData->Height = height;
-			textureData->HasMipmap = false;
-
-			EffekseerUtils::stbi_image_free(pixels);
-			return textureData;
+			auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
+			texture->SetBackend(graphicsDevice_->CreateTexture(param));
+			return texture;
 		}
 
 		return nullptr;
 	}
 
-	void Unload(Effekseer::TextureData* data) override
+	void Unload(Effekseer::TextureRef data) override
 	{
-		if (data != nullptr && data->UserPtr != nullptr)
-		{
-			GLuint texture = static_cast<GLuint>(data->UserID);
-			glDeleteTextures(1, &texture);
-		}
-
-		if (data != nullptr)
-		{
-			delete data;
-		}
+		// Do nothing
 	}
 };
 
@@ -143,7 +119,7 @@ int main(int argc, char** argv)
 	// The texture loader is extended by yourself.
 	// テクスチャ、モデル、マテリアルローダーの設定する。
 	// テクスチャローダーがで拡張されている。
-	manager->SetTextureLoader(new CustomTextureLoader());
+	manager->SetTextureLoader(::Effekseer::TextureLoaderRef(new CustomTextureLoader(renderer->GetGraphicsDevice())));
 	manager->SetModelLoader(renderer->CreateModelLoader());
 	manager->SetMaterialLoader(renderer->CreateMaterialLoader());
 
@@ -215,17 +191,13 @@ int main(int argc, char** argv)
 		time++;
 	}
 
-	// Release effects
-	// エフェクトの解放
-	ES_SAFE_RELEASE(effect);
-
 	// Dispose the manager
 	// マネージャーの破棄
-	manager->Destroy();
+	manager.Reset();
 
 	// Dispose the renderer
 	// レンダラーの破棄
-	renderer->Destroy();
+	renderer.Reset();
 
 	TerminateWindowAndDevice();
 

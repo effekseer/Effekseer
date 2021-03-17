@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Enum<T> : EnumBase where T : struct, IComparable, IFormattable, IConvertible
+	public class Enum<T> : EnumBase, IValueChangedFromDefault where T : struct, IComparable, IFormattable, IConvertible
 	{
 		T _value = default(T);
 

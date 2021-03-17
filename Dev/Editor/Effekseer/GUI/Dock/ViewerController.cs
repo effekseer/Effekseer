@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 	{
 		public ViewerController()
 		{
-			Label = Resources.GetString("ViewerControls") + "###ViewerControls";
+			Label = Icons.PanelViewerCtrl + Resources.GetString("ViewerControls") + "###ViewerControls";
 		}
 
 		protected override void UpdateInternal()

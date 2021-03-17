@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Color
+	public class Color : IValueChangedFromDefault
 	{
 		public Int R
 		{
@@ -215,5 +215,30 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.EndCollection();
 		}
 
+		public bool ValueEquals(object obj)
+		{
+			var o = obj as Color;
+			if (o == null)
+				return false;
+
+			if (R.Value != o.R.Value)
+				return false;
+
+			if (G.Value != o.G.Value)
+				return false;
+
+			if (B.Value != o.B.Value)
+				return false;
+
+			if (A.Value != o.A.Value)
+				return false;
+
+			return true;
+		}
+
+		public int GetValueHashCode()
+		{
+			return Utils.Misc.CombineHashCodes(new[] { R.Value.GetHashCode(), G.Value.GetHashCode(), B.Value.GetHashCode(), A.Value.GetHashCode() });
+		}
 	}
 }

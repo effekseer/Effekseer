@@ -12,12 +12,12 @@ namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBufferBase::VertexBufferBase( int size, bool isDynamic )
-	: m_isDynamic		( isDynamic )
-	, m_size			( size )
-	, m_offset			( 0 )
-	, m_resource		( NULL )
-	, m_isLock			( false )
+VertexBufferBase::VertexBufferBase(int size, bool isDynamic)
+	: m_isDynamic(isDynamic)
+	, m_size(size)
+	, m_offset(0)
+	, m_resource(nullptr)
+	, m_isLock(false)
 {
 }
 
@@ -31,10 +31,10 @@ VertexBufferBase::~VertexBufferBase()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void VertexBufferBase::Push( const void* buffer, int size )
+void VertexBufferBase::Push(const void* buffer, int size)
 {
-	assert( m_isLock );
-	memcpy( GetBufferDirect( size ), buffer, size );
+	assert(m_isLock);
+	memcpy(GetBufferDirect(size), buffer, size);
 }
 
 //-----------------------------------------------------------------------------------
@@ -56,24 +56,25 @@ int VertexBufferBase::GetSize() const
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void* VertexBufferBase::GetBufferDirect( int size )
+void* VertexBufferBase::GetBufferDirect(int size)
 {
-	assert( m_isLock );
-	if( m_offset + size > m_size ) return NULL;
+	assert(m_isLock);
+	if (m_offset + size > m_size)
+		return nullptr;
 
-	void* pBuffer = NULL;
+	void* pBuffer = nullptr;
 
 	// バッファに追記
 	pBuffer = m_resource + m_offset;
 	m_offset += size;
-	
+
 	return pBuffer;
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-}
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+} // namespace EffekseerRenderer
+  //-----------------------------------------------------------------------------------
+  //
+  //-----------------------------------------------------------------------------------

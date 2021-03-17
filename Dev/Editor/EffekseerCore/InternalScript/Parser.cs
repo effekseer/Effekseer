@@ -112,6 +112,7 @@ namespace Effekseer.InternalScript
 						var substitution = new SubstitutionExpression();
 						substitution.Target = lhs;
 						substitution.Value = rhs;
+						substitution.Line = token.Line;
 						sentences.Add(substitution);
 					}
 					else
@@ -203,19 +204,7 @@ namespace Effekseer.InternalScript
 
 				if (token != null)
 				{
-					if (token.Type == TokenType.Operator && (string)token.Value == "*")
-					{
-						Next();
-						var rhs = Group();
-
-						var ret = new BinOpExpression();
-						ret.Line = token.Line;
-						ret.Lhs = lhs;
-						ret.Rhs = rhs;
-						ret.Operator = (string)token.Value;
-						lhs = ret;
-					}
-					else if (token.Type == TokenType.Operator && (string)token.Value == "/")
+					if (token.Type == TokenType.Operator && ((string)token.Value == "*" || (string)token.Value == "/" || (string)token.Value == "%"))
 					{
 						Next();
 						var rhs = Group();

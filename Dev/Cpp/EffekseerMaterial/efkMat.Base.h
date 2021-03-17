@@ -21,6 +21,11 @@ namespace EffekseerMaterial
 {
 
 const int UserTextureSlotMax = 6;
+const int32_t CompiledMaterialVersion15 = 1;
+const int32_t CompiledMaterialVersion16 = 1610;
+
+const int32_t MaterialVersion15 = 3;
+const int32_t MaterialVersion16 = 1610;
 
 enum class TextureValueType
 {
@@ -54,6 +59,7 @@ enum class WarningType
 	DifferentSampler,
 	InvalidName,
 	SameName,
+	PixelNodeAndNormal,
 };
 
 enum class ValueType
@@ -124,6 +130,7 @@ enum class NodeType
 	SampleTexture,
 
 	Time,
+	EffectScale,
 	CameraPositionWS, //! 1500
 
 	VertexNormalWS,
@@ -140,6 +147,8 @@ enum class NodeType
 	Fresnel,
 	Rotator,
 	PolarCoords,
+	
+	DepthFade,
 
 	Comment,
 	Function, // Unimplemented
@@ -197,7 +206,7 @@ public:
 	{
 		std::vector<std::basic_string<T>> elems;
 
-		int32_t start = 0;
+		size_t start = 0;
 
 		for (size_t i = 0; i < s.size(); i++)
 		{

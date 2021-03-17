@@ -7,51 +7,39 @@ namespace Effekseer.Data
 {
 	public enum UVTextureReferenceTargetType
 	{
-		[Name(language = Language.Japanese, value = "なし(128x128)")]
-		[Name(language = Language.English, value = "None(128x128)")]
+		[Key(key= "UVTextureReferenceTargetType_None")]
 		None = 0,
-		[Name(language = Language.Japanese, value = "画像1")]
-		[Name(language = Language.English, value = "Image1")]
+		[Key(key = "UVTextureReferenceTargetType_Texture1")]
 		Texture1 = 1,
-		[Name(language = Language.Japanese, value = "画像2")]
-		[Name(language = Language.English, value = "Image2")]
+		[Key(key = "UVTextureReferenceTargetType_Texture2")]
 		Texture2 = 2,
-		[Name(language = Language.Japanese, value = "画像3")]
-		[Name(language = Language.English, value = "Image3")]
+		[Key(key = "UVTextureReferenceTargetType_Texture3")]
 		Texture3 = 3,
-		[Name(language = Language.Japanese, value = "画像4")]
-		[Name(language = Language.English, value = "Image4")]
+		[Key(key = "UVTextureReferenceTargetType_Texture4")]
 		Texture4 = 4,
 	}
 
 	public enum CustomDataType
 	{
-		[Name(language = Language.Japanese, value = "なし")]
-		[Name(language = Language.English, value = "None")]
+		[Key(key = "CustomDataType_None")]
 		None = 0,
 
-		[Name(language = Language.Japanese, value = "固定2")]
-		[Name(language = Language.English, value = "Fixed2")]
+		[Key(key = "CustomDataType_Fixed2D")]
 		Fixed2D = 20,
 
-		[Name(language = Language.Japanese, value = "ランダム2")]
-		[Name(language = Language.English, value = "Random2")]
+		[Key(key = "CustomDataType_Random2D")]
 		Random2D = 21,
 
-		[Name(language = Language.Japanese, value = "イージング2")]
-		[Name(language = Language.English, value = "Easing2")]
+		[Key(key = "CustomDataType_Easing2D")]
 		Easing2D = 22,
 
-		[Name(language = Language.Japanese, value = "Fカーブ2")]
-		[Name(language = Language.English, value = "FCurve2")]
+		[Key(key = "CustomDataType_FCurve2D")]
 		FCurve2D = 23,
 
-		[Name(language = Language.Japanese, value = "固定4")]
-		[Name(language = Language.English, value = "Fixed4")]
+		[Key(key = "CustomDataType_Fixed4D")]
 		Fixed4D = 40,
 
-		[Name(language = Language.Japanese, value = "Fカーブ色")]
-		[Name(language = Language.English, value = "FCurve-Color")]
+		[Key(key = "CustomDataType_FCurveColor")]
 		FCurveColor = 53,
 	}
 
@@ -160,8 +148,7 @@ namespace Effekseer.Data
 		string selfDetail = string.Empty;
 
 		[Shown(Shown = true)]
-		[Name(language = Language.Japanese, value = "パス")]
-		[Name(language = Language.English, value = "Path")]
+		[Key(key = "MaterialFileParameter_Path")]
 		public Value.PathForMaterial Path
 		{
 			get;
@@ -192,7 +179,7 @@ namespace Effekseer.Data
 		public MaterialFileParameter(RendererCommonValues rcValues)
 		{
 			this.rcValues = rcValues;
-			Path = new Value.PathForMaterial(Resources.GetString("MaterialFilter"), true);
+			Path = new Value.PathForMaterial(rcValues.BasePath, Resources.GetString("MaterialFilter"), true);
 			Path.OnChanged += Path_OnChanged;
 		}
 
@@ -347,6 +334,7 @@ namespace Effekseer.Data
 					};
 
 					ValueStatus status = null;
+					string defaultPath = Utils.Misc.GetAbsolutePath(Path.AbsolutePath, texture.DefaultPath);
 
 					var foundValue = FindValue(key.ToString(), usedValueStatuses, withNameFlag);
 					if (foundValue != null)
@@ -357,27 +345,27 @@ namespace Effekseer.Data
 							status.IsShown = texture.IsParam;
 							isChanged = true;
 						}
-
+						
 						// update default path
-						if(texture.IsParam)
+						if (texture.IsParam)
 						{
 							if ((foundValue.Value as Value.PathForImage).AbsolutePath == string.Empty)
 							{
-								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
+								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(defaultPath);
 								isChanged = true;
 							}
 
-							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(texture.DefaultPath);
+							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(defaultPath);
 						}
 						else
 						{
-							if((foundValue.Value as Value.PathForImage).AbsolutePath != texture.DefaultPath)
+							if((foundValue.Value as Value.PathForImage).AbsolutePath != defaultPath)
 							{
-								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
+								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(defaultPath);
 								isChanged = true;
 							}
 
-							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(texture.DefaultPath);
+							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(defaultPath);
 						}
 					}
 					else
@@ -386,15 +374,15 @@ namespace Effekseer.Data
 						if (!withNameFlag) continue;
 
 						status = new ValueStatus();
-						var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true, texture.DefaultPath);
+						var value = new Value.PathForImage(rcValues.BasePath, Resources.GetString("ImageFilter"), true, texture.DefaultPath);
 						status.Value = value;
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
 						valueStatuses.Add(status);
 
-						if(!string.IsNullOrEmpty(texture.DefaultPath))
+						if(!string.IsNullOrEmpty(defaultPath))
 						{
-							value.SetAbsolutePathDirectly(texture.DefaultPath);
+							value.SetAbsolutePathDirectly(defaultPath);
 						}
 
 						isChanged = true;
@@ -668,10 +656,13 @@ namespace Effekseer.Data
 
 				if(version > 0)
 				{
+					// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 					var labels = key.Split(' ');
 					status.Name = System.Net.WebUtility.UrlDecode(labels[0]);
 					status.UniformName = System.Net.WebUtility.UrlDecode(labels[1]);
 					status.Footer = labels[2];
+#endif
 					return status;
 				}
 				else
@@ -724,7 +715,12 @@ namespace Effekseer.Data
 
 			public override string ToString()
 			{
+				// TODO : rename to unity flag
+#if SCRIPT_ENABLED
 				return System.Net.WebUtility.UrlEncode(Name) + " " + System.Net.WebUtility.UrlEncode(UniformName) + " " + Footer;
+#else
+				return string.Empty;
+#endif
 			}
 		}
 
@@ -734,8 +730,7 @@ namespace Effekseer.Data
 	public class RendererCommonValues
 	{
 		[Selector(ID = 3)]
-		[Name(language = Language.Japanese, value = "マテリアル")]
-		[Name(language = Language.English, value = "Material")]
+		[Key(key = "BRS_Material")]
 		public Value.Enum<MaterialType> Material
 		{
 			get;
@@ -743,13 +738,14 @@ namespace Effekseer.Data
 		}
 
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
+		[Key(key = "BRS_EmissiveScaling")]
+		public Value.Float EmissiveScaling { get; private set; }
+
+		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "色/歪み画像")]
-		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
-		[Name(language = Language.English, value = "Texture")]
-		[Description(language = Language.English, value = "Image that represents color/distortion")]
-
+		[Key(key = "BRS_ColorTexture")]
 		public Value.PathForImage ColorTexture
 		{
 			get;
@@ -759,22 +755,17 @@ namespace Effekseer.Data
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "フィルタ")]
-		[Name(language = Language.English, value = "Filter")]
+		[Key(key = "BRS_Filter")]
 		public Value.Enum<FilterType> Filter { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Default)]
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "外側")]
-		[Name(language = Language.English, value = "Wrap")]
+		[Key(key = "BRS_Wrap")]
 		public Value.Enum<WrapType> Wrap { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "法線画像")]
-		[Description(language = Language.Japanese, value = "法線を表す画像")]
-		[Name(language = Language.English, value = "Normal Map")]
-		[Description(language = Language.English, value = "Image representing normal vectors")]
+		[Key(key = "BRS_NormalTexture")]
 		public Value.PathForImage NormalTexture
 		{
 			get;
@@ -782,18 +773,15 @@ namespace Effekseer.Data
 		}
 
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "フィルタ")]
-		[Name(language = Language.English, value = "Filter")]
+		[Key(key = "BRS_Filter2")]
 		public Value.Enum<FilterType> Filter2 { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[Name(language = Language.Japanese, value = "外側")]
-		[Name(language = Language.English, value = "Wrap")]
+		[Key(key = "BRS_Wrap2")]
 		public Value.Enum<WrapType> Wrap2 { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
-		[Name(language = Language.Japanese, value = "歪み強度")]
-		[Name(language = Language.English, value = "Distortion\nIntensity")]
+		[Key(key = "BRS_DistortionIntensity")]
 		public Value.Float DistortionIntensity { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.File)]
@@ -804,21 +792,17 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "ブレンド")]
-		[Name(language = Language.English, value = "Blend")]
+		[Key(key = "BRS_AlphaBlend")]
 		public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
-		[Name(language = Language.Japanese, value = "深度書き込み")]
-		[Name(language = Language.English, value = "Depth Set")]
+		[Key(key = "BRS_ZWrite")]
 		public Value.Boolean ZWrite { get; private set; }
 
-		[Name(language = Language.Japanese, value = "深度テスト")]
-		[Name(language = Language.English, value = "Depth Test")]
+		[Key(key = "BRS_ZTest")]
 		public Value.Boolean ZTest { get; private set; }
 
 		[Selector(ID = 0)]
-		[Name(language = Language.Japanese, value = "フェードイン")]
-		[Name(language = Language.English, value = "Fade-In")]
+		[Key(key = "BRS_FadeInType")]
 		public Value.Enum<FadeType> FadeInType
 		{
 			get;
@@ -842,8 +826,7 @@ namespace Effekseer.Data
 		}
 
 		[Selector(ID = 1)]
-		[Name(language = Language.Japanese, value = "フェードアウト")]
-		[Name(language = Language.English, value = "Fade-Out")]
+		[Key(key = "BRS_FadeOutType")]
 		public Value.Enum<FadeType> FadeOutType
 		{
 			get;
@@ -867,20 +850,19 @@ namespace Effekseer.Data
 		}
 
 		[Selector(ID = 2)]
-		[Name(language = Language.Japanese, value = "UV")]
-		[Name(language = Language.English, value = "UV")]
+		[Key(key = "BRS_UV")]
 		public Value.Enum<UVType> UV
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "参照画像")]
-		[Name(language = Language.English, value = "Referenced")]
 		[Selected(ID = 2, Value = 1)]
 		[Selected(ID = 2, Value = 2)]
 		[Selected(ID = 2, Value = 3)]
+		[Selected(ID = 2, Value = 4)]
 		[IO(Export = true)]
+		[Key(key = "BRS_UVTextureReferenceTarget")]
 		public Value.Enum<UVTextureReferenceTargetType> UVTextureReferenceTarget
 		{
 			get;
@@ -897,7 +879,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 2, Value = 2)]
 		[IO(Export = true)]
-		public UVAnimationParamater UVAnimation { get; private set; }
+		public UVAnimationSupportedFrameBlendParameter UVAnimation { get; private set; }
 
 		[Selected(ID = 2, Value = 3)]
 		[IO(Export = true)]
@@ -907,111 +889,36 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVFCurveParamater UVFCurve { get; private set; }
 
-		[Name(language = Language.Japanese, value = "色への影響")]
-		[Description(language = Language.Japanese, value = "親ノードからの色への影響")]
-		[Name(language = Language.English, value = "Inherit Color")]
-		[Description(language = Language.English, value = "When this instance should copy its parent node's color")]
+		[Key(key = "BRS_ColorInheritType")]
 		public Value.Enum<ParentEffectType> ColorInheritType
 		{
 			get;
 			private set;
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
-		[Selector(ID = 100)]
 		[IO(Export = true)]
-		[Name(language = Language.Japanese, value = "アルファ画像を有効")]
-		public Value.Boolean EnableAlphaTexture { get; private set; }
-
-		[IO(Export = true)]
-		[Selected(ID = 100, Value = 0)]
-		public AlphaTextureParameter AlphaTextureParam { get; private set; }
-
-		public class AlphaTextureParameter
-		{
-			[Name(language = Language.Japanese, value = "アルファ画像")]
-			[Name(language = Language.English, value = "α Texture")]
-			public Value.PathForImage Texture
-			{
-				get; private set;
-			}
-
-			[Name(language = Language.Japanese, value = "フィルタ(アルファ画像)")]
-			[Name(language = Language.English, value = "Filter(α Texture)")]
-			public Value.Enum<FilterType> Filter { get; private set; }
-
-			[Name(language = Language.Japanese, value = "外側(アルファ画像)")]
-			[Name(language = Language.English, value = "Wrap(α Texture)")]
-			public Value.Enum<WrapType> Wrap { get; private set; }
-
-			[Selector(ID = 101)]
-			[Name(language = Language.Japanese, value = "UV(アルファ画像)")]
-			[Name(language = Language.English, value = "UV(α Texture)")]
-			public Value.Enum<UVType> UV
-			{
-				get;
-				private set;
-			}
-
-			[Selected(ID = 101, Value = 0)]
-			[IO(Export = true)]
-			public UVDefaultParamater UVDefault { get; private set; }
-
-			[Selected(ID = 101, Value = 1)]
-			[IO(Export = true)]
-			public UVFixedParamater UVFixed { get; private set; }
-
-			[Selected(ID = 101, Value = 2)]
-			[IO(Export = true)]
-			public UVAnimationParamater UVAnimation { get; private set; }
-
-			[Selected(ID = 101, Value = 3)]
-			[IO(Export = true)]
-			public UVScrollParamater UVScroll { get; private set; }
-
-			[Selected(ID = 101, Value = 4)]
-			[IO(Export = true)]
-			public UVFCurveParamater UVFCurve { get; private set; }
-
-			public AlphaTextureParameter()
-			{
-				Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-				Filter = new Value.Enum<FilterType>(FilterType.Linear);
-				Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
-				UV = new Value.Enum<UVType>();
-				UVDefault = new UVDefaultParamater();
-				UVFixed = new UVFixedParamater();
-				UVAnimation = new UVAnimationParamater();
-				UVScroll = new UVScrollParamater();
-				UVFCurve = new UVFCurveParamater();
-			}
-		}
-
-		[Name(language = Language.Japanese, value = "アルファクランチ")]
-		[Name(language = Language.English, value = "Alpha Crunch")]
-		[IO(Export = true)]
-		public Value.Enum<AlphaCrunchType> AlphaCrunchTypeValue { get; private set; }
-#endif
-
-		[Name(language = Language.Japanese, value = "カスタムデータ")]
-		[Name(language = Language.English, value = "Custom data")]
-		[IO(Export = true)]
+		[Key(key = "BRS_CustomData1")]
 		public CustomDataParameter CustomData1 { get; private set; }
 
-		[Name(language = Language.Japanese, value = "カスタムデータ")]
-		[Name(language = Language.English, value = "Custom data")]
 		[IO(Export = true)]
+		[Key(key = "BRS_CustomData2")]
 		public CustomDataParameter CustomData2 { get; private set; }
-		internal RendererCommonValues()
+
+		internal Value.Path BasePath { get; private set; }
+
+		internal RendererCommonValues(Value.Path basepath)
 		{
+			BasePath = basepath;
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter(this);
 
-			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			EmissiveScaling = new Value.Float(1.0f, float.MaxValue, 0.0f);
+
+			ColorTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
 
-			NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			NormalTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
 			Filter2 = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap2 = new Value.Enum<WrapType>(WrapType.Repeat);
 
@@ -1031,7 +938,7 @@ namespace Effekseer.Data
 
 			UVDefault = new UVDefaultParamater();
 			UVFixed = new UVFixedParamater();
-			UVAnimation = new UVAnimationParamater();
+			UVAnimation = new UVAnimationSupportedFrameBlendParameter();
 			UVScroll = new UVScrollParamater();
 			UVFCurve = new UVFCurveParamater();
 
@@ -1041,13 +948,6 @@ namespace Effekseer.Data
 			ColorInheritType = new Value.Enum<ParentEffectType>(ParentEffectType.NotBind);
 
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
-
-#if __EFFEKSEER_BUILD_VERSION16__
-			EnableAlphaTexture = new Value.Boolean(false);
-			AlphaTextureParam = new AlphaTextureParameter();
-
-			AlphaCrunchTypeValue = new Value.Enum<AlphaCrunchType>(RendererCommonValues.AlphaCrunchType.None);
-#endif
 
 			CustomData1 = new CustomDataParameter(1);
 			CustomData2 = new CustomDataParameter(2);
@@ -1062,26 +962,17 @@ namespace Effekseer.Data
 
 		public class FadeInParamater
 		{
-			[Name(value = "フレーム数", language = Language.Japanese)]
-			[Description(language = Language.Japanese, value = "生成からフェードインが終了するまでのフレーム数")]
-			[Name(value = "Frame Count", language = Language.English)]
-			[Description(language = Language.English, value = "Duration in frames of the fade-in transition")]
+			[Key(key = "BRS_FadeIn_Frame")]
 			public Value.Float Frame { get; private set; }
 
-			[Name(language = Language.Japanese, value = "始点速度")]
-			[Description(language = Language.Japanese, value = "始点速度")]
-			[Name(language = Language.English, value = "Ease In")]
-			[Description(language = Language.English, value = "Initial speed (of the tween)")]
+			[Key(key = "BRS_FadeIn_StartSpeed")]
 			public Value.Enum<EasingStart> StartSpeed
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "終点速度")]
-			[Description(language = Language.Japanese, value = "終点速度")]
-			[Name(language = Language.English, value = "Ease Out")]
-			[Description(language = Language.English, value = "Final speed (of the tween)")]
+			[Key(key = "BRS_FadeIn_EndSpeed")]
 			public Value.Enum<EasingEnd> EndSpeed
 			{
 				get;
@@ -1098,26 +989,17 @@ namespace Effekseer.Data
 
 		public class FadeOutParamater
 		{
-			[Name(value = "フレーム数", language = Language.Japanese)]
-			[Description(language = Language.Japanese, value = "フェードアウトが開始してから終了するまでのフレーム数")]
-			[Name(value = "Frame Count", language = Language.English)]
-			[Description(language = Language.English, value = "Duration in frames of the fade-out transition")]
+			[Key(key = "BRS_FadeOut_Frame")]
 			public Value.Float Frame { get; private set; }
 
-			[Name(language = Language.Japanese, value = "始点速度")]
-			[Description(language = Language.Japanese, value = "始点速度")]
-			[Name(language = Language.English, value = "Ease In")]
-			[Description(language = Language.English, value = "Initial speed (of the tween)")]
+			[Key(key = "BRS_FadeOut_StartSpeed")]
 			public Value.Enum<EasingStart> StartSpeed
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "終点速度")]
-			[Description(language = Language.Japanese, value = "終点速度")]
-			[Name(language = Language.English, value = "Ease Out")]
-			[Description(language = Language.English, value = "Final speed (of the tween)")]
+			[Key(key = "BRS_FadeOut_EndSpeed")]
 			public Value.Enum<EasingEnd> EndSpeed
 			{
 				get;
@@ -1138,11 +1020,10 @@ namespace Effekseer.Data
 
 		public class UVFixedParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVFixedParamater_Start")]
 			public Value.Vector2D Start { get; private set; }
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+
+			[Key(key = "UVFixedParamater_Size")]
 			public Value.Vector2D Size { get; private set; }
 
 			public UVFixedParamater()
@@ -1154,37 +1035,26 @@ namespace Effekseer.Data
 
 		public class UVAnimationParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVAnimationParamater_Start")]
 			public Value.Vector2D Start { get; private set; }
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+
+			[Key(key = "UVAnimationParamater_Size")]
 			public Value.Vector2D Size { get; private set; }
 
-			[Name(value = "1枚あたりの時間", language = Language.Japanese)]
-			[Name(value = "Frame Length", language = Language.English)]
+			[Key(key = "UVAnimationParamater_FrameLength")]
 			public Value.IntWithInifinite FrameLength { get; private set; }
 
-			[Name(value = "横方向枚数", language = Language.Japanese)]
-			[Name(value = "X-Count", language = Language.English)]
+			[Key(key = "UVAnimationParamater_FrameCountX")]
 			public Value.Int FrameCountX { get; private set; }
 
-			[Name(value = "縦方向枚数", language = Language.Japanese)]
-			[Name(value = "Y-Count", language = Language.English)]
+			[Key(key = "UVAnimationParamater_FrameCountY")]
 			public Value.Int FrameCountY { get; private set; }
 
-			[Name(value = "ループ", language = Language.Japanese)]
-			[Name(value = "Loop", language = Language.English)]
+			[Key(key = "UVAnimationParamater_LoopType")]
 			public Value.Enum<LoopType> LoopType { get; private set; }
 
-			[Name(value = "開始枚数", language = Language.Japanese)]
-			[Name(value = "Start Sheet", language = Language.English)]
+			[Key(key = "UVAnimationParamater_StartSheet")]
 			public Value.IntWithRandom StartSheet { get; private set; }
-
-#if __EFFEKSEER_BUILD_VERSION16__
-			[Name(value = "アニメーション補間", language = Language.Japanese)]
-			public Value.Enum<FlipbookInterpolationType> FlipbookInterpolationType { get; private set; }
-#endif
 
 			public UVAnimationParamater()
 			{
@@ -1195,25 +1065,34 @@ namespace Effekseer.Data
 				FrameCountY = new Value.Int(1, int.MaxValue, 1);
 				LoopType = new Value.Enum<LoopType>(RendererCommonValues.LoopType.Once);
 				StartSheet = new Value.IntWithRandom(0, int.MaxValue, 0);
+			}
+		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
+		public class UVAnimationSupportedFrameBlendParameter
+		{
+			[IO(Export = true)]
+			public UVAnimationParamater AnimationParams { get; private set; }
+
+			[IO(Export = true)]
+			[Key(key = "UVAnimationSupportedFrameBlendParameter_Type")]
+			public Value.Enum<FlipbookInterpolationType> FlipbookInterpolationType { get; private set; }
+
+			public UVAnimationSupportedFrameBlendParameter() : base()
+			{
+				AnimationParams = new UVAnimationParamater();
 				FlipbookInterpolationType = new Value.Enum<FlipbookInterpolationType>(RendererCommonValues.FlipbookInterpolationType.None);
-#endif
 			}
 		}
 
 		public class UVScrollParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVScrollParamater_Start")]
 			public Value.Vector2DWithRandom Start { get; private set; }
 
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+			[Key(key = "UVScrollParamater_Size")]
 			public Value.Vector2DWithRandom Size { get; private set; }
 
-			[Name(value = "移動速度", language = Language.Japanese)]
-			[Name(value = "Scroll Speed", language = Language.English)]
+			[Key(key = "UVScrollParamater_Speed")]
 			public Value.Vector2DWithRandom Speed { get; private set; }
 
 			public UVScrollParamater()
@@ -1226,13 +1105,11 @@ namespace Effekseer.Data
 
 		public class UVFCurveParamater
 		{
-			[Name(value = "始点", language = Language.Japanese)]
-			[Name(value = "Start", language = Language.English)]
+			[Key(key = "UVFCurveParamater_Start")]
 			[IO(Export = true)]
 			public Value.FCurveVector2D Start { get; private set; }
 
-			[Name(value = "大きさ", language = Language.Japanese)]
-			[Name(value = "Size", language = Language.English)]
+			[Key(key = "UVFCurveParamater_Size")]
 			[IO(Export = true)]
 			public Value.FCurveVector2D Size { get; private set; }
 
@@ -1245,119 +1122,73 @@ namespace Effekseer.Data
 
 		public enum MaterialType : int
 		{
-			[Name(value = "標準", language = Language.Japanese)]
-			[Name(value = "Default", language = Language.English)]
+			[Key(key = "MaterialType_Default")]
 			Default = 0,
 
-			[Name(value = "歪み(背景)", language = Language.Japanese)]
-			[Name(value = "Distortion(Back)", language = Language.English)]
+			[Key(key = "MaterialType_BackDistortion")]
 			BackDistortion = 6,
 
-			[Name(value = "ライティング", language = Language.Japanese)]
-			[Name(value = "Lighting", language = Language.English)]
+			[Key(key = "MaterialType_Lighting")]
 			Lighting = 7,
 
-			[Name(value = "ファイル", language = Language.Japanese)]
-			[Name(value = "File", language = Language.English)]
+			[Key(key = "MaterialType_File")]
 			File = 128,
 		}
 		public enum FadeType : int
 		{
-			[Name(value = "有り", language = Language.Japanese)]
-			[Name(value = "Enabled", language = Language.English)]
+			[Key(key = "FadeType_Use")]
 			Use = 1,
-			[Name(value = "無し", language = Language.Japanese)]
-			[Name(value = "Disabled", language = Language.English)]
+			[Key(key = "FadeType_None")]
 			None = 0,
 		}
 
 		public enum FilterType : int
 		{
-			[Name(value = "最近傍", language = Language.Japanese)]
-			[Name(value = "Nearest-Neighbor", language = Language.English)]
+			[Key(key = "FilterType_Nearest")]
 			Nearest = 0,
-			[Name(value = "線形", language = Language.Japanese)]
-			[Name(value = "Linear Interpolation", language = Language.English)]
+			[Key(key = "FilterType_Linear")]
 			Linear = 1,
 		}
 
 		public enum WrapType : int
 		{
-			[Name(value = "繰り返し", language = Language.Japanese)]
-			[Name(value = "Repeat", language = Language.English)]
+			[Key(key = "WrapType_Repeat")]
 			Repeat = 0,
-			[Name(value = "クランプ", language = Language.Japanese)]
-			[Name(value = "Clamp", language = Language.English)]
+			[Key(key = "WrapType_Clamp")]
 			Clamp = 1,
 		}
 
 		public enum UVType : int
 		{
-			[Name(value = "標準", language = Language.Japanese)]
-			[Name(value = "Standard", language = Language.English)]
+			[Key(key = "UVType_Default")]
 			Default = 0,
-			[Name(value = "固定", language = Language.Japanese)]
-			[Name(value = "Fixed", language = Language.English)]
+			[Key(key = "UVType_Fixed")]
 			Fixed = 1,
-			[Name(value = "アニメーション", language = Language.Japanese)]
-			[Name(value = "Animation", language = Language.English)]
+			[Key(key = "UVType_Animation")]
 			Animation = 2,
-			[Name(value = "スクロール", language = Language.Japanese)]
-			[Name(value = "Scroll", language = Language.English)]
+			[Key(key = "UVType_Scroll")]
 			Scroll = 3,
-			[Name(value = "Fカーブ", language = Language.Japanese)]
-			[Name(value = "F-Curve", language = Language.English)]
+			[Key(key = "UVType_FCurve")]
 			FCurve = 4,
 		}
 
 		public enum LoopType : int
 		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
+			[Key(key = "UVLoopType_Once")]
 			Once = 0,
-			[Name(value = "ループ", language = Language.Japanese)]
-			[Name(value = "Loop", language = Language.English)]
+			[Key(key = "UVLoopType_Loop")]
 			Loop = 1,
-			[Name(value = "逆ループ", language = Language.Japanese)]
-			[Name(value = "Reverse Loop", language = Language.English)]
+			[Key(key = "UVLoopType_ReverceLoop")]
 			ReverceLoop = 2,
 		}
 
-#if __EFFEKSEER_BUILD_VERSION16__
 		public enum FlipbookInterpolationType : int
 		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
+			[Key(key = "FlipbookInterpolationType_None")]
 			None = 0,
 
-			[Name(value = "線形補間", language = Language.Japanese)]
-			[Name(value = "Lerp", language = Language.English)]
+			[Key(key = "FlipbookInterpolationType_Lerp")]
 			Lerp = 1,
 		}
-
-		public enum AlphaCrunchType : int
-		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
-			None = 0,
-
-			[Name(value = "アルファ閾値", language = Language.Japanese)]
-			[Name(value = "Alpha Threshold", language = Language.English)]
-			AlphaThreashold = 1,
-
-			[Name(value = "4点補間", language = Language.Japanese)]
-			[Name(value = "Four Point Interpolation", language = Language.English)]
-			FourPointInterpolation = 2,
-
-			[Name(value = "イージング", language = Language.Japanese)]
-			[Name(value = "Easing", language = Language.English)]
-			Easing = 3,
-
-			[Name(value = "Fカーブ", language = Language.Japanese)]
-			[Name(value = "F Curve", language = Language.English)]
-			FCurve = 4,
-		}
-#endif
-
 	}
 }

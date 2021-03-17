@@ -57,7 +57,7 @@ public:
 
 	void SaveAs(const char* path);
 
-	bool Load(const char* path, std::shared_ptr<Library> library);
+	ErrorCode Load(const char* path, std::shared_ptr<Library> library);
 
 	void UpdateBinary();
 
@@ -124,14 +124,14 @@ public:
 
 	void SaveAs();
 
-	bool Load(const char* path);
+	ErrorCode Load(const char* path);
 
 	bool Load();
 
 	/**
 		@brief	if a file is not loaded, open the file, otherwise select the file
 	*/
-	bool LoadOrSelect(const char* path);
+	ErrorCode LoadOrSelect(const char* path);
 
 	void Save();
 

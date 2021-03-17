@@ -9,51 +9,63 @@
 namespace EffekseerRendererDX12
 {
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(ID3D12Device* device, ID3D12CommandQueue* commandQueue, int32_t swapBufferCount);
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(ID3D12Device* device, ID3D12CommandQueue* commandQueue, int32_t swapBufferCount);
 
-::EffekseerRenderer::Renderer* Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+/**
+	@brief	Create an instance
+	@param	graphicsDevice	Effekseer graphics device
+	@param	renderTargetFormats	Rendered screen formats
+	@param	renderTargetCount	The number of render target
+	@param	depthFormat	Rendered screen depth format. If depth doesn't exists, it must be DXGI_FORMAT_UNKNOWN
+	@param	isReversedDepth	Whether depth is reversed.
+	@param	squareMaxCount	The number of maximum sprites
+	@return	instance
+*/
+::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
-									  bool hasDepth,
+									  DXGI_FORMAT depthFormat,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
 /**
-@brief	Create an instance
-@param	device			directX12 device
-@param int32_t	the number of maximum sprites
-@return	instance
+	@brief	Create an instance
+	@param	device	directX12 device
+	@param	commandQueue directX12 commandQueue
+	@param	swapBufferCount	The number of swapBufferCount
+	@param	renderTargetFormats	Rendered screen formats
+	@param	renderTargetCount	The number of render target
+	@param	depthFormat	Rendered screen depth format. If depth doesn't exists, it must be DXGI_FORMAT_UNKNOWN
+	@param	isReversedDepth	Whether depth is reversed.
+	@param	squareMaxCount	The number of maximum sprites
+	@return	instance
 */
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
 									  ID3D12CommandQueue* commandQueue,
 									  int32_t swapBufferCount,
 									  DXGI_FORMAT* renderTargetFormats,
 									  int32_t renderTargetCount,
-									  bool hasDepth,
+									  DXGI_FORMAT depthFormat,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture);
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, ID3D12Resource* texture);
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
-void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 
-void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData);
+void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
-
-void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* renderer);
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
 
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
 

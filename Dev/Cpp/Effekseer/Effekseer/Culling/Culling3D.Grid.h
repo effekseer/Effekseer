@@ -7,20 +7,23 @@
 
 namespace Culling3D
 {
-	class Grid
+class Grid
+{
+private:
+	std::vector<Object*> objects;
+
+public:
+	Grid();
+
+	void AddObject(Object* o);
+
+	void RemoveObject(Object* o);
+
+	std::vector<Object*>& GetObjects()
 	{
-	private:
-		std::vector<Object*>	objects;
+		return objects;
+	}
 
-	public:
-		Grid();
-
-		void AddObject(Object* o);
-
-		void RemoveObject(Object* o);
-
-		std::vector<Object*>& GetObjects() { return objects; }
-
-		bool IsScanned;
-	};
-}
+	bool IsScanned;
+};
+} // namespace Culling3D

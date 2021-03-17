@@ -34,7 +34,7 @@ ConstValue2_Name,V2,V2
 Alpha_Name,Alpha,アルファ
 Name_Name,Name,名称
 Input_Name,V,V
-Output_Name," "," "
+Output_Name, , 
 Comment_Name,Comment,コメント
 Priority_Name,Priority,優先度
 Priority_Desc,"The lower the priority, the higher the screen is shown in other editors.",低い優先度ほど、他のエディタの画面の上の位置に表示されます。
@@ -156,7 +156,9 @@ the normal has been changed for each pixel by a normal input in OutputNode.",出
 VertexTangentWS_Node_Name,VertexTangent,頂点接線
 VertexTangentWS_Node_Desc,,
 VertexColor_Node_Name,VertexColor,頂点色
-VertexColor_Node_Desc,Outputs the vertex color of the particles.,パーティクルの頂点カラーを出力します。
+VertexColor_Node_Desc,"Outputs the vertex color of the particles.
+This includes all colors of sprite, ring, and so on.","パーティクルの頂点カラーを出力します。
+スプライト等の全体色もこれに含まれます。"
 ObjectScale_Node_Name,ObjectScale,オブジェクト拡大率
 ObjectScale_Node_Desc,"Outputs the enlargement ratio of particles in Effekseer.
 
@@ -183,6 +185,8 @@ Comment_Node_Name,Comment,コメント
 Constant_Name,Constant,定数
 Time_Node_Name,Time,時間
 Time_Node_Desc,Outputs the current time in seconds.,現在の時間を秒単位で出力します。
+EffectScale_Node_Name,EffectScale,エフェクト拡大率
+EffectScale_Node_Desc,Gets the scale specified when the effect file is loaded.,エフェクトファイルを読み込んだときに指定される拡大率を取得します。
 CameraPositionWS_Node_Name,CameraPosition,カメラ位置
 CameraPositionWS_Node_Desc,Outputs the camera position.,カメラの位置を出力します。
 Constant1_Node_Name,Constant1,定数1
@@ -249,13 +253,23 @@ PolarCoords_Node_Desc,"Outputs UVs located on the radiation from the center.
 You can specify how many images are arranged in one round and the rotation angle.","中央から放射上に配置されたUVを出力します。
 一周で画像が何枚配置されるか、や回転の角度を設定できます。"
 ,,
-ConvertParam_Name,Convert to parameter,"パラメーターに変換 "
+Depth_Name,Depth,深度
+,,
+DepthFade_Name,DepthFade,フェード(深度)
+DepthFade_Desc,"Output a smaller value as it gets closer to the background object.
+Output 1 if the distance is farther than FadeDistance, 0 if the distance is 0.","背景のオブジェクトに近づくにしたがって小さな値を出力します。
+FadeDistanceより距離が離れていれば1、距離が0で0を出力します。"
+,,
+ConvertParam_Name,Convert to parameter,パラメーターに変換 
+,,
+,,
 ,,
 Error_SameNode,Error_SameNode,×　同じノードには接続できません。
 Error_SamePin,Error_SamePin,×　同じピンには接続できません。
 Error_SameDirection,Error_SameDirection,×　同じ方向には接続できません。
 Error_Loop,Error_Loop,×　ループが発生しています。
 Error_Type,Error_Type,×　型が異なります。
+Error_NewVersion,The file is too new to open. Please Update Effekseer,このファイルは新しすぎます。Effekseerを更新してください。
 Create_Link,Create_Link,接続します。
 Create_Node,Create_Node,ノードを作成します。
 ,,
@@ -278,3 +292,4 @@ Warning_SameName,A node with the same name exists.,同じ名前のノードが�
 Warning_InvalidName,"The name is invalid. 
 (Please read the help.)","無効な名前です。
 (ヘルプを読んでください。)"
+Warning_PixelNodeAndNormal,PixelNormal cannot be connected to Normal,画素法線はNormalと接続できません。

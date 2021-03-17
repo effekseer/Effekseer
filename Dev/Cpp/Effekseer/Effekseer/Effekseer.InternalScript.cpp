@@ -7,13 +7,15 @@ namespace Effekseer
 
 bool InternalScript::IsValidOperator(int value) const
 {
-	if (0 <= value && value <= 4)
+	if (0 <= value && value <= 5)
 		return true;
 	if (11 <= value && value <= 12)
 		return true;
 	if (21 <= value && value <= 22)
 		return true;
 	if (31 <= value && value <= 32)
+		return true;
+	if (50 == value)
 		return true;
 
 	return false;
@@ -66,9 +68,13 @@ float InternalScript::GetRegisterValue(int index,
 	return 0.0f;
 }
 
-InternalScript::InternalScript() {}
+InternalScript::InternalScript()
+{
+}
 
-InternalScript ::~InternalScript() {}
+InternalScript ::~InternalScript()
+{
+}
 bool InternalScript::Load(uint8_t* data, int size)
 {
 	if (data == nullptr || size <= 0)
@@ -98,7 +104,7 @@ bool InternalScript::Load(uint8_t* data, int size)
 		}
 	}
 
-	reader.Read(operators, size - reader.GetOffset());
+	reader.Read(operators, static_cast<int32_t>(size - reader.GetOffset()));
 
 	if (reader.GetStatus() == BinaryReaderStatus::Failed)
 		return false;
@@ -180,7 +186,7 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 		return ret;
 	}
 
-	int offset = 0;
+	size_t offset = 0;
 	for (int i = 0; i < operatorCount_; i++)
 	{
 		// type
@@ -232,21 +238,39 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 				registers[index] = tempInputs[0] * tempInputs[1];
 			else if (type == OperatorType::Div)
 				registers[index] = tempInputs[0] / tempInputs[1];
+			else if (type == OperatorType::Mod)
+			{
+				registers[index] = fmodf(tempInputs[0], tempInputs[1]);
+			}
 			else if (type == OperatorType::Sine)
-				registers[index] = sin(tempInputs[0]);
+			{
+				registers[index] = sinf(tempInputs[j]);
+			}
 			else if (type == OperatorType::Cos)
-				registers[index] = cos(tempInputs[0]);
+			{
+				registers[index] = cosf(tempInputs[j]);
+			}
 			else if (type == OperatorType::UnaryAdd)
+			{
 				registers[index] = tempInputs[0];
+			}
 			else if (type == OperatorType::UnarySub)
+			{
 				registers[index] = -tempInputs[0];
+			}
 			else if (type == OperatorType::Rand)
 			{
 				registers[index] = randFuncCallback(userData);
 			}
 			else if (type == OperatorType::Rand_WithSeed)
 			{
-				registers[index] = randSeedFuncCallback(userData, tempInputs[0]);
+				registers[index] = randSeedFuncCallback(userData, tempInputs[j]);
+			}
+			else if (type == OperatorType::Step)
+			{
+				auto edge = tempInputs[0];
+				auto x = tempInputs[1];
+				registers[index] = x >= edge ? 1.0f : 0.0f;
 			}
 			else if (type == OperatorType::Constant)
 			{

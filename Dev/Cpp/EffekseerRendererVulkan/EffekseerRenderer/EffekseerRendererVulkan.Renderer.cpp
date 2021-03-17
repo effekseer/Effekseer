@@ -1,10 +1,34 @@
 ﻿#include "EffekseerRendererVulkan.Renderer.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "EffekseerMaterialCompilerVulkan.h"
 
+#include "ShaderHeader/ad_model_distortion_ps.h"
+#include "ShaderHeader/ad_sprite_distortion_vs.h"
+#include "ShaderHeader/ad_sprite_lit_vs.h"
+#include "ShaderHeader/ad_sprite_unlit_vs.h"
+
+#include "ShaderHeader/ad_model_distortion_ps.h"
+#include "ShaderHeader/ad_model_distortion_vs.h"
+#include "ShaderHeader/ad_model_lit_ps.h"
+#include "ShaderHeader/ad_model_lit_vs.h"
+#include "ShaderHeader/ad_model_unlit_ps.h"
+#include "ShaderHeader/ad_model_unlit_vs.h"
+
+#include "ShaderHeader/model_distortion_ps.h"
+#include "ShaderHeader/sprite_distortion_vs.h"
+#include "ShaderHeader/sprite_lit_vs.h"
+#include "ShaderHeader/sprite_unlit_vs.h"
+
+#include "ShaderHeader/model_distortion_ps.h"
+#include "ShaderHeader/model_distortion_vs.h"
+#include "ShaderHeader/model_lit_ps.h"
+#include "ShaderHeader/model_lit_vs.h"
+#include "ShaderHeader/model_unlit_ps.h"
+#include "ShaderHeader/model_unlit_vs.h"
+
+#define GENERATE_VIEW(x) {{x, static_cast<int32_t>(sizeof(x))}};
 
 namespace EffekseerRendererVulkan
 {
@@ -15,38 +39,30 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	if (!shader)
 		return;
 
-	static const std::vector<uint8_t> standard_vert = {
-#include "Shader/Vulkan/standard.vert.spv.inl"
-	};
-	shader->StandardTexture_VS = {{standard_vert.data(), (int32_t)standard_vert.size()}};
+	shader->AdvancedSpriteUnlit_VS = GENERATE_VIEW(ad_sprite_unlit_vs);
+	shader->AdvancedSpriteLit_VS = GENERATE_VIEW(ad_sprite_lit_vs);
+	shader->AdvancedSpriteDistortion_VS = GENERATE_VIEW(ad_sprite_distortion_vs);
 
-	static const std::vector<uint8_t> standard_distorted_vert = {
-#include "Shader/Vulkan/standard_distortion.vert.spv.inl"
-	};
-	shader->StandardDistortedTexture_VS = {{standard_distorted_vert.data(), (int32_t)standard_distorted_vert.size()}};
+	shader->AdvancedModelUnlit_VS = GENERATE_VIEW(ad_model_unlit_vs);
+	shader->AdvancedModelUnlit_PS = GENERATE_VIEW(ad_model_unlit_ps);
+	shader->AdvancedModelLit_VS = GENERATE_VIEW(ad_model_lit_vs);
+	shader->AdvancedModelLit_PS = GENERATE_VIEW(ad_model_lit_ps);
+	shader->AdvancedModelDistortion_VS = GENERATE_VIEW(ad_model_distortion_vs);
+	shader->AdvancedModelDistortion_PS = GENERATE_VIEW(ad_model_distortion_ps);
 
-	static const std::vector<uint8_t> standard_frag = {
-#include "Shader/Vulkan/standard.frag.spv.inl"
-	};
-	shader->StandardTexture_PS = {{standard_frag.data(), (int32_t)standard_frag.size()}};
+	shader->SpriteUnlit_VS = GENERATE_VIEW(sprite_unlit_vs);
+	shader->SpriteLit_VS = GENERATE_VIEW(sprite_lit_vs);
+	shader->SpriteDistortion_VS = GENERATE_VIEW(sprite_distortion_vs);
 
-	static const std::vector<uint8_t> standard_distortion_frag = {
-#include "Shader/Vulkan/standard_distortion.frag.spv.inl"
-	};
-	shader->StandardDistortedTexture_PS = {{standard_distortion_frag.data(), (int32_t)standard_distortion_frag.size()}};
-
-	static const std::vector<uint8_t> model_ltn_vert = {
-#include "Shader/Vulkan/model_ltn.vert.spv.inl"
-	};
-	shader->ModelShaderLightingTextureNormal_VS = {{model_ltn_vert.data(), (int32_t)model_ltn_vert.size()}};
-
-	static const std::vector<uint8_t> model_ltn_flag = {
-#include "Shader/Vulkan/model_ltn.frag.spv.inl"
-	};
-	shader->ModelShaderLightingTextureNormal_PS = {{model_ltn_flag.data(), (int32_t)model_ltn_flag.size()}};
+	shader->ModelUnlit_VS = GENERATE_VIEW(model_unlit_vs);
+	shader->ModelUnlit_PS = GENERATE_VIEW(model_unlit_ps);
+	shader->ModelLit_VS = GENERATE_VIEW(model_lit_vs);
+	shader->ModelLit_PS = GENERATE_VIEW(model_lit_ps);
+	shader->ModelDistortion_VS = GENERATE_VIEW(model_distortion_vs);
+	shader->ModelDistortion_PS = GENERATE_VIEW(model_distortion_ps);
 }
 
-::EffekseerRenderer::GraphicsDevice* CreateDevice(
+::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(
 	VkPhysicalDevice physicalDevice, VkDevice device, VkQueue transfarQueue, VkCommandPool transfarCommandPool, int32_t swapBufferCount)
 {
 	auto graphics = new LLGI::GraphicsVulkan(
@@ -59,21 +75,19 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 		nullptr,
 		nullptr);
 
-	auto ret = new EffekseerRendererLLGI::GraphicsDevice(graphics);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }
 
-::EffekseerRenderer::Renderer*
-Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
+::EffekseerRenderer::RendererRef
+Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
 {
-	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 
-	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
+	auto renderer = Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
 	CreateFixedShaderForVulkan(&renderer->fixedShader_);
 
-
-	
 	LLGI::RenderPassPipelineStateKey key;
 	key.RenderTargetFormats.resize(renderPassInformation.RenderTextureCount);
 	key.IsPresent = renderPassInformation.DoesPresentToScreen;
@@ -82,13 +96,12 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 		key.RenderTargetFormats.at(i) = LLGI::VulkanHelper::VkFormatToTextureFormat(renderPassInformation.RenderTextureFormats.at(i));
 	}
 
-	key.HasDepth = renderPassInformation.HasDepth;
+	key.DepthFormat = LLGI::VulkanHelper::VkFormatToTextureFormat(renderPassInformation.DepthFormat);
 
 	auto pipelineState = gd->GetGraphics()->CreateRenderPassPipelineState(key);
 
 	if (!renderer->Initialize(gd, pipelineState, false))
 	{
-		ES_SAFE_RELEASE(renderer);
 		ES_SAFE_RELEASE(pipelineState);
 		return nullptr;
 	}
@@ -101,85 +114,65 @@ Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice, RenderPassInformatio
 	return renderer;
 }
 
-::EffekseerRenderer::Renderer* Create(VkPhysicalDevice physicalDevice,
-									  VkDevice device,
-									  VkQueue transfarQueue,
-									  VkCommandPool transfarCommandPool,
-									  int32_t swapBufferCount,
-									  RenderPassInformation renderPassInformation,
-									  int32_t squareMaxCount)
+::EffekseerRenderer::RendererRef Create(VkPhysicalDevice physicalDevice,
+										VkDevice device,
+										VkQueue transfarQueue,
+										VkCommandPool transfarCommandPool,
+										int32_t swapBufferCount,
+										RenderPassInformation renderPassInformation,
+										int32_t squareMaxCount)
 {
-	auto graphicDevice = CreateDevice(physicalDevice, device, transfarQueue, transfarCommandPool, swapBufferCount);
+	auto graphicDevice = CreateGraphicsDevice(physicalDevice, device, transfarQueue, transfarCommandPool, swapBufferCount);
 
 	auto ret = Create(graphicDevice, renderPassInformation, squareMaxCount);
 
 	if (ret != nullptr)
 	{
-		ES_SAFE_RELEASE(graphicDevice);
 		return ret;
 	}
 
-	ES_SAFE_RELEASE(graphicDevice);
 	return nullptr;
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, VkImage texture)
+Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateTextureData(r->GetGraphicsDevice(), texture);
+	return CreateTexture(r->GetGraphicsDevice(), info);
 }
 
-Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, VkImage texture)
+Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info)
 {
-	auto g = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
-	auto texture_ = g->GetGraphics()->CreateTexture((uint64_t)texture);
+	LLGI::VulkanImageInfo llgiinfo;
+	llgiinfo.image = info.image;
+	llgiinfo.format = info.format;
+	llgiinfo.aspect = info.aspect;
 
-	auto textureData = new Effekseer::TextureData();
-	textureData->UserPtr = texture_;
-	textureData->UserID = 0;
-	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 0;
-	textureData->Height = 0;
-	return textureData;
+	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
+	return g->CreateTexture((uint64_t)(&llgiinfo), [] {});
 }
 
-void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData)
+void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	DeleteTextureData(r->GetGraphicsDevice(), textureData);
+	FlushAndWait(renderer->GetGraphicsDevice());
 }
 
-void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData)
+void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	auto texture = (LLGI::Texture*)textureData->UserPtr;
-	texture->Release();
-	delete textureData;
-}
-
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	FlushAndWait(r->GetGraphicsDevice());
-}
-
-void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
 	g->WaitFinish();
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
+	return CreateCommandList(renderer->GetGraphicsDevice(), memoryPool);
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
 	auto commandList = g->CreateCommandList(mp->GetInternal());
@@ -188,15 +181,14 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsD
 	return ret;
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
+	return CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
 	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
@@ -209,7 +201,11 @@ void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuff
 	assert(commandList != nullptr);
 
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
-	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginExternal(nativeCommandList);
+
+	LLGI::PlatformContextVulkan context;
+	context.commandBuffer = nativeCommandList;
+
+	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginWithPlatform(&context);
 }
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList)
