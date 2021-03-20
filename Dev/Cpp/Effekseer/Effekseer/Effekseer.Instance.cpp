@@ -630,8 +630,7 @@ void Instance::FirstUpdate()
 	}
 	else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleEasing)
 	{
-		scaling_values.single_easing.start = m_pEffectNode->ScalingSingleEasing.start.getValue(rand);
-		scaling_values.single_easing.end = m_pEffectNode->ScalingSingleEasing.end.getValue(rand);
+		m_pEffectNode->ScalingSingleEasing.Init(scaling_values.single_easing, effect, instanceGlobal, m_pParent, &rand);
 	}
 	else if (m_pEffectNode->ScalingType == ParameterScalingType_FCurve)
 	{
