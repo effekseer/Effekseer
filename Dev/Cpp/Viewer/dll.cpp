@@ -1023,11 +1023,12 @@ bool Native::StepEffect(int frame)
 			g_manager->SetShown(g_handles[i].Handle, true);
 		}
 
-		m_time += m_step;
+		if (g_sound != nullptr)
+		{
+			g_sound->SetMute(mute);
+		}
 
-		g_sound->SetMute(mute);
-		g_manager->Update(m_step);
-		g_renderer->GetRenderer()->SetTime(m_time / 60.0f);
+		StepEffect();
 	}
 	return true;
 }
