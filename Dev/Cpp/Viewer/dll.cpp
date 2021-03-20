@@ -1098,6 +1098,7 @@ void Native::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
 
 void Native::SetStep(int32_t step)
 {
+	mainScreen_->SetStep(step);
 	m_step = step;
 }
 

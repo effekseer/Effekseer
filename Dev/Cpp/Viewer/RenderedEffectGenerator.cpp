@@ -400,7 +400,7 @@ void RenderedEffectGenerator::Update()
 		}
 	}
 
-	m_time += m_step;
+	m_time += 1;
 }
 
 void RenderedEffectGenerator::Update(int32_t frame)
@@ -427,7 +427,9 @@ void RenderedEffectGenerator::Update(int32_t frame)
 			manager_->SetShown(handles_[i].Handle, false);
 		}
 
-		for (int i = 0; i < frame - 1; i++)
+		const auto updatingTime = Effekseer::Max(0, frame - m_step);
+
+		for (int i = 0; i < updatingTime; i++)
 		{
 			Update();
 		}
@@ -442,7 +444,10 @@ void RenderedEffectGenerator::Update(int32_t frame)
 			sound_->SetMute(mute);
 		}
 
-		Update();
+		for (int i = 0; i < frame - updatingTime; i++)
+		{
+			Update();		
+		}
 	}
 }
 
