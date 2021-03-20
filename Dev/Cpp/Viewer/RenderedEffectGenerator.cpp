@@ -442,9 +442,7 @@ void RenderedEffectGenerator::Update(int32_t frame)
 			sound_->SetMute(mute);
 		}
 
-		manager_->Update(static_cast<float>(m_step));
-		m_time += m_step;
-		renderer_->SetTime(m_time / 60.0f);
+		Update();
 	}
 }
 
