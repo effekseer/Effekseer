@@ -264,6 +264,11 @@ public:
 	}
 };
 
+enum class DevicePropertyType
+{
+	MaxVaryingVectors,
+};
+
 /**
 	@brief	GraphicsDevice of OpenGL
 */
@@ -274,11 +279,14 @@ private:
 	std::set<DeviceObject*> objects_;
 	OpenGLDeviceType deviceType_;
 	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
+	std::map<DevicePropertyType, int> properties_;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
 	~GraphicsDevice() override;
+
+	int GetProperty(DevicePropertyType type) const;
 
 	void LostDevice();
 

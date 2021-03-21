@@ -655,6 +655,12 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEna
 	{
 		GLExt::glGenSamplers(Effekseer::TextureSlotMax, samplers_.data());
 	}
+
+	{
+		GLint v;
+		glGetIntegerv(GL_MAX_VARYING_VECTORS, &v);
+		properties_[DevicePropertyType::MaxVaryingVectors] = v;
+	}
 }
 
 GraphicsDevice::~GraphicsDevice()
@@ -663,6 +669,11 @@ GraphicsDevice::~GraphicsDevice()
 	{
 		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, samplers_.data());
 	}
+}
+
+int GraphicsDevice::GetProperty(DevicePropertyType type) const
+{
+	return properties_.at(type);
 }
 
 void GraphicsDevice::LostDevice()
