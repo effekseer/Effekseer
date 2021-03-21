@@ -59,12 +59,6 @@ protected:
 
 public:
 	virtual LLGI::Graphics* GetGraphics() const = 0;
-
-	/**
-		@brief	\~English	Set background
-				\~Japanese	背景を設定する
-	*/
-	virtual void SetBackground(LLGI::Texture* background) = 0;
 };
 
 class SingleFrameMemoryPool : public ::EffekseerRenderer::SingleFrameMemoryPool, public ::Effekseer::ReferenceObject

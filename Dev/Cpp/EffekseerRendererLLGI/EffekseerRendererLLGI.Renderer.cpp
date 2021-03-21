@@ -593,7 +593,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice_.Get(), fileInterface, platformType_, materialCompiler_);
 }
 
-void RendererImplemented::SetBackground(LLGI::Texture* background)
+void RendererImplemented::SetBackgroundInternal(LLGI::Texture* background)
 {
 	if (m_backgroundLLGI == nullptr)
 	{
