@@ -12,7 +12,7 @@ VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::Vertex
 	, m_ringLockedOffset(0)
 	, m_ringLockedSize(0)
 {
-	lockedResource_ = new uint8_t[size];
+	lockedResource_.resize(size);
 	vertexBuffers.push_back(buffer);
 }
 
@@ -23,7 +23,6 @@ VertexBuffer::~VertexBuffer()
 		LLGI::SafeRelease(v);
 	}
 	vertexBuffers.clear();
-	ES_SAFE_DELETE(lockedResource_);
 }
 
 VertexBuffer* VertexBuffer::Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
@@ -41,7 +40,7 @@ void VertexBuffer::Lock()
 	assert(!m_ringBufferLock);
 
 	m_isLock = true;
-	m_resource = (uint8_t*)lockedResource_;
+	m_resource = (uint8_t*)lockedResource_.data();
 	m_offset = 0;
 
 	/* 次のRingBufferLockは強制的にDiscard */
@@ -76,8 +75,8 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 		m_vertexRingOffset += size;
 	}
 
-	data = (uint8_t*)lockedResource_;
-	m_resource = (uint8_t*)lockedResource_;
+	data = (uint8_t*)lockedResource_.data();
+	m_resource = (uint8_t*)lockedResource_.data();
 	m_ringBufferLock = true;
 
 	return true;

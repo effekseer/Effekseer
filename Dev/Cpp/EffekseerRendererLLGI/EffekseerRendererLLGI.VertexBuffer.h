@@ -16,7 +16,7 @@ protected:
 	int32_t currentIndex = 0;
 	std::vector<LLGI::VertexBuffer*> vertexBuffers;
 
-	void* lockedResource_;
+	Effekseer::CustomAlignedVector<uint8_t> lockedResource_;
 
 	uint32_t m_vertexRingOffset;
 	bool m_ringBufferLock;

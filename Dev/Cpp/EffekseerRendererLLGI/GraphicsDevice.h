@@ -74,7 +74,7 @@ public:
 
 	bool Init(int32_t size, bool isDynamic);
 
-	void UpdateData(const void* src, int32_t size, int32_t offset);
+	void UpdateData(const void* src, int32_t size, int32_t offset) override;
 
 	LLGI::VertexBuffer* GetBuffer()
 	{
@@ -106,7 +106,7 @@ public:
 
 	bool Init(int32_t elementCount, int32_t stride);
 
-	void UpdateData(const void* src, int32_t size, int32_t offset);
+	void UpdateData(const void* src, int32_t size, int32_t offset) override;
 
 	LLGI::IndexBuffer* GetBuffer()
 	{

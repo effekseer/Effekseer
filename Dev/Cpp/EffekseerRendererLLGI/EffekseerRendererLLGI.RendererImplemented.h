@@ -196,7 +196,7 @@ public:
 
 	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
-	void SetBackground(LLGI::Texture* background) override;
+	void SetBackgroundInternal(LLGI::Texture* background);
 
 	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;
 

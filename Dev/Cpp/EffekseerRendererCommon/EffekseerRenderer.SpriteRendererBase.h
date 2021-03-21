@@ -69,7 +69,6 @@ protected:
 						   const StandardRendererState& state,
 						   const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		void* userData = nullptr;
 		const ShaderParameterCollector& collector = state.Collector;
 		if (collector.ShaderType == RendererShaderType::Material)
 		{
