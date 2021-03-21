@@ -63,8 +63,8 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 		m_vertexRingOffset += size;
 	}
 
-	data = (uint8_t*)lockedResource_;
-	m_resource = (uint8_t*)lockedResource_;
+	data = (uint8_t*)lockedResource_.data();
+	m_resource = (uint8_t*)lockedResource_.data();
 	m_ringBufferLock = true;
 
 	return true;
