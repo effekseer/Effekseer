@@ -137,6 +137,12 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix44 = 0.0f;
 };
 
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+												  ::Effekseer::FileInterface* fileInterface = nullptr,
+												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
+
 class Renderer : public ::Effekseer::IReference
 {
 protected:
@@ -524,6 +530,10 @@ Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef re
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
+void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
+
+void EndCommandList(EffekseerRenderer::CommandList* commandList);
+
 void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
 
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
@@ -537,10 +547,6 @@ EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::Graphics
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
-
-void EndCommandList(EffekseerRenderer::CommandList* commandList);
 
 } // namespace EffekseerRendererDX12
 
