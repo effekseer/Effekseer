@@ -159,6 +159,12 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix44 = 0.0f;
 };
 
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+												  ::Effekseer::FileInterface* fileInterface = nullptr,
+												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
+
 class Renderer : public ::Effekseer::IReference
 {
 protected:
@@ -509,11 +515,13 @@ namespace EffekseerRendererDX9
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(LPDIRECT3DDEVICE9 device);
 
+[[deprecated("please use EffekseerRenderer::CreateTextureLoader")]]
 ::Effekseer::TextureLoaderRef CreateTextureLoader(
 	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 	::Effekseer::FileInterface* fileInterface = nullptr,
 	::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
+[[deprecated("please use EffekseerRenderer::CreateTextureLoader")]]
 ::Effekseer::ModelLoaderRef CreateModelLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
 
 //----------------------------------------------------------------------------------

@@ -1,11 +1,29 @@
 ﻿
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
+#include "ModelLoader.h"
+#include "TextureLoader.h"
 #include <Effekseer.h>
 #include <assert.h>
 
 namespace EffekseerRenderer
 {
+
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+												  ::Effekseer::FileInterface* fileInterface,
+												  ::Effekseer::ColorSpaceType colorSpaceType)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return ::Effekseer::MakeRefPtr<TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
+#else
+	return nullptr;
+#endif
+}
+
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface)
+{
+	return ::Effekseer::MakeRefPtr<ModelLoader>(gprahicsDevice, fileInterface);
+}
 
 Renderer::Renderer()
 	: impl(new Impl())
