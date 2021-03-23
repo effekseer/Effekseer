@@ -958,6 +958,8 @@ void Material::Initialize()
 			CustomData[ci].Descriptions[i] = std::make_shared<NodeDescription>();
 		}
 	}
+
+	commandManager_->Reset();
 }
 
 std::vector<std::shared_ptr<Pin>> Material::GetConnectedPins(std::shared_ptr<Pin> pin)
@@ -1639,6 +1641,8 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 	textures.clear();
 
 	LoadFromStrInternal(json, Vector2DF(), library, basePath, SaveLoadAimType::IO);
+
+	commandManager_->Reset();
 }
 
 std::string Material::SaveAsStr(const char* basePath) { return SaveAsStrInternal(nodes_, links_, basePath, SaveLoadAimType::IO); }
