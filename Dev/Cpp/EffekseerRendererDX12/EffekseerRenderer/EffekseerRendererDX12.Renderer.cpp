@@ -8,55 +8,55 @@ namespace Sprite_Unlit_VS_Ad
 {
 static
 #include "ShaderHeader/ad_sprite_unlit_vs.h"
-} // namespace Sprite_Unlit_VS
+} // namespace Sprite_Unlit_VS_Ad
 
 namespace Sprite_Distortion_VS_Ad
 {
 static
 #include "ShaderHeader/ad_sprite_distortion_vs.h"
-} // namespace Sprite_Distortion_VS
+} // namespace Sprite_Distortion_VS_Ad
 
 namespace Sprite_Lit_VS_Ad
 {
 static
 #include "ShaderHeader/ad_sprite_lit_vs.h"
-} // namespace Sprite_Lit_VS
+} // namespace Sprite_Lit_VS_Ad
 
 namespace Model_Unlit_VS_Ad
 {
 static
 #include "ShaderHeader/ad_model_unlit_vs.h"
-} // namespace Model_Unlit_VS
+} // namespace Model_Unlit_VS_Ad
 
 namespace Model_Unlit_PS_Ad
 {
 static
 #include "ShaderHeader/ad_model_unlit_ps.h"
-} // namespace Model_Unlit_PS
+} // namespace Model_Unlit_PS_Ad
 
 namespace Model_Distortion_VS_Ad
 {
 static
 #include "ShaderHeader/ad_model_distortion_vs.h"
-} // namespace Model_Distortion_VS
+} // namespace Model_Distortion_VS_Ad
 
 namespace Model_Distortion_PS_Ad
 {
 static
 #include "ShaderHeader/ad_model_distortion_ps.h"
-} // namespace Model_Distortion_PS
+} // namespace Model_Distortion_PS_Ad
 
 namespace Model_Lit_VS_Ad
 {
 static
 #include "ShaderHeader/ad_model_lit_vs.h"
-} // namespace Model_Lit_VS
+} // namespace Model_Lit_VS_Ad
 
 namespace Model_Lit_PS_Ad
 {
 static
 #include "ShaderHeader/ad_model_lit_ps.h"
-} // namespace Model_Lit_PS
+} // namespace Model_Lit_PS_Ad
 
 namespace Sprite_Unlit_VS
 {
@@ -131,11 +131,11 @@ namespace EffekseerRendererDX12
 }
 
 ::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-									  DXGI_FORMAT* renderTargetFormats,
-									  int32_t renderTargetCount,
-									  DXGI_FORMAT depthFormat,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount)
+										DXGI_FORMAT* renderTargetFormats,
+										int32_t renderTargetCount,
+										DXGI_FORMAT depthFormat,
+										bool isReversedDepth,
+										int32_t squareMaxCount)
 {
 	auto renderer = ::Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
 
@@ -205,13 +205,13 @@ namespace EffekseerRendererDX12
 }
 
 ::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
-									  ID3D12CommandQueue* commandQueue,
-									  int32_t swapBufferCount,
-									  DXGI_FORMAT* renderTargetFormats,
-									  int32_t renderTargetCount,
-									  DXGI_FORMAT depthFormat,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount)
+										ID3D12CommandQueue* commandQueue,
+										int32_t swapBufferCount,
+										DXGI_FORMAT* renderTargetFormats,
+										int32_t renderTargetCount,
+										DXGI_FORMAT depthFormat,
+										bool isReversedDepth,
+										int32_t squareMaxCount)
 {
 	auto graphicDevice = CreateGraphicsDevice(device, commandQueue, swapBufferCount);
 
@@ -225,81 +225,27 @@ namespace EffekseerRendererDX12
 	return nullptr;
 }
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	return CreateTexture(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), texture);
-}
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture)
 {
 	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	return g->CreateTexture((uint64_t)texture, [] {});
 }
 
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()));
-}
-
-void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsDX12*>(gd->GetGraphics());
-	g->WaitFinish();
-}
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	return CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()), memoryPool);
-}
-
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsDX12*>(gd->GetGraphics());
-	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
-	auto commandList = g->CreateCommandList(mp->GetInternal());
-	auto ret = new EffekseerRendererLLGI::CommandList(g, commandList, mp->GetInternal());
-	ES_SAFE_RELEASE(commandList);
-	return ret;
-}
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	return CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef(r->GetGraphicsDevice()));
-}
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsDX12*>(gd->GetGraphics());
-	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
-	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
-	ES_SAFE_RELEASE(mp);
-	return ret;
-}
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList)
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList)
 {
 	assert(commandList != nullptr);
 
 	LLGI::PlatformContextDX12 context;
 	context.commandList = dx12CommandList;
 
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->BeginWithPlatform(&context);
 }
 
-void EndCommandList(EffekseerRenderer::CommandList* commandList)
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->EndWithPlatform();
 }
 

@@ -114,6 +114,7 @@ effekseerRendererDX12Header = CreateHeader()
 effekseerRendererDX12Header.readLines('EffekseerRendererDX12/EffekseerRenderer/EffekseerRendererDX12.Base.Pre.h')
 effekseerRendererDX12Header.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
 effekseerRendererDX12Header.readLines('EffekseerRendererDX12/EffekseerRenderer/EffekseerRendererDX12.Renderer.h')
+effekseerRendererDX12Header.readLines('EffekseerRendererLLGI/Common.h')
 effekseerRendererDX12Header.output('EffekseerRendererDX12/EffekseerRendererDX12.h')
 
 effekseerRendererVulkanHeader = CreateHeader()
