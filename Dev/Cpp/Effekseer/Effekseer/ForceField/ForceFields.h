@@ -320,7 +320,7 @@ public:
 	*/
 	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldDragParameter& ffp)
 	{
-		return -ffc.PreviousSumVelocity * ffp.Power * ffc.DeltaFrame;
+		return -ffc.PreviousSumVelocity * ffp.Power;
 	}
 
 	SIMD::Vec3f GetAcceleration(const ForceFieldCommonParameter& ffc, const ForceFieldGravityParameter& ffp)
