@@ -969,7 +969,7 @@ struct ShaderParameterCollector
 			IsDepthRequired = true;
 		}
 
-		if (param->MaterialType == ::Effekseer::RendererMaterialType::File)
+		if (param->MaterialType == ::Effekseer::RendererMaterialType::File && isMaterial)
 		{
 			MaterialRenderDataPtr = param->MaterialRenderDataPtr;
 			if (MaterialRenderDataPtr != nullptr)
