@@ -14,10 +14,6 @@
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
-
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
@@ -41,25 +37,11 @@ namespace EffekseerRendererMetal
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth);
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, id<MTLTexture> texture);
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> encoder);
 
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef Refrenderer);
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLRenderCommandEncoder> encoder);
-
-void EndCommandList(EffekseerRenderer::CommandList* commandList);
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererMetal
 

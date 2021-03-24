@@ -191,8 +191,8 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 
 	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this));
 
-	sfMemoryPoolEfk_ = EffekseerRendererVulkan::CreateSingleFrameMemoryPool(renderer);
-	commandListEfk_ = EffekseerRendererVulkan::CreateCommandList(renderer, sfMemoryPoolEfk_);
+	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
+	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 
@@ -211,7 +211,7 @@ void EffectPlatformVulkan::BeginRendering()
 
 	auto cl = static_cast<LLGI::CommandListVulkan*>(commandList_);
 	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, static_cast<VkCommandBuffer>(cl->GetCommandBuffer()));
-	GetRenderer()->SetCommandList(commandListEfk_);
+	GetRenderer()->SetCommandList(commandListEfk_.Get());
 }
 
 void EffectPlatformVulkan::EndRendering()

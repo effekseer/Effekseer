@@ -201,8 +201,8 @@ EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 
 	renderer->SetDistortingCallback(new DistortingCallbackMetal(this));
 
-	sfMemoryPoolEfk_ = EffekseerRendererMetal::CreateSingleFrameMemoryPool(renderer);
-	commandListEfk_ = EffekseerRendererMetal::CreateCommandList(renderer, sfMemoryPoolEfk_);
+	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
+	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 
@@ -221,7 +221,7 @@ void EffectPlatformMetal::BeginRendering()
 
 	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_);
 	EffekseerRendererMetal::BeginCommandList(commandListEfk_, cl->GetImpl()->renderEncoder);
-	GetRenderer()->SetCommandList(commandListEfk_);
+	GetRenderer()->SetCommandList(commandListEfk_.Get());
 }
 
 void EffectPlatformMetal::EndRendering()

@@ -8,6 +8,9 @@
 namespace EffekseerRenderer
 {
 
+/**
+
+*/
 void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,

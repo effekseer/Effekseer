@@ -91,18 +91,6 @@ enum class ProxyTextureType
 	Normal,
 };
 
-/**
-	@brief
-	\~english A class which contains a graphics device
-	\~japanese グラフィックデバイスを格納しているクラス
-*/
-class GraphicsDevice : public ::Effekseer::IReference
-{
-public:
-	GraphicsDevice() = default;
-	virtual ~GraphicsDevice() = default;
-};
-
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -412,7 +400,7 @@ public:
 	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
 	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
-	virtual void SetCommandList(CommandList* commandList)
+	virtual void SetCommandList(Effekseer::RefPtr<CommandList> commandList)
 	{
 	}
 
@@ -490,10 +478,6 @@ public:
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
-
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
@@ -517,26 +501,34 @@ namespace EffekseerRendererMetal
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth);
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, id<MTLTexture> texture);
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> encoder);
 
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef Refrenderer);
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLRenderCommandEncoder> encoder);
-
-void EndCommandList(EffekseerRenderer::CommandList* commandList);
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererMetal
+
+#endif
+
+#ifndef __EFFEKSEERRENDERER_LLGI_COMMON_H__
+#define __EFFEKSEERRENDERER_LLGI_COMMON_H__
+
+#include <Effekseer.h>
+
+namespace EffekseerRenderer
+{
+
+/**
+
+*/
+void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
+
+Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+																	Effekseer::RefPtr<::EffekseerRenderer::SingleFrameMemoryPool> memoryPool);
+
+Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
+
+} // namespace EffekseerRenderer
 
 #endif

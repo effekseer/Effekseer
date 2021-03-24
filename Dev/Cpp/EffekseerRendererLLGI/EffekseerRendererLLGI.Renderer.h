@@ -15,10 +15,6 @@
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
-
 struct FixedShader
 {
 	std::vector<LLGI::DataStructure> SpriteUnlit_VS;

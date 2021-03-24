@@ -43,11 +43,11 @@ int main(int argc, char** argv)
 
 	// Create a memory pool
 	// メモリプールの作成
-	EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk = EffekseerRendererVulkan::CreateSingleFrameMemoryPool(renderer);
+	auto sfMemoryPoolEfk = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer);
 
 	// Create a command list
 	// コマンドリストの作成
-	EffekseerRenderer::CommandList* commandListEfk = EffekseerRendererVulkan::CreateCommandList(renderer, sfMemoryPoolEfk);
+	auto commandListEfk = EffekseerRenderer::CreateCommandList(renderer, sfMemoryPoolEfk);
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 		// Begin a command list
 		// コマンドリストを開始する。
 		EffekseerRendererVulkan::BeginCommandList(commandListEfk, GetCommandList());
-		renderer->SetCommandList(commandListEfk);
+		renderer->SetCommandList(commandListEfk.Get());
 
 		if (time % 120 == 0)
 		{
@@ -150,9 +150,6 @@ int main(int argc, char** argv)
 	// Dispose the manager
 	// マネージャーの破棄
 	manager.Reset();
-
-	ES_SAFE_RELEASE(sfMemoryPoolEfk);
-	ES_SAFE_RELEASE(commandListEfk);
 
 	// Dispose the renderer
 	// レンダラーの破棄

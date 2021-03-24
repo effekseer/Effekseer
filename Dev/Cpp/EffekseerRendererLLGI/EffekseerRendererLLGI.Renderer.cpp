@@ -6,10 +6,10 @@
 
 #include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.IndexBuffer.h"
+#include "EffekseerRendererLLGI.MaterialLoader.h"
+#include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
 #include "EffekseerRendererLLGI.VertexBuffer.h"
-#include "EffekseerRendererLLGI.ModelRenderer.h"
-#include "EffekseerRendererLLGI.MaterialLoader.h"
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
@@ -25,20 +25,6 @@
 
 namespace EffekseerRendererLLGI
 {
-
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-{
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice.Get(), fileInterface);
-#else
-	return nullptr;
-#endif
-}
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-{
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice, fileInterface);
-}
 
 bool PiplineStateKey::operator<(const PiplineStateKey& v) const
 {
@@ -239,8 +225,7 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_RELEASE(renderPassPipelineState_);
 
-	ES_SAFE_RELEASE(commandList_);
-
+	commandList_.Reset();
 	GetImpl()->DeleteProxyTextures(this);
 
 	ES_SAFE_DELETE(m_distortingCallback);
@@ -371,10 +356,10 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
 	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 5});
 	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 6}); // AlphaTextureUV + UVDistortionTextureUV
-	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 7});		  // BlendUV
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 7});		// BlendUV
 	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT, "TEXCOORD", 8}); // BlendAlphaUV + BlendUVDistortionUV
-	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});		  // FlipbookIndexAndNextRate
-	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});		  // AlphaThreshold
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 9});			// FlipbookIndexAndNextRate
+	layouts_normal_ad.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32_FLOAT, "TEXCOORD", 10});			// AlphaThreshold
 
 	shader_unlit_ = Shader::Create(graphicsDevice_.Get(),
 								   fixedShader_.SpriteUnlit_VS.data(),
@@ -479,17 +464,16 @@ bool RendererImplemented::BeginRendering()
 {
 	assert(graphicsDevice_ != nullptr);
 
+	if (commandList_ == nullptr)
+	{
+		return false;
+	}
+
 	impl->CalculateCameraProjectionMatrix();
 
 	// initialize states
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
-
-	if (commandList_ == nullptr)
-	{
-		GetCurrentCommandList()->Begin();
-		// GetCurrentCommandList()->BeginRenderPass(nullptr);
-	}
 
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -501,25 +485,20 @@ bool RendererImplemented::EndRendering()
 {
 	assert(graphicsDevice_ != nullptr);
 
+	if (commandList_ == nullptr)
+	{
+		return false;
+	}
+
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	if (commandList_ == nullptr)
-	{
-		// GetCurrentCommandList()->EndRenderPass();
-		GetCurrentCommandList()->End();
-		GetGraphics()->Execute(GetCurrentCommandList());
-	}
 	return true;
 }
 
-void RendererImplemented::SetCommandList(EffekseerRenderer::CommandList* commandList)
+void RendererImplemented::SetCommandList(Effekseer::RefPtr<CommandList> commandList)
 {
-
-	ES_SAFE_ADDREF(commandList);
-	ES_SAFE_RELEASE(commandList_);
-
-	commandList_ = static_cast<CommandList*>(commandList);
+	commandList_ = commandList;
 }
 
 VertexBuffer* RendererImplemented::GetVertexBuffer()
