@@ -1,6 +1,7 @@
 ﻿#include "EffekseerRendererDX12.Renderer.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.TextureDX12.h"
 #include "../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.h"
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 
@@ -229,6 +230,20 @@ Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDevic
 {
 	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	return g->CreateTexture((uint64_t)texture, [] {});
+}
+
+TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
+{
+	if (texture != nullptr)
+	{
+		auto t = texture.DownCast<::EffekseerRendererLLGI::Backend::Texture>();
+		auto lt = static_cast<LLGI::TextureDX12*>(t->GetTexture().get());
+		return TextureProperty{lt->Get()};
+	}
+	else
+	{
+		return TextureProperty{};
+	}
 }
 
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList)

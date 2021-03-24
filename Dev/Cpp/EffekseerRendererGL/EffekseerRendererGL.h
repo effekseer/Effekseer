@@ -562,6 +562,17 @@ namespace EffekseerRendererGL
 
 Effekseer::Backend::TextureRef CreateTexture(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed);
 
+/**
+		@brief	\~English	Properties in a texture
+				\~Japanese	テクスチャ内のプロパティ
+*/
+struct TextureProperty
+{
+	GLuint Buffer = 0;
+};
+
+TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture);
+
 class Renderer;
 using RendererRef = ::Effekseer::RefPtr<Renderer>;
 
