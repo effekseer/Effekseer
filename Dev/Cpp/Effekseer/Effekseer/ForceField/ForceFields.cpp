@@ -288,7 +288,7 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = (VelocitySum + ExternalVelocity) / magnification;
+		ffcp.PreviousSumVelocity = (VelocitySum + ExternalVelocity / deltaFrame) / magnification;
 		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.DeltaFrame = deltaFrame;
 		ffcp.IsFieldRotated = field.IsRotated;
