@@ -116,7 +116,7 @@ int main(int argc, char** argv)
 			// Begin a command list
 			// コマンドリストを開始する。
 			EffekseerRendererDX12::BeginCommandList(commandListEfk, GetCommandList());
-			renderer->SetCommandList(commandListEfk.Get());
+			renderer->SetCommandList(commandListEfk);
 
 			if (time % 120 == 0)
 			{

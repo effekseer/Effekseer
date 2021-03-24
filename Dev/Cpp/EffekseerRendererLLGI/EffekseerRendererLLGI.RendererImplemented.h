@@ -86,7 +86,7 @@ protected:
 
 	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
-	Effekseer::RefPtr<CommandList> commandList_ = nullptr;
+	Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList_ = nullptr;
 
 	LLGI::CommandList* GetCurrentCommandList();
 
@@ -125,7 +125,7 @@ public:
 
 	bool EndRendering() override;
 
-	void SetCommandList(Effekseer::RefPtr<CommandList> commandList) override;
+	void SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList) override;
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override
 	{

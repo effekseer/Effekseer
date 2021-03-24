@@ -132,7 +132,7 @@ public:
 		return commandList_;
 	}
 
-	LLGI::SingleFrameMemoryPool* GetMemoryPooll()
+	LLGI::SingleFrameMemoryPool* GetMemoryPool()
 	{
 		return memoryPool_;
 	}

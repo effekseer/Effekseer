@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 		// Begin a command list
 		// コマンドリストを開始する。
 		EffekseerRendererMetal::BeginCommandList(commandListEfk, GetEncoder());
-		renderer->SetCommandList(commandListEfk.Get());
+		renderer->SetCommandList(commandListEfk);
 
 		if (time % 120 == 0)
 		{

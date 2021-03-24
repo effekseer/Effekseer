@@ -60,7 +60,8 @@ LLGI::CommandList* RendererImplemented::GetCurrentCommandList()
 {
 	if (commandList_ != nullptr)
 	{
-		return commandList_->GetInternal();
+		auto cl = commandList_.DownCast<CommandList>();
+		return cl->GetInternal();
 	}
 
 	assert(0);
@@ -496,7 +497,7 @@ bool RendererImplemented::EndRendering()
 	return true;
 }
 
-void RendererImplemented::SetCommandList(Effekseer::RefPtr<CommandList> commandList)
+void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	commandList_ = commandList;
 }
@@ -652,9 +653,11 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 	LLGI::ConstantBuffer* constantBufferVS = nullptr;
 	LLGI::ConstantBuffer* constantBufferPS = nullptr;
 
+	auto cl = commandList_.DownCast<CommandList>();
+
 	if (currentShader->GetVertexConstantBufferSize() > 0)
 	{
-		constantBufferVS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
+		constantBufferVS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
 		assert(constantBufferVS != nullptr);
 		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
 		constantBufferVS->Unlock();
@@ -663,7 +666,7 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (currentShader->GetPixelConstantBufferSize() > 0)
 	{
-		constantBufferPS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
+		constantBufferPS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
 		assert(constantBufferPS != nullptr);
 		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
 		constantBufferPS->Unlock();
@@ -704,9 +707,11 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	LLGI::ConstantBuffer* constantBufferVS = nullptr;
 	LLGI::ConstantBuffer* constantBufferPS = nullptr;
 
+	auto cl = commandList_.DownCast<CommandList>();
+
 	if (currentShader->GetVertexConstantBufferSize() > 0)
 	{
-		constantBufferVS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
+		constantBufferVS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
 		assert(constantBufferVS != nullptr);
 		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
 		constantBufferVS->Unlock();
@@ -715,7 +720,7 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 
 	if (currentShader->GetPixelConstantBufferSize() > 0)
 	{
-		constantBufferPS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
+		constantBufferPS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
 		assert(constantBufferPS != nullptr);
 		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
 		constantBufferPS->Unlock();

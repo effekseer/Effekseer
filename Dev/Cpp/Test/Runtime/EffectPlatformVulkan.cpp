@@ -211,7 +211,7 @@ void EffectPlatformVulkan::BeginRendering()
 
 	auto cl = static_cast<LLGI::CommandListVulkan*>(commandList_);
 	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, static_cast<VkCommandBuffer>(cl->GetCommandBuffer()));
-	GetRenderer()->SetCommandList(commandListEfk_.Get());
+	GetRenderer()->SetCommandList(commandListEfk_);
 }
 
 void EffectPlatformVulkan::EndRendering()
