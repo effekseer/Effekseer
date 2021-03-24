@@ -162,8 +162,6 @@ void EffectPlatformLLGI::DestroyDevice()
 		glfwWindow_ = nullptr;
 	}
 
-	ES_SAFE_RELEASE(commandListEfk_);
-	ES_SAFE_RELEASE(sfMemoryPoolEfk_);
 	ES_SAFE_RELEASE(renderPass_);
 	ES_SAFE_RELEASE(colorBuffer_);
 	ES_SAFE_RELEASE(depthBuffer_);

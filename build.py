@@ -177,12 +177,12 @@ if env['IGNORE_BUILD'] == '0':
                 call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
             else:
                 # run tests on x64
-                call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON' + suffix)
+                call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON' + suffix)
 
         elif isMac():
-            call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')
+            call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON')
         elif find_executable('ninja'):
-            call('cmake .. -G Ninja -DBUILD_VIEWER=ON')
+            call('cmake .. -G Ninja -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON')
         else:
             call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
         call('cmake --build . --config Release')

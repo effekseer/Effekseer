@@ -106,8 +106,8 @@ protected:
 	LLGI::CommandList* commandList_ = nullptr;
 	std::shared_ptr<LLGI::CommandListPool> commandListPool_ = nullptr;
 
-	EffekseerRenderer::CommandList* commandListEfk_ = nullptr;
-	EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk_ = nullptr;
+	Effekseer::RefPtr<EffekseerRenderer::CommandList> commandListEfk_ = nullptr;
+	Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> sfMemoryPoolEfk_ = nullptr;
 
 	LLGI::RenderPass* renderPass_ = nullptr;
 	LLGI::Texture* colorBuffer_ = nullptr;
