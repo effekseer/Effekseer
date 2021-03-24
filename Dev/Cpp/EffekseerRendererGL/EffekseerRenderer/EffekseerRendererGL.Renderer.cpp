@@ -94,6 +94,19 @@ Effekseer::Backend::TextureRef CreateTexture(Effekseer::Backend::GraphicsDeviceR
 	return gd->CreateTexture(buffer, hasMipmap, onDisposed);
 }
 
+TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
+{
+	if (texture != nullptr)
+	{
+		auto t = texture.DownCast<Backend::Texture>();
+		return TextureProperty{t->GetBuffer()};
+	}
+	else
+	{
+		return TextureProperty{};
+	}
+}
+
 RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
 	return Create(CreateGraphicsDevice(deviceType, isExtensionsEnabled), squareMaxCount);

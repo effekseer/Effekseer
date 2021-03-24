@@ -8,10 +8,10 @@
 
 #include "EffekseerRendererDX11.DeviceObject.h"
 #include "EffekseerRendererDX11.IndexBuffer.h"
+#include "EffekseerRendererDX11.MaterialLoader.h"
+#include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
 #include "EffekseerRendererDX11.VertexBuffer.h"
-#include "EffekseerRendererDX11.ModelRenderer.h"
-#include "EffekseerRendererDX11.MaterialLoader.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
@@ -132,6 +132,19 @@ static
 {
 	auto gd = gprahicsDevice.DownCast<Backend::GraphicsDevice>();
 	return gd->CreateTexture(srv, rtv, dsv);
+}
+
+TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
+{
+	if (texture != nullptr)
+	{
+		auto t = texture.DownCast<Backend::Texture>();
+		return TextureProperty{t->GetSRV(), t->GetRTV(), t->GetDSV()};
+	}
+	else
+	{
+		return TextureProperty{};
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -568,17 +581,16 @@ bool RendererImplemented::BeginRendering()
 
 	impl->CalculateCameraProjectionMatrix();
 
-	// ステートを保存する
 	if (m_restorationOfStates)
 	{
 		m_state->SaveState(m_device, m_context);
 	}
 
-	// ステート初期設定
+	// reset states
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
 
-	// レンダラーリセット
+	// reset a renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	return true;
@@ -591,10 +603,10 @@ bool RendererImplemented::EndRendering()
 {
 	assert(m_device != nullptr);
 
-	// レンダラーリセット
+	// reset a renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	// ステートを復元する
+	// restore states
 	if (m_restorationOfStates)
 	{
 		m_state->LoadState(m_device, m_context);

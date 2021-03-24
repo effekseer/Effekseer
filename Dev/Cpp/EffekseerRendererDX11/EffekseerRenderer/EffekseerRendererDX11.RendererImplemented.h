@@ -19,7 +19,6 @@ namespace EffekseerRendererDX11
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 class OriginalState : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
@@ -62,14 +61,6 @@ public:
 	void ReleaseState();
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-	@brief	描画クラス
-	@note
-	ツール向けの描画機能。
-*/
 class RendererImplemented;
 using RendererImplementedRef = ::Effekseer::RefPtr<RendererImplemented>;
 
@@ -97,14 +88,12 @@ private:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
-	// 座標系
 	::Effekseer::CoordinateSystem m_coordinateSystem;
 
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 
 	std::set<DeviceObject*> m_deviceObjects;
 
-	// ステート
 	OriginalState* m_state;
 
 	bool m_restorationOfStates;
@@ -118,103 +107,50 @@ private:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
 public:
-	/**
-		@brief	コンストラクタ
-	*/
+
 	RendererImplemented(int32_t squareMaxCount);
 
-	/**
-		@brief	デストラクタ
-	*/
 	~RendererImplemented();
 
 	void OnLostDevice();
 	void OnResetDevice();
 
-	/**
-		@brief	初期化
-	*/
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled);
 
 	void SetRestorationOfStatesFlag(bool flag);
 
-	/**
-		@brief	描画開始
-	*/
 	bool BeginRendering();
 
-	/**
-		@brief	描画終了
-	*/
 	bool EndRendering();
 
-	/**
-		@brief	デバイス取得
-	*/
 	ID3D11Device* GetDevice() override;
 
-	/**
-		@brief	コンテキスト取得
-	*/
 	ID3D11DeviceContext* GetContext() override;
 
-	/**
-		@brief	頂点バッファ取得
-	*/
 	VertexBuffer* GetVertexBuffer();
 
-	/**
-		@brief	インデックスバッファ取得
-	*/
 	IndexBuffer* GetIndexBuffer();
 
-	/**
-		@brief	最大描画スプライト数
-	*/
 	int32_t GetSquareMaxCount() const;
 
 	::EffekseerRenderer::RenderStateBase* GetRenderState();
 
-	/**
-		@brief	スプライトレンダラーを生成する。
-	*/
 	::Effekseer::SpriteRendererRef CreateSpriteRenderer();
 
-	/**
-		@brief	リボンレンダラーを生成する。
-	*/
 	::Effekseer::RibbonRendererRef CreateRibbonRenderer();
 
-	/**
-		@brief	リングレンダラーを生成する。
-	*/
 	::Effekseer::RingRendererRef CreateRingRenderer();
 
-	/**
-		@brief	モデルレンダラーを生成する。
-	*/
 	::Effekseer::ModelRendererRef CreateModelRenderer();
 
-	/**
-		@brief	軌跡レンダラーを生成する。
-	*/
 	::Effekseer::TrackRendererRef CreateTrackRenderer();
 
-	/**
-		@brief	テクスチャ読込クラスを生成する。
-	*/
 	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
-	/**
-		@brief	モデル読込クラスを生成する。
-	*/
 	::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr);
 
 	::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 
-	/**
-		@brief	背景を設定する。
-	*/
 	void SetBackground(ID3D11ShaderResourceView* background) override;
 
 	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;

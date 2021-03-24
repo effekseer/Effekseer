@@ -51,6 +51,20 @@ namespace EffekseerRendererDX12
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
+/**
+		@brief	\~English	Properties in a texture
+				\~Japanese	テクスチャ内のプロパティ
+
+		@note	\~English	You need not to release pointers
+				\~Japanese	ポインタの解放する必要はない
+*/
+struct TextureProperty
+{
+	ID3D12Resource* TexturePtr = nullptr;
+};
+
+TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture);
+
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList);
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
