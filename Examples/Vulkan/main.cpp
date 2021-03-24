@@ -43,11 +43,11 @@ int main(int argc, char** argv)
 
 	// Create a memory pool
 	// メモリプールの作成
-	auto sfMemoryPoolEfk = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer);
+	auto sfMemoryPoolEfk = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
 
 	// Create a command list
 	// コマンドリストの作成
-	auto commandListEfk = EffekseerRenderer::CreateCommandList(renderer, sfMemoryPoolEfk);
+	auto commandListEfk = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk);
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
