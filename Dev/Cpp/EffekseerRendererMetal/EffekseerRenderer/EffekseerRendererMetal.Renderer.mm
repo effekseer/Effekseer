@@ -42,16 +42,6 @@
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-{
-    return EffekseerRendererLLGI::CreateTextureLoader(graphicsDevice, fileInterface);
-}
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
-{
-    return EffekseerRendererLLGI::CreateModelLoader(graphicsDevice, fileInterface);
-}
-
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
     auto gd = static_cast<EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
@@ -151,77 +141,28 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	return nullptr;
 }
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = r->GetGraphicsDeviceInternal();
-	return g->CreateTexture((uint64_t)texture, []()-> void{});
-}
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
 {
     auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
     return g->CreateTexture((uint64_t)texture, []()-> void{});
 }
 
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
-{
-    auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
-	g->WaitFinish();
-}
-
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
-	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
-	auto commandList = g->CreateCommandList(mp->GetInternal());
-	auto ret = new EffekseerRendererLLGI::CommandList(g, commandList, mp->GetInternal());
-	ES_SAFE_RELEASE(commandList);
-	return ret;
-}
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
-{
-    auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
-}
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
-	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
-	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
-	ES_SAFE_RELEASE(mp);
-	return ret;
-}
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
-{
-    auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer.Get());
-    return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
-}
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLRenderCommandEncoder> encoder)
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> encoder)
 {
 	assert(commandList != nullptr);
 
     LLGI::CommandListMetalPlatformRenderPassContext context;
     context.RenderEncoder = encoder;
 
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->BeginWithPlatform(nullptr);
 	c->GetInternal()->BeginRenderPassWithPlatformPtr(&context);
 }
 
-void EndCommandList(EffekseerRenderer::CommandList* commandList)
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->EndRenderPassWithPlatformPtr();
 	c->GetInternal()->EndWithPlatform();
 }
@@ -256,90 +197,5 @@ void RendererImplemented::GenerateIndexBuffer()
 
 	m_indexBuffer->Unlock();
 }
-
-/*
-void RendererImplemented::SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer)
-{
-    if (commandList_ != nullptr)
-    {
-        auto clm = static_cast<LLGI::CommandListMetal*>(GetCurrentCommandList());
-        [extCommandBuffer retain];
-        [clm->GetImpl()->commandBuffer release];
-        clm->GetImpl()->commandBuffer = extCommandBuffer;
-    }
-}
-    
-void RendererImplemented::SetExternalRenderEncoder(id<MTLRenderCommandEncoder> extRenderEncoder)
-{
-    if (commandList_ != nullptr)
-    {
-        auto clm = static_cast<LLGI::CommandListMetal*>(GetCurrentCommandList());
-        [extRenderEncoder retain];
-        [clm->GetImpl()->renderEncoder release];
-        clm->GetImpl()->renderEncoder = extRenderEncoder;
-    }
-}
-
-bool RendererImplemented::BeginRendering()
-{
-    assert(GetGraphics() != NULL);
-
-    impl->CalculateCameraProjectionMatrix();
-
-    // initialize states
-    m_renderState->GetActiveState().Reset();
-    m_renderState->Update(true);
-
-    if (commandList_ != nullptr)
-    {
-#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_COMMAND_BUFFER__
-        GetCurrentCommandList()->Begin();
-#else
-        GetCurrentCommandList()->CommandList::Begin();
-#endif
-#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__
-        auto g = static_cast<LLGI::GraphicsMetal*>(GetGraphics());
-        GetCurrentCommandList()->BeginRenderPass(g->GetRenderPass());
-#else
-        GetCurrentCommandList()->CommandList::BeginRenderPass(nullptr);
-#endif
-    }
-
-    // reset renderer
-    m_standardRenderer->ResetAndRenderingIfRequired();
-
-    return true;
-}
-
-bool RendererImplemented::EndRendering()
-{
-    assert(GetGraphics() != NULL);
-
-    // reset renderer
-    m_standardRenderer->ResetAndRenderingIfRequired();
-
-    if (commandList_ != nullptr)
-    {
-#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__
-        GetCurrentCommandList()->EndRenderPass();
-#endif
-#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_COMMAND_BUFFER__
-        GetCurrentCommandList()->End();
-        GetGraphics()->Execute(GetCurrentCommandList());
-#endif
-    }
-    return true;
-}
-*/
-
-/*
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
-
-    if (materialCompiler_ == nullptr)
-        return nullptr;
-
-    return new MaterialLoader(this->GetGraphicsDevice(), fileInterface, platformType_, materialCompiler_);
-}
-*/
 
 } // namespace EffekseerRendererMetal

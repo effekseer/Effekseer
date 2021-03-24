@@ -201,8 +201,8 @@ EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 
 	renderer->SetDistortingCallback(new DistortingCallbackMetal(this));
 
-	sfMemoryPoolEfk_ = EffekseerRendererMetal::CreateSingleFrameMemoryPool(renderer);
-	commandListEfk_ = EffekseerRendererMetal::CreateCommandList(renderer, sfMemoryPoolEfk_);
+	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
+	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 

@@ -92,18 +92,6 @@ enum class ProxyTextureType
 	Normal,
 };
 
-/**
-	@brief
-	\~english A class which contains a graphics device
-	\~japanese グラフィックデバイスを格納しているクラス
-*/
-class GraphicsDevice : public ::Effekseer::IReference
-{
-public:
-	GraphicsDevice() = default;
-	virtual ~GraphicsDevice() = default;
-};
-
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -413,7 +401,7 @@ public:
 	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
 	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
-	virtual void SetCommandList(CommandList* commandList)
+	virtual void SetCommandList(Effekseer::RefPtr<CommandList> commandList)
 	{
 	}
 
@@ -526,28 +514,34 @@ namespace EffekseerRendererDX12
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList);
 
-void EndCommandList(EffekseerRenderer::CommandList* commandList);
-
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
-
-void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererDX12
+
+#endif
+
+#ifndef __EFFEKSEERRENDERER_LLGI_COMMON_H__
+#define __EFFEKSEERRENDERER_LLGI_COMMON_H__
+
+#include <Effekseer.h>
+
+namespace EffekseerRenderer
+{
+
+/**
+
+*/
+void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
+
+Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+																	Effekseer::RefPtr<::EffekseerRenderer::SingleFrameMemoryPool> memoryPool);
+
+Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
+
+} // namespace EffekseerRenderer
 
 #endif

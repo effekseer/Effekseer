@@ -49,27 +49,11 @@ namespace EffekseerRendererDX12
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::RendererRef renderer, ID3D12Resource* texture);
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer);
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList);
 
-void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
-
-void EndCommandList(EffekseerRenderer::CommandList* commandList);
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererDX12
 

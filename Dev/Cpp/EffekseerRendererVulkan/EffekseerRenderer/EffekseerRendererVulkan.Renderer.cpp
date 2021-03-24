@@ -134,12 +134,6 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 	return nullptr;
 }
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info)
-{
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	return CreateTexture(r->GetGraphicsDevice(), info);
-}
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info)
 {
 	LLGI::VulkanImageInfo llgiinfo;
@@ -151,56 +145,11 @@ Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDevic
 	return g->CreateTexture((uint64_t)(&llgiinfo), [] {});
 }
 
-void FlushAndWait(::EffekseerRenderer::RendererRef renderer)
-{
-	FlushAndWait(renderer->GetGraphicsDevice());
-}
-
-void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
-	g->WaitFinish();
-}
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
-{
-	return CreateCommandList(renderer->GetGraphicsDevice(), memoryPool);
-}
-
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
-	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
-	auto commandList = g->CreateCommandList(mp->GetInternal());
-	auto ret = new EffekseerRendererLLGI::CommandList(g, commandList, mp->GetInternal());
-	ES_SAFE_RELEASE(commandList);
-	return ret;
-}
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer)
-{
-	return CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
-}
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
-{
-	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto g = static_cast<LLGI::GraphicsVulkan*>(gd->GetGraphics());
-	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
-	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
-	ES_SAFE_RELEASE(mp);
-	return ret;
-}
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuffer nativeCommandList)
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, VkCommandBuffer nativeCommandList)
 {
 	assert(commandList != nullptr);
 
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 
 	LLGI::PlatformContextVulkan context;
 	context.commandBuffer = nativeCommandList;
@@ -208,10 +157,10 @@ void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuff
 	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginWithPlatform(&context);
 }
 
-void EndCommandList(EffekseerRenderer::CommandList* commandList)
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->EndWithPlatform();
 }
 

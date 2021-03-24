@@ -191,8 +191,8 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 
 	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this));
 
-	sfMemoryPoolEfk_ = EffekseerRendererVulkan::CreateSingleFrameMemoryPool(renderer);
-	commandListEfk_ = EffekseerRendererVulkan::CreateCommandList(renderer, sfMemoryPoolEfk_);
+	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
+	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 

@@ -91,18 +91,6 @@ enum class ProxyTextureType
 	Normal,
 };
 
-/**
-	@brief
-	\~english A class which contains a graphics device
-	\~japanese グラフィックデバイスを格納しているクラス
-*/
-class GraphicsDevice : public ::Effekseer::IReference
-{
-public:
-	GraphicsDevice() = default;
-	virtual ~GraphicsDevice() = default;
-};
-
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -412,7 +400,7 @@ public:
 	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
 	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
-	virtual void SetCommandList(CommandList* commandList)
+	virtual void SetCommandList(Effekseer::RefPtr<CommandList> commandList)
 	{
 	}
 
@@ -521,28 +509,34 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 									  RenderPassInformation renderPassInformation,
 									  int32_t squareMaxCount);
 
-Effekseer::Backend::TextureRef CreateTexture(::EffekseerRenderer::Renderer* renderer, const VulkanImageInfo& info);
-
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info);
 
-void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, VkCommandBuffer nativeCommandList);
 
-void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
-
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::RendererRef renderer,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::CommandList* CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::RendererRef renderer);
-
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
-
-void BeginCommandList(EffekseerRenderer::CommandList* commandList, VkCommandBuffer nativeCommandList);
-
-void EndCommandList(EffekseerRenderer::CommandList* commandList);
+void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererVulkan
+
+#endif
+
+#ifndef __EFFEKSEERRENDERER_LLGI_COMMON_H__
+#define __EFFEKSEERRENDERER_LLGI_COMMON_H__
+
+#include <Effekseer.h>
+
+namespace EffekseerRenderer
+{
+
+/**
+
+*/
+void FlushAndWait(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
+
+Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+																	Effekseer::RefPtr<::EffekseerRenderer::SingleFrameMemoryPool> memoryPool);
+
+Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> CreateSingleFrameMemoryPool(::Effekseer::Backend::GraphicsDeviceRef renderer);
+
+} // namespace EffekseerRenderer
 
 #endif

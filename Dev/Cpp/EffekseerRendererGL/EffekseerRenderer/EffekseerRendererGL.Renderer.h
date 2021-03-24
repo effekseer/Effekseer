@@ -29,7 +29,6 @@ namespace EffekseerRendererGL
 [[deprecated("please use EffekseerRenderer::CreateModelLoader")]]
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
-[[deprecated("please use EffekseerRenderer::CreateModelLoader")]]
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 												  ::Effekseer::FileInterface* fileInterface = nullptr);
 

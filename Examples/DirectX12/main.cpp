@@ -45,11 +45,11 @@ int main(int argc, char** argv)
 
 		// Create a memory pool
 		// メモリプールの作成
-		EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk = EffekseerRendererDX12::CreateSingleFrameMemoryPool(renderer);
+		auto sfMemoryPoolEfk = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
 
 		// Create a command list
 		// コマンドリストの作成
-		EffekseerRenderer::CommandList* commandListEfk = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk);
+		auto commandListEfk = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk);
 
 		// Create a manager of effects
 		// エフェクトのマネージャーの作成
@@ -171,9 +171,6 @@ int main(int argc, char** argv)
 		// Dispose the sound
 		// サウンドの破棄
 		sound.Reset();
-
-		ES_SAFE_RELEASE(sfMemoryPoolEfk);
-		ES_SAFE_RELEASE(commandListEfk);
 
 		// Dispose the renderer
 		// レンダラーの破棄
