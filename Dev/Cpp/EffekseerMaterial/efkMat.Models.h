@@ -98,7 +98,7 @@ public:
 	Vector2DF Pos;
 
 	//! For visualization (comment)
-	Vector2DF CommentSize = Vector2DF(100, 100);
+	Vector2DF CommentSize = Vector2DF(0, 0);
 
 	//! is node opened and show a preview
 	bool IsPreviewOpened = false;
@@ -120,7 +120,7 @@ public:
 
 	std::shared_ptr<NodeProperty> GetProperty(const std::string& name) const;
 
-	void UpdatePos(const Vector2DF& pos);
+	void UpdateRegion(const Vector2DF& pos, const Vector2DF& size);
 
 	bool GetIsPosDirtied() const { return isPosDirtied_; }
 
