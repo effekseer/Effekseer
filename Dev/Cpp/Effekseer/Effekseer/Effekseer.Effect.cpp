@@ -1367,7 +1367,7 @@ bool EffectImplemented::Reload(
 
 	eLoader->Unload(data, size);
 
-	return false;
+	return true;
 }
 
 //----------------------------------------------------------------------------------
