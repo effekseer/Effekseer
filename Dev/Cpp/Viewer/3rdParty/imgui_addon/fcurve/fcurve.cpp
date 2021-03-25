@@ -198,6 +198,10 @@ namespace ImGui
 			auto p0 = v - v1;
 			auto p1 = v2 - v1;
 
+			const float eps = 0.000001f;
+			if (ImLength(p1) < eps)
+				continue;
+
 			auto n = ImNorm(p1);
 			auto component1 = n * ImDot(n, p0);
 			auto component2 = p0 - component1;
