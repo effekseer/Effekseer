@@ -159,6 +159,10 @@ namespace ImGui
 			auto p0 = v - v1;
 			auto p1 = v2 - v1;
 
+			const float eps = 0.000001f;
+			if (ImLength(p1) < eps)
+				continue;
+
 			auto n = ImNorm(p1);
 			auto component1 = n * ImDot(n, p0);
 			auto component2 = p0 - component1;
@@ -231,6 +235,11 @@ namespace ImGui
 		const ImRect innerRect = window->InnerRect;
 		float width = innerRect.Max.x - innerRect.Min.x;
 		float height = innerRect.Max.y - innerRect.Min.y;
+
+		if (!innerRect.Contains(GetMousePos()))
+		{
+			return false;
+		}
 
 		auto transform_f2s = [&](const ImVec2& p) -> ImVec2
 		{
