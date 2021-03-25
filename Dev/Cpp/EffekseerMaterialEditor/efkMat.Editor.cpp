@@ -3,6 +3,8 @@
 #include "efkMat.CommandManager.h"
 #include "efkMat.Models.h"
 
+#include "imgui_node_editor.h"
+#include "ThirdParty/NodeEditor/Source/imgui_node_editor_internal.h"
 #include "ThirdParty/imgui_main/imgui_internal.h"
 #include "ThirdParty/nfd/nfd.h"
 
@@ -22,6 +24,29 @@
 
 namespace EffekseerMaterial
 {
+static Vector2DF GetNodeGroupSize(uint64_t guid)
+{
+	auto editor = reinterpret_cast<ax::NodeEditor::Detail::EditorContext*>(ed::GetCurrentEditor());
+	if (editor == nullptr)
+	{
+		return Vector2DF{0.0f, 0.0f};
+	}
+	auto nodeContext = editor->GetNode(guid);
+
+	if (nodeContext->m_Type == ax::NodeEditor::Detail::NodeType::Node)
+	{
+		return Vector2DF{0.0f, 0.0f};
+	}
+
+	ImVec2 size{0, 0};
+
+	if (nodeContext != nullptr)
+	{
+		size = nodeContext->m_GroupBounds.GetSize();
+	}
+
+	return {size.x, size.y};
+}
 
 void Compile(std::shared_ptr<Graphics> graphics,
 			 std::shared_ptr<Material> material,
@@ -858,9 +883,10 @@ void Editor::UpdatePopup()
 		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
 			auto nodeParam = content->Create();
 			auto node = material->CreateNode(nodeParam, false);
-			ed::SetNodePosition(node->GUID, popupPosition);
-			node->Pos.X = popupPosition.x;
-			node->Pos.Y = popupPosition.y;
+			ImVec2 nodePos{floorf(popupPosition.x), floorf(popupPosition.y)};
+			ed::SetNodePosition(node->GUID, nodePos);
+			node->Pos.X = nodePos.x;
+			node->Pos.Y = nodePos.y;
 
 			// link automatically
 			if (currentPin != nullptr)
@@ -1532,6 +1558,7 @@ void Editor::UpdateToRecordMovingCommand()
 
 	std::vector<std::shared_ptr<Node>> nodes;
 	std::vector<Vector2DF> poses;
+	std::vector<Vector2DF> sizes;
 
 	for (auto node : material->GetNodes())
 	{
@@ -1539,16 +1566,18 @@ void Editor::UpdateToRecordMovingCommand()
 			continue;
 
 		auto nodePos = ed::GetNodePosition(node->GUID);
-		if (nodePos.x != node->Pos.X || nodePos.y != node->Pos.Y)
+		auto nodeSize = GetNodeGroupSize(node->GUID);
+		if (nodePos.x != node->Pos.X || nodePos.y != node->Pos.Y || node->CommentSize.X != nodeSize.X || node->CommentSize.Y != nodeSize.Y)
 		{
 			nodes.push_back(node);
 			poses.push_back(Vector2DF(nodePos.x, nodePos.y));
+			sizes.push_back(nodeSize);
 		}
 	}
 
 	if (nodes.size() == 1)
 	{
-		nodes[0]->UpdatePos(Vector2DF(poses[0].X, poses[0].Y));
+		nodes[0]->UpdateRegion(Vector2DF(poses[0].X, poses[0].Y), sizes[0]);
 	}
 	else if (nodes.size() > 0)
 	{
@@ -1577,19 +1606,28 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		ImGui::BeginHorizontal("horizontal");
 		ImGui::Text(node->Properties[0]->Str.c_str());
 		ImGui::EndHorizontal();
-		auto size = ed::GetNodeSize(node->GUID);
+		
+		auto editor = reinterpret_cast<ax::NodeEditor::Detail::EditorContext*>(ed::GetCurrentEditor());
+		auto nodeContext = editor->GetNode(node->GUID);
+
+		ImVec2 size{0, 0};
+		if (nodeContext != nullptr)
+		{
+			size = nodeContext->m_GroupBounds.GetSize();
+		}
+		size.x = size.x < 64 ? 64 : size.x;
+		size.y = size.y < 64 ? 64 : size.y;
+
+		//auto size = ed::GetNodeSize(node->GUID);
 
 		// initialize
 		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
 		{
 			size.x = node->CommentSize.X;
 			size.y = node->CommentSize.Y;
+			nodeContext->m_GroupBounds.Max = nodeContext->m_GroupBounds.Min + size;
 		}
 
-		size.x = size.x < 64 ? 64 : size.x;
-		size.y = size.y < 64 ? 64 : size.y;
-		node->CommentSize.X = size.x;
-		node->CommentSize.Y = size.y;
 		ed::Group(size);
 		ImGui::EndVertical();
 		ed::EndNode();
