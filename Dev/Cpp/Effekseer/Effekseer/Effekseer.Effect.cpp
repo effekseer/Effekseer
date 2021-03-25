@@ -1333,7 +1333,7 @@ bool EffectImplemented::Reload(Manager** managers, int32_t managersCount, const 
 
 	eLoader->Unload(data, size);
 
-	return false;
+	return true;
 }
 
 //----------------------------------------------------------------------------------
