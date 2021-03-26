@@ -745,6 +745,7 @@ void Editor::UpdateNodes()
 
 			preview_->CompileShader(vs, ps, textures, uniforms);
 			previewTextureCount_ = textures.size();
+			previewUniformCount_ = uniforms.size();
 		}
 
 		for (auto node : material->GetNodes())
@@ -761,6 +762,7 @@ void Editor::UpdateNodes()
 
 			preview_->UpdateUniforms(textures, uniforms);
 			previewTextureCount_ = textures.size();
+			previewUniformCount_ = uniforms.size();
 		}
 	}
 
@@ -1562,6 +1564,22 @@ void Editor::UpdatePreview()
 	else
 	{
 		ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+	}
+
+	// uniform
+	
+	// TODO : refactor
+	auto uniformNumHeader = StringContainer::GetValue("UniformCount", "Uniform");
+	const int uniformMax = 16;
+
+	if (previewUniformCount_ > uniformMax)
+	{
+		ImGui::TextColored(
+			ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+	}
+	else
+	{
+		ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
 	}
 }
 
