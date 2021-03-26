@@ -10,6 +10,7 @@
   "ConfirmSaveChanged": "[{0}] has been changed. Do you want to save?",
   "Cancel": "Cancel",
   "TextureCount": "Image",
+  "UniformCount": "Parameter",
   "Delete_Name": "Delete",
   "": "",
   "Description_Name": "Description",
