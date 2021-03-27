@@ -346,7 +346,7 @@ std::shared_ptr<NodeProperty> Node::GetProperty(const std::string& name) const
 void Node::UpdateRegion(const Vector2DF& pos, const Vector2DF& size)
 {
 
-	if (pos.X == pos.X && Pos.Y == pos.Y && CommentSize.X == size.X && CommentSize.Y == size.Y)
+	if (Pos.X == pos.X && Pos.Y == pos.Y && CommentSize.X == size.X && CommentSize.Y == size.Y)
 		return;
 
 	Pos = pos;
