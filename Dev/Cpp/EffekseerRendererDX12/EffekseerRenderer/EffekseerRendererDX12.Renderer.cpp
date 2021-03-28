@@ -250,18 +250,43 @@ void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandL
 {
 	assert(commandList != nullptr);
 
-	LLGI::PlatformContextDX12 context;
-	context.commandList = dx12CommandList;
+	if (dx12CommandList)
+	{
+		LLGI::PlatformContextDX12 context;
+		context.commandList = dx12CommandList;
 
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
-	c->GetInternal()->BeginWithPlatform(&context);
+		auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+		c->GetInternal()->BeginWithPlatform(&context);
+		c->SetState(EffekseerRendererLLGI::CommandListState::RunningWithPlatformCommandList);
+	}
+	else
+	{
+		auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+		c->GetInternal()->Begin();
+		c->SetState(EffekseerRendererLLGI::CommandListState::Running);
+	}
 }
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
-	c->GetInternal()->EndWithPlatform();
+
+	if (c->GetState() == EffekseerRendererLLGI::CommandListState::RunningWithPlatformCommandList)
+	{
+		c->GetInternal()->EndWithPlatform();
+	}
+	else
+	{
+		c->GetInternal()->End();
+	}
+}
+
+void ExecuteCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
+{
+	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->GetGraphics()->Execute(c->GetInternal());
 }
 
 } // namespace EffekseerRendererDX12
