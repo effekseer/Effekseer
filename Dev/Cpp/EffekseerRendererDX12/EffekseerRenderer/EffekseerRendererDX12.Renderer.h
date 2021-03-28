@@ -65,9 +65,18 @@ struct TextureProperty
 
 TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture);
 
+/**
+	@brief	\~English	Start to record commands
+	\~Japanese	コマンドの記録を開始する。
+	@note
+	\~English	dx12CommandList can be null. In this case, it need to call ExecuteCommandList
+	\~Japanese	dx12CommandList はnullにできる。その場合、ExecuteCommandListを呼ぶ必要がある。
+*/
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList);
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
+
+void ExecuteCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererDX12
 

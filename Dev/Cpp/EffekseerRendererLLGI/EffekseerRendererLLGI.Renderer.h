@@ -97,12 +97,20 @@ public:
 	}
 };
 
+enum class CommandListState
+{
+	Wait,
+	Running,
+	RunningWithPlatformCommandList,
+};
+
 class CommandList : public ::EffekseerRenderer::CommandList, public ::Effekseer::ReferenceObject
 {
 private:
 	LLGI::Graphics* graphics_ = nullptr;
 	LLGI::CommandList* commandList_ = nullptr;
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
+	CommandListState state_ = CommandListState::Wait;
 
 public:
 	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
@@ -135,6 +143,16 @@ public:
 	LLGI::SingleFrameMemoryPool* GetMemoryPool()
 	{
 		return memoryPool_;
+	}
+
+	CommandListState GetState() const
+	{
+		return state_;
+	}
+
+	void SetState(CommandListState state)
+	{
+		state_ = state;
 	}
 
 	virtual int GetRef() override
