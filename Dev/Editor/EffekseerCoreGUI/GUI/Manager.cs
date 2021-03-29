@@ -101,7 +101,7 @@ namespace Effekseer.GUI
 			public override void OnFileChanged(StaticFileType fileType, string path)
 			{
 				var ext = System.IO.Path.GetExtension(path).ToLower();
-				if(ext == ".efkmat")
+				if (ext == ".efkmat")
 				{
 					Core.UpdateResourcePaths(path);
 					Viewer.IsRequiredToReload = true;
@@ -116,7 +116,7 @@ namespace Effekseer.GUI
 		static ManagerIOCallback ioCallback;
 
 		static GUIManagerCallback guiManagerCallback;
-	
+
 		static int nextID = 10;
 
 		static bool isFontSizeDirtied = true;
@@ -129,7 +129,7 @@ namespace Effekseer.GUI
 
 		internal static bool DoesChangeColorOnChangedValue = true;
 
-		public static float TextOffsetY {get; private set;}
+		public static float TextOffsetY { get; private set; }
 
 		public static float DpiScale
 		{
@@ -145,9 +145,9 @@ namespace Effekseer.GUI
 		internal static int resizedCount = 0;
 		internal static int actualWidth = 1;
 
-        /// <summary>
-        /// if this flag is true, a dialog box on disposing is not shown
-        /// </summary>
+		/// <summary>
+		/// if this flag is true, a dialog box on disposing is not shown
+		/// </summary>
 		internal static bool IgnoreDisposingDialogBox = false;
 
 		/// <summary>
@@ -168,6 +168,8 @@ namespace Effekseer.GUI
 
 		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 
+		public static string ConfigFilePath { get { return System.IO.Path.Combine(GetEntryDirectory(), Application.Name + ".config.Dock.xml"); } }
+
 		public static bool Initialize(int width, int height, swig.DeviceType deviceType, Type[] dockTypes_)
 		{
 			dockTypes = dockTypes_;
@@ -182,7 +184,7 @@ namespace Effekseer.GUI
 
 			// TODO : refactor
 			var windowConfig = new Configs.WindowConfig();
-			if(windowConfig.Load(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
+			if(windowConfig.Load(ConfigFilePath))
 			{
 				state.PosX = windowConfig.WindowPosX;
 				state.PosY = windowConfig.WindowPosY;
@@ -310,7 +312,7 @@ namespace Effekseer.GUI
 				AddControl(effectViewer);
 			}
 
-			if (LoadWindowConfig(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
+			if (LoadWindowConfig(ConfigFilePath))
 			{
 			}
 			else
@@ -421,7 +423,7 @@ namespace Effekseer.GUI
 			var entryDirectory = GetEntryDirectory();
 			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
-			SaveWindowConfig(entryDirectory + "/config.Dock.xml");
+			SaveWindowConfig(ConfigFilePath);
 
 			foreach (var p in panels)
 			{
