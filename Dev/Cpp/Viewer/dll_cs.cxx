@@ -8347,6 +8347,26 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Markdown___(void * 
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginNodeFrameTimeline___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->BeginNodeFrameTimeline();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimeline___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndNodeFrameTimeline();
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_OpenDialog___(void * jarg1, void * jarg2) {
   void * jresult ;
   char16_t *arg1 = (char16_t *) 0 ;

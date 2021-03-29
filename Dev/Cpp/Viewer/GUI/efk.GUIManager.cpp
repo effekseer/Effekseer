@@ -16,6 +16,7 @@
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
 
 #include "efk.GUIManager.h"
+#include "NodeFrameTimeline.h"
 
 #include "../EditorCommon/GUI/JapaneseFont.h"
 
@@ -2351,4 +2352,15 @@ void GUIManager::Markdown(const char16_t* text)
 
 	::ImGui::Markdown(textUtf8, strlen(textUtf8), markdownConfig_);
 }
+
+bool GUIManager::BeginNodeFrameTimeline()
+{
+	return NodeFrameTimeline::BeginNodeFrameTimeline();
+}
+
+void GUIManager::EndNodeFrameTimeline()
+{
+	NodeFrameTimeline::EndNodeFrameTimeline();
+}
+
 } // namespace efk

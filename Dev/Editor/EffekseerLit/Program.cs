@@ -15,6 +15,10 @@ namespace Effekseer
 		[HandleProcessCorruptedStateExceptions]
 		static void Main(string[] args)
 		{
+			var app = new App();
+			app.Initialize(true);
+			app.Run();
+			Core.Dispose();
 		}
 	}
 }
