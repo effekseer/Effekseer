@@ -1,5 +1,10 @@
 #include "FramerateController.h"
 
+#ifdef _WIN32
+#pragma comment(lib, "Winmm.lib")
+#include <Windows.h>
+#endif
+
 namespace Effekseer
 {
 
@@ -7,6 +12,17 @@ FramerateController::FramerateController()
 {
 	previousTime_ = std::chrono::system_clock::now();
 	SetTargetFramerate(60);
+
+#ifdef _WIN32
+	timeBeginPeriod(1);
+#endif
+}
+
+FramerateController::~FramerateController()
+{
+#ifdef _WIN32
+	timeEndPeriod(1);
+#endif
 }
 
 void FramerateController::Update()

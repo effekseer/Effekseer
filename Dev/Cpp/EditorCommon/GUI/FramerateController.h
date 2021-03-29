@@ -19,6 +19,7 @@ class FramerateController
 
 public:
 	FramerateController();
+	~FramerateController();
 
 	void Update();
 
