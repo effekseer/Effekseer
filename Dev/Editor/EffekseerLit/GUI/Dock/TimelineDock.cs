@@ -31,11 +31,11 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			//if (Manager.NativeManager.BeginNodeFrameTimeline())
-			//{
+			if (Manager.NativeManager.BeginNodeFrameTimeline())
+			{
 
-			//	Manager.NativeManager.EndNodeFrameTimeline();
-			//}
+				Manager.NativeManager.EndNodeFrameTimeline();
+			}
 		}
 
 		void OnAfter(object sender, EventArgs e)

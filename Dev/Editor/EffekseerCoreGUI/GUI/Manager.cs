@@ -170,6 +170,8 @@ namespace Effekseer.GUI
 
 		public static string ConfigFilePath { get { return System.IO.Path.Combine(GetEntryDirectory(), Application.Name + ".config.Dock.xml"); } }
 
+		public static string ImGuiIniFilePath { get { return System.IO.Path.Combine(GetEntryDirectory(), Application.Name + ".imgui.ini"); } }
+
 		public static bool Initialize(int width, int height, swig.DeviceType deviceType, Type[] dockTypes_)
 		{
 			dockTypes = dockTypes_;
@@ -402,7 +404,7 @@ namespace Effekseer.GUI
 
 			// Set imgui path
 			var entryDirectory = GetEntryDirectory();
-			swig.GUIManager.SetIniFilename(entryDirectory + "/imgui.ini");
+			swig.GUIManager.SetIniFilename(ImGuiIniFilePath);
 
 			// check files
 			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
