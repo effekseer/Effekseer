@@ -98,15 +98,10 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 
 	key.DepthFormat = LLGI::VulkanHelper::VkFormatToTextureFormat(renderPassInformation.DepthFormat);
 
-	auto pipelineState = gd->GetGraphics()->CreateRenderPassPipelineState(key);
-
-	if (!renderer->Initialize(gd, pipelineState, false))
+	if (!renderer->Initialize(gd, key, false))
 	{
-		ES_SAFE_RELEASE(pipelineState);
 		return nullptr;
 	}
-
-	ES_SAFE_RELEASE(pipelineState);
 
 	renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::Vulkan;
 	renderer->materialCompiler_ = new Effekseer::MaterialCompilerVulkan();

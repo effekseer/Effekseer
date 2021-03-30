@@ -192,15 +192,10 @@ namespace EffekseerRendererDX12
 
 	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 
-	auto pipelineState = gd->GetGraphics()->CreateRenderPassPipelineState(key);
-
-	if (renderer->Initialize(gd, pipelineState, isReversedDepth))
+	if (renderer->Initialize(gd, key, isReversedDepth))
 	{
-		ES_SAFE_RELEASE(pipelineState);
 		return renderer;
 	}
-
-	ES_SAFE_RELEASE(pipelineState);
 
 	return nullptr;
 }
