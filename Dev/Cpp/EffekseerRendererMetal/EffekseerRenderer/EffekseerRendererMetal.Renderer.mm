@@ -111,15 +111,10 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
     key.IsColorCleared = false;
     key.IsDepthCleared = false;
     
-    auto pipelineState = g->CreateRenderPassPipelineState(key);
-
-    if (renderer->Initialize(gd, pipelineState, isReversedDepth))
+    if (renderer->Initialize(gd, key, isReversedDepth))
     {
-        ES_SAFE_RELEASE(pipelineState);
         return renderer;
     }
-
-    ES_SAFE_RELEASE(pipelineState);
 
     return nullptr;
 }

@@ -56,6 +56,70 @@ bool PiplineStateKey::operator<(const PiplineStateKey& v) const
 	return false;
 }
 
+LLGI::TextureFormatType ConvertTextureFormat(Effekseer::Backend::TextureFormatType format)
+{
+	switch (format)
+	{
+	case Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM:
+		return LLGI::TextureFormatType::R8G8B8A8_UNORM;
+		break;
+	case Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM:
+		return LLGI::TextureFormatType::B8G8R8A8_UNORM;
+		break;
+	case Effekseer::Backend::TextureFormatType::R8_UNORM:
+		return LLGI::TextureFormatType::R8_UNORM;
+		break;
+	case Effekseer::Backend::TextureFormatType::R16G16_FLOAT:
+		return LLGI::TextureFormatType::R16G16_FLOAT;
+		break;
+	case Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT:
+		return LLGI::TextureFormatType::R16G16B16A16_FLOAT;
+		break;
+	case Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT:
+		return LLGI::TextureFormatType::R32G32B32A32_FLOAT;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC1:
+		return LLGI::TextureFormatType::BC1;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC2:
+		return LLGI::TextureFormatType::BC2;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC3:
+		return LLGI::TextureFormatType::BC3;
+		break;
+	case Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB:
+		return LLGI::TextureFormatType::R8G8B8A8_UNORM_SRGB;
+		break;
+	case Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB:
+		return LLGI::TextureFormatType::B8G8R8A8_UNORM_SRGB;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC1_SRGB:
+		return LLGI::TextureFormatType::BC1_SRGB;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC2_SRGB:
+		return LLGI::TextureFormatType::BC2_SRGB;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC3_SRGB:
+		return LLGI::TextureFormatType::BC3_SRGB;
+		break;
+	case Effekseer::Backend::TextureFormatType::D32:
+		return LLGI::TextureFormatType::D32;
+		break;
+	case Effekseer::Backend::TextureFormatType::D24S8:
+		return LLGI::TextureFormatType::D24S8;
+		break;
+	case Effekseer::Backend::TextureFormatType::D32S8:
+		return LLGI::TextureFormatType::D32S8;
+		break;
+	case Effekseer::Backend::TextureFormatType::Unknown:
+		break;
+	default:
+		break;
+	}
+
+	return LLGI::TextureFormatType::Unknown;
+}
+
 LLGI::CommandList* RendererImplemented::GetCurrentCommandList()
 {
 	if (commandList_ != nullptr)
@@ -74,7 +138,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	key.state = m_renderState->GetActiveState();
 	key.shader = currentShader;
 	key.topologyType = currentTopologyType_;
-	key.renderPassPipelineState = renderPassPipelineState_;
+	key.renderPassPipelineState = currentRenderPassPipelineState_.get();
 
 	auto it = piplineStates_.find(key);
 	if (it != piplineStates_.end())
@@ -158,7 +222,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 		piplineState->BlendEquationAlpha = LLGI::BlendEquationType::Add;
 	}
 
-	piplineState->SetRenderPassPipelineState(renderPassPipelineState_);
+	piplineState->SetRenderPassPipelineState(currentRenderPassPipelineState_.get());
 
 	if (!piplineState->Compile())
 	{
@@ -224,8 +288,6 @@ RendererImplemented::~RendererImplemented()
 	}
 	piplineStates_.clear();
 
-	ES_SAFE_RELEASE(renderPassPipelineState_);
-
 	commandList_.Reset();
 	GetImpl()->DeleteProxyTextures(this);
 
@@ -261,28 +323,28 @@ void RendererImplemented::OnResetDevice()
 {
 }
 
-bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
+bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineStateKey key, bool isReversedDepth)
 {
 
 	auto gd = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(graphics);
 
-	auto ret = Initialize(gd, renderPassPipelineState, isReversedDepth);
+	auto ret = Initialize(gd, key, isReversedDepth);
 
 	return ret;
 }
 
 bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
-									 LLGI::RenderPassPipelineState* renderPassPipelineState,
+									 LLGI::RenderPassPipelineStateKey key,
 									 bool isReversedDepth)
 {
 	graphicsDevice_ = graphicsDevice;
-	renderPassPipelineState_ = renderPassPipelineState;
+	ChangeRenderPassPipelineState(key);
 	isReversedDepth_ = isReversedDepth;
 
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) { std::cout << message << std::endl; });
 
 	LLGI::SafeAddRef(graphicsDevice_);
-	LLGI::SafeAddRef(renderPassPipelineState_);
+	LLGI::SafeAddRef(currentRenderPassPipelineState_);
 
 	// Generate vertex buffer
 	{
@@ -454,11 +516,23 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
 }
 
-void RendererImplemented::SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState)
+void RendererImplemented::ChangeRenderPassPipelineState(LLGI::RenderPassPipelineStateKey key)
 {
-	ES_SAFE_RELEASE(renderPassPipelineState_);
-	renderPassPipelineState_ = renderPassPipelineState;
-	LLGI::SafeAddRef(renderPassPipelineState_);
+	auto it = renderpassPipelineStates_.find(key);
+	if (it != renderpassPipelineStates_.end())
+	{
+		currentRenderPassPipelineState_ = it->second;
+	}
+	else
+	{
+		auto gd = graphicsDevice_.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+		auto pipelineState = LLGI::CreateSharedPtr(gd->GetGraphics()->CreateRenderPassPipelineState(key));
+		if (pipelineState != nullptr)
+		{
+			renderpassPipelineStates_[key] = pipelineState;
+		}
+		currentRenderPassPipelineState_ = pipelineState;
+	}
 }
 
 bool RendererImplemented::BeginRendering()
