@@ -31,6 +31,23 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			if (Manager.NativeManager.TreeNodeEx("test", swig.TreeNodeFlags.Bullet))
+			{
+				// D&D Source
+				if (Manager.NativeManager.BeginDragDropSource())
+				{
+					byte[] idBuf = new byte[5];
+					if (Manager.NativeManager.SetDragDropPayload("PayloadName", idBuf, idBuf.Length))
+					{
+					}
+					Manager.NativeManager.Text("test2");
+
+					Manager.NativeManager.EndDragDropSource();
+				}
+
+
+				Manager.NativeManager.TreePop();
+			}
 		}
 
 		void OnAfter(object sender, EventArgs e)

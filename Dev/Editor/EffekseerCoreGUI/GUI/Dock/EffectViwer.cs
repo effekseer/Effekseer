@@ -51,6 +51,21 @@ namespace Effekseer.GUI.Dock
 			var p = Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y);
 			Manager.NativeManager.Image(p, (int)contentSize.X, (int)contentSize.Y);
 
+			if (Manager.NativeManager.BeginDragDropTarget())
+			{
+				int size = 0;
+				byte[] data = new byte[5];
+				if (Manager.NativeManager.AcceptDragDropPayload("PayloadName", data, data.Length, ref size))
+				{
+					Console.WriteLine("aaa");
+					//var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
+					//treeView.exchangeEvents.Add(
+					//	Tuple.Create(sourceID, UniqueID, MovingNodeEventType.AddAsChild));
+				}
+
+				Manager.NativeManager.EndDragDropTarget();
+			}
+
 			IsHovered = Manager.NativeManager.IsWindowHovered();
 
 			Manager.NativeManager.Indent(padding);
