@@ -80,6 +80,12 @@ namespace Effekseer.Utils
 			return true;
 		}
 
+		public static bool IsFullPath(string path)
+		{
+			var correctFullPath = BackSlashToSlash(Path.GetFullPath(path));
+			return correctFullPath == BackSlashToSlash(path);
+		}
+
 		public static ResourcePaths FindResourcePaths(Data.NodeBase node, Binary.ExporterVersion exporterVersion, ResourcePaths resources = null)
 		{
 			if (resources == null)
