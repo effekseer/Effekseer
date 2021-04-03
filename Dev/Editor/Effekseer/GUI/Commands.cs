@@ -90,7 +90,11 @@ namespace Effekseer.GUI
 		/// <param name="fullPath">absolute path</param>
 		public static bool Open(string fullPath)
 		{
-			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(Resources.GetString("NotAbsolutePathError"));
+			if (!Utils.Misc.IsFullPath(fullPath))
+			{
+				throw new Exception(Resources.GetString("NotAbsolutePathError"));
+			}
+			fullPath = Utils.Misc.BackSlashToSlash(fullPath);
 
 			if (Core.IsChanged)
 			{

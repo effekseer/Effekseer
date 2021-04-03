@@ -193,6 +193,14 @@ namespace Effekseer.GUI.Dialog
 						try
 						{
 							EfkPkg.ExtractFiles(targetDirPath, files);
+
+							var effects = files.Where(_ => _.Type == EfkPkg.FileType.Effect);
+							if(effects.Count() == 1)
+							{
+								string filePath = Path.Combine(targetDirPath, effects.First().RelativePath);
+								filePath = filePath.Replace("\\", "/");
+								Commands.Open(filePath);
+							}
 						}
 						catch (Exception e)
 						{
