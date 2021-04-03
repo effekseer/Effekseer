@@ -68,6 +68,13 @@ namespace Effekseer.Data.Value
 			_abspath = abspath;
 
 			DefaultValue = _abspath;
+
+#if DEBUG
+			if(abspath != string.Empty && !System.IO.Path.IsPathRooted(abspath))
+			{
+				throw new Exception(string.Format("{0} is not absolute path", abspath));
+			}
+#endif
 		}
 
 		public string GetAbsolutePath()

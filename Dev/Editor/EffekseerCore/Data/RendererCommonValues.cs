@@ -374,7 +374,7 @@ namespace Effekseer.Data
 						if (!withNameFlag) continue;
 
 						status = new ValueStatus();
-						var value = new Value.PathForImage(rcValues.BasePath, Resources.GetString("ImageFilter"), true, texture.DefaultPath);
+						var value = new Value.PathForImage(rcValues.BasePath, Resources.GetString("ImageFilter"), true, defaultPath);
 						status.Value = value;
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
