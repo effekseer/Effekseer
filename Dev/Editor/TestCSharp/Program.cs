@@ -22,6 +22,7 @@ namespace TestCSharp
 			script.Test();
 
 			ChunkTest.Test();
+			MiscTest.Test();
 		}
 	}
 
@@ -103,6 +104,18 @@ namespace TestCSharp
 				if (result.Error.GetType() != type) throw result.Error;
 			}
 			return true;
+		}
+	}
+
+	class MiscTest
+	{
+		public static void Test()
+		{
+			Misc.TestUtils.Equals(Effekseer.Utils.Misc.GetRelativePath("C:\\\\a", "b"), "C://b");
+			Misc.TestUtils.Equals(Effekseer.Utils.Misc.GetRelativePath("C:\\\\a", "b/f/g/../h"), "C://b/f/h");
+			Misc.TestUtils.Equals(Effekseer.Utils.Misc.GetRelativePath("C:\\\\a\\", "b/f/g/../h"), "C://a/b/f/h");
+			Misc.TestUtils.Equals(Effekseer.Utils.Misc.GetRelativePath("/a", "b"), "/b");
+			Misc.TestUtils.Equals(Effekseer.Utils.Misc.GetRelativePath("a/b/c/../../", "d"), "a/d");
 		}
 	}
 }

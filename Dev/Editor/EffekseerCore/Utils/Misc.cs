@@ -27,19 +27,45 @@ namespace Effekseer.Utils
 
 		public static string GetRelativePath(string basePath, string path)
 		{
-			Func<string, string> escape = (string s) =>
-			{
-				return s.Replace("%", "%25");
-			};
+			path = path.Replace("\\", "/");
+			basePath = basePath.Replace("\\", "/");
 
-			Func<string, string> unescape = (string s) =>
+			var rootPath = string.Empty;
+			if(basePath.Length > 4 && basePath[1] == ':' && basePath[2] == '/' && basePath[3] == '/')
 			{
-				return s.Replace("%25", "%");
-			};
+				rootPath = basePath.Substring(0, 4);
+				basePath = basePath.Substring(4);
+			}
+			else if (basePath.Length > 1 && basePath[0]== '/')
+			{
+				rootPath = basePath.Substring(0, 1);
+				basePath = basePath.Substring(1);
+			}
 
-			Uri basepath = new Uri(escape(basePath));
-			Uri targetPath = new Uri(escape(path));
-			return unescape(Uri.UnescapeDataString(basepath.MakeRelativeUri(targetPath).ToString()));
+			var spath = path.Split('/').ToList();
+			var sbasePath = basePath.Split('/').ToList();
+
+			if(sbasePath.Count > 0)
+			{
+				sbasePath.RemoveAt(sbasePath.Count - 1);
+			}
+
+			var combined = sbasePath.Concat(spath).ToList();
+
+			for(int i = 0; i < combined.Count;)
+			{
+				if(i > 0 && combined[i] == "..")
+				{
+					combined.RemoveAt(i);
+					combined.RemoveAt(i - 1);
+					i--;
+					continue;
+				}
+
+				i++;
+			}
+
+			return rootPath + string.Join("/", combined);
 		}
 		public static string GetAbsolutePath(string basePath, string path)
 		{
