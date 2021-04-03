@@ -487,11 +487,11 @@ namespace EffekseerRendererDX12
 	@return	instance
 */
 ::EffekseerRenderer::RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-									  DXGI_FORMAT* renderTargetFormats,
-									  int32_t renderTargetCount,
-									  DXGI_FORMAT depthFormat,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount);
+										DXGI_FORMAT* renderTargetFormats,
+										int32_t renderTargetCount,
+										DXGI_FORMAT depthFormat,
+										bool isReversedDepth,
+										int32_t squareMaxCount);
 
 /**
 	@brief	Create an instance
@@ -506,13 +506,13 @@ namespace EffekseerRendererDX12
 	@return	instance
 */
 ::EffekseerRenderer::RendererRef Create(ID3D12Device* device,
-									  ID3D12CommandQueue* commandQueue,
-									  int32_t swapBufferCount,
-									  DXGI_FORMAT* renderTargetFormats,
-									  int32_t renderTargetCount,
-									  DXGI_FORMAT depthFormat,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount);
+										ID3D12CommandQueue* commandQueue,
+										int32_t swapBufferCount,
+										DXGI_FORMAT* renderTargetFormats,
+										int32_t renderTargetCount,
+										DXGI_FORMAT depthFormat,
+										bool isReversedDepth,
+										int32_t squareMaxCount);
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ID3D12Resource* texture);
 
@@ -529,6 +529,20 @@ struct TextureProperty
 };
 
 TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture);
+
+/**
+		@brief	\~English	Properties in a commandlist
+				\~Japanese	コマンドリスト内のプロパティ
+
+		@note	\~English	You need not to release pointers
+				\~Japanese	ポインタの解放する必要はない
+*/
+struct CommandListProperty
+{
+	ID3D12CommandList* CommandListPtr = nullptr;
+};
+
+CommandListProperty GetCommandListProperty(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 /**
 	@brief	\~English	Start to record commands
