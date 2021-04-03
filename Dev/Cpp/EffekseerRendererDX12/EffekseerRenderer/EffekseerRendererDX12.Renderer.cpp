@@ -241,6 +241,20 @@ TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
 	}
 }
 
+CommandListProperty GetCommandListProperty(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
+{
+	if (commandList != nullptr)
+	{
+		auto cl = commandList.DownCast<::EffekseerRendererLLGI::CommandList>();
+		auto clDx12 = static_cast<LLGI::CommandListDX12*>(cl->GetInternal());
+		return CommandListProperty{clDx12->GetCommandList()};
+	}
+	else
+	{
+		return CommandListProperty{};
+	}
+}
+
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList)
 {
 	assert(commandList != nullptr);
