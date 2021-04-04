@@ -27,7 +27,7 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
 
     if(UNIX AND NOT APPLE)
         target_include_directories(Boxer 
-            PRIVATE
+            PUBLIC
             ${GTK3_INCLUDE_DIRS}
             ${X11_INCLUDE_DIR})
 
@@ -57,7 +57,7 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
 
     if(UNIX AND NOT APPLE)
         target_include_directories(nfd 
-            PRIVATE
+            PUBLIC
             ${GTK3_INCLUDE_DIRS}
             ${X11_INCLUDE_DIR})
 
