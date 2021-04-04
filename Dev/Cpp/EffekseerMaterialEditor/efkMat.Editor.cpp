@@ -975,7 +975,7 @@ void Editor::UpdatePopup()
 		// keyword box
 
 		// focus into a searching textbox
-		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
 			ImGui::SetKeyboardFocusHere(0);
 
 		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords.data(), searchingKeywords.size());
