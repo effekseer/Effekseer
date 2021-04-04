@@ -54,6 +54,11 @@ public class FileDialog : global::System.IDisposable {
     return ret;
   }
 
+  public static string PickFolder(string defaultPath) {
+    string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.FileDialog_PickFolder(defaultPath));
+    return ret;
+  }
+
   public FileDialog() : this(EffekseerNativePINVOKE.new_FileDialog(), true) {
   }
 
