@@ -2358,6 +2358,12 @@ bool GUIManager::BeginNodeFrameTimeline()
 	return NodeFrameTimeline::BeginNodeFrameTimeline();
 }
 
+void GUIManager::TimelineNode(const char16_t* title)
+{
+	utf8str<256> utf8Label(title);
+	NodeFrameTimeline::TimelineNode(utf8Label);
+}
+
 void GUIManager::EndNodeFrameTimeline()
 {
 	NodeFrameTimeline::EndNodeFrameTimeline();

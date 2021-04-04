@@ -19,9 +19,10 @@ struct MySequence : public ImSequencer::SequenceInterface
     virtual const char* GetItemTypeName(int typeIndex) const { return SequencerItemTypeNames[typeIndex]; }
     virtual const char* GetItemLabel(int index) const
     {
-        static char tmps[512];
-        sprintf(tmps, "[%02d] %s", index, SequencerItemTypeNames[myItems[index].mType]);
-        return tmps;
+        //static char tmps[512];
+        //sprintf(tmps, "[%02d] %s", index, SequencerItemTypeNames[myItems[index].mType]);
+        //return tmps;
+        return myItems[index].name.c_str();
     }
 
     virtual void Get(int index, int** start, int** end, int* type, unsigned int* color)
@@ -50,6 +51,7 @@ struct MySequence : public ImSequencer::SequenceInterface
         int mType;
         int mFrameStart, mFrameEnd;
         bool mExpanded;
+        std::string name;
     };
     std::vector<MySequenceItem> myItems;
     //RampEdit rampEdit;
@@ -115,16 +117,30 @@ static int currentFrame = 100;
 
 bool NodeFrameTimeline::BeginNodeFrameTimeline()
 {
-    if (mySequence.myItems.empty()) {
-        // sequence with default values
-        mySequence.mFrameMin = -100;
-        mySequence.mFrameMax = 1000;
-        mySequence.myItems.push_back(MySequence::MySequenceItem{ 0, 10, 30, false });
-        mySequence.myItems.push_back(MySequence::MySequenceItem{ 1, 20, 30, true });
-        mySequence.myItems.push_back(MySequence::MySequenceItem{ 3, 12, 60, false });
-        mySequence.myItems.push_back(MySequence::MySequenceItem{ 2, 61, 90, false });
-        mySequence.myItems.push_back(MySequence::MySequenceItem{ 4, 90, 99, false });
-    }
+    mySequence.myItems.clear();
+    mySequence.mFrameMin = -100;    // TODO: test
+    mySequence.mFrameMax = 1000;    // TODO: test
+
+	return true;
+}
+
+void NodeFrameTimeline::TimelineNode(const char* title)
+{
+    mySequence.myItems.push_back(MySequence::MySequenceItem{ 0, 10, 30, false, title });
+}
+
+void NodeFrameTimeline::EndNodeFrameTimeline()
+{
+    //if (mySequence.myItems.empty()) {
+    //    // sequence with default values
+    //    mySequence.mFrameMin = -100;
+    //    mySequence.mFrameMax = 1000;
+    //    mySequence.myItems.push_back(MySequence::MySequenceItem{ 0, 10, 30, false });
+    //    mySequence.myItems.push_back(MySequence::MySequenceItem{ 1, 20, 30, true });
+    //    mySequence.myItems.push_back(MySequence::MySequenceItem{ 3, 12, 60, false });
+    //    mySequence.myItems.push_back(MySequence::MySequenceItem{ 2, 61, 90, false });
+    //    mySequence.myItems.push_back(MySequence::MySequenceItem{ 4, 90, 99, false });
+    //}
 
     ImGui::PushItemWidth(130);
     ImGui::InputInt("Frame Min", &mySequence.mFrameMin);
@@ -134,6 +150,7 @@ bool NodeFrameTimeline::BeginNodeFrameTimeline()
     ImGui::InputInt("Frame Max", &mySequence.mFrameMax);
     ImGui::PopItemWidth();
     Sequencer(&mySequence, &currentFrame, &expanded, &selectedEntry, &firstFrame, ImSequencer::SEQUENCER_EDIT_STARTEND | ImSequencer::SEQUENCER_ADD | ImSequencer::SEQUENCER_DEL /*| ImSequencer::SEQUENCER_COPYPASTE | ImSequencer::SEQUENCER_CHANGE_FRAME*/);
+
     // add a UI to edit that particular item
     if (selectedEntry != -1)
     {
@@ -241,10 +258,4 @@ bool NodeFrameTimeline::BeginNodeFrameTimeline()
     //}
     //ImGui::Columns(1);
 #endif
-	return true;
-}
-
-void NodeFrameTimeline::EndNodeFrameTimeline()
-{
-    //ImGui::EndChild();
 }

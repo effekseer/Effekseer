@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -94,9 +94,17 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.BeginNodeFrameTimeline())
 			{
+				for (int i = 0; i < Core.Root.Children.Count; i++)
+				{
+					var node = Core.Root.Children[i];
+					Manager.NativeManager.TimelineNode(node.Name);
+				}
 
 				Manager.NativeManager.EndNodeFrameTimeline();
 			}
+
+
+			
 		}
 
 		void OnAfter(object sender, EventArgs e)

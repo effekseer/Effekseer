@@ -61,6 +61,7 @@ namespace Effekseer.GUI.Dock
 					//var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
 					//treeView.exchangeEvents.Add(
 					//	Tuple.Create(sourceID, UniqueID, MovingNodeEventType.AddAsChild));
+					Core.Root.AddChild();
 				}
 
 				Manager.NativeManager.EndDragDropTarget();

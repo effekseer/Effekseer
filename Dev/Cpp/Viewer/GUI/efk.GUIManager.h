@@ -806,6 +806,7 @@ public:
 
 	// NodeFrameTimeline
 	bool BeginNodeFrameTimeline();
+	void TimelineNode(const char16_t* title);
 	void EndNodeFrameTimeline();
 };
 } // namespace efk
