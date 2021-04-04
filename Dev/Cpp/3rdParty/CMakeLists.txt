@@ -65,5 +65,13 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
         target_link_libraries(nfd INTERFACE ${GTK3_LIBRARIES})
         add_definitions(${GTK3_CFLAGS_OTHER})
     endif()
+
+    set(imgui_src
+        imgui/imgui.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_tables.cpp
+        imgui/imgui_widgets.cpp)
+    add_library(imgui STATIC ${imgui_src})
+    target_include_directories(imgui PUBLIC imgui/)
 endif()
 
