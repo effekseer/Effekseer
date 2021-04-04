@@ -1,5 +1,5 @@
 #include "efk.FileDialog.h"
-#include "../3rdParty/nfd/nfd.h"
+#include <nfd.h>
 #include "Effekseer.h"
 
 #include <codecvt>

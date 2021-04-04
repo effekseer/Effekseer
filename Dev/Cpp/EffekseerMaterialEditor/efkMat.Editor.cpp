@@ -6,7 +6,7 @@
 #include "imgui_node_editor.h"
 #include "ThirdParty/NodeEditor/Source/imgui_node_editor_internal.h"
 #include "ThirdParty/imgui_main/imgui_internal.h"
-#include "ThirdParty/nfd/nfd.h"
+#include <nfd.h>
 
 #include <GUI/MainWindow.h>
 #include <fstream>

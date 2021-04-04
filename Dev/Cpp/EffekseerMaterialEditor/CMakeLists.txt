@@ -42,20 +42,6 @@ file(GLOB srcs_third_imgui_platform
 file(GLOB srcs_third_node
     ThirdParty/NodeEditor/Source/*.cpp)
 
-if(WIN32)
-    file(GLOB srcs_third_nfd
-        ThirdParty/nfd/nfd_common.c
-        ThirdParty/nfd/nfd_win.cpp)
-elseif(APPLE)
-    file(GLOB srcs_third_nfd
-        ThirdParty/nfd/nfd_common.c
-        ThirdParty/nfd/nfd_cocoa.m)
-else()
-    file(GLOB srcs_third_nfd
-        ThirdParty/nfd/nfd_common.c
-        ThirdParty/nfd/nfd_gtk.c)
-endif()
-
 link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
     )
@@ -63,7 +49,7 @@ link_directories(
 # Add compile targets
 add_executable(
     EffekseerMaterialEditor
-    ${hs} ${srcs} ${srcs_third_imgui} ${srcs_third_imgui_platform} ${srcs_third_node} ${srcs_third_nfd})
+    ${hs} ${srcs} ${srcs_third_imgui} ${srcs_third_imgui_platform} ${srcs_third_node})
 
 # Flags
 if (MSVC)
@@ -107,6 +93,7 @@ target_link_libraries(
     EditorCommon
     AltseedRHI
     Boxer
+    nfd
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
 )
@@ -177,17 +164,9 @@ FIND_PACKAGE(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 find_package(Threads REQUIRED)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${GTK3_INCLUDE_DIRS}
     ${X11_INCLUDE_DIR})
-
-link_directories(${GTK3_LIBRARY_DIRS})
-
-add_definitions(${GTK3_CFLAGS_OTHER})
 
 target_link_libraries(
     EffekseerMaterialEditor
@@ -199,14 +178,13 @@ target_link_libraries(
     stdc++fs
     ${CMAKE_THREAD_LIBS_INIT}
     ${OPENGL_LIBRARY}
-    ${GTK3_LIBRARIES}
     ${X11_LIBRARIES})
 
 endif()
 
 set_target_properties(EffekseerMaterialEditor PROPERTIES LINKER_LANGUAGE CXX)
 
-set(files ${hs} ${srcs} ${srcs_third_imgui} ${srcs_third_imgui_platform} ${srcs_third_node} ${srcs_third_nfd})
+set(files ${hs} ${srcs} ${srcs_third_imgui} ${srcs_third_imgui_platform} ${srcs_third_node})
 
 foreach(FILE ${files}) 
     # Get the directory of the source file
