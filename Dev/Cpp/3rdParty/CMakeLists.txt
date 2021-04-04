@@ -32,7 +32,8 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
             ${X11_INCLUDE_DIR})
 
         target_link_directories(Boxer PRIVATE ${GTK3_LIBRARY_DIRS})
-        add_definitions(${GTK3_CFLAGS_OTHER})
+        target_link_libraries(Boxer INTERFACE ${GTK3_LIBRARIES)
+        add_compile_definitions(Boxer PRIVATE ${GTK3_CFLAGS_OTHER})
     endif()
 
     set(nfd_src
@@ -61,7 +62,8 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
             ${X11_INCLUDE_DIR})
 
         target_link_directories(nfd PRIVATE ${GTK3_LIBRARY_DIRS})
-        add_definitions(${GTK3_CFLAGS_OTHER})
+        target_link_libraries(nfd INTERFACE ${GTK3_LIBRARIES)
+        add_compile_definitions(nfd PRIVATE ${GTK3_CFLAGS_OTHER})
     endif()
 endif()
 

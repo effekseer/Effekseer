@@ -164,17 +164,9 @@ FIND_PACKAGE(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 find_package(Threads REQUIRED)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${GTK3_INCLUDE_DIRS}
     ${X11_INCLUDE_DIR})
-
-link_directories(${GTK3_LIBRARY_DIRS})
-
-add_definitions(${GTK3_CFLAGS_OTHER})
 
 target_link_libraries(
     EffekseerMaterialEditor
@@ -186,7 +178,6 @@ target_link_libraries(
     stdc++fs
     ${CMAKE_THREAD_LIBS_INIT}
     ${OPENGL_LIBRARY}
-    ${GTK3_LIBRARIES}
     ${X11_LIBRARIES})
 
 endif()
