@@ -57,14 +57,8 @@ list(APPEND hs
 
 # OS Dependency
 if (WIN32)
-list(APPEND hs
-	3rdParty/nfd/nfd.h
-	3rdParty/nfd/nfd_common.h
-)
 
 list(APPEND cpps
-	3rdParty/nfd/nfd_common.c
-	3rdParty/nfd/nfd_win.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	3rdParty/imgui_platform/imgui_impl_dx11.cpp
@@ -72,28 +66,15 @@ list(APPEND cpps
 
 elseif(APPLE)
 
-list(APPEND hs
-	3rdParty/nfd/nfd.h
-	3rdParty/nfd/nfd_common.h
-)
-
 list(APPEND cpps
-	3rdParty/nfd/nfd_common.c
-	3rdParty/nfd/nfd_cocoa.m
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 )
 
 else()
 
-list(APPEND hs
-	3rdParty/nfd/nfd.h
-	3rdParty/nfd/nfd_common.h
-)
 
 list(APPEND cpps
-	3rdParty/nfd/nfd_common.c
-	3rdParty/nfd/nfd_gtk.c
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 )
@@ -179,17 +160,24 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(Viewer)
 endif()
 
+target_link_libraries(
+    Viewer
+    PRIVATE
+    Effekseer
+    EffekseerSoundOSMixer
+    IPC
+    nfd)
+
+
 if (WIN32)
 
     target_link_libraries(
         Viewer
         PRIVATE
-        Effekseer
         EffekseerRendererDX9
         EffekseerRendererDX11
         EffekseerRendererGL
         EffekseerSoundOSMixer
-        IPC
         debug libglew32d
         debug OpenSoundMixerd
         optimized libglew32
@@ -212,10 +200,6 @@ elseif(APPLE)
         Viewer
         PRIVATE
         EffekseerRendererGL
-        EffekseerSoundOSMixer
-        Effekseer
-        IPC
-        OpenSoundMixer
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}
@@ -252,9 +236,6 @@ target_link_libraries(
 	Viewer
 	PRIVATE
 	EffekseerRendererGL
-	EffekseerSoundOSMixer
-	Effekseer
-	IPC
 	dl
 	OpenSoundMixer
 	stdc++fs
