@@ -151,6 +151,17 @@ namespace Effekseer.GUI.Dialog
 					var text = MultiLanguageTextProvider.GetText("ImportDestinationDirectory");
 					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetTextLineHeightWithSpacing());
 					Manager.NativeManager.Text(text);
+
+					if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Select")))
+					{
+						var directory = swig.FileDialog.PickFolder(Directory.GetCurrentDirectory());
+						if(!string.IsNullOrEmpty(directory))
+						{
+							targetDirPath = directory;
+							targetDirPathValid = Directory.Exists(targetDirPath);
+						}
+					}
+
 					string icon = (targetDirPathValid) ? Icons.CommonCheck : Icons.CommonError;
 					if (Manager.NativeManager.InputText(icon + "###TargetDirPath", targetDirPath))
 					{

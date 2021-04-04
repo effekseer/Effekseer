@@ -8375,6 +8375,18 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_SaveDialog___(voi
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_PickFolder___(void * jarg1) {
+  void * jresult ;
+  char16_t *arg1 = (char16_t *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  result = (char16_t *)efk::FileDialog::PickFolder((char16_t const *)arg1);
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_FileDialog___() {
   void * jresult ;
   efk::FileDialog *result = 0 ;

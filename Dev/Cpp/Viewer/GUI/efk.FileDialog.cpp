@@ -1,6 +1,6 @@
 #include "efk.FileDialog.h"
-#include <nfd.h>
 #include "Effekseer.h"
+#include <nfd.h>
 
 #include <codecvt>
 #include <iostream>
@@ -99,4 +99,32 @@ const char16_t* FileDialog::SaveDialog(const char16_t* filterList, const char16_
 	temp = u"";
 	return temp.c_str();
 }
+
+const char16_t* FileDialog::PickFolder(const char16_t* defaultPath)
+{
+	char defaultPath_[1024];
+	Effekseer::ConvertUtf16ToUtf8(defaultPath_, sizeof(defaultPath_), defaultPath);
+
+	nfdchar_t* outPath = nullptr;
+	nfdresult_t result = NFD_PickFolder(defaultPath_, &outPath);
+
+	if (result == NFD_OKAY)
+	{
+		char16_t outPath_[1024];
+		Effekseer::ConvertUtf8ToUtf16(outPath_, 1024, outPath);
+		temp = outPath_;
+		// temp = utf8_to_utf16(outPath);
+		free(outPath);
+		return temp.c_str();
+	}
+	else if (result == NFD_CANCEL)
+	{
+		temp = u"";
+		return temp.c_str();
+	}
+
+	temp = u"";
+	return temp.c_str();
+}
+
 } // namespace efk
