@@ -23,6 +23,8 @@ set(srcs
     IO/DefaultFileReader.cpp
     IO/IPCFileReader.h
     IO/IPCFileReader.cpp
+    IO/CSVReader.h
+    IO/CSVReader.cpp
 )
 
 if(WIN32)

@@ -33,9 +33,14 @@
 #include <algorithm>
 
 #include <GUI/Misc.h>
+#include <IO/CSVReader.h>
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
+
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 #ifdef WIN32
 #include <Windows.h>
@@ -159,32 +164,38 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 
 void ChangeLanguage(Effekseer::SystemLanguage language)
 {
+	std::string languageFilePath;
 
 	FILE* fp = nullptr;
 
 	if (language == Effekseer::SystemLanguage::Japanese)
 	{
-		auto path = GetExecutingDirectory() + "resources/languages/effekseer_material_ja.json";
-		fp = fopen(path.c_str(), "rb");
+		languageFilePath = GetExecutingDirectory() + "resources/languages/ja/EffekseerMaterialEditor.csv";
 	}
 	else
 	{
-		auto path = GetExecutingDirectory() + "resources/languages/effekseer_material_en.json";
-		fp = fopen(path.c_str(), "rb");
+		languageFilePath = GetExecutingDirectory() + "resources/languages/en/EffekseerMaterialEditor.csv";
 	}
 
-	if (fp != nullptr)
+	std::ifstream f(languageFilePath);
+	if (!f.is_open())
 	{
-		fseek(fp, 0, SEEK_END);
-		auto size = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		std::vector<char> data;
-		data.resize(size);
-		fread(data.data(), size, 1, fp);
-		fclose(fp);
+		return;
+	}
 
-		EffekseerMaterial::StringContainer::Clear();
-		EffekseerMaterial::StringContainer::LoadFromJsonStr(data.data());
+	auto str = std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+	auto csv = Effekseer::Editor::ReadCSV(str);
+
+	EffekseerMaterial::StringContainer::Clear();
+	for (const auto& line : csv)
+	{
+		if (line.size() < 2)
+			continue;
+
+		if (line[0] == "")
+			continue;
+
+		EffekseerMaterial::StringContainer::AddValue(line[0].c_str(), line[1].c_str());
 	}
 }
 

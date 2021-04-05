@@ -1,0 +1,248 @@
+File,File
+New,New
+Load,Load
+SaveAs,SaveAs
+Save,Save
+Search,Search
+Ja,日本語
+En,English
+ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
+Cancel,Cancel
+TextureCount,Image
+UniformCount,Parameter
+Delete_Name,Delete
+,
+Description_Name,Description
+Description_Desc,"These parameters are shown on other editors.
+Summary is shown as a label.
+Detail is shown when clicking or mouse is over  in almost cases."
+Language_Name,Lang.
+Summary_Name,Summary
+Detail_Name,Detail
+,
+,
+,
+Value_Name,V
+Value1_Name,V1
+Value2_Name,V2
+Value3_Name,V3
+Value4_Name,V4
+ConstValue1_Name,V1
+ConstValue2_Name,V2
+Alpha_Name,Alpha
+Name_Name,Name
+Input_Name,V
+Output_Name, 
+Comment_Name,Comment
+Priority_Name,Priority
+Priority_Desc,"The lower the priority, the higher the screen is shown in other editors."
+Sampler_Name,Sampler
+Sampler_Desc,"Specify how to treat an out of image.
+Repeat - repeat from opposite side
+Clamp - maintain the color of edge"
+UVIndex_Name,UV Index
+,
+ShadingModel_Name,ShadingModel
+Lit_Name,Lit
+Unlit_Name,Unlit
+Speed_Name,Speed
+ConstSpeed_Name,ConstSpeed
+,
+Math_Name,Math
+Add_Node_Name,Add
+Add_Node_Desc,"Outputs the result of adding V1 and V2 is output.
+If the input is not connected, use the value of the property."
+Subtract_Node_Name,Subtract
+Subtract_Node_Desc,"Outputs the result of subtracting V2 from V1.
+If the input is not connected, use the value of the property."
+Multiply_Node_Name,Multiply
+Multiply_Node_Desc,"Outputs the result of multiplying V1 and V2.
+If the input is not connected, use the value of the property."
+Divide_Node_Name,Divide
+Divide_Node_Desc,"Outputs the result of dividing V1 by V2.
+If the input is not connected, use the value of the property."
+Fmod_Node_Name,Mod
+Fmod_Node_Desc,"Outputs the remainder when V1 is divided by V2.
+If the input is not connected, use the value of the property."
+,
+Step_Node_Name,Step
+Step_Node_Desc,"Outputs 1 if the value input to V is larger than Edge, and outputs 0 if it is smaller."
+,
+Abs_Node_Name,Absolute
+Abs_Node_Desc,Outputs the absolute value of V.
+ComponentMask_Node_Name,MaskElements
+ComponentMask_Node_Desc,"Extract elements from V.
+For example, extract part of number 4 and output number 2."
+AppendVector_Node_Name,MergeElements
+AppendVector_Node_Desc,"Join the elements of V1 and V2.
+For example, input number 3 and number 1 and output number 4."
+OneMinus_Node_Name,1-V
+OneMinus_Node_Desc,Outputs 1-V.
+Sine_Node_Name,Sine
+Sine_Node_Desc,Outputs V Sine.
+Arctangent2_Node_Name,Arctangent2
+Arctangent2_Node_Desc,"Outputs X / Y Arctangent.
+If the input is not connected, use the value of the property."
+Ceil_Node_Name,Round up
+Ceil_Node_Desc,Outputs the result of rounding up V.
+Floor_Node_Name,Round down
+Floor_Node_Desc,Outputs the value obtained by rounding down V.
+Clamp_Node_Name,Clamp
+Clamp_Node_Desc,Outputs a value in which V is between Min and Max.
+Frac_Node_Name,Fractional part
+Frac_Node_Desc,"Outputs the fractional part of V.
+For example, if you enter 1.15, it outputs 0.15."
+Min_Node_Name,Minimum
+Min_Node_Desc,Outputs small value at V1 and V2.
+Max_Node_Name,Maximum
+Max_Node_Desc,Outputs large value at V1 and V2.
+Power_Node_Name,Power
+Power_Node_Desc,Outputs the value of Base raised to the power of Exp.
+SquareRoot_Node_Name,SquareRoot
+SquareRoot_Node_Desc,Outputs the root of V.
+DotProduct_Node_Name,Dot
+DotProduct_Node_Desc,Outputs the inner product of V1 and V2.
+CrossProduct_Node_Name,Cross
+CrossProduct_Node_Desc,Outputs the cross product of V1 and V2.
+Normalize_Node_Name,Normalize
+Normalize_Node_Desc,"Outputs the normalized value of V.
+Make sure the length of the input number is 1."
+LinearInterpolate_Node_Name,LinearInterpolate
+LinearInterpolate_Node_Desc,"Outputs the value complemented between V1 and V2 by alpha ratio.
+If the input is not connected, use the value of the property.
+
+If alpha is 1, V1 is output.
+If alpha is 0, output V2.
+If alpha is 0.7, V1 x 0.3 + V2 x 0.7 is output."
+,
+Model_Name,Model
+WorldPosition_Node_Name,VertexPosition
+WorldPosition_Node_Desc,Outputs the positions of particle vertices.
+TextureCoordinate_Node_Name,UV
+TextureCoordinate_Node_Desc,"Outputs UV coordinates of particles.
+By switching the UV number, you can use the UV before it is changed by the UV parameter of the Effekseer."
+Panner_Node_Name,MovingUV
+Panner_Node_Desc,"Moves the UV coordinates of particles according to time and outputs them.
+You can enter UV coordinates, time, and movement speed.
+If the input is not connected, use the value of the property."
+VertexNormalWS_Node_Name,VertexNormal
+VertexNormalWS_Node_Desc,Outputs the normals of particle vertices.
+PixelNormalWS_Node_Name,PixelNormal
+PixelNormalWS_Node_Desc,"Outputs the particle normal after the direction of 
+the normal has been changed for each pixel by a normal input in OutputNode."
+VertexTangentWS_Node_Name,VertexTangent
+VertexTangentWS_Node_Desc,
+VertexColor_Node_Name,VertexColor
+VertexColor_Node_Desc,"Outputs the vertex color of the particles.
+This includes all colors of sprite, ring, and so on."
+ObjectScale_Node_Name,ObjectScale
+ObjectScale_Node_Desc,"Outputs the enlargement ratio of particles in Effekseer.
+
+However, only it is valid when used for the OutputNode WorldPositionOffset with the model."
+,
+Texture_Name,Image
+SampleTexture_Node_Name,Sample Image
+SampleTexture_Node_Desc,Get the pixels from the image.
+TextureObjectParameter_Node_Name,Parameter Image
+TextureObjectParameter_Node_Desc,"Outputs an externally specified image.
+It cannot be displayed directly becase it is an image.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+TextureObject_Node_Name,Constant Image
+TextureObject_Node_Desc,"Outputs the specified image.
+It cannot be displayed directly becase it is an image."
+,
+Output_Node_Name,Output
+Comment_Node_Name,Comment
+,
+Constant_Name,Constant
+Time_Node_Name,Time
+Time_Node_Desc,Outputs the current time in seconds.
+EffectScale_Node_Name,EffectScale
+EffectScale_Node_Desc,Gets the scale specified when the effect file is loaded.
+CameraPositionWS_Node_Name,CameraPosition
+CameraPositionWS_Node_Desc,Outputs the camera position.
+Constant1_Node_Name,Constant1
+Constant1_Node_Desc,Outputs the value specified in the property.
+Constant2_Node_Name,Constant2
+Constant2_Node_Desc,Outputs the value specified in the property.
+Constant3_Node_Name,Constant3
+Constant3_Node_Desc,Outputs the value specified in the property.
+Constant4_Node_Name,Constant4
+Constant4_Node_Desc,Outputs the value specified in the property.
+Parameter_Name,Param
+Parameter1_Node_Name,Param1
+Parameter1_Node_Desc,"Outputs externally specified parameters.
+This parameter is common for each node.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+Parameter2_Node_Name,Param2
+Parameter2_Node_Desc,"Outputs externally specified parameters.
+This parameter is common for each node.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+Parameter3_Node_Name,Param3
+Parameter3_Node_Desc,"Outputs externally specified parameters.
+This parameter is common for each node.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+Parameter4_Node_Name,Param4
+Parameter4_Node_Desc,"Outputs externally specified parameters.
+This parameter is common for each node.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+CustomData1_Node_Name,CustomData1
+CustomData1_Node_Desc,"Outputs externally specified parameters.
+This parameter can be set differently for each particle.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+CustomData2_Node_Name,CustomData2
+CustomData2_Node_Desc,"Outputs externally specified parameters.
+This parameter can be set differently for each particle.
+The summary and details specified in the parameters are displayed in Effekseer and external tools."
+,
+Advanced_Name,Advanced
+,
+Fresnel_Node_Name,Fresnel
+Fresnel_Node_Desc,"The larger the surface direction is from the front, the larger the value is output.
+You can specify the intensity in the properties.
+"
+Rotator_Node_Name,Rotator
+Rotator_Node_Desc,"The input value (mainly UV) is rotated and output.
+Used to rotate an image on a material.
+An angle is expressed as 1 per lap."
+PolarCoords_Node_Name,PolarCoords
+PolarCoords_Node_Desc,"Outputs UVs located on the radiation from the center.
+You can specify how many images are arranged in one round and the rotation angle."
+,
+Depth_Name,Depth
+,
+DepthFade_Name,DepthFade
+DepthFade_Desc,"Output a smaller value as it gets closer to the background object.
+Output 1 if the distance is farther than FadeDistance, 0 if the distance is 0."
+,
+ConvertParam_Name,Convert to parameter
+,
+,
+,
+Error_SameNode,Error_SameNode
+Error_SamePin,Error_SamePin
+Error_SameDirection,Error_SameDirection
+Error_Loop,Error_Loop
+Error_Type,Error_Type
+Error_NewVersion,The file is too new to open. Please Update Effekseer
+Create_Link,Create_Link
+Create_Node,Create_Node
+,
+,
+,
+,
+,
+,
+,
+Starting,Starting
+Starting_New,Create new material
+Starting_Open,Open a material
+,
+Warning_WrongInputType,An input type is invalid
+Warning_WrongProperty,A propery is invalid
+Warning_DifferentSampler,"Different samplers are 
+assigned in a same image."
+Warning_SameName,A node with the same name exists.
+Warning_InvalidName,"The name is invalid. 
+(Please read the help.)"
+Warning_PixelNodeAndNormal,PixelNormal cannot be connected to Normal
