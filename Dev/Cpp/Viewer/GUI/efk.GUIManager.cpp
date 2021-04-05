@@ -25,6 +25,8 @@
 
 #include "../dll.h"
 
+#include <GUI/Misc.h>
+
 #ifdef __linux__
 	#include <gtk/gtk.h>
 #endif
@@ -1900,19 +1902,7 @@ void GUIManager::ClearAllFonts()
 
 void GUIManager::AddFontFromFileTTF(const char16_t* filename, float size_pixels)
 {
-	ImGuiIO& io = ImGui::GetIO();
-
-	size_pixels = roundf(size_pixels * mainWindow_->GetDPIScale());
-
-	io.Fonts->GetGlyphRangesJapanese();
-	io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
-
-	// markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1, nullptr,
-	// glyphRangesJapanese); markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
-	// markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2, nullptr,
-	// glyphRangesJapanese);
-
-	io.Fonts->Build();
+	Effekseer::Editor::AddFontFromFileTTF(utf8str<280>(filename), "japanese", size_pixels, mainWindow_->GetDPIScale());
 }
 
 void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY)

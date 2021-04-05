@@ -24,7 +24,6 @@
 
 #include "efkMat.Editor.h"
 
-#include <GUI/JapaneseFont.h>
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
 
@@ -32,6 +31,8 @@
 #include <GUI/MainWindow.h>
 #include <IO/IO.h>
 #include <algorithm>
+
+#include <GUI/Misc.h>
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
@@ -345,8 +346,8 @@ int mainLoop(int argc, char* argv[])
 
 			ImGui_ImplOpenGL3_DestroyFontsTexture();
 			io.Fonts->Clear();
-			io.Fonts->AddFontFromFileTTF(
-				"resources/GenShinGothic-Monospace-Normal.ttf", 20 * mainWindow->GetDPIScale(), nullptr, glyphRangesJapanese);
+
+			Effekseer::Editor::AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", "japanese", 20, mainWindow->GetDPIScale());
 			isDpiDirtied = false;
 		}
 
@@ -683,7 +684,7 @@ int mainLoop(int argc, char* argv[])
 						ImGui::Text(uobj->GetPreview()->VS.c_str());
 						ImGui::TreePop();
 					}
-					
+
 					if (ImGui::TreeNode("PS"))
 					{
 						ImGui::Text(uobj->GetPreview()->PS.c_str());
@@ -774,7 +775,13 @@ int mainLoop(int argc, char* argv[])
 }
 
 #if defined(NDEBUG) && defined(_WIN32)
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nShowCmd) { return mainLoop(__argc, __argv); }
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nShowCmd)
+{
+	return mainLoop(__argc, __argv);
+}
 #else
-int main(int argc, char* argv[]) { return mainLoop(argc, argv); }
+int main(int argc, char* argv[])
+{
+	return mainLoop(argc, argv);
+}
 #endif
