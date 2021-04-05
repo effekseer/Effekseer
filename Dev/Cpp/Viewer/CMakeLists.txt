@@ -19,7 +19,6 @@ endif()
 
 
 FILE(GLOB hs
-	3rdParty/imgui/*.h
 	EffekseerTool/*.h
 	Graphics/*.h
 	GUI/*.h
@@ -27,7 +26,6 @@ FILE(GLOB hs
 )
 
 FILE(GLOB cpps
-	3rdParty/imgui/*.cpp
 	3rdParty/imgui_addon/imguidock/*.cpp
 	3rdParty/imgui_addon/imguihelper/*.cpp
 	3rdParty/imgui_addon/fcurve/*.cpp
@@ -111,7 +109,6 @@ FilterFolder("${cpps}")
 
 include_directories(
 	${EFK_THIRDPARTY_INCLUDES}
-	3rdParty/imgui/
 	../include/
 	../EffekseerRendererDX9/
 	../EffekseerRendererGL/
@@ -130,6 +127,7 @@ target_link_libraries(
     PRIVATE
     EditorCommon
     Boxer
+    imgui
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
     debug "${GD_LIB_DEBUG}"

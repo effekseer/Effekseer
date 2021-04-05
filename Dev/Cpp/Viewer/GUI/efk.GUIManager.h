@@ -4,8 +4,8 @@
 #include "efk.ImageResource.h"
 #include "efk.Window.h"
 
-#include "../3rdParty/imgui/imgui.h"
-#include "../3rdParty/imgui/imgui_internal.h"
+#include <imgui.h>
+#include <imgui_internal.h>
 
 #include "../3rdParty/imgui_platform/imgui_impl_glfw.h"
 #include "../3rdParty/imgui_platform/imgui_impl_opengl3.h"

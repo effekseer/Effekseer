@@ -14,8 +14,18 @@ namespace Effekseer.GUI.Dock
 		const string ShortTabSpace = "   ";
 
 		public string Label { get; set; } = string.Empty;
-		
-		public string TabLabel { get { return (AllowsShortTab) ? Label.Substring(0, 1) + ShortTabSpace : Label; } }
+
+		public string TabLabel
+		{
+			get
+			{
+				if (AllowsShortTab)
+				{
+					return Label.Substring(0, 1) + ShortTabSpace + Label.Substring(Label.IndexOf("###"));
+				}
+				return Label;
+			}
+		}
 
 		public string WindowID { get { return Label.Substring(Label.IndexOf("###")); } }
 

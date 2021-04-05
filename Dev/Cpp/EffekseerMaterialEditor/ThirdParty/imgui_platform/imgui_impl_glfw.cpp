@@ -135,7 +135,7 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
     io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
     io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-	io.KeyMap[ImGuiKey_NumEnter] = GLFW_KEY_KP_ENTER;
+	io.KeyMap[ImGuiKey_KeyPadEnter] = GLFW_KEY_KP_ENTER;
     io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
     io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
     io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
@@ -151,7 +151,7 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     io.GetClipboardTextFn = ImGui_ImplGlfw_GetClipboardText;
     io.ClipboardUserData = g_Window;
 #if defined(_WIN32)
-    io.ImeWindowHandle = (void*)glfwGetWin32Window(g_Window);
+	//io.ImeWindowHandle = (void*)glfwGetWin32Window(g_Window);
 #endif
 
     g_MouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);

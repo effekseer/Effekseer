@@ -1161,6 +1161,36 @@ void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
 		// Horizontal Separator
 		float x1 = window->Pos.x;
 		float x2 = window->Pos.x + window->Size.x;
+
+		// FIXME-WORKRECT: old hack (#205) until we decide of consistent behavior with WorkRect/Indent and Separator
+		if (g.GroupStack.Size > 0 && g.GroupStack.back().WindowID == window->ID)
+			x1 += window->DC.Indent.x;
+
+		ImGuiOldColumns* columns = (flags & ImGuiSeparatorFlags_SpanAllColumns) ? window->DC.CurrentColumns : NULL;
+		if (columns)
+			ImGui::PushColumnsBackground();
+
+		// We don't provide our width to the layout so that it doesn't get feed back into AutoFit
+		const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thicknessDraw));
+		ImGui::ItemSize(ImVec2(0.0f, thicknessItem));
+		const bool item_visible = ImGui::ItemAdd(bb, 0);
+		if (item_visible)
+		{
+			// Draw
+			window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
+			if (g.LogEnabled)
+				ImGui::LogRenderedText(&bb.Min, "--------------------------------\n");
+		}
+		if (columns)
+		{
+			ImGui::PopColumnsBackground();
+			columns->LineMinY = window->DC.CursorPos.y;
+		}
+
+		/*
+		// Horizontal Separator
+		float x1 = window->Pos.x;
+		float x2 = window->Pos.x + window->Size.x;
 		if (!window->DC.GroupStack.empty())
 			x1 += window->DC.Indent.x;
 
@@ -1188,6 +1218,7 @@ void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
 			ImGui::PopColumnsBackground();
 			columns->LineMinY = window->DC.CursorPos.y;
 		}
+		*/
 	}
 }
 
@@ -1874,6 +1905,7 @@ void GUIManager::AddFontFromFileTTF(const char16_t* filename, float size_pixels)
 
 	size_pixels = roundf(size_pixels * mainWindow_->GetDPIScale());
 
+	io.Fonts->GetGlyphRangesJapanese();
 	io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
 
 	// markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1, nullptr,
@@ -2058,12 +2090,12 @@ bool GUIManager::IsWindowFocused()
 
 bool GUIManager::IsAnyWindowHovered()
 {
-	return ImGui::IsAnyWindowHovered();
+	return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
 }
 
 bool GUIManager::IsAnyWindowFocused()
 {
-	return ImGui::IsAnyWindowFocused();
+	return ImGui::IsWindowFocused(ImGuiHoveredFlags_AnyWindow);
 }
 
 MouseCursor GUIManager::GetMouseCursor()

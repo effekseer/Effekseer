@@ -6,7 +6,7 @@
 	https://qiita.com/benikabocha/items/a25571c1b059eaf952de
 */
 
-#include "../3rdParty/imgui/imgui.h"
+#include <imgui.h>
 
 static const ImWchar glyphRangesJapanese[] = {
 	0x0020,

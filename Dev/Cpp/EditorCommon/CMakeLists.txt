@@ -12,6 +12,8 @@ set(srcs
     GUI/MainWindow.cpp
     GUI/FramerateController.h
     GUI/FramerateController.cpp
+    GUI/Misc.h
+    GUI/Misc.cpp
     IO/IO.h
     IO/IO.cpp
     IO/StaticFile.h
