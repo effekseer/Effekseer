@@ -212,6 +212,8 @@ if env['IGNORE_BUILD'] == '0':
     else:
         call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r linux-x64')
+        call('chmod +x Dev/release/Effekseer')
+        call('chmod +x Dev/release/EffekseerMaterialEditor')
         call('chmod +x Dev/release/tools/fbxToEffekseerCurveConverter')
         call('chmod +x Dev/release/tools/fbxToEffekseerModelConverter')
         call('chmod +x Dev/release/tools/libfbxsdk.so')
