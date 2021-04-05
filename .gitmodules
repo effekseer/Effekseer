@@ -40,3 +40,9 @@
 [submodule "Dev/Cpp/3rdParty/nativefiledialog"]
 	path = Dev/Cpp/3rdParty/nativefiledialog
 	url = https://github.com/effekseer/nativefiledialog.git
+[submodule "Dev/Cpp/3rdParty/imgui"]
+	path = Dev/Cpp/3rdParty/imgui
+	url = https://github.com/effekseer/imgui.git
+[submodule "Dev/Cpp/3rdParty/imgui-node-editor"]
+	path = Dev/Cpp/3rdParty/imgui-node-editor
+	url = https://github.com/effekseer/imgui-node-editor.git

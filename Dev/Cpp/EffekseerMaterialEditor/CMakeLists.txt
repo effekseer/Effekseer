@@ -32,15 +32,9 @@ file(GLOB hs
     Dialog/*.h
     Graphics/*.h)
 
-file(GLOB srcs_third_imgui
-    ThirdParty/imgui_main/*.cpp)
-
 file(GLOB srcs_third_imgui_platform
     ThirdParty/imgui_platform/imgui_impl_opengl3.cpp
     ThirdParty/imgui_platform/imgui_impl_glfw.cpp)
-
-file(GLOB srcs_third_node
-    ThirdParty/NodeEditor/Source/*.cpp)
 
 link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
@@ -49,7 +43,7 @@ link_directories(
 # Add compile targets
 add_executable(
     EffekseerMaterialEditor
-    ${hs} ${srcs} ${srcs_third_imgui} ${srcs_third_imgui_platform} ${srcs_third_node})
+    ${hs} ${srcs} ${srcs_third_imgui_platform})
 
 # Flags
 if (MSVC)
@@ -75,10 +69,8 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
     ../EffekseerMaterial/
     ThirdParty/imgui_platform/
-    ThirdParty/imgui_main/
     ThirdParty/picojson/
-    ThirdParty/stb_image/
-    ThirdParty/NodeEditor/Include/)
+    ThirdParty/stb_image/)
 
 target_link_directories(
     EffekseerMaterialEditor
@@ -94,6 +86,8 @@ target_link_libraries(
     AltseedRHI
     Boxer
     nfd
+    imgui
+    imgui-node-editor
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
 )
@@ -184,7 +178,7 @@ endif()
 
 set_target_properties(EffekseerMaterialEditor PROPERTIES LINKER_LANGUAGE CXX)
 
-set(files ${hs} ${srcs} ${srcs_third_imgui} ${srcs_third_imgui_platform} ${srcs_third_node})
+set(files ${hs} ${srcs} ${srcs_third_imgui_platform})
 
 foreach(FILE ${files}) 
     # Get the directory of the source file
