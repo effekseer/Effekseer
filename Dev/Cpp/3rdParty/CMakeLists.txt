@@ -73,5 +73,14 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
         imgui/imgui_widgets.cpp)
     add_library(imgui STATIC ${imgui_src})
     target_include_directories(imgui PUBLIC imgui/)
+
+    set(imgui-node-editor_src
+        imgui-node-editor/crude_json.cpp
+        imgui-node-editor/imgui_canvas.cpp
+        imgui-node-editor/imgui_node_editor.cpp
+        imgui-node-editor/imgui_node_editor_api.cpp)
+    add_library(imgui-node-editor STATIC ${imgui-node-editor_src})
+    target_include_directories(imgui-node-editor PUBLIC imgui-node-editor/)
+    target_link_libraries(imgui-node-editor PRIVATE imgui)
 endif()
 

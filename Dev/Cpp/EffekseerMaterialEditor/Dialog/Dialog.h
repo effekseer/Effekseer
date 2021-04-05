@@ -39,7 +39,7 @@ public:
 	{
 		const float windowWidth = ImGui::GetTextLineHeight() * 12.0f;
 		ImGui::SetNextWindowSize(ImVec2(windowWidth, 0));
-		const auto parentWindowSize = ImGui::GetWindowSize();
+		const auto parentWindowSize = ImGui::GetIO().DisplaySize;
 		ImGui::SetNextWindowPos({parentWindowSize.x / 2.0f, parentWindowSize.y / 2.0f}, 0, {0.5f, 0.5f});
 
 		bool open = true;

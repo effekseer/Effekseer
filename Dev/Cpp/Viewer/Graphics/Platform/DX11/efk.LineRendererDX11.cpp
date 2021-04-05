@@ -13,12 +13,12 @@ using BYTE = uint8_t;
 
 namespace VS
 {
-#include "../../Shaders/HLSL_DX11_Header/line_vs.h"
+#include "../../../Shaders/HLSL_DX11_Header/line_vs.h"
 }
 
 namespace PS
 {
-#include "../../Shaders/HLSL_DX11_Header/line_ps.h"
+#include "../../../Shaders/HLSL_DX11_Header/line_ps.h"
 }
 #endif
 

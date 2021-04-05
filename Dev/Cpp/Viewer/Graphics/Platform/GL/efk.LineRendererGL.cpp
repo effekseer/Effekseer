@@ -7,8 +7,8 @@
 namespace efk
 {
 
-#include "../../Shaders/GLSL_GL_Header/line_ps.h"
-#include "../../Shaders/GLSL_GL_Header/line_vs.h"
+#include "../../../Shaders/GLSL_GL_Header/line_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/line_vs.h"
 
 /*
 static const char g_sprite_vs_src[] =
