@@ -7,88 +7,60 @@ namespace Effekseer.Data
 {
 	public enum ZSortType
 	{
-		[Name(value = "なし", language = Language.Japanese)]
-		[Name(value = "None", language = Language.English)]
+		[Key(key = "ZsortType_None")]
 		None,
-
-		[Name(value = "正順", language = Language.Japanese)]
-		[Name(value = "Normal order", language = Language.English)]
+		[Key(key = "ZsortType_NormalOrder")]
 		NormalOrder,
-
-		[Name(value = "逆順", language = Language.Japanese)]
-		[Name(value = "Reverse order", language = Language.English)]
+		[Key(key = "ZsortType_ReverseOrder")]
 		ReverseOrder,
-
 	}
 
 
 	public class DepthValues
     {
-
-        [Name(language = Language.Japanese, value = "Zオフセット")]
-        [Description(language = Language.Japanese, value = "描画時に奥行方向に移動されるオフセット")]
-        [Name(language = Language.English, value = "Z-Offset")]
-        [Description(language = Language.English, value = "An offset which shift Z direction when the particle is rendered.")]
+		[Key(key = "Depth_DepthOffset")]
         public Value.Float DepthOffset
         {
             get;
             private set;
         }
 
-		[Name(language = Language.Japanese, value = "Zオフセットによる拡大無効化")]
-		[Description(language = Language.Japanese, value = "Zオフセットにより大きさが変化しないようにするか")]
-		[Name(language = Language.English, value = "Is scaling invalid \nwith Z offset")]
-		[Description(language = Language.English, value = "Whether Scaling is not changed with Z offset")]
+		[Key(key = "Depth_IsScaleChangedDependingOnDepthOffset")]
 		public Value.Boolean IsScaleChangedDependingOnDepthOffset
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "Zオフセットの拡大")]
-		[Description(language = Language.Japanese, value = "Zオフセットがパーティクルの拡大で大きくなるか")]
-		[Name(language = Language.English, value = "Scaling Z-Offset")]
-		[Description(language = Language.English, value = "Whether Z offset is enlarged with a scaling of particles")]
+		[Key(key = "Depth_IsDepthOffsetChangedDependingOnParticleScale")]
 		public Value.Boolean IsDepthOffsetChangedDependingOnParticleScale
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "深度ソート")]
-		[Description(language = Language.Japanese, value = "距離による並び替え")]
-		[Name(language = Language.English, value = "Depth sort")]
-		[Description(language = Language.English, value = "Sorting by a distance")]
+		[Key(key = "Depth_ZSort")]
 		public Value.Enum<ZSortType> ZSort
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "深度クリップ")]
-		[Description(language = Language.Japanese, value = "指定された値より遠いパーティクルは描画されない。")]
-		[Name(language = Language.English, value = "DepthClipping")]
-		[Description(language = Language.English, value = "Particles farther than the specified value are not rendered.")]
+		[Key(key = "Depth_DepthClipping")]
 		public Value.IntWithInifinite DepthClipping
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "深度によるスケール変化の抑制")]
-		[Description(language = Language.Japanese, value = "深度が変化したとしても大きさが変わらないようにする。\n1.0だとこのパラメーターを使用せず、0.0だと変化がなくなる。")]
-		[Name(language = Language.English, value = "Suppression of scaling by depth")]
-		[Description(language = Language.English, value = "It makes scaling not to change even if a depth is changed.\nIf it is 1.0, it does not use this parameter, and if it is 0.0, there is no scaling.")]
+		[Key(key = "Depth_SuppressionOfScalingByDepth")]
 		public Value.Float SuppressionOfScalingByDepth
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "描画優先度")]
-		[Description(language = Language.Japanese, value = "小さい描画優先度のノードが先に描画される")]
-		[Name(language = Language.English, value = "Drawing priority")]
-		[Description(language = Language.English, value = "A node with Small drawing priority is drawn previously")]
+		[Key(key = "Depth_DrawingPriority")]
 		public Value.Int DrawingPriority
 		{
 			get;

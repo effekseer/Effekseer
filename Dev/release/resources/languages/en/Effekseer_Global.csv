@@ -1,0 +1,2 @@
+Global_RandomSeed_Name,Random seed
+Global_RandomSeed_Desc,"Random's seed. When this value is -1, seed is not specified."

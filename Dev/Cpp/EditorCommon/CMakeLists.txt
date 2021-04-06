@@ -23,6 +23,8 @@ set(srcs
     IO/DefaultFileReader.cpp
     IO/IPCFileReader.h
     IO/IPCFileReader.cpp
+    IO/CSVReader.h
+    IO/CSVReader.cpp
 )
 
 if(WIN32)
@@ -55,7 +57,8 @@ add_library(EditorCommon STATIC ${srcs})
 target_link_libraries(
     EditorCommon
     PRIVATE
-    IPC)
+    IPC
+    imgui)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})

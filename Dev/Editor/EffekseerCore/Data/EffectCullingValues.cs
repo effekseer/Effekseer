@@ -7,10 +7,7 @@ namespace Effekseer.Data
 {
 	public class EffectCullingValues
 	{
-		[Name(language = Language.Japanese, value = "カリングの表示")]
-		[Description(language = Language.Japanese, value = "カリングの表示非表示")]
-		[Name(language = Language.English, value = "Enable Culling")]
-		[Description(language = Language.English, value = "Whether to render hidden surfaces")]
+		[Key(key = "Culling_IsShown")]
 		[Undo(Undo = false)]
 		public Value.Boolean IsShown
 		{
@@ -18,8 +15,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "カリングの種類")]
-		[Name(language = Language.English, value = "Culling mode")]
+		[Key(key = "Culling_Type")]
 		[Selector(ID = 0)]
 		public Value.Enum<ParamaterType> Type
 		{
@@ -37,10 +33,7 @@ namespace Effekseer.Data
 
 		public class SphereParamater
 		{
-			[Name(language = Language.Japanese, value = "半径")]
-			[Description(language = Language.Japanese, value = "カリング球の半径")]
-			[Name(language = Language.English, value = "Radius")]
-			[Description(language = Language.English, value = "Radius of spherical culling")]
+			[Key(key = "Culling_Sphere_Radius")]
 			[Undo(Undo = true)]
 			public Value.Float Radius
 			{
@@ -48,10 +41,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "位置")]
-			[Description(language = Language.Japanese, value = "中心の位置")]
-			[Name(language = Language.English, value = "Position")]
-			[Description(language = Language.English, value = "Central location")]
+			[Key(key = "Culling_Sphere_Location")]
 			[Undo(Undo = false)]
 			public Value.Vector3D Location
 			{
@@ -75,11 +65,9 @@ namespace Effekseer.Data
 
 		public enum ParamaterType : int
 		{
-			[Name(value = "なし", language = Language.Japanese)]
-			[Name(value = "None", language = Language.English)]
+			[Key(key = "Culling_ParamaterType_None")]
 			None = 0,
-			[Name(value = "球", language = Language.Japanese)]
-			[Name(value = "Spherical", language = Language.English)]
+			[Key(key = "Culling_ParamaterType_Sphere")]
 			Sphere = 1,
 		}
 	}

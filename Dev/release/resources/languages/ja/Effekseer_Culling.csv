@@ -1,0 +1,13 @@
+Culling_IsShown_Name,カリングの表示
+Culling_IsShown_Desc,カリングの表示非表示
+Culling_IsShown_Name,カリングの表示
+Culling_IsShown_Desc,カリングの表示非表示
+Culling_Type_Name,カリングの種類
+,
+Culling_Sphere_Radius_Name,半径
+Culling_Sphere_Radius_Desc,カリング球の半径
+Culling_Sphere_Location_Name,位置
+Culling_Sphere_Location_Desc,中心の位置
+,
+Culling_ParamaterType_None_Name,なし
+Culling_ParamaterType_Sphere_Name,球

@@ -25,8 +25,10 @@
 
 #include "../dll.h"
 
+#include <GUI/Misc.h>
+
 #ifdef __linux__
-	#include <gtk/gtk.h>
+#include <gtk/gtk.h>
 #endif
 namespace ImGui
 {
@@ -667,9 +669,9 @@ GUIManager::~GUIManager()
 
 bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType)
 {
-	#ifdef __linux__
-		gtk_disable_setlocale();
-	#endif
+#ifdef __linux__
+	gtk_disable_setlocale();
+#endif
 	window = new efk::Window();
 
 	this->deviceType = deviceType;
@@ -1461,7 +1463,7 @@ bool GUIManager::RadioButton(const char16_t* label, bool active)
 bool GUIManager::ToggleButton(const char16_t* label, bool* p_checked)
 {
 	utf8str<256> labelU8(label);
-	
+
 	const auto& style = ImGui::GetStyle();
 
 	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
@@ -1482,7 +1484,7 @@ bool GUIManager::ToggleButton(const char16_t* label, bool* p_checked)
 
 	ImGuiContext& g = *GImGui;
 	float ANIM_SPEED = 0.08f;
-	if (g.LastActiveId == g.CurrentWindow->GetID(labelU8))// && g.LastActiveIdTimer < ANIM_SPEED)
+	if (g.LastActiveId == g.CurrentWindow->GetID(labelU8)) // && g.LastActiveIdTimer < ANIM_SPEED)
 	{
 		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
 		t = *p_checked ? (t_anim) : (1.0f - t_anim);
@@ -1495,16 +1497,16 @@ bool GUIManager::ToggleButton(const char16_t* label, bool* p_checked)
 		col_bg = ImGui::GetColorU32(ImLerp(style.Colors[ImGuiCol_Button], ImVec4(0.46f, 0.73f, 0.20f, 1.0f), t));
 
 	drawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + width, cursorPos.y + height), col_bg, height * 0.5f);
-	
+
 	float textHeight = ImGui::GetTextLineHeight();
 	float textOffsetY = (height - textHeight) * 0.5f - 1.0f;
 	if (*p_checked)
 		drawList->AddText(ImVec2(cursorPos.x + textHeight / 2, cursorPos.y + textOffsetY), IM_COL32(255, 255, 255, 255), "ON");
 	else
 		drawList->AddText(ImVec2(cursorPos.x + width / 2 - textHeight / 8, cursorPos.y + textOffsetY), IM_COL32(230, 230, 230, 255), "OFF");
-	
+
 	drawList->AddCircleFilled(ImVec2(cursorPos.x + radius + t * (width - radius * 2.0f), cursorPos.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
-	
+
 	return *p_checked;
 }
 
@@ -1898,21 +1900,9 @@ void GUIManager::ClearAllFonts()
 	io.Fonts->Clear();
 }
 
-void GUIManager::AddFontFromFileTTF(const char16_t* filename, float size_pixels)
+void GUIManager::AddFontFromFileTTF(const char16_t* fontFilepath, const char16_t* commonCharacterTablePath, const char16_t* characterTableName, float size_pixels)
 {
-	ImGuiIO& io = ImGui::GetIO();
-
-	size_pixels = roundf(size_pixels * mainWindow_->GetDPIScale());
-
-	io.Fonts->GetGlyphRangesJapanese();
-	io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
-
-	// markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1, nullptr,
-	// glyphRangesJapanese); markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
-	// markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2, nullptr,
-	// glyphRangesJapanese);
-
-	io.Fonts->Build();
+	Effekseer::Editor::AddFontFromFileTTF(utf8str<280>(fontFilepath), utf8str<280>(commonCharacterTablePath), utf8str<280>(characterTableName), size_pixels, mainWindow_->GetDPIScale());
 }
 
 void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY)

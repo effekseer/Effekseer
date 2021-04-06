@@ -7485,15 +7485,19 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ClearAllFonts___(vo
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF___(void * jarg1, void * jarg2, float jarg3) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF___(void * jarg1, void * jarg2, void * jarg3, void * jarg4, float jarg5) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
-  float arg3 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  char16_t *arg4 = (char16_t *) 0 ;
+  float arg5 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  arg3 = (float)jarg3; 
-  (arg1)->AddFontFromFileTTF((char16_t const *)arg2,arg3);
+  arg3 = (char16_t *)jarg3; 
+  arg4 = (char16_t *)jarg4; 
+  arg5 = (float)jarg5; 
+  (arg1)->AddFontFromFileTTF((char16_t const *)arg2,(char16_t const *)arg3,(char16_t const *)arg4,arg5);
 }
 
 

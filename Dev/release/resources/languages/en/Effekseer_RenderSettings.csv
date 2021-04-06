@@ -1,4 +1,4 @@
-﻿RS_ParameterType_None_Name,None
+RS_ParameterType_None_Name,None
 RS_ParameterType_Sprite_Name,Sprite
 RS_ParameterType_Ribbon_Name,Ribbon
 RS_ParameterType_Track_Name,Track
@@ -15,9 +15,126 @@ StandardColorType_Fixed_Name,Fixed
 StandardColorType_Random_Name,Random
 StandardColorType_Easing_Name,Easing
 StandardColorType_FCurve_Name,F-Curve (RGBA)
-TextureUVTypeParameter_Type_Name,"UV Type"
-TextureUVTypeParameter_TileEdgeHead_Name,"The number of tile on Head"
-TextureUVTypeParameter_TileEdgeTail_Name,"The number of tile on Tail"
-TextureUVTypeParameter_TileLoopingArea_Name,"Looping area"
+TextureUVTypeParameter_Type_Name,UV Type
+TextureUVTypeParameter_TileEdgeHead_Name,The number of tile on Head
+TextureUVTypeParameter_TileEdgeTail_Name,The number of tile on Tail
+TextureUVTypeParameter_TileLoopingArea_Name,Looping area
 TextureUVTypeParameter_Type_Strech_Name,Strech
 TextureUVTypeParameter_Type_Tile_Name,Tile
+,
+CullingType_Front_Name,Front view
+CullingType_Back_Name,Back view
+CullingType_Double_Name,Double-sided
+,
+TrackSizeType_Fixed_Name,Fixed
+,
+RingShapeType_Donut_Name,Donut
+RingShapeType_Crescent_Name,Crescent
+,
+RS_Sprite_ColorType_Default_Name,Default
+RS_Sprite_ColorType_Fixed_Name,Fixed
+,
+RS_Sprite_PositionType_Default_Name,Default
+RS_Sprite_PositionType_Fixed_Name,Fixed
+,
+RS_Ribbon_ColorAllType_Fixed_Name,Fixed
+RS_Ribbon_ColorAllType_Random_Name,Random
+RS_Ribbon_ColorAllType_Easing_Name,Easing
+,
+RS_Ribbon_ColorType_Default_Name,Default
+RS_Ribbon_ColorType_Fixed_Name,Fixed
+,
+RS_Ribbon_PositionType_Default_Name,Default
+RS_Ribbon_PositionType_Fixed_Name,Fixed
+,
+RS_Ring_LocationType_Fixed_Name,Fixed
+RS_Ring_LocationType_PVA_Name,PVA
+RS_Ring_LocationType_Easing_Name,Easing
+,
+RS_Ring_CenterRatioType_Fixed_Name,Fixed
+RS_Ring_CenterRatioType_Random_Name,Random
+RS_Ring_CenterRatioType_Easing_Name,Easing
+,
+RS_Ring_ColorType_Fixed_Name,Fixed
+RS_Ring_ColorType_Random_Name,Random
+RS_Ring_ColorType_Easing_Name,Easing
+,
+FixedRandomEasingType_Fixed_Name,Fixed
+FixedRandomEasingType_Random_Name,Random
+FixedRandomEasingType_Easing_Name,Easing
+,
+RS_Sprite_RenderingOrder_Name,Rendering Order
+RS_Sprite_Billboard_Name,Configuration
+RS_Sprite_ColorAll_Name,Color All
+RS_Sprite_Color_Name,Vertex Color
+RS_Sprite_Color_Fixed_LL_Name,Lower-Left Color
+RS_Sprite_Color_Fixed_LR_Name,Lower-Right Color
+RS_Sprite_Color_Fixed_UL_Name,Upper-Left Color
+RS_Sprite_Color_Fixed_UR_Name,Upper-Right Color
+RS_Sprite_Position_Name,Vertex Coords
+RS_Sprite_Position_Fixed_LL_Name,Lower-Left Coord
+RS_Sprite_Position_Fixed_LR_Name,Lower-Right Coord
+RS_Sprite_Position_Fixed_UL_Name,Upper-Left Coord
+RS_Sprite_Position_Fixed_UR_Name,Upper-Right Coord
+,
+RS_Ribbon_ViewpointDependent_Name,Follow Viewpoint
+RS_Ribbon_ColorAll_Name,Color All
+RS_Ribbon_Color_Name,Vertex Color
+RS_Ribbon_Color_Fixed_L_Name,Left Vertex Color
+RS_Ribbon_Color_Fixed_R_Name,Right Vertex Color
+RS_Ribbon_Position_Name,Position
+RS_Ribbon_Position_Fixed_L_Name,Left Coord
+RS_Ribbon_Position_Fixed_R_Name,Right Coord
+RS_Ribbon_SplineDivision_Name,"The number of 
+spline division"
+RS_Ribbon_SplineDivision_Desc,The number of spline division
+,
+RS_Track_TrackSizeFor_Name,Front Size
+RS_Track_TrackSizeMiddle_Name,Middle Size
+RS_Track_TrackSizeBack_Name,Back Size
+RS_Track_SplineDivision_Name,"The number of 
+spline division"
+RS_Track_SplineDivision_Desc,The number of spline division
+RS_Track_ColorLeft_Name,"Color, Left"
+RS_Track_ColorLeftMiddle_Name,"Color, Left-Center"
+RS_Track_ColorCenter_Name,"Color, Center"
+RS_Track_ColorCenterMiddle_Name,"Color, Center-Mid."
+RS_Track_ColorRight_Name,"Color, Right"
+RS_Track_ColorRightMiddle_Name,"Color, Right-Center"
+,
+FixedLocation_Location_Name,Position
+FixedLocation_Location_Desc,Position of the instance
+FixedLocation_Location_Name,Position
+FixedLocation_Location_Desc,Position of the instance
+,
+RS_Model_Model_Name,Model
+RS_Model_Model_Desc,Model File
+RS_Model_Billboard_Name,Configuration
+RS_Model_Culling_Name,Culling
+RS_Model_Color_Name,Color
+,
+RS_Ring_RingShape_Name,Shape
+RS_Ring_RenderingOrder_Name,Rendering Order
+RS_Ring_Billboard_Name,Configuration
+RS_Ring_AlphaBlend_Name,Blend
+RS_Ring_VertexCount_Name,Vertex Count
+RS_Ring_Outer_Name,Outer
+RS_Ring_Inner_Name,Inner
+RS_Ring_CenterRatio_Name,Center Ratio
+RS_Ring_OuterColor_Name,Outer Color
+RS_Ring_CenterColor_Name,Center Color
+RS_Ring_InnerColor_Name,Inner Color
+,
+RS_RingShape_Type_Name,Shape
+,
+RS_RingShapeCrescent_StartingFade_Name,Starting fade(Deg.)
+RS_RingShapeCrescent_EndingFade_Name,Ending fade(Deg.)
+RS_RingShapeCrescent_StartingAngle_Name,Starting Angle
+RS_RingShapeCrescent_EndingAngle_Name,Ending Angle
+,
+RS_Ring_PVALocation_Location_Name,Pos
+RS_Ring_PVALocation_Location_Desc,Position of the edge
+RS_Ring_PVALocation_Velocity_Name,Speed
+RS_Ring_PVALocation_Velocity_Desc,Initial velocity of the edge
+RS_Ring_PVALocation_Acceleration_Name,Accel
+RS_Ring_PVALocation_Acceleration_Desc,Acceleration of the edge

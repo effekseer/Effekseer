@@ -26,7 +26,7 @@ namespace Effekseer.Process
 
 				app.FileName = fullPath;
 				app.UseShellExecute = true;
-				app.Arguments = "ipc";
+				app.Arguments = "ipc -l " + LanguageTable.Languages[LanguageTable.SelectedIndex];
 
 				process = System.Diagnostics.Process.Start(app);
 

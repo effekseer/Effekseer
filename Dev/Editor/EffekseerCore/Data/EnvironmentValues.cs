@@ -22,10 +22,7 @@ namespace Effekseer.Data
 
 	public class EnvironmentBackgroundValues
 	{
-		[Name(language = Language.Japanese, value = "背景色")]
-		[Description(language = Language.Japanese, value = "背景色")]
-		[Name(language = Language.English, value = "Background Color")]
-		[Description(language = Language.English, value = "Background color")]
+		[Key(key = "Environment_BackgroundColor")]
 		[Undo(Undo = false)]
 		public Value.Color BackgroundColor
 		{
@@ -38,10 +35,7 @@ namespace Effekseer.Data
 		/// </summary>
 		Value.PathForImage LasyBackgroundImage;
 
-		[Name(language = Language.Japanese, value = "背景画像")]
-		[Description(language = Language.Japanese, value = "背景画像")]
-		[Name(language = Language.English, value = "Background Image")]
-		[Description(language = Language.English, value = "Background image")]
+		[Key(key = "Environment_BackgroundImage")]
 		[Undo(Undo = false)]
 		public Value.PathForImage BackgroundImage
 		{
@@ -63,10 +57,7 @@ namespace Effekseer.Data
 
 	public class EnvironmentLightingValues
 	{
-		[Name(language = Language.Japanese, value = "ライト方向")]
-		[Description(language = Language.Japanese, value = "ディレクショナルライトの向き")]
-		[Name(language = Language.English, value = "Light Direction")]
-		[Description(language = Language.English, value = "Orientation of the directional light")]
+		[Key(key = "Environment_LightDirection")]
 		[Undo(Undo = false)]
 		public Value.Vector3D LightDirection
 		{
@@ -74,10 +65,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "ライト色")]
-		[Description(language = Language.Japanese, value = "ライトのディフュージョン色")]
-		[Name(language = Language.English, value = "Light Color")]
-		[Description(language = Language.English, value = "Diffuse color of the light")]
+		[Key(key = "Environment_LightColor")]
 		[Undo(Undo = false)]
 		public Value.Color LightColor
 		{
@@ -85,10 +73,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "アンビエント色")]
-		[Description(language = Language.Japanese, value = "ライトのアンビエント色")]
-		[Name(language = Language.English, value = "Ambient Color")]
-		[Description(language = Language.English, value = "Ambient color of the light")]
+		[Key(key = "Environment_LightAmbientColor")]
 		[Undo(Undo = false)]
 		public Value.Color LightAmbientColor
 		{
@@ -107,10 +92,7 @@ namespace Effekseer.Data
 	public class EnvironmentPostEffectValues
 	{
 		[Selector(ID = 0)]
-		[Name(language = Language.Japanese, value = "ブルーム")]
-		[Description(language = Language.Japanese, value = "明るい光源からの光が周囲に漏れるように見えるエフェクト")]
-		[Name(language = Language.English, value = "Bloom")]
-		[Description(language = Language.English, value = "The effect produces fringes of light extending from the borders of bright areas in an image.")]
+		[Key(key = "Environment_BloomSwitch")]
 		[Undo(Undo = false)]
 		public Value.Enum<EffectSwitch> BloomSwitch
 		{
@@ -135,10 +117,7 @@ namespace Effekseer.Data
 		}
 
 		[Selector(ID = 0)]
-		[Name(language = Language.Japanese, value = "トーンマッピング")]
-		[Description(language = Language.Japanese, value = "")]
-		[Name(language = Language.English, value = "Tone mapping")]
-		[Description(language = Language.English, value = "")]
+		[Key(key = "Environment_TonemapSelector")]
 		[Undo(Undo = false)]
 		public Value.Enum<TonemapAlgorithm> TonemapSelector
 		{
@@ -182,30 +161,23 @@ namespace Effekseer.Data
 
 		public enum EffectSwitch : int
 		{
-			[Name(value = "Off", language = Language.Japanese)]
-			[Name(value = "Off", language = Language.English)]
+			[Key(key = "EffectSwitch_Off")]
 			Off = 0,
-			[Name(value = "On", language = Language.Japanese)]
-			[Name(value = "On", language = Language.English)]
+			[Key(key = "EffectSwitch_On")]
 			On = 1,
 		}
 
 		public enum TonemapAlgorithm : int
 		{
-			[Name(value = "Off", language = Language.Japanese)]
-			[Name(value = "Off", language = Language.English)]
+			[Key(key = "TonemapAlgorithm_Off")]
 			Off = 0,
-			[Name(value = "Reinhard", language = Language.Japanese)]
-			[Name(value = "Reinhard", language = Language.English)]
+			[Key(key = "TonemapAlgorithm_Reinhard")]
 			Reinhard = 1,
 		}
 
 		public class BloomParamater
 		{
-			[Name(language = Language.Japanese, value = "明るさ")]
-			[Description(language = Language.Japanese, value = "ブルームの明るさ")]
-			[Name(language = Language.English, value = "Intensity")]
-			[Description(language = Language.English, value = "")]
+			[Key(key = "Environment_Bloom_Intensity")]
 			[Undo(Undo = false)]
 			public Value.Float Intensity
 			{
@@ -213,10 +185,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "しきい値")]
-			[Description(language = Language.Japanese, value = "ブルームのしきい値")]
-			[Name(language = Language.English, value = "Threshold")]
-			[Description(language = Language.English, value = "")]
+			[Key(key = "Environment_Bloom_Threshold")]
 			[Undo(Undo = false)]
 			public Value.Float Threshold
 			{
@@ -224,10 +193,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "緩やかさ")]
-			[Description(language = Language.Japanese, value = "ブルームのしきい値付近の緩やかさ")]
-			[Name(language = Language.English, value = "Soft Knee")]
-			[Description(language = Language.English, value = "")]
+			[Key(key = "Environment_Bloom_SoftKnee")]
 			[Undo(Undo = false)]
 			public Value.Float SoftKnee
 			{
@@ -245,10 +211,8 @@ namespace Effekseer.Data
 
 		public class TonemapReinhardParameter
 		{
-			[Name(language = Language.Japanese, value = "露光")]
-			[Description(language = Language.Japanese, value = "")]
-			[Name(language = Language.English, value = "Exposure")]
-			[Description(language = Language.English, value = "")]
+
+			[Key(key = "Environment_TonemapReinhard_Exposure")]
 			[Undo(Undo = false)]
 			public Value.Float Exposure
 			{

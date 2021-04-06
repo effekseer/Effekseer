@@ -46,3 +46,19 @@ LFF_FF_1_Name,ForceField 1
 LFF_FF_2_Name,ForceField 2
 LFF_FF_3_Name,ForceField 3
 LFF_FF_4_Name,ForceField 4
+,
+LFF_Turbulence_RandomSeed_Name,Random Seed
+LFF_Turbulence_RandomSeed_Desc,The flow of turbulence changes according to the value.
+LFF_Turbulence_FieldScale_Name,Field scale
+LFF_Turbulence_FieldScale_Desc,Larger value ​​increases the turbulence width.
+LFF_Turbulence_Complexity_Name,Complexity
+LFF_Turbulence_Complexity_Desc,"Larger value ​​complicates turbulence. However, processing becomes heavy."
+,
+LFF_Gravity_Gravity_Name,Gravity
+LFF_Gravity_Gravity_Desc,Gravity's effect on the instance
+LFF_AttractiveForce_Resistance_Name,Resistance
+LFF_AttractiveForce_Resistance_Desc,Resistance to the directional pull of the attractor
+LFF_AttractiveForce_MinimumRange_Name,Minimum Range
+LFF_AttractiveForce_MinimumRange_Desc,"Within this range, it will be affected by the attractor"
+LFF_AttractiveForce_MaximumRange_Name,Maximum Range
+LFF_AttractiveForce_MaximumRange_Desc,"Outside this range, the attractor will have no effect on the instance"
