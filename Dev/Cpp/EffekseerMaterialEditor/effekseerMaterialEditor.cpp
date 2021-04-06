@@ -280,8 +280,9 @@ int mainLoop(int argc, char* argv[])
 
 	glfwMainWindow = mainWindow->GetGLFWWindows();
 	bool isDpiDirtied = true;
+	bool isFontUpdated = true;
 
-	mainWindow->DpiChanged = [&](float scale) -> void { isDpiDirtied = true; };
+	mainWindow->DpiChanged = [&](float scale) -> void { isDpiDirtied = true; isFontUpdated = true; };
 
 	glfwSetWindowCloseCallback(glfwMainWindow, GLFLW_CloseCallback);
 
@@ -354,11 +355,14 @@ int mainLoop(int argc, char* argv[])
 			style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
 			style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
+		}
 
+		if (isFontUpdated)
+		{
 			ImGui_ImplOpenGL3_DestroyFontsTexture();
 			io.Fonts->Clear();
 
-			Effekseer::Editor::AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", "", "japanese", 20, mainWindow->GetDPIScale());
+			Effekseer::Editor::AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", "resources/languages/characterTable.txt", "japanese", 20, mainWindow->GetDPIScale());
 			isDpiDirtied = false;
 		}
 
@@ -492,10 +496,12 @@ int mainLoop(int argc, char* argv[])
 					if (ImGui::MenuItem("Japanese"))
 					{
 						ChangeLanguage(Effekseer::SystemLanguage::Japanese);
+						isFontUpdated = true;
 					}
 					else if (ImGui::MenuItem("English"))
 					{
 						ChangeLanguage(Effekseer::SystemLanguage::English);
+						isFontUpdated = true;
 					}
 
 					ImGui::EndMenu();
