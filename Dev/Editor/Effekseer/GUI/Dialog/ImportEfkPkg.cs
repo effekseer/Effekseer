@@ -85,15 +85,7 @@ namespace Effekseer.GUI.Dialog
 
 		public void Show(string path, EfkPkg efkpkg)
 		{
-			if (Core.Language == Language.Japanese)
-			{
-				this.title = "Effekseerパッケージのインポート";
-			}
-			else
-			{
-				this.title = "Importing the Effekseer package";
-			}
-
+			title = MultiLanguageTextProvider.GetText("ImportEfkPkgTitle");
 			EfkPkg = efkpkg;
 			sourceFilePath = Utils.Misc.BackSlashToSlash(path);
 

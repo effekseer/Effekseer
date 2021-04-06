@@ -36,32 +36,6 @@ namespace Effekseer.Binary
 
 	class Utils
 	{
-		public static void LogFileNotFound(string path)
-		{
-			if (Core.OnOutputLog != null)
-			{
-				Language language = Language.English;
-
-				if (Core.Option != null && Core.Option.LanguageSelector != null)
-				{
-					language = Core.Language;
-				}
-				else
-				{
-					language = LanguageGetter.GetLanguage();
-				}
-
-				if (language == Language.Japanese)
-				{
-					Core.OnOutputLog(LogLevel.Warning, path + " が見つかりません。");
-				}
-				else
-				{
-					Core.OnOutputLog(LogLevel.Warning, path + " is not found.");
-				}
-			}
-		}
-
 		public static void ExportEasing(FloatEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version, bool exportSize)
 		{
 			var refBuf1_1 = easingValue.Start.DynamicEquationMax.Index.GetBytes();

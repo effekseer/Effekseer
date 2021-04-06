@@ -41,15 +41,7 @@ namespace Effekseer.GUI.Dialog
 			{
 				Manager.NativeManager.OpenPopup(id);
 				isFirstUpdate = false;
-
-				if (Core.Language == Language.Japanese)
-				{
-					this.message = "拡大";
-				}
-				else
-				{
-					this.message = "Scale";
-				}
+				message = MultiLanguageTextProvider.GetText("Scale");
 			}
 
 			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))

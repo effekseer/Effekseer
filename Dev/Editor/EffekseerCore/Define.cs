@@ -64,16 +64,9 @@ namespace Effekseer
 		Warning,
 	}
 
-	/// <summary>
-	/// 言語
-	/// </summary>
 	public enum Language
 	{
-        [Name(value = "日本語", language = Language.Japanese)]
-        [Name(value = "Japanese", language = Language.English)]
 		Japanese,
-        [Name(value = "英語", language = Language.Japanese)]
-        [Name(value = "English", language = Language.English)]
 		English,
 	}
 
@@ -166,15 +159,17 @@ namespace Effekseer
 
 		public NameAttribute()
 		{
-			language = Language.English;
+			//language = Language.English;
 			value = string.Empty;
 		}
 
+		/*
 		public Language language
 		{
 			get;
 			set;
 		}
+		*/
 
 		public string value
 		{
@@ -204,10 +199,12 @@ namespace Effekseer
                     var value = Resources.GetString(attribute.value);
                     if (!String.IsNullOrEmpty(value)) return value;
 
+					/*
 					if (attribute.language == Core.Language)
 					{
 						return attribute.value;
 					}
+					*/
 				}
 			}
 
@@ -227,80 +224,6 @@ namespace Effekseer
 			return null;
 		}
 	}
-
-	/// <summary>
-	/// attribute for parameter's description
-	/// </summary>
-	[AttributeUsage(
-	AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field,
-	AllowMultiple = true,
-	Inherited = false)]
-	public class DescriptionAttribute : Attribute
-	{
-		public DescriptionAttribute()
-		{
-			language = Language.English;
-			value = string.Empty;
-		}
-
-		public Language language
-		{
-			get;
-			set;
-		}
-
-		public string value
-		{
-			get;
-			set;
-		}
-		public string key
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Get description from attributes
-		/// </summary>
-		/// <param name="attributes"></param>
-		/// <param name="selected">selector's value to show</param>
-		/// <returns></returns>
-		public static string GetDescription(object[] attributes, int selected = -1)
-		{
-			if (attributes != null && attributes.Length > 0)
-			{
-				foreach (var attribute in attributes.OfType<DescriptionAttribute>())
-				{
-					// search from resources at first
-					var value = Resources.GetString(attribute.value);
-                    if (!String.IsNullOrEmpty(value)) return value;
-
-					if (attribute.language == Core.Language)
-					{
-						return attribute.value;
-					}
-				}
-			}
-
-			return string.Empty;
-		}
-
-		public static string GetKey(object[] attributes)
-		{
-			if (attributes != null && attributes.Length > 0)
-			{
-				foreach (var attribute in attributes.OfType<DescriptionAttribute>())
-				{
-					if (!String.IsNullOrEmpty(attribute.key)) return attribute.key;
-				}
-			}
-
-			return null;
-		}
-
-	}
-
 
 	/// <summary>
 	/// アイコンを設定する属性
