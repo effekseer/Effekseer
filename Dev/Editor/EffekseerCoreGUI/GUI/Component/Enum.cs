@@ -86,7 +86,6 @@ namespace Effekseer.GUI.Component
 					{
 						name = f.ToString();
 					}
-					//System.IO.File.AppendAllText("kv.csv", nameKey + "," + name.ToString() + "\r\n");
 				}
 
 				var iconAttribute = IconAttribute.GetIcon(attributes);

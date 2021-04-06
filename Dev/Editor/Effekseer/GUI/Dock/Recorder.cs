@@ -424,14 +424,7 @@ namespace Effekseer.GUI.Dock
                     recordingParameter.Transparence = (swig.TransparenceType)selectedAlphaIndex;
 					recordingParameter.Scale = Core.Recording.RecordingScale.Value;
 
-					if (Effekseer.Core.Language == Language.Japanese)
-					{
-						errorMessage = "保存に失敗しました。ファイルが他のアプリケーションで開かれている、もしくはスペックが足りません。";
-					}
-					else
-					{
-						errorMessage = "It failed to save. A file is opend by other application or lack of specification.";
-					}
+					errorMessage = MultiLanguageTextProvider.GetText("Error_FailedToSave");
 
 					bool recordResult = false;
 

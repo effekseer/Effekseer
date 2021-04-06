@@ -838,10 +838,6 @@ namespace Effekseer.Data
 			else
 			{
 				ret.Title = NameAttribute.GetName(attributes);
-				//if (!string.IsNullOrEmpty(ret.Title.ToString()))
-				//{
-				//	System.IO.File.AppendAllText("kv.csv", nameKey + ","  + "\"" + ret.Title.ToString() + "\"" + "\r\n");
-				//}
 			}
 
 			var descKey = key + "_Desc";
@@ -853,15 +849,6 @@ namespace Effekseer.Data
 			if (MultiLanguageTextProvider.HasKey(descKey))
 			{
 				ret.Description = new MultiLanguageString(descKey);
-			}
-			else
-			{
-				ret.Description = DescriptionAttribute.GetDescription(attributes);
-
-				//if(!string.IsNullOrEmpty(ret.Description.ToString()))
-				//{
-				//	System.IO.File.AppendAllText("kv.csv", descKey + "," + "\"" + ret.Description.ToString() + "\"" + "\r\n");
-				//}
 			}
 
 			var treeNode = attributes.OfType<TreeNodeAttribute>().FirstOrDefault();

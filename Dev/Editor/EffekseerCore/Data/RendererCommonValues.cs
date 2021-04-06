@@ -49,8 +49,7 @@ namespace Effekseer.Data
 		internal string Name = string.Empty;
 		internal string Desc = string.Empty;
 
-		[Name(language = Language.Japanese, value = "カスタムデータ")]
-		[Name(language = Language.English, value = "Custom Data")]
+		[Key(key = "CustomData")]
 		[Selector(ID = 10)]
 		public Value.Enum<CustomDataType> CustomData
 		{
@@ -103,16 +102,7 @@ namespace Effekseer.Data
 			}
 			else
 			{
-				if (Core.Language == Language.English)
-				{
-					ev.Title = "CustomData" + customDataNum.ToString();
-				}
-
-				if (Core.Language == Language.Japanese)
-				{
-					ev.Title = "カスタムデータ" + customDataNum.ToString();
-				}
-
+				ev.Title = MultiLanguageTextProvider.GetText("CustomData_Name") + customDataNum.ToString();
 				ev.Description = "";
 			}
 

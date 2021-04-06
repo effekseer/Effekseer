@@ -431,14 +431,7 @@ namespace Effekseer.GUI
 			}
 			catch
 			{
-				if (Core.Language == Language.Japanese)
-				{
-					swig.GUIManager.show("ヘルプを開けませんでした。公式サイトからご覧ください。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-				}
-				else
-				{
-					swig.GUIManager.show("Could not open help. Please see from the official website.", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-				}
+				swig.GUIManager.show(MultiLanguageTextProvider.GetText("Error_FailedToOpenHelp"), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 			}
 
 			return true;
