@@ -1,0 +1,26 @@
+Sound_ParamaterType_None_Name,Disabled
+Sound_ParamaterType_Use_Name,Enabled
+,
+Sound_PanType_Sound2D_Name,2D
+Sound_PanType_Sound3D_Name,3D
+,
+Sound_Wave_Name,Sound Data
+Sound_Wave_Desc,Using WAV files
+Sound_Volume_Name,Volume
+Sound_Volume_Desc,"Volume
+Range：0.0 ～ 1.0
+0 is silence, 1 is same as the original sound."
+Sound_Pitch_Name,Pitch
+Sound_Pitch_Desc,"Pitch（Units：Octave)
+Range：-4.0 ～ +4.0
+0.0 is same as original, +1.0 doubled pitch, -1.0 half pitch."
+Sound_PanType_Name,Panning Type
+Sound_PanType_Desc,Panning Type
+Sound_Pan_Name,Pan
+Sound_Pan_Desc,"Panning of sound.
+Range: -1.0 ～ +1.0
+0.0 is centered, -1.0 is left, 1.0 is right."
+Sound_Distance_Name,Damping Range
+Sound_Distance_Desc,Distance in which damping of the sound occurs
+Sound_Delay_Name,Delay
+Sound_Delay_Desc,"Duration in frames between when the instance is spawned, and when the sound plays"

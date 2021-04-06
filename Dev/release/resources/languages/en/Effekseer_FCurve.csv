@@ -1,0 +1,7 @@
+FcurveEdge_Constant_Name,Constant
+FcurveEdge_Loop_Name,Loop
+FcurveEdge_LoopInversely_Name,Loop inversely
+FcurveInterpolation_Bezier_Name,Bezier
+FcurveInterpolation_Linear_Name,Linear
+FcurveTimelineMode_Time_Name,Time(Frame)
+FcurveTimelineMode_Percent_Name,Percent(0-100)

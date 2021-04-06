@@ -1,0 +1,26 @@
+Sound_ParamaterType_None_Name,無し
+Sound_ParamaterType_Use_Name,有り
+,
+Sound_PanType_Sound2D_Name,2D
+Sound_PanType_Sound3D_Name,3D
+,
+Sound_Wave_Name,音データ
+Sound_Wave_Desc,再生する音のWAVデータ
+Sound_Volume_Name,ボリューム
+Sound_Volume_Desc,"音の大きさ。
+範囲：0.0 ～ 1.0
+0で無音。1で原音の大きさ"
+Sound_Pitch_Name,ピッチ
+Sound_Pitch_Desc,"音の高さ（単位：オクターブ）。
+範囲：-4.0 ～ +4.0
+0.0で原音。+1.0で2倍。-1.0で1/2倍"
+Sound_PanType_Name,パンタイプ
+Sound_PanType_Desc,パンタイプ
+Sound_Pan_Name,パン
+Sound_Pan_Desc,"音の定位。
+範囲：-1.0 ～ +1.0
+0.0で中央。-1.0で左から。1.0で右から"
+Sound_Distance_Name,減衰距離
+Sound_Distance_Desc,距離による減衰開始距離
+Sound_Delay_Name,ディレイ
+Sound_Delay_Desc,生成から再生開始までのフレーム数
