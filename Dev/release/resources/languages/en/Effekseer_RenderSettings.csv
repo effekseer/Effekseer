@@ -45,7 +45,7 @@ RS_Ribbon_ColorType_Default_Name,Default
 RS_Ribbon_ColorType_Fixed_Name,Fixed
 ,
 RS_Ribbon_PositionType_Default_Name,Default
-RS_Ribbon_Position_Fixed_Name,Fixed
+RS_Ribbon_PositionType_Fixed_Name,Fixed
 ,
 RS_Ring_LocationType_Fixed_Name,Fixed
 RS_Ring_LocationType_PVA_Name,PVA
@@ -62,3 +62,52 @@ RS_Ring_ColorType_Easing_Name,Easing
 FixedRandomEasingType_Fixed_Name,Fixed
 FixedRandomEasingType_Random_Name,Random
 FixedRandomEasingType_Easing_Name,Easing
+,
+RS_Sprite_RenderingOrder_Name,Rendering Order
+RS_Sprite_Billboard_Name,Configuration
+RS_Sprite_ColorAll_Name,Color All
+RS_Sprite_Color_Name,Vertex Color
+RS_Sprite_Color_Fixed_LL_Name,Lower-Left Color
+RS_Sprite_Color_Fixed_LR_Name,Lower-Right Color
+RS_Sprite_Color_Fixed_UL_Name,Upper-Left Color
+RS_Sprite_Color_Fixed_UR_Name,Upper-Right Color
+RS_Sprite_Position_Name,Vertex Coords
+RS_Sprite_Position_Fixed_LL_Name,Lower-Left Coord
+RS_Sprite_Position_Fixed_LR_Name,Lower-Right Coord
+RS_Sprite_Position_Fixed_UL_Name,Upper-Left Coord
+RS_Sprite_Position_Fixed_UR_Name,Upper-Right Coord
+,
+RS_Ribbon_ViewpointDependent_Name,Follow Viewpoint
+RS_Ribbon_ColorAll_Name,Color All
+RS_Ribbon_Color_Name,Vertex Color
+RS_Ribbon_Color_Fixed_L_Name,Left Vertex Color
+RS_Ribbon_Color_Fixed_R_Name,Right Vertex Color
+RS_Ribbon_Position_Name,Position
+RS_Ribbon_Position_Fixed_L_Name,Left Coord
+RS_Ribbon_Position_Fixed_R_Name,Right Coord
+RS_Ribbon_SplineDivision_Name,"The number of 
+spline division"
+RS_Ribbon_SplineDivision_Desc,The number of spline division
+,
+RS_Track_TrackSizeFor_Name,Front Size
+RS_Track_TrackSizeMiddle_Name,Middle Size
+RS_Track_TrackSizeBack_Name,Back Size
+RS_Track_SplineDivision_Name,"The number of 
+spline division"
+RS_Track_SplineDivision_Desc,The number of spline division
+RS_Track_ColorLeft_Name,"Color, Left"
+RS_Track_ColorLeftMiddle_Name,"Color, Left-Center"
+RS_Track_ColorCenter_Name,"Color, Center"
+RS_Track_ColorCenterMiddle_Name,"Color, Center-Mid."
+RS_Track_ColorRight_Name,"Color, Right"
+RS_Track_ColorRightMiddle_Name,"Color, Right-Center"
+,
+FixedLocation_Location_Name,Position
+FixedLocation_Location_Desc,Position of the instance
+FixedLocation_Location_Name,Position
+FixedLocation_Location_Desc,Position of the instance
+,
+RS_Model_Model_Name,Model
+RS_Model_Model_Desc,Model File
+RS_Model_Billboard_Name,Configuration
+RS_Model_Culling_Name,Culling

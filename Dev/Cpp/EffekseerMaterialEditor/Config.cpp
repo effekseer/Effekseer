@@ -9,7 +9,7 @@ namespace EffekseerMaterial
 
 Config::Config()
 {
-	Language = Effekseer::GetLanguageKey(Effekseer::GetSystemLanguage());
+	Language = Effekseer::Editor::GetLanguageKey(Effekseer::GetSystemLanguage());
 }
 
 Config::~Config()
@@ -81,7 +81,7 @@ bool Config::Load(const char* path)
 	auto languageNode = root.get("Language");
 	if (languageNode.is<double>())
 	{
-		Language = Effekseer::GetLanguageKey(static_cast<Effekseer::SystemLanguage>((int)languageNode.get<double>()));
+		Language = Effekseer::Editor::GetLanguageKey(static_cast<Effekseer::SystemLanguage>((int)languageNode.get<double>()));
 	}
 	else
 	{
