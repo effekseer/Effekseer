@@ -23,4 +23,33 @@ SystemLanguage GetSystemLanguage()
 	return SystemLanguage::Unknown;
 }
 
+std::string GetLanguageKey(SystemLanguage language)
+{
+	if (language == SystemLanguage::Japanese)
+	{
+		return "ja";
+	}
+	else if (language == SystemLanguage::English)
+	{
+		return "en";
+	}
+
+	// Fallback
+	return "en";
+}
+
+SystemLanguage GetSystemLanguage(const std::string& key)
+{
+	if (key == "ja")
+	{
+		return SystemLanguage::Japanese;
+	}
+	else if (key == "en")
+	{
+		return SystemLanguage::English;
+	}
+
+	return SystemLanguage::Unknown;
+}
+
 } // namespace Effekseer

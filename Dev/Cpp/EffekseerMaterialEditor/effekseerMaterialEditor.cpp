@@ -162,40 +162,52 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 	}
 }
 
+void ChangeLanguage(const std::string& key)
+{
+	auto loadLanguage = [](const std::string& k, const std::string& filename) {
+		const auto languageFilePath = GetExecutingDirectory() + "resources/languages/" + k + "/" + filename;
+
+		std::ifstream f(languageFilePath);
+		if (!f.is_open())
+		{
+			return;
+		}
+
+		auto str = std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+		auto csv = Effekseer::Editor::ReadCSV(str);
+
+		for (const auto& line : csv)
+		{
+			if (line.size() < 2)
+				continue;
+
+			if (line[0] == "")
+				continue;
+
+			EffekseerMaterial::StringContainer::AddValue(line[0].c_str(), line[1].c_str());
+		}
+	};
+
+	EffekseerMaterial::StringContainer::Clear();
+	loadLanguage("en", "Base.csv");
+	loadLanguage("en", "EffekseerMaterialEditor.csv");
+
+	if (key != "en")
+	{
+		loadLanguage(key, "Base.csv");
+		loadLanguage(key, "EffekseerMaterialEditor.csv");
+	}
+}
+
 void ChangeLanguage(Effekseer::SystemLanguage language)
 {
-	std::string languageFilePath;
-
-	FILE* fp = nullptr;
-
 	if (language == Effekseer::SystemLanguage::Japanese)
 	{
-		languageFilePath = GetExecutingDirectory() + "resources/languages/ja/EffekseerMaterialEditor.csv";
+		ChangeLanguage("ja");
 	}
 	else
 	{
-		languageFilePath = GetExecutingDirectory() + "resources/languages/en/EffekseerMaterialEditor.csv";
-	}
-
-	std::ifstream f(languageFilePath);
-	if (!f.is_open())
-	{
-		return;
-	}
-
-	auto str = std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-	auto csv = Effekseer::Editor::ReadCSV(str);
-
-	EffekseerMaterial::StringContainer::Clear();
-	for (const auto& line : csv)
-	{
-		if (line.size() < 2)
-			continue;
-
-		if (line[0] == "")
-			continue;
-
-		EffekseerMaterial::StringContainer::AddValue(line[0].c_str(), line[1].c_str());
+		ChangeLanguage("en");
 	}
 }
 
@@ -206,6 +218,20 @@ int mainLoop(int argc, char* argv[])
 	if (argc >= 2 && std::string(argv[1]) == "ipc")
 	{
 		ipcMode = true;
+	}
+
+	std::string languageKey;
+
+	if (argc >= 2)
+	{
+		for (int i = 1; i < argc; i++)
+		{
+			if (std::string(argv[i - 1]) == "--language" || std::string(argv[i - 1]) == "-l")
+			{
+				languageKey = argv[i];
+				break;
+			}
+		}
 	}
 
 	SetCurrentDir(GetExecutingDirectory().c_str());
@@ -315,6 +341,10 @@ int mainLoop(int argc, char* argv[])
 	std::string imguiConfigPath = GetExecutingDirectory() + "imgui.material.ini";
 	ImGui::GetIO().IniFilename = imguiConfigPath.c_str();
 
+	if (languageKey != "")
+	{
+		config->Language = languageKey;
+	}
 	ChangeLanguage(config->Language);
 
 	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
@@ -355,6 +385,8 @@ int mainLoop(int argc, char* argv[])
 			style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
 			style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
+
+			isDpiDirtied = false;
 		}
 
 		if (isFontUpdated)
@@ -362,8 +394,14 @@ int mainLoop(int argc, char* argv[])
 			ImGui_ImplOpenGL3_DestroyFontsTexture();
 			io.Fonts->Clear();
 
-			Effekseer::Editor::AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", "resources/languages/characterTable.txt", "japanese", 20, mainWindow->GetDPIScale());
-			isDpiDirtied = false;
+			Effekseer::Editor::AddFontFromFileTTF(
+				EffekseerMaterial::StringContainer::GetValue("Font_Normal").c_str(),
+				"resources/languages/characterTable.txt",
+				EffekseerMaterial::StringContainer::GetValue("CharacterTable").c_str(),
+				20,
+				mainWindow->GetDPIScale());
+
+			isFontUpdated = false;
 		}
 
 		glfwPollEvents();

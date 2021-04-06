@@ -32,11 +32,6 @@ bool StringContainer::AddValue(const char* key, const char* value)
 	auto key_ = std::string(key);
 	auto it = values.find(key_);
 
-	if (it != values.end() && it->second != key_)
-	{
-		return false;
-	}
-
 	values[key_] = value;
 
 	return true;

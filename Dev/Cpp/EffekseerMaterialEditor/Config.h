@@ -23,7 +23,7 @@ public:
 	int32_t WindowPosX = -10000;
 	int32_t WindowPosY = -10000;
 	bool WindowIsMaximumMode = false;
-	Effekseer::SystemLanguage Language = Effekseer::SystemLanguage::Unknown;
+	std::string Language;
 };
 
 } // namespace EffekseerMaterial

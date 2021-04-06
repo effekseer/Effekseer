@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
 
 namespace Effekseer
 {
@@ -16,5 +17,9 @@ enum class SystemLanguage : int32_t
 	@brief	get current a language of operation system
 */
 SystemLanguage GetSystemLanguage();
+
+std::string GetLanguageKey(SystemLanguage language);
+
+SystemLanguage GetSystemLanguage(const std::string& key);
 
 } // namespace Effekseer
