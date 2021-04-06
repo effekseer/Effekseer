@@ -55,14 +55,11 @@ namespace Effekseer.Data
 
 	public enum FixedRandomEasingType : int
 	{
-		[Name(value = "固定", language = Language.Japanese)]
-		[Name(value = "Fixed", language = Language.English)]
+		[Key(key = "FixedRandomEasingType_Fixed")]
 		Fixed = 0,
-		[Name(value = "ランダム", language = Language.Japanese)]
-		[Name(value = "Random", language = Language.English)]
+		[Key(key = "FixedRandomEasingType_Random")]
 		Random = 1,
-		[Name(value = "イージング", language = Language.Japanese)]
-		[Name(value = "Easing", language = Language.English)]
+		[Key(key = "FixedRandomEasingType_Easing")]
 		Easing = 2,
 	}
 
@@ -349,26 +346,21 @@ namespace Effekseer.Data
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
 				ColorTexture = new Value.Path(basepath, "画像ファイル (*.png)|*.png", true, "");
 			}
+			public enum ColorType : int
+			{
+				[Key(key = "RS_Sprite_ColorType_Default")]
+				Default = 0,
+				[Key(key = "RS_Sprite_ColorType_Fixed")]
+				Fixed = 1,
+			}
 
-            public enum ColorType : int
-            {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
-            }
-
-            public enum PositionType : int
-            {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
-            }
+			public enum PositionType : int
+			{
+				[Key(key = "RS_Sprite_PositionType_Default")]
+				Default = 0,
+				[Key(key = "RS_Sprite_PositionType_Fixed")]
+				Fixed = 1,
+			}
 		}
 
 		public class RibbonParamater
@@ -475,35 +467,28 @@ namespace Effekseer.Data
 
             public enum ColorAllType : int
             {
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
-                Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ribbon_ColorAllType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ribbon_ColorAllType_Random")]
+				Random = 1,
+				[Key(key = "RS_Ribbon_ColorAllType_Easing")]
+				Easing = 2,
             }
 
             public enum ColorType : int
             {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
+				[Key(key = "RS_Ribbon_ColorType_Default")]
+				Default = 0,
+				[Key(key = "RS_Ribbon_ColorType_Fixed")]
+				Fixed = 1,
             }
 
             public enum PositionType : int
             {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
+				[Key(key = "RS_Ribbon_PositionType_Default")]
+				Default = 0,
+				[Key(key = "RS_Ribbon_PositionType_Fixed")]
+				Fixed = 1,
             }
 		}
 
@@ -537,8 +522,6 @@ namespace Effekseer.Data
             [Selector(ID = 0)]
 			[Shown(Shown = false)]
 			[IO(Export = false)]
-            [Name(language = Language.Japanese, value = "表示角度")]
-			[Name(language = Language.English, value = "Viewing Angle")]
             public Value.Enum<ViewingAngleType> ViewingAngle { get; private set; }
 
 			/// <summary>
@@ -732,29 +715,20 @@ namespace Effekseer.Data
 			/// </summary>
 			public enum ViewingAngleType : int
             {
-                [Name(value = "位置", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
                 Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
                 Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
                 Easing = 2,
             }
 			
 
             public enum LocationType : int
             {
-                [Name(value = "位置", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "位置・速度・加速度", language = Language.Japanese)]
-				[Name(value = "PVA", language = Language.English)]
-                PVA = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ring_LocationType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ring_LocationType_PVA")]
+				PVA = 1,
+				[Key(key = "RS_Ring_LocationType_Easing")]
+				Easing = 2,
             }
 
             public class FixedLocation
@@ -777,15 +751,12 @@ namespace Effekseer.Data
 
             public enum CenterRatioType : int
             {
-                [Name(value = "位置", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
-                Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ring_CenterRatioType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ring_CenterRatioType_Random")]
+				Random = 1,
+				[Key(key = "RS_Ring_CenterRatioType_Easing")]
+				Easing = 2,
             }
 
             public class PVALocation
@@ -830,15 +801,12 @@ namespace Effekseer.Data
 
             public enum ColorType : int
             {
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
-                Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ring_ColorType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ring_ColorType_Random")]
+				Random = 1,
+				[Key(key = "RS_Ring_ColorType_Easing")]
+				Easing = 2,
             }
         }
 

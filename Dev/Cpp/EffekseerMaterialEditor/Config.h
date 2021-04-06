@@ -2,7 +2,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <Platform/PlatformMisc.h>
+#include <GUI/Misc.h>
 
 namespace EffekseerMaterial
 {
