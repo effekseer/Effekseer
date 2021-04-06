@@ -8,11 +8,6 @@ namespace Effekseer.GUI.Dock
 {
     class DockPanel : GroupControl, IRemovableControl, IDroppableControl
     {
-		/// <summary>
-		/// Make easy to click
-		/// </summary>
-		const string ShortTabSpace = "   ";
-
 		public string Label { get; set; } = string.Empty;
 
 		public string TabLabel
@@ -21,7 +16,7 @@ namespace Effekseer.GUI.Dock
 			{
 				if (AllowsShortTab)
 				{
-					return Label.Substring(0, 1) + ShortTabSpace + Label.Substring(Label.IndexOf("###"));
+					return Label.Substring(0, 1) + Label.Substring(Label.IndexOf("###"));
 				}
 				return Label;
 			}
