@@ -1,14 +1,20 @@
 #include "Config.h"
 #include "ThirdParty/picojson.h"
+#include <Platform/PlatformMisc.h>
 #include <fstream>
 #include <iostream>
 
 namespace EffekseerMaterial
 {
 
-Config::Config() { Language = Effekseer::GetSystemLanguage(); }
+Config::Config()
+{
+	Language = Effekseer::Editor::GetLanguageKey(Effekseer::GetSystemLanguage());
+}
 
-Config::~Config() {}
+Config::~Config()
+{
+}
 
 bool Config::Save(const char* path)
 {
@@ -25,7 +31,7 @@ bool Config::Save(const char* path)
 	root.insert(std::make_pair("WindowPosX", picojson::value((double)WindowPosX)));
 	root.insert(std::make_pair("WindowPosY", picojson::value((double)WindowPosY)));
 	root.insert(std::make_pair("WindowIsMaximumMode", picojson::value((bool)WindowIsMaximumMode)));
-	root.insert(std::make_pair("Language", picojson::value((double)Language)));
+	root.insert(std::make_pair("Language", picojson::value(Language)));
 
 	auto serialized = picojson::value(root).serialize();
 
@@ -72,7 +78,15 @@ bool Config::Load(const char* path)
 		WindowIsMaximumMode = root.get("WindowIsMaximumMode").get<bool>();
 	}
 
-	Language = static_cast<Effekseer::SystemLanguage>((int)root.get("Language").get<double>());
+	auto languageNode = root.get("Language");
+	if (languageNode.is<double>())
+	{
+		Language = Effekseer::Editor::GetLanguageKey(static_cast<Effekseer::SystemLanguage>((int)languageNode.get<double>()));
+	}
+	else
+	{
+		Language = languageNode.get<std::string>();
+	}
 
 	return true;
 }

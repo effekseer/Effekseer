@@ -87,14 +87,11 @@ namespace Effekseer.Data
 
 	public enum CullingValues : int
 	{
-		[Name(value = "表表示", language = Language.Japanese)]
-		[Name(value = "Front view", language = Language.English)]
+		[Key(key = "CullingType_Front")]
 		Front = 0,
-		[Name(value = "裏表示", language = Language.Japanese)]
-		[Name(value = "Back view", language = Language.English)]
+		[Key(key = "CullingType_Back")]
 		Back = 1,
-		[Name(value = "両面表示", language = Language.Japanese)]
-		[Name(value = "Double-sided", language = Language.English)]
+		[Key(key = "CullingType_Double")]
 		Double = 2,
 	}
 
@@ -223,8 +220,7 @@ namespace Effekseer.Data
 
 	public enum TrackSizeType : int
 	{
-		[Name(value = "固定", language = Language.Japanese)]
-		[Name(value = "Fixed", language = Language.English)]
+		[Key(key = "TrackSizeType_Fixed")]
 		Fixed = 0,
 	}
 

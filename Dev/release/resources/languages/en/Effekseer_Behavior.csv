@@ -1,0 +1,31 @@
+EffectBehavior_Location_Name,Pos
+EffectBehavior_Location_Desc,Based on center
+EffectBehavior_LocationVelocity_Name,Speed
+EffectBehavior_LocationVelocity_Desc,Starting velocity
+EffectBehavior_Rotation_Name,Angle
+EffectBehavior_Rotation_Desc,Rotated about center
+EffectBehavior_RotationVelocity_Name,"Angular
+Speed"
+EffectBehavior_RotationVelocity_Desc,Rotated about center
+EffectBehavior_Scale_Name,Scale
+EffectBehavior_Scale_Desc,Scaled about center
+EffectBehavior_ScaleVelocity_Name,"Expansion
+Rate"
+EffectBehavior_ScaleVelocity_Desc,Scaled about center
+EffectBehavior_RemovedTime_Name,Life
+EffectBehavior_RemovedTime_Desc,Frame in which instance is destroyed
+EffectBehavior_CountX_Name,X Count
+EffectBehavior_CountX_Desc,Number of instances spawned about the x-axis
+EffectBehavior_CountY_Name,Y Count
+EffectBehavior_CountY_Desc,Number of instances spawned about the y-axis
+EffectBehavior_CountZ_Name,Z Count
+EffectBehavior_CountZ_Desc,Number of instances spawned about the z-axis
+EffectBehavior_Distance_Name,Separation
+EffectBehavior_Distance_Desc,Distance between the spawned instances
+EffectBehavior_TimeSpan_Name,Generating time span(Frame)
+EffectBehavior_TimeSpan_Desc,"If the value is larger than 1, effects are generated every specified time"
+EffectBehavior_ColorAll_Name,Color All
+EffectBehavior_PlaybackSpeed_Name,Playback Speed
+EffectBehavior_TargetLocation_Name,"Point of
+Attraction"
+EffectBehavior_TargetLocation_Desc,Point in space the instances are drawn to

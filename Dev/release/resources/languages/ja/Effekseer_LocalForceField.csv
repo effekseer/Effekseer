@@ -47,3 +47,19 @@ LFF_FF_1_Name,力場 1
 LFF_FF_2_Name,力場 2
 LFF_FF_3_Name,力場 3
 LFF_FF_4_Name,力場 4
+,
+LFF_Turbulence_RandomSeed_Name,ランダムシード
+LFF_Turbulence_RandomSeed_Desc,数値に応じて乱流の流れ方が変わります。
+LFF_Turbulence_FieldScale_Name,領域の大きさ
+LFF_Turbulence_FieldScale_Desc,値を大きくすると乱流の幅が大きくなります。
+LFF_Turbulence_Complexity_Name,複雑さ
+LFF_Turbulence_Complexity_Desc,値を大きくすると乱流が複雑になります。ただし、処理が重くなります。
+,
+LFF_Gravity_Gravity_Name,重力
+LFF_Gravity_Gravity_Desc,インスタンスにかかる重力
+LFF_AttractiveForce_Resistance_Name,制御
+LFF_AttractiveForce_Resistance_Desc,移動方向をターゲット方向へ補正量
+LFF_AttractiveForce_MinimumRange_Name,最小範囲
+LFF_AttractiveForce_MinimumRange_Desc,この範囲以内では引力がフルに掛かります
+LFF_AttractiveForce_MaximumRange_Name,最大範囲
+LFF_AttractiveForce_MaximumRange_Desc,この範囲以外では引力が掛かりません

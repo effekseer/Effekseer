@@ -46,40 +46,33 @@ namespace Effekseer.Data
 
 	public enum RingShapeType
 	{
-		[Name(value = "ドーナツ", language = Language.Japanese)]
-		[Name(value = "Donut", language = Language.English)]
+		[Key(key = "RingShapeType_Donut")]
 		Donut = 0,
 
-		[Name(value = "三日月", language = Language.Japanese)]
-		[Name(value = "Crescent", language = Language.English)]
+		[Key(key = "RingShapeType_Crescent")]
 		Crescent = 1,
 	}
 
 	public enum FixedRandomEasingType : int
 	{
-		[Name(value = "固定", language = Language.Japanese)]
-		[Name(value = "Fixed", language = Language.English)]
+		[Key(key = "FixedRandomEasingType_Fixed")]
 		Fixed = 0,
-		[Name(value = "ランダム", language = Language.Japanese)]
-		[Name(value = "Random", language = Language.English)]
+		[Key(key = "FixedRandomEasingType_Random")]
 		Random = 1,
-		[Name(value = "イージング", language = Language.Japanese)]
-		[Name(value = "Easing", language = Language.English)]
+		[Key(key = "FixedRandomEasingType_Easing")]
 		Easing = 2,
 	}
 
 	public class RingShapeCrescentParameter
 	{
-		[Name(language = Language.Japanese, value = "開始フェード(度)")]
-		[Name(language = Language.English, value = "Starting fade(Deg.)")]
+		[Key(key = "RS_RingShapeCrescent_StartingFade")]
 		public Value.Float StartingFade { get; private set; }
-		[Name(language = Language.Japanese, value = "終了フェード(度)")]
-		[Name(language = Language.English, value = "Ending fade(Deg.)")]
+
+		[Key(key = "RS_RingShapeCrescent_EndingFade")]
 		public Value.Float EndingFade { get; private set; }
 
 		[Selector(ID = 0)]
-		[Name(language = Language.Japanese, value = "開始角度")]
-		[Name(language = Language.English, value = "Starting Angle")]
+		[Key(key = "RS_RingShapeCrescent_StartingAngle")]
 		public Value.Enum<FixedRandomEasingType> StartingAngle { get; private set; }
 
 		[Selected(ID = 0, Value = 0)]
@@ -94,8 +87,7 @@ namespace Effekseer.Data
 		public FloatEasingParamater StartingAngle_Easing { get; private set; }
 
 		[Selector(ID = 1)]
-		[Name(language = Language.Japanese, value = "終了角度")]
-		[Name(language = Language.English, value = "Ending Angle")]
+		[Key(key = "RS_RingShapeCrescent_EndingAngle")]
 		public Value.Enum<FixedRandomEasingType> EndingAngle { get; private set; }
 
 		[Selected(ID = 1, Value = 0)]
@@ -127,9 +119,8 @@ namespace Effekseer.Data
 
 	public class RingShapeParameter
 	{
-		[Name(language = Language.Japanese, value = "形状")]
-		[Name(language = Language.English, value = "Shape")]
 		[Selector(ID = 0)]
+		[Key(key = "RS_RingShape_Type")]
 		public Value.Enum<RingShapeType> Type
 		{
 			get;
@@ -229,23 +220,18 @@ namespace Effekseer.Data
 
 		public class SpriteParamater
 		{
-			[Name(language = Language.Japanese, value = "描画順")]
-			[Name(language = Language.English, value = "Rendering Order")]
+			[Key(key = "RS_Sprite_RenderingOrder")]
 			public Value.Enum<RenderingOrder> RenderingOrder { get; private set; }
 
-			[Name(language = Language.Japanese, value = "配置方法")]
-			[Name(language = Language.English, value = "Configuration")]
+			[Key(key = "RS_Sprite_Billboard")]
 			public Value.Enum<BillboardType> Billboard { get; private set; }
 
-			[Name(language = Language.Japanese, value = "ブレンド")]
-			[Name(language = Language.English, value = "Blend")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
 			public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
 			[Selector(ID = 0)]
-			[Name(language = Language.Japanese, value = "全体色")]
-			[Name(language = Language.English, value = "Color All")]
+			[Key(key = "RS_Sprite_ColorAll")]
 			public Value.Enum<StandardColorType> ColorAll { get; private set; }
 
 			[Selected(ID = 0, Value = 0)]
@@ -263,59 +249,45 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorAll_FCurve { get; private set; }
 
 			[Selector(ID = 1)]
-			[Name(language = Language.Japanese, value = "頂点色")]
-			[Name(language = Language.English, value = "Vertex Color")]
+			[Key(key = "RS_Sprite_Color")]
 			public Value.Enum<ColorType> Color { get; private set; }
 
 			[Selected(ID = 1, Value = 1)]
-			[Name(language = Language.Japanese, value = "左下色")]
-			[Name(language = Language.English, value = "Lower-Left Color")]
+			[Key(key = "RS_Sprite_Color_Fixed_LL")]
 			public Value.Color Color_Fixed_LL { get; private set; }
 
 			[Selected(ID = 1, Value = 1)]
-			[Name(language = Language.Japanese, value = "右下色")]
-			[Name(language = Language.English, value = "Lower-Right Color")]
+			[Key(key = "RS_Sprite_Color_Fixed_LR")]
 			public Value.Color Color_Fixed_LR { get; private set; }
 
 			[Selected(ID = 1, Value = 1)]
-			[Name(language = Language.Japanese, value = "左上色")]
-			[Name(language = Language.English, value = "Upper-Left Color")]
+			[Key(key = "RS_Sprite_Color_Fixed_UL")]
 			public Value.Color Color_Fixed_UL { get; private set; }
 
 			[Selected(ID = 1, Value = 1)]
-			[Name(language = Language.Japanese, value = "右上色")]
-			[Name(language = Language.English, value = "Upper-Right Color")]
+			[Key(key = "RS_Sprite_Color_Fixed_UR")]
 			public Value.Color Color_Fixed_UR { get; private set; }
 
 			[Selector(ID = 2)]
-			[Name(language = Language.Japanese, value = "頂点座標")]
-			[Name(language = Language.English, value = "Vertex Coords")]
+			[Key(key = "RS_Sprite_Position")]
 			public Value.Enum<PositionType> Position { get; private set; }
 
 			[Selected(ID = 2, Value = 1)]
-			[Name(language = Language.Japanese, value = "左下座標")]
-			[Name(language = Language.English, value = "Lower-Left Coord")]
+			[Key(key = "RS_Sprite_Position_Fixed_LL")]
 			public Value.Vector2D Position_Fixed_LL { get; private set; }
 
 			[Selected(ID = 2, Value = 1)]
-			[Name(language = Language.Japanese, value = "右下座標")]
-			[Name(language = Language.English, value = "Lower-Right Coord")]
+			[Key(key = "RS_Sprite_Position_Fixed_LR")]
 			public Value.Vector2D Position_Fixed_LR { get; private set; }
 
 			[Selected(ID = 2, Value = 1)]
-			[Name(language = Language.Japanese, value = "左上座標")]
-			[Name(language = Language.English, value = "Upper-Left Coord")]
+			[Key(key = "RS_Sprite_Position_Fixed_UL")]
 			public Value.Vector2D Position_Fixed_UL { get; private set; }
 
 			[Selected(ID = 2, Value = 1)]
-			[Name(language = Language.Japanese, value = "右上座標")]
-			[Name(language = Language.English, value = "Upper-Right Coord")]
+			[Key(key = "RS_Sprite_Position_Fixed_UR")]
 			public Value.Vector2D Position_Fixed_UR { get; private set; }
 
-			[Name(language = Language.Japanese, value = "カラー画像")]
-			[Description(language = Language.Japanese, value = "スプライトの色を表す画像")]
-			[Name(language = Language.English, value = "Color Image")]
-			[Description(language = Language.English, value = "Image representing the color of the sprite")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
 			public Value.Path ColorTexture
@@ -349,45 +321,36 @@ namespace Effekseer.Data
 				Position_Fixed_LR = new Value.Vector2D(0.5f, -0.5f);
 				Position_Fixed_UL = new Value.Vector2D(-0.5f, 0.5f);
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
-				ColorTexture = new Value.Path(basepath, "画像ファイル (*.png)|*.png", true, "");
+				ColorTexture = new Value.Path(basepath, "", true, "");
+			}
+			public enum ColorType : int
+			{
+				[Key(key = "RS_Sprite_ColorType_Default")]
+				Default = 0,
+				[Key(key = "RS_Sprite_ColorType_Fixed")]
+				Fixed = 1,
 			}
 
-            public enum ColorType : int
-            {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
-            }
-
-            public enum PositionType : int
-            {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
-            }
+			public enum PositionType : int
+			{
+				[Key(key = "RS_Sprite_PositionType_Default")]
+				Default = 0,
+				[Key(key = "RS_Sprite_PositionType_Fixed")]
+				Fixed = 1,
+			}
 		}
 
 		public class RibbonParamater
 		{
-			[Name(language = Language.Japanese, value = "ブレンド")]
-			[Name(language = Language.English, value = "Blend")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
 			public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
-			[Name(language = Language.Japanese, value = "視点追従")]
-			[Name(language = Language.English, value = "Follow Viewpoint")]
+			[Key(key = "RS_Ribbon_ViewpointDependent")]
 			public Value.Boolean ViewpointDependent { get; private set; }
 
 			[Selector(ID = 0)]
-			[Name(language = Language.Japanese, value = "全体色")]
-			[Name(language = Language.English, value = "Color All")]
+			[Key(key = "RS_Ribbon_ColorAll")]
 			public Value.Enum<ColorAllType> ColorAll { get; private set; }
 
 			[Selected(ID = 0, Value = 0)]
@@ -401,50 +364,36 @@ namespace Effekseer.Data
 			public ColorEasingParamater ColorAll_Easing { get; private set; }
 
 			[Selector(ID = 1)]
-			[Name(language = Language.Japanese, value = "頂点色")]
-			[Name(language = Language.English, value = "Vertex Color")]
+			[Key(key = "RS_Ribbon_Color")]
 			public Value.Enum<ColorType> Color { get; private set; }
 
 			[Selected(ID = 1, Value = 1)]
-			[Name(language = Language.Japanese, value = "左頂点色")]
-			[Name(language = Language.English, value = "Left Vertex Color")]
+			[Key(key = "RS_Ribbon_Color_Fixed_L")]
 			public Value.Color Color_Fixed_L { get; private set; }
 
 			[Selected(ID = 1, Value = 1)]
-			[Name(language = Language.Japanese, value = "右頂点色")]
-			[Name(language = Language.English, value = "Right Vertex Color")]
+			[Key(key = "RS_Ribbon_Color_Fixed_R")]
 			public Value.Color Color_Fixed_R { get; private set; }
 
 			[Selector(ID = 2)]
-			[Name(language = Language.Japanese, value = "座標")]
-			[Name(language = Language.English, value = "Position")]
+			[Key(key = "RS_Ribbon_Position")]
 			public Value.Enum<PositionType> Position { get; private set; }
 
 			[Selected(ID = 2, Value = 1)]
-			[Name(language = Language.Japanese, value = "左座標")]
-			[Name(language = Language.English, value = "Left Coord")]
+			[Key(key = "RS_Ribbon_Position_Fixed_L")]
 			public Value.Float Position_Fixed_L { get; private set; }
 
 			[Selected(ID = 2, Value = 1)]
-			[Name(language = Language.Japanese, value = "右座標")]
-			[Name(language = Language.English, value = "Right Coord")]
+			[Key(key = "RS_Ribbon_Position_Fixed_R")]
 			public Value.Float Position_Fixed_R { get; private set; }
 
-			[Name(language = Language.Japanese, value = "スプラインの分割数")]
-			[Description(language = Language.Japanese, value = "スプラインの分割数")]
-			[Name(language = Language.English, value = "The number of \nspline division")]
-			[Description(language = Language.English, value = "The number of spline division")]
+			[Key(key = "RS_Ribbon_SplineDivision")]
 			public Value.Int SplineDivision
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "色画像")]
-			[Description(language = Language.Japanese, value = "リボンの色を表す画像")]
-
-			[Name(language = Language.English, value = "Color Image")]
-			[Description(language = Language.English, value = "Image representing the color of the ribbon")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
 			public Value.Path ColorTexture
@@ -477,61 +426,49 @@ namespace Effekseer.Data
 
             public enum ColorAllType : int
             {
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
-                Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ribbon_ColorAllType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ribbon_ColorAllType_Random")]
+				Random = 1,
+				[Key(key = "RS_Ribbon_ColorAllType_Easing")]
+				Easing = 2,
             }
 
             public enum ColorType : int
             {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
+				[Key(key = "RS_Ribbon_ColorType_Default")]
+				Default = 0,
+				[Key(key = "RS_Ribbon_ColorType_Fixed")]
+				Fixed = 1,
             }
 
             public enum PositionType : int
             {
-                [Name(value = "標準", language = Language.Japanese)]
-				[Name(value = "Default", language = Language.English)]
-                Default = 0,
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 1,
+				[Key(key = "RS_Ribbon_PositionType_Default")]
+				Default = 0,
+				[Key(key = "RS_Ribbon_PositionType_Fixed")]
+				Fixed = 1,
             }
 		}
 
         public class RingParamater
         {
-			[Name(language = Language.English, value = "Shape")]
+			[Key(key = "RS_Ring_RingShape")]
 			[IO(Export = true)]
 			public RingShapeParameter RingShape { get; private set; }
 
-            [Name(language = Language.Japanese, value = "描画順")]
-			[Name(language = Language.English, value = "Rendering Order")]
-            public Value.Enum<RenderingOrder> RenderingOrder { get; private set; }
+			[Key(key = "RS_Ring_RenderingOrder")]
+			public Value.Enum<RenderingOrder> RenderingOrder { get; private set; }
 
-            [Name(language = Language.Japanese, value = "配置方法")]
-			[Name(language = Language.English, value = "Configuration")]
-            public Value.Enum<BillboardType> Billboard { get; private set; }
+			[Key(key = "RS_Ring_Billboard")]
+			public Value.Enum<BillboardType> Billboard { get; private set; }
 
-            [Name(language = Language.Japanese, value = "ブレンド")]
-			[Name(language = Language.English, value = "Blend")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
             public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
-            [Name(language = Language.Japanese, value = "頂点数")]
-			[Name(language = Language.English, value = "Vertex Count")]
-            public Value.Int VertexCount { get; private set; }
+			[Key(key = "RS_Ring_VertexCount")]
+			public Value.Int VertexCount { get; private set; }
 
 			/// <summary>
 			/// for compatibility
@@ -539,8 +476,6 @@ namespace Effekseer.Data
             [Selector(ID = 0)]
 			[Shown(Shown = false)]
 			[IO(Export = false)]
-            [Name(language = Language.Japanese, value = "表示角度")]
-			[Name(language = Language.English, value = "Viewing Angle")]
             public Value.Enum<ViewingAngleType> ViewingAngle { get; private set; }
 
 			/// <summary>
@@ -570,9 +505,8 @@ namespace Effekseer.Data
 			
 
             [Selector(ID = 1)]
-            [Name(language = Language.Japanese, value = "外輪")]
-			[Name(language = Language.English, value = "Outer")]
-            public Value.Enum<LocationType> Outer { get; private set; }
+			[Key(key = "RS_Ring_Outer")]
+			public Value.Enum<LocationType> Outer { get; private set; }
 
             [Selected(ID = 1, Value = 0)]
 			[IO(Export = true)]
@@ -587,9 +521,8 @@ namespace Effekseer.Data
             public Vector2DEasingParamater Outer_Easing { get; private set; }
 
             [Selector(ID = 2)]
-            [Name(language = Language.Japanese, value = "内輪")]
-			[Name(language = Language.English, value = "Inner")]
-            public Value.Enum<LocationType> Inner { get; private set; }
+			[Key(key = "RS_Ring_Inner")]
+			public Value.Enum<LocationType> Inner { get; private set; }
 
             [Selected(ID = 2, Value = 0)]
 			[IO(Export = true)]
@@ -604,9 +537,8 @@ namespace Effekseer.Data
             public Vector2DEasingParamater Inner_Easing { get; private set; }
 
             [Selector(ID = 3)]
-            [Name(language = Language.Japanese, value = "中心比率")]
-			[Name(language = Language.English, value = "Center Ratio")]
-            public Value.Enum<CenterRatioType> CenterRatio { get; private set; }
+			[Key(key = "RS_Ring_CenterRatio")]
+			public Value.Enum<CenterRatioType> CenterRatio { get; private set; }
 
             [Selected(ID = 3, Value = 0)]
             public Value.Float CenterRatio_Fixed { get; private set; }
@@ -620,9 +552,8 @@ namespace Effekseer.Data
 			public FloatEasingParamater CenterRatio_Easing { get; private set; }
 
             [Selector(ID = 4)]
-            [Name(language = Language.Japanese, value = "外輪色")]
-			[Name(language = Language.English, value = "Outer Color")]
-            public Value.Enum<ColorType> OuterColor { get; private set; }
+			[Key(key = "RS_Ring_OuterColor")]
+			public Value.Enum<ColorType> OuterColor { get; private set; }
 
             [Selected(ID = 4, Value = 0)]
             public Value.Color OuterColor_Fixed { get; private set; }
@@ -635,9 +566,8 @@ namespace Effekseer.Data
             public ColorEasingParamater OuterColor_Easing { get; private set; }
 
             [Selector(ID = 5)]
-            [Name(language = Language.Japanese, value = "中心色")]
-			[Name(language = Language.English, value = "Center Color")]
-            public Value.Enum<ColorType> CenterColor { get; private set; }
+			[Key(key = "RS_Ring_CenterColor")]
+			public Value.Enum<ColorType> CenterColor { get; private set; }
 
             [Selected(ID = 5, Value = 0)]
 			[IO(Export = true)]
@@ -652,9 +582,8 @@ namespace Effekseer.Data
             public ColorEasingParamater CenterColor_Easing { get; private set; }
 
             [Selector(ID = 6)]
-            [Name(language = Language.Japanese, value = "内輪色")]
-			[Name(language = Language.English, value = "Inner Color")]
-            public Value.Enum<ColorType> InnerColor { get; private set; }
+			[Key(key = "RS_Ring_InnerColor")]
+			public Value.Enum<ColorType> InnerColor { get; private set; }
 
             [Selected(ID = 6, Value = 0)]
             public Value.Color InnerColor_Fixed { get; private set; }
@@ -666,11 +595,6 @@ namespace Effekseer.Data
             [IO(Export = true)]
             public ColorEasingParamater InnerColor_Easing { get; private set; }
 
-
-            [Name(language = Language.Japanese, value = "色画像")]
-            [Description(language = Language.Japanese, value = "リボンの色を表す画像")]
-			[Name(language = Language.English, value = "Color Image")]
-			[Description(language = Language.English, value = "Image representing the color of the ribbon")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
             public Value.Path ColorTexture
@@ -734,38 +658,26 @@ namespace Effekseer.Data
 			/// </summary>
 			public enum ViewingAngleType : int
             {
-                [Name(value = "位置", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
                 Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
                 Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
                 Easing = 2,
             }
 			
 
             public enum LocationType : int
             {
-                [Name(value = "位置", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "位置・速度・加速度", language = Language.Japanese)]
-				[Name(value = "PVA", language = Language.English)]
-                PVA = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ring_LocationType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ring_LocationType_PVA")]
+				PVA = 1,
+				[Key(key = "RS_Ring_LocationType_Easing")]
+				Easing = 2,
             }
 
             public class FixedLocation
             {
-                [Name(language = Language.Japanese, value = "位置")]
-                [Description(language = Language.Japanese, value = "インスタンスの位置")]
-				[Name(language = Language.English, value = "Position")]
-				[Description(language = Language.English, value = "Position of the instance")]
-                public Value.Vector2D Location
+				[Key(key = "FixedLocation_Location")]
+				public Value.Vector2D Location
                 {
                     get;
                     private set;
@@ -779,44 +691,32 @@ namespace Effekseer.Data
 
             public enum CenterRatioType : int
             {
-                [Name(value = "位置", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
-                Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ring_CenterRatioType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ring_CenterRatioType_Random")]
+				Random = 1,
+				[Key(key = "RS_Ring_CenterRatioType_Easing")]
+				Easing = 2,
             }
 
             public class PVALocation
             {
-                [Name(language = Language.Japanese, value = "位置")]
-                [Description(language = Language.Japanese, value = "インスタンスの初期位置")]
-				[Name(language = Language.English, value = "Pos")]
-				[Description(language = Language.English, value = "Position of the instance")]
-                public Value.Vector2DWithRandom Location
+				[Key(key = "RS_Ring_PVALocation_Location")]
+				public Value.Vector2DWithRandom Location
                 {
                     get;
                     private set;
                 }
 
-                [Name(language = Language.Japanese, value = "速度")]
-                [Description(language = Language.Japanese, value = "インスタンスの初期速度")]
-				[Name(language = Language.English, value = "Speed")]
-				[Description(language = Language.English, value = "Initial velocity of the instance")]
-                public Value.Vector2DWithRandom Velocity
+				[Key(key = "RS_Ring_PVALocation_Velocity")]
+				public Value.Vector2DWithRandom Velocity
                 {
                     get;
                     private set;
                 }
 
-                [Name(language = Language.Japanese, value = "加速度")]
-                [Description(language = Language.Japanese, value = "インスタンスの初期加速度")]
-				[Name(language = Language.English, value = "Accel")]
-				[Description(language = Language.English, value = "Acceleration of the instance")]
-                public Value.Vector2DWithRandom Acceleration
+				[Key(key = "RS_Ring_PVALocation_Acceleration")]
+				public Value.Vector2DWithRandom Acceleration
                 {
                     get;
                     private set;
@@ -832,15 +732,12 @@ namespace Effekseer.Data
 
             public enum ColorType : int
             {
-                [Name(value = "固定", language = Language.Japanese)]
-				[Name(value = "Fixed", language = Language.English)]
-                Fixed = 0,
-                [Name(value = "ランダム", language = Language.Japanese)]
-				[Name(value = "Random", language = Language.English)]
-                Random = 1,
-                [Name(value = "イージング", language = Language.Japanese)]
-				[Name(value = "Easing", language = Language.English)]
-                Easing = 2,
+				[Key(key = "RS_Ring_ColorType_Fixed")]
+				Fixed = 0,
+				[Key(key = "RS_Ring_ColorType_Random")]
+				Random = 1,
+				[Key(key = "RS_Ring_ColorType_Easing")]
+				Easing = 2,
             }
         }
 
@@ -856,10 +753,7 @@ namespace Effekseer.Data
 			} = new Enum<ModelReferenceType>(ModelReferenceType.File);
 
 			[Selected(ID = 100, Value = (int)ModelReferenceType.File)]
-			[Name(language = Language.Japanese, value = "モデル")]
-			[Description(language = Language.Japanese, value = "モデルファイル")]
-			[Name(language = Language.English, value = "Model")]
-			[Description(language = Language.English, value = "Model File")]
+			[Key(key = "RS_Model_Model")]
 			public Value.PathForModel Model
 			{
 				get;
@@ -869,12 +763,10 @@ namespace Effekseer.Data
 			[Selected(ID = 100, Value = (int)ModelReferenceType.ProceduralModel)]
 			public ProceduralModelReference Reference { get; private set; } = new ProceduralModelReference();
 
-			[Name(language = Language.Japanese, value = "配置方法")]
-			[Name(language = Language.English, value = "Configuration")]
+			[Key(key = "RS_Model_Billboard")]
 			public Value.Enum<BillboardType> Billboard { get; private set; }
 
-			[Name(language = Language.Japanese, value = "カリング")]
-			[Name(language = Language.English, value = "Culling")]
+			[Key(key = "RS_Model_Culling")]
 			public Value.Enum<CullingValues> Culling { get; private set; }
 
 			public ModelParamater(Value.Path basepath)
@@ -893,7 +785,7 @@ namespace Effekseer.Data
 			}
 
 			[Selector(ID = 0)]
-			[Name(language = Language.Japanese, value = "全体色")]
+			[Key(key = "RS_Model_Color")]
 			public Value.Enum<StandardColorType> Color { get; private set; }
 
 			[Selected(ID = 0, Value = 0)]
@@ -914,33 +806,27 @@ namespace Effekseer.Data
 		public class TrackParameter
 		{
 			[Selector(ID = 10)]
-			[Name(language = Language.Japanese, value = "幅前方")]
-			[Name(language = Language.English, value = "Front Size")]
+			[Key(key = "RS_Track_TrackSizeFor")]
 			public Value.Enum<TrackSizeType> TrackSizeFor { get; private set; }
 
 			[Selected(ID = 10, Value = 0)]
 			public Value.Float TrackSizeFor_Fixed { get; private set; }
 
 			[Selector(ID = 11)]
-			[Name(language = Language.Japanese, value = "幅中間")]
-			[Name(language = Language.English, value = "Middle Size")]
+			[Key(key = "RS_Track_TrackSizeMiddle")]
 			public Value.Enum<TrackSizeType> TrackSizeMiddle { get; private set; }
 
 			[Selected(ID = 11, Value = 0)]
 			public Value.Float TrackSizeMiddle_Fixed { get; private set; }
 
 			[Selector(ID = 12)]
-			[Name(language = Language.Japanese, value = "幅後方")]
-			[Name(language = Language.English, value = "Back Size")]
+			[Key(key = "RS_Track_TrackSizeBack")]
 			public Value.Enum<TrackSizeType> TrackSizeBack { get; private set; }
 
 			[Selected(ID = 12, Value = 0)]
 			public Value.Float TrackSizeBack_Fixed { get; private set; }
 
-			[Name(language = Language.Japanese, value = "スプラインの分割数")]
-			[Description(language = Language.Japanese, value = "スプラインの分割数")]
-			[Name(language = Language.English, value = "The number of \nspline division")]
-			[Description(language = Language.English, value = "The number of spline division")]
+			[Key(key = "RS_Track_SplineDivision")]
 			public Value.Int SplineDivision
 			{
 				get;
@@ -948,8 +834,7 @@ namespace Effekseer.Data
 			}
 
 			[Selector(ID = 1)]
-			[Name(language = Language.Japanese, value = "色・左")]
-			[Name(language = Language.English, value = "Color, Left")]
+			[Key(key = "RS_Track_ColorLeft")]
 			public Value.Enum<StandardColorType> ColorLeft { get; private set; }
 
 			[Selected(ID = 1, Value = 0)]
@@ -967,8 +852,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorLeft_FCurve { get; private set; }
 
 			[Selector(ID = 2)]
-			[Name(language = Language.Japanese, value = "色・左中間")]
-			[Name(language = Language.English, value = "Color, Left-Center")]
+			[Key(key = "RS_Track_ColorLeftMiddle")]
 			public Value.Enum<StandardColorType> ColorLeftMiddle { get; private set; }
 
 			[Selected(ID = 2, Value = 0)]
@@ -986,8 +870,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorLeftMiddle_FCurve { get; private set; }
 
 			[Selector(ID = 3)]
-			[Name(language = Language.Japanese, value = "色・中央")]
-			[Name(language = Language.English, value = "Color, Center")]
+			[Key(key = "RS_Track_ColorCenter")]
 			public Value.Enum<StandardColorType> ColorCenter { get; private set; }
 
 			[Selected(ID = 3, Value = 0)]
@@ -1005,8 +888,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorCenter_FCurve { get; private set; }
 
 			[Selector(ID = 4)]
-			[Name(language = Language.Japanese, value = "色・中央中間")]
-			[Name(language = Language.English, value = "Color, Center-Mid.")]
+			[Key(key = "RS_Track_ColorCenterMiddle")]
 			public Value.Enum<StandardColorType> ColorCenterMiddle { get; private set; }
 
 			[Selected(ID = 4, Value = 0)]
@@ -1024,8 +906,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorCenterMiddle_FCurve { get; private set; }
 
 			[Selector(ID = 5)]
-			[Name(language = Language.Japanese, value = "色・右")]
-			[Name(language = Language.English, value = "Color, Right")]
+			[Key(key = "RS_Track_ColorRight")]
 			public Value.Enum<StandardColorType> ColorRight { get; private set; }
 
 			[Selected(ID = 5, Value = 0)]
@@ -1043,8 +924,7 @@ namespace Effekseer.Data
 			public ColorFCurveParameter ColorRight_FCurve { get; private set; }
 
 			[Selector(ID = 6)]
-			[Name(language = Language.Japanese, value = "色・右中間")]
-			[Name(language = Language.English, value = "Color, Right-Center")]
+			[Key(key = "RS_Track_ColorRightMiddle")]
 			public Value.Enum<StandardColorType> ColorRightMiddle { get; private set; }
 
 			[Selected(ID = 6, Value = 0)]

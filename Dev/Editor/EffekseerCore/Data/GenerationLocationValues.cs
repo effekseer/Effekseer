@@ -8,23 +8,19 @@ namespace Effekseer.Data
 {
 	public enum AxisType
 	{
-		[Name(value = "X軸", language = Language.Japanese)]
-		[Name(value = "X-Axis", language = Language.English)]
+		[Key(key = "SpawnMethod_AxisType_Xaxis")]
 		XAxis,
 
-		[Name(value = "Y軸", language = Language.Japanese)]
-		[Name(value = "Y-Axis", language = Language.English)]
+		[Key(key = "SpawnMethod_AxisType_Yaxis")]
 		YAxis,
 
-		[Name(value = "Z軸", language = Language.Japanese)]
-		[Name(value = "Z-Axis", language = Language.English)]
+		[Key(key = "SpawnMethod_AxisType_Zaxis")]
 		ZAxis,
 	}
 
 	public class GenerationLocationValues
 	{
-		[Name(value = "生成角度に影響", language = Language.Japanese)]
-		[Name(value = "Set angle on spawn", language = Language.English)]
+		[Key(key = "SpawnMethod_EffectsRotation")]
 		public Value.Boolean EffectsRotation
 		{
 			get;
@@ -91,8 +87,7 @@ namespace Effekseer.Data
 
 		public class PointParameter
 		{
-			[Name(value = "生成位置", language = Language.Japanese)]
-			[Name(value = "Spawn location", language = Language.English)]
+			[Key(key = "SpawnMethod_Point_Location")]
 			public Value.Vector3DWithRandom Location
 			{
 				get;
@@ -107,40 +102,35 @@ namespace Effekseer.Data
 
 		public class LineParameter
 		{
-			[Name(value = "分割数", language = Language.Japanese)]
-			[Name(value = "Verticies", language = Language.English)]
+			[Key(key = "SpawnMethod_Line_Division")]
 			public Value.Int Division
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "開始位置", language = Language.Japanese)]
-			[Name(value = "Init Position", language = Language.English)]
+			[Key(key = "SpawnMethod_Line_PositionStart")]
 			public Value.Vector3DWithRandom PositionStart
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "終了位置", language = Language.Japanese)]
-			[Name(value = "Final Position", language = Language.English)]
+			[Key(key = "SpawnMethod_Line_PositionEnd")]
 			public Value.Vector3DWithRandom PositionEnd
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "位置ノイズ", language = Language.Japanese)]
-			[Name(value = "Position Noize", language = Language.English)]
+			[Key(key = "SpawnMethod_Line_PositionNoize")]
 			public Value.FloatWithRandom PositionNoize
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "生成位置種類")]
-			[Name(language = Language.English, value = "Spawn Mode")]
+			[Key(key = "SpawnMethod_Line_Type")]
 			public Value.Enum<LineType> Type
 			{
 				get;
@@ -159,24 +149,21 @@ namespace Effekseer.Data
 
 		public class SphereParameter
 		{
-			[Name(value = "半径", language = Language.Japanese)]
-			[Name(value = "Radius", language = Language.English)]
+			[Key(key = "SpawnMethod_Sphere_Radius")]
 			public Value.FloatWithRandom Radius
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "X軸角度(度)", language = Language.Japanese)]
-			[Name(value = "X Rotation", language = Language.English)]
+			[Key(key = "SpawnMethod_Sphere_RotationX")]
 			public Value.FloatWithRandom RotationX
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "Y軸角度(度)", language = Language.Japanese)]
-			[Name(value = "Y Rotation", language = Language.English)]
+			[Key(key = "SpawnMethod_Sphere_RotationY")]
 			public Value.FloatWithRandom RotationY
 			{
 				get;
@@ -203,10 +190,8 @@ namespace Effekseer.Data
 			} = new Enum<ModelReferenceType>(ModelReferenceType.File);
 
 			[Selected(ID = 100, Value = (int)ModelReferenceType.File)]
-			[Name(language = Language.Japanese, value = "モデル")]
-			[Description(language = Language.Japanese, value = "モデルファイル")]
-			[Name(language = Language.English, value = "Model")]
-			[Description(language = Language.English, value = "Model File")]
+			[Key(key = "SpawnMethod_Model_Model")]
+
 			public Value.PathForModel Model
 			{
 				get;
@@ -220,8 +205,7 @@ namespace Effekseer.Data
 				private set;
 			} = new ProceduralModelReference();
 
-			[Name(language = Language.Japanese, value = "生成位置種類")]
-			[Name(language = Language.English, value = "Method of Spawning")]
+			[Key(key = "SpawnMethod_Model_Type")]
 			public Value.Enum<ModelType> Type
 			{
 				get;
@@ -237,56 +221,49 @@ namespace Effekseer.Data
 
 		public class CircleParameter
 		{
-			[Name(language = Language.Japanese, value = "軸方向")]
-			[Name(language = Language.English, value = "Axis Direction")]
+			[Key(key = "SpawnMethod_Circle_AxisDirection")]
 			public Value.Enum<AxisType> AxisDirection
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "分割数", language = Language.Japanese)]
-			[Name(value = "Verticies", language = Language.English)]
+			[Key(key = "SpawnMethod_Circle_Division")]
 			public Value.Int Division
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "半径", language = Language.Japanese)]
-			[Name(value = "Radius", language = Language.English)]
+			[Key(key = "SpawnMethod_Circle_Radius")]
 			public Value.FloatWithRandom Radius
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "開始角度", language = Language.Japanese)]
-			[Name(value = "Init Angle", language = Language.English)]
+			[Key(key = "SpawnMethod_Circle_AngleStart")]
 			public Value.FloatWithRandom AngleStart
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "終了角度", language = Language.Japanese)]
-			[Name(value = "Final Angle", language = Language.English)]
+			[Key(key = "SpawnMethod_Circle_AngleEnd")]
 			public Value.FloatWithRandom AngleEnd
 			{
 				get;
 				private set;
 			}
 
-			[Name(value = "角度ノイズ", language = Language.Japanese)]
-			[Name(value = "Angle Noize", language = Language.English)]
+			[Key(key = "SpawnMethod_Circle_AngleNoize")]
 			public Value.FloatWithRandom AngleNoize
 			{
 				get;
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "生成位置種類")]
-			[Name(language = Language.English, value = "Spawn Mode")]
+			[Key(key = "SpawnMethod_Circle_Type")]
 			public Value.Enum<CircleType> Type
 			{
 				get;
@@ -307,62 +284,47 @@ namespace Effekseer.Data
 
 		public enum ParameterType : int
 		{
-			[Name(value = "点", language = Language.Japanese)]
-			[Name(value = "Point", language = Language.English)]
+			[Key(key = "SpawnMethod_ParameterType_Point")]
 			Point = 0,
-			[Name(value = "線", language = Language.Japanese)]
-			[Name(value = "Line", language = Language.English)]
+			[Key(key = "SpawnMethod_ParameterType_Line")]
 			Line = 4,
-			[Name(value = "円", language = Language.Japanese)]
-			[Name(value = "Circle", language = Language.English)]
+			[Key(key = "SpawnMethod_ParameterType_Circle")]
 			Circle = 3,
-			[Name(value = "球", language = Language.Japanese)]
-			[Name(value = "Sphere", language = Language.English)]
+			[Key(key = "SpawnMethod_ParameterType_Sphere")]
 			Sphere = 1,
-			[Name(value = "モデル", language = Language.Japanese)]
-			[Name(value = "Model", language = Language.English)]
+			[Key(key = "SpawnMethod_ParameterType_Model")]
 			Model = 2,
 		}
 
 		public enum ModelType : int
 		{
-			[Name(value = "ランダム", language = Language.Japanese)]
-			[Name(value = "Random", language = Language.English)]
+			[Key(key = "SpawnMethod_ModelType_Random")]
 			Random = 0,
-			[Name(value = "頂点", language = Language.Japanese)]
-			[Name(value = "Vertex", language = Language.English)]
+			[Key(key = "SpawnMethod_ModelType_Vertex")]
 			Vertex = 1,
-			[Name(value = "頂点(ランダム)", language = Language.Japanese)]
-			[Name(value = "Random Vertex", language = Language.English)]
+			[Key(key = "SpawnMethod_ModelType_RandomVertex")]
 			RandomVertex = 2,
-			[Name(value = "面", language = Language.Japanese)]
-			[Name(value = "Surface", language = Language.English)]
+			[Key(key = "SpawnMethod_ModelType_Face")]
 			Face = 3,
-			[Name(value = "面(ランダム)", language = Language.Japanese)]
-			[Name(value = "Random Surface", language = Language.English)]
+			[Key(key = "SpawnMethod_ModelType_RandomFace")]
 			RandomFace = 4,
 		}
 
 		public enum LineType : int
 		{
-			[Name(value = "ランダム", language = Language.Japanese)]
-			[Name(value = "Random", language = Language.English)]
+			[Key(key = "SpawnMethod_LineType_Random")]
 			Random = 0,
-			[Name(value = "順番", language = Language.Japanese)]
-			[Name(value = "Order", language = Language.English)]
+			[Key(key = "SpawnMethod_LineType_Order")]
 			Order = 1,
 		}
 
 		public enum CircleType : int
 		{
-			[Name(value = "ランダム", language = Language.Japanese)]
-			[Name(value = "Random", language = Language.English)]
+			[Key(key = "SpawnMethod_CircleType_Random")]
 			Random = 0,
-			[Name(value = "正順", language = Language.Japanese)]
-			[Name(value = "Clockwise", language = Language.English)]
+			[Key(key = "SpawnMethod_CircleType_Order")]
 			Order = 1,
-			[Name(value = "逆順", language = Language.Japanese)]
-			[Name(value = "Counter", language = Language.English)]
+			[Key(key = "SpawnMethod_CircleType_ReverseOrder")]
 			ReverseOrder = 2,
 		}
 	}

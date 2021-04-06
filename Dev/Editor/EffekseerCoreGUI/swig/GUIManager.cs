@@ -1181,8 +1181,8 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_ClearAllFonts(swigCPtr);
   }
 
-  public void AddFontFromFileTTF(string filename, float size_pixels) {
-    EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, filename, size_pixels);
+  public void AddFontFromFileTTF(string fontFilepath, string commonCharacterTablePath, string characterTableName, float size_pixels) {
+    EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, fontFilepath, commonCharacterTablePath, characterTableName, size_pixels);
   }
 
   public void AddFontFromAtlasImage(string filename, ushort baseCode, int sizeX, int sizeY, int countX, int countY) {

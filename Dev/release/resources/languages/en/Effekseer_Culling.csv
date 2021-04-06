@@ -1,0 +1,13 @@
+Culling_IsShown_Name,Enable Culling
+Culling_IsShown_Desc,Whether to render hidden surfaces
+Culling_IsShown_Name,Enable Culling
+Culling_IsShown_Desc,Whether to render hidden surfaces
+Culling_Type_Name,Culling mode
+,
+Culling_Sphere_Radius_Name,Radius
+Culling_Sphere_Radius_Desc,Radius of spherical culling
+Culling_Sphere_Location_Name,Position
+Culling_Sphere_Location_Desc,Central location
+,
+Culling_ParamaterType_None_Name,None
+Culling_ParamaterType_Sphere_Name,Spherical

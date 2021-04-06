@@ -702,7 +702,7 @@ public:
 	void SetKeyboardFocusHere(int offset = 0);
 
 	void ClearAllFonts();
-	void AddFontFromFileTTF(const char16_t* filename, float size_pixels);
+	void AddFontFromFileTTF(const char16_t* fontFilepath, const char16_t* commonCharacterTablePath, const char16_t* characterTableName, float size_pixels);
 	void AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCode, int sizeX, int sizeY, int countX, int countY);
 
 	// Utils

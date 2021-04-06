@@ -1,0 +1,19 @@
+Depth_DepthOffset_Name,Z-Offset
+Depth_DepthOffset_Desc,An offset which shift Z direction when the particle is rendered.
+Depth_IsScaleChangedDependingOnDepthOffset_Name,"Is scaling invalid 
+with Z offset"
+Depth_IsScaleChangedDependingOnDepthOffset_Desc,Whether Scaling is not changed with Z offset
+Depth_IsDepthOffsetChangedDependingOnParticleScale_Name,Scaling Z-Offset
+Depth_IsDepthOffsetChangedDependingOnParticleScale_Desc,Whether Z offset is enlarged with a scaling of particles
+Depth_ZSort_Name,Depth sort
+Depth_ZSort_Desc,Sorting by a distance
+Depth_DepthClipping_Name,DepthClipping
+Depth_DepthClipping_Desc,Particles farther than the specified value are not rendered.
+Depth_SuppressionOfScalingByDepth_Name,Suppression of scaling by depth
+Depth_SuppressionOfScalingByDepth_Desc,"It makes scaling not to change even if a depth is changed.
+If it is 1.0, it does not use this parameter, and if it is 0.0, there is no scaling."
+Depth_DrawingPriority_Name,Drawing priority
+Depth_DrawingPriority_Desc,A node with Small drawing priority is drawn previously
+ZsortType_None_Name,None
+ZsortType_NormalOrder_Name,Normal order
+ZsortType_ReverseOrder_Name,Reverse order
