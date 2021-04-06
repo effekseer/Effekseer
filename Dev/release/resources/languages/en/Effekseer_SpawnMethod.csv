@@ -1,0 +1,47 @@
+SpawnMethod_EffectsRotation_Name,Set angle on spawn
+,
+SpawnMethod_ParameterType_Point_Name,Point
+SpawnMethod_ParameterType_Line_Name,Line
+SpawnMethod_ParameterType_Circle_Name,Circle
+SpawnMethod_ParameterType_Sphere_Name,Sphere
+SpawnMethod_ParameterType_Model_Name,Model
+,
+SpawnMethod_Point_Location_Name,Spawn location
+,
+SpawnMethod_Line_Division_Name,Verticies
+SpawnMethod_Line_PositionStart_Name,Init Position
+SpawnMethod_Line_PositionEnd_Name,Final Position
+SpawnMethod_Line_PositionNoize_Name,Position Noize
+SpawnMethod_Line_Type_Name,Spawn Mode
+,
+SpawnMethod_LineType_Random_Name,Random
+SpawnMethod_LineType_Order_Name,Order
+,
+SpawnMethod_Circle_AxisDirection_Name,Axis Direction
+SpawnMethod_Circle_Division_Name,Verticies
+SpawnMethod_Circle_Radius_Name,Radius
+SpawnMethod_Circle_AngleStart_Name,Init Angle
+SpawnMethod_Circle_AngleEnd_Name,Final Angle
+SpawnMethod_Circle_AngleNoize_Name,Angle Noize
+SpawnMethod_Circle_Type_Name,Spawn Mode
+,
+SpawnMethod_AxisType_Xaxis_Name,X-Axis
+SpawnMethod_AxisType_Yaxis_Name,Y-Axis
+SpawnMethod_AxisType_Zaxis_Name,Z-Axis
+SpawnMethod_CircleType_Random_Name,Random
+SpawnMethod_CircleType_Order_Name,Clockwise
+SpawnMethod_CircleType_ReverseOrder_Name,Counter
+,
+SpawnMethod_Sphere_Radius_Name,Radius
+SpawnMethod_Sphere_RotationX_Name,X Rotation
+SpawnMethod_Sphere_RotationY_Name,Y Rotation
+,
+SpawnMethod_Model_Model_Name,Model
+SpawnMethod_Model_Model_Desc,Model File
+SpawnMethod_Model_Type_Name,Method of Spawning
+,
+SpawnMethod_ModelType_Random_Name,Random
+SpawnMethod_ModelType_Vertex_Name,Vertex
+SpawnMethod_ModelType_RandomVertex_Name,Random Vertex
+SpawnMethod_ModelType_Face_Name,Surface
+SpawnMethod_ModelType_RandomFace_Name,Random Surface
