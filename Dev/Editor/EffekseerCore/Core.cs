@@ -1438,91 +1438,51 @@ namespace Effekseer
 
 					if (node.LocationValues.Type.Value == Data.LocationValues.ParamaterType.LocationFCurve)
 					{
-						var name = "Location";
-						if(Language == Language.Japanese)
-						{
-							name = "位置";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Location");
 						list.Add(Tuple35.Create(name,(object)node.LocationValues.LocationFCurve.FCurve));
 					}
 
 					if (node.RotationValues.Type.Value == Data.RotationValues.ParamaterType.RotationFCurve)
 					{
-						var name = "Angle";
-						if (Language == Language.Japanese)
-						{
-							name = "角度";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Angle");
 						list.Add(Tuple35.Create(name, (object)node.RotationValues.RotationFCurve.FCurve));
 					}
 
 					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.FCurve)
 					{
-						var name = "Scaling Factor";
-						if (Language == Language.Japanese)
-						{
-							name = "拡大率";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_ScalingFactor");
 						list.Add(Tuple35.Create(name, (object)node.ScalingValues.FCurve.FCurve));
 					}
 
 					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.SingleFCurve)
 					{
-						var name = "Scaling Factor(Single)";
-						if (Language == Language.Japanese)
-						{
-							name = "拡大率(単一)";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_ScalingFactor_Single");
 						list.Add(Tuple35.Create(name, (object)node.ScalingValues.SingleFCurve));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						var name = "UV(Start)";
-						if (Language == Language.Japanese)
-						{
-							name = "UV(始点)";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.UVFCurve.Start));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						var name = "UV(Size)";
-						if (Language == Language.Japanese)
-						{
-							name = "UV(大きさ)";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.UVFCurve.Size));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite &&
 						node.DrawingValues.Sprite.ColorAll.Value == Data.StandardColorType.FCurve)
 					{
-						var name = "Sprite-Color all(RGBA)";
-						if (Language == Language.Japanese)
-						{
-							name = "スプライト・全体色(RGBA)";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Sprite_Color");
 						list.Add(Tuple35.Create(name, (object)node.DrawingValues.Sprite.ColorAll_FCurve.FCurve));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model &&
 						node.DrawingValues.Model.Color.Value == Data.StandardColorType.FCurve)
 					{
-						var name = "Model-Color(RGBA)";
-						if (Language == Language.Japanese)
-						{
-							name = "モデル・色(RGBA)";
-						}
-
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Model_Color");
 						list.Add(Tuple35.Create(name, (object)node.DrawingValues.Model.Color_FCurve.FCurve));
 					}
 
@@ -1530,126 +1490,71 @@ namespace Effekseer
 					{
 						if (node.DrawingValues.Track.ColorLeft.Value == Data.StandardColorType.FCurve)
 						{
-							var name = "Track-Color,Left(RGBA)";
-							if (Language == Language.Japanese)
-							{
-								name = "軌跡・左(RGBA)";
-							}
-
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_L");
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorLeft_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorLeftMiddle.Value == Data.StandardColorType.FCurve)
 						{
-							var name = "Track-Color,Left-Center(RGBA)";
-							if (Language == Language.Japanese)
-							{
-								name = "軌跡・左中間(RGBA)";
-							}
-
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_LC");
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorLeftMiddle_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorCenter.Value == Data.StandardColorType.FCurve)
 						{
-							var name = "Track-Color,Center(RGBA)";
-							if (Language == Language.Japanese)
-							{
-								name = "軌跡・中央(RGBA)";
-							}
-
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_C");
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorCenter_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorCenterMiddle.Value == Data.StandardColorType.FCurve)
 						{
-							var name = "Track-Color,Center-Middle(RGBA)";
-							if (Language == Language.Japanese)
-							{
-								name = "軌跡・中央中間(RGBA)";
-							}
-
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_CM");
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorCenterMiddle_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorRight.Value == Data.StandardColorType.FCurve)
 						{
-							var name = "Track-Color,Right(RGBA)";
-							if (Language == Language.Japanese)
-							{
-								name = "軌跡・右(RGBA)";
-							}
-
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_R");
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRight_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorRightMiddle.Value == Data.StandardColorType.FCurve)
 						{
-							var name = "Track-Color,Right-Center(RGBA)";
-							if (Language == Language.Japanese)
-							{
-								name = "軌跡・右中間(RGBA)";
-
-							}
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_RC");
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
 						}
 					}
 
 					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 					{
-						var name = "CustomData1";
-						if (Language == Language.Japanese)
-						{
-							name = "カスタムデータ1";
-						}
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_CustomData") + "1";
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurve));
 					}
 
 					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurve2D)
 					{
-						var name = "CustomData2";
-						if (Language == Language.Japanese)
-						{
-							name = "カスタムデータ2";
-						}
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_CustomData") + "2";
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurve));
 					}
 
 					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurveColor)
 					{
-						var name = "CustomData1";
-						if (Language == Language.Japanese)
-						{
-							name = "カスタムデータ1";
-						}
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_CustomData") + "1";
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurveColor));
 					}
 
 					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurveColor)
 					{
-						var name = "CustomData2";
-						if (Language == Language.Japanese)
-						{
-							name = "カスタムデータ2";
-						}
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_CustomData") + "2";
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
 					if (node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled == true &&
 					    node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						var enType = "Alpha";
-						var jpType = "アルファ";
-
-						var startName = enType + "UV(Start)";
-						var endName	= enType + "UV(Size)";
-
-						if (Language == Language.Japanese)
-						{
-							startName = jpType + "UV(始点)";
-							endName = jpType + "UV(大きさ)";
-						}
-
+						var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_Alpha");						
+						var startName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
+						var endName	= typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Start));
 						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Size));
 					}
@@ -1657,18 +1562,9 @@ namespace Effekseer
 					if (node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.Enabled == true &&
 						node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						var enType = "UVDistortion";
-						var jpType = "UV歪み";
-
-						var startName = enType + "UV(Start)";
-						var endName	= enType + "UV(Size)";
-
-						if (Language == Language.Japanese)
-						{
-							startName = jpType + "UV(始点)";
-							endName	= jpType + "UV(大きさ)";
-						}
-
+						var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_UVDistortion");
+						var startName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
+						var endName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Start));
 						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.UVDistortionTextureParam.UVFCurve.Size));
 					}
@@ -1677,18 +1573,9 @@ namespace Effekseer
 					{
 						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 						{
-							var enType = "Blend";
-							var jpType = "ブレンド";
-
-							var startName = enType + "UV(Start)";
-							var endName = enType + "UV(Size)";
-
-							if (Language == Language.Japanese)
-							{
-								startName = jpType + "UV(始点)";
-								endName = jpType + "UV(大きさ)";
-							}
-
+							var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_Blend");
+							var startName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
+							var endName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UVFCurve.Start));
 							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendTextureParam.UVFCurve.Size));
 						}
@@ -1696,18 +1583,9 @@ namespace Effekseer
 						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendAlphaTexture == true &&
 							node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 						{
-							var enType = "BlendAlpha";
-							var jpType = "ブレンドアルファ";
-
-							var startName = enType + "UV(Start)";
-							var endName = enType + "UV(Size)";
-
-							if (Language == Language.Japanese)
-							{
-								startName = jpType + "UV(始点)";
-								endName = jpType + "UV(大きさ)";
-							}
-
+							var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_BlendAlpha");
+							var startName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
+							var endName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Start));
 							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendAlphaTextureParam.UVFCurve.Size));
 						}
@@ -1715,18 +1593,9 @@ namespace Effekseer
 						if (node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture == true &&
 							node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 						{
-							var enType = "BlendUVDistortion";
-							var jpType = "ブレンドUV歪み";
-
-							var startName = enType + "UV(Start)";
-							var endName = enType + "UV(Size)";
-
-							if (Language == Language.Japanese)
-							{
-								startName = jpType + "UV(始点)";
-								endName = jpType + "UV(大きさ)";
-							}
-
+							var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_BlendUVDistortion");
+							var startName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
+							var endName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 							list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Start));
 							list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.UVFCurve.Size));
 						}
@@ -1734,11 +1603,7 @@ namespace Effekseer
 
 					if (node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 					{
-						var name = "AlphaThreshold";
-						if (Language == Language.Japanese)
-						{
-							name = "アルファ閾値";
-						}
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_AlphaThreshold");
 						list.Add(Tuple35.Create(name, (object)node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.FCurve));
 					}
 

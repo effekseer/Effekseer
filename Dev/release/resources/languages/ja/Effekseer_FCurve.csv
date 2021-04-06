@@ -1,0 +1,7 @@
+FcurveEdge_Constant_Name,一定
+FcurveEdge_Loop_Name,ループ
+FcurveEdge_LoopInversely_Name,逆ループ
+FcurveInterpolation_Bezier_Name,ベジェ
+FcurveInterpolation_Linear_Name,線形
+FcurveTimelineMode_Time_Name,時間(フレーム)
+FcurveTimelineMode_Percent_Name,パーセント(0-100)

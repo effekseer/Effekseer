@@ -7,35 +7,28 @@ namespace Effekseer.Data.Value
 {
 	public enum FCurveTimelineMode : int
 	{
-		[Name(language = Language.Japanese, value = "時間(フレーム)")]
-		[Name(language = Language.English, value = "Time(Frame)")]
+		[Key(key = "FcurveTimelineMode_Time")]
 		Time = 0,
 
-		[Name(language = Language.Japanese, value = "パーセント(0-100)")]
-		[Name(language = Language.English, value = "Percent(0-100)")]
+		[Key(key = "FcurveTimelineMode_Percent")]
 		Percent = 1,
 	}
 
 	public enum FCurveEdge
 	{
-		[Name(language = Language.Japanese, value = "一定")]
-		[Name(language = Language.English, value = "Constant")]
+		[Key(key = "FcurveEdge_Constant")]
 		Constant = 0,
-		[Name(language = Language.Japanese, value = "ループ")]
-		[Name(language = Language.English, value = "Loop")]
+		[Key(key = "FcurveEdge_Loop")]
 		Loop = 1,
-		[Name(language = Language.Japanese, value = "逆ループ")]
-		[Name(language = Language.English, value = "Loop inversely")]
+		[Key(key = "FcurveEdge_LoopInversely")]
 		LoopInversely = 2,
 	}
 
 	public enum FCurveInterpolation
 	{
-		[Name(language = Language.Japanese, value = "ベジェ")]
-		[Name(language = Language.English, value = "Bezier")]
+		[Key(key = "FcurveInterpolation_Bezier")]
 		Bezier = 0,
-		[Name(language = Language.Japanese, value = "線形")]
-		[Name(language = Language.English, value = "Linear")]
+		[Key(key = "FcurveInterpolation_Linear")]
 		Linear = 1,
 	}
 

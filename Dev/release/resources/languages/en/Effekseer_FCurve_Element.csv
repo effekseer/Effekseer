@@ -1,0 +1,21 @@
+Fcurve_Elm_Location,Location
+Fcurve_Elm_Angle,Angle
+Fcurve_Elm_ScalingFactor,Scaling Factor
+Fcurve_Elm_ScalingFactor_Single,Scaling Factor(Single)
+Fcurve_Elm_UV_Start,UV(Start)
+Fcurve_Elm_UV_Size,UV(Size)
+Fcurve_Elm_Sprite_Color,Sprite-Color all(RGBA)
+Fcurve_Elm_Model_Color,Model-Color(RGBA)
+Fcurve_Elm_Track_Color_L,"Track-Color,Left(RGBA)"
+Fcurve_Elm_Track_Color_LC,"Track-Color,Left-Center(RGBA)"
+Fcurve_Elm_Track_Color_C,"Track-Color,Center(RGBA)"
+Fcurve_Elm_Track_Color_CM,"Track-Color,Center-Middle(RGBA)"
+Fcurve_Elm_Track_Color_R,"Track-Color,Right(RGBA)"
+Fcurve_Elm_Track_Color_RC,"Track-Color,Right-Center(RGBA)"
+Fcurve_Elm_CustomData,CustomData
+Fcurve_Elm_Alpha,Alpha
+Fcurve_Elm_UVDistortion,UVDistortion
+Fcurve_Elm_Blend,Blend
+Fcurve_Elm_BlendAlpha,BlendAlpha
+Fcurve_Elm_BlendUVDistortion,BlendUVDistortion
+Fcurve_Elm_AlphaThreshold,AlphaThreshold
