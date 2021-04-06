@@ -358,7 +358,7 @@ int mainLoop(int argc, char* argv[])
 			ImGui_ImplOpenGL3_DestroyFontsTexture();
 			io.Fonts->Clear();
 
-			Effekseer::Editor::AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", "japanese", 20, mainWindow->GetDPIScale());
+			Effekseer::Editor::AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", "", "japanese", 20, mainWindow->GetDPIScale());
 			isDpiDirtied = false;
 		}
 
