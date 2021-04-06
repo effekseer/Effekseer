@@ -1,4 +1,4 @@
-﻿RS_ParameterType_None_Name,無し
+RS_ParameterType_None_Name,無し
 RS_ParameterType_Sprite_Name,スプライト
 RS_ParameterType_Ribbon_Name,リボン
 RS_ParameterType_Track_Name,軌跡
@@ -15,9 +15,18 @@ StandardColorType_Fixed_Name,固定
 StandardColorType_Random_Name,ランダム
 StandardColorType_Easing_Name,イージング
 StandardColorType_FCurve_Name,Fカーブ(RGBA)
-TextureUVTypeParameter_Type_Name,"UV タイプ"
-TextureUVTypeParameter_TileEdgeHead_Name,"頭のタイル数"
-TextureUVTypeParameter_TileEdgeTail_Name,"尻尾のタイル数"
-TextureUVTypeParameter_TileLoopingArea_Name,"ループ領域"
+TextureUVTypeParameter_Type_Name,UV タイプ
+TextureUVTypeParameter_TileEdgeHead_Name,頭のタイル数
+TextureUVTypeParameter_TileEdgeTail_Name,尻尾のタイル数
+TextureUVTypeParameter_TileLoopingArea_Name,ループ領域
 TextureUVTypeParameter_Type_Strech_Name,ストレッチ
 TextureUVTypeParameter_Type_Tile_Name,タイル
+,
+CullingType_Front_Name,表表示
+CullingType_Back_Name,裏表示
+CullingType_Double_Name,両面表示
+,
+TrackSizeType_Fixed_Name,固定
+,
+RingShapeType_Donut_Name,ドーナツ
+RingShapeType_Crescent_Name,三日月

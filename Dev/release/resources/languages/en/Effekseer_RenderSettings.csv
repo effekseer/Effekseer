@@ -1,4 +1,4 @@
-﻿RS_ParameterType_None_Name,None
+RS_ParameterType_None_Name,None
 RS_ParameterType_Sprite_Name,Sprite
 RS_ParameterType_Ribbon_Name,Ribbon
 RS_ParameterType_Track_Name,Track
@@ -15,9 +15,18 @@ StandardColorType_Fixed_Name,Fixed
 StandardColorType_Random_Name,Random
 StandardColorType_Easing_Name,Easing
 StandardColorType_FCurve_Name,F-Curve (RGBA)
-TextureUVTypeParameter_Type_Name,"UV Type"
-TextureUVTypeParameter_TileEdgeHead_Name,"The number of tile on Head"
-TextureUVTypeParameter_TileEdgeTail_Name,"The number of tile on Tail"
-TextureUVTypeParameter_TileLoopingArea_Name,"Looping area"
+TextureUVTypeParameter_Type_Name,UV Type
+TextureUVTypeParameter_TileEdgeHead_Name,The number of tile on Head
+TextureUVTypeParameter_TileEdgeTail_Name,The number of tile on Tail
+TextureUVTypeParameter_TileLoopingArea_Name,Looping area
 TextureUVTypeParameter_Type_Strech_Name,Strech
 TextureUVTypeParameter_Type_Tile_Name,Tile
+,
+CullingType_Front_Name,Front view
+CullingType_Back_Name,Back view
+CullingType_Double_Name,Double-sided
+,
+TrackSizeType_Fixed_Name,Fixed
+,
+RingShapeType_Donut_Name,Donut
+RingShapeType_Crescent_Name,Crescent

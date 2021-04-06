@@ -18,8 +18,4 @@ enum class SystemLanguage : int32_t
 */
 SystemLanguage GetSystemLanguage();
 
-std::string GetLanguageKey(SystemLanguage language);
-
-SystemLanguage GetSystemLanguage(const std::string& key);
-
 } // namespace Effekseer

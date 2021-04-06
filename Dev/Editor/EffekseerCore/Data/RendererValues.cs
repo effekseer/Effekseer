@@ -46,12 +46,10 @@ namespace Effekseer.Data
 
 	public enum RingShapeType
 	{
-		[Name(value = "ドーナツ", language = Language.Japanese)]
-		[Name(value = "Donut", language = Language.English)]
+		[Key(key = "RingShapeType_Donut")]
 		Donut = 0,
 
-		[Name(value = "三日月", language = Language.Japanese)]
-		[Name(value = "Crescent", language = Language.English)]
+		[Key(key = "RingShapeType_Crescent")]
 		Crescent = 1,
 	}
 
