@@ -7,10 +7,7 @@ namespace Effekseer.Data
 {
 	public class EffectBehaviorValues
 	{
-		[Name(language = Language.Japanese, value = "初期位置")]
-		[Description(language = Language.Japanese, value = "中心の初期位置")]
-		[Name(language = Language.English, value = "Pos")]
-		[Description(language = Language.English, value = "Based on center")]
+		[Key(key = "EffectBehavior_Location")]
 		[Undo(Undo = false)]
 		public Value.Vector3D Location
 		{
@@ -18,10 +15,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "移動速度")]
-		[Description(language = Language.Japanese, value = "中心の移動速度")]
-		[Name(language = Language.English, value = "Speed")]
-		[Description(language = Language.English, value = "Starting velocity")]
+		[Key(key = "EffectBehavior_LocationVelocity")]
 		[Undo(Undo = false)]
 		public Value.Vector3D LocationVelocity
 		{
@@ -29,10 +23,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "初期角度")]
-		[Description(language = Language.Japanese, value = "中心の初期角度")]
-		[Name(language = Language.English, value = "Angle")]
-		[Description(language = Language.English, value = "Rotated about center")]
+		[Key(key = "EffectBehavior_Rotation")]
 		[Undo(Undo = false)]
 		public Value.Vector3D Rotation
 		{
@@ -40,10 +31,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "回転速度")]
-		[Description(language = Language.Japanese, value = "中心の回転速度")]
-		[Name(language = Language.English, value = "Angular\nSpeed")]
-		[Description(language = Language.English, value = "Rotated about center")]
+		[Key(key = "EffectBehavior_RotationVelocity")]
 		[Undo(Undo = false)]
 		public Value.Vector3D RotationVelocity
 		{
@@ -51,10 +39,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "初期拡大率")]
-		[Description(language = Language.Japanese, value = "中心の初期拡大率")]
-		[Name(language = Language.English, value = "Scale")]
-		[Description(language = Language.English, value = "Scaled about center")]
+		[Key(key = "EffectBehavior_Scale")]
 		[Undo(Undo = false)]
 		public Value.Vector3D Scale
 		{
@@ -62,10 +47,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "拡大速度")]
-		[Description(language = Language.Japanese, value = "中心の拡大速度")]
-		[Name(language = Language.English, value = "Expansion\nRate")]
-		[Description(language = Language.English, value = "Scaled about center")]
+		[Key(key = "EffectBehavior_ScaleVelocity")]
 		[Undo(Undo = false)]
 		public Value.Vector3D ScaleVelocity
 		{
@@ -73,10 +55,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "破棄フレーム")]
-		[Description(language = Language.Japanese, value = "中心が破棄されるフレーム")]
-		[Name(language = Language.English, value = "Life")]
-		[Description(language = Language.English, value = "Frame in which instance is destroyed")]
+		[Key(key = "EffectBehavior_RemovedTime")]
 		[Undo(Undo = false)]
 		public Value.IntWithInifinite RemovedTime
 		{
@@ -84,10 +63,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "個数(X方向)")]
-		[Description(language = Language.Japanese, value = "エフェクトの個数(X方向)")]
-		[Name(language = Language.English, value = "X Count")]
-		[Description(language = Language.English, value = "Number of instances spawned about the x-axis")]
+		[Key(key = "EffectBehavior_CountX")]
 		[Undo(Undo = false)]
 		public Value.Int CountX
 		{
@@ -95,10 +71,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "個数(Y方向)")]
-		[Description(language = Language.Japanese, value = "エフェクトの個数(Y方向)")]
-		[Name(language = Language.English, value = "Y Count")]
-		[Description(language = Language.English, value = "Number of instances spawned about the y-axis")]
+		[Key(key = "EffectBehavior_CountY")]
 		[Undo(Undo = false)]
 		public Value.Int CountY
 		{
@@ -106,10 +79,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "個数(Z方向)")]
-		[Description(language = Language.Japanese, value = "エフェクトの個数(Z方向)")]
-		[Name(language = Language.English, value = "Z Count")]
-		[Description(language = Language.English, value = "Number of instances spawned about the z-axis")]
+		[Key(key = "EffectBehavior_CountZ")]
 		[Undo(Undo = false)]
 		public Value.Int CountZ
 		{
@@ -117,10 +87,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "距離")]
-		[Description(language = Language.Japanese, value = "エフェクト間の距離")]
-		[Name(language = Language.English, value = "Separation")]
-		[Description(language = Language.English, value = "Distance between the spawned instances")]
+		[Key(key = "EffectBehavior_Distance")]
 		[Undo(Undo = false)]
 		public Value.Float Distance
 		{
@@ -128,10 +95,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "生成間隔(フレーム)")]
-		[Description(language = Language.Japanese, value = "1以上の場合、指定された時間ごとにエフェクトを生成する。")]
-		[Name(language = Language.English, value = "Generating time span(Frame)")]
-		[Description(language = Language.English, value = "If the value is larger than 1, effects are generated every specified time")]
+		[Key(key = "EffectBehavior_TimeSpan")]
 		[Undo(Undo = false)]
 		public Value.Int TimeSpan
 		{
@@ -139,8 +103,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "全体色")]
-		[Name(language = Language.English, value = "Color All")]
+		[Key(key = "EffectBehavior_ColorAll")]
 		[Undo(Undo = false)]
 		public Value.Color ColorAll
 		{
@@ -148,8 +111,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "再生速度")]
-		[Name(language = Language.English, value = "Playback Speed")]
+		[Key(key = "EffectBehavior_PlaybackSpeed")]
 		[Undo(Undo = false)]
 		public Value.Float PlaybackSpeed
 		{
@@ -157,10 +119,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "ターゲット位置")]
-		[Description(language = Language.Japanese, value = "ターゲット位置または引力位置")]
-		[Name(language = Language.English, value = "Point of\nAttraction")]
-		[Description(language = Language.English, value = "Point in space the instances are drawn to")]
+		[Key(key = "EffectBehavior_TargetLocation")]
 		[Undo(Undo = false)]
 		public Value.Vector3D TargetLocation
 		{

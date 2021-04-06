@@ -333,6 +333,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_AdvancedRenderCommon.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Environment.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_ProceduralModel.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Behavior.csv");
 
 			GUI.Manager.UpdateFont();
 		}
