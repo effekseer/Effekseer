@@ -1,5 +1,29 @@
-﻿Environment_Ground,Ground
+Environment_Ground,Ground
 EnvironmentGround_IsShown_Name,Ground Visible
-EnvironmentGround_IsShown_Desc,"Toggle the visibility of the ground"
+EnvironmentGround_IsShown_Desc,Toggle the visibility of the ground
 EnvironmentGround_Height_Name,Ground Height
 EnvironmentGround_Extent_Name,Ground Extent
+,
+Environment_BackgroundColor_Name,Background Color
+Environment_BackgroundColor_Desc,Background color
+Environment_BackgroundImage_Name,Background Image
+Environment_BackgroundImage_Desc,Background image
+Environment_LightDirection_Name,Light Direction
+Environment_LightDirection_Desc,Orientation of the directional light
+Environment_LightColor_Name,Light Color
+Environment_LightColor_Desc,Diffuse color of the light
+Environment_LightAmbientColor_Name,Ambient Color
+Environment_LightAmbientColor_Desc,Ambient color of the light
+Environment_BloomSwitch_Name,Bloom
+Environment_BloomSwitch_Desc,The effect produces fringes of light extending from the borders of bright areas in an image.
+Environment_TonemapSelector_Name,Tone mapping
+,
+EffectSwitch_Off_Name,Off
+EffectSwitch_On_Name,On
+TonemapAlgorithm_Off_Name,Off
+TonemapAlgorithm_Reinhard_Name,Reinhard
+,
+Environment_Bloom_Intensity_Name,Intensity
+Environment_Bloom_Threshold_Name,Threshold
+Environment_Bloom_SoftKnee_Name,Soft Knee
+Environment_TonemapReinhard_Exposure_Name,Exposure
