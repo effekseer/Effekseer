@@ -203,23 +203,14 @@ namespace Effekseer.Data
 			private set;
 		} = new Value.Enum<ForceFieldTurbulenceType>(ForceFieldTurbulenceType.Simple);
 
-		
-		[Name(value = "ランダムシード", language = Language.Japanese)]
-		[Name(value = "Random Seed", language = Language.English)]
-		[Description(language = Language.Japanese, value = "数値に応じて乱流の流れ方が変わります。")]
-		[Description(language = Language.English, value = "The flow of turbulence changes according to the value.")]
+
+		[Key(key = "LFF_Turbulence_RandomSeed")]
 		public Value.Int Seed { get; private set; }
 
-		[Name(value = "領域の大きさ", language = Language.Japanese)]
-		[Name(value = "Field scale", language = Language.English)]
-		[Description(language = Language.Japanese, value = "値を大きくすると乱流の幅が大きくなります。")]
-		[Description(language = Language.English, value = "Larger value ​​increases the turbulence width.")]
+		[Key(key = "LFF_Turbulence_FieldScale")]
 		public Value.Float FieldScale { get; private set; }
 
-		[Name(value = "複雑さ", language = Language.Japanese)]
-		[Name(value = "Complexity", language = Language.English)]
-		[Description(language = Language.Japanese, value = "値を大きくすると乱流が複雑になります。ただし、処理が重くなります。")]
-		[Description(language = Language.English, value = "Larger value ​​complicates turbulence. However, processing becomes heavy.")]
+		[Key(key = "LFF_Turbulence_Complexity")]
 		public Value.Int Octave { get; private set; }
 
 		public LocalForceFieldTurbulence()
@@ -232,10 +223,7 @@ namespace Effekseer.Data
 
 	public class ForceFieldGravity
 	{
-		[Name(language = Language.Japanese, value = "重力")]
-		[Description(language = Language.Japanese, value = "インスタンスにかかる重力")]
-		[Name(language = Language.English, value = "Gravity")]
-		[Description(language = Language.English, value = "Gravity's effect on the instance")]
+		[Key(key = "LFF_Gravity_Gravity")]
 		public Value.Vector3D Gravity
 		{
 			get;
@@ -251,30 +239,21 @@ namespace Effekseer.Data
 
 	public class ForceFieldAttractiveForce
 	{
-		[Name(language = Language.Japanese, value = "制御")]
-		[Description(language = Language.Japanese, value = "移動方向をターゲット方向へ補正量")]
-		[Name(language = Language.English, value = "Resistance")]
-		[Description(language = Language.English, value = "Resistance to the directional pull of the attractor")]
+		[Key(key = "LFF_AttractiveForce_Resistance")]
 		public Value.Float Control
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "最小範囲")]
-		[Description(language = Language.Japanese, value = "この範囲以内では引力がフルに掛かります")]
-		[Name(language = Language.English, value = "Minimum Range")]
-		[Description(language = Language.English, value = "Within this range, it will be affected by the attractor")]
+		[Key(key = "LFF_AttractiveForce_MinimumRange")]
 		public Value.Float MinRange
 		{
 			get;
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "最大範囲")]
-		[Description(language = Language.Japanese, value = "この範囲以外では引力が掛かりません")]
-		[Name(language = Language.English, value = "Maximum Range")]
-		[Description(language = Language.English, value = "Outside this range, the attractor will have no effect on the instance")]
+		[Key(key = "LFF_AttractiveForce_MaximumRange")]
 		public Value.Float MaxRange
 		{
 			get;
