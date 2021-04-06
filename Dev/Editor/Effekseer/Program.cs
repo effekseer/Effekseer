@@ -335,7 +335,9 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_ProceduralModel.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Behavior.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_SpawnMethod.csv");
-
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Depth.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Culling.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Global.csv");
 			GUI.Manager.UpdateFont();
 		}
 
