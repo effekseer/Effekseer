@@ -111,3 +111,30 @@ RS_Model_Model_Name,Model
 RS_Model_Model_Desc,Model File
 RS_Model_Billboard_Name,Configuration
 RS_Model_Culling_Name,Culling
+RS_Model_Color_Name,Color
+,
+RS_Ring_RingShape_Name,Shape
+RS_Ring_RenderingOrder_Name,Rendering Order
+RS_Ring_Billboard_Name,Configuration
+RS_Ring_AlphaBlend_Name,Blend
+RS_Ring_VertexCount_Name,Vertex Count
+RS_Ring_Outer_Name,Outer
+RS_Ring_Inner_Name,Inner
+RS_Ring_CenterRatio_Name,Center Ratio
+RS_Ring_OuterColor_Name,Outer Color
+RS_Ring_CenterColor_Name,Center Color
+RS_Ring_InnerColor_Name,Inner Color
+,
+RS_RingShape_Type_Name,Shape
+,
+RS_RingShapeCrescent_StartingFade_Name,Starting fade(Deg.)
+RS_RingShapeCrescent_EndingFade_Name,Ending fade(Deg.)
+RS_RingShapeCrescent_StartingAngle_Name,Starting Angle
+RS_RingShapeCrescent_EndingAngle_Name,Ending Angle
+,
+RS_Ring_PVALocation_Location_Name,Pos
+RS_Ring_PVALocation_Location_Desc,Position of the edge
+RS_Ring_PVALocation_Velocity_Name,Speed
+RS_Ring_PVALocation_Velocity_Desc,Initial velocity of the edge
+RS_Ring_PVALocation_Acceleration_Name,Accel
+RS_Ring_PVALocation_Acceleration_Desc,Acceleration of the edge

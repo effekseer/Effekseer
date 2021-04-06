@@ -65,16 +65,14 @@ namespace Effekseer.Data
 
 	public class RingShapeCrescentParameter
 	{
-		[Name(language = Language.Japanese, value = "開始フェード(度)")]
-		[Name(language = Language.English, value = "Starting fade(Deg.)")]
+		[Key(key = "RS_RingShapeCrescent_StartingFade")]
 		public Value.Float StartingFade { get; private set; }
-		[Name(language = Language.Japanese, value = "終了フェード(度)")]
-		[Name(language = Language.English, value = "Ending fade(Deg.)")]
+
+		[Key(key = "RS_RingShapeCrescent_EndingFade")]
 		public Value.Float EndingFade { get; private set; }
 
 		[Selector(ID = 0)]
-		[Name(language = Language.Japanese, value = "開始角度")]
-		[Name(language = Language.English, value = "Starting Angle")]
+		[Key(key = "RS_RingShapeCrescent_StartingAngle")]
 		public Value.Enum<FixedRandomEasingType> StartingAngle { get; private set; }
 
 		[Selected(ID = 0, Value = 0)]
@@ -89,8 +87,7 @@ namespace Effekseer.Data
 		public FloatEasingParamater StartingAngle_Easing { get; private set; }
 
 		[Selector(ID = 1)]
-		[Name(language = Language.Japanese, value = "終了角度")]
-		[Name(language = Language.English, value = "Ending Angle")]
+		[Key(key = "RS_RingShapeCrescent_EndingAngle")]
 		public Value.Enum<FixedRandomEasingType> EndingAngle { get; private set; }
 
 		[Selected(ID = 1, Value = 0)]
@@ -122,9 +119,8 @@ namespace Effekseer.Data
 
 	public class RingShapeParameter
 	{
-		[Name(language = Language.Japanese, value = "形状")]
-		[Name(language = Language.English, value = "Shape")]
 		[Selector(ID = 0)]
+		[Key(key = "RS_RingShape_Type")]
 		public Value.Enum<RingShapeType> Type
 		{
 			get;
@@ -457,27 +453,22 @@ namespace Effekseer.Data
 
         public class RingParamater
         {
-			[Name(language = Language.English, value = "Shape")]
+			[Key(key = "RS_Ring_RingShape")]
 			[IO(Export = true)]
 			public RingShapeParameter RingShape { get; private set; }
 
-            [Name(language = Language.Japanese, value = "描画順")]
-			[Name(language = Language.English, value = "Rendering Order")]
-            public Value.Enum<RenderingOrder> RenderingOrder { get; private set; }
+			[Key(key = "RS_Ring_RenderingOrder")]
+			public Value.Enum<RenderingOrder> RenderingOrder { get; private set; }
 
-            [Name(language = Language.Japanese, value = "配置方法")]
-			[Name(language = Language.English, value = "Configuration")]
-            public Value.Enum<BillboardType> Billboard { get; private set; }
+			[Key(key = "RS_Ring_Billboard")]
+			public Value.Enum<BillboardType> Billboard { get; private set; }
 
-            [Name(language = Language.Japanese, value = "ブレンド")]
-			[Name(language = Language.English, value = "Blend")]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
             public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
-            [Name(language = Language.Japanese, value = "頂点数")]
-			[Name(language = Language.English, value = "Vertex Count")]
-            public Value.Int VertexCount { get; private set; }
+			[Key(key = "RS_Ring_VertexCount")]
+			public Value.Int VertexCount { get; private set; }
 
 			/// <summary>
 			/// for compatibility
@@ -514,9 +505,8 @@ namespace Effekseer.Data
 			
 
             [Selector(ID = 1)]
-            [Name(language = Language.Japanese, value = "外輪")]
-			[Name(language = Language.English, value = "Outer")]
-            public Value.Enum<LocationType> Outer { get; private set; }
+			[Key(key = "RS_Ring_Outer")]
+			public Value.Enum<LocationType> Outer { get; private set; }
 
             [Selected(ID = 1, Value = 0)]
 			[IO(Export = true)]
@@ -531,9 +521,8 @@ namespace Effekseer.Data
             public Vector2DEasingParamater Outer_Easing { get; private set; }
 
             [Selector(ID = 2)]
-            [Name(language = Language.Japanese, value = "内輪")]
-			[Name(language = Language.English, value = "Inner")]
-            public Value.Enum<LocationType> Inner { get; private set; }
+			[Key(key = "RS_Ring_Inner")]
+			public Value.Enum<LocationType> Inner { get; private set; }
 
             [Selected(ID = 2, Value = 0)]
 			[IO(Export = true)]
@@ -548,9 +537,8 @@ namespace Effekseer.Data
             public Vector2DEasingParamater Inner_Easing { get; private set; }
 
             [Selector(ID = 3)]
-            [Name(language = Language.Japanese, value = "中心比率")]
-			[Name(language = Language.English, value = "Center Ratio")]
-            public Value.Enum<CenterRatioType> CenterRatio { get; private set; }
+			[Key(key = "RS_Ring_CenterRatio")]
+			public Value.Enum<CenterRatioType> CenterRatio { get; private set; }
 
             [Selected(ID = 3, Value = 0)]
             public Value.Float CenterRatio_Fixed { get; private set; }
@@ -564,9 +552,8 @@ namespace Effekseer.Data
 			public FloatEasingParamater CenterRatio_Easing { get; private set; }
 
             [Selector(ID = 4)]
-            [Name(language = Language.Japanese, value = "外輪色")]
-			[Name(language = Language.English, value = "Outer Color")]
-            public Value.Enum<ColorType> OuterColor { get; private set; }
+			[Key(key = "RS_Ring_OuterColor")]
+			public Value.Enum<ColorType> OuterColor { get; private set; }
 
             [Selected(ID = 4, Value = 0)]
             public Value.Color OuterColor_Fixed { get; private set; }
@@ -579,9 +566,8 @@ namespace Effekseer.Data
             public ColorEasingParamater OuterColor_Easing { get; private set; }
 
             [Selector(ID = 5)]
-            [Name(language = Language.Japanese, value = "中心色")]
-			[Name(language = Language.English, value = "Center Color")]
-            public Value.Enum<ColorType> CenterColor { get; private set; }
+			[Key(key = "RS_Ring_CenterColor")]
+			public Value.Enum<ColorType> CenterColor { get; private set; }
 
             [Selected(ID = 5, Value = 0)]
 			[IO(Export = true)]
@@ -596,9 +582,8 @@ namespace Effekseer.Data
             public ColorEasingParamater CenterColor_Easing { get; private set; }
 
             [Selector(ID = 6)]
-            [Name(language = Language.Japanese, value = "内輪色")]
-			[Name(language = Language.English, value = "Inner Color")]
-            public Value.Enum<ColorType> InnerColor { get; private set; }
+			[Key(key = "RS_Ring_InnerColor")]
+			public Value.Enum<ColorType> InnerColor { get; private set; }
 
             [Selected(ID = 6, Value = 0)]
             public Value.Color InnerColor_Fixed { get; private set; }
@@ -716,31 +701,22 @@ namespace Effekseer.Data
 
             public class PVALocation
             {
-                [Name(language = Language.Japanese, value = "位置")]
-                [Description(language = Language.Japanese, value = "インスタンスの初期位置")]
-				[Name(language = Language.English, value = "Pos")]
-				[Description(language = Language.English, value = "Position of the instance")]
-                public Value.Vector2DWithRandom Location
+				[Key(key = "RS_Ring_PVALocation_Location")]
+				public Value.Vector2DWithRandom Location
                 {
                     get;
                     private set;
                 }
 
-                [Name(language = Language.Japanese, value = "速度")]
-                [Description(language = Language.Japanese, value = "インスタンスの初期速度")]
-				[Name(language = Language.English, value = "Speed")]
-				[Description(language = Language.English, value = "Initial velocity of the instance")]
-                public Value.Vector2DWithRandom Velocity
+				[Key(key = "RS_Ring_PVALocation_Velocity")]
+				public Value.Vector2DWithRandom Velocity
                 {
                     get;
                     private set;
                 }
 
-                [Name(language = Language.Japanese, value = "加速度")]
-                [Description(language = Language.Japanese, value = "インスタンスの初期加速度")]
-				[Name(language = Language.English, value = "Accel")]
-				[Description(language = Language.English, value = "Acceleration of the instance")]
-                public Value.Vector2DWithRandom Acceleration
+				[Key(key = "RS_Ring_PVALocation_Acceleration")]
+				public Value.Vector2DWithRandom Acceleration
                 {
                     get;
                     private set;
@@ -809,7 +785,7 @@ namespace Effekseer.Data
 			}
 
 			[Selector(ID = 0)]
-			[Name(language = Language.Japanese, value = "全体色")]
+			[Key(key = "RS_Model_Color")]
 			public Value.Enum<StandardColorType> Color { get; private set; }
 
 			[Selected(ID = 0, Value = 0)]
