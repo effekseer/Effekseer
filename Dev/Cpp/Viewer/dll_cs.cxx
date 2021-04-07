@@ -3393,6 +3393,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DoEvents___
 }
 
 
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetDeltaSecond___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetDeltaSecond();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Present___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   

@@ -876,6 +876,11 @@ bool GUIManager::DoEvents()
 	return false;
 }
 
+float GUIManager::GetDeltaSecond()
+{
+	return framerateController_.GetDeltaSecond();
+}
+
 void GUIManager::Present()
 {
 	window->Present();

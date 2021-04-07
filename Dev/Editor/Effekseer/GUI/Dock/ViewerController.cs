@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			int[] currentFrame = new int[] { Manager.Viewer.Current };
+			int[] currentFrame = new int[] { (int)Manager.Viewer.Current };
 			int[] frameMin = new int[] { Core.StartFrame };
 			int[] frameMax = new int[] { Core.EndFrame };
 
