@@ -427,6 +427,8 @@ public:
 
 	bool DoEvents();
 
+	float GetDeltaSecond();
+
 	void Present();
 
 	void Close();

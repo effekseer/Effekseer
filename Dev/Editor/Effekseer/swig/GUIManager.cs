@@ -86,6 +86,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public float GetDeltaSecond() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetDeltaSecond(swigCPtr);
+    return ret;
+  }
+
   public void Present() {
     EffekseerNativePINVOKE.GUIManager_Present(swigCPtr);
   }

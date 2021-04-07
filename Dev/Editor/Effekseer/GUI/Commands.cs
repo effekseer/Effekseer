@@ -241,7 +241,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.StepViewer")]
 		public static bool Step()
 		{
-			Manager.Viewer.StepViewer(false);
+			Manager.Viewer.StepViewer(1.0f, false);
 			return true;
 		}
 

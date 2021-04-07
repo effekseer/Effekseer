@@ -14,7 +14,7 @@ namespace Effekseer.GUI
 		int random_seed = 0;
 		Random rand = new Random();
 
-		int current = 0;
+		float current = 0;
 
 		/// <summary>
 		/// Is effect playing
@@ -39,7 +39,7 @@ namespace Effekseer.GUI
 		/// <summary>
 		/// current frame
 		/// </summary>
-		public int Current
+		public float Current
 		{
 			get
 			{
@@ -47,7 +47,7 @@ namespace Effekseer.GUI
 			}
 			set
 			{
-				Step(value);
+				MoveFrame(value);
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace Effekseer.GUI
 			return native.PlayEffect();
 		}
 
-		public bool StepEffect(int frame)
+		public bool MoveEffectFrame(int frame)
 		{
 			return native.StepEffect(frame);
 		}
@@ -501,7 +501,18 @@ namespace Effekseer.GUI
 
 				if (IsPlaying && !IsPaused)
 				{
-					StepViewer(true);
+					var stepFrame = Manager.NativeManager.GetDeltaSecond() * 60.0f;
+					
+					// regard as 1 frame because of accuracy problem
+					if(Math.Abs(1.0f - stepFrame) < 0.05f)
+					{
+						stepFrame = 1.0f;
+					}
+
+					// large step is not better than slow
+					stepFrame = Math.Min(stepFrame, 4);
+
+					StepViewer(stepFrame, true);
 				}
 
 				// update environment
@@ -607,21 +618,21 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public void StepViewer(bool isLooping)
+		public void StepViewer(float frame, bool isLooping)
 		{
-			int next = Current + 1;
+			var next = Current + frame;
 
 			if (isLooping)
 			{
 				if (next > Core.EndFrame) next = 0;
 			}
 
-			Step(next);
+			MoveFrame(next);
 		}
 
 		public void BackStepViewer()
 		{
-			Step(Current - 1);
+			MoveFrame(Current - 1);
 		}
 
 		unsafe void Export()
@@ -751,7 +762,7 @@ namespace Effekseer.GUI
 
 			if (Core.StartFrame > 0)
 			{
-				StepEffect(Core.StartFrame);
+				MoveEffectFrame(Core.StartFrame);
 			}
 			current = Core.StartFrame;
 		}
@@ -774,16 +785,12 @@ namespace Effekseer.GUI
 
 			SetRandomSeed(random_seed);
 			PlayEffect();
-			StepEffect(Current);
+			MoveEffectFrame((int)Current);
 		}
 
-		/// <summary>
-		/// 指定フレームに移動
-		/// </summary>
-		/// <param name="new_frame"></param>
-		unsafe void Step(int new_frame)
+		unsafe void MoveFrame(float new_frame)
 		{
-			// 同一フレーム
+			// Same frame
 			if (current == new_frame) return;
 
 			if (new_frame < Core.StartFrame) new_frame = Core.StartFrame;
@@ -799,41 +806,39 @@ namespace Effekseer.GUI
 
 				if (IsPaused)
 				{
-					if (current == new_frame)
+					if ((int)current == (int)new_frame)
 					{
 					}
-					else if (current > new_frame)
+					else if ((int)current > (int)new_frame)
 					{
 						native.StopEffect();
 						SetRandomSeed(random_seed);
 						PlayEffect();
-						StepEffect(new_frame);
+						MoveEffectFrame((int)new_frame);
 					}
 					else
 					{
-						StepEffect(new_frame - current);
+						MoveEffectFrame((int)(new_frame - current));
 					}
-					current = new_frame;
 				}
 				else
 				{
-					if (current == new_frame)
+					if ((int)current == (int)new_frame)
 					{
 					}
-					else if (current > new_frame)
+					else if ((int)current > (int)new_frame)
 					{
 						native.StopEffect();
 
 						PlayEffect();
-						StepEffect(new_frame);
+						MoveEffectFrame((int)new_frame);
 					}
 					else
 					{
-						StepEffect(new_frame - current);
+						MoveEffectFrame((int)(new_frame - current));
 					}
-					current = new_frame;
 				}
-
+				current = new_frame;
 			}
 		}
 

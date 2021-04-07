@@ -1526,7 +1526,7 @@ namespace Effekseer.GUI.Dock
 
 				for (int i = 0; i < properties.Length; i++)
 				{
-					var value = this.fcurves[i].GetValue(Manager.Viewer.Current);
+					var value = this.fcurves[i].GetValue((int)Manager.Viewer.Current);
 
 					string labelName = Name + " : " + names[i] + " (" + value + ")";
 					string labelID = "###FCurveLabel_" + nodeName + "_" + Name + "_" + names[i];

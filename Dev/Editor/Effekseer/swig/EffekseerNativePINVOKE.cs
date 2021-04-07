@@ -960,6 +960,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_DoEvents___")]
   public static extern bool GUIManager_DoEvents(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetDeltaSecond___")]
+  public static extern float GUIManager_GetDeltaSecond(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Present___")]
   public static extern void GUIManager_Present(global::System.Runtime.InteropServices.HandleRef jarg1);
 
