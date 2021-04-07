@@ -298,6 +298,12 @@ namespace Effekseer.GUI.Component
 							converterPath += ".exe";
 						}
 
+						if (os.Platform == PlatformID.Unix && os.Platform != PlatformID.MacOSX)
+						{
+							string pathvar = System.Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
+							info.EnvironmentVariables["LD_LIBRARY_PATH"] = pathvar + ";" + Manager.GetEntryDirectory() + "/tools/";
+						}
+
 						info.FileName = converterPath;
 
 						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
