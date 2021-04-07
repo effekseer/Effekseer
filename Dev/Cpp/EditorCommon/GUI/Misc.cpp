@@ -27,10 +27,6 @@ void AddFontFromFileTTF(const char* fontFilepath, const char* commonCharacterTab
 	{
 		io.Fonts->AddFontFromFileTTF(fontFilepath, size_pixels, nullptr, glyphRangesJapanese);
 	}
-	else if (tableName == "simplified_chinese")
-	{
-		io.Fonts->AddFontFromFileTTF(fontFilepath, size_pixels, nullptr, io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-	}
 	else if (tableName == "chinese")
 	{
 		io.Fonts->AddFontFromFileTTF(fontFilepath, size_pixels, nullptr, io.Fonts->GetGlyphRangesChineseFull());
