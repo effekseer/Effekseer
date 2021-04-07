@@ -51,9 +51,6 @@ Repositories
 
 * [ToolHelp(Sphinx)](https://github.com/effekseer/docs_tool)
 
-Development
-=========
-
 ### Roadmap
 
 [English](docs/Roadmap_En.md)
@@ -74,13 +71,15 @@ Development
 
 ### Documents
 
+[HowToBuild](docs/Development/HowToBuild.md)
+
+[How to add a new language](docs/HowToAddNewLanguage.md)
+
+[Profiling](docs/Development/Profiling.md)
+
 [CodeOverview](docs/Development/CodeOverview.md)
 
 [CodingRule](docs/Development/CodingRule_En.md)
-
-[HowToBuild](docs/Development/HowToBuild.md)
-
-[Profiling](docs/Development/Profiling.md)
 
 [コーディングルール](docs/Development/CodingRule_Ja.md)
 
