@@ -419,10 +419,16 @@ void Instance::FirstUpdate()
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_FCurve)
 	{
 		assert(m_pEffectNode->TranslationFCurve != nullptr);
+		const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
 
 		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets(rand);
 
 		prevPosition_ = translation_values.fcruve.offset + m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
+
+		if (coordinateSystem == CoordinateSystem::LH)
+		{
+			prevPosition_.SetZ(-prevPosition_.GetZ());
+		}
 	}
 	else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
 	{
@@ -1245,6 +1251,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 
 	// if( m_sequenceNumber == ((ManagerImplemented*)m_pManager)->GetSequenceNumber() ) return;
 	m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
+	const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
 
 	assert(m_pEffectNode != nullptr);
 	assert(m_pContainer != nullptr);
@@ -1290,6 +1297,12 @@ void Instance::CalculateMatrix(float deltaFrame)
 			assert(m_pEffectNode->TranslationFCurve != nullptr);
 			auto fcurve = m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localPosition = fcurve + translation_values.fcruve.offset;
+
+			if (coordinateSystem == CoordinateSystem::LH)
+			{
+				localPosition.SetZ(-localPosition.GetZ());
+			}
+
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
 		{
