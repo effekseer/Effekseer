@@ -33,4 +33,6 @@ You can select from ```default```, ```chinese```, ```simplified_chinese```, ```k
 
 If your language doesn't exists, add letters which is used to characterTable.txt
 
+You can add and change a font by changing ''' Font_Normal ''' and ''' Font_Bold ''' in ''' Base.csv '''
+
 You now can change texts in ```resources/languages/zhcn/ ```
