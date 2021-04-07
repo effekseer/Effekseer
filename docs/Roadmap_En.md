@@ -1,13 +1,7 @@
 
 # Roadmap.
 
-## 1.53 (to be released in November)
-
-- Tool docking panel framework changes
-- C++ code quality maintenance
-- Notarization support for the Mac version
-
-## 1.6 (to be released in 2020)
+## 1.6 (to be released in 2021)
 
 ### Add standard materials
 
