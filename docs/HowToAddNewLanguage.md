@@ -26,12 +26,12 @@ Language_zhcn,简体中文 <- new language
 Change CharacterTable in ``` resources/languages/zhcn/Base.csv ```
 
 ```
-CharacterTable,simplified_chinese
+CharacterTable,chinese
 ```
 
-You can select from ```default```, ```chinese```, ```simplified_chinese```, ```korean```, ```thai```
+You can select from ```default```, ```chinese```, ```korean```, ```thai```
 
-If your language doesn't exists, add letters which is used to characterTable.txt
+If your language doesn't exists or letters, add letters which is used to characterTable.txt
 
 You can add and change a font by changing ``` Font_Normal ``` and ``` Font_Bold ``` in ``` Base.csv ```
 
