@@ -79,7 +79,7 @@ namespace Effekseer.GUI
 			return native.PlayEffect();
 		}
 
-		public bool MoveEffectFrame(int frame)
+		public bool StepEffectFrame(int frame)
 		{
 			return native.StepEffect(frame);
 		}
@@ -739,9 +739,6 @@ namespace Effekseer.GUI
 			}
 		}
 
-		/// <summary>
-		/// 新規再生
-		/// </summary>
 		unsafe void PlayNew()
 		{
 			native.StopEffect();
@@ -762,7 +759,7 @@ namespace Effekseer.GUI
 
 			if (Core.StartFrame > 0)
 			{
-				MoveEffectFrame(Core.StartFrame);
+				StepEffectFrame(Core.StartFrame);
 			}
 			current = Core.StartFrame;
 		}
@@ -785,7 +782,7 @@ namespace Effekseer.GUI
 
 			SetRandomSeed(random_seed);
 			PlayEffect();
-			MoveEffectFrame((int)Current);
+			StepEffectFrame((int)Current);
 		}
 
 		unsafe void MoveFrame(float new_frame)
@@ -814,11 +811,11 @@ namespace Effekseer.GUI
 						native.StopEffect();
 						SetRandomSeed(random_seed);
 						PlayEffect();
-						MoveEffectFrame((int)new_frame);
+						StepEffectFrame((int)new_frame);
 					}
 					else
 					{
-						MoveEffectFrame((int)(new_frame - current));
+						StepEffectFrame((int)new_frame - (int)current);
 					}
 				}
 				else
@@ -831,11 +828,11 @@ namespace Effekseer.GUI
 						native.StopEffect();
 
 						PlayEffect();
-						MoveEffectFrame((int)new_frame);
+						StepEffectFrame((int)new_frame);
 					}
 					else
 					{
-						MoveEffectFrame((int)(new_frame - current));
+						StepEffectFrame((int)new_frame - (int)current);
 					}
 				}
 				current = new_frame;
