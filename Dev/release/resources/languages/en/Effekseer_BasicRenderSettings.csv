@@ -80,6 +80,7 @@ CustomDataType_Easing2D_Name,Easing2
 CustomDataType_FCurve2D_Name,FCurve2
 CustomDataType_Fixed4D_Name,Fixed4
 CustomDataType_FCurveColor_Name,FCurve-Color
+CustomDataType_DynamicInput_Name,Dynamic input
 UVFixedParamater_Start_Name,Start
 UVFixedParamater_Size_Name,Size
 UVAnimationParamater_Start_Name,Start

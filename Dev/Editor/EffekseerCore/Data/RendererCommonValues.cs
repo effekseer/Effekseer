@@ -41,6 +41,9 @@ namespace Effekseer.Data
 
 		[Key(key = "CustomDataType_FCurveColor")]
 		FCurveColor = 53,
+
+		[Key(key = "CustomDataType_DynamicInput")]
+		DynamicInput = 60,
 	}
 
 	public class CustomDataParameter : IEditableValueCollection
