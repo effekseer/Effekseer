@@ -21,6 +21,41 @@ namespace Effekseer
 			languages = lines.ToList();
 		}
 
+		public static void CreateTableFromDirectory(string rootDirectory)
+		{
+			languages = new List<string> { "en" };
+
+			var languageDir = Utils.Misc.BackSlashToSlash(System.IO.Path.Combine(rootDirectory, "resources/languages/"));
+
+			var directories = System.IO.Directory.GetDirectories(languageDir).Select(_ => Utils.Misc.BackSlashToSlash(_));
+			foreach (var directory in directories)
+			{
+				var name = directory.Split('/').Last();
+				if(name == "en")
+				{
+					continue;
+				}
+				languages.Add(name);
+			}
+
+
+		}
+
+		public static void StoreLanguageNames(string rootDirectory)
+		{
+			var languageDir = Utils.Misc.BackSlashToSlash(System.IO.Path.Combine(rootDirectory, "resources/languages/"));
+
+			foreach (var lang in languages)
+			{
+				var languageNameFilePath = languageDir + lang + "/language.txt";
+				if (System.IO.File.Exists(languageNameFilePath))
+				{
+					var name = System.IO.File.ReadAllText(languageNameFilePath, Encoding.UTF8);
+					MultiLanguageTextProvider.AddText("Language_" + lang, name);
+				}
+			}
+		}
+
 		public static void SelectLanguage(int index, bool callEvent = true)
 		{
 			if (selectedIndex == index) return;
@@ -85,14 +120,7 @@ namespace Effekseer
 					if (record.Count < 2) continue;
 					if (record[0] == string.Empty) continue;
 
-					if (texts.ContainsKey(record[0]))
-					{
-						texts[record[0]] = record[1];
-					}
-					else
-					{
-						texts.Add(record[0], record[1]);
-					}
+					AddText(record[0], record[1]);
 				}
 			}
 		}
@@ -110,6 +138,18 @@ namespace Effekseer
 				return ret;
 			}
 			return key;
+		}
+
+		public static void AddText(string key, string text)
+		{
+			if (texts.ContainsKey(key))
+			{
+				texts[key] = text;
+			}
+			else
+			{
+				texts.Add(key, text);
+			}
 		}
 	}
 

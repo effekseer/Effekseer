@@ -89,7 +89,7 @@ namespace Effekseer
 				Utils.Logger.LogPath = Path.Combine(GUI.Manager.GetEntryDirectory(), "Effekseer.Managed.log.txt");
 			}
 
-			LanguageTable.LoadTable(Path.Combine(EntryDirectory, "resources/languages/languages.txt"));
+			LanguageTable.CreateTableFromDirectory(EntryDirectory);
 
 			var systemLanguage = EfkN.GetSystemLanguage();
 			string language = null;
@@ -223,6 +223,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Sound.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_FCurve.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_FCurve_Element.csv");
+			LanguageTable.CreateTableFromDirectory(EntryDirectory);
 			GUI.Manager.UpdateFont();
 		}
 
