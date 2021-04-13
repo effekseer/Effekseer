@@ -1874,6 +1874,11 @@ std::array<float, 4> Instance::GetCustomData(int32_t index) const
 									(values[2] + instanceCustomData->fcurveColor.offset[2]) / 255.0f,
 									(values[3] + instanceCustomData->fcurveColor.offset[3]) / 255.0f};
 	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::DynamicInput)
+	{
+		auto instanceGlobal = this->m_pContainer->GetRootInstance();
+		return instanceGlobal->GetDynamicInputParameters();
+	}
 	else
 	{
 		assert(false);

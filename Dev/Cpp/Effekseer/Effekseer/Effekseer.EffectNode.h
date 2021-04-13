@@ -586,6 +586,7 @@ enum ParameterCustomDataType : int32_t
 	FCurve2D = 23,
 	Fixed4D = 40,
 	FCurveColor = 53,
+	DynamicInput = 60,
 	Unknown,
 };
 
@@ -680,6 +681,9 @@ struct ParameterCustomData
 		{
 			FCurveColor.Values = new FCurveVectorColor();
 			pos += FCurveColor.Values->Load(pos, version);
+		}
+		else if (Type == ParameterCustomDataType::DynamicInput)
+		{
 		}
 		else
 		{

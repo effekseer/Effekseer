@@ -79,6 +79,7 @@ CustomDataType_Easing2D_Name,イージング2
 CustomDataType_FCurve2D_Name,Fカーブ2
 CustomDataType_Fixed4D_Name,固定4
 CustomDataType_FCurveColor_Name,Fカーブ色
+CustomDataType_DynamicInput_Name,動的入力
 UVFixedParamater_Start_Name,始点
 UVFixedParamater_Size_Name,大きさ
 UVAnimationParamater_Start_Name,始点
