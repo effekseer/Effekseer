@@ -103,10 +103,16 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_UV2", "Material_UV2");
 
 	{
-		single16Test(u"Flip01", "Flip01");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
 		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
+		single16Test(u"BasicRenderSettings_Emissive", "BasicRenderSettings_Emissive");
+		single16Test(u"Curve01", "Curve01");
 		single16Test(u"EdgeFallOff01", "EdgeFallOff01");
+		single16Test(u"Flip01", "Flip01");
+		single16Test(u"ForceFieldLocal02", "ForceFieldLocal02");
+		single16Test(u"Material_EffectScale", "Material_EffectScale");
+		single16Test(u"ProcedualModel01", "ProcedualModel01");
+		single16Test(u"ProcedualModel02", "ProcedualModel02");
 		single16Test(u"TGA01", "TGA01");
 	}
 
@@ -118,7 +124,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->GetRenderer()->SetCameraMatrix(mat);
 		platform->GenerateDepth();
 
-		single16Test(u"SoftParticle01", "SoftParticle01");
+		single16Test(u"SoftParticle01", "SoftParticle01_NotFlipped");
 
 		platform->GetRenderer()->SetCameraMatrix(cameraMat);
 	}
