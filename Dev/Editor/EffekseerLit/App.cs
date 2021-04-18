@@ -53,11 +53,16 @@ namespace Effekseer
 			GUI.Manager.AddControl(mainMenu);
 		}
 
+		protected override Dock.EffectViwerBase OnCreateEffectViwer()
+		{
+			return new Dock.EffectViwerDock();
+		}
+
 		protected override void OnResetWindowActually()
 		{
 			if (Manager.effectViewer == null)
 			{
-				Manager.effectViewer = new GUI.Dock.EffectViwer();
+				Manager.effectViewer = OnCreateEffectViwer();
 				if (Manager.dockManager != null)
 				{
 					Manager.dockManager.Controls.Add(Manager.effectViewer);

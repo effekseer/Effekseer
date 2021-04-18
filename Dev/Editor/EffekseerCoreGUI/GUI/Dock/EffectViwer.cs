@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-	public class EffectViwer : DockPanel
+	public class EffectViwerBase : DockPanel
 	{
 		public bool IsHovered = false;
 
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 		Component.Enum renderMode;
 		Component.Enum viewMode;
 
-		public EffectViwer()
+		public EffectViwerBase()
 		{
 			Label = Resources.GetString("Viewer") + "###Viewer";
 			renderMode = new Component.Enum();

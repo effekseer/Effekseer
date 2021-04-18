@@ -184,10 +184,18 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// 初回起動時や設定ファイルのリセット時などで、デフォルトのウィンドウレイアウトを復元する
+		/// アプリごとに MainMenu を作成する
 		/// </summary>
 		protected internal virtual void OnCreateMainMenu()
 		{
+		}
+
+		/// <summary>
+		/// アプリごとに EffectViewer を作成する
+		/// </summary>
+		protected internal virtual Effekseer.GUI.Dock.EffectViwerBase OnCreateEffectViwer()
+		{
+			return new GUI.Dock.EffectViwerBase();
 		}
 
 		/// <summary>

@@ -79,7 +79,7 @@ namespace Effekseer
 		{
 			if (Manager.effectViewer == null)
 			{
-				Manager.effectViewer = new Dock.EffectViwer();
+				Manager.effectViewer = OnCreateEffectViwer();
 				if (Manager.dockManager != null)
 				{
 					Manager.dockManager.Controls.Add(Manager.effectViewer);
