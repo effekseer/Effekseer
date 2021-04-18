@@ -750,7 +750,7 @@ namespace Effekseer.Binary
 			float width = 128.0f;
 			float height = 128.0f;
 
-			if (_TexInfo.Width > width && _TexInfo.Height > height)
+			if (_TexInfo.Width > 0 && _TexInfo.Height > 0)
 			{
 				width = (float)_TexInfo.Width;
 				height = (float)_TexInfo.Height;
@@ -816,15 +816,13 @@ namespace Effekseer.Binary
 			{
 				{
 					var value_ = _FCurve.Start;
-					var bytes1 = value_.GetBytes(1.0f / width);
-					List<byte[]> _data = new List<byte[]>();
+					var bytes1 = value_.GetBytes(1.0f / width, 1.0f / height);
 					data.Add(bytes1);
 				}
 
 				{
 					var value_ = _FCurve.Size;
-					var bytes1 = value_.GetBytes(1.0f / height);
-					List<byte[]> _data = new List<byte[]>();
+					var bytes1 = value_.GetBytes(1.0f / width, 1.0f / height);
 					data.Add(bytes1);
 				}
 			}

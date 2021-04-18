@@ -16,7 +16,7 @@ namespace Effekseer.Binary.RenderData
 			width = 128.0f;
 			height = 128.0f;
 
-			if (texInfo.Width > width && texInfo.Height > height)
+			if (texInfo.Width > 0 && texInfo.Height > 0)
 			{
 				width = texInfo.Width;
 				height = texInfo.Height;
