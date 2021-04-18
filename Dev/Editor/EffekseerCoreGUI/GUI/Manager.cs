@@ -160,7 +160,7 @@ namespace Effekseer.GUI
 
 		public static Dock.DockManager dockManager = null;
 
-		public static Dock.EffectViwerBase effectViewer = null;
+		public static Dock.EffectViwerPaneBase effectViewer = null;
 
 		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
 
@@ -708,8 +708,8 @@ namespace Effekseer.GUI
 
 		public static void ResetWindow()
 		{
-			//effectViewer?.Close();
-			//effectViewer = null;
+			effectViewer?.Close();
+			effectViewer = null;
 
 			for (int i = 0; i < panels.Length; i++)
 			{
