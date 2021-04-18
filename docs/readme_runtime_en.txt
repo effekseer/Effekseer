@@ -1,21 +1,5 @@
 # Effekseer Runtime
 
-## Release notes
-
-### 1.52k
-
-- Changed the timing of sending the model's buffer to the GPU before rendering, because in some environments the buffer generation process was not thread-safe. 
-
-### 1.52i
-
-- Fixed many bugs
-- Added Metal sample
-
-### 1.52h
-
-- (Broken changes) Depth format now can be specified.
-- Fixed many bugs
-
 ## Overview
 
 Thank you for downloading Effekseer.
