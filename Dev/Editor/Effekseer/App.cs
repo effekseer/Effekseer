@@ -78,7 +78,7 @@ namespace Effekseer
 		protected override void OnCreateEffectViwer()
 		{
 			Debug.Assert(Manager.effectViewer == null);
-			Manager.effectViewer = new Dock.EffectViwerBase();
+			Manager.effectViewer = new Dock.EffectViwer();
 			Manager.dockManager.Controls.Add(Manager.effectViewer);
 		}
 
