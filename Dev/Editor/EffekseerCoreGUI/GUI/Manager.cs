@@ -304,15 +304,8 @@ namespace Effekseer.GUI
 			GUI.Manager.AddControl(dockManager);
 
 			// Default 
-			effectViewer = Application.Current.OnCreateEffectViwer();
-			if (dockManager != null)
-			{
-				dockManager.Controls.Add(effectViewer);
-			}
-			else
-			{
-				AddControl(effectViewer);
-			}
+			Application.Current.OnCreateEffectViwer();
+			dockManager.Controls.Add(effectViewer);
 
 			if (LoadWindowConfig(ConfigFilePath))
 			{

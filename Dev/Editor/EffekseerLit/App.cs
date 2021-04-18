@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,20 +54,18 @@ namespace Effekseer
 			GUI.Manager.AddControl(mainMenu);
 		}
 
-		protected override Dock.EffectViwerBase OnCreateEffectViwer()
+		protected override void OnCreateEffectViwer()
 		{
-			return new Dock.EffectViwerDock();
+			Debug.Assert(Manager.effectViewer == null);
+			Manager.effectViewer = new Dock.EffectViwerDock();
+			Manager.dockManager.Controls.Add(Manager.effectViewer);
 		}
 
 		protected override void OnResetWindowActually()
 		{
 			if (Manager.effectViewer == null)
 			{
-				Manager.effectViewer = OnCreateEffectViwer();
-				if (Manager.dockManager != null)
-				{
-					Manager.dockManager.Controls.Add(Manager.effectViewer);
-				}
+				OnCreateEffectViwer();
 			}
 
 			var fileViewer = Manager.SelectOrShowWindow(typeof(Dock.FileViewer), null);
