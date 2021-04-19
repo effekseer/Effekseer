@@ -160,7 +160,7 @@ namespace Effekseer.GUI
 
 		public static Dock.DockManager dockManager = null;
 
-		public static Dock.EffectViwer effectViewer = null;
+		public static Dock.EffectViwerPaneBase effectViewer = null;
 
 		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
 
@@ -303,16 +303,8 @@ namespace Effekseer.GUI
 			dockManager = new GUI.Dock.DockManager();
 			GUI.Manager.AddControl(dockManager);
 
-			// Default 
-			effectViewer = new Dock.EffectViwer();
-			if (dockManager != null)
-			{
-				dockManager.Controls.Add(effectViewer);
-			}
-			else
-			{
-				AddControl(effectViewer);
-			}
+			// EffectViwer 
+			Application.Current.OnCreateEffectViwer();
 
 			if (LoadWindowConfig(ConfigFilePath))
 			{

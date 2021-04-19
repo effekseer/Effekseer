@@ -184,11 +184,14 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// 初回起動時や設定ファイルのリセット時などで、デフォルトのウィンドウレイアウトを復元する
+		/// Create a MainMenu for each application.
 		/// </summary>
-		protected internal virtual void OnCreateMainMenu()
-		{
-		}
+		protected internal abstract void OnCreateMainMenu();
+
+		/// <summary>
+		/// Create a EffectViewer for each application.
+		/// </summary>
+		protected internal abstract void OnCreateEffectViwer();
 
 		/// <summary>
 		/// 初回起動時や設定ファイルのリセット時などで、デフォルトのウィンドウレイアウトを復元する
