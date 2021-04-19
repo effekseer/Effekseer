@@ -184,12 +184,12 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// アプリごとに MainMenu を作成する
+		/// Create a MainMenu for each application.
 		/// </summary>
 		protected internal abstract void OnCreateMainMenu();
 
 		/// <summary>
-		/// アプリごとに EffectViewer を作成する
+		/// Create a EffectViewer for each application.
 		/// </summary>
 		protected internal abstract void OnCreateEffectViwer();
 
