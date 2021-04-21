@@ -6,18 +6,18 @@
 #include "EffekseerRendererDX9.RenderState.h"
 #include "EffekseerRendererDX9.RendererImplemented.h"
 
-#include "EffekseerRendererDX9.DeviceObject.h"
-#include "EffekseerRendererDX9.IndexBuffer.h"
-#include "EffekseerRendererDX9.Shader.h"
-#include "EffekseerRendererDX9.VertexBuffer.h"
-#include "EffekseerRendererDX9.ModelRenderer.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../../EffekseerRendererCommon/ModelLoader.h"
+#include "EffekseerRendererDX9.DeviceObject.h"
+#include "EffekseerRendererDX9.IndexBuffer.h"
 #include "EffekseerRendererDX9.MaterialLoader.h"
+#include "EffekseerRendererDX9.ModelRenderer.h"
+#include "EffekseerRendererDX9.Shader.h"
+#include "EffekseerRendererDX9.VertexBuffer.h"
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/TextureLoader.h"
@@ -127,25 +127,27 @@ static
 	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice, fileInterface);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-RendererRef Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
+RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount)
 {
 	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
-	if (renderer->Initialize(device))
+	if (renderer->Initialize(graphicsDevice.DownCast<Backend::GraphicsDevice>()))
 	{
 		return renderer;
 	}
 	return nullptr;
 }
 
+RendererRef Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
+{
+	auto gd = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
+	return Create(gd, squareMaxCount);
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: m_d3d_device(nullptr)
-	, m_vertexBuffer(nullptr)
+	: m_vertexBuffer(nullptr)
 	, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
@@ -284,9 +286,9 @@ void RendererImplemented::GenerateIndexData()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
+bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 {
-	m_d3d_device = device;
+	graphicsDevice_ = graphicsDevice;
 
 	// generate a vertex buffer
 	{
@@ -311,8 +313,6 @@ bool RendererImplemented::Initialize(LPDIRECT3DDEVICE9 device)
 
 	// インデックスデータの生成
 	GenerateIndexData();
-
-	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
 
 	m_renderState = new RenderState(this);
 
@@ -482,8 +482,6 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
-	assert(m_d3d_device != nullptr);
-
 	impl->CalculateCameraProjectionMatrix();
 
 	// ステートを保存する
@@ -566,8 +564,6 @@ bool RendererImplemented::BeginRendering()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::EndRendering()
 {
-	assert(m_d3d_device != nullptr);
-
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
@@ -634,14 +630,6 @@ bool RendererImplemented::EndRendering()
 	}
 
 	return true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-LPDIRECT3DDEVICE9 RendererImplemented::GetDevice()
-{
-	return m_d3d_device;
 }
 
 //----------------------------------------------------------------------------------
@@ -758,8 +746,6 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
-	Effekseer::SafeAddRef(background);
-
 	if (m_backgroundDX9 == nullptr)
 	{
 		m_backgroundDX9 = graphicsDevice_->CreateTexture(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
@@ -977,8 +963,6 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::Textur
 //----------------------------------------------------------------------------------
 void RendererImplemented::ChangeDevice(LPDIRECT3DDEVICE9 device)
 {
-	m_d3d_device = device;
-
 	for (auto& device : m_deviceObjects)
 	{
 		device->OnChangeDevice();
@@ -996,6 +980,11 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
+}
+
+LPDIRECT3DDEVICE9 RendererImplemented::GetDevice()
+{
+	return graphicsDevice_->GetDevice();
 }
 
 Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const

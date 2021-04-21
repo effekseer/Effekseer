@@ -204,11 +204,11 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 	{
 		// DirectX9Ex cannot use D3DPOOL_MANAGED
 		hr = device->CreateIndexBuffer(elementCount * stride,
-															 D3DUSAGE_WRITEONLY,
-															 stride == 4 ? D3DFMT_INDEX32 : D3DFMT_INDEX16,
-															 D3DPOOL_DEFAULT,
-															 &ib,
-															 nullptr);
+									   D3DUSAGE_WRITEONLY,
+									   stride == 4 ? D3DFMT_INDEX32 : D3DFMT_INDEX16,
+									   D3DPOOL_DEFAULT,
+									   &ib,
+									   nullptr);
 	}
 
 	buffer_ = Effekseer::CreateUniqueReference(ib);
@@ -553,6 +553,11 @@ void GraphicsDevice::LostDevice()
 
 void GraphicsDevice::ChangeDevice(IDirect3DDevice9* device)
 {
+	if (device_.get() == device)
+	{
+		return;
+	}
+
 	device_ = Effekseer::CreateUniqueReference(device, true);
 	for (auto& o : objects_)
 	{
