@@ -19,6 +19,8 @@ public:
 
 	void Lost();
 
+	void ChangeDevice(LPDIRECT3DDEVICE9 device);
+
 	void Reset();
 };
 

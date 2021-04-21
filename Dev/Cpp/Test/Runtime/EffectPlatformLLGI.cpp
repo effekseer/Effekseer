@@ -124,7 +124,7 @@ void EffectPlatformLLGI::InitializeWindow()
 
 void EffectPlatformLLGI::Present()
 {
-	graphics_->Execute(commandList_);
+	graphics_->Execute(commandList_.get());
 	platform_->Present();
 }
 
@@ -136,7 +136,7 @@ bool EffectPlatformLLGI::DoEvent()
 	glfwPollEvents();
 
 	sfMemoryPool_->NewFrame();
-	commandList_ = commandListPool_->Get();
+	commandList_ = LLGI::CreateSharedPtr(commandListPool_->Get(true));
 
 	return true;
 }
@@ -144,6 +144,10 @@ bool EffectPlatformLLGI::DoEvent()
 void EffectPlatformLLGI::PreDestroyDevice()
 {
 	graphics_->WaitFinish();
+
+	// Vulkan requires to release before destroy devices
+	commandListEfk_.Reset();
+	sfMemoryPoolEfk_.Reset();
 }
 
 void EffectPlatformLLGI::DestroyDevice()
@@ -173,6 +177,8 @@ void EffectPlatformLLGI::DestroyDevice()
 	ES_SAFE_RELEASE(pip_);
 	ES_SAFE_RELEASE(screenPip_);
 	ES_SAFE_RELEASE(checkTexture_);
+
+	commandList_.reset();
 }
 
 void EffectPlatformLLGI::BeginRendering()

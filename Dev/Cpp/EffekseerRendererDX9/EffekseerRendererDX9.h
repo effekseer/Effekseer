@@ -533,6 +533,14 @@ protected:
 
 public:
 	/**
+	@brief	Create an instance
+	@param	graphicsDevice	Effekseer graphics device
+	@param	squareMaxCount	The number of maximum sprites
+	@return	instance
+*/
+	static RendererRef Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount);
+
+	/**
 		@brief	インスタンスを生成する。
 		@param	device	[in]	DirectXのデバイス
 		@param	squareMaxCount	[in]	最大描画スプライト数

@@ -70,6 +70,8 @@ private:
 public:
 	virtual void OnLostDevice();
 
+	virtual void OnChangeDevice();
+
 	virtual void OnResetDevice();
 };
 
@@ -98,6 +100,8 @@ public:
 	void Deallocate();
 
 	void OnLostDevice() override;
+
+	void OnChangeDevice() override;
 
 	void OnResetDevice() override;
 
@@ -136,6 +140,8 @@ public:
 
 	void OnLostDevice() override;
 
+	void OnChangeDevice() override;
+
 	void OnResetDevice() override;
 
 	bool Init(int32_t elementCount, int32_t stride);
@@ -157,6 +163,7 @@ class Texture
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void(IDirect3DTexture9*&)> onLostDevice_;
 	std::function<void(IDirect3DTexture9*&)> onResetDevice_;
+	IDirect3DTexture9* keyTexture_ = nullptr;
 
 public:
 	Texture(GraphicsDevice* graphicsDevice);
@@ -169,6 +176,8 @@ public:
 	bool Init(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice);
 
 	void OnLostDevice() override;
+
+	void OnChangeDevice() override;
 
 	void OnResetDevice() override;
 
@@ -196,6 +205,8 @@ public:
 	IDirect3DDevice9* GetDevice() const;
 
 	void LostDevice();
+
+	void ChangeDevice(IDirect3DDevice9* device);
 
 	void ResetDevice();
 
