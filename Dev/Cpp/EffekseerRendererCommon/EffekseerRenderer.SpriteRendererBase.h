@@ -129,7 +129,7 @@ protected:
 		state.EdgeColor[3] = param.BasicParameterPtr->EdgeColor[3];
 		state.EdgeColorScaling = param.BasicParameterPtr->EdgeColorScaling;
 		state.IsAlphaCuttoffEnabled = param.BasicParameterPtr->IsAlphaCutoffEnabled;
-		
+
 		state.Maginification = param.Maginification;
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;

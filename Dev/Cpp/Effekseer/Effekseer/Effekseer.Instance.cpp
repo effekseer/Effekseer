@@ -1302,7 +1302,6 @@ void Instance::CalculateMatrix(float deltaFrame)
 			{
 				localPosition.SetZ(-localPosition.GetZ());
 			}
-
 		}
 		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
 		{

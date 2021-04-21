@@ -2,10 +2,10 @@
 #define __EFFEKSEER_PROCEDUAL_MODEL_PARAMETER_H__
 
 #include "../Effekseer.Color.h"
+#include "../Utils/BinaryVersion.h"
 #include "../Utils/Effekseer.BinaryReader.h"
 #include <stdint.h>
 #include <stdio.h>
-#include "../Utils/BinaryVersion.h"
 
 namespace Effekseer
 {
@@ -180,7 +180,6 @@ struct ProceduralModelParameter
 
 	std::array<float, 2> UVPosition = {0.0f, 0.5f};
 	std::array<float, 2> UVSize = {1.0f, 1.0f};
-
 
 	bool operator<(const ProceduralModelParameter& rhs) const
 	{

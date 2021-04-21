@@ -22,7 +22,6 @@ private:
 
 	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
-	
 
 	Effekseer::TextureLoaderRef textureLoader_;
 	Effekseer::TextureRef backgroundTexture_;

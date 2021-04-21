@@ -49,7 +49,6 @@ public:
 	virtual ~DepthTextureGL();
 	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
-	
 	Effekseer::Tool::Vector2DI GetSize() const
 	{
 		return size_;

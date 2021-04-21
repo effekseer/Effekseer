@@ -683,7 +683,7 @@ struct RotatedWireMeshGenerator
 				0.0f,
 			};
 		}
-		
+
 		ProceduralMesh ret;
 
 		for (int32_t l = 0; l < Count; l++)
@@ -890,16 +890,16 @@ ModelRef ProceduralModelGenerator::Generate(const ProceduralModelParameter* para
 		auto generated = generator.Generate(parameter->Mesh.Divisions[0], parameter->Mesh.Divisions[1]);
 		CalculateNormal(generated);
 		CalculateVertexColor(
-			generated, 
-			parameter->ColorUpperLeft, 
-			parameter->ColorUpperCenter, 
-			parameter->ColorUpperRight, 
+			generated,
+			parameter->ColorUpperLeft,
+			parameter->ColorUpperCenter,
+			parameter->ColorUpperRight,
 			parameter->ColorMiddleLeft,
 			parameter->ColorMiddleCenter,
-			parameter->ColorMiddleRight, 
+			parameter->ColorMiddleRight,
 			parameter->ColorLowerLeft,
 			parameter->ColorLowerCenter,
-			parameter->ColorLowerRight, 
+			parameter->ColorLowerRight,
 			parameter->ColorCenterPosition,
 			parameter->ColorCenterArea);
 

@@ -12,7 +12,7 @@ private:
 	bool isOpenGLMode_ = false;
 
 public:
-	RenderingWindow(bool isOpenGLMode, std::array<int32_t,2> windowSize, const char* title);
+	RenderingWindow(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title);
 	virtual ~RenderingWindow();
 	virtual void Present();
 	virtual bool DoEvent();

@@ -15,7 +15,7 @@ private:
 
 public:
 	ModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-				  ::Effekseer::FileInterface* fileInterface = nullptr);
+				::Effekseer::FileInterface* fileInterface = nullptr);
 	virtual ~ModelLoader();
 
 public:

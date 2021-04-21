@@ -45,7 +45,6 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
-
 class DirtiedBlock
 {
 	struct Block
@@ -222,7 +221,6 @@ public:
 
 	//! for DirectX9
 	Effekseer::Backend::TextureRef CreateTexture(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice);
-
 };
 
 } // namespace Backend

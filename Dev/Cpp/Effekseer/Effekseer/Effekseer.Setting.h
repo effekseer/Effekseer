@@ -72,7 +72,7 @@ public:
 		@param	loader	[in]		ローダー
 		*/
 	void SetEffectLoader(EffectLoaderRef loader);
-	
+
 	/**
 		@brief
 		\~English get a texture loader
@@ -220,7 +220,7 @@ public:
 		\~Japanese Effect Factoryの数を取得する。
 	*/
 	int32_t GetEffectFactoryCount() const;
-	
+
 	/**
 		@brief
 		\~English	Get resource manager

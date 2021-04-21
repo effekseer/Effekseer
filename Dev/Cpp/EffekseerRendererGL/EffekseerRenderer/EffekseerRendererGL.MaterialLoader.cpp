@@ -458,7 +458,7 @@ MaterialLoader ::~MaterialLoader()
 
 		// compiled
 		Effekseer::MaterialFile materialFile;
-		if(!materialFile.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size())))
+		if (!materialFile.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size())))
 		{
 			std::cout << "Error : Invalid material is loaded." << std::endl;
 			return nullptr;

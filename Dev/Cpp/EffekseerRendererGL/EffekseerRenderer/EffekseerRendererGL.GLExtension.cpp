@@ -204,12 +204,12 @@ static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 #if _WIN32
 #define GET_PROC(name)                              \
 	g_##name = (FP_##name)wglGetProcAddress(#name); \
-	if (g_##name == nullptr)                           \
+	if (g_##name == nullptr)                        \
 		return false;
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 #define GET_PROC(name)                              \
 	g_##name = (FP_##name)eglGetProcAddress(#name); \
-	if (g_##name == nullptr)                           \
+	if (g_##name == nullptr)                        \
 		return false;
 #endif
 
@@ -317,7 +317,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	{
 		GET_PROC(glGenVertexArraysOES);
 		GET_PROC(glDeleteVertexArraysOES);
-		GET_PROC(glBindVertexArrayOES);	
+		GET_PROC(glBindVertexArrayOES);
 	}
 
 #if defined(__EMSCRIPTEN__)
@@ -859,10 +859,10 @@ void glFramebufferTexture2D(GLenum target,
 							 level);
 #else
 	::glFramebufferTexture2D(target,
-						   attachment,
-						   textarget,
-						   texture,
-						   level);
+							 attachment,
+							 textarget,
+							 texture,
+							 level);
 #endif
 }
 

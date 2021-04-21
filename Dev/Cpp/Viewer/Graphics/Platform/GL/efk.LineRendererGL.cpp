@@ -84,7 +84,6 @@ LineRendererGL::LineRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false}, {"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true}, {"Input_UV", GL_FLOAT, 2, 16, false}};
 
-
 	shader_no_texture_->GetAttribIdList(3, sprite_attribs);
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 

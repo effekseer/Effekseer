@@ -56,7 +56,6 @@ protected:
 		Shader
 	*/
 
-
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	std::shared_ptr<LLGI::RenderPassPipelineState> currentRenderPassPipelineState_ = nullptr;
 
@@ -116,7 +115,7 @@ public:
 	void OnLostDevice() override;
 
 	void OnResetDevice() override;
-	
+
 	bool Initialize(Backend::GraphicsDeviceRef graphicsDevice, LLGI::RenderPassPipelineStateKey key, bool isReversedDepth);
 
 	bool Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineStateKey key, bool isReversedDepth);

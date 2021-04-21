@@ -25,7 +25,8 @@ struct TrackSizeParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 			float size;
@@ -43,7 +44,8 @@ public:
 	{
 		struct Color
 		{
-			union {
+			union
+			{
 				struct
 				{
 					Effekseer::Color color_;
@@ -70,7 +72,8 @@ public:
 
 		struct Size
 		{
-			union {
+			union
+			{
 				struct
 				{
 					float size_;

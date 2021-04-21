@@ -74,7 +74,8 @@ bool ImageButton_(ImTextureID user_texture_id,
 	bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
 	// Render
-	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered
+																					  : ImGuiCol_Button);
 	RenderNavHighlight(bb, id);
 	RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
 	if (bg_col.w > 0.0f)
@@ -173,7 +174,8 @@ bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
 			{"R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f"}, // Long display for RGBA
 			{"H:%0.3f", "S:%0.3f", "V:%0.3f", "A:%0.3f"}  // Long display for HSVA
 		};
-		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2 : 1;
+		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2
+																				: 1;
 
 		PushItemWidth(w_item_one);
 		for (int n = 0; n < components; n++)
@@ -422,8 +424,9 @@ void ResizeBicubic(uint32_t* dst,
 	// bicubic weight function
 	auto weight = [](float d) -> float {
 		const float a = -1.0f;
-		return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
-						 : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a) : 0.0f;
+		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
+			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
+						   : 0.0f;
 	};
 
 	for (int32_t iy = 0; iy < dstHeight; iy++)

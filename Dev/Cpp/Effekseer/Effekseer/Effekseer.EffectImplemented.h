@@ -195,7 +195,6 @@ protected:
 	void ResetReloadingBackup();
 
 public:
-
 	static EffectRef Create(const ManagerRef& pManager, const void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
 
 	static EffectRef Create(const SettingRef& setting, const void* pData, int size, float magnification, const char16_t* materialPath = nullptr);
@@ -334,8 +333,14 @@ public:
 		return ReferenceObject::Release();
 	}
 
-	EffectImplemented* GetImplemented() override { return this; }
-	const EffectImplemented* GetImplemented() const override { return this; }
+	EffectImplemented* GetImplemented() override
+	{
+		return this;
+	}
+	const EffectImplemented* GetImplemented() const override
+	{
+		return this;
+	}
 };
 //----------------------------------------------------------------------------------
 //

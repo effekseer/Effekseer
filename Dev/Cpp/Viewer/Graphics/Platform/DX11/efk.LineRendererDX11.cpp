@@ -6,7 +6,6 @@
 namespace efk
 {
 
-
 #ifdef _WIN32
 
 using BYTE = uint8_t;
@@ -21,7 +20,6 @@ namespace PS
 #include "../../../Shaders/HLSL_DX11_Header/line_ps.h"
 }
 #endif
-
 
 LineRendererDX11::LineRendererDX11(const EffekseerRenderer::RendererRef& renderer)
 	: LineRenderer(renderer)

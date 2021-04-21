@@ -1,9 +1,9 @@
 #include "efk.Window.h"
 #include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
-#include <memory>
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <memory>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -209,7 +209,7 @@ void Window::SetWindowIcon(const char16_t* iconPath)
 
 		auto pngLoader = EffekseerRenderer::PngTextureLoader();
 		pngLoader.Load(&data[0], size, false);
-		
+
 		GLFWimage image;
 		image.pixels = pngLoader.GetData().data();
 		image.width = pngLoader.GetWidth();
@@ -341,15 +341,16 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	{
 		WINDOWPLACEMENT placement;
 		GetWindowPlacement(hwnd, &placement);
-		if (placement.showCmd == SW_NORMAL) {
+		if (placement.showCmd == SW_NORMAL)
+		{
 			NCCALCSIZE_PARAMS* pncsp = (NCCALCSIZE_PARAMS*)lparam;
-			pncsp->rgrc[0].top    += 0;
+			pncsp->rgrc[0].top += 0;
 			pncsp->rgrc[0].bottom -= 8;
-			pncsp->rgrc[0].left   += 8;
-			pncsp->rgrc[0].right  -= 8;
+			pncsp->rgrc[0].left += 8;
+			pncsp->rgrc[0].right -= 8;
 		}
 	}
-	return 0;
+		return 0;
 	case WM_NCHITTEST:
 	{
 		long x = LOWORD(lparam);
@@ -360,17 +361,15 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
 		RECT rect;
 		GetClientRect(hwnd, &rect);
-		if (point.x >= rect.left && point.x < rect.right) {
+		if (point.x >= rect.left && point.x < rect.right)
+		{
 
-			if (point.y >= rect.top  && point.y < rect.top + 6
-				&& !window->maximized)
+			if (point.y >= rect.top && point.y < rect.top + 6 && !window->maximized)
 			{
 				glfwSetCursor(window->window, window->vertResize);
 				return HTTOP;
 			}
-			else if (point.y >= rect.top
-				&& point.y < rect.top + 32 * window->mainWindow_->GetDPIScale()
-				&& ImGui::GetHoveredID() == 0 && GImGui->HoveredWindow == ImGui::FindWindowByName("##MainMenuBar"))
+			else if (point.y >= rect.top && point.y < rect.top + 32 * window->mainWindow_->GetDPIScale() && ImGui::GetHoveredID() == 0 && GImGui->HoveredWindow == ImGui::FindWindowByName("##MainMenuBar"))
 			{
 				return HTCAPTION;
 			}
@@ -381,7 +380,8 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		if (wparam == HTCAPTION)
 		{
 			WPARAM cmd = TrackPopupMenu(GetSystemMenu(hwnd, 0), TPM_RETURNCMD, LOWORD(lparam), HIWORD(lparam), 0, hwnd, nullptr);
-			if (cmd) PostMessage(hwnd, WM_SYSCOMMAND, cmd, 0);
+			if (cmd)
+				PostMessage(hwnd, WM_SYSCOMMAND, cmd, 0);
 			return 0;
 		}
 		break;

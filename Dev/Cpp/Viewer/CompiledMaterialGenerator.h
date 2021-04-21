@@ -2,8 +2,8 @@
 #pragma once
 
 #include "../Effekseer/Effekseer/Material/Effekseer.CompiledMaterial.h"
-#include "../Effekseer/Effekseer/Material/Effekseer.MaterialFile.h"
 #include "../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
+#include "../Effekseer/Effekseer/Material/Effekseer.MaterialFile.h"
 #include "DynamicLinkLibrary.h"
 #include <map>
 

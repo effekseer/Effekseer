@@ -3,8 +3,8 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.Setting.h"
-#include "Effekseer.RectF.h"
 #include "Effekseer.EffectLoader.h"
+#include "Effekseer.RectF.h"
 
 #include "Effekseer.CurveLoader.h"
 #include "Effekseer.MaterialLoader.h"
@@ -20,8 +20,8 @@
 #include "Renderer/Effekseer.TrackRenderer.h"
 
 #include "Effekseer.Effect.h"
-#include "IO/Effekseer.EfkEfcFactory.h"
 #include "Effekseer.ResourceManager.h"
+#include "IO/Effekseer.EfkEfcFactory.h"
 
 //----------------------------------------------------------------------------------
 //
