@@ -312,7 +312,6 @@ RendererImplemented::~RendererImplemented()
 		materialCompiler_->Release();
 		materialCompiler_ = nullptr;
 	}
-	LLGI::SafeRelease(graphicsDevice_);
 }
 
 void RendererImplemented::OnLostDevice()
@@ -342,9 +341,6 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	isReversedDepth_ = isReversedDepth;
 
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) { std::cout << message << std::endl; });
-
-	LLGI::SafeAddRef(graphicsDevice_);
-	LLGI::SafeAddRef(currentRenderPassPipelineState_);
 
 	// Generate vertex buffer
 	{
