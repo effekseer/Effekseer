@@ -149,7 +149,7 @@ void EffectPlatformDX12::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();
 
-	auto cl = static_cast<LLGI::CommandListDX12*>(commandList_);
+	auto cl = static_cast<LLGI::CommandListDX12*>(commandList_.get());
 	EffekseerRendererDX12::BeginCommandList(commandListEfk_, cl->GetCommandList());
 	GetRenderer()->SetCommandList(commandListEfk_);
 }

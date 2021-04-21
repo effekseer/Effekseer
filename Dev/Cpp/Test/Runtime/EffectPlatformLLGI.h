@@ -103,7 +103,7 @@ protected:
 	LLGI::Platform* platform_ = nullptr;
 	LLGI::Graphics* graphics_ = nullptr;
 	LLGI::SingleFrameMemoryPool* sfMemoryPool_ = nullptr;
-	LLGI::CommandList* commandList_ = nullptr;
+	std::shared_ptr<LLGI::CommandList> commandList_ = nullptr;
 	std::shared_ptr<LLGI::CommandListPool> commandListPool_ = nullptr;
 
 	Effekseer::RefPtr<EffekseerRenderer::CommandList> commandListEfk_ = nullptr;
