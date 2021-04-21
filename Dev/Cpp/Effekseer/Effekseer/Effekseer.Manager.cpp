@@ -1726,6 +1726,10 @@ void ManagerImplemented::StopWithoutRemoveDrawSet(DrawSet& drawSet)
 
 void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 {
+	assert(drawSet.ParameterPointer != nullptr);
+	auto effect = drawSet.ParameterPointer->GetRoot();
+	assert(effect != nullptr);
+
 	auto pGlobal = drawSet.GlobalPointer;
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
 
@@ -2348,7 +2352,7 @@ void ManagerImplemented::RequestToPlaySound(Instance* instance, const EffectNode
 	{
 		InstanceGlobal* instanceGlobal = instance->GetInstanceGlobal();
 		IRandObject& rand = instance->GetRandObject();
-			
+
 		SoundPlayer::InstanceParameter parameter;
 		parameter.Data = node->GetEffect()->GetWave(node->Sound.WaveId);
 		parameter.Volume = node->Sound.Volume.getValue(rand);

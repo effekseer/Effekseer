@@ -63,6 +63,37 @@ std::u16string GetDirectoryPathAsU16(const char* path)
 #endif
 }
 
+std::vector<uint8_t> LoadFile(const char16_t* path)
+{
+	char path8[256];
+	Effekseer::ConvertUtf16ToUtf8(path8, 256, path);
+
+	FILE* filePtr = NULL;
+#ifdef _WIN32
+	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
+#else
+	filePtr = fopen((const char*)path8, "rb");
+#endif
+
+	if (filePtr == nullptr)
+	{
+		printf("Failed to load %s./n", path8);
+		assert(0);
+	}
+
+	fseek(filePtr, 0, SEEK_END);
+	auto size = ftell(filePtr);
+	fseek(filePtr, 0, SEEK_SET);
+
+	std::vector<uint8_t> data;
+	data.resize(size);
+	fread(data.data(), 1, size, filePtr);
+	fclose(filePtr);
+
+	return data;
+}
+
+
 struct InternalTestHelper
 {
 	std::string Root;

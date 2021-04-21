@@ -351,15 +351,18 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 
 		auto key_ = kv.first;
 
-		if (m_data.count(kv.first) > 0)
+		auto found = m_data.find(kv.first);
+		if (found != m_data.end())
 		{
+			const auto& data = found->second;
+
 			if (m_materialPath.size() > 1)
 			{
-				m_effects[key_].EffectPtr->Reload(managers, managerCount, &(m_data[key_][0]), (int32_t)m_data.size(), &(m_materialPath[0]));
+				m_effects[key_].EffectPtr->Reload(managers, managerCount, data.data(), (int32_t)data.size(), m_materialPath.data());
 			}
 			else
 			{
-				m_effects[key_].EffectPtr->Reload(managers, managerCount, &(m_data[key_][0]), (int32_t)m_data.size());
+				m_effects[key_].EffectPtr->Reload(managers, managerCount, data.data(), (int32_t)data.size());
 			}
 		}
 	}
@@ -402,12 +405,12 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 			{
 				if (managers != nullptr)
 				{
-					auto& data_ = m_data[key];
+					const auto& data_ = m_data[key];
 
 					if (m_materialPath.size() > 1)
 					{
 						m_effects[key].EffectPtr->Reload(
-							managers, managerCount, data_.data(), (int32_t)data_.size(), &(m_materialPath[0]), reloadingThreadType);
+							managers, managerCount, data_.data(), (int32_t)data_.size(), m_materialPath.data(), reloadingThreadType);
 					}
 					else
 					{

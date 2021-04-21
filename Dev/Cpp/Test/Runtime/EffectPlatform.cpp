@@ -150,9 +150,9 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path, Effekseer::Vector3D
 		assert(0);
 	}
 
-	fseek(filePtr, SEEK_END, 0);
+	fseek(filePtr, 0, SEEK_END);
 	auto size = ftell(filePtr);
-	fseek(filePtr, SEEK_SET, 0);
+	fseek(filePtr, 0, SEEK_SET);
 
 	std::vector<uint8_t> data;
 	data.resize(size);
