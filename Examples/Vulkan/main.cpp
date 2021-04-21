@@ -30,7 +30,11 @@ int main(int argc, char** argv)
 	int32_t windowHeight = 720;
 
 	InitializeWindowAndDevice(windowWidth, windowHeight);
-	
+
+	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
+	// However, if it is disposed before the end of Vulkan, it will go wrong, so we add a scope.
+	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
+	// ただし、Vulkanの終了前に削除されるとおかしくなるので、スコープを追加する。
 	{
 
 		// Create a renderer of effects
