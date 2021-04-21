@@ -34,7 +34,8 @@ public:
 		Color _color;
 		Color _original;
 
-		union {
+		union
+		{
 			struct
 			{
 				Color _color;

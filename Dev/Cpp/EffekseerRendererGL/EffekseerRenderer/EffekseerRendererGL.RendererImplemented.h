@@ -199,7 +199,7 @@ public:
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
-	
+
 	void SetVertexArray(VertexArray* vertexArray);
 
 	void SetLayout(Shader* shader);
@@ -238,7 +238,7 @@ public:
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override
 	{
-		return graphicsDevice_;	
+		return graphicsDevice_;
 	}
 
 	virtual int GetRef() override

@@ -265,7 +265,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	}
 	else
 	{
-		model =parameter.EffectPointer->GetModel(parameter.ModelIndex);
+		model = parameter.EffectPointer->GetModel(parameter.ModelIndex);
 	}
 
 	if (model == nullptr)

@@ -174,7 +174,7 @@ public:
 			return 0.0f;
 		}
 
-		const auto deg = powf(distance+ 1.0f, fffc.Power) * powf(tubeRadius - ffft.MinRadius + 1.0f, ffft.RadiusPower);
+		const auto deg = powf(distance + 1.0f, fffc.Power) * powf(tubeRadius - ffft.MinRadius + 1.0f, ffft.RadiusPower);
 
 		if (deg == 0.0f)
 		{

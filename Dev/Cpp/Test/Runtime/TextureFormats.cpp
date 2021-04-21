@@ -67,23 +67,23 @@ void TextureFormatsTest()
 #endif
 
 #if !defined(__FROM_CI__)
-//#ifdef __EFFEKSEER_BUILD_VULKAN__
-//	{
-//		auto platform = std::make_shared<EffectPlatformVulkan>();
-//		BasicRuntimeTestPlatform(platform.get(), "", "_Vulkan");
-//		platform->Terminate();
-//	}
-//#endif
+	//#ifdef __EFFEKSEER_BUILD_VULKAN__
+	//	{
+	//		auto platform = std::make_shared<EffectPlatformVulkan>();
+	//		BasicRuntimeTestPlatform(platform.get(), "", "_Vulkan");
+	//		platform->Terminate();
+	//	}
+	//#endif
 
 #ifdef _WIN32
 	{
 
 #ifdef __EFFEKSEER_BUILD_DX12__
-	//	{
-	//		auto platform = std::make_shared<EffectPlatformDX12>();
-	//		TextureFormatsPlatform(platform.get(), "", "_DX12");
-	//		platform->Terminate();
-	//	}
+		//	{
+		//		auto platform = std::make_shared<EffectPlatformDX12>();
+		//		TextureFormatsPlatform(platform.get(), "", "_DX12");
+		//		platform->Terminate();
+		//	}
 #endif
 
 		{

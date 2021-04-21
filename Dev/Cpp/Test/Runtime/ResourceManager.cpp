@@ -31,7 +31,7 @@ void ResourceManager_Basic()
 	auto texture2 = resourceManager->LoadTexture(u"Test", Effekseer::TextureType::Color);
 	if (texture1 != texture2)
 	{
-        throw std::string("Failed.");
+		throw std::string("Failed.");
 	}
 
 	resourceManager->UnloadTexture(texture1);
@@ -39,12 +39,12 @@ void ResourceManager_Basic()
 
 	if (texture1->GetRef() != 2)
 	{
-        throw std::string("Failed.");
+		throw std::string("Failed.");
 	}
 	texture2.Reset();
 	if (texture1->GetRef() != 1)
 	{
-        throw std::string("Failed.");
+		throw std::string("Failed.");
 	}
 	texture1.Reset();
 }

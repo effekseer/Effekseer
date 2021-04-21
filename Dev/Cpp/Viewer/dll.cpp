@@ -511,7 +511,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				setting_ = Effekseer::Setting::Create();
 
 				textureLoader_ = Effekseer::RefPtr<TextureLoader>(new TextureLoader(graphics_,
-					isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma));
+																					isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma));
 
 				setting_->SetTextureLoader(textureLoader_);
 
@@ -687,10 +687,14 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 
 	//handles_.clear();
 
-	if (textureLoader_ != nullptr) textureLoader_->RootPath = std::u16string(Path);
-	if (modelLoader_ != nullptr) modelLoader_->RootPath = std::u16string(Path);
-	if (materialLoader_ != nullptr) materialLoader_->RootPath = std::u16string(Path);
-	if (soundLoader_ != nullptr) soundLoader_->RootPath = std::u16string(Path);
+	if (textureLoader_ != nullptr)
+		textureLoader_->RootPath = std::u16string(Path);
+	if (modelLoader_ != nullptr)
+		modelLoader_->RootPath = std::u16string(Path);
+	if (materialLoader_ != nullptr)
+		materialLoader_->RootPath = std::u16string(Path);
+	if (soundLoader_ != nullptr)
+		soundLoader_->RootPath = std::u16string(Path);
 
 	// To release caches
 	if (effect_ != nullptr)

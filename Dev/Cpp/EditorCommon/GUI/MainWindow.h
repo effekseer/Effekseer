@@ -42,9 +42,15 @@ public:
 
 	void SetState(const MainWindowState& state);
 
-	float GetDPIScale() const { return dpiScale_; }
+	float GetDPIScale() const
+	{
+		return dpiScale_;
+	}
 
-	bool IsFrameless() const { return isFrameless; }
+	bool IsFrameless() const
+	{
+		return isFrameless;
+	}
 
 	static bool Initialize(const char16_t* title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode);
 

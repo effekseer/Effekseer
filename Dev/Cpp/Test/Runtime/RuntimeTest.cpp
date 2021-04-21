@@ -118,7 +118,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 
 	{
 		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
-		
+
 		Effekseer::Matrix44 mat;
 		mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
 		platform->GetRenderer()->SetCameraMatrix(mat);
@@ -729,7 +729,7 @@ void DX11DefferedContextTest()
 		{
 			platform->Update();
 		}
-		
+
 		platform->Terminate();
 	}
 #endif

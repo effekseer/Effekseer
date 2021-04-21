@@ -5,10 +5,10 @@
 #endif
 
 #include <functional>
+#include <iostream>
 #include <map>
 #include <regex>
 #include <string>
-#include <iostream>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../3rdParty/stb/stb_image_write.h"
@@ -92,7 +92,6 @@ std::vector<uint8_t> LoadFile(const char16_t* path)
 
 	return data;
 }
-
 
 struct InternalTestHelper
 {

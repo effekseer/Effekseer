@@ -22,11 +22,11 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path)
 	{
 		spdlog::trace("DefaultStaticFileReader : {} : Failed to load.", utf16_to_utf8(path));
 		length_ = 0;
-		return;	
+		return;
 	}
 	else
 	{
-		spdlog::trace("DefaultStaticFileReader : {} : Succseeded in loading.", utf16_to_utf8(path));	
+		spdlog::trace("DefaultStaticFileReader : {} : Succseeded in loading.", utf16_to_utf8(path));
 	}
 
 	if (length_ < 0)
@@ -42,7 +42,7 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path)
 
 	if (buffer_.size() > 0)
 	{
-		stream_.read(reinterpret_cast<char*>(buffer_.data()), GetSize());	
+		stream_.read(reinterpret_cast<char*>(buffer_.data()), GetSize());
 	}
 	else
 	{

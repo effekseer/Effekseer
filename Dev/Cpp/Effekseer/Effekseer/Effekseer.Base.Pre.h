@@ -986,7 +986,7 @@ struct NodeRendererBasicParameter
 
 		for (size_t i = 2; i < TextureIndexes.size(); i++)
 		{
-			if(TextureIndexes[i] >= 0)
+			if (TextureIndexes[i] >= 0)
 			{
 				return true;
 			}

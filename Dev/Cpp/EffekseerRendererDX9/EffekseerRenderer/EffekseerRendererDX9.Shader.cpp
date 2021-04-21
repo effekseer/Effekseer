@@ -119,7 +119,8 @@ Shader* Shader::Create(RendererImplemented* renderer,
 					  decl,
 					  vs,
 					  ps,
-					  vertexDeclaration, hasRefCount);
+					  vertexDeclaration,
+					  hasRefCount);
 }
 
 //----------------------------------------------------------------------------------

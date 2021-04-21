@@ -34,8 +34,8 @@ private:
 	GLFWwindow* window = nullptr;
 	bool isOpenGLMode = false;
 	DeviceType deviceType = DeviceType::OpenGL;
-	bool        minimized = false;
-	bool        maximized = false;
+	bool minimized = false;
+	bool maximized = false;
 
 #ifndef _WIN32
 	GLuint vao;
@@ -43,7 +43,7 @@ private:
 
 #ifdef _WIN32
 	GLFWcursor* vertResize = nullptr;
-	WNDPROC     glfwWndProc = nullptr;
+	WNDPROC glfwWndProc = nullptr;
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 #endif
 

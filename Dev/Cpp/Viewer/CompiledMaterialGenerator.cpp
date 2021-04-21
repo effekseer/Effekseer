@@ -143,8 +143,8 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 			return binary != nullptr;
 		};
 
-		if(!compile_and_store(Effekseer::MaterialShaderType::Standard, vsStandardBinary, psStandardBinary) ||
-			!compile_and_store(Effekseer::MaterialShaderType::Model, vsModelBinary, psModelBinary) || 
+		if (!compile_and_store(Effekseer::MaterialShaderType::Standard, vsStandardBinary, psStandardBinary) ||
+			!compile_and_store(Effekseer::MaterialShaderType::Model, vsModelBinary, psModelBinary) ||
 			!compile_and_store(Effekseer::MaterialShaderType::Refraction, vsRefractionStandardBinary, psRefractionStandardBinary) ||
 			!compile_and_store(Effekseer::MaterialShaderType::RefractionModel, vsRefractionModelBinary, psRefractionModelBinary))
 		{

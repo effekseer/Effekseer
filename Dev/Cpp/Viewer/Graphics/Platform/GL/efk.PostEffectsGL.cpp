@@ -297,9 +297,9 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	// Setup VAOs
 	vaoExtract = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderExtract.get());
 	vaoDownsample = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderDownsample.get());
-	vaoBlend = blitter.CreateVAO(renderer->GetGraphicsDevice(),shaderBlend.get());
-	vaoBlurH = blitter.CreateVAO(renderer->GetGraphicsDevice(),shaderBlurH.get());
-	vaoBlurV = blitter.CreateVAO(renderer->GetGraphicsDevice(),shaderBlurV.get());
+	vaoBlend = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderBlend.get());
+	vaoBlurH = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderBlurH.get());
+	vaoBlurV = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderBlurV.get());
 }
 
 BloomEffectGL::~BloomEffectGL()

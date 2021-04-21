@@ -85,7 +85,6 @@ private:
 
 	std::shared_ptr<StaticMesh> staticMesh_;
 
-
 public:
 	static std::shared_ptr<StaticMeshRenderer> Create(RefPtr<Backend::GraphicsDevice> graphicsDevice);
 	StaticMeshRenderer();

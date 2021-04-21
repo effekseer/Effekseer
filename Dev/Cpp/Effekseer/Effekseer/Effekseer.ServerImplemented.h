@@ -52,7 +52,6 @@ private:
 	};
 
 private:
-
 	struct EffectParameter
 	{
 		EffectRef EffectPtr;

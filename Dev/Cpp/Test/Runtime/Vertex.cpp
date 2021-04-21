@@ -5,7 +5,6 @@
 namespace EffekseerRenderer
 {
 
-
 } // namespace EffekseerRenderer
 
 template <typename T>

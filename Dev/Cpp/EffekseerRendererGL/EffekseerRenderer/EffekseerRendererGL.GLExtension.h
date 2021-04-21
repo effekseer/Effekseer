@@ -242,7 +242,6 @@ void glFramebufferTexture2D(GLenum target,
 							GLuint texture,
 							GLint level);
 
-
 void glDrawBuffers(GLsizei n, const GLenum* bufs);
 
 //----------------------------------------------------------------------------------

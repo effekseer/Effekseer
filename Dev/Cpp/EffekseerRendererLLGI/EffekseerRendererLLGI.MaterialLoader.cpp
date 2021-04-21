@@ -302,7 +302,7 @@ MaterialLoader ::~MaterialLoader()
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
 		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
-		
+
 		// compile
 		std::string log;
 
@@ -364,7 +364,7 @@ MaterialLoader ::~MaterialLoader()
 
 		// compiled
 		Effekseer::MaterialFile materialFile;
-		if(!materialFile.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size())))
+		if (!materialFile.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size())))
 		{
 			std::cout << "Error : Invalid material is loaded." << std::endl;
 			return nullptr;
@@ -382,7 +382,7 @@ MaterialLoader ::~MaterialLoader()
 		}
 
 		Effekseer::MaterialFile materialFile;
-		if(!materialFile.Load((const uint8_t*)data, size))
+		if (!materialFile.Load((const uint8_t*)data, size))
 		{
 			std::cout << "Error : Invalid material is loaded." << std::endl;
 			return nullptr;

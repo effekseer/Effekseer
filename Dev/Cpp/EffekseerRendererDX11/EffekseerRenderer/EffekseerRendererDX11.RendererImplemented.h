@@ -107,7 +107,6 @@ private:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
 public:
-
 	RendererImplemented(int32_t squareMaxCount);
 
 	~RendererImplemented();

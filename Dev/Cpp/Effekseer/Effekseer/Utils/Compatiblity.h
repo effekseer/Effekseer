@@ -24,7 +24,6 @@ inline void LoadFloatEasing(ParameterEasingFloat& param, uint8_t*& pos, int vers
 		pos += sizeof(easing_float);
 	}
 }
-}
-
+} // namespace Effekseer
 
 #endif

@@ -31,7 +31,7 @@ DeviceObject::DeviceObject(RendererImplemented* renderer, bool hasRefCount)
 DeviceObject::~DeviceObject()
 {
 	m_renderer->m_deviceObjects.erase(this);
-	if(hasRefCount_)
+	if (hasRefCount_)
 	{
 		ES_SAFE_RELEASE(m_renderer);
 	}
