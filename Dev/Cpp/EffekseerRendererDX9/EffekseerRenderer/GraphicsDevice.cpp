@@ -83,6 +83,12 @@ VertexBuffer::~VertexBuffer()
 
 bool VertexBuffer::Allocate(int32_t size, bool isDynamic)
 {
+	auto device = graphicsDevice_->GetDevice();
+	if (device == nullptr)
+	{
+		return false;
+	}
+
 	D3DPOOL pool = D3DPOOL_MANAGED;
 	int usage = D3DUSAGE_WRITEONLY;
 
@@ -93,13 +99,13 @@ bool VertexBuffer::Allocate(int32_t size, bool isDynamic)
 	}
 
 	IDirect3DVertexBuffer9* vb = nullptr;
-	HRESULT hr = graphicsDevice_->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
+	HRESULT hr = device->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
 
 	if (FAILED(hr))
 	{
 		// DirectX9Ex cannot use D3DPOOL_MANAGED
 		pool = D3DPOOL_DEFAULT;
-		hr = graphicsDevice_->GetDevice()->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
+		hr = device->CreateVertexBuffer(size, usage, 0, pool, &vb, nullptr);
 	}
 
 	buffer_ = Effekseer::CreateUniqueReference(vb);
@@ -177,11 +183,16 @@ IndexBuffer::~IndexBuffer()
 
 bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 {
+	auto device = graphicsDevice_->GetDevice();
+	if (device == nullptr)
+	{
+		return false;
+	}
 
 	HRESULT hr;
 
 	IDirect3DIndexBuffer9* ib = nullptr;
-	hr = graphicsDevice_->GetDevice()->CreateIndexBuffer(
+	hr = device->CreateIndexBuffer(
 		elementCount * stride,
 		D3DUSAGE_WRITEONLY,
 		stride == 4 ? D3DFMT_INDEX32 : D3DFMT_INDEX16,
@@ -192,7 +203,7 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 	if (FAILED(hr))
 	{
 		// DirectX9Ex cannot use D3DPOOL_MANAGED
-		hr = graphicsDevice_->GetDevice()->CreateIndexBuffer(elementCount * stride,
+		hr = device->CreateIndexBuffer(elementCount * stride,
 															 D3DUSAGE_WRITEONLY,
 															 stride == 4 ? D3DFMT_INDEX32 : D3DFMT_INDEX16,
 															 D3DPOOL_DEFAULT,
