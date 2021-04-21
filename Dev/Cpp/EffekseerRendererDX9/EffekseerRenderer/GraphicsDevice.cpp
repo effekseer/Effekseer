@@ -60,6 +60,10 @@ void DeviceObject::OnLostDevice()
 {
 }
 
+void DeviceObject::OnChangeDevice()
+{
+}
+
 void DeviceObject::OnResetDevice()
 {
 }
@@ -114,6 +118,12 @@ void VertexBuffer::OnLostDevice()
 	{
 		Deallocate();
 	}
+}
+
+void VertexBuffer::OnChangeDevice()
+{
+	Deallocate();
+	Allocate(size_, isDynamic_);
 }
 
 void VertexBuffer::OnResetDevice()
@@ -207,6 +217,12 @@ void IndexBuffer::OnLostDevice()
 {
 	// Index buffer is not losted
 	// Deallocate();
+}
+
+void IndexBuffer::OnChangeDevice()
+{
+	Deallocate();
+	Allocate(elementCount_, stride_);
 }
 
 void IndexBuffer::OnResetDevice()
@@ -431,8 +447,17 @@ bool Texture::Init(IDirect3DTexture9* texture, std::function<void(IDirect3DTextu
 	onLostDevice_ = onLostDevice;
 	onResetDevice_ = onResetDevice;
 
-	texture_.reset(texture);
-	surface_.reset();
+	texture_ = Effekseer::CreateUniqueReference(texture, true);
+
+	IDirect3DSurface9* surface = nullptr;
+	auto hr = texture->GetSurfaceLevel(0, &surface);
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	surface_ = Effekseer::CreateUniqueReference(surface);
 
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
@@ -447,35 +472,48 @@ void Texture::OnLostDevice()
 {
 	if (onLostDevice_)
 	{
-		if (texture_ != nullptr)
-		{
-			texture_->AddRef();		
-		}
-
 		auto texture = texture_.get();
 		onLostDevice_(texture);
-		texture_.reset(texture);
+		keyTexture_ = texture;
 	}
+
+	texture_.reset();
+	surface_.reset();
+}
+
+void Texture::OnChangeDevice()
+{
+	texture_.reset();
+	surface_.reset();
+
+	// TODO restore
 }
 
 void Texture::OnResetDevice()
 {
 	if (onResetDevice_)
 	{
-		if (texture_ != nullptr)
-		{
-			texture_->AddRef();
-		}
-		
-		auto texture = texture_.get();
+		auto texture = keyTexture_;
 		onResetDevice_(texture);
-		texture_.reset(texture);
+
+		texture_ = Effekseer::CreateUniqueReference(texture, true);
+		keyTexture_ = nullptr;
 
 		if (texture_ != nullptr)
 		{
 			D3DSURFACE_DESC desc;
 			texture_->GetLevelDesc(0, &desc);
 			size_ = {(int32_t)desc.Width, (int32_t)desc.Height};
+
+			IDirect3DSurface9* surface = nullptr;
+			auto hr = texture->GetSurfaceLevel(0, &surface);
+
+			if (FAILED(hr))
+			{
+				return;
+			}
+
+			surface_ = Effekseer::CreateUniqueReference(surface);
 		}
 	}
 }
@@ -499,6 +537,15 @@ void GraphicsDevice::LostDevice()
 	for (auto& o : objects_)
 	{
 		o->OnLostDevice();
+	}
+}
+
+void GraphicsDevice::ChangeDevice(IDirect3DDevice9* device)
+{
+	device_ = Effekseer::CreateUniqueReference(device, true);
+	for (auto& o : objects_)
+	{
+		o->OnChangeDevice();
 	}
 }
 

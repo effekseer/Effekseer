@@ -207,6 +207,8 @@ void RendererImplemented::OnLostDevice()
 	}
 
 	GetImpl()->DeleteProxyTextures(this);
+
+	graphicsDevice_->LostDevice();
 }
 
 //----------------------------------------------------------------------------------
@@ -214,6 +216,8 @@ void RendererImplemented::OnLostDevice()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnResetDevice()
 {
+	graphicsDevice_->ResetDevice();
+
 	for (auto& device : m_deviceObjects)
 	{
 		device->OnResetDevice();
@@ -979,6 +983,8 @@ void RendererImplemented::ChangeDevice(LPDIRECT3DDEVICE9 device)
 	{
 		device->OnChangeDevice();
 	}
+
+	graphicsDevice_->ChangeDevice(device);
 
 	m_isChangedDevice = true;
 }

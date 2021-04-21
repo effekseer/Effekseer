@@ -127,6 +127,9 @@ Shader* Shader::Create(RendererImplemented* renderer,
 //----------------------------------------------------------------------------------
 void Shader::OnLostDevice()
 {
+	ES_SAFE_RELEASE(m_vertexShader);
+	ES_SAFE_RELEASE(m_pixelShader);
+	ES_SAFE_RELEASE(m_vertexDeclaration);
 }
 
 //----------------------------------------------------------------------------------
