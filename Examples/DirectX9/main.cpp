@@ -122,6 +122,10 @@ int main(int argc, char** argv)
 			// DirectXの処理
 			ClearScreen();
 
+			// Update a time
+			// 時間を更新する
+			renderer->SetTime(time / 60.0f);
+
 			// Begin to rendering effects
 			// エフェクトの描画開始処理を行う。
 			renderer->BeginRendering();

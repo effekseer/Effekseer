@@ -152,10 +152,13 @@ void BasicRuntimeDeviceLostTest()
 	srand(0);
 
 	EffectPlatformInitializingParameter param;
-
+	// To make fullscreen enabled
+	param.WindowSize = {640, 480};
 	platform->Initialize(param);
 
 	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/Model_Parameters1.efk").c_str());
+	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel01.efkefc").c_str());
 
 	for (size_t i = 0; i < 20; i++)
 	{
@@ -753,6 +756,6 @@ TestRegister Runtime_BasicRuntimeTest("Runtime.BasicRuntimeTest", []() -> void {
 
 TestRegister Runtime_DX11DefferedContextTest("Runtime.DX11DefferedContextTest", []() -> void { DX11DefferedContextTest(); });
 
-// TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void { BasicRuntimeDeviceLostTest(); });
+TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void { BasicRuntimeDeviceLostTest(); });
 
 #endif

@@ -219,7 +219,7 @@ void EffectPlatformMetal::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();
 
-	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_);
+	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
 	EffekseerRendererMetal::BeginCommandList(commandListEfk_, cl->GetImpl()->renderEncoder);
 	GetRenderer()->SetCommandList(commandListEfk_);
 }

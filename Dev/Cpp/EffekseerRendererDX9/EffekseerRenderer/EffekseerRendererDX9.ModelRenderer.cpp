@@ -143,7 +143,7 @@ ModelRenderer::ModelRenderer(const RendererImplementedRef& renderer,
 
 	VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
 
-	graphicsDevice_ = new Backend::GraphicsDevice(renderer->GetDevice());
+	graphicsDevice_ = renderer->GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 }
 
 //----------------------------------------------------------------------------------
@@ -157,8 +157,6 @@ ModelRenderer::~ModelRenderer()
 	ES_SAFE_DELETE(shader_lit_);
 	ES_SAFE_DELETE(shader_unlit_);
 	ES_SAFE_DELETE(shader_distortion_);
-
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 //----------------------------------------------------------------------------------
@@ -283,7 +281,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	model->StoreBufferToGPU(graphicsDevice_);
+	model->StoreBufferToGPU(graphicsDevice_.Get());
 	if (!model->GetIsBufferStoredOnGPU())
 	{
 		return;
@@ -291,7 +289,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 
 	if (m_renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
 	{
-		model->GenerateWireIndexBuffer(graphicsDevice_);
+		model->GenerateWireIndexBuffer(graphicsDevice_.Get());
 		if (!model->GetIsWireIndexBufferGenerated())
 		{
 			return;

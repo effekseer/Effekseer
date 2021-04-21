@@ -16,13 +16,7 @@ namespace EffekseerRendererDX9
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-//using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
-/**
-	@brief	描画クラス
-	@note
-	ツール向けの描画機能。
-*/
 class RendererImplemented;
 using RendererImplementedRef = ::Effekseer::RefPtr<RendererImplemented>;
 
@@ -31,8 +25,6 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 	friend class DeviceObject;
 
 private:
-	LPDIRECT3DDEVICE9 m_d3d_device;
-
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer = nullptr;
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
@@ -131,10 +123,7 @@ public:
 	void OnLostDevice();
 	void OnResetDevice();
 
-	/**
-		@brief	初期化
-	*/
-	bool Initialize(LPDIRECT3DDEVICE9 device);
+	bool Initialize(Backend::GraphicsDeviceRef graphicsDevice);
 
 	void SetRestorationOfStatesFlag(bool flag);
 
@@ -147,11 +136,6 @@ public:
 		@brief	描画終了
 	*/
 	bool EndRendering();
-
-	/**
-		@brief	デバイス取得
-	*/
-	LPDIRECT3DDEVICE9 GetDevice();
 
 	/**
 		@brief	頂点バッファ取得
@@ -254,6 +238,8 @@ public:
 	void ResetRenderState();
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override;
+
+	LPDIRECT3DDEVICE9 GetDevice() override;
 
 	virtual int GetRef()
 	{

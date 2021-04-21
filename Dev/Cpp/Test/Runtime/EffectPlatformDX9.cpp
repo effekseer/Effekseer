@@ -46,6 +46,13 @@ void DistortingCallbackDX9::Lost()
 	ES_SAFE_RELEASE(texture);
 }
 
+void DistortingCallbackDX9::ChangeDevice(LPDIRECT3DDEVICE9 device)
+{
+	Effekseer::SafeAddRef(device);
+	Effekseer::SafeRelease(this->device);
+	this->device = device;
+}
+
 void DistortingCallbackDX9::Reset()
 {
 	device->CreateTexture(texWidth_, texHeight_, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
@@ -248,12 +255,34 @@ void EffectPlatformDX9::ResetDevice()
 		d3dp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 	}
 
-	hr = device_->Reset(&d3dp);
+	bool newDevice = true;
 
-	if (FAILED(hr))
+	if (newDevice)
 	{
-		throw "Failed : ResetDevice";
-		return;
+		distorting_->ChangeDevice(nullptr);
+		renderer->ChangeDevice(nullptr);
+		device_->Release();
+
+		hr =
+			d3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, (HWND)GetNativePtr(0), D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dp, &device_);
+
+		if (FAILED(hr))
+		{
+			throw "Failed : CreateDevice";
+		}
+
+		renderer->ChangeDevice(device_);
+		distorting_->ChangeDevice(device_);
+	}
+	else
+	{
+		hr = device_->Reset(&d3dp);
+
+		if (FAILED(hr))
+		{
+			throw "Failed : ResetDevice";
+			return;
+		}
 	}
 
 	distorting_->Reset();
