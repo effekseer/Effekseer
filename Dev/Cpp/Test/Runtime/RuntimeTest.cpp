@@ -465,7 +465,10 @@ void ReloadTest()
 		platform->TakeScreenshot("Reload_0.png");
 
 		auto manager = platform->GetManager();
-		platform->GetEffects()[0]->Reload(&manager, 1, (GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		auto effectData = LoadFile((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		platform->GetEffects()[0]->Reload(&manager, 1, effectData.data(), static_cast<int32_t>(effectData.size()));
 
 		//platform->Update();
 
