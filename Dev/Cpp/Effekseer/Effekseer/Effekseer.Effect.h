@@ -663,7 +663,7 @@ struct EffectBasicRenderParameter
 	{
 		float Color[4];
 		float Threshold;
-		int32_t ColorScaling;
+		float ColorScaling;
 	} EdgeParam;
 
 	AlphaBlendType AlphaBlend;

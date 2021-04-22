@@ -1279,9 +1279,9 @@ struct ParameterAlphaCutoff
 		FCurveScalar* Threshold;
 	} FCurve;
 
-	float EdgeThreshold;
+	float EdgeThreshold = 0.0f;
 	Color EdgeColor;
-	float EdgeColorScaling;
+	float EdgeColorScaling = 0.0f;
 
 	ParameterAlphaCutoff()
 		: Type(ParameterAlphaCutoff::EType::FIXED)

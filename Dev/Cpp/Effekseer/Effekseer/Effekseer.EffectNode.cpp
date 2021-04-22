@@ -870,21 +870,20 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.BlendUVDistortionTextureIndex = RendererCommon.BlendUVDistortionTextureIndex;
 	param.BlendUVDistortionTexWrapType = RendererCommon.WrapTypes[6];
 
-	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION)
+	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION && RendererCommon.UVs[0].Animation.InterpolationType != 0)
 	{
-		if (RendererCommon.UVs[0].Animation.InterpolationType != 0)
-		{
-			param.FlipbookParams.Enable = true;
-		}
-		else
-		{
-			param.FlipbookParams.Enable = false;
-		}
+		param.FlipbookParams.Enable = true;
+		param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
+		param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
+		param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
 	}
-
-	param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
-	param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
-	param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
+	else
+	{
+		param.FlipbookParams.Enable = false;
+		param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
+		param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
+		param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
+	}
 
 	param.MaterialType = RendererCommon.MaterialType;
 
