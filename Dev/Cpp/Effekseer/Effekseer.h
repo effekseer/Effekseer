@@ -3547,7 +3547,7 @@ struct EffectBasicRenderParameter
 	{
 		float Color[4];
 		float Threshold;
-		int32_t ColorScaling;
+		float ColorScaling;
 	} EdgeParam;
 
 	AlphaBlendType AlphaBlend;
@@ -4936,3 +4936,4 @@ public:
 #endif // __EFFEKSEER_CLIENT_H__
 
 #include "Effekseer.Modules.h"
+

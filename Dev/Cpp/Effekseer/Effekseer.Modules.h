@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "Effekseer.SIMD.h"
 #include "Effekseer.h"
 #include "Effekseer.SIMD.h"
 
@@ -8,6 +7,7 @@
 
 #ifndef __EFFEKSEER_PARAMETERS_H__
 #define __EFFEKSEER_PARAMETERS_H__
+
 
 namespace Effekseer
 {
@@ -785,6 +785,7 @@ public:
 #ifndef __EFFEKSEER_MODEL_H__
 #define __EFFEKSEER_MODEL_H__
 
+
 namespace Effekseer
 {
 
@@ -892,6 +893,7 @@ public:
 #ifndef __EFFEKSEER_MODELLOADER_H__
 #define __EFFEKSEER_MODELLOADER_H__
 
+
 namespace Effekseer
 {
 
@@ -957,6 +959,7 @@ public:
 
 #ifndef __EFFEKSEER_MATERIALLOADER_H__
 #define __EFFEKSEER_MATERIALLOADER_H__
+
 
 namespace Effekseer
 {
@@ -1040,6 +1043,7 @@ public:
 
 #ifndef __EFFEKSEER_MODEL_H__
 #define __EFFEKSEER_MODEL_H__
+
 
 namespace Effekseer
 {
@@ -1493,8 +1497,8 @@ public:
   //----------------------------------------------------------------------------------
 #endif // __EFFEKSEER_MODELLOADER_H__
 
-#ifndef __EFFEKSEER_SOUND_PLAYER_H__
-#define __EFFEKSEER_SOUND_PLAYER_H__
+#ifndef	__EFFEKSEER_SOUND_PLAYER_H__
+#define	__EFFEKSEER_SOUND_PLAYER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -1517,38 +1521,34 @@ class SoundPlayer : public ReferenceObject
 public:
 	struct InstanceParameter
 	{
-		SoundDataRef Data;
-		float Volume;
-		float Pan;
-		float Pitch;
-		bool Mode3D;
-		Vector3D Position;
-		float Distance;
-		void* UserData;
+		SoundDataRef	Data;
+		float		Volume;
+		float		Pan;
+		float		Pitch;
+		bool		Mode3D;
+		Vector3D	Position;
+		float		Distance;
+		void*		UserData;
 	};
 
 public:
-	SoundPlayer()
-	{
-	}
+	SoundPlayer() {}
 
-	virtual ~SoundPlayer()
-	{
-	}
+	virtual ~SoundPlayer() {}
 
-	virtual SoundHandle Play(SoundTag tag, const InstanceParameter& parameter) = 0;
+	virtual SoundHandle Play( SoundTag tag, const InstanceParameter& parameter ) = 0;
+	
+	virtual void Stop( SoundHandle handle, SoundTag tag ) = 0;
 
-	virtual void Stop(SoundHandle handle, SoundTag tag) = 0;
+	virtual void Pause( SoundHandle handle, SoundTag tag, bool pause ) = 0;
 
-	virtual void Pause(SoundHandle handle, SoundTag tag, bool pause) = 0;
+	virtual bool CheckPlaying( SoundHandle handle, SoundTag tag ) = 0;
 
-	virtual bool CheckPlaying(SoundHandle handle, SoundTag tag) = 0;
+	virtual void StopTag( SoundTag tag ) = 0;
 
-	virtual void StopTag(SoundTag tag) = 0;
+	virtual void PauseTag( SoundTag tag, bool pause ) = 0;
 
-	virtual void PauseTag(SoundTag tag, bool pause) = 0;
-
-	virtual bool CheckPlayingTag(SoundTag tag) = 0;
+	virtual bool CheckPlayingTag( SoundTag tag ) = 0;
 
 	virtual void StopAll() = 0;
 };
@@ -1556,11 +1556,11 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-} // namespace Effekseer
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif // __EFFEKSEER_SOUND_PLAYER_H__
+#endif	// __EFFEKSEER_SOUND_PLAYER_H__
 
 #ifndef __EFFEKSEER_SOUNDLOADER_H__
 #define __EFFEKSEER_SOUNDLOADER_H__
