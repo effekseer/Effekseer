@@ -342,12 +342,12 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 
 	for (auto& kv : m_effects)
 	{
-		if (kv.second.IsRegistering)
+		if (kv.second.IsRegistered)
 		{
 			continue;
 		}
 
-		kv.second.IsRegistering = false;
+		kv.second.IsRegistered = true;
 
 		auto key_ = kv.first;
 
