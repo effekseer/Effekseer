@@ -1280,7 +1280,7 @@ struct ParameterAlphaCutoff
 	} FCurve;
 
 	float EdgeThreshold = 0.0f;
-	Color EdgeColor;
+	Color EdgeColor = Color(0, 0, 0, 0);
 	float EdgeColorScaling = 0.0f;
 
 	ParameterAlphaCutoff()
