@@ -1290,7 +1290,7 @@ bool EffectImplemented::Reload(ManagerRef* managers,
 	auto originalMag = this->GetMaginification() / this->m_maginificationExternal;
 	auto originalMagExt = this->m_maginificationExternal;
 
-	isReloadingOnRenderingThread = true;
+	isReloadingOnRenderingThread = reloadingThreadType == ReloadingThreadType::Render;
 	Reset();
 	Load(data, size, originalMag * originalMagExt, matPath, reloadingThreadType);
 
@@ -1353,7 +1353,7 @@ bool EffectImplemented::Reload(
 		lockCount++;
 	}
 
-	isReloadingOnRenderingThread = true;
+	isReloadingOnRenderingThread = reloadingThreadType == ReloadingThreadType::Render;
 	Reset();
 	Load(data, size, m_maginificationExternal, materialPath, reloadingThreadType);
 	isReloadingOnRenderingThread = false;
