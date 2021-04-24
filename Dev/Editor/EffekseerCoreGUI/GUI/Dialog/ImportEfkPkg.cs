@@ -139,15 +139,21 @@ namespace Effekseer.GUI.Dialog
 					Manager.NativeManager.InputText("###SSourceFilePath", sourceFilePath, swig.InputTextFlags.ReadOnly);
 					Manager.NativeManager.PopItemWidth();
 				}
+
+				Manager.NativeManager.Spacing();
+				Manager.NativeManager.Spacing();
+
 				{
 					var text = MultiLanguageTextProvider.GetText("ImportDestinationDirectory");
-					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetTextLineHeightWithSpacing());
+					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetFrameHeight());
 					Manager.NativeManager.Text(text);
+					Manager.NativeManager.SameLine();
 
+					Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - Manager.NativeManager.GetFrameHeight() + Manager.NativeManager.GetTextLineHeight());
 					if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Select")))
 					{
 						var directory = swig.FileDialog.PickFolder(Directory.GetCurrentDirectory());
-						if(!string.IsNullOrEmpty(directory))
+						if (!string.IsNullOrEmpty(directory))
 						{
 							targetDirPath = directory;
 							targetDirPathValid = Directory.Exists(targetDirPath);
@@ -264,7 +270,7 @@ namespace Effekseer.GUI.Dialog
 				// destination file
 				if (import.DoesImport)
 				{
-					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetTextLineHeight());
+					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetFrameHeight());
 					if (Manager.NativeManager.InputText(import.GetStateIcon() + "###" +
 						file.HashName, import.DestinationName))
 					{
