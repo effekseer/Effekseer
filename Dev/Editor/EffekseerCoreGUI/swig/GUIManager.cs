@@ -1471,6 +1471,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void TimelineNode(string title) {
+    EffekseerNativePINVOKE.GUIManager_TimelineNode(swigCPtr, title);
+  }
+
   public void EndNodeFrameTimeline() {
     EffekseerNativePINVOKE.GUIManager_EndNodeFrameTimeline(swigCPtr);
   }

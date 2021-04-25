@@ -12,8 +12,8 @@ namespace Effekseer.GUI.Dock
 
 
 
-		Component.Enum renderMode;
-		Component.Enum viewMode;
+		protected Component.Enum renderMode;
+		protected Component.Enum viewMode;
 
 		public EffectViwerPaneBase()
 		{
