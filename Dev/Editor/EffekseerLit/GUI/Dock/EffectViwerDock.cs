@@ -41,6 +41,9 @@ namespace Effekseer.GUI.Dock
 					//var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
 					//treeView.exchangeEvents.Add(
 					//	Tuple.Create(sourceID, UniqueID, MovingNodeEventType.AddAsChild));
+
+					// TODO: Test. D&D を受けたらからノードを追加してみる。ここを Prefab にしたいところ。
+					Core.Root.AddChild();
 				}
 
 				Manager.NativeManager.EndDragDropTarget();
