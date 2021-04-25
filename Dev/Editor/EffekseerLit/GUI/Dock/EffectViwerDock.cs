@@ -61,15 +61,7 @@ namespace Effekseer.GUI.Dock
 			viewMode.Update();
 			Manager.NativeManager.PopItemWidth();
 
-			string perfText =
-				"D:" + Manager.Native.GetAndResetDrawCall().ToString("D3") + "  " +
-				"V:" + Manager.Native.GetAndResetVertexCount().ToString("D5") + "  " +
-				"P:" + Manager.Native.GetInstanceCount().ToString("D5") + " ";
-
-			Manager.NativeManager.SameLine(contentSize.X - Manager.NativeManager.CalcTextSize(perfText).X);
-
 			// Display performance information
-			Manager.NativeManager.Text(perfText);
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.SetTooltip(
