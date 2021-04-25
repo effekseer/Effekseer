@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +42,7 @@ namespace Effekseer.GUI.Dock
 					//treeView.exchangeEvents.Add(
 					//	Tuple.Create(sourceID, UniqueID, MovingNodeEventType.AddAsChild));
 
-					// TODO: Test. D&D ‚ğó‚¯‚½‚ç‚©‚çƒm[ƒh‚ğ’Ç‰Á‚µ‚Ä‚İ‚éB‚±‚±‚ğ Prefab ‚É‚µ‚½‚¢‚Æ‚±‚ëB
+					// TODO: Test. D&D ã‚’å—ã‘ãŸã‚‰ã‹ã‚‰ãƒãƒ¼ãƒ‰ã‚’è¿½åŠ ã—ã¦ã¿ã‚‹ã€‚ã“ã“ã‚’ Prefab ã«ã—ãŸã„ã¨ã“ã‚ã€‚
 					Core.Root.AddChild();
 				}
 

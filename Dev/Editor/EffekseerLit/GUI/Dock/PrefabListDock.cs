@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,13 +14,14 @@ namespace Effekseer.GUI.Dock
 			public string title;
 		}
 
+		// TODO: Dummy Data
 		private List<PrefabTest> _prefabs = new List<PrefabTest>()
 		{
-			new PrefabTest(){ title = "ƒAƒjƒ[ƒVƒ‡ƒ“‘fŞ-A" },
-			new PrefabTest(){ title = "ƒAƒjƒ[ƒVƒ‡ƒ“‘fŞ-B" },
-			new PrefabTest(){ title = "ƒAƒjƒ[ƒVƒ‡ƒ“‘fŞ-C" },
-			new PrefabTest(){ title = "ƒAƒjƒ[ƒVƒ‡ƒ“‘fŞ-D" },
-			new PrefabTest(){ title = "ƒAƒjƒ[ƒVƒ‡ƒ“‘fŞ-E" },
+			new PrefabTest(){ title = "ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç´ æ-A" },
+			new PrefabTest(){ title = "ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç´ æ-B" },
+			new PrefabTest(){ title = "ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç´ æ-C" },
+			new PrefabTest(){ title = "ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç´ æ-D" },
+			new PrefabTest(){ title = "ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç´ æ-E" },
 		};
 
 
