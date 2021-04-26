@@ -1,6 +1,5 @@
 #if !defined(__EMSCRIPTEN__)
-static const char ad_model_lit_ps_gl2[] = R"(
-#version 120
+static const char ad_model_lit_ps_gl2[] = R"(#version 120
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require
 #endif
@@ -224,8 +223,7 @@ void main()
 
 )";
 
-static const char ad_model_lit_ps_gl3[] = R"(
-#version 330
+static const char ad_model_lit_ps_gl3[] = R"(#version 330
 #ifdef GL_ARB_shading_language_420pack
 #extension GL_ARB_shading_language_420pack : require
 #endif
@@ -486,7 +484,6 @@ void main()
 #endif
 
 static const char ad_model_lit_ps_gles2[] = R"(
-
 precision mediump float;
 precision highp int;
 
@@ -709,8 +706,7 @@ void main()
 
 )";
 
-static const char ad_model_lit_ps_gles3[] = R"(
-#version 300 es
+static const char ad_model_lit_ps_gles3[] = R"(#version 300 es
 precision mediump float;
 precision highp int;
 

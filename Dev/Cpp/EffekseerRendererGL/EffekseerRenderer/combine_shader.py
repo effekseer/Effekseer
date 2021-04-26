@@ -51,20 +51,20 @@ for fx in verts + frags:
 
     code = '#if !defined(__EMSCRIPTEN__)\n'
     code += ''
-    code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gl2')
+    code += 'static const char {}_{}[] = R"('.format(fx, 'gl2')
     code += gl_2
     code += ')";\n\n'
 
-    code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gl3')
+    code += 'static const char {}_{}[] = R"('.format(fx, 'gl3')
     code += gl_3
     code += ')";\n\n'
     code += '#endif\n\n'
 
-    code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gles2')
+    code += 'static const char {}_{}[] = R"('.format(fx, 'gles2')
     code += gl_es2
     code += ')";\n\n'
 
-    code += 'static const char {}_{}[] = R"(\n'.format(fx, 'gles3')
+    code += 'static const char {}_{}[] = R"('.format(fx, 'gles3')
     code += gl_es3
     code += ')";\n\n'
 
