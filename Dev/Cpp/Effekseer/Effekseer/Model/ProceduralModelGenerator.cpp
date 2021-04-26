@@ -375,9 +375,6 @@ struct RotatorSphere
 			angle = angleMin;
 		}
 
-		float valueMin = depthMin * Radius;
-		float valueMax = depthMax * Radius;
-
 		value = Clamp(value, 1.0f, 0.0f);
 
 		return SIMD::Vec2f(cosf(angle) * Radius, sinf(angle) * Radius);

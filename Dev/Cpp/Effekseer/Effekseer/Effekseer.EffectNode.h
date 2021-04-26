@@ -1340,7 +1340,7 @@ struct ParameterAlphaCutoff
 			int32_t temp = 0;
 			memcpy(&temp, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
-			EdgeColorScaling = temp;
+			EdgeColorScaling = static_cast<float>(temp);
 		}
 	}
 };

@@ -980,7 +980,6 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 
 	if (GetType() == EFFECT_NODE_TYPE_MODEL)
 	{
-		auto t = (EffectNodeModel*)this;
 		param.Lighting = RendererCommon.MaterialType == RendererMaterialType::Lighting;
 	}
 

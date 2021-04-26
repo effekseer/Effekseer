@@ -512,7 +512,7 @@ void SetVertexAlphaThreshold(U& v, float value)
 {
 }
 
-static int32_t GetMaximumVertexSizeInAllTypes()
+inline int32_t GetMaximumVertexSizeInAllTypes()
 {
 	size_t size = sizeof(DynamicVertexWithCustomData);
 	size = (std::max)(size, sizeof(SimpleVertex));
@@ -1022,7 +1022,7 @@ struct ShaderParameterCollector
 		if (MaterialRenderDataPtr != nullptr && MaterialDataPtr != nullptr)
 		{
 			TextureCount = static_cast<int32_t>(Effekseer::Min(MaterialRenderDataPtr->MaterialTextures.size(), ::Effekseer::UserTextureSlotMax));
-			for (size_t i = 0; i < TextureCount; i++)
+			for (int32_t i = 0; i < TextureCount; i++)
 			{
 				if (MaterialRenderDataPtr->MaterialTextures[i].Type == 1)
 				{

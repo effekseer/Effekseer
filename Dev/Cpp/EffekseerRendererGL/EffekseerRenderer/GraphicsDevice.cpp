@@ -640,7 +640,7 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 		GL_COLOR_ATTACHMENT2,
 		GL_COLOR_ATTACHMENT3,
 	};
-	GLExt::glDrawBuffers(textures.size(), bufs);
+	GLExt::glDrawBuffers(static_cast<GLsizei>(textures.size()), bufs);
 
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 	return true;
@@ -1007,7 +1007,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
 		}
 
-		uint16_t offset = 0;
+		uint32_t offset = 0;
 		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 		{
 			const auto& element = vertexLayout->GetElements()[i];
@@ -1061,7 +1061,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 											 type,
 											 isNormalized,
 											 vertexSize,
-											 reinterpret_cast<GLvoid*>(offset));
+											 reinterpret_cast<GLvoid*>(static_cast<size_t>(offset)));
 			}
 
 			offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);

@@ -1089,8 +1089,6 @@ void Instance::Update(float deltaFrame, bool shown)
 
 			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 			{
-				auto child = (EffectNodeImplemented*)m_pEffectNode->GetChild(i);
-
 				if (maxGenerationChildrenCount[i] <= m_generatedChildrenCount[i] && group->GetInstanceCount() == 0)
 				{
 					maxcreate_count++;
@@ -1713,7 +1711,7 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 	else if (UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
-		auto uvTimeOffset = uvTimeOffsets[index];
+		auto uvTimeOffset = static_cast<float>(uvTimeOffsets[index]);
 
 		float time{};
 		int frameLength = UV.Animation.FrameLength;
@@ -1775,8 +1773,6 @@ RectF Instance::GetUV(const int32_t index) const
 	else if (UVType == ParameterRendererCommon::UV_FCURVE)
 	{
 		auto& uvAreaOffset = uvAreaOffsets[index];
-
-		auto time = (int32_t)m_LivingTime;
 
 		auto fcurvePos = UV.FCurve.Position->GetValues(m_LivingTime, m_LivedTime);
 		auto fcurveSize = UV.FCurve.Size->GetValues(m_LivingTime, m_LivedTime);

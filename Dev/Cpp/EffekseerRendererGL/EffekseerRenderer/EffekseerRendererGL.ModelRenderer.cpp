@@ -32,18 +32,6 @@ namespace EffekseerRendererGL
 
 static const int InstanceCount = 10;
 
-static std::string Replace(std::string target, std::string from_, std::string to_)
-{
-	std::string::size_type Pos(target.find(from_));
-
-	while (Pos != std::string::npos)
-	{
-		target.replace(Pos, from_.length(), to_);
-		Pos = target.find(from_, Pos + to_.length());
-	}
-
-	return target;
-}
 
 static const int NumAttribs_Model = 6;
 
