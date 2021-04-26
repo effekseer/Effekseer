@@ -97,21 +97,14 @@ void ResourceManager::UnloadCurve(CurveRef resource)
 	cachedCurves_.Unload(resource);
 }
 
-ModelRef ResourceManager::GenerateProceduralModel(const ProceduralModelParameter* param)
+ModelRef ResourceManager::GenerateProceduralModel(const ProceduralModelParameter& param)
 {
-	if (proceduralMeshGenerator_ != nullptr)
-	{
-		return proceduralMeshGenerator_->Generate(param);
-	}
-	return nullptr;
+	return proceduralMeshGenerator_.Load(param);
 }
 
 void ResourceManager::UngenerateProceduralModel(ModelRef resource)
 {
-	if (proceduralMeshGenerator_ != nullptr)
-	{
-		proceduralMeshGenerator_->Ungenerate(resource);
-	}
+	proceduralMeshGenerator_.Unload(resource);
 }
 
 //----------------------------------------------------------------------------------
