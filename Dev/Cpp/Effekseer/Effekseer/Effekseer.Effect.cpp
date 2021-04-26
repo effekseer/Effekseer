@@ -276,8 +276,12 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 
 	for (int32_t ind = 0; ind < effect->GetProceduralModelCount(); ind++)
 	{
-		auto model = resourceMgr->GenerateProceduralModel(effect->GetProceduralModelParameter(ind));
-		SetProceduralModel(effect, ind, model);
+		const auto param = effect->GetProceduralModelParameter(ind);
+		if (param != nullptr)
+		{
+			auto model = resourceMgr->GenerateProceduralModel(*param);
+			SetProceduralModel(effect, ind, model);
+		}
 	}
 }
 

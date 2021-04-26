@@ -10,6 +10,34 @@
 namespace Effekseer
 {
 
+/*
+inline bool operator<(const std::array<float, 2>& lhs, const std::array<float, 2>& rhs)
+{
+	for (size_t i = 0; i < lhs.size(); i++)
+	{
+		if (lhs[i] != rhs[i])
+		{
+			return lhs[i] < rhs[i];
+		}
+	}
+
+	return false;
+}
+
+inline bool operator<(const std::array<float, 3>& lhs, const std::array<float, 3>& rhs)
+{
+	for (size_t i = 0; i < lhs.size(); i++)
+	{
+		if (lhs[i] != rhs[i])
+		{
+			return lhs[i] < rhs[i];
+		}
+	}
+
+	return false;
+}
+*/
+
 enum class ProceduralModelType : int32_t
 {
 	Mesh,
@@ -40,8 +68,8 @@ enum class ProceduralModelAxisType : int32_t
 
 struct ProceduralModelParameter
 {
-	ProceduralModelType Type;
-	ProceduralModelPrimitiveType PrimitiveType;
+	ProceduralModelType Type = ProceduralModelType::Mesh;
+	ProceduralModelPrimitiveType PrimitiveType = ProceduralModelPrimitiveType::Sphere;
 	ProceduralModelAxisType AxisType = ProceduralModelAxisType::Y;
 
 	union
@@ -193,6 +221,9 @@ struct ProceduralModelParameter
 				return Sphere.Radius < rhs.Sphere.Radius;
 
 			if (Sphere.DepthMin != rhs.Sphere.DepthMin)
+				return Sphere.DepthMin < rhs.Sphere.DepthMin;
+
+			if (Sphere.DepthMax != rhs.Sphere.DepthMax)
 				return Sphere.DepthMax < rhs.Sphere.DepthMax;
 		}
 		else if (PrimitiveType == ProceduralModelPrimitiveType::Cone)

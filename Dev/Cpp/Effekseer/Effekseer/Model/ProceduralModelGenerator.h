@@ -15,7 +15,7 @@ public:
 	ProceduralModelGenerator() = default;
 	virtual ~ProceduralModelGenerator() = default;
 
-	virtual ModelRef Generate(const ProceduralModelParameter* parameter);
+	virtual ModelRef Generate(const ProceduralModelParameter& parameter);
 
 	virtual void Ungenerate(ModelRef model);
 };

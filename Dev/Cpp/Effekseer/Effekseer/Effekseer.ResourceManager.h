@@ -8,6 +8,7 @@
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.Resource.h"
 #include "Model/ProceduralModelGenerator.h"
+#include "Model//ProceduralModelParameter.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -77,12 +78,12 @@ public:
 
 	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const
 	{
-		return proceduralMeshGenerator_;
+		return proceduralMeshGenerator_.loader;
 	}
 
 	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator)
 	{
-		proceduralMeshGenerator_ = generator;
+		proceduralMeshGenerator_.loader = generator;
 	}
 
 	TextureRef LoadTexture(const char16_t* path, TextureType textureType);
@@ -105,12 +106,11 @@ public:
 
 	void UnloadCurve(CurveRef resource);
 
-	ModelRef GenerateProceduralModel(const ProceduralModelParameter* param);
+	ModelRef GenerateProceduralModel(const ProceduralModelParameter& param);
 
 	void UngenerateProceduralModel(ModelRef resource);
 
 private:
-	ProceduralModelGeneratorRef proceduralMeshGenerator_;
 
 	template <typename T>
 	struct LoadCounted
@@ -166,11 +166,65 @@ private:
 		}
 	};
 
+	template <typename PARAMETER, typename T>
+	struct GenerateCounted
+	{
+		PARAMETER param;
+		T resource;
+		int32_t loadCount;
+	};
+
+	template <typename LOADER, typename PARAMETER, typename RESOURCE>
+	struct CachedParameterResources
+	{
+		LOADER loader;
+		CustomMap<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>> cached;
+
+		template <typename... Arg>
+		RESOURCE Load(const PARAMETER& parameter)
+		{
+			if (loader != nullptr)
+			{
+				auto it = cached.find(parameter);
+				if (it != cached.end())
+				{
+					it->second.loadCount++;
+					return it->second.resource;
+				}
+
+				auto resource = loader->Generate(parameter);
+				if (resource != nullptr)
+				{
+					cached.emplace(parameter, GenerateCounted<PARAMETER, RESOURCE>{parameter, resource, 1});
+					return resource;
+				}
+			}
+			return nullptr;
+		}
+
+		void Unload(const RESOURCE& resource)
+		{
+			if (loader != nullptr && resource != nullptr)
+			{
+				auto it = std::find_if(cached.begin(), cached.end(), [&](const std::pair<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>>& v) { return v.second.resource == resource; });
+				if (it != cached.end())
+				{
+					if (--it->second.loadCount <= 0)
+					{
+						cached.erase(it);
+						loader->Ungenerate(resource);
+					}
+				}
+			}
+		}
+	};
+
 	CachedResources<TextureLoaderRef, TextureRef> cachedTextures_;
 	CachedResources<ModelLoaderRef, ModelRef> cachedModels_;
 	CachedResources<SoundLoaderRef, SoundDataRef> cachedSounds_;
 	CachedResources<MaterialLoaderRef, MaterialRef> cachedMaterials_;
 	CachedResources<CurveLoaderRef, CurveRef> cachedCurves_;
+	CachedParameterResources<ProceduralModelGeneratorRef, ProceduralModelParameter, ModelRef> proceduralMeshGenerator_;
 };
 
 //----------------------------------------------------------------------------------
