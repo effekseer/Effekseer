@@ -215,6 +215,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 		{
 			LOG(name);
 			LOG(": Vertex Shader error.\n");
+			LOG((std::string("DeviceType=") + std::to_string(static_cast<int>(deviceType)) + "\n").c_str());
 			LOG(log);
 		}
 		GLExt::glGetShaderInfoLog(frag_shader, sizeof(log), &log_size, log);
@@ -222,6 +223,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 		{
 			LOG(name);
 			LOG(": Fragment Shader error.\n");
+			LOG((std::string("DeviceType=") + std::to_string(static_cast<int>(deviceType)) + "\n").c_str());
 			LOG(log);
 		}
 		GLExt::glGetProgramInfoLog(program, sizeof(log), &log_size, log);
