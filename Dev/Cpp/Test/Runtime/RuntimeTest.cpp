@@ -735,6 +735,31 @@ void DX11DefferedContextTest()
 #endif
 }
 
+void ProceduralModelCacheTest()
+{
+#ifdef _WIN32
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformDX11>(true);
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel01.efkefc").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel01.efkefc").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel02.efkefc").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel02.efkefc").c_str());
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+
+		platform->Terminate();
+	}
+#endif
+}
+
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
 TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
@@ -761,4 +786,7 @@ TestRegister Runtime_DX11DefferedContextTest("Runtime.DX11DefferedContextTest", 
 
 TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void { BasicRuntimeDeviceLostTest(); });
 
+TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest", []() -> void { ProceduralModelCacheTest(); });
+
+ 
 #endif
