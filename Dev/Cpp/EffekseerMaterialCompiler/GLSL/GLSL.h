@@ -877,7 +877,6 @@ public:
 
 			for (int32_t i = 0; i < actualTextureCount; i++)
 			{
-				auto textureIndex = materialFile->GetTextureIndex(i);
 				auto textureName = materialFile->GetTextureName(i);
 
 				ExportTexture(maincode, textureName, i, stage);
@@ -961,7 +960,6 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 
 			for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
 			{
-				auto uniformIndex = materialFile->GetUniformIndex(i);
 				auto uniformName = materialFile->GetUniformName(i);
 
 				ExportUniform(maincode, 4, uniformName);

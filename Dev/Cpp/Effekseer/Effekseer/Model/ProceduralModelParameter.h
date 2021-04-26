@@ -10,58 +10,6 @@
 namespace Effekseer
 {
 
-static bool operator==(const std::array<float, 2>& lhs, const std::array<float, 2>& rhs)
-{
-	for (size_t i = 0; i < lhs.size(); i++)
-	{
-		if (lhs[i] != rhs[i])
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-static bool operator<(const std::array<float, 2>& lhs, const std::array<float, 2>& rhs)
-{
-	for (size_t i = 0; i < lhs.size(); i++)
-	{
-		if (lhs[i] != rhs[i])
-		{
-			return lhs[i] < rhs[i];
-		}
-	}
-
-	return false;
-}
-
-static bool operator==(const std::array<float, 3>& lhs, const std::array<float, 3>& rhs)
-{
-	for (size_t i = 0; i < lhs.size(); i++)
-	{
-		if (lhs[i] != rhs[i])
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-static bool operator<(const std::array<float, 3>& lhs, const std::array<float, 3>& rhs)
-{
-	for (size_t i = 0; i < lhs.size(); i++)
-	{
-		if (lhs[i] != rhs[i])
-		{
-			return lhs[i] < rhs[i];
-		}
-	}
-
-	return false;
-}
-
 enum class ProceduralModelType : int32_t
 {
 	Mesh,

@@ -85,8 +85,8 @@ static const int GL_InstanceCount = 10;
 			if (materialFile.GetCustomData1Count() > 0)
 			{
 				sprite_attribs[count].name = customData1Name;
-				sprite_attribs[count].count = materialFile.GetCustomData1Count();
-				sprite_attribs[count].offset = offset;
+				sprite_attribs[count].count = static_cast<uint16_t>(materialFile.GetCustomData1Count());
+				sprite_attribs[count].offset = static_cast<uint16_t>(offset);
 				count++;
 				offset += sizeof(float) * materialFile.GetCustomData1Count();
 			}
@@ -94,8 +94,8 @@ static const int GL_InstanceCount = 10;
 			if (materialFile.GetCustomData2Count() > 0)
 			{
 				sprite_attribs[count].name = customData2Name;
-				sprite_attribs[count].count = materialFile.GetCustomData2Count();
-				sprite_attribs[count].offset = offset;
+				sprite_attribs[count].count = static_cast<uint16_t>(materialFile.GetCustomData2Count());
+				sprite_attribs[count].offset = static_cast<uint16_t>(offset);
 				count++;
 				offset += sizeof(float) * materialFile.GetCustomData2Count();
 			}

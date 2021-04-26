@@ -172,8 +172,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(shader_ad_lit_);
 	ES_SAFE_DELETE(shader_ad_distortion_);
 
-	auto isVaoEnabled = vao_unlit_ != nullptr;
-
 	ES_SAFE_DELETE(vao_unlit_);
 	ES_SAFE_DELETE(vao_distortion_);
 	ES_SAFE_DELETE(vao_lit_);

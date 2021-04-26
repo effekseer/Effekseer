@@ -163,12 +163,9 @@ void ManagerImplemented::StopStoppingEffects()
 
 				if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE && !pRootInstance->IsFirstTime())
 				{
-					int maxcreate_count = 0;
 					bool canRemoved = true;
 					for (int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++)
 					{
-						auto child = (EffectNodeImplemented*)pRootInstance->m_pEffectNode->GetChild(i);
-
 						if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
 						{
 							canRemoved = false;
@@ -2263,9 +2260,6 @@ void ManagerImplemented::EndReloadEffect(const EffectRef& effect, bool doLockThr
 		{
 			continue;
 		}
-
-		auto e = static_cast<EffectImplemented*>(effect.Get());
-		auto pGlobal = ds.GlobalPointer;
 
 		ResetAndPlayWithDataSet(ds, ds.GlobalPointer->GetUpdatedFrame());
 	}

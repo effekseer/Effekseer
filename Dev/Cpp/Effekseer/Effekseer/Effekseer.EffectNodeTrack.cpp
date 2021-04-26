@@ -228,7 +228,7 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 	auto& instValues = instanceGroup.rendererValues.track;
-	IRandObject* rand = &instance.GetRandObject();
+
 	// Calculate only center
 	int32_t time = (int32_t)instance.m_LivingTime;
 	int32_t livedTime = (int32_t)instance.m_LivedTime;
