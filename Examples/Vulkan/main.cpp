@@ -67,13 +67,14 @@ int main(int argc, char** argv)
 		manager->SetTrackRenderer(renderer->CreateTrackRenderer());
 		manager->SetModelRenderer(renderer->CreateModelRenderer());
 
-		// Specify a texture, model and material loader
+		// Specify a texture, model, curve and material loader
 		// It can be extended by yourself. It is loaded from a file on now.
-		// テクスチャ、モデル、マテリアルローダーの設定する。
+		// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
 		// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
 		manager->SetTextureLoader(renderer->CreateTextureLoader());
 		manager->SetModelLoader(renderer->CreateModelLoader());
 		manager->SetMaterialLoader(renderer->CreateMaterialLoader());
+		manager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 
 		// Specify a position of view
 		// 視点位置を確定
