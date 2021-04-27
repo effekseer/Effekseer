@@ -505,6 +505,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	GetImpl()->CreateProxyTextures(this);
 	GetImpl()->isSoftParticleEnabled = true;
 
+	GetImpl()->isDepthReversed = isReversedDepth;
+
 	return true;
 }
 

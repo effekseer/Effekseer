@@ -561,6 +561,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	GetImpl()->CreateProxyTextures(this);
 	GetImpl()->isSoftParticleEnabled = true;
 
+	GetImpl()->isDepthReversed = !(depthFunc == D3D11_COMPARISON_LESS || depthFunc == D3D11_COMPARISON_LESS_EQUAL);
+
 	return true;
 }
 
