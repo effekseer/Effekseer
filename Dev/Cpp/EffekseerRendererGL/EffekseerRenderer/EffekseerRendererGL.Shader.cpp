@@ -55,7 +55,6 @@ static const char g_header_fs_gl3_src[] = "#version 330\n"
 static const char g_header_vs_gles3_src[] = "#version 300 es\n"
 											R"(
 )"
-											"precision mediump float;\n"
 											"#define IN in\n"
 											"#define CENTROID centroid\n"
 											"#define TEX2D textureLod\n"
@@ -64,13 +63,13 @@ static const char g_header_vs_gles3_src[] = "#version 300 es\n"
 static const char g_header_fs_gles3_src[] = "#version 300 es\n"
 											R"(
 )"
-											"precision mediump float;\n"
+											"precision highp float;\n"
 											"#define IN in\n"
 											"#define CENTROID centroid\n"
 											"#define TEX2D texture\n"
 											"layout (location = 0) out vec4 FRAGCOLOR;\n";
 
-static const char g_header_vs_gles2_src[] = "precision mediump float;\n"
+static const char g_header_vs_gles2_src[] = 
 											R"(
 #define EFK__INSTANCING_DISABLED__ 1
 )"
@@ -79,7 +78,7 @@ static const char g_header_vs_gles2_src[] = "precision mediump float;\n"
 											"#define TEX2D texture2DLod\n"
 											"#define OUT varying\n";
 
-static const char g_header_fs_gles2_src[] = "precision mediump float;\n"
+static const char g_header_fs_gles2_src[] = "precision highp float;\n"
 											R"(
 )"
 											"#define IN varying\n"
