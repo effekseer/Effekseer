@@ -73,7 +73,12 @@ private:
 	VertexArray* vao_ad_lit_ = nullptr;
 	VertexArray* vao_ad_distortion_ = nullptr;
 
-	VertexArray* m_vao_wire_frame = nullptr;
+	VertexArray* vao_unlit_wire_ = nullptr;
+	VertexArray* vao_distortion_wire_ = nullptr;
+	VertexArray* vao_lit_wire_ = nullptr;
+	VertexArray* vao_ad_unlit_wire_ = nullptr;
+	VertexArray* vao_ad_distortion_wire_ = nullptr;
+	VertexArray* vao_ad_lit_wire_ = nullptr;
 
 	//! default vao (alsmot for material)
 	GLuint defaultVertexArray_ = 0;

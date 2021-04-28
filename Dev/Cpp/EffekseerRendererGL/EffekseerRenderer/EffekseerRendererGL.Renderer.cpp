@@ -147,7 +147,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::Graphi
 	, m_restorationOfStates(true)
 	, m_currentVertexArray(nullptr)
 	, m_standardRenderer(nullptr)
-	, m_vao_wire_frame(nullptr)
+	, vao_unlit_wire_(nullptr)
 	, m_distortingCallback(nullptr)
 	, m_deviceType(graphicsDevice->GetDeviceType())
 {
@@ -180,7 +180,12 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(vao_ad_lit_);
 	ES_SAFE_DELETE(vao_ad_distortion_);
 
-	ES_SAFE_DELETE(m_vao_wire_frame);
+	ES_SAFE_DELETE(vao_unlit_wire_);
+	ES_SAFE_DELETE(vao_lit_wire_);
+	ES_SAFE_DELETE(vao_distortion_wire_);
+	ES_SAFE_DELETE(vao_ad_unlit_wire_);
+	ES_SAFE_DELETE(vao_ad_lit_wire_);
+	ES_SAFE_DELETE(vao_ad_distortion_wire_);
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
@@ -475,7 +480,12 @@ bool RendererImplemented::Initialize()
 	vao_ad_lit_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer());
 	vao_lit_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), GetIndexBuffer());
 
-	m_vao_wire_frame = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), m_indexBufferForWireframe);
+	vao_unlit_wire_ = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), m_indexBufferForWireframe);
+	vao_lit_wire_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), m_indexBufferForWireframe);
+	vao_distortion_wire_ = VertexArray::Create(graphicsDevice_, shader_distortion_, GetVertexBuffer(), m_indexBufferForWireframe);
+	vao_ad_unlit_wire_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), m_indexBufferForWireframe);
+	vao_ad_lit_wire_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), m_indexBufferForWireframe);
+	vao_ad_distortion_wire_ = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, GetVertexBuffer(), m_indexBufferForWireframe);
 
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
@@ -660,6 +670,10 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 //----------------------------------------------------------------------------------
 IndexBuffer* RendererImplemented::GetIndexBuffer()
 {
+	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+	{
+		return m_indexBufferForWireframe;
+	}
 	return m_indexBuffer;
 }
 
@@ -1017,33 +1031,71 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		SetVertexArray(m_currentVertexArray);
 	}
-	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-	{
-		SetVertexArray(m_vao_wire_frame);
-	}
 	else if (shader == shader_unlit_)
 	{
-		SetVertexArray(vao_unlit_);
+		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			SetVertexArray(vao_unlit_wire_);
+		}
+		else
+		{
+			SetVertexArray(vao_unlit_);
+		}
 	}
 	else if (shader == shader_distortion_)
 	{
-		SetVertexArray(vao_distortion_);
+		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			SetVertexArray(vao_distortion_wire_);
+		}
+		else
+		{
+			SetVertexArray(vao_distortion_);
+		}
 	}
 	else if (shader == shader_lit_)
 	{
-		SetVertexArray(vao_lit_);
+		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			SetVertexArray(vao_lit_wire_);
+		}
+		else
+		{
+			SetVertexArray(vao_lit_);
+		}
 	}
 	else if (shader == shader_ad_unlit_)
 	{
-		SetVertexArray(vao_ad_unlit_);
+		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			SetVertexArray(vao_ad_unlit_wire_);
+		}
+		else
+		{
+			SetVertexArray(vao_ad_unlit_);
+		}
 	}
 	else if (shader == shader_ad_distortion_)
 	{
-		SetVertexArray(vao_ad_distortion_);
+		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			SetVertexArray(vao_ad_distortion_wire_);
+		}
+		else
+		{
+			SetVertexArray(vao_ad_distortion_);
+		}
 	}
 	else if (shader == shader_ad_lit_)
 	{
-		SetVertexArray(vao_ad_lit_);
+		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			SetVertexArray(vao_ad_lit_wire_);
+		}
+		else
+		{
+			SetVertexArray(vao_ad_lit_);
+		}
 	}
 	else
 	{
