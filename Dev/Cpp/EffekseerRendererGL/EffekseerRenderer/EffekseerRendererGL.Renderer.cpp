@@ -945,7 +945,14 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount;
 
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
+	{
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+	}
+	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+	{
+		glDrawElements(GL_LINES, indexCount, GL_UNSIGNED_INT, nullptr);
+	}
 
 	GLCheckError();
 }
@@ -957,8 +964,14 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount * instanceCount;
 
-	GLExt::glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
-
+	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
+	{
+		GLExt::glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
+	}
+	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+	{
+		GLExt::glDrawElementsInstanced(GL_LINES, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
+	}
 	GLCheckError();
 }
 
@@ -1000,7 +1013,11 @@ void RendererImplemented::BeginShader(Shader* shader)
 	GLCheckError();
 
 	// change VAO with shader
-	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+	if (m_currentVertexArray != nullptr)
+	{
+		SetVertexArray(m_currentVertexArray);
+	}
+	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
 		SetVertexArray(m_vao_wire_frame);
 	}
@@ -1027,10 +1044,6 @@ void RendererImplemented::BeginShader(Shader* shader)
 	else if (shader == shader_ad_lit_)
 	{
 		SetVertexArray(vao_ad_lit_);
-	}
-	else if (m_currentVertexArray != nullptr)
-	{
-		SetVertexArray(m_currentVertexArray);
 	}
 	else
 	{

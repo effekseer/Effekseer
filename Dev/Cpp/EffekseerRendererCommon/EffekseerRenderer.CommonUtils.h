@@ -939,6 +939,35 @@ struct ShaderParameterCollector
 		IsDepthRequired = isSoftParticleEnabled;
 		MaterialRenderDataPtr = nullptr;
 
+		if (renderer != nullptr && renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		{
+			ShaderType = RendererShaderType::Unlit;
+
+			if (param->MaterialType == ::Effekseer::RendererMaterialType::File)
+			{
+				// None
+			}
+			else if (param->MaterialType == ::Effekseer::RendererMaterialType::BackDistortion)
+			{
+				auto resource = effect->GetDistortionImage(param->TextureIndexes[0]);
+				TexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
+			}
+			else
+			{
+				auto resource = effect->GetColorImage(param->TextureIndexes[0]);
+				TexturePtr = (resource != nullptr) ? resource->GetBackend() : nullptr;
+			}
+
+			if (TexturePtr == nullptr)
+			{
+				TexturePtr = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+			}
+			Textures[0] = TexturePtr;
+			TextureCount = 1;
+			IsDepthRequired = false;
+			return;
+		}
+
 		auto isMaterial = param->MaterialType == ::Effekseer::RendererMaterialType::File && param->MaterialRenderDataPtr != nullptr;
 		if (isMaterial)
 		{
