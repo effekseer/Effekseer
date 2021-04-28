@@ -149,6 +149,8 @@ protected:
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
+		count = (std::min)(count, m_renderer->GetSquareMaxCount());
+
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, stride_, (void*&)m_ringBufferData);
 		m_spriteCount = 0;
 
