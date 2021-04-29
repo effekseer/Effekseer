@@ -1,5 +1,9 @@
 BRS_Material_Name,マテリアル
 BRS_EmissiveScaling_Name,エミッシブ倍率
+BRS_EmissiveScaling_Desc,"指定された値をパーティクルの色に掛けます。値が大きいほど色が明るくなります。
+値が1のとき、画像をそのまま使用します。
+マテリアルが標準かライティングのときのみ有効です。
+HDRに対応した環境以外では、値を大きくすると色がおかしくなる可能性があります。"
 BRS_ColorTexture_Name,色/歪み画像
 BRS_ColorTexture_Desc,色/歪みを表す画像
 BRS_Filter_Name,フィルタ
