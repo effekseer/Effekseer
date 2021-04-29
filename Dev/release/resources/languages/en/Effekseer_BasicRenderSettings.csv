@@ -1,5 +1,9 @@
 BRS_Material_Name,Material
 BRS_EmissiveScaling_Name,Emissive Scaling
+BRS_EmissiveScaling_Desc,"It multiplies the particle's color by the specified value.
+The higher the value, the brighter the color. When the value is 1, the image will be used as is.
+Only available when the material is Standard or Lighting.
+In environments other than those that support HDR, increasing the value may result in strange colors."
 BRS_ColorTexture_Name,Texture
 BRS_ColorTexture_Desc,Image that represents color/distortion
 BRS_Filter_Name,Filter
