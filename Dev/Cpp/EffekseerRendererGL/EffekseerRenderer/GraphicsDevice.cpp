@@ -649,7 +649,10 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	: deviceType_(deviceType)
 {
-	GLExt::Initialize(deviceType, isExtensionsEnabled);
+	if (!GLExt::Initialize(deviceType, isExtensionsEnabled))
+	{
+		isValid_ = false;
+	}
 
 	if (deviceType == OpenGLDeviceType::OpenGL3 || deviceType == OpenGLDeviceType::OpenGLES3)
 	{
@@ -665,10 +668,18 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEna
 
 GraphicsDevice::~GraphicsDevice()
 {
-	if (deviceType_ == OpenGLDeviceType::OpenGL3 || deviceType_ == OpenGLDeviceType::OpenGLES3)
+	if (isValid_)
 	{
-		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, samplers_.data());
+		if (deviceType_ == OpenGLDeviceType::OpenGL3 || deviceType_ == OpenGLDeviceType::OpenGLES3)
+		{
+			GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, samplers_.data());
+		}
 	}
+}
+
+bool GraphicsDevice::GetIsValid() const
+{
+	return isValid_;
 }
 
 int GraphicsDevice::GetProperty(DevicePropertyType type) const

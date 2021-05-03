@@ -3,6 +3,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.GLExtension.h"
+#include "Effekseer.h"
 
 #if defined(__ANDROID__) || defined(__EMSCRIPTEN__)
 #include <EGL/egl.h>
@@ -202,15 +203,37 @@ static bool g_isSurrpotedMapBuffer = false;
 static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 
 #if _WIN32
-#define GET_PROC(name)                              \
-	g_##name = (FP_##name)wglGetProcAddress(#name); \
-	if (g_##name == nullptr)                        \
-		return false;
+#define GET_PROC_REQ(name)                                                                           \
+	g_##name = (FP_##name)wglGetProcAddress(#name);                                              \
+	if (g_##name == nullptr)                                                                     \
+	{                                                                                            \
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to get proc : " + std::string(#name)); \
+		return false;                                                                            \
+	}
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+#define GET_PROC_REQ(name)                                                                           \
+	g_##name = (FP_##name)eglGetProcAddress(#name);                                              \
+	if (g_##name == nullptr)                                                                     \
+	{                                                                                            \
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to get proc : " + std::string(#name)); \
+		return false;                                                                            \
+	}
+#endif
+
+#if _WIN32
+#define GET_PROC(name)                                                                           \
+	g_##name = (FP_##name)wglGetProcAddress(#name);                                              \
+	if (g_##name == nullptr)                                                                     \
+	{                                                                                            \
+		Effekseer::Log(Effekseer::LogType::Warning, "Failed to get proc : " + std::string(#name)); \
+	}
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 #define GET_PROC(name)                              \
 	g_##name = (FP_##name)eglGetProcAddress(#name); \
-	if (g_##name == nullptr)                        \
-		return false;
+	if (g_##name == nullptr)                                                                     \
+	{                                                                                            \
+		Effekseer::Log(Effekseer::LogType::Warning, "Failed to get proc : " + std::string(#name)); \
+	}
 #endif
 
 OpenGLDeviceType GetDeviceType()
@@ -223,73 +246,72 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	if (g_isInitialized)
 		return true;
 	g_deviceType = deviceType;
-
 #if _WIN32
-	GET_PROC(glDeleteBuffers);
-	GET_PROC(glCreateShader);
-	GET_PROC(glBindBuffer);
-	GET_PROC(glGenBuffers);
-	GET_PROC(glBufferData);
-	GET_PROC(glBlendEquationSeparate);
-	GET_PROC(glBlendFuncSeparate);
-	GET_PROC(glBlendEquation);
-	GET_PROC(glActiveTexture);
-	GET_PROC(glUniform1i);
-	GET_PROC(glShaderSource);
+	GET_PROC_REQ(glDeleteBuffers);
+	GET_PROC_REQ(glCreateShader);
+	GET_PROC_REQ(glBindBuffer);
+	GET_PROC_REQ(glGenBuffers);
+	GET_PROC_REQ(glBufferData);
+	GET_PROC_REQ(glBlendEquationSeparate);
+	GET_PROC_REQ(glBlendFuncSeparate);
+	GET_PROC_REQ(glBlendEquation);
+	GET_PROC_REQ(glActiveTexture);
+	GET_PROC_REQ(glUniform1i);
+	GET_PROC_REQ(glShaderSource);
 
-	GET_PROC(glCompileShader);
-	GET_PROC(glGetShaderiv);
-	GET_PROC(glCreateProgram);
+	GET_PROC_REQ(glCompileShader);
+	GET_PROC_REQ(glGetShaderiv);
+	GET_PROC_REQ(glCreateProgram);
 
-	GET_PROC(glAttachShader);
-	GET_PROC(glDeleteProgram);
-	GET_PROC(glDeleteShader);
+	GET_PROC_REQ(glAttachShader);
+	GET_PROC_REQ(glDeleteProgram);
+	GET_PROC_REQ(glDeleteShader);
 
-	GET_PROC(glLinkProgram);
-	GET_PROC(glGetProgramiv);
-	GET_PROC(glGetShaderInfoLog);
+	GET_PROC_REQ(glLinkProgram);
+	GET_PROC_REQ(glGetProgramiv);
+	GET_PROC_REQ(glGetShaderInfoLog);
 
-	GET_PROC(glGetProgramInfoLog);
-	GET_PROC(glGetAttribLocation);
-	GET_PROC(glGetUniformLocation);
+	GET_PROC_REQ(glGetProgramInfoLog);
+	GET_PROC_REQ(glGetAttribLocation);
+	GET_PROC_REQ(glGetUniformLocation);
 
-	GET_PROC(glUseProgram);
-	GET_PROC(glEnableVertexAttribArray);
-	GET_PROC(glDisableVertexAttribArray);
+	GET_PROC_REQ(glUseProgram);
+	GET_PROC_REQ(glEnableVertexAttribArray);
+	GET_PROC_REQ(glDisableVertexAttribArray);
 
-	GET_PROC(glVertexAttribPointer);
-	GET_PROC(glUniformMatrix4fv);
-	GET_PROC(glUniform4fv);
+	GET_PROC_REQ(glVertexAttribPointer);
+	GET_PROC_REQ(glUniformMatrix4fv);
+	GET_PROC_REQ(glUniform4fv);
 
-	GET_PROC(glGenerateMipmap);
-	GET_PROC(glBufferSubData);
+	GET_PROC_REQ(glGenerateMipmap);
+	GET_PROC_REQ(glBufferSubData);
 
-	GET_PROC(glGenVertexArrays);
-	GET_PROC(glDeleteVertexArrays);
-	GET_PROC(glBindVertexArray);
+	GET_PROC_REQ(glGenVertexArrays);
+	GET_PROC_REQ(glDeleteVertexArrays);
+	GET_PROC_REQ(glBindVertexArray);
 
-	GET_PROC(glGenSamplers);
-	GET_PROC(glDeleteSamplers);
-	GET_PROC(glSamplerParameteri);
-	GET_PROC(glBindSampler);
+	GET_PROC_REQ(glGenSamplers);
+	GET_PROC_REQ(glDeleteSamplers);
+	GET_PROC_REQ(glSamplerParameteri);
+	GET_PROC_REQ(glBindSampler);
 
-	GET_PROC(glMapBuffer);
-	GET_PROC(glMapBufferRange);
-	GET_PROC(glUnmapBuffer);
+	GET_PROC_REQ(glMapBuffer);
+	GET_PROC_REQ(glMapBufferRange);
+	GET_PROC_REQ(glUnmapBuffer);
 
-	GET_PROC(glDrawElementsInstanced);
+	GET_PROC_REQ(glDrawElementsInstanced);
 
-	GET_PROC(glCompressedTexImage2D);
+	GET_PROC_REQ(glCompressedTexImage2D);
 
-	GET_PROC(glGenFramebuffers);
+	GET_PROC_REQ(glGenFramebuffers);
 
-	GET_PROC(glBindFramebuffer);
+	GET_PROC_REQ(glBindFramebuffer);
 
-	GET_PROC(glDeleteFramebuffers);
+	GET_PROC_REQ(glDeleteFramebuffers);
 
-	GET_PROC(glFramebufferTexture2D);
+	GET_PROC_REQ(glFramebufferTexture2D);
 
-	GET_PROC(glDrawBuffers);
+	GET_PROC_REQ(glDrawBuffers);
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 	g_isSurrpotedBufferRange = (g_glMapBufferRange && g_glUnmapBuffer);

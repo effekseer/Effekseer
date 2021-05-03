@@ -280,11 +280,14 @@ private:
 	OpenGLDeviceType deviceType_;
 	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
 	std::map<DevicePropertyType, int> properties_;
+	bool isValid_ = true;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
 	~GraphicsDevice() override;
+
+	bool GetIsValid() const;
 
 	int GetProperty(DevicePropertyType type) const;
 
