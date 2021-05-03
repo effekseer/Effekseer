@@ -48,7 +48,13 @@ namespace EffekseerRendererGL
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
-	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType, isExtensionsEnabled);
+	auto g = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType, isExtensionsEnabled);
+	if (!g->GetIsValid())
+	{
+		return nullptr;
+	}
+
+	return g;
 }
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
@@ -109,11 +115,22 @@ TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
 
 RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
-	return Create(CreateGraphicsDevice(deviceType, isExtensionsEnabled), squareMaxCount);
+	auto device = CreateGraphicsDevice(deviceType, isExtensionsEnabled);
+	if (device == nullptr)
+	{
+		return nullptr;
+	}
+
+	return Create(device, squareMaxCount);
 }
 
 RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount)
 {
+	if (graphicsDevice == nullptr)
+	{
+		return nullptr;
+	}
+
 	auto g = graphicsDevice.DownCast<Backend::GraphicsDevice>();
 
 	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount, g);
@@ -311,25 +328,47 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_model_lit_ps(GetDeviceType()));
 
-	shader_ad_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "Standard Tex", false, false);
+	shader_ad_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "UnlitAd", false, false);
 	if (shader_ad_unlit_ == nullptr)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile UnlitAd");
 		return false;
+	}
 
-	shader_ad_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "Standard Distortion Tex", false, false);
+	shader_ad_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "DistAd", false, false);
 	if (shader_ad_distortion_ == nullptr)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
+	}
 
-	shader_ad_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "Standard Lighting Tex", false, false);
+	shader_ad_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "LitAd", false, false);
+	if (shader_ad_lit_ == nullptr)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
+		return false;
+	}
 
-	shader_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Standard Tex", false, false);
+	shader_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Unlit", false, false);
 	if (shader_unlit_ == nullptr)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Unlit");
 		return false;
+	}
 
-	shader_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Standard Distortion Tex", false, false);
+	shader_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Dist", false, false);
 	if (shader_distortion_ == nullptr)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Dist");
 		return false;
+	}
 
-	shader_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Standard Lighting Tex", false, false);
+	shader_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Lit", false, false);
+	if (shader_lit_ == nullptr)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Lit");
+		return false;
+	}
 
 	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
 		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_sampler_alphaTex"));
