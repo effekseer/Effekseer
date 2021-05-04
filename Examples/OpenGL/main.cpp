@@ -48,8 +48,8 @@ int main(int argc, char** argv)
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	renderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH(
-		90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
+	renderer->SetProjectionMatrix(
+		::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
 
 	// Specify a camera matrix
 	// カメラ行列を設定
@@ -129,7 +129,6 @@ int main(int argc, char** argv)
 #include <GLFW/glfw3.h>
 static GLFWwindow* glfwWindow = nullptr;
 
-
 bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 {
 	// Initialize Window
@@ -138,12 +137,12 @@ bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
 	{
 		throw "Failed to initialize glfw";
 	}
-	
+
 #if !_WIN32
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
 	glfwWindow = glfwCreateWindow(windowWidth, windowHeight, "OpenGL", nullptr, nullptr);
