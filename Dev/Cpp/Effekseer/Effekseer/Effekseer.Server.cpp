@@ -114,7 +114,6 @@ void ServerImplemented::InternalClient::ShutDown()
 //
 //----------------------------------------------------------------------------------
 ServerImplemented::ServerImplemented()
-	: m_running(false)
 {
 	Socket::Initialize();
 }
