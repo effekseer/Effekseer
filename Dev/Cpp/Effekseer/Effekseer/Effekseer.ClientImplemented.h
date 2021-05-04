@@ -29,11 +29,11 @@ private:
 	bool isThreadRunning = false;
 	std::thread m_threadRecv;
 
-	EfkSocket m_socket;
-	uint16_t m_port;
+	EfkSocket m_socket = InvalidSocket;
+	uint16_t m_port = 0;
 	std::vector<uint8_t> m_sendBuffer;
 
-	bool m_running;
+	bool m_running = false;
 	std::mutex mutexStop;
 
 	bool GetAddr(const char* host, IN_ADDR* addr);

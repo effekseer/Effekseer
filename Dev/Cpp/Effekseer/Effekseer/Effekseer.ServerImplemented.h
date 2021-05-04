@@ -58,13 +58,13 @@ private:
 		bool IsRegistered;
 	};
 
-	EfkSocket m_socket;
-	uint16_t m_port;
+	EfkSocket m_socket = InvalidSocket;
+	uint16_t m_port = 0;
 
 	std::thread m_thread;
 	std::mutex m_ctrlClients;
 
-	bool m_running;
+	bool m_running = false;
 
 	std::set<InternalClient*> m_clients;
 	std::set<InternalClient*> m_removedClients;

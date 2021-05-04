@@ -50,7 +50,6 @@ void ClientImplemented::StopInternal()
 }
 
 ClientImplemented::ClientImplemented()
-	: m_running(false)
 {
 	Socket::Initialize();
 }
