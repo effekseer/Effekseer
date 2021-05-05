@@ -224,7 +224,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 				Culling3D::SafeRelease(drawset.CullingObjectPointer);
 			}
 
-			m_RemovingDrawSets[1].erase(it++);
+			it = m_RemovingDrawSets[1].erase(it);
 		}
 		m_RemovingDrawSets[1].clear();
 	}
@@ -243,7 +243,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 			}
 
 			m_RemovingDrawSets[1][(*it).first] = (*it).second;
-			m_RemovingDrawSets[0].erase(it++);
+			it = m_RemovingDrawSets[0].erase(it);
 		}
 		m_RemovingDrawSets[0].clear();
 	}
@@ -267,7 +267,7 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 				}
 
 				m_RemovingDrawSets[0][(*it).first] = (*it).second;
-				m_DrawSets.erase(it++);
+				it = m_DrawSets.erase(it);
 			}
 			else
 			{
