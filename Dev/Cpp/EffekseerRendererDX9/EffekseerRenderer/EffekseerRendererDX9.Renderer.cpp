@@ -209,6 +209,7 @@ void RendererImplemented::OnLostDevice()
 	}
 
 	GetImpl()->DeleteProxyTextures(this);
+	SetBackground(nullptr);
 
 	graphicsDevice_->LostDevice();
 }
@@ -746,6 +747,13 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
+	if (background == nullptr)
+	{
+		m_backgroundDX9.Reset();
+		EffekseerRenderer::Renderer::SetBackground(nullptr);
+		return;
+	}
+
 	if (m_backgroundDX9 == nullptr)
 	{
 		m_backgroundDX9 = graphicsDevice_->CreateTexture(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
@@ -756,7 +764,7 @@ void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 		texture->Init(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
 	}
 
-	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundDX9 : nullptr);
+	EffekseerRenderer::Renderer::SetBackground(m_backgroundDX9);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
