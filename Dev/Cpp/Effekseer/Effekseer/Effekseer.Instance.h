@@ -310,10 +310,10 @@ public:
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
 
-	// 変換用行列
+	// a transform matrix in the world coordinate
 	SIMD::Mat43f m_GlobalMatrix43;
 
-	// 親の変換用行列
+	// parent's transform matrix
 	SIMD::Mat43f m_ParentMatrix;
 
 	// FirstUpdate実行前
