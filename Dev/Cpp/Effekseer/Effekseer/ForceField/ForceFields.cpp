@@ -409,6 +409,7 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 			ffcp.Position.SetZ(-ffcp.Position.GetZ());
 			ffcp.PreviousVelocity.SetZ(-ffcp.PreviousVelocity.GetZ());
 			ffcp.PreviousSumVelocity.SetZ(-ffcp.PreviousSumVelocity.GetZ());
+			ffcp.TargetPosition.SetZ(-ffcp.TargetPosition.GetZ());
 		}
 
 		if (field.IsRotated)
@@ -416,6 +417,7 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 			ffcp.PreviousSumVelocity = SIMD::Vec3f::Transform(ffcp.PreviousSumVelocity, field.InvRotation);
 			ffcp.PreviousVelocity = SIMD::Vec3f::Transform(ffcp.PreviousVelocity, field.InvRotation);
 			ffcp.Position = SIMD::Vec3f::Transform(ffcp.Position, field.InvRotation);
+			ffcp.TargetPosition = SIMD::Vec3f::Transform(ffcp.TargetPosition, field.InvRotation);
 		}
 
 		ForceField ff;
