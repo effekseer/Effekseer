@@ -919,7 +919,7 @@ void EffectImplemented::Reset()
 	m_normalImagePaths.clear();
 	m_normalImages.clear();
 	m_distortionImagePaths.clear();
-	m_distortionImagePaths.clear();
+	m_distortionImages.clear();
 	m_WavePaths.clear();
 	m_pWaves.clear();
 	modelPaths_.clear();
@@ -928,6 +928,8 @@ void EffectImplemented::Reset()
 	materials_.clear();
 	curvePaths_.clear();
 	curves_.clear();
+	proceduralModels_.clear();
+	proceduralModelParameters_.clear();
 
 	ES_SAFE_DELETE(m_pRoot);
 }
