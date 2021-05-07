@@ -316,8 +316,7 @@ void Instance::FirstUpdate()
 	forceField_.Reset();
 	m_GenerationLocation = SIMD::Mat43f::Identity;
 
-	// 親の初期化
-	if (parameter->CommonValues.TranslationBindType == BindType::WhenCreating ||
+	if (parameter->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating ||
 		parameter->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent ||
 		parameter->CommonValues.RotationBindType == BindType::WhenCreating ||
 		parameter->CommonValues.ScalingBindType == BindType::WhenCreating)
