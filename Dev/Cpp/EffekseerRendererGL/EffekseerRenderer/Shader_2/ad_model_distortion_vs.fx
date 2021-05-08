@@ -234,6 +234,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_9 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
     Output = param_9;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

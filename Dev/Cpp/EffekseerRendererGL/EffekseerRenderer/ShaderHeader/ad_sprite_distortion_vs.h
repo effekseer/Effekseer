@@ -200,6 +200,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 
@@ -655,6 +656,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

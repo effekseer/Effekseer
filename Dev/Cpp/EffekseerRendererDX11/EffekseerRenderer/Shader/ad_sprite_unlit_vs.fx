@@ -128,7 +128,7 @@ VS_Output main(const VS_Input Input)
 
 	CalculateAndStoreAdvancedParameter(Input, Output);
 
-#ifndef DISABLED_SOFT_PARTICLE
+#if !defined(DISABLED_SOFT_PARTICLE) || defined(ENABLE_DISTORTION)
 	Output.PosP = Output.PosVS;
 #endif
 
