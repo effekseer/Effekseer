@@ -813,6 +813,7 @@ public:
 			else
 			{
 				PixelConstantBuffer pcb;
+				pcb.FalloffParam.Enable = 0;
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(m_state.EnableInterpolation);
 				pcb.FlipbookParam.InterpolationType = static_cast<float>(m_state.InterpolationType);
 
