@@ -169,7 +169,7 @@ private:
 	CustomAlignedMap<Handle, DrawSet> m_renderingDrawSetMaps;
 
 	// mutex for rendering
-	std::mutex m_renderingMutex;
+	std::recursive_mutex m_renderingMutex;
 	bool m_isLockedWithRenderingMutex = false;
 
 	SettingRef m_setting;
