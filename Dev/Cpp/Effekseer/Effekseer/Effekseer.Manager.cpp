@@ -1786,7 +1786,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 		m_WorkerThreads[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	std::lock_guard lock(m_renderingMutex);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
@@ -1849,7 +1849,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 {
-	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	std::lock_guard lock(m_renderingMutex);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
@@ -1906,7 +1906,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 {
-	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	std::lock_guard lock(m_renderingMutex);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
@@ -2038,7 +2038,7 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 		m_WorkerThreads[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	std::lock_guard lock(m_renderingMutex);
 
 	auto it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
@@ -2103,7 +2103,7 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 		m_WorkerThreads[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	std::lock_guard lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
@@ -2150,7 +2150,7 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 		m_WorkerThreads[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	std::lock_guard lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
