@@ -27,7 +27,6 @@ struct StandardRendererState
 	bool DepthWrite;
 	bool Distortion;
 	float DistortionIntensity;
-	bool Wireframe;
 	bool Refraction;
 
 	::Effekseer::AlphaBlendType AlphaBlend;
@@ -74,7 +73,6 @@ struct StandardRendererState
 		DepthWrite = false;
 		Distortion = false;
 		DistortionIntensity = 1.0f;
-		Wireframe = true;
 		Refraction = false;
 
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
@@ -209,6 +207,13 @@ struct StandardRendererState
 		Effekseer::Effect* effect,
 		Effekseer::NodeRendererBasicParameter* basicParam)
 	{
+		AlphaBlend = basicParam->AlphaBlend;
+
+		if (renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		{
+			AlphaBlend = ::Effekseer::AlphaBlendType::Opacity;
+		}
+
 		Collector = ShaderParameterCollector();
 		Collector.Collect(renderer, effect, basicParam, false, renderer->GetImpl()->isSoftParticleEnabled);
 

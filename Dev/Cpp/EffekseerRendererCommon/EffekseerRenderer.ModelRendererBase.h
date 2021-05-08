@@ -1026,6 +1026,11 @@ public:
 		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = param.Culling;
 
+		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		{
+			state.AlphaBlend = ::Effekseer::AlphaBlendType::Opacity;
+		}
+
 		if (renderDistortedBackground)
 		{
 			state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;

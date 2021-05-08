@@ -281,8 +281,10 @@ enum class ZSortType : int32_t
 //-----------------------------------------------------------------------------------
 enum class RenderMode : int32_t
 {
-	Normal,	   // 通常描画
-	Wireframe, // ワイヤーフレーム描画
+	//! Render as polygon
+	Normal,
+	//! Render as wires
+	Wireframe,
 };
 
 /**

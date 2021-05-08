@@ -150,7 +150,6 @@ protected:
 		}
 
 		EffekseerRenderer::StandardRendererState state;
-		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;

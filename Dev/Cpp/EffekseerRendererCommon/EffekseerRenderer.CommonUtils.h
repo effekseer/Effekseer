@@ -939,7 +939,8 @@ struct ShaderParameterCollector
 		IsDepthRequired = isSoftParticleEnabled;
 		MaterialRenderDataPtr = nullptr;
 
-		auto isMaterial = param->MaterialType == ::Effekseer::RendererMaterialType::File && param->MaterialRenderDataPtr != nullptr;
+		auto isMaterial = param->MaterialType == ::Effekseer::RendererMaterialType::File && param->MaterialRenderDataPtr != nullptr && renderer->GetRenderMode() == Effekseer::RenderMode::Normal;
+
 		if (isMaterial)
 		{
 			MaterialDataPtr = effect->GetMaterial(param->MaterialRenderDataPtr->MaterialIndex);
@@ -969,7 +970,11 @@ struct ShaderParameterCollector
 			IsDepthRequired = true;
 		}
 
-		if (param->MaterialType == ::Effekseer::RendererMaterialType::File && isMaterial)
+		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		{
+			ShaderType = RendererShaderType::Unlit;
+		}
+		else if (param->MaterialType == ::Effekseer::RendererMaterialType::File && isMaterial)
 		{
 			MaterialRenderDataPtr = param->MaterialRenderDataPtr;
 			if (MaterialRenderDataPtr != nullptr)
@@ -1019,7 +1024,20 @@ struct ShaderParameterCollector
 			ShaderType = RendererShaderType::Unlit;
 		}
 
-		if (MaterialRenderDataPtr != nullptr && MaterialDataPtr != nullptr)
+		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		{
+			TextureCount = 1;
+			Textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+			TextureFilterTypes[0] = param->TextureFilters[0];
+			TextureWrapTypes[0] = param->TextureWraps[0];
+
+			if (IsDepthRequired)
+			{
+				DepthIndex = TextureCount;
+				TextureCount += 1;
+			}
+		}
+		else if (isMaterial)
 		{
 			TextureCount = static_cast<int32_t>(Effekseer::Min(MaterialRenderDataPtr->MaterialTextures.size(), ::Effekseer::UserTextureSlotMax));
 			for (int32_t i = 0; i < TextureCount; i++)
