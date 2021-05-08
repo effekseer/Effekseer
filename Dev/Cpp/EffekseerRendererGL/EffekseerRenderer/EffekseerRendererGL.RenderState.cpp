@@ -120,8 +120,7 @@ void RenderState::Update(bool forced)
 		{
 			glEnable(GL_BLEND);
 
-			if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity ||
-				m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+			if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity)
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 				GLExt::glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE);

@@ -57,9 +57,6 @@ RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC de
 	{
 		auto type = (::Effekseer::AlphaBlendType)i;
 
-		if (m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-			type = ::Effekseer::AlphaBlendType::Opacity;
-
 		D3D11_BLEND_DESC Desc;
 		ZeroMemory(&Desc, sizeof(Desc));
 		Desc.AlphaToCoverageEnable = false;
