@@ -254,7 +254,7 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	// Extract shader
 	EffekseerRendererGL::ShaderCodeView extractPS(g_extract_fs_src);
 
-	shaderExtract.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &extractPS, 1, "Bloom extract"));
+	shaderExtract.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &extractPS, 1, "Bloom extract"));
 
 	shaderExtract->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
@@ -266,14 +266,14 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 
 	EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
 
-	shaderDownsample.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &downSamplePS, 1, "Bloom downsample"));
+	shaderDownsample.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &downSamplePS, 1, "Bloom downsample"));
 	shaderDownsample->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 	// Blend shader
 	EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
 
-	shaderBlend.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &blendPS, 1, "Bloom blend"));
+	shaderBlend.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &blendPS, 1, "Bloom blend"));
 	shaderBlend->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
 	shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
@@ -283,14 +283,14 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	// Blur(horizontal) shader
 	EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
 
-	shaderBlurH.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &blend_h_PS, 1, "Bloom blurH"));
+	shaderBlurH.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &blend_h_PS, 1, "Bloom blurH"));
 	shaderBlurH->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
 
 	// Blur(vertical) shader
 	EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
 
-	shaderBlurV.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &blend_v_PS, 1, "Bloom blurV"));
+	shaderBlurV.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &blend_v_PS, 1, "Bloom blurV"));
 	shaderBlurV->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
 
@@ -448,14 +448,14 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	// Copy shader
 	EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
 
-	shaderCopy.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &copyPS, 1, "Tonemap copy"));
+	shaderCopy.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &copyPS, 1, "Tonemap copy"));
 	shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
 	// Reinhard shader
 	EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
 
-	shaderReinhard.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &tonemapPS, 1, "Tonemap Reinhard"));
+	shaderReinhard.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &tonemapPS, 1, "Tonemap Reinhard"));
 	shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
@@ -512,7 +512,7 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRe
 	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
 
 	// Copy shader
-	shader_.reset(Shader::Create(renderer_->GetIntetnalGraphicsDevice(), &basicVS, 1, &linierToSrgbPS, 1, "LinearToSRGB"));
+	shader_.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), &basicVS, 1, &linierToSrgbPS, 1, "LinearToSRGB"));
 	shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
 	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
 

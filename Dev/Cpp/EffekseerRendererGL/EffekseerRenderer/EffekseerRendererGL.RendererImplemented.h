@@ -236,7 +236,7 @@ public:
 
 	bool IsVertexArrayObjectSupported() const override;
 
-	Backend::GraphicsDeviceRef& GetIntetnalGraphicsDevice()
+	Backend::GraphicsDeviceRef& GetInternalGraphicsDevice()
 	{
 		return graphicsDevice_;
 	}

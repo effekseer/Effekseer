@@ -328,42 +328,42 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_model_lit_ps(GetDeviceType()));
 
-	shader_ad_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "UnlitAd", false, false);
+	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "UnlitAd", false, false);
 	if (shader_ad_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile UnlitAd");
 		return false;
 	}
 
-	shader_ad_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "DistAd", false, false);
+	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "DistAd", false, false);
 	if (shader_ad_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
 	}
 
-	shader_ad_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "LitAd", false, false);
+	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "LitAd", false, false);
 	if (shader_ad_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
 	}
 
-	shader_unlit_ = Shader::Create(GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Unlit", false, false);
+	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Unlit", false, false);
 	if (shader_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Unlit");
 		return false;
 	}
 
-	shader_distortion_ = Shader::Create(GetIntetnalGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Dist", false, false);
+	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Dist", false, false);
 	if (shader_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Dist");
 		return false;
 	}
 
-	shader_lit_ = Shader::Create(GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Lit", false, false);
+	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Lit", false, false);
 	if (shader_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Lit");
@@ -842,7 +842,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<MaterialLoader>(GetIntetnalGraphicsDevice(), fileInterface);
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(GetInternalGraphicsDevice(), fileInterface);
 }
 
 void RendererImplemented::SetBackground(GLuint background, bool hasMipmap)

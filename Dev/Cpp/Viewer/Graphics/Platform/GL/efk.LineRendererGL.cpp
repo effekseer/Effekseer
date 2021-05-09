@@ -79,7 +79,7 @@ LineRendererGL::LineRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(gl_line_ps);
 
 	auto shader_no_texture_ =
-		EffekseerRendererGL::Shader::Create(this->renderer->GetIntetnalGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex", true, false);
+		EffekseerRendererGL::Shader::Create(this->renderer->GetInternalGraphicsDevice(), &lineCodeDataVS, 1, &lineCodeDataNPS, 1, "Standard NoTex", true, false);
 
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false}, {"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true}, {"Input_UV", GL_FLOAT, 2, 16, false}};
