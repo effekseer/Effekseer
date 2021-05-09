@@ -809,6 +809,6 @@ public:
 	// NodeFrameTimeline
 	bool BeginNodeFrameTimeline();
 	void TimelineNode(const char16_t* title);
-	void EndNodeFrameTimeline();
+	void EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame);
 };
 } // namespace efk

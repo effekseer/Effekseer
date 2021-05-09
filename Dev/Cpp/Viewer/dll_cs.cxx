@@ -8385,11 +8385,21 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TimelineNode___(voi
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimeline___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimeline___(void * jarg1, int * jarg2, int * jarg3, int * jarg4, int * jarg5, int * jarg6) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int *arg2 = (int *) 0 ;
+  int *arg3 = (int *) 0 ;
+  int *arg4 = (int *) 0 ;
+  int *arg5 = (int *) 0 ;
+  int *arg6 = (int *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  (arg1)->EndNodeFrameTimeline();
+  arg2 = (int *)jarg2; 
+  arg3 = (int *)jarg3; 
+  arg4 = (int *)jarg4; 
+  arg5 = (int *)jarg5; 
+  arg6 = (int *)jarg6; 
+  (arg1)->EndNodeFrameTimeline(arg2,arg3,arg4,arg5,arg6);
 }
 
 
