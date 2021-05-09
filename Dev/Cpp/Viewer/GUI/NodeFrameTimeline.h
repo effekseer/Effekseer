@@ -7,5 +7,5 @@ class NodeFrameTimeline
 public:
 	static bool BeginNodeFrameTimeline();
 	static void TimelineNode(const char* title);
-	static void EndNodeFrameTimeline();
+	static void EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame);
 };

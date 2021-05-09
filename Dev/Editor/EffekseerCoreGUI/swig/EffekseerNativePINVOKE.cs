@@ -1837,7 +1837,7 @@ class EffekseerNativePINVOKE {
   public static extern void GUIManager_TimelineNode(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimeline___")]
-  public static extern void GUIManager_EndNodeFrameTimeline(global::System.Runtime.InteropServices.HandleRef jarg1);
+  public static extern void GUIManager_EndNodeFrameTimeline(global::System.Runtime.InteropServices.HandleRef jarg1, ref int jarg2, ref int jarg3, ref int jarg4, ref int jarg5, ref int jarg6);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_FileDialog_OpenDialog___")]
   public static extern System.IntPtr FileDialog_OpenDialog([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);

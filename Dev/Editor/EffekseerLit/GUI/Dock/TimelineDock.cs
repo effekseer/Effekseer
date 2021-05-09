@@ -8,6 +8,8 @@ namespace Effekseer.GUI.Dock
 {
 	class TimelineDock : DockPanel
 	{
+		private int _scrollFirstFrame = 0;
+
 		public TimelineDock()
 		{
 			Label = Icons.PanelOptions + Resources.GetString("Options") + "###TimelineDock";
@@ -100,12 +102,23 @@ namespace Effekseer.GUI.Dock
 					Manager.NativeManager.TimelineNode(node.Name);
 				}
 
-				Manager.NativeManager.EndNodeFrameTimeline();
+				int frameMin = Core.StartFrame;
+				int frameMax = Core.EndFrame;
+				int currentFrame = (int)Manager.Viewer.Current;
+				int selectedEntry = 0;
+				Manager.NativeManager.EndNodeFrameTimeline(ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref _scrollFirstFrame);
+
+				Core.StartFrame = frameMin;
+				Core.EndFrame = frameMax;
+				Manager.Viewer.Current = currentFrame;
+				Manager.Viewer.Current = System.Math.Max(Manager.Viewer.Current, Core.StartFrame);
+				Manager.Viewer.Current = System.Math.Min(Manager.Viewer.Current, Core.EndFrame);
 			}
 		}
 
 		void OnAfter(object sender, EventArgs e)
 		{
+			_scrollFirstFrame = 0;
 		}
 	}
 }

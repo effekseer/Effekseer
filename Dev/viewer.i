@@ -94,6 +94,13 @@ class"
 %shared_ptr(Effekseer::IO);
 %shared_ptr(Effekseer::IOCallback);
 
+// Timeline
+%apply int *INOUT { int* frameMin }
+%apply int *INOUT { int* frameMax }
+%apply int *INOUT { int* currentFrame }
+%apply int *INOUT { int* selectedEntry }
+%apply int *INOUT { int* firstFrame }
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

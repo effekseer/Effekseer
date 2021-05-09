@@ -2394,9 +2394,9 @@ void GUIManager::TimelineNode(const char16_t* title)
 	NodeFrameTimeline::TimelineNode(utf8Label);
 }
 
-void GUIManager::EndNodeFrameTimeline()
+void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame)
 {
-	NodeFrameTimeline::EndNodeFrameTimeline();
+	NodeFrameTimeline::EndNodeFrameTimeline(frameMin, frameMax, currentFrame, selectedEntry, firstFrame);
 }
 
 } // namespace efk
