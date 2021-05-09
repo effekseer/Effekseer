@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#if (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
+#if (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE2__)
 #define EFK_SSE2
 #include <emmintrin.h>
 #elif defined(__ARM_NEON__)
