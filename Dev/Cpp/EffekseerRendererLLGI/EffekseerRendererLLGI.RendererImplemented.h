@@ -12,14 +12,6 @@
 #include <LLGI.PipelineState.h>
 #include <LLGI.Texture.h>
 
-#if (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
-#define EFK_SSE2
-#include <emmintrin.h>
-#elif defined(__ARM_NEON__)
-#define EFK_NEON
-#include <arm_neon.h>
-#endif
-
 namespace EffekseerRendererLLGI
 {
 
