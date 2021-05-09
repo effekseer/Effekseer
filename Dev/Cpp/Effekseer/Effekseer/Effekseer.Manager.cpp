@@ -848,6 +848,8 @@ void ManagerImplemented::SetMatrix(Handle handle, const Matrix43& mat)
 		if (mat_ != nullptr)
 		{
 			(*mat_) = mat;
+			Vector3D t;
+			mat.GetSRT(drawSet.Scaling, drawSet.Rotation, t);
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
 		}
@@ -926,14 +928,11 @@ void ManagerImplemented::SetRotation(Handle handle, float x, float y, float z)
 
 		if (mat_ != nullptr)
 		{
-			SIMD::Mat43f r;
-			SIMD::Vec3f s, t;
+			const auto t = mat_->GetTranslation();
 
-			mat_->GetSRT(s, r, t);
+			drawSet.Rotation.RotationZXY(z, x, y);
 
-			r = SIMD::Mat43f::RotationZXY(z, x, y);
-
-			*mat_ = SIMD::Mat43f::SRT(s, r, t);
+			*mat_ = SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -951,14 +950,11 @@ void ManagerImplemented::SetRotation(Handle handle, const Vector3D& axis, float 
 
 		if (mat_ != nullptr)
 		{
-			SIMD::Mat43f r;
-			SIMD::Vec3f s, t;
+			const auto t = mat_->GetTranslation();
 
-			mat_->GetSRT(s, r, t);
+			drawSet.Rotation.RotationAxis(axis, angle);
 
-			r = SIMD::Mat43f::RotationAxis(axis, angle);
-
-			*mat_ = SIMD::Mat43f::SRT(s, r, t);
+			*mat_ = SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -976,14 +972,11 @@ void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 
 		if (mat_ != nullptr)
 		{
-			SIMD::Mat43f r;
-			SIMD::Vec3f s, t;
+			const auto t = mat_->GetTranslation();
 
-			mat_->GetSRT(s, r, t);
+			drawSet.Scaling = { x, y, z };
 
-			s = SIMD::Vec3f(x, y, z);
-
-			*mat_ = SIMD::Mat43f::SRT(s, r, t);
+			*mat_ = SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
