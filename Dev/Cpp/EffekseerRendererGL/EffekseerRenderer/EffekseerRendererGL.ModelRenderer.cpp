@@ -370,27 +370,27 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_vs(get_model_distortion_vs(renderer->GetDeviceType()));
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
-	shader_ad_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ad_lit_vs, 1, &ad_lit_ps, 1, "ModelRenderer1", true, false);
+	shader_ad_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), &ad_lit_vs, 1, &ad_lit_ps, 1, "ModelRenderer1", true, false);
 	if (shader_ad_lit == nullptr)
 		goto End;
 
-	shader_ad_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ad_unlit_vs, 1, &ad_unlit_ps, 1, "ModelRenderer5", true, false);
+	shader_ad_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), &ad_unlit_vs, 1, &ad_unlit_ps, 1, "ModelRenderer5", true, false);
 	if (shader_ad_unlit == nullptr)
 		goto End;
 
-	shader_ad_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &ad_dist_vs, 1, &ad_dist_ps, 1, "ModelRenderer7", true, false);
+	shader_ad_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), &ad_dist_vs, 1, &ad_dist_ps, 1, "ModelRenderer7", true, false);
 	if (shader_ad_distortion == nullptr)
 		goto End;
 
-	shader_lit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "ModelRenderer1", true, false);
+	shader_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "ModelRenderer1", true, false);
 	if (shader_lit == nullptr)
 		goto End;
 
-	shader_unlit = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "ModelRenderer5", true, false);
+	shader_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "ModelRenderer5", true, false);
 	if (shader_unlit == nullptr)
 		goto End;
 
-	shader_distortion = Shader::Create(renderer->GetIntetnalGraphicsDevice(), &dist_vs, 1, &dist_ps, 1, "ModelRenderer7", true, false);
+	shader_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), &dist_vs, 1, &dist_ps, 1, "ModelRenderer7", true, false);
 	if (shader_distortion == nullptr)
 		goto End;
 
