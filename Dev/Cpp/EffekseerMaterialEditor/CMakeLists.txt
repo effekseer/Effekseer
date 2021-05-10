@@ -11,18 +11,6 @@ if (MSVC)
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
 endif()
 
-# For Mac
-if(APPLE)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
-endif()
-
-# C++ version
-if(WIN32)
-    set(CMAKE_CXX_STANDARD 17)
-else()
-    set(CMAKE_CXX_STANDARD 14)
-endif()
-
 file(GLOB srcs 
     *.cpp
     Graphics/*.cpp)

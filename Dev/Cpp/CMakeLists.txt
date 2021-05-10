@@ -13,7 +13,7 @@ endif()
 
 # For Mac
 if(APPLE)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
 endif()
 
 if (MSVC)
