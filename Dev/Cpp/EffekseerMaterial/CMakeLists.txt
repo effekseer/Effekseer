@@ -9,11 +9,6 @@ if (MSVC)
     option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
-# For Mac
-if(APPLE)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
-endif()
-
 # C++ version
 if(WIN32)
     set(CMAKE_CXX_STANDARD 17)
