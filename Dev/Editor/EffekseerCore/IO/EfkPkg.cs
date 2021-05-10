@@ -381,6 +381,29 @@ namespace Effekseer.IO
 
 			try
 			{
+				// Extract resource files
+				foreach (var file in ResourceFiles)
+				{
+					if (!extractFiles.Contains(file))
+					{
+						continue;
+					}
+
+					string filePath = Path.Combine(dirPath, file.RelativePath);
+					string resourceDirPath = Path.GetDirectoryName(filePath);
+					if (!Directory.Exists(resourceDirPath))
+					{
+						Directory.CreateDirectory(resourceDirPath);
+					}
+
+					byte[] data = ApplyResourceDependencies(file, dirPath, filePath);
+					if (data != null)
+					{
+						File.WriteAllBytes(filePath, data);
+						File.SetLastWriteTime(filePath, file.LastWriteTime);
+					}
+				}
+
 				// Extract effect files
 				foreach (var file in EffectFiles)
 				{
@@ -413,32 +436,10 @@ namespace Effekseer.IO
 					}
 
 					// Write effect file
+					Core.OnFileLoaded = backedupDelegate;
 					byte[] data = efkefc.Save(root, Core.SaveAsXmlDocument(root));
 					File.WriteAllBytes(filePath, data);
 					File.SetLastWriteTime(filePath, file.LastWriteTime);
-				}
-
-				// Extract resource files
-				foreach (var file in ResourceFiles)
-				{
-					if (!extractFiles.Contains(file))
-					{
-						continue;
-					}
-
-					string filePath = Path.Combine(dirPath, file.RelativePath);
-					string resourceDirPath = Path.GetDirectoryName(filePath);
-					if (!Directory.Exists(resourceDirPath))
-					{
-						Directory.CreateDirectory(resourceDirPath);
-					}
-
-					byte[] data = ApplyResourceDependencies(file, dirPath, filePath);
-					if (data != null)
-					{
-						File.WriteAllBytes(filePath, data);
-						File.SetLastWriteTime(filePath, file.LastWriteTime);
-					}
 				}
 			}
 			finally
