@@ -36,6 +36,28 @@ namespace Effekseer.Binary
 
 	class Utils
 	{
+		public static string GetModelPath(Data.Value.Path path)
+		{
+			var relativePath = path.RelativePath;
+			var ext = System.IO.Path.GetExtension(relativePath);
+
+			if (string.IsNullOrEmpty(ext))
+			{
+				return relativePath;
+			}
+
+			if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relativePath)))
+			{
+				relativePath = System.IO.Path.GetFileNameWithoutExtension(relativePath) + ".efkmodel";
+			}
+			else
+			{
+				relativePath = System.IO.Path.ChangeExtension(relativePath, ".efkmodel");
+			}
+
+			return relativePath;
+		}
+
 		public static void ExportEasing(FloatEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version, bool exportSize)
 		{
 			var refBuf1_1 = easingValue.Start.DynamicEquationMax.Index.GetBytes();
