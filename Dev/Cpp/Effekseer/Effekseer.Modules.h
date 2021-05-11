@@ -805,6 +805,7 @@ class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;
+	static const int32_t LastetVersion = 5;
 
 	struct Vertex
 	{
@@ -1064,6 +1065,7 @@ class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;
+	static const int32_t LastetVersion = 5;
 
 	struct Vertex
 	{

@@ -25,6 +25,12 @@ Model::Model(const void* data, int32_t size)
 		p += sizeof(int32_t);
 	}
 
+	if (version_ > LastetVersion)
+	{
+		models_.resize(1);
+		return;
+	}
+
 	// For compatibility
 	int32_t modelCount = 0;
 	memcpy(&modelCount, p, sizeof(int32_t));

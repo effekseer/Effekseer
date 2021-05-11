@@ -407,14 +407,7 @@ namespace Effekseer.Binary
 
                         if (!string.IsNullOrEmpty(relative_path))
                         {
-							if(string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
-							{
-								relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
-							}
-							else
-							{
-								relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
-							}
+							relative_path = Utils.GetModelPath(_node.DrawingValues.Model.Model);
 
 							if (relative_path != string.Empty)
                             {
@@ -433,14 +426,7 @@ namespace Effekseer.Binary
 
                         if (!string.IsNullOrEmpty(relative_path))
                         {
-							if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(relative_path)))
-							{
-								relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
-							}
-							else
-							{
-								relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
-							}
+							relative_path = Utils.GetModelPath(_node.GenerationLocationValues.Model.Model);
 
 							if (relative_path != string.Empty)
                             {
