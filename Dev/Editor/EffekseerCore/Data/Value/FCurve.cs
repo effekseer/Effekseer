@@ -314,6 +314,11 @@ namespace Effekseer.Data.Value
 
             int length = keys[rInd].Frame - keys[lInd].Frame;
 
+			if(length == 0)
+			{
+				return ToFloat(keys[lInd].Value);
+			}
+
 			if (keys[rInd].Frame <= frame)
 			{
 				if (end == FCurveEdge.Constant)

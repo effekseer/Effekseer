@@ -82,6 +82,11 @@ float FCurve::GetValue(float living, float life, FCurveTimelineType type) const
 	frame -= offset_;
 	auto flen = static_cast<float>(len_);
 
+	if (len_ == 0)
+	{
+		return keys_[0];
+	}
+
 	if (frame < 0)
 	{
 		if (start_ == FCurveEdge::Constant)
