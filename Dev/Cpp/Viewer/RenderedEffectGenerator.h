@@ -244,6 +244,11 @@ public:
 	{
 		sound_ = sound;
 	}
+
+	bool GetIsSRGBMode() const
+	{
+		return m_isSRGBMode;
+	}
 };
 
 } // namespace Tool

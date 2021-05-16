@@ -199,12 +199,6 @@ private:
 
 	Effekseer::Tool::ViewerEffectBehavior behavior_;
 
-	int32_t m_time;
-
-	int m_step;
-
-	bool m_isSRGBMode = false;
-
 	::Effekseer::EffectRef effect_ = nullptr;
 
 	::Effekseer::Vector3D m_rootLocation;

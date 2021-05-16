@@ -27,15 +27,6 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-#define NONDLL 1
-
-#ifdef _WIN32
-#define MSWIN32 1
-#define BGDWIN32 1
-#endif
-#include <gd.h>
-#include <gdfontmb.h>
-
 const float DistanceBase = 15.0f;
 const float OrthoScaleBase = 16.0f;
 const float ZoomDistanceFactor = 1.125f;
@@ -434,8 +425,6 @@ void Native::MaterialLoader::ReleaseAll()
 }
 
 Native::Native()
-	: m_time(0)
-	, m_step(1)
 {
 	g_client = Effekseer::Client::Create();
 
@@ -464,7 +453,6 @@ Native::~Native()
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
 {
 	spdlog::trace("Begin Native::CreateWindow_Effekseer");
-	m_isSRGBMode = isSRGBMode;
 	g_deviceType = deviceType;
 
 	// because internal buffer is 16bit
@@ -486,7 +474,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 #endif
 	spdlog::trace("OK new ::efk::Graphics");
 
-	if (!graphics_->Initialize(pHandle, width, height, m_isSRGBMode))
+	if (!graphics_->Initialize(pHandle, width, height, isSRGBMode))
 	{
 		spdlog::trace("Graphics::Initialize(false)");
 		ES_SAFE_DELETE(graphics_);
@@ -864,7 +852,7 @@ bool Native::BeginRecord(const RecordingParameter& recordingParameter)
 		return false;
 
 	recorder.reset(new Effekseer::Tool::Recorder());
-	return recorder->Begin(mainScreen_, graphics_, setting_, recordingParameter, Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight), m_isSRGBMode, behavior_, effect_);
+	return recorder->Begin(mainScreen_, graphics_, setting_, recordingParameter, Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight), mainScreen_->GetIsSRGBMode(), behavior_, effect_);
 }
 
 bool Native::StepRecord(int frames)
@@ -1094,7 +1082,6 @@ void Native::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
 void Native::SetStep(int32_t step)
 {
 	mainScreen_->SetStep(step);
-	m_step = step;
 }
 
 bool Native::StartNetwork(const char* host, uint16_t port)
