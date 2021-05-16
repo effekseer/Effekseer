@@ -68,7 +68,7 @@ if (BUILD_DX12)
     add_definitions(-D__EFFEKSEER_BUILD_DX12__)
 endif()
 
-if (BUILD_VERSION16)
+if (BUILD_VERSION17)
     add_definitions(-D__EFFEKSEER_BUILD_VERSION17__)
 endif()
 
