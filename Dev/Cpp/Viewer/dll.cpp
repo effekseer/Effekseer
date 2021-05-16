@@ -41,21 +41,17 @@ const float OrthoScaleBase = 16.0f;
 const float ZoomDistanceFactor = 1.125f;
 const float MaxZoom = 40.0f;
 const float MinZoom = -40.0f;
+const float PI = 3.14159265f;
 
 static float g_RotX = 30.0f;
 static float g_RotY = -30.0f;
-static Effekseer::Vector3D g_lightDirection = Effekseer::Vector3D(1, 1, 1);
 static float g_Zoom = 0.0f;
-const float PI = 3.14159265f;
 
 static bool g_mouseRotDirectionInvX = false;
 static bool g_mouseRotDirectionInvY = false;
 
 static bool g_mouseSlideDirectionInvX = false;
 static bool g_mouseSlideDirectionInvY = false;
-
-static int g_lastViewWidth = 0;
-static int g_lastViewHeight = 0;
 
 bool Combine(const char16_t* rootPath, const char16_t* treePath, char16_t* dst, int dst_length)
 {
@@ -1123,9 +1119,7 @@ void Native::SendDataByNetwork(const char16_t* key, void* data, int size, const 
 
 void Native::SetLightDirection(float x, float y, float z)
 {
-	g_lightDirection = Effekseer::Vector3D(x, y, z);
-
-	Effekseer::Vector3D temp = g_lightDirection;
+	Effekseer::Vector3D temp = Effekseer::Vector3D(x, y, z);
 
 	if (!viewPointCtrl_.IsRightHand)
 	{
