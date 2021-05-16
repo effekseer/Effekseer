@@ -18,13 +18,8 @@ private:
 	std::shared_ptr<::EffekseerRenderer::Grid> grid_;
 	std::shared_ptr<::EffekseerRenderer::Guide> guide_;
 	std::shared_ptr<::EffekseerRenderer::Culling> culling_;
-	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> staticMeshRenderer_;
-
-	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
-	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
 
 	Effekseer::TextureLoaderRef textureLoader_;
-	Effekseer::TextureRef backgroundTexture_;
 	std::u16string backgroundPath;
 
 public:
@@ -60,17 +55,9 @@ public:
 
 	bool IsRightHand = true;
 
-	bool IsGroundShown = false;
-
-	float GroundHeight = 0.0f;
-
-	int32_t GroundExtent = 10;
-
 	Effekseer::Vector3D CullingPosition;
 
 	void LoadBackgroundImage(const char16_t* path);
-
-	void UpdateGround();
 };
 
 class ViewPointController

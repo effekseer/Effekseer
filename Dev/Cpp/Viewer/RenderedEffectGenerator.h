@@ -26,6 +26,29 @@ struct RenderedEffectGeneratorConfig
 	Effekseer::Color LightColor;
 	Effekseer::Color LightAmbientColor;
 	Effekseer::RenderMode RenderMode;
+
+	bool IsGroundShown = false;
+	int32_t GroundExtent = 10;
+	float GroundHeight = 0.0f;
+};
+
+class GroundRenderer
+{
+private:
+	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> groudMeshRenderer_;
+	bool Initialize(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice);
+	int32_t GroundExtent = 10;
+
+public:
+	float GroundHeight = 0.0f;
+
+	void SetExtent(int32_t extent);
+
+	static std::shared_ptr<GroundRenderer> Create(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice);
+
+	void UpdateGround();
+
+	void Render(EffekseerRenderer::RendererRef renderer);
 };
 
 class RenderedEffectGenerator
@@ -73,6 +96,7 @@ protected:
 
 	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
+	Effekseer::TextureRef backgroundTexture_;
 	Effekseer::Color backgroundMeshColor_{};
 
 	efk::RenderTexture* renderTexture_ = nullptr;
@@ -118,7 +142,9 @@ protected:
 
 	RenderedEffectGeneratorConfig config_;
 
-	void UpdateBackgroundMesh(const Color& backgroundColor);
+	std::shared_ptr<GroundRenderer> groundRenderer_;
+
+	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
 public:
 	void PlayEffect();
@@ -192,6 +218,12 @@ public:
 	void SetConfig(const RenderedEffectGeneratorConfig& config)
 	{
 		config_ = config;
+
+		if (groundRenderer_ != nullptr)
+		{
+			groundRenderer_->SetExtent(config_.GroundExtent);
+			groundRenderer_->GroundHeight = config_.GroundHeight;
+		}
 	}
 
 	std::shared_ptr<efk::RenderTexture> GetView() const

@@ -1053,14 +1053,9 @@ bool Native::InvalidateTextureCache()
 
 void Native::SetGroundParameters(bool shown, float height, int32_t extent)
 {
-	mainScreen_->IsGroundShown = shown;
-	mainScreen_->GroundHeight = height;
-
-	if (mainScreen_->GroundExtent != extent)
-	{
-		mainScreen_->GroundExtent = extent;
-		mainScreen_->UpdateGround();
-	}
+	mainScreenConfig_.IsGroundShown = shown;
+	mainScreenConfig_.GroundHeight = height;
+	mainScreenConfig_.GroundExtent = extent;
 }
 
 void Native::SetIsGridShown(bool value, bool xy, bool xz, bool yz)

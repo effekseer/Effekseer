@@ -13,6 +13,112 @@ namespace Effekseer
 namespace Tool
 {
 
+bool GroundRenderer::Initialize(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice)
+{
+	groudMeshRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphicsDevice);
+
+	if (groudMeshRenderer_ == nullptr)
+	{
+		return false;
+	}
+
+	Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData(4);
+	Effekseer::CustomVector<int32_t> ibData = {0, 1, 2, 0, 2, 3};
+
+	auto groudMesh = Effekseer::Tool::StaticMesh::Create(graphicsDevice, vbData, ibData, true);
+
+	// Create checker patterns
+	Effekseer::Backend::TextureParameter texParams;
+	texParams.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	texParams.Size = {128, 128};
+	texParams.InitialData.resize(texParams.Size[0] * texParams.Size[1] * 4);
+	for (size_t i = 0; i < texParams.InitialData.size() / 4; i++)
+	{
+		const size_t x = i % texParams.Size[0] * 2 / texParams.Size[0];
+		const size_t y = i / texParams.Size[1] * 2 / texParams.Size[1];
+		if (x ^ y == 0)
+		{
+			texParams.InitialData[i * 4 + 0] = 90;
+			texParams.InitialData[i * 4 + 1] = 90;
+			texParams.InitialData[i * 4 + 2] = 90;
+			texParams.InitialData[i * 4 + 3] = 255;
+		}
+		else
+		{
+			texParams.InitialData[i * 4 + 0] = 60;
+			texParams.InitialData[i * 4 + 1] = 60;
+			texParams.InitialData[i * 4 + 2] = 60;
+			texParams.InitialData[i * 4 + 3] = 255;
+		}
+	}
+	groudMesh->Texture = graphicsDevice->CreateTexture(texParams);
+
+	groudMeshRenderer_->SetStaticMesh(groudMesh);
+
+	UpdateGround();
+
+	return true;
+}
+
+void GroundRenderer::SetExtent(int32_t extent)
+{
+	if (GroundExtent == extent)
+	{
+		return;
+	}
+
+	GroundExtent = extent;
+	UpdateGround();
+}
+
+void GroundRenderer::UpdateGround()
+{
+	std::array<Effekseer::Tool::StaticMeshVertex, 4> vbData;
+
+	vbData[0].Pos = {-(float)GroundExtent, 0.0f, -(float)GroundExtent};
+	vbData[0].VColor = {255, 255, 255, 255};
+	vbData[0].UV = {0.0f, 0.0f};
+	vbData[1].Pos = {(float)GroundExtent, 0.0f, -(float)GroundExtent};
+	vbData[1].VColor = {255, 255, 255, 255};
+	vbData[1].UV = {(float)GroundExtent, 0.0f};
+	vbData[2].Pos = {(float)GroundExtent, 0.0f, (float)GroundExtent};
+	vbData[2].VColor = {255, 255, 255, 255};
+	vbData[2].UV = {(float)GroundExtent, (float)GroundExtent};
+	vbData[3].Pos = {-(float)GroundExtent, 0.0f, (float)GroundExtent};
+	vbData[3].VColor = {255, 255, 255, 255};
+	vbData[3].UV = {0.0f, (float)GroundExtent};
+
+	for (auto& vb : vbData)
+	{
+		vb.Normal = {0.0f, 1.0f, 0.0f};
+	}
+
+	groudMeshRenderer_->GetStaticMesh()->GetVertexBuffer()->UpdateData(
+		vbData.data(), static_cast<int32_t>(vbData.size() * sizeof(Effekseer::Tool::StaticMeshVertex)), 0);
+}
+
+void GroundRenderer::Render(EffekseerRenderer::RendererRef renderer)
+{
+	Effekseer::Tool::RendererParameter param{};
+	param.CameraMatrix = renderer->GetCameraMatrix();
+	param.ProjectionMatrix = renderer->GetProjectionMatrix();
+	param.WorldMatrix.Translation(0.0f, GroundHeight, 0.0f);
+	param.DirectionalLightDirection = renderer->GetLightDirection().ToFloat4();
+	param.DirectionalLightColor = renderer->GetLightColor().ToFloat4();
+	param.AmbientLightColor = renderer->GetLightAmbientColor().ToFloat4();
+	groudMeshRenderer_->Render(param);
+}
+
+std::shared_ptr<GroundRenderer> GroundRenderer::Create(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice)
+{
+	auto ret = std::make_shared<GroundRenderer>();
+	if (ret->Initialize(graphicsDevice))
+	{
+		return ret;
+	}
+	return nullptr;
+}
+
 RenderedEffectGenerator::DistortingCallback::DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* generator)
 	: graphics_(graphics)
 	, generator_(generator)
@@ -33,10 +139,11 @@ bool RenderedEffectGenerator::DistortingCallback::OnDistorting(EffekseerRenderer
 	return IsEnabled;
 }
 
-void RenderedEffectGenerator::UpdateBackgroundMesh(const Color& backgroundColor)
+bool RenderedEffectGenerator::UpdateBackgroundMesh(const Color& backgroundColor)
 {
 	if (backgroundMesh_ != nullptr && !(backgroundColor != backgroundMeshColor_))
-		return;
+		return true;
+
 	backgroundMeshColor_ = backgroundColor;
 
 	const float eps = 0.00001f;
@@ -66,9 +173,16 @@ void RenderedEffectGenerator::UpdateBackgroundMesh(const Color& backgroundColor)
 	ibData[5] = 3;
 
 	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+	if (!backgroundMesh_)
+	{
+		return false;
+	}
+
 	backgroundMesh_->IsLit = false;
 
 	backgroundRenderer_->SetStaticMesh(backgroundMesh_);
+
+	return true;
 }
 
 void RenderedEffectGenerator::PlayEffect()
@@ -253,10 +367,25 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
 
-		if (backgroundRenderer_ == nullptr)
+		if (backgroundRenderer_ != nullptr && UpdateBackgroundMesh(config_.BackgroundColor))
 		{
+			spdlog::trace("OK : Background");
+		}
+		else
+		{
+			spdlog::trace("FAIL : Background");
 			return false;
 		}
+	}
+
+	groundRenderer_ = GroundRenderer::Create(graphics->GetGraphicsDevice());
+	if (groundRenderer_)
+	{
+		spdlog::trace("OK : GroundRenderer");
+	}
+	else
+	{
+		spdlog::trace("FAIL : GroundRenderer");
 	}
 
 	return true;
@@ -446,7 +575,7 @@ void RenderedEffectGenerator::Update(int32_t frame)
 
 		for (int i = 0; i < frame - updatingTime; i++)
 		{
-			Update();		
+			Update();
 		}
 	}
 }
@@ -483,11 +612,20 @@ void RenderedEffectGenerator::Render()
 
 	graphics_->Clear(config_.BackgroundColor);
 
+	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundTexture_ != nullptr)
 	{
+		backgroundMesh_->Texture = backgroundTexture_->GetBackend();
+
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix.Indentity();
 		param.ProjectionMatrix.Indentity();
+		param.WorldMatrix.Indentity();
 		backgroundRenderer_->Render(param);
+	}
+
+	if (groundRenderer_ != nullptr && config_.IsGroundShown)
+	{
+		groundRenderer_->Render(renderer_);
 	}
 
 	OnAfterClear();
