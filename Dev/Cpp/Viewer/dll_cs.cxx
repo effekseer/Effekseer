@@ -8561,13 +8561,17 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginNodeFr
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TimelineNode___(void * jarg1, void * jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TimelineNode___(void * jarg1, void * jarg2, int jarg3, int jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
+  int arg3 ;
+  int arg4 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  (arg1)->TimelineNode((char16_t const *)arg2);
+  arg3 = (int)jarg3; 
+  arg4 = (int)jarg4; 
+  (arg1)->TimelineNode((char16_t const *)arg2,arg3,arg4);
 }
 
 

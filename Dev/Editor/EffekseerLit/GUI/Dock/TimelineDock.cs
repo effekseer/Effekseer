@@ -96,23 +96,76 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.BeginNodeFrameTimeline())
 			{
-				for (int i = 0; i < Core.Root.Children.Count; i++)
-				{
-					var node = Core.Root.Children[i];
-					Manager.NativeManager.TimelineNode(node.Name);
-				}
+				// NOTE:
+				// [生成開始時間]  がオフセット
+				// [生存時間] が、1インスタンスの表示時間
+				// [生成時間] が [生成数] に対応して作られる 1　インスタンスごとのオフセット
+				// 
+				// 生成数: MaxGeneration
+				// 生成開始時間: GenerationTimeOffset
+				// 生存時間: Life
+				// 生成時間: GenerationTime
+
+
 
 				int frameMin = Core.StartFrame;
 				int frameMax = Core.EndFrame;
-				int currentFrame = (int)Manager.Viewer.Current;
-				int selectedEntry = 0;
-				Manager.NativeManager.EndNodeFrameTimeline(ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref _scrollFirstFrame);
 
-				Core.StartFrame = frameMin;
-				Core.EndFrame = frameMax;
-				Manager.Viewer.Current = currentFrame;
-				Manager.Viewer.Current = System.Math.Max(Manager.Viewer.Current, Core.StartFrame);
-				Manager.Viewer.Current = System.Math.Min(Manager.Viewer.Current, Core.EndFrame);
+				for (int i = 0; i < Core.Root.Children.Count; i++)
+				{
+					var node = Core.Root.Children[i];
+
+					var common = node.CommonValues;
+
+					var frameStart = common.GenerationTimeOffset.Min;
+
+
+					var nodeLife = common.Life.Max;
+					var instanceTime = common.GenerationTime.Max;
+
+					var instanceCount = common.MaxGeneration.Value.Value;
+
+
+					var instanceOneOffset = instanceTime;//common.GenerationTimeOffset.Max - common.GenerationTimeOffset.Min;
+
+					var instanceMaxTime = (instanceOneOffset * (instanceCount - 1)) + common.Life.Max;//common.GenerationTime.Max;
+
+
+					var instanceOffsetLast = frameStart + instanceMaxTime;
+
+
+					// Nodeの開始オフセットの終端 + 
+					var frameLast = instanceOffsetLast;//common.GenerationTimeOffset.Max + common.Life.Max;
+
+					if (node.CommonValues.MaxGeneration.Infinite)
+					{
+						frameLast = frameMax;
+					}
+					else
+					{
+						var coreLife = node.CommonValues.MaxGeneration.Value;
+
+						frameLast = Math.Max(frameStart, frameLast);
+
+						Manager.NativeManager.TimelineNode(node.Name, (int)frameStart, (int)frameLast);
+					}
+
+				}
+
+
+
+				{
+
+					int currentFrame = (int)Manager.Viewer.Current;
+					int selectedEntry = 0;
+					Manager.NativeManager.EndNodeFrameTimeline(ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref _scrollFirstFrame);
+
+					Core.StartFrame = frameMin;
+					Core.EndFrame = frameMax;
+					Manager.Viewer.Current = currentFrame;
+					Manager.Viewer.Current = System.Math.Max(Manager.Viewer.Current, Core.StartFrame);
+					Manager.Viewer.Current = System.Math.Min(Manager.Viewer.Current, Core.EndFrame);
+				}
 			}
 		}
 

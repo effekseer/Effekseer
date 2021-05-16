@@ -1852,7 +1852,7 @@ class EffekseerNativePINVOKE {
   public static extern bool GUIManager_BeginNodeFrameTimeline(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TimelineNode___")]
-  public static extern void GUIManager_TimelineNode(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+  public static extern void GUIManager_TimelineNode(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, int jarg3, int jarg4);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimeline___")]
   public static extern void GUIManager_EndNodeFrameTimeline(global::System.Runtime.InteropServices.HandleRef jarg1, ref int jarg2, ref int jarg3, ref int jarg4, ref int jarg5, ref int jarg6);

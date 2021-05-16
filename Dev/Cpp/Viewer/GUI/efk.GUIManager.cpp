@@ -2479,10 +2479,10 @@ bool GUIManager::BeginNodeFrameTimeline()
 	return NodeFrameTimeline::BeginNodeFrameTimeline();
 }
 
-void GUIManager::TimelineNode(const char16_t* title)
+void GUIManager::TimelineNode(const char16_t* title, int frameStart, int frameEnd)
 {
 	utf8str<256> utf8Label(title);
-	NodeFrameTimeline::TimelineNode(utf8Label);
+	NodeFrameTimeline::TimelineNode(utf8Label, frameStart, frameEnd);
 }
 
 void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame)
