@@ -120,7 +120,7 @@ public:
 	GraphicsDX11();
 	virtual ~GraphicsDX11();
 
-	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode) override;
+	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight) override;
 
 	void CopyTo(RenderTexture* src, RenderTexture* dst) override;
 

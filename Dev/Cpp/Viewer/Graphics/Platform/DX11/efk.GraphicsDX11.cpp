@@ -206,7 +206,7 @@ GraphicsDX11::~GraphicsDX11()
 	ES_SAFE_RELEASE(d3dDebug);
 }
 
-bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode)
+bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight)
 {
 	std::string log = "";
 
@@ -405,10 +405,6 @@ bool GraphicsDX11::Present()
 
 void GraphicsDX11::BeginScene()
 {
-	if (isSRGBMode)
-	{
-	}
-
 	assert(savedRasterizerState == nullptr);
 	context->RSGetState(&savedRasterizerState);
 	context->RSSetState(rasterizerState);
@@ -418,10 +414,6 @@ void GraphicsDX11::EndScene()
 {
 	context->RSSetState(savedRasterizerState);
 	ES_SAFE_RELEASE(savedRasterizerState);
-
-	if (isSRGBMode)
-	{
-	}
 }
 
 void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture)

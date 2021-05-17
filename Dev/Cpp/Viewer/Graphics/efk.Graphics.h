@@ -100,11 +100,9 @@ public:
 	{
 	}
 
-	virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode) = 0;
+	virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight) = 0;
 
 	virtual void CopyTo(RenderTexture* src, RenderTexture* dst) = 0;
-
-	//virtual void CopyToBackground() = 0;
 
 	virtual void Resize(int32_t width, int32_t height) = 0;
 
@@ -152,29 +150,6 @@ public:
 		return 4;
 	}
 
-	virtual std::shared_ptr<Effekseer::Tool::RenderPass> CreateRenderPass(std::shared_ptr<efk::RenderTexture> colorTexture, std::shared_ptr<efk::DepthTexture> depthTexture)
-	{
-		return nullptr;
-	}
-
-	virtual std::shared_ptr<Effekseer::Tool::CommandList> CreateCommandList()
-	{
-		return nullptr;
-	}
-
-	/**
-	Called when device is losted.
-	*/
-	//std::function<void()> LostedDevice;
-
-	/**
-	Called when device is resetted.
-	*/
-	//std::function<void()> ResettedDevice;
-
-	/**
-	Called when device is presented.
-	*/
 	std::function<void()> Presented;
 
 	virtual Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice()

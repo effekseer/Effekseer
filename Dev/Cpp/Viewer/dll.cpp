@@ -457,7 +457,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 #endif
 	spdlog::trace("OK new ::efk::Graphics");
 
-	if (!graphics_->Initialize(pHandle, width, height, isSRGBMode))
+	if (!graphics_->Initialize(pHandle, width, height))
 	{
 		spdlog::trace("Graphics::Initialize(false)");
 		ES_SAFE_DELETE(graphics_);

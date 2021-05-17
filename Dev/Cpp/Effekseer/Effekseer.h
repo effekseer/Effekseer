@@ -2563,12 +2563,14 @@ struct RenderTextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	std::array<int32_t, 2> Size;
+	int SamplingCount = 1;
 };
 
 struct DepthTextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	std::array<int32_t, 2> Size;
+	int SamplingCount = 1;
 };
 
 class GraphicsDevice

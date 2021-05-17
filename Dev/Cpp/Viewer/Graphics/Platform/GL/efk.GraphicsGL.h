@@ -70,8 +70,6 @@ private:
 	void* windowHandle = nullptr;
 	int32_t windowWidth = 0;
 	int32_t windowHeight = 0;
-
-	bool isSRGBMode = false;
 	GLuint frameBuffer = 0;
 
 	std::shared_ptr<RenderTextureGL> backTarget;
@@ -85,7 +83,7 @@ public:
 	GraphicsGL();
 	virtual ~GraphicsGL();
 
-	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode) override;
+	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight) override;
 
 	void CopyTo(RenderTexture* src, RenderTexture* dst) override;
 

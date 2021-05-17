@@ -183,10 +183,8 @@ GraphicsGL::~GraphicsGL()
 	backTarget.reset();
 }
 
-bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode)
+bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight)
 {
-	this->isSRGBMode = isSRGBMode;
-
 	this->windowWidth = windowWidth;
 	this->windowHeight = windowHeight;
 
