@@ -214,6 +214,33 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
     set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER "Compiler") 
 endif()
 
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS5/")
+    add_library(
+        EffekseerMaterialCompilerPS5
+        SHARED
+        PS5/EffekseerMaterialCompilerPS5.h
+        PS5/EffekseerMaterialCompilerPS5.cpp
+    )
+
+    target_compile_definitions(EffekseerMaterialCompilerPS5 PRIVATE __SHARED_OBJECT__=1)
+
+    set_target_properties(
+        EffekseerMaterialCompilerPS5
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    )
+
+    set_target_properties(EffekseerMaterialCompilerPS5
+        PROPERTIES
+        DEBUG_POSTFIX ".Debug")
+
+    set_property(TARGET EffekseerMaterialCompilerPS5 PROPERTY FOLDER "Compiler") 
+endif()
+
 if(APPLE)
     set_target_properties(EffekseerMaterialCompilerMetal PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
     set_target_properties(EffekseerMaterialCompilerGL PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)

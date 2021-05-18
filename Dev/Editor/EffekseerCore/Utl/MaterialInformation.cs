@@ -21,6 +21,7 @@ namespace Effekseer.Utl
 		PS4 = 40,
 		Switch = 50,
 		XBoxOne = 60,
+		PS5 = 70,
 	}
 
 	public enum TextureType : int
