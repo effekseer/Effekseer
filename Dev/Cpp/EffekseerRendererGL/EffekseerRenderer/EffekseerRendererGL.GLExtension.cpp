@@ -104,6 +104,14 @@ typedef void(EFK_STDCALL* FP_glFramebufferTexture2D)(GLenum target,
 													 GLuint texture,
 													 GLint level);
 
+typedef void(EFK_STDCALL* FP_glGenRenderbuffers)(GLsizei n, GLuint* renderbuffers);
+
+typedef void(EFK_STDCALL* FP_glBindRenderbuffer)(GLenum target, GLuint renderbuffer);
+
+typedef void(EFK_STDCALL* FP_glDeleteRenderbuffers)(GLsizei n, GLuint* renderbuffers);
+
+typedef void(EFK_STDCALL* FP_glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+
 typedef void(EFK_STDCALL* FP_glDrawBuffers)(GLsizei n, const GLenum* bufs);
 
 static FP_glDeleteBuffers g_glDeleteBuffers = nullptr;
@@ -157,9 +165,17 @@ static FP_glGenFramebuffers g_glGenFramebuffers = nullptr;
 
 static FP_glBindFramebuffer g_glBindFramebuffer = nullptr;
 
+static FP_glGenRenderbuffers g_glGenRenderbuffers = nullptr;
+
+static FP_glBindRenderbuffer g_glBindRenderbuffer = nullptr;
+
 static FP_glDeleteFramebuffers g_glDeleteFramebuffers = nullptr;
 
 static FP_glFramebufferTexture2D g_glFramebufferTexture2D = nullptr;
+
+static FP_glDeleteRenderbuffers g_glDeleteRenderbuffers = nullptr;
+
+static FP_glRenderbufferStorageMultisample g_glRenderbufferStorageMultisample = nullptr;
 
 static FP_glDrawBuffers g_glDrawBuffers = nullptr;
 
@@ -203,7 +219,7 @@ static bool g_isSurrpotedMapBuffer = false;
 static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 
 #if _WIN32
-#define GET_PROC_REQ(name)                                                                           \
+#define GET_PROC_REQ(name)                                                                       \
 	g_##name = (FP_##name)wglGetProcAddress(#name);                                              \
 	if (g_##name == nullptr)                                                                     \
 	{                                                                                            \
@@ -211,7 +227,7 @@ static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 		return false;                                                                            \
 	}
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-#define GET_PROC_REQ(name)                                                                           \
+#define GET_PROC_REQ(name)                                                                       \
 	g_##name = (FP_##name)eglGetProcAddress(#name);                                              \
 	if (g_##name == nullptr)                                                                     \
 	{                                                                                            \
@@ -221,17 +237,17 @@ static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 #endif
 
 #if _WIN32
-#define GET_PROC(name)                                                                           \
-	g_##name = (FP_##name)wglGetProcAddress(#name);                                              \
-	if (g_##name == nullptr)                                                                     \
-	{                                                                                            \
+#define GET_PROC(name)                                                                             \
+	g_##name = (FP_##name)wglGetProcAddress(#name);                                                \
+	if (g_##name == nullptr)                                                                       \
+	{                                                                                              \
 		Effekseer::Log(Effekseer::LogType::Warning, "Failed to get proc : " + std::string(#name)); \
 	}
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-#define GET_PROC(name)                              \
-	g_##name = (FP_##name)eglGetProcAddress(#name); \
-	if (g_##name == nullptr)                                                                     \
-	{                                                                                            \
+#define GET_PROC(name)                                                                             \
+	g_##name = (FP_##name)eglGetProcAddress(#name);                                                \
+	if (g_##name == nullptr)                                                                       \
+	{                                                                                              \
 		Effekseer::Log(Effekseer::LogType::Warning, "Failed to get proc : " + std::string(#name)); \
 	}
 #endif
@@ -309,7 +325,15 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 
 	GET_PROC_REQ(glDeleteFramebuffers);
 
-	GET_PROC_REQ(glFramebufferTexture2D);
+	GET_PROC(glFramebufferTexture2D);
+
+	GET_PROC(glGenRenderbuffers);
+
+	GET_PROC(glBindRenderbuffer);
+
+	GET_PROC(glDeleteRenderbuffers);
+
+	GET_PROC(glRenderbufferStorageMultisample);
 
 	GET_PROC_REQ(glDrawBuffers);
 
@@ -885,6 +909,46 @@ void glFramebufferTexture2D(GLenum target,
 							 textarget,
 							 texture,
 							 level);
+#endif
+}
+
+void glGenRenderbuffers(GLsizei n, GLuint* renderbuffers)
+{
+#if _WIN32
+	g_glGenRenderbuffers(n, renderbuffers);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	::glGenRenderbuffers(n, renderbuffers);
+#endif
+}
+
+void glBindRenderbuffer(GLenum target, GLuint renderbuffer)
+{
+#if _WIN32
+	g_glBindRenderbuffer(target, renderbuffer);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	::glBindRenderbuffer(target, renderbuffer);
+#endif
+}
+
+void glDeleteRenderbuffers(GLsizei n, GLuint* renderbuffers)
+{
+#if _WIN32
+	g_glDeleteRenderbuffers(n, renderbuffers);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	::glDeleteRenderbuffers(n, renderbuffers);
+#endif
+}
+
+void glRenderbufferStorageMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
+{
+#if _WIN32
+	g_glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	::glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
 #endif
 }
 

@@ -149,10 +149,12 @@ class Texture
 {
 private:
 	GLuint buffer_ = 0;
+	GLuint renderbuffer_ = 0;
+
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void()> onDisposed_;
 
-	bool InitInternal(const Effekseer::Backend::TextureParameter& param);
+	bool InitInternal(const Effekseer::Backend::TextureParameter& param, int samplingCount);
 
 public:
 	Texture(GraphicsDevice* graphicsDevice);

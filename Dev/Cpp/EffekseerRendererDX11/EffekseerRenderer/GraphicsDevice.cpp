@@ -434,6 +434,7 @@ Texture::~Texture()
 
 bool Texture::Init(
 	Effekseer::Backend::TextureFormatType format,
+	int32_t samplingCount,
 	bool generateMipmap,
 	std::array<int32_t, 2> size,
 	const Effekseer::CustomVector<uint8_t>& initialData,
@@ -528,14 +529,17 @@ bool Texture::Init(
 		bindFlag = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 	}
 
+	uint32_t quality = 0;
+	device->CheckMultisampleQualityLevels(dxgiFormat, samplingCount, &quality);
+
 	D3D11_TEXTURE2D_DESC TexDesc{};
 	TexDesc.Width = size[0];
 	TexDesc.Height = size[1];
 	TexDesc.MipLevels = generateMipmap ? 0 : 1;
 	TexDesc.ArraySize = 1;
 	TexDesc.Format = dxgiFormat;
-	TexDesc.SampleDesc.Count = 1;
-	TexDesc.SampleDesc.Quality = 0;
+	TexDesc.SampleDesc.Count = samplingCount;
+	TexDesc.SampleDesc.Quality = quality - 1;
 	TexDesc.Usage = D3D11_USAGE_DEFAULT;
 	TexDesc.BindFlags = bindFlag;
 	TexDesc.CPUAccessFlags = 0;
@@ -571,7 +575,7 @@ bool Texture::Init(
 	ID3D11ShaderResourceView* srv = nullptr;
 	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
 	desc.Format = TexDesc.Format;
-	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	desc.ViewDimension = (samplingCount > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 	desc.Texture2D.MostDetailedMip = 0;
 	desc.Texture2D.MipLevels = -1;
 
@@ -615,7 +619,7 @@ bool Texture::Init(
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = Init(param.Format, param.GenerateMipmap, param.Size, param.InitialData, false);
+	auto ret = Init(param.Format, 1, param.GenerateMipmap, param.Size, param.InitialData, false);
 
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
@@ -624,7 +628,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 {
-	auto ret = Init(param.Format, false, param.Size, {}, true);
+	auto ret = Init(param.Format, param.SamplingCount, false, param.Size, {}, true);
 
 	type_ = Effekseer::Backend::TextureType::Render;
 
@@ -664,14 +668,18 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 		return false;
 	}
 
+	const int samplingCount = param.SamplingCount;
+	uint32_t quality = 0;
+	device->CheckMultisampleQualityLevels(format, samplingCount, &quality);
+
 	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = param.Size[0];
 	desc.Height = param.Size[1];
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = format;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
+	desc.SampleDesc.Count = samplingCount;
+	desc.SampleDesc.Quality = quality - 1;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 	desc.CPUAccessFlags = 0;
@@ -686,7 +694,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	D3D11_DEPTH_STENCIL_VIEW_DESC viewDesc;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	viewDesc.Format = depthFormat;
-	viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS; // is it correct?
 	viewDesc.Flags = 0;
 
 	if (FAILED(device->CreateDepthStencilView(texture, &viewDesc, &depthStencilView)))
@@ -698,7 +706,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	ID3D11ShaderResourceView* srv = nullptr;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = textureFormat;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.ViewDimension = (samplingCount > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
 

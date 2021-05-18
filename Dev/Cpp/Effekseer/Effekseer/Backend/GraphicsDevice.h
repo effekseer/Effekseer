@@ -402,6 +402,11 @@ struct TextureParameter
 	CustomVector<uint8_t> InitialData;
 };
 
+/**
+	@brief	Render texture
+	@note
+	You don't need to implement it to run Effekseer Runtime
+*/
 struct RenderTextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
@@ -409,6 +414,11 @@ struct RenderTextureParameter
 	int SamplingCount = 1;
 };
 
+/**
+	@brief	Render texture
+	@note
+	You don't need to implement it to run Effekseer Runtime
+*/
 struct DepthTextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
