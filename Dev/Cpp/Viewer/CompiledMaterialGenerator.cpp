@@ -25,6 +25,7 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 	names[Effekseer::CompiledMaterialPlatformType::OpenGL] = "GL";
 	names[Effekseer::CompiledMaterialPlatformType::Switch] = "Switch";
 	names[Effekseer::CompiledMaterialPlatformType::PS4] = "PS4";
+	names[Effekseer::CompiledMaterialPlatformType::PS5] = "PS5";
 
 	for (auto& name : names)
 	{
