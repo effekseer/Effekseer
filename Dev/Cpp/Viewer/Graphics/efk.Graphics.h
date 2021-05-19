@@ -25,14 +25,6 @@ namespace efk
 {
 class Graphics;
 
-enum class TextureFormat
-{
-	RGBA8U,
-	RGBA16F,
-	R16F,
-	R32F,
-};
-
 enum class TextureFeatureType
 {
 	Texture2D,
@@ -45,20 +37,19 @@ class RenderTexture
 protected:
 	int32_t samplingCount_ = 1;
 	Effekseer::Tool::Vector2DI size_;
-	TextureFormat format_;
-	Effekseer::Backend::TextureRef texture_;
-
+	Effekseer::Backend::TextureFormatType format_;
+	
 public:
 	RenderTexture() = default;
 	virtual ~RenderTexture() = default;
 
-	virtual bool Initialize(Effekseer::Tool::Vector2DI size, TextureFormat format, uint32_t multisample = 1) = 0;
+	virtual bool Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1) = 0;
 
 	virtual uint64_t GetViewID() = 0;
 
-	Effekseer::Backend::TextureRef GetAsBackend()
+	virtual Effekseer::Backend::TextureRef GetAsBackend()
 	{
-		return texture_;
+		return nullptr;
 	}
 
 	Effekseer::Tool::Vector2DI GetSize() const
@@ -71,7 +62,7 @@ public:
 		return samplingCount_;
 	}
 
-	TextureFormat GetFormat() const
+	Effekseer::Backend::TextureFormatType GetFormat() const
 	{
 		return format_;
 	}
@@ -100,11 +91,9 @@ public:
 	{
 	}
 
-	virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode) = 0;
+	virtual bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight) = 0;
 
 	virtual void CopyTo(RenderTexture* src, RenderTexture* dst) = 0;
-
-	//virtual void CopyToBackground() = 0;
 
 	virtual void Resize(int32_t width, int32_t height) = 0;
 
@@ -142,39 +131,16 @@ public:
 	{
 	}
 
-	virtual bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature)
+	virtual bool CheckFormatSupport(Effekseer::Backend::TextureFormatType format, TextureFeatureType feature)
 	{
 		return true;
 	}
 
-	virtual int GetMultisampleLevel(TextureFormat format)
+	virtual int GetMultisampleLevel(Effekseer::Backend::TextureFormatType format)
 	{
 		return 4;
 	}
 
-	virtual std::shared_ptr<Effekseer::Tool::RenderPass> CreateRenderPass(std::shared_ptr<efk::RenderTexture> colorTexture, std::shared_ptr<efk::DepthTexture> depthTexture)
-	{
-		return nullptr;
-	}
-
-	virtual std::shared_ptr<Effekseer::Tool::CommandList> CreateCommandList()
-	{
-		return nullptr;
-	}
-
-	/**
-	Called when device is losted.
-	*/
-	//std::function<void()> LostedDevice;
-
-	/**
-	Called when device is resetted.
-	*/
-	//std::function<void()> ResettedDevice;
-
-	/**
-	Called when device is presented.
-	*/
 	std::function<void()> Presented;
 
 	virtual Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice()

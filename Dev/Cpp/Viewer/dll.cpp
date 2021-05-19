@@ -27,23 +27,6 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-const float DistanceBase = 15.0f;
-const float OrthoScaleBase = 16.0f;
-const float ZoomDistanceFactor = 1.125f;
-const float MaxZoom = 40.0f;
-const float MinZoom = -40.0f;
-const float PI = 3.14159265f;
-
-static float g_RotX = 30.0f;
-static float g_RotY = -30.0f;
-static float g_Zoom = 0.0f;
-
-static bool g_mouseRotDirectionInvX = false;
-static bool g_mouseRotDirectionInvY = false;
-
-static bool g_mouseSlideDirectionInvX = false;
-static bool g_mouseSlideDirectionInvY = false;
-
 bool Combine(const char16_t* rootPath, const char16_t* treePath, char16_t* dst, int dst_length)
 {
 	int rootPathLength = 0;
@@ -151,17 +134,17 @@ bool Combine(const char16_t* rootPath, const char16_t* treePath, char16_t* dst, 
 	return true;
 }
 
-void SetZoom(float zoom)
+void Native::SetZoom(float zoom)
 {
 	g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
 }
 
-float GetDistance()
+float Native::GetDistance()
 {
 	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
 }
 
-float GetOrthoScale()
+float Native::GetOrthoScale()
 {
 	return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom);
 }
@@ -474,7 +457,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 #endif
 	spdlog::trace("OK new ::efk::Graphics");
 
-	if (!graphics_->Initialize(pHandle, width, height, isSRGBMode))
+	if (!graphics_->Initialize(pHandle, width, height))
 	{
 		spdlog::trace("Graphics::Initialize(false)");
 		ES_SAFE_DELETE(graphics_);
@@ -779,12 +762,12 @@ bool Native::Rotate(float x, float y)
 
 bool Native::Slide(float x, float y)
 {
-	if (::g_mouseSlideDirectionInvX)
+	if (g_mouseSlideDirectionInvX)
 	{
 		x = -x;
 	}
 
-	if (::g_mouseSlideDirectionInvY)
+	if (g_mouseSlideDirectionInvY)
 	{
 		y = -y;
 	}

@@ -197,6 +197,23 @@ private:
 		void ReleaseAll();
 	};
 
+	const float DistanceBase = 15.0f;
+	const float OrthoScaleBase = 16.0f;
+	const float ZoomDistanceFactor = 1.125f;
+	const float MaxZoom = 40.0f;
+	const float MinZoom = -40.0f;
+	const float PI = 3.14159265f;
+
+	float g_RotX = 30.0f;
+	float g_RotY = -30.0f;
+	float g_Zoom = 0.0f;
+
+	bool g_mouseRotDirectionInvX = false;
+	bool g_mouseRotDirectionInvY = false;
+
+	bool g_mouseSlideDirectionInvX = false;
+	bool g_mouseSlideDirectionInvY = false;
+
 	Effekseer::Tool::ViewerEffectBehavior behavior_;
 
 	::Effekseer::EffectRef effect_ = nullptr;
@@ -231,6 +248,12 @@ private:
 	EffekseerTool::ViewPointController viewPointCtrl_;
 
 	::Effekseer::EffectRef GetEffect();
+
+	void SetZoom(float zoom);
+
+	float GetDistance();
+
+	float GetOrthoScale();
 
 public:
 	Native();

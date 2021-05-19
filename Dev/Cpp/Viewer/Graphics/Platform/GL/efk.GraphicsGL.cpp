@@ -17,125 +17,69 @@ RenderTextureGL::RenderTextureGL(Graphics* graphics)
 
 RenderTextureGL::~RenderTextureGL()
 {
-	if (texture)
-	{
-		glDeleteTextures(1, &texture);
-	}
-	if (renderbuffer)
-	{
-		glDeleteRenderbuffers(1, &renderbuffer);
-	}
 }
 
-bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, TextureFormat format, uint32_t multisample)
+bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
 {
 	auto g = (GraphicsGL*)graphics;
+	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 
-	GLCheckError();
-
-	GLint glInternalFormat;
-	GLenum glFormat, glType;
-	switch (format)
-	{
-	case TextureFormat::RGBA8U:
-		glInternalFormat = GL_RGBA8;
-		glFormat = GL_RGBA;
-		glType = GL_UNSIGNED_BYTE;
-		break;
-	case TextureFormat::RGBA16F:
-		glInternalFormat = GL_RGBA16F;
-		glFormat = GL_RGBA;
-		glType = GL_HALF_FLOAT;
-		break;
-	case TextureFormat::R16F:
-		glInternalFormat = GL_R16F;
-		glFormat = GL_RED;
-		glType = GL_HALF_FLOAT;
-		break;
-	case TextureFormat::R32F:
-		glInternalFormat = GL_R32F;
-		glFormat = GL_RED;
-		glType = GL_FLOAT;
-		break;
-	default:
-		assert(0);
-		return false;
-	}
-
-	if (multisample <= 1)
-	{
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, size.X, size.Y, 0, glFormat, glType, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		// glGenerateMipmap(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	else
-	{
-		glGenRenderbuffers(1, &renderbuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, glInternalFormat, size.X, size.Y);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	}
-	GLCheckError();
+	Effekseer::Backend::RenderTextureParameter param;
+	param.Format = format;
+	param.SamplingCount = multisample;
+	param.Size = {size.X, size.Y};
+	texture_ = gd->CreateRenderTexture(param).DownCast<EffekseerRendererGL::Backend::Texture>();
 
 	this->size_ = size;
 	this->samplingCount_ = multisample;
 	this->format_ = format;
-	this->texture_ = static_cast<EffekseerRendererGL::Backend::GraphicsDevice*>(g->GetGraphicsDevice().Get())->CreateTexture(texture, false, [] {});
-	return true;
+
+	if (multisample <= 1 && texture_ != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	return texture_ != nullptr;
 }
 
 DepthTextureGL::DepthTextureGL(Graphics* graphics)
+	: graphics_(graphics)
 {
 }
 
 DepthTextureGL::~DepthTextureGL()
 {
-	if (texture)
-	{
-		glDeleteTextures(1, &texture);
-	}
-	if (renderbuffer)
-	{
-		glDeleteRenderbuffers(1, &renderbuffer);
-	}
 }
 
 bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisample)
 {
 	if (glGetError() != GL_NO_ERROR)
 		return false;
+	auto g = (GraphicsGL*)graphics_;
+	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 
-	if (multisample <= 1)
+	Effekseer::Backend::DepthTextureParameter param;
+	param.Format = Effekseer::Backend::TextureFormatType::D24S8;
+	param.SamplingCount = multisample;
+	param.Size = {width, height};
+	texture_ = gd->CreateDepthTexture(param).DownCast<EffekseerRendererGL::Backend::Texture>();
+
+	if (multisample <= 1 && texture_ != nullptr)
 	{
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
-		// Set filter
+		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	else
-	{
-		glGenRenderbuffers(1, &renderbuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, GL_DEPTH_COMPONENT32, width, height);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	}
-	assert(glGetError() == GL_NO_ERROR);
 
-	size_ = {width, height};
-
-	return true;
+	return texture_ != nullptr;
 }
 
 bool SaveTextureGL(std::vector<Effekseer::Color>& dst, GLuint texture, int32_t width, int32_t height)
@@ -183,10 +127,8 @@ GraphicsGL::~GraphicsGL()
 	backTarget.reset();
 }
 
-bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode)
+bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight)
 {
-	this->isSRGBMode = isSRGBMode;
-
 	this->windowWidth = windowWidth;
 	this->windowHeight = windowHeight;
 

@@ -298,20 +298,20 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 	spdlog::trace("OK PostProcessing");
 
-	auto msaaSampleHDR = graphics->GetMultisampleLevel(efk::TextureFormat::RGBA16F);
-	auto msaaSample = graphics->GetMultisampleLevel(efk::TextureFormat::RGBA8U);
+	auto msaaSampleHDR = graphics->GetMultisampleLevel(Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
+	auto msaaSample = graphics->GetMultisampleLevel(Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM);
 
-	auto isHDRSupported = graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::Texture2D);
+	auto isHDRSupported = graphics->CheckFormatSupport(Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT, efk::TextureFeatureType::Texture2D);
 	auto isMSAAHDRSupported =
-		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::Texture2D) &&
-		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::MultisampledTexture2DResolve) &&
-		graphics->CheckFormatSupport(efk::TextureFormat::RGBA16F, efk::TextureFeatureType::MultisampledTexture2DRenderTarget) &&
+		graphics->CheckFormatSupport(Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT, efk::TextureFeatureType::Texture2D) &&
+		graphics->CheckFormatSupport(Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT, efk::TextureFeatureType::MultisampledTexture2DResolve) &&
+		graphics->CheckFormatSupport(Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT, efk::TextureFeatureType::MultisampledTexture2DRenderTarget) &&
 		msaaSampleHDR > 1;
 	auto isMSAASupported = msaaSample > 1;
 
 	if (isHDRSupported || isMSAAHDRSupported)
 	{
-		textureFormat_ = efk::TextureFormat::RGBA16F;
+		textureFormat_ = Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT;
 
 		if (isMSAAHDRSupported)
 		{
@@ -333,7 +333,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 			msaaSamples = 1;
 		}
 
-		textureFormat_ = efk::TextureFormat::RGBA8U;
+		textureFormat_ = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 	}
 
 	spdlog::trace("HDR {} {}", isMSAAHDRSupported, isHDRSupported);
@@ -410,11 +410,11 @@ void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
 	if (msaaSamples > 1)
 	{
 		depthRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-		depthRenderTextureMSAA->Initialize(screenSize, efk::TextureFormat::R32F, msaaSamples);
+		depthRenderTextureMSAA->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, msaaSamples);
 	}
 
 	depthRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-	depthRenderTexture->Initialize(screenSize, efk::TextureFormat::R32F, 1);
+	depthRenderTexture->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, 1);
 
 	if (msaaSamples > 1)
 	{
@@ -432,7 +432,7 @@ void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
 	}
 
 	viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
-	viewRenderTexture->Initialize(screenSize, efk::TextureFormat::RGBA8U);
+	viewRenderTexture->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM);
 }
 
 void RenderedEffectGenerator::Update()
@@ -583,13 +583,17 @@ void RenderedEffectGenerator::Update(int32_t frame)
 void RenderedEffectGenerator::Render()
 {
 	// Clear a destination texture
-	UpdateBackgroundMesh(config_.BackgroundColor);
+	if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
+	{
+		UpdateBackgroundMesh({255, 255, 255, 255});
+	}
+	else
+	{
+		UpdateBackgroundMesh(config_.BackgroundColor);
+	}
 
 	graphics_->SetRenderTarget(viewRenderTexture.get(), nullptr);
-	if (config_.BackgroundColor.A != 255)
-	{
-		graphics_->Clear(config_.BackgroundColor);
-	}
+	graphics_->Clear({0, 0, 0, 0});
 
 	renderer_->SetRenderMode(config_.RenderMode);
 	renderer_->SetCameraMatrix(config_.CameraMatrix);
@@ -610,11 +614,18 @@ void RenderedEffectGenerator::Render()
 		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
 	}
 
-	graphics_->Clear(config_.BackgroundColor);
+	graphics_->Clear({0, 0, 0, 0});
 
-	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundTexture_ != nullptr)
+	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr)
 	{
-		backgroundMesh_->Texture = backgroundTexture_->GetBackend();
+		if (backgroundTexture_ != nullptr)
+		{
+			backgroundMesh_->Texture = backgroundTexture_->GetBackend();
+		}
+		else
+		{
+			backgroundMesh_->Texture = nullptr;
+		}
 
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix.Indentity();

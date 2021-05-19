@@ -52,6 +52,8 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
+DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format);
+
 class DirtiedBlock
 {
 	struct Block
@@ -195,6 +197,7 @@ class Texture
 
 	bool Init(
 		Effekseer::Backend::TextureFormatType format,
+		int32_t samplingCount,
 		bool generateMipmap,
 		std::array<int32_t, 2> size,
 		const Effekseer::CustomVector<uint8_t>& initialData,
@@ -211,6 +214,11 @@ public:
 	bool Init(const Effekseer::Backend::DepthTextureParameter& param);
 
 	bool Init(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
+
+	ID3D11Texture2D* GetTexture() const
+	{
+		return texture_.get();
+	}
 
 	ID3D11ShaderResourceView* GetSRV() const
 	{

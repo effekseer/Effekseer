@@ -213,6 +213,12 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	{
 		texParam.Format = LLGI::TextureFormatType::BC3_SRGB;
 	}
+	else
+	{
+		// not supported
+		Effekseer::Log(Effekseer::LogType::Error, "The format is not supported.(" + std::to_string(static_cast<int>(param.Format)) + ")");
+		return false;
+	}
 
 	auto texture = graphicsDevice_->GetGraphics()->CreateTexture(texParam);
 	auto buf = texture->Lock();

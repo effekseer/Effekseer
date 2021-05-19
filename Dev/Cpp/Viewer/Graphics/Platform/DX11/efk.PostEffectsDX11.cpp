@@ -327,7 +327,7 @@ void BloomEffectDX11::SetupBuffers(Effekseer::Tool::Vector2DI size)
 
 		if (extractBuffer != nullptr)
 		{
-			extractBuffer->Initialize(size, TextureFormat::RGBA16F);
+			extractBuffer->Initialize(size, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 		}
 		else
 		{
@@ -349,7 +349,7 @@ void BloomEffectDX11::SetupBuffers(Effekseer::Tool::Vector2DI size)
 
 			if (lowresBuffers[i][j] != nullptr)
 			{
-				lowresBuffers[i][j]->Initialize(bufferSize, TextureFormat::RGBA16F);
+				lowresBuffers[i][j]->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 			}
 			else
 			{

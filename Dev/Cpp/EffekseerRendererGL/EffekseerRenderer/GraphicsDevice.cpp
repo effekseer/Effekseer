@@ -227,12 +227,17 @@ Texture::~Texture()
 			glDeleteTextures(1, &buffer_);
 			buffer_ = 0;
 		}
+
+		if (renderbuffer_ > 0)
+		{
+			GLExt::glDeleteRenderbuffers(1, &renderbuffer_);
+		}
 	}
 
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
+bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, int samplingCount)
 {
 	if (graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGL2 || graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGLES2)
 	{
@@ -244,11 +249,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 		}
 	}
 
-	GLint bound = 0;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
-
-	glGenTextures(1, &buffer_);
-	glBindTexture(GL_TEXTURE_2D, buffer_);
+	bool initWithBuffer = samplingCount <= 1;
 
 	// Compressed texture
 	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
@@ -260,6 +261,27 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 
 	const size_t initialDataSize = param.InitialData.size();
 	const void* initialDataPtr = param.InitialData.size() > 0 ? param.InitialData.data() : nullptr;
+
+	GLint bound = 0;
+
+	if (initWithBuffer)
+	{
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+		glGenTextures(1, &buffer_);
+		glBindTexture(GL_TEXTURE_2D, buffer_);
+	}
+	else
+	{
+		if (isCompressed)
+		{
+			return false;
+		}
+
+		glGetIntegerv(GL_RENDERBUFFER_BINDING, &bound);
+
+		GLExt::glGenRenderbuffers(1, &renderbuffer_);
+		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer_);
+	}
 
 	if (isCompressed)
 	{
@@ -335,6 +357,18 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 			format = GL_RED;
 			type = GL_UNSIGNED_BYTE;
 		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R16_FLOAT)
+		{
+			internalFormat = GL_R16F;
+			format = GL_RED;
+			type = GL_HALF_FLOAT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R32_FLOAT)
+		{
+			internalFormat = GL_R16F;
+			format = GL_RED;
+			type = GL_FLOAT;
+		}
 		else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
 		{
 			internalFormat = GL_RG16F;
@@ -353,16 +387,29 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 			format = GL_RGBA;
 			type = GL_FLOAT;
 		}
+		else
+		{
+			// not supported
+			Effekseer::Log(Effekseer::LogType::Error, "The format is not supported.(" + std::to_string(static_cast<int>(param.Format)) + ")");
+			return false;
+		}
 
-		glTexImage2D(GL_TEXTURE_2D,
-					 0,
-					 internalFormat,
-					 param.Size[0],
-					 param.Size[1],
-					 0,
-					 format,
-					 type,
-					 initialDataPtr);
+		if (initWithBuffer)
+		{
+			glTexImage2D(GL_TEXTURE_2D,
+						 0,
+						 internalFormat,
+						 param.Size[0],
+						 param.Size[1],
+						 0,
+						 format,
+						 type,
+						 initialDataPtr);
+		}
+		else
+		{
+			GLExt::glRenderbufferStorageMultisample(GL_RENDERBUFFER, samplingCount, internalFormat, param.Size[0], param.Size[1]);
+		}
 	}
 
 	if (param.GenerateMipmap)
@@ -370,7 +417,14 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 		GLExt::glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
-	glBindTexture(GL_TEXTURE_2D, bound);
+	if (initWithBuffer)
+	{
+		glBindTexture(GL_TEXTURE_2D, bound);
+	}
+	else
+	{
+		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, bound);
+	}
 
 	size_ = param.Size;
 	format_ = param.Format;
@@ -381,7 +435,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = InitInternal(param);
+	auto ret = InitInternal(param, 1);
 
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
@@ -394,7 +448,7 @@ bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 	paramInternal.Size = param.Size;
 	paramInternal.Format = param.Format;
 	paramInternal.GenerateMipmap = false;
-	auto ret = Init(paramInternal);
+	auto ret = InitInternal(paramInternal, param.SamplingCount);
 
 	type_ = Effekseer::Backend::TextureType::Render;
 
@@ -403,33 +457,64 @@ bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 {
-	GLint bound = 0;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
 
-	glGenTextures(1, &buffer_);
-	glBindTexture(GL_TEXTURE_2D, buffer_);
+	GLint internalFormat = 0;
+	GLenum format = 0;
 
 	if (param.Format == Effekseer::Backend::TextureFormatType::D24S8)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, param.Size[0], param.Size[1], 0, GL_DEPTH_STENCIL, GL_FLOAT, nullptr);
+		format = GL_DEPTH_STENCIL;
+		internalFormat = GL_DEPTH24_STENCIL8;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, param.Size[0], param.Size[1], 0, GL_DEPTH_STENCIL, GL_FLOAT, nullptr);
+		format = GL_DEPTH_STENCIL;
+		internalFormat = GL_DEPTH32F_STENCIL8;
 	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, param.Size[0], param.Size[1], 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		format = GL_DEPTH_COMPONENT;
+		internalFormat = GL_DEPTH_COMPONENT32;
 	}
 	else
 	{
-		glDeleteTextures(1, &buffer_);
-		buffer_ = 0;
-		glBindTexture(GL_TEXTURE_2D, bound);
 		return false;
 	}
 
-	glBindTexture(GL_TEXTURE_2D, bound);
+	bool initWithBuffer = param.SamplingCount <= 1;
+
+	GLint bound = 0;
+
+	if (initWithBuffer)
+	{
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+		glGenTextures(1, &buffer_);
+		glBindTexture(GL_TEXTURE_2D, buffer_);
+	}
+	else
+	{
+		glGetIntegerv(GL_RENDERBUFFER_BINDING, &bound);
+		GLExt::glGenRenderbuffers(1, &renderbuffer_);
+		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer_);
+	}
+
+	if (initWithBuffer)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, param.Size[0], param.Size[1], 0, format, GL_FLOAT, nullptr);
+	}
+	else
+	{
+		GLExt::glRenderbufferStorageMultisample(GL_RENDERBUFFER, param.SamplingCount, internalFormat, param.Size[0], param.Size[1]);
+	}
+
+	if (initWithBuffer)
+	{
+		glBindTexture(GL_TEXTURE_2D, bound);
+	}
+	else
+	{
+		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, bound);
+	}
 
 	size_ = param.Size;
 	format_ = param.Format;

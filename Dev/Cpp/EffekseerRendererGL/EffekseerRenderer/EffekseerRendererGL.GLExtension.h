@@ -114,6 +114,8 @@ namespace GLExt
 #define GL_MAP_UNSYNCHRONIZED_BIT 0x0020
 
 #define GL_R8 0x8229
+#define GL_R16F 0x822D
+#define GL_R32F 0x822E
 #define GL_RG 0x8227
 #define GL_BGRA 0x80E1
 #define GL_RG16F 0x822f
@@ -136,6 +138,9 @@ namespace GLExt
 
 #define GL_FRAMEBUFFER 0x8D40
 #define GL_FRAMEBUFFER_BINDING 0x8CA6
+
+#define GL_RENDERBUFFER 0x8D41
+#define GL_RENDERBUFFER_BINDING 0x8CA7
 
 #define GL_COLOR_ATTACHMENT0 0x8CE0
 #define GL_COLOR_ATTACHMENT1 0x8CE1
@@ -241,6 +246,14 @@ void glFramebufferTexture2D(GLenum target,
 							GLenum textarget,
 							GLuint texture,
 							GLint level);
+
+void glGenRenderbuffers(GLsizei n, GLuint* renderbuffers);
+
+void glBindRenderbuffer(GLenum target, GLuint renderbuffer);
+
+void glDeleteRenderbuffers(GLsizei n, GLuint* renderbuffers);
+
+void glRenderbufferStorageMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
 
 void glDrawBuffers(GLsizei n, const GLenum* bufs);
 
