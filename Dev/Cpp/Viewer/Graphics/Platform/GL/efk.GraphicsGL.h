@@ -21,6 +21,11 @@ public:
 	virtual ~RenderTextureGL();
 	bool Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1);
 
+	Effekseer::Backend::TextureRef GetAsBackend() override
+	{
+		return texture_;
+	}
+
 	GLuint GetTexture()
 	{
 		return texture_->GetBuffer();

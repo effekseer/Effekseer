@@ -583,13 +583,17 @@ void RenderedEffectGenerator::Update(int32_t frame)
 void RenderedEffectGenerator::Render()
 {
 	// Clear a destination texture
-	UpdateBackgroundMesh(config_.BackgroundColor);
+	if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
+	{
+		UpdateBackgroundMesh({255, 255, 255, 255});
+	}
+	else
+	{
+		UpdateBackgroundMesh(config_.BackgroundColor);
+	}
 
 	graphics_->SetRenderTarget(viewRenderTexture.get(), nullptr);
-	if (config_.BackgroundColor.A != 255)
-	{
-		graphics_->Clear(config_.BackgroundColor);
-	}
+	graphics_->Clear({0, 0, 0, 0});
 
 	renderer_->SetRenderMode(config_.RenderMode);
 	renderer_->SetCameraMatrix(config_.CameraMatrix);
@@ -610,11 +614,18 @@ void RenderedEffectGenerator::Render()
 		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
 	}
 
-	graphics_->Clear(config_.BackgroundColor);
+	graphics_->Clear({0, 0, 0, 0});
 
-	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr && backgroundTexture_ != nullptr)
+	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr)
 	{
-		backgroundMesh_->Texture = backgroundTexture_->GetBackend();
+		if (backgroundTexture_ != nullptr)
+		{
+			backgroundMesh_->Texture = backgroundTexture_->GetBackend();
+		}
+		else
+		{
+			backgroundMesh_->Texture = nullptr;
+		}
 
 		Effekseer::Tool::RendererParameter param{};
 		param.CameraMatrix.Indentity();

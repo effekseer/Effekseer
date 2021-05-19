@@ -21,6 +21,11 @@ public:
 	virtual ~RenderTextureDX11();
 	bool Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1);
 
+	Effekseer::Backend::TextureRef GetAsBackend() override
+	{
+		return texture_;
+	}
+
 	ID3D11Texture2D* GetTexture() const
 	{
 		return texture_->GetTexture();

@@ -38,8 +38,7 @@ protected:
 	int32_t samplingCount_ = 1;
 	Effekseer::Tool::Vector2DI size_;
 	Effekseer::Backend::TextureFormatType format_;
-	Effekseer::Backend::TextureRef texture_;
-
+	
 public:
 	RenderTexture() = default;
 	virtual ~RenderTexture() = default;
@@ -48,9 +47,9 @@ public:
 
 	virtual uint64_t GetViewID() = 0;
 
-	Effekseer::Backend::TextureRef GetAsBackend()
+	virtual Effekseer::Backend::TextureRef GetAsBackend()
 	{
-		return texture_;
+		return nullptr;
 	}
 
 	Effekseer::Tool::Vector2DI GetSize() const

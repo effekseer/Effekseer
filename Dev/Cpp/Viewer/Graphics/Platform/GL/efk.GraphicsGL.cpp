@@ -34,6 +34,16 @@ bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Bac
 	this->samplingCount_ = multisample;
 	this->format_ = format;
 
+	if (multisample <= 1 && texture_ != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	return texture_ != nullptr;
 }
 
@@ -58,6 +68,17 @@ bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisam
 	param.SamplingCount = multisample;
 	param.Size = {width, height};
 	texture_ = gd->CreateDepthTexture(param).DownCast<EffekseerRendererGL::Backend::Texture>();
+
+	if (multisample <= 1 && texture_ != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	return texture_ != nullptr;
 }
 
