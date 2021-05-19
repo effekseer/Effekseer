@@ -22,10 +22,6 @@ InstanceGroup::InstanceGroup(ManagerImplemented* manager, EffectNodeImplemented*
 	, m_effectNode(effectNode)
 	, m_container(container)
 	, m_global(global)
-	, m_time(0)
-	, IsReferencedFromInstance(true)
-	, NextUsedByInstance(nullptr)
-	, NextUsedByContainer(nullptr)
 {
 	parentMatrix_ = SIMD::Mat43f::Identity;
 }
@@ -46,18 +42,70 @@ void InstanceGroup::NotfyEraseInstance()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Instance* InstanceGroup::CreateInstance()
+void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 {
-	Instance* instance = nullptr;
+	m_generatedCount = 0;
 
-	instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+	auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, 
+		m_effectNode->CommonValues.RefEqGenerationTimeOffset, m_effectNode->CommonValues.GenerationTimeOffset);
 
-	if (instance)
+	m_nextGenerationTime = gt.getValue(rand);
+
+	if (m_effectNode->CommonValues.RefEqMaxGeneration >= 0)
+	{
+		auto maxGene = static_cast<float>(m_effectNode->CommonValues.MaxGeneration);
+		ApplyEq(maxGene, m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqMaxGeneration, maxGene);
+		m_maxGenerationCount = static_cast<int32_t>(maxGene);
+	}
+	else
+	{
+		m_maxGenerationCount = m_effectNode->CommonValues.MaxGeneration;
+	}
+}
+
+Instance* InstanceGroup::CreateRootInstance()
+{
+	auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+	if (instance != nullptr)
 	{
 		m_instances.push_back(instance);
 		m_global->IncInstanceCount();
+		return instance;
 	}
-	return instance;
+	return nullptr;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void InstanceGroup::GenerateInstancesInRequirred(float localTime, RandObject& rand, Instance* parent)
+{
+	while (true)
+	{
+		// GenerationTimeOffset can be minus value.
+		// Minus frame particles is generated simultaniously at frame 0.
+		if (m_maxGenerationCount > m_generatedCount && localTime >= m_nextGenerationTime)
+		{
+			// Create a particle
+			auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+			if (instance != nullptr)
+			{
+				m_instances.push_back(instance);
+				m_global->IncInstanceCount();
+
+				instance->Initialize(parent, m_generatedCount, SIMD::Mat43f::Identity);
+			}
+
+			m_generatedCount++;
+
+			auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTime, m_effectNode->CommonValues.GenerationTime);
+			m_nextGenerationTime += Max(0.0f, gt.getValue(rand));
+		}
+		else
+		{
+			break;
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -100,7 +148,7 @@ void InstanceGroup::Update(bool shown)
 		}
 	}
 
-	m_time++;
+	//m_time++;
 }
 
 //----------------------------------------------------------------------------------
@@ -213,6 +261,11 @@ void InstanceGroup::KillAllInstances()
 			instance->Kill();
 		}
 	}
+}
+
+bool InstanceGroup::IsActive() const
+{
+	return GetInstanceCount() > 0 || m_generatedCount < m_maxGenerationCount;
 }
 
 //----------------------------------------------------------------------------------

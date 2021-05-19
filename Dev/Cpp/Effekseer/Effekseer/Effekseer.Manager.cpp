@@ -163,17 +163,7 @@ void ManagerImplemented::StopStoppingEffects()
 
 				if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE && !pRootInstance->IsFirstTime())
 				{
-					bool canRemoved = true;
-					for (int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++)
-					{
-						if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
-						{
-							canRemoved = false;
-							break;
-						}
-					}
-
-					if (canRemoved)
+					if (pRootInstance->AreChildrenRemoved())
 					{
 						// when a sound is not playing.
 						if (m_soundPlayer == nullptr || !m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
@@ -309,7 +299,7 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer(
 			return nullptr;
 		}
 
-		auto instance = group->CreateInstance();
+		auto instance = group->CreateRootInstance();
 		if (instance == nullptr)
 		{
 			group->IsReferencedFromInstance = false;

@@ -280,33 +280,6 @@ public:
 	// Scroll speed for UV
 	SIMD::Vec2f uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
 
-	// The number of generated chiledren. (fixed size)
-	int32_t m_fixedGeneratedChildrenCount[ChildrenMax];
-
-	// The number of maximum generated chiledren. (fixed size)
-	int32_t fixedMaxGenerationChildrenCount_[ChildrenMax];
-
-	// The time to generate next child.  (fixed size)
-	float m_fixedNextGenerationTime[ChildrenMax];
-
-	// The number of generated chiledren. (flexible size)
-	int32_t* m_flexibleGeneratedChildrenCount;
-
-	// The number of maximum generated chiledren. (flexible size)
-	int32_t* flexibleMaxGenerationChildrenCount_ = nullptr;
-
-	// The time to generate next child.  (flexible size)
-	float* m_flexibleNextGenerationTime;
-
-	// The number of generated chiledren. (actually used)
-	int32_t* m_generatedChildrenCount;
-
-	// The number of maximum generated chiledren. (actually used)
-	int32_t* maxGenerationChildrenCount = nullptr;
-
-	// The time to generate next child.  (actually used)
-	float* m_nextGenerationTime;
-
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
 
@@ -428,6 +401,8 @@ public:
 	{
 		return m_randObject;
 	}
+
+	bool AreChildrenRemoved() const;
 
 private:
 	/**
