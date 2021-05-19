@@ -160,6 +160,68 @@ bool DirtiedBlock::Allocate(int32_t size, int32_t offset)
 	return dirtied;
 }
 
+DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format)
+{
+	if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
+	{
+		return DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
+	{
+		return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R8_UNORM)
+	{
+		return DXGI_FORMAT_R8_UNORM;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R16_FLOAT)
+	{
+		return DXGI_FORMAT_R16_FLOAT;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R32_FLOAT)
+	{
+		return DXGI_FORMAT_R32_FLOAT;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
+	{
+		return DXGI_FORMAT_R16G16_FLOAT;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
+	{
+		return DXGI_FORMAT_R16G16B16A16_FLOAT;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
+	{
+		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC1)
+	{
+		return DXGI_FORMAT_BC1_UNORM;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC2)
+	{
+		return DXGI_FORMAT_BC2_UNORM;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC3)
+	{
+		return DXGI_FORMAT_BC3_UNORM;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
+	{
+		return DXGI_FORMAT_BC1_UNORM_SRGB;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
+	{
+		return DXGI_FORMAT_BC2_UNORM_SRGB;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+	{
+		return DXGI_FORMAT_BC3_UNORM_SRGB;
+	}
+
+	return DXGI_FORMAT_UNKNOWN;
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -462,7 +524,6 @@ bool Texture::Init(
 						format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
 						format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
 
-	DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	int32_t sizePerWidth = 0;
 	int32_t height = 0;
 
@@ -473,53 +534,13 @@ bool Texture::Init(
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 
-	if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM)
+	const DXGI_FORMAT dxgiFormat = GetTextureFormatType(format);
+
+	if (dxgiFormat == DXGI_FORMAT_UNKNOWN)
 	{
-		dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
-	{
-		dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::R8_UNORM)
-	{
-		dxgiFormat = DXGI_FORMAT_R8_UNORM;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
-	{
-		dxgiFormat = DXGI_FORMAT_R16G16_FLOAT;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT)
-	{
-		dxgiFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT)
-	{
-		dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::BC1)
-	{
-		dxgiFormat = DXGI_FORMAT_BC1_UNORM;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::BC2)
-	{
-		dxgiFormat = DXGI_FORMAT_BC2_UNORM;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::BC3)
-	{
-		dxgiFormat = DXGI_FORMAT_BC3_UNORM;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
-	{
-		dxgiFormat = DXGI_FORMAT_BC1_UNORM_SRGB;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
-	{
-		dxgiFormat = DXGI_FORMAT_BC2_UNORM_SRGB;
-	}
-	else if (format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
-	{
-		dxgiFormat = DXGI_FORMAT_BC3_UNORM_SRGB;
+		// not supported
+		Effekseer::Log(Effekseer::LogType::Error, "The format is not supported.(" + std::to_string(static_cast<int>(format)) + ")");
+		return false;
 	}
 
 	UINT bindFlag = D3D11_BIND_SHADER_RESOURCE;

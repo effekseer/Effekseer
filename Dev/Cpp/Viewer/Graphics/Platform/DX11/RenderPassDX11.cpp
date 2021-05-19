@@ -32,6 +32,9 @@ void RenderPassDX11::Resolve()
 	auto src = static_cast<efk::RenderTextureDX11*>(colorTexture_.get());
 	auto dst = static_cast<efk::RenderTextureDX11*>(resolvedColorTexture_.get());
 
+	D3D11_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
+	
 	assert(src->GetDXGIFormat() == dst->GetDXGIFormat());
 
 	context_->ResolveSubresource(dst->GetTexture(), 0, src->GetTexture(), 0, src->GetDXGIFormat());

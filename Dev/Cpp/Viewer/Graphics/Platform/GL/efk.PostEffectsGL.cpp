@@ -404,7 +404,7 @@ void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 	{
 		auto bufferSize = Effekseer::Tool::Vector2DI(width, height);
 		extractBuffer.reset(RenderTexture::Create(graphics));
-		extractBuffer->Initialize(bufferSize, TextureFormat::RGBA16F);
+		extractBuffer->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 	}
 
 	// Create low-resolution buffers
@@ -416,7 +416,7 @@ void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);
 			bufferSize.Y = std::max(1, (bufferSize.Y + 1) / 2);
 			lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
-			lowresBuffers[i][j]->Initialize(bufferSize, TextureFormat::RGBA16F);
+			lowresBuffers[i][j]->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 		}
 	}
 }

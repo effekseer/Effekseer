@@ -344,6 +344,12 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	{
 		format = D3DFMT_DXT5;
 	}
+	else
+	{
+		// not supported
+		Effekseer::Log(Effekseer::LogType::Error, "The format is not supported.(" + std::to_string(static_cast<int>(param.Format)) + ")");
+		return false;
+	}
 
 	HRESULT hr;
 	LPDIRECT3DTEXTURE9 texture = nullptr;

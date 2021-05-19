@@ -114,6 +114,8 @@ namespace GLExt
 #define GL_MAP_UNSYNCHRONIZED_BIT 0x0020
 
 #define GL_R8 0x8229
+#define GL_R16F 0x822D
+#define GL_R32F 0x822E
 #define GL_RG 0x8227
 #define GL_BGRA 0x80E1
 #define GL_RG16F 0x822f

@@ -172,6 +172,11 @@ public:
 	{
 		return buffer_;
 	}
+
+	GLuint GetRenderBuffer() const
+	{
+		return renderbuffer_;
+	}
 };
 
 class VertexLayout

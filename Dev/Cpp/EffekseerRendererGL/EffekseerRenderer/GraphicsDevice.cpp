@@ -357,6 +357,18 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 			format = GL_RED;
 			type = GL_UNSIGNED_BYTE;
 		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R16_FLOAT)
+		{
+			internalFormat = GL_R16F;
+			format = GL_RED;
+			type = GL_HALF_FLOAT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::R32_FLOAT)
+		{
+			internalFormat = GL_R16F;
+			format = GL_RED;
+			type = GL_FLOAT;
+		}
 		else if (param.Format == Effekseer::Backend::TextureFormatType::R16G16_FLOAT)
 		{
 			internalFormat = GL_RG16F;
@@ -374,6 +386,12 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 			internalFormat = GL_RGBA32F;
 			format = GL_RGBA;
 			type = GL_FLOAT;
+		}
+		else
+		{
+			// not supported
+			Effekseer::Log(Effekseer::LogType::Error, "The format is not supported.(" + std::to_string(static_cast<int>(param.Format)) + ")");
+			return false;
 		}
 
 		if (initWithBuffer)

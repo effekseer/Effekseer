@@ -25,14 +25,6 @@ namespace efk
 {
 class Graphics;
 
-enum class TextureFormat
-{
-	RGBA8U,
-	RGBA16F,
-	R16F,
-	R32F,
-};
-
 enum class TextureFeatureType
 {
 	Texture2D,
@@ -45,14 +37,14 @@ class RenderTexture
 protected:
 	int32_t samplingCount_ = 1;
 	Effekseer::Tool::Vector2DI size_;
-	TextureFormat format_;
+	Effekseer::Backend::TextureFormatType format_;
 	Effekseer::Backend::TextureRef texture_;
 
 public:
 	RenderTexture() = default;
 	virtual ~RenderTexture() = default;
 
-	virtual bool Initialize(Effekseer::Tool::Vector2DI size, TextureFormat format, uint32_t multisample = 1) = 0;
+	virtual bool Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1) = 0;
 
 	virtual uint64_t GetViewID() = 0;
 
@@ -71,7 +63,7 @@ public:
 		return samplingCount_;
 	}
 
-	TextureFormat GetFormat() const
+	Effekseer::Backend::TextureFormatType GetFormat() const
 	{
 		return format_;
 	}
@@ -140,12 +132,12 @@ public:
 	{
 	}
 
-	virtual bool CheckFormatSupport(TextureFormat format, TextureFeatureType feature)
+	virtual bool CheckFormatSupport(Effekseer::Backend::TextureFormatType format, TextureFeatureType feature)
 	{
 		return true;
 	}
 
-	virtual int GetMultisampleLevel(TextureFormat format)
+	virtual int GetMultisampleLevel(Effekseer::Backend::TextureFormatType format)
 	{
 		return 4;
 	}

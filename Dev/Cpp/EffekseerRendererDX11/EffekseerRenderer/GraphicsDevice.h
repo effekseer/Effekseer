@@ -52,6 +52,8 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
+DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format);
+
 class DirtiedBlock
 {
 	struct Block
