@@ -634,6 +634,7 @@ bool Texture::Init(
 	}
 
 	size_ = size;
+	samplingCount_ = samplingCount;
 
 	return true;
 }
@@ -741,6 +742,8 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	texture_ = Effekseer::CreateUniqueReference(texture);
 	dsv_ = Effekseer::CreateUniqueReference(depthStencilView);
 	srv_ = Effekseer::CreateUniqueReference(srv);
+
+	samplingCount_ = samplingCount;
 
 	type_ = Effekseer::Backend::TextureType::Depth;
 

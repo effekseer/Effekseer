@@ -429,6 +429,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 	size_ = param.Size;
 	format_ = param.Format;
 	hasMipmap_ = param.GenerateMipmap;
+	samplingCount_ = samplingCount;
 
 	return true;
 }
@@ -519,6 +520,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	size_ = param.Size;
 	format_ = param.Format;
 	hasMipmap_ = false;
+	samplingCount_ = param.SamplingCount;
 
 	type_ = Effekseer::Backend::TextureType::Depth;
 

@@ -529,7 +529,7 @@ bool Recorder::Step(Native* native, int frames)
 			generator_->SetConfig(config);
 
 			generator_->Render();
-			graphics_->SaveTexture(generator_->GetView().get(), pixelss[loop]);
+			graphics_->SaveTexture(generator_->GetView()->GetAsBackend(), pixelss[loop]);
 
 			auto generateAlpha = recordingParameter_.Transparence == TransparenceType::Generate;
 			auto removeAlpha = recordingParameter_.Transparence == TransparenceType::None;

@@ -147,7 +147,7 @@ void BlitterDX11::Blit(EffekseerRendererDX11::Shader* shader,
 		shader->SetConstantBuffer();
 	}
 
-	graphics->SetRenderTarget(dest, nullptr);
+	graphics->SetRenderTarget({dest->GetAsBackend()}, nullptr);
 	renderer_->GetContext()->PSSetShaderResources(0, numTextures, textures);
 
 	renderer_->GetContext()->Draw(4, 0);

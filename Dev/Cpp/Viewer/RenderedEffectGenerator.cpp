@@ -592,7 +592,7 @@ void RenderedEffectGenerator::Render()
 		UpdateBackgroundMesh(config_.BackgroundColor);
 	}
 
-	graphics_->SetRenderTarget(viewRenderTexture.get(), nullptr);
+	graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
 	graphics_->Clear({0, 0, 0, 0});
 
 	renderer_->SetRenderMode(config_.RenderMode);
@@ -605,13 +605,11 @@ void RenderedEffectGenerator::Render()
 	// clear
 	if (msaaSamples > 1)
 	{
-		auto rs = std::array<efk::RenderTexture*, 2>{hdrRenderTextureMSAA.get(), depthRenderTextureMSAA.get()};
-		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
+		graphics_->SetRenderTarget({hdrRenderTextureMSAA->GetAsBackend(), depthRenderTextureMSAA->GetAsBackend()}, depthTexture->GetAsBackend());
 	}
 	else
 	{
-		auto rs = std::array<efk::RenderTexture*, 2>{hdrRenderTexture.get(), depthRenderTexture.get()};
-		graphics_->SetRenderTarget(rs.data(), 2, depthTexture.get());
+		graphics_->SetRenderTarget({hdrRenderTexture->GetAsBackend(), depthRenderTexture->GetAsBackend()}, depthTexture->GetAsBackend());
 	}
 
 	graphics_->Clear({0, 0, 0, 0});
@@ -643,16 +641,16 @@ void RenderedEffectGenerator::Render()
 
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget(hdrRenderTextureMSAA.get(), depthTexture.get());
+		graphics_->SetRenderTarget({hdrRenderTextureMSAA->GetAsBackend()}, depthTexture->GetAsBackend());
 	}
 	else
 	{
-		graphics_->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
+		graphics_->SetRenderTarget({hdrRenderTexture->GetAsBackend()}, depthTexture->GetAsBackend());
 	}
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(depthRenderTextureMSAA.get(), depthRenderTexture.get());
+		graphics_->ResolveRenderTarget(depthRenderTextureMSAA->GetAsBackend(), depthRenderTexture->GetAsBackend());
 	}
 
 	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
@@ -723,7 +721,7 @@ void RenderedEffectGenerator::Render()
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA.get(), hdrRenderTexture.get());
+		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA->GetAsBackend(), hdrRenderTexture->GetAsBackend());
 	}
 
 	// Bloom processing (specifying the same target for src and dest is faster)
@@ -743,7 +741,7 @@ void RenderedEffectGenerator::Render()
 		m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture.get());
 	}
 
-	graphics_->SetRenderTarget(nullptr, nullptr);
+	graphics_->SetRenderTarget({nullptr}, nullptr);
 }
 
 void RenderedEffectGenerator::Reset()
@@ -772,11 +770,11 @@ void RenderedEffectGenerator::CopyToBack()
 {
 	if (msaaSamples > 1)
 	{
-		graphics_->CopyTo(hdrRenderTextureMSAA.get(), backTexture.get());
+		graphics_->CopyTo(hdrRenderTextureMSAA->GetAsBackend(), backTexture->GetAsBackend());
 	}
 	else
 	{
-		graphics_->CopyTo(hdrRenderTexture.get(), backTexture.get());
+		graphics_->CopyTo(hdrRenderTexture->GetAsBackend(), backTexture->GetAsBackend());
 	}
 
 	renderer_->SetBackground(backTexture->GetAsBackend());
