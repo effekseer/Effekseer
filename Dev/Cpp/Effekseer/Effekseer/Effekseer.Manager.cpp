@@ -163,7 +163,7 @@ void ManagerImplemented::StopStoppingEffects()
 
 				if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE && !pRootInstance->IsFirstTime())
 				{
-					if (pRootInstance->AreChildrenRemoved())
+					if (!pRootInstance->AreChildrenActive())
 					{
 						// when a sound is not playing.
 						if (m_soundPlayer == nullptr || !m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))

@@ -402,7 +402,7 @@ public:
 		return m_randObject;
 	}
 
-	bool AreChildrenRemoved() const;
+	bool AreChildrenActive() const;
 
 private:
 	/**

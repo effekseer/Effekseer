@@ -986,7 +986,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		// if children are removed and going not to generate a child
 		if (!killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
 		{
-			killed = AreChildrenRemoved();
+			killed = !AreChildrenActive();
 		}
 	}
 
@@ -1122,18 +1122,16 @@ void Instance::Update(float deltaFrame, bool shown)
 	is_time_step_allowed = true;
 }
 
-bool Instance::AreChildrenRemoved() const
+bool Instance::AreChildrenActive() const
 {
-	bool removed = true;
 	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
 		if (group->IsActive())
 		{
-			removed = false;
-			break;
+			return true;
 		}
 	}
-	return removed;
+	return false;
 }
 
 //----------------------------------------------------------------------------------
