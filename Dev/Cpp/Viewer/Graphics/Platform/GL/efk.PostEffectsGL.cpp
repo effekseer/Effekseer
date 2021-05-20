@@ -208,7 +208,7 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 	}
 
 	// Set destination texture
-	graphics->SetRenderTarget(dest, nullptr);
+	graphics->SetRenderTarget({dest->GetAsBackend()}, nullptr);
 
 	if (isCleared)
 	{

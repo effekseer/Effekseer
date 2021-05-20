@@ -195,6 +195,7 @@ protected:
 	TextureFormatType format_ = {};
 	std::array<int32_t, 2> size_ = {};
 	bool hasMipmap_ = false;
+	int32_t samplingCount_ = 1;
 
 public:
 	Texture() = default;
@@ -208,6 +209,11 @@ public:
 	std::array<int32_t, 2> GetSize() const
 	{
 		return size_;
+	}
+
+	int32_t GetSamplingCount() const
+	{
+		return samplingCount_;
 	}
 
 	bool GetHasMipmap() const

@@ -429,6 +429,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 	size_ = param.Size;
 	format_ = param.Format;
 	hasMipmap_ = param.GenerateMipmap;
+	samplingCount_ = samplingCount;
 
 	return true;
 }
@@ -471,7 +472,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 		format = GL_DEPTH_STENCIL;
 		internalFormat = GL_DEPTH32F_STENCIL8;
 	}
-	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32)
 	{
 		format = GL_DEPTH_COMPONENT;
 		internalFormat = GL_DEPTH_COMPONENT32;
@@ -519,6 +520,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	size_ = param.Size;
 	format_ = param.Format;
 	hasMipmap_ = false;
+	samplingCount_ = param.SamplingCount;
 
 	type_ = Effekseer::Backend::TextureType::Depth;
 

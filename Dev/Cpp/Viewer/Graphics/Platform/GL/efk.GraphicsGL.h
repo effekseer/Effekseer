@@ -52,6 +52,11 @@ public:
 	virtual ~DepthTextureGL();
 	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
+	Effekseer::Backend::TextureRef GetAsBackend() override
+	{
+		return texture_;
+	}
+
 	GLuint GetTexture()
 	{
 		return texture_->GetBuffer();
@@ -83,7 +88,7 @@ public:
 
 	bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight) override;
 
-	void CopyTo(RenderTexture* src, RenderTexture* dst) override;
+	void CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dst) override;
 
 	void Resize(int32_t width, int32_t height) override;
 
@@ -93,13 +98,13 @@ public:
 
 	void EndScene() override;
 
-	void SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture) override;
+	void SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture) override;
 
-	void SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels) override;
+	void SaveTexture(Effekseer::Backend::TextureRef texture, std::vector<Effekseer::Color>& pixels) override;
 
 	void Clear(Effekseer::Color color) override;
 
-	void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) override;
+	void ResolveRenderTarget(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void ResetDevice() override;
 

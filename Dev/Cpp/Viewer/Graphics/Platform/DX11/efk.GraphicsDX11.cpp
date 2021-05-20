@@ -247,7 +247,7 @@ End:
 	return false;
 }
 
-void GraphicsDX11::CopyTo(RenderTexture* src, RenderTexture* dst)
+void GraphicsDX11::CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dst)
 {
 	if (src->GetSize() != dst->GetSize())
 		return;
@@ -262,8 +262,8 @@ void GraphicsDX11::CopyTo(RenderTexture* src, RenderTexture* dst)
 	else
 	{
 		// Copy to background
-		auto s = static_cast<RenderTextureDX11*>(src);
-		auto d = static_cast<RenderTextureDX11*>(dst);
+		auto s = src.DownCast<EffekseerRendererDX11::Backend::Texture>();
+		auto d = dst.DownCast<EffekseerRendererDX11::Backend::Texture>();
 		context->CopyResource(d->GetTexture(), s->GetTexture());
 	}
 }
@@ -300,9 +300,11 @@ void GraphicsDX11::EndScene()
 	ES_SAFE_RELEASE(savedRasterizerState);
 }
 
-void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t renderTextureCount, DepthTexture* depthTexture)
+void GraphicsDX11::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture)
 {
-	if (renderTextures == nullptr || renderTextureCount == 0)
+	assert(renderTextures.size() > 0);
+
+	if (renderTextures[0] == nullptr)
 	{
 		currentRenderTargetViews.fill(nullptr);
 		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
@@ -314,25 +316,25 @@ void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t rende
 		std::array<ID3D11RenderTargetView*, 4> renderTargetView_;
 		renderTargetView_.fill(nullptr);
 
-		auto dt = (DepthTextureDX11*)depthTexture;
+		auto dt = depthTexture.DownCast<EffekseerRendererDX11::Backend::Texture>();
 
 		ID3D11DepthStencilView* depthStencilView_ = nullptr;
 
-		for (int32_t i = 0; i < renderTextureCount; i++)
+		for (size_t i = 0; i < renderTextures.size(); i++)
 		{
-			auto rt = (RenderTextureDX11*)renderTextures[i];
+			auto rt = renderTextures[i].DownCast<EffekseerRendererDX11::Backend::Texture>();
 			if (rt != nullptr)
 			{
-				renderTargetView_[i] = rt->GetRenderTargetView();
+				renderTargetView_[i] = rt->GetRTV();
 			}
 		}
 
 		if (dt != nullptr)
 		{
-			depthStencilView_ = dt->GetDepthStencilView();
+			depthStencilView_ = dt->GetDSV();
 		}
 
-		context->OMSetRenderTargets(renderTextureCount, renderTargetView_.data(), depthStencilView_);
+		context->OMSetRenderTargets(renderTextures.size(), renderTargetView_.data(), depthStencilView_);
 
 		std::array<D3D11_VIEWPORT, 4> vps;
 
@@ -340,22 +342,22 @@ void GraphicsDX11::SetRenderTarget(RenderTexture** renderTextures, int32_t rende
 		{
 			vp.TopLeftX = 0;
 			vp.TopLeftY = 0;
-			vp.Width = static_cast<float>(renderTextures[0]->GetSize().X);
-			vp.Height = static_cast<float>(renderTextures[0]->GetSize().Y);
+			vp.Width = static_cast<float>(renderTextures[0]->GetSize()[0]);
+			vp.Height = static_cast<float>(renderTextures[0]->GetSize()[1]);
 			vp.MinDepth = 0.0f;
 			vp.MaxDepth = 1.0f;
 		}
 
-		context->RSSetViewports(renderTextureCount, vps.data());
+		context->RSSetViewports(renderTextures.size(), vps.data());
 
 		currentRenderTargetViews = renderTargetView_;
 		currentDepthStencilView = depthStencilView_;
 	}
 }
 
-void GraphicsDX11::SaveTexture(RenderTexture* texture, std::vector<Effekseer::Color>& pixels)
+void GraphicsDX11::SaveTexture(Effekseer::Backend::TextureRef texture, std::vector<Effekseer::Color>& pixels)
 {
-	auto t = static_cast<RenderTextureDX11*>(texture);
+	auto t = texture.DownCast<EffekseerRendererDX11::Backend::Texture>();
 
 	HRESULT hr;
 
@@ -423,10 +425,10 @@ void GraphicsDX11::Clear(Effekseer::Color color)
 	}
 }
 
-void GraphicsDX11::ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
+void GraphicsDX11::ResolveRenderTarget(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest)
 {
-	auto srcDX11 = (RenderTextureDX11*)src;
-	auto destDX11 = (RenderTextureDX11*)dest;
+	auto srcDX11 = src.DownCast<EffekseerRendererDX11::Backend::Texture>();
+	auto destDX11 = dest.DownCast<EffekseerRendererDX11::Backend::Texture>();
 
 	D3D11_TEXTURE2D_DESC desc;
 	ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
