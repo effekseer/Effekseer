@@ -38,8 +38,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	, m_State(INSTANCE_STATE_ACTIVE)
 	, m_LivedTime(0)
 	, m_LivingTime(0)
-	, m_flexibleGeneratedChildrenCount(nullptr)
-	, m_flexibleNextGenerationTime(nullptr)
 	, m_GlobalMatrix43Calculated(false)
 	, m_ParentMatrix43Calculated(false)
 	, is_time_step_allowed(false)
@@ -47,10 +45,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	, m_flipbookIndexAndNextRate(0)
 	, m_AlphaThreshold(0.0f)
 {
-	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
-	maxGenerationChildrenCount = fixedMaxGenerationChildrenCount_;
-	m_nextGenerationTime = m_fixedNextGenerationTime;
-
 	ColorInheritance = Color(255, 255, 255, 255);
 	ColorParent = Color(255, 255, 255, 255);
 
@@ -92,23 +86,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 Instance::~Instance()
 {
 	assert(m_State != INSTANCE_STATE_ACTIVE);
-
-	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
-
-	if (m_flexibleGeneratedChildrenCount != nullptr)
-	{
-		m_pManager->GetFreeFunc()(m_flexibleGeneratedChildrenCount, sizeof(int32_t) * parameter->GetChildrenCount());
-	}
-
-	if (flexibleMaxGenerationChildrenCount_ != nullptr)
-	{
-		m_pManager->GetFreeFunc()(flexibleMaxGenerationChildrenCount_, sizeof(int32_t) * parameter->GetChildrenCount());
-	}
-
-	if (m_flexibleNextGenerationTime != nullptr)
-	{
-		m_pManager->GetFreeFunc()(m_flexibleNextGenerationTime, sizeof(float) * parameter->GetChildrenCount());
-	}
 }
 
 void Instance::GenerateChildrenInRequired()
@@ -118,51 +95,9 @@ void Instance::GenerateChildrenInRequired()
 		return;
 	}
 
-	const float& currentTime = m_LivingTime;
-
-	auto effect = this->m_pEffectNode->m_effect;
-	auto instanceGlobal = this->m_pContainer->GetRootInstance();
-	auto& rand = m_randObject;
-
-	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
-
-	InstanceGroup* group = childrenGroups_;
-
-	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
+	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
-		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
-
-		// Lack of memory
-		if (group == nullptr)
-		{
-			return;
-		}
-
-		while (true)
-		{
-			// GenerationTimeOffset can be minus value.
-			// Minus frame particles is generated simultaniously at frame 0.
-			if (maxGenerationChildrenCount[i] > m_generatedChildrenCount[i] && m_nextGenerationTime[i] <= currentTime)
-			{
-				// Create a particle
-				auto newInstance = group->CreateInstance();
-				if (newInstance != nullptr)
-				{
-					SIMD::Mat43f rootMatrix = SIMD::Mat43f::Identity;
-
-					newInstance->Initialize(this, m_generatedChildrenCount[i], rootMatrix);
-				}
-
-				m_generatedChildrenCount[i]++;
-
-				auto gt = ApplyEq(effect, instanceGlobal, m_pParent, &rand, node->CommonValues.RefEqGenerationTime, node->CommonValues.GenerationTime);
-				m_nextGenerationTime[i] += Max(0.0f, gt.getValue(rand));
-			}
-			else
-			{
-				break;
-			}
-		}
+		group->GenerateInstancesInRequirred(m_LivingTime, m_randObject, this);
 	}
 }
 
@@ -227,20 +162,6 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::
 	// Set random seed from InstanceGlobal's randomizer
 	m_randObject.SetSeed(instanceGlobal->GetRandObject().GetRandInt());
 
-	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
-
-	// Extend array
-	if (parameter->GetChildrenCount() >= ChildrenMax)
-	{
-		m_flexibleGeneratedChildrenCount = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
-		flexibleMaxGenerationChildrenCount_ = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
-		m_flexibleNextGenerationTime = (float*)(m_pManager->GetMallocFunc()(sizeof(float) * parameter->GetChildrenCount()));
-
-		m_generatedChildrenCount = m_flexibleGeneratedChildrenCount;
-		maxGenerationChildrenCount = flexibleMaxGenerationChildrenCount_;
-		m_nextGenerationTime = m_flexibleNextGenerationTime;
-	}
-
 	prevPosition_ = SIMD::Vec3f(0, 0, 0);
 }
 
@@ -259,27 +180,9 @@ void Instance::FirstUpdate()
 	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
 
 	// initialize children
-	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++)
+	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
-		auto pNode = (EffectNodeImplemented*)parameter->GetChild(i);
-
-		m_generatedChildrenCount[i] = 0;
-
-		auto gt =
-			ApplyEq(effect, instanceGlobal, m_pParent, &rand, pNode->CommonValues.RefEqGenerationTimeOffset, pNode->CommonValues.GenerationTimeOffset);
-
-		m_nextGenerationTime[i] = gt.getValue(rand);
-
-		if (pNode->CommonValues.RefEqMaxGeneration >= 0)
-		{
-			auto maxGene = static_cast<float>(pNode->CommonValues.MaxGeneration);
-			ApplyEq(maxGene, effect, instanceGlobal, m_pParent, &rand, pNode->CommonValues.RefEqMaxGeneration, maxGene);
-			maxGenerationChildrenCount[i] = static_cast<int32_t>(maxGene);
-		}
-		else
-		{
-			maxGenerationChildrenCount[i] = pNode->CommonValues.MaxGeneration;
-		}
+		group->Initialize(rand, this);
 	}
 
 	if (m_pParent == nullptr)
@@ -1071,7 +974,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		}
 
 		// if remove parent
-		if (m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved)
+		if (!killed && m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved)
 		{
 			if (m_pParent == nullptr || m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
 			{
@@ -1083,25 +986,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		// if children are removed and going not to generate a child
 		if (!killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
 		{
-			int maxcreate_count = 0;
-			InstanceGroup* group = childrenGroups_;
-
-			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
-			{
-				if (maxGenerationChildrenCount[i] <= m_generatedChildrenCount[i] && group->GetInstanceCount() == 0)
-				{
-					maxcreate_count++;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if (maxcreate_count == m_pEffectNode->GetChildrenCount())
-			{
-				killed = true;
-			}
+			killed = !AreChildrenActive();
 		}
 	}
 
@@ -1235,6 +1120,18 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	// allow to pass time
 	is_time_step_allowed = true;
+}
+
+bool Instance::AreChildrenActive() const
+{
+	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
+	{
+		if (group->IsActive())
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 //----------------------------------------------------------------------------------
