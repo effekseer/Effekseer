@@ -64,7 +64,7 @@ bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisam
 	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 
 	Effekseer::Backend::DepthTextureParameter param;
-	param.Format = Effekseer::Backend::TextureFormatType::D24S8;
+	param.Format = Effekseer::Backend::TextureFormatType::D32;
 	param.SamplingCount = multisample;
 	param.Size = {width, height};
 	texture_ = gd->CreateDepthTexture(param).DownCast<EffekseerRendererGL::Backend::Texture>();
@@ -224,7 +224,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 {
 	assert(renderTextures.size() > 0);
 	GLCheckError();
-
+	
 	// reset
 	for (int32_t i = 0; i < 4; i++)
 	{
@@ -239,6 +239,8 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDrawBuffer(GL_BACK);
 		glViewport(0, 0, windowWidth, windowHeight);
+		currentRenderTargetCount_ = 0;
+		hasDepthBuffer_ = true;
 	}
 	else
 	{
@@ -272,13 +274,21 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
 		}
 
-		if (rt->GetSamplingCount() > 1)
+		if (dt != nullptr)
 		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt.Get() != nullptr ? dt->GetRenderBuffer() : 0);
+			if (dt->GetSamplingCount() > 1)
+			{
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt->GetRenderBuffer());
+			}
+			else
+			{
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt->GetBuffer(), 0);
+			}
 		}
 		else
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt.Get() != nullptr ? dt->GetBuffer() : 0, 0);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
 		}
 
 		static const GLenum bufs[] = {
@@ -292,10 +302,9 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 		GLCheckError();
 
 		glViewport(0, 0, renderTextures[0]->GetSize()[0], renderTextures[0]->GetSize()[1]);
+		currentRenderTargetCount_ = renderTextures.size();
+		hasDepthBuffer_ = depthTexture != nullptr;
 	}
-
-	currentRenderTargetCount_ = renderTextures.size();
-	hasDepthBuffer_ = depthTexture != nullptr;
 }
 
 void GraphicsGL::SaveTexture(Effekseer::Backend::TextureRef texture, std::vector<Effekseer::Color>& pixels)

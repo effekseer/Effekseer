@@ -472,7 +472,7 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 		format = GL_DEPTH_STENCIL;
 		internalFormat = GL_DEPTH32F_STENCIL8;
 	}
-	else if (param.Format == Effekseer::Backend::TextureFormatType::D32S8)
+	else if (param.Format == Effekseer::Backend::TextureFormatType::D32)
 	{
 		format = GL_DEPTH_COMPONENT;
 		internalFormat = GL_DEPTH_COMPONENT32;
