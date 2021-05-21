@@ -31,16 +31,6 @@ public:
 		return texture_->GetTexture();
 	}
 
-	ID3D11RenderTargetView* GetRenderTargetView() const
-	{
-		return texture_->GetRTV();
-	}
-
-	ID3D11ShaderResourceView* GetShaderResourceView() const
-	{
-		return texture_->GetSRV();
-	}
-
 	uint64_t GetViewID() override
 	{
 		return (uint64_t)texture_->GetSRV();
@@ -71,16 +61,6 @@ public:
 	ID3D11Texture2D* GetTexture() const
 	{
 		return texture_->GetTexture();
-	}
-
-	ID3D11DepthStencilView* GetDepthStencilView() const
-	{
-		return texture_->GetDSV();
-	}
-
-	ID3D11ShaderResourceView* GetShaderResourceView() const
-	{
-		return texture_->GetSRV();
 	}
 };
 

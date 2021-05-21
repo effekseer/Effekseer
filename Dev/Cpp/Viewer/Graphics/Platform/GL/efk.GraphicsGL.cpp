@@ -36,12 +36,12 @@ bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Bac
 
 	if (multisample <= 1 && texture_ != nullptr)
 	{
+		GLint bound;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
 		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, bound);
 	}
 
 	return texture_ != nullptr;
@@ -391,10 +391,5 @@ void GraphicsGL::ResolveRenderTarget(Effekseer::Backend::TextureRef src, Effekse
 void GraphicsGL::ResetDevice()
 {
 }
-
-//void* GraphicsGL::GetBack()
-//{
-//	return (void*)(uintptr_t)backTarget->GetViewID();
-//}
 
 } // namespace efk

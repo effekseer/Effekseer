@@ -725,20 +725,20 @@ void RenderedEffectGenerator::Render()
 	}
 
 	// Bloom processing (specifying the same target for src and dest is faster)
-	m_bloomEffect->Render(hdrRenderTexture.get(), hdrRenderTexture.get());
+	m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
 
 	// Tone map processing
-	auto tonemapTerget = viewRenderTexture.get();
+	auto tonemapTerget = viewRenderTexture->GetAsBackend();
 	if (m_isSRGBMode)
 	{
-		tonemapTerget = linearRenderTexture.get();
+		tonemapTerget = linearRenderTexture->GetAsBackend();
 	}
 
-	m_tonemapEffect->Render(hdrRenderTexture.get(), tonemapTerget);
+	m_tonemapEffect->Render(hdrRenderTexture->GetAsBackend(), tonemapTerget);
 
 	if (m_isSRGBMode)
 	{
-		m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture.get());
+		m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture->GetAsBackend());
 	}
 
 	graphics_->SetRenderTarget({nullptr}, nullptr);

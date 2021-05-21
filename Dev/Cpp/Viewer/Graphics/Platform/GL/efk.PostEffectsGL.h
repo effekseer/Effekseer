@@ -34,11 +34,10 @@ public:
 
 	void Blit(EffekseerRendererGL::Shader* shader,
 			  EffekseerRendererGL::VertexArray* vao,
-			  int32_t numTextures,
-			  const GLuint* textures,
+			  const std::vector<Effekseer::Backend::TextureRef>& textures,
 			  const void* constantData,
 			  size_t constantDataSize,
-			  RenderTexture* dest,
+			  Effekseer::Backend::TextureRef dest,
 			  bool isCleared = true);
 };
 
@@ -71,7 +70,7 @@ public:
 	BloomEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BloomEffectGL();
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void OnLostDevice() override;
 
@@ -97,7 +96,7 @@ public:
 	TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~TonemapEffectGL();
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void OnLostDevice() override
 	{
@@ -120,7 +119,7 @@ public:
 	LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~LinearToSRGBEffectGL();
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void OnLostDevice() override
 	{

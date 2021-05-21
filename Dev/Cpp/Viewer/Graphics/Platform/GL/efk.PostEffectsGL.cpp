@@ -186,11 +186,10 @@ std::unique_ptr<EffekseerRendererGL::VertexArray> BlitterGL::CreateVAO(Effekseer
 
 void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 					 EffekseerRendererGL::VertexArray* vao,
-					 int32_t numTextures,
-					 const GLuint* textures,
+					 const std::vector<Effekseer::Backend::TextureRef>& textures,
 					 const void* constantData,
 					 size_t constantDataSize,
-					 RenderTexture* dest,
+					 Effekseer::Backend::TextureRef dest,
 					 bool isCleared)
 {
 	using namespace Effekseer;
@@ -208,7 +207,7 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 	}
 
 	// Set destination texture
-	graphics->SetRenderTarget({dest->GetAsBackend()}, nullptr);
+	graphics->SetRenderTarget({dest}, nullptr);
 
 	if (isCleared)
 	{
@@ -216,11 +215,13 @@ void BlitterGL::Blit(EffekseerRendererGL::Shader* shader,
 	}
 
 	// Set source textures
-	for (int32_t slot = 0; slot < numTextures; slot++)
+	for (size_t slot = 0; slot < textures.size(); slot++)
 	{
+		auto texture = textures[slot];
+		auto t = texture.DownCast<EffekseerRendererGL::Backend::Texture>();
 		GLExt::glBindSampler(slot, 0);
 		GLExt::glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, textures[slot]);
+		glBindTexture(GL_TEXTURE_2D, t->GetBuffer());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -306,7 +307,7 @@ BloomEffectGL::~BloomEffectGL()
 {
 }
 
-void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+void BloomEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest)
 {
 	if (!enabled)
 	{
@@ -316,9 +317,9 @@ void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	using namespace Effekseer;
 	using namespace EffekseerRendererGL;
 
-	if (renderTextureWidth != src->GetSize().X || renderTextureHeight != src->GetSize().Y)
+	if (renderTextureWidth != src->GetSize()[0] || renderTextureHeight != src->GetSize()[1])
 	{
-		SetupBuffers(src->GetSize().X, src->GetSize().Y);
+		SetupBuffers(src->GetSize()[0], src->GetSize()[1]);
 	}
 
 	auto& state = renderer_->GetRenderState()->Push();
@@ -341,41 +342,39 @@ void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 			0.25f / (knee + 0.00001f),
 			intensity,
 		};
-		const GLuint textures[] = {(GLuint)src->GetViewID()};
-		blitter.Blit(shaderExtract.get(), vaoExtract.get(), 1, textures, constantData, sizeof(constantData), extractBuffer.get());
+		blitter.Blit(shaderExtract.get(), vaoExtract.get(), {src}, constantData, sizeof(constantData), extractBuffer->GetAsBackend());
 	}
 
 	// Shrink pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		GLuint textures[1];
-		textures[0] = (i == 0) ? (GLuint)extractBuffer->GetViewID() : (GLuint)lowresBuffers[0][i - 1]->GetViewID();
-		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+		const auto textures = (i == 0) ? extractBuffer->GetAsBackend() : lowresBuffers[0][i - 1]->GetAsBackend();
+		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), {textures}, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
 	}
 
 	// Horizontal gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const GLuint textures[] = {(GLuint)lowresBuffers[0][i]->GetViewID()};
-		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), 1, textures, nullptr, 0, lowresBuffers[1][i].get());
+		const auto textures = {lowresBuffers[0][i]->GetAsBackend()};
+		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), textures, nullptr, 0, lowresBuffers[1][i]->GetAsBackend());
 	}
 
 	// Vertical gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const GLuint textures[] = {(GLuint)lowresBuffers[1][i]->GetViewID()};
-		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+		const auto textures = {lowresBuffers[1][i]->GetAsBackend()};
+		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), textures, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
 	}
 
 	// Blending pass
 	state.AlphaBlend = AlphaBlendType::Add;
 	renderer_->GetRenderState()->Update(false);
 	{
-		const GLuint textures[] = {(GLuint)lowresBuffers[0][0]->GetViewID(),
-								   (GLuint)lowresBuffers[0][1]->GetViewID(),
-								   (GLuint)lowresBuffers[0][2]->GetViewID(),
-								   (GLuint)lowresBuffers[0][3]->GetViewID()};
-		blitter.Blit(shaderBlend.get(), vaoBlend.get(), 4, textures, nullptr, 0, dest, false);
+		const auto textures = {lowresBuffers[0][0]->GetAsBackend(),
+							   lowresBuffers[0][1]->GetAsBackend(),
+							   lowresBuffers[0][2]->GetAsBackend(),
+							   lowresBuffers[0][3]->GetAsBackend()};
+		blitter.Blit(shaderBlend.get(), vaoBlend.get(), textures, nullptr, 0, dest, false);
 	}
 
 	GLExt::glActiveTexture(GL_TEXTURE0);
@@ -470,7 +469,7 @@ TonemapEffectGL::~TonemapEffectGL()
 {
 }
 
-void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+void TonemapEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererGL;
@@ -483,16 +482,16 @@ void TonemapEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	renderer_->GetRenderState()->Update(false);
 	renderer_->SetRenderMode(RenderMode::Normal);
 
-	const GLuint textures[] = {(GLuint)src->GetViewID()};
+	const auto textures = {src};
 
 	if (algorithm == Algorithm::Off)
 	{
-		blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, nullptr, 0, dest);
+		blitter.Blit(shaderCopy.get(), vaoCopy.get(), textures, nullptr, 0, dest);
 	}
 	else if (algorithm == Algorithm::Reinhard)
 	{
 		const float constantData[4] = {exposure, 16.0f * 16.0f};
-		blitter.Blit(shaderReinhard.get(), vaoReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
+		blitter.Blit(shaderReinhard.get(), vaoReinhard.get(), textures, constantData, sizeof(constantData), dest);
 	}
 
 	GLExt::glActiveTexture(GL_TEXTURE0);
@@ -524,7 +523,7 @@ LinearToSRGBEffectGL::~LinearToSRGBEffectGL()
 {
 }
 
-void LinearToSRGBEffectGL::Render(RenderTexture* src, RenderTexture* dest)
+void LinearToSRGBEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest)
 {
 	using namespace Effekseer;
 	using namespace EffekseerRendererGL;
@@ -537,9 +536,9 @@ void LinearToSRGBEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	renderer_->GetRenderState()->Update(false);
 	renderer_->SetRenderMode(RenderMode::Normal);
 
-	const GLuint textures[] = {(GLuint)src->GetViewID()};
+	const auto textures = {src};
 
-	blitter.Blit(shader_.get(), vao_.get(), 1, textures, nullptr, 0, dest);
+	blitter.Blit(shader_.get(), vao_.get(), textures, nullptr, 0, dest);
 
 	GLExt::glActiveTexture(GL_TEXTURE0);
 	renderer_->GetRenderState()->Update(true);
