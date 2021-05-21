@@ -24,7 +24,7 @@ public:
 	}
 	virtual ~PostEffect() = default;
 
-	virtual void Render(RenderTexture* src, RenderTexture* dest) = 0;
+	virtual void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) = 0;
 
 	virtual void OnLostDevice() = 0;
 

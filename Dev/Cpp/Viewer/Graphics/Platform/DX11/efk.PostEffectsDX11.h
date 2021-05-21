@@ -31,11 +31,10 @@ public:
 	virtual ~BlitterDX11();
 
 	void Blit(EffekseerRendererDX11::Shader* shader,
-			  int32_t numTextures,
-			  ID3D11ShaderResourceView* const* textures,
+			  const std::vector<Effekseer::Backend::TextureRef>& textures,
 			  const void* constantData,
 			  size_t constantDataSize,
-			  RenderTexture* dest,
+			  Effekseer::Backend::TextureRef dest,
 			  Effekseer::AlphaBlendType blendType = Effekseer::AlphaBlendType::Opacity);
 };
 
@@ -53,7 +52,7 @@ class BloomEffectDX11 : public BloomEffect
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurH;
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurV;
 
-	Effekseer::Tool::Vector2DI renderTextureSize_;
+	std::array<int32_t, 2> renderTextureSize_;
 	std::unique_ptr<RenderTexture> extractBuffer;
 	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
 
@@ -61,14 +60,14 @@ public:
 	BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BloomEffectDX11();
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void OnLostDevice() override;
 
 	void OnResetDevice() override;
 
 private:
-	void SetupBuffers(Effekseer::Tool::Vector2DI size);
+	void SetupBuffers(std::array<int32_t, 2> size);
 	void ReleaseBuffers();
 };
 
@@ -83,7 +82,7 @@ public:
 	TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~TonemapEffectDX11();
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void OnLostDevice() override
 	{
@@ -104,7 +103,7 @@ public:
 	LinearToSRGBEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~LinearToSRGBEffectDX11();
 
-	void Render(RenderTexture* src, RenderTexture* dest) override;
+	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
 
 	void OnLostDevice() override
 	{
