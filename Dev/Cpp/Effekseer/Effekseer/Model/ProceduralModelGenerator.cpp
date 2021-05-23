@@ -603,14 +603,12 @@ struct RotatedWireMeshGenerator
 
 		if (CrossSectionType == ProceduralModelCrossSectionType::Cross)
 		{
-			vertexPoses = {
-				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
-				SIMD::Vec3f(+0.0f, 0.0f, 0.0f),
-				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
-				SIMD::Vec3f(0.0f, 0.0f, -0.5f),
-				SIMD::Vec3f(0.0f, 0.0f, +0.0f),
-				SIMD::Vec3f(0.0f, 0.0f, +0.5f),
-			};
+			vertexPoses.emplace_back(+0.5f, 0.0f, 0.0f);
+			vertexPoses.emplace_back(+0.0f, 0.0f, 0.0f);
+			vertexPoses.emplace_back(-0.5f, 0.0f, 0.0f);
+			vertexPoses.emplace_back(0.0f, 0.0f, -0.5f);
+			vertexPoses.emplace_back(0.0f, 0.0f, +0.0f);
+			vertexPoses.emplace_back(0.0f, 0.0f, +0.5f);
 
 			edgeIDs = {
 				0,
@@ -634,11 +632,9 @@ struct RotatedWireMeshGenerator
 		}
 		else if (CrossSectionType == ProceduralModelCrossSectionType::Plane)
 		{
-			vertexPoses = {
-				SIMD::Vec3f(+0.5f, 0.0f, 0.0f),
-				SIMD::Vec3f(+0.0f, 0.0f, 0.0f),
-				SIMD::Vec3f(-0.5f, 0.0f, 0.0f),
-			};
+			vertexPoses.emplace_back(+0.5f, 0.0f, 0.0f);
+			vertexPoses.emplace_back(+0.0f, 0.0f, 0.0f);
+			vertexPoses.emplace_back(-0.5f, 0.0f, 0.0f);
 
 			edgeIDs = {
 				0,
@@ -655,9 +651,7 @@ struct RotatedWireMeshGenerator
 		}
 		else if (CrossSectionType == ProceduralModelCrossSectionType::Point)
 		{
-			vertexPoses = {
-				SIMD::Vec3f(0.0f, 0.0f, 0.0f),
-			};
+			vertexPoses.emplace_back(0.0f, 0.0f, 0.0f);
 
 			edgeIDs = {
 				0,
