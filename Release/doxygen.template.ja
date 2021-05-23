@@ -733,10 +733,16 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = Dev/Cpp/Effekseer/Effekseer.h 
+
+INPUT                  = Dev/Cpp/Effekseer/Effekseer.h
+INPUT                  = Dev/Cpp/Effekseer/Effekseer.Module.h 
+INPUT                  = Dev/Cpp/Effekseer/Effekseer.SIMD.h 
 INPUT                  += Dev/Cpp/EffekseerRendererDX9/EffekseerRendererDX9.h 
 INPUT                  += Dev/Cpp/EffekseerRendererDX11/EffekseerRendererDX11.h 
+INPUT                  += Dev/Cpp/EffekseerRendererDX12/EffekseerRendererDX12.h 
 INPUT                  += Dev/Cpp/EffekseerRendererGL/EffekseerRendererGL.h 
+INPUT                  += Dev/Cpp/EffekseerRendererMetal/EffekseerRendererMetal.h 
+INPUT                  += Dev/Cpp/EffekseerRendererVulkan/EffekseerRendererVulkan.h 
 
 
 # This tag can be used to specify the character encoding of the source files
