@@ -38,3 +38,23 @@ BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent_Name,生成�
 
 BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed_Name,最大追従速度
 BasicSettings_SteeringBehaviorParameter_SteeringSpeed_Name,操舵速度(%)
+
+BasicSettings_GenerationTime_Name,生成時間
+BasicSettings_GenerationTime_Desc,1インスタンスを生成するのに必要とする時間
+BasicSettings_GenerationTimeOffset_Name,生成開始時間
+BasicSettings_GenerationTimeOffset_Desc,このノードのインスタンスが生成されてから生成を開始するまでの時間
+
+TriggerType_None_Name,無し
+TriggerType_Trigger0_Name,トリガー0
+TriggerType_Trigger1_Name,トリガー1
+TriggerType_Trigger2_Name,トリガー2
+TriggerType_Trigger3_Name,トリガー3
+
+BasicSettings_Trigger_GenerationEnabled_Name,生成が有効
+BasicSettings_Trigger_GenerationEnabled_Desc,再生開始時に生成が有効かどうか
+BasicSettings_Trigger_ToStartGeneration_Name,生成開始トリガー
+BasicSettings_Trigger_ToStartGeneration_Desc,インスタンス生成を開始するためのトリガー
+BasicSettings_Trigger_ToStopGeneration_Name,生成停止トリガー
+BasicSettings_Trigger_ToStopGeneration_Desc,インスタンス生成を停止するためのトリガー
+BasicSettings_Trigger_ToRemove_Name,削除トリガー
+BasicSettings_Trigger_ToRemove_Desc,インスタンスを削除するためのトリガー

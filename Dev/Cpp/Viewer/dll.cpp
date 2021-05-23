@@ -847,7 +847,7 @@ bool Native::BeginRecord(const Effekseer::Tool::RecordingParameter& recordingPar
 		return false;
 
 	recorder.reset(new Effekseer::Tool::Recorder());
-	return recorder->Begin(mainScreen_, graphics_, setting_, recordingParameter, Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight), mainScreen_->GetIsSRGBMode(), behavior_, effect_);
+	return recorder->Begin(mainScreen_, graphics_, setting_, recordingParameter, Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight), mainScreen_->GetIsSRGBMode(), mainScreen_->GetBehavior(), effect_);
 }
 
 bool Native::StepRecord(int frames)
@@ -967,22 +967,21 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 
 Effekseer::Tool::ViewerEffectBehavior Native::GetEffectBehavior()
 {
-	return behavior_;
+	return mainScreen_->GetBehavior();
 }
 
-void Native::SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior& behavior)
+void Native::SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior behavior)
 {
-	behavior_ = behavior;
-	if (behavior_.CountX <= 0)
-		behavior_.CountX = 1;
-	if (behavior_.CountY <= 0)
-		behavior_.CountY = 1;
-	if (behavior_.CountZ <= 0)
-		behavior_.CountZ = 1;
+	if (behavior.CountX <= 0)
+		behavior.CountX = 1;
+	if (behavior.CountY <= 0)
+		behavior.CountY = 1;
+	if (behavior.CountZ <= 0)
+		behavior.CountZ = 1;
 
 	if (mainScreen_ != nullptr)
 	{
-		mainScreen_->SetBehavior(behavior_);
+		mainScreen_->SetBehavior(behavior);
 	}
 }
 

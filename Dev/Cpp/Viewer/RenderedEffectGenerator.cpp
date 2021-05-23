@@ -564,6 +564,29 @@ void RenderedEffectGenerator::Update()
 		manager_->SetDynamicInput(h.Handle, 3, behavior_.DynamicInput4);
 	}
 
+	// send triggers
+	std::array<bool*, 4> triggers = {
+		&behavior_.TriggerInput0, 
+		&behavior_.TriggerInput1, 
+		&behavior_.TriggerInput2, 
+		&behavior_.TriggerInput3
+	};
+	for (size_t i = 0; i < triggers.size(); i++)
+	{
+		bool& trigger = *triggers[i];
+		if (trigger)
+		{
+			for (auto h : handles_)
+			{
+				if (trigger) 
+				{
+					manager_->SendTrigger(h.Handle, (int32_t)i);
+				}
+			}
+		}
+		trigger = false;
+	}
+
 	for (auto h : handles_)
 	{
 		manager_->SetSpeed(h.Handle, behavior_.PlaybackSpeed);
@@ -934,6 +957,11 @@ void RenderedEffectGenerator::SetEffect(Effekseer::EffectRef effect)
 void RenderedEffectGenerator::SetBehavior(const ViewerEffectBehavior& behavior)
 {
 	behavior_ = behavior;
+}
+
+const ViewerEffectBehavior& RenderedEffectGenerator::GetBehavior() const
+{
+	return behavior_;
 }
 
 void RenderedEffectGenerator::CopyToBack()

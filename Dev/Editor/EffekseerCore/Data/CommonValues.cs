@@ -113,6 +113,52 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		public class TriggerParameter
+		{
+			[Key(key = "BasicSettings_Trigger_GenerationEnabled")]
+			public Value.Boolean GenerationEnabled
+			{
+				get;
+				private set;
+			}
+
+			[Key(key = "BasicSettings_Trigger_ToStartGeneration")]
+			public Value.Enum<TriggerType> ToStartGeneration
+			{
+				get;
+				private set;
+			}
+
+			[Key(key = "BasicSettings_Trigger_ToStopGeneration")]
+			public Value.Enum<TriggerType> ToStopGeneration
+			{
+				get;
+				private set;
+			}
+
+			[Key(key = "BasicSettings_Trigger_ToRemove")]
+			public Value.Enum<TriggerType> ToRemove
+			{
+				get;
+				private set;
+			}
+
+			public TriggerParameter()
+			{
+				GenerationEnabled = new Value.Boolean(true);
+				ToStartGeneration = new Value.Enum<TriggerType>(TriggerType.None);
+				ToStopGeneration = new Value.Enum<TriggerType>(TriggerType.None);
+				ToRemove = new Value.Enum<TriggerType>(TriggerType.None);
+			}
+		}
+
+		[IO(Export = true)]
+		public TriggerParameter TriggerParam
+		{
+			get;
+			private set;
+		}
+
 		internal CommonValues()
 		{
 			MaxGeneration = new Value.IntWithInifinite(1, false, int.MaxValue, 1);
@@ -126,6 +172,7 @@ namespace Effekseer.Data
 			GenerationTime = new Value.FloatWithRandom(1.0f, float.MaxValue, 0.00001f);
 			GenerationTimeOffset = new Value.FloatWithRandom(0, float.MaxValue, float.MinValue);
 			SteeringBehaviorParam = new SteeringBehaviorParameter();
+			TriggerParam = new TriggerParameter();
 
 			// dynamic parameter
 			MaxGeneration.CanSelectDynamicEquation = true;

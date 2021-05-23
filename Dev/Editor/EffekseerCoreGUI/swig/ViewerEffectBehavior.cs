@@ -404,6 +404,46 @@ public class ViewerEffectBehavior : global::System.IDisposable {
     } 
   }
 
+  public bool TriggerInput0 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput0_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput0_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public bool TriggerInput1 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput1_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput1_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public bool TriggerInput2 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput2_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput2_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public bool TriggerInput3 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput3_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput3_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ViewerEffectBehavior() : this(EffekseerNativePINVOKE.new_ViewerEffectBehavior(), true) {
   }
 

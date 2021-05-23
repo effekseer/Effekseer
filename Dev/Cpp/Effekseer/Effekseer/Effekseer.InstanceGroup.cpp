@@ -49,7 +49,8 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 	auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, 
 		m_effectNode->CommonValues.RefEqGenerationTimeOffset, m_effectNode->CommonValues.GenerationTimeOffset);
 
-	m_nextGenerationTime = gt.getValue(rand);
+	m_generationOffsetTime = gt.getValue(rand);
+	m_nextGenerationTime = m_generationOffsetTime;
 
 	if (m_effectNode->CommonValues.RefEqMaxGeneration >= 0)
 	{
@@ -61,6 +62,8 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 	{
 		m_maxGenerationCount = m_effectNode->CommonValues.MaxGeneration;
 	}
+
+	m_generationEnabled = m_effectNode->TriggerParam.GenerationEnabled;
 }
 
 Instance* InstanceGroup::CreateRootInstance()
@@ -80,11 +83,28 @@ Instance* InstanceGroup::CreateRootInstance()
 //----------------------------------------------------------------------------------
 void InstanceGroup::GenerateInstancesInRequirred(float localTime, RandObject& rand, Instance* parent)
 {
+	if (m_effectNode->TriggerParam.ToStartGeneration.type != TriggerType::None)
+	{
+		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStartGeneration.index) > 0)
+		{
+			m_generationEnabled = true;
+			m_generatedCount = 0;
+			m_nextGenerationTime = m_generationOffsetTime + localTime;
+		}
+	}
+	if (m_effectNode->TriggerParam.ToStopGeneration.type != TriggerType::None)
+	{
+		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStopGeneration.index) > 0)
+		{
+			m_generationEnabled = false;
+		}
+	}
+
 	while (true)
 	{
 		// GenerationTimeOffset can be minus value.
 		// Minus frame particles is generated simultaniously at frame 0.
-		if (m_maxGenerationCount > m_generatedCount && localTime >= m_nextGenerationTime)
+		if (m_generationEnabled && m_maxGenerationCount > m_generatedCount && localTime >= m_nextGenerationTime)
 		{
 			// Create a particle
 			auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
@@ -265,7 +285,7 @@ void InstanceGroup::KillAllInstances()
 
 bool InstanceGroup::IsActive() const
 {
-	return GetInstanceCount() > 0 || m_generatedCount < m_maxGenerationCount;
+	return GetInstanceCount() > 0 || (m_generationEnabled && m_generatedCount < m_maxGenerationCount);
 }
 
 //----------------------------------------------------------------------------------

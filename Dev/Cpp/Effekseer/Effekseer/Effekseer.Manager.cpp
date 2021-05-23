@@ -1026,12 +1026,22 @@ void ManagerImplemented::SetDynamicInput(Handle handle, int32_t index, float val
 
 		InstanceGlobal* instanceGlobal = drawSet.GlobalPointer;
 
-		if (index < 0 || instanceGlobal->dynamicInputParameters.size() <= index)
+		if (index < 0 || (int32_t)instanceGlobal->dynamicInputParameters.size() <= index)
 			return;
 
 		instanceGlobal->dynamicInputParameters[index] = value;
 
 		drawSet.IsParameterChanged = true;
+	}
+}
+
+void ManagerImplemented::SendTrigger(Handle handle, int32_t index)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		DrawSet& drawSet = m_DrawSets[handle];
+
+		drawSet.GlobalPointer->AddInputTriggerCount(index);
 	}
 }
 

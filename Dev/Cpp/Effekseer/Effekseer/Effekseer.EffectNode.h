@@ -137,6 +137,21 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+enum class TriggerType : uint8_t
+{
+	None = 0,
+	ExternalTrigger = 1,
+};
+
+struct alignas(2) TriggerValues
+{
+	TriggerType type = TriggerType::None;
+	uint8_t index = 0;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 struct ParameterCommonValues_8
 {
 	int MaxGeneration;
@@ -206,6 +221,14 @@ struct SteeringBehaviorParameter
 {
 	random_float MaxFollowSpeed;
 	random_float SteeringSpeed;
+};
+
+struct TriggerParameter
+{
+	bool GenerationEnabled = false;
+	TriggerValues ToStartGeneration;
+	TriggerValues ToStopGeneration;
+	TriggerValues ToRemove;
 };
 
 //----------------------------------------------------------------------------------
@@ -1466,8 +1489,8 @@ public:
 	bool IsRendered;
 
 	ParameterCommonValues CommonValues;
-
 	SteeringBehaviorParameter SteeringBehaviorParam;
+	TriggerParameter TriggerParam;
 
 	ParameterTranslationType TranslationType;
 	ParameterTranslationFixed TranslationFixed;

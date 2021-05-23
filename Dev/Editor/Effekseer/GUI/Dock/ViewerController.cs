@@ -99,6 +99,21 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 			}
+
+			{
+				Manager.NativeManager.Text("Triggers:");
+				float buttonWidth = Manager.NativeManager.GetTextLineHeightWithSpacing();
+
+				for (int i = 0; i < 4; i++)
+				{
+					Manager.NativeManager.SameLine();
+
+					if (Manager.NativeManager.Button(i.ToString(), buttonWidth))
+					{
+						Manager.Viewer.SendTrigger(i);
+					}
+				}
+			}
 		}
 	}
 }

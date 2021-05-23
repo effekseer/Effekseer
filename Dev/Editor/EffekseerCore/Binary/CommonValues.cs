@@ -49,6 +49,27 @@ namespace Effekseer.Binary
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Min.GetBytes());
 			}
 
+			// Trigger's parameters
+			data.Add(((byte)(value.TriggerParam.GenerationEnabled.GetValue() ? 1 : 0)).GetBytes());
+			int triggerFlags =
+				((value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None) ? (1 << 0) : 0) |
+				((value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None) ? (1 << 1) : 0) |
+				((value.TriggerParam.ToRemove.Value != Data.TriggerType.None) ? (1 << 2) : 0);
+			data.Add(((byte)triggerFlags).GetBytes());
+
+			if (value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None)
+			{
+				data.Add(((ushort)value.TriggerParam.ToStartGeneration.GetValue()).GetBytes());
+			}
+			if (value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None)
+			{
+				data.Add(((ushort)value.TriggerParam.ToStopGeneration.GetValue()).GetBytes());
+			}
+			if (value.TriggerParam.ToRemove.Value != Data.TriggerType.None)
+			{
+				data.Add(((ushort)value.TriggerParam.ToRemove.GetValue()).GetBytes());
+			}
+
 			return data.ToArray().ToArray();
 		}
 

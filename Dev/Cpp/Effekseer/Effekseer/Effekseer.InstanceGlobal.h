@@ -42,6 +42,7 @@ private:
 
 	RandObject m_randObjects;
 	std::array<float, 4> dynamicInputParameters;
+	std::array<uint8_t, 4> m_inputTriggerCounts;
 
 	float nextDeltaFrame_ = 0.0f;
 
@@ -78,6 +79,10 @@ public:
 	{
 		return dynamicInputParameters;
 	}
+
+	uint32_t GetInputTriggerCount(uint32_t index) const;
+
+	void AddInputTriggerCount(uint32_t index);
 
 	RandObject& GetRandObject()
 	{
