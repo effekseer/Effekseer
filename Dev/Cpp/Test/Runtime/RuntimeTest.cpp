@@ -111,9 +111,10 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		single16Test(u"Flip01", "Flip01");
 		single16Test(u"ForceFieldLocal02", "ForceFieldLocal02");
 		single16Test(u"Material_EffectScale", "Material_EffectScale");
+		single16Test(u"TGA01", "TGA01");
 		single16Test(u"ProcedualModel01", "ProcedualModel01");
 		single16Test(u"ProcedualModel02", "ProcedualModel02");
-		single16Test(u"TGA01", "TGA01");
+		single16Test(u"ProcedualModel03", "ProcedualModel03");
 	}
 
 	{
