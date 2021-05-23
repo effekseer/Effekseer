@@ -39,7 +39,6 @@ if(WIN32)
     endif()
 
     add_subdirectory(Culling)
-    add_subdirectory(CustomBinary)
     add_subdirectory(Distortion)
     add_subdirectory(Multithread)
     add_subdirectory(NetworkServer)

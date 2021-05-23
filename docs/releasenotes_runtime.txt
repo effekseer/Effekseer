@@ -2,6 +2,8 @@
 
 ### Broken changes
 
+Some classes are move from "Effekseer.h" to "Effekseer.Modules.h"
+
 #### Effekseer::RefPtr
 
 Almost pointers are replaced into SmartPointer. You don't need to consider about releasing memories.
