@@ -789,5 +789,4 @@ TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostT
 
 TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest", []() -> void { ProceduralModelCacheTest(); });
 
- 
 #endif
