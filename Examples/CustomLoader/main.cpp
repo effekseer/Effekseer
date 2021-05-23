@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 
+#include <Effekseer.Modules.h>
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
 
@@ -34,7 +35,8 @@ private:
 public:
 	// FileInterface is a binary loader. A behavior can be changed with a inheritance
 	// FileInterfaceはバイナリローダーです。振る舞いを継承により変更できます。
-	CustomTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr) : fileInterface_(fileInterface)
+	CustomTextureLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr)
+		: fileInterface_(fileInterface)
 	{
 		graphicsDevice_ = graphicsDevice;
 
@@ -64,8 +66,8 @@ public:
 			int bpp;
 			uint8_t* pixels = (uint8_t*)EffekseerUtils::stbi_load_from_memory(
 				(EffekseerUtils::stbi_uc const*)data_texture.data(), static_cast<int>(size_texture), &width, &height, &bpp, 0);
-			
-			if (width == 0 || bpp < 4)
+
+			if (width == 0 || bpp < 3)
 			{
 				// Not supported
 				EffekseerUtils::stbi_image_free(pixels);
@@ -77,7 +79,27 @@ public:
 			::Effekseer::Backend::TextureParameter param;
 			param.Format = ::Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 			param.GenerateMipmap = true;
-			param.InitialData.assign(pixels, pixels + width * height * 4);
+			param.Size[0] = width;
+			param.Size[1] = height;
+
+			if (bpp == 4)
+			{
+				param.InitialData.assign(pixels, pixels + width * height * 4);
+			}
+			else
+			{
+				param.InitialData.resize(width * height * 4);
+				for (int y = 0; y < height; y++)
+				{
+					for (int x = 0; x < width; x++)
+					{
+						param.InitialData[(x + y * width) * 4 + 0] = pixels[(x + y * width) * 3 + 0];
+						param.InitialData[(x + y * width) * 4 + 1] = pixels[(x + y * width) * 3 + 1];
+						param.InitialData[(x + y * width) * 4 + 2] = pixels[(x + y * width) * 3 + 2];
+						param.InitialData[(x + y * width) * 4 + 3] = 255;
+					}
+				}
+			}
 
 			auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
 			texture->SetBackend(graphicsDevice_->CreateTexture(param));
@@ -91,6 +113,51 @@ public:
 	{
 		// Do nothing
 	}
+};
+
+class CustomModelLoader : public ::Effekseer::ModelLoader
+{
+private:
+	::Effekseer::DefaultFileInterface defaultFileInterface_;
+	::Effekseer::FileInterface* fileInterface_;
+
+public:
+	CustomModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) : fileInterface_(fileInterface)
+	{
+		if (fileInterface == nullptr)
+		{
+			fileInterface_ = &defaultFileInterface_;
+		}
+	}
+
+	~CustomModelLoader() override = default;
+
+public:
+	Effekseer::ModelRef Load(const char16_t* path) override
+	{
+		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
+		if (reader.get() == nullptr)
+		{
+			return nullptr;
+		}
+
+		size_t size = reader->GetLength();
+		std::unique_ptr<uint8_t[]> data(new uint8_t[size]);
+		reader->Read(data.get(), size);
+
+		auto model = Load(data.get(), (int32_t)size);
+
+		return model;
+	}
+
+	Effekseer::ModelRef Load(const void* data, int32_t size) override
+	{
+		auto model = ::Effekseer::MakeRefPtr<::Effekseer::Model>((const uint8_t*)data, size);
+
+		return model;
+	}
+
+	void Unload(Effekseer::ModelRef data) override {}
 };
 
 int main(int argc, char** argv)
@@ -116,11 +183,11 @@ int main(int argc, char** argv)
 	manager->SetModelRenderer(renderer->CreateModelRenderer());
 
 	// Specify a texture, model and material loader
-	// The texture loader is extended by yourself.
+	// The texture and model loaders are extended by yourself.
 	// テクスチャ、モデル、マテリアルローダーの設定する。
-	// テクスチャローダーがで拡張されている。
+	// テクスチャとモデルローダーが拡張されている。
 	manager->SetTextureLoader(::Effekseer::TextureLoaderRef(new CustomTextureLoader(renderer->GetGraphicsDevice())));
-	manager->SetModelLoader(renderer->CreateModelLoader());
+	manager->SetModelLoader(::Effekseer::MakeRefPtr<CustomModelLoader>());
 	manager->SetMaterialLoader(renderer->CreateMaterialLoader());
 
 	// Specify a position of view
