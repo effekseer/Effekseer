@@ -188,7 +188,12 @@ int main(int argc, char** argv)
 	// テクスチャとモデルローダーが拡張されている。
 	manager->SetTextureLoader(::Effekseer::TextureLoaderRef(new CustomTextureLoader(renderer->GetGraphicsDevice())));
 	manager->SetModelLoader(::Effekseer::MakeRefPtr<CustomModelLoader>());
-	manager->SetMaterialLoader(renderer->CreateMaterialLoader());
+
+
+	// You can specify only a file loader
+	// ファイルローダーのみを指定することもできる。
+	::Effekseer::DefaultFileInterface fileInterface;
+	manager->SetMaterialLoader(renderer->CreateMaterialLoader(&fileInterface));
 
 	// Specify a position of view
 	// 視点位置を確定
