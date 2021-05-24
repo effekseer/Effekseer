@@ -20,7 +20,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 softParticleParam;
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
-} _149;
+} _155;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_backTex;
@@ -42,8 +42,10 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    float alphaFar = (depth.y - depth.x) / distanceFar;
-    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    float dir = sign(depth.x);
+    depth *= dir;
+    float alphaFar = (depth.x - depth.y) / distanceFar;
+    float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
@@ -54,25 +56,25 @@ vec4 _main(PS_Input Input)
     vec2 pos = Input.PosP.xy / vec2(Input.PosP.w);
     vec2 posR = Input.ProjTangent.xy / vec2(Input.ProjTangent.w);
     vec2 posU = Input.ProjBinormal.xy / vec2(Input.ProjBinormal.w);
-    float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _149.g_scale.x;
-    float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _149.g_scale.x;
+    float xscale = (((Output.x * 2.0) - 1.0) * Input.Color.x) * _155.g_scale.x;
+    float yscale = (((Output.y * 2.0) - 1.0) * Input.Color.y) * _155.g_scale.x;
     vec2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
     uv.x = (uv.x + 1.0) * 0.5;
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
-    uv.y = _149.mUVInversedBack.x + (_149.mUVInversedBack.y * uv.y);
+    uv.y = _155.mUVInversedBack.x + (_155.mUVInversedBack.y * uv.y);
     vec3 color = vec3(texture(Sampler_sampler_backTex, uv).xyz);
     Output = vec4(color.x, color.y, color.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    if (!(_149.softParticleParam.w == 0.0))
+    if (!(_155.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        vec4 param_2 = _149.softParticleParam;
-        vec4 param_3 = _149.reconstructionParam1;
-        vec4 param_4 = _149.reconstructionParam2;
+        vec4 param_2 = _155.softParticleParam;
+        vec4 param_3 = _155.reconstructionParam1;
+        vec4 param_4 = _155.reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0)
@@ -91,7 +93,7 @@ void main()
     Input.ProjTangent = Input_ProjTangent;
     Input.PosP = Input_PosP;
     Input.Color = Input_Color;
-    vec4 _304 = _main(Input);
-    _entryPointOutput = _304;
+    vec4 _310 = _main(Input);
+    _entryPointOutput = _310;
 }
 
