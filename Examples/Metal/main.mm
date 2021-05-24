@@ -172,7 +172,7 @@ std::shared_ptr<ContextLLGI> context;
 
 id<MTLRenderCommandEncoder> GetEncoder()
 {
-    return static_cast<LLGI::CommandListMetal*>(context->commandList)->GetImpl()->renderEncoder;
+    return static_cast<LLGI::CommandListMetal*>(context->commandList)->GetRenderCommandEncorder();
 }
 
 int GetSwapBufferCount() { return 3; }

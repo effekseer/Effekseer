@@ -149,7 +149,7 @@ public:
         if (texture_ == nullptr)
 		{
 			auto tex = (LLGI::TextureMetal*)(platform_->GetCheckedTexture());
-			texture_ = EffekseerRendererMetal::CreateTexture(renderer->GetGraphicsDevice(), tex->GetImpl()->texture);
+			texture_ = EffekseerRendererMetal::CreateTexture(renderer->GetGraphicsDevice(), tex->GetTexture());
 		}
 
         renderer->SetBackground(texture_);
@@ -220,7 +220,7 @@ void EffectPlatformMetal::BeginRendering()
 	EffectPlatformLLGI::BeginRendering();
 
 	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
-	EffekseerRendererMetal::BeginCommandList(commandListEfk_, cl->GetImpl()->renderEncoder);
+	EffekseerRendererMetal::BeginCommandList(commandListEfk_, cl->GetRenderCommandEncorder());
 	GetRenderer()->SetCommandList(commandListEfk_);
 }
 
