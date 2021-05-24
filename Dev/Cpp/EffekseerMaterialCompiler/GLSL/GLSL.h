@@ -419,8 +419,9 @@ float CalcDepthFade(vec2 screenUV, float meshZ, float softParticleParam)
 	vec2 zs = vec2(backgroundZ * rescale.x + rescale.y, meshZ);
 
 	vec2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);
-
-	return min(max((depth.y - depth.x) / distance, 0.0), 1.0);
+	float dir = sign(depth.x);
+	depth *= dir;
+	return min(max((depth.x - depth.y) / distance, 0.0), 1.0);
 }
 
 #ifdef _MATERIAL_LIT_

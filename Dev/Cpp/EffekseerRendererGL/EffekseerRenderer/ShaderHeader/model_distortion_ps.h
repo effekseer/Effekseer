@@ -124,8 +124,10 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    float alphaFar = (depth.y - depth.x) / distanceFar;
-    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    float dir = sign(depth.x);
+    depth *= dir;
+    float alphaFar = (depth.x - depth.y) / distanceFar;
+    float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
@@ -175,8 +177,8 @@ void main()
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
-    vec4 _312 = _main(Input);
-    _entryPointOutput = _312;
+    vec4 _318 = _main(Input);
+    _entryPointOutput = _318;
 }
 
 )";
@@ -306,8 +308,10 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp vec4 
     highp vec4 params = reconstruct2;
     highp vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     highp vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    highp float alphaFar = (depth.y - depth.x) / distanceFar;
-    highp float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    highp float dir = sign(depth.x);
+    depth *= dir;
+    highp float alphaFar = (depth.x - depth.y) / distanceFar;
+    highp float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
@@ -357,8 +361,8 @@ void main()
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
-    highp vec4 _312 = _main(Input);
-    _entryPointOutput = _312;
+    highp vec4 _318 = _main(Input);
+    _entryPointOutput = _318;
 }
 
 )";

@@ -50,16 +50,18 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp vec4 
     highp vec4 params = reconstruct2;
     highp vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     highp vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    highp float alphaFar = (depth.y - depth.x) / distanceFar;
-    highp float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    highp float dir = sign(depth.x);
+    depth *= dir;
+    highp float alphaFar = (depth.x - depth.y) / distanceFar;
+    highp float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
 highp vec4 _main(PS_Input Input)
 {
     highp vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
-    highp vec3 _125 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_125.x, _125.y, _125.z, Output.w);
+    highp vec3 _131 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_131.x, _131.y, _131.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -89,7 +91,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _227 = _main(Input);
-    _entryPointOutput = _227;
+    highp vec4 _233 = _main(Input);
+    _entryPointOutput = _233;
 }
 

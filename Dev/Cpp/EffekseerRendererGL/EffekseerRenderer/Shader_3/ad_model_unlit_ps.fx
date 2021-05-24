@@ -143,8 +143,10 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    float alphaFar = (depth.y - depth.x) / distanceFar;
-    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    float dir = sign(depth.x);
+    depth *= dir;
+    float alphaFar = (depth.x - depth.y) / distanceFar;
+    float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
@@ -180,29 +182,29 @@ vec4 _main(PS_Input Input)
         vec4 FalloffBlendColor = mix(CBPS0.fFalloffEndColor, CBPS0.fFalloffBeginColor, vec4(pow(CdotN, CBPS0.fFalloffParameter.z)));
         if (CBPS0.fFalloffParameter.y == 0.0)
         {
-            vec3 _440 = Output.xyz + FalloffBlendColor.xyz;
-            Output = vec4(_440.x, _440.y, _440.z, Output.w);
+            vec3 _446 = Output.xyz + FalloffBlendColor.xyz;
+            Output = vec4(_446.x, _446.y, _446.z, Output.w);
         }
         else
         {
             if (CBPS0.fFalloffParameter.y == 1.0)
             {
-                vec3 _453 = Output.xyz - FalloffBlendColor.xyz;
-                Output = vec4(_453.x, _453.y, _453.z, Output.w);
+                vec3 _459 = Output.xyz - FalloffBlendColor.xyz;
+                Output = vec4(_459.x, _459.y, _459.z, Output.w);
             }
             else
             {
                 if (CBPS0.fFalloffParameter.y == 2.0)
                 {
-                    vec3 _466 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = vec4(_466.x, _466.y, _466.z, Output.w);
+                    vec3 _472 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = vec4(_472.x, _472.y, _472.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    vec3 _480 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_480.x, _480.y, _480.z, Output.w);
+    vec3 _486 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_486.x, _486.y, _486.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -222,8 +224,8 @@ vec4 _main(PS_Input Input)
     {
         discard;
     }
-    vec3 _578 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_578.x, _578.y, _578.z, Output.w);
+    vec3 _584 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output = vec4(_584.x, _584.y, _584.z, Output.w);
     return Output;
 }
 
@@ -238,7 +240,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _614 = _main(Input);
-    _entryPointOutput = _614;
+    vec4 _620 = _main(Input);
+    _entryPointOutput = _620;
 }
 

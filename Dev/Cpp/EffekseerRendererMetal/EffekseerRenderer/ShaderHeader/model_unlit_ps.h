@@ -57,29 +57,31 @@ float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, t
     float4 params = reconstruct2;
     float2 zs = float2((backgroundZ * rescale.x) + rescale.y, meshZ);
     float2 depth = ((zs * params.w) - float2(params.y)) / (float2(params.x) - (zs * params.z));
-    float alphaFar = (depth.y - depth.x) / distanceFar;
-    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    float dir = sign(depth.x);
+    depth *= dir;
+    float alphaFar = (depth.x - depth.y) / distanceFar;
+    float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
     return fast::min(fast::max(fast::min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, constant PS_ConstanBuffer& v_117, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
+float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, constant PS_ConstanBuffer& v_123, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
 {
     float4 Output = _colorTex.sample(sampler_colorTex, Input.UV) * Input.Color;
-    float3 _125 = Output.xyz * v_117.fEmissiveScaling.x;
-    Output = float4(_125.x, _125.y, _125.z, Output.w);
+    float3 _131 = Output.xyz * v_123.fEmissiveScaling.x;
+    Output = float4(_131.x, _131.y, _131.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = v_117.mUVInversedBack.x + (v_117.mUVInversedBack.y * screenUV.y);
-    if ((isunordered(v_117.softParticleParam.w, 0.0) || v_117.softParticleParam.w != 0.0))
+    screenUV.y = v_123.mUVInversedBack.x + (v_123.mUVInversedBack.y * screenUV.y);
+    if ((isunordered(v_123.softParticleParam.w, 0.0) || v_123.softParticleParam.w != 0.0))
     {
         float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        float4 param_2 = v_117.softParticleParam;
-        float4 param_3 = v_117.reconstructionParam1;
-        float4 param_4 = v_117.reconstructionParam2;
+        float4 param_2 = v_123.softParticleParam;
+        float4 param_3 = v_123.reconstructionParam1;
+        float4 param_4 = v_123.reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0)
@@ -89,7 +91,7 @@ float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler s
     return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_117 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _depthTex [[texture(1)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_depthTex [[sampler(1)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_123 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _depthTex [[texture(1)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_depthTex [[sampler(1)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -97,8 +99,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.Color = in.Input_Color;
     Input.UV = in.Input_UV;
     Input.PosP = in.Input_PosP;
-    float4 _223 = _main(Input, _colorTex, sampler_colorTex, v_117, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _223;
+    float4 _229 = _main(Input, _colorTex, sampler_colorTex, v_123, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _229;
     return out;
 }
 
