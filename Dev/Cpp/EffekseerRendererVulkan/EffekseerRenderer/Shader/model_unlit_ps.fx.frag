@@ -27,7 +27,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
     vec4 mUVInversedBack;
-} _117;
+} _118;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
@@ -46,28 +46,28 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    float alphaFar = (depth.y - depth.x) / distanceFar;
-    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    float alphaFar = abs(depth.y - depth.x) / distanceFar;
+    float alphaNear = (abs(depth.y) - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
 vec4 _main(PS_Input Input)
 {
     vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
-    vec3 _125 = Output.xyz * _117.fEmissiveScaling.x;
-    Output = vec4(_125.x, _125.y, _125.z, Output.w);
+    vec3 _126 = Output.xyz * _118.fEmissiveScaling.x;
+    Output = vec4(_126.x, _126.y, _126.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = _117.mUVInversedBack.x + (_117.mUVInversedBack.y * screenUV.y);
-    if (!(_117.softParticleParam.w == 0.0))
+    screenUV.y = _118.mUVInversedBack.x + (_118.mUVInversedBack.y * screenUV.y);
+    if (!(_118.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param = backgroundZ;
         float param_1 = screenPos.z;
-        vec4 param_2 = _117.softParticleParam;
-        vec4 param_3 = _117.reconstructionParam1;
-        vec4 param_4 = _117.reconstructionParam2;
+        vec4 param_2 = _118.softParticleParam;
+        vec4 param_3 = _118.reconstructionParam1;
+        vec4 param_4 = _118.reconstructionParam2;
         Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0)
@@ -84,7 +84,7 @@ void main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    vec4 _223 = _main(Input);
-    _entryPointOutput = _223;
+    vec4 _224 = _main(Input);
+    _entryPointOutput = _224;
 }
 

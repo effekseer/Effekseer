@@ -13,8 +13,8 @@ float SoftParticle(float backgroundZ, float meshZ, float4 softparticleParam, flo
 
 	float2 depth = (zs * params.w - params.y) / (params.x - zs * params.z);
 
-	float alphaFar = (depth.y - depth.x) / distanceFar;
-	float alphaNear = (-distanceNearOffset-depth.y) / distanceNear;
+	float alphaFar = abs(depth.y - depth.x) / distanceFar;
+	float alphaNear = (abs(depth.y) - distanceNearOffset) / distanceNear;
 	return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 

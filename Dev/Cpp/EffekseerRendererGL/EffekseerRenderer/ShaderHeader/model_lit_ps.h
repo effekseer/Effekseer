@@ -141,8 +141,8 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
     vec4 params = reconstruct2;
     vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    float alphaFar = (depth.y - depth.x) / distanceFar;
-    float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    float alphaFar = abs(depth.y - depth.x) / distanceFar;
+    float alphaNear = (abs(depth.y) - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
@@ -152,10 +152,10 @@ vec4 _main(PS_Input Input)
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _178 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_178.x, _178.y, _178.z, Output.w);
-    vec3 _187 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_187.x, _187.y, _187.z, Output.w);
+    vec3 _179 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_179.x, _179.y, _179.z, Output.w);
+    vec3 _188 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_188.x, _188.y, _188.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -188,8 +188,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _296 = _main(Input);
-    _entryPointOutput = _296;
+    vec4 _297 = _main(Input);
+    _entryPointOutput = _297;
 }
 
 )";
@@ -336,8 +336,8 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp vec4 
     highp vec4 params = reconstruct2;
     highp vec2 zs = vec2((backgroundZ * rescale.x) + rescale.y, meshZ);
     highp vec2 depth = ((zs * params.w) - vec2(params.y)) / (vec2(params.x) - (zs * params.z));
-    highp float alphaFar = (depth.y - depth.x) / distanceFar;
-    highp float alphaNear = ((-distanceNearOffset) - depth.y) / distanceNear;
+    highp float alphaFar = abs(depth.y - depth.x) / distanceFar;
+    highp float alphaNear = (abs(depth.y) - distanceNearOffset) / distanceNear;
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
@@ -347,10 +347,10 @@ highp vec4 _main(PS_Input Input)
     highp vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _178 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_178.x, _178.y, _178.z, Output.w);
-    highp vec3 _187 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_187.x, _187.y, _187.z, Output.w);
+    highp vec3 _179 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_179.x, _179.y, _179.z, Output.w);
+    highp vec3 _188 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_188.x, _188.y, _188.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -383,8 +383,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _296 = _main(Input);
-    _entryPointOutput = _296;
+    highp vec4 _297 = _main(Input);
+    _entryPointOutput = _297;
 }
 
 )";
