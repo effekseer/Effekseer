@@ -47,6 +47,8 @@ public:
 	Effekseer::RefPtr<Effekseer::RenderingUserData> CurrentRenderingUserData;
 	void* CurrentHandleUserData = nullptr;
 
+	ExternalShaderSettings externalShaderSettings;
+
 	Impl() = default;
 	~Impl();
 

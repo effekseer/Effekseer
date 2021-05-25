@@ -35,10 +35,11 @@ LineRendererDX11::LineRendererDX11(const EffekseerRenderer::RendererRef& rendere
 	};
 
 	shader = EffekseerRendererDX11::Shader::Create(this->renderer.Get(),
-												   VS::g_main,
-												   sizeof(VS::g_main),
-												   PS::g_main,
-												   sizeof(PS::g_main),
+												   renderer->GetGraphicsDevice()->CreateShaderFromBinary(
+													   VS::g_main,
+													   sizeof(VS::g_main),
+													   PS::g_main,
+													   sizeof(PS::g_main)),
 												   "StandardRenderer No Texture",
 												   decl,
 												   3,

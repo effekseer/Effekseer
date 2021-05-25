@@ -20,8 +20,8 @@ namespace EffekseerRendererDX11
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
-	ID3D11VertexShader* m_vertexShader;
-	ID3D11PixelShader* m_pixelShader;
+	Backend::ShaderRef shader_;
+
 	ID3D11InputLayout* m_vertexDeclaration;
 	ID3D11Buffer* m_constantBufferToVS;
 	ID3D11Buffer* m_constantBufferToPS;
@@ -32,8 +32,7 @@ private:
 	int32_t pixelConstantBufferSize_ = 0;
 
 	Shader(RendererImplemented* renderer,
-		   ID3D11VertexShader* vertexShader,
-		   ID3D11PixelShader* pixelShader,
+		   Backend::ShaderRef shader,
 		   ID3D11InputLayout* vertexDeclaration,
 		   bool hasRefCount);
 
@@ -41,10 +40,7 @@ public:
 	virtual ~Shader();
 
 	static Shader* Create(RendererImplemented* renderer,
-						  const uint8_t vertexShader[],
-						  int32_t vertexShaderSize,
-						  const uint8_t pixelShader[],
-						  int32_t pixelShaderSize,
+						  Effekseer::Backend::ShaderRef shader,
 						  const char* name,
 						  const D3D11_INPUT_ELEMENT_DESC decl[],
 						  int32_t layoutCount,
@@ -57,11 +53,11 @@ public: // デバイス復旧用
 public:
 	ID3D11VertexShader* GetVertexShader() const
 	{
-		return m_vertexShader;
+		return shader_->GetVertexShader();
 	}
 	ID3D11PixelShader* GetPixelShader() const
 	{
-		return m_pixelShader;
+		return shader_->GetPixelShader();
 	}
 	ID3D11InputLayout* GetLayoutInterface() const
 	{

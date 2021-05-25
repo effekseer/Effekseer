@@ -186,6 +186,42 @@ public:
 	}
 };
 
+class Shader
+	: public DeviceObject,
+	  public Effekseer::Backend::Shader
+{
+private:
+	GraphicsDevice* graphicsDevice_ = nullptr;
+	IDirect3DVertexShader9* vertexShader_ = nullptr;
+	IDirect3DPixelShader9* pixelShader_ = nullptr;
+	Effekseer::CustomVector<uint8_t> vertexShaderData_;
+	Effekseer::CustomVector<uint8_t> pixelShaderData_;
+
+	bool GenerateShaders();
+	void ResetShaders();
+
+public:
+	Shader(GraphicsDevice* graphicsDevice);
+	~Shader() override;
+	bool Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize);
+
+	void OnLostDevice() override;
+
+	void OnChangeDevice() override;
+
+	void OnResetDevice() override;
+
+	IDirect3DVertexShader9* GetVertexShader() const
+	{
+		return vertexShader_;
+	}
+
+	IDirect3DPixelShader9* GetPixelShader() const
+	{
+		return pixelShader_;
+	}
+};
+
 /**
 	@brief	GraphicsDevice of DirectX9
 */
@@ -221,6 +257,8 @@ public:
 
 	//! for DirectX9
 	Effekseer::Backend::TextureRef CreateTexture(IDirect3DTexture9* texture, std::function<void(IDirect3DTexture9*&)> onLostDevice, std::function<void(IDirect3DTexture9*&)> onResetDevice);
+
+	Effekseer::Backend::ShaderRef CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize) override;
 };
 
 } // namespace Backend

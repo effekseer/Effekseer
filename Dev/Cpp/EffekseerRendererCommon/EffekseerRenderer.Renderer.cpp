@@ -224,4 +224,15 @@ Effekseer::Backend::GraphicsDeviceRef Renderer::GetGraphicsDevice() const
 	return nullptr;
 }
 
+const ExternalShaderSettings& Renderer::SetExternalShaderSettings()
+{
+	return impl->externalShaderSettings;
+}
+
+void Renderer::SetExternalShaderSettings(const ExternalShaderSettings& settings)
+{
+	impl->externalShaderSettings = settings;
+}
+
+
 } // namespace EffekseerRenderer

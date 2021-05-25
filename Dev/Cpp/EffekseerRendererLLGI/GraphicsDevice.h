@@ -138,6 +138,30 @@ public:
 	}
 };
 
+class Shader
+	: public DeviceObject,
+	  public Effekseer::Backend::Shader
+{
+private:
+	GraphicsDevice* graphicsDevice_ = nullptr;
+	LLGI::Shader* vertexShader_ = nullptr;
+	LLGI::Shader* pixelShader_ = nullptr;
+
+public:
+	Shader(GraphicsDevice* graphicsDevice);
+	~Shader() override;
+	bool Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize);
+
+	LLGI::Shader* GetVertexShader() const
+	{
+		return vertexShader_;
+	}
+	LLGI::Shader* GetPixelShader() const
+	{
+		return pixelShader_;
+	}
+};
+
 class GraphicsDevice
 	: public Effekseer::Backend::GraphicsDevice
 {
@@ -169,6 +193,8 @@ public:
 	Effekseer::Backend::TextureRef CreateTexture(uint64_t id, const std::function<void()>& onDisposed);
 
 	Effekseer::Backend::TextureRef CreateTexture(LLGI::Texture* texture);
+
+	Effekseer::Backend::ShaderRef CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize) override;
 };
 
 } // namespace Backend
