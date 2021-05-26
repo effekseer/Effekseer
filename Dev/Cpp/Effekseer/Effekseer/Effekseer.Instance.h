@@ -271,6 +271,9 @@ public:
 	// 生成されてからの時間
 	float m_LivingTime;
 
+	// 削除されてからの時間
+	float m_RemovingTime;
+
 	//! The time offset for UV animation
 	int32_t uvTimeOffsets[ParameterRendererCommon::UVParameterNum];
 
@@ -357,6 +360,14 @@ public:
 		@brief	状態の取得
 	*/
 	eInstanceState GetState() const;
+
+	/**
+		@brief	アクティブ状態の判定
+	*/
+	bool IsActive() const
+	{
+		return m_State <= INSTANCE_STATE_REMOVING;
+	}
 
 	/**
 		@brief	行列の取得

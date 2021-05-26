@@ -161,7 +161,7 @@ void ManagerImplemented::StopStoppingEffects()
 			{
 				Instance* pRootInstance = group->GetFirst();
 
-				if (pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE && !pRootInstance->IsFirstTime())
+				if (pRootInstance && pRootInstance->IsActive() && !pRootInstance->IsFirstTime())
 				{
 					if (!pRootInstance->AreChildrenActive())
 					{

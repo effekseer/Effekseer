@@ -1141,17 +1141,30 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 		alpha *= v;
 	}
 
-	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_ON &&
-		instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
+	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_WITHIN_LIFETIME)
 	{
-		float v = 1.0f;
-		RendererCommon.FadeOut.Value.setValueToArg(v,
-												   1.0f,
-												   0.0f,
-												   (float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) /
-													   (float)RendererCommon.FadeOut.Frame);
+		if (instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
+		{
+			float v = 1.0f;
+			RendererCommon.FadeOut.Value.setValueToArg(v,
+													   1.0f,
+													   0.0f,
+													   (float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) /
+														   (float)RendererCommon.FadeOut.Frame);
 
-		alpha *= v;
+			alpha *= v;
+		}
+	}
+	else if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_AFTER_REMOVED)
+	{
+		if (instance.IsActive())
+		{
+			float v = 1.0f;
+			RendererCommon.FadeOut.Value.setValueToArg(v,
+				1.0f, 0.0f, instance.m_RemovingTime / RendererCommon.FadeOut.Frame);
+
+			alpha *= v;
+		}
 	}
 
 	return Clamp(alpha, 1.0f, 0.0f);

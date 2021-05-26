@@ -777,8 +777,8 @@ struct ParameterRendererCommon
 
 	enum
 	{
-		FADEIN_ON = 1,
 		FADEIN_OFF = 0,
+		FADEIN_ON = 1,
 
 		FADEIN_DWORD = 0x7fffffff,
 	} FadeInType;
@@ -791,8 +791,9 @@ struct ParameterRendererCommon
 
 	enum
 	{
-		FADEOUT_ON = 1,
-		FADEOUT_OFF = 0,
+		FADEOUT_NONE = 0,
+		FADEOUT_WITHIN_LIFETIME = 1,
+		FADEOUT_AFTER_REMOVED = 2,
 
 		FADEOUT_DWORD = 0x7fffffff,
 	} FadeOutType;
@@ -879,7 +880,7 @@ struct ParameterRendererCommon
 	ParameterRendererCommon()
 	{
 		FadeInType = FADEIN_OFF;
-		FadeOutType = FADEOUT_OFF;
+		FadeOutType = FADEOUT_NONE;
 		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
 		for (int32_t i = 0; i < ArraySize; i++)
 		{
@@ -1060,7 +1061,7 @@ struct ParameterRendererCommon
 		memcpy(&FadeInType, pos, sizeof(int));
 		pos += sizeof(int);
 
-		if (FadeInType == FADEIN_ON)
+		if (FadeInType != FADEIN_OFF)
 		{
 			memcpy(&FadeIn, pos, sizeof(FadeIn));
 			pos += sizeof(FadeIn);
@@ -1069,7 +1070,7 @@ struct ParameterRendererCommon
 		memcpy(&FadeOutType, pos, sizeof(int));
 		pos += sizeof(int);
 
-		if (FadeOutType == FADEOUT_ON)
+		if (FadeOutType != FADEOUT_NONE)
 		{
 			memcpy(&FadeOut, pos, sizeof(FadeOut));
 			pos += sizeof(FadeOut);

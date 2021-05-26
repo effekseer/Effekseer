@@ -75,7 +75,7 @@ namespace Effekseer.Binary
 			data.Add(value.ZWrite.GetValue() ? 1.GetBytes() : 0.GetBytes());
 
 			data.Add(value.FadeInType);
-			if (value.FadeInType.Value == Data.RendererCommonValues.FadeType.Use)
+			if (value.FadeInType.Value == Data.RendererCommonValues.FadeInMethod.Use)
 			{
 				data.Add(value.FadeIn.Frame.GetBytes());
 
@@ -86,7 +86,8 @@ namespace Effekseer.Binary
 			}
 
 			data.Add(value.FadeOutType);
-			if (value.FadeOutType.Value == Data.RendererCommonValues.FadeType.Use)
+			if (value.FadeOutType.Value == Data.RendererCommonValues.FadeOutMethod.WithinLifetime ||
+				value.FadeOutType.Value == Data.RendererCommonValues.FadeOutMethod.AfterRemoved)
 			{
 				data.Add(value.FadeOut.Frame.GetBytes());
 

@@ -157,7 +157,7 @@ void InstanceGroup::Update(bool shown)
 	{
 		auto instance = *it;
 
-		if (instance->m_State != INSTANCE_STATE_ACTIVE)
+		if (!instance->IsActive())
 		{
 			it = m_instances.erase(it);
 			NotfyEraseInstance();
@@ -178,7 +178,7 @@ void InstanceGroup::SetBaseMatrix(const SIMD::Mat43f& mat)
 {
 	for (auto instance : m_instances)
 	{
-		if (instance->m_State == INSTANCE_STATE_ACTIVE)
+		if (instance->IsActive())
 		{
 			instance->m_GlobalMatrix43 *= mat;
 			assert(instance->m_GlobalMatrix43.IsValid());
@@ -276,7 +276,7 @@ void InstanceGroup::KillAllInstances()
 		m_instances.pop_front();
 		NotfyEraseInstance();
 
-		if (instance->GetState() == INSTANCE_STATE_ACTIVE)
+		if (instance->IsActive())
 		{
 			instance->Kill();
 		}

@@ -90,7 +90,7 @@ Instance::~Instance()
 
 void Instance::GenerateChildrenInRequired()
 {
-	if (m_State == INSTANCE_STATE_REMOVED)
+	if (m_State == INSTANCE_STATE_DISPOSING)
 	{
 		return;
 	}
@@ -152,6 +152,7 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::
 
 	m_LivingTime = 0.0f;
 	m_LivedTime = FLT_MAX;
+	m_RemovingTime = 0.0f;
 
 	m_InstanceNumber = instanceNumber;
 
@@ -950,7 +951,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	}
 
 	/* 親の削除処理 */
-	if (m_pParent != nullptr && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
+	if (m_pParent != nullptr && !m_pParent->IsActive())
 	{
 		CalculateParentMatrix(deltaFrame);
 		m_pParent = nullptr;
@@ -963,45 +964,6 @@ void Instance::Update(float deltaFrame, bool shown)
 	//}
 
 	UpdateChildrenGroupMatrix();
-
-	// check whether killed?
-	bool killed = false;
-	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
-	{
-		// if pass time
-		if (m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct)
-		{
-			if (m_LivingTime > m_LivedTime)
-			{
-				killed = true;
-			}
-		}
-
-		// if remove parent
-		if (!killed && m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved)
-		{
-			if (m_pParent == nullptr || m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
-			{
-				m_pParent = nullptr;
-				killed = true;
-			}
-		}
-
-		// if children are removed and going not to generate a child
-		if (!killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
-		{
-			killed = !AreChildrenActive();
-		}
- 
-		// remove by trigger
-		if (!killed && m_pEffectNode->TriggerParam.ToRemove.type != TriggerType::None)
-		{
-			if (GetInstanceGlobal()->GetInputTriggerCount(m_pEffectNode->TriggerParam.ToRemove.index) > 0)
-			{
-				killed = true;
-			}
-		}
-	}
 
 	{
 		auto& CommonValue = m_pEffectNode->RendererCommon;
@@ -1111,24 +1073,84 @@ void Instance::Update(float deltaFrame, bool shown)
 		}
 	}
 
-	if (killed)
+	if (m_State == INSTANCE_STATE_ACTIVE)
 	{
-		// if it need to calculate a matrix
-		if (m_pEffectNode->GetChildrenCount() > 0)
+		// check whether killed?
+		bool removed = false;
+
+		if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 		{
-			// Get parent color.
-			if (m_pParent != nullptr)
+			// if pass time
+			if (m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct)
 			{
-				if (m_pEffectNode->RendererCommon.ColorBindType == BindType::Always)
+				if (m_LivingTime > m_LivedTime)
 				{
-					ColorParent = m_pParent->ColorInheritance;
+					removed = true;
+				}
+			}
+
+			// if remove parent
+			if (!removed && m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved)
+			{
+				if (m_pParent == nullptr || m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
+				{
+					m_pParent = nullptr;
+					removed = true;
+				}
+			}
+
+			// if children are removed and going not to generate a child
+			if (!removed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
+			{
+				removed = !AreChildrenActive();
+			}
+
+			// remove by trigger
+			if (!removed && m_pEffectNode->TriggerParam.ToRemove.type != TriggerType::None)
+			{
+				if (GetInstanceGlobal()->GetInputTriggerCount(m_pEffectNode->TriggerParam.ToRemove.index) > 0)
+				{
+					removed = true;
 				}
 			}
 		}
 
-		// Delete this particle with myself.
-		Kill();
-		return;
+		if (removed)
+		{
+			// if it need to calculate a matrix
+			if (m_pEffectNode->GetChildrenCount() > 0)
+			{
+				// Get parent color.
+				if (m_pParent != nullptr)
+				{
+					if (m_pEffectNode->RendererCommon.ColorBindType == BindType::Always)
+					{
+						ColorParent = m_pParent->ColorInheritance;
+					}
+				}
+			}
+
+			if (m_pEffectNode->RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_AFTER_REMOVED)
+			{
+				m_State = INSTANCE_STATE_REMOVING;
+			}
+			else
+			{
+				// Delete this particle with myself.
+				Kill();
+				return;
+			}
+		}
+	}
+	else if (m_State == INSTANCE_STATE_REMOVING)
+	{
+		m_RemovingTime += deltaFrame;
+
+		if (m_RemovingTime > m_pEffectNode->RendererCommon.FadeOut.Frame)
+		{
+			Kill();
+			return;
+		}
 	}
 
 	// allow to pass time
@@ -1591,14 +1613,14 @@ void Instance::Draw(Instance* next, void* userData)
 //----------------------------------------------------------------------------------
 void Instance::Kill()
 {
-	if (m_State == INSTANCE_STATE_ACTIVE)
+	if (IsActive())
 	{
 		for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 		{
 			group->IsReferencedFromInstance = false;
 		}
 
-		m_State = INSTANCE_STATE_REMOVING;
+		m_State = INSTANCE_STATE_REMOVED;
 	}
 }
 

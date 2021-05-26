@@ -229,7 +229,7 @@ void InstanceContainer::Draw(bool recursive)
 			{
 				for (auto instance : group->m_instances)
 				{
-					if (instance->m_State == INSTANCE_STATE_ACTIVE)
+					if (instance->IsActive())
 					{
 						count++;
 					}
@@ -253,7 +253,7 @@ void InstanceContainer::Draw(bool recursive)
 
 					while (it != group->m_instances.end())
 					{
-						if ((*it)->m_State == INSTANCE_STATE_ACTIVE)
+						if ((*it)->IsActive())
 						{
 							auto it_temp = it;
 							it_temp++;
@@ -277,7 +277,7 @@ void InstanceContainer::Draw(bool recursive)
 
 					while (it != group->m_instances.rend())
 					{
-						if ((*it)->m_State == INSTANCE_STATE_ACTIVE)
+						if ((*it)->IsActive())
 						{
 							auto it_temp = it;
 							it_temp++;
