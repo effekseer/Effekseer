@@ -897,6 +897,15 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
 	{
+		if (GetExternalShaderSettings() == nullptr)
+		{
+			shader_unlit_->OverrideShader(nullptr);
+		}
+		else
+		{
+			shader_unlit_->OverrideShader(GetExternalShaderSettings()->StandardShader);
+		}
+
 		return shader_unlit_;
 	}
 

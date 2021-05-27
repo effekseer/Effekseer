@@ -970,7 +970,9 @@ struct ShaderParameterCollector
 			IsDepthRequired = true;
 		}
 
-		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		// TODO : refactor in 1.7
+		const auto whiteMode = renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe || renderer->GetExternalShaderSettings() != nullptr;
+		if (whiteMode)
 		{
 			ShaderType = RendererShaderType::Unlit;
 		}
@@ -1024,7 +1026,8 @@ struct ShaderParameterCollector
 			ShaderType = RendererShaderType::Unlit;
 		}
 
-		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		// TODO : refactor in 1.7
+		if (whiteMode)
 		{
 			TextureCount = 1;
 			Textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);

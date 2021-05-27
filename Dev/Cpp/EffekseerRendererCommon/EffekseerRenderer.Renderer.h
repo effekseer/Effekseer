@@ -34,7 +34,8 @@ using RendererRef = ::Effekseer::RefPtr<Renderer>;
 */
 struct ExternalShaderSettings
 {
-	Effekseer::Backend::ShaderRef Shader;
+	Effekseer::Backend::ShaderRef StandardShader;
+	Effekseer::Backend::ShaderRef ModelShader;
 	Effekseer::AlphaBlendType Blend;
 };
 
@@ -459,14 +460,14 @@ public:
 		@note
 		For	Effekseer tools
 	*/
-	virtual const ExternalShaderSettings& SetExternalShaderSettings();
+	virtual std::shared_ptr<ExternalShaderSettings> GetExternalShaderSettings() const;
 
 	/**
 		@brief	Specify external shader settings
 		@note
 		For	Effekseer tools
 	*/
-	virtual void SetExternalShaderSettings(const ExternalShaderSettings& settings);
+	virtual void SetExternalShaderSettings(const std::shared_ptr<ExternalShaderSettings>& settings);
 };
 
 //----------------------------------------------------------------------------------

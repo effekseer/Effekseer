@@ -21,6 +21,7 @@ class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
 	Backend::ShaderRef shader_;
+	Backend::ShaderRef shaderOverride_;
 
 	ID3D11InputLayout* m_vertexDeclaration;
 	ID3D11Buffer* m_constantBufferToVS;
@@ -46,17 +47,32 @@ public:
 						  int32_t layoutCount,
 						  bool hasRefCount);
 
-public: // デバイス復旧用
+public:
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
+
+	void OverrideShader(::Effekseer::Backend::ShaderRef shader)
+	{
+		shaderOverride_ = shader.DownCast<Backend::Shader>();
+	}
 
 public:
 	ID3D11VertexShader* GetVertexShader() const
 	{
+		if (shaderOverride_ != nullptr)
+		{
+			return shaderOverride_->GetVertexShader();
+		}
+
 		return shader_->GetVertexShader();
 	}
 	ID3D11PixelShader* GetPixelShader() const
 	{
+		if (shaderOverride_ != nullptr)
+		{
+			return shaderOverride_->GetPixelShader();
+		}
+
 		return shader_->GetPixelShader();
 	}
 	ID3D11InputLayout* GetLayoutInterface() const

@@ -1026,7 +1026,12 @@ public:
 		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = param.Culling;
 
-		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		// TODO : refactor in 1.7
+		if (renderer->GetExternalShaderSettings() != nullptr)
+		{
+			state.AlphaBlend = renderer->GetExternalShaderSettings()->Blend;
+		}
+		else if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
 		{
 			state.AlphaBlend = ::Effekseer::AlphaBlendType::Opacity;
 		}

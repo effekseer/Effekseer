@@ -294,6 +294,16 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		}
 	}
 
+	// TODO : refactor in 1.7
+	if (m_renderer->GetExternalShaderSettings() == nullptr)
+	{
+		shader_unlit_->OverrideShader(nullptr);
+	}
+	else
+	{
+		shader_unlit_->OverrideShader(m_renderer->GetExternalShaderSettings()->ModelShader);
+	}
+
 	EndRendering_<
 		RendererImplemented,
 		Shader,

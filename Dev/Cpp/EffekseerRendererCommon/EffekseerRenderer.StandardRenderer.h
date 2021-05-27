@@ -209,7 +209,12 @@ struct StandardRendererState
 	{
 		AlphaBlend = basicParam->AlphaBlend;
 
-		if (renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		// TODO : refactor in 1.7
+		if (renderer->GetExternalShaderSettings() != nullptr)
+		{
+			AlphaBlend = renderer->GetExternalShaderSettings()->Blend;		
+		}
+		else if (renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
 			AlphaBlend = ::Effekseer::AlphaBlendType::Opacity;
 		}
