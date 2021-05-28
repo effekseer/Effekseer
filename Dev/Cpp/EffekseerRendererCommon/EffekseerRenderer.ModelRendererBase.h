@@ -924,7 +924,8 @@ public:
 			}
 		}
 
-		auto distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
+		auto distortion = collector_.ShaderType == EffekseerRenderer::RendererShaderType::BackDistortion ||
+						  collector_.ShaderType == EffekseerRenderer::RendererShaderType::AdvancedBackDistortion;
 
 		if (isBackgroundRequired && renderer->GetBackground() == 0)
 			return;
@@ -994,7 +995,7 @@ public:
 				{
 					shader_ = advanced_shader_distortion;
 				}
-				else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+				else if (collector_.ShaderType == EffekseerRenderer::RendererShaderType::AdvancedLit)
 				{
 					shader_ = advanced_shader_lit;
 				}
@@ -1009,7 +1010,7 @@ public:
 				{
 					shader_ = shader_distortion;
 				}
-				else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+				else if (collector_.ShaderType == EffekseerRenderer::RendererShaderType::Lit)
 				{
 					shader_ = shader_lit;
 				}
