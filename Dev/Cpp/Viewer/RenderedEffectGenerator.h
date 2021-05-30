@@ -140,6 +140,9 @@ protected:
 
 	DistortingCallback* m_distortionCallback = nullptr;
 
+	Effekseer::Backend::ShaderRef whiteParticleSpriteShader_;
+	Effekseer::Backend::ShaderRef whiteParticleModelShader_;
+
 	RenderedEffectGeneratorConfig config_;
 
 	std::shared_ptr<GroundRenderer> groundRenderer_;

@@ -170,8 +170,8 @@ public:
 						  const ShaderCodeView* psData,
 						  size_t psDataCount,
 						  const char* name,
-						  bool hasRefCount = true,
-						  bool addHeader = true);
+						  bool hasRefCount,
+						  bool addHeader);
 
 public:
 	virtual void OnLostDevice() override;

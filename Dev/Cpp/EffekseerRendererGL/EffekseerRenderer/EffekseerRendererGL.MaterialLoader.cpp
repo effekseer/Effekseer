@@ -204,7 +204,7 @@ static const int GL_InstanceCount = 10;
 		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypesModel[st]));
 		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypesModel[st]));
 
-		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true);
+		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true, true);
 
 		if (shader == nullptr)
 		{

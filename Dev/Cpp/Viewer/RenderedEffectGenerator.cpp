@@ -2,6 +2,22 @@
 
 #ifdef _WIN32
 #include "Graphics/Platform/DX11/efk.GraphicsDX11.h"
+
+namespace WhiteParticle_Model_VS
+{
+#include <EffekseerRendererDX11/EffekseerRenderer/ShaderHeader/model_unlit_vs.h>
+}
+
+namespace WhiteParticle_Sprite_VS
+{
+#include <EffekseerRendererDX11/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h>
+}
+
+namespace WhiteParticle_PS
+{
+#include "Shaders/HLSL_DX11_Header/white_particle_ps.h"
+}
+
 #endif
 
 #include "Graphics/Platform/GL/efk.GraphicsGL.h"
@@ -388,6 +404,23 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 		spdlog::trace("FAIL : GroundRenderer");
 	}
 
+	if (graphics->GetGraphicsDevice()->GetDeviceName() == "DirectX11")
+	{
+		whiteParticleSpriteShader_ =
+			graphics->GetGraphicsDevice()->CreateShaderFromBinary(
+				WhiteParticle_Sprite_VS::g_main,
+				sizeof(WhiteParticle_Sprite_VS::g_main),
+				WhiteParticle_PS::g_main,
+				sizeof(WhiteParticle_PS::g_main));
+
+		whiteParticleModelShader_ =
+			graphics->GetGraphicsDevice()->CreateShaderFromBinary(
+				WhiteParticle_Model_VS::g_main,
+				sizeof(WhiteParticle_Model_VS::g_main),
+				WhiteParticle_PS::g_main,
+				sizeof(WhiteParticle_PS::g_main));
+	}
+
 	return true;
 }
 
@@ -595,6 +628,12 @@ void RenderedEffectGenerator::Render()
 	graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
 	graphics_->Clear({0, 0, 0, 0});
 
+	auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
+	external->Blend = Effekseer::AlphaBlendType::Opacity;
+	external->StandardShader = whiteParticleSpriteShader_;
+	external->ModelShader = whiteParticleModelShader_;
+	renderer_->SetExternalShaderSettings(external);
+
 	renderer_->SetRenderMode(config_.RenderMode);
 	renderer_->SetCameraMatrix(config_.CameraMatrix);
 	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
@@ -712,6 +751,8 @@ void RenderedEffectGenerator::Render()
 	ResetBack();
 
 	OnBeforePostprocess();
+
+	renderer_->SetExternalShaderSettings(nullptr);
 
 	// all post effects are disabled
 	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
