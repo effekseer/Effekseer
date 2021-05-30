@@ -7,6 +7,10 @@ namespace Effekseer.Data
 {
 	public class NodeBase
 	{
+		//static int NextManagedId = 1;
+
+		public int _managedId = 0;
+
 		List<Node> children = new List<Node>();
 
 		[Key(key = "Node_IsRendered")]

@@ -325,6 +325,11 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public bool GetNodeLifeTimes(int nodeId, ref int frameMin, ref int frameMax) {
+    bool ret = EffekseerNativePINVOKE.Native_GetNodeLifeTimes(swigCPtr, nodeId, ref frameMin, ref frameMax);
+    return ret;
+  }
+
   public static void SetFileLogger(string path) {
     EffekseerNativePINVOKE.Native_SetFileLogger(path);
   }

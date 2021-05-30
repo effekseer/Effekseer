@@ -106,6 +106,9 @@ class EffectImplemented : public Effect, public ReferenceObject
 
 	static const int32_t SupportBinaryVersion = Version16;
 
+public:
+	int nextManagedId_ = 0;
+
 protected:
 	SettingRef m_setting;
 
@@ -189,6 +192,8 @@ protected:
 	std::unique_ptr<EffectReloadingBackup> reloadingBackup;
 
 	ReferenceObject* loadingObject = nullptr;
+
+
 
 	bool LoadBody(const uint8_t* data, int32_t size, float mag);
 

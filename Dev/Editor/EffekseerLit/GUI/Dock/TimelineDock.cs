@@ -115,6 +115,16 @@ namespace Effekseer.GUI.Dock
 				{
 					var node = Core.Root.Children[i];
 
+					int frameStart = 0;
+					int frameLast = 0;
+#if true
+					if (!Manager.Viewer.native.GetNodeLifeTimes(node._managedId, ref frameStart, ref frameLast))
+					{
+
+					}
+
+					Manager.NativeManager.TimelineNode(node.Name, (int)frameStart, (int)frameLast);
+#else
 					var common = node.CommonValues;
 
 					var frameStart = common.GenerationTimeOffset.Min;
@@ -149,7 +159,7 @@ namespace Effekseer.GUI.Dock
 
 						Manager.NativeManager.TimelineNode(node.Name, (int)frameStart, (int)frameLast);
 					}
-
+#endif
 				}
 
 

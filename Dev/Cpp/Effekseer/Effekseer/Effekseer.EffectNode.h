@@ -1426,6 +1426,9 @@ class EffectNodeImplemented : public EffectNode, public SIMD::AlignedAllocationP
 	friend class EffectImplemented;
 	friend class Instance;
 
+public:
+	int managedId_ = 0;
+
 protected:
 	// 所属しているパラメーター
 	Effect* m_effect;

@@ -691,6 +691,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		return false;
 
 	// Nodes
+	nextManagedId_ = 1;
 	auto nodeData = pos + binaryReader.GetOffset();
 	m_pRoot = EffectNodeImplemented::Create(this, nullptr, nodeData);
 

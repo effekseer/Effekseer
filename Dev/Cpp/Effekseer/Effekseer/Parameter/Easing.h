@@ -9,6 +9,9 @@
 #include "DynamicParameter.h"
 #include "Effekseer.Parameters.h"
 
+#define EFK_MAX(a,b) (((a) > (b)) ? (a) : (b))
+#define EFK_MIN(a,b) (((a) < (b)) ? (a) : (b))
+
 namespace Effekseer
 {
 
@@ -519,7 +522,7 @@ public:
 
 			for (int i = 0; i < ElemNum; i++)
 			{
-				channelCount = std::max(channelCount, channelIDs[i]);
+				channelCount = EFK_MAX(channelCount, channelIDs[i]);
 			}
 			channelCount++;
 		}

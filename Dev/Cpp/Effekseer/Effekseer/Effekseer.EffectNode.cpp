@@ -1254,6 +1254,15 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 		assert(0);
 	}
 
+
+	if (auto* impl = dynamic_cast<EffectImplemented*>(effect)) {
+		effectnode->managedId_ = impl->nextManagedId_;
+		impl->nextManagedId_++;
+	}
+	else {
+		assert(0);
+	}
+
 	effectnode->LoadParameter(pos, parent, effect->GetSetting());
 
 	return effectnode;

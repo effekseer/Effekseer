@@ -4,6 +4,7 @@
 #include "Graphics/efk.PNGHelper.h"
 #include "Recorder/Recorder.h"
 #include "RenderedEffectGenerator.h"
+#define NOMINMAX
 
 #ifdef _WIN32
 #include "Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -22,6 +23,8 @@
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
+
+#include "Effekseer/Effekseer.EffectNode.h"
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -1220,6 +1223,31 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 	auto ret = isUpdateMaterialRequired_;
 	isUpdateMaterialRequired_ = false;
 	return ret;
+}
+
+bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax)
+{
+	if (!effect_.Get()) return false;
+
+	const Effekseer::EffectNode* root = effect_->GetRoot();
+
+	Effekseer::EffectTerm rootTerm;
+	rootTerm.TermMin = 0;
+	rootTerm.TermMax = 0;
+
+	// TODO: ç°ÇÕ Root íºâ∫ÇÃÉmÅ[ÉhÇµÇ©å©ÇƒÇ¢Ç»Ç¢ÅB
+	for (int i = 0; i < root->GetChildrenCount(); i++) {
+		if (const Effekseer::EffectNodeImplemented* node = dynamic_cast<Effekseer::EffectNodeImplemented*>(root->GetChild(i))) {
+			if (node->managedId_ == nodeId) {
+				Effekseer::EffectInstanceTerm term;
+				auto cterm = node->CalculateInstanceTerm(term);
+				*frameMin = cterm.FirstInstanceStartMin;
+				*frameMax = cterm.LastInstanceEndMax;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void Native::SetFileLogger(const char16_t* path)
