@@ -18,6 +18,16 @@ namespace WhiteParticle_PS
 #include "Shaders/HLSL_DX11_Header/white_particle_ps.h"
 }
 
+namespace PostEffect_Basic_VS
+{
+#include "Shaders/HLSL_DX11_Header/postfx_basic_vs.h"
+}
+
+namespace PostEffect_Overdraw_PS
+{
+#include "Shaders/HLSL_DX11_Header/postfx_overdraw_ps.h"
+}
+
 #endif
 
 #include "Graphics/Platform/GL/efk.GraphicsGL.h"
@@ -421,6 +431,16 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 				sizeof(WhiteParticle_PS::g_main));
 	}
 
+	{
+		auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromBinary(
+			PostEffect_Basic_VS::g_main,
+			sizeof(PostEffect_Basic_VS::g_main),
+			PostEffect_Overdraw_PS::g_main,
+			sizeof(PostEffect_Overdraw_PS::g_main));
+
+		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+	}
+
 	return true;
 }
 
@@ -806,6 +826,10 @@ void RenderedEffectGenerator::Render()
 
 	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
+		graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
+		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture->GetAsBackend();
+		overdrawEffect_->GetDrawParameter().TextureCount = 1;
+		overdrawEffect_->Render(nullptr, nullptr);
 	}
 	else
 	{

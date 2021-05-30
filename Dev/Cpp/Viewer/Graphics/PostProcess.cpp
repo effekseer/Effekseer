@@ -11,10 +11,10 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 {
 	std::array<Vertex, 4> vdata;
 	vdata[0] = Vertex{-1.0f, 1.0f, 0.0f, 0.0f};
-	vdata[1] = Vertex{1.0f, 1.0f, 0.0f, 1.0f};
-	vdata[2] = Vertex{1.0f, -1.0f, 1.0f, 0.0f};
-	vdata[3] = Vertex{-1.0f, -1.0f, 1.0f, 1.0f};
-	vb_ = graphicsDevice->CreateVertexBuffer(sizeof(Vertex), vdata.data(), false);
+	vdata[1] = Vertex{1.0f, 1.0f, 1.0f, 0.0f};
+	vdata[2] = Vertex{1.0f, -1.0f, 1.0f, 1.0f};
+	vdata[3] = Vertex{-1.0f, -1.0f, 0.0f, 1.0f};
+	vb_ = graphicsDevice->CreateVertexBuffer(sizeof(Vertex) * 4, vdata.data(), false);
 
 	std::array<int32_t, 6> idata;
 	idata[0] = 0;
@@ -27,7 +27,7 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 
 	std::vector<Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(2);
-	vertexLayoutElements[0].Format = Backend::VertexLayoutFormat::R32G32B32_FLOAT;
+	vertexLayoutElements[0].Format = Backend::VertexLayoutFormat::R32G32_FLOAT;
 	vertexLayoutElements[0].Name = "input_Pos";
 	vertexLayoutElements[0].SemanticIndex = 0;
 	vertexLayoutElements[0].SemanticName = "POSITION";
@@ -44,15 +44,15 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 	pipParam.FrameBufferPtr = nullptr;
 	pipParam.VertexLayoutPtr = vertexLayout;
 	pipParam.ShaderPtr = shader;
-	pipParam.IsDepthTestEnabled = true;
-	pipParam.IsDepthWriteEnabled = true;
+	pipParam.IsDepthTestEnabled = false;
+	pipParam.IsDepthWriteEnabled = false;
 	pipParam.IsBlendEnabled = false;
 
-	auto pip = graphicsDevice->CreatePipelineState(pipParam);
+	pip_ = graphicsDevice->CreatePipelineState(pipParam);
 
 	if (uniformBufferVSSize > 0)
 	{
-		uniformBufferVS_ = graphicsDevice->CreateUniformBuffer(uniformBufferVSSize, nullptr);	
+		uniformBufferVS_ = graphicsDevice->CreateUniformBuffer(uniformBufferVSSize, nullptr);
 	}
 
 	if (uniformBufferVSSize > 0)
