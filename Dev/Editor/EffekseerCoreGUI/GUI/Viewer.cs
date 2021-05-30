@@ -380,7 +380,7 @@ namespace Effekseer.GUI
 		{
 			var param = native.GetViewerParamater();
 
-			param.RenderingMode = (swig.RenderMode)renderMode;
+			param.RenderingMode = (swig.RenderingMethodType)renderMode;
 
 			native.SetViewerParamater(param);
 		}

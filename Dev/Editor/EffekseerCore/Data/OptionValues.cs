@@ -268,6 +268,9 @@ namespace Effekseer.Data
 			Normal = 0,
 			[Key(key = "RenderMode_Wireframe")]
 			Wireframe = 1,
+			NormalWithWireframe = 2,
+			Overdraw = 3,
+
 		}
 
 		public enum ViewMode : int

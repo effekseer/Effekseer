@@ -616,7 +616,11 @@ void RenderedEffectGenerator::Update(int32_t frame)
 void RenderedEffectGenerator::Render()
 {
 	// Clear a destination texture
-	if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
+	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		UpdateBackgroundMesh({0, 0, 0, 0});
+	}
+	else if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
 	{
 		UpdateBackgroundMesh({255, 255, 255, 255});
 	}
@@ -627,19 +631,6 @@ void RenderedEffectGenerator::Render()
 
 	graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
 	graphics_->Clear({0, 0, 0, 0});
-
-	auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
-	external->Blend = Effekseer::AlphaBlendType::Opacity;
-	external->StandardShader = whiteParticleSpriteShader_;
-	external->ModelShader = whiteParticleModelShader_;
-	renderer_->SetExternalShaderSettings(external);
-
-	renderer_->SetRenderMode(config_.RenderMode);
-	renderer_->SetCameraMatrix(config_.CameraMatrix);
-	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
-	renderer_->SetLightDirection(config_.LightDirection);
-	renderer_->SetLightColor(config_.LightColor);
-	renderer_->SetLightAmbientColor(config_.LightAmbientColor);
 
 	// clear
 	if (msaaSamples > 1)
@@ -652,6 +643,13 @@ void RenderedEffectGenerator::Render()
 	}
 
 	graphics_->Clear({0, 0, 0, 0});
+
+	// TODO : refactor
+	renderer_->SetCameraMatrix(config_.CameraMatrix);
+	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
+	renderer_->SetLightDirection(config_.LightDirection);
+	renderer_->SetLightColor(config_.LightColor);
+	renderer_->SetLightAmbientColor(config_.LightAmbientColor);
 
 	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr)
 	{
@@ -671,9 +669,12 @@ void RenderedEffectGenerator::Render()
 		backgroundRenderer_->Render(param);
 	}
 
-	if (groundRenderer_ != nullptr && config_.IsGroundShown)
+	if (config_.RenderingMethod != RenderingMethodType::Overdraw)
 	{
-		groundRenderer_->Render(renderer_);
+		if (groundRenderer_ != nullptr && config_.IsGroundShown)
+		{
+			groundRenderer_->Render(renderer_);
+		}
 	}
 
 	OnAfterClear();
@@ -702,8 +703,25 @@ void RenderedEffectGenerator::Render()
 
 	renderer_->SetDepth(depthRenderTexture->GetAsBackend(), reconstructionParam);
 
-	// HACK : grid renderer changes RenderMode
-	renderer_->SetRenderMode(config_.RenderMode);
+	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
+		external->Blend = Effekseer::AlphaBlendType::Add;
+		external->StandardShader = whiteParticleSpriteShader_;
+		external->ModelShader = whiteParticleModelShader_;
+		renderer_->SetExternalShaderSettings(external);
+	}
+
+	if (config_.RenderingMethod == RenderingMethodType::Normal ||
+		config_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
+		config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		renderer_->SetRenderMode(Effekseer::RenderMode::Normal);
+	}
+	else
+	{
+		renderer_->SetRenderMode(Effekseer::RenderMode::Wireframe);
+	}
 
 	// Distoriton
 	if (config_.Distortion == DistortionType::Current)
@@ -748,11 +766,32 @@ void RenderedEffectGenerator::Render()
 
 	renderer_->EndRendering();
 
+	if (config_.RenderingMethod == RenderingMethodType::NormalWithWireframe)
+	{
+		auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
+		external->Blend = Effekseer::AlphaBlendType::Opacity;
+		external->StandardShader = whiteParticleSpriteShader_;
+		external->ModelShader = whiteParticleModelShader_;
+		renderer_->SetExternalShaderSettings(external);
+
+		renderer_->SetRenderMode(Effekseer::RenderMode::Wireframe);
+
+		renderer_->BeginRendering();
+
+		manager_->Draw(config_.DrawParameter);
+
+		renderer_->EndRendering();
+	}
+
+	if (config_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
+		config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		renderer_->SetExternalShaderSettings(nullptr);
+	}
+
 	ResetBack();
 
 	OnBeforePostprocess();
-
-	renderer_->SetExternalShaderSettings(nullptr);
 
 	// all post effects are disabled
 	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
@@ -765,21 +804,27 @@ void RenderedEffectGenerator::Render()
 		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA->GetAsBackend(), hdrRenderTexture->GetAsBackend());
 	}
 
-	// Bloom processing (specifying the same target for src and dest is faster)
-	m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
-
-	// Tone map processing
-	auto tonemapTerget = viewRenderTexture->GetAsBackend();
-	if (m_isSRGBMode)
+	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
-		tonemapTerget = linearRenderTexture->GetAsBackend();
 	}
-
-	m_tonemapEffect->Render(hdrRenderTexture->GetAsBackend(), tonemapTerget);
-
-	if (m_isSRGBMode)
+	else
 	{
-		m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture->GetAsBackend());
+		// Bloom processing (specifying the same target for src and dest is faster)
+		m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
+
+		// Tone map processing
+		auto tonemapTerget = viewRenderTexture->GetAsBackend();
+		if (m_isSRGBMode)
+		{
+			tonemapTerget = linearRenderTexture->GetAsBackend();
+		}
+
+		m_tonemapEffect->Render(hdrRenderTexture->GetAsBackend(), tonemapTerget);
+
+		if (m_isSRGBMode)
+		{
+			m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture->GetAsBackend());
+		}
 	}
 
 	graphics_->SetRenderTarget({nullptr}, nullptr);

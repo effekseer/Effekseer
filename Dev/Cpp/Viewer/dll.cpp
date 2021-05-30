@@ -169,7 +169,7 @@ ViewerParamater::ViewerParamater()
 	, CullingZ(0)
 
 	, Distortion(Effekseer::Tool::DistortionType::Current)
-	, RenderingMode(RenderMode::Normal)
+	, RenderingMode(Effekseer::Tool::RenderingMethodType::Normal)
 	, ViewerMode(ViewMode::_3D)
 
 {
@@ -817,12 +817,11 @@ bool Native::SetRandomSeed(int seed)
 
 void* Native::RenderView(int32_t width, int32_t height)
 {
-	mainScreen_->GetRenderer()->SetRenderMode((Effekseer::RenderMode)viewPointCtrl_.RenderingMode);
 	viewPointCtrl_.SetScreenSize(width, height);
 	mainScreenConfig_.DrawParameter = drawParameter;
 	mainScreenConfig_.CameraMatrix = viewPointCtrl_.GetCameraMatrix();
 	mainScreenConfig_.ProjectionMatrix = viewPointCtrl_.GetProjectionMatrix();
-	mainScreenConfig_.RenderMode = viewPointCtrl_.RenderingMode;
+	mainScreenConfig_.RenderingMethod = viewPointCtrl_.RenderingMode;
 	mainScreen_->SetConfig(mainScreenConfig_);
 	mainScreen_->Resize(Effekseer::Tool::Vector2DI(width, height));
 	mainScreen_->Render();
@@ -916,7 +915,7 @@ ViewerParamater Native::GetViewerParamater()
 	paramater.RateOfMagnification = viewPointCtrl_.RateOfMagnification;
 
 	paramater.Distortion = (Effekseer::Tool::DistortionType)mainScreenConfig_.Distortion;
-	paramater.RenderingMode = (RenderMode)viewPointCtrl_.RenderingMode;
+	paramater.RenderingMode = viewPointCtrl_.RenderingMode;
 
 	return paramater;
 }
@@ -950,7 +949,7 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 
 	mainScreen_->RendersGuide = paramater.RendersGuide;
 	mainScreenConfig_.Distortion = (Effekseer::Tool::DistortionType)paramater.Distortion;
-	viewPointCtrl_.RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
+	viewPointCtrl_.RenderingMode = paramater.RenderingMode;
 }
 
 Effekseer::Tool::ViewerEffectBehavior Native::GetEffectBehavior()

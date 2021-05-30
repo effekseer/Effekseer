@@ -10,9 +10,11 @@
 
 namespace Effekseer.swig {
 
-public enum RenderMode {
+public enum RenderingMethodType {
   Normal,
-  Wireframe
+  Wireframe,
+  NormalWithWireframe,
+  Overdraw
 }
 
 }

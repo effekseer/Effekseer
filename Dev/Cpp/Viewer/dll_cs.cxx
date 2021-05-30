@@ -1970,10 +1970,10 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distortion_get_
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_set___(void * jarg1, int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  RenderMode arg2 ;
+  Effekseer::Tool::RenderingMethodType arg2 ;
   
   arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (RenderMode)jarg2; 
+  arg2 = (Effekseer::Tool::RenderingMethodType)jarg2; 
   if (arg1) (arg1)->RenderingMode = arg2;
 }
 
@@ -1981,10 +1981,10 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_
 SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___(void * jarg1) {
   int jresult ;
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  RenderMode result;
+  Effekseer::Tool::RenderingMethodType result;
   
   arg1 = (ViewerParamater *)jarg1; 
-  result = (RenderMode) ((arg1)->RenderingMode);
+  result = (Effekseer::Tool::RenderingMethodType) ((arg1)->RenderingMode);
   jresult = (int)result; 
   return jresult;
 }

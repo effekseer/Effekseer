@@ -26,12 +26,6 @@ class Recorder;
 }
 } // namespace Effekseer
 
-enum class RenderMode
-{
-	Normal,
-	Wireframe,
-};
-
 enum class ViewMode
 {
 	_3D,
@@ -63,7 +57,7 @@ public:
 	float CullingZ;
 
 	Effekseer::Tool::DistortionType Distortion;
-	RenderMode RenderingMode;
+	Effekseer::Tool::RenderingMethodType RenderingMode;
 	ViewMode ViewerMode;
 
 	ViewerParamater();

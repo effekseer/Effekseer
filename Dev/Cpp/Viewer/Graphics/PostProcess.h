@@ -17,17 +17,35 @@ private:
 		float u, v;
 	};
 
-	Effekseer::Backend::ShaderRef shader_;
-	Effekseer::Backend::VertexBufferRef vb_;
-	Effekseer::Backend::IndexBufferRef ib_;
-	Effekseer::Backend::VertexLayoutRef vertexLayout_;
+	Backend::GraphicsDeviceRef graphicsDevice_;
+	Backend::ShaderRef shader_;
+	Backend::VertexBufferRef vb_;
+	Backend::IndexBufferRef ib_;
+	Backend::VertexLayoutRef vertexLayout_;
 	Backend::PipelineStateRef pip_;
 	Backend::UniformBufferRef uniformBufferVS_;
 	Backend::UniformBufferRef uniformBufferPS_;
+	Backend::DrawParameter drawParam_;
 
 public:
-	PostProcess(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize);
+	PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize);
 	void Render(Backend::TextureRef dst, Backend::TextureRef src);
+
+	Backend::UniformBufferRef GetUniformBufferVS()
+	{
+		return uniformBufferVS_;
+	}
+
+	Backend::UniformBufferRef GetUniformBufferPS()
+	{
+		return uniformBufferPS_;
+	}
+
+	//! for reading and writing
+	Backend::DrawParameter& GetDrawParameter()
+	{
+		return drawParam_;
+	}
 };
 
 } // namespace Tool
