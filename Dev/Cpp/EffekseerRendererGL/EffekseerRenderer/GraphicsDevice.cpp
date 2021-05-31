@@ -583,32 +583,32 @@ bool Shader::Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vs
 		return false;
 	}
 
-	std::array<EffekseerRendererGL::GLExt::GLchar*, elementMax> vsCodePtr;
-	std::array<EffekseerRendererGL::GLExt::GLchar*, elementMax> psCodePtr;
+	std::array<GLchar*, elementMax> vsCodePtr;
+	std::array<GLchar*, elementMax> psCodePtr;
 	std::array<GLint, elementMax> vsCodeLen;
 	std::array<GLint, elementMax> psCodeLen;
 
 	for (size_t i = 0; i < vsCodes.size(); i++)
 	{
-		vsCodePtr[i] = const_cast<EffekseerRendererGL::GLExt::GLchar*>(vsCodes[i].data());
+		vsCodePtr[i] = const_cast<GLchar*>(vsCodes[i].data());
 		vsCodeLen[i] = static_cast<GLint>(strlen(vsCodePtr[i]));
 	}
 
 	for (size_t i = 0; i < psCodes.size(); i++)
 	{
-		psCodePtr[i] = const_cast<EffekseerRendererGL::GLExt::GLchar*>(psCodes[i].data());
+		psCodePtr[i] = const_cast<GLchar*>(psCodes[i].data());
 		psCodeLen[i] = static_cast<GLint>(strlen(psCodePtr[i]));
 	}
 
 	GLint res_vs, res_fs, res_link = 0;
 	auto vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
 
-	GLExt::glShaderSource(vert_shader, vsCodes.size(), const_cast<const EffekseerRendererGL::GLExt::GLchar**>(vsCodePtr.data()), vsCodeLen.data());
+	GLExt::glShaderSource(vert_shader, vsCodes.size(), const_cast<const GLchar**>(vsCodePtr.data()), vsCodeLen.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
 	auto frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, psCodes.size(), const_cast<const EffekseerRendererGL::GLExt::GLchar**>(psCodePtr.data()), psCodeLen.data());
+	GLExt::glShaderSource(frag_shader, psCodes.size(), const_cast<const GLchar**>(psCodePtr.data()), psCodeLen.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 
