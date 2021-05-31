@@ -18,7 +18,7 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 
 * [Official website](http://effekseer.github.io/en/)
 
-[![Slack Status](https://effekseer-slackin.herokuapp.com/badge.svg)](https://effekseer-slackin.herokuapp.com/)
+* [Slack](https://join.slack.com/t/effekseer/shared_invite/zt-86tcdhc6-wGGahU7VQjIPY5fqxwOTrg)
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
