@@ -565,7 +565,7 @@ public:
 		return ShaderRef{};
 	}
 
-	virtual ShaderRef CreateShaderFromCodes(const char* vsCode, const char* psCode, UniformLayoutRef layout = nullptr)
+	virtual ShaderRef CreateShaderFromCodes(const CustomVector<StringView<char>>& vsCodes, const CustomVector<StringView<char>>& psCodes, UniformLayoutRef layout = nullptr)
 	{
 		return ShaderRef{};
 	}

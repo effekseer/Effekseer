@@ -162,7 +162,8 @@ bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&)
 	return false;
 }
 
-using CustomString = std::basic_string<char16_t, std::char_traits<char16_t>, CustomAllocator<char16_t>>;
+template <class T>
+using CustomString = std::basic_string<T, std::char_traits<T>, CustomAllocator<T>>;
 template <class T>
 using CustomVector = std::vector<T, CustomAllocator<T>>;
 template <class T>
@@ -183,9 +184,10 @@ using CustomAlignedUnorderedMap = std::unordered_map<T, U, Hasher, KeyEq, Custom
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+template <typename T>
 class StringView
 {
-	using Traits = std::char_traits<char16_t>;
+	using Traits = std::char_traits<T>;
 
 public:
 	StringView()
@@ -194,32 +196,32 @@ public:
 	{
 	}
 
-	StringView(const char16_t* ptr)
+	StringView(const T* ptr)
 		: ptr_(ptr)
 		, size_(Traits::length(ptr))
 	{
 	}
 
-	StringView(const char16_t* ptr, size_t size)
+	StringView(const T* ptr, size_t size)
 		: ptr_(ptr)
 		, size_(size)
 	{
 	}
 
 	template <size_t N>
-	StringView(const char16_t ptr[N])
+	StringView(const T ptr[N])
 		: ptr_(ptr)
 		, size_(N)
 	{
 	}
 
-	StringView(const CustomString& str)
+	StringView(const CustomString<T>& str)
 		: ptr_(str.data())
 		, size_(str.size())
 	{
 	}
 
-	const char16_t* data() const
+	const T* data() const
 	{
 		return ptr_;
 	}
@@ -229,25 +231,25 @@ public:
 		return size_;
 	}
 
-	bool operator==(const StringView& rhs) const
+	bool operator==(const StringView<T>& rhs) const
 	{
 		return size() == rhs.size() && Traits::compare(data(), rhs.data(), size()) == 0;
 	}
 
-	bool operator!=(const StringView& rhs) const
+	bool operator!=(const StringView<T>& rhs) const
 	{
 		return size() != rhs.size() || Traits::compare(data(), rhs.data(), size()) != 0;
 	}
 
 	struct Hash
 	{
-		size_t operator()(const StringView& key) const
+		size_t operator()(const StringView<T>& key) const
 		{
 			constexpr size_t basis = (sizeof(size_t) == 8) ? 14695981039346656037ULL : 2166136261U;
 			constexpr size_t prime = (sizeof(size_t) == 8) ? 1099511628211ULL : 16777619U;
 
 			const uint8_t* data = reinterpret_cast<const uint8_t*>(key.data());
-			size_t count = key.size() * sizeof(char16_t);
+			size_t count = key.size() * sizeof(T);
 			size_t val = basis;
 			for (size_t i = 0; i < count; i++)
 			{
@@ -259,7 +261,7 @@ public:
 	};
 
 private:
-	const char16_t* ptr_;
+	const T* ptr_;
 	size_t size_;
 };
 

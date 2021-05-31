@@ -120,13 +120,13 @@ Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::Graphic
 
 Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
 {
-	return graphicsDevice->CreateShaderFromCodes(vs_shader_gl, ps_shader_gl, layout);
+	return graphicsDevice->CreateShaderFromCodes({{vs_shader_gl}}, {{ps_shader_gl}}, layout);
 }
 
 #ifdef _WIN32
 Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
 {
-	return graphicsDevice->CreateShaderFromCodes(vs_shader_dx11, ps_shader_dx11, layout);
+	return graphicsDevice->CreateShaderFromCodes({{vs_shader_dx11}}, {{ps_shader_dx11}}, layout);
 }
 #endif
 

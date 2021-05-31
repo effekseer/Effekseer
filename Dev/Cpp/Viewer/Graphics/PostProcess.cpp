@@ -73,7 +73,7 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 	drawParam_.InstanceCount = 1;
 }
 
-void PostProcess::Render(Backend::TextureRef dst, Backend::TextureRef src)
+void PostProcess::Render()
 {
 	graphicsDevice_->Draw(drawParam_);
 }

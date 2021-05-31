@@ -212,8 +212,8 @@ public:
 		buffers.push_back(ShiftBuffer(graphicsDevice));
 		buffers.push_back(ShiftBuffer(graphicsDevice));
 		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<std::string>{"i_shift", "i_color_shift"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
-		updateShader = graphicsDevice->CreateShaderFromCodes(vs_update_shader_gl, ps_update_shader_gl, uniformLayout);
-		renderShader = graphicsDevice->CreateShaderFromCodes(vs_render_shader_gl, ps_render_shader_gl, uniformLayout);
+		updateShader = graphicsDevice->CreateShaderFromCodes({{vs_update_shader_gl}}, {{ps_update_shader_gl}}, uniformLayout);
+		renderShader = graphicsDevice->CreateShaderFromCodes({{vs_render_shader_gl}}, {{ps_render_shader_gl}}, uniformLayout);
 		windowRenderPass = nullptr;
 
 		InitUpdateVertex();

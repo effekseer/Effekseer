@@ -1213,11 +1213,16 @@ Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromBinary(const void*
 	return ret;
 }
 
-Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout)
 {
+	if (vsCodes.size() != 1 || psCodes.size() != 1)
+	{
+		return nullptr;
+	}
+
 	std::string log;
-	auto vsb = Effekseer::CreateUniqueReference(CompileVertexShader(vsCode, "", {}, log));
-	auto psb = Effekseer::CreateUniqueReference(CompilePixelShader(psCode, "", {}, log));
+	auto vsb = Effekseer::CreateUniqueReference(CompileVertexShader(vsCodes[0].data(), "", {}, log));
+	auto psb = Effekseer::CreateUniqueReference(CompilePixelShader(psCodes[0].data(), "", {}, log));
 
 	if (vsb != nullptr && psb != nullptr)
 	{

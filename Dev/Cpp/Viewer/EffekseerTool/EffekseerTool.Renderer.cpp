@@ -55,22 +55,25 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 void MainScreenRenderedEffectGenerator::OnAfterClear()
 {
-	if (IsGridShown)
+	if (config_.RenderingMethod != Effekseer::Tool::RenderingMethodType::Overdraw)
 	{
-		grid_->SetLength(GridLength);
-		grid_->IsShownXY = IsGridXYShown;
-		grid_->IsShownXZ = IsGridXZShown;
-		grid_->IsShownYZ = IsGridYZShown;
-		grid_->Rendering(GridColor, IsRightHand);
-	}
+		if (IsGridShown)
+		{
+			grid_->SetLength(GridLength);
+			grid_->IsShownXY = IsGridXYShown;
+			grid_->IsShownXZ = IsGridXZShown;
+			grid_->IsShownYZ = IsGridYZShown;
+			grid_->Rendering(GridColor, IsRightHand);
+		}
 
-	{
-		culling_->IsShown = IsCullingShown;
-		culling_->Radius = CullingRadius;
-		culling_->X = CullingPosition.X;
-		culling_->Y = CullingPosition.Y;
-		culling_->Z = CullingPosition.Z;
-		culling_->Rendering(IsRightHand);
+		{
+			culling_->IsShown = IsCullingShown;
+			culling_->Radius = CullingRadius;
+			culling_->X = CullingPosition.X;
+			culling_->Y = CullingPosition.Y;
+			culling_->Z = CullingPosition.Z;
+			culling_->Rendering(IsRightHand);
+		}
 	}
 }
 

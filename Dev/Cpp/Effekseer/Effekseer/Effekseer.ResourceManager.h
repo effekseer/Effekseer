@@ -123,7 +123,7 @@ private:
 	struct CachedResources
 	{
 		LOADER loader;
-		CustomUnorderedMap<StringView, LoadCounted<RESOURCE>, StringView::Hash> cached;
+		CustomUnorderedMap<StringView<char16_t>, LoadCounted<RESOURCE>, StringView<char16_t>::Hash> cached;
 
 		template <typename... Arg>
 		RESOURCE Load(const char16_t* path, Arg&&... args)
@@ -141,7 +141,7 @@ private:
 				if (resource != nullptr)
 				{
 					resource->SetPath(path);
-					const StringView view = resource->GetPath();
+					const StringView<char16_t> view = resource->GetPath();
 					cached.emplace(view, LoadCounted<RESOURCE>{resource, 1});
 					return resource;
 				}

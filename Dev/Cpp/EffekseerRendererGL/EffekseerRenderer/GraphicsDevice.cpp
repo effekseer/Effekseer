@@ -574,20 +574,41 @@ Shader::~Shader()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef& layout)
+bool Shader::Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef& layout)
 {
-	GLint vsCodeLen = static_cast<GLint>(strlen(vsCode));
-	GLint psCodeLen = static_cast<GLint>(strlen(psCode));
+	const size_t elementMax = 16;
+	if (vsCodes.size() > elementMax || psCodes.size() > elementMax)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "There are too many elements.");
+		return false;
+	}
+
+	std::array<EffekseerRendererGL::GLExt::GLchar*, elementMax> vsCodePtr;
+	std::array<EffekseerRendererGL::GLExt::GLchar*, elementMax> psCodePtr;
+	std::array<GLint, elementMax> vsCodeLen;
+	std::array<GLint, elementMax> psCodeLen;
+
+	for (size_t i = 0; i < vsCodes.size(); i++)
+	{
+		vsCodePtr[i] = const_cast<EffekseerRendererGL::GLExt::GLchar*>(vsCodes[i].data());
+		vsCodeLen[i] = static_cast<GLint>(strlen(vsCodePtr[i]));
+	}
+
+	for (size_t i = 0; i < psCodes.size(); i++)
+	{
+		psCodePtr[i] = const_cast<EffekseerRendererGL::GLExt::GLchar*>(psCodes[i].data());
+		psCodeLen[i] = static_cast<GLint>(strlen(psCodePtr[i]));
+	}
 
 	GLint res_vs, res_fs, res_link = 0;
 	auto vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
 
-	GLExt::glShaderSource(vert_shader, 1, &vsCode, &vsCodeLen);
+	GLExt::glShaderSource(vert_shader, vsCodes.size(), const_cast<const EffekseerRendererGL::GLExt::GLchar**>(vsCodePtr.data()), vsCodeLen.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
 	auto frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, 1, &psCode, &psCodeLen);
+	GLExt::glShaderSource(frag_shader, psCodes.size(), const_cast<const EffekseerRendererGL::GLExt::GLchar**>(psCodePtr.data()), psCodeLen.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 
@@ -922,11 +943,11 @@ Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromKey(const char* ke
 	return nullptr;
 }
 
-Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout)
 {
 	auto ret = Effekseer::MakeRefPtr<Shader>(this);
 
-	if (!ret->Init(vsCode, psCode, layout))
+	if (!ret->Init(vsCodes, psCodes, layout))
 	{
 		return nullptr;
 	}

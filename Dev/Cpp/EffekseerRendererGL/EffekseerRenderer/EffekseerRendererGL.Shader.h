@@ -68,6 +68,10 @@ struct ShaderCodeView
 	}
 };
 
+const char* GetVertexShaderHeader(OpenGLDeviceType deviceType);
+
+const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType);
+
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:

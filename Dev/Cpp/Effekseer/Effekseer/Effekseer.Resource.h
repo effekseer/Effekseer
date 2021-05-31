@@ -29,7 +29,7 @@ public:
 
 	virtual ~Resource() = default;
 
-	const CustomString& GetPath()
+	const CustomString<char16_t>& GetPath()
 	{
 		return path_;
 	}
@@ -42,7 +42,7 @@ private:
 		path_ = path;
 	}
 
-	CustomString path_;
+	CustomString<char16_t> path_;
 };
 
 /**

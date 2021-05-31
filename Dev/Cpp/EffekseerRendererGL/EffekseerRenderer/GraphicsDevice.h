@@ -212,7 +212,7 @@ private:
 public:
 	Shader(GraphicsDevice* graphicsDevice);
 	~Shader() override;
-	bool Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef& layout);
+	bool Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef& layout);
 
 	GLuint GetProgram() const
 	{
@@ -326,7 +326,7 @@ public:
 
 	Effekseer::Backend::ShaderRef CreateShaderFromKey(const char* key) override;
 
-	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout) override;
+	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout) override;
 
 	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 

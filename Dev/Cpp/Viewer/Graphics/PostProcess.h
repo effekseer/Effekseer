@@ -29,7 +29,7 @@ private:
 
 public:
 	PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize);
-	void Render(Backend::TextureRef dst, Backend::TextureRef src);
+	void Render();
 
 	Backend::UniformBufferRef GetUniformBufferVS()
 	{

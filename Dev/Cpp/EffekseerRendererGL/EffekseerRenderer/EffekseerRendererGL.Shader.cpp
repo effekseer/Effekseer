@@ -69,14 +69,14 @@ static const char g_header_fs_gles3_src[] = "#version 300 es\n"
 											"#define TEX2D texture\n"
 											"layout (location = 0) out vec4 FRAGCOLOR;\n";
 
-static const char g_header_vs_gles2_src[] = 
-											R"(
+static const char g_header_vs_gles2_src[] =
+	R"(
 #define EFK__INSTANCING_DISABLED__ 1
 )"
-											"#define IN attribute\n"
-											"#define CENTROID\n"
-											"#define TEX2D texture2DLod\n"
-											"#define OUT varying\n";
+	"#define IN attribute\n"
+	"#define CENTROID\n"
+	"#define TEX2D texture2DLod\n"
+	"#define OUT varying\n";
 
 static const char g_header_fs_gles2_src[] = "precision highp float;\n"
 											R"(
@@ -109,9 +109,32 @@ static const char g_header_fs_gl2_src[] = "#version 120\n"
 										  "#define TEX2D texture2D\n"
 										  "#define FRAGCOLOR gl_FragColor\n";
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+const char* GetVertexShaderHeader(OpenGLDeviceType deviceType)
+{
+	if (deviceType == OpenGLDeviceType::OpenGL3)
+		return g_header_vs_gl3_src;
+	if (deviceType == OpenGLDeviceType::OpenGL2)
+		return g_header_vs_gl2_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES3)
+		return g_header_vs_gles3_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES2)
+		return g_header_vs_gles2_src;
+	return nullptr;
+}
+
+const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType)
+{
+	if (deviceType == OpenGLDeviceType::OpenGL3)
+		return g_header_fs_gl3_src;
+	if (deviceType == OpenGLDeviceType::OpenGL2)
+		return g_header_fs_gl2_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES3)
+		return g_header_fs_gles3_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES2)
+		return g_header_fs_gles2_src;
+	return nullptr;
+}
+
 bool Shader::CompileShader(OpenGLDeviceType deviceType,
 						   GLuint& program,
 						   const ShaderCodeView* vsData,
@@ -139,15 +162,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	// compile a vertex shader
 	if (addHeader)
 	{
-		if (deviceType == OpenGLDeviceType::OpenGL3)
-			src_data[0] = g_header_vs_gl3_src;
-		if (deviceType == OpenGLDeviceType::OpenGL2)
-			src_data[0] = g_header_vs_gl2_src;
-		if (deviceType == OpenGLDeviceType::OpenGLES3)
-			src_data[0] = g_header_vs_gles3_src;
-		if (deviceType == OpenGLDeviceType::OpenGLES2)
-			src_data[0] = g_header_vs_gles2_src;
-
+		src_data[0] = GetVertexShaderHeader(deviceType);
 		src_size[0] = (GLint)strlen(src_data[0]);
 		vsOffset += 1;
 	}
@@ -168,15 +183,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	// compile a fragment shader
 	if (addHeader)
 	{
-		if (deviceType == OpenGLDeviceType::OpenGL3)
-			src_data[0] = g_header_fs_gl3_src;
-		if (deviceType == OpenGLDeviceType::OpenGL2)
-			src_data[0] = g_header_fs_gl2_src;
-		if (deviceType == OpenGLDeviceType::OpenGLES3)
-			src_data[0] = g_header_fs_gles3_src;
-		if (deviceType == OpenGLDeviceType::OpenGLES2)
-			src_data[0] = g_header_fs_gles2_src;
-
+		src_data[0] = GetFragmentShaderHeader(deviceType);
 		src_size[0] = (GLint)strlen(src_data[0]);
 		psOffset += 1;
 	}

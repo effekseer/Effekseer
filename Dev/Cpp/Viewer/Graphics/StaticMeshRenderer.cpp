@@ -98,7 +98,7 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 	}
 	else
 	{
-		shader = graphicsDevice->CreateShaderFromCodes(gl_static_mesh_vs, gl_static_mesh_ps, uniformLayout);
+		shader = graphicsDevice->CreateShaderFromCodes({{gl_static_mesh_vs}}, {{gl_static_mesh_ps}}, uniformLayout);
 	}
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;

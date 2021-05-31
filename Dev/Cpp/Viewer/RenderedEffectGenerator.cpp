@@ -829,7 +829,7 @@ void RenderedEffectGenerator::Render()
 		graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
 		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture->GetAsBackend();
 		overdrawEffect_->GetDrawParameter().TextureCount = 1;
-		overdrawEffect_->Render(nullptr, nullptr);
+		overdrawEffect_->Render();
 	}
 	else
 	{
