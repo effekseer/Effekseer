@@ -388,6 +388,11 @@ EffectRef Effect::Create(const ManagerRef& manager, const char16_t* path, float 
 
 	eLoader->Unload(data, size);
 
+	if (effect.Get() == nullptr)
+	{
+		return nullptr;
+	}
+
 	effect->SetName(getFilenameWithoutExt(path).c_str());
 
 	return effect;
