@@ -416,6 +416,8 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 	if (graphics->GetGraphicsDevice()->GetDeviceName() == "DirectX11")
 	{
+#ifdef _WIN32
+
 		whiteParticleSpriteShader_ =
 			graphics->GetGraphicsDevice()->CreateShaderFromBinary(
 				WhiteParticle_Sprite_VS::g_main,
@@ -429,9 +431,12 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 				sizeof(WhiteParticle_Model_VS::g_main),
 				WhiteParticle_PS::g_main,
 				sizeof(WhiteParticle_PS::g_main));
+#endif
 	}
 
 	{
+#ifdef _WIN32
+
 		auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromBinary(
 			PostEffect_Basic_VS::g_main,
 			sizeof(PostEffect_Basic_VS::g_main),
@@ -439,6 +444,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 			sizeof(PostEffect_Overdraw_PS::g_main));
 
 		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+#endif
 	}
 
 	return true;
