@@ -6,7 +6,7 @@
 #include <vector>
 
 #if defined(_WIN32)
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 #if defined(__EFFEKSEER_RENDERER_GLES2__)

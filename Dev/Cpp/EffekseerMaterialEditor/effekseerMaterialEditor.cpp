@@ -43,7 +43,7 @@
 #include <sstream>
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <direct.h>
 #else
 #include <sys/types.h>
