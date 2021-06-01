@@ -11,7 +11,7 @@
 #include "EffekseerRendererDX11.Renderer.h"
 #include "GraphicsDevice.h"
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <xmmintrin.h>
 #endif
 
