@@ -224,6 +224,7 @@ void SoundImplemented::Calculate3DSound(const ::Effekseer::Vector3D& position, f
 	{
 		rolloff = 0.0f;
 	}
+	else
 	{
 		rolloff = (1.0f - (distance - rolloffDistance) / rolloffDistance);
 	}
