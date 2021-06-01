@@ -42,10 +42,7 @@ static const int GL_InstanceCount = 10;
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, false, st, 1);
 
-		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypes[st]));
-		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypes[st]));
-
-		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true, true);
+		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypes[st])}, {(const char*)binary->GetPixelShaderData(shaderTypes[st])}, "CustomMaterial");
 
 		if (shader == nullptr)
 		{
@@ -201,10 +198,7 @@ static const int GL_InstanceCount = 10;
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, instancing ? GL_InstanceCount : 1);
 
-		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypesModel[st]));
-		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypesModel[st]));
-
-		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true, true);
+		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypesModel[st])}, {(const char*)binary->GetPixelShaderData(shaderTypesModel[st])}, "CustomMaterial");
 
 		if (shader == nullptr)
 		{

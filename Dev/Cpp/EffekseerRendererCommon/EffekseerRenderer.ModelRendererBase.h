@@ -838,6 +838,15 @@ public:
 		if (param.ModelIndex < 0)
 			return;
 
+		if (renderer->GetExternalShaderSettings() == nullptr)
+		{
+			shader_unlit->OverrideShader(nullptr);
+		}
+		else
+		{
+			shader_unlit->OverrideShader(renderer->GetExternalShaderSettings()->ModelShader);
+		}
+
 		int32_t renderPassCount = 1;
 
 		if (param.BasicParameterPtr->MaterialRenderDataPtr != nullptr && param.BasicParameterPtr->MaterialRenderDataPtr->MaterialIndex >= 0)

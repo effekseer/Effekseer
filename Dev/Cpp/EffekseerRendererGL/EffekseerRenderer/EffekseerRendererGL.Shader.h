@@ -50,23 +50,7 @@ enum eConstantType
 //
 //----------------------------------------------------------------------------------
 
-struct ShaderCodeView
-{
-	const char* Data;
-	int32_t Length;
-
-	ShaderCodeView()
-		: Data(nullptr)
-		, Length(0)
-	{
-	}
-
-	ShaderCodeView(const char* data)
-		: Data(data)
-		, Length(static_cast<int32_t>(strlen(data)))
-	{
-	}
-};
+using ShaderCodeView = Effekseer::StringView<char>;
 
 const char* GetVertexShaderHeader(OpenGLDeviceType deviceType);
 
@@ -75,11 +59,6 @@ const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType);
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
-	struct ShaderCode
-	{
-		std::vector<char> Code;
-	};
-
 	struct Layout
 	{
 		GLenum type;
@@ -111,7 +90,7 @@ private:
 	};
 
 	OpenGLDeviceType m_deviceType;
-	GLuint m_program;
+	Backend::ShaderRef shader_;
 
 	std::vector<GLint> m_aid;
 	std::vector<Layout> m_layout;
@@ -129,8 +108,6 @@ private:
 	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
 
 	std::string name_;
-	std::vector<ShaderCode> vsCodes_;
-	std::vector<ShaderCode> psCodes_;
 
 	std::vector<ShaderAttribInfoInternal> attribs;
 	std::vector<ShaderUniformInfoInternal> uniforms;
@@ -139,26 +116,9 @@ private:
 
 	GLint baseInstance_ = -1;
 
-	static bool CompileShader(OpenGLDeviceType deviceType,
-							  GLuint& program,
-							  const ShaderCodeView* vsData,
-							  size_t vsDataCount,
-							  const ShaderCodeView* psData,
-							  size_t psDataCount,
-							  const char* name,
-							  bool addHeader);
-
-	bool ReloadShader();
-
 	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
-		   GLuint program,
-		   const ShaderCodeView* vsData,
-		   size_t vsDataCount,
-		   const ShaderCodeView* psData,
-		   size_t psDataCount,
-		   const char* name,
-		   bool hasRefCount,
-		   bool addHeader);
+		   Backend::ShaderRef shader,
+		   const char* name);
 
 	GLint GetAttribId(const char* name) const;
 
@@ -169,18 +129,31 @@ public:
 	virtual ~Shader();
 
 	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice,
-						  const ShaderCodeView* vsData,
-						  size_t vsDataCount,
-						  const ShaderCodeView* psData,
-						  size_t psDataCount,
-						  const char* name,
-						  bool hasRefCount,
-						  bool addHeader);
+						  Backend::ShaderRef shader,
+						  const char* name);
+
+	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, const char* name)
+	{
+		auto shader = graphicsDevice->CreateShaderFromCodes(vsCodes, psCodes, nullptr).DownCast<Backend::Shader>();
+		return Create(graphicsDevice, shader, name);
+	}
+
+	static Shader* CreateWithHeader(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::StringView<char>& vsCode, const Effekseer::StringView<char>& psCode, const char* name)
+	{
+
+		auto shader = graphicsDevice->CreateShaderFromCodes(
+										{{GetVertexShaderHeader(graphicsDevice->GetDeviceType())}, vsCode},
+										{{GetFragmentShaderHeader(graphicsDevice->GetDeviceType())}, psCode},
+										nullptr)
+						  .DownCast<Backend::Shader>();
+		return Create(graphicsDevice, shader, name);
+	}
 
 public:
-	virtual void OnLostDevice() override;
+	virtual void OnLostDevice() override
+	{
+	}
 	virtual void OnResetDevice() override;
-	virtual void OnChangeDevice();
 
 public:
 	GLuint GetInterface() const;

@@ -32,7 +32,6 @@ namespace EffekseerRendererGL
 
 static const int InstanceCount = 10;
 
-
 static const int NumAttribs_Model = 6;
 
 static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
@@ -370,27 +369,27 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_vs(get_model_distortion_vs(renderer->GetDeviceType()));
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
-	shader_ad_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), &ad_lit_vs, 1, &ad_lit_ps, 1, "ModelRenderer1", true, false);
+	shader_ad_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), {ad_lit_vs}, {ad_lit_ps}, "ModelRenderer1");
 	if (shader_ad_lit == nullptr)
 		goto End;
 
-	shader_ad_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), &ad_unlit_vs, 1, &ad_unlit_ps, 1, "ModelRenderer5", true, false);
+	shader_ad_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), {ad_unlit_vs}, {ad_unlit_ps}, "ModelRenderer5");
 	if (shader_ad_unlit == nullptr)
 		goto End;
 
-	shader_ad_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), &ad_dist_vs, 1, &ad_dist_ps, 1, "ModelRenderer7", true, false);
+	shader_ad_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), {ad_dist_vs}, {ad_dist_ps}, "ModelRenderer7");
 	if (shader_ad_distortion == nullptr)
 		goto End;
 
-	shader_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "ModelRenderer1", true, false);
+	shader_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), {lit_vs}, {lit_ps}, "ModelRenderer1");
 	if (shader_lit == nullptr)
 		goto End;
 
-	shader_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "ModelRenderer5", true, false);
+	shader_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), {unlit_vs}, {unlit_ps}, "ModelRenderer5");
 	if (shader_unlit == nullptr)
 		goto End;
 
-	shader_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), &dist_vs, 1, &dist_ps, 1, "ModelRenderer7", true, false);
+	shader_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), {dist_vs}, {dist_ps}, "ModelRenderer7");
 	if (shader_distortion == nullptr)
 		goto End;
 

@@ -51,7 +51,7 @@ public:
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 
-	void OverrideShader(::Effekseer::Backend::ShaderRef shader)
+	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override
 	{
 		shaderOverride_ = shader.DownCast<Backend::Shader>();
 	}

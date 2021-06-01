@@ -25,6 +25,19 @@ namespace EffekseerRendererGL
 namespace Backend
 {
 
+Effekseer::CustomVector<GLint> GetVertexAttribLocations(const VertexLayoutRef& vertexLayout, const ShaderRef& shader)
+{
+	Effekseer::CustomVector<GLint> ret;
+
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		const auto& element = vertexLayout->GetElements()[i];
+		ret.emplace_back(GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str()));
+	}
+
+	return ret;
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -561,54 +574,39 @@ Shader::Shader(GraphicsDevice* graphicsDevice)
 
 Shader::~Shader()
 {
-	if (program_ > 0)
-	{
-		GLExt::glDeleteProgram(program_);
-	}
-
-	if (vao_ > 0)
-	{
-		GLExt::glDeleteVertexArrays(1, &vao_);
-	}
+	Reset();
 
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Shader::Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef& layout)
+bool Shader::Compile()
 {
-	const size_t elementMax = 16;
-	if (vsCodes.size() > elementMax || psCodes.size() > elementMax)
-	{
-		Effekseer::Log(Effekseer::LogType::Error, "There are too many elements.");
-		return false;
-	}
-
 	std::array<GLchar*, elementMax> vsCodePtr;
 	std::array<GLchar*, elementMax> psCodePtr;
 	std::array<GLint, elementMax> vsCodeLen;
 	std::array<GLint, elementMax> psCodeLen;
 
-	for (size_t i = 0; i < vsCodes.size(); i++)
+	for (size_t i = 0; i < vsCodes_.size(); i++)
 	{
-		vsCodePtr[i] = const_cast<GLchar*>(vsCodes[i].data());
+		vsCodePtr[i] = const_cast<GLchar*>(vsCodes_[i].data());
 		vsCodeLen[i] = static_cast<GLint>(strlen(vsCodePtr[i]));
 	}
 
-	for (size_t i = 0; i < psCodes.size(); i++)
+	for (size_t i = 0; i < psCodes_.size(); i++)
 	{
-		psCodePtr[i] = const_cast<GLchar*>(psCodes[i].data());
+		psCodePtr[i] = const_cast<GLchar*>(psCodes_[i].data());
 		psCodeLen[i] = static_cast<GLint>(strlen(psCodePtr[i]));
 	}
 
 	GLint res_vs, res_fs, res_link = 0;
 	auto vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
 
-	GLExt::glShaderSource(vert_shader, vsCodes.size(), const_cast<const GLchar**>(vsCodePtr.data()), vsCodeLen.data());
+	GLExt::glShaderSource(vert_shader, vsCodes_.size(), const_cast<const GLchar**>(vsCodePtr.data()), vsCodeLen.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
 	auto frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, psCodes.size(), const_cast<const GLchar**>(psCodePtr.data()), psCodeLen.data());
+	GLExt::glShaderSource(frag_shader, psCodes_.size(), const_cast<const GLchar**>(psCodePtr.data()), psCodeLen.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 
@@ -664,14 +662,82 @@ bool Shader::Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vs
 		GLExt::glGenVertexArrays(1, &vao_);
 	}
 
-	layout_ = layout;
+	if (layout_ != nullptr)
+	{
+		textureLocations_.reserve(layout_->GetTextures().size());
+		for (size_t i = 0; i < layout_->GetTextures().size(); i++)
+		{
+			textureLocations_.emplace_back(GLExt::glGetUniformLocation(program_, layout_->GetTextures()[i].c_str()));
+		}
+
+		uniformLocations_.reserve(layout_->GetElements().size());
+		for (size_t i = 0; i < layout_->GetElements().size(); i++)
+		{
+			uniformLocations_.emplace_back(GLExt::glGetUniformLocation(program_, layout_->GetElements()[i].Name.c_str()));
+		}
+	}
 
 	return true;
+}
+
+void Shader::Reset()
+{
+	if (program_ > 0)
+	{
+		GLExt::glDeleteProgram(program_);
+	}
+
+	if (vao_ > 0)
+	{
+		GLExt::glDeleteVertexArrays(1, &vao_);
+	}
+
+	textureLocations_.clear();
+	uniformLocations_.clear();
+}
+
+bool Shader::Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef& layout)
+{
+	layout_ = layout;
+
+	if (vsCodes.size() > elementMax || psCodes.size() > elementMax)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "There are too many elements.");
+		return false;
+	}
+
+	vsCodes_.resize(vsCodes.size());
+
+	for (size_t i = 0; i < vsCodes_.size(); i++)
+	{
+		vsCodes_[i] = vsCodes[i].data();
+	}
+
+	psCodes_.resize(psCodes.size());
+
+	for (size_t i = 0; i < psCodes_.size(); i++)
+	{
+		psCodes_[i] = psCodes[i].data();
+	}
+
+	Reset();
+	return Compile();
+}
+
+void Shader::OnLostDevice()
+{
+	Reset();
+}
+
+void Shader::OnResetDevice()
+{
+	Compile();
 }
 
 bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
 {
 	param_ = param;
+	attribLocations_ = GetVertexAttribLocations(param_.VertexLayoutPtr.DownCast<Backend::VertexLayout>(), param_.ShaderPtr.DownCast<Backend::Shader>());
 	return true;
 }
 
@@ -986,11 +1052,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	GLExt::glUseProgram(shader->GetProgram());
 
 	// textures
-	auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
+	const auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
 
 	for (int32_t i = 0; i < textureCount; i++)
 	{
-		auto textureSlot = GLExt::glGetUniformLocation(shader->GetProgram(), shader->GetLayout()->GetTextures()[i].c_str());
+		const auto textureSlot = shader->GetTextureLocations()[i];
 
 		if (textureSlot < 0)
 		{
@@ -1070,7 +1136,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	for (size_t i = 0; i < shader->GetLayout()->GetElements().size(); i++)
 	{
 		const auto& element = shader->GetLayout()->GetElements()[i];
-		auto loc = GLExt::glGetUniformLocation(shader->GetProgram(), element.Name.c_str());
+		const auto loc = shader->GetUniformLocations()[i];
 
 		if (loc < 0)
 		{
@@ -1130,7 +1196,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 		{
 			const auto& element = vertexLayout->GetElements()[i];
-			auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
+			const auto loc = pip->GetAttribLocations()[i];
 
 			GLenum type = {};
 			int32_t count = {};
@@ -1341,7 +1407,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
 	{
 		const auto& element = vertexLayout->GetElements()[i];
-		auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
+		auto loc = pip->GetAttribLocations()[i];
 
 		if (loc >= 0)
 		{

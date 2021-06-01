@@ -92,7 +92,7 @@ enum class TextureType
 struct UniformLayoutElement
 {
 	ShaderStageType Stage = ShaderStageType::Vertex;
-	std::string Name;
+	CustomString<char> Name;
 	UniformBufferLayoutElementType Type;
 
 	//! Ignored in UniformBuffer
@@ -108,18 +108,18 @@ class UniformLayout
 	: public ReferenceObject
 {
 private:
-	CustomVector<std::string> textures_;
+	CustomVector<CustomString<char>> textures_;
 	CustomVector<UniformLayoutElement> elements_;
 
 public:
-	UniformLayout(CustomVector<std::string> textures, CustomVector<UniformLayoutElement> elements)
+	UniformLayout(CustomVector<CustomString<char>> textures, CustomVector<UniformLayoutElement> elements)
 		: textures_(std::move(textures))
 		, elements_(std::move(elements))
 	{
 	}
 	virtual ~UniformLayout() = default;
 
-	const CustomVector<std::string>& GetTextures() const
+	const CustomVector<CustomString<char>>& GetTextures() const
 	{
 		return textures_;
 	}
@@ -307,10 +307,10 @@ struct VertexLayoutElement
 	VertexLayoutFormat Format;
 
 	//! only for OpenGL
-	std::string Name;
+	CustomString<char> Name;
 
 	//! only for DirectX
-	std::string SemanticName;
+	CustomString<char> SemanticName;
 
 	//! only for DirectX
 	int32_t SemanticIndex = 0;

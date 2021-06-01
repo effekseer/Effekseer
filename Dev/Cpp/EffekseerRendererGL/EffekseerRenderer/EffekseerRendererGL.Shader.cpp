@@ -135,202 +135,23 @@ const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType)
 	return nullptr;
 }
 
-bool Shader::CompileShader(OpenGLDeviceType deviceType,
-						   GLuint& program,
-						   const ShaderCodeView* vsData,
-						   size_t vsDataCount,
-						   const ShaderCodeView* psData,
-						   size_t psDataCount,
-						   const char* name,
-						   bool addHeader)
-{
-	std::array<const char*, 16> src_data;
-	std::array<GLint, 16> src_size;
-
-	if (vsDataCount + 1 > src_data.size() || psDataCount + 1 > src_data.size())
-	{
-		assert(0);
-		return false;
-	}
-
-	GLuint vert_shader, frag_shader;
-	GLint res_vs, res_fs, res_link;
-
-	size_t vsOffset = 0;
-	size_t psOffset = 0;
-
-	// compile a vertex shader
-	if (addHeader)
-	{
-		src_data[0] = GetVertexShaderHeader(deviceType);
-		src_size[0] = (GLint)strlen(src_data[0]);
-		vsOffset += 1;
-	}
-
-	for (int i = 0; i < vsDataCount; i++)
-	{
-		src_data[i + vsOffset] = vsData[i].Data;
-		src_size[i + vsOffset] = (GLint)strlen(src_data[i + vsOffset]);
-	}
-
-	vsOffset += vsDataCount;
-
-	vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
-	GLExt::glShaderSource(vert_shader, (GLsizei)vsOffset, src_data.data(), src_size.data());
-	GLExt::glCompileShader(vert_shader);
-	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
-
-	// compile a fragment shader
-	if (addHeader)
-	{
-		src_data[0] = GetFragmentShaderHeader(deviceType);
-		src_size[0] = (GLint)strlen(src_data[0]);
-		psOffset += 1;
-	}
-
-	for (int i = 0; i < psDataCount; i++)
-	{
-		src_data[i + psOffset] = psData[i].Data;
-		src_size[i + psOffset] = (GLint)strlen(src_data[i + psOffset]);
-	}
-
-	psOffset += psDataCount;
-
-	frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, (GLsizei)psOffset, src_data.data(), src_size.data());
-	GLExt::glCompileShader(frag_shader);
-	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
-
-	// create shader program
-	program = GLExt::glCreateProgram();
-	GLExt::glAttachShader(program, vert_shader);
-	GLExt::glAttachShader(program, frag_shader);
-
-	// link shaders
-	GLExt::glLinkProgram(program);
-	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
-
-#ifndef NDEBUG
-	if (res_link == GL_FALSE)
-	{
-		// output errors
-		char log[512];
-		int32_t log_size;
-		GLExt::glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
-		if (log_size > 0)
-		{
-			LOG(name);
-			LOG(": Vertex Shader error.\n");
-			LOG((std::string("DeviceType=") + std::to_string(static_cast<int>(deviceType)) + "\n").c_str());
-			LOG(log);
-		}
-		GLExt::glGetShaderInfoLog(frag_shader, sizeof(log), &log_size, log);
-		if (log_size > 0)
-		{
-			LOG(name);
-			LOG(": Fragment Shader error.\n");
-			LOG((std::string("DeviceType=") + std::to_string(static_cast<int>(deviceType)) + "\n").c_str());
-			LOG(log);
-		}
-		GLExt::glGetProgramInfoLog(program, sizeof(log), &log_size, log);
-		if (log_size > 0)
-		{
-			LOG(name);
-			LOG(": Shader Link error.\n");
-			LOG(log);
-		}
-	}
-#endif
-	// dispose shader objects
-	GLExt::glDeleteShader(frag_shader);
-	GLExt::glDeleteShader(vert_shader);
-
-	if (res_link == GL_FALSE)
-	{
-		GLExt::glDeleteProgram(program);
-		return false;
-	}
-
-	return true;
-}
-
-bool Shader::ReloadShader()
-{
-	assert(m_program == 0);
-
-	GLuint program;
-
-	std::vector<ShaderCodeView> vsData;
-	std::vector<ShaderCodeView> psData;
-
-	vsData.resize(vsCodes_.size());
-	psData.resize(psCodes_.size());
-
-	for (size_t i = 0; i < vsData.size(); i++)
-	{
-		vsData[i].Data = vsCodes_[i].Code.data();
-		vsData[i].Length = (int32_t)vsCodes_[i].Code.size();
-	}
-
-	for (size_t i = 0; i < psData.size(); i++)
-	{
-		psData[i].Data = psCodes_[i].Code.data();
-		psData[i].Length = (int32_t)psCodes_[i].Code.size();
-	}
-
-	if (CompileShader(m_deviceType, program, vsData.data(), vsData.size(), psData.data(), psData.size(), name_.c_str(), addHeader_))
-	{
-		m_program = program;
-		GetAttribIdList(0, nullptr);
-	}
-	else
-	{
-		return false;
-	}
-
-	return true;
-}
-
 Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
-			   GLuint program,
-			   const ShaderCodeView* vsData,
-			   size_t vsDataCount,
-			   const ShaderCodeView* psData,
-			   size_t psDataCount,
-			   const char* name,
-			   bool hasRefCount,
-			   bool addHeader)
+			   Backend::ShaderRef shader,
+			   const char* name)
 	: DeviceObject(graphicsDevice.Get())
 	, m_deviceType(graphicsDevice->GetDeviceType())
-	, m_program(program)
+	, shader_(shader)
 	, m_vertexSize(0)
 	, m_vertexConstantBuffer(nullptr)
 	, m_pixelConstantBuffer(nullptr)
-	, addHeader_(addHeader)
 {
 	m_textureSlots.fill(0);
 	m_textureSlotEnables.fill(false);
 
-	vsCodes_.resize(vsDataCount);
-	psCodes_.resize(psDataCount);
-
-	for (size_t i = 0; i < vsDataCount; i++)
-	{
-		vsCodes_[i].Code.resize(vsData[i].Length);
-		memcpy(vsCodes_[i].Code.data(), vsData[i].Data, vsData[i].Length);
-		vsCodes_[i].Code.push_back(0);
-	}
-
-	for (size_t i = 0; i < psDataCount; i++)
-	{
-		psCodes_[i].Code.resize(psData[i].Length);
-		memcpy(psCodes_[i].Code.data(), psData[i].Data, psData[i].Length);
-		psCodes_[i].Code.push_back(0);
-	}
-
 	name_ = name;
 
-	baseInstance_ = GLExt::glGetUniformLocation(m_program, "SPIRV_Cross_BaseInstance");
+	GetAttribIdList(0, nullptr);
+	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
 }
 
 //-----------------------------------------------------------------------------------
@@ -338,7 +159,7 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 //-----------------------------------------------------------------------------------
 GLint Shader::GetAttribId(const char* name) const
 {
-	auto ret = GLExt::glGetAttribLocation(m_program, name);
+	auto ret = GLExt::glGetAttribLocation(shader_->GetProgram(), name);
 
 #ifdef __INTERNAL_DEBUG__
 	if (ret < 0)
@@ -356,7 +177,7 @@ GLint Shader::GetAttribId(const char* name) const
 //-----------------------------------------------------------------------------------
 GLint Shader::GetUniformId(const char* name) const
 {
-	auto ret = GLExt::glGetUniformLocation(m_program, name);
+	auto ret = GLExt::glGetUniformLocation(shader_->GetProgram(), name);
 
 #ifdef __INTERNAL_DEBUG__
 	if (ret < 0)
@@ -374,63 +195,29 @@ GLint Shader::GetUniformId(const char* name) const
 //-----------------------------------------------------------------------------------
 Shader::~Shader()
 {
-	GLExt::glDeleteProgram(m_program);
 	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
 
 Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
-					   const ShaderCodeView* vsData,
-					   size_t vsDataCount,
-					   const ShaderCodeView* psData,
-					   size_t psDataCount,
-					   const char* name,
-					   bool hasRefCount,
-					   bool addHeader)
+					   Backend::ShaderRef shader,
+					   const char* name)
 {
-	GLuint program;
-
-	if (CompileShader(graphicsDevice->GetDeviceType(), program, vsData, vsDataCount, psData, psDataCount, name, addHeader))
-	{
-		return new Shader(graphicsDevice, program, vsData, vsDataCount, psData, psDataCount, name, hasRefCount, addHeader);
-	}
-	else
-	{
+	if (shader == nullptr)
 		return nullptr;
-	}
-}
 
-void Shader::OnLostDevice()
-{
-	GLExt::glDeleteProgram(m_program);
-	m_program = 0;
+	return new Shader(graphicsDevice, shader, name);
 }
 
 void Shader::OnResetDevice()
 {
-	if (IsValid())
-		return;
-
-	if (!ReloadShader())
-	{
-		printf("Failed to reset device.\n");
-	}
-}
-
-void Shader::OnChangeDevice()
-{
-	GLExt::glDeleteProgram(m_program);
-	m_program = 0;
-
-	if (!ReloadShader())
-	{
-		printf("Failed to change device.\n");
-	}
+	GetAttribIdList(0, nullptr);
+	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
 }
 
 GLuint Shader::GetInterface() const
 {
-	return m_program;
+	return shader_->GetProgram();
 }
 
 void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
@@ -445,7 +232,7 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
 	{
 		for (int i = 0; i < count; i++)
 		{
-			m_aid.push_back(GLExt::glGetAttribLocation(m_program, info[i].name));
+			m_aid.push_back(GLExt::glGetAttribLocation(shader_->GetProgram(), info[i].name));
 			Layout layout;
 
 			layout.normalized = info[i].normalized;
@@ -483,7 +270,7 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
 	{
 		for (int i = 0; i < (int)attribs.size(); i++)
 		{
-			m_aid.push_back(GLExt::glGetAttribLocation(m_program, attribs[i].name.c_str()));
+			m_aid.push_back(GLExt::glGetAttribLocation(shader_->GetProgram(), attribs[i].name.c_str()));
 			Layout layout;
 
 			layout.normalized = attribs[i].normalized;
@@ -500,13 +287,13 @@ void Shader::GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* u
 {
 	for (int i = 0; i < count; i++)
 	{
-		uid_list[i] = GLExt::glGetUniformLocation(m_program, info[i].name);
+		uid_list[i] = GLExt::glGetUniformLocation(shader_->GetProgram(), info[i].name);
 	}
 }
 
 void Shader::BeginScene()
 {
-	GLExt::glUseProgram(m_program);
+	GLExt::glUseProgram(shader_->GetProgram());
 }
 
 void Shader::EndScene()
@@ -679,7 +466,7 @@ bool Shader::GetTextureSlotEnable(int32_t index)
 
 bool Shader::IsValid() const
 {
-	return m_program != 0;
+	return shader_->GetProgram() != 0;
 }
 
 //-----------------------------------------------------------------------------------

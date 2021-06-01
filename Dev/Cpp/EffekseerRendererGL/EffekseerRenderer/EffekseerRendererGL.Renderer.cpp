@@ -328,42 +328,42 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_model_lit_ps(GetDeviceType()));
 
-	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), &unlit_ad_vs, 1, &unlit_ad_ps, 1, "UnlitAd", false, false);
+	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), {unlit_ad_vs}, {unlit_ad_ps}, "UnlitAd");
 	if (shader_ad_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile UnlitAd");
 		return false;
 	}
 
-	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), &distortion_ad_vs, 1, &distortion_ad_ps, 1, "DistAd", false, false);
+	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), {distortion_ad_vs}, {distortion_ad_ps}, "DistAd");
 	if (shader_ad_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
 	}
 
-	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), &lit_ad_vs, 1, &lit_ad_ps, 1, "LitAd", false, false);
+	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), {lit_ad_vs}, {lit_ad_ps}, "LitAd");
 	if (shader_ad_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
 	}
 
-	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), &unlit_vs, 1, &unlit_ps, 1, "Unlit", false, false);
+	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), {unlit_vs}, {unlit_ps}, "Unlit");
 	if (shader_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Unlit");
 		return false;
 	}
 
-	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), &distortion_vs, 1, &distortion_ps, 1, "Dist", false, false);
+	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), {distortion_vs}, {distortion_ps}, "Dist");
 	if (shader_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Dist");
 		return false;
 	}
 
-	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), &lit_vs, 1, &lit_ps, 1, "Lit", false, false);
+	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), {lit_vs}, {lit_ps}, "Lit");
 	if (shader_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Lit");
@@ -392,6 +392,19 @@ bool RendererImplemented::Initialize()
 		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 17, false},
 	};
 
+	const Effekseer::Backend::VertexLayoutElement vlElemUnlitAd[8] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT, "Input_Alpha_Dist_UV", "TEXCOORD", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_BlendUV", "TEXCOORD", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT, "Input_Blend_Alpha_Dist_UV", "TEXCOORD", 3},
+		{Effekseer::Backend::VertexLayoutFormat::R32_FLOAT, "Input_FlipbookIndex", "TEXCOORD", 4},
+		{Effekseer::Backend::VertexLayoutFormat::R32_FLOAT, "Input_AlphaThreshold", "TEXCOORD", 5},
+	};
+
+	auto vlUnlitAd = graphicsDevice_->CreateVertexLayout(vlElemUnlitAd, 8);
+
 	shader_ad_unlit_->GetAttribIdList(8, sprite_attribs_ad);
 
 	static ShaderAttribInfo sprite_attribs[3] = {
@@ -400,6 +413,14 @@ bool RendererImplemented::Initialize()
 		{"Input_UV", GL_FLOAT, 2, 16, false},
 	};
 	shader_unlit_->GetAttribIdList(3, sprite_attribs);
+
+	const Effekseer::Backend::VertexLayoutElement vlElemSprite[3] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
+	};
+
+	auto vlUnlit = graphicsDevice_->CreateVertexLayout(vlElemSprite, 3);
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
@@ -443,6 +464,20 @@ bool RendererImplemented::Initialize()
 		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 21, false},
 	};
 
+	const Effekseer::Backend::VertexLayoutElement vlElemLitAd[11] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Normal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV1", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV2", "TEXCOORD", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT, "Input_Alpha_Dist_UV", "TEXCOORD", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_BlendUV", "TEXCOORD", 3},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT, "Input_Blend_Alpha_Dist_UV", "TEXCOORD", 4},
+		{Effekseer::Backend::VertexLayoutFormat::R32_FLOAT, "Input_FlipbookIndex", "TEXCOORD", 5},
+		{Effekseer::Backend::VertexLayoutFormat::R32_FLOAT, "Input_AlphaThreshold", "TEXCOORD", 6},
+	};
+
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_normal[6] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false},
 		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
@@ -450,6 +485,15 @@ bool RendererImplemented::Initialize()
 		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
 		{"Input_UV1", GL_FLOAT, 2, 24, false},
 		{"Input_UV2", GL_FLOAT, 2, 32, false},
+	};
+
+	const Effekseer::Backend::VertexLayoutElement vlElemLit[6] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Normal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV1", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV2", "TEXCOORD", 1},
 	};
 
 	shader_ad_distortion_->GetAttribIdList(11, sprite_attribs_normal_ad);
@@ -1052,6 +1096,15 @@ Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType t
 	}
 	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
 	{
+		if (GetExternalShaderSettings() == nullptr)
+		{
+			shader_unlit_->OverrideShader(nullptr);
+		}
+		else
+		{
+			shader_unlit_->OverrideShader(GetExternalShaderSettings()->StandardShader);
+		}
+
 		return shader_unlit_;
 	}
 

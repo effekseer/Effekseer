@@ -86,7 +86,7 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 	// constant buffer
 	auto vcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferVS), nullptr);
 	auto pcb = graphicsDevice->CreateUniformBuffer(sizeof(UniformBufferPS), nullptr);
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(CustomVector<std::string>{"Sampler_g_sampler"}, std::move(uniformLayoutElements));
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler"}, std::move(uniformLayoutElements));
 
 	Effekseer::Backend::ShaderRef shader;
 
