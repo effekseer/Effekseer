@@ -4,7 +4,7 @@
 #include <atomic>
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 #else
 #include <cstddef>
 #include <dlfcn.h>

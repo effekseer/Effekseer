@@ -307,7 +307,7 @@ void MainLoop()
 }
 
 #if _WIN32
-#include <Windows.h>
+#include <windows.h>
 std::wstring ToWide(const char* pText);
 void GetDirectoryName(char* dst, char* src);
 #endif

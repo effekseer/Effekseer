@@ -18,7 +18,7 @@ void* EFK_STDCALL InternalAlignedMalloc(unsigned int size, unsigned int aligneme
 {
 #if defined(__EMSCRIPTEN__) && __EMSCRIPTEN_minor__ < 38
 	return malloc(size);
-#elif defined(_MSC_VER)
+#elif defined(_WIN32)
 	return _mm_malloc(size, alignement);
 #else
 	void* ptr = nullptr;
@@ -31,7 +31,7 @@ void EFK_STDCALL InternalAlignedFree(void* p, unsigned int size)
 {
 #if defined(__EMSCRIPTEN__) && __EMSCRIPTEN_minor__ < 38
 	free(p);
-#elif defined(_MSC_VER)
+#elif defined(_WIN32)
 	_mm_free(p);
 #else
 	return free(p);
