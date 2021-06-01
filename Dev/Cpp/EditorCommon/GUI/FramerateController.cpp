@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 #pragma comment(lib, "Winmm.lib")
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 namespace Effekseer
