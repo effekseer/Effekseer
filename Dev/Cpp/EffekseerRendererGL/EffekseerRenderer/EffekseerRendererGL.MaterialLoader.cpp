@@ -57,47 +57,73 @@ static const int GL_InstanceCount = 10;
 
 		if (material->IsSimpleVertex)
 		{
-			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
-				{"atPosition", GL_FLOAT, 3, 0, false}, {"atColor", GL_UNSIGNED_BYTE, 4, 12, true}, {"atTexCoord", GL_FLOAT, 2, 16, false}};
-			shader->GetAttribIdList(3, sprite_attribs);
+			const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
+				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+			};
+
+			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 3).DownCast<Backend::VertexLayout>();
+			shader->SetVertexLayout(vl);
+
 		}
 		else
 		{
-			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[8] = {
-				{"atPosition", GL_FLOAT, 3, 0, false},
-				{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-				{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
-				{"atTangent", GL_UNSIGNED_BYTE, 4, 20, true},
-				{"atTexCoord", GL_FLOAT, 2, 24, false},
-				{"atTexCoord2", GL_FLOAT, 2, 32, false},
-				{"", GL_FLOAT, 0, 0, false},
-				{"", GL_FLOAT, 0, 0, false},
+			Effekseer::Backend::VertexLayoutElement vlElem[8] = {
+				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atNormal", "NORMAL", 1},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atTangent", "NORMAL", 2},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord2", "TEXCOORD", 1},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 2},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
+			};
+
+			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat {
+				if (i == 1)
+					return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
+				if (i == 2)
+					return Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
+				if (i == 3)
+					return Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT;
+				if (i == 4)
+					return Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT;
+
+				assert(0);
+				return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
 			};
 
 			int32_t offset = 40;
 			int count = 6;
+			int semanticIndex = 2;
 			const char* customData1Name = "atCustomData1";
 			const char* customData2Name = "atCustomData2";
 
 			if (materialFile.GetCustomData1Count() > 0)
 			{
-				sprite_attribs[count].name = customData1Name;
-				sprite_attribs[count].count = static_cast<uint16_t>(materialFile.GetCustomData1Count());
-				sprite_attribs[count].offset = static_cast<uint16_t>(offset);
+				vlElem[count].Name = customData1Name;
+				vlElem[count].Format = getFormat(materialFile.GetCustomData1Count());
+				vlElem[count].SemanticIndex = semanticIndex;
+				semanticIndex++;
+
 				count++;
 				offset += sizeof(float) * materialFile.GetCustomData1Count();
 			}
 
 			if (materialFile.GetCustomData2Count() > 0)
 			{
-				sprite_attribs[count].name = customData2Name;
-				sprite_attribs[count].count = static_cast<uint16_t>(materialFile.GetCustomData2Count());
-				sprite_attribs[count].offset = static_cast<uint16_t>(offset);
+				vlElem[count].Name = customData2Name;
+				vlElem[count].Format = getFormat(materialFile.GetCustomData2Count());
+				vlElem[count].SemanticIndex = semanticIndex;
+				semanticIndex++;
+
 				count++;
 				offset += sizeof(float) * materialFile.GetCustomData2Count();
 			}
 
-			shader->GetAttribIdList(count, sprite_attribs);
+			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, count).DownCast<Backend::VertexLayout>();
+			shader->SetVertexLayout(vl);
 		}
 
 		shader->AddVertexConstantLayout(
@@ -211,17 +237,17 @@ static const int GL_InstanceCount = 10;
 			return nullptr;
 		}
 
-		const int32_t NumAttribs = 6;
-		static ShaderAttribInfo g_model_attribs[NumAttribs] = {
-			{"a_Position", GL_FLOAT, 3, 0, false},
-			{"a_Normal", GL_FLOAT, 3, 12, false},
-			{"a_Binormal", GL_FLOAT, 3, 24, false},
-			{"a_Tangent", GL_FLOAT, 3, 36, false},
-			{"a_TexCoord", GL_FLOAT, 2, 48, false},
-			{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
+		const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Position", "POSITION", 0},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 1},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Binormal", "NORMAL", 1},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Tangent", "NORMAL", 2},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
+			{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "a_Color", "NORMAL", 3},
 		};
 
-		shader->GetAttribIdList(NumAttribs, g_model_attribs);
+		auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 6).DownCast<Backend::VertexLayout>();
+		shader->SetVertexLayout(vl);
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ProjectionMatrix"), parameterGenerator.VertexProjectionMatrixOffset);

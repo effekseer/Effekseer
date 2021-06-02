@@ -379,22 +379,9 @@ bool RendererImplemented::Initialize()
 	};
 
 	// Unlit
-
-	static ShaderAttribInfo sprite_attribs_ad[8] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false},
-		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_UV", GL_FLOAT, 2, 16, false},
-
-		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 6, false},
-		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 10, false},
-		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 12, false},
-		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 16, false},
-		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 17, false},
-	};
-
 	const Effekseer::Backend::VertexLayoutElement vlElemUnlitAd[8] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT, "Input_Alpha_Dist_UV", "TEXCOORD", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_BlendUV", "TEXCOORD", 2},
@@ -403,24 +390,17 @@ bool RendererImplemented::Initialize()
 		{Effekseer::Backend::VertexLayoutFormat::R32_FLOAT, "Input_AlphaThreshold", "TEXCOORD", 5},
 	};
 
-	auto vlUnlitAd = graphicsDevice_->CreateVertexLayout(vlElemUnlitAd, 8);
-
-	shader_ad_unlit_->GetAttribIdList(8, sprite_attribs_ad);
-
-	static ShaderAttribInfo sprite_attribs[3] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false},
-		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_UV", GL_FLOAT, 2, 16, false},
-	};
-	shader_unlit_->GetAttribIdList(3, sprite_attribs);
+	auto vlUnlitAd = graphicsDevice_->CreateVertexLayout(vlElemUnlitAd, 8).DownCast<Backend::VertexLayout>();
+	shader_ad_unlit_->SetVertexLayout(vlUnlitAd);
 
 	const Effekseer::Backend::VertexLayoutElement vlElemSprite[3] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
 	};
 
-	auto vlUnlit = graphicsDevice_->CreateVertexLayout(vlElemSprite, 3);
+	auto vlUnlit = graphicsDevice_->CreateVertexLayout(vlElemSprite, 3).DownCast<Backend::VertexLayout>();
+	shader_unlit_->SetVertexLayout(vlUnlit);
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
@@ -449,26 +429,11 @@ bool RendererImplemented::Initialize()
 	vao_ad_unlit_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer());
 
 	// Distortion
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_normal_ad[11] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false},
-		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
-		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
-		{"Input_UV1", GL_FLOAT, 2, 24, false},
-		{"Input_UV2", GL_FLOAT, 2, 32, false},
-
-		{"Input_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 10, false},
-		{"Input_BlendUV", GL_FLOAT, 2, sizeof(float) * 14, false},
-		{"Input_Blend_Alpha_Dist_UV", GL_FLOAT, 4, sizeof(float) * 16, false},
-		{"Input_FlipbookIndex", GL_FLOAT, 1, sizeof(float) * 20, false},
-		{"Input_AlphaThreshold", GL_FLOAT, 1, sizeof(float) * 21, false},
-	};
-
 	const Effekseer::Backend::VertexLayoutElement vlElemLitAd[11] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Normal", "NORMAL", 1},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Normal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Tangent", "NORMAL", 2},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV1", "TEXCOORD", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV2", "TEXCOORD", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT, "Input_Alpha_Dist_UV", "TEXCOORD", 2},
@@ -478,27 +443,20 @@ bool RendererImplemented::Initialize()
 		{Effekseer::Backend::VertexLayoutFormat::R32_FLOAT, "Input_AlphaThreshold", "TEXCOORD", 6},
 	};
 
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_normal[6] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false},
-		{"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true},
-		{"Input_Normal", GL_UNSIGNED_BYTE, 4, 16, true},
-		{"Input_Tangent", GL_UNSIGNED_BYTE, 4, 20, true},
-		{"Input_UV1", GL_FLOAT, 2, 24, false},
-		{"Input_UV2", GL_FLOAT, 2, 32, false},
-	};
-
 	const Effekseer::Backend::VertexLayoutElement vlElemLit[6] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Color", "NORMAL", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Normal", "NORMAL", 1},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT, "Input_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Normal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Tangent", "NORMAL", 2},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV1", "TEXCOORD", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV2", "TEXCOORD", 1},
 	};
 
-	shader_ad_distortion_->GetAttribIdList(11, sprite_attribs_normal_ad);
+	auto vlLitAd = graphicsDevice_->CreateVertexLayout(vlElemLitAd, 11).DownCast<Backend::VertexLayout>();
+	auto vlLit = graphicsDevice_->CreateVertexLayout(vlElemLit, 6).DownCast<Backend::VertexLayout>();
 
-	shader_distortion_->GetAttribIdList(6, sprite_attribs_normal);
+	shader_ad_distortion_->SetVertexLayout(vlLitAd);
+	shader_distortion_->SetVertexLayout(vlLit);
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
@@ -532,10 +490,8 @@ bool RendererImplemented::Initialize()
 	vao_distortion_ = VertexArray::Create(graphicsDevice_, shader_distortion_, GetVertexBuffer(), GetIndexBuffer());
 
 	// Lit
-
-	shader_ad_lit_->GetAttribIdList(11, sprite_attribs_normal_ad);
-
-	shader_lit_->GetAttribIdList(6, sprite_attribs_normal);
+	shader_ad_lit_->SetVertexLayout(vlLitAd);
+	shader_lit_->SetVertexLayout(vlLit);
 
 	for (auto shader : {shader_ad_lit_, shader_lit_})
 	{
@@ -999,7 +955,6 @@ void RendererImplemented::SetLayout(Shader* shader)
 	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
 	{
 		shader->EnableAttribs();
-		shader->SetVertex();
 		GLCheckError();
 	}
 }

@@ -38,6 +38,89 @@ Effekseer::CustomVector<GLint> GetVertexAttribLocations(const VertexLayoutRef& v
 	return ret;
 }
 
+void EnableLayouts(const VertexLayoutRef& vertexLayout, const Effekseer::CustomVector<GLint>& locations)
+{
+	int32_t vertexSize = 0;
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		const auto& element = vertexLayout->GetElements()[i];
+		vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
+	}
+
+	uint32_t offset = 0;
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		const auto& element = vertexLayout->GetElements()[i];
+		const auto loc = locations[i];
+
+		GLenum type = {};
+		int32_t count = {};
+		GLboolean isNormalized = false;
+
+		if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)
+		{
+			count = 4;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)
+		{
+			count = 4;
+			type = GL_UNSIGNED_BYTE;
+			isNormalized = GL_TRUE;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)
+		{
+			count = 1;
+			type = GL_FLOAT;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)
+		{
+			count = 2;
+			type = GL_FLOAT;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)
+		{
+			count = 3;
+			type = GL_FLOAT;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
+		{
+			count = 4;
+			type = GL_FLOAT;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		if (loc >= 0)
+		{
+			GLExt::glEnableVertexAttribArray(loc);
+			GLExt::glVertexAttribPointer(loc,
+										 count,
+										 type,
+										 isNormalized,
+										 vertexSize,
+										 reinterpret_cast<GLvoid*>(static_cast<size_t>(offset)));
+		}
+
+		offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
+	}
+}
+
+void DisableLayouts(const Effekseer::CustomVector<GLint>& locations)
+{
+	for (size_t i = 0; i < locations.size(); i++)
+	{
+		auto loc = locations[i];
+
+		if (loc >= 0)
+		{
+			GLExt::glDisableVertexAttribArray(loc);
+		}
+	}
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -1184,74 +1267,8 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	GLCheckError();
 
 	// layouts
-	{
-		int32_t vertexSize = 0;
-		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-		{
-			const auto& element = vertexLayout->GetElements()[i];
-			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
-		}
-
-		uint32_t offset = 0;
-		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-		{
-			const auto& element = vertexLayout->GetElements()[i];
-			const auto loc = pip->GetAttribLocations()[i];
-
-			GLenum type = {};
-			int32_t count = {};
-			GLboolean isNormalized = false;
-
-			if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)
-			{
-				count = 4;
-				type = GL_UNSIGNED_BYTE;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)
-			{
-				count = 4;
-				type = GL_UNSIGNED_BYTE;
-				isNormalized = GL_TRUE;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)
-			{
-				count = 1;
-				type = GL_FLOAT;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)
-			{
-				count = 2;
-				type = GL_FLOAT;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)
-			{
-				count = 3;
-				type = GL_FLOAT;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
-			{
-				count = 4;
-				type = GL_FLOAT;
-			}
-			else
-			{
-				assert(0);
-			}
-
-			if (loc >= 0)
-			{
-				GLExt::glEnableVertexAttribArray(loc);
-				GLExt::glVertexAttribPointer(loc,
-											 count,
-											 type,
-											 isNormalized,
-											 vertexSize,
-											 reinterpret_cast<GLvoid*>(static_cast<size_t>(offset)));
-			}
-
-			offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
-		}
-	}
+	auto vl = pip->GetParam().VertexLayoutPtr;
+	EnableLayouts(vl.DownCast<Backend::VertexLayout>(), pip->GetAttribLocations());
 
 	GLCheckError();
 
@@ -1404,16 +1421,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr);
 	}
 
-	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-	{
-		const auto& element = vertexLayout->GetElements()[i];
-		auto loc = pip->GetAttribLocations()[i];
-
-		if (loc >= 0)
-		{
-			GLExt::glDisableVertexAttribArray(loc);
-		}
-	}
+	DisableLayouts(pip->GetAttribLocations());
 
 	if (GLExt::IsSupportedVertexArray())
 	{

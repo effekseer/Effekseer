@@ -39,6 +39,10 @@ using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
 Effekseer::CustomVector<GLint> GetVertexAttribLocations(const VertexLayoutRef& vertexLayout, const ShaderRef& shader);
 
+void EnableLayouts(const VertexLayoutRef& vertexLayout, const Effekseer::CustomVector<GLint>& locations);
+
+void DisableLayouts(const Effekseer::CustomVector<GLint>& locations);
+
 class DeviceObject
 {
 private:

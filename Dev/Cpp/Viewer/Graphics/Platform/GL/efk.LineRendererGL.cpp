@@ -81,10 +81,15 @@ LineRendererGL::LineRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	auto shader_no_texture_ =
 		EffekseerRendererGL::Shader::Create(this->renderer->GetInternalGraphicsDevice(), {lineCodeDataVS}, {lineCodeDataNPS}, "Standard NoTex");
 
-	EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
-		{"Input_Pos", GL_FLOAT, 3, 0, false}, {"Input_Color", GL_UNSIGNED_BYTE, 4, 12, true}, {"Input_UV", GL_FLOAT, 2, 16, false}};
+	const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
+	};
 
-	shader_no_texture_->GetAttribIdList(3, sprite_attribs);
+	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 3).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
+	shader_no_texture_->SetVertexLayout(vl);
+
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
 	shader_no_texture_->AddVertexConstantLayout(
@@ -173,9 +178,6 @@ void LineRendererGL::Render()
 	renderer->GetRenderState()->Update(false);
 
 	renderer->SetVertexBuffer((EffekseerRendererGL::VertexBuffer*)vertexBuffer, sizeof(EffekseerRendererGL::Vertex));
-	// EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
-	// EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 	renderer->SetLayout((EffekseerRendererGL::Shader*)shader);
 
 	glDrawArrays(GL_LINES, 0, vertexies.size());

@@ -91,6 +91,7 @@ private:
 
 	OpenGLDeviceType m_deviceType;
 	Backend::ShaderRef shader_;
+	Backend::VertexLayoutRef vertexLayout_;
 
 	std::vector<GLint> m_aid;
 	std::vector<Layout> m_layout;
@@ -112,6 +113,8 @@ private:
 	std::vector<ShaderAttribInfoInternal> attribs;
 	std::vector<ShaderUniformInfoInternal> uniforms;
 
+	Effekseer::CustomVector<GLint> attribs_;
+
 	bool isTransposeEnabled_ = false;
 
 	GLint baseInstance_ = -1;
@@ -119,8 +122,6 @@ private:
 	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 		   Backend::ShaderRef shader,
 		   const char* name);
-
-	GLint GetAttribId(const char* name) const;
 
 public:
 	GLint GetUniformId(const char* name) const;
@@ -158,14 +159,15 @@ public:
 public:
 	GLuint GetInterface() const;
 
-	void GetAttribIdList(int count, const ShaderAttribInfo* info);
+	void SetVertexLayout(Backend::VertexLayoutRef vertexLayout);
+
+	//void GetAttribIdList(int count, const ShaderAttribInfo* info);
 	void GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* uid_list) const;
 
 	void BeginScene();
 	void EndScene();
 	void EnableAttribs();
 	void DisableAttribs();
-	void SetVertex();
 
 	void SetVertexConstantBufferSize(int32_t size) override;
 	void SetPixelConstantBufferSize(int32_t size) override;

@@ -431,11 +431,6 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 				sizeof(WhiteParticle_Model_VS::g_main),
 				WhiteParticle_PS::g_main,
 				sizeof(WhiteParticle_PS::g_main));
-#endif
-	}
-
-	{
-#ifdef _WIN32
 
 		auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromBinary(
 			PostEffect_Basic_VS::g_main,

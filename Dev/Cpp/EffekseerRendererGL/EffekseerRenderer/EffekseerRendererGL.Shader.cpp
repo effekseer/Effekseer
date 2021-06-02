@@ -150,26 +150,8 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 
 	name_ = name;
 
-	GetAttribIdList(0, nullptr);
+
 	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-GLint Shader::GetAttribId(const char* name) const
-{
-	auto ret = GLExt::glGetAttribLocation(shader_->GetProgram(), name);
-
-#ifdef __INTERNAL_DEBUG__
-	if (ret < 0)
-	{
-		std::string message = "Unused : " + name_ + " : " + std::string(name) + "\n";
-		LOG(message.c_str());
-	}
-#endif
-
-	return ret;
 }
 
 //-----------------------------------------------------------------------------------
@@ -211,7 +193,7 @@ Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 
 void Shader::OnResetDevice()
 {
-	GetAttribIdList(0, nullptr);
+	attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
 	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
 }
 
@@ -220,67 +202,10 @@ GLuint Shader::GetInterface() const
 	return shader_->GetProgram();
 }
 
-void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info)
+void Shader::SetVertexLayout(Backend::VertexLayoutRef vertexLayout)
 {
-	// TODO : refactoring
-
-	m_aid.clear();
-
-	m_vertexSize = 0;
-
-	if (info != nullptr)
-	{
-		for (int i = 0; i < count; i++)
-		{
-			m_aid.push_back(GLExt::glGetAttribLocation(shader_->GetProgram(), info[i].name));
-			Layout layout;
-
-			layout.normalized = info[i].normalized;
-			layout.type = info[i].type;
-			layout.offset = info[i].offset;
-			layout.count = info[i].count;
-
-			m_layout.push_back(layout);
-		}
-
-		attribs.resize(count);
-
-		for (int i = 0; i < count; i++)
-		{
-			attribs[i].name = info[i].name;
-			attribs[i].normalized = info[i].normalized;
-			attribs[i].type = info[i].type;
-			attribs[i].offset = info[i].offset;
-			attribs[i].count = info[i].count;
-
-			int elementSize = 0;
-			if (attribs[i].type == GL_FLOAT)
-			{
-				elementSize = sizeof(float);
-			}
-			if (attribs[i].type == GL_UNSIGNED_BYTE)
-			{
-				elementSize = sizeof(uint8_t);
-			}
-
-			m_vertexSize = Effekseer::Max(m_vertexSize, attribs[i].offset + elementSize * attribs[i].count);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < (int)attribs.size(); i++)
-		{
-			m_aid.push_back(GLExt::glGetAttribLocation(shader_->GetProgram(), attribs[i].name.c_str()));
-			Layout layout;
-
-			layout.normalized = attribs[i].normalized;
-			layout.type = attribs[i].type;
-			layout.offset = attribs[i].offset;
-			layout.count = attribs[i].count;
-
-			m_layout.push_back(layout);
-		}
-	}
+	vertexLayout_ = vertexLayout;
+	attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
 }
 
 void Shader::GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* uid_list) const
@@ -304,44 +229,15 @@ void Shader::EndScene()
 void Shader::EnableAttribs()
 {
 	GLCheckError();
-	for (size_t i = 0; i < m_aid.size(); i++)
-	{
-		if (m_aid[i] >= 0)
-		{
-			GLExt::glEnableVertexAttribArray(m_aid[i]);
-		}
-	}
+	Backend::EnableLayouts(vertexLayout_, attribs_);
 	GLCheckError();
 }
 
 void Shader::DisableAttribs()
 {
 	GLCheckError();
-
-	for (size_t i = 0; i < m_aid.size(); i++)
-	{
-		if (m_aid[i] >= 0)
-		{
-			GLExt::glDisableVertexAttribArray(m_aid[i]);
-		}
-	}
+	Backend::DisableLayouts(attribs_);
 	GLCheckError();
-}
-
-void Shader::SetVertex()
-{
-	for (size_t i = 0; i < m_aid.size(); i++)
-	{
-		if (m_aid[i] >= 0)
-		{
-			GLExt::glVertexAttribPointer(m_aid[i],
-										 m_layout[i].count,
-										 m_layout[i].type,
-										 m_layout[i].normalized,
-										 m_vertexSize,
-										 reinterpret_cast<GLvoid*>(m_layout[i].offset));
-		}
-	}
 }
 
 //-----------------------------------------------------------------------------------

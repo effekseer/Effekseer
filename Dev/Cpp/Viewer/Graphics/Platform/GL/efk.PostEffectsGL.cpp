@@ -147,8 +147,10 @@ void main() {
 }
 )";
 
-const EffekseerRendererGL::ShaderAttribInfo BlitterGL::shaderAttributes[2] = {{"a_Position", GL_FLOAT, 2, 0, false},
-																			  {"a_TexCoord", GL_FLOAT, 2, 8, false}};
+const Effekseer::Backend::VertexLayoutElement vlElem[2] = {
+	{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_Position", "POSITION", 0},
+	{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
+};
 
 BlitterGL::BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 	: graphics(graphics)
@@ -250,6 +252,8 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 {
 	using namespace EffekseerRendererGL;
 
+	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
+
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 
 	// Extract shader
@@ -257,7 +261,7 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 
 	shaderExtract.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, extractPS, "Bloom extract"));
 
-	shaderExtract->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderExtract->SetVertexLayout(vl);
 	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
 	shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 	shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderExtract->GetUniformId("u_FilterParams"), 0);
@@ -268,14 +272,14 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
 
 	shaderDownsample.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, downSamplePS, "Bloom downsample"));
-	shaderDownsample->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderDownsample->SetVertexLayout(vl);
 	shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 	// Blend shader
 	EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
 
 	shaderBlend.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blendPS, "Bloom blend"));
-	shaderBlend->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderBlend->SetVertexLayout(vl);
 	shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
 	shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
 	shaderBlend->SetTextureSlot(2, shaderBlend->GetUniformId("u_Texture2"));
@@ -285,14 +289,14 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
 
 	shaderBlurH.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_h_PS, "Bloom blurH"));
-	shaderBlurH->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderBlurH->SetVertexLayout(vl);
 	shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
 
 	// Blur(vertical) shader
 	EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
 
 	shaderBlurV.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_v_PS, "Bloom blurV"));
-	shaderBlurV->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderBlurV->SetVertexLayout(vl);
 	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
@@ -442,20 +446,22 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 {
 	using namespace EffekseerRendererGL;
 
+	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
+
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 
 	// Copy shader
 	EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
 
 	shaderCopy.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, copyPS, "Tonemap copy"));
-	shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderCopy->SetVertexLayout(vl);
 	shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
 	// Reinhard shader
 	EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
 
 	shaderReinhard.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, tonemapPS, "Tonemap Reinhard"));
-	shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shaderReinhard->SetVertexLayout(vl);
 	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
 	shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderReinhard->GetUniformId("u_Exposure"), 0);
@@ -507,12 +513,14 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRe
 {
 	using namespace EffekseerRendererGL;
 
+	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
+
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
 
 	// Copy shader
 	shader_.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, linierToSrgbPS, "LinearToSRGB"));
-	shader_->GetAttribIdList(2, BlitterGL::shaderAttributes);
+	shader_->SetVertexLayout(vl);
 	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
 
 	// Setup VAOs

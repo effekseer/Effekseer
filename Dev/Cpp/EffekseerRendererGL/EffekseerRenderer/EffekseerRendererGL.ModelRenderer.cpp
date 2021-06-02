@@ -32,17 +32,6 @@ namespace EffekseerRendererGL
 
 static const int InstanceCount = 10;
 
-static const int NumAttribs_Model = 6;
-
-static ShaderAttribInfo g_model_attribs[NumAttribs_Model] = {
-	{"Input_Pos", GL_FLOAT, 3, 0, false},
-	{"Input_Normal", GL_FLOAT, 3, 12, false},
-	{"Input_Binormal", GL_FLOAT, 3, 24, false},
-	{"Input_Tangent", GL_FLOAT, 3, 36, false},
-	{"Input_UV", GL_FLOAT, 2, 48, false},
-	{"Input_Color", GL_UNSIGNED_BYTE, 4, 56, true},
-};
-
 template <int N>
 void ModelRenderer::InitRenderer()
 {
@@ -58,6 +47,17 @@ void ModelRenderer::InitRenderer()
 	{
 		m_va[i] = nullptr;
 	}
+
+	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Normal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Binormal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 3},
+	};
+
+	auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 6).DownCast<Backend::VertexLayout>();
 
 	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<N>));
 	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererAdvancedVertexConstantBuffer<N>));
@@ -75,7 +75,7 @@ void ModelRenderer::InitRenderer()
 
 	for (auto& shader : {shader_ad_lit_, shader_lit_})
 	{
-		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
+		shader->SetVertexLayout(vl);
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
 	}
@@ -85,7 +85,7 @@ void ModelRenderer::InitRenderer()
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
-		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
+		shader->SetVertexLayout(vl);
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 	}
 	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
@@ -94,7 +94,7 @@ void ModelRenderer::InitRenderer()
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
-		shader->GetAttribIdList(NumAttribs_Model, g_model_attribs);
+		shader->SetVertexLayout(vl);
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 	}
