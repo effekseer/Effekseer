@@ -28,6 +28,8 @@ struct RenderStateSet
 	GLint cullFaceMode;
 	GLint blendSrc;
 	GLint blendDst;
+	GLint blendSrcAlpha;
+	GLint blendDstAlpha;
 	GLint blendEquation;
 	GLint vao;
 	GLint arrayBufferBinding;
