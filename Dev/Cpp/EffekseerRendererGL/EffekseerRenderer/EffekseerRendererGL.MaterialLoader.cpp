@@ -178,7 +178,12 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, false, st, 1);
 
-		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypes[st])}, {(const char*)binary->GetPixelShaderData(shaderTypes[st])}, "CustomMaterial");
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
+		StoreVertexUniform(materialFile, parameterGenerator, uniformLayoutElements);
+		StorePixelUniform(materialFile, parameterGenerator, uniformLayoutElements, st);
+		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElements);
+
+		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypes[st])}, {(const char*)binary->GetPixelShaderData(shaderTypes[st])}, uniformLayout, "CustomMaterial");
 
 		if (shader == nullptr)
 		{
@@ -262,6 +267,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 		}
 
 		// vertex uniform
+		/*
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatCamera"), parameterGenerator.VertexCameraMatrixOffset);
 
@@ -283,9 +289,9 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 											shader->GetUniformId(materialFile.GetUniformName(ui)),
 											parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
 		}
-
+		*/
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
-
+		/*
 		// pixel uniform
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
@@ -328,7 +334,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 										   shader->GetUniformId(materialFile.GetUniformName(ui)),
 										   parameterGenerator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
 		}
-
+		*/
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
 
 		// textures
@@ -361,8 +367,12 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, instancing ? GL_InstanceCount : 1);
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
+		StoreModelVertexUniform(materialFile, parameterGenerator, uniformLayoutElements, instancing);
+		StorePixelUniform(materialFile, parameterGenerator, uniformLayoutElements, st);
+		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElements);
 
-		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypesModel[st])}, {(const char*)binary->GetPixelShaderData(shaderTypesModel[st])}, "CustomMaterial");
+		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypesModel[st])}, {(const char*)binary->GetPixelShaderData(shaderTypesModel[st])}, uniformLayout, "CustomMaterial");
 
 		if (shader == nullptr)
 		{
@@ -386,7 +396,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 
 		auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 6).DownCast<Backend::VertexLayout>();
 		shader->SetVertexLayout(vl);
-
+		/*
 		// vertex uniform
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ProjectionMatrix"), parameterGenerator.VertexProjectionMatrixOffset);
@@ -456,10 +466,11 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 											shader->GetUniformId(materialFile.GetUniformName(ui)),
 											parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
 		}
-
+		*/
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
 
 		// pixel uniform
+		/*
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
 
@@ -501,7 +512,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 										   shader->GetUniformId(materialFile.GetUniformName(ui)),
 										   parameterGenerator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
 		}
-
+		*/
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
 
 		// textures

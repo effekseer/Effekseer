@@ -75,10 +75,10 @@ ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
 
 	auto shader_ =
-		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataPS, "Standard Tex");
+		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataPS, nullptr, "Standard Tex");
 
 	auto shader_no_texture_ =
-		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataNPS, "Standard NoTex");
+		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataNPS, nullptr, "Standard NoTex");
 
 	const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},

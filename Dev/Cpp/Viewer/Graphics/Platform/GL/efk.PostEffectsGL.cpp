@@ -259,7 +259,7 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	// Extract shader
 	EffekseerRendererGL::ShaderCodeView extractPS(g_extract_fs_src);
 
-	shaderExtract.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, extractPS, "Bloom extract"));
+	shaderExtract.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, extractPS, nullptr, "Bloom extract"));
 
 	shaderExtract->SetVertexLayout(vl);
 	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
@@ -271,14 +271,14 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 
 	EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
 
-	shaderDownsample.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, downSamplePS, "Bloom downsample"));
+	shaderDownsample.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, downSamplePS, nullptr, "Bloom downsample"));
 	shaderDownsample->SetVertexLayout(vl);
 	shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 	// Blend shader
 	EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
 
-	shaderBlend.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blendPS, "Bloom blend"));
+	shaderBlend.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blendPS, nullptr, "Bloom blend"));
 	shaderBlend->SetVertexLayout(vl);
 	shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
 	shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
@@ -288,14 +288,14 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	// Blur(horizontal) shader
 	EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
 
-	shaderBlurH.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_h_PS, "Bloom blurH"));
+	shaderBlurH.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_h_PS, nullptr, "Bloom blurH"));
 	shaderBlurH->SetVertexLayout(vl);
 	shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
 
 	// Blur(vertical) shader
 	EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
 
-	shaderBlurV.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_v_PS, "Bloom blurV"));
+	shaderBlurV.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_v_PS, nullptr, "Bloom blurV"));
 	shaderBlurV->SetVertexLayout(vl);
 	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
 
@@ -453,14 +453,14 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	// Copy shader
 	EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
 
-	shaderCopy.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, copyPS, "Tonemap copy"));
+	shaderCopy.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, copyPS, nullptr, "Tonemap copy"));
 	shaderCopy->SetVertexLayout(vl);
 	shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
 	// Reinhard shader
 	EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
 
-	shaderReinhard.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, tonemapPS, "Tonemap Reinhard"));
+	shaderReinhard.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, tonemapPS, nullptr, "Tonemap Reinhard"));
 	shaderReinhard->SetVertexLayout(vl);
 	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
@@ -519,7 +519,7 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRe
 	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
 
 	// Copy shader
-	shader_.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, linierToSrgbPS, "LinearToSRGB"));
+	shader_.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, linierToSrgbPS, nullptr, "LinearToSRGB"));
 	shader_->SetVertexLayout(vl);
 	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
 

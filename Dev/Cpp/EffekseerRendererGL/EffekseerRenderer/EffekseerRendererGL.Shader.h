@@ -139,13 +139,13 @@ public:
 		return Create(graphicsDevice, shader, name);
 	}
 
-	static Shader* CreateWithHeader(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::StringView<char>& vsCode, const Effekseer::StringView<char>& psCode, const char* name)
+	static Shader* CreateWithHeader(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::StringView<char>& vsCode, const Effekseer::StringView<char>& psCode, Effekseer::Backend::UniformLayoutRef layout, const char* name)
 	{
 
 		auto shader = graphicsDevice->CreateShaderFromCodes(
 										{{GetVertexShaderHeader(graphicsDevice->GetDeviceType())}, vsCode},
 										{{GetFragmentShaderHeader(graphicsDevice->GetDeviceType())}, psCode},
-										nullptr)
+										layout)
 						  .DownCast<Backend::Shader>();
 		return Create(graphicsDevice, shader, name);
 	}
