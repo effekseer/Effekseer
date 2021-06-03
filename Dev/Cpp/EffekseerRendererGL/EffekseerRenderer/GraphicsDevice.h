@@ -43,6 +43,8 @@ void EnableLayouts(const VertexLayoutRef& vertexLayout, const Effekseer::CustomV
 
 void DisableLayouts(const Effekseer::CustomVector<GLint>& locations);
 
+void StoreUniforms(const ShaderRef& shader, const UniformBufferRef& vertexUniform, const UniformBufferRef& fragmentUniform, bool transpose);
+
 class DeviceObject
 {
 private:
@@ -142,6 +144,11 @@ public:
 	bool Init(int32_t size, const void* initialData);
 
 	const Effekseer::CustomVector<uint8_t>& GetBuffer() const
+	{
+		return buffer_;
+	}
+
+	Effekseer::CustomVector<uint8_t>& GetBuffer()
 	{
 		return buffer_;
 	}

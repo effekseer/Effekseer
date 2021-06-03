@@ -683,7 +683,7 @@ public:
 	}
 
 	template <class U>
-	RefPtr<U> DownCast()
+	RefPtr<U> DownCast() const
 	{
 		auto ptr = Get();
 		SafeAddRef(ptr);
@@ -2253,6 +2253,7 @@ struct UniformLayoutElement
 	ShaderStageType Stage = ShaderStageType::Vertex;
 	CustomString<char> Name;
 	UniformBufferLayoutElementType Type;
+	int32_t Count = 1;
 
 	//! Ignored in UniformBuffer
 	int32_t Offset;

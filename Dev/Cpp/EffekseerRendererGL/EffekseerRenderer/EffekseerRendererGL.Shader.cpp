@@ -142,15 +142,13 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 	, m_deviceType(graphicsDevice->GetDeviceType())
 	, shader_(shader)
 	, m_vertexSize(0)
-	, m_vertexConstantBuffer(nullptr)
-	, m_pixelConstantBuffer(nullptr)
 {
 	m_textureSlots.fill(0);
 	m_textureSlotEnables.fill(false);
 
 	name_ = name;
 
-
+	graphicsDevice_ = graphicsDevice;
 	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
 }
 
@@ -170,15 +168,6 @@ GLint Shader::GetUniformId(const char* name) const
 #endif
 
 	return ret;
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-Shader::~Shader()
-{
-	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
-	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
 
 Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
@@ -245,8 +234,7 @@ void Shader::DisableAttribs()
 //-----------------------------------------------------------------------------------
 void Shader::SetVertexConstantBufferSize(int32_t size)
 {
-	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
-	m_vertexConstantBuffer = new uint8_t[size];
+	vertexConstantBuffer_ = graphicsDevice_->CreateUniformBuffer(size, nullptr).DownCast<Backend::UniformBuffer>();
 }
 
 //-----------------------------------------------------------------------------------
@@ -254,8 +242,7 @@ void Shader::SetVertexConstantBufferSize(int32_t size)
 //-----------------------------------------------------------------------------------
 void Shader::SetPixelConstantBufferSize(int32_t size)
 {
-	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
-	m_pixelConstantBuffer = new uint8_t[size];
+	pixelConstantBuffer_ = graphicsDevice_->CreateUniformBuffer(size, nullptr).DownCast<Backend::UniformBuffer>();
 }
 
 //-----------------------------------------------------------------------------------
@@ -295,37 +282,44 @@ void Shader::SetConstantBuffer()
 		GLExt::glUniform1i(baseInstance_, 0);
 	}
 
-	for (size_t i = 0; i < m_vertexConstantLayout.size(); i++)
+	if (shader_->GetUniformLocations().size() > 0)
 	{
-		if (m_vertexConstantLayout[i].Type == CONSTANT_TYPE_MATRIX44)
-		{
-			uint8_t* data = (uint8_t*)m_vertexConstantBuffer;
-			data += m_vertexConstantLayout[i].Offset;
-			GLExt::glUniformMatrix4fv(m_vertexConstantLayout[i].ID, m_vertexConstantLayout[i].Count, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
-		}
-
-		else if (m_vertexConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)
-		{
-			uint8_t* data = (uint8_t*)m_vertexConstantBuffer;
-			data += m_vertexConstantLayout[i].Offset;
-			GLExt::glUniform4fv(m_vertexConstantLayout[i].ID, m_vertexConstantLayout[i].Count, (const GLfloat*)data);
-		}
+		Backend::StoreUniforms(shader_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
 	}
-
-	for (size_t i = 0; i < m_pixelConstantLayout.size(); i++)
+	else
 	{
-		if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_MATRIX44)
+		for (size_t i = 0; i < m_vertexConstantLayout.size(); i++)
 		{
-			uint8_t* data = (uint8_t*)m_pixelConstantBuffer;
-			data += m_pixelConstantLayout[i].Offset;
-			GLExt::glUniformMatrix4fv(m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Count, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
+			if (m_vertexConstantLayout[i].Type == CONSTANT_TYPE_MATRIX44)
+			{
+				uint8_t* data = vertexConstantBuffer_->GetBuffer().data();
+				data += m_vertexConstantLayout[i].Offset;
+				GLExt::glUniformMatrix4fv(m_vertexConstantLayout[i].ID, m_vertexConstantLayout[i].Count, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
+			}
+
+			else if (m_vertexConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)
+			{
+				uint8_t* data = vertexConstantBuffer_->GetBuffer().data();
+				data += m_vertexConstantLayout[i].Offset;
+				GLExt::glUniform4fv(m_vertexConstantLayout[i].ID, m_vertexConstantLayout[i].Count, (const GLfloat*)data);
+			}
 		}
 
-		else if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)
+		for (size_t i = 0; i < m_pixelConstantLayout.size(); i++)
 		{
-			uint8_t* data = (uint8_t*)m_pixelConstantBuffer;
-			data += m_pixelConstantLayout[i].Offset;
-			GLExt::glUniform4fv(m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Count, (const GLfloat*)data);
+			if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_MATRIX44)
+			{
+				uint8_t* data = pixelConstantBuffer_->GetBuffer().data();
+				data += m_pixelConstantLayout[i].Offset;
+				GLExt::glUniformMatrix4fv(m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Count, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
+			}
+
+			else if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)
+			{
+				uint8_t* data = pixelConstantBuffer_->GetBuffer().data();
+				data += m_pixelConstantLayout[i].Offset;
+				GLExt::glUniform4fv(m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Count, (const GLfloat*)data);
+			}
 		}
 	}
 

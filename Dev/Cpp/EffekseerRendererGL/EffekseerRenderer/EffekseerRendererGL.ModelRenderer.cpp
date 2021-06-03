@@ -32,6 +32,54 @@ namespace EffekseerRendererGL
 
 static const int InstanceCount = 10;
 
+void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, bool isAd, bool isInstancing, int N)
+{
+	using namespace Effekseer::Backend;
+
+	int vsOffset = 0;
+
+	auto storeVector = [&](const char* name, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, vsOffset});
+		vsOffset += sizeof(float[4]) * count;
+	};
+
+	auto storeMatrix = [&](const char* name, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, vsOffset});
+		vsOffset += sizeof(Effekseer::Matrix44) * count;
+	};
+
+	storeMatrix("CBVS0.mCameraProj");
+
+	if (isInstancing)
+	{
+		storeMatrix("CBVS0.mModel_Inst", N);
+	}
+	else
+	{
+		storeMatrix("CBVS0.mModel", N);
+	}
+
+	storeVector("CBVS0.fUV", N);
+
+	if (isAd)
+	{
+		storeVector("CBVS0.fAlphaUV", N);
+		storeVector("CBVS0.fUVDistortionUV", N);
+		storeVector("CBVS0.fBlendUV", N);
+		storeVector("CBVS0.fBlendAlphaUV", N);
+		storeVector("CBVS0.fBlendUVDistortionUV", N);
+		storeVector("CBVS0.fFlipbookParameter");
+		storeVector("CBVS0.fFlipbookIndexAndNextRate", N);
+		storeVector("CBVS0.fModelAlphaThreshold", N);
+	}
+
+	storeVector("CBVS0.fModelColor", N);
+	storeVector("CBVS0.fLightDirection");
+	storeVector("CBVS0.fLightColor");
+	storeVector("CBVS0.fLightAmbient");
+	storeVector("CBVS0.mUVInversed");
+}
+
 template <int N>
 void ModelRenderer::InitRenderer()
 {
@@ -349,6 +397,20 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 {
 	assert(renderer != nullptr);
 
+	auto graphicsDevice = renderer->GetGraphicsDevice();
+
+	int instanceCount = 1;
+	bool instaincing = false;
+	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		instanceCount = InstanceCount;
+		instaincing = true;
+	}
+	else
+	{
+		instaincing = false;
+	}
+
 	Shader* shader_ad_lit = nullptr;
 	Shader* shader_ad_unlit = nullptr;
 	Shader* shader_ad_distortion = nullptr;
@@ -369,27 +431,61 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_vs(get_model_distortion_vs(renderer->GetDeviceType()));
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
-	shader_ad_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), {ad_lit_vs}, {ad_lit_ps}, "ModelRenderer1");
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
+	AddModelVertexUniformLayout(uniformLayoutElementsLitUnlit, false, instaincing, instanceCount);
+	AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
+
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsDist;
+	AddModelVertexUniformLayout(uniformLayoutElementsDist, false, instaincing, instanceCount);
+	AddDistortionPixelUniformLayout(uniformLayoutElementsDist);
+
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlitAd;
+	AddModelVertexUniformLayout(uniformLayoutElementsLitUnlitAd, true, instaincing, instanceCount);
+	AddPixelUniformLayout(uniformLayoutElementsLitUnlitAd);
+
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsDistAd;
+	AddModelVertexUniformLayout(uniformLayoutElementsDistAd, true, instaincing, instanceCount);
+	AddDistortionPixelUniformLayout(uniformLayoutElementsDistAd);
+
+	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlitAd);
+	auto shader_lit_ad_in = graphicsDevice->CreateShaderFromCodes({ad_lit_vs}, {ad_lit_ps}, uniformLayoutLitAd).DownCast<Backend::Shader>();
+
+	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlitAd);
+	auto shader_unlit_ad_in = graphicsDevice->CreateShaderFromCodes({ad_unlit_vs}, {ad_unlit_ps}, uniformLayoutUnlitAd).DownCast<Backend::Shader>();
+
+	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDistAd);
+	auto shader_dist_ad_in = graphicsDevice->CreateShaderFromCodes({ad_dist_vs}, {ad_dist_ps}, uniformLayoutDistAd).DownCast<Backend::Shader>();
+
+	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto shader_lit_in = graphicsDevice->CreateShaderFromCodes({lit_vs}, {lit_ps}, uniformLayoutLit).DownCast<Backend::Shader>();
+
+	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto shader_unlit_in = graphicsDevice->CreateShaderFromCodes({unlit_vs}, {unlit_ps}, uniformLayoutUnlit).DownCast<Backend::Shader>();
+
+	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDist);
+	auto shader_dist_in = graphicsDevice->CreateShaderFromCodes({dist_vs}, {dist_ps}, uniformLayoutDist).DownCast<Backend::Shader>();
+
+	shader_ad_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_lit_ad_in, "ModelRendererLitAd");
 	if (shader_ad_lit == nullptr)
 		goto End;
 
-	shader_ad_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), {ad_unlit_vs}, {ad_unlit_ps}, "ModelRenderer5");
+	shader_ad_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_unlit_ad_in, "ModelRendererUnlitAd");
 	if (shader_ad_unlit == nullptr)
 		goto End;
 
-	shader_ad_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), {ad_dist_vs}, {ad_dist_ps}, "ModelRenderer7");
+	shader_ad_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_dist_ad_in, "ModelRendererDistAd");
 	if (shader_ad_distortion == nullptr)
 		goto End;
 
-	shader_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), {lit_vs}, {lit_ps}, "ModelRenderer1");
+	shader_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_lit_in, "ModelRendererLit");
 	if (shader_lit == nullptr)
 		goto End;
 
-	shader_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), {unlit_vs}, {unlit_ps}, "ModelRenderer5");
+	shader_unlit = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_unlit_in, "ModelRendererUnlit");
 	if (shader_unlit == nullptr)
 		goto End;
 
-	shader_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), {dist_vs}, {dist_ps}, "ModelRenderer7");
+	shader_distortion = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_dist_in, "ModelRendererDit");
 	if (shader_distortion == nullptr)
 		goto End;
 

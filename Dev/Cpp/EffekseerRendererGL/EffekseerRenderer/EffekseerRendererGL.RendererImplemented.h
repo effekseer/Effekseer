@@ -266,6 +266,13 @@ private:
 	void GenerateIndexDataStride();
 };
 
+void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
+
+void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
+
+void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
+
+
 void AssignPixelConstantBuffer(Shader* shader);
 
 void AssignDistortionPixelConstantBuffer(Shader* shader);

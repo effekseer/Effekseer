@@ -121,6 +121,57 @@ void DisableLayouts(const Effekseer::CustomVector<GLint>& locations)
 	}
 }
 
+void StoreUniforms(const ShaderRef& shader, const UniformBufferRef& vertexUniform, const UniformBufferRef& fragmentUniform, bool transpose)
+{
+	for (size_t i = 0; i < shader->GetLayout()->GetElements().size(); i++)
+	{
+		const auto& element = shader->GetLayout()->GetElements()[i];
+		const auto loc = shader->GetUniformLocations()[i];
+
+		if (loc < 0)
+		{
+			continue;
+		}
+
+		UniformBuffer* uniformBuffer = nullptr;
+
+		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
+		{
+			uniformBuffer = static_cast<UniformBuffer*>(vertexUniform.Get());
+		}
+		else if (element.Stage == Effekseer::Backend::ShaderStageType::Pixel)
+		{
+			uniformBuffer = static_cast<UniformBuffer*>(fragmentUniform.Get());
+		}
+
+		if (uniformBuffer != nullptr)
+		{
+			if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
+			{
+				const auto& buffer = uniformBuffer->GetBuffer();
+				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
+				GLExt::glUniform4fv(loc, element.Count, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+			}
+			else if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
+			{
+				const auto& buffer = uniformBuffer->GetBuffer();
+				assert(buffer.size() >= element.Offset + sizeof(float) * 4 * 4);
+				GLExt::glUniformMatrix4fv(loc, element.Count, transpose ? GL_TRUE : GL_FALSE, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+			}
+			else
+			{
+				// Unimplemented
+				assert(0);
+			}
+		}
+		else
+		{
+			// Invalid
+			assert(0);
+		}
+	}
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -1216,53 +1267,10 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	}
 
 	// uniformss
-	for (size_t i = 0; i < shader->GetLayout()->GetElements().size(); i++)
-	{
-		const auto& element = shader->GetLayout()->GetElements()[i];
-		const auto loc = shader->GetUniformLocations()[i];
-
-		if (loc < 0)
-		{
-			continue;
-		}
-
-		UniformBuffer* uniformBuffer = nullptr;
-
-		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
-		{
-			uniformBuffer = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr.Get());
-		}
-		else if (element.Stage == Effekseer::Backend::ShaderStageType::Pixel)
-		{
-			uniformBuffer = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr.Get());
-		}
-
-		if (uniformBuffer != nullptr)
-		{
-			if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
-			{
-				const auto& buffer = uniformBuffer->GetBuffer();
-				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
-				GLExt::glUniform4fv(loc, 1, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
-			}
-			else if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
-			{
-				const auto& buffer = uniformBuffer->GetBuffer();
-				assert(buffer.size() >= element.Offset + sizeof(float) * 4 * 4);
-				GLExt::glUniformMatrix4fv(loc, 1, GL_FALSE, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
-			}
-			else
-			{
-				// Unimplemented
-				assert(0);
-			}
-		}
-		else
-		{
-			// Invalid
-			assert(0);
-		}
-	}
+	StoreUniforms(pip->GetParam().ShaderPtr.DownCast<Backend::Shader>(),
+				  drawParam.VertexUniformBufferPtr.DownCast<Backend::UniformBuffer>(),
+				  drawParam.PixelUniformBufferPtr.DownCast<Backend::UniformBuffer>(),
+				  false);
 
 	GLCheckError();
 

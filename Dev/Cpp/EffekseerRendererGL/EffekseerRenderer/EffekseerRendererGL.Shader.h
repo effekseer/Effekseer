@@ -90,6 +90,7 @@ private:
 	};
 
 	OpenGLDeviceType m_deviceType;
+	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
 	Backend::VertexLayoutRef vertexLayout_;
 
@@ -98,9 +99,8 @@ private:
 
 	int32_t m_vertexSize;
 
-	uint8_t* m_vertexConstantBuffer;
-	uint8_t* m_pixelConstantBuffer;
-	bool addHeader_ = true;
+	Backend::UniformBufferRef vertexConstantBuffer_;
+	Backend::UniformBufferRef pixelConstantBuffer_;
 
 	std::vector<ConstantLayout> m_vertexConstantLayout;
 	std::vector<ConstantLayout> m_pixelConstantLayout;
@@ -127,7 +127,7 @@ public:
 	GLint GetUniformId(const char* name) const;
 
 public:
-	virtual ~Shader();
+	virtual ~Shader() override = default;
 
 	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 						  Backend::ShaderRef shader,
@@ -174,11 +174,11 @@ public:
 
 	void* GetVertexConstantBuffer() override
 	{
-		return m_vertexConstantBuffer;
+		return vertexConstantBuffer_ != nullptr ? vertexConstantBuffer_->GetBuffer().data() : nullptr;
 	}
 	void* GetPixelConstantBuffer() override
 	{
-		return m_pixelConstantBuffer;
+		return pixelConstantBuffer_ != nullptr ? pixelConstantBuffer_->GetBuffer().data() : nullptr;
 	}
 
 	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);

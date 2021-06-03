@@ -328,42 +328,68 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_model_lit_ps(GetDeviceType()));
 
-	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), {unlit_ad_vs}, {unlit_ad_ps}, "UnlitAd");
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
+	AddVertexUniformLayout(uniformLayoutElementsLitUnlit);
+	AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
+
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsDist;
+	AddVertexUniformLayout(uniformLayoutElementsDist);
+	AddDistortionPixelUniformLayout(uniformLayoutElementsDist);
+
+	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto shader_unlit_ad = graphicsDevice_->CreateShaderFromCodes({unlit_ad_vs}, {unlit_ad_ps}, uniformLayoutUnlitAd).DownCast<Backend::Shader>();
+
+	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit_ad, "UnlitAd");
 	if (shader_ad_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile UnlitAd");
 		return false;
 	}
 
-	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), {distortion_ad_vs}, {distortion_ad_ps}, "DistAd");
+	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDist);
+	auto shader_distortion_ad = graphicsDevice_->CreateShaderFromCodes({distortion_ad_vs}, {distortion_ad_ps}, uniformLayoutDistAd).DownCast<Backend::Shader>();
+
+	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion_ad, "DistAd");
 	if (shader_ad_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
 	}
 
-	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), {lit_ad_vs}, {lit_ad_ps}, "LitAd");
+	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto shader_lit_ad = graphicsDevice_->CreateShaderFromCodes({lit_ad_vs}, {lit_ad_ps}, uniformLayoutLitAd).DownCast<Backend::Shader>();
+
+	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit_ad, "LitAd");
 	if (shader_ad_lit_ == nullptr)
 	{
-		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile LitAd");
 		return false;
 	}
 
-	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), {unlit_vs}, {unlit_ps}, "Unlit");
+	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto shader_unlit = graphicsDevice_->CreateShaderFromCodes({unlit_vs}, {unlit_ps}, uniformLayoutUnlit).DownCast<Backend::Shader>();
+
+	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit, "Unlit");
 	if (shader_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Unlit");
 		return false;
 	}
 
-	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), {distortion_vs}, {distortion_ps}, "Dist");
+	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDist);
+	auto shader_distortion = graphicsDevice_->CreateShaderFromCodes({distortion_vs}, {distortion_ps}, uniformLayoutDist).DownCast<Backend::Shader>();
+
+	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion, "Dist");
 	if (shader_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Dist");
 		return false;
 	}
 
-	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), {lit_vs}, {lit_ps}, "Lit");
+	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto shader_lit = graphicsDevice_->CreateShaderFromCodes({lit_vs}, {lit_ps}, uniformLayoutLit).DownCast<Backend::Shader>();
+
+	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit, "Lit");
 	if (shader_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Lit");
@@ -407,14 +433,14 @@ bool RendererImplemented::Initialize()
 		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.fFlipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCamera"), 0);
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("CBVS0.mCameraProj"), sizeof(Effekseer::Matrix44));
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
+
+		shader->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.fFlipbookParameter"), sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 
@@ -471,12 +497,12 @@ bool RendererImplemented::Initialize()
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBVS0.mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
 
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
-
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
 										shader->GetUniformId("CBVS0.fFlipbookParameter"),
 										sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+
+		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
+		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 
 		AssignDistortionPixelConstantBuffer(shader);
 	}
@@ -1288,8 +1314,82 @@ bool RendererImplemented::IsVertexArrayObjectSupported() const
 	return GLExt::IsSupportedVertexArray();
 }
 
+void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
+{
+	using namespace Effekseer::Backend;
+
+	int vsOffset = 0;
+
+	auto storeVector = [&](const char* name) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, 1, vsOffset});
+		vsOffset += sizeof(float[4]);
+	};
+
+	auto storeMatrix = [&](const char* name) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, 1, vsOffset});
+		vsOffset += sizeof(Effekseer::Matrix44);
+	};
+
+	storeMatrix("CBVS0.mCamera");
+	storeMatrix("CBVS0.mCameraProj");
+	storeVector("CBVS0.mUVInversed");
+	storeVector("CBVS0.fFlipbookParameter");
+}
+
+void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
+{
+	using namespace Effekseer::Backend;
+
+	int psOffset = 0;
+
+	auto storeVector = [&](const char* name) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, 1, psOffset});
+		psOffset += sizeof(float[4]);
+	};
+
+	storeVector("CBPS0.fLightDirection");
+	storeVector("CBPS0.fLightColor");
+	storeVector("CBPS0.fLightAmbient");
+	storeVector("CBPS0.fFlipbookParameter");
+	storeVector("CBPS0.fUVDistortionParameter");
+	storeVector("CBPS0.fBlendTextureParameter");
+	storeVector("CBPS0.fCameraFrontDirection");
+	storeVector("CBPS0.fFalloffParameter");
+	storeVector("CBPS0.fFalloffBeginColor");
+	storeVector("CBPS0.fFalloffEndColor");
+	storeVector("CBPS0.fEmissiveScaling");
+	storeVector("CBPS0.fEdgeColor");
+	storeVector("CBPS0.fEdgeParameter");
+	storeVector("CBPS0.softParticleParam");
+	storeVector("CBPS0.reconstructionParam1");
+	storeVector("CBPS0.reconstructionParam2");
+	storeVector("CBPS0.mUVInversedBack");
+}
+
+void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
+{
+	using namespace Effekseer::Backend;
+
+	int psOffset = 0;
+
+	auto storeVector = [&](const char* name) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, 1, psOffset});
+		psOffset += sizeof(float[4]);
+	};
+
+	storeVector("CBPS0.g_scale");
+	storeVector("CBPS0.mUVInversedBack");
+	storeVector("CBPS0.fFlipbookParameter");
+	storeVector("CBPS0.fUVDistortionParameter");
+	storeVector("CBPS0.fBlendTextureParameter");
+	storeVector("CBPS0.softParticleParam");
+	storeVector("CBPS0.reconstructionParam1");
+	storeVector("CBPS0.reconstructionParam2");
+}
+
 void AssignPixelConstantBuffer(Shader* shader)
 {
+	/*
 	int psOffset = 0;
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.fLightDirection"), psOffset);
 
@@ -1352,10 +1452,12 @@ void AssignPixelConstantBuffer(Shader* shader)
 
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.mUVInversedBack"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
+	*/
 }
 
 void AssignDistortionPixelConstantBuffer(Shader* shader)
 {
+	/*
 	int psOffset = 0;
 
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.g_scale"), psOffset);
@@ -1386,6 +1488,7 @@ void AssignDistortionPixelConstantBuffer(Shader* shader)
 	psOffset += sizeof(float[4]) * 1;
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.reconstructionParam2"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
+	*/
 }
 
 } // namespace EffekseerRendererGL
