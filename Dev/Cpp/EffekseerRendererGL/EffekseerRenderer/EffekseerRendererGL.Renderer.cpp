@@ -594,6 +594,7 @@ bool RendererImplemented::BeginRendering()
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
 		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &m_originalState.arrayBufferBinding);
 		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &m_originalState.elementArrayBufferBinding);
+		glGetIntegerv(GL_CURRENT_PROGRAM, &m_originalState.program);
 
 		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
 		{
@@ -681,6 +682,7 @@ bool RendererImplemented::EndRendering()
 
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_originalState.arrayBufferBinding);
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_originalState.elementArrayBufferBinding);
+		GLExt::glUseProgram(m_originalState.program);
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
