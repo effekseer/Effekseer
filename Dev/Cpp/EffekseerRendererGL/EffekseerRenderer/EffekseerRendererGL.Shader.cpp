@@ -248,32 +248,6 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void Shader::AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count)
-{
-	ConstantLayout l;
-	l.Type = type;
-	l.ID = id;
-	l.Offset = offset;
-	l.Count = count;
-	m_vertexConstantLayout.push_back(l);
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-void Shader::AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count)
-{
-	ConstantLayout l;
-	l.Type = type;
-	l.ID = id;
-	l.Offset = offset;
-	l.Count = count;
-	m_pixelConstantLayout.push_back(l);
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 void Shader::SetConstantBuffer()
 {
 	// baseInstance_
@@ -282,46 +256,7 @@ void Shader::SetConstantBuffer()
 		GLExt::glUniform1i(baseInstance_, 0);
 	}
 
-	if (shader_->GetUniformLocations().size() > 0)
-	{
-		Backend::StoreUniforms(shader_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
-	}
-	else
-	{
-		for (size_t i = 0; i < m_vertexConstantLayout.size(); i++)
-		{
-			if (m_vertexConstantLayout[i].Type == CONSTANT_TYPE_MATRIX44)
-			{
-				uint8_t* data = vertexConstantBuffer_->GetBuffer().data();
-				data += m_vertexConstantLayout[i].Offset;
-				GLExt::glUniformMatrix4fv(m_vertexConstantLayout[i].ID, m_vertexConstantLayout[i].Count, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
-			}
-
-			else if (m_vertexConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)
-			{
-				uint8_t* data = vertexConstantBuffer_->GetBuffer().data();
-				data += m_vertexConstantLayout[i].Offset;
-				GLExt::glUniform4fv(m_vertexConstantLayout[i].ID, m_vertexConstantLayout[i].Count, (const GLfloat*)data);
-			}
-		}
-
-		for (size_t i = 0; i < m_pixelConstantLayout.size(); i++)
-		{
-			if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_MATRIX44)
-			{
-				uint8_t* data = pixelConstantBuffer_->GetBuffer().data();
-				data += m_pixelConstantLayout[i].Offset;
-				GLExt::glUniformMatrix4fv(m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Count, isTransposeEnabled_ ? GL_TRUE : GL_FALSE, (const GLfloat*)data);
-			}
-
-			else if (m_pixelConstantLayout[i].Type == CONSTANT_TYPE_VECTOR4)
-			{
-				uint8_t* data = pixelConstantBuffer_->GetBuffer().data();
-				data += m_pixelConstantLayout[i].Offset;
-				GLExt::glUniform4fv(m_pixelConstantLayout[i].ID, m_pixelConstantLayout[i].Count, (const GLfloat*)data);
-			}
-		}
-	}
+	Backend::StoreUniforms(shader_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
 
 	GLCheckError();
 }

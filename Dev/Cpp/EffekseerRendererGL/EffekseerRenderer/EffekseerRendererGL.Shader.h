@@ -133,9 +133,9 @@ public:
 						  Backend::ShaderRef shader,
 						  const char* name);
 
-	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, const char* name)
+	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout, const char* name)
 	{
-		auto shader = graphicsDevice->CreateShaderFromCodes(vsCodes, psCodes, nullptr).DownCast<Backend::Shader>();
+		auto shader = graphicsDevice->CreateShaderFromCodes(vsCodes, psCodes, layout).DownCast<Backend::Shader>();
 		return Create(graphicsDevice, shader, name);
 	}
 
@@ -180,9 +180,6 @@ public:
 	{
 		return pixelConstantBuffer_ != nullptr ? pixelConstantBuffer_->GetBuffer().data() : nullptr;
 	}
-
-	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);
-	void AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);
 
 	void SetConstantBuffer() override;
 

@@ -70,15 +70,21 @@ ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	: ImageRenderer(renderer)
 	, renderer(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
+	using namespace Effekseer::Backend;
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
+	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, "uMatCamera", UniformBufferLayoutElementType::Matrix44, 1, 0});
+	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, "uMatProjection", UniformBufferLayoutElementType::Matrix44, 1, sizeof(Effekseer::Matrix44)});
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElm);
+
 	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
 	EffekseerRendererGL::ShaderCodeView lineCodeDataPS(g_sprite_fs_texture_src);
 	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
 
 	auto shader_ =
-		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataPS, nullptr, "Standard Tex");
+		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataPS, uniformLayout, "Standard Tex");
 
 	auto shader_no_texture_ =
-		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataNPS, nullptr, "Standard NoTex");
+		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataNPS, uniformLayout, "Standard NoTex");
 
 	const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
@@ -91,21 +97,21 @@ ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 
 	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
-	shader_->AddVertexConstantLayout(EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatCamera"), 0);
-
-	shader_->AddVertexConstantLayout(
-		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+	//shader_->AddVertexConstantLayout(EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatCamera"), 0);
+	//
+	//shader_->AddVertexConstantLayout(
+	//	EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
 
 	shader_->SetTextureSlot(0, shader_->GetUniformId("uTexture0"));
 
 	shader_no_texture_->SetVertexLayout(vl);
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
-	shader_no_texture_->AddVertexConstantLayout(
-		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatCamera"), 0);
-
-	shader_no_texture_->AddVertexConstantLayout(
-		EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+	//shader_no_texture_->AddVertexConstantLayout(
+	//	EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatCamera"), 0);
+	//
+	//shader_no_texture_->AddVertexConstantLayout(
+	//	EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
 
 	this->shader = shader_;
 	this->shader_no_texture = shader_no_texture_;
