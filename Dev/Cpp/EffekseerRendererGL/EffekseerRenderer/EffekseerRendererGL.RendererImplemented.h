@@ -28,10 +28,13 @@ struct RenderStateSet
 	GLint cullFaceMode;
 	GLint blendSrc;
 	GLint blendDst;
+	GLint blendSrcAlpha;
+	GLint blendDstAlpha;
 	GLint blendEquation;
 	GLint vao;
 	GLint arrayBufferBinding;
 	GLint elementArrayBufferBinding;
+	GLint program;
 	std::array<GLint, ::Effekseer::TextureSlotMax> boundTextures;
 };
 

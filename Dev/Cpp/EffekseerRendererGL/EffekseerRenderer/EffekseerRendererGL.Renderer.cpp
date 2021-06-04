@@ -591,9 +591,12 @@ bool RendererImplemented::BeginRendering()
 		glGetIntegerv(GL_CULL_FACE_MODE, &m_originalState.cullFaceMode);
 		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
 		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
+		glGetIntegerv(GL_BLEND_SRC_ALPHA, &m_originalState.blendSrcAlpha);
+		glGetIntegerv(GL_BLEND_DST_ALPHA, &m_originalState.blendDstAlpha);
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
 		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &m_originalState.arrayBufferBinding);
 		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &m_originalState.elementArrayBufferBinding);
+		glGetIntegerv(GL_CURRENT_PROGRAM, &m_originalState.program);
 
 		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
 		{
@@ -676,11 +679,12 @@ bool RendererImplemented::EndRendering()
 		glDepthFunc(m_originalState.depthFunc);
 		glDepthMask(m_originalState.depthWrite);
 		glCullFace(m_originalState.cullFaceMode);
-		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
+		GLExt::glBlendFuncSeparate(m_originalState.blendSrc, m_originalState.blendDst, m_originalState.blendSrcAlpha, m_originalState.blendDstAlpha);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
 
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_originalState.arrayBufferBinding);
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_originalState.elementArrayBufferBinding);
+		GLExt::glUseProgram(m_originalState.program);
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
