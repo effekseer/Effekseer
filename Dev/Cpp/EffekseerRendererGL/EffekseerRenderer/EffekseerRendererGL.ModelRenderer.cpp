@@ -83,14 +83,6 @@ void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::Uni
 template <int N>
 void ModelRenderer::InitRenderer()
 {
-	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
-		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_sampler_alphaTex"));
-		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_sampler_uvDistortionTex"));
-		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_sampler_blendTex"));
-		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_sampler_blendAlphaTex"));
-		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_sampler_blendUVDistortionTex"));
-	};
-
 	for (size_t i = 0; i < 6; i++)
 	{
 		m_va[i] = nullptr;
@@ -124,31 +116,17 @@ void ModelRenderer::InitRenderer()
 	for (auto& shader : {shader_ad_lit_, shader_lit_})
 	{
 		shader->SetVertexLayout(vl);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
 	}
-	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
-	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_sampler_depthTex"));
-	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	for (auto& shader : {shader_ad_unlit_, shader_unlit_})
 	{
 		shader->SetVertexLayout(vl);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 	}
-	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
-	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
-	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	for (auto& shader : {shader_ad_distortion_, shader_distortion_})
 	{
 		shader->SetVertexLayout(vl);
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 	}
-	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
-	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_sampler_depthTex"));
-	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 }
 
 ModelRenderer::ModelRenderer(RendererImplemented* renderer,
@@ -257,6 +235,13 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 	ShaderCodeView dist_vs(get_model_distortion_vs(renderer->GetDeviceType()));
 	ShaderCodeView dist_ps(get_model_distortion_ps(renderer->GetDeviceType()));
 
+	const auto texLocUnlit = GetTextureLocations(EffekseerRenderer::RendererShaderType::Unlit);
+	const auto texLocLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedLit);
+	const auto texLocDist = GetTextureLocations(EffekseerRenderer::RendererShaderType::BackDistortion);
+	const auto texLocAdUnlit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedUnlit);
+	const auto texLocAdLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedLit);
+	const auto texLocAdDist = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedBackDistortion);
+
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
 	AddModelVertexUniformLayout(uniformLayoutElementsLitUnlit, false, instaincing, instanceCount);
 	AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
@@ -273,22 +258,22 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer)
 	AddModelVertexUniformLayout(uniformLayoutElementsDistAd, true, instaincing, instanceCount);
 	AddDistortionPixelUniformLayout(uniformLayoutElementsDistAd);
 
-	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlitAd);
+	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdLit, uniformLayoutElementsLitUnlitAd);
 	auto shader_lit_ad_in = graphicsDevice->CreateShaderFromCodes({ad_lit_vs}, {ad_lit_ps}, uniformLayoutLitAd).DownCast<Backend::Shader>();
 
-	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlitAd);
+	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdUnlit, uniformLayoutElementsLitUnlitAd);
 	auto shader_unlit_ad_in = graphicsDevice->CreateShaderFromCodes({ad_unlit_vs}, {ad_unlit_ps}, uniformLayoutUnlitAd).DownCast<Backend::Shader>();
 
-	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDistAd);
+	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdDist, uniformLayoutElementsDistAd);
 	auto shader_dist_ad_in = graphicsDevice->CreateShaderFromCodes({ad_dist_vs}, {ad_dist_ps}, uniformLayoutDistAd).DownCast<Backend::Shader>();
 
-	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocLit, uniformLayoutElementsLitUnlit);
 	auto shader_lit_in = graphicsDevice->CreateShaderFromCodes({lit_vs}, {lit_ps}, uniformLayoutLit).DownCast<Backend::Shader>();
 
-	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
 	auto shader_unlit_in = graphicsDevice->CreateShaderFromCodes({unlit_vs}, {unlit_ps}, uniformLayoutUnlit).DownCast<Backend::Shader>();
 
-	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDist);
+	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocDist, uniformLayoutElementsDist);
 	auto shader_dist_in = graphicsDevice->CreateShaderFromCodes({dist_vs}, {dist_ps}, uniformLayoutDist).DownCast<Backend::Shader>();
 
 	shader_ad_lit = Shader::Create(renderer->GetInternalGraphicsDevice(), shader_lit_ad_in, "ModelRendererLitAd");

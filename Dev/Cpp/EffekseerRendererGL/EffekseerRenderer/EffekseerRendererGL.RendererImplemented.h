@@ -272,6 +272,8 @@ void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLa
 
 void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
 
+Effekseer::CustomVector<Effekseer::CustomString<char>> GetTextureLocations(EffekseerRenderer::RendererShaderType type);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

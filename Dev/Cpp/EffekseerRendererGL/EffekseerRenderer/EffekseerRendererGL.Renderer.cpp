@@ -328,6 +328,13 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_vs(get_sprite_lit_vs(GetDeviceType()));
 	ShaderCodeView lit_ps(get_model_lit_ps(GetDeviceType()));
 
+	const auto texLocUnlit = GetTextureLocations(EffekseerRenderer::RendererShaderType::Unlit);
+	const auto texLocLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedLit);
+	const auto texLocDist = GetTextureLocations(EffekseerRenderer::RendererShaderType::BackDistortion);
+	const auto texLocAdUnlit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedUnlit);
+	const auto texLocAdLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedLit);
+	const auto texLocAdDist = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedBackDistortion);
+
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
 	AddVertexUniformLayout(uniformLayoutElementsLitUnlit);
 	AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
@@ -336,7 +343,7 @@ bool RendererImplemented::Initialize()
 	AddVertexUniformLayout(uniformLayoutElementsDist);
 	AddDistortionPixelUniformLayout(uniformLayoutElementsDist);
 
-	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdUnlit, uniformLayoutElementsLitUnlit);
 	auto shader_unlit_ad = graphicsDevice_->CreateShaderFromCodes({unlit_ad_vs}, {unlit_ad_ps}, uniformLayoutUnlitAd).DownCast<Backend::Shader>();
 
 	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit_ad, "UnlitAd");
@@ -346,7 +353,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDist);
+	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdDist, uniformLayoutElementsDist);
 	auto shader_distortion_ad = graphicsDevice_->CreateShaderFromCodes({distortion_ad_vs}, {distortion_ad_ps}, uniformLayoutDistAd).DownCast<Backend::Shader>();
 
 	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion_ad, "DistAd");
@@ -356,7 +363,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdLit, uniformLayoutElementsLitUnlit);
 	auto shader_lit_ad = graphicsDevice_->CreateShaderFromCodes({lit_ad_vs}, {lit_ad_ps}, uniformLayoutLitAd).DownCast<Backend::Shader>();
 
 	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit_ad, "LitAd");
@@ -366,7 +373,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_sampler_colorTex", "Sampler_sampler_depthTex"}, uniformLayoutElementsLitUnlit);
+	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
 	auto shader_unlit = graphicsDevice_->CreateShaderFromCodes({unlit_vs}, {unlit_ps}, uniformLayoutUnlit).DownCast<Backend::Shader>();
 
 	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit, "Unlit");
@@ -376,7 +383,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsDist);
+	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocDist, uniformLayoutElementsDist);
 	auto shader_distortion = graphicsDevice_->CreateShaderFromCodes({distortion_vs}, {distortion_ps}, uniformLayoutDist).DownCast<Backend::Shader>();
 
 	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion, "Dist");
@@ -386,7 +393,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElementsLitUnlit);
+	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocLit, uniformLayoutElementsLitUnlit);
 	auto shader_lit = graphicsDevice_->CreateShaderFromCodes({lit_vs}, {lit_ps}, uniformLayoutLit).DownCast<Backend::Shader>();
 
 	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit, "Lit");
@@ -395,14 +402,6 @@ bool RendererImplemented::Initialize()
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Lit");
 		return false;
 	}
-
-	auto applyPSAdvancedRendererParameterTexture = [](Shader* shader, int32_t offset) -> void {
-		shader->SetTextureSlot(0 + offset, shader->GetUniformId("Sampler_sampler_alphaTex"));
-		shader->SetTextureSlot(1 + offset, shader->GetUniformId("Sampler_sampler_uvDistortionTex"));
-		shader->SetTextureSlot(2 + offset, shader->GetUniformId("Sampler_sampler_blendTex"));
-		shader->SetTextureSlot(3 + offset, shader->GetUniformId("Sampler_sampler_blendAlphaTex"));
-		shader->SetTextureSlot(4 + offset, shader->GetUniformId("Sampler_sampler_blendUVDistortionTex"));
-	};
 
 	// Unlit
 	const Effekseer::Backend::VertexLayoutElement vlElemUnlitAd[8] = {
@@ -432,12 +431,7 @@ bool RendererImplemented::Initialize()
 	{
 		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 	}
-
-	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
-	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
-	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	vao_unlit_ = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), GetIndexBuffer());
 	vao_ad_unlit_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer());
@@ -476,13 +470,7 @@ bool RendererImplemented::Initialize()
 	{
 		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
 	}
-
-	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
-	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_sampler_depthTex"));
-	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 
 	vao_ad_distortion_ = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, GetVertexBuffer(), GetIndexBuffer());
 
@@ -496,13 +484,7 @@ bool RendererImplemented::Initialize()
 	{
 		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
-		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
-		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
 	}
-
-	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
-	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_sampler_depthTex"));
-	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
 
 	vao_ad_lit_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer());
 	vao_lit_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), GetIndexBuffer());
@@ -1347,6 +1329,63 @@ void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend:
 	storeVector("CBPS0.softParticleParam");
 	storeVector("CBPS0.reconstructionParam1");
 	storeVector("CBPS0.reconstructionParam2");
+}
+
+Effekseer::CustomVector<Effekseer::CustomString<char>> GetTextureLocations(EffekseerRenderer::RendererShaderType type)
+{
+	Effekseer::CustomVector<Effekseer::CustomString<char>> texLoc;
+
+	auto pushColor = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+		texLoc.emplace_back("Sampler_sampler_colorTex");
+	};
+
+	auto pushDepth = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+		texLoc.emplace_back("Sampler_sampler_depthTex");
+	};
+
+	auto pushBack = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+		texLoc.emplace_back("Sampler_sampler_backTex");
+	};
+
+	auto pushNormal = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+		texLoc.emplace_back("Sampler_sampler_normalTex");
+	};
+
+	auto pushAdvancedRendererParameterLoc = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) -> void {
+		texLoc.emplace_back("Sampler_sampler_alphaTex");
+		texLoc.emplace_back("Sampler_sampler_uvDistortionTex");
+		texLoc.emplace_back("Sampler_sampler_blendTex");
+		texLoc.emplace_back("Sampler_sampler_blendAlphaTex");
+		texLoc.emplace_back("Sampler_sampler_blendUVDistortionTex");
+	};
+
+	pushColor(texLoc);
+
+	if (type == EffekseerRenderer::RendererShaderType::Lit)
+	{
+		pushNormal(texLoc);
+	}
+	else if (type == EffekseerRenderer::RendererShaderType::BackDistortion)
+	{
+		pushBack(texLoc);
+	}
+	else if (type == EffekseerRenderer::RendererShaderType::AdvancedUnlit)
+	{
+		pushAdvancedRendererParameterLoc(texLoc);
+	}
+	else if (type == EffekseerRenderer::RendererShaderType::AdvancedLit)
+	{
+		pushNormal(texLoc);
+		pushAdvancedRendererParameterLoc(texLoc);
+	}
+	else if (type == EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
+	{
+		pushBack(texLoc);
+		pushAdvancedRendererParameterLoc(texLoc);
+	}
+	pushDepth(texLoc);
+
+	return texLoc;
 }
 
 } // namespace EffekseerRendererGL

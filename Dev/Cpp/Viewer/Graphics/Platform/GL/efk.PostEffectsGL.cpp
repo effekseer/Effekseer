@@ -270,8 +270,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	shaderExtract->SetVertexLayout(vl);
 	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
 	shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
-	//shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderExtract->GetUniformId("u_FilterParams"), 0);
-	//shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderExtract->GetUniformId("u_Intensity"), 16);
 
 	// Downsample shader
 
@@ -469,14 +467,12 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	using namespace Effekseer::Backend;
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
 	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_Exposure", UniformBufferLayoutElementType::Vector4, 1, 0});
-	//uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_Intensity", UniformBufferLayoutElementType::Vector4, 1, sizeof(float) * 4});
 	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElm);
 
 	shaderReinhard.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, tonemapPS, uniformLayout, "Tonemap Reinhard"));
 	shaderReinhard->SetVertexLayout(vl);
 	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
-	//shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shaderReinhard->GetUniformId("u_Exposure"), 0);
 
 	// Setup VAOs
 	vaoCopy = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderCopy.get());

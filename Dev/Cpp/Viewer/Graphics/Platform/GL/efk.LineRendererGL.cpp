@@ -37,12 +37,6 @@ LineRendererGL::LineRendererGL(const EffekseerRenderer::RendererRef& renderer)
 
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 
-	//shader_no_texture_->AddVertexConstantLayout(
-	//	EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("CBVS0.mCamera"), 0);
-	//
-	//shader_no_texture_->AddVertexConstantLayout(
-	//	EffekseerRendererGL::CONSTANT_TYPE_MATRIX44, shader_no_texture_->GetUniformId("CBVS0.mProj"), sizeof(Effekseer::Matrix44));
-
 	this->shader = shader_no_texture_;
 
 	auto gd = this->renderer->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();

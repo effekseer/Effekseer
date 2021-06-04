@@ -296,6 +296,11 @@ GLint Shader::GetTextureSlot(int32_t index)
 //-----------------------------------------------------------------------------------
 bool Shader::GetTextureSlotEnable(int32_t index)
 {
+	if (shader_->GetTextureLocations().size() > 0)
+	{
+		return index < shader_->GetTextureLocations().size();
+	}
+
 	return m_textureSlotEnables[index];
 }
 
