@@ -272,11 +272,6 @@ void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLa
 
 void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
 
-
-void AssignPixelConstantBuffer(Shader* shader);
-
-void AssignDistortionPixelConstantBuffer(Shader* shader);
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

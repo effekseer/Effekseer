@@ -433,8 +433,6 @@ bool RendererImplemented::Initialize()
 		shader->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
-
-		AssignPixelConstantBuffer(shader);
 	}
 
 	applyPSAdvancedRendererParameterTexture(shader_ad_unlit_, 1);
@@ -480,8 +478,6 @@ bool RendererImplemented::Initialize()
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_backTex"));
-
-		AssignDistortionPixelConstantBuffer(shader);
 	}
 
 	applyPSAdvancedRendererParameterTexture(shader_ad_distortion_, 2);
@@ -502,8 +498,6 @@ bool RendererImplemented::Initialize()
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
-
-		AssignPixelConstantBuffer(shader);
 	}
 
 	applyPSAdvancedRendererParameterTexture(shader_ad_lit_, 2);
