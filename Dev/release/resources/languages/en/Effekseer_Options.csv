@@ -43,6 +43,8 @@ Options_DistortionType_Desc,Distortion method
 Options_MouseMappingType_Name,Mouse mapping
 RenderMode_Normal_Name,Normal
 RenderMode_Wireframe_Name,Wireframe
+RenderMode_NormalWithWireframe_Name,Normal+Wireframe
+RenderMode_Overdraw_Name,Overdraw
 ViewMode_3D_Name,3D
 ViewMode_2D_Name,2D
 FPSType_60FPS_Name,60 FPS

@@ -268,7 +268,9 @@ namespace Effekseer.Data
 			Normal = 0,
 			[Key(key = "RenderMode_Wireframe")]
 			Wireframe = 1,
+			[Key(key = "RenderMode_NormalWithWireframe")]
 			NormalWithWireframe = 2,
+			[Key(key = "RenderMode_Overdraw")]
 			Overdraw = 3,
 
 		}

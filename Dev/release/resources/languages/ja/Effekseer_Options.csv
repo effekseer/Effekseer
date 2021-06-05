@@ -43,6 +43,8 @@ Options_DistortionType_Desc,歪み方法
 Options_MouseMappingType_Name,マウスマッピング
 RenderMode_Normal_Name,通常モード
 RenderMode_Wireframe_Name,ワイヤーフレーム
+RenderMode_NormalWithWireframe_Name,通常+ワイヤーフレーム
+RenderMode_Overdraw_Name,オーバードロー
 ViewMode_3D_Name,3D
 ViewMode_2D_Name,2D
 FPSType_60FPS_Name,60 FPS
