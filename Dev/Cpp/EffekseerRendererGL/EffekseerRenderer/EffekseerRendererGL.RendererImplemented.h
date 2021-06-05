@@ -269,9 +269,13 @@ private:
 	void GenerateIndexDataStride();
 };
 
-void AssignPixelConstantBuffer(Shader* shader);
+void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
 
-void AssignDistortionPixelConstantBuffer(Shader* shader);
+void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
+
+void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
+
+Effekseer::CustomVector<Effekseer::CustomString<char>> GetTextureLocations(EffekseerRenderer::RendererShaderType type);
 
 //----------------------------------------------------------------------------------
 //

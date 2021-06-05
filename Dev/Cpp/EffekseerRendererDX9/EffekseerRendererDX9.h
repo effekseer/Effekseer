@@ -63,6 +63,18 @@ class Renderer;
 using RendererRef = ::Effekseer::RefPtr<Renderer>;
 
 /**
+	@brief	Specify a shader for renderer from external class
+	@note
+	For Effekseer tools
+*/
+struct ExternalShaderSettings
+{
+	Effekseer::Backend::ShaderRef StandardShader;
+	Effekseer::Backend::ShaderRef ModelShader;
+	Effekseer::AlphaBlendType Blend;
+};
+
+/**
 	@brief	
 	\~english A callback to distort a background before drawing
 	\~japanese 背景を歪ませるエフェクトを描画する前に実行されるコールバック
@@ -477,6 +489,20 @@ public:
 		\~Japanese	グラフィクスデバイスを取得する。
 	*/
 	virtual Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const;
+
+	/**
+		@brief	Get external shader settings
+		@note
+		For	Effekseer tools
+	*/
+	virtual std::shared_ptr<ExternalShaderSettings> GetExternalShaderSettings() const;
+
+	/**
+		@brief	Specify external shader settings
+		@note
+		For	Effekseer tools
+	*/
+	virtual void SetExternalShaderSettings(const std::shared_ptr<ExternalShaderSettings>& settings);
 };
 
 //----------------------------------------------------------------------------------

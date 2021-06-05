@@ -36,7 +36,8 @@ list(APPEND cpps
     RenderedEffectGenerator.cpp
 	Graphics/CommandList.cpp
     Graphics/RenderPass.cpp
-	Graphics/StaticMeshRenderer.cpp
+    Graphics/StaticMeshRenderer.cpp
+    Graphics/PostProcess.cpp
     Recorder/Recorder.cpp
 )
 
@@ -44,7 +45,8 @@ list(APPEND hs
     RenderedEffectGenerator.h
 	Graphics/CommandList.h
     Graphics/RenderPass.h
-	Graphics/StaticMeshRenderer.h
+    Graphics/StaticMeshRenderer.h
+    Graphics/PostProcess.h
     Recorder/Recorder.h
 )
 

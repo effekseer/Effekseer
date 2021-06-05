@@ -25,6 +25,153 @@ namespace EffekseerRendererGL
 namespace Backend
 {
 
+Effekseer::CustomVector<GLint> GetVertexAttribLocations(const VertexLayoutRef& vertexLayout, const ShaderRef& shader)
+{
+	Effekseer::CustomVector<GLint> ret;
+
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		const auto& element = vertexLayout->GetElements()[i];
+		ret.emplace_back(GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str()));
+	}
+
+	return ret;
+}
+
+void EnableLayouts(const VertexLayoutRef& vertexLayout, const Effekseer::CustomVector<GLint>& locations)
+{
+	int32_t vertexSize = 0;
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		const auto& element = vertexLayout->GetElements()[i];
+		vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
+	}
+
+	uint32_t offset = 0;
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		const auto& element = vertexLayout->GetElements()[i];
+		const auto loc = locations[i];
+
+		GLenum type = {};
+		int32_t count = {};
+		GLboolean isNormalized = false;
+
+		if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)
+		{
+			count = 4;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)
+		{
+			count = 4;
+			type = GL_UNSIGNED_BYTE;
+			isNormalized = GL_TRUE;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)
+		{
+			count = 1;
+			type = GL_FLOAT;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)
+		{
+			count = 2;
+			type = GL_FLOAT;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)
+		{
+			count = 3;
+			type = GL_FLOAT;
+		}
+		else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
+		{
+			count = 4;
+			type = GL_FLOAT;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		if (loc >= 0)
+		{
+			GLExt::glEnableVertexAttribArray(loc);
+			GLExt::glVertexAttribPointer(loc,
+										 count,
+										 type,
+										 isNormalized,
+										 vertexSize,
+										 reinterpret_cast<GLvoid*>(static_cast<size_t>(offset)));
+		}
+
+		offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
+	}
+}
+
+void DisableLayouts(const Effekseer::CustomVector<GLint>& locations)
+{
+	for (size_t i = 0; i < locations.size(); i++)
+	{
+		auto loc = locations[i];
+
+		if (loc >= 0)
+		{
+			GLExt::glDisableVertexAttribArray(loc);
+		}
+	}
+}
+
+void StoreUniforms(const ShaderRef& shader, const UniformBufferRef& vertexUniform, const UniformBufferRef& fragmentUniform, bool transpose)
+{
+	for (size_t i = 0; i < shader->GetLayout()->GetElements().size(); i++)
+	{
+		const auto& element = shader->GetLayout()->GetElements()[i];
+		const auto loc = shader->GetUniformLocations()[i];
+
+		if (loc < 0)
+		{
+			continue;
+		}
+
+		UniformBuffer* uniformBuffer = nullptr;
+
+		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
+		{
+			uniformBuffer = static_cast<UniformBuffer*>(vertexUniform.Get());
+		}
+		else if (element.Stage == Effekseer::Backend::ShaderStageType::Pixel)
+		{
+			uniformBuffer = static_cast<UniformBuffer*>(fragmentUniform.Get());
+		}
+
+		if (uniformBuffer != nullptr)
+		{
+			if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
+			{
+				const auto& buffer = uniformBuffer->GetBuffer();
+				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
+				GLExt::glUniform4fv(loc, element.Count, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+			}
+			else if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
+			{
+				const auto& buffer = uniformBuffer->GetBuffer();
+				assert(buffer.size() >= element.Offset + sizeof(float) * 4 * 4);
+				GLExt::glUniformMatrix4fv(loc, element.Count, transpose ? GL_TRUE : GL_FALSE, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+			}
+			else
+			{
+				// Unimplemented
+				assert(0);
+			}
+		}
+		else
+		{
+			// Invalid
+			assert(0);
+		}
+	}
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -561,33 +708,39 @@ Shader::Shader(GraphicsDevice* graphicsDevice)
 
 Shader::~Shader()
 {
-	if (program_ > 0)
-	{
-		GLExt::glDeleteProgram(program_);
-	}
-
-	if (vao_ > 0)
-	{
-		GLExt::glDeleteVertexArrays(1, &vao_);
-	}
+	Reset();
 
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef& layout)
+bool Shader::Compile()
 {
-	GLint vsCodeLen = static_cast<GLint>(strlen(vsCode));
-	GLint psCodeLen = static_cast<GLint>(strlen(psCode));
+	std::array<GLchar*, elementMax> vsCodePtr;
+	std::array<GLchar*, elementMax> psCodePtr;
+	std::array<GLint, elementMax> vsCodeLen;
+	std::array<GLint, elementMax> psCodeLen;
+
+	for (size_t i = 0; i < vsCodes_.size(); i++)
+	{
+		vsCodePtr[i] = const_cast<GLchar*>(vsCodes_[i].data());
+		vsCodeLen[i] = static_cast<GLint>(strlen(vsCodePtr[i]));
+	}
+
+	for (size_t i = 0; i < psCodes_.size(); i++)
+	{
+		psCodePtr[i] = const_cast<GLchar*>(psCodes_[i].data());
+		psCodeLen[i] = static_cast<GLint>(strlen(psCodePtr[i]));
+	}
 
 	GLint res_vs, res_fs, res_link = 0;
 	auto vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
 
-	GLExt::glShaderSource(vert_shader, 1, &vsCode, &vsCodeLen);
+	GLExt::glShaderSource(vert_shader, vsCodes_.size(), const_cast<const GLchar**>(vsCodePtr.data()), vsCodeLen.data());
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
 	auto frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
-	GLExt::glShaderSource(frag_shader, 1, &psCode, &psCodeLen);
+	GLExt::glShaderSource(frag_shader, psCodes_.size(), const_cast<const GLchar**>(psCodePtr.data()), psCodeLen.data());
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 
@@ -643,14 +796,82 @@ bool Shader::Init(const char* vsCode, const char* psCode, Effekseer::Backend::Un
 		GLExt::glGenVertexArrays(1, &vao_);
 	}
 
-	layout_ = layout;
+	if (layout_ != nullptr)
+	{
+		textureLocations_.reserve(layout_->GetTextures().size());
+		for (size_t i = 0; i < layout_->GetTextures().size(); i++)
+		{
+			textureLocations_.emplace_back(GLExt::glGetUniformLocation(program_, layout_->GetTextures()[i].c_str()));
+		}
+
+		uniformLocations_.reserve(layout_->GetElements().size());
+		for (size_t i = 0; i < layout_->GetElements().size(); i++)
+		{
+			uniformLocations_.emplace_back(GLExt::glGetUniformLocation(program_, layout_->GetElements()[i].Name.c_str()));
+		}
+	}
 
 	return true;
+}
+
+void Shader::Reset()
+{
+	if (program_ > 0)
+	{
+		GLExt::glDeleteProgram(program_);
+	}
+
+	if (vao_ > 0)
+	{
+		GLExt::glDeleteVertexArrays(1, &vao_);
+	}
+
+	textureLocations_.clear();
+	uniformLocations_.clear();
+}
+
+bool Shader::Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef& layout)
+{
+	layout_ = layout;
+
+	if (vsCodes.size() > elementMax || psCodes.size() > elementMax)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "There are too many elements.");
+		return false;
+	}
+
+	vsCodes_.resize(vsCodes.size());
+
+	for (size_t i = 0; i < vsCodes_.size(); i++)
+	{
+		vsCodes_[i] = vsCodes[i].data();
+	}
+
+	psCodes_.resize(psCodes.size());
+
+	for (size_t i = 0; i < psCodes_.size(); i++)
+	{
+		psCodes_[i] = psCodes[i].data();
+	}
+
+	Reset();
+	return Compile();
+}
+
+void Shader::OnLostDevice()
+{
+	Reset();
+}
+
+void Shader::OnResetDevice()
+{
+	Compile();
 }
 
 bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
 {
 	param_ = param;
+	attribLocations_ = GetVertexAttribLocations(param_.VertexLayoutPtr.DownCast<Backend::VertexLayout>(), param_.ShaderPtr.DownCast<Backend::Shader>());
 	return true;
 }
 
@@ -922,11 +1143,11 @@ Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromKey(const char* ke
 	return nullptr;
 }
 
-Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout)
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout)
 {
 	auto ret = Effekseer::MakeRefPtr<Shader>(this);
 
-	if (!ret->Init(vsCode, psCode, layout))
+	if (!ret->Init(vsCodes, psCodes, layout))
 	{
 		return nullptr;
 	}
@@ -965,11 +1186,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	GLExt::glUseProgram(shader->GetProgram());
 
 	// textures
-	auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
+	const auto textureCount = std::min(static_cast<int32_t>(shader->GetLayout()->GetTextures().size()), drawParam.TextureCount);
 
 	for (int32_t i = 0; i < textureCount; i++)
 	{
-		auto textureSlot = GLExt::glGetUniformLocation(shader->GetProgram(), shader->GetLayout()->GetTextures()[i].c_str());
+		const auto textureSlot = shader->GetTextureLocations()[i];
 
 		if (textureSlot < 0)
 		{
@@ -1046,125 +1267,16 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	}
 
 	// uniformss
-	for (size_t i = 0; i < shader->GetLayout()->GetElements().size(); i++)
-	{
-		const auto& element = shader->GetLayout()->GetElements()[i];
-		auto loc = GLExt::glGetUniformLocation(shader->GetProgram(), element.Name.c_str());
-
-		if (loc < 0)
-		{
-			continue;
-		}
-
-		UniformBuffer* uniformBuffer = nullptr;
-
-		if (element.Stage == Effekseer::Backend::ShaderStageType::Vertex)
-		{
-			uniformBuffer = static_cast<UniformBuffer*>(drawParam.VertexUniformBufferPtr.Get());
-		}
-		else if (element.Stage == Effekseer::Backend::ShaderStageType::Pixel)
-		{
-			uniformBuffer = static_cast<UniformBuffer*>(drawParam.PixelUniformBufferPtr.Get());
-		}
-
-		if (uniformBuffer != nullptr)
-		{
-			if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
-			{
-				const auto& buffer = uniformBuffer->GetBuffer();
-				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
-				GLExt::glUniform4fv(loc, 1, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
-			}
-			else if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
-			{
-				const auto& buffer = uniformBuffer->GetBuffer();
-				assert(buffer.size() >= element.Offset + sizeof(float) * 4 * 4);
-				GLExt::glUniformMatrix4fv(loc, 1, GL_FALSE, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
-			}
-			else
-			{
-				// Unimplemented
-				assert(0);
-			}
-		}
-		else
-		{
-			// Invalid
-			assert(0);
-		}
-	}
+	StoreUniforms(pip->GetParam().ShaderPtr.DownCast<Backend::Shader>(),
+				  drawParam.VertexUniformBufferPtr.DownCast<Backend::UniformBuffer>(),
+				  drawParam.PixelUniformBufferPtr.DownCast<Backend::UniformBuffer>(),
+				  false);
 
 	GLCheckError();
 
 	// layouts
-	{
-		int32_t vertexSize = 0;
-		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-		{
-			const auto& element = vertexLayout->GetElements()[i];
-			vertexSize += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
-		}
-
-		uint32_t offset = 0;
-		for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-		{
-			const auto& element = vertexLayout->GetElements()[i];
-			auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
-
-			GLenum type = {};
-			int32_t count = {};
-			GLboolean isNormalized = false;
-
-			if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)
-			{
-				count = 4;
-				type = GL_UNSIGNED_BYTE;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)
-			{
-				count = 4;
-				type = GL_UNSIGNED_BYTE;
-				isNormalized = GL_TRUE;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)
-			{
-				count = 1;
-				type = GL_FLOAT;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)
-			{
-				count = 2;
-				type = GL_FLOAT;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)
-			{
-				count = 3;
-				type = GL_FLOAT;
-			}
-			else if (element.Format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
-			{
-				count = 4;
-				type = GL_FLOAT;
-			}
-			else
-			{
-				assert(0);
-			}
-
-			if (loc >= 0)
-			{
-				GLExt::glEnableVertexAttribArray(loc);
-				GLExt::glVertexAttribPointer(loc,
-											 count,
-											 type,
-											 isNormalized,
-											 vertexSize,
-											 reinterpret_cast<GLvoid*>(static_cast<size_t>(offset)));
-			}
-
-			offset += Effekseer::Backend::GetVertexLayoutFormatSize(element.Format);
-		}
-	}
+	auto vl = pip->GetParam().VertexLayoutPtr;
+	EnableLayouts(vl.DownCast<Backend::VertexLayout>(), pip->GetAttribLocations());
 
 	GLCheckError();
 
@@ -1317,16 +1429,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr);
 	}
 
-	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-	{
-		const auto& element = vertexLayout->GetElements()[i];
-		auto loc = GLExt::glGetAttribLocation(shader->GetProgram(), element.Name.c_str());
-
-		if (loc >= 0)
-		{
-			GLExt::glDisableVertexAttribArray(loc);
-		}
-	}
+	DisableLayouts(pip->GetAttribLocations());
 
 	if (GLExt::IsSupportedVertexArray())
 	{

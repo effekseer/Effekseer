@@ -19,6 +19,10 @@ public:
 	{
 	}
 
+	virtual void OverrideShader(::Effekseer::Backend::ShaderRef shader)
+	{
+	}
+
 	virtual void SetVertexConstantBufferSize(int32_t size) = 0;
 	virtual void SetPixelConstantBufferSize(int32_t size) = 0;
 

@@ -14,13 +14,11 @@ namespace EffekseerRendererDX11
 //
 //-----------------------------------------------------------------------------------
 Shader::Shader(RendererImplemented* renderer,
-			   ID3D11VertexShader* vertexShader,
-			   ID3D11PixelShader* pixelShader,
+			   Backend::ShaderRef shader,
 			   ID3D11InputLayout* vertexDeclaration,
 			   bool hasRefCount)
 	: DeviceObject(renderer, hasRefCount)
-	, m_vertexShader(vertexShader)
-	, m_pixelShader(pixelShader)
+	, shader_(shader)
 	, m_vertexDeclaration(vertexDeclaration)
 	, m_constantBufferToVS(nullptr)
 	, m_constantBufferToPS(nullptr)
@@ -34,8 +32,6 @@ Shader::Shader(RendererImplemented* renderer,
 //-----------------------------------------------------------------------------------
 Shader::~Shader()
 {
-	ES_SAFE_RELEASE(m_vertexShader);
-	ES_SAFE_RELEASE(m_pixelShader);
 	ES_SAFE_RELEASE(m_vertexDeclaration);
 	ES_SAFE_RELEASE(m_constantBufferToVS);
 	ES_SAFE_RELEASE(m_constantBufferToPS);
@@ -48,10 +44,7 @@ Shader::~Shader()
 //
 //-----------------------------------------------------------------------------------
 Shader* Shader::Create(RendererImplemented* renderer,
-					   const uint8_t vertexShader[],
-					   int32_t vertexShaderSize,
-					   const uint8_t pixelShader[],
-					   int32_t pixelShaderSize,
+					   Effekseer::Backend::ShaderRef shader,
 					   const char* name,
 					   const D3D11_INPUT_ELEMENT_DESC decl[],
 					   int32_t layoutCount,
@@ -62,27 +55,11 @@ Shader* Shader::Create(RendererImplemented* renderer,
 
 	HRESULT hr;
 
-	ID3D11VertexShader* vs = nullptr;
-	ID3D11PixelShader* ps = nullptr;
 	ID3D11InputLayout* vertexDeclaration = nullptr;
 
-	hr = renderer->GetDevice()->CreateVertexShader(vertexShader, vertexShaderSize, nullptr, &vs);
+	auto shaderdx11 = shader.DownCast<Backend::Shader>();
 
-	if (FAILED(hr))
-	{
-		printf("* %s VS Error\n", name);
-		goto EXIT;
-	}
-
-	hr = renderer->GetDevice()->CreatePixelShader((const DWORD*)pixelShader, pixelShaderSize, nullptr, &ps);
-
-	if (FAILED(hr))
-	{
-		printf("* %s PS Error\n", name);
-		goto EXIT;
-	}
-
-	hr = renderer->GetDevice()->CreateInputLayout(decl, layoutCount, vertexShader, vertexShaderSize, &vertexDeclaration);
+	hr = renderer->GetDevice()->CreateInputLayout(decl, layoutCount, shaderdx11->GetVertexShaderData().data(), shaderdx11->GetVertexShaderData().size(), &vertexDeclaration);
 
 	if (FAILED(hr))
 	{
@@ -90,11 +67,9 @@ Shader* Shader::Create(RendererImplemented* renderer,
 		goto EXIT;
 	}
 
-	return new Shader(renderer, vs, ps, vertexDeclaration, hasRefCount);
+	return new Shader(renderer, shaderdx11, vertexDeclaration, hasRefCount);
 
 EXIT:;
-	ES_SAFE_RELEASE(vs);
-	ES_SAFE_RELEASE(ps);
 	ES_SAFE_RELEASE(vertexDeclaration);
 	return nullptr;
 }

@@ -102,7 +102,6 @@ void VertexArray::Init()
 	if (m_vertexBuffer != nullptr)
 	{
 		m_shader->EnableAttribs();
-		m_shader->SetVertex();
 	}
 
 	GLExt::glBindVertexArray(0);

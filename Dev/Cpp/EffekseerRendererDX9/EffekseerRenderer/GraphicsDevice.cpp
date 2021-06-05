@@ -535,6 +535,79 @@ void Texture::OnResetDevice()
 	}
 }
 
+bool Shader::GenerateShaders()
+{
+	auto device = graphicsDevice_->GetDevice();
+	assert(device != nullptr);
+
+	HRESULT hr;
+
+	Effekseer::SafeRelease(vertexShader_);
+	Effekseer::SafeRelease(pixelShader_);
+
+	hr = device->CreateVertexShader((const DWORD*)vertexShaderData_.data(), &vertexShader_);
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	hr = device->CreatePixelShader((const DWORD*)pixelShaderData_.data(), &pixelShader_);
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	return true;
+}
+
+void Shader::ResetShaders()
+{
+	Effekseer::SafeRelease(vertexShader_);
+	Effekseer::SafeRelease(pixelShader_);
+}
+
+Shader::Shader(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+	graphicsDevice_->Register(this);
+}
+
+Shader ::~Shader()
+{
+	ResetShaders();
+	graphicsDevice_->Unregister(this);
+	Effekseer::SafeRelease(graphicsDevice_);
+}
+
+bool Shader::Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize)
+{
+	const auto pv = static_cast<const uint8_t*>(vertexShaderData);
+	vertexShaderData_.assign(pv, pv + vertexShaderDataSize);
+
+	const auto pp = static_cast<const uint8_t*>(pixelShaderData);
+	pixelShaderData_.assign(pp, pp + pixelShaderDataSize);
+
+	return GenerateShaders();
+}
+
+void Shader::OnLostDevice()
+{
+	ResetShaders();
+}
+
+void Shader::OnChangeDevice()
+{
+	ResetShaders();
+}
+
+void Shader::OnResetDevice()
+{
+	GenerateShaders();
+}
+
 GraphicsDevice::GraphicsDevice(IDirect3DDevice9* device)
 {
 	device_ = Effekseer::CreateUniqueReference(device, true);
@@ -640,6 +713,19 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(IDirect3DTexture9* 
 
 	return ret;
 }
+
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
+{
+	auto ret = Effekseer::MakeRefPtr<Shader>(this);
+
+	if (!ret->Init(vsData, vsDataSize, psData, psDataSize))
+	{
+		return nullptr;
+	}
+
+	return ret;
+}
+
 
 } // namespace Backend
 } // namespace EffekseerRendererDX9

@@ -19,195 +19,94 @@
 namespace EffekseerRendererGL
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+using ShaderCodeView = Effekseer::StringView<char>;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ShaderAttribInfo
-{
-	const char* name;
-	GLenum type;
-	uint16_t count;
-	uint16_t offset;
-	bool normalized;
-};
+const char* GetVertexShaderHeader(OpenGLDeviceType deviceType);
 
-struct ShaderUniformInfo
-{
-	const char* name;
-};
-
-enum eConstantType
-{
-	CONSTANT_TYPE_MATRIX44 = 0,
-	CONSTANT_TYPE_VECTOR4 = 100,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-struct ShaderCodeView
-{
-	const char* Data;
-	int32_t Length;
-
-	ShaderCodeView()
-		: Data(nullptr)
-		, Length(0)
-	{
-	}
-
-	ShaderCodeView(const char* data)
-		: Data(data)
-		, Length(static_cast<int32_t>(strlen(data)))
-	{
-	}
-};
+const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType);
 
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
-	struct ShaderCode
-	{
-		std::vector<char> Code;
-	};
-
-	struct Layout
-	{
-		GLenum type;
-		uint16_t count;
-		uint16_t offset;
-		bool normalized;
-	};
-
-	struct ShaderAttribInfoInternal
-	{
-		std::string name;
-		GLenum type;
-		uint16_t count;
-		uint16_t offset;
-		bool normalized;
-	};
-
-	struct ShaderUniformInfoInternal
-	{
-		std::string name;
-	};
-
-	struct ConstantLayout
-	{
-		eConstantType Type;
-		GLint ID;
-		int32_t Offset;
-		int32_t Count;
-	};
-
 	OpenGLDeviceType m_deviceType;
-	GLuint m_program;
-
-	std::vector<GLint> m_aid;
-	std::vector<Layout> m_layout;
+	Backend::GraphicsDeviceRef graphicsDevice_;
+	Backend::ShaderRef shader_;
+	Backend::ShaderRef shaderOverride_;
+	Backend::VertexLayoutRef vertexLayout_;
 
 	int32_t m_vertexSize;
 
-	uint8_t* m_vertexConstantBuffer;
-	uint8_t* m_pixelConstantBuffer;
-	bool addHeader_ = true;
-
-	std::vector<ConstantLayout> m_vertexConstantLayout;
-	std::vector<ConstantLayout> m_pixelConstantLayout;
-
-	std::array<GLint, Effekseer::TextureSlotMax> m_textureSlots;
-	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
+	Backend::UniformBufferRef vertexConstantBuffer_;
+	Backend::UniformBufferRef pixelConstantBuffer_;
 
 	std::string name_;
-	std::vector<ShaderCode> vsCodes_;
-	std::vector<ShaderCode> psCodes_;
 
-	std::vector<ShaderAttribInfoInternal> attribs;
-	std::vector<ShaderUniformInfoInternal> uniforms;
+	Effekseer::CustomVector<GLint> attribs_;
 
 	bool isTransposeEnabled_ = false;
 
 	GLint baseInstance_ = -1;
 
-	static bool CompileShader(OpenGLDeviceType deviceType,
-							  GLuint& program,
-							  const ShaderCodeView* vsData,
-							  size_t vsDataCount,
-							  const ShaderCodeView* psData,
-							  size_t psDataCount,
-							  const char* name,
-							  bool addHeader);
-
-	bool ReloadShader();
-
 	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
-		   GLuint program,
-		   const ShaderCodeView* vsData,
-		   size_t vsDataCount,
-		   const ShaderCodeView* psData,
-		   size_t psDataCount,
-		   const char* name,
-		   bool hasRefCount,
-		   bool addHeader);
-
-	GLint GetAttribId(const char* name) const;
+		   Backend::ShaderRef shader,
+		   const char* name);
 
 public:
-	GLint GetUniformId(const char* name) const;
-
-public:
-	virtual ~Shader();
+	virtual ~Shader() override = default;
 
 	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice,
-						  const ShaderCodeView* vsData,
-						  size_t vsDataCount,
-						  const ShaderCodeView* psData,
-						  size_t psDataCount,
-						  const char* name,
-						  bool hasRefCount = true,
-						  bool addHeader = true);
+						  Backend::ShaderRef shader,
+						  const char* name);
+
+	static Shader* Create(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout, const char* name)
+	{
+		auto shader = graphicsDevice->CreateShaderFromCodes(vsCodes, psCodes, layout).DownCast<Backend::Shader>();
+		return Create(graphicsDevice, shader, name);
+	}
+
+	static Shader* CreateWithHeader(const Backend::GraphicsDeviceRef& graphicsDevice, const Effekseer::StringView<char>& vsCode, const Effekseer::StringView<char>& psCode, Effekseer::Backend::UniformLayoutRef layout, const char* name)
+	{
+
+		auto shader = graphicsDevice->CreateShaderFromCodes(
+										{{GetVertexShaderHeader(graphicsDevice->GetDeviceType())}, vsCode},
+										{{GetFragmentShaderHeader(graphicsDevice->GetDeviceType())}, psCode},
+										layout)
+						  .DownCast<Backend::Shader>();
+		return Create(graphicsDevice, shader, name);
+	}
 
 public:
-	virtual void OnLostDevice() override;
+	virtual void OnLostDevice() override
+	{
+	}
 	virtual void OnResetDevice() override;
-	virtual void OnChangeDevice();
 
 public:
+	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override;
+
 	GLuint GetInterface() const;
 
-	void GetAttribIdList(int count, const ShaderAttribInfo* info);
-	void GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* uid_list) const;
+	void SetVertexLayout(Backend::VertexLayoutRef vertexLayout);
 
 	void BeginScene();
 	void EndScene();
 	void EnableAttribs();
 	void DisableAttribs();
-	void SetVertex();
 
 	void SetVertexConstantBufferSize(int32_t size) override;
 	void SetPixelConstantBufferSize(int32_t size) override;
 
 	void* GetVertexConstantBuffer() override
 	{
-		return m_vertexConstantBuffer;
+		return vertexConstantBuffer_ != nullptr ? vertexConstantBuffer_->GetBuffer().data() : nullptr;
 	}
 	void* GetPixelConstantBuffer() override
 	{
-		return m_pixelConstantBuffer;
+		return pixelConstantBuffer_ != nullptr ? pixelConstantBuffer_->GetBuffer().data() : nullptr;
 	}
-
-	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);
-	void AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset, int32_t count = 1);
 
 	void SetConstantBuffer() override;
 
-	void SetTextureSlot(int32_t index, GLint value);
 	GLint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
 

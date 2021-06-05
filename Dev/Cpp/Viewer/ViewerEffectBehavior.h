@@ -1,19 +1,12 @@
 #pragma once
 
 #include <stdint.h>
+#include "efk.Base.h"
 
 namespace Effekseer
 {
 namespace Tool
 {
-
-// TODO : move a file
-enum class DistortionType : int32_t
-{
-	Current,
-	Effekseer120,
-	Disabled,
-};
 
 class ViewerEffectBehavior
 {

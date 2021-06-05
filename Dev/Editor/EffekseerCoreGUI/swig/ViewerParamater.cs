@@ -244,12 +244,12 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public RenderMode RenderingMode {
+  public RenderingMethodType RenderingMode {
     set {
       EffekseerNativePINVOKE.ViewerParamater_RenderingMode_set(swigCPtr, (int)value);
     } 
     get {
-      RenderMode ret = (RenderMode)EffekseerNativePINVOKE.ViewerParamater_RenderingMode_get(swigCPtr);
+      RenderingMethodType ret = (RenderingMethodType)EffekseerNativePINVOKE.ViewerParamater_RenderingMode_get(swigCPtr);
       return ret;
     } 
   }

@@ -970,7 +970,9 @@ struct ShaderParameterCollector
 			IsDepthRequired = true;
 		}
 
-		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		// TODO : refactor in 1.7
+		const auto whiteMode = renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe || renderer->GetExternalShaderSettings() != nullptr;
+		if (whiteMode)
 		{
 			ShaderType = RendererShaderType::Unlit;
 		}
@@ -1024,7 +1026,8 @@ struct ShaderParameterCollector
 			ShaderType = RendererShaderType::Unlit;
 		}
 
-		if (renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+		// TODO : refactor in 1.7
+		if (whiteMode)
 		{
 			TextureCount = 1;
 			Textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
@@ -1501,6 +1504,9 @@ struct PixelConstantBufferDistortion
 };
 
 void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType format, const std::array<int, 2>& size, int32_t& sizePerWidth, int32_t& height);
+
+//! only support OpenGL
+Effekseer::Backend::VertexLayoutRef GetVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RendererShaderType type);
 
 } // namespace EffekseerRenderer
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

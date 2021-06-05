@@ -542,11 +542,6 @@ void GraphicsDX11::ResetDevice()
 	currentDepthStencilView = depthStencilView;
 }
 
-//void* GraphicsDX11::GetBack()
-//{
-//	return backTextureSRV;
-//}
-
 ID3D11Device* GraphicsDX11::GetDevice() const
 {
 	return device_;

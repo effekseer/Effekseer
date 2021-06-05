@@ -380,7 +380,7 @@ namespace Effekseer.GUI
 		{
 			var param = native.GetViewerParamater();
 
-			param.RenderingMode = (swig.RenderMode)renderMode;
+			param.RenderingMode = (swig.RenderingMethodType)renderMode;
 
 			native.SetViewerParamater(param);
 		}
@@ -443,6 +443,7 @@ namespace Effekseer.GUI
 			Core.Option.ViewerMode.OnChanged += ViewMode_OnChanged;
 
 			Core.Option.RenderingMode.OnChanged += RenderingMode_OnChanged;
+			RenderingMode_OnChanged(null, null);
 
 			Bloom_OnChanged(null, null);
 			Core.Environment.PostEffect.BloomSwitch.OnChanged += Bloom_OnChanged;

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "EffekseerTool/EffekseerTool.Sound.h"
+#include "Graphics/PostProcess.h"
 #include "Graphics/StaticMeshRenderer.h"
 #include "Graphics/efk.Graphics.h"
 #include "Graphics/efk.PostEffects.h"
@@ -25,7 +26,7 @@ struct RenderedEffectGeneratorConfig
 	Effekseer::Vector3D LightDirection;
 	Effekseer::Color LightColor;
 	Effekseer::Color LightAmbientColor;
-	Effekseer::RenderMode RenderMode;
+	RenderingMethodType RenderingMethod;
 
 	bool IsGroundShown = false;
 	int32_t GroundExtent = 10;
@@ -125,6 +126,8 @@ protected:
 	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
 	std::unique_ptr<efk::LinearToSRGBEffect> m_linearToSRGBEffect;
 
+	std::unique_ptr<PostProcess> overdrawEffect_;
+
 	bool m_isSRGBMode = false;
 	uint32_t msaaSamples = 4;
 	Effekseer::Backend::TextureFormatType textureFormat_ = Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT;
@@ -139,6 +142,9 @@ protected:
 	EffekseerTool::Sound* sound_ = nullptr;
 
 	DistortingCallback* m_distortionCallback = nullptr;
+
+	Effekseer::Backend::ShaderRef whiteParticleSpriteShader_;
+	Effekseer::Backend::ShaderRef whiteParticleModelShader_;
 
 	RenderedEffectGeneratorConfig config_;
 

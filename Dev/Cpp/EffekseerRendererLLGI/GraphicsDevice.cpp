@@ -1,4 +1,5 @@
 #include "GraphicsDevice.h"
+#include <LLGI.Shader.h>
 #include <LLGI.Texture.h>
 
 namespace EffekseerRendererLLGI
@@ -264,6 +265,27 @@ bool Texture::Init(LLGI::Texture* texture)
 	return true;
 }
 
+Shader::Shader(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+	graphicsDevice_->Register(this);
+}
+
+Shader ::~Shader()
+{
+	Effekseer::SafeRelease(vertexShader_);
+	Effekseer::SafeRelease(pixelShader_);
+	graphicsDevice_->Unregister(this);
+	Effekseer::SafeRelease(graphicsDevice_);
+}
+
+bool Shader::Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize)
+{
+	// TODO
+	return false;
+}
+
 GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics)
 	: graphics_(graphics)
 {
@@ -363,6 +385,18 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(LLGI::Texture* text
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(texture))
+	{
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize)
+{
+	auto ret = Effekseer::MakeRefPtr<Shader>(this);
+
+	if (!ret->Init(vsData, vsDataSize, psData, psDataSize))
 	{
 		return nullptr;
 	}

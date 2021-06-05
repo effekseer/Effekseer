@@ -37,6 +37,14 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
+Effekseer::CustomVector<GLint> GetVertexAttribLocations(const VertexLayoutRef& vertexLayout, const ShaderRef& shader);
+
+void EnableLayouts(const VertexLayoutRef& vertexLayout, const Effekseer::CustomVector<GLint>& locations);
+
+void DisableLayouts(const Effekseer::CustomVector<GLint>& locations);
+
+void StoreUniforms(const ShaderRef& shader, const UniformBufferRef& vertexUniform, const UniformBufferRef& fragmentUniform, bool transpose);
+
 class DeviceObject
 {
 private:
@@ -140,6 +148,11 @@ public:
 		return buffer_;
 	}
 
+	Effekseer::CustomVector<uint8_t>& GetBuffer()
+	{
+		return buffer_;
+	}
+
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 };
 
@@ -203,16 +216,31 @@ class Shader
 	  public Effekseer::Backend::Shader
 {
 private:
+	static const size_t elementMax = 16;
+
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	GLuint program_ = 0;
 	GLuint vao_ = 0;
 
+	Effekseer::CustomVector<Effekseer::CustomString<char>> vsCodes_;
+	Effekseer::CustomVector<Effekseer::CustomString<char>> psCodes_;
+
 	Effekseer::Backend::UniformLayoutRef layout_ = nullptr;
+
+	Effekseer::CustomVector<GLint> textureLocations_;
+	Effekseer::CustomVector<GLint> uniformLocations_;
+
+	bool Compile();
+	void Reset();
 
 public:
 	Shader(GraphicsDevice* graphicsDevice);
 	~Shader() override;
-	bool Init(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef& layout);
+	bool Init(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef& layout);
+
+	void OnLostDevice() override;
+
+	void OnResetDevice() override;
 
 	GLuint GetProgram() const
 	{
@@ -228,6 +256,16 @@ public:
 	{
 		return layout_;
 	}
+
+	const Effekseer::CustomVector<GLint>& GetTextureLocations() const
+	{
+		return textureLocations_;
+	}
+
+	const Effekseer::CustomVector<GLint>& GetUniformLocations() const
+	{
+		return uniformLocations_;
+	}
 };
 
 class PipelineState
@@ -236,6 +274,7 @@ class PipelineState
 {
 private:
 	Effekseer::Backend::PipelineStateParameter param_;
+	Effekseer::CustomVector<GLint> attribLocations_;
 
 public:
 	PipelineState() = default;
@@ -246,6 +285,11 @@ public:
 	const Effekseer::Backend::PipelineStateParameter& GetParam() const
 	{
 		return param_;
+	}
+
+	const Effekseer::CustomVector<GLint>& GetAttribLocations() const
+	{
+		return attribLocations_;
 	}
 };
 
@@ -326,7 +370,7 @@ public:
 
 	Effekseer::Backend::ShaderRef CreateShaderFromKey(const char* key) override;
 
-	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const char* vsCode, const char* psCode, Effekseer::Backend::UniformLayoutRef layout) override;
+	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout) override;
 
 	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
@@ -347,7 +391,6 @@ public:
 };
 
 } // namespace Backend
-
 } // namespace EffekseerRendererGL
 
 #endif

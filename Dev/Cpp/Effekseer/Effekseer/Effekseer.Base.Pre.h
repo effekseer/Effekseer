@@ -683,7 +683,7 @@ public:
 	}
 
 	template <class U>
-	RefPtr<U> DownCast()
+	RefPtr<U> DownCast() const
 	{
 		auto ptr = Get();
 		SafeAddRef(ptr);

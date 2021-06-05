@@ -2,11 +2,49 @@
 
 #ifdef _WIN32
 #include "Graphics/Platform/DX11/efk.GraphicsDX11.h"
+
+namespace WhiteParticle_Model_VS
+{
+#include <EffekseerRendererDX11/EffekseerRenderer/ShaderHeader/model_unlit_vs.h>
+}
+
+namespace WhiteParticle_Sprite_VS
+{
+#include <EffekseerRendererDX11/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h>
+}
+
+namespace WhiteParticle_PS
+{
+#include "Shaders/HLSL_DX11_Header/white_particle_ps.h"
+}
+
+namespace PostEffect_Basic_VS
+{
+#include "Shaders/HLSL_DX11_Header/postfx_basic_vs.h"
+}
+
+namespace PostEffect_Overdraw_PS
+{
+#include "Shaders/HLSL_DX11_Header/postfx_overdraw_ps.h"
+}
+
 #endif
+
+#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.h"
+
+#include "Shaders/GLSL_GL_Header/line_ps.h"
+#include "Shaders/GLSL_GL_Header/line_vs.h"
+
+#include "Shaders/GLSL_GL_Header/postfx_basic_vs.h"
+#include "Shaders/GLSL_GL_Header/postfx_overdraw_ps.h"
+#include "Shaders/GLSL_GL_Header/white_particle_ps.h"
 
 #include "Graphics/Platform/GL/efk.GraphicsGL.h"
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
+
+#include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/model_unlit_vs.h"
+#include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h"
 
 namespace Effekseer
 {
@@ -350,7 +388,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 	if (sprite_renderer == nullptr)
 	{
-		spdlog::trace("FAIL : CreateSpriteRenderer");
+		spdlog::warn("FAIL : CreateSpriteRenderer");
 		return false;
 	}
 
@@ -373,7 +411,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 		}
 		else
 		{
-			spdlog::trace("FAIL : Background");
+			spdlog::warn("FAIL : Background");
 			return false;
 		}
 	}
@@ -385,7 +423,79 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 	}
 	else
 	{
-		spdlog::trace("FAIL : GroundRenderer");
+		spdlog::warn("FAIL : GroundRenderer");
+	}
+
+	if (graphics->GetGraphicsDevice()->GetDeviceName() == "DirectX11")
+	{
+#ifdef _WIN32
+		whiteParticleSpriteShader_ =
+			graphics->GetGraphicsDevice()->CreateShaderFromBinary(
+				WhiteParticle_Sprite_VS::g_main,
+				sizeof(WhiteParticle_Sprite_VS::g_main),
+				WhiteParticle_PS::g_main,
+				sizeof(WhiteParticle_PS::g_main));
+
+		whiteParticleModelShader_ =
+			graphics->GetGraphicsDevice()->CreateShaderFromBinary(
+				WhiteParticle_Model_VS::g_main,
+				sizeof(WhiteParticle_Model_VS::g_main),
+				WhiteParticle_PS::g_main,
+				sizeof(WhiteParticle_PS::g_main));
+
+		auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromBinary(
+			PostEffect_Basic_VS::g_main,
+			sizeof(PostEffect_Basic_VS::g_main),
+			PostEffect_Overdraw_PS::g_main,
+			sizeof(PostEffect_Overdraw_PS::g_main));
+
+		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+#endif
+	}
+	else if (graphics->GetGraphicsDevice()->GetDeviceName() == "OpenGL")
+	{
+		const auto texLocUnlit = EffekseerRendererGL::GetTextureLocations(EffekseerRenderer::RendererShaderType::Unlit);
+
+		{
+			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
+			EffekseerRendererGL::AddVertexUniformLayout(uniformLayoutElementsLitUnlit);
+			EffekseerRendererGL::AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
+
+			whiteParticleSpriteShader_ = graphics->GetGraphicsDevice()->CreateShaderFromCodes(
+				{get_sprite_unlit_vs(EffekseerRendererGL::OpenGLDeviceType::OpenGL3)},
+				{gl_white_particle_ps},
+				uniformLayoutUnlitAd);
+		}
+
+		{
+			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
+			EffekseerRendererGL::AddModelVertexUniformLayout(uniformLayoutElementsLitUnlit, false, true, EffekseerRendererGL::OpenGLInstancingCount);
+			EffekseerRendererGL::AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
+
+			whiteParticleModelShader_ = graphics->GetGraphicsDevice()->CreateShaderFromCodes(
+				{get_model_unlit_vs(EffekseerRendererGL::OpenGLDeviceType::OpenGL3)},
+				{gl_white_particle_ps},
+				uniformLayoutUnlitAd);
+		}
+
+		{
+			Effekseer::CustomVector<Effekseer::CustomString<char>> tecLoc{"Sampler_g_sampler"};
+			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> elms;
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(tecLoc, elms);
+
+			auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromCodes(
+				{gl_postfx_basic_vs},
+				{gl_postfx_overdraw_ps},
+				uniformLayoutUnlitAd);
+
+			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+		}
+	}
+	else
+	{
+		spdlog::warn("Overdraw is not suppoted.");
 	}
 
 	return true;
@@ -583,7 +693,11 @@ void RenderedEffectGenerator::Update(int32_t frame)
 void RenderedEffectGenerator::Render()
 {
 	// Clear a destination texture
-	if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
+	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		UpdateBackgroundMesh({0, 0, 0, 0});
+	}
+	else if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
 	{
 		UpdateBackgroundMesh({255, 255, 255, 255});
 	}
@@ -594,13 +708,6 @@ void RenderedEffectGenerator::Render()
 
 	graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
 	graphics_->Clear({0, 0, 0, 0});
-
-	renderer_->SetRenderMode(config_.RenderMode);
-	renderer_->SetCameraMatrix(config_.CameraMatrix);
-	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
-	renderer_->SetLightDirection(config_.LightDirection);
-	renderer_->SetLightColor(config_.LightColor);
-	renderer_->SetLightAmbientColor(config_.LightAmbientColor);
 
 	// clear
 	if (msaaSamples > 1)
@@ -613,6 +720,13 @@ void RenderedEffectGenerator::Render()
 	}
 
 	graphics_->Clear({0, 0, 0, 0});
+
+	// TODO : refactor
+	renderer_->SetCameraMatrix(config_.CameraMatrix);
+	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
+	renderer_->SetLightDirection(config_.LightDirection);
+	renderer_->SetLightColor(config_.LightColor);
+	renderer_->SetLightAmbientColor(config_.LightAmbientColor);
 
 	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr)
 	{
@@ -632,9 +746,12 @@ void RenderedEffectGenerator::Render()
 		backgroundRenderer_->Render(param);
 	}
 
-	if (groundRenderer_ != nullptr && config_.IsGroundShown)
+	if (config_.RenderingMethod != RenderingMethodType::Overdraw)
 	{
-		groundRenderer_->Render(renderer_);
+		if (groundRenderer_ != nullptr && config_.IsGroundShown)
+		{
+			groundRenderer_->Render(renderer_);
+		}
 	}
 
 	OnAfterClear();
@@ -663,8 +780,25 @@ void RenderedEffectGenerator::Render()
 
 	renderer_->SetDepth(depthRenderTexture->GetAsBackend(), reconstructionParam);
 
-	// HACK : grid renderer changes RenderMode
-	renderer_->SetRenderMode(config_.RenderMode);
+	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
+		external->Blend = Effekseer::AlphaBlendType::Add;
+		external->StandardShader = whiteParticleSpriteShader_;
+		external->ModelShader = whiteParticleModelShader_;
+		renderer_->SetExternalShaderSettings(external);
+	}
+
+	if (config_.RenderingMethod == RenderingMethodType::Normal ||
+		config_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
+		config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		renderer_->SetRenderMode(Effekseer::RenderMode::Normal);
+	}
+	else
+	{
+		renderer_->SetRenderMode(Effekseer::RenderMode::Wireframe);
+	}
 
 	// Distoriton
 	if (config_.Distortion == DistortionType::Current)
@@ -709,6 +843,29 @@ void RenderedEffectGenerator::Render()
 
 	renderer_->EndRendering();
 
+	if (config_.RenderingMethod == RenderingMethodType::NormalWithWireframe)
+	{
+		auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
+		external->Blend = Effekseer::AlphaBlendType::Opacity;
+		external->StandardShader = whiteParticleSpriteShader_;
+		external->ModelShader = whiteParticleModelShader_;
+		renderer_->SetExternalShaderSettings(external);
+
+		renderer_->SetRenderMode(Effekseer::RenderMode::Wireframe);
+
+		renderer_->BeginRendering();
+
+		manager_->Draw(config_.DrawParameter);
+
+		renderer_->EndRendering();
+	}
+
+	if (config_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
+		config_.RenderingMethod == RenderingMethodType::Overdraw)
+	{
+		renderer_->SetExternalShaderSettings(nullptr);
+	}
+
 	ResetBack();
 
 	OnBeforePostprocess();
@@ -724,21 +881,31 @@ void RenderedEffectGenerator::Render()
 		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA->GetAsBackend(), hdrRenderTexture->GetAsBackend());
 	}
 
-	// Bloom processing (specifying the same target for src and dest is faster)
-	m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
-
-	// Tone map processing
-	auto tonemapTerget = viewRenderTexture->GetAsBackend();
-	if (m_isSRGBMode)
+	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
-		tonemapTerget = linearRenderTexture->GetAsBackend();
+		graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
+		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture->GetAsBackend();
+		overdrawEffect_->GetDrawParameter().TextureCount = 1;
+		overdrawEffect_->Render();
 	}
-
-	m_tonemapEffect->Render(hdrRenderTexture->GetAsBackend(), tonemapTerget);
-
-	if (m_isSRGBMode)
+	else
 	{
-		m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture->GetAsBackend());
+		// Bloom processing (specifying the same target for src and dest is faster)
+		m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
+
+		// Tone map processing
+		auto tonemapTerget = viewRenderTexture->GetAsBackend();
+		if (m_isSRGBMode)
+		{
+			tonemapTerget = linearRenderTexture->GetAsBackend();
+		}
+
+		m_tonemapEffect->Render(hdrRenderTexture->GetAsBackend(), tonemapTerget);
+
+		if (m_isSRGBMode)
+		{
+			m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture->GetAsBackend());
+		}
 	}
 
 	graphics_->SetRenderTarget({nullptr}, nullptr);

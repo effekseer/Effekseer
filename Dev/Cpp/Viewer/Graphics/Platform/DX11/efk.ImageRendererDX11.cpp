@@ -38,20 +38,23 @@ ImageRendererDX11::ImageRendererDX11(const EffekseerRenderer::RendererRef& rende
 	};
 
 	shader = EffekseerRendererDX11::Shader::Create(this->renderer.Get(),
-												   Standard_VS::g_VS,
-												   sizeof(Standard_VS::g_VS),
-												   Standard_PS::g_PS,
-												   sizeof(Standard_PS::g_PS),
+												   renderer->GetGraphicsDevice()->CreateShaderFromBinary(
+
+													   Standard_VS::g_VS,
+													   sizeof(Standard_VS::g_VS),
+													   Standard_PS::g_PS,
+													   sizeof(Standard_PS::g_PS)),
 												   "StandardRenderer",
 												   decl,
 												   3,
 												   false);
 
 	shader_no_texture = EffekseerRendererDX11::Shader::Create(this->renderer.Get(),
-															  Standard_VS::g_VS,
-															  sizeof(Standard_VS::g_VS),
-															  StandardNoTexture_PS::g_PS,
-															  sizeof(StandardNoTexture_PS::g_PS),
+															  renderer->GetGraphicsDevice()->CreateShaderFromBinary(
+																  Standard_VS::g_VS,
+																  sizeof(Standard_VS::g_VS),
+																  StandardNoTexture_PS::g_PS,
+																  sizeof(StandardNoTexture_PS::g_PS)),
 															  "StandardRenderer No Texture",
 															  decl,
 															  3,

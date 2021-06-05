@@ -28,6 +28,8 @@ typedef ::Effekseer::Vector3D efkVector3D;
 class ModelRenderer;
 typedef ::Effekseer::RefPtr<ModelRenderer> ModelRendererRef;
 
+const int OpenGLInstancingCount = 10;
+
 class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 {
 public:
@@ -71,6 +73,9 @@ public:
 
 	void EndRendering(const efkModelNodeParam& parameter, void* userData) override;
 };
+
+void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, bool isAd, bool isInstancing, int N);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

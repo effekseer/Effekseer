@@ -105,7 +105,7 @@ public:
 
 	bool IsRightHand;
 
-	Effekseer::RenderMode RenderingMode;
+	Effekseer::Tool::RenderingMethodType RenderingMode;
 
 	void SetScreenSize(int32_t width, int32_t height);
 

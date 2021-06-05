@@ -14,6 +14,163 @@ namespace EffekseerRendererGL
 
 static const int GL_InstanceCount = 10;
 
+void StoreVertexUniform(const ::Effekseer::MaterialFile& materialFile, const EffekseerRenderer::MaterialShaderParameterGenerator& generator, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
+{
+	using namespace Effekseer::Backend;
+
+	auto storeVector = [&](const char* name, int offset, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
+	};
+
+	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
+	};
+
+	storeMatrix("uMatCamera", generator.VertexCameraMatrixOffset);
+	storeMatrix("uMatProjection", generator.VertexProjectionMatrixOffset);
+	storeVector("mUVInversed", generator.VertexInversedFlagOffset);
+	storeVector("predefined_uniform", generator.VertexPredefinedOffset);
+	storeVector("cameraPosition", generator.VertexCameraPositionOffset);
+
+	for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
+	{
+		storeVector(materialFile.GetUniformName(ui), generator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
+	}
+}
+
+void StoreModelVertexUniform(const ::Effekseer::MaterialFile& materialFile, const EffekseerRenderer::MaterialShaderParameterGenerator& generator, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, bool instancing)
+{
+	using namespace Effekseer::Backend;
+
+	auto storeVector = [&](const char* name, int offset, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
+	};
+
+	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
+	};
+
+	storeMatrix("ProjectionMatrix", generator.VertexProjectionMatrixOffset);
+
+	if (instancing)
+	{
+		storeMatrix("ModelMatrix", generator.VertexModelMatrixOffset, GL_InstanceCount);
+
+		storeVector("UVOffset", generator.VertexModelUVOffset, GL_InstanceCount);
+
+		storeVector("ModelColor", generator.VertexModelColorOffset, GL_InstanceCount);
+	}
+	else
+	{
+		storeMatrix("ModelMatrix", generator.VertexModelMatrixOffset);
+
+		storeVector("UVOffset", generator.VertexModelUVOffset);
+
+		storeVector("ModelColor", generator.VertexModelColorOffset);
+	}
+
+	storeVector("mUVInversed", generator.VertexInversedFlagOffset);
+
+	storeVector("predefined_uniform", generator.VertexPredefinedOffset);
+
+	storeVector("cameraPosition", generator.VertexCameraPositionOffset);
+
+	if (instancing)
+	{
+		if (materialFile.GetCustomData1Count() > 0)
+		{
+			storeVector("customData1s", generator.VertexModelCustomData1Offset, GL_InstanceCount);
+		}
+
+		if (materialFile.GetCustomData2Count() > 0)
+		{
+			storeVector("customData2s", generator.VertexModelCustomData2Offset, GL_InstanceCount);
+		}
+	}
+	else
+	{
+		if (materialFile.GetCustomData1Count() > 0)
+		{
+			storeVector("customData1", generator.VertexModelCustomData1Offset);
+		}
+
+		if (materialFile.GetCustomData2Count() > 0)
+		{
+			storeVector("customData2", generator.VertexModelCustomData2Offset);
+		}
+	}
+
+	for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
+	{
+		storeVector(materialFile.GetUniformName(ui), generator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
+	}
+}
+
+void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const EffekseerRenderer::MaterialShaderParameterGenerator& generator, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, int shaderType)
+{
+	using namespace Effekseer::Backend;
+
+	auto storeVector = [&](const char* name, int offset, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, count, offset});
+	};
+
+	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Matrix44, count, offset});
+	};
+
+	storeVector("mUVInversedBack", generator.PixelInversedFlagOffset);
+
+	storeVector("predefined_uniform", generator.PixelPredefinedOffset);
+
+	storeVector("cameraPosition", generator.PixelCameraPositionOffset);
+
+	storeVector("reconstructionParam1", generator.PixelReconstructionParam1Offset);
+
+	storeVector("reconstructionParam2", generator.PixelReconstructionParam2Offset);
+
+	// shiding model
+	if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
+	{
+		storeVector("lightDirection", generator.PixelLightDirectionOffset);
+		storeVector("lightColor", generator.PixelLightColorOffset);
+		storeVector("lightAmbientColor", generator.PixelLightAmbientColorOffset);
+	}
+	else if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
+	{
+	}
+
+	if (materialFile.GetHasRefraction() && shaderType == 1)
+	{
+		storeMatrix("cameraMat", generator.PixelCameraMatrixOffset);
+	}
+
+	for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
+	{
+		storeVector(materialFile.GetUniformName(ui), generator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
+	}
+}
+
+Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(const ::Effekseer::MaterialFile& materialFile)
+{
+	Effekseer::CustomVector<Effekseer::CustomString<char>> texLoc;
+
+	int32_t maxInd = -1;
+	for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
+	{
+		maxInd = Effekseer::Max(maxInd, materialFile.GetTextureIndex(ti));
+	}
+
+	texLoc.resize(maxInd + 1);
+	for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
+	{
+		texLoc[materialFile.GetTextureIndex(ti)] = materialFile.GetTextureName(ti);
+	}
+
+	texLoc.emplace_back("efk_background");
+	texLoc.emplace_back("efk_depth");
+	return texLoc;
+}
+
 ::Effekseer::MaterialRef MaterialLoader::LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary)
 {
 	auto deviceType = graphicsDevice_->GetDeviceType();
@@ -42,10 +199,12 @@ static const int GL_InstanceCount = 10;
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, false, st, 1);
 
-		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypes[st]));
-		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypes[st]));
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
+		StoreVertexUniform(materialFile, parameterGenerator, uniformLayoutElements);
+		StorePixelUniform(materialFile, parameterGenerator, uniformLayoutElements, st);
+		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(StoreTextureLocations(materialFile), uniformLayoutElements);
 
-		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true, true);
+		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypes[st])}, {(const char*)binary->GetPixelShaderData(shaderTypes[st])}, uniformLayout, "CustomMaterial");
 
 		if (shader == nullptr)
 		{
@@ -60,131 +219,78 @@ static const int GL_InstanceCount = 10;
 
 		if (material->IsSimpleVertex)
 		{
-			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
-				{"atPosition", GL_FLOAT, 3, 0, false}, {"atColor", GL_UNSIGNED_BYTE, 4, 12, true}, {"atTexCoord", GL_FLOAT, 2, 16, false}};
-			shader->GetAttribIdList(3, sprite_attribs);
+			const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
+				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+			};
+
+			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 3).DownCast<Backend::VertexLayout>();
+			shader->SetVertexLayout(vl);
 		}
 		else
 		{
-			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[8] = {
-				{"atPosition", GL_FLOAT, 3, 0, false},
-				{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
-				{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
-				{"atTangent", GL_UNSIGNED_BYTE, 4, 20, true},
-				{"atTexCoord", GL_FLOAT, 2, 24, false},
-				{"atTexCoord2", GL_FLOAT, 2, 32, false},
-				{"", GL_FLOAT, 0, 0, false},
-				{"", GL_FLOAT, 0, 0, false},
+			Effekseer::Backend::VertexLayoutElement vlElem[8] = {
+				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atNormal", "NORMAL", 1},
+				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atTangent", "NORMAL", 2},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord2", "TEXCOORD", 1},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 2},
+				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
+			};
+
+			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat {
+				if (i == 1)
+					return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
+				if (i == 2)
+					return Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
+				if (i == 3)
+					return Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT;
+				if (i == 4)
+					return Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT;
+
+				assert(0);
+				return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
 			};
 
 			int32_t offset = 40;
 			int count = 6;
+			int semanticIndex = 2;
 			const char* customData1Name = "atCustomData1";
 			const char* customData2Name = "atCustomData2";
 
 			if (materialFile.GetCustomData1Count() > 0)
 			{
-				sprite_attribs[count].name = customData1Name;
-				sprite_attribs[count].count = static_cast<uint16_t>(materialFile.GetCustomData1Count());
-				sprite_attribs[count].offset = static_cast<uint16_t>(offset);
+				vlElem[count].Name = customData1Name;
+				vlElem[count].Format = getFormat(materialFile.GetCustomData1Count());
+				vlElem[count].SemanticIndex = semanticIndex;
+				semanticIndex++;
+
 				count++;
 				offset += sizeof(float) * materialFile.GetCustomData1Count();
 			}
 
 			if (materialFile.GetCustomData2Count() > 0)
 			{
-				sprite_attribs[count].name = customData2Name;
-				sprite_attribs[count].count = static_cast<uint16_t>(materialFile.GetCustomData2Count());
-				sprite_attribs[count].offset = static_cast<uint16_t>(offset);
+				vlElem[count].Name = customData2Name;
+				vlElem[count].Format = getFormat(materialFile.GetCustomData2Count());
+				vlElem[count].SemanticIndex = semanticIndex;
+				semanticIndex++;
+
 				count++;
 				offset += sizeof(float) * materialFile.GetCustomData2Count();
 			}
 
-			shader->GetAttribIdList(count, sprite_attribs);
-		}
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatCamera"), parameterGenerator.VertexCameraMatrixOffset);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatProjection"), parameterGenerator.VertexProjectionMatrixOffset);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), parameterGenerator.VertexInversedFlagOffset);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.VertexCameraPositionOffset);
-
-		for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
-		{
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
-											shader->GetUniformId(materialFile.GetUniformName(ui)),
-											parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
+			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, count).DownCast<Backend::VertexLayout>();
+			shader->SetVertexLayout(vl);
 		}
 
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("reconstructionParam1"), parameterGenerator.PixelReconstructionParam1Offset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("reconstructionParam2"), parameterGenerator.PixelReconstructionParam2Offset);
-
-		// shiding model
-		if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
-		{
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), parameterGenerator.PixelLightDirectionOffset);
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), parameterGenerator.PixelLightColorOffset);
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), parameterGenerator.PixelLightAmbientColorOffset);
-		}
-		else if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
-		{
-		}
-
-		if (materialFile.GetHasRefraction() && st == 1)
-		{
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), parameterGenerator.PixelCameraMatrixOffset);
-		}
-
-		for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
-		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4,
-										   shader->GetUniformId(materialFile.GetUniformName(ui)),
-										   parameterGenerator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
-		}
-
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
 
-		int32_t lastIndex = -1;
-		for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
-		{
-			shader->SetTextureSlot(materialFile.GetTextureIndex(ti), shader->GetUniformId(materialFile.GetTextureName(ti)));
-			lastIndex = Effekseer::Max(lastIndex, materialFile.GetTextureIndex(ti));
-		}
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
-
-		material->TextureCount = materialFile.GetTextureCount();
+		material->TextureCount = std::min(materialFile.GetTextureCount(), Effekseer::UserTextureSlotMax);
 		material->UniformCount = materialFile.GetUniformCount();
 
 		if (st == 0)
@@ -200,11 +306,12 @@ static const int GL_InstanceCount = 10;
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, instancing ? GL_InstanceCount : 1);
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
+		StoreModelVertexUniform(materialFile, parameterGenerator, uniformLayoutElements, instancing);
+		StorePixelUniform(materialFile, parameterGenerator, uniformLayoutElements, st);
+		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(StoreTextureLocations(materialFile), uniformLayoutElements);
 
-		ShaderCodeView vs((const char*)binary->GetVertexShaderData(shaderTypesModel[st]));
-		ShaderCodeView ps((const char*)binary->GetPixelShaderData(shaderTypesModel[st]));
-
-		auto shader = Shader::Create(graphicsDevice_, &vs, 1, &ps, 1, "CustomMaterial", true);
+		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypesModel[st])}, {(const char*)binary->GetPixelShaderData(shaderTypesModel[st])}, uniformLayout, "CustomMaterial");
 
 		if (shader == nullptr)
 		{
@@ -217,145 +324,20 @@ static const int GL_InstanceCount = 10;
 			return nullptr;
 		}
 
-		const int32_t NumAttribs = 6;
-		static ShaderAttribInfo g_model_attribs[NumAttribs] = {
-			{"a_Position", GL_FLOAT, 3, 0, false},
-			{"a_Normal", GL_FLOAT, 3, 12, false},
-			{"a_Binormal", GL_FLOAT, 3, 24, false},
-			{"a_Tangent", GL_FLOAT, 3, 36, false},
-			{"a_TexCoord", GL_FLOAT, 2, 48, false},
-			{"a_Color", GL_UNSIGNED_BYTE, 4, 56, true},
+		const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Position", "POSITION", 0},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 1},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Binormal", "NORMAL", 1},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Tangent", "NORMAL", 2},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
+			{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "a_Color", "NORMAL", 3},
 		};
 
-		shader->GetAttribIdList(NumAttribs, g_model_attribs);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ProjectionMatrix"), parameterGenerator.VertexProjectionMatrixOffset);
-
-		if (instancing)
-		{
-			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset, GL_InstanceCount);
-
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset, GL_InstanceCount);
-
-			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset, GL_InstanceCount);
-		}
-		else
-		{
-			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), parameterGenerator.VertexModelMatrixOffset);
-
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), parameterGenerator.VertexModelUVOffset);
-
-			shader->AddVertexConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), parameterGenerator.VertexModelColorOffset);
-		}
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), parameterGenerator.VertexInversedFlagOffset);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
-
-		shader->AddVertexConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.VertexCameraPositionOffset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("reconstructionParam1"), parameterGenerator.PixelReconstructionParam1Offset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("reconstructionParam2"), parameterGenerator.PixelReconstructionParam2Offset);
-
-		if (instancing)
-		{
-			if (materialFile.GetCustomData1Count() > 0)
-			{
-				shader->AddVertexConstantLayout(
-					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1s"), parameterGenerator.VertexModelCustomData1Offset, GL_InstanceCount);
-			}
-
-			if (materialFile.GetCustomData2Count() > 0)
-			{
-				shader->AddVertexConstantLayout(
-					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2s"), parameterGenerator.VertexModelCustomData2Offset, GL_InstanceCount);
-			}
-		}
-		else
-		{
-			if (materialFile.GetCustomData1Count() > 0)
-			{
-				shader->AddVertexConstantLayout(
-					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1"), parameterGenerator.VertexModelCustomData1Offset);
-			}
-
-			if (materialFile.GetCustomData2Count() > 0)
-			{
-				shader->AddVertexConstantLayout(
-					CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2"), parameterGenerator.VertexModelCustomData2Offset);
-			}
-		}
-
-		for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
-		{
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
-											shader->GetUniformId(materialFile.GetUniformName(ui)),
-											parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
-		}
+		auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 6).DownCast<Backend::VertexLayout>();
+		shader->SetVertexLayout(vl);
 
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
-
-		shader->AddPixelConstantLayout(
-			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
-
-		// shiding model
-		if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
-		{
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), parameterGenerator.PixelLightDirectionOffset);
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), parameterGenerator.PixelLightColorOffset);
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), parameterGenerator.PixelLightAmbientColorOffset);
-		}
-		else if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
-		{
-		}
-
-		if (materialFile.GetHasRefraction() && st == 1)
-		{
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), parameterGenerator.PixelCameraMatrixOffset);
-		}
-
-		for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
-		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4,
-										   shader->GetUniformId(materialFile.GetUniformName(ui)),
-										   parameterGenerator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
-		}
-
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
-
-		int32_t lastIndex = -1;
-		for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
-		{
-			shader->SetTextureSlot(materialFile.GetTextureIndex(ti), shader->GetUniformId(materialFile.GetTextureName(ti)));
-			lastIndex = Effekseer::Max(lastIndex, materialFile.GetTextureIndex(ti));
-		}
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
 
 		if (st == 0)
 		{

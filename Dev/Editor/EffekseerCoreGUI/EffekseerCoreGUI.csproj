@@ -206,7 +206,7 @@
     <Compile Include="swig\Native.cs" />
     <Compile Include="swig\RecordingModeType.cs" />
     <Compile Include="swig\RecordingParameter.cs" />
-    <Compile Include="swig\RenderMode.cs" />
+    <Compile Include="swig\RenderingMethodType.cs" />
     <Compile Include="swig\SelectableFlags.cs" />
     <Compile Include="swig\StaticFile.cs" />
     <Compile Include="swig\StaticFileType.cs" />
