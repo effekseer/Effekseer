@@ -105,9 +105,6 @@ private:
 	std::vector<ConstantLayout> m_vertexConstantLayout;
 	std::vector<ConstantLayout> m_pixelConstantLayout;
 
-	std::array<GLint, Effekseer::TextureSlotMax> m_textureSlots;
-	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
-
 	std::string name_;
 
 	std::vector<ShaderAttribInfoInternal> attribs;
@@ -183,7 +180,6 @@ public:
 
 	void SetConstantBuffer() override;
 
-	void SetTextureSlot(int32_t index, GLint value);
 	GLint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
 

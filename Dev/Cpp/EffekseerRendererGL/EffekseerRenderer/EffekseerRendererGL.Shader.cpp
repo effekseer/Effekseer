@@ -143,9 +143,6 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 	, shader_(shader)
 	, m_vertexSize(0)
 {
-	m_textureSlots.fill(0);
-	m_textureSlotEnables.fill(false);
-
 	name_ = name;
 
 	graphicsDevice_ = graphicsDevice;
@@ -264,31 +261,9 @@ void Shader::SetConstantBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void Shader::SetTextureSlot(int32_t index, GLint value)
-{
-	if (value >= 0)
-	{
-		if (shader_->GetTextureLocations().size() > 0)
-		{
-			assert(index < shader_->GetTextureLocations().size());
-		}
-
-		m_textureSlots[index] = value;
-		m_textureSlotEnables[index] = true;
-	}
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 GLint Shader::GetTextureSlot(int32_t index)
 {
-	if (shader_->GetTextureLocations().size() > 0)
-	{
-		return shader_->GetTextureLocations()[index];
-	}
-
-	return m_textureSlots[index];
+	return shader_->GetTextureLocations()[index];
 }
 
 //-----------------------------------------------------------------------------------
@@ -296,12 +271,7 @@ GLint Shader::GetTextureSlot(int32_t index)
 //-----------------------------------------------------------------------------------
 bool Shader::GetTextureSlotEnable(int32_t index)
 {
-	if (shader_->GetTextureLocations().size() > 0)
-	{
-		return index < shader_->GetTextureLocations().size();
-	}
-
-	return m_textureSlotEnables[index];
+	return index < shader_->GetTextureLocations().size();
 }
 
 bool Shader::IsValid() const

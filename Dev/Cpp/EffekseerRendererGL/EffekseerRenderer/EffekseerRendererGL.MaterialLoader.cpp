@@ -150,6 +150,27 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 	}
 }
 
+Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(const ::Effekseer::MaterialFile& materialFile)
+{
+	Effekseer::CustomVector<Effekseer::CustomString<char>> texLoc;
+
+	int32_t maxInd = -1;
+	for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
+	{
+		maxInd = Effekseer::Max(maxInd, materialFile.GetTextureIndex(ti));
+	}
+
+	texLoc.resize(maxInd + 1);
+	for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
+	{
+		texLoc[materialFile.GetTextureIndex(ti)] = materialFile.GetTextureName(ti);
+	}
+
+	texLoc.emplace_back("efk_background");
+	texLoc.emplace_back("efk_depth");
+	return texLoc;
+}
+
 ::Effekseer::MaterialRef MaterialLoader::LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary)
 {
 	auto deviceType = graphicsDevice_->GetDeviceType();
@@ -181,7 +202,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
 		StoreVertexUniform(materialFile, parameterGenerator, uniformLayoutElements);
 		StorePixelUniform(materialFile, parameterGenerator, uniformLayoutElements, st);
-		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElements);
+		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(StoreTextureLocations(materialFile), uniformLayoutElements);
 
 		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypes[st])}, {(const char*)binary->GetPixelShaderData(shaderTypes[st])}, uniformLayout, "CustomMaterial");
 
@@ -269,21 +290,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
 
-		// textures
-		int32_t lastIndex = -1;
-		for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
-		{
-			shader->SetTextureSlot(materialFile.GetTextureIndex(ti), shader->GetUniformId(materialFile.GetTextureName(ti)));
-			lastIndex = Effekseer::Max(lastIndex, materialFile.GetTextureIndex(ti));
-		}
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
-
-		material->TextureCount = materialFile.GetTextureCount();
+		material->TextureCount = std::min(materialFile.GetTextureCount(), Effekseer::UserTextureSlotMax);
 		material->UniformCount = materialFile.GetUniformCount();
 
 		if (st == 0)
@@ -302,7 +309,7 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
 		StoreModelVertexUniform(materialFile, parameterGenerator, uniformLayoutElements, instancing);
 		StorePixelUniform(materialFile, parameterGenerator, uniformLayoutElements, st);
-		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElements);
+		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(StoreTextureLocations(materialFile), uniformLayoutElements);
 
 		auto shader = Shader::CreateWithHeader(graphicsDevice_, {(const char*)binary->GetVertexShaderData(shaderTypesModel[st])}, {(const char*)binary->GetPixelShaderData(shaderTypesModel[st])}, uniformLayout, "CustomMaterial");
 
@@ -331,20 +338,6 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
-
-		// textures
-		int32_t lastIndex = -1;
-		for (int32_t ti = 0; ti < materialFile.GetTextureCount(); ti++)
-		{
-			shader->SetTextureSlot(materialFile.GetTextureIndex(ti), shader->GetUniformId(materialFile.GetTextureName(ti)));
-			lastIndex = Effekseer::Max(lastIndex, materialFile.GetTextureIndex(ti));
-		}
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_background"));
-
-		lastIndex += 1;
-		shader->SetTextureSlot(lastIndex, shader->GetUniformId("efk_depth"));
 
 		if (st == 0)
 		{

@@ -250,8 +250,6 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	, blitter(graphics, renderer)
 	, renderer_(EffekseerRendererGL::RendererImplementedRef::FromPinned(renderer.Get()))
 {
-	using namespace EffekseerRendererGL;
-
 	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
 
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
@@ -263,45 +261,40 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
 	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_FilterParams", UniformBufferLayoutElementType::Vector4, 1, 0});
 	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_Intensity", UniformBufferLayoutElementType::Vector4, 1, sizeof(float) * 4});
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElm);
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, uniformLayoutElm);
+
+	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
+	auto uniformLayoutImages = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0", "u_Texture1", "u_Texture2", "u_Texture3"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
 
 	shaderExtract.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, extractPS, uniformLayout, "Bloom extract"));
 
 	shaderExtract->SetVertexLayout(vl);
-	shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
 	shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 
 	// Downsample shader
 
 	EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
 
-	shaderDownsample.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, downSamplePS, nullptr, "Bloom downsample"));
+	shaderDownsample.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, downSamplePS, uniformLayoutSingleImage, "Bloom downsample"));
 	shaderDownsample->SetVertexLayout(vl);
-	shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 	// Blend shader
 	EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
 
-	shaderBlend.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blendPS, nullptr, "Bloom blend"));
+	shaderBlend.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blendPS, uniformLayoutImages, "Bloom blend"));
 	shaderBlend->SetVertexLayout(vl);
-	shaderBlend->SetTextureSlot(0, shaderBlend->GetUniformId("u_Texture0"));
-	shaderBlend->SetTextureSlot(1, shaderBlend->GetUniformId("u_Texture1"));
-	shaderBlend->SetTextureSlot(2, shaderBlend->GetUniformId("u_Texture2"));
-	shaderBlend->SetTextureSlot(3, shaderBlend->GetUniformId("u_Texture3"));
 
 	// Blur(horizontal) shader
 	EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
 
-	shaderBlurH.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_h_PS, nullptr, "Bloom blurH"));
+	shaderBlurH.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_h_PS, uniformLayoutSingleImage, "Bloom blurH"));
 	shaderBlurH->SetVertexLayout(vl);
-	shaderBlurH->SetTextureSlot(0, shaderBlurH->GetUniformId("u_Texture0"));
 
 	// Blur(vertical) shader
 	EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
 
-	shaderBlurV.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_v_PS, nullptr, "Bloom blurV"));
+	shaderBlurV.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_v_PS, uniformLayoutSingleImage, "Bloom blurV"));
 	shaderBlurV->SetVertexLayout(vl);
-	shaderBlurV->SetTextureSlot(0, shaderBlurV->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
 	vaoExtract = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderExtract.get());
@@ -451,15 +444,15 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	using namespace EffekseerRendererGL;
 
 	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
+	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
 
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 
 	// Copy shader
 	EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
 
-	shaderCopy.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, copyPS, nullptr, "Tonemap copy"));
+	shaderCopy.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, copyPS, uniformLayoutSingleImage, "Tonemap copy"));
 	shaderCopy->SetVertexLayout(vl);
-	shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
 	// Reinhard shader
 	EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
@@ -467,11 +460,10 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	using namespace Effekseer::Backend;
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
 	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_Exposure", UniformBufferLayoutElementType::Vector4, 1, 0});
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElm);
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, uniformLayoutElm);
 
 	shaderReinhard.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, tonemapPS, uniformLayout, "Tonemap Reinhard"));
 	shaderReinhard->SetVertexLayout(vl);
-	shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
 
 	// Setup VAOs
@@ -522,14 +514,14 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRe
 	using namespace EffekseerRendererGL;
 
 	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
+	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
 
 	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
 	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
 
 	// Copy shader
-	shader_.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, linierToSrgbPS, nullptr, "LinearToSRGB"));
+	shader_.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, linierToSrgbPS, uniformLayoutSingleImage, "LinearToSRGB"));
 	shader_->SetVertexLayout(vl);
-	shader_->SetTextureSlot(0, shader_->GetUniformId("u_Texture0"));
 
 	// Setup VAOs
 	vao_ = blitter.CreateVAO(renderer->GetGraphicsDevice(), shader_.get());

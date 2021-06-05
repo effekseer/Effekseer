@@ -74,6 +74,7 @@ ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
 	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, "uMatCamera", UniformBufferLayoutElementType::Matrix44, 1, 0});
 	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, "uMatProjection", UniformBufferLayoutElementType::Matrix44, 1, sizeof(Effekseer::Matrix44)});
+	auto uniformLayoutTex = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"uTexture0"}, uniformLayoutElm);
 	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, uniformLayoutElm);
 
 	EffekseerRendererGL::ShaderCodeView lineCodeDataVS(g_sprite_vs_src);
@@ -81,7 +82,7 @@ ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	EffekseerRendererGL::ShaderCodeView lineCodeDataNPS(g_sprite_fs_no_texture_src);
 
 	auto shader_ =
-		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataPS, uniformLayout, "Standard Tex");
+		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataPS, uniformLayoutTex, "Standard Tex");
 
 	auto shader_no_texture_ =
 		EffekseerRendererGL::Shader::CreateWithHeader(this->renderer->GetInternalGraphicsDevice(), lineCodeDataVS, lineCodeDataNPS, uniformLayout, "Standard NoTex");
@@ -96,9 +97,6 @@ ImageRendererGL::ImageRendererGL(const EffekseerRenderer::RendererRef& renderer)
 	shader_->SetVertexLayout(vl);
 
 	shader_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-
-
-	shader_->SetTextureSlot(0, shader_->GetUniformId("uTexture0"));
 
 	shader_no_texture_->SetVertexLayout(vl);
 	shader_no_texture_->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
