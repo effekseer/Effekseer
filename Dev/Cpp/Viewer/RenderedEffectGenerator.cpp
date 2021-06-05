@@ -30,9 +30,21 @@ namespace PostEffect_Overdraw_PS
 
 #endif
 
+#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.h"
+
+#include "Shaders/GLSL_GL_Header/line_ps.h"
+#include "Shaders/GLSL_GL_Header/line_vs.h"
+
+#include "Shaders/GLSL_GL_Header/postfx_basic_vs.h"
+#include "Shaders/GLSL_GL_Header/postfx_overdraw_ps.h"
+#include "Shaders/GLSL_GL_Header/white_particle_ps.h"
+
 #include "Graphics/Platform/GL/efk.GraphicsGL.h"
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
+
+#include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/model_unlit_vs.h"
+#include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h"
 
 namespace Effekseer
 {
@@ -442,7 +454,44 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 	}
 	else if (graphics->GetGraphicsDevice()->GetDeviceName() == "OpenGL")
 	{
-		spdlog::warn("Overdraw is not suppoted.");
+		const auto texLocUnlit = EffekseerRendererGL::GetTextureLocations(EffekseerRenderer::RendererShaderType::Unlit);
+
+		{
+			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
+			EffekseerRendererGL::AddVertexUniformLayout(uniformLayoutElementsLitUnlit);
+			EffekseerRendererGL::AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
+
+			whiteParticleSpriteShader_ = graphics->GetGraphicsDevice()->CreateShaderFromCodes(
+				{get_sprite_unlit_vs(EffekseerRendererGL::OpenGLDeviceType::OpenGL3)},
+				{gl_white_particle_ps},
+				uniformLayoutUnlitAd);
+		}
+
+		{
+			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElementsLitUnlit;
+			EffekseerRendererGL::AddModelVertexUniformLayout(uniformLayoutElementsLitUnlit, false, true, EffekseerRendererGL::OpenGLInstancingCount);
+			EffekseerRendererGL::AddPixelUniformLayout(uniformLayoutElementsLitUnlit);
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
+
+			whiteParticleModelShader_ = graphics->GetGraphicsDevice()->CreateShaderFromCodes(
+				{get_model_unlit_vs(EffekseerRendererGL::OpenGLDeviceType::OpenGL3)},
+				{gl_white_particle_ps},
+				uniformLayoutUnlitAd);
+		}
+
+		{
+			Effekseer::CustomVector<Effekseer::CustomString<char>> tecLoc{"Sampler_g_sampler"};
+			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> elms;
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, elms);
+
+			auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromCodes(
+				{gl_postfx_basic_vs},
+				{gl_postfx_overdraw_ps},
+				uniformLayoutUnlitAd);
+
+			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+		}
 	}
 	else
 	{

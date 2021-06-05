@@ -30,7 +30,7 @@
 namespace EffekseerRendererGL
 {
 
-static const int InstanceCount = 10;
+static const int InstanceCount = OpenGLInstancingCount;
 
 void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, bool isAd, bool isInstancing, int N)
 {

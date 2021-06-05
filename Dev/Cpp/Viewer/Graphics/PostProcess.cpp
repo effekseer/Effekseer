@@ -28,11 +28,11 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 	std::vector<Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(2);
 	vertexLayoutElements[0].Format = Backend::VertexLayoutFormat::R32G32_FLOAT;
-	vertexLayoutElements[0].Name = "input_Pos";
+	vertexLayoutElements[0].Name = "Input_Pos";
 	vertexLayoutElements[0].SemanticIndex = 0;
 	vertexLayoutElements[0].SemanticName = "POSITION";
 	vertexLayoutElements[1].Format = Backend::VertexLayoutFormat::R32G32_FLOAT;
-	vertexLayoutElements[1].Name = "input_UV";
+	vertexLayoutElements[1].Name = "Input_UV";
 	vertexLayoutElements[1].SemanticIndex = 0;
 	vertexLayoutElements[1].SemanticName = "TEXCOORD";
 
