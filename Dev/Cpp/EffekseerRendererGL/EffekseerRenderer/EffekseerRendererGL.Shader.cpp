@@ -149,24 +149,6 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-GLint Shader::GetUniformId(const char* name) const
-{
-	auto ret = GLExt::glGetUniformLocation(shader_->GetProgram(), name);
-
-#ifdef __INTERNAL_DEBUG__
-	if (ret < 0)
-	{
-		std::string message = "Unused : " + name_ + " : " + std::string(name) + "\n";
-		LOG(message.c_str());
-	}
-#endif
-
-	return ret;
-}
-
 Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 					   Backend::ShaderRef shader,
 					   const char* name)
@@ -192,14 +174,6 @@ void Shader::SetVertexLayout(Backend::VertexLayoutRef vertexLayout)
 {
 	vertexLayout_ = vertexLayout;
 	attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
-}
-
-void Shader::GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* uid_list) const
-{
-	for (int i = 0; i < count; i++)
-	{
-		uid_list[i] = GLExt::glGetUniformLocation(shader_->GetProgram(), info[i].name);
-	}
 }
 
 void Shader::BeginScene()

@@ -19,37 +19,6 @@
 namespace EffekseerRendererGL
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ShaderAttribInfo
-{
-	const char* name;
-	GLenum type;
-	uint16_t count;
-	uint16_t offset;
-	bool normalized;
-};
-
-struct ShaderUniformInfo
-{
-	const char* name;
-};
-
-enum eConstantType
-{
-	CONSTANT_TYPE_MATRIX44 = 0,
-	CONSTANT_TYPE_VECTOR4 = 100,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
 using ShaderCodeView = Effekseer::StringView<char>;
 
 const char* GetVertexShaderHeader(OpenGLDeviceType deviceType);
@@ -59,56 +28,17 @@ const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType);
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
-	struct Layout
-	{
-		GLenum type;
-		uint16_t count;
-		uint16_t offset;
-		bool normalized;
-	};
-
-	struct ShaderAttribInfoInternal
-	{
-		std::string name;
-		GLenum type;
-		uint16_t count;
-		uint16_t offset;
-		bool normalized;
-	};
-
-	struct ShaderUniformInfoInternal
-	{
-		std::string name;
-	};
-
-	struct ConstantLayout
-	{
-		eConstantType Type;
-		GLint ID;
-		int32_t Offset;
-		int32_t Count;
-	};
-
 	OpenGLDeviceType m_deviceType;
 	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
 	Backend::VertexLayoutRef vertexLayout_;
-
-	std::vector<GLint> m_aid;
-	std::vector<Layout> m_layout;
 
 	int32_t m_vertexSize;
 
 	Backend::UniformBufferRef vertexConstantBuffer_;
 	Backend::UniformBufferRef pixelConstantBuffer_;
 
-	std::vector<ConstantLayout> m_vertexConstantLayout;
-	std::vector<ConstantLayout> m_pixelConstantLayout;
-
 	std::string name_;
-
-	std::vector<ShaderAttribInfoInternal> attribs;
-	std::vector<ShaderUniformInfoInternal> uniforms;
 
 	Effekseer::CustomVector<GLint> attribs_;
 
@@ -119,9 +49,6 @@ private:
 	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 		   Backend::ShaderRef shader,
 		   const char* name);
-
-public:
-	GLint GetUniformId(const char* name) const;
 
 public:
 	virtual ~Shader() override = default;
@@ -157,9 +84,6 @@ public:
 	GLuint GetInterface() const;
 
 	void SetVertexLayout(Backend::VertexLayoutRef vertexLayout);
-
-	//void GetAttribIdList(int count, const ShaderAttribInfo* info);
-	void GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* uid_list) const;
 
 	void BeginScene();
 	void EndScene();

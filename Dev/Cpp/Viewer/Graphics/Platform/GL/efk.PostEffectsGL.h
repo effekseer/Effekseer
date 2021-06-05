@@ -25,7 +25,6 @@ public:
 		float x, y;
 		float u, v;
 	};
-	static const EffekseerRendererGL::ShaderAttribInfo shaderAttributes[2];
 
 	BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 	virtual ~BlitterGL();
