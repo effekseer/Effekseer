@@ -47,6 +47,12 @@ private:
 
 	GLint baseInstance_ = -1;
 
+	Backend::ShaderRef& GetCurrentShader();
+
+	const Backend::ShaderRef& GetCurrentShader() const;
+
+	void AssignAttribs();
+
 	Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 		   Backend::ShaderRef shader,
 		   const char* name);

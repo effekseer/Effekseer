@@ -1,32 +1,7 @@
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.GLExtension.h"
 #include "EffekseerRendererGL.Renderer.h"
 
-// #define __INTERNAL_DEBUG__
-
-#ifdef __ANDROID__
-
-#ifdef __ANDROID__DEBUG__
-#include "android/log.h"
-#define LOG(s) __android_log_print(ANDROID_LOG_DEBUG, "Tag", "%s", s)
-#else
-#define LOG(s) printf("%s", s)
-#endif
-
-#elif defined(_WIN32)
-#include <windows.h>
-#define LOG(s) OutputDebugStringA(s)
-#else
-#define LOG(s) printf("%s", s)
-#endif
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
 
@@ -135,6 +110,38 @@ const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType)
 	return nullptr;
 }
 
+Backend::ShaderRef& Shader::GetCurrentShader()
+{
+	if (shaderOverride_ != nullptr)
+	{
+		return shaderOverride_;
+	}
+
+	return shader_;
+}
+
+const Backend::ShaderRef& Shader::GetCurrentShader() const
+{
+	if (shaderOverride_ != nullptr)
+	{
+		return shaderOverride_;
+	}
+
+	return shader_;
+}
+
+void Shader::AssignAttribs()
+{
+	auto& shader = GetCurrentShader();
+
+	if (vertexLayout_ != nullptr)
+	{
+		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader);
+	}
+
+	baseInstance_ = GLExt::glGetUniformLocation(shader->GetProgram(), "SPIRV_Cross_BaseInstance");
+}
+
 Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 			   Backend::ShaderRef shader,
 			   const char* name)
@@ -146,7 +153,7 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 	name_ = name;
 
 	graphicsDevice_ = graphicsDevice;
-	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
+	AssignAttribs();
 }
 
 Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
@@ -161,60 +168,30 @@ Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 
 void Shader::OnResetDevice()
 {
-	if (shaderOverride_ != nullptr)
-	{
-		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shaderOverride_);
-		baseInstance_ = GLExt::glGetUniformLocation(shaderOverride_->GetProgram(), "SPIRV_Cross_BaseInstance");
-	}
-	else
-	{
-		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
-		baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
-	}
+	AssignAttribs();
 }
 
 GLuint Shader::GetInterface() const
 {
-	if (shaderOverride_ != nullptr)
-	{
-		return shaderOverride_->GetProgram();
-	}
-
-	return shader_->GetProgram();
+	return GetCurrentShader()->GetProgram();
 }
 
 void Shader::OverrideShader(::Effekseer::Backend::ShaderRef shader)
 {
 	shaderOverride_ = shader.DownCast<Backend::Shader>();
 
-	if (shaderOverride_ != nullptr)
-	{
-		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shaderOverride_);
-		baseInstance_ = GLExt::glGetUniformLocation(shaderOverride_->GetProgram(), "SPIRV_Cross_BaseInstance");
-	}
-	else
-	{
-		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
-		baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
-	}
+	AssignAttribs();
 }
 
 void Shader::SetVertexLayout(Backend::VertexLayoutRef vertexLayout)
 {
 	vertexLayout_ = vertexLayout;
-	attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
+	AssignAttribs();
 }
 
 void Shader::BeginScene()
 {
-	if (shaderOverride_ != nullptr)
-	{
-		GLExt::glUseProgram(shaderOverride_->GetProgram());
-	}
-	else
-	{
-		GLExt::glUseProgram(shader_->GetProgram());	
-	}
+	GLExt::glUseProgram(GetCurrentShader()->GetProgram());
 }
 
 void Shader::EndScene()
@@ -236,82 +213,41 @@ void Shader::DisableAttribs()
 	GLCheckError();
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 void Shader::SetVertexConstantBufferSize(int32_t size)
 {
 	vertexConstantBuffer_ = graphicsDevice_->CreateUniformBuffer(size, nullptr).DownCast<Backend::UniformBuffer>();
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 void Shader::SetPixelConstantBufferSize(int32_t size)
 {
 	pixelConstantBuffer_ = graphicsDevice_->CreateUniformBuffer(size, nullptr).DownCast<Backend::UniformBuffer>();
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 void Shader::SetConstantBuffer()
 {
-	// baseInstance_
 	if (baseInstance_ >= 0)
 	{
 		GLExt::glUniform1i(baseInstance_, 0);
 	}
 
-	if (shaderOverride_ != nullptr)
-	{
-		Backend::StoreUniforms(shaderOverride_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
-	}
-	else
-	{
-		Backend::StoreUniforms(shader_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
-	}
+	Backend::StoreUniforms(GetCurrentShader(), vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
 
 	GLCheckError();
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 GLint Shader::GetTextureSlot(int32_t index)
 {
-	if (shaderOverride_ != nullptr)
-	{
-		return shaderOverride_->GetTextureLocations()[index];
-	}
-
-	return shader_->GetTextureLocations()[index];
+	return GetCurrentShader()->GetTextureLocations()[index];
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 bool Shader::GetTextureSlotEnable(int32_t index)
 {
-	if (shaderOverride_ != nullptr)
-	{
-		return index < shaderOverride_->GetTextureLocations().size();
-	}
-
-	return index < shader_->GetTextureLocations().size();
+	return index < GetCurrentShader()->GetTextureLocations().size();
 }
 
 bool Shader::IsValid() const
 {
-	if (shaderOverride_ != nullptr)
-	{
-		return shaderOverride_->GetProgram() != 0;
-	}
-
-	return shader_->GetProgram() != 0;
+	return GetCurrentShader()->GetProgram() != 0;
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 } // namespace EffekseerRendererGL
