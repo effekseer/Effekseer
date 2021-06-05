@@ -483,7 +483,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 		{
 			Effekseer::CustomVector<Effekseer::CustomString<char>> tecLoc{"Sampler_g_sampler"};
 			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> elms;
-			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, elms);
+			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(tecLoc, elms);
 
 			auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromCodes(
 				{gl_postfx_basic_vs},

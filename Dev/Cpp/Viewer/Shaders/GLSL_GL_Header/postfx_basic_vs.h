@@ -26,6 +26,7 @@ VS_Output _main(VS_Input Input)
     VS_Output Output;
     Output.Position = pos4;
     Output.UV = Input.UV;
+    Output.UV.y = 1.0 - Output.UV.y;
     return Output;
 }
 
