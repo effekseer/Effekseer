@@ -161,13 +161,42 @@ Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 
 void Shader::OnResetDevice()
 {
-	attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
-	baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
+	if (shaderOverride_ != nullptr)
+	{
+		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shaderOverride_);
+		baseInstance_ = GLExt::glGetUniformLocation(shaderOverride_->GetProgram(), "SPIRV_Cross_BaseInstance");
+	}
+	else
+	{
+		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
+		baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
+	}
 }
 
 GLuint Shader::GetInterface() const
 {
+	if (shaderOverride_ != nullptr)
+	{
+		return shaderOverride_->GetProgram();
+	}
+
 	return shader_->GetProgram();
+}
+
+void Shader::OverrideShader(::Effekseer::Backend::ShaderRef shader)
+{
+	shaderOverride_ = shader.DownCast<Backend::Shader>();
+
+	if (shaderOverride_ != nullptr)
+	{
+		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shaderOverride_);
+		baseInstance_ = GLExt::glGetUniformLocation(shaderOverride_->GetProgram(), "SPIRV_Cross_BaseInstance");
+	}
+	else
+	{
+		attribs_ = Backend::GetVertexAttribLocations(vertexLayout_, shader_);
+		baseInstance_ = GLExt::glGetUniformLocation(shader_->GetProgram(), "SPIRV_Cross_BaseInstance");
+	}
 }
 
 void Shader::SetVertexLayout(Backend::VertexLayoutRef vertexLayout)
@@ -178,7 +207,14 @@ void Shader::SetVertexLayout(Backend::VertexLayoutRef vertexLayout)
 
 void Shader::BeginScene()
 {
-	GLExt::glUseProgram(shader_->GetProgram());
+	if (shaderOverride_ != nullptr)
+	{
+		GLExt::glUseProgram(shaderOverride_->GetProgram());
+	}
+	else
+	{
+		GLExt::glUseProgram(shader_->GetProgram());	
+	}
 }
 
 void Shader::EndScene()
@@ -227,7 +263,14 @@ void Shader::SetConstantBuffer()
 		GLExt::glUniform1i(baseInstance_, 0);
 	}
 
-	Backend::StoreUniforms(shader_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
+	if (shaderOverride_ != nullptr)
+	{
+		Backend::StoreUniforms(shaderOverride_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
+	}
+	else
+	{
+		Backend::StoreUniforms(shader_, vertexConstantBuffer_, pixelConstantBuffer_, isTransposeEnabled_);
+	}
 
 	GLCheckError();
 }
@@ -237,6 +280,11 @@ void Shader::SetConstantBuffer()
 //-----------------------------------------------------------------------------------
 GLint Shader::GetTextureSlot(int32_t index)
 {
+	if (shaderOverride_ != nullptr)
+	{
+		return shaderOverride_->GetTextureLocations()[index];
+	}
+
 	return shader_->GetTextureLocations()[index];
 }
 
@@ -245,11 +293,21 @@ GLint Shader::GetTextureSlot(int32_t index)
 //-----------------------------------------------------------------------------------
 bool Shader::GetTextureSlotEnable(int32_t index)
 {
+	if (shaderOverride_ != nullptr)
+	{
+		return index < shaderOverride_->GetTextureLocations().size();
+	}
+
 	return index < shader_->GetTextureLocations().size();
 }
 
 bool Shader::IsValid() const
 {
+	if (shaderOverride_ != nullptr)
+	{
+		return shaderOverride_->GetProgram() != 0;
+	}
+
 	return shader_->GetProgram() != 0;
 }
 

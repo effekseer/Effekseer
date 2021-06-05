@@ -31,6 +31,7 @@ private:
 	OpenGLDeviceType m_deviceType;
 	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
+	Backend::ShaderRef shaderOverride_;
 	Backend::VertexLayoutRef vertexLayout_;
 
 	int32_t m_vertexSize;
@@ -81,6 +82,8 @@ public:
 	virtual void OnResetDevice() override;
 
 public:
+	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override;
+
 	GLuint GetInterface() const;
 
 	void SetVertexLayout(Backend::VertexLayoutRef vertexLayout);
