@@ -376,7 +376,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 	if (sprite_renderer == nullptr)
 	{
-		spdlog::trace("FAIL : CreateSpriteRenderer");
+		spdlog::warn("FAIL : CreateSpriteRenderer");
 		return false;
 	}
 
@@ -399,7 +399,7 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 		}
 		else
 		{
-			spdlog::trace("FAIL : Background");
+			spdlog::warn("FAIL : Background");
 			return false;
 		}
 	}
@@ -411,13 +411,12 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 	}
 	else
 	{
-		spdlog::trace("FAIL : GroundRenderer");
+		spdlog::warn("FAIL : GroundRenderer");
 	}
 
 	if (graphics->GetGraphicsDevice()->GetDeviceName() == "DirectX11")
 	{
 #ifdef _WIN32
-
 		whiteParticleSpriteShader_ =
 			graphics->GetGraphicsDevice()->CreateShaderFromBinary(
 				WhiteParticle_Sprite_VS::g_main,
@@ -440,6 +439,14 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 
 		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
 #endif
+	}
+	else if (graphics->GetGraphicsDevice()->GetDeviceName() == "OpenGL")
+	{
+		spdlog::warn("Overdraw is not suppoted.");
+	}
+	else
+	{
+		spdlog::warn("Overdraw is not suppoted.");
 	}
 
 	return true;
