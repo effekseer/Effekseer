@@ -37,9 +37,8 @@ set(LOCAL_SOURCES
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
-target_link_libraries(${PROJECT_NAME} PRIVATE LLGI)
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_DX12}")
-add_dependencies(${PROJECT_NAME} Effekseer)
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
