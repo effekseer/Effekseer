@@ -61,23 +61,10 @@
 #include "EffekseerRendererGL.Base.Pre.h"
 #include <stddef.h>
 
-#if defined(__APPLE__) || defined(__ANDROID__)
-#else
+#if defined(_WIN32) || defined(EMSCRIPTEN)
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 typedef char GLchar;
-#endif
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-namespace EffekseerRendererGL
-{
-namespace GLExt
-{
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
 #define GL_STREAM_DRAW 0x88E0
@@ -142,10 +129,6 @@ namespace GLExt
 
 #define GL_DEPTH_STENCIL 0x84F9
 
-//#ifndef GL_WRITE_ONLY
-#define GL_WRITE_ONLY 0x000088b9
-//#endif
-
 #define GL_FRAMEBUFFER 0x8D40
 #define GL_FRAMEBUFFER_BINDING 0x8CA6
 
@@ -174,6 +157,19 @@ namespace GLExt
 #define GL_RED 0x1903
 
 #define GL_MAX_VARYING_VECTORS 0x8DFC
+
+#endif
+
+// TODO why redifinition
+//#ifndef GL_WRITE_ONLY
+#define GL_WRITE_ONLY 0x000088b9
+//#endif
+
+
+namespace EffekseerRendererGL
+{
+namespace GLExt
+{
 
 OpenGLDeviceType GetDeviceType();
 bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled);
