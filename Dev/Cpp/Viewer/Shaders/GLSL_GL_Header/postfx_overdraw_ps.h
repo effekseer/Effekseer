@@ -18,7 +18,7 @@ layout(location = 0) out vec4 _entryPointOutput;
 vec4 _main(PS_Input Input)
 {
     float value = texture(Sampler_g_sampler, Input.UV).x / 8.0;
-    return vec4(value, 1.0 - value, 0.0, 1.0);
+    return vec4(min(1.0, value * 2.0), abs(1.0 - (value * 2.0)), max(0.0, (value * 2.0) - 1.0), 1.0);
 }
 
 void main()
