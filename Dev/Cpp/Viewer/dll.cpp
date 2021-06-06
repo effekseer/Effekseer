@@ -191,22 +191,7 @@ static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
 Native::TextureLoader::TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType)
 {
-	if (g_deviceType == efk::DeviceType::OpenGL)
-	{
-		auto g = static_cast<efk::GraphicsGL*>(graphics);
-		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader(g->GetGraphicsDevice(), nullptr, colorSpaceType);
-	}
-#ifdef _WIN32
-	else if (g_deviceType == efk::DeviceType::DirectX11)
-	{
-		auto g = static_cast<efk::GraphicsDX11*>(graphics);
-		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(g->GetGraphicsDevice(), nullptr, colorSpaceType);
-	}
-	else
-	{
-		assert(0);
-	}
-#endif
+	m_originalTextureLoader = EffekseerRenderer::CreateTextureLoader(graphics->GetGraphicsDevice(), nullptr, colorSpaceType);
 }
 
 Native::TextureLoader::~TextureLoader()
@@ -289,38 +274,15 @@ Effekseer::ModelRef Native::ModelLoader::Load(const char16_t* path)
 	}
 	else
 	{
-		if (g_deviceType == efk::DeviceType::OpenGL)
+		auto loader = ::EffekseerRenderer::CreateModelLoader(graphics_->GetGraphicsDevice());
+		auto m = loader->Load((const char16_t*)dst);
+
+		if (m != nullptr)
 		{
-			auto loader = ::EffekseerRendererGL::CreateModelLoader();
-			auto m = (Effekseer::ModelRef)loader->Load((const char16_t*)dst);
-
-			if (m != nullptr)
-			{
-				m_models[key] = m;
-			}
-
-			return m;
+			m_models[key] = m;
 		}
-#ifdef _WIN32
-		else if (g_deviceType == efk::DeviceType::DirectX11)
-		{
-			auto g = static_cast<efk::GraphicsDX11*>(graphics_);
-			auto loader = ::EffekseerRendererDX11::CreateModelLoader(g->GetGraphicsDevice());
-			auto m = (Effekseer::ModelRef)loader->Load((const char16_t*)dst);
 
-			if (m != nullptr)
-			{
-				m_models[key] = m;
-			}
-
-			return m;
-		}
-		else
-		{
-			assert(0);
-			return nullptr;
-		}
-#endif
+		return m;
 	}
 }
 
@@ -1151,24 +1113,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 		return it->second.get();
 	}
 
-	Effekseer::TextureLoaderRef loader = nullptr;
-	if (g_deviceType == efk::DeviceType::OpenGL)
-	{
-		auto r = (EffekseerRendererGL::Renderer*)mainScreen_->GetRenderer().Get();
-		loader = EffekseerRendererGL::CreateTextureLoader(r->GetGraphicsDevice());
-	}
-#ifdef _WIN32
-	else if (g_deviceType == efk::DeviceType::DirectX11)
-	{
-		auto r = (EffekseerRendererDX11::Renderer*)mainScreen_->GetRenderer().Get();
-		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetGraphicsDevice());
-	}
-	else
-	{
-		assert(0);
-	}
-#endif
-
+	auto loader = EffekseerRenderer::CreateTextureLoader(graphics_->GetGraphicsDevice());
 	auto resource = std::make_shared<efk::ImageResource>(g_deviceType, loader);
 	resource->SetPath(path);
 
