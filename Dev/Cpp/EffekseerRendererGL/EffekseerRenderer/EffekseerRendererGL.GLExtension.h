@@ -61,23 +61,10 @@
 #include "EffekseerRendererGL.Base.Pre.h"
 #include <stddef.h>
 
-#if defined(__APPLE__) || defined(__ANDROID__)
-#else
+#if defined(_WIN32) || defined(EMSCRIPTEN)
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 typedef char GLchar;
-#endif
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-namespace EffekseerRendererGL
-{
-namespace GLExt
-{
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
 #define GL_STREAM_DRAW 0x88E0
@@ -105,13 +92,6 @@ namespace GLExt
 #define GL_VERTEX_ARRAY_BINDING 0x85B5
 #define GL_ARRAY_BUFFER_BINDING 0x8894
 #define GL_ELEMENT_ARRAY_BUFFER_BINDING 0x8895
-
-#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
-#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
-#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
-#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT 0x8C4D
-#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT 0x8C4E
-#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT 0x8C4F
 #define GL_SRGB8_ALPHA8 0x8C43
 
 #define GL_FRAMEBUFFER_SRGB 0x8DB9
@@ -142,10 +122,6 @@ namespace GLExt
 
 #define GL_DEPTH_STENCIL 0x84F9
 
-//#ifndef GL_WRITE_ONLY
-#define GL_WRITE_ONLY 0x000088b9
-//#endif
-
 #define GL_FRAMEBUFFER 0x8D40
 #define GL_FRAMEBUFFER_BINDING 0x8CA6
 
@@ -174,6 +150,26 @@ namespace GLExt
 #define GL_RED 0x1903
 
 #define GL_MAX_VARYING_VECTORS 0x8DFC
+
+#endif
+
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT 0x8C4D
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT 0x8C4E
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT 0x8C4F
+
+// TODO why redifinition
+//#ifndef GL_WRITE_ONLY
+#define GL_WRITE_ONLY 0x000088b9
+//#endif
+
+
+namespace EffekseerRendererGL
+{
+namespace GLExt
+{
 
 OpenGLDeviceType GetDeviceType();
 bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled);
