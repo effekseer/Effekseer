@@ -1,6 +1,8 @@
 project(Effekseer)
 cmake_minimum_required(VERSION 3.1)
 
+FIND_PACKAGE(Threads REQUIRED)
+
 # Setup source codes
 file(GLOB effekseer_h
     *.h
@@ -88,6 +90,8 @@ add_library(${PROJECT_NAME} STATIC
 set(files
     ${effekseer_h}
     ${effekseer_src})
+
+target_link_libraries(Effekseer PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 
 FilterFolder("${files}")
 if(CLANG_FORMAT_ENABLED)

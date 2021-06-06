@@ -54,9 +54,8 @@ set(LOCAL_SOURCES
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
-target_link_libraries(${PROJECT_NAME} LLGI)
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Metal}")
-add_dependencies(${PROJECT_NAME} Effekseer)
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
 
 if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
