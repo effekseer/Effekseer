@@ -720,6 +720,7 @@ public:
 	bool IsCtrlKeyDown();
 	bool IsAltKeyDown();
 	bool IsMouseDown(int button);
+	bool IsMouseClicked(int button, bool repeat);
 	bool IsMouseDoubleClicked(int button);
 
 	bool IsItemHovered();
@@ -758,7 +759,7 @@ public:
 	void SetDockFocus(const char16_t* label);
 
 	// Fcurve
-	bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);
+	bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, const Vec2& min_kv, const Vec2& max_kv);
 	void EndFCurve();
 	bool FCurve(int fcurve_id,
 				float* keys,

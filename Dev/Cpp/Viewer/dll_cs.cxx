@@ -7689,6 +7689,22 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseDown
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseClicked___(void * jarg1, int jarg2, unsigned int jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool arg3 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = jarg3 ? true : false; 
+  result = (bool)(arg1)->IsMouseClicked(arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseDoubleClicked___(void * jarg1, int jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -8049,15 +8065,15 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetDockFocus___(voi
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_0___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5, float jarg6, float jarg7) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5, void * jarg6, void * jarg7) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
   efk::Vec2 *arg3 = 0 ;
   float arg4 ;
   efk::Vec2 *arg5 = 0 ;
-  float arg6 ;
-  float arg7 ;
+  efk::Vec2 *arg6 = 0 ;
+  efk::Vec2 *arg7 = 0 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
@@ -8073,67 +8089,17 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg6 = (float)jarg6; 
-  arg7 = (float)jarg7; 
-  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5,arg6,arg7);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_1___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5, float jarg6) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  int arg2 ;
-  efk::Vec2 *arg3 = 0 ;
-  float arg4 ;
-  efk::Vec2 *arg5 = 0 ;
-  float arg6 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (efk::Vec2 *)jarg3;
-  if (!arg3) {
+  arg6 = (efk::Vec2 *)jarg6;
+  if (!arg6) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg4 = (float)jarg4; 
-  arg5 = (efk::Vec2 *)jarg5;
-  if (!arg5) {
+  arg7 = (efk::Vec2 *)jarg7;
+  if (!arg7) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg6 = (float)jarg6; 
-  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5,arg6);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_2___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  int arg2 ;
-  efk::Vec2 *arg3 = 0 ;
-  float arg4 ;
-  efk::Vec2 *arg5 = 0 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (efk::Vec2 *)jarg3;
-  if (!arg3) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
-    return 0;
-  } 
-  arg4 = (float)jarg4; 
-  arg5 = (efk::Vec2 *)jarg5;
-  if (!arg5) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
-    return 0;
-  } 
-  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5);
+  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5,(efk::Vec2 const &)*arg6,(efk::Vec2 const &)*arg7);
   jresult = result; 
   return jresult;
 }

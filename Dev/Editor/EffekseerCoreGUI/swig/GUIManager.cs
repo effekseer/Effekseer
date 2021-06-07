@@ -1250,6 +1250,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsMouseClicked(int button, bool repeat) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseClicked(swigCPtr, button, repeat);
+    return ret;
+  }
+
   public bool IsMouseDoubleClicked(int button) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseDoubleClicked(swigCPtr, button);
     return ret;
@@ -1388,20 +1393,8 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetDockFocus(swigCPtr, label);
   }
 
-  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value, float max_value) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_0(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value, max_value);
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-    return ret;
-  }
-
-  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_1(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value);
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-    return ret;
-  }
-
-  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_2(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale));
+  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, Vec2 min_kv, Vec2 max_kv) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), Vec2.getCPtr(min_kv), Vec2.getCPtr(max_kv));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

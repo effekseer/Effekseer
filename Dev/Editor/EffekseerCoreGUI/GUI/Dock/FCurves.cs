@@ -30,6 +30,19 @@ namespace Effekseer.GUI.Dock
 		public List<Curve> Curves = new List<Curve>();
 	}
 
+	/// <summary>
+	/// TODO move
+	/// </summary>
+	/*
+	public struct RectF
+	{
+		public float X;
+		public float Y;
+		public float Width;
+		public float Height;
+	}
+	*/
+
 	public class FCurves : DockPanel
 	{
 		class Texts
@@ -67,13 +80,16 @@ namespace Effekseer.GUI.Dock
 		Component.Enum type = new Component.Enum();
 		Component.Enum timeline = new Component.Enum();
 
-		bool isAutoZoomMode = false;
-		float autoZoomRangeMin = float.MaxValue;
-		float autoZoomRangeMax = float.MinValue;
+		swig.Vec2 autoZoomRangeMin = new swig.Vec2(float.MaxValue, float.MaxValue);
+		swig.Vec2 autoZoomRangeMax = new swig.Vec2(float.MinValue, float.MinValue);
 
 		bool isFirstUpdate = true;
 
-		Action<float, float> moved = null;
+		protected int LEFT_SHIFT = 340;
+		protected int RIGHT_SHIFT = 344;
+		protected int LEFT_ALT = 342;
+		protected int RIGHT_ALT = 346;
+
 
 		public FCurves()
 		{
@@ -102,27 +118,6 @@ namespace Effekseer.GUI.Dock
 
 			NoPadding = true;
 			NoScrollBar = true;
-
-			// auto zoom event
-			moved += (x, y) =>
-			{
-				if (!isAutoZoomMode) return;
-
-				float min_y, max_y;
-				GetRange(treeNodes, out min_y, out max_y);
-
-				if (min_y < autoZoomRangeMin && y < 0)
-				{
-					autoZoomRangeMin += y;
-					autoZoomRangeMax += y;
-				}
-
-				if (max_y > autoZoomRangeMax && y > 0)
-				{
-					autoZoomRangeMin += y;
-					autoZoomRangeMax += y;
-				}
-			};
 		}
 
 		protected override void UpdateInternal()
@@ -195,7 +190,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 				{
-					Paste();
+					Paste(false);
 				}
 
 				if (Component.Functions.CanShowTip())
@@ -242,23 +237,6 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.NextColumn();
 
-			if (isAutoZoomMode)
-			{
-				if (canCurveControl)
-				{
-					float min_value, max_value;
-					GetRange(treeNodes, out min_value, out max_value);
-					var range = (max_value - min_value);
-					autoZoomRangeMin = min_value - range * 0.1f;
-					autoZoomRangeMax = max_value + range * 0.1f;
-				}
-			}
-			else
-			{
-				//autoZoomRangeMin = float.MaxValue;
-				//autoZoomRangeMax = float.MinValue;
-			}
-
 			var graphSize = Manager.NativeManager.GetContentRegionAvail();
 			graphSize.X = Math.Max(graphSize.X, 32);
 			graphSize.Y = Math.Max(graphSize.Y, 32);
@@ -267,12 +245,30 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.BeginFCurve(1, graphSize, Manager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax))
 			{
-				UpdateGraph(treeNodes);
+				var clicked = Manager.NativeManager.IsMouseClicked(0, false) && Manager.NativeManager.IsWindowHovered();
+				UpdateGraph(treeNodes, ref canControl);
+
+				// TODO refactor
+				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+				{
+				}
+				else if (Manager.NativeManager.IsKeyDown(LEFT_ALT) || Manager.NativeManager.IsKeyDown(RIGHT_ALT))
+				{
+				}
+				else
+				{
+					if (canControl && clicked)
+					{
+						UnselectPoints();
+					}
+				}
 			}
 
 			// Reset area
-			autoZoomRangeMin = float.MaxValue;
-			autoZoomRangeMax = float.MinValue;
+			autoZoomRangeMin.X = float.MaxValue;
+			autoZoomRangeMax.X = float.MinValue;
+			autoZoomRangeMin.Y = float.MaxValue;
+			autoZoomRangeMax.Y = float.MinValue;
 
 			if (canControl)
 			{
@@ -345,11 +341,6 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		void UpdateGraph(TreeNode treeNode)
-		{
-			UpdateGraph(treeNodes, ref canControl);
-		}
-
 		private void CheckAndApplyUpdate(TreeNode treeNode)
 		{
 			canCurveControlPre = canCurveControl;
@@ -405,27 +396,36 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateDetails()
 		{
-			var selected = GetSelectedFCurve();
-
+			var fcurves = GetSelectedFCurve();
+			var selectedPoints = fcurves.SelectMany(_=> {
+				var index = _.Item2.GetSelectedIndex();
+				if(index != null)
+				{
+					return index.Select(__ => Tuple.Create(_.Item1, _.Item2, __));
+				}
+				return new Tuple<IFCurve, FCurveProperty, int>[0];
+			});
 			var invalidValue = "/";
-			var selectedInd = selected.Item1 != null ? selected.Item2.GetSelectedIndex() : -1;
 
 			Manager.NativeManager.BeginChild("##FCurveDetails", new swig.Vec2());
 			Manager.NativeManager.PushItemWidth(80 * Manager.DpiScale);
 			Manager.NativeManager.Spacing();
 
-			if (selectedInd >= 0)
+			if (selectedPoints.Count() == 1)
 			{
-				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
+				var target = selectedPoints.First();
+				var ind = target.Item3;
+
+				var frameKey = new int[] { (int)target.Item2.Keys[ind] };
 				if (Manager.NativeManager.DragInt(texts.frame, frameKey))
 				{
-					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
+					var diff = frameKey[0] - target.Item2.Keys[ind];
 
-					selected.Item2.Keys[selectedInd] = (int)frameKey[0];
-					selected.Item2.LeftKeys[selectedInd] += diff;
-					selected.Item2.RightKeys[selectedInd] += diff;
-					selected.Item2.IsDirtied = true;
-					selected.Item2.SolveContradiction();
+					target.Item2.Keys[ind] = (int)frameKey[0];
+					target.Item2.LeftKeys[ind] += diff;
+					target.Item2.RightKeys[ind] += diff;
+					target.Item2.IsDirtied = true;
+					target.Item2.SolveContradiction();
 
 					canCurveControl = false;
 				}
@@ -442,17 +442,20 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
-			if (selectedInd >= 0)
+			if (selectedPoints.Count() == 1)
 			{
-				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
+				var target = selectedPoints.First();
+				var ind = target.Item3;
+
+				var frameValue = new float[] { target.Item2.Values[ind] };
 				if (Manager.NativeManager.DragFloat(texts.value, frameValue))
 				{
-					var diff = frameValue[0] - selected.Item2.Values[selectedInd];
+					var diff = frameValue[0] - target.Item2.Values[ind];
 
-					selected.Item2.Values[selectedInd] = frameValue[0];
-					selected.Item2.LeftValues[selectedInd] += diff;
-					selected.Item2.RightValues[selectedInd] += diff;
-					selected.Item2.IsDirtied = true;
+					target.Item2.Values[ind] = frameValue[0];
+					target.Item2.LeftValues[ind] += diff;
+					target.Item2.RightValues[ind] += diff;
+					target.Item2.IsDirtied = true;
 
 					canControl = false;
 					canCurveControl = false;
@@ -471,15 +474,18 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Left key
-			if (selectedInd >= 0)
+			if (selectedPoints.Count() == 1)
 			{
-				var leftValues = new float[] { selected.Item2.LeftKeys[selectedInd], selected.Item2.LeftValues[selectedInd] };
+				var target = selectedPoints.First();
+				var ind = target.Item3;
+
+				var leftValues = new float[] { target.Item2.LeftKeys[ind], target.Item2.LeftValues[ind] };
 				if (Manager.NativeManager.DragFloat2(texts.left, leftValues))
 				{
-					selected.Item2.LeftKeys[selectedInd] = leftValues[0];
-					selected.Item2.LeftValues[selectedInd] = leftValues[1];
-					selected.Item2.Clip(selectedInd);
-					selected.Item2.IsDirtied = true;
+					target.Item2.LeftKeys[ind] = leftValues[0];
+					target.Item2.LeftValues[ind] = leftValues[1];
+					target.Item2.Clip(ind);
+					target.Item2.IsDirtied = true;
 
 					canControl = false;
 					canCurveControl = false;
@@ -498,15 +504,18 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Right key
-			if (selectedInd >= 0)
+			if (selectedPoints.Count() == 1)
 			{
-				var rightValues = new float[] { selected.Item2.RightKeys[selectedInd], selected.Item2.RightValues[selectedInd] };
+				var target = selectedPoints.First();
+				var ind = target.Item3;
+
+				var rightValues = new float[] { target.Item2.RightKeys[ind], target.Item2.RightValues[ind] };
 				if (Manager.NativeManager.DragFloat2(texts.right, rightValues))
 				{
-					selected.Item2.RightKeys[selectedInd] = rightValues[0];
-					selected.Item2.RightValues[selectedInd] = rightValues[1];
-					selected.Item2.Clip(selectedInd);
-					selected.Item2.IsDirtied = true;
+					target.Item2.RightKeys[ind] = rightValues[0];
+					target.Item2.RightValues[ind] = rightValues[1];
+					target.Item2.Clip(ind);
+					target.Item2.IsDirtied = true;
 
 					canControl = false;
 					canCurveControl = false;
@@ -524,18 +533,30 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.InputText(texts.right, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
-			if (selectedInd >= 0)
+			// Bézier curve
+			if (selectedPoints.Count() > 0)
 			{
-				if (Manager.NativeManager.BeginCombo(texts.type, type.FieldNames[selected.Item2.Interpolations[selectedInd]].ToString(), swig.ComboFlags.None))
-				{
-					for (int i = 0; i < type.FieldNames.Count; i++)
-					{
-						bool is_selected = i == (int)selected.Item2.Interpolations[selectedInd];
+				var elements = selectedPoints.Select(_ => _.Item2.Interpolations[_.Item3]).Distinct();
 
-						if (Manager.NativeManager.Selectable(type.FieldNames[i].ToString(), is_selected, swig.SelectableFlags.None))
+				var multiName = "Multi";
+
+				var targetIndex = elements.Count() == 1 ? elements.First() : type.FieldNames.Count;
+				var targetName = targetIndex < type.FieldNames.Count ? type.FieldNames[targetIndex].ToString() : multiName;
+				var objects = type.FieldNames;
+
+				if (Manager.NativeManager.BeginCombo(texts.type, targetName, swig.ComboFlags.None))
+				{
+					for (int i = 0; i < objects.Count; i++)
+					{
+						bool is_selected = i == targetIndex;
+
+						if (Manager.NativeManager.Selectable(objects[i].ToString(), is_selected, swig.SelectableFlags.None))
 						{
-							selected.Item2.Interpolations[selectedInd] = i;
-							selected.Item2.IsDirtied = true;
+							foreach(var target in selectedPoints)
+							{
+								target.Item2.Interpolations[target.Item3] = i;
+								target.Item2.IsDirtied = true;
+							}
 							canCurveControl = false;
 						}
 
@@ -558,11 +579,13 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Separator();
 
 			// Start curve
-			if (selected.Item1 != null)
+			if (fcurves.Count() == 1)
 			{
-				startCurve.SetBinding(selected.Item1.StartType);
+				var fcurve = fcurves.First();
+
+				startCurve.SetBinding(fcurve.Item1.StartType);
 				startCurve.Update();
-				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
+				fcurve.Item2.StartEdge = (Data.Value.FCurveEdge)fcurve.Item1.StartType;
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
@@ -572,11 +595,13 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// End curve
-			if (selected.Item1 != null)
+			if (fcurves.Count() == 1)
 			{
-				endCurve.SetBinding(selected.Item1.EndType);
+				var fcurve = fcurves.First();
+
+				endCurve.SetBinding(fcurve.Item1.EndType);
 				endCurve.Update();
-				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
+				fcurve.Item2.EndEdge = (Data.Value.FCurveEdge)fcurve.Item1.EndType;
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
 			}
@@ -586,13 +611,15 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Sampling
-			if (selected.Item1 != null)
+			if (fcurves.Count() == 1)
 			{
-				var sampling = new int[] { selected.Item1.Sampling };
+				var fcurve = fcurves.First();
+
+				var sampling = new int[] { fcurve.Item1.Sampling };
 
 				if (Manager.NativeManager.InputInt(texts.sampling + "##SamplingText", sampling))
 				{
-					selected.Item1.Sampling.SetValue(sampling[0]);
+					fcurve.Item1.Sampling.SetValue(sampling[0]);
 				}
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
@@ -603,15 +630,17 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Offset label
-			if (selected.Item1 != null)
+			if (fcurves.Count() == 1)
 			{
+				var fcurve = fcurves.First();
+
 				var offset_id = texts.offset + "##OffsetMinMax";
-				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
+				var offsets = new float[] { fcurve.Item1.OffsetMin, fcurve.Item1.OffsetMax };
 
 				if (Manager.NativeManager.DragFloat2(offset_id, offsets))
 				{
-					selected.Item1.OffsetMin.SetValue(offsets[0]);
-					selected.Item1.OffsetMax.SetValue(offsets[1]);
+					fcurve.Item1.OffsetMin.SetValue(offsets[0]);
+					fcurve.Item1.OffsetMax.SetValue(offsets[1]);
 				}
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
@@ -621,7 +650,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.InputText(texts.offset + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
-			if (selected.Item1 == null)
+			if (fcurves.Count() == 0)
 			{
 				startCurve.SetBinding(null);
 				endCurve.SetBinding(null);
@@ -646,36 +675,6 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.EndChild();
 		}
 
-		void GetRange(TreeNode treeNode, out float min_value, out float max_value)
-		{
-			min_value = float.MaxValue;
-			max_value = float.MinValue;
-
-			foreach (var fcurve in treeNode.FCurves)
-			{
-				float min_v = 0;
-				float max_v = 0;
-
-				fcurve.GetRange(out min_v, out max_v);
-
-				min_value = Math.Min(min_value, min_v);
-				max_value = Math.Max(max_value, max_v);
-			}
-
-			for (int i = 0; i < treeNode.Children.Count; i++)
-			{
-				float min_v = 0;
-				float max_v = 0;
-
-				GetRange(treeNode.Children[i], out min_v, out max_v);
-
-				min_value = Math.Min(min_value, min_v);
-				max_value = Math.Max(max_value, max_v);
-			}
-
-			if (min_value == float.MaxValue) min_value = 0.0f;
-			if (max_value == float.MinValue) max_value = 0.0f;
-		}
 
 		void UpdateGraph(TreeNode treeNode, ref bool canControl)
 		{
@@ -1001,6 +1000,28 @@ namespace Effekseer.GUI.Dock
 
 			recurse(treeNodes);
 		}
+
+		public void UnselectPoints()
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.UnselectPoints();
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+
+		}
+
 		public void ShrinkAnchors()
 		{
 			Action<TreeNode> recurse = null;
@@ -1059,11 +1080,6 @@ namespace Effekseer.GUI.Dock
 			};
 
 			recurse(treeNodes);
-
-			if (moved != null)
-			{
-				moved(x, y);
-			}
 		}
 
 		public void Copy()
@@ -1142,13 +1158,13 @@ namespace Effekseer.GUI.Dock
 			return data;
 		}
 
-		public void Paste()
+		public void Paste(bool replace)
 		{
 			try
 			{
 				System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
 				FCurveCopiedData data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
-				Paste(data);
+				Paste(data, Manager.Viewer.Current, replace);
 			}
 			catch
 			{
@@ -1156,11 +1172,9 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		public void Paste(FCurveCopiedData data)
+		public void Paste(FCurveCopiedData data, float offsetTime, bool replace)
 		{
 			var flatten = flattenFcurves.ToArray();
-			var offsetTime = Manager.Viewer.Current;
-
 			foreach (var curve in flatten)
 			{
 				for (int ind = 0; ind < curve.Properties.Length; ind++)
@@ -1181,22 +1195,41 @@ namespace Effekseer.GUI.Dock
 
 					if (copiedCurve != null)
 					{
-						
-						for (int i = 0; i < copiedCurve.Points.Count; i++)
+					
+						if(replace)
 						{
-							prop.KVSelected = new byte[] { 0 }.Concat(prop.KVSelected).ToArray();
+							prop.KVSelected = new byte[copiedCurve.Points.Count];
+
+							prop.Keys = copiedCurve.Points.Select(_ => _.Key + offsetTime).ToArray();
+							prop.Values = copiedCurve.Points.Select(_ => _.Value).ToArray();
+							prop.LeftKeys = copiedCurve.Points.Select(_ => _.LeftKey + offsetTime).ToArray();
+							prop.LeftValues = copiedCurve.Points.Select(_ => _.LeftValue).ToArray();
+							prop.RightKeys = copiedCurve.Points.Select(_ => _.RightKey + offsetTime).ToArray();
+							prop.RightValues = copiedCurve.Points.Select(_ => _.RightValue).ToArray();
+							prop.Interpolations = copiedCurve.Points.Select(_ => _.Interpolation).ToArray();
+
+							prop.SolveContradiction();
+							prop.IsDirtied = true;
+
 						}
+						else
+						{
+							for (int i = 0; i < copiedCurve.Points.Count; i++)
+							{
+								prop.KVSelected = new byte[] { 0 }.Concat(prop.KVSelected).ToArray();
+							}
 
-						prop.Keys = copiedCurve.Points.Select(_ => _.Key + offsetTime).Concat(prop.Keys).ToArray();
-						prop.Values = copiedCurve.Points.Select(_ => _.Value).Concat(prop.Values).ToArray();
-						prop.LeftKeys = copiedCurve.Points.Select(_ => _.LeftKey + offsetTime).Concat(prop.LeftKeys).ToArray();
-						prop.LeftValues = copiedCurve.Points.Select(_ => _.LeftValue).Concat(prop.LeftValues).ToArray();
-						prop.RightKeys = copiedCurve.Points.Select(_ => _.RightKey + offsetTime).Concat(prop.RightKeys).ToArray();
-						prop.RightValues = copiedCurve.Points.Select(_ => _.RightValue).Concat(prop.RightValues).ToArray();
-						prop.Interpolations = copiedCurve.Points.Select(_ => _.Interpolation).Concat(prop.Interpolations).ToArray();
+							prop.Keys = copiedCurve.Points.Select(_ => _.Key + offsetTime).Concat(prop.Keys).ToArray();
+							prop.Values = copiedCurve.Points.Select(_ => _.Value).Concat(prop.Values).ToArray();
+							prop.LeftKeys = copiedCurve.Points.Select(_ => _.LeftKey + offsetTime).Concat(prop.LeftKeys).ToArray();
+							prop.LeftValues = copiedCurve.Points.Select(_ => _.LeftValue).Concat(prop.LeftValues).ToArray();
+							prop.RightKeys = copiedCurve.Points.Select(_ => _.RightKey + offsetTime).Concat(prop.RightKeys).ToArray();
+							prop.RightValues = copiedCurve.Points.Select(_ => _.RightValue).Concat(prop.RightValues).ToArray();
+							prop.Interpolations = copiedCurve.Points.Select(_ => _.Interpolation).Concat(prop.Interpolations).ToArray();
 
-						prop.SolveContradiction();
-						prop.IsDirtied = true;
+							prop.SolveContradiction();
+							prop.IsDirtied = true;
+						}
 					}
 				}
 
@@ -1204,7 +1237,7 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
+		List<Tuple35<Data.Value.IFCurve, FCurveProperty>> GetSelectedFCurve()
 		{
 			List<Tuple35<Data.Value.IFCurve, FCurveProperty>> rets = new List<Tuple35<IFCurve, FCurveProperty>>();
 			Action<TreeNode> recurse = null;
@@ -1214,10 +1247,10 @@ namespace Effekseer.GUI.Dock
 				foreach (var fcurve in t.FCurves)
 				{
 					var r = fcurve.GetSelectedFCurve();
-					if (r.Item1 != null)
-					{
-						rets.Add(r);
-					}
+					if (r == null)
+						continue;
+
+					rets.AddRange(r);
 				}
 
 				foreach (var c in t.Children)
@@ -1228,9 +1261,7 @@ namespace Effekseer.GUI.Dock
 
 			recurse(treeNodes);
 
-			if (rets.Count != 1) return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
-
-			return rets[0];
+			return rets;
 		}
 
 		class TreeNode
@@ -1462,10 +1493,13 @@ namespace Effekseer.GUI.Dock
 				this.fcurves = fcurves;
 			}
 
-			public void GetRange(out float value_min, out float value_max)
+			/*
+			public RectF GetRange()
 			{
-				value_min = float.MaxValue;
-				value_max = float.MinValue;
+				var key_min = float.MaxValue;
+				var key_max = float.MinValue;
+				var value_min = float.MaxValue;
+				var value_max = float.MinValue;
 
 				foreach (var prop in properties)
 				{
@@ -1473,6 +1507,13 @@ namespace Effekseer.GUI.Dock
 
 					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
 					{
+						key_min = Math.Min(prop.Keys[i], key_min);
+						key_max = Math.Max(prop.Keys[i], key_max);
+						key_min = Math.Min(prop.LeftKeys[i], key_min);
+						key_max = Math.Max(prop.LeftKeys[i], key_max);
+						key_min = Math.Min(prop.RightKeys[i], key_min);
+						key_max = Math.Max(prop.RightKeys[i], key_max);
+
 						value_min = Math.Min(prop.Values[i], value_min);
 						value_max = Math.Max(prop.Values[i], value_max);
 						value_min = Math.Min(prop.LeftValues[i], value_min);
@@ -1482,43 +1523,31 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				/*
-				if (value_min == float.MaxValue || value_max == float.MinValue)
-				{
-					// todo set from outer
-					if (defaultValue == 255)
-					{
-						value_min = 0;
-						value_max = 255;
-					}
-					else
-					{
-						value_min = -0;
-						value_max = 0;
-					}
-				}
-				*/
+				return new RectF { X = key_min, Y = value_min, Width = key_max - key_min, Height = value_max - value_min };
 			}
+			*/
 
 			public object GetValueAsObject()
 			{
 				return Value;
 			}
 
-			public Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
+			public List<Tuple35<Data.Value.IFCurve, FCurveProperty>> GetSelectedFCurve()
 			{
-				int count = properties.Count(_ => _.Selected);
-				if (count != 1) return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
+				List<Tuple35<Data.Value.IFCurve, FCurveProperty>> ret = null;
 
 				for (int i = 0; i < properties.Length; i++)
 				{
 					if (properties[i].Selected)
 					{
-						return new Tuple35<Data.Value.IFCurve, FCurveProperty>(fcurves[i], properties[i]);
+						if (ret == null)
+							ret = new List<Tuple35<IFCurve, FCurveProperty>>();
+
+						ret.Add(Tuple35.Create(fcurves[i], properties[i]));
 					}
 				}
 
-				return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
+				return ret;
 			}
 
 			public void UpdateTree(string nodeName)
@@ -1538,15 +1567,19 @@ namespace Effekseer.GUI.Dock
 
 							if (this.fcurves[i].Keys.Count() > 0)
 							{
-								var max = this.fcurves[i].Keys.Max(_ => _.ValueAsFloat);
-								var min = this.fcurves[i].Keys.Min(_ => _.ValueAsFloat);
-								window.autoZoomRangeMax = max + 10;
-								window.autoZoomRangeMin = min - 10;
+								var maxKey = this.fcurves[i].Keys.Max(_ => _.Frame);
+								var minKey = this.fcurves[i].Keys.Min(_ => _.Frame);
+								var maxValue = this.fcurves[i].Keys.Max(_ => _.ValueAsFloat);
+								var minValue = this.fcurves[i].Keys.Min(_ => _.ValueAsFloat);
+								window.autoZoomRangeMax.X = maxKey + 20;
+								window.autoZoomRangeMin.X = minKey - 20;
+								window.autoZoomRangeMax.Y = maxValue + 10;
+								window.autoZoomRangeMin.Y = minValue - 10;
 							}
 							else
 							{
-								window.autoZoomRangeMax = defaultValue + 10;
-								window.autoZoomRangeMin = -10;
+								window.autoZoomRangeMax.Y = defaultValue + 10;
+								window.autoZoomRangeMin.Y = -10;
 							}
 						}
 						else
@@ -1796,52 +1829,43 @@ namespace Effekseer.GUI.Dock
 					if (!prop.IsShown) continue;
 					if (!prop.Selected) continue;
 
+
 					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
 					{
 						if (prop.KVSelected[i] == 0) continue;
 
-						var d = 0.0f;
 						var length_pre = 10.0f;
 						var length_next = 10.0f;
 
-						if (prop.KVSelected.Length -1 == 1)
+						if (prop.KVSelected.Length - 1 == 1)
 						{
-							d = 0.0f;
+							// None
 						}
 						else if (i == 0)
 						{
 							var dx = prop.Keys[i + 1] - prop.Keys[i + 0];
-							var dy = prop.Values[i + 1] - prop.Values[i + 0];
-							d = dy / dx;
-
 							length_next = Math.Min(length_next, dx / 2.0f);
 						}
 						else if (i == prop.KVSelected.Length - 2)
 						{
 							var dx = prop.Keys[i + 0] - prop.Keys[i - 1];
-							var dy = prop.Values[i + 0] - prop.Values[i - 1];
-							d = dy / dx;
-
 							length_pre = Math.Min(length_pre, dx / 2.0f);
 						}
 						else
 						{
-							var dx = prop.Keys[i + 1] - prop.Keys[i - 1];
-							var dy = prop.Values[i + 1] - prop.Values[i - 1];
-							d = dy / dx;
-
 							length_next = Math.Min(length_next, (prop.Keys[i + 1] - prop.Keys[i + 0]) / 2.0f);
 							length_pre = Math.Min(length_next, (prop.Keys[i + 0] - prop.Keys[i - 1]) / 2.0f);
 						}
 
 						prop.LeftKeys[i] = prop.Keys[i] - length_pre;
-						prop.LeftValues[i] = prop.Values[i] - d * length_pre;
+						prop.LeftValues[i] = prop.Values[i];
 
 						prop.RightKeys[i] = prop.Keys[i] + length_next;
-						prop.RightValues[i] = prop.Values[i] + d * length_next;
+						prop.RightValues[i] = prop.Values[i];
 
 						prop.IsDirtied = true;
 					}
+
 				}
 			}
 
@@ -1892,6 +1916,17 @@ namespace Effekseer.GUI.Dock
 				properties[i].Interpolations = new int[0];
 				//properties[i].KVSelected = new byte[0];
 				properties[i].CopyValuesFromDataIfSizeDifferent(fcurves[i]);
+			}
+
+			public void UnselectPoints()
+			{
+				foreach (var prop in properties)
+				{
+					for(int i = 0; i < prop.KVSelected.Length; i++)
+					{
+						prop.KVSelected[i] = 0;
+					}
+				}
 			}
 
 			public void Unselect()
@@ -2050,19 +2085,21 @@ namespace Effekseer.GUI.Dock
 				RightKeys[index] = System.Math.Max(RightKeys[index], Keys[index]);
 			}
 
-			public int GetSelectedIndex()
+			public List<int> GetSelectedIndex()
 			{
-				if (KVSelected.Take(KVSelected.Count() - 1).Count(_ => _ > 0) != 1)
-				{
-					return -1;
-				}
+				List<int> ret = null;
 
 				for (int i = 0; i < KVSelected.Count() - 1; i++)
 				{
-					if (KVSelected[i] > 0) return i;
+					if (KVSelected[i] > 0)
+					{
+						if (ret == null)
+							ret = new List<int>();
+						ret.Add(i);
+					}
 				}
 
-				return -1;
+				return ret;
 			}
 
 			public void CopyValuesFromDataIfSizeDifferent(Data.Value.IFCurve fcurve)
