@@ -106,8 +106,6 @@ namespace Effekseer.GUI.Dock
 				// 生存時間: Life
 				// 生成時間: GenerationTime
 
-
-
 				int frameMin = Core.StartFrame;
 				int frameMax = Core.EndFrame;
 
@@ -117,55 +115,16 @@ namespace Effekseer.GUI.Dock
 
 					int frameStart = 0;
 					int frameLast = 0;
-#if true
-					if (!Manager.Viewer.native.GetNodeLifeTimes(node._managedId, ref frameStart, ref frameLast))
+					if (!Manager.Viewer.native.GetNodeLifeTimes(node.EditorNodeId, ref frameStart, ref frameLast))
 					{
-
+						// エディタ起動直後など、Native 側のインスタンスが作られていないことがある。
+						// その場合は空のタイムラインにしておく。
 					}
 
 					Manager.NativeManager.TimelineNode(node.Name, (int)frameStart, (int)frameLast);
-#else
-					var common = node.CommonValues;
-
-					var frameStart = common.GenerationTimeOffset.Min;
-
-
-					var nodeLife = common.Life.Max;
-					var instanceTime = common.GenerationTime.Max;
-
-					var instanceCount = common.MaxGeneration.Value.Value;
-
-
-					var instanceOneOffset = instanceTime;//common.GenerationTimeOffset.Max - common.GenerationTimeOffset.Min;
-
-					var instanceMaxTime = (instanceOneOffset * (instanceCount - 1)) + common.Life.Max;//common.GenerationTime.Max;
-
-
-					var instanceOffsetLast = frameStart + instanceMaxTime;
-
-
-					// Nodeの開始オフセットの終端 + 
-					var frameLast = instanceOffsetLast;//common.GenerationTimeOffset.Max + common.Life.Max;
-
-					if (node.CommonValues.MaxGeneration.Infinite)
-					{
-						frameLast = frameMax;
-					}
-					else
-					{
-						var coreLife = node.CommonValues.MaxGeneration.Value;
-
-						frameLast = Math.Max(frameStart, frameLast);
-
-						Manager.NativeManager.TimelineNode(node.Name, (int)frameStart, (int)frameLast);
-					}
-#endif
 				}
 
-
-
 				{
-
 					int currentFrame = (int)Manager.Viewer.Current;
 					int selectedEntry = 0;
 					Manager.NativeManager.EndNodeFrameTimeline(ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref _scrollFirstFrame);

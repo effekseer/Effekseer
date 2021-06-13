@@ -7,10 +7,6 @@ namespace Effekseer.Data
 {
 	public class NodeBase
 	{
-		//static int NextManagedId = 1;
-
-		public int _managedId = 0;
-
 		List<Node> children = new List<Node>();
 
 		[Key(key = "Node_IsRendered")]
@@ -38,6 +34,16 @@ namespace Effekseer.Data
 		{
 			get;
 			private set;
+		}
+
+		/// <summary>
+		/// Identifier to use when referring to a node from the editor.
+		/// </summary>
+		[IO(Export = false)]
+		public int EditorNodeId
+		{
+			get;
+			set;
 		}
 
 		public event ChangedValueEventHandler OnAfterAddNode;

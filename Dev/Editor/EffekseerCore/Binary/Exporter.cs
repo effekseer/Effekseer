@@ -844,12 +844,13 @@ namespace Effekseer.Binary
 			Action<Data.NodeRoot> outout_rootnode = null;
 			Action<Data.Node> outout_node = null;
 
-			int nextManagedId = 1;
+			// Identifier to use when referring to a node from the editor.
+			int nextEditorNodeId = 1;
 
 			outout_rootnode = (n) =>
 			{
-				n._managedId = nextManagedId;
-				nextManagedId++;
+				n.EditorNodeId = nextEditorNodeId;
+				nextEditorNodeId++;
 
 				data.Add(((int)NodeType.Root).GetBytes());
 
@@ -865,8 +866,8 @@ namespace Effekseer.Binary
 
 			outout_node = (n) =>
 			{
-				n._managedId = nextManagedId;
-				nextManagedId++;
+				n.EditorNodeId = nextEditorNodeId;
+				nextEditorNodeId++;
 
 				List<byte[]> node_data = new List<byte[]>();
 
