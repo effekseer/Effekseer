@@ -818,6 +818,17 @@ void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<
 	}
 }
 
+bool EffectNodeImplemented::Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor)
+{
+	if (!visitor(this)) return false;	// cancel
+
+	for (EffectNodeImplemented* child : m_Nodes) {
+		if (!child->Traverse(visitor)) return false;
+	}
+
+	return true;	// continue
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1255,12 +1266,8 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 	}
 
 
-	if (auto* impl = dynamic_cast<EffectImplemented*>(effect)) {
-		effectnode->managedId_ = impl->nextManagedId_;
-		impl->nextManagedId_++;
-	}
-	else {
-		assert(0);
+	if (auto* effectImpl = dynamic_cast<EffectImplemented*>(effect)) {
+		effectnode->editorNodeId_ = effectImpl->NextEditorNodeId();
 	}
 
 	effectnode->LoadParameter(pos, parent, effect->GetSetting());

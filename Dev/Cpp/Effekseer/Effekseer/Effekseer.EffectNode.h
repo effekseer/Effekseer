@@ -1427,7 +1427,6 @@ class EffectNodeImplemented : public EffectNode, public SIMD::AlignedAllocationP
 	friend class Instance;
 
 public:
-	int managedId_ = 0;
 
 protected:
 	// 所属しているパラメーター
@@ -1440,6 +1439,9 @@ protected:
 	std::vector<EffectNodeImplemented*> m_Nodes;
 
 	RefPtr<RenderingUserData> renderingUserData_;
+
+	int32_t editorNodeId_ = 0;
+
 
 	// コンストラクタ
 	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
@@ -1522,6 +1524,13 @@ public:
 	int32_t RenderingPriority = -1;
 
 	DynamicFactorParameter DynamicFactor;
+
+
+	// Identifier to use when referring to a node from the editor.
+	int32_t GetEditorNodeId() const { return editorNodeId_; }
+
+	bool Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor);
+
 
 	Effect* GetEffect() const override;
 

@@ -106,9 +106,6 @@ class EffectImplemented : public Effect, public ReferenceObject
 
 	static const int32_t SupportBinaryVersion = Version16;
 
-public:
-	int nextManagedId_ = 0;
-
 protected:
 	SettingRef m_setting;
 
@@ -193,6 +190,7 @@ protected:
 
 	ReferenceObject* loadingObject = nullptr;
 
+	int32_t nextEditorNodeId_ = 0;
 
 
 	bool LoadBody(const uint8_t* data, int32_t size, float mag);
@@ -234,6 +232,10 @@ public:
 	{
 		return dynamicEquation;
 	}
+
+	int32_t NextEditorNodeId();
+
+	EffectNodeImplemented* FindNodeByEditorNodeId(int32_t editorNodeId) const;
 
 public:
 	const char16_t* GetName() const override;

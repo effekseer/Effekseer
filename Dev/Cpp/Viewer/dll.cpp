@@ -24,6 +24,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
+#include "Effekseer/Effekseer.EffectImplemented.h"
 #include "Effekseer/Effekseer.EffectNode.h"
 
 #pragma comment(lib, "d3d9.lib")
@@ -1229,24 +1230,16 @@ bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameM
 {
 	if (!effect_.Get()) return false;
 
-	const Effekseer::EffectNode* root = effect_->GetRoot();
-
-	Effekseer::EffectTerm rootTerm;
-	rootTerm.TermMin = 0;
-	rootTerm.TermMax = 0;
-
-	// TODO: ç°ÇÕ Root íºâ∫ÇÃÉmÅ[ÉhÇµÇ©å©ÇƒÇ¢Ç»Ç¢ÅB
-	for (int i = 0; i < root->GetChildrenCount(); i++) {
-		if (const Effekseer::EffectNodeImplemented* node = dynamic_cast<Effekseer::EffectNodeImplemented*>(root->GetChild(i))) {
-			if (node->managedId_ == nodeId) {
-				Effekseer::EffectInstanceTerm term;
-				auto cterm = node->CalculateInstanceTerm(term);
-				*frameMin = cterm.FirstInstanceStartMin;
-				*frameMax = cterm.LastInstanceEndMax;
-				return true;
-			}
+	if (auto* effect = dynamic_cast<Effekseer::EffectImplemented*>(effect_.Get())) {
+		if (auto* node = effect->FindNodeByEditorNodeId(nodeId)) {
+			Effekseer::EffectInstanceTerm term;
+			auto cterm = node->CalculateInstanceTerm(term);
+			*frameMin = cterm.FirstInstanceStartMin;
+			*frameMax = cterm.LastInstanceEndMax;
+			return true;
 		}
 	}
+
 	return false;
 }
 
