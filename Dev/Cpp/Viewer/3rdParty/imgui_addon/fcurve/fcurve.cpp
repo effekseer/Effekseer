@@ -1312,22 +1312,30 @@ namespace ImGui
 						if (i - 1 == movedIndex)
 						{
 							// To change button
+							const auto activeIdMouseButton = ImGui::GetCurrentContext()->ActiveIdMouseButton;
+
 							PushID(i + 1);
 							auto id = GetID("");
 							PopID();
 
 							SetActiveID(id, window);
 
+							ImGui::GetCurrentContext()->ActiveIdMouseButton = activeIdMouseButton;
+
 							movedIndex = i + 1;
 						}
 						else if (i == movedIndex)
 						{
 							// To change button
+							const auto activeIdMouseButton = ImGui::GetCurrentContext()->ActiveIdMouseButton;
+
 							PushID(i);
 							auto id = GetID("");
 							PopID();
 
 							SetActiveID(id, window);
+
+							ImGui::GetCurrentContext()->ActiveIdMouseButton = activeIdMouseButton;
 
 							movedIndex = i - 1;
 						}
