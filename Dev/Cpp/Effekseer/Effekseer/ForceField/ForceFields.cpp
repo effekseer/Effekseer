@@ -274,6 +274,11 @@ void LocalForceFieldParameter::MaintainAttractiveForceCompatibility(const float 
 
 void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem)
 {
+	if (deltaFrame == 0.0f)
+	{
+		return;
+	}
+
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
 		auto& field = parameter.LocalForceFields[i];
@@ -384,6 +389,11 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 
 void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame, CoordinateSystem coordinateSystem)
 {
+	if (deltaFrame == 0.0f)
+	{
+		return;
+	}
+
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
 		auto& field = parameter.LocalForceFields[i];
