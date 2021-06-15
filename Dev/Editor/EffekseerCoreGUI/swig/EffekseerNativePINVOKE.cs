@@ -1698,6 +1698,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsMouseClicked___")]
   public static extern bool GUIManager_IsMouseClicked(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, bool jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsMouseReleased___")]
+  public static extern bool GUIManager_IsMouseReleased(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsMouseDoubleClicked___")]
   public static extern bool GUIManager_IsMouseDoubleClicked(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -1784,6 +1787,18 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetDockFocus___")]
   public static extern void GUIManager_SetDockFocus(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsHoveredOnFCurve___")]
+  public static extern bool GUIManager_IsHoveredOnFCurve(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg4, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg5, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg6, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg7, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg8, int jarg9, int jarg10, uint jarg11, int jarg12);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsHoveredOnFCurvePoint___")]
+  public static extern bool GUIManager_IsHoveredOnFCurvePoint(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg3, int jarg4, ref int jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsFCurvePanning___")]
+  public static extern bool GUIManager_IsFCurvePanning(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetCurrentFCurveFieldPosition___")]
+  public static extern global::System.IntPtr GUIManager_GetCurrentFCurveFieldPosition(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginFCurve___")]
   public static extern bool GUIManager_BeginFCurve(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, float jarg4, global::System.Runtime.InteropServices.HandleRef jarg5, global::System.Runtime.InteropServices.HandleRef jarg6, global::System.Runtime.InteropServices.HandleRef jarg7);

@@ -136,6 +136,44 @@ namespace ImGui
 		return log(x) / log(base);
 	}
 
+	struct FieldScreenConverter
+	{
+		float offset_x_;
+		float offset_y_;
+		float scale_x_;
+		float scale_y_;
+		ImRect innerRect_;
+		float width_;
+		float height_;
+
+	public:
+		FieldScreenConverter()
+		{
+			ImGuiWindow* window = GetCurrentWindow();
+
+			offset_x_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
+			offset_y_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
+
+			scale_x_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
+			scale_y_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+
+			innerRect_ = window->InnerRect;
+			width_ = innerRect_.Max.x - innerRect_.Min.x;
+			height_ = innerRect_.Max.y - innerRect_.Min.y;
+		}
+
+		ImVec2 F2S(const ImVec2& p) const
+		{
+			return ImVec2((p.x - offset_x_) * scale_x_ + innerRect_.Min.x, (-p.y - offset_y_) * scale_y_ + innerRect_.Min.y + height_ / 2);
+		}
+
+		ImVec2 S2F(const ImVec2& p) const
+		{
+			return ImVec2((p.x - innerRect_.Min.x) / scale_x_ + offset_x_, -((p.y - innerRect_.Min.y - height_ / 2) / scale_y_ + offset_y_));
+		}
+	};
+
+
 	bool IsHovered(const ImVec2& v1, const ImVec2& v2, float radius)
 	{
 		ImVec2 diff;
@@ -229,7 +267,7 @@ namespace ImGui
 		ImFCurveInterporationType* interporations,
 		ImFCurveEdgeType startEdge,
 		ImFCurveEdgeType endEdge,
-		ImU32 col, int count, ImVec2* tangent = nullptr)
+		ImU32 col, int count, ImVec2* tangent)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 
@@ -403,6 +441,44 @@ namespace ImGui
 		return isLineHovered;
 	}
 
+	bool IsHoveredOnFCurvePoint(const float* keys, const float* values, int count, int* hovered)
+	{
+		assert(hovered != nullptr);
+
+		const FieldScreenConverter fsc;
+		*hovered = -1;
+
+		for (int i = 0; i < count; i++)
+		{
+			PushID(i + 1);
+
+			auto isChanged = false;
+			const float pointSize = pointRadiusSelected;
+
+			auto pos = fsc.F2S(ImVec2(keys[i], values[i]));
+			auto cursorPos = GetCursorPos();
+
+			ImVec2 p(pos.x - pointSize, pos.y - pointSize);
+			SetCursorScreenPos(p);
+
+			InvisibleButton("", ImVec2(pointSize * 2, pointSize * 2));
+
+			bool isDrawPositionRequired = false;
+
+			bool isActive = IsItemActive();
+			bool itemHovered = IsItemHovered();
+
+			if (itemHovered)
+			{
+				*hovered = i;
+			}
+
+			PopID();
+		}
+
+		return *hovered >= 0;
+	}
+
 	void DrawMaker(ImGuiWindow* window, ImVec2 pos, float size, uint32_t color, int32_t thickness)
 	{
 		window->DrawList->AddCircleFilled(pos, size + thickness, 0xAA000000, 8);
@@ -431,6 +507,19 @@ namespace ImGui
 
 			rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
 		}
+	}
+
+	bool IsFCurvePanning()
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+		return window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false);
+	}
+
+	ImVec2 GetCurrentFCurveFieldPosition()
+	{
+		const FieldScreenConverter fsc;
+		auto cursorPos = GetCursorPos();
+		return fsc.S2F(cursorPos);
 	}
 
 	bool BeginFCurve(int id, const ImVec2& size, float current, const ImVec2& scale, const ImVec2& min_kv, const ImVec2& max_kv)
@@ -577,10 +666,6 @@ namespace ImGui
 		}
 
 		// pan with user
-		if (ImGui::IsMouseReleased(1))
-		{
-			window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false);
-		}
 		if (window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false))
 		{
 			ImVec2 drag_offset = ImGui::GetMouseDragDelta(1);
@@ -732,6 +817,11 @@ namespace ImGui
 	void EndFCurve()
 	{
 		ImGuiWindow* window = GetCurrentWindow();
+
+		if (ImGui::IsMouseReleased(1))
+		{
+			window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false);
+		}
 
 		FCurveContext context;
 		context.Load(window);

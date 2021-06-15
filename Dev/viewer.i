@@ -77,6 +77,7 @@ class"
 %apply float *INOUT { float* movedY }
 %apply int *INOUT { int* changedType }
 %apply int INOUT[] { int* interporations }
+%apply int *INOUT { int* hovered }
 
 %apply uint8_t INOUT[] { uint8_t* kv_selected }
 

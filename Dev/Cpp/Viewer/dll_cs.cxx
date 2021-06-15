@@ -7705,6 +7705,20 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseClic
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseReleased___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->IsMouseReleased(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseDoubleClicked___(void * jarg1, int jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -8062,6 +8076,102 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetDockFocus___(voi
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   (arg1)->SetDockFocus((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsHoveredOnFCurve___(void * jarg1, float* jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, int* jarg8, int jarg9, int jarg10, unsigned int jarg11, int jarg12) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float *arg2 = (float *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float *arg5 = (float *) 0 ;
+  float *arg6 = (float *) 0 ;
+  float *arg7 = (float *) 0 ;
+  int *arg8 = (int *) 0 ;
+  efk::FCurveEdgeType arg9 ;
+  efk::FCurveEdgeType arg10 ;
+  uint32_t arg11 ;
+  int arg12 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2;
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = jarg5;
+  arg6 = jarg6;
+  arg7 = jarg7;
+  arg8 = jarg8;
+  arg9 = (efk::FCurveEdgeType)jarg9; 
+  arg10 = (efk::FCurveEdgeType)jarg10; 
+  arg11 = (uint32_t)jarg11; 
+  arg12 = (int)jarg12; 
+  result = (bool)(arg1)->IsHoveredOnFCurve(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  jresult = result; 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsHoveredOnFCurvePoint___(void * jarg1, float* jarg2, float* jarg3, int jarg4, int * jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float *arg2 = (float *) 0 ;
+  float *arg3 = (float *) 0 ;
+  int arg4 ;
+  int *arg5 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2;
+  arg3 = jarg3;
+  arg4 = (int)jarg4; 
+  arg5 = (int *)jarg5; 
+  result = (bool)(arg1)->IsHoveredOnFCurvePoint((float const *)arg2,(float const *)arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsFCurvePanning___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsFCurvePanning();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetCurrentFCurveFieldPosition___(void * jarg1) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (arg1)->GetCurrentFCurveFieldPosition();
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
 }
 
 

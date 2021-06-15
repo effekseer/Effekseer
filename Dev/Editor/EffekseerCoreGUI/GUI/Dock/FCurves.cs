@@ -246,6 +246,8 @@ namespace Effekseer.GUI.Dock
 			if (Manager.NativeManager.BeginFCurve(1, graphSize, Manager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax))
 			{
 				var clicked = Manager.NativeManager.IsMouseClicked(0, false) && Manager.NativeManager.IsWindowHovered();
+				var panning = Manager.NativeManager.IsFCurvePanning();
+
 				UpdateGraph(treeNodes, ref canControl);
 
 				// TODO refactor
@@ -262,20 +264,37 @@ namespace Effekseer.GUI.Dock
 						UnselectPoints();
 					}
 				}
+
+				if (canControl)
+				{
+					Manager.NativeManager.StartSelectingAreaFCurve();
+
+					if (Manager.NativeManager.IsMouseReleased(1) && !panning)
+					{
+						Manager.NativeManager.OpenPopup("AAAA");
+					}
+				}
+
+				if (Manager.NativeManager.BeginPopup("AAAA"))
+				{
+					// Copy
+					// Paste
+					// Replace
+					// Add
+					// Remove
+					Manager.NativeManager.Text("hoge");
+					Manager.NativeManager.EndPopup();
+				}
+
+				Manager.NativeManager.EndFCurve();
 			}
+
 
 			// Reset area
 			autoZoomRangeMin.X = float.MaxValue;
 			autoZoomRangeMax.X = float.MinValue;
 			autoZoomRangeMin.Y = float.MaxValue;
 			autoZoomRangeMax.Y = float.MinValue;
-
-			if (canControl)
-			{
-				Manager.NativeManager.StartSelectingAreaFCurve();
-			}
-
-			Manager.NativeManager.EndFCurve();
 
 			Manager.NativeManager.NextColumn();
 
@@ -688,7 +707,6 @@ namespace Effekseer.GUI.Dock
 			{
 				UpdateGraph(treeNode.Children[i], ref canControl);
 			}
-
 		}
 
 		void OnBeforeLoad(object sender, EventArgs e)

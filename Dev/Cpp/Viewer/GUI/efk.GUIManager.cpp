@@ -2029,6 +2029,11 @@ bool GUIManager::IsMouseClicked(int button, bool repeat)
 	return ImGui::IsMouseClicked(button, repeat);
 }
 
+bool GUIManager::IsMouseReleased(int button)
+{
+	return ImGui::IsMouseReleased(button);
+}
+
 bool GUIManager::IsMouseDoubleClicked(int button)
 {
 	return ImGui::IsMouseDoubleClicked(button);
@@ -2250,6 +2255,39 @@ void GUIManager::SetDockFocus(const char16_t* label)
 {
 	utf8str<256> utf8label(label);
 	ImGui::SetWindowFocus(utf8label);
+}
+
+bool GUIManager::IsHoveredOnFCurve(float* keys, float* values, float* leftHandleKeys, float* leftHandleValues, float* rightHandleKeys, float* rightHandleValues, int* interporations, FCurveEdgeType startEdge, FCurveEdgeType endEdge, uint32_t col, int count)
+{
+	return ImGui::IsHoveredOnFCurve(
+		keys,
+		values,
+		leftHandleKeys,
+		leftHandleValues,
+		rightHandleKeys,
+		rightHandleValues,
+		reinterpret_cast<ImGui::ImFCurveInterporationType*>(interporations),
+		static_cast<ImGui::ImFCurveEdgeType>(startEdge),
+		static_cast<ImGui::ImFCurveEdgeType>(endEdge),
+		static_cast <ImU32>(col),
+		count,
+		nullptr);
+}
+
+bool GUIManager::IsHoveredOnFCurvePoint(const float* keys, const float* values, int count, int* hovered)
+{
+	return ImGui::IsHoveredOnFCurvePoint(keys, values, count, hovered);
+}
+
+bool GUIManager::IsFCurvePanning()
+{
+	return ImGui::IsFCurvePanning();
+}
+
+Vec2 GUIManager::GetCurrentFCurveFieldPosition()
+{
+	const auto pos = ImGui::GetCurrentFCurveFieldPosition();
+	return Vec2{pos.x, pos.y};
 }
 
 bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, const Vec2& min_kv, const Vec2& max_kv)
