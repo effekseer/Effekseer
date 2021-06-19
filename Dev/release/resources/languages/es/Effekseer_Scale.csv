@@ -1,0 +1,25 @@
+﻿Scale_FixedParamater_Scale_Name,"Tamaño fijado"
+Scale_FixedParamater_Scale_Desc,"Tamaño fijo magnificado según las coordenadas indicadas"
+Scale_PVAParamater_Scale_Name,"Tamaño fijado"
+Scale_PVAParamater_Scale_Desc,"Tamaño fijo magnificado según las coordenadas indicadas"
+Scale_PVAParamater_Velocity_Name,"Velocidad
+de expansión"
+Scale_PVAParamater_Velocity_Desc,"Tasa inicial de la expansión"
+Scale_PVAParamater_Acceleration_Name,"Aceleración
+de expansión"
+Scale_PVAParamater_Acceleration_Desc,"Tasa de aceleración de expansión del Nodo"
+Scale_SinglePVAParamater_Scale_Name,"Tamaño fijado"
+Scale_SinglePVAParamater_Scale_Desc,"Tamaño fijo magnificado según las coordenadas indicadas"
+Scale_SinglePVAParamater_Velocity_Name,"Velocidad
+de expansión"
+Scale_SinglePVAParamater_Velocity_Desc,"Tasa inicial de la expansión"
+Scale_SinglePVAParamater_Acceleration_Name,"Aceleración
+de Expansión"
+Scale_SinglePVAParamater_Acceleration_Desc,"Tasa de aceleración de expansión del Nodo"
+Scale_ParamaterType_Fixed_Name,Escala Fija
+Scale_ParamaterType_PVA_Name,Movimiento por aceleración
+Scale_ParamaterType_Easing_Name,Movimiento por Coordenadas
+Scale_ParamaterType_FCurve_Name,Movimiento por F-Curva
+Scale_ParamaterType_SinglePVA_Name,Mov. aceleración (Singular)
+Scale_ParamaterType_SingleEasing_Name,Mov. Coordenadas (Singular)
+Scale_ParamaterType_SingleFCurve_Name,Mov. F-Curve (Singular)

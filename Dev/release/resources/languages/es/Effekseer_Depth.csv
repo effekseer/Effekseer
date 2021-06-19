@@ -1,0 +1,19 @@
+Depth_DepthOffset_Name,Desplazamiento-Z
+Depth_DepthOffset_Desc,Un desplazamiento que desplaza la dirección Z cuando se renderiza la partícula.
+Depth_IsScaleChangedDependingOnDepthOffset_Name,"Escalado es invalido
+con desplazamiento Z"
+Depth_IsScaleChangedDependingOnDepthOffset_Desc,Cuando el escalado no cambiando por desplazamiento Z
+Depth_IsDepthOffsetChangedDependingOnParticleScale_Name,Escalado desplazamiento-Z
+Depth_IsDepthOffsetChangedDependingOnParticleScale_Desc,Si el desplazamiento de Z se amplía con una escala de partículas
+Depth_ZSort_Name,Orden profundidad
+Depth_ZSort_Desc,Orden de profundidad del Nodo
+Depth_DepthClipping_Name,Recorte de profundidad
+Depth_DepthClipping_Desc,Las partículas más alejadas del valor especificado no se renderizarán.
+Depth_SuppressionOfScalingByDepth_Name,Supresión de la escala por profundidad
+Depth_SuppressionOfScalingByDepth_Desc,"Hace que la escala no cambie aunque se cambie una profundidad.
+Si es 1.0, no utiliza este parámetro, y si es 0.0, no hay escalado."
+Depth_DrawingPriority_Name,Prioridad de dibujo
+Depth_DrawingPriority_Desc,Un Nodo con prioridad de dibujo pequeña se dibuja previamente
+ZsortType_None_Name,Nada
+ZsortType_NormalOrder_Name,Orden Normal
+ZsortType_ReverseOrder_Name,Orden invertido

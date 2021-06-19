@@ -1,0 +1,21 @@
+Fcurve_Elm_Location,Ubicación
+Fcurve_Elm_Angle,Ángulo
+Fcurve_Elm_ScalingFactor,Factor de escala
+Fcurve_Elm_ScalingFactor_Single,Factor de escala(Singular)
+Fcurve_Elm_UV_Start,UV(Inicio)
+Fcurve_Elm_UV_Size,UV(Tamaño)
+Fcurve_Elm_Sprite_Color,Sprite-Todo el color(RGBA)
+Fcurve_Elm_Model_Color,Modelo-Color(RGBA)
+Fcurve_Elm_Track_Color_L,"Pista-Color,Izquierda(RGBA)"
+Fcurve_Elm_Track_Color_LC,"Pista-Color,Izquierda-Centro(RGBA)"
+Fcurve_Elm_Track_Color_C,"Pista-Color,Centro(RGBA)"
+Fcurve_Elm_Track_Color_CM,"Pista-Color,Centro-Medio(RGBA)"
+Fcurve_Elm_Track_Color_R,"Pista-Color,Derecha(RGBA)"
+Fcurve_Elm_Track_Color_RC,"Pista-Color,Derecha-Centro(RGBA)"
+Fcurve_Elm_CustomData,Información personalizada
+Fcurve_Elm_Alpha,Alpha
+Fcurve_Elm_UVDistortion,Distorsión UV
+Fcurve_Elm_Blend,Blend
+Fcurve_Elm_BlendAlpha,BlendAlpha
+Fcurve_Elm_BlendUVDistortion,Distorsón Blend UV
+Fcurve_Elm_AlphaThreshold,Umbral Alpha

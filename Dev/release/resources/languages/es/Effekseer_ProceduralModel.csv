@@ -1,0 +1,85 @@
+﻿ProceduralModel_Name,Modelo Procedural
+
+ProceduralModelType_Mesh_Name,Malla
+ProceduralModelType_Ribbon_Name,Cinta
+
+ProceduralModelPrimitiveType_Sphere_Name,Esfera
+ProceduralModelPrimitiveType_Cone_Name,Cono
+ProceduralModelPrimitiveType_Cylinder_Name,Cilindro
+ProceduralModelPrimitiveType_Spline_Name,Estriado
+
+ProceduralModelCrossSectionType_Plane_Name,Plano
+ProceduralModelCrossSectionType_Cross_Name,Cruce
+ProceduralModelCrossSectionType_Point_Name,Punto
+
+PM_Type_Name,Tipo
+PM_AngleBeginEnd_Name,Region(Ángulo)
+PM_Divisions_Name,División
+PM_Rotate_Name,Ángulo rado
+PM_Vertices_Name,El número de vertices
+PM_Count_Name,El número de cintas
+PM_RibbonScales_Name,Delgadez de la Cinta
+PM_RibbonAngles_Name,Ángulo de la Cinta
+PM_RibbonNoises_Name,Ruidos a la longitud
+
+PM_Shape_Name,Forma
+
+PM_PrimitiveType_Name,Tipo de forma
+PM_Radius_Name,Radio 1
+PM_Radius2_Name,Radio 2
+PM_Depth_Name,Profundidad
+PM_DepthMin_Name,Profundidad(Fondo)
+PM_DepthMax_Name,Profundidad(Tope)
+
+PM_Point1_Name,Punto 1
+PM_Point2_Name,Punto 2
+PM_Point3_Name,Punto 3
+PM_Point4_Name,Punto 4
+
+PM_AxisType_Name,Eje
+
+PM_ShapeNoise_Name,Forma de Ruido
+
+PM_TiltNoiseFreq_Name,Frecuencia de ruido de inclinación
+PM_TiltNoiseOffset_Name,Desplazamiento de ruido de inclinación
+PM_TiltNoisePower_Name,Poder de ruido de inclinación
+
+PM_WaveNoiseFreq_Name,Frecuencia de Ruido de olas
+PM_WaveNoiseOffset_Name,Desplazamiento de ruido de olas
+PM_WaveNoisePower_Name,Poder de ruido de olas
+
+PM_CurlNoiseFreq_Name,Frecuencia de ruido de rizos
+PM_CurlNoiseOffset_Name,Desplazamiento de ruido de rizos
+PM_CurlNoisePower_Name,Poder de ruido de rizos
+
+PM_VertexColor_Name,Color vertice
+
+PM_ColorLeft_Name,Color-izquierda
+PM_ColorCenter_Name,Color-Centro
+PM_ColorRight_Name,Color-derecha
+PM_ColorLeftMiddle_Name,Color-CentroIzquierda
+PM_ColorCenterMiddle_Name,Color-CentroMedio
+PM_ColorRightMiddle_Name,Color-CentroDerecha
+
+PM_ColorUpperLeft_Name,Color-SuperiorIzquierda
+PM_ColorUpperCenter_Name,Color-SuperiorMedio
+PM_ColorUpperRight_Name,Color-SuperiorDerecho
+PM_ColorMiddleLeft_Name,Color-MedioIzquierda
+PM_ColorMiddleCenter_Name,Color-MedioMedio
+PM_ColorMiddleRight_Name,Color-MedioDerecho
+PM_ColorLowerLeft_Name,Color-InferiorIzquierda
+PM_ColorLowerCenter_Name,Color-InferiorMedio
+PM_ColorLowerRight_Name,Color-InferiorDerecho
+
+PM_ColorCenterPosition_Name,Posición de centro area
+PM_ColorCenterArea_Name,Tasa del centro de area
+
+PM_VertexColorNoise_Name,Ruido color vertice
+
+PM_VertexColorNoiseFreq_Name,Frecuencia RuidoColorVertice
+PM_VertexColorNoiseOffset_Name,Desplazamiento RuidoColorVertice
+PM_VertexColorNoisePower_Name,Poder RuidoColorVertice
+
+PM_UV_Name,UV
+PM_UVPosition_Name,UV Posición
+PM_UVSize_Name,UV Tamaño

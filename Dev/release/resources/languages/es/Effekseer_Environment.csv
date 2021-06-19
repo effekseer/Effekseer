@@ -1,0 +1,29 @@
+Environment_Ground,Suelo
+EnvironmentGround_IsShown_Name,Visibilidad Suelo
+EnvironmentGround_IsShown_Desc,Vuelve visible la Suelo
+EnvironmentGround_Height_Name,Altura Suelo
+EnvironmentGround_Extent_Name,Extensión Suelo
+,
+Environment_BackgroundColor_Name,Color de fondo
+Environment_BackgroundColor_Desc,Selecciona un color para el fondo
+Environment_BackgroundImage_Name,Imagen de fondo
+Environment_BackgroundImage_Desc,Selecciona una imagen para el fondo
+Environment_LightDirection_Name,Dirección luz
+Environment_LightDirection_Desc,Orientación de la dirección de luz
+Environment_LightColor_Name,Color luz
+Environment_LightColor_Desc,Color difuso de la luz
+Environment_LightAmbientColor_Name,Cplor ambiente
+Environment_LightAmbientColor_Desc,Color de ambiente de la luz
+Environment_BloomSwitch_Name,Florecimiento
+Environment_BloomSwitch_Desc,El efecto produce franjas de luz que se extienden desde los bordes de las zonas brillantes de una imagen.
+Environment_TonemapSelector_Name,tono de mapa
+,
+EffectSwitch_Off_Name,Desactivado
+EffectSwitch_On_Name,Activado
+TonemapAlgorithm_Off_Name,Desactivado
+TonemapAlgorithm_Reinhard_Name,Reinhard
+,
+Environment_Bloom_Intensity_Name,Intensidad
+Environment_Bloom_Threshold_Name,Umbral
+Environment_Bloom_SoftKnee_Name,Redondeado suave
+Environment_TonemapReinhard_Exposure_Name,Exposición
