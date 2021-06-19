@@ -1,0 +1,31 @@
+EffectBehavior_Location_Name,Pos
+EffectBehavior_Location_Desc,Basedo en el centro
+EffectBehavior_LocationVelocity_Name,Velocidad
+EffectBehavior_LocationVelocity_Desc,Velocidad de inicio
+EffectBehavior_Rotation_Name,Ángulo
+EffectBehavior_Rotation_Desc,Ángulo de rotación desde el centro
+EffectBehavior_RotationVelocity_Name,"Velocidad
+angular"
+EffectBehavior_RotationVelocity_Desc,Rotación sobre el centro
+EffectBehavior_Scale_Name,Tamaño
+EffectBehavior_Scale_Desc,Tamaño sobre el centro
+EffectBehavior_ScaleVelocity_Name,"Tasa de 
+Expansión"
+EffectBehavior_ScaleVelocity_Desc,Tanaño sobre el centro
+EffectBehavior_RemovedTime_Name,Vida
+EffectBehavior_RemovedTime_Desc,Frame donde se destruirá el Nodo
+EffectBehavior_CountX_Name,Cuenta X
+EffectBehavior_CountX_Desc,Número de Nodos creados sobre el eje X
+EffectBehavior_CountY_Name,Cuenta Y
+EffectBehavior_CountY_Desc,Número de Nodos creados sobre el eje Y
+EffectBehavior_CountZ_Name,Cuenta Z
+EffectBehavior_CountZ_Desc,Número de Nodos creados sobre el eje Z
+EffectBehavior_Distance_Name,Separación
+EffectBehavior_Distance_Desc,Distancia entre los Nodos creados
+EffectBehavior_TimeSpan_Name,Generación de lapso de tiempo (Frame)
+EffectBehavior_TimeSpan_Desc,"Si el valor es mayor que 1, los efectos se generan en el tiempo especificado"
+EffectBehavior_ColorAll_Name,Colorear todo
+EffectBehavior_PlaybackSpeed_Name,Velocidad de reproducción
+EffectBehavior_TargetLocation_Name,"Punto de
+Atracción"
+EffectBehavior_TargetLocation_Desc,Punto en el espacio en el que se colocarán los Nodos

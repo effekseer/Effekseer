@@ -1,0 +1,47 @@
+SpawnMethod_EffectsRotation_Name,Ajustar ángulo en la Aparición
+,
+SpawnMethod_ParameterType_Point_Name,Punto
+SpawnMethod_ParameterType_Line_Name,Linea
+SpawnMethod_ParameterType_Circle_Name,Circulo
+SpawnMethod_ParameterType_Sphere_Name,Esfera
+SpawnMethod_ParameterType_Model_Name,Modelo 3D
+,
+SpawnMethod_Point_Location_Name,Lugar de Aparición
+,
+SpawnMethod_Line_Division_Name,Vertices
+SpawnMethod_Line_PositionStart_Name,Posición inicial
+SpawnMethod_Line_PositionEnd_Name,Posición final
+SpawnMethod_Line_PositionNoize_Name,Posición de ruido
+SpawnMethod_Line_Type_Name,Modo de Aparición
+,
+SpawnMethod_LineType_Random_Name,Aleatorio
+SpawnMethod_LineType_Order_Name,Orden
+,
+SpawnMethod_Circle_AxisDirection_Name,Dirección Eje
+SpawnMethod_Circle_Division_Name,Vertices
+SpawnMethod_Circle_Radius_Name,Radio
+SpawnMethod_Circle_AngleStart_Name,Ángulo inicial
+SpawnMethod_Circle_AngleEnd_Name,Ángulo final
+SpawnMethod_Circle_AngleNoize_Name,Ángulo ruido
+SpawnMethod_Circle_Type_Name,Modo de Aparición
+,
+SpawnMethod_AxisType_Xaxis_Name,Eje-X
+SpawnMethod_AxisType_Yaxis_Name,Eje-Y
+SpawnMethod_AxisType_Zaxis_Name,Eje-Z
+SpawnMethod_CircleType_Random_Name,Aleatorio
+SpawnMethod_CircleType_Order_Name,Sentido agujas reloj
+SpawnMethod_CircleType_ReverseOrder_Name,Contrario agujas reloj
+,
+SpawnMethod_Sphere_Radius_Name,Radio
+SpawnMethod_Sphere_RotationX_Name,Rotación X
+SpawnMethod_Sphere_RotationY_Name,Rotación Y
+,
+SpawnMethod_Model_Model_Name,Modelo 3D
+SpawnMethod_Model_Model_Desc,Modelo archivo
+SpawnMethod_Model_Type_Name,Metodo de Aparición
+,
+SpawnMethod_ModelType_Random_Name,Aleatorio
+SpawnMethod_ModelType_Vertex_Name,Vertice
+SpawnMethod_ModelType_RandomVertex_Name,Vertice aleatorio
+SpawnMethod_ModelType_Face_Name,Superficie
+SpawnMethod_ModelType_RandomFace_Name,Superficie aleatoria

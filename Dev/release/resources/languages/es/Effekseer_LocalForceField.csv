@@ -1,0 +1,64 @@
+LFF_Falloff_Type_Name,Tipo caída
+LFF_FalloffType_None_Name,Nada
+LFF_FalloffType_Sphere_Name,Esfera
+LFF_FalloffType_Cone_Name,Cono
+LFF_FalloffType_Tube_Name,Tubo
+,
+LFF_Falloff_Power_Name,Poder caída
+LFF_Falloff_MaxDistance_Name,Area efectiva (Distancia Max.)
+LFF_Falloff_MinDistance_Name,Area efectiva (Distancia Min.)
+,
+LFF_Falloff_Tube_RadiusPower_Name,Poder caída (Radio)
+LFF_Falloff_Tube_MaxRadius_Name,Area efectiva (Radio Max.)
+LFF_Falloff_Tube_MinRadius_Name,Area efectiva (Radio Min.)
+,
+LFF_Falloff_Cone_AnglePower_Name,Poder caída (Ángulo)
+LFF_Falloff_Cone_MaxAngle_Name,Area efectiva (Ángulo Max.)
+LFF_Falloff_Cone_MinAngle_Name,Area efectiva (Ángulo Min.)
+,
+LFF_Type_Name,Tipo
+LFF_Type_None_Name,Nada
+LFF_Type_Force_Name,Fuerza
+LFF_Type_Wind_Name,Viento
+LFF_Type_Vortex_Name,Vórtice
+LFF_Type_Turbulence_Name,Turbulencia
+LFF_Type_Drag_Name,Arrastre
+LFF_Type_Gravity_Name,Gravedad
+LFF_Type_AttractiveForce_Name,Atracción (si el punto está colocado)
+,
+LFF_Power_Name,Poder
+LFF_Power_Desc,La fuerza del campo de fuerza sobre las partículas.
+LFF_Position_Name,Posición del campo de fuerza
+LFF_Rotation_Name,Ángulo del campo de fuerza
+,
+LFF_Force_Gravitation_Name,Caída con la distancia
+,
+LFF_TurbulenceType_Name,Tipo
+LFF_VortexType_Name,Tipo
+,
+LFF_VortexType_ConstantAngle_Name,Ángulo Constante
+LFF_VortexType_ConstantSpeed_Name,Velocidad Constante
+,
+LFF_TurbulenceType_Simple_Name,Simple
+LFF_TurbulenceType_Complicated_Name,Complicado
+,
+LFF_FF_1_Name,Campo fuerza 1
+LFF_FF_2_Name,Campo fuerza 2
+LFF_FF_3_Name,Campo fuerza 3
+LFF_FF_4_Name,Campo fuerza 4
+,
+LFF_Turbulence_RandomSeed_Name,Semilla aleatoria
+LFF_Turbulence_RandomSeed_Desc,El flujo de turbulencia cambia según el valor..
+LFF_Turbulence_FieldScale_Name,Tamaño campo
+LFF_Turbulence_FieldScale_Desc,Un valor mayor aumenta la anchura de la turbulencia.
+LFF_Turbulence_Complexity_Name,Complejidad
+LFF_Turbulence_Complexity_Desc,"Un valor mayor complica las turbulencias. Sin embargo, el procesamiento se vuelve pesado"
+,
+LFF_Gravity_Gravity_Name,Gravedad
+LFF_Gravity_Gravity_Desc,El efecto de la gravedad en el Nodo
+LFF_AttractiveForce_Resistance_Name,Resistencia
+LFF_AttractiveForce_Resistance_Desc,Resistencia a la atracción direccional del atractor
+LFF_AttractiveForce_MinimumRange_Name,Rango minimo
+LFF_AttractiveForce_MinimumRange_Desc,"Dentro de este rango, se verá afectado por el atractor"
+LFF_AttractiveForce_MaximumRange_Name,Rango máximo
+LFF_AttractiveForce_MaximumRange_Desc,"Fuera de este rango, el atractor no tendrá ningún efecto sobre el Nodo"

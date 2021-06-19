@@ -1,0 +1,248 @@
+File,Archivo
+New,Nuevo
+Load,Cargar
+SaveAs,Guardar Como
+Save,Guardar
+Search,Buscar
+Ja,日本語
+En,English
+ConfirmSaveChanged,[{0}] ha tenido cambios. ¿Quieres guardar los cambios?
+Cancel,Cancelar
+TextureCount,Imagen
+UniformCount,Parametros
+Delete_Name,Borrar
+,
+Description_Name,Descripción
+Description_Desc,"Estos parámetros se muestran en otro editor.
+Sumario es mostrado como etiqueta.
+Detalle es mostrardo al hacer click o pasar el raton por encima en casi todos los casos."
+Language_Name,Leng.
+Summary_Name,Sumario
+Detail_Name,Detalle
+,
+,
+,
+Value_Name,V
+Value1_Name,V1
+Value2_Name,V2
+Value3_Name,V3
+Value4_Name,V4
+ConstValue1_Name,V1
+ConstValue2_Name,V2
+Alpha_Name,Alpha
+Name_Name,Nombre
+Input_Name,V
+Output_Name, 
+Comment_Name,Comentario
+Priority_Name,Prioridad
+Priority_Desc,"Cuanto más baja sea la prioridad, más alto se mostrará la pantalla en otros editores."
+Sampler_Name,Muestra
+Sampler_Desc,"Especificar el tratamiento de una imagen.
+Repetir - repite desde el lado opuesto
+Pinza - mantiene el color del borde
+UVIndex_Name,Índice UV
+,
+ShadingModel_Name,Modelo sombreado
+Lit_Name,iluminar
+Unlit_Name,no iluminar
+Speed_Name,Velocidad
+ConstSpeed_Name,Velocidad constante
+,
+Math_Name,Math
+Add_Node_Name,Add
+Add_Node_Desc,"Se emite el resultado de -Add- de V1 y V2.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+Subtract_Node_Name,Subtract
+Subtract_Node_Desc,"Muestra el resultado de -Subtract- de V2 a V1.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+Multiply_Node_Name,Multiply
+Multiply_Node_Desc,"Produce el resultado de la -Multiply- de V1 y V2.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+Divide_Node_Name,Divide
+Divide_Node_Desc,"Da el resultado de -Divide- V1 entre V2.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+Fmod_Node_Name,Mod
+Fmod_Node_Desc,"Emite el -Mod- cuando V1 se divide por V2.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+,
+Step_Node_Name,Paso
+Step_Node_Desc,"Da salida a 1 si el valor introducido en V es mayor que el Borde, y da salida a 0 si es menor."
+,
+Abs_Node_Name,Absoluto
+Abs_Node_Desc,Da salida al valor absoluto de V.
+ComponentMask_Node_Name,Mascara elementos
+ComponentMask_Node_Desc,"Extrace elementos de V.
+Por ejemplo, extrae parte del número 4 y saca el número 2."
+AppendVector_Node_Name,Fusionar Elementos
+AppendVector_Node_Desc,"Une los elementos de V1 y V2.
+Por ejemplo, con el número 3 y número 1 y salida número 4."
+OneMinus_Node_Name,1-V
+OneMinus_Node_Desc,Salida 1-V.
+Sine_Node_Name,Seno
+Sine_Node_Desc,Salida V Seno.
+Arctangent2_Node_Name,arctangente2
+Arctangent2_Node_Desc,"Salida X / Y arctangente.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+Ceil_Node_Name,Redondear
+Ceil_Node_Desc,Muestra el resultado del redondeo de V.
+Floor_Node_Name,Redondear  abajo
+Floor_Node_Desc,Da como resultado el valor obtenido al redondear hacia abajo V.
+Clamp_Node_Name,Pinza
+Clamp_Node_Desc,Da como resultado un valor en el que V está entre Mín y Máx.
+Frac_Node_Name,Parte Fraccional
+Frac_Node_Desc,"Da salida a la parte fraccionaria de V.
+Por ejemplo, si se introduce 1,15, sale 0,15."
+Min_Node_Name,Minimo
+Min_Node_Desc,Salidas de pequeño valor en V1 y V2.
+Max_Node_Name,Máximo
+Max_Node_Desc,Salidas de gran valor en V1 y V2.
+Power_Node_Name,Poder
+Power_Node_Desc,Muestra el valor de Base elevado a la potencia de Exp.
+SquareRoot_Node_Name,Raiz Cuadrada
+SquareRoot_Node_Desc,Da como resultado la raíz de V.
+DotProduct_Node_Name,Punto
+DotProduct_Node_Desc,Da como resultado el producto interno de V1 y V2.
+CrossProduct_Node_Name,Cruz
+CrossProduct_Node_Desc,Da como resultado el producto cruzado de V1 y V2.
+Normalize_Node_Name,Normalizar
+Normalize_Node_Desc,"Da salida al valor normalizado de V.
+Asegúrese de que la longitud del número de entrada es 1."
+LinearInterpolate_Node_Name,Linea Interpolada
+LinearInterpolate_Node_Desc,"Emite el valor complementado entre V1 y V2 por la relación alpha.
+Si la entrada no está conectada, utiliza el valor de la propiedad.
+
+Si alpha es 1, V1 es salida.
+Si alpha es 0, salida V2.
+Si alpha es 0.7, V1 x 0.3 + V2 x 0.7 es salida."
+,
+Model_Name,Modelo
+WorldPosition_Node_Name,PosiciónVertice
+WorldPosition_Node_Desc,Muestra las posiciones de los vértices de las partículas.
+TextureCoordinate_Node_Name,UV
+TextureCoordinate_Node_Desc,"Muestra las coordenadas UV de las partículas.
+Al cambiar el número de UV, se puede utilizar el UV antes de que sea cambiado por el parámetro UV del Effekseer."
+Panner_Node_Name,MoverUV
+Panner_Node_Desc,"Mueve las coordenadas UV de las partículas en función del tiempo y las emite.
+Puedes introducir las coordenadas UV, el tiempo y la velocidad de movimiento.
+Si la entrada no está conectada, utiliza el valor de la propiedad."
+VertexNormalWS_Node_Name,VerticeNormal
+VertexNormalWS_Node_Desc,Muestra las normales de los vértices de las partículas.
+PixelNormalWS_Node_Name,PixelNormal
+PixelNormalWS_Node_Desc,"Da salida a la normal de la partícula después de que la dirección de 
+la normal ha sido cambiada para cada píxel por una entrada normal en la Salida del Nodo."
+VertexTangentWS_Node_Name,TangenteVertice
+VertexTangentWS_Node_Desc,
+VertexColor_Node_Name,VerticeColor
+VertexColor_Node_Desc,"Muestra el color de los vértices de las partículas.
+Esto incluye todos los colores de sprite, anillo, etc.."
+ObjectScale_Node_Name,TamañoOjeto
+ObjectScale_Node_Desc,"Muestra la relación de ampliación de las partículas en el Effekseer.
+
+Sin embargo, sólo es válido cuando se utiliza para la Salida de Nodo en la Salida posición Global con el modelo."
+,
+Texture_Name,Imagen
+SampleTexture_Node_Name,Muestra Image
+SampleTexture_Node_Desc,Obtiene los píxeles de la imagen.
+TextureObjectParameter_Node_Name,Parametros de la imagen
+TextureObjectParameter_Node_Desc,"Da salida a una imagen especificada externamente.
+No se puede mostrar directamente porque es una imagen.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+TextureObject_Node_Name,Imagen constante
+TextureObject_Node_Desc,"Muestra la imagen especificada.
+No se puede mostrar directamente porque es una imagen."
+,
+Output_Node_Name,Salida
+Comment_Node_Name,Comentario
+,
+Constant_Name,Constante
+Time_Node_Name,Tiempo
+Time_Node_Desc,Muestra la hora actual en segundos.
+EffectScale_Node_Name,Escala Effecto
+EffectScale_Node_Desc,Obtiene la escala especificada cuando se carga el archivo de efectos.
+CameraPositionWS_Node_Name,Posición cámara
+CameraPositionWS_Node_Desc,Muestra la posición de la cámara.
+Constant1_Node_Name,Constante 1
+Constant1_Node_Desc,Da salida al valor especificado en la propiedad.
+Constant2_Node_Name,Constante 2
+Constant2_Node_Desc,Da salida al valor especificado en la propiedad.
+Constant3_Node_Name,Constante 3
+Constant3_Node_Desc,Da salida al valor especificado en la propiedad.
+Constant4_Node_Name,Constante 4
+Constant4_Node_Desc,Da salida al valor especificado en la propiedad.
+Parameter_Name,Parametros
+Parameter1_Node_Name,Parametro 1
+Parameter1_Node_Desc,"Salidas de parámetros especificados externamente.
+Este parámetro es común para cada Nodo.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+Parameter2_Node_Name,Parametro 2
+Parameter2_Node_Desc,"Salidas de parámetros especificados externamente.
+Este parámetro es común para cada Nodo.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+Parameter3_Node_Name,Parametro 3
+Parameter3_Node_Desc,"Salidas de parámetros especificados externamente.
+Este parámetro es común para cada Nodo.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+Parameter4_Node_Name,Parametro 4
+Parameter4_Node_Desc,"Salidas de parámetros especificados externamente.
+Este parámetro es común para cada Nodo.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+CustomData1_Node_Name,Info personalizado 1
+CustomData1_Node_Desc,"Salidas de parámetros especificados externamente.
+Este parámetro puede ajustarse de forma diferente para cada partícula.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+CustomData2_Node_Name,Info personalizado 2
+CustomData2_Node_Desc,"Salidas de parámetros especificados externamente.
+Este parámetro puede ajustarse de forma diferente para cada partícula.
+El resumen y los detalles especificados en los parámetros se muestran en Effekseer y en las herramientas externas."
+,
+Advanced_Name,Avanzado
+,
+Fresnel_Node_Name,Fresnel
+Fresnel_Node_Desc,"TCuanto mayor sea la dirección de la superficie desde el frente, mayor será el valor de salida.
+Puede especificar la intensidad en las propiedades.
+"
+Rotator_Node_Name,Rotador
+Rotator_Node_Desc,"El valor de entrada (principalmente UV) es girado y extraido.
+Se utiliza para girar una imagen en un material.
+Un ángulo se expresa como 1 por vuelta."
+PolarCoords_Node_Name,Coordenadas polares
+PolarCoords_Node_Desc," Salidas UV localizadas en la radiación del centro.
+Puede especificar cuántas imágenes se disponen en una ronda y el ángulo de rotación."
+,
+Depth_Name,Profundidad
+,
+DepthFade_Name,Desvanecimiento de la profundidad
+DepthFade_Desc,"Emite un valor menor a medida que se acerca al objeto de fondo.
+Salida 1 si la distancia es mayor que la distancia de desvanecimiento, 0 si la distancia es 0".
+,
+ConvertParam_Name,Convertir a parametros
+,
+,
+,
+Error_SameNode,Error_MismoNodo
+Error_SamePin,Error_MismoPin
+Error_SameDirection,Error_MismaDirección
+Error_Loop,Error_Bucle
+Error_Type,Error_Tipo
+Error_NewVersion,El archivo es demasiado nuevo para abrirlo. Por favor, actualice Effekseer
+Create_Link,Crear_enlace
+Create_Node,Crear_Nodo
+,
+,
+,
+,
+,
+,
+,
+Starting,Inicio
+Starting_New,Crear nuevo material
+Starting_Open,Abrir un material
+,
+Warning_WrongInputType,Un tipo de entrada no es válido
+Warning_WrongProperty,Una propiedad no es válida
+Warning_DifferentSampler,"Las diferentes muestras son 
+asignados en una misma imagen."
+Warning_SameName,Existe un nodo con el mismo nombre.
+Warning_InvalidName,"El nombre es inválido. 
+(Por favor, lea la ayuda.)"
+Warning_PixelNodeAndNormal,PixelNormal no puede conectarse a Normal

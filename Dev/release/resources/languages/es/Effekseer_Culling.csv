@@ -1,0 +1,13 @@
+Culling_IsShown_Name,Habilitar eliminaciñon
+Culling_IsShown_Desc,Si se renderizan las superficies ocultas
+Culling_IsShown_Name,Habilitar eliminaciñon
+Culling_IsShown_Desc,Si se renderizan las superficies ocultas
+Culling_Type_Name,Modo de eliminación
+,
+Culling_Sphere_Radius_Name,Radio
+Culling_Sphere_Radius_Desc,Radio de eliminaciñon esférica
+Culling_Sphere_Location_Name,Posición
+Culling_Sphere_Location_Desc,Localización central
+,
+Culling_ParamaterType_None_Name,Nada
+Culling_ParamaterType_Sphere_Name,Esférica

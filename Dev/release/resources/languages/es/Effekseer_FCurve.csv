@@ -1,0 +1,7 @@
+FcurveEdge_Constant_Name,Constante
+FcurveEdge_Loop_Name,Loop
+FcurveEdge_LoopInversely_Name,Bucle inverso
+FcurveInterpolation_Bezier_Name,Bezier
+FcurveInterpolation_Linear_Name,Lineal
+FcurveTimelineMode_Time_Name,Tiempo (Frame)
+FcurveTimelineMode_Percent_Name,Porcentaje(0-100)

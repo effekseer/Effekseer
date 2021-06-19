@@ -1,0 +1,41 @@
+Node_IsRendered_Name,Visibilidad
+Node_IsRendered_Desc,"Hacer que sea visible o invisible este nodo.
+Indiferentemente de sus funciones."
+,
+Node_Name_Name,Nombre
+Node_Name_Desc,El nombre del Nodo
+BasicSettings_MaxGeneration_Name,Cantidad partículas
+BasicSettings_MaxGeneration_Desc,Numero de particulas a generar para este Nodo
+BasicSettings_LocationEffectType_Name,Heredar posición
+BasicSettings_LocationEffectType_Desc,Heredará la configuración del nodo -padre- en el que esté colocado.
+BasicSettings_RotationEffectType_Name,Heredar Rotación
+BasicSettings_RotationEffectType_Desc,Heredará la configuración del nodo -padre- en el que esté colocado.
+BasicSettings_ScaleEffectType_Name,Heredar tamaño
+BasicSettings_ScaleEffectType_Desc,Heredará la configuración del nodo -padre- en el que esté colocado.
+BasicSettings_RemoveWhenLifeIsExtinct_Name,"Destruir con
+su vida"
+BasicSettings_RemoveWhenLifeIsExtinct_Desc,Se destruye el nodo al llegar al final de su -vida del nodo-
+BasicSettings_RemoveWhenParentIsRemoved_Name,"Destruir con
+la herencia"
+BasicSettings_RemoveWhenParentIsRemoved_Desc,Se destruye el nodo cuando lo indique el nodo -padre-
+BasicSettings_RemoveWhenAllChildrenAreRemoved_Name,"Destruir con
+los heredados"
+BasicSettings_RemoveWhenAllChildrenAreRemoved_Desc,"Se destruye el nodo junto con los nodos -hijos-
+que estén heredando de este mismo."
+BasicSettings_Life_Name,Vida del nodo
+BasicSettings_Life_Desc,vida del nodo en frames.
+BasicSettings_GenerationTime_Name,Tasa de aparición
+BasicSettings_GenerationTime_Desc,Tasa de Frames transcuridos hasta que aparezca la siguiente partícula para este Nodo
+BasicSettings_GenerationTimeOffset_Name,Inicio
+BasicSettings_GenerationTimeOffset_Desc,Inicia la aparición de esta partícula en el frame fijado.
+,
+BasicSettings_ParentEffectType_NotBind_Name,Nunca
+BasicSettings_ParentEffectType_NotBind_Root_Name,Dependiendo de raiz (Obsoleto)
+BasicSettings_ParentEffectType_WhenCreating_Name,Solo al crear
+BasicSettings_ParentEffectType_Already_Name,Siempre
+
+BasicSettings_TranslationParentEffectType_NotBind_FollowParent_Name,Nunca - Seguir herencia
+BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent_Name,Solo al crear - Seguir herencia
+
+BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed_Name,Seguir máxima velocidad
+BasicSettings_SteeringBehaviorParameter_SteeringSpeed_Name,Velocidad de dirección(%)
