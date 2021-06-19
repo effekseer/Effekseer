@@ -331,11 +331,13 @@ void GraphicsGL::SetRenderTarget(RenderTexture** renderTextures, int32_t renderT
 
 		if (rt->GetSamplingCount() > 1)
 		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt ? dt->GetBuffer() : 0);
 		}
 		else
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt ? dt->GetBuffer() : 0, 0);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt ? dt->GetTexture() : 0, 0);
 		}
 
 		static const GLenum bufs[] = {
@@ -400,6 +402,7 @@ void GraphicsGL::Clear(Effekseer::Color color)
 
 		if (hasDepthBuffer_)
 		{
+			glDepthMask(GL_TRUE);
 			float clearDepth[] = {1.0f};
 			glClearBufferfv(GL_DEPTH, 0, clearDepth);
 			GLCheckError();

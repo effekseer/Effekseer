@@ -75,8 +75,8 @@ protected:
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
 	Effekseer::Color backgroundMeshColor_{};
 
-	efk::RenderTexture* renderTexture_ = nullptr;
-	efk::DepthTexture* depthTexture_ = nullptr;
+	//efk::RenderTexture* renderTexture_ = nullptr;
+	//efk::DepthTexture* depthTexture_ = nullptr;
 
 	Vector2DI screenSize_;
 	ViewerEffectBehavior behavior_;
