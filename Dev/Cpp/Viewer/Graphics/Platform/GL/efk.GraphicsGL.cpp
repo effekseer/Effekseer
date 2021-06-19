@@ -352,6 +352,7 @@ void GraphicsGL::Clear(Effekseer::Color color)
 
 		if (hasDepthBuffer_)
 		{
+			glDepthMask(GL_TRUE);
 			float clearDepth[] = {1.0f};
 			glClearBufferfv(GL_DEPTH, 0, clearDepth);
 			GLCheckError();
