@@ -110,6 +110,15 @@ public:
 
 	void UngenerateProceduralModel(ModelRef resource);
 
+	void SetIsCacheEnabled(bool value)
+	{
+		cachedTextures_.isCacheEnabled = value;
+		cachedModels_.isCacheEnabled = value;
+		cachedMaterials_.isCacheEnabled = value;
+		cachedSounds_.isCacheEnabled = value;
+		cachedCurves_.isCacheEnabled = value;
+	}
+
 private:
 
 	template <typename T>
@@ -122,6 +131,7 @@ private:
 	template <typename LOADER, typename RESOURCE>
 	struct CachedResources
 	{
+		bool isCacheEnabled;
 		LOADER loader;
 		CustomUnorderedMap<StringView<char16_t>, LoadCounted<RESOURCE>, StringView<char16_t>::Hash> cached;
 
@@ -130,20 +140,27 @@ private:
 		{
 			if (loader != nullptr)
 			{
-				auto it = cached.find(path);
-				if (it != cached.end())
+				if (isCacheEnabled)
 				{
-					it->second.loadCount++;
-					return it->second.resource;
-				}
+					auto it = cached.find(path);
+					if (it != cached.end())
+					{
+						it->second.loadCount++;
+						return it->second.resource;
+					}
 
-				auto resource = loader->Load(path, args...);
-				if (resource != nullptr)
+					auto resource = loader->Load(path, args...);
+					if (resource != nullptr)
+					{
+						resource->SetPath(path);
+						const StringView view = resource->GetPath();
+						cached.emplace(view, LoadCounted<RESOURCE>{resource, 1});
+						return resource;
+					}
+				}
+				else
 				{
-					resource->SetPath(path);
-					const StringView<char16_t> view = resource->GetPath();
-					cached.emplace(view, LoadCounted<RESOURCE>{resource, 1});
-					return resource;
+					return loader->Load(path, args...);
 				}
 			}
 			return nullptr;
@@ -153,14 +170,21 @@ private:
 		{
 			if (loader != nullptr && resource != nullptr)
 			{
-				auto it = cached.find(resource->GetPath());
-				if (it != cached.end())
+				if (resource->GetPath() != u"")
 				{
-					if (--it->second.loadCount <= 0)
+					auto it = cached.find(resource->GetPath());
+					if (it != cached.end())
 					{
-						cached.erase(it);
-						loader->Unload(resource);
+						if (--it->second.loadCount <= 0)
+						{
+							cached.erase(it);
+							loader->Unload(resource);
+						}
 					}
+				}
+				else
+				{
+					loader->Unload(resource);
 				}
 			}
 		}

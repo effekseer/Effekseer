@@ -236,4 +236,9 @@ const RefPtr<ResourceManager>& Setting::GetResourceManager() const
 	return resourceManager_;
 }
 
+void Setting::SetIsFileCacheEnabled(bool value)
+{
+	resourceManager_->SetIsCacheEnabled(value);
+}
+
 } // namespace Effekseer
