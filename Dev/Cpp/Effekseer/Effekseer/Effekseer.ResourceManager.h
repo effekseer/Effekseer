@@ -153,7 +153,7 @@ private:
 					if (resource != nullptr)
 					{
 						resource->SetPath(path);
-						const StringView view = resource->GetPath();
+						const StringView<char16_t> view = resource->GetPath();
 						cached.emplace(view, LoadCounted<RESOURCE>{resource, 1});
 						return resource;
 					}
