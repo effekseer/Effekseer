@@ -518,7 +518,7 @@ namespace ImGui
 	ImVec2 GetCurrentFCurveFieldPosition()
 	{
 		const FieldScreenConverter fsc;
-		auto cursorPos = GetCursorPos();
+		auto cursorPos = GetMousePos();
 		return fsc.S2F(cursorPos);
 	}
 

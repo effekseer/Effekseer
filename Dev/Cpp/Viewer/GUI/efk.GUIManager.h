@@ -797,6 +797,30 @@ public:
 
 	bool StartSelectingAreaFCurve();
 
+	bool AddFCurvePoint(const Vec2& v,
+						float* keys,
+						float* values,
+						float* leftHandleKeys,
+						float* leftHandleValues,
+						float* rightHandleKeys,
+						float* rightHandleValues,
+						int* interporations,
+						uint8_t* kv_selected,
+						int count,
+						int* newCount);
+
+	bool RemoveFCurvePoint(Vec2 v,
+					   float* keys,
+					   float* values,
+					   float* leftHandleKeys,
+					   float* leftHandleValues,
+					   float* rightHandleKeys,
+					   float* rightHandleValues,
+					   int* interporations,
+					   uint8_t* kv_selected,
+					   int count,
+					   int* newCount);
+
 	// Drag
 	bool BeginDragDropSource();
 	bool SetDragDropPayload(const char* type, uint8_t* data, int size);

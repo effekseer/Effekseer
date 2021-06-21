@@ -2269,7 +2269,7 @@ bool GUIManager::IsHoveredOnFCurve(float* keys, float* values, float* leftHandle
 		reinterpret_cast<ImGui::ImFCurveInterporationType*>(interporations),
 		static_cast<ImGui::ImFCurveEdgeType>(startEdge),
 		static_cast<ImGui::ImFCurveEdgeType>(endEdge),
-		static_cast <ImU32>(col),
+		static_cast<ImU32>(col),
 		count,
 		nullptr);
 }
@@ -2354,6 +2354,56 @@ bool GUIManager::FCurve(int fcurve_id,
 bool GUIManager::StartSelectingAreaFCurve()
 {
 	return ImGui::StartSelectingAreaFCurve();
+}
+
+bool GUIManager::AddFCurvePoint(const Vec2& v,
+								float* keys,
+								float* values,
+								float* leftHandleKeys,
+								float* leftHandleValues,
+								float* rightHandleKeys,
+								float* rightHandleValues,
+								int* interporations,
+								uint8_t* kv_selected,
+								int count,
+								int* newCount)
+{
+	return ImGui::AddFCurvePoint(ImVec2{v.X, v.Y},
+								 keys,
+								 values,
+								 leftHandleKeys,
+								 leftHandleValues,
+								 rightHandleKeys,
+								 rightHandleValues,
+								 (ImGui::ImFCurveInterporationType*)interporations,
+								 (bool*)kv_selected,
+								 count,
+								 newCount);
+}
+
+bool GUIManager::RemoveFCurvePoint(Vec2 v,
+								   float* keys,
+								   float* values,
+								   float* leftHandleKeys,
+								   float* leftHandleValues,
+								   float* rightHandleKeys,
+								   float* rightHandleValues,
+								   int* interporations,
+								   uint8_t* kv_selected,
+								   int count,
+								   int* newCount)
+{
+	return ImGui::RemoveFCurvePoint(ImVec2{v.X, v.Y},
+									keys,
+									values,
+									leftHandleKeys,
+									leftHandleValues,
+									rightHandleKeys,
+									rightHandleValues,
+									(ImGui::ImFCurveInterporationType*)interporations,
+									(bool*)kv_selected,
+									count,
+									newCount);
 }
 
 bool GUIManager::BeginDragDropSource()

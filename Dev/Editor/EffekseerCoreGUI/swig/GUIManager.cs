@@ -1438,6 +1438,18 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool AddFCurvePoint(Vec2 v, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, byte[] kv_selected, int count, ref int newCount) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_AddFCurvePoint(swigCPtr, Vec2.getCPtr(v), keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, kv_selected, count, ref newCount);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool RemoveFCurvePoint(Vec2 v, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, byte[] kv_selected, int count, ref int newCount) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_RemoveFCurvePoint(swigCPtr, Vec2.getCPtr(v), keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, kv_selected, count, ref newCount);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public bool BeginDragDropSource() {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginDragDropSource(swigCPtr);
     return ret;

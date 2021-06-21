@@ -8311,6 +8311,116 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_StartSelect
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFCurvePoint___(void * jarg1, void * jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, int* jarg9, unsigned char* jarg10, int jarg11, int * jarg12) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 *arg2 = 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float *arg5 = (float *) 0 ;
+  float *arg6 = (float *) 0 ;
+  float *arg7 = (float *) 0 ;
+  float *arg8 = (float *) 0 ;
+  int *arg9 = (int *) 0 ;
+  uint8_t *arg10 = (uint8_t *) 0 ;
+  int arg11 ;
+  int *arg12 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::Vec2 *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = jarg5;
+  arg6 = jarg6;
+  arg7 = jarg7;
+  arg8 = jarg8;
+  arg9 = jarg9;
+  arg10 = jarg10;
+  arg11 = (int)jarg11; 
+  arg12 = (int *)jarg12; 
+  result = (bool)(arg1)->AddFCurvePoint((efk::Vec2 const &)*arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  jresult = result; 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_RemoveFCurvePoint___(void * jarg1, void * jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, int* jarg9, unsigned char* jarg10, int jarg11, int * jarg12) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 arg2 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float *arg5 = (float *) 0 ;
+  float *arg6 = (float *) 0 ;
+  float *arg7 = (float *) 0 ;
+  float *arg8 = (float *) 0 ;
+  int *arg9 = (int *) 0 ;
+  uint8_t *arg10 = (uint8_t *) 0 ;
+  int arg11 ;
+  int *arg12 = (int *) 0 ;
+  efk::Vec2 *argp2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  argp2 = (efk::Vec2 *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
+    return 0;
+  }
+  arg2 = *argp2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = jarg5;
+  arg6 = jarg6;
+  arg7 = jarg7;
+  arg8 = jarg8;
+  arg9 = jarg9;
+  arg10 = jarg10;
+  arg11 = (int)jarg11; 
+  arg12 = (int *)jarg12; 
+  result = (bool)(arg1)->RemoveFCurvePoint(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  jresult = result; 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDragDropSource___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
