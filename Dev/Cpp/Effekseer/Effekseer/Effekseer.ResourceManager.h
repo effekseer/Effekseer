@@ -131,7 +131,7 @@ private:
 	template <typename LOADER, typename RESOURCE>
 	struct CachedResources
 	{
-		bool isCacheEnabled;
+		bool isCacheEnabled = true;
 		LOADER loader;
 		CustomUnorderedMap<StringView<char16_t>, LoadCounted<RESOURCE>, StringView<char16_t>::Hash> cached;
 
