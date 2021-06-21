@@ -227,6 +227,13 @@ public:
 		\~Japanese Resource Managerを取得する。
 	*/
 	const RefPtr<ResourceManager>& GetResourceManager() const;
+
+	/**
+		@brief
+		\~English	Specifies whether caching of file resources is enabled.
+		\~Japanese ファイルのリソースのキャッシュが有効か指定する。
+	*/
+	void SetIsFileCacheEnabled(bool value);
 };
 
 //----------------------------------------------------------------------------------
