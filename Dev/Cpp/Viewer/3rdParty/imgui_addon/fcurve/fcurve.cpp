@@ -1093,27 +1093,6 @@ namespace ImGui
 				(*newCount) = count + 1;
 				hasControlled = true;
 			}
-
-			if (isLineHovered && IsMouseReleased(1))
-			{
-				ImGui::OpenPopup("FCurveMenu_Add");
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, lineHoveredPos.x);
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, lineHoveredPos.y);
-			}
-			if (ImGui::BeginPopup("FCurveMenu_Add"))
-			{
-				if (ImGui::Selectable("Add"))
-				{
-					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
-					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
-					hasControlled = AddFCurvePoint({x, y}, 
-						keys, values, leftHandleKeys, leftHandleValues, 
-						rightHandleKeys, rightHandleValues, interporations,
-						kv_selected, count, newCount);
-					count = *newCount;
-				}
-				ImGui::EndPopup();
-			}
 		}
 
 		// is line selected
@@ -1355,14 +1334,6 @@ namespace ImGui
 
 				PopID();
 				SetCursorScreenPos(cursorPos);
-
-				if (itemHovered && IsMouseReleased(1))
-				{
-					ImVec2 v = transform_s2f(p);
-					ImGui::OpenPopup("FCurveMenu_Remove");
-					window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, v.x);
-					window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, v.y);
-				}
 
 				// out of window
 				if (isChanged && over_y != 0.0f)
@@ -1681,13 +1652,6 @@ namespace ImGui
 					kv_selected, count, newCount);
 				count = *newCount;
 			}
-
-			if (isLineHovered && IsMouseReleased(1))
-			{
-				ImGui::OpenPopup("FCurveMenu_Add");
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, lineHoveredPos.x);
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, lineHoveredPos.y);
-			}
 		}
 
 		// is line selected
@@ -1700,38 +1664,6 @@ namespace ImGui
 			for (int i = 0; i < count; i++)
 			{
 				kv_selected[i] = false;
-			}
-		}
-
-		if (!hasControlled && selected)
-		{
-			if (ImGui::BeginPopup("FCurveMenu_Add"))
-			{
-				if (ImGui::Selectable("Add"))
-				{
-					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
-					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
-					hasControlled = AddFCurvePoint({x, y}, 
-						keys, values, leftHandleKeys, leftHandleValues, 
-						rightHandleKeys, rightHandleValues, interporations,
-						kv_selected, count, newCount);
-					count = *newCount;
-				}
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginPopup("FCurveMenu_Remove"))
-			{
-				if (ImGui::Selectable("Remove"))
-				{
-					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
-					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
-					hasControlled = RemoveFCurvePoint({x, y}, keys, values, 
-						leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues,
-						interporations, kv_selected, count, newCount);
-					count = *newCount;
-				}
-				ImGui::EndPopup();
 			}
 		}
 

@@ -200,7 +200,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 				{
-					Paste((int)Manager.Viewer.Current, false);
+					Paste((int)Manager.Viewer.Current, false, true);
 				}
 
 				if (Component.Functions.CanShowTip())
@@ -289,7 +289,10 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				UpdateMenu();
+				if(UpdateMenu())
+				{
+					canControl = false;
+				}
 
 				Manager.NativeManager.EndFCurve();
 			}
@@ -314,8 +317,10 @@ namespace Effekseer.GUI.Dock
 			isFirstUpdate = false;
 		}
 
-		void UpdateMenu()
+		bool UpdateMenu()
 		{
+			var changed = false;
+
 			if (Manager.NativeManager.BeginPopup(fCurveMenu))
 			{
 				if (menuContext.ClickedFcurve != null)
@@ -324,31 +329,47 @@ namespace Effekseer.GUI.Dock
 					{
 						if (Manager.NativeManager.Selectable("Delete"))
 						{
-							menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition);
+							if(menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
+							{
+								changed = true;
+							}
 						}
 					}
 					else
 					{
 						if (Manager.NativeManager.Selectable("Add"))
 						{
-							menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition);
+							if(menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
+							{
+								changed = true;
+							}
 						}
 					}
 				}
 
 				if (Manager.NativeManager.Selectable("Paste on zero"))
 				{
-					Paste(0, false);
+					Paste(0, false, false);
+				}
+
+				if (Manager.NativeManager.Selectable("Paste on time"))
+				{
+					Paste((int)Manager.Viewer.Current, false, true);
 				}
 
 				if (Manager.NativeManager.Selectable("Paste on cursor"))
 				{
-					Paste((int)menuContext.ClickedPosition.X, false);
+					Paste((int)menuContext.ClickedPosition.X, false, true);
+				}
+
+				if (Manager.NativeManager.Selectable("Paste on cursor"))
+				{
+					Paste((int)menuContext.ClickedPosition.X, false, true);
 				}
 
 				if (Manager.NativeManager.Selectable("Paste with overwrite"))
 				{
-					Paste(0, true);
+					Paste(0, true, false);
 				}
 
 				if (Manager.NativeManager.Selectable("Align key"))
@@ -367,6 +388,8 @@ namespace Effekseer.GUI.Dock
 			{
 				menuContext = null;
 			}
+
+			return changed;
 		}
 
 		public override void OnDisposed()
@@ -1350,13 +1373,13 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		public void Paste(int time, bool replace)
+		public void Paste(int time, bool replace, bool removeSpace)
 		{
 			try
 			{
 				System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
 				FCurveCopiedData data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
-				Paste(data, time, replace);
+				Paste(data, time, replace, removeSpace);
 			}
 			catch
 			{
@@ -1364,18 +1387,20 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		public void Paste(FCurveCopiedData data, float offsetTime, bool replace)
+		public void Paste(FCurveCopiedData data, float offsetTime, bool replace, bool removeSpace)
 		{
-
-			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
-
-			foreach (var curve in data.Curves)
+			if(removeSpace)
 			{
-				foreach (var p in curve.Points)
+				var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
+
+				foreach (var curve in data.Curves)
 				{
-					p.Key -= xmin;
-					p.LeftKey -= xmin;
-					p.RightKey -= xmin;
+					foreach (var p in curve.Points)
+					{
+						p.Key -= xmin;
+						p.LeftKey -= xmin;
+						p.RightKey -= xmin;
+					}
 				}
 			}
 
@@ -1694,40 +1719,6 @@ namespace Effekseer.GUI.Dock
 				this.fcurves = fcurves;
 			}
 
-			/*
-			public RectF GetRange()
-			{
-				var key_min = float.MaxValue;
-				var key_max = float.MinValue;
-				var value_min = float.MaxValue;
-				var value_max = float.MinValue;
-
-				foreach (var prop in properties)
-				{
-					if (!prop.IsShown) continue;
-
-					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
-					{
-						key_min = Math.Min(prop.Keys[i], key_min);
-						key_max = Math.Max(prop.Keys[i], key_max);
-						key_min = Math.Min(prop.LeftKeys[i], key_min);
-						key_max = Math.Max(prop.LeftKeys[i], key_max);
-						key_min = Math.Min(prop.RightKeys[i], key_min);
-						key_max = Math.Max(prop.RightKeys[i], key_max);
-
-						value_min = Math.Min(prop.Values[i], value_min);
-						value_max = Math.Max(prop.Values[i], value_max);
-						value_min = Math.Min(prop.LeftValues[i], value_min);
-						value_max = Math.Max(prop.LeftValues[i], value_max);
-						value_min = Math.Min(prop.RightValues[i], value_min);
-						value_max = Math.Max(prop.RightValues[i], value_max);
-					}
-				}
-
-				return new RectF { X = key_min, Y = value_min, Width = key_max - key_min, Height = value_max - value_min };
-			}
-			*/
-
 			public object GetValueAsObject()
 			{
 				return Value;
@@ -1799,7 +1790,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public void AddPoint(int propInd, swig.Vec2 position)
+			public bool AddPoint(int propInd, swig.Vec2 position)
 			{
 				var i = propInd;
 				int newCount = 0;
@@ -1824,10 +1815,12 @@ namespace Effekseer.GUI.Dock
 					properties[i].RightValues = properties[i].RightValues.Concat(new[] { 0.0f }).ToArray();
 					properties[i].Interpolations = properties[i].Interpolations.Concat(new[] { 0 }).ToArray();
 					properties[i].IsDirtied = true;
+					return true;
 				}
+				return false;
 			}
 
-			public void RemovePoint(int propInd, swig.Vec2 position)
+			public bool RemovePoint(int propInd, swig.Vec2 position)
 			{
 				var i = propInd;
 				int newCount = 0;
@@ -1852,7 +1845,10 @@ namespace Effekseer.GUI.Dock
 					properties[i].RightValues = properties[i].RightValues.Take(properties[i].RightValues.Length - 1).ToArray();
 					properties[i].Interpolations = properties[i].Interpolations.Take(properties[i].Interpolations.Length - 1).ToArray();
 					properties[i].IsDirtied = true;
+					return true;
 				}
+
+				return false;
 			}
 
 			public bool IsHovered(out int fcurveInd, out int pointInd)
