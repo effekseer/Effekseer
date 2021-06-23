@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <algorithm>
+#include <array>
 
 namespace ImGui
 {
@@ -136,6 +137,38 @@ namespace ImGui
 		return log(x) / log(base);
 	}
 
+	static void NormalizeKeyValues(const ImVec2& k1, ImVec2& k1rh, ImVec2& k2lh, const ImVec2& k2)
+	{
+		std::array<float, 2> h1;
+		std::array<float, 2> h2;
+
+		h1[0] = k1[0] - k1rh[0];
+		h1[1] = k1[1] - k1rh[1];
+
+		h2[0] = k2[0] - k2lh[0];
+		h2[1] = k2[1] - k2lh[1];
+
+		auto len = k2[0] - k1[0];
+
+		auto lenR = std::abs(h1[0]);
+
+		auto lenL = std::abs(h2[0]);
+
+		if (lenR == 0 && lenL == 0)
+			return;
+
+		if ((lenR + lenL) > len)
+		{
+			auto f = len / (lenR + lenL);
+
+			k1rh[0] = (k1[0] - f * h1[0]);
+			k1rh[1] = (k1[1] - f * h1[1]);
+
+			k2lh[0] = (k2[0] - f * h2[0]);
+			k2lh[1] = (k2[1] - f * h2[1]);
+		}
+	}
+
 	struct FieldScreenConverter
 	{
 		float offset_x_;
@@ -226,8 +259,12 @@ namespace ImGui
 		if ((col & IM_COL32_A_MASK) == 0)
 			return false;
 
+		auto cp0m = cp0;
+		auto cp1m = cp1;
+		NormalizeKeyValues(pos0, cp0m, cp1m, pos1);
+
 		window->DrawList->PathLineTo(pos0);
-		window->DrawList->PathBezierCurveTo(cp0, cp1, pos1, 0);
+		window->DrawList->PathBezierCurveTo(cp0m, cp1m, pos1, 0);
 
 		bool isHovered = false;
 
@@ -491,6 +528,7 @@ namespace ImGui
 		float* rightHandleKeys, float* rightHandleValues,
 		int count)
 	{
+		return;
 		for (int i = 0; i < count; i++)
 		{
 			if (0 < i)
@@ -1685,11 +1723,17 @@ namespace ImGui
 
 					if (interporations[i] == ImFCurveInterporationType::Cubic)
 					{
+						auto v1s = transform_f2s(v1);
+						auto cp1s = transform_f2s(cp1);
+						auto cp2s = transform_f2s(cp2);
+						auto v2s = transform_f2s(v2);
+						NormalizeKeyValues(v1s, cp1s, cp2s, v2s);
+
 						window->DrawList->AddBezierCurve(
-							transform_f2s(v1),
-							transform_f2s(cp1),
-							transform_f2s(cp2),
-							transform_f2s(v2),
+							v1s,
+							cp1s,
+							cp2s,
+							v2s,
 							col,
 							lineThiness);
 					}
@@ -1715,11 +1759,17 @@ namespace ImGui
 
 					if (interporations[i] == ImFCurveInterporationType::Cubic)
 					{
+						auto v1s = transform_f2s(v1);
+						auto cp1s = transform_f2s(cp1);
+						auto cp2s = transform_f2s(cp2);
+						auto v2s = transform_f2s(v2);
+						NormalizeKeyValues(v1s, cp1s, cp2s, v2s);
+
 						window->DrawList->AddBezierCurve(
-							transform_f2s(v1),
-							transform_f2s(cp1),
-							transform_f2s(cp2),
-							transform_f2s(v2),
+							v1s,
+							cp1s,
+							cp2s,
+							v2s,
 							col,
 							lineThiness);
 					}

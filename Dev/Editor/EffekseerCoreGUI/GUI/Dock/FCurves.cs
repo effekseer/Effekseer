@@ -101,6 +101,8 @@ namespace Effekseer.GUI.Dock
 
 		FCurveMenuContextData menuContext;
 
+		string textMulti;
+
 		public FCurves()
 		{
 			Label = Icons.PanelFCurve + Resources.GetString("FCurves") + "###FCurves";
@@ -121,6 +123,8 @@ namespace Effekseer.GUI.Dock
 
 			timeline.Initialize(typeof(Data.Value.FCurveTimelineMode));
 			timeline.InternalLabel = texts.timelineMode_Name + "##Timeline";
+
+			textMulti = MultiLanguageTextProvider.GetText("MultipleValues");
 
 			OnChanged();
 
@@ -327,7 +331,7 @@ namespace Effekseer.GUI.Dock
 				{
 					if (menuContext.ClickedPointIndex >= 0)
 					{
-						if (Manager.NativeManager.Selectable("Delete"))
+						if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_DeletePoint")))
 						{
 							if(menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
 							{
@@ -337,7 +341,7 @@ namespace Effekseer.GUI.Dock
 					}
 					else
 					{
-						if (Manager.NativeManager.Selectable("Add"))
+						if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_AddPoint")))
 						{
 							if(menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
 							{
@@ -347,37 +351,32 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				if (Manager.NativeManager.Selectable("Paste on zero"))
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_PaseteOnZero")))
 				{
 					Paste(0, false, false);
 				}
 
-				if (Manager.NativeManager.Selectable("Paste on time"))
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_PasteOnCurrentTime")))
 				{
 					Paste((int)Manager.Viewer.Current, false, true);
 				}
 
-				if (Manager.NativeManager.Selectable("Paste on cursor"))
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_PasteOnCursor")))
 				{
 					Paste((int)menuContext.ClickedPosition.X, false, true);
 				}
 
-				if (Manager.NativeManager.Selectable("Paste on cursor"))
-				{
-					Paste((int)menuContext.ClickedPosition.X, false, true);
-				}
-
-				if (Manager.NativeManager.Selectable("Paste with overwrite"))
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_Overwrite")))
 				{
 					Paste(0, true, false);
 				}
 
-				if (Manager.NativeManager.Selectable("Align key"))
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_AlignKey")))
 				{
 					AlignKeyValue(true, false);
 				}
 
-				if (Manager.NativeManager.Selectable("Align value"))
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_AlignValue")))
 				{
 					AlignKeyValue(false, true);
 				}
@@ -653,10 +652,8 @@ namespace Effekseer.GUI.Dock
 			{
 				var elements = selectedPoints.Select(_ => _.Item2.Interpolations[_.Item3]).Distinct();
 
-				var multiName = "Multi";
-
 				var targetIndex = elements.Count() == 1 ? elements.First() : type.FieldNames.Count;
-				var targetName = targetIndex < type.FieldNames.Count ? type.FieldNames[targetIndex].ToString() : multiName;
+				var targetName = targetIndex < type.FieldNames.Count ? type.FieldNames[targetIndex].ToString() : textMulti;
 				var objects = type.FieldNames;
 
 				if (Manager.NativeManager.BeginCombo(texts.type, targetName, swig.ComboFlags.None))
@@ -2360,6 +2357,7 @@ namespace Effekseer.GUI.Dock
 			/// <param name="index"></param>
 			public void Clip(int index)
 			{
+				return;
 				if (index > 0)
 				{
 					LeftKeys[index] = System.Math.Max(LeftKeys[index], Keys[index - 1]);
