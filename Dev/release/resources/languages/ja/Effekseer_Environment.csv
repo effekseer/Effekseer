@@ -24,6 +24,6 @@ TonemapAlgorithm_Off_Name,Off
 TonemapAlgorithm_Reinhard_Name,Reinhard
 ,
 Environment_Bloom_Intensity_Name,明るさ
-Environment_Bloom_Threshold_Name,ブルームの明るさ
-Environment_Bloom_SoftKnee_Name,しきい値
+Environment_Bloom_Threshold_Name,しきい値
+Environment_Bloom_SoftKnee_Name,柔らかさ
 Environment_TonemapReinhard_Exposure_Name,露光
