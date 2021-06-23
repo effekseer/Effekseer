@@ -61,7 +61,7 @@
 #include "EffekseerRendererGL.Base.Pre.h"
 #include <stddef.h>
 
-#if defined(_WIN32) || defined(EMSCRIPTEN)
+#if defined(_WIN32) || defined(EMSCRIPTEN) || (defined(__APPLE__) && defined(__EFFEKSEER_RENDERER_GLES2__))
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 typedef char GLchar;
