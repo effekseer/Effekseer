@@ -1,8 +1,8 @@
 ﻿Rotation_ParamaterType_Fixed_Name,Ángulo fijo
-Rotation_ParamaterType_PVA_Name,Movimiento por aceleración
-Rotation_ParamaterType_Easing_Name,Movimiento por ángulo
-Rotation_ParamaterType_AxisPVA_Name,Mov. aceleración (Eje arbitrario)
-Rotation_ParamaterType_AxisEasing_Name,Mov. ángulo (Eje arbitrario)
+Rotation_ParamaterType_PVA_Name,Rotación por aceleración
+Rotation_ParamaterType_Easing_Name,Rotación por ángulo
+Rotation_ParamaterType_AxisPVA_Name,Rotación aceleración (Eje arbitrario)
+Rotation_ParamaterType_AxisEasing_Name,Rotación ángulo (Eje arbitrario)
 Rotation_ParamaterType_RotationFCurve_Name,Rotación por F-Curva
 Rotation_FixedParamater_Rotation_Name,Ángulo
 Rotation_FixedParamater_Rotation_Desc,"Rotación del Nodo, en grados"
@@ -14,10 +14,9 @@ Rotation_PVAParamater_Velocity_Desc,"Velocidad angular inicial del Nodo, en grad
 Rotation_PVAParamater_Acceleration_Name,"Aceleración
 Angular"
 Rotation_PVAParamater_Acceleration_Desc,"Aceleración de la velocidad angular del Nodo, en grados"
-Rotation_AxisPVAParamater_Axis_Name,"Rotación
-del eje"
-Rotation_AxisPVAParamater_Axis_Desc,Rotación del eje del Nodo
-Rotation_AxisPVAParamater_Rotation_Name,Angulo
+Rotation_AxisPVAParamater_Axis_Name,Rotación  eje
+Rotation_AxisPVAParamater_Axis_Desc,"Rotación del eje del Nodo, en grados"
+Rotation_AxisPVAParamater_Rotation_Name,Ángulo
 Rotation_AxisPVAParamater_Rotation_Desc,"Rotación inicial del Nodo, en grados"
 Rotation_AxisPVAParamater_Velocity_Name,"Velocidad
 Angular"
@@ -25,6 +24,5 @@ Rotation_AxisPVAParamater_Velocity_Desc,"Velocidad angular inicial del Nodo, en 
 Rotation_AxisPVAParamater_Acceleration_Name,"Aceleración
 Angular"
 Rotation_AxisPVAParamater_Acceleration_Desc,"Aceleracion de la velocidad angular del Nodo, en grados"
-Rotation_AxisEasingParamater_Axis_Name,"Rotación
-del eje"
-Rotation_AxisEasingParamater_Axis_Desc,Rotación del eje del Nodo
+Rotation_AxisEasingParamater_Axis_Name,"Rotación eje"
+Rotation_AxisEasingParamater_Axis_Desc,"Rotación del eje del Nodo, en grados"

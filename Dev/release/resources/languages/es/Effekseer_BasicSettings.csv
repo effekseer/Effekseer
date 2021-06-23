@@ -1,20 +1,20 @@
-Node_IsRendered_Name,Visibilidad
-Node_IsRendered_Desc,"Hacer que sea visible o invisible este nodo.
-Indiferentemente de sus funciones."
+Node_IsRendered_Name,Visible
+Node_IsRendered_Desc,"Hace que sea visible o invisible este nodo.
+(Las funciones del Nodo seguirán operativas) ."
 ,
 Node_Name_Name,Nombre
 Node_Name_Desc,El nombre del Nodo
-BasicSettings_MaxGeneration_Name,Cantidad partículas
-BasicSettings_MaxGeneration_Desc,Numero de particulas a generar para este Nodo
+BasicSettings_MaxGeneration_Name,Partículas
+BasicSettings_MaxGeneration_Desc,Cantidad de partículas que se generarán para este Nodo
 BasicSettings_LocationEffectType_Name,Heredar posición
-BasicSettings_LocationEffectType_Desc,Heredará la configuración del nodo -padre- en el que esté colocado.
+BasicSettings_LocationEffectType_Desc,Configura como heredará la posición del nodo -padre-
 BasicSettings_RotationEffectType_Name,Heredar Rotación
-BasicSettings_RotationEffectType_Desc,Heredará la configuración del nodo -padre- en el que esté colocado.
+BasicSettings_RotationEffectType_Desc,Configura como heredará la rotación del nodo -padre-
 BasicSettings_ScaleEffectType_Name,Heredar tamaño
-BasicSettings_ScaleEffectType_Desc,Heredará la configuración del nodo -padre- en el que esté colocado.
-BasicSettings_RemoveWhenLifeIsExtinct_Name,"Destruir con
-su vida"
-BasicSettings_RemoveWhenLifeIsExtinct_Desc,Se destruye el nodo al llegar al final de su -vida del nodo-
+BasicSettings_ScaleEffectType_Desc,Configura como heredará el tamaño del nodo -padre-
+BasicSettings_RemoveWhenLifeIsExtinct_Name,Destruir Nodo
+BasicSettings_RemoveWhenLifeIsExtinct_Desc,"-Activado- Destruye el nodo al llegar a su final de -Vida nodo-
+-Desactivado- El nodo seguirá hasta el fin de la animación"
 BasicSettings_RemoveWhenParentIsRemoved_Name,"Destruir con
 la herencia"
 BasicSettings_RemoveWhenParentIsRemoved_Desc,Se destruye el nodo cuando lo indique el nodo -padre-
@@ -22,12 +22,12 @@ BasicSettings_RemoveWhenAllChildrenAreRemoved_Name,"Destruir con
 los heredados"
 BasicSettings_RemoveWhenAllChildrenAreRemoved_Desc,"Se destruye el nodo junto con los nodos -hijos-
 que estén heredando de este mismo."
-BasicSettings_Life_Name,Vida del nodo
-BasicSettings_Life_Desc,vida del nodo en frames.
-BasicSettings_GenerationTime_Name,Tasa de aparición
-BasicSettings_GenerationTime_Desc,Tasa de Frames transcuridos hasta que aparezca la siguiente partícula para este Nodo
-BasicSettings_GenerationTimeOffset_Name,Inicio
-BasicSettings_GenerationTimeOffset_Desc,Inicia la aparición de esta partícula en el frame fijado.
+BasicSettings_Life_Name,Vida nodo
+BasicSettings_Life_Desc,Vida del nodo en frames.
+BasicSettings_GenerationTime_Name,Tasa aparición
+BasicSettings_GenerationTime_Desc,Cantidad de frames que deberán pasar hasta que aparezca la siguiente partícula para este Nodo
+BasicSettings_GenerationTimeOffset_Name,Frame inicial
+BasicSettings_GenerationTimeOffset_Desc,Es el frame inicial donde aparecerá este Nodo por primera vez
 ,
 BasicSettings_ParentEffectType_NotBind_Name,Nunca
 BasicSettings_ParentEffectType_NotBind_Root_Name,Dependiendo de raiz (Obsoleto)

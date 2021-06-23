@@ -1,25 +1,37 @@
 ﻿Scale_FixedParamater_Scale_Name,"Tamaño fijado"
-Scale_FixedParamater_Scale_Desc,"Tamaño fijo magnificado según las coordenadas indicadas"
-Scale_PVAParamater_Scale_Name,"Tamaño fijado"
-Scale_PVAParamater_Scale_Desc,"Tamaño fijo magnificado según las coordenadas indicadas"
+Scale_FixedParamater_Scale_Desc,"Tamaño fijo multiplicado según las coordenadas indicadas,
+1= Tamaño normal
+2= Doble tamaño normal
+3= Triple tamaño normal
+4= Y sucesivamente..."
+Scale_PVAParamater_Scale_Name,"Tamaño inicio"
+Scale_PVAParamater_Scale_Desc,"Tamaño inicio multiplicado según las coordenadas indicadas,
+1= Tamaño normal
+2= Doble tamaño normal
+3= Triple tamaño normal
+4= Y sucesivamente..."
 Scale_PVAParamater_Velocity_Name,"Velocidad
 de expansión"
-Scale_PVAParamater_Velocity_Desc,"Tasa inicial de la expansión"
+Scale_PVAParamater_Velocity_Desc,"Tasa de velocidad de la expansión"
 Scale_PVAParamater_Acceleration_Name,"Aceleración
 de expansión"
-Scale_PVAParamater_Acceleration_Desc,"Tasa de aceleración de expansión del Nodo"
-Scale_SinglePVAParamater_Scale_Name,"Tamaño fijado"
-Scale_SinglePVAParamater_Scale_Desc,"Tamaño fijo magnificado según las coordenadas indicadas"
+Scale_PVAParamater_Acceleration_Desc,"Tasa de aceleración de la expansión del Nodo"
+Scale_SinglePVAParamater_Scale_Name,"Tamaño inicio"
+Scale_SinglePVAParamater_Scale_Desc,"Tamaño inicio multiplicado según las coordenadas indicadas,
+1= Tamaño normal
+2= Doble tamaño normal
+3= Triple tamaño normal
+4= Y sucesivamente..."
 Scale_SinglePVAParamater_Velocity_Name,"Velocidad
 de expansión"
-Scale_SinglePVAParamater_Velocity_Desc,"Tasa inicial de la expansión"
+Scale_SinglePVAParamater_Velocity_Desc,"Tasa de velocidad de la expansión"
 Scale_SinglePVAParamater_Acceleration_Name,"Aceleración
 de Expansión"
-Scale_SinglePVAParamater_Acceleration_Desc,"Tasa de aceleración de expansión del Nodo"
-Scale_ParamaterType_Fixed_Name,Escala Fija
-Scale_ParamaterType_PVA_Name,Movimiento por aceleración
-Scale_ParamaterType_Easing_Name,Movimiento por Coordenadas
-Scale_ParamaterType_FCurve_Name,Movimiento por F-Curva
-Scale_ParamaterType_SinglePVA_Name,Mov. aceleración (Singular)
-Scale_ParamaterType_SingleEasing_Name,Mov. Coordenadas (Singular)
-Scale_ParamaterType_SingleFCurve_Name,Mov. F-Curve (Singular)
+Scale_SinglePVAParamater_Acceleration_Desc,"Tasa de aceleración de la expansión del Nodo"
+Scale_ParamaterType_Fixed_Name,Tamaño Fijo
+Scale_ParamaterType_PVA_Name,Expansión por aceleración (PVA) (XYZ individual)
+Scale_ParamaterType_Easing_Name,Expansión ejes (XYZ individual)
+Scale_ParamaterType_FCurve_Name,Expansión por F-Curva
+Scale_ParamaterType_SinglePVA_Name,Expansión aceleración (Sencillo)
+Scale_ParamaterType_SingleEasing_Name,Expansión tamaño (Sencillo)
+Scale_ParamaterType_SingleFCurve_Name,Expansión F-Curva (Sencillo)

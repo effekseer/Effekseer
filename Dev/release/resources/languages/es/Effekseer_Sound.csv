@@ -4,8 +4,8 @@ Sound_ParamaterType_Use_Name,Habilitar
 Sound_PanType_Sound2D_Name,2D
 Sound_PanType_Sound3D_Name,3D
 ,
-Sound_Wave_Name,Información Sonido
-Sound_Wave_Desc,Usar archivos WAV
+Sound_Wave_Name,Archivo Sonido
+Sound_Wave_Desc,Selecciona el archivo de sonido en formato WAV
 Sound_Volume_Name,Volumen
 Sound_Volume_Desc,"Volumen
 Rango：0.0 ～ 1.0
@@ -14,13 +14,13 @@ Sound_Pitch_Name,Pitch
 Sound_Pitch_Desc,"Pitch（Valor：Octavo)
 Rango：-4.0 ～ +4.0
 0.0 igual al original, +1.0 pitch doble, -1.0 pitch medio."
-Sound_PanType_Name,Posición
-Sound_PanType_Desc,Posición del sonido
-Sound_Pan_Name,Pos
-Sound_Pan_Desc,"Desplazamiento del sonido.
+Sound_PanType_Name,Entorno
+Sound_PanType_Desc,Entorno de reproducción del sonido
+Sound_Pan_Name,Posición
+Sound_Pan_Desc,"Posición estereo del sonido.
 Rango: -1.0 ～ +1.0
 0.0 centro, -1.0 izquierda, 1.0 Derecha."
-Sound_Distance_Name,Rango amortiguacón
+Sound_Distance_Name,Amortiguación
 Sound_Distance_Desc,Distancia en la que se produce la amortiguación del sonido
 Sound_Delay_Name,Retraso
 Sound_Delay_Desc,"Duración en Frames entre la aparición del Nodo y la reproducción del sonido"

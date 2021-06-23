@@ -49,7 +49,7 @@ Speed_Name,Velocidad
 ConstSpeed_Name,Velocidad constante
 ,
 Math_Name,Math
-Add_Node_Name,Add
+Add_Node_Name,Añadir
 Add_Node_Desc,"Se emite el resultado de -Add- de V1 y V2.
 Si la entrada no está conectada, utiliza el valor de la propiedad."
 Subtract_Node_Name,Subtract

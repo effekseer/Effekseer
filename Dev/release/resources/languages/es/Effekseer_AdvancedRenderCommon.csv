@@ -57,7 +57,7 @@ FalloffParameter_BlendType_Add_Name,Add
 FalloffParameter_BlendType_Sub_Name,Sub
 FalloffParameter_BlendType_Mul_Name,Mul
 
-SoftParticleParameters_Name,Partícula suabe
+SoftParticleParameters_Name,Partícula suave
 SoftParticleParameters_DistanceFar_Name,Distance lejana
 SoftParticleParameters_DistanceFar_Desc,Si la distancia entre el objeto de fondo y la partícula es inferior a la especificada, las partículas se vuelven translúcidas.
 SoftParticleParameters_DistanceNear_Name,Distancia cercana

@@ -4,8 +4,8 @@ Options_ViewerMode_Name,Modo de vista
 Options_ViewerMode_Desc,Modo de vista de la pantalla de visualización.
 Options_GridColor_Name,Color del grid
 Options_GridColor_Desc,El color del grid
-Options_IsGridShown_Name,Grid visible
-Options_IsGridShown_Desc,Hace visible el grid en la pantalla de visualización
+Options_IsGridShown_Name,Ver Ejes y Grids
+Options_IsGridShown_Desc,Hace visible el los ejes y grids en la pantalla de visualización
 Options_IsXYGridShown_Name,Grid visible por X-Y
 Options_IsXYGridShown_Desc,Coloca la visibilidad del grid entre los ejes X-Y
 Options_IsXZGridShown_Name,Grid visible por X-Z
@@ -14,8 +14,8 @@ Options_IsYZGridShown_Name,Grid visible por Y-Z
 Options_IsYZGridShown_Desc,Coloca la visibilidad del grid entre los ejes Y-Z
 Options_GridLength_Name,Tamaño del Grid
 Options_GridLength_Desc,Se muestra las dimensiones del grid
-Options_Magnification_Name,Aumento exterior
-Options_Magnification_Desc,Aumento del punto exterior
+Options_Magnification_Name,Opciones tamaño
+Options_Magnification_Desc,Aumenta el tamaño global de los nodulos
 Options_ExternalMagnification_Name,Ampliación de salida
 Options_ExternalMagnification_Desc,Ampliación de salida
 Options_FPS_Name,Salida FPS
@@ -27,7 +27,8 @@ Options_ColorSpace_Desc,Color del espacio
 Options_Font_Name,Fuente
 Options_Font_Desc,La fuente de texto
 Options_FontSize_Name,Tamaño fuente
-Options_FontSize_Desc,Configura el tamaño de la fuente
+Options_FontSize_Desc,"Configura el tamaño de la fuente.
+16 = Tamaño normal."
 Options_MouseRotInvX_Name,Rotación ratón (X)
 Options_MouseRotInvX_Desc,Invierte la rotación del raton sobre el eje X
 Options_MouseRotInvY_Name,Rotación ratón (Y)
@@ -40,7 +41,8 @@ Options_LanguageSelector_Name,Lenguaje
 Options_LanguageSelector_Desc,Lenguaje
 Options_DistortionType_Name,Metodo distorsión
 Options_DistortionType_Desc,Metodo de distorsión
-Options_MouseMappingType_Name,Mapeo del ratón
+Options_MouseMappingType_Name,Movimiento ratón
+Options_MouseMappingType_Desc,Configuración del movimiento del ratón
 RenderMode_Normal_Name,Normal
 RenderMode_Wireframe_Name,Estructura lineal
 ViewMode_3D_Name,3D
