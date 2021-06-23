@@ -259,8 +259,8 @@ namespace Effekseer.GUI.Dock
 				var panning = Manager.NativeManager.IsFCurvePanning();
 
 				UpdateGraph(treeNodes, ref canControl);
-				
-				if(!IsShiftDown() && !IsAltDown())
+
+				if (!IsShiftDown() && !IsAltDown())
 				{
 					if (canControl && clicked)
 					{
@@ -289,52 +289,7 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				if (Manager.NativeManager.BeginPopup(fCurveMenu))
-				{
-					if (menuContext.ClickedFcurve != null)
-					{
-						if (menuContext.ClickedPointIndex >= 0)
-						{
-							if (Manager.NativeManager.Selectable("Delete"))
-							{
-								menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition);
-							}
-						}
-						else
-						{
-							if (Manager.NativeManager.Selectable("Add"))
-							{
-								menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition);
-							}
-						}
-					}
-
-					if (Manager.NativeManager.Selectable("Paste on zero"))
-					{
-						Paste(0, false);
-					}
-
-					if (Manager.NativeManager.Selectable("Paste with overwrite"))
-					{
-						Paste(0, true);
-					}
-
-					if (Manager.NativeManager.Selectable("Align key"))
-					{
-						AlignKey();
-					}
-
-					if (Manager.NativeManager.Selectable("Align value"))
-					{
-						AlignValue();
-					}
-
-					Manager.NativeManager.EndPopup();
-				}
-				else
-				{
-					menuContext = null;
-				}
+				UpdateMenu();
 
 				Manager.NativeManager.EndFCurve();
 			}
@@ -357,6 +312,61 @@ namespace Effekseer.GUI.Dock
 			CheckAndApplyUpdate(treeNodes);
 
 			isFirstUpdate = false;
+		}
+
+		void UpdateMenu()
+		{
+			if (Manager.NativeManager.BeginPopup(fCurveMenu))
+			{
+				if (menuContext.ClickedFcurve != null)
+				{
+					if (menuContext.ClickedPointIndex >= 0)
+					{
+						if (Manager.NativeManager.Selectable("Delete"))
+						{
+							menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition);
+						}
+					}
+					else
+					{
+						if (Manager.NativeManager.Selectable("Add"))
+						{
+							menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition);
+						}
+					}
+				}
+
+				if (Manager.NativeManager.Selectable("Paste on zero"))
+				{
+					Paste(0, false);
+				}
+
+				if (Manager.NativeManager.Selectable("Paste on cursor"))
+				{
+					Paste((int)menuContext.ClickedPosition.X, false);
+				}
+
+				if (Manager.NativeManager.Selectable("Paste with overwrite"))
+				{
+					Paste(0, true);
+				}
+
+				if (Manager.NativeManager.Selectable("Align key"))
+				{
+					AlignKeyValue(true, false);
+				}
+
+				if (Manager.NativeManager.Selectable("Align value"))
+				{
+					AlignKeyValue(false, true);
+				}
+
+				Manager.NativeManager.EndPopup();
+			}
+			else
+			{
+				menuContext = null;
+			}
 		}
 
 		public override void OnDisposed()
@@ -480,66 +490,79 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.PushItemWidth(80 * Manager.DpiScale);
 			Manager.NativeManager.Spacing();
 
-			if (selectedPoints.Count() == 1)
 			{
-				var target = selectedPoints.First();
-				var ind = target.Item3;
-
-				var frameKey = new int[] { (int)target.Item2.Keys[ind] };
-				if (Manager.NativeManager.DragInt(texts.frame, frameKey))
+				var elements = selectedPoints.Select(_ => _.Item2.Keys[_.Item3]).Distinct();
+				if(elements.Count() == 1)
 				{
-					var diff = frameKey[0] - target.Item2.Keys[ind];
+					var target = selectedPoints.First();
+					var original = target.Item2.Keys[target.Item3];
+					var frameKey = new int[] { (int)original };
+					if (Manager.NativeManager.DragInt(texts.frame, frameKey))
+					{
+						var diff = frameKey[0] - original;
 
-					target.Item2.Keys[ind] = (int)frameKey[0];
-					target.Item2.LeftKeys[ind] += diff;
-					target.Item2.RightKeys[ind] += diff;
-					target.Item2.IsDirtied = true;
-					target.Item2.SolveContradiction();
+						foreach (var sp in selectedPoints)
+						{
+							var ind = sp.Item3;
+							sp.Item2.Keys[ind] = (int)frameKey[0];
+							sp.Item2.LeftKeys[ind] += diff;
+							sp.Item2.RightKeys[ind] += diff;
+							sp.Item2.IsDirtied = true;
+							sp.Item2.SolveContradiction();
+						}
 
-					canCurveControl = false;
+						canCurveControl = false;
+					}
+
+					if (Manager.NativeManager.IsItemActive())
+					{
+						canCurveControl = false;
+						canControl = false;
+						isDetailControlling = true;
+					}
 				}
-
-				if (Manager.NativeManager.IsItemActive())
+				else
 				{
-					canCurveControl = false;
-					canControl = false;
-					isDetailControlling = true;
-				}
-			}
-			else
-			{
-				Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			if (selectedPoints.Count() == 1)
-			{
-				var target = selectedPoints.First();
-				var ind = target.Item3;
-
-				var frameValue = new float[] { target.Item2.Values[ind] };
-				if (Manager.NativeManager.DragFloat(texts.value, frameValue))
-				{
-					var diff = frameValue[0] - target.Item2.Values[ind];
-
-					target.Item2.Values[ind] = frameValue[0];
-					target.Item2.LeftValues[ind] += diff;
-					target.Item2.RightValues[ind] += diff;
-					target.Item2.IsDirtied = true;
-
-					canControl = false;
-					canCurveControl = false;
-				}
-
-				if (Manager.NativeManager.IsItemActive())
-				{
-					canCurveControl = false;
-					canControl = false;
-					isDetailControlling = true;
+					Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
 				}
 			}
-			else
+			
 			{
-				Manager.NativeManager.InputText(texts.value, invalidValue, swig.InputTextFlags.ReadOnly);
+				var elements = selectedPoints.Select(_ => _.Item2.Values[_.Item3]).Distinct();
+				if (elements.Count() == 1)
+				{
+					var target = selectedPoints.First();
+					var original = target.Item2.Values[target.Item3];
+
+					var frameValue = new float[] { original };
+					if (Manager.NativeManager.DragFloat(texts.value, frameValue))
+					{
+						var diff = frameValue[0] - original;
+
+						foreach (var sp in selectedPoints)
+						{
+							var ind = sp.Item3;
+							target.Item2.Values[ind] = frameValue[0];
+							target.Item2.LeftValues[ind] += diff;
+							target.Item2.RightValues[ind] += diff;
+							target.Item2.IsDirtied = true;
+
+							canControl = false;
+							canCurveControl = false;
+						}
+
+						if (Manager.NativeManager.IsItemActive())
+						{
+							canCurveControl = false;
+							canControl = false;
+							isDetailControlling = true;
+						}
+					}
+				}
+				else
+				{
+					Manager.NativeManager.InputText(texts.value, invalidValue, swig.InputTextFlags.ReadOnly);
+				}
 			}
 
 			// Left key
@@ -1237,25 +1260,14 @@ namespace Effekseer.GUI.Dock
 				return null;
 			}
 
-			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
-
-			foreach (var curve in data.Curves)
-			{
-				foreach (var p in curve.Points)
-				{
-					p.Key -= xmin;
-					p.LeftKey -= xmin;
-					p.RightKey -= xmin;
-				}
-			}
-
 			return data;
 		}
 
-		public void AlignKey()
+		public void AlignKeyValue(bool alignKey, bool alignValue)
 		{
-			int keyCount = 0;
+			int pointCount = 0;
 			float keySum = 0;
+			float valueSum = 0;
 
 			var flatten = flattenFcurves.ToArray();
 			foreach (var curve in flatten)
@@ -1269,20 +1281,27 @@ namespace Effekseer.GUI.Dock
 
 					for (int i = 0; i < prop.Keys.Length - 1; i++)
 					{
+						if (prop.KVSelected[i] == 0)
+							continue;
+
 						keySum += prop.Keys[i];
-						keyCount++;
+						valueSum += prop.Values[i];
+						pointCount++;
 					}
 
 				}
 			}
 
-			if (keyCount == 0)
+			if (pointCount == 0)
 				return;
 
-			float key = keySum / keyCount;
+			float key = keySum / pointCount;
+			float value = valueSum / pointCount;
 
 			foreach (var curve in flatten)
 			{
+				bool curveChanged = false;
+
 				for (int ind = 0; ind < curve.Properties.Length; ind++)
 				{
 					var prop = curve.Properties[ind];
@@ -1290,75 +1309,44 @@ namespace Effekseer.GUI.Dock
 					if (!prop.IsShown) continue;
 					if (!prop.Selected) continue;
 
+					bool propChanged = false;
 					for (int i = 0; i < prop.Keys.Length - 1; i++)
 					{
-						var diff = key - prop.Keys[i];
+						if (prop.KVSelected[i] == 0)
+							continue;
 
-						prop.Keys[i] = key;
-						prop.LeftKeys[i] += diff;
-						prop.RightKeys[i] += diff;
+						var diffKey = key - prop.Keys[i];
+						var diffValue = value - prop.Values[i];
+
+						if(alignKey)
+						{
+							prop.Keys[i] = key;
+							prop.LeftKeys[i] += diffKey;
+							prop.RightKeys[i] += diffKey;
+						}
+
+						if(alignValue)
+						{
+							prop.Values[i] = value;
+							prop.LeftValues[i] += diffValue;
+							prop.RightValues[i] += diffValue;
+						}
+
+						propChanged = true;
+						curveChanged = true;
 					}
 
-					prop.SolveContradiction();
-					prop.IsDirtied = true;
+					if(propChanged)
+					{
+						prop.SolveContradiction();
+						prop.IsDirtied = true;
+					}
 				}
 
-				curve.Commit();
-			}
-		}
-
-		public void AlignValue()
-		{
-			int keyCount = 0;
-			float keySum = 0;
-
-			var flatten = flattenFcurves.ToArray();
-			foreach (var curve in flatten)
-			{
-				for (int ind = 0; ind < curve.Properties.Length; ind++)
+				if(curveChanged)
 				{
-					var prop = curve.Properties[ind];
-
-					if (!prop.IsShown) continue;
-					if (!prop.Selected) continue;
-
-					for (int i = 0; i < prop.Keys.Length - 1; i++)
-					{
-						keySum += prop.Values[i];
-						keyCount++;
-					}
-
+					curve.Commit();
 				}
-			}
-
-			if (keyCount == 0)
-				return;
-
-			float key = keySum / keyCount;
-
-			foreach (var curve in flatten)
-			{
-				for (int ind = 0; ind < curve.Properties.Length; ind++)
-				{
-					var prop = curve.Properties[ind];
-
-					if (!prop.IsShown) continue;
-					if (!prop.Selected) continue;
-
-					for (int i = 0; i < prop.Keys.Length - 1; i++)
-					{
-						var diff = key - prop.Values[i];
-
-						prop.Values[i] = key;
-						prop.LeftValues[i] += diff;
-						prop.RightValues[i] += diff;
-					}
-
-					prop.SolveContradiction();
-					prop.IsDirtied = true;
-				}
-
-				curve.Commit();
 			}
 		}
 
@@ -1378,6 +1366,19 @@ namespace Effekseer.GUI.Dock
 
 		public void Paste(FCurveCopiedData data, float offsetTime, bool replace)
 		{
+
+			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
+
+			foreach (var curve in data.Curves)
+			{
+				foreach (var p in curve.Points)
+				{
+					p.Key -= xmin;
+					p.LeftKey -= xmin;
+					p.RightKey -= xmin;
+				}
+			}
+
 			var flatten = flattenFcurves.ToArray();
 			foreach (var curve in flatten)
 			{
