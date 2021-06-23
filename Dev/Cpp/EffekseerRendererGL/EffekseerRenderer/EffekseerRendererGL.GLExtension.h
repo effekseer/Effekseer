@@ -66,7 +66,7 @@ typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 #endif
 
-#if defined(_WIN32) || defined(EMSCRIPTEN) || (defined(__APPLE__) && defined(__EFFEKSEER_RENDERER_GLES2__))
+#if defined(_WIN32) || defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && defined(__EFFEKSEER_RENDERER_GLES2__))
 typedef char GLchar;
 
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
