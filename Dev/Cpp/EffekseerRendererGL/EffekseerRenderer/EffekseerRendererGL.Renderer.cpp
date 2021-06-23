@@ -509,6 +509,7 @@ bool RendererImplemented::Initialize()
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
 										shader->GetUniformId("CBVS0.fFlipbookParameter"),
 										sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+
 		shader->SetTextureSlot(0, shader->GetUniformId("Sampler_sampler_colorTex"));
 		shader->SetTextureSlot(1, shader->GetUniformId("Sampler_sampler_normalTex"));
 
