@@ -878,7 +878,7 @@ public:
 
 	Emitter GetEmitterFromFace(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification);
 
-	bool StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice);
+	bool StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice, bool flipVertexColor = false);
 
 	bool GetIsBufferStoredOnGPU() const;
 
@@ -1138,7 +1138,7 @@ public:
 
 	Emitter GetEmitterFromFace(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification);
 
-	bool StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice);
+	bool StoreBufferToGPU(Backend::GraphicsDevice* graphicsDevice, bool flipVertexColor = false);
 
 	bool GetIsBufferStoredOnGPU() const;
 
