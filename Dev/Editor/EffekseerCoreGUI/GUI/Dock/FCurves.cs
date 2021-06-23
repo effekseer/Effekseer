@@ -1425,15 +1425,15 @@ namespace Effekseer.GUI.Dock
 					
 						if(replace)
 						{
-							prop.KVSelected = new byte[copiedCurve.Points.Count];
+							prop.KVSelected = new byte[copiedCurve.Points.Count + 1];
 
-							prop.Keys = copiedCurve.Points.Select(_ => _.Key + offsetTime).ToArray();
-							prop.Values = copiedCurve.Points.Select(_ => _.Value).ToArray();
-							prop.LeftKeys = copiedCurve.Points.Select(_ => _.LeftKey + offsetTime).ToArray();
-							prop.LeftValues = copiedCurve.Points.Select(_ => _.LeftValue).ToArray();
-							prop.RightKeys = copiedCurve.Points.Select(_ => _.RightKey + offsetTime).ToArray();
-							prop.RightValues = copiedCurve.Points.Select(_ => _.RightValue).ToArray();
-							prop.Interpolations = copiedCurve.Points.Select(_ => _.Interpolation).ToArray();
+							prop.Keys = copiedCurve.Points.Select(_ => _.Key + offsetTime).Concat(new[] { 0.0f }).ToArray();
+							prop.Values = copiedCurve.Points.Select(_ => _.Value).Concat(new[] { 0.0f }).ToArray();
+							prop.LeftKeys = copiedCurve.Points.Select(_ => _.LeftKey + offsetTime).Concat(new[] { 0.0f }).ToArray();
+							prop.LeftValues = copiedCurve.Points.Select(_ => _.LeftValue).Concat(new[] { 0.0f }).ToArray();
+							prop.RightKeys = copiedCurve.Points.Select(_ => _.RightKey + offsetTime).Concat(new[] { 0.0f }).ToArray();
+							prop.RightValues = copiedCurve.Points.Select(_ => _.RightValue).Concat(new[] { 0.0f }).ToArray();
+							prop.Interpolations = copiedCurve.Points.Select(_ => _.Interpolation).Concat(new[] { 0 }).ToArray();
 
 							prop.SolveContradiction();
 							prop.IsDirtied = true;
