@@ -5,3 +5,11 @@ FcurveInterpolation_Bezier_Name,ベジェ
 FcurveInterpolation_Linear_Name,線形
 FcurveTimelineMode_Time_Name,時間(フレーム)
 FcurveTimelineMode_Percent_Name,パーセント(0-100)
+FCurve_AddPoint,"点を追加"
+FCurve_DeletePoint,"選択した点を削除"
+FCurve_PaseteOnZero,"0フレームにコピーしたFカーブを貼り付け"
+FCurve_PasteOnCurrentTime,"現在の時間ににコピーしたFカーブを貼り付け"
+FCurve_PasteOnCursor,"カーソルの位置にコピーしたFカーブを貼り付け"
+FCurve_Overwrite,"コピーしたFカーブで上書き"
+FCurve_AlignKey,"選択したキーを整列"
+FCurve_AlignValue,"選択した値を整列"

@@ -5,3 +5,11 @@ FcurveInterpolation_Bezier_Name,Bezier
 FcurveInterpolation_Linear_Name,Linear
 FcurveTimelineMode_Time_Name,Time(Frame)
 FcurveTimelineMode_Percent_Name,Percent(0-100)
+FCurve_AddPoint,"Add a point"
+FCurve_DeletePoint,"Delete selected point"
+FCurve_PaseteOnZero,"Paste copied F-Curve on 0 frame"
+FCurve_PasteOnCurrentTime,"Paste copied F-Curve on the current time"
+FCurve_PasteOnCursor,"Paste copied F-Curve on the cursor"
+FCurve_Overwrite,"Overwrite with copied F-Curve"
+FCurve_AlignKey,"Align selected keys"
+FCurve_AlignValue,"Align selected values"
