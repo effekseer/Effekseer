@@ -16,10 +16,15 @@ BRS_Wrap2_Name,Envoltura
 BRS_DistortionIntensity_Name,"Intensidad de
 Distorsión"
 BRS_AlphaBlend_Name,Blend
+BRS_AlphaBlend_Desc,Tipo de efecto visual.
 BRS_ZWrite_Name,Ajustar profundidad
 BRS_ZTest_Name,Test de profundidad
-BRS_FadeInType_Name,Aparición
-BRS_FadeOutType_Name,Desaparición
+BRS_FadeInType_Name,Opacidad (Comienzo)
+BRS_FadeInType_Desc,"Opción de configuración de la transparencia al
+aparecer el nodo en sus primeros frames de vida"
+BRS_FadeOutType_Name,Opacidad (FIN)
+BRS_FadeOutType_Desc,"Opción de configuración de la transparencia al
+desaparecer el nodo en sus últimos frames de vida"
 BRS_UV_Name,UV
 BRS_UV2_Name,UV(Textura Alpha)
 BRS_UV3_Name,UV(UV Distorsión de Textura)
@@ -28,10 +33,10 @@ BRS_UV5_Name,UV(Blend Textura Alpha)
 BRS_UV6_Name,UV(Blend UV Distorsión de Textura)
 BRS_UVTextureReferenceTarget_Name,Referenciado
 BRS_ColorInheritType_Name,Heredar Color
-BRS_ColorInheritType_Desc,Cuando este nodo debe copiar el color de su nodo -padre-
+BRS_ColorInheritType_Desc,Tipo de herencia de color para este nodo sobre su nodo -padre-
 BRS_CustomData1_Name,Personalizado 1
 BRS_CustomData2_Name,Personalizado 2
-MaterialType_Default_Name,Por defecto
+MaterialType_Default_Name,Normal
 MaterialType_BackDistortion_Name,Distorsión (Atrás)
 MaterialType_Lighting_Name,Iluminación
 MaterialType_File_Name,Material (archivo)
@@ -50,25 +55,25 @@ UVTextureReferenceTargetType_Texture2_Name,Imagen2
 UVTextureReferenceTargetType_Texture3_Name,Imagen3
 UVTextureReferenceTargetType_Texture4_Name,Imagen4
 MaterialFileParameter_Path_Name,Ruta
-BRS_FadeIn_Frame_Name,Recuento de Frame
+BRS_FadeIn_Frame_Name,Duración Frames
 BRS_FadeIn_Frame_Desc,Duración en frames de la transición -Aparición-
 BRS_FadeIn_StartSpeed_Name,Inicio
 BRS_FadeIn_StartSpeed_Desc,Velocidad inicial (de entre)
 BRS_FadeIn_EndSpeed_Name,Final
 BRS_FadeIn_EndSpeed_Desc,Velocidad final (de entre)
-BRS_FadeOut_Frame_Name,Recuento de frame
+BRS_FadeOut_Frame_Name,Duración frames
 BRS_FadeOut_Frame_Desc,Duración en frames de la transición -Desaparición-
 BRS_FadeOut_StartSpeed_Name,Inicio
 BRS_FadeOut_StartSpeed_Desc,Velocidad inicial (de entre
 BRS_FadeOut_EndSpeed_Name,Final
 BRS_FadeOut_EndSpeed_Desc,Velocidad final (de entre)
-FadeType_Use_Name,Activado
+FadeType_Use_Name,Activar
 FadeType_None_Name,Desactivado
-FadeType_Use_Name,Activado
+FadeType_Use_Name,Activar
 FadeType_None_Name,Desactivado
 UVType_Default_Name,Standard
-UVType_Fixed_Name,Fijado
-UVType_Animation_Name,Animación
+UVType_Fixed_Name,Sheet fijo
+UVType_Animation_Name,Animación por SpriteSheet
 UVType_Scroll_Name,Scroll
 UVType_FCurve_Name,F-Curva
 CustomDataType_None_Name,Nada
@@ -86,25 +91,40 @@ CustomDataType_FCurve2D_Name,FCurva2
 CustomDataType_Fixed4D_Name,Fijado4
 CustomDataType_FCurveColor_Name,FCurva-Color
 CustomDataType_DynamicInput_Name,Entrada dinámica
-UVFixedParamater_Start_Name,Inicio
+UVFixedParamater_Start_Name,Coord. Inicio
+UVFixedParamater_Start_Desc,Desplaza la imagen en coordenadas
 UVFixedParamater_Size_Name,Tamaño
+UVFixedParamater_Size_Desc,Tamaño del sheet
 UVAnimationParamater_Start_Name,Inicio
+UVAnimationParamater_Start_Desc,Desplaza algunas coordenadas del Sheet
 UVAnimationParamater_Size_Name,Tamaño
-UVAnimationParamater_FrameLength_Name,Largo del Frame
-UVAnimationParamater_FrameCountX_Name,Cuenta X
-UVAnimationParamater_FrameCountY_Name,Cuenta Y
-UVAnimationParamater_LoopType_Name,Bucle
+UVAnimationParamater_Size_Desc,Indica el tamaño de una casilla
+UVAnimationParamater_FrameLength_Name,Frecuencia
+UVAnimationParamater_FrameLength_Desc,Frecuencia de frames entres las casillas
+UVAnimationParamater_FrameCountX_Name,Casillas X
+UVAnimationParamater_FrameCountY_Name,Casillas Y
+UVAnimationParamater_FrameCountX_Desc,Numero de casillas en horizontal (X)
+UVAnimationParamater_FrameCountY_Desc,Numero de casillas en vertical (Y)
+UVAnimationParamater_LoopType_Name,Tipo animación
+UVAnimationParamater_LoopType_Desc,"Tipo de animación:
+Detener: Se detiene al llegar a la última casilla
+Bucle: Realiza la anomación en bucle
+Invertir Bucle: Igual que el anterior, pero invertido."
 UVAnimationParamater_StartSheet_Name,Iniciar Sheet
-UVAnimationSupportedFrameBlendParameter_Type_Name,Tipo de mezcla del marco del flipbook
+UVAnimationParamater_StartSheet_Desc,Indica el sheet inicial
+UVAnimationSupportedFrameBlendParameter_Type_Name,Difuminación
+UVAnimationSupportedFrameBlendParameter_Type_Desc,Aplica un efecto de difuminación al animar entre los sheets
 UVScrollParamater_Start_Name,Inicio
+UVScrollParamater_Start_Desc,Coordenadas de inicio del Sheet
 UVScrollParamater_Size_Name,Tamaño
-UVScrollParamater_Speed_Name,Velocidad de Scroll
+UVScrollParamater_Size_Desc,Tamaño del Sheet
+UVScrollParamater_Speed_Name,Velocidad del Scroll
 UVFCurveParamater_Start_Name,Inicio
 UVFCurveParamater_Size_Name,Tamaño
-UVLoopType_Once_Name,Nada
-UVLoopType_Loop_Name,Bucle
+UVLoopType_Once_Name,Detener
+UVLoopType_Loop_Name,En Bucle
 UVLoopType_ReverceLoop_Name,Invertir bucle
 FlipbookInterpolationType_None_Name,Nada
-FlipbookInterpolationType_Lerp_Name,Lerp
+FlipbookInterpolationType_Lerp_Name,Difuminado
 ,
 CustomData_Name,Personalizado

@@ -1,7 +1,7 @@
 RS_ParameterType_None_Name,Nada
 RS_ParameterType_Sprite_Name,Sprite
 RS_ParameterType_Ribbon_Name,Lazo
-RS_ParameterType_Track_Name,Pista
+RS_ParameterType_Track_Name,Estela
 RS_ParameterType_Ring_Name,Anillo
 RS_ParameterType_Model_Name,Modelo 3D
 RS_ParameterType_ProcedualModel_Name,Modelo Procedural(No usar)
@@ -16,6 +16,9 @@ StandardColorType_Random_Name,Aleatorio
 StandardColorType_Easing_Name,Cambiar color
 StandardColorType_FCurve_Name,F-Curve (RGBA)
 TextureUVTypeParameter_Type_Name,Tipo UV
+TextureUVTypeParameter_Type_Desc,"Tipo de UV
+Estirar: Estirará la imagen
+Tile: Colocará tiles"
 TextureUVTypeParameter_TileEdgeHead_Name,El número del tile en la cabecera
 TextureUVTypeParameter_TileEdgeTail_Name,El número del tile en la cola
 TextureUVTypeParameter_TileLoopingArea_Name,Area de Bucle
@@ -83,17 +86,15 @@ RS_Ribbon_Color_Name,Color Vertice
 RS_Ribbon_Color_Fixed_L_Name,Color izquierdo Vertice
 RS_Ribbon_Color_Fixed_R_Name,Color derecha Vertice
 RS_Ribbon_Position_Name,Posición
-RS_Ribbon_Position_Fixed_L_Name,Coordenadas izquierda
-RS_Ribbon_Position_Fixed_R_Name,Coordenadas derecha
-RS_Ribbon_SplineDivision_Name,"Número división
-estrías"
+RS_Ribbon_Position_Fixed_L_Name,Coord. izquierda
+RS_Ribbon_Position_Fixed_R_Name,Coord. derecha
+RS_Ribbon_SplineDivision_Name,Número estrías
 RS_Ribbon_SplineDivision_Desc,El número de división de las estrías
 ,
 RS_Track_TrackSizeFor_Name,Tamaño frontal
 RS_Track_TrackSizeMiddle_Name,Tamaño central
 RS_Track_TrackSizeBack_Name,Tamaño trasero
-RS_Track_SplineDivision_Name,"Número división
-estrías"
+RS_Track_SplineDivision_Name,Número estrías
 RS_Track_SplineDivision_Desc,El número de división de las estrías
 RS_Track_ColorLeft_Name,"Color, Izquierda"
 RS_Track_ColorLeftMiddle_Name,"Color, Izquierda-Centro"
@@ -121,7 +122,9 @@ RS_Ring_RingShape_Name,Forma
 RS_Ring_RenderingOrder_Name,Orden renderizado
 RS_Ring_Billboard_Name,Configuración
 RS_Ring_AlphaBlend_Name,Blend
-RS_Ring_VertexCount_Name,Cuenta Vertice
+RS_Ring_VertexCount_Name,Cantidad Vertice
+RS_Ring_VertexCount_Desc,"Cantidad de Vertices para formar el objeto
+Minimo 3 (Triangulo)"
 RS_Ring_Outer_Name,Exterior
 RS_Ring_Inner_Name,Interior
 RS_Ring_CenterRatio_Name,Relación central
@@ -131,8 +134,8 @@ RS_Ring_InnerColor_Name,Color interno
 ,
 RS_RingShape_Type_Name,Forma
 ,
-RS_RingShapeCrescent_StartingFade_Name,Desvanecimiento inicial(Deg.)
-RS_RingShapeCrescent_EndingFade_Name,Desvanecimiento final(Deg.)
+RS_RingShapeCrescent_StartingFade_Name,Transparencia inicio
+RS_RingShapeCrescent_EndingFade_Name,Transparencia final
 RS_RingShapeCrescent_StartingAngle_Name,Inicio del ángulo
 RS_RingShapeCrescent_EndingAngle_Name,Final del ángulo
 ,

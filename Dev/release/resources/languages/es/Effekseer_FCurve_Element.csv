@@ -1,7 +1,7 @@
-Fcurve_Elm_Location,Ubicación
+Fcurve_Elm_Location,Posición
 Fcurve_Elm_Angle,Ángulo
 Fcurve_Elm_ScalingFactor,Factor de escala
-Fcurve_Elm_ScalingFactor_Single,Factor de escala(Singular)
+Fcurve_Elm_ScalingFactor_Single,Factor de escala(Sencillo)
 Fcurve_Elm_UV_Start,UV(Inicio)
 Fcurve_Elm_UV_Size,UV(Tamaño)
 Fcurve_Elm_Sprite_Color,Sprite-Todo el color(RGBA)
