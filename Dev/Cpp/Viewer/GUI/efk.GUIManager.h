@@ -720,6 +720,8 @@ public:
 	bool IsCtrlKeyDown();
 	bool IsAltKeyDown();
 	bool IsMouseDown(int button);
+	bool IsMouseClicked(int button, bool repeat);
+	bool IsMouseReleased(int button);
 	bool IsMouseDoubleClicked(int button);
 
 	bool IsItemHovered();
@@ -758,7 +760,15 @@ public:
 	void SetDockFocus(const char16_t* label);
 
 	// Fcurve
-	bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);
+	bool IsHoveredOnFCurve(float* keys, float* values, float* leftHandleKeys, float* leftHandleValues, float* rightHandleKeys, float* rightHandleValues, int* interporations, FCurveEdgeType startEdge, FCurveEdgeType endEdge, uint32_t col, int count);
+
+	bool IsHoveredOnFCurvePoint(const float* keys, const float* values, int count, int* hovered);
+
+	bool IsFCurvePanning();
+
+	Vec2 GetCurrentFCurveFieldPosition();
+
+	bool BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, const Vec2& min_kv, const Vec2& max_kv);
 	void EndFCurve();
 	bool FCurve(int fcurve_id,
 				float* keys,
@@ -786,6 +796,30 @@ public:
 				int* changedType);
 
 	bool StartSelectingAreaFCurve();
+
+	bool AddFCurvePoint(const Vec2& v,
+						float* keys,
+						float* values,
+						float* leftHandleKeys,
+						float* leftHandleValues,
+						float* rightHandleKeys,
+						float* rightHandleValues,
+						int* interporations,
+						uint8_t* kv_selected,
+						int count,
+						int* newCount);
+
+	bool RemoveFCurvePoint(Vec2 v,
+					   float* keys,
+					   float* values,
+					   float* leftHandleKeys,
+					   float* leftHandleValues,
+					   float* rightHandleKeys,
+					   float* rightHandleValues,
+					   int* interporations,
+					   uint8_t* kv_selected,
+					   int count,
+					   int* newCount);
 
 	// Drag
 	bool BeginDragDropSource();

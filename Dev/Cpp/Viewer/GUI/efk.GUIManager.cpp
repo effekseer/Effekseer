@@ -15,8 +15,8 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
 
-#include "efk.GUIManager.h"
 #include "NodeFrameTimeline.h"
+#include "efk.GUIManager.h"
 
 #include "../EditorCommon/GUI/JapaneseFont.h"
 
@@ -75,8 +75,7 @@ bool ImageButton_(ImTextureID user_texture_id,
 	bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
 	// Render
-	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered
-																					  : ImGuiCol_Button);
+	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
 	RenderNavHighlight(bb, id);
 	RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
 	if (bg_col.w > 0.0f)
@@ -175,8 +174,7 @@ bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
 			{"R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f"}, // Long display for RGBA
 			{"H:%0.3f", "S:%0.3f", "V:%0.3f", "A:%0.3f"}  // Long display for HSVA
 		};
-		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2
-																				: 1;
+		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2 : 1;
 
 		PushItemWidth(w_item_one);
 		for (int n = 0; n < components; n++)
@@ -425,9 +423,9 @@ void ResizeBicubic(uint32_t* dst,
 	// bicubic weight function
 	auto weight = [](float d) -> float {
 		const float a = -1.0f;
-		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
-			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
-						   : 0.0f;
+		return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
+						 : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
+									 : 0.0f;
 	};
 
 	for (int32_t iy = 0; iy < dstHeight; iy++)
@@ -2026,6 +2024,16 @@ bool GUIManager::IsMouseDown(int button)
 	return ImGui::IsMouseDown(button);
 }
 
+bool GUIManager::IsMouseClicked(int button, bool repeat)
+{
+	return ImGui::IsMouseClicked(button, repeat);
+}
+
+bool GUIManager::IsMouseReleased(int button)
+{
+	return ImGui::IsMouseReleased(button);
+}
+
 bool GUIManager::IsMouseDoubleClicked(int button)
 {
 	return ImGui::IsMouseDoubleClicked(button);
@@ -2249,9 +2257,42 @@ void GUIManager::SetDockFocus(const char16_t* label)
 	ImGui::SetWindowFocus(utf8label);
 }
 
-bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, float min_value, float max_value)
+bool GUIManager::IsHoveredOnFCurve(float* keys, float* values, float* leftHandleKeys, float* leftHandleValues, float* rightHandleKeys, float* rightHandleValues, int* interporations, FCurveEdgeType startEdge, FCurveEdgeType endEdge, uint32_t col, int count)
 {
-	return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), current, ImVec2(scale.X, scale.Y), min_value, max_value);
+	return ImGui::IsHoveredOnFCurve(
+		keys,
+		values,
+		leftHandleKeys,
+		leftHandleValues,
+		rightHandleKeys,
+		rightHandleValues,
+		reinterpret_cast<ImGui::ImFCurveInterporationType*>(interporations),
+		static_cast<ImGui::ImFCurveEdgeType>(startEdge),
+		static_cast<ImGui::ImFCurveEdgeType>(endEdge),
+		static_cast<ImU32>(col),
+		count,
+		nullptr);
+}
+
+bool GUIManager::IsHoveredOnFCurvePoint(const float* keys, const float* values, int count, int* hovered)
+{
+	return ImGui::IsHoveredOnFCurvePoint(keys, values, count, hovered);
+}
+
+bool GUIManager::IsFCurvePanning()
+{
+	return ImGui::IsFCurvePanning();
+}
+
+Vec2 GUIManager::GetCurrentFCurveFieldPosition()
+{
+	const auto pos = ImGui::GetCurrentFCurveFieldPosition();
+	return Vec2{pos.x, pos.y};
+}
+
+bool GUIManager::BeginFCurve(int id, const Vec2& size, float current, const Vec2& scale, const Vec2& min_kv, const Vec2& max_kv)
+{
+	return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), current, ImVec2(scale.X, scale.Y), ImVec2(min_kv.X, min_kv.Y), ImVec2(max_kv.X, max_kv.Y));
 }
 
 void GUIManager::EndFCurve()
@@ -2313,6 +2354,56 @@ bool GUIManager::FCurve(int fcurve_id,
 bool GUIManager::StartSelectingAreaFCurve()
 {
 	return ImGui::StartSelectingAreaFCurve();
+}
+
+bool GUIManager::AddFCurvePoint(const Vec2& v,
+								float* keys,
+								float* values,
+								float* leftHandleKeys,
+								float* leftHandleValues,
+								float* rightHandleKeys,
+								float* rightHandleValues,
+								int* interporations,
+								uint8_t* kv_selected,
+								int count,
+								int* newCount)
+{
+	return ImGui::AddFCurvePoint(ImVec2{v.X, v.Y},
+								 keys,
+								 values,
+								 leftHandleKeys,
+								 leftHandleValues,
+								 rightHandleKeys,
+								 rightHandleValues,
+								 (ImGui::ImFCurveInterporationType*)interporations,
+								 (bool*)kv_selected,
+								 count,
+								 newCount);
+}
+
+bool GUIManager::RemoveFCurvePoint(Vec2 v,
+								   float* keys,
+								   float* values,
+								   float* leftHandleKeys,
+								   float* leftHandleValues,
+								   float* rightHandleKeys,
+								   float* rightHandleValues,
+								   int* interporations,
+								   uint8_t* kv_selected,
+								   int count,
+								   int* newCount)
+{
+	return ImGui::RemoveFCurvePoint(ImVec2{v.X, v.Y},
+									keys,
+									values,
+									leftHandleKeys,
+									leftHandleValues,
+									rightHandleKeys,
+									rightHandleValues,
+									(ImGui::ImFCurveInterporationType*)interporations,
+									(bool*)kv_selected,
+									count,
+									newCount);
 }
 
 bool GUIManager::BeginDragDropSource()

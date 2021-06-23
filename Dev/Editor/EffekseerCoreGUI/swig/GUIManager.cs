@@ -1250,6 +1250,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsMouseClicked(int button, bool repeat) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseClicked(swigCPtr, button, repeat);
+    return ret;
+  }
+
+  public bool IsMouseReleased(int button) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseReleased(swigCPtr, button);
+    return ret;
+  }
+
   public bool IsMouseDoubleClicked(int button) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseDoubleClicked(swigCPtr, button);
     return ret;
@@ -1388,20 +1398,28 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetDockFocus(swigCPtr, label);
   }
 
-  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value, float max_value) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_0(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value, max_value);
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  public bool IsHoveredOnFCurve(float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, FCurveEdgeType startEdge, FCurveEdgeType endEdge, uint col, int count) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsHoveredOnFCurve(swigCPtr, keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, (int)startEdge, (int)endEdge, col, count);
     return ret;
   }
 
-  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_1(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value);
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  public bool IsHoveredOnFCurvePoint(float[] keys, float[] values, int count, ref int hovered) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsHoveredOnFCurvePoint(swigCPtr, keys, values, count, ref hovered);
     return ret;
   }
 
-  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_2(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale));
+  public bool IsFCurvePanning() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsFCurvePanning(swigCPtr);
+    return ret;
+  }
+
+  public Vec2 GetCurrentFCurveFieldPosition() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetCurrentFCurveFieldPosition(swigCPtr), true);
+    return ret;
+  }
+
+  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, Vec2 min_kv, Vec2 max_kv) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), Vec2.getCPtr(min_kv), Vec2.getCPtr(max_kv));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -1417,6 +1435,18 @@ public class GUIManager : global::System.IDisposable {
 
   public bool StartSelectingAreaFCurve() {
     bool ret = EffekseerNativePINVOKE.GUIManager_StartSelectingAreaFCurve(swigCPtr);
+    return ret;
+  }
+
+  public bool AddFCurvePoint(Vec2 v, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, byte[] kv_selected, int count, ref int newCount) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_AddFCurvePoint(swigCPtr, Vec2.getCPtr(v), keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, kv_selected, count, ref newCount);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool RemoveFCurvePoint(Vec2 v, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, byte[] kv_selected, int count, ref int newCount) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_RemoveFCurvePoint(swigCPtr, Vec2.getCPtr(v), keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, kv_selected, count, ref newCount);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <algorithm>
+#include <array>
 
 namespace ImGui
 {
@@ -86,6 +87,9 @@ public:
 
 namespace ImGui
 {
+	const float pointRadiusSelected = 5;
+	const float pointRadiusUnselected = 3;
+
 	static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
 	{
 		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
@@ -132,6 +136,76 @@ namespace ImGui
 	{
 		return log(x) / log(base);
 	}
+
+	static void NormalizeKeyValues(const ImVec2& k1, ImVec2& k1rh, ImVec2& k2lh, const ImVec2& k2)
+	{
+		std::array<float, 2> h1;
+		std::array<float, 2> h2;
+
+		h1[0] = k1[0] - k1rh[0];
+		h1[1] = k1[1] - k1rh[1];
+
+		h2[0] = k2[0] - k2lh[0];
+		h2[1] = k2[1] - k2lh[1];
+
+		auto len = k2[0] - k1[0];
+
+		auto lenR = std::abs(h1[0]);
+
+		auto lenL = std::abs(h2[0]);
+
+		if (lenR == 0 && lenL == 0)
+			return;
+
+		if ((lenR + lenL) > len)
+		{
+			auto f = len / (lenR + lenL);
+
+			k1rh[0] = (k1[0] - f * h1[0]);
+			k1rh[1] = (k1[1] - f * h1[1]);
+
+			k2lh[0] = (k2[0] - f * h2[0]);
+			k2lh[1] = (k2[1] - f * h2[1]);
+		}
+	}
+
+	struct FieldScreenConverter
+	{
+		float offset_x_;
+		float offset_y_;
+		float scale_x_;
+		float scale_y_;
+		ImRect innerRect_;
+		float width_;
+		float height_;
+
+	public:
+		FieldScreenConverter()
+		{
+			ImGuiWindow* window = GetCurrentWindow();
+
+			offset_x_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
+			offset_y_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
+
+			scale_x_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
+			scale_y_ = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+
+			innerRect_ = window->InnerRect;
+			width_ = innerRect_.Max.x - innerRect_.Min.x;
+			height_ = innerRect_.Max.y - innerRect_.Min.y;
+		}
+
+		ImVec2 F2S(const ImVec2& p) const
+		{
+			return ImVec2((p.x - offset_x_) * scale_x_ + innerRect_.Min.x, (-p.y - offset_y_) * scale_y_ + innerRect_.Min.y + height_ / 2);
+		}
+
+		ImVec2 S2F(const ImVec2& p) const
+		{
+			return ImVec2((p.x - innerRect_.Min.x) / scale_x_ + offset_x_, -((p.y - innerRect_.Min.y - height_ / 2) / scale_y_ + offset_y_));
+		}
+	};
+
 
 	bool IsHovered(const ImVec2& v1, const ImVec2& v2, float radius)
 	{
@@ -185,8 +259,12 @@ namespace ImGui
 		if ((col & IM_COL32_A_MASK) == 0)
 			return false;
 
+		auto cp0m = cp0;
+		auto cp1m = cp1;
+		NormalizeKeyValues(pos0, cp0m, cp1m, pos1);
+
 		window->DrawList->PathLineTo(pos0);
-		window->DrawList->PathBezierCurveTo(cp0, cp1, pos1, 0);
+		window->DrawList->PathBezierCurveTo(cp0m, cp1m, pos1, 0);
 
 		bool isHovered = false;
 
@@ -226,7 +304,7 @@ namespace ImGui
 		ImFCurveInterporationType* interporations,
 		ImFCurveEdgeType startEdge,
 		ImFCurveEdgeType endEdge,
-		ImU32 col, int count, ImVec2* tangent = nullptr)
+		ImU32 col, int count, ImVec2* tangent)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 
@@ -400,6 +478,44 @@ namespace ImGui
 		return isLineHovered;
 	}
 
+	bool IsHoveredOnFCurvePoint(const float* keys, const float* values, int count, int* hovered)
+	{
+		assert(hovered != nullptr);
+
+		const FieldScreenConverter fsc;
+		*hovered = -1;
+
+		for (int i = 0; i < count; i++)
+		{
+			PushID(i + 1);
+
+			auto isChanged = false;
+			const float pointSize = pointRadiusSelected;
+
+			auto pos = fsc.F2S(ImVec2(keys[i], values[i]));
+			auto cursorPos = GetCursorPos();
+
+			ImVec2 p(pos.x - pointSize, pos.y - pointSize);
+			SetCursorScreenPos(p);
+
+			InvisibleButton("", ImVec2(pointSize * 2, pointSize * 2));
+
+			bool isDrawPositionRequired = false;
+
+			bool isActive = IsItemActive();
+			bool itemHovered = IsItemHovered();
+
+			if (itemHovered)
+			{
+				*hovered = i;
+			}
+
+			PopID();
+		}
+
+		return *hovered >= 0;
+	}
+
 	void DrawMaker(ImGuiWindow* window, ImVec2 pos, float size, uint32_t color, int32_t thickness)
 	{
 		window->DrawList->AddCircleFilled(pos, size + thickness, 0xAA000000, 8);
@@ -412,6 +528,7 @@ namespace ImGui
 		float* rightHandleKeys, float* rightHandleValues,
 		int count)
 	{
+		return;
 		for (int i = 0; i < count; i++)
 		{
 			if (0 < i)
@@ -430,9 +547,24 @@ namespace ImGui
 		}
 	}
 
-	bool BeginFCurve(int id, const ImVec2& size, float current, const ImVec2& scale, float min_value, float max_value)
+	bool IsFCurvePanning()
 	{
-		bool isAutoZoomMode = min_value <= max_value;
+		ImGuiWindow* window = GetCurrentWindow();
+		return window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false);
+	}
+
+	ImVec2 GetCurrentFCurveFieldPosition()
+	{
+		const FieldScreenConverter fsc;
+		auto cursorPos = GetMousePos();
+		return fsc.S2F(cursorPos);
+	}
+
+	bool BeginFCurve(int id, const ImVec2& size, float current, const ImVec2& scale, const ImVec2& min_kv, const ImVec2& max_kv)
+	{
+		const bool isValueAutoZoomMode = min_kv.y <= max_kv.y;
+		const bool isKeyAutoZoomMode = min_kv.x <= max_kv.x;
+		const auto isAutoZoomMode = isKeyAutoZoomMode || isValueAutoZoomMode;
 
 		if (!BeginChildFrame(id, size, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 		{
@@ -474,7 +606,7 @@ namespace ImGui
 		bool isZoomed = false;
 
 		// Horizontal
-		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && ImGui::GetIO().KeyAlt)
+		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && ImGui::GetIO().KeyAlt && !isAutoZoomMode)
 		{
 			auto mousePos = GetMousePos();
 			auto mousePos_f_pre = transform_s2f(mousePos);
@@ -523,8 +655,35 @@ namespace ImGui
 		}
 
 		// AutoZoom
-		if (isAutoZoomMode)
+		if (isKeyAutoZoomMode)
 		{
+			auto max_value = max_kv.x;
+			auto min_value = min_kv.x;
+
+			auto range = max_value - min_value;
+
+			if (range == 0.0f)
+			{
+				max_value = +width / 2;
+				min_value = -width / 2;
+				range = width;
+				scale_x = scale.x;
+			}
+			else
+			{
+				scale_x = width / (range);
+			}
+
+			offset_x = (max_value + min_value) / 2.0f - range / 2;
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale_x);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, offset_x);
+		}
+
+		if (isValueAutoZoomMode)
+		{
+			auto max_value = max_kv.y;
+			auto min_value = min_kv.y;
+
 			auto range = max_value - min_value;
 
 			if (range == 0.0f)
@@ -545,16 +704,12 @@ namespace ImGui
 		}
 
 		// pan with user
-		if (ImGui::IsMouseReleased(1))
-		{
-			window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false);
-		}
 		if (window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false))
 		{
 			ImVec2 drag_offset = ImGui::GetMouseDragDelta(1);
 			offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_X) - drag_offset.x / scale_x;
 
-			if (!isAutoZoomMode)
+			if (!isValueAutoZoomMode)
 			{
 				offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_Y) - drag_offset.y / scale_y;
 			}
@@ -701,6 +856,11 @@ namespace ImGui
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 
+		if (ImGui::IsMouseReleased(1))
+		{
+			window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_PANNING, false);
+		}
+
 		FCurveContext context;
 		context.Load(window);
 
@@ -788,11 +948,12 @@ namespace ImGui
 				interporations[j] = interporations[j - 1];
 			}
 
+			const auto ctrlLength = (keys[1] - v.x) / 2.0f;
 			keys[0] = v.x;
 			values[0] = v.y;
-			leftHandleKeys[0] = v.x;
+			leftHandleKeys[0] = v.x - ctrlLength;
 			leftHandleValues[0] = v.y;
-			rightHandleKeys[0] = v.x;
+			rightHandleKeys[0] = v.x + ctrlLength;
 			rightHandleValues[0] = v.y;
 			kv_selected[0] = false;
 			interporations[0] = ImFCurveInterporationType::Cubic;
@@ -802,11 +963,12 @@ namespace ImGui
 		}
 		else if (v.x >= keys[count - 1])
 		{
+			const auto ctrlLength = (v.x - keys[count - 1]) / 2.0f;
 			keys[count] = v.x;
 			values[count] = v.y;
-			leftHandleKeys[count] = v.x;
+			leftHandleKeys[count] = v.x - ctrlLength;
 			leftHandleValues[count] = v.y;
-			rightHandleKeys[count] = v.x;
+			rightHandleKeys[count] = v.x + ctrlLength;
 			rightHandleValues[count] = v.y;
 			kv_selected[count] = false;
 			interporations[count] = ImFCurveInterporationType::Cubic;
@@ -832,11 +994,14 @@ namespace ImGui
 						interporations[j] = interporations[j - 1];
 					}
 
+					const auto leftCtrlLength = (keys[i + 1] - keys[i]) / 2.0f;
+					const auto rightCtrlLength = (keys[i + 2] - keys[i + 1]) / 2.0f;
+
 					keys[i + 1] = v.x;
 					values[i + 1] = v.y;
-					leftHandleKeys[i + 1] = v.x;
+					leftHandleKeys[i + 1] = v.x - leftCtrlLength;
 					leftHandleValues[i + 1] = v.y;
-					rightHandleKeys[i + 1] = v.x;
+					rightHandleKeys[i + 1] = v.x + rightCtrlLength;
 					rightHandleValues[i + 1] = v.y;
 					kv_selected[i + 1] = false;
 					interporations[i + 1] = ImFCurveInterporationType::Cubic;
@@ -956,36 +1121,15 @@ namespace ImGui
 
 				keys[0] = v.x;
 				values[0] = defaultValue;
-				leftHandleKeys[0] = v.x;
+				leftHandleKeys[0] = v.x - 10;
 				leftHandleValues[0] = v.y;
-				rightHandleKeys[0] = v.x;
+				rightHandleKeys[0] = v.x + 10;
 				rightHandleValues[0] = v.y;
 				kv_selected[0] = false;
 				interporations[0] = ImFCurveInterporationType::Cubic;
 
 				(*newCount) = count + 1;
 				hasControlled = true;
-			}
-
-			if (isLineHovered && IsMouseReleased(1))
-			{
-				ImGui::OpenPopup("FCurveMenu_Add");
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, lineHoveredPos.x);
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, lineHoveredPos.y);
-			}
-			if (ImGui::BeginPopup("FCurveMenu_Add"))
-			{
-				if (ImGui::Selectable("Add"))
-				{
-					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
-					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
-					hasControlled = AddFCurvePoint({x, y}, 
-						keys, values, leftHandleKeys, leftHandleValues, 
-						rightHandleKeys, rightHandleValues, interporations,
-						kv_selected, count, newCount);
-					count = *newCount;
-				}
-				ImGui::EndPopup();
 			}
 		}
 
@@ -1152,7 +1296,7 @@ namespace ImGui
 				PushID(i + 1);
 
 				auto isChanged = false;
-				float pointSize = 4;
+				const float pointSize = pointRadiusSelected;
 
 				auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 				auto cursorPos = GetCursorPos();
@@ -1228,14 +1372,6 @@ namespace ImGui
 
 				PopID();
 				SetCursorScreenPos(cursorPos);
-
-				if (itemHovered && IsMouseReleased(1))
-				{
-					ImVec2 v = transform_s2f(p);
-					ImGui::OpenPopup("FCurveMenu_Remove");
-					window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, v.x);
-					window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, v.y);
-				}
 
 				// out of window
 				if (isChanged && over_y != 0.0f)
@@ -1355,7 +1491,7 @@ namespace ImGui
 				if (!kv_selected[i]) continue;
 
 				auto isChanged = false;
-				float pointSize = 3;
+				float pointSize = pointRadiusSelected;
 
 				auto pos = transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i]));
 				auto cursorPos = GetCursorPos();
@@ -1375,6 +1511,7 @@ namespace ImGui
 
 				if (IsItemActive() && IsMouseClicked(0))
 				{
+					hasControlled = true;
 				}
 
 				if (IsItemActive() && IsMouseDragging(0))
@@ -1447,7 +1584,7 @@ namespace ImGui
 				if (!kv_selected[i]) continue;
 
 				auto isChanged = false;
-				float pointSize = 3;
+				float pointSize = pointRadiusSelected;
 
 				auto pos = transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i]));
 				auto cursorPos = GetCursorPos();
@@ -1467,6 +1604,7 @@ namespace ImGui
 
 				if (IsItemActive() && IsMouseClicked(0))
 				{
+					hasControlled = true;
 				}
 
 				if (IsItemActive() && IsMouseDragging(0))
@@ -1552,13 +1690,6 @@ namespace ImGui
 					kv_selected, count, newCount);
 				count = *newCount;
 			}
-
-			if (isLineHovered && IsMouseReleased(1))
-			{
-				ImGui::OpenPopup("FCurveMenu_Add");
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, lineHoveredPos.x);
-				window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, lineHoveredPos.y);
-			}
 		}
 
 		// is line selected
@@ -1571,38 +1702,6 @@ namespace ImGui
 			for (int i = 0; i < count; i++)
 			{
 				kv_selected[i] = false;
-			}
-		}
-
-		if (!hasControlled && selected)
-		{
-			if (ImGui::BeginPopup("FCurveMenu_Add"))
-			{
-				if (ImGui::Selectable("Add"))
-				{
-					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
-					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
-					hasControlled = AddFCurvePoint({x, y}, 
-						keys, values, leftHandleKeys, leftHandleValues, 
-						rightHandleKeys, rightHandleValues, interporations,
-						kv_selected, count, newCount);
-					count = *newCount;
-				}
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginPopup("FCurveMenu_Remove"))
-			{
-				if (ImGui::Selectable("Remove"))
-				{
-					float x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_X, 0.0f);
-					float y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::CONTEXT_MENU_ORIGIN_Y, 0.0f);
-					hasControlled = RemoveFCurvePoint({x, y}, keys, values, 
-						leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues,
-						interporations, kv_selected, count, newCount);
-					count = *newCount;
-				}
-				ImGui::EndPopup();
 			}
 		}
 
@@ -1624,11 +1723,17 @@ namespace ImGui
 
 					if (interporations[i] == ImFCurveInterporationType::Cubic)
 					{
+						auto v1s = transform_f2s(v1);
+						auto cp1s = transform_f2s(cp1);
+						auto cp2s = transform_f2s(cp2);
+						auto v2s = transform_f2s(v2);
+						NormalizeKeyValues(v1s, cp1s, cp2s, v2s);
+
 						window->DrawList->AddBezierCurve(
-							transform_f2s(v1),
-							transform_f2s(cp1),
-							transform_f2s(cp2),
-							transform_f2s(v2),
+							v1s,
+							cp1s,
+							cp2s,
+							v2s,
 							col,
 							lineThiness);
 					}
@@ -1654,11 +1759,17 @@ namespace ImGui
 
 					if (interporations[i] == ImFCurveInterporationType::Cubic)
 					{
+						auto v1s = transform_f2s(v1);
+						auto cp1s = transform_f2s(cp1);
+						auto cp2s = transform_f2s(cp2);
+						auto v2s = transform_f2s(v2);
+						NormalizeKeyValues(v1s, cp1s, cp2s, v2s);
+
 						window->DrawList->AddBezierCurve(
-							transform_f2s(v1),
-							transform_f2s(cp1),
-							transform_f2s(cp2),
-							transform_f2s(v2),
+							v1s,
+							cp1s,
+							cp2s,
+							v2s,
 							col,
 							lineThiness);
 					}
@@ -1751,7 +1862,7 @@ namespace ImGui
 			{
 				if (kv_selected[i])
 				{
-					const float pointSize = 4;
+					const float pointSize = pointRadiusSelected;
 					const float thickness = 3 + ((i == hoveredPoint) ? 1 : 0);
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 					DrawMaker(window, pos, pointSize, 0xEEFFFFFF, thickness);
@@ -1761,7 +1872,7 @@ namespace ImGui
 				}
 				else
 				{
-					const float pointSize = 3;
+					const float pointSize = pointRadiusUnselected;
 					const float thickness = 2 + ((i == hoveredPoint) ? 1 : 0);
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 					DrawMaker(window, pos, pointSize, 0xCCFFFFFF, thickness);
