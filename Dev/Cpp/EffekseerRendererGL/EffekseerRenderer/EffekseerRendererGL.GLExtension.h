@@ -66,6 +66,11 @@ typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 #endif
 
+#if defined(_WIN32) || defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && (defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)))
+#define GL_BGRA 0x80E1
+#define GL_DEPTH_COMPONENT32 0x81A7
+#endif
+
 #if defined(_WIN32) || defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && defined(__EFFEKSEER_RENDERER_GLES2__))
 typedef char GLchar;
 
@@ -110,7 +115,6 @@ typedef char GLchar;
 #define GL_R16F 0x822D
 #define GL_R32F 0x822E
 #define GL_RG 0x8227
-#define GL_BGRA 0x80E1
 #define GL_RG16F 0x822f
 
 #define GL_HALF_FLOAT 0x140b
@@ -121,7 +125,6 @@ typedef char GLchar;
 #define GL_DEPTH24_STENCIL8 0x88F0
 #define GL_DEPTH32F_STENCIL8 0x8CAD
 #define GL_DEPTH_COMPONENT24 0x81A6
-#define GL_DEPTH_COMPONENT32 0x81A7
 
 #define GL_DEPTH_STENCIL 0x84F9
 
