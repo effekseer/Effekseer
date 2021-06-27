@@ -190,7 +190,6 @@ protected:
 
 	ReferenceObject* loadingObject = nullptr;
 
-
 	bool LoadBody(const uint8_t* data, int32_t size, float mag);
 
 	void ResetReloadingBackup();
@@ -230,7 +229,6 @@ public:
 	{
 		return dynamicEquation;
 	}
-
 
 public:
 	const char16_t* GetName() const override;

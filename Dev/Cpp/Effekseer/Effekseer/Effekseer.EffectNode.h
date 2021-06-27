@@ -1438,10 +1438,6 @@ protected:
 
 	RefPtr<RenderingUserData> renderingUserData_;
 
-public:
-	
-
-
 	// コンストラクタ
 	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
 
@@ -1524,9 +1520,7 @@ public:
 
 	DynamicFactorParameter DynamicFactor;
 
-
 	bool Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor);
-
 
 	Effect* GetEffect() const override;
 
