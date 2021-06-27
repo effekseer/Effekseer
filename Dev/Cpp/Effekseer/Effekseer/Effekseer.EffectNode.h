@@ -1438,7 +1438,8 @@ protected:
 
 	RefPtr<RenderingUserData> renderingUserData_;
 
-	int32_t editorNodeId_ = 0;
+public:
+	
 
 
 	// コンストラクタ
@@ -1523,9 +1524,6 @@ public:
 
 	DynamicFactorParameter DynamicFactor;
 
-
-	// Identifier to use when referring to a node from the editor.
-	int32_t GetEditorNodeId() const { return editorNodeId_; }
 
 	bool Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor);
 

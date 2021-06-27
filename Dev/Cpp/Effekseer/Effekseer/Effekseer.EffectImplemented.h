@@ -190,8 +190,6 @@ protected:
 
 	ReferenceObject* loadingObject = nullptr;
 
-	int32_t nextEditorNodeId_ = 0;
-
 
 	bool LoadBody(const uint8_t* data, int32_t size, float mag);
 
@@ -233,9 +231,6 @@ public:
 		return dynamicEquation;
 	}
 
-	int32_t NextEditorNodeId();
-
-	EffectNodeImplemented* FindNodeByEditorNodeId(int32_t editorNodeId) const;
 
 public:
 	const char16_t* GetName() const override;

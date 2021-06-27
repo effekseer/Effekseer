@@ -691,7 +691,6 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		return false;
 
 	// Nodes
-	nextEditorNodeId_ = 1;
 	auto nodeData = pos + binaryReader.GetOffset();
 	m_pRoot = EffectNodeImplemented::Create(this, nullptr, nodeData);
 
@@ -955,33 +954,6 @@ void EffectImplemented::SetLoadingParameter(ReferenceObject* obj)
 	ES_SAFE_ADDREF(obj);
 	ES_SAFE_RELEASE(loadingObject);
 	loadingObject = obj;
-}
-
-int EffectImplemented::NextEditorNodeId()
-{
-	int id = nextEditorNodeId_;
-	nextEditorNodeId_++;
-	return id;
-}
-
-EffectNodeImplemented* EffectImplemented::FindNodeByEditorNodeId(int32_t editorNodeId) const
-{
-	if (!m_pRoot) return nullptr;
-
-	EffectNodeImplemented* result = nullptr;
-
-	const auto& visitor = [&](EffectNodeImplemented* node) -> bool {
-		if (node->GetEditorNodeId() == editorNodeId) {
-			result = node;
-			return false;
-		}
-
-		return true;
-	};
-
-	static_cast<EffectNodeImplemented*>(m_pRoot)->Traverse(visitor);
-
-	return result;
 }
 
 const char16_t* EffectImplemented::GetName() const

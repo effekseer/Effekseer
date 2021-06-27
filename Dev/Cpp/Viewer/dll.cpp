@@ -31,6 +31,39 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
+class EditorEffectNodeUserData : public ::Effekseer::RenderingUserData
+{
+public:
+	// Identifier to use when referring to a node from the editor.
+	int32_t editorNodeId_ = 0;
+
+
+	static ::Effekseer::EffectNodeImplemented* FindNodeByEditorNodeId(::Effekseer::EffectImplemented* effect, int32_t editorNodeId)
+	{
+		auto* root = effect->GetRoot();
+		if (!root) return nullptr;
+
+		::Effekseer::EffectNodeImplemented* result = nullptr;
+
+		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool {
+			const auto userData = node->GetRenderingUserData();
+			if (userData != nullptr) {
+				const auto* editorUserData = static_cast<EditorEffectNodeUserData*>(userData.Get());
+
+				if (editorUserData->editorNodeId_ == editorNodeId) {
+					result = node;
+					return false;
+				}
+			}
+			return true;
+		};
+
+		static_cast<::Effekseer::EffectNodeImplemented*>(root)->Traverse(visitor);
+
+		return result;
+	}
+};
+
 bool Combine(const char16_t* rootPath, const char16_t* treePath, char16_t* dst, int dst_length)
 {
 	int rootPathLength = 0;
@@ -642,6 +675,20 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 	{
 		mainScreen_->SetEffect(effect_);
 	}
+
+	// Create UserData while assigning NodeId.
+	{
+		int nextEditorNodeId = 1;
+		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) {
+			auto userData = ::Effekseer::RefPtr(new EditorEffectNodeUserData());
+			userData->editorNodeId_ = nextEditorNodeId;
+			node->SetRenderingUserData(userData);
+			nextEditorNodeId++;
+			return true;
+		};
+		static_cast<::Effekseer::EffectNodeImplemented*>(effect_->GetRoot())->Traverse(visitor);
+	}
+
 	return true;
 }
 
@@ -1231,7 +1278,7 @@ bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameM
 	if (!effect_.Get()) return false;
 
 	if (auto* effect = dynamic_cast<Effekseer::EffectImplemented*>(effect_.Get())) {
-		if (auto* node = effect->FindNodeByEditorNodeId(nodeId)) {
+		if (auto* node = EditorEffectNodeUserData::FindNodeByEditorNodeId(effect, nodeId)) {
 			Effekseer::EffectInstanceTerm term;
 			auto cterm = node->CalculateInstanceTerm(term);
 			*frameMin = cterm.FirstInstanceStartMin;

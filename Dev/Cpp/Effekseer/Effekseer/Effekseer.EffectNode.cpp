@@ -1265,11 +1265,6 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 		assert(0);
 	}
 
-
-	if (auto* effectImpl = dynamic_cast<EffectImplemented*>(effect)) {
-		effectnode->editorNodeId_ = effectImpl->NextEditorNodeId();
-	}
-
 	effectnode->LoadParameter(pos, parent, effect->GetSetting());
 
 	return effectnode;
