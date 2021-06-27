@@ -519,7 +519,7 @@ public:
 
 			for (int i = 0; i < ElemNum; i++)
 			{
-				channelCount = std::max(channelCount, channelIDs[i]);
+				channelCount = Effekseer::Max(channelCount, channelIDs[i]);
 			}
 			channelCount++;
 		}

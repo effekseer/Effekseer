@@ -818,6 +818,17 @@ void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<
 	}
 }
 
+bool EffectNodeImplemented::Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor)
+{
+	if (!visitor(this)) return false;	// cancel
+
+	for (EffectNodeImplemented* child : m_Nodes) {
+		if (!child->Traverse(visitor)) return false;
+	}
+
+	return true;	// continue
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

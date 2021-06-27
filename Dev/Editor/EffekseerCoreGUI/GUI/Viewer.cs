@@ -7,7 +7,7 @@ namespace Effekseer.GUI
 {
 	public class Viewer
 	{
-		swig.Native native = null;
+		public swig.Native native = null;
 		string backgroundImagePath = string.Empty;
 		bool isViewerShown = false;
 

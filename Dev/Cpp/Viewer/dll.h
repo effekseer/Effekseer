@@ -374,6 +374,8 @@ public:
 
 	bool GetIsUpdateMaterialRequiredAndReset();
 
+	bool GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax);
+
 	static void SetFileLogger(const char16_t* path);
 
 #if !SWIG

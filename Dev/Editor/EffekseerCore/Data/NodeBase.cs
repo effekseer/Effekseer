@@ -36,6 +36,16 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		/// <summary>
+		/// Identifier to use when referring to a node from the editor.
+		/// </summary>
+		[IO(Export = false)]
+		public int EditorNodeId
+		{
+			get;
+			set;
+		}
+
 		public event ChangedValueEventHandler OnAfterAddNode;
 
 		public event ChangedValueEventHandler OnAfterRemoveNode;

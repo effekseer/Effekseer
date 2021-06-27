@@ -1520,6 +1520,8 @@ public:
 
 	DynamicFactorParameter DynamicFactor;
 
+	bool Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor);
+
 	Effect* GetEffect() const override;
 
 	int GetGeneration() const override;

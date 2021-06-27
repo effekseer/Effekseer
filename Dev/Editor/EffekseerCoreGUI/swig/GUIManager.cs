@@ -1501,8 +1501,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public void TimelineNode(string title) {
-    EffekseerNativePINVOKE.GUIManager_TimelineNode(swigCPtr, title);
+  public void TimelineNode(string title, int frameStart, int frameEnd) {
+    EffekseerNativePINVOKE.GUIManager_TimelineNode(swigCPtr, title, frameStart, frameEnd);
   }
 
   public void EndNodeFrameTimeline(ref int frameMin, ref int frameMax, ref int currentFrame, ref int selectedEntry, ref int firstFrame) {

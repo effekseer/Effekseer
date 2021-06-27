@@ -121,9 +121,10 @@ bool NodeFrameTimeline::BeginNodeFrameTimeline()
     return true;
 }
 
-void NodeFrameTimeline::TimelineNode(const char* title)
+void NodeFrameTimeline::TimelineNode(const char* title, int frameStart, int frameLast)
 {
-    mySequence.myItems.push_back(MySequence::MySequenceItem{ 0, 0, 300, false, title });
+    mySequence.myItems.push_back(MySequence::MySequenceItem{ 0, frameStart, frameLast, false, title });
+
 }
 
 void NodeFrameTimeline::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame)

@@ -844,21 +844,31 @@ namespace Effekseer.Binary
 			Action<Data.NodeRoot> outout_rootnode = null;
 			Action<Data.Node> outout_node = null;
 
+			// Identifier to use when referring to a node from the editor.
+			int nextEditorNodeId = 1;
+
 			outout_rootnode = (n) =>
+			{
+				n.EditorNodeId = nextEditorNodeId;
+				nextEditorNodeId++;
+
+				data.Add(((int)NodeType.Root).GetBytes());
+
+				var children = n.Children.Internal.Where(_ => IsRenderedNodeGroup(_)).ToList();
+
+				data.Add(children.Count.GetBytes());
+				for (int i = 0; i < children.Count; i++)
 				{
-					data.Add(((int)NodeType.Root).GetBytes());
+					outout_node(children[i]);
+				}
+			};
 
-					var children = n.Children.Internal.Where(_ => IsRenderedNodeGroup(_)).ToList();
-
-					data.Add(children.Count.GetBytes());
-					for (int i = 0; i < children.Count; i++)
-					{
-						outout_node(children[i]);
-					}
-				};
 
 			outout_node = (n) =>
 			{
+				n.EditorNodeId = nextEditorNodeId;
+				nextEditorNodeId++;
+
 				List<byte[]> node_data = new List<byte[]>();
 
 				var isRenderParamExported = n.IsRendered.GetValue();
