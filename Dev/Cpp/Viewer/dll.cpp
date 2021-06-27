@@ -680,7 +680,7 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 	{
 		int nextEditorNodeId = 1;
 		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) {
-			auto userData = ::Effekseer::RefPtr(new EditorEffectNodeUserData());
+			auto userData = ::Effekseer::MakeRefPtr<EditorEffectNodeUserData>();
 			userData->editorNodeId_ = nextEditorNodeId;
 			node->SetRenderingUserData(userData);
 			nextEditorNodeId++;
