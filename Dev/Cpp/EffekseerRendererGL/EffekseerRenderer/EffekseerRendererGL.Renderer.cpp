@@ -48,12 +48,15 @@ namespace EffekseerRendererGL
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
+	GLCheckError();
 	auto g = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(deviceType, isExtensionsEnabled);
 	if (!g->GetIsValid())
 	{
+		GLCheckError();
 		return nullptr;
 	}
 
+	GLCheckError();
 	return g;
 }
 
@@ -115,6 +118,7 @@ TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
 
 RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 {
+	GLCheckError();
 	auto device = CreateGraphicsDevice(deviceType, isExtensionsEnabled);
 	if (device == nullptr)
 	{
@@ -126,6 +130,7 @@ RendererRef Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType
 
 RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount)
 {
+	GLCheckError();
 	if (graphicsDevice == nullptr)
 	{
 		return nullptr;
@@ -293,6 +298,7 @@ void RendererImplemented::GenerateIndexDataStride()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::Initialize()
 {
+	GLCheckError();
 	GLint currentVAO = 0;
 
 	if (GLExt::IsSupportedVertexArray())
@@ -311,6 +317,8 @@ bool RendererImplemented::Initialize()
 	}
 
 	SetSquareMaxCount(m_squareMaxCount);
+
+	GLCheckError();
 
 	m_renderState = new RenderState(this);
 
@@ -561,6 +569,7 @@ bool RendererImplemented::Initialize()
 		shader_ad_distortion_->SetIsTransposeEnabled(true);
 	}
 
+	GLCheckError();
 	return true;
 }
 

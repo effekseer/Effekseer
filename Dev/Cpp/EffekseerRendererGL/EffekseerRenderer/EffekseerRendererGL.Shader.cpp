@@ -121,6 +121,8 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 						   const char* name,
 						   bool addHeader)
 {
+	GLCheckError();
+
 	std::array<const char*, 16> src_data;
 	std::array<GLint, 16> src_size;
 
@@ -241,9 +243,11 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	if (res_link == GL_FALSE)
 	{
 		GLExt::glDeleteProgram(program);
+		GLCheckError();
 		return false;
 	}
 
+	GLCheckError();
 	return true;
 }
 
@@ -381,6 +385,7 @@ Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 					   bool hasRefCount,
 					   bool addHeader)
 {
+	GLCheckError();
 	GLuint program;
 
 	if (CompileShader(graphicsDevice->GetDeviceType(), program, vsData, vsDataCount, psData, psDataCount, name, addHeader))

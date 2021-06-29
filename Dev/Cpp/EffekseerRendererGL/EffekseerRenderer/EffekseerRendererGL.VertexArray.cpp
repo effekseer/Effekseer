@@ -68,6 +68,8 @@ void VertexArray::OnResetDevice()
 //-----------------------------------------------------------------------------------
 void VertexArray::Init()
 {
+	GLCheckError();
+
 	if (!m_shader->IsValid())
 	{
 		m_shader->OnResetDevice();
