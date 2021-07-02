@@ -343,27 +343,27 @@ void BloomEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backen
 			0.25f / (knee + 0.00001f),
 			intensity,
 		};
-		blitter.Blit(shaderExtract.get(), vaoExtract.get(), {src}, constantData, sizeof(constantData), extractBuffer->GetAsBackend());
+		blitter.Blit(shaderExtract.get(), vaoExtract.get(), std::vector<Effekseer::Backend::TextureRef>{src}, constantData, sizeof(constantData), extractBuffer->GetAsBackend());
 	}
 
 	// Shrink pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
 		const auto textures = (i == 0) ? extractBuffer->GetAsBackend() : lowresBuffers[0][i - 1]->GetAsBackend();
-		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), {textures}, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
+		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), std::vector<Effekseer::Backend::TextureRef>{textures}, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
 	}
 
 	// Horizontal gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const auto textures = {lowresBuffers[0][i]->GetAsBackend()};
+		const auto textures = std::vector<Effekseer::Backend::TextureRef>{lowresBuffers[0][i]->GetAsBackend()};
 		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), textures, nullptr, 0, lowresBuffers[1][i]->GetAsBackend());
 	}
 
 	// Vertical gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const auto textures = {lowresBuffers[1][i]->GetAsBackend()};
+		const auto textures = std::vector<Effekseer::Backend::TextureRef>{lowresBuffers[1][i]->GetAsBackend()};
 		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), textures, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
 	}
 
