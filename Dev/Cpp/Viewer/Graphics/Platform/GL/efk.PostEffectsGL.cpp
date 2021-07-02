@@ -371,10 +371,10 @@ void BloomEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backen
 	state.AlphaBlend = AlphaBlendType::Add;
 	renderer_->GetRenderState()->Update(false);
 	{
-		const auto textures = {lowresBuffers[0][0]->GetAsBackend(),
-							   lowresBuffers[0][1]->GetAsBackend(),
-							   lowresBuffers[0][2]->GetAsBackend(),
-							   lowresBuffers[0][3]->GetAsBackend()};
+		const auto textures = std::vector<Effekseer::Backend::TextureRef>{lowresBuffers[0][0]->GetAsBackend(),
+																		  lowresBuffers[0][1]->GetAsBackend(),
+																		  lowresBuffers[0][2]->GetAsBackend(),
+																		  lowresBuffers[0][3]->GetAsBackend()};
 		blitter.Blit(shaderBlend.get(), vaoBlend.get(), textures, nullptr, 0, dest, false);
 	}
 
