@@ -109,9 +109,13 @@ namespace Effekseer.GUI.Dock
 				int frameMin = Core.StartFrame;
 				int frameMax = Core.EndFrame;
 
-				for (int i = 0; i < Core.Root.Children.Count; i++)
+
+				var timelineNodes = Core.Root.Children;
+				var currentSelectedIndex = timelineNodes.Internal.FindIndex(x => x == Core.SelectedNode);
+
+				for (int i = 0; i < timelineNodes.Count; i++)
 				{
-					var node = Core.Root.Children[i];
+					var node = timelineNodes[i];
 
 					int frameStart = 0;
 					int frameLast = 0;
@@ -126,8 +130,14 @@ namespace Effekseer.GUI.Dock
 
 				{
 					int currentFrame = (int)Manager.Viewer.Current;
-					int selectedEntry = 0;
-					Manager.NativeManager.EndNodeFrameTimeline(ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref _scrollFirstFrame);
+					int selectedIndex = currentSelectedIndex;
+					Manager.NativeManager.EndNodeFrameTimeline(ref frameMin, ref frameMax, ref currentFrame, ref selectedIndex, ref _scrollFirstFrame);
+
+					// Selection changed?
+					if (selectedIndex != currentSelectedIndex)
+					{
+						Core.SelectedNode = timelineNodes[selectedIndex];
+					}
 
 					Core.StartFrame = frameMin;
 					Core.EndFrame = frameMax;
