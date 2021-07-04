@@ -1,3 +1,4 @@
+using Effekseer.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,31 +7,6 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-	class NodeBaseValues : Data.IEditableValueCollection
-	{
-		Data.NodeBase node;
-
-		public NodeBaseValues(Data.NodeBase node)
-		{
-			this.node = node;
-		}
-		public Data.EditableValue[] GetValues()
-		{
-			List<Data.EditableValue> values = new List<Data.EditableValue>();
-
-			var valueIsRendered = Data.EditableValue.Create(node.IsRendered, node.GetType().GetProperty("IsRendered"));
-			var valueName = Data.EditableValue.Create(node.Name, node.GetType().GetProperty("Name"));
-
-			return new[]
-			{
-				valueIsRendered,
-				valueName,
-			};
-		}
-
-		public event ChangedValueEventHandler OnChanged;
-	}
-
 	class CommonValues : DockPanel
 	{
 		Component.CopyAndPaste candp = null;
