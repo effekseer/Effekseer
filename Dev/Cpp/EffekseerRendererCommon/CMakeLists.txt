@@ -1,9 +1,11 @@
 project(EffekseerRendererCommon)
 cmake_minimum_required(VERSION 3.1)
 
-if(BUILD_UNITYPLUGIN)
+if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
 
-add_library(${PROJECT_NAME} INTERFACE)
+if(BUILD_UNITYPLUGIN)
+    add_library(${PROJECT_NAME} INTERFACE)
+endif()
 
 # Setup source codes
 
@@ -23,6 +25,13 @@ set(PublicHeader
     EffekseerRenderer.ShaderBase.h
     EffekseerRenderer.Renderer_Impl.h
 )
+
+if(BUILD_UNITYPLUGIN_FOR_IOS)
+    file(GLOB_RECURSE LOCAL_SOURCES *.cpp)
+    add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
+    target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
+endif()
 
 set_target_properties(
     ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 

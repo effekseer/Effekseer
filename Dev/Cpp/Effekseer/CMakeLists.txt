@@ -118,7 +118,7 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /we4456 /we4458)
 endif()
 
-if(BUILD_UNITYPLUGIN)
+if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
     install(DIRECTORY "${PROJECT_SOURCE_DIR}"
         DESTINATION "include"
         FILES_MATCHING

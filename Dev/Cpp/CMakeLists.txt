@@ -81,7 +81,7 @@ endif()
 
 add_subdirectory(EffekseerRendererGL)
 
-if(BUILD_UNITYPLUGIN)
+if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
     add_subdirectory(EffekseerRendererCommon)
 endif()
 
