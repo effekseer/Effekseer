@@ -488,7 +488,7 @@ void TonemapEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Back
 	renderer_->GetRenderState()->Update(false);
 	renderer_->SetRenderMode(RenderMode::Normal);
 
-	const auto textures = {src};
+	const auto textures = std::vector<Effekseer::Backend::TextureRef>{src};
 
 	if (algorithm == Algorithm::Off)
 	{
