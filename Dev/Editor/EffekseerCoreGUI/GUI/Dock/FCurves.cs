@@ -272,7 +272,7 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				if (canControl)
+				if (canControl && Manager.NativeManager.IsWindowHovered())
 				{
 					Manager.NativeManager.StartSelectingAreaFCurve();
 
