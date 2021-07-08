@@ -146,11 +146,9 @@ protected:
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
 
-		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-
 		count = (std::min)(count, m_renderer->GetSquareMaxCount());
 
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, stride_, (void*&)m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, count * 4, stride_, (void*&)m_ringBufferData);
 		m_spriteCount = 0;
 
 		vertexCount_ = count * 4;

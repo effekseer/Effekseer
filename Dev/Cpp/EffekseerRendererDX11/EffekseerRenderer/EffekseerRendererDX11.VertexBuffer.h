@@ -22,7 +22,6 @@ private:
 	ID3D11Buffer* m_buffer;
 	void* m_lockedResource;
 
-	uint32_t m_vertexRingOffset;
 	bool m_ringBufferLock;
 
 	int32_t m_ringLockedOffset;

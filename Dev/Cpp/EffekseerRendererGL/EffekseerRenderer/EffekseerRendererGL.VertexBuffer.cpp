@@ -17,7 +17,6 @@ VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int
 	: DeviceObject(graphicsDevice.Get())
 	, VertexBufferBase(size, isDynamic)
 	, m_vertexRingStart(0)
-	, m_vertexRingOffset(0)
 	, m_ringBufferLock(false)
 {
 	m_resource = new uint8_t[m_size];
@@ -105,13 +104,13 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 
 	if (size > m_size)
 		return false;
-
-	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
+	
+	m_vertexRingOffset = GetNextAliginedVertexRingOffset(m_vertexRingOffset, alignment);
 
 #ifdef __ANDROID__
 	if (true)
 #else
-	if ((int32_t)m_vertexRingOffset + size > m_size)
+	if (RequireResetRing(m_vertexRingOffset, size, m_size))
 #endif
 	{
 		offset = 0;

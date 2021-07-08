@@ -16,7 +16,6 @@ VertexBuffer::VertexBuffer(RendererImplemented* renderer, IDirect3DVertexBuffer9
 	: DeviceObject(renderer, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
 	, m_buffer(buffer)
-	, m_vertexRingOffset(0)
 	, m_ringBufferLock(false)
 {
 }
@@ -140,9 +139,9 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 	if (size > m_size)
 		return false;
 
-	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
+	m_vertexRingOffset = GetNextAliginedVertexRingOffset(m_vertexRingOffset, alignment);
 
-	if ((int32_t)m_vertexRingOffset + size > m_size)
+	if (RequireResetRing(m_vertexRingOffset, size, m_size))
 	{
 		offset = 0;
 		m_buffer->Lock(0, 0, reinterpret_cast<void**>(&data), D3DLOCK_DISCARD);

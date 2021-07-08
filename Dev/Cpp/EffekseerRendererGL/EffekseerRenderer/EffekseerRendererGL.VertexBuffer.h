@@ -22,7 +22,6 @@ private:
 	GLuint m_buffer;
 
 	uint32_t m_vertexRingStart;
-	uint32_t m_vertexRingOffset;
 	bool m_ringBufferLock;
 
 	VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic);

@@ -21,7 +21,6 @@ class VertexBuffer : public DeviceObject, public ::EffekseerRenderer::VertexBuff
 private:
 	IDirect3DVertexBuffer9* m_buffer;
 
-	uint32_t m_vertexRingOffset;
 	bool m_ringBufferLock;
 
 	VertexBuffer(RendererImplemented* renderer, IDirect3DVertexBuffer9* buffer, int size, bool isDynamic, bool hasRefCount);
