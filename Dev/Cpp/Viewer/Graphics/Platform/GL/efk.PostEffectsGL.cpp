@@ -159,7 +159,7 @@ BlitterGL::BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& r
 	auto gd = this->renderer_->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 
 	// Generate vertex data
-	vertexBuffer.reset(VertexBuffer::Create(gd, sizeof(Vertex) * 4, true));
+	vertexBuffer.reset(VertexBuffer::Create(gd, sizeof(Vertex) * 4, sizeof(Vertex) * 4, true));
 
 	vertexBuffer->Lock();
 	{

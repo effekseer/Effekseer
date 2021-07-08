@@ -97,7 +97,7 @@ LineRendererGL::LineRendererGL(const EffekseerRenderer::RendererRef& renderer)
 
 	auto gd = this->renderer->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 
-	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(gd, sizeof(EffekseerRendererGL::Vertex) * 1024, true);
+	vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(gd, sizeof(EffekseerRendererGL::Vertex) * 1024, sizeof(EffekseerRendererGL::Vertex) * 1024, true);
 
 	vao = EffekseerRendererGL::VertexArray::Create(
 		gd, shader_no_texture_, (EffekseerRendererGL::VertexBuffer*)vertexBuffer, nullptr);

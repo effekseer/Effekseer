@@ -16,20 +16,29 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+struct SharedVertexTempStorage
+{
+	Effekseer::CustomAlignedVector<uint8_t> buffer;
+};
+
 class VertexBuffer : public DeviceObject, public ::EffekseerRenderer::VertexBufferBase
 {
 private:
 	GLuint m_buffer;
 
+	std::shared_ptr<SharedVertexTempStorage> storage_;
+	int currentSize_ = 0;
+	int initialSize_ = 0;
 	uint32_t m_vertexRingStart;
 	bool m_ringBufferLock;
 
-	VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic);
+	VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int initialSize, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage = nullptr);
 
 public:
 	virtual ~VertexBuffer();
 
-	static VertexBuffer* Create(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic);
+	static VertexBuffer* Create(const Backend::GraphicsDeviceRef& graphicsDevice, int initialSize, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage = nullptr);
 
 	GLuint GetInterface();
 

@@ -469,6 +469,8 @@ public:
 			}
 			else
 			{
+				m_renderer->GetImpl()->CurrentRingBufferIndex++;
+				m_renderer->GetImpl()->CurrentRingBufferIndex %= m_renderer->GetImpl()->RingBufferCount;
 				return;
 			}
 		}
@@ -522,6 +524,9 @@ public:
 		vertexCacheOffset_ = 0;
 		specialCameraMat_.clear();
 		renderInfos_.clear();
+
+		m_renderer->GetImpl()->CurrentRingBufferIndex++;
+		m_renderer->GetImpl()->CurrentRingBufferIndex %= m_renderer->GetImpl()->RingBufferCount;
 	}
 
 	void Rendering_(const Effekseer::SIMD::Mat44f& mCamera,
