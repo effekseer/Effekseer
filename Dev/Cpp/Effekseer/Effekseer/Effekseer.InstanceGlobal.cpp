@@ -19,12 +19,12 @@ namespace Effekseer
 void* InstanceGlobal::operator new(size_t size)
 {
 	assert(sizeof(InstanceGlobal) == size);
-	return GetMallocFunc()(static_cast<uint32_t>(size));
+	return GetAlignedMallocFunc()(static_cast<uint32_t>(size), 16);
 }
 
 void InstanceGlobal::operator delete(void* p)
 {
-	GetFreeFunc()(p, sizeof(InstanceGlobal));
+	GetAlignedFreeFunc()(p, sizeof(InstanceGlobal));
 }
 
 InstanceGlobal::InstanceGlobal()
