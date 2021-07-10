@@ -37,7 +37,7 @@ void CheckPerformancePlatform(EffectPlatform* platform, std::string baseResultPa
 		{
 			for (float x = -2.0f; x <= 2.0f; x += 2.0f)
 			{
-				platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/Performance/" + name + u".efkefc").c_str(), {x, y, 0.0f});
+				platform->Play((GetDirectoryPathAsU16(__FILE__) + u"" + name).c_str(), {x, y, 0.0f});
 			}
 		}
 
@@ -59,7 +59,9 @@ void CheckPerformancePlatform(EffectPlatform* platform, std::string baseResultPa
 		ofs << ss.str();
 	};
 
-	test(u"Benediction", "Benediction");
+	test(u"../../../../TestData/Effects/Performance/Benediction.efkefc", "Benediction");
+	test(u"../../../../ResourceData/samples/03_Hanmado01/Effect/hit_hanmado_0409.efkefc", "hit_hanmado_0409");
+	test(u"../../../../ResourceData/samples/02_Tktk03/ToonWater.efkefc", "ToonWater");
 }
 
 void CheckPerformance()
