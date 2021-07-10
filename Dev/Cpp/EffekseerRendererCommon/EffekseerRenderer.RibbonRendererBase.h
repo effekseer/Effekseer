@@ -762,6 +762,9 @@ protected:
 					const efkRibbonInstanceParam& instanceParameter,
 					const ::Effekseer::SIMD::Mat44f& camera)
 	{
+		if (instanceParameter.InstanceCount <= 1)
+			return;
+
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
 		const ShaderParameterCollector& collector = state.Collector;
 		if (collector.ShaderType == RendererShaderType::Material)
