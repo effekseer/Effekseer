@@ -90,7 +90,6 @@ private:
 
 	std::vector<std::shared_ptr<RingVertex>> ringVs_;
 
-	//VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer = nullptr;
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
@@ -105,22 +104,6 @@ private:
 	Shader* currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
-
-	/*
-	VertexArray* vao_unlit_ = nullptr;
-	VertexArray* vao_distortion_ = nullptr;
-	VertexArray* vao_lit_ = nullptr;
-	VertexArray* vao_ad_unlit_ = nullptr;
-	VertexArray* vao_ad_lit_ = nullptr;
-	VertexArray* vao_ad_distortion_ = nullptr;
-
-	VertexArray* vao_unlit_wire_ = nullptr;
-	VertexArray* vao_distortion_wire_ = nullptr;
-	VertexArray* vao_lit_wire_ = nullptr;
-	VertexArray* vao_ad_unlit_wire_ = nullptr;
-	VertexArray* vao_ad_distortion_wire_ = nullptr;
-	VertexArray* vao_ad_lit_wire_ = nullptr;
-	*/
 
 	//! default vao (alsmot for material)
 	GLuint defaultVertexArray_ = 0;

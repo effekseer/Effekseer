@@ -219,25 +219,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(shader_ad_lit_);
 	ES_SAFE_DELETE(shader_ad_distortion_);
 
-	/*
-	ES_SAFE_DELETE(vao_unlit_);
-	ES_SAFE_DELETE(vao_distortion_);
-	ES_SAFE_DELETE(vao_lit_);
-
-	ES_SAFE_DELETE(vao_ad_unlit_);
-	ES_SAFE_DELETE(vao_ad_lit_);
-	ES_SAFE_DELETE(vao_ad_distortion_);
-
-	ES_SAFE_DELETE(vao_unlit_wire_);
-	ES_SAFE_DELETE(vao_lit_wire_);
-	ES_SAFE_DELETE(vao_distortion_wire_);
-	ES_SAFE_DELETE(vao_ad_unlit_wire_);
-	ES_SAFE_DELETE(vao_ad_lit_wire_);
-	ES_SAFE_DELETE(vao_ad_distortion_wire_);
-
-	ES_SAFE_DELETE(m_vertexBuffer);
-	*/
-
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
@@ -796,7 +777,6 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 		auto rv = std::make_shared<RingVertex>();
 		rv->vertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(
 			graphicsDevice_,
-			vertexBufferSize,
 			vertexBufferSize,
 			true,
 			storage));
