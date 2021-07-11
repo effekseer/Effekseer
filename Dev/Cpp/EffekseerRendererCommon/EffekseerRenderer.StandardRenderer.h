@@ -514,6 +514,7 @@ public:
 
 				if (renderBufferSize > vertexCacheMaxSize_)
 				{
+					assert(renderInfos_.size() == 1 && renderInfos_[0].offset == 0);
 					renderBufferSize = (vertexCacheMaxSize_ / (stride * 4)) * (stride * 4);
 				}
 
