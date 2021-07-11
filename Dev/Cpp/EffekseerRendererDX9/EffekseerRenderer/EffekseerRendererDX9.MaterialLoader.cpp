@@ -132,8 +132,10 @@ MaterialLoader ::~MaterialLoader()
 
 			auto getFormat = [](int32_t i) -> D3DDECLTYPE {
 				if (i == 1)
+				{
 					assert(0);
-				return D3DDECLTYPE_FLOAT2;
+					return D3DDECLTYPE_FLOAT2;
+				}
 				if (i == 2)
 					return D3DDECLTYPE_FLOAT2;
 				if (i == 3)
