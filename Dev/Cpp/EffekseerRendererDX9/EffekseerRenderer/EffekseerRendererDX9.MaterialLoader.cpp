@@ -131,17 +131,15 @@ MaterialLoader ::~MaterialLoader()
 			int index = 2;
 
 			auto getFormat = [](int32_t i) -> D3DDECLTYPE {
-				if (i == 1)
-				{
-					assert(0);
-					return D3DDECLTYPE_FLOAT2;
-				}
 				if (i == 2)
 					return D3DDECLTYPE_FLOAT2;
 				if (i == 3)
 					return D3DDECLTYPE_FLOAT3;
 				if (i == 4)
 					return D3DDECLTYPE_FLOAT4;
+
+				assert(0);
+				return D3DDECLTYPE_FLOAT1;
 			};
 
 			if (materialFile.GetCustomData1Count() > 0)
