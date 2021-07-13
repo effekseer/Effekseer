@@ -126,8 +126,6 @@ MaterialLoader ::~MaterialLoader()
 			int index = 2;
 
 			auto getFormat = [](int32_t i) -> DXGI_FORMAT {
-				if (i == 1)
-					return DXGI_FORMAT_R32_FLOAT;
 				if (i == 2)
 					return DXGI_FORMAT_R32G32_FLOAT;
 				if (i == 3)

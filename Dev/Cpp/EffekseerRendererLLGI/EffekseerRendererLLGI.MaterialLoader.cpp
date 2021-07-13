@@ -207,8 +207,6 @@ MaterialLoader ::~MaterialLoader()
 			int index = 2;
 
 			auto getFormat = [](int32_t i) -> LLGI::VertexLayoutFormat {
-				if (i == 1)
-					assert(false);
 				if (i == 2)
 					return LLGI::VertexLayoutFormat::R32G32_FLOAT;
 				if (i == 3)
@@ -216,6 +214,7 @@ MaterialLoader ::~MaterialLoader()
 				if (i == 4)
 					return LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT;
 
+				assert(false);
 				return LLGI::VertexLayoutFormat::R32_FLOAT;
 			};
 			if (materialFile.GetCustomData1Count() > 0)
