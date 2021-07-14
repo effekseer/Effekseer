@@ -397,6 +397,11 @@ public:
 			lastVb_ = vb;
 
 			// reset
+			if (!vb->GetIsRingEnabled())
+			{
+				vertexCacheOffset_ = 0;
+			}
+
 			if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4) > vertexCacheMaxSize_)
 			{
 				vertexCacheOffset_ = 0;

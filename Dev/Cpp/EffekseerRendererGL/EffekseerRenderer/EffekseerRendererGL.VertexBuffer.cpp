@@ -35,9 +35,14 @@ VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
-#ifndef __ANDROID__
-	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, storage_->buffer.data(), GL_STREAM_DRAW);
-#endif // !__ANDROID__
+#ifdef __ANDROID__
+	isRingEnabled_ = false;
+#endif
+
+	if (isRingEnabled_)
+	{
+		GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, storage_->buffer.data(), GL_STREAM_DRAW);
+	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -117,11 +122,7 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 	m_vertexRingOffset = GetNextAliginedVertexRingOffset(m_vertexRingOffset, alignment);
 	m_resource = storage_->buffer.data();
 
-#ifdef __ANDROID__
-	if (true)
-#else
-	if (RequireResetRing(m_vertexRingOffset, size, m_size))
-#endif
+	if (RequireResetRing(m_vertexRingOffset, size, m_size) || !isRingEnabled_)
 	{
 		offset = 0;
 		data = m_resource;
@@ -164,9 +165,10 @@ void VertexBuffer::Unlock()
 
 	if (GLExt::IsSupportedBufferRange() && m_vertexRingStart > 0)
 	{
-#ifdef __ANDROID__
-		GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
-#endif // !__ANDROID__
+		if (!isRingEnabled_)
+		{
+			GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
+		}
 
 		auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 		memcpy(target, m_resource, m_offset);
@@ -185,11 +187,14 @@ void VertexBuffer::Unlock()
 
 		if (GLExt::IsSupportedMapBuffer() && !avoidIOS122)
 		{
-#ifdef __ANDROID__
-			GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, nullptr, GL_STREAM_DRAW);
-#else
-			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, nullptr, GL_STREAM_DRAW);
-#endif // !__ANDROID__
+			if (isRingEnabled_)
+			{
+				GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, nullptr, GL_STREAM_DRAW);
+			}
+			else
+			{
+				GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, nullptr, GL_STREAM_DRAW);
+			}
 
 			auto target = (uint8_t*)GLExt::glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 			if (target == nullptr)
@@ -213,18 +218,21 @@ void VertexBuffer::Unlock()
 		}
 		else
 		{
-#ifdef __ANDROID__
-			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
-#else
-			if (m_vertexRingStart > 0)
+			if (isRingEnabled_)
 			{
-				GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+				if (m_vertexRingStart > 0)
+				{
+					GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+				}
+				else
+				{
+					GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+				}
 			}
 			else
 			{
-				GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+				GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
 			}
-#endif
 		}
 	}
 

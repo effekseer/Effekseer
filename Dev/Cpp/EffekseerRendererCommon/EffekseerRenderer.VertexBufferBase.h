@@ -26,6 +26,7 @@ protected:
 	uint8_t* m_resource;
 	bool m_isLock;
 	int m_vertexRingOffset = 0;
+	bool isRingEnabled_ = true;
 
 public:
 	VertexBufferBase(int size, bool isDynamic);
@@ -48,6 +49,11 @@ public:
 	int GetVertexRingOffset() const
 	{
 		return m_vertexRingOffset;
+	}
+
+	bool GetIsRingEnabled() const
+	{
+		return isRingEnabled_;
 	}
 
 	static int GetNextAliginedVertexRingOffset(int vertexRingOffset, int alignment)
