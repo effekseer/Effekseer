@@ -31,12 +31,12 @@ private:
 	uint32_t m_vertexRingStart;
 	bool m_ringBufferLock;
 
-	VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage = nullptr);
+	VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, bool isRingEnabled, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage = nullptr);
 
 public:
 	virtual ~VertexBuffer();
 
-	static VertexBuffer* Create(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage = nullptr);
+	static VertexBuffer* Create(const Backend::GraphicsDeviceRef& graphicsDevice, bool isRingEnabled, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage = nullptr);
 
 	GLuint GetInterface();
 

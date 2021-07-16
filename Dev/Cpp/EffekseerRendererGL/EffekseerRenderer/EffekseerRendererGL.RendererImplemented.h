@@ -82,6 +82,12 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 private:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 
+	struct PlatformSetting
+	{
+		bool isRingBufferEnabled;
+		int ringBufferCount;
+	};
+
 	struct RingVertex
 	{
 		std::unique_ptr<VertexBuffer> vertexBuffer;
@@ -129,6 +135,8 @@ private:
 	int32_t indexBufferStride_ = 2;
 
 	int32_t indexBufferCurrentStride_ = 0;
+
+	static PlatformSetting GetPlatformSetting();
 
 	//! because gleDrawElements has only index offset
 	int32_t GetIndexSpriteCount() const;

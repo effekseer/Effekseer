@@ -43,6 +43,10 @@
 
 #include "GraphicsDevice.h"
 
+#ifdef __APPLE__
+#import <TargetConditionals.h>
+#endif
+
 namespace EffekseerRendererGL
 {
 
@@ -182,6 +186,14 @@ void VertexArrayGroup::Create(
 	vao_ad_unlit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_unlit, vertexBuffer, indexBufferForWireframe));
 	vao_ad_lit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_lit, vertexBuffer, indexBufferForWireframe));
 	vao_ad_distortion_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_distortion, vertexBuffer, indexBufferForWireframe));
+}
+
+RendererImplemented::PlatformSetting RendererImplemented::GetPlatformSetting()
+{
+#if defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
+	return PlatformSetting{false, 1};
+#endif
+	return PlatformSetting{true, 3};
 }
 
 //----------------------------------------------------------------------------------
@@ -745,10 +757,12 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	m_squareMaxCount = count;
 
+	const auto setting = GetPlatformSetting();
+
 	ES_SAFE_DELETE(m_indexBuffer);
 	ringVs_.clear();
 	GetImpl()->CurrentRingBufferIndex = 0;
-	GetImpl()->RingBufferCount = 3;
+	GetImpl()->RingBufferCount = setting.ringBufferCount;
 
 	int vertexBufferSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
 
@@ -777,6 +791,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 		auto rv = std::make_shared<RingVertex>();
 		rv->vertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(
 			graphicsDevice_,
+			setting.isRingBufferEnabled,
 			vertexBufferSize,
 			true,
 			storage));

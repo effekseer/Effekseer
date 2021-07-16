@@ -13,13 +13,15 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage)
+VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, bool isRingEnabled, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage)
 	: DeviceObject(graphicsDevice.Get())
 	, VertexBufferBase(size, isDynamic)
 	, m_vertexRingStart(0)
 	, m_ringBufferLock(false)
 	, storage_(storage)
 {
+	isRingEnabled_ = isRingEnabled;
+
 	if (storage == nullptr)
 	{
 		storage_ = std::make_shared<SharedVertexTempStorage>();
@@ -34,10 +36,6 @@ VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int
 
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-
-#ifdef __ANDROID__
-	isRingEnabled_ = false;
-#endif
 
 	if (isRingEnabled_)
 	{
@@ -58,9 +56,9 @@ VertexBuffer::~VertexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer* VertexBuffer::Create(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage)
+VertexBuffer* VertexBuffer::Create(const Backend::GraphicsDeviceRef& graphicsDevice, bool isRingEnabled, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage)
 {
-	return new VertexBuffer(graphicsDevice, size, isDynamic, storage);
+	return new VertexBuffer(graphicsDevice, isRingEnabled, size, isDynamic, storage);
 }
 
 GLuint VertexBuffer::GetInterface()
