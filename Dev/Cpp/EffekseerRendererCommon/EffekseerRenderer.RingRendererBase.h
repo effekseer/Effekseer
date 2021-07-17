@@ -144,11 +144,6 @@ protected:
 			instances_.reserve(count);
 		}
 
-		if (count == 1)
-		{
-			renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
-		}
-
 		EffekseerRenderer::StandardRendererState state;
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
@@ -194,8 +189,12 @@ protected:
 
 		materialType_ = param.BasicParameterPtr->MaterialType;
 
-		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * singleVertexCount, stride_, (void*&)m_ringBufferData);
+		if (CanSingleRendering())
+		{
+			renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
+		}
+
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, count * singleVertexCount, stride_, (void*&)m_ringBufferData);
 
 		vertexCount_ = count * singleVertexCount;
 	}
@@ -717,8 +716,9 @@ protected:
 		if (CanSingleRendering())
 		{
 			::Effekseer::SIMD::Mat44f mat = m_singleRenderingMatrix * renderer->GetCameraMatrix();
-
-			renderer->GetStandardRenderer()->Rendering(mat, renderer->GetProjectionMatrix());
+			auto& state = m_renderer->GetStandardRenderer()->GetState();
+			state.SpecialCameraMat = renderer->GetStandardRenderer()->AllocateSpecialCameraMat();
+			renderer->GetStandardRenderer()->SetSpecialCameraMat(state.SpecialCameraMat, mat);
 		}
 
 		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None && !CanSingleRendering())

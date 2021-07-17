@@ -7,7 +7,6 @@ namespace EffekseerRendererLLGI
 VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount)
 	: DeviceObject(graphicsDevice, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
-	, m_vertexRingOffset(0)
 	, m_ringBufferLock(false)
 	, m_ringLockedOffset(0)
 	, m_ringLockedSize(0)
@@ -56,9 +55,9 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 	if (size > m_size)
 		return false;
 
-	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
+	m_vertexRingOffset = GetNextAliginedVertexRingOffset(m_vertexRingOffset, alignment);
 
-	if ((int32_t)m_vertexRingOffset + size > m_size)
+	if (RequireResetRing(m_vertexRingOffset, size, m_size))
 	{
 		offset = 0;
 		m_ringLockedOffset = 0;

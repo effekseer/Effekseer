@@ -47,6 +47,12 @@ public:
 	Effekseer::RefPtr<Effekseer::RenderingUserData> CurrentRenderingUserData;
 	void* CurrentHandleUserData = nullptr;
 
+	//! for OpenGL
+	int32_t CurrentRingBufferIndex = 0;
+
+	//! for OpenGL
+	int32_t RingBufferCount = 1;
+
 	std::shared_ptr<ExternalShaderSettings> externalShaderSettings;
 
 	Impl() = default;

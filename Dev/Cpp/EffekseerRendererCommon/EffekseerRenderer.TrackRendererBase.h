@@ -861,6 +861,9 @@ protected:
 					const efkTrackInstanceParam& instanceParameter,
 					const ::Effekseer::SIMD::Mat44f& camera)
 	{
+		if (instanceParameter.InstanceCount <= 1)
+			return;
+
 		const auto& state = m_renderer->GetStandardRenderer()->GetState();
 		const ShaderParameterCollector& collector = state.Collector;
 
@@ -981,9 +984,7 @@ public:
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
 
-		m_renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-
-		m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, stride_, (void*&)m_ringBufferData);
+		m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, vertexCount, stride_, (void*&)m_ringBufferData);
 		vertexCount_ = vertexCount;
 	}
 };
