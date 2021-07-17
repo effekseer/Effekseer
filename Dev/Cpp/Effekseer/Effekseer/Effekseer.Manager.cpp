@@ -974,7 +974,7 @@ void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 		{
 			const auto t = mat_->GetTranslation();
 
-			drawSet.Scaling = { x, y, z };
+			drawSet.Scaling = {x, y, z};
 
 			*mat_ = SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t);
 
@@ -1458,7 +1458,10 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 
 		for (auto& chunks : instanceChunks_)
 		{
-			if (m_WorkerThreads.size() >= 2)
+			// wakeup threads and wait to complete threads are hevery, so multithread the updates if you have a large number of instances.
+			const size_t multithreadingChunkThreshold = 4;
+
+			if (m_WorkerThreads.size() >= 2 && chunks.size() >= multithreadingChunkThreshold)
 			{
 				const uint32_t chunkStep = (uint32_t)m_WorkerThreads.size();
 
@@ -1494,6 +1497,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			}
 			else
 			{
+				PROFILER_BLOCK("DoUpdate::RunAsync(Single)", profiler::colors::Red300);
 				for (auto chunk : chunks)
 				{
 					chunk->UpdateInstances();
