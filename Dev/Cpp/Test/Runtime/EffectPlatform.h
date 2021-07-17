@@ -43,7 +43,10 @@ protected:
 	{
 		return nullptr;
 	}
-	virtual EffekseerRenderer::RendererRef CreateRenderer() = 0;
+	virtual EffekseerRenderer::RendererRef CreateRenderer()
+	{
+		return nullptr;
+	}
 
 	virtual void InitializeWindow()
 	{
@@ -69,7 +72,7 @@ protected:
 	}
 	virtual bool DoEvent()
 	{
-		return false;
+		return true;
 	}
 
 public:
