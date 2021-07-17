@@ -13,22 +13,34 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic)
+VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, bool isRingEnabled, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage)
 	: DeviceObject(graphicsDevice.Get())
 	, VertexBufferBase(size, isDynamic)
 	, m_vertexRingStart(0)
-	, m_vertexRingOffset(0)
 	, m_ringBufferLock(false)
+	, storage_(storage)
 {
-	m_resource = new uint8_t[m_size];
-	memset(m_resource, 0, (size_t)m_size);
+	isRingEnabled_ = isRingEnabled;
+
+	if (storage == nullptr)
+	{
+		storage_ = std::make_shared<SharedVertexTempStorage>();
+		storage_->buffer.resize(size);
+	}
+	else
+	{
+		assert(storage_->buffer.size() == size);
+	}
+
+	m_resource = nullptr;
 
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
-#ifndef __ANDROID__
-	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
-#endif // !__ANDROID__
+	if (isRingEnabled_)
+	{
+		GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, storage_->buffer.data(), GL_STREAM_DRAW);
+	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -39,15 +51,14 @@ VertexBuffer::VertexBuffer(const Backend::GraphicsDeviceRef& graphicsDevice, int
 VertexBuffer::~VertexBuffer()
 {
 	GLExt::glDeleteBuffers(1, &m_buffer);
-	delete[] m_resource;
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer* VertexBuffer::Create(const Backend::GraphicsDeviceRef& graphicsDevice, int size, bool isDynamic)
+VertexBuffer* VertexBuffer::Create(const Backend::GraphicsDeviceRef& graphicsDevice, bool isRingEnabled, int size, bool isDynamic, std::shared_ptr<SharedVertexTempStorage> storage)
 {
-	return new VertexBuffer(graphicsDevice, size, isDynamic);
+	return new VertexBuffer(graphicsDevice, isRingEnabled, size, isDynamic, storage);
 }
 
 GLuint VertexBuffer::GetInterface()
@@ -76,7 +87,7 @@ void VertexBuffer::OnResetDevice()
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
 #ifndef __ANDROID__
-	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, storage_->buffer.data(), GL_STREAM_DRAW);
 #endif // !__ANDROID__
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -88,10 +99,10 @@ void VertexBuffer::OnResetDevice()
 void VertexBuffer::Lock()
 {
 	assert(!m_isLock);
-
 	m_isLock = true;
 	m_offset = 0;
 	m_vertexRingStart = 0;
+	m_resource = storage_->buffer.data();
 }
 
 //-----------------------------------------------------------------------------------
@@ -106,13 +117,10 @@ bool VertexBuffer::RingBufferLock(int32_t size, int32_t& offset, void*& data, in
 	if (size > m_size)
 		return false;
 
-	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
+	m_vertexRingOffset = GetNextAliginedVertexRingOffset(m_vertexRingOffset, alignment);
+	m_resource = storage_->buffer.data();
 
-#ifdef __ANDROID__
-	if (true)
-#else
-	if ((int32_t)m_vertexRingOffset + size > m_size)
-#endif
+	if (RequireResetRing(m_vertexRingOffset, size, m_size) || !isRingEnabled_)
 	{
 		offset = 0;
 		data = m_resource;
@@ -155,9 +163,10 @@ void VertexBuffer::Unlock()
 
 	if (GLExt::IsSupportedBufferRange() && m_vertexRingStart > 0)
 	{
-#ifdef __ANDROID__
-		GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
-#endif // !__ANDROID__
+		if (!isRingEnabled_)
+		{
+			GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
+		}
 
 		auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 		memcpy(target, m_resource, m_offset);
@@ -176,11 +185,14 @@ void VertexBuffer::Unlock()
 
 		if (GLExt::IsSupportedMapBuffer() && !avoidIOS122)
 		{
-#ifdef __ANDROID__
-			GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, nullptr, GL_STREAM_DRAW);
-#else
-			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, nullptr, GL_STREAM_DRAW);
-#endif // !__ANDROID__
+			if (isRingEnabled_)
+			{
+				GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, nullptr, GL_STREAM_DRAW);
+			}
+			else
+			{
+				GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, nullptr, GL_STREAM_DRAW);
+			}
 
 			auto target = (uint8_t*)GLExt::glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 			if (target == nullptr)
@@ -204,18 +216,21 @@ void VertexBuffer::Unlock()
 		}
 		else
 		{
-#ifdef __ANDROID__
-			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
-#else
-			if (m_vertexRingStart > 0)
+			if (isRingEnabled_)
 			{
-				GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+				if (m_vertexRingStart > 0)
+				{
+					GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+				}
+				else
+				{
+					GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+				}
 			}
 			else
 			{
-				GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+				GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
 			}
-#endif
 		}
 	}
 
@@ -228,6 +243,7 @@ void VertexBuffer::Unlock()
 
 	m_isLock = false;
 	m_ringBufferLock = false;
+	m_resource = nullptr;
 }
 
 bool VertexBuffer::IsValid()

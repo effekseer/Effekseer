@@ -43,6 +43,10 @@
 
 #include "GraphicsDevice.h"
 
+#ifdef __APPLE__
+#import <TargetConditionals.h>
+#endif
+
 namespace EffekseerRendererGL
 {
 
@@ -157,19 +161,52 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 	return (int32_t)(vsSize / size / 4 + 1);
 }
 
+void VertexArrayGroup::Create(
+	Backend::GraphicsDeviceRef graphicsDevice,
+	VertexBuffer* vertexBuffer,
+	IndexBuffer* indexBuffer,
+	IndexBuffer* indexBufferForWireframe,
+	Shader* shader_unlit,
+	Shader* shader_distortion,
+	Shader* shader_lit,
+	Shader* shader_ad_unlit,
+	Shader* shader_ad_lit,
+	Shader* shader_ad_distortion)
+{
+	vao_ad_distortion = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_distortion, vertexBuffer, indexBuffer));
+	vao_distortion = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_distortion, vertexBuffer, indexBuffer));
+	vao_ad_lit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_lit, vertexBuffer, indexBuffer));
+	vao_lit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_lit, vertexBuffer, indexBuffer));
+	vao_unlit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_unlit, vertexBuffer, indexBuffer));
+	vao_ad_unlit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_unlit, vertexBuffer, indexBuffer));
+
+	vao_unlit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_unlit, vertexBuffer, indexBufferForWireframe));
+	vao_lit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_lit, vertexBuffer, indexBufferForWireframe));
+	vao_distortion_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_distortion, vertexBuffer, indexBufferForWireframe));
+	vao_ad_unlit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_unlit, vertexBuffer, indexBufferForWireframe));
+	vao_ad_lit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_lit, vertexBuffer, indexBufferForWireframe));
+	vao_ad_distortion_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_distortion, vertexBuffer, indexBufferForWireframe));
+}
+
+RendererImplemented::PlatformSetting RendererImplemented::GetPlatformSetting()
+{
+#if defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
+	return PlatformSetting{false, 1};
+#endif
+	return PlatformSetting{true, 3};
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::GraphicsDeviceRef graphicsDevice)
-	: m_vertexBuffer(nullptr)
-	, m_indexBuffer(nullptr)
+	: m_indexBuffer(nullptr)
 	, m_indexBufferForWireframe(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_renderState(nullptr)
 	, m_restorationOfStates(true)
 	, m_currentVertexArray(nullptr)
 	, m_standardRenderer(nullptr)
-	, vao_unlit_wire_(nullptr)
 	, m_distortingCallback(nullptr)
 	, m_deviceType(graphicsDevice->GetDeviceType())
 {
@@ -194,23 +231,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(shader_ad_lit_);
 	ES_SAFE_DELETE(shader_ad_distortion_);
 
-	ES_SAFE_DELETE(vao_unlit_);
-	ES_SAFE_DELETE(vao_distortion_);
-	ES_SAFE_DELETE(vao_lit_);
-
-	ES_SAFE_DELETE(vao_ad_unlit_);
-	ES_SAFE_DELETE(vao_ad_lit_);
-	ES_SAFE_DELETE(vao_ad_distortion_);
-
-	ES_SAFE_DELETE(vao_unlit_wire_);
-	ES_SAFE_DELETE(vao_lit_wire_);
-	ES_SAFE_DELETE(vao_distortion_wire_);
-	ES_SAFE_DELETE(vao_ad_unlit_wire_);
-	ES_SAFE_DELETE(vao_ad_lit_wire_);
-	ES_SAFE_DELETE(vao_ad_distortion_wire_);
-
 	ES_SAFE_DELETE(m_renderState);
-	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
@@ -315,8 +336,6 @@ bool RendererImplemented::Initialize()
 	{
 		indexBufferStride_ = 4;
 	}
-
-	SetSquareMaxCount(m_squareMaxCount);
 
 	GLCheckError();
 
@@ -432,9 +451,6 @@ bool RendererImplemented::Initialize()
 	shader_unlit_->SetTextureSlot(1, shader_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 	shader_ad_unlit_->SetTextureSlot(6, shader_ad_unlit_->GetUniformId("Sampler_sampler_depthTex"));
 
-	vao_unlit_ = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), GetIndexBuffer());
-	vao_ad_unlit_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), GetIndexBuffer());
-
 	// Distortion
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_normal_ad[11] = {
 		{"Input_Pos", GL_FLOAT, 3, 0, false},
@@ -491,10 +507,6 @@ bool RendererImplemented::Initialize()
 	shader_distortion_->SetTextureSlot(2, shader_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 	shader_ad_distortion_->SetTextureSlot(7, shader_ad_distortion_->GetUniformId("Sampler_sampler_depthTex"));
 
-	vao_ad_distortion_ = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, GetVertexBuffer(), GetIndexBuffer());
-
-	vao_distortion_ = VertexArray::Create(graphicsDevice_, shader_distortion_, GetVertexBuffer(), GetIndexBuffer());
-
 	// Lit
 
 	shader_ad_lit_->GetAttribIdList(11, sprite_attribs_normal_ad);
@@ -528,15 +540,7 @@ bool RendererImplemented::Initialize()
 	shader_lit_->SetTextureSlot(2, shader_lit_->GetUniformId("Sampler_sampler_depthTex"));
 	shader_ad_lit_->SetTextureSlot(7, shader_ad_lit_->GetUniformId("Sampler_sampler_depthTex"));
 
-	vao_ad_lit_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), GetIndexBuffer());
-	vao_lit_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), GetIndexBuffer());
-
-	vao_unlit_wire_ = VertexArray::Create(graphicsDevice_, shader_unlit_, GetVertexBuffer(), m_indexBufferForWireframe);
-	vao_lit_wire_ = VertexArray::Create(graphicsDevice_, shader_lit_, GetVertexBuffer(), m_indexBufferForWireframe);
-	vao_distortion_wire_ = VertexArray::Create(graphicsDevice_, shader_distortion_, GetVertexBuffer(), m_indexBufferForWireframe);
-	vao_ad_unlit_wire_ = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, GetVertexBuffer(), m_indexBufferForWireframe);
-	vao_ad_lit_wire_ = VertexArray::Create(graphicsDevice_, shader_ad_lit_, GetVertexBuffer(), m_indexBufferForWireframe);
-	vao_ad_distortion_wire_ = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, GetVertexBuffer(), m_indexBufferForWireframe);
+	SetSquareMaxCount(m_squareMaxCount);
 
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
@@ -718,7 +722,7 @@ bool RendererImplemented::EndRendering()
 //----------------------------------------------------------------------------------
 VertexBuffer* RendererImplemented::GetVertexBuffer()
 {
-	return m_vertexBuffer;
+	return ringVs_[GetImpl()->CurrentRingBufferIndex]->vertexBuffer.get();
 }
 
 //----------------------------------------------------------------------------------
@@ -753,20 +757,17 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	m_squareMaxCount = count;
 
-	if (m_vertexBuffer != nullptr)
-		AddRef();
-	if (m_indexBuffer != nullptr)
-		AddRef();
-	ES_SAFE_DELETE(m_vertexBuffer);
-	ES_SAFE_DELETE(m_indexBuffer);
+	const auto setting = GetPlatformSetting();
 
-	// generate a vertex buffer
-	{
-		m_vertexBuffer =
-			VertexBuffer::Create(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true);
-		if (m_vertexBuffer == nullptr)
-			return;
-	}
+	ES_SAFE_DELETE(m_indexBuffer);
+	ringVs_.clear();
+	GetImpl()->CurrentRingBufferIndex = 0;
+	GetImpl()->RingBufferCount = setting.ringBufferCount;
+
+	int vertexBufferSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
+
+	auto storage = std::make_shared<SharedVertexTempStorage>();
+	storage->buffer.resize(vertexBufferSize);
 
 	// generate an index buffer
 	{
@@ -784,6 +785,36 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	// generate index data
 	GenerateIndexData();
+
+	for (int i = 0; i < GetImpl()->RingBufferCount; i++)
+	{
+		auto rv = std::make_shared<RingVertex>();
+		rv->vertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(
+			graphicsDevice_,
+			setting.isRingBufferEnabled,
+			vertexBufferSize,
+			true,
+			storage));
+		if (rv->vertexBuffer == nullptr)
+		{
+			return;
+		}
+
+		rv->vao = std::unique_ptr<VertexArrayGroup>(new VertexArrayGroup());
+		rv->vao->Create(
+			graphicsDevice_,
+			rv->vertexBuffer.get(),
+			m_indexBuffer,
+			m_indexBufferForWireframe,
+			shader_unlit_,
+			shader_distortion_,
+			shader_lit_,
+			shader_ad_unlit_,
+			shader_ad_lit_,
+			shader_ad_distortion_);
+
+		ringVs_.emplace_back(rv);
+	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
@@ -1082,6 +1113,8 @@ void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
 
+	auto& ringv = ringVs_[GetImpl()->CurrentRingBufferIndex];
+
 	// change VAO with shader
 	if (m_currentVertexArray != nullptr)
 	{
@@ -1091,66 +1124,66 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			SetVertexArray(vao_unlit_wire_);
+			SetVertexArray(ringv->vao->vao_unlit_wire.get());
 		}
 		else
 		{
-			SetVertexArray(vao_unlit_);
+			SetVertexArray(ringv->vao->vao_unlit.get());
 		}
 	}
 	else if (shader == shader_distortion_)
 	{
 		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			SetVertexArray(vao_distortion_wire_);
+			SetVertexArray(ringv->vao->vao_distortion_wire.get());
 		}
 		else
 		{
-			SetVertexArray(vao_distortion_);
+			SetVertexArray(ringv->vao->vao_distortion.get());
 		}
 	}
 	else if (shader == shader_lit_)
 	{
 		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			SetVertexArray(vao_lit_wire_);
+			SetVertexArray(ringv->vao->vao_lit_wire.get());
 		}
 		else
 		{
-			SetVertexArray(vao_lit_);
+			SetVertexArray(ringv->vao->vao_lit.get());
 		}
 	}
 	else if (shader == shader_ad_unlit_)
 	{
 		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			SetVertexArray(vao_ad_unlit_wire_);
+			SetVertexArray(ringv->vao->vao_ad_unlit_wire.get());
 		}
 		else
 		{
-			SetVertexArray(vao_ad_unlit_);
+			SetVertexArray(ringv->vao->vao_ad_unlit.get());
 		}
 	}
 	else if (shader == shader_ad_distortion_)
 	{
 		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			SetVertexArray(vao_ad_distortion_wire_);
+			SetVertexArray(ringv->vao->vao_ad_distortion_wire.get());
 		}
 		else
 		{
-			SetVertexArray(vao_ad_distortion_);
+			SetVertexArray(ringv->vao->vao_ad_distortion.get());
 		}
 	}
 	else if (shader == shader_ad_lit_)
 	{
 		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			SetVertexArray(vao_ad_lit_wire_);
+			SetVertexArray(ringv->vao->vao_ad_lit_wire.get());
 		}
 		else
 		{
-			SetVertexArray(vao_ad_lit_);
+			SetVertexArray(ringv->vao->vao_ad_lit.get());
 		}
 	}
 	else

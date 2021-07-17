@@ -18,7 +18,6 @@ protected:
 
 	Effekseer::CustomAlignedVector<uint8_t> lockedResource_;
 
-	uint32_t m_vertexRingOffset;
 	bool m_ringBufferLock;
 
 	int32_t m_ringLockedOffset;
