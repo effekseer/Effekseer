@@ -1466,8 +1466,9 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				{
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
+					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
 					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
-						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red);
+						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
 							chunks[i]->UpdateInstances();
@@ -1476,14 +1477,18 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				}
 
 				// Process on this thread
-				for (size_t i = 0; i < chunks.size(); i += chunkStep)
 				{
-					chunks[i]->UpdateInstances();
+					PROFILER_BLOCK("DoUpdate::RunAsync(Main)", profiler::colors::Red300);
+					for (size_t i = 0; i < chunks.size(); i += chunkStep)
+					{
+						chunks[i]->UpdateInstances();
+					}
 				}
 
 				// Wait for all worker threads completion
 				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
 				{
+					PROFILER_BLOCK("DoUpdate::WaitForComplete", profiler::colors::Red400);
 					m_WorkerThreads[threadID].WaitForComplete();
 				}
 			}
@@ -1495,15 +1500,21 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				}
 			}
 
-			for (auto chunk : chunks)
 			{
-				chunk->GenerateChildrenInRequired();
+				PROFILER_BLOCK("DoUpdate::GenerateChildrenInRequired", profiler::colors::Red500);
+				for (auto chunk : chunks)
+				{
+					chunk->GenerateChildrenInRequired();
+				}
 			}
 		}
 
-		for (auto& drawSet : m_DrawSets)
 		{
-			UpdateHandleInternal(drawSet.second);
+			PROFILER_BLOCK("DoUpdate::UpdateHandleInternal", profiler::colors::Red600);
+			for (auto& drawSet : m_DrawSets)
+			{
+				UpdateHandleInternal(drawSet.second);
+			}
 		}
 	}
 
