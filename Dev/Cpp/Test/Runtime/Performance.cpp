@@ -24,53 +24,71 @@
 #include <iostream>
 #include <sstream>
 
-void CheckPerformancePlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
+struct PerformanceResult
+{
+	std::vector<int> updateTime;
+	std::vector<int> drawTime;
+};
+
+const int PerformanceLength = 300;
+
+std::map<std::string, PerformanceResult> CheckPerformancePlatform(EffectPlatform* platform)
 {
 	EffectPlatformInitializingParameter param;
 	param.WindowSize = {1280, 720};
 	platform->Initialize(param);
 
-	auto test = [&](const char16_t* name, const char* savename) -> void {
+	auto test = [&](const char16_t* name) -> PerformanceResult {
 		srand(0);
 
-		for (float y = -2.0f; y <= 2.0f; y += 2.0f)
+		PerformanceResult ret;
+
+		const float eps = 0.0001f;
+
+		for (float y = -2.0f; y <= 2.0f + eps; y += 2.0f)
 		{
-			for (float x = -2.0f; x <= 2.0f; x += 2.0f)
+			for (float x = -2.0f; x <= 2.0f + eps; x += 2.0f)
 			{
 				platform->Play((GetDirectoryPathAsU16(__FILE__) + u"" + name).c_str(), {x, y, 0.0f});
 			}
 		}
 
-		std::stringstream ss;
-
-		for (size_t i = 0; i < 300; i++)
+		for (size_t i = 0; i < PerformanceLength; i++)
 		{
 			platform->Update();
 
 			int32_t updateTime = platform->GetManager()->GetUpdateTime();
 			int32_t drawTime = platform->GetManager()->GetDrawTime();
-
-			ss << updateTime << "," << drawTime << std::endl;
+			ret.updateTime.emplace_back(updateTime);
+			ret.drawTime.emplace_back(drawTime);
 		}
 
 		platform->StopAllEffects();
 
-		std::ofstream ofs(savename + suffix + ".csv");
-		ofs << ss.str();
+		return ret;
 	};
 
-	test(u"../../../../TestData/Effects/Performance/Benediction.efkefc", "Benediction");
-	test(u"../../../../ResourceData/samples/03_Hanmado01/Effect/hit_hanmado_0409.efkefc", "hit_hanmado_0409");
-	test(u"../../../../ResourceData/samples/02_Tktk03/ToonWater.efkefc", "ToonWater");
+	std::map<std::string, PerformanceResult> ret;
+	ret["Benediction"] = test(u"../../../../TestData/Effects/Performance/Benediction.efkefc");
+	ret["hit_hanmado_0409"] = test(u"../../../../ResourceData/samples/03_Hanmado01/Effect/hit_hanmado_0409.efkefc");
+	ret["ToonWater"] = test(u"../../../../ResourceData/samples/02_Tktk03/ToonWater.efkefc");
+	return ret;
 }
 
 void CheckPerformance()
 {
+	std::map<std::string, std::map<std::string, PerformanceResult>> results;
+
 #ifdef _WIN32
 	{
 		auto platform = std::make_shared<EffectPlatformDX11>();
-		CheckPerformancePlatform(platform.get(), "", "_DX11");
+		const auto result = CheckPerformancePlatform(platform.get());
 		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["DX11"] = r.second;
+		}
 	}
 #endif
 
@@ -79,8 +97,13 @@ void CheckPerformance()
 #ifdef _WIN32
 	{
 		auto platform = std::make_shared<EffectPlatformDX9>();
-		CheckPerformancePlatform(platform.get(), "", "_DX9");
+		const auto result = CheckPerformancePlatform(platform.get());
 		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["DX9"] = r.second;
+		}
 	}
 
 #endif
@@ -88,32 +111,87 @@ void CheckPerformance()
 #ifdef __EFFEKSEER_BUILD_DX12__
 	{
 		auto platform = std::make_shared<EffectPlatformDX12>();
-		CheckPerformancePlatform(platform.get(), "", "_DX12");
+		const auto result = CheckPerformancePlatform(platform.get());
 		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["DX12"] = r.second;
+		}
 	}
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 	{
 		auto platform = std::make_shared<EffectPlatformVulkan>();
-		CheckPerformancePlatform(platform.get(), "", "_Vulkan");
+		const auto result = CheckPerformancePlatform(platform.get());
 		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["Vulkan"] = r.second;
+		}
 	}
 #endif
 
 #if defined(__APPLE__)
 	{
 		auto platform = std::make_shared<EffectPlatformMetal>();
-		CheckPerformancePlatform(platform.get(), "", "_Metal");
+		const auto result = CheckPerformancePlatform(platform.get());
 		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["Metal"] = r.second;
+		}
 	}
 #endif
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
-		CheckPerformancePlatform(platform.get(), "", "_GL");
+		const auto result = CheckPerformancePlatform(platform.get());
 		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["GL"] = r.second;
+		}
 	}
 #endif
+
+	for (const auto& r : results)
+	{
+		std::stringstream ss;
+
+		for (const auto& p : r.second)
+		{
+			ss << "Update(" << p.first << "),";
+		}
+
+		for (const auto& p : r.second)
+		{
+			ss << "Draw(" << p.first << "),";
+		}
+
+		ss << std::endl;
+
+		for (int i = 0; i < PerformanceLength; i++)
+		{
+			for (const auto& p : r.second)
+			{
+				ss << p.second.updateTime[i] << ",";
+			}
+
+			for (const auto& p : r.second)
+			{
+				ss << p.second.drawTime[i] << ",";
+			}
+
+			ss << std::endl;
+		}
+
+		std::ofstream ofs(r.first + ".csv");
+		ofs << ss.str();
+	}
 }
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
