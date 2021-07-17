@@ -69,6 +69,7 @@ std::map<std::string, PerformanceResult> CheckPerformancePlatform(EffectPlatform
 	};
 
 	std::map<std::string, PerformanceResult> ret;
+	ret["ManyRings"] = test(u"../../../../TestData/Effects/Performance/ManyRings.efkefc");
 	ret["Benediction"] = test(u"../../../../TestData/Effects/Performance/Benediction.efkefc");
 	ret["hit_hanmado_0409"] = test(u"../../../../ResourceData/samples/03_Hanmado01/Effect/hit_hanmado_0409.efkefc");
 	ret["ToonWater"] = test(u"../../../../ResourceData/samples/02_Tktk03/ToonWater.efkefc");
