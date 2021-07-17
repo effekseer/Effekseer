@@ -79,6 +79,16 @@ void CheckPerformance()
 {
 	std::map<std::string, std::map<std::string, PerformanceResult>> results;
 
+	{
+		auto platform = std::make_shared<EffectPlatform>();
+		const auto result = CheckPerformancePlatform(platform.get());
+		platform->Terminate();
+
+		for (const auto& r : result)
+		{
+			results[r.first]["None"] = r.second;
+		}
+	}
 #ifdef _WIN32
 	{
 		auto platform = std::make_shared<EffectPlatformDX11>();

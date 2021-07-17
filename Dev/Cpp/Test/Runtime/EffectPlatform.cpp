@@ -76,33 +76,36 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	renderer_ = CreateRenderer();
 
-	auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 10.0f) / 2.0f;
-	auto focus = ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f);
-
-	renderer_->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-	if (isOpenGLMode_)
+	if (renderer_ != nullptr)
 	{
-		renderer_->SetProjectionMatrix(
-			::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
-	}
-	else
-	{
-		renderer_->SetProjectionMatrix(
-			::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
-	}
+		auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 10.0f) / 2.0f;
+		auto focus = ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f);
 
-	manager_->SetSpriteRenderer(renderer_->CreateSpriteRenderer());
-	manager_->SetRibbonRenderer(renderer_->CreateRibbonRenderer());
-	manager_->SetRingRenderer(renderer_->CreateRingRenderer());
-	manager_->SetModelRenderer(renderer_->CreateModelRenderer());
-	manager_->SetTrackRenderer(renderer_->CreateTrackRenderer());
+		renderer_->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+		if (isOpenGLMode_)
+		{
+			renderer_->SetProjectionMatrix(
+				::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+		}
+		else
+		{
+			renderer_->SetProjectionMatrix(
+				::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+		}
+
+		manager_->SetSpriteRenderer(renderer_->CreateSpriteRenderer());
+		manager_->SetRibbonRenderer(renderer_->CreateRibbonRenderer());
+		manager_->SetRingRenderer(renderer_->CreateRingRenderer());
+		manager_->SetModelRenderer(renderer_->CreateModelRenderer());
+		manager_->SetTrackRenderer(renderer_->CreateTrackRenderer());
+
+		manager_->SetTextureLoader(renderer_->CreateTextureLoader());
+		manager_->SetModelLoader(renderer_->CreateModelLoader());
+		manager_->SetMaterialLoader(renderer_->CreateMaterialLoader());
+	}
 
 	manager_->SetCoordinateSystem(::Effekseer::CoordinateSystem::RH);
-
-	manager_->SetTextureLoader(renderer_->CreateTextureLoader());
-	manager_->SetModelLoader(renderer_->CreateModelLoader());
-	manager_->SetMaterialLoader(renderer_->CreateMaterialLoader());
 
 	if (param.IsCullingCreated)
 	{
@@ -195,10 +198,13 @@ bool EffectPlatform::Update()
 
 	BeginRendering();
 
-	renderer_->SetTime(time_);
-	renderer_->BeginRendering();
-	manager_->Draw();
-	renderer_->EndRendering();
+	if (renderer_ != nullptr)
+	{
+		renderer_->SetTime(time_);
+		renderer_->BeginRendering();
+		manager_->Draw();
+		renderer_->EndRendering();
+	}
 
 	EndRendering();
 
@@ -216,10 +222,13 @@ bool EffectPlatform::Draw()
 
 	BeginRendering();
 
-	renderer_->SetTime(time_);
-	renderer_->BeginRendering();
-	manager_->Draw();
-	renderer_->EndRendering();
+	if (renderer_ != nullptr)
+	{
+		renderer_->SetTime(time_);
+		renderer_->BeginRendering();
+		manager_->Draw();
+		renderer_->EndRendering();
+	}
 
 	EndRendering();
 
