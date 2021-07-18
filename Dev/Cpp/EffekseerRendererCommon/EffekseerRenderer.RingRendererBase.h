@@ -16,6 +16,8 @@
 #include "EffekseerRenderer.StandardRenderer.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 
+#define __ZOFFSET__
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -219,6 +221,9 @@ protected:
 
 	bool CanSingleRendering()
 	{
+#ifdef __ZOFFSET__
+		return false;
+#endif
 		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default && fasterSngleRingModeEnabled_;
 	}
 
@@ -380,6 +385,12 @@ protected:
 		float fadeStartAngle = parameter.StartingFade;
 		float fadeEndingAngle = parameter.EndingFade;
 
+#ifdef __ZOFFSET__
+		ZFixedTransformBlock outerTransform(mat43, outerHeight);
+		ZFixedTransformBlock innerTransform(mat43, innerHeight);
+		ZFixedTransformBlock centerTransform(mat43, centerHeight);
+#endif
+
 		for (int i = 0; i < singleVertexCount; i += 8)
 		{
 			float old_c = cos_;
@@ -390,9 +401,19 @@ protected:
 			sin_ = sin_ * stepC + cos_ * stepS;
 			cos_ = t;
 
+#ifdef __ZOFFSET__
+			outerNext = ::Effekseer::SIMD::Vec3f{cos_ * outerRadius, sin_ * outerRadius, 0};
+			innerNext = ::Effekseer::SIMD::Vec3f{cos_ * innerRadius, sin_ * innerRadius, 0};
+			centerNext = ::Effekseer::SIMD::Vec3f{cos_ * centerRadius, sin_ * centerRadius, 0};
+
+			outerTransform.Transform(outerNext);
+			innerTransform.Transform(innerNext);
+			centerTransform.Transform(centerNext);
+#else
 			outerNext = ::Effekseer::SIMD::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
 			innerNext = ::Effekseer::SIMD::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
 			centerNext = ::Effekseer::SIMD::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
+#endif
 
 			currentAngleDegree += stepAngleDegree;
 
@@ -571,17 +592,27 @@ protected:
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
+#ifdef __ZOFFSET__
+				::Effekseer::SIMD::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, 0.0f};
+				outerTransform.Transform(outerBefore);
+#else
 				::Effekseer::SIMD::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
+#endif
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
 				auto s_n = sin_ * stepC + cos_ * stepS;
 				auto c_n = t_n;
 
+#ifdef __ZOFFSET__
+				::Effekseer::SIMD::Vec3f outerNN{c_n * outerRadius, s_n * outerRadius, 0.0f};
+				outerTransform.Transform(outerNN);
+#else
 				::Effekseer::SIMD::Vec3f outerNN;
 				outerNN.SetX(c_n * outerRadius);
 				outerNN.SetY(s_n * outerRadius);
 				outerNN.SetZ(outerHeight);
+#endif
 
 				::Effekseer::SIMD::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
 				::Effekseer::SIMD::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
@@ -606,16 +637,19 @@ protected:
 				}
 
 				// rotate directions
+
+#if defined(__ZOFFSET__)
+#else
 				::Effekseer::SIMD::Mat43f matRot = mat43;
 				matRot.SetTranslation({0.0f, 0.0f, 0.0f});
-
 				normalCurrent = ::Effekseer::SIMD::Vec3f::Transform(normalCurrent, matRot);
 				normalNext = ::Effekseer::SIMD::Vec3f::Transform(normalNext, matRot);
 				tangentCurrent = ::Effekseer::SIMD::Vec3f::Transform(tangentCurrent, matRot);
 				tangentNext = ::Effekseer::SIMD::Vec3f::Transform(tangentNext, matRot);
-
+#endif
 				normalCurrent = normalCurrent.Normalize();
 				normalNext = normalNext.Normalize();
+
 				tangentCurrent = tangentCurrent.Normalize();
 				tangentNext = tangentNext.Normalize();
 
@@ -682,7 +716,10 @@ protected:
 		}
 		else
 		{
+#if defined(__ZOFFSET__) || defined(__ZOFFSET2__)
+#else
 			TransformVertexes(verteies, singleVertexCount, mat43);
+#endif
 		}
 
 		// custom parameter

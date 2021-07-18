@@ -655,6 +655,33 @@ void ApplyViewOffset(::Effekseer::SIMD::Mat44f& mat,
 					 const ::Effekseer::SIMD::Mat44f& camera,
 					 float distance);
 
+struct ZFixedTransformBlock
+{
+	Effekseer::SIMD::Float4 m0;
+	Effekseer::SIMD::Float4 m1;
+	Effekseer::SIMD::Float4 center;
+
+	ZFixedTransformBlock(const ::Effekseer::SIMD::Mat43f& mat, float z)
+	{
+		using namespace Effekseer::SIMD;
+
+		m0 = mat.X;
+		m1 = mat.Y;
+		auto m2 = mat.Z;
+		center = Float4::SetZero();
+		Float4::Transpose(m0, m1, m2, center);
+		center = center + m2 * z;
+	}
+
+	void Transform(Effekseer::SIMD::Vec3f& data)
+	{
+		using namespace Effekseer::SIMD;
+
+		Float4 oPos = Float4::MulAddLane<0>(center, m0, data.s);
+		data.s = Float4::MulAddLane<1>(oPos, m1, data.s);
+	}
+};
+
 template <typename Vertex>
 inline void TransformVertexes(Vertex& vertexes, int32_t count, const ::Effekseer::SIMD::Mat43f& mat)
 {
