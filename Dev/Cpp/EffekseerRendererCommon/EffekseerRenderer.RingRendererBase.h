@@ -322,9 +322,6 @@ protected:
 		const float stepS = sinf(stepAngle);
 		float cos_ = cosf(beginAngle);
 		float sin_ = sinf(beginAngle);
-		::Effekseer::SIMD::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, outerHeight);
-		::Effekseer::SIMD::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, innerHeight);
-		::Effekseer::SIMD::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, centerHeight);
 
 		float uv0Current = instanceParameter.UV.X;
 		const float uv0Step = instanceParameter.UV.Width / parameter.VertexCount;
@@ -386,9 +383,22 @@ protected:
 		float fadeEndingAngle = parameter.EndingFade;
 
 #ifdef __ZOFFSET__
+		::Effekseer::SIMD::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, 0.0f);
+		::Effekseer::SIMD::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, 0.0f);
+		::Effekseer::SIMD::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, 0.0f);
+
 		ZFixedTransformBlock outerTransform(mat43, outerHeight);
 		ZFixedTransformBlock innerTransform(mat43, innerHeight);
 		ZFixedTransformBlock centerTransform(mat43, centerHeight);
+
+		outerTransform.Transform(outerCurrent);
+		innerTransform.Transform(innerCurrent);
+		centerTransform.Transform(centerCurrent);
+#else
+		::Effekseer::SIMD::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, outerHeight);
+		::Effekseer::SIMD::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, innerHeight);
+		::Effekseer::SIMD::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, centerHeight);
+
 #endif
 
 		for (int i = 0; i < singleVertexCount; i += 8)
