@@ -52,7 +52,6 @@ protected:
 	int32_t stride_ = 0;
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
-	bool fasterSngleRingModeEnabled_ = true;
 
 public:
 	RingRendererBase(RENDERER* renderer)
@@ -66,28 +65,6 @@ public:
 
 	virtual ~RingRendererBase()
 	{
-	}
-
-	/**
-		@brief	get a flag of single ring mode
-		@note
-		This flag means that a rendering of ring is faster with GPU on some condition.
-		Default is true.
-	*/
-	bool GetFasterSingleRingModeEnabled() const
-	{
-		return fasterSngleRingModeEnabled_;
-	}
-
-	/**
-		@brief	Set a flag of single ring mode
-		@note
-		please read getter
-	*/
-
-	void SetFasterSngleRingModeEnabled(bool value)
-	{
-		fasterSngleRingModeEnabled_ = value;
 	}
 
 protected:
@@ -189,11 +166,6 @@ protected:
 
 		materialType_ = param.BasicParameterPtr->MaterialType;
 
-		if (CanSingleRendering())
-		{
-			renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
-		}
-
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, count * singleVertexCount, stride_, (void*&)m_ringBufferData);
 
 		vertexCount_ = count * singleVertexCount;
@@ -203,7 +175,7 @@ protected:
 					const efkRingInstanceParam& instanceParameter,
 					const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		if (parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None || CanSingleRendering())
+		if (parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None)
 		{
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
@@ -215,11 +187,6 @@ protected:
 			kv.Value = instanceParameter;
 			instances_.push_back(kv);
 		}
-	}
-
-	bool CanSingleRendering()
-	{
-		return m_instanceCount <= 1 && materialType_ == ::Effekseer::RendererMaterialType::Default && fasterSngleRingModeEnabled_;
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
@@ -257,14 +224,7 @@ protected:
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
 
-			if (CanSingleRendering())
-			{
-				mat43 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
-			}
-			else
-			{
-				mat43 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
-			}
+			mat43 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
 		}
 		else if (parameter.Billboard == ::Effekseer::BillboardType::Fixed)
 		{
@@ -380,6 +340,18 @@ protected:
 		float fadeStartAngle = parameter.StartingFade;
 		float fadeEndingAngle = parameter.EndingFade;
 
+		::Effekseer::SIMD::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, 0.0f);
+		::Effekseer::SIMD::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, 0.0f);
+		::Effekseer::SIMD::Vec3f centerCurrent(cos_ * centerRadius, sin_ * centerRadius, 0.0f);
+
+		ZFixedTransformBlock outerTransform(mat43, outerHeight);
+		ZFixedTransformBlock innerTransform(mat43, innerHeight);
+		ZFixedTransformBlock centerTransform(mat43, centerHeight);
+
+		outerTransform.Transform(outerCurrent);
+		innerTransform.Transform(innerCurrent);
+		centerTransform.Transform(centerCurrent);
+
 		for (int i = 0; i < singleVertexCount; i += 8)
 		{
 			float old_c = cos_;
@@ -390,9 +362,13 @@ protected:
 			sin_ = sin_ * stepC + cos_ * stepS;
 			cos_ = t;
 
-			outerNext = ::Effekseer::SIMD::Vec3f{cos_ * outerRadius, sin_ * outerRadius, outerHeight};
-			innerNext = ::Effekseer::SIMD::Vec3f{cos_ * innerRadius, sin_ * innerRadius, innerHeight};
-			centerNext = ::Effekseer::SIMD::Vec3f{cos_ * centerRadius, sin_ * centerRadius, centerHeight};
+			outerNext = ::Effekseer::SIMD::Vec3f{cos_ * outerRadius, sin_ * outerRadius, 0};
+			innerNext = ::Effekseer::SIMD::Vec3f{cos_ * innerRadius, sin_ * innerRadius, 0};
+			centerNext = ::Effekseer::SIMD::Vec3f{cos_ * centerRadius, sin_ * centerRadius, 0};
+
+			outerTransform.Transform(outerNext);
+			innerTransform.Transform(innerNext);
+			centerTransform.Transform(centerNext);
 
 			currentAngleDegree += stepAngleDegree;
 
@@ -571,17 +547,16 @@ protected:
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
 				auto c_b = t_b;
 
-				::Effekseer::SIMD::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, outerHeight};
+				::Effekseer::SIMD::Vec3f outerBefore{c_b * outerRadius, s_b * outerRadius, 0.0f};
+				outerTransform.Transform(outerBefore);
 
 				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
 				auto s_n = sin_ * stepC + cos_ * stepS;
 				auto c_n = t_n;
 
-				::Effekseer::SIMD::Vec3f outerNN;
-				outerNN.SetX(c_n * outerRadius);
-				outerNN.SetY(s_n * outerRadius);
-				outerNN.SetZ(outerHeight);
+				::Effekseer::SIMD::Vec3f outerNN{c_n * outerRadius, s_n * outerRadius, 0.0f};
+				outerTransform.Transform(outerNN);
 
 				::Effekseer::SIMD::Vec3f tangent0 = (outerCurrent - outerBefore).Normalize();
 				::Effekseer::SIMD::Vec3f tangent1 = (outerNext - outerCurrent).Normalize();
@@ -604,15 +579,6 @@ protected:
 					normalCurrent = -normalCurrent;
 					normalNext = -normalNext;
 				}
-
-				// rotate directions
-				::Effekseer::SIMD::Mat43f matRot = mat43;
-				matRot.SetTranslation({0.0f, 0.0f, 0.0f});
-
-				normalCurrent = ::Effekseer::SIMD::Vec3f::Transform(normalCurrent, matRot);
-				normalNext = ::Effekseer::SIMD::Vec3f::Transform(normalNext, matRot);
-				tangentCurrent = ::Effekseer::SIMD::Vec3f::Transform(tangentCurrent, matRot);
-				tangentNext = ::Effekseer::SIMD::Vec3f::Transform(tangentNext, matRot);
 
 				normalCurrent = normalCurrent.Normalize();
 				normalNext = normalNext.Normalize();
@@ -676,15 +642,6 @@ protected:
 			centerColor = centerColorNext;
 		}
 
-		if (CanSingleRendering())
-		{
-			m_singleRenderingMatrix = mat43;
-		}
-		else
-		{
-			TransformVertexes(verteies, singleVertexCount, mat43);
-		}
-
 		// custom parameter
 		if (customData1Count_ > 0)
 		{
@@ -713,15 +670,7 @@ protected:
 
 	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		if (CanSingleRendering())
-		{
-			::Effekseer::SIMD::Mat44f mat = m_singleRenderingMatrix * renderer->GetCameraMatrix();
-			auto& state = m_renderer->GetStandardRenderer()->GetState();
-			state.SpecialCameraMat = renderer->GetStandardRenderer()->AllocateSpecialCameraMat();
-			renderer->GetStandardRenderer()->SetSpecialCameraMat(state.SpecialCameraMat, mat);
-		}
-
-		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None && !CanSingleRendering())
+		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None)
 		{
 			for (auto& kv : instances_)
 			{
