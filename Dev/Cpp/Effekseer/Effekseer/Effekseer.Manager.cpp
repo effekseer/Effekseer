@@ -1279,6 +1279,7 @@ void ManagerImplemented::Flip()
 					}
 
 					InstanceContainer* pContainer = ds.InstanceContainerPointer;
+					Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 
 					Vector3D location;
 
@@ -1297,11 +1298,10 @@ void ManagerImplemented::Flip()
 					{
 						float radius = effect->Culling.Sphere.Radius;
 
-						if (mat_ != nullptr)
 						{
-							SIMD::Vec3f s = mat_->GetScale();
+							SIMD::Vec3f s = pInstance->GetGlobalMatrix43().GetScale();
 							radius *= s.GetLength();
-							SIMD::Vec3f culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), *mat_);
+							SIMD::Vec3f culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), pInstance->GetGlobalMatrix43());
 							ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(culling_pos.GetX(), culling_pos.GetY(), culling_pos.GetZ()));
 						}
 

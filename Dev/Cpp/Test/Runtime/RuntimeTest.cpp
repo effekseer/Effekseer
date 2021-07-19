@@ -761,35 +761,6 @@ void ProceduralModelCacheTest()
 #endif
 }
 
-void CullingTest()
-{
-	{
-		srand(0);
-#ifdef _WIN32
-		auto platform = std::make_shared<EffectPlatformDX11>();
-#else
-		auto platform = std::make_shared<EffectPlatformGL>();
-#endif
-		EffectPlatformInitializingParameter param;
-
-		platform->Initialize(param);
-
-		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/Culling/Sphere.efkefc").c_str());
-
-		for (size_t i = 0; i < 20; i++)
-		{
-			if (i == 10)
-			{
-				platform->GetManager()->StopRoot(h);
-			}
-			platform->Update();
-			platform->GetManager()->AddLocation(h, {0.0f, 0.1f, 0.0f});
-		}
-
-		platform->Terminate();
-	}
-}
-
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
 TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
@@ -817,7 +788,5 @@ TestRegister Runtime_DX11DefferedContextTest("Runtime.DX11DefferedContextTest", 
 TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void { BasicRuntimeDeviceLostTest(); });
 
 TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest", []() -> void { ProceduralModelCacheTest(); });
-
-TestRegister Runtime_CullingTest("Runtime.CullingTest", []() -> void { CullingTest(); });
 
 #endif

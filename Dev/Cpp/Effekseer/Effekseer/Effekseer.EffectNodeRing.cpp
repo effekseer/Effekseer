@@ -71,8 +71,8 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 			memcpy(&Shape.EndingFade, pos, sizeof(float));
 			pos += sizeof(float);
 
-			LoadSingleParameter(pos, Shape.StartingAngle, m_effect->GetVersion());
-			LoadSingleParameter(pos, Shape.EndingAngle, m_effect->GetVersion());
+			LoadSingleParameter(pos, Shape.StartingAngle);
+			LoadSingleParameter(pos, Shape.EndingAngle);
 		}
 	}
 
@@ -82,9 +82,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 	// compatiblity
 	{
 		RingSingleParameter viewingAngle;
-
-		// because of old version
-		LoadSingleParameter(pos, viewingAngle, Version15);
+		LoadSingleParameter(pos, viewingAngle);
 		if (m_effect->GetVersion() < 15)
 		{
 			Shape.Type = RingShapeType::Cresient;
@@ -123,7 +121,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 
 	LoadLocationParameter(pos, InnerLocation);
 
-	LoadSingleParameter(pos, CenterRatio, m_effect->GetVersion());
+	LoadSingleParameter(pos, CenterRatio);
 
 	LoadColorParameter(pos, OuterColor);
 
@@ -437,7 +435,7 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, InstanceGroup& i
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param, int version)
+void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param)
 {
 	memcpy(&param.type, pos, sizeof(int));
 	pos += sizeof(int);
@@ -454,7 +452,7 @@ void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParamete
 	}
 	else if (param.type == RingSingleParameter::Easing)
 	{
-		LoadFloatEasing(param.easing, pos, version);
+		LoadFloatEasing(param.easing, pos, m_effect->GetVersion());
 	}
 }
 
