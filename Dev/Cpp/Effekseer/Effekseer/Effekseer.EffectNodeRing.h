@@ -256,7 +256,7 @@ public:
 	}
 
 private:
-	void LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param);
+	void LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param, int version);
 
 	void LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param);
 
