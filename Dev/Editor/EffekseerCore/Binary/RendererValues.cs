@@ -33,7 +33,7 @@ namespace Effekseer.Binary
 					data.Add(value.Crescent.StartingAngle_Random.Max.GetBytes());
 					data.Add(value.Crescent.StartingAngle_Random.Min.GetBytes());
 				}
-				if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Easing)
+				else if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Easing)
 				{
 					Utils.ExportEasing(value.Crescent.StartingAngle_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
 				}
@@ -49,7 +49,7 @@ namespace Effekseer.Binary
 					data.Add(value.Crescent.EndingAngle_Random.Max.GetBytes());
 					data.Add(value.Crescent.EndingAngle_Random.Min.GetBytes());
 				}
-				if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Easing)
+				else if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Easing)
 				{
 					Utils.ExportEasing(value.Crescent.EndingAngle_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
 				}
