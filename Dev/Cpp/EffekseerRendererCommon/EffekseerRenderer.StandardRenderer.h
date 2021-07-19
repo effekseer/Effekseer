@@ -23,7 +23,6 @@ namespace EffekseerRenderer
 
 struct StandardRendererState
 {
-	int SpecialCameraMat = -1;
 	bool DepthTest;
 	bool DepthWrite;
 	bool Distortion;
@@ -70,7 +69,6 @@ struct StandardRendererState
 
 	StandardRendererState()
 	{
-		SpecialCameraMat = -1;
 		DepthTest = false;
 		DepthWrite = false;
 		Distortion = false;
@@ -109,9 +107,6 @@ struct StandardRendererState
 
 	bool operator!=(const StandardRendererState state)
 	{
-		if (SpecialCameraMat != state.SpecialCameraMat)
-			return true;
-
 		if (Collector != state.Collector)
 			return true;
 
@@ -291,7 +286,6 @@ private:
 	int32_t vertexCacheOffset_ = 0;
 	EffekseerRenderer::VertexBufferBase* lastVb_ = nullptr;
 
-	Effekseer::CustomAlignedVector<Effekseer::SIMD::Mat44f> specialCameraMat_;
 	Effekseer::CustomAlignedVector<RenderInfo> renderInfos_;
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
@@ -318,18 +312,6 @@ public:
 
 	virtual ~StandardRenderer()
 	{
-	}
-
-	int32_t AllocateSpecialCameraMat()
-	{
-		auto id = specialCameraMat_.size();
-		specialCameraMat_.resize(specialCameraMat_.size() + 1);
-		return static_cast<int>(id);
-	}
-
-	void SetSpecialCameraMat(int32_t id, const Effekseer::SIMD::Mat44f& mat)
-	{
-		specialCameraMat_.at(id) = mat;
 	}
 
 	static int32_t CalculateCurrentStride(const StandardRendererState& state)
@@ -484,17 +466,6 @@ public:
 		{
 			const auto& state = info.state;
 
-			Effekseer::SIMD::Mat44f mCamera;
-
-			if (state.SpecialCameraMat >= 0)
-			{
-				mCamera = specialCameraMat_[state.SpecialCameraMat];
-			}
-			else
-			{
-				mCamera = m_renderer->GetCameraMatrix();
-			}
-
 			const auto& mProj = m_renderer->GetProjectionMatrix();
 
 			int32_t stride = CalculateCurrentStride(state);
@@ -523,12 +494,11 @@ public:
 					renderBufferSize = (vertexCacheMaxSize_ / (stride * 4)) * (stride * 4);
 				}
 
-				Rendering_(mCamera, mProj, info.offset, renderBufferSize, info.stride, passInd, state);
+				Rendering_(m_renderer->GetCameraMatrix(), mProj, info.offset, renderBufferSize, info.stride, passInd, state);
 			}
 		}
 
 		vertexCacheOffset_ = 0;
-		specialCameraMat_.clear();
 		renderInfos_.clear();
 
 		m_renderer->GetImpl()->CurrentRingBufferIndex++;
