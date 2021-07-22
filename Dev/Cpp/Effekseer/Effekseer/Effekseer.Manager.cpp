@@ -2300,7 +2300,7 @@ void ManagerImplemented::CalcCulling(const Matrix44& cameraProjMat, bool isOpenG
 		}
 	}
 
-	m_cullingWorld->Culling(cullingMat, isOpenGL);
+	m_cullingWorld->Culling(cullingMat, isOpenGL, m_setting->GetCoordinateSystem() == CoordinateSystem::RH);
 
 	for (int32_t i = 0; i < m_cullingWorld->GetObjectCount(); i++)
 	{

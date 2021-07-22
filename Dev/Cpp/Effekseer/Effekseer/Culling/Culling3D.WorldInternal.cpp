@@ -359,7 +359,7 @@ void WorldInternal::CastRay(Vector3DF from, Vector3DF to)
 	grids.clear();
 }
 
-void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL)
+void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL, bool isRightHand)
 {
 	objs.clear();
 
@@ -407,14 +407,29 @@ void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL)
 		facePositions[5] = eyebox[0];
 
 		Vector3DF faceDir[6];
-		faceDir[0] = Vector3DF::Cross(eyebox[1] - eyebox[5], eyebox[7] - eyebox[5]);
-		faceDir[1] = Vector3DF::Cross(eyebox[6] - eyebox[4], eyebox[0] - eyebox[4]);
 
-		faceDir[2] = Vector3DF::Cross(eyebox[7] - eyebox[6], eyebox[2] - eyebox[6]);
-		faceDir[3] = Vector3DF::Cross(eyebox[0] - eyebox[4], eyebox[5] - eyebox[4]);
+		if (isRightHand)
+		{
+			faceDir[0] = Vector3DF::Cross(eyebox[1] - eyebox[5], eyebox[7] - eyebox[5]);
+			faceDir[1] = Vector3DF::Cross(eyebox[6] - eyebox[4], eyebox[0] - eyebox[4]);
 
-		faceDir[4] = Vector3DF::Cross(eyebox[5] - eyebox[4], eyebox[6] - eyebox[4]);
-		faceDir[5] = Vector3DF::Cross(eyebox[2] - eyebox[0], eyebox[1] - eyebox[5]);
+			faceDir[2] = Vector3DF::Cross(eyebox[7] - eyebox[6], eyebox[2] - eyebox[6]);
+			faceDir[3] = Vector3DF::Cross(eyebox[0] - eyebox[4], eyebox[5] - eyebox[4]);
+
+			faceDir[4] = Vector3DF::Cross(eyebox[5] - eyebox[4], eyebox[6] - eyebox[4]);
+			faceDir[5] = Vector3DF::Cross(eyebox[2] - eyebox[0], eyebox[1] - eyebox[5]);
+		}
+		else
+		{
+			faceDir[0] = -Vector3DF::Cross(eyebox[1] - eyebox[5], eyebox[7] - eyebox[5]);
+			faceDir[1] = -Vector3DF::Cross(eyebox[6] - eyebox[4], eyebox[0] - eyebox[4]);
+
+			faceDir[2] = -Vector3DF::Cross(eyebox[7] - eyebox[6], eyebox[2] - eyebox[6]);
+			faceDir[3] = -Vector3DF::Cross(eyebox[0] - eyebox[4], eyebox[5] - eyebox[4]);
+
+			faceDir[4] = -Vector3DF::Cross(eyebox[5] - eyebox[4], eyebox[6] - eyebox[4]);
+			faceDir[5] = -Vector3DF::Cross(eyebox[2] - eyebox[0], eyebox[1] - eyebox[5]);
+		}
 
 		for (int32_t i = 0; i < 6; i++)
 		{
@@ -825,6 +840,6 @@ void WorldInternal::Dump(const char* path, const Matrix44& cameraProjMat, bool i
 		}
 	}
 
-	Culling(cameraProjMat, isOpenGL);
+	Culling(cameraProjMat, isOpenGL, true);
 }
 } // namespace Culling3D
