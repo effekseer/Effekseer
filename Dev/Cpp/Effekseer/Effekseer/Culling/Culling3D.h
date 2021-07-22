@@ -333,7 +333,7 @@ public:
 
 	virtual void CastRay(Vector3DF from, Vector3DF to) = 0;
 
-	virtual void Culling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
+	virtual void Culling(const Matrix44& cameraProjMat, bool isOpenGL, bool isRightHand) = 0;
 	virtual int32_t GetObjectCount() = 0;
 	virtual Object* GetObject(int32_t index) = 0;
 

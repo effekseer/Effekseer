@@ -45,7 +45,7 @@ public:
 
 	void CastRay(Vector3DF from, Vector3DF to) override;
 
-	void Culling(const Matrix44& cameraProjMat, bool isOpenGL) override;
+	void Culling(const Matrix44& cameraProjMat, bool isOpenGL, bool isRightHand) override;
 
 	bool Reassign() override;
 
