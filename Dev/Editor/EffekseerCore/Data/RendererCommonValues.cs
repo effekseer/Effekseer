@@ -889,10 +889,12 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 3, Value = (int)MaterialType.File)]
 		[IO(Export = true)]
 		[Key(key = "BRS_CustomData1")]
 		public CustomDataParameter CustomData1 { get; private set; }
 
+		[Selected(ID = 3, Value = (int)MaterialType.File)]
 		[IO(Export = true)]
 		[Key(key = "BRS_CustomData2")]
 		public CustomDataParameter CustomData2 { get; private set; }
