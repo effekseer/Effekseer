@@ -1,5 +1,4 @@
 #include "EffekseerRendererMetal.Renderer.h"
-#include "EffekseerRendererMetal.RendererImplemented.h"
 //#include "EffekseerRendererMetal.MaterialLoader.h"
 #include "EffekseerRendererMetal.VertexBuffer.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.IndexBuffer.h"
