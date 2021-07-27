@@ -35,6 +35,15 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 	friend class DeviceObject;
 
 protected:
+	const int32_t ringVertexCount_ = 3;
+
+	struct RingVertex
+	{
+		std::unique_ptr<VertexBuffer> vertexBuffer;
+	};
+
+	std::vector<std::shared_ptr<RingVertex>> ringVs_;
+
 	std::map<PiplineStateKey, LLGI::PipelineState*> piplineStates_;
 	LLGI::VertexBuffer* currentVertexBuffer_ = nullptr;
 	int32_t currentVertexBufferStride_ = 0;
@@ -51,7 +60,6 @@ protected:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	std::shared_ptr<LLGI::RenderPassPipelineState> currentRenderPassPipelineState_ = nullptr;
 
-	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer;
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
