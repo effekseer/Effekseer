@@ -4,7 +4,36 @@
 namespace EffekseerRendererLLGI
 {
 
-VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount)
+std::shared_ptr<LLGI::VertexBuffer> VertexBuffer::CreateBuffer()
+{
+	return LLGI::CreateSharedPtr(GetGraphicsDevice()->GetGraphics()->CreateVertexBuffer(m_size));
+}
+
+std::shared_ptr<LLGI::VertexBuffer> VertexBuffer::GetNextBuffer()
+{
+	auto ret = storedVertexBuffers_[nextIndex_];
+	nextIndex_++;
+	nextIndex_ %= storedVertexBuffers_.size();
+
+	return ret;
+}
+
+bool VertexBuffer::Init()
+{
+	for (int i = 0; i < ringVertexCount_; i++)
+	{
+		auto vb = CreateBuffer();
+		if (vb == nullptr)
+		{
+			return false;
+		}
+		storedVertexBuffers_.emplace_back(vb);
+	}
+
+	return true;
+}
+
+VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
 	: DeviceObject(graphicsDevice, hasRefCount)
 	, VertexBufferBase(size, isDynamic)
 	, m_ringBufferLock(false)
@@ -12,25 +41,17 @@ VertexBuffer::VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::Vertex
 	, m_ringLockedSize(0)
 {
 	lockedResource_.resize(size);
-	vertexBuffers.push_back(buffer);
-}
-
-VertexBuffer::~VertexBuffer()
-{
-	for (auto& v : vertexBuffers)
-	{
-		LLGI::SafeRelease(v);
-	}
-	vertexBuffers.clear();
 }
 
 VertexBuffer* VertexBuffer::Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount)
 {
-	auto vertexBuffer = graphicsDevice->GetGraphics()->CreateVertexBuffer(size);
-	if (vertexBuffer == nullptr)
+	auto ret = new VertexBuffer(graphicsDevice, size, isDynamic, hasRefCount);
+	if (!ret->Init())
+	{
+		ES_SAFE_DELETE(ret);
 		return nullptr;
-
-	return new VertexBuffer(graphicsDevice, vertexBuffer, size, isDynamic, hasRefCount);
+	}
+	return ret;
 }
 
 void VertexBuffer::Lock()
@@ -95,16 +116,22 @@ void VertexBuffer::Unlock()
 
 	if (m_isLock)
 	{
-		auto data = (uint8_t*)vertexBuffers[currentIndex]->Lock();
+		currentVertexBuffer_ = GetNextBuffer();
+		auto data = (uint8_t*)currentVertexBuffer_->Lock();
 
 		memcpy(data, m_resource, m_size);
 
-		vertexBuffers[currentIndex]->Unlock();
+		currentVertexBuffer_->Unlock();
 	}
 
 	if (m_ringBufferLock)
 	{
-		auto data = (uint8_t*)vertexBuffers[currentIndex]->Lock();
+		if (currentVertexBuffer_ == nullptr || m_ringLockedOffset == 0)
+		{
+			currentVertexBuffer_ = GetNextBuffer();
+		}
+
+		auto data = (uint8_t*)currentVertexBuffer_->Lock();
 
 		uint8_t* dst = (uint8_t*)data;
 		dst += m_ringLockedOffset;
@@ -114,7 +141,7 @@ void VertexBuffer::Unlock()
 
 		memcpy(dst, src, m_ringLockedSize);
 
-		vertexBuffers[currentIndex]->Unlock();
+		currentVertexBuffer_->Unlock();
 	}
 
 	m_resource = nullptr;
