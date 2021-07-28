@@ -12,9 +12,10 @@ namespace EffekseerRendererLLGI
 class VertexBuffer : public DeviceObject, public ::EffekseerRenderer::VertexBufferBase
 {
 protected:
-	// TODO make ring buffer
-	int32_t currentIndex = 0;
-	std::vector<LLGI::VertexBuffer*> vertexBuffers;
+	// TODO make correct ring buffer
+	const int ringVertexCount_ = 3;
+
+	int32_t nextIndex_ = 0;
 
 	Effekseer::CustomAlignedVector<uint8_t> lockedResource_;
 
@@ -23,16 +24,23 @@ protected:
 	int32_t m_ringLockedOffset;
 	int32_t m_ringLockedSize;
 
-	VertexBuffer(Backend::GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount);
+	std::vector<std::shared_ptr<LLGI::VertexBuffer>> storedVertexBuffers_;
+	std::shared_ptr<LLGI::VertexBuffer> CreateBuffer();
+	std::shared_ptr<LLGI::VertexBuffer> GetNextBuffer();
+
+	std::shared_ptr<LLGI::VertexBuffer> currentVertexBuffer_;
+
+	bool Init();
+	VertexBuffer(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
 
 public:
-	virtual ~VertexBuffer();
+	~VertexBuffer() override = default;
 
 	static VertexBuffer* Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
 
 	LLGI::VertexBuffer* GetVertexBuffer()
 	{
-		return vertexBuffers[currentIndex];
+		return currentVertexBuffer_.get();
 	}
 
 public:

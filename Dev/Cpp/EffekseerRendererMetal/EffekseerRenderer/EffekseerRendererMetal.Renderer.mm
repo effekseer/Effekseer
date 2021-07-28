@@ -1,7 +1,4 @@
 #include "EffekseerRendererMetal.Renderer.h"
-#include "EffekseerRendererMetal.RendererImplemented.h"
-//#include "EffekseerRendererMetal.MaterialLoader.h"
-#include "EffekseerRendererMetal.VertexBuffer.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.IndexBuffer.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
@@ -97,7 +94,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth)
 {
-    auto renderer = Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
+    auto renderer = Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
     renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
 
     CreateFixedShaderForMetal(&renderer->fixedShader_);
@@ -160,37 +157,6 @@ void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandLis
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->EndRenderPassWithPlatformPtr();
 	c->GetInternal()->EndWithPlatform();
-}
-
-void RendererImplemented::GenerateVertexBuffer()
-{
-    // Metal doesn't need to update buffer to make sure it has the correct size
-    auto sc = std::max(4000, m_squareMaxCount);
-    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_.Get(), EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * sc * 4, true, false);
-}
-
-void RendererImplemented::GenerateIndexBuffer()
-{
-    auto sc = std::max(4000, m_squareMaxCount);
-
-	m_indexBuffer = EffekseerRendererLLGI::IndexBuffer::Create(graphicsDevice_.Get(), sc * 6, false, false);
-	if (m_indexBuffer == nullptr)
-		return;
-
-	m_indexBuffer->Lock();
-
-	for (int i = 0; i < sc; i++)
-	{
-		uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
-		buf[0] = 3 + 4 * i;
-		buf[1] = 1 + 4 * i;
-		buf[2] = 0 + 4 * i;
-		buf[3] = 3 + 4 * i;
-		buf[4] = 0 + 4 * i;
-		buf[5] = 2 + 4 * i;
-	}
-
-	m_indexBuffer->Unlock();
 }
 
 } // namespace EffekseerRendererMetal
