@@ -516,7 +516,7 @@ bool Recorder::Step(Native* native, int frames)
 			auto config = generator_->GetConfig();
 			if (recordingParameter_.Transparence == TransparenceType::None)
 			{
-				config.BackgroundColor = Effekseer::Color(0, 0, 0, 255);
+				// not change
 			}
 			else if (recordingParameter_.Transparence == TransparenceType::Original)
 			{
