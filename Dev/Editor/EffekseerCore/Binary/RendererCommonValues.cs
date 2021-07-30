@@ -94,7 +94,7 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(easing[2]));
 			}
 
-			data.Add(new BasicUvSerializer(value).SerializeUv(texInfo));
+			data.Add(new BasicUvSerializer(value, version).SerializeUv(texInfo));
 
 
 			if (version >= ExporterVersion.Ver16Alpha1)

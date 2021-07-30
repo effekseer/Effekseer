@@ -76,6 +76,11 @@ namespace Effekseer.Binary
 				_data.Add(easingValue.Start.GetBytes(magnification));
 				_data.Add(easingValue.End.GetBytes(magnification));
 			}
+			else
+			{
+				_data.Add(easingValue.Start.GetBytes(magnification));
+				_data.Add(easingValue.End.GetBytes(magnification));
+			}
 
 			// middle
 			if (version >= ExporterVersion.Ver16Alpha1)

@@ -5,11 +5,13 @@ namespace Effekseer.Binary.RenderData
 	internal sealed class BasicUvSerializer : UvSerializer
 	{
 		private readonly Data.RendererCommonValues.UVAnimationSupportedFrameBlendParameter _animationParameter;
+		ExporterVersion _version;
 
-		public BasicUvSerializer(Data.RendererCommonValues value)
+		public BasicUvSerializer(Data.RendererCommonValues value, ExporterVersion version)
 			: base(value.UV, value.UVFixed, value.UVAnimation.AnimationParams, value.UVScroll, value.UVFCurve)
 		{
 			_animationParameter = value.UVAnimation;
+			_version = version;
 		}
 
 		protected override void GetSize(TextureInformation texInfo, out float width, out float height)
@@ -28,7 +30,11 @@ namespace Effekseer.Binary.RenderData
 		protected override void SerializeAnimationUv(UvAggregator aggregator)
 		{
 			base.SerializeAnimationUv(aggregator);
-			aggregator.Add(_animationParameter.FlipbookInterpolationType);
+
+			if(_version >= ExporterVersion.Ver1600)
+			{
+				aggregator.Add(_animationParameter.FlipbookInterpolationType);
+			}
 		}
 	}
 }

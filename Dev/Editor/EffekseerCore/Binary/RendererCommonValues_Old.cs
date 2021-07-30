@@ -463,7 +463,10 @@ namespace Effekseer.Binary
 				data.Add(value_.AnimationParams.StartSheet.Max.GetBytes());
 				data.Add(value_.AnimationParams.StartSheet.Min.GetBytes());
 
-				data.Add(value_.FlipbookInterpolationType);
+				if (version >= ExporterVersion.Ver1600)
+				{
+					data.Add(value_.FlipbookInterpolationType);
+				}
 			}
 			else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
 			{
