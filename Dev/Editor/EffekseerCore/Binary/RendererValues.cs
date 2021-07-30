@@ -89,7 +89,17 @@ namespace Effekseer.Binary
 			{
 				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
-					value = null;
+					var param = value.Model;
+
+					data.Add(value.Type.GetValueAsInt().GetBytes());
+					data.Add(BitConverter.GetBytes(1.0f));
+					data.Add(BitConverter.GetBytes(-1));
+					data.Add(param.Billboard);
+					data.Add(((int)param.Culling.Value).GetBytes());
+					OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
+						param.Color_FCurve);
+
+					return data.ToArray().ToArray();
 				}
 			}
 
