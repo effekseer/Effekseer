@@ -406,7 +406,7 @@ protected:
 				auto frontDirection = m_renderer->GetCameraFrontDirection();
 				if (!param.IsRightHand)
 				{
-					frontDirection.Z = -frontDirection.Z;
+					frontDirection = -frontDirection;
 				}
 
 				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);

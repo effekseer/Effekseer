@@ -679,7 +679,7 @@ protected:
 				Effekseer::SIMD::Vec3f frontDirection = m_renderer->GetCameraFrontDirection();
 				if (!param.IsRightHand)
 				{
-					frontDirection.SetZ(-frontDirection.GetZ());
+					frontDirection = -frontDirection;
 				}
 
 				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
