@@ -319,7 +319,9 @@ protected:
 			{
 				if (!parameter.IsRightHand)
 				{
+					// It has a bug. But it is difficult to fix
 					F = -F;
+					R = -R;
 				}
 
 				StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
@@ -361,6 +363,8 @@ protected:
 
 					if (!parameter.IsRightHand)
 					{
+						// It has a bug. But it is difficult to fix
+						tangentX = -tangentX;
 						tangentZ = -tangentZ;
 					}
 
