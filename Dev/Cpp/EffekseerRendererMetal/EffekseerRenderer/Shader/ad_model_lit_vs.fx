@@ -115,7 +115,7 @@ float2 GetFlipbookUVForIndex(thread const float2& OriginUV, thread const float& 
 }
 
 static inline __attribute__((always_inline))
-void ApplyFlipbookVS(thread float& flipbookRate, thread float2& flipbookUV, thread const float4& flipbookParameter, thread const float& flipbookIndex, thread const float2& uv)
+void ApplyFlipbookVS(thread float& flipbookRate, thread float2& flipbookUV, thread const float4& flipbookParameter, thread const float& flipbookIndex, thread const float2& uv, thread const float2& uvInversed)
 {
     if (flipbookParameter.x > 0.0)
     {
@@ -158,7 +158,9 @@ void ApplyFlipbookVS(thread float& flipbookRate, thread float2& flipbookUV, thre
                 }
             }
         }
-        float2 param = uv;
+        float2 notInversedUV = uv;
+        notInversedUV.y = uvInversed.x + (uvInversed.y * notInversedUV.y);
+        float2 param = notInversedUV;
         float param_1 = Index;
         float param_2 = flipbookParameter.z;
         float param_3 = flipbookParameter.w;
@@ -168,11 +170,12 @@ void ApplyFlipbookVS(thread float& flipbookRate, thread float2& flipbookUV, thre
         float param_6 = flipbookParameter.z;
         float param_7 = flipbookParameter.w;
         flipbookUV = GetFlipbookUVForIndex(param_4, param_5, param_6, param_7);
+        flipbookUV.y = uvInversed.x + (uvInversed.y * flipbookUV.y);
     }
 }
 
 static inline __attribute__((always_inline))
-void CalculateAndStoreAdvancedParameter(thread const float2& uv, thread const float2& uv1, thread const float4& alphaUV, thread const float4& uvDistortionUV, thread const float4& blendUV, thread const float4& blendAlphaUV, thread const float4& blendUVDistortionUV, thread const float& flipbookIndexAndNextRate, thread const float& modelAlphaThreshold, thread VS_Output& vsoutput, constant VS_ConstantBuffer& v_365)
+void CalculateAndStoreAdvancedParameter(thread const float2& uv, thread const float2& uv1, thread const float4& alphaUV, thread const float4& uvDistortionUV, thread const float4& blendUV, thread const float4& blendAlphaUV, thread const float4& blendUVDistortionUV, thread const float& flipbookIndexAndNextRate, thread const float& modelAlphaThreshold, thread VS_Output& vsoutput, constant VS_ConstantBuffer& v_386)
 {
     vsoutput.Alpha_Dist_UV.x = (uv.x * alphaUV.z) + alphaUV.x;
     vsoutput.Alpha_Dist_UV.y = (uv.y * alphaUV.w) + alphaUV.y;
@@ -188,44 +191,45 @@ void CalculateAndStoreAdvancedParameter(thread const float2& uv, thread const fl
     float2 flipbookNextIndexUV = float2(0.0);
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = v_365.fFlipbookParameter;
+    float4 param_2 = v_386.fFlipbookParameter;
     float param_3 = flipbookIndexAndNextRate;
     float2 param_4 = uv1;
-    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
+    float2 param_5 = float2(v_386.mUVInversed.xy);
+    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
     vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
     vsoutput.UV_Others.z = flipbookRate;
     vsoutput.UV_Others.w = modelAlphaThreshold;
-    vsoutput.Alpha_Dist_UV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = v_365.mUVInversed.x + (v_365.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = v_365.mUVInversed.x + (v_365.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = v_386.mUVInversed.x + (v_386.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = v_386.mUVInversed.x + (v_386.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.y = v_386.mUVInversed.x + (v_386.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.y = v_386.mUVInversed.x + (v_386.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = v_386.mUVInversed.x + (v_386.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
 }
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_386)
 {
     uint index = Input.Index;
-    float4x4 mModel = transpose(v_365.mModel_Inst[index]);
-    float4 uv = v_365.fUV[index];
-    float4 alphaUV = v_365.fAlphaUV[index];
-    float4 uvDistortionUV = v_365.fUVDistortionUV[index];
-    float4 blendUV = v_365.fBlendUV[index];
-    float4 blendAlphaUV = v_365.fBlendAlphaUV[index];
-    float4 blendUVDistortionUV = v_365.fBlendUVDistortionUV[index];
-    float4 modelColor = v_365.fModelColor[index] * Input.Color;
-    float flipbookIndexAndNextRate = v_365.fFlipbookIndexAndNextRate[index].x;
-    float modelAlphaThreshold = v_365.fModelAlphaThreshold[index].x;
+    float4x4 mModel = transpose(v_386.mModel_Inst[index]);
+    float4 uv = v_386.fUV[index];
+    float4 alphaUV = v_386.fAlphaUV[index];
+    float4 uvDistortionUV = v_386.fUVDistortionUV[index];
+    float4 blendUV = v_386.fBlendUV[index];
+    float4 blendAlphaUV = v_386.fBlendAlphaUV[index];
+    float4 blendUVDistortionUV = v_386.fBlendUVDistortionUV[index];
+    float4 modelColor = v_386.fModelColor[index] * Input.Color;
+    float flipbookIndexAndNextRate = v_386.fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = v_386.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 worldPos = localPosition * mModel;
-    Output.PosVS = v_365.mCameraProj * worldPos;
+    Output.PosVS = v_386.mCameraProj * worldPos;
     float2 outputUV = Input.UV;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
-    outputUV.y = v_365.mUVInversed.x + (v_365.mUVInversed.y * outputUV.y);
+    outputUV.y = v_386.mUVInversed.x + (v_386.mUVInversed.y * outputUV.y);
     Output.UV_Others = float4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
@@ -250,13 +254,13 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_365)
     float param_7 = flipbookIndexAndNextRate;
     float param_8 = modelAlphaThreshold;
     VS_Output param_9 = Output;
-    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, v_365);
+    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, v_386);
     Output = param_9;
     Output.PosP = Output.PosVS;
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_365 [[buffer(0)]], uint gl_InstanceIndex [[instance_id]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_386 [[buffer(0)]], uint gl_InstanceIndex [[instance_id]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -267,7 +271,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_3
     Input.UV = in.Input_UV;
     Input.Color = in.Input_Color;
     Input.Index = gl_InstanceIndex;
-    VS_Output flattenTemp = _main(Input, v_365);
+    VS_Output flattenTemp = _main(Input, v_386);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV_Others = flattenTemp.UV_Others;

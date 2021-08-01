@@ -42,7 +42,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     vec4 fLightColor;
     vec4 fLightAmbient;
     vec4 mUVInversed;
-} _365;
+} _386;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec3 Input_Normal;
@@ -89,7 +89,7 @@ vec2 GetFlipbookUVForIndex(vec2 OriginUV, float Index, float DivideX, float Divi
     return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
 }
 
-void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipbookParameter, float flipbookIndex, vec2 uv)
+void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipbookParameter, float flipbookIndex, vec2 uv, vec2 uvInversed)
 {
     if (flipbookParameter.x > 0.0)
     {
@@ -132,7 +132,9 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
                 }
             }
         }
-        vec2 param = uv;
+        vec2 notInversedUV = uv;
+        notInversedUV.y = uvInversed.x + (uvInversed.y * notInversedUV.y);
+        vec2 param = notInversedUV;
         float param_1 = Index;
         float param_2 = flipbookParameter.z;
         float param_3 = flipbookParameter.w;
@@ -142,6 +144,7 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
         float param_6 = flipbookParameter.z;
         float param_7 = flipbookParameter.w;
         flipbookUV = GetFlipbookUVForIndex(param_4, param_5, param_6, param_7);
+        flipbookUV.y = uvInversed.x + (uvInversed.y * flipbookUV.y);
     }
 }
 
@@ -161,43 +164,44 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = _365.fFlipbookParameter;
+    vec4 param_2 = _386.fFlipbookParameter;
     float param_3 = flipbookIndexAndNextRate;
     vec2 param_4 = uv1;
-    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
+    vec2 param_5 = vec2(_386.mUVInversed.xy);
+    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
     vsoutput.Blend_FBNextIndex_UV = vec4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
     vsoutput.UV_Others.z = flipbookRate;
     vsoutput.UV_Others.w = modelAlphaThreshold;
-    vsoutput.Alpha_Dist_UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.y = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _365.mUVInversed.x + (_365.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _386.mUVInversed.x + (_386.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _386.mUVInversed.x + (_386.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.y = _386.mUVInversed.x + (_386.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.y = _386.mUVInversed.x + (_386.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _386.mUVInversed.x + (_386.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
 }
 
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 mModel = _365.mModel_Inst[index];
-    vec4 uv = _365.fUV[index];
-    vec4 alphaUV = _365.fAlphaUV[index];
-    vec4 uvDistortionUV = _365.fUVDistortionUV[index];
-    vec4 blendUV = _365.fBlendUV[index];
-    vec4 blendAlphaUV = _365.fBlendAlphaUV[index];
-    vec4 blendUVDistortionUV = _365.fBlendUVDistortionUV[index];
-    vec4 modelColor = _365.fModelColor[index] * Input.Color;
-    float flipbookIndexAndNextRate = _365.fFlipbookIndexAndNextRate[index].x;
-    float modelAlphaThreshold = _365.fModelAlphaThreshold[index].x;
+    mat4 mModel = _386.mModel_Inst[index];
+    vec4 uv = _386.fUV[index];
+    vec4 alphaUV = _386.fAlphaUV[index];
+    vec4 uvDistortionUV = _386.fUVDistortionUV[index];
+    vec4 blendUV = _386.fBlendUV[index];
+    vec4 blendAlphaUV = _386.fBlendAlphaUV[index];
+    vec4 blendUVDistortionUV = _386.fBlendUVDistortionUV[index];
+    vec4 modelColor = _386.fModelColor[index] * Input.Color;
+    float flipbookIndexAndNextRate = _386.fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = _386.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 worldPos = localPosition * mModel;
-    Output.PosVS = worldPos * _365.mCameraProj;
+    Output.PosVS = worldPos * _386.mCameraProj;
     vec2 outputUV = Input.UV;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
-    outputUV.y = _365.mUVInversed.x + (_365.mUVInversed.y * outputUV.y);
+    outputUV.y = _386.mUVInversed.x + (_386.mUVInversed.y * outputUV.y);
     Output.UV_Others = vec4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
     vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
@@ -208,8 +212,8 @@ VS_Output _main(VS_Input Input)
     worldNormal = normalize(worldNormal);
     worldBinormal = normalize(worldBinormal);
     worldTangent = normalize(worldTangent);
-    Output.ProjTangent = (worldPos + worldTangent) * _365.mCameraProj;
-    Output.ProjBinormal = (worldPos + worldBinormal) * _365.mCameraProj;
+    Output.ProjTangent = (worldPos + worldTangent) * _386.mCameraProj;
+    Output.ProjBinormal = (worldPos + worldBinormal) * _386.mCameraProj;
     Output.Color = modelColor;
     vec2 param = Input.UV;
     vec2 param_1 = Output.UV_Others.xy;
