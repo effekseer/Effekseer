@@ -790,6 +790,85 @@ void CullingTest()
 	}
 }
 
+void RenderLimitTest()
+{
+	auto test = [](EffectPlatform* platform)
+	{
+		EffectPlatformInitializingParameter param;
+		param.SpriteCount = 20;
+		platform->Initialize(param);
+
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel01.efkefc").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+
+		for (size_t i = 0; i < 60; i++)
+		{
+			platform->Update();
+		}
+
+		platform->Terminate();
+	};
+
+#ifdef _WIN32
+	{
+		auto platform = std::make_shared<EffectPlatformDX11>();
+		test(platform.get());
+	}
+#endif
+
+#if !defined(__FROM_CI__)
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+	{
+		auto platform = std::make_shared<EffectPlatformVulkan>();
+		test(platform.get());
+	}
+#endif
+
+#ifdef _WIN32
+	{
+
+#ifdef __EFFEKSEER_BUILD_DX12__
+		{
+			auto platform = std::make_shared<EffectPlatformDX12>();
+			test(platform.get());
+		}
+#endif
+
+		{
+			auto platform = std::make_shared<EffectPlatformDX9>();
+			test(platform.get());
+		}
+
+		{
+			auto platform = std::make_shared<EffectPlatformGL>();
+			test(platform.get());
+		}
+	}
+
+#elif defined(__APPLE__)
+
+	{
+		auto platform = std::make_shared<EffectPlatformMetal>();
+		test(platform.get());
+	}
+
+	{
+		auto platform = std::make_shared<EffectPlatformGL>();
+		test(platform.get());
+	}
+
+#else
+#ifndef __EFFEKSEER_BUILD_VERSION16__
+	{
+		auto platform = std::make_shared<EffectPlatformGL>();
+		test(platform.get());
+	}
+#endif
+#endif
+#endif
+}
+
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
 TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
@@ -819,5 +898,7 @@ TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostT
 TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest", []() -> void { ProceduralModelCacheTest(); });
 
 TestRegister Runtime_CullingTest("Runtime.CullingTest", []() -> void { CullingTest(); });
+
+TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void { RenderLimitTest(); });
 
 #endif

@@ -156,7 +156,7 @@ EffekseerRenderer::RendererRef EffectPlatformDX11::CreateRenderer()
 		context = context_;
 	}
 
-	auto ret = EffekseerRendererDX11::Renderer::Create(device_, context, 2000);
+	auto ret = EffekseerRendererDX11::Renderer::Create(device_, context, initParam_.SpriteCount);
 
 	ret->SetDistortingCallback(new DistortingCallbackDX11(device_, context));
 

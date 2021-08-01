@@ -69,7 +69,7 @@ void EffectPlatformDX9::CreateCheckedSurface()
 
 EffekseerRenderer::RendererRef EffectPlatformDX9::CreateRenderer()
 {
-	auto ret = EffekseerRendererDX9::Renderer::Create(device_, 2000);
+	auto ret = EffekseerRendererDX9::Renderer::Create(device_, initParam_.SpriteCount);
 	distorting_ = new DistortingCallbackDX9((EffekseerRendererDX9::RendererRef)ret, device_, initParam_.WindowSize[0], initParam_.WindowSize[1]);
 	ret->SetDistortingCallback(distorting_);
 	return ret;
