@@ -128,7 +128,7 @@ EffekseerRenderer::RendererRef EffectPlatformDX12::CreateRenderer()
 	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	auto renderer = EffekseerRendererDX12::Create(
-		g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, DXGI_FORMAT_D32_FLOAT, false, 10000);
+		g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, DXGI_FORMAT_D32_FLOAT, false, initParam_.SpriteCount);
 
 	renderer->SetDistortingCallback(new DistortingCallbackDX12(this));
 

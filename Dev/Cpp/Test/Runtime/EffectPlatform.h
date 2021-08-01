@@ -13,6 +13,7 @@ struct EffectPlatformInitializingParameter
 	bool IsUpdatedByHandle = false;
 	bool IsCullingCreated = true;
 	int InstanceCount = 8000;
+	int SpriteCount = 2000;
 	std::array<int32_t, 2> WindowSize = {320, 240};
 };
 

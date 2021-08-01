@@ -37,7 +37,7 @@ public:
 
 EffekseerRenderer::RendererRef EffectPlatformGL::CreateRenderer()
 {
-	auto ret = EffekseerRendererGL::Renderer::Create(2000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	auto ret = EffekseerRendererGL::Renderer::Create(initParam_.SpriteCount, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 
 	ret->SetDistortingCallback(new DistortingCallbackGL(initParam_.WindowSize[0], initParam_.WindowSize[1]));
 

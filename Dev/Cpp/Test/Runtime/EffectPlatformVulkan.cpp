@@ -187,7 +187,7 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 													  static_cast<VkCommandPool>(g->GetCommandPool()),
 													  3,
 													  renderPassInfo,
-													  10000);
+													  initParam_.SpriteCount);
 
 	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this));
 
