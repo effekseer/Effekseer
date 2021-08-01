@@ -372,6 +372,12 @@ public:
 
 		const int32_t requiredSize = count * stride;
 
+		if (requiredSize > vertexCacheMaxSize_ || requiredSize == 0)
+		{
+			data = nullptr;
+			return;
+		}
+
 		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4) > vertexCacheMaxSize_)
 		{
 			Rendering();

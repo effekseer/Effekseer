@@ -185,6 +185,11 @@ protected:
 		}
 		else
 		{
+			if (instances_.size() >= m_instanceCount)
+			{
+				return;
+			}
+
 			KeyValue kv;
 			kv.Value = instanceParameter;
 			instances_.push_back(kv);
@@ -711,6 +716,8 @@ public:
 
 	void Rendering(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData)
 	{
+		if (m_ringBufferData == nullptr)
+			return;
 		if (m_spriteCount + 2 * parameter.VertexCount > m_renderer->GetSquareMaxCount())
 			return;
 		Rendering_(parameter, instanceParameter, m_renderer->GetCameraMatrix());
@@ -720,7 +727,6 @@ public:
 	{
 		if (m_ringBufferData == nullptr)
 			return;
-
 		if (m_spriteCount == 0 && parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None)
 			return;
 

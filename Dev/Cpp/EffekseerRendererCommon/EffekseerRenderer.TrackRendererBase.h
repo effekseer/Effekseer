@@ -861,6 +861,8 @@ protected:
 					const efkTrackInstanceParam& instanceParameter,
 					const ::Effekseer::SIMD::Mat44f& camera)
 	{
+		if (m_ringBufferData == nullptr)
+			return;
 		if (instanceParameter.InstanceCount <= 1)
 			return;
 
