@@ -46,7 +46,7 @@ float2 GetFlipbookUVForIndex(float2 OriginUV, float Index, float DivideX, float 
     return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
 }
 
-void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 flipbookParameter, float flipbookIndex, float2 uv)
+void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 flipbookParameter, float flipbookIndex, float2 uv, float2 uvInversed)
 {
 	if (flipbookParameter.x > 0)
 	{
@@ -92,7 +92,10 @@ void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 f
 			}
 		}
 
-		float2 OriginUV = GetFlipbookOriginUV(uv, Index, flipbookParameter.z, flipbookParameter.w);
+		float2 notInversedUV = uv;
+		notInversedUV.y = uvInversed.x + uvInversed.y * notInversedUV.y;
+		float2 OriginUV = GetFlipbookOriginUV(notInversedUV, Index, flipbookParameter.z, flipbookParameter.w);
 		flipbookUV = GetFlipbookUVForIndex(OriginUV, NextIndex, flipbookParameter.z, flipbookParameter.w);
+		flipbookUV.y = uvInversed.x + uvInversed.y * flipbookUV.y;
 	}
 }

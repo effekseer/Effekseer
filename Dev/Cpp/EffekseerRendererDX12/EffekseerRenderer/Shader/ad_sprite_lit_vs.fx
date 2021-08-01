@@ -27,14 +27,14 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _349 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _376 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _255_mCamera : packoffset(c0);
-    column_major float4x4 _255_mCameraProj : packoffset(c4);
-    float4 _255_mUVInversed : packoffset(c8);
-    float4 _255_fFlipbookParameter : packoffset(c9);
+    column_major float4x4 _276_mCamera : packoffset(c0);
+    column_major float4x4 _276_mCameraProj : packoffset(c4);
+    float4 _276_mUVInversed : packoffset(c8);
+    float4 _276_fFlipbookParameter : packoffset(c9);
 };
 
 
@@ -139,7 +139,7 @@ float2 GetFlipbookUVForIndex(float2 OriginUV, float Index, float DivideX, float 
     return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
 }
 
-void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 flipbookParameter, float flipbookIndex, float2 uv)
+void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 flipbookParameter, float flipbookIndex, float2 uv, float2 uvInversed)
 {
     if (flipbookParameter.x > 0.0f)
     {
@@ -182,7 +182,9 @@ void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 f
                 }
             }
         }
-        float2 param = uv;
+        float2 notInversedUV = uv;
+        notInversedUV.y = uvInversed.x + (uvInversed.y * notInversedUV.y);
+        float2 param = notInversedUV;
         float param_1 = Index;
         float param_2 = flipbookParameter.z;
         float param_3 = flipbookParameter.w;
@@ -192,27 +194,29 @@ void ApplyFlipbookVS(inout float flipbookRate, inout float2 flipbookUV, float4 f
         float param_6 = flipbookParameter.z;
         float param_7 = flipbookParameter.w;
         flipbookUV = GetFlipbookUVForIndex(param_4, param_5, param_6, param_7);
+        flipbookUV.y = uvInversed.x + (uvInversed.y * flipbookUV.y);
     }
 }
 
 void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutput)
 {
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
-    vsoutput.Alpha_Dist_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _276_mUVInversed.x + (_276_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _276_mUVInversed.x + (_276_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
     vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_FBNextIndex_UV.y = _276_mUVInversed.x + (_276_mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
-    vsoutput.Blend_Alpha_Dist_UV.y = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _255_mUVInversed.x + (_255_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Blend_Alpha_Dist_UV.y = _276_mUVInversed.x + (_276_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _276_mUVInversed.x + (_276_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
     float flipbookRate = 0.0f;
     float2 flipbookNextIndexUV = 0.0f.xx;
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = _255_fFlipbookParameter;
+    float4 param_2 = _276_fFlipbookParameter;
     float param_3 = vsinput.FlipbookIndex;
     float2 param_4 = vsoutput.UV_Others.xy;
-    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4);
+    float2 param_5 = float2(_276_mUVInversed.xy);
+    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
     vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
@@ -222,15 +226,15 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _349;
+    VS_Output Output = _376;
     float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
     float2 uv1 = Input.UV1;
-    uv1.y = _255_mUVInversed.x + (_255_mUVInversed.y * uv1.y);
+    uv1.y = _276_mUVInversed.x + (_276_mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    Output.PosVS = mul(_255_mCameraProj, worldPos);
+    Output.PosVS = mul(_276_mCameraProj, worldPos);
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
