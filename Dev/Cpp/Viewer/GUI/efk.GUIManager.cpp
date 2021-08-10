@@ -464,6 +464,9 @@ void ResizeBicubic(uint32_t* dst,
 
 size_t ConvertUTF16ToUTF8(char* dst, size_t dstSize, const char16_t* src)
 {
+	if (src == nullptr)
+		return 0;
+
 	const uint16_t* wp = (const uint16_t*)src;
 	uint8_t* cp = (uint8_t*)dst;
 
@@ -514,6 +517,7 @@ struct utf8str
 	char data[SIZE];
 	utf8str(const char16_t* u16str)
 	{
+		data[0] = 0;
 		ConvertUTF16ToUTF8(data, SIZE, u16str);
 	}
 	operator const char*() const
