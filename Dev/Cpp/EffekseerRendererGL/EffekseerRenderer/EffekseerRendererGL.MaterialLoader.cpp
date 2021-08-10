@@ -16,6 +16,11 @@ static const int GL_InstanceCount = 10;
 
 ::Effekseer::MaterialRef MaterialLoader::LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary)
 {
+	if (binary == nullptr)
+	{
+		return nullptr;
+	}
+
 	auto deviceType = graphicsDevice_->GetDeviceType();
 
 	auto instancing = deviceType == OpenGLDeviceType::OpenGL3 || deviceType == OpenGLDeviceType::OpenGLES3;

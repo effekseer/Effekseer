@@ -64,6 +64,11 @@ MaterialLoader ::~MaterialLoader()
 
 ::Effekseer::MaterialRef MaterialLoader::LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary)
 {
+	if (binary == nullptr)
+	{
+		return nullptr;
+	}
+
 	auto material = ::Effekseer::MakeRefPtr<::Effekseer::Material>();
 	material->IsSimpleVertex = materialFile.GetIsSimpleVertex();
 	material->IsRefractionRequired = materialFile.GetHasRefraction();
