@@ -414,6 +414,8 @@ public:
 
 	void UpdateHandleToMoveToFrame(Handle handle, float frame) override;
 
+	void SetRandomSeed(Handle handle, int32_t seed) override;
+
 private:
 	void UpdateInstancesByInstanceGlobal(const DrawSet& drawSet);
 

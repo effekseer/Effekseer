@@ -1165,6 +1165,16 @@ void ManagerImplemented::SetSpeed(Handle handle, float speed)
 	}
 }
 
+void ManagerImplemented::SetRandomSeed(Handle handle, int32_t seed)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		auto& drawSet = m_DrawSets[handle];
+		auto pGlobal = drawSet.GlobalPointer;
+		pGlobal->GetRandObject().SetSeed(seed);
+	}
+}
+
 void ManagerImplemented::SetTimeScaleByGroup(int64_t groupmask, float timeScale)
 {
 	for (auto& it : m_DrawSets)

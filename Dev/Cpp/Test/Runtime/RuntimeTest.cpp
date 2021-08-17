@@ -371,6 +371,55 @@ void PlaybackSpeedTest()
 	}
 }
 
+void PlaybackRandomSeedTest()
+{
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->GetManager()->SetRandomSeed(h, 1);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot("PlaybackRandomSeed_0.png");
+
+		platform->Terminate();
+	}
+
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->GetManager()->SetRandomSeed(h, 2);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot("PlaybackRandomSeed_1.png");
+
+		platform->Terminate();
+	}
+}
+
 void MassPlayTest()
 {
 	{
@@ -888,6 +937,8 @@ TestRegister Runtime_UpdateToMoveTest("Runtime.UpdateToMoveTest", []() -> void {
 TestRegister Runtime_MassPlayTest("Runtime.MassPlayTest", []() -> void { MassPlayTest(); });
 
 TestRegister Runtime_PlaybackSpeedTest("Runtime.PlaybackSpeedTest", []() -> void { PlaybackSpeedTest(); });
+
+TestRegister Runtime_PlaybackRandomSeedTest("Runtime.PlaybackRandomSeedTest", []() -> void { PlaybackRandomSeedTest(); });
 
 TestRegister Runtime_StartingFrameTest("Runtime.StartingFrameTest", []() -> void { StartingFrameTest(); });
 
