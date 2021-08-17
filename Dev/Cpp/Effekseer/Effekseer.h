@@ -4338,6 +4338,13 @@ public:
 	virtual void SetUserData(Handle handle, void* userData) = 0;
 
 	/**
+		@brief
+		\~English	Set a default random seed of the effect by a handle.
+		\~Japanese	ハンドルごとにエフェクトのデフォルトランダムシード値を設定する。
+	*/
+	virtual void SetRandomSeed(Handle handle, int32_t seed) = 0;
+
+	/**
 		@brief	今までのPlay等の処理をUpdate実行時に適用するようにする。
 	*/
 	virtual void Flip() = 0;
