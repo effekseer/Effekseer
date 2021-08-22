@@ -93,6 +93,11 @@ bool VertexBuffer::Init(int32_t size, bool isDynamic)
 
 void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
+	if (size == 0 || src == nullptr)
+	{
+		return;
+	}
+
 	bool isSupportedBufferRange = GLExt::IsSupportedBufferRange();
 #ifdef __ANDROID__
 	isSupportedBufferRange = false;
@@ -180,6 +185,11 @@ bool IndexBuffer::Init(int32_t elementCount, int32_t stride)
 
 void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
+	if (size == 0 || src == nullptr)
+	{
+		return;
+	}
+
 	memcpy(resources_.data() + offset, src, size);
 
 	int elementArrayBufferBinding = 0;

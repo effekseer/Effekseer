@@ -13,6 +13,12 @@ Model::Model(const CustomVector<Vertex>& vertecies, const CustomVector<Face>& fa
 
 Model::Model(const void* data, int32_t size)
 {
+	if (data == nullptr)
+	{
+		models_.resize(1);
+		return;
+	}
+
 	const uint8_t* p = (const uint8_t*)data;
 
 	memcpy(&version_, p, sizeof(int32_t));

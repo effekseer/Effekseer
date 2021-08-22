@@ -27,10 +27,12 @@ ModelLoader::~ModelLoader()
 	}
 
 	size_t size = reader->GetLength();
-	std::unique_ptr<uint8_t[]> data(new uint8_t[size]);
-	reader->Read(data.get(), size);
+	Effekseer::CustomAlignedVector<uint8_t> data;
+	data.resize(size);
 
-	auto model = Load(data.get(), (int32_t)size);
+	reader->Read(data.data(), size);
+
+	auto model = Load(data.data(), (int32_t)size);
 
 	return model;
 }
