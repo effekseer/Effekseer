@@ -1201,22 +1201,7 @@ public:
 class NodeTextureObject : public NodeParameter
 {
 public:
-	NodeTextureObject()
-	{
-		Type = NodeType::TextureObject;
-		TypeName = "TextureObject";
-		Group = std::vector<std::string>{"Texture"};
-
-		auto output = std::make_shared<PinParameter>();
-		output->Name = "Output";
-		output->Type = ValueType::Texture;
-		OutputPins.push_back(output);
-
-		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Texture";
-		param->Type = ValueType::Texture;
-		Properties.push_back(param);
-	}
+	NodeTextureObject();
 };
 
 class NodeTextureObjectParameter : public NodeParameter
