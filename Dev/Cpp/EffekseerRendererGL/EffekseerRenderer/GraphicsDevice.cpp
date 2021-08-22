@@ -43,6 +43,9 @@ VertexBuffer::VertexBuffer(GraphicsDevice* graphicsDevice)
 VertexBuffer::~VertexBuffer()
 {
 	graphicsDevice_->Unregister(this);
+
+	Deallocate();
+
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
@@ -63,7 +66,7 @@ bool VertexBuffer::Allocate(int32_t size, bool isDynamic)
 
 void VertexBuffer::Deallocate()
 {
-	if (buffer_ == 0)
+	if (buffer_ != 0)
 	{
 		GLExt::glDeleteBuffers(1, &buffer_);
 		buffer_ = 0;
@@ -125,6 +128,9 @@ IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice)
 IndexBuffer::~IndexBuffer()
 {
 	graphicsDevice_->Unregister(this);
+
+	Deallocate();
+
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
@@ -147,7 +153,7 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 
 void IndexBuffer::Deallocate()
 {
-	if (buffer_ == 0)
+	if (buffer_ != 0)
 	{
 		GLExt::glDeleteBuffers(1, &buffer_);
 		buffer_ = 0;
