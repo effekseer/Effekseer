@@ -74,12 +74,16 @@ endif()
 
 add_subdirectory(Effekseer)
 
-if (WIN32)
+if (BUILD_DX9)
     add_subdirectory(EffekseerRendererDX9)
+endif()
+if (BUILD_DX11)
     add_subdirectory(EffekseerRendererDX11)
 endif()
 
-add_subdirectory(EffekseerRendererGL)
+if (BUILD_GL)
+    add_subdirectory(EffekseerRendererGL)
+endif()
 
 if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
     add_subdirectory(EffekseerRendererCommon)

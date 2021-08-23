@@ -9,6 +9,7 @@ if (MSVC)
     option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
+option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
@@ -23,6 +24,8 @@ option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer 
 option(BUILD_VULKAN "Build vulkan modules" OFF)
 
 if (WIN32)
+    option(BUILD_DX9 "Build DirectX9 modules" ON)
+    option(BUILD_DX11 "Build DirectX11 modules" ON)
     option(BUILD_DX12 "Build DirectX12 modules" ON)
 else()
     option(BUILD_DX12 "Build DirectX12 modules" OFF)
@@ -75,7 +78,7 @@ endif()
 
 option(BUILD_WITH_EASY_PROFILER "Build with easy_profiler to profile" OFF)
 
-if ()
+if (BUILD_DX12)
     add_definitions(-D__EFFEKSEER_BUILD_DX12__)
 endif()
 
