@@ -376,7 +376,7 @@ struct PS_Input
 {
 )"
 
-#if defined(_DIRECTX11) || defined(_DIRECTX12) || defined(_PSSL)
+#if defined(_DIRECTX11) || defined(_DIRECTX12) || defined(_XBOXONE) || defined(_PSSL)
 								 R"(
 	float4 Position		: SV_POSITION;
 )"
