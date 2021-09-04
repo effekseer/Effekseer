@@ -153,7 +153,7 @@ public:
 			return 0.0f;
 		}
 
-		if (distance <= fffc.MinDistance)
+		if (distance < fffc.MinDistance)
 		{
 			return 0.0f;
 		}
@@ -196,7 +196,7 @@ public:
 			return 0.0f;
 		}
 
-		if (distance <= fffc.MinDistance)
+		if (distance < fffc.MinDistance)
 		{
 			return 0.0f;
 		}
