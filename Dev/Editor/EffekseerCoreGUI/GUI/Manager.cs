@@ -719,7 +719,7 @@ namespace Effekseer.GUI
 		}
 
 
-		internal static Dock.DockPanel GetWindow(Type t)
+		public static Dock.DockPanel GetWindow(Type t)
 		{
 			foreach(var panel in panels)
 			{
@@ -737,7 +737,15 @@ namespace Effekseer.GUI
 
 				if (panels[i] != null)
 				{
-					panels[i].SetFocus();
+					if(panels[i].Visibled)
+					{
+						panels[i].Close();
+					}
+					else
+					{
+						panels[i].SetFocus();
+					}
+
 					return panels[i];
 				}
 				else

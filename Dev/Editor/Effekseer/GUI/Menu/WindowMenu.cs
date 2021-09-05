@@ -75,6 +75,17 @@ namespace Effekseer.GUI.Menu
 				item.Label = new MultiLanguageString(Title);
 				item.Icon = _iconName;
 				item.Clicked += () => Manager.SelectOrShowWindow(_type, new swig.Vec2(300, 300), true);
+				item.GetLabel = () => {
+					var dock = Manager.GetWindow(_type);
+					var str = item.Label.ToString();
+					if(dock != null)
+					{
+						str += " x";
+					}
+
+					return str;
+				};
+
 				menu.Controls.Add(item);
 			}
 		}

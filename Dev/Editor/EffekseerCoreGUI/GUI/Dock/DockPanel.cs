@@ -46,7 +46,7 @@ namespace Effekseer.GUI.Dock
 		protected bool NoCloseButton = false;
 		protected bool AllowsShortTab = true;
 
-		private bool Visibled = false;
+		public bool Visibled { get; private set; }
 		private bool Windowed = false;
 
 		public DockPanel()
@@ -80,7 +80,7 @@ namespace Effekseer.GUI.Dock
 					if (NoPadding) Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(0.0f, 0.0f));
 
 					bool dockEnabled = Manager.NativeManager.BeginDock(
-						Label, TabLabel, ref opened, Visibled && !NoCloseButton, flags);
+						Label, TabLabel, ref opened, Visibled && Windowed && !NoCloseButton, flags);
 
 					Visibled = Manager.NativeManager.IsDockVisibled();
 					Windowed = Manager.NativeManager.IsDockWindowed();
