@@ -38,8 +38,26 @@ IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 uniform vec4 u_FilterParams;
 uniform vec4 u_Intensity;
+
+bool isNan(float val) {
+	return (val < 0.0 || 0.0 < val || val == 0.0) ? false : true;
+}
+
 void main() {
 	vec3 color = TEX2D(u_Texture0, v_TexCoord).rgb;
+
+	if (isNan(color.r)) {
+		color.r = 0.0f;
+	}
+
+	if (isNan(color.g)) {
+		color.g = 0.0f;
+	}
+
+	if (isNan(color.b)) {
+		color.b = 0.0f;
+	}
+
 	float brightness = dot(color, vec3(0.299, 0.587, 0.114));
 	float soft = brightness - u_FilterParams.y;
 	soft = clamp(soft, 0.0, u_FilterParams.z);
