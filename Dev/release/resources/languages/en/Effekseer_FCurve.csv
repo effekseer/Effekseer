@@ -5,3 +5,6 @@ FcurveInterpolation_Bezier_Name,Bezier
 FcurveInterpolation_Linear_Name,Linear
 FcurveTimelineMode_Time_Name,Time(Frame)
 FcurveTimelineMode_Percent_Name,Percent(0-100)
+Fcurve_Key_Name,Time
+Fcurve_Key_Frame_Name,Frame
+Fcurve_Key_Percent_Name,Percent

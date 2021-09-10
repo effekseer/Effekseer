@@ -34,6 +34,9 @@ namespace Effekseer.GUI.Dock
 	{
 		class Texts
 		{
+			public string key = Resources.GetString("Fcurve_Key_Name");
+			public string key_frame = Resources.GetString("Fcurve_Key_Frame_Name");
+			public string key_percent = Resources.GetString("Fcurve_Key_Percent_Name");
 			public string frame = Resources.GetString("Frame");
 			public string value = Resources.GetString("Value");
 			public string start = Resources.GetString("Start");
@@ -414,10 +417,26 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.PushItemWidth(80 * Manager.DpiScale);
 			Manager.NativeManager.Spacing();
 
+			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__ => __.IsShown)).ToArray();
+
+			var keyText = texts.key;
+
+			if (flattenFcurves.Count == 1)
+			{
+				if (flattenFcurves.First().GetTimeLineType().Value == FCurveTimelineMode.Percent)
+				{
+					keyText += " (" + texts.key_percent + ")";
+				}
+				else if (flattenFcurves.First().GetTimeLineType().Value == FCurveTimelineMode.Time)
+				{
+					keyText += " (" + texts.key_frame + ")";
+				}
+			}
+
 			if (selectedInd >= 0)
 			{
 				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
-				if (Manager.NativeManager.DragInt(texts.frame, frameKey))
+				if (Manager.NativeManager.DragInt(keyText, frameKey))
 				{
 					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
 
@@ -439,7 +458,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(keyText, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			if (selectedInd >= 0)
@@ -626,8 +645,6 @@ namespace Effekseer.GUI.Dock
 				startCurve.SetBinding(null);
 				endCurve.SetBinding(null);
 			}
-
-			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__ => __.IsShown)).ToArray();
 
 			if (fcurveGroups.Any())
 			{
