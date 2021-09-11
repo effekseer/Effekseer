@@ -418,16 +418,17 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Spacing();
 
 			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__ => __.IsShown)).ToArray();
+			var currentTimeLineTypes = fcurveGroups.Select(_ => _.GetTimeLineType().Value).Distinct().ToArray();
 
 			var keyText = texts.key;
 
-			if (flattenFcurves.Count == 1)
+			if (currentTimeLineTypes.Count() == 1)
 			{
-				if (flattenFcurves.First().GetTimeLineType().Value == FCurveTimelineMode.Percent)
+				if (currentTimeLineTypes[0] == FCurveTimelineMode.Percent)
 				{
 					keyText += " (" + texts.key_percent + ")";
 				}
-				else if (flattenFcurves.First().GetTimeLineType().Value == FCurveTimelineMode.Time)
+				else if (currentTimeLineTypes[0] == FCurveTimelineMode.Time)
 				{
 					keyText += " (" + texts.key_frame + ")";
 				}
