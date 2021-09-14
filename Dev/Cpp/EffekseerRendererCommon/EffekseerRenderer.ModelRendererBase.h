@@ -989,12 +989,6 @@ public:
 			{
 				shader_ = (SHADER*)material->ModelUserPtr;
 			}
-
-			// validate
-			if (shader_ == nullptr)
-			{
-				return;
-			}
 		}
 		else
 		{
@@ -1028,6 +1022,11 @@ public:
 					shader_ = shader_unlit;
 				}
 			}
+		}
+		// validate
+		if (shader_ == nullptr)
+		{
+			return;
 		}
 
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();

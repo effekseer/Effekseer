@@ -594,15 +594,15 @@ public:
 			{
 				shader_ = (SHADER*)renderState.Collector.MaterialDataPtr->UserPtr;
 			}
-
-			// validate
-			if (shader_ == nullptr)
-				return;
 		}
 		else
 		{
 			shader_ = m_renderer->GetShader(renderState.Collector.ShaderType);
 		}
+
+		// validate
+		if (shader_ == nullptr)
+			return;
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
 		state.DepthTest = renderState.DepthTest;
