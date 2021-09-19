@@ -4,14 +4,14 @@
 #include <EffekseerRendererGL.h>
 #include <Effekseer\Utils\Effekseer.CustomAllocator.h>
 
-#include <iostream>
+#include <Effekseer/Utils/Effekseer.CustomAllocator.h>
 #include <fstream>
-#include <string>
-#include <Effekseer\Utils\Effekseer.CustomAllocator.h>
+#include <iostream>
 #include <random>
+#include <string>
 #define _USE_MATH_DEFINES
-#include <math.h>
 #include <Effekseer\Effekseer.Matrix44.h>
+#include <math.h>
 
 struct DataVertex
 {
@@ -82,7 +82,8 @@ std::array<std::array<float, 4>, 4> matTo2DArray(Effekseer::Matrix44 matrix)
 	std::array<std::array<float, 4>, 4> array2d;
 	for (int i = 0; i < array2d.size(); i++)
 	{
-		for (int j = 0; j < array2d.size(); j++){
+		for (int j = 0; j < array2d.size(); j++)
+		{
 			array2d[i][j] = matrix.Values[i][j];
 		}
 	}
@@ -95,7 +96,7 @@ public:
 	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, 4> textures;
 	Effekseer::Backend::RenderPassRef renderPass;
 
-	GpuParticleBuffer(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,int texWidth,int texHeight)
+	GpuParticleBuffer(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int texWidth, int texHeight)
 	{
 		Effekseer::Backend::RenderTextureParameter texParam;
 		texParam.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
@@ -119,7 +120,7 @@ class GpuParticleContext
 {
 	std::random_device seed_gen;
 	std::mt19937 mt = std::mt19937(seed_gen());
-	std::uniform_real_distribution<> rand1 = std::uniform_real_distribution<>(0, 1); 
+	std::uniform_real_distribution<> rand1 = std::uniform_real_distribution<>(0, 1);
 	static const int TrailBufferSize = 32;
 	static const int EmitBufferSize = 1024;
 	Effekseer::Backend::GraphicsDeviceRef graphicsDevice;
@@ -135,7 +136,7 @@ class GpuParticleContext
 	int windowHeight = 720;
 	int texWidth;
 	int texHeight;
-	
+
 	Effekseer::Backend::ShaderRef updateShader;
 	Effekseer::Backend::ShaderRef renderShader;
 	Effekseer::Backend::ShaderRef emitShader;
@@ -174,7 +175,6 @@ class GpuParticleContext
 	Effekseer::Backend::UniformBufferRef emitUniformBufferVS;
 	Effekseer::Backend::UniformBufferRef renderUniformBufferVS;
 
-
 	void initRenderVertex()
 	{
 		std::array<std::array<float, 2>, 4> vbData;
@@ -212,7 +212,7 @@ class GpuParticleContext
 		vbData[2] = {1, 1};
 		vbData[3] = {1, -1};
 
-		updateVB = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float,2>) * 4, vbData.data(), false);
+		updateVB = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 2>) * 4, vbData.data(), false);
 
 		std::array<int32_t, 6> ibData;
 		ibData[0] = 0;
@@ -263,11 +263,12 @@ class GpuParticleContext
 
 	void updateEmit(int targetIndex)
 	{
-		if (newParticleCount <= 0) {
+		if (newParticleCount <= 0)
+		{
 			return;
 		}
 
-		initEmitVertex();//Update Buffer‚Å‚â‚é‚×‚«
+		initEmitVertex(); //Update Buffer‚Å‚â‚é‚×‚«
 
 		Effekseer::Backend::PipelineStateParameter pipParam;
 
@@ -307,7 +308,7 @@ class GpuParticleContext
 		Effekseer::CustomVector<uint8_t> pixels(width * 4);
 		for (int x = 0; x < width; x++)
 		{
-			const auto rgb = hsv2rgb(std::array<float, 3>{x * 360.0f/width , 0.8, 1.0});
+			const auto rgb = hsv2rgb(std::array<float, 3>{x * 360.0f / width, 0.8, 1.0});
 			pixels[x * 4 + 0] = rgb[0];
 			pixels[x * 4 + 1] = rgb[1];
 			pixels[x * 4 + 2] = rgb[2];
@@ -318,7 +319,7 @@ class GpuParticleContext
 		texParam.Format = Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM;
 		texParam.Size = {width, 1};
 		texParam.InitialData = pixels;
-		
+
 		return graphicsDevice->CreateTexture(texParam);
 	}
 
@@ -335,8 +336,8 @@ class GpuParticleContext
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"i_ParticleData0", "i_ParticleData1"},
 			updateUniformLayoutElements);
 		updateShader = graphicsDevice->CreateShaderFromCodes(
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.vert.glsl").c_str() },
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str() },
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.vert.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str()},
 			updateUniformLayout);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> emitUniformLayoutElements;
@@ -353,8 +354,8 @@ class GpuParticleContext
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{},
 			emitUniformLayoutElements);
 		emitShader = graphicsDevice->CreateShaderFromCodes(
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str() },
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str() },
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str()},
 			emitUniformLayout);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
@@ -372,11 +373,11 @@ class GpuParticleContext
 		renderUniformLayoutElements[2].Stage = Effekseer::Backend::ShaderStageType::Vertex;
 		renderUniformLayoutElements[2].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
 		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
-			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1","ColorTable"},
+			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable"},
 			renderUniformLayoutElements);
 		renderShader = graphicsDevice->CreateShaderFromCodes(
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str() },
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str() },
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str()},
 			renderUniformLayout);
 
 		colorTableTexture = createColorTableTexture();
@@ -384,11 +385,11 @@ class GpuParticleContext
 
 public:
 	std::shared_ptr<WINDOW> window;
-	GpuParticleContext(int maxParticleCount,int windowWidth,int windowHeight)
+	GpuParticleContext(int maxParticleCount, int windowWidth, int windowHeight)
 	{
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
-	
+
 		texWidth = TrailBufferSize;
 		texHeight = ((maxParticleCount + texWidth - 1) / texWidth) | 0;
 		this->maxParticleCount = texWidth * texHeight;
@@ -402,9 +403,9 @@ public:
 
 		UpdateUniformBufferPS updateUniformBufferPSInitData = {{1.0, 0, 0, 0}};
 		updateUniformBufferPS = graphicsDevice->CreateUniformBuffer(sizeof(UpdateUniformBufferPS), &updateUniformBufferPSInitData);
-		EmitUniformBufferVS emitUniformBufferVSInitData = {{texWidth - 1, 31 - clz32(texWidth),0,0},
+		EmitUniformBufferVS emitUniformBufferVSInitData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0},
 														   {2.0 / texWidth, 2.0 / texHeight, 1.0 / texWidth - 1.0, 1.0 / texHeight - 1.0}};
-		emitUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(EmitUniformBufferVS),&emitUniformBufferVSInitData );
+		emitUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(EmitUniformBufferVS), &emitUniformBufferVSInitData);
 		projMatrix.Indentity();
 		viewMatrix.Indentity();
 
@@ -475,13 +476,11 @@ public:
 		graphicsDevice->EndRenderPass();
 
 		updateEmit(targetIndex);
-		
+
 		pingpong = (pingpong + 1) % 2;
 
-		projMatrix.PerspectiveFovRH(30*M_PI/180, (float)windowWidth / windowHeight, 0.1, 100);
-		viewMatrix.LookAtRH(Effekseer::Vector3D(0, 2, 2), Effekseer::Vector3D(0, 0, 0), Effekseer::Vector3D(0,1,0));
-
-
+		projMatrix.PerspectiveFovRH(30 * M_PI / 180, (float)windowWidth / windowHeight, 0.1, 100);
+		viewMatrix.LookAtRH(Effekseer::Vector3D(0, 2, 2), Effekseer::Vector3D(0, 0, 0), Effekseer::Vector3D(0, 1, 0));
 	}
 
 	void Render()
@@ -507,7 +506,7 @@ public:
 		Effekseer::Backend::DrawParameter drawParam;
 
 		drawParam.TextureCount = buffers[pingpong].textures.size() + 1;
-		for (int i = 0; i < buffers[pingpong].textures.size() ; i++)
+		for (int i = 0; i < buffers[pingpong].textures.size(); i++)
 		{
 			drawParam.TexturePtrs[i] = buffers[pingpong].textures.at(i);
 			drawParam.TextureSamplingTypes[i] = Effekseer::Backend::TextureSamplingType::Nearest;
@@ -529,35 +528,33 @@ public:
 		graphicsDevice->Draw(drawParam);
 		graphicsDevice->EndRenderPass();
 	}
-
 };
 
 template <typename WINDOW>
 void GpuParticle()
-{ 
+{
 	int windowWidth = 1280;
 	int windowHeight = 720;
-	GpuParticleContext<WINDOW> gpuParticleContext(1024*128,windowWidth,windowHeight);
+	GpuParticleContext<WINDOW> gpuParticleContext(1024 * 128, windowWidth, windowHeight);
 	int count = 0;
 	int emitNum = 128;
 	while (count < 1000 && gpuParticleContext.window->DoEvent())
 	{
-		
+
 		for (int i = 0; i < emitNum; i++)
 		{
-			std::array<float, 3> position = {-0.5f - (i - emitNum/2)*(i-emitNum/2)/10.0f/emitNum , -1 + i * 2.0f / emitNum, 0};
-			std::array<float, 3> direction = {1 , 1, 0};
+			std::array<float, 3> position = {-0.5f - (i - emitNum / 2) * (i - emitNum / 2) / 10.0f / emitNum, -1 + i * 2.0f / emitNum, 0};
+			std::array<float, 3> direction = {1, 1, 0};
 			gpuParticleContext.Emit(500, position, direction);
 		}
 		gpuParticleContext.Update();
 
 		gpuParticleContext.Render();
-		
+
 		gpuParticleContext.window->Present();
 
 		count++;
 	}
-	
 }
 
 #if !defined(__FROM_CI__)
