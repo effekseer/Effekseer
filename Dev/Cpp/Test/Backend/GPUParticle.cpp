@@ -402,13 +402,13 @@ public:
 
 		UpdateUniformBufferPS updateUniformBufferPSInitData = {{1.0, 0, 0, 0}};
 		updateUniformBufferPS = graphicsDevice->CreateUniformBuffer(sizeof(UpdateUniformBufferPS), &updateUniformBufferPSInitData);
-		EmitUniformBufferVS emitUniformBufferVSInitData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0},
-														   {2.0 / texWidth, 2.0 / texHeight, 1.0 / texWidth - 1.0, 1.0 / texHeight - 1.0}};
+		EmitUniformBufferVS emitUniformBufferVSInitData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0},
+														   {2.0f / texWidth, 2.0f / texHeight, 1.0f / texWidth - 1.0f, 1.0f / texHeight - 1.0f}};
 		emitUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(EmitUniformBufferVS), &emitUniformBufferVSInitData);
 		projMatrix.Indentity();
 		viewMatrix.Indentity();
 
-		RenderUniformBufferVS renderUniformBufferVSInitData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
+		RenderUniformBufferVS renderUniformBufferVSInitData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 		renderUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(RenderUniformBufferVS), &renderUniformBufferVSInitData);
 
 		windowRenderPass = nullptr;
@@ -449,7 +449,7 @@ public:
 		glViewport(0, 0, texWidth, texHeight);
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 
-		RenderUniformBufferVS renderUniformBufferVSData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
+		RenderUniformBufferVS renderUniformBufferVSData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 		graphicsDevice->UpdateUniformBuffer(renderUniformBufferVS, sizeof(RenderUniformBufferVS), 0, &renderUniformBufferVSData);
 
 		Effekseer::Backend::DrawParameter drawParam;
