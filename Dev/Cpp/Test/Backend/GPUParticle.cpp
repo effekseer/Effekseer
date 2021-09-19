@@ -25,25 +25,25 @@ std::string ReadFileAll(std::string path)
 	return str;
 }
 
-std::array<UINT8, 3> hsv2rgb(std::array<float, 3> hsv)
+std::array<uint8_t, 3> hsv2rgb(std::array<float, 3> hsv)
 {
 	float h = hsv[0] / 60;
 	float s = hsv[1];
 	float v = hsv[2];
-	std::array<UINT8, 3> rgb;
+	std::array<uint8_t, 3> rgb;
 
 	if (s == 0)
 	{
-		return std::array<UINT8, 3>{(UINT8)(v * 255), (UINT8)(v * 255), (UINT8)(v * 255)};
+		return std::array<uint8_t, 3>{(uint8_t)(v * 255), (uint8_t)(v * 255), (uint8_t)(v * 255)};
 	}
 
 	int i = h;
 	float f = h - i;
 
-	UINT8 v0 = v * 255;
-	UINT8 v1 = v * (1 - s) * 255;
-	UINT8 v2 = v * (1 - s * f) * 255;
-	UINT8 v3 = v * (1 - s * (1 - f)) * 255;
+	uint8_t v0 = v * 255;
+	uint8_t v1 = v * (1 - s) * 255;
+	uint8_t v2 = v * (1 - s * f) * 255;
+	uint8_t v3 = v * (1 - s * (1 - f)) * 255;
 
 	switch (i)
 	{
@@ -109,7 +109,8 @@ public:
 		Effekseer::Backend::DepthTextureParameter depthTexParam;
 		depthTexParam.Size = texParam.Size;
 
-		renderPass = graphicsDevice->CreateRenderPass(textures, graphicsDevice->CreateDepthTexture(depthTexParam));
+		auto depthTex = graphicsDevice->CreateDepthTexture(depthTexParam);
+		renderPass = graphicsDevice->CreateRenderPass(textures, depthTex);
 	}
 };
 
@@ -401,13 +402,13 @@ public:
 
 		UpdateUniformBufferPS updateUniformBufferPSInitData = {{1.0, 0, 0, 0}};
 		updateUniformBufferPS = graphicsDevice->CreateUniformBuffer(sizeof(UpdateUniformBufferPS), &updateUniformBufferPSInitData);
-		EmitUniformBufferVS emitUniformBufferVSInitData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0},
-														   {2.0 / texWidth, 2.0 / texHeight, 1.0 / texWidth - 1.0, 1.0 / texHeight - 1.0}};
+		EmitUniformBufferVS emitUniformBufferVSInitData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0},
+														   {2.0f / texWidth, 2.0f / texHeight, 1.0f / texWidth - 1.0f, 1.0f / texHeight - 1.0f}};
 		emitUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(EmitUniformBufferVS), &emitUniformBufferVSInitData);
 		projMatrix.Indentity();
 		viewMatrix.Indentity();
 
-		RenderUniformBufferVS renderUniformBufferVSInitData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
+		RenderUniformBufferVS renderUniformBufferVSInitData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 		renderUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(RenderUniformBufferVS), &renderUniformBufferVSInitData);
 
 		windowRenderPass = nullptr;
@@ -448,7 +449,7 @@ public:
 		glViewport(0, 0, texWidth, texHeight);
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 
-		RenderUniformBufferVS renderUniformBufferVSData = {{texWidth - 1, 31 - clz32(texWidth), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
+		RenderUniformBufferVS renderUniformBufferVSData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 		graphicsDevice->UpdateUniformBuffer(renderUniformBufferVS, sizeof(RenderUniformBufferVS), 0, &renderUniformBufferVSData);
 
 		Effekseer::Backend::DrawParameter drawParam;
