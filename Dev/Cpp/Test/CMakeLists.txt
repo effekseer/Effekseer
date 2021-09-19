@@ -24,6 +24,7 @@ set(effekseer_test_src
     Runtime/ResourceManager.cpp
     Backend/Mesh.cpp
     Backend/RenderPassTest.cpp
+    Backend/GPUParticle.cpp
 )
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
