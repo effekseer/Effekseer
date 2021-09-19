@@ -332,11 +332,11 @@ class GpuParticleContext
 		updateUniformLayoutElements[0].Stage = Effekseer::Backend::ShaderStageType::Pixel;
 		updateUniformLayoutElements[0].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
 		auto updateUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
-			Effekseer::CustomVector<std::string>{"i_ParticleData0", "i_ParticleData1"},
+			Effekseer::CustomVector<Effekseer::CustomString<char>>{"i_ParticleData0", "i_ParticleData1"},
 			updateUniformLayoutElements);
 		updateShader = graphicsDevice->CreateShaderFromCodes(
-			ReadFileAll(DirectoryPath+"GpuParticleShaders/perticle-update.vert.glsl").c_str(),
-			ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str(),
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.vert.glsl").c_str() },
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str() },
 			updateUniformLayout);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> emitUniformLayoutElements;
@@ -350,11 +350,11 @@ class GpuParticleContext
 		emitUniformLayoutElements[1].Stage = Effekseer::Backend::ShaderStageType::Vertex;
 		emitUniformLayoutElements[1].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
 		auto emitUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
-			Effekseer::CustomVector<std::string>{},
+			Effekseer::CustomVector<Effekseer::CustomString<char>>{},
 			emitUniformLayoutElements);
 		emitShader = graphicsDevice->CreateShaderFromCodes(
-			ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str(),
-			ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str(),
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str() },
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str() },
 			emitUniformLayout);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
@@ -372,11 +372,11 @@ class GpuParticleContext
 		renderUniformLayoutElements[2].Stage = Effekseer::Backend::ShaderStageType::Vertex;
 		renderUniformLayoutElements[2].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
 		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
-			Effekseer::CustomVector<std::string>{"ParticleData0", "ParticleData1","ColorTable"},
+			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1","ColorTable"},
 			renderUniformLayoutElements);
 		renderShader = graphicsDevice->CreateShaderFromCodes(
-			ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str(),
-			ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str(),
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str() },
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str() },
 			renderUniformLayout);
 
 		colorTableTexture = createColorTableTexture();
