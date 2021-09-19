@@ -25,25 +25,25 @@ std::string ReadFileAll(std::string path)
 	return str;
 }
 
-std::array<UINT8, 3> hsv2rgb(std::array<float, 3> hsv)
+std::array<uint8_t, 3> hsv2rgb(std::array<float, 3> hsv)
 {
 	float h = hsv[0] / 60;
 	float s = hsv[1];
 	float v = hsv[2];
-	std::array<UINT8, 3> rgb;
+	std::array<uint8_t, 3> rgb;
 
 	if (s == 0)
 	{
-		return std::array<UINT8, 3>{(UINT8)(v * 255), (UINT8)(v * 255), (UINT8)(v * 255)};
+		return std::array<uint8_t, 3>{(uint8_t)(v * 255), (uint8_t)(v * 255), (uint8_t)(v * 255)};
 	}
 
 	int i = h;
 	float f = h - i;
 
-	UINT8 v0 = v * 255;
-	UINT8 v1 = v * (1 - s) * 255;
-	UINT8 v2 = v * (1 - s * f) * 255;
-	UINT8 v3 = v * (1 - s * (1 - f)) * 255;
+	uint8_t v0 = v * 255;
+	uint8_t v1 = v * (1 - s) * 255;
+	uint8_t v2 = v * (1 - s * f) * 255;
+	uint8_t v3 = v * (1 - s * (1 - f)) * 255;
 
 	switch (i)
 	{
