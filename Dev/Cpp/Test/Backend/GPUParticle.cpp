@@ -109,7 +109,8 @@ public:
 		Effekseer::Backend::DepthTextureParameter depthTexParam;
 		depthTexParam.Size = texParam.Size;
 
-		renderPass = graphicsDevice->CreateRenderPass(textures, graphicsDevice->CreateDepthTexture(depthTexParam));
+		auto depthTex = graphicsDevice->CreateDepthTexture(depthTexParam);
+		renderPass = graphicsDevice->CreateRenderPass(textures, depthTex);
 	}
 };
 
