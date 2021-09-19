@@ -8,7 +8,7 @@
 #include <random>
 #include <string>
 #define _USE_MATH_DEFINES
-#include <Effekseer\Effekseer.Matrix44.h>
+#include <Effekseer/Effekseer.Matrix44.h>
 #include <math.h>
 
 struct DataVertex
