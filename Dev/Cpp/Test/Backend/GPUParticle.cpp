@@ -1,10 +1,8 @@
 #include "../TestHelper.h"
 #include "../Window/RenderingWindowGL.h"
 #include "Effekseer.h"
-#include <EffekseerRendererGL.h>
-#include <Effekseer\Utils\Effekseer.CustomAllocator.h>
-
 #include <Effekseer/Utils/Effekseer.CustomAllocator.h>
+#include <EffekseerRendererGL.h>
 #include <fstream>
 #include <iostream>
 #include <random>
