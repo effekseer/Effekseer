@@ -1482,6 +1482,8 @@ void Instance::CalculateMatrix(float deltaFrame)
 			// It should be used a result of past frame
 			auto location = SIMD::Mat43f::Translation(localPosition);
 			location *= m_GenerationLocation;
+			
+			localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation) - m_GenerationLocation.GetTranslation();
 			currentLocalPosition = location.GetTranslation();
 		}
 		else
