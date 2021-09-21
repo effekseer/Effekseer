@@ -199,7 +199,8 @@ class Texture
 		Effekseer::Backend::TextureFormatType format,
 		int32_t samplingCount,
 		bool generateMipmap,
-		std::array<int32_t, 2> size,
+		int32_t dimNum,
+		std::array<int32_t, 3> size,
 		const Effekseer::CustomVector<uint8_t>& initialData,
 		bool isRenderTarget);
 

@@ -498,7 +498,8 @@ bool Texture::Init(
 	Effekseer::Backend::TextureFormatType format,
 	int32_t samplingCount,
 	bool generateMipmap,
-	std::array<int32_t, 2> size,
+	int32_t dimNum,
+	std::array<int32_t, 3> size,
 	const Effekseer::CustomVector<uint8_t>& initialData,
 	bool isRenderTarget)
 {
@@ -641,7 +642,7 @@ bool Texture::Init(
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = Init(param.Format, 1, param.GenerateMipmap, param.Size, param.InitialData, false);
+	auto ret = Init(param.Format, 1, param.GenerateMipmap, param.DimNum, param.Size, param.InitialData, false);
 
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
@@ -650,7 +651,13 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 {
-	auto ret = Init(param.Format, param.SamplingCount, false, param.Size, {}, true);
+	auto ret = Init(param.Format, param.SamplingCount, false, 2, {
+																	 param.Size[0],
+																	 param.Size[1],
+																	 0,
+																 },
+					{},
+					true);
 
 	type_ = Effekseer::Backend::TextureType::Render;
 

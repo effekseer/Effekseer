@@ -2244,6 +2244,7 @@ enum class ShaderStageType
 enum class TextureType
 {
 	Color2D,
+	Color3D,
 	Render,
 	Depth,
 };
@@ -2353,7 +2354,7 @@ class Texture
 protected:
 	TextureType type_ = {};
 	TextureFormatType format_ = {};
-	std::array<int32_t, 2> size_ = {};
+	std::array<int32_t, 3> size_ = {};
 	bool hasMipmap_ = false;
 	int32_t samplingCount_ = 1;
 
@@ -2566,7 +2567,8 @@ struct TextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	bool GenerateMipmap = true;
-	std::array<int32_t, 2> Size;
+	int32_t DimNum = 2;
+	std::array<int32_t, 3> Size;
 	CustomVector<uint8_t> InitialData;
 };
 
