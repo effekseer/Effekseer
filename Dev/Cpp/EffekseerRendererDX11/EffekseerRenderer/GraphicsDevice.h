@@ -199,8 +199,9 @@ class Texture
 		Effekseer::Backend::TextureFormatType format,
 		int32_t samplingCount,
 		bool generateMipmap,
-		int32_t dimNum,
-		std::array<int32_t, 3> size,
+		std::array<int32_t, 2> size,
+		int32_t depth,
+		int32_t arrayLayers,
 		const Effekseer::CustomVector<uint8_t>& initialData,
 		bool isRenderTarget);
 
@@ -398,6 +399,8 @@ public:
 	Effekseer::Backend::TextureRef CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
 
 	Effekseer::Backend::TextureRef CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
+
+	bool CopyTexture(TextureRef& dst, TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer) override;
 
 	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 

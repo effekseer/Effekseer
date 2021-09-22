@@ -2245,6 +2245,7 @@ enum class TextureType
 {
 	Color2D,
 	Color3D,
+	ColorArray2D,
 	Render,
 	Depth,
 };
@@ -2354,7 +2355,7 @@ class Texture
 protected:
 	TextureType type_ = {};
 	TextureFormatType format_ = {};
-	std::array<int32_t, 3> size_ = {};
+	std::array<int32_t, 2> size_ = {};
 	bool hasMipmap_ = false;
 	int32_t samplingCount_ = 1;
 
@@ -2567,8 +2568,9 @@ struct TextureParameter
 {
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
 	bool GenerateMipmap = true;
-	int32_t DimNum = 2;
-	std::array<int32_t, 3> Size;
+	std::array<int32_t, 2> Size;
+	int Depth = 0;
+	int ArrayLayers = 0;
 	CustomVector<uint8_t> InitialData;
 };
 
@@ -2715,6 +2717,11 @@ public:
 	virtual TextureRef CreateDepthTexture(const DepthTextureParameter& param)
 	{
 		return TextureRef{};
+	}
+
+	virtual bool CopyTexture(TextureRef& dst, TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer)
+	{
+		return false;
 	}
 
 	/**

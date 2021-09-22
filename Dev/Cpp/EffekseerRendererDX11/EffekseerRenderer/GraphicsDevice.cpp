@@ -498,8 +498,9 @@ bool Texture::Init(
 	Effekseer::Backend::TextureFormatType format,
 	int32_t samplingCount,
 	bool generateMipmap,
-	int32_t dimNum,
-	std::array<int32_t, 3> size,
+	std::array<int32_t, 2> size,
+	int32_t depth,
+	int32_t arrayLayers,
 	const Effekseer::CustomVector<uint8_t>& initialData,
 	bool isRenderTarget)
 {
@@ -554,25 +555,51 @@ bool Texture::Init(
 	uint32_t quality = 0;
 	device->CheckMultisampleQualityLevels(dxgiFormat, samplingCount, &quality);
 
-	D3D11_TEXTURE2D_DESC TexDesc{};
-	TexDesc.Width = size[0];
-	TexDesc.Height = size[1];
-	TexDesc.MipLevels = generateMipmap ? 0 : 1;
-	TexDesc.ArraySize = 1;
-	TexDesc.Format = dxgiFormat;
-	TexDesc.SampleDesc.Count = samplingCount;
-	TexDesc.SampleDesc.Quality = quality - 1;
-	TexDesc.Usage = D3D11_USAGE_DEFAULT;
-	TexDesc.BindFlags = bindFlag;
-	TexDesc.CPUAccessFlags = 0;
-
-	if (generateMipmap)
+	if (depth == 0)
 	{
-		TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 	}
 	else
 	{
-		TexDesc.MiscFlags = 0;
+		ID3D11Texture3D* texture = nullptr;
+
+		D3D11_TEXTURE3D_DESC texDesc{};
+		texDesc.Width = size[0];
+		texDesc.Height = size[1];
+		texDesc.MipLevels = generateMipmap ? 0 : 1;
+		texDesc.Format = dxgiFormat;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.BindFlags = bindFlag;
+		texDesc.CPUAccessFlags = 0;
+
+		if (generateMipmap)
+		{
+			texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		}
+		else
+		{
+			texDesc.MiscFlags = 0;
+		}
+	}
+
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = size[0];
+	texDesc.Height = size[1];
+	texDesc.MipLevels = generateMipmap ? 0 : 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = dxgiFormat;
+	texDesc.SampleDesc.Count = samplingCount;
+	texDesc.SampleDesc.Quality = quality - 1;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = bindFlag;
+	texDesc.CPUAccessFlags = 0;
+
+	if (generateMipmap)
+	{
+		texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	}
+	else
+	{
+		texDesc.MiscFlags = 0;
 	}
 
 	ID3D11Texture2D* texture = nullptr;
@@ -587,7 +614,7 @@ bool Texture::Init(
 		data.SysMemSlicePitch = sizePerWidth * height;
 	}
 
-	HRESULT hr = device->CreateTexture2D(&TexDesc, hasInitiData && !generateMipmap ? &data : nullptr, &texture);
+	HRESULT hr = device->CreateTexture2D(&texDesc, hasInitiData && !generateMipmap ? &data : nullptr, &texture);
 
 	if (FAILED(hr))
 	{
@@ -596,7 +623,7 @@ bool Texture::Init(
 
 	ID3D11ShaderResourceView* srv = nullptr;
 	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
-	desc.Format = TexDesc.Format;
+	desc.Format = texDesc.Format;
 	desc.ViewDimension = (samplingCount > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 	desc.Texture2D.MostDetailedMip = 0;
 	desc.Texture2D.MipLevels = -1;
@@ -642,7 +669,7 @@ bool Texture::Init(
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
-	auto ret = Init(param.Format, 1, param.GenerateMipmap, param.DimNum, param.Size, param.InitialData, false);
+	auto ret = Init(param.Format, 1, param.GenerateMipmap, param.Size, param.Depth, param.ArrayLayers, param.InitialData, false);
 
 	type_ = Effekseer::Backend::TextureType::Color2D;
 
@@ -651,13 +678,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 {
-	auto ret = Init(param.Format, param.SamplingCount, false, 2, {
-																	 param.Size[0],
-																	 param.Size[1],
-																	 0,
-																 },
-					{},
-					true);
+	auto ret = Init(param.Format, param.SamplingCount, false, param.Size, 0, 0, {}, true);
 
 	type_ = Effekseer::Backend::TextureType::Render;
 
@@ -1170,6 +1191,11 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateDepthTexture(const Effeksee
 	}
 
 	return ret;
+}
+
+bool GraphicsDevice::CopyTexture(TextureRef& dst, TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer)
+{
+	return false;
 }
 
 Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
