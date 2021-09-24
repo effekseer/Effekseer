@@ -412,7 +412,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 		}
 	}
 
-	bool initWithBuffer = samplingCount <= 1;
+	bool woSampling = samplingCount <= 1;
 
 	// Compressed texture
 	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
@@ -426,12 +426,25 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 	const void* initialDataPtr = param.InitialData.size() > 0 ? param.InitialData.data() : nullptr;
 
 	GLint bound = 0;
+	int boundTarget = GL_TEXTURE_BINDING_2D;
+	int target = GL_TEXTURE_2D;
 
-	if (initWithBuffer)
+	if (woSampling)
 	{
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+		if (param.ArrayLayers > 0)
+		{
+			boundTarget = GL_TEXTURE_BINDING_2D_ARRAY;
+			target = GL_TEXTURE_2D_ARRAY;		
+		}
+		else if (param.Depth > 0)
+		{
+			boundTarget = GL_TEXTURE_BINDING_3D;
+			target = GL_TEXTURE_3D;
+		}
+
+		glGetIntegerv(boundTarget, &bound);
 		glGenTextures(1, &buffer_);
-		glBindTexture(GL_TEXTURE_2D, buffer_);
+		glBindTexture(target, buffer_);
 	}
 	else
 	{
@@ -475,7 +488,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 			format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
 		}
 
-		GLExt::glCompressedTexImage2D(GL_TEXTURE_2D,
+		GLExt::glCompressedTexImage2D(target,
 									  0,
 									  format,
 									  param.Size[0],
@@ -557,17 +570,28 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 			return false;
 		}
 
-		if (initWithBuffer)
+		if (woSampling)
 		{
-			glTexImage2D(GL_TEXTURE_2D,
-						 0,
-						 internalFormat,
-						 param.Size[0],
-						 param.Size[1],
-						 0,
-						 format,
-						 type,
-						 initialDataPtr);
+			if(param.ArrayLayers > 0)
+			{
+				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.ArrayLayers, 0, format, type, initialDataPtr);
+			}
+			else if (param.Depth > 0)
+			{
+				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.Depth, 0, format, type, initialDataPtr);			
+			}
+			else
+			{
+				glTexImage2D(target,
+							 0,
+							 internalFormat,
+							 param.Size[0],
+							 param.Size[1],
+							 0,
+							 format,
+							 type,
+							 initialDataPtr);			
+			}
 		}
 		else
 		{
@@ -577,12 +601,12 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 
 	if (param.GenerateMipmap)
 	{
-		GLExt::glGenerateMipmap(GL_TEXTURE_2D);
+		GLExt::glGenerateMipmap(target);
 	}
 
-	if (initWithBuffer)
+	if (woSampling)
 	{
-		glBindTexture(GL_TEXTURE_2D, bound);
+		glBindTexture(target, bound);
 	}
 	else
 	{
@@ -1104,6 +1128,11 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateDepthTexture(const Effeksee
 	}
 
 	return ret;
+}
+
+bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer::Backend::TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer)
+{
+	return false;
 }
 
 Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)

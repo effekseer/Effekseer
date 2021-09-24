@@ -169,12 +169,12 @@ typedef char GLchar;
 #define GL_TEXTURE_2D_ARRAY 0x8C1A
 #define GL_TEXTURE_BINDING_2D_ARRAY 0x8C1D
 #define GL_TEXTURE_3D 0x806F
+#define GL_TEXTURE_BINDING_3D 0x806A
 
 // TODO why redifinition
 //#ifndef GL_WRITE_ONLY
 #define GL_WRITE_ONLY 0x000088b9
 //#endif
-
 
 namespace EffekseerRendererGL
 {
@@ -265,6 +265,28 @@ void glDeleteRenderbuffers(GLsizei n, GLuint* renderbuffers);
 void glRenderbufferStorageMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
 
 void glDrawBuffers(GLsizei n, const GLenum* bufs);
+
+void glTexImage3D(GLenum target,
+				  GLint level,
+				  GLint internalformat,
+				  GLsizei width,
+				  GLsizei height,
+				  GLsizei depth,
+				  GLint border,
+				  GLenum format,
+				  GLenum type,
+				  const void* data);
+
+
+void glCopyTexSubImage3D(GLenum target,
+						 GLint level,
+						 GLint xoffset,
+						 GLint yoffset,
+						 GLint zoffset,
+						 GLint x,
+						 GLint y,
+						 GLsizei width,
+						 GLsizei height);
 
 //----------------------------------------------------------------------------------
 //

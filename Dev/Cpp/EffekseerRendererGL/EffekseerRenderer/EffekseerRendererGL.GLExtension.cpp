@@ -114,6 +114,27 @@ typedef void(EFK_STDCALL* FP_glRenderbufferStorageMultisample)(GLenum target, GL
 
 typedef void(EFK_STDCALL* FP_glDrawBuffers)(GLsizei n, const GLenum* bufs);
 
+typedef void(EFK_STDCALL* FP_glTexImage3D)(GLenum target,
+										   GLint level,
+										   GLint internalformat,
+										   GLsizei width,
+										   GLsizei height,
+										   GLsizei depth,
+										   GLint border,
+										   GLenum format,
+										   GLenum type,
+										   const void* data);
+
+typedef void(EFK_STDCALL* FP_glCopyTexSubImage3D)(GLenum target,
+												  GLint level,
+												  GLint xoffset,
+												  GLint yoffset,
+												  GLint zoffset,
+												  GLint x,
+												  GLint y,
+												  GLsizei width,
+												  GLsizei height);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = nullptr;
 static FP_glCreateShader g_glCreateShader = nullptr;
 static FP_glBindBuffer g_glBindBuffer = nullptr;
@@ -178,6 +199,10 @@ static FP_glDeleteRenderbuffers g_glDeleteRenderbuffers = nullptr;
 static FP_glRenderbufferStorageMultisample g_glRenderbufferStorageMultisample = nullptr;
 
 static FP_glDrawBuffers g_glDrawBuffers = nullptr;
+
+static FP_glTexImage3D g_glTexImage3D = nullptr;
+
+static FP_glCopyTexSubImage3D g_glCopyTexSubImage3D = nullptr;
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
@@ -336,6 +361,10 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	GET_PROC(glRenderbufferStorageMultisample);
 
 	GET_PROC_REQ(glDrawBuffers);
+
+	GET_PROC_REQ(glTexImage3D);
+
+	GET_PROC_REQ(glCopyTexSubImage3D);
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 	g_isSurrpotedBufferRange = (g_glMapBufferRange && g_glUnmapBuffer);
@@ -959,6 +988,43 @@ void glDrawBuffers(GLsizei n, const GLenum* bufs)
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
 #else
 	::glDrawBuffers(n, bufs);
+#endif
+}
+
+void glTexImage3D(GLenum target,
+				  GLint level,
+				  GLint internalformat,
+				  GLsizei width,
+				  GLsizei height,
+				  GLsizei depth,
+				  GLint border,
+				  GLenum format,
+				  GLenum type,
+				  const void* data)
+{
+#if _WIN32
+	g_glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, data);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	::glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, data);
+#endif
+}
+
+void glCopyTexSubImage3D(GLenum target,
+						 GLint level,
+						 GLint xoffset,
+						 GLint yoffset,
+						 GLint zoffset,
+						 GLint x,
+						 GLint y,
+						 GLsizei width,
+						 GLsizei height)
+{
+#if _WIN32
+	g_glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	::glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 #endif
 }
 
