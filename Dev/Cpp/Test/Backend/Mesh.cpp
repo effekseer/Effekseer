@@ -5,6 +5,17 @@
 #include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
 #include "../Window/RenderingWindowDX11.h"
 #include <EffekseerRendererDX11.h>
+
+namespace DX11VS
+{
+#include "../Shaders/HLSL_DX11_Header/mesh_vs.h"
+}
+
+namespace DX11PS
+{
+#include "../Shaders/HLSL_DX11_Header/mesh_ps.h"
+}
+
 #endif
 
 #undef None
@@ -12,90 +23,15 @@
 #include <EffekseerRendererGL.h>
 #include <memory>
 
+#include "../Shaders/GLSL_GL_Header/mesh_ps.h"
+#include "../Shaders/GLSL_GL_Header/mesh_vs.h"
+
 struct SimpleVertex
 {
 	std::array<float, 3> Position;
 	std::array<float, 2> UV;
 	std::array<uint8_t, 4> Color;
 };
-
-static auto vs_shader_gl = R"(
-
-#version 140
-in vec3 in_position;
-in vec2 in_uv;
-in vec4 in_color;
-
-uniform vec4 shift_vertex;
-
-out vec4 vsps_color;
-
-void main(void)
-{
-    gl_Position = vec4(in_position, 1.0) + shift_vertex;
-    vsps_color = in_color;	
-}
-
-)";
-
-static auto ps_shader_gl = R"(
-
-#version 140
-in vec4 vsps_color;
-
-out vec4 fragColor;
-
-void main(void)
-{
-    fragColor = vsps_color;
-}
-
-)";
-
-static auto vs_shader_dx11 = R"(
-
-struct VS_Input
-{
-	float3 Pos : POSITION0;
-	float2 UV : TEXCOORD0;
-	float4 Color : NORMAL0;
-};
-
-struct VS_Output
-{
-	float4 Pos : SV_POSITION;
-	float2 UV : TEXCOORD0;
-	float4 Color : COLOR0;
-};
-
-float4 shift_vertex : register(c0);
-
-VS_Output main(const VS_Input input)
-{
-	VS_Output output = (VS_Output)0;
-	output.Pos =float4(input.Pos.x, input.Pos.y, input.Pos.z, 1.0) + shift_vertex;
-	output.UV = input.UV;
-	output.Color = input.Color;
-	return output;
-}
-
-)";
-
-static auto ps_shader_dx11 = R"(
-
-struct PS_Input
-{
-	float4 Pos : SV_POSITION;
-	float2 UV : TEXCOORD0;
-	float4 Color : COLOR0;
-};
-
-float4 main(PS_Input input): SV_Target
-{
-	return input.Color;
-}
-
-)";
 
 Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderingWindowGL* window)
 {
@@ -120,13 +56,13 @@ Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::Graphic
 
 Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
 {
-	return graphicsDevice->CreateShaderFromCodes({{vs_shader_gl}}, {{ps_shader_gl}}, layout);
+	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, layout);
 }
 
 #ifdef _WIN32
 Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
 {
-	return graphicsDevice->CreateShaderFromCodes({{vs_shader_dx11}}, {{ps_shader_dx11}}, layout);
+	return graphicsDevice->CreateShaderFromBinary(DX11VS::g_main, sizeof(DX11VS::g_main), DX11PS::g_main, sizeof(DX11PS::g_main));
 }
 #endif
 
@@ -173,7 +109,7 @@ void Backend_Mesh()
 
 	// shader
 	Effekseer::Backend::UniformLayoutElement uniformLayoutElement;
-	uniformLayoutElement.Name = "shift_vertex";
+	uniformLayoutElement.Name = "CBVS0.shift_vertex";
 	uniformLayoutElement.Offset = 0;
 	uniformLayoutElement.Stage = Effekseer::Backend::ShaderStageType::Vertex;
 	uniformLayoutElement.Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
@@ -189,15 +125,15 @@ void Backend_Mesh()
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(3);
 	vertexLayoutElements[0].Format = Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT;
-	vertexLayoutElements[0].Name = "in_position";
+	vertexLayoutElements[0].Name = "input_Pos";
 	vertexLayoutElements[0].SemanticIndex = 0;
 	vertexLayoutElements[0].SemanticName = "POSITION";
 	vertexLayoutElements[1].Format = Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
-	vertexLayoutElements[1].Name = "in_uv";
+	vertexLayoutElements[1].Name = "input_UV";
 	vertexLayoutElements[1].SemanticIndex = 0;
 	vertexLayoutElements[1].SemanticName = "TEXCOORD";
 	vertexLayoutElements[2].Format = Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM;
-	vertexLayoutElements[2].Name = "in_color";
+	vertexLayoutElements[2].Name = "input_Color";
 	vertexLayoutElements[2].SemanticIndex = 0;
 	vertexLayoutElements[2].SemanticName = "NORMAL";
 
