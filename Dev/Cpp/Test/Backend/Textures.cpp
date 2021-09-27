@@ -4,16 +4,13 @@
 #include "../Window/RenderingWindowGL.h"
 
 #ifdef _WIN32
-#include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
-#include "../Window/RenderingWindowDX11.h"
-#include <EffekseerRendererDX11.h>
 
-namespace DX11VS_Mesh
+namespace DX11VS
 {
 #include "../Shaders/HLSL_DX11_Header/mesh_vs.h"
 }
 
-namespace DX11PS_Mesh
+namespace DX11PS
 {
 #include "../Shaders/HLSL_DX11_Header/mesh_ps.h"
 }
@@ -21,31 +18,29 @@ namespace DX11PS_Mesh
 #endif
 
 #undef None
-#include "../../EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h"
-#include <EffekseerRendererGL.h>
 #include <memory>
 
 #include "../Shaders/GLSL_GL_Header/mesh_ps.h"
 #include "../Shaders/GLSL_GL_Header/mesh_vs.h"
 
-Effekseer::Backend::ShaderRef GenerateShader_Mesh(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
+Effekseer::Backend::ShaderRef GenerateShader_Textures(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
 {
 	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, layout);
 }
 
 #ifdef _WIN32
-Effekseer::Backend::ShaderRef GenerateShader_Mesh(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
+Effekseer::Backend::ShaderRef GenerateShader_Textures(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
 {
-	return graphicsDevice->CreateShaderFromBinary(DX11VS_Mesh::g_main, sizeof(DX11VS_Mesh::g_main), DX11PS_Mesh::g_main, sizeof(DX11PS_Mesh::g_main));
+	return graphicsDevice->CreateShaderFromBinary(DX11VS::g_main, sizeof(DX11VS::g_main), DX11PS::g_main, sizeof(DX11PS::g_main));
 }
 #endif
 
 template <typename WINDOW>
-void Backend_Mesh()
+void Backend_Textures()
 {
-	auto window = std::make_shared<WINDOW>(std::array<int, 2>({1280, 720}), "Backend.Mesh");
+	auto window = std::make_shared<WINDOW>(std::array<int, 2>({1280, 720}), "Backend.Textures");
 
-	auto graphicsDevice = GenerateGraphicsDevice(window.get());
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice = GenerateGraphicsDevice(window.get());
 
 	std::array<SimpleVertex, 4> vbData;
 	vbData[0].Position = {-0.5f, 0.5f, 0.5f};
@@ -82,7 +77,7 @@ void Backend_Mesh()
 	auto cb = graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data());
 	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
-	auto shader = GenerateShader_Mesh(graphicsDevice, uniformLayout, window.get());
+	auto shader = GenerateShader_Textures(graphicsDevice, uniformLayout, window.get());
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(3);
@@ -101,6 +96,19 @@ void Backend_Mesh()
 
 	auto vertexLayout = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 
+	// Create textures
+	Effekseer::Backend::TextureParameter texParamSrc1;
+	texParamSrc1.GenerateMipmap = false;
+	texParamSrc1.Size = {1, 1};
+	texParamSrc1.InitialData = {255, 0, 0, 255};
+	auto texSrc1 = graphicsDevice->CreateTexture(texParamSrc1);
+
+	Effekseer::Backend::TextureParameter texParamSrc2;
+	texParamSrc1.GenerateMipmap = false;
+	texParamSrc1.Size = {1, 1};
+	texParamSrc1.InitialData = {0, 255, 0, 255};
+	auto texSrc2 = graphicsDevice->CreateTexture(texParamSrc2);
+
 	Effekseer::Backend::PipelineStateParameter pipParam;
 
 	// OpenGL doesn't require it
@@ -116,11 +124,13 @@ void Backend_Mesh()
 	int count = 0;
 	while (count < 60 && window->DoEvent())
 	{
+		// Copy textures
+
 		graphicsDevice->BeginRenderPass(renderPass, true, true, Effekseer::Color(80, 80, 80, 255));
 
-		shiftVertex[0] += 0.01f;
-		shiftVertex[0] = fmodf(shiftVertex[0], 0.5f);
 		graphicsDevice->UpdateUniformBuffer(cb, sizeof(float) * 4, 0, shiftVertex.data());
+
+		// Specify textures
 
 		Effekseer::Backend::DrawParameter drawParam;
 		drawParam.VertexBufferPtr = vb;
@@ -139,10 +149,10 @@ void Backend_Mesh()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh<RenderingWindowGL>(); });
+TestRegister Test_Backend_Textures_GL("Backend.Textures_GL", []() -> void { Backend_Textures<RenderingWindowGL>(); });
 
 #ifdef _WIN32
-TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh<RenderingWindowDX11>(); });
+TestRegister Test_Backend_Textures_DX11("Backend.Textures_DX11", []() -> void { Backend_Textures<RenderingWindowDX11>(); });
 #endif
 
 #endif
