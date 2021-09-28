@@ -231,7 +231,7 @@ public:
 			return texture2d_.get();
 		}
 
-		texture3d_.get();
+		return texture3d_.get();
 	}
 
 	ID3D11ShaderResourceView* GetSRV() const

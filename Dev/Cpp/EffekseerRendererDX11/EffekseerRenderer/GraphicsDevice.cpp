@@ -638,6 +638,7 @@ bool Texture::Init(
 		D3D11_TEXTURE3D_DESC texDesc{};
 		texDesc.Width = size[0];
 		texDesc.Height = size[1];
+		texDesc.Depth = depth;
 		texDesc.MipLevels = generateMipmap ? 0 : 1;
 		texDesc.Format = dxgiFormat;
 		texDesc.Usage = D3D11_USAGE_DEFAULT;

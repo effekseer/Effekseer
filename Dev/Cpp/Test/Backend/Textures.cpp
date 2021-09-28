@@ -12,7 +12,7 @@ namespace DX11VS
 
 namespace DX11PS
 {
-#include "../Shaders/HLSL_DX11_Header/mesh_ps.h"
+#include "../Shaders/HLSL_DX11_Header/textures_ps.h"
 }
 
 #endif
@@ -20,12 +20,12 @@ namespace DX11PS
 #undef None
 #include <memory>
 
-#include "../Shaders/GLSL_GL_Header/mesh_ps.h"
 #include "../Shaders/GLSL_GL_Header/mesh_vs.h"
+#include "../Shaders/GLSL_GL_Header/textures_ps.h"
 
 Effekseer::Backend::ShaderRef GenerateShader_Textures(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
 {
-	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, layout);
+	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_textures_ps}}, layout);
 }
 
 #ifdef _WIN32
@@ -45,12 +45,16 @@ void Backend_Textures()
 	std::array<SimpleVertex, 4> vbData;
 	vbData[0].Position = {-0.5f, 0.5f, 0.5f};
 	vbData[0].Color = {0, 0, 0, 255};
+	vbData[0].UV = {0.0f, 0.0f};
 	vbData[1].Position = {0.5f, 0.5f, 0.5f};
 	vbData[1].Color = {255, 0, 0, 255};
+	vbData[1].UV = {1.0f, 0.0f};
 	vbData[2].Position = {0.5f, -0.5f, 0.5f};
 	vbData[2].Color = {255, 255, 0, 255};
+	vbData[2].UV = {1.0f, 1.0f};
 	vbData[3].Position = {-0.5f, -0.5f, 0.5f};
 	vbData[3].Color = {0, 255, 0, 255};
+	vbData[3].UV = {0.0f, 1.0f};
 
 	auto vb = graphicsDevice->CreateVertexBuffer(sizeof(SimpleVertex) * 4, vbData.data(), false);
 
@@ -104,10 +108,36 @@ void Backend_Textures()
 	auto texSrc1 = graphicsDevice->CreateTexture(texParamSrc1);
 
 	Effekseer::Backend::TextureParameter texParamSrc2;
-	texParamSrc1.GenerateMipmap = false;
-	texParamSrc1.Size = {1, 1};
-	texParamSrc1.InitialData = {0, 255, 0, 255};
+	texParamSrc2.GenerateMipmap = false;
+	texParamSrc2.Size = {1, 1};
+	texParamSrc2.InitialData = {0, 255, 0, 255};
 	auto texSrc2 = graphicsDevice->CreateTexture(texParamSrc2);
+
+	Effekseer::Backend::TextureParameter texParamSrc3;
+	texParamSrc3.GenerateMipmap = false;
+	texParamSrc3.Size = {1, 1};
+	texParamSrc3.InitialData = {0, 0, 255, 255};
+	auto texSrc3 = graphicsDevice->CreateTexture(texParamSrc3);
+
+	Effekseer::Backend::TextureParameter texParamDst1;
+	texParamDst1.GenerateMipmap = false;
+	texParamDst1.Size = {1, 1};
+	texParamSrc3.InitialData.resize(4);
+	auto texDst1 = graphicsDevice->CreateTexture(texParamDst1);
+
+	Effekseer::Backend::TextureParameter texParamDst2;
+	texParamDst2.GenerateMipmap = false;
+	texParamDst2.Size = {1, 1};
+	texParamDst2.ArrayLayers = 3;
+	texParamSrc3.InitialData.resize(12);
+	auto texDst2 = graphicsDevice->CreateTexture(texParamDst2);
+
+	Effekseer::Backend::TextureParameter texParamDst3;
+	texParamDst3.GenerateMipmap = false;
+	texParamDst3.Size = {1, 1};
+	texParamDst3.Depth = 3;
+	texParamSrc3.InitialData.resize(12);
+	auto texDst3 = graphicsDevice->CreateTexture(texParamDst3);
 
 	Effekseer::Backend::PipelineStateParameter pipParam;
 
@@ -124,15 +154,29 @@ void Backend_Textures()
 	int count = 0;
 	while (count < 60 && window->DoEvent())
 	{
-		// Copy textures
+		graphicsDevice->CopyTexture(texDst1, texSrc1, {0, 0, 0}, {0, 0, 0}, {1, 1, 1}, 0, 0);
+		graphicsDevice->CopyTexture(texDst2, texSrc2, {0, 0, 1}, {0, 0, 0}, {1, 1, 1}, 1, 0);
+		graphicsDevice->CopyTexture(texDst3, texSrc3, {0, 0, 1}, {0, 0, 0}, {1, 1, 1}, 0, 0);
 
 		graphicsDevice->BeginRenderPass(renderPass, true, true, Effekseer::Color(80, 80, 80, 255));
 
 		graphicsDevice->UpdateUniformBuffer(cb, sizeof(float) * 4, 0, shiftVertex.data());
 
-		// Specify textures
-
 		Effekseer::Backend::DrawParameter drawParam;
+
+		drawParam.TextureCount = 3;
+		drawParam.TexturePtrs[0] = texDst1;
+		drawParam.TextureSamplingTypes[0] = Effekseer::Backend::TextureSamplingType::Nearest;
+		drawParam.TextureWrapTypes[0] = Effekseer::Backend::TextureWrapType::Clamp;
+
+		drawParam.TexturePtrs[1] = texDst2;
+		drawParam.TextureSamplingTypes[1] = Effekseer::Backend::TextureSamplingType::Nearest;
+		drawParam.TextureWrapTypes[1] = Effekseer::Backend::TextureWrapType::Clamp;
+
+		drawParam.TexturePtrs[2] = texDst3;
+		drawParam.TextureSamplingTypes[2] = Effekseer::Backend::TextureSamplingType::Nearest;
+		drawParam.TextureWrapTypes[2] = Effekseer::Backend::TextureWrapType::Clamp;
+
 		drawParam.VertexBufferPtr = vb;
 		drawParam.IndexBufferPtr = ib;
 		drawParam.PipelineStatePtr = pip;
