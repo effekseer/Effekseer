@@ -151,7 +151,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 
 	LLGI::TextureInitializationParameter texParam;
 	texParam.Size = LLGI::Vec2I(param.Size[0], param.Size[1]);
-	texParam.MipMapCount = param.GenerateMipmap ? count : 1;
+	texParam.MipMapCount = param.MipLevelCount < 1 ? count : param.MipLevelCount;
 
 	// TODO : Fix it
 	texParam.MipMapCount = 1;

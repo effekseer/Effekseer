@@ -1156,7 +1156,7 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 		return false;
 	}
 
-	if (srcgl->GetTarget() != GL_TEXTURE_3D && dstPos[2] != 0)
+	if (dstgl->GetTarget() != GL_TEXTURE_3D && dstPos[2] != 0)
 	{
 		return false;
 	}

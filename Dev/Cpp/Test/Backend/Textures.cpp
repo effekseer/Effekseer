@@ -105,40 +105,45 @@ void Backend_Textures()
 
 	// Create textures
 	Effekseer::Backend::TextureParameter texParamSrc1;
-	texParamSrc1.GenerateMipmap = false;
-	texParamSrc1.Size = {1, 1};
+	texParamSrc1.MipLevelCount = 1;
+	texParamSrc1.Size = {1, 1, 1};
+	texParamSrc1.Dimension = 2;
 	texParamSrc1.InitialData = {255, 0, 0, 255};
 	auto texSrc1 = graphicsDevice->CreateTexture(texParamSrc1);
 
 	Effekseer::Backend::TextureParameter texParamSrc2;
-	texParamSrc2.GenerateMipmap = false;
-	texParamSrc2.Size = {1, 1};
+	texParamSrc2.MipLevelCount = 1;
+	texParamSrc2.Size = {1, 1, 1};
+	texParamSrc2.Dimension = 2;
 	texParamSrc2.InitialData = {0, 255, 0, 255};
 	auto texSrc2 = graphicsDevice->CreateTexture(texParamSrc2);
 
 	Effekseer::Backend::TextureParameter texParamSrc3;
-	texParamSrc3.GenerateMipmap = false;
-	texParamSrc3.Size = {1, 1};
+	texParamSrc3.MipLevelCount = 1;
+	texParamSrc3.Size = {1, 1, 1};
+	texParamSrc3.Dimension = 2;
 	texParamSrc3.InitialData = {0, 0, 255, 255};
 	auto texSrc3 = graphicsDevice->CreateTexture(texParamSrc3);
 
 	Effekseer::Backend::TextureParameter texParamDst1;
-	texParamDst1.GenerateMipmap = false;
-	texParamDst1.Size = {1, 1};
+	texParamDst1.MipLevelCount = 1;
+	texParamDst1.Size = {1, 1, 1};
+	texParamDst1.Dimension = 2;
 	texParamDst1.InitialData.resize(4);
 	auto texDst1 = graphicsDevice->CreateTexture(texParamDst1);
 
 	Effekseer::Backend::TextureParameter texParamDst2;
-	texParamDst2.GenerateMipmap = false;
-	texParamDst2.Size = {1, 1};
+	texParamDst2.MipLevelCount = 1;
+	texParamDst2.Size = {1, 1, 3};
 	texParamDst2.ArrayLayers = 3;
+	texParamDst2.Dimension = 3;
 	texParamDst2.InitialData.resize(12);
 	auto texDst2 = graphicsDevice->CreateTexture(texParamDst2);
 
 	Effekseer::Backend::TextureParameter texParamDst3;
-	texParamDst3.GenerateMipmap = false;
-	texParamDst3.Size = {1, 1};
-	texParamDst3.Depth = 3;
+	texParamDst3.MipLevelCount = 1;
+	texParamDst3.Size = {1, 1, 3};
+	texParamDst3.Dimension = 3;
 	texParamDst3.InitialData.resize(12);
 	auto texDst3 = graphicsDevice->CreateTexture(texParamDst3);
 

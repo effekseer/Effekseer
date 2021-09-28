@@ -405,13 +405,21 @@ struct PipelineStateParameter
 	FrameBufferRef FrameBufferPtr;
 };
 
+enum class TextureUsageType
+{
+	None = 0,
+	RenderTarget = 1 << 0,
+	Array = 1 << 1,
+};
+
 struct TextureParameter
 {
+	TextureUsageType Usage = TextureUsageType::None;
 	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
-	bool GenerateMipmap = true;
-	std::array<int32_t, 2> Size;
-	int Depth = 0;
-	int ArrayLayers = 0;
+	int32_t Dimension;
+	std::array<int32_t, 3> Size;
+	int32_t MipLevelCount = 1;
+	int SampleCount = 1;
 	CustomVector<uint8_t> InitialData;
 };
 
