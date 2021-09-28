@@ -434,7 +434,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 		if (param.ArrayLayers > 0)
 		{
 			boundTarget = GL_TEXTURE_BINDING_2D_ARRAY;
-			target = GL_TEXTURE_2D_ARRAY;		
+			target = GL_TEXTURE_2D_ARRAY;
 		}
 		else if (param.Depth > 0)
 		{
@@ -572,13 +572,13 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 
 		if (woSampling)
 		{
-			if(param.ArrayLayers > 0)
+			if (param.ArrayLayers > 0)
 			{
 				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.ArrayLayers, 0, format, type, initialDataPtr);
 			}
 			else if (param.Depth > 0)
 			{
-				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.Depth, 0, format, type, initialDataPtr);			
+				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.Depth, 0, format, type, initialDataPtr);
 			}
 			else
 			{
@@ -590,7 +590,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 							 0,
 							 format,
 							 type,
-							 initialDataPtr);			
+							 initialDataPtr);
 			}
 		}
 		else
@@ -613,6 +613,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, bound);
 	}
 
+	target_ = target;
 	size_ = param.Size;
 	format_ = param.Format;
 	hasMipmap_ = param.GenerateMipmap;
@@ -625,7 +626,18 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
 	auto ret = InitInternal(param, 1);
 
-	type_ = Effekseer::Backend::TextureType::Color2D;
+	if (param.Depth > 0)
+	{
+		type_ = Effekseer::Backend::TextureType::Color3D;
+	}
+	else if (param.ArrayLayers > 0)
+	{
+		type_ = Effekseer::Backend::TextureType::ColorArray2D;
+	}
+	else
+	{
+		type_ = Effekseer::Backend::TextureType::Color2D;
+	}
 
 	return ret;
 }
@@ -1012,10 +1024,14 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEna
 		glGetIntegerv(GL_MAX_VARYING_VECTORS, &v);
 		properties_[DevicePropertyType::MaxVaryingVectors] = v;
 	}
+
+	GLExt::glGenFramebuffers(1, &frameBufferTemp_);
 }
 
 GraphicsDevice::~GraphicsDevice()
 {
+	GLExt::glDeleteFramebuffers(1, &frameBufferTemp_);
+
 	if (isValid_)
 	{
 		if (deviceType_ == OpenGLDeviceType::OpenGL3 || deviceType_ == OpenGLDeviceType::OpenGLES3)
@@ -1132,7 +1148,44 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateDepthTexture(const Effeksee
 
 bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer::Backend::TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer)
 {
-	return false;
+	auto dstgl = dst.DownCast<Texture>();
+	auto srcgl = src.DownCast<Texture>();
+
+	if (srcgl->GetTarget() != GL_TEXTURE_2D)
+	{
+		return false;
+	}
+
+	if (srcgl->GetTarget() != GL_TEXTURE_3D && dstPos[2] != 0)
+	{
+		return false;
+	}
+
+	GLint backupFramebuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+
+	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, frameBufferTemp_);
+	GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcgl->GetBuffer(), 0);
+	GLCheckError();
+
+	if (dstgl->GetTarget() == GL_TEXTURE_2D)
+	{
+		glBindTexture(dstgl->GetTarget(), dstgl->GetBuffer());
+		glCopyTexSubImage2D(dstgl->GetTarget(), 0, dstPos[0], dstPos[1], srcPos[0], srcPos[1], size[0], size[1]);
+		GLCheckError();
+	}
+	else
+	{
+		glBindTexture(dstgl->GetTarget(), dstgl->GetBuffer());
+		GLExt::glCopyTexSubImage3D(dstgl->GetTarget(), 0, dstPos[0], dstPos[1], dstPos[2] + dstLayer, srcPos[0], srcPos[1], size[0], size[1]);
+		GLCheckError();
+	}
+
+	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+
+	GLCheckError();
+
+	return true;
 }
 
 Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t size, const void* initialData)
@@ -1248,7 +1301,9 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		if (texture != nullptr)
 		{
 			GLExt::glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, texture->GetBuffer());
+			glBindTexture(texture->GetTarget(), texture->GetBuffer());
+
+			GLCheckError();
 
 			static const GLint glfilterMin[] = {GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
 			static const GLint glfilterMin_NoneMipmap[] = {GL_NEAREST, GL_LINEAR};
@@ -1308,8 +1363,12 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 			}
+
+			GLCheckError();
 		}
 	}
+
+	GLCheckError();
 
 	// uniformss
 	StoreUniforms(pip->GetParam().ShaderPtr.DownCast<Backend::Shader>(),
@@ -1499,6 +1558,8 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 #endif
 	}
 
+	GLCheckError();
+
 	GLbitfield flag = 0;
 
 	if (isColorCleared)
@@ -1524,7 +1585,6 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 void GraphicsDevice::EndRenderPass()
 {
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	GLCheckError();
 }
 

@@ -79,7 +79,10 @@ void Backend_Textures()
 	std::array<float, 4> shiftVertex;
 	shiftVertex.fill(0);
 	auto cb = graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data());
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
+
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
+		Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler1", "Sampler_g_sampler2", "Sampler_g_sampler3"},
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
 	auto shader = GenerateShader_Textures(graphicsDevice, uniformLayout, window.get());
 
@@ -122,21 +125,21 @@ void Backend_Textures()
 	Effekseer::Backend::TextureParameter texParamDst1;
 	texParamDst1.GenerateMipmap = false;
 	texParamDst1.Size = {1, 1};
-	texParamSrc3.InitialData.resize(4);
+	texParamDst1.InitialData.resize(4);
 	auto texDst1 = graphicsDevice->CreateTexture(texParamDst1);
 
 	Effekseer::Backend::TextureParameter texParamDst2;
 	texParamDst2.GenerateMipmap = false;
 	texParamDst2.Size = {1, 1};
 	texParamDst2.ArrayLayers = 3;
-	texParamSrc3.InitialData.resize(12);
+	texParamDst2.InitialData.resize(12);
 	auto texDst2 = graphicsDevice->CreateTexture(texParamDst2);
 
 	Effekseer::Backend::TextureParameter texParamDst3;
 	texParamDst3.GenerateMipmap = false;
 	texParamDst3.Size = {1, 1};
 	texParamDst3.Depth = 3;
-	texParamSrc3.InitialData.resize(12);
+	texParamDst3.InitialData.resize(12);
 	auto texDst3 = graphicsDevice->CreateTexture(texParamDst3);
 
 	Effekseer::Backend::PipelineStateParameter pipParam;
@@ -155,7 +158,7 @@ void Backend_Textures()
 	while (count < 60 && window->DoEvent())
 	{
 		graphicsDevice->CopyTexture(texDst1, texSrc1, {0, 0, 0}, {0, 0, 0}, {1, 1, 1}, 0, 0);
-		graphicsDevice->CopyTexture(texDst2, texSrc2, {0, 0, 1}, {0, 0, 0}, {1, 1, 1}, 1, 0);
+		graphicsDevice->CopyTexture(texDst2, texSrc2, {0, 0, 0}, {0, 0, 0}, {1, 1, 1}, 1, 0);
 		graphicsDevice->CopyTexture(texDst3, texSrc3, {0, 0, 1}, {0, 0, 0}, {1, 1, 1}, 0, 0);
 
 		graphicsDevice->BeginRenderPass(renderPass, true, true, Effekseer::Color(80, 80, 80, 255));

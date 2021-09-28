@@ -579,18 +579,22 @@ bool Texture::Init(
 		}
 
 		ID3D11Texture2D* texture = nullptr;
-		D3D11_SUBRESOURCE_DATA data = {};
+		std::vector<D3D11_SUBRESOURCE_DATA> data;
 
-		bool hasInitiData = initialData.size() > 0;
+		bool hasInitData = initialData.size() > 0;
 
-		if (hasInitiData)
+		if (hasInitData)
 		{
-			data.pSysMem = initialData.data();
-			data.SysMemPitch = sizePerWidth;
-			data.SysMemSlicePitch = sizePerWidth * height;
+			data.resize(texDesc.ArraySize);
+			for (int i = 0; i < texDesc.ArraySize; i++)
+			{
+				data[i].pSysMem = initialData.data() + (sizePerWidth * height * i);
+				data[i].SysMemPitch = sizePerWidth;
+				data[i].SysMemSlicePitch = sizePerWidth * height;
+			}
 		}
 
-		HRESULT hr = device->CreateTexture2D(&texDesc, hasInitiData && !generateMipmap ? &data : nullptr, &texture);
+		HRESULT hr = device->CreateTexture2D(&texDesc, hasInitData && !generateMipmap ? data.data() : nullptr, &texture);
 
 		if (FAILED(hr))
 		{
@@ -600,15 +604,18 @@ bool Texture::Init(
 		ID3D11ShaderResourceView* srv = nullptr;
 		D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
 		desc.Format = texDesc.Format;
-		desc.ViewDimension = (samplingCount > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 
 		if (arrayLayers > 0)
 		{
-			desc.Texture2D.MostDetailedMip = 0;
-			desc.Texture2D.MipLevels = -1;
+			desc.ViewDimension = (samplingCount > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY : D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+			desc.Texture2DArray.ArraySize = arrayLayers;
+			desc.Texture2DArray.FirstArraySlice = 0;
+			desc.Texture2DArray.MostDetailedMip = 0;
+			desc.Texture2DArray.MipLevels = -1;
 		}
 		else
 		{
+			desc.ViewDimension = (samplingCount > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 			desc.Texture2D.MostDetailedMip = 0;
 			desc.Texture2D.MipLevels = -1;
 		}
@@ -623,9 +630,19 @@ bool Texture::Init(
 		// Generate mipmap
 		if (generateMipmap)
 		{
-			if (hasInitiData)
+			if (hasInitData)
 			{
-				context->UpdateSubresource(texture, 0, 0, data.pSysMem, data.SysMemPitch, data.SysMemSlicePitch);
+				for (int i = 0; i < texDesc.ArraySize; i++)
+				{
+					D3D11_BOX box;
+					box.left = 0;
+					box.top = 0;
+					box.right = size[0];
+					box.bottom = size[1];
+					box.front = 0;
+					box.back = 1;
+					context->UpdateSubresource(texture, i, &box, data[i].pSysMem, data[i].SysMemPitch, data[i].SysMemSlicePitch);
+				}
 			}
 			context->GenerateMips(srv);
 		}
@@ -724,7 +741,18 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 {
 	auto ret = Init(param.Format, 1, param.GenerateMipmap, param.Size, param.Depth, param.ArrayLayers, param.InitialData, false);
 
-	type_ = Effekseer::Backend::TextureType::Color2D;
+	if (param.Depth > 0)
+	{
+		type_ = Effekseer::Backend::TextureType::Color3D;
+	}
+	else if (param.ArrayLayers > 0)
+	{
+		type_ = Effekseer::Backend::TextureType::ColorArray2D;
+	}
+	else
+	{
+		type_ = Effekseer::Backend::TextureType::Color2D;
+	}
 
 	return ret;
 }
@@ -1253,14 +1281,14 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 
 	D3D11_BOX box;
 	box.left = srcPos[0];
-	box.front = srcPos[1];
-	box.top = srcPos[2];
+	box.top = srcPos[1];
+	box.front = srcPos[2] + srcLayer;
 
 	box.right = srcPos[0] + size[0];
-	box.back = srcPos[1] + size[1];
-	box.bottom = srcPos[2] + size[2];
+	box.bottom = srcPos[1] + size[1];
+	box.back = srcPos[2] + size[2];
 
-	context_->CopySubresourceRegion(dstdx11, 0, dstPos[0], dstPos[1], dstPos[2], srcdx11, 0, &box);
+	context_->CopySubresourceRegion(dstdx11, dstLayer, dstPos[0], dstPos[1], dstPos[2], srcdx11, srcLayer, &box);
 
 	return true;
 }

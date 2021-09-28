@@ -163,6 +163,7 @@ class Texture
 private:
 	GLuint buffer_ = 0;
 	GLuint renderbuffer_ = 0;
+	int32_t target_ = -1;
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void()> onDisposed_;
@@ -189,6 +190,11 @@ public:
 	GLuint GetRenderBuffer() const
 	{
 		return renderbuffer_;
+	}
+
+	int32_t GetTarget() const
+	{
+		return target_;
 	}
 };
 
@@ -330,6 +336,7 @@ private:
 	std::set<DeviceObject*> objects_;
 	OpenGLDeviceType deviceType_;
 	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
+	GLuint frameBufferTemp_ = 0;
 	std::map<DevicePropertyType, int> properties_;
 	bool isValid_ = true;
 
