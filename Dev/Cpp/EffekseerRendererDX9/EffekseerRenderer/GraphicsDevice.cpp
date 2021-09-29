@@ -275,7 +275,7 @@ Texture::~Texture()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
 {
 	if (param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM ||
 		param.Format == Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM_SRGB)
@@ -299,7 +299,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	int32_t sizePerWidth = 0;
 	int32_t height = 0;
 
-	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, param.Size, sizePerWidth, height);
+	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {param.Size[0], param.Size[1]}, sizePerWidth, height);
 
 	const int32_t blockSize = 4;
 	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
@@ -354,7 +354,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	HRESULT hr;
 	LPDIRECT3DTEXTURE9 texture = nullptr;
 	hr =
-		device->CreateTexture(param.Size[0], param.Size[1], 1, param.GenerateMipmap ? D3DUSAGE_AUTOGENMIPMAP : 0, format, D3DPOOL_DEFAULT, &texture, nullptr);
+		device->CreateTexture(param.Size[0], param.Size[1], 1, param.MipLevelCount < 0 ? D3DUSAGE_AUTOGENMIPMAP : 0, format, D3DPOOL_DEFAULT, &texture, nullptr);
 
 	if (FAILED(hr))
 	{
@@ -370,9 +370,9 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 		return false;
 	}
 
-	if (param.InitialData.size() > 0)
+	if (initialData.size() > 0)
 	{
-		const uint8_t* srcBits = static_cast<const uint8_t*>(param.InitialData.data());
+		const uint8_t* srcBits = static_cast<const uint8_t*>(initialData.data());
 		D3DLOCKED_RECT locked;
 		if (SUCCEEDED(tempTexture->LockRect(0, &locked, nullptr, 0)))
 		{
@@ -404,9 +404,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	ES_SAFE_RELEASE(tempTexture);
 
 	texture_ = Effekseer::CreateUniqueReference(texture);
-
-	size_ = param.Size;
-	type_ = Effekseer::Backend::TextureType::Color2D;
+	param_ = param;
 
 	return true;
 }
@@ -453,8 +451,9 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 	texture_ = Effekseer::CreateUniqueReference(texture);
 	surface_ = Effekseer::CreateUniqueReference(surface);
 
-	size_ = param.Size;
-	type_ = Effekseer::Backend::TextureType::Depth;
+	param_.Format = param.Format;
+	param_.Size = {param.Size[0], param.Size[1], 0};
+	param_.Dimension = 2;
 
 	return true;
 }
@@ -476,11 +475,13 @@ bool Texture::Init(IDirect3DTexture9* texture, std::function<void(IDirect3DTextu
 
 	surface_ = Effekseer::CreateUniqueReference(surface);
 
-	type_ = Effekseer::Backend::TextureType::Color2D;
-
 	D3DSURFACE_DESC desc;
 	texture_->GetLevelDesc(0, &desc);
-	size_ = {(int32_t)desc.Width, (int32_t)desc.Height};
+
+	// TODO : make correct
+	param_.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	param_.Size = {(int32_t)desc.Width, (int32_t)desc.Height, 0};
+	param_.Dimension = 2;
 
 	return true;
 }
@@ -520,7 +521,6 @@ void Texture::OnResetDevice()
 		{
 			D3DSURFACE_DESC desc;
 			texture_->GetLevelDesc(0, &desc);
-			size_ = {(int32_t)desc.Width, (int32_t)desc.Height};
 
 			IDirect3DSurface9* surface = nullptr;
 			auto hr = texture->GetSurfaceLevel(0, &surface);
@@ -690,11 +690,11 @@ Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t ele
 	return ret;
 }
 
-Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
 {
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
-	if (!ret->Init(param))
+	if (!ret->Init(param, initialData))
 	{
 		return nullptr;
 	}
@@ -725,7 +725,6 @@ Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromBinary(const void*
 
 	return ret;
 }
-
 
 } // namespace Backend
 } // namespace EffekseerRendererDX9

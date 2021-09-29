@@ -57,11 +57,11 @@ public:
 
 	int32_t GetWidth() const
 	{
-		return backend_->GetSize()[0];
+		return backend_->GetParameter().Size[0];
 	}
 	int32_t GetHeight() const
 	{
-		return backend_->GetSize()[1];
+		return backend_->GetParameter().Size[1];
 	}
 
 	const Backend::TextureRef& GetBackend()

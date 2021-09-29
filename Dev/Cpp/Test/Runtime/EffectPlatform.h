@@ -135,7 +135,8 @@ public:
 			const size_t heightSize = 10;
 
 			Effekseer::Backend::TextureParameter texParam;
-			texParam.InitialData.resize(sizeof(float) * 4 * heightSize);
+			Effekseer::CustomVector<uint8_t> initialData;
+			initialData.resize(sizeof(float) * 4 * heightSize);
 			texParam.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
 			texParam.Size = {1, heightSize};
 
@@ -143,15 +144,15 @@ public:
 			{
 				if ((i % 2 == 0 && !isBackgroundFlipped_) || (i % 2 == 1 && isBackgroundFlipped_))
 				{
-					memcpy(texParam.InitialData.data() + sizeof(float) * 4 * i, posMiddleArray.data(), sizeof(float) * 4);
+					memcpy(initialData.data() + sizeof(float) * 4 * i, posMiddleArray.data(), sizeof(float) * 4);
 				}
 				else
 				{
-					memcpy(texParam.InitialData.data() + sizeof(float) * 4 * i, posNearArray.data(), sizeof(float) * 4);
+					memcpy(initialData.data() + sizeof(float) * 4 * i, posNearArray.data(), sizeof(float) * 4);
 				}
 			}
 
-			auto depth = GetRenderer()->GetGraphicsDevice()->CreateTexture(texParam);
+			auto depth = GetRenderer()->GetGraphicsDevice()->CreateTexture(texParam, initialData);
 
 			EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
 			reconstructionParam.DepthBufferScale = 1.0f;

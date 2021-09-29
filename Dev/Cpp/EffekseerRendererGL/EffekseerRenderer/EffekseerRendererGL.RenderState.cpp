@@ -180,7 +180,7 @@ void RenderState::Update(bool forced)
 
 				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 
-				if (texture->GetHasMipmap())
+				if (texture->GetParameter().MipLevelCount != 1)
 				{
 					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
 				}
@@ -235,7 +235,7 @@ void RenderState::Update(bool forced)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 				GLCheckError();
 
-				if (texture->GetHasMipmap())
+				if (texture->GetParameter().MipLevelCount != 1)
 				{
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
 				}

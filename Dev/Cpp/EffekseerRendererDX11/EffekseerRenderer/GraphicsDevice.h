@@ -197,21 +197,11 @@ class Texture
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 
-	bool Init(
-		Effekseer::Backend::TextureFormatType format,
-		int32_t samplingCount,
-		bool generateMipmap,
-		std::array<int32_t, 2> size,
-		int32_t depth,
-		int32_t arrayLayers,
-		const Effekseer::CustomVector<uint8_t>& initialData,
-		bool isRenderTarget);
-
 public:
 	Texture(GraphicsDevice* graphicsDevice);
 	~Texture() override;
 
-	bool Init(const Effekseer::Backend::TextureParameter& param);
+	bool Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData);
 
 	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
 
@@ -406,7 +396,7 @@ public:
 
 	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData) override;
 
 	Effekseer::Backend::TextureRef CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
 

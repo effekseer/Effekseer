@@ -155,13 +155,13 @@ bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t win
 
 void GraphicsGL::CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dst)
 {
-	if (src->GetSize() != dst->GetSize())
+	if (src->GetParameter().Size != dst->GetParameter().Size)
 		return;
 
-	if (src->GetFormat() != dst->GetFormat())
+	if (src->GetParameter().Format != dst->GetParameter().Format)
 		return;
 
-	if (src->GetSamplingCount() != dst->GetSamplingCount())
+	if (src->GetParameter().SampleCount != dst->GetParameter().SampleCount)
 	{
 		ResolveRenderTarget(src, dst);
 	}
@@ -174,7 +174,7 @@ void GraphicsGL::CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::
 		auto s = src.DownCast<EffekseerRendererGL::Backend::Texture>();
 		auto d = dst.DownCast<EffekseerRendererGL::Backend::Texture>();
 
-		if (s->GetSamplingCount() > 1)
+		if (s->GetParameter().SampleCount > 1)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, s->GetRenderBuffer());
@@ -186,7 +186,7 @@ void GraphicsGL::CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::
 		}
 
 		glBindTexture(GL_TEXTURE_2D, d->GetBuffer());
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, dst->GetSize()[0], dst->GetSize()[1]);
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, dst->GetParameter().Size[0], dst->GetParameter().Size[1]);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
@@ -258,7 +258,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
 			}
-			else if (rti->GetSamplingCount() > 1)
+			else if (rti->GetParameter().SampleCount > 1)
 			{
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, rti->GetRenderBuffer());
 			}
@@ -276,7 +276,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 
 		if (dt != nullptr)
 		{
-			if (dt->GetSamplingCount() > 1)
+			if (dt->GetParameter().SampleCount > 1)
 			{
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt->GetRenderBuffer());
 			}
@@ -301,7 +301,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 
 		GLCheckError();
 
-		glViewport(0, 0, renderTextures[0]->GetSize()[0], renderTextures[0]->GetSize()[1]);
+		glViewport(0, 0, renderTextures[0]->GetParameter().Size[0], renderTextures[0]->GetParameter().Size[1]);
 		currentRenderTargetCount_ = renderTextures.size();
 		hasDepthBuffer_ = depthTexture != nullptr;
 	}
@@ -310,8 +310,8 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 void GraphicsGL::SaveTexture(Effekseer::Backend::TextureRef texture, std::vector<Effekseer::Color>& pixels)
 {
 	auto t = texture.DownCast<EffekseerRendererGL::Backend::Texture>();
-	pixels.resize(t->GetSize()[0] * t->GetSize()[1]);
-	SaveTextureGL(pixels, t->GetBuffer(), t->GetSize()[0], t->GetSize()[1]);
+	pixels.resize(t->GetParameter().Size[0] * t->GetParameter().Size[1]);
+	SaveTextureGL(pixels, t->GetBuffer(), t->GetParameter().Size[0], t->GetParameter().Size[1]);
 }
 
 void GraphicsGL::Clear(Effekseer::Color color)
@@ -377,7 +377,7 @@ void GraphicsGL::ResolveRenderTarget(Effekseer::Backend::TextureRef src, Effekse
 	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtDest->GetBuffer(), 0);
 	GLCheckError();
 
-	glBlitFramebuffer(0, 0, src->GetSize()[0], src->GetSize()[1], 0, 0, dest->GetSize()[0], dest->GetSize()[1], GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, src->GetParameter().Size[0], src->GetParameter().Size[1], 0, 0, dest->GetParameter().Size[0], dest->GetParameter().Size[1], GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	GLCheckError();
 
 	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);

@@ -138,7 +138,7 @@ Texture::~Texture()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
 {
 	int mw = std::max(param.Size[0], param.Size[1]);
 	int count = 1;
@@ -224,18 +224,15 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
 	auto texture = graphicsDevice_->GetGraphics()->CreateTexture(texParam);
 	auto buf = texture->Lock();
 
-	if (param.InitialData.size() > 0)
+	if (initialData.size() > 0)
 	{
-		memcpy(buf, param.InitialData.data(), param.InitialData.size());
+		memcpy(buf, initialData.data(), initialData.size());
 	}
 
 	texture->Unlock();
 
 	texture_ = LLGI::CreateSharedPtr(texture);
-
-	size_ = param.Size;
-	type_ = Effekseer::Backend::TextureType::Color2D;
-
+	param_ = param;
 	return true;
 }
 
@@ -250,8 +247,15 @@ bool Texture::Init(uint64_t id, std::function<void()> onDisposed)
 	texture_ = LLGI::CreateSharedPtr(texture);
 	onDisposed_ = onDisposed;
 
-	type_ = Effekseer::Backend::TextureType::Color2D;
-
+	param_.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	param_.Dimension = 2;
+	param_.Size = {
+		texture->GetSizeAs2D().X,
+		texture->GetSizeAs2D().Y,
+		0};
+	param_.MipLevelCount = texture_->GetMipmapCount();
+	param_.SampleCount = texture_->GetSamplingCount();
+	param_.Usage = Effekseer::Backend::TextureUsageType::External;
 	return true;
 }
 
@@ -259,9 +263,17 @@ bool Texture::Init(LLGI::Texture* texture)
 {
 	LLGI::SafeAddRef(texture);
 	texture_ = LLGI::CreateSharedPtr(texture);
-	type_ = Effekseer::Backend::TextureType::Color2D;
-	auto size = texture_->GetSizeAs2D();
-	size_ = {size.X, size.Y};
+
+	param_.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	param_.Dimension = 2;
+	param_.Size = {
+		texture->GetSizeAs2D().X,
+		texture->GetSizeAs2D().Y,
+		0};
+	param_.MipLevelCount = texture_->GetMipmapCount();
+	param_.SampleCount = texture_->GetSamplingCount();
+	param_.Usage = Effekseer::Backend::TextureUsageType::External;
+
 	return true;
 }
 
@@ -356,11 +368,11 @@ Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t ele
 	return ret;
 }
 
-Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
 {
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
-	if (!ret->Init(param))
+	if (!ret->Init(param, initialData))
 	{
 		return nullptr;
 	}

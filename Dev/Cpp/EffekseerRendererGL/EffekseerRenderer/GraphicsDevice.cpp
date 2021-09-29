@@ -400,7 +400,7 @@ Texture::~Texture()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, int samplingCount)
+bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
 {
 	if (graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGL2 || graphicsDevice_->GetDeviceType() == OpenGLDeviceType::OpenGLES2)
 	{
@@ -412,7 +412,7 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 		}
 	}
 
-	bool woSampling = samplingCount <= 1;
+	bool woSampling = param.SampleCount <= 1;
 
 	// Compressed texture
 	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
@@ -422,8 +422,8 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 						param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
 
-	const size_t initialDataSize = param.InitialData.size();
-	const void* initialDataPtr = param.InitialData.size() > 0 ? param.InitialData.data() : nullptr;
+	const size_t initialDataSize = initialData.size();
+	const void* initialDataPtr = initialData.size() > 0 ? initialData.data() : nullptr;
 
 	GLint bound = 0;
 	int boundTarget = GL_TEXTURE_BINDING_2D;
@@ -431,12 +431,12 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 
 	if (woSampling)
 	{
-		if (param.ArrayLayers > 0)
+		if ((param.Usage & Effekseer::Backend::TextureUsageType::Array) != Effekseer::Backend::TextureUsageType::None)
 		{
 			boundTarget = GL_TEXTURE_BINDING_2D_ARRAY;
 			target = GL_TEXTURE_2D_ARRAY;
 		}
-		else if (param.Depth > 0)
+		else if (param.Dimension == 3)
 		{
 			boundTarget = GL_TEXTURE_BINDING_3D;
 			target = GL_TEXTURE_3D;
@@ -572,13 +572,13 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 
 		if (woSampling)
 		{
-			if (param.ArrayLayers > 0)
+			if ((param.Usage & Effekseer::Backend::TextureUsageType::Array) != Effekseer::Backend::TextureUsageType::None)
 			{
-				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.ArrayLayers, 0, format, type, initialDataPtr);
+				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.Size[2], 0, format, type, initialDataPtr);
 			}
-			else if (param.Depth > 0)
+			else if (param.Dimension == 3)
 			{
-				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.Depth, 0, format, type, initialDataPtr);
+				GLExt::glTexImage3D(target, 0, internalFormat, param.Size[0], param.Size[1], param.Size[2], 0, format, type, initialDataPtr);
 			}
 			else
 			{
@@ -595,11 +595,11 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 		}
 		else
 		{
-			GLExt::glRenderbufferStorageMultisample(GL_RENDERBUFFER, samplingCount, internalFormat, param.Size[0], param.Size[1]);
+			GLExt::glRenderbufferStorageMultisample(GL_RENDERBUFFER, param.SampleCount, internalFormat, param.Size[0], param.Size[1]);
 		}
 	}
 
-	if (param.GenerateMipmap)
+	if (param.MipLevelCount != 1)
 	{
 		GLExt::glGenerateMipmap(target);
 	}
@@ -614,50 +614,24 @@ bool Texture::InitInternal(const Effekseer::Backend::TextureParameter& param, in
 	}
 
 	target_ = target;
-	size_ = param.Size;
-	format_ = param.Format;
-	hasMipmap_ = param.GenerateMipmap;
-	samplingCount_ = samplingCount;
-
+	param_ = param;
 	return true;
-}
-
-bool Texture::Init(const Effekseer::Backend::TextureParameter& param)
-{
-	auto ret = InitInternal(param, 1);
-
-	if (param.Depth > 0)
-	{
-		type_ = Effekseer::Backend::TextureType::Color3D;
-	}
-	else if (param.ArrayLayers > 0)
-	{
-		type_ = Effekseer::Backend::TextureType::ColorArray2D;
-	}
-	else
-	{
-		type_ = Effekseer::Backend::TextureType::Color2D;
-	}
-
-	return ret;
 }
 
 bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 {
 	Effekseer::Backend::TextureParameter paramInternal;
-	paramInternal.Size = param.Size;
+	paramInternal.Size = {param.Size[0], param.Size[1], 1};
 	paramInternal.Format = param.Format;
-	paramInternal.GenerateMipmap = false;
-	auto ret = InitInternal(paramInternal, param.SamplingCount);
-
-	type_ = Effekseer::Backend::TextureType::Render;
-
-	return ret;
+	paramInternal.MipLevelCount = 1;
+	paramInternal.SampleCount = param.SamplingCount;
+	paramInternal.Dimension = 2;
+	paramInternal.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
+	return Init(paramInternal, {});
 }
 
 bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 {
-
 	GLint internalFormat = 0;
 	GLenum format = 0;
 
@@ -716,13 +690,12 @@ bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, bound);
 	}
 
-	size_ = param.Size;
-	format_ = param.Format;
-	hasMipmap_ = false;
-	samplingCount_ = param.SamplingCount;
-
-	type_ = Effekseer::Backend::TextureType::Depth;
-
+	param_.Format = param.Format;
+	param_.Dimension = 2;
+	param_.Size = {param.Size[0], param.Size[1], 1};
+	param_.MipLevelCount = 1;
+	param_.SampleCount = param.SamplingCount;
+	param_.Usage = Effekseer::Backend::TextureUsageType::None;
 	return true;
 }
 
@@ -733,10 +706,14 @@ bool Texture::Init(GLuint buffer, bool hasMipmap, const std::function<void()>& o
 
 	buffer_ = buffer;
 	onDisposed_ = onDisposed;
-	hasMipmap_ = hasMipmap;
 
-	type_ = Effekseer::Backend::TextureType::Color2D;
-
+	// TODO : make correct
+	param_.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	param_.Dimension = 2;
+	param_.Size = {1, 1, 1};
+	param_.MipLevelCount = hasMipmap ? 2 : 1;
+	param_.SampleCount = 1;
+	param_.Usage = Effekseer::Backend::TextureUsageType::External;
 	return true;
 }
 
@@ -954,14 +931,14 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 			return false;
 		}
 
-		if (textures.at(i)->GetTextureType() != Effekseer::Backend::TextureType::Render)
+		if ((textures.at(i)->GetParameter().Usage & Effekseer::Backend::TextureUsageType::RenderTarget) == Effekseer::Backend::TextureUsageType::None)
 		{
 			Effekseer::Log(Effekseer::LogType::Error, "RenderPass : textures " + std::to_string(i) + " must be Render.");
 			return false;
 		}
 	}
 
-	if (depthTexture != nullptr && depthTexture->GetTextureType() != Effekseer::Backend::TextureType::Depth)
+	if (depthTexture != nullptr && !Effekseer::Backend::IsDepthTextureFormat(depthTexture->GetParameter().Format))
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "RenderPass : depthTexture must be Depth.");
 		return false;
@@ -1110,11 +1087,11 @@ Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t ele
 	return ret;
 }
 
-Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param)
+Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
 {
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
-	if (!ret->Init(param))
+	if (!ret->Init(param, initialData))
 	{
 		return nullptr;
 	}
@@ -1316,7 +1293,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 			if (drawParam.TextureSamplingTypes[i] == Effekseer::Backend::TextureSamplingType::Linear)
 			{
-				if (texture->GetHasMipmap())
+				if (texture->GetParameter().MipLevelCount != 1)
 				{
 					filterMin = glfilterMin[1];
 				}
@@ -1328,7 +1305,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			}
 			else
 			{
-				if (texture->GetHasMipmap())
+				if (texture->GetParameter().MipLevelCount != 1)
 				{
 					filterMin = glfilterMin[0];
 				}

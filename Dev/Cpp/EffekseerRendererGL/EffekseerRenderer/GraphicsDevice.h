@@ -168,13 +168,11 @@ private:
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void()> onDisposed_;
 
-	bool InitInternal(const Effekseer::Backend::TextureParameter& param, int samplingCount);
-
 public:
 	Texture(GraphicsDevice* graphicsDevice);
 	~Texture() override;
 
-	bool Init(const Effekseer::Backend::TextureParameter& param);
+	bool Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData);
 
 	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
 
@@ -363,7 +361,7 @@ public:
 
 	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData) override;
 
 	Effekseer::Backend::TextureRef CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
 
