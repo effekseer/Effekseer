@@ -38,7 +38,8 @@ public:
 
 	DXGI_FORMAT GetDXGIFormat() const
 	{
-		return EffekseerRendererDX11::Backend::GetTextureFormatType(texture_->GetFormat());
+		const auto param = texture_->GetParameter();
+		return EffekseerRendererDX11::Backend::GetTextureFormatType(param.Format);
 	}
 };
 

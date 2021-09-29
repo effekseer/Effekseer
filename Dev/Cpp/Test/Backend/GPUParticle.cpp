@@ -1,8 +1,8 @@
 #include "../TestHelper.h"
 #include "../Window/RenderingWindowGL.h"
 #include "Effekseer.h"
-#include <EffekseerRendererGL.h>
 #include <Effekseer/Utils/Effekseer.CustomAllocator.h>
+#include <EffekseerRendererGL.h>
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -316,10 +316,10 @@ class GpuParticleContext
 
 		Effekseer::Backend::TextureParameter texParam;
 		texParam.Format = Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM;
-		texParam.Size = {width, 1};
-		texParam.InitialData = pixels;
+		texParam.Size = {width, 1, 0};
+		texParam.Dimension = 2;
 
-		return graphicsDevice->CreateTexture(texParam);
+		return graphicsDevice->CreateTexture(texParam, pixels);
 	}
 
 	void initUniformLayouts()

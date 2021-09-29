@@ -78,31 +78,32 @@ public:
 			// 実際にGPUに画像を読み込む。何を返すべきか知りたい場合、、各バックエンドのコードを読んでください。
 			::Effekseer::Backend::TextureParameter param;
 			param.Format = ::Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-			param.GenerateMipmap = true;
-			param.Size[0] = width;
-			param.Size[1] = height;
+			param.MipLevelCount = -1;
+			param.Size = {width, height, 0};
+			param.Dimension = 2;
+			Effekseer::CustomVector<uint8_t> initialData;
 
 			if (bpp == 4)
 			{
-				param.InitialData.assign(pixels, pixels + width * height * 4);
+				initialData.assign(pixels, pixels + width * height * 4);
 			}
 			else
 			{
-				param.InitialData.resize(width * height * 4);
+				initialData.resize(width * height * 4);
 				for (int y = 0; y < height; y++)
 				{
 					for (int x = 0; x < width; x++)
 					{
-						param.InitialData[(x + y * width) * 4 + 0] = pixels[(x + y * width) * 3 + 0];
-						param.InitialData[(x + y * width) * 4 + 1] = pixels[(x + y * width) * 3 + 1];
-						param.InitialData[(x + y * width) * 4 + 2] = pixels[(x + y * width) * 3 + 2];
-						param.InitialData[(x + y * width) * 4 + 3] = 255;
+						initialData[(x + y * width) * 4 + 0] = pixels[(x + y * width) * 3 + 0];
+						initialData[(x + y * width) * 4 + 1] = pixels[(x + y * width) * 3 + 1];
+						initialData[(x + y * width) * 4 + 2] = pixels[(x + y * width) * 3 + 2];
+						initialData[(x + y * width) * 4 + 3] = 255;
 					}
 				}
 			}
 
 			auto texture = ::Effekseer::MakeRefPtr<::Effekseer::Texture>();
-			texture->SetBackend(graphicsDevice_->CreateTexture(param));
+			texture->SetBackend(graphicsDevice_->CreateTexture(param, initialData));
 			return texture;
 		}
 
@@ -188,7 +189,6 @@ int main(int argc, char** argv)
 	// テクスチャとモデルローダーが拡張されている。
 	manager->SetTextureLoader(::Effekseer::TextureLoaderRef(new CustomTextureLoader(renderer->GetGraphicsDevice())));
 	manager->SetModelLoader(::Effekseer::MakeRefPtr<CustomModelLoader>());
-
 
 	// You can specify only a file loader
 	// ファイルローダーのみを指定することもできる。

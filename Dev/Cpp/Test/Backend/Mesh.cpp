@@ -1,4 +1,6 @@
 #include "../TestHelper.h"
+#include "Helper.h"
+
 #include "../Window/RenderingWindowGL.h"
 
 #ifdef _WIN32
@@ -6,12 +8,12 @@
 #include "../Window/RenderingWindowDX11.h"
 #include <EffekseerRendererDX11.h>
 
-namespace DX11VS
+namespace DX11VS_Mesh
 {
 #include "../Shaders/HLSL_DX11_Header/mesh_vs.h"
 }
 
-namespace DX11PS
+namespace DX11PS_Mesh
 {
 #include "../Shaders/HLSL_DX11_Header/mesh_ps.h"
 }
@@ -26,55 +28,15 @@ namespace DX11PS
 #include "../Shaders/GLSL_GL_Header/mesh_ps.h"
 #include "../Shaders/GLSL_GL_Header/mesh_vs.h"
 
-struct SimpleVertex
-{
-	std::array<float, 3> Position;
-	std::array<float, 2> UV;
-	std::array<uint8_t, 4> Color;
-};
-
-Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderingWindowGL* window)
-{
-	return nullptr;
-}
-
-#ifdef _WIN32
-Effekseer::Backend::RenderPassRef GenerateRenderPass(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderingWindowDX11* window)
-{
-	auto gd = static_cast<EffekseerRendererDX11::Backend::GraphicsDevice*>(graphicsDevice.Get());
-	auto rt = gd->CreateTexture(nullptr, window->GetRenderTargetView(), nullptr);
-	auto dt = gd->CreateTexture(nullptr, nullptr, window->GetDepthStencilView());
-
-	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> rts;
-	rts.resize(1);
-	rts.at(0) = rt;
-
-	auto rp = gd->CreateRenderPass(rts, dt);
-	return rp;
-}
-#endif
-
-Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
+Effekseer::Backend::ShaderRef GenerateShader_Mesh(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
 {
 	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, layout);
 }
 
 #ifdef _WIN32
-Effekseer::Backend::ShaderRef GenerateShader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
+Effekseer::Backend::ShaderRef GenerateShader_Mesh(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
 {
-	return graphicsDevice->CreateShaderFromBinary(DX11VS::g_main, sizeof(DX11VS::g_main), DX11PS::g_main, sizeof(DX11PS::g_main));
-}
-#endif
-
-Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice(RenderingWindowGL* window)
-{
-	return EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
-}
-
-#ifdef _WIN32
-Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice(RenderingWindowDX11* window)
-{
-	return EffekseerRendererDX11::CreateGraphicsDevice(window->GetDevice(), window->GetContext());
+	return graphicsDevice->CreateShaderFromBinary(DX11VS_Mesh::g_main, sizeof(DX11VS_Mesh::g_main), DX11PS_Mesh::g_main, sizeof(DX11PS_Mesh::g_main));
 }
 #endif
 
@@ -120,7 +82,7 @@ void Backend_Mesh()
 	auto cb = graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data());
 	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
-	auto shader = GenerateShader(graphicsDevice, uniformLayout, window.get());
+	auto shader = GenerateShader_Mesh(graphicsDevice, uniformLayout, window.get());
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(3);

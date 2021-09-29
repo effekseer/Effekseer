@@ -17,6 +17,7 @@ using D3D11DevicePtr = std::unique_ptr<ID3D11Device, Effekseer::ReferenceDeleter
 using D3D11DeviceContextPtr = std::unique_ptr<ID3D11DeviceContext, Effekseer::ReferenceDeleter<ID3D11DeviceContext>>;
 using D3D11ResourcePtr = std::unique_ptr<ID3D11Resource, Effekseer::ReferenceDeleter<ID3D11Resource>>;
 using D3D11Texture2DPtr = std::unique_ptr<ID3D11Texture2D, Effekseer::ReferenceDeleter<ID3D11Texture2D>>;
+using D3D11Texture3DPtr = std::unique_ptr<ID3D11Texture3D, Effekseer::ReferenceDeleter<ID3D11Texture3D>>;
 using D3D11ShaderResourceViewPtr = std::unique_ptr<ID3D11ShaderResourceView, Effekseer::ReferenceDeleter<ID3D11ShaderResourceView>>;
 using D3D11RenderTargetViewPtr = std::unique_ptr<ID3D11RenderTargetView, Effekseer::ReferenceDeleter<ID3D11RenderTargetView>>;
 using D3D11DepthStencilViewPtr = std::unique_ptr<ID3D11DepthStencilView, Effekseer::ReferenceDeleter<ID3D11DepthStencilView>>;
@@ -188,26 +189,19 @@ class Texture
 	: public DeviceObject,
 	  public Effekseer::Backend::Texture
 {
-	D3D11Texture2DPtr texture_;
+	D3D11Texture2DPtr texture2d_;
+	D3D11Texture3DPtr texture3d_;
 	D3D11ShaderResourceViewPtr srv_;
 	D3D11RenderTargetViewPtr rtv_;
 	D3D11DepthStencilViewPtr dsv_;
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 
-	bool Init(
-		Effekseer::Backend::TextureFormatType format,
-		int32_t samplingCount,
-		bool generateMipmap,
-		std::array<int32_t, 2> size,
-		const Effekseer::CustomVector<uint8_t>& initialData,
-		bool isRenderTarget);
-
 public:
 	Texture(GraphicsDevice* graphicsDevice);
 	~Texture() override;
 
-	bool Init(const Effekseer::Backend::TextureParameter& param);
+	bool Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData);
 
 	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
 
@@ -217,7 +211,17 @@ public:
 
 	ID3D11Texture2D* GetTexture() const
 	{
-		return texture_.get();
+		return texture2d_.get();
+	}
+
+	ID3D11Resource* GetResource() const
+	{
+		if (texture2d_ != nullptr)
+		{
+			return texture2d_.get();
+		}
+
+		return texture3d_.get();
 	}
 
 	ID3D11ShaderResourceView* GetSRV() const
@@ -392,11 +396,13 @@ public:
 
 	Effekseer::Backend::IndexBufferRef CreateIndexBuffer(int32_t elementCount, const void* initialData, Effekseer::Backend::IndexBufferStrideType stride) override;
 
-	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param) override;
+	Effekseer::Backend::TextureRef CreateTexture(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData) override;
 
 	Effekseer::Backend::TextureRef CreateRenderTexture(const Effekseer::Backend::RenderTextureParameter& param) override;
 
 	Effekseer::Backend::TextureRef CreateDepthTexture(const Effekseer::Backend::DepthTextureParameter& param) override;
+
+	bool CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer::Backend::TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer) override;
 
 	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 

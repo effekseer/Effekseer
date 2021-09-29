@@ -249,13 +249,13 @@ End:
 
 void GraphicsDX11::CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dst)
 {
-	if (src->GetSize() != dst->GetSize())
+	if (src->GetParameter().Size != dst->GetParameter().Size)
 		return;
 
-	if (src->GetFormat() != dst->GetFormat())
+	if (src->GetParameter().Format != dst->GetParameter().Format)
 		return;
 
-	if (src->GetSamplingCount() != dst->GetSamplingCount())
+	if (src->GetParameter().SampleCount != dst->GetParameter().SampleCount)
 	{
 		ResolveRenderTarget(src, dst);
 	}
@@ -342,8 +342,8 @@ void GraphicsDX11::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> r
 		{
 			vp.TopLeftX = 0;
 			vp.TopLeftY = 0;
-			vp.Width = static_cast<float>(renderTextures[0]->GetSize()[0]);
-			vp.Height = static_cast<float>(renderTextures[0]->GetSize()[1]);
+			vp.Width = static_cast<float>(renderTextures[0]->GetParameter().Size[0]);
+			vp.Height = static_cast<float>(renderTextures[0]->GetParameter().Size[1]);
 			vp.MinDepth = 0.0f;
 			vp.MaxDepth = 1.0f;
 		}

@@ -336,9 +336,9 @@ void BloomEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backen
 	using namespace Effekseer;
 	using namespace EffekseerRendererGL;
 
-	if (renderTextureWidth != src->GetSize()[0] || renderTextureHeight != src->GetSize()[1])
+	if (renderTextureWidth != src->GetParameter().Size[0] || renderTextureHeight != src->GetParameter().Size[1])
 	{
-		SetupBuffers(src->GetSize()[0], src->GetSize()[1]);
+		SetupBuffers(src->GetParameter().Size[0], src->GetParameter().Size[1]);
 	}
 
 	auto& state = renderer_->GetRenderState()->Push();

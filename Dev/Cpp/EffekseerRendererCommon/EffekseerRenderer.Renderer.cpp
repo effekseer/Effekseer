@@ -198,10 +198,12 @@ void Renderer::SetBackground(::Effekseer::Backend::TextureRef texture)
 
 	Effekseer::Backend::TextureParameter param;
 	param.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-	param.Size = {1, 1};
-	param.GenerateMipmap = false;
-	param.InitialData.assign(buf.begin(), buf.end());
-	return GetGraphicsDevice()->CreateTexture(param);
+	param.Dimension = 2;
+	param.Size = {1, 1, 1};
+	param.MipLevelCount = 1;
+	Effekseer::CustomVector<uint8_t> initialData;
+	initialData.assign(buf.begin(), buf.end());
+	return GetGraphicsDevice()->CreateTexture(param, initialData);
 }
 
 void Renderer::DeleteProxyTexture(::Effekseer::Backend::TextureRef& texture)

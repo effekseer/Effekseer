@@ -22,6 +22,9 @@ set(effekseer_test_src
     Runtime/TextureFormats.cpp
     Runtime/Vertex.cpp
     Runtime/ResourceManager.cpp
+    Backend/Helper.h
+    Backend/Helper.cpp
+    Backend/Textures.cpp
     Backend/Mesh.cpp
     Backend/RenderPassTest.cpp
     Backend/GPUParticle.cpp

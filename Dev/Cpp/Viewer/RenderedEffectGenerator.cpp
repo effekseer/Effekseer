@@ -69,27 +69,30 @@ bool GroundRenderer::Initialize(Effekseer::RefPtr<Effekseer::Backend::GraphicsDe
 	Effekseer::Backend::TextureParameter texParams;
 	texParams.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 	texParams.Size = {128, 128};
-	texParams.InitialData.resize(texParams.Size[0] * texParams.Size[1] * 4);
-	for (size_t i = 0; i < texParams.InitialData.size() / 4; i++)
+
+	Effekseer::CustomVector<uint8_t> initialData;
+	initialData.resize(texParams.Size[0] * texParams.Size[1] * 4);
+
+	for (size_t i = 0; i < initialData.size() / 4; i++)
 	{
 		const size_t x = i % texParams.Size[0] * 2 / texParams.Size[0];
 		const size_t y = i / texParams.Size[1] * 2 / texParams.Size[1];
 		if (x ^ y == 0)
 		{
-			texParams.InitialData[i * 4 + 0] = 90;
-			texParams.InitialData[i * 4 + 1] = 90;
-			texParams.InitialData[i * 4 + 2] = 90;
-			texParams.InitialData[i * 4 + 3] = 255;
+			initialData[i * 4 + 0] = 90;
+			initialData[i * 4 + 1] = 90;
+			initialData[i * 4 + 2] = 90;
+			initialData[i * 4 + 3] = 255;
 		}
 		else
 		{
-			texParams.InitialData[i * 4 + 0] = 60;
-			texParams.InitialData[i * 4 + 1] = 60;
-			texParams.InitialData[i * 4 + 2] = 60;
-			texParams.InitialData[i * 4 + 3] = 255;
+			initialData[i * 4 + 0] = 60;
+			initialData[i * 4 + 1] = 60;
+			initialData[i * 4 + 2] = 60;
+			initialData[i * 4 + 3] = 255;
 		}
 	}
-	groudMesh->Texture = graphicsDevice->CreateTexture(texParams);
+	groudMesh->Texture = graphicsDevice->CreateTexture(texParams, initialData);
 
 	groudMeshRenderer_->SetStaticMesh(groudMesh);
 

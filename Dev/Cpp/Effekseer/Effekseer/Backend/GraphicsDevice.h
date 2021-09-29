@@ -58,11 +58,24 @@ enum class TextureFormatType
 	BC1_SRGB,
 	BC2_SRGB,
 	BC3_SRGB,
+
+	//! You don't need to implement DepthTexture for a runtime
 	D32,
+
+	//! You don't need to implement DepthTexture for a runtime
 	D24S8,
+
+	//! You don't need to implement DepthTexture for a runtime
 	D32S8,
 	Unknown,
 };
+
+inline bool IsDepthTextureFormat(TextureFormatType format)
+{
+	return format == TextureFormatType::D24S8 ||
+		   format == TextureFormatType::D32S8 ||
+		   format == TextureFormatType::D32;
+}
 
 enum class IndexBufferStrideType
 {
@@ -80,13 +93,6 @@ enum class ShaderStageType
 {
 	Vertex,
 	Pixel,
-};
-
-enum class TextureType
-{
-	Color2D,
-	Render,
-	Depth,
 };
 
 struct UniformLayoutElement
@@ -188,43 +194,50 @@ public:
 	virtual ~PipelineState() = default;
 };
 
+enum class TextureUsageType : uint32_t
+{
+	None = 0,
+	//! You don't need to implement RenderTarget flag for a runtime
+	RenderTarget = 1 << 0,
+	Array = 1 << 1,
+	External = 1 << 2,
+};
+
+inline TextureUsageType operator|(TextureUsageType lhs, TextureUsageType rhs)
+{
+	return static_cast<TextureUsageType>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+
+inline TextureUsageType operator&(TextureUsageType lhs, TextureUsageType rhs)
+{
+	return static_cast<TextureUsageType>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+struct TextureParameter
+{
+	TextureUsageType Usage = TextureUsageType::None;
+	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
+	int32_t Dimension = 2;
+	std::array<int32_t, 3> Size = {1, 1, 1};
+	int32_t MipLevelCount = 1;
+
+	//! You don't need to implement SampleCount for a runtime
+	int SampleCount = 1;
+};
+
 class Texture
 	: public ReferenceObject
 {
 protected:
-	TextureType type_ = {};
-	TextureFormatType format_ = {};
-	std::array<int32_t, 2> size_ = {};
-	bool hasMipmap_ = false;
-	int32_t samplingCount_ = 1;
+	TextureParameter param_;
 
 public:
 	Texture() = default;
 	virtual ~Texture() = default;
 
-	TextureFormatType GetFormat() const
+	TextureParameter GetParameter() const
 	{
-		return format_;
-	}
-
-	std::array<int32_t, 2> GetSize() const
-	{
-		return size_;
-	}
-
-	int32_t GetSamplingCount() const
-	{
-		return samplingCount_;
-	}
-
-	bool GetHasMipmap() const
-	{
-		return hasMipmap_;
-	}
-
-	TextureType GetTextureType() const
-	{
-		return type_;
+		return param_;
 	}
 };
 
@@ -403,14 +416,6 @@ struct PipelineStateParameter
 	FrameBufferRef FrameBufferPtr;
 };
 
-struct TextureParameter
-{
-	TextureFormatType Format = TextureFormatType::R8G8B8A8_UNORM;
-	bool GenerateMipmap = true;
-	std::array<int32_t, 2> Size;
-	CustomVector<uint8_t> InitialData;
-};
-
 /**
 	@brief	Render texture
 	@note
@@ -541,7 +546,7 @@ public:
 		return RenderPassRef{};
 	}
 
-	virtual TextureRef CreateTexture(const TextureParameter& param)
+	virtual TextureRef CreateTexture(const TextureParameter& param, const CustomVector<uint8_t>& initialData = CustomVector<uint8_t>())
 	{
 		return TextureRef{};
 	}
@@ -554,6 +559,11 @@ public:
 	virtual TextureRef CreateDepthTexture(const DepthTextureParameter& param)
 	{
 		return TextureRef{};
+	}
+
+	virtual bool CopyTexture(TextureRef& dst, TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer)
+	{
+		return false;
 	}
 
 	/**
