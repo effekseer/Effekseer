@@ -134,7 +134,7 @@ Effekseer::TextureRef TextureLoader::Load(const void* data, int32_t size, Effeks
 				param.Size[0] = tgaTextureLoader_.GetWidth();
 				param.Size[1] = tgaTextureLoader_.GetHeight();
 				param.Format = format;
-				param.MipLevelCount = isMipMapEnabled ? -1 : 1;
+				param.MipLevelCount = isMipMapEnabled ? 0 : 1;
 				param.Dimension = 2;
 				Effekseer::CustomVector<uint8_t> initialData;
 				initialData.assign(tgaTextureLoader_.GetData().begin(), tgaTextureLoader_.GetData().end());
