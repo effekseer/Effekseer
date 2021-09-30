@@ -26,7 +26,7 @@ set(effekseer_test_src
     Backend/Helper.cpp
     Backend/Textures.cpp
     Backend/Mesh.cpp
-    Backend/RenderPassTest.cpp
+    Backend/RenderPass.cpp
     Backend/GPUParticle.cpp
 )
 
