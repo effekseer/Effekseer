@@ -12,4 +12,5 @@ private:
 public:
 	RenderingWindowGL(std::array<int32_t, 2> windowSize, const char* title);
 	~RenderingWindowGL() override = default;
+	Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice() override;
 };

@@ -3,7 +3,7 @@
 #include "RenderingWindow.h"
 #include <d3d11.h>
 
-class RenderingWindowDX11 : RenderingWindow
+class RenderingWindowDX11 : public RenderingWindow
 {
 private:
 	ID3D11Device* device_ = nullptr;
@@ -22,6 +22,7 @@ public:
 	~RenderingWindowDX11() override;
 	void Present() override;
 	bool DoEvent() override;
+	Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice() override;
 
 	ID3D11Device* GetDevice() const
 	{

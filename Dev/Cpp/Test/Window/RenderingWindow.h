@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Effekseer.h>
 #include <array>
 #include <stdint.h>
 
@@ -16,5 +17,9 @@ public:
 	virtual ~RenderingWindow();
 	virtual void Present();
 	virtual bool DoEvent();
+	virtual Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice()
+	{
+		return nullptr;
+	}
 	void* GetNativePtr(int32_t index);
 };

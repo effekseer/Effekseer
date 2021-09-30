@@ -28,24 +28,10 @@ namespace DX11PS_Mesh
 #include "../Shaders/GLSL_GL_Header/mesh_ps.h"
 #include "../Shaders/GLSL_GL_Header/mesh_vs.h"
 
-Effekseer::Backend::ShaderRef GenerateShader_Mesh(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
+void Backend_Mesh(std::shared_ptr<RenderingWindow> window)
 {
-	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, layout);
-}
 
-#ifdef _WIN32
-Effekseer::Backend::ShaderRef GenerateShader_Mesh(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
-{
-	return graphicsDevice->CreateShaderFromBinary(DX11VS_Mesh::g_main, sizeof(DX11VS_Mesh::g_main), DX11PS_Mesh::g_main, sizeof(DX11PS_Mesh::g_main));
-}
-#endif
-
-template <typename WINDOW>
-void Backend_Mesh()
-{
-	auto window = std::make_shared<WINDOW>(std::array<int, 2>({1280, 720}), "Backend.Mesh");
-
-	auto graphicsDevice = GenerateGraphicsDevice(window.get());
+	auto graphicsDevice = window->GenerateGraphicsDevice();
 
 	std::array<SimpleVertex, 4> vbData;
 	vbData[0].Position = {-0.5f, 0.5f, 0.5f};
@@ -82,7 +68,21 @@ void Backend_Mesh()
 	auto cb = graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data());
 	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
-	auto shader = GenerateShader_Mesh(graphicsDevice, uniformLayout, window.get());
+	Effekseer::Backend::ShaderRef shader;
+
+#ifdef _WIN32
+	if (graphicsDevice->GetDeviceName() == "DirectX11")
+	{
+		shader = graphicsDevice->CreateShaderFromBinary(DX11VS_Mesh::g_main, sizeof(DX11VS_Mesh::g_main), DX11PS_Mesh::g_main, sizeof(DX11PS_Mesh::g_main));
+	}
+#endif
+
+	if (graphicsDevice->GetDeviceName() == "OpenGL")
+	{
+		shader = graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, uniformLayout);
+	}
+
+	assert(shader != nullptr);
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(3);
@@ -139,10 +139,10 @@ void Backend_Mesh()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh<RenderingWindowGL>(); });
+TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh(std::make_shared<RenderingWindowGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 
 #ifdef _WIN32
-TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh<RenderingWindowDX11>(); });
+TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh(std::make_shared<RenderingWindowDX11>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 #endif
 
 #endif

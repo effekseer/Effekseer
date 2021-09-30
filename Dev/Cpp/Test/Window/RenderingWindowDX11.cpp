@@ -1,5 +1,6 @@
 #include "RenderingWindowDX11.h"
 #include <Effekseer.h>
+#include <EffekseerRendererDX11.h>
 
 RenderingWindowDX11::RenderingWindowDX11(std::array<int32_t, 2> windowSize, const char* title)
 	: RenderingWindow(true, windowSize, title)
@@ -128,4 +129,9 @@ bool RenderingWindowDX11::DoEvent()
 	}
 
 	return true;
+}
+
+Effekseer::Backend::GraphicsDeviceRef RenderingWindowDX11::GenerateGraphicsDevice()
+{
+	return EffekseerRendererDX11::CreateGraphicsDevice(GetDevice(), GetContext());
 }
