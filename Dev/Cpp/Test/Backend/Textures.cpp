@@ -1,10 +1,10 @@
 #include "../TestHelper.h"
 #include "Helper.h"
 
-#include "../Window/RenderingWindowGL.h"
+#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 
 #ifdef _WIN32
-
+#include <Windows.h>
 namespace DX11VS
 {
 #include "../Shaders/HLSL_DX11_Header/mesh_vs.h"
@@ -15,6 +15,8 @@ namespace DX11PS
 #include "../Shaders/HLSL_DX11_Header/textures_ps.h"
 }
 
+#include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
+
 #endif
 
 #undef None
@@ -23,24 +25,12 @@ namespace DX11PS
 #include "../Shaders/GLSL_GL_Header/mesh_vs.h"
 #include "../Shaders/GLSL_GL_Header/textures_ps.h"
 
-Effekseer::Backend::ShaderRef GenerateShader_Textures(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowGL*)
-{
-	return graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_textures_ps}}, layout);
-}
-
-#ifdef _WIN32
-Effekseer::Backend::ShaderRef GenerateShader_Textures(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, Effekseer::Backend::UniformLayoutRef layout, RenderingWindowDX11*)
-{
-	return graphicsDevice->CreateShaderFromBinary(DX11VS::g_main, sizeof(DX11VS::g_main), DX11PS::g_main, sizeof(DX11PS::g_main));
-}
-#endif
-
 template <typename WINDOW>
 void Backend_Textures()
 {
-	auto window = std::make_shared<WINDOW>(std::array<int, 2>({1280, 720}), "Backend.Textures");
+	std::shared_ptr<RenderingEnvironment> window = std::make_shared<WINDOW>(std::array<int, 2>({1280, 720}), "Backend.Textures");
 
-	Effekseer::Backend::GraphicsDeviceRef graphicsDevice = GenerateGraphicsDevice(window.get());
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice = window->GetGraphicsDevice();
 
 	std::array<SimpleVertex, 4> vbData;
 	vbData[0].Position = {-0.5f, 0.5f, 0.5f};
@@ -84,7 +74,15 @@ void Backend_Textures()
 		Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler1", "Sampler_g_sampler2", "Sampler_g_sampler3"},
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
-	auto shader = GenerateShader_Textures(graphicsDevice, uniformLayout, window.get());
+	std::map<std::string, ShaderContainer> shaders;
+#ifdef _WIN32
+	shaders["DirectX11"].InitAsBinary(DX11VS::g_main, sizeof(DX11VS::g_main), DX11PS::g_main, sizeof(DX11PS::g_main));
+#endif
+	shaders["OpenGL"].VertexCodes = {{gl_mesh_vs}};
+	shaders["OpenGL"].PixelCodes = {{gl_textures_ps}};
+	auto shader = window->CreateShader(shaders, uniformLayout);
+
+	assert(shader != nullptr);
 
 	std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
 	vertexLayoutElements.resize(3);
@@ -152,7 +150,7 @@ void Backend_Textures()
 
 	auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
-	auto renderPass = GenerateRenderPass(graphicsDevice, window.get());
+	auto renderPass = window->GetScreenRenderPass();
 	int count = 0;
 	while (count < 60 && window->DoEvent())
 	{
@@ -195,10 +193,10 @@ void Backend_Textures()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_Textures_GL("Backend.Textures_GL", []() -> void { Backend_Textures<RenderingWindowGL>(); });
+TestRegister Test_Backend_Textures_GL("Backend.Textures_GL", []() -> void { Backend_Textures<RenderingEnvironmentGL>(); });
 
 #ifdef _WIN32
-TestRegister Test_Backend_Textures_DX11("Backend.Textures_DX11", []() -> void { Backend_Textures<RenderingWindowDX11>(); });
+TestRegister Test_Backend_Textures_DX11("Backend.Textures_DX11", []() -> void { Backend_Textures<RenderingEnvironmentDX11>(); });
 #endif
 
 #endif

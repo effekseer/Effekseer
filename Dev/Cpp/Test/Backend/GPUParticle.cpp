@@ -1,5 +1,5 @@
 #include "../TestHelper.h"
-#include "../Window/RenderingWindowGL.h"
+#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 #include "Effekseer.h"
 #include <Effekseer/Utils/Effekseer.CustomAllocator.h>
 #include <EffekseerRendererGL.h>
@@ -557,5 +557,5 @@ void GpuParticle()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle<RenderingWindowGL>(); });
+TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle<RenderingEnvironmentGL>(); });
 #endif

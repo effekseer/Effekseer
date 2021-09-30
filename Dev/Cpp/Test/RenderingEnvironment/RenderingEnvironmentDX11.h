@@ -1,9 +1,9 @@
 #pragma once
 
-#include "RenderingWindow.h"
+#include "RenderingEnvironment.h"
 #include <d3d11.h>
 
-class RenderingWindowDX11 : public RenderingWindow
+class RenderingEnvironmentDX11 : public RenderingEnvironment
 {
 private:
 	ID3D11Device* device_ = nullptr;
@@ -18,11 +18,10 @@ private:
 	ID3D11DepthStencilView* depthStencilView_ = nullptr;
 
 public:
-	RenderingWindowDX11(std::array<int32_t, 2> windowSize, const char* title);
-	~RenderingWindowDX11() override;
+	RenderingEnvironmentDX11(std::array<int32_t, 2> windowSize, const char* title);
+	~RenderingEnvironmentDX11() override;
 	void Present() override;
 	bool DoEvent() override;
-	Effekseer::Backend::GraphicsDeviceRef GenerateGraphicsDevice() override;
 
 	ID3D11Device* GetDevice() const
 	{

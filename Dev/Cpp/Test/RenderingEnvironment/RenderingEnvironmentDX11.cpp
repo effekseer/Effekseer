@@ -1,9 +1,11 @@
-#include "RenderingWindowDX11.h"
+#include "RenderingEnvironmentDX11.h"
 #include <Effekseer.h>
 #include <EffekseerRendererDX11.h>
 
-RenderingWindowDX11::RenderingWindowDX11(std::array<int32_t, 2> windowSize, const char* title)
-	: RenderingWindow(true, windowSize, title)
+#include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
+
+RenderingEnvironmentDX11::RenderingEnvironmentDX11(std::array<int32_t, 2> windowSize, const char* title)
+	: RenderingEnvironment(true, windowSize, title)
 {
 	UINT debugFlag = 0;
 #if _DEBUG
@@ -100,9 +102,23 @@ RenderingWindowDX11::RenderingWindowDX11(std::array<int32_t, 2> windowSize, cons
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	context_->RSSetViewports(1, &vp);
+
+	graphicsDevice_ = EffekseerRendererDX11::CreateGraphicsDevice(GetDevice(), GetContext());
+
+	{
+		auto gd = static_cast<EffekseerRendererDX11::Backend::GraphicsDevice*>(graphicsDevice_.Get());
+		auto rt = gd->CreateTexture(nullptr, GetRenderTargetView(), nullptr);
+		auto dt = gd->CreateTexture(nullptr, nullptr, GetDepthStencilView());
+
+		Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> rts;
+		rts.resize(1);
+		rts.at(0) = rt;
+
+		renderPass_ = gd->CreateRenderPass(rts, dt);
+	}
 }
 
-RenderingWindowDX11 ::~RenderingWindowDX11()
+RenderingEnvironmentDX11 ::~RenderingEnvironmentDX11()
 {
 	ES_SAFE_RELEASE(renderTargetView_);
 	ES_SAFE_RELEASE(backBuffer_);
@@ -116,22 +132,17 @@ RenderingWindowDX11 ::~RenderingWindowDX11()
 	ES_SAFE_RELEASE(device_);
 }
 
-void RenderingWindowDX11::Present()
+void RenderingEnvironmentDX11::Present()
 {
 	swapChain_->Present(1, 0);
 }
 
-bool RenderingWindowDX11::DoEvent()
+bool RenderingEnvironmentDX11::DoEvent()
 {
-	if (!RenderingWindow::DoEvent())
+	if (!RenderingEnvironment::DoEvent())
 	{
 		return false;
 	}
 
 	return true;
-}
-
-Effekseer::Backend::GraphicsDeviceRef RenderingWindowDX11::GenerateGraphicsDevice()
-{
-	return EffekseerRendererDX11::CreateGraphicsDevice(GetDevice(), GetContext());
 }

@@ -7,10 +7,10 @@ set(effekseer_test_src
     main.cpp
     TestHelper.h
     TestHelper.cpp
-    Window/RenderingWindow.h
-    Window/RenderingWindow.cpp
-    Window/RenderingWindowGL.h
-    Window/RenderingWindowGL.cpp
+    RenderingEnvironment/RenderingEnvironment.h
+    RenderingEnvironment/RenderingEnvironment.cpp
+    RenderingEnvironment/RenderingEnvironmentGL.h
+    RenderingEnvironment/RenderingEnvironmentGL.cpp
     Runtime/EffectPlatform.h
     Runtime/EffectPlatform.cpp
     Runtime/EffectPlatformGLFW.h
@@ -64,8 +64,8 @@ if(WIN32)
         Runtime/EffectPlatformDX9.cpp
         Runtime/EffectPlatformDX11.h
         Runtime/EffectPlatformDX11.cpp
-        Window/RenderingWindowDX11.h
-        Window/RenderingWindowDX11.cpp
+        RenderingEnvironment/RenderingEnvironmentDX11.h
+        RenderingEnvironment/RenderingEnvironmentDX11.cpp
     )
 endif()
 
