@@ -1,5 +1,5 @@
+#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 #include "../TestHelper.h"
-#include "../Window/RenderingWindowGL.h"
 #include "Effekseer.h"
 #include <EffekseerRendererGL.h>
 
@@ -202,12 +202,12 @@ private:
 	}
 
 public:
-	std::shared_ptr<RenderingWindow> window_;
+	std::shared_ptr<RenderingEnvironment> window_;
 
-	RenderPassTestContext(std::shared_ptr<RenderingWindow> window)
+	RenderPassTestContext(std::shared_ptr<RenderingEnvironment> window)
 	{
 		window_ = window;
-		graphicsDevice = window_->GenerateGraphicsDevice();
+		graphicsDevice = window_->GetGraphicsDevice();
 		buffers.push_back(ShiftBuffer(graphicsDevice));
 		buffers.push_back(ShiftBuffer(graphicsDevice));
 		auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"i_shift", "i_color_shift"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
@@ -297,7 +297,7 @@ public:
 	}
 };
 
-void Backend_RenderPass(std::shared_ptr<RenderingWindow> window)
+void Backend_RenderPass(std::shared_ptr<RenderingEnvironment> window)
 {
 	RenderPassTestContext renderPassTestContext(window);
 	int count = 0;
@@ -312,5 +312,5 @@ void Backend_RenderPass(std::shared_ptr<RenderingWindow> window)
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_RenderPass("Backend.RenderPass_GL", []() -> void { Backend_RenderPass(std::make_shared<RenderingWindowGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
+TestRegister Test_Backend_RenderPass("Backend.RenderPass_GL", []() -> void { Backend_RenderPass(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 #endif

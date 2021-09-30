@@ -1,5 +1,5 @@
 
-#include "RenderingWindow.h"
+#include "RenderingEnvironment.h"
 
 #if defined(WIN32) || defined(__APPLE__) || defined(__linux__)
 
@@ -25,7 +25,7 @@
 
 #endif
 
-void* RenderingWindow::GetNativePtr(int32_t index)
+void* RenderingEnvironment::GetNativePtr(int32_t index)
 {
 #ifdef _WIN32
 	if (index == 0)
@@ -52,7 +52,7 @@ void* RenderingWindow::GetNativePtr(int32_t index)
 	return nullptr;
 }
 
-RenderingWindow::RenderingWindow(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title)
+RenderingEnvironment::RenderingEnvironment(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title)
 {
 	isOpenGLMode_ = isOpenGLMode;
 
@@ -89,7 +89,7 @@ RenderingWindow::RenderingWindow(bool isOpenGLMode, std::array<int32_t, 2> windo
 	}
 }
 
-RenderingWindow::~RenderingWindow()
+RenderingEnvironment::~RenderingEnvironment()
 {
 	if (glfwWindow_ != nullptr)
 	{
@@ -99,7 +99,7 @@ RenderingWindow::~RenderingWindow()
 	}
 }
 
-void RenderingWindow::Present()
+void RenderingEnvironment::Present()
 {
 	if (isOpenGLMode_)
 	{
@@ -107,7 +107,7 @@ void RenderingWindow::Present()
 	}
 }
 
-bool RenderingWindow::DoEvent()
+bool RenderingEnvironment::DoEvent()
 {
 	if (glfwWindowShouldClose(glfwWindow_) == GL_TRUE)
 	{
@@ -117,4 +117,32 @@ bool RenderingWindow::DoEvent()
 	glfwPollEvents();
 
 	return true;
+}
+
+Effekseer::Backend::ShaderRef RenderingEnvironment::CreateShader(std::map<std::string, ShaderContainer> shaders, Effekseer::Backend::UniformLayoutRef layout)
+{
+	const auto& shader = shaders[graphicsDevice_->GetDeviceName()];
+	if (shader.VertexCodes.size() > 0)
+	{
+		Effekseer::CustomVector<Effekseer::StringView<char>> vsCodes;
+		Effekseer::CustomVector<Effekseer::StringView<char>> psCodes;
+
+		for (size_t i = 0; i < shader.VertexCodes.size(); i++)
+		{
+			vsCodes.emplace_back(shader.VertexCodes[i].c_str());
+		}
+
+		for (size_t i = 0; i < shader.PixelCodes.size(); i++)
+		{
+			psCodes.emplace_back(shader.PixelCodes[i].c_str());
+		}
+
+		return graphicsDevice_->CreateShaderFromCodes(vsCodes, psCodes, layout);
+	}
+	else if (shader.VertexData.size() > 0)
+	{
+		return graphicsDevice_->CreateShaderFromBinary(shader.VertexData.data(), shader.VertexData.size(), shader.PixelData.data(), shader.PixelData.size());
+	}
+
+	return nullptr;
 }

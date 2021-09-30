@@ -1,11 +1,11 @@
 #include "../TestHelper.h"
 #include "Helper.h"
 
-#include "../Window/RenderingWindowGL.h"
+#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 
 #ifdef _WIN32
 #include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
-#include "../Window/RenderingWindowDX11.h"
+#include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
 #include <EffekseerRendererDX11.h>
 
 namespace DX11VS_Mesh
@@ -28,10 +28,9 @@ namespace DX11PS_Mesh
 #include "../Shaders/GLSL_GL_Header/mesh_ps.h"
 #include "../Shaders/GLSL_GL_Header/mesh_vs.h"
 
-void Backend_Mesh(std::shared_ptr<RenderingWindow> window)
+void Backend_Mesh(std::shared_ptr<RenderingEnvironment> window)
 {
-
-	auto graphicsDevice = window->GenerateGraphicsDevice();
+	auto graphicsDevice = window->GetGraphicsDevice();
 
 	std::array<SimpleVertex, 4> vbData;
 	vbData[0].Position = {-0.5f, 0.5f, 0.5f};
@@ -68,19 +67,13 @@ void Backend_Mesh(std::shared_ptr<RenderingWindow> window)
 	auto cb = graphicsDevice->CreateUniformBuffer(sizeof(float) * 4, shiftVertex.data());
 	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{uniformLayoutElement});
 
-	Effekseer::Backend::ShaderRef shader;
-
+	std::map<std::string, ShaderContainer> shaders;
 #ifdef _WIN32
-	if (graphicsDevice->GetDeviceName() == "DirectX11")
-	{
-		shader = graphicsDevice->CreateShaderFromBinary(DX11VS_Mesh::g_main, sizeof(DX11VS_Mesh::g_main), DX11PS_Mesh::g_main, sizeof(DX11PS_Mesh::g_main));
-	}
+	shaders["DirectX11"].InitAsBinary(DX11VS_Mesh::g_main, sizeof(DX11VS_Mesh::g_main), DX11PS_Mesh::g_main, sizeof(DX11PS_Mesh::g_main));
 #endif
-
-	if (graphicsDevice->GetDeviceName() == "OpenGL")
-	{
-		shader = graphicsDevice->CreateShaderFromCodes({{gl_mesh_vs}}, {{gl_mesh_ps}}, uniformLayout);
-	}
+	shaders["OpenGL"].VertexCodes = {{gl_mesh_vs}};
+	shaders["OpenGL"].PixelCodes = {{gl_mesh_ps}};
+	auto shader = window->CreateShader(shaders, uniformLayout);
 
 	assert(shader != nullptr);
 
@@ -112,7 +105,7 @@ void Backend_Mesh(std::shared_ptr<RenderingWindow> window)
 
 	auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
-	auto renderPass = GenerateRenderPass(graphicsDevice, window.get());
+	auto renderPass = window->GetScreenRenderPass();
 	int count = 0;
 	while (count < 60 && window->DoEvent())
 	{
@@ -139,10 +132,10 @@ void Backend_Mesh(std::shared_ptr<RenderingWindow> window)
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh(std::make_shared<RenderingWindowGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
+TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 
 #ifdef _WIN32
-TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh(std::make_shared<RenderingWindowDX11>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
+TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 #endif
 
 #endif
