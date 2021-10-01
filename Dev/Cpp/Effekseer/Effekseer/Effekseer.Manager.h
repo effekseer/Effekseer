@@ -634,6 +634,13 @@ public:
 		@param	autoDraw	[in]	自動描画フラグ
 	*/
 	virtual void SetAutoDrawing(Handle handle, bool autoDraw) = 0;
+	
+	/**
+		@brief
+		\~English	Gets the user pointer set on the handle.
+		\~Japanese	ハンドルに設定されたユーザーポインタを取得する。
+	*/
+	virtual void* GetUserData(Handle handle) = 0;
 
 	/**
 		@brief
