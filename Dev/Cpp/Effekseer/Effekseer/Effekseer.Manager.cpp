@@ -1204,6 +1204,18 @@ void ManagerImplemented::SetAutoDrawing(Handle handle, bool autoDraw)
 	}
 }
 
+void* ManagerImplemented::GetUserData(Handle handle)
+{
+	auto it = m_DrawSets.find(handle);
+
+	if (it != m_DrawSets.end())
+	{
+		return it->second.GlobalPointer->GetUserData();
+	}
+
+	return nullptr;
+}
+
 void ManagerImplemented::SetUserData(Handle handle, void* userData)
 {
 	auto it = m_DrawSets.find(handle);
