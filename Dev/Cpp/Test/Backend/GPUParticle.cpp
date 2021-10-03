@@ -91,6 +91,8 @@ std::array<std::array<float, 4>, 4> matTo2DArray(Effekseer::Matrix44 matrix)
 class GpuParticleBuffer
 {
 public:
+	// textures[0]: Position
+	// textures[1]: Velocity
 	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, 4> textures;
 	Effekseer::Backend::RenderPassRef renderPass;
 
@@ -174,6 +176,14 @@ class GpuParticleContext
 	Effekseer::Backend::UniformBufferRef emitUniformBufferVS;
 	Effekseer::Backend::UniformBufferRef renderUniformBufferVS;
 
+	bool trailMode = true;
+	int32_t trailOffset = 0;
+	//trailFrameBuffer = gl.createFramebuffer();
+	Effekseer::Backend::TextureRef trailBufferTexture;
+	Effekseer::Backend::VertexBufferRef trailVertexBuffer;
+	Effekseer::Backend::ShaderRef trailRenderShader;
+	
+
 	void initRenderVertex()
 	{
 		std::array<std::array<float, 2>, 4> vbData;
@@ -190,7 +200,6 @@ class GpuParticleContext
 		ibData[3] = 2;
 		ibData[4] = 1;
 		ibData[5] = 3;
-
 		renderIB = graphicsDevice->CreateIndexBuffer(6, ibData.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 
 		std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
@@ -199,7 +208,6 @@ class GpuParticleContext
 		vertexLayoutElements[0].Name = "a_VertexPosition";
 		vertexLayoutElements[0].SemanticIndex = 0;
 		vertexLayoutElements[0].SemanticName = "TEXCOORD";
-
 		renderVL = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 	}
 
@@ -210,7 +218,6 @@ class GpuParticleContext
 		vbData[1] = {-1, -1};
 		vbData[2] = {1, 1};
 		vbData[3] = {1, -1};
-
 		updateVB = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 2>) * 4, vbData.data(), false);
 
 		std::array<int32_t, 6> ibData;
@@ -228,7 +235,6 @@ class GpuParticleContext
 		vertexLayoutElements[0].Name = "a_Position";
 		vertexLayoutElements[0].SemanticIndex = 0;
 		vertexLayoutElements[0].SemanticName = "TEXCOORD";
-
 		updateVL = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 	}
 
@@ -258,6 +264,43 @@ class GpuParticleContext
 		vertexLayoutElements[2].SemanticName = "POSITION";
 
 		emitVL = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
+	}
+
+	void initTrailHistoriesTexture()
+	{
+		Effekseer::Backend::TextureParameter param;
+		param.Usage = Effekseer::Backend::TextureUsageType::None;
+		param.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
+		param.Dimension = 3;
+		param.Size = { texWidth, texHeight, TrailBufferSize };
+		param.MipLevelCount = 1;
+		param.SampleCount = 1;
+		trailBufferTexture = graphicsDevice->CreateTexture(param);
+	}
+
+	void initTrailRenderVertexBuffer()
+	{
+		std::vector<float> trailVertexData;
+		trailVertexData.resize((TrailBufferSize + 1) * 4);
+		for (int i = 0; i <= TrailBufferSize; i++) {
+			// Right
+			trailVertexData[i * 4 + 0] = +i / TrailBufferSize;
+			trailVertexData[i * 4 + 1] = 0.5;
+			// Left
+			trailVertexData[i * 4 + 2] = +i / TrailBufferSize;
+			trailVertexData[i * 4 + 3] = -0.5;
+		}
+		trailVertexBuffer = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 2>) * 4, trailVertexData.data(), false);
+		/*
+					[0]   [1]   [2]         [n-1] [n]   n=TrailBufferSize+1
+
+		-0.5   ->   +-----+-----+--...  ...--+-----+
+					|     |     |            |     |
+		Origin ->	*     *     *            *     *
+					|     |     |            |     |
+		+0.5   ->   +-----+-----+--...  ...--+-----+
+
+		*/
 	}
 
 	void updateEmit(int targetIndex)
@@ -382,6 +425,37 @@ class GpuParticleContext
 		colorTableTexture = createColorTableTexture();
 	}
 
+	void initTraitUniformLayoutAndShaders()
+	{
+		std::string DirectoryPath = GetDirectoryPath(__FILE__);
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
+		renderUniformLayoutElements.resize(4);
+		renderUniformLayoutElements[0].Name = "ID2TPos";
+		renderUniformLayoutElements[0].Offset = 0;
+		renderUniformLayoutElements[0].Stage = Effekseer::Backend::ShaderStageType::Vertex;
+		renderUniformLayoutElements[0].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
+		renderUniformLayoutElements[1].Name = "ViewMatrix";
+		renderUniformLayoutElements[1].Offset = sizeof(float) * 4;
+		renderUniformLayoutElements[1].Stage = Effekseer::Backend::ShaderStageType::Vertex;
+		renderUniformLayoutElements[1].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
+		renderUniformLayoutElements[2].Name = "ProjMatrix";
+		renderUniformLayoutElements[2].Offset = sizeof(float) * 20;
+		renderUniformLayoutElements[2].Stage = Effekseer::Backend::ShaderStageType::Vertex;
+		renderUniformLayoutElements[2].Type = Effekseer::Backend::UniformBufferLayoutElementType::Matrix44;
+		renderUniformLayoutElements[3].Name = "Trail";
+		renderUniformLayoutElements[3].Offset = sizeof(float) * 36;
+		renderUniformLayoutElements[3].Stage = Effekseer::Backend::ShaderStageType::Vertex;
+		renderUniformLayoutElements[3].Type = Effekseer::Backend::UniformBufferLayoutElementType::Vector4;
+		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
+			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable", "Histories"},
+			renderUniformLayoutElements);
+		trailRenderShader = graphicsDevice->CreateShaderFromCodes(
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.vert.glsl").c_str() },
+			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.frag.glsl").c_str() },
+			renderUniformLayout);
+
+	}
+
 public:
 	std::shared_ptr<WINDOW> window;
 	GpuParticleContext(int maxParticleCount, int windowWidth, int windowHeight)
@@ -416,6 +490,10 @@ public:
 		initUpdateVertex();
 		initRenderVertex();
 		initEmitVertex();
+
+		initTrailHistoriesTexture();
+		initTrailRenderVertexBuffer();
+		initTraitUniformLayoutAndShaders();
 	}
 
 	void Emit(int lifeTime, std::array<float, 3> position, std::array<float, 3> direction)
@@ -484,26 +562,38 @@ public:
 
 	void Render()
 	{
-
-		Effekseer::Backend::PipelineStateParameter pipParam;
-
-		// OpenGL doesn't require it
-		pipParam.FrameBufferPtr = nullptr;
-		pipParam.VertexLayoutPtr = renderVL;
-		pipParam.ShaderPtr = renderShader;
-		pipParam.IsDepthTestEnabled = false;
-		pipParam.IsBlendEnabled = true;
-		pipParam.BlendSrcFunc = Effekseer::Backend::BlendFuncType::SrcAlpha;
-		pipParam.BlendDstFunc = Effekseer::Backend::BlendFuncType::One;
-		pipParam.BlendSrcFuncAlpha = Effekseer::Backend::BlendFuncType::SrcAlpha;
-		pipParam.BlendDstFuncAlpha = Effekseer::Backend::BlendFuncType::One;
-
-		auto pip = graphicsDevice->CreatePipelineState(pipParam);
+		Effekseer::Backend::PipelineStateRef pip;
+		if (trailMode) {
+			Effekseer::Backend::PipelineStateParameter pipParam;
+			pipParam.FrameBufferPtr = nullptr;
+			pipParam.VertexLayoutPtr = renderVL;
+			pipParam.ShaderPtr = trailRenderShader;
+			pipParam.IsDepthTestEnabled = false;
+			pipParam.IsBlendEnabled = true;
+			pipParam.BlendSrcFunc = Effekseer::Backend::BlendFuncType::SrcAlpha;
+			pipParam.BlendDstFunc = Effekseer::Backend::BlendFuncType::One;
+			pipParam.BlendSrcFuncAlpha = Effekseer::Backend::BlendFuncType::SrcAlpha;
+			pipParam.BlendDstFuncAlpha = Effekseer::Backend::BlendFuncType::One;
+			pip = graphicsDevice->CreatePipelineState(pipParam);
+		}
+		else {
+			Effekseer::Backend::PipelineStateParameter pipParam;
+			// OpenGL doesn't require it
+			pipParam.FrameBufferPtr = nullptr;
+			pipParam.VertexLayoutPtr = renderVL;
+			pipParam.ShaderPtr = renderShader;
+			pipParam.IsDepthTestEnabled = false;
+			pipParam.IsBlendEnabled = true;
+			pipParam.BlendSrcFunc = Effekseer::Backend::BlendFuncType::SrcAlpha;
+			pipParam.BlendDstFunc = Effekseer::Backend::BlendFuncType::One;
+			pipParam.BlendSrcFuncAlpha = Effekseer::Backend::BlendFuncType::SrcAlpha;
+			pipParam.BlendDstFuncAlpha = Effekseer::Backend::BlendFuncType::One;
+			pip = graphicsDevice->CreatePipelineState(pipParam);
+		}
 
 		glViewport(0, 0, windowWidth, windowHeight);
 		graphicsDevice->BeginRenderPass(windowRenderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 		Effekseer::Backend::DrawParameter drawParam;
-
 		drawParam.TextureCount = buffers[pingpong].textures.size() + 1;
 		for (int i = 0; i < buffers[pingpong].textures.size(); i++)
 		{
@@ -515,16 +605,30 @@ public:
 		drawParam.TextureSamplingTypes[buffers[pingpong].textures.size()] = Effekseer::Backend::TextureSamplingType::Linear;
 		drawParam.TextureWrapTypes[buffers[pingpong].textures.size()] = Effekseer::Backend::TextureWrapType::Clamp;
 
-		drawParam.PipelineStatePtr = pip;
+		if (trailMode) {
+			drawParam.VertexBufferPtr = trailVertexBuffer;
+			drawParam.IndexBufferPtr = nullptr;
+			drawParam.PipelineStatePtr = pip;
+			drawParam.PrimitiveCount = TrailBufferSize * 2;
+			drawParam.InstanceCount = maxParticleCount;
+			drawParam.VertexUniformBufferPtr = renderUniformBufferVS;
 
-		drawParam.VertexBufferPtr = renderVB;
-		drawParam.IndexBufferPtr = renderIB;
-		drawParam.PipelineStatePtr = pip;
-		drawParam.PrimitiveCount = 2;
-		drawParam.InstanceCount = maxParticleCount;
-		drawParam.VertexUniformBufferPtr = renderUniformBufferVS;
+			graphicsDevice->Draw(drawParam);
+		}
+		else {
 
-		graphicsDevice->Draw(drawParam);
+			//drawParam.PipelineStatePtr = pip;
+
+			drawParam.VertexBufferPtr = renderVB;
+			drawParam.IndexBufferPtr = renderIB;
+			drawParam.PipelineStatePtr = pip;
+			drawParam.PrimitiveCount = 2;
+			drawParam.InstanceCount = maxParticleCount;
+			drawParam.VertexUniformBufferPtr = renderUniformBufferVS;
+
+			graphicsDevice->Draw(drawParam);
+		}
+
 		graphicsDevice->EndRenderPass();
 	}
 };
