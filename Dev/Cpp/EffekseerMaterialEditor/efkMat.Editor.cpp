@@ -50,6 +50,36 @@ static Vector2DF GetNodeGroupSize(uint64_t guid)
 	return {size.x, size.y};
 }
 
+static std::tuple<Vector2DF, Vector2DF> GetSelectedNodeBounds(float margin)
+{
+	std::array<ed::NodeId, 256> selectedNodes;
+	auto selectedCount = ed::GetSelectedNodes(selectedNodes.data(), selectedNodes.size());
+
+	ImVec2 areaMin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+	ImVec2 areaMax(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+
+	for (size_t i = 0; i < selectedCount; i++)
+	{
+		const auto pos = ed::GetNodePosition(selectedNodes[i]);
+		const auto size = ed::GetNodeSize(selectedNodes[i]);
+		areaMin.x = std::min(areaMin.x, pos.x);
+		areaMin.y = std::min(areaMin.y, pos.y);
+		areaMax.x = std::max(areaMax.x, (pos + size).x);
+		areaMax.y = std::max(areaMax.y, (pos + size).y);
+	}
+
+	if (selectedCount > 0)
+	{
+		areaMin.x -= margin;
+		areaMin.y -= margin;
+		areaMax.x += margin;
+		areaMax.y += margin;
+		return std::tuple<Vector2DF, Vector2DF>{Vector2DF{areaMin.x, areaMin.y}, Vector2DF{areaMax.x, areaMax.y}};
+	}
+
+	return std::tuple<Vector2DF, Vector2DF>{};
+}
+
 void Compile(std::shared_ptr<Graphics> graphics,
 			 std::shared_ptr<Material> material,
 			 std::shared_ptr<Node> node,
@@ -290,9 +320,9 @@ ErrorCode EditorContent::Load(const char* path, std::shared_ptr<Library> library
 	fclose(fp);
 
 	auto err = material_->Load(data, library, path);
-	if(err != ErrorCode::OK)
+	if (err != ErrorCode::OK)
 	{
-		if(err == ErrorCode::NewVersion)
+		if (err == ErrorCode::NewVersion)
 		{
 			boxer::show(
 				StringContainer::GetValue("Error_NewVersion").c_str(),
@@ -908,6 +938,18 @@ void Editor::UpdatePopup()
 			ed::SetNodePosition(node->GUID, nodePos);
 			node->Pos.X = nodePos.x;
 			node->Pos.Y = nodePos.y;
+
+			if (node->Parameter->Type == NodeType::Comment)
+			{
+				// A comment node includes all selected nodes
+				const auto [areaMin, areaMax] = GetSelectedNodeBounds(30.0f);
+				if (areaMax.X - areaMin.X > 0.0f && areaMax.Y - areaMin.Y > 0.0f)
+				{
+					node->Pos = areaMin;
+					node->CommentSize.X = areaMax.X - areaMin.X;
+					node->CommentSize.Y = areaMax.Y - areaMin.Y;
+				}
+			}
 
 			// link automatically
 			if (currentPin != nullptr)
@@ -1569,7 +1611,7 @@ void Editor::UpdatePreview()
 	}
 
 	// uniform
-	
+
 	// TODO : refactor
 	auto uniformNumHeader = StringContainer::GetValue("UniformCount", "Uniform");
 	const int uniformMax = 16;
@@ -1643,7 +1685,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		ImGui::BeginHorizontal("horizontal");
 		ImGui::Text(node->Properties[0]->Str.c_str());
 		ImGui::EndHorizontal();
-		
+
 		auto editor = reinterpret_cast<ax::NodeEditor::Detail::EditorContext*>(ed::GetCurrentEditor());
 		auto nodeContext = editor->GetNode(node->GUID);
 
