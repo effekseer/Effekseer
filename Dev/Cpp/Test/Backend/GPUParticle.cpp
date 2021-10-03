@@ -176,13 +176,22 @@ class GpuParticleContext
 	Effekseer::Backend::UniformBufferRef emitUniformBufferVS;
 	Effekseer::Backend::UniformBufferRef renderUniformBufferVS;
 
-	bool trailMode = true;
+	bool trailMode = false;
 	int32_t trailOffset = 0;
-	//trailFrameBuffer = gl.createFramebuffer();
 	Effekseer::Backend::TextureRef trailBufferTexture;
 	Effekseer::Backend::VertexBufferRef trailVertexBuffer;
+	Effekseer::Backend::IndexBufferRef trailRenderIndexBuffer;
 	Effekseer::Backend::ShaderRef trailRenderShader;
-	
+	Effekseer::Backend::UniformBufferRef trailRenderUniformBufferVS;
+
+	struct TrailRenderUniformBufferVS
+	{
+		std::array<float, 4> ID2TPos;
+		std::array<std::array<float, 4>, 4> ViewMatrix;
+		std::array<std::array<float, 4>, 4> ProjMatrix;
+		std::array<float, 4> Trail;
+	};
+
 
 	void initRenderVertex()
 	{
@@ -290,7 +299,7 @@ class GpuParticleContext
 			trailVertexData[i * 4 + 2] = +i / TrailBufferSize;
 			trailVertexData[i * 4 + 3] = -0.5;
 		}
-		trailVertexBuffer = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 2>) * 4, trailVertexData.data(), false);
+		trailVertexBuffer = graphicsDevice->CreateVertexBuffer(sizeof(float) * trailVertexData.size(), trailVertexData.data(), false);
 		/*
 					[0]   [1]   [2]         [n-1] [n]   n=TrailBufferSize+1
 
@@ -301,6 +310,21 @@ class GpuParticleContext
 		+0.5   ->   +-----+-----+--...  ...--+-----+
 
 		*/
+
+		std::vector<int32_t> ibData;
+		int quadCount = (TrailBufferSize + 1);
+		ibData.resize(quadCount * 6);
+		int32_t ofs = 0;
+		for (int i = 0; i < quadCount; i++) {
+			ibData[i * 6 + 0] = ofs + 0;
+			ibData[i * 6 + 1] = ofs + 1;
+			ibData[i * 6 + 2] = ofs + 2;
+			ibData[i * 6 + 3] = ofs + 2;
+			ibData[i * 6 + 4] = ofs + 1;
+			ibData[i * 6 + 5] = ofs + 3;
+			ofs += 4;
+		}
+		trailRenderIndexBuffer = graphicsDevice->CreateIndexBuffer(ibData.size(), ibData.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 	}
 
 	void updateEmit(int targetIndex)
@@ -454,6 +478,11 @@ class GpuParticleContext
 			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.frag.glsl").c_str() },
 			renderUniformLayout);
 
+
+		TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
+			{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { trailOffset, TrailBufferSize }
+		};
+		trailRenderUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(TrailRenderUniformBufferVS), &trailRenderUniformBufferVSInitData);
 	}
 
 public:
@@ -513,6 +542,41 @@ public:
 		const int sourceIndex = pingpong;
 		const int targetIndex = (pingpong + 1) % 2;
 
+		if (trailMode) {
+			if (--trailOffset < 0) {
+				trailOffset = TrailBufferSize - 1;
+			}
+
+			//gl.viewport(0, 0, this.texWidth, this.texHeight);
+			//gl.useProgram(this.trailUpdateShader);
+			//gl.bindFramebuffer(gl.FRAMEBUFFER, this.trailFrameBuffer);
+			//this.buffers[sourceIndex].setUpdateSource();
+			//gl.uniform1i(gl.getUniformLocation(this.trailUpdateShader, "i_ParticleData0"), 0);
+			//gl.uniform1i(gl.getUniformLocation(this.trailUpdateShader, "i_ParticleData1"), 1);
+			//gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, this.trailBufferTexture, 0, this.trailOffset);
+			//gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+			//gl.enableVertexAttribArray(0);
+			//gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+			//gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+			//gl.disableVertexAttribArray(0);
+			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+			// Position texture to
+			graphicsDevice->CopyTexture(trailBufferTexture, buffers[sourceIndex].textures.at(0),
+				{ 0, 0, trailOffset },
+				{ 0, 0, 0 },
+				{ texWidth, texHeight , 1 },
+				0, 0);
+			
+
+			//gl.bindFramebuffer(gl.FRAMEBUFFER, );	
+			//gl.bindTexture(gl.TEXTURE_2D_ARRAY, this.trailBufferTexture, );
+			//gl.copyTexSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, this.trailOffset, 0, 0, this.texWidth, this.texHeight);
+			//gl.bindTexture(gl.TEXTURE_2D_ARRAY, null);
+			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		}
+
+
 		Effekseer::Backend::PipelineStateParameter pipParam;
 
 		// OpenGL doesn't require it
@@ -527,8 +591,17 @@ public:
 		glViewport(0, 0, texWidth, texHeight);
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 
-		RenderUniformBufferVS renderUniformBufferVSData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
-		graphicsDevice->UpdateUniformBuffer(renderUniformBufferVS, sizeof(RenderUniformBufferVS), 0, &renderUniformBufferVSData);
+
+		if (trailMode) {
+			TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
+				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { trailOffset, TrailBufferSize }
+			};
+			graphicsDevice->UpdateUniformBuffer(trailRenderUniformBufferVS, sizeof(TrailRenderUniformBufferVS), 0, &trailRenderUniformBufferVSInitData);
+		}
+		else {
+			RenderUniformBufferVS renderUniformBufferVSData = { {static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix) };
+			graphicsDevice->UpdateUniformBuffer(renderUniformBufferVS, sizeof(RenderUniformBufferVS), 0, &renderUniformBufferVSData);
+		}
 
 		Effekseer::Backend::DrawParameter drawParam;
 
@@ -607,18 +680,15 @@ public:
 
 		if (trailMode) {
 			drawParam.VertexBufferPtr = trailVertexBuffer;
-			drawParam.IndexBufferPtr = nullptr;
+			drawParam.IndexBufferPtr = trailRenderIndexBuffer;
 			drawParam.PipelineStatePtr = pip;
 			drawParam.PrimitiveCount = TrailBufferSize * 2;
 			drawParam.InstanceCount = maxParticleCount;
-			drawParam.VertexUniformBufferPtr = renderUniformBufferVS;
+			drawParam.VertexUniformBufferPtr = trailRenderUniformBufferVS;
 
 			graphicsDevice->Draw(drawParam);
 		}
 		else {
-
-			//drawParam.PipelineStatePtr = pip;
-
 			drawParam.VertexBufferPtr = renderVB;
 			drawParam.IndexBufferPtr = renderIB;
 			drawParam.PipelineStatePtr = pip;

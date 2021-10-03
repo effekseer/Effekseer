@@ -151,12 +151,15 @@ void StoreUniforms(const ShaderRef& shader, const UniformBufferRef& vertexUnifor
 				const auto& buffer = uniformBuffer->GetBuffer();
 				assert(buffer.size() >= element.Offset + sizeof(float) * 4);
 				GLExt::glUniform4fv(loc, element.Count, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+
+				GLCheckError();
 			}
 			else if (element.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
 			{
 				const auto& buffer = uniformBuffer->GetBuffer();
 				assert(buffer.size() >= element.Offset + sizeof(float) * 4 * 4);
 				GLExt::glUniformMatrix4fv(loc, element.Count, transpose ? GL_TRUE : GL_FALSE, reinterpret_cast<const GLfloat*>(buffer.data() + element.Offset));
+				GLCheckError();
 			}
 			else
 			{

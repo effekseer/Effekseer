@@ -123,4 +123,5 @@ void main() {
 		v_Color = texture(ColorTable, texCoord);
 		v_Color.a *= fadeInOut(1.0, 10.0, age, lifetime);
 	}
+	v_Color = vec4(1, 0, 0, 1);
 }

@@ -89,11 +89,11 @@ uniform sampler2D ParticleData0;
 uniform sampler2D ParticleData1;
 uniform sampler2D ColorTable;
 uniform highp sampler2DArray Histories;
-uniform ivec2 ID2TPos;
+uniform vec4 ID2TPos;
 
 uniform mat4 ViewMatrix;
 uniform mat4 ProjMatrix;
-uniform ivec2 Trail;			// .x=trailOffset, .y=TrailBufferSize
+uniform vec4 Trail;			// .x=trailOffset, .y=TrailBufferSize
 
 vec3 unpackVec3(float s) {
 	uint bits = floatBitsToUint(s);
@@ -104,7 +104,8 @@ vec3 unpackVec3(float s) {
 void main() {
 	//int particleID = int(a_ParticleIndex);
 	int particleID = gl_InstanceID;
-	ivec2 texPos = ivec2(particleID & ID2TPos.x, particleID >> ID2TPos.y);
+	ivec2 ID2TPos2i = ivec2(ID2TPos.x, ID2TPos.y);
+	ivec2 texPos = ivec2(particleID & ID2TPos2i.x, particleID >> ID2TPos2i.y);
 	vec4 data0 = texelFetch(ParticleData0, texPos, 0);
 	vec4 data1 = texelFetch(ParticleData1, texPos, 0);
 	
@@ -118,7 +119,7 @@ void main() {
 		float historyID = a_VertexPosition.x * min(float(Trail.y), age);
 		vec3 position, direction;
 		if (historyID >= 1.0) {
-			int texIndex = (Trail.x + int(historyID) - 1) % Trail.y;
+			int texIndex = (int(Trail.x) + int(historyID) - 1) % int(Trail.y);
 			vec4 trailData = texelFetch(Histories, ivec3(texPos, texIndex), 0);
 			position = trailData.xyz;
 			direction = unpackVec3(trailData.w);
@@ -136,4 +137,5 @@ void main() {
 		v_Color = texture(ColorTable, texCoord);
 		v_Color.a *= 0.5 * fadeInOut(10.0, 10.0, age, lifetime);
 	}
+	v_Color = vec4(1, 0, 0, 1);
 }
