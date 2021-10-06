@@ -3,131 +3,148 @@
 
 namespace Effekseer
 {
-
-bool EfkEfcFactory::OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath)
+	
+EfkEfcFile::EfkEfcFile(const void* data, int32_t size)
+	: data_(data), size_(size)
 {
-	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data)), size);
+	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data_)), size_);
 
 	// EFKP
 	int head = 0;
-	binaryReader.Read(head);
-	if (memcmp(&head, "EFKE", 4) != 0)
-		return false;
+	if (!binaryReader.Read(head) || memcmp(&head, "EFKE", 4) != 0)
+		return;
 
-	int32_t version = 0;
+	if (!binaryReader.Read(version_))
+		return;
 
-	binaryReader.Read(version);
+	isValid_ = true;
+}
 
-	// load chunk
-	while (binaryReader.GetOffset() < size)
+EfkEfcFile::Chunk EfkEfcFile::ReadChunk(const char* forcc) const
+{
+	if (!IsValid()) return {};
+
+	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data_)), size_);
+
+	// Skip forcc and version
+	binaryReader.AddOffset(8);
+
+	// read chunk
+	while (binaryReader.GetOffset() < size_)
 	{
-		int chunk = 0;
-		binaryReader.Read(chunk);
+		int chunkForcc = 0;
+		binaryReader.Read(chunkForcc);
 		int chunkSize = 0;
 		binaryReader.Read(chunkSize);
 
-		if (memcmp(&chunk, "INFO", 4) == 0)
+		if (memcmp(&chunkForcc, forcc, 4) == 0)
 		{
-		}
-
-		if (memcmp(&chunk, "EDIT", 4) == 0)
-		{
-		}
-
-		if (memcmp(&chunk, "BIN_", 4) == 0)
-		{
-			if (LoadBody(effect, reinterpret_cast<const uint8_t*>(data) + binaryReader.GetOffset(), chunkSize, magnification, materialPath))
-			{
-				return true;
-			}
+			Chunk chunk;
+			chunk.data = reinterpret_cast<const uint8_t*>(data_) + binaryReader.GetOffset();
+			chunk.size = chunkSize;
+			return chunk;
 		}
 
 		binaryReader.AddOffset(chunkSize);
 	}
 
-	return false;
+	return {};
+}
+
+EfkEfcFile::Chunk EfkEfcFile::ReadInfo() const
+{
+	return ReadChunk("INFO");
+}
+
+EfkEfcFile::Chunk EfkEfcFile::ReadEditerData() const
+{
+	return ReadChunk("EDIT");
+}
+
+EfkEfcFile::Chunk EfkEfcFile::ReadRuntimeData() const
+{
+	return ReadChunk("BIN_");
+}
+
+bool EfkEfcFactory::OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const char16_t* materialPath)
+{
+	EfkEfcFile file(data, size);
+
+	if (!file.IsValid())
+	{
+		return false;
+	}
+
+	auto chunk = file.ReadRuntimeData();
+	if (chunk.data == nullptr)
+	{
+		return false;
+	}
+
+	return LoadBody(effect, chunk.data, chunk.size, magnification, materialPath);
 }
 
 bool EfkEfcFactory::OnCheckIsBinarySupported(const void* data, int32_t size)
 {
-	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data)), size);
+	EfkEfcFile file(data, size);
 
-	// EFKP
-	int head = 0;
-	binaryReader.Read(head);
-	if (memcmp(&head, "EFKE", 4) != 0)
-		return false;
-
-	return true;
+	return file.IsValid();
 }
 
 bool EfkEfcProperty::Load(const void* data, int32_t size)
 {
-	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data)), size);
+	EfkEfcFile file(data, size);
 
-	// EFKP
-	int head = 0;
-	binaryReader.Read(head);
-	if (memcmp(&head, "EFKE", 4) != 0)
-		return false;
-
-	int32_t version = 0;
-
-	binaryReader.Read(version);
-
-	// load chunk
-	while (binaryReader.GetOffset() < size)
+	if (!file.IsValid())
 	{
-		int chunk = 0;
-		binaryReader.Read(chunk);
-		int chunkSize = 0;
-		binaryReader.Read(chunkSize);
-
-		if (memcmp(&chunk, "INFO", 4) == 0)
-		{
-			int32_t infoVersion = 0;
-
-			auto loadStr = [this, &binaryReader, &infoVersion](std::vector<std::u16string>& dst) {
-				int32_t dataCount = 0;
-				binaryReader.Read(dataCount);
-
-				// compatibility
-				if (dataCount >= 1500)
-				{
-					infoVersion = dataCount;
-					binaryReader.Read(dataCount);
-				}
-
-				dst.resize(dataCount);
-
-				std::vector<char16_t> strBuf;
-
-				for (int i = 0; i < dataCount; i++)
-				{
-					int length = 0;
-					binaryReader.Read(length);
-					strBuf.resize(length);
-					binaryReader.Read(strBuf.data(), length);
-					dst.at(i) = strBuf.data();
-				}
-			};
-
-			loadStr(colorImages_);
-			loadStr(normalImages_);
-			loadStr(distortionImages_);
-			loadStr(models_);
-			loadStr(sounds_);
-
-			if (infoVersion >= 1500)
-			{
-				loadStr(materials_);
-			}
-		}
-
-		binaryReader.AddOffset(chunkSize);
+		return false;
 	}
 
-	return false;
+	auto chunk = file.ReadRuntimeData();
+	if (chunk.data == nullptr)
+	{
+		return false;
+	}
+	
+	BinaryReader<true> binaryReader(const_cast<uint8_t*>(static_cast<const uint8_t*>(chunk.data)), chunk.size);
+
+	int32_t infoVersion = 0;
+
+	auto loadStr = [this, &binaryReader, &infoVersion](std::vector<std::u16string>& dst) {
+		int32_t dataCount = 0;
+		binaryReader.Read(dataCount);
+
+		// compatibility
+		if (dataCount >= 1500)
+		{
+			infoVersion = dataCount;
+			binaryReader.Read(dataCount);
+		}
+
+		dst.resize(dataCount);
+
+		std::vector<char16_t> strBuf;
+
+		for (int i = 0; i < dataCount; i++)
+		{
+			int length = 0;
+			binaryReader.Read(length);
+			strBuf.resize(length);
+			binaryReader.Read(strBuf.data(), length);
+			dst.at(i) = strBuf.data();
+		}
+	};
+
+	loadStr(colorImages_);
+	loadStr(normalImages_);
+	loadStr(distortionImages_);
+	loadStr(models_);
+	loadStr(sounds_);
+
+	if (infoVersion >= 1500)
+	{
+		loadStr(materials_);
+	}
 }
 
 const std::vector<std::u16string>& EfkEfcProperty::GetColorImages() const
