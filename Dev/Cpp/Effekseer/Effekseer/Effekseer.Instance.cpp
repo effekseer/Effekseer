@@ -319,7 +319,10 @@ void Instance::FirstUpdate()
 	if (parameter->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating ||
 		parameter->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent ||
 		parameter->CommonValues.RotationBindType == BindType::WhenCreating ||
-		parameter->CommonValues.ScalingBindType == BindType::WhenCreating)
+		parameter->CommonValues.ScalingBindType == BindType::WhenCreating ||
+		(parameter->CommonValues.TranslationBindType == TranslationParentBindType::Always &&
+		 parameter->CommonValues.RotationBindType == BindType::Always &&
+		 parameter->CommonValues.ScalingBindType == BindType::Always))
 	{
 		m_ParentMatrix = parentMatrix;
 		assert(m_ParentMatrix.IsValid());
@@ -980,6 +983,7 @@ void Instance::FirstUpdate()
 		}
 	}
 
+	prevPosition_ += m_GenerationLocation.GetTranslation();
 	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
