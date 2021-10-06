@@ -8,6 +8,37 @@
 namespace Effekseer
 {
 
+class EfkEfcFile
+{
+public:
+	struct Chunk
+	{
+		const void* data;
+		int32_t size;
+	};
+
+private:
+	const void* data_ = nullptr;
+	int32_t size_ = 0;
+	bool isValid_ = false;
+	int32_t version_ = 0;
+
+public:
+	explicit EfkEfcFile(const void* data, int32_t size);
+
+	bool IsValid() const { return isValid_; }
+
+	bool GetVersion() const { return version_; }
+
+	Chunk ReadChunk(const char* forcc) const;
+
+	Chunk ReadInfo() const;
+
+	Chunk ReadEditerData() const;
+
+	Chunk ReadRuntimeData() const;
+};
+
 /**
 	@brief a factory for effect efc format
 */
