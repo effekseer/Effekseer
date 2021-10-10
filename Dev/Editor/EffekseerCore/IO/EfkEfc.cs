@@ -270,7 +270,8 @@ namespace Effekseer.IO
 		{
 			Utils.Logger.Write(string.Format("Save : Start : {0}", path));
 
-			var allData = Save(rootNode, editorData);
+			var binaryExporter = new Binary.Exporter();
+			var allData = Save(binaryExporter, rootNode, editorData);
 
 			try
 			{
@@ -305,10 +306,8 @@ namespace Effekseer.IO
 			return true;
 		}
 
-		public byte[] Save(Data.NodeRoot rootNode, XmlDocument editorData)
+		public byte[] Save(Binary.Exporter binaryExporter, Data.NodeRoot rootNode, XmlDocument editorData)
 		{
-			// binary data
-			var binaryExporter = new Binary.Exporter();
 			var binaryDataLatest = binaryExporter.Export(rootNode, 1, Binary.ExporterVersion.Latest);  // TODO change magnification
 
 			// info data
