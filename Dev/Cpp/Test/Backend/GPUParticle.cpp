@@ -595,7 +595,7 @@ public:
 
 		if (trailMode) {
 			TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
-				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { trailOffset, TrailBufferSize }
+				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize), 0.0f, 0.0f }
 			};
 			graphicsDevice->UpdateUniformBuffer(trailRenderUniformBufferVS, sizeof(TrailRenderUniformBufferVS), 0, &trailRenderUniformBufferVSInitData);
 		}
