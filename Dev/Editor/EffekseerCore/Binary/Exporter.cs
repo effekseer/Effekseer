@@ -989,7 +989,7 @@ namespace Effekseer.Binary
 					node_data.Add(@new);
 				}
 #else
-				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion));
+				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion, ConvertLoadingFilePath));
 #endif
 
 				if (isRenderParamExported)
