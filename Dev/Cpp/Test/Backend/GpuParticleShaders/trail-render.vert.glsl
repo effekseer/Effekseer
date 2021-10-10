@@ -112,22 +112,30 @@ void main() {
 	float age = data1.x;
 	float lifetime = data1.y;
 
+	//float historyID_ = 0.0;
+	//vec3 direction_;
+
 	if (age >= lifetime || age <= 0.0) {
 		gl_Position = vec4(0.0);
 		v_Color = vec4(0.0);
 	} else {
 		float historyID = a_VertexPosition.x * min(float(Trail.y), age);
+		//historyID_ = historyID;
 		vec3 position, direction;
 		if (historyID >= 1.0) {
 			int texIndex = (int(Trail.x) + int(historyID) - 1) % int(Trail.y);
 			vec4 trailData = texelFetch(Histories, ivec3(texPos, texIndex), 0);
 			position = trailData.xyz;
 			direction = unpackVec3(trailData.w);
+			//direction = vec3(1.0, 0, 0);
 		} else {
 			position = data0.xyz;
 			direction = unpackVec3(data0.w);
+			//direction = vec3(1.0, 0, 0);
 		}
-		vec3 vertex = cross(vec3(0.0, 1.0, 0.0), direction) * a_VertexPosition.y * 0.02;
+		//direction_ = direction;
+		float width = 0.05;
+		vec3 vertex = cross(vec3(0.0, 1.0, 0.0), direction) * a_VertexPosition.y * width;
 		
 		//float c = dot(vec3(1.0, 0.0, 0.0), direction);
 		//float s = sqrt(1.0 - c * c);
@@ -137,5 +145,6 @@ void main() {
 		v_Color = texture(ColorTable, texCoord);
 		v_Color.a *= 0.5 * fadeInOut(10.0, 10.0, age, lifetime);
 	}
-	v_Color = vec4(1, 0, 0, 1);
+	//v_Color = vec4(1, historyID_, 0, 1);
+	//v_Color = vec4(direction_, 1);
 }

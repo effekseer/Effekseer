@@ -1136,9 +1136,12 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 		return false;
 	}
 
-	if (dstgl->GetTarget() != GL_TEXTURE_3D && dstPos[2] != 0)
+	if (dstgl->GetTarget() != GL_TEXTURE_3D && dstgl->GetTarget() != GL_TEXTURE_2D_ARRAY)	// use glCopyTexSubImage2D?
 	{
-		return false;
+		if (dstPos[2] != 0)
+		{
+			return false;
+		}
 	}
 
 	GLint backupFramebuffer;

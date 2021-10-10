@@ -11,6 +11,8 @@
 #include <Effekseer/Effekseer.Matrix44.h>
 #include <math.h>
 
+#define USE_TRAL 0
+
 struct DataVertex
 {
 	std::array<float, 3> Particle;
@@ -176,9 +178,9 @@ class GpuParticleContext
 	Effekseer::Backend::UniformBufferRef emitUniformBufferVS;
 	Effekseer::Backend::UniformBufferRef renderUniformBufferVS;
 
-	bool trailMode = false;
+	bool trailMode = USE_TRAL;
 	int32_t trailOffset = 0;
-	Effekseer::Backend::TextureRef trailBufferTexture;
+	Effekseer::Backend::TextureRef trailHistoriesTexture;
 	Effekseer::Backend::VertexBufferRef trailVertexBuffer;
 	Effekseer::Backend::IndexBufferRef trailRenderIndexBuffer;
 	Effekseer::Backend::ShaderRef trailRenderShader;
@@ -191,7 +193,6 @@ class GpuParticleContext
 		std::array<std::array<float, 4>, 4> ProjMatrix;
 		std::array<float, 4> Trail;
 	};
-
 
 	void initRenderVertex()
 	{
@@ -278,36 +279,36 @@ class GpuParticleContext
 	void initTrailHistoriesTexture()
 	{
 		Effekseer::Backend::TextureParameter param;
-		param.Usage = Effekseer::Backend::TextureUsageType::None;
+		param.Usage = Effekseer::Backend::TextureUsageType::Array;
 		param.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
 		param.Dimension = 3;
 		param.Size = { texWidth, texHeight, TrailBufferSize };
 		param.MipLevelCount = 1;
 		param.SampleCount = 1;
-		trailBufferTexture = graphicsDevice->CreateTexture(param);
+		trailHistoriesTexture = graphicsDevice->CreateTexture(param);
 	}
 
 	void initTrailRenderVertexBuffer()
 	{
-		std::vector<float> trailVertexData;
-		trailVertexData.resize((TrailBufferSize + 1) * 4);
+		std::vector<Effekseer::Vector2D> trailVertexData;
+		trailVertexData.resize((TrailBufferSize + 1) * 2);
 		for (int i = 0; i <= TrailBufferSize; i++) {
 			// Right
-			trailVertexData[i * 4 + 0] = +i / TrailBufferSize;
-			trailVertexData[i * 4 + 1] = 0.5;
+			trailVertexData[i * 2 + 0].X = static_cast<float>(+i) / TrailBufferSize;
+			trailVertexData[i * 2 + 0].Y = +0.5;
 			// Left
-			trailVertexData[i * 4 + 2] = +i / TrailBufferSize;
-			trailVertexData[i * 4 + 3] = -0.5;
+			trailVertexData[i * 2 + 1].X = static_cast<float>(+i) / TrailBufferSize;
+			trailVertexData[i * 2 + 1].Y = -0.5;
 		}
-		trailVertexBuffer = graphicsDevice->CreateVertexBuffer(sizeof(float) * trailVertexData.size(), trailVertexData.data(), false);
+		trailVertexBuffer = graphicsDevice->CreateVertexBuffer(sizeof(Effekseer::Vector2D) * trailVertexData.size(), trailVertexData.data(), false);
 		/*
 					[0]   [1]   [2]         [n-1] [n]   n=TrailBufferSize+1
 
-		-0.5   ->   +-----+-----+--...  ...--+-----+
+		+0.5   ->   +-----+-----+--...  ...--+-----+
 					|     |     |            |     |
 		Origin ->	*     *     *            *     *
 					|     |     |            |     |
-		+0.5   ->   +-----+-----+--...  ...--+-----+
+		-0.5   ->   +-----+-----+--...  ...--+-----+
 
 		*/
 
@@ -322,7 +323,7 @@ class GpuParticleContext
 			ibData[i * 6 + 3] = ofs + 2;
 			ibData[i * 6 + 4] = ofs + 1;
 			ibData[i * 6 + 5] = ofs + 3;
-			ofs += 4;
+			ofs += 2;
 		}
 		trailRenderIndexBuffer = graphicsDevice->CreateIndexBuffer(ibData.size(), ibData.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 	}
@@ -562,7 +563,7 @@ public:
 			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
 			// Position texture to
-			graphicsDevice->CopyTexture(trailBufferTexture, buffers[sourceIndex].textures.at(0),
+			graphicsDevice->CopyTexture(trailHistoriesTexture, buffers[sourceIndex].textures.at(0),
 				{ 0, 0, trailOffset },
 				{ 0, 0, 0 },
 				{ texWidth, texHeight , 1 },
@@ -599,7 +600,9 @@ public:
 			graphicsDevice->UpdateUniformBuffer(trailRenderUniformBufferVS, sizeof(TrailRenderUniformBufferVS), 0, &trailRenderUniformBufferVSInitData);
 		}
 		else {
-			RenderUniformBufferVS renderUniformBufferVSData = { {static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix) };
+			RenderUniformBufferVS renderUniformBufferVSData = {
+				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)
+			};
 			graphicsDevice->UpdateUniformBuffer(renderUniformBufferVS, sizeof(RenderUniformBufferVS), 0, &renderUniformBufferVSData);
 		}
 
@@ -674,11 +677,21 @@ public:
 			drawParam.TextureSamplingTypes[i] = Effekseer::Backend::TextureSamplingType::Nearest;
 			drawParam.TextureWrapTypes[i] = Effekseer::Backend::TextureWrapType::Clamp;
 		}
-		drawParam.TexturePtrs[buffers[pingpong].textures.size()] = colorTableTexture;
-		drawParam.TextureSamplingTypes[buffers[pingpong].textures.size()] = Effekseer::Backend::TextureSamplingType::Linear;
-		drawParam.TextureWrapTypes[buffers[pingpong].textures.size()] = Effekseer::Backend::TextureWrapType::Clamp;
+		int colorTableTextureIndex = buffers[pingpong].textures.size();
+		drawParam.TexturePtrs[colorTableTextureIndex] = colorTableTexture;
+		drawParam.TextureSamplingTypes[colorTableTextureIndex] = Effekseer::Backend::TextureSamplingType::Linear;
+		drawParam.TextureWrapTypes[colorTableTextureIndex] = Effekseer::Backend::TextureWrapType::Clamp;
+
+
 
 		if (trailMode) {
+			drawParam.TextureCount++;
+			int historiesTextureIndex = colorTableTextureIndex + 1;
+			drawParam.TexturePtrs[historiesTextureIndex] = trailHistoriesTexture;
+			drawParam.TextureSamplingTypes[historiesTextureIndex] = Effekseer::Backend::TextureSamplingType::Linear;
+			drawParam.TextureWrapTypes[historiesTextureIndex] = Effekseer::Backend::TextureWrapType::Clamp;
+
+
 			drawParam.VertexBufferPtr = trailVertexBuffer;
 			drawParam.IndexBufferPtr = trailRenderIndexBuffer;
 			drawParam.PipelineStatePtr = pip;
@@ -713,7 +726,6 @@ void GpuParticle()
 	int emitNum = 128;
 	while (count < 1000 && gpuParticleContext.window->DoEvent())
 	{
-
 		for (int i = 0; i < emitNum; i++)
 		{
 			std::array<float, 3> position = {-0.5f - (i - emitNum / 2) * (i - emitNum / 2) / 10.0f / emitNum, -1 + i * 2.0f / emitNum, 0};
