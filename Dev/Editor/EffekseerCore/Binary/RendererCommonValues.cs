@@ -17,7 +17,8 @@ namespace Effekseer.Binary
 			SortedDictionary<string, int> normalTexture_and_index,
 			SortedDictionary<string, int> distortionTexture_and_index,
 			SortedDictionary<string, int> material_and_index,
-			ExporterVersion version)
+			ExporterVersion version,
+			System.Func<string, string> convertLoadingFilePath)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -42,7 +43,8 @@ namespace Effekseer.Binary
 				distortionTexture_and_index,
 				material_and_index,
 				version,
-				texInfoRepo));
+				texInfoRepo,
+				convertLoadingFilePath));
 
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);
@@ -272,9 +274,10 @@ namespace Effekseer.Binary
 			SortedDictionary<string, int> distortionTexture_and_index,
 			SortedDictionary<string, int> material_and_index,
 			ExporterVersion version,
-			TextureInformationRepository texInfoRepo)
+			TextureInformationRepository texInfoRepo,
+			System.Func<string, string> convertLoadingFilePath)
 		{
-			var aggregator = new TextureValuesAggregator(value, advanceValue, texInfoRepo);
+			var aggregator = new TextureValuesAggregator(value, advanceValue, texInfoRepo, convertLoadingFilePath);
 			MaterialSerializerInstance.AddMaterialData(version, value, aggregator,
 				texture_and_index, distortionTexture_and_index, normalTexture_and_index, material_and_index);
 			return aggregator.CurrentData;

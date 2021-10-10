@@ -43,6 +43,11 @@ namespace Effekseer.Binary
 		public List<ProceduralModelParameter> ProceduralModels = new List<ProceduralModelParameter>();
 
 		/// <summary>
+		/// Convert an absolute path to load dependencies from redirected files
+		/// </summary>
+		public Func<string, string> ConvertLoadingFilePath;
+
+		/// <summary>
 		/// Export effect data
 		/// </summary>
 		/// <returns></returns>
@@ -964,12 +969,12 @@ namespace Effekseer.Binary
 
 #if DEBUG
 				{
-					var old = RendererCommonValues_Old.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion);
-					var @new = RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion);
-					if (!old.SequenceEqual(@new))
-					{
-						throw new Exception("RendererCommonValues.GetBytes returned unexpected data.");
-					}
+					//var old = RendererCommonValues_Old.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion);
+					var @new = RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion, ConvertLoadingFilePath);
+					//if (!old.SequenceEqual(@new))
+					//{
+					//	throw new Exception("RendererCommonValues.GetBytes returned unexpected data.");
+					//}
 
 					node_data.Add(@new);
 				}
