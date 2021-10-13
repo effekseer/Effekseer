@@ -145,6 +145,8 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 	{
 		loadStr(materials_);
 	}
+
+	return true;
 }
 
 const std::vector<std::u16string>& EfkEfcProperty::GetColorImages() const
