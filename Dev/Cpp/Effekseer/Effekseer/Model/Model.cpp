@@ -398,7 +398,7 @@ bool Model::GenerateWireIndexBuffer(Backend::GraphicsDevice* graphicsDevice)
 		}
 
 		{
-			models_[f].wireIndexBuffer = graphicsDevice->CreateIndexBuffer(indexes.size(), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
+			models_[f].wireIndexBuffer = graphicsDevice->CreateIndexBuffer(static_cast<int32_t>(indexes.size()), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 			if (models_[f].wireIndexBuffer == nullptr)
 			{
 				return false;

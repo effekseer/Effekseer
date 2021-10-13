@@ -53,6 +53,8 @@ if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 
+WarnError(${PROJECT_NAME})
+
 #--------------------
 # Install
 
