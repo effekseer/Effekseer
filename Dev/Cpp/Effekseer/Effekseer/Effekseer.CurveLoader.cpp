@@ -30,7 +30,7 @@ CurveRef CurveLoader::Load(const char16_t* path)
 
 	reader->Read(data.data(), size);
 
-	return Load(data.data(), size);
+	return Load(data.data(), static_cast<int32_t>(size));
 }
 
 CurveRef CurveLoader::Load(const void* data, int32_t size)

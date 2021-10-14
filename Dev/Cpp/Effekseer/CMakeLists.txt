@@ -114,9 +114,7 @@ if(BUILD_WITH_EASY_PROFILER)
     add_dependencies(Effekseer ExternalProject_easy_profiler)
 endif()
 
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /we4456 /we4458)
-endif()
+WarnError(${PROJECT_NAME})
 
 if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
     install(DIRECTORY "${PROJECT_SOURCE_DIR}"
