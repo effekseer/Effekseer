@@ -41,6 +41,8 @@ Options_LanguageSelector_Desc,言語設定
 Options_DistortionType_Name,歪み方法
 Options_DistortionType_Desc,歪み方法
 Options_MouseMappingType_Name,マウスマッピング
+Options_FileViewerViewMode_Name,ファイル表示方法
+Options_FileViewerIconSize_Name,ファイルアイコンサイズ
 RenderMode_Normal_Name,通常モード
 RenderMode_Wireframe_Name,ワイヤーフレーム
 RenderMode_NormalWithWireframe_Name,通常+ワイヤーフレーム
@@ -64,3 +66,5 @@ MouseMappingType_Effekseer_Name,Effekseer
 MouseMappingType_Unity_Name,Unity
 MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
+FileViewer_ViewMode_IconView_Name,アイコン表示
+FileViewer_ViewMode_ListView_Name,リスト表示

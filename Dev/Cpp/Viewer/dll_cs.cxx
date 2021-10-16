@@ -3849,6 +3849,34 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopStyleVar__SWIG_1
 }
 
 
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetStyleVar___(void * jarg1, int jarg2) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImGuiStyleVarFlags arg2 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImGuiStyleVarFlags)jarg2; 
+  result = (float)(arg1)->GetStyleVar(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetStyleVar2___(void * jarg1, int jarg2) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImGuiStyleVarFlags arg2 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImGuiStyleVarFlags)jarg2; 
+  result = (arg1)->GetStyleVar2(arg2);
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushItemWidth___(void * jarg1, float jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;
@@ -7106,6 +7134,56 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable_
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   result = (bool)(arg1)->Selectable((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SelectableContent__SWIG_0___(void * jarg1, void * jarg2, void * jarg3, unsigned int jarg4, void * jarg5, float jarg6, float jarg7, int jarg8) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  bool arg4 ;
+  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  float arg6 ;
+  float arg7 ;
+  efk::SelectableFlags arg8 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  arg4 = jarg4 ? true : false; 
+  arg5 = (efk::ImageResource *)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  arg8 = (efk::SelectableFlags)jarg8; 
+  result = (bool)(arg1)->SelectableContent((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5,arg6,arg7,arg8);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SelectableContent__SWIG_1___(void * jarg1, void * jarg2, void * jarg3, unsigned int jarg4, void * jarg5, float jarg6, float jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  bool arg4 ;
+  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  float arg6 ;
+  float arg7 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  arg4 = jarg4 ? true : false; 
+  arg5 = (efk::ImageResource *)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  result = (bool)(arg1)->SelectableContent((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5,arg6,arg7);
   jresult = result; 
   return jresult;
 }

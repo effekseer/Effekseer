@@ -43,6 +43,8 @@ Options_DistortionType_Name,Metodo distorsión
 Options_DistortionType_Desc,Metodo de distorsión
 Options_MouseMappingType_Name,Movimiento ratón
 Options_MouseMappingType_Desc,Configuración del movimiento del ratón
+Options_FileViewerViewMode_Name,Modo de vista de archivo
+Options_FileViewerIconSize_Name,Tamaño del icono de archivo
 RenderMode_Normal_Name,Normal
 RenderMode_Wireframe_Name,Estructura lineal
 ViewMode_3D_Name,3D
@@ -64,3 +66,5 @@ MouseMappingType_Effekseer_Name,Effekseer
 MouseMappingType_Unity_Name,Unity
 MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
+FileViewer_ViewMode_IconView_Name,Vista de icono
+FileViewer_ViewMode_ListView_Name,Vista de la lista

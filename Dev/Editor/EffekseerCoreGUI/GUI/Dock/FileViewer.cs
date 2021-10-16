@@ -12,6 +12,8 @@ namespace Effekseer.GUI.Dock
 		public string CurrentPath { get; private set; }
 		string addressText = string.Empty;
 		bool addressEditing = false;
+		bool addressActivated = false;
+
 		List<FileItem> items = new List<FileItem>();
 		int selectedIndex = -1;
 
@@ -23,7 +25,8 @@ namespace Effekseer.GUI.Dock
 		FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		bool shouldUpdateFileList = true;
 
-		const string ContextMenuPopupId = "###FileViewerPopupMenu";
+		const string OptionMenuPopupId = "###FileViewerOptionMenu";
+		const string ContextMenuPopupId = "###FileViewerContextMenu";
 
 		public FileViewer()
 		{
@@ -66,54 +69,159 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			var regionSize = Manager.NativeManager.GetContentRegionAvail();
+			float dpiScale = Manager.DpiScale;
+			var spacing = Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.ItemSpacing);
+
 			Manager.NativeManager.PushItemWidth(-1);
 
 			// Address bar
+			UpdateAddressBar(dpiScale, regionSize, spacing);
+
+			Manager.NativeManager.Separator();
+
+			// Display all files
+			UpdateFileView(dpiScale, regionSize, spacing);
+
+			Manager.NativeManager.PopItemWidth();
+
+			if (shouldUpdateFileList)
 			{
-				// Back directory (BS shortcut key)
-				if (Manager.NativeManager.IsWindowFocused() &&
-					Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
-					!Manager.NativeManager.IsAnyItemActive() &&
-					!string.IsNullOrEmpty(CurrentPath))
+				UpdateFileList();
+				shouldUpdateFileList = false;
+			}
+		}
+
+		void UpdateAddressBar(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
+		{
+			float buttonWidth = Manager.NativeManager.GetTextLineHeight() + Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.FramePadding).X * 2;
+
+			// Back directory (BS shortcut key)
+			if (Manager.NativeManager.IsWindowFocused() &&
+				Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
+				!Manager.NativeManager.IsAnyItemActive() &&
+				!string.IsNullOrEmpty(CurrentPath))
+			{
+				UpdateFileListWithProjectPath(CurrentPath);
+			}
+
+			// Back directory
+			if (Manager.NativeManager.Button("↑", buttonWidth) &&
+				!String.IsNullOrEmpty(CurrentPath))
+			{
+				UpdateFileListWithProjectPath(CurrentPath);
+			}
+
+			Manager.NativeManager.SameLine();
+
+			// Display current directory
+			if (addressActivated || addressEditing)
+			{
+				Manager.NativeManager.PushItemWidth(regionSize.X - buttonWidth * 2 - spacing.X * 2);
+
+				if (addressActivated)
 				{
-					UpdateFileListWithProjectPath(CurrentPath);
+					Manager.NativeManager.SetKeyboardFocusHere();
+					addressEditing = true;
+					addressActivated = false;
 				}
 
-				// Back directory
-				if (Manager.NativeManager.Button("↑") &&
-					!String.IsNullOrEmpty(CurrentPath))
-				{
-					UpdateFileListWithProjectPath(CurrentPath);
-				}
-			
-				Manager.NativeManager.SameLine();
-
-				// Display current directory
-				if (Manager.NativeManager.InputText("###AddressBar", addressText))
+				if (Manager.NativeManager.InputText("###AddressText", addressText))
 				{
 					addressText = Manager.NativeManager.GetInputTextResult();
 					UpdateFileList(addressText);
-				}
-				if (Manager.NativeManager.IsItemActivated())
-				{
-					addressEditing = true;
 				}
 				if (Manager.NativeManager.IsItemDeactivated())
 				{
 					addressEditing = false;
 					addressText = CurrentPath;
 				}
+
+				Manager.NativeManager.PopItemWidth();
+			}
+			else
+			{
+				string label = Path.GetFileName(CurrentPath) + "###AddressButton";
+				if (Manager.NativeManager.Button(label, regionSize.X - buttonWidth * 2 - spacing.X * 2))
+				{
+					addressActivated = true;
+				}
 			}
 
-			Manager.NativeManager.Separator();
+			Manager.NativeManager.SameLine();
 
-			// Display all files
+			if (Manager.NativeManager.Button(Icons.NavMenu, buttonWidth))
+			{
+				Manager.NativeManager.OpenPopup(OptionMenuPopupId);
+			}
+
+			UpdateOptionMenu();
+		}
+
+		void UpdateOptionMenu()
+		{
+			float fontSize = Manager.NativeManager.GetTextLineHeight();
+
+			Manager.NativeManager.SetNextWindowSize(fontSize * 20, 0.0f, swig.Cond.Always);
+
+			if (Manager.NativeManager.BeginPopup(OptionMenuPopupId))
+			{
+				var viewMode = Core.Option.FileViewerViewMode.GetValue();
+
+				Manager.NativeManager.PushItemWidth(fontSize * 8);
+
+				// View Mode setting
+				string comboLabel = MultiLanguageTextProvider.GetText("Options_FileViewerViewMode_Name");
+				string comboSelectedLabel = MultiLanguageTextProvider.GetText("FileViewer_ViewMode_" + Core.Option.FileViewerViewMode.GetValue().ToString() + "_Name");
+				if (Manager.NativeManager.BeginCombo(comboLabel, comboSelectedLabel, swig.ComboFlags.None))
+				{
+					string iconViewLabel = MultiLanguageTextProvider.GetText("FileViewer_ViewMode_" + Data.OptionValues.FileViewMode.IconView.ToString() + "_Name");
+					if (Manager.NativeManager.Selectable(iconViewLabel, viewMode == Data.OptionValues.FileViewMode.IconView))
+					{
+						Core.Option.FileViewerViewMode.SetValueDirectly(Data.OptionValues.FileViewMode.IconView);
+					}
+					string listViewLabel = MultiLanguageTextProvider.GetText("FileViewer_ViewMode_" + Data.OptionValues.FileViewMode.ListView.ToString() + "_Name");
+					if (Manager.NativeManager.Selectable(listViewLabel, viewMode == Data.OptionValues.FileViewMode.ListView))
+					{
+						Core.Option.FileViewerViewMode.SetValueDirectly(Data.OptionValues.FileViewMode.ListView);
+					}
+					Manager.NativeManager.EndCombo();
+				}
+
+				// Icon size setting
+				if (viewMode == Data.OptionValues.FileViewMode.IconView)
+				{
+					int[] val = new int[1] { Core.Option.FileViewerIconSize.GetValue() };
+					if (Manager.NativeManager.DragInt(MultiLanguageTextProvider.GetText("Options_FileViewerIconSize_Name"), val, 1, 32, 512, "%d"))
+					{
+						Core.Option.FileViewerIconSize.SetValueDirectly(val[0]);
+					}
+				}
+
+				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.EndPopup();
+			}
+		}
+
+		void UpdateFileView(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
+		{
+			var viewMode = Core.Option.FileViewerViewMode.GetValue();
+			float iconSize = Core.Option.FileViewerIconSize.GetValue();
+
+			int contentCountX = 1;
+
+			if (viewMode == Data.OptionValues.FileViewMode.IconView)
+			{
+				contentCountX = (int)((regionSize.X + spacing.X * 2) / (iconSize + spacing.X));
+				if (contentCountX <= 0) contentCountX = 1;
+			}
+
 			for (int i = 0; i < items.Count; i++)
 			{
 				var item = items[i];
 
-				string icon = Icons.Empty;
-				swig.ImageResource image = null;
+				string icon = "";
 
 				switch (item.Type)
 				{
@@ -124,7 +232,7 @@ namespace Effekseer.GUI.Dock
 						icon = Icons.FileEfkefc;
 						break;
 					case FileType.Image:
-						image = item.Image;
+						icon = viewMode == Data.OptionValues.FileViewMode.IconView ? "" : Icons.Empty;
 						break;
 					case FileType.Sound:
 						icon = Icons.FileSound;
@@ -142,8 +250,25 @@ namespace Effekseer.GUI.Dock
 
 				float iconPosX = Manager.NativeManager.GetCursorPosX();
 
-				string caption = icon + " " + Path.GetFileName(item.FilePath);
-				if (Manager.NativeManager.Selectable(caption, item.Selected, swig.SelectableFlags.AllowDoubleClick))
+				if (i != 0 && i % contentCountX != 0)
+				{
+					Manager.NativeManager.SameLine();
+				}
+
+				string label = icon + Path.GetFileName(item.FilePath);
+				bool selected = false;
+
+				if (viewMode == Data.OptionValues.FileViewMode.IconView)
+				{
+					selected = Manager.NativeManager.SelectableContent("###FileContent_" + i, label,
+						item.Selected, item.Image, iconSize, iconSize, swig.SelectableFlags.AllowDoubleClick);
+				}
+				else
+				{
+					selected = Manager.NativeManager.Selectable(label + "###FileContent_" + i, item.Selected, swig.SelectableFlags.AllowDoubleClick);
+				}
+
+				if (selected)
 				{
 					if (Manager.NativeManager.IsCtrlKeyDown())
 					{
@@ -163,7 +288,7 @@ namespace Effekseer.GUI.Dock
 						ResetSelected();
 						item.Selected = true;
 					}
-					
+
 					selectedIndex = i;
 
 					if (Manager.NativeManager.IsMouseDoubleClicked(0) ||
@@ -213,24 +338,19 @@ namespace Effekseer.GUI.Dock
 						break;
 				}
 
-				if (image != null)
+				if (viewMode == Data.OptionValues.FileViewMode.ListView)
 				{
-					Manager.NativeManager.SameLine();
-					Manager.NativeManager.SetCursorPosX(iconPosX);
-					float iconSize = Manager.NativeManager.GetTextLineHeight();
-					Manager.NativeManager.Image(image, iconSize, iconSize);
+					if (item.Image != null)
+					{
+						Manager.NativeManager.SameLine();
+						Manager.NativeManager.SetCursorPosX(iconPosX);
+						float listIconSize = Manager.NativeManager.GetTextLineHeight();
+						Manager.NativeManager.Image(item.Image, listIconSize, listIconSize);
+					}
 				}
 			}
 
 			UpdateContextMenu();
-
-			Manager.NativeManager.PopItemWidth();
-
-			if (shouldUpdateFileList)
-			{
-				UpdateFileList();
-				shouldUpdateFileList = false;
-			}
 		}
 
 		void UpdateContextMenu()
@@ -389,6 +509,11 @@ namespace Effekseer.GUI.Dock
 			}
 
 			path = Path.GetFullPath(path);
+			
+			if (path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+			{
+				path = path.Substring(0, path.Length - 1);
+			}
 
 			ResetSelected();
 			CurrentPath = path;

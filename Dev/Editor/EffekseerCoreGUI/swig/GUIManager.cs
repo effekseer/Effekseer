@@ -247,6 +247,16 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_PopStyleVar__SWIG_1(swigCPtr);
   }
 
+  public float GetStyleVar(ImGuiStyleVarFlags idx) {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetStyleVar(swigCPtr, (int)idx);
+    return ret;
+  }
+
+  public Vec2 GetStyleVar2(ImGuiStyleVarFlags idx) {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetStyleVar2(swigCPtr, (int)idx), true);
+    return ret;
+  }
+
   public void PushItemWidth(float item_width) {
     EffekseerNativePINVOKE.GUIManager_PushItemWidth(swigCPtr, item_width);
   }
@@ -1036,6 +1046,16 @@ public class GUIManager : global::System.IDisposable {
 
   public bool Selectable(string label) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label);
+    return ret;
+  }
+
+  public bool SelectableContent(string idstr, string label, bool selected, ImageResource thumbnail, float size_x, float size_y, SelectableFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_0(swigCPtr, idstr, label, selected, ImageResource.getCPtr(thumbnail), size_x, size_y, (int)flags);
+    return ret;
+  }
+
+  public bool SelectableContent(string idstr, string label, bool selected, ImageResource thumbnail, float size_x, float size_y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_1(swigCPtr, idstr, label, selected, ImageResource.getCPtr(thumbnail), size_x, size_y);
     return ret;
   }
 

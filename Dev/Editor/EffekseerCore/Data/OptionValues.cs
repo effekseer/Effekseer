@@ -227,6 +227,21 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "Options_FileViewerViewMode")]
+		[Undo(Undo = false)]
+		public Value.Enum<FileViewMode> FileViewerViewMode
+		{
+			get;
+			private set;
+		}
+		[Key(key = "Options_FileViewerIconSize")]
+		[Undo(Undo = false)]
+		public Value.Int FileViewerIconSize
+		{
+			get;
+			private set;
+		}
+
 		public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
@@ -260,8 +275,11 @@ namespace Effekseer.Data
 			MouseMappingType = new Value.Enum<MouseMappingType>(Data.MouseMappingType.Effekseer);
 
 			LanguageSelector = new LanguageSelector();
+
+			FileViewerViewMode = new Value.Enum<FileViewMode>(FileViewMode.IconView);
+			FileViewerIconSize = new Value.Int(96, 512, 48);
 		}
-		
+
 		public enum RenderMode : int
 		{
 			[Key(key = "RenderMode_Normal")]
@@ -320,6 +338,14 @@ namespace Effekseer.Data
 			GammaSpace = 0,
 			[Key(key = "ColorSpaceType_LinearSpace")]
 			LinearSpace = 1,
+		}
+
+		public enum FileViewMode : int
+		{
+			[Key(key = "FileViewer_ViewMode_IconView")]
+			IconView = 0,
+			[Key(key = "FileViewer_ViewMode_ListView")]
+			ListView = 1,
 		}
 	}
 }

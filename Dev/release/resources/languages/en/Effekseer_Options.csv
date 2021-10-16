@@ -41,6 +41,8 @@ Options_LanguageSelector_Desc,Langueage
 Options_DistortionType_Name,Distortion method
 Options_DistortionType_Desc,Distortion method
 Options_MouseMappingType_Name,Mouse mapping
+Options_FileViewerViewMode_Name,File view mode
+Options_FileViewerIconSize_Name,File icon size
 RenderMode_Normal_Name,Normal
 RenderMode_Wireframe_Name,Wireframe
 RenderMode_NormalWithWireframe_Name,Normal+Wireframe
@@ -64,3 +66,5 @@ MouseMappingType_Effekseer_Name,Effekseer
 MouseMappingType_Unity_Name,Unity
 MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
+FileViewer_ViewMode_IconView_Name,Icon view
+FileViewer_ViewMode_ListView_Name,List view

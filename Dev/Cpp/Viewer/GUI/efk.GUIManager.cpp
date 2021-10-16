@@ -1121,6 +1121,45 @@ void GUIManager::PopStyleVar(int count)
 	ImGui::PopStyleVar(count);
 }
 
+float GUIManager::GetStyleVar(ImGuiStyleVarFlags idx)
+{
+	auto& style = ImGui::GetStyle();
+	switch (idx)
+	{
+	case Alpha:			    return style.Alpha;
+	case WindowRounding:	return style.WindowRounding;
+	case WindowBorderSize:  return style.WindowBorderSize;
+	case ChildRounding:	    return style.ChildRounding;
+	case ChildBorderSize:   return style.ChildBorderSize;
+	case PopupRounding:	    return style.PopupRounding;
+	case PopupBorderSize:   return style.PopupBorderSize;
+	case FrameRounding:	    return style.FrameRounding;
+	case FrameBorderSize:   return style.FrameBorderSize;
+	case IndentSpacing:	    return style.IndentSpacing;
+	case ScrollbarSize:	    return style.ScrollbarSize;
+	case ScrollbarRounding: return style.ScrollbarRounding;
+	case GrabMinSize:	    return style.GrabMinSize;
+	case GrabRounding:	    return style.GrabRounding;
+	default:                return 0.0f;
+	}
+}
+
+Vec2 GUIManager::GetStyleVar2(ImGuiStyleVarFlags idx)
+{
+	auto& style = ImGui::GetStyle();
+	switch (idx)
+	{
+	case WindowPadding:	    return *(Vec2*)&style.WindowPadding;
+	case WindowMinSize:	    return *(Vec2*)&style.WindowMinSize;
+	case WindowTitleAlign:  return *(Vec2*)&style.WindowTitleAlign;
+	case FramePadding:	    return *(Vec2*)&style.FramePadding;
+	case ItemSpacing:	    return *(Vec2*)&style.ItemSpacing;
+	case ItemInnerSpacing:  return *(Vec2*)&style.ItemInnerSpacing;
+	case ButtonTextAlign:   return *(Vec2*)&style.ButtonTextAlign;
+	default:                return Vec2();
+	}
+}
+
 void GUIManager::PushItemWidth(float item_width)
 {
 	ImGui::PushItemWidth(item_width);
@@ -1801,6 +1840,30 @@ bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags)
 bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags)
 {
 	return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0));
+}
+
+bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, ImageResource* thumbnail, float size_x, float size_y, SelectableFlags flags)
+{
+	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	const auto& style = ImGui::GetStyle();
+
+	ImVec2 screenPos = ImGui::GetCursorScreenPos();
+	ImVec4 clipRect = { screenPos.x, screenPos.y, screenPos.x + size_x, screenPos.y + size_y };
+
+	if (thumbnail)
+	{
+		drawList->AddImage(ToImTextureID(thumbnail), cursorPos, ImVec2(cursorPos.x + size_x, cursorPos.y + size_y));
+	}
+
+	bool result = ImGui::Selectable(utf8str<256>(idstr), selected, (int)flags, ImVec2(size_x, size_y));
+
+	drawList->AddText(GImGui->Font, GImGui->FontSize, ImVec2(cursorPos.x + 1, cursorPos.y + 1), 
+		ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), utf8str<256>(label), nullptr, size_x, &clipRect);
+	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, 
+		ImGui::GetColorU32(ImGuiCol_Text), utf8str<256>(label), nullptr, size_x, &clipRect);
+
+	return result;
 }
 
 void GUIManager::SetTooltip(const char16_t* text)

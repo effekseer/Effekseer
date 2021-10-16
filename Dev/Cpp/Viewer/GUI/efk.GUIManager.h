@@ -482,6 +482,8 @@ public:
 	void PushStyleVar(ImGuiStyleVarFlags idx, float val);
 	void PushStyleVar(ImGuiStyleVarFlags idx, const Vec2& val);
 	void PopStyleVar(int count = 1);
+	float GetStyleVar(ImGuiStyleVarFlags idx);
+	Vec2 GetStyleVar2(ImGuiStyleVarFlags idx);
 
 	// Parameters stacks (current window)
 	void PushItemWidth(float item_width);
@@ -675,6 +677,8 @@ public:
 
 	// Widgets: Selectable / Lists
 	bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
+
+	bool SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, ImageResource* thumbnail, float size_x, float size_y, SelectableFlags flags = SelectableFlags::None);
 
 	// Tooltips
 	void SetTooltip(const char16_t* text);

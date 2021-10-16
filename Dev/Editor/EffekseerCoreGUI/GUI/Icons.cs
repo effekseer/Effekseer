@@ -51,5 +51,8 @@ namespace Effekseer.GUI
 		public const string FileModel          = "\xec25";
 		public const string FileSound          = "\xec37";
 		public const string FileOther          = "\xec34";
+
+		public const string NavMenu            = "\xec40";
+		public const string NavFilter          = "\xec41";
 	}
 }
