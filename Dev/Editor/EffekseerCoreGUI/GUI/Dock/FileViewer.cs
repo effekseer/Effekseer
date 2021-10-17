@@ -85,6 +85,8 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PopItemWidth();
 
+			UpdateKeyNavication();
+
 			if (shouldUpdateFileList)
 			{
 				UpdateFileList();
@@ -95,15 +97,6 @@ namespace Effekseer.GUI.Dock
 		void UpdateAddressBar(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
 		{
 			float buttonWidth = Manager.NativeManager.GetTextLineHeight() + Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.FramePadding).X * 2;
-
-			// Back directory (BS shortcut key)
-			if (Manager.NativeManager.IsWindowFocused() &&
-				Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
-				!Manager.NativeManager.IsAnyItemActive() &&
-				!string.IsNullOrEmpty(CurrentPath))
-			{
-				UpdateFileListWithProjectPath(CurrentPath);
-			}
 
 			// Back directory
 			if (Manager.NativeManager.Button("↑", buttonWidth) &&
@@ -221,52 +214,31 @@ namespace Effekseer.GUI.Dock
 			{
 				var item = items[i];
 
-				string icon = "";
-
-				switch (item.Type)
-				{
-					case FileType.Directory:
-						icon = Icons.FileDirectory;
-						break;
-					case FileType.EffekseerProject:
-						icon = Icons.FileEfkefc;
-						break;
-					case FileType.Image:
-						icon = viewMode == Data.OptionValues.FileViewMode.IconView ? "" : Icons.Empty;
-						break;
-					case FileType.Sound:
-						icon = Icons.FileSound;
-						break;
-					case FileType.Model:
-						icon = Icons.FileModel;
-						break;
-					case FileType.Material:
-						icon = Icons.FileEfkmat;
-						break;
-					default:
-						icon = Icons.FileOther;
-						break;
-				}
-
-				float iconPosX = Manager.NativeManager.GetCursorPosX();
+				string icon = item.GetIcon(viewMode == Data.OptionValues.FileViewMode.ListView);
 
 				if (i != 0 && i % contentCountX != 0)
 				{
 					Manager.NativeManager.SameLine();
 				}
 
+				item.DrawPosX = Manager.NativeManager.GetCursorPosX();
+				item.DrawPosY = Manager.NativeManager.GetCursorPosY();
+
 				string label = icon + Path.GetFileName(item.FilePath);
 				bool selected = false;
 
-				if (viewMode == Data.OptionValues.FileViewMode.IconView)
+				switch (viewMode)
 				{
-					selected = Manager.NativeManager.SelectableContent("###FileContent_" + i, label,
-						item.Selected, item.Image, iconSize, iconSize, swig.SelectableFlags.AllowDoubleClick);
+					case Data.OptionValues.FileViewMode.IconView:
+						selected = Manager.NativeManager.SelectableContent("###FileContent_" + i, label,
+							item.Selected, item.Image, iconSize, iconSize, swig.SelectableFlags.AllowDoubleClick);
+						break;
+					case Data.OptionValues.FileViewMode.ListView:
+						selected = Manager.NativeManager.Selectable(label + "###FileContent_" + i, item.Selected, swig.SelectableFlags.AllowDoubleClick);
+						break;
 				}
-				else
-				{
-					selected = Manager.NativeManager.Selectable(label + "###FileContent_" + i, item.Selected, swig.SelectableFlags.AllowDoubleClick);
-				}
+
+				item.ItemID = Manager.NativeManager.GetItemID();
 
 				if (selected)
 				{
@@ -296,11 +268,6 @@ namespace Effekseer.GUI.Dock
 					{
 						OnFilePicked();
 					}
-				}
-
-				if (Manager.NativeManager.IsItemFocused())
-				{
-					ResetSelected();
 				}
 
 				if (Manager.NativeManager.IsItemClicked(1))
@@ -343,7 +310,7 @@ namespace Effekseer.GUI.Dock
 					if (item.Image != null)
 					{
 						Manager.NativeManager.SameLine();
-						Manager.NativeManager.SetCursorPosX(iconPosX);
+						Manager.NativeManager.SetCursorPosX(item.DrawPosX);
 						float listIconSize = Manager.NativeManager.GetTextLineHeight();
 						Manager.NativeManager.Image(item.Image, listIconSize, listIconSize);
 					}
@@ -351,6 +318,13 @@ namespace Effekseer.GUI.Dock
 			}
 
 			UpdateContextMenu();
+			
+			if (!Manager.NativeManager.IsPopupOpen(ContextMenuPopupId) &&
+				!Manager.NativeManager.IsAnyItemActive() && 
+				Manager.NativeManager.IsMouseClicked(0, false))
+			{
+				ResetSelected();
+			}
 		}
 
 		void UpdateContextMenu()
@@ -391,6 +365,72 @@ namespace Effekseer.GUI.Dock
 				}
 
 				Manager.NativeManager.EndPopup();
+			}
+		}
+
+		void UpdateKeyNavication()
+		{
+			if (Manager.NativeManager.IsWindowFocused() && !Manager.NativeManager.IsAnyItemActive())
+			{
+				// Back directory (BS shortcut key)
+				if (Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
+					!string.IsNullOrEmpty(CurrentPath))
+				{
+					UpdateFileListWithProjectPath(CurrentPath);
+				}
+
+				// Find item by input key
+				string inputChars = Manager.NativeManager.GetInputCharacters().ToLower();
+				if (inputChars.Length > 0)
+				{
+					char navChar = inputChars[0];
+
+					List<FileItem> hits = items.FindAll(item => Path.GetFileName(item.FilePath).ToLower().IndexOf(navChar) == 0);
+					if (hits.Count > 0)
+					{
+						int hitIndex = items.IndexOf(hits[0]);
+						int lastIndex = selectedIndex;
+
+						ResetSelected();
+
+						if (lastIndex >= 0 && hits.Contains(items[lastIndex]))
+						{
+							selectedIndex = lastIndex + 1;
+
+							if (selectedIndex - hitIndex >= hits.Count)
+							{
+								selectedIndex = hitIndex;
+							}
+						}
+						else
+						{
+							selectedIndex = hitIndex;
+						}
+						
+						// Set focus
+						FileItem item = items[selectedIndex];
+						item.Selected = true;
+						Manager.NativeManager.SetFocusID(item.ItemID);
+
+						// Scroll to navigation item
+						float relX = item.DrawPosX - Manager.NativeManager.GetScrollX();
+						float relY = item.DrawPosY - Manager.NativeManager.GetScrollY();
+
+						switch (Core.Option.FileViewerViewMode.GetValue())
+						{
+							case Data.OptionValues.FileViewMode.IconView:
+								Manager.NativeManager.ScrollToBringRectIntoView(
+									new swig.Vec2(relX, relY),
+									new swig.Vec2(relX, relY + Core.Option.FileViewerIconSize.GetValue()));
+								break;
+							case Data.OptionValues.FileViewMode.ListView:
+								Manager.NativeManager.ScrollToBringRectIntoView(
+									new swig.Vec2(relX, relY),
+									new swig.Vec2(relX, relY + Manager.NativeManager.GetTextLineHeightWithSpacing()));
+								break;
+						}
+					}
+				}
 			}
 		}
 
@@ -451,6 +491,12 @@ namespace Effekseer.GUI.Dock
 
 			public bool Selected { get; set; }
 
+			public int ItemID { get; set; }
+
+			public float DrawPosX { get; set; }
+			
+			public float DrawPosY { get; set; }
+
 			public FileItem(string name, string filePath)
 			{
 				FilePath = filePath;
@@ -489,6 +535,20 @@ namespace Effekseer.GUI.Dock
 							Type = FileType.Other;
 							break;
 					}
+				}
+			}
+
+			public string GetIcon(bool isListView)
+			{
+				switch (Type)
+				{
+					case FileType.Directory:        return Icons.FileDirectory;
+					case FileType.EffekseerProject: return Icons.FileEfkefc;
+					case FileType.Image:            return isListView ? Icons.Empty : "";
+					case FileType.Sound:            return Icons.FileSound;
+					case FileType.Model:            return Icons.FileModel;
+					case FileType.Material:         return Icons.FileEfkmat;
+					default:                        return Icons.FileOther;
 				}
 			}
 		}

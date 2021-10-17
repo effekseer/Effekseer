@@ -511,6 +511,18 @@ public:
 	float GetFrameHeightWithSpacing();
 	float GetDpiScale() const;
 
+	int GetItemID();
+	void SetFocusID(int id);
+
+	// Scroll
+	float GetScrollX();
+	float GetScrollY();
+	void SetScrollX(float scroll_x);
+	void SetScrollY(float scroll_y);
+	float GetScrollMaxX();
+	float GetScrollMaxY();
+	Vec2 ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max);
+
 	// Column
 	void Columns(int count = 1, const char* id = nullptr, bool border = true);
 	void NextColumn();
@@ -723,6 +735,8 @@ public:
 	bool IsShiftKeyDown();
 	bool IsCtrlKeyDown();
 	bool IsAltKeyDown();
+	int GetPressedKeyIndex(bool repeat);
+	const char16_t* GetInputCharacters();
 	bool IsMouseDown(int button);
 	bool IsMouseClicked(int button, bool repeat);
 	bool IsMouseReleased(int button);

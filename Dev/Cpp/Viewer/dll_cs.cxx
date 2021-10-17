@@ -4083,6 +4083,124 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetDpiScale___(voi
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemID___(void * jarg1) {
+  int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (int)(arg1)->GetItemID();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetFocusID___(void * jarg1, int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->SetFocusID(arg2);
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetScrollX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetScrollX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetScrollY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetScrollY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetScrollX___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetScrollX(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetScrollY___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetScrollY(arg2);
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetScrollMaxX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetScrollMaxX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetScrollMaxY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetScrollMaxY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ScrollToBringRectIntoView___(void * jarg1, void * jarg2, void * jarg3) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 arg2 ;
+  efk::Vec2 arg3 ;
+  efk::Vec2 *argp2 ;
+  efk::Vec2 *argp3 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  argp2 = (efk::Vec2 *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
+    return 0;
+  }
+  arg2 = *argp2; 
+  argp3 = (efk::Vec2 *)jarg3; 
+  if (!argp3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
+    return 0;
+  }
+  arg3 = *argp3; 
+  result = (arg1)->ScrollToBringRectIntoView(arg2,arg3);
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Columns__SWIG_0___(void * jarg1, int jarg2, char * jarg3, unsigned int jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
@@ -7767,6 +7885,32 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAltKeyDow
   arg1 = (efk::GUIManager *)jarg1; 
   result = (bool)(arg1)->IsAltKeyDown();
   jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetPressedKeyIndex___(void * jarg1, unsigned int jarg2) {
+  int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
+  int result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  result = (int)(arg1)->GetPressedKeyIndex(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetInputCharacters___(void * jarg1) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (char16_t *)(arg1)->GetInputCharacters();
+  jresult = (char16_t *)result; 
   return jresult;
 }
 

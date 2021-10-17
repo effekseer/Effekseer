@@ -344,6 +344,49 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public int GetItemID() {
+    int ret = EffekseerNativePINVOKE.GUIManager_GetItemID(swigCPtr);
+    return ret;
+  }
+
+  public void SetFocusID(int id) {
+    EffekseerNativePINVOKE.GUIManager_SetFocusID(swigCPtr, id);
+  }
+
+  public float GetScrollX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetScrollX(swigCPtr);
+    return ret;
+  }
+
+  public float GetScrollY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetScrollY(swigCPtr);
+    return ret;
+  }
+
+  public void SetScrollX(float scroll_x) {
+    EffekseerNativePINVOKE.GUIManager_SetScrollX(swigCPtr, scroll_x);
+  }
+
+  public void SetScrollY(float scroll_y) {
+    EffekseerNativePINVOKE.GUIManager_SetScrollY(swigCPtr, scroll_y);
+  }
+
+  public float GetScrollMaxX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetScrollMaxX(swigCPtr);
+    return ret;
+  }
+
+  public float GetScrollMaxY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetScrollMaxY(swigCPtr);
+    return ret;
+  }
+
+  public Vec2 ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max) {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_ScrollToBringRectIntoView(swigCPtr, Vec2.getCPtr(rect_min), Vec2.getCPtr(rect_max)), true);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public void Columns(int count, string id, bool border) {
     EffekseerNativePINVOKE.GUIManager_Columns__SWIG_0(swigCPtr, count, id, border);
   }
@@ -1262,6 +1305,16 @@ public class GUIManager : global::System.IDisposable {
 
   public bool IsAltKeyDown() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsAltKeyDown(swigCPtr);
+    return ret;
+  }
+
+  public int GetPressedKeyIndex(bool repeat) {
+    int ret = EffekseerNativePINVOKE.GUIManager_GetPressedKeyIndex(swigCPtr, repeat);
+    return ret;
+  }
+
+  public string GetInputCharacters() {
+    string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManager_GetInputCharacters(swigCPtr));
     return ret;
   }
 

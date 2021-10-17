@@ -1343,6 +1343,59 @@ float GUIManager::GetDpiScale() const
 	return mainWindow_->GetDPIScale();
 }
 
+int GUIManager::GetItemID()
+{
+	return ImGui::GetItemID();
+}
+
+void GUIManager::SetFocusID(int id)
+{
+	ImGui::SetFocusID(id, ImGui::GetCurrentWindow());
+	//GImGui->NavDisableHighlight = false;
+}
+
+float GUIManager::GetScrollX()
+{
+	return ImGui::GetScrollX();
+}
+
+float GUIManager::GetScrollY()
+{
+	return ImGui::GetScrollY();
+}
+
+void GUIManager::SetScrollX(float scroll_x)
+{
+	ImGui::SetScrollX(scroll_x);
+}
+
+void GUIManager::SetScrollY(float scroll_y)
+{
+	ImGui::SetScrollY(scroll_y);
+}
+
+float GUIManager::GetScrollMaxX()
+{
+	return ImGui::GetScrollMaxX();
+}
+
+float GUIManager::GetScrollMaxY()
+{
+	return ImGui::GetScrollMaxY();
+}
+
+Vec2 GUIManager::ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max)
+{
+	auto window = ImGui::GetCurrentWindow();
+	auto rect = window->Rect();
+	rect.Max.x = rect.Min.x + rect_max.X;
+	rect.Max.y = rect.Min.y + rect_max.Y;
+	rect.Min.x += rect_min.X;
+	rect.Min.y += rect_min.Y;
+	ImVec2 deltaScroll = ImGui::ScrollToBringRectIntoView(window, rect);
+	return { deltaScroll.x, deltaScroll.y };
+}
+
 void GUIManager::Columns(int count, const char* id, bool border)
 {
 	ImGui::Columns(count, id, border);
@@ -2084,6 +2137,28 @@ bool GUIManager::IsCtrlKeyDown()
 bool GUIManager::IsAltKeyDown()
 {
 	return ImGui::GetIO().KeyAlt;
+}
+
+int GUIManager::GetPressedKeyIndex(bool repeat)
+{
+	for (int i = 0; i < 512; i++)
+	{
+		if (ImGui::IsKeyPressed(i, repeat))
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+const char16_t* GUIManager::GetInputCharacters()
+{
+	inputTextResult.clear();
+	for (auto c : ImGui::GetIO().InputQueueCharacters)
+	{
+		inputTextResult.push_back(c);
+	}
+	return inputTextResult.c_str();
 }
 
 bool GUIManager::IsMouseDown(int button)
