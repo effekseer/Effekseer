@@ -1258,7 +1258,7 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 	D3D11_BOX box;
 	box.left = srcPos[0];
 	box.top = srcPos[1];
-	box.front = srcPos[2] + srcLayer;
+	box.front = srcPos[2];
 
 	box.right = srcPos[0] + size[0];
 	box.bottom = srcPos[1] + size[1];
