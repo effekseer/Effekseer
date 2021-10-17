@@ -1,8 +1,10 @@
 #include "../TestHelper.h"
 #include "../RenderingEnvironment/RenderingEnvironmentGL.h"
+#include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
 #include "Effekseer.h"
 #include <Effekseer/Utils/Effekseer.CustomAllocator.h>
 #include <EffekseerRendererGL.h>
+#include <EffekseerRendererDX11.h>
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -403,8 +405,8 @@ class GpuParticleContext
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"i_ParticleData0", "i_ParticleData1"},
 			updateUniformLayoutElements);
 		updateShader = graphicsDevice->CreateShaderFromCodes(
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.vert.glsl").c_str()},
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-update.vert.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-update.frag.glsl").c_str()},
 			updateUniformLayout);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> emitUniformLayoutElements;
@@ -421,8 +423,8 @@ class GpuParticleContext
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{},
 			emitUniformLayoutElements);
 		emitShader = graphicsDevice->CreateShaderFromCodes(
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str()},
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-emit.vert.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-emit.frag.glsl").c_str()},
 			emitUniformLayout);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
@@ -443,8 +445,8 @@ class GpuParticleContext
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable"},
 			renderUniformLayoutElements);
 		renderShader = graphicsDevice->CreateShaderFromCodes(
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str()},
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-render.vert.glsl").c_str()},
+			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-render.frag.glsl").c_str()},
 			renderUniformLayout);
 
 		colorTableTexture = createColorTableTexture();
@@ -498,7 +500,8 @@ public:
 		this->maxParticleCount = texWidth * texHeight;
 
 		window = std::make_shared<WINDOW>(std::array<int, 2>({windowWidth, windowHeight}), "Backend.GpuParticle");
-		graphicsDevice = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+		//graphicsDevice = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+		graphicsDevice = window->GetGraphicsDevice();
 		buffers.push_back(GpuParticleBuffer(graphicsDevice, texWidth, texHeight));
 		buffers.push_back(GpuParticleBuffer(graphicsDevice, texWidth, texHeight));
 
@@ -744,4 +747,5 @@ void GpuParticle()
 
 #if !defined(__FROM_CI__)
 TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle<RenderingEnvironmentGL>(); });
+//TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle<RenderingEnvironmentDX11>(); });
 #endif
