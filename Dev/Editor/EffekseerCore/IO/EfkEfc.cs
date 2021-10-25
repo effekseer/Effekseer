@@ -306,10 +306,8 @@ namespace Effekseer.IO
 			return true;
 		}
 
-		public byte[] Save(Binary.Exporter binaryExporter, Data.NodeRoot rootNode, XmlDocument editorData)
+		byte[] GetInfoData(Binary.Exporter binaryExporter)
 		{
-			var binaryDataLatest = binaryExporter.Export(rootNode, 1, Binary.ExporterVersion.Latest);  // TODO change magnification
-
 			// info data
 			byte[] infoData = null;
 			{
@@ -326,16 +324,30 @@ namespace Effekseer.IO
 				int infoVersion = (int)Binary.ExporterVersion.Latest;
 				data.Add(BitConverter.GetBytes(infoVersion));
 
-				exportStrs(binaryExporter.UsedTextures);
-				exportStrs(binaryExporter.UsedNormalTextures);
-				exportStrs(binaryExporter.UsedDistortionTextures);
-				exportStrs(binaryExporter.Models);
-				exportStrs(binaryExporter.Sounds);
-				exportStrs(binaryExporter.Materials);
-				exportStrs(binaryExporter.Curves);
+				if((int)infoVersion <= (int)Binary.ExporterVersion.Ver1600)
+				{
+					exportStrs(binaryExporter.UsedTextures);
+					exportStrs(binaryExporter.UsedNormalTextures);
+					exportStrs(binaryExporter.UsedDistortionTextures);
+					exportStrs(binaryExporter.Models);
+					exportStrs(binaryExporter.Sounds);
+					exportStrs(binaryExporter.Materials);
+					exportStrs(binaryExporter.Curves);
+				}
+				else
+				{
+
+				}
 
 				infoData = data.SelectMany(_ => _).ToArray();
 			}
+
+			return infoData;
+		}
+
+		public byte[] Save(Binary.Exporter binaryExporter, Data.NodeRoot rootNode, XmlDocument editorData)
+		{
+			var binaryDataLatest = binaryExporter.Export(rootNode, 1, Binary.ExporterVersion.Latest);  // TODO change magnification
 
 			// header
 			byte[] headerData = null;
@@ -348,7 +360,7 @@ namespace Effekseer.IO
 			}
 
 			var chunk = new Chunk();
-			chunk.AddChunk("INFO", infoData);
+			chunk.AddChunk("INFO", GetInfoData(binaryExporter));
 			chunk.AddChunk("EDIT", Compress(editorData));
 			chunk.AddChunk("BIN_", binaryDataLatest);
 
