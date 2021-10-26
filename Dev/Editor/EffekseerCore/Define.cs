@@ -8,6 +8,18 @@ using System.Threading;
 
 namespace Effekseer
 {
+	public enum FileType
+	{
+		Effect = 0,
+		Texture = 1,
+		Sound = 2,
+		Model = 3,
+		Material = 4,
+		Curve = 5,
+		Directory = 254,
+		Other = 255,
+	}
+
 	public class Constant
 	{
 		/// <summary>

@@ -19,16 +19,6 @@ namespace Effekseer.IO
 	{
 		public const string MetaFileName = "metafile.json";
 
-		public enum FileType
-		{
-			Effect,
-			Texture,
-			Sound,
-			Model,
-			Material,
-			Curve,
-		}
-
 		public class FileInfo
 		{
 			public FileType Type;
