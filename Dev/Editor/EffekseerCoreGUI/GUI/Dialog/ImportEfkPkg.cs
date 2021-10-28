@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Dialog
 						{
 							EfkPkg.ExtractFiles(targetDirPath, files);
 
-							var effects = files.Where(_ => _.Type == EfkPkg.FileType.Effect);
+							var effects = files.Where(_ => _.Type == FileType.Effect);
 							if(effects.Count() == 1)
 							{
 								string filePath = Path.Combine(targetDirPath, effects.First().RelativePath);

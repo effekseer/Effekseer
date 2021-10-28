@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>js</title>
+</head>
+
+<body>
+
+    <p id='result1'>Result1</p>
+    <p id='result2'>Result1</p>
+    <p id='result3'>Result1</p>
+    <p id='result4'>Result1</p>
+    <p id='result5'>Result1</p>
+    <p id='result6'>Result1</p>
+    <p id='result7'>Result1</p>
+    <p id='result8'>Result1</p>
+
+</body>
+
+<script src="js/EfkEfcProperty.js"></script>
+
+<script type='text/javascript'>
+
+    function checkData(url, values, id) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = () => {
+            var data = xhr.response;
+            var info = loadEfkEfcInformation(data);
+
+            included = [];
+            for (var i = 0; i < info.dependentFiles.length; i++) {
+                included.push(info.dependentFiles[i].path);
+            }
+
+            values.sort();
+            included.sort();
+
+            for (var i = 0; i < values.length; i++) {
+                if (values[i] !== included[i]) {
+                    document.getElementById(id).innerText = "Not equal";
+                    return;
+                }
+            }
+
+            document.getElementById(id).innerText = "OK";
+        };
+        xhr.onerror = () => {
+            document.getElementById(id).innerText = "Failed to get a file";
+        };
+        xhr.send(null);
+    }
+
+    checkData("../../TestData/Effects/15/BasicRenderSettings_Blend.efkefc", ['../Textures/Particle03.png'], "result1");
+    checkData("../../TestData/Effects/15/Material_WorldPositionOffset.efkefc", ['../Materials/WorldPositionOffset.efkmat', '../Models/Sphare_Resized.efkmodel', '../Textures/Normal1.png', '../Textures/TestPattern.png'], "result2");
+    checkData("../../TestData/Effects/16/Curve01.efkefc", ['../Curves/Curve1.efkcurve'], "result3");
+    checkData("../../TestData/Effects/16/SoftParticle01.efkefc", ['../Materials/DepthFade.efkmat', '../Models/Sphare_Resized.efkmodel'], "result4");
+
+    checkData("../../TestData/Effects/17_Dependency/BasicRenderSettings_Blend.efkefc", ['../Textures/Particle03.png'], "result5");
+    checkData("../../TestData/Effects/17_Dependency/Material_WorldPositionOffset.efkefc", ['../Materials/WorldPositionOffset.efkmat', '../Models/Sphare_Resized.efkmodel', '../Textures/Normal1.png', '../Textures/TestPattern.png'], "result6");
+    checkData("../../TestData/Effects/17_Dependency/Curve01.efkefc", ['../Curves/Curve1.efkcurve'], "result7");
+    checkData("../../TestData/Effects/17_Dependency/SoftParticle01.efkefc", ['../Materials/DepthFade.efkmat', '../Models/Sphare_Resized.efkmodel'], "result8");
+</script>
+
+</html>

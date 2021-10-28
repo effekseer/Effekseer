@@ -8,16 +8,6 @@ namespace Effekseer.GUI
 {
 	class DragAndDrops
 	{
-		public enum FileType
-		{
-			Image,
-			Sound,
-			Model,
-			Material,
-			Curve,
-			Other,
-		}
-
 		static byte[] tempBuffer = new byte[512];
 
 		public static void UpdateFileSrc(string path, FileType type)
