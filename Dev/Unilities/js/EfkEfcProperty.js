@@ -127,25 +127,25 @@ function loadEfkEfcInformation(buffer) {
                 }
 
                 var images = [];
-                for (var i = 0; i < colorImages.length(); i++) {
+                for (var i = 0; i < colorImages.length; i++) {
                     if (!images.includes(colorImages[i])) {
                         images.push(colorImages[i]);
                     }
                 }
 
-                for (var i = 0; i < normalImages.length(); i++) {
+                for (var i = 0; i < normalImages.length; i++) {
                     if (!images.includes(normalImages[i])) {
                         images.push(normalImages[i]);
                     }
                 }
 
-                for (var i = 0; i < distortionImages.length(); i++) {
+                for (var i = 0; i < distortionImages.length; i++) {
                     if (!images.includes(distortionImages[i])) {
                         images.push(distortionImages[i]);
                     }
                 }
 
-                for (var i = 0; i < images.length(); i++) {
+                for (var i = 0; i < images.length; i++) {
                     var df = new DependentFile();
                     df.fileType = FileType.Texture;
                     if (containsRGB(images[i])) {
@@ -195,8 +195,6 @@ function loadEfkEfcInformation(buffer) {
                     df.path = reader.getStringAsUTF16();
                     info.dependentFiles.push(df);
                 }
-
-                return ret;
             }
 
             return info;
