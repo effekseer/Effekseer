@@ -101,7 +101,7 @@ namespace Effekseer.GUI.Component
 				btn_load_Click();
 			}
 
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Sound);
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Sound);
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			
@@ -109,7 +109,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.Text(filePath);
 
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(DragAndDrops.FileType.Sound);
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Sound);
 
 			if (Manager.NativeManager.IsItemHovered())
 			{

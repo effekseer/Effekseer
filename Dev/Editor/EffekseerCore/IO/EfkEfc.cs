@@ -306,6 +306,18 @@ namespace Effekseer.IO
 			return true;
 		}
 
+		enum TextureColorType : int
+		{
+			sRGB = 1 << 0,
+			Linear = 1 << 1,
+		}
+
+		class Dependency
+		{
+			public FileType FileType = FileType.Other;
+			public int Flag = 0;
+			public string Path = string.Empty;
+		}
 		byte[] GetInfoData(Binary.Exporter binaryExporter)
 		{
 			// info data
@@ -324,7 +336,7 @@ namespace Effekseer.IO
 				int infoVersion = (int)Binary.ExporterVersion.Latest;
 				data.Add(BitConverter.GetBytes(infoVersion));
 
-				if((int)infoVersion <= (int)Binary.ExporterVersion.Ver1600)
+				if ((int)infoVersion <= (int)Binary.ExporterVersion.Ver1600)
 				{
 					exportStrs(binaryExporter.UsedTextures);
 					exportStrs(binaryExporter.UsedNormalTextures);
@@ -336,7 +348,74 @@ namespace Effekseer.IO
 				}
 				else
 				{
+					var srgbTextures = binaryExporter.UsedTextures;
+					var linearTextures = binaryExporter.UsedTextures.Concat(binaryExporter.UsedDistortionTextures).ToList();
+					var textures = srgbTextures.Concat(linearTextures).Distinct().ToArray();
 
+					var dependencies = new List<Dependency>();
+
+					foreach (var texture in textures)
+					{
+						var d = new Dependency();
+						d.FileType = FileType.Texture;
+						d.Flag = 0;
+						if (srgbTextures.Contains(texture))
+						{
+							d.Flag += (int)TextureColorType.sRGB;
+						}
+
+						if (linearTextures.Contains(texture))
+						{
+							d.Flag += (int)TextureColorType.Linear;
+						}
+
+						d.Path = texture;
+						dependencies.Add(d);
+					}
+
+					foreach (var model in binaryExporter.Models)
+					{
+						var d = new Dependency();
+						d.FileType = FileType.Model;
+						d.Flag = 0;
+						d.Path = model;
+						dependencies.Add(d);
+					}
+
+					foreach (var sound in binaryExporter.Sounds)
+					{
+						var d = new Dependency();
+						d.FileType = FileType.Sound;
+						d.Flag = 0;
+						d.Path = sound;
+						dependencies.Add(d);
+					}
+
+					foreach (var material in binaryExporter.Materials)
+					{
+						var d = new Dependency();
+						d.FileType = FileType.Material;
+						d.Flag = 0;
+						d.Path = material;
+						dependencies.Add(d);
+					}
+
+					foreach (var curve in binaryExporter.Curves)
+					{
+						var d = new Dependency();
+						d.FileType = FileType.Curve;
+						d.Flag = 0;
+						d.Path = curve;
+						dependencies.Add(d);
+					}
+
+					data.Add(BitConverter.GetBytes(dependencies.Count));
+					foreach (var dependency in dependencies)
+					{
+						data.Add(BitConverter.GetBytes((int)dependency.FileType));
+						data.Add(BitConverter.GetBytes((int)dependency.Flag));
+						data.Add(GetBinaryStr(dependency.Path));
+					}
 				}
 
 				infoData = data.SelectMany(_ => _).ToArray();
@@ -365,7 +444,7 @@ namespace Effekseer.IO
 			chunk.AddChunk("BIN_", binaryDataLatest);
 
 			// fallback
-			if(Binary.ExporterVersion.Latest > Binary.ExporterVersion.Ver1500)
+			if (Binary.ExporterVersion.Latest > Binary.ExporterVersion.Ver1500)
 			{
 				var binaryExporterFallback = new Binary.Exporter();
 				var binaryDataFallback = binaryExporterFallback.Export(Core.Root, 1, Binary.ExporterVersion.Ver1500);

@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Dock
 		string menuShowInFileManager;
 		string menuImportFromPackage;
 		string menuExportToPackage;
-		
+
 		FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		bool shouldUpdateFileList = true;
 
@@ -285,23 +285,23 @@ namespace Effekseer.GUI.Dock
 				// D&D
 				switch (item.Type)
 				{
-					case FileType.Image:
-						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Image);
+					case FileType.Texture:
+						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Texture);
 						break;
 					case FileType.Sound:
-						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Sound);
+						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Sound);
 						break;
 					case FileType.Model:
-						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Model);
+						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Model);
 						break;
 					case FileType.Material:
-						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Material);
+						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Material);
 						break;
 					case FileType.Curve:
-						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Curve);
+						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Curve);
 						break;
 					default:
-						DragAndDrops.UpdateFileSrc(item.FilePath, DragAndDrops.FileType.Other);
+						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Other);
 						break;
 				}
 
@@ -318,9 +318,9 @@ namespace Effekseer.GUI.Dock
 			}
 
 			UpdateContextMenu();
-			
+
 			if (!Manager.NativeManager.IsPopupOpen(ContextMenuPopupId) &&
-				!Manager.NativeManager.IsAnyItemActive() && 
+				!Manager.NativeManager.IsAnyItemActive() &&
 				Manager.NativeManager.IsMouseClicked(0, false))
 			{
 				ResetSelected();
@@ -406,7 +406,7 @@ namespace Effekseer.GUI.Dock
 						{
 							selectedIndex = hitIndex;
 						}
-						
+
 						// Set focus
 						FileItem item = items[selectedIndex];
 						item.Selected = true;
@@ -463,18 +463,6 @@ namespace Effekseer.GUI.Dock
 			UpdateFileList(dirPath);
 		}
 
-		public enum FileType
-		{
-			Directory,
-			EffekseerProject,
-			Image,
-			Sound,
-			Model,
-			Material,
-			Curve,
-			Other,
-		}
-
 		/// <summary>
 		/// A file in the list
 		/// </summary>
@@ -494,7 +482,7 @@ namespace Effekseer.GUI.Dock
 			public int ItemID { get; set; }
 
 			public float DrawPosX { get; set; }
-			
+
 			public float DrawPosY { get; set; }
 
 			public FileItem(string name, string filePath)
@@ -511,10 +499,10 @@ namespace Effekseer.GUI.Dock
 					{
 						case ".efkproj":
 						case ".efkefc":
-							Type = FileType.EffekseerProject;
+							Type = FileType.Effect;
 							break;
 						case ".png":
-							Type = FileType.Image;
+							Type = FileType.Texture;
 							Image = Images.Load(Manager.Native, filePath);
 							break;
 						case ".wav":
@@ -542,13 +530,13 @@ namespace Effekseer.GUI.Dock
 			{
 				switch (Type)
 				{
-					case FileType.Directory:        return Icons.FileDirectory;
-					case FileType.EffekseerProject: return Icons.FileEfkefc;
-					case FileType.Image:            return isListView ? Icons.Empty : "";
-					case FileType.Sound:            return Icons.FileSound;
-					case FileType.Model:            return Icons.FileModel;
-					case FileType.Material:         return Icons.FileEfkmat;
-					default:                        return Icons.FileOther;
+					case FileType.Directory: return Icons.FileDirectory;
+					case FileType.Effect: return Icons.FileEfkefc;
+					case FileType.Texture: return isListView ? Icons.Empty : "";
+					case FileType.Sound: return Icons.FileSound;
+					case FileType.Model: return Icons.FileModel;
+					case FileType.Material: return Icons.FileEfkmat;
+					default: return Icons.FileOther;
 				}
 			}
 		}
@@ -569,7 +557,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			path = Path.GetFullPath(path);
-			
+
 			if (path.EndsWith(Path.DirectorySeparatorChar.ToString()))
 			{
 				path = path.Substring(0, path.Length - 1);
@@ -625,7 +613,7 @@ namespace Effekseer.GUI.Dock
 			if (selectedIndex == -1) return;
 
 			var fileItem = items[selectedIndex];
-			if (fileItem.Type == FileType.EffekseerProject)
+			if (fileItem.Type == FileType.Effect)
 			{
 				// efkproj is opened internal function
 				Commands.Open(fileItem.FilePath);
@@ -669,7 +657,7 @@ namespace Effekseer.GUI.Dock
 
 			try
 			{
-				string dirPath = Directory.Exists(fileItem.FilePath) ? 
+				string dirPath = Directory.Exists(fileItem.FilePath) ?
 					fileItem.FilePath : Path.GetDirectoryName(fileItem.FilePath);
 
 				if (swig.GUIManager.IsMacOSX())
