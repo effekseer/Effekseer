@@ -349,7 +349,7 @@ namespace Effekseer.IO
 				else
 				{
 					var srgbTextures = binaryExporter.UsedTextures;
-					var linearTextures = binaryExporter.UsedTextures.Concat(binaryExporter.UsedDistortionTextures).ToList();
+					var linearTextures = binaryExporter.UsedNormalTextures.Concat(binaryExporter.UsedDistortionTextures).ToList();
 					var textures = srgbTextures.Concat(linearTextures).Distinct().ToArray();
 
 					var dependencies = new List<Dependency>();
