@@ -69,6 +69,7 @@ enum class RecordingModeType
 	SpriteSheet,
 	Gif,
 	Avi,
+	H264,
 };
 
 enum class TransparenceType

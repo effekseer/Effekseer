@@ -94,27 +94,6 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 	}
 }
 
-class RecorderCallback
-{
-private:
-public:
-	RecorderCallback() = default;
-	virtual ~RecorderCallback() = default;
-
-	virtual bool OnBeginRecord()
-	{
-		return false;
-	}
-
-	virtual void OnEndRecord()
-	{
-	}
-
-	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels)
-	{
-	}
-}; // namespace RecorderCallback
-
 class RecorderCallbackSprite : public RecorderCallback
 {
 private:
