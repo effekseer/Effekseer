@@ -51,7 +51,7 @@ namespace Effekseer.GUI.Dock
 			os.Platform == PlatformID.Win32Windows ||
 			os.Platform == PlatformID.WinCE))
 			{
-				selectedExportTypes = selectedExportTypes.Concat(new[] { "H264" }).ToArray();
+				selectedExportTypes = selectedExportTypes.Concat(new[] { Resources.GetString("ExportAsH264") }).ToArray();
 			}
 
 			selectedAlphaTypes[0] = Resources.GetString("None");

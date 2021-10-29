@@ -61,7 +61,7 @@ public:
 
 		IMFMediaType* pMediaTypeOut = nullptr;
 		IMFMediaType* pMediaTypeIn = nullptr;
-		int bitrate = 800000;
+		int bitrate = 8000000;
 
 		HRESULT hr = MFCreateSinkWriterFromURL(reinterpret_cast<const wchar_t*>(path.c_str()), NULL, NULL, &sinkWriter_);
 
@@ -277,8 +277,17 @@ void RecorderCallbackH264::OnEndRecord()
 
 void RecorderCallbackH264::OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels)
 {
-	auto p = reinterpret_cast<const uint8_t*>(pixels.data());
-	buffer_.assign(p, p + buffer_.size());
+	for (int y = 0; y < imageSize_.Y; y++)
+	{
+		for (int x = 0; x < imageSize_.X; x++)
+		{
+			const auto pixel = pixels[x + y * imageSize_.X];
+
+			auto p = reinterpret_cast<Effekseer::Color*>(buffer_.data());
+			p[x + (imageSize_.Y - 1 - y) * imageSize_.X + 0] = pixels[x + y * imageSize_.X];
+		}
+	}
+
 	videoWriter_->Write(buffer_);
 }
 
