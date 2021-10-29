@@ -45,6 +45,15 @@ namespace Effekseer.GUI.Dock
 			selectedExportTypes[2] = Resources.GetString("ExportAsGifAnimation");
 			selectedExportTypes[3] = Resources.GetString("ExportAsAvi");
 
+			System.OperatingSystem os = System.Environment.OSVersion;
+			if ((os.Platform == PlatformID.Win32NT ||
+			os.Platform == PlatformID.Win32S ||
+			os.Platform == PlatformID.Win32Windows ||
+			os.Platform == PlatformID.WinCE))
+			{
+				selectedExportTypes = selectedExportTypes.Concat(new[] { "H264" }).ToArray();
+			}
+
 			selectedAlphaTypes[0] = Resources.GetString("None");
 			selectedAlphaTypes[1] = Resources.GetString("UseOriginalImage");
 			selectedAlphaTypes[2] = Resources.GetString("GenerateAlpha");
@@ -384,9 +393,12 @@ namespace Effekseer.GUI.Dock
                     {
 						filter = "avi";
                     }
+					else if (selectedTypeIndex == 4)
+					{
+						filter = "mp4";
+					}
 
-
-                    var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 					if (string.IsNullOrEmpty(result)) return;
                                    
@@ -452,7 +464,12 @@ namespace Effekseer.GUI.Dock
 
 						recordResult = viewer.RecordAsAVI(filename, recordingParameter);
 					}
+					else if (selectedTypeIndex == 4)
+					{
+						Utils.Logger.Write(string.Format("RecordAsH264 : {0}", filename));
 
+						recordResult = viewer.RecordAsH264(filename, recordingParameter);
+					}
 					if (recordResult)
 					{
 						Manager.NativeManager.OpenPopup("###RecorderProgress");

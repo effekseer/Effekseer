@@ -1,6 +1,7 @@
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#include "Windows/RecorderCallbackH264.h"
 #endif
 
 #include "Recorder.h"
@@ -412,6 +413,19 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 		{
 			recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2_, imageSize_);
 		}
+	}
+	else if (recordingParameter_.RecordingMode == RecordingModeType::H264)
+	{
+#ifdef _WIN32
+		recorderCallback = std::make_shared<RecorderCallbackH264>(recordingParameter_, imageSize_);
+
+		if (recordingParameter_.Transparence == TransparenceType::Generate2)
+		{
+			recorderCallback2 = std::make_shared<RecorderCallbackH264>(recordingParameter2_, imageSize_);
+		}
+#else
+		return false;
+#endif
 	}
 
 	if (recordingParameter_.Transparence == TransparenceType::Generate2)

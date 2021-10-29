@@ -1528,6 +1528,222 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerEffectBehavior___
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_GetPath___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (char16_t *)((Effekseer::Tool::RecordingParameter const *)arg1)->GetPath();
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_GetExt___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (char16_t *)((Effekseer::Tool::RecordingParameter const *)arg1)->GetExt();
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_SetPath___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SetPath((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_SetExt___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SetExt((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_RecordingMode_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  Effekseer::Tool::RecordingModeType arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::RecordingModeType)jarg2; 
+  if (arg1) (arg1)->RecordingMode = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_RecordingMode_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  Effekseer::Tool::RecordingModeType result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (Effekseer::Tool::RecordingModeType) ((arg1)->RecordingMode);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Count_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->Count = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Count_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (int32_t) ((arg1)->Count);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_HorizontalCount_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->HorizontalCount = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_HorizontalCount_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (int32_t) ((arg1)->HorizontalCount);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_OffsetFrame_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->OffsetFrame = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_OffsetFrame_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (int32_t) ((arg1)->OffsetFrame);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Freq_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->Freq = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Freq_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (int32_t) ((arg1)->Freq);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Transparence_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  Effekseer::Tool::TransparenceType arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::TransparenceType)jarg2; 
+  if (arg1) (arg1)->Transparence = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Transparence_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  Effekseer::Tool::TransparenceType result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (Effekseer::Tool::TransparenceType) ((arg1)->Transparence);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Scale_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->Scale = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Scale_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  result = (int32_t) ((arg1)->Scale);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_RecordingParameter___() {
+  void * jresult ;
+  Effekseer::Tool::RecordingParameter *result = 0 ;
+  
+  result = (Effekseer::Tool::RecordingParameter *)new Effekseer::Tool::RecordingParameter();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_RecordingParameter___(void * jarg1) {
+  Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
+  
+  arg1 = (Effekseer::Tool::RecordingParameter *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   int32_t arg2 ;
@@ -2030,222 +2246,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerParamater___(void
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_GetPath___(void * jarg1) {
-  void * jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  char16_t *result = 0 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (char16_t *)((RecordingParameter const *)arg1)->GetPath();
-  jresult = (char16_t *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_GetExt___(void * jarg1) {
-  void * jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  char16_t *result = 0 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (char16_t *)((RecordingParameter const *)arg1)->GetExt();
-  jresult = (char16_t *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_SetPath___(void * jarg1, void * jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  (arg1)->SetPath((char16_t const *)arg2);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_SetExt___(void * jarg1, void * jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  (arg1)->SetExt((char16_t const *)arg2);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_RecordingMode_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  RecordingModeType arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (RecordingModeType)jarg2; 
-  if (arg1) (arg1)->RecordingMode = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_RecordingMode_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  RecordingModeType result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (RecordingModeType) ((arg1)->RecordingMode);
-  jresult = (int)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Count_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->Count = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Count_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (int32_t) ((arg1)->Count);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_HorizontalCount_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->HorizontalCount = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_HorizontalCount_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (int32_t) ((arg1)->HorizontalCount);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_OffsetFrame_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->OffsetFrame = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_OffsetFrame_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (int32_t) ((arg1)->OffsetFrame);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Freq_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->Freq = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Freq_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (int32_t) ((arg1)->Freq);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Transparence_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  TransparenceType arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (TransparenceType)jarg2; 
-  if (arg1) (arg1)->Transparence = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Transparence_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  TransparenceType result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (TransparenceType) ((arg1)->Transparence);
-  jresult = (int)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Scale_set___(void * jarg1, int jarg2) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->Scale = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_Scale_get___(void * jarg1) {
-  int jresult ;
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  int32_t result;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  result = (int32_t) ((arg1)->Scale);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_RecordingParameter___() {
-  void * jresult ;
-  RecordingParameter *result = 0 ;
-  
-  result = (RecordingParameter *)new RecordingParameter();
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_RecordingParameter___(void * jarg1) {
-  RecordingParameter *arg1 = (RecordingParameter *) 0 ;
-  
-  arg1 = (RecordingParameter *)jarg1; 
-  delete arg1;
-}
-
-
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Native___() {
   void * jresult ;
   Native *result = 0 ;
@@ -2523,16 +2523,16 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * 
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_BeginRecord___(void * jarg1, void * jarg2) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  RecordingParameter *arg2 = 0 ;
+  Effekseer::Tool::RecordingParameter *arg2 = 0 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (RecordingParameter *)jarg2;
+  arg2 = (Effekseer::Tool::RecordingParameter *)jarg2;
   if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "RecordingParameter const & type is null", 0);
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::RecordingParameter const & type is null", 0);
     return 0;
   } 
-  result = (bool)(arg1)->BeginRecord((RecordingParameter const &)*arg2);
+  result = (bool)(arg1)->BeginRecord((Effekseer::Tool::RecordingParameter const &)*arg2);
   jresult = result; 
   return jresult;
 }
@@ -2603,16 +2603,16 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsRecordComplet
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_Record___(void * jarg1, void * jarg2) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  RecordingParameter *arg2 = 0 ;
+  Effekseer::Tool::RecordingParameter *arg2 = 0 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (RecordingParameter *)jarg2;
+  arg2 = (Effekseer::Tool::RecordingParameter *)jarg2;
   if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "RecordingParameter const & type is null", 0);
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::RecordingParameter const & type is null", 0);
     return 0;
   } 
-  result = (bool)(arg1)->Record((RecordingParameter const &)*arg2);
+  result = (bool)(arg1)->Record((Effekseer::Tool::RecordingParameter const &)*arg2);
   jresult = result; 
   return jresult;
 }

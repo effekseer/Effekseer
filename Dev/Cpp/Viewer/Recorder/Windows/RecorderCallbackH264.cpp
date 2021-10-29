@@ -1,10 +1,15 @@
 #include "RecorderCallbackH264.h"
 
-#include <Mfreadwrite.h>
 #include <Windows.h>
+
 #include <mfapi.h>
-#include <mferror.h>
+
 #include <mfidl.h>
+
+#include <Mfreadwrite.h>
+
+#include <mferror.h>
+
 #include <string>
 #include <vector>
 
@@ -250,6 +255,32 @@ public:
 		}
 	}
 };
+
+bool RecorderCallbackH264::OnBeginRecord()
+{
+	auto path = std::u16string(recordingParameter_.GetPath()) + std::u16string(recordingParameter_.GetExt());
+	videoWriter_ = std::make_shared<VideoWriter>();
+	if (!videoWriter_->Start(path, imageSize_.X, imageSize_.Y, (int32_t)(60.0f / (float)recordingParameter_.Freq), recordingParameter_.Count))
+	{
+		return false;
+	}
+
+	buffer_.resize(videoWriter_->GetBufferSize());
+
+	return true;
+}
+
+void RecorderCallbackH264::OnEndRecord()
+{
+	videoWriter_.reset();
+}
+
+void RecorderCallbackH264::OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels)
+{
+	auto p = reinterpret_cast<const uint8_t*>(pixels.data());
+	buffer_.assign(p, p + buffer_.size());
+	videoWriter_->Write(buffer_);
+}
 
 } // namespace Tool
 } // namespace Effekseer
