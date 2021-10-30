@@ -166,6 +166,19 @@ namespace Effekseer.GUI
             return native.BeginRecord(recordingParameter);
         }
 
+		public bool RecordAsH264(string path, swig.RecordingParameter recordingParameter)
+		{
+			var dir = System.IO.Path.GetDirectoryName(path);
+			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
+			var ext = System.IO.Path.GetExtension(path);
+
+			recordingParameter.SetPath(dir + "/" + fileWExt);
+			recordingParameter.SetExt(ext);
+			recordingParameter.RecordingMode = swig.RecordingModeType.H264;
+			return native.BeginRecord(recordingParameter);
+		}
+
+
 		public bool EndRecord()
 		{
 			return native.EndRecord();

@@ -2,6 +2,7 @@
 
 #include "../Graphics/efk.Graphics.h"
 #include "../dll.h"
+#include "RecorderCallback.h"
 
 namespace Effekseer
 {

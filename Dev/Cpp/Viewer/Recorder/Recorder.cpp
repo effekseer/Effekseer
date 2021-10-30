@@ -1,6 +1,7 @@
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#include "Windows/RecorderCallbackH264.h"
 #endif
 
 #include "Recorder.h"
@@ -93,27 +94,6 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 		pixelsAdd[i].A = 255;
 	}
 }
-
-class RecorderCallback
-{
-private:
-public:
-	RecorderCallback() = default;
-	virtual ~RecorderCallback() = default;
-
-	virtual bool OnBeginRecord()
-	{
-		return false;
-	}
-
-	virtual void OnEndRecord()
-	{
-	}
-
-	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels)
-	{
-	}
-}; // namespace RecorderCallback
 
 class RecorderCallbackSprite : public RecorderCallback
 {
@@ -209,26 +189,11 @@ public:
 
 	void OnEndRecord() override
 	{
-		char16_t path_[260];
-		auto pathWithoutExt = recordingParameter_.GetPath();
-		auto ext = recordingParameter_.GetExt();
-
-		char pathWOE[256];
-		char ext_[256];
-		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
-
-		auto ss = std::stringstream();
-		ss << pathWOE << ext_;
-
-		//		sprintf(path8_dst, "%s%s", pathWOE, ext_);
-		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
-
-		spdlog::trace("RecorderCallbackSpriteSheet : {}", ss.str());
+		auto path = std::u16string(recordingParameter_.GetPath()) + std::u16string(recordingParameter_.GetExt());
 
 		efk::PNGHelper pngHelper;
 		pngHelper.Save(
-			path_, imageSize_.X * recordingParameter_.HorizontalCount, imageSize_.Y * yCount, pixels_out.data());
+			path.c_str(), imageSize_.X * recordingParameter_.HorizontalCount, imageSize_.Y * yCount, pixels_out.data());
 	}
 
 	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
@@ -266,24 +231,9 @@ public:
 
 	bool OnBeginRecord() override
 	{
-		char16_t path_[260];
-		auto pathWithoutExt = recordingParameter_.GetPath();
-		auto ext = recordingParameter_.GetExt();
+		auto path = std::u16string(recordingParameter_.GetPath()) + std::u16string(recordingParameter_.GetExt());
 
-		char pathWOE[256];
-		char ext_[256];
-		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
-
-		auto ss = std::stringstream();
-		ss << pathWOE << ext_;
-
-		//sprintf(path8_dst, "%s%s", pathWOE, ext_);
-		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
-
-		spdlog::trace("RecorderCallbackGif : {}", ss.str());
-
-		helper.Initialize(path_, imageSize_.X, imageSize_.Y, recordingParameter_.Freq);
+		helper.Initialize(path.c_str(), imageSize_.X, imageSize_.Y, recordingParameter_.Freq);
 		return true;
 	}
 
@@ -317,28 +267,14 @@ public:
 
 	bool OnBeginRecord() override
 	{
-		char16_t path_[260];
-		auto pathWithoutExt = recordingParameter_.GetPath();
-		auto ext = recordingParameter_.GetExt();
-
-		char pathWOE[256];
-		char ext_[256];
-		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
-		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
-
-		auto ss = std::stringstream();
-		ss << pathWOE << ext_;
-
-		//sprintf(path8_dst, "%s%s", pathWOE, ext_);
-
-		spdlog::trace("RecorderCallbackAvi : {}", ss.str());
-
-		Effekseer::ConvertUtf8ToUtf16(path_, 260, ss.str().c_str());
+		auto path = std::u16string(recordingParameter_.GetPath()) + std::u16string(recordingParameter_.GetExt());
+		char path8[256];
+		Effekseer::ConvertUtf16ToUtf8(path8, 256, path.c_str());
 
 #ifdef _WIN32
-		_wfopen_s(&fp, (const wchar_t*)path_, L"wb");
+		_wfopen_s(&fp, (const wchar_t*)path.c_str(), L"wb");
 #else
-		fp = fopen(ss.str().c_str(), "wb");
+		fp = fopen(path8, "wb");
 #endif
 
 		if (fp == nullptr)
@@ -433,6 +369,19 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 		{
 			recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2_, imageSize_);
 		}
+	}
+	else if (recordingParameter_.RecordingMode == RecordingModeType::H264)
+	{
+#ifdef _WIN32
+		recorderCallback = std::make_shared<RecorderCallbackH264>(recordingParameter_, imageSize_);
+
+		if (recordingParameter_.Transparence == TransparenceType::Generate2)
+		{
+			recorderCallback2 = std::make_shared<RecorderCallbackH264>(recordingParameter2_, imageSize_);
+		}
+#else
+		return false;
+#endif
 	}
 
 	if (recordingParameter_.Transparence == TransparenceType::Generate2)

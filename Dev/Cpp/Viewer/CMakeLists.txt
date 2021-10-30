@@ -57,6 +57,11 @@ list(APPEND cpps
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	3rdParty/imgui_platform/imgui_impl_dx11.cpp
+	Recorder/Windows/RecorderCallbackH264.cpp
+)
+
+list(APPEND hs
+    Recorder/Windows/RecorderCallbackH264.h
 )
 
 elseif(APPLE)

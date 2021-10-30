@@ -14,7 +14,8 @@ public enum RecordingModeType {
   Sprite,
   SpriteSheet,
   Gif,
-  Avi
+  Avi,
+  H264
 }
 
 }

@@ -841,7 +841,7 @@ void* Native::RenderView(int32_t width, int32_t height)
 	return (void*)mainScreen_->GetView()->GetViewID();
 }
 
-bool Native::BeginRecord(const RecordingParameter& recordingParameter)
+bool Native::BeginRecord(const Effekseer::Tool::RecordingParameter& recordingParameter)
 {
 	if (effect_ == nullptr)
 		return false;
@@ -885,7 +885,7 @@ bool Native::IsRecordCompleted() const
 	return (recorder) ? recorder->IsCompleted() : false;
 }
 
-bool Native::Record(const RecordingParameter& recordingParameter)
+bool Native::Record(const Effekseer::Tool::RecordingParameter& recordingParameter)
 {
 	if (BeginRecord(recordingParameter) == false)
 	{
