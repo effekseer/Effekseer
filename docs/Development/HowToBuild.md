@@ -97,7 +97,7 @@ cd Dev/release
 mono Effekseer.exe
 ```
 
-###　Linux
+### Linux
 
 ```
 python3 build.py
