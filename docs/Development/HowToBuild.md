@@ -46,13 +46,6 @@ git lfs install
 git lfs pull
 ```
 
-### TortoiseGit (Windows)
-
-```
-Clone -> input https://github.com/effekseer/Effekseer
-Submodule Update -> check init
-```
-
 Build to develop Editor
 ----------
 
@@ -104,7 +97,7 @@ cd Dev/release
 mono Effekseer.exe
 ```
 
-###Linux
+###　Linux
 
 ```
 python3 build.py
