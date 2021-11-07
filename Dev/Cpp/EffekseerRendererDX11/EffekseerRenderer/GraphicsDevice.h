@@ -416,6 +416,8 @@ public:
 
 	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
+	void SetViewport(int32_t x, int32_t y, int32_t width, int32_t height) override;
+
 	void Draw(const Effekseer::Backend::DrawParameter& drawParam) override;
 
 	void BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor) override;

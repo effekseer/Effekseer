@@ -356,7 +356,7 @@ class GpuParticleContext
 
 		auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
-		glViewport(0, 0, texWidth, texHeight);
+		graphicsDevice->SetViewport(0, 0, texWidth, texHeight);
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, false, false, Effekseer::Color(0, 0, 0, 255));
 		Effekseer::Backend::DrawParameter drawParam;
 
@@ -540,7 +540,6 @@ public:
 
 		if (deviceType == GraphicsDeviceType::OpenGL) {
 			window = std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({ windowWidth, windowHeight }), "Backend.GpuParticle");
-			//graphicsDevice = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 		}
 		else if (deviceType == GraphicsDeviceType::DirectX11) {
 			window = std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({ windowWidth, windowHeight }), "Backend.GpuParticle");
@@ -562,7 +561,7 @@ public:
 		RenderUniformBufferVS renderUniformBufferVSInitData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 		renderUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(RenderUniformBufferVS), &renderUniformBufferVSInitData);
 
-		windowRenderPass = window->GetScreenRenderPass();//graphicsDevice->CreateRenderPass();
+		windowRenderPass = window->GetScreenRenderPass();
 
 		initUpdateVertex();
 		initRenderVertex();
@@ -636,7 +635,7 @@ public:
 
 		auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
-		glViewport(0, 0, texWidth, texHeight);
+		graphicsDevice->SetViewport(0, 0, texWidth, texHeight);
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 
 
@@ -714,7 +713,7 @@ public:
 			pip = graphicsDevice->CreatePipelineState(pipParam);
 		}
 
-		//glViewport(0, 0, windowWidth, windowHeight);
+		graphicsDevice->SetViewport(0, 0, windowWidth, windowHeight);
 		graphicsDevice->BeginRenderPass(windowRenderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 		Effekseer::Backend::DrawParameter drawParam;
 		drawParam.TextureCount = buffers[pingpong].textures.size() + 1;

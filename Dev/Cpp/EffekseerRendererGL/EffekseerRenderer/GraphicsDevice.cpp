@@ -1233,6 +1233,12 @@ Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const Effeks
 	return ret;
 }
 
+void GraphicsDevice::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	glViewport(x, y, width, height);
+	GLCheckError();
+}
+
 void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 {
 	if (drawParam.VertexBufferPtr == nullptr ||
