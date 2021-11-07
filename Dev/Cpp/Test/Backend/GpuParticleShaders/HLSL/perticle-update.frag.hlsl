@@ -1,172 +1,223 @@
-struct PS_INPUT
-{
-    float2 ScreenUV;
-};
+#line 1 "perticle-update.frag.hlsl"
+#line 1 "./noise.hlsli"
 
-struct VS_OUTPUT
-{
-    float4 o_ParticleData0;
-    float4 o_ParticleData1;
-};
 
-cbuffer CB : register(b0)
-{
-    float4 _515_DeltaTime : packoffset(c0);
-};
-
-Texture2D<float4> i_ParticleData0 : register(t0);
-SamplerState i_ParticleData0Sampler : register(s0);
-Texture2D<float4> i_ParticleData1 : register(t1);
-SamplerState i_ParticleData1Sampler : register(s1);
-
-static float2 input_ScreenUV;
-static float4 _entryPointOutput_o_ParticleData0;
-static float4 _entryPointOutput_o_ParticleData1;
-
-struct SPIRV_Cross_Input
-{
-    float2 input_ScreenUV : TEXCOORD0;
-};
-
-struct SPIRV_Cross_Output
-{
-    float4 _entryPointOutput_o_ParticleData0 : TEXCOORD0;
-    float4 _entryPointOutput_o_ParticleData1 : TEXCOORD1;
-};
-
-float3 unpackVec3(float s)
-{
-    uint bits = asuint(s);
-    float3 v = float3(uint3(bits, bits >> uint(10), bits >> uint(20)) & uint3(1023u, 1023u, 1023u));
-    return ((v / 1023.0f.xxx) * 2.0f) - 1.0f.xxx;
+float3 mod289(float3 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 
-float3 mod289(float3 x)
-{
-    return x - (floor(x * 0.00346020772121846675872802734375f) * 289.0f);
+float4 mod289(float4 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 
-float4 mod289(float4 x)
-{
-    return x - (floor(x * 0.00346020772121846675872802734375f) * 289.0f);
-}
-
-float4 permute(float4 x)
-{
-    float4 param = ((x * 34.0f) + 1.0f.xxxx) * x;
-    return mod289(param);
+float4 permute(float4 x) {
+     return mod289(((x*34.0)+1.0)*x);
 }
 
 float4 taylorInvSqrt(float4 r)
 {
-    return 1.792842864990234375f.xxxx - (r * 0.8537347316741943359375f);
+  return 1.79284291400159 - 0.85373472095314 * r;
 }
 
 float snoise(float3 v)
-{
-    float3 i = floor(v + dot(v, 0.3333333432674407958984375f.xxx).xxx);
-    float3 x0 = (v - i) + dot(i, 0.16666667163372039794921875f.xxx).xxx;
-    float3 g = step(x0.yzx, x0);
-    float3 l = 1.0f.xxx - g;
-    float3 i1 = min(g, l.zxy);
-    float3 i2 = max(g, l.zxy);
-    float3 x1 = (x0 - i1) + 0.16666667163372039794921875f.xxx;
-    float3 x2 = (x0 - i2) + 0.3333333432674407958984375f.xxx;
-    float3 x3 = x0 - 0.5f.xxx;
-    float3 param = i;
-    i = mod289(param);
-    float4 param_1 = i.z.xxxx + float4(0.0f, i1.z, i2.z, 1.0f);
-    float4 param_2 = (permute(param_1) + i.y.xxxx) + float4(0.0f, i1.y, i2.y, 1.0f);
-    float4 param_3 = (permute(param_2) + i.x.xxxx) + float4(0.0f, i1.x, i2.x, 1.0f);
-    float4 p = permute(param_3);
-    float n_ = 0.14285714924335479736328125f;
-    float3 ns = (float3(2.0f, 0.5f, 1.0f) * n_) - float3(0.0f, 1.0f, 0.0f);
-    float4 j = p - (floor((p * ns.z) * ns.z) * 49.0f);
-    float4 x_ = floor(j * ns.z);
-    float4 y_ = floor(j - (x_ * 7.0f));
-    float4 x = (x_ * ns.x) + ns.yyyy;
-    float4 y = (y_ * ns.x) + ns.yyyy;
-    float4 h = (1.0f.xxxx - abs(x)) - abs(y);
-    float4 b0 = float4(x.xy, y.xy);
-    float4 b1 = float4(x.zw, y.zw);
-    float4 s0 = (floor(b0) * 2.0f) + 1.0f.xxxx;
-    float4 s1 = (floor(b1) * 2.0f) + 1.0f.xxxx;
-    float4 sh = -step(h, 0.0f.xxxx);
-    float4 a0 = b0.xzyw + (s0.xzyw * sh.xxyy);
-    float4 a1 = b1.xzyw + (s1.xzyw * sh.zzww);
-    float3 p0 = float3(a0.xy, h.x);
-    float3 p1 = float3(a0.zw, h.y);
-    float3 p2 = float3(a1.xy, h.z);
-    float3 p3 = float3(a1.zw, h.w);
-    float4 param_4 = float4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3));
-    float4 norm = taylorInvSqrt(param_4);
-    p0 *= norm.x;
-    p1 *= norm.y;
-    p2 *= norm.z;
-    p3 *= norm.w;
-    float4 m = max(0.60000002384185791015625f.xxxx - float4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0f.xxxx);
-    m *= m;
-    return 42.0f * dot(m * m, float4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+  {
+  const float2 C = float2(1.0/6.0, 1.0/3.0);
+  const float4 D = float4(0.0, 0.5, 1.0, 2.0);
+
+
+  float3 i = floor(v + dot(v, C.yyy) );
+  float3 x0 = v - i + dot(i, C.xxx) ;
+
+
+  float3 g = step(x0.yzx, x0.xyz);
+  float3 l = 1.0 - g;
+  float3 i1 = min( g.xyz, l.zxy );
+  float3 i2 = max( g.xyz, l.zxy );
+
+
+
+
+
+  float3 x1 = x0 - i1 + C.xxx;
+  float3 x2 = x0 - i2 + C.yyy;
+  float3 x3 = x0 - D.yyy;
+
+
+  i = mod289(i);
+  float4 p = permute( permute( permute(
+             i.z + float4(0.0, i1.z, i2.z, 1.0 ))
+           + i.y + float4(0.0, i1.y, i2.y, 1.0 ))
+           + i.x + float4(0.0, i1.x, i2.x, 1.0 ));
+
+
+
+  float n_ = 0.142857142857;
+  float3 ns = n_ * D.wyz - D.xzx;
+
+  float4 j = p - 49.0 * floor(p * ns.z * ns.z);
+
+  float4 x_ = floor(j * ns.z);
+  float4 y_ = floor(j - 7.0 * x_ );
+
+  float4 x = x_ *ns.x + ns.yyyy;
+  float4 y = y_ *ns.x + ns.yyyy;
+  float4 h = 1.0 - abs(x) - abs(y);
+
+  float4 b0 = float4( x.xy, y.xy );
+  float4 b1 = float4( x.zw, y.zw );
+
+
+
+  float4 s0 = floor(b0)*2.0 + 1.0;
+  float4 s1 = floor(b1)*2.0 + 1.0;
+  float4 sh = -step(h, float4(0.0,0.0,0.0,0.0));
+
+  float4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+  float4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+
+  float3 p0 = float3(a0.xy,h.x);
+  float3 p1 = float3(a0.zw,h.y);
+  float3 p2 = float3(a1.xy,h.z);
+  float3 p3 = float3(a1.zw,h.w);
+
+
+  float4 norm = taylorInvSqrt(float4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x;
+  p1 *= norm.y;
+  p2 *= norm.z;
+  p3 *= norm.w;
+
+
+  float4 m = max(0.6 - float4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 42.0 * dot( m*m, float4( dot(p0,x0), dot(p1,x1),
+                                dot(p2,x2), dot(p3,x3) ) );
 }
 
-float3 noise3(float3 seed)
-{
-    float3 param = seed;
-    float3 param_1 = seed.yzx;
-    float3 param_2 = seed.zxy;
-    return float3(snoise(param), snoise(param_1), snoise(param_2));
+
+float packVec3(float3 v) {
+    uint3 i = uint3((v + 1.0) * 0.5 * 1023.0);
+    return asfloat(i.x | (i.y << 10) | (i.z << 20));
 }
 
-float packVec3(float3 v)
-{
-    uint3 i = uint3(((v + 1.0f.xxx) * 0.5f) * 1023.0f);
-    return asfloat((i.x | (i.y << uint(10))) | (i.z << uint(20)));
+float3 unpackVec3(float s) {
+    uint bits = asuint(s);
+    float3 v = float3(uint3(bits, bits >> 10, bits >> 20) & 1023u);
+    return v / 1023.0 * 2.0 - 1.0;
 }
 
-VS_OUTPUT _main(PS_INPUT _input)
-{
-    float4 data0 = i_ParticleData0.SampleLevel(i_ParticleData0Sampler, float2(float4(_input.ScreenUV, 0.0f, 0.0f).xy), 0.0f);
-    float4 data1 = i_ParticleData1.SampleLevel(i_ParticleData1Sampler, float2(float4(_input.ScreenUV, 0.0f, 0.0f).xy), 0.0f);
-    float3 position = data0.xyz;
-    float param = data1.w;
-    float3 direction = unpackVec3(param);
-    float DeltaTime1f = _515_DeltaTime.x;
-    data1.x += DeltaTime1f;
-    float lifetimeRatio = data1.x / data1.y;
-    float3 velocity = 0.0f.xxx;
-    velocity += (direction * lerp(0.00999999977648258209228515625f, 0.0f, lifetimeRatio));
-    float3 param_1 = position;
-    velocity += (noise3(param_1) * 0.00999999977648258209228515625f);
-    float3 targetPosition = float3(0.20000000298023223876953125f, 0.0f, 0.0f);
-    float3 diff = targetPosition - position;
-    velocity += (normalize(diff) * 0.00999999977648258209228515625f);
-    position += velocity;
-    float3 _567 = normalize(velocity);
-    bool3 _569 = (length(velocity) < 9.9999997473787516355514526367188e-05f).xxx;
-    direction = float3(_569.x ? direction.x : _567.x, _569.y ? direction.y : _567.y, _569.z ? direction.z : _567.z);
-    float3 param_2 = direction;
-    VS_OUTPUT _output;
-    _output.o_ParticleData0 = float4(position, packVec3(param_2));
-    _output.o_ParticleData1 = data1;
-    return _output;
+float rand(float2 seed) {
+    return frac(sin(dot(seed, float2(12.9898, 78.233))) * 43758.5453);
 }
 
-void vert_main()
-{
-    PS_INPUT _input;
-    _input.ScreenUV = input_ScreenUV;
-    PS_INPUT param = _input;
-    VS_OUTPUT flattenTemp = _main(param);
-    _entryPointOutput_o_ParticleData0 = flattenTemp.o_ParticleData0;
-    _entryPointOutput_o_ParticleData1 = flattenTemp.o_ParticleData1;
+float3 noise3(float3 seed) {
+    return float3(snoise(seed.xyz), snoise(seed.yzx), snoise(seed.zxy));
+}
+#line 2 "perticle-update.frag.hlsl"
+
+Texture2D i_ParticleData0 : register(t0);
+SamplerState i_ParticleData0Sampler : register(s0);
+Texture2D i_ParticleData1 : register(t1);
+SamplerState i_ParticleData1Sampler : register(s1);
+
+cbuffer CB : register(b0) {
+ uniform float4 DeltaTime;
+
+};
+
+struct PS_INPUT {
+ float2 ScreenUV: TEXCOORD0;
+};
+
+struct VS_OUTPUT {
+    float4 o_ParticleData0 : COLOR0;
+    float4 o_ParticleData1: COLOR1;
+};
+
+float3 orbit(float3 position, float3 direction, float3 move) {
+ float3 offset = float3(0.0, 0.0, 0.0);
+ float3 axis = normalize(float3(0.0, 1.0, 0.0));
+ float3 diff = position - offset;
+ float distance = length(diff);
+ float3 normalDir;
+ float radius;
+ if (distance < 0.0001) {
+  radius = 0.0001;
+  normalDir = direction;
+ } else {
+  float3 normal = diff - axis * dot(axis, normalize(diff)) * distance;
+  radius = length(normal);
+  if (radius < 0.0001) {
+   normalDir = direction;
+  } else {
+   normalDir = normalize(normal);
+  }
+ }
+
+
+ float nextRadius = max(0.0001, radius + move.z);
+ float3 orbitDir = cross(axis, normalDir);
+ float arc = 2.0 * 3.141592 * radius;
+ float rotation = move.x / arc;
+
+ float3 rotationDir = orbitDir * sin(rotation) - normalDir * (1.0 - cos(rotation));
+ float3 velocity = rotationDir * radius + (rotationDir * 2.0 + normalDir) * radius * (nextRadius - radius);
+
+ return velocity + axis * move.y;
+
+
+
+
 }
 
-SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
-{
-    input_ScreenUV = stage_input.input_ScreenUV;
-    vert_main();
-    SPIRV_Cross_Output stage_output;
-    stage_output._entryPointOutput_o_ParticleData0 = _entryPointOutput_o_ParticleData0;
-    stage_output._entryPointOutput_o_ParticleData1 = _entryPointOutput_o_ParticleData1;
-    return stage_output;
+float4 myTexelFetch(Texture2D t, SamplerState s, int2 pos) {
+ return t.Sample(s, float4(pos.x, pos.y, 0, 0));
+}
+
+VS_OUTPUT main(PS_INPUT input) {
+ VS_OUTPUT output;
+
+
+
+
+ float4 data0 = i_ParticleData0.Sample(i_ParticleData0Sampler, float4(input.ScreenUV, 0, 0));
+ float4 data1 = i_ParticleData1.Sample(i_ParticleData1Sampler, float4(input.ScreenUV, 0, 0));
+ float3 position = data0.xyz;
+ float3 direction = unpackVec3(data1.w);
+
+ float DeltaTime1f = DeltaTime.x;
+
+ data1.x += DeltaTime1f;
+ float lifetimeRatio = data1.x / data1.y;
+
+
+ float3 velocity = float3(0.0);
+
+  velocity += direction * lerp(0.01, 0.0, lifetimeRatio);
+
+
+
+
+
+
+  velocity += 0.01 * noise3(position);
+
+
+
+  float3 targetPosition = float3(0.2, 0.0, 0.0);
+  float3 diff = targetPosition - position;
+  velocity += normalize(diff) * 0.01;
+
+
+
+ position += velocity;
+
+
+ direction = (length(velocity) < 0.0001) ? direction : normalize(velocity);
+
+
+ output.o_ParticleData0 = float4(position, packVec3(direction));
+ output.o_ParticleData1 = data1;
+
+ return output;
 }

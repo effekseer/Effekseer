@@ -76,7 +76,7 @@ VS_OUTPUT main(PS_INPUT input) {
 	float lifetimeRatio = data1.x / data1.y;
 	
 	// Clculate velocity
-	float3 velocity = float3(0.0);
+	float3 velocity = float3(0.0,0.0,0.0);
 	//if (Flags.x) {
 		velocity += direction * lerp(0.01, 0.0, lifetimeRatio);
 	//}

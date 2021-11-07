@@ -788,7 +788,7 @@ void GpuParticle(GraphicsDeviceType deviceType)
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL); });
-//TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
+//TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL); });
+TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
 //TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
 #endif

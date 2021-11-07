@@ -19,7 +19,7 @@ float4 taylorInvSqrt(float4 r)
 
 float snoise(float3 v)
   { 
-  const float2  C = float2(1.0/6.0, 1.0/3.0) ;
+  const float2  C = float2(1.0/6.0, 1.0/3.0);
   const float4  D = float4(0.0, 0.5, 1.0, 2.0);
 
 // First corner
@@ -68,7 +68,7 @@ float snoise(float3 v)
   //float4 s1 = float4(lessThan(b1,0.0))*2.0 - 1.0;
   float4 s0 = floor(b0)*2.0 + 1.0;
   float4 s1 = floor(b1)*2.0 + 1.0;
-  float4 sh = -step(h, float4(0.0));
+  float4 sh = -step(h, float4(0.0,0.0,0.0,0.0));
 
   float4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
   float4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
