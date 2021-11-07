@@ -1,6 +1,6 @@
 struct PS_INPUT
 {
-    float3 v_Color;
+    float4 v_Color;
 };
 
 struct PS_OUTPUT
@@ -8,12 +8,12 @@ struct PS_OUTPUT
     float4 o_FragColor;
 };
 
-static float3 input_v_Color;
+static float4 input_v_Color;
 static float4 _entryPointOutput_o_FragColor;
 
 struct SPIRV_Cross_Input
 {
-    float3 input_v_Color : TEXCOORD0;
+    float4 input_v_Color : TEXCOORD0;
 };
 
 struct SPIRV_Cross_Output
@@ -24,7 +24,7 @@ struct SPIRV_Cross_Output
 PS_OUTPUT _main(PS_INPUT _input)
 {
     PS_OUTPUT _output;
-    _output.o_FragColor = float4(_input.v_Color, 1.0f);
+    _output.o_FragColor = _input.v_Color;
     return _output;
 }
 

@@ -15,6 +15,12 @@
 
 #define USE_TRAL 0
 
+enum class GraphicsDeviceType
+{
+	OpenGL,
+	DirectX11,
+};
+
 struct DataVertex
 {
 	std::array<float, 3> Particle;
@@ -120,7 +126,6 @@ public:
 	}
 };
 
-template <typename WINDOW>
 class GpuParticleContext
 {
 	std::random_device seed_gen;
@@ -404,10 +409,18 @@ class GpuParticleContext
 		auto updateUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"i_ParticleData0", "i_ParticleData1"},
 			updateUniformLayoutElements);
-		updateShader = graphicsDevice->CreateShaderFromCodes(
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-update.vert.glsl").c_str()},
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-update.frag.glsl").c_str()},
-			updateUniformLayout);
+		if (deviceType == GraphicsDeviceType::OpenGL) {
+			updateShader = graphicsDevice->CreateShaderFromCodes(
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.vert.glsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str()},
+				updateUniformLayout);
+		}
+		else {
+			updateShader = graphicsDevice->CreateShaderFromCodes(
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.vert.hlsl").c_str() },
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.frag.hlsl").c_str() },
+				updateUniformLayout);
+		}
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> emitUniformLayoutElements;
 		emitUniformLayoutElements.resize(2);
@@ -422,10 +435,18 @@ class GpuParticleContext
 		auto emitUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{},
 			emitUniformLayoutElements);
-		emitShader = graphicsDevice->CreateShaderFromCodes(
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-emit.vert.glsl").c_str()},
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-emit.frag.glsl").c_str()},
-			emitUniformLayout);
+		if (deviceType == GraphicsDeviceType::OpenGL) {
+			emitShader = graphicsDevice->CreateShaderFromCodes(
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str()},
+				emitUniformLayout);
+		}
+		else {
+			emitShader = graphicsDevice->CreateShaderFromCodes(
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.vert.hlsl").c_str() },
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.frag.hlsl").c_str() },
+				emitUniformLayout);
+		}
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
 		renderUniformLayoutElements.resize(3);
@@ -444,10 +465,18 @@ class GpuParticleContext
 		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable"},
 			renderUniformLayoutElements);
-		renderShader = graphicsDevice->CreateShaderFromCodes(
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-render.vert.glsl").c_str()},
-			{ReadFileAll(DirectoryPath + "GpuParticleShaders/GLSL/perticle-render.frag.glsl").c_str()},
-			renderUniformLayout);
+		if (deviceType == GraphicsDeviceType::OpenGL) {
+			renderShader = graphicsDevice->CreateShaderFromCodes(
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str()},
+				renderUniformLayout);
+		}
+		else {
+			renderShader = graphicsDevice->CreateShaderFromCodes(
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-render.vert.hlsl").c_str() },
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-render.frag.hlsl").c_str() },
+				renderUniformLayout);
+		}
 
 		colorTableTexture = createColorTableTexture();
 	}
@@ -476,11 +505,18 @@ class GpuParticleContext
 		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable", "Histories"},
 			renderUniformLayoutElements);
-		trailRenderShader = graphicsDevice->CreateShaderFromCodes(
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.vert.glsl").c_str() },
-			{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.frag.glsl").c_str() },
-			renderUniformLayout);
-
+		if (deviceType == GraphicsDeviceType::OpenGL) {
+			trailRenderShader = graphicsDevice->CreateShaderFromCodes(
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.vert.glsl").c_str() },
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.frag.glsl").c_str() },
+				renderUniformLayout);
+		}
+		else {
+			trailRenderShader = graphicsDevice->CreateShaderFromCodes(
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.vert.hlsl").c_str() },
+				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.frag.hlsl").c_str() },
+				renderUniformLayout);
+		}
 
 		TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
 			{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize) }
@@ -489,9 +525,12 @@ class GpuParticleContext
 	}
 
 public:
-	std::shared_ptr<WINDOW> window;
-	GpuParticleContext(int maxParticleCount, int windowWidth, int windowHeight)
+	std::shared_ptr<RenderingEnvironment> window;
+	GraphicsDeviceType deviceType;
+
+	GpuParticleContext(GraphicsDeviceType deviceType, int maxParticleCount, int windowWidth, int windowHeight)
 	{
+		this->deviceType = deviceType;
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
 
@@ -499,8 +538,13 @@ public:
 		texHeight = ((maxParticleCount + texWidth - 1) / texWidth) | 0;
 		this->maxParticleCount = texWidth * texHeight;
 
-		window = std::make_shared<WINDOW>(std::array<int, 2>({windowWidth, windowHeight}), "Backend.GpuParticle");
-		//graphicsDevice = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+		if (deviceType == GraphicsDeviceType::OpenGL) {
+			window = std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({ windowWidth, windowHeight }), "Backend.GpuParticle");
+			//graphicsDevice = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+		}
+		else if (deviceType == GraphicsDeviceType::DirectX11) {
+			window = std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({ windowWidth, windowHeight }), "Backend.GpuParticle");
+		}
 		graphicsDevice = window->GetGraphicsDevice();
 		buffers.push_back(GpuParticleBuffer(graphicsDevice, texWidth, texHeight));
 		buffers.push_back(GpuParticleBuffer(graphicsDevice, texWidth, texHeight));
@@ -518,7 +562,7 @@ public:
 		RenderUniformBufferVS renderUniformBufferVSInitData = {{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 		renderUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(RenderUniformBufferVS), &renderUniformBufferVSInitData);
 
-		windowRenderPass = nullptr;
+		windowRenderPass = window->GetScreenRenderPass();//graphicsDevice->CreateRenderPass();
 
 		initUpdateVertex();
 		initRenderVertex();
@@ -670,7 +714,7 @@ public:
 			pip = graphicsDevice->CreatePipelineState(pipParam);
 		}
 
-		glViewport(0, 0, windowWidth, windowHeight);
+		//glViewport(0, 0, windowWidth, windowHeight);
 		graphicsDevice->BeginRenderPass(windowRenderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 		Effekseer::Backend::DrawParameter drawParam;
 		drawParam.TextureCount = buffers[pingpong].textures.size() + 1;
@@ -719,12 +763,11 @@ public:
 	}
 };
 
-template <typename WINDOW>
-void GpuParticle()
+void GpuParticle(GraphicsDeviceType deviceType)
 {
 	int windowWidth = 1280;
 	int windowHeight = 720;
-	GpuParticleContext<WINDOW> gpuParticleContext(1024 * 128, windowWidth, windowHeight);
+	GpuParticleContext gpuParticleContext(deviceType, 1024 * 128, windowWidth, windowHeight);
 	int count = 0;
 	int emitNum = 128;
 	while (count < 1000 && gpuParticleContext.window->DoEvent())
@@ -746,6 +789,7 @@ void GpuParticle()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle<RenderingEnvironmentGL>(); });
-//TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle<RenderingEnvironmentDX11>(); });
+TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL); });
+//TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
+//TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
 #endif

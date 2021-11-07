@@ -12,15 +12,18 @@ struct VS_OUTPUT
 
 cbuffer CB : register(b0)
 {
-    float4 _485_ID2TPos : packoffset(c0);
-    column_major float4x4 _485_ViewMatrix : packoffset(c1);
-    column_major float4x4 _485_ProjMatrix : packoffset(c5);
+    float4 _326_ID2TPos : packoffset(c0);
+    column_major float4x4 _326_ViewMatrix : packoffset(c1);
+    column_major float4x4 _326_ProjMatrix : packoffset(c5);
+    float4 _326_Trail : packoffset(c9);
 };
 
 Texture2D<float4> ParticleData0 : register(t0);
 SamplerState ParticleData0Sampler : register(s0);
 Texture2D<float4> ParticleData1 : register(t1);
 SamplerState ParticleData1Sampler : register(s1);
+Texture2DArray<float4> Histories : register(t3);
+SamplerState HistoriesSampler : register(s3);
 Texture2D<float4> ColorTable : register(t2);
 SamplerState ColorTableSampler : register(s2);
 
@@ -41,11 +44,16 @@ struct SPIRV_Cross_Output
     float4 gl_Position : SV_Position;
 };
 
-float2 rotate(float2 pos, float deg)
+float3 unpackVec3(float s)
 {
-    float c = cos(deg * 0.01745328865945339202880859375f);
-    float s = sin(deg * 0.01745328865945339202880859375f);
-    return mul(pos, float2x2(float2(c, -s), float2(s, c)));
+    uint bits = asuint(s);
+    float3 v = float3(uint3(bits, bits >> uint(10), bits >> uint(20)) & uint3(1023u, 1023u, 1023u));
+    return ((v / 1023.0f.xxx) * 2.0f) - 1.0f.xxx;
+}
+
+float2 mod289(float2 x)
+{
+    return x - (floor(x * 0.00346020772121846675872802734375f) * 289.0f);
 }
 
 float3 mod289(float3 x)
@@ -53,67 +61,39 @@ float3 mod289(float3 x)
     return x - (floor(x * 0.00346020772121846675872802734375f) * 289.0f);
 }
 
-float4 mod289(float4 x)
+float3 permute(float3 x)
 {
-    return x - (floor(x * 0.00346020772121846675872802734375f) * 289.0f);
-}
-
-float4 permute(float4 x)
-{
-    float4 param = ((x * 34.0f) + 1.0f.xxxx) * x;
+    float3 param = ((x * 34.0f) + 1.0f.xxx) * x;
     return mod289(param);
 }
 
-float4 taylorInvSqrt(float4 r)
+float snoise(float2 v)
 {
-    return 1.792842864990234375f.xxxx - (r * 0.8537347316741943359375f);
-}
-
-float snoise(float3 v)
-{
-    float3 i = floor(v + dot(v, 0.3333333432674407958984375f.xxx).xxx);
-    float3 x0 = (v - i) + dot(i, 0.16666667163372039794921875f.xxx).xxx;
-    float3 g = step(x0.yzx, x0);
-    float3 l = 1.0f.xxx - g;
-    float3 i1 = min(g, l.zxy);
-    float3 i2 = max(g, l.zxy);
-    float3 x1 = (x0 - i1) + 0.16666667163372039794921875f.xxx;
-    float3 x2 = (x0 - i2) + 0.3333333432674407958984375f.xxx;
-    float3 x3 = x0 - 0.5f.xxx;
-    float3 param = i;
+    float2 i = floor(v + dot(v, 0.3660254180431365966796875f.xx).xx);
+    float2 x0 = (v - i) + dot(i, 0.211324870586395263671875f.xx).xx;
+    bool2 _149 = (x0.x > x0.y).xx;
+    float2 i1 = float2(_149.x ? float2(1.0f, 0.0f).x : float2(0.0f, 1.0f).x, _149.y ? float2(1.0f, 0.0f).y : float2(0.0f, 1.0f).y);
+    float4 x12 = x0.xyxy + float4(0.211324870586395263671875f, 0.211324870586395263671875f, -0.57735025882720947265625f, -0.57735025882720947265625f);
+    float2 _161 = x12.xy - i1;
+    x12 = float4(_161.x, _161.y, x12.z, x12.w);
+    float2 param = i;
     i = mod289(param);
-    float4 param_1 = i.z.xxxx + float4(0.0f, i1.z, i2.z, 1.0f);
-    float4 param_2 = (permute(param_1) + i.y.xxxx) + float4(0.0f, i1.y, i2.y, 1.0f);
-    float4 param_3 = (permute(param_2) + i.x.xxxx) + float4(0.0f, i1.x, i2.x, 1.0f);
-    float4 p = permute(param_3);
-    float n_ = 0.14285714924335479736328125f;
-    float3 ns = (float3(2.0f, 0.5f, 1.0f) * n_) - float3(0.0f, 1.0f, 0.0f);
-    float4 j = p - (floor((p * ns.z) * ns.z) * 49.0f);
-    float4 x_ = floor(j * ns.z);
-    float4 y_ = floor(j - (x_ * 7.0f));
-    float4 x = (x_ * ns.x) + ns.yyyy;
-    float4 y = (y_ * ns.x) + ns.yyyy;
-    float4 h = (1.0f.xxxx - abs(x)) - abs(y);
-    float4 b0 = float4(x.xy, y.xy);
-    float4 b1 = float4(x.zw, y.zw);
-    float4 s0 = (floor(b0) * 2.0f) + 1.0f.xxxx;
-    float4 s1 = (floor(b1) * 2.0f) + 1.0f.xxxx;
-    float4 sh = -step(h, 0.0f.xxxx);
-    float4 a0 = b0.xzyw + (s0.xzyw * sh.xxyy);
-    float4 a1 = b1.xzyw + (s1.xzyw * sh.zzww);
-    float3 p0 = float3(a0.xy, h.x);
-    float3 p1 = float3(a0.zw, h.y);
-    float3 p2 = float3(a1.xy, h.z);
-    float3 p3 = float3(a1.zw, h.w);
-    float4 param_4 = float4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3));
-    float4 norm = taylorInvSqrt(param_4);
-    p0 *= norm.x;
-    p1 *= norm.y;
-    p2 *= norm.z;
-    p3 *= norm.w;
-    float4 m = max(0.60000002384185791015625f.xxxx - float4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0f.xxxx);
+    float3 param_1 = i.y.xxx + float3(0.0f, i1.y, 1.0f);
+    float3 param_2 = (permute(param_1) + i.x.xxx) + float3(0.0f, i1.x, 1.0f);
+    float3 p = permute(param_2);
+    float3 m = max(0.5f.xxx - float3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0f.xxx);
     m *= m;
-    return 42.0f * dot(m * m, float4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+    m *= m;
+    float3 x = (frac(p * 0.024390242993831634521484375f.xxx) * 2.0f) - 1.0f.xxx;
+    float3 h = abs(x) - 0.5f.xxx;
+    float3 ox = floor(x + 0.5f.xxx);
+    float3 a0 = x - ox;
+    m *= (1.792842864990234375f.xxx - (((a0 * a0) + (h * h)) * 0.8537347316741943359375f));
+    float3 g;
+    g.x = (a0.x * x0.x) + (h.x * x0.y);
+    float2 _273 = (a0.yz * x12.xz) + (h.yz * x12.yw);
+    g = float3(g.x, _273.x, _273.y);
+    return 130.0f * dot(m, g);
 }
 
 float fadeIn(float duration, float age, float lifetime)
@@ -140,33 +120,48 @@ float fadeInOut(float fadeinDuration, float fadeoutDuration, float age, float li
 VS_OUTPUT _main(VS_INPUT _input)
 {
     int particleID = int(_input.instanceID);
-    int2 ID2TPos2i = int2(int(_485_ID2TPos.x), int(_485_ID2TPos.y));
+    int2 ID2TPos2i = int2(int(_326_ID2TPos.x), int(_326_ID2TPos.y));
     int2 texPos = int2(particleID & ID2TPos2i.x, particleID >> ID2TPos2i.y);
     float4 data0 = ParticleData0.SampleLevel(ParticleData0Sampler, float2(float4(float2(texPos), 0.0f, 0.0f).xy), 0.0f);
     float4 data1 = ParticleData1.SampleLevel(ParticleData1Sampler, float2(float4(float2(texPos), 0.0f, 0.0f).xy), 0.0f);
     float age = data1.x;
     float lifetime = data1.y;
     VS_OUTPUT _output;
-    if (age >= lifetime)
+    if ((age >= lifetime) || (age <= 0.0f))
     {
         _output.Position = 0.0f.xxxx;
         _output.v_Color = 0.0f.xxxx;
     }
     else
     {
-        float3 position = data0.xyz;
-        float2 param = _input.a_VertexPosition * 0.0030000000260770320892333984375f;
-        float param_1 = 45.0f;
-        position += float3(rotate(param, param_1), 0.0f);
-        _output.Position = mul(float4(position, 1.0f), mul(_485_ViewMatrix, _485_ProjMatrix));
-        float3 param_2 = float3(float2(texPos), 0.0f) / 512.0f.xxx;
+        float historyID = _input.a_VertexPosition.x * min(_326_Trail.y, age);
+        float3 position;
+        float3 direction;
+        if (historyID >= 1.0f)
+        {
+            int texIndex = ((int(_326_Trail.x) + int(historyID)) - 1) % int(_326_Trail.y);
+            float4 trailData = Histories.SampleLevel(HistoriesSampler, float3(float4(float2(texPos), float(texIndex), 0.0f).xyz), 0.0f);
+            position = trailData.xyz;
+            float param = trailData.w;
+            direction = unpackVec3(param);
+        }
+        else
+        {
+            position = data0.xyz;
+            float param_1 = data0.w;
+            direction = unpackVec3(param_1);
+        }
+        float width = 0.0500000007450580596923828125f;
+        float3 vertex = (cross(float3(0.0f, 1.0f, 0.0f), direction) * _input.a_VertexPosition.y) * width;
+        _output.Position = mul(mul(float4(position + vertex, 1.0f), _326_ViewMatrix), _326_ProjMatrix);
+        float2 param_2 = float2(texPos) / 512.0f.xx;
         float2 texCoord = snoise(param_2).xx;
         _output.v_Color = ColorTable.SampleLevel(ColorTableSampler, float2(float4(texCoord, 0.0f, 0.0f).xy), 0.0f);
-        float param_3 = 1.0f;
+        float param_3 = 10.0f;
         float param_4 = 10.0f;
         float param_5 = age;
         float param_6 = lifetime;
-        _output.v_Color.w *= fadeInOut(param_3, param_4, param_5, param_6);
+        _output.v_Color.w *= (0.5f * fadeInOut(param_3, param_4, param_5, param_6));
     }
     return _output;
 }
