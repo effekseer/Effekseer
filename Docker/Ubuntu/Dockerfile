@@ -11,7 +11,7 @@ RUN add-apt-repository universe
 RUN apt update
 RUN apt -y install apt-transport-https
 RUN apt update
-RUN apt -y install dotnet-sdk-3.1
+RUN apt -y install dotnet-sdk-5.0
 
 RUN \
     git clone --depth 1 https://github.com/effekseer/Effekseer.git \
