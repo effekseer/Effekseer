@@ -56,7 +56,7 @@ static std::tuple<Vector2DF, Vector2DF> GetSelectedNodeBounds(float margin)
 	auto selectedCount = ed::GetSelectedNodes(selectedNodes.data(), selectedNodes.size());
 
 	ImVec2 areaMin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-	ImVec2 areaMax(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+	ImVec2 areaMax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 
 	for (size_t i = 0; i < selectedCount; i++)
 	{
