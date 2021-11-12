@@ -103,6 +103,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_UV2", "Material_UV2");
 
 	{
+		single16Test(u"DrawWithoutInstancing", "DrawWithoutInstancing");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
 		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
 		single16Test(u"BasicRenderSettings_Emissive", "BasicRenderSettings_Emissive");
