@@ -625,6 +625,7 @@ protected:
 		else
 		{
 			auto pcb = (PixelConstantBuffer*)shader_->GetPixelConstantBuffer();
+			pcb->MiscFlags.fill(0.0f);
 
 			// specify predefined parameters
 			if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)

@@ -27,6 +27,7 @@ cbuffer PS_ConstanBuffer : register(b0)
 	float4 reconstructionParam1;
 	float4 reconstructionParam2;
 	float4 mUVInversedBack;
+	float4 miscFlags;
 };
 
 Texture2D _colorTex : register(t0);
@@ -66,11 +67,12 @@ struct PS_Input
 };
 
 #include "SoftParticle_PS.fx"
+#include "Linear_sRGB.fx"
 
 float4 main(const PS_Input Input)
 	: SV_Target
 {
-	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV) * Input.Color;
+	float4 Output = ConvertFromSRGBTexture(_colorTex.Sample(sampler_colorTex, Input.UV)) * Input.Color;
 
 #if ENABLE_LIGHTING
 	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5) * 2.0;
@@ -113,5 +115,5 @@ float4 main(const PS_Input Input)
 	if (Output.a == 0.0)
 		discard;
 
-	return Output;
+	return ConvertToScreen(Output);
 }

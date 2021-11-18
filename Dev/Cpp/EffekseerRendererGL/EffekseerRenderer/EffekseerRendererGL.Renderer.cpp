@@ -1394,6 +1394,9 @@ void AssignPixelConstantBuffer(Shader* shader)
 
 	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.mUVInversedBack"), psOffset);
 	psOffset += sizeof(float[4]) * 1;
+
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("CBPS0.miscFlags"), psOffset);
+	psOffset += sizeof(float[4]) * 1;
 }
 
 void AssignDistortionPixelConstantBuffer(Shader* shader)

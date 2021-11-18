@@ -30,6 +30,7 @@ struct PS_ConstanBuffer
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
     vec4 mUVInversedBack;
+    vec4 miscFlags;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -40,16 +41,67 @@ centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
 varying vec4 _VSPS_PosP;
 
+vec3 PositivePow(vec3 base, vec3 power)
+{
+    return pow(max(abs(base), vec3(1.1920928955078125e-07)), power);
+}
+
+vec3 LinearToSRGB(vec3 c)
+{
+    vec3 param = c;
+    vec3 param_1 = vec3(0.4166666567325592041015625);
+    return max((PositivePow(param, param_1) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0));
+}
+
+vec4 LinearToSRGB(vec4 c)
+{
+    vec3 param = c.xyz;
+    return vec4(LinearToSRGB(param), c.w);
+}
+
+vec4 ConvertFromSRGBTexture(vec4 c)
+{
+    if (CBPS0.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    vec4 param = c;
+    return LinearToSRGB(param);
+}
+
+vec3 SRGBToLinear(vec3 c)
+{
+    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+}
+
+vec4 SRGBToLinear(vec4 c)
+{
+    vec3 param = c.xyz;
+    return vec4(SRGBToLinear(param), c.w);
+}
+
+vec4 ConvertToScreen(vec4 c)
+{
+    if (CBPS0.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    vec4 param = c;
+    return SRGBToLinear(param);
+}
+
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
-    vec3 _45 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_45.x, _45.y, _45.z, Output.w);
+    vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
+    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    vec3 _165 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_165.x, _165.y, _165.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
     }
-    return Output;
+    vec4 param_1 = Output;
+    return ConvertToScreen(param_1);
 }
 
 void main()
@@ -59,7 +111,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _83 = _main(Input);
-    gl_FragData[0] = _83;
+    vec4 _201 = _main(Input);
+    gl_FragData[0] = _201;
 }
 

@@ -775,6 +775,7 @@ public:
 
 			// ps
 			PixelConstantBuffer pcb{};
+			pcb.MiscFlags.fill(0.0f);
 
 			pcb.FalloffParam.Enable = 0;
 
@@ -868,6 +869,7 @@ public:
 			else
 			{
 				PixelConstantBuffer pcb;
+				pcb.MiscFlags.fill(0.0f);
 				pcb.FalloffParam.Enable = 0;
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.EnableInterpolation);
 				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.InterpolationType);

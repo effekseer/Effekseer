@@ -30,7 +30,8 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
     vec4 mUVInversedBack;
-} _164;
+    vec4 miscFlags;
+} _195;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_normalTex;
@@ -43,6 +44,34 @@ layout(location = 3) in vec3 Input_WorldB;
 layout(location = 4) in vec3 Input_WorldT;
 layout(location = 5) in vec4 Input_PosP;
 layout(location = 0) out vec4 _entryPointOutput;
+
+vec3 PositivePow(vec3 base, vec3 power)
+{
+    return pow(max(abs(base), vec3(1.1920928955078125e-07)), power);
+}
+
+vec3 LinearToSRGB(vec3 c)
+{
+    vec3 param = c;
+    vec3 param_1 = vec3(0.4166666567325592041015625);
+    return max((PositivePow(param, param_1) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0));
+}
+
+vec4 LinearToSRGB(vec4 c)
+{
+    vec3 param = c.xyz;
+    return vec4(LinearToSRGB(param), c.w);
+}
+
+vec4 ConvertFromSRGBTexture(vec4 c)
+{
+    if (_195.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    vec4 param = c;
+    return LinearToSRGB(param);
+}
 
 float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 reconstruct1, vec4 reconstruct2)
 {
@@ -60,35 +89,58 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
     return min(max(min(alphaFar, alphaNear), 0.0), 1.0);
 }
 
+vec3 SRGBToLinear(vec3 c)
+{
+    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+}
+
+vec4 SRGBToLinear(vec4 c)
+{
+    vec3 param = c.xyz;
+    return vec4(SRGBToLinear(param), c.w);
+}
+
+vec4 ConvertToScreen(vec4 c)
+{
+    if (_195.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    vec4 param = c;
+    return SRGBToLinear(param);
+}
+
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
+    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
-    float diffuse = max(dot(_164.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _184 = Output.xyz * ((_164.fLightColor.xyz * diffuse) + _164.fLightAmbient.xyz);
-    Output = vec4(_184.x, _184.y, _184.z, Output.w);
-    vec3 _193 = Output.xyz * _164.fEmissiveScaling.x;
-    Output = vec4(_193.x, _193.y, _193.z, Output.w);
+    float diffuse = max(dot(_195.fLightDirection.xyz, localNormal), 0.0);
+    vec3 _301 = Output.xyz * ((_195.fLightColor.xyz * diffuse) + _195.fLightAmbient.xyz);
+    Output = vec4(_301.x, _301.y, _301.z, Output.w);
+    vec3 _309 = Output.xyz * _195.fEmissiveScaling.x;
+    Output = vec4(_309.x, _309.y, _309.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = _164.mUVInversedBack.x + (_164.mUVInversedBack.y * screenUV.y);
-    if (!(_164.softParticleParam.w == 0.0))
+    screenUV.y = _195.mUVInversedBack.x + (_195.mUVInversedBack.y * screenUV.y);
+    if (!(_195.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-        float param = backgroundZ;
-        float param_1 = screenPos.z;
-        vec4 param_2 = _164.softParticleParam;
-        vec4 param_3 = _164.reconstructionParam1;
-        vec4 param_4 = _164.reconstructionParam2;
-        Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
+        float param_1 = backgroundZ;
+        float param_2 = screenPos.z;
+        vec4 param_3 = _195.softParticleParam;
+        vec4 param_4 = _195.reconstructionParam1;
+        vec4 param_5 = _195.reconstructionParam2;
+        Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
     }
     if (Output.w == 0.0)
     {
         discard;
     }
-    return Output;
+    vec4 param_6 = Output;
+    return ConvertToScreen(param_6);
 }
 
 void main()
@@ -101,7 +153,7 @@ void main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    vec4 _298 = _main(Input);
-    _entryPointOutput = _298;
+    vec4 _415 = _main(Input);
+    _entryPointOutput = _415;
 }
 

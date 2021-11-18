@@ -244,6 +244,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 
 	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
 		auto generator = DirectX::ShaderGenerator(DX9::material_common_define,
+												  DX9::material_common_functions,
 												  DX9::material_common_vs_functions,
 												  DX9::material_sprite_vs_pre,
 												  DX9::material_sprite_vs_pre_simple,
