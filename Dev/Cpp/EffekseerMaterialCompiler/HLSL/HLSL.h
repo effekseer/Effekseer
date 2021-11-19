@@ -584,7 +584,7 @@ static char* g_material_ps_suf2_unlit = R"(
 	if(opacityMask <= 0.0f) discard;
 	if(opacity <= 0.0) discard;
 
-	return Output;
+	return ConvertToScreen(Output);
 }
 
 )";
@@ -600,7 +600,7 @@ static char* g_material_ps_suf2_lit = R"(
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
 
-	return Output;
+	return ConvertToScreen(Output);
 }
 
 )";

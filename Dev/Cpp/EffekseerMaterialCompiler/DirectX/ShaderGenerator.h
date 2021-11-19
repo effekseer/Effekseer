@@ -393,6 +393,16 @@ public:
 			// replace textures
 			for (int32_t i = 0; i < actualTextureCount; i++)
 			{
+
+				std::string prefix;
+				std::string suffix;
+
+				if (materialFile->GetTextureColorType(i) == Effekseer::TextureColorType::Color)
+				{
+					prefix = "ConvertFromSRGBTexture(";
+					suffix = ")";
+				}
+
 				std::string keyP = "$TEX_P" + std::to_string(materialFile->GetTextureIndex(i)) + "$";
 				std::string keyS = "$TEX_S" + std::to_string(materialFile->GetTextureIndex(i)) + "$";
 
@@ -400,13 +410,13 @@ public:
 				{
 					if (stage == 0)
 					{
-						baseCode = Replace(baseCode, keyP, std::string("tex2Dlod(") + materialFile->GetTextureName(i) + "_sampler,float4(GetUV(");
-						baseCode = Replace(baseCode, keyS, "),0,1))");
+						baseCode = Replace(baseCode, keyP, prefix + std::string("tex2Dlod(") + materialFile->GetTextureName(i) + "_sampler,float4(GetUV(");
+						baseCode = Replace(baseCode, keyS, "),0,1))" + suffix);
 					}
 					else
 					{
-						baseCode = Replace(baseCode, keyP, std::string("tex2D(") + materialFile->GetTextureName(i) + "_sampler,GetUV(");
-						baseCode = Replace(baseCode, keyS, "))");
+						baseCode = Replace(baseCode, keyP, prefix + std::string("tex2D(") + materialFile->GetTextureName(i) + "_sampler,GetUV(");
+						baseCode = Replace(baseCode, keyS, "))" + suffix);
 					}
 				}
 				else
@@ -415,17 +425,17 @@ public:
 					{
 						baseCode = Replace(baseCode,
 										   keyP,
-										   std::string(materialFile->GetTextureName(i)) + "_texture.SampleLevel(" +
+										   prefix + std::string(materialFile->GetTextureName(i)) + "_texture.SampleLevel(" +
 											   materialFile->GetTextureName(i) + "_sampler,GetUV(");
-						baseCode = Replace(baseCode, keyS, "),0)");
+						baseCode = Replace(baseCode, keyS, "),0)" + suffix);
 					}
 					else
 					{
 						baseCode = Replace(baseCode,
 										   keyP,
-										   std::string(materialFile->GetTextureName(i)) + "_texture.Sample(" + materialFile->GetTextureName(i) +
+										   prefix + std::string(materialFile->GetTextureName(i)) + "_texture.Sample(" + materialFile->GetTextureName(i) +
 											   "_sampler,GetUV(");
-						baseCode = Replace(baseCode, keyS, "))");
+						baseCode = Replace(baseCode, keyS, "))" + suffix);
 					}
 				}
 			}
