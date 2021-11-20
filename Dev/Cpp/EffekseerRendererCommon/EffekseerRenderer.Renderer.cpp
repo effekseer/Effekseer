@@ -219,6 +219,11 @@ void Renderer::SetDepth(::Effekseer::Backend::TextureRef texture, const DepthRec
 	impl->SetDepth(texture, reconstructionParam);
 }
 
+void Renderer::SetMaintainGammaColorInLinearColorSpace(bool value)
+{
+	impl->MaintainGammaColorInLinearColorSpace = value;
+}
+
 Effekseer::Backend::GraphicsDeviceRef Renderer::GetGraphicsDevice() const
 {
 	return nullptr;
