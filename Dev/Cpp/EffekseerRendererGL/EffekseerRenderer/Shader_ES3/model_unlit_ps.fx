@@ -88,7 +88,7 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp vec4 
 
 highp vec3 SRGBToLinear(highp vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 highp vec4 SRGBToLinear(highp vec4 c)
@@ -111,8 +111,8 @@ highp vec4 _main(PS_Input Input)
 {
     highp vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     highp vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    highp vec3 _248 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_248.x, _248.y, _248.z, Output.w);
+    highp vec3 _250 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_250.x, _250.y, _250.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -143,7 +143,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _351 = _main(Input);
-    _entryPointOutput = _351;
+    highp vec4 _353 = _main(Input);
+    _entryPointOutput = _353;
 }
 

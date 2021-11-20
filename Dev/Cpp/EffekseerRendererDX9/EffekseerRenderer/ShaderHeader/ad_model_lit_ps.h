@@ -15,40 +15,40 @@
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_normalTex;
 //   sampler2D Sampler_sampler_uvDistortionTex;
-//   float4 _285_fBlendTextureParameter;
-//   float4 _285_fCameraFrontDirection;
-//   float4 _285_fEdgeColor;
-//   float4 _285_fEdgeParameter;
-//   float4 _285_fEmissiveScaling;
-//   float4 _285_fFalloffBeginColor;
-//   float4 _285_fFalloffEndColor;
-//   float4 _285_fFalloffParameter;
-//   float4 _285_fFlipbookParameter;
-//   float4 _285_fLightAmbient;
-//   float4 _285_fLightColor;
-//   float4 _285_fLightDirection;
-//   float4 _285_fUVDistortionParameter;
-//   float4 _285_miscFlags;
+//   float4 _287_fBlendTextureParameter;
+//   float4 _287_fCameraFrontDirection;
+//   float4 _287_fEdgeColor;
+//   float4 _287_fEdgeParameter;
+//   float4 _287_fEmissiveScaling;
+//   float4 _287_fFalloffBeginColor;
+//   float4 _287_fFalloffEndColor;
+//   float4 _287_fFalloffParameter;
+//   float4 _287_fFlipbookParameter;
+//   float4 _287_fLightAmbient;
+//   float4 _287_fLightColor;
+//   float4 _287_fLightDirection;
+//   float4 _287_fUVDistortionParameter;
+//   float4 _287_miscFlags;
 //
 //
 // Registers:
 //
 //   Name                                 Reg   Size
 //   ------------------------------------ ----- ----
-//   _285_fLightDirection                 c0       1
-//   _285_fLightColor                     c1       1
-//   _285_fLightAmbient                   c2       1
-//   _285_fFlipbookParameter              c3       1
-//   _285_fUVDistortionParameter          c4       1
-//   _285_fBlendTextureParameter          c5       1
-//   _285_fCameraFrontDirection           c6       1
-//   _285_fFalloffParameter               c7       1
-//   _285_fFalloffBeginColor              c8       1
-//   _285_fFalloffEndColor                c9       1
-//   _285_fEmissiveScaling                c10      1
-//   _285_fEdgeColor                      c11      1
-//   _285_fEdgeParameter                  c12      1
-//   _285_miscFlags                       c17      1
+//   _287_fLightDirection                 c0       1
+//   _287_fLightColor                     c1       1
+//   _287_fLightAmbient                   c2       1
+//   _287_fFlipbookParameter              c3       1
+//   _287_fUVDistortionParameter          c4       1
+//   _287_fBlendTextureParameter          c5       1
+//   _287_fCameraFrontDirection           c6       1
+//   _287_fFalloffParameter               c7       1
+//   _287_fFalloffBeginColor              c8       1
+//   _287_fFalloffEndColor                c9       1
+//   _287_fEmissiveScaling                c10      1
+//   _287_fEdgeColor                      c11      1
+//   _287_fEdgeParameter                  c12      1
+//   _287_miscFlags                       c17      1
 //   Sampler_sampler_colorTex             s0       1
 //   Sampler_sampler_normalTex            s1       1
 //   Sampler_sampler_alphaTex             s2       1
@@ -182,10 +182,11 @@
     mad r1.yzw, r0.xxyz, c16.x, c16.y
     mad r1.yzw, r0.xxyz, r1, c16.z
     mul r1.yzw, r0.xxyz, r1
-    cmp oC0.xyz, -r1.x, r0, r1.yzww
+    min r2.xyz, r1.yzww, r0
+    cmp oC0.xyz, -r1.x, r0, r2
     mov oC0.w, r0.w
 
-// approximately 112 instruction slots used (8 texture, 104 arithmetic)
+// approximately 113 instruction slots used (8 texture, 105 arithmetic)
 #endif
 
 const BYTE g_ps30_main[] =
@@ -321,7 +322,7 @@ const BYTE g_ps30_main[] =
      84, 101, 120,   0,   4,   0, 
      12,   0,   1,   0,   1,   0, 
       1,   0,   0,   0,   0,   0, 
-      0,   0,  95,  50,  56,  53, 
+      0,   0,  95,  50,  56,  55, 
      95, 102,  66, 108, 101, 110, 
     100,  84, 101, 120, 116, 117, 
     114, 101,  80,  97, 114,  97, 
@@ -329,51 +330,51 @@ const BYTE g_ps30_main[] =
       1,   0,   3,   0,   1,   0, 
       4,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  50, 
-     56,  53,  95, 102,  67,  97, 
+     56,  55,  95, 102,  67,  97, 
     109, 101, 114,  97,  70, 114, 
     111, 110, 116,  68, 105, 114, 
     101,  99, 116, 105, 111, 110, 
-      0,  95,  50,  56,  53,  95, 
+      0,  95,  50,  56,  55,  95, 
     102,  69, 100, 103, 101,  67, 
     111, 108, 111, 114,   0,  95, 
-     50,  56,  53,  95, 102,  69, 
+     50,  56,  55,  95, 102,  69, 
     100, 103, 101,  80,  97, 114, 
      97, 109, 101, 116, 101, 114, 
-      0,  95,  50,  56,  53,  95, 
+      0,  95,  50,  56,  55,  95, 
     102,  69, 109, 105, 115, 115, 
     105, 118, 101,  83,  99,  97, 
     108, 105, 110, 103,   0,  95, 
-     50,  56,  53,  95, 102,  70, 
+     50,  56,  55,  95, 102,  70, 
      97, 108, 108, 111, 102, 102, 
      66, 101, 103, 105, 110,  67, 
     111, 108, 111, 114,   0,  95, 
-     50,  56,  53,  95, 102,  70, 
+     50,  56,  55,  95, 102,  70, 
      97, 108, 108, 111, 102, 102, 
      69, 110, 100,  67, 111, 108, 
     111, 114,   0,  95,  50,  56, 
-     53,  95, 102,  70,  97, 108, 
+     55,  95, 102,  70,  97, 108, 
     108, 111, 102, 102,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  50,  56,  53, 
+    114,   0,  95,  50,  56,  55, 
      95, 102,  70, 108, 105, 112, 
      98, 111, 111, 107,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  50,  56,  53, 
+    114,   0,  95,  50,  56,  55, 
      95, 102,  76, 105, 103, 104, 
     116,  65, 109,  98, 105, 101, 
     110, 116,   0,  95,  50,  56, 
-     53,  95, 102,  76, 105, 103, 
+     55,  95, 102,  76, 105, 103, 
     104, 116,  67, 111, 108, 111, 
-    114,   0,  95,  50,  56,  53, 
+    114,   0,  95,  50,  56,  55, 
      95, 102,  76, 105, 103, 104, 
     116,  68, 105, 114, 101,  99, 
     116, 105, 111, 110,   0,  95, 
-     50,  56,  53,  95, 102,  85, 
+     50,  56,  55,  95, 102,  85, 
      86,  68, 105, 115, 116, 111, 
     114, 116, 105, 111, 110,  80, 
      97, 114,  97, 109, 101, 116, 
     101, 114,   0,  95,  50,  56, 
-     53,  95, 109, 105, 115,  99, 
+     55,  95, 109, 105, 115,  99, 
      70, 108,  97, 103, 115,   0, 
     112, 115,  95,  51,  95,  48, 
       0,  77, 105,  99, 114, 111, 
@@ -716,11 +717,14 @@ const BYTE g_ps30_main[] =
     228, 128,  16,   0, 170, 160, 
       5,   0,   0,   3,   1,   0, 
      14, 128,   0,   0, 144, 128, 
-      1,   0, 228, 128,  88,   0, 
-      0,   4,   0,   8,   7, 128, 
-      1,   0,   0, 129,   0,   0, 
-    228, 128,   1,   0, 249, 128, 
-      1,   0,   0,   2,   0,   8, 
-      8, 128,   0,   0, 255, 128, 
-    255, 255,   0,   0
+      1,   0, 228, 128,  10,   0, 
+      0,   3,   2,   0,   7, 128, 
+      1,   0, 249, 128,   0,   0, 
+    228, 128,  88,   0,   0,   4, 
+      0,   8,   7, 128,   1,   0, 
+      0, 129,   0,   0, 228, 128, 
+      2,   0, 228, 128,   1,   0, 
+      0,   2,   0,   8,   8, 128, 
+      0,   0, 255, 128, 255, 255, 
+      0,   0
 };

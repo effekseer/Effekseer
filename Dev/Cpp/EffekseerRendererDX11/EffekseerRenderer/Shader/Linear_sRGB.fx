@@ -8,7 +8,7 @@ float3 PositivePow(float3 base, float3 power)
 // based on http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html?m=1
 half3 SRGBToLinear(half3 c)
 {
-	return c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878);
+	return min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
 }
 
 half4 SRGBToLinear(half4 c)

@@ -31,7 +31,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam2;
     vec4 mUVInversedBack;
     vec4 miscFlags;
-} _195;
+} _197;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_normalTex;
@@ -65,7 +65,7 @@ vec4 LinearToSRGB(vec4 c)
 
 vec4 ConvertFromSRGBTexture(vec4 c)
 {
-    if (_195.miscFlags.x == 0.0)
+    if (_197.miscFlags.x == 0.0)
     {
         return c;
     }
@@ -91,7 +91,7 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
 
 vec3 SRGBToLinear(vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 vec4 SRGBToLinear(vec4 c)
@@ -102,7 +102,7 @@ vec4 SRGBToLinear(vec4 c)
 
 vec4 ConvertToScreen(vec4 c)
 {
-    if (_195.miscFlags.x == 0.0)
+    if (_197.miscFlags.x == 0.0)
     {
         return c;
     }
@@ -116,23 +116,23 @@ vec4 _main(PS_Input Input)
     vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
-    float diffuse = max(dot(_195.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _301 = Output.xyz * ((_195.fLightColor.xyz * diffuse) + _195.fLightAmbient.xyz);
-    Output = vec4(_301.x, _301.y, _301.z, Output.w);
-    vec3 _309 = Output.xyz * _195.fEmissiveScaling.x;
-    Output = vec4(_309.x, _309.y, _309.z, Output.w);
+    float diffuse = max(dot(_197.fLightDirection.xyz, localNormal), 0.0);
+    vec3 _303 = Output.xyz * ((_197.fLightColor.xyz * diffuse) + _197.fLightAmbient.xyz);
+    Output = vec4(_303.x, _303.y, _303.z, Output.w);
+    vec3 _311 = Output.xyz * _197.fEmissiveScaling.x;
+    Output = vec4(_311.x, _311.y, _311.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = _195.mUVInversedBack.x + (_195.mUVInversedBack.y * screenUV.y);
-    if (!(_195.softParticleParam.w == 0.0))
+    screenUV.y = _197.mUVInversedBack.x + (_197.mUVInversedBack.y * screenUV.y);
+    if (!(_197.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_1 = backgroundZ;
         float param_2 = screenPos.z;
-        vec4 param_3 = _195.softParticleParam;
-        vec4 param_4 = _195.reconstructionParam1;
-        vec4 param_5 = _195.reconstructionParam2;
+        vec4 param_3 = _197.softParticleParam;
+        vec4 param_4 = _197.reconstructionParam1;
+        vec4 param_5 = _197.reconstructionParam2;
         Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
     }
     if (Output.w == 0.0)
@@ -153,7 +153,7 @@ void main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    vec4 _415 = _main(Input);
-    _entryPointOutput = _415;
+    vec4 _417 = _main(Input);
+    _entryPointOutput = _417;
 }
 

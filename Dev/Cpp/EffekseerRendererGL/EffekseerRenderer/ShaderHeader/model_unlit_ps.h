@@ -72,7 +72,7 @@ vec4 ConvertFromSRGBTexture(vec4 c)
 
 vec3 SRGBToLinear(vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 vec4 SRGBToLinear(vec4 c)
@@ -95,8 +95,8 @@ vec4 _main(PS_Input Input)
 {
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    vec3 _165 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_165.x, _165.y, _165.z, Output.w);
+    vec3 _167 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_167.x, _167.y, _167.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -112,8 +112,8 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _201 = _main(Input);
-    gl_FragData[0] = _201;
+    vec4 _203 = _main(Input);
+    gl_FragData[0] = _203;
 }
 
 )";
@@ -209,7 +209,7 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
 
 vec3 SRGBToLinear(vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 vec4 SRGBToLinear(vec4 c)
@@ -232,8 +232,8 @@ vec4 _main(PS_Input Input)
 {
     vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    vec3 _248 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_248.x, _248.y, _248.z, Output.w);
+    vec3 _250 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_250.x, _250.y, _250.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -264,8 +264,8 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _351 = _main(Input);
-    _entryPointOutput = _351;
+    vec4 _353 = _main(Input);
+    _entryPointOutput = _353;
 }
 
 )";
@@ -344,7 +344,7 @@ highp vec4 ConvertFromSRGBTexture(highp vec4 c)
 
 highp vec3 SRGBToLinear(highp vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 highp vec4 SRGBToLinear(highp vec4 c)
@@ -367,8 +367,8 @@ highp vec4 _main(PS_Input Input)
 {
     highp vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     highp vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    highp vec3 _165 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_165.x, _165.y, _165.z, Output.w);
+    highp vec3 _167 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_167.x, _167.y, _167.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -384,8 +384,8 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _201 = _main(Input);
-    gl_FragData[0] = _201;
+    highp vec4 _203 = _main(Input);
+    gl_FragData[0] = _203;
 }
 
 )";
@@ -480,7 +480,7 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp vec4 
 
 highp vec3 SRGBToLinear(highp vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 highp vec4 SRGBToLinear(highp vec4 c)
@@ -503,8 +503,8 @@ highp vec4 _main(PS_Input Input)
 {
     highp vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     highp vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    highp vec3 _248 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_248.x, _248.y, _248.z, Output.w);
+    highp vec3 _250 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_250.x, _250.y, _250.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -535,8 +535,8 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _351 = _main(Input);
-    _entryPointOutput = _351;
+    highp vec4 _353 = _main(Input);
+    _entryPointOutput = _353;
 }
 
 )";

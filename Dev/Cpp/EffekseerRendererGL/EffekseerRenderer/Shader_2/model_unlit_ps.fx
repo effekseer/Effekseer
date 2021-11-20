@@ -71,7 +71,7 @@ vec4 ConvertFromSRGBTexture(vec4 c)
 
 vec3 SRGBToLinear(vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 vec4 SRGBToLinear(vec4 c)
@@ -94,8 +94,8 @@ vec4 _main(PS_Input Input)
 {
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    vec3 _165 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_165.x, _165.y, _165.z, Output.w);
+    vec3 _167 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_167.x, _167.y, _167.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
@@ -111,7 +111,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _201 = _main(Input);
-    gl_FragData[0] = _201;
+    vec4 _203 = _main(Input);
+    gl_FragData[0] = _203;
 }
 

@@ -95,7 +95,7 @@ highp float SoftParticle(highp float backgroundZ, highp float meshZ, highp vec4 
 
 highp vec3 SRGBToLinear(highp vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 highp vec4 SRGBToLinear(highp vec4 c)
@@ -121,10 +121,10 @@ highp vec4 _main(PS_Input Input)
     highp vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _301 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_301.x, _301.y, _301.z, Output.w);
-    highp vec3 _309 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_309.x, _309.y, _309.z, Output.w);
+    highp vec3 _303 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_303.x, _303.y, _303.z, Output.w);
+    highp vec3 _311 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_311.x, _311.y, _311.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -158,7 +158,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _419 = _main(Input);
-    _entryPointOutput = _419;
+    highp vec4 _421 = _main(Input);
+    _entryPointOutput = _421;
 }
 

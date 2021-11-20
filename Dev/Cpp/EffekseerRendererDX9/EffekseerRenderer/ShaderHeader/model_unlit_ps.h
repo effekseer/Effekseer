@@ -9,16 +9,16 @@
 // Parameters:
 //
 //   sampler2D Sampler_sampler_colorTex;
-//   float4 _111_fEmissiveScaling;
-//   float4 _111_miscFlags;
+//   float4 _113_fEmissiveScaling;
+//   float4 _113_miscFlags;
 //
 //
 // Registers:
 //
 //   Name                     Reg   Size
 //   ------------------------ ----- ----
-//   _111_fEmissiveScaling    c10      1
-//   _111_miscFlags           c17      1
+//   _113_fEmissiveScaling    c10      1
+//   _113_miscFlags           c17      1
 //   Sampler_sampler_colorTex s0       1
 //
 
@@ -49,10 +49,11 @@
     mad r1.yzw, r0.xxyz, c1.x, c1.y
     mad r1.yzw, r0.xxyz, r1, c2.w
     mul r1.yzw, r0.xxyz, r1
-    cmp oC0.xyz, -r1.x, r0, r1.yzww
+    min r2.xyz, r1.yzww, r0
+    cmp oC0.xyz, -r1.x, r0, r2
     mov oC0.w, r0.w
 
-// approximately 22 instruction slots used (1 texture, 21 arithmetic)
+// approximately 23 instruction slots used (1 texture, 22 arithmetic)
 #endif
 
 const BYTE g_ps30_main[] =
@@ -81,14 +82,14 @@ const BYTE g_ps30_main[] =
     171, 171,   4,   0,  12,   0, 
       1,   0,   1,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  49,  49,  49,  95, 102, 
+     95,  49,  49,  51,  95, 102, 
      69, 109, 105, 115, 115, 105, 
     118, 101,  83,  99,  97, 108, 
     105, 110, 103,   0, 171, 171, 
       1,   0,   3,   0,   1,   0, 
       4,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  49, 
-     49,  49,  95, 109, 105, 115, 
+     49,  51,  95, 109, 105, 115, 
      99,  70, 108,  97, 103, 115, 
       0, 112, 115,  95,  51,  95, 
      48,   0,  77, 105,  99, 114, 
@@ -168,11 +169,13 @@ const BYTE g_ps30_main[] =
       2,   0, 255, 160,   5,   0, 
       0,   3,   1,   0,  14, 128, 
       0,   0, 144, 128,   1,   0, 
-    228, 128,  88,   0,   0,   4, 
-      0,   8,   7, 128,   1,   0, 
-      0, 129,   0,   0, 228, 128, 
-      1,   0, 249, 128,   1,   0, 
-      0,   2,   0,   8,   8, 128, 
-      0,   0, 255, 128, 255, 255, 
-      0,   0
+    228, 128,  10,   0,   0,   3, 
+      2,   0,   7, 128,   1,   0, 
+    249, 128,   0,   0, 228, 128, 
+     88,   0,   0,   4,   0,   8, 
+      7, 128,   1,   0,   0, 129, 
+      0,   0, 228, 128,   2,   0, 
+    228, 128,   1,   0,   0,   2, 
+      0,   8,   8, 128,   0,   0, 
+    255, 128, 255, 255,   0,   0
 };

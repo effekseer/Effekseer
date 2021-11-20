@@ -14,34 +14,34 @@
 //   sampler2D Sampler_sampler_blendUVDistortionTex;
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_uvDistortionTex;
-//   float4 _284_fBlendTextureParameter;
-//   float4 _284_fCameraFrontDirection;
-//   float4 _284_fEdgeColor;
-//   float4 _284_fEdgeParameter;
-//   float4 _284_fEmissiveScaling;
-//   float4 _284_fFalloffBeginColor;
-//   float4 _284_fFalloffEndColor;
-//   float4 _284_fFalloffParameter;
-//   float4 _284_fFlipbookParameter;
-//   float4 _284_fUVDistortionParameter;
-//   float4 _284_miscFlags;
+//   float4 _286_fBlendTextureParameter;
+//   float4 _286_fCameraFrontDirection;
+//   float4 _286_fEdgeColor;
+//   float4 _286_fEdgeParameter;
+//   float4 _286_fEmissiveScaling;
+//   float4 _286_fFalloffBeginColor;
+//   float4 _286_fFalloffEndColor;
+//   float4 _286_fFalloffParameter;
+//   float4 _286_fFlipbookParameter;
+//   float4 _286_fUVDistortionParameter;
+//   float4 _286_miscFlags;
 //
 //
 // Registers:
 //
 //   Name                                 Reg   Size
 //   ------------------------------------ ----- ----
-//   _284_fFlipbookParameter              c3       1
-//   _284_fUVDistortionParameter          c4       1
-//   _284_fBlendTextureParameter          c5       1
-//   _284_fCameraFrontDirection           c6       1
-//   _284_fFalloffParameter               c7       1
-//   _284_fFalloffBeginColor              c8       1
-//   _284_fFalloffEndColor                c9       1
-//   _284_fEmissiveScaling                c10      1
-//   _284_fEdgeColor                      c11      1
-//   _284_fEdgeParameter                  c12      1
-//   _284_miscFlags                       c17      1
+//   _286_fFlipbookParameter              c3       1
+//   _286_fUVDistortionParameter          c4       1
+//   _286_fBlendTextureParameter          c5       1
+//   _286_fCameraFrontDirection           c6       1
+//   _286_fFalloffParameter               c7       1
+//   _286_fFalloffBeginColor              c8       1
+//   _286_fFalloffEndColor                c9       1
+//   _286_fEmissiveScaling                c10      1
+//   _286_fEdgeColor                      c11      1
+//   _286_fEdgeParameter                  c12      1
+//   _286_miscFlags                       c17      1
 //   Sampler_sampler_colorTex             s0       1
 //   Sampler_sampler_alphaTex             s1       1
 //   Sampler_sampler_uvDistortionTex      s2       1
@@ -160,10 +160,11 @@
     mad r1.yzw, r0.xxyz, c13.x, c13.y
     mad r1.yzw, r0.xxyz, r1, c2.w
     mul r1.yzw, r0.xxyz, r1
-    cmp oC0.xyz, -r1.x, r0, r1.yzww
+    min r2.xyz, r1.yzww, r0
+    cmp oC0.xyz, -r1.x, r0, r2
     mov oC0.w, r0.w
 
-// approximately 101 instruction slots used (7 texture, 94 arithmetic)
+// approximately 102 instruction slots used (7 texture, 95 arithmetic)
 #endif
 
 const BYTE g_ps30_main[] =
@@ -279,48 +280,48 @@ const BYTE g_ps30_main[] =
       4,   0,  12,   0,   1,   0, 
       1,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  50, 
-     56,  52,  95, 102,  66, 108, 
+     56,  54,  95, 102,  66, 108, 
     101, 110, 100,  84, 101, 120, 
     116, 117, 114, 101,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114,   0,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  50,  56,  52,  95, 102, 
+     95,  50,  56,  54,  95, 102, 
      67,  97, 109, 101, 114,  97, 
      70, 114, 111, 110, 116,  68, 
     105, 114, 101,  99, 116, 105, 
     111, 110,   0,  95,  50,  56, 
-     52,  95, 102,  69, 100, 103, 
+     54,  95, 102,  69, 100, 103, 
     101,  67, 111, 108, 111, 114, 
-      0,  95,  50,  56,  52,  95, 
+      0,  95,  50,  56,  54,  95, 
     102,  69, 100, 103, 101,  80, 
      97, 114,  97, 109, 101, 116, 
     101, 114,   0,  95,  50,  56, 
-     52,  95, 102,  69, 109, 105, 
+     54,  95, 102,  69, 109, 105, 
     115, 115, 105, 118, 101,  83, 
      99,  97, 108, 105, 110, 103, 
-      0,  95,  50,  56,  52,  95, 
+      0,  95,  50,  56,  54,  95, 
     102,  70,  97, 108, 108, 111, 
     102, 102,  66, 101, 103, 105, 
     110,  67, 111, 108, 111, 114, 
-      0,  95,  50,  56,  52,  95, 
+      0,  95,  50,  56,  54,  95, 
     102,  70,  97, 108, 108, 111, 
     102, 102,  69, 110, 100,  67, 
     111, 108, 111, 114,   0,  95, 
-     50,  56,  52,  95, 102,  70, 
+     50,  56,  54,  95, 102,  70, 
      97, 108, 108, 111, 102, 102, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114,   0,  95,  50, 
-     56,  52,  95, 102,  70, 108, 
+     56,  54,  95, 102,  70, 108, 
     105, 112,  98, 111, 111, 107, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114,   0,  95,  50, 
-     56,  52,  95, 102,  85,  86, 
+     56,  54,  95, 102,  85,  86, 
      68, 105, 115, 116, 111, 114, 
     116, 105, 111, 110,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  50,  56,  52, 
+    114,   0,  95,  50,  56,  54, 
      95, 109, 105, 115,  99,  70, 
     108,  97, 103, 115,   0, 112, 
     115,  95,  51,  95,  48,   0, 
@@ -626,10 +627,13 @@ const BYTE g_ps30_main[] =
     255, 160,   5,   0,   0,   3, 
       1,   0,  14, 128,   0,   0, 
     144, 128,   1,   0, 228, 128, 
-     88,   0,   0,   4,   0,   8, 
-      7, 128,   1,   0,   0, 129, 
-      0,   0, 228, 128,   1,   0, 
-    249, 128,   1,   0,   0,   2, 
-      0,   8,   8, 128,   0,   0, 
-    255, 128, 255, 255,   0,   0
+     10,   0,   0,   3,   2,   0, 
+      7, 128,   1,   0, 249, 128, 
+      0,   0, 228, 128,  88,   0, 
+      0,   4,   0,   8,   7, 128, 
+      1,   0,   0, 129,   0,   0, 
+    228, 128,   2,   0, 228, 128, 
+      1,   0,   0,   2,   0,   8, 
+      8, 128,   0,   0, 255, 128, 
+    255, 255,   0,   0
 };

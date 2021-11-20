@@ -10,22 +10,22 @@
 //
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_normalTex;
-//   float4 _111_fEmissiveScaling;
-//   float4 _111_fLightAmbient;
-//   float4 _111_fLightColor;
-//   float4 _111_fLightDirection;
-//   float4 _111_miscFlags;
+//   float4 _113_fEmissiveScaling;
+//   float4 _113_fLightAmbient;
+//   float4 _113_fLightColor;
+//   float4 _113_fLightDirection;
+//   float4 _113_miscFlags;
 //
 //
 // Registers:
 //
 //   Name                      Reg   Size
 //   ------------------------- ----- ----
-//   _111_fLightDirection      c0       1
-//   _111_fLightColor          c1       1
-//   _111_fLightAmbient        c2       1
-//   _111_fEmissiveScaling     c10      1
-//   _111_miscFlags            c17      1
+//   _113_fLightDirection      c0       1
+//   _113_fLightColor          c1       1
+//   _113_fLightAmbient        c2       1
+//   _113_fEmissiveScaling     c10      1
+//   _113_miscFlags            c17      1
 //   Sampler_sampler_colorTex  s0       1
 //   Sampler_sampler_normalTex s1       1
 //
@@ -73,10 +73,11 @@
     mad r1.yzw, r0.xxyz, c5.x, c5.y
     mad r1.yzw, r0.xxyz, r1, c5.z
     mul r1.yzw, r0.xxyz, r1
-    cmp oC0.xyz, -r1.x, r0, r1.yzww
+    min r2.xyz, r1.yzww, r0
+    cmp oC0.xyz, -r1.x, r0, r2
     mov oC0.w, r0.w
 
-// approximately 36 instruction slots used (2 texture, 34 arithmetic)
+// approximately 37 instruction slots used (2 texture, 35 arithmetic)
 #endif
 
 const BYTE g_ps30_main[] =
@@ -126,23 +127,23 @@ const BYTE g_ps30_main[] =
       4,   0,  12,   0,   1,   0, 
       1,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  49, 
-     49,  49,  95, 102,  69, 109, 
+     49,  51,  95, 102,  69, 109, 
     105, 115, 115, 105, 118, 101, 
      83,  99,  97, 108, 105, 110, 
     103,   0, 171, 171,   1,   0, 
       3,   0,   1,   0,   4,   0, 
       1,   0,   0,   0,   0,   0, 
-      0,   0,  95,  49,  49,  49, 
+      0,   0,  95,  49,  49,  51, 
      95, 102,  76, 105, 103, 104, 
     116,  65, 109,  98, 105, 101, 
     110, 116,   0,  95,  49,  49, 
-     49,  95, 102,  76, 105, 103, 
+     51,  95, 102,  76, 105, 103, 
     104, 116,  67, 111, 108, 111, 
-    114,   0,  95,  49,  49,  49, 
+    114,   0,  95,  49,  49,  51, 
      95, 102,  76, 105, 103, 104, 
     116,  68, 105, 114, 101,  99, 
     116, 105, 111, 110,   0,  95, 
-     49,  49,  49,  95, 109, 105, 
+     49,  49,  51,  95, 109, 105, 
     115,  99,  70, 108,  97, 103, 
     115,   0, 112, 115,  95,  51, 
      95,  48,   0,  77, 105,  99, 
@@ -263,11 +264,14 @@ const BYTE g_ps30_main[] =
     228, 128,   5,   0, 170, 160, 
       5,   0,   0,   3,   1,   0, 
      14, 128,   0,   0, 144, 128, 
-      1,   0, 228, 128,  88,   0, 
-      0,   4,   0,   8,   7, 128, 
-      1,   0,   0, 129,   0,   0, 
-    228, 128,   1,   0, 249, 128, 
-      1,   0,   0,   2,   0,   8, 
-      8, 128,   0,   0, 255, 128, 
-    255, 255,   0,   0
+      1,   0, 228, 128,  10,   0, 
+      0,   3,   2,   0,   7, 128, 
+      1,   0, 249, 128,   0,   0, 
+    228, 128,  88,   0,   0,   4, 
+      0,   8,   7, 128,   1,   0, 
+      0, 129,   0,   0, 228, 128, 
+      2,   0, 228, 128,   1,   0, 
+      0,   2,   0,   8,   8, 128, 
+      0,   0, 255, 128, 255, 255, 
+      0,   0
 };

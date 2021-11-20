@@ -70,7 +70,7 @@ vec4 ConvertFromSRGBTexture(vec4 c)
 
 vec3 SRGBToLinear(vec3 c)
 {
-	return c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878);
+	return min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
 }
 
 vec4 SRGBToLinear(vec4 c)

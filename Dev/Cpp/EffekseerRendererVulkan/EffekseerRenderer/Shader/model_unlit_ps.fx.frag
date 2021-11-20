@@ -28,7 +28,7 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam2;
     vec4 mUVInversedBack;
     vec4 miscFlags;
-} _195;
+} _197;
 
 layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
 layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
@@ -58,7 +58,7 @@ vec4 LinearToSRGB(vec4 c)
 
 vec4 ConvertFromSRGBTexture(vec4 c)
 {
-    if (_195.miscFlags.x == 0.0)
+    if (_197.miscFlags.x == 0.0)
     {
         return c;
     }
@@ -84,7 +84,7 @@ float SoftParticle(float backgroundZ, float meshZ, vec4 softparticleParam, vec4 
 
 vec3 SRGBToLinear(vec3 c)
 {
-    return c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125));
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
 }
 
 vec4 SRGBToLinear(vec4 c)
@@ -95,7 +95,7 @@ vec4 SRGBToLinear(vec4 c)
 
 vec4 ConvertToScreen(vec4 c)
 {
-    if (_195.miscFlags.x == 0.0)
+    if (_197.miscFlags.x == 0.0)
     {
         return c;
     }
@@ -107,20 +107,20 @@ vec4 _main(PS_Input Input)
 {
     vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    vec3 _248 = Output.xyz * _195.fEmissiveScaling.x;
-    Output = vec4(_248.x, _248.y, _248.z, Output.w);
+    vec3 _250 = Output.xyz * _197.fEmissiveScaling.x;
+    Output = vec4(_250.x, _250.y, _250.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = _195.mUVInversedBack.x + (_195.mUVInversedBack.y * screenUV.y);
-    if (!(_195.softParticleParam.w == 0.0))
+    screenUV.y = _197.mUVInversedBack.x + (_197.mUVInversedBack.y * screenUV.y);
+    if (!(_197.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_1 = backgroundZ;
         float param_2 = screenPos.z;
-        vec4 param_3 = _195.softParticleParam;
-        vec4 param_4 = _195.reconstructionParam1;
-        vec4 param_5 = _195.reconstructionParam2;
+        vec4 param_3 = _197.softParticleParam;
+        vec4 param_4 = _197.reconstructionParam1;
+        vec4 param_5 = _197.reconstructionParam2;
         Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
     }
     if (Output.w == 0.0)
@@ -138,7 +138,7 @@ void main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    vec4 _347 = _main(Input);
-    _entryPointOutput = _347;
+    vec4 _349 = _main(Input);
+    _entryPointOutput = _349;
 }
 
