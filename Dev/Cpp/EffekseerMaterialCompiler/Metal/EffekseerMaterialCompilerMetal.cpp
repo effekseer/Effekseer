@@ -508,7 +508,7 @@ static const char g_material_fs_src_suf2_lit[] =
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
 
-    o.gl_FragColor = ConvertToScreen(Output);
+    o.gl_FragColor = ConvertToScreen(Output, u.predefined_uniform);
     return o;
 }
 
@@ -520,7 +520,7 @@ static const char g_material_fs_src_suf2_unlit[] =
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
 
-    o.gl_FragColor = ConvertToScreen(float4(emissive, opacity));
+    o.gl_FragColor = ConvertToScreen(float4(emissive, opacity), u.predefined_uniform);
     return o;
 }
 
@@ -871,7 +871,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 			if (materialFile->GetTextureColorType(i) == Effekseer::TextureColorType::Color)
 			{
 				prefix = "ConvertFromSRGBTexture(";
-				suffix = ")";
+				suffix = ",u.predefined_uniform)";
 			}
 
             auto textureIndex = materialFile->GetTextureIndex(i);
