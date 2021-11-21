@@ -11,12 +11,13 @@ cbuffer CB : register(b0) {
 };
 
 struct PS_INPUT {
+    float4 Position: SV_POSITION; // for disable DX11 validation error.
 	float2 ScreenUV: TEXCOORD0;
 };
 
-struct VS_OUTPUT {
-    float4 o_ParticleData0 : COLOR0;	// |   Pos X   |   Pos Y   |   Pos Z   |  Dir XYZ  |
-    float4 o_ParticleData1: COLOR1;		// | LifeCount | Lifetime  |   Index   |   Seed    |
+struct PS_OUTPUT {
+    float4 o_ParticleData0 : SV_Target0;	// |   Pos X   |   Pos Y   |   Pos Z   |  Dir XYZ  |
+    float4 o_ParticleData1: SV_Target1;		// | LifeCount | Lifetime  |   Index   |   Seed    |
 };
 
 float3 orbit(float3 position, float3 direction, float3 move) {
@@ -59,8 +60,8 @@ float4 myTexelFetch(Texture2D t, SamplerState s, int2 pos) {
 	return t.Sample(s, float4(pos.x, pos.y, 0, 0));	// TODO: pixel to uv
 }
 
-VS_OUTPUT main(PS_INPUT input) {
-	VS_OUTPUT output;
+PS_OUTPUT main(PS_INPUT input) {
+	PS_OUTPUT output;
 
 	// Load data
 	//float4 data0 = myTexelFetch(i_ParticleData0, i_ParticleData0Sampler, int2(gl_FragCoord.xy), 0);

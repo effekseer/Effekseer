@@ -1,7 +1,7 @@
 struct VS_INPUT {
-    float3 a_Particle: TEXCOORD0;  // x:ParticleID, y:Lifetime, z:Seed
-    float3 a_Position : POSITION0;
-    float3 a_Direction : TEXCOORD1;
+    float3 a_Particle: POSITION0;  // x:ParticleID, y:Lifetime, z:Seed
+    float3 a_Position : POSITION1;
+    float3 a_Direction : POSITION2;
 };
 
 struct VS_OUTPUT {

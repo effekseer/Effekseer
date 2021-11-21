@@ -35,3 +35,33 @@ D:\Proj\Effekseer\build\Dev\Cpp\3rdParty\LLGI\tools\ShaderTranspiler\Debug\Shade
 
 
 
+
+dxc -T ps_4_0 -P ../HLSL/perticle-emit.frag.hlsl perticle-emit.frag.hlsl
+dxc -T ps_4_0 -P ../HLSL/perticle-emit.vert.hlsl perticle-emit.vert.hlsl
+
+dxc -T ps_4_0 -P ../HLSL/perticle-render.frag.hlsl perticle-render.frag.hlsl
+dxc -T ps_4_0 -P ../HLSL/perticle-render.vert.hlsl perticle-render.vert.hlsl
+
+dxc -T ps_4_0 -P ../HLSL/perticle-update.frag.hlsl perticle-update.frag.hlsl
+dxc -T ps_4_0 -P ../HLSL/perticle-update.vert.hlsl perticle-update.vert.hlsl
+
+dxc -T ps_4_0 -P ../HLSL/trail-render.frag.hlsl trail-render.frag.hlsl
+dxc -T ps_4_0 -P ../HLSL/trail-render.vert.hlsl trail-render.vert.hlsl
+
+dxc -T ps_4_0 -P ../HLSL/trail-update.frag.hlsl trail-update.frag.hlsl
+dxc -T ps_4_0 -P ../HLSL/trail-update.vert.hlsl trail-update.vert.hlsl
+
+
+dxc -T ps_4_0 -E -Fo ../HLSL/perticle-emit.vert.hlsl -P ../HLSL/perticle-emit.vert.hlsl
+
+dxc -T ps_4_0 -E -Fo ../HLSL/perticle-render.frag.hlsl -P ../HLSL/perticle-render.frag.hlsl
+dxc -T ps_4_0 -E -Fo ../HLSL/perticle-render.vert.hlsl -P ../HLSL/perticle-render.vert.hlsl
+
+dxc -T ps_4_0 -E -Fo ../HLSL/perticle-update.frag.hlsl -P ../HLSL/perticle-update.frag.hlsl
+dxc -T ps_4_0 -E -Fo ../HLSL/perticle-update.vert.hlsl -P ../HLSL/perticle-update.vert.hlsl
+
+dxc -T ps_4_0 -E -Fo ../HLSL/trail-update.frag.hlsl -P ../HLSL/trail-render.frag.hlsl
+dxc -T ps_4_0 -E -Fo ../HLSL/trail-update.vert.hlsl -P ../HLSL/trail-render.vert.hlsl
+
+dxc -T ps_4_0 -E -Fo ../HLSL/trail-update.frag.hlsl -P ../HLSL/trail-update.frag.hlsl
+dxc -T ps_4_0 -E -Fo ../HLSL/trail-update.vert.hlsl -P ../HLSL/trail-update.vert.hlsl

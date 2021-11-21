@@ -224,7 +224,7 @@ class GpuParticleContext
 		vertexLayoutElements[0].Format = Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
 		vertexLayoutElements[0].Name = "a_VertexPosition";
 		vertexLayoutElements[0].SemanticIndex = 0;
-		vertexLayoutElements[0].SemanticName = "TEXCOORD";
+		vertexLayoutElements[0].SemanticName = "POSITION";
 		renderVL = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 	}
 
@@ -251,7 +251,7 @@ class GpuParticleContext
 		vertexLayoutElements[0].Format = Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
 		vertexLayoutElements[0].Name = "a_Position";
 		vertexLayoutElements[0].SemanticIndex = 0;
-		vertexLayoutElements[0].SemanticName = "TEXCOORD";
+		vertexLayoutElements[0].SemanticName = "POSITION";
 		updateVL = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 	}
 

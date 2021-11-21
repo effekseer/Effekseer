@@ -1,5 +1,5 @@
-#line 1 "trail-render.vert.hlsl"
-#line 1 "./noise.hlsli"
+//#line 1 "trail-render.vert.hlsl"
+//#line 1 "./noise.hlsli"
 
 
 float3 mod289(float3 x) {
@@ -113,9 +113,9 @@ float rand(float2 seed) {
 float3 noise3(float3 seed) {
     return float3(snoise(seed.xyz), snoise(seed.yzx), snoise(seed.zxy));
 }
-#line 2 "trail-render.vert.hlsl"
-#line 1 "./noise2D.hlsli"
-#line 12 "./noise2D.hlsli"
+//#line 2 "trail-render.vert.hlsl"
+//#line 1 "./noise2D.hlsli"
+//#line 12 "./noise2D.hlsli"
 float2 mod289(float2 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
@@ -172,8 +172,8 @@ float snoise(float2 v)
   g.yz = a0.yz * x12.xz + h.yz * x12.yw;
   return 130.0 * dot(m, g);
 }
-#line 3 "trail-render.vert.hlsl"
-#line 1 "./render-utils.hlsli"
+//#line 3 "trail-render.vert.hlsl"
+//#line 1 "./render-utils.hlsli"
 
 float fadeIn(float duration, float age, float lifetime) {
  return clamp(age / duration, 0.0, 1.0);
@@ -186,7 +186,7 @@ float fadeOut(float duration, float age, float lifetime) {
 float fadeInOut(float fadeinDuration, float fadeoutDuration, float age, float lifetime) {
  return fadeIn(fadeinDuration, age, lifetime) * fadeOut(fadeoutDuration, age, lifetime);
 }
-#line 4 "trail-render.vert.hlsl"
+//#line 4 "trail-render.vert.hlsl"
 
 struct VS_INPUT {
     uint instanceID : SV_InstanceID;
@@ -220,22 +220,25 @@ VS_OUTPUT main(VS_INPUT input) {
  int particleID = input.instanceID;
  int2 ID2TPos2i = int2(ID2TPos.x, ID2TPos.y);
  int2 texPos = int2(particleID & ID2TPos2i.x, particleID >> ID2TPos2i.y);
- float4 data0 = ParticleData0.Sample(ParticleData0Sampler, float4(texPos, 0, 0));
- float4 data1 = ParticleData1.Sample(ParticleData1Sampler, float4(texPos, 0, 0));
+ //float4 data0 = ParticleData0.Sample(ParticleData0Sampler, float4(texPos, 0, 0));
+ //float4 data1 = ParticleData1.Sample(ParticleData1Sampler, float4(texPos, 0, 0));
+ float4 data0 = ParticleData0.SampleLevel(ParticleData0Sampler, (float2)texPos, 0);
+ float4 data1 = ParticleData1.SampleLevel(ParticleData1Sampler, (float2)texPos, 0);
 
  float age = data1.x;
  float lifetime = data1.y;
 
  if (age >= lifetime || age <= 0.0) {
-  output.Position = float4(0.0);
-  output.v_Color = float4(0.0);
+  output.Position = float4(0.0, 0.0, 0.0, 0.0);
+  output.v_Color = float4(0.0, 0.0, 0.0, 0.0);
  } else {
   float historyID = input.a_VertexPosition.x * min(float(Trail.y), age);
   float3 position, direction;
   if (historyID >= 1.0) {
    int texIndex = (int(Trail.x) + int(historyID) - 1) % int(Trail.y);
 
-   float4 trailData = Histories.Sample(HistoriesSampler, float4(texPos, texIndex, 0));
+   //float4 trailData = Histories.Sample(HistoriesSampler, float4(texPos, texIndex, 0));
+   float4 trailData = Histories.SampleLevel(HistoriesSampler, float3(texPos, texIndex), 0);
    position = trailData.xyz;
    direction = unpackVec3(trailData.w);
   } else {
@@ -247,10 +250,15 @@ VS_OUTPUT main(VS_INPUT input) {
 
 
 
-  output.Position = ProjMatrix * (ViewMatrix * float4(position.xyz + vertex, 1.0));
+  //output.Position = ProjMatrix * (ViewMatrix * float4(position.xyz + vertex, 1.0));
+  output.Position = float4(position.xyz + vertex, 1.0);
+  output.Position = mul(output.Position, ViewMatrix);
+  output.Position = mul(output.Position, ProjMatrix);
 
-  float2 texCoord = float2(snoise(float2(texPos) / 512.0));
-  output.v_Color = ColorTable.Sample(ColorTableSampler, float4(texCoord, 0, 0));
+  float v = snoise(float3(texPos, 0) / 512.0);
+  float2 texCoord = float2(v,v);
+  //float2 texCoord = float2(snoise(float2(texPos) / 512.0));
+  output.v_Color = ColorTable.SampleLevel(ColorTableSampler, texCoord, 0);
   output.v_Color.a *= 0.5 * fadeInOut(10.0, 10.0, age, lifetime);
  }
 

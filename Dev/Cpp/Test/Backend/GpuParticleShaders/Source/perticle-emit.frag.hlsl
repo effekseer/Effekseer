@@ -1,14 +1,15 @@
 #include "noise.hlsli"
 
 struct PS_INPUT {
-    float3 v_Particle;
-    float3 v_Position;
-    float3 v_Direction;
+    float4 Position : SV_POSITION;
+    float3 v_Particle : TEXCOORD0;
+    float3 v_Position : TEXCOORD1;
+    float3 v_Direction : TEXCOORD2;
 };
 
 struct PS_OUTPUT {
-    float4 o_ParticleData0 : COLOR0;    // |   Pos X   |   Pos Y   |   Pos Z   |  Dir XYZ  |
-    float4 o_ParticleData1: COLOR1;     // | LifeCount | Lifetime  |   Seed    |  Vel XYZ  |
+    float4 o_ParticleData0 : SV_Target0;    // |   Pos X   |   Pos Y   |   Pos Z   |  Dir XYZ  |
+    float4 o_ParticleData1: SV_Target1;     // | LifeCount | Lifetime  |   Seed    |  Vel XYZ  |
 };
 
 PS_OUTPUT main(PS_INPUT input) {

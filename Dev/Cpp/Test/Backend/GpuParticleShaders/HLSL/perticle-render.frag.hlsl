@@ -1,11 +1,11 @@
-#line 1 "perticle-render.frag.hlsl"
+//#line 1 "perticle-render.frag.hlsl"
 
 struct PS_INPUT {
     float3 v_Color : COLOR0;
 };
 
 struct PS_OUTPUT {
-    float4 o_FragColor: COLOR0;
+    float4 o_FragColor: SV_Target0;
 };
 
 PS_OUTPUT main(PS_INPUT input) {

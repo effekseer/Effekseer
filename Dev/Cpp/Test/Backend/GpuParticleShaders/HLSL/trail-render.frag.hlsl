@@ -5,7 +5,7 @@ struct PS_INPUT {
 };
 
 struct PS_OUTPUT {
-    float4 o_FragColor: COLOR0;
+    float4 o_FragColor: SV_Target0;
 };
 
 PS_OUTPUT main(PS_INPUT input) {

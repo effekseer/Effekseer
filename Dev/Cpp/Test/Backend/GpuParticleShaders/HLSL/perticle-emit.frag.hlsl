@@ -1,5 +1,5 @@
-#line 1 "perticle-emit.frag.hlsl"
-#line 1 "./noise.hlsli"
+//#line 1 "perticle-emit.frag.hlsl"
+//#line 1 "./noise.hlsli"
 
 
 float3 mod289(float3 x) {
@@ -113,17 +113,18 @@ float rand(float2 seed) {
 float3 noise3(float3 seed) {
     return float3(snoise(seed.xyz), snoise(seed.yzx), snoise(seed.zxy));
 }
-#line 2 "perticle-emit.frag.hlsl"
+//#line 2 "perticle-emit.frag.hlsl"
 
 struct PS_INPUT {
-    float3 v_Particle;
-    float3 v_Position;
-    float3 v_Direction;
+    float4 Position : SV_POSITION;
+    float3 v_Particle: TEXCOORD0;
+    float3 v_Position : TEXCOORD1;
+    float3 v_Direction : TEXCOORD2;
 };
 
 struct PS_OUTPUT {
-    float4 o_ParticleData0 : COLOR0;
-    float4 o_ParticleData1: COLOR1;
+    float4 o_ParticleData0 : SV_Target0;
+    float4 o_ParticleData1: SV_Target1;
 };
 
 PS_OUTPUT main(PS_INPUT input) {

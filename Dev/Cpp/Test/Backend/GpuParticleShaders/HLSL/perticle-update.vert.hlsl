@@ -5,7 +5,7 @@ struct VS_INPUT {
 
 struct VS_OUTPUT {
     float4 Position: SV_POSITION;
- float2 ScreenUV: TEXCOORD0;
+    float2 ScreenUV: TEXCOORD0;
 };
 
 VS_OUTPUT main(VS_INPUT input) {

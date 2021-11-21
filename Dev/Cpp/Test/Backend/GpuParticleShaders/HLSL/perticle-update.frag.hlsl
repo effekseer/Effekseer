@@ -1,5 +1,5 @@
-#line 1 "perticle-update.frag.hlsl"
-#line 1 "./noise.hlsli"
+//#line 1 "perticle-update.frag.hlsl"
+//#line 1 "./noise.hlsli"
 
 
 float3 mod289(float3 x) {
@@ -113,7 +113,7 @@ float rand(float2 seed) {
 float3 noise3(float3 seed) {
     return float3(snoise(seed.xyz), snoise(seed.yzx), snoise(seed.zxy));
 }
-#line 2 "perticle-update.frag.hlsl"
+//#line 2 "perticle-update.frag.hlsl"
 
 Texture2D i_ParticleData0 : register(t0);
 SamplerState i_ParticleData0Sampler : register(s0);
@@ -126,12 +126,13 @@ cbuffer CB : register(b0) {
 };
 
 struct PS_INPUT {
+    float4 Position: SV_POSITION; // for disable DX11 validation error.
  float2 ScreenUV: TEXCOORD0;
 };
 
 struct VS_OUTPUT {
-    float4 o_ParticleData0 : COLOR0;
-    float4 o_ParticleData1: COLOR1;
+    float4 o_ParticleData0 : SV_Target0;
+    float4 o_ParticleData1: SV_Target1;
 };
 
 float3 orbit(float3 position, float3 direction, float3 move) {
@@ -191,7 +192,7 @@ VS_OUTPUT main(PS_INPUT input) {
  float lifetimeRatio = data1.x / data1.y;
 
 
- float3 velocity = float3(0.0);
+ float3 velocity = float3(0.0,0,0);
 
   velocity += direction * lerp(0.01, 0.0, lifetimeRatio);
 

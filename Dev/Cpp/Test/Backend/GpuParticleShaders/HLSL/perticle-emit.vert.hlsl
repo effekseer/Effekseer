@@ -1,15 +1,15 @@
 #line 1 "perticle-emit.vert.hlsl"
 struct VS_INPUT {
-    float3 a_Particle: TEXCOORD0;
-    float3 a_Position : POSITION0;
-    float3 a_Direction : TEXCOORD1;
+    float3 a_Particle: POSITION0;
+    float3 a_Position : POSITION1;
+    float3 a_Direction : POSITION2;
 };
 
 struct VS_OUTPUT {
     float4 Position : SV_POSITION;
     float3 v_Particle: TEXCOORD0;
-    float3 v_Position : POSITION0;
-    float3 v_Direction : TEXCOORD1;
+    float3 v_Position : TEXCOORD1;
+    float3 v_Direction : TEXCOORD2;
 };
 
 cbuffer CB : register(b0) {

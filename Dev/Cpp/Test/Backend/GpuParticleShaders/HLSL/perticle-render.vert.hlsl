@@ -1,5 +1,5 @@
-#line 1 "perticle-render.vert.hlsl"
-#line 1 "./noise.hlsli"
+//#line 1 "perticle-render.vert.hlsl"
+//#line 1 "./noise.hlsli"
 
 
 float3 mod289(float3 x) {
@@ -113,7 +113,7 @@ float rand(float2 seed) {
 float3 noise3(float3 seed) {
     return float3(snoise(seed.xyz), snoise(seed.yzx), snoise(seed.zxy));
 }
-#line 2 "perticle-render.vert.hlsl"
+//#line 2 "perticle-render.vert.hlsl"
 
 struct VS_INPUT {
 
@@ -143,7 +143,7 @@ float2 rotate(float2 pos, float deg) {
     const float toRad = 3.141592 / 180.0;
     float c = cos(deg * toRad);
     float s = sin(deg * toRad);
-    return float2x2(c, -s, s, c) * pos;
+    return mul(pos, float2x2(c, -s, s, c));
 }
 
 float fadeIn(float duration, float age, float lifetime) {
@@ -164,23 +164,30 @@ VS_OUTPUT main(VS_INPUT input) {
     int particleID = input.instanceID;
     int2 ID2TPos2i = int2(ID2TPos.x,ID2TPos.y);
     int2 texPos = int2(particleID & ID2TPos2i.x, particleID >> ID2TPos2i.y);
-    float4 data0 = ParticleData0.Sample(ParticleData0Sampler, float4(texPos, 0, 0));
-    float4 data1 = ParticleData1.Sample(ParticleData1Sampler, float4(texPos, 0, 0));
+    //float4 data0 = ParticleData0.Sample(ParticleData0Sampler, float4((float)texPos.x, (float)texPos.y, 0, 0));
+    //float4 data1 = ParticleData1.Sample(ParticleData1Sampler, float4((float)texPos.x, (float)texPos.y, 0, 0));
+    float4 data0 = ParticleData0.SampleLevel(ParticleData0Sampler, (float2)texPos, 0);
+    float4 data1 = ParticleData1.SampleLevel(ParticleData1Sampler, (float2)texPos, 0);
 
     float age = data1.x;
     float lifetime = data1.y;
 
     if (age >= lifetime) {
-        output.Position = float4(0.0);
-        output.v_Color = float4(0.0);
+        output.Position = float4(0.0,0.0,0.0,0.0);
+        output.v_Color = float4(0.0,0.0,0.0,0.0);
     }
     else {
         float3 position = data0.xyz;
         position.xyz += float3(rotate(input.a_VertexPosition * 0.003, 45.0), 0.0);
-        output.Position = ProjMatrix * ViewMatrix * float4(position, 1.0);
+        //output.Position = ProjMatrix * ViewMatrix * float4(position, 1.0);
+        output.Position = float4(position, 1.0);
+        output.Position = mul(output.Position, ViewMatrix);
+        output.Position = mul(output.Position, ProjMatrix);
 
-        float2 texCoord = float2(snoise(float3(texPos, 0) / 512.0));
-        output.v_Color = ColorTable.Sample(ColorTableSampler, float4(texCoord, 0, 0));
+        float v = snoise(float3(texPos, 0) / 512.0);
+        float2 texCoord = float2(v,v);
+        //output.v_Color = ColorTable.Sample(ColorTableSampler, float4(texCoord, 0, 0));
+        output.v_Color = ColorTable.SampleLevel(ColorTableSampler, texCoord, 0);
         output.v_Color.a *= fadeInOut(1.0, 10.0, age, lifetime);
     }
 

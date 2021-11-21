@@ -28,7 +28,8 @@ float2 rotate(float2 pos, float deg) {
     const float toRad = 3.141592 / 180.0;
     float c = cos(deg * toRad);
     float s = sin(deg * toRad);
-    return float2x2(c, -s, s, c) * pos;
+    return mul(pos, float2x2(c, -s, s, c));
+    //return float2x2(c, -s, s, c) * pos;
 }
 
 float fadeIn(float duration, float age, float lifetime) {
@@ -56,16 +57,21 @@ VS_OUTPUT main(VS_INPUT input) {
     float lifetime = data1.y;
 
     if (age >= lifetime) {
-        output.Position = float4(0.0);
-        output.v_Color = float4(0.0);
+        output.Position = float4(0.0,0.0,0.0,0.0);
+        output.v_Color = float4(0.0,0.0,0.0,0.0);
     }
     else {
         float3 position = data0.xyz;
         position.xyz += float3(rotate(input.a_VertexPosition * 0.003, 45.0), 0.0);
-        output.Position = ProjMatrix * ViewMatrix * float4(position, 1.0);
+        //output.Position = ProjMatrix * ViewMatrix * float4(position, 1.0);
+        output.Position = float4(position, 1.0);
+        output.Position = mul(output.Position, ViewMatrix);
+        output.Position = mul(output.Position, ProjMatrix);
         
-        float2 texCoord = float2(snoise(float3(texPos, 0) / 512.0));
-        output.v_Color = ColorTable.Sample(ColorTableSampler, float4(texCoord, 0, 0));
+        float v = snoise(float3(texPos, 0) / 512.0);
+        float2 texCoord = float2(v,v);
+        //output.v_Color = ColorTable.Sample(ColorTableSampler, float4(texCoord, 0, 0));
+        output.v_Color = ColorTable.SampleLevel(ColorTableSampler, texCoord, 0);
         output.v_Color.a *= fadeInOut(1.0, 10.0, age, lifetime);
     }
 
