@@ -5,7 +5,7 @@ float3 PositivePow(float3 base, float3 power)
 	return pow(max(abs(base), float3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);
 }
 
-// based on http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html?m=1
+// based on http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
 half3 SRGBToLinear(half3 c)
 {
 	return min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
