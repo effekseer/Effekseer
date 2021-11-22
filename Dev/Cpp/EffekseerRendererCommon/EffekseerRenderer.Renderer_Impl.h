@@ -55,6 +55,8 @@ public:
 
 	std::shared_ptr<ExternalShaderSettings> externalShaderSettings;
 
+	bool MaintainGammaColorInLinearColorSpace = false;
+
 	Impl() = default;
 	~Impl();
 

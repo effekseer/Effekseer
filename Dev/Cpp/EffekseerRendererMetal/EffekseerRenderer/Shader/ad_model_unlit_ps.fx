@@ -48,6 +48,7 @@ struct PS_ConstanBuffer
     float4 reconstructionParam1;
     float4 reconstructionParam2;
     float4 mUVInversedBack;
+    float4 miscFlags;
 };
 
 struct main0_out
@@ -91,6 +92,38 @@ float2 UVDistortionOffset(texture2d<float> t, sampler s, thread const float2& uv
 }
 
 static inline __attribute__((always_inline))
+float3 PositivePow(thread const float3& base, thread const float3& power)
+{
+    return pow(fast::max(abs(base), float3(1.1920928955078125e-07)), power);
+}
+
+static inline __attribute__((always_inline))
+float3 LinearToSRGB(thread const float3& c)
+{
+    float3 param = c;
+    float3 param_1 = float3(0.4166666567325592041015625);
+    return fast::max((PositivePow(param, param_1) * 1.05499994754791259765625) - float3(0.054999999701976776123046875), float3(0.0));
+}
+
+static inline __attribute__((always_inline))
+float4 LinearToSRGB(thread const float4& c)
+{
+    float3 param = c.xyz;
+    return float4(LinearToSRGB(param), c.w);
+}
+
+static inline __attribute__((always_inline))
+float4 ConvertFromSRGBTexture(thread const float4& c, constant PS_ConstanBuffer& v_368)
+{
+    if (v_368.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    float4 param = c;
+    return LinearToSRGB(param);
+}
+
+static inline __attribute__((always_inline))
 void ApplyFlipbook(thread float4& dst, texture2d<float> t, sampler s, float4 flipbookParameter, float4 vcolor, float2 nextUV, thread const float& flipbookRate)
 {
     if (flipbookParameter.x > 0.0)
@@ -108,29 +141,29 @@ void ApplyTextureBlending(thread float4& dstColor, float4 blendColor, float blen
 {
     if (blendType == 0.0)
     {
-        float3 _93 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = float4(_93.x, _93.y, _93.z, dstColor.w);
+        float3 _119 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
+        dstColor = float4(_119.x, _119.y, _119.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0)
         {
-            float3 _105 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = float4(_105.x, _105.y, _105.z, dstColor.w);
+            float3 _131 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = float4(_131.x, _131.y, _131.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0)
             {
-                float3 _118 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = float4(_118.x, _118.y, _118.z, dstColor.w);
+                float3 _144 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = float4(_144.x, _144.y, _144.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    float3 _131 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = float4(_131.x, _131.y, _131.z, dstColor.w);
+                    float3 _157 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = float4(_157.x, _157.y, _157.z, dstColor.w);
                 }
             }
         }
@@ -155,85 +188,112 @@ float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, t
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, thread texture2d<float> _uvDistortionTex, thread sampler sampler_uvDistortionTex, constant PS_ConstanBuffer& v_287, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _alphaTex, thread sampler sampler_alphaTex, thread texture2d<float> _blendUVDistortionTex, thread sampler sampler_blendUVDistortionTex, thread texture2d<float> _blendTex, thread sampler sampler_blendTex, thread texture2d<float> _blendAlphaTex, thread sampler sampler_blendAlphaTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
+float3 SRGBToLinear(thread const float3& c)
+{
+    return fast::min(c, c * ((c * ((c * 0.305306017398834228515625) + float3(0.6821711063385009765625))) + float3(0.01252287812530994415283203125)));
+}
+
+static inline __attribute__((always_inline))
+float4 SRGBToLinear(thread const float4& c)
+{
+    float3 param = c.xyz;
+    return float4(SRGBToLinear(param), c.w);
+}
+
+static inline __attribute__((always_inline))
+float4 ConvertToScreen(thread const float4& c, constant PS_ConstanBuffer& v_368)
+{
+    if (v_368.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    float4 param = c;
+    return SRGBToLinear(param);
+}
+
+static inline __attribute__((always_inline))
+float4 _main(PS_Input Input, constant PS_ConstanBuffer& v_368, thread texture2d<float> _uvDistortionTex, thread sampler sampler_uvDistortionTex, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _alphaTex, thread sampler sampler_alphaTex, thread texture2d<float> _blendUVDistortionTex, thread sampler sampler_blendUVDistortionTex, thread texture2d<float> _blendTex, thread sampler sampler_blendTex, thread texture2d<float> _blendAlphaTex, thread sampler sampler_blendAlphaTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
 {
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = v_287.fUVDistortionParameter.zw;
+    float2 param_2 = v_368.fUVDistortionParameter.zw;
     float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, param_1, param_2);
-    UVOffset *= v_287.fUVDistortionParameter.x;
-    float4 Output = _colorTex.sample(sampler_colorTex, (Input.UV_Others.xy + UVOffset)) * Input.Color;
-    float4 param_3 = Output;
-    float param_4 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_3, _colorTex, sampler_colorTex, v_287.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_4);
-    Output = param_3;
+    UVOffset *= v_368.fUVDistortionParameter.x;
+    float4 param_3 = _colorTex.sample(sampler_colorTex, (Input.UV_Others.xy + UVOffset));
+    float4 Output = ConvertFromSRGBTexture(param_3, v_368) * Input.Color;
+    float4 param_4 = Output;
+    float param_5 = advancedParam.FlipbookRate;
+    ApplyFlipbook(param_4, _colorTex, sampler_colorTex, v_368.fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_5);
+    Output = param_4;
     float4 AlphaTexColor = _alphaTex.sample(sampler_alphaTex, (advancedParam.AlphaUV + UVOffset));
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    float2 param_5 = advancedParam.BlendUVDistortionUV;
-    float2 param_6 = v_287.fUVDistortionParameter.zw;
-    float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, param_5, param_6);
-    BlendUVOffset *= v_287.fUVDistortionParameter.y;
-    float4 BlendTextureColor = _blendTex.sample(sampler_blendTex, (advancedParam.BlendUV + BlendUVOffset));
+    float2 param_6 = advancedParam.BlendUVDistortionUV;
+    float2 param_7 = v_368.fUVDistortionParameter.zw;
+    float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, param_6, param_7);
+    BlendUVOffset *= v_368.fUVDistortionParameter.y;
+    float4 param_8 = _blendTex.sample(sampler_blendTex, (advancedParam.BlendUV + BlendUVOffset));
+    float4 BlendTextureColor = ConvertFromSRGBTexture(param_8, v_368);
     float4 BlendAlphaTextureColor = _blendAlphaTex.sample(sampler_blendAlphaTex, (advancedParam.BlendAlphaUV + BlendUVOffset));
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    float4 param_7 = Output;
-    ApplyTextureBlending(param_7, BlendTextureColor, v_287.fBlendTextureParameter.x);
-    Output = param_7;
-    if (v_287.fFalloffParameter.x == 1.0)
+    float4 param_9 = Output;
+    ApplyTextureBlending(param_9, BlendTextureColor, v_368.fBlendTextureParameter.x);
+    Output = param_9;
+    if (v_368.fFalloffParameter.x == 1.0)
     {
-        float3 cameraVec = normalize(-v_287.fCameraFrontDirection.xyz);
+        float3 cameraVec = normalize(-v_368.fCameraFrontDirection.xyz);
         float CdotN = fast::clamp(dot(cameraVec, normalize(Input.WorldN)), 0.0, 1.0);
-        float4 FalloffBlendColor = mix(v_287.fFalloffEndColor, v_287.fFalloffBeginColor, float4(pow(CdotN, v_287.fFalloffParameter.z)));
-        if (v_287.fFalloffParameter.y == 0.0)
+        float4 FalloffBlendColor = mix(v_368.fFalloffEndColor, v_368.fFalloffBeginColor, float4(pow(CdotN, v_368.fFalloffParameter.z)));
+        if (v_368.fFalloffParameter.y == 0.0)
         {
-            float3 _446 = Output.xyz + FalloffBlendColor.xyz;
-            Output = float4(_446.x, _446.y, _446.z, Output.w);
+            float3 _565 = Output.xyz + FalloffBlendColor.xyz;
+            Output = float4(_565.x, _565.y, _565.z, Output.w);
         }
         else
         {
-            if (v_287.fFalloffParameter.y == 1.0)
+            if (v_368.fFalloffParameter.y == 1.0)
             {
-                float3 _459 = Output.xyz - FalloffBlendColor.xyz;
-                Output = float4(_459.x, _459.y, _459.z, Output.w);
+                float3 _578 = Output.xyz - FalloffBlendColor.xyz;
+                Output = float4(_578.x, _578.y, _578.z, Output.w);
             }
             else
             {
-                if (v_287.fFalloffParameter.y == 2.0)
+                if (v_368.fFalloffParameter.y == 2.0)
                 {
-                    float3 _472 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = float4(_472.x, _472.y, _472.z, Output.w);
+                    float3 _591 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = float4(_591.x, _591.y, _591.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    float3 _486 = Output.xyz * v_287.fEmissiveScaling.x;
-    Output = float4(_486.x, _486.y, _486.z, Output.w);
+    float3 _605 = Output.xyz * v_368.fEmissiveScaling.x;
+    Output = float4(_605.x, _605.y, _605.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = v_287.mUVInversedBack.x + (v_287.mUVInversedBack.y * screenUV.y);
-    if ((isunordered(v_287.softParticleParam.w, 0.0) || v_287.softParticleParam.w != 0.0))
+    screenUV.y = v_368.mUVInversedBack.x + (v_368.mUVInversedBack.y * screenUV.y);
+    if ((isunordered(v_368.softParticleParam.w, 0.0) || v_368.softParticleParam.w != 0.0))
     {
         float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
-        float param_8 = backgroundZ;
-        float param_9 = screenPos.z;
-        float4 param_10 = v_287.softParticleParam;
-        float4 param_11 = v_287.reconstructionParam1;
-        float4 param_12 = v_287.reconstructionParam2;
-        Output.w *= SoftParticle(param_8, param_9, param_10, param_11, param_12);
+        float param_10 = backgroundZ;
+        float param_11 = screenPos.z;
+        float4 param_12 = v_368.softParticleParam;
+        float4 param_13 = v_368.reconstructionParam1;
+        float4 param_14 = v_368.reconstructionParam2;
+        Output.w *= SoftParticle(param_10, param_11, param_12, param_13, param_14);
     }
     if (Output.w <= fast::max(0.0, advancedParam.AlphaThreshold))
     {
         discard_fragment();
     }
-    float3 _580 = mix(v_287.fEdgeColor.xyz * v_287.fEdgeParameter.y, Output.xyz, float3(ceil((Output.w - advancedParam.AlphaThreshold) - v_287.fEdgeParameter.x)));
-    Output = float4(_580.x, _580.y, _580.z, Output.w);
-    return Output;
+    float3 _699 = mix(v_368.fEdgeColor.xyz * v_368.fEdgeParameter.y, Output.xyz, float3(ceil((Output.w - advancedParam.AlphaThreshold) - v_368.fEdgeParameter.x)));
+    Output = float4(_699.x, _699.y, _699.z, Output.w);
+    float4 param_15 = Output;
+    return ConvertToScreen(param_15, v_368);
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_287 [[buffer(0)]], texture2d<float> _uvDistortionTex [[texture(2)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _alphaTex [[texture(1)]], texture2d<float> _blendUVDistortionTex [[texture(5)]], texture2d<float> _blendTex [[texture(3)]], texture2d<float> _blendAlphaTex [[texture(4)]], texture2d<float> _depthTex [[texture(6)]], sampler sampler_uvDistortionTex [[sampler(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_alphaTex [[sampler(1)]], sampler sampler_blendUVDistortionTex [[sampler(5)]], sampler sampler_blendTex [[sampler(3)]], sampler sampler_blendAlphaTex [[sampler(4)]], sampler sampler_depthTex [[sampler(6)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_368 [[buffer(0)]], texture2d<float> _uvDistortionTex [[texture(2)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _alphaTex [[texture(1)]], texture2d<float> _blendUVDistortionTex [[texture(5)]], texture2d<float> _blendTex [[texture(3)]], texture2d<float> _blendAlphaTex [[texture(4)]], texture2d<float> _depthTex [[texture(6)]], sampler sampler_uvDistortionTex [[sampler(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_alphaTex [[sampler(1)]], sampler sampler_blendUVDistortionTex [[sampler(5)]], sampler sampler_blendTex [[sampler(3)]], sampler sampler_blendAlphaTex [[sampler(4)]], sampler sampler_depthTex [[sampler(6)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -245,8 +305,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = in.Input_Blend_FBNextIndex_UV;
     Input.PosP = in.Input_PosP;
-    float4 _616 = _main(Input, _uvDistortionTex, sampler_uvDistortionTex, v_287, _colorTex, sampler_colorTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _616;
+    float4 _737 = _main(Input, v_368, _uvDistortionTex, sampler_uvDistortionTex, _colorTex, sampler_colorTex, _alphaTex, sampler_alphaTex, _blendUVDistortionTex, sampler_blendUVDistortionTex, _blendTex, sampler_blendTex, _blendAlphaTex, sampler_blendAlphaTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _737;
     return out;
 }
 

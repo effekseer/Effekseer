@@ -867,6 +867,12 @@ void SetLogger(const std::function<void(LogType, const std::string&)>& logger);
 
 void Log(LogType logType, const std::string& message);
 
+enum class TextureColorType : int32_t
+{
+	Color,
+	Value,
+};
+
 enum class ColorSpaceType : int32_t
 {
 	Gamma,

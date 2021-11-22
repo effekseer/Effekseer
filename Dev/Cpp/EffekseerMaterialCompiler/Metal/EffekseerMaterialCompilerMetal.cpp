@@ -55,6 +55,62 @@ inline auto MOD(T1 x, T2 y) -> decltype(x - y * floor(x/y)) {
     return x - y * floor(x/y);
 }
 
+#define FLT_EPSILON 1.192092896e-07f
+
+static inline __attribute__((always_inline))
+float3 PositivePow(thread const float3& base, thread const float3& power)
+{
+	return pow(fast::max(abs(base), float3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);
+}
+
+static inline __attribute__((always_inline))
+float3 LinearToSRGB(thread const float3& c)
+{
+	return fast::max(1.055 * PositivePow(c, 0.416666667) - 0.055, 0.0);
+}
+
+static inline __attribute__((always_inline))
+float4 LinearToSRGB(thread const float4& c)
+{
+    float3 param = c.xyz;
+    return float4(LinearToSRGB(param), c.w);
+}
+
+static inline __attribute__((always_inline))
+float4 ConvertFromSRGBTexture(thread const float4& c, constant float4& predefined_uniform)
+{
+    if (predefined_uniform.z == 0.0)
+    {
+        return c;
+    }
+    float4 param = c;
+    return LinearToSRGB(param);
+}
+
+static inline __attribute__((always_inline))
+float3 SRGBToLinear(thread const float3& c)
+{
+	return fast::min(c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
+}
+
+static inline __attribute__((always_inline))
+float4 SRGBToLinear(thread const float4& c)
+{
+    float3 param = c.xyz;
+    return float4(SRGBToLinear(param), c.w);
+}
+
+static inline __attribute__((always_inline))
+float4 ConvertToScreen(thread const float4& c, constant float4& predefined_uniform)
+{
+    if (predefined_uniform.z == 0.0)
+    {
+        return c;
+    }
+    float4 param = c;
+    return SRGBToLinear(param);
+}
+
 )";
 
 static const char* material_common_define_vs = R"(
@@ -452,7 +508,7 @@ static const char g_material_fs_src_suf2_lit[] =
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
 
-    o.gl_FragColor = Output;
+    o.gl_FragColor = ConvertToScreen(Output, u.predefined_uniform);
     return o;
 }
 
@@ -464,7 +520,7 @@ static const char g_material_fs_src_suf2_unlit[] =
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
 
-    o.gl_FragColor = float4(emissive, opacity);
+    o.gl_FragColor = ConvertToScreen(float4(emissive, opacity), u.predefined_uniform);
     return o;
 }
 
@@ -809,6 +865,15 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
         // replace textures
         for (size_t i = 0; i < actualTextureCount; i++)
         {
+			std::string prefix;
+			std::string suffix;
+
+			if (materialFile->GetTextureColorType(i) == Effekseer::TextureColorType::Color)
+			{
+				prefix = "ConvertFromSRGBTexture(";
+				suffix = ",u.predefined_uniform)";
+			}
+
             auto textureIndex = materialFile->GetTextureIndex(i);
             auto textureName = std::string(materialFile->GetTextureName(i));
 
@@ -826,8 +891,10 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
                 std::string varName = baseCode.substr(varPos, posS - varPos);
 
                 std::ostringstream texSample;
+				texSample << prefix;
                 texSample << textureName << ".sample(s_" << textureName << ", ";
                 texSample << GetUVReplacement(varName, stage) << ")";
+				texSample << suffix;
                 
                 baseCode = baseCode.replace(posP, posS + keyS.length() - posP, texSample.str());
                 posP = baseCode.find(keyP, posP + texSample.str().length());

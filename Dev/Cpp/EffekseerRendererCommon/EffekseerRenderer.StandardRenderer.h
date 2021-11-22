@@ -670,6 +670,7 @@ public:
 			predefined_uniforms.fill(0.5f);
 			predefined_uniforms[0] = m_renderer->GetTime();
 			predefined_uniforms[1] = renderState.Maginification;
+			predefined_uniforms[2] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 			// vs
 			int32_t vsOffset = 0;
@@ -780,6 +781,8 @@ public:
 
 			// ps
 			PixelConstantBuffer pcb{};
+			pcb.MiscFlags.fill(0.0f);
+			pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 			pcb.FalloffParam.Enable = 0;
 
@@ -873,6 +876,9 @@ public:
 			else
 			{
 				PixelConstantBuffer pcb;
+				pcb.MiscFlags.fill(0.0f);
+				pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
+
 				pcb.FalloffParam.Enable = 0;
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.EnableInterpolation);
 				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.InterpolationType);

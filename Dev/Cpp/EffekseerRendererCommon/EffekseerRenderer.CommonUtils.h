@@ -1457,6 +1457,7 @@ struct PixelConstantBuffer
 	EdgeParameter EdgeParam;
 	SoftParticleParameter SoftParticleParam;
 	float UVInversedBack[4];
+	std::array<float,4> MiscFlags;
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{
