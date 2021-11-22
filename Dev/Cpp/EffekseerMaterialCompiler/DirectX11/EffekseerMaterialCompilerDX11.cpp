@@ -242,6 +242,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(MaterialFile* materialFile
 
 	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) -> bool {
 		auto generator = DirectX::ShaderGenerator(DX11::material_common_define,
+												  DX11::material_common_functions,
 												  DX11::material_common_vs_functions,
 												  DX11::material_sprite_vs_pre,
 												  DX11::material_sprite_vs_pre_simple,

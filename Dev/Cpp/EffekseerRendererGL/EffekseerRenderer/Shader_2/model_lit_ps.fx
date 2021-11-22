@@ -33,6 +33,7 @@ struct PS_ConstanBuffer
     vec4 reconstructionParam1;
     vec4 reconstructionParam2;
     vec4 mUVInversedBack;
+    vec4 miscFlags;
 };
 
 uniform PS_ConstanBuffer CBPS0;
@@ -47,21 +48,72 @@ varying vec3 _VSPS_WorldB;
 varying vec3 _VSPS_WorldT;
 varying vec4 _VSPS_PosP;
 
+vec3 PositivePow(vec3 base, vec3 power)
+{
+    return pow(max(abs(base), vec3(1.1920928955078125e-07)), power);
+}
+
+vec3 LinearToSRGB(vec3 c)
+{
+    vec3 param = c;
+    vec3 param_1 = vec3(0.4166666567325592041015625);
+    return max((PositivePow(param, param_1) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0));
+}
+
+vec4 LinearToSRGB(vec4 c)
+{
+    vec3 param = c.xyz;
+    return vec4(LinearToSRGB(param), c.w);
+}
+
+vec4 ConvertFromSRGBTexture(vec4 c)
+{
+    if (CBPS0.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    vec4 param = c;
+    return LinearToSRGB(param);
+}
+
+vec3 SRGBToLinear(vec3 c)
+{
+    return min(c, c * ((c * ((c * 0.305306017398834228515625) + vec3(0.6821711063385009765625))) + vec3(0.01252287812530994415283203125)));
+}
+
+vec4 SRGBToLinear(vec4 c)
+{
+    vec3 param = c.xyz;
+    return vec4(SRGBToLinear(param), c.w);
+}
+
+vec4 ConvertToScreen(vec4 c)
+{
+    if (CBPS0.miscFlags.x == 0.0)
+    {
+        return c;
+    }
+    vec4 param = c;
+    return SRGBToLinear(param);
+}
+
 vec4 _main(PS_Input Input)
 {
-    vec4 Output = texture2D(Sampler_sampler_colorTex, Input.UV) * Input.Color;
+    vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
+    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
     vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _99 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_99.x, _99.y, _99.z, Output.w);
-    vec3 _110 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_110.x, _110.y, _110.z, Output.w);
+    vec3 _221 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output = vec4(_221.x, _221.y, _221.z, Output.w);
+    vec3 _229 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_229.x, _229.y, _229.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
     }
-    return Output;
+    vec4 param_1 = Output;
+    return ConvertToScreen(param_1);
 }
 
 void main()
@@ -74,7 +126,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _155 = _main(Input);
-    gl_FragData[0] = _155;
+    vec4 _274 = _main(Input);
+    gl_FragData[0] = _274;
 }
 

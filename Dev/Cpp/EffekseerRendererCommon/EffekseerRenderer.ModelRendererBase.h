@@ -466,6 +466,7 @@ protected:
 		predefined_uniforms.fill(0.5f);
 		predefined_uniforms[0] = renderer->GetTime();
 		predefined_uniforms[1] = param.Magnification;
+		predefined_uniforms[2] = renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 		// vs
 		int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 2) * InstanceCount;
@@ -625,6 +626,8 @@ protected:
 		else
 		{
 			auto pcb = (PixelConstantBuffer*)shader_->GetPixelConstantBuffer();
+			pcb->MiscFlags.fill(0.0f);
+			pcb->MiscFlags[0] = renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 			// specify predefined parameters
 			if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)

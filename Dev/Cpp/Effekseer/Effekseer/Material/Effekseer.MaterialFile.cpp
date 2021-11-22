@@ -110,6 +110,8 @@ bool MaterialFile::Load(const uint8_t* data, int32_t size)
 				offset += sizeof(int);
 
 				// valuetexture
+				int colorType = 0;
+				memcpy(&colorType, data + offset, 4);
 				offset += sizeof(int);
 
 				// sampler
@@ -121,6 +123,7 @@ bool MaterialFile::Load(const uint8_t* data, int32_t size)
 				texture.Name = name;
 				texture.Index = index;
 				texture.Wrap = static_cast<TextureWrapType>(sampler);
+				texture.ColorType = static_cast<TextureColorType>(colorType);
 				textures_.push_back(texture);
 			}
 
@@ -234,6 +237,11 @@ uint64_t MaterialFile::GetGUID() const
 void MaterialFile::SetGUID(uint64_t guid)
 {
 	guid_ = guid;
+}
+
+TextureColorType MaterialFile::GetTextureColorType(int32_t index) const
+{
+	return textures_.at(index).ColorType;
 }
 
 TextureWrapType MaterialFile::GetTextureWrap(int32_t index) const
