@@ -208,7 +208,6 @@ void FBXConverter::LoadSkin(FbxMesh* fbxMesh, std::vector<BoneConnector>& bcs, s
 	for (auto skinInd = 0; skinInd < skinCount; skinInd++)
 	{
 		auto skin = (FbxSkin*)fbxMesh->GetDeformer(skinInd, FbxDeformer::eSkin);
-
 		auto clusterCount = skin->GetClusterCount();
 		for (auto clusterInd = 0; clusterInd < clusterCount; clusterInd++)
 		{
@@ -226,12 +225,10 @@ void FBXConverter::LoadSkin(FbxMesh* fbxMesh, std::vector<BoneConnector>& bcs, s
 			int32_t id = bcs.size();
 
 			BoneConnector connector;
+			connector.LinkNode = cluster->GetLink();
 			connector.Name = name;
-
-			auto m2_inv = m2.Inverse();
-			auto m = m2_inv * m1;
-
-			connector.OffsetMatrix = m;
+			connector.TransformMatrix = m1;
+			connector.TransformLinkMatrix = m2;
 
 			bcs.push_back(connector);
 
@@ -392,6 +389,7 @@ std::shared_ptr<Mesh> FBXConverter::LoadMesh(FbxMesh* fbxMesh)
 
 	// ê›íË
 	auto mesh = std::make_shared<Mesh>();
+	mesh->BoundNode = node;
 	mesh->Name = node->GetName();
 	mesh->BoneConnectors = bcs_temp;
 
@@ -482,6 +480,7 @@ std::shared_ptr<Node> FBXConverter::LoadHierarchy(std::shared_ptr<Node> parent, 
 	FbxMesh* mesh = nullptr;
 	std::shared_ptr<Node> node = std::make_shared<Node>();
 
+	node->Original = fbxNode;
 	node->Name = fbxNode->GetName();
 
 	auto attribute_ = fbxNode->GetNodeAttribute();
@@ -543,6 +542,14 @@ std::shared_ptr<Node> FBXConverter::LoadHierarchy(std::shared_ptr<Node> parent, 
 	node->Scaling[1] = lclS[1];
 	node->Scaling[2] = lclS[2];
 
+	auto geoT = fbxNode->GetGeometricTranslation(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	auto geoR = fbxNode->GetGeometricRotation(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	auto geoS = fbxNode->GetGeometricScaling(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	node->GeometryMatrix = FbxAMatrix(geoT, geoR, geoS);
+	node->EvaluatedGlobalMatrix = fbxNode->EvaluateGlobalTransform();
+
+	node->PreRotation = fbxNode->GetPreRotation(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	node->PostRotation = fbxNode->GetPostRotation(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
 	node->RotationPivot = fbxNode->GetRotationPivot(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
 	node->RotationOffset = fbxNode->GetRotationOffset(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
 	node->ScalingPivot = fbxNode->GetScalingPivot(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
