@@ -18,21 +18,13 @@ namespace Effekseer.IO
 
 		public class ResourceRoot
 		{
-			public EfkPkg.FileType Type;
+			public EfkPkg.FileType Type { get; private set; }
 			public string RootPath;
-		}
 
-		ResourceDestinationType resourceDestinationType = ResourceDestinationType.RelativePath;
-
-		List<ResourceRoot> resourceRoots = new List<ResourceRoot>();
-
-		public EfkPkgImporter()
-		{
-			resourceRoots.Add(new ResourceRoot { Type = EfkPkg.FileType.Effect, RootPath = "Effects/" });
-			resourceRoots.Add(new ResourceRoot { Type = EfkPkg.FileType.Texture, RootPath = "Textures/" });
-			resourceRoots.Add(new ResourceRoot { Type = EfkPkg.FileType.Material, RootPath = "Materials/" });
-			resourceRoots.Add(new ResourceRoot { Type = EfkPkg.FileType.Sound, RootPath = "Sounds/" });
-			resourceRoots.Add(new ResourceRoot { Type = EfkPkg.FileType.Curve, RootPath = "Curves/" });
+			internal ResourceRoot(EfkPkg.FileType type)
+			{
+				Type = type;
+			}
 		}
 
 		public class ImportFile
@@ -44,12 +36,18 @@ namespace Effekseer.IO
 				PathError,
 			}
 
-			public EfkPkg.FileInfo FileInfo;
+			public EfkPkg.FileInfo FileInfo { get; private set; }
 			public bool DoesImport;
-			public PathState State;
+			public PathState State { get; private set; }
 			public string DestinationRelativePath;
 
-			internal EfkPkgImporter Importer;
+			EfkPkgImporter Importer;
+
+			internal ImportFile(EfkPkgImporter importer, EfkPkg.FileInfo fileInfo)
+			{
+				Importer = importer;
+				FileInfo = fileInfo;
+			}
 
 			public string GetDestinationPath(string targetDirPath, List<ResourceRoot> resourceRoots, ResourceDestinationType resourceDestinationType)
 			{
@@ -68,13 +66,13 @@ namespace Effekseer.IO
 
 			public void ValidationPath()
 			{
-				if (!Directory.Exists(Importer.destinationPath))
+				if (!Directory.Exists(Importer.DestinationPath))
 				{
 					State = PathState.PathError;
 					return;
 				}
 
-				string fullPath = GetDestinationPath(Importer.destinationPath, Importer.resourceRoots, Importer.resourceDestinationType);
+				string fullPath = GetDestinationPath(Importer.DestinationPath, Importer.resourceRoots, Importer.resourceDestinationType);
 
 				if (!Misc.IsValidPath(fullPath))
 				{
@@ -91,11 +89,14 @@ namespace Effekseer.IO
 			}
 		}
 
-		string destinationPath;
+		public string DestinationPath { get; set; }
 		EfkPkg efkpkg;
 		List<ImportFile> importedFiles = new List<ImportFile>();
+		ResourceDestinationType resourceDestinationType = ResourceDestinationType.RelativePath;
+		List<ResourceRoot> resourceRoots = new List<ResourceRoot>();
 
 		public bool IsDestinationPathValid { get; private set; }
+
 
 		public IReadOnlyCollection<ImportFile> ImportedFiles
 		{
@@ -124,21 +125,25 @@ namespace Effekseer.IO
 
 		public EfkPkgImporter(EfkPkg efkpkg, string defaultDestinationPath)
 		{
-			this.destinationPath = defaultDestinationPath;
+			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Effect) { RootPath = "Effects/" });
+			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Texture) { RootPath = "Textures/" });
+			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Material) { RootPath = "Materials/" });
+			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Sound) { RootPath = "Sounds/" });
+			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Curve) { RootPath = "Curves/" });
+
+			DestinationPath = defaultDestinationPath;
 			this.efkpkg = efkpkg;
 
-			if (destinationPath == null)
+			if (DestinationPath == null)
 			{
-				destinationPath = Directory.GetCurrentDirectory();
+				DestinationPath = Directory.GetCurrentDirectory();
 			}
 
-			this.destinationPath = Misc.BackSlashToSlash(destinationPath);
+			DestinationPath = Misc.BackSlashToSlash(DestinationPath);
 
 			foreach (var file in efkpkg.AllFiles)
 			{
-				var import = new ImportFile();
-				import.Importer = this;
-				import.FileInfo = file;
+				var import = new ImportFile(this, file);
 				import.DestinationRelativePath = file.RelativePath;
 				import.DoesImport = true;
 				importedFiles.Add(import);
@@ -149,7 +154,7 @@ namespace Effekseer.IO
 
 		public void RenewIOStatus()
 		{
-			IsDestinationPathValid = Directory.Exists(destinationPath);
+			IsDestinationPathValid = Directory.Exists(DestinationPath);
 
 			foreach (var imported in importedFiles)
 			{
@@ -167,10 +172,10 @@ namespace Effekseer.IO
 			}
 
 
-			efkpkg.ExtractFiles(destinationPath, files.Select(_ => _.FileInfo).ToArray());
+			efkpkg.ExtractFiles(DestinationPath, files.Select(_ => _.FileInfo).ToArray());
 
 			var effects = files.Where(_ => _.FileInfo.Type == EfkPkg.FileType.Effect);
-			return effects.Select(_ => Utils.Misc.BackSlashToSlash(Path.Combine(destinationPath, _.FileInfo.RelativePath))).ToArray();
+			return effects.Select(_ => Misc.BackSlashToSlash(Path.Combine(DestinationPath, _.FileInfo.RelativePath))).ToArray();
 		}
 
 		/// <summary>
@@ -218,7 +223,7 @@ namespace Effekseer.IO
 			}
 		}
 
-		public void RemoveDirectoryInfos()
+		public void RemoveDirectoryNames()
 		{
 			foreach (var imported in importedFiles)
 			{
@@ -226,15 +231,21 @@ namespace Effekseer.IO
 			}
 		}
 
-		public void RenameFiles()
+		public void RenameFileNames()
 		{
 			var pathToHashes = new Dictionary<string, string>();
 
 			foreach (var imported in importedFiles)
 			{
-				var path = imported.GetDestinationPath(destinationPath, resourceRoots, resourceDestinationType);
+				var path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
 				var dirPath = Path.GetDirectoryName(path);
-				var files = Directory.GetFiles(dirPath);
+
+				var files = new string[0];
+
+				if (Directory.Exists(dirPath))
+				{
+					files = Directory.GetFiles(dirPath).Select(_ => Misc.BackSlashToSlash(_)).ToArray();
+				}
 
 				foreach (var f in files)
 				{
@@ -243,14 +254,20 @@ namespace Effekseer.IO
 						continue;
 					}
 
-					var hash = EfkPkg.ComputeHashName(File.ReadAllBytes(f));
-					pathToHashes.Add(f, hash);
+					try
+					{
+						var hash = EfkPkg.ComputeHashName(File.ReadAllBytes(f));
+						pathToHashes.Add(f, hash);
+					}
+					catch
+					{
+					}
 				}
 			}
 
 			foreach (var imported in importedFiles)
 			{
-				var path = imported.GetDestinationPath(destinationPath, resourceRoots, resourceDestinationType);
+				var path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
 				var dirPath = Path.GetDirectoryName(path);
 
 				var relatedPathToHashes = pathToHashes.Where(_ => Path.GetDirectoryName(_.Key) == dirPath);
@@ -258,7 +275,8 @@ namespace Effekseer.IO
 				if (relatedPathToHashes.Any(_ => _.Value == imported.FileInfo.HashName))
 				{
 					var p = relatedPathToHashes.First(_ => _.Value == imported.FileInfo.HashName);
-					imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dirPath, Path.GetFileName(p.Key)));
+					var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
+					imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, Path.GetFileName(p.Key)));
 				}
 				else if (relatedPathToHashes.Any(_ => _.Key == path))
 				{
@@ -269,7 +287,7 @@ namespace Effekseer.IO
 						fn += "_" + Path.GetExtension(imported.DestinationRelativePath);
 						imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, fn));
 
-						path = imported.GetDestinationPath(destinationPath, resourceRoots, resourceDestinationType);
+						path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
 					}
 				}
 			}

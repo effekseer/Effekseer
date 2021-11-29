@@ -19,96 +19,36 @@ namespace Effekseer.GUI.Dialog
 
 		bool opened = true;
 		bool isFirstUpdate = true;
-
 		string sourceFilePath = string.Empty;
-		string targetDirPath = string.Empty;
-		bool targetDirPathValid = false;
-
-		class ImportFile
-		{
-			public enum PathState
-			{
-				Writable,
-				Overwrite,
-				PathError,
-			}
-
-			public bool DoesImport;
-			public PathState State;
-			public string DestinationRelativePath;
-			public string DestinationFileName;
-			public EfkPkg.FileType FileType;
-
-			public void ValidationPath(string targetDirPath)
-			{
-				if (!Directory.Exists(targetDirPath))
-				{
-					State = PathState.PathError;
-					return;
-				}
-
-				string fullPath = Path.Combine(targetDirPath, DestinationRelativePath);
-				fullPath = Misc.BackSlashToSlash(fullPath);
-				if (!Misc.IsValidPath(fullPath))
-				{
-					State = PathState.PathError;
-				}
-				else if (File.Exists(fullPath))
-				{
-					State = PathState.Overwrite;
-				}
-				else
-				{
-					State = PathState.Writable;
-				}
-			}
-
-			public string GetStateIcon()
-			{
-				switch (State)
-				{
-					case PathState.Writable: return Icons.CommonCheck;
-					case PathState.Overwrite: return Icons.CommonWarning;
-					case PathState.PathError: return Icons.CommonError;
-				}
-				return string.Empty;
-			}
-		}
-		Dictionary<EfkPkg.FileInfo, ImportFile> importFiles = new Dictionary<EfkPkg.FileInfo, ImportFile>();
-
-		public EfkPkg EfkPkg { get; private set; }
 
 		public bool ShouldBeRemoved { get; private set; }
 
-
-		// いい感じに実装する
-		public bool UseResourcesRoot = false;
-
-		public bool MergeFiles = false;
-
-		public bool SeparateFiles = false;
-		class ResourceRoot
+		public string GetStateIcon(EfkPkgImporter.ImportFile.PathState state)
 		{
-			public EfkPkg.FileType Type;
-			public string RootPath;
+			switch (state)
+			{
+				case EfkPkgImporter.ImportFile.PathState.Writable: return Icons.CommonCheck;
+				case EfkPkgImporter.ImportFile.PathState.Overwrite: return Icons.CommonWarning;
+				case EfkPkgImporter.ImportFile.PathState.PathError: return Icons.CommonError;
+			}
+			return string.Empty;
 		}
 
-		List<ResourceRoot> roots = new List<ResourceRoot>();
+		EfkPkgImporter importer;
 
 		public ImportEfkPkg()
 		{
 			ShouldBeRemoved = false;
-
-
 		}
+
 
 		public void Show(string path, EfkPkg efkpkg)
 		{
 			title = MultiLanguageTextProvider.GetText("ImportEfkPkgTitle");
-			EfkPkg = efkpkg;
 			sourceFilePath = Utils.Misc.BackSlashToSlash(path);
 
 			// FileViewer Path or Current Effect Path or Current Directory
+			string targetDirPath = null;
 			var fileViewer = (Dock.FileViewer)Manager.GetWindow(typeof(Dock.FileViewer));
 			if (fileViewer != null && !string.IsNullOrEmpty(fileViewer.CurrentPath))
 			{
@@ -122,17 +62,16 @@ namespace Effekseer.GUI.Dialog
 			{
 				targetDirPath = Directory.GetCurrentDirectory();
 			}
-			targetDirPath = Utils.Misc.BackSlashToSlash(targetDirPath);
-			targetDirPathValid = Directory.Exists(targetDirPath);
 
-			foreach (var file in efkpkg.AllFiles)
+			try
 			{
-				var import = new ImportFile();
-				import.DestinationRelativePath = file.RelativePath;
-				import.DestinationFileName = Path.GetFileName(file.RelativePath);
-				import.DoesImport = true;
-				import.ValidationPath(targetDirPath);
-				importFiles.Add(file, import);
+				importer = new EfkPkgImporter(efkpkg, targetDirPath);
+			}
+			catch (Exception e)
+			{
+				var mb = new MessageBox();
+				mb.Show("Error", e.Message);
+				ShouldBeRemoved = true;
 			}
 
 			Manager.AddControl(this);
@@ -161,6 +100,17 @@ namespace Effekseer.GUI.Dialog
 				}
 
 				Manager.NativeManager.Spacing();
+
+				if (Manager.NativeManager.Button("RemoveDir"))
+				{
+					importer.RemoveDirectoryNames();
+				}
+
+				if (Manager.NativeManager.Button("Rename"))
+				{
+					importer.RenameFileNames();
+				}
+
 				Manager.NativeManager.Spacing();
 
 				{
@@ -175,42 +125,22 @@ namespace Effekseer.GUI.Dialog
 						var directory = swig.FileDialog.PickFolder(Directory.GetCurrentDirectory());
 						if (!string.IsNullOrEmpty(directory))
 						{
-							targetDirPath = directory;
-							targetDirPathValid = Directory.Exists(targetDirPath);
+							importer.DestinationPath = directory;
+							importer.RenewIOStatus();
 						}
 					}
 
-					string icon = (targetDirPathValid) ? Icons.CommonCheck : Icons.CommonError;
-					if (Manager.NativeManager.InputText(icon + "###TargetDirPath", targetDirPath))
+					string icon = (importer.IsDestinationPathValid) ? Icons.CommonCheck : Icons.CommonError;
+					if (Manager.NativeManager.InputText(icon + "###TargetDirPath", importer.DestinationPath))
 					{
-						targetDirPath = Manager.NativeManager.GetInputTextResult();
-						targetDirPathValid = Directory.Exists(targetDirPath);
-						foreach (var file in EfkPkg.AllFiles)
-						{
-							importFiles[file].ValidationPath(targetDirPath);
-						}
+						importer.DestinationPath = Manager.NativeManager.GetInputTextResult();
+						importer.RenewIOStatus();
 					}
+
 					Manager.NativeManager.PopItemWidth();
 				}
 
 				Manager.NativeManager.Spacing();
-
-				bool[] useRoot = new[] { UseResourcesRoot };
-				if (Manager.NativeManager.Checkbox("ルートディレクトリの使用", useRoot))
-				{
-					UseResourcesRoot = useRoot[0];
-				}
-
-				if (UseResourcesRoot)
-				{
-					foreach (var root in roots)
-					{
-						if (Manager.NativeManager.InputText(root.Type.ToString(), root.RootPath))
-						{
-							root.RootPath = Manager.NativeManager.GetInputTextResult();
-						}
-					}
-				}
 
 				Manager.NativeManager.Spacing();
 
@@ -228,26 +158,13 @@ namespace Effekseer.GUI.Dialog
 
 					if (Manager.NativeManager.Button(textImport, buttonWidth))
 					{
-						var files = importFiles
-							.Where(kv => kv.Value.DoesImport)
-							.Select(kv => kv.Key)
-							.ToArray();
-
-						foreach (var file in files)
-						{
-							file.RelativePath = importFiles[file].DestinationRelativePath;
-						}
-
 						try
 						{
-							EfkPkg.ExtractFiles(targetDirPath, files);
+							var results = importer.Import();
 
-							var effects = files.Where(_ => _.Type == EfkPkg.FileType.Effect);
-							if (effects.Count() == 1)
+							if (results != null && results.Length == 1)
 							{
-								string filePath = Path.Combine(targetDirPath, effects.First().RelativePath);
-								filePath = filePath.Replace("\\", "/");
-								Commands.Open(filePath);
+								Commands.Open(results[0]);
 							}
 						}
 						catch (Exception e)
@@ -275,7 +192,6 @@ namespace Effekseer.GUI.Dialog
 			}
 		}
 
-		// Display file list
 		private void UpdateFileList(swig.Vec2 size)
 		{
 			var textImportSourceFile = MultiLanguageTextProvider.GetText("ImportSourceFile");
@@ -294,15 +210,15 @@ namespace Effekseer.GUI.Dialog
 			Manager.NativeManager.Separator();
 
 			// display file table body
-			foreach (var file in EfkPkg.AllFiles)
+			foreach (var import in importer.ImportedFiles)
 			{
-				var import = importFiles[file];
+				var file = import.FileInfo;
 				bool[] doesImport = new bool[] { import.DoesImport };
 
 				// source file
 				if (Manager.NativeManager.Checkbox(file.RelativePath, doesImport))
 				{
-					SetFileImportSettings(file, doesImport[0]);
+					importer.SetFileImportSettings(file, doesImport[0]);
 				}
 				Manager.NativeManager.NextColumn();
 
@@ -310,61 +226,21 @@ namespace Effekseer.GUI.Dialog
 				if (import.DoesImport)
 				{
 					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetFrameHeight());
-					if (Manager.NativeManager.InputText(import.GetStateIcon() + "###" +
+					if (Manager.NativeManager.InputText(GetStateIcon(import.State) + "###" +
 						file.HashName, import.DestinationRelativePath))
 					{
 						import.DestinationRelativePath = Manager.NativeManager.GetInputTextResult();
-						import.ValidationPath(targetDirPath);
+						importer.RenewIOStatus();
 					}
 					Manager.NativeManager.PopItemWidth();
 				}
+
 				Manager.NativeManager.NextColumn();
 			}
 
 			Manager.NativeManager.Columns(1);
 
 			Manager.NativeManager.EndChildFrame();
-		}
-
-		// Set file import settings
-		void SetFileImportSettings(EfkPkg.FileInfo file, bool doesImport)
-		{
-			var import = importFiles[file];
-			import.DoesImport = doesImport;
-
-			if (doesImport)
-			{
-				// Enable dependency files
-				if (file.Dependencies != null)
-				{
-					foreach (var fileDep in file.Dependencies)
-					{
-						SetFileImportSettings(fileDep, true);
-					}
-				}
-			}
-			else
-			{
-				// Disable when nowhere dependent
-				foreach (var fileEfc in EfkPkg.AllFiles)
-				{
-					if (importFiles[fileEfc].DoesImport &&
-						fileEfc.Dependencies != null &&
-						fileEfc.Dependencies.Contains(file))
-					{
-						import.DoesImport = true;
-					}
-				}
-
-				// Disable dependency files
-				if (file.Dependencies != null)
-				{
-					foreach (var fileDep in file.Dependencies)
-					{
-						SetFileImportSettings(fileDep, false);
-					}
-				}
-			}
 		}
 	}
 }
