@@ -101,18 +101,6 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.Spacing();
 
-				if (Manager.NativeManager.Button("RemoveDir"))
-				{
-					importer.RemoveDirectoryNames();
-				}
-
-				if (Manager.NativeManager.Button("Rename"))
-				{
-					importer.RenameFileNames();
-				}
-
-				Manager.NativeManager.Spacing();
-
 				{
 					var text = MultiLanguageTextProvider.GetText("ImportDestinationDirectory");
 					Manager.NativeManager.PushItemWidth(-Manager.NativeManager.GetFrameHeight());
@@ -142,6 +130,42 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.Spacing();
 
+				if (Manager.NativeManager.Button("RemoveDir"))
+				{
+					importer.RemoveDirectoryNames();
+				}
+
+				if (Manager.NativeManager.Button("Rename"))
+				{
+					importer.RenameFileNames();
+				}
+
+				Manager.NativeManager.Spacing();
+
+
+				{
+					var rootDir = new[] { importer.ResourceDestination == EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory };
+
+					if (Manager.NativeManager.Checkbox("Use Root Dir", rootDir))
+					{
+						importer.ResourceDestination = rootDir[0] ? EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory : EfkPkgImporter.ResourceDestinationType.RelativePath;
+						importer.RenewIOStatus();
+					}
+
+					if (importer.ResourceDestination == EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory)
+					{
+						foreach (var root in importer.ResourceRoots)
+						{
+							if (Manager.NativeManager.InputText(root.Type.ToString(), root.RootPath))
+							{
+								root.RootPath = Manager.NativeManager.GetInputTextResult();
+								importer.RenewIOStatus();
+							}
+						}
+					}
+				}
+
+				
 				Manager.NativeManager.Spacing();
 
 				var size = Manager.NativeManager.GetContentRegionAvail();

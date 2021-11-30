@@ -106,6 +106,14 @@ namespace Effekseer.IO
 			}
 		}
 
+		public IReadOnlyCollection<ResourceRoot> ResourceRoots
+		{
+			get
+			{
+				return resourceRoots;
+			}
+		}
+
 		public ResourceDestinationType ResourceDestination
 		{
 			get
