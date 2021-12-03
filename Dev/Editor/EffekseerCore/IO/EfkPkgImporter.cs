@@ -239,7 +239,85 @@ namespace Effekseer.IO
 			}
 		}
 
+		public void RenameFileNamesToAvoidOverwrite()
+		{
+			var pathToHashes = GetRelatedFilePathToHashes();
+
+			foreach (var imported in importedFiles)
+			{
+				var path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
+				var dirPath = Path.GetDirectoryName(path);
+
+				var relatedPathToHashes = pathToHashes.Where(_ => Path.GetDirectoryName(_.Key) == dirPath);
+
+				if (relatedPathToHashes.Any(_ => _.Key == path && _.Value != imported.FileInfo.HashName))
+				{
+					while (relatedPathToHashes.Any(_ => _.Key == path))
+					{
+						var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
+						var fn = Path.GetFileNameWithoutExtension(imported.DestinationRelativePath);
+						fn += "_" + Path.GetExtension(imported.DestinationRelativePath);
+						imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, fn));
+
+						path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
+					}
+				}
+			}
+		}
+
+		public void RenameFileNamesToMergeSameFiles()
+		{
+			var pathToHashes = GetRelatedFilePathToHashes();
+
+			foreach (var imported in importedFiles)
+			{
+				var path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
+				var dirPath = Path.GetDirectoryName(path);
+
+				var relatedPathToHashes = pathToHashes.Where(_ => Path.GetDirectoryName(_.Key) == dirPath);
+
+				if (relatedPathToHashes.Any(_ => _.Value == imported.FileInfo.HashName))
+				{
+					var p = relatedPathToHashes.First(_ => _.Value == imported.FileInfo.HashName);
+					var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
+					imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, Path.GetFileName(p.Key)));
+				}
+			}
+		}
+
 		public void RenameFileNames()
+		{
+			var pathToHashes = GetRelatedFilePathToHashes();
+
+			foreach (var imported in importedFiles)
+			{
+				var path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
+				var dirPath = Path.GetDirectoryName(path);
+
+				var relatedPathToHashes = pathToHashes.Where(_ => Path.GetDirectoryName(_.Key) == dirPath);
+
+				if (relatedPathToHashes.Any(_ => _.Value == imported.FileInfo.HashName))
+				{
+					var p = relatedPathToHashes.First(_ => _.Value == imported.FileInfo.HashName);
+					var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
+					imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, Path.GetFileName(p.Key)));
+				}
+				else if (relatedPathToHashes.Any(_ => _.Key == path))
+				{
+					while (relatedPathToHashes.Any(_ => _.Key == path))
+					{
+						var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
+						var fn = Path.GetFileNameWithoutExtension(imported.DestinationRelativePath);
+						fn += "_" + Path.GetExtension(imported.DestinationRelativePath);
+						imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, fn));
+
+						path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
+					}
+				}
+			}
+		}
+
+		Dictionary<string, string> GetRelatedFilePathToHashes()
 		{
 			var pathToHashes = new Dictionary<string, string>();
 
@@ -273,32 +351,7 @@ namespace Effekseer.IO
 				}
 			}
 
-			foreach (var imported in importedFiles)
-			{
-				var path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
-				var dirPath = Path.GetDirectoryName(path);
-
-				var relatedPathToHashes = pathToHashes.Where(_ => Path.GetDirectoryName(_.Key) == dirPath);
-
-				if (relatedPathToHashes.Any(_ => _.Value == imported.FileInfo.HashName))
-				{
-					var p = relatedPathToHashes.First(_ => _.Value == imported.FileInfo.HashName);
-					var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
-					imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, Path.GetFileName(p.Key)));
-				}
-				else if (relatedPathToHashes.Any(_ => _.Key == path))
-				{
-					while (relatedPathToHashes.Any(_ => _.Key == path))
-					{
-						var dn = Path.GetDirectoryName(imported.DestinationRelativePath);
-						var fn = Path.GetFileNameWithoutExtension(imported.DestinationRelativePath);
-						fn += "_" + Path.GetExtension(imported.DestinationRelativePath);
-						imported.DestinationRelativePath = Misc.BackSlashToSlash(Path.Combine(dn, fn));
-
-						path = imported.GetDestinationPath(DestinationPath, resourceRoots, resourceDestinationType);
-					}
-				}
-			}
+			return pathToHashes;
 		}
 	}
 }

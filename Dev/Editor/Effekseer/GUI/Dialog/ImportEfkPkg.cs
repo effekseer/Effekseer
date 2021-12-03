@@ -135,13 +135,21 @@ namespace Effekseer.GUI.Dialog
 					importer.RemoveDirectoryNames();
 				}
 
-				if (Manager.NativeManager.Button("Rename"))
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.Button("Rename to avoid overwrite"))
 				{
-					importer.RenameFileNames();
+					importer.RenameFileNamesToAvoidOverwrite();
+				}
+
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.Button("Rename to MergeSameFiles"))
+				{
+					importer.RenameFileNamesToMergeSameFiles();
 				}
 
 				Manager.NativeManager.Spacing();
-
 
 				{
 					var rootDir = new[] { importer.ResourceDestination == EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory };
@@ -165,7 +173,7 @@ namespace Effekseer.GUI.Dialog
 					}
 				}
 
-				
+
 				Manager.NativeManager.Spacing();
 
 				var size = Manager.NativeManager.GetContentRegionAvail();
