@@ -18,10 +18,10 @@ namespace Effekseer.IO
 
 		public class ResourceRoot
 		{
-			public EfkPkg.FileType Type { get; private set; }
+			public FileType Type { get; private set; }
 			public string RootPath;
 
-			internal ResourceRoot(EfkPkg.FileType type)
+			internal ResourceRoot(FileType type)
 			{
 				Type = type;
 			}
@@ -133,11 +133,11 @@ namespace Effekseer.IO
 
 		public EfkPkgImporter(EfkPkg efkpkg, string defaultDestinationPath)
 		{
-			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Effect) { RootPath = "Effects/" });
-			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Texture) { RootPath = "Textures/" });
-			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Material) { RootPath = "Materials/" });
-			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Sound) { RootPath = "Sounds/" });
-			resourceRoots.Add(new ResourceRoot(EfkPkg.FileType.Curve) { RootPath = "Curves/" });
+			resourceRoots.Add(new ResourceRoot(FileType.Effect) { RootPath = "Effects/" });
+			resourceRoots.Add(new ResourceRoot(FileType.Texture) { RootPath = "Textures/" });
+			resourceRoots.Add(new ResourceRoot(FileType.Material) { RootPath = "Materials/" });
+			resourceRoots.Add(new ResourceRoot(FileType.Sound) { RootPath = "Sounds/" });
+			resourceRoots.Add(new ResourceRoot(FileType.Curve) { RootPath = "Curves/" });
 
 			DestinationPath = defaultDestinationPath;
 			this.efkpkg = efkpkg;
@@ -182,7 +182,7 @@ namespace Effekseer.IO
 
 			efkpkg.ExtractFiles(DestinationPath, files.Select(_ => _.FileInfo).ToArray());
 
-			var effects = files.Where(_ => _.FileInfo.Type == EfkPkg.FileType.Effect);
+			var effects = files.Where(_ => _.FileInfo.Type == FileType.Effect);
 			return effects.Select(_ => Misc.BackSlashToSlash(Path.Combine(DestinationPath, _.FileInfo.RelativePath))).ToArray();
 		}
 
