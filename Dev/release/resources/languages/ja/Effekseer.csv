@@ -38,10 +38,6 @@ GenerateAlpha2,生成(ブレンド+加算),
 Height,縦幅,
 Help,ヘルプ,
 Import,インポート,
-ImportSourcePackage,インポート元のパッケージ,
-ImportDestinationDirectory,インポート先のディレクトリ,
-ImportSourceFile,インポート元のファイル,
-ImportDestinationFile,インポート先のファイル,
 Infinite,無限,
 InternalAbout,Effekseerについて,
 InternalAddNode,ノードの追加,
@@ -338,3 +334,11 @@ Error_FailedToOpenHelp,ヘルプを開けませんでした。公式サイトか
 ChangeRestartValues_Message,次回のEffekseer起動時に適用します。,
 ,,
 ImportEfkPkgTitle,Effekseerパッケージのインポート,
+ImportSourcePackage,インポート元のパッケージ,
+ImportDestinationDirectory,インポート先のディレクトリ,
+ImportSourceFile,インポート元のファイル,
+ImportDestinationFile,インポート先のファイル,
+ImportRemoveDirPath,ディレクトリ名をパスから除去
+ImportAvoidOverwrite,上書きを避けるように名前を変更
+ImportMergeSameFiles,同一ファイルを共通化するように名前を変更
+ImportUseRootDir,ルートディレクトリの使用
