@@ -38,10 +38,6 @@ GenerateAlpha2,Generate alpha(Blend+Add),
 Height,Height,
 Help,Help,
 Import,Import,
-ImportSourcePackage,Source package,
-ImportDestinationDirectory,Destination directory,
-ImportSourceFile,Source files,
-ImportDestinationFile,Destination files,
 Infinite,Infinite,
 InternalAbout,About Effekseer,
 InternalAddNode,Add Node,
@@ -339,3 +335,11 @@ Error_FailedToOpenHelp,Could not open help. Please see from the official website
 ChangeRestartValues_Message,It adapts to the next startup,
 ,,
 ImportEfkPkgTitle,Importing the Effekseer package,
+ImportSourcePackage,Source package,
+ImportDestinationDirectory,Destination directory,
+ImportSourceFile,Source files,
+ImportDestinationFile,Destination files,
+ImportRemoveDirPath,Remove directory names from the path
+ImportAvoidOverwrite,Rename to avoid overwriting
+ImportMergeSameFiles,Rename same files to make them common
+ImportUseRootDir,Use the root directory
