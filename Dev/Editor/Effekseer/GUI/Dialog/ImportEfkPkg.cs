@@ -95,7 +95,7 @@ namespace Effekseer.GUI.Dialog
 					var text = MultiLanguageTextProvider.GetText("ImportSourcePackage");
 					Manager.NativeManager.PushItemWidth(-1);
 					Manager.NativeManager.Text(text);
-					Manager.NativeManager.InputText("###SSourceFilePath", sourceFilePath, swig.InputTextFlags.ReadOnly);
+					Manager.NativeManager.InputText("###SourceFilePath", sourceFilePath, swig.InputTextFlags.ReadOnly);
 					Manager.NativeManager.PopItemWidth();
 				}
 
@@ -130,21 +130,17 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.Spacing();
 
-				if (Manager.NativeManager.Button("RemoveDir###RemoveDirPath"))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ImportRemoveDirPath") + "###ImportRemoveDirPath"))
 				{
 					importer.RemoveDirectoryNames();
 				}
 
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.Button("Rename to avoid overwrite###AvoidOverwrite"))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ImportAvoidOverwrite") + "###ImportAvoidOverwrite"))
 				{
 					importer.RenameFileNamesToAvoidOverwrite();
 				}
 
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.Button("Rename to MergeSameFiles###MergeFiles"))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ImportMergeSameFiles") + "###ImportMergeSameFiles"))
 				{
 					importer.RenameFileNamesToMergeSameFiles();
 				}
@@ -154,7 +150,7 @@ namespace Effekseer.GUI.Dialog
 				{
 					var rootDir = new[] { importer.ResourceDestination == EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory };
 
-					if (Manager.NativeManager.Checkbox("Use Root Dir###UseRootDir", rootDir))
+					if (Manager.NativeManager.Checkbox(MultiLanguageTextProvider.GetText("ImportUseRootDir") + "###UseRootDir", rootDir))
 					{
 						importer.ResourceDestination = rootDir[0] ? EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory : EfkPkgImporter.ResourceDestinationType.RelativePath;
 						importer.RenewIOStatus();
