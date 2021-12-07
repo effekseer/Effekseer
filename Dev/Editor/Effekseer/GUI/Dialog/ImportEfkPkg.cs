@@ -130,21 +130,21 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.Spacing();
 
-				if (Manager.NativeManager.Button("RemoveDir"))
+				if (Manager.NativeManager.Button("RemoveDir###RemoveDirPath"))
 				{
 					importer.RemoveDirectoryNames();
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Rename to avoid overwrite"))
+				if (Manager.NativeManager.Button("Rename to avoid overwrite###AvoidOverwrite"))
 				{
 					importer.RenameFileNamesToAvoidOverwrite();
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Rename to MergeSameFiles"))
+				if (Manager.NativeManager.Button("Rename to MergeSameFiles###MergeFiles"))
 				{
 					importer.RenameFileNamesToMergeSameFiles();
 				}
@@ -154,7 +154,7 @@ namespace Effekseer.GUI.Dialog
 				{
 					var rootDir = new[] { importer.ResourceDestination == EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory };
 
-					if (Manager.NativeManager.Checkbox("Use Root Dir", rootDir))
+					if (Manager.NativeManager.Checkbox("Use Root Dir###UseRootDir", rootDir))
 					{
 						importer.ResourceDestination = rootDir[0] ? EfkPkgImporter.ResourceDestinationType.ResourceRootDirectory : EfkPkgImporter.ResourceDestinationType.RelativePath;
 						importer.RenewIOStatus();
