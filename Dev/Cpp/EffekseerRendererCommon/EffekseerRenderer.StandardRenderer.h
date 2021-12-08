@@ -105,7 +105,12 @@ struct StandardRendererState
 		HandleUserData = nullptr;
 	}
 
-	bool operator!=(const StandardRendererState state)
+	bool operator==(const StandardRendererState& state) const
+	{
+		return !(*this != state);
+	}
+
+	bool operator!=(const StandardRendererState& state) const
 	{
 		if (Collector != state.Collector)
 			return true;
@@ -353,11 +358,6 @@ public:
 
 	void BeginRenderingAndRenderingIfRequired(StandardRendererState state, int32_t count, int& stride, void*& data)
 	{
-		if (renderInfos_.size() > 0 && renderInfos_[renderInfos_.size() - 1].state != state)
-		{
-			//Rendering();
-		}
-
 		if (renderInfos_.size() > 0 && (renderInfos_[renderInfos_.size() - 1].isLargeSize || renderInfos_[renderInfos_.size() - 1].hasDistortion))
 		{
 			Rendering();
@@ -407,14 +407,22 @@ public:
 
 		data = (vertexCaches_.data() + oldOffset);
 
-		RenderInfo renderInfo;
-		renderInfo.state = state;
-		renderInfo.size = requiredSize;
-		renderInfo.offset = oldOffset;
-		renderInfo.stride = stride;
-		renderInfo.isLargeSize = requiredSize > vertexCacheMaxSize_;
-		renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
-		renderInfos_.emplace_back(renderInfo);
+		if (renderInfos_.size() > 0 && renderInfos_.back().state == state)
+		{
+			RenderInfo& renderInfo = renderInfos_.back();
+			renderInfo.size += requiredSize;
+		}
+		else
+		{
+			RenderInfo renderInfo;
+			renderInfo.state = state;
+			renderInfo.size = requiredSize;
+			renderInfo.offset = oldOffset;
+			renderInfo.stride = stride;
+			renderInfo.isLargeSize = requiredSize > vertexCacheMaxSize_;
+			renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
+			renderInfos_.emplace_back(renderInfo);
+		}
 	}
 
 	void ResetAndRenderingIfRequired()
