@@ -68,6 +68,7 @@ echo for github actions
 rmdir /s /q %RDIR_R%\src\3rdParty\glslang\Test\baseLegalResults
 rmdir /s /q %RDIR_R%\src\3rdParty\glslang\Test\baseResults
 
+
 mkdir %RDIR_R%\src\3rdParty\stb_effekseer
 robocopy Dev\Cpp\3rdParty\stb_effekseer %RDIR_R%\src\3rdParty\stb_effekseer *.h
 
