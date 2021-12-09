@@ -65,8 +65,7 @@ mkdir %RDIR_R%\src\3rdParty\glslang
 robocopy Dev\Cpp\3rdParty\glslang %RDIR_R%\src\3rdParty\glslang /S
 
 echo for github actions
-rmdir /s /q %RDIR_R%\src\3rdParty\glslang\Test\baseLegalResults
-rmdir /s /q %RDIR_R%\src\3rdParty\glslang\Test\baseResults
+rmdir /s /q %RDIR_R%\src\3rdParty\glslang\Test
 
 
 mkdir %RDIR_R%\src\3rdParty\stb_effekseer
