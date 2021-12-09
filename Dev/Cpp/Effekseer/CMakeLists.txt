@@ -75,7 +75,6 @@ set(effekseer_src
     Effekseer/SIMD/Mat44f.cpp
     Effekseer/SIMD/Utils.cpp
     Effekseer/Noise/CurlNoise.cpp
-    Effekseer/Noise/PerlinNoise.cpp
     Effekseer/ForceField/ForceFields.cpp
     Effekseer/Model/ProceduralModelGenerator.cpp
     Effekseer/Model/Model.cpp

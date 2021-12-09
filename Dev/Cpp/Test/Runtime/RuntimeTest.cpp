@@ -76,6 +76,31 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
+	auto singleResourceData_00_Basic_Test = [&](const char16_t* name, const char* savename, int time) -> void
+	{
+		srand(0);
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../ResourceData/samples/00_Basic/" + name + u".efkefc").c_str());
+
+		for (size_t i = 0; i < time; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		platform->StopAllEffects();
+	};
+
+	{
+		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
+
+		Effekseer::Matrix44 mat;
+		mat.LookAtRH({0, 20, 20}, {0, 20, 0}, {0, 1, 0});
+		platform->GetRenderer()->SetCameraMatrix(mat);
+
+		singleResourceData_00_Basic_Test(u"Simple_Turbulence_Fireworks", "Simple_Turbulence_Fireworks", 180);
+
+		platform->GetRenderer()->SetCameraMatrix(cameraMat);
+	}
+
 	single10Test(u"SimpleLaser", "SimpleLaser");
 	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
