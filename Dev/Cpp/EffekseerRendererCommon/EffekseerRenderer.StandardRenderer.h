@@ -356,7 +356,7 @@ public:
 		return static_cast<int32_t>(stride);
 	}
 
-	void BeginRenderingAndRenderingIfRequired(StandardRendererState state, int32_t count, int& stride, void*& data)
+	void BeginRenderingAndRenderingIfRequired(const StandardRendererState& state, int32_t count, int& stride, void*& data)
 	{
 		if (renderInfos_.size() > 0 && (renderInfos_[renderInfos_.size() - 1].isLargeSize || renderInfos_[renderInfos_.size() - 1].hasDistortion))
 		{
@@ -366,6 +366,7 @@ public:
 		stride = CalculateCurrentStride(state);
 
 		const int32_t requiredSize = count * stride;
+		const auto spriteStride = stride * 4;
 
 		if (requiredSize > vertexCacheMaxSize_ || requiredSize == 0)
 		{
@@ -373,7 +374,7 @@ public:
 			return;
 		}
 
-		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4) > vertexCacheMaxSize_)
+		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_)
 		{
 			Rendering();
 		}
@@ -390,13 +391,13 @@ public:
 				vertexCacheOffset_ = 0;
 			}
 
-			if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4) > vertexCacheMaxSize_)
+			if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_)
 			{
 				vertexCacheOffset_ = 0;
 			}
 		}
 
-		vertexCacheOffset_ = EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4);
+		vertexCacheOffset_ = EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride);
 
 		const auto oldOffset = vertexCacheOffset_;
 		vertexCacheOffset_ += requiredSize;
@@ -407,7 +408,7 @@ public:
 
 		data = (vertexCaches_.data() + oldOffset);
 
-		if (renderInfos_.size() > 0 && renderInfos_.back().state == state)
+		if (renderInfos_.size() > 0 && renderInfos_.back().state == state && (renderInfos_.back().size + requiredSize) / spriteStride <= m_renderer->GetSquareMaxCount())
 		{
 			RenderInfo& renderInfo = renderInfos_.back();
 			renderInfo.size += requiredSize;
@@ -438,8 +439,10 @@ public:
 
 	void Rendering()
 	{
-		if (vertexCacheOffset_ == 0)
+		if (renderInfos_.size() == 0)
+		{
 			return;
+		}
 
 		int cpuBufStart = INT_MAX;
 		int cpuBufEnd = 0;
@@ -512,7 +515,6 @@ public:
 			}
 		}
 
-		vertexCacheOffset_ = 0;
 		renderInfos_.clear();
 
 		m_renderer->GetImpl()->CurrentRingBufferIndex++;
