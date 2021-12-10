@@ -40,7 +40,7 @@ float atan2(in float y, in float x) {
 static const char* material_common_functions =
 	R"(
 
-#define FLT_EPSILON 1.192092896e-07f
+#define FLT_EPSILON 1.192092896e-07
 
 vec3 PositivePow(vec3 base, vec3 power)
 {
