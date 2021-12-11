@@ -205,7 +205,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 	GLExt::glLinkProgram(program);
 	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
 
-// #ifndef NDEBUG
+#ifndef NDEBUG
 	if (res_link == GL_FALSE)
 	{
 		// output errors
@@ -235,7 +235,7 @@ bool Shader::CompileShader(OpenGLDeviceType deviceType,
 			LOG(log);
 		}
 	}
-// #endif
+#endif
 	// dispose shader objects
 	GLExt::glDeleteShader(frag_shader);
 	GLExt::glDeleteShader(vert_shader);
