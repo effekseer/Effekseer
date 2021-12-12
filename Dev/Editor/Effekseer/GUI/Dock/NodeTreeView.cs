@@ -523,7 +523,10 @@ namespace Effekseer.GUI.Dock
 
 		private void SelectNodeIfClicked()
 		{
-			if (Manager.NativeManager.IsItemClicked(0) ||
+			int KEY_ENTER = 257;
+
+			if ((Manager.NativeManager.IsItemFocused() && Manager.NativeManager.IsKeyDown(KEY_ENTER)) ||
+				Manager.NativeManager.IsItemClicked(0) ||
 				Manager.NativeManager.IsItemClicked(1))
 			{
 				Core.SelectedNode = this.Node;
