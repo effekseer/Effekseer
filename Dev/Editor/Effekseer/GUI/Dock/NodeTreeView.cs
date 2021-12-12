@@ -524,8 +524,7 @@ namespace Effekseer.GUI.Dock
 		private void SelectNodeIfClicked()
 		{
 			if (Manager.NativeManager.IsItemClicked(0) ||
-				Manager.NativeManager.IsItemClicked(1) ||
-				Manager.NativeManager.IsItemFocused())
+				Manager.NativeManager.IsItemClicked(1))
 			{
 				Core.SelectedNode = this.Node;
 			}
