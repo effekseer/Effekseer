@@ -546,6 +546,8 @@ std::shared_ptr<Node> FBXConverter::LoadHierarchy(std::shared_ptr<Node> parent, 
 	auto geoR = fbxNode->GetGeometricRotation(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
 	auto geoS = fbxNode->GetGeometricScaling(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
 	node->GeometryMatrix = FbxAMatrix(geoT, geoR, geoS);
+
+	node->EvaluatedLocalMatrix = fbxNode->EvaluateLocalTransform();
 	node->EvaluatedGlobalMatrix = fbxNode->EvaluateGlobalTransform();
 
 	node->PreRotation = fbxNode->GetPreRotation(fbxsdk::FbxNode::EPivotSet::eSourcePivot);

@@ -43,6 +43,9 @@ public:
 	FbxMatrix GeometryMatrix;
 
 	//! For Debug
+	FbxMatrix EvaluatedLocalMatrix;
+
+	//! For Debug
 	FbxMatrix EvaluatedGlobalMatrix;
 
 	std::vector<std::shared_ptr<Node>> Children;
@@ -290,16 +293,16 @@ struct NodeState
 		matS.SetTRS(zero, zero, s);
 
 		FbxMatrix matSOffset;
-		matSOffset.SetTRS(zero, zero, this->TargetNode->ScalingOffset + one);
+		matSOffset.SetTRS(this->TargetNode->ScalingOffset, zero, one);
 
 		FbxMatrix matSPivot;
-		matSPivot.SetTRS(zero, zero, this->TargetNode->ScalingPivot + one);
+		matSPivot.SetTRS(this->TargetNode->ScalingPivot, zero, one);
 
 		FbxMatrix matROffset;
-		matROffset.SetTRS(zero, this->TargetNode->RotationOffset, one);
+		matROffset.SetTRS(this->TargetNode->RotationOffset, zero, one);
 
 		FbxMatrix matRPivot;
-		matRPivot.SetTRS(zero, this->TargetNode->RotationPivot, one);
+		matRPivot.SetTRS(this->TargetNode->RotationPivot, zero, one);
 
 		FbxMatrix matRPre;
 		matRPre.SetTRS(zero, this->TargetNode->PreRotation, one);
@@ -308,8 +311,8 @@ struct NodeState
 		matRPost.SetTRS(zero, this->TargetNode->PostRotation, one);
 
 		// https://help.autodesk.com/view/FBX/2017/ENU/?guid=__files_GUID_10CDD63C_79C1_4F2D_BB28_AD2BE65A02ED_htm
-		MatLocal = matT * matROffset * matRPivot * matRPre * matR * matRPost * matRPivot.Inverse() * matSOffset * matSPivot * matS *
-				   matSPivot.Inverse();
+		MatLocal = matT * matROffset * matRPivot * matRPre * matR * matRPost.Inverse() * matRPivot.Inverse() * matSOffset * matSPivot *
+				   matS * matSPivot.Inverse();
 	}
 };
 
