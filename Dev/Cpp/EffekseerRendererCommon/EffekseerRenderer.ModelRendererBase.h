@@ -971,7 +971,8 @@ public:
 		SHADER* shader_ = nullptr;
 		bool renderDistortedBackground = false;
 
-		if (materialRenderData != nullptr && materialRenderData->MaterialIndex >= 0 &&
+		if (collector_.ShaderType == EffekseerRenderer::RendererShaderType::Material &&
+			materialRenderData != nullptr && materialRenderData->MaterialIndex >= 0 &&
 			param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex) != nullptr)
 		{
 			material = param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex);
