@@ -431,6 +431,11 @@ namespace Effekseer.IO
 					}
 
 					string filePath = Path.Combine(dirPath, file.RelativePath);
+					string resourceDirPath = Path.GetDirectoryName(filePath);
+					if (!Directory.Exists(resourceDirPath))
+					{
+						Directory.CreateDirectory(resourceDirPath);
+					}
 
 					EfkEfc efkefc = new EfkEfc();
 					var doc = efkefc.Load(file.Data);

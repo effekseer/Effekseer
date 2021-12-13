@@ -176,9 +176,8 @@ namespace Effekseer.IO
 
 			foreach (var file in files)
 			{
-				file.FileInfo.RelativePath = file.DestinationRelativePath;
+				file.FileInfo.RelativePath = file.GetDestinationPath(string.Empty, resourceRoots, resourceDestinationType);
 			}
-
 
 			efkpkg.ExtractFiles(DestinationPath, files.Select(_ => _.FileInfo).ToArray());
 
