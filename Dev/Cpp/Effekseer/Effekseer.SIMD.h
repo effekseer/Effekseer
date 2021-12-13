@@ -934,7 +934,7 @@ inline Float4 Float4::SetInt(int32_t x, int32_t y, int32_t z, int32_t w)
 inline Float4 Float4::SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w)
 {
 	const uint32_t i[4] = {x, y, z, w};
-	return vreinterpretq_u32_f32(vld1q_u32(i));
+	return vreinterpretq_f32_u32(vld1q_u32(i));
 }
 
 inline Float4 Float4::Sqrt(const Float4& in)
