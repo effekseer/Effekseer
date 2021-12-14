@@ -25,24 +25,24 @@ struct AdvancedParameter
 
 cbuffer PS_ConstanBuffer : register(b0)
 {
-    float4 _290_fLightDirection : register(c0);
-    float4 _290_fLightColor : register(c1);
-    float4 _290_fLightAmbient : register(c2);
-    float4 _290_fFlipbookParameter : register(c3);
-    float4 _290_fUVDistortionParameter : register(c4);
-    float4 _290_fBlendTextureParameter : register(c5);
-    float4 _290_fCameraFrontDirection : register(c6);
-    float4 _290_fFalloffParameter : register(c7);
-    float4 _290_fFalloffBeginColor : register(c8);
-    float4 _290_fFalloffEndColor : register(c9);
-    float4 _290_fEmissiveScaling : register(c10);
-    float4 _290_fEdgeColor : register(c11);
-    float4 _290_fEdgeParameter : register(c12);
-    float4 _290_softParticleParam : register(c13);
-    float4 _290_reconstructionParam1 : register(c14);
-    float4 _290_reconstructionParam2 : register(c15);
-    float4 _290_mUVInversedBack : register(c16);
-    float4 _290_miscFlags : register(c17);
+    float4 _339_fLightDirection : register(c0);
+    float4 _339_fLightColor : register(c1);
+    float4 _339_fLightAmbient : register(c2);
+    float4 _339_fFlipbookParameter : register(c3);
+    float4 _339_fUVDistortionParameter : register(c4);
+    float4 _339_fBlendTextureParameter : register(c5);
+    float4 _339_fCameraFrontDirection : register(c6);
+    float4 _339_fFalloffParameter : register(c7);
+    float4 _339_fFalloffBeginColor : register(c8);
+    float4 _339_fFalloffEndColor : register(c9);
+    float4 _339_fEmissiveScaling : register(c10);
+    float4 _339_fEdgeColor : register(c11);
+    float4 _339_fEdgeParameter : register(c12);
+    float4 _339_softParticleParam : register(c13);
+    float4 _339_reconstructionParam1 : register(c14);
+    float4 _339_reconstructionParam2 : register(c15);
+    float4 _339_mUVInversedBack : register(c16);
+    float4 _339_miscFlags : register(c17);
 };
 
 uniform sampler2D Sampler_sampler_uvDistortionTex : register(s3);
@@ -96,14 +96,6 @@ AdvancedParameter DisolveAdvancedParameter(PS_Input psinput)
     return ret;
 }
 
-float2 UVDistortionOffset(float2 uv, float2 uvInversed, sampler2D SPIRV_Cross_Combinedts)
-{
-    float2 UVOffset = (tex2D(SPIRV_Cross_Combinedts, uv).xy * 2.0f) - 1.0f.xx;
-    UVOffset.y *= (-1.0f);
-    UVOffset.y = uvInversed.x + (uvInversed.y * UVOffset.y);
-    return UVOffset;
-}
-
 float3 PositivePow(float3 base, float3 power)
 {
     return pow(max(abs(base), 1.1920928955078125e-07f.xxx), power);
@@ -122,9 +114,9 @@ float4 LinearToSRGB(float4 c)
     return float4(LinearToSRGB(param), c.w);
 }
 
-float4 ConvertFromSRGBTexture(float4 c)
+float4 ConvertFromSRGBTexture(float4 c, bool isValid)
 {
-    if (_290_miscFlags.x == 0.0f)
+    if (!isValid)
     {
         return c;
     }
@@ -132,11 +124,33 @@ float4 ConvertFromSRGBTexture(float4 c)
     return LinearToSRGB(param);
 }
 
-void ApplyFlipbook(inout float4 dst, float4 flipbookParameter, float4 vcolor, float2 nextUV, float flipbookRate, sampler2D SPIRV_Cross_Combinedts)
+float2 UVDistortionOffset(float2 uv, float2 uvInversed, bool convertFromSRGB, sampler2D SPIRV_Cross_Combinedts)
+{
+    float4 sampledColor = tex2D(SPIRV_Cross_Combinedts, uv);
+    if (convertFromSRGB)
+    {
+        float4 param = sampledColor;
+        bool param_1 = convertFromSRGB;
+        sampledColor = ConvertFromSRGBTexture(param, param_1);
+    }
+    float2 UVOffset = (sampledColor.xy * 2.0f) - 1.0f.xx;
+    UVOffset.y *= (-1.0f);
+    UVOffset.y = uvInversed.x + (uvInversed.y * UVOffset.y);
+    return UVOffset;
+}
+
+void ApplyFlipbook(inout float4 dst, float4 flipbookParameter, float4 vcolor, float2 nextUV, float flipbookRate, bool convertFromSRGB, sampler2D SPIRV_Cross_Combinedts)
 {
     if (flipbookParameter.x > 0.0f)
     {
-        float4 NextPixelColor = tex2D(SPIRV_Cross_Combinedts, nextUV) * vcolor;
+        float4 sampledColor = tex2D(SPIRV_Cross_Combinedts, nextUV);
+        if (convertFromSRGB)
+        {
+            float4 param = sampledColor;
+            bool param_1 = convertFromSRGB;
+            sampledColor = ConvertFromSRGBTexture(param, param_1);
+        }
+        float4 NextPixelColor = sampledColor * vcolor;
         if (flipbookParameter.y == 1.0f)
         {
             dst = lerp(dst, NextPixelColor, flipbookRate.xxxx);
@@ -148,29 +162,29 @@ void ApplyTextureBlending(inout float4 dstColor, float4 blendColor, float blendT
 {
     if (blendType == 0.0f)
     {
-        float3 _111 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
-        dstColor = float4(_111.x, _111.y, _111.z, dstColor.w);
+        float3 _214 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
+        dstColor = float4(_214.x, _214.y, _214.z, dstColor.w);
     }
     else
     {
         if (blendType == 1.0f)
         {
-            float3 _123 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = float4(_123.x, _123.y, _123.z, dstColor.w);
+            float3 _226 = dstColor.xyz + (blendColor.xyz * blendColor.w);
+            dstColor = float4(_226.x, _226.y, _226.z, dstColor.w);
         }
         else
         {
             if (blendType == 2.0f)
             {
-                float3 _136 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = float4(_136.x, _136.y, _136.z, dstColor.w);
+                float3 _239 = dstColor.xyz - (blendColor.xyz * blendColor.w);
+                dstColor = float4(_239.x, _239.y, _239.z, dstColor.w);
             }
             else
             {
                 if (blendType == 3.0f)
                 {
-                    float3 _149 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = float4(_149.x, _149.y, _149.z, dstColor.w);
+                    float3 _252 = dstColor.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor = float4(_252.x, _252.y, _252.z, dstColor.w);
                 }
             }
         }
@@ -188,9 +202,9 @@ float4 SRGBToLinear(float4 c)
     return float4(SRGBToLinear(param), c.w);
 }
 
-float4 ConvertToScreen(float4 c)
+float4 ConvertToScreen(float4 c, bool isValid)
 {
-    if (_290_miscFlags.x == 0.0f)
+    if (!isValid)
     {
         return c;
     }
@@ -200,74 +214,85 @@ float4 ConvertToScreen(float4 c)
 
 float4 _main(PS_Input Input)
 {
+    bool convertColorSpace = _339_miscFlags.x != 0.0f;
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = _290_fUVDistortionParameter.zw;
-    float2 UVOffset = UVDistortionOffset(param_1, param_2, Sampler_sampler_uvDistortionTex);
-    UVOffset *= _290_fUVDistortionParameter.x;
-    float4 param_3 = tex2D(Sampler_sampler_colorTex, Input.UV_Others.xy + UVOffset);
-    float4 Output = ConvertFromSRGBTexture(param_3) * Input.Color;
+    float2 param_2 = _339_fUVDistortionParameter.zw;
+    bool param_3 = convertColorSpace;
+    float2 UVOffset = UVDistortionOffset(param_1, param_2, param_3, Sampler_sampler_uvDistortionTex);
+    UVOffset *= _339_fUVDistortionParameter.x;
+    float4 param_4 = tex2D(Sampler_sampler_colorTex, Input.UV_Others.xy + UVOffset);
+    bool param_5 = convertColorSpace;
+    float4 Output = ConvertFromSRGBTexture(param_4, param_5) * Input.Color;
     float3 texNormal = (tex2D(Sampler_sampler_normalTex, Input.UV_Others.xy + UVOffset).xyz - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
-    float4 param_4 = Output;
-    float param_5 = advancedParam.FlipbookRate;
-    ApplyFlipbook(param_4, _290_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_5, Sampler_sampler_colorTex);
-    Output = param_4;
-    float4 AlphaTexColor = tex2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
+    float4 param_6 = Output;
+    float param_7 = advancedParam.FlipbookRate;
+    bool param_8 = convertColorSpace;
+    ApplyFlipbook(param_6, _339_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_7, param_8, Sampler_sampler_colorTex);
+    Output = param_6;
+    float4 param_9 = tex2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
+    bool param_10 = convertColorSpace;
+    float4 AlphaTexColor = ConvertFromSRGBTexture(param_9, param_10);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
-    float2 param_6 = advancedParam.BlendUVDistortionUV;
-    float2 param_7 = _290_fUVDistortionParameter.zw;
-    float2 BlendUVOffset = UVDistortionOffset(param_6, param_7, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset *= _290_fUVDistortionParameter.y;
-    float4 param_8 = tex2D(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
-    float4 BlendTextureColor = ConvertFromSRGBTexture(param_8);
-    float4 BlendAlphaTextureColor = tex2D(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
+    float2 param_11 = advancedParam.BlendUVDistortionUV;
+    float2 param_12 = _339_fUVDistortionParameter.zw;
+    bool param_13 = convertColorSpace;
+    float2 BlendUVOffset = UVDistortionOffset(param_11, param_12, param_13, Sampler_sampler_blendUVDistortionTex);
+    BlendUVOffset *= _339_fUVDistortionParameter.y;
+    float4 param_14 = tex2D(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
+    bool param_15 = convertColorSpace;
+    float4 BlendTextureColor = ConvertFromSRGBTexture(param_14, param_15);
+    float4 param_16 = tex2D(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
+    bool param_17 = convertColorSpace;
+    float4 BlendAlphaTextureColor = ConvertFromSRGBTexture(param_16, param_17);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
-    float4 param_9 = Output;
-    ApplyTextureBlending(param_9, BlendTextureColor, _290_fBlendTextureParameter.x);
-    Output = param_9;
-    float diffuse = max(dot(_290_fLightDirection.xyz, localNormal), 0.0f);
-    float3 _503 = Output.xyz * ((_290_fLightColor.xyz * diffuse) + _290_fLightAmbient.xyz);
-    Output = float4(_503.x, _503.y, _503.z, Output.w);
-    if (_290_fFalloffParameter.x == 1.0f)
+    float4 param_18 = Output;
+    ApplyTextureBlending(param_18, BlendTextureColor, _339_fBlendTextureParameter.x);
+    Output = param_18;
+    float diffuse = max(dot(_339_fLightDirection.xyz, localNormal), 0.0f);
+    float3 _549 = Output.xyz * ((_339_fLightColor.xyz * diffuse) + _339_fLightAmbient.xyz);
+    Output = float4(_549.x, _549.y, _549.z, Output.w);
+    if (_339_fFalloffParameter.x == 1.0f)
     {
-        float3 cameraVec = normalize(-_290_fCameraFrontDirection.xyz);
+        float3 cameraVec = normalize(-_339_fCameraFrontDirection.xyz);
         float CdotN = clamp(dot(cameraVec, float3(localNormal.x, localNormal.y, localNormal.z)), 0.0f, 1.0f);
-        float4 FalloffBlendColor = lerp(_290_fFalloffEndColor, _290_fFalloffBeginColor, pow(CdotN, _290_fFalloffParameter.z).xxxx);
-        if (_290_fFalloffParameter.y == 0.0f)
+        float4 FalloffBlendColor = lerp(_339_fFalloffEndColor, _339_fFalloffBeginColor, pow(CdotN, _339_fFalloffParameter.z).xxxx);
+        if (_339_fFalloffParameter.y == 0.0f)
         {
-            float3 _549 = Output.xyz + FalloffBlendColor.xyz;
-            Output = float4(_549.x, _549.y, _549.z, Output.w);
+            float3 _595 = Output.xyz + FalloffBlendColor.xyz;
+            Output = float4(_595.x, _595.y, _595.z, Output.w);
         }
         else
         {
-            if (_290_fFalloffParameter.y == 1.0f)
+            if (_339_fFalloffParameter.y == 1.0f)
             {
-                float3 _562 = Output.xyz - FalloffBlendColor.xyz;
-                Output = float4(_562.x, _562.y, _562.z, Output.w);
+                float3 _608 = Output.xyz - FalloffBlendColor.xyz;
+                Output = float4(_608.x, _608.y, _608.z, Output.w);
             }
             else
             {
-                if (_290_fFalloffParameter.y == 2.0f)
+                if (_339_fFalloffParameter.y == 2.0f)
                 {
-                    float3 _575 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = float4(_575.x, _575.y, _575.z, Output.w);
+                    float3 _621 = Output.xyz * FalloffBlendColor.xyz;
+                    Output = float4(_621.x, _621.y, _621.z, Output.w);
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    float3 _589 = Output.xyz * _290_fEmissiveScaling.x;
-    Output = float4(_589.x, _589.y, _589.z, Output.w);
+    float3 _635 = Output.xyz * _339_fEmissiveScaling.x;
+    Output = float4(_635.x, _635.y, _635.z, Output.w);
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {
         discard;
     }
-    float3 _621 = lerp(_290_fEdgeColor.xyz * _290_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _290_fEdgeParameter.x).xxx);
-    Output = float4(_621.x, _621.y, _621.z, Output.w);
-    float4 param_10 = Output;
-    return ConvertToScreen(param_10);
+    float3 _667 = lerp(_339_fEdgeColor.xyz * _339_fEdgeParameter.y, Output.xyz, ceil((Output.w - advancedParam.AlphaThreshold) - _339_fEdgeParameter.x).xxx);
+    Output = float4(_667.x, _667.y, _667.z, Output.w);
+    float4 param_19 = Output;
+    bool param_20 = convertColorSpace;
+    return ConvertToScreen(param_19, param_20);
 }
 
 void frag_main()
@@ -282,8 +307,8 @@ void frag_main()
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
-    float4 _662 = _main(Input);
-    _entryPointOutput = _662;
+    float4 _710 = _main(Input);
+    _entryPointOutput = _710;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

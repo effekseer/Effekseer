@@ -66,9 +66,9 @@ vec4 LinearToSRGB(vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-vec4 ConvertFromSRGBTexture(vec4 c)
+vec4 ConvertFromSRGBTexture(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -87,9 +87,9 @@ vec4 SRGBToLinear(vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-vec4 ConvertToScreen(vec4 c)
+vec4 ConvertToScreen(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -99,21 +99,24 @@ vec4 ConvertToScreen(vec4 c)
 
 vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
-    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    bool param_1 = convertColorSpace;
+    vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _221 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_221.x, _221.y, _221.z, Output.w);
-    vec3 _229 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    vec3 _229 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_229.x, _229.y, _229.z, Output.w);
+    vec3 _237 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_237.x, _237.y, _237.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
     }
-    vec4 param_1 = Output;
-    return ConvertToScreen(param_1);
+    vec4 param_2 = Output;
+    bool param_3 = convertColorSpace;
+    return ConvertToScreen(param_2, param_3);
 }
 
 void main()
@@ -126,7 +129,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _274 = _main(Input);
-    gl_FragData[0] = _274;
+    vec4 _284 = _main(Input);
+    gl_FragData[0] = _284;
 }
 
