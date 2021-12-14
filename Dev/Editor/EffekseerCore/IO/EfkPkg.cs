@@ -79,9 +79,9 @@ namespace Effekseer.IO
 
 				Func<string, string> convertLoadingFilePath = (string convertedPath) =>
 				{
-					foreach(var fileInfo in dependencies)
+					foreach (var fileInfo in dependencies)
 					{
-						if(convertedPath.Contains(fileInfo.HashName))
+						if (convertedPath.Contains(fileInfo.HashName))
 						{
 							return convertedPath.Replace(fileInfo.HashName, fileInfo.RelativePath);
 						}
@@ -431,6 +431,11 @@ namespace Effekseer.IO
 					}
 
 					string filePath = Path.Combine(dirPath, file.RelativePath);
+					string resourceDirPath = Path.GetDirectoryName(filePath);
+					if (!Directory.Exists(resourceDirPath))
+					{
+						Directory.CreateDirectory(resourceDirPath);
+					}
 
 					EfkEfc efkefc = new EfkEfc();
 					var doc = efkefc.Load(file.Data);
@@ -450,7 +455,7 @@ namespace Effekseer.IO
 					var resourcePaths = Utils.Misc.FindResourcePaths(root, Binary.ExporterVersion.Latest);
 					foreach (var list in resourcePaths.All)
 					{
-						ApplyEffectDependencies(list);
+						ApplyEffectDependencies(list, dirPath, filePath);
 					}
 
 					// Write effect file
@@ -470,15 +475,18 @@ namespace Effekseer.IO
 			return true;
 		}
 
-		private void ApplyEffectDependencies(List<Data.Value.Path> resourceList)
+		private void ApplyEffectDependencies(List<Data.Value.Path> resourceList, string exportDirPath, string effectPath)
 		{
 			foreach (var resource in resourceList)
 			{
 				string hashName = resource.GetRelativePath();
-				var entry = ResourceFiles.Find(r => r.HashName == hashName);
-				if (entry != null)
+				var resfile = ResourceFiles.Find(r => r.HashName == hashName);
+				if (resfile != null)
 				{
-					resource.SetRelativePathDirectly(entry.RelativePath, true);
+					var fullPath = Path.Combine(exportDirPath, resfile.RelativePath);
+					fullPath = Utils.Misc.BackSlashToSlash(fullPath);
+					var path = Utils.Misc.GetRelativePath(effectPath, fullPath);
+					resource.SetRelativePathDirectly(path, true);
 				}
 			}
 		}
