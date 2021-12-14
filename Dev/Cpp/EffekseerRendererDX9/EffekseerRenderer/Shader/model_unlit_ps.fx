@@ -8,24 +8,24 @@ struct PS_Input
 
 cbuffer PS_ConstanBuffer : register(b0)
 {
-    float4 _113_fLightDirection : register(c0);
-    float4 _113_fLightColor : register(c1);
-    float4 _113_fLightAmbient : register(c2);
-    float4 _113_fFlipbookParameter : register(c3);
-    float4 _113_fUVDistortionParameter : register(c4);
-    float4 _113_fBlendTextureParameter : register(c5);
-    float4 _113_fCameraFrontDirection : register(c6);
-    float4 _113_fFalloffParameter : register(c7);
-    float4 _113_fFalloffBeginColor : register(c8);
-    float4 _113_fFalloffEndColor : register(c9);
-    float4 _113_fEmissiveScaling : register(c10);
-    float4 _113_fEdgeColor : register(c11);
-    float4 _113_fEdgeParameter : register(c12);
-    float4 _113_softParticleParam : register(c13);
-    float4 _113_reconstructionParam1 : register(c14);
-    float4 _113_reconstructionParam2 : register(c15);
-    float4 _113_mUVInversedBack : register(c16);
-    float4 _113_miscFlags : register(c17);
+    float4 _141_fLightDirection : register(c0);
+    float4 _141_fLightColor : register(c1);
+    float4 _141_fLightAmbient : register(c2);
+    float4 _141_fFlipbookParameter : register(c3);
+    float4 _141_fUVDistortionParameter : register(c4);
+    float4 _141_fBlendTextureParameter : register(c5);
+    float4 _141_fCameraFrontDirection : register(c6);
+    float4 _141_fFalloffParameter : register(c7);
+    float4 _141_fFalloffBeginColor : register(c8);
+    float4 _141_fFalloffEndColor : register(c9);
+    float4 _141_fEmissiveScaling : register(c10);
+    float4 _141_fEdgeColor : register(c11);
+    float4 _141_fEdgeParameter : register(c12);
+    float4 _141_softParticleParam : register(c13);
+    float4 _141_reconstructionParam1 : register(c14);
+    float4 _141_reconstructionParam2 : register(c15);
+    float4 _141_mUVInversedBack : register(c16);
+    float4 _141_miscFlags : register(c17);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);
@@ -67,9 +67,9 @@ float4 LinearToSRGB(float4 c)
     return float4(LinearToSRGB(param), c.w);
 }
 
-float4 ConvertFromSRGBTexture(float4 c)
+float4 ConvertFromSRGBTexture(float4 c, bool isValid)
 {
-    if (_113_miscFlags.x == 0.0f)
+    if (!isValid)
     {
         return c;
     }
@@ -88,9 +88,9 @@ float4 SRGBToLinear(float4 c)
     return float4(SRGBToLinear(param), c.w);
 }
 
-float4 ConvertToScreen(float4 c)
+float4 ConvertToScreen(float4 c, bool isValid)
 {
-    if (_113_miscFlags.x == 0.0f)
+    if (!isValid)
     {
         return c;
     }
@@ -100,16 +100,19 @@ float4 ConvertToScreen(float4 c)
 
 float4 _main(PS_Input Input)
 {
+    bool convertColorSpace = _141_miscFlags.x != 0.0f;
     float4 param = tex2D(Sampler_sampler_colorTex, Input.UV);
-    float4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    float3 _167 = Output.xyz * _113_fEmissiveScaling.x;
-    Output = float4(_167.x, _167.y, _167.z, Output.w);
+    bool param_1 = convertColorSpace;
+    float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
+    float3 _175 = Output.xyz * _141_fEmissiveScaling.x;
+    Output = float4(_175.x, _175.y, _175.z, Output.w);
     if (Output.w == 0.0f)
     {
         discard;
     }
-    float4 param_1 = Output;
-    return ConvertToScreen(param_1);
+    float4 param_2 = Output;
+    bool param_3 = convertColorSpace;
+    return ConvertToScreen(param_2, param_3);
 }
 
 void frag_main()
@@ -119,8 +122,8 @@ void frag_main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    float4 _203 = _main(Input);
-    _entryPointOutput = _203;
+    float4 _213 = _main(Input);
+    _entryPointOutput = _213;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

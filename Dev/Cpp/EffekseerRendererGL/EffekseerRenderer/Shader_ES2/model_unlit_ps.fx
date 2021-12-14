@@ -58,9 +58,9 @@ highp vec4 LinearToSRGB(highp vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-highp vec4 ConvertFromSRGBTexture(highp vec4 c)
+highp vec4 ConvertFromSRGBTexture(highp vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -79,9 +79,9 @@ highp vec4 SRGBToLinear(highp vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-highp vec4 ConvertToScreen(highp vec4 c)
+highp vec4 ConvertToScreen(highp vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -91,16 +91,19 @@ highp vec4 ConvertToScreen(highp vec4 c)
 
 highp vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     highp vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
-    highp vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    highp vec3 _167 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_167.x, _167.y, _167.z, Output.w);
+    bool param_1 = convertColorSpace;
+    highp vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
+    highp vec3 _175 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_175.x, _175.y, _175.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
     }
-    highp vec4 param_1 = Output;
-    return ConvertToScreen(param_1);
+    highp vec4 param_2 = Output;
+    bool param_3 = convertColorSpace;
+    return ConvertToScreen(param_2, param_3);
 }
 
 void main()
@@ -110,7 +113,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _203 = _main(Input);
-    gl_FragData[0] = _203;
+    highp vec4 _213 = _main(Input);
+    gl_FragData[0] = _213;
 }
 

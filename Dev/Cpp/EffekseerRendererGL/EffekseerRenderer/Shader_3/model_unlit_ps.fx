@@ -61,9 +61,9 @@ vec4 LinearToSRGB(vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-vec4 ConvertFromSRGBTexture(vec4 c)
+vec4 ConvertFromSRGBTexture(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -98,9 +98,9 @@ vec4 SRGBToLinear(vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-vec4 ConvertToScreen(vec4 c)
+vec4 ConvertToScreen(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -110,10 +110,12 @@ vec4 ConvertToScreen(vec4 c)
 
 vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
-    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
-    vec3 _250 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_250.x, _250.y, _250.z, Output.w);
+    bool param_1 = convertColorSpace;
+    vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
+    vec3 _258 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_258.x, _258.y, _258.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -122,19 +124,20 @@ vec4 _main(PS_Input Input)
     if (!(CBPS0.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-        float param_1 = backgroundZ;
-        float param_2 = screenPos.z;
-        vec4 param_3 = CBPS0.softParticleParam;
-        vec4 param_4 = CBPS0.reconstructionParam1;
-        vec4 param_5 = CBPS0.reconstructionParam2;
-        Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
+        float param_2 = backgroundZ;
+        float param_3 = screenPos.z;
+        vec4 param_4 = CBPS0.softParticleParam;
+        vec4 param_5 = CBPS0.reconstructionParam1;
+        vec4 param_6 = CBPS0.reconstructionParam2;
+        Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
     }
     if (Output.w == 0.0)
     {
         discard;
     }
-    vec4 param_6 = Output;
-    return ConvertToScreen(param_6);
+    vec4 param_7 = Output;
+    bool param_8 = convertColorSpace;
+    return ConvertToScreen(param_7, param_8);
 }
 
 void main()
@@ -144,7 +147,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _353 = _main(Input);
-    _entryPointOutput = _353;
+    vec4 _363 = _main(Input);
+    _entryPointOutput = _363;
 }
 
