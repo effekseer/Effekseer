@@ -11,24 +11,24 @@ struct PS_Input
 
 cbuffer PS_ConstanBuffer : register(b1)
 {
-    float4 _197_fLightDirection : packoffset(c0);
-    float4 _197_fLightColor : packoffset(c1);
-    float4 _197_fLightAmbient : packoffset(c2);
-    float4 _197_fFlipbookParameter : packoffset(c3);
-    float4 _197_fUVDistortionParameter : packoffset(c4);
-    float4 _197_fBlendTextureParameter : packoffset(c5);
-    float4 _197_fCameraFrontDirection : packoffset(c6);
-    float4 _197_fFalloffParameter : packoffset(c7);
-    float4 _197_fFalloffBeginColor : packoffset(c8);
-    float4 _197_fFalloffEndColor : packoffset(c9);
-    float4 _197_fEmissiveScaling : packoffset(c10);
-    float4 _197_fEdgeColor : packoffset(c11);
-    float4 _197_fEdgeParameter : packoffset(c12);
-    float4 _197_softParticleParam : packoffset(c13);
-    float4 _197_reconstructionParam1 : packoffset(c14);
-    float4 _197_reconstructionParam2 : packoffset(c15);
-    float4 _197_mUVInversedBack : packoffset(c16);
-    float4 _197_miscFlags : packoffset(c17);
+    float4 _225_fLightDirection : packoffset(c0);
+    float4 _225_fLightColor : packoffset(c1);
+    float4 _225_fLightAmbient : packoffset(c2);
+    float4 _225_fFlipbookParameter : packoffset(c3);
+    float4 _225_fUVDistortionParameter : packoffset(c4);
+    float4 _225_fBlendTextureParameter : packoffset(c5);
+    float4 _225_fCameraFrontDirection : packoffset(c6);
+    float4 _225_fFalloffParameter : packoffset(c7);
+    float4 _225_fFalloffBeginColor : packoffset(c8);
+    float4 _225_fFalloffEndColor : packoffset(c9);
+    float4 _225_fEmissiveScaling : packoffset(c10);
+    float4 _225_fEdgeColor : packoffset(c11);
+    float4 _225_fEdgeParameter : packoffset(c12);
+    float4 _225_softParticleParam : packoffset(c13);
+    float4 _225_reconstructionParam1 : packoffset(c14);
+    float4 _225_reconstructionParam2 : packoffset(c15);
+    float4 _225_mUVInversedBack : packoffset(c16);
+    float4 _225_miscFlags : packoffset(c17);
 };
 
 Texture2D<float4> _colorTex : register(t0);
@@ -81,9 +81,9 @@ float4 LinearToSRGB(float4 c)
     return float4(LinearToSRGB(param), c.w);
 }
 
-float4 ConvertFromSRGBTexture(float4 c)
+float4 ConvertFromSRGBTexture(float4 c, bool isValid)
 {
-    if (_197_miscFlags.x == 0.0f)
+    if (!isValid)
     {
         return c;
     }
@@ -118,9 +118,9 @@ float4 SRGBToLinear(float4 c)
     return float4(SRGBToLinear(param), c.w);
 }
 
-float4 ConvertToScreen(float4 c)
+float4 ConvertToScreen(float4 c, bool isValid)
 {
-    if (_197_miscFlags.x == 0.0f)
+    if (!isValid)
     {
         return c;
     }
@@ -130,35 +130,38 @@ float4 ConvertToScreen(float4 c)
 
 float4 _main(PS_Input Input)
 {
+    bool convertColorSpace = _225_miscFlags.x != 0.0f;
     float4 param = _colorTex.Sample(sampler_colorTex, Input.UV);
-    float4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    bool param_1 = convertColorSpace;
+    float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     float3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
-    float diffuse = max(dot(_197_fLightDirection.xyz, localNormal), 0.0f);
-    float3 _303 = Output.xyz * ((_197_fLightColor.xyz * diffuse) + _197_fLightAmbient.xyz);
-    Output = float4(_303.x, _303.y, _303.z, Output.w);
-    float3 _311 = Output.xyz * _197_fEmissiveScaling.x;
+    float diffuse = max(dot(_225_fLightDirection.xyz, localNormal), 0.0f);
+    float3 _311 = Output.xyz * ((_225_fLightColor.xyz * diffuse) + _225_fLightAmbient.xyz);
     Output = float4(_311.x, _311.y, _311.z, Output.w);
+    float3 _319 = Output.xyz * _225_fEmissiveScaling.x;
+    Output = float4(_319.x, _319.y, _319.z, Output.w);
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
-    screenUV.y = _197_mUVInversedBack.x + (_197_mUVInversedBack.y * screenUV.y);
-    if (_197_softParticleParam.w != 0.0f)
+    screenUV.y = _225_mUVInversedBack.x + (_225_mUVInversedBack.y * screenUV.y);
+    if (_225_softParticleParam.w != 0.0f)
     {
         float backgroundZ = _depthTex.Sample(sampler_depthTex, screenUV).x;
-        float param_1 = backgroundZ;
-        float param_2 = screenPos.z;
-        float4 param_3 = _197_softParticleParam;
-        float4 param_4 = _197_reconstructionParam1;
-        float4 param_5 = _197_reconstructionParam2;
-        Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
+        float param_2 = backgroundZ;
+        float param_3 = screenPos.z;
+        float4 param_4 = _225_softParticleParam;
+        float4 param_5 = _225_reconstructionParam1;
+        float4 param_6 = _225_reconstructionParam2;
+        Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
     }
     if (Output.w == 0.0f)
     {
         discard;
     }
-    float4 param_6 = Output;
-    return ConvertToScreen(param_6);
+    float4 param_7 = Output;
+    bool param_8 = convertColorSpace;
+    return ConvertToScreen(param_7, param_8);
 }
 
 void frag_main()
@@ -171,8 +174,8 @@ void frag_main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    float4 _417 = _main(Input);
-    _entryPointOutput = _417;
+    float4 _427 = _main(Input);
+    _entryPointOutput = _427;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

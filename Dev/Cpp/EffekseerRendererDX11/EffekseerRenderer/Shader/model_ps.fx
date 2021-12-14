@@ -72,7 +72,9 @@ struct PS_Input
 float4 main(const PS_Input Input)
 	: SV_Target
 {
-	float4 Output = ConvertFromSRGBTexture(_colorTex.Sample(sampler_colorTex, Input.UV)) * Input.Color;
+	bool convertColorSpace = miscFlags.x != 0.0f;
+
+	float4 Output = ConvertFromSRGBTexture(_colorTex.Sample(sampler_colorTex, Input.UV), convertColorSpace) * Input.Color;
 
 #if ENABLE_LIGHTING
 	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5) * 2.0;
@@ -115,5 +117,5 @@ float4 main(const PS_Input Input)
 	if (Output.a == 0.0)
 		discard;
 
-	return ConvertToScreen(Output);
+	return ConvertToScreen(Output, convertColorSpace);
 }

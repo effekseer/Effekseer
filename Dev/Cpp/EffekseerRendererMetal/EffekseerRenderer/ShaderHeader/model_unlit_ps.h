@@ -70,9 +70,9 @@ float4 LinearToSRGB(thread const float4& c)
 }
 
 static inline __attribute__((always_inline))
-float4 ConvertFromSRGBTexture(thread const float4& c, constant PS_ConstanBuffer& v_197)
+float4 ConvertFromSRGBTexture(thread const float4& c, thread const bool& isValid)
 {
-    if (v_197.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -111,9 +111,9 @@ float4 SRGBToLinear(thread const float4& c)
 }
 
 static inline __attribute__((always_inline))
-float4 ConvertToScreen(thread const float4& c, constant PS_ConstanBuffer& v_197)
+float4 ConvertToScreen(thread const float4& c, thread const bool& isValid)
 {
-    if (v_197.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -122,35 +122,38 @@ float4 ConvertToScreen(thread const float4& c, constant PS_ConstanBuffer& v_197)
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, constant PS_ConstanBuffer& v_197, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
+float4 _main(PS_Input Input, constant PS_ConstanBuffer& v_225, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
 {
+    bool convertColorSpace = (isunordered(v_225.miscFlags.x, 0.0) || v_225.miscFlags.x != 0.0);
     float4 param = _colorTex.sample(sampler_colorTex, Input.UV);
-    float4 Output = ConvertFromSRGBTexture(param, v_197) * Input.Color;
-    float3 _250 = Output.xyz * v_197.fEmissiveScaling.x;
-    Output = float4(_250.x, _250.y, _250.z, Output.w);
+    bool param_1 = convertColorSpace;
+    float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
+    float3 _258 = Output.xyz * v_225.fEmissiveScaling.x;
+    Output = float4(_258.x, _258.y, _258.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = v_197.mUVInversedBack.x + (v_197.mUVInversedBack.y * screenUV.y);
-    if ((isunordered(v_197.softParticleParam.w, 0.0) || v_197.softParticleParam.w != 0.0))
+    screenUV.y = v_225.mUVInversedBack.x + (v_225.mUVInversedBack.y * screenUV.y);
+    if ((isunordered(v_225.softParticleParam.w, 0.0) || v_225.softParticleParam.w != 0.0))
     {
         float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
-        float param_1 = backgroundZ;
-        float param_2 = screenPos.z;
-        float4 param_3 = v_197.softParticleParam;
-        float4 param_4 = v_197.reconstructionParam1;
-        float4 param_5 = v_197.reconstructionParam2;
-        Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
+        float param_2 = backgroundZ;
+        float param_3 = screenPos.z;
+        float4 param_4 = v_225.softParticleParam;
+        float4 param_5 = v_225.reconstructionParam1;
+        float4 param_6 = v_225.reconstructionParam2;
+        Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
     }
     if (Output.w == 0.0)
     {
         discard_fragment();
     }
-    float4 param_6 = Output;
-    return ConvertToScreen(param_6, v_197);
+    float4 param_7 = Output;
+    bool param_8 = convertColorSpace;
+    return ConvertToScreen(param_7, param_8);
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_197 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _depthTex [[texture(1)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_depthTex [[sampler(1)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_225 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _depthTex [[texture(1)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_depthTex [[sampler(1)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -158,8 +161,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.Color = in.Input_Color;
     Input.UV = in.Input_UV;
     Input.PosP = in.Input_PosP;
-    float4 _349 = _main(Input, v_197, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _349;
+    float4 _359 = _main(Input, v_225, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _359;
     return out;
 }
 

@@ -67,9 +67,9 @@ vec4 LinearToSRGB(vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-vec4 ConvertFromSRGBTexture(vec4 c)
+vec4 ConvertFromSRGBTexture(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -88,9 +88,9 @@ vec4 SRGBToLinear(vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-vec4 ConvertToScreen(vec4 c)
+vec4 ConvertToScreen(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -100,21 +100,24 @@ vec4 ConvertToScreen(vec4 c)
 
 vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
-    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    bool param_1 = convertColorSpace;
+    vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _221 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_221.x, _221.y, _221.z, Output.w);
-    vec3 _229 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    vec3 _229 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_229.x, _229.y, _229.z, Output.w);
+    vec3 _237 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_237.x, _237.y, _237.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
     }
-    vec4 param_1 = Output;
-    return ConvertToScreen(param_1);
+    vec4 param_2 = Output;
+    bool param_3 = convertColorSpace;
+    return ConvertToScreen(param_2, param_3);
 }
 
 void main()
@@ -127,8 +130,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _274 = _main(Input);
-    gl_FragData[0] = _274;
+    vec4 _284 = _main(Input);
+    gl_FragData[0] = _284;
 }
 
 )";
@@ -203,9 +206,9 @@ vec4 LinearToSRGB(vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-vec4 ConvertFromSRGBTexture(vec4 c)
+vec4 ConvertFromSRGBTexture(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -240,9 +243,9 @@ vec4 SRGBToLinear(vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-vec4 ConvertToScreen(vec4 c)
+vec4 ConvertToScreen(vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -252,15 +255,17 @@ vec4 ConvertToScreen(vec4 c)
 
 vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
-    vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    bool param_1 = convertColorSpace;
+    vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _303 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_303.x, _303.y, _303.z, Output.w);
-    vec3 _311 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    vec3 _311 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_311.x, _311.y, _311.z, Output.w);
+    vec3 _319 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_319.x, _319.y, _319.z, Output.w);
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -269,19 +274,20 @@ vec4 _main(PS_Input Input)
     if (!(CBPS0.softParticleParam.w == 0.0))
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-        float param_1 = backgroundZ;
-        float param_2 = screenPos.z;
-        vec4 param_3 = CBPS0.softParticleParam;
-        vec4 param_4 = CBPS0.reconstructionParam1;
-        vec4 param_5 = CBPS0.reconstructionParam2;
-        Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
+        float param_2 = backgroundZ;
+        float param_3 = screenPos.z;
+        vec4 param_4 = CBPS0.softParticleParam;
+        vec4 param_5 = CBPS0.reconstructionParam1;
+        vec4 param_6 = CBPS0.reconstructionParam2;
+        Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
     }
     if (Output.w == 0.0)
     {
         discard;
     }
-    vec4 param_6 = Output;
-    return ConvertToScreen(param_6);
+    vec4 param_7 = Output;
+    bool param_8 = convertColorSpace;
+    return ConvertToScreen(param_7, param_8);
 }
 
 void main()
@@ -294,8 +300,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _421 = _main(Input);
-    _entryPointOutput = _421;
+    vec4 _431 = _main(Input);
+    _entryPointOutput = _431;
 }
 
 )";
@@ -369,9 +375,9 @@ highp vec4 LinearToSRGB(highp vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-highp vec4 ConvertFromSRGBTexture(highp vec4 c)
+highp vec4 ConvertFromSRGBTexture(highp vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -390,9 +396,9 @@ highp vec4 SRGBToLinear(highp vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-highp vec4 ConvertToScreen(highp vec4 c)
+highp vec4 ConvertToScreen(highp vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -402,21 +408,24 @@ highp vec4 ConvertToScreen(highp vec4 c)
 
 highp vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     highp vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
-    highp vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    bool param_1 = convertColorSpace;
+    highp vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     highp vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _221 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_221.x, _221.y, _221.z, Output.w);
-    highp vec3 _229 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    highp vec3 _229 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_229.x, _229.y, _229.z, Output.w);
+    highp vec3 _237 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_237.x, _237.y, _237.z, Output.w);
     if (Output.w == 0.0)
     {
         discard;
     }
-    highp vec4 param_1 = Output;
-    return ConvertToScreen(param_1);
+    highp vec4 param_2 = Output;
+    bool param_3 = convertColorSpace;
+    return ConvertToScreen(param_2, param_3);
 }
 
 void main()
@@ -429,8 +438,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _274 = _main(Input);
-    gl_FragData[0] = _274;
+    highp vec4 _284 = _main(Input);
+    gl_FragData[0] = _284;
 }
 
 )";
@@ -504,9 +513,9 @@ highp vec4 LinearToSRGB(highp vec4 c)
     return vec4(LinearToSRGB(param), c.w);
 }
 
-highp vec4 ConvertFromSRGBTexture(highp vec4 c)
+highp vec4 ConvertFromSRGBTexture(highp vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -541,9 +550,9 @@ highp vec4 SRGBToLinear(highp vec4 c)
     return vec4(SRGBToLinear(param), c.w);
 }
 
-highp vec4 ConvertToScreen(highp vec4 c)
+highp vec4 ConvertToScreen(highp vec4 c, bool isValid)
 {
-    if (CBPS0.miscFlags.x == 0.0)
+    if (!isValid)
     {
         return c;
     }
@@ -553,15 +562,17 @@ highp vec4 ConvertToScreen(highp vec4 c)
 
 highp vec4 _main(PS_Input Input)
 {
+    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
     highp vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
-    highp vec4 Output = ConvertFromSRGBTexture(param) * Input.Color;
+    bool param_1 = convertColorSpace;
+    highp vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     highp vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     highp vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     highp float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    highp vec3 _303 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_303.x, _303.y, _303.z, Output.w);
-    highp vec3 _311 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    highp vec3 _311 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
     Output = vec4(_311.x, _311.y, _311.z, Output.w);
+    highp vec3 _319 = Output.xyz * CBPS0.fEmissiveScaling.x;
+    Output = vec4(_319.x, _319.y, _319.z, Output.w);
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -570,19 +581,20 @@ highp vec4 _main(PS_Input Input)
     if (!(CBPS0.softParticleParam.w == 0.0))
     {
         highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
-        highp float param_1 = backgroundZ;
-        highp float param_2 = screenPos.z;
-        highp vec4 param_3 = CBPS0.softParticleParam;
-        highp vec4 param_4 = CBPS0.reconstructionParam1;
-        highp vec4 param_5 = CBPS0.reconstructionParam2;
-        Output.w *= SoftParticle(param_1, param_2, param_3, param_4, param_5);
+        highp float param_2 = backgroundZ;
+        highp float param_3 = screenPos.z;
+        highp vec4 param_4 = CBPS0.softParticleParam;
+        highp vec4 param_5 = CBPS0.reconstructionParam1;
+        highp vec4 param_6 = CBPS0.reconstructionParam2;
+        Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
     }
     if (Output.w == 0.0)
     {
         discard;
     }
-    highp vec4 param_6 = Output;
-    return ConvertToScreen(param_6);
+    highp vec4 param_7 = Output;
+    bool param_8 = convertColorSpace;
+    return ConvertToScreen(param_7, param_8);
 }
 
 void main()
@@ -595,8 +607,8 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _421 = _main(Input);
-    _entryPointOutput = _421;
+    highp vec4 _431 = _main(Input);
+    _entryPointOutput = _431;
 }
 
 )";
