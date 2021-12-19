@@ -729,7 +729,7 @@ namespace Effekseer.GUI
 			return null;
 		}
 
-		public static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetRect = false)
+		public static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetSize = false, bool requireClose = true)
 		{
 			for(int i = 0; i < dockTypes.Length; i++)
 			{
@@ -737,7 +737,7 @@ namespace Effekseer.GUI
 
 				if (panels[i] != null)
 				{
-					if(panels[i].Visibled)
+					if(panels[i].Visibled && requireClose)
 					{
 						panels[i].Close();
 					}
@@ -758,7 +758,7 @@ namespace Effekseer.GUI
 					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
 					panels[i].InitialDockSize = defaultSize;
 					panels[i].IsInitialized = -1;
-					panels[i].ResetSize = resetRect;
+					panels[i].ResetSize = resetSize;
 
 					if (dockManager != null)
 					{

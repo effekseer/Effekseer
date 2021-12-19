@@ -30,14 +30,15 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			
-			if(Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
+			if (Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
 			{
+				var state = Manager.MainWindow.GetState();
+
 				var windowSize = Manager.NativeManager.GetWindowSize();
-				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(windowSize.X *0.75f, windowSize.Y * 0.5f)) as Dock.FCurves;
+				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(state.Width * 0.75f, state.Height * 0.5f), true, false) as Dock.FCurves;
 				panel?.UnselectAll();
 				panel?.SelectFCurve(boundObject);
-			}	
+			}
 		}
 	}
 }
