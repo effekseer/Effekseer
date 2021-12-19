@@ -33,8 +33,8 @@ namespace Effekseer.GUI.Component
 			
 			if(Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
 			{
-				var windowSize = Manager.NativeManager.GetWindowSize();
-				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(windowSize.X *0.75f, windowSize.Y * 0.5f)) as Dock.FCurves;
+				var state = Manager.MainWindow.GetState();
+				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(state.Width * 0.75f, state.Height * 0.5f), true) as Dock.FCurves;
 				panel?.UnselectAll();
 				panel?.SelectFCurve(boundObject);
 			}	
