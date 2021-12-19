@@ -34,7 +34,6 @@ namespace Effekseer.GUI.Component
 			{
 				var state = Manager.MainWindow.GetState();
 
-				var windowSize = Manager.NativeManager.GetWindowSize();
 				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves), new swig.Vec2(state.Width * 0.75f, state.Height * 0.5f), true, false) as Dock.FCurves;
 				panel?.UnselectAll();
 				panel?.SelectFCurve(boundObject);
