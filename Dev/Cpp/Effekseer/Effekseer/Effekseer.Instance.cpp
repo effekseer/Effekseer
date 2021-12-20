@@ -1241,11 +1241,9 @@ void Instance::CalculateMatrix(float deltaFrame)
 			localPosition = {0, 0, 0};
 		}
 
-		// Velocitty
-		SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
-		if (m_pEffectNode->LocalForceField.HasValue)
+		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
-			localVelocity = localPosition - prevPosition_;
+			localPosition += m_GenerationLocation.GetTranslation();
 		}
 
 		if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
@@ -1277,12 +1275,14 @@ void Instance::CalculateMatrix(float deltaFrame)
 			localPosition += followVelocity;
 		}
 
-		prevPosition_ = localPosition;
-
-		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
+		// Velocitty
+		SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
+		if (m_pEffectNode->LocalForceField.HasValue)
 		{
-			localPosition += m_GenerationLocation.GetTranslation();
+			localVelocity = localPosition - prevPosition_;
 		}
+
+		prevPosition_ = localPosition;
 
 		/* 回転の更新(時間から直接求めれるよう対応済み) */
 		if (m_pEffectNode->RotationType == ParameterRotationType_None)
