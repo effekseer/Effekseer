@@ -775,7 +775,7 @@ void ExportMain(
     }
 }
 
-ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderType, int32_t maximumTextureCount)
+ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderType, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
     bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
     bool isRefrection =
@@ -854,11 +854,20 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
         
         
         // replace uniforms
-        for (size_t i = 0; i < materialFile->GetUniformCount(); i++)
+		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
+
+        for (size_t i = 0; i < actualUniformCount; i++)
         {
             auto name = materialFile->GetUniformName(i);
             baseCode = Replace(baseCode, name, std::string("u.") + name);
         }
+
+        for (size_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
+		{
+			auto name = materialFile->GetUniformName(i);
+			baseCode = Replace(baseCode, name, std::string("float4(0,0,0,0)"));
+		}
+
         baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
         baseCode = Replace(baseCode, "cameraPosition", std::string("u.") + "cameraPosition");
 
@@ -1005,7 +1014,7 @@ public:
     int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
     auto binary = new CompiledMaterialBinaryMetal();
     //auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
@@ -1094,8 +1103,9 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-    auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
-        auto shader = Metal::GenerateShader(materialFile, type, maximumTextureCount);
+    auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, & maximumTextureCount](MaterialShaderType type)
+	{
+		auto shader = Metal::GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount);
         binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
         binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
     };
@@ -1112,7 +1122,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
     return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile) { return Compile(materialFile, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile) { return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 

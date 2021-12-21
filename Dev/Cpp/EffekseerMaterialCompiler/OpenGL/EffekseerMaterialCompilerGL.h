@@ -15,7 +15,7 @@ public:
 
 	virtual ~MaterialCompilerGL() = default;
 
-	CompiledMaterialBinary* Compile(MaterialFile* materialFile, int32_t maximumTextureCount);
+	CompiledMaterialBinary* Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount);
 
 	CompiledMaterialBinary* Compile(MaterialFile* materialFile) override;
 

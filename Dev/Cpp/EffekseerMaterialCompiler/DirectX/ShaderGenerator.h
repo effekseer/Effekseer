@@ -286,6 +286,7 @@ public:
 
 	ShaderData GenerateShader(MaterialFile* materialFile,
 							  MaterialShaderType shaderType,
+							  int32_t maximumUniformCount,
 							  int32_t maximumTextureCount,
 							  int32_t pixelShaderTextureSlotOffset,
 							  int32_t instanceCount)
@@ -349,7 +350,9 @@ public:
 				}
 			}
 
-			for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
+			int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
+
+			for (int32_t i = 0; i < actualUniformCount; i++)
 			{
 				ExportUniform(maincode, 4, materialFile->GetUniformName(i), cind);
 				cind++;
@@ -357,6 +360,11 @@ public:
 
 			// finish constant buffer
 			maincode << "};" << std::endl;
+
+			for (int32_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
+			{
+				maincode << "const " << GetType(4) << " " << materialFile->GetUniformName(i) << " = float4(0,0,0,0);" << std::endl;
+			}
 
 			int32_t textureSlotOffset = 0;
 
