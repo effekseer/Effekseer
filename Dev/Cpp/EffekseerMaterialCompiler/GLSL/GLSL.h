@@ -929,7 +929,7 @@ public:
 				maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
 			}
 
-			int32_t actualUniformCount = std::min(16, materialFile->GetUniformCount());
+			int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
 			int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
 
 			for (int32_t i = 0; i < actualTextureCount; i++)
@@ -985,7 +985,7 @@ public:
 
 			if (isRefrection && stage == 1)
 			{
-				ExportUniform(maincode, maximumUniformCount, "cameraMat");
+				ExportUniform(maincode, 16, "cameraMat");
 			}
 
 			if (!isSprite && stage == 0)
