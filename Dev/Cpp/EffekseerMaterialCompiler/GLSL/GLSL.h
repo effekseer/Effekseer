@@ -928,6 +928,7 @@ public:
 				maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
 			}
 
+			int32_t actualUniformCount = std::min(16, materialFile->GetUniformCount());
 			int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
 
 			for (int32_t i = 0; i < actualTextureCount; i++)
@@ -1013,11 +1014,18 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 				}
 			}
 
-			for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
+			for (int32_t i = 0; i < actualUniformCount; i++)
 			{
 				auto uniformName = materialFile->GetUniformName(i);
 
 				ExportUniform(maincode, 4, uniformName);
+			}
+
+			for (int32_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
+			{
+				auto uniformName = materialFile->GetUniformName(i);
+
+				maincode << "const " << GetType(4) << " " << uniformName << "= vec4(0,0,0,0);" << std::endl;
 			}
 
 			// Uniform block end
