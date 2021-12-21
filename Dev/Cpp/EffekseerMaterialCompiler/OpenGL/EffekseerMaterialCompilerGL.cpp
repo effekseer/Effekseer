@@ -71,7 +71,7 @@ public:
 	}
 };
 
-CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryGL();
 
@@ -83,9 +83,9 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, 
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVector, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, false, false, false, false, 0, false, false, InstanceCount);
+		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, false, false, false, false, 0, false, false, InstanceCount);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};
@@ -104,7 +104,7 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, 
 
 CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile)
 {
-	return Compile(materialFile, Effekseer::UserTextureSlotMax);
+	return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax);
 }
 
 } // namespace Effekseer

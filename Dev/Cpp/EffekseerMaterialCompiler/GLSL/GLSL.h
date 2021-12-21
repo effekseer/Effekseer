@@ -883,6 +883,7 @@ class ShaderGenerator
 public:
 	ShaderData GenerateShader(MaterialFile* materialFile,
 							  MaterialShaderType shaderType,
+							  int32_t maximumUniformCount,
 							  int32_t maximumTextureCount,
 							  bool useUniformBlock,
 							  bool isOutputDefined,
@@ -984,7 +985,7 @@ public:
 
 			if (isRefrection && stage == 1)
 			{
-				ExportUniform(maincode, 16, "cameraMat");
+				ExportUniform(maincode, maximumUniformCount, "cameraMat");
 			}
 
 			if (!isSprite && stage == 0)

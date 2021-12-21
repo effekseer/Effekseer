@@ -121,7 +121,7 @@ public:
 	}
 };
 
-CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
 	auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerDX12());
 
@@ -167,7 +167,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		auto generator = DirectX::ShaderGenerator(DX12::material_common_define,
 												  DX12::material_common_functions,
 												  DX12::material_common_vs_functions,
@@ -186,7 +186,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 												  DX12::g_material_ps_suf2_refraction,
 												  DirectX::ShaderGeneratorTarget::DirectX12);
 
-		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, 0, DX12_InstanceCount);
+		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, DX12_InstanceCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
@@ -205,7 +205,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 
 CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile)
 {
-	return Compile(materialFile, Effekseer::UserTextureSlotMax);
+	return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax);
 }
 
 } // namespace Effekseer
